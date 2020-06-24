@@ -29,7 +29,7 @@ class CDM_DECL PBEquipmentAction
 public:
 
   /** Create a new action based on the binding object, load that data into the new action, and return said action */
-  static SEEquipmentAction* Load(const CDM_BIND::AnyEquipmentActionData& any, SESubstanceManager& subMgr);
+  static SEEquipmentAction* Load(const CDM_BIND::AnyEquipmentActionData& any, const SESubstanceManager& subMgr);
   /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
   static CDM_BIND::AnyEquipmentActionData* Unload(const SEEquipmentAction& action);
 
@@ -43,11 +43,11 @@ public:
   static void Serialize(const CDM_BIND::AnesthesiaMachineActionData& src, SEAnesthesiaMachineAction& dst);
   static void Serialize(const SEAnesthesiaMachineAction& src, CDM_BIND::AnesthesiaMachineActionData& dst);
 
-  static void Load(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst);
+  static void Load(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst, const SESubstanceManager& subMgr);
   static CDM_BIND::AnesthesiaMachineConfigurationData* Unload(const SEAnesthesiaMachineConfiguration& src);
-  static void Serialize(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst);
+  static void Serialize(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEAnesthesiaMachineConfiguration& src, CDM_BIND::AnesthesiaMachineConfigurationData& dst);
-  static void Copy(const SEAnesthesiaMachineConfiguration& src, SEAnesthesiaMachineConfiguration& dst);
+  static void Copy(const SEAnesthesiaMachineConfiguration& src, SEAnesthesiaMachineConfiguration& dst, const SESubstanceManager& subMgr);
 
   static void Load(const CDM_BIND::AnesthesiaMachineExpiratoryValveLeakData& src, SEAnesthesiaMachineExpiratoryValveLeak& dst);
   static CDM_BIND::AnesthesiaMachineExpiratoryValveLeakData* Unload(const SEAnesthesiaMachineExpiratoryValveLeak& src);
@@ -128,11 +128,11 @@ public:
   static void Serialize(const CDM_BIND::InhalerActionData& src, SEInhalerAction& dst);
   static void Serialize(const SEInhalerAction& src, CDM_BIND::InhalerActionData& dst);
 
-  static void Load(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst);
+  static void Load(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr);
   static CDM_BIND::InhalerConfigurationData* Unload(const SEInhalerConfiguration& src);
-  static void Serialize(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst);
+  static void Serialize(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEInhalerConfiguration& src, CDM_BIND::InhalerConfigurationData& dst);
-  static void Copy(const SEInhalerConfiguration& src, SEInhalerConfiguration& dst);
+  static void Copy(const SEInhalerConfiguration& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr);
 
   ///////////////////////////
   // Mechanical Ventilator //
@@ -141,9 +141,9 @@ public:
   static void Serialize(const CDM_BIND::MechanicalVentilatorActionData& src, SEMechanicalVentilatorAction& dst);
   static void Serialize(const SEMechanicalVentilatorAction& src, CDM_BIND::MechanicalVentilatorActionData& dst);
 
-  static void Load(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst);
+  static void Load(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr);
   static CDM_BIND::MechanicalVentilatorConfigurationData* Unload(const SEMechanicalVentilatorConfiguration& src);
-  static void Serialize(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst);
+  static void Serialize(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEMechanicalVentilatorConfiguration& src, CDM_BIND::MechanicalVentilatorConfigurationData& dst);
-  static void Copy(const SEMechanicalVentilatorConfiguration& src, SEMechanicalVentilatorConfiguration& dst);
+  static void Copy(const SEMechanicalVentilatorConfiguration& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr);
 };

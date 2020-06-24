@@ -24,7 +24,7 @@ class CDM_DECL PBPatientCondition
 public:
 
   /** Create a new condition based on the binding object, load that data into the new condition, and return said condition */
-  static SEPatientCondition* Load(const CDM_BIND::AnyPatientConditionData& any, SESubstanceManager& subMgr);
+  static SEPatientCondition* Load(const CDM_BIND::AnyPatientConditionData& any, const SESubstanceManager& subMgr);
   /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
   static CDM_BIND::AnyPatientConditionData* Unload(const SEPatientCondition& condition);
   static void Serialize(const CDM_BIND::PatientConditionData& src, SEPatientCondition& dst);

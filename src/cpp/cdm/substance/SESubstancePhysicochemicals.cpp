@@ -18,11 +18,6 @@ SESubstancePhysicochemicals::SESubstancePhysicochemicals(Logger* logger) : Logga
 
 SESubstancePhysicochemicals::~SESubstancePhysicochemicals()
 {
-  Clear();
-}
-
-void SESubstancePhysicochemicals::Clear()
-{
   SAFE_DELETE(m_AcidDissociationConstant);
   m_BindingProtein = eSubstance_BindingProtein::NullBindingProtein;
   SAFE_DELETE(m_BloodPlasmaRatio);
@@ -30,6 +25,17 @@ void SESubstancePhysicochemicals::Clear()
   m_IonicState = eSubstance_IonicState::NullIonicState;
   SAFE_DELETE(m_LogP);
   SAFE_DELETE(m_OralAbsorptionRateConstant);
+}
+
+void SESubstancePhysicochemicals::Clear()
+{
+  INVALIDATE_PROPERTY(m_AcidDissociationConstant);
+  m_BindingProtein = eSubstance_BindingProtein::NullBindingProtein;
+  INVALIDATE_PROPERTY(m_BloodPlasmaRatio);
+  INVALIDATE_PROPERTY(m_FractionUnboundInPlasma);
+  m_IonicState = eSubstance_IonicState::NullIonicState;
+  INVALIDATE_PROPERTY(m_LogP);
+  INVALIDATE_PROPERTY(m_OralAbsorptionRateConstant);
 }
 
 bool SESubstancePhysicochemicals::IsValid() const

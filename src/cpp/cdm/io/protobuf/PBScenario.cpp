@@ -23,7 +23,7 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst)
   dst.SetDescription(src.description());
 
   if (src.has_patientconfiguration())
-    PBEngine::Load(src.patientconfiguration(), dst.GetPatientConfiguration(), *dst.m_SubMgr);
+    PBEngine::Load(src.patientconfiguration(), dst.GetPatientConfiguration());
   else 
     dst.SetEngineStateFile(src.enginestatefile());
 
@@ -66,13 +66,11 @@ bool PBScenario::SerializeToString(const SEScenario& src, std::string& output, S
   PBScenario::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filename, SerializationFormat m)
+bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filename)
 {
   CDM_BIND::ScenarioData data;
   PBScenario::Serialize(src, data);
-  std::string content;
-  PBScenario::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 bool PBScenario::SerializeFromString(const std::string& src, SEScenario& dst, SerializationFormat m)
 {
@@ -82,10 +80,11 @@ bool PBScenario::SerializeFromString(const std::string& src, SEScenario& dst, Se
   PBScenario::Load(data, dst);
   return true;
 }
-bool PBScenario::SerializeFromFile(const std::string& filename, SEScenario& dst, SerializationFormat m)
+bool PBScenario::SerializeFromFile(const std::string& filename, SEScenario& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::ScenarioData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBScenario::SerializeFromString(content, dst, m);
+  PBScenario::Load(data, dst);
+  return true;
 }

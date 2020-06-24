@@ -16,7 +16,7 @@ public:
 
   virtual void Clear();
 
-  virtual void Merge(const SEAnesthesiaMachineOxygenBottle& from);
+  virtual void Merge(const SEAnesthesiaMachineOxygenBottle& from, SESubstanceManager& subMgr);
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
@@ -29,5 +29,4 @@ public:
 protected:
 
   SEScalarVolume*     m_Volume;
-
 };

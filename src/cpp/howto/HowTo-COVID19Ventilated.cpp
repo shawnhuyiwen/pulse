@@ -45,7 +45,7 @@ void HowToCOVID19Ventilated()
   pe->GetLogger()->SetLogFile("HowTo_COVID19Ventilated.log");
   
   pe->GetLogger()->Info("HowTo_COVID19Ventilated");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -112,14 +112,14 @@ void HowToCOVID19Ventilated()
   pe->ProcessAction(intubation);
 
   // Setup the PC-CMV ventilator
-  SEMechanicalVentilatorConfiguration MVConfig(pe->GetSubstanceManager());
+  SEMechanicalVentilatorConfiguration MVConfig(pe->GetLogger());
   SEMechanicalVentilator& mv = MVConfig.GetConfiguration();
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
   mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);
   mv.GetPositiveEndExpiredPressure().SetValue(10.0, PressureUnit::cmH2O);
-  SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");
   SESubstanceFraction* fractionFiO2 = &mv.GetFractionInspiredGas(*oxygen);
   fractionFiO2->GetFractionAmount().SetValue(0.5);
   double respirationRate_per_min = 20.0;

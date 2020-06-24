@@ -12,12 +12,12 @@ class CDM_DECL SEAnesthesiaMachineChamber : Loggable
   friend SEAnesthesiaMachine;
 public:
 
-  SEAnesthesiaMachineChamber(SESubstanceManager& substances);
+  SEAnesthesiaMachineChamber(Logger* logger);
   virtual ~SEAnesthesiaMachineChamber();
 
   virtual void Clear();
 
-  virtual void Merge(const SEAnesthesiaMachineChamber& from);
+  virtual void Merge(const SEAnesthesiaMachineChamber& from, SESubstanceManager& subMgr);
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
@@ -40,6 +40,4 @@ protected:
   eSwitch               m_State;
   const SESubstance*    m_Substance;
   SEScalar0To1*         m_SubstanceFraction;
-
-  SESubstanceManager&   m_Substances;
 };

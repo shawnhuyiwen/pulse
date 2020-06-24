@@ -3,9 +3,14 @@
 
 #include "stdafx.h"
 #include "PulsePhysiologyEngine.h"
+#include "PulseScenarioExec.h"
 #include "controller/Engine.h"
 
 #include "patient/SEPatient.h"
+#include "patient/assessments/SECompleteBloodCount.h"
+#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "patient/assessments/SEPulmonaryFunctionTest.h"
+#include "patient/assessments/SEUrinalysis.h"
 #include "engine/SEAction.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
@@ -38,6 +43,8 @@ public:
   size_t length;
   std::vector<double> requestedValues;
   double* requestedData = nullptr;
+
+  PulseScenarioExec* exec = nullptr;
 };
 
 PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
@@ -49,19 +56,39 @@ PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
 }
 PulseEngineThunk::~PulseEngineThunk()
 {
+  SAFE_DELETE(data->exec);
   delete data;
 }
 
-bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat format)
+PhysiologyEngine& PulseEngineThunk::GetPhysiologyEngine()
 {
-  if (!data->eng->SerializeFromFile(filename, format))
+  return *data->eng;
+}
+
+bool PulseEngineThunk::ExecuteScenario(std::string const& scenario, SerializationFormat format, std::string const& csvFile, std::string const& logFile, std::string const& dataDir)
+{
+  if (data->exec != nullptr)
+  {
+    data->eng->GetLogger()->Error("Already running a scenario");
+    return false;
+  }
+  data->exec = new PulseScenarioExec(data->eng->GetLogger());
+  data->exec->GetLogger()->SetLogFile(logFile);
+  bool b = data->exec->Execute(*data->eng, scenario, format, csvFile, dataDir);
+  SAFE_DELETE(data->exec);
+  return b;
+}
+
+bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format)
+{
+  if (!data->eng->SerializeFromFile(filename))
     return false;
   data->eng->GetEventManager().ForwardEvents(this);
 
   // Load up the data requests
   if (!data_requests.empty())
   {
-    if (!data->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, data->eng->GetSubstanceManager()))
+    if (!data->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, data_requests_format, data->eng->GetSubstanceManager()))
     {
       data->eng->GetLogger()->Error("Unable to load data requests string");
       return false;
@@ -76,9 +103,9 @@ bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::strin
   return true;
 }
 
-bool PulseEngineThunk::SerializeToFile(std::string const& filename, SerializationFormat format)
+bool PulseEngineThunk::SerializeToFile(std::string const& filename)
 {
-  return data->eng->SerializeToFile(filename, format);
+  return data->eng->SerializeToFile(filename);
 }
 
 
@@ -140,6 +167,53 @@ bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration
   return true;
 }
 
+std::string PulseEngineThunk::GetInitialPatient(SerializationFormat format)
+{
+  std::string stream;
+  data->eng->GetInitialPatient().SerializeToString(stream, format);
+  return stream;
+}
+
+std::string PulseEngineThunk::GetPatientAssessment(int type, SerializationFormat format)
+{
+  std::string stream;
+  switch (type)
+  {
+  case 0: // CBC
+  {
+    SECompleteBloodCount cbc(data->eng->GetLogger());
+    data->eng->GetPatientAssessment(cbc);
+    cbc.SerializeToString(stream, format);
+    break;
+  }
+  case 1: // CMP
+  {
+    SEComprehensiveMetabolicPanel cmp(data->eng->GetLogger());
+    data->eng->GetPatientAssessment(cmp);
+    cmp.SerializeToString(stream, format);
+    break;
+  }
+  case 2:// PFT
+  {
+    SEPulmonaryFunctionTest pft(data->eng->GetLogger());
+    data->eng->GetPatientAssessment(pft);
+    pft.SerializeToString(stream, format);
+    break;
+  }
+  case 3: // U
+  {
+    SEUrinalysis u(data->eng->GetLogger());
+    data->eng->GetPatientAssessment(u);
+    u.SerializeToString(stream, format);
+    break;
+  }
+  default:
+    stream = "Unsupported assessment type";
+  };
+
+  return stream;
+}
+
 void PulseEngineThunk::LogToConsole(bool b)
 {
   data->eng->GetLogger()->LogToConsole(b);
@@ -167,7 +241,6 @@ void PulseEngineThunk::KeepEventChanges(bool keep)
 {
   data->keep_event_changes = keep;
 }
-
 std::string PulseEngineThunk::PullEvents(SerializationFormat format)
 {
   std::string events;
@@ -177,7 +250,6 @@ std::string PulseEngineThunk::PullEvents(SerializationFormat format)
   DELETE_VECTOR(data->events);
   return events;
 }
-
 std::string PulseEngineThunk::PullActiveEvents(SerializationFormat format)
 {
   std::string active_events;
@@ -314,7 +386,7 @@ void PulseEngineThunk::SetupDefaultDataRequests()
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
-  SESubstance* CO2 = data->eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  const SESubstance* CO2 = data->eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
   data->eng->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina", *CO2, "PartialPressure", PressureUnit::mmHg);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
 }

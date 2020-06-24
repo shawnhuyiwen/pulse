@@ -34,7 +34,7 @@ integrated with all other types of physiologic software. Models at
 any anatomical level can be implemented within the existing
 infrastructure.
 
-@image html SystemFidelity.png
+<img src="./Images/System/SystemFidelity.png" width="650">
 <center>
 *Figure 1. The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
 </center><br>
@@ -83,6 +83,7 @@ Physiologic:
 Equipment:
 - @ref AnesthesiaMachineMethodology
 - @ref InhalerMethodology
+- @ref MechanicalVentilatorMethodology
 - Electrocardiogram (%ECG) Methodology (see @ref CardiovascularMethodology)
 - Supplemental Oxygen Methodology (see @ref RespiratoryMethodology)
 
@@ -593,6 +594,7 @@ We will continue to improve system modularity.  See the system specific methodol
   @refitem environment-future "Environment Future Work"
   @refitem GI-futurework "Gastrointestinal Future Work"
   @refitem inhaler-future "Inhaler Future Work"
+  @refitem ventilator-improvements "Mechanical Ventilator Future Work"  
   @refitem nervous-future "Nervous Future Work"  
   @refitem renal-futurework "Renal Future Work"
   @refitem respiratory-future "Respiratory Future Work"

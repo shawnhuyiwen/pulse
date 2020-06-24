@@ -1284,5 +1284,5 @@ void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
   std::string results = sOutputDirectory + "/AcidBaseBloodGasTests.csv";
   pc.GetDataTrack().WriteTrackToFile(results.c_str());
 
-  testReport.SerializeToFile(sOutputDirectory + "/AcidBaseBloodGasTestsReport.json",JSON);
+  testReport.SerializeToFile(sOutputDirectory + "/AcidBaseBloodGasTestsReport.json");
 }

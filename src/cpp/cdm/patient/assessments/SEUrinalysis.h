@@ -44,7 +44,7 @@ public:
   virtual void Clear();
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
 
   virtual bool HasColorResult() const;
   virtual eUrinalysis_UrineColor GetColorResult() const;

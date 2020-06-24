@@ -1376,5 +1376,5 @@ void CommonDataModelTest::LiquidCompartmentTest(const std::string& rptDirectory)
   UpdateLiquidLinks.SetName("UpdateLiquidLinks");
   TestUpdateLiquidLinks(UpdateLiquidLinks, subMgr);
 
-  testReport.SerializeToFile(rptDirectory + "/LiquidCompartmentTestReport.json",JSON);
+  testReport.SerializeToFile(rptDirectory + "/LiquidCompartmentTestReport.json");
 }

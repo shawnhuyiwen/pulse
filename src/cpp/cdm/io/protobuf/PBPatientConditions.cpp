@@ -437,7 +437,7 @@ void PBPatientCondition::Copy(const SESepsis& src, SESepsis& dst)
   PBPatientCondition::Serialize(data, dst);
 }
 
-SEPatientCondition* PBPatientCondition::Load(const CDM_BIND::AnyPatientConditionData& any, SESubstanceManager& subMgr)
+SEPatientCondition* PBPatientCondition::Load(const CDM_BIND::AnyPatientConditionData& any, const SESubstanceManager& subMgr)
 {
   switch (any.Condition_case())
   {

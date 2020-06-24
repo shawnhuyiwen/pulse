@@ -9,7 +9,7 @@ class CDM_DECL SEPulmonaryShuntExacerbation : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEPulmonaryShuntExacerbation();
+  SEPulmonaryShuntExacerbation(Logger* logger=nullptr);
   virtual ~SEPulmonaryShuntExacerbation();
 
   virtual void Clear();

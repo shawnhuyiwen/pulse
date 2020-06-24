@@ -236,6 +236,7 @@ PulseController::PulseController(Logger* logger) : PulseData(logger)
 {
   m_ConfigOverride = nullptr;
   m_Stabilizer = new PulseStabilizationController(*this);
+  m_Logger->LogToConsole(true);
 }
 PulseController::~PulseController()
 {
@@ -244,7 +245,6 @@ PulseController::~PulseController()
 
 bool PulseController::SetConfigurationOverride(const SEEngineConfiguration* config)
 {
-  const PulseConfiguration* pConfig = nullptr;
   if (config != nullptr)
   {
     m_ConfigOverride = dynamic_cast<const PulseConfiguration*>(config);
@@ -257,13 +257,13 @@ bool PulseController::SetConfigurationOverride(const SEEngineConfiguration* conf
   return true;
 }
 
-bool PulseController::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool PulseController::SerializeFromFile(const std::string& filename)
 {
-  return PBPulseState::SerializeFromFile(filename, *this, m, m_ConfigOverride);
+  return PBPulseState::SerializeFromFile(filename, *this, m_ConfigOverride);
 }
-bool PulseController::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool PulseController::SerializeToFile(const std::string& filename) const
 {
-  return PBPulseState::SerializeToFile(*this, filename, m);
+  return PBPulseState::SerializeToFile(*this, filename);
 }
 
 bool PulseController::SerializeFromString(const std::string& src, SerializationFormat m)
@@ -306,7 +306,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
       pFile = "./patients/";
       pFile += patient_configuration.GetPatientFile();
     }
-    if (!patient.SerializeFromFile(pFile, JSON))// TODO Support all serialization formats
+    if (!patient.SerializeFromFile(pFile))// TODO Support all serialization formats
       return false;
     if (!PulseController::Initialize(patient))
       return false;
@@ -388,7 +388,7 @@ bool PulseController::Initialize(SEPatient const& patient)
   // Now, Let's see if there is anything to merge into our base configuration
   Info("Merging OnDisk Configuration");
   PulseConfiguration cFile(*m_Substances);
-  cFile.SerializeFromFile("PulseConfiguration.json",JSON);
+  cFile.SerializeFromFile("PulseConfiguration.json");
   m_Config->Merge(cFile);
 
   // Now, override anything with a configuration provided by the user or scenario
@@ -406,7 +406,7 @@ bool PulseController::Initialize(SEPatient const& patient)
   {
     std::string stableDir = "./stable/";
     MakeDirectory(stableDir.c_str());
-    m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json",JSON);
+    m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json");
   }
 
   m_SaturationCalculator->Setup();
@@ -1220,22 +1220,26 @@ bool PulseController::ProcessAction(const SEAction& action)
     {
       if (serialize->HasFilename())
       {
-        SerializeToFile(serialize->GetFilename(), JSON);
+        SerializeToFile(serialize->GetFilename());
       }
       else
       {
         std::stringstream ss;
         MakeDirectory("./states");
+        ss << "./states/" << m_InitialPatient->GetName() << "@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.pbb";
+        Info("Saving " + ss.str());
+        SerializeToFile(ss.str());
+        ss.str(""); ss.clear();
         ss << "./states/" << m_InitialPatient->GetName() << "@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
         Info("Saving " + ss.str());
-        SerializeToFile(ss.str(), JSON);
+        SerializeToFile(ss.str());
         // Debug code to make sure things are consistent
-        //SerializeFomFile(ss.str(),JSON);
-        //SerializeToFile("./states/AfterSave.json",JSON);
+        //SerializeFomFile(ss.str());
+        //SerializeToFile("./states/AfterSave.json);
       }
     }
     else
-      return SerializeFromFile(serialize->GetFilename(), JSON);
+      return SerializeFromFile(serialize->GetFilename());
     return true;
   }
 
@@ -1265,7 +1269,7 @@ bool PulseController::ProcessAction(const SEAction& action)
       pftFile = Replace(pftFile, "Results", m_ss.str());
       pftFile = Replace(pftFile, ".csv", ".json");
       m_ss << "PulmonaryFunctionTest@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
-      pft.SerializeToFile(pftFile, JSON);
+      pft.SerializeToFile(pftFile);
       break;
     }
     case ePatientAssessment_Type::Urinalysis:
@@ -1280,7 +1284,7 @@ bool PulseController::ProcessAction(const SEAction& action)
       upanFile = Replace(upanFile, "Results", m_ss.str());
       upanFile = Replace(upanFile, ".csv", ".json");
       m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
-      upan.SerializeToFile(upanFile, JSON);
+      upan.SerializeToFile(upanFile);
       break;
     }
 
@@ -1295,7 +1299,7 @@ bool PulseController::ProcessAction(const SEAction& action)
       cbcFile = Replace(cbcFile, "Results", m_ss.str());
       cbcFile = Replace(cbcFile, ".csv", ".json");
       m_ss << "CompleteBloodCount@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
-      cbc.SerializeToFile(cbcFile, JSON);
+      cbc.SerializeToFile(cbcFile);
       break;
     }
 
@@ -1310,7 +1314,7 @@ bool PulseController::ProcessAction(const SEAction& action)
       mpFile = Replace(mpFile, "Results", m_ss.str());
       mpFile = Replace(mpFile, ".csv", ".json");
       m_ss << "ComprehensiveMetabolicPanel@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
-      mp.SerializeToFile(mpFile, JSON);
+      mp.SerializeToFile(mpFile);
       break;
     }
     default:
@@ -1412,7 +1416,7 @@ bool PulseController::CreateCircuitsAndCompartments()
   Ambient.SetAsReferenceNode();
 
   m_Environment->Initialize();
-  m_Environment->GetEnvironmentalConditions().Copy(m_Config->GetInitialEnvironmentalConditions());
+  m_Environment->GetEnvironmentalConditions().Copy(m_Config->GetInitialEnvironmentalConditions(), *m_Substances);
   m_Environment->StateChange();
   // Update the environment pressures on all the 'air' circuits to match what the environment was set to
   gEnvironment.GetPressure().Set(m_Environment->GetEnvironmentalConditions().GetAtmosphericPressure());

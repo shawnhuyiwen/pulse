@@ -48,7 +48,7 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -214,7 +214,7 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RespiratoryDriverTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -222,8 +222,8 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
-  SEEnvironmentalConditions env(pc.GetSubstances());
-  env.SerializeFromFile("./environments/Standard.json",JSON);
+  SEEnvironmentalConditions env(pc.GetLogger());
+  env.SerializeFromFile("./environments/Standard.json", pc.GetSubstances());
   SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {

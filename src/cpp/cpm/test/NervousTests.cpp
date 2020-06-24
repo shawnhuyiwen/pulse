@@ -70,7 +70,7 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   pc.GetLogger()->SetLogFile(sTestDirectory + "/" + tName + ".log");
   pc.GetLogger()->Info("Running " + tName);
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();

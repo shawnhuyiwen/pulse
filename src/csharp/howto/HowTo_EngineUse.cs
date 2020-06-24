@@ -78,13 +78,13 @@ namespace HowTo_UseEngine
       // You must provide an event listener to get events
       pulse.SetEventHandler(new MyEventHandler());
 
-      InitializationType initType = InitializationType.StateFileName;
+      InitializationType initType = InitializationType.StateString;
       switch (initType)
       {
         case InitializationType.StateFileName:
           {
             // Load a state file
-            if (!pulse.SerializeFromFile("./states/Soldier@0s.json", data_mgr, SerializationFormat.JSON))
+            if (!pulse.SerializeFromFile("./states/Soldier@0s.pbb", data_mgr))
             {
               Console.WriteLine("Error Initializing Pulse!");
               return;
@@ -110,7 +110,7 @@ namespace HowTo_UseEngine
             // (Maybe the Pulse engine is on hosted on another machine)
             //cfg.SetPatientFile("./patients/Soldier.json");
             // Or, ou can load up a local file on disk
-            cfg.GetPatient().SerializeFromFile("./patients/Soldier.json", SerializationFormat.JSON);
+            cfg.GetPatient().SerializeFromFile("./patients/Soldier.json");
             // Optionally, you can add conditions to the patient
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().SetValue(0.2);
             cfg.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().SetValue(1.0);
@@ -166,6 +166,16 @@ namespace HowTo_UseEngine
       // DOES ANYONE WANT TO BE ABLE TO CHANGE DATA REQUESTS IN THE MIDDLE OF A RUN?
       // NOTE ANY CSV FILE BEING WRITTEN OUT WOULD NOT SUPPORT CHANGING DATA IN THE MIDDLE OF A RUN
       // BUT IF YOU ARE NOT WRITING A CSV OUT, I COULD SEE THIS BEING USEFUL...
+
+      // You can get the initial patient at any time
+      // But it will not change, so once is good
+      // All values will be set to what the engine stabilized to
+      SEPatient initialPatient = new SEPatient();
+      pulse.GetInitialPatient(initialPatient);
+      Console.WriteLine("Sex " + initialPatient.GetSex().ToString());
+      Console.WriteLine("Age " + initialPatient.GetAge().ToString());
+      Console.WriteLine("Height " + initialPatient.GetHeight().ToString());
+      Console.WriteLine("Weight " + initialPatient.GetWeight().ToString());
 
       // Now we can start telling the engine what to do
       // All the same concepts apply from the C++ HowTo files, so look there if you want to see more examples

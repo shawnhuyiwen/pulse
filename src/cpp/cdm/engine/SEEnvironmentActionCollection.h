@@ -3,9 +3,9 @@
 #pragma once
 class SEAction;
 class SEEnvironmentAction;
-class SESubstanceManager;
 class SEThermalApplication;
 class SEChangeEnvironmentalConditions;
+class SESubstanceManager;
 CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(AnyEnvironmentActionData)
 
@@ -33,9 +33,8 @@ public:
 protected:
   void Clear();
   bool ProcessAction(const SEEnvironmentAction& action);
-  
+  SESubstanceManager& m_Substances;
+
   SEChangeEnvironmentalConditions*  m_ChangeEnvironmentalConditions;
   SEThermalApplication*             m_ThermalApplication;
-  // General
-  SESubstanceManager&             m_Substances;
 };

@@ -5,7 +5,7 @@
 #include "patient/actions/SEIntubation.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEIntubation::SEIntubation() : SEPatientAction()
+SEIntubation::SEIntubation(Logger* logger) : SEPatientAction(logger)
 {
   m_Type = eIntubation_Type::Off;
 }

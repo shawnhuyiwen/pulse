@@ -173,6 +173,13 @@ The engine triggers the hypoxia event when the partial pressure of oxygen in the
 
 If the partial pressure of oxygen in the blood falls below 15&nbsp; an irreversible state is triggered and it will be impossible to regain homeostasis.
 
+### Hyperoxemia
+Hyperoxemia occurs when the partial pressure of oxygen in the blood rises above 120 mmHg, usually due to excessive supplemental oxygen delivery. Hyperoxemia can induce cerebral vasoconstriction, neuronal cell death, and seizures. In addition, hyperoxemia reduces the cardiac index and heart rate while increasing peripheral vascular resistance @cite gershengorn2014hyperoxemia.
+
+The engine triggers the moderate hyperoxemia event when the partial pressure of oxygen in the aorta rises above 120 mmHg. This is a reversible condition and is considered resolved when the partial pressure falls below 117 mmHg. This 3 mmHg window provides a buffer to account for normal fluctuations in the model.
+
+If the partial pressure of oxygen in the blood rises to greater than 200 mmHg, the severe hyperoxemia event is triggered to flag the oxygen toxicity.
+
 ### Brain Oxygen Deficit
 The brain is unable to complete any significant anaerobic metabolism. Therefore, without oxygen in the brain, unconsciousness results within five to ten seconds, and permanent damage can occur within five to ten minutes @cite guyton2006medical. Additionally, irreversible damage can occur if the oxygen tension in the brain is too low for a prolonged period of time @cite dhawan2011neurointensive. 
 

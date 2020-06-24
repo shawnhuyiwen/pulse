@@ -113,7 +113,7 @@ def HowTo_UseEngine():
     # There are several ways to initialize an engine to a patient
     start_type = eStartType.State
     if start_type is eStartType.State: # The engine is ready instantaneously
-        if not pulse.serialize_from_file("./states/Soldier@0s.json", data_req_mgr, eSerializationFormat.JSON):
+        if not pulse.serialize_from_file("./states/Soldier@0s.pbb", data_req_mgr):
             print("Unable to load initial state file")
             return
         # Stabilization will require the engine to run for several minutes
@@ -131,7 +131,7 @@ def HowTo_UseEngine():
             # You only need to set sex and all other properties will be computed
             # per https://pulse.kitware.com/_patient_methodology.html
             # Let's  load up a file from disk (You don't have to start with a file)
-            serialize_patient_from_file("./patients/Soldier.json", p, eSerializationFormat.JSON)
+            serialize_patient_from_file("./patients/Soldier.json", p)
             # Now let's modify a few properties
             p.set_name("Wenye")
             p.get_age().set_value(22,TimeUnit.yr)
@@ -147,8 +147,7 @@ def HowTo_UseEngine():
         env = pc.get_conditions().get_initial_environmental_conditions()
         # Let's  load up a file from disk (You don't have to start with a file)
         serialize_environmental_conditions_from_file("./environments/ExerciseEnvironment.json",
-                                                        env.get_environmental_conditions(),
-                                                        eSerializationFormat.JSON)
+                                                        env.get_environmental_conditions())
         # Now let's modify a few properties
         env.get_environmental_conditions().get_air_density().set_value(1.225, MassPerVolumeUnit.kg_Per_m3)
         env.get_environmental_conditions().get_ambient_temperature().set_value(33, TemperatureUnit.C)
@@ -159,6 +158,16 @@ def HowTo_UseEngine():
         if not pulse.initialize_engine(pc, data_req_mgr):
             print("Unable to load stabilize engine")
             return
+
+    # You can get the initial patient at any time
+    # But it will not change, so once is good
+    # All values will be set to what the engine stabilized to
+    initialPatient = SEPatient();
+    pulse.get_initial_patient(initialPatient);
+    print("Sex: " + str(initialPatient.get_sex()));
+    print("Age: " + str(initialPatient.get_age()));
+    print("Height: " + str(initialPatient.get_height()));
+    print("Weight: " + str(initialPatient.get_weight()));
 
     # Get some data from the engine
     # The results array contains a value for each of the data requests made above

@@ -9,7 +9,7 @@ class CDM_DECL SECondition : public Loggable
   friend class PBCondition;//friend the serialization class
 public:
 
-  SECondition();
+  SECondition(Logger* logger);
   virtual ~SECondition();
   
   virtual void Clear();// Deletes all members

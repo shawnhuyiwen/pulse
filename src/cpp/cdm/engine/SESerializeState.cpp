@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "engine/SESerializeState.h"
 
-SESerializeState::SESerializeState() : SEAction()
+SESerializeState::SESerializeState(Logger* logger) : SEAction(logger)
 {
   m_Filename="";
   m_Type = eSerialization_Type::Save;

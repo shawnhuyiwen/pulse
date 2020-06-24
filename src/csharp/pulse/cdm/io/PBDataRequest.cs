@@ -23,7 +23,7 @@ namespace Pulse.CDM
         dst.GetDataRequests().Add(SEDataRequest.New((eDataRequest_Category)dr.Category, dr.CompartmentName, dr.SubstanceName, dr.PropertyName, dr.Unit));
       }
     }
-    public static bool SerializeFromString(string src, SEDataRequestManager dst)
+    public static bool SerializeFromString(string src, SEDataRequestManager dst, SerializationFormat format)
     {
       try
       {
@@ -63,7 +63,7 @@ namespace Pulse.CDM
         dst.DataRequest.Add(dst_dr);
       }
     }
-    public static string SerializeToString(SEDataRequestManager src)
+    public static string SerializeToString(SEDataRequestManager src, SerializationFormat format)
     {
       var pb = PBDataRequest.Unload(src);
       return pb.ToString();

@@ -312,6 +312,17 @@ void PulseSubstances::InitializeGasCompartments()
     }
   }
 
+  for (SEGasCompartment* cmpt : m_data.GetCompartments().GetMechanicalVentilatorLeafCompartments())
+  {
+    if (cmpt->HasVolume())
+    {
+      cmpt->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
+      cmpt->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
+      cmpt->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
+      cmpt->Balance(BalanceGasBy::VolumeFraction);
+    }
+  }
+
   for (SEGasCompartment* cmpt : m_data.GetCompartments().GetInhalerLeafCompartments())
   {
     if (cmpt->HasVolume())
@@ -900,15 +911,15 @@ bool PulseSubstances::LoadSubstanceDirectory(const std::string& data_dir)
   return Setup();
 }
 
-void PulseSubstances::AddActiveSubstance(SESubstance& substance)
+void PulseSubstances::AddActiveSubstance(const SESubstance& substance)
 {
   if (IsActive(substance))
     return;// If its already active, don't do anything
   
   SESubstanceManager::AddActiveSubstance(substance);
   if (substance.GetState() == eSubstance_State::Gas)
-    m_data.GetCompartments().AddGasCompartmentSubstance(substance);
-  m_data.GetCompartments().AddLiquidCompartmentSubstance(substance);
+    m_data.GetCompartments().AddGasCompartmentSubstance((SESubstance&)substance);
+  m_data.GetCompartments().AddLiquidCompartmentSubstance((SESubstance&)substance);
 
   if (&substance == m_CO)// We need to put HbCO in the system is CO is in the system
   {
@@ -1204,7 +1215,7 @@ void PulseSubstances::SetSubstanceMolarity(SESubstance& sub, const std::vector<S
   }
 }
 
-const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeIndependentDepositionEfficencyCoefficient(SESubstance& substance)
+const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeIndependentDepositionEfficencyCoefficient(const SESubstance& substance)
 {
   auto itr = m_SIDECoefficients.find(&substance);
   if (itr != m_SIDECoefficients.end())
@@ -1212,7 +1223,7 @@ const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeInd
 
   if (!substance.HasAerosolization())
     Fatal("Cannot generate a SIDE Coefficient if no aerosolization data is provided");
-  if (!substance.GetAerosolization().HasParticulateSizeDistribution())
+  if (!substance.GetAerosolization()->HasParticulateSizeDistribution())
     Fatal("Cannot generate a SIDE Coefficient if no particulate distribution is provided");
 
   // This fraction vs. length histogram characterizes the size distribution for a polydispersed aerosol.
@@ -1224,10 +1235,10 @@ const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeInd
   // all deposit in the head and particles greater than 100 micrometers deposit 50% in the head with 50% loss.
   // For more information see the [aerosol](@ref environment-aerosol) section in the @ref EnvironmentMethodology report.
   // A histogram with n bins must contain n+1 boundaries
-  SEHistogramFractionVsLength& concentrations = substance.GetAerosolization().GetParticulateSizeDistribution();
+  const SEHistogramFractionVsLength* concentrations = substance.GetAerosolization()->GetParticulateSizeDistribution();
 
   // Check to make sure everything is in the right form.
-  if (!concentrations.IsVaild())
+  if (!concentrations->IsVaild())
     Fatal("Particle distribution histogram is not valid");
 
   // First we need compartment-specific deposition fractions for each size
@@ -1236,15 +1247,15 @@ const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeInd
   SEHistogramFractionVsLength depositionsAnatomicalDeadspace;
   SEHistogramFractionVsLength depositionsAlveoli;
   // Copy sizes
-  depositionsAirway.GetLength() = concentrations.GetLength();
-  depositionsCarina.GetLength() = concentrations.GetLength();
-  depositionsAnatomicalDeadspace.GetLength() = concentrations.GetLength();
-  depositionsAlveoli.GetLength() = concentrations.GetLength();
+  depositionsAirway.GetLength() = concentrations->GetLength();
+  depositionsCarina.GetLength() = concentrations->GetLength();
+  depositionsAnatomicalDeadspace.GetLength() = concentrations->GetLength();
+  depositionsAlveoli.GetLength() = concentrations->GetLength();
 
   int numPerRegion = 1000; // This is how many times the equations are evaluated in a bin to get a mean deposition fraction
-  for (size_t i = 0; i < concentrations.NumberOfBins(); i++)
+  for (size_t i = 0; i < concentrations->NumberOfBins(); i++)
   {
-    double binLength = concentrations.GetLength()[i + 1] - concentrations.GetLength()[i];
+    double binLength = concentrations->GetLength()[i + 1] - concentrations->GetLength()[i];
     double stepSize = binLength / double(numPerRegion); //
     double sumHeadAirways = 0.;
     double sumAnatomicalDeadspace = 0.;
@@ -1252,7 +1263,7 @@ const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeInd
     double aerodynamicDiameter;
     for (int j = 0; j < numPerRegion; j++)
     {
-      aerodynamicDiameter = concentrations.GetLength()[i] + stepSize*j; //Start at the bottom of the bin and march towards the top minus one step
+      aerodynamicDiameter = concentrations->GetLength()[i] + stepSize*j; //Start at the bottom of the bin and march towards the top minus one step
       if (aerodynamicDiameter == 0)
         continue;
       double inspirFrac = 1 - 0.5*(1 - 1 / (1 + 0.00076*pow(aerodynamicDiameter, 2.8)));
@@ -1295,15 +1306,15 @@ const SizeIndependentDepositionEfficencyCoefficient& PulseSubstances::GetSizeInd
   double sumDeadspaceOneMinusProducts = 0.;
   double sumAlveoliProducts = 0.;
 
-  for (size_t i = 0; i < concentrations.NumberOfBins(); i++)
+  for (size_t i = 0; i < concentrations->NumberOfBins(); i++)
   {
-    sumAirwayProducts += concentrations.GetFraction()[i] * depositionsAirway.GetFraction()[i];
-    sumAirwayOneMinusProducts += concentrations.GetFraction()[i] * (1 - depositionsAirway.GetFraction()[i]);
-    sumCarinaProducts += concentrations.GetFraction()[i] * depositionsCarina.GetFraction()[i];
-    sumCarinaOneMinusProducts += concentrations.GetFraction()[i] * (1 - depositionsCarina.GetFraction()[i]);
-    sumDeadspaceProducts += concentrations.GetFraction()[i] * depositionsAnatomicalDeadspace.GetFraction()[i];
-    sumDeadspaceOneMinusProducts += concentrations.GetFraction()[i] * (1 - depositionsAnatomicalDeadspace.GetFraction()[i]);
-    sumAlveoliProducts += concentrations.GetFraction()[i] * depositionsAlveoli.GetFraction()[i];
+    sumAirwayProducts += concentrations->GetFraction()[i] * depositionsAirway.GetFraction()[i];
+    sumAirwayOneMinusProducts += concentrations->GetFraction()[i] * (1 - depositionsAirway.GetFraction()[i]);
+    sumCarinaProducts += concentrations->GetFraction()[i] * depositionsCarina.GetFraction()[i];
+    sumCarinaOneMinusProducts += concentrations->GetFraction()[i] * (1 - depositionsCarina.GetFraction()[i]);
+    sumDeadspaceProducts += concentrations->GetFraction()[i] * depositionsAnatomicalDeadspace.GetFraction()[i];
+    sumDeadspaceOneMinusProducts += concentrations->GetFraction()[i] * (1 - depositionsAnatomicalDeadspace.GetFraction()[i]);
+    sumAlveoliProducts += concentrations->GetFraction()[i] * depositionsAlveoli.GetFraction()[i];
   }
 
   SizeIndependentDepositionEfficencyCoefficient* SIDECoefficients = new SizeIndependentDepositionEfficencyCoefficient();

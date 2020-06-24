@@ -9,7 +9,7 @@ class CDM_DECL SEDyspnea : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEDyspnea();
+  SEDyspnea(Logger* logger=nullptr);
   virtual ~SEDyspnea();
 
   virtual void Clear();

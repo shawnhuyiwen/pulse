@@ -63,18 +63,6 @@ https://opensource.org/licenses/BSD-3-Clause
 
 ------------------------------------------------------------------------------
 
-This product uses the log4cpp package
-
-http://log4cpp.sourceforge.net/
-
-Licensed under the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-https://www.gnu.org/licenses/lgpl.html
-
-------------------------------------------------------------------------------
-
 When on Windows machines, this product uses the dirent.h package
 
 https://github.com/tronkko/dirent

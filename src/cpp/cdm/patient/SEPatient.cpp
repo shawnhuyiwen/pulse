@@ -104,17 +104,17 @@ bool SEPatient::SerializeToString(std::string& output, SerializationFormat m) co
 {
   return PBPatient::SerializeToString(*this, output, m);
 }
-bool SEPatient::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEPatient::SerializeToFile(const std::string& filename) const
 {
-  return PBPatient::SerializeToFile(*this, filename, m);
+  return PBPatient::SerializeToFile(*this, filename);
 }
 bool SEPatient::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBPatient::SerializeFromString(src, *this, m);
 }
-bool SEPatient::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEPatient::SerializeFromFile(const std::string& filename)
 {
-  return PBPatient::SerializeFromFile(filename, *this, m);
+  return PBPatient::SerializeFromFile(filename, *this);
 }
 
 const SEScalar* SEPatient::GetScalar(const std::string& name)

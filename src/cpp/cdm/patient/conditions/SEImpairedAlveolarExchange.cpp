@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SEImpairedAlveolarExchange::SEImpairedAlveolarExchange() : SEPatientCondition()
+SEImpairedAlveolarExchange::SEImpairedAlveolarExchange(Logger* logger) : SEPatientCondition(logger)
 {
   m_ImpairedSurfaceArea = nullptr;
   m_ImpairedFraction = nullptr;

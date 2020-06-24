@@ -81,7 +81,7 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 
   tracker.AdvanceModelTime(30);
 
-  SEInhalerConfiguration config(pc->GetSubstanceManager());
+  SEInhalerConfiguration config(pc->GetLogger());
   config.GetConfiguration().SetSubstance(pc->GetSubstanceManager().GetSubstance("Albuterol"));
   config.GetConfiguration().GetMeteredDose().SetValue(90.0, MassUnit::ug);
   config.GetConfiguration().GetNozzleLoss().SetValue(0.040);
@@ -148,14 +148,14 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsSerialization.csv");
 
   // Save and Load the Engine State
-  pc->SerializeToFile("./MidBolusState.json",JSON);
+  pc->SerializeToFile("./MidBolusState.json");
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->SerializeFromFile("./MidBolusState.json",JSON);
+  pc->SerializeFromFile("./MidBolusState.json");
   pc->SetSimulationTime(now);
 
   tracker.AdvanceModelTime(15);
 
-  SEAnesthesiaMachineConfiguration amConfig(pc->GetSubstanceManager());
+  SEAnesthesiaMachineConfiguration amConfig(pc->GetLogger());
   amConfig.GetConfiguration().SetConnection(eAnesthesiaMachine_Connection::Mask);
   amConfig.GetConfiguration().GetInletFlow().SetValue(5, VolumePerTimeUnit::L_Per_min);
   amConfig.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
@@ -171,9 +171,9 @@ void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& track
   pc->ProcessAction(amConfig);
   tracker.AdvanceModelTime(5);
 
-  pc->SerializeToFile("./AnesthesiaMachineState.json",BINARY);
+  pc->SerializeToFile("./AnesthesiaMachineState.json");
   now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-  pc->SerializeFromFile("./AnesthesiaMachineState.json",BINARY);
+  pc->SerializeFromFile("./AnesthesiaMachineState.json");
   pc->SetSimulationTime(now);
 
   tracker.AdvanceModelTime(40);
@@ -186,8 +186,8 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
   pc->GetLogger()->SetLogFile("SerializationTestSetup.log");
   HowToTracker tracker(*pc);
 
-  SESubstance* O2 = pc->GetSubstanceManager().GetSubstance("Oxygen");
-  SESubstance* CO2 = pc->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  const SESubstance* O2 = pc->GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* CO2 = pc->GetSubstanceManager().GetSubstance("CarbonDioxide");
 /*
   SESubstanceDataRequest* subRequest;
   
@@ -308,14 +308,14 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     {
       pc->GetLogger()->SetLogFile("BasicStandardStateResults.log");
       pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("BasicStandardStateResults.csv");
-      pc->SerializeFromFile("./BasicStandardState@60s.json",JSON);
+      pc->SerializeFromFile("./BasicStandardState@60s.json");
       tracker.AdvanceModelTime(60);
     }
   }
   // Several Options to choose how to set up our engine before we save and load
   if(false)
   {
-    SESubstance* Albert = pc->GetSubstanceManager().GetSubstance("Albuterol");
+    const SESubstance* Albert = pc->GetSubstanceManager().GetSubstance("Albuterol");
     pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "MassInBody", MassUnit::ug);
     pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
     pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "RemainingSystemicMassCleared", MassUnit::ug);
@@ -323,7 +323,7 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
   }
   else if (false)
   {
-    SESubstance* Succs = pc->GetSubstanceManager().GetSubstance("Succinylcholine");
+    const SESubstance* Succs = pc->GetSubstanceManager().GetSubstance("Succinylcholine");
     pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "MassInBody", MassUnit::ug);
     pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
     pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "RemainingSystemicMassCleared", MassUnit::ug);
@@ -331,5 +331,5 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
     pc->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainTissueExtracellular", *Succs, "Concentration", MassPerVolumeUnit::ug_Per_mL);
     InjectSuccsState(pc.get(), tracker, *Succs);
   }
-  pc->SerializeToFile("./FinalEngineState.json",JSON);
+  pc->SerializeToFile("./FinalEngineState.json");
 }

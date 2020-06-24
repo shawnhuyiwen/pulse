@@ -15,7 +15,7 @@ public:
   virtual void Clear(); //clear memory
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
 
   virtual bool HasHematocrit() const;
   virtual SEScalar0To1& GetHematocrit(); 

@@ -6,7 +6,7 @@
 #include "properties/SEScalarVolume.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SEChronicPericardialEffusion::SEChronicPericardialEffusion() : SEPatientCondition()
+SEChronicPericardialEffusion::SEChronicPericardialEffusion(Logger* logger) : SEPatientCondition(logger)
 {
   m_AccumulatedVolume = nullptr;
 }

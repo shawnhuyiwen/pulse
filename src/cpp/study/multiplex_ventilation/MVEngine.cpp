@@ -119,7 +119,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
         std::string state = soloVentilation->statefile();
         pc = new PulseController();
         pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
-        if (!pc->SerializeFromFile(state, SerializationFormat::JSON))
+        if (!pc->SerializeFromFile(state))
         {
           Error("Unable to load file : " + state);
           return false;
@@ -141,9 +141,9 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
 
         pc = new PulseController();
         pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
-        if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.json", SerializationFormat::JSON))
+        if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.pbb"))
         {
-          Error("Unable to load file : StandardMale@0s.json");
+          Error("Unable to load file : StandardMale@0s.pbb");
           return false;
         }
         pc->GetLogger()->LogToConsole(GetLogger()->IsLoggingToConsole());
@@ -256,7 +256,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
     m_MultiplexVentilationGraph->StateChange();
 
     Info("Configuring Mechanical Ventilator");
-    m_MVC = new SEMechanicalVentilatorConfiguration(*m_SubMgr);
+    m_MVC = new SEMechanicalVentilatorConfiguration(GetLogger());
     auto& mv = m_MVC->GetConfiguration();
     mv.SetConnection(eMechanicalVentilator_Connection::Tube);
     mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
@@ -708,7 +708,7 @@ bool MVEngine::RunSoloState(const std::string& stateFile, const std::string& res
 
   PulseController pc;
   pc.GetLogger()->SetLogFile(logFile);
-  pc.SerializeFromFile(stateFile, SerializationFormat::JSON);
+  pc.SerializeFromFile(stateFile);
   MVEngine::TrackData(pc.GetEngineTracker(), dataFile);
   int count = (int)(duration_s / timeStep_s);
   for (int i = 0; i < count; i++)

@@ -41,7 +41,7 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/InternalTemperatureVariableBMRCircuitTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -120,7 +120,7 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/InternalTemperatureVariableSkinCircuitTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -222,7 +222,7 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/InternalTemperatureVariableCoreCircuitTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -323,7 +323,7 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/EnvironmentVariableTemperatureCircuitTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -452,7 +452,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -611,7 +611,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -710,7 +710,7 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/EnvironmentTemperatureInput.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -720,7 +720,7 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
   pc.CreateCircuitsAndCompartments();
   Environment &env = (Environment&)pc.GetEnvironment();
   env.Initialize();
-  env.GetEnvironmentalConditions().SerializeFromFile("./environments/Standard.json",JSON);
+  env.GetEnvironmentalConditions().SerializeFromFile("./environments/Standard.json", pc.GetSubstances());
   env.StateChange();
 
   pc.GetEnergy().GetCoreTemperature().SetValue(37.0, TemperatureUnit::C);

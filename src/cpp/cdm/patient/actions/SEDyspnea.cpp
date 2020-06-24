@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEDyspnea::SEDyspnea() : SEPatientAction()
+SEDyspnea::SEDyspnea(Logger* logger) : SEPatientAction(logger)
 {
   m_Severity=nullptr;
 }

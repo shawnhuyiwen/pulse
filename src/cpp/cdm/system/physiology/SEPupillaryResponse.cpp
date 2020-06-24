@@ -14,14 +14,16 @@ SEPupillaryResponse::SEPupillaryResponse(Logger* logger)
 
 SEPupillaryResponse::~SEPupillaryResponse()
 {
-  Clear();
+  SAFE_DELETE(m_ReactivityModifier);
+  SAFE_DELETE(m_ShapeModifier);
+  SAFE_DELETE(m_SizeModifier);
 }
 
 void SEPupillaryResponse::Clear()
 {
-  SAFE_DELETE(m_ReactivityModifier);
-  SAFE_DELETE(m_ShapeModifier);
-  SAFE_DELETE(m_SizeModifier);
+  INVALIDATE_PROPERTY(m_ReactivityModifier);
+  INVALIDATE_PROPERTY(m_ShapeModifier);
+  INVALIDATE_PROPERTY(m_SizeModifier);
 }
 
 const SEScalar* SEPupillaryResponse::GetScalar(const std::string& name)

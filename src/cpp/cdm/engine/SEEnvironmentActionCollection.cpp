@@ -38,8 +38,8 @@ bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& act
   if (conditions != nullptr)
   {
     if (m_ChangeEnvironmentalConditions == nullptr)
-      m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions(m_Substances);
-    m_ChangeEnvironmentalConditions->Copy(*conditions);
+      m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions(GetLogger());
+    m_ChangeEnvironmentalConditions->Copy(*conditions, m_Substances);
     if (!m_ChangeEnvironmentalConditions->IsActive())
       RemoveChangeEnvironmentalConditions();
     return true;

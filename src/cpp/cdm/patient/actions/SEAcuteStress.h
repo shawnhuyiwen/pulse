@@ -9,7 +9,7 @@ class CDM_DECL SEAcuteStress : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEAcuteStress();
+  SEAcuteStress(Logger* logger=nullptr);
   virtual ~SEAcuteStress();
 
   virtual void Clear();

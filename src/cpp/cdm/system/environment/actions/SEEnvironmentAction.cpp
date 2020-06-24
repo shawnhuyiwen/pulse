@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "system/environment/actions/SEEnvironmentAction.h"
 
-SEEnvironmentAction::SEEnvironmentAction() : SEAction()
+SEEnvironmentAction::SEEnvironmentAction(Logger* logger) : SEAction(logger)
 {
 
 }

@@ -27,7 +27,7 @@ void PBPulseEquipment::Load(const PULSE_BIND::AnesthesiaMachineData& src, Anesth
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
-  PBAnesthesiaMachine::Serialize(src.common(), dst);
+  PBAnesthesiaMachine::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
   dst.m_inhaling = src.inhaling();
   dst.m_currentbreathingCycleTime_s = src.currentbreathingcycletime_s();
   dst.m_inspirationTime_s = src.inspirationtime_s();
@@ -86,7 +86,7 @@ void PBPulseEquipment::Load(const PULSE_BIND::InhalerData& src, Inhaler& dst)
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::InhalerData& src, Inhaler& dst)
 {
-  PBInhaler::Serialize(src.common(), dst);
+  PBInhaler::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
 }
 PULSE_BIND::InhalerData* PBPulseEquipment::Unload(const Inhaler& src)
 {
@@ -107,7 +107,7 @@ void PBPulseEquipment::Load(const PULSE_BIND::MechanicalVentilatorData& src, Mec
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {
-  PBMechanicalVentilator::Serialize(src.common(), dst);
+  PBMechanicalVentilator::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
   dst.m_Inhaling = src.inhaling();
   dst.m_CurrentBreathingCycleTime_s = src.currentbreathingcycletime_s();
   dst.m_PressureTarget_cmH2O = src.pressuretarget_cmh2o();

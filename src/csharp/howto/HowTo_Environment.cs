@@ -43,7 +43,7 @@ namespace HowTo_Environment
       SEInitialEnvironmentalConditions envC = pc.GetConditions().GetInitialEnvironmentalConditions();
       SEEnvironmentalConditions env = envC.GetEnvironmentalConditions();
       // Let's  load up a file from disk (You don't have to start with a file)
-      env.SerializeFromFile("./environments/ExerciseEnvironment.json", SerializationFormat.JSON);
+      env.SerializeFromFile("./environments/ExerciseEnvironment.json");
       // Now let's modify a few properties
       env.GetAirDensity().SetValue(1.225, MassPerVolumeUnit.kg_Per_m3);
       env.GetAmbientTemperature().SetValue(33, TemperatureUnit.C);

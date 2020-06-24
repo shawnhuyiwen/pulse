@@ -8,55 +8,43 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "io/protobuf/PBSubstance.h"
 
-SESubstanceCompound::SESubstanceCompound(Logger* logger) : Loggable(logger)
+SESubstanceCompound::SESubstanceCompound(const std::string& name, Logger* logger) : Loggable(logger)
 {
-  m_Name = "";
+  m_Name = name;
 }
 
 SESubstanceCompound::~SESubstanceCompound()
 {
-  Clear();
+  DELETE_VECTOR(m_Components);
+  m_cComponents.clear();
 }
 
 void SESubstanceCompound::Clear()
 {
-  m_Name = "";
-  DELETE_VECTOR(m_Components);
-  m_cComponents.clear();
+  for (SESubstanceConcentration* sq : m_Components)
+    sq->Clear();
 }
 
 bool SESubstanceCompound::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBSubstance::SerializeToString(*this, output, m);
 }
-bool SESubstanceCompound::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SESubstanceCompound::SerializeToFile(const std::string& filename) const
 {
-  return PBSubstance::SerializeToFile(*this, filename, m);
+  return PBSubstance::SerializeToFile(*this, filename);
 }
 bool SESubstanceCompound::SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, SerializationFormat m)
 {
   return PBSubstance::SerializeFromString(src, *this, subMgr, m);
 }
-bool SESubstanceCompound::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr, SerializationFormat m)
+bool SESubstanceCompound::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
 {
-  return PBSubstance::SerializeFromFile(filename, *this, subMgr, m);
+  return PBSubstance::SerializeFromFile(filename, *this, subMgr);
 }
 
 std::string SESubstanceCompound::GetName() const
 {
   return m_Name;
-}
-void SESubstanceCompound::SetName(const std::string& name)
-{
-  m_Name = name;
-}
-bool SESubstanceCompound::HasName() const
-{
-  return m_Name.empty()?false:true;
-}
-void SESubstanceCompound::InvalidateName()
-{
-  m_Name = "";
 }
 
 bool SESubstanceCompound::HasComponent() const

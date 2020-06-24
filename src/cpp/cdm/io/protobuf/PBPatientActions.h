@@ -46,7 +46,7 @@ class CDM_DECL PBPatientAction
 {
 public:
   /** Create a new action based on the binding object, load that data into the new action, and return said action */
-  static SEPatientAction* Load(const CDM_BIND::AnyPatientActionData& any, SESubstanceManager& subMgr);
+  static SEPatientAction* Load(const CDM_BIND::AnyPatientActionData& any, const SESubstanceManager& subMgr);
   /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
   static CDM_BIND::AnyPatientActionData* Unload(const SEPatientAction& action);
   static void Serialize(const CDM_BIND::PatientActionData& src, SEPatientAction& dst);

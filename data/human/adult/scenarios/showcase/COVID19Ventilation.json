@@ -61,7 +61,7 @@
   
   { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
     {
-	  "PatientAction": { "Action": { "Comment": "Deterioration to Severe ARDS" } },
+      "PatientAction": { "Action": { "Comment": "Deterioration to Severe ARDS" } },
       "Severity": { "Scalar0To1": { "Value": 0.9 }},
       "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
       "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
@@ -100,12 +100,13 @@
           {
             "Connection": "Tube",
             "InspirationWaveform": "Square",
-		    "ExpirationWaveform": "Square",
+            "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } },
-			"InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
-		    "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
-            "FractionInspiredGas": [
+            "InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
+            "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
+            "FractionInspiredGas":
+            [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } }
             ]
           }
@@ -128,12 +129,13 @@
           {
             "Connection": "Tube",
             "InspirationWaveform": "Square",
-		    "ExpirationWaveform": "Square",
+            "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 30.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 12.0, "Unit": "cmH2O" } },
-			"InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
-		    "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
-            "FractionInspiredGas": [
+            "InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
+            "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
+            "FractionInspiredGas":
+            [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.9995, "Unit": "" } } }
             ]
           }
@@ -147,7 +149,7 @@
   
   { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
     {
-	  "PatientAction": { "Action": { "Comment": "Improved to Moderate ARDS" } },
+      "PatientAction": { "Action": { "Comment": "Improved to Moderate ARDS" } },
       "Severity": { "Scalar0To1": { "Value": 0.6 }},
       "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
       "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
@@ -167,13 +169,14 @@
           {
             "Connection": "Tube",
             "InspirationWaveform": "Square",
-		    "ExpirationWaveform": "Square",
+            "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 22.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },
-			"InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
-		    "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
-            "FractionInspiredGas": [
-              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.5, "Unit": "" } } }
+            "InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
+            "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
+            "FractionInspiredGas":
+            [
+              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.6, "Unit": "" } } }
             ]
           }
         }
@@ -205,13 +208,14 @@
           {
             "Connection": "Tube",
             "InspirationWaveform": "Square",
-		    "ExpirationWaveform": "Square",
+            "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 18.0, "Unit": "cmH2O" } },
-            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },
-			"InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
-		    "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
-            "FractionInspiredGas": [
-              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.25, "Unit": "" } } }
+            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 6.0, "Unit": "cmH2O" } },
+            "InspirationTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
+            "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
+            "FractionInspiredGas":
+            [
+              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } }
             ]
           }
         }

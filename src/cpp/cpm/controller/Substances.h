@@ -41,7 +41,7 @@ public:
   virtual bool Setup();
   virtual void InitializeSubstances();
 
-  virtual void AddActiveSubstance(SESubstance& substance);
+  virtual void AddActiveSubstance(const SESubstance& substance);
   virtual bool IsActive(const SESubstance& sub) const;
 
   inline SESubstance&  GetO2()      { return *m_O2; }
@@ -75,7 +75,7 @@ public:
   void CalculateGenericClearance(double volumeCleared_mL, SETissueCompartment& cmpt, SESubstance& sub, SEScalarMass* cleared = nullptr);
   void CalculateGenericExcretion(double VascularFlow_mL_Per_s, SETissueCompartment& cmpt, SESubstance& sub, double FractionExcreted, double timestep_s, SEScalarMass* excreted = nullptr);
 
-  const SizeIndependentDepositionEfficencyCoefficient& GetSizeIndependentDepositionEfficencyCoefficient(SESubstance& substance);
+  const SizeIndependentDepositionEfficencyCoefficient& GetSizeIndependentDepositionEfficencyCoefficient(const SESubstance& substance);
 
   double GetSubstanceMass(SESubstance&, const std::vector<SELiquidCompartment*>&, const MassUnit& unit);
   double GetSubstanceMass(SESubstance&, const std::vector<SETissueCompartment*>&, const MassUnit& unit);
@@ -130,7 +130,7 @@ protected:
 
   bool          m_isCOActive;
 
-  std::map<SESubstance*, SizeIndependentDepositionEfficencyCoefficient*> m_SIDECoefficients;
+  std::map<const SESubstance*, SizeIndependentDepositionEfficencyCoefficient*> m_SIDECoefficients;
 
   PulseData&    m_data;
 };

@@ -17,7 +17,7 @@ void PBPulseEnvironment::Load(const PULSE_BIND::EnvironmentData& src, Environmen
 }
 void PBPulseEnvironment::Serialize(const PULSE_BIND::EnvironmentData& src, Environment& dst)
 {
-  PBEnvironment::Serialize(src.common(), dst);
+  PBEnvironment::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
   dst.m_PatientEquivalentDiameter_m = src.patientequivalentdiameter_m();
 }
 PULSE_BIND::EnvironmentData* PBPulseEnvironment::Unload(const Environment& src)

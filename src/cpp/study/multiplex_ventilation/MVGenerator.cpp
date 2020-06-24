@@ -57,7 +57,7 @@ void MVGenerator::GeneratePatientList()
   }
 }
 
-bool MVGenerator::Run(const std::string& stateDir, const std::string listFilename, SerializationFormat f)
+bool MVGenerator::Run(const std::string& stateDir, const std::string listFilename)
 {
   TimingProfile profiler;
   profiler.Start("Total");
@@ -74,7 +74,7 @@ bool MVGenerator::Run(const std::string& stateDir, const std::string listFilenam
   m_CompletedPatientList = new pulse::study::bind::multiplex_ventilation::PatientStateListData();
   if (FileExists(listFilename))
   {
-    if (!SerializeFromFile(listFilename, f))
+    if (!SerializeFromFile(listFilename))
       return false;
     if (m_CompletedPatientList->patients_size() > 0)
     {
@@ -144,12 +144,12 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventil
   MakeDirectory(Dir::Solo + "/csv/");
   auto engine = CreatePulseEngine();
   engine->GetLogger()->SetLogFile(Dir::Solo + "/log/" + baseName + ".log");
-  engine->SerializeFromFile("./states/StandardMale@0s.json", SerializationFormat::JSON);
+  engine->SerializeFromFile("./states/StandardMale@0s.pbb");
   MVEngine::TrackData(*engine->GetEngineTracker(), Dir::Solo + "/csv/" + baseName + ".csv");
   engine->GetLogger()->LogToConsole(logToConsole);
   engine->GetLogger()->Info("Creating engine " + baseName);
 
-  SESubstance* Oxygen = engine->GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* Oxygen = engine->GetSubstanceManager().GetSubstance("Oxygen");
 
   SEDyspnea dyspnea;
   dyspnea.GetSeverity().SetValue(1.0);
@@ -168,7 +168,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventil
   pulmonaryShunt.GetSeverity().SetValue(pData.impairmentfraction());
 
   // Setup the PC-CMV ventilator
-  SEMechanicalVentilatorConfiguration mvc(engine->GetSubstanceManager());
+  SEMechanicalVentilatorConfiguration mvc(engine->GetLogger());
   auto& mv = mvc.GetConfiguration();
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
   mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
@@ -246,7 +246,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventil
   // Save our state
   baseName += "_FiO2=" + cdm::to_string(currentFiO2);
   engine->GetLogger()->Info("Saving engine state" + baseName + ".json");
-  engine->SerializeToFile(Dir::Solo + baseName + ".json", SerializationFormat::JSON);
+  engine->SerializeToFile(Dir::Solo + baseName + ".json");
   // Append to our "list" of generated states
   pData.set_statefile(Dir::Solo + baseName + ".json");
   pData.set_fio2(FiO2->GetFractionAmount().GetValue());
@@ -280,7 +280,7 @@ bool MVGenerator::GenerateStabilizedPatient(pulse::study::bind::multiplex_ventil
 bool MVGenerator::StabilizeSpO2(PhysiologyEngine& eng)
 {
   // Let's shoot for with in 0.25% for 10s straight
-  SESubstance* Oxygen = eng.GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* Oxygen = eng.GetSubstanceManager().GetSubstance("Oxygen");
   auto AortaO2 = eng.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(*Oxygen);
 
   double currentSpO2 = 0;
@@ -346,7 +346,7 @@ void MVGenerator::FinalizePatient(pulse::study::bind::multiplex_ventilation::Pat
   m_mutex.lock();
   auto ps = m_CompletedPatientList->mutable_patients()->Add();
   ps->CopyFrom(p);
-  SerializeToFile(*m_CompletedPatientList, m_PatientStateListFile, SerializationFormat::JSON);
+  SerializeToFile(*m_CompletedPatientList, m_PatientStateListFile);
   Info("Completed Patient " + to_string(m_CompletedPatientList->patients_size()) + " of " + to_string(m_PatientList->patients_size()));
   m_mutex.unlock();
 }
@@ -364,12 +364,9 @@ bool MVGenerator::SerializeToString(pulse::study::bind::multiplex_ventilation::P
   }
   return true;
 }
-bool MVGenerator::SerializeToFile(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, const std::string& filename, SerializationFormat f) const
+bool MVGenerator::SerializeToFile(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, const std::string& filename) const
 {
-  std::string content;
-  if (!SerializeToString(src, content, f))
-    return false;
-  return WriteFile(content, filename, SerializationFormat::JSON);
+  return PBUtils::SerializeToFile(src, filename, GetLogger());
 }
 bool MVGenerator::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::PatientStateListData& dst, SerializationFormat f)
 {
@@ -386,15 +383,7 @@ bool MVGenerator::SerializeFromString(const std::string& src, pulse::study::bind
   }
   return true;
 }
-bool MVGenerator::SerializeFromFile(const std::string& filename, SerializationFormat f)
+bool MVGenerator::SerializeFromFile(const std::string& filename)
 {
-  std::string content = ReadFile(filename, SerializationFormat::JSON);
-  if (content.empty())
-  {
-    Error("Unable to read file " + filename);
-    return false;
-  }
-  if (!SerializeFromString(content, *m_CompletedPatientList, f))
-    return false;
-  return true;
+  return PBUtils::SerializeFromFile(filename, *m_CompletedPatientList, GetLogger());
 }

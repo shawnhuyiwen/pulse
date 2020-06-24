@@ -26,16 +26,16 @@ class CDM_DECL SEConditionManager : public Loggable
   friend class PBEngine;//friend the serialization class
 public:
 
-  SEConditionManager(SESubstanceManager&);
+  SEConditionManager(const SESubstanceManager&);
   ~SEConditionManager();
 
   void Clear();
   void Copy(const SEConditionManager& src);
   
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
   bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
 
   bool ProcessCondition(const SECondition& condition);// Will make a copy
 
@@ -105,8 +105,8 @@ public:
   void GetAllConditions(std::vector<const SECondition*>& v) const;
 
 protected:
+  const SESubstanceManager& m_Substances;
 
-  SESubstanceManager&                      m_Substances;
   SEAcuteRespiratoryDistressSyndrome*      m_ARDS;
   SEChronicAnemia*                         m_Anemia;
   SEConsumeMeal*                           m_ConsumeMeal;

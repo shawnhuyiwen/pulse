@@ -80,6 +80,31 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEScalarForce
+    public static void Load(pulse.cdm.bind.ScalarForceData src, SEScalarForce dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ScalarForceData src, SEScalarForce dst)
+    {
+      dst.Invalidate();
+      dst.SetValue(src.ScalarForce.Value, ForceUnit.FromString(src.ScalarForce.Unit));
+    }
+    public static pulse.cdm.bind.ScalarForceData Unload(SEScalarForce src)
+    {
+      pulse.cdm.bind.ScalarForceData dst = new pulse.cdm.bind.ScalarForceData();
+      Serialize(src, dst);
+      return dst;
+    }
+
+    public static void Serialize(SEScalarForce src, pulse.cdm.bind.ScalarForceData dst)
+    {
+      dst.ScalarForce = new pulse.cdm.bind.ScalarData();
+      dst.ScalarForce.Value = src.GetValue();
+      dst.ScalarForce.Unit = src.GetUnit().ToString();
+    }
+    #endregion
+
     #region SEScalarFrequency
     public static void Load(pulse.cdm.bind.ScalarFrequencyData src, SEScalarFrequency dst)
     {

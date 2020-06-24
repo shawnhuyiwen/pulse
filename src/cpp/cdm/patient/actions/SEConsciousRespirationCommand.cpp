@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "patient/actions/SEConsciousRespirationCommand.h"
 
-SEConsciousRespirationCommand::SEConsciousRespirationCommand()
+SEConsciousRespirationCommand::SEConsciousRespirationCommand(Logger* logger) : Loggable(logger)
 {
   m_Comment = "";
 }

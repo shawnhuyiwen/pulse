@@ -3,60 +3,54 @@
 
 #include "PulseEngineJNI.h"
 #include "PulseScenario.h"
-#include "PulseScenarioExec.h"
-#include "engine/SEAction.h"
-#include "engine/SEDataRequest.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEActionManager.h"
-#include "engine/SEConditionManager.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEPatientConfiguration.h"
-#include "properties/SEScalarTime.h"
-#include "utils/DataTrack.h"
-
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "patient/assessments/SECompleteBloodCount.h"
-#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "patient/assessments/SEUrinalysis.h"
 
 #include "EngineTest.h"
 
+  /////////////////////
+  // TESTING SUPPORT //
+  /////////////////////
+
 extern "C"
-JNIEXPORT jlong JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
 {
   PulseEngineTest *executor = new PulseEngineTest();
   return reinterpret_cast<jlong>(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineTest *executor = reinterpret_cast<PulseEngineTest*>(ptr);
   SAFE_DELETE(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_testing_EngineUnitTestDriver_nativeExecute(JNIEnv *env, jobject obj, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeExecute(JNIEnv * env, jobject obj, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
-  PulseEngineTest *executor = reinterpret_cast<PulseEngineTest*>(ptr);
+  PulseEngineTest* executor = reinterpret_cast<PulseEngineTest*>(ptr);
   executor->RunTest(testName, outputDir);
   env->ReleaseStringUTFChars(test, testName);
   env->ReleaseStringUTFChars(toDir, outputDir);
 }
 
+  ////////////////////
+  // ENGINE SUPPORT //
+  ////////////////////
+
 extern "C"
-JNIEXPORT jlong JNICALL Java_pulse_engine_Pulse_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeAllocate(JNIEnv *env, jobject obj)
 { 
   PulseEngineJNI *engineJNI = new PulseEngineJNI();
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
+  
   return reinterpret_cast<jlong>(engineJNI);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_Pulse_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -64,358 +58,275 @@ JNIEXPORT void JNICALL Java_pulse_engine_Pulse_nativeDelete(JNIEnv *env, jobject
   SAFE_DELETE(engineJNI);
 }
 
+//////////////////////
+// SCENARIO SUPPORT //
+//////////////////////
+
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_PulseEngine_nativeReset(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeExecuteScenario(JNIEnv * env, jobject obj, jlong ptr, jstring scenario, jint scenario_format, jstring csvFilename, jstring logFilename, jstring dataDir)
 {
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr); 
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
-  engineJNI->Reset();
-}
 
-extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv *env, jobject obj, jlong ptr, jstring scenario, jint format, jstring csvFile, double updateFreq_s)
-{
+  jboolean bRet;
   const char* sceStr = env->GetStringUTFChars(scenario, JNI_FALSE);
-  const char* csvF = env->GetStringUTFChars(csvFile,JNI_FALSE);
-  try
+  const char* csvStr = env->GetStringUTFChars(csvFilename, JNI_FALSE);
+  const char* logStr = env->GetStringUTFChars(logFilename, JNI_FALSE);
+  const char* ddStr = nullptr;
+  if (dataDir != nullptr)
   {
-    PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-    engineJNI->jniEnv = env;
-    engineJNI->jniObj = obj;
-    // Load up the json and run the scenario
-    if (engineJNI->exec == nullptr)
-      engineJNI->exec = new PulseScenarioExec(engineJNI->eng->GetLogger());
-    engineJNI->exec->Execute(*engineJNI->eng, sceStr, format==1?SerializationFormat::JSON:SerializationFormat::BINARY, csvF);
+    ddStr = env->GetStringUTFChars(dataDir, JNI_FALSE);
+    bRet = engineJNI->ExecuteScenario(sceStr, (SerializationFormat)scenario_format, csvStr, logStr, ddStr);
   }
-  catch (...)
-  {
-    std::cerr << "Unable to execute scenario " << std::endl;
-  }
+  else
+    bRet = engineJNI->ExecuteScenario(sceStr, (SerializationFormat)scenario_format, csvStr, logStr);
+
   env->ReleaseStringUTFChars(scenario, sceStr);
-  env->ReleaseStringUTFChars(csvFile,csvF);
+  env->ReleaseStringUTFChars(csvFilename, csvStr);
+  env->ReleaseStringUTFChars(logFilename, logStr);
+  if (ddStr != nullptr)
+    env->ReleaseStringUTFChars(dataDir, ddStr);
+
+  return bRet;
 }
 
-extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_PulseScenarioExec_nativeCancelScenario(JNIEnv *env, jobject obj, jlong ptr)
-{
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr); 
-  //engineJNI->jniEnv = env; I am not doing this because the cancel comes in on another thread
-  //engineJNI->jniObj = obj; and it has valid copies of the env and obj for its context
-  if (engineJNI->exec != nullptr)
-    engineJNI->exec->Cancel();// This will not do anything with JNI
-}
+//////////////////
+// START ENGINE //
+//////////////////
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jstring dataRequests, jint format)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerializeFromFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jstring dataRequests, jint dataRequestsFormat)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
-  // Load up the data requests
-  if (dataRequests != nullptr)
-  {
-    const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-    if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, JSON, engineJNI->eng->GetSubstanceManager()))
-    {
-      env->ReleaseStringUTFChars(dataRequests, drmStr);
-      std::cerr << "Unable to load datarequest string" << std::endl;
-      return false;
-    }
-    env->ReleaseStringUTFChars(dataRequests, drmStr);
-  }
+  const char* fnStr = env->GetStringUTFChars(stateFilename, JNI_FALSE);
+  const char* dmStr = nullptr;
+  if(dataRequests != nullptr)
+    dmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
+  jboolean bRet = engineJNI->SerializeFromFile(fnStr, dmStr, (SerializationFormat)dataRequestsFormat);
 
-  // Ok, crank 'er up!
-  const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  jboolean bRet = engineJNI->eng->SerializeFromFile(pStateFilename, JSON);
-
-  env->ReleaseStringUTFChars(stateFilename, pStateFilename);
+  env->ReleaseStringUTFChars(stateFilename, fnStr);
+  if(dmStr != nullptr)
+    env->ReleaseStringUTFChars(dataRequests, dmStr);
   return bRet;
 }
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename, jint format)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerializeToFile(JNIEnv *env, jobject obj, jlong ptr, jstring stateFilename)
 {
   jboolean bRet;
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env; 
   engineJNI->jniObj = obj;
-  const char* pStateFilename = env->GetStringUTFChars(stateFilename, JNI_FALSE);
-  bRet = engineJNI->eng->SerializeToFile(pStateFilename,JSON);
-  env->ReleaseStringUTFChars(stateFilename, pStateFilename);
+
+  const char* fnStr = env->GetStringUTFChars(stateFilename, JNI_FALSE);
+  bRet = engineJNI->SerializeToFile(fnStr);
+
+  env->ReleaseStringUTFChars(stateFilename, fnStr);
   return bRet;
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeFromString(JNIEnv * env, jobject obj, jlong ptr, jstring state, jstring dataRequests, jint format)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerializeFromString(JNIEnv * env, jobject obj, jlong ptr, jstring state, jstring dataRequests, jint format)
 {
-  return false;
+  jboolean bRet;
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  const char* dmStr = nullptr;
+  if (dataRequests != nullptr)
+    dmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);\
+  const char* sStr = env->GetStringUTFChars(state, JNI_FALSE);
+  bRet = engineJNI->SerializeFromString(sStr, dmStr, (SerializationFormat)format);
+
+  env->ReleaseStringUTFChars(state, sStr);
+  if (dmStr != nullptr)
+    env->ReleaseStringUTFChars(dataRequests, dmStr);
+  return bRet;
 }
 extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeSerializeToString(JNIEnv * env, jobject obj, jlong ptr, jint format)
-{
-  return false;
-}
-
-extern "C"
-JNIEXPORT jboolean JNICALL Java_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format, jstring dataDir)
-{
-  bool ret = false;
-  try
-  {
-    PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-    engineJNI->jniEnv = env;
-    engineJNI->jniObj = obj;
-    const char* dataD = env->GetStringUTFChars(dataDir, JNI_FALSE);
-    env->ReleaseStringUTFChars(dataDir, dataD);
-
-    // Load up the patient
-    const char* pStr = env->GetStringUTFChars(patient_configuration, JNI_FALSE);
-    SEPatientConfiguration p(engineJNI->eng->GetSubstanceManager());
-    if (!p.SerializeFromString(pStr,JSON))
-    {
-      env->ReleaseStringUTFChars(patient_configuration, pStr);
-      std::cerr << "Unable to load patient configuration string" << std::endl;
-      return false;
-    }
-    env->ReleaseStringUTFChars(patient_configuration, pStr);
-      
-    // Load up the data requests
-    if (dataRequests != nullptr)
-    {
-      const char* drmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-      if (!engineJNI->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(drmStr, JSON, engineJNI->eng->GetSubstanceManager()))
-      {
-        env->ReleaseStringUTFChars(dataRequests, drmStr);
-        std::cerr << "Unable to load datarequest string" << std::endl;
-        return false;
-      }
-      env->ReleaseStringUTFChars(dataRequests, drmStr);
-    }
-
-    // Ok, crank 'er up!
-    ret = engineJNI->eng->InitializeEngine(p);
-    engineJNI->eng->GetEventManager().ForwardEvents(engineJNI);
-  }
-
-  catch (std::exception& ex)
-  {
-    ret = false;
-    std::cerr << "TODO Handle this Failure : " << ex.what() << std::endl;
-  }
-  
-  return ret;
-}
-
-extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_Pulse_nativeLogToConsole(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerializeToString(JNIEnv * env, jobject obj, jlong ptr, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
-  engineJNI->eng->GetLogger()->LogToConsole(b);
+
+  std::string out = engineJNI->SerializeToString((SerializationFormat)format);
+  jstring state = env->NewStringUTF(out.c_str());
+  return state;
 }
+
+
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_Pulse_nativeForwardLogMessages(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format, jstring dataDir)
+{
+  bool bRet;
+  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  if (patient_configuration == nullptr)
+    return false;
+  const char* pcStr = env->GetStringUTFChars(patient_configuration, JNI_FALSE);
+    
+  const char* drStr = nullptr;
+  if (dataRequests != nullptr)
+    drStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
+
+  const char* ddStr = nullptr;
+  if (dataDir != nullptr)
+  {
+    ddStr = env->GetStringUTFChars(dataDir, JNI_FALSE);
+    bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format, ddStr);
+  }
+  else
+    bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format);
+
+  env->ReleaseStringUTFChars(patient_configuration, pcStr);
+  if(drStr != nullptr)
+    env->ReleaseStringUTFChars(dataRequests, drStr);
+  if(ddStr != nullptr)
+    env->ReleaseStringUTFChars(dataDir, ddStr);
+
+  return bRet;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetInitialPatient(JNIEnv * env, jobject obj, jlong ptr, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
-  engineJNI->forwardLogMessages = b;
+
+  std::string stream = engineJNI->GetInitialPatient((SerializationFormat)format);
+  jstring patient = env->NewStringUTF(stream.c_str());
+  return patient;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetAssessment(JNIEnv * env, jobject obj, jlong ptr, jint type, jint format)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  std::string stream = engineJNI->GetPatientAssessment(type,(SerializationFormat)format);
+  jstring assessment = env->NewStringUTF(stream.c_str());
+  return assessment;
+}
+
+extern "C"
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeForwardLogMessages(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+  engineJNI->KeepLogMessages(b);
 }
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_Pulse_nativeSetLogFilename(JNIEnv * env, jobject obj, jlong ptr, jstring logFilename)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSetLogFilename(JNIEnv * env, jobject obj, jlong ptr, jstring logFilename)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
   const char* logF = env->GetStringUTFChars(logFilename, JNI_FALSE);
-  engineJNI->eng->GetLogger()->SetLogFile(logF);
+  engineJNI->SetLogFilename(logF);
   env->ReleaseStringUTFChars(logFilename, logF);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_pulse_engine_Pulse_nativeForwardEvents(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeKeepEventChanges(JNIEnv * env, jobject obj, jlong ptr, jboolean b)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
-  engineJNI->forwardEvents = b;
+  engineJNI->KeepEventChanges(b);
+}
+extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullEvents(JNIEnv * env, jobject obj, jlong ptr, jint format)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  std::string out = engineJNI->PullEvents((SerializationFormat)format);
+  jstring events = env->NewStringUTF(out.c_str());
+  return events;
+}
+extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullActiveEvents(JNIEnv * env, jobject obj, jlong ptr, jint format)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  std::string out = engineJNI->PullActiveEvents((SerializationFormat)format);
+  jstring events = env->NewStringUTF(out.c_str());
+  return events;
 }
 
 extern "C"
-JNIEXPORT bool JNICALL Java_pulse_engine_PulseEngine_nativeAdvanceTimeStep(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeProcessActions(JNIEnv * env, jobject obj, jlong ptr, jstring actions, jint format)
 {
-  bool success = true;
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env;
-  engineJNI->jniObj = obj;
-  try
-  {
-    engineJNI->eng->AdvanceModelTime();
-  }
-  catch (CommonDataModelException& ex)
-  {
-    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
-    success = false;
-  }
-  catch (std::exception& ex)
-  {
-    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
-    success = false;
-  }
-  catch (...)
-  {
-    std::cerr << "JNI Caught Unknown Exception " << std::endl;
-    success = false;
-  }
-  if (success)
-  {
-    double currentTime_s = engineJNI->eng->GetSimulationTime(TimeUnit::s);
-    engineJNI->eng->GetEngineTracker()->TrackData(currentTime_s);
-    engineJNI->PushData(currentTime_s);
-  }
-  return success;
-}
-extern "C"
-JNIEXPORT bool JNICALL Java_pulse_engine_PulseEngine_nativeAdvanceTime(JNIEnv *env, jobject obj, jlong ptr, jdouble time_s)
-{
-  bool success = true;
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env;
-  engineJNI->jniObj = obj;
-  try
-  {
-    engineJNI->eng->AdvanceModelTime(time_s, TimeUnit::s);
-  }
-  catch (CommonDataModelException& ex)
-  {
-    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
-    success = false;
-  }
-  catch (std::exception& ex)
-  {
-    std::cerr << "JNI Caught Exception " << ex.what() << std::endl;
-    success = false;
-  }
-  catch (...)
-  {
-    std::cerr << "JNI Caught Unknown Exception " << std::endl;
-    success = false;
-  }
-  if (success)
-  {
-    double currentTime_s = engineJNI->eng->GetSimulationTime(TimeUnit::s);
-    engineJNI->eng->GetEngineTracker()->TrackData(currentTime_s);
-    engineJNI->PushData(currentTime_s);
-  }
-  return success;
-}
-
-extern "C"
-JNIEXPORT bool JNICALL Java_pulse_engine_PulseEngine_nativeProcessActions(JNIEnv *env, jobject obj, jlong ptr, jstring actions)
-{
-  bool success = true;
   if (actions == nullptr)
-    return success;
-  PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+    return true;
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
+
   const char* aStr = env->GetStringUTFChars(actions, JNI_FALSE);
-
-  try
-  {
-    std::vector<SEAction*> vActions;
-    if (!SEActionManager::SerializeFromString(aStr, vActions, JSON, engineJNI->eng->GetSubstanceManager()))
-    {
-      env->ReleaseStringUTFChars(actions, aStr);
-      return false;
-    }
-    env->ReleaseStringUTFChars(actions, aStr);
-
-    for (const SEAction* a : vActions)
-    {
-      if (!engineJNI->eng->ProcessAction(*a))
-        success = false;
-      delete a;
-    }
-  }
-  catch (CommonDataModelException& ex)
-  {
-    success = false;
-    engineJNI->eng->GetLogger()->Error(ex.what());
-  }
-  catch (std::exception& ex)
-  {
-    success = false;
-    engineJNI->eng->GetLogger()->Error(ex.what());
-  }
-  catch (...)
-  {
-    success = false;
-  }
-
-  return success;
+  jboolean bRet = engineJNI->ProcessActions(aStr, (SerializationFormat)format);
+  env->ReleaseStringUTFChars(actions, aStr);
+  return bRet;
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL Java_pulse_engine_PulseEngine_nativeGetAssessment(JNIEnv *env, jobject obj, jlong ptr, jint type)
+JNIEXPORT jdouble JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetTimeStep(JNIEnv * env, jobject obj, jlong ptr, jstring unit, jint format)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  const char* uStr = "s";
+  if(unit != nullptr)
+    uStr = env->GetStringUTFChars(unit, JNI_FALSE);
+  jdouble ts = engineJNI->GetTimeStep(uStr);
+  env->ReleaseStringUTFChars(unit, uStr);
+  return ts;
+}
+
+extern "C"
+JNIEXPORT bool JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeAdvanceTimeStep(JNIEnv *env, jobject obj, jlong ptr)
 {
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
-  
-  jstring assessment;
 
-  std::string stream;
-  switch (type)
-  {
-    case 0: // CBC
-    {
-      SECompleteBloodCount cbc(engineJNI->eng->GetLogger());
-      engineJNI->eng->GetPatientAssessment(cbc);
-      cbc.SerializeToString(stream, JSON);
-      break;
-    }
-    case 1: // CMP
-    {
-      SEComprehensiveMetabolicPanel cmp(engineJNI->eng->GetLogger());
-      engineJNI->eng->GetPatientAssessment(cmp);
-      cmp.SerializeToString(stream, JSON);
-      break;
-    }
-    case 2:// PFT
-    {
-      SEPulmonaryFunctionTest pft(engineJNI->eng->GetLogger());
-      engineJNI->eng->GetPatientAssessment(pft);
-      pft.SerializeToString(stream, JSON);
-      break;
-    }
-    case 3: // U
-    {
-      SEUrinalysis u(engineJNI->eng->GetLogger());
-      engineJNI->eng->GetPatientAssessment(u);
-      u.SerializeToString(stream, JSON);
-      break;
-    }
-    default:
-      stream = "Unsupported assessment type";
-  };
-
-  assessment = env->NewStringUTF(stream.c_str());
-  return assessment;
+  return engineJNI->AdvanceTimeStep();
 }
 
-PulseEngineJNI::PulseEngineJNI() : SEAdvanceHandler(), SEEventHandler()
-{// No logger needed for the event handler, at this point
+extern "C"
+JNIEXPORT jdoubleArray JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullData(JNIEnv * env, jobject obj, jlong ptr)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  jdoubleArray jData;
+  double* data = engineJNI->PullDataPtr();
+  jsize len = (jsize)engineJNI->DataLength();
+  jData = env->NewDoubleArray(len);
+  env->SetDoubleArrayRegion(jData, 0, len, data);
+  return jData;
+}
+
+
+PulseEngineJNI::PulseEngineJNI() : PulseEngineThunk()
+{
   Reset();
-  eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine().release());
-  forwardEvents = true;
-  forwardLogMessages = true;
-  eng->GetLogger()->SetForward(this);
-  eng->GetLogger()->LogToConsole(false);
-  eng->GetEventManager().ForwardEvents(this);
-  trk=&eng->GetEngineTracker()->GetDataTrack();
 }
 
 PulseEngineJNI::~PulseEngineJNI()
@@ -425,8 +336,6 @@ PulseEngineJNI::~PulseEngineJNI()
 
 void PulseEngineJNI::Reset()
 {
-  exec = nullptr;
-  firstUpdate = true;
   jniEnv=nullptr;
   jniObj=nullptr;
   jniDebugMethodID=nullptr;
@@ -434,111 +343,64 @@ void PulseEngineJNI::Reset()
   jniWarnMethodID=nullptr;
   jniErrorMethodID=nullptr;
   jniFatalMethodID=nullptr;
-  update_cnt = 0;
-  updateFrequency_cnt = 45;// About every half second
 }
 
-void PulseEngineJNI::OnAdvance(double time_s)
-{
-  if (update_cnt++ > updateFrequency_cnt)
-  {    
-    PushData(time_s);
-    update_cnt = 0;
-  }
-}
-void PulseEngineJNI::PushData(double time_s)
+void PulseEngineJNI::ForwardDebug(const std::string& msg, const std::string& origin)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
-    jmethodID m;
-    std::vector<std::string>& headings = trk->GetHeadings();
-
-    if (firstUpdate)
-    {
-      firstUpdate = false;
-      jobjectArray sary = jniEnv->NewObjectArray((jsize)headings.size(), jniEnv->FindClass("java/lang/String"), jniEnv->NewStringUTF(""));
-      for (unsigned int i = 0; i < headings.size(); i++)
-        jniEnv->SetObjectArrayElement(sary, i, jniEnv->NewStringUTF(headings[i].c_str()));
-      m = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "setCDMHeadings", "([Ljava/lang/String;)V");
-      if (m == nullptr)
-        std::cerr << "Can't find setCDMHeadings method in Java" << std::endl;
-      jniEnv->CallVoidMethod(jniObj, m, sary);
-    }
-
-    // Gather up the requested data into an array and pass it over to java
-    // The order is set in the header order
-    jdoubleArray ary = jniEnv->NewDoubleArray((jsize)trk->GetProbes()->size());
-
-    jboolean isCopy = JNI_FALSE;
-    jdouble* reqData = jniEnv->GetDoubleArrayElements(ary, &isCopy);
-    for (unsigned int i = 0; i < headings.size(); i++)
-      reqData[i] = trk->GetProbe(headings[i]);
-    if (isCopy == JNI_TRUE)
-      jniEnv->ReleaseDoubleArrayElements(ary, reqData, JNI_COMMIT);
-
-    m = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "updateCDM", "(D[D)V");
-    if (m == nullptr)
-      std::cerr << "Can't find updateCDM method in Java" << std::endl;
-    jniEnv->CallVoidMethod(jniObj, m, time_s, ary);
-  }
-}
-
-void PulseEngineJNI::ForwardDebug(const std::string&  msg, const std::string&  origin)
-{
-  if(jniEnv!=nullptr&&jniObj!=nullptr)
-  {
     jstring m = jniEnv->NewStringUTF(msg.c_str());
     jstring o = jniEnv->NewStringUTF(origin.c_str());
-    if(jniDebugMethodID==nullptr)
-      jniDebugMethodID = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogDebug",   "(Ljava/lang/String;Ljava/lang/String;)V");
+    if (jniDebugMethodID == nullptr)
+      jniDebugMethodID = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogDebug", "(Ljava/lang/String;Ljava/lang/String;)V");
     jniEnv->CallVoidMethod(jniObj, jniDebugMethodID, m, o);
   }
 }
 
-void PulseEngineJNI::ForwardInfo(const std::string&  msg, const std::string&  origin)
+void PulseEngineJNI::ForwardInfo(const std::string& msg, const std::string& origin)
 {
-  if(jniEnv!=nullptr&&jniObj!=nullptr)
+  if (jniEnv != nullptr && jniObj != nullptr)
   {
     jstring m = jniEnv->NewStringUTF(msg.c_str());
     jstring o = jniEnv->NewStringUTF(origin.c_str());
-    if(jniInfoMethodID==nullptr)
-      jniInfoMethodID  = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogInfo",    "(Ljava/lang/String;Ljava/lang/String;)V");
+    if (jniInfoMethodID == nullptr)
+      jniInfoMethodID = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogInfo", "(Ljava/lang/String;Ljava/lang/String;)V");
     jniEnv->CallVoidMethod(jniObj, jniInfoMethodID, m, o);
   }
 }
 
-void PulseEngineJNI::ForwardWarning(const std::string&  msg, const std::string&  origin)
+void PulseEngineJNI::ForwardWarning(const std::string& msg, const std::string& origin)
 {
-  if(jniEnv!=nullptr&&jniObj!=nullptr)
+  if (jniEnv != nullptr && jniObj != nullptr)
   {
     jstring m = jniEnv->NewStringUTF(msg.c_str());
     jstring o = jniEnv->NewStringUTF(origin.c_str());
-    if(jniWarnMethodID==nullptr)
-      jniWarnMethodID  = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogWarning", "(Ljava/lang/String;Ljava/lang/String;)V");
+    if (jniWarnMethodID == nullptr)
+      jniWarnMethodID = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogWarning", "(Ljava/lang/String;Ljava/lang/String;)V");
     jniEnv->CallVoidMethod(jniObj, jniWarnMethodID, m, o);
   }
 }
 
-void PulseEngineJNI::ForwardError(const std::string&  msg, const std::string&  origin)
+void PulseEngineJNI::ForwardError(const std::string& msg, const std::string& origin)
 {
-  if(jniEnv!=nullptr&&jniObj!=nullptr)
+  if (jniEnv != nullptr && jniObj != nullptr)
   {
     jstring m = jniEnv->NewStringUTF(msg.c_str());
     jstring o = jniEnv->NewStringUTF(origin.c_str());
-    if(jniErrorMethodID==nullptr)
-      jniErrorMethodID = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogError",   "(Ljava/lang/String;Ljava/lang/String;)V");
+    if (jniErrorMethodID == nullptr)
+      jniErrorMethodID = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogError", "(Ljava/lang/String;Ljava/lang/String;)V");
     jniEnv->CallVoidMethod(jniObj, jniErrorMethodID, m, o);
   }
 }
 
-void PulseEngineJNI::ForwardFatal(const std::string&  msg, const std::string&  origin)
+void PulseEngineJNI::ForwardFatal(const std::string& msg, const std::string& origin)
 {
-  if(jniEnv!=nullptr&&jniObj!=nullptr)
+  if (jniEnv != nullptr && jniObj != nullptr)
   {
     jstring m = jniEnv->NewStringUTF(msg.c_str());
     jstring o = jniEnv->NewStringUTF(origin.c_str());
-    if(jniFatalMethodID==nullptr)
-      jniFatalMethodID = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogFatal",   "(Ljava/lang/String;Ljava/lang/String;)V");
+    if (jniFatalMethodID == nullptr)
+      jniFatalMethodID = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogFatal", "(Ljava/lang/String;Ljava/lang/String;)V");
     jniEnv->CallVoidMethod(jniObj, jniFatalMethodID, m, o);
   }
   std::string err;
@@ -548,13 +410,3 @@ void PulseEngineJNI::ForwardFatal(const std::string&  msg, const std::string&  o
   throw PhysiologyEngineException(err);
 }
 
-void PulseEngineJNI::HandleEvent(eEvent type, bool active, const SEScalarTime* time)
-{
-  if (jniEnv != nullptr && jniObj != nullptr)
-  {
-    jmethodID m = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "handleEvent", "(IIZD)V");
-    if (m == nullptr)
-      std::cerr << "Can't find handleEvent method in Java" << std::endl;
-    jniEnv->CallVoidMethod(jniObj, m, 0, type, active, time != nullptr ? time->GetValue(TimeUnit::s) : 0);
-  }
-}

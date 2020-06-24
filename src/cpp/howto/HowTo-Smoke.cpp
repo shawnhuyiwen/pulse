@@ -69,18 +69,18 @@ void HowToSmoke()
   }
   */
   
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
 
   // Get some substances out we will use
-  SESubstance* N2 = pe->GetSubstanceManager().GetSubstance("Nitrogen");
-  SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
-  SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
-  SESubstance* CO = pe->GetSubstanceManager().GetSubstance("CarbonMonoxide");
-  SESubstance* Particulate = pe->GetSubstanceManager().GetSubstance("ForestFireParticulate");
+  const SESubstance* N2 = pe->GetSubstanceManager().GetSubstance("Nitrogen");
+  const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  const SESubstance* CO = pe->GetSubstanceManager().GetSubstance("CarbonMonoxide");
+  const SESubstance* Particulate = pe->GetSubstanceManager().GetSubstance("ForestFireParticulate");
 
 
   
@@ -125,7 +125,7 @@ void HowToSmoke()
   pe->GetLogger()->Info(std::stringstream() <<"Systemic Vascular Resistance : " << pe->GetCardiovascularSystem()->GetSystemicVascularResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL) << PressureTimePerVolumeUnit::mmHg_s_Per_mL);;
 
   // Here we will put this healty patient into a smokey environment.
-  SEChangeEnvironmentalConditions envChange(pe->GetSubstanceManager());
+  SEChangeEnvironmentalConditions envChange(pe->GetLogger());
   // NOTE YOUR FRACTIONS MUST ADD UP TO 1.0
   envChange.GetEnvironmentalConditions().GetAmbientGas(*N2).GetFractionAmount().SetValue(0.79008);
   envChange.GetEnvironmentalConditions().GetAmbientGas(*O2).GetFractionAmount().SetValue(0.2095);

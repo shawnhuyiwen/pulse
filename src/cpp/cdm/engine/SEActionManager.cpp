@@ -13,12 +13,11 @@
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
 
-SEActionManager::SEActionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), 
-                                                                   m_Substances(substances)
+SEActionManager::SEActionManager(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_Substances(subMgr)
 {
-  m_PatientActions = new SEPatientActionCollection(substances);
-  m_EnvironmentActions = new SEEnvironmentActionCollection(substances);
-  m_EquipmentActions = new SEEquipmentActionCollection(substances);
+  m_PatientActions = new SEPatientActionCollection(m_Substances);
+  m_EnvironmentActions = new SEEnvironmentActionCollection(m_Substances);
+  m_EquipmentActions = new SEEquipmentActionCollection(m_Substances);
 }
 
 SEActionManager::~SEActionManager()
@@ -40,17 +39,17 @@ bool SEActionManager::SerializeToString(std::string& output, SerializationFormat
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEActionManager::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEActionManager::SerializeToFile(const std::string& filename) const
 {
-  return PBEngine::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename);
 }
 bool SEActionManager::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SEActionManager::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEActionManager::SerializeFromFile(const std::string& filename)
 {
-  return PBEngine::SerializeFromFile(filename, *this, m);
+  return PBEngine::SerializeFromFile(filename, *this);
 }
 
 // A raw serialize method
@@ -61,7 +60,7 @@ bool SEActionManager::SerializeFromFile(const std::string& filename, Serializati
 // A hemorrhage with no flow rate isinvalid and used to turn off an existing hemorrhage
 // So we need to serialize that invalid action in, and have it processed by the engine action manager
 // So this method is intended to be a middle man between the socket/language client and an engine.
-bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, SESubstanceManager& subMgr)
+bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }

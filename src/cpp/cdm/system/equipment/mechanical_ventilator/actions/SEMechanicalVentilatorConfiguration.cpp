@@ -16,7 +16,7 @@
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBEquipmentActions.h"
 
-SEMechanicalVentilatorConfiguration::SEMechanicalVentilatorConfiguration(SESubstanceManager& substances) : SEMechanicalVentilatorAction(), m_Substances(substances)
+SEMechanicalVentilatorConfiguration::SEMechanicalVentilatorConfiguration(Logger* logger) : SEMechanicalVentilatorAction(logger)
 {
   m_Configuration = nullptr;
   InvalidateConfigurationFile();
@@ -34,9 +34,9 @@ void SEMechanicalVentilatorConfiguration::Clear()
   SAFE_DELETE(m_Configuration);
 }
 
-void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfiguration& src)
+void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this);
+  PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
 bool SEMechanicalVentilatorConfiguration::IsValid() const
@@ -52,7 +52,7 @@ SEMechanicalVentilator& SEMechanicalVentilatorConfiguration::GetConfiguration()
 {
   m_ConfigurationFile = "";
   if (m_Configuration == nullptr)
-    m_Configuration = new SEMechanicalVentilator(m_Substances);
+    m_Configuration = new SEMechanicalVentilator(GetLogger());
   return *m_Configuration;
 }
 const SEMechanicalVentilator* SEMechanicalVentilatorConfiguration::GetConfiguration() const

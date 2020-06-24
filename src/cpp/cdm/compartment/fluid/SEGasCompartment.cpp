@@ -132,7 +132,7 @@ SEGasSubstanceQuantity& SEGasCompartment::CreateSubstanceQuantity(SESubstance& s
     m_SubstanceQuantities.push_back(subQ);
     m_TransportSubstances.push_back(subQ);
   }
-  if (!m_FluidChildren.empty())
+  if (!m_Children.empty() && !m_FluidChildren.empty())
   {
     for (SEGasCompartment* child : m_Children)
       subQ->AddChild(child->CreateSubstanceQuantity(substance));

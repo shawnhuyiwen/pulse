@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SEPulmonaryFibrosis::SEPulmonaryFibrosis() : SEPatientCondition()
+SEPulmonaryFibrosis::SEPulmonaryFibrosis(Logger* logger) : SEPatientCondition(logger)
 {
   m_Severity = nullptr;
 }

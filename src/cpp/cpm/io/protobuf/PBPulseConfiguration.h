@@ -16,7 +16,7 @@ public:
   static void Merge(const PulseConfiguration& src, PulseConfiguration& dst);
 
   static bool SerializeToString(const PulseConfiguration& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const PulseConfiguration& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeToFile(const PulseConfiguration& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m);
-  static bool SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, PulseConfiguration& dst);
 };

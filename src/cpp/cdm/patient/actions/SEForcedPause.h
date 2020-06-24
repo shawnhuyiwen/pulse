@@ -8,7 +8,7 @@ class CDM_DECL SEForcedPause : public SEConsciousRespirationCommand
 {
   friend class PBPatientAction;//friend the serialization class
   friend class SEConsciousRespiration;
-  SEForcedPause();
+  SEForcedPause(Logger* logger);
 public:
 
   virtual ~SEForcedPause();

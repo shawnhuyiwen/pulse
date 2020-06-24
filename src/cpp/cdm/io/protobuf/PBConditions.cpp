@@ -14,7 +14,7 @@ POP_PROTO_WARNINGS()
 #include "substance/SESubstanceManager.h"
 
 
-SECondition* PBCondition::Load(const CDM_BIND::AnyConditionData& condition, SESubstanceManager& subMgr)
+SECondition* PBCondition::Load(const CDM_BIND::AnyConditionData& condition, const SESubstanceManager& subMgr)
 {
   switch (condition.Condition_case())
   {

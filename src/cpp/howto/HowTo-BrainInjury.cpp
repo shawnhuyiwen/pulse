@@ -44,7 +44,7 @@ void HowToBrainInjury()
   pe->GetLogger()->SetLogFile("./test_results/HowTo_BrainInjury.log");
   
   pe->GetLogger()->Info("HowTo_BrainInjury");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
