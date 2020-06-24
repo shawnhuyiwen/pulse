@@ -417,6 +417,7 @@ bool PulseController::Initialize(SEPatient const& patient)
   // Due to needing the initial environment values for circuits to construct properly
   Info("Creating Circuits and Compartments");
   CreateCircuitsAndCompartments();
+  OverrideCircuits();
 
   m_SpareAdvanceTime_s = 0;
   m_AirwayMode = eAirwayMode::Free;
@@ -1429,6 +1430,57 @@ bool PulseController::CreateCircuitsAndCompartments()
 
   m_Compartments->StateChange();
   return true;
+}
+
+// assumes circuit overrides and doesn't check if override is not applied
+bool PulseController::OverrideCircuits()
+{
+  if (!m_Config->HasInitialOverrides()) return true;
+
+  SEOverrides& overrides = m_Config->GetInitialOverrides();
+  // Apply Overrides (Note using Force, as these values are locked (for good reason)
+  // But we know what we are doing, right?
+  SEFluidCircuit& cv = GetCircuits().GetActiveCardiovascularCircuit();
+  SEFluidCircuit& resp = GetCircuits().GetRespiratoryCircuit();
+
+  bool bReturn = true;
+  for (auto& sp : overrides.GetScalarProperties())
+  {
+    SEFluidCircuitPath* path = nullptr;
+    if (resp.HasPath(sp.name))
+    {
+      path = resp.GetPath(sp.name);
+    }
+    else if (cv.HasPath(sp.name))
+    {
+      path = cv.GetPath(sp.name);
+    }
+    if (path == nullptr)
+    {
+      continue;
+    }
+    if (PressureTimePerVolumeUnit::IsValidUnit(sp.unit))
+    {// Assume its a resistor
+      const PressureTimePerVolumeUnit& u = PressureTimePerVolumeUnit::GetCompoundUnit(sp.unit);
+      path->GetResistance().ForceValue(sp.value, u);
+      path->GetNextResistance().ForceValue(sp.value, u);
+      path->GetResistanceBaseline().ForceValue(sp.value, u);
+    }
+    else if (VolumePerPressureUnit::IsValidUnit(sp.unit))
+    {
+      const VolumePerPressureUnit& u = VolumePerPressureUnit::GetCompoundUnit(sp.unit);
+      path->GetCompliance().ForceValue(sp.value, u);
+      path->GetNextCompliance().ForceValue(sp.value, u);
+      path->GetComplianceBaseline().ForceValue(sp.value, u);
+    }
+    else
+    {
+      Error("Could not process circuit override " + sp.name);
+      bReturn = false;
+    }
+  }
+
+  return bReturn;
 }
 
 void PulseController::SetupCardiovascular()

@@ -9,6 +9,7 @@ class SEDynamicStabilization;
 class SETimedStabilization;
 class SEEnvironmentalConditions;
 class SEElectroCardioGramWaveformInterpolator;
+class SEOverrides;
 #include "engine/SEEngineConfiguration.h"
 
 /**
@@ -59,6 +60,11 @@ public:
   virtual const SEAutoSerialization* GetAutoSerialization() const;
   virtual void RemoveAutoSerialization();
 
+  // add method here for overrrides
+  virtual bool HasInitialOverrides() const;
+  virtual SEOverrides& GetInitialOverrides();
+  virtual const SEOverrides* GetInitialOverrides() const;
+  virtual void RemoveInitialOverrides();
 protected:
   SESubstanceManager& m_Substances;
 
@@ -67,6 +73,8 @@ protected:
   SEDynamicStabilization*    m_DynamicStabilization;
   SEAutoSerialization*       m_AutoSerialization;
   eSwitch                    m_WritePatientBaselineFile;
+
+  SEOverrides*               m_InitialOverrides;
 
   //////////////////////
   /** Blood Chemistry */
