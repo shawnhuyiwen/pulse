@@ -147,6 +147,35 @@ void Nervous::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Nervous::PreProcess()
 {
+  // Check for any overrides
+  if (m_data.HasOverride())
+  {
+    // Look for any known overrides
+    for (auto& o : m_data.GetOverrides())
+    {
+      if (o.name == "CerebrospinalFluidAbsorptionRate")
+      {
+        m_CSFAbsorptionRate_mLPermin = Convert(o.value, VolumePerTimeUnit::GetCompoundUnit(o.unit), VolumePerTimeUnit::mL_Per_min);
+        Info("CerebrospinalFluidAbsorptionRate override is " + cdm::to_string(m_CSFAbsorptionRate_mLPermin));
+        continue;
+      }
+      if (o.name == "CerebrospinalFluidProductionRate")
+      {
+        m_CSFProductionRate_mlPermin = Convert(o.value, VolumePerTimeUnit::GetCompoundUnit(o.unit), VolumePerTimeUnit::mL_Per_min);
+        Info("CerebrospinalFluidProductionRate override is " + cdm::to_string(m_CSFProductionRate_mlPermin));
+        continue;
+      }
+      if (o.name == pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2)
+      {
+        Info("Compliance override is " + cdm::to_string(Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::mL_Per_mmHg)));
+        // Print this out and manually make sure its what we want it to be.
+        double c = m_data.GetCircuits().GetFluidPath(pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2)->GetCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+        Info("Compliance set to " + cdm::to_string(c));
+        continue;
+      }
+    }
+   
+  }
   if(m_BaroreceptorFeedback ==eSwitch::On)
     BaroreceptorFeedback();
   if(m_ChemoreceptorFeedback ==eSwitch::On)
@@ -196,7 +225,6 @@ void Nervous::CerebralSpinalFluidUpdates()
 {
     //Update CSF Production and Absorption Rates
     m_CSFProductAbsorptionPath->GetNextFlowSource().SetValue(m_CSFProductionRate_mlPermin - m_CSFAbsorptionRate_mLPermin, VolumePerTimeUnit::mL_Per_min);
-    
 }
 
 //--------------------------------------------------------------------------------------------------

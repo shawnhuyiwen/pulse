@@ -43,7 +43,7 @@
 
 #include "properties/SEScalarVolumePerTime.h"
 
-SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
+SEPatientActionCollection::SEPatientActionCollection(Logger* logger) : Loggable(logger)
 {
   m_ARDSExacerbation = nullptr;
   m_AcuteStress = nullptr;
@@ -120,7 +120,7 @@ void SEPatientActionCollection::Clear()
   DELETE_MAP_SECOND(m_SubstanceCompoundInfusions);
 }
 
-bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
+bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action, SESubstanceManager& subMgr)
 {
   const SEPatientAssessmentRequest* patientAss = dynamic_cast<const SEPatientAssessmentRequest*>(&action);
   if (patientAss != nullptr)
@@ -389,7 +389,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   {
     if (m_MechanicalVentilation == nullptr)
       m_MechanicalVentilation = new SEMechanicalVentilation();
-    m_MechanicalVentilation->Copy(*mvData,m_Substances);
+    m_MechanicalVentilation->Copy(*mvData, subMgr);
     if (!m_MechanicalVentilation->IsActive())
       RemoveMechanicalVentilation();
     return true;
@@ -456,7 +456,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   const SESubstanceBolus* bolus = dynamic_cast<const SESubstanceBolus*>(&action);
   if (bolus != nullptr)
   {
-    const SESubstance* sub = m_Substances.GetSubstance(bolus->GetSubstance().GetName());
+    const SESubstance* sub = subMgr.GetSubstance(bolus->GetSubstance().GetName());
     if (sub == nullptr)//Make sure this substance manager has it
     {
       Error("Ignoring SESubstanceBolus action due to unknown substance in action: " + bolus->GetSubstance().GetName());
@@ -467,7 +467,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     {
       myBolus = new SESubstanceBolus(*sub);
       m_SubstanceBolus[sub] = myBolus;
-      m_Substances.AddActiveSubstance(*sub);
+      subMgr.AddActiveSubstance(*sub);
     }
     myBolus->Copy(*bolus);
     if (!myBolus->IsActive())
@@ -478,7 +478,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   const SESubstanceInfusion* subInfusion = dynamic_cast<const SESubstanceInfusion*>(&action);
   if (subInfusion != nullptr)
   {
-    const SESubstance* sub = m_Substances.GetSubstance(subInfusion->GetSubstance().GetName());
+    const SESubstance* sub = subMgr.GetSubstance(subInfusion->GetSubstance().GetName());
     if (sub == nullptr)//Make sure this substance manager has it
     {
       Error("Ignoring SESubstanceInfusion action due to unknown substance in action: " + subInfusion->GetSubstance().GetName());
@@ -489,7 +489,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     {
       mySubInfuse = new SESubstanceInfusion(*sub);
       m_SubstanceInfusions[sub] = mySubInfuse;
-      m_Substances.AddActiveSubstance(*sub);
+      subMgr.AddActiveSubstance(*sub);
     }
     mySubInfuse->Copy(*subInfusion);
     if (!mySubInfuse->IsActive())
@@ -500,7 +500,7 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   const SESubstanceCompoundInfusion* cSubInfusion = dynamic_cast<const SESubstanceCompoundInfusion*>(&action);
   if (cSubInfusion != nullptr)
   {
-    const SESubstanceCompound* cmpd = m_Substances.GetCompound(cSubInfusion->GetSubstanceCompound().GetName());
+    const SESubstanceCompound* cmpd = subMgr.GetCompound(cSubInfusion->GetSubstanceCompound().GetName());
     if (cmpd == nullptr)//Make sure this substance manager has it
     {
       Error("Ignoring SESubstanceCompoundInfusion action due to unknown substance in action: " + cSubInfusion->GetSubstanceCompound().GetName());
@@ -511,12 +511,12 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     {
       mySubCompInfuse = new SESubstanceCompoundInfusion(*cmpd);
       m_SubstanceCompoundInfusions[cmpd] = mySubCompInfuse;
-      m_Substances.AddActiveCompound(*cmpd);
+      subMgr.AddActiveCompound(*cmpd);
       // Activate the compound component substances
       const SESubstanceCompound& sc = mySubCompInfuse->GetSubstanceCompound();
       for (const SESubstanceConcentration* scc : sc.GetComponents())
       {
-        m_Substances.AddActiveSubstance(scc->GetSubstance());
+        subMgr.AddActiveSubstance(scc->GetSubstance());
       }
     }
     mySubCompInfuse->Copy(*cSubInfusion);

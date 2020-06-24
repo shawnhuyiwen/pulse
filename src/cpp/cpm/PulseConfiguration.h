@@ -20,7 +20,7 @@ class PULSE_DECL PulseConfiguration : public SEEngineConfiguration
   friend class PBPulseConfiguration;//friend the serialization class
 public:
 
-  PulseConfiguration(Logger* logger);
+  PulseConfiguration(Logger* logger=nullptr);
   virtual ~PulseConfiguration();
   
   virtual void Clear();

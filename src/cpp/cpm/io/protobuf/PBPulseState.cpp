@@ -130,7 +130,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     for (int i = 0; i < src.conditions().anycondition_size(); i++)
     {
       SECondition* c = PBCondition::Load(src.conditions().anycondition()[i], *dst.m_Substances);
-      dst.m_Conditions->ProcessCondition(*c);
+      dst.m_Conditions->Copy(*c, *dst.m_Substances);
       delete c;
     }
   }
@@ -141,7 +141,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     for (int i = 0; i < src.activeactions().anyaction_size(); i++)
     {
       SEAction* a = PBAction::Load(src.activeactions().anyaction()[i], *dst.m_Substances);
-      dst.m_Actions->ProcessAction(*a);
+      dst.m_Actions->ProcessAction(*a, *dst.m_Substances);
       delete a;
     }
   }

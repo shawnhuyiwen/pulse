@@ -13,19 +13,19 @@ class CDM_DECL SEActionManager : public Loggable
   friend class PBEngine;//friend the serialization class
 public:
 
-  SEActionManager(SESubstanceManager&);
+  SEActionManager(Logger* logger=nullptr);
   ~SEActionManager();
 
   void Clear();
   
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename);
+  bool SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, SESubstanceManager& subMgr);
 
   static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
-  bool ProcessAction(const SEAction& action);// Will make a copy
+  bool ProcessAction(const SEAction& action, SESubstanceManager&);// Will make a copy
 
   SEPatientActionCollection&                 GetPatientActions()           { return *m_PatientActions; }
   SEEnvironmentActionCollection&             GetEnvironmentActions()       { return *m_EnvironmentActions; }
@@ -38,7 +38,6 @@ public:
   void GetAllActions(std::vector<const SEAction*>& v) const;
 
 protected:
-  SESubstanceManager& m_Substances;
 
   SEPatientActionCollection*           m_PatientActions;
   SEEnvironmentActionCollection*       m_EnvironmentActions;

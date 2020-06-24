@@ -262,7 +262,7 @@ void Tissue::AtSteadyState()
     if (m_data.GetConditions().HasConsumeMeal())
     {
       SEScalarMass mass;
-      SEMeal& meal = m_data.GetConditions().GetConsumeMeal()->GetMeal();
+      SEMeal& meal = m_data.GetConditions().GetConsumeMeal().GetMeal();
       double elapsedTime_s = meal.GetElapsedTime().GetValue(TimeUnit::s);
       double patientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
       double renalVolumeCleared = m_Albumin->GetClearance().GetRenalClearance(VolumePerTimeMassUnit::mL_Per_s_kg)*patientWeight_kg*elapsedTime_s;

@@ -456,7 +456,7 @@ bool SARunner::RunSimulation(std::string const& outDir, pulse::study::bind::sens
   //cfg.SetChemoreceptorFeedback(eSwitch::Off);
   pulse->SetConfigurationOverride(&cfg);
 
-  SEPatientConfiguration pc(pulse->GetSubstanceManager());
+  SEPatientConfiguration pc;
   pc.SetPatientFile("./patients/StandardMale.json");
   if (!pulse->InitializeEngine(pc)) return false;
 

@@ -15,7 +15,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
 
-SEEnvironmentActionCollection::SEEnvironmentActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
+SEEnvironmentActionCollection::SEEnvironmentActionCollection(Logger* logger) : Loggable(logger)
 {
   m_ChangeEnvironmentalConditions = nullptr;
   m_ThermalApplication = nullptr;
@@ -32,14 +32,14 @@ void SEEnvironmentActionCollection::Clear()
   RemoveThermalApplication();
 }
 
-bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action)
+bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action, SESubstanceManager& subMgr)
 {
   const SEChangeEnvironmentalConditions* conditions = dynamic_cast<const SEChangeEnvironmentalConditions*>(&action);
   if (conditions != nullptr)
   {
     if (m_ChangeEnvironmentalConditions == nullptr)
       m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions(GetLogger());
-    m_ChangeEnvironmentalConditions->Copy(*conditions, m_Substances);
+    m_ChangeEnvironmentalConditions->Copy(*conditions, subMgr);
     if (!m_ChangeEnvironmentalConditions->IsActive())
       RemoveChangeEnvironmentalConditions();
     return true;

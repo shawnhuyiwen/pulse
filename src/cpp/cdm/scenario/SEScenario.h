@@ -13,7 +13,7 @@ class CDM_DECL SEScenario : public Loggable
   friend class PBScenario;//friend the serialization class
 public:
 
-  SEScenario(Logger* logger, std::string const& dataDir="./");
+  SEScenario(Logger* logger=nullptr, std::string const& dataDir="./");
   virtual ~SEScenario();
   
   virtual void Clear(); //clear memory
@@ -62,5 +62,4 @@ protected:
   SEPatientConfiguration*                     m_PatientConfiguration;
   SEDataRequestManager*                       m_DataRequestMgr;
   std::vector<const SEAction*>                m_Actions;
-
 };

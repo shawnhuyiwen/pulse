@@ -23,44 +23,66 @@ int main(int argc, char* argv[])
     std::for_each(mode.begin(), mode.end(), [](char& c) { c = ::tolower(c); });
 
     HRunner hr("./test_results/hydrocephalus/HydrocephalusRunner.log");
+    hr.GetLogger()->LogToConsole(true);
     pulse::study::bind::hydrocephalus::SimulationListData simList;
     simList.set_outputrootdir("./test_results/hydrocephalus/");
 
-    auto sim = simList.add_simulation();
     if (mode == "single")
     {
+      auto sim = simList.add_simulation();
       sim->set_id(42);
       sim->set_name("single");
       sim->set_cerebrospinalfluidabsorptionrate_ml_per_min(50);
       sim->set_cerebrospinalfluidproductionrate_ml_per_min(10);
       sim->set_intracranialspacecompliance_ml_per_mmhg(100);
-      sim->set_intracranialspacevolume_ml(200);
+      sim->set_intracranialspacevolumebaseline_ml(100);
       hr.Run(simList);
       return 0;
     }
     else
     {
-        //compliance loop
-        for (double compliance=35.0; compliance<165.0; compliance+=15)
+      double complianceMin = 35;
+      double complianceMax = 155;// 165;
+      double complianceStep = 30;//15;
+
+      double volumeMin = 70;
+      double volumeMax = 150;
+      double volumeStep = 20;// 15;
+
+      double absorptionRateMin = 0.23;
+      double absorptionRateMax = 0.53;// 0.52;
+      double absorptionRateStep = 0.1;// 0.05;
+
+      double productionRateMin = 0.23;
+      double productionRateMax = 0.53;// 0.52;
+      double productionRateStep = 0.1;// 0.05;
+      size_t cnt = 0;
+      //compliance loop
+      for (double compliance=complianceMin; compliance < complianceMax; compliance += complianceStep)
+      {
+        //volume loop
+        for (double volume=volumeMin; volume < volumeMax; volume += volumeStep)
         {
-            sim->set_intracranialspacecompliance_ml_per_mmhg(compliance);
-            //volume loop
-            for (double volume=70.0; volume<150.0; volume+=15)
+          //absorpotion loop
+          for (double absorptionRate=absorptionRateMin; absorptionRate < absorptionRateMax; absorptionRate += absorptionRateStep)
+          {
+            //production loop
+            for (double productionRate=productionRateMin; productionRate < productionRateMax; productionRate += productionRateStep)
             {
-                sim->set_intracranialspacevolume_ml(volume);
-                //absorpotion loop
-                for (double absorptionRate=0.23; absorptionRate<0.52; absorptionRate+=0.05)
-                {
-                    sim->set_cerebrospinalfluidabsorptionrate_ml_per_min(absorptionRate);
-                    //production loop
-                    for (double productionRate=0.23; productionRate<0.52; productionRate+=0.05)
-                    {
-                        sim->set_cerebrospinalfluidproductionrate_ml_per_min(productionRate);
-                    }
-                }
+              auto sim = simList.add_simulation();
+              sim->set_id(cnt++);
+              sim->set_name("Preliminary Data");
+              sim->set_intracranialspacecompliance_ml_per_mmhg(compliance);
+              sim->set_intracranialspacevolumebaseline_ml(volume);
+              sim->set_cerebrospinalfluidabsorptionrate_ml_per_min(absorptionRate);
+              sim->set_cerebrospinalfluidproductionrate_ml_per_min(productionRate);
             }
+          }
         }
-        hr.Run(simList);
+      }
+      hr.GetLogger()->Info("Running a simList with " + std::to_string(simList.simulation_size()) + " runs.");
+      hr.Run(simList);
+      return 0;
     }
     std::cerr << "Unsupported mode : " << mode << std::endl;
   }

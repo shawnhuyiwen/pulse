@@ -141,8 +141,8 @@ std::string PulseEngineThunk::SerializeToString(SerializationFormat format)
 
 bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format, std::string const& data_dir)
 {
-  SEPatientConfiguration pc(data->eng->GetSubstanceManager());
-  if (!pc.SerializeFromString(patient_configuration, format))
+  SEPatientConfiguration pc(data->eng->GetLogger());
+  if (!pc.SerializeFromString(patient_configuration, format, data->eng->GetSubstanceManager()))
   {
     data->eng->GetLogger()->Error("Unable to load patient configuration string");
     return false;

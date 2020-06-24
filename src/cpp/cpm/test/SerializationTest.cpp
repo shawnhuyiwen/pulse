@@ -71,7 +71,7 @@ public:
 void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 {
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerResults.csv");
-  SEPatientConfiguration pconfig(pc->GetSubstanceManager());
+  SEPatientConfiguration pconfig;
   pconfig.SetPatientFile("StandardMale.json");
   if (!pc->InitializeEngine(pconfig))
   {
@@ -125,7 +125,7 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& tracker, const SESubstance& succs)
 {
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsResults.csv");
-  SEPatientConfiguration pconfig(pc->GetSubstanceManager());
+  SEPatientConfiguration pconfig;
   pconfig.SetPatientFile("StandardMale.json");
   if (!pc->InitializeEngine(pconfig))
   {

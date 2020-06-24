@@ -101,8 +101,8 @@ PulseData::PulseData(Logger* logger) : Loggable(logger)
 
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
 
-  m_Actions = std::unique_ptr<SEActionManager>(new SEActionManager(*m_Substances));
-  m_Conditions = std::unique_ptr<SEConditionManager>(new SEConditionManager(*m_Substances));
+  m_Actions = std::unique_ptr<SEActionManager>(new SEActionManager(GetLogger()));
+  m_Conditions = std::unique_ptr<SEConditionManager>(new SEConditionManager(GetLogger()));
 
   m_BloodChemistrySystem = std::unique_ptr<BloodChemistry>(new BloodChemistry(*this));
   m_CardiovascularSystem = std::unique_ptr<Cardiovascular>(new Cardiovascular(*this));
@@ -277,8 +277,8 @@ bool PulseController::SerializeToString(std::string& output, SerializationFormat
 
 bool PulseController::InitializeEngine(const std::string& patient_configuration, SerializationFormat m)
 {
-  SEPatientConfiguration pc(*m_Substances);
-  pc.SerializeFromString(patient_configuration, m);
+  SEPatientConfiguration pc(GetLogger());
+  pc.SerializeFromString(patient_configuration, m, *m_Substances);
   return InitializeEngine(pc);
 }
 
@@ -331,7 +331,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
 
   // We need to copy conditions here, so systems can prepare for them in their AtSteadyState method
   if (patient_configuration.HasConditions())
-    m_Conditions->Copy(*patient_configuration.GetConditions());
+    m_Conditions->Copy(*patient_configuration.GetConditions(), *m_Substances);
   AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
 
   // Copy any changes to the current patient to the initial patient
@@ -418,7 +418,13 @@ bool PulseController::Initialize(SEPatient const& patient)
   // Due to needing the initial environment values for circuits to construct properly
   Info("Creating Circuits and Compartments");
   CreateCircuitsAndCompartments();
-  OverrideCircuits();
+
+  // Appy any prestabilization overrides
+  if (m_Config->HasInitialOverrides())
+  {
+    ProcessAction(m_Config->GetInitialOverrides());
+    OverrideCircuits();// Override any circuit values
+  }
 
   m_SpareAdvanceTime_s = 0;
   m_AirwayMode = eAirwayMode::Free;
@@ -1209,6 +1215,18 @@ void PulseController::PostProcess()
 
 bool PulseController::ProcessAction(const SEAction& action)
 {
+  // We can setup overrides before the engine is ready
+  const SEOverrides* overrides = dynamic_cast<const SEOverrides*>(&action);
+  if (overrides != nullptr)
+  {
+    for (auto& so : overrides->GetScalarProperties())
+    {
+      m_ScalarOverrides.push_back(so);
+      Info("Overriding " + so.name + " with " + cdm::to_string(so.value) + " " + so.unit);
+    }
+    return true;
+  }
+
   if (!IsReady())
     return false;
   m_ss << "[Action] " << m_SimulationTime << ", " << action;
@@ -1241,14 +1259,6 @@ bool PulseController::ProcessAction(const SEAction& action)
     }
     else
       return SerializeFromFile(serialize->GetFilename());
-    return true;
-  }
-
-  const SEOverrides* overrides = dynamic_cast<const SEOverrides*>(&action);
-  if (overrides != nullptr)
-  {
-    for (auto& so : overrides->GetScalarProperties())
-      m_ScalarOverrides.push_back(so);
     return true;
   }
 
@@ -1328,7 +1338,7 @@ bool PulseController::ProcessAction(const SEAction& action)
     return true;
   }
 
-  return GetActions().ProcessAction(action);
+  return GetActions().ProcessAction(action, *m_Substances);
 }
 
 bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) const
@@ -1440,31 +1450,30 @@ bool PulseController::CreateCircuitsAndCompartments()
 // assumes circuit overrides and doesn't check if override is not applied
 bool PulseController::OverrideCircuits()
 {
-  if (!m_Config->HasInitialOverrides())
-    return true;
+  bool bReturn = true;
+  if (m_ScalarOverrides.empty())
+    return bReturn;
 
-  SEOverrides& overrides = m_Config->GetInitialOverrides();
-  // Apply Overrides (Note using Force, as these values are locked (for good reason)
-  // But we know what we are doing, right?
   SEFluidCircuit& cv = GetCircuits().GetActiveCardiovascularCircuit();
   SEFluidCircuit& resp = GetCircuits().GetRespiratoryCircuit();
-
-  bool bReturn = true;
-  for (auto& sp : overrides.GetScalarProperties())
+  for (auto& sp : m_ScalarOverrides)
   {
+    SEFluidCircuitNode* node = nullptr;
     SEFluidCircuitPath* path = nullptr;
     if (resp.HasPath(sp.name))
-    {
       path = resp.GetPath(sp.name);
-    }
     else if (cv.HasPath(sp.name))
-    {
       path = cv.GetPath(sp.name);
-    }
-    if (path == nullptr)
-    {
-      continue;
-    }
+    else if (resp.HasNode(sp.name))
+      node = resp.GetNode(sp.name);
+    else if (cv.HasNode(sp.name))
+      node = cv.GetNode(sp.name);
+
+    if (path == nullptr && node == nullptr)
+      continue; // Must be an override for a system variable
+
+    // Apply Overrides (Note using Force, as these values are locked (for good reason)
+    // But we know what we are doing, right?
     if (PressureTimePerVolumeUnit::IsValidUnit(sp.unit))
     {// Assume its a resistor
       const PressureTimePerVolumeUnit& u = PressureTimePerVolumeUnit::GetCompoundUnit(sp.unit);
@@ -1478,6 +1487,13 @@ bool PulseController::OverrideCircuits()
       path->GetCompliance().ForceValue(sp.value, u);
       path->GetNextCompliance().ForceValue(sp.value, u);
       path->GetComplianceBaseline().ForceValue(sp.value, u);
+    }
+    else if (VolumeUnit::IsValidUnit(sp.unit))
+    {
+      const VolumeUnit& u = VolumeUnit::GetCompoundUnit(sp.unit);
+      node->GetVolume().ForceValue(sp.value, u);
+      node->GetNextVolume().ForceValue(sp.value, u);
+      node->GetVolumeBaseline().ForceValue(sp.value, u);
     }
     else
     {

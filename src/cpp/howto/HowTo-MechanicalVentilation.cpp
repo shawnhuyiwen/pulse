@@ -102,29 +102,26 @@ void HowToMechanicalVentilation()
   }
   else
   {
-    SEPatientConfiguration pc(pe->GetSubstanceManager());
+    SEPatientConfiguration pc;
     pc.SetPatientFile("StandardMale.json");
 
     if (false) //COPD
     {
-      SEChronicObstructivePulmonaryDisease COPD;
+      SEChronicObstructivePulmonaryDisease& COPD = pc.GetConditions().GetChronicObstructivePulmonaryDisease();
       COPD.GetBronchitisSeverity().SetValue(0.5);
       COPD.GetEmphysemaSeverity().SetValue(0.7);
-      pc.GetConditions().ProcessCondition(COPD);
     }
     if (false) //LobarPneumonia
     {      
-      SELobarPneumonia LobarPneumonia;
+      SELobarPneumonia& LobarPneumonia = pc.GetConditions().GetLobarPneumonia();
       LobarPneumonia.GetSeverity().SetValue(0.2);
       LobarPneumonia.GetLeftLungAffected().SetValue(1.0);
       LobarPneumonia.GetRightLungAffected().SetValue(1.0);
-      pc.GetConditions().ProcessCondition(LobarPneumonia);
     }
     if (false) //Generic ImpairedAlveolarExchange (no specified reason)
     {      
-      SEImpairedAlveolarExchange ImpairedAlveolarExchange;
+      SEImpairedAlveolarExchange& ImpairedAlveolarExchange = pc.GetConditions().GetImpairedAlveolarExchange();
       ImpairedAlveolarExchange.GetImpairedFraction().SetValue(0.5);
-      pc.GetConditions().ProcessCondition(ImpairedAlveolarExchange);
     }
 
     //Select the patient and initialize with conditions
