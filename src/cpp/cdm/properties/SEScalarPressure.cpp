@@ -42,7 +42,5 @@ const PressureUnit& PressureUnit::GetCompoundUnit(const std::string& unit)
     return atm;
   if (mbar.GetString().compare(unit) == 0)
     return mbar;
-  std::stringstream err;
-  err << unit << " is not a valid Pressure unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Pressure unit");
 }

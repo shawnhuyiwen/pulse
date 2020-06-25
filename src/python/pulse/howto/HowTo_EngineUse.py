@@ -159,6 +159,16 @@ def HowTo_UseEngine():
             print("Unable to load stabilize engine")
             return
 
+    # You can get the initial patient at any time
+    # But it will not change, so once is good
+    # All values will be set to what the engine stabilized to
+    initialPatient = SEPatient();
+    pulse.get_initial_patient(initialPatient);
+    print("Sex: " + str(initialPatient.get_sex()));
+    print("Age: " + str(initialPatient.get_age()));
+    print("Height: " + str(initialPatient.get_height()));
+    print("Weight: " + str(initialPatient.get_weight()));
+
     # Get some data from the engine
     # The results array contains a value for each of the data requests made above
     # The order of the array is in the same order as the data requests array is

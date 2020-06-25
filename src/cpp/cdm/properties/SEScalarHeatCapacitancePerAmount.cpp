@@ -17,7 +17,5 @@ const HeatCapacitancePerAmountUnit& HeatCapacitancePerAmountUnit::GetCompoundUni
 {
   if (J_Per_K_mol.GetString().compare(unit) == 0)
     return J_Per_K_mol;
-  std::stringstream err;
-  err << unit << " is not a valid HeatCapacitancePerAmount unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid HeatCapacitancePerAmount unit");
 }

@@ -66,11 +66,11 @@ void MechanicalVentilator::Initialize()
 {
   PulseSystem::Initialize();
   SetConnection(eMechanicalVentilator_Connection::NullConnection);
-  m_Inhaling = true;
-  m_CurrentBreathingCycleTime_s = 0.0;
-  m_PressureTarget_cmH2O = 0.0;
-  m_PressureBaseline_cmH2O = 0.0;
-  m_DriverPressure_cmH2O = 0.0;
+  m_CurrentBreathMode = eBreathPeriod::exhale;
+  m_CurrentPeriodTime_s = 0.0;
+  m_DriverPressure_cmH2O = SEScalar::dNaN();
+  m_DriverFlow_L_Per_s = SEScalar::dNaN();
+  m_CurrentInspiratoryVolume_L = 0.0;
   StateChange();
 }
 
@@ -90,8 +90,14 @@ void MechanicalVentilator::SetUp()
   m_Ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
   m_VentilatorAerosol = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
 
+  // Nodes
+  m_VentilatorNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::Ventilator);
+  m_ConnectionNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::Connection);
+  m_AmbientNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::EnvironmentNode::Ambient);
+
   // Paths
   m_EnvironmentToVentilator = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
+  m_YPieceToConnection = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::YPieceToConnection);
 }
 
 void MechanicalVentilator::StateChange()
@@ -103,8 +109,9 @@ void MechanicalVentilator::StateChange()
     return;
   }
 
-  m_Inhaling = true;
-  m_CurrentBreathingCycleTime_s = 0.0;
+  m_CurrentBreathMode = eBreathPeriod::exhale;
+  m_CurrentPeriodTime_s = 0.0;
+  m_CurrentInspiratoryVolume_L = 0.0;
 
   // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
 
@@ -298,20 +305,20 @@ void MechanicalVentilator::PreProcess()
   //Do nothing if the ventilator is off and not initialized
   if (GetConnection() == eMechanicalVentilator_Connection::Off)
   {
-    m_Inhaling = true;
-    m_CurrentBreathingCycleTime_s = 0.0;
+    m_CurrentBreathMode = eBreathPeriod::exhale;
+    m_CurrentPeriodTime_s = 0.0;
+    m_CurrentInspiratoryVolume_L = 0.0;
     return;
   }
   
   SetConnection();
-  ApplyBaseline();
-  ApplyTarget();
   CalculateInspiration();
+  CalculatePause();
   CalculateExpiration();
-  SetVentilatorPressure();
+  SetVentilatorDriver();
   SetResistances();
 
-  m_CurrentBreathingCycleTime_s += m_dt_s;
+  m_CurrentPeriodTime_s += m_dt_s;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -347,57 +354,40 @@ void MechanicalVentilator::PostProcess(bool solve_and_transport)
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Set the instantaneous driver pressure on the circuit pressure source.
+/// Set the instantaneous driver pressure or flow on the circuit source.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::SetVentilatorPressure()
+void MechanicalVentilator::SetVentilatorDriver()
 {
-  m_EnvironmentToVentilator->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
-}
+  if (!std::isnan(m_DriverPressure_cmH2O) && !std::isnan(m_DriverFlow_L_Per_s))
+    {
+      /// \error Error: Ventilator driver pressure and flow both set, only one allowed. Using the pressure value.
+      Error("Ventilator driver pressure and flow both set, only one allowed. Using the pressure value.");
+    }
+  else if (std::isnan(m_DriverPressure_cmH2O) && std::isnan(m_DriverFlow_L_Per_s))
+  {
+    /// \error Error: Ventilator driver pressure or flow must be set. Using a pressure of 0.
+    Error("Ventilator driver pressure or flow must be set. Using a pressure of 0.");
 
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Parse the baseline value.
-//--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::ApplyBaseline()
-{
-  m_PressureBaseline_cmH2O = 0.0;
-  if (HasPositiveEndExpiredPressure())
-  {
-    m_PressureBaseline_cmH2O = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+    m_DriverPressure_cmH2O = 0.0;
   }
-  else if (HasFunctionalResidualCapacity())
-  {
-    /// \error Error: FRC baseline is not yet supported.
-    Error("FRC baseline is not yet supported.");
-  }
-  else
-  {
-    /// \error Error: No expiration baseline defined.
-    Error("No expiration baseline defined.");
-  }
-}
 
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Parse the target value.
-//--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::ApplyTarget()
-{
-  m_PressureTarget_cmH2O = m_PressureBaseline_cmH2O;
-
-  if (HasPeakInspiratoryPressure())
+  if (!std::isnan(m_DriverPressure_cmH2O))
   {
-    m_PressureTarget_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
+    if (m_EnvironmentToVentilator->HasNextFlowSource())
+    {
+      m_EnvironmentToVentilator->GetNextFlowSource().Invalidate();
+      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+    }
+    m_EnvironmentToVentilator->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
   }
-  else if (HasEndTidalCarbonDioxidePressure())
+  else if (!std::isnan(m_DriverFlow_L_Per_s))
   {
-    /// \error Error: EtCO2 target is not yet supported.
-    Error("EtCO2 target is not yet supported.");
-  }
-  else
-  {
-    /// \error Error: No inspiration trigger defined.
-    Error("No inspiration target defined.");
+    if (m_EnvironmentToVentilator->HasNextPressureSource())
+    {
+      m_EnvironmentToVentilator->GetNextPressureSource().Invalidate();
+      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+    }
+    m_EnvironmentToVentilator->GetNextFlowSource().SetValue(m_DriverFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
   }
 }
 
@@ -407,65 +397,108 @@ void MechanicalVentilator::ApplyTarget()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::CalculateInspiration()
 {
-  if (!m_Inhaling)
+  if (m_CurrentBreathMode != eBreathPeriod::inhale)
   {
+    m_CurrentInspiratoryVolume_L = 0.0;
     return;
   }
 
-  double pauseTime_s = 0.0;
-  if (HasInspirationPauseTime())
-  {
-    pauseTime_s = GetInspirationPauseTime(TimeUnit::s);
-  }
+  m_CurrentInspiratoryVolume_L += m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) * m_dt_s;
 
   // Check trigger
   if (HasExpirationCycleTime())
   {
-    if (m_CurrentBreathingCycleTime_s >= GetExpirationCycleTime(TimeUnit::s) + pauseTime_s)
+    if (m_CurrentPeriodTime_s >= GetExpirationCycleTime(TimeUnit::s))
     {
-      m_CurrentBreathingCycleTime_s = 0.0;
-      m_Inhaling = false;
-      return;
-    }
-    else if (m_CurrentBreathingCycleTime_s >= GetExpirationCycleTime(TimeUnit::s))
-    {
-      // Apply pause
-      // Don't change the driver pressure
+      CycleMode();
       return;
     }
   }
   else if (HasExpirationCyclePressure())
   {
-    /// \error Error: Expiration pressure cycle is not yet supported.
-    Error("Expiration pressure cycle is not yet supported.");
+    /// \error Fatal: Expiration pressure cycle is not yet supported.
+    Fatal("Expiration pressure cycle is not yet supported.");
+  }
+  else if (HasExpirationCycleVolume())
+  {
+    if (m_CurrentInspiratoryVolume_L >= GetExpirationCycleVolume(VolumeUnit::L))
+    {
+      m_CurrentInspiratoryVolume_L = 0.0;
+      CycleMode();
+      return;
+    }
   }
   else if (HasExpirationCycleFlow())
   {
-    /// \error Error: Expiration flow cycle is not yet supported.
-    Error("Expiration flow cycle is not yet supported.");
+    /// \error Fatal: Expiration flow cycle is not yet supported.
+    Fatal("Expiration flow cycle is not yet supported.");
   }
   else
   {
-    /// \error Error: No expiration cycle defined.
-    Error("No expiration cycle defined.");
+    /// \error Fatal: No expiration cycle defined.
+    Fatal("No expiration cycle defined.");
   }
 
   // Check limit
   if (HasInspirationLimitPressure() || HasInspirationLimitFlow() || HasInspirationLimitVolume())
   {
-    /// \error Error: Limits are not yet supported.
-    Error("Limits are not yet supported.");
+    /// \error Fatal: Limits are not yet supported.
+    Fatal("Limits are not yet supported.");
   }
 
   // Apply waveform
   if (GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::Square)
   {
-    m_DriverPressure_cmH2O = m_PressureTarget_cmH2O;
+    if (HasPeakInspiratoryPressure())
+    {
+      m_DriverPressure_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
+      m_DriverFlow_L_Per_s = SEScalar::dNaN();
+    }
+    else if (HasInspirationTargetFlow())
+    {
+      m_DriverFlow_L_Per_s = GetInspirationTargetFlow(VolumePerTimeUnit::L_Per_s);
+      m_DriverPressure_cmH2O = SEScalar::dNaN();
+    }
+    else
+    {
+      /// \error Fatal: Inspiration mode not yet supported.
+      Fatal("Inspiration mode not yet supported.");
+    }
   }
   else
   {
-    /// \error Error: Non-square waveforms are not yet supported.
-    Error("Non-square waveforms are not yet supported.");
+    /// \error Fatal: Non-square waveforms are not yet supported.
+    Fatal("Non-square waveforms are not yet supported.");
+  }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Determine the instantaneous driver pressure during pause.
+//--------------------------------------------------------------------------------------------------
+void MechanicalVentilator::CalculatePause()
+{
+  if (m_CurrentBreathMode != eBreathPeriod::pause)
+  {
+    return;
+  }
+
+  if (HasInspirationPauseTime())
+  {
+    if (m_CurrentPeriodTime_s < GetInspirationPauseTime(TimeUnit::s))
+    {
+      // Hold this pressure
+      m_DriverPressure_cmH2O = m_VentilatorNode->GetNextPressure(PressureUnit::cmH2O);
+      m_DriverFlow_L_Per_s = SEScalar::dNaN();
+    }
+    else
+    {
+      CycleMode();
+    }
+  }
+  else
+  {
+    CycleMode();
   }
 }
 
@@ -475,46 +508,101 @@ void MechanicalVentilator::CalculateInspiration()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::CalculateExpiration()
 {
-  if (m_Inhaling)
+  if (m_CurrentBreathMode != eBreathPeriod::exhale)
   {
     return;
   }
 
   // Check trigger
-  if (HasInspirationTriggerTime())
+  bool hasTrigger = false;
+  if (HasInspirationMachineTriggerTime())
   {
-    if (m_CurrentBreathingCycleTime_s >= GetInspirationTriggerTime(TimeUnit::s))
+    if (m_CurrentPeriodTime_s >= GetInspirationMachineTriggerTime(TimeUnit::s))
     {
-      m_CurrentBreathingCycleTime_s = 0.0;
-      m_Inhaling = true;
+      CycleMode();
       return;
     }
+
+    hasTrigger = true;
   }
-  else if (HasInspirationTriggerPressure())
+
+  if (HasInspirationPatientTriggerPressure())
   {
-    /// \error Error: Inspiration pressure trigger is not yet supported.
-    Error("Inspiration pressure trigger is not yet supported.");
+    double relativePressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
+    if (HasPositiveEndExpiredPressure())
+    {
+      relativePressure_cmH2O -= GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+    }
+    if (relativePressure_cmH2O <= GetInspirationPatientTriggerPressure(PressureUnit::cmH2O))
+    {
+      CycleMode();
+      return;
+    }
+
+    hasTrigger = true;
   }
-  else if (HasInspirationTriggerFlow())
+
+  if (HasInspirationPatientTriggerFlow())
   {
-    /// \error Error: Inspiration flow trigger is not yet supported.
-    Error("Inspiration flow trigger is not yet supported.");
+    /// \error Fatal: Inspiration flow trigger is not yet supported.
+    Fatal("Inspiration flow trigger is not yet supported.");
+    hasTrigger = true;
   }
-  else
+
+  if (!hasTrigger)
   {
-    /// \error Error: No inspiration trigger defined.
-    Error("No inspiration trigger defined.");
+    /// \error Fatal: No inspiration trigger defined.
+    Fatal("No inspiration trigger defined.");
   }
 
   // Apply waveform
   if (GetExpirationWaveform() == eMechanicalVentilator_DriverWaveform::Square)
   {
-    m_DriverPressure_cmH2O = m_PressureBaseline_cmH2O;
+    if (HasPositiveEndExpiredPressure())
+    {
+      m_DriverPressure_cmH2O = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+      m_DriverFlow_L_Per_s = SEScalar::dNaN();
+    }
+    else if (HasFunctionalResidualCapacity())
+    {
+      /// \error Fatal: Functional residual capacity expiratory baseline not yet supported.
+      Fatal("Functional residual capacity expiratory baseline not yet supported.");
+    }
+    else
+    {
+      m_DriverPressure_cmH2O = 0.0;
+      m_DriverFlow_L_Per_s = SEScalar::dNaN();
+    }
   }
   else
   {
-    /// \error Error: Non-square waveforms are not yet supported.
-    Error("Non-square waveforms are not yet supported.");
+    /// \error Fatal: Non-square waveforms are not yet supported.
+    Fatal("Non-square waveforms are not yet supported.");
+  }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Go to next breath mode based on current mode.
+///
+/// \details
+/// Inhale to pause, pause to exhale, or exhale to inhale.
+//--------------------------------------------------------------------------------------------------
+void MechanicalVentilator::CycleMode()
+{
+  m_CurrentPeriodTime_s = 0.0;
+
+  if (m_CurrentBreathMode == eBreathPeriod::inhale)
+  {
+    m_CurrentBreathMode = eBreathPeriod::pause;
+  }
+  else if (m_CurrentBreathMode == eBreathPeriod::pause)
+  {
+    m_CurrentBreathMode = eBreathPeriod::exhale;
+  }
+  else if (m_CurrentBreathMode == eBreathPeriod::exhale)
+  {
+    m_CurrentBreathMode = eBreathPeriod::inhale;
   }
 }
 

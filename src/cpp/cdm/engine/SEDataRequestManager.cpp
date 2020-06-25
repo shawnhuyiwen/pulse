@@ -221,39 +221,39 @@ SEDataRequest* SEDataRequestManager::FindGasCompartmentDataRequest(const std::st
   return nullptr;
 }
 
-SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::string& cmptName, const std::string& substance, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindGasCompartmentDataRequest(cmptName, sub, property);
+  SEDataRequest* dr = FindGasCompartmentDataRequest(cmptName, substance, property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::GasCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
-  dr->SetSubstanceName(sub.GetName());
+  dr->SetSubstanceName(substance);
   dr->SetPropertyName(property);
   return *dr;
 }
-SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateGasCompartmentDataRequest(const std::string& cmptName, const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindGasCompartmentDataRequest(cmptName, sub, property);
+  SEDataRequest* dr = FindGasCompartmentDataRequest(cmptName, substance, property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::GasCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
-  dr->SetSubstanceName(sub.GetName());
+  dr->SetSubstanceName(substance);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
   return *dr;
 }
-SEDataRequest* SEDataRequestManager::FindGasCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string property)
+SEDataRequest* SEDataRequestManager::FindGasCompartmentDataRequest(const std::string& cmptName, const std::string& substance, const std::string property)
 {
   for (SEDataRequest* dr : m_Requests)
   {
     if (dr->GetCategory() == eDataRequest_Category::GasCompartment &&
       dr->GetPropertyName() == property &&
       dr->GetCompartmentName() == cmptName &&
-      dr->GetSubstanceName() == sub.GetName())
+      dr->GetSubstanceName() == substance)
       return dr;
   }
   return nullptr;
@@ -294,39 +294,39 @@ SEDataRequest* SEDataRequestManager::FindLiquidCompartmentDataRequest(const std:
   return nullptr;
 }
 
-SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const std::string& cmptName, const std::string& substance, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindLiquidCompartmentDataRequest(cmptName, sub, property);
+  SEDataRequest* dr = FindLiquidCompartmentDataRequest(cmptName, substance, property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::LiquidCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
-  dr->SetSubstanceName(sub.GetName());
+  dr->SetSubstanceName(substance);
   dr->SetPropertyName(property);
   return *dr;
 }
-SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateLiquidCompartmentDataRequest(const std::string& cmptName, const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindLiquidCompartmentDataRequest(cmptName, sub, property);
+  SEDataRequest* dr = FindLiquidCompartmentDataRequest(cmptName, substance, property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::LiquidCompartment, dfault);
   m_Requests.push_back(dr);
   dr->SetCompartmentName(cmptName);
-  dr->SetSubstanceName(sub.GetName());
+  dr->SetSubstanceName(substance);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
   return *dr;
 }
-SEDataRequest* SEDataRequestManager::FindLiquidCompartmentDataRequest(const std::string& cmptName, const SESubstance& sub, const std::string property)
+SEDataRequest* SEDataRequestManager::FindLiquidCompartmentDataRequest(const std::string& cmptName, const std::string& substance, const std::string property)
 {
   for (SEDataRequest* dr : m_Requests)
   {
     if (dr->GetCategory() == eDataRequest_Category::LiquidCompartment && 
         dr->GetPropertyName() == property &&
         dr->GetCompartmentName() == cmptName &&
-        dr->GetSubstanceName() == sub.GetName())
+        dr->GetSubstanceName() == substance)
       return dr;
   }
   return nullptr;
@@ -402,36 +402,36 @@ SEDataRequest* SEDataRequestManager::FindTissueCompartmentDataRequest(const std:
   return nullptr;
 }
 
-SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const SESubstance& sub, const std::string& property, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const std::string& substance, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindSubstanceDataRequest(sub, property);
+  SEDataRequest* dr = FindSubstanceDataRequest(substance, property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::Substance, dfault);
   m_Requests.push_back(dr);
-  dr->SetSubstanceName(sub.GetName());
+  dr->SetSubstanceName(substance);
   dr->SetPropertyName(property);
   return *dr;
 }
-SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const SESubstance& sub, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+SEDataRequest& SEDataRequestManager::CreateSubstanceDataRequest(const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEDataRequest* dr = FindSubstanceDataRequest(sub, property);
+  SEDataRequest* dr = FindSubstanceDataRequest(substance, property);
   if (dr != nullptr)
     return *dr;
   dr = new SEDataRequest(eDataRequest_Category::Substance, dfault);
   m_Requests.push_back(dr);
-  dr->SetSubstanceName(sub.GetName());
+  dr->SetSubstanceName(substance);
   dr->SetPropertyName(property);
   dr->SetUnit(unit);
   return *dr;
 }
-SEDataRequest* SEDataRequestManager::FindSubstanceDataRequest(const SESubstance& sub, const std::string& property)
+SEDataRequest* SEDataRequestManager::FindSubstanceDataRequest(const std::string& substance, const std::string& property)
 {
   for (SEDataRequest* dr : m_Requests)
   {
     if (dr->GetCategory() == eDataRequest_Category::Substance && 
         dr->GetPropertyName() == property && 
-        dr->GetSubstanceName() == sub.GetName())
+        dr->GetSubstanceName() == substance)
       return dr;
   }
   return nullptr;

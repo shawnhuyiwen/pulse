@@ -11,6 +11,7 @@ namespace Pulse
   // C# class that wraps the PulseC API
   public class PulseEngine
   {
+    private bool alive = false;
     private const string PulseLib = "PulseC";   // Name of our Pulse library (PulseC or PulseCd)
     readonly IntPtr pulse_cptr;                 // Pointer to the pulse engine in C
     private double[] data_values;               // Data coming back from the engine
@@ -50,13 +51,16 @@ namespace Pulse
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, SerializationFormat.JSON);
-      return SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)SerializationFormat.JSON);
+      alive = SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)SerializationFormat.JSON);
+      return alive;
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     static extern bool SerializeToFile(IntPtr pulse, string filename);
     public bool SerializeToFile(string filename)
     {
+      if (!alive)
+        return false;
       return SerializeToFile(pulse_cptr, filename);
     }
 
@@ -66,13 +70,16 @@ namespace Pulse
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, format);
-      return SerializeFromString(pulse_cptr, state, data_mgr_str, (int)format);
+      alive = SerializeFromString(pulse_cptr, state, data_mgr_str, (int)format);
+      return alive;
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     static extern bool SerializeToString(IntPtr pulse, int format, out IntPtr state_str);
     public string SerializeToString(SerializationFormat format)
     {
+      if (!alive)
+        return null;
       if (!SerializeToString(pulse_cptr, (int)format, out str_addr))
         return null;
       string state_str = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
@@ -80,13 +87,29 @@ namespace Pulse
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_mgr, int data_mgr_format, string data_dir);
+    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_mgr, int thunk_format, string data_dir);
     public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr, string data_dir="./")
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string patient_configuration_str = PBPatientConfiguration.SerializeToString(patient_configuration);
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, thunk_as);
-      return InitializeEngine(pulse_cptr, patient_configuration_str, data_mgr_str, (int)thunk_as, data_dir);
+      alive = InitializeEngine(pulse_cptr, patient_configuration_str, data_mgr_str, (int)thunk_as, data_dir);
+      return alive;
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern bool GetInitialPatient(IntPtr pulse, int format, out IntPtr initial_patient);
+    public bool GetInitialPatient(SEPatient p)
+    {
+      if (!alive)
+        return false;
+      if (!GetInitialPatient(pulse_cptr, (int)thunk_as, out str_addr))
+        return false;
+      string patient = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+      if (patient == null)
+        return false;
+      PBPatient.SerializeFromString(patient, p);
+      return true;
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -127,6 +150,8 @@ namespace Pulse
     static extern bool PullActiveEvents(IntPtr pulse, int format, out IntPtr active_events);
     public bool PullActiveEvents(List<SEActiveEvent> active_events)
     {
+      if (!alive)
+        return false;
       active_events.Clear();
       if (!PullActiveEvents(pulse_cptr, (int)thunk_as, out str_addr))
         return false;
@@ -141,12 +166,16 @@ namespace Pulse
     static extern bool ProcessActions(IntPtr pulse, string any_action_list, int format);
     public bool ProcessAction(SEAction action)
     {
+      if (!alive)
+        return false;
       List<SEAction> actions = new List<SEAction>();
       actions.Add(action);
       return ProcessActions(actions);
     }
     public bool ProcessActions(List<SEAction> actions)
     {
+      if (!alive)
+        return false;
       string any_action_list_str = PBAction.SerializeToString(actions);
       //System.Console.Out.WriteLine(any_action_list_str);
       return ProcessActions(pulse_cptr, any_action_list_str, (int)thunk_as);
@@ -156,6 +185,8 @@ namespace Pulse
     static extern bool AdvanceTimeStep(IntPtr pulse);
     public bool AdvanceTimeStep()
     {
+      if (!alive)
+        return false;
       bool b = AdvanceTimeStep(pulse_cptr);
       // Grab events and pass them to handler
       if (event_handler != null)
@@ -193,6 +224,8 @@ namespace Pulse
     }
     public bool AdvanceTime_s(double duration)
     {
+      if (!alive)
+        return false;
       duration += extra_time_s;
       int steps = (int)Math.Floor(duration / time_step_s);
       extra_time_s = duration - (steps * time_step_s);
@@ -208,6 +241,8 @@ namespace Pulse
     static extern IntPtr PullData(IntPtr pulse);
     public double[] PullData()
     {
+      if (!alive)
+        return null;
       IntPtr data = PullData(pulse_cptr);
       Marshal.Copy(data, data_values, 0, data_values.Length);
       return data_values;

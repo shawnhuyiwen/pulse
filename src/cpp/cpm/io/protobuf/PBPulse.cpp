@@ -22,7 +22,7 @@ void PBPulse::Serialize(const PULSE_BIND::ScenarioData& src, PulseScenario& dst)
   PBScenario::Serialize(src.scenario(), dst);
 
   if (src.has_configuration())
-    PBPulseConfiguration::Load(src.configuration(), dst.GetConfiguration());
+    PBPulseConfiguration::Load(src.configuration(), dst.GetConfiguration(), dst.GetSubstanceManager());
 }
 PULSE_BIND::ScenarioData* PBPulse::Unload(const PulseScenario& src)
 {

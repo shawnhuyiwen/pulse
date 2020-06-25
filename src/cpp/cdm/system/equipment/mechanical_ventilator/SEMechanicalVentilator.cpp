@@ -30,6 +30,7 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
 
   m_ExpirationCycleFlow = nullptr;
   m_ExpirationCyclePressure = nullptr;
+  m_ExpirationCycleVolume = nullptr;
   m_ExpirationCycleTime = nullptr;
 
   m_ExpirationTubeResistance = nullptr;
@@ -43,11 +44,12 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
   m_InspirationPauseTime = nullptr;
 
   m_PeakInspiratoryPressure = nullptr;
-  m_EndTidalCarbonDioxidePressure = nullptr;
+  m_InspirationTargetFlow = nullptr;
 
-  m_InspirationTriggerFlow = nullptr;
-  m_InspirationTriggerPressure = nullptr;
-  m_InspirationTriggerTime = nullptr;
+  m_InspirationMachineTriggerTime = nullptr;
+
+  m_InspirationPatientTriggerFlow = nullptr;
+  m_InspirationPatientTriggerPressure = nullptr;  
 
   m_InspirationTubeResistance = nullptr;
   m_InspirationValveResistance = nullptr;
@@ -71,6 +73,7 @@ void SEMechanicalVentilator::Clear()
 
   SAFE_DELETE(m_ExpirationCycleFlow);
   SAFE_DELETE(m_ExpirationCyclePressure);
+  SAFE_DELETE(m_ExpirationCycleVolume);
   SAFE_DELETE(m_ExpirationCycleTime);
 
   SAFE_DELETE(m_ExpirationTubeResistance);
@@ -84,11 +87,12 @@ void SEMechanicalVentilator::Clear()
   SAFE_DELETE(m_InspirationPauseTime);
 
   SAFE_DELETE(m_PeakInspiratoryPressure);
-  SAFE_DELETE(m_EndTidalCarbonDioxidePressure);
+  SAFE_DELETE(m_InspirationTargetFlow);
 
-  SAFE_DELETE(m_InspirationTriggerFlow);
-  SAFE_DELETE(m_InspirationTriggerPressure);
-  SAFE_DELETE(m_InspirationTriggerTime);
+  SAFE_DELETE(m_InspirationMachineTriggerTime);
+
+  SAFE_DELETE(m_InspirationPatientTriggerFlow);
+  SAFE_DELETE(m_InspirationPatientTriggerPressure);
 
   SAFE_DELETE(m_InspirationTubeResistance);
   SAFE_DELETE(m_InspirationValveResistance);
@@ -129,6 +133,7 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
 
   COPY_PROPERTY(ExpirationCycleFlow);
   COPY_PROPERTY(ExpirationCyclePressure);
+  COPY_PROPERTY(ExpirationCycleVolume);
   COPY_PROPERTY(ExpirationCycleTime);
 
   COPY_PROPERTY(ExpirationTubeResistance);
@@ -143,11 +148,12 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
   COPY_PROPERTY(InspirationPauseTime);
 
   COPY_PROPERTY(PeakInspiratoryPressure);
-  COPY_PROPERTY(EndTidalCarbonDioxidePressure);
+  COPY_PROPERTY(InspirationTargetFlow);
 
-  COPY_PROPERTY(InspirationTriggerFlow);
-  COPY_PROPERTY(InspirationTriggerPressure);
-  COPY_PROPERTY(InspirationTriggerTime);
+  COPY_PROPERTY(InspirationMachineTriggerTime);
+
+  COPY_PROPERTY(InspirationPatientTriggerFlow);
+  COPY_PROPERTY(InspirationPatientTriggerPressure);
 
   COPY_PROPERTY(InspirationTubeResistance);
   COPY_PROPERTY(InspirationValveResistance);
@@ -234,6 +240,8 @@ const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
     return &GetExpirationCycleFlow();
   if (name == "ExpirationCyclePressure")
     return &GetExpirationCyclePressure();
+  if (name == "ExpirationCycleVolume")
+    return &GetExpirationCycleVolume();
   if (name == "ExpirationCycleTime")
     return &GetExpirationCycleTime();
 
@@ -254,15 +262,16 @@ const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
 
   if (name == "PeakInspiratoryPressure")
     return &GetPeakInspiratoryPressure();
-  if (name == "EndTidalCarbonDioxidePressure")
-    return &GetEndTidalCarbonDioxidePressure();
+  if (name == "InspirationTargetFlow")
+    return &GetInspirationTargetFlow();
 
-  if (name == "InspirationTriggerFlow")
-    return &GetInspirationTriggerFlow();
-  if (name == "InspirationTriggerPressure")
-    return &GetInspirationTriggerPressure();
-  if (name == "InspirationTriggerTime")
-    return &GetInspirationTriggerTime();
+  if (name == "InspirationMachineTriggerTime")
+    return &GetInspirationMachineTriggerTime();
+
+  if (name == "InspirationPatientTriggerFlow")
+    return &GetInspirationPatientTriggerFlow();
+  if (name == "InspirationPatientTriggerPressure")
+    return &GetInspirationPatientTriggerPressure();
 
   if (name == "InspirationTubeResistance")
     return &GetInspirationTubeResistance();
@@ -367,6 +376,23 @@ double SEMechanicalVentilator::GetExpirationCyclePressure(const PressureUnit& un
   return m_ExpirationCyclePressure->GetValue(unit);
 }
 
+bool SEMechanicalVentilator::HasExpirationCycleVolume() const
+{
+  return m_ExpirationCycleVolume == nullptr ? false : m_ExpirationCycleVolume->IsValid();
+}
+SEScalarVolume& SEMechanicalVentilator::GetExpirationCycleVolume()
+{
+  if (m_ExpirationCycleVolume == nullptr)
+    m_ExpirationCycleVolume = new SEScalarVolume();
+  return *m_ExpirationCycleVolume;
+}
+double SEMechanicalVentilator::GetExpirationCycleVolume(const VolumeUnit& unit) const
+{
+  if (m_ExpirationCycleVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_ExpirationCycleVolume->GetValue(unit);
+}
+
 bool SEMechanicalVentilator::HasExpirationCycleTime() const
 {
   return m_ExpirationCycleTime == nullptr ? false : m_ExpirationCycleTime->IsValid();
@@ -461,6 +487,23 @@ double SEMechanicalVentilator::GetInspirationLimitPressure(const PressureUnit& u
   return m_InspirationLimitPressure->GetValue(unit);
 }
 
+bool SEMechanicalVentilator::HasInspirationLimitVolume() const
+{
+  return m_InspirationLimitVolume == nullptr ? false : m_InspirationLimitVolume->IsValid();
+}
+SEScalarVolume& SEMechanicalVentilator::GetInspirationLimitVolume()
+{
+  if (m_InspirationLimitVolume == nullptr)
+    m_InspirationLimitVolume = new SEScalarVolume();
+  return *m_InspirationLimitVolume;
+}
+double SEMechanicalVentilator::GetInspirationLimitVolume(const VolumeUnit& unit) const
+{
+  if (m_InspirationLimitVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_InspirationLimitVolume->GetValue(unit);
+}
+
 bool SEMechanicalVentilator::HasInspirationPauseTime() const
 {
   return m_InspirationPauseTime == nullptr ? false : m_InspirationPauseTime->IsValid();
@@ -495,89 +538,72 @@ double SEMechanicalVentilator::GetPeakInspiratoryPressure(const PressureUnit& un
   return m_PeakInspiratoryPressure->GetValue(unit);
 }
 
-bool SEMechanicalVentilator::HasEndTidalCarbonDioxidePressure() const
+bool SEMechanicalVentilator::HasInspirationTargetFlow() const
 {
-  return m_EndTidalCarbonDioxidePressure == nullptr ? false : m_EndTidalCarbonDioxidePressure->IsValid();
+  return m_InspirationTargetFlow == nullptr ? false : m_InspirationTargetFlow->IsValid();
 }
-SEScalarPressure& SEMechanicalVentilator::GetEndTidalCarbonDioxidePressure()
+SEScalarVolumePerTime& SEMechanicalVentilator::GetInspirationTargetFlow()
 {
-  if (m_EndTidalCarbonDioxidePressure == nullptr)
-    m_EndTidalCarbonDioxidePressure = new SEScalarPressure();
-  return *m_EndTidalCarbonDioxidePressure;
+  if (m_InspirationTargetFlow == nullptr)
+    m_InspirationTargetFlow = new SEScalarVolumePerTime();
+  return *m_InspirationTargetFlow;
 }
-double SEMechanicalVentilator::GetEndTidalCarbonDioxidePressure(const PressureUnit& unit) const
+double SEMechanicalVentilator::GetInspirationTargetFlow(const VolumePerTimeUnit& unit) const
 {
-  if (m_EndTidalCarbonDioxidePressure == nullptr)
+  if (m_InspirationTargetFlow == nullptr)
     return SEScalar::dNaN();
-  return m_EndTidalCarbonDioxidePressure->GetValue(unit);
+  return m_InspirationTargetFlow->GetValue(unit);
 }
 
-bool SEMechanicalVentilator::HasInspirationLimitVolume() const
+bool SEMechanicalVentilator::HasInspirationMachineTriggerTime() const
 {
-  return m_InspirationLimitVolume == nullptr ? false : m_InspirationLimitVolume->IsValid();
+  return m_InspirationMachineTriggerTime == nullptr ? false : m_InspirationMachineTriggerTime->IsValid();
 }
-SEScalarVolume& SEMechanicalVentilator::GetInspirationLimitVolume()
+SEScalarTime& SEMechanicalVentilator::GetInspirationMachineTriggerTime()
 {
-  if (m_InspirationLimitVolume == nullptr)
-    m_InspirationLimitVolume = new SEScalarVolume();
-  return *m_InspirationLimitVolume;
+  if (m_InspirationMachineTriggerTime == nullptr)
+    m_InspirationMachineTriggerTime = new SEScalarTime();
+  return *m_InspirationMachineTriggerTime;
 }
-double SEMechanicalVentilator::GetInspirationLimitVolume(const VolumeUnit& unit) const
+double SEMechanicalVentilator::GetInspirationMachineTriggerTime(const TimeUnit& unit) const
 {
-  if (m_InspirationLimitVolume == nullptr)
+  if (m_InspirationMachineTriggerTime == nullptr)
     return SEScalar::dNaN();
-  return m_InspirationLimitVolume->GetValue(unit);
+  return m_InspirationMachineTriggerTime->GetValue(unit);
 }
 
-bool SEMechanicalVentilator::HasInspirationTriggerFlow() const
+bool SEMechanicalVentilator::HasInspirationPatientTriggerFlow() const
 {
-  return m_InspirationTriggerFlow == nullptr ? false : m_InspirationTriggerFlow->IsValid();
+  return m_InspirationPatientTriggerFlow == nullptr ? false : m_InspirationPatientTriggerFlow->IsValid();
 }
-SEScalarVolumePerTime& SEMechanicalVentilator::GetInspirationTriggerFlow()
+SEScalarVolumePerTime& SEMechanicalVentilator::GetInspirationPatientTriggerFlow()
 {
-  if (m_InspirationTriggerFlow == nullptr)
-    m_InspirationTriggerFlow = new SEScalarVolumePerTime();
-  return *m_InspirationTriggerFlow;
+  if (m_InspirationPatientTriggerFlow == nullptr)
+    m_InspirationPatientTriggerFlow = new SEScalarVolumePerTime();
+  return *m_InspirationPatientTriggerFlow;
 }
-double SEMechanicalVentilator::GetInspirationTriggerFlow(const VolumePerTimeUnit& unit) const
+double SEMechanicalVentilator::GetInspirationPatientTriggerFlow(const VolumePerTimeUnit& unit) const
 {
-  if (m_InspirationTriggerFlow == nullptr)
+  if (m_InspirationPatientTriggerFlow == nullptr)
     return SEScalar::dNaN();
-  return m_InspirationTriggerFlow->GetValue(unit);
+  return m_InspirationPatientTriggerFlow->GetValue(unit);
 }
 
-bool SEMechanicalVentilator::HasInspirationTriggerPressure() const
+bool SEMechanicalVentilator::HasInspirationPatientTriggerPressure() const
 {
-  return m_InspirationTriggerPressure == nullptr ? false : m_InspirationTriggerPressure->IsValid();
+  return m_InspirationPatientTriggerPressure == nullptr ? false : m_InspirationPatientTriggerPressure->IsValid();
 }
-SEScalarPressure& SEMechanicalVentilator::GetInspirationTriggerPressure()
+SEScalarPressure& SEMechanicalVentilator::GetInspirationPatientTriggerPressure()
 {
-  if (m_InspirationTriggerPressure == nullptr)
-    m_InspirationTriggerPressure = new SEScalarPressure();
-  return *m_InspirationTriggerPressure;
+  if (m_InspirationPatientTriggerPressure == nullptr)
+    m_InspirationPatientTriggerPressure = new SEScalarPressure();
+  return *m_InspirationPatientTriggerPressure;
 }
-double SEMechanicalVentilator::GetInspirationTriggerPressure(const PressureUnit& unit) const
+double SEMechanicalVentilator::GetInspirationPatientTriggerPressure(const PressureUnit& unit) const
 {
-  if (m_InspirationTriggerPressure == nullptr)
+  if (m_InspirationPatientTriggerPressure == nullptr)
     return SEScalar::dNaN();
-  return m_InspirationTriggerPressure->GetValue(unit);
-}
-
-bool SEMechanicalVentilator::HasInspirationTriggerTime() const
-{
-  return m_InspirationTriggerTime == nullptr ? false : m_InspirationTriggerTime->IsValid();
-}
-SEScalarTime& SEMechanicalVentilator::GetInspirationTriggerTime()
-{
-  if (m_InspirationTriggerTime == nullptr)
-    m_InspirationTriggerTime = new SEScalarTime();
-  return *m_InspirationTriggerTime;
-}
-double SEMechanicalVentilator::GetInspirationTriggerTime(const TimeUnit& unit) const
-{
-  if (m_InspirationTriggerTime == nullptr)
-    return SEScalar::dNaN();
-  return m_InspirationTriggerTime->GetValue(unit);
+  return m_InspirationPatientTriggerPressure->GetValue(unit);
 }
 
 bool SEMechanicalVentilator::HasInspirationTubeResistance() const

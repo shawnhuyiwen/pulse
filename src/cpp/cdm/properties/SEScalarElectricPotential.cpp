@@ -22,7 +22,5 @@ const ElectricPotentialUnit& ElectricPotentialUnit::GetCompoundUnit(const std::s
     return V;
   if(mV.GetString().compare(unit)==0)
     return mV;
-  std::stringstream err;
-  err << unit << " is not a valid Electric Potential unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid ElectricPotential unit");
 }

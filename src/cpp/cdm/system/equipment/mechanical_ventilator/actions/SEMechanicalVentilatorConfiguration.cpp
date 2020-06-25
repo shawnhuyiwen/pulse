@@ -94,6 +94,7 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tFunctionalResidualCapacity: "; m_Configuration->HasFunctionalResidualCapacity() ? str << m_Configuration->GetFunctionalResidualCapacity() : str << "NaN";
     str << "\n\tExpirationCycleFlow: "; m_Configuration->HasExpirationCycleFlow() ? str << m_Configuration->GetExpirationCycleFlow() : str << "NaN";
     str << "\n\tExpirationCyclePressure: "; m_Configuration->HasExpirationCyclePressure() ? str << m_Configuration->GetExpirationCyclePressure() : str << "NaN";
+    str << "\n\tExpirationCycleVolume: "; m_Configuration->HasExpirationCycleVolume() ? str << m_Configuration->GetExpirationCycleVolume() : str << "NaN";
     str << "\n\tExpirationCycleTime: "; m_Configuration->HasExpirationCycleTime() ? str << m_Configuration->GetExpirationCycleTime() : str << "NaN";
     str << "\n\tExpirationTubeResistance: "; m_Configuration->HasExpirationTubeResistance() ? str << m_Configuration->GetExpirationTubeResistance() : str << "NaN";
     str << "\n\tExpirationValveResistance: "; m_Configuration->HasExpirationValveResistance() ? str << m_Configuration->GetExpirationValveResistance() : str << "NaN";
@@ -103,10 +104,10 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tInspirationLimitVolume: "; m_Configuration->HasInspirationLimitVolume() ? str << m_Configuration->GetInspirationLimitVolume() : str << "NaN";
     str << "\n\tInspirationPauseTime: "; m_Configuration->HasInspirationPauseTime() ? str << m_Configuration->GetInspirationPauseTime() : str << "NaN";
     str << "\n\tPeakInspiratoryPressure: "; m_Configuration->HasPeakInspiratoryPressure() ? str << m_Configuration->GetPeakInspiratoryPressure() : str << "NaN";
-    str << "\n\tEndTidalCarbonDioxidePressure: "; m_Configuration->HasEndTidalCarbonDioxidePressure() ? str << m_Configuration->GetEndTidalCarbonDioxidePressure() : str << "NaN";
-    str << "\n\tInspirationTriggerFlow: "; m_Configuration->HasInspirationTriggerFlow() ? str << m_Configuration->GetInspirationTriggerFlow() : str << "NaN";
-    str << "\n\tInspirationTriggerPressure: "; m_Configuration->HasInspirationTriggerPressure() ? str << m_Configuration->GetInspirationTriggerPressure() : str << "NaN";
-    str << "\n\tInspirationTriggerTime: "; m_Configuration->HasInspirationTriggerTime() ? str << m_Configuration->GetInspirationTriggerTime() : str << "NaN";
+    str << "\n\tInspirationTargetFlow: "; m_Configuration->HasInspirationTargetFlow() ? str << m_Configuration->GetInspirationTargetFlow() : str << "NaN";
+    str << "\n\tInspirationMachineTriggerTime: "; m_Configuration->HasInspirationMachineTriggerTime() ? str << m_Configuration->GetInspirationMachineTriggerTime() : str << "NaN";
+    str << "\n\tInspirationPatientTriggerFlow: "; m_Configuration->HasInspirationPatientTriggerFlow() ? str << m_Configuration->GetInspirationPatientTriggerFlow() : str << "NaN";
+    str << "\n\tInspirationPatientTriggerPressure: "; m_Configuration->HasInspirationPatientTriggerPressure() ? str << m_Configuration->GetInspirationPatientTriggerPressure() : str << "NaN";    
     str << "\n\tInspirationTubeResistance: "; m_Configuration->HasInspirationTubeResistance() ? str << m_Configuration->GetInspirationTubeResistance() : str << "NaN";
     str << "\n\tInspirationValveResistance: "; m_Configuration->HasInspirationValveResistance() ? str << m_Configuration->GetInspirationValveResistance() : str << "NaN";
     str << "\n\tInspirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Configuration->GetInspirationWaveform());

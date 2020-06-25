@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 from enum import Enum
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarFrequency, SEScalarLength, \
-                              SEScalarMass, SEScalarMassPerVolume, SEScalarPower, \
+                              SEScalarMass, SEScalarMassPerTime, SEScalarMassPerVolume, SEScalarPower, \
                               SEScalarPressure, SEScalarTime, SEScalarVolume, SEScalarProperty
 from pulse.cdm.engine import SEConditionManager
 
@@ -383,3 +383,108 @@ class SEPatient():
         if self._vital_capacity is None:
             self._vital_capacity = SEScalarVolume()
         return self._vital_capacity
+
+class SENutrition():
+    __slots__ = ["_carbohydrate", "_carbohydrate_digestion_rate",
+                 "_fat", "_fat_digestion_rate",
+                 "_protein", "_protein_digestion_rate",
+                 "_calcium", "_sodium", "_water",]
+
+    def __init__(self):
+        self._carbohydrate = None
+        self._carbohydrate_digestion_rate = None
+        self._fat = None
+        self._fat_digestion_rate = None
+        self._protein = None
+        self._protein_digestion_rate = None
+        self._calcium = None
+        self._sodium = None
+        self._water = None
+
+    def clear(self):
+        if self._carbohydrate is not None: self._carbohydrate.invalidate()
+        if self._carbohydrate_digestion_rate is not None: self._carbohydrate_digestion_rate.invalidate()
+        if self._fat is not None: self._fat.invalidate()
+        if self._fat_digestion_rate is not None: self._fat_digestion_rate.invalidate()
+        if self._protein is not None: self._protein.invalidate()
+        if self._protein_digestion_rate is not None: self._protein_digestion_rate.invalidate()
+        if self._calcium is not None: self._calcium.invalidate()
+        if self._sodium is not None: self._sodium.invalidate()
+        if self._water is not None: self._water.invalidate()
+
+    def copy(self, src):
+        if not isinstance(SENutrition, src):
+            raise Exception("Provided argument must be a SENutrition")
+        self.clear()
+        if src.has_carbohydrate(): self.get_carbohydrate().set(src._carbohydrate)
+        if src.has_carbohydrate_digestion_rate(): self.get_carbohydrate_digestion_rate().set(src._carbohydrate_digestion_rate)
+        if src.has_fat(): self.get_fat().set(src._fat)
+        if src.has_fat_digestion_rate(): self.get_fat_digestion_rate().set(src._fat_digestion_rate)
+        if src.has_protein(): self.get_protein().set(src._protein)
+        if src.has_protein_digestion_rate(): self.get_protein_digestion_rate().set(src._protein_digestion_rate)
+        if src.has_calcium(): self.get_calcium().set(src._calcium)
+        if src.has_sodium(): self.get_sodium().set(src._sodium)
+        if src.has_water(): self.get_water().set(src._water)
+
+    def has_carbohydrate(self):
+        return False if self._carbohydrate is None else self._carbohydrate.is_valid()
+    def get_carbohydrate(self):
+        if self._carbohydrate is None:
+            self._carbohydrate = SEScalarMass()
+        return self._carbohydrate
+
+    def has_carbohydrate_digestion_rate(self):
+        return False if self._carbohydrate_digestion_rate is None else self._carbohydrate_digestion_rate.is_valid()
+    def get_carbohydrate_digestion_rate(self):
+        if self._carbohydrate_digestion_rate is None:
+            self._carbohydrate_digestion_rate = SEScalarMassPerTime()
+        return self._carbohydrate_digestion_rate
+
+    def has_fat(self):
+        return False if self._fat is None else self._fat.is_valid()
+    def get_fat(self):
+        if self._fat is None:
+            self._fat = SEScalarMass()
+        return self._fat
+
+    def has_fat_digestion_rate(self):
+        return False if self._fat_digestion_rate is None else self._fat_digestion_rate.is_valid()
+    def get_fat_digestion_rate(self):
+        if self._fat_digestion_rate is None:
+            self._fat_digestion_rate = SEScalarMassPerTime()
+        return self._fat_digestion_rate
+
+    def has_protein(self):
+        return False if self._protein is None else self._protein.is_valid()
+    def get_protein(self):
+        if self._protein is None:
+            self._protein = SEScalarMass()
+        return self._protein
+
+    def has_protein_digestion_rate(self):
+        return False if self._protein_digestion_rate is None else self._protein_digestion_rate.is_valid()
+    def get_protein_digestion_rate(self):
+        if self._protein_digestion_rate is None:
+            self._protein_digestion_rate = SEScalarMassPerTime()
+        return self._protein_digestion_rate
+
+    def has_calcium(self):
+        return False if self._calcium is None else self._calcium.is_valid()
+    def get_calcium(self):
+        if self._calcium is None:
+            self._calcium = SEScalarMass()
+        return self._calcium
+
+    def has_sodium(self):
+        return False if self._sodium is None else self._sodium.is_valid()
+    def get_sodium(self):
+        if self._sodium is None:
+            self._sodium = SEScalarMass()
+        return self._sodium
+
+    def has_water(self):
+        return False if self._water is None else self._water.is_valid()
+    def get_water(self):
+        if self._water is None:
+            self._water = SEScalarVolume()
+        return self._water

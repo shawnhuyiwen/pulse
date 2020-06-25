@@ -270,7 +270,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
     double totalPeriod_s = 60.0 / respirationRate_per_min;
     double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
     double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-    mv.GetInspirationTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+    mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
     mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
 
     m_FiO2 = &mv.GetFractionInspiredGas(*m_Oxygen);
@@ -559,7 +559,7 @@ bool MVEngine::GetSimulationState(pulse::study::bind::multiplex_ventilation::Sim
     // For Completeness, Write out the ventilator settings
 
     // Translate ventilator settings
-    double expiratoryPeriod_s = pc->GetMechanicalVentilator().GetInspirationTriggerTime(TimeUnit::s);
+    double expiratoryPeriod_s = pc->GetMechanicalVentilator().GetInspirationMachineTriggerTime(TimeUnit::s);
     double inspiratoryPeriod_s = pc->GetMechanicalVentilator().GetExpirationCycleTime(TimeUnit::s);
     double respirationRate_per_min = 60.0 / (inspiratoryPeriod_s + inspiratoryPeriod_s);
     double IERatio = inspiratoryPeriod_s / expiratoryPeriod_s;
@@ -653,16 +653,14 @@ void MVEngine::TrackData(SEEngineTracker& trkr, const std::string& csv_filename)
 
   trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "Pressure", PressureUnit::cmH2O);
 
-  SESubstance* O2 = trkr.GetSubstanceManager().GetSubstance("Oxygen");
-  SESubstance* CO2 = trkr.GetSubstanceManager().GetSubstance("CarbonDioxide");
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *O2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *CO2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, *O2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, *CO2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, *CO2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *O2, "PartialPressure", PressureUnit::mmHg);
-  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, *CO2, "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Airway, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::LeftAlveoli, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+  trkr.GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::RightAlveoli, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
 
   trkr.SetupRequests();
 }

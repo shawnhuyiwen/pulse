@@ -27,7 +27,5 @@ const PressurePerVolumeUnit& PressurePerVolumeUnit::GetCompoundUnit(const std::s
     return cmH2O_Per_mL;
   if (cmH2O_Per_L.GetString().compare(unit) == 0)
     return cmH2O_Per_L;
-  std::stringstream err;
-  err << unit << " is not a valid PressurePerVolume unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid PressurePerVolume unit");
 }

@@ -71,7 +71,7 @@ public:
 void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 {
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InhalerResults.csv");
-  SEPatientConfiguration pconfig(pc->GetSubstanceManager());
+  SEPatientConfiguration pconfig;
   pconfig.SetPatientFile("StandardMale.json");
   if (!pc->InitializeEngine(pconfig))
   {
@@ -125,7 +125,7 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
 void PulseEngineTest::InjectSuccsState(PhysiologyEngine* pc, HowToTracker& tracker, const SESubstance& succs)
 {
   pc->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("InjectSuccsResults.csv");
-  SEPatientConfiguration pconfig(pc->GetSubstanceManager());
+  SEPatientConfiguration pconfig;
   pconfig.SetPatientFile("StandardMale.json");
   if (!pc->InitializeEngine(pconfig))
   {
@@ -315,21 +315,19 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
   // Several Options to choose how to set up our engine before we save and load
   if(false)
   {
-    const SESubstance* Albert = pc->GetSubstanceManager().GetSubstance("Albuterol");
-    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "MassInBody", MassUnit::ug);
-    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
-    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Albert, "RemainingSystemicMassCleared", MassUnit::ug);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Albuterol", "MassInBody", MassUnit::ug);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Albuterol", "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Albuterol", "RemainingSystemicMassCleared", MassUnit::ug);
     InhalerState(pc.get(), tracker);
   }
   else if (false)
   {
-    const SESubstance* Succs = pc->GetSubstanceManager().GetSubstance("Succinylcholine");
-    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "MassInBody", MassUnit::ug);
-    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
-    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest(*Succs, "RemainingSystemicMassCleared", MassUnit::ug);
-    pc->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainVasculature", *Succs, "Concentration", MassPerVolumeUnit::ug_Per_mL);
-    pc->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainTissueExtracellular", *Succs, "Concentration", MassPerVolumeUnit::ug_Per_mL);
-    InjectSuccsState(pc.get(), tracker, *Succs);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Succinylcholine", "MassInBody", MassUnit::ug);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Succinylcholine", "PlasmaConcentration", MassPerVolumeUnit::ug_Per_mL);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateSubstanceDataRequest("Succinylcholine", "RemainingSystemicMassCleared", MassUnit::ug);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainVasculature", "Succinylcholine", "Concentration", MassPerVolumeUnit::ug_Per_mL);
+    pc->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest("BrainTissueExtracellular", "Succinylcholine", "Concentration", MassPerVolumeUnit::ug_Per_mL);
+    InjectSuccsState(pc.get(), tracker, *pc->GetSubstanceManager().GetSubstance("Succinylcholine"));
   }
   pc->SerializeToFile("./FinalEngineState.json");
 }

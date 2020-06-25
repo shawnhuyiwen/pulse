@@ -19,27 +19,28 @@ add_library_ex(PulseJNI SHARED
 target_include_directories(PulseJNI PRIVATE ${JNI_INCLUDE_DIRS})
 set_target_properties (PulseJNI PROPERTIES FOLDER ${PROJECT_NAME})
 
-file(GLOB_RECURSE JAVA_FILES
-  "com/*.java"
-  "pulse/*.java")
-add_jar(PulseJava ${JAVA_FILES}
+include(PulseFiles.cmake)
+# Still going to glob google protobuf java files
+file(GLOB_RECURSE GOOGLE_JAVA_FILES "com/google/*.java")
+add_jar(PulseJava ${PULSE_JAVA_FILES} ${GOOGLE_JAVA_FILES}
     INCLUDE_JARS 
-      "jar/jcommon-1.0.16.jar"
-      "jar/jdom-2.0.2.jar"
-      "jar/jfreechart-1.0.13.jar"
-      "jar/gson-2.8.5.jar"
-      "jar/guava-26.0-jre.jar"
-      "jar/log4j-1.2.17.jar"
-      "jar/poi-3.13-20150929.jar"
-      "jar/poi-ooxml-3.13-20150929.jar"
-      "jar/poi-ooxml-schemas-3.13-20150929.jar"
-      "jar/pdfbox-2.0.0-RC3.jar"
-      "jar/reflections-0.9.9-RC1-uberjar.jar"
-      "jar/zip4j-1.3.1.jar"
-      "jar/org.eclipse.jgit-4.11.0.201803080745-r.jar"
-      "jar/slf4j-api-1.7.25.jar"
-      "jar/slf4j-simple-1.7.25.jar"
-      "jar/error_prone_annotations-2.3.2.jar"
+      "jar/commons-collections4-4.4.jar"
+      "jar/commons-compress-1.19.jar"
+      "jar/commons-math3-3.6.1.jar"
+      "jar/error_prone_annotations-2.3.4.jar"
+      "jar/gson-2.8.6.jar"
+      "jar/guava-29.0-jre.jar"
+      "jar/java-ordered-properties-1.0.3.jar"
+      "jar/javassist.jar"
+      "jar/jfreechart-1.5.0.jar"
+      "jar/logback-classic-1.2.3.jar"
+      "jar/logback-core-1.2.3.jar"
+      "jar/poi-4.1.2.jar"
+      "jar/poi-ooxml-4.1.2.jar"
+      "jar/poi-ooxml-schemas-4.1.2.jar"
+      "jar/reflections-0.9.12.jar"
+      "jar/slf4j-api-1.7.30.jar"
+      "jar/xmlbeans-3.1.0.jar"
     OUTPUT_NAME Pulse)
 get_target_property(_jarFile PulseJava JAR_FILE)
 add_custom_command(TARGET PulseJava POST_BUILD

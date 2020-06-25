@@ -17,7 +17,5 @@ const ElectricResistanceUnit& ElectricResistanceUnit::GetCompoundUnit(const std:
 {
   if (Ohm.GetString().compare(unit) == 0)
     return Ohm;
-  std::stringstream err;
-  err << unit << " is not a valid ElectricResistance unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid ElectricResistance unit");
 }

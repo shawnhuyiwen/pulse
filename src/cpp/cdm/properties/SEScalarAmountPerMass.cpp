@@ -21,7 +21,5 @@ const AmountPerMassUnit& AmountPerMassUnit::GetCompoundUnit(const std::string& u
     return ct_Per_g;
   if(ct_Per_ug.GetString().compare(unit)==0)
     return ct_Per_ug;
-  std::stringstream err;
-  err << unit << " is not a valid AmountPerMass unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid AmountPerMass unit");
 }

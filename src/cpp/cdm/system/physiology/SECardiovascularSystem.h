@@ -152,7 +152,7 @@ protected:
   SEScalar0To1*                          m_HeartEjectionFraction;
   SEScalarFrequency*                     m_HeartRate;
   eHeartRhythm                           m_HeartRhythm;
-  SEScalarVolume*                        m_HeartStrokeVolume;  
+  SEScalarVolume*                        m_HeartStrokeVolume;
   SEScalarPressure*                      m_IntracranialPressure;
   SEScalarPressure*                      m_MeanArterialPressure;
   SEScalarPressure*                      m_MeanArterialCarbonDioxidePartialPressure;
@@ -166,9 +166,9 @@ protected:
   SEScalarVolumePerTime*                 m_PulmonaryMeanCapillaryFlow;
   SEScalarVolumePerTime*                 m_PulmonaryMeanShuntFlow;
   SEScalarPressure*                      m_PulmonarySystolicArterialPressure;
-  SEScalarPressureTimePerVolume*                m_PulmonaryVascularResistance;
+  SEScalarPressureTimePerVolume*         m_PulmonaryVascularResistance;
   SEScalarPressureTimePerVolumeArea*     m_PulmonaryVascularResistanceIndex;
   SEScalarPressure*                      m_PulsePressure;
   SEScalarPressure*                      m_SystolicArterialPressure;
-  SEScalarPressureTimePerVolume*                m_SystemicVascularResistance;
+  SEScalarPressureTimePerVolume*         m_SystemicVascularResistance;
 };

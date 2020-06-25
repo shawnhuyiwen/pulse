@@ -109,7 +109,7 @@
             "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
-            "InspirationTriggerTime": { "ScalarTime": { "Value": 3.33, "Unit": "s" } },
+            "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 3.33, "Unit": "s" } },
             "ExpirationCycleTime": { "ScalarTime": { "Value": 1.67, "Unit": "s" } },
             "FractionInspiredGas": [
               { "Name": "Nitrogen", "Amount": { "Scalar0To1": { "Value": 0.7896, "Unit": "" } } },
@@ -137,7 +137,7 @@
             "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
-            "InspirationTriggerTime": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
+            "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
             "ExpirationCycleTime": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } } ],

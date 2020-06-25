@@ -20,3 +20,13 @@ void SEScalarNegative1To1::SetValue(double d, const NoUnit& unitless)
 { 
   SEScalarNegative1To1::SetValue(d);
 }
+
+void SEScalarNegative1To1::ForceValue(double d)
+{
+  SEScalar::ForceValue(d);
+}
+
+void SEScalarNegative1To1::ForceValue(double d, const NoUnit& unitless)
+{
+  SEScalar::ForceValue(d);
+}

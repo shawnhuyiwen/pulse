@@ -124,6 +124,11 @@ const SEPatient& PulseEngine::GetPatient() const
   return m_PulseController->GetData().GetCurrentPatient();
 }
 
+const SEPatient& PulseEngine::GetInitialPatient() const
+{
+  return m_PulseController->GetData().GetInitialPatient();
+}
+
 bool PulseEngine::GetPatientAssessment(SEPatientAssessment& assessment) const
 {
   

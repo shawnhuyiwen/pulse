@@ -9,10 +9,10 @@
 src/schema/schema_last_built
 /src/cpp/bind
 /src/csharp/pulse/bind
-/src/java/com
-/src/java/pulse/cdm/bind
-/src/java/pulse/cpm/bind
-/src/java/pulse/study/bind
+/src/java/com/google
+/src/java/com/kitware/pulse/cdm/bind
+/src/java/com/kitware/pulse/cpm/bind
+/src/java/com/kitware/pulse/study/bind
 /src/python/pulse/cdm/bind
 /src/python/pulse/cpm/bind
 /src/python/pulse/study/bind

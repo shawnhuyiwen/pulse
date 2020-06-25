@@ -14,7 +14,7 @@ class CDM_DECL SEEnvironmentActionCollection : public Loggable
   friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
-  SEEnvironmentActionCollection(SESubstanceManager&);
+  SEEnvironmentActionCollection(Logger* logger=nullptr);
 public:
   ~SEEnvironmentActionCollection();
 
@@ -32,8 +32,7 @@ public:
 
 protected:
   void Clear();
-  bool ProcessAction(const SEEnvironmentAction& action);
-  SESubstanceManager& m_Substances;
+  bool ProcessAction(const SEEnvironmentAction& action, SESubstanceManager&);
 
   SEChangeEnvironmentalConditions*  m_ChangeEnvironmentalConditions;
   SEThermalApplication*             m_ThermalApplication;

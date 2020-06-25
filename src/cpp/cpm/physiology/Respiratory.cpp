@@ -2336,8 +2336,8 @@ void Respiratory::UpdateVolumes()
     }
     else
     {
-      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetBronchitisSeverity().GetValue();
-      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
+      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
+      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
     double combinedSeverity = 0.0;
@@ -2359,7 +2359,7 @@ void Respiratory::UpdateVolumes()
 
   if (m_data.GetConditions().HasPulmonaryFibrosis())
   {
-    double Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+    double Severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
     //Linear function: Min = 0.0, Max = 2.0 (decreasing with severity)
     double alveolarDeadSpace_L = GeneralMath::LinearInterpolator(0.0, 1.0, 2.0, 0.0, Severity);
@@ -2548,7 +2548,7 @@ void Respiratory::UpdateResistances()
     }
     else
     {
-      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetBronchitisSeverity().GetValue();
+      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
     }
 
     double dResistanceScalingFactor = GeneralMath::ExponentialGrowthFunction(10.0, 1.0, 90.0, bronchitisSeverity);
@@ -2620,7 +2620,7 @@ void Respiratory::UpdateAlveolarCompliances()
     }
     else
     {
-      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
+      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
     double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 2.0, emphysemaSeverity);
@@ -2650,9 +2650,9 @@ void Respiratory::UpdateAlveolarCompliances()
     }
     else
     {
-      severity = m_data.GetConditions().GetLobarPneumonia()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
     }
     
     double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.4, severity);
@@ -2665,7 +2665,7 @@ void Respiratory::UpdateAlveolarCompliances()
   //Pulmonary Fibrosis
   if (m_data.GetConditions().HasPulmonaryFibrosis())
   {
-    double Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+    double Severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
     double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.4, Severity);
 
@@ -2690,9 +2690,9 @@ void Respiratory::UpdateAlveolarCompliances()
     }
     else
     {
-      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
     }
 
     double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.4, severity);
@@ -2750,8 +2750,8 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
     }
     else
     {
-      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetBronchitisSeverity().GetValue();
-      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
+      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
+      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
     combinedObstructiveSeverity = MAX(combinedObstructiveSeverity, emphysemaSeverity);
@@ -2777,9 +2777,9 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
     }
     else
     {
-      severity = m_data.GetConditions().GetLobarPneumonia()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
     }
 
     // Get the right and left lung ratios
@@ -2794,7 +2794,7 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
   // Pulmonary Fibrosis
   if (m_data.GetConditions().HasPulmonaryFibrosis())
   {
-    double Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+    double Severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
     combinedRestrictiveSeverity = MAX(combinedRestrictiveSeverity, Severity);
   }
@@ -2816,9 +2816,9 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
     }
     else
     {
-      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
     }
 
     // Get the right and left lung ratios
@@ -2896,9 +2896,9 @@ void Respiratory::UpdateDiffusion()
     }
     else
     {
-      unsigned int total = int(m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedSurfaceArea()) +
-        int(m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedFraction()) +
-        int(m_data.GetConditions().GetImpairedAlveolarExchange()->HasSeverity());
+      unsigned int total = int(m_data.GetConditions().GetImpairedAlveolarExchange().HasImpairedSurfaceArea()) +
+        int(m_data.GetConditions().GetImpairedAlveolarExchange().HasImpairedFraction()) +
+        int(m_data.GetConditions().GetImpairedAlveolarExchange().HasSeverity());
 
       if (total == 0)
       {
@@ -2912,17 +2912,17 @@ void Respiratory::UpdateDiffusion()
         Warning("The Impaired Alveolar Exchange condition is defined with mulitple values. Defaulting to the surface area value first, impaired fraction next, and severity last.");
       }
 
-      if (m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedSurfaceArea())
+      if (m_data.GetConditions().GetImpairedAlveolarExchange().HasImpairedSurfaceArea())
       {
-        alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 - m_data.GetConditions().GetImpairedAlveolarExchange()->GetImpairedSurfaceArea(AreaUnit::cm2);
+        alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 - m_data.GetConditions().GetImpairedAlveolarExchange().GetImpairedSurfaceArea(AreaUnit::cm2);
       }
-      else if (m_data.GetConditions().GetImpairedAlveolarExchange()->HasImpairedFraction())
+      else if (m_data.GetConditions().GetImpairedAlveolarExchange().HasImpairedFraction())
       {
-        alveoliDiffusionArea_cm2 = (1.0 - m_data.GetConditions().GetImpairedAlveolarExchange()->GetImpairedFraction().GetValue()) * alveoliDiffusionArea_cm2;
+        alveoliDiffusionArea_cm2 = (1.0 - m_data.GetConditions().GetImpairedAlveolarExchange().GetImpairedFraction().GetValue()) * alveoliDiffusionArea_cm2;
       }
-      else if (m_data.GetConditions().GetImpairedAlveolarExchange()->HasSeverity())
+      else if (m_data.GetConditions().GetImpairedAlveolarExchange().HasSeverity())
       {
-        double severity = m_data.GetConditions().GetImpairedAlveolarExchange()->GetSeverity().GetValue();
+        double severity = m_data.GetConditions().GetImpairedAlveolarExchange().GetSeverity().GetValue();
         double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
         alveoliDiffusionArea_cm2 *= gasDiffusionScalingFactor;
       }
@@ -2941,7 +2941,7 @@ void Respiratory::UpdateDiffusion()
     }
     else
     {
-      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
+      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
     double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, emphysemaSeverity);
@@ -2966,9 +2966,9 @@ void Respiratory::UpdateDiffusion()
     }
     else
     {
-      severity = m_data.GetConditions().GetLobarPneumonia()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
     }
 
     // Get the right and left lung ratios
@@ -2989,7 +2989,7 @@ void Respiratory::UpdateDiffusion()
  //PulmonaryFibrosis
   if (m_data.GetConditions().HasPulmonaryFibrosis())
   {
-    double Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+    double Severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
     double gasDiffusionScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, Severity);
 
@@ -3014,9 +3014,9 @@ void Respiratory::UpdateDiffusion()
     }
     else
     {
-      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
     }
 
     // Get the right and left lung ratios
@@ -3061,8 +3061,8 @@ void Respiratory::UpdatePulmonaryCapillary()
     }
     else
     {
-      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetBronchitisSeverity().GetValue();
-      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
+      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
+      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
     // Calculate Pulmonary Capillary Resistance Multiplier based on severities
@@ -3086,7 +3086,7 @@ void Respiratory::UpdatePulmonaryCapillary()
   //PulmonaryFibrosis
   if (m_data.GetConditions().HasPulmonaryFibrosis())
   {
-    double Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+    double Severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
     // Calculate Pulmonary Capillary Resistance Multiplier based on severity
 
@@ -3132,7 +3132,7 @@ void Respiratory::UpdatePulmonaryShunt()
     }
     else
     {
-      severity = m_data.GetConditions().GetPulmonaryShunt()->GetSeverity().GetValue();
+      severity = m_data.GetConditions().GetPulmonaryShunt().GetSeverity().GetValue();
     }
 
     rightSeverity = severity;
@@ -3155,14 +3155,10 @@ void Respiratory::UpdatePulmonaryShunt()
     }
     else
     {
-      severity = m_data.GetConditions().GetLobarPneumonia()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
     }
-
-    // Get the right and left lung ratios
-    double dRightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-    double dLeftLungRatio = 1.0 - dRightLungRatio;
 
     double rightScaledSeverity = severity * rightLungFraction;
     double leftScaledSeverity = severity * leftLungFraction;
@@ -3187,14 +3183,10 @@ void Respiratory::UpdatePulmonaryShunt()
     }
     else
     {
-      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
     }
-
-    // Get the right and left lung ratios
-    double dRightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
-    double dLeftLungRatio = 1.0 - dRightLungRatio;
 
     double rightScaledSeverity = severity * rightLungFraction;
     double leftScaledSeverity = severity * leftLungFraction;
@@ -3257,8 +3249,8 @@ void Respiratory::ModifyDriverPressure()
     }
     else
     {
-      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetBronchitisSeverity().GetValue();
-      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease()->GetEmphysemaSeverity().GetValue();
+      bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
+      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
     double combinedSeverity = 0.0;
@@ -3286,9 +3278,9 @@ void Respiratory::ModifyDriverPressure()
     }
     else
     {
-      severity = m_data.GetConditions().GetLobarPneumonia()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetLobarPneumonia()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetLobarPneumonia().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetLobarPneumonia().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
     }
 
     // Get the right and left lung ratios
@@ -3307,7 +3299,7 @@ void Respiratory::ModifyDriverPressure()
 
   if (m_data.GetConditions().HasPulmonaryFibrosis())
   {
-    double Severity = m_data.GetConditions().GetPulmonaryFibrosis()->GetSeverity().GetValue();
+    double Severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
     //Linear function: Min = 0.0, Max = 0.8 (increasing with severity)
     double thisDyspneaSeverity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, Severity);
@@ -3331,9 +3323,9 @@ void Respiratory::ModifyDriverPressure()
     }
     else
     {
-      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetSeverity().GetValue();
-      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetLeftLungAffected().GetValue();
-      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome()->GetRightLungAffected().GetValue();
+      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
     }
 
     // Get the right and left lung ratios

@@ -167,6 +167,16 @@ namespace HowTo_UseEngine
       // NOTE ANY CSV FILE BEING WRITTEN OUT WOULD NOT SUPPORT CHANGING DATA IN THE MIDDLE OF A RUN
       // BUT IF YOU ARE NOT WRITING A CSV OUT, I COULD SEE THIS BEING USEFUL...
 
+      // You can get the initial patient at any time
+      // But it will not change, so once is good
+      // All values will be set to what the engine stabilized to
+      SEPatient initialPatient = new SEPatient();
+      pulse.GetInitialPatient(initialPatient);
+      Console.WriteLine("Sex " + initialPatient.GetSex().ToString());
+      Console.WriteLine("Age " + initialPatient.GetAge().ToString());
+      Console.WriteLine("Height " + initialPatient.GetHeight().ToString());
+      Console.WriteLine("Weight " + initialPatient.GetWeight().ToString());
+
       // Now we can start telling the engine what to do
       // All the same concepts apply from the C++ HowTo files, so look there if you want to see more examples
 

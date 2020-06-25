@@ -1,8 +1,9 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 from enum import Enum
+from pulse.cdm.patient import SENutrition
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
-from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, \
+from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarForce, \
                               SEScalarMassPerVolume, SEScalarPressure, \
                               SEScalarTime, SEScalarVolumePerTime, SEScalarVolume
 
@@ -228,6 +229,69 @@ class SECardiacArrest(SEPatientAction):
     def __repr__(self):
         return ("Cardiac Arrest\n"
          "  State: {}").format(self._state)
+
+class SEChestCompressionForce(SEPatientAction):
+    __slots__ = ["_force"]
+
+    def __init__(self):
+        super().__init__()
+        self._force = None
+
+    def clear(self):
+        super().clear()
+        if self._force is not None:
+            self._force.invalidate()
+
+    def is_valid(self):
+        return self.has_force()
+
+    def has_force(self):
+        return self._force is not None
+    def get_force(self):
+        if self._force is None:
+            self._force = SEScalarForce()
+        return self._force
+
+    def __repr__(self):
+        return ("Chest Compression\n"
+                "  Force: {}").format(self._force)
+
+class SEChestCompressionForceScale(SEPatientAction):
+    __slots__ = ["_force_scale","_force_period"]
+
+    def __init__(self):
+        super().__init__()
+        self._force_scale = None
+        self._force_period = None
+
+    def clear(self):
+        super().clear()
+        if self._force_scale is not None:
+            self._force_scale.invalidate()
+        if self._force_period is not None:
+            self._force_period.invalidate()
+
+    def is_valid(self):
+        return self.has_force_scale() and self.has_force_period()
+
+    def has_force_scale(self):
+        return self._force_scale is not None
+    def get_force_scale(self):
+        if self._force_scale is None:
+            self._force_scale = SEScalar0To1()
+        return self._force_scale
+
+    def has_force_period(self):
+        return self._force_period is not None
+    def get_force_period(self):
+        if self._force_period is None:
+            self._force_period = SEScalarTime()
+        return self._force_period
+
+    def __repr__(self):
+        return ("Chest Compression\n"
+                "  Force Scale: {}\n"
+                "  Force Period: {}").format(self._force_scale, self._force_period)
 
 class SEChestOcclusiveDressing(SEPatientAction):
     __slots__ = ["_state", "_side"]
@@ -496,6 +560,46 @@ class SEForcedExhale(AnyConsciousRespirationCommand):
                 "  Release Period: {}").format(self._expiratory_capacity_fraction, self._exhale_period,
                                               self._hold_period, self._release_period)
 
+class SEConsumeNutrients(SEPatientAction):
+    __slots__ = ["_nutrition_file",
+                 "_nutrition"]
+
+    def __init__(self):
+        super().__init__()
+        self._nutrition_file = None
+        self._nutrition = None
+
+    def clear(self):
+        self._nutrition_file = None
+        self._nutrition = None
+
+    def copy(self, src):
+        if not isinstance(SEConsumeNutrients, src):
+            raise Exception("Provided argument must be a SEConsumeNutrients")
+        self.clear()
+        self._nutrition_file = src._nutrition_file
+        self._nutrition.copy(src._nutrition)
+
+    def is_valid(self):
+        return self.has_nutrition() or self.has_nutrition_file()
+
+    def is_active(self):
+        return True;
+
+    def has_nutrition_file(self):
+        return self._nutrition_file is not None
+    def get_nutrition_file(self):
+        return self._nutrition_file
+    def set_nutrition_file(self, filename: str):
+        self._nutrition_file = filename
+
+    def has_nutrition(self):
+        return self._nutrition is not None
+    def get_nutrition(self):
+        if self._nutrition is None:
+            self._nutrition = SENutrition()
+        return self._nutrition
+
 class SEDyspnea(SEPatientAction):
     def __init__(self):
         super().__init__()
@@ -516,6 +620,7 @@ class SEDyspnea(SEPatientAction):
         if self._severity is None:
             self._severity = SEScalar0To1()
         return self._severity
+
     def __repr__(self):
         return ("Dyspnea\n"
                 "  Severity: {}").format(self._severity)
@@ -1115,3 +1220,16 @@ class SETensionPneumothorax(SEPatientAction):
                 "  Type: {}\n"
                 "  Side: {}\n"
                 "  Severity: {}").format(self._type, self._side, self._severity)
+
+class SEUrinate(SEPatientAction):
+    def __init__(self):
+        super().__init__()
+
+    def clear(self):
+        super().clear()
+
+    def is_valid(self):
+        return True
+
+    def __repr__(self):
+        return ("Urinate\n")

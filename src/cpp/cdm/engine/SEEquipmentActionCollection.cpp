@@ -30,7 +30,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolumePerTime.h"
 
-SEEquipmentActionCollection::SEEquipmentActionCollection(SESubstanceManager& substances) : Loggable(substances.GetLogger()), m_Substances(substances)
+SEEquipmentActionCollection::SEEquipmentActionCollection(Logger* logger) : Loggable(logger)
 {
   m_AnesthesiaMachineConfiguration = nullptr;
   m_InhalerConfiguration = nullptr;
@@ -78,7 +78,7 @@ void SEEquipmentActionCollection::Clear()
   RemoveAnesthesiaMachineYPieceDisconnect();
 }
 
-bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
+bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action, SESubstanceManager& subMgr)
 {
   const SEMechanicalVentilatorAction* mva = dynamic_cast<const SEMechanicalVentilatorAction*>(&action);
   if (mva != nullptr)
@@ -88,7 +88,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     {
       if (m_MechanicalVentilatorConfiguration == nullptr)
         m_MechanicalVentilatorConfiguration = new SEMechanicalVentilatorConfiguration(GetLogger());
-      m_MechanicalVentilatorConfiguration->Copy(*config, m_Substances);
+      m_MechanicalVentilatorConfiguration->Copy(*config, subMgr);
       if (!m_MechanicalVentilatorConfiguration->IsActive())
         RemoveMechanicalVentilatorConfiguration();
       return true;
@@ -103,7 +103,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     {
       if (m_AnesthesiaMachineConfiguration == nullptr)
         m_AnesthesiaMachineConfiguration = new SEAnesthesiaMachineConfiguration(GetLogger());
-      m_AnesthesiaMachineConfiguration->Copy(*config, m_Substances);
+      m_AnesthesiaMachineConfiguration->Copy(*config, subMgr);
       if (!m_AnesthesiaMachineConfiguration->IsActive())
         RemoveAnesthesiaMachineConfiguration();
       return true;
@@ -250,7 +250,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     {
       if (m_InhalerConfiguration == nullptr)
         m_InhalerConfiguration = new SEInhalerConfiguration(GetLogger());
-      m_InhalerConfiguration->Copy(*config, m_Substances);
+      m_InhalerConfiguration->Copy(*config, subMgr);
       if (!m_InhalerConfiguration->IsActive())
         RemoveInhalerConfiguration();
       return true;

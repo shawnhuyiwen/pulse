@@ -111,6 +111,29 @@ namespace pulse {
     DEFINE_STATIC_STRING(ExternalTemperature);
   };
 
+  ///////////////////////////////////////
+  // Cerebrospinal Fluid Circuit Enums //
+  ///////////////////////////////////////
+
+  class CerebrospinalFluidNode
+  {
+  public:
+    DEFINE_STATIC_STRING(VascularCSFBarrier);
+    DEFINE_STATIC_STRING(IntracranialSpace1);
+    DEFINE_STATIC_STRING(IntracranialSpace2);
+  };
+
+  class CerebrospinalFluidPath
+  {
+  public:
+ 
+    DEFINE_STATIC_STRING(IntracranialSpace2ToGround);
+    DEFINE_STATIC_STRING(GroundToIntracranialSpace1);
+    DEFINE_STATIC_STRING(Brain1ToVascularCSFBarrier);
+    DEFINE_STATIC_STRING(VascularCSFBarrierToIntracranialSpace1);
+    DEFINE_STATIC_STRING(IntracranialSpace1ToIntracranialSpace2);
+  };
+
   ///////////////////////////
   // Chyme Circuit Enums //
   ///////////////////////////
@@ -129,6 +152,9 @@ namespace pulse {
     DEFINE_STATIC_STRING(GutT1ToGround);
   };
 
+  ////////////////////////////////
+  // Respiratoruy Circuit Enums //
+  ////////////////////////////////
 
   class RespiratoryNode
   {

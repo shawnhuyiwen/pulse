@@ -22,7 +22,5 @@ const AmountUnit& AmountUnit::GetCompoundUnit(const std::string& unit)
     return mol;
   if (pmol.GetString().compare(unit) == 0)
     return pmol;
-  std::stringstream err;
-  err << unit << " is not a valid Amount unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Amount unit");
 }

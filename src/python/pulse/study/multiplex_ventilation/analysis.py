@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.study.bind.MultiplexVentilation_pb2 import *
+from google.protobuf import json_format
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -10,7 +11,6 @@ import pandas as pd
 import statsmodels.api as sm
 import seaborn as sns
 
-from google.protobuf import json_format
 from scipy import interpolate
 from statsmodels.formula.api import ols
 from mpl_toolkits.mplot3d import Axes3D

@@ -23,7 +23,7 @@
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
 
-SEConditionManager::SEConditionManager(const SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_Substances(subMgr)
+SEConditionManager::SEConditionManager(Logger* logger) : Loggable(logger)
 {
   m_ARDS = nullptr;
   m_Anemia = nullptr;
@@ -62,7 +62,24 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_Sepsis);
 }
 
-void SEConditionManager::Copy(const SEConditionManager& src)
+bool SEConditionManager::SerializeToString(std::string& output, SerializationFormat m) const
+{
+  return PBEngine::SerializeToString(*this, output, m);
+}
+bool SEConditionManager::SerializeToFile(const std::string& filename) const
+{
+  return PBEngine::SerializeToFile(*this, filename);
+}
+bool SEConditionManager::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+{
+  return PBEngine::SerializeFromString(src, *this, m, subMgr);
+}
+bool SEConditionManager::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
+{
+  return PBEngine::SerializeFromFile(filename, *this, subMgr);
+}
+
+void SEConditionManager::Copy(const SEConditionManager& src, const SESubstanceManager& subMgr)
 {
   Clear();
   if (src.IsEmpty())
@@ -72,29 +89,12 @@ void SEConditionManager::Copy(const SEConditionManager& src)
   src.GetAllConditions(conditions);
   for (const SECondition* c : conditions)
   {
-    if (!ProcessCondition(*c))
+    if (!Copy(*c, subMgr))
       Error("Could not process " + c->GetName());
   }
 }
 
-bool SEConditionManager::SerializeToString(std::string& output, SerializationFormat m) const
-{
-  return PBEngine::SerializeToString(*this, output, m);
-}
-bool SEConditionManager::SerializeToFile(const std::string& filename) const
-{
-  return PBEngine::SerializeToFile(*this, filename);
-}
-bool SEConditionManager::SerializeFromString(const std::string& src, SerializationFormat m)
-{
-  return PBEngine::SerializeFromString(src, *this, m);
-}
-bool SEConditionManager::SerializeFromFile(const std::string& filename)
-{
-  return PBEngine::SerializeFromFile(filename, *this);
-}
-
-bool SEConditionManager::ProcessCondition(const SECondition& condition)
+bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceManager& subMgr)
 {
   if (!condition.IsValid())
   {
@@ -105,59 +105,35 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
 
   if (dynamic_cast<const SEPatientCondition*>(&condition) != nullptr)
   {
-
     const SEAcuteRespiratoryDistressSyndrome* ards = dynamic_cast<const SEAcuteRespiratoryDistressSyndrome*>(&condition);
     if (ards != nullptr)
     {
-      if (HasAcuteRespiratoryDistressSyndrome())
-      {
-        Error("Cannot have multiple ARDS conditions");
-        return false;
-      }
-      m_ARDS = new SEAcuteRespiratoryDistressSyndrome();
-      m_ARDS->Copy(*ards);
+      GetAcuteRespiratoryDistressSyndrome().Copy(*ards);
       return true;
     }
 
     const SEChronicAnemia* a = dynamic_cast<const SEChronicAnemia*>(&condition);
     if (a != nullptr)
     {
-      if (HasChronicAnemia())
-      {
-        Error("Cannot have multiple Anemia conditions");
-        return false;
-      }
-      m_Anemia = new SEChronicAnemia();
-      m_Anemia->Copy(*a);
+      GetChronicAnemia().Copy(*a);
       return true;
     }
 
     const SEChronicObstructivePulmonaryDisease* copd = dynamic_cast<const SEChronicObstructivePulmonaryDisease*>(&condition);
     if (copd != nullptr)
     {
-      if (HasChronicObstructivePulmonaryDisease())
-      {
-        Error("Cannot have multiple COPD conditions");
-        return false;
-      }
-      m_COPD = new SEChronicObstructivePulmonaryDisease();
-      m_COPD->Copy(*copd);
+      GetChronicObstructivePulmonaryDisease().Copy(*copd);
       return true;
     }
 
     const SEChronicHeartFailure* h = dynamic_cast<const SEChronicHeartFailure*>(&condition);
     if (h != nullptr)
     {
-      if (HasChronicHeartFailure())
-      {
-        Error("Cannot have multiple Heart Failure conditions");
-        return false;
-      }
+      // When we add more of these type, make sure to Clear then all out here
       const SEChronicVentricularSystolicDysfunction* vsd = dynamic_cast<const SEChronicVentricularSystolicDysfunction*>(&condition);
       if (vsd != nullptr)
       {
-        m_ChronicVentricularSystolicDysfunction = new SEChronicVentricularSystolicDysfunction();
-        m_ChronicVentricularSystolicDysfunction->Copy(*vsd);
+        GetChronicVentricularSystolicDysfunction().Copy(*vsd);
         return true;
       }
       Error("Unknown Heart Failure condition");
@@ -167,104 +143,56 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
     const SEChronicPericardialEffusion* pe = dynamic_cast<const SEChronicPericardialEffusion*>(&condition);
     if (pe != nullptr)
     {
-      if (HasChronicPericardialEffusion())
-      {
-        Error("Cannot have multiple Pericardial Effusion conditions");
-        return false;
-      }
-      m_PericardialEffusion = new SEChronicPericardialEffusion();
-      m_PericardialEffusion->Copy(*pe);
+      GetChronicPericardialEffusion().Copy(*pe);
       return true;
     }
 
     const SEChronicRenalStenosis* r = dynamic_cast<const SEChronicRenalStenosis*>(&condition);
     if (r != nullptr)
     {
-      if (HasChronicRenalStenosis())
-      {
-        Error("Cannot have multiple Renal Stenosis conditions");
-        return false;
-      }
-      m_RenalStenosis = new SEChronicRenalStenosis();
-      m_RenalStenosis->Copy(*r);
+      GetChronicRenalStenosis().Copy(*r);
       return true;
     }
 
     const SEConsumeMeal* g = dynamic_cast<const SEConsumeMeal*>(&condition);
     if (g != nullptr)
     {
-      if (HasConsumeMeal())
-      {
-        Error("Cannot have multiple Gut Nutrient conditions");
-        return false;
-      }
-      m_ConsumeMeal = new SEConsumeMeal();
-      m_ConsumeMeal->Copy(*g);
+      GetConsumeMeal().Copy(*g);
       return true;
     }
 
     const SEImpairedAlveolarExchange* iae = dynamic_cast<const SEImpairedAlveolarExchange*>(&condition);
     if (iae != nullptr)
     {
-      if (HasImpairedAlveolarExchange())
-      {
-        Error("Cannot have multiple Impaired Alveolar Exchange conditions");
-        return false;
-      }
-      m_ImpairedAlveolarExchange = new SEImpairedAlveolarExchange();
-      m_ImpairedAlveolarExchange->Copy(*iae);
+      GetImpairedAlveolarExchange().Copy(*iae);
       return true;
     }
 
     const SELobarPneumonia* lp = dynamic_cast<const SELobarPneumonia*>(&condition);
     if (lp != nullptr)
     {
-      if (HasLobarPneumonia())
-      {
-        Error("Cannot have multiple Lobar Pneumonia conditions");
-        return false;
-      }
-      m_LobarPneumonia = new SELobarPneumonia();
-      m_LobarPneumonia->Copy(*lp);
+      GetLobarPneumonia().Copy(*lp);
       return true;
     }
 
     const SEPulmonaryFibrosis* pf = dynamic_cast<const SEPulmonaryFibrosis*>(&condition);
     if (pf != nullptr)
     {
-      if (HasPulmonaryFibrosis())
-      {
-        Error("Cannot have multiple Pulmonary Fibrosis conditions");
-        return false;
-      }
-      m_PulmonaryFibrosis = new SEPulmonaryFibrosis();
-      m_PulmonaryFibrosis->Copy(*pf);
+      GetPulmonaryFibrosis().Copy(*pf);
       return true;
     }
 
     const SEPulmonaryShunt* ps = dynamic_cast<const SEPulmonaryShunt*>(&condition);
     if (ps != nullptr)
     {
-      if (HasPulmonaryShunt())
-      {
-        Error("Cannot have multiple Pulmonary Shunt conditions");
-        return false;
-      }
-      m_PulmonaryShunt = new SEPulmonaryShunt();
-      m_PulmonaryShunt->Copy(*ps);
+      GetPulmonaryShunt().Copy(*ps);
       return true;
     }
 
     const SESepsis* s = dynamic_cast<const SESepsis*>(&condition);
     if (s != nullptr)
     {
-      if (HasSepsis())
-      {
-        Error("Cannot have multiple Lobar Pneumonia conditions");
-        return false;
-      }
-      m_Sepsis = new SESepsis();
-      m_Sepsis->Copy(*s);
+      GetSepsis().Copy(*s);
       return true;
     }
   }
@@ -274,13 +202,7 @@ bool SEConditionManager::ProcessCondition(const SECondition& condition)
     const SEInitialEnvironmentalConditions* ie = dynamic_cast<const SEInitialEnvironmentalConditions*>(&condition);
     if (ie != nullptr)
     {
-      if (HasInitialEnvironmentalConditions())
-      {
-        Error("Cannot have multiple Initial Environmental conditions");
-        return false;
-      }
-      m_InitialEnvironmentalConditions = new SEInitialEnvironmentalConditions(GetLogger());
-      m_InitialEnvironmentalConditions->Copy(*ie, m_Substances);
+      GetInitialEnvironmentalConditions().Copy(*ie, subMgr);
       return true;
     }
   }
@@ -294,9 +216,11 @@ bool SEConditionManager::HasAcuteRespiratoryDistressSyndrome() const
 {
   return m_ARDS == nullptr ? false : m_ARDS->IsValid();
 }
-SEAcuteRespiratoryDistressSyndrome* SEConditionManager::GetAcuteRespiratoryDistressSyndrome()
+SEAcuteRespiratoryDistressSyndrome& SEConditionManager::GetAcuteRespiratoryDistressSyndrome()
 {
-  return m_ARDS;
+  if (m_ARDS == nullptr)
+    m_ARDS = new SEAcuteRespiratoryDistressSyndrome();
+  return *m_ARDS;
 }
 const SEAcuteRespiratoryDistressSyndrome* SEConditionManager::GetAcuteRespiratoryDistressSyndrome() const
 {
@@ -307,9 +231,11 @@ bool SEConditionManager::HasChronicAnemia() const
 {
   return m_Anemia == nullptr ? false : m_Anemia->IsValid();
 }
-SEChronicAnemia* SEConditionManager::GetChronicAnemia()
+SEChronicAnemia& SEConditionManager::GetChronicAnemia()
 {
-  return m_Anemia;
+  if (m_Anemia == nullptr)
+    m_Anemia = new SEChronicAnemia();
+  return *m_Anemia;
 }
 const SEChronicAnemia* SEConditionManager::GetChronicAnemia() const
 {
@@ -320,9 +246,11 @@ bool SEConditionManager::HasChronicObstructivePulmonaryDisease() const
 {
   return m_COPD == nullptr ? false : m_COPD->IsValid();
 }
-SEChronicObstructivePulmonaryDisease* SEConditionManager::GetChronicObstructivePulmonaryDisease()
+SEChronicObstructivePulmonaryDisease& SEConditionManager::GetChronicObstructivePulmonaryDisease()
 {
-  return m_COPD;
+  if (m_COPD == nullptr)
+    m_COPD = new SEChronicObstructivePulmonaryDisease();
+  return *m_COPD;
 }
 const SEChronicObstructivePulmonaryDisease* SEConditionManager::GetChronicObstructivePulmonaryDisease() const
 {
@@ -337,9 +265,11 @@ bool SEConditionManager::HasChronicVentricularSystolicDysfunction() const
 {
   return m_ChronicVentricularSystolicDysfunction == nullptr ? false : m_ChronicVentricularSystolicDysfunction->IsValid();
 }
-SEChronicVentricularSystolicDysfunction* SEConditionManager::GetChronicVentricularSystolicDysfunction()
+SEChronicVentricularSystolicDysfunction& SEConditionManager::GetChronicVentricularSystolicDysfunction()
 {
-  return m_ChronicVentricularSystolicDysfunction;
+  if (m_ChronicVentricularSystolicDysfunction == nullptr)
+    m_ChronicVentricularSystolicDysfunction = new SEChronicVentricularSystolicDysfunction();
+  return *m_ChronicVentricularSystolicDysfunction;
 }
 const SEChronicVentricularSystolicDysfunction* SEConditionManager::GetChronicVentricularSystolicDysfunction() const
 {
@@ -350,9 +280,11 @@ bool SEConditionManager::HasChronicPericardialEffusion() const
 {
   return m_PericardialEffusion == nullptr ? false : m_PericardialEffusion->IsValid();
 }
-SEChronicPericardialEffusion* SEConditionManager::GetChronicPericardialEffusion()
+SEChronicPericardialEffusion& SEConditionManager::GetChronicPericardialEffusion()
 {
-  return m_PericardialEffusion;
+  if (m_PericardialEffusion == nullptr)
+    m_PericardialEffusion = new SEChronicPericardialEffusion();
+  return *m_PericardialEffusion;
 }
 const SEChronicPericardialEffusion* SEConditionManager::GetChronicPericardialEffusion() const
 {
@@ -363,23 +295,26 @@ bool SEConditionManager::HasChronicRenalStenosis() const
 {
   return m_RenalStenosis == nullptr ? false : m_RenalStenosis->IsValid();
 }
-SEChronicRenalStenosis* SEConditionManager::GetChronicRenalStenosis()
+SEChronicRenalStenosis& SEConditionManager::GetChronicRenalStenosis()
 {
-  return m_RenalStenosis;
+  if (m_RenalStenosis == nullptr)
+    m_RenalStenosis = new SEChronicRenalStenosis();
+  return *m_RenalStenosis;
 }
 const SEChronicRenalStenosis* SEConditionManager::GetChronicRenalStenosis() const
 {
   return m_RenalStenosis;
 }
 
-
 bool SEConditionManager::HasConsumeMeal() const
 {
   return m_ConsumeMeal == nullptr ? false : m_ConsumeMeal->IsValid();
 }
-SEConsumeMeal* SEConditionManager::GetConsumeMeal()
+SEConsumeMeal& SEConditionManager::GetConsumeMeal()
 {
-  return m_ConsumeMeal;
+  if (m_ConsumeMeal == nullptr)
+    m_ConsumeMeal = new SEConsumeMeal();
+  return *m_ConsumeMeal;
 }
 const SEConsumeMeal* SEConditionManager::GetConsumeMeal() const
 {
@@ -390,9 +325,11 @@ bool SEConditionManager::HasImpairedAlveolarExchange() const
 {
   return m_ImpairedAlveolarExchange == nullptr ? false : m_ImpairedAlveolarExchange->IsValid();
 }
-SEImpairedAlveolarExchange* SEConditionManager::GetImpairedAlveolarExchange()
+SEImpairedAlveolarExchange& SEConditionManager::GetImpairedAlveolarExchange()
 {
-  return m_ImpairedAlveolarExchange;
+  if (m_ImpairedAlveolarExchange == nullptr)
+    m_ImpairedAlveolarExchange = new SEImpairedAlveolarExchange();
+  return *m_ImpairedAlveolarExchange;
 }
 const SEImpairedAlveolarExchange* SEConditionManager::GetImpairedAlveolarExchange() const
 {
@@ -403,9 +340,11 @@ bool SEConditionManager::HasLobarPneumonia() const
 {
   return m_LobarPneumonia == nullptr ? false : m_LobarPneumonia->IsValid();
 }
-SELobarPneumonia* SEConditionManager::GetLobarPneumonia()
+SELobarPneumonia& SEConditionManager::GetLobarPneumonia()
 {
-  return m_LobarPneumonia;
+  if (m_LobarPneumonia == nullptr)
+    m_LobarPneumonia = new SELobarPneumonia();
+  return *m_LobarPneumonia;
 }
 const SELobarPneumonia* SEConditionManager::GetLobarPneumonia() const
 {
@@ -416,9 +355,11 @@ bool SEConditionManager::HasPulmonaryFibrosis() const
 {
   return m_PulmonaryFibrosis == nullptr ? false : m_PulmonaryFibrosis->IsValid();
 }
-SEPulmonaryFibrosis* SEConditionManager::GetPulmonaryFibrosis()
+SEPulmonaryFibrosis& SEConditionManager::GetPulmonaryFibrosis()
 {
-  return m_PulmonaryFibrosis;
+  if (m_PulmonaryFibrosis == nullptr)
+    m_PulmonaryFibrosis = new SEPulmonaryFibrosis();
+  return *m_PulmonaryFibrosis;
 }
 const SEPulmonaryFibrosis* SEConditionManager::GetPulmonaryFibrosis() const
 {
@@ -429,9 +370,11 @@ bool SEConditionManager::HasPulmonaryShunt() const
 {
   return m_PulmonaryShunt == nullptr ? false : m_PulmonaryShunt->IsValid();
 }
-SEPulmonaryShunt* SEConditionManager::GetPulmonaryShunt()
+SEPulmonaryShunt& SEConditionManager::GetPulmonaryShunt()
 {
-  return m_PulmonaryShunt;
+  if (m_PulmonaryShunt == nullptr)
+    m_PulmonaryShunt = new SEPulmonaryShunt();
+  return *m_PulmonaryShunt;
 }
 const SEPulmonaryShunt* SEConditionManager::GetPulmonaryShunt() const
 {
@@ -442,9 +385,11 @@ bool SEConditionManager::HasSepsis() const
 {
   return m_Sepsis == nullptr ? false : m_Sepsis->IsValid();
 }
-SESepsis* SEConditionManager::GetSepsis()
+SESepsis& SEConditionManager::GetSepsis()
 {
-  return m_Sepsis;
+  if (m_Sepsis == nullptr)
+    m_Sepsis = new SESepsis();
+  return *m_Sepsis;
 }
 const SESepsis* SEConditionManager::GetSepsis() const
 {
@@ -455,9 +400,11 @@ bool SEConditionManager::HasInitialEnvironmentalConditions() const
 {
   return m_InitialEnvironmentalConditions == nullptr ? false : m_InitialEnvironmentalConditions->IsValid();
 }
-SEInitialEnvironmentalConditions* SEConditionManager::GetInitialEnvironmentalConditions()
+SEInitialEnvironmentalConditions& SEConditionManager::GetInitialEnvironmentalConditions()
 {
-  return m_InitialEnvironmentalConditions;
+  if (m_InitialEnvironmentalConditions == nullptr)
+    m_InitialEnvironmentalConditions = new SEInitialEnvironmentalConditions();
+  return *m_InitialEnvironmentalConditions;
 }
 const SEInitialEnvironmentalConditions* SEConditionManager::GetInitialEnvironmentalConditions() const
 {

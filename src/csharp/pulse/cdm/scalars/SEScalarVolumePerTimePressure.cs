@@ -77,4 +77,9 @@ public class SEScalarVolumePerTimePressure : SEScalar
   {
     return unit;
   }
+
+  public new string ToString()
+  {
+    return this.value + "(" + this.unit.ToString() + ")";
+  }
 }

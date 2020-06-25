@@ -121,7 +121,7 @@ SEPatientConfiguration& SEScenario::GetPatientConfiguration()
 {
   InvalidateEngineStateFile();
   if (m_PatientConfiguration == nullptr)
-    m_PatientConfiguration = new SEPatientConfiguration(*m_SubMgr);
+    m_PatientConfiguration = new SEPatientConfiguration(GetLogger());
   return *m_PatientConfiguration;
 }
 const SEPatientConfiguration* SEScenario::GetPatientConfiguration() const
@@ -146,4 +146,3 @@ const std::vector<const SEAction*>& SEScenario::GetActions() const
 {
   return m_Actions;
 }
-

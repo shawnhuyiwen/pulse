@@ -26,18 +26,17 @@ class CDM_DECL SEConditionManager : public Loggable
   friend class PBEngine;//friend the serialization class
 public:
 
-  SEConditionManager(const SESubstanceManager&);
+  SEConditionManager(Logger* logger=nullptr);
   ~SEConditionManager();
 
   void Clear();
-  void Copy(const SEConditionManager& src);
-  
+  void Copy(const SEConditionManager& src, const SESubstanceManager& subMgr);
+  bool Copy(const SECondition& condition, const SESubstanceManager&);
+
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename);
-
-  bool ProcessCondition(const SECondition& condition);// Will make a copy
+  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
   // Not too many conditions, so just have one manager
   // If we start getting alot, I will make patient/environment/equipment condition managers, like the action managers
@@ -47,65 +46,64 @@ public:
   // Patient Conditions
 
   bool HasAcuteRespiratoryDistressSyndrome() const;
-  SEAcuteRespiratoryDistressSyndrome* GetAcuteRespiratoryDistressSyndrome();
+  SEAcuteRespiratoryDistressSyndrome& GetAcuteRespiratoryDistressSyndrome();
   const SEAcuteRespiratoryDistressSyndrome* GetAcuteRespiratoryDistressSyndrome() const;
 
   bool HasChronicAnemia() const;
-  SEChronicAnemia* GetChronicAnemia();
+  SEChronicAnemia& GetChronicAnemia();
   const SEChronicAnemia* GetChronicAnemia() const;
 
   bool HasChronicObstructivePulmonaryDisease() const;
-  SEChronicObstructivePulmonaryDisease* GetChronicObstructivePulmonaryDisease();
+  SEChronicObstructivePulmonaryDisease& GetChronicObstructivePulmonaryDisease();
   const SEChronicObstructivePulmonaryDisease* GetChronicObstructivePulmonaryDisease() const;
 
   bool HasChronicHeartFailure() const;
   bool HasChronicVentricularSystolicDysfunction() const;
-  SEChronicVentricularSystolicDysfunction* GetChronicVentricularSystolicDysfunction();
+  SEChronicVentricularSystolicDysfunction& GetChronicVentricularSystolicDysfunction();
   const SEChronicVentricularSystolicDysfunction* GetChronicVentricularSystolicDysfunction() const;
 
   bool HasChronicPericardialEffusion() const;
-  SEChronicPericardialEffusion* GetChronicPericardialEffusion();
+  SEChronicPericardialEffusion& GetChronicPericardialEffusion();
   const SEChronicPericardialEffusion* GetChronicPericardialEffusion() const;
 
   bool HasChronicRenalStenosis() const;
-  SEChronicRenalStenosis* GetChronicRenalStenosis();
+  SEChronicRenalStenosis& GetChronicRenalStenosis();
   const SEChronicRenalStenosis* GetChronicRenalStenosis() const;
 
   bool HasConsumeMeal() const;
-  SEConsumeMeal* GetConsumeMeal();
+  SEConsumeMeal& GetConsumeMeal();
   const SEConsumeMeal* GetConsumeMeal() const;
 
   bool HasImpairedAlveolarExchange() const;
-  SEImpairedAlveolarExchange* GetImpairedAlveolarExchange();
+  SEImpairedAlveolarExchange& GetImpairedAlveolarExchange();
   const SEImpairedAlveolarExchange* GetImpairedAlveolarExchange() const;
 
   bool HasLobarPneumonia() const;
-  SELobarPneumonia* GetLobarPneumonia();
+  SELobarPneumonia& GetLobarPneumonia();
   const SELobarPneumonia* GetLobarPneumonia() const;
 
   bool HasPulmonaryFibrosis() const;
-  SEPulmonaryFibrosis* GetPulmonaryFibrosis();
+  SEPulmonaryFibrosis& GetPulmonaryFibrosis();
   const SEPulmonaryFibrosis* GetPulmonaryFibrosis() const;
 
   bool HasPulmonaryShunt() const;
-  SEPulmonaryShunt* GetPulmonaryShunt();
+  SEPulmonaryShunt& GetPulmonaryShunt();
   const SEPulmonaryShunt* GetPulmonaryShunt() const;
 
   bool HasSepsis() const;
-  SESepsis* GetSepsis();
+  SESepsis& GetSepsis();
   const SESepsis* GetSepsis() const;
 
   // Environment Conditions
 
   bool HasInitialEnvironmentalConditions() const;
-  SEInitialEnvironmentalConditions* GetInitialEnvironmentalConditions();
+  SEInitialEnvironmentalConditions& GetInitialEnvironmentalConditions();
   const SEInitialEnvironmentalConditions* GetInitialEnvironmentalConditions() const;
 
   // Helper to get a list of the active conditions
   void GetAllConditions(std::vector<const SECondition*>& v) const;
 
 protected:
-  const SESubstanceManager& m_Substances;
 
   SEAcuteRespiratoryDistressSyndrome*      m_ARDS;
   SEChronicAnemia*                         m_Anemia;

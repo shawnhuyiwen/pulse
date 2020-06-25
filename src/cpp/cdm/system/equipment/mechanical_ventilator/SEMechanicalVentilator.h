@@ -72,6 +72,10 @@ public:
   virtual SEScalarPressure& GetExpirationCyclePressure();
   virtual double GetExpirationCyclePressure(const PressureUnit& unit) const;
 
+  virtual bool HasExpirationCycleVolume() const;
+  virtual SEScalarVolume& GetExpirationCycleVolume();
+  virtual double GetExpirationCycleVolume(const VolumeUnit& unit) const;
+
   virtual bool HasExpirationCycleTime() const;
   virtual SEScalarTime& GetExpirationCycleTime();
   virtual double GetExpirationCycleTime(const TimeUnit& unit) const;
@@ -95,6 +99,10 @@ public:
   virtual SEScalarPressure& GetInspirationLimitPressure();
   virtual double GetInspirationLimitPressure(const PressureUnit& unit) const;
 
+  virtual bool HasInspirationLimitVolume() const;
+  virtual SEScalarVolume& GetInspirationLimitVolume();
+  virtual double GetInspirationLimitVolume(const VolumeUnit& unit) const;
+
   virtual bool HasInspirationPauseTime() const;
   virtual SEScalarTime& GetInspirationPauseTime();
   virtual double GetInspirationPauseTime(const TimeUnit& unit) const;
@@ -103,25 +111,21 @@ public:
   virtual SEScalarPressure& GetPeakInspiratoryPressure();
   virtual double GetPeakInspiratoryPressure(const PressureUnit& unit) const;
 
-  virtual bool HasEndTidalCarbonDioxidePressure() const;
-  virtual SEScalarPressure& GetEndTidalCarbonDioxidePressure();
-  virtual double GetEndTidalCarbonDioxidePressure(const PressureUnit& unit) const;
+  virtual bool HasInspirationTargetFlow() const;
+  virtual SEScalarVolumePerTime& GetInspirationTargetFlow();
+  virtual double GetInspirationTargetFlow(const VolumePerTimeUnit& unit) const;
 
-  virtual bool HasInspirationLimitVolume() const;
-  virtual SEScalarVolume& GetInspirationLimitVolume();
-  virtual double GetInspirationLimitVolume(const VolumeUnit& unit) const;
+  virtual bool HasInspirationMachineTriggerTime() const;
+  virtual SEScalarTime& GetInspirationMachineTriggerTime();
+  virtual double GetInspirationMachineTriggerTime(const TimeUnit& unit) const;
 
-  virtual bool HasInspirationTriggerFlow() const;
-  virtual SEScalarVolumePerTime& GetInspirationTriggerFlow();
-  virtual double GetInspirationTriggerFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasInspirationPatientTriggerFlow() const;
+  virtual SEScalarVolumePerTime& GetInspirationPatientTriggerFlow();
+  virtual double GetInspirationPatientTriggerFlow(const VolumePerTimeUnit& unit) const;
 
-  virtual bool HasInspirationTriggerPressure() const;
-  virtual SEScalarPressure& GetInspirationTriggerPressure();
-  virtual double GetInspirationTriggerPressure(const PressureUnit& unit) const;
-
-  virtual bool HasInspirationTriggerTime() const;
-  virtual SEScalarTime& GetInspirationTriggerTime();
-  virtual double GetInspirationTriggerTime(const TimeUnit& unit) const;
+  virtual bool HasInspirationPatientTriggerPressure() const;
+  virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
+  virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
 
   virtual bool HasInspirationTubeResistance() const;
   virtual SEScalarPressureTimePerVolume& GetInspirationTubeResistance();
@@ -164,6 +168,7 @@ protected:
   // Expriatory Cycle Properties (Only Set 1)
   SEScalarVolumePerTime*                       m_ExpirationCycleFlow;
   SEScalarPressure*                            m_ExpirationCyclePressure;
+  SEScalarVolume*                              m_ExpirationCycleVolume;
   SEScalarTime*                                m_ExpirationCycleTime;
 
   SEScalarPressureTimePerVolume*               m_ExpirationTubeResistance;
@@ -179,12 +184,14 @@ protected:
 
   // Inspiratory Target Properties (Only set 1)
   SEScalarPressure*                            m_PeakInspiratoryPressure;
-  SEScalarPressure*                            m_EndTidalCarbonDioxidePressure;
+  SEScalarVolumePerTime*                       m_InspirationTargetFlow;
 
-  // Inspiratory Trigger Properties (Only set 1)
-  SEScalarVolumePerTime*                       m_InspirationTriggerFlow;
-  SEScalarPressure*                            m_InspirationTriggerPressure;
-  SEScalarTime*                                m_InspirationTriggerTime;
+  // Inspiratory Machine Trigger Properties (Only set 1)
+  SEScalarTime*                                m_InspirationMachineTriggerTime;
+
+  // Inspiratory Patient Trigger Properties (Only set 1)
+  SEScalarVolumePerTime*                       m_InspirationPatientTriggerFlow;
+  SEScalarPressure*                            m_InspirationPatientTriggerPressure;
 
   SEScalarPressureTimePerVolume*               m_InspirationTubeResistance;
   SEScalarPressureTimePerVolume*               m_InspirationValveResistance;

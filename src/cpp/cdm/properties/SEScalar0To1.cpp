@@ -23,10 +23,10 @@ void SEScalar0To1::SetValue(double d, const NoUnit& unitless)
 
 void SEScalar0To1::ForceValue(double d)
 {
-  SEScalar::SetValue(d);
+  SEScalar::ForceValue(d);
 }
 
 void SEScalar0To1::ForceValue(double d, const NoUnit& unitless)
 {
-  SEScalar::SetValue(d);
+  SEScalar::ForceValue(d);
 }

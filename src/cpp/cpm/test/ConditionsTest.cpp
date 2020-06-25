@@ -18,14 +18,14 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
   Logger log("ConditionsPermutationsReport.log");
 
   std::unique_ptr<PhysiologyEngine> physEng = CreatePulseEngine(&log);
-  SEPatientConfiguration pc(physEng->GetSubstanceManager());
+  SEPatientConfiguration pc(&log);
 
   std::vector<SECondition*> conditions;
   SEChronicAnemia cAnem;
   cAnem.GetReductionFactor().SetValue(0.1);
   conditions.push_back(&cAnem);
 
-  SEPatientConfiguration sceConfig(physEng->GetSubstanceManager());
+  SEPatientConfiguration sceConfig(&log);
   pc.SetPatientFile("StandardMale.json");
 
   std::vector<int> conditionSwitches;
@@ -52,7 +52,7 @@ void PulseEngineTest::ConditionCombinations(const std::string& rptDirectory)
       {
         if (combo[c] == 1)
         {
-          sceConfig.GetConditions().ProcessCondition(*conditions[c]);
+          sceConfig.GetConditions().Copy(*conditions[c], physEng->GetSubstanceManager());
           ss << conditions[c]->GetName() << "-";
         }
       }

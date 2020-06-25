@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 import math, copy
 import PyPulse
-from pulse.cdm.patient import SEPatientConfiguration
+from pulse.cdm.patient import SEPatient, SEPatientConfiguration
 from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager, SEDataRequest
 from pulse.cdm.engine import IEventHandler, ILoggerForward
 from pulse.cdm.io.engine import serialize_actions_to_string, \
@@ -11,6 +11,7 @@ from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_event_change_list_from_string, \
                                 serialize_active_event_list_from_string, \
                                 serialize_log_messages_from_string
+from pulse.cdm.io.patient import serialize_patient_from_string
 
 
 class PulsePhysiologyEngine:
@@ -77,6 +78,10 @@ class PulsePhysiologyEngine:
         if self._is_ready:
             self._pull(True)
         return self._is_ready
+
+    def get_initial_patient(self, dst: SEPatient):
+        stream = self.__pulse.get_initial_patient(PyPulse.serialization_format.json)
+        serialize_patient_from_string(stream, dst, eSerializationFormat.JSON)
 
     def set_event_handler(self, event_handler: IEventHandler):
         self._event_handler = event_handler

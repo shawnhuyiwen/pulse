@@ -47,7 +47,7 @@ bool PulseScenario::HasConfiguration() const
 PulseConfiguration& PulseScenario::GetConfiguration()
 {
   if (m_Configuration == nullptr)
-    m_Configuration = new PulseConfiguration(*m_SubMgr);
+    m_Configuration = new PulseConfiguration(GetLogger());
   return *m_Configuration;
 }
 const PulseConfiguration* PulseScenario::GetConfiguration() const

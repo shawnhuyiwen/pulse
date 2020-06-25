@@ -42,7 +42,5 @@ const LengthUnit& LengthUnit::GetCompoundUnit(const std::string& unit)
     return in;
   if (ft.GetString().compare(unit) == 0)
     return ft;
-  std::stringstream err;
-  err << unit << " is not a valid Length unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Length unit");
 }

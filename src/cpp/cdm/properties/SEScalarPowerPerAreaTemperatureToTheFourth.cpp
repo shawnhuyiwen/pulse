@@ -17,7 +17,5 @@ const PowerPerAreaTemperatureToTheFourthUnit& PowerPerAreaTemperatureToTheFourth
 {
   if (W_Per_m2_K4.GetString().compare(unit) == 0)
     return W_Per_m2_K4;
-  std::stringstream err;
-  err << unit << " is not a valid PowerPerAreaTemperatureToTheFourth unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid PowerPerAreaTemperatureToTheFourth unit");
 }
