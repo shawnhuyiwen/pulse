@@ -70,7 +70,7 @@ message MechanicalVentilatorData
   
   oneof InspirationPatientTrigger
   {
-    ScalarVolumePerTimeData           InspirationPatientTriggerFlow        = 19;/**<< @brief Ventilator sensor flow value to trigger inspiration phase. */
+    ScalarVolumePerTimeData           InspirationPatientTriggerFlow        = 19;/**<< @brief Ventilator sensor volume change value to trigger inspiration phase. */
     ScalarPressureData                InspirationPatientTriggerPressure    = 20;/**<< @brief Ventilator sensor pressure value to trigger inspiration phase. */
   }
   
