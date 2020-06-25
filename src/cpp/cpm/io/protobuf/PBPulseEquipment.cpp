@@ -108,10 +108,11 @@ void PBPulseEquipment::Load(const PULSE_BIND::MechanicalVentilatorData& src, Mec
 void PBPulseEquipment::Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {
   PBMechanicalVentilator::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
-  dst.m_CurrentPeriodTime_s = src.currentperiodtime_s();
-  dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
-  dst.m_DriverFlow_L_Per_s = src.driverflow_l_per_s();
+  dst.m_CurrentBreathState = (eBreathState)src.currentbreathstate();
   dst.m_CurrentInspiratoryVolume_L = src.currentinspiratoryvolume_l();
+  dst.m_CurrentPeriodTime_s = src.currentperiodtime_s();
+  dst.m_DriverFlow_L_Per_s = src.driverflow_l_per_s();
+  dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
 }
 PULSE_BIND::MechanicalVentilatorData* PBPulseEquipment::Unload(const MechanicalVentilator& src)
 {
@@ -122,8 +123,9 @@ PULSE_BIND::MechanicalVentilatorData* PBPulseEquipment::Unload(const MechanicalV
 void PBPulseEquipment::Serialize(const MechanicalVentilator& src, PULSE_BIND::MechanicalVentilatorData& dst)
 {
   PBMechanicalVentilator::Serialize(src, *dst.mutable_common());
-  dst.set_currentperiodtime_s(src.m_CurrentPeriodTime_s);
-  dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
-  dst.set_driverflow_l_per_s(src.m_DriverFlow_L_Per_s);
+  dst.set_currentbreathstate((CDM_BIND::eBreathState)src.m_CurrentBreathState);
   dst.set_currentinspiratoryvolume_l(src.m_CurrentInspiratoryVolume_L);
+  dst.set_currentperiodtime_s(src.m_CurrentPeriodTime_s);
+  dst.set_driverflow_l_per_s(src.m_DriverFlow_L_Per_s);
+  dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
 }

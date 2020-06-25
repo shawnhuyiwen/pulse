@@ -113,6 +113,14 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
+  /// Get the Condition Manager.
+  /// Allows a user to check the state of active conditions
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEConditionManager& GetConditionManager() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
   /// Engines can have a configuration for allowing a user to set certain internal parameters
   /// Engines with configurations will have all configuration parameters defaulted,
   /// This allow you to change one or more or those parameters.
@@ -123,11 +131,9 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Get the Condition Manager.
-  /// Allows a user to check the state of active conditions
-  ///
+  /// returns the engine configuration.
   //--------------------------------------------------------------------------------------------------
-  virtual const SEConditionManager& GetConditionManager() const = 0;
+  virtual const SEEngineConfiguration* GetConfiguration() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -142,13 +148,7 @@ public:
   /// and provide access to the data easily (ex. to easily write data to csv files)
   //--------------------------------------------------------------------------------------------------
   virtual SEEngineTracker* GetEngineTracker() const = 0;
-  
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// returns the engine configuration.
-  //--------------------------------------------------------------------------------------------------
-  virtual const SEEngineConfiguration* GetConfiguration() const = 0;
-  
+
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// returns the engine time step that is used when advancing time.

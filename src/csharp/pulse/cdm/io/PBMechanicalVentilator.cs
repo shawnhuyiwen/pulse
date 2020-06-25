@@ -25,45 +25,50 @@ namespace Pulse.CDM
       dst.SetConnection((SEMechanicalVentilator.Connection)src.Connection);
       if (src.EndotrachealTubeResistance != null)
         PBProperty.Load(src.EndotrachealTubeResistance, dst.GetEndotrachealTubeResistance());
+
       if (src.PositiveEndExpiredPressure != null)
         PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
-      if (src.FunctionalResidualCapacity != null)
+      else if (src.FunctionalResidualCapacity != null)
         PBProperty.Load(src.FunctionalResidualCapacity, dst.GetFunctionalResidualCapacity());
+
       if (src.ExpirationCycleFlow != null)
         PBProperty.Load(src.ExpirationCycleFlow, dst.GetExpirationCycleFlow());
-      if (src.ExpirationCyclePressure != null)
+      else if (src.ExpirationCyclePressure != null)
         PBProperty.Load(src.ExpirationCyclePressure, dst.GetExpirationCyclePressure());
-      if (src.ExpirationCycleTime != null)
+      else if (src.ExpirationCycleTime != null)
         PBProperty.Load(src.ExpirationCycleTime, dst.GetExpirationCycleTime());
+      else if (src.ExpirationCycleVolume != null)
+        PBProperty.Load(src.ExpirationCycleVolume, dst.GetExpirationCycleVolume());
+
       if (src.ExpirationTubeResistance != null)
         PBProperty.Load(src.ExpirationTubeResistance, dst.GetExpirationTubeResistance());
       if (src.ExpirationValveResistance != null)
         PBProperty.Load(src.ExpirationValveResistance, dst.GetExpirationValveResistance());
       dst.SetExpirationWaveform((SEMechanicalVentilator.DriverWaveform)src.ExpirationWaveform);
 
-
       if (src.InspirationLimitFlow != null)
         PBProperty.Load(src.InspirationLimitFlow, dst.GetInspirationLimitFlow());
-      if (src.InspirationLimitPressure != null)
+      else if (src.InspirationLimitPressure != null)
         PBProperty.Load(src.InspirationLimitPressure, dst.GetInspirationLimitPressure());
-      if (src.InspirationLimitPressure != null)
-        PBProperty.Load(src.InspirationLimitPressure, dst.GetInspirationLimitPressure());
-      if (src.InspirationLimitVolume != null)
+      else if (src.InspirationLimitVolume != null)
         PBProperty.Load(src.InspirationLimitVolume, dst.GetInspirationLimitVolume());
-      if (src.InspirationLimitVolume != null)
-        PBProperty.Load(src.InspirationLimitVolume, dst.GetInspirationLimitVolume());
+      
       if (src.InspirationPauseTime != null)
         PBProperty.Load(src.InspirationPauseTime, dst.GetInspirationPauseTime());
+
       if (src.PeakInspiratoryPressure != null)
         PBProperty.Load(src.PeakInspiratoryPressure, dst.GetPeakInspiratoryPressure());
-      if (src.PeakInspiratoryPressure != null)
-        PBProperty.Load(src.PeakInspiratoryPressure, dst.GetPeakInspiratoryPressure());
-      if (src.PeakInspiratoryPressure != null)
-        PBProperty.Load(src.PeakInspiratoryPressure, dst.GetPeakInspiratoryPressure());
-      if (src.InspirationTriggerPressure != null)
-        PBProperty.Load(src.InspirationTriggerPressure, dst.GetInspirationTriggerPressure());
-      if (src.InspirationTriggerTime != null)
-        PBProperty.Load(src.InspirationTriggerTime, dst.GetInspirationTriggerTime());
+      else if (src.InspirationTargetFlow != null)
+        PBProperty.Load(src.InspirationTargetFlow, dst.GetInspirationTargetFlow());
+
+      if (src.InspirationMachineTriggerTime != null)
+        PBProperty.Load(src.InspirationMachineTriggerTime, dst.GetInspirationMachineTriggerTime());
+
+      if (src.InspirationPatientTriggerFlow != null)
+        PBProperty.Load(src.InspirationPatientTriggerFlow, dst.GetInspirationPatientTriggerFlow());
+      else if (src.InspirationPatientTriggerPressure != null)
+        PBProperty.Load(src.InspirationPatientTriggerPressure, dst.GetInspirationPatientTriggerPressure());
+
       if (src.InspirationTubeResistance != null)
         PBProperty.Load(src.InspirationTubeResistance, dst.GetInspirationTubeResistance());
       if (src.InspirationValveResistance != null)
@@ -92,16 +97,21 @@ namespace Pulse.CDM
       dst.Connection = (pulse.cdm.bind.MechanicalVentilatorData.Types.eConnection)(int)src.GetConnection();
       if (src.HasEndotrachealTubeResistance())
         dst.EndotrachealTubeResistance = PBProperty.Unload(src.GetEndotrachealTubeResistance());
+
       if (src.HasPositiveEndExpiredPressure())
         dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
-      if (src.HasFunctionalResidualCapacity())
+      else if (src.HasFunctionalResidualCapacity())
         dst.FunctionalResidualCapacity = PBProperty.Unload(src.GetFunctionalResidualCapacity());
+
       if (src.HasExpirationCycleFlow())
         dst.ExpirationCycleFlow = PBProperty.Unload(src.GetExpirationCycleFlow());
-      if (src.HasExpirationCyclePressure())
+      else if (src.HasExpirationCyclePressure())
         dst.ExpirationCyclePressure = PBProperty.Unload(src.GetExpirationCyclePressure());
-      if (src.HasExpirationCycleTime())
+      else if (src.HasExpirationCycleTime())
         dst.ExpirationCycleTime = PBProperty.Unload(src.GetExpirationCycleTime());
+      else if (src.HasExpirationCycleVolume())
+        dst.ExpirationCycleVolume = PBProperty.Unload(src.GetExpirationCycleVolume());
+
       if (src.HasExpirationTubeResistance())
         dst.ExpirationTubeResistance = PBProperty.Unload(src.GetExpirationTubeResistance());
       if (src.HasExpirationValveResistance())
@@ -110,22 +120,27 @@ namespace Pulse.CDM
 
       if (src.HasInspirationLimitFlow())
         dst.InspirationLimitFlow = PBProperty.Unload(src.GetInspirationLimitFlow());
-      if (src.HasInspirationLimitPressure())
+      else if (src.HasInspirationLimitPressure())
         dst.InspirationLimitPressure = PBProperty.Unload(src.GetInspirationLimitPressure());
-      if (src.HasInspirationLimitVolume())
+      else if (src.HasInspirationLimitVolume())
         dst.InspirationLimitVolume = PBProperty.Unload(src.GetInspirationLimitVolume());
+
       if (src.HasInspirationPauseTime())
         dst.InspirationPauseTime = PBProperty.Unload(src.GetInspirationPauseTime());
+
       if (src.HasPeakInspiratoryPressure())
         dst.PeakInspiratoryPressure = PBProperty.Unload(src.GetPeakInspiratoryPressure());
-      if (src.HasEndTidalCarbonDioxidePressure())
-        dst.EndTidalCarbonDioxidePressure = PBProperty.Unload(src.GetEndTidalCarbonDioxidePressure());
-      if (src.HasInspirationTriggerFlow())
-        dst.InspirationTriggerFlow = PBProperty.Unload(src.GetInspirationTriggerFlow());
-      if (src.HasInspirationTriggerPressure())
-        dst.InspirationTriggerPressure = PBProperty.Unload(src.GetInspirationTriggerPressure());
-      if (src.HasInspirationTriggerTime())
-        dst.InspirationTriggerTime = PBProperty.Unload(src.GetInspirationTriggerTime());
+      else if (src.HasInspirationTargetFlow())
+        dst.InspirationTargetFlow = PBProperty.Unload(src.GetInspirationTargetFlow());
+
+      if (src.HasInspirationMachineTriggerTime())
+        dst.InspirationMachineTriggerTime = PBProperty.Unload(src.GetInspirationMachineTriggerTime());
+
+      if (src.HasInspirationPatientTriggerFlow())
+        dst.InspirationPatientTriggerFlow = PBProperty.Unload(src.GetInspirationPatientTriggerFlow());
+      else if (src.HasInspirationPatientTriggerPressure())
+        dst.InspirationPatientTriggerPressure = PBProperty.Unload(src.GetInspirationPatientTriggerPressure());
+
       if (src.HasInspirationTubeResistance())
         dst.InspirationTubeResistance = PBProperty.Unload(src.GetInspirationTubeResistance());
       if (src.HasInspirationValveResistance())

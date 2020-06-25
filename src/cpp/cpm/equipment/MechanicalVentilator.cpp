@@ -66,7 +66,7 @@ void MechanicalVentilator::Initialize()
 {
   PulseSystem::Initialize();
   SetConnection(eMechanicalVentilator_Connection::NullConnection);
-  m_CurrentBreathMode = eBreathPeriod::exhale;
+  m_CurrentBreathState = eBreathState::Exhale;
   m_CurrentPeriodTime_s = 0.0;
   m_DriverPressure_cmH2O = SEScalar::dNaN();
   m_DriverFlow_L_Per_s = SEScalar::dNaN();
@@ -109,7 +109,7 @@ void MechanicalVentilator::StateChange()
     return;
   }
 
-  m_CurrentBreathMode = eBreathPeriod::exhale;
+  m_CurrentBreathState = eBreathState::Exhale;
   m_CurrentPeriodTime_s = 0.0;
   m_CurrentInspiratoryVolume_L = 0.0;
 
@@ -305,7 +305,7 @@ void MechanicalVentilator::PreProcess()
   //Do nothing if the ventilator is off and not initialized
   if (GetConnection() == eMechanicalVentilator_Connection::Off)
   {
-    m_CurrentBreathMode = eBreathPeriod::exhale;
+    m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
     m_CurrentInspiratoryVolume_L = 0.0;
     return;
@@ -397,7 +397,7 @@ void MechanicalVentilator::SetVentilatorDriver()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::CalculateInspiration()
 {
-  if (m_CurrentBreathMode != eBreathPeriod::inhale)
+  if (m_CurrentBreathState != eBreathState::Inhale)
   {
     m_CurrentInspiratoryVolume_L = 0.0;
     return;
@@ -478,7 +478,7 @@ void MechanicalVentilator::CalculateInspiration()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::CalculatePause()
 {
-  if (m_CurrentBreathMode != eBreathPeriod::pause)
+  if (m_CurrentBreathState != eBreathState::Pause)
   {
     return;
   }
@@ -508,7 +508,7 @@ void MechanicalVentilator::CalculatePause()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::CalculateExpiration()
 {
-  if (m_CurrentBreathMode != eBreathPeriod::exhale)
+  if (m_CurrentBreathState != eBreathState::Exhale)
   {
     return;
   }
@@ -592,17 +592,17 @@ void MechanicalVentilator::CycleMode()
 {
   m_CurrentPeriodTime_s = 0.0;
 
-  if (m_CurrentBreathMode == eBreathPeriod::inhale)
+  if (m_CurrentBreathState == eBreathState::Inhale)
   {
-    m_CurrentBreathMode = eBreathPeriod::pause;
+    m_CurrentBreathState = eBreathState::Pause;
   }
-  else if (m_CurrentBreathMode == eBreathPeriod::pause)
+  else if (m_CurrentBreathState == eBreathState::Pause)
   {
-    m_CurrentBreathMode = eBreathPeriod::exhale;
+    m_CurrentBreathState = eBreathState::Exhale;
   }
-  else if (m_CurrentBreathMode == eBreathPeriod::exhale)
+  else if (m_CurrentBreathState == eBreathState::Exhale)
   {
-    m_CurrentBreathMode = eBreathPeriod::inhale;
+    m_CurrentBreathState = eBreathState::Inhale;
   }
 }
 

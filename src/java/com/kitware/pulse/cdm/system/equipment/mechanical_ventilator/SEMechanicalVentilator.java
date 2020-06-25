@@ -290,7 +290,7 @@ public class SEMechanicalVentilator extends SEEquipment
     
     if (src.hasInspirationMachineTriggerTime())
       SEScalarTime.load(src.getInspirationMachineTriggerTime(), dst.getInspirationMachineTriggerTime());
-
+    
     if (src.hasInspirationPatientTriggerFlow())
       SEScalarVolumePerTime.load(src.getInspirationPatientTriggerFlow(), dst.getInspirationPatientTriggerFlow());
     else if (src.hasInspirationPatientTriggerPressure())
@@ -368,7 +368,7 @@ public class SEMechanicalVentilator extends SEEquipment
     
     if (src.hasInspirationMachineTriggerTime())
       dst.setInspirationMachineTriggerTime(SEScalarTime.unload(src.getInspirationMachineTriggerTime()));
-
+    
     if(src.hasInspirationPatientTriggerFlow())
       dst.setInspirationPatientTriggerFlow(SEScalarVolumePerTime.unload(src.getInspirationPatientTriggerFlow()));
     else if (src.hasInspirationPatientTriggerPressure())

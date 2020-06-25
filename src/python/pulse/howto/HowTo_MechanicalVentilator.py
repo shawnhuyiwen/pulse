@@ -46,7 +46,7 @@ def HowTo_MechanicalVentilator():
     total_period_s = 60 / respiration_rate
     inspiratory_period_s = ie_ratio * total_period_s / (1 + ie_ratio)
     expiratory_period_s = total_period_s - inspiratory_period_s
-    mechanical_ventilator.get_inspiration_trigger_time().set_value(expiratory_period_s, TimeUnit.s)
+    mechanical_ventilator.get_inspiration_machine_trigger_time().set_value(expiratory_period_s, TimeUnit.s)
     mechanical_ventilator.get_expiration_cycle_time().set_value(inspiratory_period_s, TimeUnit.s)
 
     mechanical_ventilator.remove_fraction_inspired_gasses()
