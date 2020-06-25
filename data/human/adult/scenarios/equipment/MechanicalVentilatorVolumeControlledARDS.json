@@ -1,11 +1,11 @@
 {
-  "Name": "MechanicalVentilatorPressureControlledARDS",
-  "Description": "Apply a PM-CMV mode ventilator to treat a patient with ARDS.",
+  "Name": "MechanicalVentilatorVolumeControlledARDS",
+  "Description": "Apply a VC-AC mode ventilator to treat a patient with ARDS.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json",
     "Conditions": { "AnyCondition": [ {
           "PatientCondition": {
             "AcuteRespiratoryDistressSyndrome": {
-              "Severity": { "Scalar0To1": { "Value": 0.3 } },
+              "Severity": { "Scalar0To1": { "Value": 0.6 } },
               "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 } },
               "RightLungAffected": { "Scalar0To1": { "Value": 1.0 } } } } }
       ] }
@@ -99,10 +99,6 @@
   
   { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
-  
-  { "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
-  
   {
     "EquipmentAction": {
       "MechanicalVentilatorConfiguration": {
@@ -113,81 +109,18 @@
           "Connection": "Tube",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
-          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
+          "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 5.0, "Unit": "s" } },
+          "InspirationPatientTriggerPressure": { "ScalarPressure": { "Value": -0.000001, "Unit": "cmH2O" } },
+          "InspirationTargetFlow": { "ScalarVolumePerTime": { "Value": 0.5, "Unit": "L/s" } },
+          "ExpirationCycleVolume": { "ScalarVolume": { "Value": 0.540, "Unit": "L" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },
-          "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
-          "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
-          "FractionInspiredGas": [
-            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.25, "Unit": "" } } }
-          ]
-        }
-      }
-    }
-  },  
-
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
-  
-  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
-      {
-        "Severity": { "Scalar0To1": { "Value": 0.6 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
-      }}
-    },
-  
-  {
-    "EquipmentAction": {
-      "MechanicalVentilatorConfiguration": {
-        "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
-              "Comment": "Attach the mechanical ventilator" }}},
-        "Configuration":
-        {
-          "Connection": "Tube",
-          "InspirationWaveform": "Square",
-          "ExpirationWaveform": "Square",
-          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 25.0, "Unit": "cmH2O" } },
-          "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
-          "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
-          "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
           "FractionInspiredGas": [
             { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.5, "Unit": "" } } }
           ]
         }
       }
     }
-  },  
-
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
-  
-  { "PatientAction": { "AcuteRespiratoryDistressSyndromeExacerbation": 
-      {
-        "Severity": { "Scalar0To1": { "Value": 0.9 }},
-        "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-        "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
-      }}
-    },
-  
-  {
-      "EquipmentAction": {
-        "MechanicalVentilatorConfiguration": {
-          "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
-                "Comment": "Attach the mechanical ventilator" }}},
-          "Configuration":
-          {
-            "Connection": "Tube",
-            "InspirationWaveform": "Square",
-            "ExpirationWaveform": "Square",
-            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 32.0, "Unit": "cmH2O" } },
-            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
-            "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
-            "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
-            "FractionInspiredGas": [
-              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.9995, "Unit": "" } } }
-            ]
-          }
-        }
-      }
-    },  
+  },
   
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } }
   ]

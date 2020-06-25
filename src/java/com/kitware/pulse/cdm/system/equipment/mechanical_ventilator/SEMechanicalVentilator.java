@@ -31,6 +31,7 @@ public class SEMechanicalVentilator extends SEEquipment
   // Expriatory Cycle Properties (Only Set 1)
   protected SEScalarVolumePerTime             expirationCycleFlow;
   protected SEScalarPressure                  expirationCyclePressure;
+  protected SEScalarVolume                    expirationCycleVolume;
   protected SEScalarTime                      expirationCycleTime;
   
   protected SEScalarPressureTimePerVolume     expirationTubeResistance;
@@ -47,12 +48,15 @@ public class SEMechanicalVentilator extends SEEquipment
   
   // Inspiratory Target Properties (Only set 1)
   protected SEScalarPressure                  peakInspiratoryPressure;
-  protected SEScalarPressure                  endTidalCarbonDioxidePressure;
+  protected SEScalarVolumePerTime             inspirationTargetFlow;
   
-  // Inspiratory Trigger Properties (Only set 1)
-  protected SEScalarVolumePerTime             inspirationTriggerFlow;
-  protected SEScalarPressure                  inspirationTriggerPressure;
-  protected SEScalarTime                      inspirationTriggerTime;
+  // Inspiratory Machine Trigger Properties (Only set 1)
+  protected SEScalarTime                      inspirationMachineTriggerTime;
+
+  // Inspiratory Patient Trigger Properties (Only set 1)
+  protected SEScalarVolumePerTime             inspirationPatientTriggerFlow;
+  protected SEScalarPressure                  inspirationPatientTriggerPressure;
+  
 
   protected SEScalarPressureTimePerVolume     inspirationTubeResistance;
   protected SEScalarPressureTimePerVolume     inspirationValveResistance;
@@ -72,6 +76,7 @@ public class SEMechanicalVentilator extends SEEquipment
 
     expirationCycleFlow = null;
     expirationCyclePressure = null;
+    expirationCycleVolume = null;
     expirationCycleTime = null;
 
     expirationTubeResistance = null;
@@ -85,11 +90,12 @@ public class SEMechanicalVentilator extends SEEquipment
     inspirationPauseTime = null;
 
     peakInspiratoryPressure = null;
-    endTidalCarbonDioxidePressure = null;
+    inspirationTargetFlow = null;
 
-    inspirationTriggerFlow = null;
-    inspirationTriggerPressure = null;
-    inspirationTriggerTime = null;
+    inspirationMachineTriggerTime = null;
+
+    inspirationPatientTriggerFlow = null;
+    inspirationPatientTriggerPressure = null;
 
     inspirationTubeResistance = null;
     inspirationValveResistance = null;
@@ -115,6 +121,8 @@ public class SEMechanicalVentilator extends SEEquipment
       expirationCycleFlow.invalidate();
     if (expirationCyclePressure != null)
       expirationCyclePressure.invalidate();
+    if (expirationCycleVolume != null)
+      expirationCycleVolume.invalidate();
     if (expirationCycleTime != null)
       expirationCycleTime.invalidate();
 
@@ -136,15 +144,16 @@ public class SEMechanicalVentilator extends SEEquipment
 
     if (peakInspiratoryPressure != null)
       peakInspiratoryPressure.invalidate();
-    if (endTidalCarbonDioxidePressure != null)
-      endTidalCarbonDioxidePressure.invalidate();
+    if (inspirationTargetFlow != null)
+      inspirationTargetFlow.invalidate();
 
-    if (inspirationTriggerFlow != null)
-      inspirationTriggerFlow.invalidate();
-    if (inspirationTriggerPressure != null)
-      inspirationTriggerPressure.invalidate();
-    if (inspirationTriggerTime != null)
-      inspirationTriggerTime.invalidate();
+    if (inspirationMachineTriggerTime != null)
+      inspirationMachineTriggerTime.invalidate();
+
+    if (inspirationPatientTriggerFlow != null)
+      inspirationPatientTriggerFlow.invalidate();
+    if (inspirationPatientTriggerPressure != null)
+      inspirationPatientTriggerPressure.invalidate();
 
     if (inspirationTubeResistance != null)
       inspirationTubeResistance.invalidate();
@@ -173,6 +182,8 @@ public class SEMechanicalVentilator extends SEEquipment
       this.getExpirationCycleFlow().set(from.getExpirationCycleFlow());
     if(from.hasExpirationCyclePressure())
       this.getExpirationCyclePressure().set(from.getExpirationCyclePressure());
+    if(from.hasExpirationCycleVolume())
+      this.getExpirationCycleVolume().set(from.getExpirationCycleVolume());
     if(from.hasExpirationCycleTime())
       this.getExpirationCycleTime().set(from.getExpirationCycleTime());
     
@@ -195,15 +206,16 @@ public class SEMechanicalVentilator extends SEEquipment
     
     if(from.hasPeakInspiratoryPressure())
       this.getPeakInspiratoryPressure().set(from.getPeakInspiratoryPressure());
-    if(from.hasEndTidalCarbonDioxidePressure())
-      this.getEndTidalCarbonDioxidePressure().set(from.getEndTidalCarbonDioxidePressure());
+    if(from.hasInspirationTargetFlow())
+      this.getInspirationTargetFlow().set(from.getInspirationTargetFlow());
     
-    if(from.hasInspirationTriggerFlow())
-      this.getInspirationTriggerFlow().set(from.getInspirationTriggerFlow());
-    if(from.hasInspirationTriggerPressure())
-      this.getInspirationTriggerPressure().set(from.getInspirationTriggerPressure());
-    if(from.hasInspirationTriggerTime())
-      this.getInspirationTriggerTime().set(from.getInspirationTriggerTime());
+    if(from.hasInspirationMachineTriggerTime())
+      this.getInspirationMachineTriggerTime().set(from.getInspirationMachineTriggerTime());
+
+    if(from.hasInspirationPatientTriggerFlow())
+      this.getInspirationPatientTriggerFlow().set(from.getInspirationPatientTriggerFlow());
+    if(from.hasInspirationPatientTriggerPressure())
+      this.getInspirationPatientTriggerPressure().set(from.getInspirationPatientTriggerPressure());
     
     if(from.hasInspirationTubeResistance())
       this.getInspirationTubeResistance().set(from.getInspirationTubeResistance());
@@ -249,6 +261,8 @@ public class SEMechanicalVentilator extends SEEquipment
       SEScalarVolumePerTime.load(src.getExpirationCycleFlow(), dst.getExpirationCycleFlow());
     else if (src.hasExpirationCyclePressure())
       SEScalarPressure.load(src.getExpirationCyclePressure(), dst.getExpirationCyclePressure());
+    else if (src.hasExpirationCycleVolume())
+      SEScalarVolume.load(src.getExpirationCycleVolume(), dst.getExpirationCycleVolume());
     else if (src.hasExpirationCycleTime())
       SEScalarTime.load(src.getExpirationCycleTime(), dst.getExpirationCycleTime());
     
@@ -271,15 +285,16 @@ public class SEMechanicalVentilator extends SEEquipment
     
     if (src.hasPeakInspiratoryPressure())
       SEScalarPressure.load(src.getPeakInspiratoryPressure(), dst.getPeakInspiratoryPressure());
-    else if (src.hasEndTidalCarbonDioxidePressure())
-      SEScalarPressure.load(src.getEndTidalCarbonDioxidePressure(), dst.getEndTidalCarbonDioxidePressure());
+    else if (src.hasInspirationTargetFlow())
+      SEScalarVolumePerTime.load(src.getInspirationTargetFlow(), dst.getInspirationTargetFlow());
     
-    if (src.hasInspirationTriggerFlow())
-      SEScalarVolumePerTime.load(src.getInspirationTriggerFlow(), dst.getInspirationTriggerFlow());
-    else if (src.hasInspirationTriggerPressure())
-      SEScalarPressure.load(src.getInspirationTriggerPressure(), dst.getInspirationTriggerPressure());
-    else if (src.hasInspirationTriggerTime())
-      SEScalarTime.load(src.getInspirationTriggerTime(), dst.getInspirationTriggerTime());
+    if (src.hasInspirationMachineTriggerTime())
+      SEScalarTime.load(src.getInspirationMachineTriggerTime(), dst.getInspirationMachineTriggerTime());
+
+    if (src.hasInspirationPatientTriggerFlow())
+      SEScalarVolumePerTime.load(src.getInspirationPatientTriggerFlow(), dst.getInspirationPatientTriggerFlow());
+    else if (src.hasInspirationPatientTriggerPressure())
+      SEScalarPressure.load(src.getInspirationPatientTriggerPressure(), dst.getInspirationPatientTriggerPressure());
     
     if (src.hasInspirationTubeResistance())
       SEScalarPressureTimePerVolume.load(src.getInspirationTubeResistance(), dst.getInspirationTubeResistance());
@@ -324,6 +339,8 @@ public class SEMechanicalVentilator extends SEEquipment
       dst.setExpirationCycleFlow(SEScalarVolumePerTime.unload(src.getExpirationCycleFlow()));
     else if (src.hasExpirationCyclePressure())
       dst.setExpirationCyclePressure(SEScalarPressure.unload(src.getExpirationCyclePressure()));
+    else if (src.hasExpirationCycleVolume())
+      dst.setExpirationCycleVolume(SEScalarVolume.unload(src.getExpirationCycleVolume()));
     else if (src.hasExpirationCycleTime())
       dst.setExpirationCycleTime(SEScalarTime.unload(src.getExpirationCycleTime()));
     
@@ -346,15 +363,16 @@ public class SEMechanicalVentilator extends SEEquipment
     
     if(src.hasPeakInspiratoryPressure())
       dst.setPeakInspiratoryPressure(SEScalarPressure.unload(src.getPeakInspiratoryPressure()));
-    else if (src.hasEndTidalCarbonDioxidePressure())
-      dst.setEndTidalCarbonDioxidePressure(SEScalarPressure.unload(src.getEndTidalCarbonDioxidePressure()));
+    else if (src.hasInspirationTargetFlow())
+      dst.setInspirationTargetFlow(SEScalarVolumePerTime.unload(src.getInspirationTargetFlow()));
     
-    if(src.hasInspirationTriggerFlow())
-      dst.setInspirationTriggerFlow(SEScalarVolumePerTime.unload(src.getInspirationTriggerFlow()));
-    else if (src.hasInspirationTriggerPressure())
-      dst.setInspirationTriggerPressure(SEScalarPressure.unload(src.getInspirationTriggerPressure()));
-    else if (src.hasInspirationTriggerTime())
-      dst.setInspirationTriggerTime(SEScalarTime.unload(src.getInspirationTriggerTime()));
+    if (src.hasInspirationMachineTriggerTime())
+      dst.setInspirationMachineTriggerTime(SEScalarTime.unload(src.getInspirationMachineTriggerTime()));
+
+    if(src.hasInspirationPatientTriggerFlow())
+      dst.setInspirationPatientTriggerFlow(SEScalarVolumePerTime.unload(src.getInspirationPatientTriggerFlow()));
+    else if (src.hasInspirationPatientTriggerPressure())
+      dst.setInspirationPatientTriggerPressure(SEScalarPressure.unload(src.getInspirationPatientTriggerPressure()));
     
     if(src.hasInspirationTubeResistance())
       dst.setInspirationTubeResistance(SEScalarPressureTimePerVolume.unload(src.getInspirationTubeResistance()));
@@ -435,6 +453,17 @@ public class SEMechanicalVentilator extends SEEquipment
   public boolean hasExpirationCyclePressure()
   {
     return expirationCyclePressure == null ? false : expirationCyclePressure.isValid();
+  }
+
+  public SEScalarVolume getExpirationCycleVolume()
+  {
+    if (expirationCycleVolume == null)
+      expirationCycleVolume = new SEScalarVolume();
+    return expirationCycleVolume;
+  }
+  public boolean hasExpirationCycleVolume()
+  {
+    return expirationCycleVolume == null ? false : expirationCycleVolume.isValid();
   }
   
   public SEScalarTime getExpirationCycleTime()
@@ -538,48 +567,48 @@ public class SEMechanicalVentilator extends SEEquipment
     return peakInspiratoryPressure == null ? false : peakInspiratoryPressure.isValid();
   }
   
-  public SEScalarPressure getEndTidalCarbonDioxidePressure()
+  public SEScalarVolumePerTime getInspirationTargetFlow()
   {
-    if (endTidalCarbonDioxidePressure == null)
-      endTidalCarbonDioxidePressure = new SEScalarPressure();
-    return endTidalCarbonDioxidePressure;
+    if (inspirationTargetFlow == null)
+      inspirationTargetFlow = new SEScalarVolumePerTime();
+    return inspirationTargetFlow;
   }
-  public boolean hasEndTidalCarbonDioxidePressure()
+  public boolean hasInspirationTargetFlow()
   {
-    return endTidalCarbonDioxidePressure == null ? false : endTidalCarbonDioxidePressure.isValid();
-  }
-  
-  public SEScalarVolumePerTime getInspirationTriggerFlow()
-  {
-    if (inspirationTriggerFlow == null)
-      inspirationTriggerFlow = new SEScalarVolumePerTime();
-    return inspirationTriggerFlow;
-  }
-  public boolean hasInspirationTriggerFlow()
-  {
-    return inspirationTriggerFlow == null ? false : inspirationTriggerFlow.isValid();
+    return inspirationTargetFlow == null ? false : inspirationTargetFlow.isValid();
   }
   
-  public SEScalarPressure getInspirationTriggerPressure()
+  public SEScalarTime getInspirationMachineTriggerTime()
   {
-    if (inspirationTriggerPressure == null)
-      inspirationTriggerPressure = new SEScalarPressure();
-    return inspirationTriggerPressure;
+    if (inspirationMachineTriggerTime == null)
+      inspirationMachineTriggerTime = new SEScalarTime();
+    return inspirationMachineTriggerTime;
   }
-  public boolean hasInspirationTriggerPressure()
+  public boolean hasInspirationMachineTriggerTime()
   {
-    return inspirationTriggerPressure == null ? false : inspirationTriggerPressure.isValid();
+    return inspirationMachineTriggerTime == null ? false : inspirationMachineTriggerTime.isValid();
+  }
+
+  public SEScalarVolumePerTime getInspirationPatientTriggerFlow()
+  {
+    if (inspirationPatientTriggerFlow == null)
+      inspirationPatientTriggerFlow = new SEScalarVolumePerTime();
+    return inspirationPatientTriggerFlow;
+  }
+  public boolean hasInspirationPatientTriggerFlow()
+  {
+    return inspirationPatientTriggerFlow == null ? false : inspirationPatientTriggerFlow.isValid();
   }
   
-  public SEScalarTime getInspirationTriggerTime()
+  public SEScalarPressure getInspirationPatientTriggerPressure()
   {
-    if (inspirationTriggerTime == null)
-      inspirationTriggerTime = new SEScalarTime();
-    return inspirationTriggerTime;
+    if (inspirationPatientTriggerPressure == null)
+      inspirationPatientTriggerPressure = new SEScalarPressure();
+    return inspirationPatientTriggerPressure;
   }
-  public boolean hasInspirationTriggerTime()
+  public boolean hasInspirationPatientTriggerPressure()
   {
-    return inspirationTriggerTime == null ? false : inspirationTriggerTime.isValid();
+    return inspirationPatientTriggerPressure == null ? false : inspirationPatientTriggerPressure.isValid();
   }
   
   public SEScalarPressureTimePerVolume getInspirationTubeResistance()
@@ -743,6 +772,7 @@ public class SEMechanicalVentilator extends SEEquipment
         
         + "\n\tExpirationCycleFlow: " + (hasExpirationCycleFlow()?getExpirationCycleFlow():"NotProvided")
         + "\n\tExpirationCyclePressure: " + (hasExpirationCyclePressure()?getExpirationCyclePressure():"NotProvided")
+        + "\n\tExpirationCycleVolume: " + (hasExpirationCycleVolume()?getExpirationCycleVolume():"NotProvided")
         + "\n\tExpirationCycleTime: " + (hasExpirationCycleTime()?getExpirationCycleTime():"NotProvided")
         
         + "\n\tExpirationTubeResistance: " + (hasExpirationTubeResistance()?getExpirationTubeResistance():"NotProvided")
@@ -756,11 +786,12 @@ public class SEMechanicalVentilator extends SEEquipment
         + "\n\tInspirationPauseTime: " + (hasInspirationPauseTime()?getInspirationPauseTime():"NotProvided")
         
         + "\n\tPeakInspiratoryPressure: " + (hasPeakInspiratoryPressure()?getPeakInspiratoryPressure():"NotProvided")
-        + "\n\tEndTidalCarbonDioxidePressure: " + (hasEndTidalCarbonDioxidePressure()?getEndTidalCarbonDioxidePressure():"NotProvided")
+        + "\n\tInspirationTargetFlow: " + (hasInspirationTargetFlow()?getInspirationTargetFlow():"NotProvided")
         
-        + "\n\tInspirationTriggerFlow: " + (hasInspirationTriggerFlow()?getInspirationTriggerFlow():"NotProvided")
-        + "\n\tInspirationTriggerPressure: " + (hasInspirationTriggerPressure()?getInspirationTriggerPressure():"NotProvided")
-        + "\n\tInspirationTriggerTime: " + (hasInspirationTriggerTime()?getInspirationTriggerTime():"NotProvided")
+        + "\n\tInspirationMachineTriggerTime: " + (hasInspirationMachineTriggerTime()?getInspirationMachineTriggerTime():"NotProvided")
+
+        + "\n\tInspirationPatientTriggerFlow: " + (hasInspirationPatientTriggerFlow()?getInspirationPatientTriggerFlow():"NotProvided")
+        + "\n\tInspirationPatientTriggerPressure: " + (hasInspirationPatientTriggerPressure()?getInspirationPatientTriggerPressure():"NotProvided")
         
         + "\n\tInspirationTubeResistance: " + (hasInspirationTubeResistance()?getInspirationTubeResistance():"NotProvided")
         + "\n\tInspirationValveResistance: " + (hasInspirationValveResistance()?getInspirationValveResistance():"NotProvided")

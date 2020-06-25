@@ -270,7 +270,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
     double totalPeriod_s = 60.0 / respirationRate_per_min;
     double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
     double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-    mv.GetInspirationTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+    mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
     mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
 
     m_FiO2 = &mv.GetFractionInspiredGas(*m_Oxygen);
@@ -559,7 +559,7 @@ bool MVEngine::GetSimulationState(pulse::study::bind::multiplex_ventilation::Sim
     // For Completeness, Write out the ventilator settings
 
     // Translate ventilator settings
-    double expiratoryPeriod_s = pc->GetMechanicalVentilator().GetInspirationTriggerTime(TimeUnit::s);
+    double expiratoryPeriod_s = pc->GetMechanicalVentilator().GetInspirationMachineTriggerTime(TimeUnit::s);
     double inspiratoryPeriod_s = pc->GetMechanicalVentilator().GetExpirationCycleTime(TimeUnit::s);
     double respirationRate_per_min = 60.0 / (inspiratoryPeriod_s + inspiratoryPeriod_s);
     double IERatio = inspiratoryPeriod_s / expiratoryPeriod_s;

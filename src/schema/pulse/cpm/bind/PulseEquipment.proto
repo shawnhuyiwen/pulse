@@ -36,9 +36,8 @@ message InhalerData
 message MechanicalVentilatorData
 {
   pulse.cdm.bind.MechanicalVentilatorData          Common                         = 1;
-  bool                                             Inhaling                       = 2;
-  double                                           CurrentBreathingCycleTime_s    = 3;
-  double                                           PressureTarget_cmH2O           = 4;
-  double                                           PressureBaseline_cmH2O         = 5;
-  double                                           DriverPressure_cmH2O           = 6;
+  double                                           CurrentPeriodTime_s            = 2;
+  double                                           DriverPressure_cmH2O           = 3;
+  double                                           DriverFlow_L_Per_s             = 4;
+  double                                           CurrentInspiratoryVolume_L     = 5;
 }
