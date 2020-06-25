@@ -57,15 +57,18 @@ public:
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Reset engine and set it to the state in the provided file.
+  /// The file may contain json or binary. 
+  /// Anything but an extension of .json will be interpreted as binary.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromFile(const std::string& filename) = 0;
+  virtual bool SerializeFromFile(const std::string& file) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Save the current state of the engine to provided filename.
-  /// Engine will be in a cleared state if this method fails.
+  /// Using a .json extension will save a json/ascii file.
+  /// Anything else will save as binary.
   //--------------------------------------------------------------------------------------------------
   virtual bool SerializeToFile(const std::string& filename) const = 0;
 
@@ -84,7 +87,6 @@ public:
   /// Save the current state of the engine.
   /// The state can be saved as JSON or bytes in the given string.
   /// Note that the bytes are binary, not text; we only use the string class as a convenient container.
-  /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
   virtual bool SerializeToString(std::string& state, SerializationFormat m) const = 0;
 
