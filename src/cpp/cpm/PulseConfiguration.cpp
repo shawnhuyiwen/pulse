@@ -121,7 +121,7 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_WaterDigestionRate = nullptr;
 
   // Nervous
-  m_CerebrospinalFluidEnabled = eSwitch::On;
+  m_CerebrospinalFluidEnabled = eSwitch::Off;
   m_BaroreceptorFeedback = eSwitch::On;
   m_ChemoreceptorFeedback = eSwitch::On;
   m_HeartElastanceDistributedTimeDelay = nullptr;
@@ -255,7 +255,7 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_WaterDigestionRate);
 
   // Nervous
-  m_CerebrospinalFluidEnabled = eSwitch::On;
+  m_CerebrospinalFluidEnabled = eSwitch::Off;
   m_BaroreceptorFeedback = eSwitch::On;
   m_ChemoreceptorFeedback = eSwitch::On;
   SAFE_DELETE(m_HeartElastanceDistributedTimeDelay);
@@ -412,7 +412,7 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetWaterDigestionRate().SetValue(0.417, VolumePerTimeUnit::mL_Per_s);// Peronnet2012Pharmacokinetic, Estimated from 300mL H20 being absorbed in 9.5-12m
   
   // Nervous
-  m_CerebrospinalFluidEnabled = eSwitch::On;
+  m_CerebrospinalFluidEnabled = eSwitch::Off;
   m_BaroreceptorFeedback = eSwitch::On;
   m_ChemoreceptorFeedback = eSwitch::On;
   GetHeartElastanceDistributedTimeDelay().SetValue(20.0, TimeUnit::s);

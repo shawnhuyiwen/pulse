@@ -49,6 +49,7 @@ Nervous::~Nervous()
 void Nervous::Clear()
 {
   SENervousSystem::Clear();
+  m_CSFProductAbsorptionPath = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -114,8 +115,8 @@ void Nervous::SetUp()
   m_NormalizedAlphaResistance   = m_data.GetConfiguration().GetNormalizedResistanceSympatheticSlope();
   m_NormalizedBetaHeartRate     = m_data.GetConfiguration().GetNormalizedHeartRateParasympatheticSlope();
 
-  
-  m_CSFProductAbsorptionPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CerebrospinalFluidPath::GroundToIntracranialSpace1);
+  if(m_data.GetConfiguration().IsCerebrospinalFluidEnabled())
+    m_CSFProductAbsorptionPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CerebrospinalFluidPath::GroundToIntracranialSpace1);
 }
 
 void Nervous::AtSteadyState()
@@ -223,6 +224,8 @@ void Nervous::PostProcess(bool solve_and_transport)
 //--------------------------------------------------------------------------------------------------
 void Nervous::CerebralSpinalFluidUpdates()
 {
+  if (!m_data.GetConfiguration().IsCerebrospinalFluidEnabled())
+    return;
     //Update CSF Production and Absorption Rates
     m_CSFProductAbsorptionPath->GetNextFlowSource().SetValue(m_CSFProductionRate_mlPermin - m_CSFAbsorptionRate_mLPermin, VolumePerTimeUnit::mL_Per_min);
 }
