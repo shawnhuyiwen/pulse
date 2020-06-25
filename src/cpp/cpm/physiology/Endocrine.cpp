@@ -118,7 +118,7 @@ void Endocrine::SynthesizeInsulin()
   double bloodGlucoseConcentration_mg_Per_dL = m_data.GetSubstances().GetGlucose().GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL);
   if (bloodGlucoseConcentration_mg_Per_dL >= 80)
   {
-    // Linear function for blood glucose between 80-150 mg/dL and insulin synthesis of 100-475 pmol/min
+    // Linear function for blood glucose between 80-150 mg/dL and insulin synthesis of 100-475 pmol/min [polonsky1987insulin]
     double insulinSynthesisRate_pmol_Per_min = (5.357 * bloodGlucoseConcentration_mg_Per_dL) - 328.56;
     GetInsulinSynthesisRate().SetValue(insulinSynthesisRate_pmol_Per_min, AmountPerTimeUnit::pmol_Per_min);
 

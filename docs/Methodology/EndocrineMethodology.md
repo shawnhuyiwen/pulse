@@ -46,15 +46,18 @@ Features, Capabilities, and Dependencies
 The %Endocrine System currently contains only two hormones: epinephrine and insulin. Both hormones are released endogenously and cleared at a specified rate. The release rate of insulin is modified by the concentration of glucose in the blood, and the release rate of epinephrine is perturbed from the basal rate by two actions: exercise and acute stress.
 
 ### Insulin
-Insulin is secreted by the pancreatic beta cells in response to increased blood glucose. The model utilized for insulin synthesis was obtained from a full-body insulin and glucose feedback model @cite tolic2000modeling. The synthesis rate is defined by:
+Insulin is secreted by the pancreatic beta cells in response to increased blood glucose.
+The model utilized for insulin synthesis is a linear function capturing the insulin/glucose relationship described in polonsky @cite polonsky1987insulin.
+The synthesis rate is defined by:
 
-\f[f(G)=\frac{R}{1+\exp \left((C-G)\left(\frac{1}{a_{1} } \right)\right)} \f] 
+\f[f(I)= (5.357 * G) - 328.56 \f] 
 <center>
 *Equation 1.*
 </center><br>
-Where *R* is the tuned basal insulin synthesis rate in microunits per minute. *C* is the upper glucose concentration set-point in grams per liter. *a<sub>1</sub>* is the lower glucose concentration set-point in grams per liter.
+Where *G* is glucose concentration of the blood. 
+This linear function is valid for glucose levels of 80-150 mg/dL, and will compute an insulin synthesis rate between 100-475 pmol/min accordingly.
 
-The equation gives the insulin synthesis rate in microunits per minute as a function of the blood glucose concentration in grams per liter. The remaining parameters are tuning constants that were adjusted to achieve the correct insulin response. Because the %Cardiovascular System does not contain a pancreas compartment, the insulin is synthesized directly in the splanchnic. It utilizes the glucose concentration in the aorta to determine the amount of insulin to be synthesized.
+Because the %Cardiovascular System does not contain a pancreas compartment, the insulin is synthesized directly in the splanchnic.
 
 Insulin does not have any effects attributable to pharmacodynamic model. Its only purpose is to modulate the consumption of glucose.
 
