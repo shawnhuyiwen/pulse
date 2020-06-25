@@ -1,6 +1,6 @@
 {
   "Name": "HemorrhageClass2InternalSpleen",
-  "Description": "",
+  "Description": "25% Blood loss from spleen",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {

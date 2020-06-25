@@ -1,6 +1,6 @@
 {
   "Name": "HemorrhageClass3NoFluidLongTerm",
-  "Description": "",
+  "Description": "35% Blood Loss",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {

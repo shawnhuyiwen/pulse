@@ -187,11 +187,42 @@ Actions
 The cardiac arrest action is used to externally initiate a cardiac arrest event (see @ref cardiovascular-arrest "Cardiac Arrest" event below). The cardiac arrest event is a cessation of all cardiac and respiratory function. The cardiac arrest event can be triggered by systems of the engine when physiological thresholds are reached (physiological cardiac arrest), or it can be triggered by the cardiac arrest action (interface-initiated cardiac arrest). The cardiac arrest insult can be thought of as an idiopathic sudden cardiac arrest.
 
 #### Hemorrhage
-A hemorrhage is a substantial blood loss that may lead to inadequate supply of oxygen to tissues and vital organs. Reduced blood volume leads to reduced cardiac output, reduced mean arterial pressure, and an increase in heart rate due to baroreceptor response. Hemorrhage is initiated in the engine by specifying the location (compartment) and bleed rate. Multiple hemorrhages may exist at any given time. The user can specify and cardiovascular compartment to apply a hemorrhage. After the hemorrhage has been specified, the total loss rate is the sum of each individual bleed rate to that compartment. This value is set as a negative flow source. This results in a decrease in total blood volume that is linearly proportional to the total loss rate. This decrease in blood volume leads to a drop in arterial pressures and cardiac output. The baroreceptor reflex initiates an increase in heart rate to compensate for the reduced mean arterial pressure.
+A hemorrhage is a significant reduction in blood volume, which triggers a physiologic response to stabilize cardiovascular function. Hypovolemia is any loss in blood volume, where a loss of more than 35% is considered hypovolemic shock. Hemorrhage causes a reduction in filling pressure for the circulation, leading to a decrease in venous return. This is evidenced by the decrease in mean arterial pressure and cardiac output. If these physiologic values continue to drop, hemorrhagic or hypovolemic shock will occur. There are three stages of shock: a nonprogressive stage, which the normal circulatory responses will lead to a recovery; a progressive stage, which leads to progressively worsening condition and eventual death without intervention; and an irreversible stage, which leads to death regardless of intervention. The sympathetic response is triggered by the decrease in mean arterial blood pressure, specifically by causing the stretch receptors (baroreceptors) to activate. This response triggers an increase in systemic vascular resistance, heart rate, and a decrease in venous compliance. This is discussed in detail in the @ref NervousMethodology. 
 
-An internal hemorrhage can also be specified for abdominal cardiovascular compartments, including the aorta, vena cava, stomach, splanchnic, spleen, right and left kidneys, large and small intestines, and liver. The internal hemorrhage allows blood to flow into the abdominal cavity, increasing the pressure in the cavity. This pressure is applied to the aorta, increasing the localized blood pressure as a result of internal blood accumulation.
+Hemorrhage is initiated in the engine by specifying the location (compartment) and bleed rate. Multiple hemorrhages may exist at any given time. The user can specify a cardiovascular compartment to apply a hemorrhage. After the hemorrhage has been specified, the total loss rate is the sum of each individual bleed rate to that compartment. This value is set as a negative flow source. This results in a decrease in total blood volume that is linearly proportional to the total loss rate. An internal hemorrhage can also be specified for abdominal cardiovascular compartments, including the aorta, vena cava, stomach, splanchnic, spleen, right and left kidneys, large and small intestines, and liver. The internal hemorrhage allows blood to flow into the abdominal cavity, increasing the pressure in the cavity. This pressure is applied to the aorta, increasing the localized blood pressure as a result of internal blood accumulation.
 
-Additionally, as there is a decrease in total blood volume, there is an associated decrease in the substances found in the blood. Like blood volume, the decrease in the substance will be linearly proportional to the bleed rate. For more specific information regarding these substances and their loss due to bleeding, see @ref BloodChemistryMethodology and @ref SubstanceTransportMethodology. Figure 8 shows the blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no intervention other than the cessation of hemorrhage. Figure 9 shows a hemorrhage event with subsequent saline administration. Note that the hemoglobin content remains diminished as the blood volume recovers with IV saline. By comparison, [Figure 11](@ref cardiovascular-blood-administration) shows a blood-product intervention following a hemorrhage event. In that figure, the hemoglobin increases with the blood infusion.
+The hemorrhage response was validated with a comparison to the literature. The mean arterial pressure and cardiac output were computed as a function of their baseline value and plotted with the percent blood loss, as shown in Figure 8. The computed results are shown on the left and the validation data @cite guyton2006medical is shown on the right.
+
+<table>
+<tr>
+<td><img src="./plots/Cardiovascular/CardiacShockTest.jpg" width="550">
+</td>
+<td><img src="./Images/Cardiovascular/CardiacShockValidation.jpg" width="550">
+</td>
+</tr>
+</table>
+<center>
+*Figure 8. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).*
+</center><br>
+
+For the hemorrhage to shock scenario, our results maintain MAP through a 20% blood loss and CO begins to slowly decrease as expected. At 20%, we see an approximately linear drop in MAP from a as expected compared to experimental data from @cite guyton2006medical. The cardiac output shows the correct trend but a larger error for this region. The “last ditch” plateau is then exhibited from a blood loss of just under 35% to just under 45%. The MAP and CO then drop precipitously as expected. 
+
+The different types of shock are evident in the data collected for groups of dogs and published in @cite guyton2006medical. Groups I, II, and III show cases of nonprogressive shock, Groups IV, and V show cases of progressive shock, and Group VI is an irreversible shock case. The first three groups recover without intervention, the final case leads quickly to death, and the Group IV and V cases show a short rebound before the physiologic decline that occurs without treatment. These cases were duplicated in the Pulse engine. The results and comparison to validation data are shown in Figure 9.
+
+<table>
+<tr>
+<td><img src="./plots/Cardiovascular/HemorrhageGroups.jpg" width="250">
+</td>
+<td><img src="./Images/Cardiovascular/HemorrhageGroupsValidation.jpg" width="250">
+</td>
+</tr>
+</table>
+*Figure 9. Normalized mean arterial pressure for different hemorrhage severities to demonstrate the different shock types. The computaed Pulse results are on the left and the validation data @cite guyton2006medical is on the right.*
+</center><br>
+
+For the first three group hemorrhage scenarios (90%, 65%, and 50% blood loss), if the hemorrhage is arrested the MAP begins to rise and reaches a stable value. However, for the remaining three scenarios, the hemorrhage is unrecoverable for the patient. This is expected compared to the experimental data and for the degree of shock. However, one limitation of the model is that at the turning point between progressive and irreversible shock, the expected behavior is a temporary recovery lasting minutes to hours followed by deterioration and death. The current model has no ability to reverse the curve once the final deterioration toward deaths occurs. This is triggered at a blood pressure of approximately 40-45 mmHg. While the outcome is the same, the short recovery is not captured. Future work will incorporate this improvement.
+
+We also saw the expected blood volume, pressure, heart rate, and substance concentration values follow expected trends for the fluid resuscitation scenarios. Figures 10 and 11 show the appropriate substance behavior coupled with the blood volume changes. Like blood volume, the decrease in the substance will be linearly proportional to the bleed rate. For more specific information regarding these substances and their loss due to bleeding, see @ref BloodChemistryMethodology and @ref SubstanceTransportMethodology. Figure 10 shows the blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no intervention other than the cessation of hemorrhage. Figure 11 shows a hemorrhage event with subsequent saline administration. Note that the hemoglobin content remains diminished as the blood volume recovers with IV saline. By comparison, [Figure 13](@ref cardiovascular-blood-administration) shows a blood-product intervention following a hemorrhage event. In that figure, the hemoglobin increases with the blood infusion.
 
 <table>
 <tr>
@@ -203,7 +234,7 @@ Additionally, as there is a decrease in total blood volume, there is an associat
 </table>
 <img src="./plots/Cardiovascular/Class4NoFluid_Legend.jpg" width="450">
 <center>
-*Figure 8. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no subsequent intervention.*
+*Figure 10. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no subsequent intervention.*
 </center><br>
 
 <table>
@@ -216,7 +247,7 @@ Additionally, as there is a decrease in total blood volume, there is an associat
 </table>
 <img src="./plots/Cardiovascular/Class2Saline_Legend.jpg" width="450">
 <center>
-*Figure 9. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with a subsequent infusion of saline.*
+*Figure 11. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with a subsequent infusion of saline.*
 </center><br>
 
 #### Pericardial Effusion
@@ -254,8 +285,8 @@ Cardiac Arrest is a condition in which the pumping of the heart is no longer eff
 ### Cardiogenic Shock
 In general, the term "shock" refers to inadequate perfusion of the tissues. The several categories of shock serve to signify the origin of the disturbance. Cardiogenic shock is inadequate perfusion due a reduction in the pumping capability of the heart. In the engine, the Cardiogenic Shock event is activated when the cardiac index () is below 2.2 (L/min-m^2) *and* the systolic blood pressure is less than 90.0 (mmHg) *and* the pulmonary capillary wedge pressure is greater than 15.0 (mmHg) @cite dhakam2008review.
 
-### Hypovolemia
-Hypovolemia is defined as a reduction in total blood volume by 35 percent @cite guyton2006medical. Typically, this is classified by elevated heart rate and decreased arterial pressure. In the engine, hypovolemia is triggered during a hemorrhage when blood volume has fallen below 65 percent of its normal value. 
+### Hypovolemic Shock
+Hypovolemia is any reduction in blood volume. Hypovolemic shock is defined as a reduction in total blood volume by 35 percent @cite guyton2006medical. Typically, this is classified by elevated heart rate and decreased arterial pressure. In the engine, hypovolemia is triggered during a hemorrhage when blood volume has fallen below 65 percent of its normal value. 
 
 @anchor cardiovascular-results
 Results and Conclusions
@@ -288,7 +319,7 @@ The arterial pressure waveform was validated according to the plot shown in Figu
 <td><img src="./plots/Cardiovascular/PhysioNetPressure.jpg" width="400"></td>
 </tr>
 </table>
-<i>Figure 10. Arterial pressure waveform comparisons. The diastolic and systolic pressures were validated using the data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, a waveform was found on PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. Both the validation waveform and the engine waveform show sharp increases in pressure during the systolic period. After the contraction occurs, the pressure begins decreasing and that is where the main difference in the engine and the validation data occur. There is a dip and subsequent rise in the arterial pressure that occurs due to the dicrotic notch, which the engine does not capture.</i>
+<i>Figure 12. Arterial pressure waveform comparisons. The diastolic and systolic pressures were validated using the data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, a waveform was found on PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. Both the validation waveform and the engine waveform show sharp increases in pressure during the systolic period. After the contraction occurs, the pressure begins decreasing and that is where the main difference in the engine and the validation data occur. There is a dip and subsequent rise in the arterial pressure that occurs due to the dicrotic notch, which the engine does not capture.</i>
 </center><br>
 
 @anchor cardiovascular-validation-conditions
@@ -356,7 +387,7 @@ The heart failure scenario has a ventricular systolic dysfunction condition appl
 ### Hemorrhage
 The hemorrhage action is tested using several scenarios. The class 2 hemorrhage scenario with blood intravenous (IV) administration begins with a healthy patient. After a few seconds, a hemorrhage action is initiated at a rate of 250 milliliters (mL) per minute. The hemorrhage continues for four minutes before the bleeding rate is reduced to 0 mL per minute. After two minutes, 500 mL of IV blood is administered intravenously over five minutes. The other hemorrhage scenarios are similar but with different subsequent interventions. There are also two multi-compartment hemorrhage scenarios. Figure 11 demonstrates the time-evolution of select data, and the validation results are displayed in Tables 6a-f.
 
-The results show decreases in the systolic pressure and minor increases in the diastolic pressure during the course of the hemorrhage. In response to the decreasing arterial pressures, the baroreceptor response raises the heart rate. The blood volume and hemoglobin content were validated through direct calculation by decreasing blood volume by the bleeding rate multiplied by the time. There is a difference between the computed and simulated blood volume post-hemorrhage due to fluid shift between the intravascular and extravascular space. This shift is evident in the period between cessation of hemorrhage and the start of the infusion (top-left panel of Figure 11).
+The results show decreases in the systolic pressure and minor increases in the diastolic pressure during the course of the hemorrhage. In response to the decreasing arterial pressures, the baroreceptor response raises the heart rate. The blood volume and hemoglobin content were validated through direct calculation by decreasing blood volume by the bleeding rate multiplied by the time. There is a difference between the computed and simulated blood volume post-hemorrhage due to fluid shift between the intravascular and extravascular space. This shift is evident in the period between cessation of hemorrhage and the start of the infusion (top-left panel of Figure 13).
 
 Following the completion of the hemorrhage, intravenous blood is administered. The validation of this action can be found in the IV Fluid Administration section, with the exception of hemoglobin content. There will be an increase in hemoglobin content directly proportional to the amount of blood added from the IV. This value was calculated directly from the known blood volume in the IV bag and hemoglobin concentration of the blood. The engine matched this calculated value exactly. 
 
@@ -377,7 +408,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 </table>
 <img src="./plots/Cardiovascular/Class2Saline_Legend.jpg" width="500">
 <center>
-*Figure 12. The class 2 hemorrhage scenario shows the blood volume decreasing linearly with the constant 250 milliliter per minute bleeding rate. The blood hemoglobin content follows this exact trend. At the conclusion of the bleed, the blood volume and hemoglobin are at a lower value. Five hundred (500) milliliters of blood is then administered intravenously over the course of 5 minutes. Both the blood volume and hemoglobin content increase linearly with this administration.*
+*Figure 13. The class 2 hemorrhage scenario shows the blood volume decreasing linearly with the constant 250 milliliter per minute bleeding rate. The blood hemoglobin content follows this exact trend. At the conclusion of the bleed, the blood volume and hemoglobin are at a lower value. Five hundred (500) milliliters of blood is then administered intravenously over the course of 5 minutes. Both the blood volume and hemoglobin content increase linearly with this administration.*
 </center>
 
 <br><center>
@@ -509,6 +540,8 @@ Future Work
 
 Recommended Improvements
 ------------------------
+
+We plan to improve the hemorrhage implementation to accept an initial hemorrhage rate, which is then translated to a resistance path rather than a flow source. This will better manage the natural hemorrhage rate changes that occur as blood pressure drops.
 
 An area of potential future advancement lies in the inertance of the %Cardiovascular System. The @ref CircuitMethodology has the ability to incorporate inertance into the lumped parameter models. In the future, this could be added to the %Cardiovascular Model to provide a more accurate blood pressure waveform.
 
