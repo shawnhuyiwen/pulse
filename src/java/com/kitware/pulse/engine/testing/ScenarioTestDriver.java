@@ -11,7 +11,6 @@ import com.kitware.pulse.cdm.engine.SEAutoSerialization;
 import com.kitware.pulse.cdm.testing.SETestDriver;
 import com.kitware.pulse.cdm.testing.SETestJob;
 import com.kitware.pulse.cpm.bind.Pulse;
-import com.kitware.pulse.engine.PulseEngine;
 import com.kitware.pulse.engine.PulseScenarioExec;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;

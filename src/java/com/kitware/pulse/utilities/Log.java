@@ -25,27 +25,27 @@ public class Log
   
   public static boolean isFatal(Level level)
   {
-    return level == Level.FATAL;
+    return isError(level) || level == Level.FATAL;
   }
 
   public static boolean isError(Level level)
   {
-    return isFatal(level) || level == Level.ERROR;
+    return isWarn(level) || level == Level.ERROR;
   }
 
   public static boolean isWarn(Level level)
   {
-    return isError(level) || level == Level.WARN;
+    return isInfo(level) || level == Level.WARN;
   }
 
   public static boolean isInfo(Level level)
   {
-    return isWarn(level) || level == Level.INFO;
+    return isDebug(level) || level == Level.INFO;
   }
 
   public static boolean isDebug(Level level)
   {
-    return isInfo(level) || level == Level.DEBUG;
+    return level == Level.DEBUG;
   }
 
   

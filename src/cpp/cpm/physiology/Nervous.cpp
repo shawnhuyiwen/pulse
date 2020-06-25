@@ -123,19 +123,19 @@ void Nervous::AtSteadyState()
 {
   if (m_data.GetState() == EngineState::AtInitialStableState)
   {
-    SetChemoreceptorFeedback(m_data.GetConfiguration().GetChemoreceptorFeedback());
+    SetChemoreceptorFeedback(m_data.GetConfiguration().GetChemoreceptorFeedback()); // The set-points (Baselines) get reset at the end of each stabilization period.
   }
   else if (m_data.GetState() == EngineState::AtSecondaryStableState)
   {
     SetBaroreceptorFeedback(m_data.GetConfiguration().GetBaroreceptorFeedback());
-    // The set-points (Baselines) get reset at the end of each stabilization period.
-    m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
-    m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
-    m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
-    m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
-    m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / m_BaroreceptorMeanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
-    m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
   }
+  // The set-points (Baselines) get reset at the end of each stabilization period.
+  m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
+  m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
+  m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+  m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
+  m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / m_BaroreceptorMeanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
+  m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
 }
 
 //--------------------------------------------------------------------------------------------------
