@@ -199,9 +199,9 @@ The hemorrhage response was validated with a comparison to the literature. The m
 
 <table>
 <tr>
-<td><img src="./plots/Cardiovascular/CardiacShockTest.jpg" width="550">
+<td><img src="./plots/Cardiovascular/CardiacShock.jpg" width="550">
 </td>
-<td><img src="./Images/Cardiovascular/CardiacShockValidation.jpg" width="550">
+<td><img src="./Images/Cardiovascular/HemorrhageShockValidation.jpg" width="550">
 </td>
 </tr>
 </table>
@@ -215,12 +215,13 @@ The different types of shock are evident in the data collected for groups of dog
 
 <table>
 <tr>
-<td><img src="./plots/Cardiovascular/HemorrhageGroups.jpg" width="250">
+<td><img src="./plots/Cardiovascular/HemorrhageGroups.jpg" width="550">
 </td>
 <td><img src="./Images/Cardiovascular/HemorrhageGroupsValidation.jpg" width="250">
 </td>
 </tr>
 </table>
+<center>
 *Figure 9. Normalized mean arterial pressure for different hemorrhage severities to demonstrate the different shock types. The computaed Pulse results are on the left and the validation data @cite guyton2006medical is on the right.*
 </center><br>
 
