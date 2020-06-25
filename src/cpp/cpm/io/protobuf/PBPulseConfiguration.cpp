@@ -240,6 +240,8 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
   if (src.has_nervousconfiguration())
   {
     const PULSE_BIND::ConfigurationData_NervousConfigurationData& config = src.nervousconfiguration();
+    if (config.enablecerebrospinalfluid() != CDM_BIND::eSwitch::NullSwitch)
+      dst.EnableCerebrospinalFluid((eSwitch)config.enablecerebrospinalfluid());
     if (config.baroreceptorfeedback() != CDM_BIND::eSwitch::NullSwitch)
       dst.SetBaroreceptorFeedback((eSwitch)config.baroreceptorfeedback());
     if (config.chemoreceptorfeedback() != CDM_BIND::eSwitch::NullSwitch)
@@ -492,6 +494,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
 
   // Nervous
   PULSE_BIND::ConfigurationData_NervousConfigurationData* n = dst.mutable_nervousconfiguration();
+  n->set_enablecerebrospinalfluid((CDM_BIND::eSwitch)src.m_CerebrospinalFluidEnabled);
   n->set_baroreceptorfeedback((CDM_BIND::eSwitch)src.m_BaroreceptorFeedback);
   n->set_chemoreceptorfeedback((CDM_BIND::eSwitch)src.m_ChemoreceptorFeedback);
   if (src.HasHeartElastanceDistributedTimeDelay())

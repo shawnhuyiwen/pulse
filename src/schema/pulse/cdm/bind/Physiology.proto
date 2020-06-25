@@ -241,6 +241,12 @@ message RenalSystemData
   ScalarMassPerVolumeData             UrineUreaNitrogenConcentration                 = 54;/**<< @brief Scaled concentration of Urea in the bladder  */ 
 }
 
+enum eBreathState
+{
+  Inhale = 0;
+  Pause  = 1;
+  Exhale = 2;
+}
 /**@brief Provides ventilation and gas exchange of the human respiratory system.
    @details Supports changes in the lungs volume and pressure data during the flow
    and transfer of gases between the lungs, the blood and the outside environment.*/

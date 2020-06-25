@@ -3,6 +3,7 @@
 
 #pragma once
 #include "PulsePhysiologySystems.h"
+#include "system/physiology/SERespiratorySystem.h"
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 class SEEquipmentActionCollection;
 class SEGasCompartment;
@@ -42,7 +43,6 @@ public:
   void PostProcess(bool solve_and_transport=true);
 
 protected:
-  enum eBreathPeriod {inhale, pause, exhale};
 
   void ComputeExposedModelParameters() override;
 
@@ -58,12 +58,11 @@ protected:
   void SetResistances();
 
   // Serializable member variables (Set in Initialize and in schema)
-  //Aaron - I assume JAVA and C# interfaces still need to be updated
   double                m_CurrentPeriodTime_s;
   double                m_DriverPressure_cmH2O;
   double                m_DriverFlow_L_Per_s;
   double                m_CurrentInspiratoryVolume_L;
-  eBreathPeriod         m_CurrentBreathMode; //Aaron - serialize
+  eBreathState          m_CurrentBreathState;
 
   // Stateless member variable (Set in SetUp())
   double                m_dt_s;
