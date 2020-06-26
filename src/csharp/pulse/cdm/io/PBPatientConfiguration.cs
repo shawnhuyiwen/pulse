@@ -21,6 +21,7 @@ namespace Pulse.CDM
         PBPatient.Serialize(src.Patient, dst.GetPatient());
       if (src.Conditions != null)
         Serialize(src.Conditions, dst.GetConditions());
+      dst.SetDataRootDir(src.DataRoot);
     }
     public static bool SerializeFromString(string src, SEPatientConfiguration dst)
     {
@@ -50,6 +51,7 @@ namespace Pulse.CDM
         dst.Patient = PBPatient.Unload(src.GetPatient());
       if (src.HasConditions())
         dst.Conditions = PBPatientConfiguration.Unload(src.GetConditions());
+      dst.DataRoot = src.GetDataRootDir();
     }
     public static string SerializeToString(SEPatientConfiguration src)
     {

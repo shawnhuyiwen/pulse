@@ -111,7 +111,7 @@ def HowTo_UseEngine():
     data_req_mgr.set_results_filename("./test_results/HowTo_EngineUse.py.csv")
 
     # There are several ways to initialize an engine to a patient
-    start_type = eStartType.State
+    start_type = eStartType.Stabilize_PatientObject
     if start_type is eStartType.State: # The engine is ready instantaneously
         if not pulse.serialize_from_file("./states/Soldier@0s.pbb", data_req_mgr):
             print("Unable to load initial state file")
@@ -152,6 +152,10 @@ def HowTo_UseEngine():
         env.get_environmental_conditions().get_air_density().set_value(1.225, MassPerVolumeUnit.kg_Per_m3)
         env.get_environmental_conditions().get_ambient_temperature().set_value(33, TemperatureUnit.C)
         env.get_environmental_conditions().get_respiration_ambient_temperature().set_value(33, TemperatureUnit.C)
+
+        # By default, pulse will look for data files in the working directory of your program "./"
+        # You can change that in your patient configuration
+        pc.set_data_root_dir("./")
 
         # Initialize the engine with our configuration
         # Optionally you can provide a data_dir root where Pulse will look for required data files

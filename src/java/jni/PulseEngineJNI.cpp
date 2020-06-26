@@ -161,7 +161,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerial
 
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format, jstring dataDir)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format)
 {
   bool bRet;
   PulseEngineJNI *engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
@@ -176,20 +176,11 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeIniti
   if (dataRequests != nullptr)
     drStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
 
-  const char* ddStr = nullptr;
-  if (dataDir != nullptr)
-  {
-    ddStr = env->GetStringUTFChars(dataDir, JNI_FALSE);
-    bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format, ddStr);
-  }
-  else
     bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format);
 
   env->ReleaseStringUTFChars(patient_configuration, pcStr);
   if(drStr != nullptr)
     env->ReleaseStringUTFChars(dataRequests, drStr);
-  if(ddStr != nullptr)
-    env->ReleaseStringUTFChars(dataDir, ddStr);
 
   return bRet;
 }

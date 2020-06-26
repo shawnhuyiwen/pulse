@@ -284,6 +284,7 @@ bool PulseController::InitializeEngine(const std::string& patient_configuration,
 
 bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_configuration)
 {
+  Info("Looking for files in " + patient_configuration.GetDataRoot());
   m_DataDir = patient_configuration.GetDataRoot();
   m_EngineTrack->ResetFile();
   m_State = EngineState::Initialization;
