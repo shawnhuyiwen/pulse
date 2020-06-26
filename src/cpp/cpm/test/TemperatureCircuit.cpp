@@ -45,7 +45,7 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -124,7 +124,7 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -226,7 +226,7 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -327,7 +327,7 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -456,7 +456,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -615,7 +615,7 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -714,7 +714,7 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();

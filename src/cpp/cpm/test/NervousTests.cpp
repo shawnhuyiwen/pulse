@@ -74,7 +74,7 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   //Renal and Tissue are on
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);

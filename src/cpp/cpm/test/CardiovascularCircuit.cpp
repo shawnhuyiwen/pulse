@@ -60,13 +60,13 @@ void PulseEngineTest::CardiovascularAndCerebrospinalFluidCircuitAndTransportTest
 }
 
 void PulseEngineTest::FullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
-{
-  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, true, false, sTestDirectory, "FullCardiovascular", false);
+{// \todo enable csf when ready
+  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, false, false, sTestDirectory, "FullCardiovascular", false);
 }
 
 void PulseEngineTest::CardiovascularBloodGasesTest(const std::string& sTestDirectory)
-{
-  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, true, true, sTestDirectory, "CardiovascularBloodGasesTest", false);
+{// \todo enable csf when ready
+  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, false, true, sTestDirectory, "CardiovascularBloodGasesTest", false);
 }
 
 void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDirectory)
@@ -207,7 +207,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   if (heartRate_bpm <= 0)
     heartRate_bpm = pc.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
   else

@@ -33,8 +33,8 @@ namespace Pulse.CDM
     // Expiration Cyclye (Only set one)
     protected SEScalarVolumePerTime expiration_cycle_flow;
     protected SEScalarPressure expiration_cycle_pressure;
-    protected SEScalarVolume expiration_cycle_volume;
     protected SEScalarTime expiration_cycle_time;
+    protected SEScalarVolume expiration_cycle_volume;
 
     protected SEScalarPressureTimePerVolume expiration_tube_resistance;
     protected SEScalarPressureTimePerVolume expiration_valve_resistance;

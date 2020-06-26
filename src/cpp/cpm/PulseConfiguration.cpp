@@ -393,7 +393,7 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetAirSpecificHeat().SetValue(1.0035, HeatCapacitancePerMassUnit::kJ_Per_K_kg);
   GetMolarMassOfDryAir().SetValue(0.028964, MassPerAmountUnit::kg_Per_mol);
   GetMolarMassOfWaterVapor().SetValue(0.018016, MassPerAmountUnit::kg_Per_mol);
-  if (!dataDir.empty())
+  if (!dataDir.empty() && subMgr != nullptr)
     GetInitialEnvironmentalConditions().SerializeFromFile(dataDir +"/environments/Standard.json", *subMgr);
   GetWaterDensity().SetValue(1000, MassPerVolumeUnit::kg_Per_m3);
 

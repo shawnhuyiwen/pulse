@@ -485,7 +485,7 @@ void Cardiovascular::ChronicAnemia()
     if (path->HasResistanceBaseline())
     {
     path->GetResistanceBaseline().SetValue(path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL)*viscousModifier, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    }   
+    }
   }
 }
 

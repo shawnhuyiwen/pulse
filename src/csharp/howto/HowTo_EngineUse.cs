@@ -70,7 +70,7 @@ namespace HowTo_UseEngine
       pulse.SetLogFilename("./test_results/HowTo_EngineUse.cs.log");
       // You can also have pulse log to the console (std::cout)
       // By default, console logging is turned off
-      //pulse.LogToConsole(true);
+      pulse.LogToConsole(true);
       // It is recommended to listen and  manage the log messages yourself
       // With a listener, you can add messages to a log, display, or write them to console
       pulse.SetLogListener(new MyLogListener());
@@ -78,7 +78,7 @@ namespace HowTo_UseEngine
       // You must provide an event listener to get events
       pulse.SetEventHandler(new MyEventHandler());
 
-      InitializationType initType = InitializationType.StateString;
+      InitializationType initType = InitializationType.PatientObject;
       switch (initType)
       {
         case InitializationType.StateFileName:
