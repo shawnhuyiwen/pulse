@@ -348,7 +348,7 @@ All actions in the CV System were validated. A summary of this validation is sho
 
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Anemia - 30%	|	Hemoglobin content reduced by 30  percent.	|<span class="success">	6	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
+|	Anemia - 30%	|	Hemoglobin content reduced by 30  percent.	|<span class="success">	5	</span>|<span class="warning">		</span>|<span class="danger">	3	</span>|
 |	Arrythmia - Sinus Bradycardia	|	Heart rate set to 50 beats per minute.	|<span class="success">	5	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	Arrythmia - Sinus Tachycardia	|	Heart rate set to 110 beats per minute	|<span class="success">	5	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	CPR 	|	Cardiac arrest is initiated, and CPR is performed.	|<span class="success">	22	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
@@ -360,10 +360,10 @@ All actions in the CV System were validated. A summary of this validation is sho
 |	Hemorrhage Class 3 - No Fluids	|	35% hemorrhage	|<span class="success">	13	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
 |	Hemorrhage Class 3 - RBC	|	30% hemorrhage then packed red blood cell administration	|<span class="success">	19	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
 |	Hemorrhage to Shock	|	Hemorrhage until death	|<span class="success">	13	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
-|	Pericardial Effusion - Chronic	|	Patient has an effused pericardium with an accumulated volume of 500 ml.	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
-|	Pericardial Effusion - Acute	|	Pericardium volume starts at 500mL and increases at 6 mL/min.	|<span class="success">	13	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
+|	Pericardial Effusion - Chronic	|	Patient has an effused pericardium with an accumulated volume of 500 ml.	|<span class="success">	9	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Pericardial Effusion - Acute	|	Pericardium volume starts at 500mL and increases at 6 mL/min.	|<span class="success">	16	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Ventricular Systolic Failure	|	Chronic heart failure is initiated. - NOT VALIDATED	|<span class="success">	0	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	177	</span>|<span class="warning">	10	</span>|<span class="danger">	8	</span>|
+|		|	Total	|<span class="success">	181	</span>|<span class="warning">	7	</span>|<span class="danger">	7	</span>|
 
 
 ### Cardiopulmonary Resuscitation (CPR)
@@ -536,11 +536,11 @@ The anemia condition reduces the oxygen carrying capacity of the blood. The anem
 <center>
 *Table 16. Validation matrix for sinus tachycardia arrythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
-|	Condition	|	Notes			|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Hemoglobin Concentration (g/dL)	|	Heart Rate (/min)	|	Cardiac Output (L/min)	|	Stroke Volume (mL/beat)	|	Oxygen Saturation %	|	Respiration Rate (/min)	|	Hematocrit %	|	Systemic Vascular Resistance (mmHg*min/L)	|
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Condition	|	Notes			|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Hemoglobin Concentration (g/dL)	|	Heart Rate (/min)	|	Cardiac Output (L/min)	|	Stroke Volume (mL/beat)	|	Oxygen Saturation %	|	Respiration Rate (/min)	|	Hematocrit %	|	Systemic Vascular Resistance (mmHg*min/L)
+|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------
 |	Anemia	|	0.3 severity			|	0	|	120	|<span class="success">	10.3 (per severity]	</span>|<span class="success">	"increase
 @cite Toy2000fatigue "	</span>|<span class="warning">	"Slight increase 
- @cite duke1969hemodynamic"	</span>|<span class="danger">	Slight increase @cite duke1969hemodynamic	</span>|<span class="success">	94.5 @cite duke1969hemodynamic; Should not affect oxygen saturation, especially at our severities @cite moss2016SME	</span>|<span class="success">	NC until exertion @cite toy2000fatigue	</span>|<span class="success">	Decrease as determined by severity and initial hemoglobin @cite duke1969hemodynamic	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|
+ @cite duke1969hemodynamic"	</span>|<span class="danger">	Slight increase @cite duke1969hemodynamic	</span>|<span class="success">	94.5 @cite duke1969hemodynamic; Should not affect oxygen saturation, especially at our severities @cite moss2016SME	</span>|<span class="success">	NC until exertion @cite toy2000fatigue	</span>|<span class="success">	Decrease as determined by severity and initial hemoglobin @cite duke1969hemodynamic	</span>|<span class="success">	Decrease @cite guyton2006medical
 
 
 @anchor cardiovascular-conclusions
@@ -562,6 +562,8 @@ An area of potential future advancement lies in the inertance of the %Cardiovasc
 Another potential area for improvement is simulation of a tourniquet. An intervention could be added to simulate the increased resistance to flow and external pressure application that would be present with the application of a tourniquet.
 
 The cardiac arrest functionality also needs improvement. Like in the human body, most of the systems require a beating heart to function properly. Also like in the human body, the engine systems tend to go haywire when the heart stops. However, the ways in which the systems go haywire deviate from the human physiological systems' response during cardiac arrest. Improvements to the engine functionality during cardiac arrest would allow for many desirable scenarios, including Advanced Cardiac Life Support (ACLS) scenarios where some recovery of the patient is actually possible. As described in the CPR section, recovery from cardiac arrest is currently impossible in the engine. Rescue breathing would also be a valuable improvement.
+
+Anemia is currently limited to less than 30% reduction in hemoglobin, this should be expanded to cover a wider range of severe anemias.
 
 The ventricular systolic function is how an unvalidated condition in the engine. We will improve the model and validate this condition in the future.
 
