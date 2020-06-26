@@ -162,9 +162,9 @@ public class ConvexHullPlotter implements Plotter
       dataSeriesLeft = plotTool.createXYSeries("",splitVals.get(4),splitVals.get(5));
       dataSeriesRight = plotTool.createXYSeries("",splitVals.get(6),splitVals.get(7));
       
-      dataSeriesBottom.setKey("REMOVE");
-      dataSeriesLeft.setKey("REMOVE");
-      dataSeriesRight.setKey("REMOVE");
+      dataSeriesBottom.setKey("REMOVE_Y1B"+i);
+      dataSeriesLeft.setKey("REMOVE_Y1L"+i);
+      dataSeriesRight.setKey("REMOVE_Y1R"+i);
       
       dataSet1.addSeries(dataSeriesTop);
       dataSet1.addSeries(dataSeriesBottom);
@@ -192,9 +192,9 @@ public class ConvexHullPlotter implements Plotter
       dataSeriesLeft = plotTool.createXYSeries("",splitVals.get(4),splitVals.get(5));
       dataSeriesRight = plotTool.createXYSeries("",splitVals.get(6),splitVals.get(7));
       
-      dataSeriesBottom.setKey("REMOVE");
-      dataSeriesLeft.setKey("REMOVE");
-      dataSeriesRight.setKey("REMOVE");
+      dataSeriesBottom.setKey("REMOVE_Y2B"+i);
+      dataSeriesLeft.setKey("REMOVE_Y2L"+i);
+      dataSeriesRight.setKey("REMOVE_Y2R"+i);
       
       dataSet2.addSeries(dataSeriesTop);
       dataSet2.addSeries(dataSeriesBottom);
@@ -449,7 +449,7 @@ public class ConvexHullPlotter implements Plotter
         renderer1.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
         renderer1.setSeriesFillPaint(i, Color.red); 
         renderer1.setSeriesPaint(i, Color.red);
-        if(dataSet1.getSeries(i).getKey() != null && dataSet1.getSeries(i).getKey().toString().equalsIgnoreCase("REMOVE"))
+        if(dataSet1.getSeries(i).getKey() != null && dataSet1.getSeries(i).getKey().toString().startsWith("REMOVE"))
           renderer1.setSeriesVisibleInLegend(i, false);
       }
     }
@@ -466,7 +466,7 @@ public class ConvexHullPlotter implements Plotter
         renderer1.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
         renderer1.setSeriesFillPaint(i, Color.red); 
         renderer1.setSeriesPaint(i, Color.red);
-        if(dataSet1.getSeries(i).getKey() != null && dataSet1.getSeries(i).getKey().toString().equalsIgnoreCase("REMOVE"))
+        if(dataSet1.getSeries(i).getKey() != null && dataSet1.getSeries(i).getKey().toString().startsWith("REMOVE"))
           renderer1.setSeriesVisibleInLegend(i, false);
       }
       for(int i = 0; i < dataSet2.getSeriesCount(); i++)
@@ -475,7 +475,7 @@ public class ConvexHullPlotter implements Plotter
         renderer2.setBaseShapesVisible(false);
         renderer2.setSeriesFillPaint(i, Color.blue); 
         renderer2.setSeriesPaint(i, Color.blue);
-        if(dataSet2.getSeries(i).getKey() != null && dataSet2.getSeries(i).getKey().toString().equalsIgnoreCase("REMOVE"))
+        if(dataSet2.getSeries(i).getKey() != null && dataSet2.getSeries(i).getKey().toString().startsWith("REMOVE"))
           renderer2.setSeriesVisibleInLegend(i, false);
       }
       plot.getRangeAxis(0).setLabelPaint(Color.red);
