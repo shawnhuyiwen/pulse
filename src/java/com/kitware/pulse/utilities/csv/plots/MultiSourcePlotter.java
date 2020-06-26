@@ -15,6 +15,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -174,7 +175,7 @@ public class MultiSourcePlotter implements Plotter
     Float[] strokes = {2.f,2.f,3.f,4.f,5.f,8.f};
     Color[] variedColors = {Color.red, Color.blue, Color.green, Color.orange, Color.magenta, Color.cyan, Color.gray, new Color(255,165,0), new Color(42,183,136), new Color(87,158,186)};
     XYPlot plot = (XYPlot) chart.getPlot();
-    StandardXYItemRenderer renderer = (StandardXYItemRenderer) plot.getRenderer();
+    XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
     
     //For Scientific notation
     //NumberFormat formatter = new DecimalFormat("0.######E0");
@@ -214,7 +215,7 @@ public class MultiSourcePlotter implements Plotter
     {
       BasicStroke wideLine = new BasicStroke( strokes[i] );
       renderer.setSeriesStroke(i, wideLine); 
-      renderer.setBaseShapesVisible(false);
+      renderer.setDefaultShapesVisible(false);
       if(cIndex > 9) cIndex = 0;
       renderer.setSeriesFillPaint(i, variedColors[cIndex]); 
       renderer.setSeriesPaint(i, variedColors[cIndex]);

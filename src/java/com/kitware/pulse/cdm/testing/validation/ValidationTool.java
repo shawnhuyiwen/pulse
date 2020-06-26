@@ -1341,9 +1341,9 @@ public abstract class ValidationTool
     try
     {
       if(TABLE_TYPE.equals("System"))
-        c = Class.forName("pulse.cdm.bind.Physiology$"+sheetName+"SystemData");
+        c = Class.forName("com.kitware.pulse.cdm.bind.Physiology$"+sheetName+"SystemData");
       else if(TABLE_TYPE.equalsIgnoreCase("Patient"))
-        c = Class.forName("pulse.cdm.bind.Patient.PatientData");
+        c = Class.forName("com.kitware.pulse.cdm.bind.Patient.PatientData");
       else
         throw new RuntimeException("Unknown table type "+TABLE_TYPE);
     }

@@ -1,4 +1,4 @@
-Version 2.3.0 {#version}
+Version 3.0.0 {#version}
 =============
 
 Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
@@ -10,6 +10,33 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
 
 - - -
+
+## Pulse v3.0.0 (July 2020)
+
+- Software Architecture
+  
+- Physiology Models
+ e calculations
+  
+### Congratulations
+
+Congratulations and thank you to everyone who contributed to this release. This release, we would like to specially recognize our 2 new contributors:
+
+  - Bob Marinier
+  - Wenye He
+
+## Planned Improvements
+
+- Python bindings
+- Black box circuit/compartment components
+- Sepsis
+- Hemorrhagic Shock
+- Hemorrhage methodology update for better performance and usability
+- Work of breathing and respiratory fatigue models
+- A second order baroreceptor model
+- Modularity improvements for system/model/circuit swapping
+- Pediatric physiology prototype
+- Official contribution plan for merge requests for methodology/model changes
 
 ## Pulse v2.3.0 (January 2020)
 

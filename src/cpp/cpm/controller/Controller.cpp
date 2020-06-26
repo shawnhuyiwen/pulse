@@ -329,13 +329,13 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
     return false;
 
+  // Copy any changes to the current patient to the initial patient
+  m_InitialPatient->Copy(*m_CurrentPatient);
+
   // We need to copy conditions here, so systems can prepare for them in their AtSteadyState method
   if (patient_configuration.HasConditions())
     m_Conditions->Copy(*patient_configuration.GetConditions(), *m_Substances);
   AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
-
-  // Copy any changes to the current patient to the initial patient
-  m_InitialPatient->Copy(*m_CurrentPatient);
 
   m_State = EngineState::SecondaryStabilization;
   // Apply conditions and anything else to the physiology

@@ -8,11 +8,10 @@ Overview
 Abstract
 --------
 
-The %Gastrointestinal System models the ingestion of macronutrients and their subsequent digestion and transportation into the %Cardiovascular system. 
+The %Gastrointestinal System models the ingestion of water and macronutrients and their subsequent digestion and transportation into the %Cardiovascular system. 
 Digestion rates for each macronutrient can be specified along with the amount, and if no rates are supplied, a default configurable rate will be used.
-The macronutrients are then digested by converting the macronutrient into a specific substance from the stomach and 
-incrementing the amount of that substance into the small intestine's chyme. 
-The substances in the chyme are then absorbed into the vascular system via the small intestine's walls each timestep.
+The macronutrients are then digested by converting the macronutrient into a specific substance from the stomach and incrementing the amount of that substance into the small intestine's vasculature each timestep. 
+Water is digested from the stomach into a gut/chyme compartment and aborbed into the small intestine vasculature at a standard rate.
 
 @anchor GI-introduction
 Introduction
@@ -51,42 +50,37 @@ Data Flow
 ### Reset
 
 The stomach is initialized with configurable amounts of each macronutrient, sodium, calcium, and water.
-The gut chyme is then initialized with substance amounts by calculating 5 hours' worth of digestion of the stomach nutrients,
-while not removing mass from the stomach.
-
+The stomach contents may be overriden via the Pulse configuration object or via the meal consumption condition
 ### Preprocess
-
-#### Gastric Secretion
-
-A static gastric secretion flow rate of 2.46 mL/min is used to manually move water volume from the gut tissue back into the stomach.
 
 #### Digestion
 
 The amount of macronutrient to decrement from the stomach is based on the nutrient's digestion rate and the engine timestep.
 The decremented amount is then multiplied by a configurable absorption amount to calculate the mass of the nutrient absorbed into the body.
-This calculated mass is then used to increment a specific substance on the gut chyme compartment.
+This calculated mass is then used to increment a specific substance into the small intestine vascular compartment.
 
 Nutrient data is converted to substance data in the following manner :
-	- Carbohydrates - A transfer mass is directly calculated from the stomach carbohydrate digestion rate and engine timestep.
-	                  That mass is then decremented from the stomach carbohydrate mass.
-	                  The mass is also multiplied by a configurable carbohydrate absorption factor, 
-					  and the amount of glucose in the gut chyme is incremented by that product.
-	- Fats - A transfer mass is directly calculated from the stomach fat digestion rate and engine timestep.
-	                  That mass is then decremented from the stomach fat mass.
-	                  The mass is also multiplied by a configurable fat absorption factor, 
-					  and the amount of tristearin in the gut chyme is incremented by that product.
-	- Protein - A transfer mass is directly calculated from the stomach protein digestion rate and engine timestep.
-	                  That mass is then decremented from the stomach protein mass.
-	                  The mass is also multiplied by a configurable ProteinToUrea factor, 
-					  and the amount of urea in the gut chyme is incremented by that product.
-	- Calcium - A transfer mass is directly calculated from the configurable stomach calcium digestion rate and engine timestep.
-	                  That mass is then decremented from the stomach calcium mass.
-	                  The mass is also multiplied by a configurable calcium absorption factor, 
-					  and the amount of calcium in the gut chyme is incremented by that product.
+  - Carbohydrates - A transfer mass is directly calculated from the stomach carbohydrate digestion rate and   engine timestep.
+                    That mass is then decremented from the stomach carbohydrate mass.
+                    The mass is also multiplied by a configurable carbohydrate absorption factor, 
+                    and the amount of glucose in the small intestine vasculatur is incremented by that product.
+  - Fats - A transfer mass is directly calculated from the stomach fat digestion rate and engine timestep.
+           That mass is then decremented from the stomach fat mass.
+           The mass is also multiplied by a configurable fat absorption factor, 
+           and the amount of tristearin in the small intestine vasculatur is incremented by that product.
+  - Protein - A transfer mass is directly calculated from the stomach protein digestion rate and engine timestep.
+              That mass is then decremented from the stomach protein mass.
+              The mass is also multiplied by a configurable ProteinToUrea factor, 
+              and the amount of urea in the small intestine vasculatur is incremented by that product.
+  - Calcium - A transfer mass is directly calculated from the configurable stomach calcium digestion rate and engine timestep.
+              That mass is then decremented from the stomach calcium mass.
+              The mass is also multiplied by a configurable calcium absorption factor, 
+              and the amount of calcium in the small intestine vasculatur is incremented by that product.
     - Sodium - A transfer mass is calculated as a function of the concentration of sodium in the stomach and the water digestion rate.
-	           This mass is decremented from the stomach sodium mass and the sodium mass is incremented by this transferred mass in the gut chyme compartment.
-	- Water -  A transfer volume is directly calculated from the configurable water digestion rate and engine timestep.
-			   This volume is decremented from the stomach water volume and the volume is incremented by this transferred volume in the gut chyme compartment.
+               This mass is decremented from the stomach sodium mass.
+               The resulting sodium mass is incremented in the small intestine vasculatur compartment.
+  - Water -  A transfer volume is directly calculated from the configurable water digestion rate and engine timestep.
+             This volume is decremented from the stomach water volume and the volume is incremented by this transferred volume in the gut chyme compartment.
  
 #### Absorption
 
@@ -96,15 +90,14 @@ A static absorption flow rate of 3.3 mL/min is used to manually move water volum
 
 #### ConsumeMeal
 
-The ConsumeMeal condition provides a nutrition object along with an elapsed time since those nutrients were in the stomach.
-The GI System will then zero out the contents of the stomach and gut chyme and add the nutrient data provided in the condition to the stomach.
-The digestion algorithm is executed for the provided elapsed time, removing nutrient mass from the stomach and adding it to substance quantities in the gut chyme.
-Next, the absorption algorithm will be executed for the provided elapsed time, removing substance mass from the gut chyme and distributing that mass throughout the blood and tissues.
+The ConsumeMeal condition is still under development and will provide a nutrition object along with an elapsed time since those nutrients were in the stomach.
+The GI System will then calculate the digested amounts based on the provided time and update the cardiovascular and tissue system accordingly.
 
 ### Actions
 
 #### ConsumeNutrients
-Each nutrient is optional in the ConsumeNutrients action. If a nutrient mass is provided with no accompanying digestion rate, the engine will default to the rate specified in the engine configuration. 
+Each nutrient is optional in the ConsumeNutrients action.
+If a nutrient mass is provided with no accompanying digestion rate, the engine will default to the rate specified in the engine configuration. 
 If a digestion rate is provided for a macronutrient, it will be combined with the current stomach digestion rate for that macronutrient by volume weighting the two rates together.
 
 ### Process
@@ -130,7 +123,11 @@ Figure 2. The %GI circuit is made up of nodes and paths with elements and is con
 </center><br>
 
 There is a steady secretion of fluid, enzymes, and other substances into the various compartments of the digestive tract.
-The constant secretion of fluid into the digestive tract allows for macronutrients to be slowly digested and eventually absorbed through the intestinal wall @cite hall2011guyton. In the engine, these macronutrients are placed into the CV system through the an absorption rate that mirrors that of the human GI tract. The calculated flow rate transports substance from the small instestine C1 node to the CV system's small intestine 1 node @ref GI-circuit. Similar transport connects the tissue and the small inestine and determines wanter balance and secretion rate.
+The constant secretion of fluid into the digestive tract allows for macronutrients to be slowly digested and eventually absorbed through the intestinal wall @cite hall2011guyton.
+In the engine, these macronutrients are placed into the CV system through the an absorption rate that mirrors that of the human GI tract.
+A digested amount is calculated individually for each substance, and that calculated mass is decremented from the stomach, multiplied by its associated absorption factor and the result is added to the CV system's small intestine 1 node @ref GI-circuit.
+Water, on the other hand, is digested from the stomach to the small instestine C1 node. A flow source then transports the water volume to the CV system as part of our circuit calculation.
+
 The digestion rate of macronutrients is heavily dependent on the nature of the source food, as the digestive tract needs to free substances from the rest of the food's molecular structure before it can be absorbed @cite wolever1991glycemic.
 Fats spend several hours being emulsified by the small intestine and are then quickly absorbed once exposed to pancreatic enzymes @cite hall2011guyton. 
 Due to the current lack of a hepatic model, the %Gastrointestinal System breaks protein into urea, simulating the deamination of amino acids in the liver @cite hall2011guyton @cite bean1984regulation @cite haussinger1991hepatocyte. 
@@ -138,8 +135,8 @@ Many of the small ions like sodium are quickly absorbed with active transport in
 An exception to this is calcium, which is carefully regulated by parathyroid hormone to ensure that the body's requirements are met @cite hall2011guyton.
 Water is absorbed via the osmotic gradient that either naturally exists between the gut chyme and the blood or that is created by the active transport of substances across the intestinal wall @cite hall2011guyton.
 <center>
-| Macronutrient	| Resultant Substance |                       Digestion Rate (R)                         | Absorption Fraction (A<sub>frac</sub>) | Gut Substance Mass(M<sub>g</sub>) Stomach Nutrient Mass (M<sub>s</sub>)|
-|:---:	        |:---:                |:---:                                                             |:---:                                   |:---:                                                                   |
+| Macronutrient | Resultant Substance |                       Digestion Rate (R)                         | Absorption Fraction (A<sub>frac</sub>) | Gut Substance Mass(M<sub>g</sub>) Stomach Nutrient Mass (M<sub>s</sub>)|
+|:---:          |:---:                |:---:                                                             |:---:                                   |:---:                                                                   |
 | Carbohydrate  | Glucose             | 0.5 - 0.625 g/min @cite hall2011guyton @cite wolever1991glycemic | 0.800 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                            |
 | Fat           | Tristearin          | 0.055 g/min @cite hall2011guyton                                 | 0.248 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                            |
 | Protein       | Urea                | 0.071 - 0.157 g/min @cite dangin2001digestion                    | 0.405 @cite hall2011guyton             | M<sub>g</sub> = R*&Delta;T*A<sub>frac</sub>                            |
@@ -150,7 +147,7 @@ Water is absorbed via the osmotic gradient that either naturally exists between 
 *Table 1. How macronutrients are converted into substances.*
 </center>
 
-Once substance mass is in the gut, the substances are transported into the cardiovascular circuit with a constant flow source of 3.3mL/s.
+Water is transported into the cardiovascular circuit at a maximum flow rate of 3.3mL/s.
 
 @anchor GI-dependencies
 Dependencies
@@ -161,8 +158,9 @@ The %Gastrointestinal System is not dependent on any other system, but other sys
 Assumptions and Limitations
 ---------------------------
 
-Currently there is no modeling of defecation or the lower portion of the digestive tract. This means that all food that is ingested will eventually be absorbed.
-The current digestion methodology is rudimentary and assumes all digestive rates are constant and move with the water flow after leaving the stomach. Active transport is used across cell walls with no diffusion currently implemented. Contraction of the small intestines to allow for transport and defecation is also not modeled.
+The current digestion methodology is rudimentary and makes very general assumptions for the macronutrient types and assumes all digestive rates are constant when digesting from the stomach to the vasculature.
+Currently there is no modeling of feces in the lower portion of the digestive tract. The calculated unabsorbed substance masses are simpley removed from the system.
+Active transport is used across cell walls with no diffusion currently implemented. Contraction of the small intestines to allow for transport and defecation is also not modeled.
 
 @anchor GI-results
 Results and Conclusions
@@ -170,26 +168,25 @@ Results and Conclusions
 Validation - Resting Physiologic State
 --------------------------------------
 
-The %Gastrointestinal System was validated qualitatively by observing the relative changes in the substance and nutrient masses between the stomach contents
-and the gut contents. The transport to the CV system was then shown by demonstrating an increase in substance concentration in the blood.
+The %Gastrointestinal System was validated qualitatively by observing the relative changes in the substance and nutrient masses between the stomach contents,
+the gut volumes and small intestine volume and substance masses. The transport to the CV system was then shown by demonstrating an increase in substance concentration in the blood.
 Concentrations are not solely a function of GI; other systems are potentially using substances in the blood.
 
 <center>
-*Table 2. Macronutrient mass in the stomach, gut, and blood as a function of time.*
+*Table 2. Macronutrient mass in the stomach, and blood as a function of time.*
 
-|  Macronutrient/Substance |                           Stomach Mass(g) vs. Time(s)                            |                               Gut Mass(g) vs. Time(s)                                  |                     Blood Concentration (ug/mL) vs. Time (s)                         |
-|:---:                     |:---:                                                                             |:---:                                                                                   |:---:                                                                                 |
-| Carbohydrate/Glucose     | <img src="./plots/GI/12hr_StomachCarbs.jpg" height="100" width="200"> | <img src="./plots/GI/12hr_IntestineGlucose.jpg" height="100" width="200">    | <img src="./plots/GI/12hr_BloodGlucose.jpg" height="100" width="200">    |
-| Fat/Tristearin           | <img src="./plots/GI/12hr_StomachFat.jpg" height="100" width="200">          | <img src="./plots/GI/12hr_IntestineTristearin.jpg" height="100" width="200"> | <img src="./plots/GI/12hr_BloodTristearin.jpg" height="100" width="200"> |
-| Protein/Urea             | <img src="./plots/GI/12hr_StomachProtein.jpg" height="100" width="200">      | <img src="./plots/GI/12hr_IntestineUrea.jpg" height="100" width="200">       | <img src="./plots/GI/12hr_BloodUrea.jpg" height="100" width="200">       |
-| Calcium                  | <img src="./plots/GI/12hr_StomachCalcium.jpg" height="100" width="200">      | <img src="./plots/GI/12hr_IntestineCalcium.jpg" height="100" width="200">    | <img src="./plots/GI/12hr_BloodCalcium.jpg" height="100" width="200">    |
-| Sodium                   | <img src="./plots/GI/12hr_StomachSodium.jpg" height="100" width="200">       | <img src="./plots/GI/12hr_IntestineSodium.jpg" height="100" width="200">     | <img src="./plots/GI/12hr_BloodSodium.jpg" height="100" width="200">     |
-| Water                    | <img src="./plots/GI/12hr_StomachWater.jpg" height="100" width="200">        | <img src="./plots/GI/12hr_IntestineVolume.jpg" height="100" width="200">          | <img src="./plots/GI/12hr_BV.jpg" height="100" width="200">             |
+|  Macronutrient/Substance |               Stomach Mass(g) / Volume(mL)  vs. Time(s)                |         Blood Concentration (ug/mL) / Volume (mL) vs. Time (s)           |
+|:---:                     |:---:                                                                   |:---:                                                                     |
+| Carbohydrate/Glucose     | <img src="./plots/GI/4hr_StomachCarbs.jpg" height="200" width="400">   | <img src="./plots/GI/4hr_BloodGlucose.jpg" height="200" width="400">    |
+| Fat/Tristearin           | <img src="./plots/GI/4hr_StomachFat.jpg" height="200" width="400">     | <img src="./plots/GI/4hr_BloodTristearin.jpg" height="200" width="400"> |
+| Protein/Urea             | <img src="./plots/GI/4hr_StomachProtein.jpg" height="200" width="400"> | <img src="./plots/GI/4hr_BloodUrea.jpg" height="200" width="400">       |
+| Calcium                  | <img src="./plots/GI/4hr_StomachCalcium.jpg" height="200" width="400"> | <img src="./plots/GI/4hr_BloodCalcium.jpg" height="200" width="400">    |
+| Sodium                   | <img src="./plots/GI/4hr_StomachSodium.jpg" height="200" width="400">  | <img src="./plots/GI/4hr_BloodSodium.jpg" height="200" width="400">     |
+| Water                    | <img src="./plots/GI/4hr_StomachWater.jpg" height="200" width="400">   | <img src="./plots/GI/4hr_BV.jpg" height="200" width="400">              |
 </center>
 
 As seen in Table 2, the macronutrient masses in the stomach are depleted based on different digestion rates and eventually reach zero. 
-The center column of plots shows the associated mass of substances in the gut chyme increase as the nutrients are removed from the stomach.
-Concentrations are provided in the far right column demonstrating the effect of the increasing mass on the blood concentrations.
+Concentrations are provided on the right column demonstrating the effect of the increasing mass on the blood concentrations.
 These overall trends meet the expectations of the model performance.
 
 @anchor GI-conclusions
@@ -212,11 +209,11 @@ Recommended Improvements
 ------------------------
 
 - More %Substances: By expanding the list of %substances used in the engine, the %Gastrointestinal model will inherently gain fidelity as mechanisms
-	are constructed to properly handle new inputs.
+  are constructed to properly handle new inputs.
 
 - Defecation: The %Gastrointestinal system should eventually be able to handle undigestible material and the fluid loss due to defecation. This
-	will also allow for a variety of disease states to be implemented.
-	
+  will also allow for a variety of disease states to be implemented.
+  
 - Vomiting: This can be added either as a symptom or an intervention to aid someone who has ingested a harmful substance.
 
 @anchor GI-appendices
