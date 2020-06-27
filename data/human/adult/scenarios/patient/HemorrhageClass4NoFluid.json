@@ -1,7 +1,12 @@
 {
-  "Name": "HemorrhageClass3NoFluidLongTerm",
+  "Name": "HemorrhageClass4NoFluidLongTerm",
   "Description": "",
-  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
+  "StartType":
+  {
+    "PatientConfiguration": {
+      "PatientFile": "StandardMale.json"
+    }
+  },
   "DataRequestManager":
   {
     "DataRequest":
@@ -102,7 +107,40 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 700.0,
+          "Value": 900.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Hemorrhage": {
+        "Compartment": "RightLegVasculature",
+        "Rate": {
+          "ScalarVolumePerTime": {
+            "Value": 55.0,
+            "Unit": "mL/min"
+          }
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Hemorrhage": {
+        "Compartment": "VenaCava",
+        "Rate": {
+          "ScalarVolumePerTime": {
+            "Value": 90.0,
+            "Unit": "mL/min"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 900.0,
           "Unit": "s"
         }
       }
@@ -133,7 +171,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 500.0,
+          "Value": 1500.0,
           "Unit": "s"
         }
       }
