@@ -1,0 +1,26 @@
+
+add_library_ex(PulseEngineUnitTests
+  H_FILES
+    engine/cpp/EngineTest.h
+  CPP_FILES
+    engine/cpp/AcidBaseTests.cpp
+    engine/cpp/AerosolTest.cpp
+    engine/cpp/AnesthesiaCircuit.cpp
+    engine/cpp/CardiovascularCircuit.cpp
+    engine/cpp/ConditionsTest.cpp
+    engine/cpp/EngineTest.cpp
+    engine/cpp/FourCompartmentTest.cpp
+	engine/cpp/MechanicalVentilatorCircuit.cpp
+    engine/cpp/MultiEngineTest.cpp
+    engine/cpp/NervousTests.cpp
+    engine/cpp/ReadScenarios.cpp
+    engine/cpp/RenalCircuit.cpp
+    engine/cpp/RespiratoryCircuit.cpp
+    engine/cpp/SerializationTest.cpp
+    engine/cpp/SolverTests.cpp
+    engine/cpp/TemperatureCircuit.cpp
+    engine/cpp/TissueTests.cpp
+  PUBLIC_DEPENDS
+    PulseEngine
+  #VERBOSE
+)

@@ -290,51 +290,59 @@ based on clinical data. The single breath waveform segments are defined by fract
 1. Inspiratory rise
 2. Inspiratory hold
 3. Inspiratory released
-4. Inspiratory to expiratory pause fraction
+4. Inspiratory to expiratory pause
 5. Expiratory rise
 6. Expiratory hold
 7. Expiratory release
 8. Residue
 
-Each segment is given a fraction of the total breath, with all summing to a value of 1 whole breath. The segment period is calculated by multiplying the segment fraction by the total breath time (determined by the target ventilation frequency). During quiet/eupnea breathing, only the inspiratory rise and inspiratory release segments are used. The fraction of total breath time is set by the inspiratory-expiratory ratio.
+Each segment is given as a fraction of the total breath, with all summing to a value of 1 whole breath. The inpsiratory rise (inhale) period (segment 1: <i>T<sub>ins</sub></i>) and inspiratory release (exhale) period (segment 3: <i>T<sub>exp</sub></i>) is calculated as a fraction of the total breath period (<i>T<sub>tot</sub></i>) knowing the muscle driver ventilation frequency (<i>f<sub>v</sub></i>) by @cite Fresnel2014musclePressure,
 
-The time series of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is given by,
-
-\f[{P_{mus}} = \left\{ {\begin{array}{*{20}{l}}
-{ - {e^{\left( {\frac{{ - t}}{\tau } - 1} \right)}}{P_{\min }},}&{0 < t \le {t_1}}\\
-{{P_{\min }},}&{{t_1} < t \le {t_2}}\\
-{{e^{\left( {\frac{{ - t - {t_2}}}{\tau }} \right)}}{P_{\min }},}&{{t_2} < t \le {t_3}}\\
-{0,}&{{t_3} < t \le {t_4}}\\
-{1 - {e^{ - \left( {\frac{{t - {t_4}}}{\tau }} \right)}}{P_{max}},}&{{t_4} < t \le {t_5}}\\
-{{P_{max}},}&{{t_5} < t \le {t_6}}\\
-{{e^{ - \left( {\frac{{t - {t_6}}}{\tau }} \right)}}{P_{max}},}&{{t_6} < t \le {t_7}}\\
-{0,}&{{t_7} < t \le {t_{\max }}}
-\end{array}} \right.\f]
+\f[\frac{{{T_{ins}}}}{{{T_{tot}}}} = 0.0125\left( {{f_v}[bpm] + 4} \right) + 0.125\f]
 <center>
 <i>Equation 6.</i>
 </center><br> 
 
-Where &tau; is the quotient of the segment duration and a shape constant value. We use a constant value of 4 for this denominator for a less rapid increase/decrease at the beginning of segments. This allows for peak inspiratory and expiratory flows to more closely matches expected values.  While a value of 10 in the denominator gives a smoother transition between segments, it causes pressure to change too rapidly initially and does not meet validation for airflow.
+\f[\frac{{{T_{\exp }}}}{{{T_{tot}}}} = {T_{tot}} - {T_{ins}}\f]
+<center>
+<i>Equation 7.</i>
+</center><br> 
 
-<i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure 3 shows the basic segmented muscle driver waveform used.
+Unless a conscious respiration action is called, all other segment fractions are set to 0. The inspiratory-expiratory ratio will change based on the driver respiration rate. The time series of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is given by @cite Fresnel2014musclePressure,
 
-<img src="./Images/Respiratory/DriverWaveform.png" width="600">
+\f[{P_{mus}} = \left\{ {\begin{array}{*{20}{l}}
+{{P_{\min }}\left( {1 - {e^{\frac{{{f_{v + 4{P_{0.1}}}}}}{{10}}t}}} \right),}&{0 < t \le {t_1}}\\
+{{P_{\min }},}&{{t_1} < t \le {t_2}}\\
+{{P_{\min }}\left( {{e^{ - \frac{{{f_{v + \frac{{{P_{0.1}}}}{2}}}}}{{10}}t}}} \right),}&{{t_2} < t \le {t_3}}\\
+{0,}&{{t_3} < t \le {t_4}}\\
+{{P_{max}}\left( {1 - {e^{ - \frac{{{f_{v + \frac{{{P_{0.1}}}}{2}}}}}{{10}}t}}} \right),}&{{t_4} < t \le {t_5}}\\
+{{P_{max}},}&{{t_5} < t \le {t_6}}\\
+{{P_{max}}\left( {{e^{\frac{{{f_{v + 4{P_{0.1}}}}}}{{10}}t}}} \right),}&{{t_6} < t \le {t_7}}\\
+{0,}&{{t_7} < t \le {t_{\max }}}
+\end{array}} \right.\f]
+<center>
+<i>Equation 8.</i>
+</center><br> 
+
+Where <i>P<sub>0.1</sub></i> is the airway occlusion pressure, measured 100 ms after the onset of inspiration during quiet breathing. We set this to a constant healthy value of 0.75. <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure 3 shows the basic segmented muscle driver waveform used.
+
+<img src="./plots/Respiratory/DriverWaveform.jpg" width="600">
 <center> 
-<i>Figure 3. Segmented waveform used to drive the respiratory system. Segment functions are presented in Equation 6. The fraction of each segment duration compared to the total breath duration is set based on the inspiratory-expiratory ratio - many often set to zero. The total time of each breath is determined from a target respiration rate.</i>
+<i>Figure 3. Conscious respiration muscle pressure waveform showing all segments with a duration of 1s each to minimum and maximum pressure.  These segment functions are presented in the equation above. The fraction of each segment duration compared to the total breath duration is set based on the inspiratory-expiratory ratio - many often set to zero. The total time of each breath is determined from a target respiration rate.</i>
 </center><br>
 
 At the beginning of each breath, a target volume (i.e., tidal volume) is determined and mapped to the <i>P<sub>min</sub></i> value using simple circuit math and assuming constant lung and chest wall compliances. This is given by,
 
 \f[{P_{min }} = \frac{{ - V + FRC}}{{{C_{total}}}}\f]
 <center>
-<i>Equation 7.</i>
+<i>Equation 9.</i>
 </center><br> 
 
 Where <i>V</i> is the target volume, <i>FRC</i> is the functional residual capacity and <i>C<sub>total</sub></i> is the total compliance of the respiratory system. The total compliance is determined from the baseline constant compliances of the left chest wall (<i>C<sub>LCW</sub></i>), left lung (<i>C<sub>LL</sub></i>), right chest wall (<i>C<sub>RCW</sub></i>), and right lung (<i>C<sub>RL</sub></i>) by,
 
 \f[{C_{total}} = \frac{1}{{\frac{1}{{{C_{LCW}}}} + \frac{1}{{{C_{LL}}}}}} + \frac{1}{{\frac{1}{{{C_{RCW}}}} + \frac{1}{{{C_{RL}}}}}}\f]
 <center>
-<i>Equation 8.</i>
+<i>Equation 10.</i>
 </center><br> 
 
 @anchor respiratory-chemoreceptors
@@ -342,21 +350,21 @@ The Fresnel model uses pre-selected ventilation frequencies to model various phy
 
 \f[\dot{V}_{A} =G_{p} e^{-0.05P_{a} O_{2} } \max (0,P_{aCO_{2} } -I_{p} )+G_{c} \max (0,P_{aCO_{2} } -I_{c} )\f] 
 <center>
-<i>Equation 9.</i>
+<i>Equation 11.</i>
 </center><br> 
 
 <i>P<sub>aO</sub><sub>2</sub></i> and <i>P<sub>aCO</sub><sub>2</sub></i> are the arterial oxygen and carbon dioxide partial pressures, respectively. <i>I<sub>p</sub></i> and <i>I<sub>c</sub></i> are the cutoff threshold constants, and <i>G<sub>p</sub></i> and <i>G<sub>c</sub></i> are the peripheral and central controller gain constants, respectively. The value of <i>f<sub>v</sub></i> used in the pressure source corresponds to the target  respiration rate that the engine must attain to ensure accurate blood gas levels. It is related to the minute ventilation, <i>V<sup><b>.</b></sup><sub>E</sub></i>, as shown in the equation below
 
 \f[f_{v} =\dot{V}_{E} /V_{T} \f] 
 <center>
-<i>Equation 10.</i>
+<i>Equation 12.</i>
 </center><br> 
 
 where <i>V<sup><b>.</b></sup><sub>E</sub></i> is calculated using the relation
 
 \f[\dot{V}_{E} =\dot{V}_{A} +\dot{V}_{D} \f] 
 <center>
-<i>Equation 11.</i>
+<i>Equation 13.</i>
 </center><br> 
 
 <i>V<sup><b>.</b></sup><sub>D</sub></i> is the dead space ventilation and is obtained by taking the product of the dead space volume and the respiration rate. The target tidal volume <i>V<sub>T</sub></i> needed to predict <i>f<sub>v</sub></i> is calculated from the pulmonary ventilation based on a piecewise linear relationship between the tidal volume and the minute ventilation as shown by Watson @cite watson1974tidalVolume . In the article, the author presented data that  describes the relationship between the minute ventilation and tidal volume by straight line. The data is reproduced in Figure 4 below.
@@ -374,7 +382,7 @@ Up to about half of the vital capacity <i>V<sub>C</sub></i>, the minute ventilat
 
 \f[\dot{V}_{E} =m(V_{T} -c)\f] 
 <center>
-<i>Equation 12.</i>
+<i>Equation 14.</i>
 </center><br> 
 
 where <i>m</i> is the slope and <i>c</i> is the x-intercept of the minute ventilation versus tidal volume plot. The data 
@@ -384,7 +392,7 @@ volume from the minute ventilation.
 
 \f[V_{T} =\left\{\begin{array}{l} {c+\dot{V}_{E} /m,V_{T} \le V_{C} } \\ {0.5*V_{C} ,V_{T} >V_{C} } \end{array}\right. \f] 
 <center>
-<i>Equation 13.</i>
+<i>Equation 15.</i>
 </center><br> 
 
 Where <i>m</i> and <i>c</i> are constant parameters determined during initialization. During the initial parameterization, the minute ventilation is plotted against the vital capacity to determine <i>c</i> by taking the x-intercept of <i>V<sup><b>.</b></sup><sub>E</sub></i> vs <i>V<sub>T</sub></i> plot. Then, the slope is adjusted to meet the initial baseline parameters of the patient. These parameters include the baseline respiration rate and tidal volume, where the latter is estimated from the patient's weight. 
@@ -440,63 +448,63 @@ The waveform in Figure 6 is defined by these mathematical relationships,
  {\vphantom {{ - \left( {P - c} \right)} d}} \right.
  \kern-\nulldelimiterspace} d}}}}}\f]
 <center>
-<i>Equation 14.</i>
+<i>Equation 16.</i>
 </center><br> 
  
 \f[{P_{cl}} = c - 2d\f]
 <center>
-<i>Equation 15.</i>
+<i>Equation 17.</i>
 </center><br> 
 
 \f[{P_{cu}} = c + 2d\f]
 <center>
-<i>Equation 16.</i>
+<i>Equation 18.</i>
 </center><br> 
 
 Where (<i>V</i>) is the individual lung volume, (<i>P</i>) is the intrapulmonary pressure, and the other variables are defined in Figure 6. These equations can be rearranged and input with known parameters to determine the instantaneous expected pressure (<i>P</i>) of each lung. First, the baseline side compliance (<i>C<sub>sb</sub></i>) is determined knowing the baseline chest wall (<i>C<sub>cwb</sub></i>) and baseline lung (<i>C<sub>lb</sub></i>) compliances,
 
 \f[{C_{sb}} = \frac{1}{{\frac{1}{{{C_{cwb}}}} + \frac{1}{{{C_{lb}}}}}}\f]
 <center>
-<i>Equation 17.</i>
+<i>Equation 19.</i>
 </center><br> 
 
 The expected intrapulmonary pressure (<i>P</i>) at the a given volume (<i>V</i>) can be calculated knowing the individual lung functional residual capacity (<i>FRC</i>), residual volume (<i>RV</i>), and vital capacity (<i>VC</i>) by the following,
 
 \f[\lambda  = \ln \left( {\frac{{FRC - RV}}{{RV + VC - FRC}}} \right)\f]
 <center>
-<i>Equation 18.</i>
+<i>Equation 20.</i>
 </center><br> 
 
 \f[{P_{cu}} = \frac{{VC - FRC}}{{{C_{sb}}}}\f]
 <center>
-<i>Equation 19.</i>
+<i>Equation 21.</i>
 </center><br> 
 
 \f[c =  - \frac{{{P_{cu}}\lambda \left( {2 - \lambda } \right)}}{2}\f]
 <center>
-<i>Equation 20.</i>
+<i>Equation 22.</i>
 </center><br> 
 
 \f[d = \frac{{{P_{cu}} - c}}{2}\f]
 <center>
-<i>Equation 21.</i>
+<i>Equation 23.</i>
 </center><br> 
 
 \f[P = d \cdot \ln \left( {\frac{{V - RV}}{{RV + VC - V}}} \right) + c\f]
 <center>
-<i>Equation 22.</i>
+<i>Equation 24.</i>
 </center><br> 
 
 Then, the instantaneous chest wall compliance (<i>C<sub>cw</sub></i>) to apply at the current timestep is found using the side compliance (<i>C<sub>s</sub></i>) by,
 
 \f[{C_s} = \frac{{V - FRC}}{P}\f]
 <center>
-<i>Equation 23.</i>
+<i>Equation 25.</i>
 </center><br> 
 
 \f[{C_{cw}} = \frac{1}{{\frac{1}{{{C_s}}} - \frac{1}{{{C_{lb}}}}}}\f]
 <center>
-<i>Equation 24.</i>
+<i>Equation 26.</i>
 </center><br> 
 
 #### Standard Lung Volumes and Capacities
@@ -537,7 +545,7 @@ maximal forced expiration. ERV can be calculated as
 
 \f[ERV=FRC-RV\f] 
 <center>
-<i>Equation 25.</i>
+<i>Equation 27.</i>
 </center><br> 
 
 In this equation, both FRC and RV are input values obtained from weight-based
@@ -575,7 +583,7 @@ capacity (TLC) using the relation
 
 \f[IRV=TLC-FRC-V_{T} \f] 
 <center>
-<i>Equation 26.</i>
+<i>Equation 28.</i>
 </center><br> 
 
 Both TLC and FRC are weight-based inputs to the model, whereas V<sub>T</sub> is calculated
@@ -593,14 +601,14 @@ calculated as
 
 \f[V_{C} =IRV+V_{T} +ERV\f] 
 <center>
-<i>Equation 27.</i>
+<i>Equation 29.</i>
 </center><br> 
 
 V<sub>C</sub>  can also be calculated using TLC as:
 
 \f[V_{C} =TLC-RV\f] 
 <center>
-<i>Equation 28.</i>
+<i>Equation 30.</i>
 </center><br> 
 
 Again, both TLC and RV are weight-based inputs to the model, and V<sub>T</sub> is calculated
@@ -616,7 +624,7 @@ calculated from TLC and FRC as
 
 \f[IC=TLC-FRC\f] 
 <center>
-<i>Equation 29.</i>
+<i>Equation 31.</i>
 </center><br> 
 
 In the model, both TLC and FRC are weight-based input variables, and IC can be
@@ -646,7 +654,7 @@ product of tidal volume (V<sub>T</sub>) and respiration rate (RR), i.e.,
 
 \f[\dot{V}_{E} =V_{T} *RR\f] 
 <center>
-<i>Equation 30.</i>
+<i>Equation 32.</i>
 </center><br> 
 
 The %Respiratory Model calculates both V<sub>T</sub> and RR from the simulation data. 
@@ -689,7 +697,7 @@ resistance <i>R<sub>trachea</sub></i> as:
 
 \f[Q_{trachea} =\frac{P_{mouth} -P_{carina} }{R_{trachea} } \f] 
 <center>
-<i>Equation 31.</i>
+<i>Equation 33.</i>
 </center><br> 
 
 <i>P<sub>mouth</sub></i> and <i>P<sub>carina</sub></i> are the pressures at the mouth and the carina nodes,
@@ -793,7 +801,7 @@ mixture and the fractional concentration F<sub>gas</sub> of the gas as
 
 \f[P_{gas} =F_{gas} *P_{total} \f] 
 <center>
-<i>Equation 32.</i>
+<i>Equation 34.</i>
 </center><br> 
 
 The %Respiratory Model calculates the partial pressure of a gas at any node
@@ -812,7 +820,7 @@ pressure P<sub>Lung</sub/> at the alveoli nodes as
 
 \f[P_{LungO_{2} } =VF_{LungO_{2} } *P_{Lung} \f] 
 <center>
-<i>Equation 33.</i>
+<i>Equation 35.</i>
 </center><br> 
 
 The alveolar O<SUB>2</SUB> partial pressure can thus be determined by taking the average of
@@ -827,7 +835,7 @@ calculated using the absolute lung pressure, i.e.,
 
 \f[P_{LungO_{2} } =VF_{LungO_{2} } *(P_{B} -P_{H_{2} O} +P_{Lung} )\f] 
 <center>
-<i>Equation 34.</i>
+<i>Equation 36.</i>
 </center><br> 
 
 Figure 13 depicts the plot of P<sub>LungO<SUB>2</SUB></sub>  for the left and right alveoli
@@ -977,7 +985,7 @@ the flow across the trachea <i>Q<sub>trachea</sub></i> as
 
 \f[R_{pulm} =\frac{P_{mouth} -P_{alveoli} }{Q_{trachea} } \f] 
 <center>
-<i>Equation 35.</i>
+<i>Equation 37.</i>
 </center><br> 
 
 The %Respiratory Model calculates the pulmonary compliance <i>C<sub>pulm</sub></i> by dividing the tidal 
@@ -985,7 +993,7 @@ volume <i>V<sub>T</sub></i> by the intrapleural pressure <i>P<sub>pleu</sub></i>
 
 \f[C_{pulm} =\frac{V_{T} }{P_{pleau(max )} -P_{pleu(min )} } \f] 
 <center>
-<i>Equation 36.</i>
+<i>Equation 38.</i>
 </center><br> 
  
 Here <i>P<sub>pleu(min)</sub></i> and <i>P<sub>pleu(max)</sub></i> are the minimum and maximum respective pressures at the 
@@ -1061,32 +1069,34 @@ Disease states are applied to the simulated patient by modifying various paramet
 
 \f[y = {10^{\ln \left( {x\frac{b}{a}} \right) + \ln \left( a \right)}}\f] 
 <center>
-<i>Equation 37.</i>
+<i>Equation 39.</i>
 </center><br> 
 
 \f[y = \left( {b - a} \right)x + a\f] 
 <center>
-<i>Equation 38.</i>
+<i>Equation 40.</i>
 </center><br> 
 
 Growth/increasing functions define a as 1 and b as the maximum multiplier, while decay/decreasing functions define b as 1 and a as the minimum multiplier. Therefore, a severity of 0 will not change the healthy value and allows for an intuitive continuous function without any discontinuities. The respiratory system also includes logic to combine effects for each parameter when multiple insults/interventions are applied. 
 
-When an artificial airway is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with all other action/condition modifiers.
+When positive pressure ventilation is applied (i.e., mechanical ventilator or anesthesia machine), there is a change in the respiratory circuit's resistance and compliance @cite arnal2018parameters. Intubated patients will have these modifiers stacked/combined with all other action/condition modifiers.
 
 <center><br>
-<i>Table 2. Property changes due to the application of respiratory diseases and an artificial airway. ARDS and COPD are applied by the user with a severity defined between 0 and 1 and mapped using with linear or exponential functions.  Mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9. The fatigue factor is a multiplier on the muscle pressure source target that effectively reduces the tidal volume due to the increased effort of breathing.</i>
+<i>Table 2. Property changes due to the application of respiratory diseases and positive pressure ventilation. ARDS and COPD are applied by the user with a severity defined between 0 and 1 and mapped using with linear or exponential functions.  Mild severity = 0.3, moderate severity = 0.6, severe severity = 0.9. The fatigue factor is a multiplier on the muscle pressure source target that effectively reduces the tidal volume due to the increased effort of breathing.</i>
 </center>
 
 <table>
   <tr>
     <th>Parameter</th>
+	<th>System</th>
     <th>Standard Healthy</th>
-    <th>Artificial Airway</th>
+    <th>Positive Pressure Ventilation</th>
     <th colspan="4">Restrictive (ARDS)</th>
     <th colspan="4">Obstructive (COPD)</th>
   </tr>
   <tr>
     <th></th>
+	<th></th>
 	<th></th>
 	<th></th>
 	<th>Severity Mapping</th>
@@ -1098,14 +1108,15 @@ When an artificial airway is applied (i.e., mechanical ventilator or anesthesia 
     <th>Moderate</th>
     <th>Severe</th>
   </tr>
-  <tr><td>Alveolar Dead Space (L)</td><td>0</td><td>0</td><td>N/A</td><td>0</td><td>0</td><td>0</td><td>Linear Growth</td><td>0.6</td><td>1.2</td><td>1.8</td></tr>
-  <tr><td>Airway Resistance (cmH20-s/L)</td><td>1.125</td><td>9</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
-  <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Exponential Growth</td><td>1.74</td><td>6.7</td><td>25.8</td></tr>
-  <tr><td>Lung Compliance (L/cmH2O)</td><td>0.1</td><td>0.04</td><td>Linear Decay</td><td>0.082</td><td>0.064</td><td>0.046</td><td>Linear Growth</td><td>0.13</td><td>0.16</td><td>0.19</td></tr>
-  <tr><td>Inspiratory-Expiratory Ratio</td><td>0.5</td><td>0.5</td><td>Exponential Growth</td><td>1.1</td><td>2.6</td><td>12.1</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
-  <tr><td>Diffusion Surface Area (m^2)</td><td>68.3</td><td>68.3</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td></tr>
-  <tr><td>Pulmonary Capilary Resistance (cmH20-s/L)</td><td>85.6</td><td>85.6</td><td>N/A</td><td>85.6</td><td>85.6</td><td>85.6</td><td>Linear Growth</td><td>128.4</td><td>171.2</td><td>214.0</td></tr>
-  <tr><td>Fatigue Factor</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>
+  <tr><td>Alveolar Dead Space (L)</td><td>Respiratory</td><td>0</td><td>0</td><td>N/A</td><td>0</td><td>0</td><td>0</td><td>Linear Growth</td><td>0.6</td><td>1.2</td><td>1.8</td></tr>
+  <tr><td>Airway Resistance (cmH20-s/L)</td><td>Respiratory</td><td>1.125</td><td>9</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
+  <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>Respiratory</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Exponential Growth</td><td>1.74</td><td>6.7</td><td>25.8</td></tr>
+  <tr><td>Lung Compliance (L/cmH2O)</td><td>Respiratory</td><td>0.1</td><td>0.04</td><td>Linear Decay</td><td>0.082</td><td>0.064</td><td>0.046</td><td>Linear Growth</td><td>0.13</td><td>0.16</td><td>0.19</td></tr>
+  <tr><td>Inspiratory-Expiratory Ratio</td><td>Respiratory</td><td>0.5</td><td>0.5</td><td>Exponential Growth</td><td>1.1</td><td>2.6</td><td>12.1</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
+  <tr><td>Diffusion Surface Area (m^2)</td><td>Respiratory</td><td>68.3</td><td>68.3</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td></tr>
+  <tr><td>Pulmonary Capillary Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>0.062</td><td>0.062</td><td>N/A</td><td>0.062</td><td>0.062</td><td>0.062</td><td>Linear Growth</td><td>0.094</td><td>0.126</td><td>0.157</td></tr>
+  <tr><td>Pulmonary Shunt Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>8.9</td><td>8.9</td><td>Exponential Decay</td><td>2.23</td><td>0.56</td><td>0.14</td><td>N/A</td><td>8.9</td><td>8.9</td><td>8.9</td></tr>
+  <tr><td>Fatigue Factor</td><td>Respiratory</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>
 </table>
 
 Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure 17 shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD.
@@ -1137,6 +1148,10 @@ Additionally, The engine models destruction of lung tissue with an increase in a
 The destruction of the alveolar membranes also destroys the pulmonary capillaries embedded in the membranes. To model pulmonary capillary destruction, the engine increases the pulmonary capillary flow resistance based on severity. Although increased pulmonary capillary resistance is related to alveolar membrane destruction, and therefore associated with emphysema, the engine uses either emphysema severity or chronic bronchitis severity (whichever is higher) to determine the pulmonary capillary resistance multiplier. This was done in an attempt to model increased blood pressure and elevated heart rate, which are symptoms of both emphysema and chronic bronchitis. Increasing the capillary resistance should increase arterial blood pressure as the heart pumps harder to overcome the increased resistance in the lungs. 
 
 Decreased Inspiration-Expiration (IE) ratio is another pathophysiologic feature of COPD.  As with asthma, the normal IE ratio is scaled using a multiplier based on severity. Either chronic bronchitis severity or emphysema severity (whichever is higher) is used to determine the IE ratio scaling multiplier. 
+
+#### Acute %Respiratory Distress Syndrome
+
+Acute %Respiratory Distress Syndrome (ARDS) is modeled in the engine as a generic impairment of the alveoli's ability to exchange oxygen and carbon dioxide.  The specific cause (i.e., sepsis, pneumonia, etc.) is not specified.  The model is implemented to meet the PaO2/FiO2 Berlin Criteria combined with accepted pulmonary shunt fractions when mechanically ventilated.  A severity value is mapped to various model parameters to achieve mild, moderate, and severe symptoms at severities of 0.3, 0.6, and 0.9 respectively.  Direct modifiers are implemented as shown in Table 2.
 
 #### Lobar Pneumonia
 
@@ -1317,6 +1332,10 @@ Conscious respiration has any number of potential applications and is likely to 
 literature determined by a voluntary cough immediately following office-based vocal fold medialization injections @cite ruddy2014improved.</i>
 </center><br>
 
+#### Exacerbations
+
+Several respiratory conditions have exacerbation actions defined to allow for increased/decreased severities during runtime, including COPD, ARDS, and Lobar Pneumonia.  These exacerbation actions will instantaneously (i.e., during the simulation/scenario runtime) change the values shown in Table 2, based on the severity provided.  Exacerbations can either degrade or improve the patient's current condition.
+
 @anchor respiratory-events
 Events
 ------
@@ -1396,6 +1415,7 @@ The actions and interventions associated with the %Respiratory System were valid
 |	AsthmaAttackLifeThreateningAcute	|	Life threatening acute asthma attack	|<span class="success">	16	</span>|<span class="warning">	3	</span>|<span class="danger">	0	</span>|
 |	COPDSevereEmphysema	|	GOLD Stage III Emphysema	|<span class="success">	5	</span>|<span class="warning">	3	</span>|<span class="danger">	1	</span>|
 |	COPDSevereBronchitisLeft	|	Severe Chronic Bronchitis	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
+|	ARDSModerateBothLungs	|	Moderate Acute Respiratory Distress Syndrome	|<span class="success">	9	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	LobarPneumoniaSevereLeftLobe	|	Severe Lobar Pneumonia in one lobe in the left lung	|<span class="success">	2	</span>|<span class="warning">	5	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaSevereRightLung	|	Severe Lobar Pneumonia in two lobes of right lung	|<span class="success">	4	</span>|<span class="warning">	3	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaModerateBothLungs	|	Moderate Lobar Pneumonia in both lungs	|<span class="success">	6	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
@@ -1404,11 +1424,11 @@ The actions and interventions associated with the %Respiratory System were valid
 |	TensionPneumothoraxClosedVaried	|	Varied closed pneumothorax severities and interventions	|<span class="success">	32	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
 |	AirwayObstructionVaried	|	Airway Obstruction with varying severities	|<span class="success">	27	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Bronchoconstriction	|	Bronchoconstriction with varying severities	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	5	</span>|
-|	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	15	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	MainstemIntubation	|	Right and left mainstem intubation and correction (with Succs)	|<span class="success">	20	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	10	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Dyspnea	|	Varied severities of respiratory apnea	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Supplemental Oxygen	|	Nasal cannula, simple mask, and non-rebreather mask	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	251	</span>|<span class="warning">	22	</span>|<span class="danger">	22	</span>|
+|		|	Total	|<span class="success">	250	</span>|<span class="warning">	22	</span>|<span class="danger">	22	</span>|
 
 @anchor respiratory-conditionvalidation
 Validation - Conditions
@@ -1433,6 +1453,18 @@ The COPD condition was validated against two scenarios. The severe emphysema sce
 |	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Trachea Flow - Peak Expiratory Flow  (L/min)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Severe Chronic Bronchitis: Bronchitis Severity = 0.65 Emphysema Severity = 0.5 Both Lungs 100%	|		|	120	|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	> 20 @cite bergeronSME	</span>|<span class="success">	< 60% of normal @cite bergeronSME	</span>|<span class="success">	Increase,  Tachycardia @cite bergeronSME	</span>|<span class="danger">	Increase,  Pulmonary Hypertension,  > 140 mm Hg @cite bergeronSME	</span>|<span class="success">	< 90% @cite bergeronSME	</span>|<span class="success">	Decrease,  Hypoxemia,  < 55 mm Hg  @cite bergeronSME	</span>|<span class="warning">	Increase,   Hypercapnia > 55 mmHg   @cite bergeronSME	</span>|<span class="success">	Decrease @cite van1991physical, @cite bergeronSME	</span>|
+
+### Acute %Respiratory Distress Syndrome
+
+The ARDS condition was validated against a moderate severity scenario.  Further validation of ARDS while ventilated can be found in the @ref MechanicalVentilatorMethodology validation.
+
+<center><br>
+<i>Table 8. Validation matrix for moderate ARDS in both lungs. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
+</center>
+
+|	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Pulmonary Compliance (L/cmH2O)	|	Respiration Rate (breaths/min)	|	Shunt Fraction	|	Heart Rate (beats/min)	|	Total Pulmonary Ventilation (L/min) 	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	Carrico Index [PaO2/FiO2] (mmHg)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Moderate ARDS Severity = 0.6 Left Lung = 100% Right Lung  = 100%	|	Chronic condition	|	120	|<span class="success">	Reduced @cite mortelliti2002acute	</span>|<span class="success">	Tachypnea @cite mortelliti2002acute	</span>|<span class="success">	>20% @cite radermacher2017fifty	</span>|<span class="success">	Tachycardia @cite mortelliti2002acute	</span>|<span class="success">	Increased @ cite mortelliti2002acute	</span>|<span class="success">	Hypoxia @cite mortelliti2002acute	</span>|<span class="success">	Hypoxemia @cite radermacher2017fifty	</span>|<span class="success">	Normal or near normal @cite mortelliti2002acute	</span>|<span class="success">	<300 @cite mortelliti2002acute	</span>|
 
 ### Lobar Pneumonia
 
@@ -1886,6 +1918,12 @@ RR - Respiration rate
 V<sup><b>.</b></sup><sub>E</sub> - Minute ventilation
 
 V<sup><b>.</b></sup><sub>A</sub> - Alveolar ventilation
+
+PaO2 - Arterial blood oxygen partial pressure
+
+FiO2 - Fraction of inspired oxygen
+
+IE Ratio - Inspiratory:Expiratory Ratio
 
 Data Model Implementation
 -------------------------

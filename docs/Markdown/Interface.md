@@ -14,17 +14,22 @@ This generic interface is the controlling class for a physiology engine modeling
 @anchor LoggingInterface
 ### Logging
 
-You can provide an optional string into this creation method that will create a log file on disk where the engine will output all errors, warnings and other logged information.
-It is highly recommended to create a log, and check it often. If you do not wish to have this engine create a log, you can pass in nullptr.
-You can also provide a callback class to the logger that will forward all logging events to so that your application can easily monitor the engine.
+The Pulse Logger class can write messages from the engine to the console and/or a file.
+You can also provide a callback class to the logger for the engine to forward all logging events to your application so it can easily monitor the engine.
+The %Logger class is used to specify the name of a file to write messages to. (An empty string will disable writing to file),
+You may also turn on and off writing of messages to the console.
+
+It is highly recommended to create a log, and check it often. Many problems can be identified through the log.
+You can access the log at any time, the engine does not have to be initialized or have a state loaded.
+
 For more details, please consult the HowTo-EngineUse.cpp file in the SDK.
 You can access and utilize this logger with in your own application as such:
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// Retrieve the Logger associated with this engine
-	//--------------------------------------------------------------------------------------------------
-	virtual Logger* GetLogger() = 0;
+  /// \brief
+  /// Retrieve the Logger associated with this engine
+  //--------------------------------------------------------------------------------------------------
+  virtual Logger* GetLogger() = 0;
 @endcode
 
 @anchor EngineInitialization
@@ -35,45 +40,54 @@ There are two ways to initialize the engine once created.
 @anchor EngineState
 #### Engine State
 
-An engine state file is the exact state of the engine written into an xml file. 
+An engine state file is the exact state of the engine written into an file/string. 
 Once loaded, the engine is instantly ready to process instructions.
-You can specify an xml file on disk, or a state object held in memory.
-You can optionally specify a specific simulation time for the engine to use as its initial simulation time.
-If no time is provided, the simulation time that is in the state file will be used.
-The SDK provides a state file for various patients at simulation time 0 located in the bin/states directory.
+You can specify a file on disk, or the string contents of a state held in memory.
+The Pulse build can provide a set of state files for various patients at simulation time 0 located in the bin/states directory.
+When providing a state (from file or string) Pulse will not need to access any files on disk.
+All required data is provided in the state itself.
 
 @code
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Reset engine and set it to the state in the provided file.
-  /// You may provided a Simulation Time to be used if desired.
-  /// It will be reflected in the GetSimulationTime method.
+  /// The file may contain json or binary. 
+  /// Anything but an extension of .json will be interpreted as binary.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool LoadState(const std::string& file, const SEScalarTime* simTime=nullptr) = 0;
+  virtual bool SerializeFromFile(const std::string& file) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Reset engine and set it to the state in the provided file.
-  /// You may provided a Simulation Time to be used if desired.
-  /// It will be reflected in the GetSimulationTime method.
+  /// Reset engine and set it to the state in the provided string.
+  /// The string can contain JSON or binary.
+  /// Note that a string of bytes are binary, not text; we only use the string class as a convenient container.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool LoadState(const CDM::PhysiologyEngineStateData& state, const SEScalarTime* simTime = nullptr) = 0;
+  virtual bool SerializeFromString(const std::string& state, SerializationFormat m) = 0;
 @endcode
 
 At any point during the life of an engine, you create your own state object for later use.
 @code
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Save the current state of the engine.
-  /// State will be written to a file if provided.
-  /// State object will be returned.
-  /// Engine will be in a cleared state if this method fails.
+  /// Save the current state of the engine to provided filename.
+  /// Using a .json extension will save a json/ascii file.
+  /// Anything else will save as binary.
   //--------------------------------------------------------------------------------------------------
-  virtual std::unique_ptr<CDM::PhysiologyEngineStateData> SaveState(const std::string& file = "") = 0;
+  virtual bool SerializeToFile(const std::string& filename) const = 0;
+  
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Reset engine and set it to the state in the provided string.
+  /// The string can contain JSON or binary.
+  /// Note that a string of bytes are binary, not text; we only use the string class as a convenient container.
+  /// Return value indicates engine was able to load provided state file.
+
+  //--------------------------------------------------------------------------------------------------
+  virtual bool SerializeFromString(const std::string& state, SerializationFormat m) = 0;
 @endcode
 
 @anchor PatientCreation
@@ -81,34 +95,38 @@ At any point during the life of an engine, you create your own state object for 
 
 If you would like to create your own patient or apply a condition to a specific patient, 
 you will need to initialize the engine with a patient definition.
+When creating a new patient state, Pulse need to access files on disk.
+You can specify the root directory containing these files in the provided SEPatientConfiguration object/string.
+More about files required by Pulse can be found on our [wiki](https://gitlab.kitware.com/physiology/engine/-/wikis/how-to-connect-to-pulse#application-execution)
 
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// locates the xml patient file and reads in the values. 
-	///
-	/// This will create an engine that you can send instructions (patient,actions,conditions) to dynamically.
-	/// The return value will indicate success failure of the creation of the engine.  
-	/// Some combinations of patients and conditions may prevent the engine from stabilizing
-	///
-	//--------------------------------------------------------------------------------------------------
-	virtual bool InitializeEngine(const std::string& patientFile, const std::vector<const SECondition*>* conditions = nullptr, const PhysiologyEngineConfiguration* config = nullptr) = 0;
+  /// \brief
+  /// locates the xml patient file and reads in the values. 
+  ///
+  /// This will create an engine that you can send instructions (patient,actions,conditions) to dynamically.
+  /// The return value will indicate success failure of the creation of the engine.  
+  /// Some combinations of patients and conditions may prevent the engine from stabilizing
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual bool InitializeEngine(const std::string& patientConfiguration, SerializationFormat m) = 0;
 
-	//--------------------------------------------------------------------------------------------------
-	/// \brief
-	///
-	/// This will create an engine that you can send instructions (patient,actions,conditions) to dynamically.
-	/// The return value will indicate success failure of the creation of the engine.  
-	/// Some combinations of patients and conditions may prevent the engine from stabilizing
-	///
-	//--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const SEPatient& patient, const std::vector<const SECondition*>* conditions = nullptr, const PhysiologyEngineConfiguration* config = nullptr) = 0;
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  ///
+  /// This will create an engine that you can send instructions (patient,actions,conditions) to dynamically.
+  /// The return value will indicate success failure of the creation of the engine.  
+  /// Some combinations of patients and conditions may prevent the engine from stabilizing
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual bool InitializeEngine(const SEPatientConfiguration& patientConfiguration) = 0;
 @endcode
 
 @anchor ConditionsInterface
 When a patient definition is provided, the engine will go through an initialization algorithm that will take several minutes
 as to tune the engine to model the specific state requested of the patient. 
 This initialization method is also the only way to specify any conditions (chronic/disease states).
+The following conditions are specified via the SEPatientConfiguration object.
 
 #### Patient Conditions
 @secreflist
@@ -121,6 +139,8 @@ This initialization method is also the only way to specify any conditions (chron
   @refitem ConsumeMealTable "Consume Meal"
   @refitem ImpairedAlveolarExchangeTable "Impaired Alveolar Exchange"
   @refitem LobarPneumoniaTable "Lobar Pneumonia"
+  @refitem PulmonaryFibrosisTable "Pulmonary Fibrosis"
+  @refitem PulmonaryShuntTable "Pulmonary Shunt"
   @refitem SepsisTable "Sepsis"
 @endsecreflist
 
@@ -130,27 +150,54 @@ This initialization method is also the only way to specify any conditions (chron
 @endsecreflist
 
 <br>
-Initializing the patient simulation with conditions will extend the initialization time by a few more minutes.
+Adding conditions to the patient configuration object will extend the initialization time by a few more minutes.
 Once the InitalizeEngine method returns, the engine is stabilize, and it is recommended to save the engine state for future use.
 (Assuming the patient vitals are acceptable, it may take some adjusting of condition severity to get a desired patient state with conditions applied.)
 The SDK provides multiple tested patient files for use in the bin/patients directory. For more information on this look at the @ref PatientMethodology.
 
-@anchor EngineConfiguration
-##### Engine Configuration
+@code
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Get the Condition Manager.
+  /// Allows a user to check the state of active conditions
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEConditionManager& GetConditionManager() const = 0;
+@endcode
 
-You can provide an engine configuration to the initialize methods. 
-This configuration is used to tweek various variables associated in the engine methodology.
+@anchor EngineConfiguration
+### Engine Configuration
+
+The engine configuration is used to tweek various variables associated in the engine methodology.
 Configuration modification requires a very in-depth knowledge of the engine.
 It is not recommended to provide another configuration unless you know what effects it will have.
-There are some useful configuration options that may be of interest, such as writing data to a csv file while the initialization algorithm executes.
+Note that if you provide a configuration, you can specify any number of configuration properties (1 or more).
+And only those specified values will be used to replace the default configuration values.
+There are some useful configuration options that you may want to change, such as writing data to a csv file while the initialization algorithm executes.
 Come visit us on the forums if this is something you want to know more about.
 
-You can retrieve and view the configuration with this method (note you will need to cast it to the PulseConfiguration class to see configuration data)
+You can provide an engine configuration parameter to the engine via this method:
+(Note you will need to instantiate a PulseConfiguration object to pass to this method)
 
 @code
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// returns the engine configuration. 	
+  /// Engines can have a configuration for allowing a user to set certain internal parameters
+  /// Engines with configurations will have all configuration parameters defaulted,
+  /// This allow you to change one or more or those parameters.
+  /// The parameters provided will be applied during SerializeFrom* and InitializeEngine methods.
+  /// Use with caution! (Use nullptr to revert back to using all engine defaults)
+  //--------------------------------------------------------------------------------------------------
+  virtual bool SetConfigurationOverride(const SEEngineConfiguration* config) = 0;
+@endcode
+
+You can retrieve and view the configuration with this method: 
+(note you will need to cast it to the %PulseConfiguration class to see configuration data)
+
+@code
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// returns the engine configuration.   
   //--------------------------------------------------------------------------------------------------
   virtual const PhysiologyEngineConfiguration* GetConfiguration() = 0;
 @endcode
@@ -164,10 +211,10 @@ How to utilize this functionality is demonstrated in all the HowTo files provide
 
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// Retrieve the PhysiologyEngineTrack associated with tracking data from this engine to a file
-	//--------------------------------------------------------------------------------------------------
-	virtual PhysiologyEngineTrack* GetEngineTrack() = 0;
+  /// \brief
+  /// Retrieve the PhysiologyEngineTrack associated with tracking data from this engine to a file
+  //--------------------------------------------------------------------------------------------------
+  virtual PhysiologyEngineTrack* GetEngineTrack() = 0;
 @endcode
 
 @anchor AdvanceTime
@@ -182,24 +229,24 @@ How you decide to drive the simulation is up to you, but you must explicitly adv
 
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// executes one pass through the time loop of the engine at the fixed time step
-	///
-	/// Events, errors, and warning as are logged to file not errors are returned
-	/// through the API at this time. 
-	///
-	//--------------------------------------------------------------------------------------------------
-	virtual void AdvanceModelTime() = 0;
+  /// \brief
+  /// executes one pass through the time loop of the engine at the fixed time step
+  ///
+  /// Events, errors, and warning as are logged to file not errors are returned
+  /// through the API at this time. 
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual void AdvanceModelTime() = 0;
 
-	//--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// executes one pass through the time loop of the engine at the fixed time step
-	///
-	/// Events, errors, and warning as are logged to file not errors are returned
-	/// through the API at this time. 
-	///
-	//--------------------------------------------------------------------------------------------------
-	virtual void AdvanceModelTime(double time, const TimeUnit& unit) = 0;
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// executes one pass through the time loop of the engine at the fixed time step
+  ///
+  /// Events, errors, and warning as are logged to file not errors are returned
+  /// through the API at this time. 
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual void AdvanceModelTime(double time, const TimeUnit& unit) = 0;
 @endcode
 
 If no time is provided, the engine will simulate for the smallest amount of time it can.
@@ -207,25 +254,46 @@ The minimum amount of time the engine can simulate is the engines' time step, yo
 
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// returns the engine time step that is used when advancing time. 
-	///
-	//--------------------------------------------------------------------------------------------------
-	virtual double GetTimeStep(const TimeUnit& unit) = 0;
+  /// \brief
+  /// returns the engine time step that is used when advancing time. 
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual double GetTimeStep(const TimeUnit& unit) = 0;
 @endcode
 
 You can retrieve the total amount of time the engine has simulated with the following call:
 
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// returns the current time of the simulation. 	
-	//--------------------------------------------------------------------------------------------------
-	virtual double GetSimulationTime(const TimeUnit& unit) = 0;
+  /// \brief
+  /// returns the current time of the simulation.   
+  //--------------------------------------------------------------------------------------------------
+  virtual double GetSimulationTime(const TimeUnit& unit) = 0;
 @endcode
 Note that the simulation time is 0 when the InitializeEngine method returns.
-Remember that you can set the simulation time to what ever you want when loading a state.
+
+You can set the simulation time of the engine with the following call:
 It will then be incremented from that point on whenever you call AdvanceModelTime.
+
+@code
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Set the current time of the simulation.
+  /// Engine Simulation time will be advanced from this time point
+  //--------------------------------------------------------------------------------------------------
+  virtual void SetSimulationTime(const SEScalarTime& time) = 0;
+@endcode
+
+You can provide a callback object with the following call:
+The engine will call the method implementation after each time step.
+
+@code
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Add a callback object that will be called after each timestep
+  //--------------------------------------------------------------------------------------------------
+  virtual void SetAdvanceHandler(SEAdvanceHandler* handler) = 0;
+@endcode
 
 @anchor ProcessActions
 ### Process Action
@@ -233,14 +301,14 @@ It will then be incremented from that point on whenever you call AdvanceModelTim
 Actions are the means by which instructions are provided to a physiology engine.
 You will need to create an instance of an action class, fill it out with the necessary data and pass it into this method.
 @code
-	//--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// Execute the provided action.
-	/// true will be returned if the engine supports the action
-	/// false will be returned if the engine does not support the action
-	///
-	//--------------------------------------------------------------------------------------------------
-	virtual bool ProcessAction(const SEAction& action) = 0;
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Execute the provided action.
+  /// true will be returned if the engine supports the action
+  /// false will be returned if the engine does not support the action
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual bool ProcessAction(const SEAction& action) = 0;
 @endcode
 
 #### Patient Actions
@@ -261,11 +329,13 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem DyspneaTable "Dyspnea"
   @refitem ExerciseTable "Exercise"
   @refitem HemorrhageTable "Hemorrhage"
+  @refitem ImpairedAlveolarExchangeExacerbationTable "Impaired Alveolar Exchange Exacerbation"
   @refitem IntubationTable "Intubation"
   @refitem LobarPneumoniaExacerbationTable "Lobar Pneumonia Exacerbation"
   @refitem MechanicalVentilationTable "Mechanical Ventilation"
   @refitem NeedleDecompressionTable "Needle Decompression"
   @refitem PericardialEffusionTable "Pericardial Effusion"
+  @refitem PulmonaryShuntExacerbationTable "Pulmonary Shunt Exacerbation"
   @refitem RespiratoryFatigueTable "Respiratory Fatigue"
   @refitem SubstanceBolusTable "Substance Bolus"
   @refitem SubstanceCompoundInfusionTable "Substance Compound Infusion"
@@ -284,18 +354,18 @@ You will need to create an instance of an action class, fill it out with the nec
 #### Anesthesia Machine Actions
 @secreflist
   @refitem AnesthesiaMachineConfigurationTable "Anesthesia Machine Configuration"
-  @refitem ExpiratoryValveLeakTable "Expiratory Valve Leak"
-  @refitem ExpiratoryValveObstructionTable "Expiratory Valve Obstruction"
-  @refitem InspiratoryValveLeakTable "Inspiratory Valve Leak"
-  @refitem InspiratoryValveObstructionTable "Inspiratory Valve Obstruction"
-  @refitem MaskLeakTable "Mask Leak"
-  @refitem OxygenTankPressureLossTable "Oxygen Tank Pressure Loss"
-  @refitem OxygenWallPortPressureLossTable "Oxygen Wall Port Pressure Loss"
-  @refitem SodaLimeFailureTable "SodaLime Failure"
-  @refitem TubeCuffLeakTable "Tube Cuff Leak"
-  @refitem VaporizerFailureTable "Vaporizer Failure"
-  @refitem VentilatorPressureLossTable "Ventilator Pressure Loss"
-  @refitem YPieceDisconnectTable "Y-Piece Disconnect"
+  @refitem AnesthesiaMachineExpiratoryValveLeakTable "Expiratory Valve Leak"
+  @refitem AnesthesiaMachineExpiratoryValveObstructionTable "Expiratory Valve Obstruction"
+  @refitem AnesthesiaMachineInspiratoryValveLeakTable "Inspiratory Valve Leak"
+  @refitem AnesthesiaMachineInspiratoryValveObstructionTable "Inspiratory Valve Obstruction"
+  @refitem AnesthesiaMachineMaskLeakTable "Mask Leak"
+  @refitem AnesthesiaMachineOxygenTankPressureLossTable "Oxygen Tank Pressure Loss"
+  @refitem AnesthesiaMachineOxygenWallPortPressureLossTable "Oxygen Wall Port Pressure Loss"
+  @refitem AnesthesiaMachineSodaLimeFailureTable "SodaLime Failure"
+  @refitem AnesthesiaMachineTubeCuffLeakTable "Tube Cuff Leak"
+  @refitem AnesthesiaMachineVaporizerFailureTable "Vaporizer Failure"
+  @refitem AnesthesiaMachineVentilatorPressureLossTable "Ventilator Pressure Loss"
+  @refitem AnesthesiaMachineYPieceDisconnectTable "Y-Piece Disconnect"
 @endsecreflist
 
 #### %Inhaler Actions
@@ -303,39 +373,77 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem InhalerConfigurationTable "Inhaler Configuration"
 @endsecreflist
 
+#### Mechanical Ventilator Actions
+@secreflist
+  @refitem MechanicalVentilatorConfigurationTable "Mechanical Ventilator Configuration"
+@endsecreflist
+
+You can query the engine's action manager to get action information.
+For example, this may be useful to understand the current state of a infusion.
+
+@code
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Get the Action Manager.
+  /// Allows a user to check the state of active actions
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEActionManager& GetActionManager() const = 0;
+@endcode
+
 @anchor PatientState
 ### Patient State
 
+As the engine runs, it can change the patient settings.
+If you would like to get the original, stabilized healthy patient values,
+you can get the Initial Patient object via this method:
+@code
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Returns the initial simulation patient object used by the engine 
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEPatient& GetInitialPatient() = 0;
+@endcode
+
 Once you start advancing time and processing actions, the patient state can start to change.
-Depending on what actions you process, it can change slightly, such as a slight increase in mean arterial pressure,
-or it can change quite dramatically and start affecting multiple systems through various physiological feedback mechanisms. 
-These dramatic changes in patient state are tracked by means of @ref PatientEventTable "Patient Events". 
+Depending on what actions you process, it can change slightly, such as a slight increase weight or a change in a baseline value, such as the mean arterial pressure baseline.
 
-You can track patient event states in one of two ways.
-
-- Poll the patient object via Patient object method:
+You can get the Current Patient object via this method:
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// Returns the patient object used by the engine 
-	///
-	//--------------------------------------------------------------------------------------------------
-	virtual const SEPatient& GetPatient() = 0;
+  /// \brief
+  /// Returns the patient object used by the engine 
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEPatient& GetPatient() = 0;
 @endcode
-Note you can get more @ref PatientTable "Patient" data from this class, not just event status.
 
-- Set up a callback method that will automatically call your code when patient event status changes.
-Set the callback method with this method
+### Engine Events
+
+As the engine runs and depending on actions taken the engine can enter and exit various clinically based patient states that can affect multiple systems through various physiological feedback mechanisms. 
+These dramatic changes in the engine are listed in our @ref eEventTable "Engine Events Table". 
+
+You can access event states by getting the SEEventManager object with this method:
+
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// Add a callback object that will be called whenever a pateint or anesthesia machine event changes state
-	//--------------------------------------------------------------------------------------------------
-	virtual void SetEventHandler(SEEventHandler* handler) = 0;
-@endcode
-Event State is primarily associated with the patient, but there are events associated with @ref AnesthesiaMachineEventTable "Anesthesia Machine".
+  /// \brief
+  /// Retrieves the associated event manager.
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEEventManager& GetEventManager() const = 0;
 
-Look at the SDK HowTo-UseEngine.cpp for a full example in using both of these methods.
+@endcode
+
+You can then gain access to events by either
+
+- Polling the active events directly on the event manager
+- Set up a callback method on the %SEEventManager to notify you when the engine enters and exits any event.
+
+Events are primarily associated with the patient, but there are events associated with Equipment.
+
+Look at the SDK HowTo-UseEngine.cpp for a full example of using engine events.
 
 @anchor AssessmentsInterface
 ### Patient Assessments
@@ -355,13 +463,13 @@ You must create and provide an assessment object to the physiology engine via th
 
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// Determines the assessment type and fills the data object with current data. 
-	///
-	/// Assessments can be queried at any point in the calculation and as many times are desired. 
-	///
-	//--------------------------------------------------------------------------------------------------
-	virtual bool GetPatientAssessment(SEPatientAssessment& assessment) = 0; 
+  /// \brief
+  /// Determines the assessment type and fills the data object with current data. 
+  ///
+  /// Assessments can be queried at any point in the calculation and as many times are desired. 
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual bool GetPatientAssessment(SEPatientAssessment& assessment) = 0; 
 @endcode
 
 @anchor SystemsInterface
@@ -371,33 +479,34 @@ The bodies physiology, equipment, and the environment are all systems and each s
 
 The engine supports the following systems:
 
-|Code Method                                                                             | CDM Table                                           |
-|---                                                                                     |---                                                  |
-|@code virtual const SEEnvironment* GetEnvironment() = 0; @endcode                       | @ref EnvironmentTable "Environment"                 |
-|@code virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() = 0; @endcode     | @ref BloodChemistrySystemTable "BloodChemistry"     |
-|@code virtual const SECardiovascularSystem* GetCardiovascularSystem() = 0; @endcode     | @ref CardiovascularSystemTable "Cardiovascular"     |
-|@code virtual const SEEndocrineSystem* GetEndocrineSystem() = 0; @endcode               | @ref EndocrineSystemTable "Endocrine"               |
-|@code virtual const SEEnergySystem* GetEnergySystem() = 0; @endcode                     | @ref EnergySystemTable "Energy"                     |
-|@code virtual const SERenalSystem* GetRenalSystem() = 0; @endcode                       | @ref RenalSystemTable "Renal"                       |
-|@code virtual const SEGastrointestinalSystem* GetGastrointestinalSystem() = 0; @endcode | @ref GastrointestinalSystemTable "Gastrointestinal" |
-|@code virtual const SENervousSystem* GetNervousSystem() = 0; @endcode                   | @ref NervousSystemTable "Nervous"                   |
-|@code virtual const SERespiratorySystem* GetRespiratorySystem() = 0; @endcode           | @ref RespiratorySystemTable "Respiratory"           |
-|@code virtual const SEDrugSystem* GetDrugSystem() = 0; @endcode                         | @ref DrugSystemTable "Drug"                         |
-|@code virtual const SETissueSystem* GetTissueSystem() = 0; @endcode                     | @ref TissueSystemTable "Tissue"                     |
-|@code virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() = 0; @endcode           | @ref AnesthesiaMachineTable "Anesthesia Machine"    |
-|@code virtual const SEElectroCardioGram* GetElectroCardioGram() = 0; @endcode           | @ref ElectroCardioGramTable "ElectroCardioGram"     |
-|@code virtual const SEInhaler* GetInhaler() = 0; @endcode                               | @ref InhalerTable "Inhaler"                         |
+|Code Method                                                                             | CDM Table                                             |
+|---                                                                                     |---                                                    |
+|@code virtual const SEEnvironment* GetEnvironment() = 0; @endcode                       | @ref EnvironmentTable "Environment"                   |
+|@code virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() = 0; @endcode     | @ref BloodChemistrySystemTable "BloodChemistry"       |
+|@code virtual const SECardiovascularSystem* GetCardiovascularSystem() = 0; @endcode     | @ref CardiovascularSystemTable "Cardiovascular"       |
+|@code virtual const SEEndocrineSystem* GetEndocrineSystem() = 0; @endcode               | @ref EndocrineSystemTable "Endocrine"                 |
+|@code virtual const SEEnergySystem* GetEnergySystem() = 0; @endcode                     | @ref EnergySystemTable "Energy"                       |
+|@code virtual const SERenalSystem* GetRenalSystem() = 0; @endcode                       | @ref RenalSystemTable "Renal"                         |
+|@code virtual const SEGastrointestinalSystem* GetGastrointestinalSystem() = 0; @endcode | @ref GastrointestinalSystemTable "Gastrointestinal"   |
+|@code virtual const SENervousSystem* GetNervousSystem() = 0; @endcode                   | @ref NervousSystemTable "Nervous"                     |
+|@code virtual const SERespiratorySystem* GetRespiratorySystem() = 0; @endcode           | @ref RespiratorySystemTable "Respiratory"             |
+|@code virtual const SEDrugSystem* GetDrugSystem() = 0; @endcode                         | @ref DrugSystemTable "Drug"                           |
+|@code virtual const SETissueSystem* GetTissueSystem() = 0; @endcode                     | @ref TissueSystemTable "Tissue"                       |
+|@code virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() = 0; @endcode           | @ref AnesthesiaMachineTable "Anesthesia Machine"      |
+|@code virtual const SEElectroCardioGram* GetElectroCardioGram() = 0; @endcode           | @ref ElectroCardioGramTable "ElectroCardioGram"       |
+|@code virtual const SEInhaler* GetInhaler() = 0; @endcode                               | @ref InhalerTable "Inhaler"                           |
+|@code virtual const SEMechanicalVentilator* GetMechanicalVentilator() = 0; @endcode     | @ref MechanicalVentilatorTable "MechanicalVentilator" |
 
 @anchor CompartmentsInterface
 ### Compartments
 
 A compartment represents the fluid dynamics of an anatomical organ or equipment component. 
 Compartments can represent various fidelities of data for these components, such as:
-	- An anatomical space, such as the body's skin, muscles
-	- An organ, such as the liver
-	- An organ substructure, such as the Left Heart
-	- Extravascular tissue of an organ
-	- A component of a piece of equipment, such as an anesthesia machine ventilator
+  - An anatomical space, such as the body's skin, muscles
+  - An organ, such as the liver
+  - An organ substructure, such as the Left Heart
+  - Extravascular tissue of an organ
+  - A component of a piece of equipment, such as an anesthesia machine ventilator
   
 The following compartment types are used to represent various anatomical structures for both physiology and equipment:
 
@@ -468,16 +577,16 @@ All compartments are accessed via the SECompartmentManager retrieved from this m
 @anchor SubstancesInterface
 #### Substances
 
-Various Substances are available in the body and there is a SESubstanceManager associated with the engine. <br>
+Various Substances are available in the body and there is a %SESubstanceManager associated with the engine. <br>
 You can retrieve the SESubstanceManager with this method:
 
 @code
   //--------------------------------------------------------------------------------------------------
-	/// \brief
-	/// Retrieves the associated substance manager.
-	///
-	//--------------------------------------------------------------------------------------------------
-	virtual SESubstanceManager& GetSubstanceManager() = 0;
+  /// \brief
+  /// Retrieves the associated substance manager.
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SESubstanceManager& GetSubstanceManager() = 0;
 @endcode
 
 In practice, only a substance reference are used with compartments to get the Substance Quantity object associated with a particular compartment.

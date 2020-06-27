@@ -276,3 +276,11 @@ $( document ).ready(function() {
 	});
   //searchBox.CloseResultsWindow();
 });
+
+$(function(){
+  //Alert settings
+  $('.kw-alert').delay(200).slideDown("fast");
+  $('.kw-alert-close').click(function(){
+    $('.kw-alert').slideUp("fast");
+  });
+});

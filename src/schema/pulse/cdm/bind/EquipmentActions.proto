@@ -1,0 +1,34 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "com.kitware.pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/AnesthesiaMachineActions.proto";
+import "pulse/cdm/bind/InhalerActions.proto";
+import "pulse/cdm/bind/MechanicalVentilatorActions.proto";
+
+/** @brief Anesthesia machine action container. */
+message AnyEquipmentActionData
+{
+  oneof Action
+  {
+    AnesthesiaMachineConfigurationData                      AnesthesiaMachineConfiguration               = 1;
+    AnesthesiaMachineExpiratoryValveLeakData                AnesthesiaMachineExpiratoryValveLeak         = 2;
+    AnesthesiaMachineExpiratoryValveObstructionData         AnesthesiaMachineExpiratoryValveObstruction  = 3;
+    AnesthesiaMachineInspiratoryValveLeakData               AnesthesiaMachineInspiratoryValveLeak        = 4;
+    AnesthesiaMachineInspiratoryValveObstructionData        AnesthesiaMachineInspiratoryValveObstruction = 5;
+    AnesthesiaMachineMaskLeakData                           AnesthesiaMachineMaskLeak                    = 6;
+    AnesthesiaMachineSodaLimeFailureData                    AnesthesiaMachineSodaLimeFailure             = 7;
+    AnesthesiaMachineTubeCuffLeakData                       AnesthesiaMachineTubeCuffLeak                = 8;
+    AnesthesiaMachineVaporizerFailureData                   AnesthesiaMachineVaporizerFailure            = 9;
+    AnesthesiaMachineVentilatorPressureLossData             AnesthesiaMachineVentilatorPressureLoss      = 10;
+    AnesthesiaMachineYPieceDisconnectData                   AnesthesiaMachineYPieceDisconnect            = 11;
+    AnesthesiaMachineOxygenWallPortPressureLossData         AnesthesiaMachineOxygenWallPortPressureLoss  = 12;
+    AnesthesiaMachineOxygenTankPressureLossData             AnesthesiaMachineOxygenTankPressureLoss      = 13;
+    
+    InhalerConfigurationData                                InhalerConfiguration                         = 101;
+    
+    MechanicalVentilatorConfigurationData                   MechanicalVentilatorConfiguration            = 201;
+  }
+}

@@ -1,0 +1,973 @@
+{
+  "Name": "Morphine",
+  "Description": "Inject standard patient with Morphine.",
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
+  "DataRequestManager": {
+    "DataRequest": [{
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "PropertyName": "Weight",
+      "Unit": "kg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "HeartRate",
+      "Unit": "1/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "HeartStrokeVolume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "BloodVolume",
+      "Unit": "L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "ExtravascularFluidVolume",
+      "Unit": "L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "ArterialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "MeanArterialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "SystolicArterialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "DiastolicArterialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "CardiacOutput",
+      "Unit": "L/min"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "HemoglobinContent",
+      "Unit": "g"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "CentralVenousPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "PulmonaryCapillariesWedgePressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "TidalVolume",
+      "Unit": "mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "TotalLungVolume",
+      "Unit": "L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "RespirationRate",
+      "Unit": "1/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "OxygenSaturation",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "CarbonDioxideSaturation",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Physiology",
+      "PropertyName": "EndTidalCarbonDioxideFraction",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "TotalAlveolarVentilation",
+      "Unit": "L/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "TranspulmonaryPressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "CoreTemperature",
+      "Unit": "degC"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "SkinTemperature",
+      "Unit": "degC"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "RespiratoryExchangeRatio",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "OxygenConsumptionRate",
+      "Unit": "mL/min"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "CarbonDioxideProductionRate",
+      "Unit": "mL/min"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "Physiology",
+      "PropertyName": "GlomerularFiltrationRate",
+      "Unit": "mL/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "RenalBloodFlow",
+      "Unit": "L/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "UrineProductionRate",
+      "Unit": "mL/min"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Physiology",
+      "PropertyName": "LeftAfferentArterioleResistance",
+      "Unit": "mmHg min/mL"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Physiology",
+      "PropertyName": "RightAfferentArterioleResistance",
+      "Unit": "mmHg min/mL"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "LeftAlveoli",
+      "PropertyName": "Pressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "LeftAlveoli",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "LeftAlveoli",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "RightAlveoli",
+      "PropertyName": "Pressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "RightAlveoli",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "RightAlveoli",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Carina",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Carina",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "cmH2O"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "Aorta",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "Aorta",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "VenaCava",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "VenaCava",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "PartialPressure",
+      "Unit": "mmHg"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightTubules",
+      "SubstanceName": "Sodium",
+      "PropertyName": "Concentration",
+      "Unit": "g/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftTubules",
+      "SubstanceName": "Sodium",
+      "PropertyName": "Concentration",
+      "Unit": "g/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Substance",
+      "SubstanceName": "Oxygen",
+      "PropertyName": "AlveolarTransfer",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Substance",
+      "SubstanceName": "CarbonDioxide",
+      "PropertyName": "AlveolarTransfer",
+      "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+        "Precision": 6
+      },
+      "Category": "Substance",
+      "SubstanceName": "Epinephrine",
+      "PropertyName": "BloodConcentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "NeuromuscularBlockLevel",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Physiology",
+      "PropertyName": "SedationLevel",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "PupillaryResponse-SizeModifier",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "PupillaryResponse-ReactivityModifier",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "Aorta",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "VenaCava",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BoneVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BrainVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "FatVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "GutVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftKidneyVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftLungVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MuscleVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MyocardiumVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightKidneyVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightLungVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SkinVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SpleenVasculature",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BoneTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BrainTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "FatTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "GutTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftKidneyTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftLungTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MuscleTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MyocardiumTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightKidneyTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightLungTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SkinTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SpleenTissueExtracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BoneTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "BrainTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "FatTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "GutTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftKidneyTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftLungTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MuscleTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "MyocardiumTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightKidneyTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightLungTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SkinTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "SpleenTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "Concentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 6
+      },
+      "Category": "Substance",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PlasmaConcentration",
+      "Unit": "ug/L"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Substance",
+      "SubstanceName": "Morphine",
+      "PropertyName": "SystemicMassCleared",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "Substance",
+      "SubstanceName": "Morphine",
+      "PropertyName": "MassInBody",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "LeftKidneyTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "RightKidneyTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "BrainTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "RightLungTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "LeftLungTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "LiverTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "BoneTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "FatTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "SkinTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "MuscleTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "SpleenTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "GutTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 4
+      },
+      "Category": "Substance",
+      "CompartmentName": "MyocardiumTissue",
+      "SubstanceName": "Morphine",
+      "PropertyName": "PartitionCoefficient",
+      "Unit": "unitless"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "MassCleared",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LeftKidneyTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "MassCleared",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "RightKidneyTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "MassCleared",
+      "Unit": "ug"
+    }, {
+      "DecimalFormat": {
+        "Precision": 2
+      },
+      "Category": "LiquidCompartment",
+      "CompartmentName": "LiverTissueIntracellular",
+      "SubstanceName": "Morphine",
+      "PropertyName": "MassExcreted",
+      "Unit": "ug"
+    }]
+  },
+  "AnyAction": [{
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "SubstanceBolus": {
+        "Substance": "Morphine",
+        "Concentration": {
+          "ScalarMassPerVolume": {
+            "Value": 1000.0,
+            "Unit": "ug/mL"
+          }
+        },
+        "Dose": {
+          "ScalarVolume": {
+            "Value": 40.0,
+            "Unit": "mL"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 500.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }]
+}

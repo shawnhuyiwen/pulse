@@ -1,96 +1,17 @@
-#
-#    FIND_PACKAGE(Pulse REQUIRED)
-#
-#    This file will define the following variables:
-#      - Pulse_LIB_ROOT_DIR             : The root library directory
-#      - Pulse_LIBRARIES                : The list of both debug and release libraries.
-#                                       : It is recommended to use this variable in your CMake file
-#                                       : It will configure both debug and release build types for you.
-#                                       : target_link_libraries(YourProject ${PULSE_LIBRARIES})
-#      - Pulse_RELEASE_LIBS             : The list of release libraries.
-#      - Pulse_DEBUG_LIBS               : The list of debug libraries.
-#      - Pulse_INCLUDE_DIRS             : The Pulse include directories.
-#      - Pulse_VERSION                  : The version of this Pulse build. Example: "2.4.0"
-#      - Pulse_VERSION_MAJOR            : Major version part of Pulse_VERSION. Example: "2"
-#      - Pulse_VERSION_MINOR            : Minor version part of Pulse_VERSION. Example: "4"
-#      - Pulse_VERSION_PATCH            : Patch version part of Pulse_VERSION. Example: "0"
-#
-# ===================================================================================
+@PACKAGE_INIT@
 
-set(Pulse_INSTALL "${Pulse_DIR}")
+set(export_config_name "@export_config_name@")
 
-set(Pulse_INCLUDE_DIRS "${Pulse_INSTALL}/include"
-                       "${Pulse_INSTALL}/include/cdm"
-                       )
-set(Pulse_LIB_ROOT_DIR "${Pulse_INSTALL}/lib")
+set_and_check(${export_config_name}Targets "${CMAKE_CURRENT_LIST_DIR}/${export_config_name}Targets.cmake")
 
-if("@PULSE_LOGGER@" STREQUAL "log4cpp")
-  set(LOGGER_LIB "log4cpp")
-elseif("@PULSE_LOGGER@" STREQUAL "log4cplus")
-  if(MSVC)
-   set(LOGGER_LIB "log4cplus")
-  else()
-   set(LOGGER_LIB "liblog4cplus")
-  endif()
+include(${${export_config_name}Targets})
+
+
+set(Pulse_ROOT ${PACKAGE_PREFIX_DIR})
+
+# Pulse uses protobuf, but only distributes/needs its libraries
+if (NOT protobuf::libprotobuf_FOUND)
+ add_library(protobuf::libprotobuf INTERFACE IMPORTED)
+ target_link_libraries(protobuf::libprotobuf INTERFACE debug ${PACKAGE_PREFIX_DIR}/lib/@PROTOBUF_LIBRARY_DEBUG@)
+ target_link_libraries(protobuf::libprotobuf INTERFACE optimized ${PACKAGE_PREFIX_DIR}/lib/@PROTOBUF_LIBRARY_RELEASE@)
 endif()
-
-if (WIN32)
-  set(LIB_ENDING "lib")
-elseif (APPLE)
-  set(LIB_ENDING "a")
-else()
-  set(LIB_ENDING "a")
-endif()
-
-set (WIN32_LIBS "")
-if(WIN32)
-  list(APPEND WIN32_LIBS "ws2_32" "advapi32")
-endif()
-
-set (Pulse_LIBRARIES "")
-
-set(Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngine.${LIB_ENDING}" 
-               "${Pulse_LIB_ROOT_DIR}/CommonDataModel.${LIB_ENDING}"
-               "${Pulse_LIB_ROOT_DIR}/DataModelBindings.${LIB_ENDING}"
-               "${Pulse_LIB_ROOT_DIR}/libprotobuf.${LIB_ENDING}"
-               "${WIN32_LIBS}"
-)
-set(Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/PulseEngined.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/CommonDataModeld.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/DataModelBindingsd.${LIB_ENDING}"
-                     "${Pulse_LIB_ROOT_DIR}/libprotobufd.${LIB_ENDING}"
-                     "${WIN32_LIBS}"
-)
-
-if(NOT "@PULSE_LOGGER@" STREQUAL "simple")
-  if("@PULSE_LOGGER@" STREQUAL "log4cpp")
-    set(LOGGER_LIB "log4cpp")
-  elseif("@PULSE_LOGGER@" STREQUAL "log4cplus")
-    if(MSVC)
-     set(LOGGER_LIB "log4cplus")
-    else()
-     set(LOGGER_LIB "liblog4cplus")
-    endif()
-  else()
-    message(FATAL_ERROR "Unknown Pulse Logger")
-  endif()
-  list (APPEND Pulse_RELEASE_LIBS "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}.${LIB_ENDING}")
-  list (APPEND Pulse_DEBUG_LIBS "${Pulse_LIB_ROOT_DIR}/${LOGGER_LIB}d.${LIB_ENDING}")
-endif()
-
-foreach(lib ${Pulse_RELEASE_LIBS})
-  list (APPEND Pulse_LIBRARIES optimized ${lib})
-endforeach(lib)
-foreach(lib ${Pulse_DEBUG_LIBS})
-  list (APPEND Pulse_LIBRARIES debug ${lib})
-endforeach(lib)
-
-# Create an interface target
-add_library(Pulse INTERFACE IMPORTED)
-target_include_directories(Pulse INTERFACE ${Pulse_INCLUDE_DIRS})
-target_link_libraries(Pulse INTERFACE ${Pulse_LIBRARIES})
-
-set( Pulse_VERSION_MAJOR "@PULSE_VERSION_MAJOR@" )
-set( Pulse_VERSION_MINOR "@PULSE_VERSION_MINOR@" )
-set( Pulse_VERSION_PATCH "@PULSE_VERSION_PATCH@" )
-set( Pulse_VERSION "@PULSE_VERSION@" )

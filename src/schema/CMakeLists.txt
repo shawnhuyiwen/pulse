@@ -1,0 +1,2 @@
+
+include(GenerateBindings.cmake)

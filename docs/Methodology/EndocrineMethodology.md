@@ -46,15 +46,18 @@ Features, Capabilities, and Dependencies
 The %Endocrine System currently contains only two hormones: epinephrine and insulin. Both hormones are released endogenously and cleared at a specified rate. The release rate of insulin is modified by the concentration of glucose in the blood, and the release rate of epinephrine is perturbed from the basal rate by two actions: exercise and acute stress.
 
 ### Insulin
-Insulin is secreted by the pancreatic beta cells in response to increased blood glucose. The model utilized for insulin synthesis was obtained from a full-body insulin and glucose feedback model @cite tolic2000modeling. The synthesis rate is defined by:
+Insulin is secreted by the pancreatic beta cells in response to increased blood glucose.
+The model utilized for insulin synthesis is a linear function capturing the insulin/glucose relationship described in polonsky @cite polonsky1987insulin.
+The synthesis rate is defined by:
 
-\f[f(G)=\frac{R}{1+\exp \left((C-G)\left(\frac{1}{a_{1} } \right)\right)} \f] 
+\f[f(I)= (5.357 * G) - 328.56 \f] 
 <center>
 *Equation 1.*
 </center><br>
-Where *R* is the tuned basal insulin synthesis rate in microunits per minute. *C* is the upper glucose concentration set-point in grams per liter. *a<sub>1</sub>* is the lower glucose concentration set-point in grams per liter.
+Where *G* is glucose concentration of the blood. 
+This linear function is valid for glucose levels of 80-150 mg/dL, and will compute an insulin synthesis rate between 100-475 pmol/min accordingly.
 
-The equation gives the insulin synthesis rate in microunits per minute as a function of the blood glucose concentration in grams per liter. The remaining parameters are tuning constants that were adjusted to achieve the correct insulin response. Because the %Cardiovascular System does not contain a pancreas compartment, the insulin is synthesized directly in the splanchnic. It utilizes the glucose concentration in the aorta to determine the amount of insulin to be synthesized.
+Because the %Cardiovascular System does not contain a pancreas compartment, the insulin is synthesized directly in the splanchnic.
 
 Insulin does not have any effects attributable to pharmacodynamic model. Its only purpose is to modulate the consumption of glucose.
 
@@ -137,6 +140,7 @@ The effects of epinephrine release on the physiology can be clearly seen by trig
 <center>
 *Table 1. Actions associated with the %Endocrine System were validated by comparing the engine output to expected trends and data. Engine results show favorable agreement (green), some agreement (yellow), or bad agreement (red). Results mostly matched expected trends.*
 </center>														
+	Acute Stress															
 |	Action	|	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Arterial Epinephrine (ug/L)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Heart Rate (1/min)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Acute Stress	|	Severity 0.4; mild pain	|	20	|	210	|<span class="danger">	90% Increase @cite greisen2001acute Increase @cite herd1991cardiovascular	</span>|<span class="danger">	15 mmHg Increase @cite herd1991cardiovascular	</span>|<span class="danger">	17 mmHg Increase @cite herd1991cardiovascular	</span>|<span class="success">	Increase @cite herd1991cardiovascular	</span>|
@@ -144,6 +148,7 @@ The effects of epinephrine release on the physiology can be clearly seen by trig
 |	Acute Stress	|	Severity 0.8; mental stress	|	620	|	810	|<span class="danger">	37-273% Increase @cite herd1991cardiovascular .09 @cite wilkinson1998sympathetic	</span>|<span class="danger">	15 mmHg Increase @cite herd1991cardiovascular 143.8 @cite wilkinson1998sympathetic	</span>|<span class="success">	8 mmHg Increase @cite herd1991cardiovascular	</span>|<span class="warning">	Increase @cite herd1991cardiovascular  82 @cite wilkinson1998sympathetic	</span>|
 |	Acute Stress	|	Severity 0	|	820	|	1210	|<span class="success">	.034 ug/L @cite wortsman1984adrenomedullary	</span>|<span class="success">	100-140 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	60-90 mmHg @cite Leeuwen2015laboratory	</span>|<span class="success">	72 @cite guyton2006medical	</span>|
 |	Acute Stress	|	Severity 1; panic attack	|	1220	|	1410	|<span class="danger">	54-199% Increase @cite wilkinson1998sympathetic	</span>|<span class="success">	NC to Slight Increase @cite wilkinson1998sympathetic	</span>|<span class="success">	NC to Slight Increase @cite wilkinson1998sympathetic	</span>|<span class="success">	85-108 @cite wilkinson1998sympathetic	</span>|
+
 
 @anchor endrocrine-conclusions
 Conclusions

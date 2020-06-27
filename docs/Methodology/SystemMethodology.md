@@ -34,7 +34,7 @@ integrated with all other types of physiologic software. Models at
 any anatomical level can be implemented within the existing
 infrastructure.
 
-@image html SystemFidelity.png
+<img src="./Images/System/SystemFidelity.png" width="650">
 <center>
 *Figure 1. The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
 </center><br>
@@ -83,6 +83,7 @@ Physiologic:
 Equipment:
 - @ref AnesthesiaMachineMethodology
 - @ref InhalerMethodology
+- @ref MechanicalVentilatorMethodology
 - Electrocardiogram (%ECG) Methodology (see @ref CardiovascularMethodology)
 - Supplemental Oxygen Methodology (see @ref RespiratoryMethodology)
 
@@ -303,12 +304,12 @@ success or failure.
 
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Cynthia	|	Midazolam is injected causing an airway obstruction. Oxygen is supplied via a mask. Ketamine is administered and the airway obstruction is cleared. Rocuronium is administered. An endotracheal tube is set.	|<span class="success">	30	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Cynthia	|	Midazolam is injected causing an airway obstruction. Oxygen is supplied via a mask. Ketamine is administered and the airway obstruction is cleared. Rocuronium is administered. An endotracheal tube is set.	|<span class="success">	28	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
 |	Hassan	|	Oxygen is administered via a mask. Ketamine and succinylcholine are administered and the mask is removed. Right mainstem intubation occurs. The tube placement is corrected for a successful endotracheal intubation.	|<span class="success">	25	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Nathan	|	Nathan is injected with Fentanyl. Oxygen is administered via a mask. An oxygen wall port pressure loss occurs. The oxygen bottle is attached to supply oxygen.	|<span class="success">	20	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Gus	|	A ventilator mask is placed on Gus and oxygen is administered via a mask. Succinylcholine is injected and the mask is removed. A failed endotracheal intubation occurs as an esophageal intubation. Endotracheal intubation then occurs.	|<span class="success">	20	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Joel	|	Airway obstruction occurs at the beginning of the scenario. the obstruction is removed, and oxygen is supplied via a mask. Etomidate and succinylcholine are administered, and the mask is removed. An endotracheal tube is set.	|<span class="success">	30	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	125	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|		|	Total	|<span class="success">	123	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
 
 Although the tidal volume is not shown for these scenarios, it should be noted that mild to moderate discrepancies between the tidal volume set on the anesthesia machine and that observed for the patient were observed in the engine. This is also a common observation in clinical practice, because the anesthesia machine may have to overcome the patient condition and airway resistance to provide sufficient tidal volume @cite Morgan2006Clinical .
 
@@ -593,6 +594,7 @@ We will continue to improve system modularity.  See the system specific methodol
   @refitem environment-future "Environment Future Work"
   @refitem GI-futurework "Gastrointestinal Future Work"
   @refitem inhaler-future "Inhaler Future Work"
+  @refitem ventilator-improvements "Mechanical Ventilator Future Work"  
   @refitem nervous-future "Nervous Future Work"  
   @refitem renal-futurework "Renal Future Work"
   @refitem respiratory-future "Respiratory Future Work"
