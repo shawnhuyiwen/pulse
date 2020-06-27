@@ -6,6 +6,7 @@
 #include "controller/Engine.h"
 #include "engine/SEAction.h"
 #include "engine/SEAutoSerialization.h"
+#include "engine/SEPatientConfiguration.h"
 #include "PulseScenario.h"
 #include "PulseConfiguration.h"
 #include "properties/SEScalarTime.h"
@@ -95,6 +96,8 @@ bool PulseScenarioExec::Execute(PhysiologyEngine& engine, const std::string& sce
       Error("Unable to load scenario : " + scenario);
       return false;
     }
+    if (m_PulseScenario->HasPatientConfiguration())
+      m_PulseScenario->GetPatientConfiguration().SetDataRoot(dataDir);
     return Execute(engine, *m_PulseScenario, resultsFile);
   }
   catch (CommonDataModelException& ex)
@@ -128,6 +131,8 @@ bool PulseScenarioExec::ExecuteFile(PhysiologyEngine& engine, const std::string&
       rFile = scenarioFile;
       rFile += ".csv";
     }
+    if (m_PulseScenario->HasPatientConfiguration())
+      m_PulseScenario->GetPatientConfiguration().SetDataRoot(dataDir);
     return Execute(engine, *m_PulseScenario, rFile);
   }
   catch (CommonDataModelException& ex)
