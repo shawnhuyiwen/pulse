@@ -1,4 +1,4 @@
-Version 2.3.0 {#version}
+Version 3.0.0 {#version}
 =============
 
 Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
@@ -10,6 +10,52 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
 
 - - -
+
+## Pulse v3.0.0 (July 2020)
+
+- Software Architecture Improvements
+  - Major refactor of our repository structure
+    - Enables implementation of specific engines (adult, pediatric, animal) to both share and extend common models with target specific models
+    - Provides a framework for performing and sharing code between various sensitivity and correlation analysis studies with a Pulse engine
+    - Improved CMake structure to simplify integration of Pulse into custom applications
+  - Streamlining of engine creation and management
+    - Pulse states are self contained and no longer depend on any files on disk
+    - Pulse states now support binary serialization
+    - Location of required files for patient creation can be specified by users
+  - Improvements to cross language support
+    - Java interface has been refactored to conform with C# and Python usage
+    - C# supports most actions, conditions and equipment types 
+    - Python is now a fully supported language
+  - Pulse now supports the ability to override and hold specific system and circuit parameters to a certain values, such as Lung Compliance
+- Physiology Model Improvements
+  - Added generic mechanical ventilator equipment model with PC-CMV and VC-AC mode implementation
+  - Added pulmonary shunting as a standalone model and in conjunction with other respiratory diseases
+  - Improved and validated ARDS
+  - Added more respiratory clinical measurements with validation
+  - Added hyperoxemia and hypocapnia events
+  - Improved cardiovascular validation for resting physiology
+  - Improved the tissue to cardiovascular interface to improve fluid movement between these regions of the body
+  - Hemorrhagic shock and improved hemorrhage methodology to meet validation through different stages of hemorrhagic shock to death
+  - A second order baroreceptor model to moderate the effectiveness of the baroreceptors over time
+
+### Congratulations
+
+Congratulations and thank you to everyone who contributed to this release. This release, we would like to specially recognize our 2 new contributors:
+
+  - Bob Marinier of [SoarTech](https://soartech.com/) for helping improve the Java interface
+  - Wenye He of [Innovision](https://innovisionllc.com/) for helping to start our Python API, and extend our C# API
+
+## Planned Improvements
+
+- Sepsis
+- Cerebrospinal fluid model for improved intracranial pressure
+- Work of breathing and respiratory fatigue models
+- Circuit/Compartment black boxing to support modularity for system/model/circuit swapping
+- Pediatric physiology prototype
+- An official contribution guide for merge requests for methodology/model changes
+- Pypi support to pip install Pulse into a python environment
+- Maven build for easy inclusion into Java projects
+- Integration with Hololens 2
 
 ## Pulse v2.3.0 (January 2020)
 

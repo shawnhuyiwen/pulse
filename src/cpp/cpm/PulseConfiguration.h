@@ -9,6 +9,7 @@ class SEDynamicStabilization;
 class SETimedStabilization;
 class SEEnvironmentalConditions;
 class SEElectroCardioGramWaveformInterpolator;
+class SEOverrides;
 #include "engine/SEEngineConfiguration.h"
 
 /**
@@ -19,17 +20,17 @@ class PULSE_DECL PulseConfiguration : public SEEngineConfiguration
   friend class PBPulseConfiguration;//friend the serialization class
 public:
 
-  PulseConfiguration(SESubstanceManager& substances);
+  PulseConfiguration(Logger* logger=nullptr);
   virtual ~PulseConfiguration();
   
   virtual void Clear();
-  void Merge(const PulseConfiguration&);
-  virtual void Initialize(const std::string& data_dir);
+  void Merge(const PulseConfiguration&, SESubstanceManager& subMgr);
+  virtual void Initialize(const std::string& dataDir="", SESubstanceManager* subMgr=nullptr);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename);
+  bool SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, SESubstanceManager& subMgr);
   
 
   virtual bool HasTimeStep() const;
@@ -59,14 +60,20 @@ public:
   virtual const SEAutoSerialization* GetAutoSerialization() const;
   virtual void RemoveAutoSerialization();
 
+  // add method here for overrrides
+  virtual bool HasInitialOverrides() const;
+  virtual SEOverrides& GetInitialOverrides();
+  virtual const SEOverrides* GetInitialOverrides() const;
+  virtual void RemoveInitialOverrides();
 protected:
-  SESubstanceManager& m_Substances;
 
   SEScalarTime*              m_TimeStep;
   SETimedStabilization*      m_TimedStabilization;
   SEDynamicStabilization*    m_DynamicStabilization;
   SEAutoSerialization*       m_AutoSerialization;
   eSwitch                    m_WritePatientBaselineFile;
+
+  SEOverrides*               m_InitialOverrides;
 
   //////////////////////
   /** Blood Chemistry */
@@ -376,6 +383,9 @@ protected:
   /** Nervous */
   /////////////
 public:
+  virtual bool IsCerebrospinalFluidEnabled() const { return m_CerebrospinalFluidEnabled == eSwitch::On; }
+  virtual void EnableCerebrospinalFluid(eSwitch s) { m_CerebrospinalFluidEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
+
   virtual eSwitch GetBaroreceptorFeedback() const { return m_BaroreceptorFeedback; }
   virtual void SetBaroreceptorFeedback(eSwitch s) { m_BaroreceptorFeedback = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
 
@@ -443,6 +453,7 @@ public:
   virtual double GetVenousComplianceDistributedTimeDelay(const TimeUnit& unit) const;
 
 protected:
+  eSwitch         m_CerebrospinalFluidEnabled;
   eSwitch         m_ChemoreceptorFeedback;
   eSwitch         m_BaroreceptorFeedback;
   SEScalarTime*   m_HeartElastanceDistributedTimeDelay;

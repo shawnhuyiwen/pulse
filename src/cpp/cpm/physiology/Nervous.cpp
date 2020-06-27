@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "physiology/Nervous.h"
 #include "PulseConfiguration.h"
+#include "controller/Circuits.h"
 // Actions
 #include "engine/SEActionManager.h"
 #include "engine/SEPatientActionCollection.h"
@@ -17,6 +18,7 @@
 #include "system/physiology/SEDrugSystem.h"
 // CDM
 #include "engine/SEEventManager.h"
+#include "circuit/fluid/SEFluidCircuit.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarPressurePerVolume.h"
@@ -47,6 +49,7 @@ Nervous::~Nervous()
 void Nervous::Clear()
 {
   SENervousSystem::Clear();
+  m_CSFProductAbsorptionPath = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -83,6 +86,9 @@ void Nervous::Initialize()
   m_BaroreceptorSaturationStatus = false;
   m_BaroreceptorSaturationTime_s = 0.0;
   m_BaroreceptorEffectivenessParameter = 1.0;
+
+  m_CSFAbsorptionRate_mLPermin = 0;
+  m_CSFProductionRate_mlPermin = 0;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -108,25 +114,28 @@ void Nervous::SetUp()
   m_NormalizedAlphaCompliance   = m_data.GetConfiguration().GetNormalizedComplianceParasympatheticSlope();
   m_NormalizedAlphaResistance   = m_data.GetConfiguration().GetNormalizedResistanceSympatheticSlope();
   m_NormalizedBetaHeartRate     = m_data.GetConfiguration().GetNormalizedHeartRateParasympatheticSlope();
+
+  if(m_data.GetConfiguration().IsCerebrospinalFluidEnabled())
+    m_CSFProductAbsorptionPath = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(pulse::CerebrospinalFluidPath::GroundToIntracranialSpace1);
 }
 
 void Nervous::AtSteadyState()
 {
   if (m_data.GetState() == EngineState::AtInitialStableState)
   {
-    SetChemoreceptorFeedback(m_data.GetConfiguration().GetChemoreceptorFeedback());
+    SetChemoreceptorFeedback(m_data.GetConfiguration().GetChemoreceptorFeedback()); // The set-points (Baselines) get reset at the end of each stabilization period.
   }
   else if (m_data.GetState() == EngineState::AtSecondaryStableState)
   {
     SetBaroreceptorFeedback(m_data.GetConfiguration().GetBaroreceptorFeedback());
-    // The set-points (Baselines) get reset at the end of each stabilization period.
-    m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
-    m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
-    m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
-    m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
-    m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / m_BaroreceptorMeanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
-    m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
   }
+  // The set-points (Baselines) get reset at the end of each stabilization period.
+  m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
+  m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
+  m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+  m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
+  m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / m_BaroreceptorMeanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
+  m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -139,10 +148,41 @@ void Nervous::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Nervous::PreProcess()
 {
+  // Check for any overrides
+  if (m_data.HasOverride())
+  {
+    // Look for any known overrides
+    for (auto& o : m_data.GetOverrides())
+    {
+      if (o.name == "CerebrospinalFluidAbsorptionRate")
+      {
+        m_CSFAbsorptionRate_mLPermin = Convert(o.value, VolumePerTimeUnit::GetCompoundUnit(o.unit), VolumePerTimeUnit::mL_Per_min);
+        Info("CerebrospinalFluidAbsorptionRate override is " + cdm::to_string(m_CSFAbsorptionRate_mLPermin));
+        continue;
+      }
+      if (o.name == "CerebrospinalFluidProductionRate")
+      {
+        m_CSFProductionRate_mlPermin = Convert(o.value, VolumePerTimeUnit::GetCompoundUnit(o.unit), VolumePerTimeUnit::mL_Per_min);
+        Info("CerebrospinalFluidProductionRate override is " + cdm::to_string(m_CSFProductionRate_mlPermin));
+        continue;
+      }
+      if (o.name == pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2)
+      {
+        Info("Compliance override is " + cdm::to_string(Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::mL_Per_mmHg)));
+        // Print this out and manually make sure its what we want it to be.
+        double c = m_data.GetCircuits().GetFluidPath(pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2)->GetCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+        Info("Compliance set to " + cdm::to_string(c));
+        continue;
+      }
+    }
+   
+  }
   if(m_BaroreceptorFeedback ==eSwitch::On)
     BaroreceptorFeedback();
   if(m_ChemoreceptorFeedback ==eSwitch::On)
     ChemoreceptorFeedback();
+  CerebralSpinalFluidUpdates();
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -173,6 +213,21 @@ void Nervous::ComputeExposedModelParameters()
 void Nervous::PostProcess(bool solve_and_transport)
 {
 
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// The CSF pressure application function calculates the pressure applied to the brain due to CSF pressure.
+///
+/// \details
+/// The pressure applied to the brain is dictated by the pressure in the intranial space.
+//--------------------------------------------------------------------------------------------------
+void Nervous::CerebralSpinalFluidUpdates()
+{
+  if (!m_data.GetConfiguration().IsCerebrospinalFluidEnabled())
+    return;
+    //Update CSF Production and Absorption Rates
+    m_CSFProductAbsorptionPath->GetNextFlowSource().SetValue(m_CSFProductionRate_mlPermin - m_CSFAbsorptionRate_mLPermin, VolumePerTimeUnit::mL_Per_min);
 }
 
 //--------------------------------------------------------------------------------------------------

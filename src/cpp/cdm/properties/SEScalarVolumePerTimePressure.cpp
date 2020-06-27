@@ -32,7 +32,5 @@ const VolumePerTimePressureUnit& VolumePerTimePressureUnit::GetCompoundUnit(cons
     return L_Per_min_mmHg;
   if (mL_Per_min_mmHg.GetString().compare(unit) == 0)
     return mL_Per_min_mmHg;
-  std::stringstream err;
-  err << unit << " is not a valid VolumePerTimePressure unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid VolumePerTimePressure unit");
 }

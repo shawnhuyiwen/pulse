@@ -17,7 +17,5 @@ const ElectricInductanceUnit& ElectricInductanceUnit::GetCompoundUnit(const std:
 {
   if (H.GetString().compare(unit) == 0)
     return H;
-  std::stringstream err;
-  err << unit << " is not a valid ElectricInductance unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid ElectricInductance unit");
 }

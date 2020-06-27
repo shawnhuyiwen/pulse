@@ -34,7 +34,7 @@ class CDM_DECL SEEquipmentActionCollection : public Loggable
   friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
-  SEEquipmentActionCollection(SESubstanceManager&);
+  SEEquipmentActionCollection(Logger* logger=nullptr);
 public:
   ~SEEquipmentActionCollection();
 
@@ -122,8 +122,7 @@ public:
   
 protected:
   void Clear();
-  bool ProcessAction(const SEEquipmentAction& action);
-  SESubstanceManager& m_Substances;
+  bool ProcessAction(const SEEquipmentAction& action, SESubstanceManager&);
 
   SEAnesthesiaMachineConfiguration*                            m_AnesthesiaMachineConfiguration;
   //Anesthesia Machine Incidents

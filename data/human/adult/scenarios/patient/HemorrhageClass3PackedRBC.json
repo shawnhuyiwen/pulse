@@ -1,6 +1,6 @@
 {
   "Name": "HemorrhageClass3PackedRBC",
-  "Description": "",
+  "Description": "30% blood loss then intravenous administration of packed red blood cells",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {

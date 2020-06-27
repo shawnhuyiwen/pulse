@@ -80,9 +80,9 @@ C_EXPORT bool C_CALL SerializeToString(PulseEngineThunk* thunk, int format, char
 }
 
 extern "C"
-C_EXPORT bool C_CALL InitializeEngine(PulseEngineThunk* thunk, const char* patient_configuration, const char* data_requests, int format, const char* data_dir = ".")
+C_EXPORT bool C_CALL InitializeEngine(PulseEngineThunk* thunk, const char* patient_configuration, const char* data_requests, int format)
 {
-  return thunk->InitializeEngine(patient_configuration==nullptr?"":patient_configuration, data_requests==nullptr?"":data_requests, (SerializationFormat)format, data_dir==nullptr?"./":data_dir);
+  return thunk->InitializeEngine(patient_configuration==nullptr?"":patient_configuration, data_requests==nullptr?"":data_requests, (SerializationFormat)format);
 }
 
 extern "C"

@@ -130,7 +130,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     for (int i = 0; i < src.conditions().anycondition_size(); i++)
     {
       SECondition* c = PBCondition::Load(src.conditions().anycondition()[i], *dst.m_Substances);
-      dst.m_Conditions->ProcessCondition(*c);
+      dst.m_Conditions->Copy(*c, *dst.m_Substances);
       delete c;
     }
   }
@@ -141,7 +141,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     for (int i = 0; i < src.activeactions().anyaction_size(); i++)
     {
       SEAction* a = PBAction::Load(src.activeactions().anyaction()[i], *dst.m_Substances);
-      dst.m_Actions->ProcessAction(*a);
+      dst.m_Actions->ProcessAction(*a, *dst.m_Substances);
       delete a;
     }
   }
@@ -178,7 +178,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
   if (!src.has_configuration())
     ss << "PulseState must have a configuration" << std::endl;
   else
-    PBPulseConfiguration::Load(src.configuration(), *dst.m_Config);
+    PBPulseConfiguration::Load(src.configuration(), *dst.m_Config, *dst.m_Substances);
   if (config != nullptr)
   {// Merge in any provided configuration parameters, I hope you know what you are doing....
     const PulseConfiguration* peConfig = dynamic_cast<const PulseConfiguration*>(config);
@@ -188,7 +188,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     }
     else
     {
-      dst.m_Config->Merge(*peConfig);
+      dst.m_Config->Merge(*peConfig, *dst.m_Substances);
     }
   }
   /////////////

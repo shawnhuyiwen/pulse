@@ -17,7 +17,7 @@ An example of a basic scenario file is shown below.
 {
   "Name": "Vitals Monitor",
   "Description": "Data associated with a vitals monitor.",
-  "StartType":{"EngineStateFile":"./states/StandardMale@0s.json"},
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [
       
@@ -63,7 +63,13 @@ There are initial states (just after it is stable) for every patient in the bin/
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "Name": "Vitals Monitor",
 "Description": "Data associated with a vitals monitor.",
-"StartType":{"EngineStateFile":"./states/StandardMale@0s.json"},
+"EngineStateFile":"./states/StandardMale@0s.pbb",
+
+# Or specify a json state file 
+
+"Name": "Vitals Monitor",
+"Description": "Data associated with a vitals monitor.",
+"EngineStateFile":"./states/StandardMale@0s.json",
 
 # Next comes data requests (See Further Below)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,27 +78,29 @@ There are initial states (just after it is stable) for every patient in the bin/
 
 While it is recommended to use an Engine State when running a scenario, you do have the option to initialize the engine with a Patient File and optional conditions.
 The specified patient file refers to a file containing @ref Patient_PatientData information.
-Replace the EngineStateFile section with an InitialParameters like this:
+Replace the EngineStateFile section with a Patient Configuration like this:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "Name": "Condition Example",
 "Description": "Data associated with a condition.",
-"StartType": {
-    "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "AnyCondition": [{
-        "PatientCondition": {
-          "SpecificCondition": {
-            "ConditionProperty": {
-              "Scalar0To1": {
-                "Value": 0.3
-              }
+"PatientConfiguration": {
+    "PatientFile": "StandardMale.json",
+    "Conditions": { "AnyCondition": [{
+      "PatientCondition": {
+        "ChronicObstructivePulmonaryDisease": {
+          "BronchitisSeverity": {
+            "Scalar0To1": {
+              "Value": 0.7
+            }
+          },
+          "EmphysemaSeverity": {
+            "Scalar0To1": {
+              "Value": 0.5
             }
           }
         }
-      }]
-    }
-  },
+      }
+    }]}
 
 # Next comes data requests (See Further Below)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,17 +110,28 @@ Replace the EngineStateFile section with an InitialParameters like this:
 Conditions give instructions to the engine to apply certain changes to the engine to simulate the specified conditions.
 The following are links to the Condition class specification along with XML examples of conditions that can be used in making your own scenarios.
 
-#### Chronic Anemia
+#### Acute %Respiratory Distress Syndrome
 @copybrief AcuteRespiratoryDistressSyndromeData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
-    "AcuteRespiratoryDistressSyndrome": {
-      "Severity": { "Scalar0To1": { "Value": 0.3 } },
-      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0  },
-      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }
+  "AcuteRespiratoryDistressSyndrome": {
+    "Severity": {
+      "Scalar0To1": {
+        "Value": 0.03
+      }
+    },
+    "LeftLungAffected": {
+      "Scalar0To1": {
+        "Value": 0.4
+      }
+    },
+    "RightLungAffected": {
+      "Scalar0To1": {
+        "Value": 0.7
+      }
     }
-  }
+  }}
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -122,7 +141,11 @@ The following are links to the Condition class specification along with XML exam
 "AnyCondition": [{
   "PatientCondition": {
     "ChronicAnemia": {
-      "ReductionFactor": { "Scalar0To1": { "Value": 0.3 } } 
+      "ReductionFactor": {
+        "Scalar0To1": {
+          "Value": 0.3
+        }
+      }
     }
   }
 }]
@@ -134,8 +157,17 @@ The following are links to the Condition class specification along with XML exam
 "AnyCondition": [{
   "PatientCondition": {
     "ChronicObstructivePulmonaryDisease": {
-      "BronchitisSeverity": { "Scalar0To1": { "Value": 0.65 } },
-      "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.5 } } }
+      "BronchitisSeverity": {
+        "Scalar0To1": {
+          "Value": 0.1
+        }
+      },
+      "EmphysemaSeverity": {
+        "Scalar0To1": {
+          "Value": 0.1
+        }
+      }
+    }
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -145,8 +177,14 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
-    "ChronicPericardialEffusion": 
-      { "AccumulatedVolume": { "ScalarVolume": { "Value": 500.0, "Unit": "mL" } } }
+    "ChronicPericardialEffusion": {
+      "AccumulatedVolume": {
+        "ScalarVolume": {
+          "Value": 50.0,
+          "Unit": "mL"
+        }
+      }
+    }
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -156,9 +194,17 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
   "PatientCondition": {
-    "ChronicRenalStenosis": { 
-      "LeftKidneySeverity": { "Scalar0To1": { "Value": 0.6 } },
-      "RightKidneySeverity": { "Scalar0To1": { "Value": 0.2 } }
+    "ChronicRenalStenosis": {
+      "LeftKidneySeverity": {
+        "Scalar0To1": {
+          "Value": 0.1
+        }
+      },
+      "RightKidneySeverity": {
+        "Scalar0To1": {
+          "Value": 0.05
+        }
+      }
     }
   }
 }]
@@ -245,6 +291,22 @@ or
       "Severity": { "Scalar0To1":  "Value": 0.2 } },
       "LeftLungAffected": { "Scalar0To1": { "Value": 1.0  },
       "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }
+      }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#### Pulmonary Shunt
+@copybrief PulmonaryShuntData
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyCondition": [{
+  "PatientCondition": {
+    "PulmonaryShunt": {
+      "Severity": {
+        "Scalar0To1": {
+          "Value": 0.8
+        }
       }
     }
   }
@@ -417,9 +479,21 @@ The following are links to the Action class specification along with XML example
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+#### Override
+
+@copybrief OverridesData
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "Overrides": {
+    "ScalarOverride": [{ "Name":"", "Value": 5.0, "Unit": "min" },
+                       { "Name":"", "Value": 5.0, "Unit": "min" }]
+    }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 - - -
 
-Patient Insults
+Patient Actions
 ---------------
 - - -
 
@@ -504,7 +578,7 @@ Types : Diffuse, LeftFocal, RightFocal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-		
+  
 #### Bronchoconstriction 
 @copybrief BronchoconstrictionData <br>
 Severity value must be >=0.0 and <=1.0 <br>
@@ -521,43 +595,6 @@ A severity of 0 removes the action completely.
 
 - - -
 
-#### Consume Nutrients 
-@copybrief ConsumeNutrientsData
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "ConsumeNutrients": {
-      "Nutrition": {
-        "Carbohydrate": { "ScalarMass": { "Value":390.0, "Unit":"g" } },
-        "CarbohydrateDigestionRate": { "ScalarMassPerTime": { "Value":0.5, "Unit":"g/min" } },
-        "Fat": { "ScalarMass": { "Value":90.0, "Unit":"g" } },
-        "FatDigestionRate": { "ScalarMassPerTime": { "Value":0.055, "Unit":"g/min" } },
-        "Protein": { "ScalarMass": { "Value":56.0, "Unit":"g"} },
-        "ProteinDigestionRate": { "ScalarMassPerTime": { "Value":0.071, "Unit":"g/min" } },
-        "Calcium": { "ScalarMass": { "Value":1.0, "Unit":"g"} },
-        "Sodium": { "ScalarMass": { "Value":1.5, "Unit":"g"} },
-        "Water": { "ScalarVolume": { "Value":3.7, "Unit":"L"} }
-      }
-    }
-  }
-}
-
-#or
-
-# File must be in the ./bin/nutrition directory -->
-"AnyAction": [{
-  "PatientAction": {
-    "ConsumeNutrients": {
-      "NutritionFile": { "./nutrition/Soylent.json" }
-      }
-    }
-  }
-}
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
 #### Cardiac Arrest 
 @copybrief CardiacArrestData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -565,145 +602,11 @@ A severity of 0 removes the action completely.
   "PatientAction": {
     "CardiacArrest": { "State":"On" }
   }
-}
+}]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
 
-#### Exercise 
-@copybrief ExerciseData <br>
-An intensity of 0 removes the action completely.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "Exercise": {
-      "Intensity": { "Scalar0To1": { "Value":0.3 } }
-    }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
-#### COPD Exacerbation
-@copybrief ChronicObstructivePulmonaryDiseaseExacerbationExacerbationData <br>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "ChronicObstructivePulmonaryDiseaseExacerbation": {
-      "BronchitisSeverity": { "Scalar0To1": { "Value": 0.5 }},
-      "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.7 }}
-    }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
-#### Dyspnea
-@copybrief DyspneaData <br>
-Severity value must be >=0.0 and <=1.0 <br>
-A severity of 0 removes the action completely.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "Dyspnea": {
-      "Severity": { "Scalar0To1": { "Value":0.3 } }
-    }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
-#### Hemorrhage 
-@copybrief HemorrhageData <br>
-The Compartment attribute can be any of the enumerations defined in the enumAnatomy enumeration.<br>
-Type can be Internal or External
-FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "Hemorrhage": { 
-      "Compartment":"RightLeg",
-      "Type":"External",
-      "Rate": { "ScalarVolumePerTime": { "Value":250.0, "Unit":"mL/min" } }
-    }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- - -
-
-#### Lobar Pneumonia Exacerbation
-@copybrief LobarPneumoniaExacerbationData <br>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "LobarPneumoniaExacerbation": {
-      "Severity": { "Scalar0To1": { "Value": 0.2 }},
-      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
-      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
-    }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
-#### Pericardial Effusion
-@copybrief PericardialEffusionData <br>
-EffusionRate of the liquid
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "PericardialEffusion": {
-      "EffusionRate": { "ScalarVolumePerTime": { "Value":0.1, "Unit":"mL/s" } }
-    }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
-#### Respiratory Fatigue
-@copybrief RespiratoryFatigueData <br>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "RespiratoryFatigue": {
-      "Severity": { "Scalar0To1": { "Value":0.3 } }
-    }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
-#### Tension Pneumothorax 
-@copybrief TensionPneumothoraxData <br>
-The Type attribute can be "Open" or "Closed"<br>
-The Side attribute can be "Left" or "Right"<br>
-Severity value must be >=0.0 and <=1.0 <br>
-A severity of 0 removes the action completely.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "TensionPneumothorax": {
-      "Type":"Open,
-      "Side":"Right,
-      "Severity": { "Scalar0To1": { "Value":0.3 } }
-    }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
-Patient Interventions
----------------------
-
-- - -
-	
 #### Chest Compression Force 
 @copybrief ChestCompressionForceData <br>
 Force is the specific magnitude to perform a compression with.<br>
@@ -805,6 +708,125 @@ the system to react.
 
 - - -
 
+#### COPD Exacerbation
+@copybrief ChronicObstructivePulmonaryDiseaseExacerbationExacerbationData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "ChronicObstructivePulmonaryDiseaseExacerbation": {
+      "BronchitisSeverity": { "Scalar0To1": { "Value": 0.5 }},
+      "EmphysemaSeverity": { "Scalar0To1": { "Value": 0.7 }}
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+- - -
+
+#### Consume Nutrients 
+@copybrief ConsumeNutrientsData
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "ConsumeNutrients": {
+      "Nutrition": {
+        "Carbohydrate": { "ScalarMass": { "Value":390.0, "Unit":"g" } },
+        "CarbohydrateDigestionRate": { "ScalarMassPerTime": { "Value":0.5, "Unit":"g/min" } },
+        "Fat": { "ScalarMass": { "Value":90.0, "Unit":"g" } },
+        "FatDigestionRate": { "ScalarMassPerTime": { "Value":0.055, "Unit":"g/min" } },
+        "Protein": { "ScalarMass": { "Value":56.0, "Unit":"g"} },
+        "ProteinDigestionRate": { "ScalarMassPerTime": { "Value":0.071, "Unit":"g/min" } },
+        "Calcium": { "ScalarMass": { "Value":1.0, "Unit":"g"} },
+        "Sodium": { "ScalarMass": { "Value":1.5, "Unit":"g"} },
+        "Water": { "ScalarVolume": { "Value":3.7, "Unit":"L"} }
+      }
+    }
+  }
+}]
+
+#or
+
+# File must be in the ./bin/nutrition directory -->
+"AnyAction": [{
+  "PatientAction": {
+    "ConsumeNutrients": {
+      "NutritionFile": { "./nutrition/Soylent.json" }
+      }
+    }
+  }]
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- - -
+
+#### Dyspnea
+@copybrief DyspneaData <br>
+Severity value must be >=0.0 and <=1.0 <br>
+A severity of 0 removes the action completely.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "Dyspnea": {
+      "Severity": { "Scalar0To1": { "Value":0.3 } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Exercise 
+@copybrief ExerciseData <br>
+An intensity of 0 removes the action completely.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "Exercise": {
+      "Intensity": { "Scalar0To1": { "Value":0.3 } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Hemorrhage 
+@copybrief HemorrhageData <br>
+The Compartment attribute can be any of the enumerations defined in the enumAnatomy enumeration.<br>
+Type can be Internal or External
+FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "Hemorrhage": { 
+      "Compartment":"RightLeg",
+      "Type":"External",
+      "Rate": { "ScalarVolumePerTime": { "Value":250.0, "Unit":"mL/min" } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Impaired Alveolar Exchange Exacerbation 
+@copybrief ImpairedAlveolarExchangeExacerbationData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientCondition": {
+    "ImpairedAlveolarExchange": {
+      "ImpairedFraction": {
+        "Scalar0To1": {
+          "Value": 0.09
+        }
+      }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
 #### Intubation 
 @copybrief IntubationData <br>
 Note: In order to 'turn off' an intubation, use'Off' as the Type  <br>
@@ -816,6 +838,22 @@ Types : Off, Esophageal, LeftMainstem, RightMainstem, Tracheal
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Lobar Pneumonia Exacerbation
+@copybrief LobarPneumoniaExacerbationData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "LobarPneumoniaExacerbation": {
+      "Severity": { "Scalar0To1": { "Value": 0.2 }},
+      "LeftLungAffected": { "Scalar0To1": { "Value": 1.0 }},
+      "RightLungAffected": { "Scalar0To1": { "Value": 1.0 }}
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
 
@@ -858,6 +896,53 @@ FATAL: If the side specified does not have a pneumothorax
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Pericardial Effusion
+@copybrief PericardialEffusionData <br>
+EffusionRate of the liquid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "PericardialEffusion": {
+      "EffusionRate": { "ScalarVolumePerTime": { "Value":0.1, "Unit":"mL/s" } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Pulmonary Shunt Exacerbation
+@copybrief PulmonaryShuntExacerbationData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientCondition": {
+    "PulmonaryShunt": {
+      "Severity": {
+        "Scalar0To1": {
+          "Value": 0.8
+        }
+      }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### %Respiratory Fatigue
+@copybrief RespiratoryFatigueData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "RespiratoryFatigue": {
+      "Severity": { "Scalar0To1": { "Value":0.3 } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
 
@@ -948,6 +1033,27 @@ A Volume of "Infinity" may be used for something like a wall port
     }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Tension Pneumothorax 
+@copybrief TensionPneumothoraxData <br>
+The Type attribute can be "Open" or "Closed"<br>
+The Side attribute can be "Left" or "Right"<br>
+Severity value must be >=0.0 and <=1.0 <br>
+A severity of 0 removes the action completely.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "TensionPneumothorax": {
+      "Type":"Open,
+      "Side":"Right,
+      "Severity": { "Scalar0To1": { "Value":0.3 } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 - - -
 
 #### Urinate 
@@ -1242,12 +1348,12 @@ Severity value must be >=0.0 and <=1.0
 
 - - -
 
-%Inhaler State
+%Inhaler
 ------------------------
 
 #### %Inhaler Configuration 
 @copybrief InhalerConfigurationData <br>
-FATAL: Cannot have inhaler and anesthesia machine on at the same time
+FATAL: Cannot have mechanical ventilator and anesthesia machine on at the same time
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "InhalerAction": {
@@ -1257,6 +1363,37 @@ FATAL: Cannot have inhaler and anesthesia machine on at the same time
         "MeteredDose": { "ScalarMass": { "Value":90.0, "Unit":"ug" } }
         "NozzleLoss": { "Scalar0To1": { "Value":0.04 } }
         "SpacerVolume": { "ScalarVolume": { "Value":500.0 "Unit":"mL" } }
+      }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Mechanical Ventilator
+------------------------
+
+#### Mechanical Ventilator Configuration 
+@copybrief MechanicalVentilatorConfigurationData <br>
+FATAL: Cannot have inhaler and anesthesia machine on at the same time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "EquipmentAction": {
+    "MechanicalVentilatorConfiguration": {
+      "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
+            "Comment": "Attach the mechanical ventilator with rate = 20 bpm and I:E Ratio = 1:1" }}},
+      "Configuration":
+      {
+        "Connection": "Tube",
+        "InspirationWaveform": "Square",
+        "ExpirationWaveform": "Square",
+        "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
+        "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
+        "InspirationTriggerTime": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
+        "ExpirationCycleTime": { "ScalarTime": { "Value": 1.5, "Unit": "s" } },
+        "FractionInspiredGas": [
+          { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } } ],
+        "ConcentrationInspiredAerosol": [
+          { "Name": "Albuterol", "Concentration": { "ScalarMassPerVolume": { "Value": 2500.0, "Unit": "mg/m^3" } } }]
       }
     }
   }

@@ -79,7 +79,8 @@ void PulseEngineTest::FillFunctionMap()
   bgeMap.insert(std::make_pair("CardiovascularCircuitAndTransportTest", cardioCTTest));
   bgeMap.insert(std::make_pair("CardiovascularAndRenalCircuitAndTransportTest", &PulseEngineTest::CardiovascularAndRenalCircuitAndTransportTest));
   bgeMap.insert(std::make_pair("CardiovascularAndTissueCircuitAndTransportTest", &PulseEngineTest::CardiovascularAndTissueCircuitAndTransportTest));
-  bgeMap.insert(std::make_pair("CardiovascularTissueAndRenalCircuitAndTransportTest", &PulseEngineTest::CardiovascularTissueAndRenalCircuitAndTransportTest));
+  bgeMap.insert(std::make_pair("CardiovascularAndCerebrospinalFluidCircuitAndTransportTest", &PulseEngineTest::CardiovascularAndCerebrospinalFluidCircuitAndTransportTest));
+  bgeMap.insert(std::make_pair("FullCardiovascularCircuitAndTransportTest", &PulseEngineTest::FullCardiovascularCircuitAndTransportTest));
   bgeMap.insert(std::make_pair("CardiovascularBloodGasesTest", cardioBGTest));
   bgeMap.insert(std::make_pair("TuneCardiovascularCircuitTest", cardioTuneCircuitTest));
   bgeMap.insert(std::make_pair("CardiovascularCircuitScaleTests", &PulseEngineTest::CardiovascularCircuitScaleTests));

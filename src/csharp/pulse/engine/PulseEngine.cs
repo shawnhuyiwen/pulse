@@ -87,13 +87,13 @@ namespace Pulse
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_mgr, int thunk_format, string data_dir);
-    public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr, string data_dir="./")
+    static extern bool InitializeEngine(IntPtr pulse, string patient_configuration, string data_mgr, int thunk_format);
+    public bool InitializeEngine(SEPatientConfiguration patient_configuration, SEDataRequestManager data_mgr)
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string patient_configuration_str = PBPatientConfiguration.SerializeToString(patient_configuration);
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, thunk_as);
-      alive = InitializeEngine(pulse_cptr, patient_configuration_str, data_mgr_str, (int)thunk_as, data_dir);
+      alive = InitializeEngine(pulse_cptr, patient_configuration_str, data_mgr_str, (int)thunk_as);
       return alive;
     }
 

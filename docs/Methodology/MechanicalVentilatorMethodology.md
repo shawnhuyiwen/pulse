@@ -8,7 +8,7 @@ Mechanical Ventilator Methodology {#MechanicalVentilatorMethodology}
 
 The Mechanical Ventilator Model is a generic representation of a positive-pressure ventilation device and 
 inhaled gas/agent administration. It models a semi-closed circuit breathing system. The current implementation is limited, but the data model is designed for future expansion.
-The results of this system were evaluated for pressure control-continuous mandatory ventilation (PC-CMV) ventilation mode. The results show excellent correlation with the expected values. 
+The results of this system were evaluated for pressure control - continuous mandatory ventilation (PC-CMV) and volume control - assist control (VC-AC) ventilation modes. The results show excellent correlation with the expected values. 
 Future work will add more ventilation modes, including assisted breathing functionality.
 
 @anchor ventilator-intro
@@ -54,7 +54,7 @@ The Mechanical Ventilator model consists of a pressure source with tubes and val
 
 <img src="./Images/MechanicalVentilator/MechanicalVentilatorCircuit.png" width="400">
 <center>
-<i>Figure 1. Circuit diagram of the Mechanical Ventilator. The circuit employs the a driver pressure source, resistance, and valves.</i>
+<i>Figure 1. Circuit diagram of the Mechanical Ventilator. The circuit employs a driver source (either pressure or flow, depending on the mode and settings), resistances, and valves.</i>
 </center><br>
 
 ### Connecting to the %Respiratory Circuit
@@ -72,12 +72,14 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
 - Connection (Off, Mask, Tube): Connection type to the %Respiratory System
 - Inspiration Phase
 	- Trigger: Transition to inspiration
-		- Time: Total length of expiration phase to trigger inspiration phase
-		- Pressure: Ventilator sensor pressure value to trigger inspiration phase
-		- Flow: Ventilator sensor flow value to trigger inspiration phase
+    - Machine Trigger: Control triggers
+      - Time: Total length of expiration phase to trigger inspiration phase      
+    - Patient Trigger: Assisted triggers
+      - Volume: Ventilator sensor volume change value to trigger inspiration phase
+      - Pressure: Ventilator sensor pressure value to trigger inspiration phase      
 	- Waveform (square, exponential, ramp, sinusoidal, sigmoidal): Pattern of driver function
 	- Pause: Time of plateau (i.e., constant driver pressure) between inspiration and expiration
-	- Target (PIP, TV, EtCO2, etc.): Value to set/achieve
+	- Target (PIP, TV, etc.): Value to set/achieve
 	- Limit: Cutoff/maximum
 		- Pressure: Ventilator sensor pressure cutoff/maximum
 		- Flow: Ventilator sensor flow cutoff/maximum
@@ -86,6 +88,7 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
 	- Cycle: Transition to expiration
 		- Time: Total length of inspiration phase to trigger expiration phase
 		- Pressure: Ventilator sensor pressure value to trigger expiration phase
+    - Volume: Ventilator sensor volume change (i.e., TV) to trigger expiration phase
 		- Flow: Ventilator sensor flow value to trigger expiration phase
 	- Waveform (square, exponential, ramp, sinusoidal, sigmoidal): Pattern of driver function
 	- Baseline (PEEP or FRC): Value to set/achieve
@@ -147,7 +150,7 @@ System that regulates the atmospheric/reference pressure.
 @anchor ventilator-assumptions
 ## Assumptions and Limitations
 
-Currently, the Mechanical Ventilator uses ideal pressure sources and one-way valves. Only setting appropriate for a PC-CMV mode are allowed and tested.  However, the system is defined and implemented to allow for future mode expansion without data model changes. 
+Currently, the Mechanical Ventilator uses ideal pressure sources and one-way valves. Only setting appropriate for a PC-CMV or VC-AC modes are allowed and tested.  However, the system is defined and implemented to allow for future mode expansion without data model changes. 
 
 @anchor ventilator-results
 # Results and Conclusions
@@ -155,7 +158,7 @@ Currently, the Mechanical Ventilator uses ideal pressure sources and one-way val
 @anchor ventilator-settingsvalidation
 ## Validation - Settings
 
-The Mechanical ventilator settings are fully dynamic and do not have any bounds enforced.  A scenario that varies these settings in several different combinations is included with the code base and produces the outputs shown in Figure 2.
+The Mechanical ventilator settings are fully dynamic and do not have any bounds enforced.  A scenario that varies the PC-CMV settings in several different combinations is included with the code base and produces the outputs shown in Figure 2.
 
 <center>
 <table border="0">
@@ -174,10 +177,29 @@ The Mechanical ventilator settings are fully dynamic and do not have any bounds 
 </center>
 <center><i>Figure 2. These plots show the successful implementation of varying Mechanical Ventilator settings without patient spontaneous breathing.</i></center><br>
 
+A scenario that varies the VC-AC settings for assisted breathing for a patient with moderate ARDS produces the outputs shown in Figure 3.
+
+<center>
+<table border="0">
+<tr>    
+    <td><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_TotalLungVolume.jpg" width="550"></td>
+	<td><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_RR.jpg" width="550"></td>
+</tr>
+<tr>    
+    <td><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_TidalVolume.jpg" width="550"></td>
+	<td><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_InspiratoryExpiratoryRatio.jpg" width="550"></td>
+</tr>
+<tr>
+    <td colspan="2"><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDSLegend.jpg" width="1100"></td>
+</tr>
+</table>
+</center>
+<center><i>Figure 3. These plots show the successful implementation of varying Mechanical Ventilator settings without patient spontaneous breathing.</i></center><br>
+
 @anchor ventilator-ardsvalidation
 ## Validation - ARDS
 
-The %Respiratory ARDS model with mild, moderate, and severe severities is extensively tested in this scenario.  The patient is administered a neuromuscular blockade to prevent spontaneous breathing and ideal PIP, PEEP, and FiO2 values are set in the ventilator to maintain adequate SpO2 values. Results successfully match expected empirical data and trends, as shown in table 1. Example outputs are shown in Figure 3.
+The %Respiratory ARDS model with mild, moderate, and severe severities is extensively tested in this scenario.  The patient is administered a neuromuscular blockade to prevent spontaneous breathing and ideal PIP, PEEP, and FiO2 values are set in the ventilator to maintain adequate SpO2 values. Results successfully match expected empirical data and trends, as shown in table 1. Example outputs are shown in Figure 4.
 
 <center>
 <table border="0">
@@ -194,7 +216,7 @@ The %Respiratory ARDS model with mild, moderate, and severe severities is extens
 </tr>
 </table>
 </center>
-<center><i>Figure 3. These plots show the successful implementation of a ventilated patient with varying ARDS severities.</i></center><br>
+<center><i>Figure 4. These plots show the successful implementation of a ventilated patient with varying ARDS severities.</i></center><br>
 
 <center><br>
 Table 1. Cumulative validation results for Anesthesia Machine specific conditions and actions scenarios.
@@ -229,7 +251,7 @@ future development.
 
 ## Coming Soon
 
-Logic and results for handling more ventilation modes, including assisted breathing.
+Logic and results for handling more ventilation modes.
 
 ## Recommended Improvements
 

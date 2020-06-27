@@ -154,17 +154,17 @@ bool PBEngine::SerializeToString(const LogMessages& src, std::string& output, Se
   return PBUtils::SerializeToString(data, output, m, logger);
 }
 
-void PBEngine::Load(const CDM_BIND::ConditionListData& src, SEConditionManager& dst)
+void PBEngine::Load(const CDM_BIND::ConditionListData& src, SEConditionManager& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBEngine::Serialize(src, dst);
+  PBEngine::Serialize(src, dst, subMgr);
 }
-void PBEngine::Serialize(const CDM_BIND::ConditionListData& src, SEConditionManager& dst)
+void PBEngine::Serialize(const CDM_BIND::ConditionListData& src, SEConditionManager& dst, const SESubstanceManager& subMgr)
 {
   for (int i = 0; i < src.anycondition_size(); i++)
   {
-    SECondition* c = PBCondition::Load(src.anycondition()[i], dst.m_Substances);
-    dst.ProcessCondition(*c);
+    SECondition* c = PBCondition::Load(src.anycondition()[i], subMgr);
+    dst.Copy(*c, subMgr);
     delete c;
   }
 }
@@ -204,17 +204,17 @@ void PBEngine::Serialize(const SEConditionManager& src, CDM_BIND::ConditionListD
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_InitialEnvironmentalConditions));
 }
 
-void PBEngine::Load(const CDM_BIND::ActionListData& src, SEActionManager& dst)
+void PBEngine::Load(const CDM_BIND::ActionListData& src, SEActionManager& dst, SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBEngine::Serialize(src, dst);
+  PBEngine::Serialize(src, dst, subMgr);
 }
-void PBEngine::Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst)
+void PBEngine::Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst, SESubstanceManager& subMgr)
 {
   for (int i = 0; i < src.anyaction_size(); i++)
   {
-    SEAction* a = PBAction::Load(src.anyaction()[i], dst.m_Substances);
-    dst.ProcessAction(*a);
+    SEAction* a = PBAction::Load(src.anyaction()[i], subMgr);
+    dst.ProcessAction(*a, subMgr);
     delete a;
   }
 }
@@ -348,12 +348,12 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
 }
 
 
-void PBEngine::Load(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst)
+void PBEngine::Load(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBEngine::Serialize(src, dst);
+  PBEngine::Serialize(src, dst, subMgr);
 }
-void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst)
+void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, const SESubstanceManager& subMgr)
 {
   if (src.has_patient())
     PBPatient::Load(src.patient(), dst.GetPatient());
@@ -361,13 +361,14 @@ void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatien
     dst.SetPatientFile(src.patientfile());
   
   if (src.has_conditions())
-    PBEngine::Load(src.conditions(), dst.GetConditions());
+    PBEngine::Load(src.conditions(), dst.GetConditions(), subMgr);
 
   for (size_t i = 0; i < src.scalaroverride_size(); i++)
   {
     const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
     dst.AddScalarOverride(sp.name(), sp.value(), sp.unit());
   }
+  dst.SetDataRoot(src.dataroot());
 }
 CDM_BIND::PatientConfigurationData* PBEngine::Unload(const SEPatientConfiguration& src)
 {
@@ -391,6 +392,7 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientCon
   }
 
   dst.set_allocated_conditions(PBEngine::Unload(*src.GetConditions()));
+  dst.set_dataroot(src.GetDataRoot());
 }
 
 
@@ -406,20 +408,20 @@ bool PBEngine::SerializeToFile(const SEPatientConfiguration& src, const std::str
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEPatientConfiguration& dst, SerializationFormat m)
+bool PBEngine::SerializeFromString(const std::string& src, SEPatientConfiguration& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::PatientConfigurationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst);
+  PBEngine::Load(data, dst, subMgr);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEPatientConfiguration& dst)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEPatientConfiguration& dst, const SESubstanceManager& subMgr)
 {
   CDM_BIND::PatientConfigurationData data;
   if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst);
+  PBEngine::Load(data, dst, subMgr);
   return true;
 }
 
@@ -550,20 +552,20 @@ bool PBEngine::SerializeToFile(const SEConditionManager& src, const std::string&
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEConditionManager& dst, SerializationFormat m)
+bool PBEngine::SerializeFromString(const std::string& src, SEConditionManager& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::ConditionListData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst);
+  PBEngine::Load(data, dst, subMgr);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEConditionManager& dst)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEConditionManager& dst, const SESubstanceManager& subMgr)
 {
   CDM_BIND::ConditionListData data;
   if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst);
+  PBEngine::Load(data, dst, subMgr);
   return true;
 }
 
@@ -579,20 +581,20 @@ bool PBEngine::SerializeToFile(const SEActionManager& src, const std::string& fi
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m)
+bool PBEngine::SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m, SESubstanceManager& subMgr)
 {
   CDM_BIND::ActionListData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst);
+  PBEngine::Load(data, dst, subMgr);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEActionManager& dst)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEActionManager& dst, SESubstanceManager& subMgr)
 {
   CDM_BIND::ActionListData data;
   if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst);
+  PBEngine::Load(data, dst, subMgr);
   return true;
 }
 

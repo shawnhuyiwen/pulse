@@ -22,7 +22,7 @@ public:
 
   virtual void Run() override
   {
-    SEPatientConfiguration pc(m_pEngine->GetSubstanceManager());
+    SEPatientConfiguration pc;
     pc.SetPatientFile("StandardMale.json");
     m_pEngine->InitializeEngine(pc);
 

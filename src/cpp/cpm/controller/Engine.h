@@ -74,6 +74,7 @@ public:
 
   virtual const SEEventManager&                        GetEventManager() const override;
 
+  PulseController* GetController() { return m_PulseController; }
 protected:
   PulseController* m_PulseController;
 };

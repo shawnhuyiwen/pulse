@@ -53,7 +53,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);
   pc.CreateCircuitsAndCompartments();

@@ -5,6 +5,7 @@
 PUSH_PROTO_WARNINGS()
 #include "pulse/cpm/bind/PulseConfiguration.pb.h"
 POP_PROTO_WARNINGS()
+#include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBPulseConfiguration.h"
 #include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBEnvironment.h"
@@ -20,18 +21,18 @@ POP_PROTO_WARNINGS()
 #include "properties/SEScalarMassPerTime.h"
 #include "utils/FileUtils.h"
 
-void PBPulseConfiguration::Merge(const PulseConfiguration& src, PulseConfiguration& dst)
+void PBPulseConfiguration::Merge(const PulseConfiguration& src, PulseConfiguration& dst, SESubstanceManager& subMgr)
 {
   PULSE_BIND::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
-  PBPulseConfiguration::Serialize(data, dst,true);
+  PBPulseConfiguration::Serialize(data, dst, subMgr, true);
 }
 
-void PBPulseConfiguration::Load(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst)
+void PBPulseConfiguration::Load(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst, SESubstanceManager& subMgr)
 {
-  PBPulseConfiguration::Serialize(src, dst);
+  PBPulseConfiguration::Serialize(src, dst, subMgr);
 }
-void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst, bool merge)
+void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst, SESubstanceManager& subMgr, bool merge)
 {
   if (!merge)
     dst.Clear();
@@ -55,6 +56,9 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
     PBEngine::Load(src.autoserialization(), dst.GetAutoSerialization());
   if (src.writepatientbaselinefile() != CDM_BIND::eSwitch::NullSwitch)
     dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
+
+  if (src.has_initialoverrides())
+    PBAction::Load(src.initialoverrides(), dst.GetInitialOverrides());
 
   // Blood Chemistry
   if (src.has_bloodchemistryconfiguration())
@@ -174,14 +178,14 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
       PBProperty::Load(config.molarmassofwatervapor(), dst.GetMolarMassOfWaterVapor());
     if (!config.initialconditionsfile().empty())
     {
-      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(), dst.m_Substances))
+      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(), subMgr))
       {
         dst.Error("Unable to load InitialEnvironmentalConditions file");
       }
     }
     else if (config.has_initialconditions())
     {
-      PBEnvironment::Load(config.initialconditions(), dst.GetInitialEnvironmentalConditions(), dst.m_Substances);
+      PBEnvironment::Load(config.initialconditions(), dst.GetInitialEnvironmentalConditions(), subMgr);
     }
     if (config.has_waterdensity())
       PBProperty::Load(config.waterdensity(), dst.GetWaterDensity());
@@ -236,6 +240,8 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
   if (src.has_nervousconfiguration())
   {
     const PULSE_BIND::ConfigurationData_NervousConfigurationData& config = src.nervousconfiguration();
+    if (config.enablecerebrospinalfluid() != CDM_BIND::eSwitch::NullSwitch)
+      dst.EnableCerebrospinalFluid((eSwitch)config.enablecerebrospinalfluid());
     if (config.baroreceptorfeedback() != CDM_BIND::eSwitch::NullSwitch)
       dst.SetBaroreceptorFeedback((eSwitch)config.baroreceptorfeedback());
     if (config.chemoreceptorfeedback() != CDM_BIND::eSwitch::NullSwitch)
@@ -360,6 +366,8 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
   if (src.HasAutoSerialization())
     dst.set_allocated_autoserialization(PBEngine::Unload(*src.m_AutoSerialization));
   dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);
+  if (src.HasInitialOverrides())
+    dst.set_allocated_initialoverrides(PBAction::Unload(*src.m_InitialOverrides));
 
   // Blood Chemistry
   PULSE_BIND::ConfigurationData_BloodChemistryConfigurationData* bc = dst.mutable_bloodchemistryconfiguration();
@@ -486,6 +494,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
 
   // Nervous
   PULSE_BIND::ConfigurationData_NervousConfigurationData* n = dst.mutable_nervousconfiguration();
+  n->set_enablecerebrospinalfluid((CDM_BIND::eSwitch)src.m_CerebrospinalFluidEnabled);
   n->set_baroreceptorfeedback((CDM_BIND::eSwitch)src.m_BaroreceptorFeedback);
   n->set_chemoreceptorfeedback((CDM_BIND::eSwitch)src.m_ChemoreceptorFeedback);
   if (src.HasHeartElastanceDistributedTimeDelay())
@@ -586,19 +595,19 @@ bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const 
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m)
+bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m, SESubstanceManager& subMgr)
 {
   PULSE_BIND::ConfigurationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBPulseConfiguration::Load(data, dst);
+  PBPulseConfiguration::Load(data, dst, subMgr);
   return true;
 }
-bool PBPulseConfiguration::SerializeFromFile(const std::string& filename, PulseConfiguration& dst)
+bool PBPulseConfiguration::SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SESubstanceManager& subMgr)
 {
   PULSE_BIND::ConfigurationData data;
   if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  PBPulseConfiguration::Load(data, dst);
+  PBPulseConfiguration::Load(data, dst, subMgr);
   return true;
 }

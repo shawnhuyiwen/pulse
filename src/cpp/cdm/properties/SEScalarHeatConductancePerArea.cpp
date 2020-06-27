@@ -27,7 +27,5 @@ const HeatConductancePerAreaUnit& HeatConductancePerAreaUnit::GetCompoundUnit(co
     return W_Per_m2_C;
   if (BTU_Per_hr_ft2_C.GetString().compare(unit) == 0)
     return BTU_Per_hr_ft2_C;
-  std::stringstream err;
-  err << unit << " is not a valid HeatConductancePerArea unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid HeatConductancePerArea unit");
 }

@@ -31,7 +31,7 @@ System Design
 Background and Scope
 --------------------
 #### Baroreceptor Feedback
-The baroreceptor mechanism provides rapid negative feedback control of arterial pressure. A drop in arterial pressure is sensed by the baroreceptors and leads to an increase in heart rate, heart elastance, and vessel distensibility. These changes operate with the goal maintaining arterial pressure at its healthy resting level. The baroreceptor mechanism may be divided into three parts: afferent, CNS, and efferent. The afferent part contains the receptors, which detect changes in the MAP. After that, the CNS portions the response into either sympathetic or parasympathetic. Lastly, the efferent part is used to provide feedback to the vasculature and organs within the %Cardiovascular System @cite ottesen2004applied. The model chosen only models the CNS and efferent portion of the baroreceptors. The fidelity of the model does require the modeling of the actual stretch receptors in the aorta or carotid arteries to provide the necessary feedback.
+The baroreceptor mechanism provides rapid negative feedback control of arterial pressure. A drop in arterial pressure is sensed by the baroreceptors and leads to an increase in heart rate, heart elastance, and a decrease in systemic vascular resistance. These changes operate with the goal maintaining arterial pressure at its healthy resting level. The baroreceptor mechanism may be divided into three parts: afferent, CNS, and efferent. The afferent part contains the receptors, which detect changes in the MAP. After that, the CNS portions the response into either sympathetic or parasympathetic. Lastly, the efferent part is used to provide feedback to the vasculature and organs within the %Cardiovascular System @cite ottesen2004applied. The model chosen only models the CNS and efferent portion of the baroreceptors. The fidelity of the model does require the modeling of the actual stretch receptors in the aorta or carotid arteries to provide the necessary feedback. Instead the changes in MAP are used to calculate changes in parasympathetic and sympathetic responses, which trigger the changes in the %Cardiovascular System.
 
 #### TBI
 Traumatic brain injuries are relatively common, affecting millions annually. They are usually defined as a blunt or penetrating injury to the head that disrupts normal brain function. Furthermore, they are classified as either focal (e.g. cerebral contusions, lacerations, and hematomas) or diffuse (e.g. concussions and diffuse axonal injuries) @cite adoni2007pupillary. The scope of the TBI model is somewhat limited by the low fidelity of the modeled brain. The brain is represented in the current %Cardiovascular circuit with only two resistors and a compliance, all within one compartment. Because the circuit is modeled in this way, TBI is considered as an acute, non-localized, non-penetrating injury from a circuit perspective. Thus, the TBI model can account for intracranial pressure and cerebral blood flow on the basis of the whole brain, but not to specific areas of the brain. However, the engine does provide for three injury inputs: diffuse, right focal, and left focal. These will be discussed in the @ref nervous-actions "Actions" section. Similarly to the @ref RenalMethodology "Renal System", the brain circuit could be expanded to accommodate a higher-fidelity brain model.
@@ -48,7 +48,7 @@ The engine initialization and stabilization is described in detail in the [stabi
 
 ### Preprocess
 #### Baroreceptor Feedback
-The baroreceptor feedback is calculated here. It calculates the difference between the current MAP and the recorded set point to determine modifiers for the important %cardiovascular circuit parameters (heart rate, heart elastance, resistance, and compliance).
+The baroreceptor feedback is calculated here. It calculates the difference between the current MAP and the recorded set point to determine modifiers for the important %cardiovascular circuit parameters (heart rate, heart elastance, systemic resistance, and venous compliance).
 
 ### Process
 #### Check Brain Status
@@ -80,7 +80,7 @@ The baroreceptor model implemented is adapted from the models described by Ottes
 *Equation 2.*
 </center><br>
 
-Where &nu; is a parameter that represents the response slope of the baroreceptors, <b>p</b><sub>a</sub> is the current MAP, and <b>p</b><sub>a,setpoint</sub> is the MAP set-point. An example of the sympathetic and parasympathetic responses as a function of MAP are shown in Figure 1. These were calculated with an assumed MAP set-point of 87 mmHg.
+Where &nu; is a parameter that represents the response slope of the baroreceptors, <b>p</b><sub>a</sub> is the current MAP, and <b>p</b><sub>a,setpoint</sub> is the MAP set-point. An example of the sympathetic and parasympathetic responses as a function of MAP are shown in Figure 1. These were calculated with an assumed MAP set-point of 87 mmHg. The model in @cite ottesen2004applied uses an &nu value of 1, which worked well in an isolated system as shown in Figure 1. However, when integrated into the whole-body physiology model, this was unable to account for the accumulated response of the baroreceptors. For example, as the MAP increases, the sympathetic response increases, however, the effects of the sympathetic response drop the MAP. At the next time step, the sympathetic response will drop. In reality the response is required to maintain this effect, but the constant loop of feedback obscures the needed sympathetic response. To combat this, we increased the value of &nu to 4.
 
 <img src="./plots/Nervous/Response_Fractions.jpg" width="550">
 <center>
@@ -136,6 +136,10 @@ Where x<sub>HR</sub>, x<sub>E</sub>, x<sub>R</sub> and x<sub>C</sub> are the rel
 </tr>
 </table>
 <center> *Figure 3. The plot array demonstrates the normalized organ responses to sympathetic or parasympathetic activity, plotted against the normalized mean arterial pressure.* </center>
+
+This model works well for smaller increases in MAP. However, the baroreceptors reach a saturation level and can no longer continue to apply the same level of change to the achieve a MAP response. This can be seen in the case of hemorrhage. Lower levels of hemorrhage result in the ability to fully maintain MAP with the above changes to parameters to the %Cardiovascular System. However, as the blood pressure continues to drop, the baroreceptors become less effective. To account for this, the model includes a saturation parameter. When the sympathetic response reaches 0.78, an event is triggered for baroreceptor saturation. After the baroreceptors reach saturation, Equations 4-7 are scaled to by a baroreceptor effectiveness parameter to reduce the response. When the MAP reaches a level of approximately 45 mmHg, the body responds with a "last-ditch" response. This is a strong burst of baroreceptor activity to attempt to sustain cardiovasclar function @cite guyton2006medical. The baroreceptor effectiveness parameter is increased for a MAP between 40 and 45 mmHg to represent this response. Below 40mmHg, the barorecptor effectiveness rapidly falls contributing to cardiovascular collapse. The best example of this response is the baroreceptor role in hemorrhage, particularly the role in the cascade to through hemorrhagic (hypovolemic) shock @cite guyton2006medical @cite Batchinsky2007sympathetic.
+
+It is also important to consider the second order effects of the baroreceptor response. The literature shows that the baroreceptors become less effective not only as the MAP deviates further from its baseline, but also as the response extends through time @cite Sheriff2006editorial @cite Drummond1996acute, @cite Dampney2017resetting. This sustained response is not feasible for long periods of time and barorector resetting occurs. A Baroreceptor Active event is triggered when the pressure diviates from the setpoint by plus or minus 5%. After 7 minutes of continuous baroreceptor activation, the MAP setpoint is modified in the direction of the diviation by 35% of the deviation. This is key for modeling longer scenarios where compensatory mechanisms begin to fail. 
 
 ### Chemoreceptors
 The chemoreceptors are chemosensitive cells that are sensitive to reduced oxygen and excess carbon dioxide. Excitation of the chemoreceptors stimulates the sympathetic nervous system. The chemoreceptors contribute significantly to the control of respiratory function, and they are included in the [respiratory control model](@ref respiratory-chemoreceptors) developed. As sympathetic activators, the chemoreceptors also increase the heart rate and contractility. The complete mechanisms of chemoreceptor feedback are complicated and beyond the current scope of the engine, so a phenomenological model was developed to elicit an appropriate response to hypoxia and hypercapnia. Only the heart rate effects of chemoreceptor stimulation are modeled in the current version of the engine, but contractility modification will be included in a future release.  Figure 4 shows the chemoreceptor effect on heart rate. In the figure, the abscissa values represent a fractional deviation of gas concentration from baseline, and the ordinate values show the resultant change in heart rate as a fraction of the baseline heart rate. The final heart rate modification due to chemoreceptors is the sum of the oxygen and carbon dioxide effects. For example, severe hypoxia and severe hypercapnia will result in a three-fold increase in heart rate (baseline + 2 * baseline).
@@ -223,20 +227,19 @@ No resting state physiology validation was completed, because the baroreceptors 
 Validation - Actions and Conditions
 --------------------
 ### Baroreceptor Reflex
-The baroreceptor reflex is validated through simulation of an acute hemorrhage scenario. This scenario begins with the healthy male patient. After a short time a massive hemorrhage (bleeding rate of 1000 mL/min) is initiated, and after 30 seconds the bleeding is stopped. The responses for cardiac output, heart rate, systemic vascular resistance and blood volume are shown in Figure 6. The responses shown in the plot are initially driven by decreasing blood volume, resulting in decreased preload and a subsequent reduction in cardiac output. The baroreceptors attempt to maintain the arterial pressure by increasing the heart rate and contractility, increasing the systemic vascular resistance, and reducing vascular compliance. The feedback mechanisms allow for the cardiac output to stabilize approximately 8% lower than its resting value. This compensation occurs by enforcing a 7% increase in systemic vascular resistance and an 18% increase in heart rate. While these changes may seem substantial, they fall short of the expected values. For this specific hemorrhage scenario, there is an expected 30% increase in heart rate, 15-20% decrease in cardiac output and 10-15% increase in systemic vascular resistance @cite hosomi1979effect. We are currently investigating the reasons for the discrepancy. The validation results are shown in tabular form below. Additional validation related to the baraoreceptor reflex and hemodynamic stability can be found in the @ref CardiovascularMethodology report.
+The baroreceptor reflex is validated through simulation of an acute hemorrhage scenario. This scenario begins with the healthy male patient. An hemorrhage is initiated and proceeds through hemorrhagic shock to patient death. The cardiac output and the MAP are shown in Figure 6 for both the Pulse model and the experimental data in @cite guyton2006medical. This scenario and validation shows the baroreceptor activation and the effectiveness changes throughout the range of MAP changes important in hemorrhage. More details can be found in the @CardiovascularMethodology.
 
-<img src="./plots/Nervous/Baroreceptors_CardiacOutput.jpg" width="1100">
-<img src="./plots/Nervous/Baroreceptors_HR.jpg" width="1100">
-<img src="./plots/Nervous/Baroreceptors_VascularResistance.jpg" width="1100">
-<img src="./plots/Nervous/BaroreceptorsLegend.jpg" width="300">
-<center> *Figure 6. The hemodynamic response to hemorrhage with feedback from the baroreceptor reflex.* </center>
-
-<center><br>
-*Table 1. The cardiac output, heart rate, systemic vascular resistance and blood volume are shown as a function of time for the acute hemorrhage scenario. There is a noticeable decrease in blood volume and cardiac output due to the fluid loss. The baroreceptor response in this situation leads to an increase in heart rate and systemic vascular resistance in an attempt to maintain arterial pressure.*
-</center>
-|	Action	|	Notes	|	Sampled Scenario Time (s)	|	Heart Rate (beats/min)	|	Cardiac Output (mL/min)	|	Systemic Vascular Resistance (mmHg s/mL)	|
-|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Hemorrhage	|	10% blood loss in 30 s	|	200	|<span class="warning">	Increase ~30% @cite Hosomi1979effect @cite Ottesen2004applied	</span>|<span class="warning">	Decrease ~15-20% @cite Hosomi1979effect @cite Ottesen2004applied	</span>|<span class="warning">	Increase 10-15% @cite Hosomi1979effect @cite Ottesen2004applied	</span>|
+<table>
+<tr>
+<td><img src="./plots/Cardiovascular/CardiacShock.jpg" width="550">
+</td>
+<td><img src="./Images/Cardiovascular/HemorrhageShockValidation.jpg" width="550">
+</td>
+</tr>
+</table>
+<center>
+*Figure 6. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).*
+</center><br>
 
 ### Brain Injury
 The Brain Injury action is validated through repeated application and removal of increasing severities of TBI. The scenario begins with a healthy male patient. After a short time, a mild brain injury (Severity = 0.2, Type = Diffuse) is applied, and the patient is allowed to stabilize before the injury state is removed (only one TBI action can be in effect at a time, so adding a Diffuse Severity 0 TBI removes all TBI effects). This process is repeated for a more severe injury (Severity = 0.75, Type = Left Focal) and severe (Severity = 1, Type = Right Focal) brain injury. We expect to see increases in ICP, with the most severe injury resulting in an ICP greater than 25 mmHg, and decreases in CBF, with the most severe case approaching 8 mL per 100 grams of brain per minute, which, for the validated patient, equates to 108 mL per minute @cite bergeronSME @cite steiner2006monitoring. The scenario shows good agreement for these values. We expect CPP to either increase above its maximum normal value or decrease below its minimum normal value, but, though we see a drop, it isn't quite as pronounced as expected @cite steiner2006monitoring. We can also see that for the low severity injury, ICP doesn't quite reach the threshold to strongly affect the pupils. For the Left Focal injury, only the left pupil is affected, and for the Right Focal injury, only the right pupil is affected.
@@ -304,6 +307,8 @@ Recommended Improvements
 ------------------------
 - Including unstressed volume in the tone model
 - Patient variability incorporated into the baroreceptor reflex model constants
+- Cerebrospinal fluid model to calculate intracranial pressure
+- Baroreceptor changes during exercise and sleep
 - Positional variability
 - Higher-fidelity brain model with localized injuries
 - Interventions to treat TBI like drainage of cerebrospinal fluid, hypothermic treatment, hyperventilation, and mannitol therapy

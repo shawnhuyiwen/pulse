@@ -41,7 +41,7 @@ public:
   bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format);
   std::string SerializeToString(SerializationFormat format);
 
-  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format, std::string const& data_dir = "./");
+  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format);
 
   std::string GetInitialPatient(SerializationFormat format);
   std::string GetPatientAssessment(int type, SerializationFormat format);
@@ -134,6 +134,25 @@ namespace pulse {
         _values.push_back(AerosolAndMechanicalVentilator);
         _values.push_back(AnesthesiaMachine);
         _values.push_back(MechanicalVentilator);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  // TODO Rachel
+  class CerebrospinalFluidCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(IntracranialSpace);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(IntracranialSpace);
       }
       return _values;
     }

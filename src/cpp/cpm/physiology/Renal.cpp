@@ -431,7 +431,7 @@ void Renal::AtSteadyState()
   {
     if (m_data.GetConditions().HasConsumeMeal())
     {
-      double elapsedTime_s = m_data.GetConditions().GetConsumeMeal()->GetMeal().GetElapsedTime(TimeUnit::s);
+      double elapsedTime_s = m_data.GetConditions().GetConsumeMeal().GetMeal().GetElapsedTime(TimeUnit::s);
       ConsumeMeal(elapsedTime_s);
     }
   }

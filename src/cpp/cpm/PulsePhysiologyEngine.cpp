@@ -139,10 +139,10 @@ std::string PulseEngineThunk::SerializeToString(SerializationFormat format)
   return state;
 }
 
-bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format, std::string const& data_dir)
+bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format)
 {
-  SEPatientConfiguration pc(data->eng->GetSubstanceManager());
-  if (!pc.SerializeFromString(patient_configuration, format))
+  SEPatientConfiguration pc(data->eng->GetLogger());
+  if (!pc.SerializeFromString(patient_configuration, format, data->eng->GetSubstanceManager()))
   {
     data->eng->GetLogger()->Error("Unable to load patient configuration string");
     return false;
@@ -386,8 +386,7 @@ void PulseEngineThunk::SetupDefaultDataRequests()
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
-  const SESubstance* CO2 = data->eng->GetSubstanceManager().GetSubstance("CarbonDioxide");
-  data->eng->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina", *CO2, "PartialPressure", PressureUnit::mmHg);
+  data->eng->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
   data->eng->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
 }
 

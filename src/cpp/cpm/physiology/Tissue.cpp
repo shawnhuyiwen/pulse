@@ -262,7 +262,7 @@ void Tissue::AtSteadyState()
     if (m_data.GetConditions().HasConsumeMeal())
     {
       SEScalarMass mass;
-      SEMeal& meal = m_data.GetConditions().GetConsumeMeal()->GetMeal();
+      SEMeal& meal = m_data.GetConditions().GetConsumeMeal().GetMeal();
       double elapsedTime_s = meal.GetElapsedTime().GetValue(TimeUnit::s);
       double patientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
       double renalVolumeCleared = m_Albumin->GetClearance().GetRenalClearance(VolumePerTimeMassUnit::mL_Per_s_kg)*patientWeight_kg*elapsedTime_s;
@@ -907,9 +907,9 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
         // If blood glucose is low, glucose will be pulled from the liver tissue into the vascular region. This is the equivalent of a glucagon response.
         // 0.02 is a time tuning factor.
         double massReleased_mg = 0;
-        if (bloodGlucose_mg_Per_dL < 80.0)
+        if (bloodGlucose_mg_Per_dL < 85.0)
         {
-          massReleased_mg = 0.02*(80.0 - bloodGlucose_mg_Per_dL)*vascular->GetVolume(VolumeUnit::dL)*time_s;
+          massReleased_mg = 0.1*(85.0 - bloodGlucose_mg_Per_dL)*vascular->GetVolume(VolumeUnit::dL)*time_s;
           //double massReleased_mg = 1.68 * time_s;
           DistributeMassbyVolumeWeighted(*vascular, *m_Glucose, massReleased_mg, MassUnit::mg);
           vascular->GetSubstanceQuantity(*m_Glucose)->Balance(BalanceLiquidBy::Mass);

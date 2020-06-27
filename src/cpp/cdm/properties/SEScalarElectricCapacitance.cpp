@@ -17,7 +17,5 @@ const ElectricCapacitanceUnit& ElectricCapacitanceUnit::GetCompoundUnit(const st
 {
   if (F.GetString().compare(unit) == 0)
     return F;
-  std::stringstream err;
-  err << unit << " is not a valid ElectricCapacitance unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid  ElectricCapacitance unit");
 }

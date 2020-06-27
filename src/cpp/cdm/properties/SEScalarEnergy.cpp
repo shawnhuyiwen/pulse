@@ -32,7 +32,5 @@ const EnergyUnit& EnergyUnit::GetCompoundUnit(const std::string& unit)
     return kJ;
   if (kcal.GetString().compare(unit) == 0)
     return kcal;
-  std::stringstream err;
-  err << unit << " is not a valid Energy unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Energy unit");
 }

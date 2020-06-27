@@ -11,16 +11,21 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
     dst.Connection = src.get_connection().value
     if src.has_endotracheal_tube_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_endotracheal_tube_resistance(), dst.EndotrachealTubeResistance)
+
     if src.has_positive_end_expired_pressure():
         serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiredPressure)
     if src.has_functional_residual_capacity():
         serialize_scalar_pressure_to_bind(src.get_functional_residual_capacity(), dst.FunctionalResidualCapacity)
+
     if src.has_expiration_cycle_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_expiration_cycle_flow(), dst.ExpirationCycleFlow)
-    if src.has_expiration_cycle_pressure():
+    elif src.has_expiration_cycle_pressure():
         serialize_scalar_pressure_to_bind(src.get_expiration_cycle_pressure(), dst.ExpirationCyclePressure)
-    if src.has_expiration_cycle_time():
+    elif src.has_expiration_cycle_time():
         serialize_scalar_time_to_bind(src.get_expiration_cycle_time(), dst.ExpirationCycleTime)
+    elif src.has_expiration_cycle_volume():
+        serialize_scalar_volume_to_bind(src.get_expiration_cycle_volume(), dst.ExpirationCycleVolume)
+
     if src.has_expiration_tube_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_expiration_tube_resistance(), dst.ExpirationTubeResistance)
     if src.has_expiration_valve_resistance():
@@ -29,22 +34,27 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
 
     if src.has_inspiration_limit_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_inspiration_limit_flow(), dst.InspirationLimitFlow)
-    if src.has_inspiration_limit_pressure():
+    elif src.has_inspiration_limit_pressure():
         serialize_scalar_pressure_to_bind(src.get_inspiration_limit_pressure(), dst.InspirationLimitPressure)
-    if src.has_inspiration_limit_volume():
+    elif src.has_inspiration_limit_volume():
         serialize_scalar_volume_to_bind(src.get_inspiration_limit_volume(), dst.InspirationLimitVolume)
+
     if src.has_inspiration_pause_time():
         serialize_scalar_time_to_bind(src.get_inspiration_pause_time(), dst.InspirationPauseTime)
+
     if src.has_peak_inpiratory_pressure():
         serialize_scalar_pressure_to_bind(src.get_peak_inpiratory_pressure(), dst.PeakInspiratoryPressure)
-    if src.has_end_tidal_carbon_dioxide_pressure():
-        serialize_scalar_pressure_to_bind(src.get_end_tidal_carbon_dioxide_pressure(), dst.EndTidalCarbonDioxidePressure)
-    if src.has_inspiration_trigger_flow():
-        serialize_scalar_volume_per_time_to_bind(src.get_inspiration_trigger_flow(), dst.InspirationTriggerFlow)
-    if src.has_inspiration_trigger_pressure():
-        serialize_scalar_pressure_to_bind(src.get_inspiration_trigger_pressure(), dst.InspirationTriggerPressure)
-    if src.has_inspiration_trigger_time():
-        serialize_scalar_time_to_bind(src.get_inspiration_trigger_time(), dst.InspirationTriggerTime)
+    if src.has_inspiration_target_flow():
+        serialize_scalar_pressure_to_bind(src.get_inspiration_target_flow(), dst.InspirationTargetFlow)
+
+    if src.has_inspiration_machine_trigger_time():
+        serialize_scalar_time_to_bind(src.get_inspiration_machine_trigger_time(), dst.InspirationMachineTriggerTime)
+
+    if src.has_inspiration_patient_trigger_flow():
+        serialize_scalar_volume_per_time_to_bind(src.get_inspiration_patient_trigger_flow(), dst.InspirationPatientTriggerFlow)
+    if src.has_inspiration_patient_trigger_pressure():
+        serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationPatientTriggerPressure)
+
     if src.has_inspiration_tube_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_inspiration_tube_resistance(), dst.InspirationTubeResistance)
     if src.has_inspiration_valve_resistance():

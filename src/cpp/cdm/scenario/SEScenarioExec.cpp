@@ -54,6 +54,8 @@ bool SEScenarioExec::ExecuteFile(PhysiologyEngine& pe, const std::string& scenar
       rFile = scenarioFile;
       rFile += ".out";
     }
+    if (m_Scenario->HasPatientConfiguration())
+      m_Scenario->GetPatientConfiguration().SetDataRoot(dataDir);
     bool success = Execute(pe, *m_Scenario, rFile, ec);
     return success;
   }
@@ -88,6 +90,8 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, const std::string& scenarioFi
       Error("Error reading scenario file " + scenarioFile + " " + ex.what());
       return false;
     }
+    if (m_Scenario->HasPatientConfiguration())
+      m_Scenario->GetPatientConfiguration().SetDataRoot(dataDir);
     bool success = Execute(pe, *m_Scenario, resultsFile, ec);
     return success;
   }

@@ -8,6 +8,7 @@ import "pulse/cdm/bind/AnesthesiaMachine.proto";
 import "pulse/cdm/bind/ElectroCardioGram.proto";
 import "pulse/cdm/bind/Inhaler.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
+import "pulse/cdm/bind/Physiology.proto";
 
 message AnesthesiaMachineData
 {
@@ -36,9 +37,9 @@ message InhalerData
 message MechanicalVentilatorData
 {
   pulse.cdm.bind.MechanicalVentilatorData          Common                         = 1;
-  bool                                             Inhaling                       = 2;
-  double                                           CurrentBreathingCycleTime_s    = 3;
-  double                                           PressureTarget_cmH2O           = 4;
-  double                                           PressureBaseline_cmH2O         = 5;
-  double                                           DriverPressure_cmH2O           = 6;
+  pulse.cdm.bind.eBreathState                      CurrentBreathState             = 2;
+  double                                           CurrentInspiratoryVolume_L     = 3;
+  double                                           CurrentPeriodTime_s            = 4;
+  double                                           DriverPressure_cmH2O           = 5;
+  double                                           DriverFlow_L_Per_s             = 6;
 }

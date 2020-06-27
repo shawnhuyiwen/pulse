@@ -18,4 +18,3 @@ public:
   void ForceValue(double d);
   void ForceValue(double d, const NoUnit& unitless);
 };
-

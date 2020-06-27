@@ -17,7 +17,5 @@ const ElectricCurrentUnit& ElectricCurrentUnit::GetCompoundUnit(const std::strin
 {
   if (A.GetString().compare(unit) == 0)
     return A;
-  std::stringstream err;
-  err << unit << " is not a valid ElectricCurrent unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid ElectricCurrent unit");
 }

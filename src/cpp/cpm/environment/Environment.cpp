@@ -208,7 +208,7 @@ void Environment::AtSteadyState()
   if (m_data.GetState() == EngineState::AtInitialStableState)
   {
     if (m_data.GetConditions().HasInitialEnvironmentalConditions())
-      ProcessChange(*m_data.GetConditions().GetInitialEnvironmentalConditions(), m_data.GetSubstances());
+      ProcessChange(m_data.GetConditions().GetInitialEnvironmentalConditions(), m_data.GetSubstances());
   }
 }
 

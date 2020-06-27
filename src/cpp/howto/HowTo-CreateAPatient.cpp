@@ -40,7 +40,7 @@ void HowToCreateAPatient()
   pe->GetLogger()->SetLogFile("./test_results/HowTo_CreateAPatient.log");
   pe->GetLogger()->Info("HowTo_CreateAPatient");
 
-  SEPatientConfiguration pc(pe->GetSubstanceManager());
+  SEPatientConfiguration pc;
   SEPatient& patient = pc.GetPatient();
   patient.SetName("HowToCreateAPatient");
   //Patient sex is the only thing that is absolutely required to be set.

@@ -57,7 +57,7 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();

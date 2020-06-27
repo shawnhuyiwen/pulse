@@ -22,7 +22,5 @@ const VolumePerTimePressureAreaUnit& VolumePerTimePressureAreaUnit::GetCompoundU
     return mL_Per_min_mmHg_m2;
   if (mL_Per_s_mmHg_m2.GetString().compare(unit) == 0)
     return mL_Per_s_mmHg_m2;  
-  std::stringstream err;
-  err << unit << " is not a valid VolumePerTimePressureArea unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid VolumePerTimePressureArea unit");
 }

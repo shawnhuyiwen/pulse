@@ -36,6 +36,8 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
     PBProperty::Load(src.expirationcycleflow(), dst.GetExpirationCycleFlow());
   if (src.has_expirationcyclepressure())
     PBProperty::Load(src.expirationcyclepressure(), dst.GetExpirationCyclePressure());
+  if (src.has_expirationcyclevolume())
+    PBProperty::Load(src.expirationcyclevolume(), dst.GetExpirationCycleVolume());
   if (src.has_expirationcycletime())
     PBProperty::Load(src.expirationcycletime(), dst.GetExpirationCycleTime());
 
@@ -57,15 +59,16 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
 
   if (src.has_peakinspiratorypressure())
     PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
-  if (src.has_endtidalcarbondioxidepressure())
-    PBProperty::Load(src.endtidalcarbondioxidepressure(), dst.GetEndTidalCarbonDioxidePressure());
+  if (src.has_inspirationtargetflow())
+    PBProperty::Load(src.inspirationtargetflow(), dst.GetInspirationTargetFlow());
 
-  if (src.has_inspirationtriggerflow())
-    PBProperty::Load(src.inspirationtriggerflow(), dst.GetInspirationTriggerFlow());
-  if (src.has_inspirationtriggerpressure())
-    PBProperty::Load(src.inspirationtriggerpressure(), dst.GetInspirationTriggerPressure());
-  if (src.has_inspirationtriggertime())
-    PBProperty::Load(src.inspirationtriggertime(), dst.GetInspirationTriggerTime());
+  if (src.has_inspirationmachinetriggertime())
+    PBProperty::Load(src.inspirationmachinetriggertime(), dst.GetInspirationMachineTriggerTime());
+
+  if (src.has_inspirationpatienttriggerflow())
+    PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
+  if (src.has_inspirationpatienttriggerpressure())
+    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());  
 
   if (src.has_inspirationtuberesistance())
     PBProperty::Load(src.inspirationtuberesistance(), dst.GetInspirationTubeResistance());
@@ -133,6 +136,8 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
     dst.set_allocated_expirationcycleflow(PBProperty::Unload(*src.m_ExpirationCycleFlow));
   if (src.HasExpirationCyclePressure())
     dst.set_allocated_expirationcyclepressure(PBProperty::Unload(*src.m_ExpirationCyclePressure));
+  if (src.HasExpirationCycleVolume())
+    dst.set_allocated_expirationcyclevolume(PBProperty::Unload(*src.m_ExpirationCycleVolume));
   if (src.HasExpirationCycleTime())
     dst.set_allocated_expirationcycletime(PBProperty::Unload(*src.m_ExpirationCycleTime));
 
@@ -154,15 +159,16 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
 
   if (src.HasPeakInspiratoryPressure())
     dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
-  if (src.HasEndTidalCarbonDioxidePressure())
-    dst.set_allocated_endtidalcarbondioxidepressure(PBProperty::Unload(*src.m_EndTidalCarbonDioxidePressure));
+  if (src.HasInspirationTargetFlow())
+    dst.set_allocated_inspirationtargetflow(PBProperty::Unload(*src.m_InspirationTargetFlow));
 
-  if (src.HasInspirationTriggerFlow())
-    dst.set_allocated_inspirationtriggerflow(PBProperty::Unload(*src.m_InspirationTriggerFlow));
-  if (src.HasInspirationTriggerPressure())
-    dst.set_allocated_inspirationtriggerpressure(PBProperty::Unload(*src.m_InspirationTriggerPressure));
-  if (src.HasInspirationTriggerTime())
-    dst.set_allocated_inspirationtriggertime(PBProperty::Unload(*src.m_InspirationTriggerTime));
+  if (src.HasInspirationMachineTriggerTime())
+    dst.set_allocated_inspirationmachinetriggertime(PBProperty::Unload(*src.m_InspirationMachineTriggerTime));
+
+  if (src.HasInspirationPatientTriggerFlow())
+    dst.set_allocated_inspirationpatienttriggerflow(PBProperty::Unload(*src.m_InspirationPatientTriggerFlow));
+  if (src.HasInspirationPatientTriggerPressure())
+    dst.set_allocated_inspirationpatienttriggerpressure(PBProperty::Unload(*src.m_InspirationPatientTriggerPressure));  
 
   if (src.HasInspirationTubeResistance())
     dst.set_allocated_inspirationtuberesistance(PBProperty::Unload(*src.m_InspirationTubeResistance));

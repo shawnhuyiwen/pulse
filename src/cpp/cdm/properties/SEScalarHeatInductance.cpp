@@ -17,7 +17,5 @@ const HeatInductanceUnit& HeatInductanceUnit::GetCompoundUnit(const std::string&
 {
   if (K_s_Per_W.GetString().compare(unit) == 0)
     return K_s_Per_W;
-  std::stringstream err;
-  err << unit << " is not a valid HeatInductance unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid HeatInductance unit");
 }

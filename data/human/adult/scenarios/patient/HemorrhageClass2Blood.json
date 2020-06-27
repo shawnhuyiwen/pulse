@@ -1,6 +1,6 @@
 {
   "Name": "HemorrhageClass2Blood",
-  "Description": "",
+  "Description": "25% Blood Loss then intravenous administration of whole blood ",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {

@@ -42,7 +42,5 @@ const PressureTimePerVolumeUnit& PressureTimePerVolumeUnit::GetCompoundUnit(cons
     return mmHg_min_Per_L;
   if (Pa_s_Per_m3.GetString().compare(unit) == 0)
     return Pa_s_Per_m3;
-  std::stringstream err;
-  err << unit << " is not a valid PressureTimePerVolume unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid PressureTimePerVolume unit");
 }

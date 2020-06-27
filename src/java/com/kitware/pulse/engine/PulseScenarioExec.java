@@ -22,22 +22,24 @@ public class PulseScenarioExec
   
   protected static class MyListener extends LogListener
   {
+    public String origin = "";
     protected MyListener()
     {
       super();
       listen(false);
     }    
-    @Override public void handleDebug(String msg) { Log.debug(msg); }
-    @Override public void handleInfo(String msg)  { Log.info(msg); }
-    @Override public void handleWarn(String msg)  { Log.warn(msg); }
-    @Override public void handleError(String msg) { Log.error(msg); }
-    @Override public void handleFatal(String msg) { Log.fatal(msg); }
+    @Override public void handleDebug(String msg) { Log.debug(msg, origin); }
+    @Override public void handleInfo(String msg)  { Log.info(msg, origin); }
+    @Override public void handleWarn(String msg)  { Log.warn(msg, origin); }
+    @Override public void handleError(String msg) { Log.error(msg, origin); }
+    @Override public void handleFatal(String msg) { Log.fatal(msg, origin); }
   }
+  protected MyListener listener = new MyListener();
   public PulseScenarioExec()
   {
     JNIBridge.initialize();
     engine=new PulseEngine();
-    engine.setLogListener(new MyListener());
+    engine.setLogListener(listener);
   }
   
   public void finalize()
@@ -70,6 +72,7 @@ public class PulseScenarioExec
   }
   public boolean runScenario(String scenario, SerializationType format, String resultsFile, String logFile, String dataDir)
   {
+    listener.origin = resultsFile.substring(resultsFile.lastIndexOf("/")+1,resultsFile.lastIndexOf("."));
     return engine.nativeExecuteScenario(engine.nativeObj, scenario, format.value(), resultsFile, logFile, dataDir);
   }
   

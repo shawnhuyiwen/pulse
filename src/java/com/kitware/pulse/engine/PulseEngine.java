@@ -134,15 +134,11 @@ public class PulseEngine
   
   public boolean initializeEngine(SEPatientConfiguration patientConfiguration, SEDataRequestManager dataRequests)
   {
-    return initializeEngine(patientConfiguration, dataRequests, "./");
-  }
-  public boolean initializeEngine(SEPatientConfiguration patientConfiguration, SEDataRequestManager dataRequests, String dataDir)
-  {
     try
     {
       String pcString = JsonFormat.printer().print(SEPatientConfiguration.unload(patientConfiguration));
       String drString = JsonFormat.printer().print(SEDataRequestManager.unload(dataRequests));
-      alive = nativeInitializeEngine(nativeObj, pcString, drString, thunkType.value(), dataDir);
+      alive = nativeInitializeEngine(nativeObj, pcString, drString, thunkType.value());
     }
     catch(Exception ex)
     {
@@ -430,7 +426,7 @@ public class PulseEngine
   protected native boolean nativeSerializeFromString(long nativeObj, String state, String dataRequests, int format);
   protected native String  nativeSerializeToString(long nativeObj, String stateFile, int format);
   
-  protected native boolean nativeInitializeEngine(long nativeObj, String patient_configuration, String dataRequests, int thunk_format, String dataDir);
+  protected native boolean nativeInitializeEngine(long nativeObj, String patient_configuration, String dataRequests, int thunk_format);
   
   protected native void nativeLogToConsole(long nativeObj, boolean b);
   protected native void nativeSetLogFilename(long nativeObj, String filename);

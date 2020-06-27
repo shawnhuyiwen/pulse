@@ -96,13 +96,13 @@ PulseData::PulseData(Logger* logger) : Loggable(logger)
   m_InitialPatient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
   m_CurrentPatient = std::unique_ptr<SEPatient>(new SEPatient(GetLogger()));
 
-  m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(*m_Substances));
+  m_Config = std::unique_ptr<PulseConfiguration>(new PulseConfiguration(GetLogger()));
   m_Config->Initialize("");//Setup defaults that don't need files on disk
 
   m_SaturationCalculator = std::unique_ptr<SaturationCalculator>(new SaturationCalculator(*this));
 
-  m_Actions = std::unique_ptr<SEActionManager>(new SEActionManager(*m_Substances));
-  m_Conditions = std::unique_ptr<SEConditionManager>(new SEConditionManager(*m_Substances));
+  m_Actions = std::unique_ptr<SEActionManager>(new SEActionManager(GetLogger()));
+  m_Conditions = std::unique_ptr<SEConditionManager>(new SEConditionManager(GetLogger()));
 
   m_BloodChemistrySystem = std::unique_ptr<BloodChemistry>(new BloodChemistry(*this));
   m_CardiovascularSystem = std::unique_ptr<Cardiovascular>(new Cardiovascular(*this));
@@ -277,13 +277,14 @@ bool PulseController::SerializeToString(std::string& output, SerializationFormat
 
 bool PulseController::InitializeEngine(const std::string& patient_configuration, SerializationFormat m)
 {
-  SEPatientConfiguration pc(*m_Substances);
-  pc.SerializeFromString(patient_configuration, m);
+  SEPatientConfiguration pc(GetLogger());
+  pc.SerializeFromString(patient_configuration, m, *m_Substances);
   return InitializeEngine(pc);
 }
 
 bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_configuration)
 {
+  Info("Looking for files in " + patient_configuration.GetDataRoot());
   m_DataDir = patient_configuration.GetDataRoot();
   m_EngineTrack->ResetFile();
   m_State = EngineState::Initialization;
@@ -329,13 +330,13 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
     return false;
 
-  // We need to copy conditions here, so systems can prepare for them in their AtSteadyState method
-  if (patient_configuration.HasConditions())
-    m_Conditions->Copy(*patient_configuration.GetConditions());
-  AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
-
   // Copy any changes to the current patient to the initial patient
   m_InitialPatient->Copy(*m_CurrentPatient);
+
+  // We need to copy conditions here, so systems can prepare for them in their AtSteadyState method
+  if (patient_configuration.HasConditions())
+    m_Conditions->Copy(*patient_configuration.GetConditions(), *m_Substances);
+  AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
 
   m_State = EngineState::SecondaryStabilization;
   // Apply conditions and anything else to the physiology
@@ -383,19 +384,19 @@ bool PulseController::Initialize(SEPatient const& patient)
   // to any substance child objects, those will need to be fixed up, if they exist
 
   Info("Initializing Configuration");
-  m_Config->Initialize(m_DataDir); // Reset to Defaults
+  m_Config->Initialize(m_DataDir, m_Substances.get()); // Reset to Defaults
 
   // Now, Let's see if there is anything to merge into our base configuration
   Info("Merging OnDisk Configuration");
-  PulseConfiguration cFile(*m_Substances);
-  cFile.SerializeFromFile("PulseConfiguration.json");
-  m_Config->Merge(cFile);
+  PulseConfiguration cFile(GetLogger());
+  cFile.SerializeFromFile("PulseConfiguration.json", *m_Substances.get());
+  m_Config->Merge(cFile, *m_Substances.get());
 
   // Now, override anything with a configuration provided by the user or scenario
   if (m_ConfigOverride != nullptr)
   {
     Info("Merging Provided Configuration");
-    m_Config->Merge(*m_ConfigOverride);
+    m_Config->Merge(*m_ConfigOverride, *m_Substances.get());
   }
 
   if (!m_Config->IsPDEnabled())
@@ -418,6 +419,13 @@ bool PulseController::Initialize(SEPatient const& patient)
   // Due to needing the initial environment values for circuits to construct properly
   Info("Creating Circuits and Compartments");
   CreateCircuitsAndCompartments();
+
+  // Appy any prestabilization overrides
+  if (m_Config->HasInitialOverrides())
+  {
+    ProcessAction(m_Config->GetInitialOverrides());
+    OverrideCircuits();// Override any circuit values
+  }
 
   m_SpareAdvanceTime_s = 0;
   m_AirwayMode = eAirwayMode::Free;
@@ -1208,6 +1216,18 @@ void PulseController::PostProcess()
 
 bool PulseController::ProcessAction(const SEAction& action)
 {
+  // We can setup overrides before the engine is ready
+  const SEOverrides* overrides = dynamic_cast<const SEOverrides*>(&action);
+  if (overrides != nullptr)
+  {
+    for (auto& so : overrides->GetScalarProperties())
+    {
+      m_ScalarOverrides.push_back(so);
+      Info("Overriding " + so.name + " with " + cdm::to_string(so.value) + " " + so.unit);
+    }
+    return true;
+  }
+
   if (!IsReady())
     return false;
   m_ss << "[Action] " << m_SimulationTime << ", " << action;
@@ -1240,14 +1260,6 @@ bool PulseController::ProcessAction(const SEAction& action)
     }
     else
       return SerializeFromFile(serialize->GetFilename());
-    return true;
-  }
-
-  const SEOverrides* overrides = dynamic_cast<const SEOverrides*>(&action);
-  if (overrides != nullptr)
-  {
-    for (auto& so : overrides->GetScalarProperties())
-      m_ScalarOverrides.push_back(so);
     return true;
   }
 
@@ -1327,7 +1339,7 @@ bool PulseController::ProcessAction(const SEAction& action)
     return true;
   }
 
-  return GetActions().ProcessAction(action);
+  return GetActions().ProcessAction(action, *m_Substances);
 }
 
 bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) const
@@ -1375,6 +1387,8 @@ bool PulseController::CreateCircuitsAndCompartments()
     SetupRenal();
   if (m_Config->IsTissueEnabled())
     SetupTissue();
+  if (m_Config->IsCerebrospinalFluidEnabled())
+    SetupCerebrospinalFluid();
   SetupGastrointestinal();
 
   ///////////////////////////////////////////////////////////////////
@@ -1432,6 +1446,64 @@ bool PulseController::CreateCircuitsAndCompartments()
 
   m_Compartments->StateChange();
   return true;
+}
+
+// assumes circuit overrides and doesn't check if override is not applied
+bool PulseController::OverrideCircuits()
+{
+  bool bReturn = true;
+  if (m_ScalarOverrides.empty())
+    return bReturn;
+
+  SEFluidCircuit& cv = GetCircuits().GetActiveCardiovascularCircuit();
+  SEFluidCircuit& resp = GetCircuits().GetRespiratoryCircuit();
+  for (auto& sp : m_ScalarOverrides)
+  {
+    SEFluidCircuitNode* node = nullptr;
+    SEFluidCircuitPath* path = nullptr;
+    if (resp.HasPath(sp.name))
+      path = resp.GetPath(sp.name);
+    else if (cv.HasPath(sp.name))
+      path = cv.GetPath(sp.name);
+    else if (resp.HasNode(sp.name))
+      node = resp.GetNode(sp.name);
+    else if (cv.HasNode(sp.name))
+      node = cv.GetNode(sp.name);
+
+    if (path == nullptr && node == nullptr)
+      continue; // Must be an override for a system variable
+
+    // Apply Overrides (Note using Force, as these values are locked (for good reason)
+    // But we know what we are doing, right?
+    if (PressureTimePerVolumeUnit::IsValidUnit(sp.unit))
+    {// Assume its a resistor
+      const PressureTimePerVolumeUnit& u = PressureTimePerVolumeUnit::GetCompoundUnit(sp.unit);
+      path->GetResistance().ForceValue(sp.value, u);
+      path->GetNextResistance().ForceValue(sp.value, u);
+      path->GetResistanceBaseline().ForceValue(sp.value, u);
+    }
+    else if (VolumePerPressureUnit::IsValidUnit(sp.unit))
+    {
+      const VolumePerPressureUnit& u = VolumePerPressureUnit::GetCompoundUnit(sp.unit);
+      path->GetCompliance().ForceValue(sp.value, u);
+      path->GetNextCompliance().ForceValue(sp.value, u);
+      path->GetComplianceBaseline().ForceValue(sp.value, u);
+    }
+    else if (VolumeUnit::IsValidUnit(sp.unit))
+    {
+      const VolumeUnit& u = VolumeUnit::GetCompoundUnit(sp.unit);
+      node->GetVolume().ForceValue(sp.value, u);
+      node->GetNextVolume().ForceValue(sp.value, u);
+      node->GetVolumeBaseline().ForceValue(sp.value, u);
+    }
+    else
+    {
+      Error("Could not process circuit override " + sp.name);
+      bReturn = false;
+    }
+  }
+
+  return bReturn;
 }
 
 void PulseController::SetupCardiovascular()
@@ -1763,10 +1835,12 @@ void PulseController::SetupCardiovascular()
   Aorta1ToBrain1.GetResistanceBaseline().SetValue(systemicResistanceModifier*ResistanceBrain, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   SEFluidCircuitPath& Brain1ToGround = cCardiovascular.CreatePath(Brain1, Ground, pulse::CardiovascularPath::Brain1ToGround);
   Brain1ToGround.GetComplianceBaseline().SetValue(0.0, VolumePerPressureUnit::mL_Per_mmHg);
+  /*SEFluidCircuitPath& GroundToBrain1 = cCardiovascular.CreatePath(Ground, Brain1, pulse::CardiovascularPath::GroundToBrain1);
+  GroundToBrain1.GetPressureSourceBaseline().SetValue(1.0, PressureUnit::mmHg);*/
   SEFluidCircuitPath& Brain1ToBrain2 = cCardiovascular.CreatePath(Brain1, Brain2, pulse::CardiovascularPath::Brain1ToBrain2);
   Brain1ToBrain2.GetResistanceBaseline().SetValue(systemicResistanceModifier*ResistanceBrainVenous, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   SEFluidCircuitPath& Brain2ToVenaCava = cCardiovascular.CreatePath(Brain2, VenaCava, pulse::CardiovascularPath::Brain2ToVenaCava);
-
+  
   SEFluidCircuitPath& Aorta1ToBone1 = cCardiovascular.CreatePath(Aorta1, Bone1, pulse::CardiovascularPath::Aorta1ToBone1);
   Aorta1ToBone1.GetResistanceBaseline().SetValue(systemicResistanceModifier*ResistanceBone, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   SEFluidCircuitPath& Bone1ToGround = cCardiovascular.CreatePath(Bone1, Ground, pulse::CardiovascularPath::Bone1ToGround);
@@ -3981,6 +4055,57 @@ void PulseController::SetupTissue()
 
  cCombinedCardiovascular.SetNextAndCurrentFromBaselines();
  cCombinedCardiovascular.StateChange();
+}
+
+void PulseController::SetupCerebrospinalFluid()
+{
+  // TODO Rachel
+  Info("Setting Up Cerebrospinal Fluid");
+  SEFluidCircuit& cCombinedCardiovascular = m_Circuits->GetActiveCardiovascularCircuit();
+
+  SEFluidCircuitNode* Ground = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Ground);
+  SEFluidCircuitNode* Brain1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::Brain1);
+
+  double brainVascularCompliance = cCombinedCardiovascular.GetPath(pulse::CardiovascularPath::Brain1ToGround)->GetComplianceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg);
+  double brainVascularPressure = Brain1->GetPressure().GetValue(PressureUnit::mmHg);
+
+  m_Circuits->DeleteFluidPath(pulse::CardiovascularPath::Brain1ToGround);
+
+  SEFluidCircuitNode& VascularCSFBarrier = cCombinedCardiovascular.CreateNode(pulse::CerebrospinalFluidNode::VascularCSFBarrier);
+  VascularCSFBarrier.GetPressure().SetValue(brainVascularPressure, PressureUnit::mmHg);
+
+  //Initialize these values based on height/weight
+  SEFluidCircuitNode& IntracranialSpace1 = cCombinedCardiovascular.CreateNode(pulse::CerebrospinalFluidNode::IntracranialSpace1);
+  IntracranialSpace1.GetPressure().SetValue(7.0, PressureUnit::mmHg);
+  IntracranialSpace1.GetVolumeBaseline().SetValue(0.0, VolumeUnit::mL);
+  SEFluidCircuitNode& IntracranialSpace2 = cCombinedCardiovascular.CreateNode(pulse::CerebrospinalFluidNode::IntracranialSpace2);
+  IntracranialSpace2.GetPressure().SetValue(7.0, PressureUnit::mmHg);
+  IntracranialSpace2.GetVolumeBaseline().SetValue(100.0, VolumeUnit::mL);
+
+  SEFluidCircuitPath& Brain1ToVascularCSFBarrier = cCombinedCardiovascular.CreatePath(*Brain1, VascularCSFBarrier, pulse::CerebrospinalFluidPath::Brain1ToVascularCSFBarrier);
+  Brain1ToVascularCSFBarrier.GetComplianceBaseline().SetValue(brainVascularCompliance, VolumePerPressureUnit::mL_Per_mmHg); //Vascular Volume
+  
+  SEFluidCircuitPath& VascularCSFBarrierToIntracranialSpace1 = cCombinedCardiovascular.CreatePath(VascularCSFBarrier, IntracranialSpace1, pulse::CerebrospinalFluidPath::VascularCSFBarrierToIntracranialSpace1);
+  
+  SEFluidCircuitPath& GroundToIntracranialSpace1 = cCombinedCardiovascular.CreatePath(*Ground, IntracranialSpace1, pulse::CerebrospinalFluidPath::GroundToIntracranialSpace1);
+  GroundToIntracranialSpace1.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);  //Absorption/Production Path
+  
+  SEFluidCircuitPath& IntracranialSpace1ToIntracranialSpace2 = cCombinedCardiovascular.CreatePath(IntracranialSpace1, IntracranialSpace2, pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2);
+  IntracranialSpace1ToIntracranialSpace2.GetComplianceBaseline().SetValue(70.0, VolumePerPressureUnit::mL_Per_mmHg); //CSF Volume
+
+  SEFluidCircuitPath& IntracranialSpace2ToGround = cCombinedCardiovascular.CreatePath(IntracranialSpace2, *Ground, pulse::CerebrospinalFluidPath::IntracranialSpace2ToGround);
+
+  cCombinedCardiovascular.SetNextAndCurrentFromBaselines();
+  cCombinedCardiovascular.StateChange();
+
+  // Compartment
+  SELiquidCompartment& cIntracranialSpace = m_Compartments->CreateLiquidCompartment(pulse::CerebrospinalFluidCompartment::IntracranialSpace);
+  cIntracranialSpace.MapNode(IntracranialSpace1);
+  cIntracranialSpace.MapNode(IntracranialSpace2);
+
+  SELiquidCompartmentGraph& gCombinedCardiovascular = m_Compartments->GetActiveCardiovascularGraph();
+  gCombinedCardiovascular.AddCompartment(cIntracranialSpace);
+  gCombinedCardiovascular.StateChange();
 }
 
 void PulseController::SetupRespiratory()

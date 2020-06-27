@@ -67,7 +67,5 @@ const MassPerAmountUnit& MassPerAmountUnit::GetCompoundUnit(const std::string& u
     return ug_Per_ct;
   if (pg_Per_ct.GetString().compare(unit) == 0)
     return pg_Per_ct;
-  std::stringstream err;
-  err << unit << " is not a valid MassPerAmount unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid MassPerAmount unit");
 }

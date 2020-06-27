@@ -43,14 +43,12 @@ void HowToLobarPneumonia()
   // As fluid fills portions of the lung it becomes more difficult to breath and the gas diffusion surface area in the alveoli is reduced. 
   // Since this is a condition, we need to initialize it on the patient along with engine initialization
 
-  SELobarPneumonia lobarPneumonia;
+  SEPatientConfiguration pc;
+  pc.SetPatientFile("StandardMale.json");
+  SELobarPneumonia& lobarPneumonia = pc.GetConditions().GetLobarPneumonia();
   lobarPneumonia.GetSeverity().SetValue(0.2);
   lobarPneumonia.GetLeftLungAffected().SetValue(1.0);
   lobarPneumonia.GetRightLungAffected().SetValue(1.0);
-
-  SEPatientConfiguration pc(pe->GetSubstanceManager());
-  pc.SetPatientFile("StandardMale.json");
-  pc.GetConditions().ProcessCondition(lobarPneumonia);
 
   if (!pe->InitializeEngine(pc))
   {

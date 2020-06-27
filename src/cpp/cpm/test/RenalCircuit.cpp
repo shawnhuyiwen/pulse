@@ -55,7 +55,7 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -186,7 +186,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
@@ -505,7 +505,7 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   pc.SetupPatient(patient);
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
-  pc.m_Config->Initialize("./");
+  pc.m_Config->Initialize("./", &pc.GetSubstances());
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();

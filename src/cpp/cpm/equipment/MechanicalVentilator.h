@@ -3,6 +3,7 @@
 
 #pragma once
 #include "PulsePhysiologySystems.h"
+#include "system/physiology/SERespiratorySystem.h"
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 class SEEquipmentActionCollection;
 class SEGasCompartment;
@@ -42,25 +43,26 @@ public:
   void PostProcess(bool solve_and_transport=true);
 
 protected:
+
   void ComputeExposedModelParameters() override;
 
   void SetConnection();
   void SetConnection(eMechanicalVentilator_Connection c);
   void InvalidateConnection();
 
-  void ApplyBaseline();
-  void ApplyTarget();
   void CalculateInspiration();
+  void CalculatePause();
   void CalculateExpiration();
-  void SetVentilatorPressure();
+  void SetVentilatorDriver();
+  void CycleMode();
   void SetResistances();
 
   // Serializable member variables (Set in Initialize and in schema)
-  bool                  m_Inhaling;
-  double                m_CurrentBreathingCycleTime_s;
-  double                m_PressureTarget_cmH2O;
-  double                m_PressureBaseline_cmH2O;
+  double                m_CurrentPeriodTime_s;
   double                m_DriverPressure_cmH2O;
+  double                m_DriverFlow_L_Per_s;
+  double                m_CurrentInspiratoryVolume_L;
+  eBreathState          m_CurrentBreathState;
 
   // Stateless member variable (Set in SetUp())
   double                m_dt_s;
@@ -68,5 +70,9 @@ protected:
   SEGasCompartment*     m_Environment;
   SEGasCompartment*     m_Ventilator;
   SELiquidCompartment*  m_VentilatorAerosol;
+  SEFluidCircuitNode*   m_VentilatorNode;
+  SEFluidCircuitNode*   m_ConnectionNode;
+  SEFluidCircuitNode*   m_AmbientNode;
   SEFluidCircuitPath*   m_EnvironmentToVentilator;
+  SEFluidCircuitPath*   m_YPieceToConnection;
 };

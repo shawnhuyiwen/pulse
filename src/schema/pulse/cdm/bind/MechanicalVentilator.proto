@@ -28,51 +28,56 @@ message MechanicalVentilatorData
     Sigmoidal          = 5;/**<<  */
   }
   
-  eConnection                         Connection                    = 1; /**<< @brief @ref MechanicalVentilatorData_eControlTable */
-  ScalarPressureTimePerVolumeData     EndotrachealTubeResistance    = 2; /**<< @brief Total connection resistance. */
+  eConnection                         Connection                        = 1; /**<< @brief @ref MechanicalVentilatorData_eControlTable */
+  ScalarPressureTimePerVolumeData     EndotrachealTubeResistance        = 2; /**<< @brief Total connection resistance. */
   
   oneof ExpiratoryBaseline
   {
-    ScalarPressureData                PositiveEndExpiredPressure    = 3; /**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
-    ScalarPressureData                FunctionalResidualCapacity    = 4; /**<< @brief Total lung volume at the end of exhalation. */
+    ScalarPressureData                PositiveEndExpiredPressure        = 3; /**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
+    ScalarPressureData                FunctionalResidualCapacity        = 4; /**<< @brief Total lung volume at the end of exhalation. */
   }
   oneof ExpirationCycle
   {
-    ScalarVolumePerTimeData           ExpirationCycleFlow           = 5; /**<< @brief Ventilator sensor flow value to trigger expiration phase. */
-    ScalarPressureData                ExpirationCyclePressure       = 6; /**<< @brief Ventilator sensor pressure value to trigger expiration phase. */
-    ScalarTimeData                    ExpirationCycleTime           = 7; /**<< @brief Total length of inspiration phase to trigger expiration phase. */
+    ScalarVolumePerTimeData           ExpirationCycleFlow               = 5; /**<< @brief Ventilator sensor flow value to trigger expiration phase. */
+    ScalarPressureData                ExpirationCyclePressure           = 6; /**<< @brief Ventilator sensor pressure value to trigger expiration phase. */
+    ScalarTimeData                    ExpirationCycleTime               = 7; /**<< @brief Total length of inspiration phase to trigger expiration phase. */
+    ScalarVolumeData                  ExpirationCycleVolume             = 8; /**<< @brief Ventilator sensor volume change (i.e., tidal volume) to trigger expiration phase. */
   }
   
-  ScalarPressureTimePerVolumeData     ExpirationTubeResistance      = 8; /**<< @brief Total resistance of expiratory limb tubing. */
-  ScalarPressureTimePerVolumeData     ExpirationValveResistance     = 9; /**<< @brief Total resistance of expiratory valves. */
-  eDriverWaveform                     ExpirationWaveform            = 10;/**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
+  ScalarPressureTimePerVolumeData     ExpirationTubeResistance          = 9; /**<< @brief Total resistance of expiratory limb tubing. */
+  ScalarPressureTimePerVolumeData     ExpirationValveResistance         = 10;/**<< @brief Total resistance of expiratory valves. */
+  eDriverWaveform                     ExpirationWaveform                = 11;/**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
   
-  oneof InspirationLimits
+  oneof InspirationLimit
   {
-    ScalarVolumePerTimeData           InspirationLimitFlow          = 11;/**<< @brief Ventilator sensor flow cutoff/maximum. */
-    ScalarPressureData                InspirationLimitPressure      = 12;/**<< @brief Ventilator sensor pressure cutoff/maximum. */
-    ScalarVolumeData                  InspirationLimitVolume        = 13;/**<< @brief Total lung volume cutoff/maximum. */
+    ScalarVolumePerTimeData           InspirationLimitFlow              = 12;/**<< @brief Ventilator sensor flow cutoff/maximum. */
+    ScalarPressureData                InspirationLimitPressure          = 13;/**<< @brief Ventilator sensor pressure cutoff/maximum. */
+    ScalarVolumeData                  InspirationLimitVolume            = 14;/**<< @brief Total lung volume cutoff/maximum. */
   }
   
-  ScalarTimeData                      InspirationPauseTime          = 14;/**<< @brief Time of plateau (i.e., constant driver pressure) between inspiration and expiration. */
+  ScalarTimeData                      InspirationPauseTime              = 15;/**<< @brief Time of plateau (i.e., constant driver pressure) between inspiration and expiration. */
   
-  oneof InspiratoryTargets
+  oneof InspiratoryTarget
   {
-    ScalarPressureData                PeakInspiratoryPressure       = 15;/**<< @brief Extrinsic pressure above atmosphere at the end of inhalation. */
-    ScalarPressureData                EndTidalCarbonDioxidePressure = 16;/**<< @brief Ideal EtCO2 target for automatically adjusting ventilator driver values. */
+    ScalarVolumePerTimeData           InspirationTargetFlow             = 16;/**<< @brief Air flow at end of inhalation. */
+    ScalarPressureData                PeakInspiratoryPressure           = 17;/**<< @brief Extrinsic pressure above atmosphere at the end of inhalation. */
   }
   
-  oneof InspirationTriggers
+  oneof InspirationMachineTrigger
   {
-    ScalarVolumePerTimeData           InspirationTriggerFlow        = 17;/**<< @brief Ventilator sensor flow value to trigger inspiration phase. */
-    ScalarPressureData                InspirationTriggerPressure    = 18;/**<< @brief Ventilator sensor pressure value to trigger inspiration phase. */
-    ScalarTimeData                    InspirationTriggerTime        = 19;/**<< @brief Total length of expiration phase to trigger inspiration phase. */
+    ScalarTimeData                    InspirationMachineTriggerTime     = 18;/**<< @brief Total length of expiration phase to trigger inspiration phase. */
   }
   
-  ScalarPressureTimePerVolumeData     InspirationTubeResistance     = 20;/**<< @brief Total resistance of inspiratory limb tubing. */
-  ScalarPressureTimePerVolumeData     InspirationValveResistance    = 21;/**<< @brief Total resistance of inspiratory valves. */
-  eDriverWaveform                     InspirationWaveform           = 22;/**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
+  oneof InspirationPatientTrigger
+  {
+    ScalarVolumePerTimeData           InspirationPatientTriggerFlow     = 19;/**<< @brief Ventilator sensor volume change value to trigger inspiration phase. */
+    ScalarPressureData                InspirationPatientTriggerPressure = 20;/**<< @brief Ventilator sensor pressure value to trigger inspiration phase. */
+  }
   
-  repeated SubstanceFractionData      FractionInspiredGas           = 23;/**<< @brief Break down of the gases, such as FiO2. */
-  repeated SubstanceConcentrationData ConcentrationInspiredAerosol  = 24;/**<< @brief Concentration of added aerosolized substances. */
+  ScalarPressureTimePerVolumeData     InspirationTubeResistance         = 21;/**<< @brief Total resistance of inspiratory limb tubing. */
+  ScalarPressureTimePerVolumeData     InspirationValveResistance        = 22;/**<< @brief Total resistance of inspiratory valves. */
+  eDriverWaveform                     InspirationWaveform               = 23;/**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
+  
+  repeated SubstanceFractionData      FractionInspiredGas               = 24;/**<< @brief Break down of the gases, such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol      = 25;/**<< @brief Concentration of added aerosolized substances. */
 }

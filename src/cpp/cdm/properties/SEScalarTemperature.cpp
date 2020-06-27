@@ -32,9 +32,7 @@ const TemperatureUnit& TemperatureUnit::GetCompoundUnit(const std::string& unit)
     return K;
   if (R.GetString().compare(unit) == 0)
     return R;
-  std::stringstream err;
-  err << unit << " is not a valid Temperature unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid Temperature unit");
 }
 
 double SEScalarTemperature::GetValue(const TemperatureUnit& unit) const

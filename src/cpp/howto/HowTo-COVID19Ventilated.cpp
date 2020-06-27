@@ -129,7 +129,7 @@ void HowToCOVID19Ventilated()
   double totalPeriod_s = 60.0 / respirationRate_per_min;
   double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
   double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-  mv.GetInspirationTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+  mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
   mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
   pe->ProcessAction(MVConfig);
 

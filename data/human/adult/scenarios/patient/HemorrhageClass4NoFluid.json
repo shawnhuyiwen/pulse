@@ -1,5 +1,5 @@
 {
-  "Name": "HemorrhageClass3NoFluidLongTerm",
+  "Name": "HemorrhageClass4NoFluidLongTerm",
   "Description": "",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":

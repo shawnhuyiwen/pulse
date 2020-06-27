@@ -57,15 +57,18 @@ public:
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Reset engine and set it to the state in the provided file.
+  /// The file may contain json or binary. 
+  /// Anything but an extension of .json will be interpreted as binary.
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromFile(const std::string& filename) = 0;
+  virtual bool SerializeFromFile(const std::string& file) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Save the current state of the engine to provided filename.
-  /// Engine will be in a cleared state if this method fails.
+  /// Using a .json extension will save a json/ascii file.
+  /// Anything else will save as binary.
   //--------------------------------------------------------------------------------------------------
   virtual bool SerializeToFile(const std::string& filename) const = 0;
 
@@ -84,7 +87,6 @@ public:
   /// Save the current state of the engine.
   /// The state can be saved as JSON or bytes in the given string.
   /// Note that the bytes are binary, not text; we only use the string class as a convenient container.
-  /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
   virtual bool SerializeToString(std::string& state, SerializationFormat m) const = 0;
 
@@ -111,6 +113,14 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
+  /// Get the Condition Manager.
+  /// Allows a user to check the state of active conditions
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEConditionManager& GetConditionManager() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
   /// Engines can have a configuration for allowing a user to set certain internal parameters
   /// Engines with configurations will have all configuration parameters defaulted,
   /// This allow you to change one or more or those parameters.
@@ -121,11 +131,9 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Get the Condition Manager.
-  /// Allows a user to check the state of active conditions
-  ///
+  /// returns the engine configuration.
   //--------------------------------------------------------------------------------------------------
-  virtual const SEConditionManager& GetConditionManager() const = 0;
+  virtual const SEEngineConfiguration* GetConfiguration() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -140,13 +148,7 @@ public:
   /// and provide access to the data easily (ex. to easily write data to csv files)
   //--------------------------------------------------------------------------------------------------
   virtual SEEngineTracker* GetEngineTracker() const = 0;
-  
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// returns the engine configuration.
-  //--------------------------------------------------------------------------------------------------
-  virtual const SEEngineConfiguration* GetConfiguration() const = 0;
-  
+
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// returns the engine time step that is used when advancing time.

@@ -37,7 +37,5 @@ const VolumePerPressureUnit& VolumePerPressureUnit::GetCompoundUnit(const std::s
     return m3_Per_Pa;
   if (mL_Per_mmHg.GetString().compare(unit) == 0)
     return mL_Per_mmHg;
-  std::stringstream err;
-  err << unit << " is not a valid VolumePerPressure unit";
-  throw CommonDataModelException(err.str());
+  throw CommonDataModelException(unit + " is not a valid VolumePerPressure unit");
 }
