@@ -139,7 +139,7 @@ std::string PulseEngineThunk::SerializeToString(SerializationFormat format)
   return state;
 }
 
-bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format, std::string const& data_dir)
+bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format)
 {
   SEPatientConfiguration pc(data->eng->GetLogger());
   if (!pc.SerializeFromString(patient_configuration, format, data->eng->GetSubstanceManager()))

@@ -368,6 +368,7 @@ void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatien
     const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
     dst.AddScalarOverride(sp.name(), sp.value(), sp.unit());
   }
+  dst.SetDataRoot(src.dataroot());
 }
 CDM_BIND::PatientConfigurationData* PBEngine::Unload(const SEPatientConfiguration& src)
 {
@@ -391,6 +392,7 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientCon
   }
 
   dst.set_allocated_conditions(PBEngine::Unload(*src.GetConditions()));
+  dst.set_dataroot(src.GetDataRoot());
 }
 
 

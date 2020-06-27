@@ -68,12 +68,11 @@ class PulsePhysiologyEngine:
         return None
 
     def initialize_engine(self, patient_configuration: SEPatientConfiguration,
-                                data_request_mgr: SEDataRequestManager,
-                                data_dir: str="./"):
+                                data_request_mgr: SEDataRequestManager):
         # Process requests and setup our results structure
         drm = self._process_requests(data_request_mgr, eSerializationFormat.JSON)
         pc = serialize_patient_configuration_to_string(patient_configuration, eSerializationFormat.JSON)
-        self._is_ready = self.__pulse.initialize_engine(pc, drm, PyPulse.serialization_format.json, data_dir)
+        self._is_ready = self.__pulse.initialize_engine(pc, drm, PyPulse.serialization_format.json)
         self._dt_s = self.__pulse.get_timestep("s")
         if self._is_ready:
             self._pull(True)

@@ -41,7 +41,7 @@ public:
   bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format);
   std::string SerializeToString(SerializationFormat format);
 
-  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format, std::string const& data_dir = "./");
+  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format);
 
   std::string GetInitialPatient(SerializationFormat format);
   std::string GetPatientAssessment(int type, SerializationFormat format);

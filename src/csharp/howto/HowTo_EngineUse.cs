@@ -152,8 +152,9 @@ namespace HowTo_UseEngine
             // Initialization requires that you have all data files on disk for Pulse to find when creating a patient
             //   - Patient file (if not creating an inline patient definition)
             //   - Substance, Stabilization (config folder), nutrition, environments, ecg files
-            // The data_dir field can be changed in the InitializeEngine method
-            // If you have those folders in another location
+            // If you have those folders in another location,
+            // The data root dir can be changed in the SEPatientConfiguration object
+            cfg.SetDataRootDir("./");// The default is "./"
             if (!pulse.InitializeEngine(cfg, data_mgr))
             {
               Console.WriteLine("Error Initializing Pulse!");

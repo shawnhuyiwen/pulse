@@ -8,6 +8,7 @@ namespace Pulse.CDM
     protected SEPatient patient;
     protected string patient_file;
     protected SEConditionManager condition_manager;
+    protected string data_root_dir;
 
     public SEPatientConfiguration()
     {
@@ -19,6 +20,7 @@ namespace Pulse.CDM
       patient_file = null;
       patient = null;
       condition_manager = null;
+      data_root_dir = "./";
     }
 
     public bool IsValid()
@@ -26,6 +28,15 @@ namespace Pulse.CDM
       if (!HasPatient() && !HasPatientFile())
         return false;
       return true;
+    }
+
+    public string GetDataRootDir()
+    {
+      return data_root_dir;
+    }
+    public void SetDataRootDir(string dir)
+    {
+      data_root_dir = dir;
     }
 
     public bool HasPatientFile()

@@ -11,7 +11,7 @@ class eSex(Enum):
     Female = 1
 
 class SEPatientConfiguration():
-    __slots__ = ["_patient", "_patient_file", "_condition_manager", "_scalar_overrides"]
+    __slots__ = ["_patient", "_patient_file", "_condition_manager", "_scalar_overrides", "_data_root_dir"]
 
     def __init__(self):
         self.clear()
@@ -21,11 +21,17 @@ class SEPatientConfiguration():
         self._patient_file = None
         self._scalar_overrides = []
         self._condition_manager = None
+        self._data_root_dir = "./"
 
     def is_valid(self):
         if not self.has_patient() and not self.has_patient_file():
             return False;
         return True
+
+    def set_data_root_dir(self, dir: str):
+        self._data_root_dir = dir
+    def get_data_root_dir(self):
+        return self._data_root_dir
 
     def has_patient(self):
         return self._patient is not None

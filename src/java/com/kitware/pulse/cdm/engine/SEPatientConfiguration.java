@@ -10,13 +10,13 @@ import com.kitware.pulse.cdm.bind.Engine.AnyConditionData;
 import com.kitware.pulse.cdm.bind.Engine.PatientConfigurationData;
 import com.kitware.pulse.cdm.conditions.SECondition;
 import com.kitware.pulse.cdm.patient.SEPatient;
-import com.kitware.pulse.cdm.substance.SESubstanceManager;
 
 public class SEPatientConfiguration 
 {
   protected SEPatient                     patient;
   protected String                        patientFile;
   protected List<SECondition>             conditions;
+  protected String                        dataRootDir="./";
   
   public SEPatientConfiguration()
   {
@@ -52,6 +52,7 @@ public class SEPatientConfiguration
     
     for(AnyConditionData cData : src.getConditions().getAnyConditionList())
       dst.conditions.add(SECondition.ANY2CDM(cData));
+    dst.setDataRootDir(src.getDataRoot());
   }
   
   public static PatientConfigurationData unload(SEPatientConfiguration src)
@@ -71,6 +72,7 @@ public class SEPatientConfiguration
       for(SECondition c : src.conditions)
         dst.getConditionsBuilder().addAnyCondition(SECondition.CDM2ANY(c));    
     }
+    dst.setDataRoot(src.dataRootDir);
   }
   
   public boolean isValid()
@@ -78,6 +80,15 @@ public class SEPatientConfiguration
     if (!hasPatientFile()&&!hasPatient())
       return false;
    return true;
+  }
+  
+  public void setDataRootDir(String dir)
+  {
+    dataRootDir = dir;
+  }
+  public String getDataRootDir()
+  {
+    return dataRootDir;
   }
   
   public SEPatient getPatient()
