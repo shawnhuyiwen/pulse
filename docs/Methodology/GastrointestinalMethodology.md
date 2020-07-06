@@ -177,12 +177,12 @@ Concentrations are not solely a function of GI; other systems are potentially us
 
 |  Macronutrient/Substance |               Stomach Mass(g) / Volume(mL)  vs. Time(s)                |         Blood Concentration (ug/mL) / Volume (mL) vs. Time (s)           |
 |:---:                     |:---:                                                                   |:---:                                                                     |
-| Carbohydrate/Glucose     | <img src="./plots/GI/4hr_StomachCarbs.jpg" height="200" width="400">   | <img src="./plots/GI/4hr_BloodGlucose.jpg" height="200" width="400">    |
-| Fat/Tristearin           | <img src="./plots/GI/4hr_StomachFat.jpg" height="200" width="400">     | <img src="./plots/GI/4hr_BloodTristearin.jpg" height="200" width="400"> |
-| Protein/Urea             | <img src="./plots/GI/4hr_StomachProtein.jpg" height="200" width="400"> | <img src="./plots/GI/4hr_BloodUrea.jpg" height="200" width="400">       |
-| Calcium                  | <img src="./plots/GI/4hr_StomachCalcium.jpg" height="200" width="400"> | <img src="./plots/GI/4hr_BloodCalcium.jpg" height="200" width="400">    |
-| Sodium                   | <img src="./plots/GI/4hr_StomachSodium.jpg" height="200" width="400">  | <img src="./plots/GI/4hr_BloodSodium.jpg" height="200" width="400">     |
-| Water                    | <img src="./plots/GI/4hr_StomachWater.jpg" height="200" width="400">   | <img src="./plots/GI/4hr_BV.jpg" height="200" width="400">              |
+| Carbohydrate/Glucose     | <img src="./plots/GI/6hr_StomachCarbs.jpg" height="200" width="400">   | <img src="./plots/GI/6hr_BloodGlucose.jpg" height="200" width="400">    |
+| Fat/Tristearin           | <img src="./plots/GI/6hr_StomachFat.jpg" height="200" width="400">     | <img src="./plots/GI/6hr_BloodTristearin.jpg" height="200" width="400"> |
+| Protein/Urea             | <img src="./plots/GI/6hr_StomachProtein.jpg" height="200" width="400"> | <img src="./plots/GI/6hr_BloodUrea.jpg" height="200" width="400">       |
+| Calcium                  | <img src="./plots/GI/6hr_StomachCalcium.jpg" height="200" width="400"> | <img src="./plots/GI/6hr_BloodCalcium.jpg" height="200" width="400">    |
+| Sodium                   | <img src="./plots/GI/6hr_StomachSodium.jpg" height="200" width="400">  | <img src="./plots/GI/6hr_BloodSodium.jpg" height="200" width="400">     |
+| Water                    | <img src="./plots/GI/6hr_StomachWater.jpg" height="200" width="400">   | <img src="./plots/GI/6hr_BV.jpg" height="200" width="400">              |
 </center>
 
 As seen in Table 2, the macronutrient masses in the stomach are depleted based on different digestion rates and eventually reach zero. 

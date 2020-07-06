@@ -98,7 +98,7 @@ public class CDM2MD
 
       // PATIENT CONDITIONS
       writer.append("#### The following tables describe the conditions that can be applied to the patient before starting the simulation\n<hr>\n");
-      Set<Class<? extends SEPatientCondition>> pConditions = FindObjects.findClassSubTypes("pulse.cdm.patient.conditions", SEPatientCondition.class);
+      Set<Class<? extends SEPatientCondition>> pConditions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.patient.conditions", SEPatientCondition.class);
       List<Class<? extends Object>> pConditionsSorted = pConditions.stream().collect(Collectors.toList());
       Collections.sort(pConditionsSorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
       for(Class<?> c : pConditionsSorted)
@@ -106,7 +106,7 @@ public class CDM2MD
 
       // PHYSIOLOGY
       writer.append("#### The following tables describe the system data that is calculated each time step\n<hr>\n");
-      Set<Class<? extends Object>> phys = FindObjects.findAllClasses("pulse.cdm.system.physiology");
+      Set<Class<? extends Object>> phys = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.physiology");
       List<Class<? extends Object>> physSorted = phys.stream().collect(Collectors.toList());
       Collections.sort(physSorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
       for(Class<?> c : physSorted)
@@ -115,12 +115,12 @@ public class CDM2MD
 
       // PATIENT ACTIONS/CONDITIONS/ASSESSMENTS
       writer.append("#### The following tables describe the are actions that may be performed on the patient\n<hr>\n");
-      Set<Class<? extends SEPatientAction>> pActions = FindObjects.findClassSubTypes("pulse.cdm.patient.actions", SEPatientAction.class);
+      Set<Class<? extends SEPatientAction>> pActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.patient.actions", SEPatientAction.class);
       List<Class<? extends SEPatientAction>> pActionsSorted = pActions.stream().collect(Collectors.toList());
       Collections.sort(pActionsSorted, (o1, o2) -> o1.getName().compareTo(o2.getName()));
       for(Class<?> c : pActionsSorted)
         WriteDoxyTable(c, "", writer, skipProperties);
-      Set<Class<? extends SEConsciousRespirationCommand>> cmds = FindObjects.findClassSubTypes("pulse.cdm.patient.actions", SEConsciousRespirationCommand.class);
+      Set<Class<? extends SEConsciousRespirationCommand>> cmds = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.patient.actions", SEConsciousRespirationCommand.class);
       for(Class<?> c : cmds)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(BrainInjuryData.eType.class, "BrainInjuryData_", writer, skipProperties);
@@ -129,12 +129,12 @@ public class CDM2MD
       WriteDoxyTable(SubstanceBolusData.eRoute.class, "SubstanceBolusData_", writer, skipProperties);
       WriteDoxyTable(SupplementalOxygenData.eDevice.class, "SupplementalOxygenData_", writer, skipProperties);
       WriteDoxyTable(ePatientAssessmentType.class, "", writer, skipProperties);
-      Set<Class<? extends Object>> pNutrition = FindObjects.findAllClasses("pulse.cdm.patient.nutrition");
+      Set<Class<? extends Object>> pNutrition = FindObjects.findAllClasses("com.kitware.pulse.cdm.patient.nutrition");
       for(Class<?> c : pNutrition)
         WriteDoxyTable(c, "", writer, skipProperties);
 
       writer.append("#### The following tables describe the assessments that may be performed on the patient\n<hr>\n");
-      Set<Class<? extends SEPatientAssessment>> pAsses = FindObjects.findClassSubTypes("pulse.cdm.patient.assessments", SEPatientAssessment.class);
+      Set<Class<? extends SEPatientAssessment>> pAsses = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.patient.assessments", SEPatientAssessment.class);
       for(Class<?> c : pAsses)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(ePatientAssessmentType.class, "", writer, skipProperties);
@@ -146,23 +146,23 @@ public class CDM2MD
 
       // ENVIRONMENT
       writer.append("#### The following tables describe the external environment that surrounds the patient\n<hr>\n");
-      Set<Class<? extends Object>> env = FindObjects.findAllClasses("pulse.cdm.system.environment");
+      Set<Class<? extends Object>> env = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.environment");
       for(Class<?> c : env)
         WriteDoxyTable(c, "", writer, skipProperties);
-      Set<Class<? extends SEEnvironmentAction>> eActions = FindObjects.findClassSubTypes("pulse.cdm.system.environment.actions", SEEnvironmentAction.class);
+      Set<Class<? extends SEEnvironmentAction>> eActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.environment.actions", SEEnvironmentAction.class);
       for(Class<?> c : eActions)
         WriteDoxyTable(c, "", writer, skipProperties);
-      Set<Class<? extends SEEnvironmentCondition>> eConditions = FindObjects.findClassSubTypes("pulse.cdm.system.environment.conditions", SEEnvironmentCondition.class);
+      Set<Class<? extends SEEnvironmentCondition>> eConditions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.environment.conditions", SEEnvironmentCondition.class);
       for(Class<?> c : eConditions)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(EnvironmentalConditionsData.eSurroundingType.class, "EnvironmentalConditionsData_", writer, skipProperties);
 
       // ANESTHESIA MACHINE
       writer.append("#### The following tables describe the anesthesia machine\n<hr>\n"); 
-      Set<Class<? extends Object>> anes = FindObjects.findAllClasses("pulse.cdm.system.equipment.anesthesia_machine");
+      Set<Class<? extends Object>> anes = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.anesthesia_machine");
       for(Class<?> c : anes)
         WriteDoxyTable(c, "", writer, skipProperties);
-      Set<Class<? extends SEAnesthesiaMachineAction>> aActions = FindObjects.findClassSubTypes("pulse.cdm.system.equipment.anesthesia_machine.actions", SEAnesthesiaMachineAction.class);
+      Set<Class<? extends SEAnesthesiaMachineAction>> aActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.anesthesia_machine.actions", SEAnesthesiaMachineAction.class);
       for(Class<?> c : aActions)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(AnesthesiaMachineData.eConnection.class, "AnesthesiaMachineData_", writer, skipProperties);
@@ -171,25 +171,25 @@ public class CDM2MD
 
       // ECG
       writer.append("#### The following tables describe the %ECG\n<hr>\n");
-      Set<Class<? extends Object>> ecg = FindObjects.findAllClasses("pulse.cdm.system.equipment.electrocardiogram");
+      Set<Class<? extends Object>> ecg = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.electrocardiogram");
       for(Class<?> c : ecg)
         WriteDoxyTable(c, "", writer, skipProperties);
 
       // INHALER
       writer.append("#### The following tables describe the inhaler\n<hr>\n");
-      Set<Class<? extends Object>> inhaler = FindObjects.findAllClasses("pulse.cdm.system.equipment.inhaler");
+      Set<Class<? extends Object>> inhaler = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.inhaler");
       for(Class<?> c : inhaler)
         WriteDoxyTable(c, "", writer, skipProperties);
-      Set<Class<? extends SEInhalerAction>> iActions = FindObjects.findClassSubTypes("pulse.cdm.system.equipment.inhaler.actions", SEInhalerAction.class);
+      Set<Class<? extends SEInhalerAction>> iActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.inhaler.actions", SEInhalerAction.class);
       for(Class<?> c : iActions)
         WriteDoxyTable(c, "", writer, skipProperties);
 
       // MECHANICAL VENTILATOR
       writer.append("#### The following tables describe the mechanical ventilator\n<hr>\n");
-      Set<Class<? extends Object>> mech_vent = FindObjects.findAllClasses("pulse.cdm.system.equipment.mechanical_ventilator");
+      Set<Class<? extends Object>> mech_vent = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.mechanical_ventilator");
       for(Class<?> c : mech_vent)
         WriteDoxyTable(c, "", writer, skipProperties);
-      Set<Class<? extends SEMechanicalVentilatorAction>> mvActions = FindObjects.findClassSubTypes("pulse.cdm.system.equipment.mechanical_ventilator.actions", SEMechanicalVentilatorAction.class);
+      Set<Class<? extends SEMechanicalVentilatorAction>> mvActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions", SEMechanicalVentilatorAction.class);
       for(Class<?> c : mvActions)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(MechanicalVentilatorData.eConnection.class, "MechanicalVentilatorData_", writer, skipProperties);
@@ -197,10 +197,10 @@ public class CDM2MD
 
       // SUBSTSANCE
       writer.append("#### The following tables describe substances used in Pulse\n<hr>\n");
-      Set<Class<? extends Object>> subs = FindObjects.findAllClasses("pulse.cdm.substance");
+      Set<Class<? extends Object>> subs = FindObjects.findAllClasses("com.kitware.pulse.cdm.substance");
       for(Class<?> c : subs)
         WriteDoxyTable(c, "", writer, skipProperties);
-      Set<Class<? extends Object>> subQs = FindObjects.findAllClasses("pulse.cdm.substance.quantity");
+      Set<Class<? extends Object>> subQs = FindObjects.findAllClasses("com.kitware.pulse.cdm.substance.quantity");
       for(Class<?> c : subQs)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(SubstanceData.eState.class, "SubstanceData_", writer, skipProperties);
@@ -209,13 +209,13 @@ public class CDM2MD
 
       // COMPARTMENT
       writer.append("#### The following tables describe anatomical compartments\n<hr>\n");
-      Set<Class<? extends SECompartment>> cmpts = FindObjects.findClassSubTypes("pulse.cdm.compartment",SECompartment.class);
+      Set<Class<? extends SECompartment>> cmpts = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.compartment",SECompartment.class);
       for(Class<?> c : cmpts)
         WriteDoxyTable(c, "", writer, skipProperties);
 
       // SCENARIO
       writer.append("#### The following tables describe a simulation scenario\n<hr>\n");
-      Set<Class<? extends Object>> sce = FindObjects.findAllClasses("pulse.cdm.scenario");
+      Set<Class<? extends Object>> sce = FindObjects.findAllClasses("com.kitware.pulse.cdm.scenario");
       for(Class<?> c : sce)
         WriteDoxyTable(c, "", writer, skipProperties);
 

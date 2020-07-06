@@ -488,9 +488,9 @@ Actions
 
 Urination empties the bladder. This can be called as an action or will automatically occur with the functional incontinence event. This action decreases the urethra resistance to allow the bladder to empty to 1 mL.  The fluid mechanics and transport are done generically by the circuit solver and transporter respectively.
 
-<center><img src="./plots/Renal/12hr_Urination.jpg" width="800"></center>
+<center><img src="./plots/Renal/4hr_Urination.jpg" width="800"></center>
 <center> 
-<i>Figure 15. Bladder volume over time is shown during a twelve hour simulation. Once the bladder reaches the maximum allowable volume, 400mL, the patient will experience functional incontinence.</i>
+<i>Figure 15. Bladder volume over time is shown during a 4 hour simulation. Once the bladder reaches the maximum allowable volume, 400mL, the patient will experience functional incontinence.</i>
 </center><br>
 
 @anchor renal-events
