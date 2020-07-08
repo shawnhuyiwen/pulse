@@ -9,7 +9,7 @@ Mechanical Ventilator Methodology {#MechanicalVentilatorMethodology}
 The Mechanical Ventilator Model is a generic representation of a positive-pressure ventilation device and 
 inhaled gas/agent administration. It models a semi-closed circuit breathing system. The current implementation is limited, but the data model is designed for future expansion.
 The results of this system were evaluated for pressure control - continuous mandatory ventilation (PC-CMV) and volume control - assist control (VC-AC) ventilation modes. The results show excellent correlation with the expected values. 
-Future work will add more ventilation modes, including assisted breathing functionality.
+Future work will add more ventilation modes.
 
 @anchor ventilator-intro
 ## Introduction
@@ -194,7 +194,7 @@ A scenario that varies the VC-AC settings for assisted breathing for a patient w
 </tr>
 </table>
 </center>
-<center><i>Figure 3. These plots show the successful implementation of varying Mechanical Ventilator settings without patient spontaneous breathing.</i></center><br>
+<center><i>Figure 3. These plots show the successful implementation of varying Mechanical Ventilator settings with patient spontaneous breathing.</i></center><br>
 
 @anchor ventilator-ardsvalidation
 ## Validation - ARDS
@@ -233,7 +233,7 @@ Table 1. Cumulative validation results for Anesthesia Machine specific condition
 |	Mild ARDS (severity = 0.3)	|	Chronic condition	|		|	0	|<span class="success">	Increased @cite mortelliti2002acute	</span>|<span class="success">	>200 @cite villar2013universal	</span>|<span class="success">	2%-5% @cite Levitzky2013pulmonary	</span>|<span class="success">	Reduced	</span>|<span class="success">	Reduced (fatigue)	</span>|<span class="success">	Reduced @cite mortelliti2002acute	</span>|
 |	Tracheal Intubation	|		|	30	|	60	|<span class="success">	Increased @cite mortelliti2002acute	</span>|<span class="success">	>200 @cite villar2013universal	</span>|<span class="success">	2%-5% @cite Levitzky2013pulmonary	</span>|<span class="success">	Reduced	</span>|<span class="success">	Reduced  further (artificial airway) @cite arnal2018parameters	</span>|<span class="success">	Reduced  further  (artificial airway) @cite mortelliti2002acute @cite arnal2018parameters	</span>|
 |	Apnea (Dyspnea severity = 1.0); Turn on P-CMV mechanical ventilator and provide supplemental oxygen	|	Use apnea to mimic neuromuscular blockade; Ventilator settings chosen for target tidal volume and oxygen saturation	|	60	|	360	|<span class="success">	20 (ventilator setting)	</span>|<span class="success">	>200 @cite villar2013universal	</span>|<span class="success">	2%-5% @cite Levitzky2013pulmonary	</span>|<span class="success">	88%-95% @cite mortelliti2002acute (ventilator target)	</span>|<span class="success">	6 mL/kg (ideal body weight) = 450 mL @cite mortelliti2002acute (ventilator target)	</span>|<span class="success">	Reduced @cite mortelliti2002acute	</span>|
-|	Moderate ARDS (severity = 0.3); Adjust ventilator settings	|	Ventilator settings chosen for target tidal volume and oxygen saturation	|	360	|	660	|<span class="success">	20 (ventilator setting)	</span>|<span class="success">	100-200 @cite villar2013universal	</span>|<span class="success">	>20% @cite radermacher2017fifty	</span>|<span class="success">	88%-95% @cite mortelliti2002acute (ventilator target)	</span>|<span class="success">	6 mL/kg (ideal body weight) = 450 mL @cite mortelliti2002acute (ventilator target)	</span>|<span class="success">	Reduced further @cite mortelliti2002acute	</span>|
+|	Moderate ARDS (severity = 0.6); Adjust ventilator settings	|	Ventilator settings chosen for target tidal volume and oxygen saturation	|	360	|	660	|<span class="success">	20 (ventilator setting)	</span>|<span class="success">	100-200 @cite villar2013universal	</span>|<span class="success">	>20% @cite radermacher2017fifty	</span>|<span class="success">	88%-95% @cite mortelliti2002acute (ventilator target)	</span>|<span class="success">	6 mL/kg (ideal body weight) = 450 mL @cite mortelliti2002acute (ventilator target)	</span>|<span class="success">	Reduced further @cite mortelliti2002acute	</span>|
 |	Severe ARDS (severity = 0.9); Adjust ventilator settings	|	Ventilator settings chosen for target tidal volume and supplemental oxygen at max (1.0 fraction O2)	|	660	|	960	|<span class="success">	20 (ventilator setting)	</span>|<span class="success">	<100 @cite villar2013universal	</span>|<span class="success">	>40% @cite radermacher2017fifty	</span>|<span class="success">	Reduced (100% FiO2)	</span>|<span class="success">	6 mL/kg (ideal body weight) = 450 mL @cite mortelliti2002acute (ventilator target)	</span>|<span class="success">	Reduced further @cite mortelliti2002acute	</span>|
 
 @anchor ventilator-conclusion
@@ -242,7 +242,7 @@ Table 1. Cumulative validation results for Anesthesia Machine specific condition
 While the model is a generic representation of mechanical ventilation, inhaled gases, and inhaled agent 
 administration, this model represents the behavior of a complex piece of equipment that is 
 associated with a difficult
-medical speciality. The engine provides a whole-body approach to modeling that 
+medical specialty. The engine provides a whole-body approach to modeling that 
 allows for simulation of this complex field. This system is a strong addition to the engine with the potential for 
 future development.
 
