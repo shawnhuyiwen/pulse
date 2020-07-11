@@ -119,9 +119,9 @@ $ cd builds
 # Note you need to provide cmake the source directory at the end (relative or absolute)
 # Run CMake (it will use the system default compiler if you don't provide options or use the CMake GUI)
 $ cmake -DCMAKE_BUILD_TYPE:STRING=Release ../engine
-# If you want the build to pull the Verification and Validation (V&V) scenarios and baselines run this (or check the PULSE_DOWNLOAD_BASELINES option in the CMake GUI)
+# If you want the build to pull the Verification and Validation (V&V) scenarios and baselines run this (or check the Pulse_DOWNLOAD_BASELINES option in the CMake GUI)
 # You can always pull these later if you want (See Running and Testing)
-$ cmake -DCMAKE_BUILD_TYPE:STRING=Release -DPULSE_DOWNLOAD_BASELINES:BOOL=ON ../engine
+$ cmake -DCMAKE_BUILD_TYPE:STRING=Release -DPulse_DOWNLOAD_BASELINES:BOOL=ON ../engine
 #
 # Build the install target/project
 # On Linux/OSX/MinGW 
@@ -181,7 +181,7 @@ With your toolchain file in your build directory open a cmd shell and run :
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # Where Pulse source is located in N:/Pulse/engine on my system
-cmake -G "Unix Makefiles" -DPULSE_BUILD_JAVA_UTILS=OFF -DCMAKE_TOOLCHAIN_FILE=magicleap.toolchain.cmake N:/Pulse/engine
+cmake -G "Unix Makefiles" -DPulse_BUILD_JAVA_UTILS=OFF -DCMAKE_TOOLCHAIN_FILE=magicleap.toolchain.cmake N:/Pulse/engine
 # Where the Lumin SDK was installed to N:/Tools/MagicLeap on my system
 N:/Tools/MagicLeap/dev/mlsdk/v0.22.0/tools/mabu/tools/MinGW/bin/mingw32-make.exe
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
