@@ -1743,6 +1743,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
     any->set_allocated_substancecompoundinfusion(PBPatientAction::Unload(*sci));
     return any;
   }
+  const SESupplementalOxygen* so2 = dynamic_cast<const SESupplementalOxygen*>(&action);
+  if (so2 != nullptr)
+  {
+    any->set_allocated_supplementaloxygen(PBPatientAction::Unload(*so2));
+    return any;
+  }
   const SETensionPneumothorax* tp = dynamic_cast<const SETensionPneumothorax*>(&action);
   if (tp != nullptr)
   {
