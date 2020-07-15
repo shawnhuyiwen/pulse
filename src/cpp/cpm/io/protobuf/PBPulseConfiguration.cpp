@@ -324,8 +324,8 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
       PBProperty::Load(config.centralcontrollerco2pressuresetpoint(), dst.GetCentralControllerCO2PressureSetPoint());
     if (config.has_centralventilatorycontrollergain())
       PBProperty::Load(config.centralventilatorycontrollergain(), dst.GetCentralVentilatoryControllerGain());
-    if (config.has_minimumallowableinpiratoryandexpiratoryperiod())
-      PBProperty::Load(config.minimumallowableinpiratoryandexpiratoryperiod(), dst.GetMinimumAllowableInpiratoryAndExpiratoryPeriod());
+    if (config.has_minimumallowableinspiratoryandexpiratoryperiod())
+      PBProperty::Load(config.minimumallowableinspiratoryandexpiratoryperiod(), dst.GetMinimumAllowableInpiratoryAndExpiratoryPeriod());
     if (config.has_minimumallowabletidalvolume())
       PBProperty::Load(config.minimumallowabletidalvolume(), dst.GetMinimumAllowableTidalVolume());
     if (config.has_peripheralcontrollerco2pressuresetpoint())
@@ -563,7 +563,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
   if (src.HasCentralVentilatoryControllerGain())
     resp->set_allocated_centralventilatorycontrollergain(PBProperty::Unload(*src.m_CentralVentilatoryControllerGain));
   if (src.HasMinimumAllowableInpiratoryAndExpiratoryPeriod())
-    resp->set_allocated_minimumallowableinpiratoryandexpiratoryperiod(PBProperty::Unload(*src.m_MinimumAllowableInpiratoryAndExpiratoryPeriod));
+    resp->set_allocated_minimumallowableinspiratoryandexpiratoryperiod(PBProperty::Unload(*src.m_MinimumAllowableInpiratoryAndExpiratoryPeriod));
   if (src.HasMinimumAllowableTidalVolume())
     resp->set_allocated_minimumallowabletidalvolume(PBProperty::Unload(*src.m_MinimumAllowableTidalVolume));
   if (src.HasPeripheralControllerCO2PressureSetPoint())

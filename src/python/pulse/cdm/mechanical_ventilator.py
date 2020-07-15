@@ -45,7 +45,7 @@ class SEMechanicalVentilator(SEEquipment):
 
                  "_inspiration_pause_time",
                  # One of
-                 "_peak_inpiratory_pressure",
+                 "_peak_inspiratory_pressure",
                  "_inspiration_target_flow",
                  # One of
                  "_inspiration_machine_trigger_time",
@@ -83,7 +83,7 @@ class SEMechanicalVentilator(SEEquipment):
 
         self._inspiration_pause_time = None
 
-        self._peak_inpiratory_pressure = None
+        self._peak_inspiratory_pressure = None
         self._inspiration_target_flow = None
 
         self._inspiration_machine_trigger_time = None
@@ -120,7 +120,7 @@ class SEMechanicalVentilator(SEEquipment):
 
         if self._inspiration_pause_time is not None: self._inspiration_pause_time.invalidate()
 
-        if self._peak_inpiratory_pressure is not None: self._peak_inpiratory_pressure.invalidate()
+        if self._peak_inspiratory_pressure is not None: self._peak_inspiratory_pressure.invalidate()
         if self._inspiration_target_flow is not None: self._inspiration_target_flow.invalidate()
         
         if self._inspiration_machine_trigger_time is not None: self._inspiration_machine_trigger_time.invalidate()
@@ -160,7 +160,7 @@ class SEMechanicalVentilator(SEEquipment):
 
         if src.has_inspiration_pause_time(): self.get_inspiration_pause_time().set(src._inspiration_pause_time)
 
-        if src.has_peak_inpiratory_pressure(): self.get_peak_inpiratory_pressure().set(src._peak_inpiratory_pressure)
+        if src.has_peak_inspiratory_pressure(): self.get_peak_inspiratory_pressure().set(src._peak_inspiratory_pressure)
         if src.has_inspiration_target_flow(): self.get_inspiration_target_flow().set(src._inspiration_target_flow)
 
         if src.has_inspiration_machine_trigger_time(): self.get_inspiration_machine_trigger_time().set(src._inspiration_machine_trigger_time)
@@ -278,12 +278,12 @@ class SEMechanicalVentilator(SEEquipment):
             self._inspiration_pause_time = SEScalarTime()
         return self._inspiration_pause_time
 
-    def has_peak_inpiratory_pressure(self):
-        return False if self._peak_inpiratory_pressure is None else self._peak_inpiratory_pressure.is_valid()
-    def get_peak_inpiratory_pressure(self):
-        if self._peak_inpiratory_pressure is None:
-            self._peak_inpiratory_pressure = SEScalarPressure()
-        return self._peak_inpiratory_pressure
+    def has_peak_inspiratory_pressure(self):
+        return False if self._peak_inspiratory_pressure is None else self._peak_inspiratory_pressure.is_valid()
+    def get_peak_inspiratory_pressure(self):
+        if self._peak_inspiratory_pressure is None:
+            self._peak_inspiratory_pressure = SEScalarPressure()
+        return self._peak_inspiratory_pressure
 
     def has_inspiration_target_flow(self):
         return False if self._inspiration_target_flow is None else self._inspiration_target_flow.is_valid()

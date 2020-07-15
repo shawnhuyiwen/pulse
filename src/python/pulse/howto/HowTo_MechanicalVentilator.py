@@ -37,7 +37,7 @@ def HowTo_MechanicalVentilator():
     mechanical_ventilator.set_connection(eConnection.Mask)
     mechanical_ventilator.set_inspiration_waveform(eDriverWaveform.Square)
     mechanical_ventilator.set_expiration_waveform(eDriverWaveform.Square)
-    mechanical_ventilator.get_peak_inpiratory_pressure().set_value(21, PressureUnit.cmH2O)
+    mechanical_ventilator.get_peak_inspiratory_pressure().set_value(21, PressureUnit.cmH2O)
     mechanical_ventilator.get_positive_end_expired_pressure().set_value(10, PressureUnit.cmH2O)
 
     # Translate ventilator settings
