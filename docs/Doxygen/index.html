@@ -62,19 +62,18 @@
               <h1>Downloads</h1>
             </div>
             <div class="row">
-              <div class="feat-application row-content col-sm-4">
+              <div class="feat-application row-content col-sm-6">
                 <div class="feat-application-wrap">
                   <div class="app-img">
                     <img src="Images/PulseExplorer-Vitals.png" alt="">
                   </div>
                   <div class="app-content">
                     <h4>Pulse Physiology Explorer</h4>
-                    <p>The Pulse Physiology Engine is a powerful tool in computing the physiological responses to acute injury and treatment. 
-                       However, without a visualization tool the information is difficult to understand. 
+                    <p>The Pulse Physiology Engine is a powerful tool in computing the physiological responses to acute injury and treatment.
                        As part of the Kitware physiology repository, we have developed a visualization tool built on Qt to provide a way to dynamically interact with the Pulse physiology engine.
                        Prebuilt binaries are available.</p>
                     <div class="calls-to-action">
-                      <a href="https://gitlab.kitware.com/physiology/explorer/-/wikis/home#download-the-pulse-explorer" class="btn btn-primary">Download</a>
+                      <a href="https://gitlab.kitware.com/physiology/explorer/-/wikis/home#download-the-pulse-explorer" class="btn btn-primary" target="_blank">Download</a>
                       <a href="https://gitlab.kitware.com/physiology/explorer" class="btn btn-primary" target="_blank">Source</a>
                     </div>
                   </div>
@@ -82,7 +81,7 @@
               </div>
               <!-- END .application -->
 
-              <div class="feat-application row-content col-sm-4">
+              <div class="feat-application row-content col-sm-6">
                 <div class="feat-application-wrap">
                   <div class="app-img">
                     <ul id="slippry">
@@ -104,8 +103,35 @@
                 </div>
               </div>
               <!-- END .application -->
+            </div>
+            
+            <br><br>
               
-              <div class="feat-application row-content col-sm-4">
+            <div class="row">
+              <div class="feat-application row-content col-sm-6">
+                <div class="feat-application-wrap">
+                  <div class="app-img">
+                  <center>
+                    <img src="Images/PulseJupyter.png" alt="">
+                  </center>
+                  </div>
+                  <div class="app-content">
+                    <h4 style="padding-top:35px">Pulse Python/Jupyter Support</h4>
+                    <p>Pulse now supports Python.
+                       As part of our Python support, we have created several Jupyter notebooks and examples demonstrating Pulse.
+                       You can immediatly view our notebooks and code new notebooks in your browser.</a>
+                       As we work towards PyPi distribution of Pulse, we provide several ways to add our python package to your application.<br><br>
+                    </p>
+                    <div class="calls-to-action">
+                      <a href="https://mybinder.org/v2/git/https%3A%2F%2Fgitlab.kitware.com%2Fphysiology%2Fjupyter.git/master" class="btn btn-primary" target="_blank">Web Notebook</a>
+                      <a href="https://gitlab.kitware.com/physiology/engine/-/wikis/Using%20Python" class="btn btn-primary" target="_blank">Wiki</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- END .application -->
+              
+              <div class="feat-application row-content col-sm-6">
                 <div class="feat-application-wrap">
                   <div class="app-img">
                   <center>
@@ -115,12 +141,14 @@
                   <div class="app-content">
                     <h4 style="padding-top:35px">Pulse Engine</h4>
                     <p>The Pulse Engine repository contains all the code needed to build the engine.
-                       Pulse is written in C++ and also provides an interface for other languages, including Java, C, C#, and soon Python.
+                       Pulse is written in C++ and also provides an interface for other languages, including Java, C, C#, and Python.
                        Follow the Readme instructions on the repository to build your version of Pulse.
                        Leverage the provided resources for any issues building Pulse.<br><br>
+                       We also provide prebuild docker containers for every Pulse version. <br><br>
                     </p>
                     <div class="calls-to-action">
                       <a href="https://gitlab.kitware.com/physiology/engine" class="btn btn-primary" target="_blank">Source</a>
+                      <a href="https://hub.docker.com/r/kitware/pulse" class="btn btn-primary" target="_blank">Docker Hub</a>
                     </div>
                   </div>
                 </div>

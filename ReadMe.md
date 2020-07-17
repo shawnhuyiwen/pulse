@@ -135,7 +135,26 @@ $ cd install/bin
 # In this example that would be ~/Pulse/builds/install/bin
 # Now you can run something
 $ ./PulseScenarioDriver VitalsMonitor.json
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### Docker Support
+
+Pulse provides a docker file that, by default, builds a linux based docker container with Python support.
+
+To build this docker container, pull the source code and run the docker build command from the source root.
+Kitware provides Pulse containers on [dockerhub](https://hub.docker.com/r/kitware/pulse).
+
+Here is an example of building a docker container and pushing it to an organization repository in dockerhub:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# From the Pulse source directory
+$ docker build -t kitware/pulse:3.0.0 .
+$ docker push kitware/pulse:3.0.0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+### Single Board Computers Support 
 
 Note that on small boards, like the Beagle Board Black and DragonBoard 410c, you may need to allocate a <a href="https://www.cyberciti.biz/faq/linux-add-a-swap-file-howto/">temporary swap</a> file if your build runs out of memory
 

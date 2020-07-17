@@ -88,6 +88,7 @@ elseif(TYPE STREQUAL "doxygen")
   setup_landing_page(index.html)
   setup_landing_page(pulse-in-action.html)
   setup_landing_page(news.html)
+  setup_landing_page(focus.html)
 elseif(TYPE STREQUAL "protoc")
   file(REMOVE @CMAKE_SOURCE_DIR@/src/schema/schema_last_built)
   execute_process(COMMAND ${CMAKE_COMMAND} -DSRC_ROOT:PATH=@CMAKE_SOURCE_DIR@/src

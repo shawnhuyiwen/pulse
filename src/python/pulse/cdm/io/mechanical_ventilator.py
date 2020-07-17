@@ -42,8 +42,8 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
     if src.has_inspiration_pause_time():
         serialize_scalar_time_to_bind(src.get_inspiration_pause_time(), dst.InspirationPauseTime)
 
-    if src.has_peak_inpiratory_pressure():
-        serialize_scalar_pressure_to_bind(src.get_peak_inpiratory_pressure(), dst.PeakInspiratoryPressure)
+    if src.has_peak_inspiratory_pressure():
+        serialize_scalar_pressure_to_bind(src.get_peak_inspiratory_pressure(), dst.PeakInspiratoryPressure)
     if src.has_inspiration_target_flow():
         serialize_scalar_pressure_to_bind(src.get_inspiration_target_flow(), dst.InspirationTargetFlow)
 

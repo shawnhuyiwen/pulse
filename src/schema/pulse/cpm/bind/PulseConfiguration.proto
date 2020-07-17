@@ -163,7 +163,7 @@ message ConfigurationData
     pulse.cdm.bind.ScalarPressureData                  CentralControllerCO2PressureSetPoint                 = 1;
     pulse.cdm.bind.ScalarData                          CentralVentilatoryControllerGain                     = 2;
     pulse.cdm.bind.ScalarVolumeData                    MinimumAllowableTidalVolume                          = 3;
-    pulse.cdm.bind.ScalarTimeData                      MinimumAllowableInpiratoryAndExpiratoryPeriod        = 4;
+    pulse.cdm.bind.ScalarTimeData                      MinimumAllowableInspiratoryAndExpiratoryPeriod       = 4;
     pulse.cdm.bind.ScalarPressureData                  PeripheralControllerCO2PressureSetPoint              = 5;
     pulse.cdm.bind.ScalarData                          PeripheralVentilatoryControllerGain                  = 6;
     pulse.cdm.bind.ScalarVolumePerTimeData             PulmonaryVentilationRateMaximum                      = 7;
