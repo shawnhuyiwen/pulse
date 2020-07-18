@@ -12,6 +12,7 @@ import pandas as pd
 import sys
 
 from SALib.sample import saltelli
+from scipy import stats
 
 
 def create_histograms(sample_params_df, output_dir):
@@ -29,6 +30,7 @@ def create_histograms(sample_params_df, output_dir):
     for key in sample_params_df.keys():
         sample_params_df.hist(column=key, bins=30)
         plt.savefig(os.path.join(output_dir, "histograms", "{}.png".format(key)))
+
 
 def run_simulation_list(param_values_df, sobol_params_dict, output_dir):
     """
@@ -141,11 +143,12 @@ def gen_sim_list_from_defaults(percent_variation, baseline_file, distribution, o
     :param baseline_file: String - patient state file to read baseline vales
     :param distribution: String - "normal or "uniform"
     :param output_dir: String - output directory
+    :param compartment: String - 'cv' or 'combined'
     :return: Pandas DataFrame - holds sampled parameters, dictionary - holds parameter units
     """
 
     print("Sampling parameter space ...")
-    sobol_problem_size = 1000
+    sobol_problem_size = 600
     sobol_params_dict = get_paths_and_values(percent_variation, baseline_file, distribution, compartment)
     sobol_problem = sample_params(sobol_params_dict, output_dir)
 
@@ -170,7 +173,8 @@ def get_paths_and_values(percent_variation, baseline_file, distribution, compart
     file.close()
 
     # get all cardiovascular and/or respiratory paths
-    cv_paths_to_remove = ["RightHeart1ToRightHeart3", "LeftHeart1ToLeftHeart3"]
+    # enter any resistance or compliance paths that should not be included in analysis
+    cv_paths_to_remove = []
     resp_paths_to_remove = []
     full_cv_paths = next(
         item for item in initial_patient_state_file["CircuitManager"]["FluidCircuit"]
@@ -182,26 +186,36 @@ def get_paths_and_values(percent_variation, baseline_file, distribution, compart
     full_resp_paths = [ele for ele in full_resp_paths["Circuit"]["Path"] if ele not in resp_paths_to_remove]
 
     sobol_params = {"paths": [], "bounds": [], "dists": [], "unit": []}
+    full_cv_paths.sort()
+
     for circuit_path in initial_patient_state_file["CircuitManager"]["FluidPath"]:
         if circuit_path["CircuitPath"]["Name"] in full_cv_paths:
             if 'Resistance' in circuit_path.keys():
-                sobol_params = populate_sobol_params(circuit_path, sobol_params, "Resistance", distribution,
-                                                     "ScalarPressureTimePerVolume", percent_variation)
+                populate_sobol_params(circuit_path["Resistance"]["ScalarPressureTimePerVolume"]["Value"],
+                                      circuit_path["CircuitPath"]["Name"], sobol_params, distribution,
+                                      circuit_path["Resistance"]["ScalarPressureTimePerVolume"]["Unit"],
+                                      percent_variation)
             elif 'Compliance' in circuit_path.keys():
-                sobol_params = populate_sobol_params(circuit_path, sobol_params, "Compliance", distribution,
-                                                     "ScalarVolumePerPressure", percent_variation)
+                populate_sobol_params(circuit_path["Compliance"]["ScalarVolumePerPressure"]["Value"],
+                                      circuit_path["CircuitPath"]["Name"], sobol_params, distribution,
+                                      circuit_path["Compliance"]["ScalarVolumePerPressure"]["Unit"],
+                                      percent_variation)
         elif compartment == "combined" and circuit_path["CircuitPath"]["Name"] in full_resp_paths:
             if 'Resistance' in circuit_path.keys():
-                sobol_params = populate_sobol_params(circuit_path, sobol_params, "Resistance", distribution,
-                                                     "ScalarPressureTimePerVolume", percent_variation)
+                populate_sobol_params(circuit_path["Resistance"]["ScalarPressureTimePerVolume"]["Value"],
+                                      circuit_path["CircuitPath"]["Name"], sobol_params, distribution,
+                                      circuit_path["Resistance"]["ScalarPressureTimePerVolume"]["Unit"],
+                                      percent_variation)
             elif 'Compliance' in circuit_path.keys():
-                sobol_params = populate_sobol_params(circuit_path, sobol_params, "Compliance", distribution,
-                                                     "ScalarVolumePerPressure", percent_variation)
+                populate_sobol_params(circuit_path["Compliance"]["ScalarVolumePerPressure"]["Value"],
+                                      circuit_path["CircuitPath"]["Name"], sobol_params, distribution,
+                                      circuit_path["Compliance"]["ScalarVolumePerPressure"]["Unit"],
+                                      percent_variation)
 
     return sobol_params
 
 
-def populate_sobol_params(circuit_path, sobol_params, lumped_element, distribution, unit, percent_variation):
+def populate_sobol_params(value, name, sobol_params, distribution, unit, percent_variation):
     """
     Populate a dictionary to make it easier to sample the parameter space.
     :param circuit_path: Dictionary - holds parts of the patient state file
@@ -213,7 +227,6 @@ def populate_sobol_params(circuit_path, sobol_params, lumped_element, distributi
     :return: Dictionary - holds parameters with bounds to sample
     """
 
-    value = circuit_path[lumped_element][unit]["Value"]
     if distribution == "normal":
         bound1 = value
         bound2 = value * percent_variation / 100.0
@@ -225,8 +238,8 @@ def populate_sobol_params(circuit_path, sobol_params, lumped_element, distributi
     else:
         raise ValueError("Incorrect distribution.")
     sobol_params["bounds"].append([bound1, bound2])
-    sobol_params["paths"].append(circuit_path["CircuitPath"]["Name"])
-    sobol_params["unit"].append(circuit_path[lumped_element][unit]["Unit"])
+    sobol_params["paths"].append(name)
+    sobol_params["unit"].append(unit)
 
     return sobol_params
 
@@ -308,30 +321,43 @@ def gen_sim_list_from_manual_edits(output_dir):
 
 if __name__ == '__main__':
     """
-    To run cardiovascular analysis: python3 utils.py cv
-    To run combined cardiovascular and respiratory analysis: python3 utils.py combined
+    Creates series of JSON files for Pulse simulations.
+    To run cardiovascular system analysis: python3 utils.py cv
+    To run combined cardiovascular and respiratory systems analysis: python3 utils.py combined
     """
 
     if len(sys.argv) != 2:
-        raise ValueError("Incorrect number of arguments. Please enter 'cv' if analyzing only the cardiovascular or"
-                         " 'combined' if analyzing the combined cardiovascular and respiratory system.")
+        raise ValueError("Incorrect number of arguments. Please enter 'cv' if analyzing only the cardiovascular system"
+                         " or 'combined' if analyzing the combined cardiovascular and respiratory systems.")
 
     write_only = True
+
+    """
+    Amount to vary the input parameters (resistances and compliances). If sampling parameters with a uniform
+    distribution, the percent_variation will describe the range of values. If sampling parameters with a normal
+    distribution, the percent_variation will describe the standard deviation."
+    """
     percent_variation = 10.0
+
+    # set distribution to 'normal' or 'uniform'
     distribution = "normal"
+
     output_dir = "./test_results/sensitivity_analysis/"
     baseline_file = "./states/StandardMale@0s.json"
-    sensitivity_analysis = "local"
+
+    # set sensitivity_analysis to 'global' or 'local'
+    sensitivity_analysis = "global"
 
     if sensitivity_analysis == "global":
         print("Global sensitivity analysis")
-        # simulations = SimulationListData()
-        # simulations.OutputRootDir = BaseDir + "simulations/"
         create_sim_list = False
         if write_only:
             # Generate the whole list
-            sample_params_df, sobol_param_dict = gen_sim_list_from_defaults(percent_variation, baseline_file, distribution,
-                                                                            output_dir, sys.argv[1])
+            sample_params_df, sobol_param_dict = gen_sim_list_from_defaults(percent_variation,
+                                                                            baseline_file,
+                                                                            distribution,
+                                                                            output_dir,
+                                                                            sys.argv[1])
             create_sim_list = True
         else:
             if not os.path.exists(os.path.join(output_dir, "sensitivity_analysis_bounds_list.json")):

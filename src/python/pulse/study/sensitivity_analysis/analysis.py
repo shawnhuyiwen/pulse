@@ -31,28 +31,110 @@ def gen_heatmaps(sobol_indices_df, quantities_of_interest, results_dir, sobol_in
     for col in quantities_of_interest:
         df[col] = sobol_indices_df[col, sobol_index]
 
-    bins = ["Brain", "Myocardium", "VenaCava", "RightArm", "LeftArm", "RightLeg", "LeftLeg", "Fat", "Muscle", "Skin",
-            "Liver", "Spleen", "SmallIntestine", "LargeIntestine", "Splanchnic", "Kidney", "Bone", "LeftPulmonary",
-            "RightPulmonary", "Pericardium"]
+    for col in df.columns:
+        df.rename({col: col.replace("Mean ", "")}, axis=1, inplace=True)
+
+    df_max = df.max(axis=1)
+    indices_to_keep = sorted(range(len(df_max)), key=lambda sub: df_max[sub])[-20:]
+    df_keep = df.iloc[indices_to_keep].sort_index()
+    # df_keep = df_keep.sort_index()
+
+    abbreviations = {"AbdominalCavity1ToGround": "AA1-G",
+                     "Aorta1ToAorta4": "AA1-AA4",
+                     "Aorta1ToBone1": "AA1-Bone",
+                     "Aorta1ToBrain1": "AA1-Brain",
+                     "Aorta1ToFat1": "AA1-Fat",
+                     "Aorta1ToLargeIntestine": "AA1-LI",
+                     "Aorta1ToLeftArm1": "AA1-LA",
+                     "Aorta1ToLeftLeg1": "AA1-LL",
+                     "Aorta1ToLiver1": "AA1-Liver",
+                     "Aorta1ToMuscle1": "AA1-Muscle",
+                     "Aorta1ToMyocardium1": "AA1-MC",
+                     "Aorta1ToRightArm1": "AA1-RA",
+                     "Aorta1ToRightLeg1": "AA1-RL",
+                     "Aorta1ToSkin1": "AA1-Skin",
+                     "Aorta1ToSmallIntestine": "AA1-SI",
+                     "Aorta1ToSplanchnic": "AA1-SP",
+                     "Aorta1ToSpleen": "AA1-Spleen",
+                     "Aorta3ToAorta1": "AA3-AA1",
+                     "Bone1ToBone2": "Bone-VC",
+                     "Bone1ToGround": "Bone-G",
+                     "Brain1ToBrain2": "Brain-VC",
+                     "Brain1ToGround": "Brain-G",
+                     "Fat1ToFat2": "Fat-VC",
+                     "Fat1ToGround": "Fat-G",
+                     "LargeIntestineToGround": "LI-G",
+                     "LargeIntestineToPortalVein": "LI-PV",
+                     "LeftArm1ToGround": "LA-G",
+                     "LeftArm1ToLeftArm2": "LA-VC",
+                     "LeftIntermediatePulmonaryArteriesToLeftPulmonaryArteries": "LIPA-LPA",
+                     "LeftLeg1ToGround": "LL-G",
+                     "LeftLeg1ToLeftLeg2": "LL-VC",
+                     "LeftPulmonaryArteriesToGround": "LPA-G",
+                     "LeftPulmonaryArteriesToLeftPulmonaryCapillaries": "LPA-LPC",
+                     "LeftPulmonaryArteriesToLeftPulmonaryVeins": "LPA-LPV",
+                     "LeftPulmonaryCapillariesToGround": "LPC-G",
+                     "LeftPulmonaryCapillariesToLeftPulmonaryVeins": "LPC-LPV",
+                     "LeftPulmonaryVeinsToGround": "LPV-G",
+                     "LeftPulmonaryVeinsToLeftIntermediatePulmonaryVeins": "LPV-LIPV",
+                     "Liver1ToGround": "Liver-G",
+                     "Liver1ToLiver2": "Liver-VC",
+                     "Muscle1ToGround": "Muscle-G",
+                     "Muscle1ToMuscle2": "Muscle-VC",
+                     "Myocardium1ToGround": "MC-G",
+                     "Myocardium1ToMyocardium2": "MC-VC",
+                     "Pericardium1ToGround": "PC-G",
+                     "PortalVeinToLiver1": "PV-Liver",
+                     "RightArm1ToGround": "RA-G",
+                     "RightArm1ToRightArm2": "RA-VC",
+                     "RightIntermediatePulmonaryArteriesToRightPulmonaryArteries": "RIPA-RPA",
+                     "RightLeg1ToGround": "RL-G",
+                     "RightLeg1ToRightLeg2": "RL-VC",
+                     "RightPulmonaryArteriesToGround": "RPA-G",
+                     "RightPulmonaryArteriesToRightPulmonaryCapillaries": "RPA-RPC",
+                     "RightPulmonaryArteriesToRightPulmonaryVeins": "RPA-RPV",
+                     "RightPulmonaryCapillariesToGround": "RPC-G",
+                     "RightPulmonaryCapillariesToRightPulmonaryVeins": "RPC-RPV",
+                     "RightPulmonaryVeinsToGround": "RPV-G",
+                     "RightPulmonaryVeinsToRightIntermediatePulmonaryVeins": "RPV-RIPV",
+                     "Skin1ToGround": "Skin-G",
+                     "Skin1ToSkin2": "Skin-VC",
+                     "SmallIntestineToGround": "SI-G",
+                     "SmallIntestineToPortalVein": "SI-PV",
+                     "SplanchnicToGround": "SP-G",
+                     "SplanchnicToPortalVein": "SP-PV",
+                     "SpleenToGround": "Spleen-G",
+                     "SpleenToPortalVein": "Spleen-PV",
+                     "VenaCavaToGround": "VC-G",
+                     "VenaCavaToRightHeart2": "VC-RH",
+                     "LeftAlveoliToLeftPleuralConnection": "LAL-LPC",
+                     "LeftPleuralToRespiratoryMuscle": "LPL-RM",
+                     "RightAlveoliToRightPleuralConnection": "RAL-RPC",
+                     "RightPleuralToRespiratoryMuscle": "RPL-RM",
+                     "CarinaToLeftAnatomicDeadSpace": "Carina-LANDS",
+                     "CarinaToRightAnatomicDeadSpace": "Carina-RANDS",
+                     "EnvironmentToLeftChestLeak": "ENV-LCL",
+                     "EnvironmentToRightChestLeak": "ENV-RCL",
+                     "LeftAlveoliLeakToLeftPleural": "LAL-LPL",
+                     "RightAlveoliLeakToRightPleural": "RAL-RPL",
+                     "LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace": "LANDS-LALDS",
+                     "RightAnatomicDeadSpaceToRightAlveolarDeadSpace": "RANDS-RALDS",
+                     "LeftPleuralToEnvironment": "LPL-ENV",
+                     "RightPleuralToEnvironment": "RPL-ENV",
+                     "MouthToCarina": "Mouth-Carina",
+                     "MouthToStomach": "Mouth-Stomach",
+                     "StomachToEnvironment": "Stomach-ENV"}
+
+    for path in df.index:
+        df.rename(index={path: abbreviations[path]}, inplace=True)
+    for path in df_keep.index:
+        df_keep.rename(index={path: abbreviations[path]}, inplace=True)
 
     save_heatmap(df, results_dir, sobol_index)
-    found_bin_bool = True
-    if sobol_index == "S1" and len(quantities_of_interest) > 1:
-        binned_df = pd.DataFrame(0, columns=quantities_of_interest, index=bins)
-        for col in df:
-            for index, value in df[col].items():
-                found_bin = False
-                for part in bins:
-                    if part in index:
-                        binned_df.loc[part, col] = value
-                        found_bin = True
-                        break
-                if not found_bin and found_bin_bool:
-                    print("Could not place {} into a bin.".format(index))
-            found_bin_bool = False
 
-        binned_df.to_csv(os.path.join(results_dir, "global_sensitivity_indices", "sobol_indices_binned_s1.csv"))
-        save_heatmap(binned_df, results_dir, "{}_binned".format(sobol_index))
+    df_transpose = df_keep.T
+
+    save_heatmap(df_transpose, results_dir, "{}_cleaned".format(sobol_index))
 
 
 def save_heatmap(df, results_dir, sobol_index):
@@ -64,12 +146,18 @@ def save_heatmap(df, results_dir, sobol_index):
     :return: None
     """
 
-    plt.figure(figsize=(16, 16))
+    plt.figure(figsize=(22, 22))
+    sns.set(font_scale=2.8)
+    if "Arterial Oxygen Partial Pressure" in df.index:
+        plt.figure(figsize=(50, 10))
+        sns.set(font_scale=4.0)
+
     sns.heatmap(df)
     plt.tight_layout()
-    plt.title(sobol_index)
+    plt.title("Global Sensitivity Index {}".format(sobol_index))
 
-    plt.savefig(os.path.join(results_dir, "global_sensitivity_indices", "heatmap_{}".format(sobol_index)))
+    plt.savefig(os.path.join(results_dir, "global_sensitivity_indices", "heatmap_{}".format(sobol_index)),
+                bbox_inches='tight')
 
 
 def compute_local_sensitivity(parsed_results_df, results_dir):
@@ -80,7 +168,7 @@ def compute_local_sensitivity(parsed_results_df, results_dir):
     :return: None
     """
 
-    file = open(os.path.join(results_dir, "local_sa_problem.json"))
+    file = open(os.path.join(results_dir, "sobol_problem.json"))
     sa_problem = json.load(file)
     file.close()
 
@@ -98,11 +186,17 @@ def compute_local_sensitivity(parsed_results_df, results_dir):
 
     for col in std_dev_df:
         std_dev_df[col] = std_dev_df[col] / std_dev_df[col].max()
-    print(std_dev_df.head())
 
     std_dev_df.to_csv(os.path.join(results_dir, "local_sensitivity_indices", "normal_std_dev.csv"))
 
+    indices_to_drop = []
+    for index, row in std_dev_df.iterrows():
+        if not any(ele > 0.1 for ele in row):
+            indices_to_drop.append(index)
+    std_dev_df.drop(indices_to_drop, inplace=True)
+
     plt.figure(figsize=(16, 16))
+    sns.set(font_scale=2.0)
     sns.heatmap(std_dev_df)
     plt.tight_layout()
     plt.title("STD Local Sensitivity")
@@ -187,9 +281,10 @@ if __name__ == '__main__':
 
     # cv or combined
     phys_systems = "cv"
-    sensitivity_analysis = "local"
+    sensitivity_analysis = "global"
 
     parsed_results_df = analysis.load_and_parse_results(results_dir, phys_systems)
+    parsed_results_df.columns = [analysis.add_spaces(i) for i in parsed_results_df.columns]
 
     if sensitivity_analysis == "local":
         if not os.path.exists(os.path.join(results_dir, "local_sensitivity_indices")):
@@ -202,7 +297,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) == 1:
         """
-        Compute global sensitivity indices if you were able to run all of the simulations that you need.
+        Compute global sensitivity indices if you ran all of the simulations that you need.
         Often, this requires a very large number of simulations. To use this method, run this script 
         as follows: python3 analysis.py
         """
@@ -212,6 +307,7 @@ if __name__ == '__main__':
         elif sensitivity_analysis == "global":
             print("Computing global sensitivity indices ...")
             compute_sobol_indices_without_ml(parsed_results_df, results_dir)
+            # compute_parameter_correlations(parsed_results_df, phys_systems, results_dir)
     elif len(sys.argv) == 3:
         """
         If you ran a subset of the simulations that you need, you can build a surrogate machine learning
