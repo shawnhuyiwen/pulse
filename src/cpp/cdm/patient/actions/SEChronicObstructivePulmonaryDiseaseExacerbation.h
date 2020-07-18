@@ -9,7 +9,7 @@ class CDM_DECL SEChronicObstructivePulmonaryDiseaseExacerbation : public SEPatie
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEChronicObstructivePulmonaryDiseaseExacerbation();
+  SEChronicObstructivePulmonaryDiseaseExacerbation(Logger* logger=nullptr);
   virtual ~SEChronicObstructivePulmonaryDiseaseExacerbation();
 
   virtual void Clear(); //clear memory

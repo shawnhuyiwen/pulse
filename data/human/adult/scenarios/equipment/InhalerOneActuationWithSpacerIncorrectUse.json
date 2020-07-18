@@ -459,7 +459,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Albuterol",
       "PropertyName": "Concentration",
       "Unit": "ug/L"
@@ -513,7 +513,7 @@
         "Precision": 4
       },
       "Category": "LiquidCompartment",
-      "CompartmentName": "Mouth",
+      "CompartmentName": "Airway",
       "SubstanceName": "Albuterol",
       "PropertyName": "MassDeposited",
       "Unit": "ug"
@@ -645,7 +645,7 @@
       "PropertyName": "InspiratoryPulmonaryResistance",
       "Unit": "cmH2O s/L"
     }, {
-	  "DecimalFormat": {
+      "DecimalFormat": {
         "Precision": 4
       },
       "Category": "Physiology",
@@ -692,7 +692,7 @@
       "ConsciousRespiration": {
         "Command": [{
           "UseInhaler": {
-			}
+            }
           }, {
           "ForcedExhale": {
             "ExpiratoryReserveVolumeFraction": {
@@ -720,13 +720,13 @@
                 "Unit": "s"
               }
             },
-			"HoldPeriod": {
+            "HoldPeriod": {
               "ScalarTime": {
                 "Value": 3.0,
                 "Unit": "s"
               }
             },
-			"ReleasePeriod": {
+            "ReleasePeriod": {
               "ScalarTime": {
                 "Value": 5.0,
                 "Unit": "s"

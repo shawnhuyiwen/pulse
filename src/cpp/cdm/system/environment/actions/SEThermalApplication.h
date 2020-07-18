@@ -10,7 +10,7 @@ class CDM_DECL SEThermalApplication : public SEEnvironmentAction
   friend class PBEnvironmentAction;//friend the serialization class
 public:
 
-  SEThermalApplication();
+  SEThermalApplication(Logger* logger=nullptr);
   virtual ~SEThermalApplication();
 
   virtual void Clear();

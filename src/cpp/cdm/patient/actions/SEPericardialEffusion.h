@@ -9,7 +9,7 @@ class CDM_DECL SEPericardialEffusion : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEPericardialEffusion();
+  SEPericardialEffusion(Logger* logger=nullptr);
   virtual ~SEPericardialEffusion();
 
   virtual void Clear(); //clear memory

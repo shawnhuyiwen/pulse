@@ -4,6 +4,7 @@
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
+    "SamplesPerSecond": 1.0,
     "DataRequest":
     [
       { "DecimalFormat": { "Precision": 1 }, "PropertyName": "Weight", "Unit": "kg" },    
@@ -23,11 +24,11 @@
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "MyocardiumVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },
-	  { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "PropertyName": "InFlow",  "Unit": "mL/min" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature",        "PropertyName": "InFlow",  "Unit": "mL/min" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava",     "PropertyName": "InFlow",  "Unit": "mL/min" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "LiquidCompartment", "CompartmentName": "RightHeartVasculature",   "PropertyName": "InFlow",  "Unit": "mL/min" },    
-	  
-	  { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"}
+      
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"}
     ]
   },
   "AnyAction": [{
@@ -75,7 +76,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 14000.0,
+          "Value": 3000.0,
           "Unit": "s"
         }
       }

@@ -9,7 +9,7 @@ class CDM_DECL SEAcuteRespiratoryDistressSyndrome : public SEPatientCondition
   friend class PBPatientCondition;//friend the serialization class
 public:
 
-  SEAcuteRespiratoryDistressSyndrome();
+  SEAcuteRespiratoryDistressSyndrome(Logger* logger=nullptr);
   virtual ~SEAcuteRespiratoryDistressSyndrome();
 
   virtual void Clear(); //clear memory

@@ -5,9 +5,10 @@
 
 #include "EngineTest.h"
 #include "controller/Controller.h"
-#include "controller/Substances.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
+#include "controller/Substances.h"
+#include "physiology/Saturation.h"
 #include "PulseConfiguration.h"
 #include "patient/SEPatient.h"
 #include "substance/SESubstanceFraction.h"
@@ -52,13 +53,16 @@ void PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfig
   PulseController pc;
   pc.GetLogger()->SetLogFile(sTestDirectory + "/AnesthesiaMachineCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   pc.m_Config->EnableRenal(eSwitch::Off);
   pc.m_Config->EnableTissue(eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
-  SEEnvironmentalConditions env(pc.GetSubstances());
-  env.SerializeFromFile("./environments/Standard.json",JSON);
+  SEEnvironmentalConditions env(pc.GetLogger());
+  env.SerializeFromFile("./environments/Standard.json", pc.GetSubstances());
   SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   for (SESubstanceFraction* subFrac : env.GetAmbientGases())
   {

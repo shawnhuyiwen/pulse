@@ -1,6 +1,6 @@
 syntax = "proto3";
 package pulse.study.bind.sensitivity_analysis;
-option java_package = "pulse.study.bind.sensitivity_analysis";
+option java_package = "com.kitware.pulse.study.bind.sensitivity_analysis";
 option csharp_namespace = "pulse.study.bind.sensitivity_analysis";
 option optimize_for = SPEED;
 
@@ -34,7 +34,7 @@ message SimulationData
   double                       MeanMuscleVasculatureInFlow_mL_Per_s          = 20;
   double                       MeanMyocardiumVasculatureInFlow_mL_Per_s      = 21;
   double                       MeanPulmonaryArteriesInFlow_mL_Per_s          = 22;
-  double 					   MeanPulmonaryCapillariesInFlow_mL_Per_s       = 23;
+  double                       MeanPulmonaryCapillariesInFlow_mL_Per_s       = 23;
   double                       MeanPulmonaryCapillariesPressure_mmHg         = 24;
   double                       MeanPulmonaryVeinsInFlow_mL_Per_s             = 25;
   double                       MeanPulmonaryVeinsPressure_mmHg               = 26;

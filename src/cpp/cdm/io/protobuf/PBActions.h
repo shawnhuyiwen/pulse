@@ -14,10 +14,10 @@ class CDM_DECL PBAction
 public:
 
   /** Create a new action based on the binding object, load that data into the new action, and return said action */
-  static SEAction* Load(const CDM_BIND::AnyActionData& action, SESubstanceManager& subMgr);
+  static SEAction* Load(const CDM_BIND::AnyActionData& action, const SESubstanceManager& subMgr);
   /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
   static CDM_BIND::AnyActionData* Unload(const SEAction& action);
-  static SEAction* Copy(const SEAction& a, SESubstanceManager& subMgr);
+  static SEAction* Copy(const SEAction& a, const SESubstanceManager& subMgr);
 
   static void Serialize(const CDM_BIND::ActionData& src, SEAction& dst);
   static void Serialize(const SEAction& src, CDM_BIND::ActionData& dst);

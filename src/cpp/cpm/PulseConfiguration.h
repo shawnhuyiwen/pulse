@@ -20,17 +20,17 @@ class PULSE_DECL PulseConfiguration : public SEEngineConfiguration
   friend class PBPulseConfiguration;//friend the serialization class
 public:
 
-  PulseConfiguration(SESubstanceManager& substances);
+  PulseConfiguration(Logger* logger=nullptr);
   virtual ~PulseConfiguration();
   
   virtual void Clear();
-  void Merge(const PulseConfiguration&);
-  virtual void Initialize(const std::string& data_dir);
+  void Merge(const PulseConfiguration&, SESubstanceManager& subMgr);
+  virtual void Initialize(const std::string& dataDir="", SESubstanceManager* subMgr=nullptr);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, SESubstanceManager& subMgr);
   
 
   virtual bool HasTimeStep() const;
@@ -66,7 +66,6 @@ public:
   virtual const SEOverrides* GetInitialOverrides() const;
   virtual void RemoveInitialOverrides();
 protected:
-  SESubstanceManager& m_Substances;
 
   SEScalarTime*              m_TimeStep;
   SETimedStabilization*      m_TimedStabilization;
@@ -131,10 +130,10 @@ public:
 protected:
   SEScalarPressurePerVolume* m_LeftHeartElastanceMaximum; 
   SEScalarPressurePerVolume* m_LeftHeartElastanceMinimum; 
-  SEScalar0To1*          m_MinimumBloodVolumeFraction;
+  SEScalar0To1*              m_MinimumBloodVolumeFraction;
   SEScalarPressurePerVolume* m_RightHeartElastanceMaximum; 
   SEScalarPressurePerVolume* m_RightHeartElastanceMinimum;
-  SEScalar*              m_StandardPulmonaryCapillaryCoverage;
+  SEScalar*                  m_StandardPulmonaryCapillaryCoverage;
 
   //////////////
   /** Circuit */
@@ -384,6 +383,9 @@ protected:
   /** Nervous */
   /////////////
 public:
+  virtual bool IsCerebrospinalFluidEnabled() const { return m_CerebrospinalFluidEnabled == eSwitch::On; }
+  virtual void EnableCerebrospinalFluid(eSwitch s) { m_CerebrospinalFluidEnabled = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
+
   virtual eSwitch GetBaroreceptorFeedback() const { return m_BaroreceptorFeedback; }
   virtual void SetBaroreceptorFeedback(eSwitch s) { m_BaroreceptorFeedback = (s == eSwitch::NullSwitch) ? eSwitch::On : s; }
 
@@ -451,6 +453,7 @@ public:
   virtual double GetVenousComplianceDistributedTimeDelay(const TimeUnit& unit) const;
 
 protected:
+  eSwitch         m_CerebrospinalFluidEnabled;
   eSwitch         m_ChemoreceptorFeedback;
   eSwitch         m_BaroreceptorFeedback;
   SEScalarTime*   m_HeartElastanceDistributedTimeDelay;
@@ -527,7 +530,7 @@ public:
   virtual bool HasTargetSodiumDelivery();
   virtual SEScalarMassPerTime& GetTargetSodiumDelivery();
 protected:
-  eSwitch                         m_RenalEnabled;
+  eSwitch                              m_RenalEnabled;
 
   SEScalarMassPerVolume*               m_PlasmaSodiumConcentrationSetPoint;
   SEScalarMassPerVolume*               m_PeritubularPotassiumConcentrationSetPoint;
@@ -542,8 +545,8 @@ protected:
   SEScalarArea*                        m_RightTubularReabsorptionFilteringSurfaceAreaBaseline;
   SEScalarVolumePerTimePressureArea*   m_RightTubularReabsorptionFluidPermeabilityBaseline;
    
-  SEScalarPressureTimePerVolume*              m_MaximumAfferentResistance;
-  SEScalarPressureTimePerVolume*              m_MinimumAfferentResistance;
+  SEScalarPressureTimePerVolume*       m_MaximumAfferentResistance;
+  SEScalarPressureTimePerVolume*       m_MinimumAfferentResistance;
   
   SEScalarMassPerTime*                 m_TargetSodiumDelivery;
 

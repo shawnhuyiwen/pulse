@@ -18,7 +18,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
 
-SEEnvironment::SEEnvironment(SESubstanceManager& substances) : SESystem(substances.GetLogger()), m_Substances(substances)
+SEEnvironment::SEEnvironment(Logger* logger) : SESystem(logger)
 {
   m_ActiveHeating = nullptr;
   m_ActiveCooling = nullptr;
@@ -92,45 +92,45 @@ const SEScalar* SEEnvironment::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEEnvironment::ProcessChange(SEInitialEnvironmentalConditions& change)
+bool SEEnvironment::ProcessChange(SEInitialEnvironmentalConditions& change, SESubstanceManager& subMgr)
 {
   // If we have data then we merge it, if a file was provided
   // we reset and set the environment to the file, so we only have the file data
   if (change.HasEnvironmentalConditions())
-    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions());
+    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions(), subMgr);
   else if (change.HasEnvironmentalConditionsFile())
   {
     // Update the condition with the file contents
     std::string cfg_file = change.GetEnvironmentalConditionsFile();
-    if (!change.GetEnvironmentalConditions().SerializeFromFile(cfg_file,JSON))
+    if (!change.GetEnvironmentalConditions().SerializeFromFile(cfg_file, subMgr))
     {
       /// \error Unable to read Configuration Action file
       Error("Could not read provided SEInitialEnvironment file", "SEEnvironment::ProcessChange");
       return false;
     }
-    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions());
+    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions(), subMgr);
   }
   StateChange();
   return true;
 }
 
-bool SEEnvironment::ProcessChange(SEChangeEnvironmentalConditions& change)
+bool SEEnvironment::ProcessChange(SEChangeEnvironmentalConditions& change, SESubstanceManager& subMgr)
 {
   // If we have data then we merge it, if a file was provided
   // we reset and set the environment to the file, so we only have the file data
   if (change.HasEnvironmentalConditions())
-    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions());
+    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions(), subMgr);
   else if (change.HasEnvironmentalConditionsFile())
   {
     // Update the action with the file contents
     std::string cfg_file = change.GetEnvironmentalConditionsFile();
-    if (!change.GetEnvironmentalConditions().SerializeFromFile(cfg_file,JSON))
+    if (!change.GetEnvironmentalConditions().SerializeFromFile(cfg_file, subMgr))
     {
       /// \error Unable to read Configuration Action file
       Error("Could not read provided Environmental Conditions file", "SEEnvironment::ProcessChange");
       return false;
     }
-    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions());
+    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions(), subMgr);
   }
   StateChange();
   return true;
@@ -200,7 +200,7 @@ bool SEEnvironment::HasEnvironmentalConditions() const
 SEEnvironmentalConditions& SEEnvironment::GetEnvironmentalConditions()
 {
   if (m_EnvironmentalConditions == nullptr)
-    m_EnvironmentalConditions = new SEEnvironmentalConditions(m_Substances);
+    m_EnvironmentalConditions = new SEEnvironmentalConditions(GetLogger());
   return *m_EnvironmentalConditions;
 }
 const SEEnvironmentalConditions* SEEnvironment::GetEnvironmentalConditions() const

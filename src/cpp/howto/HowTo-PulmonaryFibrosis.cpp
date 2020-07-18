@@ -42,12 +42,9 @@ void HowToPulmonaryFibrosis()
   // Since this is a condition, we do not provide a starting state
   // You will need to initialize the engine to this patient configuration
   // You could then save out your own state and use it in the future
-  SEPatientConfiguration pc(pe->GetSubstanceManager());
+  SEPatientConfiguration pc;
   pc.SetPatientFile("StandardMale.json");
-
-  SEPulmonaryFibrosis PF;
-  PF.GetSeverity().SetValue(0.9);
-  pc.GetConditions().ProcessCondition(PF);
+  pc.GetConditions().GetPulmonaryFibrosis().GetSeverity().SetValue(0.9);
 
   if (!pe->InitializeEngine(pc))
   {

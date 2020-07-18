@@ -20,8 +20,8 @@ public:
   PulseEngine(Logger* logger=nullptr);
   virtual ~PulseEngine();
 
-  virtual bool SerializeFromFile(const std::string& file, SerializationFormat m) override;
-  virtual bool SerializeToFile(const std::string& file, SerializationFormat m) const override;
+  virtual bool SerializeFromFile(const std::string& file) override;
+  virtual bool SerializeToFile(const std::string& file) const override;
 
   virtual bool SerializeFromString(const std::string& state, SerializationFormat m) override;
   virtual bool SerializeToString(std::string& state, SerializationFormat m) const override;
@@ -47,10 +47,10 @@ public:
   virtual bool  ProcessAction(const SEAction& action) override;
   virtual const SEActionManager& GetActionManager() const override;
 
-  virtual SESubstanceManager& GetSubstanceManager() override;
   virtual const SESubstanceManager& GetSubstanceManager() const override;
   virtual void SetAdvanceHandler(SEAdvanceHandler* handler) override;
   virtual const SEPatient& GetPatient() const override;
+  virtual const SEPatient& GetInitialPatient() const override;
   virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const override;
 
   virtual const SEEnvironment*                         GetEnvironment() const override;

@@ -441,8 +441,8 @@ void Cardiovascular::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::ChronicAnemia()
 {
-  SEChronicAnemia* anemia = m_data.GetConditions().GetChronicAnemia();
-  double rf = anemia->GetReductionFactor().GetValue();
+  SEChronicAnemia& anemia = m_data.GetConditions().GetChronicAnemia();
+  double rf = anemia.GetReductionFactor().GetValue();
 
   // Maximum 30% reduction
   if (rf > 0.3)
@@ -517,7 +517,7 @@ void Cardiovascular::ChronicHeartFailure()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::ChronicPericardialEffusion()
 {
-  double deltaVolume_mL = m_data.GetConditions().GetChronicPericardialEffusion()->GetAccumulatedVolume().GetValue(VolumeUnit::mL);
+  double deltaVolume_mL = m_data.GetConditions().GetChronicPericardialEffusion().GetAccumulatedVolume().GetValue(VolumeUnit::mL);
   if (deltaVolume_mL > 1000.0)
   {
     Error("Cannot specify volume accumulation greater than 1000 mL. Accumulated volume is now set at 1000 mL.");
@@ -548,8 +548,8 @@ void Cardiovascular::ChronicPericardialEffusion()
 void Cardiovascular::ChronicRenalStenosis()
 {
   ///\todo move this to CV
-  double LeftOcclusionFraction = m_data.GetConditions().GetChronicRenalStenosis()->GetLeftKidneySeverity().GetValue();
-  double RightOcclusionFraction = m_data.GetConditions().GetChronicRenalStenosis()->GetRightKidneySeverity().GetValue();
+  double LeftOcclusionFraction = m_data.GetConditions().GetChronicRenalStenosis().GetLeftKidneySeverity().GetValue();
+  double RightOcclusionFraction = m_data.GetConditions().GetChronicRenalStenosis().GetRightKidneySeverity().GetValue();
 
   if (LeftOcclusionFraction < 0.0)
   {

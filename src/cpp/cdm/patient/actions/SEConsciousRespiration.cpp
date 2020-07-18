@@ -10,7 +10,7 @@
 #include "patient/actions/SEUseInhaler.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEConsciousRespiration::SEConsciousRespiration() : SEPatientAction()
+SEConsciousRespiration::SEConsciousRespiration(Logger* logger) : SEPatientAction(logger)
 {
   m_StartImmediately = false;
 }
@@ -74,28 +74,28 @@ void SEConsciousRespiration::RemoveActiveCommand()
 
 SEForcedExhale&  SEConsciousRespiration::AddForcedExhale()
 {
-    SEForcedExhale* myEx = new SEForcedExhale();
+    SEForcedExhale* myEx = new SEForcedExhale(GetLogger());
     m_Commands.push_back(myEx);
     return *myEx;
 }
 
 SEForcedInhale& SEConsciousRespiration::AddForcedInhale()
 {
-  SEForcedInhale* myIn = new SEForcedInhale();
+  SEForcedInhale* myIn = new SEForcedInhale(GetLogger());
   m_Commands.push_back(myIn);
   return *myIn;
 }
 
 SEForcedPause& SEConsciousRespiration::AddForcedPause()
 {
-  SEForcedPause* myHold = new SEForcedPause();
+  SEForcedPause* myHold = new SEForcedPause(GetLogger());
   m_Commands.push_back(myHold);
   return *myHold;
 }
 
 SEUseInhaler& SEConsciousRespiration::AddUseInhaler()
 {
-    SEUseInhaler* myUse = new SEUseInhaler();
+    SEUseInhaler* myUse = new SEUseInhaler(GetLogger());
     m_Commands.push_back(myUse);
     return *myUse;
 }

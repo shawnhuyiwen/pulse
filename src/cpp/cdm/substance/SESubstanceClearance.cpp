@@ -29,11 +29,6 @@ SESubstanceClearance::SESubstanceClearance(Logger* logger) : Loggable(logger)
 
 SESubstanceClearance::~SESubstanceClearance()
 {
-  Clear();
-}
-
-void SESubstanceClearance::Clear()
-{
   m_hasSystemic = false;
   m_ChargeInBlood = eCharge::NullCharge;
   SAFE_DELETE(m_FractionExcretedInFeces);
@@ -50,6 +45,26 @@ void SESubstanceClearance::Clear()
   SAFE_DELETE(m_RenalReabsorptionRate);
   SAFE_DELETE(m_RenalExcretionRate);
   SAFE_DELETE(m_SystemicClearance);
+}
+
+void SESubstanceClearance::Clear()
+{
+  m_hasSystemic = false;
+  m_ChargeInBlood = eCharge::NullCharge;
+  INVALIDATE_PROPERTY(m_FractionExcretedInFeces);
+  INVALIDATE_PROPERTY(m_FractionExcretedInUrine);
+  INVALIDATE_PROPERTY(m_FractionMetabolizedInGut);
+  INVALIDATE_PROPERTY(m_FractionUnboundInPlasma);
+  INVALIDATE_PROPERTY(m_GlomerularFilterability);
+  INVALIDATE_PROPERTY(m_IntrinsicClearance);
+  m_RenalDynamic = RenalDynamic::NullDynamic;
+  INVALIDATE_PROPERTY(m_RenalClearance);
+  INVALIDATE_PROPERTY(m_RenalReabsorptionRatio);
+  INVALIDATE_PROPERTY(m_RenalTransportMaximum);
+  INVALIDATE_PROPERTY(m_RenalFiltrationRate);
+  INVALIDATE_PROPERTY(m_RenalReabsorptionRate);
+  INVALIDATE_PROPERTY(m_RenalExcretionRate);
+  INVALIDATE_PROPERTY(m_SystemicClearance);
 }
 
 bool SESubstanceClearance::IsValid() const

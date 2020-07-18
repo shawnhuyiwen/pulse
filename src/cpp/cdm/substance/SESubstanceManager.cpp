@@ -18,87 +18,116 @@ SESubstanceManager::SESubstanceManager(Logger* logger) : Loggable(logger)
 SESubstanceManager::~SESubstanceManager()
 {
   Clear();
+  DELETE_VECTOR(m_Substances);
+  DELETE_VECTOR(m_Compounds);
 }
 
 void SESubstanceManager::Clear()
 {
-  DELETE_VECTOR(m_Substances);
-  DELETE_VECTOR(m_Compounds);
   m_ActiveSubstances.clear();
+  m_cActiveSubstances.clear();
   m_ActiveCompounds.clear();
+  m_cActiveCompounds.clear();
   m_ActiveGases.clear();
+  m_cActiveGases.clear();
   m_ActiveLiquids.clear();
+  m_cActiveLiquids.clear();
+
+  std::string name;
+  for (SESubstance* sub : m_Substances)
+    sub->Clear();
+  for (SESubstanceCompound* cmpd : m_Compounds)
+    cmpd->Clear();
 }
 
-/**
- * TRANSFERS OWNERSHIP TO THE MANAGER
- */
-void SESubstanceManager::AddSubstance(SESubstance& substance) 
+bool SESubstanceManager::HasSubstance(const std::string& name) const
 {
-  SESubstance* s;
-  for(unsigned int i=0; i<m_Substances.size(); i++)
+  for (SESubstance* s : m_Substances)
   {
-    s=m_Substances.at(i);
-    if(s==&substance)
-      return;
+    if (name.compare(s->GetName()) == 0)
+      true;
   }
-  m_Substances.push_back(&substance);
+  return false;
 }
 
-SESubstance* SESubstanceManager::GetSubstance(const std::string& name) const
+SESubstance* SESubstanceManager::GetSubstance(const std::string& name)
 {
-  SESubstance* s;
-  for(unsigned int i=0; i<m_Substances.size(); i++)
+  for(SESubstance* s : m_Substances)
   {
-    s=m_Substances.at(i);
+    if(s->GetName() == name)
+      return s;
+  }
+  SESubstance* s = new SESubstance(name, GetLogger());
+  m_Substances.push_back(s);
+  m_cSubstances.push_back(s);
+  return s;
+}
+const SESubstance* SESubstanceManager::GetSubstance(const std::string& name) const
+{
+  for (SESubstance* s : m_Substances)
+  {
     if(name.compare(s->GetName())==0)
       return s;
   }
   return nullptr;
 }
 
-const std::vector<SESubstance*>& SESubstanceManager::GetSubstances() const
+const std::vector<SESubstance*>& SESubstanceManager::GetSubstances()
 {
   return m_Substances;
+}
+const std::vector<const SESubstance*>& SESubstanceManager::GetSubstances() const
+{
+  return m_cSubstances;
 }
 
 bool SESubstanceManager::IsActive(const SESubstance& substance) const
 {
-  SESubstance* sub;
-  for(unsigned int iSubstance=0; iSubstance < m_ActiveSubstances.size(); iSubstance++)
+  for (SESubstance* s : m_ActiveSubstances)
   {
-    sub=m_ActiveSubstances.at(iSubstance); 
-    if(sub==&substance)
+    if(s==&substance)
       return true;
   }
   return false;
 }
 
-const std::vector<SESubstance*>& SESubstanceManager::GetActiveSubstances() const
+const std::vector<SESubstance*>& SESubstanceManager::GetActiveSubstances()
 {
   return m_ActiveSubstances;
 }
+const std::vector<const SESubstance*>& SESubstanceManager::GetActiveSubstances() const
+{
+  return m_cActiveSubstances;
+}
 
-void SESubstanceManager::AddActiveSubstance(SESubstance& substance) 
+void SESubstanceManager::AddActiveSubstance(const SESubstance& substance) 
 {
   if (IsActive(substance))
     return;
-  if(substance.GetState()==eSubstance_State::Gas)
-    m_ActiveGases.push_back(&substance);
-  if(substance.GetState()== eSubstance_State::Liquid)
-    m_ActiveLiquids.push_back(&substance);
-    m_ActiveSubstances.push_back(&substance);
+  if (substance.GetState() == eSubstance_State::Gas)
+  {
+    m_ActiveGases.push_back(&(SESubstance&)substance);
+    m_cActiveGases.push_back(&substance);
+  }
+  if (substance.GetState() == eSubstance_State::Liquid)
+  {
+    m_ActiveLiquids.push_back(&(SESubstance&)substance);
+    m_cActiveLiquids.push_back(&substance);
+  }
+  m_ActiveSubstances.push_back(&(SESubstance&)substance);
+  m_cActiveSubstances.push_back(&substance);
 }
 
 void SESubstanceManager::RemoveActiveSubstance(const SESubstance& substance)
 {
-  SESubstance* sub;
+  const SESubstance* sub;
   for(unsigned int iSubstance=0; iSubstance < m_ActiveSubstances.size(); iSubstance++)
   {
-    sub=m_ActiveSubstances.at(iSubstance); 
+    sub=m_ActiveSubstances.at(iSubstance);
     if(sub==&substance)
     {
       m_ActiveSubstances.erase(m_ActiveSubstances.begin()+iSubstance);
+      m_cActiveSubstances.erase(m_cActiveSubstances.begin()+iSubstance);
       break;
     }
   }
@@ -108,6 +137,7 @@ void SESubstanceManager::RemoveActiveSubstance(const SESubstance& substance)
     if(sub==&substance)
     {
       m_ActiveGases.erase(m_ActiveGases.begin()+iSubstance);
+      m_cActiveGases.erase(m_cActiveGases.begin()+iSubstance);
       break;
     }
   }
@@ -117,6 +147,7 @@ void SESubstanceManager::RemoveActiveSubstance(const SESubstance& substance)
     if(sub==&substance)
     {
       m_ActiveLiquids.erase(m_ActiveLiquids.begin()+iSubstance);
+      m_cActiveLiquids.erase(m_cActiveLiquids.begin()+iSubstance);
       break;
     }
   }
@@ -124,94 +155,116 @@ void SESubstanceManager::RemoveActiveSubstance(const SESubstance& substance)
 
 void SESubstanceManager::RemoveActiveSubstances(const std::vector<SESubstance*>& substances)
 {
-  for(SESubstance* sub : substances)
+  for(SESubstance* sub : m_ActiveSubstances)
     RemoveActiveSubstance(*sub);
 }
 
 void SESubstanceManager::RemoveActiveSubstances()
 {
-  std::vector<SESubstance*> copy(m_ActiveSubstances);
-  for (SESubstance* sub : copy)
+  std::vector<const SESubstance*> copy(m_cActiveSubstances);
+  for (const SESubstance* sub : copy)
     RemoveActiveSubstance(*sub);
 }
 
-
-const std::vector<SESubstance*>& SESubstanceManager::GetActiveGases() const
+const std::vector<SESubstance*>& SESubstanceManager::GetActiveGases()
 {
   return m_ActiveGases;
 }
+const std::vector<const SESubstance*>& SESubstanceManager::GetActiveGases() const
+{
+  return m_cActiveGases;
+}
 
-const std::vector<SESubstance*>& SESubstanceManager::GetActiveLiquids() const
+const std::vector<SESubstance*>& SESubstanceManager::GetActiveLiquids()
 {
   return m_ActiveLiquids;
 }
-
-void SESubstanceManager::AddCompound(SESubstanceCompound& compound) 
+const std::vector<const SESubstance*>& SESubstanceManager::GetActiveLiquids() const
 {
-  SESubstanceCompound* c;
-  for(unsigned int i=0; i<m_Compounds.size(); i++)
-  {
-    c=m_Compounds.at(i);
-    if(c==&compound)
-      return;
-  }
-  m_Compounds.push_back(&compound);
+  return m_cActiveLiquids;
 }
 
-SESubstanceCompound* SESubstanceManager::GetCompound(const std::string& name) const
+bool SESubstanceManager::HasCompound(const std::string& name) const
 {
-  SESubstanceCompound* c;
-  for(unsigned int i=0; i<m_Compounds.size(); i++)
+  for (SESubstanceCompound* c : m_Compounds)
   {
-    c=m_Compounds.at(i);
-    if(name.compare(c->GetName())==0)
+    if (c->GetName() == name)
+      return true;
+  }
+  return false;
+}
+
+SESubstanceCompound* SESubstanceManager::GetCompound(const std::string& name)
+{
+  for(SESubstanceCompound* c : m_Compounds)
+  {
+    if(c->GetName() == name)
+      return c;
+  }
+  SESubstanceCompound* c = new SESubstanceCompound(name, GetLogger());
+  m_Compounds.push_back(c);
+  m_cCompounds.push_back(c);
+  return c;
+}
+const SESubstanceCompound* SESubstanceManager::GetCompound(const std::string& name) const
+{
+  for (SESubstanceCompound* c : m_Compounds)
+  {
+    if (c->GetName() == name)
       return c;
   }
   return nullptr;
 }
 
-const std::vector<SESubstanceCompound*>& SESubstanceManager::GetCompounds() const
+const std::vector<SESubstanceCompound*>& SESubstanceManager::GetCompounds()
 {
   return m_Compounds;
+}
+const std::vector<const SESubstanceCompound*>& SESubstanceManager::GetCompounds() const
+{
+  return m_cCompounds;
 }
 
 bool SESubstanceManager::IsActive(const SESubstanceCompound& compound) const
 {
-  SESubstanceCompound* c;
-  for(unsigned int i=0; i < m_ActiveCompounds.size(); i++)
+  for (SESubstanceCompound* c : m_ActiveCompounds)
   {
-    c=m_ActiveCompounds.at(i); 
     if(c==&compound)
       return true;
   }
   return false;
 }
 
-const std::vector<SESubstanceCompound*>& SESubstanceManager::GetActiveCompounds() const
+const std::vector<SESubstanceCompound*>& SESubstanceManager::GetActiveCompounds()
 {
   return m_ActiveCompounds;
 }
-
-void SESubstanceManager::AddActiveCompound(SESubstanceCompound& compound) 
+const std::vector<const SESubstanceCompound*>& SESubstanceManager::GetActiveCompounds() const
 {
-  SESubstanceCompound* c;
-  for(unsigned int i=0; i < m_ActiveCompounds.size(); i++)
-  {
-    c=m_ActiveCompounds.at(i); 
-    if(c==&compound)
-      return;
-  }
-    m_ActiveCompounds.push_back(&compound);
+  return m_cActiveCompounds;
 }
 
-void SESubstanceManager::RemoveActiveCompound(SESubstanceCompound& compound)
+void SESubstanceManager::AddActiveCompound(const SESubstanceCompound& compound) 
 {
-  unsigned int i = 0;
   for (SESubstanceCompound* c : m_ActiveCompounds)
   {
     if(c==&compound)
+      return;
+  }
+  m_ActiveCompounds.push_back(&(SESubstanceCompound&)compound);
+  m_cActiveCompounds.push_back(&compound);
+}
+
+void SESubstanceManager::RemoveActiveCompound(const SESubstanceCompound& compound)
+{
+  const SESubstanceCompound* c;
+  for (unsigned int i = 0; i < m_ActiveCompounds.size(); i++)
+  {
+    c = m_ActiveCompounds.at(i);
+    if(c==&compound)
     {
       m_ActiveCompounds.erase(m_ActiveCompounds.begin()+i);
+      m_cActiveCompounds.erase(m_cActiveCompounds.begin()+i);
       break;
     }
     i++;
@@ -253,23 +306,17 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
       {
         try
         {
-          SESubstance* sub = new SESubstance(GetLogger());
-          if (!sub->SerializeFromFile(ss.str(), JSON))
+
+          // I am assuming the filename is also the substance name
+          // If we don't want to make that assumption, we need to have
+          // a map of filename to substance ptr and use it rather than GetSubstance by name.
+          std::string name(ent->d_name);
+          name=name.substr(0, name.size()-ext.size());
+          SESubstance* sub = GetSubstance(name);
+          if (!sub->SerializeFromFile(ss.str()))
           {
-            delete sub;
             Error("Unable to read substance " + ss.str());
             continue;
-          }
-          else
-          {
-            std::string binary;
-            if (!sub->SerializeToString(binary, BINARY))
-            {
-              delete sub;
-              Error("Unable to serialize substance " + ss.str());
-              continue;
-            }
-            AddSubstance(*sub);
           }
         }
         catch (...)
@@ -292,23 +339,16 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
       {
         try
         {
-          SESubstanceCompound* cmpd = new SESubstanceCompound(GetLogger());
-          if (!cmpd->SerializeFromFile(ss.str(), *this, JSON))
+          // I am assuming the filename is also the substance name
+          // If we don't want to make that assumption, we need to have
+          // a map of filename to substance ptr and use it rather than GetSubstance by name.
+          std::string name(ent->d_name);
+          name = name.substr(0, name.size() - ext.size());
+          SESubstanceCompound* cmpd = GetCompound(name);
+          if (!cmpd->SerializeFromFile(ss.str(), *this))
           {
-            delete cmpd;
             Error("Unable to read substance compound " + ss.str());
             continue;
-          }
-          else
-          {
-            std::string binary;
-            if (!cmpd->SerializeToString(binary, BINARY))
-            {
-              delete cmpd;
-              Error("Unable to serialize substance compound " + ss.str());
-              continue;
-            }
-            AddCompound(*cmpd);
           }
         }
         catch (...)

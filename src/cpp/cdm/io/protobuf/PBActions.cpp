@@ -20,7 +20,7 @@ POP_PROTO_WARNINGS()
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarTime.h"
 
-SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, SESubstanceManager& subMgr)
+SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, const SESubstanceManager& subMgr)
 {
   switch (action.Action_case())
   {
@@ -97,7 +97,7 @@ CDM_BIND::AnyActionData* PBAction::Unload(const SEAction& action)
   delete any;
   return nullptr;
 }
-SEAction* PBAction::Copy(const SEAction& a, SESubstanceManager& subMgr)
+SEAction* PBAction::Copy(const SEAction& a, const SESubstanceManager& subMgr)
 {
   CDM_BIND::AnyActionData* data = PBAction::Unload(a);
   SEAction* copy = PBAction::Load(*data, subMgr);
@@ -158,6 +158,7 @@ CDM_BIND::SerializeStateData* PBAction::Unload(const SESerializeState& src)
 void PBAction::Serialize(const SESerializeState& src, CDM_BIND::SerializeStateData& dst)
 {
   PBAction::Serialize(src, *dst.mutable_action());
+
   dst.set_type((CDM_BIND::SerializeStateData::eType)src.m_Type);
   if (src.HasFilename())
     dst.set_filename(src.m_Filename);

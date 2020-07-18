@@ -3,7 +3,6 @@
 
 #pragma once
 class SEAction;
-class SESubstanceManager;
 class SEEquipmentAction;
 class SEAnesthesiaMachine;
 class SEAnesthesiaMachineAction;
@@ -26,6 +25,7 @@ class SEInhalerConfiguration;
 class SEMechanicalVentilator;
 class SEMechanicalVentilatorAction;
 class SEMechanicalVentilatorConfiguration;
+class SESubstanceManager;
 CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(AnyEquipmentActionData)
 
@@ -34,7 +34,7 @@ class CDM_DECL SEEquipmentActionCollection : public Loggable
   friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
-  SEEquipmentActionCollection(SESubstanceManager&);
+  SEEquipmentActionCollection(Logger* logger=nullptr);
 public:
   ~SEEquipmentActionCollection();
 
@@ -122,7 +122,7 @@ public:
   
 protected:
   void Clear();
-  bool ProcessAction(const SEEquipmentAction& action);
+  bool ProcessAction(const SEEquipmentAction& action, SESubstanceManager&);
 
   SEAnesthesiaMachineConfiguration*                            m_AnesthesiaMachineConfiguration;
   //Anesthesia Machine Incidents
@@ -144,6 +144,4 @@ protected:
   SEInhalerConfiguration*                                      m_InhalerConfiguration;
 
   SEMechanicalVentilatorConfiguration*                         m_MechanicalVentilatorConfiguration;
-  // General
-  SESubstanceManager& m_Substances;
 };

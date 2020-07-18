@@ -52,7 +52,8 @@ public:
   void CardiovascularCircuitAndTransportTest(const std::string& sTestDirectory);
   void CardiovascularAndRenalCircuitAndTransportTest(const std::string& sTestDirectory);
   void CardiovascularAndTissueCircuitAndTransportTest(const std::string& sTestDirectory);
-  void CardiovascularTissueAndRenalCircuitAndTransportTest(const std::string& sTestDirectory);
+  void CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(const std::string& sTestDirectory);
+  void FullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory);
   void CardiovascularBloodGasesTest(const std::string& sTestDirectory);// Characterize the cv circuit
   void TuneCardiovascularCircuitTest(const std::string& sTestDirectory);
   // Cardiovascular Utilities //
@@ -61,7 +62,7 @@ protected:
   enum CardiovascularDriver { Sinusoid = 0, Heart };
   void SinusoidHeartDriver(double time_s, double heartRate_s, double& lHeartElastance, double& rHeartElastance);
   void CardiovascularCircuitAndTransportTest(CardiovascularDriver driverType, double complianceScale, double resistanceScale, double volumeScale, double heartRate_bpm,
-    double sysRes, double sysComp, double aortaRes, double aortaComp, double rightHeartRes, double venaCavaComp, bool connectTissue, bool connectRenal, 
+    double sysRes, double sysComp, double aortaRes, double aortaComp, double rightHeartRes, double venaCavaComp, bool connectTissue, bool connectRenal, bool connectCSF,
   bool balanceBloodgases, const std::string& sTestDirectory, const std::string& sTestName, bool breakOutResults);
   void TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient);
 
@@ -92,7 +93,7 @@ public:
   void RespiratoryCircuitAndTransportTest(const std::string& sTestDirectory);
   void RespiratoryDriverTest(const std::string& sTestDirectory);
 protected:
-  enum RespiratoryConfiguration { RespiratorySolo, AnesthesiaMachineSolo, RespiratoryWithAnesthesiaMachine, RespiratoryWithInhaler, RespiratoryWithMechanicalVentilation
+  enum RespiratoryConfiguration { RespiratorySolo, AnesthesiaMachineSolo, RespiratoryWithAnesthesiaMachine, RespiratoryWithInhaler, RespiratoryWithMechanicalVentilation, MechanicalVentilatorSolo, RespiratoryWithMechanicalVentilator
   };
   void RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
 
@@ -103,6 +104,14 @@ public:
   void RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
 protected:
   void AnesthesiaMachineCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
+
+public:
+  ///////////////////////////
+  // Mechanical Ventilator //
+  void MechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
+  void RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
+protected:
+  void MechanicalVentilatorCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
 
 public:
   /////////////

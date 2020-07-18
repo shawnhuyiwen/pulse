@@ -21,18 +21,18 @@ POP_PROTO_WARNINGS()
 #include "properties/SEScalarMassPerTime.h"
 #include "utils/FileUtils.h"
 
-void PBPulseConfiguration::Merge(const PulseConfiguration& src, PulseConfiguration& dst)
+void PBPulseConfiguration::Merge(const PulseConfiguration& src, PulseConfiguration& dst, SESubstanceManager& subMgr)
 {
   PULSE_BIND::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
-  PBPulseConfiguration::Serialize(data, dst,true);
+  PBPulseConfiguration::Serialize(data, dst, subMgr, true);
 }
 
-void PBPulseConfiguration::Load(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst)
+void PBPulseConfiguration::Load(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst, SESubstanceManager& subMgr)
 {
-  PBPulseConfiguration::Serialize(src, dst);
+  PBPulseConfiguration::Serialize(src, dst, subMgr);
 }
-void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst, bool merge)
+void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, PulseConfiguration& dst, SESubstanceManager& subMgr, bool merge)
 {
   if (!merge)
     dst.Clear();
@@ -45,8 +45,8 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
     PBEngine::Load(src.dynamicstabilization(), dst.GetDynamicStabilization());
   else if (!src.stabilizationfilename().empty())
   {
-    if (!dst.GetTimedStabilization().SerializeFromFile(src.stabilizationfilename(),JSON))
-      if (!dst.GetDynamicStabilization().SerializeFromFile(src.stabilizationfilename(),JSON))
+    if (!dst.GetTimedStabilization().SerializeFromFile(src.stabilizationfilename()))
+      if (!dst.GetDynamicStabilization().SerializeFromFile(src.stabilizationfilename()))
       {
         dst.Error("Unable to load stabilization file");
         dst.RemoveStabilization();
@@ -178,14 +178,14 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
       PBProperty::Load(config.molarmassofwatervapor(), dst.GetMolarMassOfWaterVapor());
     if (!config.initialconditionsfile().empty())
     {
-      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(),JSON))
+      if (!dst.GetInitialEnvironmentalConditions().SerializeFromFile(config.initialconditionsfile(), subMgr))
       {
         dst.Error("Unable to load InitialEnvironmentalConditions file");
       }
     }
     else if (config.has_initialconditions())
     {
-      PBEnvironment::Load(config.initialconditions(), dst.GetInitialEnvironmentalConditions());
+      PBEnvironment::Load(config.initialconditions(), dst.GetInitialEnvironmentalConditions(), subMgr);
     }
     if (config.has_waterdensity())
       PBProperty::Load(config.waterdensity(), dst.GetWaterDensity());
@@ -209,7 +209,7 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
       PBProperty::Load(config.defaultproteindigestionrate(), dst.GetDefaultProteinDigestionRate());
     if (!config.initialstomachcontentsfile().empty())
     {
-      if (!dst.GetDefaultStomachContents().SerializeFromFile(config.initialstomachcontentsfile(),JSON))
+      if (!dst.GetDefaultStomachContents().SerializeFromFile(config.initialstomachcontentsfile()))
       {
         dst.Error("Unable to load Standard Stomach Contents file");
       }
@@ -585,27 +585,26 @@ bool PBPulseConfiguration::SerializeToString(const PulseConfiguration& src, std:
   PBPulseConfiguration::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const std::string& filename, SerializationFormat m)
+bool PBPulseConfiguration::SerializeToFile(const PulseConfiguration& src, const std::string& filename)
 {
   PULSE_BIND::ConfigurationData data;
   PBPulseConfiguration::Serialize(src, data);
-  std::string content;
-  PBPulseConfiguration::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m)
+bool PBPulseConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m, SESubstanceManager& subMgr)
 {
   PULSE_BIND::ConfigurationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBPulseConfiguration::Load(data, dst);
+  PBPulseConfiguration::Load(data, dst, subMgr);
   return true;
 }
-bool PBPulseConfiguration::SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SerializationFormat m)
+bool PBPulseConfiguration::SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SESubstanceManager& subMgr)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  PULSE_BIND::ConfigurationData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBPulseConfiguration::SerializeFromString(content, dst, m);
+  PBPulseConfiguration::Load(data, dst, subMgr);
+  return true;
 }

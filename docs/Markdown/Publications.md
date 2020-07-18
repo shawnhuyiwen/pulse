@@ -1,39 +1,40 @@
 Publications {#published}
 =======
-To acknowledge the Pulse Physiology Engine as a platform, please cite the Pulse Website
+To acknowledge the Pulse Physiology Engine as a platform, please cite the Pulse Website.
 
 For work that uses or incorporates Pulse, please cite the following publication:
 
-- Bray, Aaron, Jeffrey B. Webb, Andinet Enquobahrie, Jared Vicory, Jerry Heneghan, Robert Hubal, Stephanie TerMaath, Philip Asare, and Rachel B. Clipp. "Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation." SN Comprehensive Clinical Medicine. 2019.  "
+- Bray, Aaron, Jeffrey B. Webb, Andinet Enquobahrie, Jared Vicory, Jerry Heneghan, Robert Hubal, Stephanie TerMaath, Philip Asare, and Rachel B. Clipp. "Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation." SN Comprehensive Clinical Medicine. 2019. https://doi.org/10.1007/s42399-019-00053-w
 
-We will add more publications as we get them targeted at specific systems<br>
 Please let us know if you have a publication you would like added to this list by emailing <a href="mailto:comm@kitware.com">comm@kitware.com</a>.
 
-Note that some of these publications focus on the physiology engine precursor, %BioGears.<br>
-Authors Clipp, Webb, and Bray have transitioned to the Pulse team.
-
+Note that some of the publications prior to 2018 focus on the physiology engine precursor, %BioGears. Authors Clipp, Webb, and Bray have transitioned to the Pulse team.
 
 Pulse Publications:
-- Bray, Aaron, Jeffrey B. Webb, Andinet Enquobahrie, Jared Vicory, Jerry Heneghan, Robert Hubal, Stephanie TerMaath, Philip Asare, and Rachel B. Clipp. "Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation." SN Comprehensive Clinical Medicine. 2019.
+- Rachel B. Clipp, PhD, Aaron Bray, and Jeffrey B. Webb. "An Integrated Model for Hemorrhagic Shock and Fluid Resuscitation." Military Health System Research Symposium (MHSRS). 2020.
+- Jeffrey B. Webb, Aaron Bray, Philip K. Asare, Rachel B. Clipp, Yatin B. Mehta, Sudheer Penupolu, Aalpen A. Patel, S. Mark Poler. "Computational Simulation to Assess Patient Safety of Uncompensated COVID-19 Two-patient Ventilator Sharing Using the Pulse Physiology Engine." medRxiv preprint. 2020. https://doi.org/10.1101/2020.05.19.20107201
+- Jeffrey B. Webb, Aaron Bray, and Rachel B. Clipp. "Parameterization of Respiratory Physiology and Pathophysiology for Real-Time Simulation." 42nd Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC'20). 2020.
+- Mrinali Kesavadas and Pavithra Rajeswaran, "Cyber Physical CPR Training System with Physiological Feedback." 41st Annual International Conference of the IEEE Engineering in Medicine & Biology Society (EMBC). 2019.
+- Bray, Aaron, Jeffrey B. Webb, Andinet Enquobahrie, Jared Vicory, Jerry Heneghan, Robert Hubal, Stephanie TerMaath, Philip Asare, and Rachel B. Clipp. "Pulse Physiology Engine: an Open-Source Software Platform for Computational Modeling of Human Medical Simulation." SN Comprehensive Clinical Medicine. 2019. https://doi.org/10.1007/s42399-019-00053-w
 - Gessa, Farooq M., "Testing and Validation Framework for Closed-Loop Physiology Management Systems for Critical and Perioperative Care" (2019). Master's Theses. 220. https://digitalcommons.bucknell.edu/masters_theses/220
-- Rodriquez Jr, Dario, Thomas Blakeman, Dina Gomaa, and Richard Branson. Advancing Mechanical Ventilation Management through Simulation. No. AFRL-SA-WP-SR-2019-0006. USAFSAM/FHE Wright-Patterson AFB United States, 2019. 
+- Rodriquez Jr, Dario, Thomas Blakeman, Dina Gomaa, and Richard Branson. Advancing Mechanical Ventilation Management through Simulation. No. AFRL-SA-WP-SR-2019-0006. USAFSAM/FHE Wright-Patterson AFB United States, 2019. https://apps.dtic.mil/dtic/tr/fulltext/u2/1074448.pdf 
 - Jeffrey B. Webb, Rodney Metoyer, Aaron Bray, and Rachel B. Clipp. "Simulation of Asthma Attack and Inhaler Actuation using the Pulse Physiology Engine." BMES Frontiers in Medical Devices. March 2019.
-- Taylor, Glenn, Anthony Deschamps, Alyssa Tanaka, Denise Nicholson, Gerd Bruder, Gregory Welch, and Francisco Guido-Sanz, "Augmented Reality for Tactical Combat Casualty Care Training," International Conference on Augmented Cognition. Springer, Cham, 2018.
+- Taylor, Glenn, Anthony Deschamps, Alyssa Tanaka, Denise Nicholson, Gerd Bruder, Gregory Welch, and Francisco Guido-Sanz, "Augmented Reality for Tactical Combat Casualty Care Training." International Conference on Augmented Cognition. Springer, Cham, 2018. https://doi.org/10.1007/978-3-319-91467-1_19
 - Paul Ruales Rosero, Pavithra Rajeswaran, Jeffrey Webb, Aaron Bray, Thenkurussi Kesavadas. "Modelling Valvular Diseases Using a Virtual Physiology Engine." 40th Annual International Conference of the IEEE Engineering in Medicine and Biology Society. Honolulu, Hawaii. 2018.
 - Farooq Gessa, Philip Asare, Aaron Bray, Rachel Clipp, S. Mark Poler. "Towards A Test and Validation Framework for Closed-Loop Physiology Management Systems for Critical and Perioperative." Medical Cyber Physical Systems Workshop. Porto, Portugal. 2018.
 - Farooq Gessa, Philip Asare1, Dikendra Karki1, Aaron Bray, Rachel B. Clipp, Mark Poler, "Simulation-Based Test and Validation of Medical Cyber-Physical Systems for Critical and Perioperative Care," Workshop on Monitoring and Testing of Cyber-Physical Systems (MT-CPS).
 - Farooq  Gessa, Aaron Bray, Rachel Clipp, Philip  Asare, S. Mark Poler, "A Proof-of-Concept Framework for Testing and Validating Networked Medical Device Applications and Closed-Loop Physiology Management Systems for Critical and Perioperative Care," Society for Technology in Anesthesia (STA) Annual Meeting 
-- Potter, Lucas, Arikatla, Sreekanth, Bray, Aaron, Webb, Jeff, and Enquobahrie, Andinet. "Physiology informed virtual surgical planning: a case study with a virtual airway surgical planner and BioGears." SPIE Medical Imaging Conference on Image-Guided Procedures, Robotic Interventions, and Modeling. Orlando, FL. 2017.
+- Potter, Lucas, Arikatla, Sreekanth, Bray, Aaron, Webb, Jeff, and Enquobahrie, Andinet. "Physiology informed virtual surgical planning: a case study with a virtual airway surgical planner and BioGears." SPIE Medical Imaging Conference on Image-Guided Procedures, Robotic Interventions, and Modeling. Orlando, FL. 2017. https://doi.org/10.1117/12.2252510
 - Fisher, Charles E, Frank, Randall J, Argenta, Chris, Petrovitch, Chris, Oxford, Eddie, Pamplin, Jeremy C, Baker Jr, William L, Wendroff, Daniel S, Cancio, Leopoldo C, Batchinsky, Andriy I. "Forecasting the Trajectory of Blood Loss from Vital Signs Collected at the Bedside: a Principal Component Analysis Approach." 15th International Conference on Complex Acute Illness. Pasadena, CA. 2016.
 - Metoyer, Rodney, Carter, Jenn, Bergeron, Bryan, Baird, Austin, Bray, Aaron, Clipp, Rachel B., Thames, M. Cameron, Webb, Jeff. "A Framework for Multiscale Physiology: Towards Individualized Computer Simulation."  VPH2016, book of abstracts, A.G. Hoekstra (Editor), University of Amsterdam, (Amsterdam), ISBN 978-90-826254-0-0, 2016.
-- Clipp, Rachel B, Bray, Aaron M, Metoyer, Rodney Jr, Thames, M. Cameron, and Webb, Jeffrey B. "Pharmacokinetic and Pharmacodynamic Modeling in BioGears" IEEE Engineering in Medicine and Biology Conference. Orlando, FL. 2016.
+- Clipp, Rachel B, Bray, Aaron M, Metoyer, Rodney Jr, Thames, M. Cameron, and Webb, Jeffrey B. "Pharmacokinetic and Pharmacodynamic Modeling in BioGears" IEEE Engineering in Medicine and Biology Conference. Orlando, FL. 2016. https://doi.org/10.1109/EMBC.2016.7590986
 - Clipp, Rachel B, Thames, M. Cameron, Webb, Jeffrey B, Metoyer, Rodney Jr, Swarm, Zachary M, Bray, Aaron M, and Carter, Jenn N. "Integration of a Baroreflex Model Into a Whole Body Physiology Engine." ASME Summer Biomechanics, BioTransport, and BioEngineering Conference. National Harbor, MD. 2016.
 - Clipp, Rachel B., Webb, Jeffrey B., Thames, M. Cameron, Swarm, Zachary, Metoyer, Rodney, and Bray, Aaron. Pharmacokinetic and Pharmacodynamic Modeling in BioGears. Medicine Meets Virtual Reality Conference. Los Angelos, CA. 2016.
 - Metoyer, Rodney, Bergeron, Bryan, Clipp, Rachel B., Webb, Jeffrey B., Thames, M. Cameron, Swarm, Zachary, Carter, Jenn, Gebremichael, Y. , and Heneghan, Jeremiah. Multiscale Simulation of Insults and Interventions: The BioGears Showcase Scenarios. Medicine Meets Virtual Reality Conference. Los Angelos, CA. 2016.
 - Swarm, Zachary, Webb, Jeffrey B., Clipp, Rachel B., Carter, Jenn, Thames, M. Cameron, Metoyer, Rodney, and Bray, Aaron and Byrd, David. Modeling %Renal Behavior and Control in BioGears. Medicine Meets Virtual Reality Conference. Los Angelos, CA. 2016.
 - Thames, M. Cameron, Webb, Jeffrey B., Clipp, Rachel B., Carter, Jenn, Swarm, Zachary, Metoyer, Rodney, and Bray, Aaron and Byrd, David. Dynamic Response to Heat Gain and Heat Loss in the BioGears Engine. Medicine Meets Virtual Reality Conference. Los Angelos, CA. 2016.
-- Bergeron, Bryan. "BioGears - It's Alive!" Servo Magazine, December 2015.
+- Bergeron, Bryan. "BioGears - It's Alive!" Servo Magazine, December 2015. https://www.servomagazine.com/magazine/article/biogears-its-alive
 - Gebremichael, Y., Clipp, R., Webb, J., Bray, A., Thames, M. Cameron, Swarm, Z., Carter, J., and Heneghan, J. Integration Of A Spontaneous %Respiratory Driver with Blood Gas Feedback into BioGears, an Open-Source, Whole-Body Physiology Model. Summer Biomechanics, bioengineering and Biotransport Conference. Snowbird Resort, Utah. 2015
 - Metoyer, Rodney, and Smith, Beth. Modeling the Time-Dependent Intrapericardial Pressure-Volume Relationship. World Congress of Biomechanics. Boston, MA. 2014
-- Kauchak, Marty. "Game Changer." MedSim Magazine, page 21, Volume 3, Issue 2, 2014.
+- Kauchak, Marty. "Game Changer." MedSim Magazine, page 21, Volume 3, Issue 2, 2014. https://medicalsimulation.training/technology/gamer-changer/
 - Clipp, Rachel B. and Scott, Gabriel. HumanSim: A Physiology Engine for the Simulation of Anesthesia/Anaphylaxis, Military Health Research Symposium. Fort Lauderdale, FL. 2012.

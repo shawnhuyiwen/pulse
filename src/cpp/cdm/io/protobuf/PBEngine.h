@@ -33,41 +33,41 @@ public:
   static bool SerializeToString(const LogMessages& src, std::string& output, SerializationFormat m, Logger* logger);
   static bool SerializeFromString(const std::string& src, LogMessages& dst, SerializationFormat m, Logger* logger);
 
-  static void Load(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr);
+  static void Load(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, const SESubstanceManager& subMgr);
   static CDM_BIND::PatientConfigurationData* Unload(const SEPatientConfiguration& src);
-  static void Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, SESubstanceManager& subMgr);
+  static void Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientConfigurationData& dst);
   static bool SerializeToString(const SEPatientConfiguration& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEPatientConfiguration& src, const std::string& filename, SerializationFormat m);
-  static bool SerializeFromString(const std::string& src, SEPatientConfiguration& dst, SerializationFormat m, SESubstanceManager& subMgr);
-  static bool SerializeFromFile(const std::string& filename, SEPatientConfiguration& dst, SerializationFormat m, SESubstanceManager& subMgr);
+  static bool SerializeToFile(const SEPatientConfiguration& src, const std::string& filename);
+  static bool SerializeFromString(const std::string& src, SEPatientConfiguration& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromFile(const std::string& filename, SEPatientConfiguration& dst, const SESubstanceManager& subMgr);
 
-  static void Load(const CDM_BIND::ConditionListData& src, SEConditionManager& dst);
+  static void Load(const CDM_BIND::ConditionListData& src, SEConditionManager& dst, const SESubstanceManager& subMgr);
   static CDM_BIND::ConditionListData* Unload(const SEConditionManager& src);
-  static void Serialize(const CDM_BIND::ConditionListData& src, SEConditionManager& dst);
+  static void Serialize(const CDM_BIND::ConditionListData& src, SEConditionManager& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEConditionManager& src, CDM_BIND::ConditionListData& dst);
 
   static bool SerializeToString(const SEConditionManager& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEConditionManager& src, const std::string& filename, SerializationFormat m);
-  static bool SerializeFromString(const std::string& src, SEConditionManager& dst, SerializationFormat m);
-  static bool SerializeFromFile(const std::string& filename, SEConditionManager& dst, SerializationFormat m);
+  static bool SerializeToFile(const SEConditionManager& src, const std::string& filename);
+  static bool SerializeFromString(const std::string& src, SEConditionManager& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromFile(const std::string& filename, SEConditionManager& dst, const SESubstanceManager& subMgr);
 
-  static void Load(const CDM_BIND::ActionListData& src, SEActionManager& dst);
+  static void Load(const CDM_BIND::ActionListData& src, SEActionManager& dst, SESubstanceManager& subMgr);
   static CDM_BIND::ActionListData* Unload(const SEActionManager& src);
-  static void Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst);
+  static void Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst, SESubstanceManager& subMgr);
   static void Serialize(const SEActionManager& src, CDM_BIND::ActionListData& dst);
   static void Serialize(const SEEquipmentActionCollection& src, CDM_BIND::ActionListData& dst);
   static void Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst);
   static void Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionListData& dst);
 
   static bool SerializeToString(const SEActionManager& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEActionManager& src, const std::string& filename, SerializationFormat m);
-  static bool SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m);
-  static bool SerializeFromFile(const std::string& filename, SEActionManager& dst, SerializationFormat m);
+  static bool SerializeToFile(const SEActionManager& src, const std::string& filename);
+  static bool SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m, SESubstanceManager& subMgr);
+  static bool SerializeFromFile(const std::string& filename, SEActionManager& dst, SESubstanceManager& subMgr);
 
-  static void Load(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, SESubstanceManager& subMgr);
-  static void Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, SESubstanceManager& subMgr);
-  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, SESubstanceManager& subMgr);
+  static void Load(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
   static void Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst);
   static CDM_BIND::DataRequestData* Unload(const SEDataRequest& src);
@@ -82,9 +82,9 @@ public:
   static void Copy(const SEDataRequestManager& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr);
 
   static bool SerializeToString(const SEDataRequestManager& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEDataRequestManager& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeToFile(const SEDataRequestManager& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEDataRequestManager& dst, SerializationFormat m, const SESubstanceManager& subMgr);
-  static bool SerializeFromFile(const std::string& filename, SEDataRequestManager& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromFile(const std::string& filename, SEDataRequestManager& dst, const SESubstanceManager& subMgr);
 
   static void Load(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst);
   static CDM_BIND::DecimalFormatData* Unload(const SEDecimalFormat& src);
@@ -102,9 +102,9 @@ public:
   static void Serialize(const SEDynamicStabilization& src, CDM_BIND::DynamicStabilizationData& dst);
 
   static bool SerializeToString(const SEDynamicStabilization& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SEDynamicStabilization& src, const std::string& filename, SerializationFormat);
+  static bool SerializeToFile(const SEDynamicStabilization& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEDynamicStabilization& dst, SerializationFormat m);
-  static bool SerializeFromFile(const std::string& filename, SEDynamicStabilization& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SEDynamicStabilization& dst);
 
   static void Load(const CDM_BIND::DynamicStabilizationEngineConvergenceData& src, SEDynamicStabilizationEngineConvergence& dst);
   static CDM_BIND::DynamicStabilizationEngineConvergenceData* Unload(const SEDynamicStabilizationEngineConvergence& src);
@@ -117,7 +117,7 @@ public:
   static void Serialize(const SETimedStabilization& src, CDM_BIND::TimedStabilizationData& dst);
 
   static bool SerializeToString(const SETimedStabilization& src, std::string& output, SerializationFormat m);
-  static bool SerializeToFile(const SETimedStabilization& src, const std::string& filename, SerializationFormat m);
+  static bool SerializeToFile(const SETimedStabilization& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SETimedStabilization& dst, SerializationFormat m);
-  static bool SerializeFromFile(const std::string& filename, SETimedStabilization& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SETimedStabilization& dst);
 };

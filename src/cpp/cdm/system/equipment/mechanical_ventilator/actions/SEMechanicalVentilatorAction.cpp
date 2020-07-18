@@ -4,7 +4,7 @@
 #include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
 #include "substance/SESubstanceManager.h"
 
-SEMechanicalVentilatorAction::SEMechanicalVentilatorAction() : SEEquipmentAction()
+SEMechanicalVentilatorAction::SEMechanicalVentilatorAction(Logger* logger) : SEEquipmentAction(logger)
 {
 
 }

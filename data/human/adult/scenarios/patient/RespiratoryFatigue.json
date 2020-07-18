@@ -72,13 +72,13 @@
       }}
     },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}},
-	{ "PatientAction": { "RespiratoryFatigue": 
+    { "PatientAction": { "RespiratoryFatigue": 
       {
         "Severity": { "Scalar0To1": { "Value": 0.5 }}
       }}
     },
     { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}},
-	{ "PatientAction": { "RespiratoryFatigue": 
+    { "PatientAction": { "RespiratoryFatigue": 
       {
         "Severity": { "Scalar0To1": { "Value": 1.0 }}
       }}

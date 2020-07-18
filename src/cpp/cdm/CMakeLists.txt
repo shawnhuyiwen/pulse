@@ -624,8 +624,6 @@ add_library_ex(CommonDataModel
     utils/DataTrack.cpp
     utils/FileUtils.cpp
     utils/GeneralMath.cpp
-    #utils/Log4cplus.cpp
-    #utils/Log4cpp.cpp
     utils/Logger.cpp
     utils/ScopedMutex.cpp
     utils/SimpleLogger.cpp

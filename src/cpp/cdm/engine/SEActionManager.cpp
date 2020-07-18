@@ -13,12 +13,11 @@
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
 
-SEActionManager::SEActionManager(SESubstanceManager& substances) : Loggable(substances.GetLogger()), 
-                                                                   m_Substances(substances)
+SEActionManager::SEActionManager(Logger* logger) : Loggable(logger)
 {
-  m_PatientActions = new SEPatientActionCollection(substances);
-  m_EnvironmentActions = new SEEnvironmentActionCollection(substances);
-  m_EquipmentActions = new SEEquipmentActionCollection(substances);
+  m_PatientActions = new SEPatientActionCollection(logger);
+  m_EnvironmentActions = new SEEnvironmentActionCollection(logger);
+  m_EquipmentActions = new SEEquipmentActionCollection(logger);
 }
 
 SEActionManager::~SEActionManager()
@@ -40,17 +39,17 @@ bool SEActionManager::SerializeToString(std::string& output, SerializationFormat
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEActionManager::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEActionManager::SerializeToFile(const std::string& filename) const
 {
-  return PBEngine::SerializeToFile(*this, filename, m);
+  return PBEngine::SerializeToFile(*this, filename);
 }
-bool SEActionManager::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEActionManager::SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr)
 {
-  return PBEngine::SerializeFromString(src, *this, m);
+  return PBEngine::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEActionManager::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEActionManager::SerializeFromFile(const std::string& filename, SESubstanceManager& subMgr)
 {
-  return PBEngine::SerializeFromFile(filename, *this, m);
+  return PBEngine::SerializeFromFile(filename, *this, subMgr);
 }
 
 // A raw serialize method
@@ -61,12 +60,12 @@ bool SEActionManager::SerializeFromFile(const std::string& filename, Serializati
 // A hemorrhage with no flow rate isinvalid and used to turn off an existing hemorrhage
 // So we need to serialize that invalid action in, and have it processed by the engine action manager
 // So this method is intended to be a middle man between the socket/language client and an engine.
-bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, SESubstanceManager& subMgr)
+bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }
 
-bool SEActionManager::ProcessAction(const SEAction& action)
+bool SEActionManager::ProcessAction(const SEAction& action, SESubstanceManager& subMgr)
 {
   if (!action.IsValid())
   {
@@ -78,15 +77,15 @@ bool SEActionManager::ProcessAction(const SEAction& action)
 
   const SEPatientAction* pa = dynamic_cast<const SEPatientAction*>(&action);
   if (pa != nullptr)
-    bRet = m_PatientActions->ProcessAction(*pa);
+    bRet = m_PatientActions->ProcessAction(*pa, subMgr);
 
   const SEEnvironmentAction* ea = dynamic_cast<const SEEnvironmentAction*>(&action);
   if (ea != nullptr)
-    bRet = m_EnvironmentActions->ProcessAction(*ea);
+    bRet = m_EnvironmentActions->ProcessAction(*ea, subMgr);
 
   const SEEquipmentAction* ia = dynamic_cast<const SEEquipmentAction*>(&action);
   if (ia != nullptr)
-    bRet = m_EquipmentActions->ProcessAction(*ia);
+    bRet = m_EquipmentActions->ProcessAction(*ia, subMgr);
 
   if (!bRet)
   {

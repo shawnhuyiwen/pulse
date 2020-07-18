@@ -22,18 +22,18 @@ PulseEngine::~PulseEngine()
   SAFE_DELETE(m_PulseController);
 }
 
-bool PulseEngine::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool PulseEngine::SerializeFromFile(const std::string& filename)
 {
-  return m_PulseController->SerializeFromFile(filename, m);
+  return m_PulseController->SerializeFromFile(filename);
 }
-bool PulseEngine::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool PulseEngine::SerializeToFile(const std::string& filename) const
 {
-  return m_PulseController->SerializeToFile(filename, m);
+  return m_PulseController->SerializeToFile(filename);
 }
 
 bool PulseEngine::SerializeFromString(const std::string& src, SerializationFormat m)
 {
-  return SerializeFromString(src, m);
+  return m_PulseController->SerializeFromString(src, m);
 }
 bool PulseEngine::SerializeToString(std::string& output, SerializationFormat m) const
 {
@@ -124,6 +124,11 @@ const SEPatient& PulseEngine::GetPatient() const
   return m_PulseController->GetData().GetCurrentPatient();
 }
 
+const SEPatient& PulseEngine::GetInitialPatient() const
+{
+  return m_PulseController->GetData().GetInitialPatient();
+}
+
 bool PulseEngine::GetPatientAssessment(SEPatientAssessment& assessment) const
 {
   
@@ -135,10 +140,6 @@ const SEEnvironment* PulseEngine::GetEnvironment() const
   return &m_PulseController->GetData().GetEnvironment();
 }
 
-SESubstanceManager& PulseEngine::GetSubstanceManager()
-{
-  return m_PulseController->GetData().GetSubstances();
-}
 const SESubstanceManager& PulseEngine::GetSubstanceManager() const
 {
   return m_PulseController->GetData().GetSubstances();

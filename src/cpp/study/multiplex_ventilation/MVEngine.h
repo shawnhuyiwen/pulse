@@ -68,6 +68,7 @@ PUSH_PROTO_WARNINGS()
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/json_util.h>
 POP_PROTO_WARNINGS()
+#include "io/protobuf/PBUtils.h"
 
 bool ExtractInitialConditions(const std::string& filePath, double& comp, double& imp);
 bool ExtractVentilatorSettings(const std::string& filePath, std::string& fileName, double& pip_cmH2O, double& peep_cmH2O, double& FiO2);

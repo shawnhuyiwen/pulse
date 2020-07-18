@@ -4,8 +4,9 @@
 from pulse.cdm.engine import eSerializationFormat
 from google.protobuf import json_format
 
-from pulse.cdm.patient import SEPatient, eSex
+from pulse.cdm.patient import SEPatient, eSex, SENutrition
 from pulse.cdm.bind.Patient_pb2 import PatientData
+from pulse.cdm.bind.PatientNutrition_pb2 import NutritionData
 
 from pulse.cdm.io.scalars import *
 
@@ -14,8 +15,8 @@ def serialize_patient_to_string(src: SEPatient, fmt: eSerializationFormat):
     serialize_patient_to_bind(src, dst)
     return json_format.MessageToJson(dst, True, True)
 
-def serialize_patient_to_file(src: SEPatient, filename: str, fmt: eSerializationFormat):
-    string = serialize_patient_to_string(src, fmt)
+def serialize_patient_to_file(src: SEPatient, filename: str):
+    string = serialize_patient_to_string(src, eSerializationFormat.JSON)
     file = open(filename, "w")
     n = file.write(string)
     file.close()
@@ -25,10 +26,10 @@ def serialize_patient_from_string(string: str, dst: SEPatient, fmt: eSerializati
     json_format.Parse(string, src)
     serialize_patient_from_bind(src,dst)
 
-def serialize_patient_from_file(filename: str, dst: SEPatient, fmt: eSerializationFormat):
+def serialize_patient_from_file(filename: str, dst: SEPatient):
     with open(filename) as f:
         string = f.read()
-    serialize_patient_from_string(string, dst, fmt)
+    serialize_patient_from_string(string, dst, eSerializationFormat.JSON)
 
 def serialize_patient_to_bind(src: SEPatient, dst: PatientData):
     dst.Name = src.get_name()
@@ -89,6 +90,7 @@ def serialize_patient_to_bind(src: SEPatient, dst: PatientData):
         serialize_scalar_volume_to_bind(src.get_vital_capacity(), dst.VitalCapacity)
 
 def serialize_patient_from_bind(src: PatientData, dst: SEPatient):
+    dst.clear()
     dst.set_name(src.Name)
     dst.set_sex(eSex(src.Sex))
     if src.HasField("Age"):
@@ -146,3 +148,64 @@ def serialize_patient_from_bind(src: PatientData, dst: SEPatient):
     if src.HasField("VitalCapacity"):
         serialize_scalar_volume_from_bind(src.VitalCapacity, dst.get_vital_capacity())
 
+def serialize_nutrition_to_string(src: SENutrition, fmt: eSerializationFormat):
+    dst = NutritionData()
+    serialize_nutrition_to_bind(src, dst)
+    return json_format.MessageToJson(dst, True, True)
+
+def serialize_nutrition_to_file(src: SENutrition, filename: str):
+    string = serialize_nutrition_to_string(src, eSerializationFormat.JSON)
+    file = open(filename, "w")
+    n = file.write(string)
+    file.close()
+
+def serialize_nutrition_from_string(string: str, dst: SENutrition, fmt: eSerializationFormat):
+    src = NutritionData()
+    json_format.Parse(string, src)
+    serialize_nutrition_from_bind(src,dst)
+
+def serialize_nutrition_from_file(filename: str, dst: SENutrition):
+    with open(filename) as f:
+        string = f.read()
+    serialize_nutrition_from_string(string, dst, eSerializationFormat.JSON)
+
+def serialize_nutrition_to_bind(src: SENutrition, dst: NutritionData):
+    if src.has_carbohydrate():
+        serialize_scalar_mass_to_bind(src.get_carbohydrate(), dst.Carbohydrate)
+    if src.has_carbohydrate_digestion_rate():
+        serialize_scalar_mass_per_time_to_bind(src.get_carbohydrate_digestion_rate(), dst.CarbohydrateDigestionRate)
+    if src.has_fat():
+        serialize_scalar_mass_to_bind(src.get_fat(), dst.Fat)
+    if src.has_fat_digestion_rate():
+        serialize_scalar_mass_per_time_to_bind(src.get_fat_digestion_rate(), dst.FatDigestionRate)
+    if src.has_protein():
+        serialize_scalar_mass_to_bind(src.get_protein(), dst.Protein)
+    if src.has_protein_digestion_rate():
+        serialize_scalar_mass_per_time_to_bind(src.get_protein_digestion_rate(), dst.ProteinDigestionRate)
+    if src.has_calcium():
+        serialize_scalar_mass_to_bind(src.get_calcium(), dst.Calcium)
+    if src.has_sodium():
+        serialize_scalar_mass_to_bind(src.get_sodium(), dst.Sodium)
+    if src.has_water():
+        serialize_scalar_volume_to_bind(src.get_water(), dst.Water)
+
+def serialize_nutrition_from_bind(src: NutritionData, dst: SENutrition):
+    dst.clear()
+    if src.HasField("Carbohydrate"):
+        serialize_scalar_mass_from_bind(src.Carbohydrate, dst.get_age())
+    if src.HasField("CarbohydrateDigestionRate"):
+        serialize_scalar_mass_per_time_from_bind(src.CarbohydrateDigestionRate, dst.get_weight())
+    if src.HasField("Fat"):
+        serialize_scalar_mass_from_bind(src.Fat, dst.get_height())
+    if src.HasField("FatDigestionRate"):
+        serialize_scalar_mass_per_time_from_bind(src.FatDigestionRate, dst.get_body_density())
+    if src.HasField("Protein"):
+        serialize_scalar_mass_from_bind(src.Protein, dst.get_body_fat_fraction())
+    if src.HasField("ProteinDigestionRate"):
+        serialize_scalar_mass_per_time_from_bind(src.ProteinDigestionRate, dst.get_ideal_body_weight())
+    if src.HasField("Calcium"):
+        serialize_scalar_mass_from_bind(src.Calcium, dst.get_lean_body_mass())
+    if src.HasField("Sodium"):
+        serialize_scalar_mass_from_bind(src.Sodium, dst.get_alveoli_surface_area())
+    if src.HasField("Water"):
+        serialize_scalar_volume_from_bind(src.Water, dst.get_right_lung_ratio())

@@ -9,7 +9,7 @@ class CDM_DECL SENeedleDecompression : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SENeedleDecompression();
+  SENeedleDecompression(Logger* logger=nullptr);
   virtual ~SENeedleDecompression();
 
   virtual void Clear(); //clear memory

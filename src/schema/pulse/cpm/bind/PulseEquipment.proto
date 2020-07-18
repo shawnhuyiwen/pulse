@@ -1,6 +1,6 @@
 syntax = "proto3";
 package pulse.cpm.bind;
-option java_package = "pulse.cpm.bind";
+option java_package = "com.kitware.pulse.cpm.bind";
 option csharp_namespace = "pulse.cpm.bind";
 option optimize_for = SPEED;
 
@@ -38,4 +38,7 @@ message MechanicalVentilatorData
   pulse.cdm.bind.MechanicalVentilatorData          Common                         = 1;
   bool                                             Inhaling                       = 2;
   double                                           CurrentBreathingCycleTime_s    = 3;
+  double                                           PressureTarget_cmH2O           = 4;
+  double                                           PressureBaseline_cmH2O         = 5;
+  double                                           DriverPressure_cmH2O           = 6;
 }

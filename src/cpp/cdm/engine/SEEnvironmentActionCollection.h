@@ -3,9 +3,9 @@
 #pragma once
 class SEAction;
 class SEEnvironmentAction;
-class SESubstanceManager;
 class SEThermalApplication;
 class SEChangeEnvironmentalConditions;
+class SESubstanceManager;
 CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(AnyEnvironmentActionData)
 
@@ -14,7 +14,7 @@ class CDM_DECL SEEnvironmentActionCollection : public Loggable
   friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
-  SEEnvironmentActionCollection(SESubstanceManager&);
+  SEEnvironmentActionCollection(Logger* logger=nullptr);
 public:
   ~SEEnvironmentActionCollection();
 
@@ -32,10 +32,8 @@ public:
 
 protected:
   void Clear();
-  bool ProcessAction(const SEEnvironmentAction& action);
-  
+  bool ProcessAction(const SEEnvironmentAction& action, SESubstanceManager&);
+
   SEChangeEnvironmentalConditions*  m_ChangeEnvironmentalConditions;
   SEThermalApplication*             m_ThermalApplication;
-  // General
-  SESubstanceManager&             m_Substances;
 };

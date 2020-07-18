@@ -129,7 +129,7 @@ void HowToEngineUse()
   // The first order of business is to initialize the engine by loading a patient state.
   // Patient states provided in the SDK are the state of the engine at the time they stabilize
   // More details on creating a patient and stabilizing the engine can be found in HowTo-CreateAPatient.cpp
-  if (!pe->SerializeFromFile("./states/Soldier@0s.json", JSON))
+  if (!pe->SerializeFromFile("./states/Soldier@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -154,8 +154,8 @@ void HowToEngineUse()
   // So it's a good idea to cache this pointer so you can reuse it when asking at various time steps
   // You can find all substances defined in json files in the substances directory of your working directory
   // Names are in those json files. ALL substance json files are loaded into a substance managers when the engine is created
-  SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
-  SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
+  const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
+  const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
   // The tracker is responsible for advancing the engine time AND outputting the data requests below at each time step
   // If you do not wish to write data to a file, you do not need to make any data requests
@@ -170,8 +170,8 @@ void HowToEngineUse()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");  
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *O2, "PartialPressure");
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, *CO2, "PartialPressure");
+  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure");
+  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure");
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Lungs, "Volume");
   pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
 
@@ -268,7 +268,7 @@ void HowToEngineUse()
 
 
   // Save the state of the engine
-  pe->SerializeToFile("./states/FinalEngineUseState.json",JSON);
+  pe->SerializeToFile("./states/FinalEngineUseState.json");
 
   pe->GetLogger()->Info("Finished");
 }

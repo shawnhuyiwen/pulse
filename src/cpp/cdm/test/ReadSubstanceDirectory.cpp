@@ -16,7 +16,6 @@ void CommonDataModelTest::ReadSubstanceDirectory(const std::string& rptDirectory
   TimingProfile pTimer;
   std::string testName = "ReadSubstanceDirectory";
   m_Logger->SetLogFile(rptDirectory + "/" + testName + ".log");
-  SESubstance obj(m_Logger);
 
   std::string dir = GetCurrentWorkingDirectory();
   dir.append("/substances");
@@ -25,14 +24,22 @@ void CommonDataModelTest::ReadSubstanceDirectory(const std::string& rptDirectory
   SETestSuite&  testSuite = testReport.CreateTestSuite();
   testSuite.SetName(testName);
 
-  SETestCase& testCase = testSuite.CreateTestCase();
+  SETestCase& testCase1 = testSuite.CreateTestCase();
   pTimer.Start("Case");
   SESubstanceManager subMgr(m_Logger);
   if(!subMgr.LoadSubstanceDirectory())
-    testCase.AddFailure("Unable to load substances");
-  testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
-  testCase.SetName(obj.GetName());
+    testCase1.AddFailure("Unable to load substances");
+  testCase1.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
+  testCase1.SetName("Initial Load");
   // TODO would be nice to listen to errors on the logger and add them to the testCase failures...
 
-  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.json",JSON);
+  // Let's call load again and make sure our addresses did not change
+  SETestCase& testCase2 = testSuite.CreateTestCase();
+  pTimer.Start("Case");
+  if (!subMgr.LoadSubstanceDirectory())
+    testCase2.AddFailure("Unable to load substances");
+  testCase2.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
+  testCase2.SetName("Second Load");
+
+  testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.json");
 }

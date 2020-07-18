@@ -9,7 +9,6 @@
 #include "engine/SEPatientConfiguration.h"
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBScenario.h"
-#include "io/protobuf/PBActions.h"
 
 SEScenario::SEScenario(Logger* logger, std::string const& dataDir) : Loggable(logger)
 {
@@ -41,17 +40,17 @@ bool SEScenario::SerializeToString(std::string& output, SerializationFormat m) c
 {
   return PBScenario::SerializeToString(*this, output, m);
 }
-bool SEScenario::SerializeToFile(const std::string& filename, SerializationFormat m) const
+bool SEScenario::SerializeToFile(const std::string& filename) const
 {
-  return PBScenario::SerializeToFile(*this, filename, m);
+  return PBScenario::SerializeToFile(*this, filename);
 }
 bool SEScenario::SerializeFromString(const std::string& src, SerializationFormat m)
 {
   return PBScenario::SerializeFromString(src, *this, m);
 }
-bool SEScenario::SerializeFromFile(const std::string& filename, SerializationFormat m)
+bool SEScenario::SerializeFromFile(const std::string& filename)
 {
-  return PBScenario::SerializeFromFile(filename, *this, m);
+  return PBScenario::SerializeFromFile(filename, *this);
 }
 
 bool SEScenario::IsValid() const
@@ -122,7 +121,7 @@ SEPatientConfiguration& SEScenario::GetPatientConfiguration()
 {
   InvalidateEngineStateFile();
   if (m_PatientConfiguration == nullptr)
-    m_PatientConfiguration = new SEPatientConfiguration(*m_SubMgr);
+    m_PatientConfiguration = new SEPatientConfiguration(GetLogger());
   return *m_PatientConfiguration;
 }
 const SEPatientConfiguration* SEScenario::GetPatientConfiguration() const
@@ -141,10 +140,9 @@ void SEScenario::InvalidatePatientConfiguration()
 void SEScenario::AddAction(const SEAction& a)
 {
   // Make a copy using the bindings
-  m_Actions.push_back(PBAction::Copy(a,*m_SubMgr));
+  m_Actions.push_back(SEAction::Copy(a,*m_SubMgr));
 }
 const std::vector<const SEAction*>& SEScenario::GetActions() const
 {
   return m_Actions;
 }
-

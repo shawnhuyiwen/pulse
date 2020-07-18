@@ -1,6 +1,6 @@
 syntax = "proto3";
 package pulse.cdm.bind;
-option java_package = "pulse.cdm.bind";
+option java_package = "com.kitware.pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
@@ -18,47 +18,61 @@ message MechanicalVentilatorData
     Tube           = 3;
   }
   
-  enum eControl
-  {
-    NullControl    = 0;/**<< Signals not provided, or no change */
-    PC_CMV         = 1;/**<< Pressure Control Ventilation with Continuous Mandatory Ventilation */
-  }
-  
   enum eDriverWaveform
   {
     NullDriverWaveform = 0;/**<< Signals not provided, or no change */
     Square             = 1;/**<<  */
+    Exponential        = 2;/**<<  */
+    Ramp               = 3;/**<<  */
+    Sinusoidal         = 4;/**<<  */
+    Sigmoidal          = 5;/**<<  */
   }
   
-  message BreathProfileData
+  eConnection                         Connection                    = 1; /**<< @brief @ref MechanicalVentilatorData_eControlTable */
+  ScalarPressureTimePerVolumeData     EndotrachealTubeResistance    = 2; /**<< @brief Total connection resistance. */
+  
+  oneof ExpiratoryBaseline
   {
-    oneof Breath
-    {
-      ScalarFrequencyData             Rate                          = 1; /**<< @brief . */
-      ScalarTimeData                  Period                        = 2; /**<< @brief . */
-    }
-    
-    ScalarData                        InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
+    ScalarPressureData                PositiveEndExpiredPressure    = 3; /**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
+    ScalarPressureData                FunctionalResidualCapacity    = 4; /**<< @brief Total lung volume at the end of exhalation. */
   }
-  
-  message InspiratoryExpiratoryPeriodData
+  oneof ExpirationCycle
   {
-    ScalarTimeData                    ExpiratoryPeriod              = 1; /**<< @brief . */
-    ScalarTimeData                    InspiratoryPeriod             = 2; /**<< @brief . */
+    ScalarVolumePerTimeData           ExpirationCycleFlow           = 5; /**<< @brief Ventilator sensor flow value to trigger expiration phase. */
+    ScalarPressureData                ExpirationCyclePressure       = 6; /**<< @brief Ventilator sensor pressure value to trigger expiration phase. */
+    ScalarTimeData                    ExpirationCycleTime           = 7; /**<< @brief Total length of inspiration phase to trigger expiration phase. */
   }
   
-  oneof BreathingControl
+  ScalarPressureTimePerVolumeData     ExpirationTubeResistance      = 8; /**<< @brief Total resistance of expiratory limb tubing. */
+  ScalarPressureTimePerVolumeData     ExpirationValveResistance     = 9; /**<< @brief Total resistance of expiratory valves. */
+  eDriverWaveform                     ExpirationWaveform            = 10;/**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
+  
+  oneof InspirationLimits
   {
-    BreathProfileData                 BreathProfile                 = 1; /**<< @brief . */
-    InspiratoryExpiratoryPeriodData   InspiratoryExpiratoryPeriod   = 2; /**<< @brief . */
+    ScalarVolumePerTimeData           InspirationLimitFlow          = 11;/**<< @brief Ventilator sensor flow cutoff/maximum. */
+    ScalarPressureData                InspirationLimitPressure      = 12;/**<< @brief Ventilator sensor pressure cutoff/maximum. */
+    ScalarVolumeData                  InspirationLimitVolume        = 13;/**<< @brief Total lung volume cutoff/maximum. */
   }
-  eConnection                         Connection                    = 3; /**<< @brief @ref MechanicalVentilatorData_eConnectionTable */
-  eControl                            Control                       = 4; /**<< @brief @ref MechanicalVentilatorData_eControlTable */
-  eDriverWaveform                     DriverWaveform                = 5; /**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
   
-  ScalarPressureData                  PeakInspiratoryPressure       = 6; /**<< @brief */
-  ScalarPressureData                  PositiveEndExpiredPressure    = 7; /**<< @brief The pressure above atmospheric pressure that exists in the lungs at the end of expiration.*/
+  ScalarTimeData                      InspirationPauseTime          = 14;/**<< @brief Time of plateau (i.e., constant driver pressure) between inspiration and expiration. */
   
-  repeated SubstanceFractionData      FractionInspiredGas           = 8;/**<< @brief Break down of the gasses such as FiO2. */
-  repeated SubstanceConcentrationData ConcentrationInspiredAerosol  = 9;/**<< @brief Concentration of added aerosolized substances. */
+  oneof InspiratoryTargets
+  {
+    ScalarPressureData                PeakInspiratoryPressure       = 15;/**<< @brief Extrinsic pressure above atmosphere at the end of inhalation. */
+    ScalarPressureData                EndTidalCarbonDioxidePressure = 16;/**<< @brief Ideal EtCO2 target for automatically adjusting ventilator driver values. */
+  }
+  
+  oneof InspirationTriggers
+  {
+    ScalarVolumePerTimeData           InspirationTriggerFlow        = 17;/**<< @brief Ventilator sensor flow value to trigger inspiration phase. */
+    ScalarPressureData                InspirationTriggerPressure    = 18;/**<< @brief Ventilator sensor pressure value to trigger inspiration phase. */
+    ScalarTimeData                    InspirationTriggerTime        = 19;/**<< @brief Total length of expiration phase to trigger inspiration phase. */
+  }
+  
+  ScalarPressureTimePerVolumeData     InspirationTubeResistance     = 20;/**<< @brief Total resistance of inspiratory limb tubing. */
+  ScalarPressureTimePerVolumeData     InspirationValveResistance    = 21;/**<< @brief Total resistance of inspiratory valves. */
+  eDriverWaveform                     InspirationWaveform           = 22;/**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
+  
+  repeated SubstanceFractionData      FractionInspiredGas           = 23;/**<< @brief Break down of the gases, such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol  = 24;/**<< @brief Concentration of added aerosolized substances. */
 }

@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "patient/conditions/SEChronicHeartFailure.h"
 
-SEChronicHeartFailure::SEChronicHeartFailure() : SEPatientCondition()
+SEChronicHeartFailure::SEChronicHeartFailure(Logger* logger) : SEPatientCondition(logger)
 {
 }
 

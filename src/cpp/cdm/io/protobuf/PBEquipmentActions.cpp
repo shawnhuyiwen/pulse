@@ -52,16 +52,16 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineAction& src, CDM_BIND
   PBEquipmentAction::Serialize(src, *dst.mutable_equipmentaction());
 }
 
-void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst)
+void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBEquipmentAction::Serialize(src, dst);
+  PBEquipmentAction::Serialize(src, dst, subMgr);
 }
-void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst)
+void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineConfigurationData& src, SEAnesthesiaMachineConfiguration& dst, const SESubstanceManager& subMgr)
 {
   PBEquipmentAction::Serialize(src.anesthesiamachineaction(), dst);
   if (src.has_configuration())
-    PBAnesthesiaMachine::Load(src.configuration(), dst.GetConfiguration());
+    PBAnesthesiaMachine::Load(src.configuration(), dst.GetConfiguration(), subMgr);
   else
     dst.SetConfigurationFile(src.configurationfile());
 }
@@ -79,12 +79,12 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineConfiguration& src, C
   else if (src.HasConfigurationFile())
     dst.set_configurationfile(src.m_ConfigurationFile);
 }
-void PBEquipmentAction::Copy(const SEAnesthesiaMachineConfiguration& src, SEAnesthesiaMachineConfiguration& dst)
+void PBEquipmentAction::Copy(const SEAnesthesiaMachineConfiguration& src, SEAnesthesiaMachineConfiguration& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
   CDM_BIND::AnesthesiaMachineConfigurationData data;
   PBEquipmentAction::Serialize(src, data);
-  PBEquipmentAction::Serialize(data, dst);
+  PBEquipmentAction::Serialize(data, dst, subMgr);
 }
 
 void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineExpiratoryValveLeakData& src, SEAnesthesiaMachineExpiratoryValveLeak& dst)
@@ -468,16 +468,16 @@ void PBEquipmentAction::Serialize(const SEInhalerAction& src, CDM_BIND::InhalerA
   PBEquipmentAction::Serialize(src, *dst.mutable_equipmentaction());
 }
 
-void PBEquipmentAction::Load(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
+void PBEquipmentAction::Load(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBEquipmentAction::Serialize(src, dst);
+  PBEquipmentAction::Serialize(src, dst, subMgr);
 }
-void PBEquipmentAction::Serialize(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst)
+void PBEquipmentAction::Serialize(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr)
 {
   PBEquipmentAction::Serialize(src.inhaleraction(), dst);
   if (src.has_configuration())
-    PBInhaler::Load(src.configuration(), dst.GetConfiguration());
+    PBInhaler::Load(src.configuration(), dst.GetConfiguration(), subMgr);
   else
     dst.SetConfigurationFile(src.configurationfile());
 }
@@ -495,12 +495,12 @@ void PBEquipmentAction::Serialize(const SEInhalerConfiguration& src, CDM_BIND::I
   else if (src.HasConfigurationFile())
     dst.set_configurationfile(src.m_ConfigurationFile);
 }
-void PBEquipmentAction::Copy(const SEInhalerConfiguration& src, SEInhalerConfiguration& dst)
+void PBEquipmentAction::Copy(const SEInhalerConfiguration& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
   CDM_BIND::InhalerConfigurationData data;
   PBEquipmentAction::Serialize(src, data);
-  PBEquipmentAction::Serialize(data, dst);
+  PBEquipmentAction::Serialize(data, dst, subMgr);
 }
 
 ///////////////////////////
@@ -516,16 +516,16 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorAction& src, CDM_B
   PBEquipmentAction::Serialize(src, *dst.mutable_equipmentaction());
 }
 
-void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst)
+void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
-  PBEquipmentAction::Serialize(src, dst);
+  PBEquipmentAction::Serialize(src, dst, subMgr);
 }
-void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst)
+void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr)
 {
   PBEquipmentAction::Serialize(src.mechanicalventilatoraction(), dst);
   if (src.has_configuration())
-    PBMechanicalVentilator::Load(src.configuration(), dst.GetConfiguration());
+    PBMechanicalVentilator::Load(src.configuration(), dst.GetConfiguration(), subMgr);
   else
     dst.SetConfigurationFile(src.configurationfile());
 }
@@ -543,26 +543,26 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorConfiguration& src
   else if (src.HasConfigurationFile())
     dst.set_configurationfile(src.m_ConfigurationFile);
 }
-void PBEquipmentAction::Copy(const SEMechanicalVentilatorConfiguration& src, SEMechanicalVentilatorConfiguration& dst)
+void PBEquipmentAction::Copy(const SEMechanicalVentilatorConfiguration& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr)
 {
   dst.Clear();
   CDM_BIND::MechanicalVentilatorConfigurationData data;
   PBEquipmentAction::Serialize(src, data);
-  PBEquipmentAction::Serialize(data, dst);
+  PBEquipmentAction::Serialize(data, dst, subMgr);
 }
 
 ///////////////////////////
 // Equipment Load/Unload //
 ///////////////////////////
 
-SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionData& any, SESubstanceManager& subMgr)
+SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionData& any, const SESubstanceManager& subMgr)
 {
   switch (any.Action_case())
   {
   case CDM_BIND::AnyEquipmentActionData::ActionCase::kAnesthesiaMachineConfiguration:
   {
-    SEAnesthesiaMachineConfiguration* a = new SEAnesthesiaMachineConfiguration(subMgr);
-    PBEquipmentAction::Load(any.anesthesiamachineconfiguration(), *a);
+    SEAnesthesiaMachineConfiguration* a = new SEAnesthesiaMachineConfiguration(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.anesthesiamachineconfiguration(), *a, subMgr);
     return a;
   }
   case CDM_BIND::AnyEquipmentActionData::ActionCase::kAnesthesiaMachineOxygenTankPressureLoss:
@@ -639,14 +639,14 @@ SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionDat
   }
   case CDM_BIND::AnyEquipmentActionData::ActionCase::kInhalerConfiguration:
   {
-    SEInhalerConfiguration* a = new SEInhalerConfiguration(subMgr);
-    PBEquipmentAction::Load(any.inhalerconfiguration(), *a);
+    SEInhalerConfiguration* a = new SEInhalerConfiguration(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.inhalerconfiguration(), *a, subMgr);
     return a;
   }
   case CDM_BIND::AnyEquipmentActionData::ActionCase::kMechanicalVentilatorConfiguration:
   {
-    SEMechanicalVentilatorConfiguration* a = new SEMechanicalVentilatorConfiguration(subMgr);
-    PBEquipmentAction::Load(any.mechanicalventilatorconfiguration(), *a);
+    SEMechanicalVentilatorConfiguration* a = new SEMechanicalVentilatorConfiguration(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.mechanicalventilatorconfiguration(), *a, subMgr);
     return a;
   }
   }

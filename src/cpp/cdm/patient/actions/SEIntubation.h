@@ -13,7 +13,7 @@ class CDM_DECL SEIntubation : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEIntubation();
+  SEIntubation(Logger* logger=nullptr);
   virtual ~SEIntubation();
 
   virtual void Clear(); //clear memory

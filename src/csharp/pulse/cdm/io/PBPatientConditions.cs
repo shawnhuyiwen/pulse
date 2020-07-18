@@ -63,6 +63,12 @@ namespace Pulse.CDM
         Serialize(any.PulmonaryFibrosis, pf);
         return pf;
       }
+      if (any.PulmonaryShunt != null)
+      {
+        SEPulmonaryShunt ps = new SEPulmonaryShunt();
+        Serialize(any.PulmonaryShunt, ps);
+        return ps;
+      }
       if (any.Sepsis != null)
       {
         SESepsis s = new SESepsis();
@@ -119,6 +125,11 @@ namespace Pulse.CDM
       if (Condition.GetType().IsAssignableFrom(typeof(SEPulmonaryFibrosis)))
       {
         any.PulmonaryFibrosis = Unload((SEPulmonaryFibrosis)Condition);
+        return any;
+      }
+      if (Condition.GetType().IsAssignableFrom(typeof(SEPulmonaryShunt)))
+      {
+        any.PulmonaryShunt = Unload((SEPulmonaryShunt)Condition);
         return any;
       }
       if (Condition.GetType().IsAssignableFrom(typeof(SESepsis)))
@@ -393,6 +404,32 @@ namespace Pulse.CDM
       return dst;
     }
     public static void Serialize(SEPulmonaryFibrosis src, pulse.cdm.bind.PulmonaryFibrosisData dst)
+    {
+      dst.PatientCondition = new pulse.cdm.bind.PatientConditionData();
+      Serialize(src, dst.PatientCondition);
+      if (src.HasSeverity())
+        dst.Severity = PBProperty.Unload(src.GetSeverity());
+    }
+    #endregion
+
+    #region SEPulmonaryShunt
+    public static void Load(pulse.cdm.bind.PulmonaryShuntData src, SEPulmonaryShunt dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.PulmonaryShuntData src, SEPulmonaryShunt dst)
+    {
+      Serialize(src.PatientCondition, dst);
+      if (src.Severity != null)
+        PBProperty.Load(src.Severity, dst.GetSeverity());
+    }
+    public static pulse.cdm.bind.PulmonaryShuntData Unload(SEPulmonaryShunt src)
+    {
+      pulse.cdm.bind.PulmonaryShuntData dst = new pulse.cdm.bind.PulmonaryShuntData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEPulmonaryShunt src, pulse.cdm.bind.PulmonaryShuntData dst)
     {
       dst.PatientCondition = new pulse.cdm.bind.PatientConditionData();
       Serialize(src, dst.PatientCondition);

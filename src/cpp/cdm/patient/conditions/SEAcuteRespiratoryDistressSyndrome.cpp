@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SEAcuteRespiratoryDistressSyndrome::SEAcuteRespiratoryDistressSyndrome() : SEPatientCondition()
+SEAcuteRespiratoryDistressSyndrome::SEAcuteRespiratoryDistressSyndrome(Logger* logger) : SEPatientCondition(logger)
 {
   m_Severity=nullptr;
   m_LeftLungAffected = nullptr;

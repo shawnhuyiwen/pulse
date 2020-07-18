@@ -205,13 +205,11 @@ bool PBTestReport::SerializeToString(const SETestReport& src, std::string& outpu
   PBTestReport::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& filename, SerializationFormat m)
+bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& filename)
 {
   CDM_BIND::TestReportData data;
   PBTestReport::Serialize(src, data);
-  std::string content;
-  PBTestReport::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 bool PBTestReport::SerializeFromString(const std::string& src, SETestReport& dst, SerializationFormat m)
 {
@@ -221,10 +219,11 @@ bool PBTestReport::SerializeFromString(const std::string& src, SETestReport& dst
   PBTestReport::Load(data, dst);
   return true;
 }
-bool PBTestReport::SerializeFromFile(const std::string& filename, SETestReport& dst, SerializationFormat m)
+bool PBTestReport::SerializeFromFile(const std::string& filename, SETestReport& dst)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  CDM_BIND::TestReportData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBTestReport::SerializeFromString(content, dst, m);
+  PBTestReport::Load(data, dst);
+  return true;
 }

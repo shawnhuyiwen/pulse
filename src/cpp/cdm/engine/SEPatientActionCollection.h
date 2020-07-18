@@ -45,7 +45,7 @@ class CDM_DECL SEPatientActionCollection : public Loggable
   friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
-  SEPatientActionCollection(SESubstanceManager&);
+  SEPatientActionCollection(Logger* logger=nullptr);
 public:
   ~SEPatientActionCollection();
 
@@ -223,7 +223,7 @@ public:
 
 protected:
   void Clear();
-  bool ProcessAction(const SEPatientAction& action);
+  bool ProcessAction(const SEPatientAction& action, SESubstanceManager&);
 
   SEAcuteRespiratoryDistressSyndromeExacerbation*   m_ARDSExacerbation;
   SEAcuteStress*                                    m_AcuteStress;
@@ -260,6 +260,4 @@ protected:
   std::map<const SESubstance*,SESubstanceBolus*>                    m_SubstanceBolus;
   std::map<const SESubstance*,SESubstanceInfusion*>                 m_SubstanceInfusions;
   std::map<const SESubstanceCompound*,SESubstanceCompoundInfusion*> m_SubstanceCompoundInfusions;
-
-  SESubstanceManager& m_Substances;
 };

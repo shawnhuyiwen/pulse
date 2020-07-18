@@ -13,15 +13,15 @@ class CDM_DECL SEScenario : public Loggable
   friend class PBScenario;//friend the serialization class
 public:
 
-  SEScenario(Logger* logger, std::string const& dataDir="./");
+  SEScenario(Logger* logger=nullptr, std::string const& dataDir="./");
   virtual ~SEScenario();
   
   virtual void Clear(); //clear memory
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
   bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
 
   bool IsValid() const;
 
@@ -51,6 +51,9 @@ public:
   virtual SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
   virtual const SEDataRequestManager& GetDataRequestManager() const { return *m_DataRequestMgr; }
 
+  virtual SESubstanceManager& GetSubstanceManager() { return *m_SubMgr; }
+  virtual const SESubstanceManager& GetSubstanceManager() const { return *m_SubMgr; }
+
 protected:
   SESubstanceManager*                         m_SubMgr;
   std::string                                 m_Name;
@@ -59,5 +62,4 @@ protected:
   SEPatientConfiguration*                     m_PatientConfiguration;
   SEDataRequestManager*                       m_DataRequestMgr;
   std::vector<const SEAction*>                m_Actions;
-
 };

@@ -267,7 +267,7 @@ protected:
 class PULSE_DECL PulseEnvironmentSystem : public SEEnvironment, public PulseSystem
 {
 public:
-  PulseEnvironmentSystem(SESubstanceManager& substances) : SEEnvironment(substances) {}
+  PulseEnvironmentSystem(Logger* logger) : SEEnvironment(logger) {}
   virtual ~PulseEnvironmentSystem() = default;
 
   virtual const SEScalar* GetScalar(const std::string & name) override
@@ -288,7 +288,7 @@ protected:
 class PULSE_DECL PulseAnesthesiaMachine : public SEAnesthesiaMachine, public PulseSystem
 {
 public:
-  PulseAnesthesiaMachine(SESubstanceManager& substances) : SEAnesthesiaMachine(substances) {}
+  PulseAnesthesiaMachine(Logger* logger) : SEAnesthesiaMachine(logger) {}
   virtual ~PulseAnesthesiaMachine() = default;
 
   virtual const SEScalar* GetScalar(const std::string & name) override
@@ -330,7 +330,7 @@ protected:
 class PULSE_DECL PulseInhaler : public SEInhaler, public PulseSystem
 {
 public:
-  PulseInhaler(SESubstanceManager& substances) : SEInhaler(substances) {}
+  PulseInhaler(Logger* logger) : SEInhaler(logger) {}
   virtual ~PulseInhaler() = default;
 
   virtual const SEScalar* GetScalar(const std::string & name) override
@@ -351,7 +351,7 @@ protected:
 class PULSE_DECL PulseMechanicalVentilator : public SEMechanicalVentilator, public PulseSystem
 {
 public:
-  PulseMechanicalVentilator(SESubstanceManager& substances) : SEMechanicalVentilator(substances) {}
+  PulseMechanicalVentilator(Logger* logger) : SEMechanicalVentilator(logger) {}
   virtual ~PulseMechanicalVentilator() = default;
 
   virtual const SEScalar* GetScalar(const std::string & name) override

@@ -12,12 +12,13 @@ SESubstanceTissuePharmacokinetics::SESubstanceTissuePharmacokinetics(const std::
 
 SESubstanceTissuePharmacokinetics::~SESubstanceTissuePharmacokinetics()
 {
-  Clear();
+
+  SAFE_DELETE(m_PartitionCoefficient)
 }
 
 void SESubstanceTissuePharmacokinetics::Clear()
 {;
-  SAFE_DELETE(m_PartitionCoefficient)
+  INVALIDATE_PROPERTY(m_PartitionCoefficient)
 }
 
 const SEScalar* SESubstanceTissuePharmacokinetics::GetScalar(const std::string& name)

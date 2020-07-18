@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.study.bind.MultiplexVentilation_pb2 import *
+from google.protobuf import json_format
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -10,10 +11,11 @@ import pandas as pd
 import statsmodels.api as sm
 import seaborn as sns
 
-from google.protobuf import json_format
 from scipy import interpolate
 from statsmodels.formula.api import ols
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.ticker import MaxNLocator
+from matplotlib.colors import BoundaryNorm
 
 
 def parse_data(simulations):
@@ -562,6 +564,7 @@ def plot_OSI_surface():
     x, y, z = np.meshgrid(FiO2, MAP_mmHg, SpO2_fraction, indexing='ij')
     OSI_mmHg = x * y / z
 
+    # Use different units for plotting
     x, y, z = np.meshgrid(FiO2, MAP_cmH2O, SpO2_percent, indexing='ij')
 
     fig = plt.figure()
@@ -574,6 +577,62 @@ def plot_OSI_surface():
     fig.colorbar(p)
 
     plt.savefig('OSI_Visualization.png')
+
+    # --------------------------------------------------------------
+    # make these smaller to increase the resolution
+    num_increments = 100
+    dx = (1.0 - 0.21) / num_increments
+    dy = (40 - 0) / num_increments
+
+    FiO2 = np.arange(0.21, 1.0, (1.0 - 0.21) / num_increments)
+    MAP_cmH2O = np.arange(0, 40, (40 - 0) / num_increments)
+    MAP_mmHg = MAP_cmH2O * 0.735559
+
+    # generate 2 2d grids for the x & y bounds
+    x, y = np.meshgrid(FiO2, MAP_mmHg)
+    z = x * y / 0.9
+    x, y = np.meshgrid(FiO2, MAP_cmH2O)
+
+    # x and y are bounds, so z should be the value *inside* those bounds.
+    # Therefore, remove the last value from the z array.
+    z = z[:-1, :-1]
+    levels = MaxNLocator(nbins=15).tick_values(z.min(), z.max())
+
+    cmap = plt.get_cmap('coolwarm')
+    fig, (ax0, ax1) = plt.subplots(ncols=2)
+
+    # contours are *point* based plots, so convert our bound into point
+    # centers
+    cf = ax0.contourf(x[:-1, :-1] + dx / 2.,
+                      y[:-1, :-1] + dy / 2., z, levels=levels,
+                      cmap=cmap)
+    fig.colorbar(cf, ax=ax0)
+    ax0.set_title('SpO2 = 90%')
+    ax0.set_xlabel('FiO2')
+    ax0.set_ylabel('MAP (cmH2O)')
+    #ax0.contour(x[:-1, :-1], y[:-1, :-1], z, colors='k')
+
+    x, y = np.meshgrid(FiO2, MAP_mmHg)
+    z = x * y / 0.95
+    x, y = np.meshgrid(FiO2, MAP_cmH2O)
+
+    # x and y are bounds, so z should be the value *inside* those bounds.
+    # Therefore, remove the last value from the z array.
+    z = z[:-1, :-1]
+
+    # contours are *point* based plots, so convert our bound into point
+    # centers
+    cf = ax1.contourf(x[:-1, :-1] + dx / 2.,
+                      y[:-1, :-1] + dy / 2., z, levels=levels,
+                      cmap=cmap)
+    fig.colorbar(cf, ax=ax1)
+    ax1.set_title('SpO2 = 95%')
+    ax1.set_xlabel('FiO2')
+    ax1.set_ylabel('MAP (cmH2O)')
+
+    fig.suptitle('OSI (mmHg)', fontsize=14)
+
+    plt.savefig('OSI_Visualization_SpO2_90.png')
 
 
 if __name__ == '__main__':
@@ -603,6 +662,6 @@ if __name__ == '__main__':
     plot_outcome_comparisons(x, y, z, df)
     plot_interpolation(x, y, z)
 
-    #plot_OSI_surface()
+    # plot_OSI_surface()
 
     plt.show()

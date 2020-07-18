@@ -17,6 +17,8 @@ def serialize_environment_action_to_bind(src: SEEnvironmentAction, dst: Environm
 def serialize_environment_action_from_bind(src: EnvironmentActionData, dst: SEEnvironmentAction):
     serialize_action_from_bind(src.Action,dst)
 
+#################################################################
+
 def serialize_change_environmental_conditions_to_bind(src: SEChangeEnvironmentalConditions, dst: ChangeEnvironmentalConditionsData):
     serialize_environment_action_to_bind(src, dst.EnvironmentAction)
     if src.has_environmental_conditions_file():
@@ -27,6 +29,8 @@ def serialize_change_environmental_conditions_to_bind(src: SEChangeEnvironmental
 def serialize_change_environmental_conditions_from_bind(src: ChangeEnvironmentalConditionsData, dst: SEChangeEnvironmentalConditions):
     serialize_environment_action_from_bind(src.EnvironmentAction, dst)
     raise Exception("serialize_change_environmental_conditions_from_bind not implemented")
+
+#################################################################
 
 def serialize_thermal_application_to_bind(src: SEThermalApplication, dst: ThermalApplicationData):
     serialize_environment_action_to_bind(src, dst.EnvironmentAction)
@@ -42,3 +46,4 @@ def serialize_thermal_application_from_bind(src: ThermalApplicationData, dst: SE
     serialize_environment_action_from_bind(src.EnvironmentAction, dst)
     raise Exception("serialize_thermal_application_from_bind not implemented")
 
+#################################################################

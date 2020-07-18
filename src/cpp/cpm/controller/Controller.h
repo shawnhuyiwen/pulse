@@ -203,8 +203,8 @@ public:
   virtual PulseData& GetData() { return (*this); }
   virtual const PulseData& GetData() const { return (*this); }
 
-  virtual bool SerializeFromFile(const std::string& file, SerializationFormat m);
-  virtual bool SerializeToFile(const std::string& file, SerializationFormat m) const;
+  virtual bool SerializeFromFile(const std::string& file);
+  virtual bool SerializeToFile(const std::string& file) const;
 
   virtual bool SerializeFromString(const std::string& state, SerializationFormat m);
   virtual bool SerializeToString(std::string& state, SerializationFormat m) const;
@@ -230,6 +230,7 @@ protected:
   virtual void SetupCardiovascular();
   virtual void SetupRenal();
   virtual void SetupTissue();
+  virtual void SetupCerebrospinalFluid();
   virtual void SetupGastrointestinal();
   virtual void SetupRespiratory();
   virtual void SetupAnesthesiaMachine();

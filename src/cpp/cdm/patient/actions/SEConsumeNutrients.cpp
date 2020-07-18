@@ -8,7 +8,7 @@
 #include "properties/SEScalarVolume.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEConsumeNutrients::SEConsumeNutrients() : SEPatientAction()
+SEConsumeNutrients::SEConsumeNutrients(Logger* logger) : SEPatientAction(logger)
 {
   m_Nutrition = nullptr;
   InvalidateNutritionFile();

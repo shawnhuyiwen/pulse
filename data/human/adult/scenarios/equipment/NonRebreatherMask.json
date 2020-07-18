@@ -545,8 +545,8 @@
       "CompartmentName": "Pericardium",
       "PropertyName": "Pressure",
       "Unit": "mmHg"
-	}, {  
-	"DecimalFormat": {
+    }, {  
+    "DecimalFormat": {
         "Precision": 4
       },
       "Category": "GasCompartment",
@@ -561,7 +561,7 @@
       "CompartmentName": "Carina",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "VolumeFraction"
-	}, {
+    }, {
       "DecimalFormat": {
         "Precision": 4
       },
@@ -569,7 +569,7 @@
       "CompartmentName": "NonRebreatherMaskOxygenSource",
       "PropertyName": "OutFlow",
       "Unit": "L/min"
-	}, {
+    }, {
       "DecimalFormat": {
         "Precision": 4
       },

@@ -9,7 +9,7 @@ class CDM_DECL SEInhalerAction : public SEEquipmentAction
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEInhalerAction();
+  SEInhalerAction(Logger* logger);
   virtual ~SEInhalerAction();
 
   virtual void Clear();// Deletes all members

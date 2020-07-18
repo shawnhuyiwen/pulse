@@ -7,7 +7,7 @@ class CDM_DECL SEAutoSerialization : public Loggable
 {
   friend class PBEngine;//friend the serialization class
 public:
-  SEAutoSerialization(Logger* logger);
+  SEAutoSerialization(Logger* logger=nullptr);
   virtual ~SEAutoSerialization();
 
   virtual void Clear();

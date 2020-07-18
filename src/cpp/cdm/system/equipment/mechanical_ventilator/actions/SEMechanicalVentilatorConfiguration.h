@@ -10,11 +10,11 @@ class CDM_DECL SEMechanicalVentilatorConfiguration : public SEMechanicalVentilat
   friend class PBEquipmentAction;//friend the serialization class
 public:
 
-  SEMechanicalVentilatorConfiguration(SESubstanceManager& substances);
+  SEMechanicalVentilatorConfiguration(Logger* logger=nullptr);
   virtual ~SEMechanicalVentilatorConfiguration();
 
   virtual void Clear();
-  virtual void Copy(const SEMechanicalVentilatorConfiguration& src);
+  virtual void Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr);
 
   virtual bool IsValid() const;
 
@@ -30,8 +30,7 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  SESubstanceManager&  m_Substances;
 
-  std::string             m_ConfigurationFile;
-  SEMechanicalVentilator* m_Configuration;
+  std::string               m_ConfigurationFile;
+  SEMechanicalVentilator*   m_Configuration;
 };

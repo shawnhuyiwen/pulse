@@ -13,7 +13,7 @@ class CDM_DECL SEBrainInjury : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEBrainInjury();
+  SEBrainInjury(Logger* logger=nullptr);
   virtual ~SEBrainInjury();
 
   virtual void Clear();

@@ -6,7 +6,7 @@
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEBrainInjury::SEBrainInjury() : SEPatientAction()
+SEBrainInjury::SEBrainInjury(Logger* logger) : SEPatientAction(logger)
 {
   m_Severity=nullptr;
   m_Type = eBrainInjury_Type::Diffuse;

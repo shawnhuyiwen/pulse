@@ -14,7 +14,7 @@
 #include "properties/SEScalarVolumePerTime.h"
 #include "io/protobuf/PBEquipmentActions.h"
 
-SEAnesthesiaMachineConfiguration::SEAnesthesiaMachineConfiguration(SESubstanceManager& substances) : SEAnesthesiaMachineAction(), m_Substances(substances)
+SEAnesthesiaMachineConfiguration::SEAnesthesiaMachineConfiguration(Logger* logger) : SEAnesthesiaMachineAction(logger)
 {
   m_Configuration = nullptr;
   InvalidateConfigurationFile();
@@ -32,9 +32,9 @@ void SEAnesthesiaMachineConfiguration::Clear()
   SAFE_DELETE(m_Configuration);
 }
 
-void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src)
+void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this);
+  PBEquipmentAction::Copy(src, *this, subMgr);
 }
 
 bool SEAnesthesiaMachineConfiguration::IsValid() const
@@ -50,7 +50,7 @@ SEAnesthesiaMachine& SEAnesthesiaMachineConfiguration::GetConfiguration()
 {
   m_ConfigurationFile = "";
   if (m_Configuration == nullptr)
-    m_Configuration = new SEAnesthesiaMachine(m_Substances);
+    m_Configuration = new SEAnesthesiaMachine(GetLogger());
   return *m_Configuration;
 }
 const SEAnesthesiaMachine* SEAnesthesiaMachineConfiguration::GetConfiguration() const

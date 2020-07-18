@@ -41,27 +41,32 @@ enum Driver { Sinusoid = 0, Heart };
 // We use 1,1,1,0 to run our test without any scaling of the circuit and using the HeartRate Baseline in the standard patient file
 void PulseEngineTest::CardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
 {
-  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, false, sTestDirectory, "Cardiovascular", false);
+  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, false, false, sTestDirectory, "Cardiovascular", false);
 }
 
 void PulseEngineTest::CardiovascularAndRenalCircuitAndTransportTest(const std::string& sTestDirectory)
 {
-  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, true, false, sTestDirectory, "CardiovascularAndRenal", false);
+  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, true, false, false, sTestDirectory, "CardiovascularAndRenal", false);
 }
 
 void PulseEngineTest::CardiovascularAndTissueCircuitAndTransportTest(const std::string& sTestDirectory)
 {
-  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, false, false, sTestDirectory, "CardiovascularAndTissue", false);
+  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, false, false, false, sTestDirectory, "CardiovascularAndTissue", false);
 }
 
-void PulseEngineTest::CardiovascularTissueAndRenalCircuitAndTransportTest(const std::string& sTestDirectory)
+void PulseEngineTest::CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(const std::string& sTestDirectory)
 {
-  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, false, sTestDirectory, "CardiovascularTissueAndRenal", false);
+  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, false, false, true, false, sTestDirectory, "CardiovascularAndCerebrospinalFluid", false);
+}
+
+void PulseEngineTest::FullCardiovascularCircuitAndTransportTest(const std::string& sTestDirectory)
+{
+  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, true, false, sTestDirectory, "FullCardiovascular", false);
 }
 
 void PulseEngineTest::CardiovascularBloodGasesTest(const std::string& sTestDirectory)
 {
-  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, true, sTestDirectory, "CardiovascularBloodGasesTest", false);
+  CardiovascularCircuitAndTransportTest(Heart, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, true, true, true, true, sTestDirectory, "CardiovascularBloodGasesTest", false);
 }
 
 void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDirectory)
@@ -124,7 +129,7 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(const std::string& sTestDire
       }
     }
   }
-  testReport.SerializeToFile(sTestDirectory + "/TuneCardiovascularCircuitReport.json",JSON);
+  testReport.SerializeToFile(sTestDirectory + "/TuneCardiovascularCircuitReport.json");
 }
 void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient)
 {
@@ -157,7 +162,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   double complianceScale, double resistanceScale, double volumeScale, double heartRate_bpm,
   double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale,
   double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale,
-  bool connectTissue, bool connectRenal, bool balanceBloodGases, const std::string& sTestDirectory, 
+  bool connectTissue, bool connectRenal, bool connectCSF, bool balanceBloodGases, const std::string& sTestDirectory, 
   const std::string& sTestName, bool breakOutResults)
 {
   //breakOutResults True = seperate files for different types (i.e. volumes, flows, etc.); False = one file with everything
@@ -198,8 +203,11 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   pc.GetLogger()->SetLogFile(sTestDirectory + "/" + tName.str() + "CircuitAndTransportTest.log");
   pc.GetLogger()->Info("Running " + tName.str());
   SEPatient patient(pc.GetLogger());
-  patient.SerializeFromFile("./patients/StandardMale.json", JSON);
+  patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);
+  pc.GetSubstances().LoadSubstanceDirectory("./");
+  pc.GetSaturationCalculator().Setup();
+  pc.m_Config->Initialize("./");
   if (heartRate_bpm <= 0)
     heartRate_bpm = pc.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
   else
@@ -209,13 +217,14 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
 
   pc.m_Config->EnableRenal(connectRenal ? eSwitch::On : eSwitch::Off);
   pc.m_Config->EnableTissue(connectTissue? eSwitch::On :eSwitch::Off);
+  pc.m_Config->EnableCerebrospinalFluid(connectCSF ? eSwitch::On : eSwitch::Off);
   pc.CreateCircuitsAndCompartments();
 
   std::vector<SESubstance*> subs2Track;
   if (balanceBloodGases)
   {
-    SEEnvironmentalConditions env(pc.GetSubstances());
-    env.SerializeFromFile("./environments/Standard.json",JSON);
+    SEEnvironmentalConditions env(pc.GetLogger());
+    env.SerializeFromFile("./environments/Standard.json", pc.GetSubstances());
     SEGasCompartment* cEnv = pc.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
     for (SESubstanceFraction* subFrac : env.GetAmbientGases())
     {
@@ -701,7 +710,7 @@ void PulseEngineTest::CardiovascularCircuitScaleTests(const std::string& sTestDi
           {
             for (double vcFactor = 0.5; vcFactor < 1.51; vcFactor += 0.25)
             {
-              CardiovascularCircuitAndTransportTest(Heart, comp, res, vol, heartRate_bpm, srFactor, scFactor, arFactor, acFactor, vrFactor, vcFactor, false, false, false, sTestDirectory, "CVScale", true);
+              CardiovascularCircuitAndTransportTest(Heart, comp, res, vol, heartRate_bpm, srFactor, scFactor, arFactor, acFactor, vrFactor, vcFactor, false, false, false, false, sTestDirectory, "CVScale", true);
 
               cvLastMeanPressureTrk.Track("SystemicResistanceScale", testNo, srFactor);
               cvLastMeanPressureTrk.Track("SystemicComplianceScale", testNo, scFactor);

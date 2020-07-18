@@ -18,14 +18,16 @@ SESubstanceAerosolization::SESubstanceAerosolization(Logger* logger) : Loggable(
 
 SESubstanceAerosolization::~SESubstanceAerosolization()
 {
-  Clear();
+  SAFE_DELETE(m_BronchioleModifier);
+  SAFE_DELETE(m_InflammationCoefficient);
+  SAFE_DELETE(m_ParticulateSizeDistribution);
 }
 
 void SESubstanceAerosolization::Clear()
 {
-  SAFE_DELETE(m_BronchioleModifier);
-  SAFE_DELETE(m_InflammationCoefficient);
-  SAFE_DELETE(m_ParticulateSizeDistribution);
+  INVALIDATE_PROPERTY(m_BronchioleModifier);
+  INVALIDATE_PROPERTY(m_InflammationCoefficient);
+  INVALIDATE_PROPERTY(m_ParticulateSizeDistribution);
 }
 
 bool SESubstanceAerosolization::IsValid() const

@@ -699,8 +699,8 @@ std::vector<std::string> DataTrack::ReadTrackFromFile(const char* fileName)
     while (pos < line.size())
       if ((pos = line.find_first_of(',', pos)) != std::string::npos)
         line[pos] = ' ';
-    std::istringstream iss(line);
-    copy(std::istream_iterator<double>(iss),
+    std::istringstream issL(line);
+    copy(std::istream_iterator<double>(issL),
              std::istream_iterator<double>(),
              std::back_inserter<std::vector<double>>(values));
     double time = values[0];

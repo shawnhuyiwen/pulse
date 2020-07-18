@@ -12,14 +12,14 @@ class CDM_DECL SEPatientConfiguration : public Loggable
 {
   friend class PBEngine;//friend the serialization class
 public:
-  SEPatientConfiguration(SESubstanceManager& subMgr);
+  SEPatientConfiguration(Logger* logger=nullptr);
   virtual ~SEPatientConfiguration();
   virtual void Clear(); //clear memory
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename, SerializationFormat m) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
-  bool SerializeFromFile(const std::string& filename, SerializationFormat m);
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
   virtual bool IsValid()const;
 
@@ -54,6 +54,5 @@ protected:
   SEPatient*                      m_Patient;
   std::string                     m_PatientFile;
   SEConditionManager*             m_Conditions;
-  SESubstanceManager&             m_SubMgr;
   std::vector<SEScalarProperty>   m_ScalarOverrides;
 };

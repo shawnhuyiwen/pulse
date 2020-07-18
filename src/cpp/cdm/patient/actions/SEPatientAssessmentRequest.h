@@ -10,7 +10,7 @@ class CDM_DECL SEPatientAssessmentRequest : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEPatientAssessmentRequest();
+  SEPatientAssessmentRequest(Logger* logger=nullptr);
   virtual ~SEPatientAssessmentRequest();
 
   virtual void Clear(); //clear memory

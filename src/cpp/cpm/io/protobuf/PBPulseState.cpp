@@ -54,9 +54,8 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
   for (int i = 0; i < src.substance_size(); i++)
   {
     const CDM_BIND::SubstanceData& subData = src.substance()[i];
-    SESubstance* sub = new SESubstance(dst.GetLogger());
+    SESubstance* sub = dst.m_Substances->GetSubstance(subData.name());
     PBSubstance::Load(subData, *sub);
-    dst.m_Substances->AddSubstance(*sub);
   }
   for (int i = 0; i < src.activesubstance_size(); i++)
   {
@@ -72,9 +71,8 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
   for (int i = 0; i < src.compound_size(); i++)
   {
     const CDM_BIND::SubstanceCompoundData& cmpdData = src.compound()[i];
-    SESubstanceCompound* cmpd = new SESubstanceCompound(dst.GetLogger());
+    SESubstanceCompound* cmpd = dst.m_Substances->GetCompound(cmpdData.name());
     PBSubstance::Load(cmpdData, *cmpd, *dst.m_Substances);
-    dst.m_Substances->AddCompound(*cmpd);
   }
   for (int i = 0; i < src.activecompound_size(); i++)
   {
@@ -132,7 +130,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     for (int i = 0; i < src.conditions().anycondition_size(); i++)
     {
       SECondition* c = PBCondition::Load(src.conditions().anycondition()[i], *dst.m_Substances);
-      dst.m_Conditions->ProcessCondition(*c);
+      dst.m_Conditions->Copy(*c, *dst.m_Substances);
       delete c;
     }
   }
@@ -143,7 +141,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     for (int i = 0; i < src.activeactions().anyaction_size(); i++)
     {
       SEAction* a = PBAction::Load(src.activeactions().anyaction()[i], *dst.m_Substances);
-      dst.m_Actions->ProcessAction(*a);
+      dst.m_Actions->ProcessAction(*a, *dst.m_Substances);
       delete a;
     }
   }
@@ -180,7 +178,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
   if (!src.has_configuration())
     ss << "PulseState must have a configuration" << std::endl;
   else
-    PBPulseConfiguration::Load(src.configuration(), *dst.m_Config);
+    PBPulseConfiguration::Load(src.configuration(), *dst.m_Config, *dst.m_Substances);
   if (config != nullptr)
   {// Merge in any provided configuration parameters, I hope you know what you are doing....
     const PulseConfiguration* peConfig = dynamic_cast<const PulseConfiguration*>(config);
@@ -190,7 +188,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     }
     else
     {
-      dst.m_Config->Merge(*peConfig);
+      dst.m_Config->Merge(*peConfig, *dst.m_Substances);
     }
   }
   /////////////
@@ -277,7 +275,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
 
 
   // It helps to unload what you just loaded and do a compare if you have issues
-  //SerializeToFile(dst, "WhatIJustLoaded.json", SerializationFormat::JSON);
+  //SerializeToFile(dst, "WhatIJustLoaded.json");
 
   // Good to go, save it off and carry on!
   dst.m_State = EngineState::Active;
@@ -353,18 +351,20 @@ bool PBPulseState::Serialize(const PulseController& src, PULSE_BIND::StateData& 
   return true;
 }
 
-bool PBPulseState::SerializeFromFile(const std::string& filename, PulseController& dst, SerializationFormat m, const SEEngineConfiguration* config)
+bool PBPulseState::SerializeFromFile(const std::string& filename, PulseController& dst, const SEEngineConfiguration* config)
 {
-  std::string content = ReadFile(filename, m);
-  if (content.empty())
+  PULSE_BIND::StateData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  return PBPulseState::SerializeFromString(content, dst, m, config);
+  PBPulseState::Load(data, dst, config);
+  return true;
 }
-bool PBPulseState::SerializeToFile(const PulseController& src, const std::string& filename, SerializationFormat m)
+
+bool PBPulseState::SerializeToFile(const PulseController& src, const std::string& filename)
 {
-  std::string content;
-  PBPulseState::SerializeToString(src, content, m);
-  return WriteFile(content, filename, m);
+  PULSE_BIND::StateData data;
+  PBPulseState::Serialize(src, data);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
 bool PBPulseState::SerializeToString(const PulseController& src, std::string& output, SerializationFormat m)

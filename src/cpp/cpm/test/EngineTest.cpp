@@ -70,6 +70,7 @@ void PulseEngineTest::FillFunctionMap()
   testFunction cardioTuneCircuitTest = &PulseEngineTest::TuneCardiovascularCircuitTest;
   testFunction respCTTest = &PulseEngineTest::RespiratoryCircuitAndTransportTest;
   testFunction anesthCTTest = &PulseEngineTest::AnesthesiaMachineCircuitAndTransportTest;
+  testFunction ventCTTest = &PulseEngineTest::MechanicalVentilatorCircuitAndTransportTest;
 
 
   bgeMap.insert(std::make_pair("ReadScenarios", &PulseEngineTest::ReadScenarios));
@@ -78,7 +79,8 @@ void PulseEngineTest::FillFunctionMap()
   bgeMap.insert(std::make_pair("CardiovascularCircuitAndTransportTest", cardioCTTest));
   bgeMap.insert(std::make_pair("CardiovascularAndRenalCircuitAndTransportTest", &PulseEngineTest::CardiovascularAndRenalCircuitAndTransportTest));
   bgeMap.insert(std::make_pair("CardiovascularAndTissueCircuitAndTransportTest", &PulseEngineTest::CardiovascularAndTissueCircuitAndTransportTest));
-  bgeMap.insert(std::make_pair("CardiovascularTissueAndRenalCircuitAndTransportTest", &PulseEngineTest::CardiovascularTissueAndRenalCircuitAndTransportTest));
+  bgeMap.insert(std::make_pair("CardiovascularAndCerebrospinalFluidCircuitAndTransportTest", &PulseEngineTest::CardiovascularAndCerebrospinalFluidCircuitAndTransportTest));
+  bgeMap.insert(std::make_pair("FullCardiovascularCircuitAndTransportTest", &PulseEngineTest::FullCardiovascularCircuitAndTransportTest));
   bgeMap.insert(std::make_pair("CardiovascularBloodGasesTest", cardioBGTest));
   bgeMap.insert(std::make_pair("TuneCardiovascularCircuitTest", cardioTuneCircuitTest));
   bgeMap.insert(std::make_pair("CardiovascularCircuitScaleTests", &PulseEngineTest::CardiovascularCircuitScaleTests));
@@ -94,6 +96,9 @@ void PulseEngineTest::FillFunctionMap()
 
   bgeMap.insert(std::make_pair("AnesthesiaMachineCircuitAndTransportTest", anesthCTTest));
   bgeMap.insert(std::make_pair("RespiratoryWithAnesthesiaMachineCircuitAndTransportTest", &PulseEngineTest::RespiratoryWithAnesthesiaMachineCircuitAndTransportTest));
+
+  bgeMap.insert(std::make_pair("MechanicalVentilatorCircuitAndTransportTest", ventCTTest));
+  bgeMap.insert(std::make_pair("RespiratoryWithMechanicalVentilatorCircuitAndTransportTest", &PulseEngineTest::RespiratoryWithMechanicalVentilatorCircuitAndTransportTest));
 
   bgeMap.insert(std::make_pair("RespiratoryWithInhalerCircuitAndTransportTest", &PulseEngineTest::RespiratoryWithInhalerCircuitAndTransportTest));
 

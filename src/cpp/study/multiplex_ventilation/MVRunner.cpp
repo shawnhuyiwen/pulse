@@ -25,7 +25,7 @@ bool MVRunner::Run(pulse::study::bind::multiplex_ventilation::SimulationListData
   m_SimulationResultsList = new pulse::study::bind::multiplex_ventilation::SimulationListData();
   if (FileExists(m_SimulationResultsListFile))
   {
-    if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList, SerializationFormat::JSON))
+    if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList))
     {
       GetLogger()->Warning("Unable to read found results file");
     }
@@ -36,7 +36,7 @@ bool MVRunner::Run(pulse::study::bind::multiplex_ventilation::SimulationListData
   return b;
 }
 
-bool MVRunner::Run(const std::string& filename, SerializationFormat f, Mode m)
+bool MVRunner::Run(const std::string& filename, Mode m)
 {
   SAFE_DELETE(m_SimulationList);
   SAFE_DELETE(m_SimulationResultsList);
@@ -44,13 +44,13 @@ bool MVRunner::Run(const std::string& filename, SerializationFormat f, Mode m)
   m_SimulationResultsList = new pulse::study::bind::multiplex_ventilation::SimulationListData();
 
   m_Mode = m;
-  if (!SerializeFromFile(filename, *m_SimulationList, f))
+  if (!SerializeFromFile(filename, *m_SimulationList))
     return false;
   // Let's try to read in a results file
   m_SimulationResultsListFile = filename.substr(0, filename.length() - 5) + "_results.json";
   if (FileExists(m_SimulationResultsListFile))
   {
-    if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList, f))
+    if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList))
     {
       GetLogger()->Warning("Unable to read found results file");
     }
@@ -421,7 +421,7 @@ void MVRunner::FinalizeSimulation(pulse::study::bind::multiplex_ventilation::Sim
   m_mutex.lock();
   auto rSim = m_SimulationResultsList->mutable_simulations()->Add();
   rSim->CopyFrom(sim);
-  SerializeToFile(*m_SimulationResultsList, m_SimulationResultsListFile, SerializationFormat::JSON);
+  SerializeToFile(*m_SimulationResultsList, m_SimulationResultsListFile);
   Info("Completed Simulation " + to_string(m_SimulationResultsList->simulations_size()) + " of " + to_string(m_SimulationList->simulations_size()));
   if (sim.achievedstabilization())
     Info("  Stabilized : " + sim.outputbasefilename() + "_fio2=" + to_string(sim.fio2()));
@@ -447,12 +447,9 @@ bool MVRunner::SerializeToString(pulse::study::bind::multiplex_ventilation::Simu
   }
   return true;
 }
-bool MVRunner::SerializeToFile(pulse::study::bind::multiplex_ventilation::SimulationListData& src, const std::string& filename, SerializationFormat f) const
+bool MVRunner::SerializeToFile(pulse::study::bind::multiplex_ventilation::SimulationListData& src, const std::string& filename) const
 {
-  std::string content;
-  if (!SerializeToString(src, content, f))
-    return false;
-  return WriteFile(content, filename, SerializationFormat::JSON);
+  return PBUtils::SerializeToFile(src, filename, GetLogger());
 }
 bool MVRunner::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationListData& dst, SerializationFormat f)
 {
@@ -469,13 +466,7 @@ bool MVRunner::SerializeFromString(const std::string& src, pulse::study::bind::m
   }
   return true;
 }
-bool MVRunner::SerializeFromFile(const std::string& filename, pulse::study::bind::multiplex_ventilation::SimulationListData& dst, SerializationFormat f)
+bool MVRunner::SerializeFromFile(const std::string& filename, pulse::study::bind::multiplex_ventilation::SimulationListData& dst)
 {
-  std::string content = ReadFile(filename, SerializationFormat::JSON);
-  if (content.empty())
-  {
-    Error("Unable to read file " + filename);
-    return false;
-  }
-  return SerializeFromString(content, dst, f);
+  return PBUtils::SerializeFromFile(filename, dst, GetLogger());
 }

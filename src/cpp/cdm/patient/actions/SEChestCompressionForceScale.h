@@ -8,7 +8,7 @@ class CDM_DECL SEChestCompressionForceScale : public SEChestCompression
 {
   friend class PBPatientAction;//friend the serialization class
 public:
-  SEChestCompressionForceScale();
+  SEChestCompressionForceScale(Logger* logger=nullptr);
   virtual ~SEChestCompressionForceScale();
 
   virtual void Clear(); //clear memory

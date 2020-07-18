@@ -7,7 +7,7 @@ class CDM_DECL SEAnesthesiaMachineOxygenTankPressureLoss : public SEAnesthesiaMa
 {
   friend class PBEquipmentAction;//friend the serialization class
 public:
-  SEAnesthesiaMachineOxygenTankPressureLoss();
+  SEAnesthesiaMachineOxygenTankPressureLoss(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineOxygenTankPressureLoss();
 
   virtual void Clear();

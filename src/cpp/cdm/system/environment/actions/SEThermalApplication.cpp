@@ -10,7 +10,7 @@
 #include "properties/SEScalarTemperature.h"
 #include "io/protobuf/PBEnvironmentActions.h"
 
-SEThermalApplication::SEThermalApplication() : SEEnvironmentAction()
+SEThermalApplication::SEThermalApplication(Logger* logger) : SEEnvironmentAction(logger)
 {
   m_ClearContents = true;
   m_ActiveHeating = nullptr;

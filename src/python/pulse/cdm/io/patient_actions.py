@@ -5,6 +5,7 @@ from pulse.cdm.io.action import serialize_action_from_bind, serialize_action_to_
 
 from pulse.cdm.patient_actions import *
 from pulse.cdm.bind.PatientActions_pb2 import *
+from pulse.cdm.io.patient import *
 from pulse.cdm.io.scalars import *
 
 def serialize_patient_action_to_bind(src: SEPatientAction, dst: PatientActionData):
@@ -99,6 +100,30 @@ def serialize_cardiac_arrest_from_bind(src: CardiacArrestData, dst: SECardiacArr
 
 #################################################################
 
+def serialize_chest_compression_force_to_bind(src: SEChestCompressionForce, dst: ChestCompressionForceData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    if src.has_force():
+        serialize_scalar_force_to_bind(src.get_force(), dst.Force)
+
+def serialize_chest_compression_force_from_bind(src: ChestCompressionForceData, dst: SEChestCompressionForce):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+    raise Exception("serialize_chest_compression_force_from_bind not implemented")
+
+#################################################################
+
+def serialize_chest_compression_force_scale_to_bind(src: SEChestCompressionForceScale, dst: ChestCompressionForceScaleData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    if src.has_force_period():
+        serialize_scalar_time_to_bind(src.get_force_period(), dst.ForcePeriod)
+    if src.has_force_scale():
+        serialize_scalar_0to1_to_bind(src.get_force_scale(), dst.ForceScale)
+
+def serialize_chest_compression_force_scale_from_bind(src: ChestCompressionForceScaleData, dst: SEChestCompressionForceScale):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+    raise Exception("serialize_chest_compression_force_scale_from_bind not implemented")
+
+#################################################################
+
 def serialize_chest_occlusive_dressing_to_bind(src: SEChestOcclusiveDressing, dst: ChestOcclusiveDressingData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_side():
@@ -190,6 +215,19 @@ def serialize_conscious_respiration_command_to_bind(src, dst: AnyConsciousRespir
 
 def serialize_conscious_respiration_command_from_bind(src: AnyConsciousRespirationCommandData, dst):
     raise Exception("serialize_conscious_respiration_command_from_bind not implemented")
+
+#################################################################
+
+def serialize_consume_nutrients_to_bind(src: SEConsumeNutrients, dst: ConsumeNutrientsData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    if src.has_nutrition_file():
+        dst.NutritionFile = src.get_nutrition_file()
+    elif src.has_nutrition():
+        serialize_nutrition_to_bind(src.get_nutrition(), dst.Nutrition)
+
+def serialize_consume_nutrients_from_bind(src: ConsumeNutrientsData, dst: ConsumeNutrientsData):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+    raise Exception("serialize_consume_nutrients_from_bind not implemented")
 
 #################################################################
 
@@ -402,3 +440,12 @@ def serialize_tension_pneumothorax_to_bind(src: SETensionPneumothorax, dst: Tens
 def serialize_tension_pneumothorax_from_bind(src: TensionPneumothoraxData, dst: SETensionPneumothorax):
     serialize_patient_action_from_bind(src.PatientAction, dst)
     raise Exception("serialize_patient_condition_from_bind not implemented")
+
+#################################################################
+
+def serialize_urinate_to_bind(src: SEUrinate, dst: UrinateData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+
+def serialize_urinate_from_bind(src: UrinateData, dst: SEUrinate):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+    raise Exception("serialize_urinate_from_bind not implemented")

@@ -56,14 +56,14 @@ C_EXPORT void C_CALL Deallocate(PulseEngineThunk* thunk)
 }
 
 extern "C"
-C_EXPORT bool C_CALL SerializeFromFile(PulseEngineThunk* thunk, const char* filename, const char* data_requests, int format)
+C_EXPORT bool C_CALL SerializeFromFile(PulseEngineThunk* thunk, const char* filename, const char* data_requests, int data_requests_format)
 {
-  return thunk->SerializeFromFile(filename==nullptr?"":filename, data_requests==nullptr?"":data_requests, (SerializationFormat)format);
+  return thunk->SerializeFromFile(filename==nullptr?"":filename, data_requests==nullptr?"":data_requests, (SerializationFormat)data_requests_format);
 }
 extern "C"
-C_EXPORT bool C_CALL SerializeToFile(PulseEngineThunk* thunk, const char* filename, int format)
+C_EXPORT bool C_CALL SerializeToFile(PulseEngineThunk* thunk, const char* filename)
 {
-  return thunk->SerializeToFile(filename==nullptr?"":filename, (SerializationFormat)format);
+  return thunk->SerializeToFile(filename==nullptr?"":filename);
 }
 
 extern "C"
@@ -83,6 +83,16 @@ extern "C"
 C_EXPORT bool C_CALL InitializeEngine(PulseEngineThunk* thunk, const char* patient_configuration, const char* data_requests, int format, const char* data_dir = ".")
 {
   return thunk->InitializeEngine(patient_configuration==nullptr?"":patient_configuration, data_requests==nullptr?"":data_requests, (SerializationFormat)format, data_dir==nullptr?"./":data_dir);
+}
+
+extern "C"
+C_EXPORT bool C_CALL GetInitialPatient(PulseEngineThunk * thunk, int format, char** str_addr)
+{
+  std::string initial_patient = thunk->GetInitialPatient((SerializationFormat)format);
+  if (initial_patient.empty())
+    return false;
+  *str_addr = c_strdup(initial_patient.c_str(), initial_patient.length());
+  return true;
 }
 
 extern "C"
