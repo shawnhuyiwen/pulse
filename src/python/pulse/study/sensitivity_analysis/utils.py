@@ -148,9 +148,9 @@ def gen_sim_list_from_defaults(percent_variation, baseline_file, distribution, o
     """
 
     print("Sampling parameter space ...")
-    sobol_problem_size = 600
+    sobol_problem_size = 1000
     sobol_params_dict = get_paths_and_values(percent_variation, baseline_file, distribution, compartment)
-    sobol_problem = sample_params(sobol_params_dict, output_dir)
+    sobol_problem = sample_params(sobol_params_dict, output_dir, sobol_problem_size)
 
     param_values = saltelli.sample(sobol_problem, sobol_problem_size)
     sampled_params_df = pd.DataFrame(data=param_values, columns=sobol_params_dict["paths"])
