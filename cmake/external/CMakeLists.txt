@@ -22,6 +22,11 @@ if(MSVC)
   endif()
 endif()
 
+if( ANDROID )# Protobuf will use the android log methods and we will need to explictly link to those methods
+  set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -landroid -llog" CACHE STRING INTERNAL FORCE)
+  set(CMAKE_SHARED_LINKER_FLAGS  "${CMAKE_SHARED_LINKER_FLAGS}  -landroid -llog}" CACHE STRING INTERNAL FORCE)
+endif()
+
 mark_as_superbuild(
   VARS
     CMAKE_BUILD_TYPE
