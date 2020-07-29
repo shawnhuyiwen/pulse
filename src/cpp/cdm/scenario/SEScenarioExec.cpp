@@ -129,15 +129,15 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, const SEScenario& scenario, c
     }
     else if (scenario.HasPatientConfiguration())
     {
+      // Make a copy of the data requests, note this clears out data requests from the engine
+      pe.GetEngineTracker()->GetDataRequestManager().Copy(scenario.GetDataRequestManager(), pe.GetSubstanceManager());
+      if (!pe.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
+        pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
       if (!pe.InitializeEngine(*scenario.GetPatientConfiguration()))
       {
         Error("Unable to initialize engine");
         return false;
       }
-      // Make a copy of the data requests, note this clears out data requests from the engine
-      pe.GetEngineTracker()->GetDataRequestManager().Copy(scenario.GetDataRequestManager(), pe.GetSubstanceManager());
-      if (!pe.GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
-        pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(resultsFile);
     }
     else
     {

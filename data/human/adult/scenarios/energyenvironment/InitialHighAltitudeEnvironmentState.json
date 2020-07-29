@@ -347,7 +347,7 @@
       "CompartmentName": "Carina",
       "SubstanceName": "Oxygen",
       "PropertyName": "PartialPressure",
-      "Unit": "cmH2O"
+      "Unit": "mmHg"
     }, {
       "DecimalFormat": {
         "Precision": 1
@@ -356,7 +356,7 @@
       "CompartmentName": "Carina",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "PartialPressure",
-      "Unit": "cmH2O"
+      "Unit": "mmHg"
     }, {
       "DecimalFormat": {
         "Precision": 1

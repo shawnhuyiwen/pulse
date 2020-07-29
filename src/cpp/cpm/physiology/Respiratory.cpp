@@ -2426,7 +2426,7 @@ void Respiratory::UpdateResistances()
     m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation || 
     m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
   {
-    tracheaResistance_cmH2O_s_Per_L *= 8.0;
+    tracheaResistance_cmH2O_s_Per_L *= 11.0;
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2551,7 +2551,7 @@ void Respiratory::UpdateResistances()
       bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
     }
 
-    double dResistanceScalingFactor = GeneralMath::ExponentialGrowthFunction(10.0, 1.0, 90.0, bronchitisSeverity);
+    double dResistanceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 80.0, bronchitisSeverity);
     obstructiveResistanceScalingFactor = MAX(obstructiveResistanceScalingFactor, dResistanceScalingFactor);
   }
 
@@ -2623,7 +2623,7 @@ void Respiratory::UpdateAlveolarCompliances()
       emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
-    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 2.0, emphysemaSeverity);
+    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 1.2, emphysemaSeverity);
     
     leftObstructiveComplianceScalingFactor = MAX(leftObstructiveComplianceScalingFactor, complianceScalingFactor);
     rightObstructiveComplianceScalingFactor = MAX(rightObstructiveComplianceScalingFactor, complianceScalingFactor);
@@ -2831,14 +2831,28 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
 
   //------------------------------------------------------------------------------------------------------
   //Set new value & Drugs/PD
-  m_IERatioScaleFactor = 1.0 - combinedObstructiveSeverity;
+
+  // Approximate mapping without frequency effects (standard respiration rate)
+  //
+  // Factor | Inspiratory Fraction | IE Ratio
+  // -------|----------------------|-----------
+  // 0.5    | 0.17                 | 1:5 (0.2)
+  // 0.75   | 0.25                 | 1:3 (0.33)
+  // 1.0    | 0.33                 | 1:2 (0.5)
+  // 1.5    | 0.5                  | 1:1 (1.0)
+  // 2.0    | 0.67                 | 2:1 (2.0)
+
+  // Obstructive effects
+  m_IERatioScaleFactor *= GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.17, combinedObstructiveSeverity);
+
+  // Bronchodilators
   //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
   m_IERatioScaleFactor *= exp(7728.4 * m_AverageLocalTissueBronchodilationEffects);
   //Lower than 0.1 causes simulation instability
   m_IERatioScaleFactor = LIMIT(m_IERatioScaleFactor, 0.1, 1.0);
 
-  m_IERatioScaleFactor += 1.5 * combinedRestrictiveSeverity;
-  m_IERatioScaleFactor = LIMIT(m_IERatioScaleFactor, 0.1, 10.0);
+  // Restrictive effects
+  m_IERatioScaleFactor *= GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 1.5, combinedRestrictiveSeverity);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -3258,7 +3272,7 @@ void Respiratory::ModifyDriverPressure()
     combinedSeverity = MAX(combinedSeverity, bronchitisSeverity);
 
     //Linear function: Min = 0.0, Max = 0.8 (increasing with severity)
-    double thisDyspneaSeverity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.8, combinedSeverity);
+    double thisDyspneaSeverity = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.4, combinedSeverity);
     dyspneaSeverity = MAX(dyspneaSeverity, thisDyspneaSeverity);
   }
 
