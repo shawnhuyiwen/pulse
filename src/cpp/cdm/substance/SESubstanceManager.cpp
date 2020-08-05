@@ -45,7 +45,7 @@ bool SESubstanceManager::HasSubstance(const std::string& name) const
   for (SESubstance* s : m_Substances)
   {
     if (name.compare(s->GetName()) == 0)
-      true;
+      return true;
   }
   return false;
 }

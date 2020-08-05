@@ -20,6 +20,20 @@ if(MSVC)
     set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} /MP${${PROJECT_NAME}_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP${${PROJECT_NAME}_NUM_BUILD_PROCESSES}" CACHE STRING INTERNAL FORCE)
   endif()
+#elseif(ANDROID)
+#  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -llog" CACHE INTERNAL "" FORCE)
+#  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -llog" CACHE INTERNAL "" FORCE)
+#  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -llog" CACHE INTERNAL "" FORCE)
+#  set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -llog" CACHE INTERNAL "" FORCE)
+#  message(STATUS "Hello ANDROID")
+endif()
+
+if(CMAKE_TOOLCHAIN_FILE)
+  message(STATUS "Passing toolchain file : ${CMAKE_TOOLCHAIN_FILE}")
+  set(COMPILER CMAKE_TOOLCHAIN_FILE)
+else()
+  set(COMPILER CMAKE_C_COMPILER
+               CMAKE_CXX_COMPILER)
 endif()
 
 mark_as_superbuild(
@@ -29,12 +43,13 @@ mark_as_superbuild(
     CMAKE_INSTALL_PREFIX
     #CMAKE_MODULE_PATH # Paths used in include(), find_package()
     #CMAKE_PREFIX_PATH # Path prefixes to be searched, in find_xxx functions
-    CMAKE_C_COMPILER
-    CMAKE_CXX_COMPILER
+    ${COMPILER}
     CMAKE_C_FLAGS
     CMAKE_CXX_FLAGS
     CMAKE_EXE_LINKER_FLAGS
+    CMAKE_MODULE_LINKER_FLAGS
     CMAKE_SHARED_LINKER_FLAGS
+    CMAKE_STATIC_LINKER_FLAGS
     CMAKE_CXX_STANDARD
     CMAKE_CXX_STANDARD_REQUIRED
     THREADS_PREFER_PTHREAD_FLAG
@@ -85,6 +100,8 @@ ExternalProject_Add( ${PROJECT_NAME}
   BINARY_DIR ${CMAKE_BINARY_DIR}/Innerbuild
   ${COMMON_CMAKE_EP_ARGS}
   CMAKE_ARGS
+    -DCMAKE_TOOLCHAIN_FILE:STRING=${CMAKE_TOOLCHAIN_FILE}
+  CMAKE_CACHE_ARGS 
     -D${PROJECT_NAME}_SUPERBUILD:BOOL=OFF
     -D${PROJECT_NAME}_JAVA_API:BOOL=${${PROJECT_NAME}_JAVA_API}
     -D${PROJECT_NAME}_PYTHON_API:BOOL=${${PROJECT_NAME}_PYTHON_API}
@@ -117,8 +134,8 @@ if (${PROJECT_NAME}_JAVA_API)
               WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
   set_target_properties (PulseData PROPERTIES FOLDER ${PROJECT_NAME})
 else()
-  message(WARNING "Without Java Utils, this build will not generate required data files needed for Pulse to execute")
-  message(WARNING "You will need to get these required data files from another build/source")
+  message(STATUS "!!! Without Java Utils, this build will not generate required data files needed for Pulse to execute !!!")
+  message(STATUS "!!! You will need to get these required data files from another build/source !!!")
 endif()
 
 if(${PROJECT_NAME}_DOWNLOAD_BASELINES)
@@ -128,5 +145,5 @@ if(${PROJECT_NAME}_DOWNLOAD_BASELINES)
             WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
   set_target_properties (PulseData PROPERTIES FOLDER ${PROJECT_NAME})
 else()
-  message(STATUS "NOT pulling the latest Pulse Baselines!")
+  message(STATUS "!!! NOT pulling the latest Pulse Baselines !!!")
 endif()

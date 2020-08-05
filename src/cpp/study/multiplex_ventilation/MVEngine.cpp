@@ -107,7 +107,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
     SEGasCompartment* inspiratoryConnectionCompartment = nullptr;
     SEGasCompartment* expiratoryConnectionCompartment = nullptr;
 
-    Info("Creating "+to_string(sim.patientcomparisons_size())+" patients");
+    Info("Creating "+ std::to_string(sim.patientcomparisons_size())+" patients");
     for (int p = 0; p < sim.patientcomparisons_size(); p++)
     {
       PulseController* pc = nullptr;
@@ -118,7 +118,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
         auto* soloVentilation = comparison.mutable_soloventilation();
         std::string state = soloVentilation->statefile();
         pc = new PulseController();
-        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
+        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + std::to_string(p) + ".log");
         if (!pc->SerializeFromFile(state))
         {
           Error("Unable to load file : " + state);
@@ -140,7 +140,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
         auto* multiVentilation = comparison.mutable_multiplexventilation();
 
         pc = new PulseController();
-        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + to_string(p) + ".log");
+        pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + std::to_string(p) + ".log");
         if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.pbb"))
         {
           Error("Unable to load file : StandardMale@0s.pbb");
@@ -235,17 +235,17 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
         }
 
         // Connect the tubes to the shared ventilator circuit/graph
-        auto& expiratoryConnectionPath = m_MultiplexVentilationCircuit->CreatePath(*expiratoryConnectionNode, *expiratoryValveNode, "expiratoryConnection_" + to_string(p));
-        auto& expiratoryConnectionLink = m_CmptMgr->CreateGasLink(*expiratoryConnectionCompartment, *expiratoryValveCmpt, "expiratoryConnection_" + to_string(p));
+        auto& expiratoryConnectionPath = m_MultiplexVentilationCircuit->CreatePath(*expiratoryConnectionNode, *expiratoryValveNode, "expiratoryConnection_" + std::to_string(p));
+        auto& expiratoryConnectionLink = m_CmptMgr->CreateGasLink(*expiratoryConnectionCompartment, *expiratoryValveCmpt, "expiratoryConnection_" + std::to_string(p));
         expiratoryConnectionLink.MapPath(expiratoryConnectionPath);
         m_MultiplexVentilationGraph->AddLink(expiratoryConnectionLink);
 
-        auto& inspiratoryConnectionPath = m_MultiplexVentilationCircuit->CreatePath(*inspiratoryConnectionNode, *inspiratoryValveNode, "inspiratoryConnection_p" + to_string(p));
-        auto& inspiratoryConnectionLink = m_CmptMgr->CreateGasLink(*inspiratoryConnectionCompartment, *inspiratoryValveCmpt, "inspiratoryConnection_p" + to_string(p));
+        auto& inspiratoryConnectionPath = m_MultiplexVentilationCircuit->CreatePath(*inspiratoryConnectionNode, *inspiratoryValveNode, "inspiratoryConnection_p" + std::to_string(p));
+        auto& inspiratoryConnectionLink = m_CmptMgr->CreateGasLink(*inspiratoryConnectionCompartment, *inspiratoryValveCmpt, "inspiratoryConnection_p" + std::to_string(p));
         inspiratoryConnectionLink.MapPath(inspiratoryConnectionPath);
         m_MultiplexVentilationGraph->AddLink(inspiratoryConnectionLink);
       }
-      TrackData(pc->GetEngineTracker(), outDir + "multiplex_patient_" + to_string(p) + "_results.csv");
+      TrackData(pc->GetEngineTracker(), outDir + "multiplex_patient_" + std::to_string(p) + "_results.csv");
       auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
       auto AortaCO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetCO2());
       m_AortaO2s.push_back(AortaO2);
@@ -721,11 +721,11 @@ bool MVEngine::RunSoloState(const std::string& stateFile, const std::string& res
     if (statusTime_s > statusStep_s)
     {
       statusTime_s = 0;
-      logger.Info("Current Time is " + logger.to_string(currentTime_s) + "s, it took " + logger.to_string(profiler.GetElapsedTime_s("Status")) + "s to simulate the past " + logger.to_string(statusStep_s) + "s");
+      logger.Info("Current Time is " + cdm::to_string(currentTime_s) + "s, it took " + cdm::to_string(profiler.GetElapsedTime_s("Status")) + "s to simulate the past " + cdm::to_string(statusStep_s) + "s");
       profiler.Reset("Status");
     }
   }
-  logger.Info("It took " + logger.to_string(profiler.GetElapsedTime_s("Total")) + "s to run this simulation");
+  logger.Info("It took " + cdm::to_string(profiler.GetElapsedTime_s("Total")) + "s to run this simulation");
   profiler.Clear();
   return true;
 }

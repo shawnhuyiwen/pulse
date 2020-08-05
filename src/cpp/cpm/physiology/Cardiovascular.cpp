@@ -2339,7 +2339,7 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
       //Info("  " + p->GetName() + " Resistance : " + p->GetResistance().ToString());
       //Info("  " + p->GetName() + " Flow : " + p->GetFlow().ToString());
     }
-    Info("Tuning " + cdm::to_string(pCnt) + "/" + cdm::to_string(tissueResistancePaths.size()) + " paths at " + cdm::to_string(time_s) + "s");
+    Info("Tuning " + std::to_string(pCnt) + "/" + std::to_string(tissueResistancePaths.size()) + " paths at " + cdm::to_string(time_s) + "s");
 
     if (pCnt==0)
     {

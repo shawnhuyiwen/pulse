@@ -304,7 +304,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
     std::string pFile = patient_configuration.GetPatientFile();
     if (pFile.find("/patients") == std::string::npos)
     {// Prepend the patient directory if it's not there
-      pFile = "./patients/";
+      pFile = m_DataDir+"/patients/";
       pFile += patient_configuration.GetPatientFile();
     }
     if (!patient.SerializeFromFile(pFile))// TODO Support all serialization formats
@@ -405,7 +405,7 @@ bool PulseController::Initialize(SEPatient const& patient)
   // Now we can check the config
   if (m_Config->IsWritingPatientBaselineFile())
   {
-    std::string stableDir = "./stable/";
+    std::string stableDir = m_DataDir+"/stable/";
     MakeDirectory(stableDir.c_str());
     m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json");
   }
