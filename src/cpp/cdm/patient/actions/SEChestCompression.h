@@ -7,7 +7,6 @@
 class CDM_DECL SEChestCompression : public SEPatientAction
 {
   friend class PBPatientAction;//friend the serialization class
-  friend class PBPatientAction;//friend the serialization class
 public:
 
   SEChestCompression(Logger* logger);

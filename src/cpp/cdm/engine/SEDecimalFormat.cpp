@@ -2,7 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
-#include <iomanip> 
+#include <iomanip>
+#include <iostream>
 #include "engine/SEDecimalFormat.h"
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)

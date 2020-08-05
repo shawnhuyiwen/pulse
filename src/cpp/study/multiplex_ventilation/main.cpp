@@ -191,10 +191,10 @@ int main(int argc, char* argv[])
                 // Set up our single patients on their own ventilator cases //
                 //////////////////////////////////////////////////////////////
 
-                std::string sBaseName0 = "peep=" + mvr.to_string(PEEP_cmH2O) +
-                  "_pip=" + mvr.to_string(PIP_cmH2O) +
-                  "_comp=" + mvr.to_string(compliance0_mL_Per_cmH2O) +
-                  "_imp=" + mvr.to_string(impairment0) + "/";
+                std::string sBaseName0 = "peep=" + std::to_string(PEEP_cmH2O) +
+                  "_pip=" + std::to_string(PIP_cmH2O) +
+                  "_comp=" + std::to_string(compliance0_mL_Per_cmH2O) +
+                  "_imp=" + cdm::to_string(impairment0) + "/";
                 if(soloNames.find(sBaseName0) == soloNames.end())
                 {
                   auto sim = soloSimList.add_simulations();
@@ -215,10 +215,10 @@ int main(int argc, char* argv[])
                   soloNames.insert(sBaseName0);
                 }
 
-                std::string sBaseName1 = "peep=" + mvr.to_string(PEEP_cmH2O) +
-                  "_pip=" + mvr.to_string(PIP_cmH2O) +
-                  "_comp=" + mvr.to_string(compliance1_mL_Per_cmH2O) +
-                  "_imp=" + mvr.to_string(impairment1) + "/";
+                std::string sBaseName1 = "peep=" + std::to_string(PEEP_cmH2O) +
+                  "_pip=" + std::to_string(PIP_cmH2O) +
+                  "_comp=" + std::to_string(compliance1_mL_Per_cmH2O) +
+                  "_imp=" + cdm::to_string(impairment1) + "/";
                 if (soloNames.find(sBaseName1) == soloNames.end())
                 {
                   auto sim = soloSimList.add_simulations();
@@ -243,18 +243,18 @@ int main(int argc, char* argv[])
                 // Setup our Multiplex ventilation Cases //
                 ///////////////////////////////////////////
 
-                std::string mBaseName = "peep=" + mvr.to_string(PEEP_cmH2O) +
-                  "_pip=" + mvr.to_string(PIP_cmH2O) +
-                  "_c0=" + mvr.to_string(compliance0_mL_Per_cmH2O) +
-                  "_c1=" + mvr.to_string(compliance1_mL_Per_cmH2O) +
-                  "_i0=" + mvr.to_string(impairment0) +
-                  "_i1=" + mvr.to_string(impairment1) + "/";
-                std::string inverted = "peep=" + mvr.to_string(PEEP_cmH2O) +
-                  "_pip=" + mvr.to_string(PIP_cmH2O) +
-                  "_c0=" + mvr.to_string(compliance0_mL_Per_cmH2O) +
-                  "_c1=" + mvr.to_string(compliance1_mL_Per_cmH2O) +
-                  "_i0=" + mvr.to_string(impairment0) +
-                  "_i1=" + mvr.to_string(impairment1) + "/";
+                std::string mBaseName = "peep=" + std::to_string(PEEP_cmH2O) +
+                  "_pip=" + std::to_string(PIP_cmH2O) +
+                  "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
+                  "_c1=" + std::to_string(compliance1_mL_Per_cmH2O) +
+                  "_i0=" + cdm::to_string(impairment0) +
+                  "_i1=" + cdm::to_string(impairment1) + "/";
+                std::string inverted = "peep=" + std::to_string(PEEP_cmH2O) +
+                  "_pip=" + std::to_string(PIP_cmH2O) +
+                  "_c0=" + std::to_string(compliance0_mL_Per_cmH2O) +
+                  "_c1=" + std::to_string(compliance1_mL_Per_cmH2O) +
+                  "_i0=" + cdm::to_string(impairment0) +
+                  "_i1=" + cdm::to_string(impairment1) + "/";
                 if (multiplexNames.find(mBaseName) != multiplexNames.end())
                 {
                   std::cout << "Will already run a simulation for " << mBaseName << std::endl;
@@ -390,8 +390,8 @@ int main(int argc, char* argv[])
           else
           {
             // Let's make sure the FiO2 came out to the same 
-            logger.Info("Expected FiO2 : " + logger.to_string(FiO2));
-            logger.Info("Computed FiO2 : " + logger.to_string(pData.fio2()));
+            logger.Info("Expected FiO2 : " + cdm::to_string(FiO2));
+            logger.Info("Computed FiO2 : " + cdm::to_string(pData.fio2()));
             if (!FileExists(patient))
             {
               logger.Error("Could not generate the solo state with the same FiO2");
@@ -401,9 +401,9 @@ int main(int argc, char* argv[])
         }
 
         std::string solo_patient_base_path = Dir::Results + combined_name +
-          "/pip=" +  logger.to_string(pip_cmH2O) +
-          "_peep=" + logger.to_string(peep_cmH2O) +
-          "_FiO2=" + logger.to_string(FiO2) + "_solo_patient_" + logger.to_string(iter);
+          "/pip=" +  cdm::to_string(pip_cmH2O) +
+          "_peep=" + cdm::to_string(peep_cmH2O) +
+          "_FiO2=" + cdm::to_string(FiO2) + "_solo_patient_" + std::to_string(iter);
 
         MVEngine::RunSoloState(patient, solo_patient_base_path, soloRunTime_s, logger);
 
@@ -447,9 +447,9 @@ int main(int argc, char* argv[])
         double FiO2 = FiO2s.at(iter);
 
         std::string sim_base_path = Dir::Results + combined_name +
-          "/pip=" + logger.to_string(pip_cmH2O) +
-          "_peep=" + logger.to_string(peep_cmH2O) +
-          "_FiO2=" + logger.to_string(FiO2) + "_";
+          "/pip=" +  cdm::to_string(pip_cmH2O) +
+          "_peep=" + cdm::to_string(peep_cmH2O) +
+          "_FiO2=" + cdm::to_string(FiO2) + "_";
         sim.set_outputbasefilename(sim_base_path);
 
         sim.set_pip_cmh2o(pip_cmH2O);
@@ -492,9 +492,9 @@ int main(int argc, char* argv[])
       FiO2Avg /= double(iter);
 
       std::string sim_base_path = Dir::Results + combined_name +
-        "/pip=" + logger.to_string(pipAvg_cmH2O) +
-        "_peep=" + logger.to_string(peepAvg_cmH2O) +
-        "_FiO2=" + logger.to_string(FiO2Avg) + "_";
+        "/pip="  + cdm::to_string(pipAvg_cmH2O) +
+        "_peep=" + cdm::to_string(peepAvg_cmH2O) +
+        "_FiO2=" + cdm::to_string(FiO2Avg) + "_";
       sim.set_outputbasefilename(sim_base_path);
       sim.set_pip_cmh2o(pipAvg_cmH2O);
       sim.set_peep_cmh2o(peepAvg_cmH2O);
