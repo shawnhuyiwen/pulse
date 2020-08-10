@@ -121,7 +121,8 @@ if (${PROJECT_NAME}_JAVA_API)
   add_dependencies(PulseData Pulse)
   add_custom_command(TARGET PulseData POST_BUILD
       COMMAND ${CMAKE_COMMAND} -DTYPE:STRING=genData -P run.cmake
-              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+      BYPRODUCTS "${CMAKE_INSTALL_PREFIX}/bin/patients/StandardMale.json")
   # Don't genStates if in Debug, takes way too long
   string(APPEND _genStates
     "$<IF:$<CONFIG:Debug>,"
@@ -131,7 +132,8 @@ if (${PROJECT_NAME}_JAVA_API)
   add_custom_command(TARGET PulseData POST_BUILD
       COMMAND "${_genStates}"
               COMMAND_EXPAND_LISTS
-              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin
+      BYPRODUCTS "${CMAKE_INSTALL_PREFIX}/bin/states/StandardMale@0s.json")
   set_target_properties (PulseData PROPERTIES FOLDER ${PROJECT_NAME})
 else()
   message(STATUS "!!! Without Java Utils, this build will not generate required data files needed for Pulse to execute !!!")
