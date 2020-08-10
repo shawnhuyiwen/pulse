@@ -8,6 +8,7 @@
 
 SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 {
+  Set(dr);
   m_Category = dr.m_Category;
   m_CompartmentName = dr.m_CompartmentName;
   m_SubstanceName = dr.m_SubstanceName;
