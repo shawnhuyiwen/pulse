@@ -119,7 +119,7 @@
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 1.974, "Unit": "s" } },
           "ExpirationCycleTime": { "ScalarTime": { "Value": 1.776, "Unit": "s" } },
           "FractionInspiredGas": [
-            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.35, "Unit": "" } } }
+            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.47, "Unit": "" } } }
           ]
         }
       }

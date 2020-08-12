@@ -1308,7 +1308,8 @@ void Respiratory::RespiratoryDriver()
     m_data.GetEvents().SetEvent(eEvent::StartOfExhale, true, m_data.GetSimulationTime());
   }
 
-  //double pi = 3.14159265359;
+  //jbw - updated expiration to new waveforms
+  double pi = 3.14159265359;
   if (m_BreathingCycleTime_s >= ResidueFractionTimeStart_s)
   {
     m_DriverPressure_cmH2O = 0.0;
@@ -1333,11 +1334,11 @@ void Respiratory::RespiratoryDriver()
   }
   else if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s)
   {
-    double ventilationFrequency_Per_min = 60.0 / (m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s);
-    m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * (exp(-((ventilationFrequency_Per_min + m_VentilatoryOcclusionPressure_cmH2O / 2.0) / 10.0) * (m_BreathingCycleTime_s - InspiratoryReleaseTimeStart_s)));
+    //double ventilationFrequency_Per_min = 60.0 / (m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s);
+    //m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * (exp(-((ventilationFrequency_Per_min + m_VentilatoryOcclusionPressure_cmH2O / 2.0) / 10.0) * (m_BreathingCycleTime_s - InspiratoryReleaseTimeStart_s)));
     
-    //double segmentTime_s = InspiratoryToExpiratoryPauseTimeStart_s - InspiratoryReleaseTimeStart_s;
-    //m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - InspiratoryReleaseTimeStart_s) / (segmentTime_s));
+    double segmentTime_s = InspiratoryToExpiratoryPauseTimeStart_s - InspiratoryReleaseTimeStart_s;
+    m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - InspiratoryReleaseTimeStart_s) / (segmentTime_s));
   }
   else if (m_BreathingCycleTime_s >= InspiratoryHoldTimeStart_s)
   {
@@ -1345,10 +1346,10 @@ void Respiratory::RespiratoryDriver()
   }
   else //(m_BreathingCycleTime_s >= InspiratoryRiseTimeStart_s)
   {
-    double ventilationFrequency_Per_min = 60.0 / (m_InspiratoryRiseFraction * TotalBreathingCycleTime_s);
-    m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * (1.0 - exp(-((ventilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0) * m_BreathingCycleTime_s));
+    //double ventilationFrequency_Per_min = 60.0 / (m_InspiratoryRiseFraction * TotalBreathingCycleTime_s);
+    //m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * (1.0 - exp(-((ventilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0) * m_BreathingCycleTime_s));
 
-    //m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * m_BreathingCycleTime_s / InspiratoryHoldTimeStart_s);
+    m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * m_BreathingCycleTime_s / InspiratoryHoldTimeStart_s);
   }
 
   if (!m_PatientActions->HasConsciousRespiration())
@@ -1393,11 +1394,14 @@ void Respiratory::SetBreathCycleFractions()
   //Healthy = ~1:2 IE Ratio = 0.33 inpiration and 0.67 expiration
   ///\cite Fresnel2014musclePressure
   //Adjust for standard 12 bpm giving ~0.33 instead of 16 bpm by adding 4
-  m_InspiratoryRiseFraction = (0.0125 * (m_VentilationFrequency_Per_min + 4.0) + 0.125) * m_IERatioScaleFactor;
-  m_InspiratoryRiseFraction = LIMIT(m_InspiratoryRiseFraction, 0.1, 0.9);
+  double inspiratoryFraction = (0.0125 * (m_VentilationFrequency_Per_min + 4.0) + 0.125) * m_IERatioScaleFactor;
+  inspiratoryFraction = LIMIT(inspiratoryFraction, 0.1, 0.9);
+  double expiratoryFraction = 1.0 - inspiratoryFraction;
+
+  m_InspiratoryRiseFraction = inspiratoryFraction;
   m_InspiratoryHoldFraction = 0.0;
-  m_InspiratoryReleaseFraction = 1.0 - m_InspiratoryRiseFraction;
-  m_InspiratoryToExpiratoryPauseFraction = 0.0;
+  m_InspiratoryReleaseFraction = 0.5 * expiratoryFraction;
+  m_InspiratoryToExpiratoryPauseFraction = 0.5 * expiratoryFraction;
   m_ExpiratoryRiseFraction = 0.0;
   m_ExpiratoryHoldFraction = 0.0;
   m_ExpiratoryReleaseFraction = 0.0;
@@ -2319,6 +2323,17 @@ void Respiratory::UpdateVolumes()
   double rightAlveolarDeadSpaceIncrease_L = 0.0;
 
   //------------------------------------------------------------------------------------------------------
+//Positive Pressure Ventilation
+  if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
+  {
+    double ventilatorIncrease_L = 0.05;
+    leftAlveolarDeadSpaceIncrease_L += ventilatorIncrease_L;
+    rightAlveolarDeadSpaceIncrease_L += ventilatorIncrease_L;
+  }
+
+  //------------------------------------------------------------------------------------------------------
   //COPD
   //Exacerbation will overwrite the condition, even if it means improvement
 
@@ -2623,8 +2638,8 @@ void Respiratory::UpdateAlveolarCompliances()
       emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
-    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 1.2, emphysemaSeverity);
-    
+    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 1.1, emphysemaSeverity);
+
     leftObstructiveComplianceScalingFactor = MAX(leftObstructiveComplianceScalingFactor, complianceScalingFactor);
     rightObstructiveComplianceScalingFactor = MAX(rightObstructiveComplianceScalingFactor, complianceScalingFactor);
   }
@@ -3135,6 +3150,17 @@ void Respiratory::UpdatePulmonaryShunt()
   double leftSeverity = 0.0;
 
   //------------------------------------------------------------------------------------------------------
+  //Positive Pressure Ventilation
+  if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
+  {
+    double shuntResistanceFactor = 0.3;
+    m_RightPulmonaryArteriesToVeins->GetNextResistance().MultiplyValue(shuntResistanceFactor, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_LeftPulmonaryArteriesToVeins->GetNextResistance().MultiplyValue(shuntResistanceFactor, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  }
+
+  //------------------------------------------------------------------------------------------------------
   //PulmonaryShunt
   //Exacerbation will overwrite the condition, even if it means improvement
   if (m_data.GetConditions().HasPulmonaryShunt() || m_PatientActions->HasPulmonaryShuntExacerbation())
@@ -3208,8 +3234,8 @@ void Respiratory::UpdatePulmonaryShunt()
     leftSeverity = MAX(leftSeverity, leftScaledSeverity);
   }
 
-  double rightPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, rightSeverity);
-  double leftPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.01, 1.0, leftSeverity);
+  double rightPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.05, 1.0, rightSeverity);
+  double leftPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.05, 1.0, leftSeverity);
 
   double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
