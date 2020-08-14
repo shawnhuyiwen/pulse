@@ -79,11 +79,11 @@ double SESubstanceCompoundInfusion::GetBagVolume(const VolumeUnit& unit) const
 
 SESubstanceCompound& SESubstanceCompoundInfusion::GetSubstanceCompound()
 {
-  return (SESubstanceCompound&)m_Compound;
+  return const_cast<SESubstanceCompound&>(m_Compound);
 }
 const SESubstanceCompound& SESubstanceCompoundInfusion::GetSubstanceCompound() const
 {
-  return (SESubstanceCompound&)m_Compound;
+  return m_Compound;
 }
 
 void SESubstanceCompoundInfusion::ToString(std::ostream &str) const

@@ -79,11 +79,11 @@ double SESubstanceInfusion::GetConcentration(const MassPerVolumeUnit& unit) cons
 
 SESubstance& SESubstanceInfusion::GetSubstance()
 {
-  return (SESubstance&)m_Substance;
+  return const_cast<SESubstance&>(m_Substance);
 }
 const SESubstance& SESubstanceInfusion::GetSubstance() const
 {
-  return (SESubstance&)m_Substance;
+  return m_Substance;
 }
 
 void SESubstanceInfusion::ToString(std::ostream &str) const
