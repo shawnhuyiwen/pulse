@@ -53,37 +53,17 @@ bool CreateFilePath(const std::string& path)
     return false;
   }
 
-  std::string buffer = path;
-  std::vector<std::string> folderLevels;
-  char* c_str = (char*)buffer.c_str();
-
-  // Point to end of the string
-  char* strPtr = &c_str[strlen(c_str) - 1];
-
-  // Break out each directory into our vector
-  do
+  // Recursively create parents
+  auto const sep = path.find_last_of("\\/");
+  if (sep != std::string::npos && sep > 0)
   {
-    do
+    if (!CreateFilePath(path.substr(0, sep)))
     {
-      strPtr--;
-    } while ((*strPtr != '\\') && (*strPtr != '/') && (strPtr >= c_str));
-    folderLevels.push_back(std::string(strPtr + 1));
-    strPtr[1] = 0;
-  } while (strPtr >= c_str);
-
-  std::string destDir = "";
-
-  std::string dir;
-
-  // Create the folders iteratively, backwards
-  for (size_t i = folderLevels.size() - 1; i >= 1; i--)
-  {
-    dir = folderLevels.at(i);
-    if (dir == "/" || dir == "\\")
-      continue;
-    destDir += dir;
-    MKDIR(destDir.c_str());
+      return false;
+    }
   }
+
+  MKDIR(path.c_str());
   return true;
 }
 
