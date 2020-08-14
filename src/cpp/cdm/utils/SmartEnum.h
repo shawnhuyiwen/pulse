@@ -56,7 +56,7 @@ struct SmartEnum
   virtual ~Clazz() {} \
 \
   int index() const { return _idx; } \
-  const Type value() const { return Type(_idx); } \
+  Type value() const { return Type(_idx); } \
   const char* string() const { return Clazz::Value(_idx); } \
   void set(const Type& t) { _idx = static_cast<int>(t); } \
 \
