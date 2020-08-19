@@ -97,7 +97,10 @@ void Logger::SetLogFile(const std::string& logFilename)
   }
   _log_lib->_log_to_file = true;
 
-  CreateFilePath(logFilename);
+  // Separate path from file, and create the path
+  auto const sep = logFilename.find_last_of("\\/");
+  if (sep != std::string::npos && sep > 0)
+    CreateFilePath(logFilename.substr(0, sep));
   _log_lib->_file.close();
   // delete previous log contents if it exists
   _log_lib->_file.open(logFilename.c_str(), std::ofstream::out | std::ofstream::trunc);

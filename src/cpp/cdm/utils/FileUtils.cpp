@@ -69,8 +69,11 @@ bool CreateFilePath(const std::string& path)
 
 bool WriteFile(const std::string& content, const std::string& filename)
 {
-  if (!CreateFilePath(filename))
-    return false;
+  // Separate path from file, and create the path
+  auto const sep = filename.find_last_of("\\/");
+  if (sep != std::string::npos && sep > 0)
+    if (!CreateFilePath(filename.substr(0, sep)))
+      return false;
   std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
   ascii_ostream << content;
   ascii_ostream.flush();
