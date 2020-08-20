@@ -64,7 +64,7 @@ bool SARunner::Run()
   profiler.Start("Total");
 
   // Ensure our output dir exists
-  CreateFilePath(m_OutDir);
+  CreatePath(m_OutDir);
 
   // Get the ID's of simulations we need to run
   m_SimulationsToRun.clear();

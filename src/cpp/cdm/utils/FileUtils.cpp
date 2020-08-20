@@ -46,7 +46,7 @@ std::string Replace(const std::string& original, const std::string& replace, con
   return s;
 }
 
-bool CreateFilePath(const std::string& path)
+bool CreatePath(const std::string& path)
 {
   if (path.empty())
   {
@@ -57,7 +57,7 @@ bool CreateFilePath(const std::string& path)
   auto const sep = path.find_last_of("\\/");
   if (sep != std::string::npos && sep > 0)
   {
-    if (!CreateFilePath(path.substr(0, sep)))
+    if (!CreatePath(path.substr(0, sep)))
     {
       return false;
     }
@@ -67,13 +67,19 @@ bool CreateFilePath(const std::string& path)
   return true;
 }
 
-bool WriteFile(const std::string& content, const std::string& filename)
+bool CreateFilePath(const std::string& filenamePath)
 {
   // Separate path from file, and create the path
-  auto const sep = filename.find_last_of("\\/");
+  auto const sep = filenamePath.find_last_of("\\/");
   if (sep != std::string::npos && sep > 0)
-    if (!CreateFilePath(filename.substr(0, sep)))
-      return false;
+    return CreatePath(filenamePath.substr(0, sep));
+  return true; // Nothing to do... 
+}
+
+bool WriteFile(const std::string& content, const std::string& filename)
+{
+  if (!CreateFilePath(filename))
+    return false;
   std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
   ascii_ostream << content;
   ascii_ostream.flush();
