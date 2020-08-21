@@ -165,5 +165,5 @@ void SEInhaler::SetSubstance(const SESubstance* sub)
 }
 SESubstance* SEInhaler::GetSubstance() const
 {
-  return (SESubstance*)m_Substance;
+  return const_cast<SESubstance*>(m_Substance);
 }

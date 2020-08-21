@@ -465,8 +465,8 @@ bool MVEngine::AdvanceTime(double time_s)
     for (PulseController* pc : m_Engines)
     {
       pc->GetEvents().UpdateEvents(pc->GetTimeStep());
-      ((SEScalarTime&)pc->GetEngineTime()).Increment(pc->GetTimeStep());
-      ((SEScalarTime&)pc->GetSimulationTime()).Increment(pc->GetTimeStep());
+      const_cast<SEScalarTime&>(pc->GetEngineTime()).Increment(pc->GetTimeStep());
+      const_cast<SEScalarTime&>(pc->GetSimulationTime()).Increment(pc->GetTimeStep());
       pc->GetEngineTracker().TrackData(m_CurrentTime_s);
     }
     m_CurrentTime_s += m_TimeStep_s;

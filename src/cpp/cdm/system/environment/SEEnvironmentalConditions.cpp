@@ -138,7 +138,7 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from, SES
       total += amt;
       m_AmbientGases.push_back(sf);
       m_cAmbientGases.push_back(sf);
-      subMgr.AddActiveSubstance((SESubstance&)sf->m_Substance);
+      subMgr.AddActiveSubstance(sf->m_Substance);
     }
     if (!SEScalar::IsValue(1, total))
       subMgr.Error("Environment Ambient Substance fractions do not sum to 1");
