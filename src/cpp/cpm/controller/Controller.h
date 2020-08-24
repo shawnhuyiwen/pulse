@@ -214,7 +214,6 @@ class PULSE_DECL PulseController : public PulseData
 {
   friend class PulseEngine;
   friend class PulseEngineTest;
-  friend class PulseScenarioExec;
   friend class PBPulseState;//friend the serialization class
 protected:// Create via PulseEngine
   PulseController(Logger* logger = nullptr);

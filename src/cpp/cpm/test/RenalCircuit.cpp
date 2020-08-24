@@ -4,6 +4,7 @@
 #define _USE_MATH_DEFINES
 
 #include "EngineTest.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
@@ -48,7 +49,8 @@ void PulseEngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirec
   DataTrack     graphTrk;
   std::ofstream graphFile;
 
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
@@ -179,7 +181,8 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
 {
   TimingProfile tmr;
   tmr.Start("Test");
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalFeedbackTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
@@ -498,7 +501,8 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
 
   TimingProfile tmr;
   tmr.Start("Test");
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RenalSystemTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");

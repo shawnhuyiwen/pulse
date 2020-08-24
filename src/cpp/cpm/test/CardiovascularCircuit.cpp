@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineTest.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Substances.h"
 #include "controller/Circuits.h"
@@ -135,7 +136,8 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, cons
 {
   TimingProfile timer;
   timer.Start("TestCase");
-  PulseController pc(testSuite.GetLogger());
+  PulseEngine pe(testSuite.GetLogger());
+  PulseController& pc = pe.GetController();
   testSuite.GetLogger()->Info("Running " + sTestName);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);
@@ -199,7 +201,8 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   double circuit_s = 0;
   double transport_s = 0;
   double binding_s = 0;
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/" + tName.str() + "CircuitAndTransportTest.log");
   pc.GetLogger()->Info("Running " + tName.str());
   SEPatient patient(pc.GetLogger());

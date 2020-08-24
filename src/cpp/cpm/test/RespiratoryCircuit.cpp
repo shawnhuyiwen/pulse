@@ -3,6 +3,7 @@
 #define _USE_MATH_DEFINES
 
 #include "EngineTest.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
@@ -45,7 +46,8 @@ void PulseEngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguratio
   std::ofstream fileGraph;
   std::ofstream fAerosolGraph;
 
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RespiratoryCircuitAndTransportTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
@@ -211,7 +213,8 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
 {
   TimingProfile tmr;
   tmr.Start("Test");
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/RespiratoryDriverTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");

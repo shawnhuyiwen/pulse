@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineTest.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Substances.h"
 #include "controller/Circuits.h"
@@ -31,7 +32,8 @@
 void PulseEngineTest::DistributeMass(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  PulseController pc(testSuite.GetLogger());
+  PulseEngine pe(testSuite.GetLogger());
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   // First test case  
   SETestCase& testCase = testSuite.CreateTestCase();
@@ -217,7 +219,8 @@ void PulseEngineTest::DistributeMass(SETestSuite& testSuite)
 
 void PulseEngineTest::PerfusionLimitedDiffusionTest(SETestSuite& testSuite)
 {
-  PulseController pc(testSuite.GetLogger());
+  PulseEngine pe(testSuite.GetLogger());
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   TimingProfile timer;
   double timestep_s = 1. / 90.;
@@ -279,7 +282,8 @@ void PulseEngineTest::AlveolarOxygenDiffusionTest(const std::string& rptDirector
   //This test examines diffusion of O2 from a gas compartment (like lungs) to a liquid compartment
   //The gas compartment is set to resemble atmospheric conditions, and the liquid compartment is oxygen-poor
   //We should expect to see oxygen diffuse into the liquid compartment
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
 
   double timestep_s = 1.0 / 90;
@@ -345,7 +349,8 @@ void PulseEngineTest::AlveolarCarbonDioxideDiffusionTest(const std::string& rptD
 {
   //Second test case: High liquid compartment CO2 concentration with a lower gas compartment CO2 concentration
   //We should expect CO2 to diffuse out of the liquid compartment into the gas compartment
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
 
   DataTrack trk2;
@@ -416,7 +421,8 @@ void PulseEngineTest::InstantPlusSimpleDiffusionTest(const std::string& rptDirec
   //                    |
   //                  cmpt4
   // Expect cmpt2 and cmpt4 to quickly equilibrate, while the others take more time
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
   pc.GetSubstances().LoadSubstanceDirectory();
@@ -482,7 +488,8 @@ void PulseEngineTest::InstantPlusSimpleDiffusionTest(const std::string& rptDirec
 void PulseEngineTest::InstantDiffusionTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  PulseController pc(testSuite.GetLogger());
+  PulseEngine pe(testSuite.GetLogger());
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
   pc.GetSubstances().LoadSubstanceDirectory();
@@ -527,7 +534,8 @@ void PulseEngineTest::SimpleDiffusionTwoCompartmentTest(const std::string& rptDi
   // Second test case -- 
   // Tests the diffusion between two tissue liquid compartments
   // Calculated permeability coefficient
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
   pc.GetSubstances().LoadSubstanceDirectory();
@@ -609,7 +617,8 @@ void PulseEngineTest::SimpleDiffusionFourCompartmentTest(const std::string& rptD
   //     cmpt4 <->  cmpt2
   //              \ cmpt3                 
   // Artificial permeability coefficient
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
   pc.GetSubstances().LoadSubstanceDirectory();
@@ -707,7 +716,8 @@ void PulseEngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDirecto
   // Only these cmpts have data--> L2C0  L2C1 L2C2 L2C3
   // Artificial permeability coefficient
 
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
   pc.GetSubstances().LoadSubstanceDirectory();
@@ -836,7 +846,8 @@ void PulseEngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDirecto
 
 void PulseEngineTest::FacilitatedDiffusionTest(const std::string& rptDirectory)
 {
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1.0 / 90;
   pc.GetSubstances().LoadSubstanceDirectory();
@@ -884,7 +895,8 @@ void PulseEngineTest::FacilitatedDiffusionTest(const std::string& rptDirectory)
 void PulseEngineTest::ActiveTransportTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  PulseController pc(testSuite.GetLogger());
+  PulseEngine pe(testSuite.GetLogger());
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   double timestep_s = 1. / 90.;
   pc.GetSubstances().LoadSubstanceDirectory();
@@ -920,7 +932,8 @@ void PulseEngineTest::ActiveTransportTest(SETestSuite& testSuite)
 void PulseEngineTest::GenericClearanceTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  PulseController pc(testSuite.GetLogger());
+  PulseEngine pe(testSuite.GetLogger());
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
 
   // First test case
@@ -946,7 +959,8 @@ void PulseEngineTest::GenericClearanceTest(SETestSuite& testSuite)
 void PulseEngineTest::GenericExcretionTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
-  PulseController pc(testSuite.GetLogger());
+  PulseEngine pe(testSuite.GetLogger());
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
 
   // First test case

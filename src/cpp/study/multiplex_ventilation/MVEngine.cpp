@@ -111,8 +111,8 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
     Info("Creating "+ std::to_string(sim.patientcomparisons_size())+" patients");
     for (int p = 0; p < sim.patientcomparisons_size(); p++)
     {
-      PulseEngine* pe = dynamic_cast<PulseEngine*>(CreatePulseEngine().release());
-      PulseController* pc = pe->GetController();
+      PulseEngine* pe = new PulseEngine();
+      PulseController* pc = &pe->GetController();
       m_Controllers.push_back(pc);
       m_Engines.push_back(pe);
 
