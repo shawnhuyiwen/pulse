@@ -19,16 +19,11 @@ class SEUrinalysis;
  */  
 class PULSE_DECL Renal : public PulseRenalSystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Renal(PulseData& data);
-  PulseData& m_data;
-
-  double m_dt;
-  
 public:
+  Renal(PulseData& data);
   virtual ~Renal();
 
   void Clear();
@@ -102,6 +97,7 @@ protected:
   SERunningAverage* m_rightRenalArterialPressure_mmHg_runningAvg;
   
   // Stateless member variable (Set in SetUp())
+  double              m_dt;
   //Circuits
   SEFluidCircuit*     m_RenalCircuit;
   //Nodes

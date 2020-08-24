@@ -16,7 +16,6 @@ PULSE_BIND_DECL(StateData)
 class PULSE_DECL PulseEngine : public PhysiologyEngine
 {
 public:
-
   PulseEngine(Logger* logger=nullptr);
   virtual ~PulseEngine();
 

@@ -14,14 +14,11 @@ class SELiquidSubstanceQuantity;
 */
 class PULSE_DECL SaturationCalculator : public Loggable
 {
-  friend class PulseData;
+  friend class PulseController;
   friend error_functor;
   friend class PulseEngineTest;
-protected:
-  SaturationCalculator(PulseData& data);
-  PulseData& m_data;
-
 public:
+  SaturationCalculator(PulseData& data);
   virtual ~SaturationCalculator();
 
   bool Setup();
@@ -35,6 +32,7 @@ protected:
   void CalculateHemoglobinSaturations(double O2PartialPressureGuess_mmHg, double CO2PartialPressureGuess_mmHg, double pH, double temperature_C, double  hematocrit, double& OxygenSaturation, double& CarbonDioxideSaturation, double CO2_scaling_factor);
   bool DistributeHemoglobinBySaturation();
 
+  PulseData& m_data;
   // All properties are stateless and are set by either the Initialize method or SetBodyState method
   SESubstance* m_O2;
   SESubstance* m_Hb;

@@ -39,7 +39,7 @@
 ========================
 */
 
-MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data.GetLogger()), m_data(data)
+MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data)
 {
   Clear();
 }

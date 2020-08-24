@@ -21,14 +21,11 @@ class SELiquidSubstanceQuantity;
  */  
 class PULSE_DECL Tissue : public PulseTissueSystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Tissue(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Tissue(PulseData& data);
   virtual ~Tissue();
 
   void Clear();

@@ -5,6 +5,7 @@
 #include <thread>
 #include "PulsePhysiologyEngine.h"
 
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
@@ -115,7 +116,8 @@ protected:
 
   
   std::string m_DataDir;
-  std::vector<PulseController*> m_Engines;
+  std::vector<PulseEngine*> m_Engines;
+  std::vector<PulseController*> m_Controllers;
   std::vector<SELiquidSubstanceQuantity*> m_AortaO2s;
   std::vector<SELiquidSubstanceQuantity*> m_AortaCO2s;
   SEMechanicalVentilatorConfiguration* m_MVC;

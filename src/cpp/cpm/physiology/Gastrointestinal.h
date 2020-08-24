@@ -13,14 +13,11 @@ class SEFluidCircuitPath;
 */
 class PULSE_DECL Gastrointestinal : public PulseGastrointestinalSystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Gastrointestinal(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Gastrointestinal(PulseData& data);
   virtual ~Gastrointestinal();
 
   void Clear();

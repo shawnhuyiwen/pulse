@@ -14,14 +14,11 @@ class SEFluidCircuit;
  */  
 class PULSE_DECL Nervous : public PulseNervousSystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Nervous(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Nervous(PulseData& data);
   virtual ~Nervous();
 
   void Clear();

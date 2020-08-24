@@ -23,26 +23,26 @@ public:
   virtual void SetReadOnlyFluid(bool b);
 
   // Active methods return the circuit configuration to be calculated
-  SEFluidCircuit&           GetActiveCardiovascularCircuit();
-  SEFluidCircuit&           GetCardiovascularCircuit();
-  SEFluidCircuit&           GetRenalCircuit();
+  virtual SEFluidCircuit&   GetActiveCardiovascularCircuit();
+  virtual SEFluidCircuit&   GetCardiovascularCircuit();
+  virtual SEFluidCircuit&   GetRenalCircuit();
 
-  SEFluidCircuit&           GetActiveRespiratoryCircuit();
-  SEFluidCircuit&           GetRespiratoryCircuit();
-  SEFluidCircuit&           GetRespiratoryAndAnesthesiaMachineCircuit();
-  SEFluidCircuit&           GetRespiratoryAndInhalerCircuit();
-  SEFluidCircuit&           GetRespiratoryAndNasalCannulaCircuit();
-  SEFluidCircuit&           GetRespiratoryAndSimpleMaskCircuit();
-  SEFluidCircuit&           GetRespiratoryAndNonRebreatherMaskCircuit();
-  SEFluidCircuit&           GetRespiratoryAndMechanicalVentilationCircuit();
-  SEFluidCircuit&           GetRespiratoryAndMechanicalVentilatorCircuit();
+  virtual SEFluidCircuit&   GetActiveRespiratoryCircuit();
+  virtual SEFluidCircuit&   GetRespiratoryCircuit();
+  virtual SEFluidCircuit&   GetRespiratoryAndAnesthesiaMachineCircuit();
+  virtual SEFluidCircuit&   GetRespiratoryAndInhalerCircuit();
+  virtual SEFluidCircuit&   GetRespiratoryAndNasalCannulaCircuit();
+  virtual SEFluidCircuit&   GetRespiratoryAndSimpleMaskCircuit();
+  virtual SEFluidCircuit&   GetRespiratoryAndNonRebreatherMaskCircuit();
+  virtual SEFluidCircuit&   GetRespiratoryAndMechanicalVentilationCircuit();
+  virtual SEFluidCircuit&   GetRespiratoryAndMechanicalVentilatorCircuit();
 
-  SEThermalCircuit&         GetTemperatureCircuit();
-  SEThermalCircuit&         GetExternalTemperatureCircuit();
-  SEThermalCircuit&         GetInternalTemperatureCircuit();
+  virtual SEThermalCircuit& GetTemperatureCircuit();
+  virtual SEThermalCircuit& GetExternalTemperatureCircuit();
+  virtual SEThermalCircuit& GetInternalTemperatureCircuit();
 
-  SEFluidCircuit&           GetAnesthesiaMachineCircuit();
-  SEFluidCircuit&           GetMechanicalVentilatorCircuit();
+  virtual SEFluidCircuit&   GetAnesthesiaMachineCircuit();
+  virtual SEFluidCircuit&   GetMechanicalVentilatorCircuit();
 
 protected:
 

@@ -31,28 +31,24 @@ class SEPulmonaryFunctionTest;
 */
 class PULSE_DECL Respiratory : public PulseRespiratorySystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-
-  Respiratory(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Respiratory(PulseData& data);
   virtual ~Respiratory();
 
-  void Clear();
+  virtual void Clear();
 
   // Set members to a stable homeostatic state
-  void Initialize();
+  virtual void Initialize();
   // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
-  void SetUp();
+  virtual void SetUp();
 
-  void AtSteadyState();
-  void PreProcess();
-  void Process(bool solve_and_transport=true);
-  void PostProcess(bool solve_and_transport=true);
+  virtual void AtSteadyState();
+  virtual void PreProcess();
+  virtual void Process(bool solve_and_transport=true);
+  virtual void PostProcess(bool solve_and_transport=true);
   bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const;
 
 protected:

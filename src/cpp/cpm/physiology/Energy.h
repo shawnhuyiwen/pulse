@@ -17,14 +17,11 @@ class SEThermalCircuitCalculator;
  */  
 class PULSE_DECL Energy : public PulseEnergySystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Energy(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Energy(PulseData& data);
   ~Energy(void);
 
   void Clear();

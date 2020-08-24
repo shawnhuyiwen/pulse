@@ -48,7 +48,7 @@
 ========================
 */
 
-AnesthesiaMachine::AnesthesiaMachine(PulseData& data) : PulseAnesthesiaMachine(data.GetLogger()), m_data(data)
+AnesthesiaMachine::AnesthesiaMachine(PulseData& data) : PulseAnesthesiaMachine(data)
 {
   Clear();
 }

@@ -52,20 +52,21 @@ enum class EngineState { NotReady=0,
 
 // Keep enums in sync with appropriate proto file !!
 enum class eAirwayMode{ Free=0, 
-                       AnesthesiaMachine,
-                       Inhaler,
-                       MechanicalVentilation,// Action
-                       MechanicalVentilator, // Equipment
-                       NasalCannula,
-                       NonRebreatherMask,
-                       SimpleMask};
+                        AnesthesiaMachine,
+                        Inhaler,
+                        MechanicalVentilation,// Action
+                        MechanicalVentilator, // Equipment
+                        NasalCannula,
+                        NonRebreatherMask,
+                        SimpleMask};
 extern const std::string& eAirwayMode_Name(eAirwayMode m);
 
 class PULSE_DECL PulseData : public Loggable
 {
   friend class PulseEngine;
+protected:// Create via PulseEngine
+  PulseData(Logger* logger = nullptr);
 public:
-  PulseData(Logger* logger=nullptr);
   virtual ~PulseData();
 
   virtual std::string GetDataRoot() const { return m_DataDir; }
@@ -84,22 +85,38 @@ public:
   virtual const SEPatient&              GetInitialPatient() const;
   virtual SEPatient&                    GetCurrentPatient() const;
 
+  virtual bool                          HasBloodChemistry() const;
   virtual SEBloodChemistrySystem&       GetBloodChemistry() const;
+  virtual bool                          HasCardiovascular() const;
   virtual SECardiovascularSystem&       GetCardiovascular() const;
+  virtual bool                          HasDrugs() const;
   virtual SEDrugSystem&                 GetDrugs() const;
+  virtual bool                          HasEndocrine() const;
   virtual SEEndocrineSystem&            GetEndocrine() const;
+  virtual bool                          HasEnergy() const;
   virtual SEEnergySystem&               GetEnergy() const;
+  virtual bool                          HasGastrointestinal() const;
   virtual SEGastrointestinalSystem&     GetGastrointestinal() const;
+  virtual bool                          HasHepatic() const;
   virtual SEHepaticSystem&              GetHepatic() const;
+  virtual bool                          HasNervous() const;
   virtual SENervousSystem&              GetNervous() const;
+  virtual bool                          HasRenal() const;
   virtual SERenalSystem&                GetRenal() const;
+  virtual bool                          HasRespiratory() const;
   virtual SERespiratorySystem&          GetRespiratory() const;
+  virtual bool                          HasTissue() const;
   virtual SETissueSystem&               GetTissue() const;
 
+  virtual bool                          HasEnvironment() const;
   virtual SEEnvironment&                GetEnvironment() const;
+  virtual bool                          HasAnesthesiaMachine() const;
   virtual SEAnesthesiaMachine&          GetAnesthesiaMachine() const;
+  virtual bool                          HasECG() const;
   virtual SEElectroCardioGram&          GetECG() const;
+  virtual bool                          HasInhaler() const;
   virtual SEInhaler&                    GetInhaler() const;
+  virtual bool                          HasMechanicalVentilator() const;
   virtual SEMechanicalVentilator&       GetMechanicalVentilator() const;
 
   virtual SEActionManager&              GetActions() const;
@@ -118,6 +135,7 @@ public:
   virtual const SEScalarTime&           GetEngineTime() const;
   virtual const SEScalarTime&           GetSimulationTime() const;
 
+  virtual bool                          IsAirwayModeSupported(eAirwayMode mode) { return true; }
   virtual eAirwayMode                   GetAirwayMode() const { return m_AirwayMode; }
   virtual void                          SetAirwayMode(eAirwayMode mode);
 
@@ -129,60 +147,63 @@ public:
   virtual bool                          HasOverride() const;
   virtual const std::vector<SEScalarProperty>& GetOverrides() const;
 
-  std::stringstream                                             m_ss;
+  std::stringstream                     m_ss;
 protected:
-  EngineState                                                   m_State;
-  SEEngineTracker*                                              m_EngineTrack;
-  DataTrack*                                                    m_DataTrack;
+  virtual void                          Allocate() {};
+  virtual void                          SetupTracker();
 
-  SEScalarTime                                                  m_CurrentTime;
-  SEScalarTime                                                  m_SimulationTime;
-  double                                                        m_SpareAdvanceTime_s;
-  eAirwayMode                                                   m_AirwayMode;
-  eSwitch                                                       m_Intubation;
+  EngineState                           m_State;
+  SEEngineTracker*                      m_EngineTrack;
+  DataTrack*                            m_DataTrack;
 
-  std::unique_ptr<PulseConfiguration>                           m_Config;
-  std::unique_ptr<SaturationCalculator>                         m_SaturationCalculator;
+  SEScalarTime                          m_CurrentTime;
+  SEScalarTime                          m_SimulationTime;
+  double                                m_SpareAdvanceTime_s;
+  eAirwayMode                           m_AirwayMode;
+  eSwitch                               m_Intubation;
 
-  std::unique_ptr<PulseSubstances>                              m_Substances;
+  PulseConfiguration*                   m_Config=nullptr;
+  SaturationCalculator*                 m_SaturationCalculator=nullptr;
 
-  std::unique_ptr<SEActionManager>                              m_Actions;
-  std::unique_ptr<SEConditionManager>                           m_Conditions;
-  std::unique_ptr<PulseCircuits>                                m_Circuits;
-  std::unique_ptr<PulseCompartments>                            m_Compartments;
+  PulseSubstances*                      m_Substances=nullptr;
 
-  std::unique_ptr<Environment>                                  m_Environment;
+  SEActionManager*                      m_Actions=nullptr;
+  SEConditionManager*                   m_Conditions=nullptr;
+  PulseCircuits*                        m_Circuits=nullptr;
+  PulseCompartments*                    m_Compartments=nullptr;
 
-  std::unique_ptr<BloodChemistry>                               m_BloodChemistrySystem;
-  std::unique_ptr<Cardiovascular>                               m_CardiovascularSystem;
-  std::unique_ptr<Endocrine>                                    m_EndocrineSystem;
-  std::unique_ptr<Energy>                                       m_EnergySystem;
-  std::unique_ptr<Gastrointestinal>                             m_GastrointestinalSystem;
-  std::unique_ptr<Hepatic>                                      m_HepaticSystem;
-  std::unique_ptr<Nervous>                                      m_NervousSystem;
-  std::unique_ptr<Renal>                                        m_RenalSystem;
-  std::unique_ptr<Respiratory>                                  m_RespiratorySystem;
-  std::unique_ptr<Drugs>                                        m_DrugSystem;
-  std::unique_ptr<Tissue>                                       m_TissueSystem;
+  Environment*                          m_Environment=nullptr;
 
-  std::unique_ptr<ECG>                                          m_ECG;
+  BloodChemistry*                       m_BloodChemistrySystem=nullptr;
+  Cardiovascular*                       m_CardiovascularSystem=nullptr;
+  Endocrine*                            m_EndocrineSystem=nullptr;
+  Energy*                               m_EnergySystem=nullptr;
+  Gastrointestinal*                     m_GastrointestinalSystem=nullptr;
+  Hepatic*                              m_HepaticSystem=nullptr;
+  Nervous*                              m_NervousSystem=nullptr;
+  Renal*                                m_RenalSystem=nullptr;
+  Respiratory*                          m_RespiratorySystem=nullptr;
+  Drugs*                                m_DrugSystem=nullptr;
+  Tissue*                               m_TissueSystem=nullptr;
 
-  std::unique_ptr<AnesthesiaMachine>                            m_AnesthesiaMachine;
+  ECG*                                  m_ECG=nullptr;
 
-  std::unique_ptr<Inhaler>                                      m_Inhaler;
+  AnesthesiaMachine*                    m_AnesthesiaMachine=nullptr;
 
-  std::unique_ptr<MechanicalVentilator>                         m_MechanicalVentilator;
+  Inhaler*                              m_Inhaler=nullptr;
 
-  std::unique_ptr<SEPatient>                                    m_InitialPatient;
-  std::unique_ptr<SEPatient>                                    m_CurrentPatient;
+  MechanicalVentilator*                 m_MechanicalVentilator=nullptr;
 
-  std::unique_ptr<SEEventManager>                               m_EventManager;
+  SEPatient*                            m_InitialPatient=nullptr;
+  SEPatient*                            m_CurrentPatient=nullptr;
 
-  SEAdvanceHandler*                                             m_AdvanceHandler;
+  SEEventManager*                       m_EventManager=nullptr;
 
-  std::string                                                   m_DataDir;
+  SEAdvanceHandler*                     m_AdvanceHandler=nullptr;
 
-  std::vector<SEScalarProperty>                                 m_ScalarOverrides;
+  std::string                           m_DataDir;
+
+  std::vector<SEScalarProperty>         m_ScalarOverrides;
 
 };
 
@@ -195,9 +216,9 @@ class PULSE_DECL PulseController : public PulseData
   friend class PulseEngineTest;
   friend class PulseScenarioExec;
   friend class PBPulseState;//friend the serialization class
+protected:// Create via PulseEngine
+  PulseController(Logger* logger = nullptr);
 public:
-  
-  PulseController(Logger* logger=nullptr);
   virtual ~PulseController();
 
   virtual PulseData& GetData() { return (*this); }
@@ -226,6 +247,7 @@ public:
   virtual bool CreateCircuitsAndCompartments();
   virtual bool OverrideCircuits();
 protected:
+  virtual void Allocate() override;
 
   virtual void SetupCardiovascular();
   virtual void SetupRenal();
@@ -245,6 +267,7 @@ protected:
 
   virtual bool Initialize(const SEPatient& patient);
   virtual bool SetupPatient(const SEPatient& patient);
+  virtual void InitializeSystems();
 
   // Notify systems that steady state has been achieved
   virtual void AtSteadyState(EngineState state);
