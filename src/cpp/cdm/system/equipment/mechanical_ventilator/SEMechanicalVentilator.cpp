@@ -182,7 +182,7 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
       total += amt;
       m_FractionInspiredGases.push_back(sf);
       m_cFractionInspiredGases.push_back(sf);
-      subMgr.AddActiveSubstance((SESubstance&)sf->m_Substance);
+      subMgr.AddActiveSubstance(sf->m_Substance);
     }
     
     // It's Ok if you ONLY set Oxygen, i.e. FiO2

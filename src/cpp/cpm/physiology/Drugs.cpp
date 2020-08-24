@@ -261,7 +261,6 @@ void Drugs::AdministerSubstanceInfusion()
     return;
 
   SESubstanceInfusion*            infusion;
-  SESubstance*                    sub;
   SELiquidSubstanceQuantity*      subQ;
   double concentration_ug_Per_mL;
   double rate_mL_Per_s;
@@ -269,7 +268,7 @@ void Drugs::AdministerSubstanceInfusion()
 
   for (auto i : infusions)
   {
-    sub = (SESubstance*)i.first; /// \todo sub needs to be const
+    auto const sub = i.first;
     infusion = i.second;
     concentration_ug_Per_mL = infusion->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_mL);
     rate_mL_Per_s = infusion->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);

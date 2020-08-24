@@ -190,7 +190,7 @@ void Inhaler::Administer()
   m_Mouthpiece->Balance(BalanceGasBy::VolumeFraction);
 
   // Add the dose substance to the list of active substances to be tracked in Pulse
-  m_data.GetSubstances().AddActiveSubstance((SESubstance&)*m_Substance);
+  m_data.GetSubstances().AddActiveSubstance(*m_Substance);
 
   // Get the inhaler node volume
   double dVolume_L = m_Mouthpiece->GetVolume(VolumeUnit::L);

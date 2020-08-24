@@ -106,15 +106,15 @@ void SESubstanceManager::AddActiveSubstance(const SESubstance& substance)
     return;
   if (substance.GetState() == eSubstance_State::Gas)
   {
-    m_ActiveGases.push_back(&(SESubstance&)substance);
+    m_ActiveGases.push_back(&const_cast<SESubstance&>(substance));
     m_cActiveGases.push_back(&substance);
   }
   if (substance.GetState() == eSubstance_State::Liquid)
   {
-    m_ActiveLiquids.push_back(&(SESubstance&)substance);
+    m_ActiveLiquids.push_back(&const_cast<SESubstance&>(substance));
     m_cActiveLiquids.push_back(&substance);
   }
-  m_ActiveSubstances.push_back(&(SESubstance&)substance);
+  m_ActiveSubstances.push_back(&const_cast<SESubstance&>(substance));
   m_cActiveSubstances.push_back(&substance);
 }
 
@@ -251,7 +251,7 @@ void SESubstanceManager::AddActiveCompound(const SESubstanceCompound& compound)
     if(c==&compound)
       return;
   }
-  m_ActiveCompounds.push_back(&(SESubstanceCompound&)compound);
+  m_ActiveCompounds.push_back(&const_cast<SESubstanceCompound&>(compound));
   m_cActiveCompounds.push_back(&compound);
 }
 

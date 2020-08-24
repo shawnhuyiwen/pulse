@@ -75,7 +75,7 @@ bool SEAnesthesiaMachineChamber::HasSubstance() const
 }
 SESubstance* SEAnesthesiaMachineChamber::GetSubstance() const
 {
-  return (SESubstance*)m_Substance;
+  return const_cast<SESubstance*>(m_Substance);
 }
 void SEAnesthesiaMachineChamber::SetSubstance(const SESubstance& substance)
 {
