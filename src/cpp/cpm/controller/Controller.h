@@ -276,8 +276,8 @@ protected:
 
   virtual void ForwardFatal(const std::string&  msg, const std::string&  origin);
 
-  PulseConfiguration const* m_ConfigOverride;
-  PulseStabilizationController* m_Stabilizer;
+  PulseConfiguration const* m_ConfigOverride=nullptr;
+  PulseStabilizationController* m_Stabilizer=nullptr;
 };
 
 class PULSE_DECL PulseStabilizationController : public SEEngineStabilization::Controller

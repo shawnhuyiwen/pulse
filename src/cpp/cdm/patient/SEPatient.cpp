@@ -58,7 +58,7 @@ SEPatient::SEPatient(Logger* logger) : Loggable(logger)
 
 SEPatient::~SEPatient()
 {
-  Clear();  
+  Clear();
 }
 
 void SEPatient::Clear()
