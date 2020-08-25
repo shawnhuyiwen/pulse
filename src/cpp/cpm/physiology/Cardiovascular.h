@@ -30,14 +30,11 @@ class SEFluidCircuitCalculator;
 */
 class PULSE_DECL Cardiovascular : public PulseCardiovascularSystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Cardiovascular(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Cardiovascular(PulseData& data);
   virtual ~Cardiovascular();
 
   void Clear();

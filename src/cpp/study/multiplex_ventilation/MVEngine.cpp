@@ -54,6 +54,7 @@ void MVEngine::DestroyEngines()
   SAFE_DELETE(m_Transporter);
 
   DELETE_VECTOR(m_Engines);
+  m_Controllers.clear();
   m_AortaO2s.clear();
   m_AortaCO2s.clear();
   SAFE_DELETE(m_MVC);
@@ -77,7 +78,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
 {
   try
   {
-    if (!m_Engines.empty())
+    if (!m_Controllers.empty())
     {
       Error("The controller currently has engine allocated, please reset the controller to start new set of engines");
       return false;
@@ -110,14 +111,18 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
     Info("Creating "+ std::to_string(sim.patientcomparisons_size())+" patients");
     for (int p = 0; p < sim.patientcomparisons_size(); p++)
     {
-      PulseController* pc = nullptr;
+      PulseEngine* pe = new PulseEngine();
+      PulseController* pc = &pe->GetController();
+      m_Controllers.push_back(pc);
+      m_Engines.push_back(pe);
+
       auto& comparison = (*sim.mutable_patientcomparisons())[p];
 
       if (comparison.has_soloventilation())
       {
         auto* soloVentilation = comparison.mutable_soloventilation();
         std::string state = soloVentilation->statefile();
-        pc = new PulseController();
+
         pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + std::to_string(p) + ".log");
         if (!pc->SerializeFromFile(state))
         {
@@ -139,7 +144,6 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
       {
         auto* multiVentilation = comparison.mutable_multiplexventilation();
 
-        pc = new PulseController();
         pc->GetLogger()->SetLogFile(outDir + "multiplex_patient_" + std::to_string(p) + ".log");
         if (!pc->SerializeFromFile(m_DataDir + "/states/StandardMale@0s.pbb"))
         {
@@ -250,7 +254,6 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
       auto AortaCO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetCO2());
       m_AortaO2s.push_back(AortaO2);
       m_AortaCO2s.push_back(AortaCO2);
-      m_Engines.push_back(pc);
     }
     m_MultiplexVentilationCircuit->StateChange();
     m_MultiplexVentilationGraph->StateChange();
@@ -305,7 +308,7 @@ bool MVEngine::CreateEngine(pulse::study::bind::multiplex_ventilation::Simulatio
 
 bool MVEngine::AdvanceTime(double time_s)
 {
-  if (m_Engines.empty())
+  if (m_Controllers.empty())
   {
     Error("No engines have been allocated yet...");
     return false;
@@ -317,47 +320,47 @@ bool MVEngine::AdvanceTime(double time_s)
 
   for (int i = 0; i < count; i++)
   {
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
     {
       if (pc->GetEvents().IsEventActive(eEvent::IrreversibleState))
         return false;
     }
     // PreProcess
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Environment&)pc->GetEnvironment()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Cardiovascular&)pc->GetCardiovascular()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Inhaler&)pc->GetInhaler()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Respiratory&)pc->GetRespiratory()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((AnesthesiaMachine&)pc->GetAnesthesiaMachine()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((MechanicalVentilator&)pc->GetMechanicalVentilator()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Gastrointestinal&)pc->GetGastrointestinal()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Hepatic&)pc->GetHepatic()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Renal&)pc->GetRenal()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Nervous&)pc->GetNervous()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Energy&)pc->GetEnergy()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Endocrine&)pc->GetEndocrine()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Drugs&)pc->GetDrugs()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Tissue&)pc->GetTissue()).PreProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((BloodChemistry&)pc->GetBloodChemistry()).PreProcess();
     // Since this is the last preprocess,
     // Check if we are in mechanical ventilator mode
     int vent_count = 0;
     bool enableMultiplexVentilation = false;
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
     {
       ((ECG&)pc->GetECG()).PreProcess();
       if (pc->GetAirwayMode() == eAirwayMode::MechanicalVentilator)
@@ -365,7 +368,7 @@ bool MVEngine::AdvanceTime(double time_s)
     }
     if (vent_count > 0)
     {
-      if (vent_count == m_Engines.size())
+      if (vent_count == m_Controllers.size())
         enableMultiplexVentilation = true;
       else
       {
@@ -375,11 +378,11 @@ bool MVEngine::AdvanceTime(double time_s)
     }
 
     // Process
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Environment&)pc->GetEnvironment()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Cardiovascular&)pc->GetCardiovascular()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Inhaler&)pc->GetInhaler()).Process();
     if (enableMultiplexVentilation)
     {
@@ -396,73 +399,73 @@ bool MVEngine::AdvanceTime(double time_s)
       // we DO NOT need to keep it up to date.
       // This is an intentional application specific optimization
     }
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Respiratory&)pc->GetRespiratory()).Process(!enableMultiplexVentilation);
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((AnesthesiaMachine&)pc->GetAnesthesiaMachine()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((MechanicalVentilator&)pc->GetMechanicalVentilator()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Gastrointestinal&)pc->GetGastrointestinal()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Hepatic&)pc->GetHepatic()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Renal&)pc->GetRenal()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Nervous&)pc->GetNervous()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Energy&)pc->GetEnergy()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Endocrine&)pc->GetEndocrine()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Drugs&)pc->GetDrugs()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Tissue&)pc->GetTissue()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((BloodChemistry&)pc->GetBloodChemistry()).Process();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((ECG&)pc->GetECG()).Process();
 
     // PostProcess
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Environment&)pc->GetEnvironment()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Cardiovascular&)pc->GetCardiovascular()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Inhaler&)pc->GetInhaler()).PostProcess();
     if (enableMultiplexVentilation)
     {
       m_Calculator->PostProcess(*m_MultiplexVentilationCircuit);
     }
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Respiratory&)pc->GetRespiratory()).PostProcess(!enableMultiplexVentilation);
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((AnesthesiaMachine&)pc->GetAnesthesiaMachine()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((MechanicalVentilator&)pc->GetMechanicalVentilator()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Gastrointestinal&)pc->GetGastrointestinal()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Hepatic&)pc->GetHepatic()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Renal&)pc->GetRenal()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Nervous&)pc->GetNervous()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Energy&)pc->GetEnergy()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Endocrine&)pc->GetEndocrine()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Drugs&)pc->GetDrugs()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((Tissue&)pc->GetTissue()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((BloodChemistry&)pc->GetBloodChemistry()).PostProcess();
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
       ((ECG&)pc->GetECG()).PostProcess();
 
     // Increment Times and track data
-    for (PulseController* pc : m_Engines)
+    for (PulseController* pc : m_Controllers)
     {
       pc->GetEvents().UpdateEvents(pc->GetTimeStep());
       const_cast<SEScalarTime&>(pc->GetEngineTime()).Increment(pc->GetTimeStep());
@@ -482,20 +485,20 @@ void MVEngine::SetFiO2(double FiO2)
 
 bool MVEngine::ProcessAction(const SEAction& a)
 {
-  if (m_Engines.empty())
+  if (m_Controllers.empty())
   {
     Error("No engines have been allocated yet...");
     return false;
   }
   bool b = true;
-  for (PulseController* pc : m_Engines)
+  for (PulseController* pc : m_Controllers)
     if (!pc->ProcessAction(a))
       b = false;
   return b;
 }
 bool MVEngine::ProcessActions(std::string const& actions, SerializationFormat format)
 {
-  if (m_Engines.empty())
+  if (m_Controllers.empty())
   {
     Error("No engines have been allocated yet...");
     return false;
@@ -546,7 +549,7 @@ std::string MVEngine::GetSimulationState(SerializationFormat fmt)
 }
 bool MVEngine::GetSimulationState(pulse::study::bind::multiplex_ventilation::SimulationData& sim)
 {
-  if (m_Engines.empty())
+  if (m_Controllers.empty())
   {
     Error("No engines have been allocated yet...");
     return false;
@@ -554,7 +557,7 @@ bool MVEngine::GetSimulationState(pulse::study::bind::multiplex_ventilation::Sim
 
   for (int p = 0; p < sim.patientcomparisons_size(); p++)
   {
-    PulseController* pc = m_Engines[p];
+    PulseController* pc = m_Controllers[p];
     auto* multiVentilation = (*sim.mutable_patientcomparisons())[p].mutable_multiplexventilation();
     // For Completeness, Write out the ventilator settings
 
@@ -603,7 +606,7 @@ double MVEngine::GetMinSpO2()
 {
   double SpO2;
   double minSpO2 = 1.0;
-  for (PulseController* pc : m_Engines)
+  for (PulseController* pc : m_Controllers)
   {
     SpO2 = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
     if (SpO2 < minSpO2)
@@ -704,17 +707,17 @@ bool MVEngine::RunSoloState(const std::string& stateFile, const std::string& res
   double timeStep_s = 0.02;
   double currentTime_s = 0;
 
-  PulseController pc;
-  pc.GetLogger()->SetLogFile(logFile);
-  pc.SerializeFromFile(stateFile);
-  MVEngine::TrackData(pc.GetEngineTracker(), dataFile);
+  auto pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile(logFile);
+  pe->SerializeFromFile(stateFile);
+  MVEngine::TrackData(*pe->GetEngineTracker(), dataFile);
   int count = (int)(duration_s / timeStep_s);
   for (int i = 0; i < count; i++)
   {
-    if (pc.GetEvents().IsEventActive(eEvent::IrreversibleState))
+    if (pe->GetEventManager().IsEventActive(eEvent::IrreversibleState))
       return false;
-    pc.AdvanceModelTime();
-    pc.GetEngineTracker().TrackData(currentTime_s);
+    pe->AdvanceModelTime();
+    pe->GetEngineTracker()->TrackData(currentTime_s);
     currentTime_s += timeStep_s;
     statusTime_s += timeStep_s;
     // How are we running?

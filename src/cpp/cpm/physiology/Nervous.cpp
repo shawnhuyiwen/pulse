@@ -36,7 +36,7 @@
 
 // #define VERBOSE
 
-Nervous::Nervous(PulseData& data) : PulseNervousSystem(data.GetLogger()), m_data(data)
+Nervous::Nervous(PulseData& data) : PulseNervousSystem(data)
 {
   Clear();
 }

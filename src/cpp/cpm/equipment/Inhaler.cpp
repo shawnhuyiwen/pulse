@@ -32,7 +32,7 @@ Constructors
 ========================
 */
 
-Inhaler::Inhaler(PulseData& data) : PulseInhaler(data.GetLogger()), m_data(data)
+Inhaler::Inhaler(PulseData& data) : PulseInhaler(data)
 {
   Clear();
 }

@@ -1,6 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Compartments.h"
 #include "controller/Substances.h"
@@ -42,7 +43,8 @@ void PulseEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
 
   DataTrack trk;
 
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(rptDirectory + "/AcidBaseMath.log");
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -288,7 +290,8 @@ void PulseEngineTest::AcidBaseFeedbackTest(const std::string& rptDirectory)
   // It’s making sure the solver gives the same answer when it's feed back the previous answer.
 
   DataTrack trk;
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(rptDirectory + "/AcidBaseFeedback.log");
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -404,7 +407,8 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
   // Did not test negatives because the engine already has checks for negative mass and concentrations. 
 
   DataTrack trk;
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(rptDirectory + "/AcidBaseLimits.log");
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -603,7 +607,8 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
 void PulseEngineTest::AcidBaseExtremeTest(const std::string& rptDirectory)
 {
   DataTrack trk;
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(rptDirectory + "/AcidBaseExtreme.log");
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();
@@ -1262,7 +1267,8 @@ void PulseEngineTest::AcidBaseBloodGasTest(PulseController& pc, bloodType bloodC
 
 void PulseEngineTest::AcidBaseBloodGasTests(const std::string& sOutputDirectory)
 {
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sOutputDirectory + "/AcidBaseBloodGasTests.log");
   pc.GetSubstances().LoadSubstanceDirectory("./");
   pc.GetSaturationCalculator().Setup();

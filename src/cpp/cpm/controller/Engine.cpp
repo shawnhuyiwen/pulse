@@ -1,5 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
+
 #include "stdafx.h"
 #include "controller/Engine.h"
 #include "PulseConfiguration.h"
@@ -15,6 +16,8 @@ PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
 PulseEngine::PulseEngine(Logger* logger)
 {
   m_PulseController = new PulseController(logger);
+  m_PulseController->Allocate();
+  m_PulseController->SetupTracker();
 }
 
 PulseEngine::~PulseEngine()

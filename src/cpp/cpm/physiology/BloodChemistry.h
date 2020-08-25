@@ -19,14 +19,11 @@ class SELiquidSubstanceQuantity;
  */           
 class PULSE_DECL BloodChemistry : public PulseBloodChemistrySystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  BloodChemistry(PulseData& data);
-  PulseData& m_data;
-
 public:
+  BloodChemistry(PulseData& data);
   virtual ~BloodChemistry();
 
   void Clear();

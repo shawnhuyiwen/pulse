@@ -10,14 +10,11 @@
  */  
 class PULSE_DECL Hepatic : public PulseHepaticSystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Hepatic(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Hepatic(PulseData& data);
   virtual ~Hepatic();
 
   void Clear();

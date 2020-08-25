@@ -1,6 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
 #include "controller/Substances.h"
@@ -47,7 +48,8 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
   double deltaT_s = 1.0 / 90.0;
   bool showAllOutput = true; //toggle this to show all Info outputs for all circuits, which will show first-pass solve times and fail rates
 
-  PulseController pc(tsSolverSpeed.GetLogger());
+  PulseEngine pe(tsSolverSpeed.GetLogger());
+  PulseController& pc = pe.GetController();
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);

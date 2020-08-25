@@ -12,14 +12,11 @@ class SEElectroCardioGramWaveformInterpolator;
 */
 class PULSE_DECL ECG : public PulseElectroCardioGram
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulseEquipment;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  ECG(PulseData& pc);
-  PulseData& m_data;
-
 public:
+  ECG(PulseData& pc);
   virtual ~ECG();
 
   void Clear();

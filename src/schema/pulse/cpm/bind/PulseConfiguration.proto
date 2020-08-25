@@ -198,7 +198,6 @@ message ConfigurationData
   RenalConfigurationData                               RenalConfiguration                                   = 17;
   RespiratoryConfigurationData                         RespiratoryConfiguration                             = 18;
   TissueConfigurationData                              TissueConfiguration                                  = 19;
-  
-  pulse.cdm.bind.OverridesData 						   InitialOverrides									    = 20;
+  pulse.cdm.bind.OverridesData                         InitialOverrides                                     = 20;
 }
  

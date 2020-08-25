@@ -17,7 +17,7 @@ Constructors
 ========================
 */
 
-ECG::ECG(PulseData& data) : PulseElectroCardioGram(data.GetLogger()), m_data(data)
+ECG::ECG(PulseData& data) : PulseElectroCardioGram(data)
 {
   Clear();
   m_interpolator = new SEElectroCardioGramWaveformInterpolator(data.GetLogger());

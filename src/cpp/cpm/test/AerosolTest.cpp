@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineTest.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
@@ -219,7 +220,8 @@ void PulseEngineTest::SizeIndependentDepositionEfficencyCoefficientsTest(SETestS
   SETestCase& tc1 = suite.CreateTestCase();
   tc1.SetName(substance.GetName()+"SIDECo");
   
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   const SizeIndependentDepositionEfficencyCoefficient& SIDECoeff =  pc.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
   m_ss << "Airway: " << SIDECoeff.GetAirway();
   Info(m_ss);
@@ -261,7 +263,8 @@ void PulseEngineTest::DepositionFractionTest(SETestSuite& suite, SESubstance& su
   SETestCase& tc = suite.CreateTestCase();
   tc.SetName(substance.GetName()+"DepositionFraction");
 
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
   pc.SetupPatient(patient);

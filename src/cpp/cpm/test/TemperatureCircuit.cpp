@@ -1,6 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
 #include "controller/Substances.h"
@@ -38,7 +39,8 @@
 //This test holds EnvironmentSkin and EnvironmentCore sources constant and varies BMR
 void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/InternalTemperatureVariableBMRCircuitTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
@@ -117,7 +119,8 @@ void PulseEngineTest::InternalTemperatureVariableBMRCircuitTest(const std::strin
 //This test holds BMR and EnvironmentCore sources constant and varies EnvironmentSkin
 void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/InternalTemperatureVariableSkinCircuitTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
@@ -219,7 +222,8 @@ void PulseEngineTest::InternalTemperatureVariableSkinCircuitTest(const std::stri
 //This test holds BMR and EnvironmentSkin sources constant and varies EnvironmentCore
 void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/InternalTemperatureVariableCoreCircuitTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
@@ -320,7 +324,8 @@ void PulseEngineTest::InternalTemperatureVariableCoreCircuitTest(const std::stri
 //This test uses a constant BMR in place of the Energy circuit and varies ambient temperature
 void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/EnvironmentVariableTemperatureCircuitTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
@@ -449,7 +454,8 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
 //This test uses both the Environment and Energy circuits, varying both BMR and ambient temp
 void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
@@ -608,7 +614,8 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
 //This test verifies that the Skin temperature drops when drastically lowering other values
 void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(const std::string& sTestDirectory)
 {
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/CombinedInternalAndEnvironmentSkinTempDropCircuitTest.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");
@@ -707,7 +714,8 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
 //This test compares Environment circuit output to ISO data
 void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestDirectory)
 {
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/EnvironmentTemperatureInput.log");
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");

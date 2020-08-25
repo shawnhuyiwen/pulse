@@ -11,7 +11,6 @@ add_library_ex(CommonPulseModels
     controller/Compartments.h
     controller/Controller.h
     controller/Engine.h
-    controller/PatientSetup.h
     controller/Substances.h
     controller/System.h
     environment/Environment.h
@@ -46,8 +45,9 @@ add_library_ex(CommonPulseModels
     controller/Compartments.cpp
     controller/Controller.cpp
     controller/Engine.cpp
-    controller/PatientSetup.cpp
     controller/Substances.cpp
+    controller/SetupPatient.cpp
+    controller/SetupCircuitsAndCompartments.cpp
     environment/Environment.cpp
     equipment/AnesthesiaMachine.cpp
     equipment/ECG.cpp

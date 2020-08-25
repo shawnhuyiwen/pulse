@@ -291,6 +291,7 @@ add_library_ex(CommonDataModel
     system/physiology/SERespiratorySystem.h
     system/physiology/SETissueSystem.h
     utils/ConfigParser.h
+    utils/CSV.h
     utils/DataPeak.h
     utils/DataTrack.h
     utils/EnumHashSpecialization.h
@@ -620,6 +621,7 @@ add_library_ex(CommonDataModel
     system/physiology/SERespiratorySystem.cpp
     system/physiology/SETissueSystem.cpp
     utils/ConfigParser.cpp
+    utils/CSV.cpp
     utils/DataPeak.cpp
     utils/DataTrack.cpp
     utils/FileUtils.cpp

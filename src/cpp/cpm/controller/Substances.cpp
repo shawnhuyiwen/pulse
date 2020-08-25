@@ -233,10 +233,6 @@ void PulseSubstances::InitializeSubstances()
   AddActiveSubstance(*m_sodium);
   AddActiveSubstance(*m_tristearin);
   AddActiveSubstance(*m_urea);
-
-  InitializeGasCompartments();
-  InitializeLiquidCompartmentGases();
-  InitializeLiquidCompartmentNonGases();
 }
 
 void PulseSubstances::InitializeGasCompartments()

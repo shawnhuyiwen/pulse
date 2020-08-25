@@ -16,14 +16,10 @@ class SEThermalCircuitPath;
  */  
 class PULSE_DECL Environment : public PulseEnvironmentSystem
 {
-  friend class PulseData;
   friend class PBPulseEnvironment;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Environment(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Environment(PulseData& data);
   virtual ~Environment();
 
   void Clear();

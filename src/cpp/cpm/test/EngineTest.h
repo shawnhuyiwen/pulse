@@ -28,15 +28,13 @@ class HowToTracker;
 class ENGINE_TEST_DECL PulseEngineTest : Loggable
 {
 public:
-  PulseEngineTest();
-  PulseEngineTest(Logger* logger);
+  PulseEngineTest(Logger* logger=nullptr);
   virtual ~PulseEngineTest();
 
   bool RunTest(const std::string& testName, const std::string& sOutputDirectory);
   void FillFunctionMap();
 
 protected:
-  bool myLogger;
   typedef void(PulseEngineTest::*testFunction)(const std::string&);
   typedef std::map<std::string, testFunction> testMap;
   testMap bgeMap;
