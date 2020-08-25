@@ -164,7 +164,7 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   double complianceScale, double resistanceScale, double volumeScale, double heartRate_bpm,
   double systemicResistanceScale, double systemicComplianceScale, double aortaResistanceScale,
   double aortaComplianceScale, double rightHeartResistanceScale, double venaCavaComplianceScale,
-  bool connectTissue, bool connectRenal, bool connectCSF, bool balanceBloodGases, const std::string& sTestDirectory, 
+  bool connectTissue, bool connectRenal, bool connectCSF, bool balanceBloodGases, const std::string& sTestDirectory,
   const std::string& sTestName, bool breakOutResults)
 {
   //breakOutResults True = seperate files for different types (i.e. volumes, flows, etc.); False = one file with everything
@@ -235,6 +235,8 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
       cEnv->GetSubstanceQuantity(subFrac->GetSubstance())->GetVolumeFraction().Set(subFrac->GetFractionAmount());
     }
     pc.GetSubstances().InitializeSubstances();
+    pc.GetSubstances().InitializeLiquidCompartmentGases();
+    pc.GetSubstances().InitializeLiquidCompartmentNonGases();
     subs2Track.push_back(&pc.GetSubstances().GetO2());
     subs2Track.push_back(&pc.GetSubstances().GetCO2());
     subs2Track.push_back(&pc.GetSubstances().GetHb());
