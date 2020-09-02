@@ -42,63 +42,77 @@ void DataTrack::Clear()
   Reset();
   if(m_FileStream.is_open())
     m_FileStream.close();
-  m_HeadingOrder.clear();
 }
 
 void DataTrack::Reset()
 {
   // Clear out our data
-  m_Time.clear();
-  for(TrackMapItr itr = m_Track.begin(); itr != m_Track.end(); ++itr) 
-  {
-    delete itr->second;
-  }
-  m_Track.clear();
-  m_Probe.clear();
-  m_Formatting.clear(); 
+  m_Times.clear();
+  m_Elements.clear();
 }
 
-std::vector<std::string>& DataTrack::GetHeadings()
+
+std::vector<double> const& DataTrack::GetTimes() const
 {
-  return m_HeadingOrder;
+  return m_Times;
+}
+
+DataTrack::Element& DataTrack::GetElement(size_t idx)
+{
+  if (idx < m_Elements.size())
+    return m_Elements[idx];
+  Element e;
+  e.name = "Unknown-"+std::to_string(m_Elements.size());
+  e.idx = m_Elements.size();
+  m_Elements.push_back(e);
+  return m_Elements.back();
+}
+DataTrack::Element& DataTrack::GetElement(std::string const& name)
+{
+  for (Element& e : m_Elements)
+  {
+    if (e.name == name)
+      return e;
+  }
+  Element e;
+  e.name = name;
+  e.idx = m_Elements.size();
+  m_Elements.push_back(e);
+  return m_Elements.back();
 }
 
 void DataTrack::SetFormatting(const std::string& name, const SEDecimalFormat& f)
 {
-  if (std::find(m_HeadingOrder.begin(), m_HeadingOrder.end(), name) == m_HeadingOrder.end())
-    m_HeadingOrder.push_back(name);
-  m_Formatting[name].Set(f);
+  Element& e = GetElement(name);
+  e.format = f;
 }
 void DataTrack::SetFormatting(const std::string& name, std::streamsize precision)
 {
-  if (std::find(m_HeadingOrder.begin(), m_HeadingOrder.end(), name) == m_HeadingOrder.end())
-    m_HeadingOrder.push_back(name);
-  m_Formatting[name].SetPrecision(precision);
+  Element& e = GetElement(name);
+  e.format.SetPrecision(precision);
 }
 void DataTrack::SetDefaultFormatting(std::streamsize precision)
 {
   m_DefaultPrecision = precision;
 }
 
-void DataTrack::Probe(const std::string& name, double value, int i)
+void DataTrack::Probe(size_t idx, double value)
 {
-  std::stringstream ss;
-  ss << name << i;
-  std::string count = ss.str();
-  if (std::find(m_HeadingOrder.begin(), m_HeadingOrder.end(), count) == m_HeadingOrder.end())
-  {
-    m_HeadingOrder.push_back(count);
-  }
-  m_Probe[count]=value;
+  Element& e = GetElement(idx);
+  e.probe = value;
 }
-
-void DataTrack::Probe(const std::string& name, double value)
+size_t DataTrack::Probe(const std::string& name, double value)
 {
-  if (std::find(m_HeadingOrder.begin(), m_HeadingOrder.end(), name) == m_HeadingOrder.end())
-  {
-    m_HeadingOrder.push_back(name);
-  }
-  m_Probe[name]=value;
+  Element& e = GetElement(name);
+  e.probe = value;
+  return e.idx;
+}
+size_t DataTrack::Probe(const std::string& name, double value, int i)
+{
+  std::string count = name + std::to_string(i);
+  Element& e = GetElement(count);
+  e.probe = value;
+  return e.idx;
 }
 
 void DataTrack::Probe(const SEFluidCircuit& c)
@@ -323,64 +337,38 @@ void DataTrack::Probe(const SELiquidCompartmentGraph& graph)
   }
 }
 
+double DataTrack::GetProbe(size_t idx)
+{
+  Element& e = GetElement(idx);
+  return e.probe;
+}
 double DataTrack::GetProbe(const std::string& name)
 {
-  if(m_Probe.find(name)==m_Probe.end())
-    return std::numeric_limits<double>::quiet_NaN();
-  return m_Probe[name];
+  Element& e = GetElement(name);
+  return e.probe;
 }
 
-ProbeMap* DataTrack::GetProbes()
+size_t DataTrack::Track(const std::string& name, double time, double value)
 {
-  return &m_Probe;
-}
-
-void DataTrack::Track(const std::string& name, double time, double value)
-{
-  if (std::find(m_HeadingOrder.begin(), m_HeadingOrder.end(), name) == m_HeadingOrder.end())
+  if (m_LastTime != time)
   {
-    m_HeadingOrder.push_back(name);
-  }
-  std::vector<double>* v;
-  if(m_LastTime!=time)
-  {
-    m_LastTime=time;
-    m_Time.push_back(time);
-    // Will also push NaN to all other vectors
-    for(TrackMapItr itr = m_Track.begin(); itr != m_Track.end(); ++itr) 
-    {
-      itr->second->push_back(std::numeric_limits<double>::quiet_NaN());
-    }
-  }
-  // Check to see if we have a vector for provided name
-  v=m_Track[name];
-  if(v==nullptr)
-  {
-    v = new std::vector<double>();
-    m_Track[name]=v;
-    // Initialize any empty slots to NaN
-    for(unsigned int i=0; i<m_Time.size(); i++)
-      v->push_back(std::numeric_limits<double>::quiet_NaN());
-
-    // This output helps to see if something is added to the csv after initialization, who it is, to figure out why
-    //std::cout << "Adding vector for " << name << std::endl;
+    m_LastTime = time;
+    m_Times.push_back(time);
   }
 
-  if(v->size()==0)
+  // Create element we are to update if we don't have it
+  Element& ue = GetElement(name);
+  // The Track vector should be the same length as m_Time
+  // Add NaN's to all Element tracking vectors to equal the size to m_Time
+  for (Element& e : m_Elements)
   {
-    if(m_Logger != nullptr)
+    while (e.track.size() < m_Times.size())
     {
-      m_Logger->Error("DataTrack array size error for "+name);
-    }
-    else
-    {
-      std::cout<<"DataTrack array size error for " << name;
+      e.track.push_back(std::numeric_limits<double>::quiet_NaN());
     }
   }
-  else
-  {
-    v->at(v->size()-1)=value;
-  }
+  ue.track.back() = value;
+  return ue.idx;
 }
 
 void DataTrack::Track(double time_s, const SEElectricalCircuit& c)
@@ -652,33 +640,33 @@ void DataTrack::Track(double time_s, const SELiquidCompartmentGraph& graph, std:
   }
 }
 
-double DataTrack::GetTrack(const std::string& name, double time)
+double DataTrack::GetTrack(size_t idx, double time)
 {
-  std::vector<double>* v = m_Track[name];
-  if(v==nullptr)
-    return std::numeric_limits<double>::quiet_NaN();
-  for(unsigned int i=0; i<m_Time.size(); i++)
+  Element& e = GetElement(idx);
+  for (size_t i = 0; i < e.track.size(); i++)
   {
-    if(m_Time[i]==time)
-      return v->at(i);// All lengths should be the same
+    if (m_Times[i] == time)
+      return e.track[i];// All lengths should be the same
   }
   return std::numeric_limits<double>::quiet_NaN();
 }
 
-std::vector<double>* DataTrack::GetTrack(const std::string& name)
+double DataTrack::GetTrack(const std::string& name, double time)
 {
-  return m_Track[name];
-}
-
-std::vector<double>& DataTrack::GetTimes()
-{
-  return m_Time;
+  Element& e = GetElement(name);
+  for(size_t i=0; i<e.track.size(); i++)
+  {
+    if(m_Times[i]==time)
+      return e.track[i];// All lengths should be the same
+  }
+  return std::numeric_limits<double>::quiet_NaN();
 }
 
 std::vector<std::string> DataTrack::ReadTrackFromFile(const char* fileName)
 {
-  m_Track.clear();
-  std::string line;  
+  m_Times.clear();
+  m_Elements.clear();
+  std::string line;
   std::ifstream infile(fileName);
   // Grab the headings from the first line
   std::getline(infile, line);
@@ -718,7 +706,7 @@ std::vector<std::string> DataTrack::ReadTrackFromFile(const char* fileName)
 std::vector<std::string> DataTrack::StreamDataFromFile(const char* fileName)
 {
   Reset();
-  std::string line;  
+  std::string line;
   m_FileStream.open(fileName);
   // Grab the headings from the first line
   std::getline(m_FileStream, line);
@@ -761,13 +749,14 @@ double DataTrack::StreamDataFromFile(std::vector<std::string>* headings)
 
 void DataTrack::CreateFile(const char* fileName, std::ofstream& file)
 {
+  size_t idx = 0;
   file.open(fileName, std::ofstream::out | std::ofstream::trunc);
   // Write our headers  
   file<<"Time(s)"<<m_Delimiter;
-  for (unsigned int i = 0; i < m_HeadingOrder.size(); i++)
+  for (Element& e : m_Elements)
   {
-    file << m_HeadingOrder.at(i); 
-    if (i<(m_HeadingOrder.size()-1))
+    file << e.name;
+    if ((++idx)<(m_Elements.size()))
       file << m_Delimiter;
   }
   file << std::endl;
@@ -776,14 +765,15 @@ void DataTrack::CreateFile(const char* fileName, std::ofstream& file)
 
 void DataTrack::WriteTrackToFile(const char* fileName)
 {
+  size_t idx = 0;
   std::ofstream file;
   file.open(fileName, std::ofstream::out | std::ofstream::trunc);
   // Write our headers  
   file << "Time(s)" << m_Delimiter;
-  for (unsigned int i = 0; i < m_HeadingOrder.size(); i++)
+  for (Element& e : m_Elements)
   {
-    file << m_HeadingOrder.at(i);
-    if (i<(m_HeadingOrder.size() - 1))
+    file << e.name;
+    if ((++idx) < (m_Elements.size()))
       file << m_Delimiter;
   }
   file<<std::endl;
@@ -796,14 +786,13 @@ void DataTrack::StreamTrackToFile(std::ofstream& file)
 {  
   double d;
  // Write out map values
-  for(unsigned int i=0; i<m_Time.size(); i++)
-  {    
-    file << std::fixed << std::setprecision(m_DefaultPrecision) << m_Time.at(i) << m_Delimiter;
-    for (unsigned int h = 0; h < m_HeadingOrder.size(); h++)
+  for(size_t i=0; i<m_Times.size(); i++)
+  {
+    size_t idx = 0;
+    file << std::fixed << std::setprecision(m_DefaultPrecision) << m_Times[i] << m_Delimiter;
+    for (Element& e : m_Elements)
     {
-      const std::string& s = m_HeadingOrder[h];
-      
-      d = m_Track[s]->at(i);
+      d = e.track[i];
       if (d == 0)
       {
         file << std::fixed << std::setprecision(0);
@@ -820,10 +809,10 @@ void DataTrack::StreamTrackToFile(std::ofstream& file)
       }
       else
       {
-        m_Formatting[s].SetStream(file);
+        e.format.SetStream(file);
         file << d;
       }
-      if (h<(m_HeadingOrder.size() - 1))
+      if ((++idx) < (m_Elements.size()))
         file << m_Delimiter;
     }
     file<<std::endl;
@@ -831,22 +820,22 @@ void DataTrack::StreamTrackToFile(std::ofstream& file)
   file.flush();
 
   // Clear out the data we had now that it is written
-  m_Time.clear();
-  for(TrackMapItr itr = m_Track.begin(); itr != m_Track.end(); ++itr) 
+  m_Times.clear();
+  for (Element& e : m_Elements)
   {
-    itr->second->clear();
+    e.track.clear();
   }
 }
 
 void DataTrack::StreamProbesToFile(double time, std::ofstream& file)
 {
   double d;
+  size_t idx = 0;
   // Write out probe values in heading order
   file << std::fixed << std::setprecision(2) << time << m_Delimiter;
-  for(unsigned int h=0; h<m_HeadingOrder.size(); h++) 
+  for (Element& e : m_Elements)
   {
-    const std::string& s = m_HeadingOrder[h];
-    d = GetProbe(s);
+    d = e.probe;
     if (d == 0)
     {
       file << std::fixed << std::setprecision(0);
@@ -863,10 +852,10 @@ void DataTrack::StreamProbesToFile(double time, std::ofstream& file)
     }
     else
     {
-       m_Formatting[s].SetStream(file);
+      e.format.SetStream(file);
       file << d;
     }
-    if(h<(m_HeadingOrder.size()-1))
+    if ((++idx) < (m_Elements.size()))
       file << m_Delimiter;
   }
   file<<std::endl;
