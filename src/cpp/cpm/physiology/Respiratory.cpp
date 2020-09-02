@@ -2566,7 +2566,7 @@ void Respiratory::UpdateResistances()
       bronchitisSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetBronchitisSeverity().GetValue();
     }
 
-    double dResistanceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 80.0, bronchitisSeverity);
+    double dResistanceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 60.0, bronchitisSeverity);
     obstructiveResistanceScalingFactor = MAX(obstructiveResistanceScalingFactor, dResistanceScalingFactor);
   }
 
@@ -2610,8 +2610,8 @@ void Respiratory::UpdateAlveolarCompliances()
     m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
     m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
   {
-    rightAlveoliCompliance_L_Per_cmH2O *= 0.4;
-    leftAlveoliCompliance_L_Per_cmH2O *= 0.4;
+    rightAlveoliCompliance_L_Per_cmH2O *= 0.38;
+    leftAlveoliCompliance_L_Per_cmH2O *= 0.38;
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2638,7 +2638,7 @@ void Respiratory::UpdateAlveolarCompliances()
       emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
-    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 1.1, emphysemaSeverity);
+    double complianceScalingFactor = GeneralMath::ExponentialGrowthFunction(10, 1.0, 1.15, emphysemaSeverity);
 
     leftObstructiveComplianceScalingFactor = MAX(leftObstructiveComplianceScalingFactor, complianceScalingFactor);
     rightObstructiveComplianceScalingFactor = MAX(rightObstructiveComplianceScalingFactor, complianceScalingFactor);
@@ -2670,7 +2670,7 @@ void Respiratory::UpdateAlveolarCompliances()
       rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
     }
     
-    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.4, severity);
+    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.55, 1.0, severity);
 
     leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * leftLungFraction);
     rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * rightLungFraction);
@@ -2680,9 +2680,9 @@ void Respiratory::UpdateAlveolarCompliances()
   //Pulmonary Fibrosis
   if (m_data.GetConditions().HasPulmonaryFibrosis())
   {
-    double Severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
+    double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
-    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.4, Severity);
+    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.55, 1.0, severity);
 
     leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, complianceScalingFactor);
     rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, complianceScalingFactor);
@@ -2710,7 +2710,7 @@ void Respiratory::UpdateAlveolarCompliances()
       rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
     }
 
-    double complianceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.4, severity);
+    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.55, 1.0, severity);
 
     leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * leftLungFraction);
     rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * rightLungFraction);
@@ -3236,6 +3236,27 @@ void Respiratory::UpdatePulmonaryShunt()
 
   double rightPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.05, 1.0, rightSeverity);
   double leftPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.05, 1.0, leftSeverity);
+
+  //------------------------------------------------------------------------------------------------------
+  //COPD
+  //Exacerbation will overwrite the condition, even if it means improvement
+  if (m_data.GetConditions().HasChronicObstructivePulmonaryDisease() || m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
+  {
+    double emphysemaSeverity = 0.0;
+    if (m_PatientActions->HasChronicObstructivePulmonaryDiseaseExacerbation())
+    {
+      emphysemaSeverity = m_PatientActions->GetChronicObstructivePulmonaryDiseaseExacerbation()->GetEmphysemaSeverity().GetValue();
+    }
+    else
+    {
+      emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
+    }
+
+    double pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.6, 1.0, emphysemaSeverity);
+
+    rightPulmonaryShuntScalingFactor = MIN(rightPulmonaryShuntScalingFactor, pulmonaryShuntScalingFactor);
+    leftPulmonaryShuntScalingFactor = MIN(leftPulmonaryShuntScalingFactor, pulmonaryShuntScalingFactor);
+  }
 
   double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);

@@ -114,7 +114,7 @@
           "Connection": "Tube",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
-          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 30.0, "Unit": "cmH2O" } },
+          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 28.0, "Unit": "cmH2O" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 11.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 1.974, "Unit": "s" } },
           "ExpirationCycleTime": { "ScalarTime": { "Value": 1.776, "Unit": "s" } },
