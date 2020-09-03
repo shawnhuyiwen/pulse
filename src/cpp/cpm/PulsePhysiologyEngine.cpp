@@ -333,15 +333,14 @@ double* PulseEngineThunk::PullDataPtr()
   if (data->requestedData == nullptr)
   {
     // +1 for the sim time
-    data->length = data->eng->GetEngineTracker()->GetDataTrack().GetHeadings().size() + 1;
+    data->length = data->eng->GetEngineTracker()->GetDataTrack().NumTracks() + 1;
     data->requestedData = new double[data->length];
   }
   // Always put the sim time in index 0 as seconds
   data->requestedData[0] = currentTime_s;
   // Pull all data we requested and pack into our array for return to the caller
-  size_t i = 0;
-  for (std::string& heading : data->eng->GetEngineTracker()->GetDataTrack().GetHeadings())
-    data->requestedData[++i] = data->eng->GetEngineTracker()->GetDataTrack().GetProbe(heading);
+  for (size_t i = 1; i<data->length; i++)
+    data->requestedData[i] = data->eng->GetEngineTracker()->GetDataTrack().GetProbe(i-1);
 
   return data->requestedData;
 }

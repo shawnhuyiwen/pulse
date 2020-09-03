@@ -215,7 +215,7 @@ void SEEngineTracker::PullData()
     }
     if (!ds->HasScalar())
     {
-      m_DataTrack->Probe(ds->Heading, SEScalar::dNaN());
+      m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
       continue;
     }
     ds->UpdateScalar();// Update compartment if needed
@@ -225,15 +225,15 @@ void SEEngineTracker::PullData()
       {
         if (dr->GetUnit() == nullptr)
           dr->SetUnit(*ds->GetUnit());
-        m_DataTrack->Probe(ds->Heading, ds->GetValue(*dr->GetUnit()));
+        m_DataTrack->Probe(ds->idx, ds->GetValue(*dr->GetUnit()));
       }
       else
-        m_DataTrack->Probe(ds->Heading, ds->GetValue());
+        m_DataTrack->Probe(ds->idx, ds->GetValue());
     }
     else if (ds->IsInfinity())
-      m_DataTrack->Probe(ds->Heading, std::numeric_limits<double>::infinity());
+      m_DataTrack->Probe(ds->idx, std::numeric_limits<double>::infinity());
     else
-      m_DataTrack->Probe(ds->Heading, SEScalar::dNaN());
+      m_DataTrack->Probe(ds->idx, SEScalar::dNaN());
   }
 }
 
@@ -243,7 +243,7 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
   if (m_Request2Scalar.find(&dr) != m_Request2Scalar.end())
     return true; // We have this connected already
 
-  SEDataRequestScalar* ds=new SEDataRequestScalar(GetLogger());  
+  SEDataRequestScalar* ds=new SEDataRequestScalar(GetLogger());
   m_Request2Scalar[&dr]=ds;
 
   bool success = ConnectRequest(dr, *ds);
@@ -266,7 +266,7 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 
       ds->Heading = Space2Underscore(m_ss.str());
       m_ss.str("");//Reset Buffer
-      m_DataTrack->Probe(ds->Heading, 0);
+      ds->idx = m_DataTrack->Probe(ds->Heading, 0);
       m_DataTrack->SetFormatting(ds->Heading, dr);
       return success;
     }
@@ -291,7 +291,7 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
       }
       ds->Heading = Space2Underscore(m_ss.str());
       m_ss.str("");//Reset Buffer
-      m_DataTrack->Probe(ds->Heading, 0);
+      ds->idx = m_DataTrack->Probe(ds->Heading, 0);
       m_DataTrack->SetFormatting(ds->Heading, dr);
       return success;
     }
@@ -305,7 +305,7 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
           m_ss << dr.GetSubstanceName() << "-" << dr.GetCompartmentName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
         ds->Heading = Space2Underscore(m_ss.str());
         m_ss.str("");//Reset Buffer
-        m_DataTrack->Probe(ds->Heading, 0);
+        ds->idx = m_DataTrack->Probe(ds->Heading, 0);
         m_DataTrack->SetFormatting(ds->Heading, dr);
         return success;
       }
@@ -317,7 +317,7 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
           m_ss << dr.GetSubstanceName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
         ds->Heading = Space2Underscore(m_ss.str());
         m_ss.str("");//Reset Buffer
-        m_DataTrack->Probe(ds->Heading, 0);
+        ds->idx = m_DataTrack->Probe(ds->Heading, 0);
         m_DataTrack->SetFormatting(ds->Heading, dr);
         return success;
       }
