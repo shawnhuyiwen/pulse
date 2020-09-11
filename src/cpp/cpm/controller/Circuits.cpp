@@ -125,12 +125,21 @@ void PulseCircuits::SetReadOnlyFluid(bool b)
 {
   SECircuitManager::SetReadOnlyFluid(b);
   // These don't need to be locked
-  GetFluidNode(pulse::EnvironmentNode::Ambient)->GetPressure().SetReadOnly(false);
-  GetFluidNode(pulse::EnvironmentNode::Ambient)->GetNextPressure().SetReadOnly(false);
-  GetFluidNode(pulse::RespiratoryNode::Stomach)->GetPressure().SetReadOnly(false);
-  GetFluidNode(pulse::RespiratoryNode::Stomach)->GetNextPressure().SetReadOnly(false);
-  GetFluidNode(pulse::InhalerNode::Mouthpiece)->GetPressure().SetReadOnly(false);
-  GetFluidNode(pulse::InhalerNode::Mouthpiece)->GetNextPressure().SetReadOnly(false);  
+  if (GetFluidNode(pulse::EnvironmentNode::Ambient) != nullptr)
+  {
+    GetFluidNode(pulse::EnvironmentNode::Ambient)->GetPressure().SetReadOnly(false);
+    GetFluidNode(pulse::EnvironmentNode::Ambient)->GetNextPressure().SetReadOnly(false);
+  }
+  if (GetFluidNode(pulse::RespiratoryNode::Stomach) != nullptr)
+  {
+    GetFluidNode(pulse::RespiratoryNode::Stomach)->GetPressure().SetReadOnly(false);
+    GetFluidNode(pulse::RespiratoryNode::Stomach)->GetNextPressure().SetReadOnly(false);
+  }
+  if (GetFluidNode(pulse::InhalerNode::Mouthpiece) != nullptr)
+  {
+    GetFluidNode(pulse::InhalerNode::Mouthpiece)->GetPressure().SetReadOnly(false);
+    GetFluidNode(pulse::InhalerNode::Mouthpiece)->GetNextPressure().SetReadOnly(false);
+  }
 }
 
 SEFluidCircuit& PulseCircuits::GetActiveCardiovascularCircuit()
