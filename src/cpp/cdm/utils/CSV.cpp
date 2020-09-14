@@ -91,15 +91,14 @@ std::string CSV::NextValue(unsigned skip)
   for (;;)
   {
     auto out = std::string{};
-    if (std::getline(m_p->record, out, ','))
+    if (!std::getline(m_p->record, out, ','))
+      out = "";
+    if (skip)
     {
-      if (skip)
-      {
-        --skip;
-        continue;
-      }
-      return trim(out);
+      --skip;
+      continue;
     }
+    return trim(out);
   }
 
   return "";
