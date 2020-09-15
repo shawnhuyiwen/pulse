@@ -63,7 +63,7 @@ void HowToSerialize()
   SEHemorrhage hemorrhageLeg;
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
-  hemorrhageLeg.GetRate().SetValue(90, VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
+  hemorrhageLeg.GetSeverity().SetValue(0.5);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
 
   // Add a Tension Pnuemothorax

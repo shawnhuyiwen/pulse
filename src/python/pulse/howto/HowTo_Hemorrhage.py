@@ -25,7 +25,11 @@ def HowTo_Hemorrhage():
     hemorrhage.set_comment("Laceration to the leg")
     hemorrhage.set_type(eHemorrhageType.External)
     hemorrhage.set_compartment("RightLeg")
-    hemorrhage.get_rate().set_value(75,VolumePerTimeUnit.mL_Per_min)
+    # Optionally, You can set the flow rate of the hemorrhage,
+    # but this needs to be provided the proper flow rate associated with the anatomy
+    # This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
+    # It is intended to interact with sensors or with something continuously monitoring physiology and updating the flow
+    hemorrhage.get_flow_rate().set_value(75,VolumePerTimeUnit.mL_Per_min)
     pulse.process_action(hemorrhage)
 
     # Advance some time and print out the vitals

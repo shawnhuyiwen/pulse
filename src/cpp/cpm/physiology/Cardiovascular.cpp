@@ -982,9 +982,12 @@ void Cardiovascular::Hemorrhage()
   //Set all hemorrhage flows to zero, so:
   // - We can increment for overlapping compartments
   // - We know to remove ones that are turned off
-  for (unsigned int hIter = 0; hIter < m_HemorrhagePaths.size(); hIter++)
+  for (SEFluidCircuitPath* path :  m_HemorrhagePaths)
   {
-    m_HemorrhagePaths.at(hIter)->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+    if(path->HasNextFlowSource())
+      path->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+    if (path->HasNextResistance())
+      path->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   }
 
   SEHemorrhage* h;
@@ -995,7 +998,8 @@ void Cardiovascular::Hemorrhage()
   for (auto hem : hems)
   {
     h = hem.second;
-    double rate_mL_Per_s = h->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
+
+   
     // Allow shorthand naming
     SELiquidCompartment* compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
     if (compartment == nullptr)
@@ -1010,14 +1014,6 @@ void Cardiovascular::Hemorrhage()
       continue;
     }
 
-    /// \error Error: Bleeding rate cannot be less than zero
-    if (rate_mL_Per_s < 0)
-    {
-      m_ss << "Cannot specify bleeding less than 0";
-      Error(m_ss);
-      invalid_hemorrhages.push_back(h);
-      continue;
-    }
     /// \error Error: Bleeding must be from a vascular compartment
     if (!compartment)
     {
@@ -1040,7 +1036,32 @@ void Cardiovascular::Hemorrhage()
     else //(h->GetType() == eHemorrhage_Type::External)
     {
       //Only mass is merely transfered if it is an internal bleed
+      
+    }
+
+    if (h->HasFlowRate() && h->HasSeverity())
+    {
+      h->GetFlowRate().Invalidate();
+      Warning("Hemorrhage requested with both flow rate and severity, will only use severity.");
+    }
+
+    double rate_mL_Per_s = 0;
+    if (h->HasFlowRate())
+    {
+      rate_mL_Per_s = h->GetFlowRate().GetValue(VolumePerTimeUnit::mL_Per_s);
       TotalLossRate_mL_Per_s += rate_mL_Per_s;
+      if (rate_mL_Per_s < 0)
+      {
+        m_ss << "Cannot specify bleeding less than 0";
+        Error(m_ss);
+        /// \error Error: Bleeding rate cannot be less than zero
+        invalid_hemorrhages.push_back(h);
+        continue;
+      }
+    }
+    else if (h->HasSeverity())
+    {
+
     }
 
     //Get all circuit nodes in this compartment

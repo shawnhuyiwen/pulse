@@ -43,7 +43,7 @@
     "PatientAction": {
       "Hemorrhage": {
         "Compartment": "RightLegVasculature",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 50.0,
             "Unit": "mL/min"
@@ -55,7 +55,7 @@
     "PatientAction": {
       "Hemorrhage": {
         "Compartment": "VenaCava",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 150.0,
             "Unit": "mL/min"
@@ -76,7 +76,7 @@
     "PatientAction": {
       "Hemorrhage": {
         "Compartment": "RightLegVasculature",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
           }
@@ -87,7 +87,7 @@
     "PatientAction": {
       "Hemorrhage": {
         "Compartment": "VenaCava",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
           }

@@ -78,7 +78,7 @@
     "PatientAction": {
       "Hemorrhage": {
         "Compartment": "RightLegVasculature",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 90.0,
             "Unit": "mL/min"
@@ -99,7 +99,7 @@
     "PatientAction": {
       "Hemorrhage": {
         "Compartment": "RightLegVasculature",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
           }

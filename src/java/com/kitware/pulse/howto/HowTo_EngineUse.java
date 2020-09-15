@@ -285,7 +285,12 @@ public class HowTo_EngineUse
     SEHemorrhage h = new SEHemorrhage();
     h.setType(HemorrhageData.eType.External);
     h.setCompartment(PulseCompartments.Vascular.RightLeg);
-    h.getRate().setValue(75,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
+    h.getSeverity().setValue(0.8);
+    // Optionally, You can set the flow rate of the hemorrhage,
+    // This needs to be provided the proper flow rate associated with the anatomy
+    // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
+    // It is intended to interact with sensors or with something continuously monitoring physiology and updating the flow
+    //h.getFlowRate().setValue(75,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
     if(!pe.processAction(h))
     {
       Log.error("Engine was unable to process requested actions");
@@ -310,7 +315,8 @@ public class HowTo_EngineUse
     }
 
     // Stop the hemorrhage
-    h.getRate().setValue(0,VolumePerTimeUnit.mL_Per_min);
+    h.getSeverity().setValue(0);
+    //h.getFlowRate().setValue(0,VolumePerTimeUnit.mL_Per_min);
     if(!pe.processAction(h))
     {
       Log.error("Engine was unable to process requested actions");
