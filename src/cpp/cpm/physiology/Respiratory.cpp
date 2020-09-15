@@ -2670,7 +2670,7 @@ void Respiratory::UpdateAlveolarCompliances()
       rightLungFraction = m_data.GetConditions().GetLobarPneumonia().GetRightLungAffected().GetValue();
     }
     
-    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.55, 1.0, severity);
+    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.32, 1.0, severity);
 
     leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * leftLungFraction);
     rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * rightLungFraction);
@@ -2682,7 +2682,7 @@ void Respiratory::UpdateAlveolarCompliances()
   {
     double severity = m_data.GetConditions().GetPulmonaryFibrosis().GetSeverity().GetValue();
 
-    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.55, 1.0, severity);
+    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.32, 1.0, severity);
 
     leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, complianceScalingFactor);
     rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, complianceScalingFactor);
@@ -2710,7 +2710,7 @@ void Respiratory::UpdateAlveolarCompliances()
       rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
     }
 
-    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.55, 1.0, severity);
+    double complianceScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.32, 1.0, severity);
 
     leftRestrictiveComplianceScalingFactor = MIN(leftRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * leftLungFraction);
     rightRestrictiveComplianceScalingFactor = MIN(rightRestrictiveComplianceScalingFactor, 1.0 - (1.0 - complianceScalingFactor) * rightLungFraction);
