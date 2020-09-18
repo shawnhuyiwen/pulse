@@ -1,6 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
+#include "blackbox/SEBlackBox.h"
 #include "compartment/SECompartment.h"
 #include "compartment/SECompartmentNodes.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
@@ -55,6 +56,11 @@ public:
   virtual bool HasChild(const std::string& name);
   virtual void AddChild(SEThermalCompartment& child);
 
+  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
+  virtual SEThermalBlackBox* GetBlackBox() { return m_BlackBox; }
+  virtual const SEThermalBlackBox* GetBlackBox() const { return m_BlackBox; }
+  virtual void SetBlackBox(SEThermalBlackBox* bb) { m_BlackBox = bb; }
+
 protected:
   virtual double CalculateInFlow_W() const;
   virtual double CalculateOutFlow_W() const;
@@ -71,4 +77,6 @@ protected:
   std::vector<SEThermalCompartment*> m_Children;
   std::vector<SEThermalCompartment*> m_Leaves;
   SECompartmentNodes<THERMAL_COMPARTMENT_NODE>  m_Nodes;
+
+  SEThermalBlackBox* m_BlackBox = nullptr;
 };

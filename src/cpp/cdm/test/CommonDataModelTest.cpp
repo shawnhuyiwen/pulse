@@ -225,8 +225,6 @@ void CommonDataModelTest::FillFunctionMap()
   cdmMap.insert(std::make_pair("FluidCircuitTest", &CommonDataModelTest::FluidCircuitTest));
   cdmMap.insert(std::make_pair("ThermalCircuitTest", &CommonDataModelTest::ThermalCircuitTest));
   cdmMap.insert(std::make_pair("CombinedCircuitTest", &CommonDataModelTest::CombinedCircuitTest));
-  cdmMap.insert(std::make_pair("InterCircuitComparisonTest", &CommonDataModelTest::InterCircuitComparisonTest));
-  cdmMap.insert(std::make_pair("InterCircuitIndividualTest", &CommonDataModelTest::InterCircuitIndividualTest));
   cdmMap.insert(std::make_pair("DynamicallyChangingCircuitTest", &CommonDataModelTest::DynamicallyChangingCircuitTest));
   cdmMap.insert(std::make_pair("NonZeroReferencePositive", &CommonDataModelTest::NonZeroReferencePositive));
   cdmMap.insert(std::make_pair("NonZeroReferenceNegative", &CommonDataModelTest::NonZeroReferenceNegative));
@@ -245,6 +243,10 @@ void CommonDataModelTest::FillFunctionMap()
   cdmMap.insert(std::make_pair("LargeFlowTransportTest", &CommonDataModelTest::LargeFlowTransportTest));
   cdmMap.insert(std::make_pair("LiquidTransportTest", &CommonDataModelTest::LiquidTransportTest));
   cdmMap.insert(std::make_pair("GasTransportTest", &CommonDataModelTest::GasTransportTest));
+
+  cdmMap.insert(std::make_pair("BasicBlackBoxComparisonTest", &CommonDataModelTest::BasicBlackBoxComparisonTest));
+  cdmMap.insert(std::make_pair("BasicBlackBoxTest", &CommonDataModelTest::BasicBlackBoxTest));
+  cdmMap.insert(std::make_pair("WindkesselBlackBoxTest", &CommonDataModelTest::WindkesselBlackBoxTest));
 
   cdmMap.insert(std::make_pair("ReadPatientDirectory", &CommonDataModelTest::ReadPatientDirectory));
   cdmMap.insert(std::make_pair("ReadSubstanceDirectory", &CommonDataModelTest::ReadSubstanceDirectory));

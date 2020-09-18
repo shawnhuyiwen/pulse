@@ -6,9 +6,12 @@ import java.util.List;
 
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.*;
+import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
 import com.kitware.pulse.cdm.bind.PatientActions.IntubationData.eType;
 import com.kitware.pulse.cdm.datarequests.SEDataRequest;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
+import com.kitware.pulse.cdm.engine.SEPatientConfiguration;
+import com.kitware.pulse.cdm.patient.SEPatient;
 import com.kitware.pulse.cdm.patient.actions.SEIntubation;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.LengthUnit;
@@ -129,7 +132,30 @@ public class HowTo_MechanicalVentilator
     mv_peep.setUnit(PressureUnit.cmH2O.toString());
     dataRequests.getRequestedData().add(mv_peep);
     
-    pe.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
+    
+    if (false)
+    {
+      pe.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
+    }
+    else
+    {
+      SEPatient patient = new SEPatient();
+      patient.setName("Johnny Lawrence");
+      patient.setSex(eSex.Male);
+      patient.getAge().setValue(44, TimeUnit.yr);
+      patient.getWeight().setValue(170, MassUnit.lb);
+      patient.getHeight().setValue(71, LengthUnit.in);
+      patient.getBodyFatFraction().setValue(0.21);
+      patient.getHeartRateBaseline().setValue(72, FrequencyUnit.Per_min);
+      patient.getDiastolicArterialPressureBaseline().setValue(72., PressureUnit.mmHg);
+      patient.getSystolicArterialPressureBaseline().setValue(114., PressureUnit.mmHg);
+      patient.getRespirationRateBaseline().setValue(16, FrequencyUnit.Per_min);
+
+      SEPatientConfiguration sepc = new SEPatientConfiguration();
+      sepc.setPatient(patient);
+      //sepc.setDataRootDir(binDir);
+      pe.initializeEngine(sepc, dataRequests);
+    }
     
     SEIntubation intubate = new SEIntubation();
     intubate.setType(eType.Tracheal);

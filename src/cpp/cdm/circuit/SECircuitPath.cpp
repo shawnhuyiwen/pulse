@@ -5,7 +5,7 @@
 
 
 template<CIRCUIT_PATH_TEMPLATE>
-SECircuitPath<CIRCUIT_PATH_TYPES>::SECircuitPath(SECircuitNode<PotentialScalar, QuantityScalar>& src, SECircuitNode<PotentialScalar, QuantityScalar>& tgt, const std::string& name) : Loggable(src.GetLogger()), m_SourceNode(src), m_TargetNode(tgt), m_Name(name)
+SECircuitPath<CIRCUIT_PATH_TYPES>::SECircuitPath(SECircuitNode<CIRCUIT_NODE_TYPES>& src, SECircuitNode<CIRCUIT_NODE_TYPES>& tgt, const std::string& name) : Loggable(src.GetLogger()), m_SourceNode(src), m_TargetNode(tgt), m_Name(name)
 {
   m_Resistance = nullptr;
   m_NextResistance = nullptr;
@@ -85,12 +85,12 @@ std::string SECircuitPath<CIRCUIT_PATH_TYPES>::GetName() const
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
-SECircuitNode<PotentialScalar, QuantityScalar>& SECircuitPath<CIRCUIT_PATH_TYPES>::GetSourceNode() const
+SECircuitNode<CIRCUIT_NODE_TYPES>& SECircuitPath<CIRCUIT_PATH_TYPES>::GetSourceNode() const
 {
   return m_SourceNode;
 }
 template<CIRCUIT_PATH_TEMPLATE>
-SECircuitNode<PotentialScalar, QuantityScalar>& SECircuitPath<CIRCUIT_PATH_TYPES>::GetTargetNode() const
+SECircuitNode<CIRCUIT_NODE_TYPES>& SECircuitPath<CIRCUIT_PATH_TYPES>::GetTargetNode() const
 {
   return m_TargetNode;
 }
@@ -101,17 +101,17 @@ SECircuitNode<PotentialScalar, QuantityScalar>& SECircuitPath<CIRCUIT_PATH_TYPES
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasValidElements() const
 {
-  size_t numRCI = (HasResistance() ? 1 : 0) +
+  int numRCI = (HasResistance() ? 1 : 0) +
     (HasCapacitance() ? 1 : 0) +
     (HasInductance() ? 1 : 0);
-  size_t numNextRCI = (HasNextResistance() ? 1 : 0) +
+  int numNextRCI = (HasNextResistance() ? 1 : 0) +
     (HasNextCapacitance() ? 1 : 0) +
     (HasNextInductance() ? 1 : 0);
-  size_t numSrcState = (HasSwitch() ? 1 : 0) +
+  int numSrcState = (HasSwitch() ? 1 : 0) +
     (HasValve() ? 1 : 0) +
     (HasFluxSource() ? 1 : 0) +
     (HasPotentialSource() ? 1 : 0);
-  size_t numNextSrcState = (HasNextSwitch() ? 1 : 0) +
+  int numNextSrcState = (HasNextSwitch() ? 1 : 0) +
     (HasNextValve() ? 1 : 0) +
     (HasNextFluxSource() ? 1 : 0) +
     (HasNextPotentialSource() ? 1 : 0);

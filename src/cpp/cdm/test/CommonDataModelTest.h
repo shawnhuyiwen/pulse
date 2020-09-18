@@ -220,8 +220,6 @@ public:
   void FluidCircuitTest(const std::string& sOutputDirectory);
   void ThermalCircuitTest(const std::string& sOutputDirectory);
   void CombinedCircuitTest(const std::string& sOutputDirectory);
-  void InterCircuitComparisonTest(const std::string& sOutputDirectory);
-  void InterCircuitIndividualTest(const std::string& sOutputDirectory);    //This one outputs two files
   void CircuitErrorTest(const std::string& sOutputDirectory);          //This one doesn't output anything right now
   void DynamicallyChangingCircuitTest(const std::string& sOutputDirectory);  //This one has some really strange output (-1.$)
   void NonZeroReferencePositive(const std::string& sOutputDirectory);
@@ -406,6 +404,16 @@ public:
   void LargeFlowTransportTest(const std::string& sOutputDirectory);
   void LiquidTransportTest(const std::string& sOutputDirectory);
   void GasTransportTest(const std::string& sOutputDirectory);
+  
+  ///////////////
+  // Black Box //
+  ///////////////
+
+public:
+  void BasicBlackBoxComparisonTest(const std::string& sOutputDirectory);
+  void BasicBlackBoxTest(const std::string& sOutputDirectory);
+  void SimpleBlackBoxTest(const std::string& sOutputDirectory);
+  void WindkesselBlackBoxTest(const std::string& sOutputDirectory);
 
   ///////////////
   // I/O Tests //

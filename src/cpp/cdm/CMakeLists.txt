@@ -6,6 +6,13 @@ add_library_ex(CommonDataModel
     Macros.h
     PhysiologyEngine.h
     stdafx.h
+    blackbox/SEBlackBox.h
+    blackbox/SEBlackBoxManager.h
+    blackbox/electrical/SEElectricalBlackBox.h
+    blackbox/fluid/SEFluidBlackBox.h
+    blackbox/fluid/SEGasBlackBox.h
+    blackbox/fluid/SELiquidBlackBox.h
+    blackbox/thermal/SEThermalBlackBox.h
     circuit/SECircuit.h
     circuit/SECircuitCalculator.h
     circuit/SECircuitManager.h
@@ -29,6 +36,8 @@ add_library_ex(CommonDataModel
     compartment/SECompartmentManager.h
     compartment/SECompartmentNodes.h
     compartment/SECompartmentTransportGraph.h
+    compartment/electrical/SEElectricalCompartment.cpp
+    compartment/electrical/SEElectricalCompartmentLink.cpp
     compartment/fluid/SEFluidCompartment.h
     compartment/fluid/SEFluidCompartmentLink.h
     compartment/fluid/SEGasCompartment.h
@@ -70,6 +79,7 @@ add_library_ex(CommonDataModel
     engine/SETimedStabilization.h
     io/protobuf/PBActions.h
     io/protobuf/PBAnesthesiaMachine.h
+    io/protobuf/PBBlackBox.h
     io/protobuf/PBCircuit.h
     io/protobuf/PBCompartment.h
     io/protobuf/PBConditions.h
@@ -325,6 +335,13 @@ add_library_ex(CommonDataModel
     utils/unitconversion/UnitStringLexer.h
   CPP_FILES
     stdafx.cpp
+    blackbox/SEBlackBox.cpp
+    blackbox/SEBlackBoxManager.cpp
+    blackbox/electrical/SEElectricalBlackBox.cpp
+    blackbox/fluid/SEFluidBlackBox.cpp
+    blackbox/fluid/SEGasBlackBox.cpp
+    blackbox/fluid/SELiquidBlackBox.cpp
+    blackbox/thermal/SEThermalBlackBox.cpp
     circuit/SECircuit.cpp
     circuit/SECircuitCalculator.cpp
     circuit/SECircuitManager.cpp
@@ -348,6 +365,8 @@ add_library_ex(CommonDataModel
     compartment/SECompartmentManager.cpp
     compartment/SECompartmentNodes.cpp
     compartment/SECompartmentTransportGraph.cpp
+    compartment/electrical/SEElectricalCompartment.cpp
+    compartment/electrical/SEElectricalCompartmentLink.cpp
     compartment/fluid/SEFluidCompartment.cpp
     compartment/fluid/SEFluidCompartmentLink.cpp
     compartment/fluid/SEGasCompartment.cpp
@@ -389,6 +408,7 @@ add_library_ex(CommonDataModel
     io/protobuf/PBActions.cpp
     io/protobuf/PBAnesthesiaMachine.cpp
     io/protobuf/PBAnesthesiaMachineEnums.cpp
+    io/protobuf/PBBlackBox.cpp
     io/protobuf/PBCircuit.cpp
     io/protobuf/PBCompartment.cpp
     io/protobuf/PBCompartmentEnums.cpp

@@ -1,0 +1,152 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "com.kitware.pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Properties.proto";
+
+message BlackBoxPropertyData
+{
+  enum eType
+  {
+    None        = 0;/**<< @brief No responsibility to be provided to/calculated by the black box */
+    Imposed     = 1;/**<< @brief To be calculated by the black box */
+    Provided    = 2;/**<< @brief Provided to the black box */
+  }
+  
+  eType                                 Type                    = 1;
+}
+
+// Fluid Properties
+message BlackBoxVolumePerTimeData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarVolumePerTimeData               Property                = 2;
+}
+message BlackBoxPressureData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarPressureData                    Property                = 2;
+}
+message BlackBoxVolumeData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarVolumeData                      Property                = 2;
+}
+message BlackBoxMassPerVolumeData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarMassPerVolumeData               Property                = 2;
+}
+
+
+// Electric Properties
+message BlackBoxElectricCurrentData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarElectricCurrentData             Property                = 2;
+}
+message BlackBoxElectricPotentialData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarElectricPotentialData           Property                = 2;
+}
+message BlackBoxElectricChargeData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarElectricChargeData              Property                = 2;
+}
+
+
+// Thermal Properties
+message BlackBoxPowerData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarPowerData                       Property                = 2;
+}
+message BlackBoxTemperatureData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarTemperatureData                 Property                = 2;
+}
+message BlackBoxEnergyData
+{
+  BlackBoxPropertyData                  Base                    = 1;
+  ScalarEnergyData                      Property                = 2;
+}
+
+message BlackBoxSubstanceData
+{
+  string                                 Name                   = 1;
+}
+
+message GasBlackBoxSubstanceData
+{
+  BlackBoxSubstanceData                  Base                   = 1;
+  BlackBoxPressureData                   PartialPressure        = 2;
+}
+
+message LiquidBlackBoxSubstanceData
+{
+  BlackBoxSubstanceData                  Base                   = 1;
+  BlackBoxMassPerVolumeData              Concentration          = 2;
+}
+
+
+message BlackBoxData
+{
+  string                                 Name                   = 1;
+}
+
+message FluidBlackBoxData
+{
+  BlackBoxData                           Base                   = 1;
+  BlackBoxVolumePerTimeData              SourceFlow             = 2;
+  BlackBoxVolumePerTimeData              TargetFlow             = 3;
+  BlackBoxPressureData                   SourcePressure         = 4;
+  BlackBoxPressureData                   TargetPressure         = 5;
+  BlackBoxPressureData                   Pressure               = 6;
+  BlackBoxVolumeData                     Volume                 = 7;
+}
+
+message ElectricBlackBoxData
+{
+  BlackBoxData                           Base                   = 1;
+  BlackBoxElectricCurrentData            SourceCurrent          = 2;
+  BlackBoxElectricCurrentData            TargetCurrent          = 3;
+  BlackBoxElectricPotentialData          SourceVoltage          = 4;
+  BlackBoxElectricPotentialData          TargetVoltage          = 5;
+  BlackBoxElectricPotentialData          Voltage                = 6;
+  BlackBoxElectricChargeData             Charge                 = 7;
+}
+
+message ThermalBlackBoxData
+{
+  BlackBoxData                           Base                   = 1;
+  BlackBoxPowerData                      SourceHeatTransferRate = 2;
+  BlackBoxPowerData                      TargetHeatTransferRate = 3;
+  BlackBoxTemperatureData                SourceTemperature      = 4;
+  BlackBoxTemperatureData                TargetTemperature      = 5;
+  BlackBoxTemperatureData                Temperature            = 6;
+  BlackBoxEnergyData                     Heat                   = 7;
+}
+
+
+message GasBlackBoxData
+{
+  FluidBlackBoxData                      Base                   = 1;
+  repeated GasBlackBoxSubstanceData      SubstanceQuantity      = 2;
+}
+
+message LiquidBlackBoxData
+{
+  FluidBlackBoxData                      Base                   = 1;
+  repeated LiquidBlackBoxSubstanceData   SubstanceQuantity      = 2;
+}
+
+message BlackBoxesData
+{
+  repeated GasBlackBoxData               GasBox                 = 1;
+  repeated LiquidBlackBoxData            LiquidBox              = 2;
+}

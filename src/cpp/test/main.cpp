@@ -33,8 +33,8 @@ int main(int argc, char* argv[])
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndTissueCircuitAndTransportTest(peDir);
-      peTest.CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(peDir);
-      peTest.FullCardiovascularCircuitAndTransportTest(peDir);
+      //peTest.CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(peDir);
+      //peTest.FullCardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularBloodGasesTest(peDir);
       //peTest.TuneCardiovascularCircuitTest(peDir);
 
@@ -113,10 +113,16 @@ int main(int argc, char* argv[])
       //cdmTest.LargeFlowTransportTest(cdmDir);
       //cdmTest.LiquidTransportTest(cdmDir);
       //cdmTest.GasTransportTest(cdmDir);
+      
+      // BlackBox Tests
+      //cdmTest.BasicBlackBoxComparisonTest(cdmDir);
+      //cdmTest.BasicBlackBoxTest(cdmDir);
+      cdmTest.SimpleBlackBoxTest(cdmDir);
+      //cdmTest.WindkesselBlackBoxTest(cdmDir);
 
       // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);
-      cdmTest.ReadSubstanceDirectory(cdmDir);
+      //cdmTest.ReadSubstanceDirectory(cdmDir);
 
       // Property Tests
       //cdmTest.ScalarTest(cdmDir);

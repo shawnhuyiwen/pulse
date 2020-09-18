@@ -4,8 +4,8 @@
 #pragma once
 #include "utils/SmartEnum.h"
 
-#define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, typename CapacitanceUnit, typename FluxUnit, typename InductanceUnit, typename PotentialUnit, typename QuantityUnit, typename ResistanceUnit
-#define CIRCUIT_CALCULATOR_TYPES CircuitType,NodeType,PathType,CapacitanceUnit,FluxUnit,InductanceUnit,PotentialUnit,QuantityUnit,ResistanceUnit
+#define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, typename BlackBoxType, typename CapacitanceUnit, typename FluxUnit, typename InductanceUnit, typename PotentialUnit, typename QuantityUnit, typename ResistanceUnit
+#define CIRCUIT_CALCULATOR_TYPES CircuitType,NodeType,PathType,BlackBoxType,CapacitanceUnit,FluxUnit,InductanceUnit,PotentialUnit,QuantityUnit,ResistanceUnit
 
 class eigen; // Encapsulate eigen in pimpl pattern
 
@@ -38,9 +38,15 @@ protected:
   /**/virtual void CalculateFluxes();
   /**/virtual void CalculateQuantities();
 
+  virtual void ParseInPotentialSources();
+
+  virtual void Verbose(std::string location);
+
   // Valve Support
   virtual bool CheckAndModifyValves();
   virtual bool IsCurrentValveStateUnique();
+  // Black Box Support
+  virtual void ParseInBlackBoxNodes();
   // Eigen Support
   virtual void PopulateAMatrix(NodeType& nKCL, PathType& p, double dMultiplier, bool hasPotentialSource = false);  
   // These are all transient and cleared/set at the start of the process call
@@ -54,6 +60,7 @@ protected:
   EigenCircuitSolver             m_solver;
   std::set<uint64_t>             m_valveStates;
   std::map<PathType*, size_t>    m_potentialSources;
+  std::map<NodeType*, size_t>    m_blackBoxPotentialSources;
 
   const CapacitanceUnit &m_CapacitanceUnit;
   const FluxUnit        &m_FluxUnit;
