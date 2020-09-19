@@ -30,14 +30,14 @@ protected:
   virtual SEThermalBlackBox* CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName);
 
   virtual std::string GetBlackBoxName(const std::string& srcCmptName, const std::string& tgtCmptName) const;
-  template<typename BlackBoxType> BlackBoxType* CreateBlackBox(const std::string& name, std::map<std::string, BlackBoxType*>& ledger);
+  template<typename tBlackBox> tBlackBox* CreateBlackBox(const std::string& name, std::map<std::string, tBlackBox*>& ledger);
   
-  template<typename BlackBoxType, typename CompartmentType, typename LinkType, typename NodeType, typename PathType>
-  bool MapBlackBox(BlackBoxType& bb, LinkType& src2bbLink, LinkType& bb2tgtLink)
+  template<typename tBlackBox, typename tCompartment, typename tLink, typename tNode, typename tPath>
+  bool MapBlackBox(tBlackBox& bb, tLink& src2bbLink, tLink& bb2tgtLink)
   {
-    CompartmentType& bbCmpt  = src2bbLink.GetTargetCompartment();
-    CompartmentType& srcCmpt = src2bbLink.GetSourceCompartment();
-    CompartmentType& tgtCmpt = bb2tgtLink.GetTargetCompartment();
+    tCompartment& bbCmpt  = src2bbLink.GetTargetCompartment();
+    tCompartment& srcCmpt = src2bbLink.GetSourceCompartment();
+    tCompartment& tgtCmpt = bb2tgtLink.GetTargetCompartment();
     bb.SetCompartment(&bbCmpt);
     bb.SetSourceCompartment(&srcCmpt);
     bb.SetSourceLink(&src2bbLink);
@@ -48,7 +48,7 @@ protected:
     src2bbLink.SetBlackBox(&bb);
     bb2tgtLink.SetBlackBox(&bb);
 
-    return bb.MapBlackBox<BlackBoxType, NodeType,PathType>(*src2bbLink.GetPath(), *bb2tgtLink.GetPath());
+    return bb.MapBlackBox(*src2bbLink.GetPath(), *bb2tgtLink.GetPath());
   }
 
   std::map<std::string, SEElectricalBlackBox*> m_ElectricalBoxes;

@@ -157,12 +157,11 @@ protected:
   virtual PathType* GetTargetPath() const { return m_TargetPath; }
   virtual void SetTargetPath(PathType* p) { m_TargetPath = p; }
 
-  template<typename BlackBoxType_, typename NodeType_, typename PathType_>
-  bool MapBlackBox(PathType_& srcPath, PathType_& tgtPath)
+  virtual bool MapBlackBox(PathType& srcPath, PathType& tgtPath)
   {
-    NodeType_& bbNode = srcPath.GetTargetNode();
-    NodeType_& srcNode = srcPath.GetSourceNode();
-    NodeType_& tgtNode = tgtPath.GetTargetNode();
+    NodeType& bbNode = srcPath.GetTargetNode();
+    NodeType& srcNode = srcPath.GetSourceNode();
+    NodeType& tgtNode = tgtPath.GetTargetNode();
 
     //Check our assumptions
     if (&srcPath.GetSourceNode() == &tgtPath.GetSourceNode() ||
@@ -185,15 +184,12 @@ protected:
     SetTargetNode(&tgtNode);
     SetTargetPath(&tgtPath);
 
-    BlackBoxType_* bb = (BlackBoxType_*)this;
-    bbNode.SetBlackBox(bb);
-    srcNode.SetBlackBox(bb);
-    tgtNode.SetBlackBox(bb);
-    srcPath.SetBlackBox(bb);
-    tgtPath.SetBlackBox(bb);
+    MapBlackBox(srcPath, tgtPath, bbNode, srcNode, tgtNode);
 
     return true;
   }
+  virtual void MapBlackBox(PathType& srcPath, PathType tgtPath,
+                           NodeType& bbNode, NodeType& srcNode, NodeType tgtNode) = 0;
 
   std::string      m_Name;
   // Circuit Elements

@@ -124,12 +124,12 @@ SELiquidBlackBox* PulseBlackBoxes::CreateLiquidBlackBox(const std::string& srcCm
     if (srcNode.HasBlackBox())
     {
       Error("Source Node already has a black box");
-      return false;
+      return nullptr;
     }
     if (tgtNode.HasBlackBox())
     {
       Error("Target Node already has a black box");
-      return false;
+      return nullptr;
     }
 
     // \TODO Figure out which circuit(s) and graph(s) to use

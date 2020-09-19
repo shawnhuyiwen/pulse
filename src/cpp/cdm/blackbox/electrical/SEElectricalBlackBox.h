@@ -9,6 +9,7 @@
 class CDM_DECL SEElectricalBlackBox : public SEBlackBox<ELECTRICAL_BLACK_BOX>
 {
   friend class SEBlackBoxManager;
+  friend class CommonDataModelTest;
 protected:
   SEElectricalBlackBox(const std::string& name, Logger* logger);
 public:
@@ -35,6 +36,21 @@ protected:
   virtual bool HasTargetLink() const { return m_tgtLink != nullptr; }
   virtual SEElectricalCompartmentLink* GetTargetLink() const { return m_tgtLink; }
   virtual void SetTargetLink(SEElectricalCompartmentLink* l) { m_tgtLink = l; }
+
+
+  virtual bool MapBlackBox(SEElectricalCircuitPath& srcPath, SEElectricalCircuitPath& tgtPath)
+  {
+    return SEBlackBox::MapBlackBox(srcPath, tgtPath);
+  }
+  virtual void MapBlackBox(SEElectricalCircuitPath& srcPath, SEElectricalCircuitPath tgtPath,
+                           SEElectricalCircuitNode& bbNode, SEElectricalCircuitNode& srcNode, SEElectricalCircuitNode tgtNode) override
+  {
+    bbNode.SetBlackBox(this);
+    srcNode.SetBlackBox(this);
+    tgtNode.SetBlackBox(this);
+    srcPath.SetBlackBox(this);
+    tgtPath.SetBlackBox(this);
+  }
 
 protected:
   // Graph Elements
