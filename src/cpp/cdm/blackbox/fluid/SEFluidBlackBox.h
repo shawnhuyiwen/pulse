@@ -3,6 +3,7 @@
 
 #pragma once
 #include "blackbox/SEBlackBox.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
 
 class CDM_DECL SEFluidBlackBox : public SEBlackBox<FLUID_BLACK_BOX>
 {

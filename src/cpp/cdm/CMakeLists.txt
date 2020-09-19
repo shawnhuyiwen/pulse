@@ -36,8 +36,8 @@ add_library_ex(CommonDataModel
     compartment/SECompartmentManager.h
     compartment/SECompartmentNodes.h
     compartment/SECompartmentTransportGraph.h
-    compartment/electrical/SEElectricalCompartment.cpp
-    compartment/electrical/SEElectricalCompartmentLink.cpp
+    compartment/electrical/SEElectricalCompartment.h
+    compartment/electrical/SEElectricalCompartmentLink.h
     compartment/fluid/SEFluidCompartment.h
     compartment/fluid/SEFluidCompartmentLink.h
     compartment/fluid/SEGasCompartment.h

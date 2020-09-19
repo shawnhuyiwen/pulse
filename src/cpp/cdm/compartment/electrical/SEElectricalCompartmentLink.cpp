@@ -5,7 +5,7 @@
 #include "compartment/electrical/SEElectricalCompartment.h"
 #include "compartment/electrical/SEElectricalCompartmentLink.h"
 #include "circuit/SECircuitManager.h"
-#include "circuit/Electrical/SEElectricalCircuitPath.h"
+#include "circuit/electrical/SEElectricalCircuitPath.h"
 #include "properties/SEScalarElectricCurrent.h"
 
 SEElectricalCompartmentLink::SEElectricalCompartmentLink(SEElectricalCompartment& src, SEElectricalCompartment & tgt, const std::string& name) : SECompartmentLink(name,src.GetLogger()), m_SourceCmpt(src), m_TargetCmpt(tgt)

@@ -2,12 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuitCalculator.h"
-#include "compartment/SECompartmentGraph.h"
-#include "circuit/electrical/SEElectricalCircuitPath.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
-
 
 enum class eBlackBox_Property_Type {
   Provided = 0, Imposed
@@ -36,12 +30,16 @@ extern const std::string& eBlackBox_Property_Type_Name(eBlackBox_Property_Type m
                           SEScalarPower, SEScalarTemperature, SEScalarEnergy, \
                           PowerUnit, TemperatureUnit, EnergyUnit
 
+#define CCT typename CT, typename NT, typename PT, typename BBT, \
+            typename CU, typename FU, typename IU, \
+            typename PU, typename QU, typename RU
+
 template<BLACK_BOX_TEMPLATE>
 class CDM_DECL SEBlackBox : public Loggable
 {
   friend class SEBlackBoxManager;
   friend class CommonDataModelTest;
-  template<CIRCUIT_CALCULATOR_TEMPLATE> friend class SECircuitCalculator;
+  template<CCT> friend class SECircuitCalculator;
 protected:
   SEBlackBox(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name) {}
 public:

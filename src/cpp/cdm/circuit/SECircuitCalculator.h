@@ -4,7 +4,9 @@
 #pragma once
 #include "utils/SmartEnum.h"
 
-#define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, typename BlackBoxType, typename CapacitanceUnit, typename FluxUnit, typename InductanceUnit, typename PotentialUnit, typename QuantityUnit, typename ResistanceUnit
+#define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, typename BlackBoxType, \
+                                    typename CapacitanceUnit, typename FluxUnit, typename InductanceUnit, \
+                                    typename PotentialUnit, typename QuantityUnit, typename ResistanceUnit
 #define CIRCUIT_CALCULATOR_TYPES CircuitType,NodeType,PathType,BlackBoxType,CapacitanceUnit,FluxUnit,InductanceUnit,PotentialUnit,QuantityUnit,ResistanceUnit
 
 class eigen; // Encapsulate eigen in pimpl pattern

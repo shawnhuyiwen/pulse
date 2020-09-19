@@ -3,6 +3,7 @@
 
 #pragma once
 #include "blackbox/SEBlackBox.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
 #include "compartment/thermal/SEThermalCompartmentLink.h"
 
 class CDM_DECL SEThermalBlackBox : public SEBlackBox<THERMAL_BLACK_BOX>
