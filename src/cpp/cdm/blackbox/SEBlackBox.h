@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "properties/SEScalar.h"
+
 enum class eBlackBox_Property_Type {
   Provided = 0, Imposed
 };
@@ -155,12 +157,12 @@ protected:
   virtual PathType* GetTargetPath() const { return m_TargetPath; }
   virtual void SetTargetPath(PathType* p) { m_TargetPath = p; }
 
-  template<typename BlackBoxType, typename NodeType, typename PathType>
-  bool MapBlackBox(PathType& srcPath, PathType& tgtPath)
+  template<typename BlackBoxType_, typename NodeType_, typename PathType_>
+  bool MapBlackBox(PathType_& srcPath, PathType_& tgtPath)
   {
-    NodeType& bbNode = srcPath.GetTargetNode();
-    NodeType& srcNode = srcPath.GetSourceNode();
-    NodeType& tgtNode = tgtPath.GetTargetNode();
+    NodeType_& bbNode = srcPath.GetTargetNode();
+    NodeType_& srcNode = srcPath.GetSourceNode();
+    NodeType_& tgtNode = tgtPath.GetTargetNode();
 
     //Check our assumptions
     if (&srcPath.GetSourceNode() == &tgtPath.GetSourceNode() ||
@@ -183,7 +185,7 @@ protected:
     SetTargetNode(&tgtNode);
     SetTargetPath(&tgtPath);
 
-    BlackBoxType* bb = (BlackBoxType*)this;
+    BlackBoxType_* bb = (BlackBoxType_*)this;
     bbNode.SetBlackBox(bb);
     srcNode.SetBlackBox(bb);
     tgtNode.SetBlackBox(bb);
