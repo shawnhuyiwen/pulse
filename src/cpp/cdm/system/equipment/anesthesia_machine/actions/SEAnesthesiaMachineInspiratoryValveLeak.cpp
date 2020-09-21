@@ -12,13 +12,13 @@ SEAnesthesiaMachineInspiratoryValveLeak::SEAnesthesiaMachineInspiratoryValveLeak
 
 SEAnesthesiaMachineInspiratoryValveLeak::~SEAnesthesiaMachineInspiratoryValveLeak()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEAnesthesiaMachineInspiratoryValveLeak::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEAnesthesiaMachineInspiratoryValveLeak::Copy(const SEAnesthesiaMachineInspiratoryValveLeak& src)

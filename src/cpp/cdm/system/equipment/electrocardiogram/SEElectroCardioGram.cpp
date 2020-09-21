@@ -23,12 +23,6 @@ SEElectroCardioGram::SEElectroCardioGram(Logger* logger) : SEEquipment(logger)
 
 SEElectroCardioGram::~SEElectroCardioGram()
 {
-  Clear();
-}
-
-void SEElectroCardioGram::Clear()
-{
-  SEEquipment::Clear();
   SAFE_DELETE(m_Lead1ElectricPotential);
   SAFE_DELETE(m_Lead2ElectricPotential);
   SAFE_DELETE(m_Lead3ElectricPotential);
@@ -41,6 +35,23 @@ void SEElectroCardioGram::Clear()
   SAFE_DELETE(m_Lead10ElectricPotential);
   SAFE_DELETE(m_Lead11ElectricPotential);
   SAFE_DELETE(m_Lead12ElectricPotential);
+}
+
+void SEElectroCardioGram::Clear()
+{
+  SEEquipment::Clear();
+  INVALIDATE_PROPERTY(m_Lead1ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead2ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead3ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead4ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead5ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead6ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead7ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead8ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead9ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead10ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead11ElectricPotential);
+  INVALIDATE_PROPERTY(m_Lead12ElectricPotential);
 }
 
 const SEScalar* SEElectroCardioGram::GetScalar(const std::string& name)

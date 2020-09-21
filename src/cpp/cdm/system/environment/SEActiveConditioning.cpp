@@ -16,19 +16,17 @@ SEActiveConditioning::SEActiveConditioning(Logger* logger) : Loggable(logger)
 
 SEActiveConditioning::~SEActiveConditioning()
 {
-  Clear();
-}
 
-void SEActiveConditioning::Clear()
-{
   SAFE_DELETE(m_Power);
   SAFE_DELETE(m_SurfaceArea);
   SAFE_DELETE(m_SurfaceAreaFraction);
 }
 
-void SEActiveConditioning::Reset()
+void SEActiveConditioning::Clear()
 {
-  Clear();
+  INVALIDATE_PROPERTY(m_Power);
+  INVALIDATE_PROPERTY(m_SurfaceArea);
+  INVALIDATE_PROPERTY(m_SurfaceAreaFraction);
 }
 
 const SEScalar* SEActiveConditioning::GetScalar(const std::string& name)

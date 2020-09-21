@@ -16,13 +16,15 @@ SEConsumeNutrients::SEConsumeNutrients(Logger* logger) : SEPatientAction(logger)
 
 SEConsumeNutrients::~SEConsumeNutrients()
 {
-  Clear();
+  SAFE_DELETE(m_Nutrition);
+  InvalidateNutritionFile();
 }
 
 void SEConsumeNutrients::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Nutrition);
+  if (m_Nutrition)
+    m_Nutrition->Clear();
   InvalidateNutritionFile();
 }
 

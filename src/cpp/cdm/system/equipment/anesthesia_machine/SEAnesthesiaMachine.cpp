@@ -38,13 +38,6 @@ SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
 
 SEAnesthesiaMachine::~SEAnesthesiaMachine()
 {
-  Clear();
-}
-
-void SEAnesthesiaMachine::Clear()
-{
-  SEEquipment::Clear();
-
   m_Connection = eAnesthesiaMachine_Connection::NullConnection;
   SAFE_DELETE(m_InletFlow);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
@@ -59,6 +52,30 @@ void SEAnesthesiaMachine::Clear()
   SAFE_DELETE(m_RightChamber);
   SAFE_DELETE(m_OxygenBottleOne);
   SAFE_DELETE(m_OxygenBottleTwo);
+}
+
+void SEAnesthesiaMachine::Clear()
+{
+  SEEquipment::Clear();
+
+  m_Connection = eAnesthesiaMachine_Connection::NullConnection;
+  INVALIDATE_PROPERTY(m_InletFlow);
+  INVALIDATE_PROPERTY(m_InspiratoryExpiratoryRatio);
+  INVALIDATE_PROPERTY(m_OxygenFraction);
+  m_OxygenSource = eAnesthesiaMachine_OxygenSource::NullSource;
+  INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
+  m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NullGas;
+  INVALIDATE_PROPERTY(m_RespiratoryRate);
+  INVALIDATE_PROPERTY(m_ReliefValvePressure);
+  INVALIDATE_PROPERTY(m_PeakInspiratoryPressure);
+  if (m_LeftChamber)
+    m_LeftChamber->Clear();
+  if(m_RightChamber)
+    m_RightChamber->Clear();
+  if(m_OxygenBottleOne)
+    m_OxygenBottleOne->Clear();
+  if(m_OxygenBottleTwo)
+    m_OxygenBottleTwo->Clear();
 }
 
 void SEAnesthesiaMachine::ProcessConfiguration(SEAnesthesiaMachineConfiguration& config, SESubstanceManager& subMgr)

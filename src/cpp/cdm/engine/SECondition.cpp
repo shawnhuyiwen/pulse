@@ -14,7 +14,7 @@ SECondition::SECondition(Logger* logger) : Loggable(logger)
 
 SECondition::~SECondition()
 {
-  Clear();
+  m_Comment = "";
 }
 
 void SECondition::Clear()

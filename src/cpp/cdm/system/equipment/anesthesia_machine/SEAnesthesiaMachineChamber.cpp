@@ -16,13 +16,15 @@ SEAnesthesiaMachineChamber::SEAnesthesiaMachineChamber(Logger* logger) : Loggabl
 
 SEAnesthesiaMachineChamber::~SEAnesthesiaMachineChamber()
 {
-  Clear();
+  m_State = eSwitch::Off;
+  SAFE_DELETE(m_SubstanceFraction);
+  m_Substance = nullptr;
 }
 
 void SEAnesthesiaMachineChamber::Clear()
 {
   m_State = eSwitch::Off;
-  SAFE_DELETE(m_SubstanceFraction);
+  INVALIDATE_PROPERTY(m_SubstanceFraction);
   m_Substance=nullptr;
 }
 

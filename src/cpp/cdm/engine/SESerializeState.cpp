@@ -12,7 +12,7 @@ SESerializeState::SESerializeState(Logger* logger) : SEAction(logger)
 
 SESerializeState::~SESerializeState()
 {
-  Clear();
+
 }
 
 void SESerializeState::Clear()

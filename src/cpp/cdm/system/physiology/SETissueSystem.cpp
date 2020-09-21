@@ -19,11 +19,6 @@ SETissueSystem::SETissueSystem(Logger* logger) : SESystem(logger)
 
 SETissueSystem::~SETissueSystem()
 {
-  Clear();
-}
-
-void SETissueSystem::Clear()
-{
   SAFE_DELETE(m_CarbonDioxideProductionRate);
   SAFE_DELETE(m_ExtracellularFluidVolume);
   SAFE_DELETE(m_ExtravascularFluidVolume);
@@ -31,6 +26,18 @@ void SETissueSystem::Clear()
   SAFE_DELETE(m_IntracellularFluidPH);
   SAFE_DELETE(m_OxygenConsumptionRate);
   SAFE_DELETE(m_RespiratoryExchangeRatio);
+}
+
+void SETissueSystem::Clear()
+{
+  SESystem::Clear();
+  INVALIDATE_PROPERTY(m_CarbonDioxideProductionRate);
+  INVALIDATE_PROPERTY(m_ExtracellularFluidVolume);
+  INVALIDATE_PROPERTY(m_ExtravascularFluidVolume);
+  INVALIDATE_PROPERTY(m_IntracellularFluidVolume);
+  INVALIDATE_PROPERTY(m_IntracellularFluidPH);
+  INVALIDATE_PROPERTY(m_OxygenConsumptionRate);
+  INVALIDATE_PROPERTY(m_RespiratoryExchangeRatio);
 }
 
 const SEScalar* SETissueSystem::GetScalar(const std::string& name)

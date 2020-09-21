@@ -17,14 +17,16 @@ SEGastrointestinalSystem::SEGastrointestinalSystem(Logger* logger) : SESystem(lo
 
 SEGastrointestinalSystem::~SEGastrointestinalSystem()
 {
-  Clear();
+  SAFE_DELETE(m_WaterAbsorptionRate);
+  SAFE_DELETE(m_StomachContents);
 }
 
 void SEGastrointestinalSystem::Clear()
 {
   SESystem::Clear();
-  SAFE_DELETE(m_WaterAbsorptionRate);
-  SAFE_DELETE(m_StomachContents);
+  INVALIDATE_PROPERTY(m_WaterAbsorptionRate);
+  if (m_StomachContents)
+    m_StomachContents->Clear();
 }
 
 

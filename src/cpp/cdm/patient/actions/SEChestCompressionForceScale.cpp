@@ -15,14 +15,15 @@ SEChestCompressionForceScale::SEChestCompressionForceScale(Logger* logger) : SEC
 
 SEChestCompressionForceScale::~SEChestCompressionForceScale()
 {
-  Clear();
+  SAFE_DELETE(m_ForceScale);
+  SAFE_DELETE(m_ForcePeriod);
 }
 
 void SEChestCompressionForceScale::Clear()
 {
   SEChestCompression::Clear();
-  SAFE_DELETE(m_ForceScale);
-  SAFE_DELETE(m_ForcePeriod);
+  INVALIDATE_PROPERTY(m_ForceScale);
+  INVALIDATE_PROPERTY(m_ForcePeriod);
 }
 
 void SEChestCompressionForceScale::Copy(const SEChestCompressionForceScale& src)

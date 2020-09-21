@@ -12,7 +12,7 @@ SEUrinate::SEUrinate(Logger* logger) : SEPatientAction(logger)
 
 SEUrinate::~SEUrinate()
 {
-  Clear();
+
 }
 
 void SEUrinate::Clear()

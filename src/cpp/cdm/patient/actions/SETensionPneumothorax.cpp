@@ -15,7 +15,9 @@ SETensionPneumothorax::SETensionPneumothorax(Logger* logger) : SEPatientAction(l
 
 SETensionPneumothorax::~SETensionPneumothorax()
 {
-  Clear();
+  m_Type = eGate::NullGate;
+  m_Side = eSide::NullSide;
+  SAFE_DELETE(m_Severity);
 }
 
 void SETensionPneumothorax::Clear()
@@ -23,7 +25,7 @@ void SETensionPneumothorax::Clear()
   SEPatientAction::Clear();
   m_Type= eGate::NullGate;
   m_Side= eSide::NullSide;
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SETensionPneumothorax::Copy(const SETensionPneumothorax& src)

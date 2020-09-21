@@ -13,13 +13,13 @@ SEChestCompressionForce::SEChestCompressionForce(Logger* logger) : SEChestCompre
 
 SEChestCompressionForce::~SEChestCompressionForce()
 {
-  Clear();
+  SAFE_DELETE(m_Force);
 }
 
 void SEChestCompressionForce::Clear()
 {
   SEChestCompression::Clear();
-  SAFE_DELETE(m_Force);
+  INVALIDATE_PROPERTY(m_Force);
 }
 
 void SEChestCompressionForce::Copy(const SEChestCompressionForce& src)

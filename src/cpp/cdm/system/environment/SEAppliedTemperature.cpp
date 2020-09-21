@@ -17,15 +17,18 @@ SEAppliedTemperature::SEAppliedTemperature(Logger* logger) : Loggable(logger)
 
 SEAppliedTemperature::~SEAppliedTemperature()
 {
-  Clear();
+  m_State = eSwitch::Off;
+  SAFE_DELETE(m_Temperature);
+  SAFE_DELETE(m_SurfaceArea);
+  SAFE_DELETE(m_SurfaceAreaFraction);
 }
 
 void SEAppliedTemperature::Clear()
 {
-  SAFE_DELETE(m_Temperature);
-  SAFE_DELETE(m_SurfaceArea);
-  SAFE_DELETE(m_SurfaceAreaFraction);
   m_State = eSwitch::Off;
+  INVALIDATE_PROPERTY(m_Temperature);
+  INVALIDATE_PROPERTY(m_SurfaceArea);
+  INVALIDATE_PROPERTY(m_SurfaceAreaFraction);
 }
 
 const SEScalar* SEAppliedTemperature::GetScalar(const std::string& name)

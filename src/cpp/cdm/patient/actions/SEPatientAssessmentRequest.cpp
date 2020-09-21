@@ -12,7 +12,7 @@ SEPatientAssessmentRequest::SEPatientAssessmentRequest(Logger* logger) : SEPatie
 
 SEPatientAssessmentRequest::~SEPatientAssessmentRequest()
 {
-  Clear();
+  m_Type = ePatientAssessment_Type::CompleteBloodCount;
 }
 
 void SEPatientAssessmentRequest::Clear()

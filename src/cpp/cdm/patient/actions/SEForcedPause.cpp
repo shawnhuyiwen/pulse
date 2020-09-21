@@ -13,13 +13,13 @@ SEForcedPause::SEForcedPause(Logger* logger) : SEConsciousRespirationCommand(log
 
 SEForcedPause::~SEForcedPause()
 {
-  Clear();
+  SAFE_DELETE(m_Period);
 }
 
 void SEForcedPause::Clear()
 {
   SEConsciousRespirationCommand::Clear();
-  SAFE_DELETE(m_Period);
+  INVALIDATE_PROPERTY(m_Period);
 }
 
 void SEForcedPause::Copy(const SEForcedPause& src)

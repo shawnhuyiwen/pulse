@@ -22,7 +22,7 @@ SESubstancePharmacokinetics::~SESubstancePharmacokinetics()
 void SESubstancePharmacokinetics::Clear()
 {
   if(m_Physicochemicals!=nullptr)
-  m_Physicochemicals->Clear();
+    m_Physicochemicals->Clear();
   for (auto itr : m_TissueKinetics)
     itr.second->Clear();
 }

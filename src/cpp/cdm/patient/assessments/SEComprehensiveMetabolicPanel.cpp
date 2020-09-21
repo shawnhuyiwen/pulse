@@ -32,12 +32,6 @@ SEComprehensiveMetabolicPanel::SEComprehensiveMetabolicPanel(Logger* logger) : S
 
 SEComprehensiveMetabolicPanel::~SEComprehensiveMetabolicPanel()
 {
-  Clear();
-}
-
-void SEComprehensiveMetabolicPanel::Clear()
-{
-  SEPatientAssessment::Clear();
   SAFE_DELETE(m_Albumin);
   SAFE_DELETE(m_ALP);
   SAFE_DELETE(m_ALT);
@@ -52,6 +46,25 @@ void SEComprehensiveMetabolicPanel::Clear()
   SAFE_DELETE(m_Sodium);
   SAFE_DELETE(m_TotalBilirubin);
   SAFE_DELETE(m_TotalProtein);
+}
+
+void SEComprehensiveMetabolicPanel::Clear()
+{
+  SEPatientAssessment::Clear();
+  INVALIDATE_PROPERTY(m_Albumin);
+  INVALIDATE_PROPERTY(m_ALP);
+  INVALIDATE_PROPERTY(m_ALT);
+  INVALIDATE_PROPERTY(m_AST);
+  INVALIDATE_PROPERTY(m_BUN);
+  INVALIDATE_PROPERTY(m_Calcium);
+  INVALIDATE_PROPERTY(m_Chloride);
+  INVALIDATE_PROPERTY(m_CO2);
+  INVALIDATE_PROPERTY(m_Creatinine);
+  INVALIDATE_PROPERTY(m_Glucose);
+  INVALIDATE_PROPERTY(m_Potassium);
+  INVALIDATE_PROPERTY(m_Sodium);
+  INVALIDATE_PROPERTY(m_TotalBilirubin);
+  INVALIDATE_PROPERTY(m_TotalProtein);
 }
 
 bool SEComprehensiveMetabolicPanel::SerializeToString(std::string& output, SerializationFormat m) const

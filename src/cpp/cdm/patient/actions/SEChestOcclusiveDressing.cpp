@@ -13,7 +13,8 @@ SEChestOcclusiveDressing::SEChestOcclusiveDressing(Logger* logger) : SEPatientAc
 
 SEChestOcclusiveDressing::~SEChestOcclusiveDressing()
 {
-  Clear();
+  m_State = eSwitch::Off;
+  m_Side = eSide::NullSide;
 }
 
 void SEChestOcclusiveDressing::Clear()

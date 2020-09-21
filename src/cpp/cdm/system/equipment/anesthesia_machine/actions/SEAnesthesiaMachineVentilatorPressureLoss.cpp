@@ -12,13 +12,13 @@ SEAnesthesiaMachineVentilatorPressureLoss::SEAnesthesiaMachineVentilatorPressure
 
 SEAnesthesiaMachineVentilatorPressureLoss::~SEAnesthesiaMachineVentilatorPressureLoss()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEAnesthesiaMachineVentilatorPressureLoss::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEAnesthesiaMachineVentilatorPressureLoss::Copy(const SEAnesthesiaMachineVentilatorPressureLoss& src)

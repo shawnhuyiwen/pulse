@@ -22,12 +22,6 @@ SEMechanicalVentilation::SEMechanicalVentilation(Logger* logger) : SEPatientActi
 
 SEMechanicalVentilation::~SEMechanicalVentilation()
 {
-  Clear();
-}
-
-void SEMechanicalVentilation::Clear()
-{
-  SEPatientAction::Clear();
 
   m_State = eSwitch::Off;
   SAFE_DELETE(m_Flow);
@@ -37,6 +31,20 @@ void SEMechanicalVentilation::Clear()
   m_cGasFractions.clear();
   DELETE_VECTOR(m_Aerosols);
   m_cAerosols.clear();
+}
+
+void SEMechanicalVentilation::Clear()
+{
+  SEPatientAction::Clear();
+
+  m_State = eSwitch::Off;
+  INVALIDATE_PROPERTY(m_Flow);
+  INVALIDATE_PROPERTY(m_Pressure);
+
+  for (SESubstanceFraction* sf : m_GasFractions)
+    sf->Clear();
+  for (SESubstanceConcentration* sc : m_Aerosols)
+    sc->Clear();
 }
 
 void SEMechanicalVentilation::Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr)

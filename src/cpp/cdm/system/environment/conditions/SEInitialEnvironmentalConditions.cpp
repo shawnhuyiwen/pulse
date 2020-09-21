@@ -25,14 +25,17 @@ SEInitialEnvironmentalConditions::SEInitialEnvironmentalConditions(Logger* logge
 
 SEInitialEnvironmentalConditions::~SEInitialEnvironmentalConditions()
 {
-  Clear();
+
+  InvalidateEnvironmentalConditionsFile();
+  SAFE_DELETE(m_EnvironmentalConditions);
 }
 
 void SEInitialEnvironmentalConditions::Clear()
 {
   SEEnvironmentCondition::Clear();
   InvalidateEnvironmentalConditionsFile();
-  SAFE_DELETE(m_EnvironmentalConditions);
+  if (m_EnvironmentalConditions)
+    m_EnvironmentalConditions->Clear();
 }
 
 void SEInitialEnvironmentalConditions::Copy(const SEInitialEnvironmentalConditions& src, const SESubstanceManager& subMgr)

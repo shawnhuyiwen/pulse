@@ -24,14 +24,16 @@ SEMechanicalVentilatorConfiguration::SEMechanicalVentilatorConfiguration(Logger*
 
 SEMechanicalVentilatorConfiguration::~SEMechanicalVentilatorConfiguration()
 {
-  Clear();
+  InvalidateConfigurationFile();
+  SAFE_DELETE(m_Configuration);
 }
 
 void SEMechanicalVentilatorConfiguration::Clear()
 {
   SEMechanicalVentilatorAction::Clear();
   InvalidateConfigurationFile();
-  SAFE_DELETE(m_Configuration);
+  if (m_Configuration)
+    m_Configuration->Clear();
 }
 
 void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr)

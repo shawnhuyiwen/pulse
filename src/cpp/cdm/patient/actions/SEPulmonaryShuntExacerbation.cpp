@@ -13,13 +13,13 @@ SEPulmonaryShuntExacerbation::SEPulmonaryShuntExacerbation(Logger* logger) : SEP
 
 SEPulmonaryShuntExacerbation::~SEPulmonaryShuntExacerbation()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEPulmonaryShuntExacerbation::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEPulmonaryShuntExacerbation::Copy(const SEPulmonaryShuntExacerbation& src)

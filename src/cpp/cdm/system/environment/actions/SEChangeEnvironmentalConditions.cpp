@@ -27,14 +27,16 @@ SEChangeEnvironmentalConditions::SEChangeEnvironmentalConditions(Logger* logger)
 
 SEChangeEnvironmentalConditions::~SEChangeEnvironmentalConditions()
 {
-  Clear();
+  InvalidateEnvironmentalConditionsFile();
+  SAFE_DELETE(m_EnvironmentalConditions);
 }
 
 void SEChangeEnvironmentalConditions::Clear()
 {
   SEEnvironmentAction::Clear();
   InvalidateEnvironmentalConditionsFile();
-  SAFE_DELETE(m_EnvironmentalConditions);
+  if (m_EnvironmentalConditions)
+    m_EnvironmentalConditions->Clear();
 }
 
 void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr)

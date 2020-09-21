@@ -18,16 +18,18 @@ SESubstanceBolus::SESubstanceBolus(const SESubstance& substance, Logger* logger)
 
 SESubstanceBolus::~SESubstanceBolus()
 {
-  Clear();
+  m_AdminRoute = eSubstanceAdministration_Route::Intravenous;
+  SAFE_DELETE(m_Dose);
+  SAFE_DELETE(m_Concentration);
+  m_State.Clear();
 }
 
 void SESubstanceBolus::Clear()
 {
   SESubstanceAdministration::Clear();
   m_AdminRoute=eSubstanceAdministration_Route::Intravenous;
-  SAFE_DELETE(m_Dose);
-  SAFE_DELETE(m_Concentration);
-  // m_Substance=nullptr; Keeping mapping!!
+  INVALIDATE_PROPERTY(m_Dose);
+  INVALIDATE_PROPERTY(m_Concentration);
   m_State.Clear();
 }
 

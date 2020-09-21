@@ -11,7 +11,7 @@ SEPatientCondition::SEPatientCondition(Logger* logger) : SECondition(logger)
 
 SEPatientCondition::~SEPatientCondition()
 {
-  Clear();
+
 }
 
 void SEPatientCondition::Clear()
