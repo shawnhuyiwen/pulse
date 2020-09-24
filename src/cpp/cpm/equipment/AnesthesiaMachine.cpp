@@ -163,10 +163,26 @@ void AnesthesiaMachine::SetUp()
 
 void AnesthesiaMachine::StateChange()
 {
-  if (HasLeftChamber() && GetLeftChamber().GetState() == eSwitch::On && GetLeftChamber().HasSubstance())
-    m_data.GetSubstances().AddActiveSubstance(*m_LeftChamber->GetSubstance());
-  if (HasRightChamber() && GetRightChamber().GetState() == eSwitch::On && GetRightChamber().HasSubstance())
-    m_data.GetSubstances().AddActiveSubstance(*m_RightChamber->GetSubstance());
+  if (HasLeftChamber() && GetLeftChamber().GetState() == eSwitch::On)
+  {
+    if (GetLeftChamber().HasSubstance())
+      m_data.GetSubstances().AddActiveSubstance(*m_LeftChamber->GetSubstance());
+    else
+      Error("Active left chamber was not provided a substance, chamber will not be used.");
+
+    if(!GetLeftChamber().HasSubstanceFraction())
+      Error("Active left chamber was not provided a substance fraction, chamber will not be used.");
+  }
+  if (HasRightChamber() && GetRightChamber().GetState() == eSwitch::On)
+  {
+    if (GetRightChamber().HasSubstance())
+      m_data.GetSubstances().AddActiveSubstance(*m_RightChamber->GetSubstance());
+    else
+      Error("Active right chamber was not provided a substance, chamber will not be used.");
+
+    if (!GetRightChamber().HasSubstanceFraction())
+      Error("Active right chamber was not provided a substance fraction, chamber will not be used.");
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -389,14 +405,14 @@ void AnesthesiaMachine::CalculateGasSourceSubstances()
   {
     VaporizerFailureSeverity = m_actions->GetAnesthesiaMachineVaporizerFailure()->GetSeverity().GetValue();
   }
-  if(GetLeftChamber().GetState() == eSwitch::On && GetLeftChamber().HasSubstance())
+  if(GetLeftChamber().GetState() == eSwitch::On && GetLeftChamber().HasSubstance() && GetLeftChamber().HasSubstanceFraction())
   {
     SEGasSubstanceQuantity* gasSrcSubQ = m_gasSource->GetSubstanceQuantity(*GetLeftChamber().GetSubstance());
     LeftInhaledAgentVolumeFraction = GetLeftChamber().GetSubstanceFraction().GetValue();
     LeftInhaledAgentVolumeFraction = LeftInhaledAgentVolumeFraction * (1-VaporizerFailureSeverity);
     gasSrcSubQ->GetVolumeFraction().SetValue(LeftInhaledAgentVolumeFraction);
   }
-  if(GetRightChamber().GetState() == eSwitch::On && GetRightChamber().HasSubstance())
+  if(GetRightChamber().GetState() == eSwitch::On && GetRightChamber().HasSubstance() && GetRightChamber().HasSubstanceFraction())
   {
     SEGasSubstanceQuantity* gasSrcSubQ = m_gasSource->GetSubstanceQuantity(*GetRightChamber().GetSubstance());
     RightInhaledAgentVolumeFraction = GetRightChamber().GetSubstanceFraction().GetValue();

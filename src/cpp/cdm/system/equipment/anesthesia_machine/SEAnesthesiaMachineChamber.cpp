@@ -33,9 +33,12 @@ void SEAnesthesiaMachineChamber::Merge(const SEAnesthesiaMachineChamber& from, S
   SetState(from.m_State);
   if (from.HasSubstanceFraction())
     GetSubstanceFraction().Set(*from.m_SubstanceFraction);
-  m_Substance = subMgr.GetSubstance(from.m_Substance->GetName());
-  if (m_Substance == nullptr)
-    Error("Do not have substance : " + from.m_Substance->GetName());
+  if (from.m_Substance != nullptr)
+  {
+    m_Substance = subMgr.GetSubstance(from.m_Substance->GetName());
+    if (m_Substance == nullptr)
+      Error("Do not have substance : " + from.m_Substance->GetName());
+  }
 }
 
 const SEScalar* SEAnesthesiaMachineChamber::GetScalar(const std::string& name)
