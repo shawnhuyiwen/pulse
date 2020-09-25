@@ -12,7 +12,7 @@ SEAnesthesiaMachineOxygenTankPressureLoss::SEAnesthesiaMachineOxygenTankPressure
 
 SEAnesthesiaMachineOxygenTankPressureLoss::~SEAnesthesiaMachineOxygenTankPressureLoss()
 {
-  Clear();
+  m_State = eSwitch::Off;
 }
 
 void SEAnesthesiaMachineOxygenTankPressureLoss::Clear()

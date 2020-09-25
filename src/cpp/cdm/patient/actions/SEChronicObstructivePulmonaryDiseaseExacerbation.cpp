@@ -14,14 +14,15 @@ SEChronicObstructivePulmonaryDiseaseExacerbation::SEChronicObstructivePulmonaryD
 
 SEChronicObstructivePulmonaryDiseaseExacerbation::~SEChronicObstructivePulmonaryDiseaseExacerbation()
 {
-  Clear();
+  SAFE_DELETE(m_BronchitisSeverity);
+  SAFE_DELETE(m_EmphysemaSeverity);
 }
 
 void SEChronicObstructivePulmonaryDiseaseExacerbation::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_BronchitisSeverity);
-  SAFE_DELETE(m_EmphysemaSeverity);
+  INVALIDATE_PROPERTY(m_BronchitisSeverity);
+  INVALIDATE_PROPERTY(m_EmphysemaSeverity);
 }
 
 void SEChronicObstructivePulmonaryDiseaseExacerbation::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src)

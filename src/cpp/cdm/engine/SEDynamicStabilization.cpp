@@ -25,9 +25,9 @@ SEDynamicStabilization::SEDynamicStabilization(Logger *logger) : SEEngineStabili
 SEDynamicStabilization::~SEDynamicStabilization()
 {
   Clear();
-  delete m_MergedConditions;
-  delete m_RestingConvergence;
-  delete m_FeedbackConvergence;
+  SAFE_DELETE(m_MergedConditions)
+  SAFE_DELETE(m_RestingConvergence)
+  SAFE_DELETE(m_FeedbackConvergence)
 }
 
 void SEDynamicStabilization::Clear()

@@ -18,14 +18,16 @@ SEInhalerConfiguration::SEInhalerConfiguration(Logger* logger) : SEInhalerAction
 
 SEInhalerConfiguration::~SEInhalerConfiguration()
 {
-  Clear();
+  InvalidateConfigurationFile();
+  SAFE_DELETE(m_Configuration);
 }
 
 void SEInhalerConfiguration::Clear()
 {
   SEInhalerAction::Clear();
   InvalidateConfigurationFile();
-  SAFE_DELETE(m_Configuration);
+  if (m_Configuration)
+    m_Configuration->Clear();
 }
 
 void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr)

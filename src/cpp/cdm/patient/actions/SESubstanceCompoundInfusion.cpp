@@ -16,14 +16,16 @@ SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompou
 
 SESubstanceCompoundInfusion::~SESubstanceCompoundInfusion()
 {
-  Clear();
+  SAFE_DELETE(m_Rate);
+  SAFE_DELETE(m_BagVolume);
+  // m_Compound=nullptr; Keeping mapping!!
 }
 
 void SESubstanceCompoundInfusion::Clear()
 {
   SESubstanceAdministration::Clear();
-  m_Rate=nullptr;
-  m_BagVolume=nullptr;  
+  INVALIDATE_PROPERTY(m_Rate);
+  INVALIDATE_PROPERTY(m_BagVolume);
   // m_Compound=nullptr; Keeping mapping!!
 }
 

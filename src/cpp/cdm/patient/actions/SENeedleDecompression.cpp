@@ -13,7 +13,8 @@ SENeedleDecompression::SENeedleDecompression(Logger* logger) : SEPatientAction(l
 
 SENeedleDecompression::~SENeedleDecompression()
 {
-  Clear();
+  m_State = eSwitch::Off;
+  m_Side = eSide::NullSide;
 }
 
 void SENeedleDecompression::Clear()

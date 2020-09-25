@@ -22,10 +22,9 @@ SEActionManager::SEActionManager(Logger* logger) : Loggable(logger)
 
 SEActionManager::~SEActionManager()
 {
-  Clear();
-  delete(m_PatientActions);
-  delete(m_EnvironmentActions);
-  delete(m_EquipmentActions);
+  SAFE_DELETE(m_PatientActions);
+  SAFE_DELETE(m_EnvironmentActions);
+  SAFE_DELETE(m_EquipmentActions);
 }
 
 void SEActionManager::Clear()

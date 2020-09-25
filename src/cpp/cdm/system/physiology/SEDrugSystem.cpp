@@ -28,13 +28,6 @@ SEDrugSystem::SEDrugSystem(Logger* logger) : SESystem(logger)
 
 SEDrugSystem::~SEDrugSystem()
 {
-  Clear();
-}
-
-void SEDrugSystem::Clear()
-{
-  SESystem::Clear();
-
   SAFE_DELETE(m_BronchodilationLevel);
   SAFE_DELETE(m_HeartRateChange);
   SAFE_DELETE(m_MeanBloodPressureChange);
@@ -45,6 +38,23 @@ void SEDrugSystem::Clear()
   SAFE_DELETE(m_SedationLevel);
   SAFE_DELETE(m_TidalVolumeChange);
   SAFE_DELETE(m_TubularPermeabilityChange);
+}
+
+void SEDrugSystem::Clear()
+{
+  SESystem::Clear();
+
+  INVALIDATE_PROPERTY(m_BronchodilationLevel);
+  INVALIDATE_PROPERTY(m_HeartRateChange);
+  INVALIDATE_PROPERTY(m_MeanBloodPressureChange);
+  INVALIDATE_PROPERTY(m_NeuromuscularBlockLevel);
+  INVALIDATE_PROPERTY(m_PulsePressureChange);
+  if (m_PupillaryResponse)
+    m_PupillaryResponse->Clear();
+  INVALIDATE_PROPERTY(m_RespirationRateChange);
+  INVALIDATE_PROPERTY(m_SedationLevel);
+  INVALIDATE_PROPERTY(m_TidalVolumeChange);
+  INVALIDATE_PROPERTY(m_TubularPermeabilityChange);
 }
 
 const SEScalar* SEDrugSystem::GetScalar(const std::string& name)

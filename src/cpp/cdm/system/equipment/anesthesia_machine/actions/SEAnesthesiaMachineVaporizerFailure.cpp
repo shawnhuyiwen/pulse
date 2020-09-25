@@ -12,13 +12,13 @@ SEAnesthesiaMachineVaporizerFailure::SEAnesthesiaMachineVaporizerFailure(Logger*
 
 SEAnesthesiaMachineVaporizerFailure::~SEAnesthesiaMachineVaporizerFailure()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEAnesthesiaMachineVaporizerFailure::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEAnesthesiaMachineVaporizerFailure::Copy(const SEAnesthesiaMachineVaporizerFailure& src)

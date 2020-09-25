@@ -18,14 +18,15 @@ SESubstanceInfusion::SESubstanceInfusion(const SESubstance& substance, Logger* l
 
 SESubstanceInfusion::~SESubstanceInfusion()
 {
-  Clear();
+  SAFE_DELETE(m_Rate);
+  SAFE_DELETE(m_Concentration);
 }
 
 void SESubstanceInfusion::Clear()
 {
   SESubstanceAdministration::Clear();
-  m_Rate=nullptr;
-  m_Concentration=nullptr;  
+  INVALIDATE_PROPERTY(m_Rate);
+  INVALIDATE_PROPERTY(m_Concentration);
 }
 
 void SESubstanceInfusion::Copy(const SESubstanceInfusion& src)

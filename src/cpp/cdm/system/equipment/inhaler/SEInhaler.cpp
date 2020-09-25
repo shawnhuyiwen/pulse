@@ -25,7 +25,11 @@ SEInhaler::SEInhaler(Logger* logger) : SEEquipment(logger)
 
 SEInhaler::~SEInhaler()
 {
-  Clear();
+  m_State = eSwitch::Off;
+  SAFE_DELETE(m_MeteredDose);
+  SAFE_DELETE(m_NozzleLoss);
+  SAFE_DELETE(m_SpacerVolume);
+  m_Substance = nullptr;
 }
 
 void SEInhaler::Clear()
@@ -33,9 +37,9 @@ void SEInhaler::Clear()
   SEEquipment::Clear();
 
   m_State = eSwitch::Off;
-  SAFE_DELETE(m_MeteredDose);
-  SAFE_DELETE(m_NozzleLoss);
-  SAFE_DELETE(m_SpacerVolume);
+  INVALIDATE_PROPERTY(m_MeteredDose);
+  INVALIDATE_PROPERTY(m_NozzleLoss);
+  INVALIDATE_PROPERTY(m_SpacerVolume);
   m_Substance = nullptr;
 }
 

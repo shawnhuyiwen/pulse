@@ -52,7 +52,32 @@ SESubstance::SESubstance(const std::string& name, Logger* logger) : Loggable(log
 
 SESubstance::~SESubstance()
 {
-  Clear();
+  m_State = eSubstance_State::NullState;
+  SAFE_DELETE(m_Density);
+  SAFE_DELETE(m_MolarMass);
+
+  SAFE_DELETE(m_MaximumDiffusionFlux);
+  SAFE_DELETE(m_MichaelisCoefficient);
+
+  SAFE_DELETE(m_BloodConcentration);
+  SAFE_DELETE(m_MassInBody);
+  SAFE_DELETE(m_MassInBlood);
+  SAFE_DELETE(m_MassInTissue);
+  SAFE_DELETE(m_PlasmaConcentration);
+  SAFE_DELETE(m_SystemicMassCleared);
+  SAFE_DELETE(m_TissueConcentration);
+
+  SAFE_DELETE(m_AlveolarTransfer);
+  SAFE_DELETE(m_DiffusingCapacity);
+  SAFE_DELETE(m_EndTidalFraction);
+  SAFE_DELETE(m_EndTidalPressure);
+  SAFE_DELETE(m_SolubilityCoefficient);
+  SAFE_DELETE(m_RelativeDiffusionCoefficient);
+
+  SAFE_DELETE(m_Aerosolization);
+  SAFE_DELETE(m_Clearance);
+  SAFE_DELETE(m_PK);
+  SAFE_DELETE(m_PD);
 }
 
 void SESubstance::Clear()

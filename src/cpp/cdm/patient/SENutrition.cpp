@@ -24,11 +24,6 @@ SENutrition::SENutrition(Logger* logger) : Loggable(logger)
 
 SENutrition::~SENutrition()
 {
-  Clear();  
-}
-
-void SENutrition::Clear()
-{
   SAFE_DELETE(m_Carbohydrate);
   SAFE_DELETE(m_CarbohydrateDigestionRate);
   SAFE_DELETE(m_Fat);
@@ -38,6 +33,19 @@ void SENutrition::Clear()
   SAFE_DELETE(m_Calcium);
   SAFE_DELETE(m_Sodium);
   SAFE_DELETE(m_Water);
+}
+
+void SENutrition::Clear()
+{
+  INVALIDATE_PROPERTY(m_Carbohydrate);
+  INVALIDATE_PROPERTY(m_CarbohydrateDigestionRate);
+  INVALIDATE_PROPERTY(m_Fat);
+  INVALIDATE_PROPERTY(m_FatDigestionRate);
+  INVALIDATE_PROPERTY(m_Protein);
+  INVALIDATE_PROPERTY(m_ProteinDigestionRate);
+  INVALIDATE_PROPERTY(m_Calcium);
+  INVALIDATE_PROPERTY(m_Sodium);
+  INVALIDATE_PROPERTY(m_Water);
 }
 
 void SENutrition::Copy(const SENutrition& src)

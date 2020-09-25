@@ -13,13 +13,13 @@ SEChronicAnemia::SEChronicAnemia(Logger* logger) : SEPatientCondition(logger)
 
 SEChronicAnemia::~SEChronicAnemia()
 {
-  Clear();
+  SAFE_DELETE(m_ReductionFactor);
 }
 
 void SEChronicAnemia::Clear()
 {
   SEPatientCondition::Clear();
-  SAFE_DELETE(m_ReductionFactor);
+  INVALIDATE_PROPERTY(m_ReductionFactor);
 }
 
 void SEChronicAnemia::Copy(const SEChronicAnemia& src)

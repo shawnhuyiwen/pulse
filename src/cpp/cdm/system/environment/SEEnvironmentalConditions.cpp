@@ -35,18 +35,13 @@ SEEnvironmentalConditions::SEEnvironmentalConditions(Logger* logger) : Loggable(
 
 SEEnvironmentalConditions::~SEEnvironmentalConditions()
 {
-  Clear();
-}
-
-void SEEnvironmentalConditions::Clear()
-{
   m_SurroundingType = eSurroundingType::NullSurrounding;
   SAFE_DELETE(m_AirDensity);
   SAFE_DELETE(m_AirVelocity);
   SAFE_DELETE(m_AmbientTemperature);
   SAFE_DELETE(m_AtmosphericPressure);
   SAFE_DELETE(m_ClothingResistance);
-  SAFE_DELETE(m_Emissivity); 
+  SAFE_DELETE(m_Emissivity);
   SAFE_DELETE(m_MeanRadiantTemperature);
   SAFE_DELETE(m_RelativeHumidity);
   SAFE_DELETE(m_RespirationAmbientTemperature);
@@ -56,6 +51,26 @@ void SEEnvironmentalConditions::Clear()
 
   DELETE_VECTOR(m_AmbientAerosols);
   m_cAmbientAerosols.clear();
+}
+
+void SEEnvironmentalConditions::Clear()
+{
+  m_SurroundingType = eSurroundingType::NullSurrounding;
+  INVALIDATE_PROPERTY(m_AirDensity);
+  INVALIDATE_PROPERTY(m_AirVelocity);
+  INVALIDATE_PROPERTY(m_AmbientTemperature);
+  INVALIDATE_PROPERTY(m_AtmosphericPressure);
+  INVALIDATE_PROPERTY(m_ClothingResistance);
+  INVALIDATE_PROPERTY(m_Emissivity);
+  INVALIDATE_PROPERTY(m_MeanRadiantTemperature);
+  INVALIDATE_PROPERTY(m_RelativeHumidity);
+  INVALIDATE_PROPERTY(m_RespirationAmbientTemperature);
+
+  for (SESubstanceFraction* sf : m_AmbientGases)
+    sf->Clear();
+
+  for (SESubstanceConcentration* sc : m_AmbientAerosols)
+    sc->Clear();
 }
 
 void SEEnvironmentalConditions::Copy(const SEEnvironmentalConditions& src, const SESubstanceManager& subMgr)

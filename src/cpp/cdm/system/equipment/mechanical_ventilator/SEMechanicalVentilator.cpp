@@ -58,13 +58,6 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
 
 SEMechanicalVentilator::~SEMechanicalVentilator()
 {
-  Clear();
-}
-
-void SEMechanicalVentilator::Clear()
-{
-  SEEquipment::Clear();
-
   m_Connection = eMechanicalVentilator_Connection::NullConnection;
   SAFE_DELETE(m_EndotrachealTubeResistance);
 
@@ -105,6 +98,49 @@ void SEMechanicalVentilator::Clear()
   DELETE_VECTOR(m_ConcentrationInspiredAerosols);
   m_cConcentrationInspiredAerosols.clear();
   m_ConcentrationInspiredAerosols.clear();
+}
+
+void SEMechanicalVentilator::Clear()
+{
+  SEEquipment::Clear();
+
+  m_Connection = eMechanicalVentilator_Connection::NullConnection;
+  INVALIDATE_PROPERTY(m_EndotrachealTubeResistance);
+
+  INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
+  INVALIDATE_PROPERTY(m_FunctionalResidualCapacity);
+
+  INVALIDATE_PROPERTY(m_ExpirationCycleFlow);
+  INVALIDATE_PROPERTY(m_ExpirationCyclePressure);
+  INVALIDATE_PROPERTY(m_ExpirationCycleVolume);
+  INVALIDATE_PROPERTY(m_ExpirationCycleTime);
+
+  INVALIDATE_PROPERTY(m_ExpirationTubeResistance);
+  INVALIDATE_PROPERTY(m_ExpirationValveResistance);
+  m_ExpirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+
+  INVALIDATE_PROPERTY(m_InspirationLimitFlow);
+  INVALIDATE_PROPERTY(m_InspirationLimitPressure);
+  INVALIDATE_PROPERTY(m_InspirationLimitVolume);
+
+  INVALIDATE_PROPERTY(m_InspirationPauseTime);
+
+  INVALIDATE_PROPERTY(m_PeakInspiratoryPressure);
+  INVALIDATE_PROPERTY(m_InspirationTargetFlow);
+
+  INVALIDATE_PROPERTY(m_InspirationMachineTriggerTime);
+
+  INVALIDATE_PROPERTY(m_InspirationPatientTriggerFlow);
+  INVALIDATE_PROPERTY(m_InspirationPatientTriggerPressure);
+
+  INVALIDATE_PROPERTY(m_InspirationTubeResistance);
+  INVALIDATE_PROPERTY(m_InspirationValveResistance);
+  m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+
+  for (SESubstanceFraction* sf : m_FractionInspiredGases)
+    sf->Clear();
+  for (SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
+    sc->Clear();
 }
 
 

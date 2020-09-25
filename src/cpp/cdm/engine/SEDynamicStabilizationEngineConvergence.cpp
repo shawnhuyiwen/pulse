@@ -20,10 +20,10 @@ SEDynamicStabilizationEngineConvergence::SEDynamicStabilizationEngineConvergence
 SEDynamicStabilizationEngineConvergence::~SEDynamicStabilizationEngineConvergence()
 {
   Clear();
-  delete m_DataRequestMgr;
-  delete m_ConvergenceTime;
-  delete m_MinimumReactionTime;
-  delete m_MaximumAllowedStabilizationTime;
+  SAFE_DELETE(m_DataRequestMgr)
+  SAFE_DELETE(m_ConvergenceTime)
+  SAFE_DELETE(m_MinimumReactionTime)
+  SAFE_DELETE(m_MaximumAllowedStabilizationTime)
 }
 
 void SEDynamicStabilizationEngineConvergence::Clear()

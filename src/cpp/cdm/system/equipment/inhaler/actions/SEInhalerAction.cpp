@@ -11,7 +11,7 @@ SEInhalerAction::SEInhalerAction(Logger* logger) : SEEquipmentAction(logger)
 
 SEInhalerAction::~SEInhalerAction()
 {
-  Clear();
+
 }
 
 void SEInhalerAction::Clear()
