@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "controller/Controller.h"
+#include "controller/BlackBoxes.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 #include "controller/Substances.h"
@@ -187,6 +188,8 @@ PulseCircuits& PulseData::GetCircuits() const { return *m_Circuits; }
 
 PulseCompartments& PulseData::GetCompartments() const { return *m_Compartments; }
 
+PulseBlackBoxes& PulseData::GetBlackBoxes() const { return *m_BlackBoxes; }
+
 const PulseConfiguration& PulseData::GetConfiguration() const { return *m_Config; }
 
 const SEScalarTime& PulseData::GetEngineTime() const { return m_CurrentTime; }
@@ -239,6 +242,7 @@ PulseController::~PulseController()
   SAFE_DELETE(m_EventManager);
 
   SAFE_DELETE(m_Compartments);
+  SAFE_DELETE(m_BlackBoxes);
 
   SAFE_DELETE(m_Circuits);
 }
@@ -282,6 +286,7 @@ void PulseController::Allocate()
   m_EventManager = new SEEventManager(GetLogger());
 
   m_Compartments = new PulseCompartments(*this);
+  m_BlackBoxes = new PulseBlackBoxes(*this);
 
   m_Circuits = new PulseCircuits(*this);
 }

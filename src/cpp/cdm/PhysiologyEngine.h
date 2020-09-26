@@ -29,6 +29,7 @@ class SEElectroCardioGram;
 class SEInhaler;
 class SEMechanicalVentilator;
 class SECompartmentManager;
+class SEBlackBoxManager;
 class SEActionManager;
 class SEConditionManager;
 class SEEventManager;
@@ -369,4 +370,14 @@ public:
   ///
   //--------------------------------------------------------------------------------------------------
   virtual const SECompartmentManager& GetCompartments() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Retrieves the engine black box manager
+  /// Black boxes allow users to inject or retrieve flows, pressure, volume
+  /// as well as substance volumes and volume fractions into the engine, use with caution.
+  /// These are intended to allow integration between Pulse and other systems at a low level.
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual SEBlackBoxManager& GetBlackBoxes() const = 0;
 };
