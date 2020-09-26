@@ -115,10 +115,10 @@ int main(int argc, char* argv[])
       //cdmTest.GasTransportTest(cdmDir);
       
       // BlackBox Tests
-      cdmTest.BasicBlackBoxComparisonTest(cdmDir);
-      //cdmTest.BasicBlackBoxTest(cdmDir);
-      cdmTest.SimpleBlackBoxTest(cdmDir);
-      cdmTest.WindkesselBlackBoxTest(cdmDir);
+      //cdmTest.BasicBlackBoxComparisonTest(cdmDir);
+      cdmTest.BasicBlackBoxTest(cdmDir);
+      //cdmTest.SimpleBlackBoxTest(cdmDir);
+      //cdmTest.WindkesselBlackBoxTest(cdmDir);
 
       // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);
