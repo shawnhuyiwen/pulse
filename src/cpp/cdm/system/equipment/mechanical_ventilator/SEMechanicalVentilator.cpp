@@ -137,10 +137,8 @@ void SEMechanicalVentilator::Clear()
   INVALIDATE_PROPERTY(m_InspirationValveResistance);
   m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
 
-  for (SESubstanceFraction* sf : m_FractionInspiredGases)
-    sf->Clear();
-  for (SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
-    sc->Clear();
+  RemoveFractionInspiredGases();
+  RemoveConcentrationInspiredAerosols();
 }
 
 
@@ -199,10 +197,10 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
   // Always need to provide a full (fractions sum to 1) substance list that replaces current
   if (from.HasFractionInspiredGas())
   {
+    size_t cnt = 0;
     double amt;
     double total = 0;
     const SESubstance* sub;
-    SESubstanceFraction* sf;
     // Since we are allowing only O2 to be specified
     // Remove everything so we know what is intentionally not provided
     // And what is intentially set to 0 (don't just set to 0)
@@ -211,25 +209,32 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
     {
       sub = subMgr.GetSubstance(osf->GetSubstance().GetName());
       if (sub == nullptr)
+      {
         Error("Do not have substance : " + osf->GetSubstance().GetName());
-      sf = new SESubstanceFraction(*sub);
-      sf->GetFractionAmount().Set(osf->GetFractionAmount());
-      amt = sf->GetFractionAmount().GetValue();
+        continue;
+      }
+      SESubstanceFraction& sf = GetFractionInspiredGas(*sub);
+      amt = osf->GetFractionAmount().GetValue();
+      sf.GetFractionAmount().SetValue(amt);
+      subMgr.AddActiveSubstance(*sub);
       total += amt;
-      m_FractionInspiredGases.push_back(sf);
-      m_cFractionInspiredGases.push_back(sf);
-      subMgr.AddActiveSubstance(sf->m_Substance);
+      if (amt > 0)
+        cnt++; // Count of non-zero fractions
     }
-    
+
     // It's Ok if you ONLY set Oxygen, i.e. FiO2
     // Ventilator models should understand that common setting
     if (!SEScalar::IsValue(1, total))
     {
       bool err = false;
-      if (m_FractionInspiredGases.size() != 1)
+      if (cnt != 1)
         err = true;
-      else if (m_FractionInspiredGases[0]->GetSubstance().GetName() != "Oxygen")
-        err = true;
+      else
+      {
+        const SESubstance* o2 = subMgr.GetSubstance("Oxygen");
+        if (!GetFractionInspiredGas(*o2).GetFractionAmount().IsPositive())
+          err = true;
+      }
       if(err)
         Error("Mechanical Ventilator substance fractions do not sum to 1");
     }
@@ -694,7 +699,7 @@ bool SEMechanicalVentilator::HasFractionInspiredGas(const SESubstance& s) const
   for (const SESubstanceFraction* sf : m_FractionInspiredGases)
   {
     if (&s == &sf->GetSubstance())
-      return true;
+      return sf->GetFractionAmount() > 0;
   }
   return false;
 }
@@ -732,22 +737,13 @@ const SESubstanceFraction* SEMechanicalVentilator::GetFractionInspiredGas(const 
 }
 void SEMechanicalVentilator::RemoveFractionInspiredGas(const SESubstance& s)
 {
-  const SESubstanceFraction* sf;
-  for (unsigned int i = 0; i < m_FractionInspiredGases.size(); i++)
-  {
-    sf = m_FractionInspiredGases[i];
-    if (&s == &sf->GetSubstance())
-    {
-      m_FractionInspiredGases.erase(m_FractionInspiredGases.begin() + i);
-      m_cFractionInspiredGases.erase(m_cFractionInspiredGases.begin() + i);
-      delete sf;
-    }
-  }
+  SESubstanceFraction& sf = GetFractionInspiredGas(s);
+  sf.GetFractionAmount().SetValue(0);
 }
 void SEMechanicalVentilator::RemoveFractionInspiredGases()
 {
-  DELETE_VECTOR(m_FractionInspiredGases);
-  m_cFractionInspiredGases.clear();
+  for (SESubstanceFraction* sf : m_FractionInspiredGases)
+    sf->GetFractionAmount().SetValue(0);
 }
 
 bool SEMechanicalVentilator::HasConcentrationInspiredAerosol() const
@@ -756,10 +752,10 @@ bool SEMechanicalVentilator::HasConcentrationInspiredAerosol() const
 }
 bool SEMechanicalVentilator::HasConcentrationInspiredAerosol(const SESubstance& substance) const
 {
-  for (const SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
+  for (SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
   {
     if (&substance == &sc->GetSubstance())
-      return true;
+      return sc->GetConcentration().IsPositive();
   }
   return false;
 }
@@ -797,20 +793,15 @@ const SESubstanceConcentration* SEMechanicalVentilator::GetConcentrationInspired
 }
 void SEMechanicalVentilator::RemoveConcentrationInspiredAerosol(const SESubstance& substance)
 {
-  const SESubstanceConcentration* sc;
-  for (unsigned int i = 0; i < m_ConcentrationInspiredAerosols.size(); i++)
-  {
-    sc = m_ConcentrationInspiredAerosols[i];
-    if (&substance == &sc->GetSubstance())
-    {
-      m_ConcentrationInspiredAerosols.erase(m_ConcentrationInspiredAerosols.begin() + i);
-      m_cConcentrationInspiredAerosols.erase(m_cConcentrationInspiredAerosols.begin() + i);
-      delete sc;
-    }
-  }
+  SESubstanceConcentration& sc = GetConcentrationInspiredAerosol(substance);
+  auto& unit = *sc.GetConcentration().GetUnit();
+  sc.GetConcentration().SetValue(0, unit);
 }
 void SEMechanicalVentilator::RemoveConcentrationInspiredAerosols()
 {
-  DELETE_VECTOR(m_ConcentrationInspiredAerosols);
-  m_cConcentrationInspiredAerosols.clear();
+  for (SESubstanceConcentration* sc : m_ConcentrationInspiredAerosols)
+  {
+    auto& unit = *sc->GetConcentration().GetUnit();
+    sc->GetConcentration().SetValue(0, unit);
+  }
 }
