@@ -979,9 +979,9 @@ void Cardiovascular::Hemorrhage()
 {
   /// \todo Enforce limits and remove fatal errors.
 
-  //Set all hemorrhage flows to zero, so:
-  // - We can increment for overlapping compartments
-  // - We know to remove ones that are turned off
+  //Check all existing hemorrhage paths, if has a flow source or a resistance (covers both types of hemorrhage), then set to zero
+  // - We do not want to assume prior knowledge, so we can ensure we capture the current flow rate or severity
+  // - If zero at the end, we can remove irrelevant hemorrhages
   for (SEFluidCircuitPath* path :  m_HemorrhagePaths)
   {
     if(path->HasNextFlowSource())
@@ -995,6 +995,7 @@ void Cardiovascular::Hemorrhage()
   double internal_rate_mL_Per_s = 0.0;
   std::vector<SEHemorrhage*> invalid_hemorrhages;
   const std::map <std::string, SEHemorrhage*> & hems = m_data.GetActions().GetPatientActions().GetHemorrhages();
+  //Loop over all hemorrhages to check for validity
   for (auto hem : hems)
   {
     h = hem.second;
@@ -1002,11 +1003,13 @@ void Cardiovascular::Hemorrhage()
    
     // Allow shorthand naming
     SELiquidCompartment* compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
+    //Add Vasculature to the compartment name to grab the cardiovascular compartment
     if (compartment == nullptr)
     {
       h->SetCompartment(h->GetCompartment() + "Vasculature");
       compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
     }
+    //Unsupported compartment
     if (compartment == nullptr)
     {
       Error("Removing invalid Hemorrhage due to unsupported compartment : " + h->GetCompartment());
@@ -1022,6 +1025,7 @@ void Cardiovascular::Hemorrhage()
       invalid_hemorrhages.push_back(h);
       continue;
     }
+    // \error Error: Internal hemorrhage is only supported for the abdominal region at this time
     if (h->GetType() == eHemorrhage_Type::Internal)
     {
       SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
@@ -1033,16 +1037,18 @@ void Cardiovascular::Hemorrhage()
         continue;
       }
     }
+    //TODO: Why do we have an emply else statement?
     else //(h->GetType() == eHemorrhage_Type::External)
     {
       //Only mass is merely transfered if it is an internal bleed
       
     }
 
+    // \warning Warning: A flow rate and severity were both provided, we will only use the severity. 
     if (h->HasFlowRate() && h->HasSeverity())
     {
       h->GetFlowRate().Invalidate();
-      Warning("Hemorrhage requested with both flow rate and severity, will only use severity.");
+      Warning("Hemorrhage requested with both flow rate and severity, we will only use severity.");
     }
 
     double rate_mL_Per_s = 0;
@@ -1061,7 +1067,20 @@ void Cardiovascular::Hemorrhage()
     }
     else if (h->HasSeverity())
     {
-
+        if(h->GetSeverity().GetValue() < 0.0 || h->GetSeverity().GetValue() > 1.0)
+        {
+            m_ss << "A severity less than 0 or greater than 1.0 cannot be specified.";
+            Error(m_ss);
+            /// \error Error: Severity cannot be less than zero or greater than 1.0
+            invalid_hemorrhages.push_back(h);
+            continue;
+        }
+    }
+    else
+    {
+        m_ss << "A severity or a rate must be specified.";
+        Error(m_ss);
+        /// \error Error: A severity or a rate must be specified for hemorrhage
     }
 
     //Get all circuit nodes in this compartment
@@ -1111,23 +1130,26 @@ void Cardiovascular::Hemorrhage()
     {
       //Weight the flow sink value by node volume
       double thisNodeRate_mL_Per_s = 0.0;
-      if (nodesWithVolume == 0)
+      if (h->HasFlowRate())
       {
-        //No nodes have volume, so evenly distribute
-        thisNodeRate_mL_Per_s = rate_mL_Per_s / double(nodes.size());
+          if (nodesWithVolume == 0)
+          {
+              //No nodes have volume, so evenly distribute
+              thisNodeRate_mL_Per_s = rate_mL_Per_s / double(nodes.size());
+          }
+          else if (!node->HasNextVolume())
+          {
+              //Some nodes have volume, but not this one, so move on
+              continue;
+          }
+          else
+          {
+              //This node has volume
+              thisNodeRate_mL_Per_s = rate_mL_Per_s * node->GetNextVolume(VolumeUnit::mL) / totalVolume_mL;
+          }
       }
-      else if (!node->HasNextVolume())
-      {
-        //Some nodes have volume, but not this one, so move on
-        continue;
-      }
-      else
-      {
-        //This node has volume
-        thisNodeRate_mL_Per_s = rate_mL_Per_s * node->GetNextVolume(VolumeUnit::mL) / totalVolume_mL;
-      }
-
-      //Check if we've already been hemorrhaging here
+      
+      //Find the path associated with the node and check if we've already been hemorrhaging here
       SEFluidCircuitPath* hemorrhagePath = nullptr;
       for (unsigned int hIter = 0; hIter < m_HemorrhagePaths.size(); hIter++)
       {
@@ -1140,15 +1162,30 @@ void Cardiovascular::Hemorrhage()
       if (hemorrhagePath!=nullptr)
       {
         //Update the existing bleed path
-        //Increment value to allow overlapping compartments
-        hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+         if (h->HasFlowRate())
+         {
+             //Increment value to allow overlapping compartments
+             hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+         }
+         else
+         {
+             //TODO: path exists for resistance hemorrhage, so scale the resistance value
+         }
       }
       else
       {
         //Add bleed path for fluid mechanics
         SEFluidCircuitPath& newHemorrhagePath = m_CirculatoryCircuit->CreatePath(*node, *m_Ground, node->GetName() + "Hemorrhage");
-        //Increment value to allow overlapping compartments
-        newHemorrhagePath.GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        if (h->HasFlowRate())
+        {
+            //Increment value to allow overlapping compartments
+            newHemorrhagePath.GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+        }
+        else
+        {
+            //TODO: Add the new hemorrhage path with the resistance here
+        }
+        
         m_CirculatoryCircuit->StateChange();
 
         //Add bleed link for transport
@@ -1187,6 +1224,7 @@ void Cardiovascular::Hemorrhage()
       }
     }
 
+    //TODO: Fix this - should change path construction to go staight to abdominal cavity and also cover resistance hemorrhage
     //total the internal hemorrhage flow rate and apply it to the abdominal cavity path
     for (auto hemorrhage : m_InternalHemorrhagePaths)
     {
@@ -1202,9 +1240,11 @@ void Cardiovascular::Hemorrhage()
   //Remove hemorrhage elements that aren't being used
   //Make sure to do this even if no hemorrhage action, since it's needed when removed
   unsigned int hIter = 0;
+  SEFluidCircuitPath* hemorrhagePath = nullptr;
   while (hIter < m_HemorrhagePaths.size())
   {
-    if (m_HemorrhagePaths.at(hIter)->GetNextFlowSource().IsZero())
+    hemorrhagePath = m_HemorrhagePaths.at(hIter);
+    if ((hemorrhagePath->HasNextFlowSource() && hemorrhagePath->GetNextFlowSource().IsZero()) || (hemorrhagePath->HasNextResistance() && hemorrhagePath->GetNextResistance().IsZero()))
     {
       m_CirculatoryCircuit->RemovePath(*m_HemorrhagePaths.at(hIter));
       m_HemorrhagePaths.erase(m_HemorrhagePaths.begin() + hIter);
@@ -1233,6 +1273,7 @@ void Cardiovascular::Hemorrhage()
   if (TotalLossRate_mL_Per_s == 0)
     return;
 
+  //TODO: How will we handle this for resistance hemorrhage?? Do we grab the NextFlow on the path??
   //Update the patient's mass
   double bloodDensity_kg_Per_mL = m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
   double massLost_kg = (TotalLossRate_mL_Per_s - internal_rate_mL_Per_s)*bloodDensity_kg_Per_mL*m_dT_s;
