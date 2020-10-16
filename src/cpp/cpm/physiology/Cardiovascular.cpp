@@ -977,7 +977,10 @@ void Cardiovascular::TraumaticBrainInjury()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::Hemorrhage()
 {
-  /// \todo Enforce limits and remove fatal errors.
+   //Maximum resistance for hemorrhage paths to eliminate flow
+    double maxResistanceForNoFlow__mmHg_min_Per_L = 500;
+    
+    /// \todo Enforce limits and remove fatal errors.
 
   //Check all existing hemorrhage paths, if has a flow source or a resistance (covers both types of hemorrhage), then set to zero
   // - We do not want to assume prior knowledge, so we can ensure we capture the current flow rate or severity
@@ -1169,7 +1172,14 @@ void Cardiovascular::Hemorrhage()
          }
          else
          {
-             //TODO: path exists for resistance hemorrhage, so scale the resistance value
+             //use the severity to calculate the resistance
+             double resistanceBaseline_mmHg_min_Per_L = hemorrhagePath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_min_Per_L);
+             double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, resistanceBaseline_mmHg_min_Per_L, maxResistanceForNoFlow__mmHg_min_Per_L, h->GetSeverity().GetValue());
+             //check to see if the NextResistance has been set and take the lowest resistance value to correspond to the highest severity
+             if (resistance_mmHg_min_Per_L < hemorrhagePath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_min_Per_L))
+             {
+                 hemorrhagePath->GetNextResistance().SetValue(resistance_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+             }
          }
       }
       else
@@ -1183,7 +1193,22 @@ void Cardiovascular::Hemorrhage()
         }
         else
         {
-            //TODO: Add the new hemorrhage path with the resistance here
+            //calculate the max flow rate
+            double flowRate_L_per_min = 0;
+            for (SEFluidCircuitPath* path : m_CirculatoryCircuit->GetPaths())
+            {            
+                if (&path->GetTargetNode() == node)
+                {
+                    flowRate_L_per_min += path->GetNextFlow().GetValue(VolumePerTimeUnit::L_Per_min);
+                }
+            }
+            //The minimum resistance is associated with the maximum flow rate across the hemorrhage path
+            //Check to see if there is a resistance baseline
+            double resistanceBaseline_mmHg_min_Per_L = (node->GetNextPressure().GetValue(PressureUnit::mmHg) - m_Ground->GetNextPressure().GetValue(PressureUnit::mmHg)) / (0.95 * flowRate_L_per_min);
+            newHemorrhagePath.GetResistanceBaseline().SetValue(resistanceBaseline_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+            //use the severity to calculate the resistance
+            double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, maxResistanceForNoFlow__mmHg_min_Per_L, resistanceBaseline_mmHg_min_Per_L, h->GetSeverity().GetValue());
+            newHemorrhagePath.GetNextResistance().SetValue(resistance_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
         }
         
         m_CirculatoryCircuit->StateChange();
