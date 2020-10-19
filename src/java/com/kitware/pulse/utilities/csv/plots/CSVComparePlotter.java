@@ -212,7 +212,7 @@ public class CSVComparePlotter
           if(expectedTime == null)
           {
             expectedTime = new ArrayList<>();
-            computedTime = new ArrayList<>();          
+            computedTime = new ArrayList<>();
             expectedResults.readHeader("Time(s)",expectedTime);
             computedResults.readHeader("Time(s)",computedTime);
           }
@@ -226,7 +226,7 @@ public class CSVComparePlotter
           expectedData = allExpected.get(header);
           if(expectedData == null)
           {
-            Log.warn(header + "No data was found in expected results for header "+header);            
+            Log.warn(header + "No data was found in expected results for header "+header);
           }
           computedData = allComputed.get(header);
           if(computedData == null)
