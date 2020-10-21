@@ -269,9 +269,9 @@ public class CSVComparePlotter
       try
       {
         if(!readAll)
-          computedResults.readHeader(header,computedData);          
+          computedResults.readHeader(header,computedData);
         else
-          computedData = allComputed.get(header);   
+          computedData = allComputed.get(header);
 
         allComputed.remove(header);// Take it out of the map
         plot.createGraph
