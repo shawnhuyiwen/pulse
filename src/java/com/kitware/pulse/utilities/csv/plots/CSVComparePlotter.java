@@ -35,7 +35,7 @@ public class CSVComparePlotter
       {
         args = new String[10];
         args[0] = "./BaselineResults.csv";// Expected
-        args[1] = "./ComputedResults.csv";// Computed          
+        args[1] = "./ComputedResults.csv";// Computed
         args[2] = "false"; // Full plot
       }
       else
