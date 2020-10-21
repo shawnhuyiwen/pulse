@@ -773,7 +773,8 @@ void Cardiovascular::CalculateVitalSigns()
 
     if (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) <= 20)
     {
-        Fatal("Blood Pressure has fallen too low to continue circulation.");
+        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+        Fatal("Blood Pressure has fallen too low to continue circulation, the engine is now in an irreversible state.");
     }
 
     //Check for cardiogenic shock
