@@ -240,9 +240,9 @@ public class CSVComparison extends SETestReport
           if(reportDifferences)
           {
             if(!firstColumnIsTime)
-              Log.error(header+" does not match expected "+expected+", != computed "+computed+" ["+optsErr+"%]","");
+              Log.error(header+" does not match expected "+expected+" != computed "+computed+" ["+optsErr+"%]","");
             else
-              Log.error(header+" @Time "+expectedData.get(0)+": expected "+expected+", != computed "+computed+" ["+optsErr+"%]","");
+              Log.error(header+" @Time "+expectedData.get(0)+": expected "+expected+" != computed "+computed+" ["+optsErr+"%]","");
           }
           failures.add(header);
         }
@@ -256,9 +256,9 @@ public class CSVComparison extends SETestReport
       for(String key : headerError.keySet())
       {
         Error err = headerError.get(key);
-        Log.error(key+" has a total of "+err.total+" errors, between times ["+err.firstTime+", "+err.lastTime+"] \n"+
-                      "     min error : @Time "+err.minTime+": expected "+err.minExpected+", != computed "+err.minComputed+" ["+err.minErr+"%] \n"+
-                      "     max error : @Time "+err.maxTime+": expected "+err.maxExpected+", != computed "+err.maxComputed+" ["+err.maxErr+"%]");
+        Log.error(key+" has a total of "+err.total+" errors between times ["+err.firstTime+", "+err.lastTime+"] \n"+
+                      "-  min error : @Time "+err.minTime+": expected "+err.minExpected+" != computed "+err.minComputed+" ["+err.minErr+"%] \n"+
+                      "-  max error : @Time "+err.maxTime+": expected "+err.maxExpected+" != computed "+err.maxComputed+" ["+err.maxErr+"%]");
       }
     }
     if(suite.getActiveCase().hasFailures())
