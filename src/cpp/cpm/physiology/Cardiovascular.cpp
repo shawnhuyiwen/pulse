@@ -771,6 +771,11 @@ void Cardiovascular::CalculateVitalSigns()
       m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, false, m_data.GetSimulationTime());
     }
 
+    if (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) <= 20)
+    {
+        Fatal("Blood Pressure has fallen too low to continue circulation.");
+    }
+
     //Check for cardiogenic shock
     if (GetCardiacIndex().GetValue(VolumePerTimeAreaUnit::L_Per_min_m2) < 2.2 &&
       GetSystolicArterialPressure(PressureUnit::mmHg) < 90.0 &&
@@ -978,7 +983,7 @@ void Cardiovascular::TraumaticBrainInjury()
 void Cardiovascular::Hemorrhage()
 {
    //Maximum resistance for hemorrhage paths to eliminate flow
-    double maxResistanceForNoFlow__mmHg_min_Per_L = 500;
+    double maxResistanceForNoFlow__mmHg_min_Per_L = 1000.0;
     
     /// \todo Enforce limits and remove fatal errors.
 
@@ -1039,12 +1044,6 @@ void Cardiovascular::Hemorrhage()
         invalid_hemorrhages.push_back(h);
         continue;
       }
-    }
-    //TODO: Why do we have an emply else statement?
-    else //(h->GetType() == eHemorrhage_Type::External)
-    {
-      //Only mass is merely transfered if it is an internal bleed
-      
     }
 
     // \warning Warning: A flow rate and severity were both provided, we will only use the severity. 
@@ -1133,25 +1132,25 @@ void Cardiovascular::Hemorrhage()
     {
       //Weight the flow sink value by node volume
       double thisNodeRate_mL_Per_s = 0.0;
-      if (h->HasFlowRate())
+      if (nodesWithVolume == 0)
       {
-          if (nodesWithVolume == 0)
-          {
-              //No nodes have volume, so evenly distribute
-              thisNodeRate_mL_Per_s = rate_mL_Per_s / double(nodes.size());
-          }
-          else if (!node->HasNextVolume())
-          {
-              //Some nodes have volume, but not this one, so move on
-              continue;
-          }
-          else
-          {
-              //This node has volume
-              thisNodeRate_mL_Per_s = rate_mL_Per_s * node->GetNextVolume(VolumeUnit::mL) / totalVolume_mL;
-          }
+          //No nodes have volume, so evenly distribute
+          thisNodeRate_mL_Per_s = rate_mL_Per_s / double(nodes.size());
+      }
+      else if (!node->HasNextVolume())
+      {
+          //Some nodes have volume, but not this one, so move on
+          continue;
+      }
+      else
+      {
+          //This node has volume
+          thisNodeRate_mL_Per_s = rate_mL_Per_s * node->GetNextVolume(VolumeUnit::mL) / totalVolume_mL;
       }
       
+      bool calculateResistanceBaseline = false;
+      bool calculateResistance = false;
+      bool completeStateChange = false;
       //Find the path associated with the node and check if we've already been hemorrhaging here
       SEFluidCircuitPath* hemorrhagePath = nullptr;
       for (unsigned int hIter = 0; hIter < m_HemorrhagePaths.size(); hIter++)
@@ -1167,86 +1166,130 @@ void Cardiovascular::Hemorrhage()
         //Update the existing bleed path
          if (h->HasFlowRate())
          {
-             //Increment value to allow overlapping compartments
-             hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+             if (!hemorrhagePath->HasResistanceBaseline())
+             {
+                 //Increment value to allow overlapping compartments
+                 hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+             }
+             else
+             {
+
+                 hemorrhagePath->GetNextResistance().Invalidate();
+                 hemorrhagePath->GetResistance().Invalidate();
+                 hemorrhagePath->GetResistanceBaseline().Invalidate();
+                 hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+                 completeStateChange = true;
+             }
          }
          else
          {
-             //use the severity to calculate the resistance
-             double resistanceBaseline_mmHg_min_Per_L = hemorrhagePath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_min_Per_L);
-             double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, resistanceBaseline_mmHg_min_Per_L, maxResistanceForNoFlow__mmHg_min_Per_L, h->GetSeverity().GetValue());
-             //check to see if the NextResistance has been set and take the lowest resistance value to correspond to the highest severity
-             if (resistance_mmHg_min_Per_L < hemorrhagePath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_min_Per_L))
+             if (hemorrhagePath->HasFlowSource())
              {
-                 hemorrhagePath->GetNextResistance().SetValue(resistance_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+                 hemorrhagePath->GetFlowSource().Invalidate();
+                 hemorrhagePath->GetNextFlowSource().Invalidate();
+                 calculateResistanceBaseline = true;
+                 calculateResistance = true;
+                 completeStateChange = true;
              }
+             else
+             {
+                 if (h->GetSeverity().GetValue() == 0.0)
+                     hemorrhagePath->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+                 else
+                 {
+                     calculateResistance = true;
+                 }
+             }  
          }
       }
-      else
+      else //new hemorrhage path
       {
-        //Add bleed path for fluid mechanics
-        SEFluidCircuitPath& newHemorrhagePath = m_CirculatoryCircuit->CreatePath(*node, *m_Ground, node->GetName() + "Hemorrhage");
-        if (h->HasFlowRate())
-        {
-            //Increment value to allow overlapping compartments
-            newHemorrhagePath.GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-        }
-        else
-        {
-            //calculate the max flow rate
-            double flowRate_L_per_min = 0;
-            for (SEFluidCircuitPath* path : m_CirculatoryCircuit->GetPaths())
-            {            
-                if (&path->GetTargetNode() == node)
-                {
-                    flowRate_L_per_min += path->GetNextFlow().GetValue(VolumePerTimeUnit::L_Per_min);
-                }
-            }
-            //The minimum resistance is associated with the maximum flow rate across the hemorrhage path
-            //Check to see if there is a resistance baseline
-            double resistanceBaseline_mmHg_min_Per_L = (node->GetNextPressure().GetValue(PressureUnit::mmHg) - m_Ground->GetNextPressure().GetValue(PressureUnit::mmHg)) / (0.95 * flowRate_L_per_min);
-            newHemorrhagePath.GetResistanceBaseline().SetValue(resistanceBaseline_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
-            //use the severity to calculate the resistance
-            double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, maxResistanceForNoFlow__mmHg_min_Per_L, resistanceBaseline_mmHg_min_Per_L, h->GetSeverity().GetValue());
-            newHemorrhagePath.GetNextResistance().SetValue(resistance_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
-        }
-        
-        m_CirculatoryCircuit->StateChange();
-
-        //Add bleed link for transport
-        //Find the source compartment (may be a leaf) to make the graph work (i.e., to transport)
-        SELiquidCompartment* sourceCompartment;
-        if (std::find(compartment->GetNodeMapping().GetNodes().begin(), compartment->GetNodeMapping().GetNodes().end(), node) != compartment->GetNodeMapping().GetNodes().end())
-        {
-          sourceCompartment = compartment;
-        }
-        else
-        {
-          for (unsigned int leafIter = 0; leafIter < compartment->GetLeaves().size(); leafIter++)
+          //Add bleed path for fluid mechanics
+          SEFluidCircuitPath& newHemorrhagePath = m_CirculatoryCircuit->CreatePath(*node, *m_Ground, node->GetName() + "Hemorrhage");
+          if (h->HasFlowRate())
           {
-            SELiquidCompartment* leaf = compartment->GetLeaves().at(leafIter);
-            if (std::find(leaf->GetNodeMapping().GetNodes().begin(), leaf->GetNodeMapping().GetNodes().end(), node) != leaf->GetNodeMapping().GetNodes().end())
-            {
-              sourceCompartment = leaf;
-              break;
-            }
+              //Increment value to allow overlapping compartments
+              newHemorrhagePath.GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
           }
-        }
+          else
+          {
+              if (h->GetSeverity().GetValue() == 0.0)
+                  newHemorrhagePath.GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+              calculateResistanceBaseline = true;
+              calculateResistance = true;
+          }
+          
+          completeStateChange = true;
 
-        SELiquidCompartmentLink& newHemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*sourceCompartment, *m_Groundcmpt, compartment->GetName() + "Hemorrhage");
-        newHemorrhageLink.MapPath(newHemorrhagePath);
-        m_CirculatoryGraph->AddLink(newHemorrhageLink);
-        m_data.GetCompartments().StateChange();
+          //Add bleed link for transport
+          //Find the source compartment (may be a leaf) to make the graph work (i.e., to transport)
+          SELiquidCompartment* sourceCompartment;
+          if (std::find(compartment->GetNodeMapping().GetNodes().begin(), compartment->GetNodeMapping().GetNodes().end(), node) != compartment->GetNodeMapping().GetNodes().end())
+          {
+              sourceCompartment = compartment;
+          }
+          else
+          {
+              for (unsigned int leafIter = 0; leafIter < compartment->GetLeaves().size(); leafIter++)
+              {
+                  SELiquidCompartment* leaf = compartment->GetLeaves().at(leafIter);
+                  if (std::find(leaf->GetNodeMapping().GetNodes().begin(), leaf->GetNodeMapping().GetNodes().end(), node) != leaf->GetNodeMapping().GetNodes().end())
+                  {
+                      sourceCompartment = leaf;
+                      break;
+                  }
+              }
+          }
 
-        //Add to local lists
-        m_HemorrhagePaths.push_back(&newHemorrhagePath);
-        m_HemorrhageLinks.push_back(&newHemorrhageLink);
-        if (h->GetType() == eHemorrhage_Type::Internal)
-        {
-          m_InternalHemorrhagePaths.push_back(&newHemorrhagePath);
-          m_InternalHemorrhageLinks.push_back(&newHemorrhageLink);
-        }
+          SELiquidCompartmentLink& newHemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*sourceCompartment, *m_Groundcmpt, compartment->GetName() + "Hemorrhage");
+          newHemorrhageLink.MapPath(newHemorrhagePath);
+          m_CirculatoryGraph->AddLink(newHemorrhageLink);
+          m_data.GetCompartments().StateChange();
+
+          //Add to local lists
+          m_HemorrhagePaths.push_back(&newHemorrhagePath);
+          m_HemorrhageLinks.push_back(&newHemorrhageLink);
+          if (h->GetType() == eHemorrhage_Type::Internal)
+          {
+              m_InternalHemorrhagePaths.push_back(&newHemorrhagePath);
+              m_InternalHemorrhageLinks.push_back(&newHemorrhageLink);
+          }
+
+          hemorrhagePath = &newHemorrhagePath;
       }
+      
+      if (calculateResistance)
+      {
+          if (calculateResistanceBaseline)
+
+          {
+              // calculate the max flow rate
+              double flowRate_L_per_min = 0;
+              for (SEFluidCircuitPath* path : m_CirculatoryCircuit->GetPaths())
+              {
+                  if (&path->GetTargetNode() == node)
+                  {
+                      flowRate_L_per_min += path->GetNextFlow().GetValue(VolumePerTimeUnit::L_Per_min);
+                  }
+              }
+              //The minimum resistance is associated with the maximum flow rate across the hemorrhage path
+              //Check to see if there is a resistance baseline
+              double resistanceBaseline_mmHg_min_Per_L = (node->GetNextPressure().GetValue(PressureUnit::mmHg) - m_Ground->GetNextPressure().GetValue(PressureUnit::mmHg)) / (0.98 * flowRate_L_per_min);
+              hemorrhagePath->GetResistanceBaseline().SetValue(resistanceBaseline_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+          }
+          double resistanceBaseline_mmHg_min_Per_L = hemorrhagePath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_min_Per_L);
+          //use the severity to calculate the resistance
+          double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, maxResistanceForNoFlow__mmHg_min_Per_L, resistanceBaseline_mmHg_min_Per_L, h->GetSeverity().GetValue());
+          hemorrhagePath->GetNextResistance().SetValue(resistance_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
+          if (hemorrhagePath->HasNextFlow())
+          {
+              TotalLossRate_mL_Per_s += hemorrhagePath->GetNextFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
+          }          
+      }
+      if (completeStateChange)
+      {
+          m_CirculatoryCircuit->StateChange();
+      }       
     }
 
     //TODO: Fix this - should change path construction to go staight to abdominal cavity and also cover resistance hemorrhage
@@ -1295,10 +1338,7 @@ void Cardiovascular::Hemorrhage()
   //Effect the Aorta with internal hemorrhages
   InternalHemorrhagePressureApplication();
 
-  if (TotalLossRate_mL_Per_s == 0)
-    return;
-
-  //TODO: How will we handle this for resistance hemorrhage?? Do we grab the NextFlow on the path??
+  //TODO: How will we handle this for resistance hemorrhage?? Do we grab the NextFlow on the path?? Maybe just delete.
   //Update the patient's mass
   double bloodDensity_kg_Per_mL = m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
   double massLost_kg = (TotalLossRate_mL_Per_s - internal_rate_mL_Per_s)*bloodDensity_kg_Per_mL*m_dT_s;
@@ -1308,6 +1348,8 @@ void Cardiovascular::Hemorrhage()
   m_data.GetCurrentPatient().GetWeight().SetValue(patientMass_kg, MassUnit::kg);
   //Debugging hemorrhage
   m_BloodVolumeEstimate -= (TotalLossRate_mL_Per_s * m_dT_s);
+  m_data.GetDataTrack().Probe("BloodLossRate", TotalLossRate_mL_Per_s);
+  m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate);
 }
 
 //--------------------------------------------------------------------------------------------------
