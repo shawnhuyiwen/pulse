@@ -5,9 +5,7 @@ package com.kitware.pulse.cdm.testing.csv;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.kitware.pulse.cdm.testing.SETestReport;
 import com.kitware.pulse.cdm.testing.SETestSuite;
@@ -29,6 +27,22 @@ public class CSVComparison extends SETestReport
   public double limit=2.0;
   public boolean reportDifferences=false;
   
+  protected class Error
+  {
+    public Error(double t) { firstTime = t; }
+    public int total=0;
+    public double firstTime;
+    public double lastTime;
+    public double maxTime;
+    public double maxExpected;
+    public double maxComputed;
+    public double maxErr=0;
+    public double minTime;
+    public double minExpected;
+    public double minComputed;
+    public double minErr=10000;
+  }
+  
   public static void main(String[] args) throws IOException, InterruptedException
   {
     if(args.length<2)
@@ -37,8 +51,8 @@ public class CSVComparison extends SETestReport
       {
         args = new String[10];
         args[0] = "./Scenario1Results_1.csv";// Expected
-        args[1] = "./Scenario1Results_1.csv";// Computed   
-        args[2] = "2.0";// Percent Difference Allowed       
+        args[1] = "./Scenario1Results_1.csv";// Computed
+        args[2] = "2.0";// Percent Difference Allowed
         args[3] = "false";// Report Differences in the error report, turn off if you are expecting a LOT of error
       }
       else
@@ -98,7 +112,7 @@ public class CSVComparison extends SETestReport
     }
     
     String report = computedFilePath.substring(0,computedFilePath.length()-4)+"/"+computedFile.getName();
-    report=report.substring(0, report.length()-4)+"Report.json";    
+    report=report.substring(0, report.length()-4)+"Report.json";
     this.setFullReportPath(report);
         
     Set<String> failures = new HashSet<>();
@@ -106,14 +120,12 @@ public class CSVComparison extends SETestReport
     {
       FileUtils.delete(this.reportDir);
       Thread.sleep(1000);
-      FileUtils.createDirectory(this.reportDir);      
+      FileUtils.createDirectory(this.reportDir);
     }
     catch(Exception ex)
     {
       Log.warn("Having a hard time deleting the old report directory",ex);
     }
-    
-    
     
     CSVContents expectedResults;
     CSVContents computedResults;
@@ -166,15 +178,18 @@ public class CSVComparison extends SETestReport
       {
         totalErrors++;
         Log.error("Computed results ("+computedFilePath+") did not provide expected result "+header);
-      }       
+      }
     }
-    double time=0;
+
+    Map<String,Error> headerError = new HashMap<String,Error>();
     boolean firstColumnIsTime = false;
     if(expectedHeaders.get(0).substring(0, 4).equalsIgnoreCase("Time"))
       firstColumnIsTime = true;
+    int totalLines = 0;
     
     while(true)
-    {    
+    {
+      totalLines++;
       List<Double> expectedData = expectedResults.readNextLine();
       List<Double> computedData = computedResults.readNextLine();
       
@@ -186,11 +201,11 @@ public class CSVComparison extends SETestReport
         break;
       }
       if(expectedData.isEmpty() || computedData.isEmpty())
-        break;     
+        break;
       
-      time = expectedData.get(0);
       for(int i=0; i<expectedData.size(); i++)
-      {      
+      {
+        
         String header = expectedHeaders.get(i);
         double expected=expectedData.get(i);
         int idx=computedHeaders.indexOf(header);
@@ -201,32 +216,51 @@ public class CSVComparison extends SETestReport
         if(!DoubleUtils.equals(expected, computed, opts))
         {
           totalErrors++;
+          if(!headerError.containsKey(header))
+            headerError.put(header, new Error(expectedData.get(0)));
+          Error err = headerError.get(header);
+          err.total++;
+          double optsErr = opts.getLastError();
+          if(optsErr > err.maxErr)
+          {
+            err.maxTime = expectedData.get(0);
+            err.maxExpected = expected;
+            err.maxComputed = computed;
+            err.maxErr = optsErr;
+          }
+          if(optsErr < err.minErr)
+          {
+            err.minTime = expectedData.get(0);
+            err.minExpected = expected;
+            err.minComputed = computed;
+            err.minErr = optsErr;
+          }
+          err.lastTime = expectedData.get(0);
           
           if(reportDifferences)
           {
             if(!firstColumnIsTime)
-              Log.error(header+" does not match expected "+expected+", != computed "+computed+" ["+opts.getLastError()+"%]","");
+              Log.error(header+" does not match expected "+expected+" != computed "+computed+" ["+optsErr+"%]","");
             else
-              Log.error(header+" @Time "+expectedData.get(i)+": expected "+expected+", != computed "+computed+" ["+opts.getLastError()+"%]","");
-          }
-          else if(!failures.contains(header))
-          {
-            Log.error("Compare Failed for "+name);
-            if(!firstColumnIsTime)
-              Log.error(header+" does not match expected "+expected+", != computed "+computed+" ["+opts.getLastError()+"%]","");
-            else
-              Log.error(header+" @Time "+expectedData.get(i)+": expected "+expected+", != computed "+computed+" ["+opts.getLastError()+"%]","");            
+              Log.error(header+" @Time "+expectedData.get(0)+": expected "+expected+" != computed "+computed+" ["+optsErr+"%]","");
           }
           failures.add(header);
         }
       }
     }
-    
-    if(firstColumnIsTime)
-      Log.info("Compared "+time+" time units worth of data");
 
+    Log.info("Compared "+totalLines+" total times");
     if(totalErrors>0)
-      Log.error(totalErrors+" errors found");
+    {
+      Log.error(totalErrors+" total errors found");
+      for(String key : headerError.keySet())
+      {
+        Error err = headerError.get(key);
+        Log.error(key+" has a total of "+err.total+" errors between times ["+err.firstTime+", "+err.lastTime+"] \n"+
+                      "-  min error : @Time "+err.minTime+": expected "+err.minExpected+" != computed "+err.minComputed+" ["+err.minErr+"%] \n"+
+                      "-  max error : @Time "+err.maxTime+": expected "+err.maxExpected+" != computed "+err.maxComputed+" ["+err.maxErr+"%]");
+      }
+    }
     if(suite.getActiveCase().hasFailures())
       Log.error(computedFilePath +" Comparison failed!!");
     else

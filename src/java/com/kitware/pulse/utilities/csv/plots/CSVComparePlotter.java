@@ -212,7 +212,7 @@ public class CSVComparePlotter
           if(expectedTime == null)
           {
             expectedTime = new ArrayList<>();
-            computedTime = new ArrayList<>();          
+            computedTime = new ArrayList<>();
             expectedResults.readHeader("Time(s)",expectedTime);
             computedResults.readHeader("Time(s)",computedTime);
           }
@@ -226,7 +226,7 @@ public class CSVComparePlotter
           expectedData = allExpected.get(header);
           if(expectedData == null)
           {
-            Log.warn(header + "No data was found in expected results for header "+header);            
+            Log.warn(header + "No data was found in expected results for header "+header);
           }
           computedData = allComputed.get(header);
           if(computedData == null)
@@ -269,9 +269,9 @@ public class CSVComparePlotter
       try
       {
         if(!readAll)
-          computedResults.readHeader(header,computedData);          
+          computedResults.readHeader(header,computedData);
         else
-          computedData = allComputed.get(header);   
+          computedData = allComputed.get(header);
 
         allComputed.remove(header);// Take it out of the map
         plot.createGraph
