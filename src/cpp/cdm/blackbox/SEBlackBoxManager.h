@@ -9,6 +9,7 @@
 
 class CDM_DECL SEBlackBoxManager : public Loggable
 {
+  friend class CommonDataModelTest;
 public:
   SEBlackBoxManager(Logger* logger);
   virtual ~SEBlackBoxManager();
@@ -35,7 +36,7 @@ protected:
   template<typename tBlackBox, typename tCompartment, typename tLink, typename tNode, typename tPath>
   bool MapBlackBox(tBlackBox& bb, tLink& src2bbLink, tLink& bb2tgtLink)
   {
-    tCompartment& bbCmpt  = src2bbLink.GetTargetCompartment();
+    tCompartment& bbCmpt = src2bbLink.GetTargetCompartment();
     tCompartment& srcCmpt = src2bbLink.GetSourceCompartment();
     tCompartment& tgtCmpt = bb2tgtLink.GetTargetCompartment();
     bb.SetCompartment(&bbCmpt);
@@ -48,7 +49,47 @@ protected:
     src2bbLink.SetBlackBox(&bb);
     bb2tgtLink.SetBlackBox(&bb);
 
-    return bb.MapBlackBox(*src2bbLink.GetPath(), *bb2tgtLink.GetPath());
+    tPath& srcPath = *src2bbLink.GetPath();
+    tPath& tgtPath = *bb2tgtLink.GetPath();
+
+    return MapBlackBox<tBlackBox, tNode, tPath>(bb, srcPath, tgtPath);
+  }
+
+  template<typename tBlackBox, typename tNode, typename tPath>
+  bool MapBlackBox(tBlackBox& bb, tPath& srcPath, tPath& tgtPath)
+  {
+    tNode& bbNode = srcPath.GetTargetNode();
+    tNode& srcNode = srcPath.GetSourceNode();
+    tNode& tgtNode = tgtPath.GetTargetNode();
+
+    //Check our assumptions
+    if (&srcPath.GetSourceNode() == &tgtPath.GetSourceNode() ||
+      &srcPath.GetSourceNode() == &tgtPath.GetTargetNode())
+    {
+      bbNode = srcPath.GetSourceNode();
+      srcNode = srcPath.GetTargetNode();
+    }
+
+    if (&tgtPath.GetTargetNode() == &srcPath.GetSourceNode() ||
+      &tgtPath.GetTargetNode() == &srcPath.GetTargetNode())
+    {
+      bbNode = tgtPath.GetTargetNode();
+      tgtNode = tgtPath.GetSourceNode();
+    }
+
+    bb.SetNode(&bbNode);
+    bb.SetSourceNode(&srcNode);
+    bb.SetSourcePath(&srcPath);
+    bb.SetTargetNode(&tgtNode);
+    bb.SetTargetPath(&tgtPath);
+
+    bbNode.SetBlackBox(&bb);
+    srcNode.SetBlackBox(&bb);
+    tgtNode.SetBlackBox(&bb);
+    srcPath.SetBlackBox(&bb);
+    tgtPath.SetBlackBox(&bb);
+
+    return true;
   }
 
   std::map<std::string, SEElectricalBlackBox*> m_ElectricalBoxes;

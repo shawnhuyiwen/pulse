@@ -37,21 +37,6 @@ protected:
   virtual SEElectricalCompartmentLink* GetTargetLink() const { return m_tgtLink; }
   virtual void SetTargetLink(SEElectricalCompartmentLink* l) { m_tgtLink = l; }
 
-
-  virtual bool MapBlackBox(SEElectricalCircuitPath& srcPath, SEElectricalCircuitPath& tgtPath)
-  {
-    return SEBlackBox::MapBlackBox(srcPath, tgtPath);
-  }
-  virtual void MapBlackBox(SEElectricalCircuitPath& srcPath, SEElectricalCircuitPath tgtPath,
-                           SEElectricalCircuitNode& bbNode, SEElectricalCircuitNode& srcNode, SEElectricalCircuitNode tgtNode) override
-  {
-    bbNode.SetBlackBox(this);
-    srcNode.SetBlackBox(this);
-    tgtNode.SetBlackBox(this);
-    srcPath.SetBlackBox(this);
-    tgtPath.SetBlackBox(this);
-  }
-
 protected:
   // Graph Elements
   SEElectricalCompartment*     m_Compartment = nullptr;

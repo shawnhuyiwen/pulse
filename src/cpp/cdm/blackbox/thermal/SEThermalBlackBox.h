@@ -37,20 +37,6 @@ protected:
   virtual SEThermalCompartmentLink* GetTargetLink() const { return m_tgtLink; }
   virtual void SetTargetLink(SEThermalCompartmentLink* l) { m_tgtLink = l; }
 
-  virtual bool MapBlackBox(SEThermalCircuitPath& srcPath, SEThermalCircuitPath& tgtPath)
-  {
-    return SEBlackBox::MapBlackBox(srcPath, tgtPath);
-  }
-  virtual void MapBlackBox(SEThermalCircuitPath& srcPath, SEThermalCircuitPath tgtPath,
-                           SEThermalCircuitNode& bbNode, SEThermalCircuitNode& srcNode, SEThermalCircuitNode tgtNode) override
-  {
-    bbNode.SetBlackBox(this);
-    srcNode.SetBlackBox(this);
-    tgtNode.SetBlackBox(this);
-    srcPath.SetBlackBox(this);
-    tgtPath.SetBlackBox(this);
-  }
-
 protected:
   // Graph Elements
   SEThermalCompartment*     m_Compartment = nullptr;

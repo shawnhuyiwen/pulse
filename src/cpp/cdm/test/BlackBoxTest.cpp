@@ -147,13 +147,13 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
   SEFluidCircuitPath& BB1Path1 = fluidCircuit1->CreatePath(Node2, BB1Node, "BB1Path1");
   SEFluidCircuitPath& BB1Path2 = fluidCircuit1->CreatePath(BB1Node, Node4, "BB1Path2");
   SEFluidBlackBox& BlackBox1 = *BBmgr.GetLiquidBlackBox("BB1","");// jbw correct names
-  BlackBox1.MapBlackBox(BB1Path1, BB1Path2);
+  BBmgr.MapBlackBox<MAP_FLUID_BLACK_BOX>(BlackBox1, BB1Path1, BB1Path2);
 
   SEFluidCircuitNode& BB2Node = fluidCircuit2->CreateNode("BB2Node");
   SEFluidCircuitPath& BB2Path1 = fluidCircuit2->CreatePath(Node6, BB2Node, "BB2Path1");
   SEFluidCircuitPath& BB2Path2 = fluidCircuit2->CreatePath(BB2Node, Node5, "BB2Path2");
   SEFluidBlackBox& BlackBox2 = *BBmgr.GetLiquidBlackBox("BB2", "");// jbw correct names
-  BlackBox2.MapBlackBox(BB2Path1, BB2Path2);
+  BBmgr.MapBlackBox<MAP_FLUID_BLACK_BOX>(BlackBox2, BB2Path1, BB2Path2);
 
   fluidCircuit1->StateChange();
   fluidCircuit2->StateChange();
@@ -328,14 +328,14 @@ void CommonDataModelTest::SimpleBlackBoxTest(const std::string& sOutputDirectory
       SEFluidCircuitPath& pathBBPassiveSource = circuitDriver->CreatePath(nodeDriverBBSource, nodeBBPassive, "pathBBPassiveSource");
       SEFluidCircuitPath& pathBBPassiveTarget = circuitDriver->CreatePath(nodeBBPassive, nodeDriverBBTarget, "pathBBPassiveTarget");
       blackBoxPassive = managerBlackBox.GetLiquidBlackBox("blackBoxPassive", "");// jbw correct names
-      blackBoxPassive->MapBlackBox(pathBBPassiveSource, pathBBPassiveTarget);
+      managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxPassive, pathBBPassiveSource, pathBBPassiveTarget);
 
       //Replaces Driver
       SEFluidCircuitNode& nodeBBDriver = circuitPassive->CreateNode("nodeBBDriver");
       SEFluidCircuitPath& pathBBDriverSource = circuitPassive->CreatePath(nodePassiveBBSource, nodeBBDriver, "pathBBDriverSource");
       SEFluidCircuitPath& pathBBDriverTarget = circuitPassive->CreatePath(nodeBBDriver, nodePassiveBBTarget, "pathBBDriverTarget");
       blackBoxDriver = managerBlackBox.GetLiquidBlackBox("blackBoxDriver", "");// jbw correct names
-      blackBoxDriver->MapBlackBox(pathBBDriverSource, pathBBDriverTarget);
+      managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxDriver, pathBBDriverSource, pathBBDriverTarget);
 
       // Imposed = black box forces it on circuit
       // Provided = circuit calculates it
@@ -613,14 +613,14 @@ void CommonDataModelTest::WindkesselBlackBoxTest(const std::string& sOutputDirec
       SEFluidCircuitPath& pathBlackBoxDriverSource = circuitWindkessel->CreatePath(nodeWindkesselResistance2, nodeBlackBoxDriver, "pathBlackBoxDriverSource");
       SEFluidCircuitPath& pathBlackBoxDriverTarget = circuitWindkessel->CreatePath(nodeBlackBoxDriver, nodeWindkesselResistance1, "pathBlackBoxDriverTarget");
       blackBoxDriver = managerBlackBox.GetLiquidBlackBox("blackBoxDriver", "");// jbw correct names
-      blackBoxDriver->MapBlackBox(pathBlackBoxDriverSource, pathBlackBoxDriverTarget);
+      managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxDriver, pathBlackBoxDriverSource, pathBlackBoxDriverTarget);
 
       //Replaces the Windkessel
       SEFluidCircuitNode& nodeBlackBoxWindkessel = circuitDriver->CreateNode("nodeBlackBoxWindkessel");
       SEFluidCircuitPath& pathBlackBoxWindkesselSource = circuitDriver->CreatePath(nodeDriverResistance2, nodeBlackBoxWindkessel, "pathBlackBoxWindkesselSource");
       SEFluidCircuitPath& pathBlackBoxWindkesselTarget = circuitDriver->CreatePath(nodeBlackBoxWindkessel, nodeDriverResistance1, "pathBlackBoxWindkesselTarget");
       blackBoxWindkessel = managerBlackBox.GetLiquidBlackBox("blackBoxWindkessel", "");// jbw correct names
-      blackBoxWindkessel->MapBlackBox(pathBlackBoxWindkesselSource, pathBlackBoxWindkesselTarget);
+      managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxWindkessel, pathBlackBoxWindkesselSource, pathBlackBoxWindkesselTarget);
 
       // Imposed = black box forces it on circuit
       // Provided = circuit calculates it

@@ -24,13 +24,19 @@ extern const std::string& eBlackBox_Property_Type_Name(eBlackBox_Property_Type m
                              SEScalarElectricCurrent, SEScalarElectricPotential, SEScalarElectricCharge, \
                              ElectricCurrentUnit, ElectricPotentialUnit, ElectricChargeUnit
 
+#define MAP_ELECTRICAL_BLACK_BOX SEElectricalBlackBox,SEElectricalCircuitNode, SEElectricalCircuitPath
+
 #define FLUID_BLACK_BOX SEFluidCircuitNode, SEFluidCircuitPath, \
                         SEScalarVolumePerTime, SEScalarPressure, SEScalarVolume, \
                         VolumePerTimeUnit, PressureUnit, VolumeUnit
 
+#define MAP_FLUID_BLACK_BOX SEFluidBlackBox,SEFluidCircuitNode, SEFluidCircuitPath
+
 #define THERMAL_BLACK_BOX SEThermalCircuitNode, SEThermalCircuitPath, \
                           SEScalarPower, SEScalarTemperature, SEScalarEnergy, \
                           PowerUnit, TemperatureUnit, EnergyUnit
+
+#define MAP_THERMAL_BLACK_BOX SEThermalBlackBox,SEThermalCircuitNode, SEThermalCircuitPath
 
 #define CCT typename CT, typename NT, typename PT, typename BBT, \
             typename CU, typename FU, typename IU, \
@@ -156,40 +162,6 @@ protected:
   virtual bool HasTargetPath() const { return m_TargetPath != nullptr; }
   virtual PathType* GetTargetPath() const { return m_TargetPath; }
   virtual void SetTargetPath(PathType* p) { m_TargetPath = p; }
-
-  virtual bool MapBlackBox(PathType& srcPath, PathType& tgtPath)
-  {
-    NodeType& bbNode = srcPath.GetTargetNode();
-    NodeType& srcNode = srcPath.GetSourceNode();
-    NodeType& tgtNode = tgtPath.GetTargetNode();
-
-    //Check our assumptions
-    if (&srcPath.GetSourceNode() == &tgtPath.GetSourceNode() ||
-      &srcPath.GetSourceNode() == &tgtPath.GetTargetNode())
-    {
-      bbNode = srcPath.GetSourceNode();
-      srcNode = srcPath.GetTargetNode();
-    }
-
-    if (&tgtPath.GetTargetNode() == &srcPath.GetSourceNode() ||
-      &tgtPath.GetTargetNode() == &srcPath.GetTargetNode())
-    {
-      bbNode = tgtPath.GetTargetNode();
-      tgtNode = tgtPath.GetSourceNode();
-    }
-
-    SetNode(&bbNode);
-    SetSourceNode(&srcNode);
-    SetSourcePath(&srcPath);
-    SetTargetNode(&tgtNode);
-    SetTargetPath(&tgtPath);
-
-    MapBlackBox(srcPath, tgtPath, bbNode, srcNode, tgtNode);
-
-    return true;
-  }
-  virtual void MapBlackBox(PathType& srcPath, PathType tgtPath,
-                           NodeType& bbNode, NodeType& srcNode, NodeType tgtNode) = 0;
 
   std::string      m_Name;
   // Circuit Elements

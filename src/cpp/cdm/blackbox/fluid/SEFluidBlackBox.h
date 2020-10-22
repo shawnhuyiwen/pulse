@@ -16,20 +16,4 @@ public:
 
 protected:
 
-  virtual bool MapBlackBox(SEFluidCircuitPath& srcPath, SEFluidCircuitPath& tgtPath)
-  {
-    return SEBlackBox::MapBlackBox(srcPath, tgtPath);
-  }
-  virtual void MapBlackBox(SEFluidCircuitPath& srcPath, SEFluidCircuitPath tgtPath,
-                           SEFluidCircuitNode& bbNode, SEFluidCircuitNode& srcNode, SEFluidCircuitNode tgtNode) override
-  {
-    bbNode.SetBlackBox(this);
-    srcNode.SetBlackBox(this);
-    tgtNode.SetBlackBox(this);
-    srcPath.SetBlackBox(this);
-    tgtPath.SetBlackBox(this);
-  }
-
-protected:
-
 };
