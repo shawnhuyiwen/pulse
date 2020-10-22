@@ -11,7 +11,7 @@ SEHepaticSystem::SEHepaticSystem(Logger* logger) : SESystem(logger)
 
 SEHepaticSystem::~SEHepaticSystem()
 {
-  Clear();
+
 }
 
 void SEHepaticSystem::Clear()

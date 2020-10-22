@@ -12,13 +12,13 @@ SEEndocrineSystem::SEEndocrineSystem(Logger* logger) : SESystem(logger)
 
 SEEndocrineSystem::~SEEndocrineSystem()
 {
-  Clear();
+  SAFE_DELETE(m_InsulinSynthesisRate);
 }
 
 void SEEndocrineSystem::Clear()
 {
   SESystem::Clear();
-  SAFE_DELETE(m_InsulinSynthesisRate);
+  INVALIDATE_PROPERTY(m_InsulinSynthesisRate);
 }
 
 const SEScalar* SEEndocrineSystem::GetScalar(const std::string& name)

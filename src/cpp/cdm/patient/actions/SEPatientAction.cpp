@@ -11,7 +11,7 @@ SEPatientAction::SEPatientAction(Logger* logger) : SEAction(logger)
 
 SEPatientAction::~SEPatientAction()
 {
-  Clear();
+
 }
 
 void SEPatientAction::Clear()

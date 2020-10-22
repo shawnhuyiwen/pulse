@@ -13,13 +13,13 @@ SEAirwayObstruction::SEAirwayObstruction(Logger* logger) : SEPatientAction(logge
 
 SEAirwayObstruction::~SEAirwayObstruction()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEAirwayObstruction::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEAirwayObstruction::Copy(const SEAirwayObstruction& src)

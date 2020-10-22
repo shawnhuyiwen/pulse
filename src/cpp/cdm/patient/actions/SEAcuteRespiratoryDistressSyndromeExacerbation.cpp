@@ -15,15 +15,17 @@ SEAcuteRespiratoryDistressSyndromeExacerbation::SEAcuteRespiratoryDistressSyndro
 
 SEAcuteRespiratoryDistressSyndromeExacerbation::~SEAcuteRespiratoryDistressSyndromeExacerbation()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
+  SAFE_DELETE(m_LeftLungAffected);
+  SAFE_DELETE(m_RightLungAffected);
 }
 
 void SEAcuteRespiratoryDistressSyndromeExacerbation::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Severity);
-  SAFE_DELETE(m_LeftLungAffected);
-  SAFE_DELETE(m_RightLungAffected);
+  INVALIDATE_PROPERTY(m_Severity);
+  INVALIDATE_PROPERTY(m_LeftLungAffected);
+  INVALIDATE_PROPERTY(m_RightLungAffected);
 }
 
 void SEAcuteRespiratoryDistressSyndromeExacerbation::Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src)

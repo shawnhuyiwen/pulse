@@ -12,7 +12,7 @@ SEOverrides::SEOverrides(Logger* logger) : SEAction(logger)
 
 SEOverrides::~SEOverrides()
 {
-  Clear();
+
 }
 
 void SEOverrides::Clear()

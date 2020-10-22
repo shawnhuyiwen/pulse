@@ -12,13 +12,13 @@ SEAnesthesiaMachineSodaLimeFailure::SEAnesthesiaMachineSodaLimeFailure(Logger* l
 
 SEAnesthesiaMachineSodaLimeFailure::~SEAnesthesiaMachineSodaLimeFailure()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEAnesthesiaMachineSodaLimeFailure::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEAnesthesiaMachineSodaLimeFailure::Copy(const SEAnesthesiaMachineSodaLimeFailure& src)

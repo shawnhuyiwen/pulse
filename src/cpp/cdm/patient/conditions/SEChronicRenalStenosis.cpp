@@ -15,13 +15,15 @@ SEChronicRenalStenosis::SEChronicRenalStenosis(Logger* logger) : SEPatientCondit
 SEChronicRenalStenosis::~SEChronicRenalStenosis()
 {
   Clear();
+  SAFE_DELETE(m_LeftKidneySeverity);
+  SAFE_DELETE(m_RightKidneySeverity);
 }
 
 void SEChronicRenalStenosis::Clear()
 {
   SEPatientCondition::Clear();
-  SAFE_DELETE(m_LeftKidneySeverity);
-  SAFE_DELETE(m_RightKidneySeverity);
+  INVALIDATE_PROPERTY(m_LeftKidneySeverity);
+  INVALIDATE_PROPERTY(m_RightKidneySeverity);
 }
 
 void SEChronicRenalStenosis::Copy(const SEChronicRenalStenosis& src)

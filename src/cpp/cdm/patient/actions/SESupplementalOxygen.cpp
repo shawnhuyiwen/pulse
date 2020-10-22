@@ -16,15 +16,17 @@ SESupplementalOxygen::SESupplementalOxygen(Logger* logger) : SEPatientAction(log
 
 SESupplementalOxygen::~SESupplementalOxygen()
 {
-  Clear();
+  m_Device = eSupplementalOxygen_Device::None;
+  SAFE_DELETE(m_Flow);
+  SAFE_DELETE(m_Volume);
 }
 
 void SESupplementalOxygen::Clear()
 {
   SEPatientAction::Clear();
   m_Device = eSupplementalOxygen_Device::None;
-  SAFE_DELETE(m_Flow);
-  SAFE_DELETE(m_Volume);
+  INVALIDATE_PROPERTY(m_Flow);
+  INVALIDATE_PROPERTY(m_Volume);
 }
 
 void SESupplementalOxygen::Copy(const SESupplementalOxygen& src)

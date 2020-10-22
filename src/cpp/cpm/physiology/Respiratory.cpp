@@ -945,7 +945,9 @@ void Respiratory::SupplementalOxygen()
   SESupplementalOxygen* so = m_data.GetActions().GetPatientActions().GetSupplementalOxygen();
 
   // Get flow
-  double flow_L_Per_min = so->GetFlow(VolumePerTimeUnit::L_Per_min);
+  double flow_L_Per_min = 0;
+  if(so->HasFlow())
+    flow_L_Per_min = so->GetFlow(VolumePerTimeUnit::L_Per_min);
   //Get tank pressure node and flow control resistor path
   SEFluidCircuitPath* Tank = nullptr;
   SEFluidCircuitPath* OxygenInlet = nullptr;
@@ -1013,7 +1015,6 @@ void Respiratory::SupplementalOxygen()
     so->GetVolume().SetValue(425.0, VolumeUnit::L);
     Info("Supplemental oxygen initial tank volume not set. Using default value of 425 L.");
   }
-  
 
   //Decrement volume from the tank
   //Inf volume is assumed to be a wall connection that will never run out

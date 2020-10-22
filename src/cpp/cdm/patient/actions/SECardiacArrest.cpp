@@ -12,7 +12,7 @@ SECardiacArrest::SECardiacArrest(Logger* logger) : SEPatientAction(logger)
 
 SECardiacArrest::~SECardiacArrest()
 {
-  Clear();
+  m_State = eSwitch::Off;
 }
 
 void SECardiacArrest::Clear()

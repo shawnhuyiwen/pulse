@@ -10,7 +10,7 @@ SEEnvironmentAction::SEEnvironmentAction(Logger* logger) : SEAction(logger)
 
 SEEnvironmentAction::~SEEnvironmentAction()
 {
-  Clear();
+
 }
 
 void SEEnvironmentAction::Clear()

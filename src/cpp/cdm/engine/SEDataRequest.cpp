@@ -29,7 +29,11 @@ SEDataRequest::SEDataRequest(eDataRequest_Category category, const SEDecimalForm
 
 SEDataRequest::~SEDataRequest()
 {
-  Clear();
+  m_CompartmentName = "";
+  m_SubstanceName = "";
+  m_PropertyName = "";
+  m_RequestedUnit = "";
+  m_Unit = nullptr;
 }
 
 void SEDataRequest::Clear()

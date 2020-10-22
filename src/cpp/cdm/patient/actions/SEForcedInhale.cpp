@@ -17,16 +17,19 @@ SEForcedInhale::SEForcedInhale(Logger* logger) : SEConsciousRespirationCommand(l
 
 SEForcedInhale::~SEForcedInhale()
 {
-  Clear();
+  SAFE_DELETE(m_InspiratoryCapacityFraction);
+  SAFE_DELETE(m_InhalePeriod);
+  SAFE_DELETE(m_HoldPeriod);
+  SAFE_DELETE(m_ReleasePeriod);
 }
 
 void SEForcedInhale::Clear()
 {
   SEConsciousRespirationCommand::Clear();
-  SAFE_DELETE(m_InspiratoryCapacityFraction);
-  SAFE_DELETE(m_InhalePeriod);
-  SAFE_DELETE(m_HoldPeriod);
-  SAFE_DELETE(m_ReleasePeriod);
+  INVALIDATE_PROPERTY(m_InspiratoryCapacityFraction);
+  INVALIDATE_PROPERTY(m_InhalePeriod);
+  INVALIDATE_PROPERTY(m_HoldPeriod);
+  INVALIDATE_PROPERTY(m_ReleasePeriod);
 }
 
 void SEForcedInhale::Copy(const SEForcedInhale& src)

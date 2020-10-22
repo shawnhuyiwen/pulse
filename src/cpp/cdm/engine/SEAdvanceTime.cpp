@@ -12,13 +12,13 @@ SEAdvanceTime::SEAdvanceTime(Logger* logger) : SEAction(logger)
 
 SEAdvanceTime::~SEAdvanceTime()
 {
-  Clear();
+  SAFE_DELETE(m_Time);
 }
 
 void SEAdvanceTime::Clear()
 {
   SEAction::Clear();
-  SAFE_DELETE(m_Time);
+  INVALIDATE_PROPERTY(m_Time);
 }
 
 bool SEAdvanceTime::IsValid() const

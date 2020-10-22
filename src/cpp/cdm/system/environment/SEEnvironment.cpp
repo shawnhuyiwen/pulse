@@ -36,12 +36,6 @@ SEEnvironment::SEEnvironment(Logger* logger) : SESystem(logger)
 
 SEEnvironment::~SEEnvironment()
 {
-  Clear();
-}
-
-void SEEnvironment::Clear()
-{
-  SESystem::Clear();
   SAFE_DELETE(m_ActiveHeating);
   SAFE_DELETE(m_ActiveCooling);
   SAFE_DELETE(m_AppliedTemperature);
@@ -53,7 +47,29 @@ void SEEnvironment::Clear()
   SAFE_DELETE(m_RadiativeHeatLoss);
   SAFE_DELETE(m_RadiativeHeatTranferCoefficient);
   SAFE_DELETE(m_RespirationHeatLoss);
-  SAFE_DELETE(m_SkinHeatLoss);
+  SAFE_DELETE(m_SkinHeatLoss);;
+}
+
+void SEEnvironment::Clear()
+{
+  SESystem::Clear();
+  if (m_ActiveHeating)
+    m_ActiveHeating->Clear();
+  if (m_ActiveCooling)
+    m_ActiveCooling->Clear();
+  if (m_AppliedTemperature)
+    m_AppliedTemperature->Clear();
+  if (m_EnvironmentalConditions)
+    m_EnvironmentalConditions->Clear();
+
+  INVALIDATE_PROPERTY(m_ConvectiveHeatLoss);
+  INVALIDATE_PROPERTY(m_ConvectiveHeatTranferCoefficient);
+  INVALIDATE_PROPERTY(m_EvaporativeHeatLoss);
+  INVALIDATE_PROPERTY(m_EvaporativeHeatTranferCoefficient);
+  INVALIDATE_PROPERTY(m_RadiativeHeatLoss);
+  INVALIDATE_PROPERTY(m_RadiativeHeatTranferCoefficient);
+  INVALIDATE_PROPERTY(m_RespirationHeatLoss);
+  INVALIDATE_PROPERTY(m_SkinHeatLoss);
 }
 
 const SEScalar* SEEnvironment::GetScalar(const std::string& name)

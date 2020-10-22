@@ -26,12 +26,6 @@ SECompleteBloodCount::SECompleteBloodCount(Logger* logger) : SEPatientAssessment
 
 SECompleteBloodCount::~SECompleteBloodCount()
 {
-  Clear();
-}
-
-void SECompleteBloodCount::Clear()
-{
-  SEPatientAssessment::Clear();
   SAFE_DELETE(m_Hematocrit);
   SAFE_DELETE(m_Hemoglobin);
   SAFE_DELETE(m_PlateletCount);
@@ -40,6 +34,19 @@ void SECompleteBloodCount::Clear()
   SAFE_DELETE(m_MeanCorpuscularVolume);
   SAFE_DELETE(m_RedBloodCellCount);
   SAFE_DELETE(m_WhiteBloodCellCount);
+}
+
+void SECompleteBloodCount::Clear()
+{
+  SEPatientAssessment::Clear();
+  INVALIDATE_PROPERTY(m_Hematocrit);
+  INVALIDATE_PROPERTY(m_Hemoglobin);
+  INVALIDATE_PROPERTY(m_PlateletCount);
+  INVALIDATE_PROPERTY(m_MeanCorpuscularHemoglobin);
+  INVALIDATE_PROPERTY(m_MeanCorpuscularHemoglobinConcentration);
+  INVALIDATE_PROPERTY(m_MeanCorpuscularVolume);
+  INVALIDATE_PROPERTY(m_RedBloodCellCount);
+  INVALIDATE_PROPERTY(m_WhiteBloodCellCount);
 }
 
 bool SECompleteBloodCount::SerializeToString(std::string& output, SerializationFormat m) const

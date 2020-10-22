@@ -11,7 +11,7 @@ SEPatientAssessment::SEPatientAssessment(Logger* logger) : Loggable(logger)
 
 SEPatientAssessment::~SEPatientAssessment()
 {
-  Clear();
+
 }
 
 void SEPatientAssessment::Clear()

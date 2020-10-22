@@ -15,14 +15,16 @@ SEImpairedAlveolarExchangeExacerbation::SEImpairedAlveolarExchangeExacerbation(L
 
 SEImpairedAlveolarExchangeExacerbation::~SEImpairedAlveolarExchangeExacerbation()
 {
-  Clear();
+  SAFE_DELETE(m_ImpairedSurfaceArea);
+  SAFE_DELETE(m_ImpairedFraction);
+  SAFE_DELETE(m_Severity);
 }
 
 void SEImpairedAlveolarExchangeExacerbation::Clear()
 {
-  SAFE_DELETE(m_ImpairedSurfaceArea);
-  SAFE_DELETE(m_ImpairedFraction);
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_ImpairedSurfaceArea);
+  INVALIDATE_PROPERTY(m_ImpairedFraction);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEImpairedAlveolarExchangeExacerbation::Copy(const SEImpairedAlveolarExchangeExacerbation & src)

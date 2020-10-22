@@ -19,7 +19,10 @@ SEPatientConfiguration::SEPatientConfiguration(Logger* logger) : Loggable(logger
 
 SEPatientConfiguration::~SEPatientConfiguration()
 {
-  Clear();
+  m_DataRoot = "./";
+  m_PatientFile = "";
+  SAFE_DELETE(m_Patient);
+  SAFE_DELETE(m_Conditions);
 }
 
 bool SEPatientConfiguration::SerializeToString(std::string& output, SerializationFormat m) const
@@ -43,8 +46,10 @@ void SEPatientConfiguration::Clear()
 {
   m_DataRoot = "./";
   m_PatientFile = "";
-  SAFE_DELETE(m_Patient);
-  SAFE_DELETE(m_Conditions);
+  if (m_Patient)
+    m_Patient->Clear();
+  if (m_Conditions)
+    m_Conditions->Clear();
 }
 
 bool SEPatientConfiguration::IsValid() const

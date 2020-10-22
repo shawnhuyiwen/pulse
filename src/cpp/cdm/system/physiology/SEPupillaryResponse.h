@@ -4,7 +4,7 @@
 #pragma once
 #include "system/SESystem.h"
 
-class CDM_DECL SEPupillaryResponse
+class CDM_DECL SEPupillaryResponse : public Loggable
 {
   friend class PBPhysiology;//friend the serialization class
 public:

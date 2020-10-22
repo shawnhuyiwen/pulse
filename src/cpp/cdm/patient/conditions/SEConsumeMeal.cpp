@@ -16,13 +16,15 @@ SEConsumeMeal::SEConsumeMeal(Logger* logger) : SEPatientCondition(logger)
 
 SEConsumeMeal::~SEConsumeMeal()
 {
-  Clear();
+  SAFE_DELETE(m_Meal);
+  InvalidateMealFile();
 }
 
 void SEConsumeMeal::Clear()
 {
   SEPatientCondition::Clear();
-  SAFE_DELETE(m_Meal);
+  if (m_Meal)
+    m_Meal->Clear();
   InvalidateMealFile();
 }
 

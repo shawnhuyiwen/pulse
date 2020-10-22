@@ -15,14 +15,16 @@ SEHemorrhage::SEHemorrhage(Logger* logger) : SEPatientAction(logger)
 
 SEHemorrhage::~SEHemorrhage()
 {
-  Clear();
+  m_Compartment = "";
+  SAFE_DELETE(m_Rate);
+  m_Type = eHemorrhage_Type::External;
 }
 
 void SEHemorrhage::Clear()
 {
   SEPatientAction::Clear();
   m_Compartment = "";
-  SAFE_DELETE(m_Rate);
+  INVALIDATE_PROPERTY(m_Rate);
   m_Type = eHemorrhage_Type::External;
 }
 

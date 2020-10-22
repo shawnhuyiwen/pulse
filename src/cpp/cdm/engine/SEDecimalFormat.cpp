@@ -15,7 +15,7 @@ SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 
 SEDecimalFormat::~SEDecimalFormat()
 {
-  Clear();
+
 }
 
 void SEDecimalFormat::Clear()

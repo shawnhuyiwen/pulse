@@ -398,5 +398,4 @@ void PulseEngineJNI::ForwardFatal(const std::string& msg, const std::string& ori
   err.append(msg);
   err.append(" ");
   err.append(origin);
-  throw PhysiologyEngineException(err);
 }

@@ -12,7 +12,7 @@ public:
   SECondition(Logger* logger);
   virtual ~SECondition();
   
-  virtual void Clear();// Deletes all members
+  virtual void Clear();
 
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;
