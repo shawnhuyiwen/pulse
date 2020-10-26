@@ -78,8 +78,16 @@ public:
       //scaling factor is linear such that when CO2 mM is 27, factor is .4; when CO2 mM is 29, factor is 1
       double totalCO2_mM = co2_mM / .05;
       double CO2_scaling_factor = .4*totalCO2_mM - 10.6;
-      if (CO2_scaling_factor > 1.0) CO2_scaling_factor = 1.0;
-      else if (CO2_scaling_factor < 0.1) CO2_scaling_factor = 0.1;
+      if (CO2_scaling_factor > 1.0)
+      {
+        //Just setting this to 1.0 here causes a discontinuity that actually causes the CO2 Sat to drop when it should rise.
+        //Therefore, we'll smooth it a little.
+        CO2_scaling_factor = 1.0 + 0.1 * (CO2_scaling_factor - 1.0);
+      }
+      else if (CO2_scaling_factor < 0.1)
+      {
+        CO2_scaling_factor = 0.1;
+      }
 
       m_SatCalc.CalculateHemoglobinSaturations(O2PartialPressureGuess_mmHg, CO2PartialPressureGuess_mmHg, pH, m_SatCalc.m_temperature_C, m_SatCalc.m_hematocrit, OxygenSaturation, CarbonDioxideSaturation, CO2_scaling_factor);
       logTerm = log10(bicarb_mM / co2_mM);

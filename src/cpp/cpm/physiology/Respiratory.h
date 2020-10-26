@@ -145,10 +145,15 @@ protected:
   double m_InspiratoryRiseFraction;
   double m_InspiratoryToExpiratoryPauseFraction;
 
-  //Conscious Respiration
+  // Conscious Respiration
   bool m_ActiveConsciousRespirationCommand;
 
-  //Overrides
+  // Disease States
+  //jbw - serialize these
+  double m_leftAlveoliDecrease_L;
+  double m_rightAlveoliDecrease_L;
+
+  // Overrides
   double m_RespiratoryResistanceOverride_cmH2O_s_Per_L;
   double m_RespiratoryComplianceOverride_L_Per_cmH2O;
 

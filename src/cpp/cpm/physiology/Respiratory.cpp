@@ -242,6 +242,9 @@ void Respiratory::Initialize()
 
   m_IERatioScaleFactor = 1.0;
 
+  m_leftAlveoliDecrease_L = 0;
+  m_rightAlveoliDecrease_L = 0;
+
   //System data
   double TidalVolume_L = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L);
   double RespirationRate_Per_min = m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min);
@@ -2192,8 +2195,8 @@ void Respiratory::UpdateChestWallCompliances()
   double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
   double leftLungRatio = 1.0 - rightLungRatio;
 
-  double rightVolume_L = m_RightLung->GetVolume(VolumeUnit::L) - m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
-  double leftVolume_L = m_LeftLung->GetVolume(VolumeUnit::L) - m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
+  double rightVolume_L = m_RightLung->GetVolume(VolumeUnit::L) - m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L) + m_rightAlveoliDecrease_L;
+  double leftVolume_L = m_LeftLung->GetVolume(VolumeUnit::L) - m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L) + m_leftAlveoliDecrease_L;
 
   for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
   {
@@ -2322,15 +2325,43 @@ void Respiratory::UpdateVolumes()
   double leftAlveolarDeadSpaceIncrease_L = 0.0;
   double rightAlveolarDeadSpaceIncrease_L = 0.0;
 
+  double leftAlveoliDecrease_L = 0.0;
+  double rightAlveoliDecrease_L = 0.0;
+
   //------------------------------------------------------------------------------------------------------
-//Positive Pressure Ventilation
-  if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
-    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
-    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
+  //ARDS
+  //Exacerbation will overwrite the condition, even if it means improvement
+
+  //The dead space cannot be greater than the FRC in our model.
+
+  if (m_data.GetConditions().HasAcuteRespiratoryDistressSyndrome() || m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
   {
-    double ventilatorIncrease_L = 0.05;
-    leftAlveolarDeadSpaceIncrease_L += ventilatorIncrease_L;
-    rightAlveolarDeadSpaceIncrease_L += ventilatorIncrease_L;
+    double severity = 0.0;
+    double leftLungFraction = 0.0;
+    double rightLungFraction = 0.0;
+    if (m_PatientActions->HasAcuteRespiratoryDistressSyndromeExacerbation())
+    {
+      severity = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation()->GetSeverity().GetValue();
+      leftLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation()->GetLeftLungAffected().GetValue();
+      rightLungFraction = m_PatientActions->GetAcuteRespiratoryDistressSyndromeExacerbation()->GetRightLungAffected().GetValue();
+    }
+    else
+    {
+      severity = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetSeverity().GetValue();
+      leftLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetLeftLungAffected().GetValue();
+      rightLungFraction = m_data.GetConditions().GetAcuteRespiratoryDistressSyndrome().GetRightLungAffected().GetValue();
+    }
+
+    double alveolarDeadSpace_L = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.15, severity);
+
+    double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
+    double leftLungRatio = 1.0 - rightLungRatio;
+
+    leftAlveolarDeadSpaceIncrease_L = MAX(leftAlveolarDeadSpaceIncrease_L, alveolarDeadSpace_L * leftLungRatio * leftLungFraction);
+    rightAlveolarDeadSpaceIncrease_L = MAX(rightAlveolarDeadSpaceIncrease_L, alveolarDeadSpace_L * rightLungRatio * rightLungFraction);
+
+    leftAlveoliDecrease_L = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.6, severity);
+    rightAlveoliDecrease_L = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.6, severity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2360,13 +2391,18 @@ void Respiratory::UpdateVolumes()
     combinedSeverity = MAX(combinedSeverity, bronchitisSeverity);
 
     //Linear function: Min = 0.0, Max = 2.0 (increasing with severity)
-    double alveolarDeadSpace_L = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 2.0, combinedSeverity);
+    double alveolarDeadSpace_L = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 3.5, combinedSeverity);
 
     double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
     double leftLungRatio = 1.0 - rightLungRatio;
     
     leftAlveolarDeadSpaceIncrease_L = MAX(leftAlveolarDeadSpaceIncrease_L, alveolarDeadSpace_L * leftLungRatio);
     rightAlveolarDeadSpaceIncrease_L = MAX(rightAlveolarDeadSpaceIncrease_L, alveolarDeadSpace_L * rightLungRatio);
+
+    //jbw - Do the max stuff here for comined effects
+    //jbw - Increases and decreases should all be based on baseline multipliers
+    leftAlveoliDecrease_L = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.5, combinedSeverity);
+    rightAlveoliDecrease_L = GeneralMath::LinearInterpolator(0.0, 1.0, 0.0, 0.5, combinedSeverity);
   }
  
   //---------------------------------------------------------------------------------------------------------------------------------------------
@@ -2390,6 +2426,47 @@ void Respiratory::UpdateVolumes()
   leftAlveolarDeadSpace_L += leftAlveolarDeadSpaceIncrease_L;
   rightAlveolarDeadSpace_L += rightAlveolarDeadSpaceIncrease_L;
 
+  //---------------------------------------------------------------------------------------------------------------------------------------------
+  //Update alveoli volume that participates in gas exchange
+
+  //Only do this once on the timestep that it changes
+  //Change both next and current volume to handle compliance properly
+  if (leftAlveoliDecrease_L != m_leftAlveoliDecrease_L)
+  {
+    m_LeftAlveoli->GetNextVolume().SetReadOnly(false);
+    m_LeftAlveoli->GetVolume().SetReadOnly(false);
+    m_LeftAlveoli->GetNextVolume().IncrementValue(m_leftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
+    m_LeftAlveoli->GetVolume().IncrementValue(m_leftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
+    m_LeftAlveoli->GetNextVolume().SetReadOnly(true);
+    m_LeftAlveoli->GetVolume().SetReadOnly(true);
+    m_leftAlveoliDecrease_L = leftAlveoliDecrease_L;
+
+    m_LeftPleural->GetNextVolume().SetReadOnly(false);
+    m_LeftPleural->GetVolume().SetReadOnly(false);
+    m_LeftPleural->GetNextVolume().IncrementValue(m_leftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
+    m_LeftPleural->GetVolume().IncrementValue(m_leftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
+    m_LeftPleural->GetNextVolume().SetReadOnly(true);
+    m_LeftPleural->GetVolume().SetReadOnly(true);
+  }
+
+  if (rightAlveoliDecrease_L != m_rightAlveoliDecrease_L)
+  {
+    m_RightAlveoli->GetNextVolume().SetReadOnly(false);
+    m_RightAlveoli->GetVolume().SetReadOnly(false);
+    m_RightAlveoli->GetNextVolume().IncrementValue(m_rightAlveoliDecrease_L - rightAlveoliDecrease_L, VolumeUnit::L);
+    m_RightAlveoli->GetVolume().IncrementValue(m_rightAlveoliDecrease_L - rightAlveoliDecrease_L, VolumeUnit::L);
+    m_RightAlveoli->GetNextVolume().SetReadOnly(true);
+    m_RightAlveoli->GetVolume().SetReadOnly(true);
+    m_rightAlveoliDecrease_L = rightAlveoliDecrease_L;
+
+    m_RightPleural->GetNextVolume().SetReadOnly(false);
+    m_RightPleural->GetVolume().SetReadOnly(false);
+    m_RightPleural->GetNextVolume().IncrementValue(m_leftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
+    m_RightPleural->GetVolume().IncrementValue(m_leftAlveoliDecrease_L - leftAlveoliDecrease_L, VolumeUnit::L);
+    m_RightPleural->GetNextVolume().SetReadOnly(true);
+    m_RightPleural->GetVolume().SetReadOnly(true);
+  }
+
   m_LeftAlveolarDeadSpace->GetNextVolume().SetValue(leftAlveolarDeadSpace_L, VolumeUnit::L);
   m_RightAlveolarDeadSpace->GetNextVolume().SetValue(rightAlveolarDeadSpace_L, VolumeUnit::L);
 
@@ -2398,7 +2475,7 @@ void Respiratory::UpdateVolumes()
   double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
   double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
   double totalLungCapacity_L = m_data.GetInitialPatient().GetTotalLungCapacity(VolumeUnit::L);
-  functionalResidualCapacity_L += leftAlveolarDeadSpaceIncrease_L + rightAlveolarDeadSpaceIncrease_L;
+  functionalResidualCapacity_L += leftAlveolarDeadSpaceIncrease_L - m_leftAlveoliDecrease_L + rightAlveolarDeadSpaceIncrease_L - m_rightAlveoliDecrease_L;
   residualVolume_L += leftAlveolarDeadSpaceIncrease_L + rightAlveolarDeadSpaceIncrease_L;
   totalLungCapacity_L += leftAlveolarDeadSpaceIncrease_L + rightAlveolarDeadSpaceIncrease_L;
 
@@ -3149,6 +3226,9 @@ void Respiratory::UpdatePulmonaryShunt()
   double rightSeverity = 0.0;
   double leftSeverity = 0.0;
 
+  double rightPulmonaryShuntScalingFactor = 1.0;
+  double leftPulmonaryShuntScalingFactor = 1.0;
+
   //------------------------------------------------------------------------------------------------------
   //Positive Pressure Ventilation
   if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
@@ -3156,8 +3236,8 @@ void Respiratory::UpdatePulmonaryShunt()
     m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
   {
     double shuntResistanceFactor = 0.3;
-    m_RightPulmonaryArteriesToVeins->GetNextResistance().MultiplyValue(shuntResistanceFactor, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    m_LeftPulmonaryArteriesToVeins->GetNextResistance().MultiplyValue(shuntResistanceFactor, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    rightPulmonaryShuntScalingFactor = shuntResistanceFactor;
+    leftPulmonaryShuntScalingFactor = shuntResistanceFactor;
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -3234,8 +3314,8 @@ void Respiratory::UpdatePulmonaryShunt()
     leftSeverity = MAX(leftSeverity, leftScaledSeverity);
   }
 
-  double rightPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.05, 1.0, rightSeverity);
-  double leftPulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.05, 1.0, leftSeverity);
+  rightPulmonaryShuntScalingFactor = MIN(rightPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.005, 1.0, rightSeverity));
+  leftPulmonaryShuntScalingFactor = MIN(leftPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.005, 1.0, leftSeverity));
 
   //------------------------------------------------------------------------------------------------------
   //COPD
@@ -3252,7 +3332,7 @@ void Respiratory::UpdatePulmonaryShunt()
       emphysemaSeverity = m_data.GetConditions().GetChronicObstructivePulmonaryDisease().GetEmphysemaSeverity().GetValue();
     }
 
-    double pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.6, 1.0, emphysemaSeverity);
+    double pulmonaryShuntScalingFactor = GeneralMath::ExponentialDecayFunction(10, 0.05, 1.0, emphysemaSeverity);
 
     rightPulmonaryShuntScalingFactor = MIN(rightPulmonaryShuntScalingFactor, pulmonaryShuntScalingFactor);
     leftPulmonaryShuntScalingFactor = MIN(leftPulmonaryShuntScalingFactor, pulmonaryShuntScalingFactor);

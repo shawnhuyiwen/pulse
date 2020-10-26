@@ -74,6 +74,10 @@
     
       { "DecimalFormat": { "Precision": 3 }, "Category": "Patient", "PropertyName": "AlveoliSurfaceArea", "Unit": "m^2" },
       
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarDeadSpace",              "Unit": "mL" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AnatomicDeadSpace",              "Unit": "mL" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PhysiologicDeadSpace",           "Unit": "mL" },
+      
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "RespirationRate",                   "Unit": "1/min" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "InspiratoryExpiratoryRatio",        "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "InspiratoryPulmonaryResistance",    "Unit": "cmH2O s/L" },
@@ -98,17 +102,17 @@
     "EquipmentAction": {
       "MechanicalVentilatorConfiguration": {
         "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
-              "Comment": "Attach the mechanical ventilator - TV = 8 mL/kg(ideal)" }}},
+              "Comment": "Attach the mechanical ventilator - VC-AC: TV = 7 mL/kg(ideal)" }}},
         "Configuration":
         {
           "Connection": "Tube",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
-          "InspirationTargetFlow": { "ScalarVolumePerTime": { "Value": 0.455, "Unit": "L/s" } },
+          "InspirationTargetFlow": { "ScalarVolumePerTime": { "Value": 0.351, "Unit": "L/s" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 10.0, "Unit": "s" } },
           "InspirationPatientTriggerPressure": { "ScalarPressure": { "Value": -0.000001, "Unit": "cmH2O" } },
-          "ExpirationCycleVolume": { "ScalarVolume": { "Value": 0.602, "Unit": "L" } },
+          "ExpirationCycleVolume": { "ScalarVolume": { "Value": 0.527, "Unit": "L" } },
           "FractionInspiredGas": [
             { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } }
           ]
@@ -117,6 +121,6 @@
     }
   },  
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "min" } } } }
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 60.0, "Unit": "min" } } } }
   ]
 }
