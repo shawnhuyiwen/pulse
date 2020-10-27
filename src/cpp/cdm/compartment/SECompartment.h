@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+class SEElectricCompartment;
 class SEGasCompartment;
 class SELiquidCompartment;
 class SEThermalCompartment;

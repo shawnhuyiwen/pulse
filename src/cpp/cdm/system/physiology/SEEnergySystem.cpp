@@ -25,7 +25,7 @@ SEEnergySystem::SEEnergySystem(Logger* logger) : SESystem(logger)
   m_SkinTemperature=nullptr;
   m_SweatRate = nullptr;
   m_TotalMetabolicRate = nullptr;
-  m_TotalWorkRateLevel = nullptr;  
+  m_TotalWorkRateLevel = nullptr;
 }
 
 SEEnergySystem::~SEEnergySystem()

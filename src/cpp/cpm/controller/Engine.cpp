@@ -6,7 +6,7 @@
 #include "PulseConfiguration.h"
 #include "Substances.h"
 #include "Compartments.h"
-
+#include "BlackBoxes.h"
 
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
 {
@@ -226,4 +226,9 @@ const SEMechanicalVentilator* PulseEngine::GetMechanicalVentilator() const
 const SECompartmentManager& PulseEngine::GetCompartments() const
 {
   return m_PulseController->GetData().GetCompartments();
+}
+
+SEBlackBoxManager& PulseEngine::GetBlackBoxes() const
+{
+  return m_PulseController->GetData().GetBlackBoxes();
 }

@@ -23,6 +23,7 @@ public:
 
   virtual bool HasMapping() const { return !m_AllNodes.empty(); }
   virtual const std::vector<NodeType*>& GetNodes() const { return m_AllNodes; }
+  virtual const std::vector<NodeType*>& GetQuantityNodes() const { return m_QuantityNodes; }
   virtual void RemoveNode(NodeType& node);
   virtual void MapNode(NodeType& node);
 
@@ -36,8 +37,6 @@ public:
 
 protected:
   void SortNode(NodeType& node);
-  virtual const std::vector<NodeType*>& GetAllNodes() const { return m_AllNodes; }
-  virtual const std::vector<NodeType*>& GetQuantityNodes() const { return m_QuantityNodes; }
 
   // I assume all nodes will have a pressure
   std::vector<NodeType*> m_QuantityNodes;

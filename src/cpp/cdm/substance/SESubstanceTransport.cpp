@@ -9,8 +9,9 @@
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 
-#include "Eigen/Core"
-#include "Eigen/LU"
+#include <Eigen/Core>
+#include <Eigen/LU>
+
 //#define VERBOSE
 #define ZERO_APPROX 1e-10
 

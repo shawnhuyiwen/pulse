@@ -4,7 +4,7 @@
 #pragma once
 #include "compartment/fluid/SEFluidCompartmentLink.h"
 #include "compartment/fluid/SEGasCompartment.h"
-
+class SEGasBlackBox;
 class SEGasCompartment;
 
 class CDM_DECL SEGasCompartmentLink : public SEFluidCompartmentLink<SEGasTransportEdge, SEGasTransportVertex, SEGasCompartment>
@@ -16,6 +16,11 @@ protected:
 public:
   ~SEGasCompartmentLink() {}
 
-protected:
+  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
+  virtual SEGasBlackBox* GetBlackBox() { return m_BlackBox; }
+  virtual const SEGasBlackBox* GetBlackBox() const { return m_BlackBox; }
+  virtual void SetBlackBox(SEGasBlackBox* bb) { m_BlackBox = bb; }
 
+protected:
+  SEGasBlackBox* m_BlackBox = nullptr;
 };

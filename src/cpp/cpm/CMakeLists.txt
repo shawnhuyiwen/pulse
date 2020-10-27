@@ -7,6 +7,7 @@ add_library_ex(CommonPulseModels
     PulseScenario.h
     PulseScenarioExec.h
     stdafx.h
+    controller/BlackBoxes.h
     controller/Circuits.h
     controller/Compartments.h
     controller/Controller.h
@@ -41,6 +42,7 @@ add_library_ex(CommonPulseModels
     PulsePhysiologyEngine.cpp
     PulseScenario.cpp
     PulseScenarioExec.cpp
+    controller/BlackBoxes.cpp
     controller/Circuits.cpp
     controller/Compartments.cpp
     controller/Controller.cpp

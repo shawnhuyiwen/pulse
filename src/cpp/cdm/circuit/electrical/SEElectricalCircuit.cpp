@@ -38,4 +38,3 @@ void SEElectricalCircuit::AddCircuit(SEElectricalCircuit& circuit)
   for (SEElectricalCircuitPath* path : circuit.GetPaths())
     AddPath(*path);      
 }
-

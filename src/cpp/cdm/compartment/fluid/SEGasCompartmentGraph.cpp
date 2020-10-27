@@ -19,7 +19,7 @@ void SEGasCompartmentGraph::BalanceByIntensive()
       if (subQ->HasVolumeFraction())
         totalVolumeFraction += subQ->GetVolumeFraction().GetValue();
     }
-    if (SEScalar::IsZero(totalVolumeFraction, ZERO_APPROX))
+    if (totalVolumeFraction == 0.0)
     {
       for (SEGasSubstanceQuantity* subQ : cmpt->GetSubstanceQuantities())
       {
@@ -31,13 +31,13 @@ void SEGasCompartmentGraph::BalanceByIntensive()
     else
     {
       //Adjust to keep the volume fractions making sense
-      //Make it a little more sensitive than the error check later just to be safe
+    //Make it a little more sensitive than the error check later just to be safe
       if (std::abs(1.0 - totalVolumeFraction) > (ZERO_APPROX / 10.0))
       {
         for (SEGasSubstanceQuantity* subQ : cmpt->GetSubstanceQuantities())
         {
           //Adjust everything the same amount to make sure the volume fraction is 1.0
-          double volumeFractionErrorFraction = 1.0 / totalVolumeFraction;  //<1 = too high; >1 = too low
+      double volumeFractionErrorFraction = 1.0 / totalVolumeFraction;  //<1 = too high; >1 = too low
           subQ->GetVolumeFraction().SetValue(subQ->GetVolumeFraction().GetValue() * volumeFractionErrorFraction);
         }
       }

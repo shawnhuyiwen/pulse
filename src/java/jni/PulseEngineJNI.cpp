@@ -176,7 +176,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeIniti
   if (dataRequests != nullptr)
     drStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
 
-    bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format);
+  bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format);
 
   env->ReleaseStringUTFChars(patient_configuration, pcStr);
   if(drStr != nullptr)
