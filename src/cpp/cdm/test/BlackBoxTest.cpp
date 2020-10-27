@@ -80,12 +80,12 @@ void CommonDataModelTest::BasicBlackBoxComparisonTest(const std::string& sOutput
     if (!serialized && currentTime_s > 80)
     {
       serialized = true;
-      std::string jsonDir = sOutputDirectory + "/BasicBlackBoxComparison.json";
+      std::string jsonDir = sOutputDirectory + "/BasicBlackBoxComparisonSerializationTest.json";
       TestCircuitSerialization(jsonDir);
       fluidCircuit = m_Circuits->GetFluidCircuit("Fluid");
     }
   }
-  std::string sOutputFile = sOutputDirectory + "/BasicBlackBoxComparison.csv";
+  std::string sOutputFile = sOutputDirectory + "/BasicBlackBoxComparisonTest.csv";
   trk1.WriteTrackToFile(sOutputFile.c_str());
   m_Circuits->Clear();
 }
@@ -95,7 +95,7 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
   //jbw - Add transport
 
   std::cout << "BlackBoxTest\n";
-  m_Logger->SetLogFile(sOutputDirectory + "/BlackBoxTest.log");
+  m_Logger->SetLogFile(sOutputDirectory + "/BasicBlackBoxTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 50.0;
   double currentTime_s = 0.0;
@@ -213,7 +213,7 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
     fluidCalculator.Process(*fluidCircuit2, timeStep_s);
 
     fluidCalculator.PostProcess(*fluidCircuit1);
-    fluidCalculator.PostProcess(*fluidCircuit2);    
+    fluidCalculator.PostProcess(*fluidCircuit2);
     
     currentTime_s += timeStep_s;
     sample += timeStep_s;
@@ -225,8 +225,8 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
     }
   }
 
-  std::string sOutputFile1 = sOutputDirectory + "/BlackBoxTestCircuit1.csv";
-  std::string sOutputFile2 = sOutputDirectory + "/BlackBoxTestCircuit2.csv";
+  std::string sOutputFile1 = sOutputDirectory + "/BasicBlackBoxTestCircuit1.csv";
+  std::string sOutputFile2 = sOutputDirectory + "/BasicBlackBoxTestCircuit2.csv";
   trk1.WriteTrackToFile(sOutputFile1.c_str());
   trk2.WriteTrackToFile(sOutputFile2.c_str());
   m_Circuits->Clear();
@@ -507,9 +507,9 @@ void CommonDataModelTest::SimpleBlackBoxTest(const std::string& sOutputDirectory
     }
 
 
-    std::string sOutputFileDriver = sOutputDirectory + "/BlackBoxDriver" + outputFile + ".csv";
-    std::string sOutputFilePassive = sOutputDirectory + "/BlackBoxPassive" + outputFile + ".csv";
-    std::string sOutputFileCombined = sOutputDirectory + "/BlackBoxCombined.csv";
+    std::string sOutputFileDriver = sOutputDirectory + "/SimpleBlackBoxDriver" + outputFile + ".csv";
+    std::string sOutputFilePassive = sOutputDirectory + "/SimpleBlackBoxPassive" + outputFile + ".csv";
+    std::string sOutputFileCombined = sOutputDirectory + "/SimpleBlackBoxCombined.csv";
 
     if (!isCombined)
     {
@@ -535,6 +535,7 @@ void CommonDataModelTest::WindkesselBlackBoxTest(const std::string& sOutputDirec
   DataTrack trkCombined;
   std::cout << "WindkesselBlackBoxTest\n";
   m_Logger->SetLogFile(sOutputDirectory + "/WindkesselBlackBoxTest.log");
+  m_Logger->LogToConsole(true);
 
   for (unsigned int iter = 0; iter < (1 << 8); ++iter)
   {
@@ -793,7 +794,7 @@ void CommonDataModelTest::WindkesselBlackBoxTest(const std::string& sOutputDirec
       continue;
     }
 
-
+    Info("Writing Windkessel for " + outputFile);
     std::string sOutputFileWindkessel = sOutputDirectory + "/BlackBoxWindkessel" + outputFile + ".csv";
     std::string sOutputFileDriver = sOutputDirectory + "/BlackBoxDriver" + outputFile + ".csv";
     std::string sOutputFileCombined = sOutputDirectory + "/BlackBoxCombined.csv";

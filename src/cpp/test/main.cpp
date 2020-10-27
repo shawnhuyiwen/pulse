@@ -116,9 +116,9 @@ int main(int argc, char* argv[])
       
       // BlackBox Tests
       //cdmTest.BasicBlackBoxComparisonTest(cdmDir);
-      cdmTest.BasicBlackBoxTest(cdmDir);
+      //cdmTest.BasicBlackBoxTest(cdmDir);
       //cdmTest.SimpleBlackBoxTest(cdmDir);
-      //cdmTest.WindkesselBlackBoxTest(cdmDir);
+      cdmTest.WindkesselBlackBoxTest(cdmDir);
 
       // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);

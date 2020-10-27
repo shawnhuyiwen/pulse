@@ -246,6 +246,7 @@ void CommonDataModelTest::FillFunctionMap()
 
   cdmMap.insert(std::make_pair("BasicBlackBoxComparisonTest", &CommonDataModelTest::BasicBlackBoxComparisonTest));
   cdmMap.insert(std::make_pair("BasicBlackBoxTest", &CommonDataModelTest::BasicBlackBoxTest));
+  cdmMap.insert(std::make_pair("SimpleBlackBoxTest", &CommonDataModelTest::SimpleBlackBoxTest));
   cdmMap.insert(std::make_pair("WindkesselBlackBoxTest", &CommonDataModelTest::WindkesselBlackBoxTest));
 
   cdmMap.insert(std::make_pair("ReadPatientDirectory", &CommonDataModelTest::ReadPatientDirectory));
