@@ -178,8 +178,8 @@ public class WaveformUtils
       plotter.formatXYPlot(chart, Color.white);
            
       // Set up the line to plot
-      BasicStroke wideLine = new BasicStroke( CSVPlotTool.lineWidth ); 
-      r.setSeriesStroke(0, wideLine);       
+      BasicStroke wideLine = new BasicStroke(CSVPlotTool.computedLineWidth);
+      r.setSeriesStroke(0, wideLine);
       r.setSeriesLinesVisible(0, true);
       r.setSeriesShapesVisible(0, false);
       dataSet.addSeries(plotter.createXYSeries(title,xData,yData));

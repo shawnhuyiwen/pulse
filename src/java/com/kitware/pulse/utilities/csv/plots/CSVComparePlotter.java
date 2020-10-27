@@ -241,9 +241,9 @@ public class CSVComparePlotter
         
 
         try
-        {         
+        {
           plot.createGraph
-          (             
+          (
               plotDir,
               failures==null?Color.white:failures.contains(header)?Color.red:Color.green,
                   header+"vsTime",// Title
@@ -251,7 +251,7 @@ public class CSVComparePlotter
                   header,// Y Axis
                   plot.createXYSeries("Expected", expectedTime, expectedData),
                   plot.createXYSeries("Computed", computedTime, computedData)
-              );                  
+              );
         }
         catch(Exception ex)
         {
@@ -282,7 +282,7 @@ public class CSVComparePlotter
             "Time(s)",// X Axis
             header,// Y Axis
             plot.createXYSeries("Computed", computedTime, computedData)
-            );      
+            );
       }
       catch(Exception ex)
       {
