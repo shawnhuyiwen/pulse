@@ -59,6 +59,9 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::CardiogenicShock:
         m_ss << " Patient has Cardiogenic Shock";
         break;
+      case eEvent::CardiovascularCollapse:
+          m_ss << " Patient has low blood pressure and the vasculature has collapsed";
+          break;
       case eEvent::CriticalBrainOxygenDeficit:
         m_ss << " Oxygen tension in the brain is critically low";
         break;
