@@ -51,11 +51,6 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
 SECardiovascularSystem::~SECardiovascularSystem()
 {
   Clear();
-}
-
-void SECardiovascularSystem::Clear()
-{
-  SESystem::Clear();
 
   SAFE_DELETE(m_ArterialPressure);
   SAFE_DELETE(m_BloodVolume);
@@ -87,6 +82,40 @@ void SECardiovascularSystem::Clear()
   SAFE_DELETE(m_PulsePressure);
   SAFE_DELETE(m_SystemicVascularResistance);
   SAFE_DELETE(m_SystolicArterialPressure);
+}
+
+void SECardiovascularSystem::Clear()
+{
+  INVALIDATE_PROPERTY(m_ArterialPressure);
+  INVALIDATE_PROPERTY(m_BloodVolume);
+  INVALIDATE_PROPERTY(m_CardiacIndex);
+  INVALIDATE_PROPERTY(m_CardiacOutput);
+  INVALIDATE_PROPERTY(m_CentralVenousPressure);
+  INVALIDATE_PROPERTY(m_CerebralBloodFlow);
+  INVALIDATE_PROPERTY(m_CerebralPerfusionPressure);
+  INVALIDATE_PROPERTY(m_DiastolicArterialPressure);
+  INVALIDATE_PROPERTY(m_HeartEjectionFraction);
+  INVALIDATE_PROPERTY(m_HeartRate);
+  m_HeartRhythm = eHeartRhythm::NormalSinus;
+  INVALIDATE_PROPERTY(m_HeartStrokeVolume);
+  INVALIDATE_PROPERTY(m_IntracranialPressure);
+  INVALIDATE_PROPERTY(m_MeanArterialPressure);
+  INVALIDATE_PROPERTY(m_MeanArterialCarbonDioxidePartialPressure);
+  INVALIDATE_PROPERTY(m_MeanArterialCarbonDioxidePartialPressureDelta);
+  INVALIDATE_PROPERTY(m_MeanCentralVenousPressure);
+  INVALIDATE_PROPERTY(m_MeanSkinFlow);
+  INVALIDATE_PROPERTY(m_PulmonaryArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryCapillariesWedgePressure);
+  INVALIDATE_PROPERTY(m_PulmonaryDiastolicArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryMeanArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryMeanCapillaryFlow);
+  INVALIDATE_PROPERTY(m_PulmonaryMeanShuntFlow);
+  INVALIDATE_PROPERTY(m_PulmonarySystolicArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryVascularResistance);
+  INVALIDATE_PROPERTY(m_PulmonaryVascularResistanceIndex);
+  INVALIDATE_PROPERTY(m_PulsePressure);
+  INVALIDATE_PROPERTY(m_SystemicVascularResistance);
+  INVALIDATE_PROPERTY(m_SystolicArterialPressure);
 }
 
 const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)

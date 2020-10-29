@@ -272,7 +272,7 @@ SEScalarVolume& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetVolume()
   if (m_Nodes.HasMapping())
     return m_Nodes.GetQuantity();
   if (m_Volume == nullptr)
-    m_Volume = new SEScalarVolume();
+    m_Volume = new SEScalarVolume();  
   if (!m_FluidChildren.empty())
   {
     m_Volume->SetReadOnly(false);
@@ -319,7 +319,7 @@ bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasSubstanceQuantity(const SES
 }
 
 template<FLUID_COMPARTMENT_TEMPLATE>
-SubstanceQuantityType* SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetSubstanceQuantity(const SESubstance& substance)
+SubstanceQuantityType* SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetSubstanceQuantity(const SESubstance& substance) const
 {
   for (SubstanceQuantityType* sq : m_SubstanceQuantities)
   {
@@ -329,18 +329,7 @@ SubstanceQuantityType* SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetSubstance
   return nullptr;
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
-const SubstanceQuantityType* SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetSubstanceQuantity(const SESubstance& substance) const
-{
-  for (SubstanceQuantityType* sq : m_SubstanceQuantities)
-  {
-    if (&sq->GetSubstance() == &substance)
-      return sq;
-  }
-  return nullptr;
-}
-
-template<FLUID_COMPARTMENT_TEMPLATE>
-const std::vector<SubstanceQuantityType*>& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetSubstanceQuantities()
+const std::vector<SubstanceQuantityType*>& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetSubstanceQuantities() const
 {
   return m_SubstanceQuantities;
 }

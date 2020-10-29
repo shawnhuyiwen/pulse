@@ -36,7 +36,7 @@ public:
   virtual void RemoveLink(const std::string& name);  
 
 protected:
-  std::string                        m_Name;
+  std::string                       m_Name;
   std::vector<CompartmentType*>     m_Compartments;
   std::vector<CompartmentLinkType*> m_CompartmentLinks;
 };

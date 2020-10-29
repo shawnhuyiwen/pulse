@@ -3,6 +3,7 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
+class SEThermalBlackBox;
 
 class CDM_DECL SEThermalCircuitNode : public SECircuitNode<THERMAL_CIRCUIT_NODE>
 {

@@ -9,24 +9,27 @@
 
 SEHemorrhage::SEHemorrhage(Logger* logger) : SEPatientAction(logger)
 {
-  m_Type = eHemorrhage_Type::External;
   m_Compartment = "";
   m_FlowRate=nullptr;
   m_Severity = nullptr;
+  m_Type = eHemorrhage_Type::External;
 }
 
 SEHemorrhage::~SEHemorrhage()
 {
-  Clear();
+  m_Compartment = "";
+  SAFE_DELETE(m_FlowRate);
+  SAFE_DELETE(m_Severity);
+  m_Type = eHemorrhage_Type::External;
 }
 
 void SEHemorrhage::Clear()
 {
   SEPatientAction::Clear();
-  m_Type = eHemorrhage_Type::External;
   m_Compartment = "";
-  SAFE_DELETE(m_FlowRate);
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_FlowRate);
+  INVALIDATE_PROPERTY(m_Severity);
+  m_Type = eHemorrhage_Type::External;
 }
 
 void SEHemorrhage::Copy(const SEHemorrhage& src)

@@ -70,6 +70,7 @@ public:
   virtual const SEMechanicalVentilator*                GetMechanicalVentilator() const override;
 
   virtual const SECompartmentManager&                  GetCompartments() const override;
+  virtual SEBlackBoxManager&                           GetBlackBoxes() const override;
 
   virtual const SEEventManager&                        GetEventManager() const override;
 

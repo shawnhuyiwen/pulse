@@ -17,12 +17,17 @@ SEAutoSerialization::SEAutoSerialization(Logger* logger) : Loggable(logger)
 
 SEAutoSerialization::~SEAutoSerialization()
 {
-  Clear();
+  SAFE_DELETE(m_Period);
+  m_PeriodTimeStamps = eSwitch::Off;
+  m_AfterActions = eSwitch::Off;
+  m_AfterActions = eSwitch::Off;
+  m_Directory = "";
+  m_FileName = "";
 }
 
 void SEAutoSerialization::Clear()
 {
-  SAFE_DELETE(m_Period);
+  INVALIDATE_PROPERTY(m_Period);
   m_PeriodTimeStamps = eSwitch::Off;
   m_AfterActions = eSwitch::Off;
   m_AfterActions = eSwitch::Off;

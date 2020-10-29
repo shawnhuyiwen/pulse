@@ -22,7 +22,7 @@ SEDynamicStabilizationPropertyConvergence::SEDynamicStabilizationPropertyConverg
 
 SEDynamicStabilizationPropertyConvergence::~SEDynamicStabilizationPropertyConvergence()
 {
-  delete m_DataRequestScalar;
+  SAFE_DELETE(m_DataRequestScalar)
 }
 
 // This basically tests the current property with the target proptry and if they are in a window of acceptance

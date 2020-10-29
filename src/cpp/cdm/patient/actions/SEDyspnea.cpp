@@ -13,13 +13,13 @@ SEDyspnea::SEDyspnea(Logger* logger) : SEPatientAction(logger)
 
 SEDyspnea::~SEDyspnea()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEDyspnea::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEDyspnea::Copy(const SEDyspnea& src)

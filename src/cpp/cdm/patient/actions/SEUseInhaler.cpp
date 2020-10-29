@@ -15,7 +15,7 @@ SEUseInhaler::SEUseInhaler(Logger* logger) : SEConsciousRespirationCommand(logge
 
 SEUseInhaler::~SEUseInhaler()
 {
-  Clear();
+
 }
 
 void SEUseInhaler::Clear()

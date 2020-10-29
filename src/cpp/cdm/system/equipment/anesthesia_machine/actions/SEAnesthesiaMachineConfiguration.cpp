@@ -22,14 +22,16 @@ SEAnesthesiaMachineConfiguration::SEAnesthesiaMachineConfiguration(Logger* logge
 
 SEAnesthesiaMachineConfiguration::~SEAnesthesiaMachineConfiguration()
 {
-  Clear();
+  InvalidateConfigurationFile();
+  SAFE_DELETE(m_Configuration);
 }
 
 void SEAnesthesiaMachineConfiguration::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
   InvalidateConfigurationFile();
-  SAFE_DELETE(m_Configuration);
+  if (m_Configuration)
+    m_Configuration->Clear();
 }
 
 void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr)

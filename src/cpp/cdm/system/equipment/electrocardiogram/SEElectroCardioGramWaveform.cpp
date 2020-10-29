@@ -17,15 +17,19 @@ SEElectroCardioGramWaveform::SEElectroCardioGramWaveform(Logger* logger) : Logga
 
 SEElectroCardioGramWaveform::~SEElectroCardioGramWaveform()
 {
-  Clear();
+  m_Rhythm = eHeartRhythm::NormalSinus;
+  m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
+  SAFE_DELETE(m_TimeStep);
+  SAFE_DELETE(m_Data);
+  m_ActiveIndicies.clear();
 }
 
 void SEElectroCardioGramWaveform::Clear()
 {
   m_Rhythm = eHeartRhythm::NormalSinus;
   m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
-  SAFE_DELETE(m_TimeStep);
-  SAFE_DELETE(m_Data);
+  INVALIDATE_PROPERTY(m_TimeStep);
+  INVALIDATE_PROPERTY(m_Data);
   m_ActiveIndicies.clear();
 }
 

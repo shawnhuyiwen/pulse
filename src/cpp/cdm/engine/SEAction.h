@@ -12,7 +12,7 @@ public:
   SEAction(Logger* logger);
   virtual ~SEAction();
 
-  virtual void Clear();// Deletes all members
+  virtual void Clear();
   static SEAction* Copy(const SEAction&, const SESubstanceManager&);
   
   /** Test if the action has all data it needs */

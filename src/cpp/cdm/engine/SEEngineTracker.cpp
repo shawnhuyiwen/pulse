@@ -324,11 +324,11 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
     }
     default:
       m_ss << "Unhandled data request category: " << eDataRequest_Category_Name(dr.GetCategory()) << std::endl;
-      Fatal(m_ss);
+      Error(m_ss);
   }
 
   m_ss << "Unhandled data request : " << dr.GetPropertyName() << std::endl;
-  Fatal(m_ss);
+  Error(m_ss);
   return false;
 }
 
@@ -549,7 +549,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
     }
     default:
       m_ss << "Unhandled data request category: " << eDataRequest_Category_Name(dr.GetCategory()) << std::endl;
-      Fatal(m_ss);
+      Error(m_ss);
   }
 
   if (s != nullptr)
@@ -558,7 +558,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
     return true;
   }
   m_ss << "Unhandled data request : " << propertyName << std::endl;
-  Fatal(m_ss);
+  Error(m_ss);
   return false;
 }
 
@@ -566,7 +566,7 @@ void SEDataRequestScalar::SetScalar(const SEScalar* s, SEDataRequest& dr)
 {
   if (s==nullptr)
   {
-    Fatal("Unknown Data Request : " + dr.GetPropertyName());
+    Error("Unknown Data Request : " + dr.GetPropertyName());
     return;
   }
   SEGenericScalar::SetScalar(*s);

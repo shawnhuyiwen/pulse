@@ -34,12 +34,6 @@ SEPulmonaryFunctionTest::SEPulmonaryFunctionTest(Logger* logger) : SEPatientAsse
 
 SEPulmonaryFunctionTest::~SEPulmonaryFunctionTest()
 {
-  Clear();
-}
-
-void SEPulmonaryFunctionTest::Clear()
-{
-  SEPatientAssessment::Clear();
   SAFE_DELETE(m_ExpiratoryReserveVolume);
   SAFE_DELETE(m_ForcedVitalCapacity);
   SAFE_DELETE(m_ForcedExpiratoryVolume);
@@ -55,6 +49,26 @@ void SEPulmonaryFunctionTest::Clear()
   SAFE_DELETE(m_VitalCapacity);
 
   SAFE_DELETE(m_LungVolumePlot);
+}
+
+void SEPulmonaryFunctionTest::Clear()
+{
+  SEPatientAssessment::Clear();
+  INVALIDATE_PROPERTY(m_ExpiratoryReserveVolume);
+  INVALIDATE_PROPERTY(m_ForcedVitalCapacity);
+  INVALIDATE_PROPERTY(m_ForcedExpiratoryVolume);
+  INVALIDATE_PROPERTY(m_ForcedExpiratoryFlow);
+  INVALIDATE_PROPERTY(m_InspiratoryCapacity);
+  INVALIDATE_PROPERTY(m_InspiratoryReserveVolume);
+  INVALIDATE_PROPERTY(m_PeakExpiratoryFlow);
+  INVALIDATE_PROPERTY(m_MaximumVoluntaryVentilation);
+  INVALIDATE_PROPERTY(m_SlowVitalCapacity);
+  INVALIDATE_PROPERTY(m_TotalLungCapacity);
+  INVALIDATE_PROPERTY(m_FunctionalResidualCapacity);
+  INVALIDATE_PROPERTY(m_ResidualVolume);
+  INVALIDATE_PROPERTY(m_VitalCapacity);
+
+  INVALIDATE_PROPERTY(m_LungVolumePlot);
 }
 
 bool SEPulmonaryFunctionTest::SerializeToString(std::string& output, SerializationFormat m) const

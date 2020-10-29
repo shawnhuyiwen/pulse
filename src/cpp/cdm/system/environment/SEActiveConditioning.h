@@ -11,7 +11,6 @@ public:
   virtual ~SEActiveConditioning();
 
   virtual void Clear();
-  virtual void Reset();
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

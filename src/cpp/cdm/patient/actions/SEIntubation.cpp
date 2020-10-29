@@ -12,7 +12,7 @@ SEIntubation::SEIntubation(Logger* logger) : SEPatientAction(logger)
 
 SEIntubation::~SEIntubation()
 {
-  Clear();
+  m_Type = eIntubation_Type::Off;
 }
 
 void SEIntubation::Clear()

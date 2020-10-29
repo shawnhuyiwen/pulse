@@ -11,7 +11,7 @@ SEConsciousRespirationCommand::SEConsciousRespirationCommand(Logger* logger) : L
 
 SEConsciousRespirationCommand::~SEConsciousRespirationCommand()
 {
-  Clear();
+  m_Comment = "";
 }
 
 void SEConsciousRespirationCommand::Clear()

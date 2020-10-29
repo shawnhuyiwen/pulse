@@ -5,6 +5,7 @@
 #include "CommonDataModel.h"
 #include "engine/SEEngineStabilization.h"
 
+class PulseBlackBoxes;
 class PulseConfiguration;
 class PulseCircuits;
 class PulseCompartments;
@@ -129,6 +130,8 @@ public:
 
   virtual PulseCompartments&            GetCompartments() const;
 
+  virtual PulseBlackBoxes&              GetBlackBoxes() const;
+
   virtual const PulseConfiguration&     GetConfiguration() const;
 
   virtual const SEScalarTime&           GetTimeStep() const;
@@ -171,6 +174,7 @@ protected:
   SEConditionManager*                   m_Conditions=nullptr;
   PulseCircuits*                        m_Circuits=nullptr;
   PulseCompartments*                    m_Compartments=nullptr;
+  PulseBlackBoxes*                      m_BlackBoxes=nullptr;
 
   Environment*                          m_Environment=nullptr;
 

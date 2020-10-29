@@ -13,13 +13,13 @@ SEExercise::SEExercise(Logger* logger) : SEPatientAction(logger)
 
 SEExercise::~SEExercise()
 {
-  Clear();
+  SAFE_DELETE(m_Intensity);
 }
 
 void SEExercise::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Intensity);
+  INVALIDATE_PROPERTY(m_Intensity);
 }
 
 void SEExercise::Copy(const SEExercise& src)

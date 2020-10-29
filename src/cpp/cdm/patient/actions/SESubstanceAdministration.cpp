@@ -11,7 +11,7 @@ SESubstanceAdministration::SESubstanceAdministration(Logger* logger) : SEPatient
 
 SESubstanceAdministration::~SESubstanceAdministration()
 {
-  Clear();
+
 }
 
 void SESubstanceAdministration::Clear()

@@ -13,13 +13,13 @@ SEAsthmaAttack::SEAsthmaAttack(Logger* logger) : SEPatientAction(logger)
 
 SEAsthmaAttack::~SEAsthmaAttack()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEAsthmaAttack::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEAsthmaAttack::Copy(const SEAsthmaAttack& src)

@@ -11,7 +11,7 @@ See accompanying NOTICE file for details.*/
 #include "properties/SEScalarEnergy.h"
 
 SEThermalCircuitPath::SEThermalCircuitPath(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt, const std::string& name) :
-  SECircuitPath<SEScalarPower, SEScalarHeatResistance, SEScalarHeatCapacitance, SEScalarHeatInductance, SEScalarTemperature, SEScalarEnergy>(src, tgt ,name), 
+  SECircuitPath<THERMAL_CIRCUIT_PATH>(src, tgt ,name),
   m_ThermalSourceNode(src), m_ThermalTargetNode(tgt)
 {
 
