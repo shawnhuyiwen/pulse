@@ -1337,18 +1337,10 @@ void Cardiovascular::Hemorrhage()
   //Effect the Aorta with internal hemorrhages
   InternalHemorrhagePressureApplication();
 
-  //TODO: How will we handle this for resistance hemorrhage?? Do we grab the NextFlow on the path?? Maybe just delete.
-  //Update the patient's mass
-  double bloodDensity_kg_Per_mL = m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
-  double massLost_kg = (TotalLossRate_mL_Per_s - internal_rate_mL_Per_s)*bloodDensity_kg_Per_mL*m_dT_s;
-  double patientMass_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
-  patientMass_kg -= massLost_kg;
-  m_data.GetCurrentPatient().GetWeight().SetValue(patientMass_kg, MassUnit::kg);
-
   //Debugging hemorrhage
-  m_BloodVolumeEstimate -= (TotalLossRate_mL_Per_s * m_dT_s);
+  /*m_BloodVolumeEstimate -= (TotalLossRate_mL_Per_s * m_dT_s);
   m_data.GetDataTrack().Probe("BloodLossRate", TotalLossRate_mL_Per_s);
-  m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate);
+  m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate);*/
 }
 
 //--------------------------------------------------------------------------------------------------
