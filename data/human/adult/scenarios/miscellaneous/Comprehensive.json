@@ -1099,6 +1099,17 @@
       }
     }
   }, {
+    "PatientAction": {
+      "Hemorrhage": {
+        "Compartment": "VenaCava",
+        "FlowRate": {
+          "ScalarVolumePerTime": {
+            "Unit": "mL/min"
+          }
+        }
+      }
+    }
+  },{
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
@@ -1244,17 +1255,6 @@
       "AsthmaAttack": {
         "Severity": {
           "Scalar0To1": {
-          }
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Hemorrhage": {
-        "Compartment": "VenaCava",
-        "FlowRate": {
-          "ScalarVolumePerTime": {
-            "Unit": "mL/min"
           }
         }
       }
