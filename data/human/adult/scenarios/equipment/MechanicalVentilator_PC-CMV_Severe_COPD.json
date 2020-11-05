@@ -122,18 +122,18 @@
     "EquipmentAction": {
       "MechanicalVentilatorConfiguration": {
         "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
-              "Comment": "Attach the mechanical ventilator: RR = 13 bpm, I:E = 0.43, TV = 10 mL/kg(ideal)" }}},
+              "Comment": "Attach the mechanical ventilator: RR = 13 bpm, I:E = 0.43, TV = 7 mL/kg(ideal)" }}},
         "Configuration":
         {
           "Connection": "Tube",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
-          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 30.0, "Unit": "cmH2O" } },
+          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 23.5, "Unit": "cmH2O" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 3.228, "Unit": "s" } },
           "ExpirationCycleTime": { "ScalarTime": { "Value": 1.388, "Unit": "s" } },
           "FractionInspiredGas": [
-            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.38, "Unit": "" } } }
+            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.35, "Unit": "" } } }
           ]
         }
       }

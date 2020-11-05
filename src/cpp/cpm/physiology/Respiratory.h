@@ -149,7 +149,6 @@ protected:
   bool m_ActiveConsciousRespirationCommand;
 
   // Disease States
-  //jbw - serialize these
   double m_leftAlveoliDecrease_L;
   double m_rightAlveoliDecrease_L;
 

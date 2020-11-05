@@ -4899,7 +4899,7 @@ void PulseController::SetupMechanicalVentilator()
   double tubeVolume_L = 0.3; //4 total tubes - this is per tube
                              //22mm ID * 36" length = pi * (0.022m / 2)^2 * 0.91m = 3.46e-4 m^3 = 0.346 L... so decent ballpark?
   double yPieceVolume_L = 0.01;
-  double connectioneVolume_L = 0.05;
+  double connectionVolume_L = 0.05;
   double tubeResistance_cmH2O_s_Per_L = 0.01; //4 total tubes - this is per tube 
                                               //this is pretty negligable
 
@@ -4936,7 +4936,7 @@ void PulseController::SetupMechanicalVentilator()
 
   SEFluidCircuitNode& Connection = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Connection);
   Connection.GetPressure().Set(Ambient.GetPressure());
-  Connection.GetVolumeBaseline().SetValue(connectioneVolume_L, VolumeUnit::L);
+  Connection.GetVolumeBaseline().SetValue(connectionVolume_L, VolumeUnit::L);
 
   //Paths
   SEFluidCircuitPath& EnvironmentToVentilator = cMechanicalVentilator.CreatePath(Ambient, Ventilator, pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
