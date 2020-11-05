@@ -12,10 +12,10 @@ public class SEHemorrhage extends SEPatientAction
 {
 
   private static final long serialVersionUID = -1654353830396880L;
-  protected String compartment;
-  protected eType type;
+  protected String                compartment;
+  protected eType                 type;
   protected SEScalarVolumePerTime flowRate;
-  protected SEScalar0To1 severity;
+  protected SEScalar0To1          severity;
   
   public SEHemorrhage()
   {

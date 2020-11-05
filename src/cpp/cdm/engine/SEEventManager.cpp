@@ -60,8 +60,8 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         m_ss << " Patient has Cardiogenic Shock";
         break;
       case eEvent::CardiovascularCollapse:
-          m_ss << " Patient has low blood pressure and the vasculature has collapsed";
-          break;
+        m_ss << " Patient has low blood pressure and the vasculature has collapsed";
+        break;
       case eEvent::CriticalBrainOxygenDeficit:
         m_ss << " Oxygen tension in the brain is critically low";
         break;
@@ -198,6 +198,9 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         break;
       case eEvent::CardiogenicShock:
         m_ss << " Patient no longer has Cardiogenic Shock";
+        break;
+      case eEvent::CardiovascularCollapse:
+        m_ss << " Patient is no longer experiencing cardiovasculature collapse";
         break;
       case eEvent::CriticalBrainOxygenDeficit:
         m_ss << " Oxygen tension in the brain has increased above the critical threshold";

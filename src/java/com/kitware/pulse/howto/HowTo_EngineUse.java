@@ -165,7 +165,7 @@ public class HowTo_EngineUse
     tlv.setPropertyName("TotalLungVolume");
     tlv.setUnit(VolumeUnit.mL.toString());
     dataRequests.getRequestedData().add(tlv);
-    SEDataRequest bv = new SEDataRequest();  
+    SEDataRequest bv = new SEDataRequest();
     bv.setCategory(eCategory.Physiology);  
     bv.setPropertyName("BloodVolume");
     bv.setUnit(VolumeUnit.mL.toString());
@@ -178,7 +178,7 @@ public class HowTo_EngineUse
     // data_values[0] is ALWAYS the simulation time in seconds
     // The rest of the data values are in order of the data_requests list provided
 
-    InitializationType initType = InitializationType.PatientObject;
+    InitializationType initType = InitializationType.StateFile;
     // INITIALIZE THE ENGINE WITH A PATIENT
     switch(initType)
     {
