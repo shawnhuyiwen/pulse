@@ -985,7 +985,7 @@ void Cardiovascular::TraumaticBrainInjury()
 void Cardiovascular::Hemorrhage()
 {
    //Maximum resistance for hemorrhage paths to eliminate flow
-    double maxResistanceForNoFlow__mmHg_min_Per_L = 1000.0;
+    double maxResistanceForNoFlow__mmHg_min_Per_L = 750.0;
     
     /// \todo Enforce limits and remove fatal errors.
 
@@ -1286,7 +1286,7 @@ void Cardiovascular::Hemorrhage()
         }
         double resistanceBaseline_mmHg_min_Per_L = hemorrhagePath->GetResistanceBaseline().GetValue(PressureTimePerVolumeUnit::mmHg_min_Per_L);
         //use the severity to calculate the resistance
-        double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, maxResistanceForNoFlow__mmHg_min_Per_L, resistanceBaseline_mmHg_min_Per_L, h->GetSeverity().GetValue());
+        double resistance_mmHg_min_Per_L = GeneralMath::LinearInterpolator(0.0, 1.0, maxResistanceForNoFlow__mmHg_min_Per_L / h->GetSeverity().GetValue(), resistanceBaseline_mmHg_min_Per_L, h->GetSeverity().GetValue());
         hemorrhagePath->GetNextResistance().SetValue(resistance_mmHg_min_Per_L, PressureTimePerVolumeUnit::mmHg_min_Per_L);
         if (hemorrhagePath->HasNextFlow())
         {
@@ -1338,9 +1338,9 @@ void Cardiovascular::Hemorrhage()
   InternalHemorrhagePressureApplication();
 
   //Debugging hemorrhage
-  //m_BloodVolumeEstimate -= (TotalLossRate_mL_Per_s * m_dT_s);
-  //m_data.GetDataTrack().Probe("BloodLossRate", TotalLossRate_mL_Per_s);
-  //m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate);
+  /*m_BloodVolumeEstimate -= (TotalLossRate_mL_Per_s * m_dT_s);
+  m_data.GetDataTrack().Probe("BloodLossRate", TotalLossRate_mL_Per_s);
+  m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate);*/
 }
 
 //--------------------------------------------------------------------------------------------------
