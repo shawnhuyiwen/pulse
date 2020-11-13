@@ -992,11 +992,12 @@ class eSubstance_Administration(Enum):
     Subcutaneous = 9
 
 class SESubstanceBolus(SEPatientAction):
-    __slots__ = ["_admin_route", "_concentration", "_dose", "_substance"]
+    __slots__ = ["_admin_route", "_admin_duration", "_concentration", "_dose", "_substance"]
 
     def __init__(self):
         super().__init__()
         self._admin_route = eSubstance_Administration.Intravenous
+        self._admin_duration = None
         self._dose = None
         self._concentration = None
         self._substance = None
@@ -1004,6 +1005,8 @@ class SESubstanceBolus(SEPatientAction):
     def clear(self):
         super().clear()
         self._admin_route = eSubstance_Administration.Intravenous
+        if self._admin_duration is not None:
+            self._admin_duration.invalidate()
         if self._dose is not None:
             self._dose.invalidate()
         if self._concentration is not None:
@@ -1021,11 +1024,17 @@ class SESubstanceBolus(SEPatientAction):
     def get_admin_route(self):
         return self._admin_route
 
+    def get_admin_duration(self):
+        if self._admin_duration is None:
+            self._admin_duration = SEScalarTime()
+        return self._admin_duration
+    def has_admin_duration(self):
+        return self._admin_duration is not None
+
     def get_concentration(self):
         if self._concentration is None:
             self._concentration = SEScalarMassPerVolume()
         return self._concentration
-
     def has_concentration(self):
         return self._concentration is not None
 
@@ -1044,9 +1053,12 @@ class SESubstanceBolus(SEPatientAction):
         self._substance = substance
     def __repr__(self):
         return ("Substance Bolus\n"
+                "  Administration Route: {}\n"
+                "  Administration Duration: {}\n"
                 "  Concentration: {}\n"
                 "  Dose: {}\n"
-                "  Substance: {}").format(self._concentration, self._dose, self._substance)
+                "  Substance: {}").format(self._admin_route, self._admin_duration,
+                                          self._concentration, self._dose, self._substance)
 
 class SESubstanceCompoundInfusion(SEPatientAction):
     __slots__ = ["_bag_volume", "_rate", "_compound"]

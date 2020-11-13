@@ -5,14 +5,14 @@ package com.kitware.pulse.cdm.patient.actions;
 
 import com.kitware.pulse.cdm.bind.PatientActions.SubstanceBolusData;
 import com.kitware.pulse.cdm.bind.PatientActions.SubstanceBolusData.eRoute;
-import com.kitware.pulse.cdm.properties.SEScalarMassPerVolume;
-import com.kitware.pulse.cdm.properties.SEScalarVolume;
+import com.kitware.pulse.cdm.properties.*;
 
 public class SESubstanceBolus extends SEPatientAction
 {
 
   private static final long serialVersionUID = -2177347285157137770L;
   protected eRoute adminRoute;
+  protected SEScalarTime adminDuration;
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolume dose;
   protected String substance;
@@ -20,6 +20,7 @@ public class SESubstanceBolus extends SEPatientAction
   public SESubstanceBolus()
   {
     this.adminRoute = null;
+    this.adminDuration = null;
     this.dose = null;
     this.concentration = null;
     this.substance = "";
@@ -30,8 +31,13 @@ public class SESubstanceBolus extends SEPatientAction
     if(this==other)
       return;
     super.copy(other);
-    adminRoute = other.adminRoute;
     substance = other.substance;
+    adminRoute = other.adminRoute;
+    
+    if (other.adminDuration != null)
+      getAdministrationDuration().set(other.getAdministrationDuration());
+    else if (adminDuration != null)
+      adminDuration.invalidate();
     
     if (other.dose != null)
       getDose().set(other.getDose());
@@ -49,6 +55,8 @@ public class SESubstanceBolus extends SEPatientAction
   {
     super.reset();
     adminRoute = null;
+    if (adminDuration != null)
+      adminDuration.invalidate();
     if (dose != null)
       dose.invalidate();
     if (concentration != null)
@@ -65,6 +73,8 @@ public class SESubstanceBolus extends SEPatientAction
   {
     SEPatientAction.load(src.getPatientAction(), dst);
     dst.setSubstance(src.getSubstance());
+    if(src.hasAdministrationDuration())
+      SEScalarTime.load(src.getAdministrationDuration(),dst.getAdministrationDuration());
     if(src.hasDose())
       SEScalarVolume.load(src.getDose(),dst.getDose());
     if(src.hasConcentration())
@@ -83,6 +93,8 @@ public class SESubstanceBolus extends SEPatientAction
   protected static void unload(SESubstanceBolus src, SubstanceBolusData.Builder dst)
   {
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
+    if (src.hasAdministrationDuration())
+      dst.setAdministrationDuration(SEScalarTime.unload(src.adminDuration));
     if (src.hasDose())
       dst.setDose(SEScalarVolume.unload(src.dose));
     if (src.hasConcentration())
@@ -104,6 +116,17 @@ public class SESubstanceBolus extends SEPatientAction
   public boolean hasAdministrationRoute()
   {
     return adminRoute == null ? false : true;
+  }
+  
+  public boolean hasAdministrationDuration()
+  {
+    return adminDuration == null ? false : adminDuration.isValid();
+  }
+  public SEScalarTime getAdministrationDuration()
+  {
+    if (adminDuration == null)
+      adminDuration = new SEScalarTime();
+    return adminDuration;
   }
   
   public boolean hasConcentration()
@@ -147,7 +170,8 @@ public class SESubstanceBolus extends SEPatientAction
           + "\n\tDose: " + getDose()
           + "\n\tConcentration: " + getConcentration()
           + "\n\tSubstance: " + getSubstance()
-          + "\n\tAdministration Route: " + getAdministrationRoute();
+          + "\n\tAdministration Route: " + getAdministrationRoute()
+          + "\n\tAdministration Duration: " + getAdministrationDuration();
     else
       return "Action not specified properly";
   }

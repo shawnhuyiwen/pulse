@@ -1099,6 +1099,8 @@ void PBPatientAction::Serialize(const CDM_BIND::SubstanceBolusData& src, SESubst
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetAdminRoute((eSubstanceAdministration_Route)src.administrationroute());
+  if (src.has_administrationduration())
+    PBProperty::Load(src.administrationduration(), dst.GetAdminDuration());
   if (src.has_dose())
     PBProperty::Load(src.dose(), dst.GetDose());
   if (src.has_concentration())
@@ -1117,6 +1119,8 @@ void PBPatientAction::Serialize(const SESubstanceBolus& src, CDM_BIND::Substance
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.set_substance(src.m_Substance.GetName());
   dst.set_administrationroute((CDM_BIND::SubstanceBolusData::eRoute)src.m_AdminRoute);
+  if (src.HasAdminDuration())
+    dst.set_allocated_administrationduration(PBProperty::Unload(*src.m_AdminDuration));
   if (src.HasDose())
     dst.set_allocated_dose(PBProperty::Unload(*src.m_Dose));
   if (src.HasConcentration())

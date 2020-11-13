@@ -12,6 +12,7 @@
 SESubstanceBolus::SESubstanceBolus(const SESubstance& substance, Logger* logger) : SESubstanceAdministration(logger), m_Substance(substance), m_State(substance)
 {
   m_AdminRoute=eSubstanceAdministration_Route::Intravenous;
+  m_AdminDuration=nullptr;
   m_Dose=nullptr;
   m_Concentration=nullptr;
 }
@@ -19,6 +20,7 @@ SESubstanceBolus::SESubstanceBolus(const SESubstance& substance, Logger* logger)
 SESubstanceBolus::~SESubstanceBolus()
 {
   m_AdminRoute = eSubstanceAdministration_Route::Intravenous;
+  SAFE_DELETE(m_AdminDuration);
   SAFE_DELETE(m_Dose);
   SAFE_DELETE(m_Concentration);
   m_State.Clear();
@@ -28,6 +30,7 @@ void SESubstanceBolus::Clear()
 {
   SESubstanceAdministration::Clear();
   m_AdminRoute=eSubstanceAdministration_Route::Intravenous;
+  INVALIDATE_PROPERTY(m_AdminDuration);
   INVALIDATE_PROPERTY(m_Dose);
   INVALIDATE_PROPERTY(m_Concentration);
   m_State.Clear();
@@ -55,6 +58,23 @@ eSubstanceAdministration_Route SESubstanceBolus::GetAdminRoute() const
 void SESubstanceBolus::SetAdminRoute(eSubstanceAdministration_Route route)
 {
   m_AdminRoute = route;
+}
+
+bool SESubstanceBolus::HasAdminDuration() const
+{
+  return m_AdminDuration == nullptr ? false : m_AdminDuration->IsValid();
+}
+SEScalarTime& SESubstanceBolus::GetAdminDuration()
+{
+  if (m_AdminDuration == nullptr)
+    m_AdminDuration = new SEScalarTime();
+  return *m_AdminDuration;
+}
+double SESubstanceBolus::GetAdminDuration(const TimeUnit& unit) const
+{
+  if (m_AdminDuration == nullptr)
+    return SEScalar::dNaN();
+  return m_AdminDuration->GetValue(unit);
 }
 
 bool SESubstanceBolus::HasDose() const
@@ -105,10 +125,11 @@ void SESubstanceBolus::ToString(std::ostream &str) const
   str << "Patient Action : Substance Bolus"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str  << "\n\tDose: "; HasDose()? str << *m_Dose : str << "No Dose Set";
-  str  << "\n\tConcentration: "; HasConcentration()? str << *m_Concentration : str << "NaN";
   str << "\n\tSubstance: " << m_Substance.GetName();
-  str  << "\n\tAdministration Route: " << eSubstanceAdministration_Route_Name(GetAdminRoute());
+  str << "\n\tAdministration Route: " << eSubstanceAdministration_Route_Name(GetAdminRoute());
+  str << "\n\tAdministration Duration: "; HasAdminDuration() ? str << *m_AdminDuration : str << "No Administration Duration Set";
+  str << "\n\tDose: "; HasDose()? str << *m_Dose : str << "No Dose Set";
+  str << "\n\tConcentration: "; HasConcentration()? str << *m_Concentration : str << "NaN";
   str << std::flush;
 }
 
