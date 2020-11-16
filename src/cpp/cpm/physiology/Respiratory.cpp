@@ -3182,7 +3182,7 @@ void Respiratory::UpdatePulmonaryCapillary()
 
     // Calculate Pulmonary Capillary Resistance Multiplier based on severities
     double maxSeverity = MAX(bronchitisSeverity, emphysemaSeverity);
-    double pulmonaryResistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 8.0, maxSeverity);
+    double pulmonaryResistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 6.0, maxSeverity);
 
     double rightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     double leftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -3202,7 +3202,7 @@ void Respiratory::UpdatePulmonaryCapillary()
 
     // Calculate Pulmonary Capillary Resistance Multiplier based on severity
 
-    double pulmonaryResistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 8.0, severity);
+    double pulmonaryResistanceMultiplier = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 6.0, severity);
 
     double rightPulmonaryCapillaryResistance = m_RightPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     double leftPulmonaryCapillaryResistance = m_LeftPulmonaryCapillary->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -3322,6 +3322,8 @@ void Respiratory::UpdatePulmonaryShunt()
 
   //------------------------------------------------------------------------------------------------------
   //COPD - shunting occurs in UpdatePulmonaryCapillary
+
+  //------------------------------------------------------------------------------------------------------
 
   double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
