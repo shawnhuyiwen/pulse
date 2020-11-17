@@ -338,11 +338,12 @@ message SubstanceBolusData
   }
  
   PatientActionData                         PatientAction                   = 1;
-  eRoute                                    AdministrationRoute             = 2;/**<<@brief @ref SubstanceBolusData_eRouteTable */
-  string                                    Substance                       = 3;/**<<@brief @ref SubstanceTable */
-  ScalarMassPerVolumeData                   Concentration                   = 4;/**<<@brief Concentration of the dose to administer. */
-  ScalarVolumeData                          Dose                            = 5;/**<<@brief Volume of dose to administer. */
-  SubstanceBolusStateData                   State                           = 6;/**<<@brief Current state of the bolus. */
+  string                                    Substance                       = 2;/**<<@brief @ref SubstanceTable */
+  eRoute                                    AdministrationRoute             = 3;/**<<@brief @ref SubstanceBolusData_eRouteTable */
+  ScalarTimeData                            AdministrationDuration          = 4;/**<<@brief Length of time taken to fully administer the bolus. */
+  ScalarMassPerVolumeData                   Concentration                   = 5;/**<<@brief Concentration of the dose to administer. */
+  ScalarVolumeData                          Dose                            = 6;/**<<@brief Volume of dose to administer. */
+  SubstanceBolusStateData                   State                           = 7;/**<<@brief Current state of the bolus. */
 }
 
 /** @brief Continuous injection of a compound. */

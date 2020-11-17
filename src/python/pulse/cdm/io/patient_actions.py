@@ -369,6 +369,8 @@ def serialize_respiratory_fatigue_from_bind(src: RespiratoryFatigueData, dst: SE
 
 def serialize_substance_bolus_to_bind(src:SESubstanceBolus, dst: SubstanceBolusData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
+    if src.has_admin_duration():
+        serialize_scalar_time_to_bind(src.get_admin_duration(), dst.AdministrationDuration)
     if src.has_concentration():
         serialize_scalar_mass_per_volume_to_bind(src.get_concentration(), dst.Concentration)
     if src.has_dose():
