@@ -98,9 +98,9 @@ elseif(TYPE STREQUAL "protoc")
                                            -DPulse_PYTHON_API:BOOL=@Pulse_PYTHON_API@
                                            -P "@CMAKE_SOURCE_DIR@/src/schema/GenerateBindings.cmake")
 elseif(TYPE STREQUAL "updateBaselines")
-  execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@" --target UpdateVerification)
+  execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@/data" --target UpdateVerification)
 elseif(TYPE STREQUAL "jar")
-  execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@" --target PulseJava)
+  execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@/src/java" --target PulseJava)
 elseif(TYPE STREQUAL "rebase")
   # find Git and if available set GIT_HASH variable
   find_package(Git QUIET)
