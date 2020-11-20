@@ -107,8 +107,8 @@ protected:
   double m_CompressionRatio;
   double m_CompressionPeriod_s;
   //Hemorrhage
-  std::vector<SEFluidCircuitPath*> m_HemorrhagePaths;
   std::vector<SELiquidCompartmentLink*> m_HemorrhageLinks;
+  std::vector<SEFluidCircuitPath*> m_HemorrhagePaths;
   // Vitals and Averages
   double m_CurrentCardiacCycleTime_s;
   double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
@@ -209,8 +209,4 @@ protected:
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
-  
-  //debugging hemorrhage
-  double m_BloodVolumeEstimate;
-  double m_CardiacOutputBaseline;
 };

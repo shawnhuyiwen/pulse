@@ -62,7 +62,9 @@
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
 
-        { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"}
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhageRate", "Unit": "mL/s"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"}
     ]
   },
   "AnyAction": [{

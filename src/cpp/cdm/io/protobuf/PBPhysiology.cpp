@@ -216,6 +216,10 @@ void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECa
     PBProperty::Load(src.systemicvascularresistance(), dst.GetSystemicVascularResistance());
   if (src.has_systolicarterialpressure())
     PBProperty::Load(src.systolicarterialpressure(), dst.GetSystolicArterialPressure());
+  if (src.has_totalhemorrhagerate())
+    PBProperty::Load(src.totalhemorrhagerate(), dst.GetTotalHemorrhageRate());
+  if (src.has_totalhemorrhagedvolume())
+    PBProperty::Load(src.totalhemorrhagedvolume(), dst.GetTotalHemorrhagedVolume());
 }
 
 CDM_BIND::CardiovascularSystemData* PBPhysiology::Unload(const SECardiovascularSystem& src)
@@ -285,6 +289,10 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::Cardio
     dst.set_allocated_systemicvascularresistance(PBProperty::Unload(*src.m_SystemicVascularResistance));
   if (src.HasSystolicArterialPressure())
     dst.set_allocated_systolicarterialpressure(PBProperty::Unload(*src.m_SystolicArterialPressure));
+  if (src.HasTotalHemorrhageRate())
+    dst.set_allocated_totalhemorrhagerate(PBProperty::Unload(*src.m_TotalHemorrhageRate));
+  if (src.HasTotalHemorrhagedVolume())
+    dst.set_allocated_totalhemorrhagedvolume(PBProperty::Unload(*src.m_TotalHemorrhagedVolume));
 }
 
 

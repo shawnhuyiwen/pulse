@@ -213,7 +213,6 @@ void Cardiovascular::Initialize()
 
   //Initialize system data based on patient file inputs
   GetBloodVolume().Set(m_data.GetCurrentPatient().GetBloodVolumeBaseline());
-  m_BloodVolumeEstimate = m_data.GetCurrentPatient().GetBloodVolumeBaseline().GetValue(VolumeUnit::mL);
   m_CardiacCycleAortaPressureHigh_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
   m_CardiacCycleAortaPressureLow_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
   GetMeanArterialPressure().SetValue((2. / 3.*m_CardiacCycleAortaPressureLow_mmHg) + (1. / 3.*m_CardiacCycleAortaPressureHigh_mmHg), PressureUnit::mmHg);
@@ -254,8 +253,6 @@ void Cardiovascular::Initialize()
   TuneCircuit();
   systemicVascularResistance_mmHg_s_Per_mL = (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) - GetMeanCentralVenousPressure().GetValue(PressureUnit::mmHg)) / GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_s);
   GetSystemicVascularResistance().SetValue(systemicVascularResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  //Debugging
-  m_CardiacOutputBaseline = m_CardiacOutput->GetValue(VolumePerTimeUnit::L_Per_min);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1334,10 +1331,8 @@ void Cardiovascular::Hemorrhage()
   //Effect the Aorta with internal hemorrhages
   InternalHemorrhagePressureApplication();
 
-  //Debugging hemorrhage
-  m_BloodVolumeEstimate -= (TotalLossRate_mL_Per_s * m_dT_s);
-  m_data.GetDataTrack().Probe("BloodLossRate", TotalLossRate_mL_Per_s);
-  m_data.GetDataTrack().Probe("BloodVolumeEstimate", m_BloodVolumeEstimate);
+  GetTotalHemorrhageRate().SetValue(TotalLossRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+  GetTotalHemorrhagedVolume().IncrementValue((TotalLossRate_mL_Per_s* m_dT_s), VolumeUnit::mL);
 }
 
 //--------------------------------------------------------------------------------------------------
