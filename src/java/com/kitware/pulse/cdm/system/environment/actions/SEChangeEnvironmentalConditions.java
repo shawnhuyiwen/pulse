@@ -10,18 +10,18 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
 {
 
   private static final long serialVersionUID = -998387113042088499L;
-  protected SEEnvironmentalConditions environmentalConditions;
-  protected String                    environmentalConditionsFile;
+  protected SEEnvironmentalConditions environmentalConditions=null;
+  protected String                    environmentalConditionsFile="";
   
   public SEChangeEnvironmentalConditions()
   {
-    this.environmentalConditions=new SEEnvironmentalConditions();
+  
   }
   
   public SEChangeEnvironmentalConditions(SEChangeEnvironmentalConditions other)
   {
     this();
-    copy(other);    
+    copy(other);
   }
   
   public void copy(SEChangeEnvironmentalConditions other)
@@ -29,7 +29,8 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
     if(this==other)
       return;
     super.copy(other);
-    this.environmentalConditions.copy(other.environmentalConditions);
+    if(this.environmentalConditions != null)
+      this.environmentalConditions.copy(other.environmentalConditions);
     this.environmentalConditionsFile=other.environmentalConditionsFile;
   }
   
@@ -37,8 +38,8 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
   public void reset()
   {
     super.reset();
-    this.environmentalConditions.reset();
-    this.environmentalConditionsFile="";
+    this.environmentalConditions = null;
+    this.environmentalConditionsFile=null;
   }
   
   @Override
@@ -82,6 +83,9 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
   }
   public SEEnvironmentalConditions getEnvironmentalConditions()
   {
+    this.environmentalConditionsFile = null;
+    if(this.environmentalConditions == null)
+      this.environmentalConditions=new SEEnvironmentalConditions();
     return this.environmentalConditions;
   }
   
@@ -95,6 +99,7 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
   }
   public void setEnvironmentalConditionsFile(String s)
   {
+    this.environmentalConditions = null;
     this.environmentalConditionsFile = s;
   }
   
