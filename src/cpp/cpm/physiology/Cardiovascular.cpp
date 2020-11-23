@@ -981,11 +981,9 @@ void Cardiovascular::TraumaticBrainInjury()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::Hemorrhage()
 { 
-    /// \todo Enforce limits and remove fatal errors.
-
   //Check all existing hemorrhage paths, if has a flow source or a resistance (covers both types of hemorrhage), then set to zero
   // - We do not want to assume prior knowledge, so we can ensure we capture the current flow rate or severity
-  // - If zero at the end, we can remove irrelevant hemorrhages
+  // - If zero at the end, we will remove these hemorrhages
   for (SEFluidCircuitPath* path :  m_HemorrhagePaths)
   {
     if(path->HasNextFlowSource())
@@ -995,6 +993,7 @@ void Cardiovascular::Hemorrhage()
   }
 
   SEHemorrhage* h;
+  bool completeStateChange = false;
   double TotalLossRate_mL_Per_s = 0.0;
   double internal_rate_mL_Per_s = 0.0;
   std::vector<SEHemorrhage*> invalid_hemorrhages;
@@ -1003,7 +1002,6 @@ void Cardiovascular::Hemorrhage()
   for (auto hem : hems)
   {
     h = hem.second;
-
 
     // Allow shorthand naming
     SELiquidCompartment* compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
@@ -1016,27 +1014,26 @@ void Cardiovascular::Hemorrhage()
     //Unsupported compartment
     if (compartment == nullptr)
     {
+      /// \error Error: Removing invalid Hemorrhage due to unsupported compartment
       Error("Removing invalid Hemorrhage due to unsupported compartment : " + h->GetCompartment());
       invalid_hemorrhages.push_back(h);
       continue;
     }
 
-    /// \error Error: Bleeding must be from a vascular compartment
     if (!compartment)
     {
-      m_ss << "Cannot hemorrhage from compartment " + h->GetComment() + ", must be a valid vascular compartment";
-      Error(m_ss);
+      // \error Error: Bleeding must be from a vascular compartment
+      Error("Cannot hemorrhage from compartment " + h->GetComment() + ", must be a valid vascular compartment");
       invalid_hemorrhages.push_back(h);
       continue;
     }
-    // \error Error: Internal hemorrhage is only supported for the abdominal region at this time
     if (h->GetType() == eHemorrhage_Type::Internal)
     {
       SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
       if (!abdomenCompartment->HasChild(compartment->GetName()))
       {
-        m_ss << "Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.";
-        Error(m_ss);
+        /// \error Error: Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.
+        Error("Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.");
         invalid_hemorrhages.push_back(h);
         continue;
       }
@@ -1056,9 +1053,8 @@ void Cardiovascular::Hemorrhage()
       TotalLossRate_mL_Per_s += rate_mL_Per_s;
       if (rate_mL_Per_s < 0)
       {
-        m_ss << "Cannot specify bleeding less than 0";
-        Error(m_ss);
         /// \error Error: Bleeding rate cannot be less than zero
+        Error("Cannot specify bleeding less than 0");
         invalid_hemorrhages.push_back(h);
         continue;
       }
@@ -1067,18 +1063,16 @@ void Cardiovascular::Hemorrhage()
     {
       if (h->GetSeverity().GetValue() < 0.0 || h->GetSeverity().GetValue() > 1.0)
       {
-        m_ss << "A severity less than 0 or greater than 1.0 cannot be specified.";
-        Error(m_ss);
         /// \error Error: Severity cannot be less than zero or greater than 1.0
+        Error("A severity less than 0 or greater than 1.0 cannot be specified.");
         invalid_hemorrhages.push_back(h);
         continue;
       }
     }
     else
     {
-      m_ss << "A severity or a rate must be specified.";
-      Error(m_ss);
       /// \error Error: A severity or a rate must be specified for hemorrhage
+      Error("A severity or a rate must be specified.");
     }
 
     //Get all circuit nodes in this compartment
@@ -1113,12 +1107,10 @@ void Cardiovascular::Hemorrhage()
       nodesIter++;
     }
 
-    /// \error Fatal: Bleeding must come from nodes in the circultatory circuit
     if (nodes.size() == 0)
     {
       /// \error Error: Hemorrhage compartments must have nodes in the circulatory circuit
-      m_ss << "Hemorrhage compartments must have nodes in the circulatory circuit";
-      Error(m_ss);
+      Error("Hemorrhage compartments must have nodes in the circulatory circuit");
       invalid_hemorrhages.push_back(h);
       continue;
     }
@@ -1146,7 +1138,6 @@ void Cardiovascular::Hemorrhage()
 
       bool calculateResistanceBaseline = false;
       bool calculateResistance = false;
-      bool completeStateChange = false;
       //Find the path associated with the node and check if we've already been hemorrhaging here
       SEFluidCircuitPath* hemorrhagePath = nullptr;
       for (unsigned int hIter = 0; hIter < m_HemorrhagePaths.size(); hIter++)
@@ -1169,15 +1160,14 @@ void Cardiovascular::Hemorrhage()
           }
           else
           {
-
-            hemorrhagePath->GetNextResistance().Invalidate();
             hemorrhagePath->GetResistance().Invalidate();
+            hemorrhagePath->GetNextResistance().Invalidate();
             hemorrhagePath->GetResistanceBaseline().Invalidate();
             hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
             completeStateChange = true;
           }
         }
-        else
+        else // Severity
         {
           if (hemorrhagePath->HasFlowSource())
           {
@@ -1211,6 +1201,7 @@ void Cardiovascular::Hemorrhage()
         {
           newHemorrhagePath = &m_CirculatoryCircuit->CreatePath(*node, *m_Ground, node->GetName() + "Hemorrhage");
         }
+
         if (h->HasFlowRate())
         {
           //Increment value to allow overlapping compartments
@@ -1249,7 +1240,6 @@ void Cardiovascular::Hemorrhage()
         SELiquidCompartmentLink& newHemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*sourceCompartment, *m_Groundcmpt, compartment->GetName() + "Hemorrhage");
         newHemorrhageLink.MapPath(*newHemorrhagePath);
         m_CirculatoryGraph->AddLink(newHemorrhageLink);
-        m_data.GetCompartments().StateChange();
 
         //Add to local lists
         m_HemorrhagePaths.push_back(newHemorrhagePath);
@@ -1287,10 +1277,6 @@ void Cardiovascular::Hemorrhage()
           TotalLossRate_mL_Per_s += hemorrhagePath->GetNextFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
         }
       }
-      if (completeStateChange)
-      {
-        m_CirculatoryCircuit->StateChange();
-      }
     }
   }
 
@@ -1307,17 +1293,29 @@ void Cardiovascular::Hemorrhage()
     hemorrhagePath = m_HemorrhagePaths.at(hIter);
     if ((hemorrhagePath->HasNextFlowSource() && hemorrhagePath->GetNextFlowSource().IsZero()) || (hemorrhagePath->HasNextResistance() && hemorrhagePath->GetNextResistance().IsZero()))
     {
+      hemorrhagePath->GetFlowSource().Invalidate();
+      hemorrhagePath->GetNextFlowSource().Invalidate();
+      hemorrhagePath->GetResistance().Invalidate();
+      hemorrhagePath->GetNextResistance().Invalidate();
+      hemorrhagePath->GetResistanceBaseline().Invalidate();
+
       m_CirculatoryCircuit->RemovePath(*m_HemorrhagePaths.at(hIter));
       m_HemorrhagePaths.erase(m_HemorrhagePaths.begin() + hIter);
-      m_CirculatoryCircuit->StateChange();
 
       m_CirculatoryGraph->RemoveLink(*m_HemorrhageLinks.at(hIter));
       m_HemorrhageLinks.erase(m_HemorrhageLinks.begin() + hIter);
-      m_CirculatoryGraph->StateChange();
+      completeStateChange = true;
 
       continue;
     }
     hIter++;
+  }
+
+  if (completeStateChange)
+  {
+    m_data.GetCompartments().StateChange();
+    m_CirculatoryCircuit->StateChange();
+    m_CirculatoryGraph->StateChange();
   }
 
   //Update abdominal cavity compliance
