@@ -20,7 +20,7 @@ public:
   PulseThread(const std::string& logfile);
   virtual ~PulseThread();
 
-  void SetHemorrhageFlow_mL_Per_min(double rate);
+  void SetHemorrhageSeverity(double s);
   void SetIVFluidsFlow_mL_Per_min(double rate);
 
   void Status();

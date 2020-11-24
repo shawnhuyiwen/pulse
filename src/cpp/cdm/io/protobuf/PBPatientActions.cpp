@@ -717,10 +717,12 @@ void PBPatientAction::Load(const CDM_BIND::HemorrhageData& src, SEHemorrhage& ds
 void PBPatientAction::Serialize(const CDM_BIND::HemorrhageData& src, SEHemorrhage& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_rate())
-    PBProperty::Load(src.rate(), dst.GetRate());
   dst.m_Compartment = src.compartment();
   dst.SetType((eHemorrhage_Type)src.type());
+  if (src.has_flowrate())
+    PBProperty::Load(src.flowrate(), dst.GetFlowRate());
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
 }
 CDM_BIND::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
 {
@@ -731,11 +733,13 @@ CDM_BIND::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
 void PBPatientAction::Serialize(const SEHemorrhage& src, CDM_BIND::HemorrhageData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasRate())
-    dst.set_allocated_rate(PBProperty::Unload(*src.m_Rate));
   if (src.HasCompartment())
     dst.set_compartment(src.m_Compartment);
   dst.set_type((CDM_BIND::HemorrhageData::eType)src.m_Type);
+  if (src.HasFlowRate())
+    dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
 void PBPatientAction::Copy(const SEHemorrhage& src, SEHemorrhage& dst)
 {

@@ -22,22 +22,27 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
+  virtual eHemorrhage_Type GetType() const;
+  virtual void SetType(eHemorrhage_Type t);
+
   virtual std::string GetCompartment() const;
   virtual void SetCompartment(const std::string& name);
   virtual bool HasCompartment() const;
   virtual void InvalidateCompartment();
 
-  virtual bool HasRate() const;
-  virtual SEScalarVolumePerTime& GetRate();
-  virtual double GetRate(const VolumePerTimeUnit& unit) const;
+  virtual bool HasFlowRate() const;
+  virtual SEScalarVolumePerTime& GetFlowRate();
+  virtual double GetFlowRate(const VolumePerTimeUnit& unit) const;
 
-  virtual eHemorrhage_Type GetType() const;
-  virtual void SetType(eHemorrhage_Type t);
+  virtual bool HasSeverity() const;
+  virtual SEScalar0To1& GetSeverity();
+  virtual double GetSeverity() const;
 
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  std::string             m_Compartment;
-  SEScalarVolumePerTime*  m_Rate;
   eHemorrhage_Type        m_Type;
+  std::string             m_Compartment;
+  SEScalarVolumePerTime*  m_FlowRate;
+  SEScalar0To1*           m_Severity;
 };

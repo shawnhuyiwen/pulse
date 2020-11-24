@@ -34,7 +34,7 @@
 #pragma warning(disable:4786)
 #pragma warning(disable:4275)
 
-// #define VERBOSE
+// #define PROBE
 
 Nervous::Nervous(PulseData& data) : PulseNervousSystem(data)
 {
@@ -177,9 +177,21 @@ void Nervous::PreProcess()
     }
    
   }
-  if(m_BaroreceptorFeedback ==eSwitch::On)
+  if(m_BaroreceptorFeedback == eSwitch::On)
     BaroreceptorFeedback();
-  if(m_ChemoreceptorFeedback ==eSwitch::On)
+#ifdef PROBE
+  else
+  {
+    m_data.GetDataTrack().Probe("SympatheticFraction", 0);
+    m_data.GetDataTrack().Probe("ParaSympatheticFraction", 0);
+    m_data.GetDataTrack().Probe("CumulativeMAP", 0);
+    m_data.GetDataTrack().Probe("baroreceptorPressure", 0);
+    m_data.GetDataTrack().Probe("deltaPressure", 0);
+    m_data.GetDataTrack().Probe("effectivenessParameter", 0);
+    m_data.GetDataTrack().Probe("normalizedMAP", 0);
+  }
+#endif
+  if(m_ChemoreceptorFeedback == eSwitch::On)
     ChemoreceptorFeedback();
   CerebralSpinalFluidUpdates();
 
@@ -227,7 +239,7 @@ void Nervous::CerebralSpinalFluidUpdates()
   if (!m_data.GetConfiguration().IsCerebrospinalFluidEnabled())
     return;
     //Update CSF Production and Absorption Rates
-    m_CSFProductAbsorptionPath->GetNextFlowSource().SetValue(m_CSFProductionRate_mlPermin - m_CSFAbsorptionRate_mLPermin, VolumePerTimeUnit::mL_Per_min);
+  m_CSFProductAbsorptionPath->GetNextFlowSource().SetValue(m_CSFProductionRate_mlPermin - m_CSFAbsorptionRate_mLPermin, VolumePerTimeUnit::mL_Per_min);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -289,19 +301,23 @@ void Nervous::BaroreceptorFeedback()
   //update nu - the slope response of the firing rate
   //nu *= (1 - sedationDampeningEffect);  TODO: Add this back when I have data for validation
   //Backout the pressure associated with the total sympathetic fraction from the last time step 
-  double cumulativeMeanArterialPressure_mmHg = pow(((1.0 / m_TotalSympatheticFraction) - 1.0), (1 / nu)) * meanArterialPressureCombinedBaseline_mmHg;
+  double cumulativeMeanArterialPressure_mmHg = pow(((1.0 / m_TotalSympatheticFraction) - 1.0), (1.0 / nu)) * meanArterialPressureCombinedBaseline_mmHg;
   double deltaPressure_mmHg = meanArterialPressure_mmHg - m_LastMeanArterialPressure_mmHg;
   double baroreceptorPressure_mmHg = cumulativeMeanArterialPressure_mmHg + deltaPressure_mmHg;
   m_TotalSympatheticFraction = 1.0 / (1.0 + pow( meanArterialPressure_mmHg / meanArterialPressureCombinedBaseline_mmHg, nu));
-  double parasympatheticFraction = 1 - m_TotalSympatheticFraction;
+  double parasympatheticFraction = 1.0 - m_TotalSympatheticFraction;
   m_LastMeanArterialPressure_mmHg = meanArterialPressure_mmHg;
-
-  //m_data.GetDataTrack().Probe("SympatheticFraction", m_TotalSympatheticFraction);
-  //m_data.GetDataTrack().Probe("ParaSympatheticFraction", parasympatheticFraction);
-  //m_data.GetDataTrack().Probe("CumulativeMAP", cumulativeMeanArterialPressure_mmHg);
-  //m_data.GetDataTrack().Probe("baroreceptorPressure", baroreceptorPressure_mmHg);
-  //m_data.GetDataTrack().Probe("deltaPressure", deltaPressure_mmHg);
   double normalizedMAP = meanArterialPressure_mmHg / meanArterialPressureCombinedBaseline_mmHg;
+
+#ifdef PROBE
+  m_data.GetDataTrack().Probe("SympatheticFraction", m_TotalSympatheticFraction);
+  m_data.GetDataTrack().Probe("ParaSympatheticFraction", parasympatheticFraction);
+  m_data.GetDataTrack().Probe("CumulativeMAP", cumulativeMeanArterialPressure_mmHg);
+  m_data.GetDataTrack().Probe("baroreceptorPressure", baroreceptorPressure_mmHg);
+  m_data.GetDataTrack().Probe("deltaPressure", deltaPressure_mmHg);
+  m_data.GetDataTrack().Probe("normalizedMAP", normalizedMAP);
+#endif
+
   if (m_TotalSympatheticFraction < 0.78)
   {
     if (m_BaroreceptorSaturationStatus)
@@ -406,15 +422,8 @@ void Nervous::BaroreceptorFeedback()
   }
   m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
 
-  //m_data.GetDataTrack().Probe("effectivenessParameter", m_BaroreceptorEffectivenessParameter);
-  //m_data.GetDataTrack().Probe("normalizedMAPBaro", normalizedMAP);
-
-#ifdef VERBOSE
-  m_data.GetDataTrack().Probe("normalizedHeartRate", normalizedHeartRate);
-  m_data.GetDataTrack().Probe("normalizedHeartElastance", normalizedHeartElastance);
-  m_data.GetDataTrack().Probe("normalizedResistance", normalizedResistance);
-  m_data.GetDataTrack().Probe("normalizedCompliance", normalizedCompliance);
-  m_data.GetDataTrack().Probe("meanArterialPressureBaseline_mmHg", meanArterialPressureBaseline_mmHg);
+#ifdef PROBE
+  m_data.GetDataTrack().Probe("effectivenessParameter", m_BaroreceptorEffectivenessParameter);
 #endif
 }
 

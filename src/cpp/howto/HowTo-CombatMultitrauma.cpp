@@ -91,13 +91,13 @@ void CreateState()
   SEHemorrhage hemorrhageLeg;
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
-  hemorrhageLeg.GetRate().SetValue(100, VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
+  hemorrhageLeg.GetSeverity().SetValue(0.8);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
 
   SEHemorrhage hemorrhageVenaCava;
   hemorrhageVenaCava.SetType(eHemorrhage_Type::External);
   hemorrhageVenaCava.SetCompartment(pulse::VascularCompartment::VenaCava);//the location of the hemorrhage
-  hemorrhageVenaCava.GetRate().SetValue(250, VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
+  hemorrhageVenaCava.GetSeverity().SetValue(0.2);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageVenaCava);
 
   //Advance the engine to the point we would like to load later
@@ -162,13 +162,13 @@ void LoadState()
   SEHemorrhage hemorrhageLeg;
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
-  hemorrhageLeg.GetRate().SetValue(50, VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
+  hemorrhageLeg.GetSeverity().SetValue(0.15);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
 
   SEHemorrhage hemorrhageVenaCava;
   hemorrhageVenaCava.SetType(eHemorrhage_Type::External);
   hemorrhageVenaCava.SetCompartment(pulse::VascularCompartment::VenaCava);//the location of the hemorrhage
-  hemorrhageVenaCava.GetRate().SetValue(0, VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
+  hemorrhageVenaCava.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageVenaCava);
 
   tracker.AdvanceModelTime(60);
@@ -185,7 +185,7 @@ void LoadState()
   // Apply a tournaquet and stop the bleeding completely
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
-  hemorrhageLeg.GetRate().SetValue(0, VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
+  hemorrhageLeg.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
    
   tracker.AdvanceModelTime(30);

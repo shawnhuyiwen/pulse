@@ -50,7 +50,7 @@ namespace HowTo_PatientStates
       SEHemorrhage h1 = new SEHemorrhage();
       h1.SetType(SEHemorrhage.eType.External);
       h1.SetCompartment("RightLeg");
-      h1.GetRate().SetValue(33, VolumePerTimeUnit.mL_Per_min);
+      h1.GetSeverity().SetValue(0.33);
       injury_set_1.Add(h1);
       injury_sets.Add(injury_set_1);
 
@@ -60,7 +60,7 @@ namespace HowTo_PatientStates
       SEHemorrhage h2 = new SEHemorrhage();
       h2.SetType(SEHemorrhage.eType.External);
       h2.SetCompartment("RightLeg");
-      h2.GetRate().SetValue(66, VolumePerTimeUnit.mL_Per_min);
+      h2.GetSeverity().SetValue(0.66);
       injury_set_2.Add(h2);
       injury_sets.Add(injury_set_2);
 

@@ -655,23 +655,31 @@ class eHemorrhageType(Enum):
     External = 0
     Internal = 1
 class SEHemorrhage(SEPatientAction):
-    __slots__ = ["_compartment","_rate","_type"]
+    __slots__ = ["_type","_compartment","_flow_rate","_severity"]
 
     def __init__(self):
         super().__init__()
-        self._compartment = None
-        self._rate = None
         self._type = eHemorrhageType.External
+        self._compartment = None
+        self._flow_rate = None
+        self._severity = None
 
     def clear(self):
         super().clear()
-        self._compartment = None
-        if self._rate is not None:
-            self._rate.invalidate()
         self._type = eHemorrhageType.External
+        self._compartment = None
+        if self._flow_rate is not None:
+            self._flow_rate.invalidate()
+        if self._severity is not None:
+            self._severity.invalidate()
 
     def is_valid(self):
-        return self.has_rate() and self.has_compartment()
+        return self.has_compartment() and (self.has_flow_rate() or self.has_severity())
+
+    def get_type(self):
+        return self._type
+    def set_type(self, type: eHemorrhageType):
+        self._type = type
 
     def has_compartment(self):
         return self._compartment is not None
@@ -682,23 +690,26 @@ class SEHemorrhage(SEPatientAction):
     def invalidate_compartment(self):
         self._compartment = None
 
-    def has_rate(self):
-        return False if self._rate is None else self._rate.is_valid()
-    def get_rate(self):
-        if self._rate is None:
-            self._rate = SEScalarVolumePerTime()
-        return self._rate
+    def has_flow_rate(self):
+        return False if self._flow_rate is None else self._flow_rate.is_valid()
+    def get_flow_rate(self):
+        if self._flow_rate is None:
+            self._flow_rate = SEScalarVolumePerTime()
+        return self._flow_rate
 
-    def get_type(self):
-        return self._type
-    def set_type(self, type: eHemorrhageType):
-        self._type = type
+    def has_severity(self):
+        return False if self._severity is None else self._severity.is_valid()
+    def get_severity(self):
+        if self._severity is None:
+            self._severity = SEScalar0To1()
+        return self._severity
 
     def __repr__(self):
         return ("Hemorrhage\n"
                 "  Type: {}\n"
                 "  Compartment: {}\n"
-                "  Rate: {}").format(self._type,self._compartment,self._rate)
+                "  Flow Rate: {}\n"
+                "  Severity: {}").format(self._type,self._compartment,self._flow_rate, self._severity)
 
 class SEImpairedAlveolarExchangeExacerbation(SEPatientAction):
     __slots__ = ["_impaired_surface_area", "_impaired_fraction", "_severity"]

@@ -12,6 +12,7 @@
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
 
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMass.h"
 #include "properties/SEScalarPressure.h"
@@ -27,6 +28,7 @@ void HowToDynamicHemorrhage()
   // When it comes back, the engine will be running, waiting for your input
 
   int action;
+  double severity;
   double rate;
   bool active = true;
   do
@@ -39,10 +41,10 @@ void HowToDynamicHemorrhage()
       pThread.Status();
       break;
     case 2:
-      pThread.GetLogger()->Info("Enter Hemorrhage Rate in mL/min : ");
-      std::cin >> rate;
-      pThread.GetLogger()->Info(std::stringstream() << rate);
-      pThread.SetHemorrhageFlow_mL_Per_min(rate);
+      pThread.GetLogger()->Info("Enter Hemorrhage Severity [0-1] : ");
+      std::cin >> severity;
+      pThread.GetLogger()->Info(std::stringstream() << severity);
+      pThread.SetHemorrhageSeverity(severity);
       break;
     case 3:
       pThread.GetLogger()->Info("Enter IV Fluids Rate in mL/min : ");
@@ -87,9 +89,9 @@ PulseThread::~PulseThread()
   SAFE_DELETE(m_hemorrhage);
 }
 
-void PulseThread::SetHemorrhageFlow_mL_Per_min(double rate)
+void PulseThread::SetHemorrhageSeverity(double s)
 {
-  m_hemorrhage->GetRate().SetValue(rate, VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
+  m_hemorrhage->GetSeverity().SetValue(s);
   m_mutex.lock();
   m_pe->ProcessAction(*m_hemorrhage);
   m_mutex.unlock();

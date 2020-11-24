@@ -46,6 +46,8 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   protected SEScalarPressure                  pulsePressure;
   protected SEScalarPressureTimePerVolume     systemicVascularResistance;
   protected SEScalarPressure                  systolicArterialPressure;
+  protected SEScalarVolumePerTime             totalHemorrhageRate;
+  protected SEScalarVolume                    totalHemorrhagedVolume;
 
   public SECardiovascularSystem()
   {
@@ -76,6 +78,8 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     pulsePressure = null;
     systemicVascularResistance = null;
     systolicArterialPressure = null;
+    totalHemorrhageRate = null;
+    totalHemorrhagedVolume = null;
   }
 
   @Override
@@ -100,14 +104,20 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     if (meanCentralVenousPressure != null)
       meanCentralVenousPressure.invalidate();
     if (diastolicArterialPressure != null)
-      diastolicArterialPressure.invalidate();  
+      diastolicArterialPressure.invalidate();
     if (heartEjectionFraction != null)
       heartEjectionFraction.invalidate();
-    if (intracranialPressure != null)
-      intracranialPressure.invalidate();
     this.heartRhythm = null;
     if (heartStrokeVolume != null)
       heartStrokeVolume.invalidate();
+    if (intracranialPressure != null)
+      intracranialPressure.invalidate();
+    if (meanArterialCarbonDioxidePartialPressure != null)
+      meanArterialCarbonDioxidePartialPressure.invalidate();
+    if (meanArterialCarbonDioxidePartialPressureDelta != null)
+      meanArterialCarbonDioxidePartialPressureDelta.invalidate();
+    if (meanSkinFlow != null)
+      meanSkinFlow.invalidate();
     if (pulmonaryArterialPressure != null)
       pulmonaryArterialPressure.invalidate();
     if (pulmonaryCapillariesWedgePressure != null)
@@ -115,29 +125,27 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     if (pulmonaryDiastolicArterialPressure != null)
       pulmonaryDiastolicArterialPressure.invalidate();
     if (pulmonaryMeanArterialPressure != null)
-      pulmonaryMeanArterialPressure.invalidate();    
+      pulmonaryMeanArterialPressure.invalidate();
     if (pulmonaryMeanCapillaryFlow != null)
       pulmonaryMeanCapillaryFlow.invalidate();
     if (pulmonaryMeanShuntFlow != null)
       pulmonaryMeanShuntFlow.invalidate();
     if (pulmonarySystolicArterialPressure != null)
-      pulmonarySystolicArterialPressure.invalidate();    
+      pulmonarySystolicArterialPressure.invalidate();
     if (pulmonaryVascularResistance != null)
-      pulmonaryVascularResistance.invalidate();    
+      pulmonaryVascularResistance.invalidate();
     if (pulmonaryVascularResistanceIndex != null)
-      pulmonaryVascularResistanceIndex.invalidate();    
+      pulmonaryVascularResistanceIndex.invalidate();
     if (pulsePressure != null)
       pulsePressure.invalidate();
     if (systemicVascularResistance != null)
-      systemicVascularResistance.invalidate();    
+      systemicVascularResistance.invalidate();
     if (systolicArterialPressure != null)
       systolicArterialPressure.invalidate();
-    if (meanArterialCarbonDioxidePartialPressure != null)
-      meanArterialCarbonDioxidePartialPressure.invalidate();
-    if (meanArterialCarbonDioxidePartialPressureDelta != null)
-      meanArterialCarbonDioxidePartialPressureDelta.invalidate();
-    if (meanSkinFlow != null)
-      meanSkinFlow.invalidate();
+    if (totalHemorrhageRate != null)
+      totalHemorrhageRate.invalidate();
+    if (totalHemorrhagedVolume != null)
+      totalHemorrhagedVolume.invalidate();
   }
 
   public static void load(CardiovascularSystemData src, SECardiovascularSystem dst)
@@ -172,6 +180,12 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       SEScalarVolume.load(src.getHeartStrokeVolume(),dst.getHeartStrokeVolume());
     if (src.hasIntracranialPressure())
       SEScalarPressure.load(src.getIntracranialPressure(),dst.getIntracranialPressure());
+    if (src.hasMeanArterialCarbonDioxidePartialPressure())
+      SEScalarPressure.load(src.getMeanArterialCarbonDioxidePartialPressure(),dst.getMeanArterialCarbonDioxidePartialPressure());
+    if (src.hasMeanArterialCarbonDioxidePartialPressureDelta())
+      SEScalarPressure.load(src.getMeanArterialCarbonDioxidePartialPressureDelta(),dst.getMeanArterialCarbonDioxidePartialPressureDelta());
+    if (src.hasMeanSkinFlow())
+      SEScalarVolumePerTime.load(src.getMeanSkinFlow(),dst.getMeanSkinFlow());
     if (src.hasPulmonaryArterialPressure())
       SEScalarPressure.load(src.getPulmonaryArterialPressure(),dst.getPulmonaryArterialPressure());
     if (src.hasPulmonaryCapillariesWedgePressure())
@@ -196,12 +210,11 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       SEScalarPressureTimePerVolume.load(src.getSystemicVascularResistance(),dst.getSystemicVascularResistance());
     if (src.hasSystolicArterialPressure())
       SEScalarPressure.load(src.getSystolicArterialPressure(),dst.getSystolicArterialPressure());
-    if (src.hasMeanArterialCarbonDioxidePartialPressure())
-      SEScalarPressure.load(src.getMeanArterialCarbonDioxidePartialPressure(),dst.getMeanArterialCarbonDioxidePartialPressure());
-    if (src.hasMeanArterialCarbonDioxidePartialPressureDelta())
-      SEScalarPressure.load(src.getMeanArterialCarbonDioxidePartialPressureDelta(),dst.getMeanArterialCarbonDioxidePartialPressureDelta());
-    if (src.hasMeanSkinFlow())
-      SEScalarVolumePerTime.load(src.getMeanSkinFlow(),dst.getMeanSkinFlow());
+    if (src.hasTotalHemorrhageRate())
+      SEScalarVolumePerTime.load(src.getTotalHemorrhageRate(),dst.getTotalHemorrhageRate());
+    if (src.hasTotalHemorrhagedVolume())
+      SEScalarVolume.load(src.getTotalHemorrhagedVolume(),dst.getTotalHemorrhagedVolume());
+
   }
 
   public static CardiovascularSystemData unload(SECardiovascularSystem src)
@@ -243,6 +256,12 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       dst.setHeartStrokeVolume(SEScalarVolume.unload(src.getHeartStrokeVolume()));
     if (src.hasIntracranialPressure())
       dst.setIntracranialPressure(SEScalarPressure.unload(src.getIntracranialPressure()));
+    if (src.hasMeanArterialCarbonDioxidePartialPressure())
+      dst.setMeanArterialCarbonDioxidePartialPressure(SEScalarPressure.unload(src.getMeanArterialCarbonDioxidePartialPressure()));
+    if (src.hasMeanArterialCarbonDioxidePartialPressureDelta())
+      dst.setMeanArterialCarbonDioxidePartialPressureDelta(SEScalarPressure.unload(src.getMeanArterialCarbonDioxidePartialPressureDelta()));
+    if (src.hasMeanSkinFlow())
+      dst.setMeanSkinFlow(SEScalarVolumePerTime.unload(src.getMeanSkinFlow()));
     if (src.hasPulmonaryArterialPressure())
       dst.setPulmonaryArterialPressure(SEScalarPressure.unload(src.getPulmonaryArterialPressure()));
     if (src.hasPulmonaryCapillariesWedgePressure())
@@ -264,20 +283,15 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     if (src.hasPulsePressure())
       dst.setPulsePressure(SEScalarPressure.unload(src.getPulsePressure()));
     if (src.hasSystemicVascularResistance())
-      dst.setSystemicVascularResistance(SEScalarPressureTimePerVolume.unload(src.getSystemicVascularResistance()));    
+      dst.setSystemicVascularResistance(SEScalarPressureTimePerVolume.unload(src.getSystemicVascularResistance()));
     if (src.hasSystolicArterialPressure())
       dst.setSystolicArterialPressure(SEScalarPressure.unload(src.getSystolicArterialPressure()));
-    if (src.hasMeanArterialCarbonDioxidePartialPressure())
-      dst.setMeanArterialCarbonDioxidePartialPressure(SEScalarPressure.unload(src.getMeanArterialCarbonDioxidePartialPressure()));
-    if (src.hasMeanArterialCarbonDioxidePartialPressureDelta())
-      dst.setMeanArterialCarbonDioxidePartialPressureDelta(SEScalarPressure.unload(src.getMeanArterialCarbonDioxidePartialPressureDelta()));
-    if (src.hasMeanSkinFlow())
-      dst.setMeanSkinFlow(SEScalarVolumePerTime.unload(src.getMeanSkinFlow()));
+    if (src.hasTotalHemorrhageRate())
+      dst.setTotalHemorrhageRate(SEScalarVolumePerTime.unload(src.getTotalHemorrhageRate()));
+    if (src.hasTotalHemorrhagedVolume())
+      dst.setTotalHemorrhagedVolume(SEScalarVolume.unload(src.getTotalHemorrhagedVolume()));
   }
 
-  /*
-   * Arterial Pressure
-   */
   public boolean hasArterialPressure()
   {
     return arterialPressure == null ? false : arterialPressure.isValid();
@@ -289,9 +303,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return arterialPressure;
   }
 
-  /*
-   * Mean Arterial Pressure
-   */
   public boolean hasMeanArterialPressure()
   {
     return meanArterialPressure == null ? false : meanArterialPressure.isValid();
@@ -303,9 +314,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return meanArterialPressure;
   }
 
-  /*
-   * Blood Volume
-   */
   public boolean hasBloodVolume()
   {
     return bloodVolume == null ? false : bloodVolume.isValid();
@@ -328,9 +336,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return cardiacIndex;
   }
 
-  /*
-   * Cardiac Output
-   */
   public boolean hasCardiacOutput()
   {
     return cardiacOutput == null ? false : cardiacOutput.isValid();
@@ -342,9 +347,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return cardiacOutput;
   }
 
-  /*
-   * Central Venous Pressure
-   */
   public boolean hasCentralVenousPressure()
   {
     return centralVenousPressure == null ? false : centralVenousPressure.isValid();
@@ -378,9 +380,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return cerebralPerfusionPressure;
   }
 
-  /*
-   * Mean Central Venous Pressure
-   */
   public boolean hasMeanCentralVenousPressure()
   {
     return meanCentralVenousPressure == null ? false : meanCentralVenousPressure.isValid();
@@ -392,9 +391,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return meanCentralVenousPressure;
   }
 
-  /*
-   * Diastolic Arterial Pressure
-   */
   public boolean hasDiastolicArterialPressure()
   {
     return diastolicArterialPressure == null ? false : diastolicArterialPressure.isValid();
@@ -406,9 +402,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return diastolicArterialPressure;
   }
 
-  /*
-   * Heart Ejection Fraction
-   */
   public boolean hasHeartEjectionFraction()
   {
     return heartEjectionFraction == null ? false : heartEjectionFraction.isValid();
@@ -420,9 +413,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return heartEjectionFraction;
   }
 
-  /*
-   * Heart Rate
-   */
   public boolean hasHeartRate()
   {
     return heartRate == null ? false : heartRate.isValid();
@@ -434,16 +424,10 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return heartRate;
   }
 
-  /*
-   * Heart Rhythm
-   */
   public eHeartRhythm    getHeartRhythm() { return this.heartRhythm;}
   public void            setHeartRhythm(eHeartRhythm heartRhythm){this.heartRhythm=heartRhythm;}
   public boolean         hasHeartRhythm(){return this.heartRhythm==null?false:true;}
 
-  /*
-   * Heart Stroke Volume
-   */
   public boolean hasHeartStrokeVolume()
   {
     return heartStrokeVolume == null ? false : heartStrokeVolume.isValid();
@@ -465,10 +449,41 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       intracranialPressure = new SEScalarPressure();
     return intracranialPressure;
   }
+  
 
-  /*
-   * Pulmonary Arterial Pressure
-   */
+  public boolean hasMeanArterialCarbonDioxidePartialPressure()
+  {
+    return meanArterialCarbonDioxidePartialPressure == null ? false : meanArterialCarbonDioxidePartialPressure.isValid();
+  }
+  public SEScalarPressure getMeanArterialCarbonDioxidePartialPressure()
+  {
+    if (meanArterialCarbonDioxidePartialPressure == null)
+      meanArterialCarbonDioxidePartialPressure = new SEScalarPressure();
+    return meanArterialCarbonDioxidePartialPressure;
+  }
+
+  public boolean hasMeanArterialCarbonDioxidePartialPressureDelta()
+  {
+    return meanArterialCarbonDioxidePartialPressureDelta == null ? false : meanArterialCarbonDioxidePartialPressureDelta.isValid();
+  }
+  public SEScalarPressure getMeanArterialCarbonDioxidePartialPressureDelta()
+  {
+    if (meanArterialCarbonDioxidePartialPressureDelta == null)
+      meanArterialCarbonDioxidePartialPressureDelta = new SEScalarPressure();
+    return meanArterialCarbonDioxidePartialPressureDelta;
+  }
+
+  public boolean hasMeanSkinFlow()
+  {
+    return meanSkinFlow == null ? false : meanSkinFlow.isValid();
+  }
+  public SEScalarVolumePerTime getMeanSkinFlow()
+  {
+    if (meanSkinFlow == null)
+      meanSkinFlow = new SEScalarVolumePerTime();
+    return meanSkinFlow;
+  }
+
   public boolean hasPulmonaryArterialPressure()
   {
     return pulmonaryArterialPressure == null ? false : pulmonaryArterialPressure.isValid();
@@ -480,9 +495,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return pulmonaryArterialPressure;
   }
 
-  /*
-   * Pulmonary Capillaries Wedge Pressure
-   */
   public boolean hasPulmonaryCapillariesWedgePressure()
   {
     return pulmonaryCapillariesWedgePressure == null ? false : pulmonaryCapillariesWedgePressure.isValid();
@@ -494,9 +506,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return pulmonaryCapillariesWedgePressure;
   }
 
-  /*
-   * Pulmonary Diastolic Arterial Pressure
-   */
   public boolean hasPulmonaryDiastolicArterialPressure()
   {
     return pulmonaryDiastolicArterialPressure == null ? false : pulmonaryDiastolicArterialPressure.isValid();
@@ -508,9 +517,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return pulmonaryDiastolicArterialPressure;
   }
 
-  /*
-   * Pulmonary Mean Arterial Pressure
-   */
   public boolean hasPulmonaryMeanArterialPressure()
   {
     return pulmonaryMeanArterialPressure == null ? false : pulmonaryMeanArterialPressure.isValid();
@@ -522,9 +528,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return pulmonaryMeanArterialPressure;
   }
 
-  /*
-   * Pulmonary Mean Capillary Flow
-   */
   public boolean hasPulmonaryMeanCapillaryFlow()
   {
     return pulmonaryMeanCapillaryFlow == null ? false : pulmonaryMeanCapillaryFlow.isValid();
@@ -536,9 +539,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return pulmonaryMeanCapillaryFlow;
   }
 
-  /*
-   * Pulmonary Mean Shunt Flow
-   */
   public boolean hasPulmonaryMeanShuntFlow()
   {
     return pulmonaryMeanShuntFlow == null ? false : pulmonaryMeanShuntFlow.isValid();
@@ -550,9 +550,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return pulmonaryMeanShuntFlow;
   }
 
-  /*
-   * Pulmonary Systolic Arterial Pressure
-   */
   public boolean hasPulmonarySystolicArterialPressure()
   {
     return pulmonarySystolicArterialPressure == null ? false : pulmonarySystolicArterialPressure.isValid();
@@ -586,9 +583,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return pulmonaryVascularResistanceIndex;
   }
 
-  /*
-   * Pulse Pressure
-   */
   public boolean hasPulsePressure()
   {
     return pulsePressure == null ? false : pulsePressure.isValid();
@@ -600,9 +594,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return pulsePressure;
   }
 
-  /*
-   * Systemic Vascular Resistance
-   */
   public boolean hasSystemicVascularResistance()
   {
     return systemicVascularResistance == null ? false : systemicVascularResistance.isValid();
@@ -614,9 +605,6 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     return systemicVascularResistance;
   }
 
-  /*
-   * Systolic Arterial Pressure
-   */
   public boolean hasSystolicArterialPressure()
   {
     return systolicArterialPressure == null ? false : systolicArterialPressure.isValid();
@@ -627,46 +615,26 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       systolicArterialPressure = new SEScalarPressure();
     return systolicArterialPressure;
   }
-
-  /*
-   * Mean Arterial Carbon Dioxide Partial Pressure
-   */
-  public boolean hasMeanArterialCarbonDioxidePartialPressure()
+  
+  public boolean hasTotalHemorrhageRate()
   {
-    return meanArterialCarbonDioxidePartialPressure == null ? false : meanArterialCarbonDioxidePartialPressure.isValid();
+    return totalHemorrhageRate == null ? false : totalHemorrhageRate.isValid();
   }
-  public SEScalarPressure getMeanArterialCarbonDioxidePartialPressure()
+  public SEScalarVolumePerTime getTotalHemorrhageRate()
   {
-    if (meanArterialCarbonDioxidePartialPressure == null)
-      meanArterialCarbonDioxidePartialPressure = new SEScalarPressure();
-    return meanArterialCarbonDioxidePartialPressure;
+    if (totalHemorrhageRate == null)
+      totalHemorrhageRate = new SEScalarVolumePerTime();
+    return totalHemorrhageRate;
   }
 
-  /*
-   * Mean Arterial Carbon Dioxide Partial Pressure Delta
-   */
-  public boolean hasMeanArterialCarbonDioxidePartialPressureDelta()
+  public boolean hasTotalHemorrhagedVolume()
   {
-    return meanArterialCarbonDioxidePartialPressureDelta == null ? false : meanArterialCarbonDioxidePartialPressureDelta.isValid();
+    return totalHemorrhagedVolume == null ? false : totalHemorrhagedVolume.isValid();
   }
-  public SEScalarPressure getMeanArterialCarbonDioxidePartialPressureDelta()
+  public SEScalarVolume getTotalHemorrhagedVolume()
   {
-    if (meanArterialCarbonDioxidePartialPressureDelta == null)
-      meanArterialCarbonDioxidePartialPressureDelta = new SEScalarPressure();
-    return meanArterialCarbonDioxidePartialPressureDelta;
-  }
-
-  /*
-   * Mean Skin Flow
-   */
-  public boolean hasMeanSkinFlow()
-  {
-    return meanSkinFlow == null ? false : meanSkinFlow.isValid();
-  }
-  public SEScalarVolumePerTime getMeanSkinFlow()
-  {
-    if (meanSkinFlow == null)
-      meanSkinFlow = new SEScalarVolumePerTime();
-    return meanSkinFlow;
+    if (totalHemorrhagedVolume == null)
+      totalHemorrhagedVolume = new SEScalarVolume();
+    return totalHemorrhagedVolume;
   }
 }

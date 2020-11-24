@@ -151,7 +151,7 @@
           }
         },
         "Compartment": "RightLeg",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 100.0,
             "Unit": "mL/min"
@@ -168,7 +168,7 @@
           }
         },
         "Compartment": "VenaCava",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 250.0,
             "Unit": "mL/min"
@@ -194,7 +194,7 @@
           }
         },
         "Compartment": "RightLeg",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 50.0,
             "Unit": "mL/min"
@@ -211,7 +211,7 @@
           }
         },
         "Compartment": "VenaCava",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
           }
@@ -257,7 +257,7 @@
           }
         },
         "Compartment": "RightLeg",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
           }

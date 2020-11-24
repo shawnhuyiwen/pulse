@@ -97,6 +97,8 @@ message CardiovascularSystemData
   ScalarPressureData                  PulsePressure                                  = 28;/**<< @brief The difference between the systolic and diastolic pressures.*/
   ScalarPressureTimePerVolumeData     SystemicVascularResistance                     = 29;/**<< @brief The resistance to blood flow through the entire systemic vasculature, not including the pulmonary circulation.*/
   ScalarPressureData                  SystolicArterialPressure                       = 30;/**<< @brief The maximum pressure in the aorta over the course of a cardiac cycle.*/
+  ScalarVolumePerTimeData             TotalHemorrhageRate                            = 31;/**<< @brief The total rate of blood loss due to all active hemorrhages.*/
+  ScalarVolumeData                    TotalHemorrhagedVolume                         = 32;/**<< @brief The total amount of blood lost due to all hemorrhages.*/
 }
 
 /** @brief Provides transport of drugs through the blood and air in the cardiovascular and respiratory systems, respectively.

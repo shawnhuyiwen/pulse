@@ -3,20 +3,23 @@
 
 #include "stdafx.h"
 #include "patient/actions/SEHemorrhage.h"
+#include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
 SEHemorrhage::SEHemorrhage(Logger* logger) : SEPatientAction(logger)
 {
   m_Compartment = "";
-  m_Rate=nullptr;
+  m_FlowRate=nullptr;
+  m_Severity = nullptr;
   m_Type = eHemorrhage_Type::External;
 }
 
 SEHemorrhage::~SEHemorrhage()
 {
   m_Compartment = "";
-  SAFE_DELETE(m_Rate);
+  SAFE_DELETE(m_FlowRate);
+  SAFE_DELETE(m_Severity);
   m_Type = eHemorrhage_Type::External;
 }
 
@@ -24,7 +27,8 @@ void SEHemorrhage::Clear()
 {
   SEPatientAction::Clear();
   m_Compartment = "";
-  INVALIDATE_PROPERTY(m_Rate);
+  INVALIDATE_PROPERTY(m_FlowRate);
+  INVALIDATE_PROPERTY(m_Severity);
   m_Type = eHemorrhage_Type::External;
 }
 
@@ -35,12 +39,27 @@ void SEHemorrhage::Copy(const SEHemorrhage& src)
 
 bool SEHemorrhage::IsValid() const
 {
-  return SEPatientAction::IsValid() && HasCompartment() && HasRate();
+  return SEPatientAction::IsValid() && HasCompartment() && (HasFlowRate() || HasSeverity());
 }
 
 bool SEHemorrhage::IsActive() const
 {
-  return IsValid() ? !m_Rate->IsZero() : false;
+  if (!IsValid())
+    return false;
+  if (HasFlowRate() && m_FlowRate->IsPositive())
+    return true;
+  if (HasSeverity() && m_Severity->IsPositive())
+    return true;
+  return false;
+}
+
+eHemorrhage_Type SEHemorrhage::GetType() const
+{
+  return m_Type;
+}
+void SEHemorrhage::SetType(eHemorrhage_Type Type)
+{
+  m_Type = Type;
 }
 
 std::string SEHemorrhage::GetCompartment() const
@@ -63,39 +82,49 @@ void SEHemorrhage::InvalidateCompartment()
   m_Compartment = "";
 }
 
-bool SEHemorrhage::HasRate() const
+bool SEHemorrhage::HasFlowRate() const
 {
-  return m_Rate==nullptr?false:m_Rate->IsValid();
+  return m_FlowRate==nullptr?false:m_FlowRate->IsValid();
 }
-SEScalarVolumePerTime& SEHemorrhage::GetRate()
+SEScalarVolumePerTime& SEHemorrhage::GetFlowRate()
 {
-  if(m_Rate==nullptr)
-    m_Rate=new SEScalarVolumePerTime();
-  return *m_Rate;
+  if(m_FlowRate==nullptr)
+    m_FlowRate=new SEScalarVolumePerTime();
+  return *m_FlowRate;
 }
-double SEHemorrhage::GetRate(const VolumePerTimeUnit& unit) const
+double SEHemorrhage::GetFlowRate(const VolumePerTimeUnit& unit) const
 {
-  if (m_Rate == nullptr)
+  if (m_FlowRate == nullptr)
     return SEScalar::dNaN();
-  return m_Rate->GetValue(unit);
+  return m_FlowRate->GetValue(unit);
 }
 
-eHemorrhage_Type SEHemorrhage::GetType() const
+bool SEHemorrhage::HasSeverity() const
 {
-  return m_Type;
+  return m_Severity == nullptr ? false : m_Severity->IsValid();
 }
-void SEHemorrhage::SetType(eHemorrhage_Type Type)
+SEScalar0To1& SEHemorrhage::GetSeverity()
 {
-  m_Type = Type;
+  if (m_Severity == nullptr)
+    m_Severity = new SEScalar0To1();
+  return *m_Severity;
 }
+double SEHemorrhage::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
+
 
 void SEHemorrhage::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Hemorrhage"; 
+  str << "Patient Action : Hemorrhage";
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tRate: "; HasRate() ? str << *m_Rate : str << "NaN";
-  str << "\n\tFor Compartment: "; HasCompartment()? str << GetCompartment() : str << "No Compartment Set";
   str << "\n\tType: " << eHemorrhage_Type_Name(GetType());
+  str << "\n\tFor Compartment: "; HasCompartment()? str << GetCompartment() : str << "No Compartment Set";
+  str << "\n\tFlowRate: "; HasFlowRate() ? str << *m_FlowRate : str << "Not Set";
+  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
   str << std::flush;
 }
