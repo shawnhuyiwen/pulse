@@ -239,10 +239,10 @@ void PBPatientCondition::Load(const CDM_BIND::ConsumeMealData& src, SEConsumeMea
 void PBPatientCondition::Serialize(const CDM_BIND::ConsumeMealData& src, SEConsumeMeal& dst)
 {
   PBPatientCondition::Serialize(src.patientcondition(), dst);
-  if (src.has_meal())
-    PBPatientNutrition::Load(src.meal(), dst.GetMeal());
-  else
+  if(!src.mealfile().empty())
     dst.SetMealFile(src.mealfile());
+  else if (src.has_meal())
+    PBPatientNutrition::Load(src.meal(), dst.GetMeal());
 }
 CDM_BIND::ConsumeMealData* PBPatientCondition::Unload(const SEConsumeMeal& src)
 {
@@ -253,10 +253,10 @@ CDM_BIND::ConsumeMealData* PBPatientCondition::Unload(const SEConsumeMeal& src)
 void PBPatientCondition::Serialize(const SEConsumeMeal& src, CDM_BIND::ConsumeMealData& dst)
 {
   PBPatientCondition::Serialize(src, *dst.mutable_patientcondition());
-  if (src.HasMeal())
+  if (src.HasMealFile())
+    dst.set_mealfile(src.m_MealFile); 
+  else if (src.HasMeal())
     dst.set_allocated_meal(PBPatientNutrition::Unload(*src.m_Meal));
-  else if (src.HasMealFile())
-    dst.set_mealfile(src.m_MealFile);
 }
 void PBPatientCondition::Copy(const SEConsumeMeal& src, SEConsumeMeal& dst)
 {

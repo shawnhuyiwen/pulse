@@ -28,7 +28,6 @@ public:
   virtual std::string GetMealFile() const;
   virtual void SetMealFile(const std::string& fileName);
   virtual bool HasMealFile() const;
-  virtual void InvalidateMealFile();
 
   virtual void ToString(std::ostream &str) const;
 

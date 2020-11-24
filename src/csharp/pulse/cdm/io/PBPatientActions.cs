@@ -856,10 +856,10 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.ConsumeNutrientsData src, SEConsumeNutrients dst)
     {
       Serialize(src.PatientAction, dst);
+      if (src.NutritionFile != null)
+        dst.SetNutritionFile(src.NutritionFile);
       if (src.Nutrition != null)
         PBNutrition.Load(src.Nutrition, dst.GetNutrition());
-      else if (src.NutritionFile != null)
-        dst.SetNutritionFile(src.NutritionFile);
     }
 
     public static pulse.cdm.bind.ConsumeNutrientsData Unload(SEConsumeNutrients src)

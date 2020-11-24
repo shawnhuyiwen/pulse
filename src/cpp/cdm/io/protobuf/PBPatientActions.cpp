@@ -509,10 +509,10 @@ void PBPatientAction::Load(const CDM_BIND::ConsumeNutrientsData& src, SEConsumeN
 void PBPatientAction::Serialize(const CDM_BIND::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_nutrition())
-    PBPatientNutrition::Load(src.nutrition(), dst.GetNutrition());
-  else
+  if(!src.nutritionfile().empty())
     dst.SetNutritionFile(src.nutritionfile());
+  else if (src.has_nutrition())
+    PBPatientNutrition::Load(src.nutrition(), dst.GetNutrition());
 }
 CDM_BIND::ConsumeNutrientsData* PBPatientAction::Unload(const SEConsumeNutrients& src)
 {
@@ -523,10 +523,10 @@ CDM_BIND::ConsumeNutrientsData* PBPatientAction::Unload(const SEConsumeNutrients
 void PBPatientAction::Serialize(const SEConsumeNutrients& src, CDM_BIND::ConsumeNutrientsData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasNutrition())
-    dst.set_allocated_nutrition(PBPatientNutrition::Unload(*src.m_Nutrition));
-  else if (src.HasNutritionFile())
+  if (src.HasNutritionFile())
     dst.set_nutritionfile(src.m_NutritionFile);
+  else if (src.HasNutrition())
+    dst.set_allocated_nutrition(PBPatientNutrition::Unload(*src.m_Nutrition));
 }
 void PBPatientAction::Copy(const SEConsumeNutrients& src, SEConsumeNutrients& dst)
 {

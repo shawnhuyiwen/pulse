@@ -10,8 +10,8 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
 {
 
   private static final long serialVersionUID = 7917788116628472277L;
-  protected SEAnesthesiaMachine configuration;
-  protected String              configurationFile;
+  protected SEAnesthesiaMachine configuration=null;
+  protected String              configurationFile="";
   
   public SEAnesthesiaMachineConfiguration()
   {
@@ -21,7 +21,7 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
   public SEAnesthesiaMachineConfiguration(SEAnesthesiaMachineConfiguration other)
   {
     this();
-    copy(other);    
+    copy(other);
   }
   
   public void copy(SEAnesthesiaMachineConfiguration other)
@@ -29,7 +29,8 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
     if(this==other)
       return;
     super.copy(other);
-    this.configuration.copy(other.configuration);
+    if(other.configuration!=null)
+      this.getConfiguration().copy(other.configuration);
     this.configurationFile=other.configurationFile;
   }
   
@@ -40,8 +41,7 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
     
     if (this.configuration != null)
       this.configuration.reset();
-    if (this.configurationFile != null)
-      this.configurationFile="";
+    this.configurationFile="";
   }
   
   @Override
@@ -74,10 +74,10 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
   protected static void unload(SEAnesthesiaMachineConfiguration src, AnesthesiaMachineConfigurationData.Builder dst)
   {
     SEAnesthesiaMachineAction.unload(src, dst.getAnesthesiaMachineActionBuilder());
-    if(src.hasConfiguration())
-      dst.setConfiguration(SEAnesthesiaMachine.unload(src.configuration));
-    else if(src.hasConfigurationFile())
+    if(src.hasConfigurationFile())
       dst.setConfigurationFile(src.configurationFile);
+    else if(src.hasConfiguration())
+      dst.setConfiguration(SEAnesthesiaMachine.unload(src.configuration));
   }
   
   public boolean hasConfiguration()
@@ -108,12 +108,13 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
   public String toString()
   {
     String str = "Anesthesia Machine Configuration";
-    if(hasConfiguration())
+    if(this.hasConfigurationFile())
+      str +="\n\tAnesthesia Machine File: "+this.configurationFile;
+    else if(hasConfiguration())
     {
       str += configuration.toString();
     }
-    if(this.hasConfigurationFile())
-      str +="\n\tAnesthesia Machine File: "+this.configurationFile;
+    
     return str;
   }
 }

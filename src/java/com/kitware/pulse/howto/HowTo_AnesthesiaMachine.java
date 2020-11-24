@@ -64,7 +64,9 @@ public class HowTo_AnesthesiaMachine
     if (useStateFile) {
       pe.serializeFromFile("./states/StandardMale@0s.json", createDataRequests());
     } else {
-      SEPatient patient = new SEPatient();
+      SEPatientConfiguration sepc = new SEPatientConfiguration();
+
+      SEPatient patient = sepc.getPatient();
       patient.setName("Johnny Lawrence");
       patient.setSex(eSex.Male);
       patient.getAge().setValue(44, TimeUnit.yr);
@@ -76,8 +78,6 @@ public class HowTo_AnesthesiaMachine
       patient.getSystolicArterialPressureBaseline().setValue(114., PressureUnit.mmHg);
       patient.getRespirationRateBaseline().setValue(16, FrequencyUnit.Per_min);
 
-      SEPatientConfiguration sepc = new SEPatientConfiguration();
-      sepc.setPatient(patient);
       SEDataRequestManager dataRequests = createDataRequests();
 
       pe.initializeEngine(sepc, dataRequests);

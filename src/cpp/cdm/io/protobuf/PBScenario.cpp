@@ -22,10 +22,10 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst)
   dst.SetName(src.name());
   dst.SetDescription(src.description());
 
+  if(!src.enginestatefile().empty())
+    dst.SetEngineStateFile(src.enginestatefile());
   if (src.has_patientconfiguration())
     PBEngine::Load(src.patientconfiguration(), dst.GetPatientConfiguration(), *dst.m_SubMgr);
-  else 
-    dst.SetEngineStateFile(src.enginestatefile());
 
   if (src.has_datarequestmanager())
     PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager(), *dst.m_SubMgr);

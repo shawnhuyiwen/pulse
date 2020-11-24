@@ -139,7 +139,8 @@ public class HowTo_MechanicalVentilator
     }
     else
     {
-      SEPatient patient = new SEPatient();
+      SEPatientConfiguration sepc = new SEPatientConfiguration();
+      SEPatient patient = sepc.getPatient();
       patient.setName("Johnny Lawrence");
       patient.setSex(eSex.Male);
       patient.getAge().setValue(44, TimeUnit.yr);
@@ -151,8 +152,6 @@ public class HowTo_MechanicalVentilator
       patient.getSystolicArterialPressureBaseline().setValue(114., PressureUnit.mmHg);
       patient.getRespirationRateBaseline().setValue(16, FrequencyUnit.Per_min);
 
-      SEPatientConfiguration sepc = new SEPatientConfiguration();
-      sepc.setPatient(patient);
       //sepc.setDataRootDir(binDir);
       pe.initializeEngine(sepc, dataRequests);
     }

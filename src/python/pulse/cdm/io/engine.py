@@ -314,10 +314,10 @@ def serialize_patient_configuration_from_file(filename: str, dst: SEPatientConfi
     serialize_patient_configuration_from_string(string, dst, eSerializationFormat.JSON)
 
 def serialize_patient_configuration_to_bind(src: SEPatientConfiguration, dst: PatientConfigurationData):
-    if src.has_patient():
-        serialize_patient_to_bind(src.get_patient(), dst.Patient)
-    elif src.has_patient_file():
+    if src.has_patient_file():
         dst.PatientFile = src.get_patient_file()
+    elif src.has_patient():
+        serialize_patient_to_bind(src.get_patient(), dst.Patient)
     if src.has_conditions():
         serialize_condition_manager_to_bind(src.get_conditions(), dst.Conditions)
     for override in src.get_scalar_overrides():

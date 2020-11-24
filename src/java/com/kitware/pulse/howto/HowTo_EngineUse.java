@@ -187,7 +187,8 @@ public class HowTo_EngineUse
         // Set up your patient
         // This is the minimum and recommended data to set for a patient
         // But you can get more complicated, consult our Patient Variability Documentation for more details
-        SEPatient patient = new SEPatient();
+        SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
+        SEPatient patient = patient_configuration.getPatient();
         patient.setName("Standard");
         patient.setSex(eSex.Male);
         patient.getAge().setValue(44,TimeUnit.yr);
@@ -199,8 +200,6 @@ public class HowTo_EngineUse
         patient.getSystolicArterialPressureBaseline().setValue(114.,PressureUnit.mmHg);
         patient.getRespirationRateBaseline().setValue(16,FrequencyUnit.Per_min);
 
-        SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
-        patient_configuration.setPatient(patient);
         // Optionally add conditions to the patient_configuration
         // Optionally, specify where you would like Pulse to look for files it needs on disk
         patient_configuration.setDataRootDir("./");// Default is "./"

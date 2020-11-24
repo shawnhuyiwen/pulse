@@ -56,10 +56,10 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.InitialEnvironmentalConditionsData src, SEInitialEnvironmentalConditions dst)
     {
       PBEnvironmentCondition.Serialize(src.EnvironmentCondition, dst);
+      if (src.EnvironmentalConditionsFile != null)
+        dst.SetEnvironmentalConditionsFile(src.EnvironmentalConditionsFile);
       if (src.EnvironmentalConditions != null)
         PBEnvironment.Load(src.EnvironmentalConditions, dst.GetEnvironmentalConditions());
-      else if (src.EnvironmentalConditionsFile != null)
-        dst.SetEnvironmentalConditionsFile(src.EnvironmentalConditionsFile);
     }
 
     public static pulse.cdm.bind.InitialEnvironmentalConditionsData Unload(SEInitialEnvironmentalConditions src)

@@ -30,7 +30,7 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
       return;
     super.copy(other);
     if(this.environmentalConditions != null)
-      this.environmentalConditions.copy(other.environmentalConditions);
+      this.getEnvironmentalConditions().copy(other.environmentalConditions);
     this.environmentalConditionsFile=other.environmentalConditionsFile;
   }
   
@@ -38,7 +38,8 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
   public void reset()
   {
     super.reset();
-    this.environmentalConditions = null;
+    if(this.environmentalConditions!=null)
+      this.environmentalConditions.reset();
     this.environmentalConditionsFile=null;
   }
   
@@ -71,10 +72,10 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
   protected static void unload(SEChangeEnvironmentalConditions src, ChangeEnvironmentalConditionsData.Builder dst)
   {
     SEEnvironmentAction.unload(src, dst.getEnvironmentActionBuilder());
-    if(src.hasEnvironmentalConditions())
-      dst.setEnvironmentalConditions(SEEnvironmentalConditions.unload(src.environmentalConditions));
-    else if(src.hasEnvironmentalConditionsFile())
+    if(src.hasEnvironmentalConditionsFile())
       dst.setEnvironmentalConditionsFile(src.environmentalConditionsFile);
+    else if(src.hasEnvironmentalConditions())
+      dst.setEnvironmentalConditions(SEEnvironmentalConditions.unload(src.environmentalConditions));
   }
   
   public boolean hasEnvironmentalConditions()
@@ -83,7 +84,6 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
   }
   public SEEnvironmentalConditions getEnvironmentalConditions()
   {
-    this.environmentalConditionsFile = null;
     if(this.environmentalConditions == null)
       this.environmentalConditions=new SEEnvironmentalConditions();
     return this.environmentalConditions;
@@ -99,18 +99,17 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
   }
   public void setEnvironmentalConditionsFile(String s)
   {
-    this.environmentalConditions = null;
     this.environmentalConditionsFile = s;
   }
   
   @Override
   public String toString()
   {
-    if (environmentalConditions != null)
-      return "Environment Configuration : "+environmentalConditions.toString();
-    else if(this.hasEnvironmentalConditionsFile())
+    if(this.hasEnvironmentalConditionsFile())
       return "Envrioment Configuration:"
           + "\n\tEnvironmentalConditionsFile: "+this.environmentalConditionsFile;
+    else if (environmentalConditions != null)
+      return "Environment Configuration : "+environmentalConditions.toString();
     else
       return "Action not specified properly";
   }

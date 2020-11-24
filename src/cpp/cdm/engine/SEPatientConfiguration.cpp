@@ -74,21 +74,15 @@ std::string SEPatientConfiguration::GetPatientFile() const
 }
 void SEPatientConfiguration::SetPatientFile(const std::string& patientFile)
 {
-  InvalidatePatient();
   m_PatientFile = patientFile;
 }
 bool SEPatientConfiguration::HasPatientFile() const
 {
-  return m_PatientFile.empty()?false:true;
-}
-void SEPatientConfiguration::InvalidatePatientFile()
-{
-  m_PatientFile = "";
+  return !m_PatientFile.empty();
 }
 
 SEPatient& SEPatientConfiguration::GetPatient()
 {
-  InvalidatePatientFile(); 
   if (m_Patient == nullptr)
     m_Patient = new SEPatient(GetLogger());
   return *m_Patient;
@@ -100,10 +94,6 @@ const SEPatient* SEPatientConfiguration::GetPatient() const
 bool SEPatientConfiguration::HasPatient() const
 {
   return m_Patient != nullptr;
-}
-void SEPatientConfiguration::InvalidatePatient()
-{
-    SAFE_DELETE(m_Patient);
 }
 
 SEConditionManager& SEPatientConfiguration::GetConditions()
@@ -119,10 +109,6 @@ const SEConditionManager* SEPatientConfiguration::GetConditions() const
 bool SEPatientConfiguration::HasConditions() const
 {
   return m_Conditions != nullptr;
-}
-void SEPatientConfiguration::InvalidateConditions()
-{
-  SAFE_DELETE(m_Conditions);
 }
 
 bool SEPatientConfiguration::HasOverride() const

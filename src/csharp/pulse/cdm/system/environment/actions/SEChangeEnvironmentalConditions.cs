@@ -5,13 +5,12 @@ namespace Pulse.CDM
 {
   public class SEChangeEnvironmentalConditions : SEEnvironmentAction
   {
-    protected SEEnvironmentalConditions environmental_conditions;
-    protected string                    environmental_conditions_file;
+    protected SEEnvironmentalConditions environmental_conditions=null;
+    protected string                    environmental_conditions_file="";
 
     public SEChangeEnvironmentalConditions()
     {
-      environmental_conditions = null;
-      environmental_conditions_file = null;
+    
     }
 
     public SEChangeEnvironmentalConditions(SEChangeEnvironmentalConditions other)
@@ -22,7 +21,8 @@ namespace Pulse.CDM
     public override void Clear()
     {
       base.Clear();
-      environmental_conditions = null;
+      if(environmental_conditions != null)
+        environmental_conditions.Clear();
       environmental_conditions_file = null;
 
     }
@@ -32,7 +32,8 @@ namespace Pulse.CDM
       if (this == other)
         return;
       base.Copy(other);
-      environmental_conditions.Copy(other.environmental_conditions);
+      if(other.environmental_conditions != null)
+        GetEnvironmentalConditions().Copy(other.environmental_conditions);
       environmental_conditions_file = other.environmental_conditions_file;
     }
 
@@ -76,11 +77,11 @@ namespace Pulse.CDM
 
     public new string ToString()
     {
-      if (environmental_conditions != null)
-        return "Environment Configuration : " + environmental_conditions.ToString();
-      else if (HasEnvironmentalConditionsFile())
+      if (HasEnvironmentalConditionsFile())
         return "Envrioment Configuration:"
             + "\n\tEnvironmentalConditionsFile: " + environmental_conditions_file;
+      else if (environmental_conditions != null)
+        return "Environment Configuration : " + environmental_conditions.ToString();
       else
         return "Action not specified properly";
     }
