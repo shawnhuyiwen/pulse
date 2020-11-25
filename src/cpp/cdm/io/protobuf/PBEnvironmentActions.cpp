@@ -29,10 +29,10 @@ void PBEnvironmentAction::Load(const CDM_BIND::ChangeEnvironmentalConditionsData
 void PBEnvironmentAction::Serialize(const CDM_BIND::ChangeEnvironmentalConditionsData& src, SEChangeEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {
   PBEnvironmentAction::Serialize(src.environmentaction(), dst);
-  if (src.has_environmentalconditions())
-    PBEnvironment::Load(src.environmentalconditions(), dst.GetEnvironmentalConditions(), subMgr);
-  else
+  if (!src.environmentalconditionsfile().empty())
     dst.SetEnvironmentalConditionsFile(src.environmentalconditionsfile());
+  else if (src.has_environmentalconditions())
+    PBEnvironment::Load(src.environmentalconditions(), dst.GetEnvironmentalConditions(), subMgr);
 }
 CDM_BIND::ChangeEnvironmentalConditionsData* PBEnvironmentAction::Unload(const SEChangeEnvironmentalConditions& src)
 {
@@ -43,10 +43,10 @@ CDM_BIND::ChangeEnvironmentalConditionsData* PBEnvironmentAction::Unload(const S
 void PBEnvironmentAction::Serialize(const SEChangeEnvironmentalConditions& src, CDM_BIND::ChangeEnvironmentalConditionsData& dst)
 {
   PBEnvironmentAction::Serialize(src, *dst.mutable_environmentaction());
-  if (src.HasEnvironmentalConditions())
-    dst.set_allocated_environmentalconditions(PBEnvironment::Unload(*src.m_EnvironmentalConditions));
-  else if (src.HasEnvironmentalConditionsFile())
+  if (src.HasEnvironmentalConditionsFile())
     dst.set_environmentalconditionsfile(src.m_EnvironmentalConditionsFile);
+  else if (src.HasEnvironmentalConditions())
+    dst.set_allocated_environmentalconditions(PBEnvironment::Unload(*src.m_EnvironmentalConditions));
 }
 void PBEnvironmentAction::Copy(const SEChangeEnvironmentalConditions& src, SEChangeEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {

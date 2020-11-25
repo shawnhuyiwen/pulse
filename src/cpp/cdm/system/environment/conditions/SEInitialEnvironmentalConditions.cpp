@@ -20,20 +20,19 @@
 SEInitialEnvironmentalConditions::SEInitialEnvironmentalConditions(Logger* logger) : SEEnvironmentCondition(logger)
 {
   m_EnvironmentalConditions = nullptr;
-  InvalidateEnvironmentalConditionsFile();
+  m_EnvironmentalConditionsFile = "";
 }
 
 SEInitialEnvironmentalConditions::~SEInitialEnvironmentalConditions()
 {
-
-  InvalidateEnvironmentalConditionsFile();
+  m_EnvironmentalConditionsFile = "";
   SAFE_DELETE(m_EnvironmentalConditions);
 }
 
 void SEInitialEnvironmentalConditions::Clear()
 {
   SEEnvironmentCondition::Clear();
-  InvalidateEnvironmentalConditionsFile();
+  m_EnvironmentalConditionsFile = "";
   if (m_EnvironmentalConditions)
     m_EnvironmentalConditions->Clear();
 }
@@ -59,7 +58,6 @@ bool SEInitialEnvironmentalConditions::HasEnvironmentalConditions() const
 }
 SEEnvironmentalConditions& SEInitialEnvironmentalConditions::GetEnvironmentalConditions()
 {
-  m_EnvironmentalConditionsFile = "";
   if (m_EnvironmentalConditions == nullptr)
     m_EnvironmentalConditions = new SEEnvironmentalConditions(GetLogger());
   return *m_EnvironmentalConditions;
@@ -75,19 +73,12 @@ std::string SEInitialEnvironmentalConditions::GetEnvironmentalConditionsFile() c
 }
 void SEInitialEnvironmentalConditions::SetEnvironmentalConditionsFile(const std::string& fileName)
 {
-  if (m_EnvironmentalConditions != nullptr)
-    SAFE_DELETE(m_EnvironmentalConditions);
   m_EnvironmentalConditionsFile = fileName;
 }
 bool SEInitialEnvironmentalConditions::HasEnvironmentalConditionsFile() const
 {
-  return m_EnvironmentalConditionsFile.empty() ? false : true;
+  return !m_EnvironmentalConditionsFile.empty();
 }
-void SEInitialEnvironmentalConditions::InvalidateEnvironmentalConditionsFile()
-{
-  m_EnvironmentalConditionsFile = "";
-}
-
 
 void SEInitialEnvironmentalConditions::ToString(std::ostream &str) const
 {
@@ -95,8 +86,10 @@ void SEInitialEnvironmentalConditions::ToString(std::ostream &str) const
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   if (HasEnvironmentalConditionsFile())
+  {
     str << "\n\tEnvironmental Conditions File: "; str << m_EnvironmentalConditionsFile;
-  if (HasEnvironmentalConditions())
+  }
+  else if (HasEnvironmentalConditions())
   {
     str << "\n\tSurroundingType: " << eSurroundingType_Name(m_EnvironmentalConditions->GetSurroundingType());
     str << "\n\tAir Density: ";  m_EnvironmentalConditions->HasAirDensity() ? str << m_EnvironmentalConditions->GetAirDensity() : str << "Not Set";
@@ -125,4 +118,3 @@ void SEInitialEnvironmentalConditions::ToString(std::ostream &str) const
   }
   str << std::flush;
 }
-

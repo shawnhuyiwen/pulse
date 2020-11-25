@@ -10,34 +10,36 @@ public class SEConsumeMeal extends SEPatientCondition
 {
 
   private static final long serialVersionUID = -44596470205969619L;
-  protected SEMeal       meal;
-  protected String       mealFile;
+  protected SEMeal       meal=null;
+  protected String       mealFile="";
   
   public SEConsumeMeal()
   {
-    this.meal=new SEMeal();
+   
   }
   
   public SEConsumeMeal(SEConsumeMeal other)
   {
     this();
-    copy(other);    
+    copy(other);
   }
   
   public void copy(SEConsumeMeal other)
   {
     if(this==other)
       return;
-    super.copy(other);   
-    this.meal.copy(other.meal);
+    super.copy(other);
+    if(other.meal != null)
+      this.getMeal().copy(other.meal);
     this.mealFile=other.mealFile;
   }
   
   @Override
   public void reset()
   {
-    super.reset();  
-    this.meal.reset();
+    super.reset();
+    if(this.meal != null)
+      this.meal.reset();
     this.mealFile="";
   }
   
@@ -65,10 +67,10 @@ public class SEConsumeMeal extends SEPatientCondition
   protected static void unload(SEConsumeMeal src, ConsumeMealData.Builder dst)
   {
     SEPatientCondition.unload(src, dst.getPatientConditionBuilder()); 
-    if(src.hasMeal())
-      dst.setMeal(SEMeal.unload(src.meal));
-    else if(src.hasMealFile())
+    if(src.hasMealFile())
       dst.setMealFile(src.mealFile);
+    else if(src.hasMeal())
+      dst.setMeal(SEMeal.unload(src.meal));
   }
   
   public boolean hasMeal()
@@ -77,6 +79,8 @@ public class SEConsumeMeal extends SEPatientCondition
   }
   public SEMeal getMeal()
   {
+    if(this.meal == null)
+      this.meal=new SEMeal();
     return this.meal;
   }
   
@@ -97,16 +101,16 @@ public class SEConsumeMeal extends SEPatientCondition
   public String toString()
   {
     String str="Consume Meal:";
-    if (meal != null)
+    if(this.hasMealFile())
+      str += "\n\tFile: "+this.mealFile;
+    else if (meal != null)
       str +="\n\tElapsedTime: " + (this.meal.hasElapsedTime()?this.meal.getElapsedTime():"None")
           + "\n\tCarbohydrate: " + (this.meal.hasCarbohydrate()?this.meal.getCarbohydrate():"None")
           + "\n\tFat: " + (this.meal.hasFat()?this.meal.getFat():"None")
           + "\n\tProtein: " + (this.meal.hasProtein()?this.meal.getProtein():"None")
           + "\n\tSodium: " + (this.meal.hasSodium()?this.meal.getSodium():"None")
           + "\n\tWater: " + (this.meal.hasWater()?this.meal.getWater():"None");
-    if(this.hasMealFile())
-      str += "\n\tFile: "+this.mealFile;
-
+    
     return str;
   }
 }

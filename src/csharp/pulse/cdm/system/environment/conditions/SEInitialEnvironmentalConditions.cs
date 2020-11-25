@@ -5,12 +5,12 @@ namespace Pulse.CDM
 {
   public class SEInitialEnvironmentalConditions : SEEnvironmentCondition
   {
-    protected SEEnvironmentalConditions environmental_conditions;
-    protected string                    environmental_conditions_file;
+    protected SEEnvironmentalConditions environmental_conditions=null;
+    protected string                    environmental_conditions_file="";
 
     public SEInitialEnvironmentalConditions()
     {
-      environmental_conditions = new SEEnvironmentalConditions();
+    
     }
 
     public SEInitialEnvironmentalConditions(SEInitialEnvironmentalConditions other)
@@ -22,15 +22,16 @@ namespace Pulse.CDM
     {
       if (this == other)
         return;
-
-      environmental_conditions.Copy(other.environmental_conditions);
+      if(other.environmental_conditions != null)
+        GetEnvironmentalConditions().Copy(other.environmental_conditions);
       environmental_conditions_file = other.environmental_conditions_file;
     }
 
     public override void Clear()
     {
       base.Clear();
-      environmental_conditions.Clear();
+      if(environmental_conditions != null)
+        environmental_conditions.Clear();
       environmental_conditions_file = "";
     }
 
@@ -56,6 +57,8 @@ namespace Pulse.CDM
     }
     public SEEnvironmentalConditions GetEnvironmentalConditions()
     {
+      if (environmental_conditions == null)
+        environmental_conditions = new SEEnvironmentalConditions();
       return environmental_conditions;
     }
 
@@ -79,10 +82,10 @@ namespace Pulse.CDM
 
     public new string ToString()
     {
-      if (environmental_conditions != null)
-        return "Initial Environmental Conditions : " + environmental_conditions.ToString();
-      else if (HasEnvironmentalConditionsFile())
+      if (HasEnvironmentalConditionsFile())
         return "Initial Envrionmental Conditions File : " + environmental_conditions_file;
+      else if (environmental_conditions != null)
+        return "Initial Environmental Conditions : " + environmental_conditions.ToString();
       else
         return "Condition not specified properly";
     }

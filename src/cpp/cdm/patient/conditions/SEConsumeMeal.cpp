@@ -11,13 +11,13 @@
 SEConsumeMeal::SEConsumeMeal(Logger* logger) : SEPatientCondition(logger)
 {
   m_Meal = nullptr;
-  InvalidateMealFile();
+  m_MealFile = "";
 }
 
 SEConsumeMeal::~SEConsumeMeal()
 {
   SAFE_DELETE(m_Meal);
-  InvalidateMealFile();
+  m_MealFile = "";
 }
 
 void SEConsumeMeal::Clear()
@@ -25,7 +25,7 @@ void SEConsumeMeal::Clear()
   SEPatientCondition::Clear();
   if (m_Meal)
     m_Meal->Clear();
-  InvalidateMealFile();
+  m_MealFile = "";
 }
 
 void SEConsumeMeal::Copy(const SEConsumeMeal& src)
@@ -64,17 +64,11 @@ std::string SEConsumeMeal::GetMealFile() const
 }
 void SEConsumeMeal::SetMealFile(const std::string& fileName)
 {
-  if (m_Meal != nullptr)
-    SAFE_DELETE(m_Meal);
   m_MealFile = fileName;
 }
 bool SEConsumeMeal::HasMealFile() const
 {
-  return m_MealFile.empty() ? false : true;
-}
-void SEConsumeMeal::InvalidateMealFile()
-{
-  m_MealFile = "";
+  return !m_MealFile.empty();
 }
 
 void SEConsumeMeal::ToString(std::ostream &str) const
@@ -82,7 +76,11 @@ void SEConsumeMeal::ToString(std::ostream &str) const
   str << "Patient Condition :  Consume Meal";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  if (HasMeal())
+  if (HasMealFile())
+  {
+    str << "\n\tMeal File: "; str << m_MealFile;
+  }
+  else if (HasMeal())
   {
     str << "\n\tCharbohydrates: "; m_Meal->HasCarbohydrate() ? str << m_Meal->GetCarbohydrate() : str << "None";
     str << "\n\tCharbohydrates Digestion Rate: "; m_Meal->HasCarbohydrateDigestionRate() ? str << m_Meal->GetCarbohydrateDigestionRate() : str << "None";
@@ -94,7 +92,5 @@ void SEConsumeMeal::ToString(std::ostream &str) const
     str << "\n\tSodium: "; m_Meal->HasSodium() ? str << m_Meal->GetSodium() : str << "None";
     str << "\n\tWater: "; m_Meal->HasWater() ? str << m_Meal->GetWater() : str << "None";
   }
-  if (HasMealFile())
-    str << "\n\tMeal File: "; str << m_MealFile;
   str << std::flush;
 }

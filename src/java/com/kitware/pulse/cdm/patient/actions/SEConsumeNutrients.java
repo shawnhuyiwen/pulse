@@ -10,18 +10,18 @@ public class SEConsumeNutrients extends SEPatientAction
 {
 
   private static final long serialVersionUID = 3049429585113617869L;
-  protected SENutrition nutrition;
-  protected String nutritionFile;
+  protected SENutrition nutrition=null;
+  protected String nutritionFile="";
   
   public SEConsumeNutrients()
   {
-    this.nutrition=new SENutrition();
+   
   }
   
   public SEConsumeNutrients(SEConsumeNutrients other)
   {
     this();
-    copy(other);    
+    copy(other);
   }
   
   public void copy(SEConsumeNutrients other)
@@ -29,7 +29,8 @@ public class SEConsumeNutrients extends SEPatientAction
     if(this==other)
       return;
     super.copy(other);
-    this.nutrition.copy(other.nutrition);
+    if(other.nutrition != null)
+      this.getNutrition().copy(other.nutrition);
     this.nutritionFile=other.nutritionFile;
   }
   
@@ -37,7 +38,8 @@ public class SEConsumeNutrients extends SEPatientAction
   public void reset()
   {
     super.reset();
-    this.nutrition.reset();
+    if(this.nutrition != null)
+      this.nutrition.reset();
     this.nutritionFile="";
   }
   
@@ -71,10 +73,10 @@ public class SEConsumeNutrients extends SEPatientAction
   protected static void unload(SEConsumeNutrients src, ConsumeNutrientsData.Builder dst)
   {
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    if(src.hasNutrition())
-      dst.setNutrition(SENutrition.unload(src.nutrition));
-    else if(src.hasNutritionFile())
+    if(src.hasNutritionFile())
       dst.setNutritionFile(src.nutritionFile);
+    else if(src.hasNutrition())
+      dst.setNutrition(SENutrition.unload(src.nutrition));
   }
   
   public boolean hasNutrition()
@@ -83,6 +85,8 @@ public class SEConsumeNutrients extends SEPatientAction
   }
   public SENutrition getNutrition()
   {
+    if(this.nutrition==null)
+      this.nutrition=new SENutrition();
     return this.nutrition;
   }
   
@@ -103,14 +107,14 @@ public class SEConsumeNutrients extends SEPatientAction
   public String toString()
   {
     String str="Consume Nutrients:";
-    if (nutrition != null)
+    if(this.hasNutritionFile())
+      str +="\n\tFile: "+this.nutritionFile;
+    else if (nutrition != null)
       str +="\n\tCarbohydrate: " + (this.nutrition.hasCarbohydrate()?this.nutrition.getCarbohydrate():"None")
           + "\n\tFat: " + (this.nutrition.hasFat()?this.nutrition.getFat():"None")
           + "\n\tProtein: " + (this.nutrition.hasProtein()?this.nutrition.getProtein():"None")
           + "\n\tSodium: " + (this.nutrition.hasSodium()?this.nutrition.getSodium():"None")
           + "\n\tWater: " + (this.nutrition.hasWater()?this.nutrition.getWater():"None");
-    if(this.hasNutritionFile())
-      str +="\n\tFile: "+this.nutritionFile;
     return str;
   }
 }

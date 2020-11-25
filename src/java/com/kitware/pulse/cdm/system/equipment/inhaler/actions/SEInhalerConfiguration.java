@@ -11,8 +11,8 @@ public class SEInhalerConfiguration extends SEInhalerAction
 {
 
   private static final long serialVersionUID = 1236980982027471365L;
-  protected SEInhaler configuration;
-  protected String    configurationFile;
+  protected SEInhaler configuration=null;
+  protected String    configurationFile="";
   
   public SEInhalerConfiguration()
   {
@@ -21,7 +21,7 @@ public class SEInhalerConfiguration extends SEInhalerAction
   public SEInhalerConfiguration(SEInhalerConfiguration other)
   {
     this();
-    copy(other);    
+    copy(other);
   }
   
   public void copy(SEInhalerConfiguration other)
@@ -29,7 +29,8 @@ public class SEInhalerConfiguration extends SEInhalerAction
     if(this==other)
       return;
     super.copy(other);
-    this.configuration.copy(other.configuration);
+    if(other.configuration != null)
+      this.getConfiguration().copy(other.configuration);
     this.configurationFile=other.configurationFile;
   }
   
@@ -40,8 +41,7 @@ public class SEInhalerConfiguration extends SEInhalerAction
     
     if (this.configuration != null)
       this.configuration.reset();
-    if (this.configurationFile != null)
-      this.configurationFile="";
+    this.configurationFile="";
   }
   
   @Override
@@ -73,10 +73,10 @@ public class SEInhalerConfiguration extends SEInhalerAction
   }
   protected static void unload(SEInhalerConfiguration src, InhalerConfigurationData.Builder dst)
   {
-    if(src.hasConfiguration())
-      dst.setConfiguration(SEInhaler.unload(src.configuration));
-    else if(src.hasConfigurationFile())
+    if(src.hasConfigurationFile())
       dst.setConfigurationFile(src.configurationFile);
+    else if(src.hasConfiguration())
+      dst.setConfiguration(SEInhaler.unload(src.configuration));
   }
   
   public boolean hasConfiguration()
@@ -107,13 +107,12 @@ public class SEInhalerConfiguration extends SEInhalerAction
   public String toString()
   {
     String str = "Inhaler Configuration";
-    if(hasConfiguration())
+    if(this.hasConfigurationFile())
+      str +="\n\tInhaler File: "+this.configurationFile;
+    else if(hasConfiguration())
     {
       str += configuration.toString();
     }
-    
-    if(this.hasConfigurationFile())
-      str +="\n\tInhaler File: "+this.configurationFile;
     
     return str;
   }

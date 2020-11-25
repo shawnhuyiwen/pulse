@@ -16,20 +16,20 @@
 
 SEAnesthesiaMachineConfiguration::SEAnesthesiaMachineConfiguration(Logger* logger) : SEAnesthesiaMachineAction(logger)
 {
+  m_ConfigurationFile = "";
   m_Configuration = nullptr;
-  InvalidateConfigurationFile();
 }
 
 SEAnesthesiaMachineConfiguration::~SEAnesthesiaMachineConfiguration()
 {
-  InvalidateConfigurationFile();
+  m_ConfigurationFile = "";
   SAFE_DELETE(m_Configuration);
 }
 
 void SEAnesthesiaMachineConfiguration::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  InvalidateConfigurationFile();
+  m_ConfigurationFile = "";
   if (m_Configuration)
     m_Configuration->Clear();
 }
@@ -50,7 +50,6 @@ bool SEAnesthesiaMachineConfiguration::HasConfiguration() const
 }
 SEAnesthesiaMachine& SEAnesthesiaMachineConfiguration::GetConfiguration()
 {
-  m_ConfigurationFile = "";
   if (m_Configuration == nullptr)
     m_Configuration = new SEAnesthesiaMachine(GetLogger());
   return *m_Configuration;
@@ -66,19 +65,12 @@ std::string SEAnesthesiaMachineConfiguration::GetConfigurationFile() const
 }
 void SEAnesthesiaMachineConfiguration::SetConfigurationFile(const std::string& fileName)
 {
-  if (m_Configuration != nullptr)
-    SAFE_DELETE(m_Configuration);
   m_ConfigurationFile = fileName;
 }
 bool SEAnesthesiaMachineConfiguration::HasConfigurationFile() const
 {
-  return m_ConfigurationFile.empty() ? false : true;
+  return !m_ConfigurationFile.empty();
 }
-void SEAnesthesiaMachineConfiguration::InvalidateConfigurationFile()
-{
-  m_ConfigurationFile = "";
-}
-
 
 void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
 {
@@ -86,8 +78,10 @@ void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   if (HasConfigurationFile())
+  {
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;
-  if (HasConfiguration())
+  }
+  else if (HasConfiguration())
   {
     str << "\n\tConnection: " << eAnesthesiaMachine_Connection_Name(m_Configuration->GetConnection());
     str << "\n\tInlet Flow Rate: "; m_Configuration->HasInletFlow() ? str << m_Configuration->GetInletFlow() : str << "NaN";
@@ -122,4 +116,3 @@ void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
   }
   str << std::flush;
 }
-

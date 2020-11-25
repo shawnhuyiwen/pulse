@@ -28,22 +28,18 @@ public:
   virtual std::string GetName() const;
   virtual void SetName(const std::string& name);
   virtual bool HasName() const;
-  virtual void InvalidateName();
 
   virtual std::string GetDescription() const;
   virtual void SetDescription(const std::string& desc);
   virtual bool HasDescription() const;
-  virtual void InvalidateDescription();
 
   virtual std::string GetEngineStateFile() const;
   virtual void SetEngineStateFile(const std::string& file);
   virtual bool HasEngineStateFile() const;
-  virtual void InvalidateEngineStateFile();
   
   virtual SEPatientConfiguration& GetPatientConfiguration();
   virtual const SEPatientConfiguration* GetPatientConfiguration() const;
   virtual bool HasPatientConfiguration() const;
-  virtual void InvalidatePatientConfiguration();
 
   virtual void AddAction(const SEAction& action);
   virtual const std::vector<const SEAction*>& GetActions() const;
