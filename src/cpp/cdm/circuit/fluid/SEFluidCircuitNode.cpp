@@ -6,7 +6,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 
-SEFluidCircuitNode::SEFluidCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<SEScalarPressure,SEScalarVolume>(name,logger)
+SEFluidCircuitNode::SEFluidCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<FLUID_CIRCUIT_NODE>(name,logger)
 {
   
 }

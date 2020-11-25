@@ -379,7 +379,7 @@
     "PatientAction": {
       "Hemorrhage": {
         "Compartment": "VenaCava",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Value": 1000.0,
             "Unit": "mL/min"
@@ -400,7 +400,7 @@
     "PatientAction": {
       "Hemorrhage": {
         "Compartment": "VenaCava",
-        "Rate": {
+        "FlowRate": {
           "ScalarVolumePerTime": {
             "Unit": "mL/min"
           }

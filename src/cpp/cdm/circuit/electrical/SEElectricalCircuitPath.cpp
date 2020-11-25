@@ -11,7 +11,7 @@ See accompanying NOTICE file for details.*/
 #include "properties/SEScalarElectricCharge.h"
 
 SEElectricalCircuitPath::SEElectricalCircuitPath(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt, const std::string& name) :
-  SECircuitPath<SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge>(src,tgt,name),
+  SECircuitPath<ELECTRICAL_CIRCUIT_PATH>(src,tgt,name),
   m_ElectricalSourceNode(src), m_ElectricalTargetNode(tgt)
 {
 

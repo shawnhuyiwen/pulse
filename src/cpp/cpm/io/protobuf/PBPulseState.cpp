@@ -173,7 +173,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
   if (!src.has_compartmentmanager())
     ss << "PulseState must have a compartment manager" << std::endl;
   else
-    PBCompartment::Load(src.compartmentmanager(), *dst.m_Compartments, dst.m_Circuits.get());
+    PBCompartment::Load(src.compartmentmanager(), *dst.m_Compartments, dst.m_Circuits);
   // Configuration //
   if (!src.has_configuration())
     ss << "PulseState must have a configuration" << std::endl;

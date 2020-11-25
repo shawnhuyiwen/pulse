@@ -11,7 +11,7 @@ SESystem::SESystem(Logger* logger) : Loggable(logger)
 
 SESystem::~SESystem()
 {
-  Clear();
+
 }
 
 void SESystem::Clear()

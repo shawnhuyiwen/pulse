@@ -211,10 +211,10 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineConfigurationData src, SEAnesthesiaMachineConfiguration dst)
     {
       Serialize(src.AnesthesiaMachineAction, dst);
-      if (src.Configuration != null)
-        PBAnesthesiaMachine.Load(src.Configuration, dst.GetConfiguration());
-      else if (src.Configuration != null)
+      if (src.ConfigurationFile != null)
         dst.SetConfigurationFile(src.ConfigurationFile);
+      else if (src.Configuration != null)
+        PBAnesthesiaMachine.Load(src.Configuration, dst.GetConfiguration());
     }
     public static pulse.cdm.bind.AnesthesiaMachineConfigurationData Unload(SEAnesthesiaMachineConfiguration src)
     {
@@ -573,10 +573,10 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorConfigurationData src, SEMechanicalVentilatorConfiguration dst)
     {
       Serialize(src.MechanicalVentilatorAction, dst);
-      if (src.Configuration != null)
-        PBMechanicalVentilator.Load(src.Configuration, dst.GetConfiguration());
-      else if (src.Configuration != null)
+      if (src.ConfigurationFile != null)
         dst.SetConfigurationFile(src.ConfigurationFile);
+      else if (src.Configuration != null)
+        PBMechanicalVentilator.Load(src.Configuration, dst.GetConfiguration());
     }
     public static pulse.cdm.bind.MechanicalVentilatorConfigurationData Unload(SEMechanicalVentilatorConfiguration src)
     {
@@ -588,10 +588,10 @@ namespace Pulse.CDM
     {
       dst.MechanicalVentilatorAction = new pulse.cdm.bind.MechanicalVentilatorActionData();
       Serialize(src, dst.MechanicalVentilatorAction);
-      if (src.HasConfiguration())
-        dst.Configuration = PBMechanicalVentilator.Unload(src.GetConfiguration());
-      else if (src.HasConfigurationFile())
+      if (src.HasConfigurationFile())
         dst.ConfigurationFile = src.GetConfigurationFile();
+      else if (src.HasConfiguration())
+        dst.Configuration = PBMechanicalVentilator.Unload(src.GetConfiguration());
     }
     #endregion
   }

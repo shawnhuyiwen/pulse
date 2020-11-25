@@ -35,7 +35,7 @@ public class CSVComparePlotter
       {
         args = new String[10];
         args[0] = "./BaselineResults.csv";// Expected
-        args[1] = "./ComputedResults.csv";// Computed          
+        args[1] = "./ComputedResults.csv";// Computed
         args[2] = "false"; // Full plot
       }
       else
@@ -212,7 +212,7 @@ public class CSVComparePlotter
           if(expectedTime == null)
           {
             expectedTime = new ArrayList<>();
-            computedTime = new ArrayList<>();          
+            computedTime = new ArrayList<>();
             expectedResults.readHeader("Time(s)",expectedTime);
             computedResults.readHeader("Time(s)",computedTime);
           }
@@ -226,7 +226,7 @@ public class CSVComparePlotter
           expectedData = allExpected.get(header);
           if(expectedData == null)
           {
-            Log.warn(header + "No data was found in expected results for header "+header);            
+            Log.warn(header + "No data was found in expected results for header "+header);
           }
           computedData = allComputed.get(header);
           if(computedData == null)
@@ -241,9 +241,9 @@ public class CSVComparePlotter
         
 
         try
-        {         
+        {
           plot.createGraph
-          (             
+          (
               plotDir,
               failures==null?Color.white:failures.contains(header)?Color.red:Color.green,
                   header+"vsTime",// Title
@@ -251,7 +251,7 @@ public class CSVComparePlotter
                   header,// Y Axis
                   plot.createXYSeries("Expected", expectedTime, expectedData),
                   plot.createXYSeries("Computed", computedTime, computedData)
-              );                  
+              );
         }
         catch(Exception ex)
         {
@@ -269,9 +269,9 @@ public class CSVComparePlotter
       try
       {
         if(!readAll)
-          computedResults.readHeader(header,computedData);          
+          computedResults.readHeader(header,computedData);
         else
-          computedData = allComputed.get(header);   
+          computedData = allComputed.get(header);
 
         allComputed.remove(header);// Take it out of the map
         plot.createGraph
@@ -282,7 +282,7 @@ public class CSVComparePlotter
             "Time(s)",// X Axis
             header,// Y Axis
             plot.createXYSeries("Computed", computedTime, computedData)
-            );      
+            );
       }
       catch(Exception ex)
       {

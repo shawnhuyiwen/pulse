@@ -233,10 +233,6 @@ void PulseSubstances::InitializeSubstances()
   AddActiveSubstance(*m_sodium);
   AddActiveSubstance(*m_tristearin);
   AddActiveSubstance(*m_urea);
-
-  InitializeGasCompartments();
-  InitializeLiquidCompartmentGases();
-  InitializeLiquidCompartmentNonGases();
 }
 
 void PulseSubstances::InitializeGasCompartments()
@@ -918,8 +914,8 @@ void PulseSubstances::AddActiveSubstance(const SESubstance& substance)
   
   SESubstanceManager::AddActiveSubstance(substance);
   if (substance.GetState() == eSubstance_State::Gas)
-    m_data.GetCompartments().AddGasCompartmentSubstance((SESubstance&)substance);
-  m_data.GetCompartments().AddLiquidCompartmentSubstance((SESubstance&)substance);
+    m_data.GetCompartments().AddGasCompartmentSubstance(const_cast<SESubstance&>(substance));
+  m_data.GetCompartments().AddLiquidCompartmentSubstance(const_cast<SESubstance&>(substance));
 
   if (&substance == m_CO)// We need to put HbCO in the system is CO is in the system
   {

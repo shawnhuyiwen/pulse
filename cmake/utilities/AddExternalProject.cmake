@@ -85,13 +85,14 @@ macro(add_external_project_ex extProj)
       CMAKE_GENERATOR ${CMAKE_GENERATOR}
       CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
       CMAKE_GENERATOR_TOOLSET ${CMAKE_GENERATOR_TOOLSET}
+      CMAKE_GENERATOR_INSTANCE ${CMAKE_GENERATOR_INSTANCE}
     )
 
     define_external_dirs_ex( ${extProj} )
 
     #-----------------------------------------------------------------------------
     # Add project
-    #-----------------------------------------------------------------------------    
+    #-----------------------------------------------------------------------------
     ExternalProject_add( ${extProj}
       PREFIX ${${extProj}_PREFIX}
       SOURCE_DIR ${${extProj}_SOURCE_DIR} # from above or parsed argument

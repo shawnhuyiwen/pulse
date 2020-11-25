@@ -96,7 +96,7 @@
 //Should be commented out, unless debugging/tuning
 //#define TUNING
 
-Respiratory::Respiratory(PulseData& data) : PulseRespiratorySystem(data.GetLogger()), m_data(data)
+Respiratory::Respiratory(PulseData& data) : PulseRespiratorySystem(data)
 {
   m_BloodPHRunningAverage = new SERunningAverage();
   m_MeanAirwayPressure_cmH2O = new SERunningAverage();
@@ -235,8 +235,6 @@ void Respiratory::Initialize()
   //The peak driver pressure is the pressure above the default pressure
   m_PeakInspiratoryPressure_cmH2O = 0.0;
   m_PeakExpiratoryPressure_cmH2O = 0.0;
-  m_ArterialO2PartialPressure_mmHg = m_AortaO2->GetPartialPressure(PressureUnit::mmHg);
-  m_ArterialCO2PartialPressure_mmHg = m_AortaCO2->GetPartialPressure(PressureUnit::mmHg);
   m_PreviousTargetAlveolarVentilation_L_Per_min = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L) * m_VentilationFrequency_Per_min;
   m_AverageLocalTissueBronchodilationEffects = 0.0;
 
@@ -310,7 +308,13 @@ void Respiratory::Initialize()
   m_RespiratoryResistanceOverride_cmH2O_s_Per_L = -1.0;
   m_RespiratoryComplianceOverride_L_Per_cmH2O = -1.0;
 
-  //Get the fluid mechanics to a good starting point
+  if (m_data.HasCardiovascular())
+  {
+    m_ArterialO2PartialPressure_mmHg = m_AortaO2->GetPartialPressure(PressureUnit::mmHg);
+    m_ArterialCO2PartialPressure_mmHg = m_AortaCO2->GetPartialPressure(PressureUnit::mmHg);
+  }
+
+  //Get the substances to a good starting point
   TuneCircuit();
 }
 
@@ -361,13 +365,8 @@ void Respiratory::SetUp()
   m_RightLungExtravascular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::RightLungIntracellular);
   m_Carina = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
   m_CarinaO2 = m_Carina->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-  SELiquidCompartment* Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
-  m_AortaO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-  m_AortaCO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
   m_LeftAlveoliO2 = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftAlveoli)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
   m_RightAlveoliO2 = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightAlveoli)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-  m_MechanicalVentilationConnection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
-  m_MechanicalVentilationAerosolConnection = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
   // Compartments we will process aerosol effects on
   m_AerosolEffects.clear();
   m_AerosolEffects.push_back(m_data.GetCompartments().GetLiquidCompartment(pulse::PulmonaryCompartment::Carina));
@@ -422,6 +421,17 @@ void Respiratory::SetUp()
   //Pulmonary Shunt
   m_LeftPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::LeftPulmonaryArteriesToLeftPulmonaryVeins);
   m_RightPulmonaryArteriesToVeins = m_data.GetCircuits().GetCardiovascularCircuit().GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryVeins);
+
+  //Mechanical Ventilation Compartments
+  m_MechanicalVentilationConnection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
+  m_MechanicalVentilationAerosolConnection = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
+
+  if (m_data.HasCardiovascular())
+  {
+    SELiquidCompartment* Aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
+    m_AortaO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
+    m_AortaCO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -517,8 +527,11 @@ void Respiratory::PreProcess()
   UpdateAlveolarCompliances();
   UpdateInspiratoryExpiratoryRatio();
   UpdateDiffusion();
-  UpdatePulmonaryCapillary();
-  UpdatePulmonaryShunt();
+  if (m_data.HasCardiovascular())
+  {
+    UpdatePulmonaryCapillary();
+    UpdatePulmonaryShunt();
+  }
 
   ProcessAerosolSubstances();
   Pneumothorax();
@@ -526,7 +539,10 @@ void Respiratory::PreProcess()
   MechanicalVentilation();
   SupplementalOxygen();
 
-  RespiratoryDriver();
+  if (m_data.HasCardiovascular())
+  {
+    RespiratoryDriver();
+  }
 
   //Do the overrides
   SetRespiratoryResistance();
@@ -936,7 +952,9 @@ void Respiratory::SupplementalOxygen()
   SESupplementalOxygen* so = m_data.GetActions().GetPatientActions().GetSupplementalOxygen();
 
   // Get flow
-  double flow_L_Per_min = so->GetFlow(VolumePerTimeUnit::L_Per_min);
+  double flow_L_Per_min = 0;
+  if(so->HasFlow())
+    flow_L_Per_min = so->GetFlow(VolumePerTimeUnit::L_Per_min);
   //Get tank pressure node and flow control resistor path
   SEFluidCircuitPath* Tank = nullptr;
   SEFluidCircuitPath* OxygenInlet = nullptr;
@@ -1004,7 +1022,6 @@ void Respiratory::SupplementalOxygen()
     so->GetVolume().SetValue(425.0, VolumeUnit::L);
     Info("Supplemental oxygen initial tank volume not set. Using default value of 425 L.");
   }
-  
 
   //Decrement volume from the tank
   //Inf volume is assumed to be a wall connection that will never run out
@@ -1797,8 +1814,15 @@ void Respiratory::CalculateVitalSigns()
   GetTransChestWallPressure().SetValue(transChestWallPressure_cmH2O, PressureUnit::cmH2O);
   GetTransMusclePressure().SetValue(transMusclePressure_cmH2O, PressureUnit::cmH2O);
 
-  double averageAlveoliO2PartialPressure_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
-  GetAlveolarArterialGradient().SetValue(averageAlveoliO2PartialPressure_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
+  if (m_data.HasCardiovascular())
+  {
+    double averageAlveoliO2PartialPressure_mmHg = (m_LeftAlveoliO2->GetPartialPressure(PressureUnit::mmHg) + m_RightAlveoliO2->GetPartialPressure(PressureUnit::mmHg)) / 2.0;
+    GetAlveolarArterialGradient().SetValue(averageAlveoliO2PartialPressure_mmHg - m_AortaO2->GetPartialPressure(PressureUnit::mmHg), PressureUnit::mmHg);
+  }
+  else
+  {
+    GetAlveolarArterialGradient().Clear();
+  }
 
   m_MeanAirwayPressure_cmH2O->Sample(airwayOpeningPressure_cmH2O - bodySurfacePressure_cmH2O);
 
@@ -1927,11 +1951,29 @@ void Respiratory::CalculateVitalSigns()
       //We want the peak Carina O2 value - this should be the inspired value
       double FiO2 = m_TopCarinaO2;
       GetFractionOfInsipredOxygen().SetValue(FiO2);
-      GetCarricoIndex().SetValue(m_ArterialO2PartialPressure_mmHg / FiO2, PressureUnit::mmHg);
-      GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(m_data.GetBloodChemistry().GetOxygenSaturation().GetValue() / FiO2);
       double meanAirwayPressure_mmHg = Convert(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O, PressureUnit::mmHg);
-      GetOxygenationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg * 100.0 / m_ArterialO2PartialPressure_mmHg);
-      GetOxygenSaturationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg / m_data.GetBloodChemistry().GetOxygenSaturation().GetValue(), PressureUnit::cmH2O);
+
+      if (m_data.HasCardiovascular())
+      {
+        GetCarricoIndex().SetValue(m_ArterialO2PartialPressure_mmHg / FiO2, PressureUnit::mmHg);
+        GetOxygenationIndex().SetValue(FiO2* meanAirwayPressure_mmHg * 100.0 / m_ArterialO2PartialPressure_mmHg);
+      }
+      else
+      {
+        GetCarricoIndex().Clear();
+        GetOxygenationIndex().Clear();
+      }
+
+      if (m_data.HasBloodChemistry())
+      {
+        GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(m_data.GetBloodChemistry().GetOxygenSaturation().GetValue() / FiO2);
+        GetOxygenSaturationIndex().SetValue(FiO2* meanAirwayPressure_mmHg / m_data.GetBloodChemistry().GetOxygenSaturation().GetValue(), PressureUnit::cmH2O);
+      }
+      else
+      {
+        GetSaturationAndFractionOfInspiredOxygenRatio().Clear();
+        GetOxygenSaturationIndex().Clear();
+      }
 
       m_BottomBreathTotalVolume_L = totalLungVolume_L;
       m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
@@ -1947,20 +1989,6 @@ void Respiratory::CalculateVitalSigns()
     GetTotalPulmonaryVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
     GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
     m_MeanAirwayPressure_cmH2O->Clear();
-  }
-
- /// \todo Move to blood chemistry
-  // Although it is called respiratory acidosis/alkalosis, the detection and event setting is actually a part of the @ref BloodChemistrySystem
-  // The terms "metabolic" and "respiratory" refer to the origin of the acid-base disturbance
-  // The hydrogen ion concentration is a property of the blood
-  // The events related to blood concentrations should be detected and set in blood chemistry.
-  //Keep a running average of the pH
-  m_BloodPHRunningAverage->Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
-  //Reset at start of cardiac cycle 
-  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
-  {
-    m_LastCardiacCycleBloodPH = m_BloodPHRunningAverage->Value();
-    m_BloodPHRunningAverage->Clear();
   }
 
   if (m_data.GetState() > EngineState::InitialStabilization)
@@ -1993,53 +2021,74 @@ void Respiratory::CalculateVitalSigns()
       /// The patient is no longer considered to have tachypnea.
       m_data.GetEvents().SetEvent(eEvent::Tachypnea, false, m_data.GetSimulationTime());
     }
+  }
 
-    double highPh = 8.5;
-    double lowPh = 6.5;   // \cite Edge2006AcidosisConscious
-    //// Respiratory Acidosis
-    if (m_LastCardiacCycleBloodPH < 7.35 && m_ArterialCO2PartialPressure_mmHg > 47.0)
+  if (m_data.HasBloodChemistry() && m_data.HasCardiovascular())
+  {
+    /// \todo Move to blood chemistry
+     // Although it is called respiratory acidosis/alkalosis, the detection and event setting is actually a part of the @ref BloodChemistrySystem
+     // The terms "metabolic" and "respiratory" refer to the origin of the acid-base disturbance
+     // The hydrogen ion concentration is a property of the blood
+     // The events related to blood concentrations should be detected and set in blood chemistry.
+     //Keep a running average of the pH
+    m_BloodPHRunningAverage->Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
+    //Reset at start of cardiac cycle 
+    if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
-      /// \event Patient: Respiratory Acidosis: event is triggered when blood pH is below 7.36
-      /// The patient has respiratory acidosis.
-      m_data.GetEvents().SetEvent(eEvent::RespiratoryAcidosis, true, m_data.GetSimulationTime());
+      m_LastCardiacCycleBloodPH = m_BloodPHRunningAverage->Value();
+      m_BloodPHRunningAverage->Clear();
+    }
 
-      /// \event Patient: arterial blood ph has dropped below 6.5.
-      if (m_LastCardiacCycleBloodPH < lowPh)
+    if (m_data.GetState() > EngineState::InitialStabilization)
+    {// Don't throw events if we are initializing
+
+      double highPh = 8.5;
+      double lowPh = 6.5;   // \cite Edge2006AcidosisConscious
+      //// Respiratory Acidosis
+      if (m_LastCardiacCycleBloodPH < 7.35 && m_ArterialCO2PartialPressure_mmHg > 47.0)
       {
-        /// \irreversible Extreme respiratory Acidosis: blood pH below 6.5.
-        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-        ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is below 6.5, Patient is experiencing extreme respiratory Acidosis and is in an irreversible state.";
-        Fatal(ss);
+        /// \event Patient: Respiratory Acidosis: event is triggered when blood pH is below 7.36
+        /// The patient has respiratory acidosis.
+        m_data.GetEvents().SetEvent(eEvent::RespiratoryAcidosis, true, m_data.GetSimulationTime());
+
+        /// \event Patient: arterial blood ph has dropped below 6.5.
+        if (m_LastCardiacCycleBloodPH < lowPh)
+        {
+          /// \irreversible Extreme respiratory Acidosis: blood pH below 6.5.
+          m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is below 6.5, Patient is experiencing extreme respiratory Acidosis and is in an irreversible state.";
+          Fatal(ss);
+        }
       }
-    }
-    else if (m_LastCardiacCycleBloodPH >= 7.38 && m_ArterialCO2PartialPressure_mmHg < 44.0)
-    {
-      /// \event Patient: End Respiratory Acidosis Event. The pH value has risen above 7.38. 
-      /// The patient is no longer considered to have respiratory acidosis.
-      m_data.GetEvents().SetEvent(eEvent::RespiratoryAcidosis, false, m_data.GetSimulationTime());
-    }
-
-    ////Respiratory Alkalosis
-    if (m_LastCardiacCycleBloodPH > 7.45 && m_ArterialCO2PartialPressure_mmHg < 37.0)
-    {
-      /// \event Patient: Respiratory Alkalosis: event is triggered when blood pH is above 7.45
-      /// The patient has respiratory alkalosis.
-      m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, true, m_data.GetSimulationTime());
-
-      /// \event Patient: arterial blood ph has gotten above 8.5.
-      if (m_LastCardiacCycleBloodPH > highPh)
+      else if (m_LastCardiacCycleBloodPH >= 7.38 && m_ArterialCO2PartialPressure_mmHg < 44.0)
       {
-        /// \irreversible Extreme respiratory Alkalosis: blood pH above 8.5.
-        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-        ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is above 8.5, Patient is experiencing extreme respiratory Alkalosis and is in an irreversible state.";
-        Fatal(ss);
+        /// \event Patient: End Respiratory Acidosis Event. The pH value has risen above 7.38. 
+        /// The patient is no longer considered to have respiratory acidosis.
+        m_data.GetEvents().SetEvent(eEvent::RespiratoryAcidosis, false, m_data.GetSimulationTime());
       }
-    }
-    else if (m_LastCardiacCycleBloodPH <= 7.43 && m_ArterialCO2PartialPressure_mmHg > 39.0)
-    {
-      /// \event Patient: End Respiratory Alkalosis Event. The pH value has has fallen below 7.45. 
-      /// The patient is no longer considered to have respiratory alkalosis.
-      m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, false, m_data.GetSimulationTime());
+
+      ////Respiratory Alkalosis
+      if (m_LastCardiacCycleBloodPH > 7.45 && m_ArterialCO2PartialPressure_mmHg < 37.0)
+      {
+        /// \event Patient: Respiratory Alkalosis: event is triggered when blood pH is above 7.45
+        /// The patient has respiratory alkalosis.
+        m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, true, m_data.GetSimulationTime());
+
+        /// \event Patient: arterial blood ph has gotten above 8.5.
+        if (m_LastCardiacCycleBloodPH > highPh)
+        {
+          /// \irreversible Extreme respiratory Alkalosis: blood pH above 8.5.
+          m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
+          ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is above 8.5, Patient is experiencing extreme respiratory Alkalosis and is in an irreversible state.";
+          Fatal(ss);
+        }
+      }
+      else if (m_LastCardiacCycleBloodPH <= 7.43 && m_ArterialCO2PartialPressure_mmHg > 39.0)
+      {
+        /// \event Patient: End Respiratory Alkalosis Event. The pH value has has fallen below 7.45. 
+        /// The patient is no longer considered to have respiratory alkalosis.
+        m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, false, m_data.GetSimulationTime());
+      }
     }
   }
 }
@@ -2596,33 +2645,36 @@ void Respiratory::UpdateResistances()
     rightBronchiResistance_cmH2O_s_Per_L = MIN(rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
   }
 
-  //------------------------------------------------------------------------------------------------------
-  //Bronchodilation
-  //Note: this could constrict with a negative number from PD
-  //We're going to make the bronchodilation effects be based off of Albuterol.
-  //A value of 1.0 will be the effective Albuterol EMax (with the current, non-overdose implementation), and -1.0 will be a bronchconstriction the same percentage in the other direction.
-  //Experimentally, 1mg of Albuterol given via a spacer device on an endotracheal tube caused a pulmonary resistance change of ~20% @cite mancebo1991effects.
-  //The bronchi are ~30% of the total pulmonary resistance, so we'll make a dilation effect of 1.0 be at the respiratory open resistance.
-  //Dilation effect values have max effect at 1 and below -1, so anything outside of that will maintain that effect.
-  double bronchoDilationEffect = m_data.GetDrugs().GetBronchodilationLevel().GetValue();
-  if (bronchoDilationEffect != 0.0)
+  if (m_data.HasDrugs())
   {
-    //It'll pretty much always get in here because there's epinephrine present
-    //Get the path resistances 
-    if (bronchoDilationEffect >= 0.0)// positive, therefore dilation
+    //------------------------------------------------------------------------------------------------------
+    //Bronchodilation
+    //Note: this could constrict with a negative number from PD
+    //We're going to make the bronchodilation effects be based off of Albuterol.
+    //A value of 1.0 will be the effective Albuterol EMax (with the current, non-overdose implementation), and -1.0 will be a bronchconstriction the same percentage in the other direction.
+    //Experimentally, 1mg of Albuterol given via a spacer device on an endotracheal tube caused a pulmonary resistance change of ~20% @cite mancebo1991effects.
+    //The bronchi are ~30% of the total pulmonary resistance, so we'll make a dilation effect of 1.0 be at the respiratory open resistance.
+    //Dilation effect values have max effect at 1 and below -1, so anything outside of that will maintain that effect.
+    double bronchoDilationEffect = m_data.GetDrugs().GetBronchodilationLevel().GetValue();
+    if (bronchoDilationEffect != 0.0)
     {
-      bronchoDilationEffect = MIN(bronchoDilationEffect, 1.0);
-      leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialDecayFunction(10.0, m_RespClosedResistance_cmH2O_s_Per_L, leftBronchiResistance_cmH2O_s_Per_L, bronchoDilationEffect);
-      rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialDecayFunction(10.0, m_RespClosedResistance_cmH2O_s_Per_L, rightBronchiResistance_cmH2O_s_Per_L, bronchoDilationEffect);
+      //It'll pretty much always get in here because there's epinephrine present
+      //Get the path resistances 
+      if (bronchoDilationEffect >= 0.0)// positive, therefore dilation
+      {
+        bronchoDilationEffect = MIN(bronchoDilationEffect, 1.0);
+        leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialDecayFunction(10.0, m_RespClosedResistance_cmH2O_s_Per_L, leftBronchiResistance_cmH2O_s_Per_L, bronchoDilationEffect);
+        rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialDecayFunction(10.0, m_RespClosedResistance_cmH2O_s_Per_L, rightBronchiResistance_cmH2O_s_Per_L, bronchoDilationEffect);
+      }
+      else //negative, therefore constriction
+      {
+        bronchoDilationEffect = MIN(-bronchoDilationEffect, 1.0);
+        leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
+        rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
+      }
+      leftBronchiResistance_cmH2O_s_Per_L = BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+      rightBronchiResistance_cmH2O_s_Per_L = BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
     }
-    else //negative, therefore constriction
-    {
-      bronchoDilationEffect = MIN(-bronchoDilationEffect, 1.0);
-      leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
-      rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
-    }
-    leftBronchiResistance_cmH2O_s_Per_L = BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-    rightBronchiResistance_cmH2O_s_Per_L = BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
   }
 
   //------------------------------------------------------------------------------------------------------

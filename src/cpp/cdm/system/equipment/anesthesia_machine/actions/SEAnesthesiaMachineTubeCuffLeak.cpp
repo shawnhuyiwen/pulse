@@ -12,13 +12,13 @@ SEAnesthesiaMachineTubeCuffLeak::SEAnesthesiaMachineTubeCuffLeak(Logger* logger)
 
 SEAnesthesiaMachineTubeCuffLeak::~SEAnesthesiaMachineTubeCuffLeak()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEAnesthesiaMachineTubeCuffLeak::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEAnesthesiaMachineTubeCuffLeak::Copy(const SEAnesthesiaMachineTubeCuffLeak& src)

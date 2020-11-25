@@ -5,8 +5,8 @@ namespace Pulse.CDM
 {
   public class SEMechanicalVentilatorConfiguration : SEMechanicalVentilatorAction
   {
-    protected SEMechanicalVentilator configuration;
-    protected string configurationFile;
+    protected SEMechanicalVentilator configuration = null;
+    protected string configurationFile = "";
 
     public SEMechanicalVentilatorConfiguration()
     {
@@ -21,18 +21,17 @@ namespace Pulse.CDM
     public void copy(SEMechanicalVentilatorConfiguration other)
     {
       base.Copy(other);
-      this.configuration.Copy(other.configuration);
+      if(other.configuration != null)
+        this.GetConfiguration().Copy(other.configuration);
       this.configurationFile = other.configurationFile;
     }
 
     public override void Clear()
     {
       base.Clear();
-
       if (this.configuration != null)
         this.configuration.Clear();
-      if (this.configurationFile != null)
-        this.configurationFile = "";
+      this.configurationFile = "";
     }
 
     public override bool IsValid()
@@ -68,12 +67,13 @@ namespace Pulse.CDM
     public override string ToString()
     {
       string str = "Mechanical Ventilator Configuration";
-      if (HasConfiguration())
+      if (this.HasConfigurationFile())
+        str += "\n\tConfiguration File: " + this.configurationFile;
+      else if (HasConfiguration())
       {
         str += configuration.ToString();
       }
-      if (this.HasConfigurationFile())
-        str += "\n\tConfiguration File: " + this.configurationFile;
+      
       return str;
     }
   }

@@ -84,6 +84,7 @@ public:
 
 protected:
   // Methods to find data requests so we don't keep making the same one
+  SEDataRequest* FindDataRequest(const SEDataRequest& dr);
   SEDataRequest* FindPatientDataRequest(const std::string& property);
   SEDataRequest* FindPhysiologyDataRequest(const std::string& property);
   SEDataRequest* FindEnvironmentDataRequest(const std::string& property);

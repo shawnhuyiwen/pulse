@@ -20,16 +20,24 @@ SEUrinalysisMicroscopic::SEUrinalysisMicroscopic(Logger* logger) : Loggable(logg
 
 SEUrinalysisMicroscopic::~SEUrinalysisMicroscopic()
 {
-  Clear();
-}
-
-void SEUrinalysisMicroscopic::Clear()
-{
   m_ObservationType = eUrinalysis_MicroscopicObservationType::NullObservationType;
   SAFE_DELETE(m_RedBloodCells);
   SAFE_DELETE(m_WhiteBloodCells);
   m_EpithelialCells = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
   SAFE_DELETE(m_Casts);
+  m_Crystals = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
+  m_Bacteria = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
+  m_Trichomonads = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
+  m_Yeast = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
+}
+
+void SEUrinalysisMicroscopic::Clear()
+{
+  m_ObservationType = eUrinalysis_MicroscopicObservationType::NullObservationType;
+  INVALIDATE_PROPERTY(m_RedBloodCells);
+  INVALIDATE_PROPERTY(m_WhiteBloodCells);
+  m_EpithelialCells = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
+  INVALIDATE_PROPERTY(m_Casts);
   m_Crystals = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
   m_Bacteria = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
   m_Trichomonads = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;

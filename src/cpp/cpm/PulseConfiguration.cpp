@@ -174,17 +174,10 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
 
 PulseConfiguration::~PulseConfiguration()
 {
-  Clear();
-}
-
-void PulseConfiguration::Clear()
-{
   SAFE_DELETE(m_TimeStep);
-  RemoveStabilization();
   SAFE_DELETE(m_AutoSerialization);
-  m_WritePatientBaselineFile = eSwitch::Off;
   SAFE_DELETE(m_InitialOverrides);
-  
+
   // Blood Chemistry
   SAFE_DELETE(m_MeanCorpuscularHemoglobin);
   SAFE_DELETE(m_MeanCorpuscularVolume);
@@ -218,7 +211,6 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_UniversalGasConstant);
 
   // Drugs
-  m_PDEnabled = eSwitch::On;
 
   //  ECG
   SAFE_DELETE(m_ECGInterpolator);
@@ -244,7 +236,7 @@ void PulseConfiguration::Clear()
 
   // Gastrointestinal
   SAFE_DELETE(m_CalciumDigestionRate);
-  SAFE_DELETE(m_CalciumAbsorptionFraction); 
+  SAFE_DELETE(m_CalciumAbsorptionFraction);
   SAFE_DELETE(m_CarbohydrateAbsorptionFraction);
   SAFE_DELETE(m_DefaultCarbohydrateDigestionRate);
   SAFE_DELETE(m_DefaultFatDigestionRate);
@@ -255,9 +247,6 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_WaterDigestionRate);
 
   // Nervous
-  m_CerebrospinalFluidEnabled = eSwitch::Off;
-  m_BaroreceptorFeedback = eSwitch::On;
-  m_ChemoreceptorFeedback = eSwitch::On;
   SAFE_DELETE(m_HeartElastanceDistributedTimeDelay);
   SAFE_DELETE(m_HeartRateDistributedTimeDelay);
   SAFE_DELETE(m_NormalizedHeartRateIntercept);
@@ -275,7 +264,6 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_VenousComplianceDistributedTimeDelay);
 
   // Renal
-  m_RenalEnabled = eSwitch::On;
   SAFE_DELETE(m_PlasmaSodiumConcentrationSetPoint);
   SAFE_DELETE(m_PeritubularPotassiumConcentrationSetPoint);
   SAFE_DELETE(m_LeftGlomerularFluidPermeabilityBaseline);
@@ -300,6 +288,138 @@ void PulseConfiguration::Clear()
   SAFE_DELETE(m_PulmonaryVentilationRateMaximum);
   SAFE_DELETE(m_VentilationTidalVolumeIntercept);
   SAFE_DELETE(m_VentilatoryOcclusionPressure);
+
+  //Tissue
+}
+
+void PulseConfiguration::Clear()
+{
+  INVALIDATE_PROPERTY(m_TimeStep);
+  RemoveStabilization();
+  if(m_AutoSerialization)
+    m_AutoSerialization->Clear();
+  m_WritePatientBaselineFile = eSwitch::Off;
+  if(m_InitialOverrides)
+    m_InitialOverrides->Clear();
+  
+  // Blood Chemistry
+  INVALIDATE_PROPERTY(m_MeanCorpuscularHemoglobin);
+  INVALIDATE_PROPERTY(m_MeanCorpuscularVolume);
+  INVALIDATE_PROPERTY(m_StandardDiffusionDistance);
+  INVALIDATE_PROPERTY(m_StandardOxygenDiffusionCoefficient);
+
+  // Cardiovascular
+  INVALIDATE_PROPERTY(m_LeftHeartElastanceMaximum);
+  INVALIDATE_PROPERTY(m_LeftHeartElastanceMinimum);
+  INVALIDATE_PROPERTY(m_MinimumBloodVolumeFraction);
+  INVALIDATE_PROPERTY(m_RightHeartElastanceMaximum);
+  INVALIDATE_PROPERTY(m_RightHeartElastanceMinimum);
+  INVALIDATE_PROPERTY(m_StandardPulmonaryCapillaryCoverage);
+
+  // Circuit
+  INVALIDATE_PROPERTY(m_CardiovascularOpenResistance);
+  INVALIDATE_PROPERTY(m_DefaultClosedElectricResistance);
+  INVALIDATE_PROPERTY(m_DefaultClosedFlowResistance);
+  INVALIDATE_PROPERTY(m_DefaultClosedHeatResistance);
+  INVALIDATE_PROPERTY(m_DefaultOpenElectricResistance);
+  INVALIDATE_PROPERTY(m_DefaultOpenFlowResistance);
+  INVALIDATE_PROPERTY(m_DefaultOpenHeatResistance);
+  INVALIDATE_PROPERTY(m_MachineClosedResistance);
+  INVALIDATE_PROPERTY(m_MachineOpenResistance);
+  INVALIDATE_PROPERTY(m_RespiratoryClosedResistance);
+  INVALIDATE_PROPERTY(m_RespiratoryOpenResistance);
+
+  // Constants
+  INVALIDATE_PROPERTY(m_OxygenMetabolicConstant);
+  INVALIDATE_PROPERTY(m_StefanBoltzmann);
+  INVALIDATE_PROPERTY(m_UniversalGasConstant);
+
+  // Drugs
+  m_PDEnabled = eSwitch::On;
+
+  //  ECG
+  if (m_ECGInterpolator)
+    m_ECGInterpolator->Clear();
+
+  // Energy
+  INVALIDATE_PROPERTY(m_BodySpecificHeat);
+  INVALIDATE_PROPERTY(m_CarbonDioxideProductionFromOxygenConsumptionConstant);
+  INVALIDATE_PROPERTY(m_CoreTemperatureLow);
+  INVALIDATE_PROPERTY(m_CoreTemperatureHigh);
+  INVALIDATE_PROPERTY(m_DeltaCoreTemperatureLow);
+  INVALIDATE_PROPERTY(m_EnergyPerATP);
+  INVALIDATE_PROPERTY(m_SweatHeatTransfer);
+  INVALIDATE_PROPERTY(m_VaporizationEnergy);
+  INVALIDATE_PROPERTY(m_VaporSpecificHeat);
+
+  // Environment
+  INVALIDATE_PROPERTY(m_AirDensity);
+  INVALIDATE_PROPERTY(m_AirSpecificHeat);
+  INVALIDATE_PROPERTY(m_MolarMassOfDryAir);
+  INVALIDATE_PROPERTY(m_MolarMassOfWaterVapor);
+  if (m_InitialEnvironmentalConditions)
+    m_InitialEnvironmentalConditions->Clear();
+  INVALIDATE_PROPERTY(m_WaterDensity);
+
+  // Gastrointestinal
+  INVALIDATE_PROPERTY(m_CalciumDigestionRate);
+  INVALIDATE_PROPERTY(m_CalciumAbsorptionFraction);
+  INVALIDATE_PROPERTY(m_CarbohydrateAbsorptionFraction);
+  INVALIDATE_PROPERTY(m_DefaultCarbohydrateDigestionRate);
+  INVALIDATE_PROPERTY(m_DefaultFatDigestionRate);
+  INVALIDATE_PROPERTY(m_DefaultProteinDigestionRate);
+  if (m_DefaultStomachContents)
+    m_DefaultStomachContents->Clear();
+  INVALIDATE_PROPERTY(m_FatAbsorptionFraction);
+  INVALIDATE_PROPERTY(m_ProteinToUreaFraction);
+  INVALIDATE_PROPERTY(m_WaterDigestionRate);
+
+  // Nervous
+  m_CerebrospinalFluidEnabled = eSwitch::Off;
+  m_BaroreceptorFeedback = eSwitch::On;
+  m_ChemoreceptorFeedback = eSwitch::On;
+  INVALIDATE_PROPERTY(m_HeartElastanceDistributedTimeDelay);
+  INVALIDATE_PROPERTY(m_HeartRateDistributedTimeDelay);
+  INVALIDATE_PROPERTY(m_NormalizedHeartRateIntercept);
+  INVALIDATE_PROPERTY(m_NormalizedHeartRateSympatheticSlope);
+  INVALIDATE_PROPERTY(m_NormalizedHeartRateParasympatheticSlope);
+  INVALIDATE_PROPERTY(m_NormalizedHeartElastanceIntercept);
+  INVALIDATE_PROPERTY(m_NormalizedHeartElastanceSympatheticSlope);
+  INVALIDATE_PROPERTY(m_NormalizedResistanceIntercept);
+  INVALIDATE_PROPERTY(m_NormalizedResistanceSympatheticSlope);
+  INVALIDATE_PROPERTY(m_NormalizedComplianceIntercept);
+  INVALIDATE_PROPERTY(m_NormalizedComplianceParasympatheticSlope);
+  INVALIDATE_PROPERTY(m_PupilDiameterBaseline);
+  INVALIDATE_PROPERTY(m_ResponseSlope);
+  INVALIDATE_PROPERTY(m_SystemicResistanceDistributedTimeDelay);
+  INVALIDATE_PROPERTY(m_VenousComplianceDistributedTimeDelay);
+
+  // Renal
+  m_RenalEnabled = eSwitch::On;
+  INVALIDATE_PROPERTY(m_PlasmaSodiumConcentrationSetPoint);
+  INVALIDATE_PROPERTY(m_PeritubularPotassiumConcentrationSetPoint);
+  INVALIDATE_PROPERTY(m_LeftGlomerularFluidPermeabilityBaseline);
+  INVALIDATE_PROPERTY(m_LeftGlomerularFilteringSurfaceAreaBaseline);
+  INVALIDATE_PROPERTY(m_LeftTubularReabsorptionFluidPermeabilityBaseline);
+  INVALIDATE_PROPERTY(m_LeftTubularReabsorptionFilteringSurfaceAreaBaseline);
+  INVALIDATE_PROPERTY(m_MaximumAfferentResistance);
+  INVALIDATE_PROPERTY(m_MinimumAfferentResistance);
+  INVALIDATE_PROPERTY(m_RightGlomerularFluidPermeabilityBaseline);
+  INVALIDATE_PROPERTY(m_RightGlomerularFilteringSurfaceAreaBaseline);
+  INVALIDATE_PROPERTY(m_RightTubularReabsorptionFluidPermeabilityBaseline);
+  INVALIDATE_PROPERTY(m_RightTubularReabsorptionFilteringSurfaceAreaBaseline);
+  INVALIDATE_PROPERTY(m_TargetSodiumDelivery);
+
+  // Respiratory
+  INVALIDATE_PROPERTY(m_CentralControllerCO2PressureSetPoint);
+  INVALIDATE_PROPERTY(m_CentralVentilatoryControllerGain);
+  INVALIDATE_PROPERTY(m_MinimumAllowableInpiratoryAndExpiratoryPeriod);
+  INVALIDATE_PROPERTY(m_MinimumAllowableTidalVolume);
+  INVALIDATE_PROPERTY(m_PeripheralControllerCO2PressureSetPoint);
+  INVALIDATE_PROPERTY(m_PeripheralVentilatoryControllerGain);
+  INVALIDATE_PROPERTY(m_PulmonaryVentilationRateMaximum);
+  INVALIDATE_PROPERTY(m_VentilationTidalVolumeIntercept);
+  INVALIDATE_PROPERTY(m_VentilatoryOcclusionPressure);
 
   //Tissue
   m_TissueEnabled = eSwitch::On;

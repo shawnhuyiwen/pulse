@@ -1,6 +1,9 @@
 # External Data
 include(ExternalData)
-set(ExternalData_URL_TEMPLATES "https://data.kitware.com/api/v1/file/hashsum/%(algo)/%(hash)/download")
+# Putting in the same URL to ensure bad connections retry a few times
+set(ExternalData_URL_TEMPLATES "https://data.kitware.com/api/v1/file/hashsum/%(algo)/%(hash)/download"
+                               "https://data.kitware.com/api/v1/file/hashsum/%(algo)/%(hash)/download"
+                               "https://data.kitware.com/api/v1/file/hashsum/%(algo)/%(hash)/download")
 
 message(STATUS "Looking for zip shas")
 file(GLOB_RECURSE _VERIFICATION_SHA RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.sha512")
@@ -22,7 +25,7 @@ endforeach()
 ExternalData_Add_Target(ExternalData)
 set(ExternalData_LINK_CONTENT SHA512)
 set(ExternalData_TIMEOUT_ABSOLUTE 300)
-set(ExternalData_TIMEOUT_INACTIVITY 60)
+set(ExternalData_TIMEOUT_INACTIVITY 150)
 
 set(INC_DOWNLOAD)
 if(PULSE_DOWNLOAD_BASELINES)

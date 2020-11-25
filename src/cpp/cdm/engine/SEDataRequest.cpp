@@ -8,6 +8,7 @@
 
 SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 {
+  Set(dr);
   m_Category = dr.m_Category;
   m_CompartmentName = dr.m_CompartmentName;
   m_SubstanceName = dr.m_SubstanceName;
@@ -28,7 +29,11 @@ SEDataRequest::SEDataRequest(eDataRequest_Category category, const SEDecimalForm
 
 SEDataRequest::~SEDataRequest()
 {
-  Clear();
+  m_CompartmentName = "";
+  m_SubstanceName = "";
+  m_PropertyName = "";
+  m_RequestedUnit = "";
+  m_Unit = nullptr;
 }
 
 void SEDataRequest::Clear()

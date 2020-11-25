@@ -55,8 +55,6 @@ message CardiovascularData
   
   repeated string                           HemorrhageLinks                                     = 33;
   repeated string                           HemorrhagePaths                                     = 34;
-  repeated string                           InternalHemorrhageLinks                             = 35;
-  repeated string                           InternalHemorrhagePaths                             = 36;
 }
 
 message DrugData

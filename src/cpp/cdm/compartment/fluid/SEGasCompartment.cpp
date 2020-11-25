@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "substance/SESubstanceManager.h"
-#include "substance/SESubstance.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
 #include "utils/GeneralMath.h"
@@ -53,8 +52,7 @@ void SEGasCompartment::Balance(BalanceGasBy by)
           subQ->GetVolumeFraction().SetValue(subQ->GetVolume(VolumeUnit::mL) / totalVolume_mL);
           subQ->GetVolume().SetValue(subQ->GetVolumeFraction().GetValue() * GetVolume(VolumeUnit::mL), VolumeUnit::mL);
           if(HasPressure())
-            if(!GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger))
-              Error("  Compartment : " + GetName() + ", Substance : " + subQ->GetSubstance().GetName());
+            GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger);
         }
       }
       break;
@@ -67,8 +65,7 @@ void SEGasCompartment::Balance(BalanceGasBy by)
         {
           subQ->Invalidate();
           if (HasPressure())
-            if(!GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger))
-              Error("  Compartment : " + GetName() + ", Substance : " + subQ->GetSubstance().GetName());
+            GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger);
         }
         return;
       }
@@ -78,8 +75,7 @@ void SEGasCompartment::Balance(BalanceGasBy by)
       {
         subQ->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
         if (HasPressure())
-          if(!GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger))
-            Error("  Compartment : " + GetName() + ", Substance : " + subQ->GetSubstance().GetName());
+          GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger);
       }
     }
       else
@@ -96,8 +92,7 @@ void SEGasCompartment::Balance(BalanceGasBy by)
             subQ->GetVolume().SetValue(subQ->GetVolumeFraction().GetValue() * totalVolume_mL, VolumeUnit::mL);
           }
           if (HasPressure())
-            if(!GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger))
-              Error("  Compartment : " + GetName() + ", Substance : " + subQ->GetSubstance().GetName());
+            GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger);
         }
         if (!SEScalar::IsZero(1-totalFraction, ZERO_APPROX))
           Fatal(GetName() + " Compartment's volume fractions do not sum up to 1");
@@ -132,7 +127,7 @@ SEGasSubstanceQuantity& SEGasCompartment::CreateSubstanceQuantity(SESubstance& s
     m_SubstanceQuantities.push_back(subQ);
     m_TransportSubstances.push_back(subQ);
   }
-  if (!m_Children.empty() && !m_FluidChildren.empty())
+  if (!m_FluidChildren.empty())
   {
     for (SEGasCompartment* child : m_Children)
       subQ->AddChild(child->CreateSubstanceQuantity(substance));

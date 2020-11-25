@@ -5,10 +5,10 @@ namespace Pulse.CDM
 {
   public class SEPatientConfiguration
   {
-    protected SEPatient patient;
-    protected string patient_file;
-    protected SEConditionManager condition_manager;
-    protected string data_root_dir;
+    protected SEPatient patient = null;
+    protected string patient_file = "";
+    protected SEConditionManager condition_manager=null;
+    protected string data_root_dir = "./";
 
     public SEPatientConfiguration()
     {
@@ -18,7 +18,8 @@ namespace Pulse.CDM
     public void Clear()
     {
       patient_file = null;
-      patient = null;
+      if(patient!=null)
+        patient.Clear();
       condition_manager = null;
       data_root_dir = "./";
     }
@@ -50,7 +51,6 @@ namespace Pulse.CDM
     public void SetPatientFile(string f)
     {
       patient_file = f;
-      patient = null;
     }
 
     public bool HasPatient()
@@ -66,7 +66,6 @@ namespace Pulse.CDM
     public void SetPatient(SEPatient p)
     {
       patient = p;
-      patient_file = null;
     }
 
     public bool HasConditions()

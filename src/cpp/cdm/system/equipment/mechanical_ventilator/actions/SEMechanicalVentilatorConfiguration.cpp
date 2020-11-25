@@ -18,20 +18,22 @@
 
 SEMechanicalVentilatorConfiguration::SEMechanicalVentilatorConfiguration(Logger* logger) : SEMechanicalVentilatorAction(logger)
 {
+  m_ConfigurationFile = "";
   m_Configuration = nullptr;
-  InvalidateConfigurationFile();
 }
 
 SEMechanicalVentilatorConfiguration::~SEMechanicalVentilatorConfiguration()
 {
-  Clear();
+  m_ConfigurationFile = "";
+  SAFE_DELETE(m_Configuration);
 }
 
 void SEMechanicalVentilatorConfiguration::Clear()
 {
   SEMechanicalVentilatorAction::Clear();
-  InvalidateConfigurationFile();
-  SAFE_DELETE(m_Configuration);
+  m_ConfigurationFile = "";
+  if (m_Configuration)
+    m_Configuration->Clear();
 }
 
 void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr)
@@ -50,7 +52,6 @@ bool SEMechanicalVentilatorConfiguration::HasConfiguration() const
 }
 SEMechanicalVentilator& SEMechanicalVentilatorConfiguration::GetConfiguration()
 {
-  m_ConfigurationFile = "";
   if (m_Configuration == nullptr)
     m_Configuration = new SEMechanicalVentilator(GetLogger());
   return *m_Configuration;
@@ -66,17 +67,11 @@ std::string SEMechanicalVentilatorConfiguration::GetConfigurationFile() const
 }
 void SEMechanicalVentilatorConfiguration::SetConfigurationFile(const std::string& fileName)
 {
-  if (m_Configuration != nullptr)
-    SAFE_DELETE(m_Configuration);
   m_ConfigurationFile = fileName;
 }
 bool SEMechanicalVentilatorConfiguration::HasConfigurationFile() const
 {
-  return m_ConfigurationFile.empty() ? false : true;
-}
-void SEMechanicalVentilatorConfiguration::InvalidateConfigurationFile()
-{
-  m_ConfigurationFile = "";
+  return !m_ConfigurationFile.empty();
 }
 
 void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
@@ -85,8 +80,10 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   if (HasConfigurationFile())
+  {
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;
-  if (HasConfiguration())
+  }
+  else if (HasConfiguration())
   {
     str << "\n\tConnection: " << eMechanicalVentilator_Connection_Name(m_Configuration->GetConnection());
     str << "\n\tEndotrachealTubeResistance: "; m_Configuration->HasEndotrachealTubeResistance() ? str << m_Configuration->GetEndotrachealTubeResistance() : str << "NaN";
@@ -107,7 +104,7 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tInspirationTargetFlow: "; m_Configuration->HasInspirationTargetFlow() ? str << m_Configuration->GetInspirationTargetFlow() : str << "NaN";
     str << "\n\tInspirationMachineTriggerTime: "; m_Configuration->HasInspirationMachineTriggerTime() ? str << m_Configuration->GetInspirationMachineTriggerTime() : str << "NaN";
     str << "\n\tInspirationPatientTriggerFlow: "; m_Configuration->HasInspirationPatientTriggerFlow() ? str << m_Configuration->GetInspirationPatientTriggerFlow() : str << "NaN";
-    str << "\n\tInspirationPatientTriggerPressure: "; m_Configuration->HasInspirationPatientTriggerPressure() ? str << m_Configuration->GetInspirationPatientTriggerPressure() : str << "NaN";    
+    str << "\n\tInspirationPatientTriggerPressure: "; m_Configuration->HasInspirationPatientTriggerPressure() ? str << m_Configuration->GetInspirationPatientTriggerPressure() : str << "NaN";
     str << "\n\tInspirationTubeResistance: "; m_Configuration->HasInspirationTubeResistance() ? str << m_Configuration->GetInspirationTubeResistance() : str << "NaN";
     str << "\n\tInspirationValveResistance: "; m_Configuration->HasInspirationValveResistance() ? str << m_Configuration->GetInspirationValveResistance() : str << "NaN";
     str << "\n\tInspirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Configuration->GetInspirationWaveform());
@@ -128,4 +125,3 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
   }
   str << std::flush;
 }
-

@@ -15,14 +15,11 @@ class SELiquidSubstanceQuantity;
  */  
 class PULSE_DECL Endocrine : public PulseEndocrineSystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Endocrine(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Endocrine(PulseData& data);
   virtual ~Endocrine();
 
   void Clear();

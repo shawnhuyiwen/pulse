@@ -20,6 +20,7 @@ namespace Pulse.CDM
     }
 
     protected eAdministration admin_route;
+    protected SEScalarTime admin_duration;
     protected SEScalarMassPerVolume concentration;
     protected SEScalarVolume dose;
     protected string substance;
@@ -27,6 +28,7 @@ namespace Pulse.CDM
     public SESubstanceBolus()
     {
       this.admin_route = eAdministration.Intravenous;
+      this.admin_duration = null;
       this.dose = null;
       this.concentration = null;
       this.substance = null;
@@ -37,6 +39,8 @@ namespace Pulse.CDM
       base.Clear();
       substance = null;
       admin_route = eAdministration.Intravenous;
+      if (admin_duration != null)
+        admin_duration.Invalidate();
       if (dose != null)
         dose.Invalidate();
       if (concentration != null)
@@ -55,6 +59,17 @@ namespace Pulse.CDM
     public void SetAdminRoute(eAdministration adminRoute)
     {
       this.admin_route = adminRoute;
+    }
+
+    public bool HasAdminDuration()
+    {
+      return admin_duration == null ? false : admin_duration.IsValid();
+    }
+    public SEScalarTime GetAdminDuration()
+    {
+      if (admin_duration == null)
+        admin_duration = new SEScalarTime();
+      return admin_duration;
     }
 
     public bool HasConcentration()

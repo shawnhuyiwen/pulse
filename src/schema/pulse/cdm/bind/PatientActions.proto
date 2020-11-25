@@ -231,9 +231,13 @@ message HemorrhageData
   }
   
   PatientActionData                         PatientAction                   = 1;
-  string                                    Compartment                     = 2;/**<<@brief Compartment where the bleeding is occurring */
-  ScalarVolumePerTimeData                   Rate                            = 3;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
-  eType                                     Type                            = 4;/**<<@brief @ref HemorrhageData_eTypeTable*/
+  eType                                     Type                            = 2;/**<<@brief @ref HemorrhageData_eTypeTable*/
+  string                                    Compartment                     = 3;/**<<@brief Compartment where the bleeding is occurring */
+  oneof Value
+  {
+      ScalarVolumePerTimeData               FlowRate                        = 4;/**<<@brief The flow rate of blood exiting the specified compartment. Set to zero to stop the bleeding rate. */
+      Scalar0To1Data                        Severity                        = 5;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+  }
 }
 
 /** @brief Generic way to specify the effectivness of alveolar exchange. */
@@ -244,8 +248,8 @@ message ImpairedAlveolarExchangeExacerbationData
   {
     ScalarAreaData                          ImpairedSurfaceArea             = 2;/**<< @brief Surface Area of the impaired alveoli. */
     Scalar0To1Data                          ImpairedFraction                = 3;/**<< @brief Surface Area Fraction of the impaired alveoli. */
-    Scalar0To1Data                          Severity                        = 4;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
   }
+  Scalar0To1Data                            Severity                        = 4;/**<< @brief Scale of affect, 0 being none, 1 being the highest possible. */
 }
 
 /** @brief Insertion of tube into the patient's airway */
@@ -338,11 +342,12 @@ message SubstanceBolusData
   }
  
   PatientActionData                         PatientAction                   = 1;
-  eRoute                                    AdministrationRoute             = 2;/**<<@brief @ref SubstanceBolusData_eRouteTable */
-  string                                    Substance                       = 3;/**<<@brief @ref SubstanceTable */
-  ScalarMassPerVolumeData                   Concentration                   = 4;/**<<@brief Concentration of the dose to administer. */
-  ScalarVolumeData                          Dose                            = 5;/**<<@brief Volume of dose to administer. */
-  SubstanceBolusStateData                   State                           = 6;/**<<@brief Current state of the bolus. */
+  string                                    Substance                       = 2;/**<<@brief @ref SubstanceTable */
+  eRoute                                    AdministrationRoute             = 3;/**<<@brief @ref SubstanceBolusData_eRouteTable */
+  ScalarTimeData                            AdministrationDuration          = 4;/**<<@brief Length of time taken to fully administer the bolus. */
+  ScalarMassPerVolumeData                   Concentration                   = 5;/**<<@brief Concentration of the dose to administer. */
+  ScalarVolumeData                          Dose                            = 6;/**<<@brief Volume of dose to administer. */
+  SubstanceBolusStateData                   State                           = 7;/**<<@brief Current state of the bolus. */
 }
 
 /** @brief Continuous injection of a compound. */

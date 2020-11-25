@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.DatasetRenderingOrder;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.SeriesRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -46,12 +49,12 @@ public class CSVPlotTool
   public static Font smallFont = new Font("SansSerif", Font.PLAIN, 15);
   //font size for X,Y axis title and plot title
   public static Font largeFont = new Font("SansSerif", Font.PLAIN, 22);  
-  //width of lines
-  public static float lineWidth = 2.0f;
-  //color of expected data
+  //Expected line
+  public static float expectedLineWidth = 4.5f;
   public static Paint expectedLineColor = Color.BLACK;
-  //color of computed data
+  //Computed Line
   public static Paint computedLineColor = Color.RED;
+  public static float computedLineWidth = 2.0f;
 
   public static void main(String[] args)
   {
@@ -144,7 +147,7 @@ public class CSVPlotTool
   {
     new File(toDir).mkdir();
     
-    Log.info("Creating Graph "+toDir+"/"+title);    
+    Log.info("Creating Graph "+toDir+"/"+title);
     double resMin0    = 1.e6;
     double resMax0   = -1.e6;
     double resMin1    = 1.e6;
@@ -169,6 +172,8 @@ public class CSVPlotTool
         );
 
     XYPlot plot = (XYPlot) chart.getPlot();
+    plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+    plot.setSeriesRenderingOrder(SeriesRenderingOrder.FORWARD);
 /* I have residual and error plots turned off, there are some plots that contain these names in their title, and I don't want this code running, need a better way to see if we are doing a special plot rather than title contents
     if(title.contains("Residual"))
     {
@@ -213,8 +218,8 @@ public class CSVPlotTool
        *
     }
     else
-*/      
-    {      
+*/
+    {
       if(title.indexOf("Hemoglobin-GlomerularFilterability")>-1)
         System.out.println("stop");
       if(xyData.length > 1)
@@ -270,25 +275,24 @@ public class CSVPlotTool
 
     formatXYPlot(chart,color);
     //Changing line widths and colors
-    XYItemRenderer r = plot.getRenderer(); 
-    BasicStroke wideLine = new BasicStroke( lineWidth ); 
-    r.setSeriesStroke(0, wideLine); 
-    r.setSeriesStroke(1, wideLine); 
+    XYItemRenderer r = plot.getRenderer();
+    r.setSeriesStroke(0, new BasicStroke( expectedLineWidth ));
+    r.setSeriesStroke(1, new BasicStroke( computedLineWidth ));
     XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) plot.getRenderer();
     if(xyData.length>1)
     {
-      renderer.setSeriesStroke(//makes a dashed line
-          0, //argument below float[]{I,K} -> alternates between solid and opaque (solid for I, opaque for K)
-          new BasicStroke(lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{15.0f, 30.0f}, 0.0f)
-          );
-      renderer.setDrawSeriesLineAsPath(true);
-      renderer.setUseFillPaint(true);
+      //renderer.setSeriesStroke(//makes a dashed line
+      //    0, //argument below float[]{I,K} -> alternates between solid and opaque (solid for I, opaque for K)
+      //    new BasicStroke(expectedlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{15.0f, 30.0f}, 0.0f)
+      //    );
+      //renderer.setDrawSeriesLineAsPath(true);
+      //renderer.setUseFillPaint(true);
     }
     renderer.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
-    renderer.setSeriesFillPaint(0, expectedLineColor); 
-    renderer.setSeriesFillPaint(1, computedLineColor ); 
-    renderer.setSeriesPaint(0, expectedLineColor); 
-    renderer.setSeriesPaint(1, computedLineColor); 
+    renderer.setSeriesFillPaint(0, expectedLineColor );
+    renderer.setSeriesPaint(0, expectedLineColor);
+    renderer.setSeriesFillPaint(1, computedLineColor);
+    renderer.setSeriesPaint(1, computedLineColor);
 
     try
     {

@@ -11,8 +11,8 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
 {
 
   private static final long serialVersionUID = -1487014080271791164L;
-  protected SEMechanicalVentilator configuration;
-  protected String                 configurationFile;
+  protected SEMechanicalVentilator configuration=null;
+  protected String                 configurationFile="";
   
   public SEMechanicalVentilatorConfiguration()
   {
@@ -22,7 +22,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   public SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorConfiguration other)
   {
     this();
-    copy(other);    
+    copy(other);
   }
   
   public void copy(SEMechanicalVentilatorConfiguration other)
@@ -30,7 +30,8 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
     if(this==other)
       return;
     super.copy(other);
-    this.configuration.copy(other.configuration);
+    if(other.configuration!=null)
+      this.getConfiguration().copy(other.configuration);
     this.configurationFile=other.configurationFile;
   }
   
@@ -41,8 +42,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
     
     if (this.configuration != null)
       this.configuration.reset();
-    if (this.configurationFile != null)
-      this.configurationFile="";
+    this.configurationFile="";
   }
   
   @Override
@@ -75,10 +75,10 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   protected static void unload(SEMechanicalVentilatorConfiguration src, MechanicalVentilatorConfigurationData.Builder dst)
   {
     SEMechanicalVentilatorAction.unload(src, dst.getMechanicalVentilatorActionBuilder());
-    if(src.hasConfiguration())
-      dst.setConfiguration(SEMechanicalVentilator.unload(src.configuration));
-    else if(src.hasConfigurationFile())
+    if(src.hasConfigurationFile())
       dst.setConfigurationFile(src.configurationFile);
+    else if(src.hasConfiguration())
+      dst.setConfiguration(SEMechanicalVentilator.unload(src.configuration));
   }
   
   public boolean hasConfiguration()
@@ -109,12 +109,13 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   public String toString()
   {
     String str = "Mechanical Ventilator Configuration";
-    if(hasConfiguration())
+    if(this.hasConfigurationFile())
+      str +="\n\tConfiguration File: "+this.configurationFile;
+    else if(hasConfiguration())
     {
       str += configuration.toString();
     }
-    if(this.hasConfigurationFile())
-      str +="\n\tConfiguration File: "+this.configurationFile;
+    
     return str;
   }
 }

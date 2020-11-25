@@ -18,14 +18,15 @@ SESubstanceInfusion::SESubstanceInfusion(const SESubstance& substance, Logger* l
 
 SESubstanceInfusion::~SESubstanceInfusion()
 {
-  Clear();
+  SAFE_DELETE(m_Rate);
+  SAFE_DELETE(m_Concentration);
 }
 
 void SESubstanceInfusion::Clear()
 {
   SESubstanceAdministration::Clear();
-  m_Rate=nullptr;
-  m_Concentration=nullptr;  
+  INVALIDATE_PROPERTY(m_Rate);
+  INVALIDATE_PROPERTY(m_Concentration);
 }
 
 void SESubstanceInfusion::Copy(const SESubstanceInfusion& src)
@@ -79,11 +80,11 @@ double SESubstanceInfusion::GetConcentration(const MassPerVolumeUnit& unit) cons
 
 SESubstance& SESubstanceInfusion::GetSubstance()
 {
-  return (SESubstance&)m_Substance;
+  return const_cast<SESubstance&>(m_Substance);
 }
 const SESubstance& SESubstanceInfusion::GetSubstance() const
 {
-  return (SESubstance&)m_Substance;
+  return m_Substance;
 }
 
 void SESubstanceInfusion::ToString(std::ostream &str) const

@@ -6,6 +6,7 @@
 #include "compartment/fluid/SEGasCompartmentLink.h"
 #include "compartment/substances/SEGasSubstanceQuantity.h"
 #include "substance/SESubstanceTransport.h"
+class SEGasBlackBox;
 
 enum class BalanceGasBy { Volume, VolumeFraction };
 
@@ -26,9 +27,16 @@ public:
   virtual const std::vector<SEGasCompartment*>& GetChildren() { return m_Children; }
   virtual const std::vector<SEGasCompartment*>& GetLeaves() { return m_Leaves; }
 
+  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
+  virtual SEGasBlackBox* GetBlackBox() { return m_BlackBox; }
+  virtual const SEGasBlackBox* GetBlackBox() const { return m_BlackBox; }
+  virtual void SetBlackBox(SEGasBlackBox* bb) { m_BlackBox = bb; }
+
 protected:
   virtual SEGasSubstanceQuantity& CreateSubstanceQuantity(SESubstance& substance);
  
   std::vector<SEGasCompartment*> m_Children;
   std::vector<SEGasCompartment*> m_Leaves;
+
+  SEGasBlackBox* m_BlackBox = nullptr;
 };

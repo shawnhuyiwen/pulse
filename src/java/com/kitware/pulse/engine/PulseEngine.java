@@ -303,7 +303,7 @@ public class PulseEngine
   
   public synchronized boolean processAction(SEAction action)
   {
-    List <SEAction> actions = new ArrayList<>(); 
+    List <SEAction> actions = new ArrayList<>();
     actions.add(action);
     return processActions(actions);
   }

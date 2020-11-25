@@ -58,12 +58,7 @@ SEPatient::SEPatient(Logger* logger) : Loggable(logger)
 
 SEPatient::~SEPatient()
 {
-  Clear();  
-}
-
-void SEPatient::Clear()
-{
-  m_Name="";
+  m_Name = "";
   m_Sex = ePatient_Sex::Male;
   SAFE_DELETE(m_Age);
   SAFE_DELETE(m_Weight);
@@ -93,6 +88,40 @@ void SEPatient::Clear()
   SAFE_DELETE(m_TidalVolumeBaseline);
   SAFE_DELETE(m_TotalLungCapacity);
   SAFE_DELETE(m_VitalCapacity);
+}
+
+void SEPatient::Clear()
+{
+  m_Name="";
+  m_Sex = ePatient_Sex::Male;
+  INVALIDATE_PROPERTY(m_Age);
+  INVALIDATE_PROPERTY(m_Weight);
+  INVALIDATE_PROPERTY(m_Height);
+
+  INVALIDATE_PROPERTY(m_AlveoliSurfaceArea);
+  INVALIDATE_PROPERTY(m_BasalMetabolicRate);
+  INVALIDATE_PROPERTY(m_BloodVolumeBaseline);
+  INVALIDATE_PROPERTY(m_BodyDensity);
+  INVALIDATE_PROPERTY(m_BodyFatFraction);
+  INVALIDATE_PROPERTY(m_DiastolicArterialPressureBaseline);
+  INVALIDATE_PROPERTY(m_ExpiratoryReserveVolume);
+  INVALIDATE_PROPERTY(m_FunctionalResidualCapacity);
+  INVALIDATE_PROPERTY(m_HeartRateBaseline);
+  INVALIDATE_PROPERTY(m_HeartRateMaximum);
+  INVALIDATE_PROPERTY(m_HeartRateMinimum);
+  INVALIDATE_PROPERTY(m_IdealBodyWeight);
+  INVALIDATE_PROPERTY(m_InspiratoryCapacity);
+  INVALIDATE_PROPERTY(m_InspiratoryReserveVolume);
+  INVALIDATE_PROPERTY(m_LeanBodyMass);
+  INVALIDATE_PROPERTY(m_MeanArterialPressureBaseline);
+  INVALIDATE_PROPERTY(m_ResidualVolume);
+  INVALIDATE_PROPERTY(m_RespirationRateBaseline);
+  INVALIDATE_PROPERTY(m_RightLungRatio);
+  INVALIDATE_PROPERTY(m_SkinSurfaceArea);
+  INVALIDATE_PROPERTY(m_SystolicArterialPressureBaseline);
+  INVALIDATE_PROPERTY(m_TidalVolumeBaseline);
+  INVALIDATE_PROPERTY(m_TotalLungCapacity);
+  INVALIDATE_PROPERTY(m_VitalCapacity);
 }
 
 void SEPatient::Copy(const SEPatient& src)

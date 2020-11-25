@@ -35,12 +35,6 @@ SEUrinalysis::SEUrinalysis(Logger* logger) : SEPatientAssessment(logger)
 
 SEUrinalysis::~SEUrinalysis()
 {
-  Clear();
-}
-
-void SEUrinalysis::Clear()
-{
-  SEPatientAssessment::Clear();
   m_Color = eUrinalysis_UrineColor::NullColor;
   m_Appearance = eUrinalysis_ClarityIndicator::NullClarity;
   m_Glucose = eUrinalysis_PresenceIndicator::NullPresence;
@@ -55,6 +49,26 @@ void SEUrinalysis::Clear()
   m_LeukocyteEsterase = eUrinalysis_PresenceIndicator::NullPresence;
 
   SAFE_DELETE(m_Microscopic);
+}
+
+void SEUrinalysis::Clear()
+{
+  SEPatientAssessment::Clear();
+  m_Color = eUrinalysis_UrineColor::NullColor;
+  m_Appearance = eUrinalysis_ClarityIndicator::NullClarity;
+  m_Glucose = eUrinalysis_PresenceIndicator::NullPresence;
+  m_Ketone = eUrinalysis_PresenceIndicator::NullPresence;
+  INVALIDATE_PROPERTY(m_Bilirubin);
+  INVALIDATE_PROPERTY(m_SpecificGravity);
+  m_Blood = eUrinalysis_PresenceIndicator::NullPresence;
+  INVALIDATE_PROPERTY(m_pH);
+  m_Protein = eUrinalysis_PresenceIndicator::NullPresence;
+  INVALIDATE_PROPERTY(m_Urobilinogen);
+  m_Nitrite = eUrinalysis_PresenceIndicator::NullPresence;
+  m_LeukocyteEsterase = eUrinalysis_PresenceIndicator::NullPresence;
+
+  if (m_Microscopic)
+    m_Microscopic->Clear();
 }
 
 bool SEUrinalysis::SerializeToString(std::string& output, SerializationFormat m) const

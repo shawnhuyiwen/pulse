@@ -1,0 +1,20 @@
+@PACKAGE_INIT@
+
+set(export_config_name "@export_config_name@")
+
+set_and_check(${export_config_name}Targets "${CMAKE_CURRENT_LIST_DIR}/${export_config_name}Targets.cmake")
+
+include(${${export_config_name}Targets})
+
+
+set(Pulse_ROOT ${PACKAGE_PREFIX_DIR})
+
+if(@Pulse_USING_PROTOBUF_DIR@)
+  set(protobuf_DIR "@protobuf_DIR@")
+  find_package(protobuf REQUIRED CONFIG NO_DEFAULT_PATH)
+else()
+  find_package(protobuf QUIET CONFIG NO_DEFAULT_PATH)
+  if(NOT protobuf_FOUND)
+    find_package(Protobuf REQUIRED)
+  endif()
+endif()

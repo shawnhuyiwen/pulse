@@ -11,19 +11,21 @@
 SEConsumeNutrients::SEConsumeNutrients(Logger* logger) : SEPatientAction(logger)
 {
   m_Nutrition = nullptr;
-  InvalidateNutritionFile();
+  m_NutritionFile = "";
 }
 
 SEConsumeNutrients::~SEConsumeNutrients()
 {
-  Clear();
+  SAFE_DELETE(m_Nutrition);
+  m_NutritionFile = "";
 }
 
 void SEConsumeNutrients::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Nutrition);
-  InvalidateNutritionFile();
+  if (m_Nutrition)
+    m_Nutrition->Clear();
+  m_NutritionFile = "";
 }
 
 void SEConsumeNutrients::Copy(const SEConsumeNutrients& src)
@@ -47,7 +49,6 @@ bool SEConsumeNutrients::HasNutrition() const
 }
 SENutrition& SEConsumeNutrients::GetNutrition()
 {
-  m_NutritionFile = "";
   if (m_Nutrition == nullptr)
     m_Nutrition = new SENutrition(nullptr);
   return *m_Nutrition;
@@ -64,16 +65,10 @@ std::string SEConsumeNutrients::GetNutritionFile() const
 void SEConsumeNutrients::SetNutritionFile(const std::string& fileName)
 {
   m_NutritionFile = fileName;
-  if (m_Nutrition != nullptr)
-    SAFE_DELETE(m_Nutrition);
 }
 bool SEConsumeNutrients::HasNutritionFile() const
 {
-  return m_NutritionFile.empty() ? false : true;
-}
-void SEConsumeNutrients::InvalidateNutritionFile()
-{
-  m_NutritionFile = "";
+  return !m_NutritionFile.empty();
 }
 
 void SEConsumeNutrients::ToString(std::ostream &str) const
@@ -81,7 +76,11 @@ void SEConsumeNutrients::ToString(std::ostream &str) const
   str << "Patient Action : Consume Nutrients"; 
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  if (HasNutrition())
+  if (HasNutritionFile())
+  {
+    str << "\n\tNutrition File: "; str << m_NutritionFile;
+  }
+  else if (HasNutrition())
   {
     str << "\n\tCharbohydrates: "; m_Nutrition->HasCarbohydrate() ? str << m_Nutrition->GetCarbohydrate() : str << "None";
     str << "\n\tCharbohydrates Digestion Rate: "; m_Nutrition->HasCarbohydrateDigestionRate() ? str << m_Nutrition->GetCarbohydrateDigestionRate() : str << "None";
@@ -93,7 +92,5 @@ void SEConsumeNutrients::ToString(std::ostream &str) const
     str << "\n\tSodium: "; m_Nutrition->HasSodium() ? str << m_Nutrition->GetSodium() : str << "None";
     str << "\n\tWater: "; m_Nutrition->HasWater() ? str << m_Nutrition->GetWater() : str << "None";
   }
-  if (HasNutritionFile())
-    str << "\n\tNutrition File: "; str << m_NutritionFile;
   str << std::flush;
 }

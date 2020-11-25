@@ -39,7 +39,7 @@
 ========================
 */
 
-MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data.GetLogger()), m_data(data)
+MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data)
 {
   Clear();
 }
@@ -163,6 +163,7 @@ void MechanicalVentilator::StateChange()
   }
   else
   {
+    Info("Adding "+cdm::to_string(currentN2Fraction + gasFractionDiff) + "% of N2 to the system");
     m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
   }
 
@@ -299,6 +300,7 @@ void MechanicalVentilator::PreProcess()
 {
   if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorConfiguration())
   {
+    SEMechanicalVentilator::Clear();
     ProcessConfiguration(*m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorConfiguration(), m_data.GetSubstances());
     m_data.GetActions().GetEquipmentActions().RemoveMechanicalVentilatorConfiguration();
   }

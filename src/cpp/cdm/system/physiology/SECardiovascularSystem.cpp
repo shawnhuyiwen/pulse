@@ -46,16 +46,13 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_PulsePressure = nullptr;
   m_SystemicVascularResistance = nullptr;
   m_SystolicArterialPressure = nullptr;
+  m_TotalHemorrhageRate = nullptr;
+  m_TotalHemorrhagedVolume = nullptr;
 }
 
 SECardiovascularSystem::~SECardiovascularSystem()
 {
   Clear();
-}
-
-void SECardiovascularSystem::Clear()
-{
-  SESystem::Clear();
 
   SAFE_DELETE(m_ArterialPressure);
   SAFE_DELETE(m_BloodVolume);
@@ -87,6 +84,44 @@ void SECardiovascularSystem::Clear()
   SAFE_DELETE(m_PulsePressure);
   SAFE_DELETE(m_SystemicVascularResistance);
   SAFE_DELETE(m_SystolicArterialPressure);
+  SAFE_DELETE(m_TotalHemorrhageRate);
+  SAFE_DELETE(m_TotalHemorrhagedVolume);
+}
+
+void SECardiovascularSystem::Clear()
+{
+  INVALIDATE_PROPERTY(m_ArterialPressure);
+  INVALIDATE_PROPERTY(m_BloodVolume);
+  INVALIDATE_PROPERTY(m_CardiacIndex);
+  INVALIDATE_PROPERTY(m_CardiacOutput);
+  INVALIDATE_PROPERTY(m_CentralVenousPressure);
+  INVALIDATE_PROPERTY(m_CerebralBloodFlow);
+  INVALIDATE_PROPERTY(m_CerebralPerfusionPressure);
+  INVALIDATE_PROPERTY(m_DiastolicArterialPressure);
+  INVALIDATE_PROPERTY(m_HeartEjectionFraction);
+  INVALIDATE_PROPERTY(m_HeartRate);
+  m_HeartRhythm = eHeartRhythm::NormalSinus;
+  INVALIDATE_PROPERTY(m_HeartStrokeVolume);
+  INVALIDATE_PROPERTY(m_IntracranialPressure);
+  INVALIDATE_PROPERTY(m_MeanArterialPressure);
+  INVALIDATE_PROPERTY(m_MeanArterialCarbonDioxidePartialPressure);
+  INVALIDATE_PROPERTY(m_MeanArterialCarbonDioxidePartialPressureDelta);
+  INVALIDATE_PROPERTY(m_MeanCentralVenousPressure);
+  INVALIDATE_PROPERTY(m_MeanSkinFlow);
+  INVALIDATE_PROPERTY(m_PulmonaryArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryCapillariesWedgePressure);
+  INVALIDATE_PROPERTY(m_PulmonaryDiastolicArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryMeanArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryMeanCapillaryFlow);
+  INVALIDATE_PROPERTY(m_PulmonaryMeanShuntFlow);
+  INVALIDATE_PROPERTY(m_PulmonarySystolicArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryVascularResistance);
+  INVALIDATE_PROPERTY(m_PulmonaryVascularResistanceIndex);
+  INVALIDATE_PROPERTY(m_PulsePressure);
+  INVALIDATE_PROPERTY(m_SystemicVascularResistance);
+  INVALIDATE_PROPERTY(m_SystolicArterialPressure);
+    INVALIDATE_PROPERTY(m_TotalHemorrhageRate);
+  INVALIDATE_PROPERTY(m_TotalHemorrhagedVolume);
 }
 
 const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
@@ -149,6 +184,10 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetSystemicVascularResistance();
   if (name.compare("SystolicArterialPressure") == 0)
     return &GetSystolicArterialPressure();
+  if (name.compare("TotalHemorrhageRate") == 0)
+    return &GetTotalHemorrhageRate();
+  if (name.compare("TotalHemorrhagedVolume") == 0)
+    return &GetTotalHemorrhagedVolume();
   return nullptr;
 }
 
@@ -652,4 +691,38 @@ double SECardiovascularSystem::GetSystolicArterialPressure(const PressureUnit& u
   if (m_SystolicArterialPressure == nullptr)
     return SEScalar::dNaN();
   return m_SystolicArterialPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasTotalHemorrhageRate() const
+{
+  return m_TotalHemorrhageRate == nullptr ? false : m_TotalHemorrhageRate->IsValid();
+}
+SEScalarVolumePerTime& SECardiovascularSystem::GetTotalHemorrhageRate()
+{
+  if (m_TotalHemorrhageRate == nullptr)
+    m_TotalHemorrhageRate = new SEScalarVolumePerTime();
+  return *m_TotalHemorrhageRate;
+}
+double SECardiovascularSystem::GetTotalHemorrhageRate(const VolumePerTimeUnit& unit) const
+{
+  if (m_TotalHemorrhageRate == nullptr)
+    return SEScalar::dNaN();
+  return m_TotalHemorrhageRate->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasTotalHemorrhagedVolume() const
+{
+  return m_TotalHemorrhagedVolume == nullptr ? false : m_TotalHemorrhagedVolume->IsValid();
+}
+SEScalarVolume& SECardiovascularSystem::GetTotalHemorrhagedVolume()
+{
+  if (m_TotalHemorrhagedVolume == nullptr)
+    m_TotalHemorrhagedVolume = new SEScalarVolume();
+  return *m_TotalHemorrhagedVolume;
+}
+double SECardiovascularSystem::GetTotalHemorrhagedVolume(const VolumeUnit& unit) const
+{
+  if (m_TotalHemorrhagedVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_TotalHemorrhagedVolume->GetValue(unit);
 }

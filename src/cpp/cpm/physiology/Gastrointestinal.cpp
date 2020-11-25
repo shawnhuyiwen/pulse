@@ -44,7 +44,7 @@
 
 //#define logMeal
 
-Gastrointestinal::Gastrointestinal(PulseData& data) : PulseGastrointestinalSystem(data.GetLogger()), m_data(data)
+Gastrointestinal::Gastrointestinal(PulseData& data) : PulseGastrointestinalSystem(data)
 {
   Clear();
   m_CalciumDigestionRate = new SEScalarMassPerTime();

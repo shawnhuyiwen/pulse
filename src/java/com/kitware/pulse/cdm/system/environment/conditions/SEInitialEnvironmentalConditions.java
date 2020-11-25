@@ -10,18 +10,18 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
 {
 
   private static final long serialVersionUID = 735720711996975921L;
-  protected SEEnvironmentalConditions environmentalConditions;
-  protected String                    environmentalConditionsFile;
+  protected SEEnvironmentalConditions environmentalConditions=null;
+  protected String                    environmentalConditionsFile="";
   
   public SEInitialEnvironmentalConditions()
   {
-    this.environmentalConditions=new SEEnvironmentalConditions();
+   
   }
   
   public SEInitialEnvironmentalConditions(SEInitialEnvironmentalConditions other)
   {
     this();
-    copy(other);    
+    copy(other);
   }
   
   public void copy(SEInitialEnvironmentalConditions other)
@@ -29,7 +29,8 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
     if(this==other)
       return;
     super.copy(other);
-    this.environmentalConditions.copy(other.environmentalConditions);
+    if(other.environmentalConditions != null)
+      this.getEnvironmentalConditions().copy(other.environmentalConditions);
     this.environmentalConditionsFile=other.environmentalConditionsFile;
   }
   
@@ -37,7 +38,8 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
   public void reset()
   {
     super.reset();
-    this.environmentalConditions.reset();
+    if(this.environmentalConditions!=null)
+      this.environmentalConditions.reset();
     this.environmentalConditionsFile="";
   }
   
@@ -69,10 +71,10 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
   protected static void unload(SEInitialEnvironmentalConditions src, InitialEnvironmentalConditionsData.Builder dst)
   {
     SEEnvironmentCondition.unload(src, dst.getEnvironmentConditionBuilder());
-    if(src.hasEnvironmentalConditions())
-      dst.setEnvironmentalConditions(SEEnvironmentalConditions.unload(src.environmentalConditions));
-    else if(src.hasEnvironmentalConditionsFile())
+    if(src.hasEnvironmentalConditionsFile())
       dst.setEnvironmentalConditionsFile(src.environmentalConditionsFile);
+    else if(src.hasEnvironmentalConditions())
+      dst.setEnvironmentalConditions(SEEnvironmentalConditions.unload(src.environmentalConditions));
   }
   
   public boolean hasEnvironmentalConditions()
@@ -81,6 +83,8 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
   }
   public SEEnvironmentalConditions getEnvironmentalConditions()
   {
+    if(this.environmentalConditions == null)
+      this.environmentalConditions=new SEEnvironmentalConditions();
     return this.environmentalConditions;
   }
   
@@ -100,11 +104,11 @@ public class SEInitialEnvironmentalConditions extends SEEnvironmentCondition
   @Override
   public String toString()
   {
-    if (environmentalConditions != null)
-      return "Initial Environmental Conditions : "+environmentalConditions.toString();
-    else if(this.hasEnvironmentalConditionsFile())
+    if(this.hasEnvironmentalConditionsFile())
       return "Initial Envriomental Conditions:"
           + "\n\tEnvironmentalConditionsFile: "+this.environmentalConditionsFile;
+    else if (environmentalConditions != null)
+      return "Initial Environmental Conditions : "+environmentalConditions.toString();
     else
       return "Condition not specified properly";
   }

@@ -13,13 +13,13 @@ SEMeal::SEMeal(Logger* logger) : SENutrition(logger)
 
 SEMeal::~SEMeal()
 {
-  Clear();  
+  SAFE_DELETE(m_ElapsedTime);
 }
 
 void SEMeal::Clear()
 {
   SENutrition::Clear();
-  SAFE_DELETE(m_ElapsedTime);
+  INVALIDATE_PROPERTY(m_ElapsedTime);
 }
 
 bool SEMeal::SerializeToString(std::string& output, SerializationFormat m) const

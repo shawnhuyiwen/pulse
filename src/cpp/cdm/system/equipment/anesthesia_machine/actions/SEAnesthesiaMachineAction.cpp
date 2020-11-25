@@ -11,7 +11,7 @@ SEAnesthesiaMachineAction::SEAnesthesiaMachineAction(Logger* logger) : SEEquipme
 
 SEAnesthesiaMachineAction::~SEAnesthesiaMachineAction()
 {
-  Clear();
+
 }
 
 void SEAnesthesiaMachineAction::Clear()

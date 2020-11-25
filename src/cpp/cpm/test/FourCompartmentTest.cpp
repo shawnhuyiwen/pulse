@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 #include "EngineTest.h"
 #include "CommonDataModel.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Substances.h"
 #include "controller/Circuits.h"
@@ -83,7 +84,8 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   std::ofstream file;
   SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, m_Logger);
   SEFluidCircuitCalculator calc(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, m_Logger);
-  PulseController pc(m_Logger);
+  PulseEngine pe(m_Logger);
+  PulseController& pc = pe.GetController();
   Tissue& tsu = (Tissue&)pc.GetTissue();
   SEPatient patient(pc.GetLogger());
   patient.SerializeFromFile("./patients/StandardMale.json");

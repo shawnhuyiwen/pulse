@@ -1,11 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
+
 #include "stdafx.h"
 #include "controller/Engine.h"
 #include "PulseConfiguration.h"
 #include "Substances.h"
 #include "Compartments.h"
-
+#include "BlackBoxes.h"
 
 PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
 {
@@ -15,6 +16,8 @@ PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger)
 PulseEngine::PulseEngine(Logger* logger)
 {
   m_PulseController = new PulseController(logger);
+  m_PulseController->Allocate();
+  m_PulseController->SetupTracker();
 }
 
 PulseEngine::~PulseEngine()
@@ -223,4 +226,9 @@ const SEMechanicalVentilator* PulseEngine::GetMechanicalVentilator() const
 const SECompartmentManager& PulseEngine::GetCompartments() const
 {
   return m_PulseController->GetData().GetCompartments();
+}
+
+SEBlackBoxManager& PulseEngine::GetBlackBoxes() const
+{
+  return m_PulseController->GetData().GetBlackBoxes();
 }

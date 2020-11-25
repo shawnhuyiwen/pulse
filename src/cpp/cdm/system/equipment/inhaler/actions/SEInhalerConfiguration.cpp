@@ -12,20 +12,22 @@
 
 SEInhalerConfiguration::SEInhalerConfiguration(Logger* logger) : SEInhalerAction(logger)
 {
+  m_ConfigurationFile = "";
   m_Configuration = nullptr;
-  InvalidateConfigurationFile();
 }
 
 SEInhalerConfiguration::~SEInhalerConfiguration()
 {
-  Clear();
+  m_ConfigurationFile = "";
+  SAFE_DELETE(m_Configuration);
 }
 
 void SEInhalerConfiguration::Clear()
 {
   SEInhalerAction::Clear();
-  InvalidateConfigurationFile();
-  SAFE_DELETE(m_Configuration);
+  m_ConfigurationFile = "";
+  if (m_Configuration)
+    m_Configuration->Clear();
 }
 
 void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr)
@@ -44,7 +46,6 @@ bool SEInhalerConfiguration::HasConfiguration() const
 }
 SEInhaler& SEInhalerConfiguration::GetConfiguration()
 {
-  m_ConfigurationFile = "";
   if (m_Configuration == nullptr)
     m_Configuration = new SEInhaler(GetLogger());
   return *m_Configuration;
@@ -60,19 +61,12 @@ std::string SEInhalerConfiguration::GetConfigurationFile() const
 }
 void SEInhalerConfiguration::SetConfigurationFile(const std::string& fileName)
 {
-  if (m_Configuration != nullptr)
-    SAFE_DELETE(m_Configuration);
   m_ConfigurationFile = fileName;
 }
 bool SEInhalerConfiguration::HasConfigurationFile() const
 {
-  return m_ConfigurationFile.empty() ? false : true;
+  return !m_ConfigurationFile.empty();
 }
-void SEInhalerConfiguration::InvalidateConfigurationFile()
-{
-  m_ConfigurationFile = "";
-}
-
 
 void SEInhalerConfiguration::ToString(std::ostream &str) const
 {
@@ -80,15 +74,16 @@ void SEInhalerConfiguration::ToString(std::ostream &str) const
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   if (HasConfigurationFile())
+  {
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;
-  if (HasConfiguration())
+  }
+  else if (HasConfiguration())
   {
     str << "\n\tState: " << eSwitch_Name(m_Configuration->GetState());
     str << "\n\tMetered Dose: "; m_Configuration->HasMeteredDose() ? str << m_Configuration->GetMeteredDose() : str << "NaN";
     str << "\n\tNozzle Loss: "; m_Configuration->HasNozzleLoss() ? str << m_Configuration->GetNozzleLoss() : str << "NaN";
     str << "\n\tSpacerVolume: "; m_Configuration->HasSpacerVolume() ? str << m_Configuration->GetSpacerVolume() : str << "NaN";
-    str << "\n\tSubstance: "; m_Configuration->HasSubstance() ? str << m_Configuration->GetSubstance()->GetName() : str << "Not Set";    
+    str << "\n\tSubstance: "; m_Configuration->HasSubstance() ? str << m_Configuration->GetSubstance()->GetName() : str << "Not Set";
   }
   str << std::flush;
 }
-

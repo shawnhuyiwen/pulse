@@ -12,13 +12,13 @@ SEAnesthesiaMachineYPieceDisconnect::SEAnesthesiaMachineYPieceDisconnect(Logger*
 
 SEAnesthesiaMachineYPieceDisconnect::~SEAnesthesiaMachineYPieceDisconnect()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEAnesthesiaMachineYPieceDisconnect::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEAnesthesiaMachineYPieceDisconnect::Copy(const SEAnesthesiaMachineYPieceDisconnect& src)

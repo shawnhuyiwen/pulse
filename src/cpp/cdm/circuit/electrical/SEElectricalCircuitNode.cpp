@@ -6,7 +6,7 @@
 #include "properties/SEScalarElectricCharge.h"
 #include "properties/SEScalarElectricPotential.h"
 
-SEElectricalCircuitNode::SEElectricalCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<SEScalarElectricPotential, SEScalarElectricCharge>(name, logger)
+SEElectricalCircuitNode::SEElectricalCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<ELECTRICAL_CIRCUIT_NODE>(name, logger)
 {
   
 }

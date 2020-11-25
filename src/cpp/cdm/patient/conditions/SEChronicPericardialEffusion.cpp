@@ -14,12 +14,13 @@ SEChronicPericardialEffusion::SEChronicPericardialEffusion(Logger* logger) : SEP
 SEChronicPericardialEffusion::~SEChronicPericardialEffusion()
 {
   Clear();
+  SAFE_DELETE(m_AccumulatedVolume);
 }
 
 void SEChronicPericardialEffusion::Clear()
 {
   SEPatientCondition::Clear();
-  SAFE_DELETE(m_AccumulatedVolume);
+  INVALIDATE_PROPERTY(m_AccumulatedVolume);
 }
 
 void SEChronicPericardialEffusion::Copy(const SEChronicPericardialEffusion& src)

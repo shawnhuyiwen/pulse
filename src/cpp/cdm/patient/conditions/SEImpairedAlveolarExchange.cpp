@@ -15,14 +15,16 @@ SEImpairedAlveolarExchange::SEImpairedAlveolarExchange(Logger* logger) : SEPatie
 
 SEImpairedAlveolarExchange::~SEImpairedAlveolarExchange()
 {
-  Clear();
+  SAFE_DELETE(m_ImpairedSurfaceArea);
+  SAFE_DELETE(m_ImpairedFraction);
+  SAFE_DELETE(m_Severity);
 }
 
 void SEImpairedAlveolarExchange::Clear()
 {
-  SAFE_DELETE(m_ImpairedSurfaceArea);
-  SAFE_DELETE(m_ImpairedFraction);
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_ImpairedSurfaceArea);
+  INVALIDATE_PROPERTY(m_ImpairedFraction);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEImpairedAlveolarExchange::Copy(const SEImpairedAlveolarExchange& src)

@@ -16,11 +16,11 @@
 #include "properties/SEScalarHeatInductance.h"
 #include "properties/SEScalarHeatResistance.h"
 
-#define CIRCUIT_PATH_TEMPLATE typename FluxScalar, typename ResistanceScalar, typename CapacitanceScalar, typename InductanceScalar, typename PotentialScalar, typename QuantityScalar
-#define CIRCUIT_PATH_TYPES FluxScalar,ResistanceScalar,CapacitanceScalar,InductanceScalar,PotentialScalar,QuantityScalar
-#define ELECTRICAL_CIRCUIT_PATH SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge
-#define FLUID_CIRCUIT_PATH SEScalarVolumePerTime, SEScalarPressureTimePerVolume, SEScalarVolumePerPressure, SEScalarPressureTimeSquaredPerVolume, SEScalarPressure, SEScalarVolume
-#define THERMAL_CIRCUIT_PATH SEScalarPower, SEScalarHeatResistance, SEScalarHeatCapacitance, SEScalarHeatInductance, SEScalarTemperature, SEScalarEnergy
+#define CIRCUIT_PATH_TEMPLATE typename BlackBoxType, typename FluxScalar, typename ResistanceScalar, typename CapacitanceScalar, typename InductanceScalar, typename PotentialScalar, typename QuantityScalar
+#define CIRCUIT_PATH_TYPES BlackBoxType, FluxScalar,ResistanceScalar,CapacitanceScalar,InductanceScalar,PotentialScalar,QuantityScalar
+#define ELECTRICAL_CIRCUIT_PATH SEElectricalBlackBox, SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge
+#define FLUID_CIRCUIT_PATH SEFluidBlackBox, SEScalarVolumePerTime, SEScalarPressureTimePerVolume, SEScalarVolumePerPressure, SEScalarPressureTimeSquaredPerVolume, SEScalarPressure, SEScalarVolume
+#define THERMAL_CIRCUIT_PATH SEThermalBlackBox, SEScalarPower, SEScalarHeatResistance, SEScalarHeatCapacitance, SEScalarHeatInductance, SEScalarTemperature, SEScalarEnergy
 
 template<CIRCUIT_PATH_TEMPLATE>
 class SECircuitPath : public Loggable
@@ -28,7 +28,7 @@ class SECircuitPath : public Loggable
   friend class PBCircuit;//friend the serialization class
   template<typename NodeType, typename PathType> friend class SECircuit;
 protected:
-  SECircuitPath(SECircuitNode<PotentialScalar, QuantityScalar>& src, SECircuitNode<PotentialScalar, QuantityScalar>& tgt, const std::string& name);
+  SECircuitPath(SECircuitNode<CIRCUIT_NODE_TYPES>& src, SECircuitNode<CIRCUIT_NODE_TYPES>& tgt, const std::string& name);
 public:
   virtual ~SECircuitPath();
 
@@ -81,8 +81,8 @@ public:
   virtual PotentialScalar& GetValveBreakdownPotential();
   
   virtual bool HasValidElements() const;
-  virtual size_t NumberOfElements() const { return m_NumElements; }
-  virtual size_t NumberOfNextElements() const { return m_NumNextElements; }
+  virtual unsigned short NumberOfElements() const { return m_NumElements; }
+  virtual unsigned short NumberOfNextElements() const { return m_NumNextElements; }
 
   virtual eGate GetSwitch() const;
   virtual void SetSwitch(eGate state);
@@ -120,12 +120,16 @@ public:
   virtual bool HasNextPolarizedState() const;
   virtual void InvalidateNextPolarizedState();
 
+  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
+  virtual BlackBoxType* GetBlackBox() const { return m_BlackBox; }
+  virtual void SetBlackBox(BlackBoxType* bb) { m_BlackBox = bb; }
+
 protected:
   std::string                         m_Name;
   SECircuitNode<CIRCUIT_NODE_TYPES>&  m_SourceNode;
   SECircuitNode<CIRCUIT_NODE_TYPES>&  m_TargetNode;
-  mutable size_t                      m_NumElements;
-  mutable size_t                      m_NumNextElements;
+  mutable unsigned short              m_NumElements;
+  mutable unsigned short              m_NumNextElements;
   /////////////////////////    
   // Valves and Switches //    
   /////////////////////////    
@@ -158,4 +162,6 @@ protected:
   PotentialScalar*             m_NextPotentialSource;
   PotentialScalar*             m_PotentialSourceBaseline;
   PotentialScalar*             m_ValveBreakdownPotential;
+
+  BlackBoxType*                m_BlackBox = nullptr;
 };

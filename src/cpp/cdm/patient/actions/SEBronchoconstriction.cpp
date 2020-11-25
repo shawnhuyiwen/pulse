@@ -13,13 +13,13 @@ SEBronchoconstriction::SEBronchoconstriction(Logger* logger) : SEPatientAction(l
 
 SEBronchoconstriction::~SEBronchoconstriction()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEBronchoconstriction::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEBronchoconstriction::Copy(const SEBronchoconstriction& src)

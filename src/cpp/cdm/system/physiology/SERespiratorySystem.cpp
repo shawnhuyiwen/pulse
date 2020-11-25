@@ -75,13 +75,6 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
 
 SERespiratorySystem::~SERespiratorySystem()
 {
-  Clear();
-}
-
-void SERespiratorySystem::Clear()
-{
-  SESystem::Clear();
-
   SAFE_DELETE(m_AlveolarArterialGradient);
   SAFE_DELETE(m_AlveolarDeadSpace);
   SAFE_DELETE(m_AnatomicDeadSpace);
@@ -135,6 +128,65 @@ void SERespiratorySystem::Clear()
   SAFE_DELETE(m_TranspulmonaryPressure);
   SAFE_DELETE(m_TransrespiratoryPressure);
   SAFE_DELETE(m_TransthoracicPressure);
+}
+
+void SERespiratorySystem::Clear()
+{
+  SESystem::Clear();
+
+  INVALIDATE_PROPERTY(m_AlveolarArterialGradient);
+  INVALIDATE_PROPERTY(m_AlveolarDeadSpace);
+  INVALIDATE_PROPERTY(m_AnatomicDeadSpace);
+  INVALIDATE_PROPERTY(m_CarricoIndex);
+  INVALIDATE_PROPERTY(m_ChestWallCompliance);
+  INVALIDATE_PROPERTY(m_ElasticWorkOfBreathing);
+  INVALIDATE_PROPERTY(m_EndTidalCarbonDioxideFraction);
+  INVALIDATE_PROPERTY(m_EndTidalCarbonDioxidePressure);
+  INVALIDATE_PROPERTY(m_EndTidalOxygenFraction);
+  INVALIDATE_PROPERTY(m_EndTidalOxygenPressure);
+  INVALIDATE_PROPERTY(m_ExpiratoryFlow);
+  INVALIDATE_PROPERTY(m_ExpiratoryPulmonaryResistance);
+  INVALIDATE_PROPERTY(m_FractionOfInsipredOxygen);
+  INVALIDATE_PROPERTY(m_ImposedPowerOfBreathing);
+  INVALIDATE_PROPERTY(m_ImposedWorkOfBreathing);
+  INVALIDATE_PROPERTY(m_InspiratoryExpiratoryRatio);
+  INVALIDATE_PROPERTY(m_InspiratoryFlow);
+  INVALIDATE_PROPERTY(m_InspiratoryPulmonaryResistance);
+  INVALIDATE_PROPERTY(m_IntrapleuralPressure);
+  INVALIDATE_PROPERTY(m_IntrapulmonaryPressure);
+  INVALIDATE_PROPERTY(m_LungCompliance);
+  INVALIDATE_PROPERTY(m_MaximalInspiratoryPressure);
+  INVALIDATE_PROPERTY(m_MeanAirwayPressure);
+  INVALIDATE_PROPERTY(m_OxygenationIndex);
+  INVALIDATE_PROPERTY(m_OxygenSaturationIndex);
+  INVALIDATE_PROPERTY(m_PatientPowerOfBreathing);
+  INVALIDATE_PROPERTY(m_PatientWorkOfBreathing);
+  INVALIDATE_PROPERTY(m_PeakInspiratoryPressure);
+  INVALIDATE_PROPERTY(m_PhysiologicDeadSpace);
+  INVALIDATE_PROPERTY(m_PositiveEndExpiratoryPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryCompliance);
+  INVALIDATE_PROPERTY(m_PulmonaryElastance);
+  INVALIDATE_PROPERTY(m_ResistiveExpiratoryWorkOfBreathing);
+  INVALIDATE_PROPERTY(m_ResistiveInspiratoryWorkOfBreathing);
+  INVALIDATE_PROPERTY(m_RespirationRate);
+  INVALIDATE_PROPERTY(m_RespiratoryMuscleFatigue);
+  INVALIDATE_PROPERTY(m_RespiratoryMusclePressure);
+  INVALIDATE_PROPERTY(m_SaturationAndFractionOfInspiredOxygenRatio);
+  INVALIDATE_PROPERTY(m_SpecificVentilation);
+  INVALIDATE_PROPERTY(m_TidalVolume);
+  INVALIDATE_PROPERTY(m_TotalAlveolarVentilation);
+  INVALIDATE_PROPERTY(m_TotalDeadSpaceVentilation);
+  INVALIDATE_PROPERTY(m_TotalLungVolume);
+  INVALIDATE_PROPERTY(m_TotalPowerOfBreathing);
+  INVALIDATE_PROPERTY(m_TotalPulmonaryVentilation);
+  INVALIDATE_PROPERTY(m_TotalWorkOfBreathing);
+  INVALIDATE_PROPERTY(m_TransairwayPressure);
+  INVALIDATE_PROPERTY(m_TransalveolarPressure);
+  INVALIDATE_PROPERTY(m_TransChestWallPressure);
+  INVALIDATE_PROPERTY(m_TransMusclePressure);
+  INVALIDATE_PROPERTY(m_TranspulmonaryPressure);
+  INVALIDATE_PROPERTY(m_TransrespiratoryPressure);
+  INVALIDATE_PROPERTY(m_TransthoracicPressure);
 }
 
 const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)

@@ -3,7 +3,7 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SESubstanceBolus, eSubstance_Administration
-from pulse.cdm.scalars import MassPerVolumeUnit, VolumeUnit
+from pulse.cdm.scalars import TimeUnit, MassPerVolumeUnit, VolumeUnit
 from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
 
 def HowTo_SubstanceBolus():
@@ -21,13 +21,14 @@ def HowTo_SubstanceBolus():
     print(results)
 
     # Perform an action
-    substance = SESubstanceBolus()
-    substance.set_comment("Patient receives injection of Epinephrine")
-    substance.set_admin_route(eSubstance_Administration.Intramuscular)
-    substance.set_substance("Epinephrine")
-    substance.get_dose().set_value(1.0, VolumeUnit.mL)
-    substance.get_concentration().set_value(1.1, MassPerVolumeUnit.from_string("ug/L"))
-    pulse.process_action(substance)
+    bolus = SESubstanceBolus()
+    bolus.set_comment("Patient receives injection of Epinephrine")
+    bolus.set_admin_route(eSubstance_Administration.Intramuscular)
+    # bolus.get_admin_duration().set_value(2, TimeUnit.s) (optional)
+    bolus.set_substance("Epinephrine")
+    bolus.get_dose().set_value(1.0, VolumeUnit.mL)
+    bolus.get_concentration().set_value(1.1, MassPerVolumeUnit.ug_Per_L)
+    pulse.process_action(bolus)
 
     # Advance some time and print out the vitals
     pulse.advance_time_s(30)

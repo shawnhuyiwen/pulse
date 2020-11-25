@@ -856,10 +856,10 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.ConsumeNutrientsData src, SEConsumeNutrients dst)
     {
       Serialize(src.PatientAction, dst);
+      if (src.NutritionFile != null)
+        dst.SetNutritionFile(src.NutritionFile);
       if (src.Nutrition != null)
         PBNutrition.Load(src.Nutrition, dst.GetNutrition());
-      else if (src.NutritionFile != null)
-        dst.SetNutritionFile(src.NutritionFile);
     }
 
     public static pulse.cdm.bind.ConsumeNutrientsData Unload(SEConsumeNutrients src)
@@ -939,11 +939,13 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.HemorrhageData src, SEHemorrhage dst)
     {
       Serialize(src.PatientAction, dst);
+      dst.SetType((SEHemorrhage.eType)(int)src.Type);
       if (src.Compartment != null)
         dst.SetCompartment(src.Compartment);
-      if (src.Rate != null)
-        PBProperty.Load(src.Rate, dst.GetRate());
-      dst.SetType((SEHemorrhage.eType)(int)src.Type);
+      if (src.FlowRate != null)
+        PBProperty.Load(src.FlowRate, dst.GetFlowRate());
+      if (src.Severity != null)
+        PBProperty.Load(src.Severity, dst.GetSeverity());
     }
     public static pulse.cdm.bind.HemorrhageData Unload(SEHemorrhage src)
     {
@@ -955,11 +957,13 @@ namespace Pulse.CDM
     {
       dst.PatientAction = new pulse.cdm.bind.PatientActionData();
       Serialize(src, dst.PatientAction);
+      dst.Type = (pulse.cdm.bind.HemorrhageData.Types.eType)(int)src.GetType();
       if (src.HasCompartment())
         dst.Compartment = src.GetCompartment();
-      if (src.HasRate())
-        dst.Rate = PBProperty.Unload(src.GetRate());
-      dst.Type = (pulse.cdm.bind.HemorrhageData.Types.eType)(int)src.GetType();
+      if (src.HasFlowRate())
+        dst.FlowRate = PBProperty.Unload(src.GetFlowRate());
+      if (src.HasSeverity())
+        dst.Severity = PBProperty.Unload(src.GetSeverity());
     }
     #endregion
 

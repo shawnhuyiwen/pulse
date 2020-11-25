@@ -11,12 +11,15 @@ SEDataRequestManager::SEDataRequestManager(Logger* logger) : Loggable(logger)
 {
   m_DefaultDecimalFormatting = nullptr;
   m_OverrideDecimalFormatting = nullptr;
-  Clear();
+  m_SamplesPerSecond = 0; // Sample every time step
 }
 
 SEDataRequestManager::~SEDataRequestManager()
 {
-  Clear();
+  m_SamplesPerSecond = 0; // Sample every time step
+  DELETE_VECTOR(m_Requests);
+  SAFE_DELETE(m_DefaultDecimalFormatting);
+  SAFE_DELETE(m_OverrideDecimalFormatting);
 }
 
 void SEDataRequestManager::Clear()
@@ -81,9 +84,65 @@ void SEDataRequestManager::RemoveOverrideDecimalFormatting()
 
 SEDataRequest& SEDataRequestManager::CopyDataRequest(const SEDataRequest& dr)
 {
-  SEDataRequest* my_dr = new SEDataRequest(dr);
-  m_Requests.push_back(my_dr);
+  SEDataRequest* my_dr = FindDataRequest(dr);
+  if (my_dr == nullptr)
+  {
+    my_dr = new SEDataRequest(dr);
+    m_Requests.push_back(my_dr);
+  }
   return *my_dr;
+}
+
+SEDataRequest* SEDataRequestManager::FindDataRequest(const SEDataRequest& dr)
+{
+  SEDataRequest* my_dr;
+
+  switch (dr.GetCategory())
+  {
+  case eDataRequest_Category::Patient:
+    my_dr = FindPatientDataRequest(dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::Physiology:
+    my_dr = FindPhysiologyDataRequest(dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::Environment:
+    my_dr = FindEnvironmentDataRequest(dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::GasCompartment:
+    if(dr.HasSubstanceName())
+      my_dr = FindGasCompartmentDataRequest(dr.GetCompartmentName(), dr.GetSubstanceName(), dr.GetPropertyName());
+    else
+      my_dr = FindGasCompartmentDataRequest(dr.GetCompartmentName(), dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::LiquidCompartment:
+    if (dr.HasSubstanceName())
+      my_dr = FindLiquidCompartmentDataRequest(dr.GetCompartmentName(), dr.GetSubstanceName(), dr.GetPropertyName());
+    else
+      my_dr = FindLiquidCompartmentDataRequest(dr.GetCompartmentName(), dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::ThermalCompartment:
+    my_dr = FindThermalCompartmentDataRequest(dr.GetCompartmentName(), dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::TissueCompartment:
+    my_dr = FindTissueCompartmentDataRequest(dr.GetCompartmentName(), dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::Substance:
+    my_dr = FindSubstanceDataRequest(dr.GetSubstanceName(), dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::AnesthesiaMachine:
+    my_dr = FindAnesthesiaMachineDataRequest(dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::ECG:
+    my_dr = FindECGDataRequest(dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::Inhaler:
+    my_dr = FindInhalerDataRequest(dr.GetPropertyName());
+    return my_dr;
+  case eDataRequest_Category::MechanicalVentilator:
+    my_dr = FindMechanicalVentilatorDataRequest(dr.GetPropertyName());
+    return my_dr;
+  }
+  return nullptr;
 }
 
 SEDataRequest& SEDataRequestManager::CreateDataRequest(eDataRequest_Category category, const SEDecimalFormat* dfault)

@@ -3,6 +3,7 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
+class SEFluidBlackBox;
 
 class CDM_DECL SEFluidCircuitNode : public SECircuitNode<FLUID_CIRCUIT_NODE>
 {

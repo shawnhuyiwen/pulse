@@ -107,7 +107,7 @@ Visual Studio users, our <a href="https://gitlab.kitware.com/physiology/engine/w
 
 Here is the quickest way to pull and build via a bash shell:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 $ mkdir Pulse
 $ cd Pulse
 $ git clone https://gitlab.kitware.com/physiology/engine
@@ -119,9 +119,9 @@ $ cd builds
 # Note you need to provide cmake the source directory at the end (relative or absolute)
 # Run CMake (it will use the system default compiler if you don't provide options or use the CMake GUI)
 $ cmake -DCMAKE_BUILD_TYPE:STRING=Release ../engine
-# If you want the build to pull the Verification and Validation (V&V) scenarios and baselines run this (or check the PULSE_DOWNLOAD_BASELINES option in the CMake GUI)
+# If you want the build to pull the Verification and Validation (V&V) scenarios and baselines run this (or check the Pulse_DOWNLOAD_BASELINES option in the CMake GUI)
 # You can always pull these later if you want (See Running and Testing)
-$ cmake -DCMAKE_BUILD_TYPE:STRING=Release -DPULSE_DOWNLOAD_BASELINES:BOOL=ON ../engine
+$ cmake -DCMAKE_BUILD_TYPE:STRING=Release -DPulse_DOWNLOAD_BASELINES:BOOL=ON ../engine
 #
 # Build the install target/project
 # On Linux/OSX/MinGW 
@@ -146,13 +146,11 @@ Kitware provides Pulse containers on [dockerhub](https://hub.docker.com/r/kitwar
 
 Here is an example of building a docker container and pushing it to an organization repository in dockerhub:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # From the Pulse source directory
 $ docker build -t kitware/pulse:3.0.0 .
 $ docker push kitware/pulse:3.0.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
 
 ### Single Board Computers Support 
 
@@ -165,9 +163,71 @@ su - root
 fallocate -l 1G tmpswap
 mkswap tmpswap
 swapon tmpswap
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 Read the article if you want to make this change permanent, it contains some valuable hints regarding permissions and fstab.
+### Cross Compiling
+
+CMake provides the ability to easily cross compile.
+In general, when we cross compile, we are doing so to get out a PulseC library.
+The PulseC library provides an interface used by our C#/Unity and Python API's to access and control the C++ based engine.
+Unity is C# based and any C# managed libraries built on any platform, will automatically run on other platforms.
+But the PulseC library is a native library and a specific platform version must be provided for the platform Pulse is being run on.
+The following sections will highlight specific build instructions for cross compiling for these target platforms.
+
+#### Native Platform Build
+
+The first thing you will want to do is build Pulse on the host system. I use Visual Studio when building natively.
+During the Pulse build, it will build and run the Protobuf protoc compiler to generate C++ classes needed for I/O.
+These files are needed to build, but when you cross compile, you will build a protoc executable for your target platform, and it will not run on the native host system.
+Doing a native build will ensure these files are generated. The cross compile build will see the files exist and not run the non native protoc compiler.
+Once you have a native build, create a new empty build directory for your cross compile build.
+
+#### Dockcross
+
+To generate Pulse libraries for android, linux, and web assembly, we use docker containers provided by [dockcross](https://hub.docker.com/u/dockcross). Dockcross provides both a build environment and a cmake toolchain file that simplifies the cross platform build process. 
+Simply pull the target docker container, run cmake, and build.
+I am using docker on windows via the WSL 2 based engine, from an [Ubuntu 20](https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71?activetab=pivot:overviewtab) terminal.
+
+Here is an example bulding Pulse for Android armv8a.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# Run this command from a directory that contains both your sourc and your build directories
+$ docker run --rm dockcross/android-arm64 > ./armv8a
+# This creates a file we will use to invoke our container
+# Next, set execution permissions
+$ chmod +x ./armv8a  
+# Run CMake
+# -B is the relative path to my build directory
+# -H is the relative path to my Pulse source directory
+$ ./armv8a cmake -DPulse_JAVA_API:BOOL=OFF -B./Builds/pulse-engine-armv8a -H./Pulse/engine -GNinja
+# Use ninja to build (provided in the docker)
+$ ./armv8a ninja -C./Builds/pulse-engine-armv8a
+# The PulseC.so for the target platform will be in the pulse-engine-armv8a/install/bin directory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#### Magic Leap
+
+Magic Leap provides a Lumin SDK for use in compiling native C++ code for use on the Magic Leap platform.
+You will need to download and install this SDK. 
+In this example we are building on a windows machine, using the Lumin SDK v0.24.1.
+Please follow the [Lumin instructions on generating a cmake toolchain file](https://developer.magicleap.com/en-us/learn/guides/sdk-mabu-ref-build-and-link-libraries#build-libraries-with-cmake) needed for cross compiling.
+
+I had to modify the toolchain file, adding '-llog' for protobuf's use of the android log methods, as well as '-g -std=c++11 -Wall -pedantic' to add C++11 support.
+Here is a copy of the [modified toolchain file](https://data.kitware.com/api/v1/file/5f29b9489014a6d84e57067a/download)
+
+To generate a Makefile and build, run :
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
+# Where -H specifies the Pulse source, and -B is the build directory
+cmake -DPulse_JAVA_API:BOOL=OFF -DCMAKE_TOOLCHAIN_FILE:FILEPATH=C:/Programming/magicleap.0.24.1.toolchain.cmake -BC:/Programming/Builds/pulse-engine-lumin -HC:/Programming/Pulse/engine -G "Unix Makefiles"
+# Run make from within your build directory
+N:/Tools/MagicLeap/dev/mlsdk/v0.24.1/tools/mabu/tools/MinGW/bin/mingw32-make.exe
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This will provide a PulseC.so in the build/install/bin that works on the Magic Leap platform!
+
 
 ## Updating Pulse
 
