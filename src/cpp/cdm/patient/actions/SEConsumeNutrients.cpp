@@ -68,7 +68,7 @@ void SEConsumeNutrients::SetNutritionFile(const std::string& fileName)
 }
 bool SEConsumeNutrients::HasNutritionFile() const
 {
-  return m_NutritionFile.empty();
+  return !m_NutritionFile.empty();
 }
 
 void SEConsumeNutrients::ToString(std::ostream &str) const
