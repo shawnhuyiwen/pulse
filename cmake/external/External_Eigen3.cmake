@@ -7,8 +7,7 @@ add_external_project_ex( Eigen3
   URL "https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz"
   URL_HASH MD5=9e30f67e8531477de4117506fe44669b
   CMAKE_CACHE_ARGS 
-        -DCMAKE_INSTALL_PREFIX:PATH=${Eigen3_PREFIX}/install
-        -DBUILD_TESTING:BOOL=OFF
+    -DBUILD_TESTING:BOOL=OFF
   RELATIVE_INCLUDE_PATH ""
   DEPENDENCIES ""
   #VERBOSE

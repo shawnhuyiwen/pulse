@@ -35,18 +35,13 @@ SEEnvironmentalConditions::SEEnvironmentalConditions(Logger* logger) : Loggable(
 
 SEEnvironmentalConditions::~SEEnvironmentalConditions()
 {
-  Clear();
-}
-
-void SEEnvironmentalConditions::Clear()
-{
   m_SurroundingType = eSurroundingType::NullSurrounding;
   SAFE_DELETE(m_AirDensity);
   SAFE_DELETE(m_AirVelocity);
   SAFE_DELETE(m_AmbientTemperature);
   SAFE_DELETE(m_AtmosphericPressure);
   SAFE_DELETE(m_ClothingResistance);
-  SAFE_DELETE(m_Emissivity); 
+  SAFE_DELETE(m_Emissivity);
   SAFE_DELETE(m_MeanRadiantTemperature);
   SAFE_DELETE(m_RelativeHumidity);
   SAFE_DELETE(m_RespirationAmbientTemperature);
@@ -56,6 +51,22 @@ void SEEnvironmentalConditions::Clear()
 
   DELETE_VECTOR(m_AmbientAerosols);
   m_cAmbientAerosols.clear();
+}
+
+void SEEnvironmentalConditions::Clear()
+{
+  m_SurroundingType = eSurroundingType::NullSurrounding;
+  INVALIDATE_PROPERTY(m_AirDensity);
+  INVALIDATE_PROPERTY(m_AirVelocity);
+  INVALIDATE_PROPERTY(m_AmbientTemperature);
+  INVALIDATE_PROPERTY(m_AtmosphericPressure);
+  INVALIDATE_PROPERTY(m_ClothingResistance);
+  INVALIDATE_PROPERTY(m_Emissivity);
+  INVALIDATE_PROPERTY(m_MeanRadiantTemperature);
+  INVALIDATE_PROPERTY(m_RelativeHumidity);
+  INVALIDATE_PROPERTY(m_RespirationAmbientTemperature);
+  RemoveAmbientGases();
+  RemoveAmbientAerosols();
 }
 
 void SEEnvironmentalConditions::Copy(const SEEnvironmentalConditions& src, const SESubstanceManager& subMgr)
@@ -125,20 +136,19 @@ void SEEnvironmentalConditions::Merge(const SEEnvironmentalConditions& from, SES
     double total = 0;
     RemoveAmbientGases();
     const SESubstance* sub;
-    SESubstanceFraction* sf;
     for (SESubstanceFraction* osf : from.m_AmbientGases)
     {
       sub = subMgr.GetSubstance(osf->GetSubstance().GetName());
-      if (sub==nullptr)
+      if (sub == nullptr)
+      {
         Error("Do not have substance : " + osf->GetSubstance().GetName());
-
-      sf = new SESubstanceFraction(*sub);
-      sf->GetFractionAmount().Set(osf->GetFractionAmount());
-      amt = sf->GetFractionAmount().GetValue();
+        continue;
+      }
+      SESubstanceFraction& sf = GetAmbientGas(*sub);
+      amt = osf->GetFractionAmount().GetValue();
+      sf.GetFractionAmount().SetValue(amt);
+      subMgr.AddActiveSubstance(*sub);
       total += amt;
-      m_AmbientGases.push_back(sf);
-      m_cAmbientGases.push_back(sf);
-      subMgr.AddActiveSubstance((SESubstance&)sf->m_Substance);
     }
     if (!SEScalar::IsValue(1, total))
       subMgr.Error("Environment Ambient Substance fractions do not sum to 1");
@@ -326,11 +336,11 @@ bool SEEnvironmentalConditions::HasAmbientGas(const SESubstance& s) const
   for (const SESubstanceFraction* sf : m_AmbientGases)
   {
     if (&s == &sf->GetSubstance())
-      return true;
+      return sf->GetFractionAmount() > 0;
   }
   return false;
 }
-const std::vector<SESubstanceFraction*>& SEEnvironmentalConditions::GetAmbientGases() 
+const std::vector<SESubstanceFraction*>& SEEnvironmentalConditions::GetAmbientGases()
 {
   return m_AmbientGases;
 }
@@ -364,24 +374,14 @@ const SESubstanceFraction* SEEnvironmentalConditions::GetAmbientGas(const SESubs
 }
 void SEEnvironmentalConditions::RemoveAmbientGas(const SESubstance& s)
 {
-  const SESubstanceFraction* sf;
-  for (unsigned int i = 0; i<m_AmbientGases.size(); i++)
-  {
-    sf = m_AmbientGases[i];
-    if (&s == &sf->GetSubstance())
-    {
-      m_AmbientGases.erase(m_AmbientGases.begin() + i);
-      m_cAmbientGases.erase(m_cAmbientGases.begin() + i);
-      delete sf;
-    }
-  }
+  SESubstanceFraction& sf = GetAmbientGas(s);
+  sf.GetFractionAmount().SetValue(0);
 }
 void SEEnvironmentalConditions::RemoveAmbientGases()
-{  
-  DELETE_VECTOR(m_AmbientGases);
-  m_cAmbientGases.clear();
+{
+  for (SESubstanceFraction* sf : m_AmbientGases)
+    sf->GetFractionAmount().SetValue(0);
 }
-
 
 bool SEEnvironmentalConditions::HasAmbientAerosol() const
 {
@@ -389,10 +389,10 @@ bool SEEnvironmentalConditions::HasAmbientAerosol() const
 }
 bool SEEnvironmentalConditions::HasAmbientAerosol(const SESubstance& substance) const
 {
-  for (const SESubstanceConcentration* sc : m_AmbientAerosols)
+  for (SESubstanceConcentration* sc : m_AmbientAerosols)
   {
     if (&substance == &sc->GetSubstance())
-      return true;
+      return sc->GetConcentration().IsPositive();
   }
   return false;
 }
@@ -430,20 +430,15 @@ const SESubstanceConcentration* SEEnvironmentalConditions::GetAmbientAerosol(con
 }
 void SEEnvironmentalConditions::RemoveAmbientAerosol(const SESubstance& substance)
 {
-  const SESubstanceConcentration* sc;
-  for (unsigned int i = 0; i<m_AmbientAerosols.size(); i++)
-  {
-    sc = m_AmbientAerosols[i];
-    if (&substance == &sc->GetSubstance())
-    {
-      m_AmbientAerosols.erase(m_AmbientAerosols.begin() + i);
-      m_cAmbientAerosols.erase(m_cAmbientAerosols.begin() + i);
-      delete sc;
-    }
-  }
+  SESubstanceConcentration& sc = GetAmbientAerosol(substance);
+  auto& unit = *sc.GetConcentration().GetUnit();
+  sc.GetConcentration().SetValue(0, unit);
 }
 void SEEnvironmentalConditions::RemoveAmbientAerosols()
 {
-  DELETE_VECTOR(m_AmbientAerosols);
-  m_cAmbientAerosols.clear();
+  for (SESubstanceConcentration* sc : m_AmbientAerosols)
+  {
+    auto& unit = *sc->GetConcentration().GetUnit();
+    sc->GetConcentration().SetValue(0, unit);
+  }
 }

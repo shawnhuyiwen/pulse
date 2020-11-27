@@ -13,12 +13,12 @@ SEAnesthesiaMachineOxygenBottle::SEAnesthesiaMachineOxygenBottle(Logger* logger)
 
 SEAnesthesiaMachineOxygenBottle::~SEAnesthesiaMachineOxygenBottle()
 {
-  Clear();
+  SAFE_DELETE(m_Volume);
 }
 
 void SEAnesthesiaMachineOxygenBottle::Clear()
 {
-  SAFE_DELETE(m_Volume);
+  INVALIDATE_PROPERTY(m_Volume);
 }
 
 void SEAnesthesiaMachineOxygenBottle::Merge(const SEAnesthesiaMachineOxygenBottle& from, SESubstanceManager& subMgr)

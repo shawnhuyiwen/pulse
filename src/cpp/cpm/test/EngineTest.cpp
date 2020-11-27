@@ -3,22 +3,13 @@
 
 #include "EngineTest.h"
 
-PulseEngineTest::PulseEngineTest() : Loggable(new Logger())
-{
-  myLogger = true;
-  FillFunctionMap();
-}
-
 PulseEngineTest::PulseEngineTest(Logger* logger) : Loggable(logger)
 {
-  myLogger = false;
   FillFunctionMap();
 }
 
 PulseEngineTest::~PulseEngineTest()
 {
-  if (myLogger)
-    SAFE_DELETE(m_Logger);
 }
 
 bool PulseEngineTest::RunTest(const std::string& testName, const std::string& sOutputDirectory)

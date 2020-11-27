@@ -30,14 +30,11 @@ class SEFluidCircuitCalculator;
 */
 class PULSE_DECL Cardiovascular : public PulseCardiovascularSystem
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulsePhysiology;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Cardiovascular(PulseData& data);
-  PulseData& m_data;
-
 public:
+  Cardiovascular(PulseData& data);
   virtual ~Cardiovascular();
 
   void Clear();
@@ -110,10 +107,8 @@ protected:
   double m_CompressionRatio;
   double m_CompressionPeriod_s;
   //Hemorrhage
-  std::vector<SEFluidCircuitPath*> m_HemorrhagePaths;
-  std::vector<SEFluidCircuitPath*> m_InternalHemorrhagePaths;
   std::vector<SELiquidCompartmentLink*> m_HemorrhageLinks;
-  std::vector<SELiquidCompartmentLink*> m_InternalHemorrhageLinks;
+  std::vector<SEFluidCircuitPath*> m_HemorrhagePaths;
   // Vitals and Averages
   double m_CurrentCardiacCycleTime_s;
   double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
@@ -214,8 +209,4 @@ protected:
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
-  
-  //debugging hemorrhage
-  double m_BloodVolumeEstimate;
-  double m_CardiacOutputBaseline;
 };

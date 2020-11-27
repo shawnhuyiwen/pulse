@@ -46,13 +46,6 @@ SEBloodChemistrySystem::SEBloodChemistrySystem(Logger* logger) : SESystem(logger
 
 SEBloodChemistrySystem::~SEBloodChemistrySystem()
 {
-  Clear();
-}
-
-void SEBloodChemistrySystem::Clear()
-{
-  SESystem::Clear();
-
   SAFE_DELETE(m_BloodDensity);
   SAFE_DELETE(m_BloodPH);
   SAFE_DELETE(m_BloodSpecificHeat);
@@ -81,6 +74,38 @@ void SEBloodChemistrySystem::Clear()
   SAFE_DELETE(m_VenousOxygenPressure);
   SAFE_DELETE(m_ArterialCarbonDioxidePressure);
   SAFE_DELETE(m_VenousCarbonDioxidePressure);
+}
+
+void SEBloodChemistrySystem::Clear()
+{
+  INVALIDATE_PROPERTY(m_BloodDensity);
+  INVALIDATE_PROPERTY(m_BloodPH);
+  INVALIDATE_PROPERTY(m_BloodSpecificHeat);
+  INVALIDATE_PROPERTY(m_BloodUreaNitrogenConcentration);
+  INVALIDATE_PROPERTY(m_CarbonDioxideSaturation);
+  INVALIDATE_PROPERTY(m_CarbonMonoxideSaturation);
+  INVALIDATE_PROPERTY(m_Hematocrit);
+  INVALIDATE_PROPERTY(m_HemoglobinContent);
+  INVALIDATE_PROPERTY(m_OxygenSaturation);
+  INVALIDATE_PROPERTY(m_Phosphate);
+  INVALIDATE_PROPERTY(m_PlasmaVolume);
+  INVALIDATE_PROPERTY(m_PulseOximetry);
+  INVALIDATE_PROPERTY(m_RedBloodCellCount);
+  INVALIDATE_PROPERTY(m_ShuntFraction);
+  INVALIDATE_PROPERTY(m_StrongIonDifference);
+  INVALIDATE_PROPERTY(m_TotalProteinConcentration);
+  INVALIDATE_PROPERTY(m_VolumeFractionNeutralPhospholipidInPlasma);
+  INVALIDATE_PROPERTY(m_VolumeFractionNeutralLipidInPlasma);
+  INVALIDATE_PROPERTY(m_WhiteBloodCellCount);
+
+  INVALIDATE_PROPERTY(m_PulmonaryVenousOxygenPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryArterialOxygenPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryVenousCarbonDioxidePressure);
+  INVALIDATE_PROPERTY(m_PulmonaryArterialCarbonDioxidePressure);
+  INVALIDATE_PROPERTY(m_ArterialOxygenPressure);
+  INVALIDATE_PROPERTY(m_VenousOxygenPressure);
+  INVALIDATE_PROPERTY(m_ArterialCarbonDioxidePressure);
+  INVALIDATE_PROPERTY(m_VenousCarbonDioxidePressure);
 }
 
 const SEScalar* SEBloodChemistrySystem::GetScalar(const std::string& name)

@@ -13,13 +13,13 @@ SESepsis::SESepsis(Logger* logger) : SEPatientCondition(logger)
 
 SESepsis::~SESepsis()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SESepsis::Clear()
 {
   SEPatientCondition::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SESepsis::Copy(const SESepsis& src)

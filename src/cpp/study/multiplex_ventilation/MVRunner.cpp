@@ -278,7 +278,7 @@ bool MVRunner::StepSimulationFiO2(pulse::study::bind::multiplex_ventilation::Sim
   // Add our stabilization numbers to the results
   for (int p = 0; p < sim.patientcomparisons_size(); p++)
   {
-    PulseController* pc = mve.m_Engines[p];
+    PulseController* pc = mve.m_Controllers[p];
     double SpO2 = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
     auto* multiVentilation = (*sim.mutable_patientcomparisons())[p].mutable_multiplexventilation();
     multiVentilation->set_achievedstabilization(SpO2>=0.89);
@@ -312,7 +312,7 @@ bool MVRunner::RunSimulationToStableSpO2(pulse::study::bind::multiplex_ventilati
   // Let's shoot for with in 0.25% for 10s straight
   double pctDiffSpO2 = 0.25;
   std::vector<double> previsouSpO2s;
-  for (PulseController* pc : mve.m_Engines)
+  for (PulseController* pc : mve.m_Controllers)
     previsouSpO2s.push_back(pc->GetBloodChemistry().GetOxygenSaturation().GetValue());
 
   double statusTimer_s = 0;  // Current time of this status cycle
@@ -348,7 +348,7 @@ bool MVRunner::RunSimulationToStableSpO2(pulse::study::bind::multiplex_ventilati
     {
       size_t idx = 0;
       bool allPassed = true;
-      for (PulseController* pc : mve.m_Engines)
+      for (PulseController* pc : mve.m_Controllers)
       {
         double currentSpO2 = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
         double pctDiff = GeneralMath::PercentDifference(previsouSpO2s[idx++], currentSpO2);
@@ -361,7 +361,7 @@ bool MVRunner::RunSimulationToStableSpO2(pulse::study::bind::multiplex_ventilati
       {
         idx = 0;
         stabilizationPasses = 0;
-        for (PulseController* pc : mve.m_Engines)
+        for (PulseController* pc : mve.m_Controllers)
         {
           previsouSpO2s[idx++] = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
         }
@@ -384,7 +384,7 @@ bool MVRunner::RunSimulationToStableSpO2(pulse::study::bind::multiplex_ventilati
   // Add our stabilization numbers to the results
   for (int p = 0; p < sim.patientcomparisons_size(); p++)
   {
-    PulseController* pc = mve.m_Engines[p];
+    PulseController* pc = mve.m_Controllers[p];
     double SpO2 = pc->GetBloodChemistry().GetOxygenSaturation().GetValue();
     auto* multiVentilation = (*sim.mutable_patientcomparisons())[p].mutable_multiplexventilation();
     multiVentilation->set_achievedstabilization(!(totalIterations > maxIterations));

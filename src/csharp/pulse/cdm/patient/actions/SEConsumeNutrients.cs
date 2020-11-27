@@ -5,13 +5,12 @@ namespace Pulse.CDM
 {
   public class SEConsumeNutrients : SEPatientAction
   {
-    protected SENutrition nutrition;
-    protected string      nutrition_file;
+    protected SENutrition nutrition = null;
+    protected string      nutrition_file = "";
 
     public SEConsumeNutrients()
     {
-      nutrition = null;
-      nutrition_file = null;
+
     }
 
     public SEConsumeNutrients(SEConsumeNutrients other)
@@ -22,9 +21,9 @@ namespace Pulse.CDM
     public override void Clear()
     {
       base.Clear();
-      nutrition = null;
+      if(nutrition !=  null)
+        nutrition.Clear();
       nutrition_file = null;
-
     }
 
     public void Copy(SEConsumeNutrients other)
@@ -32,7 +31,8 @@ namespace Pulse.CDM
       if (this == other)
         return;
       base.Copy(other);
-      nutrition.Copy(other.nutrition);
+      if(other.nutrition != null)
+        GetNutrition().Copy(other.nutrition);
       nutrition_file = other.nutrition_file;
     }
 
@@ -76,11 +76,11 @@ namespace Pulse.CDM
 
     public new string ToString()
     {
-      if (nutrition != null)
-        return "Consume Nutrients : \n" + nutrition.ToString();
-      else if (HasNutritionFile())
+      if (HasNutritionFile())
         return "Consume Nutrients:"
             + "\n\tNutritionFile: " + nutrition_file;
+      else if (nutrition != null)
+        return "Consume Nutrients : \n" + nutrition.ToString();
       else
         return "Action not specified properly";
     }

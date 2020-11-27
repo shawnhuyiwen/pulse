@@ -24,12 +24,6 @@ SENervousSystem::SENervousSystem(Logger* logger) : SESystem(logger)
 
 SENervousSystem::~SENervousSystem()
 {
-  Clear();
-}
-
-void SENervousSystem::Clear()
-{
-  SESystem::Clear();
   m_BaroreceptorFeedback = eSwitch::NullSwitch;
   SAFE_DELETE(m_BaroreceptorHeartRateScale);
   SAFE_DELETE(m_BaroreceptorHeartElastanceScale);
@@ -40,6 +34,23 @@ void SENervousSystem::Clear()
   SAFE_DELETE(m_ChemoreceptorHeartElastanceScale);
   SAFE_DELETE(m_LeftEyePupillaryResponse);
   SAFE_DELETE(m_RightEyePupillaryResponse);
+}
+
+void SENervousSystem::Clear()
+{
+  SESystem::Clear();
+  m_BaroreceptorFeedback = eSwitch::NullSwitch;
+  INVALIDATE_PROPERTY(m_BaroreceptorHeartRateScale);
+  INVALIDATE_PROPERTY(m_BaroreceptorHeartElastanceScale);
+  INVALIDATE_PROPERTY(m_BaroreceptorResistanceScale);
+  INVALIDATE_PROPERTY(m_BaroreceptorComplianceScale);
+  m_ChemoreceptorFeedback = eSwitch::NullSwitch;
+  INVALIDATE_PROPERTY(m_ChemoreceptorHeartRateScale);
+  INVALIDATE_PROPERTY(m_ChemoreceptorHeartElastanceScale);
+  if (m_LeftEyePupillaryResponse)
+    m_LeftEyePupillaryResponse->Clear();
+  if (m_RightEyePupillaryResponse)
+    m_RightEyePupillaryResponse->Clear();
 }
 
 const SEScalar* SENervousSystem::GetScalar(const std::string& name)

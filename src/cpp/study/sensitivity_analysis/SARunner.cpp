@@ -64,7 +64,7 @@ bool SARunner::Run()
   profiler.Start("Total");
 
   // Ensure our output dir exists
-  CreateFilePath(m_OutDir);
+  CreatePath(m_OutDir);
 
   // Get the ID's of simulations we need to run
   m_SimulationsToRun.clear();
@@ -183,7 +183,7 @@ bool SARunner::RunSimulationUntilStable(std::string const& outDir, pulse::study:
   PBAction::Load(sim.overrides(), overrides);
   // Apply Overrides (Note using Force, as these values are locked (for good reason)
   // But we know what we are doing, right?
-  PulseController* pc = ((PulseEngine*)pulse.get())->GetController();
+  PulseController* pc = &((PulseEngine*)pulse.get())->GetController();
   SEFluidCircuit& cv = pc->GetCircuits().GetActiveCardiovascularCircuit();
   SEFluidCircuit& resp = pc->GetCircuits().GetActiveRespiratoryCircuit();
   bool hasRespOverride = false;
@@ -480,7 +480,7 @@ bool SARunner::RunSimulation(std::string const& outDir, pulse::study::bind::sens
   //pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
   // check if overriding respiratory path
-  PulseController* pctrl = ((PulseEngine*)pulse.get())->GetController();
+  PulseController* pctrl = &((PulseEngine*)pulse.get())->GetController();
   SEFluidCircuit& resp = pctrl->GetCircuits().GetRespiratoryCircuit();
   bool hasRespOverride = false;
   for (auto& sp : cfg.GetInitialOverrides().GetScalarProperties())

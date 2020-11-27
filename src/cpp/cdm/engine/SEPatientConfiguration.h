@@ -29,17 +29,14 @@ public:
   virtual std::string GetPatientFile() const;
   virtual void SetPatientFile(const std::string& patientFile);
   virtual bool HasPatientFile() const;
-  virtual void InvalidatePatientFile();
 
   virtual SEPatient& GetPatient();
   virtual const SEPatient* GetPatient() const;
   virtual bool HasPatient() const;
-  virtual void InvalidatePatient();
 
   virtual SEConditionManager& GetConditions();
   virtual const SEConditionManager* GetConditions() const;
   virtual bool HasConditions() const;
-  virtual void InvalidateConditions();
 
   virtual bool HasOverride() const;
   virtual void AddScalarOverride(const std::string& name, double value);

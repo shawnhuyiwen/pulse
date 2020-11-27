@@ -288,6 +288,8 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
 
     if (config.has_plasmasodiumconcentrationsetpoint())
       PBProperty::Load(config.plasmasodiumconcentrationsetpoint(), dst.GetPlasmaSodiumConcentrationSetPoint());
+    if (config.has_peritubularpotassiumconcentrationsetpoint())
+      PBProperty::Load(config.peritubularpotassiumconcentrationsetpoint(), dst.GetPeritubularPotassiumConcentrationSetPoint());
 
     if (config.has_leftglomerularfluidpermeabilitybaseline())
       PBProperty::Load(config.leftglomerularfluidpermeabilitybaseline(), dst.GetLeftGlomerularFluidPermeabilityBaseline());
@@ -533,6 +535,9 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
   renal->set_enablerenal((CDM_BIND::eSwitch)src.m_RenalEnabled);
   if (src.HasPlasmaSodiumConcentrationSetPoint())
     renal->set_allocated_plasmasodiumconcentrationsetpoint(PBProperty::Unload(*src.m_PlasmaSodiumConcentrationSetPoint));
+  if (src.HasPeritubularPotassiumConcentrationSetPoint())
+    renal->set_allocated_peritubularpotassiumconcentrationsetpoint(PBProperty::Unload(*src.m_PeritubularPotassiumConcentrationSetPoint));
+
   if (src.HasLeftGlomerularFilteringSurfaceAreaBaseline())
     renal->set_allocated_leftglomerularfilteringsurfaceareabaseline(PBProperty::Unload(*src.m_LeftGlomerularFilteringSurfaceAreaBaseline));
   if (src.HasLeftGlomerularFluidPermeabilityBaseline())

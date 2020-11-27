@@ -244,12 +244,12 @@ public class SETestReport
       buffer.append("<table border=\"1\">");
       buffer.append("<caption><b>"+group+"</b></caption>");
       buffer.append("<tr>");
-      buffer.append("<th> Test Case </th>");      
-      buffer.append("<th> # of Failures </th>");
-      buffer.append("<th> # of Runs </th>");
-      buffer.append("<th> Time </th>");
+      buffer.append("<th> Test Case </th>");
+      //buffer.append("<th> # of Failures </th>");
+      //buffer.append("<th> # of Runs </th>");
+      //buffer.append("<th> Time </th>");
       buffer.append("<th> Failures </th>");
-      buffer.append("<th> Requirements Tested </th>");
+      //buffer.append("<th> Requirements Tested </th>");
       buffer.append("</tr>");
 
 
@@ -277,7 +277,7 @@ public class SETestReport
           data=new Data();
           data.name=ts.getName();
           data.runs=ts.getTestCases().size();
-          data.errors=ts.getNumErrors();        
+          data.errors=ts.getNumErrors();
           data.duration_s=ts.getDuration(TimeUnit.s);
           for(SETestCase tc : ts.testCases)
           	data.failures.addAll(tc.failures);
@@ -293,16 +293,18 @@ public class SETestReport
             data.html.append("<tr bgcolor=\"#00FF00\">");
           }
           data.html.append("<td align=\"left\">"+data.name+"</td>");   
-          data.html.append("<td>"+data.errors+"</td>");
-          data.html.append("<td>"+data.runs+"</td>");  
-          data.html.append("<td>"+data.duration_s+"</td>");
+          //data.html.append("<td>"+data.errors+"</td>");
+          //data.html.append("<td>"+data.runs+"</td>");  
+          //data.html.append("<td>"+data.duration_s+"</td>");
           data.html.append("<td>");
           if(data.failures.size() > 0)
           {
             int i=0;
             while (i < data.failures.size()-1)
             {
-              data.html.append(data.failures.get(i) + "<br>");
+              String f = data.failures.get(i);
+              f = f.replaceAll("\n", "<br>");
+              data.html.append(f + "<br>");
               i++;
               if(i>5)//Only write out the first few errors, could be a LOT of errors
                 break;
@@ -310,27 +312,27 @@ public class SETestReport
             data.html.append(data.failures.get(i));
           }
           data.html.append("</td>");
-          data.html.append("<td>");
-          if (data.requirements.size() > 0)
-          {
-            int i=0;
-            while (i < data.requirements.size()-1)
-            {
-              data.html.append(data.requirements.get(i) + " , ");
-              i++;
-            }
-            data.html.append(data.requirements.get(i));
-          }
-          data.html.append("</td>");
+          //data.html.append("<td>");
+          //if (data.requirements.size() > 0)
+          //{
+          //  int i=0;
+          //  while (i < data.requirements.size()-1)
+          //  {
+          //    data.html.append(data.requirements.get(i) + " , ");
+          //    i++;
+          //  }
+          //  data.html.append(data.requirements.get(i));
+          //}
+          //data.html.append("</td>");
           data.html.append("</tr>");
         }
       }
 
       buffer.append("<tr>");
-      buffer.append("<td align=\"left\">"+"Totals for "+runs+" test suites"+"</td>");   
+      buffer.append("<td align=\"left\">"+"Totals for "+runs+" test suites"+"</td>");
       buffer.append("<td>"+totalErrors+"</td>");
-      buffer.append("<td>"+totalRuns+"</td>");  
-      buffer.append("<td>"+totalDuration_s+"</td>"); 
+      //buffer.append("<td>"+totalRuns+"</td>");
+      //buffer.append("<td>"+totalDuration_s+"</td>"); 
       buffer.append("</tr>");
 
       if(sortResults)

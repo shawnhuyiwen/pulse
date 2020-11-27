@@ -12,6 +12,14 @@ from SALib.sample import saltelli
 from tqdm import tqdm
 
 
+def add_spaces(input_str):
+    input_str = input_str.replace("InFlow", "Flow")
+    input_str_with_spaces = re.sub(r"(\w)([A-Z])", r"\1 \2", input_str)
+    rest = input_str_with_spaces.split("_", 1)[0]
+
+    return rest
+
+
 def between(start_char, end_char, input_str):
     """
     Get substring between two characters.
@@ -59,7 +67,7 @@ def load_and_parse_results(results_dir, phys_systems):
     file_nums = []
     for file in os.listdir(os.path.join(results_dir, "simulations")):
         if file.endswith(".json") and file.startswith("simlist_results"):
-            file_nums.append(int(between("results_", ".json", file)))
+            file_nums.append(int(between("simlist_results_", ".json", file)))
 
     if not file_nums:
         raise ValueError("No results files found.")
@@ -69,19 +77,58 @@ def load_and_parse_results(results_dir, phys_systems):
     print("Counted {} total simulations.".format(num_sims))
 
     # store results in DataFrame
-    file = open(os.path.join(results_dir, "simulations/simlist_results_500.json"))
-    results_file = json.load(file)
-    file.close()
+    if os.path.exists(os.path.join(results_dir, "simulations/simlist_results_500.json")):
+        file = open(os.path.join(results_dir, "simulations/simlist_results_500.json"))
+        results_file = json.load(file)
+        file.close()
+    elif os.path.exists(os.path.join(results_dir, "simulations/simlist_results_0.json")):
+        file = open(os.path.join(results_dir, "simulations/simlist_results_0.json"))
+        results_file = json.load(file)
+        file.close()
+        num_sims = 1
+    else:
+        raise ValueError("No results file found!")
 
-    col_list = []
-    for key in results_file["Simulation"][0]:
-        if phys_systems == "cv":
-            if key not in ["ID", "Name", "Overrides", "AchievedStabilization", "StabilizationTime_s",
-                           "TotalSimulationTime_s"]:
-                col_list.append(key)
-        elif phys_systems == "combined":
-            if key in ["MeanArterialOxygenPartialPressure_mmHg", "MeanArterialCarbonDioxidePartialPressure_mmHg"]:
-                col_list.append(key)
+    cols_of_interest = []
+    if phys_systems == "cv":
+        cols_of_interest = ["MeanAortaInFlow_mL_Per_s",
+                            "MeanBoneVasculatureInFlow_mL_Per_s",
+                            "MeanBrainVasculatureInFlow_mL_Per_s",
+                            "MeanFatVasculatureInFlow_mL_Per_s",
+                            "MeanKidneyVasculatureInFlow_mL_Per_s",
+                            "MeanLargeIntestineVasculatureInFlow_mL_Per_s",
+                            "MeanLeftArmVasculatureInFlow_mL_Per_s",
+                            "MeanLeftHeartInFlow_mL_Per_s",
+                            "MeanLeftKidneyVasculatureInFlow_mL_Per_s",
+                            "MeanLeftLegVasculatureInFlow_mL_Per_s",
+                            "MeanLeftPulmonaryArteriesInFlow_mL_Per_s",
+                            "MeanLeftPulmonaryCapillariesInFlow_mL_Per_s",
+                            "MeanLeftPulmonaryVeinsInFlow_mL_Per_s",
+                            "MeanLiverVasculatureInFlow_mL_Per_s",
+                            "MeanMuscleVasculatureInFlow_mL_Per_s",
+                            "MeanMyocardiumVasculatureInFlow_mL_Per_s",
+                            "MeanPulmonaryArteriesInFlow_mL_Per_s",
+                            "MeanPulmonaryCapillariesInFlow_mL_Per_s",
+                            "MeanPulmonaryVeinsInFlow_mL_Per_s",
+                            "MeanRightArmVasculatureInFlow_mL_Per_s",
+                            "MeanRightHeartInFlow_mL_Per_s",
+                            "MeanRightKidneyVasculatureInFlow_mL_Per_s",
+                            "MeanRightLegVasculatureInFlow_mL_Per_s",
+                            "MeanRightPulmonaryArteriesInFlow_mL_Per_s",
+                            "MeanRightPulmonaryCapillariesInFlow_mL_Per_s",
+                            "MeanRightPulmonaryVeinsInFlow_mL_Per_s",
+                            "MeanSkinVasculatureInFlow_mL_Per_s",
+                            "MeanSmallIntestineVasculatureInFlow_mL_Per_s",
+                            "MeanSplanchnicVasculatureInFlow_mL_Per_s",
+                            "MeanSpleenVasculatureInFlow_mL_Per_s",
+                            "MeanVenaCavaInFlow_mL_Per_s"]
+    elif phys_systems == "combined":
+        cols_of_interest = ["MeanArterialCarbonDioxidePartialPressure_mmHg",
+                            "MeanArterialOxygenPartialPressure_mmHg",
+                            "MeanVenousCarbonDioxidePartialPressure_mmHg",
+                            "MeanVenousOxygenPartialPressure_mmHg"]
+
+    col_list = [i for i in results_file["Simulation"][0] if i in cols_of_interest]
 
     count_unstable = 0
     total_sim_time = 0
@@ -92,14 +139,8 @@ def load_and_parse_results(results_dir, phys_systems):
         file.close()
         for index, sim in enumerate(results_file["Simulation"]):
             for key in sim:
-                if phys_systems == "cv":
-                    if key not in ["ID", "Name", "Overrides", "AchievedStabilization", "StabilizationTime_s",
-                                   "TotalSimulationTime_s"]:
-                        df.at[sim["ID"], key] = sim[key]
-                elif phys_systems == "combined":
-                    if key in ["MeanArterialOxygenPartialPressure_mmHg",
-                               "MeanArterialCarbonDioxidePartialPressure_mmHg"]:
-                        df.at[sim["ID"], key] = sim[key]
+                if key in cols_of_interest:
+                    df.at[sim["ID"], key] = sim[key]
             if not sim["AchievedStabilization"]:
                 count_unstable += 1
             total_sim_time += sim["TotalSimulationTime_s"]

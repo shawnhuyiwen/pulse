@@ -4,7 +4,6 @@
 #pragma once
 #include "scenario/SEScenario.h"
 class PulseConfiguration;
-PULSE_BIND_DECL(ScenarioData)
 
 /**
 * @brief A Pulse specific scenario (i.e. holds a %Pulse configuration object)

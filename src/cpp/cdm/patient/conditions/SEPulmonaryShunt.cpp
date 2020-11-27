@@ -13,13 +13,13 @@ SEPulmonaryShunt::SEPulmonaryShunt(Logger* logger) : SEPatientCondition(logger)
 
 SEPulmonaryShunt::~SEPulmonaryShunt()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEPulmonaryShunt::Clear()
 {
   SEPatientCondition::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEPulmonaryShunt::Copy(const SEPulmonaryShunt& src)

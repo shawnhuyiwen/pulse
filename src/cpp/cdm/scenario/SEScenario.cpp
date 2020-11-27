@@ -31,7 +31,8 @@ void SEScenario::Clear()
   m_Name = "";
   m_Description = "";
   m_EngineStateFile = "";
-  SAFE_DELETE(m_PatientConfiguration);
+  if (m_PatientConfiguration)
+    m_PatientConfiguration->Clear();
   DELETE_VECTOR(m_Actions);
   m_DataRequestMgr->Clear();
 }
@@ -77,10 +78,6 @@ bool SEScenario::HasName() const
 {
   return m_Name.empty()?false:true;
 }
-void SEScenario::InvalidateName()
-{
-  m_Name = "";
-}
 
 std::string SEScenario::GetDescription() const
 {
@@ -94,10 +91,6 @@ bool SEScenario::HasDescription() const
 {
   return m_Description.empty()?false:true;
 }
-void SEScenario::InvalidateDescription()
-{
-  m_Description = "";
-}
 
 std::string SEScenario::GetEngineStateFile() const
 {
@@ -105,21 +98,15 @@ std::string SEScenario::GetEngineStateFile() const
 }
 void SEScenario::SetEngineStateFile(const std::string& file)
 {
-  InvalidatePatientConfiguration();
   m_EngineStateFile = file;
 }
 bool SEScenario::HasEngineStateFile() const
 {
   return m_EngineStateFile.empty() ? false : true;
 }
-void SEScenario::InvalidateEngineStateFile()
-{
-  m_EngineStateFile = "";
-}
 
 SEPatientConfiguration& SEScenario::GetPatientConfiguration()
 {
-  InvalidateEngineStateFile();
   if (m_PatientConfiguration == nullptr)
     m_PatientConfiguration = new SEPatientConfiguration(GetLogger());
   return *m_PatientConfiguration;
@@ -131,10 +118,6 @@ const SEPatientConfiguration* SEScenario::GetPatientConfiguration() const
 bool SEScenario::HasPatientConfiguration() const
 {
   return m_PatientConfiguration != nullptr;
-}
-void SEScenario::InvalidatePatientConfiguration()
-{
-  SAFE_DELETE(m_PatientConfiguration);
 }
 
 void SEScenario::AddAction(const SEAction& a)

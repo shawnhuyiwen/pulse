@@ -165,7 +165,7 @@ public class HowTo_EngineUse
     tlv.setPropertyName("TotalLungVolume");
     tlv.setUnit(VolumeUnit.mL.toString());
     dataRequests.getRequestedData().add(tlv);
-    SEDataRequest bv = new SEDataRequest();  
+    SEDataRequest bv = new SEDataRequest();
     bv.setCategory(eCategory.Physiology);  
     bv.setPropertyName("BloodVolume");
     bv.setUnit(VolumeUnit.mL.toString());
@@ -178,7 +178,7 @@ public class HowTo_EngineUse
     // data_values[0] is ALWAYS the simulation time in seconds
     // The rest of the data values are in order of the data_requests list provided
 
-    InitializationType initType = InitializationType.PatientObject;
+    InitializationType initType = InitializationType.StateFile;
     // INITIALIZE THE ENGINE WITH A PATIENT
     switch(initType)
     {
@@ -187,7 +187,8 @@ public class HowTo_EngineUse
         // Set up your patient
         // This is the minimum and recommended data to set for a patient
         // But you can get more complicated, consult our Patient Variability Documentation for more details
-        SEPatient patient = new SEPatient();
+        SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
+        SEPatient patient = patient_configuration.getPatient();
         patient.setName("Standard");
         patient.setSex(eSex.Male);
         patient.getAge().setValue(44,TimeUnit.yr);
@@ -199,8 +200,6 @@ public class HowTo_EngineUse
         patient.getSystolicArterialPressureBaseline().setValue(114.,PressureUnit.mmHg);
         patient.getRespirationRateBaseline().setValue(16,FrequencyUnit.Per_min);
 
-        SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
-        patient_configuration.setPatient(patient);
         // Optionally add conditions to the patient_configuration
         // Optionally, specify where you would like Pulse to look for files it needs on disk
         patient_configuration.setDataRootDir("./");// Default is "./"
@@ -285,7 +284,12 @@ public class HowTo_EngineUse
     SEHemorrhage h = new SEHemorrhage();
     h.setType(HemorrhageData.eType.External);
     h.setCompartment(PulseCompartments.Vascular.RightLeg);
-    h.getRate().setValue(75,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
+    h.getSeverity().setValue(0.8);
+    // Optionally, You can set the flow rate of the hemorrhage,
+    // This needs to be provided the proper flow rate associated with the anatomy
+    // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
+    // It is intended to interact with sensors or with something continuously monitoring physiology and updating the flow
+    //h.getFlowRate().setValue(75,VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
     if(!pe.processAction(h))
     {
       Log.error("Engine was unable to process requested actions");
@@ -310,7 +314,8 @@ public class HowTo_EngineUse
     }
 
     // Stop the hemorrhage
-    h.getRate().setValue(0,VolumePerTimeUnit.mL_Per_min);
+    h.getSeverity().setValue(0);
+    //h.getFlowRate().setValue(0,VolumePerTimeUnit.mL_Per_min);
     if(!pe.processAction(h))
     {
       Log.error("Engine was unable to process requested actions");

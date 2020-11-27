@@ -18,14 +18,11 @@ class SEFluidCircuitPath;
  */
 class PULSE_DECL MechanicalVentilator : public PulseMechanicalVentilator
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulseEquipment;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  MechanicalVentilator(PulseData& pc);
-  PulseData& m_data;
-
 public:
+  MechanicalVentilator(PulseData& pc);
   virtual ~MechanicalVentilator();
 
   void Clear();

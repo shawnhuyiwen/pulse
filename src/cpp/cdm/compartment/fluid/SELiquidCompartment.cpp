@@ -148,7 +148,7 @@ SELiquidSubstanceQuantity& SELiquidCompartment::CreateSubstanceQuantity(SESubsta
     m_SubstanceQuantities.push_back(subQ);
     m_TransportSubstances.push_back(subQ);
   }
-  if (!m_Children.empty() && !m_FluidChildren.empty())
+  if (!m_FluidChildren.empty())
   {
     for (SELiquidCompartment* child : m_Children)
       subQ->AddChild(child->CreateSubstanceQuantity(substance));

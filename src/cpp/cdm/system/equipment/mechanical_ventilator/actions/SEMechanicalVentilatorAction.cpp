@@ -11,7 +11,7 @@ SEMechanicalVentilatorAction::SEMechanicalVentilatorAction(Logger* logger) : SEE
 
 SEMechanicalVentilatorAction::~SEMechanicalVentilatorAction()
 {
-  Clear();
+
 }
 
 void SEMechanicalVentilatorAction::Clear()

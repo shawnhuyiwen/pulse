@@ -14,14 +14,11 @@ class SELiquidSubstanceQuantity;
 */
 class PULSE_DECL Inhaler : public PulseInhaler
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulseEquipment;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  Inhaler(PulseData& pc);
-  PulseData& m_data;
-
 public:
+  Inhaler(PulseData& pc);
   virtual ~Inhaler();
 
   void Clear();

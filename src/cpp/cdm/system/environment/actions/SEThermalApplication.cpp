@@ -20,7 +20,9 @@ SEThermalApplication::SEThermalApplication(Logger* logger) : SEEnvironmentAction
 
 SEThermalApplication::~SEThermalApplication()
 {
-  Clear();
+  SAFE_DELETE(m_ActiveHeating);
+  SAFE_DELETE(m_ActiveCooling);
+  SAFE_DELETE(m_AppliedTemperature);
 }
 
 void SEThermalApplication::Clear()
@@ -28,9 +30,12 @@ void SEThermalApplication::Clear()
   SEEnvironmentAction::Clear();
   if (m_ClearContents)
   {
-    SAFE_DELETE(m_ActiveHeating);
-    SAFE_DELETE(m_ActiveCooling);
-    SAFE_DELETE(m_AppliedTemperature);
+    if (m_ActiveHeating)
+      m_ActiveHeating->Clear();
+    if (m_ActiveCooling)
+      m_ActiveCooling->Clear();
+    if (m_AppliedTemperature)
+      m_AppliedTemperature->Clear();
   }
 }
 

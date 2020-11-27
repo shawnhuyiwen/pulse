@@ -11,7 +11,7 @@
 #include "properties/SEScalarVolume.h"
 
 SEFluidCircuitPath::SEFluidCircuitPath(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt, const std::string& name) :
-  SECircuitPath<SEScalarVolumePerTime, SEScalarPressureTimePerVolume, SEScalarVolumePerPressure, SEScalarPressureTimeSquaredPerVolume, SEScalarPressure, SEScalarVolume>(src, tgt, name),
+  SECircuitPath<FLUID_CIRCUIT_PATH>(src, tgt, name),
   m_FluidSourceNode(src), m_FluidTargetNode(tgt)
 {
 

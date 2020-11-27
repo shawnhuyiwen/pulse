@@ -355,10 +355,10 @@ void PBEngine::Load(const CDM_BIND::PatientConfigurationData& src, SEPatientConf
 }
 void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatientConfiguration& dst, const SESubstanceManager& subMgr)
 {
-  if (src.has_patient())
-    PBPatient::Load(src.patient(), dst.GetPatient());
-  else
+  if (!src.patientfile().empty())
     dst.SetPatientFile(src.patientfile());
+  else if (src.has_patient())
+    PBPatient::Load(src.patient(), dst.GetPatient());
   
   if (src.has_conditions())
     PBEngine::Load(src.conditions(), dst.GetConditions(), subMgr);

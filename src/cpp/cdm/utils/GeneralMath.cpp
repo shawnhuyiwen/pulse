@@ -426,3 +426,69 @@ double GeneralMath::LogisticFunction(double a, double x50, double k, double x)
   return y;
 }
 
+double GeneralMath::RootMeanSquaredError(std::vector<double> observed, std::vector<double> predicted, bool normalize, double outlierStandardDeviation)
+{
+  double squaredSum = 0;
+  double sum = 0;
+  unsigned int length = 0;
+  double observedMax = 0.0;
+  double observedMin = 0.0;
+
+  for (unsigned int i = 0; i < observed.size(); i++)
+  {
+    double difference = std::abs(observed[i] - predicted[i]);
+    sum += difference;
+    squaredSum += std::pow(difference, 2);
+    length++;
+
+    if (i == 0 || observed[i] > observedMax)
+    {
+      observedMax = observed[i];
+    }
+    if (i == 0 || observed[i] < observedMax)
+    {
+      observedMin = observed[i];
+    }
+  }
+
+  if (outlierStandardDeviation > 0)
+  {
+    double mean = sum / length;
+    double variance = 0;
+    for (unsigned int i = 0; i < observed.size(); i++)
+    {
+      variance += std::pow(std::abs(observed[i] - predicted[i]) - mean, 2);
+    }
+    variance /= length;
+    double standardDeviation = std::sqrt(variance);
+
+    double maxDifference = outlierStandardDeviation * standardDeviation;
+    for (unsigned int i = 0; i < observed.size(); i++)
+    {
+      double difference = std::abs(observed[i] - predicted[i]);
+      if (difference > maxDifference)
+      {
+        squaredSum -= std::pow(difference, 2); // Remove it from the calculation
+        length--;
+        continue; // Doesn't effect normalizing
+      }
+
+      if (i == 0 || observed[i] > observedMax)
+      {
+        observedMax = observed[i];
+      }
+      if (i == 0 || observed[i] < observedMax)
+      {
+        observedMin = observed[i];
+      }
+    }
+  }
+
+  double RMSE = std::sqrt(squaredSum / length);
+  if (normalize)
+  {
+    RMSE /= (observedMax - observedMin);
+  }
+
+  return RMSE;
+}

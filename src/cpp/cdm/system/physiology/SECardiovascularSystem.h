@@ -131,13 +131,21 @@ public:
   virtual SEScalarPressure& GetPulsePressure();
   virtual double GetPulsePressure(const PressureUnit& unit) const;
 
+  virtual bool HasSystemicVascularResistance() const;
+  virtual SEScalarPressureTimePerVolume& GetSystemicVascularResistance();
+  virtual double GetSystemicVascularResistance(const PressureTimePerVolumeUnit& unit) const;
+
   virtual bool HasSystolicArterialPressure() const;
   virtual SEScalarPressure& GetSystolicArterialPressure();
   virtual double GetSystolicArterialPressure(const PressureUnit& unit) const;
 
-  virtual bool HasSystemicVascularResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetSystemicVascularResistance();
-  virtual double GetSystemicVascularResistance(const PressureTimePerVolumeUnit& unit) const;
+  virtual bool HasTotalHemorrhageRate() const;
+  virtual SEScalarVolumePerTime& GetTotalHemorrhageRate();
+  virtual double GetTotalHemorrhageRate(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasTotalHemorrhagedVolume() const;
+  virtual SEScalarVolume& GetTotalHemorrhagedVolume();
+  virtual double GetTotalHemorrhagedVolume(const VolumeUnit& unit) const;
 
 protected:
 
@@ -171,4 +179,6 @@ protected:
   SEScalarPressure*                      m_PulsePressure;
   SEScalarPressure*                      m_SystolicArterialPressure;
   SEScalarPressureTimePerVolume*         m_SystemicVascularResistance;
+  SEScalarVolumePerTime*                 m_TotalHemorrhageRate;
+  SEScalarVolume*                        m_TotalHemorrhagedVolume;
 };

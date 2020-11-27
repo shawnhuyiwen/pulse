@@ -11,7 +11,7 @@ SEEnvironmentCondition::SEEnvironmentCondition(Logger* logger) : SECondition(log
 
 SEEnvironmentCondition::~SEEnvironmentCondition()
 {
-  Clear();
+
 }
 
 void SEEnvironmentCondition::Clear()

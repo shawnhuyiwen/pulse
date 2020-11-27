@@ -42,7 +42,19 @@ SEConditionManager::SEConditionManager(Logger* logger) : Loggable(logger)
 
 SEConditionManager::~SEConditionManager()
 {
-  Clear();
+  SAFE_DELETE(m_ARDS);
+  SAFE_DELETE(m_Anemia);
+  SAFE_DELETE(m_COPD);
+  SAFE_DELETE(m_ChronicVentricularSystolicDysfunction);
+  SAFE_DELETE(m_RenalStenosis);
+  SAFE_DELETE(m_ConsumeMeal);
+  SAFE_DELETE(m_LobarPneumonia);
+  SAFE_DELETE(m_PericardialEffusion);
+  SAFE_DELETE(m_PulmonaryFibrosis);
+  SAFE_DELETE(m_PulmonaryShunt);
+  SAFE_DELETE(m_ImpairedAlveolarExchange);
+  SAFE_DELETE(m_InitialEnvironmentalConditions);
+  SAFE_DELETE(m_Sepsis);
 }
 
 void SEConditionManager::Clear()

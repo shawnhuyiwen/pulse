@@ -13,14 +13,13 @@ SEAcuteStress::SEAcuteStress(Logger* logger) : SEPatientAction(logger)
 
 SEAcuteStress::~SEAcuteStress()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEAcuteStress::Clear()
 {
-  
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEAcuteStress::Copy(const SEAcuteStress& src)

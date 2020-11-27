@@ -23,7 +23,7 @@
 #include "properties/SEScalar0To1.h"
 #include "utils/GeneralMath.h"
 
-Endocrine::Endocrine(PulseData& data) : PulseEndocrineSystem(data.GetLogger()), m_data(data)
+Endocrine::Endocrine(PulseData& data) : PulseEndocrineSystem(data)
 {
   Clear();
 }

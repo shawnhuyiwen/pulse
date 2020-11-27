@@ -73,7 +73,12 @@ void HowToHemorrhage()
   SEHemorrhage hemorrhageLeg;
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
-  hemorrhageLeg.GetRate().SetValue(250,VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
+  hemorrhageLeg.GetSeverity().SetValue(0.8);
+  // Optionally, You can set the flow rate of the hemorrhage,
+  // This needs to be provided the proper flow rate associated with the anatomy
+  // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
+  // It is intended to interact with sensors or with something continuously monitoring physiology and updating the flow
+  //hemorrhageLeg.GetFlowRate().SetValue(250,VolumePerTimeUnit::mL_Per_min);//the rate of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
 
   // Advance some time to let the body bleed out a bit
@@ -91,7 +96,7 @@ void HowToHemorrhage()
   // Hemorrhage is sealed
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//location of hemorrhage
-  hemorrhageLeg.GetRate().SetValue(0,VolumePerTimeUnit::mL_Per_min);//rate is set to 0 to close the bleed
+  hemorrhageLeg.GetFlowRate().SetValue(0,VolumePerTimeUnit::mL_Per_min);//rate is set to 0 to close the bleed
   pe->ProcessAction(hemorrhageLeg);
   
   

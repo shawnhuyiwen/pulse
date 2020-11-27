@@ -5,6 +5,7 @@ add_library_ex(CommonDataModelTests
   CPP_FILES
     AdvancedCircuitTest.cpp
     BasicCircuitTest.cpp
+    BlackBoxTest.cpp
     CommonDataModelTest.cpp
     GasCompartmentTest.cpp
     LiquidCompartmentTest.cpp

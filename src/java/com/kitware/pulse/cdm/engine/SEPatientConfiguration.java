@@ -27,7 +27,8 @@ public class SEPatientConfiguration
   
   public void reset() 
   {
-    patient=null;
+    if(patient != null)
+      patient.reset();
     patientFile = "";
     conditions.clear();
   }
@@ -40,9 +41,7 @@ public class SEPatientConfiguration
     {
     case PATIENT:
     {
-      SEPatient p = new SEPatient();
-      SEPatient.load(src.getPatient(),p);
-      dst.setPatient(p);
+      SEPatient.load(src.getPatient(),dst.getPatient());
       break;
     }
     case PATIENTFILE:
@@ -63,10 +62,10 @@ public class SEPatientConfiguration
   }
   protected static void unload(SEPatientConfiguration src, PatientConfigurationData.Builder dst)
   {
-    if(src.hasPatient())
-      dst.setPatient(SEPatient.unload(src.patient));
     if(src.hasPatientFile())
       dst.setPatientFile(src.patientFile);
+    else if(src.hasPatient())
+      dst.setPatient(SEPatient.unload(src.patient));
     if(src.conditions.size()>0)
     {
       for(SECondition c : src.conditions)
@@ -93,38 +92,26 @@ public class SEPatientConfiguration
   
   public SEPatient getPatient()
   {
+    if(patient == null)
+      this.patient = new SEPatient();
     return patient;
-  }
-  public void setPatient(SEPatient patient)
-  {
-    this.patient = patient;
-    this.patientFile = "";
   }
   public boolean hasPatient()
   {
     return patient==null ? false : true;
   }
-  public void invalidatePatient()
-  {
-    patient = null;
-  }
-
+  
   public String getPatientFile()
   {
     return patientFile;
   }
   public void setPatientFile(String patientFile)
   {
-    this.patient = null;
     this.patientFile = patientFile;
   }
   public boolean hasPatientFile()
   {
     return patientFile.isEmpty() ? false : true;
-  }
-  public void invalidatePatientFile()
-  {
-    patientFile = "";
   }
   
   public List<SECondition> getConditions() 

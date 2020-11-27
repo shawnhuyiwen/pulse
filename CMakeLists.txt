@@ -77,7 +77,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
     option(USE_SYSTEM_${extProj} "Exclude ${extProj} from superbuild and use an existing build." OFF)
     mark_as_advanced(USE_SYSTEM_${extProj})
   endmacro()
-  
+
   define_dependency(Eigen3)
   if(WIN32)
     # *nix systems have this already
@@ -92,7 +92,7 @@ if(${PROJECT_NAME}_SUPERBUILD)
         message(FATAL_ERROR "Unable to support Python API, cannot find Python3")
     endif()
   endif()
-  
+
   if(${PROJECT_NAME}_DEPENDENCIES)
     if(MSVC OR XCode)
       if(NOT ${PROJECT_NAME}_SLAVE_BUILD)
@@ -122,7 +122,7 @@ endif()
 #                               INNERBUILD
 #-----------------------------------------------------------------------------
 
-if(MSVC)  
+if(MSVC)
 # Using MD as that seems to be what I run into alot, you could change these to /MT and /MTd if you want...
   set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1 /MP /EHsc" CACHE STRING INTERNAL FORCE)
   set(CMAKE_CXX_FLAGS_RELEASE "/MD /MP /EHsc" CACHE STRING INTERNAL FORCE)
@@ -153,19 +153,29 @@ if(WIN32)
   # *nix systems have this already
   find_package(Dirent REQUIRED)
 endif()
-# Use the config written by protobuf
-set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "" FORCE)
-find_package(protobuf REQUIRED NO_DEFAULT_PATH)
+
+# Tell protobuf-config.cmake to try to be compatible with FindProtobuf.cmake;
+# this makes it easier for us to work with either one
+set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "CMake built-in FindProtobuf.cmake module compatible" FORCE)
+mark_as_advanced(protobuf_MODULE_COMPATIBLE)
+
+# Try to use the config written by protobuf
+find_package(protobuf QUIET CONFIG NO_DEFAULT_PATH)
+if(protobuf_DIR AND protobuf_FOUND)
+  # Success; set flag so we will reexport protobuf for our users
+  set(Pulse_USING_PROTOBUF_DIR ON)
+elseif(NOT protobuf_FOUND)
+  # Nope; fall back on FindProtobuf.cmake
+  find_package(Protobuf REQUIRED)
+endif()
+
+# Ensure protobuf exported target exists
 get_target_property(PROTOBUF_LIBRARY_RELEASE protobuf::libprotobuf LOCATION_RELEASE)
 get_target_property(PROTOBUF_LIBRARY_DEBUG protobuf::libprotobuf LOCATION_DEBUG)
-#message(STATUS "PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE}")
-#message(STATUS "PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG}")
 install(FILES ${PROTOBUF_LIBRARY_RELEASE} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
 install(FILES ${PROTOBUF_LIBRARY_DEBUG} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
 get_filename_component(PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG} NAME)
 get_filename_component(PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE} NAME)
-#message(STATUS "PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE}")
-#message(STATUS "PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG}")
 
 set(SCHEMA_SRC "${CMAKE_SOURCE_DIR}/schema")
 set(SCHEMA_DST "${CMAKE_SOURCE_DIR}/schema/bind")
@@ -228,7 +238,7 @@ export(
 # Configure '${PROJECT_NAME}Config.cmake' for a build tree
 set(build_config ${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake)
 configure_package_config_file(
-  cmake/${PROJECT_NAME}Config.cmake.in 
+  cmake/${PROJECT_NAME}ConfigBuild.cmake.in
   ${build_config}
   INSTALL_DESTINATION "${PROJECT_BINARY_DIR}"
   )
@@ -244,7 +254,7 @@ install(
 
 set(install_config ${PROJECT_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}Config.cmake)
 configure_package_config_file(
-  cmake/${PROJECT_NAME}Config.cmake.in 
+  cmake/${PROJECT_NAME}ConfigInstall.cmake.in
   ${install_config}
   INSTALL_DESTINATION ${${PROJECT_NAME}_INSTALL_CONFIG_DIR}
   )

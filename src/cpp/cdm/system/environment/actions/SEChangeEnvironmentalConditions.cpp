@@ -22,19 +22,21 @@
 SEChangeEnvironmentalConditions::SEChangeEnvironmentalConditions(Logger* logger) : SEEnvironmentAction(logger)
 {
   m_EnvironmentalConditions = nullptr;
-  InvalidateEnvironmentalConditionsFile();
+  m_EnvironmentalConditionsFile = "";
 }
 
 SEChangeEnvironmentalConditions::~SEChangeEnvironmentalConditions()
 {
-  Clear();
+  m_EnvironmentalConditionsFile = "";
+  SAFE_DELETE(m_EnvironmentalConditions);
 }
 
 void SEChangeEnvironmentalConditions::Clear()
 {
   SEEnvironmentAction::Clear();
-  InvalidateEnvironmentalConditionsFile();
-  SAFE_DELETE(m_EnvironmentalConditions);
+  m_EnvironmentalConditionsFile = "";
+  if (m_EnvironmentalConditions)
+    m_EnvironmentalConditions->Clear();
 }
 
 void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr)
@@ -53,7 +55,6 @@ bool SEChangeEnvironmentalConditions::HasEnvironmentalConditions() const
 }
 SEEnvironmentalConditions& SEChangeEnvironmentalConditions::GetEnvironmentalConditions()
 {
-  m_EnvironmentalConditionsFile = "";
   if (m_EnvironmentalConditions == nullptr)
     m_EnvironmentalConditions = new SEEnvironmentalConditions(GetLogger());
   return *m_EnvironmentalConditions;
@@ -62,11 +63,6 @@ const SEEnvironmentalConditions* SEChangeEnvironmentalConditions::GetEnvironment
 {
   return m_EnvironmentalConditions;
 }
-void SEChangeEnvironmentalConditions::InvalidateEnvironmentalConditions()
-{
-  SAFE_DELETE(m_EnvironmentalConditions);
-}
-
 
 std::string SEChangeEnvironmentalConditions::GetEnvironmentalConditionsFile() const
 {
@@ -74,19 +70,12 @@ std::string SEChangeEnvironmentalConditions::GetEnvironmentalConditionsFile() co
 }
 void SEChangeEnvironmentalConditions::SetEnvironmentalConditionsFile(const std::string& fileName)
 {
-  if (m_EnvironmentalConditions != nullptr)
-    SAFE_DELETE(m_EnvironmentalConditions);
   m_EnvironmentalConditionsFile = fileName;
 }
 bool SEChangeEnvironmentalConditions::HasEnvironmentalConditionsFile() const
 {
-  return m_EnvironmentalConditionsFile.empty() ? false : true;
+  return !m_EnvironmentalConditionsFile.empty();
 }
-void SEChangeEnvironmentalConditions::InvalidateEnvironmentalConditionsFile()
-{
-  m_EnvironmentalConditionsFile = "";
-}
-
 
 void SEChangeEnvironmentalConditions::ToString(std::ostream &str) const
 {
@@ -94,8 +83,10 @@ void SEChangeEnvironmentalConditions::ToString(std::ostream &str) const
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   if (HasEnvironmentalConditionsFile())
+  {
     str << "\n\tEnvironmental Conditions File: "; str << m_EnvironmentalConditionsFile;
-  if (HasEnvironmentalConditions())
+  }
+  else if (HasEnvironmentalConditions())
   {
     str << "\n\tSurroundingType: " << eSurroundingType_Name(m_EnvironmentalConditions->GetSurroundingType());
     str << "\n\tAir Velocity: ";  m_EnvironmentalConditions->HasAirVelocity() ? str << m_EnvironmentalConditions->GetAirVelocity() : str << "Not Set";
@@ -123,4 +114,3 @@ void SEChangeEnvironmentalConditions::ToString(std::ostream &str) const
   }
   str << std::flush;
 }
-

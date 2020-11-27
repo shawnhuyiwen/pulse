@@ -25,18 +25,11 @@ SEEnergySystem::SEEnergySystem(Logger* logger) : SESystem(logger)
   m_SkinTemperature=nullptr;
   m_SweatRate = nullptr;
   m_TotalMetabolicRate = nullptr;
-  m_TotalWorkRateLevel = nullptr;  
+  m_TotalWorkRateLevel = nullptr;
 }
 
 SEEnergySystem::~SEEnergySystem()
 {
-  Clear();
-}
-
-void SEEnergySystem::Clear()
-{
-  SESystem::Clear();
-
   SAFE_DELETE(m_AchievedExerciseLevel);
   SAFE_DELETE(m_CoreTemperature);
   SAFE_DELETE(m_CreatinineProductionRate);
@@ -48,6 +41,23 @@ void SEEnergySystem::Clear()
   SAFE_DELETE(m_SweatRate);
   SAFE_DELETE(m_TotalMetabolicRate);
   SAFE_DELETE(m_TotalWorkRateLevel);
+}
+
+void SEEnergySystem::Clear()
+{
+  SESystem::Clear();
+
+  INVALIDATE_PROPERTY(m_AchievedExerciseLevel);
+  INVALIDATE_PROPERTY(m_CoreTemperature);
+  INVALIDATE_PROPERTY(m_CreatinineProductionRate);
+  INVALIDATE_PROPERTY(m_ExerciseMeanArterialPressureDelta);
+  INVALIDATE_PROPERTY(m_FatigueLevel);
+  INVALIDATE_PROPERTY(m_KetoneProductionRate);
+  INVALIDATE_PROPERTY(m_LactateProductionRate);
+  INVALIDATE_PROPERTY(m_SkinTemperature);
+  INVALIDATE_PROPERTY(m_SweatRate);
+  INVALIDATE_PROPERTY(m_TotalMetabolicRate);
+  INVALIDATE_PROPERTY(m_TotalWorkRateLevel);
 }
 
 const SEScalar* SEEnergySystem::GetScalar(const std::string& name)

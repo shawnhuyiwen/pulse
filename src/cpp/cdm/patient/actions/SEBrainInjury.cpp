@@ -14,13 +14,14 @@ SEBrainInjury::SEBrainInjury(Logger* logger) : SEPatientAction(logger)
 
 SEBrainInjury::~SEBrainInjury()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
+  m_Type = eBrainInjury_Type::Diffuse;
 }
 
 void SEBrainInjury::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
   m_Type = eBrainInjury_Type::Diffuse;
 }
 

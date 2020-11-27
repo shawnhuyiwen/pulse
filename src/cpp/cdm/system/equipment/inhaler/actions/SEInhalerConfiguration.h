@@ -25,7 +25,6 @@ public:
   virtual std::string GetConfigurationFile() const;
   virtual void SetConfigurationFile(const std::string& fileName);
   virtual bool HasConfigurationFile() const;
-  virtual void InvalidateConfigurationFile();
 
   virtual void ToString(std::ostream &str) const;
 

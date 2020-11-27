@@ -27,7 +27,6 @@ public:
   virtual std::string GetNutritionFile() const;
   virtual void SetNutritionFile(const std::string& fileName);
   virtual bool HasNutritionFile() const;
-  virtual void InvalidateNutritionFile();
 
   virtual void ToString(std::ostream &str) const;
 

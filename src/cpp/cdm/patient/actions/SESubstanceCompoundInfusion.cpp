@@ -16,14 +16,16 @@ SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompou
 
 SESubstanceCompoundInfusion::~SESubstanceCompoundInfusion()
 {
-  Clear();
+  SAFE_DELETE(m_Rate);
+  SAFE_DELETE(m_BagVolume);
+  // m_Compound=nullptr; Keeping mapping!!
 }
 
 void SESubstanceCompoundInfusion::Clear()
 {
   SESubstanceAdministration::Clear();
-  m_Rate=nullptr;
-  m_BagVolume=nullptr;  
+  INVALIDATE_PROPERTY(m_Rate);
+  INVALIDATE_PROPERTY(m_BagVolume);
   // m_Compound=nullptr; Keeping mapping!!
 }
 
@@ -79,11 +81,11 @@ double SESubstanceCompoundInfusion::GetBagVolume(const VolumeUnit& unit) const
 
 SESubstanceCompound& SESubstanceCompoundInfusion::GetSubstanceCompound()
 {
-  return (SESubstanceCompound&)m_Compound;
+  return const_cast<SESubstanceCompound&>(m_Compound);
 }
 const SESubstanceCompound& SESubstanceCompoundInfusion::GetSubstanceCompound() const
 {
-  return (SESubstanceCompound&)m_Compound;
+  return m_Compound;
 }
 
 void SESubstanceCompoundInfusion::ToString(std::ostream &str) const

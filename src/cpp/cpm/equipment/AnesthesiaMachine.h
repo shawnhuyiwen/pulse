@@ -16,14 +16,11 @@ class SEFluidCircuitPath;
  */    
 class PULSE_DECL AnesthesiaMachine : public PulseAnesthesiaMachine
 {
-  friend class PulseData;
+  friend class PulseController;
   friend class PBPulseEquipment;//friend the serialization class
   friend class PulseEngineTest;
-protected:
-  AnesthesiaMachine(PulseData& pc);
-  PulseData& m_data;
-
 public:
+  AnesthesiaMachine(PulseData& pc);
   virtual ~AnesthesiaMachine();
 
   void Clear();

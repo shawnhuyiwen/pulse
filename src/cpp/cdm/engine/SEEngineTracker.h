@@ -36,8 +36,6 @@ class SEDataRequestScalar : public SEGenericScalar
 protected:
   SEDataRequestScalar(Logger* logger) : SEGenericScalar(logger)
   {
-    Heading.clear();
-
     UpdateProperty = CompartmentUpdate::None;
     GasCmpt = nullptr;
     GasSubstance = nullptr;
@@ -49,7 +47,8 @@ protected:
   void UpdateScalar();
   void SetScalar(const SEScalar* s, SEDataRequest& dr);// SEScalar* in order to internnally throw error if the Track cannot find the requested property, it will pass in nullptr if it cannot find it
 
-  std::string     Heading;
+  size_t                        idx;
+  std::string                   Heading;
 
   // Compartment related variables
   CompartmentUpdate             UpdateProperty;

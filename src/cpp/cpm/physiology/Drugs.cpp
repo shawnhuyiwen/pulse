@@ -53,7 +53,7 @@
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarNegative1To1.h"
 
-Drugs::Drugs(PulseData& data) : PulseDrugSystem(data.GetLogger()), m_data(data)
+Drugs::Drugs(PulseData& data) : PulseDrugSystem(data)
 {
   Clear();
 }
@@ -198,7 +198,7 @@ void Drugs::AdministerSubstanceBolus()
   double dose_mL;
   double concentration_ugPermL;
   double massIncrement_ug = 0;
-  double administrationTime_s = 2; //administer dose over 2 seconds for a bolus dose
+  double administrationTime_s;
 
   for (auto b : boluses)
   {    
@@ -222,7 +222,7 @@ void Drugs::AdministerSubstanceBolus()
       subQ = m_venaCavaVascular->GetSubstanceQuantity(*sub);
       break;
     case eSubstanceAdministration_Route::Intramuscular:
-      subQ = m_muscleIntracellular->GetSubstanceQuantity(*sub);            
+      subQ = m_muscleIntracellular->GetSubstanceQuantity(*sub);
       break;
     default:
       /// \error Error: Unavailable Administration Route
@@ -230,8 +230,14 @@ void Drugs::AdministerSubstanceBolus()
       completedBolus.push_back(b.first);// Remove it 
       continue;
     }
-    
-    concentration_ugPermL = bolus->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_mL);
+
+    if (!bolus->HasAdminDuration())
+    {
+      bolus->GetAdminDuration().SetValue(2, TimeUnit::s);
+      Info("Defaulting bolus administration duration of " + sub->GetName() + " to 2s");
+    }
+    administrationTime_s = bolus->GetAdminDuration(TimeUnit::s);
+    concentration_ugPermL = bolus->GetConcentration(MassPerVolumeUnit::ug_Per_mL);
     massIncrement_ug = dose_mL*concentration_ugPermL*m_dt_s / administrationTime_s;
     bolusState->GetElapsedTime().IncrementValue(m_dt_s, TimeUnit::s);
     bolusState->GetAdministeredDose().IncrementValue(massIncrement_ug / concentration_ugPermL,VolumeUnit::mL);
@@ -261,7 +267,6 @@ void Drugs::AdministerSubstanceInfusion()
     return;
 
   SESubstanceInfusion*            infusion;
-  SESubstance*                    sub;
   SELiquidSubstanceQuantity*      subQ;
   double concentration_ug_Per_mL;
   double rate_mL_Per_s;
@@ -269,7 +274,7 @@ void Drugs::AdministerSubstanceInfusion()
 
   for (auto i : infusions)
   {
-    sub = (SESubstance*)i.first; /// \todo sub needs to be const
+    auto const sub = i.first;
     infusion = i.second;
     concentration_ug_Per_mL = infusion->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_mL);
     rate_mL_Per_s = infusion->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);

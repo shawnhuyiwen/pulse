@@ -43,6 +43,10 @@ public:
   virtual eSubstanceAdministration_Route GetAdminRoute() const;
   virtual void SetAdminRoute(eSubstanceAdministration_Route name);
 
+  virtual bool HasAdminDuration() const;
+  virtual SEScalarTime& GetAdminDuration();
+  virtual double GetAdminDuration(const TimeUnit& unit) const;
+
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();
   virtual double GetConcentration(const MassPerVolumeUnit& unit) const;
@@ -60,11 +64,10 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
+  const SESubstance&             m_Substance;
   eSubstanceAdministration_Route m_AdminRoute;
+  SEScalarTime*                  m_AdminDuration;
   SEScalarMassPerVolume*         m_Concentration;
   SEScalarVolume*                m_Dose;
-  const SESubstance&             m_Substance;
   SESubstanceBolusState          m_State;
-  
-};        
-
+};

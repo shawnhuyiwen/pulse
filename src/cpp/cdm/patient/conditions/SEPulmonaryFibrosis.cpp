@@ -13,13 +13,13 @@ SEPulmonaryFibrosis::SEPulmonaryFibrosis(Logger* logger) : SEPatientCondition(lo
 
 SEPulmonaryFibrosis::~SEPulmonaryFibrosis()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SEPulmonaryFibrosis::Clear()
 {
   SEPatientCondition::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEPulmonaryFibrosis::Copy(const SEPulmonaryFibrosis& src)

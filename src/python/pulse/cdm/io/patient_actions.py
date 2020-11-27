@@ -258,8 +258,10 @@ def serialize_hemorrhage_to_bind(src: SEHemorrhage, dst: HemorrhageData):
     dst.Type = src.get_type().value
     if src.has_compartment():
         dst.Compartment = src.get_compartment()
-    if src.has_rate():
-        serialize_scalar_volume_per_time_to_bind(src.get_rate(), dst.Rate)
+    if src.has_flow_rate():
+        serialize_scalar_volume_per_time_to_bind(src.get_flow_rate(), dst.FlowRate)
+    if src.has_severity():
+        serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
 
 def serialize_hemorrhage_from_bind(src: HemorrhageData, dst: SEHemorrhage):
     raise Exception("serialize_hemorrhage_from_bind not implemented")
@@ -369,6 +371,8 @@ def serialize_respiratory_fatigue_from_bind(src: RespiratoryFatigueData, dst: SE
 
 def serialize_substance_bolus_to_bind(src:SESubstanceBolus, dst: SubstanceBolusData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
+    if src.has_admin_duration():
+        serialize_scalar_time_to_bind(src.get_admin_duration(), dst.AdministrationDuration)
     if src.has_concentration():
         serialize_scalar_mass_per_volume_to_bind(src.get_concentration(), dst.Concentration)
     if src.has_dose():

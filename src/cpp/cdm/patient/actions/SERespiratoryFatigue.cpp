@@ -13,14 +13,13 @@ SERespiratoryFatigue::SERespiratoryFatigue(Logger* logger) : SEPatientAction(log
 
 SERespiratoryFatigue::~SERespiratoryFatigue()
 {
-  Clear();
+  SAFE_DELETE(m_Severity);
 }
 
 void SERespiratoryFatigue::Clear()
 {
-  
   SEPatientAction::Clear();
-  SAFE_DELETE(m_Severity);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SERespiratoryFatigue::Copy(const SERespiratoryFatigue& src)

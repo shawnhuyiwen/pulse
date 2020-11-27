@@ -141,21 +141,22 @@ message ConfigurationData
     pulse.cdm.bind.eSwitch                             EnableRenal                                          = 1;
                                                        
     pulse.cdm.bind.ScalarMassPerVolumeData             PlasmaSodiumConcentrationSetPoint                    = 2;
+    pulse.cdm.bind.ScalarMassPerVolumeData             PeritubularPotassiumConcentrationSetPoint            = 3;
                                                        
-    pulse.cdm.bind.ScalarAreaData                      LeftGlomerularFilteringSurfaceAreaBaseline           = 3;
-    pulse.cdm.bind.ScalarVolumePerTimePressureAreaData LeftGlomerularFluidPermeabilityBaseline              = 4;
-    pulse.cdm.bind.ScalarAreaData                      LeftTubularReabsorptionFilteringSurfaceAreaBaseline  = 5;
-    pulse.cdm.bind.ScalarVolumePerTimePressureAreaData LeftTubularReabsorptionFluidPermeabilityBaseline     = 6;
+    pulse.cdm.bind.ScalarAreaData                      LeftGlomerularFilteringSurfaceAreaBaseline           = 4;
+    pulse.cdm.bind.ScalarVolumePerTimePressureAreaData LeftGlomerularFluidPermeabilityBaseline              = 5;
+    pulse.cdm.bind.ScalarAreaData                      LeftTubularReabsorptionFilteringSurfaceAreaBaseline  = 6;
+    pulse.cdm.bind.ScalarVolumePerTimePressureAreaData LeftTubularReabsorptionFluidPermeabilityBaseline     = 7;
                                                        
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData     MaximumAfferentResistance                            = 7;
-    pulse.cdm.bind.ScalarPressureTimePerVolumeData     MinimumAfferentResistance                            = 8;
+    pulse.cdm.bind.ScalarPressureTimePerVolumeData     MaximumAfferentResistance                            = 8;
+    pulse.cdm.bind.ScalarPressureTimePerVolumeData     MinimumAfferentResistance                            = 9;
                                                        
-    pulse.cdm.bind.ScalarAreaData                      RightGlomerularFilteringSurfaceAreaBaseline          = 9;
-    pulse.cdm.bind.ScalarVolumePerTimePressureAreaData RightGlomerularFluidPermeabilityBaseline             = 10;
-    pulse.cdm.bind.ScalarAreaData                      RightTubularReabsorptionFilteringSurfaceAreaBaseline = 11;
-    pulse.cdm.bind.ScalarVolumePerTimePressureAreaData RightTubularReabsorptionFluidPermeabilityBaseline    = 12;
+    pulse.cdm.bind.ScalarAreaData                      RightGlomerularFilteringSurfaceAreaBaseline          = 10;
+    pulse.cdm.bind.ScalarVolumePerTimePressureAreaData RightGlomerularFluidPermeabilityBaseline             = 11;
+    pulse.cdm.bind.ScalarAreaData                      RightTubularReabsorptionFilteringSurfaceAreaBaseline = 12;
+    pulse.cdm.bind.ScalarVolumePerTimePressureAreaData RightTubularReabsorptionFluidPermeabilityBaseline    = 13;
                                                        
-    pulse.cdm.bind.ScalarMassPerTimeData               TargetSodiumDelivery                                 = 13;
+    pulse.cdm.bind.ScalarMassPerTimeData               TargetSodiumDelivery                                 = 14;
   }
   
   message RespiratoryConfigurationData
@@ -198,7 +199,6 @@ message ConfigurationData
   RenalConfigurationData                               RenalConfiguration                                   = 17;
   RespiratoryConfigurationData                         RespiratoryConfiguration                             = 18;
   TissueConfigurationData                              TissueConfiguration                                  = 19;
-  
-  pulse.cdm.bind.OverridesData 						   InitialOverrides									    = 20;
+  pulse.cdm.bind.OverridesData                         InitialOverrides                                     = 20;
 }
  

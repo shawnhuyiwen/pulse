@@ -70,7 +70,7 @@ namespace HowTo_UseEngine
       pulse.SetLogFilename("./test_results/HowTo_EngineUse.cs.log");
       // You can also have pulse log to the console (std::cout)
       // By default, console logging is turned off
-      pulse.LogToConsole(true);
+      pulse.LogToConsole(false);// We have a logger writing to the console in this example
       // It is recommended to listen and  manage the log messages yourself
       // With a listener, you can add messages to a log, display, or write them to console
       pulse.SetLogListener(new MyLogListener());
@@ -78,7 +78,7 @@ namespace HowTo_UseEngine
       // You must provide an event listener to get events
       pulse.SetEventHandler(new MyEventHandler());
 
-      InitializationType initType = InitializationType.PatientObject;
+      InitializationType initType = InitializationType.StateFileName;
       switch (initType)
       {
         case InitializationType.StateFileName:
@@ -210,7 +210,12 @@ namespace HowTo_UseEngine
       SEHemorrhage h = new SEHemorrhage();
       h.SetType(SEHemorrhage.eType.External);
       h.SetCompartment("RightLeg");
-      h.GetRate().SetValue(50, VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
+      h.GetSeverity().SetValue(0.8);
+      // Optionally, You can set the flow rate of the hemorrhage,
+      // This needs to be provided the proper flow rate associated with the anatomy
+      // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
+      // It is intended to interact with sensors or with something continuously monitoring physiology and updating the flow
+      //h.GetFlowRate().SetValue(50, VolumePerTimeUnit.mL_Per_min);// Change this to 750 if you want to see how engine failures are handled!!
       actions.Add(h);
       if (!pulse.ProcessActions(actions))
       {
@@ -232,7 +237,8 @@ namespace HowTo_UseEngine
       }
 
       // Stop the hemorrhage
-      h.GetRate().SetValue(0, VolumePerTimeUnit.mL_Per_min);
+      h.GetSeverity().SetValue(0);
+      //h.GetFlowRate().SetValue(0, VolumePerTimeUnit.mL_Per_min);
       if (!pulse.ProcessAction(h))
       {
         Console.WriteLine("Engine was unable to process requested actions");

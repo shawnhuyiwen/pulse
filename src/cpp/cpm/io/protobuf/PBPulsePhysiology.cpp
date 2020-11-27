@@ -122,23 +122,6 @@ void PBPulsePhysiology::Serialize(const PULSE_BIND::CardiovascularData& src, Car
   }
   if (!dst.m_HemorrhagePaths.empty())
     dst.m_data.GetCircuits().GetCardiovascularCircuit().StateChange();
-  // Only associating references here, as these are a subset of the hemorrhage links/paths we just processed
-  for (auto name : src.internalhemorrhagelinks())
-  {
-    SELiquidCompartmentLink* hLink = dst.m_data.GetCompartments().GetCardiovascularGraph().GetLink(name);
-    if (hLink == nullptr)
-      dst.Fatal("Unable to find Internal Hemorrhage Link " + name);
-    else
-      dst.m_InternalHemorrhageLinks.push_back(hLink);
-  }
-  for (auto name : src.internalhemorrhagepaths())
-  {
-    SEFluidCircuitPath* hPath = dst.m_data.GetCircuits().GetCardiovascularCircuit().GetPath(name);
-    if (hPath == nullptr)
-      dst.Fatal("Unable to find Internal Hemorrhage path " + name);
-    else
-      dst.m_InternalHemorrhagePaths.push_back(hPath);
-  }
 }
 PULSE_BIND::CardiovascularData* PBPulsePhysiology::Unload(const Cardiovascular& src)
 {
@@ -189,10 +172,6 @@ void PBPulsePhysiology::Serialize(const Cardiovascular& src, PULSE_BIND::Cardiov
   for (auto* p : src.m_HemorrhagePaths)
     dst.add_hemorrhagepaths(p->GetName());
 
-  for (auto* l : src.m_InternalHemorrhageLinks)
-    dst.add_internalhemorrhagelinks(l->GetName());
-  for (auto* p : src.m_InternalHemorrhagePaths)
-    dst.add_internalhemorrhagepaths(p->GetName());
 }
 
 void PBPulsePhysiology::Load(const PULSE_BIND::DrugData& src, Drugs& dst)

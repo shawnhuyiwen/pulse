@@ -1,5 +1,5 @@
 {
-  "Name": "HemorrhageClass2BloodFemoralArtery",
+  "Name": "HemorrhageSeverityP5",
   "Description": "",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
@@ -62,7 +62,9 @@
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
 
-        { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"}
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhageRate", "Unit": "mL/s"},
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "TotalHemorrhagedVolume", "Unit": "mL"}
     ]
   },
   "AnyAction": [{
@@ -78,66 +80,18 @@
     "PatientAction": {
       "Hemorrhage": {
         "Compartment": "RightLegVasculature",
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Value": 90.0,
-            "Unit": "mL/min"
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 1.0
           }
         }
       }
     }
   }, {
-    "AdvanceTime": {
+  "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 1200.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Hemorrhage": {
-        "Compartment": "RightLegVasculature",
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Unit": "mL/min"
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 170.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "SubstanceCompoundInfusion": {
-        "SubstanceCompound": "Blood",
-        "BagVolume": {
-          "ScalarVolume": {
-            "Value": 500.0,
-            "Unit": "mL"
-          }
-        },
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Value": 100.0,
-            "Unit": "mL/min"
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 400.0,
+          "Value": 2500.0,
           "Unit": "s"
         }
       }

@@ -22,14 +22,13 @@ public:
 
 protected:
   virtual void BalanceByIntensive()=0;
-  virtual int GetVertexIndex(const GraphVertexType& v) const;
+  virtual size_t GetVertexIndex(const GraphVertexType& v) const;
   virtual const std::vector<GraphVertexType*>& GetVerticies() const;
   virtual const std::vector<GraphEdgeType*>* GetSourceEdges(const GraphVertexType& v) const;
   virtual const std::vector<GraphEdgeType*>* GetTargetEdges(const GraphVertexType& v) const;
 
   std::vector<GraphVertexType*>                                  m_Verticies;
-  std::map<const GraphVertexType*, int>                       m_VertexIndicies;
+  std::map<const GraphVertexType*, size_t>                       m_VertexIndicies;
   std::map<const GraphVertexType*, std::vector<GraphEdgeType*>*> m_SourceEdgeMap;
   std::map<const GraphVertexType*, std::vector<GraphEdgeType*>*> m_TargetEdgeMap;
 };
-

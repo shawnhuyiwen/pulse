@@ -159,7 +159,7 @@ bool PulseScenarioExec::Execute(PhysiologyEngine& engine, const PulseScenario& s
       m_AutoSerializationReload       = cfg->GetAutoSerialization()->GetReloadState();
       m_AutoSerializationFileName     = cfg->GetAutoSerialization()->GetFileName();
       m_AutoSerializationDirectory    = cfg->GetAutoSerialization()->GetDirectory();
-      CreateFilePath(m_AutoSerializationDirectory);
+      CreatePath(m_AutoSerializationDirectory);
       Info("Exeucting Scenario with AutoSerialization");
     }
   }

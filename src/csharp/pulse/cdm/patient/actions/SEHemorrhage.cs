@@ -11,29 +11,42 @@ namespace Pulse.CDM
       Internal
     }
 
-    protected string compartment;
-    protected SEScalarVolumePerTime rate;
     protected eType type;
+    protected string compartment;
+    protected SEScalarVolumePerTime flow_rate;
+    protected SEScalar0To1 severity;
 
     public SEHemorrhage()
     {
-      compartment = null;
-      rate = null;
       type = eType.External;
+      compartment = null;
+      flow_rate = null;
+      severity = null;
     }
 
     public override void Clear()
     {
       base.Clear();
-      compartment = null;
-      if (rate != null)
-        rate.Invalidate();
       type = eType.External;
+      compartment = null;
+      if (flow_rate != null)
+        flow_rate.Invalidate();
+      if (severity != null)
+        severity.Invalidate();
     }
 
     public override bool IsValid()
     {
-      return HasRate() && HasCompartment();
+      return HasCompartment() && (HasFlowRate() || HasSeverity());
+    }
+
+    public new eType GetType()
+    {
+      return type;
+    }
+    public void SetType(eType t)
+    {
+      type = t;
     }
 
     public string GetCompartment()
@@ -49,27 +62,26 @@ namespace Pulse.CDM
       return !string.IsNullOrEmpty(compartment);
     }
 
-    public bool HasRate()
+    public bool HasFlowRate()
     {
-      return rate == null ? false : rate.IsValid();
+      return flow_rate == null ? false : flow_rate.IsValid();
     }
-    public SEScalarVolumePerTime GetRate()
+    public SEScalarVolumePerTime GetFlowRate()
     {
-      if (rate == null)
-        rate = new SEScalarVolumePerTime();
-      return rate;
+      if (flow_rate == null)
+        flow_rate = new SEScalarVolumePerTime();
+      return flow_rate;
     }
 
-    public new eType GetType()
+    public bool HasSeverity()
     {
-      return type;
+      return severity == null ? false : severity.IsValid();
     }
-    public void SetType(eType t)
+    public SEScalar0To1 GetSeverity()
     {
-      type = t;
+      if (severity == null)
+        severity = new SEScalar0To1();
+      return severity;
     }
   }
 }
-
-
-

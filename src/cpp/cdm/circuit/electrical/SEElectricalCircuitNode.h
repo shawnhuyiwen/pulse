@@ -3,8 +3,9 @@
 
 #pragma once
 #include "circuit/SECircuitNode.h"
+class SEElectricalBlackBox;
 
-class CDM_DECL SEElectricalCircuitNode : public SECircuitNode<SEScalarElectricPotential, SEScalarElectricCharge>
+class CDM_DECL SEElectricalCircuitNode : public SECircuitNode<ELECTRICAL_CIRCUIT_NODE>
 {
   friend class PBCircuit;//friend the serialization class
   friend class SECircuitManager;

@@ -509,10 +509,10 @@ void PBPatientAction::Load(const CDM_BIND::ConsumeNutrientsData& src, SEConsumeN
 void PBPatientAction::Serialize(const CDM_BIND::ConsumeNutrientsData& src, SEConsumeNutrients& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_nutrition())
-    PBPatientNutrition::Load(src.nutrition(), dst.GetNutrition());
-  else
+  if(!src.nutritionfile().empty())
     dst.SetNutritionFile(src.nutritionfile());
+  else if (src.has_nutrition())
+    PBPatientNutrition::Load(src.nutrition(), dst.GetNutrition());
 }
 CDM_BIND::ConsumeNutrientsData* PBPatientAction::Unload(const SEConsumeNutrients& src)
 {
@@ -523,10 +523,10 @@ CDM_BIND::ConsumeNutrientsData* PBPatientAction::Unload(const SEConsumeNutrients
 void PBPatientAction::Serialize(const SEConsumeNutrients& src, CDM_BIND::ConsumeNutrientsData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasNutrition())
-    dst.set_allocated_nutrition(PBPatientNutrition::Unload(*src.m_Nutrition));
-  else if (src.HasNutritionFile())
+  if (src.HasNutritionFile())
     dst.set_nutritionfile(src.m_NutritionFile);
+  else if (src.HasNutrition())
+    dst.set_allocated_nutrition(PBPatientNutrition::Unload(*src.m_Nutrition));
 }
 void PBPatientAction::Copy(const SEConsumeNutrients& src, SEConsumeNutrients& dst)
 {
@@ -717,10 +717,12 @@ void PBPatientAction::Load(const CDM_BIND::HemorrhageData& src, SEHemorrhage& ds
 void PBPatientAction::Serialize(const CDM_BIND::HemorrhageData& src, SEHemorrhage& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_rate())
-    PBProperty::Load(src.rate(), dst.GetRate());
   dst.m_Compartment = src.compartment();
   dst.SetType((eHemorrhage_Type)src.type());
+  if (src.has_flowrate())
+    PBProperty::Load(src.flowrate(), dst.GetFlowRate());
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
 }
 CDM_BIND::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
 {
@@ -731,11 +733,13 @@ CDM_BIND::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
 void PBPatientAction::Serialize(const SEHemorrhage& src, CDM_BIND::HemorrhageData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasRate())
-    dst.set_allocated_rate(PBProperty::Unload(*src.m_Rate));
   if (src.HasCompartment())
     dst.set_compartment(src.m_Compartment);
   dst.set_type((CDM_BIND::HemorrhageData::eType)src.m_Type);
+  if (src.HasFlowRate())
+    dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
 }
 void PBPatientAction::Copy(const SEHemorrhage& src, SEHemorrhage& dst)
 {
@@ -1095,6 +1099,8 @@ void PBPatientAction::Serialize(const CDM_BIND::SubstanceBolusData& src, SESubst
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetAdminRoute((eSubstanceAdministration_Route)src.administrationroute());
+  if (src.has_administrationduration())
+    PBProperty::Load(src.administrationduration(), dst.GetAdminDuration());
   if (src.has_dose())
     PBProperty::Load(src.dose(), dst.GetDose());
   if (src.has_concentration())
@@ -1113,6 +1119,8 @@ void PBPatientAction::Serialize(const SESubstanceBolus& src, CDM_BIND::Substance
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.set_substance(src.m_Substance.GetName());
   dst.set_administrationroute((CDM_BIND::SubstanceBolusData::eRoute)src.m_AdminRoute);
+  if (src.HasAdminDuration())
+    dst.set_allocated_administrationduration(PBProperty::Unload(*src.m_AdminDuration));
   if (src.HasDose())
     dst.set_allocated_dose(PBProperty::Unload(*src.m_Dose));
   if (src.HasConcentration())

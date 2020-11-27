@@ -83,13 +83,6 @@ SERenalSystem::SERenalSystem(Logger* logger) : SESystem(logger)
 
 SERenalSystem::~SERenalSystem()
 {
-  Clear();  
-}
-
-void SERenalSystem::Clear()
-{
-  SESystem::Clear();
-
   SAFE_DELETE(m_GlomerularFiltrationRate);
   SAFE_DELETE(m_FiltrationFraction);
 
@@ -148,6 +141,70 @@ void SERenalSystem::Clear()
   SAFE_DELETE(m_UrineSpecificGravity);
   SAFE_DELETE(m_UrineVolume);
   SAFE_DELETE(m_UrineUreaNitrogenConcentration);
+}
+
+void SERenalSystem::Clear()
+{
+  SESystem::Clear();
+
+  INVALIDATE_PROPERTY(m_GlomerularFiltrationRate);
+  INVALIDATE_PROPERTY(m_FiltrationFraction);
+
+  INVALIDATE_PROPERTY(m_LeftAfferentArterioleResistance);
+  INVALIDATE_PROPERTY(m_LeftBowmansCapsulesHydrostaticPressure);
+  INVALIDATE_PROPERTY(m_LeftBowmansCapsulesOsmoticPressure);
+  INVALIDATE_PROPERTY(m_LeftEfferentArterioleResistance);
+  INVALIDATE_PROPERTY(m_LeftGlomerularCapillariesHydrostaticPressure);
+  INVALIDATE_PROPERTY(m_LeftGlomerularCapillariesOsmoticPressure);
+  INVALIDATE_PROPERTY(m_LeftGlomerularFiltrationCoefficient);
+  INVALIDATE_PROPERTY(m_LeftGlomerularFiltrationRate);
+  INVALIDATE_PROPERTY(m_LeftGlomerularFiltrationSurfaceArea);
+  INVALIDATE_PROPERTY(m_LeftGlomerularFluidPermeability);
+  INVALIDATE_PROPERTY(m_LeftFiltrationFraction);
+  INVALIDATE_PROPERTY(m_LeftNetFiltrationPressure);
+  INVALIDATE_PROPERTY(m_LeftNetReabsorptionPressure);
+  INVALIDATE_PROPERTY(m_LeftPeritubularCapillariesHydrostaticPressure);
+  INVALIDATE_PROPERTY(m_LeftPeritubularCapillariesOsmoticPressure);
+  INVALIDATE_PROPERTY(m_LeftReabsorptionFiltrationCoefficient);
+  INVALIDATE_PROPERTY(m_LeftReabsorptionRate);
+  INVALIDATE_PROPERTY(m_LeftTubularReabsorptionFiltrationSurfaceArea);
+  INVALIDATE_PROPERTY(m_LeftTubularReabsorptionFluidPermeability);
+  INVALIDATE_PROPERTY(m_LeftTubularHydrostaticPressure);
+  INVALIDATE_PROPERTY(m_LeftTubularOsmoticPressure);
+
+  INVALIDATE_PROPERTY(m_RenalBloodFlow);
+  INVALIDATE_PROPERTY(m_RenalPlasmaFlow);
+  INVALIDATE_PROPERTY(m_RenalVascularResistance);
+
+  INVALIDATE_PROPERTY(m_RightAfferentArterioleResistance);
+  INVALIDATE_PROPERTY(m_RightBowmansCapsulesHydrostaticPressure);
+  INVALIDATE_PROPERTY(m_RightBowmansCapsulesOsmoticPressure);
+  INVALIDATE_PROPERTY(m_RightEfferentArterioleResistance);
+  INVALIDATE_PROPERTY(m_RightGlomerularCapillariesHydrostaticPressure);
+  INVALIDATE_PROPERTY(m_RightGlomerularCapillariesOsmoticPressure);
+  INVALIDATE_PROPERTY(m_RightGlomerularFiltrationCoefficient);
+  INVALIDATE_PROPERTY(m_RightGlomerularFiltrationRate);
+  INVALIDATE_PROPERTY(m_RightGlomerularFiltrationSurfaceArea);
+  INVALIDATE_PROPERTY(m_RightGlomerularFluidPermeability);
+  INVALIDATE_PROPERTY(m_RightFiltrationFraction);
+  INVALIDATE_PROPERTY(m_RightNetFiltrationPressure);
+  INVALIDATE_PROPERTY(m_RightNetReabsorptionPressure);
+  INVALIDATE_PROPERTY(m_RightPeritubularCapillariesHydrostaticPressure);
+  INVALIDATE_PROPERTY(m_RightPeritubularCapillariesOsmoticPressure);
+  INVALIDATE_PROPERTY(m_RightReabsorptionFiltrationCoefficient);
+  INVALIDATE_PROPERTY(m_RightReabsorptionRate);
+  INVALIDATE_PROPERTY(m_RightTubularReabsorptionFiltrationSurfaceArea);
+  INVALIDATE_PROPERTY(m_RightTubularReabsorptionFluidPermeability);
+  INVALIDATE_PROPERTY(m_RightTubularHydrostaticPressure);
+  INVALIDATE_PROPERTY(m_RightTubularOsmoticPressure);
+
+  INVALIDATE_PROPERTY(m_UrinationRate);
+  INVALIDATE_PROPERTY(m_UrineOsmolality);
+  INVALIDATE_PROPERTY(m_UrineOsmolarity);
+  INVALIDATE_PROPERTY(m_UrineProductionRate);
+  INVALIDATE_PROPERTY(m_UrineSpecificGravity);
+  INVALIDATE_PROPERTY(m_UrineVolume);
+  INVALIDATE_PROPERTY(m_UrineUreaNitrogenConcentration);
 }
 
 const SEScalar* SERenalSystem::GetScalar(const std::string& name)

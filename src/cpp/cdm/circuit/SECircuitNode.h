@@ -9,11 +9,11 @@
 #include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarEnergy.h"
 
-#define CIRCUIT_NODE_TEMPLATE typename PotentialScalar, typename QuantityScalar
-#define CIRCUIT_NODE_TYPES PotentialScalar,QuantityScalar
-#define ELECTRICAL_CIRCUIT_NODE SEScalarElectricPotential, SEScalarElectricCharge
-#define FLUID_CIRCUIT_NODE SEScalarPressure, SEScalarVolume
-#define THERMAL_CIRCUIT_NODE SEScalarTemperature, SEScalarEnergy
+#define CIRCUIT_NODE_TEMPLATE typename BlackBoxType, typename PotentialScalar, typename QuantityScalar
+#define CIRCUIT_NODE_TYPES BlackBoxType,PotentialScalar,QuantityScalar
+#define ELECTRICAL_CIRCUIT_NODE SEElectricalBlackBox, SEScalarElectricPotential, SEScalarElectricCharge
+#define FLUID_CIRCUIT_NODE SEFluidBlackBox, SEScalarPressure, SEScalarVolume
+#define THERMAL_CIRCUIT_NODE SEThermalBlackBox, SEScalarTemperature, SEScalarEnergy
 
 template<CIRCUIT_NODE_TEMPLATE>
 class SECircuitNode : public Loggable
@@ -41,8 +41,12 @@ public:
   virtual bool HasQuantityBaseline() const;
   virtual QuantityScalar& GetQuantityBaseline();
 
-  void SetCalculatorIndex(const int index);
-  int GetCalculatorIndex() const;
+  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
+  virtual BlackBoxType* GetBlackBox() const { return m_BlackBox; }
+  virtual void SetBlackBox(BlackBoxType* bb) { m_BlackBox = bb; }
+
+  void SetCalculatorIndex(const size_t index);
+  size_t GetCalculatorIndex() const;
 
   bool IsReferenceNode() const;
   void SetAsReferenceNode();
@@ -61,7 +65,9 @@ protected:
   QuantityScalar*         m_NextQuantity;
   QuantityScalar*         m_QuantityBaseline;
 
+  BlackBoxType* m_BlackBox = nullptr;
+
 private:
-  int                     m_CalculatorIndex;
+  size_t                  m_CalculatorIndex;
   bool                    m_IsReferenceNode = false;
 };

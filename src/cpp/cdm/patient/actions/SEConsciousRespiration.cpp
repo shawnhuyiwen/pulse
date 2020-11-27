@@ -17,7 +17,8 @@ SEConsciousRespiration::SEConsciousRespiration(Logger* logger) : SEPatientAction
 
 SEConsciousRespiration::~SEConsciousRespiration()
 {
-  Clear();
+  DELETE_VECTOR(m_Commands);
+  m_StartImmediately = false;
 }
 
 void SEConsciousRespiration::Clear()

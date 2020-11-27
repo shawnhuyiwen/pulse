@@ -270,7 +270,7 @@ void SECompartmentManager::AddGasCompartmentSubstance(SESubstance& s)
     }
   }
 }
-const std::vector<SESubstance*>& SECompartmentManager::GetGasCompartmentSubstances()
+const std::vector<SESubstance*>& SECompartmentManager::GetGasCompartmentSubstances() const
 {
   return m_GasSubstances;
 }
@@ -411,7 +411,7 @@ void SECompartmentManager::AddLiquidCompartmentSubstance(SESubstance& s)
     }
   }
 }
-const std::vector<SESubstance*>& SECompartmentManager::GetLiquidCompartmentSubstances()
+const std::vector<SESubstance*>& SECompartmentManager::GetLiquidCompartmentSubstances() const
 {
   return m_LiquidSubstances;
 }

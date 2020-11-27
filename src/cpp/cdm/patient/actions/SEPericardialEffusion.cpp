@@ -13,13 +13,13 @@ SEPericardialEffusion::SEPericardialEffusion(Logger* logger) : SEPatientAction(l
 
 SEPericardialEffusion::~SEPericardialEffusion()
 {
-  Clear();
+  SAFE_DELETE(m_EffusionRate);
 }
 
 void SEPericardialEffusion::Clear()
 {
   SEPatientAction::Clear();
-  SAFE_DELETE(m_EffusionRate);
+  INVALIDATE_PROPERTY(m_EffusionRate);
 }
 
 void SEPericardialEffusion::Copy(const SEPericardialEffusion& src)

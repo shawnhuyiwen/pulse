@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineTest.h"
+#include "controller/Engine.h"
 #include "controller/Controller.h"
 #include "controller/Circuits.h"
 #include "controller/Substances.h"
@@ -66,7 +67,8 @@ void PulseEngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   DataTrack outTrk;
   std::ofstream file;
 
-  PulseController pc;
+  PulseEngine pe;
+  PulseController& pc = pe.GetController();
   pc.GetLogger()->SetLogFile(sTestDirectory + "/" + tName + ".log");
   pc.GetLogger()->Info("Running " + tName);
   SEPatient patient(pc.GetLogger());
