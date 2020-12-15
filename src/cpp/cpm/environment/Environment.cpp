@@ -229,8 +229,9 @@ void Environment::PreProcess()
   }
 
   //Set clothing resistor
-  double dClothingResistance_rsi = GetEnvironmentalConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
   double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
+  double dClothingResistance_rsi = GetEnvironmentalConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
+  dClothingResistance_rsi = MAX(dClothingResistance_rsi, 1e-10);// Prevent a zero clothing resistance to prevent a path resistance of 0
   m_SkinToClothing->GetNextResistance().SetValue(dClothingResistance_rsi / dSurfaceArea_m2, HeatResistanceUnit::K_Per_W);
 
   //Set the skin heat loss
@@ -557,7 +558,7 @@ void Environment::CalculateRadiation()
       dResistance_K_Per_W = dSurfaceArea_m2 / dRadiativeHeatTransferCoefficient_WPerM2_K;
     }
 
-    MAX(dResistance_K_Per_W, m_data.GetConfiguration().GetDefaultClosedHeatResistance(HeatResistanceUnit::K_Per_W));
+    dResistance_K_Per_W = MAX(dResistance_K_Per_W, m_data.GetConfiguration().GetDefaultClosedHeatResistance(HeatResistanceUnit::K_Per_W));
     m_ClothingToEnclosurePath->GetNextResistance().SetValue(dResistance_K_Per_W, HeatResistanceUnit::K_Per_W);
 
     //Set the source
@@ -624,7 +625,7 @@ void Environment::CalculateConvection()
     dResistance_K_Per_W = dSurfaceArea_m2 / dConvectiveHeatTransferCoefficient_WPerM2_K;
   }
 
-  MAX(dResistance_K_Per_W, m_data.GetConfiguration().GetDefaultClosedHeatResistance(HeatResistanceUnit::K_Per_W));
+  dResistance_K_Per_W = MAX(dResistance_K_Per_W, m_data.GetConfiguration().GetDefaultClosedHeatResistance(HeatResistanceUnit::K_Per_W));
   m_ClothingToEnvironmentPath->GetNextResistance().SetValue(dResistance_K_Per_W, HeatResistanceUnit::K_Per_W);
   
   //Set the source
