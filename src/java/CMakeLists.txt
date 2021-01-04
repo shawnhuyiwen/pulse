@@ -41,7 +41,8 @@ add_jar(PulseJava ${PULSE_JAVA_FILES} ${GOOGLE_JAVA_FILES}
       "jar/reflections-0.9.12.jar"
       "jar/slf4j-api-1.7.30.jar"
       "jar/xmlbeans-3.1.0.jar"
-    OUTPUT_NAME Pulse)
+    OUTPUT_NAME Pulse
+    MANIFEST ${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.MF)
 get_target_property(_jarFile PulseJava JAR_FILE)
 add_custom_command(TARGET PulseJava POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${_jarFile} ${CMAKE_INSTALL_PREFIX}/bin)
