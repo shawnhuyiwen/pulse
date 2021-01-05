@@ -38,6 +38,7 @@ void HowToHemorrhage()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->LogToConsole(true);
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
@@ -67,7 +68,7 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");;
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
 
   // Hemorrhage Starts - instantiate a hemorrhage action and have the engine process it
   SEHemorrhage hemorrhageLeg;
@@ -82,7 +83,11 @@ void HowToHemorrhage()
   pe->ProcessAction(hemorrhageLeg);
 
   // Advance some time to let the body bleed out a bit
-  tracker.AdvanceModelTime(300);
+  if(!tracker.AdvanceModelTime(300)) // Check the return of advance time, if your hemorrhage is too extreme, the engine will enter an unsolvable/irreversable state
+  {
+    pe->GetLogger()->Fatal("Unable to advance engine time");
+    return;
+  }
 
   pe->GetLogger()->Info("The patient has been hemorrhaging for 300s");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -91,7 +96,7 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");;
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
 
   // Hemorrhage is sealed
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
@@ -101,7 +106,11 @@ void HowToHemorrhage()
   
   
   // Advance some time while the medic gets the drugs ready
-  tracker.AdvanceModelTime(100);
+  if(!tracker.AdvanceModelTime(100))
+  {
+    pe->GetLogger()->Fatal("Unable to advance engine time");
+    return;
+  }
 
   pe->GetLogger()->Info("The patient has NOT been hemorrhaging for 100s");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -110,7 +119,7 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");;
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
 
   // Patient is stabilizing, but not great
 
@@ -121,7 +130,11 @@ void HowToHemorrhage()
   iVSaline.GetRate().SetValue(100,VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline
   pe->ProcessAction(iVSaline);
 
-  tracker.AdvanceModelTime(400);
+  if (!tracker.AdvanceModelTime(400))
+  {
+    pe->GetLogger()->Fatal("Unable to advance engine time");
+    return;
+  }
 
   pe->GetLogger()->Info("The patient has been getting fluids for the past 400s");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -130,6 +143,6 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");;
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info("Finished");
 }

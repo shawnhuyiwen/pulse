@@ -47,6 +47,27 @@
 
 #include "utils/FileUtils.h"
 
+class FatalListner : public LoggerForward
+{
+public:
+  FatalListner(SEEventManager& mgr, SEScalarTime& ct) : m_Events (mgr), m_CurrentTime(ct) {};
+  ~FatalListner() = default;
+
+  virtual void ForwardDebug(const std::string& msg, const std::string& origin) { }
+  virtual void ForwardInfo(const std::string& msg, const std::string& origin) { }
+  virtual void ForwardWarning(const std::string& msg, const std::string& origin) { }
+  virtual void ForwardError(const std::string& msg, const std::string& origin) { }
+  virtual void ForwardFatal(const std::string& msg, const std::string& origin)
+  {
+    m_Events.SetEvent(eEvent::IrreversibleState, true, m_CurrentTime);
+  }
+
+protected:
+  SEEventManager& m_Events;
+  SEScalarTime& m_CurrentTime;
+};
+
+
 PulseData::PulseData(Logger* logger) : Loggable(logger)
 {
   m_State = EngineState::NotReady;
@@ -240,6 +261,8 @@ PulseController::~PulseController()
   SAFE_DELETE(m_MechanicalVentilator);
 
   SAFE_DELETE(m_EventManager);
+  m_Logger->RemoveForward(m_LogForward);
+  SAFE_DELETE(m_LogForward);
 
   SAFE_DELETE(m_Compartments);
   SAFE_DELETE(m_BlackBoxes);
@@ -284,6 +307,8 @@ void PulseController::Allocate()
   m_MechanicalVentilator = new MechanicalVentilator(*this);
 
   m_EventManager = new SEEventManager(GetLogger());
+  m_LogForward = new FatalListner(*m_EventManager, m_CurrentTime);
+  m_Logger->AddForward(m_LogForward);
 
   m_Compartments = new PulseCompartments(*this);
   m_BlackBoxes = new PulseBlackBoxes(*this);
@@ -527,6 +552,8 @@ void PulseController::SetSimulationTime(const SEScalarTime& time)
 
 bool PulseController::IsReady() const
 {
+  if (m_State == EngineState::Fatal)
+    return false;
   if (m_State == EngineState::NotReady)
   {
     Error("Engine is not ready to process, Initialize the engine or Load a state.");
@@ -535,16 +562,20 @@ bool PulseController::IsReady() const
   return true;
 }
 
-void PulseController::AdvanceModelTime()
+bool PulseController::AdvanceModelTime()
 {
   if (!IsReady())
-    return;
-  if (m_EventManager->IsEventActive(eEvent::IrreversibleState))
-    return;
+    return false;
 
   PreProcess();
   Process();
   PostProcess();
+
+  if (m_EventManager->IsEventActive(eEvent::IrreversibleState))
+  {
+    m_State = EngineState::Fatal;
+    return false;
+  }
 
   m_EventManager->UpdateEvents(m_Config->GetTimeStep());
   m_CurrentTime.Increment(m_Config->GetTimeStep());
@@ -555,15 +586,19 @@ void PulseController::AdvanceModelTime()
 
   // TODO Figure out a way to track what overrides were used and which were not
   m_ScalarOverrides.clear();
+
+  return true;
 }
 
-void PulseController::AdvanceModelTime(double time, const TimeUnit& unit)
+bool PulseController::AdvanceModelTime(double time, const TimeUnit& unit)
 {
   double time_s = Convert(time, unit, TimeUnit::s) + m_SpareAdvanceTime_s;
   int count = (int)(time_s / GetTimeStep().GetValue(TimeUnit::s));
   for (int i = 0; i < count; i++)
-    AdvanceModelTime();
+    if (!AdvanceModelTime())
+      return false;
   m_SpareAdvanceTime_s = time_s - (count * GetTimeStep().GetValue(TimeUnit::s));
+  return true;
 }
 
 void PulseController::AtSteadyState(EngineState state)
@@ -797,13 +832,4 @@ bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) cons
 
   Error("Unsupported patient assessment");
   return false;
-}
-
-void PulseController::ForwardFatal(const std::string&  msg, const std::string&  origin)
-{
-  std::string err;
-  err.append(msg);
-  err.append(" ");
-  err.append(origin);
-  throw PhysiologyEngineException(err);
 }
