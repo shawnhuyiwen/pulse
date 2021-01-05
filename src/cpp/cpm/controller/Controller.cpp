@@ -227,6 +227,9 @@ PulseController::PulseController(Logger* logger) : PulseData(logger)
 }
 PulseController::~PulseController()
 {
+  m_Logger->RemoveForward(m_LogForward);
+  SAFE_DELETE(m_LogForward);
+
   SAFE_DELETE(m_Stabilizer);
 
   SAFE_DELETE(m_Substances);
@@ -261,8 +264,6 @@ PulseController::~PulseController()
   SAFE_DELETE(m_MechanicalVentilator);
 
   SAFE_DELETE(m_EventManager);
-  m_Logger->RemoveForward(m_LogForward);
-  SAFE_DELETE(m_LogForward);
 
   SAFE_DELETE(m_Compartments);
   SAFE_DELETE(m_BlackBoxes);
@@ -307,13 +308,14 @@ void PulseController::Allocate()
   m_MechanicalVentilator = new MechanicalVentilator(*this);
 
   m_EventManager = new SEEventManager(GetLogger());
-  m_LogForward = new FatalListner(*m_EventManager, m_CurrentTime);
-  m_Logger->AddForward(m_LogForward);
 
   m_Compartments = new PulseCompartments(*this);
   m_BlackBoxes = new PulseBlackBoxes(*this);
 
   m_Circuits = new PulseCircuits(*this);
+
+  m_LogForward = new FatalListner(*m_EventManager, m_CurrentTime);
+  m_Logger->AddForward(m_LogForward);
 }
 
 bool PulseController::SetConfigurationOverride(const SEEngineConfiguration* config)

@@ -72,7 +72,6 @@ void Logger::Deinitialize() {}
 //logger constructor
 Logger::Logger(const std::string& logFilename)
 {
-  RemoveForwards();
   m_time = nullptr;
   _log_lib = new log_lib();
   SetLogFile(logFilename);
