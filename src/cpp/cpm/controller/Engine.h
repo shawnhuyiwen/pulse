@@ -41,8 +41,8 @@ public:
   virtual double GetSimulationTime(const TimeUnit& unit) const override;
   virtual void SetSimulationTime(const SEScalarTime& time) override;
 
-  virtual void  AdvanceModelTime() override;
-  virtual void  AdvanceModelTime(double time, const TimeUnit& unit) override;
+  virtual bool  AdvanceModelTime() override;
+  virtual bool  AdvanceModelTime(double time, const TimeUnit& unit) override;
   virtual bool  ProcessAction(const SEAction& action) override;
   virtual const SEActionManager& GetActionManager() const override;
 

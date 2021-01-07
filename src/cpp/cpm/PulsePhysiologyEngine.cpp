@@ -52,7 +52,7 @@ PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
   data = new PulseEngineThunk::pimpl;
   data->eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine().release());
   data->eng->GetLogger()->LogToConsole(false);
-  data->eng->GetLogger()->SetForward(this);
+  data->eng->GetLogger()->AddForward(this);
 }
 PulseEngineThunk::~PulseEngineThunk()
 {
@@ -306,7 +306,7 @@ bool PulseEngineThunk::AdvanceTimeStep()
   bool success = true;
   try
   {
-    data->eng->AdvanceModelTime();
+    success = data->eng->AdvanceModelTime();
   }
   catch (CommonDataModelException& ex)
   {

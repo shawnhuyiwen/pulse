@@ -178,7 +178,7 @@ public:
   /// through the API at this time. 
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual void AdvanceModelTime() = 0;
+  virtual bool AdvanceModelTime() = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -189,7 +189,7 @@ public:
   /// through the API at this time.
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual void AdvanceModelTime(double time, const TimeUnit& unit) = 0;
+  virtual bool AdvanceModelTime(double time, const TimeUnit& unit) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

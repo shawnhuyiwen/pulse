@@ -48,7 +48,8 @@ enum class EngineState { NotReady=0,
                          AtInitialStableState,
                          SecondaryStabilization,
                          AtSecondaryStableState,
-                         Active };
+                         Active,
+                         Fatal};
 
 
 // Keep enums in sync with appropriate proto file !!
@@ -202,6 +203,7 @@ protected:
   SEPatient*                            m_CurrentPatient=nullptr;
 
   SEEventManager*                       m_EventManager=nullptr;
+  LoggerForward*                        m_LogForward=nullptr;
 
   SEAdvanceHandler*                     m_AdvanceHandler=nullptr;
 
@@ -241,8 +243,8 @@ public:
 
   virtual void SetSimulationTime(const SEScalarTime& time);
 
-  virtual void  AdvanceModelTime();
-  virtual void  AdvanceModelTime(double time, const TimeUnit& unit);
+  virtual bool  AdvanceModelTime();
+  virtual bool  AdvanceModelTime(double time, const TimeUnit& unit);
   virtual bool  ProcessAction(const SEAction& action);
 
   virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const;
@@ -278,8 +280,6 @@ protected:
   virtual void Process();
   virtual void PostProcess();
 
-  virtual void ForwardFatal(const std::string&  msg, const std::string&  origin);
-
   PulseConfiguration const* m_ConfigOverride=nullptr;
   PulseStabilizationController* m_Stabilizer=nullptr;
 };
@@ -290,7 +290,7 @@ public:
   PulseStabilizationController(PulseController& pc) : _pc(pc) {}
   ~PulseStabilizationController() = default;
 
-  virtual void AdvanceTime() override { _pc.AdvanceModelTime(); }
+  virtual bool AdvanceTime() override { return _pc.AdvanceModelTime(); }
   virtual SEEngineTracker* GetEngineTracker() override
   {
     return &_pc.GetData().GetEngineTracker();
