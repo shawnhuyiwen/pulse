@@ -1219,7 +1219,7 @@ void Cardiovascular::Hemorrhage()
 
         //Add bleed link for transport
         //Find the source compartment (may be a leaf) to make the graph work (i.e., to transport)
-        SELiquidCompartment* sourceCompartment;
+        SELiquidCompartment* sourceCompartment = nullptr;
         if (std::find(compartment->GetNodeMapping().GetNodes().begin(), compartment->GetNodeMapping().GetNodes().end(), node) != compartment->GetNodeMapping().GetNodes().end())
         {
           sourceCompartment = compartment;
@@ -1236,6 +1236,8 @@ void Cardiovascular::Hemorrhage()
             }
           }
         }
+        
+        if (sourceCompartment == nullptr) Fatal("Unable to find the correct source compartment.");
 
         SELiquidCompartmentLink& newHemorrhageLink = m_data.GetCompartments().CreateLiquidLink(*sourceCompartment, *m_Groundcmpt, compartment->GetName() + "Hemorrhage");
         newHemorrhageLink.MapPath(*newHemorrhagePath);
