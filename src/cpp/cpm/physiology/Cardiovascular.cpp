@@ -663,36 +663,36 @@ void Cardiovascular::PostProcess(bool solve_and_transport)
 void Cardiovascular::CalculateVitalSigns()
 {
   // Grab data from the circuit in order to calculate a running mean
-  double AortaNodePressure_mmHg = m_Aorta->GetPressure(PressureUnit::mmHg);
-  double AortaNodeCO2PartialPressure_mmHg = m_AortaCO2 == nullptr ? 0 : m_AortaCO2->GetPartialPressure(PressureUnit::mmHg); // This is here so we can Tune circuit w/o substances
-  double LeftPulmonaryArteryVolume_mL = m_LeftPulmonaryArteries->GetVolume(VolumeUnit::mL);
-  double RightPulmonaryArteryVolume_mL = m_RightPulmonaryArteries->GetVolume(VolumeUnit::mL);
-  double TotalPulmonaryArteryVolume_mL = LeftPulmonaryArteryVolume_mL + RightPulmonaryArteryVolume_mL;
-  double LeftPulmonaryArteryPressure_mmHg = m_LeftPulmonaryArteries->GetPressure(PressureUnit::mmHg);
-  double RightPulmonaryArteryPressure_mmHg = m_RightPulmonaryArteries->GetPressure(PressureUnit::mmHg);
+  const double AortaNodePressure_mmHg = m_Aorta->GetPressure(PressureUnit::mmHg);
+  const double AortaNodeCO2PartialPressure_mmHg = m_AortaCO2 == nullptr ? 0 : m_AortaCO2->GetPartialPressure(PressureUnit::mmHg); // This is here so we can Tune circuit w/o substances
+  const double LeftPulmonaryArteryVolume_mL = m_LeftPulmonaryArteries->GetVolume(VolumeUnit::mL);
+  const double RightPulmonaryArteryVolume_mL = m_RightPulmonaryArteries->GetVolume(VolumeUnit::mL);
+  const double TotalPulmonaryArteryVolume_mL = LeftPulmonaryArteryVolume_mL + RightPulmonaryArteryVolume_mL;
+  const double LeftPulmonaryArteryPressure_mmHg = m_LeftPulmonaryArteries->GetPressure(PressureUnit::mmHg);
+  const double RightPulmonaryArteryPressure_mmHg = m_RightPulmonaryArteries->GetPressure(PressureUnit::mmHg);
 
-  double LeftPulmonaryVeinVolume_mL = m_LeftPulmonaryVeins->GetVolume(VolumeUnit::mL);
-  double RightPulmonaryVeinVolume_mL = m_RightPulmonaryVeins->GetVolume(VolumeUnit::mL);
-  double TotalPulmonaryVeinVolume_mL = LeftPulmonaryVeinVolume_mL + RightPulmonaryVeinVolume_mL;
-  double LeftPulmonaryVeinPressure_mmHg = m_LeftPulmonaryVeins->GetPressure(PressureUnit::mmHg);
-  double RightPulmonaryVeinPressure_mmHg = m_RightPulmonaryVeins->GetPressure(PressureUnit::mmHg);
+  const double LeftPulmonaryVeinVolume_mL = m_LeftPulmonaryVeins->GetVolume(VolumeUnit::mL);
+  const double RightPulmonaryVeinVolume_mL = m_RightPulmonaryVeins->GetVolume(VolumeUnit::mL);
+  const double TotalPulmonaryVeinVolume_mL = LeftPulmonaryVeinVolume_mL + RightPulmonaryVeinVolume_mL;
+  const double LeftPulmonaryVeinPressure_mmHg = m_LeftPulmonaryVeins->GetPressure(PressureUnit::mmHg);
+  const double RightPulmonaryVeinPressure_mmHg = m_RightPulmonaryVeins->GetPressure(PressureUnit::mmHg);
+ 
+  const double PulmonaryArteryNodePressure_mmHg = (LeftPulmonaryArteryVolume_mL*LeftPulmonaryArteryPressure_mmHg + RightPulmonaryArteryVolume_mL*RightPulmonaryArteryPressure_mmHg) / TotalPulmonaryArteryVolume_mL;
+  const double PulmVeinNodePressure_mmHg = (LeftPulmonaryVeinVolume_mL*LeftPulmonaryVeinPressure_mmHg + RightPulmonaryVeinVolume_mL*RightPulmonaryVeinPressure_mmHg) / TotalPulmonaryVeinVolume_mL;
+  const double PulmCapFlow_mL_Per_s = m_LeftPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s)
+          + m_RightPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+  const double PulmShuntFlow_mL_Per_s = m_LeftPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s)
+          + m_RightPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
-  double PulmonaryArteryNodePressure_mmHg = (LeftPulmonaryArteryVolume_mL*LeftPulmonaryArteryPressure_mmHg + RightPulmonaryArteryVolume_mL*RightPulmonaryArteryPressure_mmHg) / TotalPulmonaryArteryVolume_mL;
-  double PulmVeinNodePressure_mmHg = (LeftPulmonaryVeinVolume_mL*LeftPulmonaryVeinPressure_mmHg + RightPulmonaryVeinVolume_mL*RightPulmonaryVeinPressure_mmHg) / TotalPulmonaryVeinVolume_mL;
-  double PulmCapFlow_mL_Per_s = m_LeftPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s)
-    + m_RightPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
-  double PulmShuntFlow_mL_Per_s = m_LeftPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s)
-    + m_RightPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+  const double VenaCavaPressure_mmHg = m_VenaCava->GetPressure(PressureUnit::mmHg);
 
-  double VenaCavaPressure_mmHg = m_VenaCava->GetPressure(PressureUnit::mmHg);
+  const double SkinFlow_mL_Per_s = m_pAortaToSkin->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+  const double LHeartFlow_mL_Per_s = m_LeftHeartToAorta->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+  const double LHeartVolume_mL = m_LeftHeart->GetVolume(VolumeUnit::mL);
 
-  double SkinFlow_mL_Per_s = m_pAortaToSkin->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
-  double LHeartFlow_mL_Per_s = m_LeftHeartToAorta->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
-  double LHeartVolume_mL = m_LeftHeart->GetVolume(VolumeUnit::mL);
+  const double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
-  double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
-
-  double gutFlow_mL_Per_s = m_pAortaToLargeIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
+  const double gutFlow_mL_Per_s = m_pAortaToLargeIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
     m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
     m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
@@ -995,7 +995,6 @@ void Cardiovascular::Hemorrhage()
   SEHemorrhage* h;
   bool completeStateChange = false;
   double TotalLossRate_mL_Per_s = 0.0;
-  double internal_rate_mL_Per_s = 0.0;
   std::vector<SEHemorrhage*> invalid_hemorrhages;
   const std::map <std::string, SEHemorrhage*>& hems = m_data.GetActions().GetPatientActions().GetHemorrhages();
   //Loop over all hemorrhages to check for validity
@@ -1362,7 +1361,6 @@ void Cardiovascular::PericardialEffusion()
   double flowCubed_mL3_Per_s3 = 0.0;
   double compliance_mL_Per_mmHg = 0.0;
   double intrapericardialVolume_mL = m_Pericardium->GetVolume(VolumeUnit::mL);
-  double intrapericardialPressure_mmHg = m_Pericardium->GetPressure(PressureUnit::mmHg);
 
   double effusionRate_mL_Per_s = m_data.GetActions().GetPatientActions().GetPericardialEffusion()->GetEffusionRate().GetValue(VolumePerTimeUnit::mL_Per_s);
   if (effusionRate_mL_Per_s <= 0.1 && effusionRate_mL_Per_s > 0.0)
@@ -1795,10 +1793,10 @@ void Cardiovascular::MetabolicToneResponse()
   double coreTempDelta_degC = MAX(coreTemp_degC - coreTempSet_degC, 0.0);
   coreTempDelta_degC = MIN(coreTempDelta_degC, 1.0); //A 1 degree increase in core temperature is the where the cardiovascular response on resistances is capped
   //The skin multiplier is used to increase the skin blood flow resistance, effectively reducing the skin blood flow leading to less heat transfered from core to skin.
-  double skinMultiplier = 1.0 / MAX((coreTemp_degC - 35.0), 0.001);
-  double coreTempLow_degC = m_data.GetConfiguration().GetCoreTemperatureLow(TemperatureUnit::C); //36.8 degC
+  //double skinMultiplier = 1.0 / MAX((coreTemp_degC - 35.0), 0.001);
+  //double coreTempLow_degC = m_data.GetConfiguration().GetCoreTemperatureLow(TemperatureUnit::C); //36.8 degC
   /// \cite talebipour2006sauna
-  double tempMultiplier = 1.0 - 0.4*MIN(coreTempDelta_degC, 1.0); //Approximate 40% reduction in peripheral resistance due to core temperature rise of 1 degree.
+  // double tempMultiplier = 1.0 - 0.4*MIN(coreTempDelta_degC, 1.0); //Approximate 40% reduction in peripheral resistance due to core temperature rise of 1 degree.
   double metabolicModifier = 1.0;
   //The metabolic multiplier is used as a tuned response to represent cardiovascular resistance effects during exercise
   double sp0 = 1.5;
@@ -1811,7 +1809,6 @@ void Cardiovascular::MetabolicToneResponse()
 
   //Reducing resistances scaling with metabolic rate increase and changes in core temperature
   double resistanceNew__mmHg_s_Per_mL = 0.0;
-  double complianceNew_mL_Per_mmHg = 0.0;
 
   for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
   {
@@ -1856,8 +1853,7 @@ void Cardiovascular::AdjustVascularTone()
   //The baroreceptor response adjusts the systemic resistances and compliances according to the multiplier calculated in Nervous.cpp
   double UpdatedResistance_mmHg_s_Per_mL = 0.0;
   double UpdatedCompliance_mL_Per_mmHg = 0.0;
-  double totalResistanceChange_mmHg_s_Per_mL = 0.0;
-  double totalComplianceChange_mL_Per_mmHg = 0.0;
+
   if (m_data.GetNervous().GetBaroreceptorFeedback() == eSwitch::On)
   {
     for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
@@ -2030,7 +2026,7 @@ void Cardiovascular::TuneCircuit()
   double systolic_mmHg = 0, tgt_systolic_mmHg = 0;
   double diastolic_mmHg = 0, tgt_diastolic_mmHg = 0;
   double cardiacOutput_mL_Per_min = 0, tgt_cardiacOutput_mL_Per_min = 0;
-  double meanCVP_mmHg = 0, tgt_meanCVP_mmHg = 0;
+  double meanCVP_mmHg = 0;
   double blood_mL = 0, tgt_blood_mL = 0;
 
   double time_s = 0;
@@ -2369,9 +2365,9 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
   }
 
   // Tuning variables
-  double pressuretolerance = 0.01;
-  double stabPercentTolerance = 0.25;
-  double stabCheckTime_s = 15.0;
+  const double pressuretolerance = 0.01;
+  const double stabPercentTolerance = 0.25;
+  const double stabCheckTime_s = 15.0;
 
   double currentStableTime_s;
   double maxStableTime_s = 20;
