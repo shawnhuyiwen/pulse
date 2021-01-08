@@ -515,9 +515,9 @@ void Renal::PostProcess(bool solve_and_transport)
 //--------------------------------------------------------------------------------------------------
 void Renal::CalculateUltrafiltrationFeedback()
 {  
-  //Tuning parameters
-  double glomerularOsmoticSensitivity = 1.0;
-  double bowmansOsmoticSensitivity = 1.0;
+  //Tuning parameters unused
+  const double glomerularOsmoticSensitivity = 1.0;
+  const double bowmansOsmoticSensitivity = 1.0;
 
   //Get substances
   SEFluidCircuitPath* glomerularOsmoticSourcePath = nullptr;
@@ -583,9 +583,9 @@ void Renal::CalculateUltrafiltrationFeedback()
 //--------------------------------------------------------------------------------------------------
 void Renal::CalculateReabsorptionFeedback()
 {
-  //Tuning parameters
-  double peritubularOsmoticSensitivity = 1.0;
-  double tubulesOsmoticSensitivity = 1.0;
+  //Tuning parameters, unused
+  const double peritubularOsmoticSensitivity = 1.0;
+  const double tubulesOsmoticSensitivity = 1.0;
 
   //Determine the permeability
   //Only allow water to be reabsorbed more easily
@@ -630,7 +630,7 @@ void Renal::CalculateReabsorptionFeedback()
     //Set the filter resistance based on its physical properties
     //This is the Capillary Filtration Coefficient
     //We'll just assume this linear relationship for now
-    double filterResistance_mmHg_s_Per_mL = filterResistancePath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    filterResistance_mmHg_s_Per_mL = filterResistancePath->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     if (permeability_mL_Per_s_Per_mmHg_Per_m2 != 0 && surfaceArea_m2 != 0)
       filterResistance_mmHg_s_Per_mL = 1 / (permeability_mL_Per_s_Per_mmHg_Per_m2 * surfaceArea_m2);
     else
@@ -661,11 +661,8 @@ void Renal::CalculateReabsorptionFeedback()
 void Renal::CalculateGluconeogenesis()
 {
   //Whatever Lactate shows up in the Ureter (i.e. what's excreted) is converted to Glucose and put in the TubularCapillaries (i.e. reabsorbed)
-
-  SEFluidCircuitNode* tubulesNode = nullptr;
   SELiquidSubstanceQuantity* peritubularGlucose = nullptr;
   SELiquidSubstanceQuantity* ureterLactate = nullptr;
-  SEFluidCircuitPath* reabsorptionResistancePath = nullptr;
 
   double totalReabsorptionRate_mg_Per_s = 0.0;
   double totalLactateExcretionRate_mg_Per_s = 0.0;
@@ -772,7 +769,6 @@ void Renal::CalculateActiveTransport()
   m_SubstanceTransport.leftGlucoseReabsorptionMass_mg = 0.0;
   m_SubstanceTransport.rightGlucoseReabsorptionMass_mg = 0.0;
 
-  unsigned int i = 0;
   for (SESubstance* sub : m_data.GetCompartments().GetLiquidCompartmentSubstances())
   {
     if (!sub->HasClearance())
@@ -1835,7 +1831,6 @@ void Renal::CalculateTubuloglomerularFeedback()
   //Get substances and appropriate paths and node which will be utilized in this implementation 
   SEFluidCircuitPath* tubulesPath = nullptr;
   SEFluidCircuitPath* afferentResistancePath = nullptr;
-  SEFluidCircuitNode* renalArteryNode = nullptr;
 
   //set sodium flow to initially be zero
   double sodiumFlow_mg_Per_s = 0.0;
