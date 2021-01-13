@@ -301,9 +301,8 @@ void Nervous::BaroreceptorFeedback()
   //update nu - the slope response of the firing rate
   //nu *= (1 - sedationDampeningEffect);  TODO: Add this back when I have data for validation
   //Backout the pressure associated with the total sympathetic fraction from the last time step 
-  double cumulativeMeanArterialPressure_mmHg = pow(((1.0 / m_TotalSympatheticFraction) - 1.0), (1.0 / nu)) * meanArterialPressureCombinedBaseline_mmHg;
-  double deltaPressure_mmHg = meanArterialPressure_mmHg - m_LastMeanArterialPressure_mmHg;
-  double baroreceptorPressure_mmHg = cumulativeMeanArterialPressure_mmHg + deltaPressure_mmHg;
+  // double cumulativeMeanArterialPressure_mmHg = pow(((1.0 / m_TotalSympatheticFraction) - 1.0), (1.0 / nu)) * meanArterialPressureCombinedBaseline_mmHg;
+  // double deltaPressure_mmHg = meanArterialPressure_mmHg - m_LastMeanArterialPressure_mmHg;
   m_TotalSympatheticFraction = 1.0 / (1.0 + pow( meanArterialPressure_mmHg / meanArterialPressureCombinedBaseline_mmHg, nu));
   double parasympatheticFraction = 1.0 - m_TotalSympatheticFraction;
   m_LastMeanArterialPressure_mmHg = meanArterialPressure_mmHg;

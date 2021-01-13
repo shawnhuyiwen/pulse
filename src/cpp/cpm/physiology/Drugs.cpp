@@ -315,7 +315,6 @@ void Drugs::AdministerSubstanceCompoundInfusion()
   SESubstanceCompoundInfusion*        infusion;
   const SESubstanceCompound*          compound;
   SELiquidSubstanceQuantity*          subQ;
-  double concentration_ug_Per_mL=0;
   double rate_mL_Per_s = 0;
   double totalRate_mL_Per_s = 0;
   double massIncrement_ug=0;
@@ -351,7 +350,7 @@ void Drugs::AdministerSubstanceCompoundInfusion()
     for (const SESubstanceConcentration* component : compound->GetComponents())
     {      
       subQ = m_venaCavaVascular->GetSubstanceQuantity(component->GetSubstance());
-      double massIncrement_ug = rate_mL_Per_s*component->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_dt_s;
+      massIncrement_ug = rate_mL_Per_s*component->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_dt_s;
       subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
       subQ->Balance(BalanceLiquidBy::Mass);
     }    
@@ -393,7 +392,6 @@ void Drugs::CalculatePartitionCoefficients()
   double IntracellularPHEffects = 0;
   double PlasmaPHEffects = 0;
   double PHEffectPower = 0;
-  double PHEffects = 0;
   double EquationPartA = 0;
   double EquationPartB = 0;
   double EquationPartC = 0;

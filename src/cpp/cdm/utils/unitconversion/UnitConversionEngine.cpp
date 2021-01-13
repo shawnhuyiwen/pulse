@@ -77,9 +77,9 @@ inline bool CIEQUAL(std::string strA, std::string strB)
     }
 
     std::transform(strA.begin(), strA.end(), strA.begin(),
-      [](unsigned char c) { return std::tolower(c); });
+      [](std::string::value_type c) { return static_cast<std::string::value_type>(std::tolower(c)); });
     std::transform(strB.begin(), strB.end(), strB.begin(),
-      [](unsigned char c) { return std::tolower(c); });
+      [](std::string::value_type c) { return static_cast<std::string::value_type>(std::tolower(c)); });
 
     return strA == strB;
 }

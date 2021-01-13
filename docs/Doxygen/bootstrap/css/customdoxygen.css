@@ -188,16 +188,20 @@ a.qindexHL {
     border: 1px double #869DCA;
 }
 
+.contents a:visited {
+    color: #ffffff;
+}
+
 .contents a.qindexHL:visited {
     color: #ffffff;
 }
 
 a.code, a.code:visited, a.line, a.line:visited {
-    color: #4665A2;
+    color: #ffffff;
 }
 
 a.codeRef, a.codeRef:visited, a.lineRef, a.lineRef:visited {
-    color: #4665A2;
+    color: #ffffff;
 }
 
 /* @end */
