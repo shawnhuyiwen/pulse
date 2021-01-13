@@ -294,8 +294,6 @@ void CommonDataModelTest::TestThermalHierarchy(SETestSuite& testSuite, SESubstan
   SETestCase& testCase = testSuite.CreateTestCase();
   testCase.SetName("HierarchyHeatTemperatureFlows");
 
-  SESubstance* N2 = subMgr.GetSubstance("Nitrogen");
-
   SEScalarTemperature partialTemperature;
 
   TimingProfile pTimer;
