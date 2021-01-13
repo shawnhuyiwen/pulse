@@ -76,19 +76,19 @@ void PulseEngineTest::AcidBaseMathTest(const std::string& rptDirectory)
   SELiquidSubstanceQuantity* nHCO3 = cmpt.GetSubstanceQuantity(*HCO3);
   SELiquidSubstanceQuantity* nHbCO2 = cmpt.GetSubstanceQuantity(*HbCO2);
 
-  double cmptVolume_mL = 100.0;
-  double normalTotalO2_mM = 6.2;
-  double normalTotalCO2_mM = 28.86;
+  const double cmptVolume_mL = 100.0;
+  const double normalTotalO2_mM = 6.2;
+  const double normalTotalCO2_mM = 28.86;
   double currentTotalO2_mM;
   double currentTotalCO2_mM;
-  double normalDissolvedCO2_gPerL = 0.05526; // 0.05526;
-  double normalDissolvedO2_gPerL = 0.004287; // 0.004287;
-  double normalBicarbonate_gPerL = 0.026*61.0168;
-  double normalHgb_mM = 1.55;
-  double percentNothingBound = 0.01;
-  double percentO2OnlyBound = 0.73;
-  double percentO2CO2Bound = 0.25;
-  double percentCO2Bound = 0.01;
+  const double normalDissolvedCO2_gPerL = 0.05526; // 0.05526;
+  const double normalDissolvedO2_gPerL = 0.004287; // 0.004287;
+  const double normalBicarbonate_gPerL = 0.026*61.0168;
+  const double normalHgb_mM = 1.55;
+  const double percentNothingBound = 0.01;
+  const double percentO2OnlyBound = 0.73;
+  const double percentO2CO2Bound = 0.25;
+  const double percentCO2Bound = 0.01;
   //double O2ppGuess_mmHg = 100.0;
   //double CO2ppGuess_mmHg = 1000.0*normalDissolvedCO2_gPerL/(44.01*0.0314);
   //normalDissolvedCO2_gPerL = CO2ppGuess_mmHg*(44.01*0.0314) / 1000.0;
@@ -572,16 +572,16 @@ void PulseEngineTest::AcidBaseLimitsTest(const std::string& rptDirectory)
     c.CalculateBloodGasDistribution(cmpt);
 
     // Get and print results
-    double finalDissovledCO2_gPerL = nCO2->GetConcentration().GetValue(MassPerVolumeUnit::g_Per_L);
-    double finalDissovledCO2_mM = finalDissovledCO2_gPerL / CO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
-    double finalBicarb_gPerL = nHCO3->GetConcentration().GetValue(MassPerVolumeUnit::g_Per_L);
-    double finalBicarbCO2_mM = finalBicarb_gPerL / HCO3->GetMolarMass(MassPerAmountUnit::g_Per_mmol); // Yes this should be m_CO2_g_Per_mmol because 1 mol CO2 per mol bicarb
-    double finalBicarbCO2_gPerL = finalBicarbCO2_mM * CO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
-    double finalBoundCO2_mM = 4.0 * (nHbCO2->GetMass().GetValue(MassUnit::g) / cmpt.GetVolume(VolumeUnit::L) / HbCO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol) + nHbO2CO2->GetMass().GetValue(MassUnit::g) / cmpt.GetVolume(VolumeUnit::L) / HbO2CO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol)); //4 moles CO2 per mole Hb
-    double finalBoundCO2_gPerL = finalBoundCO2_mM * CO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
-    double finalTotalCO2_mM = finalDissovledCO2_mM + finalBicarbCO2_mM + finalBoundCO2_mM;
-    double finalTotalCO2_gPerL = finalDissovledCO2_gPerL + finalBicarbCO2_gPerL + finalBoundCO2_gPerL;
-    double finalTotalHemoglobin_gPerL = nHb->GetConcentration().GetValue(MassPerVolumeUnit::g_Per_L) +
+    finalDissovledCO2_gPerL = nCO2->GetConcentration().GetValue(MassPerVolumeUnit::g_Per_L);
+    finalDissovledCO2_mM = finalDissovledCO2_gPerL / CO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
+    finalBicarb_gPerL = nHCO3->GetConcentration().GetValue(MassPerVolumeUnit::g_Per_L);
+    finalBicarbCO2_mM = finalBicarb_gPerL / HCO3->GetMolarMass(MassPerAmountUnit::g_Per_mmol); // Yes this should be m_CO2_g_Per_mmol because 1 mol CO2 per mol bicarb
+    finalBicarbCO2_gPerL = finalBicarbCO2_mM * CO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
+    finalBoundCO2_mM = 4.0 * (nHbCO2->GetMass().GetValue(MassUnit::g) / cmpt.GetVolume(VolumeUnit::L) / HbCO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol) + nHbO2CO2->GetMass().GetValue(MassUnit::g) / cmpt.GetVolume(VolumeUnit::L) / HbO2CO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol)); //4 moles CO2 per mole Hb
+    finalBoundCO2_gPerL = finalBoundCO2_mM * CO2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
+    finalTotalCO2_mM = finalDissovledCO2_mM + finalBicarbCO2_mM + finalBoundCO2_mM;
+    finalTotalCO2_gPerL = finalDissovledCO2_gPerL + finalBicarbCO2_gPerL + finalBoundCO2_gPerL;
+    finalTotalHemoglobin_gPerL = nHb->GetConcentration().GetValue(MassPerVolumeUnit::g_Per_L) +
       nHbO2->GetConcentration().GetValue(MassPerVolumeUnit::g_Per_L) +
       nHbCO2->GetConcentration().GetValue(MassPerVolumeUnit::g_Per_L) +
       nHbO2CO2->GetConcentration().GetValue(MassPerVolumeUnit::g_Per_L);
@@ -896,7 +896,6 @@ void PulseEngineTest::AcidBaseBloodGasTest(PulseController& pc, bloodType bloodC
   double CO2sat_max = 0;         //Computed using Dash model
   double pH_min = 0;             //Leeuwen 
   double pH_max = 0;             //Leeuwen 
-  double percentTolerance = .02;
 
   double O2_sat = 0;
   double CO2_sat = 0;

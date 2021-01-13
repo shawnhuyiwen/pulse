@@ -497,8 +497,6 @@ void PulseEngineTest::InstantDiffusionTest(SETestSuite& testSuite)
   pc.GetSubstances().AddActiveSubstance(*o2);
   SELiquidCompartment& cmpt1 = pc.GetCompartments().CreateLiquidCompartment("cmpt1");
   SELiquidCompartment& cmpt2 = pc.GetCompartments().CreateLiquidCompartment("cmpt2");
-  SELiquidCompartment& cmpt3 = pc.GetCompartments().CreateLiquidCompartment("cmpt3");
-  SELiquidCompartment& cmpt4 = pc.GetCompartments().CreateLiquidCompartment("cmpt4");
 
   // First test - simple two compartment instant diffusion test
   timer.Start("Test");
@@ -624,7 +622,7 @@ void PulseEngineTest::SimpleDiffusionFourCompartmentTest(const std::string& rptD
   pc.GetSubstances().LoadSubstanceDirectory();
   SESubstance* o2 = pc.GetSubstances().GetSubstance("Oxygen");
   pc.GetSubstances().AddActiveSubstance(*o2);
-  SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");
+  pc.GetCompartments().CreateTissueCompartment("Tissue");
   SELiquidCompartment& cmpt1_IC = pc.GetCompartments().CreateLiquidCompartment("cmpt1_IC");
   SELiquidCompartment& cmpt2_EC = pc.GetCompartments().CreateLiquidCompartment("cmpt2_EC");
   SELiquidCompartment& cmpt3_LQ = pc.GetCompartments().CreateLiquidCompartment("cmpt3_LQ");
@@ -662,11 +660,6 @@ void PulseEngineTest::SimpleDiffusionFourCompartmentTest(const std::string& rptD
   tsu.MoveMassBySimpleDiffusion(cmpt1_IC, cmpt4_LQ, *o2, permeabilityCoefficient_mL_Per_s, timestep_s);
   tsu.MoveMassBySimpleDiffusion(cmpt2_EC, cmpt4_LQ, *o2, permeabilityCoefficient_mL_Per_s, timestep_s);
   tsu.MoveMassBySimpleDiffusion(cmpt3_LQ, cmpt4_LQ, *o2, permeabilityCoefficient_mL_Per_s, timestep_s);
-
-  double v3CalculatedConcentration_g_Per_mL = cmpt3_LQ.GetSubstanceQuantity(*o2)->GetConcentration(MassPerVolumeUnit::g_Per_mL);
-  double v4CalculatedConcentration_g_Per_mL = cmpt4_LQ.GetSubstanceQuantity(*o2)->GetConcentration(MassPerVolumeUnit::g_Per_mL);
-  double v3ExpectedConcentration_g_Per_mL = (v3Mass_g / v3Vol_mL);
-  double v4ExpectedConcentration_g_Per_mL = (v4Mass_g / v4Vol_mL);
 
   // Ok, now balance
   cmpt4_LQ.Balance(BalanceLiquidBy::Mass);
@@ -853,7 +846,7 @@ void PulseEngineTest::FacilitatedDiffusionTest(const std::string& rptDirectory)
   pc.GetSubstances().LoadSubstanceDirectory();
   SESubstance* sub = pc.GetSubstances().GetSubstance("Glucose");
   pc.GetSubstances().AddActiveSubstance(*sub);
-  SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");  
+  pc.GetCompartments().CreateTissueCompartment("Tissue");  
   SELiquidCompartment& tissueExtracellular = pc.GetCompartments().CreateLiquidCompartment("Extracellular");
   SELiquidCompartment& vascular = pc.GetCompartments().CreateLiquidCompartment("Vascular");
 
@@ -897,12 +890,12 @@ void PulseEngineTest::ActiveTransportTest(SETestSuite& testSuite)
   TimingProfile timer;
   PulseEngine pe(testSuite.GetLogger());
   PulseController& pc = pe.GetController();
-  Tissue& tsu = (Tissue&)pc.GetTissue();
-  double timestep_s = 1. / 90.;
+
+
   pc.GetSubstances().LoadSubstanceDirectory();
   SESubstance* sub = pc.GetSubstances().GetSubstance("Desflurane");
   pc.GetSubstances().AddActiveSubstance(*sub);
-  SETissueCompartment& tissue = pc.GetCompartments().CreateTissueCompartment("Tissue");
+  pc.GetCompartments().CreateTissueCompartment("Tissue");
   SELiquidCompartment& extracellular = pc.GetCompartments().CreateLiquidCompartment("Extracellular");
   SELiquidCompartment& intracellular = pc.GetCompartments().CreateLiquidCompartment("Intracellular");
 
@@ -913,7 +906,6 @@ void PulseEngineTest::ActiveTransportTest(SETestSuite& testSuite)
 
   double ecVol_mL = 20.0;
   double icVol_mL = 50.0;
-  double vMass_g = 1.5;
   double ecMass_g = 1.5;
   double icMass_g = 2.0;
 
@@ -933,14 +925,13 @@ void PulseEngineTest::GenericClearanceTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
   PulseEngine pe(testSuite.GetLogger());
-  PulseController& pc = pe.GetController();
-  Tissue& tsu = (Tissue&)pc.GetTissue();
+
 
   // First test case
   SETestCase& testCase1 = testSuite.CreateTestCase();
   testCase1.SetName("GenericClearanceTestLiquid");  
   // You at least need 2 test cases here (liquid and tissue)
-  SETestCase& testCase = testSuite.CreateTestCase();
+  testSuite.CreateTestCase();
   timer.Start("Test");
   // Test Logic
   //testCase.GetFailures().push_back("Report any errors like this");
@@ -960,8 +951,6 @@ void PulseEngineTest::GenericExcretionTest(SETestSuite& testSuite)
 {
   TimingProfile timer;
   PulseEngine pe(testSuite.GetLogger());
-  PulseController& pc = pe.GetController();
-  Tissue& tsu = (Tissue&)pc.GetTissue();
 
   // First test case
   SETestCase& testCase1 = testSuite.CreateTestCase();

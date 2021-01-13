@@ -147,7 +147,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     }
 
     std::vector<std::chrono::microseconds::rep> times;
-    for (int i = 0; i < numSolves; i++)
+    for (int j = 0; j < numSolves; j++)
     {
       failed = false;
 
@@ -222,7 +222,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     }
 
     times.clear();
-    for (int i = 0; i < numSolves; i++)
+    for (int j = 0; j < numSolves; j++)
     {
       failed = false;
 
@@ -298,7 +298,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     }
 
     times.clear();
-    for (int i = 0; i < numSolves; i++)
+    for (int j = 0; j < numSolves; j++)
     {
       failed = false;
 
@@ -374,7 +374,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     }
 
     times.clear();
-    for (int i = 0; i < numSolves; i++)
+    for (int j = 0; j < numSolves; j++)
     {
       failed = false;
 
@@ -449,7 +449,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     }
 
     times.clear();
-    for (int i = 0; i < numSolves; i++)
+    for (int j = 0; j < numSolves; j++)
     {
       failed = false;
 
@@ -524,7 +524,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     }
 
     times.clear();
-    for (int i = 0; i < numSolves; i++)
+    for (int j = 0; j < numSolves; j++)
     {
       failed = false;
 
@@ -600,7 +600,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     }
 
     times.clear();
-    for (int i = 0; i < numSolves; i++)
+    for (int j = 0; j < numSolves; j++)
     {
       failed = false;
 
@@ -675,7 +675,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     }
 
     times.clear();
-    for (int i = 0; i < numSolves; i++)
+    for (int j = 0; j < numSolves; j++)
     {
       failed = false;
 
@@ -750,7 +750,7 @@ void PulseEngineTest::SolverSpeedTest(const std::string& rptDirectory)
     }
 
     times.clear();
-    for (int i = 0; i < numSolves; i++)
+    for (int j = 0; j < numSolves; j++)
     {
       failed = false;
 
