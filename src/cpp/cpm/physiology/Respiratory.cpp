@@ -1332,7 +1332,6 @@ void Respiratory::RespiratoryDriver()
     m_data.GetEvents().SetEvent(eEvent::StartOfExhale, true, m_data.GetSimulationTime());
   }
 
-  //jbw - updated expiration to new waveforms
   double pi = 3.14159265359;
   if (m_BreathingCycleTime_s >= ResidueFractionTimeStart_s)
   {
@@ -1340,8 +1339,8 @@ void Respiratory::RespiratoryDriver()
   }
   else if (m_BreathingCycleTime_s >= ExpiratoryReleaseTimeStart_s)
   {
-    double ventilationFrequency_Per_min = 60.0 / (m_ExpiratoryReleaseFraction * TotalBreathingCycleTime_s);
-    m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * (exp(-((ventilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0) * (m_BreathingCycleTime_s - ExpiratoryReleaseTimeStart_s)));
+    double segmentTime_s = ResidueFractionTimeStart_s - ExpiratoryReleaseTimeStart_s;
+    m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - ExpiratoryReleaseTimeStart_s) / segmentTime_s);
   }
   else if (m_BreathingCycleTime_s >= ExpiratoryHoldTimeStart_s)
   {
@@ -1349,8 +1348,8 @@ void Respiratory::RespiratoryDriver()
   }
   else if (m_BreathingCycleTime_s >= ExpiratoryRiseTimeStart_s)
   {
-    double ventilationFrequency_Per_min = 60.0 / (m_ExpiratoryRiseFraction * TotalBreathingCycleTime_s);
-    m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * (1.0 - exp(-((ventilationFrequency_Per_min + m_VentilatoryOcclusionPressure_cmH2O / 2.0) / 10.0) * (m_BreathingCycleTime_s - ExpiratoryRiseTimeStart_s)));
+    double segmentTime_s = ExpiratoryHoldTimeStart_s - ExpiratoryRiseTimeStart_s;
+    m_DriverPressure_cmH2O = m_PeakExpiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s - ExpiratoryRiseTimeStart_s) / segmentTime_s);
   }
   else if (m_BreathingCycleTime_s >= InspiratoryToExpiratoryPauseTimeStart_s)
   {
@@ -1358,11 +1357,8 @@ void Respiratory::RespiratoryDriver()
   }
   else if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s)
   {
-    //double ventilationFrequency_Per_min = 60.0 / (m_InspiratoryReleaseFraction * TotalBreathingCycleTime_s);
-    //m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * (exp(-((ventilationFrequency_Per_min + m_VentilatoryOcclusionPressure_cmH2O / 2.0) / 10.0) * (m_BreathingCycleTime_s - InspiratoryReleaseTimeStart_s)));
-    
     double segmentTime_s = InspiratoryToExpiratoryPauseTimeStart_s - InspiratoryReleaseTimeStart_s;
-    m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - InspiratoryReleaseTimeStart_s) / (segmentTime_s));
+    m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * (m_BreathingCycleTime_s + segmentTime_s - InspiratoryReleaseTimeStart_s) / segmentTime_s);
   }
   else if (m_BreathingCycleTime_s >= InspiratoryHoldTimeStart_s)
   {
@@ -1370,9 +1366,6 @@ void Respiratory::RespiratoryDriver()
   }
   else //(m_BreathingCycleTime_s >= InspiratoryRiseTimeStart_s)
   {
-    //double ventilationFrequency_Per_min = 60.0 / (m_InspiratoryRiseFraction * TotalBreathingCycleTime_s);
-    //m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * (1.0 - exp(-((ventilationFrequency_Per_min + 4.0 * m_VentilatoryOcclusionPressure_cmH2O) / 10.0) * m_BreathingCycleTime_s));
-
     m_DriverPressure_cmH2O = m_PeakInspiratoryPressure_cmH2O * sin(pi / 2.0 * m_BreathingCycleTime_s / InspiratoryHoldTimeStart_s);
   }
 
