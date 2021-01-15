@@ -126,7 +126,7 @@ if(MSVC)
 # Using MD as that seems to be what I run into alot, you could change these to /MT and /MTd if you want...
   set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MDd /Zi /Ob2 /Oi /Od /RTC1 /MP /EHsc" CACHE STRING INTERNAL FORCE)
   set(CMAKE_CXX_FLAGS_RELEASE "/MD /MP /EHsc" CACHE STRING INTERNAL FORCE)
-  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MDd /Zi /MP /EHsc" CACHE STRING INTERNAL FORCE)
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MD /Zi /MP /EHsc" CACHE STRING INTERNAL FORCE)
 endif()
 if ( CMAKE_COMPILER_IS_GNUCC )
   # Protobuf is not using the same variable name in its swap specificiation definitions
