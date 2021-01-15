@@ -962,6 +962,11 @@ void Respiratory::SupplementalOxygen()
     }
     case eSupplementalOxygen_Device::NasalCannula:
     {
+      // This implementation can replace other Supplemental O2 modes
+      if (m_data.GetAirwayMode() == eAirwayMode::SimpleMask ||
+          m_data.GetAirwayMode() == eAirwayMode::NonRebreatherMask)
+        m_data.SetAirwayMode(eAirwayMode::Free);
+
       m_data.SetAirwayMode(eAirwayMode::NasalCannula);
       if (!so->HasFlow())
       {
@@ -976,7 +981,12 @@ void Respiratory::SupplementalOxygen()
     }
     case eSupplementalOxygen_Device::NonRebreatherMask:
     {
+      // This implementation can replace other Supplemental O2 modes
+      if (m_data.GetAirwayMode() == eAirwayMode::SimpleMask ||
+          m_data.GetAirwayMode() == eAirwayMode::NasalCannula)
+        m_data.SetAirwayMode(eAirwayMode::Free);
       m_data.SetAirwayMode(eAirwayMode::NonRebreatherMask);
+
       if (!so->HasFlow())
       {
         flow_L_Per_min = 10.0;
@@ -990,7 +1000,12 @@ void Respiratory::SupplementalOxygen()
     }
     case eSupplementalOxygen_Device::SimpleMask:
     {
+      // This implementation can replace other Supplemental O2 modes
+      if (m_data.GetAirwayMode() == eAirwayMode::NasalCannula ||
+          m_data.GetAirwayMode() == eAirwayMode::NonRebreatherMask)
+        m_data.SetAirwayMode(eAirwayMode::Free);
       m_data.SetAirwayMode(eAirwayMode::SimpleMask);
+
       if (!so->HasFlow())
       {
         flow_L_Per_min = 7.5;
