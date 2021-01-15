@@ -52,14 +52,7 @@ void CommonDataModelTest::TissueCompartmentTest(const std::string& rptDirectory)
   double TissueToPlasmaAlbuminRatio = 1.0;
   double TissueToPlasmaAlphaAcidGlycoproteinRatio = 0.8;
   double TissueToPlasmaLipoproteinRatio = 0.54;
-  //double TotalMass_mg = 333;
-
-  double ec_pH = 7.14;
-  double ec_WaterVolumeFraction = 0.67;
-
-  double ic_pH = 7.42;
-  double ic_WaterVolumeFraction = 0.76;
-
+  
   SECompartmentManager cmptMgr(subMgr);
   SETissueCompartment* tissue = &cmptMgr.CreateTissueCompartment("Tissue");
   tissue->GetAcidicPhospohlipidConcentration().SetValue(AcidicPhospohlipidConcentration_mg_Per_g, MassPerMassUnit::mg_Per_g);

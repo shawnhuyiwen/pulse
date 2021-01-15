@@ -4138,7 +4138,6 @@ void CommonDataModelTest::TestPreProcess2(double dT, int i)
   //    Never change "current" values, only next.
 
   // ALL PRESSURE SOURCES MUST EXIST ON PATH 1 UNTIL THIS IS CHANGED TO BE MORE FLEXIBLE
-  double ONE = 1;
   bool FLOWSOURCE = false;
   bool SWITCHPRESENT = false;
   bool PRESSURESOURCE  = false;
@@ -4384,7 +4383,6 @@ void CommonDataModelTest::TestPreProcess4(double dT, int i)
   //    Never change "current" values, only next.
 
   // ALL PRESSURE SOURCES MUST EXIST ON PATH 1 UNTIL THIS IS CHANGED TO BE MORE FLEXIBLE
-  double ONE = 1;
   bool FLOWSOURCE = false;
   bool SWITCHPRESENT = false;
   bool PRESSURESOURCE  = false;
@@ -5252,7 +5250,6 @@ void CommonDataModelTest::RunTest(const std::string& outputDirectory, const std:
   fluidCircuit->SetNextAndCurrentFromBaselines();
   fluidCircuit->StateChange();
 
-  double sample = 0;
   bool serialized = false;
   double outputTime_s = 0;
   while (currentTime_s < 10) // Run for 10 secs

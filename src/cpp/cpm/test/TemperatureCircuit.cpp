@@ -362,8 +362,8 @@ void PulseEngineTest::EnvironmentVariableTemperatureCircuitTest(const std::strin
 
   SEThermalCircuitNode& MetabolicNode = m_ECircuit.CreateNode("Metabolic");
   SEThermalCircuitPath& MetabolicPath = m_ECircuit.CreatePath(*Ground, MetabolicNode, "GroundToMetabolic");
-  SEThermalCircuitPath& MetabolicToCore = m_ECircuit.CreatePath(*Core, MetabolicNode, "CoreToMetabolic");
-  SEThermalCircuitPath& MetabolicToSkin = m_ECircuit.CreatePath(*Skin, MetabolicNode, "SkinToMetabolic");
+  m_ECircuit.CreatePath(*Core, MetabolicNode, "CoreToMetabolic");
+  m_ECircuit.CreatePath(*Skin, MetabolicNode, "SkinToMetabolic");
 
   //Hold BMR constant
   MetabolicPath.GetHeatSourceBaseline().SetValue(testBMR, PowerUnit::kcal_Per_day);
@@ -471,12 +471,12 @@ void PulseEngineTest::CombinedInternalAndEnvironmentVariableBMRandTemperatureCir
 
   SEThermalCircuitPath* MetabolicPath = m_TECircuit.GetPath(pulse::InternalTemperaturePath::GroundToInternalCore);
   SEThermalCircuitPath* CoreToSkin = m_TECircuit.GetPath(pulse::InternalTemperaturePath::InternalCoreToInternalSkin);
-  SEThermalCircuitPath* EnvCoreToGround = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalCoreToGround);
-  SEThermalCircuitPath* EnvSkinToGround = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToGround);
+  m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalCoreToGround);
+  m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToGround);
   SEThermalCircuitPath* EnvSkinToClothing = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToClothing);
   SEThermalCircuitPath* ClothingToEnclosure = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnclosure);
   SEThermalCircuitPath* GroundToEnvironment = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnvironment);
-  SEThermalCircuitPath* GroundToEnclosure = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnclosure);
+  m_TECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnclosure);
   SEThermalCircuitPath* ClothingToEnvironment = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnvironment);
 
   //You must initialize these resistors or the circuit won't solve
@@ -631,8 +631,8 @@ void PulseEngineTest::CombinedInternalAndEnvironmentSkinTempDropCircuitTest(cons
 
   SEThermalCircuitPath* MetabolicPath = m_TECircuit.GetPath(pulse::InternalTemperaturePath::GroundToInternalCore);
   SEThermalCircuitPath* CoreToSkin = m_TECircuit.GetPath(pulse::InternalTemperaturePath::InternalCoreToInternalSkin);
-  SEThermalCircuitPath* EnvCoreToGround = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalCoreToGround);
-  SEThermalCircuitPath* EnvSkinToGround = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToGround);
+  m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalCoreToGround);
+  m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToGround);
   SEThermalCircuitPath* EnvSkinToClothing = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ExternalSkinToClothing);
   SEThermalCircuitPath* ClothingToEnclosure = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::ClothingToEnclosure);
   SEThermalCircuitPath* GroundToEnvironment = m_TECircuit.GetPath(pulse::ExternalTemperaturePath::GroundToEnvironment);
@@ -764,8 +764,8 @@ void PulseEngineTest::EnvironmentISO7730ComparisonTest(const std::string& sTestD
   SEThermalCircuitNode& MetabolicNode = EnvironmentCircuit.CreateNode("Metabolic");
   MetabolicNode.GetTemperature().SetValue(dAmbientTemperature_K, TemperatureUnit::K);
   SEThermalCircuitPath &MetabolicPath = EnvironmentCircuit.CreatePath(*AbsoluteReferenceNode, MetabolicNode, "AbsoluteReferenceToMetabolic");
-  SEThermalCircuitPath &MetabolicToEnvironmentSkinPath = EnvironmentCircuit.CreatePath(MetabolicNode, *EnvironmentSkinNode, "MetabolicToEnvironmentSkin");
-  SEThermalCircuitPath &MetabolicToEnvironmentCorePath = EnvironmentCircuit.CreatePath(MetabolicNode, *EnvironmentCoreNode, "MetabolicToEnvironmentCore");
+  EnvironmentCircuit.CreatePath(MetabolicNode, *EnvironmentSkinNode, "MetabolicToEnvironmentSkin");
+  EnvironmentCircuit.CreatePath(MetabolicNode, *EnvironmentCoreNode, "MetabolicToEnvironmentCore");
 
   //Initialize the new source so that circuit solves on first loop
   MetabolicPath.GetNextHeatSource().SetValue(0, PowerUnit::W);

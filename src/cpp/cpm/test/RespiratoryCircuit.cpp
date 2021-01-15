@@ -244,7 +244,6 @@ void PulseEngineTest::RespiratoryDriverTest(const std::string& sTestDirectory)
   SEFluidCircuitPath* driverPressurePath = RespCircuit.GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
   SEFluidCircuitPath* rightPleuralToRespiratoryMuscle = RespCircuit.GetPath(pulse::RespiratoryPath::RightPleuralToRespiratoryMuscle);
   SEFluidCircuitPath* leftPleuralToRespiratoryMuscle = RespCircuit.GetPath(pulse::RespiratoryPath::LeftPleuralToRespiratoryMuscle);
-  SEFluidCircuitPath* AirwayToCarina = RespCircuit.GetPath(pulse::RespiratoryPath::AirwayToCarina);
   SEFluidCircuitPath* RightAlveoliToRightPleuralConnection = RespCircuit.GetPath(pulse::RespiratoryPath::RightAlveoliToRightPleuralConnection);
   SEFluidCircuitPath* LeftAlveoliToLeftPleuralConnection = RespCircuit.GetPath(pulse::RespiratoryPath::LeftAlveoliToLeftPleuralConnection);
   

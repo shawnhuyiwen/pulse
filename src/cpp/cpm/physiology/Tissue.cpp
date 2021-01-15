@@ -616,22 +616,22 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
 
   // The following fractions are used to compute the metabolic conversion of substances.
   // Stoichiometric ratios can be found in any physiology text, such as \cite guyton2006medical
-  double FractionOfO2CO2ToGlucose = 0.157894737;    // Ratio of o2/co2 required to produce ATP for glucose consumption. = 6.0 / 38.0 
-  double FractionOfO2ToLipid = 0.212239583;         // Ratio of o2 required to produce ATP for lipid consumption. = 163.0 / 768.0;
-  double FractionOfCO2ToLipid = 0.1484375;          // ratio of co2 required to produce ATP for lipid consumption. = 114.0 / 768.0;
+  const double FractionOfO2CO2ToGlucose = 0.157894737;    // Ratio of o2/co2 required to produce ATP for glucose consumption. = 6.0 / 38.0 
+  const double FractionOfO2ToLipid = 0.212239583;         // Ratio of o2 required to produce ATP for lipid consumption. = 163.0 / 768.0;
+  const double FractionOfCO2ToLipid = 0.1484375;          // ratio of co2 required to produce ATP for lipid consumption. = 114.0 / 768.0;
   SEScalarPressure ppO2;
   SEScalarMassPerVolume atConc;
   ppO2.SetValue(40.0, PressureUnit::mmHg);
   GeneralMath::CalculateHenrysLawConcentration(*m_O2, ppO2, atConc, m_Logger);
-  double anaerobicThresholdConcentration_mM = atConc.GetValue(MassPerVolumeUnit::g_Per_L) / m_O2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
-  double FractionOfGlucoseToATP = 0.026315789;      // Ratio of glucose required to ATP produced. = 1.0 / 38.0;
-  double FractionOfLactateToGlucose = 0.5;          // Ratio of glucose required to lactate produced during anaerobic metabolism. = 1.0 / 2.0;
-  double FractionOfAcetoacetateToATP = 0.041666667; // Ratio of acetoacetate required to ATP produced. = 1.0 / 24.0;
-  double FractionOfLactateToATP = 0.027777778;      // Ratio of lactate required to ATP produced. = 1.0 / 36.0;
-  double FractionOfLipidToATP = 0.002604167;        // Ratio of of lipid required to ATP produced. = 2.0 / 768.0;
-  double FractionLipidsAsTristearin = 0.256;        // This is an empirically determined value specific to the Pulse implementation
+  const double anaerobicThresholdConcentration_mM = atConc.GetValue(MassPerVolumeUnit::g_Per_L) / m_O2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
+  const double FractionOfGlucoseToATP = 0.026315789;      // Ratio of glucose required to ATP produced. = 1.0 / 38.0;
+  const double FractionOfLactateToGlucose = 0.5;          // Ratio of glucose required to lactate produced during anaerobic metabolism. = 1.0 / 2.0;
+  const double FractionOfAcetoacetateToATP = 0.041666667; // Ratio of acetoacetate required to ATP produced. = 1.0 / 24.0;
+  const double FractionOfLactateToATP = 0.027777778;      // Ratio of lactate required to ATP produced. = 1.0 / 36.0;
+  const double FractionOfLipidToATP = 0.002604167;        // Ratio of of lipid required to ATP produced. = 2.0 / 768.0;
+  const double FractionLipidsAsTristearin = 0.256;        // This is an empirically determined value specific to the Pulse implementation
 
-  double exerciseTuningFactor = 1.0; // 2.036237;           // A tuning factor to adjust production and consumption during exercise
+  const double exerciseTuningFactor = 1.0; // 2.036237;           // A tuning factor to adjust production and consumption during exercise
 
   double insulinConc_ug_Per_L = m_data.GetSubstances().GetInsulin().GetBloodConcentration(MassPerVolumeUnit::ug_Per_L);
 

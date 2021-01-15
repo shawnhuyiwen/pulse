@@ -323,8 +323,8 @@ void CommonDataModelTest::CombinedCircuitTest(const std::string& sTestDirectory)
   SEFluidCircuit* CombinedCircuit = &m_Circuits->CreateFluidCircuit("Combined");
   CombinedCircuit->AddCircuit(*MasterCircuit);
   CombinedCircuit->AddCircuit(*SlaveCircuit);
-  SEFluidCircuitPath& GroundPath = CombinedCircuit->CreatePath(MasterNode4, SlaveNode4, "GroundPath");
-  SEFluidCircuitPath& CombinedPath = CombinedCircuit->CreatePath(MasterNode3, SlaveNode3, "CombinedPath");
+  CombinedCircuit->CreatePath(MasterNode4, SlaveNode4, "GroundPath");
+  CombinedCircuit->CreatePath(MasterNode3, SlaveNode3, "CombinedPath");
   CombinedCircuit->RemovePath(SlavePath1);
   CombinedCircuit->StateChange();
 
@@ -379,7 +379,6 @@ void CommonDataModelTest::CircuitErrorTest(const std::string& sTestDirectory)
   std::cout << "CircuitErrorTest\n";
   //Setup a basic circuit
   m_Logger->SetLogFile(sTestDirectory + "/CombinedCircuitTest.log");
-  double timeStep_s = 1.0 / 165.0;
   SEFluidCircuitCalculator fluidCalculator(m_Logger);
   SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("Fluid");
   //-----------------------------------------------------------
@@ -487,9 +486,7 @@ void CommonDataModelTest::DynamicallyChangingCircuitTest(const std::string& sTes
       fluidCircuit->GetPath("Path4")->GetResistanceBaseline().SetValue(50, PressureTimePerVolumeUnit::Pa_s_Per_m3);
 
       //Add a new Path
-      SEFluidCircuitNode* Node2 = fluidCircuit->GetNode("Node2");
-      SEFluidCircuitNode* Node4 = fluidCircuit->GetNode("Node4");
-      SEFluidCircuitPath& Path5 = fluidCircuit->CreatePath(*Node2, *Node4, "Path5");
+      SEFluidCircuitPath& Path5 = fluidCircuit->CreatePath(Node2, Node4, "Path5");
       Path5.GetNextResistance().SetValue(25, PressureTimePerVolumeUnit::Pa_s_Per_m3);
       //Reset the baselines
       fluidCircuit->StateChange();
@@ -715,7 +712,6 @@ void CommonDataModelTest::PolarizedCapacitorTest(const std::string& sTestDirecto
   fluidCircuit->StateChange();
 
   bool serialized = false;
-  double sample = 0;
   while (currentTime_s < 150)
   {
     if (currentTime_s > 100)
@@ -871,7 +867,7 @@ void CommonDataModelTest::ComplianceVolumeChange(const std::string& sTestDirecto
   SEFluidCircuitPath* groundTonode2 = &fluidCircuit->CreatePath(*ground, *node2, "groundTonode2");
   groundTonode2->GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
   SEFluidCircuitPath* node2Tonode3 = &fluidCircuit->CreatePath(*node2, *node3, "node2Tonode3");
-  SEFluidCircuitPath* node3Toground = &fluidCircuit->CreatePath(*node3, *ground, "node3Toground");
+  fluidCircuit->CreatePath(*node3, *ground, "node3Toground");
   node2Tonode3->GetComplianceBaseline().SetValue(1.0, VolumePerPressureUnit::L_Per_cmH2O);
   fluidCircuit->SetNextAndCurrentFromBaselines();
   fluidCircuit->StateChange();
@@ -962,7 +958,7 @@ void CommonDataModelTest::CircuitLockingTest(const std::string& sOutputDirectory
   flowSource.GetFlowSourceBaseline().SetValue(0.1, VolumePerTimeUnit::m3_Per_s);
   SEFluidCircuitPath& potentialSource = fluidCircuit->CreatePath(Node5, Node1, "Potential Source");
   potentialSource.GetPotentialSourceBaseline().SetValue(10, PressureUnit::Pa);
-  SEFluidCircuitPath& dummyPath = fluidCircuit->CreatePath(Node1, Node3, "Short");
+  fluidCircuit->CreatePath(Node1, Node3, "Short");
   
   fluidCircuit->SetNextAndCurrentFromBaselines();
   fluidCircuit->StateChange();
