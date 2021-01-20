@@ -1408,9 +1408,11 @@ void Respiratory::RespiratoryDriver()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::SetBreathCycleFractions()
 {
+  m_IERatioScaleFactor *= 0.92; //Tuning factor determined from healthy validation
+
   //Healthy = ~1:2 IE Ratio = 0.33 inpiration and 0.67 expiration
   ///\cite Fresnel2014musclePressure
-  //Adjust for standard 12 bpm giving ~0.33 instead of 16 bpm by adding 4
+  //Adjust for standard 12 bpm giving ~0.33 instead of 16 bpm by adding 4  
   double inspiratoryFraction = (0.0125 * (m_VentilationFrequency_Per_min + 4.0) + 0.125) * m_IERatioScaleFactor;
   inspiratoryFraction = LIMIT(inspiratoryFraction, 0.1, 0.9);
   double expiratoryFraction = 1.0 - inspiratoryFraction;
@@ -2868,6 +2870,8 @@ void Respiratory::UpdateAlveolarCompliances()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateInspiratoryExpiratoryRatio()
 {
+  m_IERatioScaleFactor = 1.0; //Reset
+
   //Adjust the inspiration/expiration ratio based on severity
   double combinedObstructiveSeverity = 0.0;
   double combinedRestrictiveSeverity = 0.0;
@@ -3362,8 +3366,8 @@ void Respiratory::UpdatePulmonaryShunt()
     leftSeverity = MAX(leftSeverity, leftScaledSeverity);
   }
 
-  rightPulmonaryShuntScalingFactor = MIN(rightPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.05, 1.0, rightSeverity) * 0.4);
-  leftPulmonaryShuntScalingFactor = MIN(leftPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.05, 1.0, leftSeverity)) * 0.4;
+  rightPulmonaryShuntScalingFactor = MIN(rightPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.02, 1.0, rightSeverity));
+  leftPulmonaryShuntScalingFactor = MIN(leftPulmonaryShuntScalingFactor, GeneralMath::ExponentialDecayFunction(10, 0.02, 1.0, leftSeverity));
 
   //------------------------------------------------------------------------------------------------------
   //COPD - shunting occurs in UpdatePulmonaryCapillary
