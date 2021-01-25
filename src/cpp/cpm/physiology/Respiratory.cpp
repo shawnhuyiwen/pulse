@@ -1408,7 +1408,7 @@ void Respiratory::RespiratoryDriver()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::SetBreathCycleFractions()
 {
-  m_IERatioScaleFactor *= 0.92; //Tuning factor determined from healthy validation
+  m_IERatioScaleFactor *= 0.94; //Tuning factor determined from healthy validation
 
   //Healthy = ~1:2 IE Ratio = 0.33 inpiration and 0.67 expiration
   ///\cite Fresnel2014musclePressure
@@ -1419,8 +1419,8 @@ void Respiratory::SetBreathCycleFractions()
 
   m_InspiratoryRiseFraction = inspiratoryFraction;
   m_InspiratoryHoldFraction = 0.0;
-  m_InspiratoryReleaseFraction = 0.5 * expiratoryFraction;
-  m_InspiratoryToExpiratoryPauseFraction = 0.5 * expiratoryFraction;
+  m_InspiratoryReleaseFraction = MIN(inspiratoryFraction, expiratoryFraction * 0.5);
+  m_InspiratoryToExpiratoryPauseFraction = 1.0 - m_InspiratoryRiseFraction - m_InspiratoryReleaseFraction;
   m_ExpiratoryRiseFraction = 0.0;
   m_ExpiratoryHoldFraction = 0.0;
   m_ExpiratoryReleaseFraction = 0.0;
@@ -2681,7 +2681,7 @@ void Respiratory::UpdateResistances()
   if (m_PatientActions->HasAsthmaAttack())
   {
     double severity = m_PatientActions->GetAsthmaAttack()->GetSeverity().GetValue();
-    obstructiveResistanceScalingFactor = GeneralMath::ExponentialGrowthFunction(10.0, 1.0, 90.0, severity);
+    obstructiveResistanceScalingFactor = GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 60.0, severity);
   }
 
   //------------------------------------------------------------------------------------------------------
@@ -2993,7 +2993,8 @@ void Respiratory::UpdateInspiratoryExpiratoryRatio()
   // 2.0    | 0.67                 | 2:1 (2.0)
 
   // Obstructive effects
-  m_IERatioScaleFactor *= GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.17, combinedObstructiveSeverity);
+  //Multiplier included to counterbalance effects of RC time constant
+  m_IERatioScaleFactor *= GeneralMath::LinearInterpolator(0.0, 1.0, 1.0, 0.5 * 0.2, combinedObstructiveSeverity);
 
   // Bronchodilators
   //When albuterol is administered, the bronchodilation also causes the IE ratio to correct itself
