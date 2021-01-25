@@ -40,8 +40,8 @@
             "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }, 
         { "ForcedInhale": {
             "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.0 } },
-            "InhalePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } , 
-            "HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },
+            "InhalePeriod": { "ScalarTime": { "Value": 2.0, "Unit": "s" } } , 
+            "HoldPeriod": { "ScalarTime": { "Value": 2.0, "Unit": "s" } } } },
         { "ForcedExhale": { 
             "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
             "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } } 
@@ -64,8 +64,8 @@
             "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }, 
         { "ForcedInhale": {
             "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.0 } },
-            "InhalePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } , 
-            "HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },
+            "InhalePeriod": { "ScalarTime": { "Value": 2.0, "Unit": "s" } } , 
+            "HoldPeriod": { "ScalarTime": { "Value": 2.0, "Unit": "s" } } } },
         { "ForcedExhale": { 
             "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
             "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } } 
@@ -98,8 +98,8 @@
             "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }, 
         { "ForcedInhale": {
             "InspiratoryCapacityFraction": { "Scalar0To1": { "Value": 1.0 } },
-            "InhalePeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } , 
-            "HoldPeriod": { "ScalarTime": { "Value": 1.0, "Unit": "s" } } } },
+            "InhalePeriod": { "ScalarTime": { "Value": 2.0, "Unit": "s" } } , 
+            "HoldPeriod": { "ScalarTime": { "Value": 2.0, "Unit": "s" } } } },
         { "ForcedExhale": { 
             "ExpiratoryReserveVolumeFraction": { "Scalar0To1": { "Value": 1.0 } },
             "ExhalePeriod": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } } 
