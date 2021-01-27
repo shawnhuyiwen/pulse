@@ -308,7 +308,7 @@ Each segment is given as a fraction of the total breath, with all summing to a v
 <i>Equation 7.</i>
 </center><br> 
 
-Unless a conscious respiration action is called, all other segment fractions are set to 0. The inspiratory-expiratory ratio will change based on the driver respiration rate. The time series of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is given by @cite Fresnel2014musclePressure,
+Unless a conscious respiration action is called, all other segment fractions are set to 0. The inspiratory-expiratory ratio will change based on the driver respiration rate. The time series(<i>t</i>) of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is given by @cite Fresnel2014musclePressure,
 
 \f[{P_{mus}} = \left\{ {\begin{array}{*{20}{l}}
 {{P_{\min }} \cdot \sin \left( {\frac{\pi }{2} \cdot \frac{t}{{{t_1}}}} \right),}&{0 < t \le {t_1}}\\
@@ -325,7 +325,7 @@ Unless a conscious respiration action is called, all other segment fractions are
 <i>Equation 8.</i>
 </center><br> 
 
-Where <i>P<sub>0.1</sub></i> is the airway occlusion pressure, measured 100 ms after the onset of inspiration during quiet breathing. We set this to a constant healthy value of 0.75. <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure 3 shows the basic segmented muscle driver waveform used.
+Where <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure 3 shows the basic segmented muscle driver waveform used.
 
 <img src="./plots/Respiratory/DriverWaveform.jpg" width="600">
 <center> 
