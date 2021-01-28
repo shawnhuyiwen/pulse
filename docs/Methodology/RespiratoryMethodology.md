@@ -308,7 +308,7 @@ Each segment is given as a fraction of the total breath, with all summing to a v
 <i>Equation 7.</i>
 </center><br> 
 
-Unless a conscious respiration action is called, all other segment fractions are set to 0. The inspiratory-expiratory ratio will change based on the driver respiration rate. The time series(<i>t</i>) of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is given by @cite Fresnel2014musclePressure,
+Unless a conscious respiration action is called, all other segment fractions are set to 0. The inspiratory-expiratory ratio will change based on the driver respiration rate. The time series(<i>t</i>) of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is based on empirical data @cite kondili2010estimation as,
 
 \f[{P_{mus}} = \left\{ {\begin{array}{*{20}{l}}
 {{P_{\min }} \cdot \sin \left( {\frac{\pi }{2} \cdot \frac{t}{{{t_1}}}} \right),}&{0 < t \le {t_1}}\\
