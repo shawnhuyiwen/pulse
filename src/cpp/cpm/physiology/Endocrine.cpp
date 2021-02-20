@@ -163,8 +163,7 @@ void Endocrine::ReleaseEpinephrine()
   // If we have a stress/anxiety response, release more epi
   if (m_data.GetActions().GetPatientActions().HasAcuteStress())
   {
-    SEAcuteStress* s = m_data.GetActions().GetPatientActions().GetAcuteStress();
-    double severity = s->GetSeverity().GetValue();
+    double severity = m_data.GetActions().GetPatientActions().GetAcuteStress().GetSeverity().GetValue();
 
     //The highest stress multiplier we currently support is 30
     releaseMultiplier += GeneralMath::LinearInterpolator(0, 1, 0, 30, severity);

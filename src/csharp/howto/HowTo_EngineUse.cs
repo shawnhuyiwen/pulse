@@ -52,6 +52,11 @@ namespace HowTo_UseEngine
         SEDataRequest.CreateGasCompartmentSubstanceRequest("Carina", "CarbonDioxide", "PartialPressure", "mmHg"),
         SEDataRequest.CreatePhysiologyRequest("BloodVolume", "mL"),
         SEDataRequest.CreateECGRequest("Lead3ElectricPotential", "mV"),
+        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("BrainVasculature", "Oxygen", "PartialPressure", "mmHg"),
+        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("BrainVasculature", "CarbonDioxide", "PartialPressure", "mmHg"),
+        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("MyocardiumVasculature", "Oxygen", "PartialPressure", "mmHg"),
+        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("MyocardiumVasculature", "CarbonDioxide", "PartialPressure", "mmHg"),
+        SEDataRequest.CreateSubstanceRequest("Hemoglobin", "BloodConcentration", "g/dL"),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
       // In addition to getting this data back via this API

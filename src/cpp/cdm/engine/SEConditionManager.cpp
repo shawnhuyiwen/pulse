@@ -7,7 +7,6 @@
 #include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 #include "patient/conditions/SEChronicAnemia.h"
 #include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "patient/conditions/SEChronicHeartFailure.h"
 #include "patient/conditions/SEChronicPericardialEffusion.h"
 #include "patient/conditions/SEChronicRenalStenosis.h"
 #include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
@@ -138,20 +137,6 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
       return true;
     }
 
-    const SEChronicHeartFailure* h = dynamic_cast<const SEChronicHeartFailure*>(&condition);
-    if (h != nullptr)
-    {
-      // When we add more of these type, make sure to Clear then all out here
-      const SEChronicVentricularSystolicDysfunction* vsd = dynamic_cast<const SEChronicVentricularSystolicDysfunction*>(&condition);
-      if (vsd != nullptr)
-      {
-        GetChronicVentricularSystolicDysfunction().Copy(*vsd);
-        return true;
-      }
-      Error("Unknown Heart Failure condition");
-      return false;
-    }
-
     const SEChronicPericardialEffusion* pe = dynamic_cast<const SEChronicPericardialEffusion*>(&condition);
     if (pe != nullptr)
     {
@@ -163,6 +148,13 @@ bool SEConditionManager::Copy(const SECondition& condition, const SESubstanceMan
     if (r != nullptr)
     {
       GetChronicRenalStenosis().Copy(*r);
+      return true;
+    }
+
+    const SEChronicVentricularSystolicDysfunction* vsd = dynamic_cast<const SEChronicVentricularSystolicDysfunction*>(&condition);
+    if (vsd != nullptr)
+    {
+      GetChronicVentricularSystolicDysfunction().Copy(*vsd);
       return true;
     }
 

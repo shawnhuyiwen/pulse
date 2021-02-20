@@ -298,9 +298,10 @@ void Energy::Exercise()
   // Only try to get intensity if the exercise action is active. Otherwise, we are just refilling energy buckets post-exercise.
   if (m_data.GetActions().GetPatientActions().HasExercise())
   {
-    if (m_data.GetActions().GetPatientActions().GetExercise()->HasIntensity())
+    SEExercise& ex = m_data.GetActions().GetPatientActions().GetExercise();
+    if (ex.HasIntensity())
     {
-      exerciseIntensity = m_data.GetActions().GetPatientActions().GetExercise()->GetIntensity().GetValue();
+      exerciseIntensity = ex.GetIntensity().GetValue();
     }    
     else
     {

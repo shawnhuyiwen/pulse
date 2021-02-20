@@ -9,7 +9,7 @@
 #include "properties/SEScalarTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SESubstanceBolus::SESubstanceBolus(const SESubstance& substance, Logger* logger) : SESubstanceAdministration(logger), m_Substance(substance), m_State(substance)
+SESubstanceBolus::SESubstanceBolus(const SESubstance& substance, Logger* logger) : SEPatientAction(logger), m_Substance(substance)
 {
   m_AdminRoute=eSubstanceAdministration_Route::Intravenous;
   m_AdminDuration=nullptr;
@@ -23,32 +23,48 @@ SESubstanceBolus::~SESubstanceBolus()
   SAFE_DELETE(m_AdminDuration);
   SAFE_DELETE(m_Dose);
   SAFE_DELETE(m_Concentration);
-  m_State.Clear();
 }
 
 void SESubstanceBolus::Clear()
 {
-  SESubstanceAdministration::Clear();
+  SEPatientAction::Clear();
   m_AdminRoute=eSubstanceAdministration_Route::Intravenous;
   INVALIDATE_PROPERTY(m_AdminDuration);
   INVALIDATE_PROPERTY(m_Dose);
   INVALIDATE_PROPERTY(m_Concentration);
-  m_State.Clear();
 }
 
-void SESubstanceBolus::Copy(const SESubstanceBolus& src)
+void SESubstanceBolus::Copy(const SESubstanceBolus& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SESubstanceBolus::IsValid() const
 {
-  return SESubstanceAdministration::IsValid() && HasDose() && HasConcentration();
+  return SEPatientAction::IsValid() && HasDose() && HasConcentration();
 }
 
 bool SESubstanceBolus::IsActive() const
 {
-  return IsValid();
+  return !SEPatientAction::IsActive();
+}
+void SESubstanceBolus::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SESubstanceBolus::GetScalar(const std::string& name)
+{
+  if (name.compare("AdminDuration") == 0)
+    return &GetAdminDuration();
+  if (name.compare("Dose") == 0)
+    return &GetDose();
+  if (name.compare("Concentration") == 0)
+    return &GetConcentration();
+  return nullptr;
 }
 
 eSubstanceAdministration_Route SESubstanceBolus::GetAdminRoute() const
@@ -131,36 +147,4 @@ void SESubstanceBolus::ToString(std::ostream &str) const
   str << "\n\tDose: "; HasDose()? str << *m_Dose : str << "No Dose Set";
   str << "\n\tConcentration: "; HasConcentration()? str << *m_Concentration : str << "NaN";
   str << std::flush;
-}
-
-SESubstanceBolusState::SESubstanceBolusState(const SESubstance& sub, Logger* logger) : Loggable(logger), m_Substance(sub)
-{
-  m_ElapsedTime = new SEScalarTime();
-  m_AdministeredDose = new SEScalarVolume();
-  Clear();
-}
-SESubstanceBolusState::~SESubstanceBolusState()
-{
-  delete m_ElapsedTime;
-  delete m_AdministeredDose;
-}
-
-void SESubstanceBolusState::Clear()
-{
-  m_ElapsedTime->SetValue(0, TimeUnit::s);
-  m_AdministeredDose->SetValue(0, VolumeUnit::mL);
-}
-
-double SESubstanceBolusState::GetElapsedTime(const TimeUnit& unit) const
-{
-  if (m_ElapsedTime == nullptr)
-    return SEScalar::dNaN();
-  return m_ElapsedTime->GetValue(unit);
-}
-
-double SESubstanceBolusState::GetAdministeredDose(const VolumeUnit& unit) const
-{
-  if (m_AdministeredDose == nullptr)
-    return SEScalar::dNaN();
-  return m_AdministeredDose->GetValue(unit);
 }

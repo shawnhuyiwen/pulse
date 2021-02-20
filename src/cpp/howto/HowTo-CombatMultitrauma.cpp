@@ -175,7 +175,7 @@ void LoadState()
 
   // Needle Decompression to help with pneumothorax
   SENeedleDecompression needleDecomp;
-  needleDecomp.SetActive(true);
+  needleDecomp.SetState(eSwitch::On);
   needleDecomp.SetSide(eSide::Left);
   pe->ProcessAction(needleDecomp);
 

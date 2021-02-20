@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "patient/actions/SEHemorrhage.h"
 #include "properties/SEScalar0To1.h"
+#include "properties/SEScalarVolume.h"
 #include "properties/SEScalarVolumePerTime.h"
 #include "io/protobuf/PBPatientActions.h"
 
@@ -12,6 +13,7 @@ SEHemorrhage::SEHemorrhage(Logger* logger) : SEPatientAction(logger)
   m_Compartment = "";
   m_FlowRate=nullptr;
   m_Severity = nullptr;
+  m_TotalBloodLost = nullptr;
   m_Type = eHemorrhage_Type::External;
 }
 
@@ -20,6 +22,7 @@ SEHemorrhage::~SEHemorrhage()
   m_Compartment = "";
   SAFE_DELETE(m_FlowRate);
   SAFE_DELETE(m_Severity);
+  SAFE_DELETE(m_TotalBloodLost);
   m_Type = eHemorrhage_Type::External;
 }
 
@@ -29,12 +32,27 @@ void SEHemorrhage::Clear()
   m_Compartment = "";
   INVALIDATE_PROPERTY(m_FlowRate);
   INVALIDATE_PROPERTY(m_Severity);
+  INVALIDATE_PROPERTY(m_TotalBloodLost);
   m_Type = eHemorrhage_Type::External;
 }
 
-void SEHemorrhage::Copy(const SEHemorrhage& src)
+void SEHemorrhage::Copy(const SEHemorrhage& src, bool preserveState)
 {
+  static double v;
+  static const VolumeUnit* vu;
+  if (preserveState)
+  {
+    vu = nullptr;
+    if (HasTotalBloodLost())
+    {
+      vu = GetTotalBloodLost().GetUnit();
+      v = GetTotalBloodLost(*vu);
+    }
+  }
   PBPatientAction::Copy(src, *this);
+  // Put back any state
+  if (preserveState && vu != nullptr)
+    GetTotalBloodLost().SetValue(v, *vu);
 }
 
 bool SEHemorrhage::IsValid() const
@@ -44,13 +62,31 @@ bool SEHemorrhage::IsValid() const
 
 bool SEHemorrhage::IsActive() const
 {
-  if (!IsValid())
+  if (!SEPatientAction::IsActive())
     return false;
-  if (HasFlowRate() && m_FlowRate->IsPositive())
-    return true;
   if (HasSeverity() && m_Severity->IsPositive())
     return true;
+  if (HasFlowRate() && m_FlowRate->IsPositive())
+    return true;
   return false;
+}
+void SEHemorrhage::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  INVALIDATE_PROPERTY(m_FlowRate);
+  INVALIDATE_PROPERTY(m_Severity);
+  // Keep the other variables, as they are state
+}
+
+const SEScalar* SEHemorrhage::GetScalar(const std::string& name)
+{
+  if (name.compare("FlowRate") == 0)
+    return &GetFlowRate();
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  if (name.compare("TotalBloodLost") == 0)
+    return &GetTotalBloodLost();
+  return nullptr;
 }
 
 eHemorrhage_Type SEHemorrhage::GetType() const
@@ -116,6 +152,22 @@ double SEHemorrhage::GetSeverity() const
   return m_Severity->GetValue();
 }
 
+bool SEHemorrhage::HasTotalBloodLost() const
+{
+  return m_TotalBloodLost == nullptr ? false : m_TotalBloodLost->IsValid();
+}
+SEScalarVolume& SEHemorrhage::GetTotalBloodLost()
+{
+  if (m_TotalBloodLost == nullptr)
+    m_TotalBloodLost = new SEScalarVolume();
+  return *m_TotalBloodLost;
+}
+double SEHemorrhage::GetTotalBloodLost(const VolumeUnit& unit) const
+{
+  if (m_TotalBloodLost == nullptr)
+    return SEScalar::dNaN();
+  return m_TotalBloodLost->GetValue(unit);
+}
 
 void SEHemorrhage::ToString(std::ostream &str) const
 {
@@ -126,5 +178,6 @@ void SEHemorrhage::ToString(std::ostream &str) const
   str << "\n\tFor Compartment: "; HasCompartment()? str << GetCompartment() : str << "No Compartment Set";
   str << "\n\tFlowRate: "; HasFlowRate() ? str << *m_FlowRate : str << "Not Set";
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
+  str << "\n\tTotalBloodLost: "; HasTotalBloodLost() ? str << *m_TotalBloodLost : str << "Not Set";
   str << std::flush;
 }

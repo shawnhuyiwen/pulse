@@ -26,13 +26,6 @@ bool SEAdvanceTime::IsValid() const
   return HasTime() && m_Time->IsValid();
 }
 
-void SEAdvanceTime::ToString(std::ostream &str) const
-{  
-  if(HasComment())
-    str<<"\n\tComment : "<<m_Comment;
-  str << "\n\tAdvance Time : " << m_Time;
-}
-
 bool SEAdvanceTime::HasTime() const
 {
   return m_Time==nullptr?false:m_Time->IsValid();
@@ -48,4 +41,18 @@ double SEAdvanceTime::GetTime(const TimeUnit& unit) const
   if (m_Time == nullptr)
     return SEScalar::dNaN();
   return m_Time->GetValue(unit);
+}
+
+void SEAdvanceTime::ToString(std::ostream& str) const
+{
+  if (HasComment())
+    str << "\n\tComment : " << m_Comment;
+  str << "\n\tAdvance Time : " << m_Time;
+}
+
+const SEScalar* SEAdvanceTime::GetScalar(const std::string& name)
+{
+  if (name.compare("Time") == 0)
+    return &GetTime();
+  return nullptr;
 }

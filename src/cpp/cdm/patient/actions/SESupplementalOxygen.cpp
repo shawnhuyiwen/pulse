@@ -29,14 +29,37 @@ void SESupplementalOxygen::Clear()
   INVALIDATE_PROPERTY(m_Volume);
 }
 
-void SESupplementalOxygen::Copy(const SESupplementalOxygen& src)
+void SESupplementalOxygen::Copy(const SESupplementalOxygen& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SESupplementalOxygen::IsValid() const
 {
   return SEPatientAction::IsValid();
+}
+
+bool SESupplementalOxygen::IsActive() const
+{
+  if (!SEPatientAction::IsActive())
+    return false;
+  return m_Device != eSupplementalOxygen_Device::None && (HasFlow() || HasVolume());
+}
+void SESupplementalOxygen::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SESupplementalOxygen::GetScalar(const std::string& name)
+{
+  if (name.compare("Flow") == 0)
+    return &GetFlow();
+  if (name.compare("Volume") == 0)
+    return &GetVolume();
+  return nullptr;
 }
 
 eSupplementalOxygen_Device SESupplementalOxygen::GetDevice() const

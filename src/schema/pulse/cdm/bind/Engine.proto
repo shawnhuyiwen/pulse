@@ -35,23 +35,25 @@ message DataRequestData
     Patient              = 0;
     Physiology           = 1;
     Environment          = 2;
-    GasCompartment       = 3;
-    LiquidCompartment    = 4;
-    ThermalCompartment   = 5;
-    TissueCompartment    = 6;
-    Substance            = 7;
-    AnesthesiaMachine    = 8;
-    ECG                  = 9;
-    Inhaler              = 10;
-    MechanicalVentilator = 11;
+    Action               = 3;
+    GasCompartment       = 4;
+    LiquidCompartment    = 5;
+    ThermalCompartment   = 6;
+    TissueCompartment    = 7;
+    Substance            = 8;
+    AnesthesiaMachine    = 9;
+    ECG                  = 10;
+    Inhaler              = 11;
+    MechanicalVentilator = 12;
   }
   
   DecimalFormatData                                    DecimalFormat             = 1;/**<<@brief If writing to a file, specify the decimal formatting */
   eCategory                                            Category                  = 2;/**<<@brief A category assocated with the Name */
-  string                                               CompartmentName           = 3;/**<<@brief The compartment name the property could be associated with */
-  string                                               SubstanceName             = 4;/**<<@brief The substance name the property could be associated with */
-  string                                               PropertyName              = 5;/**<<@brief The name of the property requested */
-  string                                               Unit                      = 6;/**<<@brief If writing to a file, the unit the data will be in. */
+  string                                               ActionName                = 3;/**<<@brief The action name the property is on */
+  string                                               CompartmentName           = 4;/**<<@brief The compartment name the property could be associated with */
+  string                                               SubstanceName             = 5;/**<<@brief The substance name the property could be associated with */
+  string                                               PropertyName              = 6;/**<<@brief The name of the property requested */
+  string                                               Unit                      = 7;/**<<@brief If writing to a file, the unit the data will be in. */
 }
 message DataRequestManagerData
 {

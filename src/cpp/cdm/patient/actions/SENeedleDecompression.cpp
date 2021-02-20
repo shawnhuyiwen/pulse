@@ -24,9 +24,11 @@ void SENeedleDecompression::Clear()
   m_Side= eSide::NullSide;
 }
 
-void SENeedleDecompression::Copy(const SENeedleDecompression& src)
+void SENeedleDecompression::Copy(const SENeedleDecompression& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SENeedleDecompression::IsValid() const
@@ -36,12 +38,19 @@ bool SENeedleDecompression::IsValid() const
 
 bool SENeedleDecompression::IsActive() const
 {
-  return IsValid() && m_State == eSwitch::On;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return m_State == eSwitch::On;
+}
+void SENeedleDecompression::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
 }
 
-void SENeedleDecompression::SetActive(bool b)
+const SEScalar* SENeedleDecompression::GetScalar(const std::string& name)
 {
-  m_State = b ? eSwitch::On : eSwitch::Off;
+  return nullptr;
 }
 
 eSwitch SENeedleDecompression::GetState() const

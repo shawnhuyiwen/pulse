@@ -45,185 +45,208 @@ class CDM_DECL SEPatientActionCollection : public Loggable
   friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
-  SEPatientActionCollection(Logger* logger=nullptr);
+  SEPatientActionCollection(SESubstanceManager& subMgr);
 public:
   ~SEPatientActionCollection();
 
   bool HasAcuteRespiratoryDistressSyndromeExacerbation() const;
-  SEAcuteRespiratoryDistressSyndromeExacerbation* GetAcuteRespiratoryDistressSyndromeExacerbation();
+  SEAcuteRespiratoryDistressSyndromeExacerbation& GetAcuteRespiratoryDistressSyndromeExacerbation();
   const SEAcuteRespiratoryDistressSyndromeExacerbation* GetAcuteRespiratoryDistressSyndromeExacerbation() const;
   void RemoveAcuteRespiratoryDistressSyndromeExacerbation();
 
   bool HasAcuteStress() const;
-  SEAcuteStress* GetAcuteStress();
+  SEAcuteStress& GetAcuteStress();
   const SEAcuteStress* GetAcuteStress() const;
   void RemoveAcuteStress();
 
   bool HasAirwayObstruction() const;
-  SEAirwayObstruction* GetAirwayObstruction();
+  SEAirwayObstruction& GetAirwayObstruction();
   const SEAirwayObstruction* GetAirwayObstruction() const;
   void RemoveAirwayObstruction();
 
   bool HasAsthmaAttack() const;
-  SEAsthmaAttack* GetAsthmaAttack();
+  SEAsthmaAttack& GetAsthmaAttack();
   const SEAsthmaAttack* GetAsthmaAttack() const;
   void RemoveAsthmaAttack();
 
   bool HasBrainInjury() const;
-  SEBrainInjury* GetBrainInjury();
+  SEBrainInjury& GetBrainInjury();
   const SEBrainInjury* GetBrainInjury() const;
   void RemoveBrainInjury();
 
   bool HasBronchoconstriction() const;
-  SEBronchoconstriction* GetBronchoconstriction();
+  SEBronchoconstriction& GetBronchoconstriction();
   const SEBronchoconstriction* GetBronchoconstriction() const;
   void RemoveBronchoconstriction();
 
   bool HasCardiacArrest() const;
-  SECardiacArrest* GetCardiacArrest();
+  SECardiacArrest& GetCardiacArrest();
   const SECardiacArrest* GetCardiacArrest() const;
   void RemoveCardiacArrest();
 
   bool HasChestCompression() const;
-  void RemoveChestCompression();
   bool HasChestCompressionForce() const;
-  SEChestCompressionForce* GetChestCompressionForce();
+  SEChestCompressionForce& GetChestCompressionForce();
   const SEChestCompressionForce* GetChestCompressionForce() const;
+  void RemoveChestCompressionForce();
   bool HasChestCompressionForceScale() const;
-  SEChestCompressionForceScale* GetChestCompressionForceScale();
+  SEChestCompressionForceScale& GetChestCompressionForceScale();
   const SEChestCompressionForceScale* GetChestCompressionForceScale() const;
+  void RemoveChestCompressionForceScale();
 
   bool HasChestOcclusiveDressing() const;
   bool HasLeftChestOcclusiveDressing() const;
-  SEChestOcclusiveDressing* GetLeftChestOcclusiveDressing();
+  SEChestOcclusiveDressing& GetLeftChestOcclusiveDressing();
   const SEChestOcclusiveDressing* GetLeftChestOcclusiveDressing() const;
   void RemoveLeftChestOcclusiveDressing();
   bool HasRightChestOcclusiveDressing() const;
-  SEChestOcclusiveDressing* GetRightChestOcclusiveDressing();
+  SEChestOcclusiveDressing& GetRightChestOcclusiveDressing();
   const SEChestOcclusiveDressing* GetRightChestOcclusiveDressing() const;
   void RemoveRightChestOcclusiveDressing();
 
   bool HasChronicObstructivePulmonaryDiseaseExacerbation() const;
-  SEChronicObstructivePulmonaryDiseaseExacerbation* GetChronicObstructivePulmonaryDiseaseExacerbation();
+  SEChronicObstructivePulmonaryDiseaseExacerbation& GetChronicObstructivePulmonaryDiseaseExacerbation();
   const SEChronicObstructivePulmonaryDiseaseExacerbation* GetChronicObstructivePulmonaryDiseaseExacerbation() const;
   void RemoveChronicObstructivePulmonaryDiseaseExacerbation();
 
   bool HasConsciousRespiration() const;
-  SEConsciousRespiration* GetConsciousRespiration();
+  SEConsciousRespiration& GetConsciousRespiration();
   const SEConsciousRespiration* GetConsciousRespiration() const;
   void RemoveConsciousRespiration();
 
   bool HasConsumeNutrients() const;
-  SEConsumeNutrients* GetConsumeNutrients();
+  SEConsumeNutrients& GetConsumeNutrients();
   const SEConsumeNutrients* GetConsumeNutrients() const;
   void RemoveConsumeNutrients();
 
   bool HasDyspnea() const;
-  SEDyspnea* GetDyspnea();
+  SEDyspnea& GetDyspnea();
   const SEDyspnea* GetDyspnea() const;
   void RemoveDyspnea();
 
   bool HasExercise() const;
-  SEExercise* GetExercise();
+  SEExercise& GetExercise();
   const SEExercise* GetExercise() const;
   void RemoveExercise();
 
   bool HasHemorrhage() const;
-  const std::map<std::string, SEHemorrhage*>& GetHemorrhages() const;
-  void RemoveHemorrhage(const std::string& cmpt);
+  bool HasHemorrhage(const std::string& cmptName) const;
+  SEHemorrhage& GetHemorrhage(const std::string& cmptName);
+  const SEHemorrhage* GetHemorrhage(const std::string& cmptName) const;
+  const std::vector<SEHemorrhage*>& GetHemorrhages();
+  const std::vector<SEHemorrhage const*>& GetHemorrhages() const;
+  void RemoveHemorrhage(const std::string& cmptName);
 
   bool HasImpairedAlveolarExchangeExacerbation() const;
-  SEImpairedAlveolarExchangeExacerbation* GetImpairedAlveolarExchangeExacerbation();
+  SEImpairedAlveolarExchangeExacerbation& GetImpairedAlveolarExchangeExacerbation();
   const SEImpairedAlveolarExchangeExacerbation* GetImpairedAlveolarExchangeExacerbation() const;
   void RemoveImpairedAlveolarExchangeExacerbation();
 
   bool HasIntubation() const;
-  SEIntubation* GetIntubation();
+  SEIntubation& GetIntubation();
   const SEIntubation* GetIntubation() const;
   void RemoveIntubation();
 
   bool HasLobarPneumoniaExacerbation() const;
-  SELobarPneumoniaExacerbation* GetLobarPneumoniaExacerbation();
+  SELobarPneumoniaExacerbation& GetLobarPneumoniaExacerbation();
   const SELobarPneumoniaExacerbation* GetLobarPneumoniaExacerbation() const;
   void RemoveLobarPneumoniaExacerbation();
 
   bool HasMechanicalVentilation() const;
-  SEMechanicalVentilation* GetMechanicalVentilation();
+  SEMechanicalVentilation& GetMechanicalVentilation();
   const SEMechanicalVentilation* GetMechanicalVentilation() const;
   void RemoveMechanicalVentilation();
 
   bool HasNeedleDecompression() const;
   bool HasLeftNeedleDecompression() const;
-  SENeedleDecompression* GetLeftNeedleDecompression();
+  SENeedleDecompression& GetLeftNeedleDecompression();
   const SENeedleDecompression* GetLeftNeedleDecompression() const;
   void RemoveLeftNeedleDecompression();
 
   bool HasRightNeedleDecompression() const;
-  SENeedleDecompression* GetRightNeedleDecompression();
+  SENeedleDecompression& GetRightNeedleDecompression();
   const SENeedleDecompression* GetRightNeedleDecompression() const;
   void RemoveRightNeedleDecompression();
 
   bool HasPericardialEffusion() const;
-  SEPericardialEffusion* GetPericardialEffusion();
+  SEPericardialEffusion& GetPericardialEffusion();
   const SEPericardialEffusion* GetPericardialEffusion() const;
   void RemovePericardialEffusion();
 
   bool HasPulmonaryShuntExacerbation() const;
-  SEPulmonaryShuntExacerbation* GetPulmonaryShuntExacerbation();
+  SEPulmonaryShuntExacerbation& GetPulmonaryShuntExacerbation();
   const SEPulmonaryShuntExacerbation* GetPulmonaryShuntExacerbation() const;
   void RemovePulmonaryShuntExacerbation();
 
   bool HasRespiratoryFatigue() const;
-  SERespiratoryFatigue* GetRespiratoryFatigue();
+  SERespiratoryFatigue& GetRespiratoryFatigue();
   const SERespiratoryFatigue* GetRespiratoryFatigue() const;
   void RemoveRespiratoryFatigue();
 
-  const std::map<const SESubstance*, SESubstanceBolus*>&  GetSubstanceBoluses() const;
+  bool HasSubstanceBolus() const;
+  bool HasSubstanceBolus(const SESubstance& sub) const;
+  SESubstanceBolus& GetSubstanceBolus(const SESubstance& sub);
+  const SESubstanceBolus* GetSubstanceBolus(const SESubstance& sub) const;
+  const std::vector<SESubstanceBolus*>& GetSubstanceBoluses();
+  const std::vector<SESubstanceBolus const*>& GetSubstanceBoluses() const;
   void RemoveSubstanceBolus(const SESubstance& sub);
 
-  const std::map<const SESubstance*, SESubstanceInfusion*>& GetSubstanceInfusions() const;
+  bool HasSubstanceInfusion() const;
+  bool HasSubstanceInfusion(const SESubstance& sub) const;
+  SESubstanceInfusion& GetSubstanceInfusion(const SESubstance& sub);
+  const SESubstanceInfusion* GetSubstanceInfusion(const SESubstance& sub) const;
+  const std::vector<SESubstanceInfusion*>& GetSubstanceInfusions();
+  const std::vector<SESubstanceInfusion const*>& GetSubstanceInfusions() const;
   void RemoveSubstanceInfusion(const SESubstance& sub);
 
-  const std::map<const SESubstanceCompound*, SESubstanceCompoundInfusion*>&  GetSubstanceCompoundInfusions() const;
+  bool HasSubstanceCompoundInfusion() const;
+  bool HasSubstanceCompoundInfusion(const SESubstanceCompound& sub) const;
+  SESubstanceCompoundInfusion& GetSubstanceCompoundInfusion(const SESubstanceCompound& sub);
+  const SESubstanceCompoundInfusion* GetSubstanceCompoundInfusion(const SESubstanceCompound& sub) const;
+  const std::vector<SESubstanceCompoundInfusion*>& GetSubstanceCompoundInfusions();
+  const std::vector<SESubstanceCompoundInfusion const*>&  GetSubstanceCompoundInfusions() const;
   void RemoveSubstanceCompoundInfusion(const SESubstanceCompound& sub);
 
   bool HasSupplementalOxygen() const;
-  SESupplementalOxygen* GetSupplementalOxygen();
+  SESupplementalOxygen& GetSupplementalOxygen();
   const SESupplementalOxygen* GetSupplementalOxygen() const;
   void RemoveSupplementalOxygen();
 
   bool HasTensionPneumothorax() const;
 
   bool HasLeftClosedTensionPneumothorax() const;
-  SETensionPneumothorax* GetLeftClosedTensionPneumothorax();
+  SETensionPneumothorax& GetLeftClosedTensionPneumothorax();
   const SETensionPneumothorax* GetLeftClosedTensionPneumothorax() const;
   void RemoveLeftClosedTensionPneumothorax();
 
   bool HasLeftOpenTensionPneumothorax() const;
-  SETensionPneumothorax* GetLeftOpenTensionPneumothorax();
+  SETensionPneumothorax& GetLeftOpenTensionPneumothorax();
   const SETensionPneumothorax* GetLeftOpenTensionPneumothorax() const;
   void RemoveLeftOpenTensionPneumothorax();
 
   bool HasRightClosedTensionPneumothorax() const;
-  SETensionPneumothorax* GetRightClosedTensionPneumothorax();
+  SETensionPneumothorax& GetRightClosedTensionPneumothorax();
   const SETensionPneumothorax* GetRightClosedTensionPneumothorax() const;
   void RemoveRightClosedTensionPneumothorax();
 
   bool HasRightOpenTensionPneumothorax() const;
-  SETensionPneumothorax* GetRightOpenTensionPneumothorax();
+  SETensionPneumothorax& GetRightOpenTensionPneumothorax();
   const SETensionPneumothorax* GetRightOpenTensionPneumothorax() const;
   void RemoveRightOpenTensionPneumothorax();
 
   bool HasUrinate() const;
-  SEUrinate* GetUrinate();
+  SEUrinate& GetUrinate();
   const SEUrinate* GetUrinate() const;
   void RemoveUrinate();
 
   void GetAllActions(std::vector<const SEAction*>& v) const;
+  const SEScalar* GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property);
 
 protected:
   void Clear();
-  bool ProcessAction(const SEPatientAction& action, SESubstanceManager&);
+  bool ProcessAction(const SEPatientAction& action);
+
+  SESubstanceManager&                               m_SubMgr;
 
   SEAcuteRespiratoryDistressSyndromeExacerbation*   m_ARDSExacerbation;
   SEAcuteStress*                                    m_AcuteStress;
@@ -232,7 +255,8 @@ protected:
   SEBrainInjury*                                    m_BrainInjury;
   SEBronchoconstriction*                            m_Bronchoconstriction;
   SECardiacArrest*                                  m_CardiacArrest;
-  SEChestCompression*                               m_ChestCompression;
+  SEChestCompressionForce*                          m_ChestCompressionForce;
+  SEChestCompressionForceScale*                     m_ChestCompressionForceScale;
   SEChestOcclusiveDressing*                         m_LeftChestOcclusiveDressing;
   SEChestOcclusiveDressing*                         m_RightChestOcclusiveDressing;
   SEConsciousRespiration*                           m_ConsciousRespiration;
@@ -256,8 +280,8 @@ protected:
   SETensionPneumothorax*                            m_RightOpenTensionPneumothorax;
   SEUrinate*                                        m_Urinate;
 
-  std::map<std::string, SEHemorrhage*>                              m_Hemorrhages;
-  std::map<const SESubstance*,SESubstanceBolus*>                    m_SubstanceBolus;
-  std::map<const SESubstance*,SESubstanceInfusion*>                 m_SubstanceInfusions;
-  std::map<const SESubstanceCompound*,SESubstanceCompoundInfusion*> m_SubstanceCompoundInfusions;
+  std::vector<SEHemorrhage*>                        m_Hemorrhages;
+  std::vector<SESubstanceBolus*>                    m_SubstanceBoluses;
+  std::vector<SESubstanceInfusion*>                 m_SubstanceInfusions;
+  std::vector<SESubstanceCompoundInfusion*>         m_SubstanceCompoundInfusions;
 };

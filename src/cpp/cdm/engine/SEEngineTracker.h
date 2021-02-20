@@ -8,6 +8,7 @@ class SESystem;
 class SEPatient;
 class SEEnvironment;
 class PhysiologyEngine;
+class SEActionManager;
 class SESubstanceManager;
 class SECompartmentManager;
 class SEDataRequest;
@@ -63,12 +64,13 @@ protected:
 class CDM_DECL SEEngineTracker : public Loggable
 {
 public:
-  SEEngineTracker(SEPatient&, SESubstanceManager&, SECompartmentManager&, Logger* logger=nullptr);
+  SEEngineTracker(SEPatient&, SEActionManager&, SESubstanceManager&, SECompartmentManager&, Logger* logger=nullptr);
   virtual ~SEEngineTracker();
 
   void Clear();// Remove all requests and close the results file
 
   DataTrack& GetDataTrack();
+  SEActionManager& GetActionManager() { return m_ActionMgr; }
   SESubstanceManager& GetSubstanceManager() { return m_SubMgr; }
   SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
 
@@ -103,6 +105,7 @@ protected:
   SEDataRequestManager*        m_DataRequestMgr;
   
   SEPatient&                   m_Patient;
+  SEActionManager&             m_ActionMgr;
   SESubstanceManager&          m_SubMgr;
   SECompartmentManager&        m_CmptMgr;
 

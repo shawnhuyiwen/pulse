@@ -113,6 +113,58 @@ inline std::ostream& operator<< (std::ostream& out, const SEScalar& s)
   return out;
 }
 
+template <typename Enum>
+class CDM_DECL SEScalarEnum : public SEScalar
+{
+public:
+  SEScalarEnum() : SEScalar() { Clear(); }
+  virtual ~SEScalarEnum() { Clear(); }
+
+  virtual void Invalidate()
+  {
+    SEScalar::Invalidate();
+    m_enum = (Enum)-1;
+  }
+  bool Set(const SEScalarEnum<Enum>& s)
+  {
+    SEScalar::Set(s);
+    m_enum = s.m_enum;
+  }
+  void Copy(const SEScalarEnum<Enum>& s)
+  {
+    SEScalar::Set(s);
+    m_enum = s.m_enum;
+  }
+
+  Enum GetEnum() const { return m_enum; }
+  void SetEnum(Enum e)
+  {
+    m_enum = e;
+    SetValue((double)e);
+  }
+
+private:
+  using SEScalar::IsInfinity;
+
+  using SEScalar::IsPositive;
+  using SEScalar::IsNegative;
+  using SEScalar::IsZero;
+
+  using SEScalar::SetValue;
+  using SEScalar::ForceValue;
+
+  using SEScalar::Increment;
+  using SEScalar::IncrementValue;
+
+  using SEScalar::Multiply;
+  using SEScalar::MultiplyValue;
+
+  using SEScalar::Average;
+
+protected:
+  Enum m_enum;
+};
+
 /**
 * @brief - An interface to be used for gaining access to a scalar with any unit type
 * @details - This interface allows you to have a pointer to a scalar with units
@@ -349,4 +401,3 @@ inline void IncrementOverride(SEScalarQuantity<Unit>& s, double value, const Uni
     double Get##name(const type##Unit& unit) const { return m_##name.GetValue(unit); } \
   protected: \
     SEScalar##type m_##name;
-

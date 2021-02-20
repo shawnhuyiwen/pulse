@@ -5,7 +5,7 @@
 #include "patient/actions/SESubstanceAdministration.h"
 class SESubstance;
 
-class CDM_DECL SESubstanceInfusion : public SESubstanceAdministration
+class CDM_DECL SESubstanceInfusion : public SEPatientAction
 {
   friend class PBPatientAction;//friend the serialization class
 public:
@@ -14,10 +14,11 @@ public:
   virtual ~SESubstanceInfusion();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SESubstanceInfusion& src);
+  virtual void Copy(const SESubstanceInfusion& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();
@@ -31,6 +32,8 @@ public:
   virtual const SESubstance& GetSubstance() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalarMassPerVolume*                  m_Concentration;

@@ -13,10 +13,11 @@ public:
   virtual ~SEChronicObstructivePulmonaryDiseaseExacerbation();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src);
+  virtual void Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasBronchitisSeverity() const;
   virtual SEScalar0To1& GetBronchitisSeverity();
@@ -27,6 +28,8 @@ public:
   virtual double GetEmphysemaSeverity() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalar0To1*     m_BronchitisSeverity;

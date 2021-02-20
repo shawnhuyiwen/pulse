@@ -13,11 +13,11 @@ public:
   virtual ~SENeedleDecompression();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SENeedleDecompression& src);
+  virtual void Copy(const SENeedleDecompression& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-  virtual void SetActive(bool b);
+  virtual void Deactivate();
 
   virtual eSwitch GetState() const;
   virtual void SetState(eSwitch name);
@@ -28,6 +28,8 @@ public:
   virtual void InvalidateSide();
   
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eSide m_Side;

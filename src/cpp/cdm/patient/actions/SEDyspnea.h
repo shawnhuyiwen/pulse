@@ -13,16 +13,19 @@ public:
   virtual ~SEDyspnea();
 
   virtual void Clear();
-  virtual void Copy(const SEDyspnea& src);
+  virtual void Copy(const SEDyspnea& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalar0To1*           m_Severity;

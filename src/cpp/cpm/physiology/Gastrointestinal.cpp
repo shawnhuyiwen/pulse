@@ -160,19 +160,19 @@ void Gastrointestinal::PreProcess()
     if (m_data.GetActions().GetPatientActions().HasConsumeNutrients())
     {
       // Use Default Rates if none provided
-      SEConsumeNutrients* c = m_data.GetActions().GetPatientActions().GetConsumeNutrients();
-      if (c->HasNutritionFile())
+      SEConsumeNutrients& c = m_data.GetActions().GetPatientActions().GetConsumeNutrients();
+      if (c.HasNutritionFile())
       {// Grab file, then load it (note GetNutrition will remove the file name, so get it first)
-        std::string file = c->GetNutritionFile();
-        if (!c->GetNutrition().SerializeFromFile(file))
+        std::string file = c.GetNutritionFile();
+        if (!c.GetNutrition().SerializeFromFile(file))
         {
           /// \error Unable to read consume meal action file
           Error("Could not read provided nutrition file", "Gastrointestinal::PreProcess");
         }
       }
-      DefaultNutritionRates(c->GetNutrition());
-      m_StomachContents->Increment(c->GetNutrition());
-      m_data.GetCurrentPatient().GetWeight().IncrementValue(c->GetNutrition().GetWeight(MassUnit::kg), MassUnit::kg);
+      DefaultNutritionRates(c.GetNutrition());
+      m_StomachContents->Increment(c.GetNutrition());
+      m_data.GetCurrentPatient().GetWeight().IncrementValue(c.GetNutrition().GetWeight(MassUnit::kg), MassUnit::kg);
       m_data.GetActions().GetPatientActions().RemoveConsumeNutrients();
     }
     DigestStomachNutrients(m_dT_s);

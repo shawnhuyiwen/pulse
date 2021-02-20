@@ -121,7 +121,7 @@ void PulseData::SetIntubation(eSwitch s)
 
 void PulseData::SetupTracker()
 {
-  m_EngineTrack = new SEEngineTracker(*m_CurrentPatient, *m_Substances, *m_Compartments, m_Logger);
+  m_EngineTrack = new SEEngineTracker(*m_CurrentPatient, *m_Actions, *m_Substances, *m_Compartments, m_Logger);
   if(m_BloodChemistrySystem)
     m_EngineTrack->AddSystem(*m_BloodChemistrySystem);
   if (m_CardiovascularSystem)
@@ -285,7 +285,7 @@ void PulseController::Allocate()
 
   m_SaturationCalculator = new SaturationCalculator(*this);
 
-  m_Actions = new SEActionManager(GetLogger());
+  m_Actions = new SEActionManager(*m_Substances);
   m_Conditions = new SEConditionManager(GetLogger());
 
   m_BloodChemistrySystem = new BloodChemistry(*this);
@@ -807,7 +807,7 @@ bool PulseController::ProcessAction(const SEAction& action)
     return true;
   }
 
-  return GetActions().ProcessAction(action, *m_Substances);
+  return GetActions().ProcessAction(action);
 }
 
 bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) const

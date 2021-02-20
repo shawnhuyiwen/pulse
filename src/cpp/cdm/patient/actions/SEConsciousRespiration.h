@@ -18,10 +18,11 @@ public:
   virtual ~SEConsciousRespiration();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEConsciousRespiration& src);
+  virtual void Copy(const SEConsciousRespiration& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool StartImmediately() const;
   virtual void SetStartImmediately(bool b);
@@ -38,6 +39,9 @@ public:
   virtual SEUseInhaler&   AddUseInhaler();
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
+
 protected:
 
   bool m_StartImmediately;

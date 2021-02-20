@@ -13,10 +13,11 @@ public:
   virtual ~SETensionPneumothorax();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SETensionPneumothorax& src);
+  virtual void Copy(const SETensionPneumothorax& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual eGate GetType() const;
   virtual void SetType(eGate name);
@@ -33,6 +34,8 @@ public:
   virtual double GetSeverity() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eGate    m_Type;

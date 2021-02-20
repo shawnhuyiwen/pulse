@@ -14,10 +14,11 @@ public:
   virtual ~SEThermalApplication();
 
   virtual void Clear();
-  virtual void Copy(const SEThermalApplication& src);
+  virtual void Copy(const SEThermalApplication& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasActiveHeating() const;
   virtual SEActiveConditioning& GetActiveHeating();
@@ -34,7 +35,9 @@ public:
   virtual const SEAppliedTemperature* GetAppliedTemperature() const;
   virtual void RemoveAppliedTemperature();
 
-  virtual void ToString(std::ostream &str) const;
+  virtual void ToString(std::ostream& str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   bool                   m_ClearContents;

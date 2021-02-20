@@ -28,9 +28,11 @@ void SELobarPneumoniaExacerbation::Clear()
   INVALIDATE_PROPERTY(m_RightLungAffected);
 }
 
-void SELobarPneumoniaExacerbation::Copy(const SELobarPneumoniaExacerbation& src)
+void SELobarPneumoniaExacerbation::Copy(const SELobarPneumoniaExacerbation& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SELobarPneumoniaExacerbation::IsValid() const
@@ -40,13 +42,29 @@ bool SELobarPneumoniaExacerbation::IsValid() const
 
 bool SELobarPneumoniaExacerbation::IsActive() const
 {
-  if (!IsValid())
+  if (!SEPatientAction::IsActive())
     return false;
   if (GetSeverity() <= 0)
     return false;
   if (GetLeftLungAffected() <= 0 && GetRightLungAffected() <= 0)
     return false;
   return true;
+}
+void SELobarPneumoniaExacerbation::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SELobarPneumoniaExacerbation::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  if (name.compare("LeftLungAffected") == 0)
+    return &GetLeftLungAffected();
+  if (name.compare("RightLungAffected") == 0)
+    return &GetRightLungAffected();
+  return nullptr;
 }
 
 bool SELobarPneumoniaExacerbation::HasSeverity() const

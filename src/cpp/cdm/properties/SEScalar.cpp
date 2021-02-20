@@ -55,8 +55,8 @@ void SEScalar::Clear()
 bool SEScalar::Set(const SEScalar& s)
 {
   if (dynamic_cast<const SEUnitScalar*>(&s) != nullptr)
-    std::cerr << " HALT ";
-  if(!s.IsValid())    
+    throw CommonDataModelException("Scalar is not of the proper type");
+  if(!s.IsValid())
     return false;
   if (m_readOnly)
     throw CommonDataModelException("Scalar is marked read-only");
@@ -241,6 +241,10 @@ bool SEScalar::IsZero(double d, double limit)
     return true;
   return false;
 }
+
+//////////////////////
+// SEScalarQuantity //
+//////////////////////
 
 template<typename Unit>
 SEScalarQuantity<Unit>::SEScalarQuantity() : SEUnitScalar()

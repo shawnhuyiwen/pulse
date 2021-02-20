@@ -22,9 +22,11 @@ void SEAcuteStress::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEAcuteStress::Copy(const SEAcuteStress& src)
+void SEAcuteStress::Copy(const SEAcuteStress& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEAcuteStress::IsValid() const
@@ -34,7 +36,21 @@ bool SEAcuteStress::IsValid() const
 
 bool SEAcuteStress::IsActive() const
 {
-  return IsValid() ? !m_Severity->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Severity->IsZero();
+}
+void SEAcuteStress::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAcuteStress::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEAcuteStress::HasSeverity() const

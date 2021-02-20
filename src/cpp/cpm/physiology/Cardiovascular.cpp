@@ -11,7 +11,6 @@
 // Conditions
 #include "engine/SEConditionManager.h"
 #include "patient/conditions/SEChronicAnemia.h"
-#include "patient/conditions/SEChronicHeartFailure.h"
 #include "patient/conditions/SEChronicPericardialEffusion.h"
 #include "patient/conditions/SEChronicRenalStenosis.h"
 // Actions
@@ -957,8 +956,8 @@ void Cardiovascular::TraumaticBrainInjury()
     return;
 
   //Grab info about the injury
-  SEBrainInjury* b = m_data.GetActions().GetPatientActions().GetBrainInjury();
-  double severity = b->GetSeverity().GetValue();
+  SEBrainInjury& b = m_data.GetActions().GetPatientActions().GetBrainInjury();
+  double severity = b.GetSeverity().GetValue();
 
   //Interpolate linearly between multipliers of 1 (for severity of 0) to max (for severity of 1)
   //These multipliers are chosen to result in ICP > 25 mmHg and CBF < 1.8 mL/s
@@ -992,15 +991,15 @@ void Cardiovascular::Hemorrhage()
       path->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   }
 
-  SEHemorrhage* h;
   bool completeStateChange = false;
   double TotalLossRate_mL_Per_s = 0.0;
   std::vector<SEHemorrhage*> invalid_hemorrhages;
-  const std::map <std::string, SEHemorrhage*>& hems = m_data.GetActions().GetPatientActions().GetHemorrhages();
+  const std::vector<SEHemorrhage*>& hems = m_data.GetActions().GetPatientActions().GetHemorrhages();
   //Loop over all hemorrhages to check for validity
-  for (auto hem : hems)
+  for (auto h : hems)
   {
-    h = hem.second;
+    if (!h->IsActive())
+      continue;
 
     // Allow shorthand naming
     SELiquidCompartment* compartment = m_data.GetCompartments().GetCardiovascularGraph().GetCompartment(h->GetCompartment());
@@ -1038,15 +1037,18 @@ void Cardiovascular::Hemorrhage()
       }
     }
 
-    // \warning Warning: A flow rate and severity were both provided, we will only use the severity. 
-    if (h->HasFlowRate() && h->HasSeverity())
-    {
-      h->GetFlowRate().Invalidate();
-      Warning("Hemorrhage requested with both flow rate and severity, we will only use severity.");
-    }
-
     double rate_mL_Per_s = 0;
-    if (h->HasFlowRate())
+    if (h->HasSeverity())
+    {
+      if (h->GetSeverity().GetValue() < 0.0 || h->GetSeverity().GetValue() > 1.0)
+      {
+        /// \error Error: Severity cannot be less than zero or greater than 1.0
+        Error("A severity less than 0 or greater than 1.0 cannot be specified.");
+        invalid_hemorrhages.push_back(h);
+        continue;
+      }
+    }
+    else if (h->HasFlowRate())
     {
       rate_mL_Per_s = h->GetFlowRate().GetValue(VolumePerTimeUnit::mL_Per_s);
       TotalLossRate_mL_Per_s += rate_mL_Per_s;
@@ -1054,16 +1056,6 @@ void Cardiovascular::Hemorrhage()
       {
         /// \error Error: Bleeding rate cannot be less than zero
         Error("Cannot specify bleeding less than 0");
-        invalid_hemorrhages.push_back(h);
-        continue;
-      }
-    }
-    else if (h->HasSeverity())
-    {
-      if (h->GetSeverity().GetValue() < 0.0 || h->GetSeverity().GetValue() > 1.0)
-      {
-        /// \error Error: Severity cannot be less than zero or greater than 1.0
-        Error("A severity less than 0 or greater than 1.0 cannot be specified.");
         invalid_hemorrhages.push_back(h);
         continue;
       }
@@ -1149,24 +1141,7 @@ void Cardiovascular::Hemorrhage()
 
       if (hemorrhagePath != nullptr)
       {
-        //Update the existing bleed path
-        if (h->HasFlowRate())
-        {
-          if (!hemorrhagePath->HasResistanceBaseline())
-          {
-            //Increment value to allow overlapping compartments
-            hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-          }
-          else
-          {
-            hemorrhagePath->GetResistance().Invalidate();
-            hemorrhagePath->GetNextResistance().Invalidate();
-            hemorrhagePath->GetResistanceBaseline().Invalidate();
-            hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-            completeStateChange = true;
-          }
-        }
-        else // Severity
+        if (h->HasSeverity()) // Severity
         {
           if (hemorrhagePath->HasFlowSource())
           {
@@ -1186,6 +1161,23 @@ void Cardiovascular::Hemorrhage()
             }
           }
         }
+        //Update the existing bleed path
+        else // Static Flow Rate
+        {
+          if (!hemorrhagePath->HasResistanceBaseline())
+          {
+            //Increment value to allow overlapping compartments
+            hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+          }
+          else
+          {
+            hemorrhagePath->GetResistance().Invalidate();
+            hemorrhagePath->GetNextResistance().Invalidate();
+            hemorrhagePath->GetResistanceBaseline().Invalidate();
+            hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+            completeStateChange = true;
+          }
+        }
       }
       else //new hemorrhage path
       {
@@ -1201,17 +1193,17 @@ void Cardiovascular::Hemorrhage()
           newHemorrhagePath = &m_CirculatoryCircuit->CreatePath(*node, *m_Ground, node->GetName() + "Hemorrhage");
         }
 
-        if (h->HasFlowRate())
-        {
-          //Increment value to allow overlapping compartments
-          newHemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-        }
-        else
+        if(h->HasSeverity())
         {
           if (h->GetSeverity().GetValue() == 0.0)
             newHemorrhagePath->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_min_Per_L);
           calculateResistanceBaseline = true;
           calculateResistance = true;
+        }
+        else
+        {
+          //Increment value to allow overlapping compartments
+          newHemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
         }
 
         completeStateChange = true;
@@ -1252,7 +1244,6 @@ void Cardiovascular::Hemorrhage()
       if (calculateResistance)
       {
         if (calculateResistanceBaseline)
-
         {
           // calculate the max flow rate
           double flowRate_L_per_min = 0;
@@ -1278,6 +1269,15 @@ void Cardiovascular::Hemorrhage()
           TotalLossRate_mL_Per_s += hemorrhagePath->GetNextFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
         }
       }
+      // Keep track of bleeding on the action
+      double hemorrhagePathFlow_mL_Per_s = 0;
+      if (hemorrhagePath->HasNextFlow())
+        hemorrhagePathFlow_mL_Per_s = hemorrhagePath->GetNextFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
+      if (h->HasSeverity())
+      {
+        h->GetFlowRate().SetValue(hemorrhagePathFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+      }
+      h->GetTotalBloodLost().IncrementValue(hemorrhagePathFlow_mL_Per_s* m_dT_s, VolumeUnit::mL);
     }
   }
 
@@ -1362,7 +1362,7 @@ void Cardiovascular::PericardialEffusion()
   double compliance_mL_Per_mmHg = 0.0;
   double intrapericardialVolume_mL = m_Pericardium->GetVolume(VolumeUnit::mL);
 
-  double effusionRate_mL_Per_s = m_data.GetActions().GetPatientActions().GetPericardialEffusion()->GetEffusionRate().GetValue(VolumePerTimeUnit::mL_Per_s);
+  double effusionRate_mL_Per_s = m_data.GetActions().GetPatientActions().GetPericardialEffusion().GetEffusionRate().GetValue(VolumePerTimeUnit::mL_Per_s);
   if (effusionRate_mL_Per_s <= 0.1 && effusionRate_mL_Per_s > 0.0)
   {
     //Slow effusion
@@ -1431,14 +1431,14 @@ void Cardiovascular::CPR()
     if (m_data.GetActions().GetPatientActions().HasChestCompressionForceScale()) 
     {
       Warning("Attempt to start a new compression during a previous compression. Allow more time between compressions or shorten the compression period.");
-      m_data.GetActions().GetPatientActions().RemoveChestCompression();
+      m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
       return;
     }
 
     if (m_data.GetActions().GetPatientActions().HasChestCompressionForce())
     {
       Warning("Attempt to switch to explicit force from force scale during CPR compression. CPR actions will be ignored until current compression ends.");
-      m_data.GetActions().GetPatientActions().RemoveChestCompression();
+      m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
       return;
     }
 
@@ -1455,14 +1455,15 @@ void Cardiovascular::CPR()
   if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
   {
     Warning("CPR attempted on beating heart. Action ignored.");
-    m_data.GetActions().GetPatientActions().RemoveChestCompression();
+    m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
+    m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
     return;
   }
 
   // Have a new call for a chest compression
   if (m_data.GetActions().GetPatientActions().HasChestCompressionForceScale())
   {
-    m_CompressionRatio = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale()->GetForceScale().GetValue();
+    m_CompressionRatio = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().GetForceScale().GetValue();
     /// \error Warning: CPR compression ratio must be a positive value between 0 and 1 inclusive.
     if (m_CompressionRatio < 0.0)
       Warning("CPR compression ratio must be a positive value between 0 and 1 inclusive.");
@@ -1471,16 +1472,16 @@ void Cardiovascular::CPR()
 
     BLIM(m_CompressionRatio, 0., 1.);
     // If no period was assigned by the user, then use the default - 0.4s
-    if (m_data.GetActions().GetPatientActions().GetChestCompressionForceScale()->HasForcePeriod())
+    if (m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().HasForcePeriod())
     {
-      m_CompressionPeriod_s = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale()->GetForcePeriod().GetValue(TimeUnit::s);
+      m_CompressionPeriod_s = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().GetForcePeriod().GetValue(TimeUnit::s);
     }
     else
     {
       m_CompressionPeriod_s = 0.4;
     }
 
-    m_data.GetActions().GetPatientActions().RemoveChestCompression();
+    m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
   }
 
   CalculateAndSetCPRcompressionForce();
@@ -1522,7 +1523,7 @@ void Cardiovascular::CalculateAndSetCPRcompressionForce()
   }
   else //Explicit force
   {
-    compressionForce_N = m_data.GetActions().GetPatientActions().GetChestCompressionForce()->GetForce().GetValue(ForceUnit::N);
+    compressionForce_N = m_data.GetActions().GetPatientActions().GetChestCompressionForce().GetForce().GetValue(ForceUnit::N);
   }
 
   m_CompressionTime_s += m_dT_s;
@@ -1549,7 +1550,7 @@ void Cardiovascular::CalculateAndSetCPRcompressionForce()
 
   // The action is removed when the force is set to 0.
   if (compressionForce_N == 0)
-    m_data.GetActions().GetPatientActions().RemoveChestCompression();
+    m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
 }
 
 //--------------------------------------------------------------------------------------------------

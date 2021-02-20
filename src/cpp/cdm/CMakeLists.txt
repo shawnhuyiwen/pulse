@@ -114,7 +114,6 @@ add_library_ex(CommonDataModel
     patient/actions/SEBrainInjury.h
     patient/actions/SEBronchoconstriction.h
     patient/actions/SECardiacArrest.h
-    patient/actions/SEChestCompression.h
     patient/actions/SEChestCompressionForce.h
     patient/actions/SEChestCompressionForceScale.h
     patient/actions/SEChestOcclusiveDressing.h
@@ -154,7 +153,6 @@ add_library_ex(CommonDataModel
     patient/assessments/SEUrinalysisMicroscopic.h
     patient/conditions/SEAcuteRespiratoryDistressSyndrome.h
     patient/conditions/SEChronicAnemia.h
-    patient/conditions/SEChronicHeartFailure.h
     patient/conditions/SEChronicObstructivePulmonaryDisease.h
     patient/conditions/SEChronicPericardialEffusion.h
     patient/conditions/SEChronicRenalStenosis.h
@@ -454,7 +452,6 @@ add_library_ex(CommonDataModel
     patient/actions/SEBrainInjury.cpp
     patient/actions/SEBronchoconstriction.cpp
     patient/actions/SECardiacArrest.cpp
-    patient/actions/SEChestCompression.cpp
     patient/actions/SEChestCompressionForce.cpp
     patient/actions/SEChestCompressionForceScale.cpp
     patient/actions/SEChestOcclusiveDressing.cpp
@@ -494,7 +491,6 @@ add_library_ex(CommonDataModel
     patient/assessments/SEUrinalysisMicroscopic.cpp
     patient/conditions/SEAcuteRespiratoryDistressSyndrome.cpp
     patient/conditions/SEChronicAnemia.cpp
-    patient/conditions/SEChronicHeartFailure.cpp
     patient/conditions/SEChronicObstructivePulmonaryDisease.cpp
     patient/conditions/SEChronicPericardialEffusion.cpp
     patient/conditions/SEChronicRenalStenosis.cpp

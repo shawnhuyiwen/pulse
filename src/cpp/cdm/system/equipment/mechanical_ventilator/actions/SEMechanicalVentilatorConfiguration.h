@@ -14,9 +14,11 @@ public:
   virtual ~SEMechanicalVentilatorConfiguration();
 
   virtual void Clear();
-  virtual void Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr);
+  virtual void Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr, bool preserveState = false);
 
   virtual bool IsValid() const;
+  virtual bool IsActive() const;
+  virtual void Deactivate();
 
   bool HasConfiguration() const;
   SEMechanicalVentilator& GetConfiguration();
@@ -27,6 +29,8 @@ public:
   virtual bool HasConfigurationFile() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
 

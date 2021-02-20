@@ -20,8 +20,6 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual eSerialization_Type GetType() const;
   virtual void SetType(eSerialization_Type t);
 
@@ -29,6 +27,10 @@ public:
   virtual std::string GetFilename() const;
   virtual void SetFilename(const std::string& filename);
   virtual void InvalidateFilename();
+
+  virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
 

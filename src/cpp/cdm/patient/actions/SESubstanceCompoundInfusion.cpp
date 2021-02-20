@@ -8,7 +8,7 @@
 #include "properties/SEScalarVolume.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompound& compound, Logger* logger) : SESubstanceAdministration(logger), m_Compound(compound)
+SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompound& compound, Logger* logger) : SEPatientAction(logger), m_Compound(compound)
 {
   m_Rate=nullptr;
   m_BagVolume=nullptr;
@@ -23,25 +23,42 @@ SESubstanceCompoundInfusion::~SESubstanceCompoundInfusion()
 
 void SESubstanceCompoundInfusion::Clear()
 {
-  SESubstanceAdministration::Clear();
+  SEPatientAction::Clear();
   INVALIDATE_PROPERTY(m_Rate);
   INVALIDATE_PROPERTY(m_BagVolume);
-  // m_Compound=nullptr; Keeping mapping!!
 }
 
-void SESubstanceCompoundInfusion::Copy(const SESubstanceCompoundInfusion& src)
+void SESubstanceCompoundInfusion::Copy(const SESubstanceCompoundInfusion& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SESubstanceCompoundInfusion::IsValid() const
 {
-  return SESubstanceAdministration::IsValid() && HasRate() && HasBagVolume();
+  return SEPatientAction::IsValid() && HasRate() && HasBagVolume();
 }
 
 bool SESubstanceCompoundInfusion::IsActive() const
 {
-  return IsValid() ? !m_Rate->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Rate->IsZero();
+}
+void SESubstanceCompoundInfusion::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SESubstanceCompoundInfusion::GetScalar(const std::string& name)
+{
+  if (name.compare("Rate") == 0)
+    return &GetRate();
+  if (name.compare("BagVolume") == 0)
+    return &GetBagVolume();
+  return nullptr;
 }
 
 bool SESubstanceCompoundInfusion::HasRate() const
