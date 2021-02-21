@@ -196,7 +196,6 @@ void Drugs::AdministerSubstanceBolus()
   double dose_mL;
   double concentration_ugPermL;
   double massIncrement_ug = 0;
-  double volumeDecrement_mL = 0;
   double administrationTime_s;
 
   for (auto bolus : boluses)
@@ -204,8 +203,8 @@ void Drugs::AdministerSubstanceBolus()
     if (!bolus->IsActive())
       continue;
 
-    dose_mL = bolus->GetDose().GetValue(VolumeUnit::mL);
-    if (dose_mL<=0)
+    dose_mL = bolus->GetDose(VolumeUnit::mL);
+    if (bolus->GetAdministeredDose().GetValue(VolumeUnit::mL) >= dose_mL)
     {
       // Finished, remove it
       completedBolus.push_back(&bolus->GetSubstance());
@@ -238,14 +237,10 @@ void Drugs::AdministerSubstanceBolus()
     }
     administrationTime_s = bolus->GetAdminDuration(TimeUnit::s);
     concentration_ugPermL = bolus->GetConcentration(MassPerVolumeUnit::ug_Per_mL);
-    massIncrement_ug = dose_mL*concentration_ugPermL*m_dt_s / administrationTime_s;
-    volumeDecrement_mL = -massIncrement_ug / concentration_ugPermL;
+    massIncrement_ug = dose_mL * concentration_ugPermL * m_dt_s / administrationTime_s;
     subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
     subQ->Balance(BalanceLiquidBy::Mass);
-
-    if (volumeDecrement_mL < 0)
-      volumeDecrement_mL = 0;
-    bolus->GetDose().IncrementValue(volumeDecrement_mL,VolumeUnit::mL);
+    bolus->GetAdministeredDose().IncrementValue(massIncrement_ug / concentration_ugPermL, VolumeUnit::mL);
     /// \todo Add fluid amount to fluid system
   }
   // Remove any bolus that are complete

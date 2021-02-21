@@ -18,6 +18,7 @@ public:
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Activate();
   virtual void Deactivate();
 
   virtual eSubstanceAdministration_Route GetAdminRoute() const;
@@ -42,10 +43,16 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
+  virtual bool HasAdministeredDose() const;
+  virtual SEScalarVolume& GetAdministeredDose();
+  virtual double GetAdministeredDose(const VolumeUnit& unit) const;
+
 protected:
+
   const SESubstance&             m_Substance;
   eSubstanceAdministration_Route m_AdminRoute;
   SEScalarTime*                  m_AdminDuration;
+  SEScalarVolume*                m_AdministeredDose;
   SEScalarMassPerVolume*         m_Concentration;
   SEScalarVolume*                m_Dose;
 };

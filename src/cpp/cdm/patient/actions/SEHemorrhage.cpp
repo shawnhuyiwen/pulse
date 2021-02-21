@@ -64,9 +64,9 @@ bool SEHemorrhage::IsActive() const
 {
   if (!SEPatientAction::IsActive())
     return false;
-  if (HasSeverity() && m_Severity->IsPositive())
+  if (HasSeverity())
     return true;
-  if (HasFlowRate() && m_FlowRate->IsPositive())
+  if (HasFlowRate())
     return true;
   return false;
 }

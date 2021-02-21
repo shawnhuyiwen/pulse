@@ -13,6 +13,7 @@ SESubstanceBolus::SESubstanceBolus(const SESubstance& substance, Logger* logger)
 {
   m_AdminRoute=eSubstanceAdministration_Route::Intravenous;
   m_AdminDuration=nullptr;
+  m_AdministeredDose = nullptr;
   m_Dose=nullptr;
   m_Concentration=nullptr;
 }
@@ -21,6 +22,7 @@ SESubstanceBolus::~SESubstanceBolus()
 {
   m_AdminRoute = eSubstanceAdministration_Route::Intravenous;
   SAFE_DELETE(m_AdminDuration);
+  SAFE_DELETE(m_AdministeredDose);
   SAFE_DELETE(m_Dose);
   SAFE_DELETE(m_Concentration);
 }
@@ -30,6 +32,7 @@ void SESubstanceBolus::Clear()
   SEPatientAction::Clear();
   m_AdminRoute=eSubstanceAdministration_Route::Intravenous;
   INVALIDATE_PROPERTY(m_AdminDuration);
+  INVALIDATE_PROPERTY(m_AdministeredDose);
   INVALIDATE_PROPERTY(m_Dose);
   INVALIDATE_PROPERTY(m_Concentration);
 }
@@ -48,7 +51,14 @@ bool SESubstanceBolus::IsValid() const
 
 bool SESubstanceBolus::IsActive() const
 {
-  return !SEPatientAction::IsActive();
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Dose->IsZero() && !m_Concentration->IsZero();
+}
+void SESubstanceBolus::Activate()
+{
+  SEPatientAction::Activate();
+  GetAdministeredDose().SetValue(0, VolumeUnit::mL);
 }
 void SESubstanceBolus::Deactivate()
 {
@@ -60,6 +70,8 @@ const SEScalar* SESubstanceBolus::GetScalar(const std::string& name)
 {
   if (name.compare("AdminDuration") == 0)
     return &GetAdminDuration();
+  if (name.compare("AdministeredDose") == 0)
+    return &GetAdministeredDose();
   if (name.compare("Dose") == 0)
     return &GetDose();
   if (name.compare("Concentration") == 0)
@@ -91,6 +103,23 @@ double SESubstanceBolus::GetAdminDuration(const TimeUnit& unit) const
   if (m_AdminDuration == nullptr)
     return SEScalar::dNaN();
   return m_AdminDuration->GetValue(unit);
+}
+
+bool SESubstanceBolus::HasAdministeredDose() const
+{
+  return m_AdministeredDose == nullptr ? false : m_AdministeredDose->IsValid();
+}
+SEScalarVolume& SESubstanceBolus::GetAdministeredDose()
+{
+  if (m_AdministeredDose == nullptr)
+    m_AdministeredDose = new SEScalarVolume();
+  return *m_AdministeredDose;
+}
+double SESubstanceBolus::GetAdministeredDose(const VolumeUnit& unit) const
+{
+  if (m_AdministeredDose == nullptr)
+    return SEScalar::dNaN();
+  return m_AdministeredDose->GetValue(unit);
 }
 
 bool SESubstanceBolus::HasDose() const
@@ -146,5 +175,6 @@ void SESubstanceBolus::ToString(std::ostream &str) const
   str << "\n\tAdministration Duration: "; HasAdminDuration() ? str << *m_AdminDuration : str << "No Administration Duration Set";
   str << "\n\tDose: "; HasDose()? str << *m_Dose : str << "No Dose Set";
   str << "\n\tConcentration: "; HasConcentration()? str << *m_Concentration : str << "NaN";
+  str << "\n\AdministeredDose: "; HasAdministeredDose() ? str << *m_AdministeredDose : str << "NaN";
   str << std::flush;
 }

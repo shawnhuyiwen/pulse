@@ -249,7 +249,7 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineConfiguration() const
 {
-  return m_AnesthesiaMachineConfiguration == nullptr ? false : true;
+  return m_AnesthesiaMachineConfiguration == nullptr ? false : m_AnesthesiaMachineConfiguration->IsActive();
 }
 SEAnesthesiaMachineConfiguration& SEEquipmentActionCollection::GetAnesthesiaMachineConfiguration()
 {
@@ -509,7 +509,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineYPieceDisconnect()
 
 bool SEEquipmentActionCollection::HasInhalerConfiguration() const
 {
-  return m_InhalerConfiguration == nullptr ? false : true;
+  return m_InhalerConfiguration == nullptr ? false : m_InhalerConfiguration->IsActive();
 }
 SEInhalerConfiguration& SEEquipmentActionCollection::GetInhalerConfiguration()
 {
@@ -529,7 +529,7 @@ void SEEquipmentActionCollection::RemoveInhalerConfiguration()
 
 bool SEEquipmentActionCollection::HasMechanicalVentilatorConfiguration() const
 {
-  return m_MechanicalVentilatorConfiguration == nullptr ? false : true;
+  return m_MechanicalVentilatorConfiguration == nullptr ? false : m_MechanicalVentilatorConfiguration->IsActive();
 }
 SEMechanicalVentilatorConfiguration& SEEquipmentActionCollection::GetMechanicalVentilatorConfiguration()
 {

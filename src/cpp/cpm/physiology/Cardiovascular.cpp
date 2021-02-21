@@ -993,6 +993,7 @@ void Cardiovascular::Hemorrhage()
 
   bool completeStateChange = false;
   double TotalLossRate_mL_Per_s = 0.0;
+  std::vector<SEHemorrhage*> zero_hemorrhages;
   std::vector<SEHemorrhage*> invalid_hemorrhages;
   const std::vector<SEHemorrhage*>& hems = m_data.GetActions().GetPatientActions().GetHemorrhages();
   //Loop over all hemorrhages to check for validity
@@ -1270,18 +1271,23 @@ void Cardiovascular::Hemorrhage()
         }
       }
       // Keep track of bleeding on the action
-      double hemorrhagePathFlow_mL_Per_s = 0;
-      if (hemorrhagePath->HasNextFlow())
-        hemorrhagePathFlow_mL_Per_s = hemorrhagePath->GetNextFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
+      double hemorrhagePathFlow_mL_Per_s;
       if (h->HasSeverity())
       {
+        hemorrhagePathFlow_mL_Per_s = hemorrhagePath->GetNextFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
         h->GetFlowRate().SetValue(hemorrhagePathFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
       }
+      if (!h->GetFlowRate().IsPositive())
+        zero_hemorrhages.push_back(h);
+      hemorrhagePathFlow_mL_Per_s = h->GetFlowRate(VolumePerTimeUnit::mL_Per_s);
       h->GetTotalBloodLost().IncrementValue(hemorrhagePathFlow_mL_Per_s* m_dT_s, VolumeUnit::mL);
     }
   }
 
-  // Remove any invalid hemorrhages
+  // Remove any zero hemorrhages
+  for (SEHemorrhage* ih : zero_hemorrhages)
+    m_data.GetActions().GetPatientActions().RemoveHemorrhage(ih->GetCompartment());
+  // Destroy any invalid hemorrhages
   for (SEHemorrhage* ih : invalid_hemorrhages)
     m_data.GetActions().GetPatientActions().RemoveHemorrhage(ih->GetCompartment());
 
