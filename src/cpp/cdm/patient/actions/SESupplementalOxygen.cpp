@@ -45,7 +45,8 @@ bool SESupplementalOxygen::IsActive() const
 {
   if (!SEPatientAction::IsActive())
     return false;
-  return m_Device != eSupplementalOxygen_Device::None && (HasFlow() || HasVolume());
+  return m_Device != eSupplementalOxygen_Device::None;
+  // Defaults will be used if no flow/volume supplied
 }
 void SESupplementalOxygen::Deactivate()
 {

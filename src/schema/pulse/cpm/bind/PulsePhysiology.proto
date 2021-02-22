@@ -52,9 +52,6 @@ message CardiovascularData
   pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryArteryPressure_mmHg            = 30;
   pulse.cdm.bind.RunningAverageData         CardiacCycleCentralVenousPressure_mmHg              = 31;
   pulse.cdm.bind.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 32;
-  
-  repeated string                           HemorrhageLinks                                     = 33;
-  repeated string                           HemorrhagePaths                                     = 34;
 }
 
 message DrugData

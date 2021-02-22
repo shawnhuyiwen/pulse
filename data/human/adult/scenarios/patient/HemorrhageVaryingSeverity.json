@@ -97,7 +97,7 @@
         "Compartment": "LeftLegVasculature",
         "Severity": {
           "Scalar0To1": {
-            "Value": 0.05
+            "Value": 0.0
           }
         }
       }

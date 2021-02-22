@@ -269,7 +269,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineConfiguration()
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineOxygenTankPressureLoss() const
 {
-  return m_AnesthesiaMachineOxygenTankPressureLoss == nullptr ? false : true;
+  return m_AnesthesiaMachineOxygenTankPressureLoss == nullptr ? false : m_AnesthesiaMachineOxygenTankPressureLoss->IsActive();
 }
 SEAnesthesiaMachineOxygenTankPressureLoss& SEEquipmentActionCollection::GetAnesthesiaMachineOxygenTankPressureLoss()
 {
@@ -289,7 +289,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineOxygenTankPressureLoss(
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineOxygenWallPortPressureLoss() const
 {
-  return m_AnesthesiaMachineOxygenWallPortPressureLoss == nullptr ? false : true;
+  return m_AnesthesiaMachineOxygenWallPortPressureLoss == nullptr ? false : m_AnesthesiaMachineOxygenWallPortPressureLoss->IsActive();
 }
 SEAnesthesiaMachineOxygenWallPortPressureLoss& SEEquipmentActionCollection::GetAnesthesiaMachineOxygenWallPortPressureLoss()
 {
@@ -309,7 +309,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineOxygenWallPortPressureL
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineExpiratoryValveLeak() const
 {
-  return m_AnesthesiaMachineExpiratoryValveLeak == nullptr ? false : true;
+  return m_AnesthesiaMachineExpiratoryValveLeak == nullptr ? false : m_AnesthesiaMachineExpiratoryValveLeak->IsActive();
 }
 SEAnesthesiaMachineExpiratoryValveLeak& SEEquipmentActionCollection::GetAnesthesiaMachineExpiratoryValveLeak()
 {
@@ -329,7 +329,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineExpiratoryValveLeak()
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineExpiratoryValveObstruction() const
 {
-  return m_AnesthesiaMachineExpiratoryValveObstruction == nullptr ? false : true;
+  return m_AnesthesiaMachineExpiratoryValveObstruction == nullptr ? false : m_AnesthesiaMachineExpiratoryValveObstruction->IsActive();
 }
 SEAnesthesiaMachineExpiratoryValveObstruction& SEEquipmentActionCollection::GetAnesthesiaMachineExpiratoryValveObstruction()
 {
@@ -349,7 +349,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineExpiratoryValveObstruct
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineInspiratoryValveLeak() const
 {
-  return m_AnesthesiaMachineInspiratoryValveLeak == nullptr ? false : true;
+  return m_AnesthesiaMachineInspiratoryValveLeak == nullptr ? false : m_AnesthesiaMachineInspiratoryValveLeak->IsActive();
 }
 SEAnesthesiaMachineInspiratoryValveLeak& SEEquipmentActionCollection::GetAnesthesiaMachineInspiratoryValveLeak()
 {
@@ -369,7 +369,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineInspiratoryValveLeak()
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineInspiratoryValveObstruction() const
 {
-  return m_AnesthesiaMachineInspiratoryValveObstruction == nullptr ? false : true;
+  return m_AnesthesiaMachineInspiratoryValveObstruction == nullptr ? false : m_AnesthesiaMachineInspiratoryValveObstruction->IsActive();
 }
 SEAnesthesiaMachineInspiratoryValveObstruction& SEEquipmentActionCollection::GetAnesthesiaMachineInspiratoryValveObstruction()
 {
@@ -389,7 +389,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineInspiratoryValveObstruc
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineMaskLeak() const
 {
-  return m_AnesthesiaMachineMaskLeak == nullptr ? false : true;
+  return m_AnesthesiaMachineMaskLeak == nullptr ? false : m_AnesthesiaMachineMaskLeak->IsActive();
 }
 SEAnesthesiaMachineMaskLeak& SEEquipmentActionCollection::GetAnesthesiaMachineMaskLeak()
 {
@@ -409,7 +409,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineMaskLeak()
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineSodaLimeFailure() const
 {
-  return m_AnesthesiaMachineSodaLimeFailure == nullptr ? false : true;
+  return m_AnesthesiaMachineSodaLimeFailure == nullptr ? false : m_AnesthesiaMachineSodaLimeFailure->IsActive();
 }
 SEAnesthesiaMachineSodaLimeFailure& SEEquipmentActionCollection::GetAnesthesiaMachineSodaLimeFailure()
 {
@@ -429,7 +429,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineSodaLimeFailure()
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineTubeCuffLeak() const
 {
-  return m_AnesthesiaMachineTubeCuffLeak == nullptr ? false : true;
+  return m_AnesthesiaMachineTubeCuffLeak == nullptr ? false : m_AnesthesiaMachineTubeCuffLeak->IsActive();
 }
 SEAnesthesiaMachineTubeCuffLeak& SEEquipmentActionCollection::GetAnesthesiaMachineTubeCuffLeak()
 {
@@ -449,7 +449,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineTubeCuffLeak()
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineVaporizerFailure() const
 {
-  return m_AnesthesiaMachineVaporizerFailure == nullptr ? false : true;
+  return m_AnesthesiaMachineVaporizerFailure == nullptr ? false : m_AnesthesiaMachineVaporizerFailure->IsActive();
 }
 SEAnesthesiaMachineVaporizerFailure& SEEquipmentActionCollection::GetAnesthesiaMachineVaporizerFailure()
 {
@@ -469,7 +469,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineVaporizerFailure()
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineVentilatorPressureLoss() const
 {
-  return m_AnesthesiaMachineVentilatorPressureLoss == nullptr ? false : true;
+  return m_AnesthesiaMachineVentilatorPressureLoss == nullptr ? false : m_AnesthesiaMachineVentilatorPressureLoss->IsActive();
 }
 SEAnesthesiaMachineVentilatorPressureLoss& SEEquipmentActionCollection::GetAnesthesiaMachineVentilatorPressureLoss()
 {
@@ -489,7 +489,7 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineVentilatorPressureLoss(
 
 bool SEEquipmentActionCollection::HasAnesthesiaMachineYPieceDisconnect() const
 {
-  return m_AnesthesiaMachineYPieceDisconnect == nullptr ? false : true;
+  return m_AnesthesiaMachineYPieceDisconnect == nullptr ? false : m_AnesthesiaMachineYPieceDisconnect->IsActive();
 }
 SEAnesthesiaMachineYPieceDisconnect& SEEquipmentActionCollection::GetAnesthesiaMachineYPieceDisconnect()
 {
