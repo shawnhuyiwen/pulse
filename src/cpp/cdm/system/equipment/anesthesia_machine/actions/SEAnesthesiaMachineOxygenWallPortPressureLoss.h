@@ -18,6 +18,7 @@ public:
   virtual bool IsActive() const;
   virtual void Deactivate();
 
+  virtual eSwitch GetState() const;
   virtual void SetState(eSwitch state);
 
   virtual void ToString(std::ostream &str) const;

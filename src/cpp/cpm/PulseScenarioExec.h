@@ -35,7 +35,7 @@ protected:
   std::stringstream          m_AutoSerializationOutput;
   std::stringstream          m_AutoSerializationActions;
 
-  virtual bool ProcessActions(PulseEngine& engine, const SEScenario& scenario);
-  virtual bool ProcessAction(PulseEngine& engine, const SEAction& action);
-  virtual void AdvanceEngine(PulseEngine& engine);
+  virtual bool ProcessActions(PhysiologyEngine& engine, const SEScenario& scenario) override;
+  virtual bool ProcessAction(PhysiologyEngine& engine, const SEAction& action) override;
+  virtual void AdvanceEngine(PhysiologyEngine& engine) override;
 };

@@ -153,7 +153,7 @@ void Environment::StateChange()
   if (m_AmbientGases == nullptr ||m_AmbientAerosols == nullptr)
     return;
 
-  if (GetEnvironmentalConditions().GetAmbientGases().size() > 0)
+  if (GetEnvironmentalConditions().HasAmbientGas())
   {
     // Add Gases to the environment
     //Check to make sure fractions sum to 1.0  

@@ -49,6 +49,11 @@ const SEScalar* SEAnesthesiaMachineOxygenWallPortPressureLoss::GetScalar(const s
   return nullptr;
 }
 
+
+eSwitch SEAnesthesiaMachineOxygenWallPortPressureLoss::GetState() const
+{
+  return m_State.GetEnum();
+}
 void SEAnesthesiaMachineOxygenWallPortPressureLoss::SetState(eSwitch state)
 {
   m_State.SetEnum(state);

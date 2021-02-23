@@ -163,6 +163,7 @@ void SEEngineTracker::SetupRequests()
     bool isOpen = m_ResultsStream.is_open();
     if (!isOpen || m_ForceConnection)
     {// Process/Hook up all requests with their associated scalers
+      DELETE_MAP_SECOND(m_Request2Scalar);// Get our scalars again
       for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
       {
         if (!TrackRequest(*dr))
