@@ -21,7 +21,7 @@ void SEAnesthesiaMachineTubeCuffLeak::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEAnesthesiaMachineTubeCuffLeak::Copy(const SEAnesthesiaMachineTubeCuffLeak& src)
+void SEAnesthesiaMachineTubeCuffLeak::Copy(const SEAnesthesiaMachineTubeCuffLeak& src, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
@@ -33,7 +33,21 @@ bool SEAnesthesiaMachineTubeCuffLeak::IsValid() const
 
 bool SEAnesthesiaMachineTubeCuffLeak::IsActive() const
 {
+  if (!SEAnesthesiaMachineAction::IsActive())
+    return false;
   return HasSeverity() ? !m_Severity->IsZero() : false;
+}
+void SEAnesthesiaMachineTubeCuffLeak::Deactivate()
+{
+  SEAnesthesiaMachineAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAnesthesiaMachineTubeCuffLeak::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEAnesthesiaMachineTubeCuffLeak::HasSeverity() const

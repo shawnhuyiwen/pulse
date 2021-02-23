@@ -27,9 +27,11 @@ void SEImpairedAlveolarExchangeExacerbation::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEImpairedAlveolarExchangeExacerbation::Copy(const SEImpairedAlveolarExchangeExacerbation & src)
+void SEImpairedAlveolarExchangeExacerbation::Copy(const SEImpairedAlveolarExchangeExacerbation & src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEImpairedAlveolarExchangeExacerbation::IsValid() const
@@ -39,7 +41,7 @@ bool SEImpairedAlveolarExchangeExacerbation::IsValid() const
 
 bool SEImpairedAlveolarExchangeExacerbation::IsActive() const
 {
-  if (!IsValid())
+  if (!SEPatientAction::IsActive())
     return false;
   if (GetImpairedFraction() > 0)
     return true;
@@ -48,6 +50,22 @@ bool SEImpairedAlveolarExchangeExacerbation::IsActive() const
   if (HasSeverity())
     return true;
   return false;
+}
+void SEImpairedAlveolarExchangeExacerbation::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEImpairedAlveolarExchangeExacerbation::GetScalar(const std::string& name)
+{
+  if (name.compare("ImpairedSurfaceArea") == 0)
+    return &GetImpairedSurfaceArea();
+  if (name.compare("ImpairedFraction") == 0)
+    return &GetImpairedFraction();
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEImpairedAlveolarExchangeExacerbation::HasImpairedSurfaceArea() const

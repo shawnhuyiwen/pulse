@@ -13,7 +13,7 @@ public:
   class Controller
   {
   public:
-    virtual void AdvanceTime() = 0;
+    virtual bool AdvanceTime() = 0;
     virtual SEEngineTracker* GetEngineTracker() = 0;
     virtual double GetTimeStep(const TimeUnit& unit) = 0;
   };

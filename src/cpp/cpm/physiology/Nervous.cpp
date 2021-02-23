@@ -301,9 +301,8 @@ void Nervous::BaroreceptorFeedback()
   //update nu - the slope response of the firing rate
   //nu *= (1 - sedationDampeningEffect);  TODO: Add this back when I have data for validation
   //Backout the pressure associated with the total sympathetic fraction from the last time step 
-  double cumulativeMeanArterialPressure_mmHg = pow(((1.0 / m_TotalSympatheticFraction) - 1.0), (1.0 / nu)) * meanArterialPressureCombinedBaseline_mmHg;
-  double deltaPressure_mmHg = meanArterialPressure_mmHg - m_LastMeanArterialPressure_mmHg;
-  double baroreceptorPressure_mmHg = cumulativeMeanArterialPressure_mmHg + deltaPressure_mmHg;
+  // double cumulativeMeanArterialPressure_mmHg = pow(((1.0 / m_TotalSympatheticFraction) - 1.0), (1.0 / nu)) * meanArterialPressureCombinedBaseline_mmHg;
+  // double deltaPressure_mmHg = meanArterialPressure_mmHg - m_LastMeanArterialPressure_mmHg;
   m_TotalSympatheticFraction = 1.0 / (1.0 + pow( meanArterialPressure_mmHg / meanArterialPressureCombinedBaseline_mmHg, nu));
   double parasympatheticFraction = 1.0 - m_TotalSympatheticFraction;
   m_LastMeanArterialPressure_mmHg = meanArterialPressure_mmHg;
@@ -531,25 +530,25 @@ void Nervous::SetPupilEffects()
   // Calculate the TBI response
   if (m_data.GetActions().GetPatientActions().HasBrainInjury())
   {
-    SEBrainInjury* b = m_data.GetActions().GetPatientActions().GetBrainInjury();
+    SEBrainInjury& b = m_data.GetActions().GetPatientActions().GetBrainInjury();
 
-    if (b->GetSeverity().GetValue() > 0)
+    if (b.GetSeverity().GetValue() > 0)
     {
       double icp_mmHg = m_data.GetCardiovascular().GetIntracranialPressure().GetValue(PressureUnit::mmHg);
 
-      if (b->GetType() == eBrainInjury_Type::Diffuse)
+      if (b.GetType() == eBrainInjury_Type::Diffuse)
       {
         leftPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         leftPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));
         rightPupilSizeResponseLevel = leftPupilSizeResponseLevel;
         rightPupilReactivityResponseLevel = leftPupilReactivityResponseLevel;
       }
-      else if (b->GetType() == eBrainInjury_Type::LeftFocal)
+      else if (b.GetType() == eBrainInjury_Type::LeftFocal)
       {
         leftPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         leftPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));
       }
-      else if(b->GetType() == eBrainInjury_Type::RightFocal)
+      else if(b.GetType() == eBrainInjury_Type::RightFocal)
       {
         rightPupilSizeResponseLevel += (1 / (1 + exp(-2.3*(icp_mmHg - 22.5))));
         rightPupilReactivityResponseLevel += -.001*pow(10, .3*(icp_mmHg - 15));

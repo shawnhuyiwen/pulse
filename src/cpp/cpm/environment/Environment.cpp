@@ -153,7 +153,7 @@ void Environment::StateChange()
   if (m_AmbientGases == nullptr ||m_AmbientAerosols == nullptr)
     return;
 
-  if (GetEnvironmentalConditions().GetAmbientGases().size() > 0)
+  if (GetEnvironmentalConditions().HasAmbientGas())
   {
     // Add Gases to the environment
     //Check to make sure fractions sum to 1.0  
@@ -224,13 +224,14 @@ void Environment::PreProcess()
 {
   if (m_data.GetActions().GetEnvironmentActions().HasChangeEnvironmentalConditions())
   {
-    ProcessChange(*m_data.GetActions().GetEnvironmentActions().GetChangeEnvironmentalConditions(), m_data.GetSubstances());
+    ProcessChange(m_data.GetActions().GetEnvironmentActions().GetChangeEnvironmentalConditions(), m_data.GetSubstances());
     m_data.GetActions().GetEnvironmentActions().RemoveChangeEnvironmentalConditions();
   }
 
   //Set clothing resistor
-  double dClothingResistance_rsi = GetEnvironmentalConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
   double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
+  double dClothingResistance_rsi = GetEnvironmentalConditions().GetClothingResistance(HeatResistanceAreaUnit::rsi); //1 rsi = 1 m^2-K/W
+  dClothingResistance_rsi = MAX(dClothingResistance_rsi, 1e-10);// Prevent a zero clothing resistance to prevent a path resistance of 0
   m_SkinToClothing->GetNextResistance().SetValue(dClothingResistance_rsi / dSurfaceArea_m2, HeatResistanceUnit::K_Per_W);
 
   //Set the skin heat loss
@@ -302,7 +303,7 @@ void Environment::ProcessActions()
 
   //We'll allow heating, cooling, and temperature setting to be done simultaneously
   
-  SEThermalApplication* ta = m_data.GetActions().GetEnvironmentActions().GetThermalApplication();
+  SEThermalApplication& ta = m_data.GetActions().GetEnvironmentActions().GetThermalApplication();
   double dEffectiveAreaFraction = 0.0;
   double dSurfaceArea_m2 = m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2);
 
@@ -311,9 +312,9 @@ void Environment::ProcessActions()
       
   double dTotalEffect_W = 0.0;
 
-  if (ta->HasActiveHeating())
+  if (ta.HasActiveHeating())
   {
-    SEActiveConditioning& ah = ta->GetActiveHeating();
+    SEActiveConditioning& ah = ta.GetActiveHeating();
     if (ah.HasSurfaceArea() && ah.HasSurfaceAreaFraction())
     {
       ///\error Warning: SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.
@@ -350,9 +351,9 @@ void Environment::ProcessActions()
   }
 
   dEffectiveAreaFraction = 0.0;
-  if (ta->HasActiveCooling())
+  if (ta.HasActiveCooling())
   {
-    SEActiveConditioning& ac = ta->GetActiveCooling();
+    SEActiveConditioning& ac = ta.GetActiveCooling();
     if (ac.HasSurfaceArea() && ac.HasSurfaceAreaFraction())
     {
       ///\error Warning: SurfaceArea and SurfaceAreaFraction are both set. The largest fraction will be used.
@@ -394,9 +395,9 @@ void Environment::ProcessActions()
   //Handle active temperature
 
   dEffectiveAreaFraction = 0.0;
-  if (ta->HasAppliedTemperature())
+  if (ta.HasAppliedTemperature())
   {
-    SEAppliedTemperature& ap = ta->GetAppliedTemperature();
+    SEAppliedTemperature& ap = ta.GetAppliedTemperature();
     if (ap.HasSurfaceArea() && ap.HasSurfaceAreaFraction())
     {
       ///\error Warning: AppliedSurfaceArea and AppliedSurfaceAreaFraction are both set. The largest fraction will be used.
@@ -557,7 +558,7 @@ void Environment::CalculateRadiation()
       dResistance_K_Per_W = dSurfaceArea_m2 / dRadiativeHeatTransferCoefficient_WPerM2_K;
     }
 
-    MAX(dResistance_K_Per_W, m_data.GetConfiguration().GetDefaultClosedHeatResistance(HeatResistanceUnit::K_Per_W));
+    dResistance_K_Per_W = MAX(dResistance_K_Per_W, m_data.GetConfiguration().GetDefaultClosedHeatResistance(HeatResistanceUnit::K_Per_W));
     m_ClothingToEnclosurePath->GetNextResistance().SetValue(dResistance_K_Per_W, HeatResistanceUnit::K_Per_W);
 
     //Set the source
@@ -624,7 +625,7 @@ void Environment::CalculateConvection()
     dResistance_K_Per_W = dSurfaceArea_m2 / dConvectiveHeatTransferCoefficient_WPerM2_K;
   }
 
-  MAX(dResistance_K_Per_W, m_data.GetConfiguration().GetDefaultClosedHeatResistance(HeatResistanceUnit::K_Per_W));
+  dResistance_K_Per_W = MAX(dResistance_K_Per_W, m_data.GetConfiguration().GetDefaultClosedHeatResistance(HeatResistanceUnit::K_Per_W));
   m_ClothingToEnvironmentPath->GetNextResistance().SetValue(dResistance_K_Per_W, HeatResistanceUnit::K_Per_W);
   
   //Set the source

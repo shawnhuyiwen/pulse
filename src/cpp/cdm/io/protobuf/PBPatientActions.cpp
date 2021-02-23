@@ -723,6 +723,8 @@ void PBPatientAction::Serialize(const CDM_BIND::HemorrhageData& src, SEHemorrhag
     PBProperty::Load(src.flowrate(), dst.GetFlowRate());
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
+  if (src.has_totalbloodlost())
+    PBProperty::Load(src.totalbloodlost(), dst.GetTotalBloodLost());
 }
 CDM_BIND::HemorrhageData* PBPatientAction::Unload(const SEHemorrhage& src)
 {
@@ -740,6 +742,8 @@ void PBPatientAction::Serialize(const SEHemorrhage& src, CDM_BIND::HemorrhageDat
     dst.set_allocated_flowrate(PBProperty::Unload(*src.m_FlowRate));
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+  if (src.HasTotalBloodLost())
+    dst.set_allocated_totalbloodlost(PBProperty::Unload(*src.m_TotalBloodLost));
 }
 void PBPatientAction::Copy(const SEHemorrhage& src, SEHemorrhage& dst)
 {
@@ -1105,8 +1109,6 @@ void PBPatientAction::Serialize(const CDM_BIND::SubstanceBolusData& src, SESubst
     PBProperty::Load(src.dose(), dst.GetDose());
   if (src.has_concentration())
     PBProperty::Load(src.concentration(), dst.GetConcentration());
-  if (src.has_state())
-    PBPatientAction::Load(src.state(), dst.m_State);
 }
 CDM_BIND::SubstanceBolusData* PBPatientAction::Unload(const SESubstanceBolus& src)
 {
@@ -1125,44 +1127,11 @@ void PBPatientAction::Serialize(const SESubstanceBolus& src, CDM_BIND::Substance
     dst.set_allocated_dose(PBProperty::Unload(*src.m_Dose));
   if (src.HasConcentration())
     dst.set_allocated_concentration(PBProperty::Unload(*src.m_Concentration));
-  dst.set_allocated_state(PBPatientAction::Unload(src.m_State));
 }
 void PBPatientAction::Copy(const SESubstanceBolus& src, SESubstanceBolus& dst)
 {
   dst.Clear();
   CDM_BIND::SubstanceBolusData data;
-  PBPatientAction::Serialize(src, data);
-  PBPatientAction::Serialize(data, dst);
-}
-
-void PBPatientAction::Load(const CDM_BIND::SubstanceBolusStateData& src, SESubstanceBolusState& dst)
-{
-  dst.Clear();
-  PBPatientAction::Serialize(src, dst);
-}
-void PBPatientAction::Serialize(const CDM_BIND::SubstanceBolusStateData& src, SESubstanceBolusState& dst)
-{
-  if (src.has_elapsedtime())
-    PBProperty::Load(src.elapsedtime(), dst.GetElapsedTime());
-  if (src.has_administereddose())
-    PBProperty::Load(src.administereddose(), dst.GetAdministeredDose());
-}
-CDM_BIND::SubstanceBolusStateData* PBPatientAction::Unload(const SESubstanceBolusState& src)
-{
-  CDM_BIND::SubstanceBolusStateData* dst = new CDM_BIND::SubstanceBolusStateData();
-  PBPatientAction::Serialize(src, *dst);
-  return dst;
-}
-void PBPatientAction::Serialize(const SESubstanceBolusState& src, CDM_BIND::SubstanceBolusStateData& dst)
-{
-  dst.set_substance(src.m_Substance.GetName());
-  dst.set_allocated_elapsedtime(PBProperty::Unload(*src.m_ElapsedTime));
-  dst.set_allocated_administereddose(PBProperty::Unload(*src.m_AdministeredDose));
-}
-void PBPatientAction::Copy(const SESubstanceBolusState& src, SESubstanceBolusState& dst)
-{
-  dst.Clear();
-  CDM_BIND::SubstanceBolusStateData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }

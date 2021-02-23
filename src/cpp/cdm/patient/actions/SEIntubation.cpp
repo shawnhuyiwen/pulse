@@ -21,11 +21,12 @@ void SEIntubation::Clear()
   m_Type = eIntubation_Type::Off;
 }
 
-void SEIntubation::Copy(const SEIntubation& src)
+void SEIntubation::Copy(const SEIntubation& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
-
 bool SEIntubation::IsValid() const
 {
   return true;
@@ -33,7 +34,19 @@ bool SEIntubation::IsValid() const
 
 bool SEIntubation::IsActive() const
 {
+  if (!SEPatientAction::IsActive())
+    return false;
   return GetType() != eIntubation_Type::Off;
+}
+void SEIntubation::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEIntubation::GetScalar(const std::string& name)
+{
+  return nullptr;
 }
 
 eIntubation_Type SEIntubation::GetType() const

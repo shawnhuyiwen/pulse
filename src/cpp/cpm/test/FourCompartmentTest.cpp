@@ -52,31 +52,31 @@ double TotalHbMols(SELiquidCompartmentGraph& Graph, SESubstance& Hb, SESubstance
   return totalHb_g / Hb_g_Per_mol + totalHbO2_g / HbO2_g_Per_mol + totalHbCO2_g / HbCO2_g_Per_mol + totalHBO2CO2_g / HbO2CO2_g_Per_mol;
 }
 
-void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProductionConsumption, bool usingDiffusion, const std::string& rptDirectory)
+void PulseEngineTest::FourCompartmentTest(bool localUsingAcidBase, bool localUsingProductionConsumption, bool localUsingDiffusion, const std::string& rptDirectory)
 {
   DataTrack trk;
   std::string outputName;
-  if (!usingAcidBase && !usingProductionConsumption && !usingDiffusion)
+  if (!localUsingAcidBase && !localUsingProductionConsumption && !localUsingDiffusion)
   {
     outputName = "/FourCompartmentTestSimple";
   }
-  else if (usingAcidBase && !usingProductionConsumption && !usingDiffusion)
+  else if (localUsingAcidBase && !localUsingProductionConsumption && !localUsingDiffusion)
   {
     outputName = "/AcidBaseFourCompartmentTest";
   }
-  else if (!usingAcidBase && !usingProductionConsumption && usingDiffusion)
+  else if (!localUsingAcidBase && !localUsingProductionConsumption && localUsingDiffusion)
   {
     outputName = "/FiveCompartmentTestWithDiffusion";
   }
-  else if (usingAcidBase && usingProductionConsumption && !usingDiffusion)
+  else if (localUsingAcidBase && localUsingProductionConsumption && !localUsingDiffusion)
   {
     outputName = "/AcidBaseFourCompartmentTestWithProductionConsumption";
   }
-  else if (usingAcidBase && !usingProductionConsumption && usingDiffusion)
+  else if (localUsingAcidBase && !localUsingProductionConsumption && localUsingDiffusion)
   {
     outputName = "/AcidBaseFiveCompartmentTestWithDiffusion";
   }
-  else if (usingAcidBase && usingProductionConsumption && usingDiffusion)
+  else if (localUsingAcidBase && localUsingProductionConsumption && localUsingDiffusion)
   {
     outputName = "/AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion";
   }
@@ -241,7 +241,7 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   pc.GetSubstances().InitializeBloodGases(cCapillaries, Hb_total_mM, Low_O2_sat, Low_O2_mmol_Per_L, Low_CO2_sat, Low_CO2_mmol_Per_L, Low_HCO3_mmol_Per_L, Low_pH, false);
   pc.GetSubstances().InitializeBloodGases(cVeins, Hb_total_mM, Low_O2_sat, Low_O2_mmol_Per_L, Low_CO2_sat, Low_CO2_mmol_Per_L, Low_HCO3_mmol_Per_L, Low_pH, false);
 
-  if (usingAcidBase)
+  if (localUsingAcidBase)
   {
     pc.GetSaturationCalculator().CalculateBloodGasDistribution(cPulmonary);
     pc.GetSaturationCalculator().CalculateBloodGasDistribution(cArteries);
@@ -253,7 +253,7 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   double tissueVolume_L = 61.7;  //sum of all tissue volumes
   double tissueO2Mass_g = tissueVolume_L * cCapillaries.GetSubstanceQuantity(O2)->GetConcentration(MassPerVolumeUnit::g_Per_L);
   double tissueCO2Mass_g = tissueVolume_L * cCapillaries.GetSubstanceQuantity(CO2)->GetConcentration(MassPerVolumeUnit::g_Per_L);
-  if (usingDiffusion)
+  if (localUsingDiffusion)
   {
     //cTissue.GetTotalVolume().SetValue(tissueVolume_L, VolumeUnit::L);
     cTissue.GetVolume().SetValue(tissueVolume_L, VolumeUnit::L);
@@ -281,9 +281,9 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   for (unsigned int i = 0; i < runTime_min * 60.0 / deltaT_s; i++)
   {
     //PreProcess - Mimic Produce, Consume, and Alveolar Transfer
-    if (usingProductionConsumption)
+    if (localUsingProductionConsumption)
     {
-      if (usingDiffusion)
+      if (localUsingDiffusion)
       {
         //Do it in the tissues and let it diffuse
         cPulmonary.GetSubstanceQuantity(O2)->GetMass().IncrementValue(O2Consumption_ugPerS * deltaT_s, MassUnit::ug);
@@ -352,7 +352,7 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
     //Execute the substance transport function
     txpt.Transport(Graph, deltaT_s);
 
-  if (usingAcidBase)
+  if (localUsingAcidBase)
   {
     for (SELiquidCompartment* cmpt : Graph.GetCompartments())
     {
@@ -361,7 +361,7 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
   }
 
     //Diffuse if necessary
-    if (usingDiffusion)
+    if (localUsingDiffusion)
     {
       tsu.MoveMassByInstantDiffusion(cCapillaries, cTissue, O2, deltaT_s);
       tsu.MoveMassByInstantDiffusion(cCapillaries, cTissue, CO2, deltaT_s);
@@ -406,7 +406,7 @@ void PulseEngineTest::FourCompartmentTest(bool usingAcidBase, bool usingProducti
     }
 
     //Tissue and total oxygen w/ diffusion
-    if (usingDiffusion)
+    if (localUsingDiffusion)
     {
       cTissue.Balance(BalanceLiquidBy::Mass);
       cCapillaries.Balance(BalanceLiquidBy::Mass);

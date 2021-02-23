@@ -1,7 +1,7 @@
 {
   "Name": "EnvironmentExposure",
   "Description": "Showcase scenario: Patient is exposed to sub-zero temperatures and develops hypothermia.",
-    "PatientConfiguration": { "PatientFile": "Jane.json" },
+  "PatientConfiguration": { "PatientFile": "Jane.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {

@@ -301,7 +301,7 @@ void MechanicalVentilator::PreProcess()
   if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorConfiguration())
   {
     SEMechanicalVentilator::Clear();
-    ProcessConfiguration(*m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorConfiguration(), m_data.GetSubstances());
+    ProcessConfiguration(m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorConfiguration(), m_data.GetSubstances());
     m_data.GetActions().GetEquipmentActions().RemoveMechanicalVentilatorConfiguration();
   }
   //Do nothing if the ventilator is off and not initialized

@@ -24,9 +24,11 @@ void SEChestOcclusiveDressing::Clear()
   m_Side= eSide::NullSide;
 }
 
-void SEChestOcclusiveDressing::Copy(const SEChestOcclusiveDressing& src)
+void SEChestOcclusiveDressing::Copy(const SEChestOcclusiveDressing& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEChestOcclusiveDressing::IsValid() const
@@ -36,7 +38,19 @@ bool SEChestOcclusiveDressing::IsValid() const
 
 bool SEChestOcclusiveDressing::IsActive() const
 {
-  return IsValid() && m_State == eSwitch::On;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return m_State == eSwitch::On;
+}
+void SEChestOcclusiveDressing::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEChestOcclusiveDressing::GetScalar(const std::string& name)
+{
+  return nullptr;
 }
 
 eSide SEChestOcclusiveDressing::GetSide() const

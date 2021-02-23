@@ -4,8 +4,8 @@
 include(AddExternalProject)
 define_external_dirs_ex( Eigen3 )
 add_external_project_ex( Eigen3
-  URL "https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz"
-  URL_HASH MD5=9e30f67e8531477de4117506fe44669b
+  URL "https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.tar.gz"
+  URL_HASH MD5=609286804b0f79be622ccf7f9ff2b660
   CMAKE_CACHE_ARGS 
     -DBUILD_TESTING:BOOL=OFF
   RELATIVE_INCLUDE_PATH ""

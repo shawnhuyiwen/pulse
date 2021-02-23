@@ -21,7 +21,7 @@ void SEAnesthesiaMachineYPieceDisconnect::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEAnesthesiaMachineYPieceDisconnect::Copy(const SEAnesthesiaMachineYPieceDisconnect& src)
+void SEAnesthesiaMachineYPieceDisconnect::Copy(const SEAnesthesiaMachineYPieceDisconnect& src, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
@@ -33,7 +33,21 @@ bool SEAnesthesiaMachineYPieceDisconnect::IsValid() const
 
 bool SEAnesthesiaMachineYPieceDisconnect::IsActive() const
 {
+  if (!SEAnesthesiaMachineAction::IsActive())
+    return false;
   return HasSeverity() ? !m_Severity->IsZero() : false;
+}
+void SEAnesthesiaMachineYPieceDisconnect::Deactivate()
+{
+  SEAnesthesiaMachineAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAnesthesiaMachineYPieceDisconnect::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEAnesthesiaMachineYPieceDisconnect::HasSeverity() const

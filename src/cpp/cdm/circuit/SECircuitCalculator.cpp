@@ -254,7 +254,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   //The b matrix will have all of the right side values (known values) from the KCL equation
   //Variables used in the loop
   double dStartingCompliance = 0.0;
-  double dStartingInertance = 0.0;
   for (NodeType* n : m_circuit->GetNodes())
   {
     //Sum of the flows at each node is 0

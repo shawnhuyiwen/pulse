@@ -17,10 +17,11 @@ public:
   virtual ~SEHemorrhage();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEHemorrhage& src);
+  virtual void Copy(const SEHemorrhage& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual eHemorrhage_Type GetType() const;
   virtual void SetType(eHemorrhage_Type t);
@@ -38,11 +39,18 @@ public:
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
+  virtual bool HasTotalBloodLost() const;
+  virtual SEScalarVolume& GetTotalBloodLost();
+  virtual double GetTotalBloodLost(const VolumeUnit& unit) const;
+
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eHemorrhage_Type        m_Type;
   std::string             m_Compartment;
   SEScalarVolumePerTime*  m_FlowRate;
   SEScalar0To1*           m_Severity;
+  SEScalarVolume*         m_TotalBloodLost;
 };

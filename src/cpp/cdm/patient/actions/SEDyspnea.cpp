@@ -22,9 +22,11 @@ void SEDyspnea::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEDyspnea::Copy(const SEDyspnea& src)
+void SEDyspnea::Copy(const SEDyspnea& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEDyspnea::IsValid() const
@@ -34,7 +36,21 @@ bool SEDyspnea::IsValid() const
 
 bool SEDyspnea::IsActive() const
 {
-  return IsValid() ? !m_Severity->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Severity->IsZero();
+}
+void SEDyspnea::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEDyspnea::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEDyspnea::HasSeverity() const

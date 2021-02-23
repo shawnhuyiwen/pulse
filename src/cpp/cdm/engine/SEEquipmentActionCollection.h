@@ -34,95 +34,98 @@ class CDM_DECL SEEquipmentActionCollection : public Loggable
   friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
-  SEEquipmentActionCollection(Logger* logger=nullptr);
+  SEEquipmentActionCollection(SESubstanceManager& subMgr);
 public:
   ~SEEquipmentActionCollection();
 
   // STATE ACTION
   bool HasAnesthesiaMachineConfiguration() const;
-  SEAnesthesiaMachineConfiguration* GetAnesthesiaMachineConfiguration();
+  SEAnesthesiaMachineConfiguration& GetAnesthesiaMachineConfiguration();
   const SEAnesthesiaMachineConfiguration* GetAnesthesiaMachineConfiguration() const;
   void RemoveAnesthesiaMachineConfiguration();
 
   bool HasInhalerConfiguration() const;
-  SEInhalerConfiguration* GetInhalerConfiguration();
+  SEInhalerConfiguration& GetInhalerConfiguration();
   const SEInhalerConfiguration* GetInhalerConfiguration() const;
   void RemoveInhalerConfiguration();
 
   bool HasMechanicalVentilatorConfiguration() const;
-  SEMechanicalVentilatorConfiguration* GetMechanicalVentilatorConfiguration();
+  SEMechanicalVentilatorConfiguration& GetMechanicalVentilatorConfiguration();
   const SEMechanicalVentilatorConfiguration* GetMechanicalVentilatorConfiguration() const;
   void RemoveMechanicalVentilatorConfiguration();
 
   // INCIDENT ACTIONS
 
   bool HasAnesthesiaMachineOxygenTankPressureLoss() const;
-  SEAnesthesiaMachineOxygenTankPressureLoss* GetAnesthesiaMachineOxygenTankPressureLoss();
+  SEAnesthesiaMachineOxygenTankPressureLoss& GetAnesthesiaMachineOxygenTankPressureLoss();
   const SEAnesthesiaMachineOxygenTankPressureLoss* GetAnesthesiaMachineOxygenTankPressureLoss() const;
   void RemoveAnesthesiaMachineOxygenTankPressureLoss();
 
   bool HasAnesthesiaMachineOxygenWallPortPressureLoss() const;
-  SEAnesthesiaMachineOxygenWallPortPressureLoss* GetAnesthesiaMachineOxygenWallPortPressureLoss();
+  SEAnesthesiaMachineOxygenWallPortPressureLoss& GetAnesthesiaMachineOxygenWallPortPressureLoss();
   const SEAnesthesiaMachineOxygenWallPortPressureLoss* GetAnesthesiaMachineOxygenWallPortPressureLoss() const;
   void RemoveAnesthesiaMachineOxygenWallPortPressureLoss();
 
   // FAILURE ACTIONS
 
   bool HasAnesthesiaMachineExpiratoryValveLeak() const;
-  SEAnesthesiaMachineExpiratoryValveLeak* GetAnesthesiaMachineExpiratoryValveLeak();
+  SEAnesthesiaMachineExpiratoryValveLeak& GetAnesthesiaMachineExpiratoryValveLeak();
   const SEAnesthesiaMachineExpiratoryValveLeak* GetAnesthesiaMachineExpiratoryValveLeak() const;
   void RemoveAnesthesiaMachineExpiratoryValveLeak();
 
   bool HasAnesthesiaMachineExpiratoryValveObstruction() const;
-  SEAnesthesiaMachineExpiratoryValveObstruction* GetAnesthesiaMachineExpiratoryValveObstruction();
+  SEAnesthesiaMachineExpiratoryValveObstruction& GetAnesthesiaMachineExpiratoryValveObstruction();
   const SEAnesthesiaMachineExpiratoryValveObstruction* GetAnesthesiaMachineExpiratoryValveObstruction() const;
   void RemoveAnesthesiaMachineExpiratoryValveObstruction();
 
   bool HasAnesthesiaMachineInspiratoryValveLeak() const;
-  SEAnesthesiaMachineInspiratoryValveLeak* GetAnesthesiaMachineInspiratoryValveLeak();
+  SEAnesthesiaMachineInspiratoryValveLeak& GetAnesthesiaMachineInspiratoryValveLeak();
   const SEAnesthesiaMachineInspiratoryValveLeak* GetAnesthesiaMachineInspiratoryValveLeak() const;
   void RemoveAnesthesiaMachineInspiratoryValveLeak();
 
   bool HasAnesthesiaMachineInspiratoryValveObstruction() const;
-  SEAnesthesiaMachineInspiratoryValveObstruction* GetAnesthesiaMachineInspiratoryValveObstruction();
+  SEAnesthesiaMachineInspiratoryValveObstruction& GetAnesthesiaMachineInspiratoryValveObstruction();
   const SEAnesthesiaMachineInspiratoryValveObstruction* GetAnesthesiaMachineInspiratoryValveObstruction() const;
   void RemoveAnesthesiaMachineInspiratoryValveObstruction();
 
   bool HasAnesthesiaMachineMaskLeak() const;
-  SEAnesthesiaMachineMaskLeak* GetAnesthesiaMachineMaskLeak();
+  SEAnesthesiaMachineMaskLeak& GetAnesthesiaMachineMaskLeak();
   const SEAnesthesiaMachineMaskLeak* GetAnesthesiaMachineMaskLeak() const;
   void RemoveAnesthesiaMachineMaskLeak();
 
   bool HasAnesthesiaMachineSodaLimeFailure() const;
-  SEAnesthesiaMachineSodaLimeFailure* GetAnesthesiaMachineSodaLimeFailure();
+  SEAnesthesiaMachineSodaLimeFailure& GetAnesthesiaMachineSodaLimeFailure();
   const SEAnesthesiaMachineSodaLimeFailure* GetAnesthesiaMachineSodaLimeFailure() const;
   void RemoveAnesthesiaMachineSodaLimeFailure();
 
   bool HasAnesthesiaMachineTubeCuffLeak() const;
-  SEAnesthesiaMachineTubeCuffLeak* GetAnesthesiaMachineTubeCuffLeak();
+  SEAnesthesiaMachineTubeCuffLeak& GetAnesthesiaMachineTubeCuffLeak();
   const SEAnesthesiaMachineTubeCuffLeak* GetAnesthesiaMachineTubeCuffLeak() const;
   void RemoveAnesthesiaMachineTubeCuffLeak();
 
   bool HasAnesthesiaMachineVaporizerFailure() const;
-  SEAnesthesiaMachineVaporizerFailure* GetAnesthesiaMachineVaporizerFailure();
+  SEAnesthesiaMachineVaporizerFailure& GetAnesthesiaMachineVaporizerFailure();
   const SEAnesthesiaMachineVaporizerFailure* GetAnesthesiaMachineVaporizerFailure() const;
   void RemoveAnesthesiaMachineVaporizerFailure();
 
   bool HasAnesthesiaMachineVentilatorPressureLoss() const;
-  SEAnesthesiaMachineVentilatorPressureLoss* GetAnesthesiaMachineVentilatorPressureLoss();
+  SEAnesthesiaMachineVentilatorPressureLoss& GetAnesthesiaMachineVentilatorPressureLoss();
   const SEAnesthesiaMachineVentilatorPressureLoss* GetAnesthesiaMachineVentilatorPressureLoss() const;
   void RemoveAnesthesiaMachineVentilatorPressureLoss();
 
   bool HasAnesthesiaMachineYPieceDisconnect() const;
-  SEAnesthesiaMachineYPieceDisconnect* GetAnesthesiaMachineYPieceDisconnect();
+  SEAnesthesiaMachineYPieceDisconnect& GetAnesthesiaMachineYPieceDisconnect();
   const SEAnesthesiaMachineYPieceDisconnect* GetAnesthesiaMachineYPieceDisconnect() const;
   void RemoveAnesthesiaMachineYPieceDisconnect();
 
   void GetAllActions(std::vector<const SEAction*>& v) const;
+  const SEScalar* GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property);
   
 protected:
   void Clear();
-  bool ProcessAction(const SEEquipmentAction& action, SESubstanceManager&);
+  bool ProcessAction(const SEEquipmentAction& action);
+
+  SESubstanceManager&                                          m_SubMgr;
 
   SEAnesthesiaMachineConfiguration*                            m_AnesthesiaMachineConfiguration;
   //Anesthesia Machine Incidents

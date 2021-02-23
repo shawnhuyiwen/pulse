@@ -28,24 +28,44 @@ void SEAcuteRespiratoryDistressSyndromeExacerbation::Clear()
   INVALIDATE_PROPERTY(m_RightLungAffected);
 }
 
-void SEAcuteRespiratoryDistressSyndromeExacerbation::Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src)
+void SEAcuteRespiratoryDistressSyndromeExacerbation::Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEAcuteRespiratoryDistressSyndromeExacerbation::IsValid() const
 {
+  if (!SEPatientAction::IsValid())
+    return false;
   return HasSeverity() && HasLeftLungAffected() && HasRightLungAffected();
 }
 bool SEAcuteRespiratoryDistressSyndromeExacerbation::IsActive() const
 {
-  if (!IsValid())
+  if (!SEPatientAction::IsActive())
     return false;
   if (GetSeverity() <= 0)
     return false;
   if (GetLeftLungAffected() <= 0 && GetRightLungAffected() <= 0)
     return false;
   return true;
+}
+void SEAcuteRespiratoryDistressSyndromeExacerbation::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAcuteRespiratoryDistressSyndromeExacerbation::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  if (name.compare("LeftLungAffected") == 0)
+    return &GetLeftLungAffected();
+  if (name.compare("RightLungAffected") == 0)
+    return &GetRightLungAffected();
+  return nullptr;
 }
 
 bool SEAcuteRespiratoryDistressSyndromeExacerbation::HasSeverity() const

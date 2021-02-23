@@ -415,18 +415,17 @@ void Tissue::CalculateDiffusion()
           // Sodium is special. We need to diffuse for renal function.
           // We will not treat sodium any differently once diffusion functionality is fully implemented.
           if (sub == m_Sodium)
-            double moved_ug = MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_dt_s);
+            MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_dt_s);
 
           continue;
         }
 
-        double moved_ug;
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         /////////////////// Vascular to Extravascular-Extracellular /////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // --- First, instant diffusion ---
-        moved_ug = MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_dt_s);
+        MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_dt_s);
 
         // --- Second, simple diffusion ---
           // Compute the vascular to extracellular permeability coefficient
@@ -444,7 +443,7 @@ void Tissue::CalculateDiffusion()
         double vToECpermeabilityCoefficient_mL_Per_s = vToECpermeabilityCoefficient_mL_Per_s_g * tissue->GetTotalMass(MassUnit::g);
           // A tuning factor helps tune the dynamics - note that concentrations will ALWAYS equilibrate in steady state given enough time regardless of the permeability
         double vToECPermeabilityTuningFactor = 1.0; 
-        moved_ug = MoveMassBySimpleDiffusion(*vascular, extracellular, *sub, vToECPermeabilityTuningFactor*vToECpermeabilityCoefficient_mL_Per_s, m_dt_s);
+        MoveMassBySimpleDiffusion(*vascular, extracellular, *sub, vToECPermeabilityTuningFactor*vToECpermeabilityCoefficient_mL_Per_s, m_dt_s);
 
         // --- Third facilitated diffusion ---
         if (sub->HasMaximumDiffusionFlux())
@@ -453,13 +452,13 @@ void Tissue::CalculateDiffusion()
           double capCoverage_cm2 = massToAreaCoefficient_cm2_Per_g * tissue->GetTotalMass(MassUnit::g);
           double maximumMassFlux = sub->GetMaximumDiffusionFlux(MassPerAreaTimeUnit::g_Per_cm2_s);
           double combinedCoefficient_g_Per_s = maximumMassFlux*capCoverage_cm2;
-          moved_ug = MoveMassByFacilitatedDiffusion(*vascular, extracellular, *sub, combinedCoefficient_g_Per_s, m_dt_s);
+          MoveMassByFacilitatedDiffusion(*vascular, extracellular, *sub, combinedCoefficient_g_Per_s, m_dt_s);
         }
 
         // --- Fourth, and final vascular to EV-EC, Active diffusion ---
         double pumpRate_g_Per_s = 0.0;
         /// \todo Compute the pump rate from an empirically-determined baseline pump rate.
-        moved_ug = MoveMassByActiveTransport(*vascular, extracellular, *sub, pumpRate_g_Per_s, m_dt_s);
+        MoveMassByActiveTransport(*vascular, extracellular, *sub, pumpRate_g_Per_s, m_dt_s);
         
 #ifdef PROBE_BLOOD_GASES
         if (sub == &m_data.GetSubstances().GetO2() || sub == &m_data.GetSubstances().GetCO2())
@@ -475,12 +474,12 @@ void Tissue::CalculateDiffusion()
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // --- First, instant diffusion ---
-        moved_ug = MoveMassByInstantDiffusion(extracellular, intracellular, *sub, m_dt_s);
+        MoveMassByInstantDiffusion(extracellular, intracellular, *sub, m_dt_s);
 
         // --- Second, simple diffusion ---
           // Assuming that the capillary permeability coefficient is proportional to the cellular membrane permeability coefficient for a given tissue and substance
         double ECtoICPermeabilityFactor = 1.0; // This is the permeability constant
-        moved_ug = MoveMassBySimpleDiffusion(extracellular, intracellular, *sub, ECtoICPermeabilityFactor*vToECpermeabilityCoefficient_mL_Per_s, m_dt_s);
+        MoveMassBySimpleDiffusion(extracellular, intracellular, *sub, ECtoICPermeabilityFactor*vToECpermeabilityCoefficient_mL_Per_s, m_dt_s);
 
         // --- Third facilitated diffusion ---
           // In Pulse, only glucose moves by facilitated diffusion, and it is assumed that all glucose that gets to the 
@@ -490,7 +489,7 @@ void Tissue::CalculateDiffusion()
         // --- Fourth, and final vascular to EV-EC, Active diffusion ---
         pumpRate_g_Per_s = 0.0;
         /// \todo Compute the pump rate from an empirically-determined baseline pump rate.
-        moved_ug = MoveMassByActiveTransport(extracellular, intracellular, *sub, pumpRate_g_Per_s, m_dt_s);        
+        MoveMassByActiveTransport(extracellular, intracellular, *sub, pumpRate_g_Per_s, m_dt_s);        
 
 #ifdef PROBE_BLOOD_GASES
         if (sub == &m_data.GetSubstances().GetO2() || sub == &m_data.GetSubstances().GetCO2())
@@ -617,22 +616,22 @@ void Tissue::CalculateMetabolicConsumptionAndProduction(double time_s)
 
   // The following fractions are used to compute the metabolic conversion of substances.
   // Stoichiometric ratios can be found in any physiology text, such as \cite guyton2006medical
-  double FractionOfO2CO2ToGlucose = 0.157894737;    // Ratio of o2/co2 required to produce ATP for glucose consumption. = 6.0 / 38.0 
-  double FractionOfO2ToLipid = 0.212239583;         // Ratio of o2 required to produce ATP for lipid consumption. = 163.0 / 768.0;
-  double FractionOfCO2ToLipid = 0.1484375;          // ratio of co2 required to produce ATP for lipid consumption. = 114.0 / 768.0;
+  const double FractionOfO2CO2ToGlucose = 0.157894737;    // Ratio of o2/co2 required to produce ATP for glucose consumption. = 6.0 / 38.0 
+  const double FractionOfO2ToLipid = 0.212239583;         // Ratio of o2 required to produce ATP for lipid consumption. = 163.0 / 768.0;
+  const double FractionOfCO2ToLipid = 0.1484375;          // ratio of co2 required to produce ATP for lipid consumption. = 114.0 / 768.0;
   SEScalarPressure ppO2;
   SEScalarMassPerVolume atConc;
   ppO2.SetValue(40.0, PressureUnit::mmHg);
   GeneralMath::CalculateHenrysLawConcentration(*m_O2, ppO2, atConc, m_Logger);
-  double anaerobicThresholdConcentration_mM = atConc.GetValue(MassPerVolumeUnit::g_Per_L) / m_O2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
-  double FractionOfGlucoseToATP = 0.026315789;      // Ratio of glucose required to ATP produced. = 1.0 / 38.0;
-  double FractionOfLactateToGlucose = 0.5;          // Ratio of glucose required to lactate produced during anaerobic metabolism. = 1.0 / 2.0;
-  double FractionOfAcetoacetateToATP = 0.041666667; // Ratio of acetoacetate required to ATP produced. = 1.0 / 24.0;
-  double FractionOfLactateToATP = 0.027777778;      // Ratio of lactate required to ATP produced. = 1.0 / 36.0;
-  double FractionOfLipidToATP = 0.002604167;        // Ratio of of lipid required to ATP produced. = 2.0 / 768.0;
-  double FractionLipidsAsTristearin = 0.256;        // This is an empirically determined value specific to the Pulse implementation
+  const double anaerobicThresholdConcentration_mM = atConc.GetValue(MassPerVolumeUnit::g_Per_L) / m_O2->GetMolarMass(MassPerAmountUnit::g_Per_mmol);
+  const double FractionOfGlucoseToATP = 0.026315789;      // Ratio of glucose required to ATP produced. = 1.0 / 38.0;
+  const double FractionOfLactateToGlucose = 0.5;          // Ratio of glucose required to lactate produced during anaerobic metabolism. = 1.0 / 2.0;
+  const double FractionOfAcetoacetateToATP = 0.041666667; // Ratio of acetoacetate required to ATP produced. = 1.0 / 24.0;
+  const double FractionOfLactateToATP = 0.027777778;      // Ratio of lactate required to ATP produced. = 1.0 / 36.0;
+  const double FractionOfLipidToATP = 0.002604167;        // Ratio of of lipid required to ATP produced. = 2.0 / 768.0;
+  const double FractionLipidsAsTristearin = 0.256;        // This is an empirically determined value specific to the Pulse implementation
 
-  double exerciseTuningFactor = 1.0; // 2.036237;           // A tuning factor to adjust production and consumption during exercise
+  const double exerciseTuningFactor = 1.0; // 2.036237;           // A tuning factor to adjust production and consumption during exercise
 
   double insulinConc_ug_Per_L = m_data.GetSubstances().GetInsulin().GetBloodConcentration(MassPerVolumeUnit::ug_Per_L);
 
@@ -998,7 +997,7 @@ void Tissue::GlucoseLipidControl(double time_s)
   double bloodLipidDelta_mg_Per_mL = (currentBloodLipid_mg_Per_mL - m_RestingBloodLipid_mg_Per_mL);
   double insulinFeedback = currentInsulinConcentration_mg_Per_mL / m_RestingBloodInsulin_mg_Per_mL;
   double massDelta_mg = 0.0;
-  double evFlow_mL_Per_s = 0.0;
+
   double vascularVolume = 0.0;
   double extravascularVolume = 0.0;
   double transferTimeConstant_per_s = 0.1;
@@ -1163,13 +1162,10 @@ void Tissue::DistributeMassbyVolumeWeighted(SELiquidCompartment& cmpt, const SES
   if (mass == 0)
     return;
   SELiquidSubstanceQuantity* subQ = cmpt.GetSubstanceQuantity(sub);
-  if (mass < 0.0)
+  if (mass < 0.0 && -mass > subQ->GetMass(unit))
   {
-    if (-mass > subQ->GetMass(unit))
-    {
       mass = -subQ->GetMass(unit);
       Info("The amount of mass decrement to distribute by volume weighted was greater than available. High probability of negative mass. DistributeMassbyMassWeighted is preferred for decrements.");
-    }    
   }
 
   if (!cmpt.HasChildren())
@@ -1186,11 +1182,11 @@ void Tissue::DistributeMassbyVolumeWeighted(SELiquidCompartment& cmpt, const SES
     for (SELiquidCompartment* leaf : cmpt.GetLeaves())
     {
       double leafMass = mass * (leaf->GetVolume(VolumeUnit::mL) / volume_mL);
-      SELiquidSubstanceQuantity* subQ = leaf->GetSubstanceQuantity(sub);
-      subQ->GetMass().IncrementValue(leafMass, unit);
-      if (std::abs(subQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
+      SELiquidSubstanceQuantity* leafSubQ = leaf->GetSubstanceQuantity(sub);
+      leafSubQ->GetMass().IncrementValue(leafMass, unit);
+      if (std::abs(leafSubQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
-        subQ->GetMass().SetValue(0.0, MassUnit::ug);
+        leafSubQ->GetMass().SetValue(0.0, MassUnit::ug);
       }
     }
   }
@@ -1231,16 +1227,16 @@ void Tissue::DistributeMassbyMassWeighted(SELiquidCompartment& cmpt, const SESub
     double mass_ug = subQ->GetMass(MassUnit::ug);
     for (SELiquidCompartment* leaf : cmpt.GetLeaves())
     {
-      SELiquidSubstanceQuantity* subQ = leaf->GetSubstanceQuantity(sub);
+      SELiquidSubstanceQuantity* leafSubQ = leaf->GetSubstanceQuantity(sub);
       double leafMass = 0.0;
       if (mass_ug != 0.0)
       {
-        leafMass = mass * (subQ->GetMass(MassUnit::ug) / mass_ug);
+        leafMass = mass * (leafSubQ->GetMass(MassUnit::ug) / mass_ug);
       }
-        subQ->GetMass().IncrementValue(leafMass, unit);
-      if (std::abs(subQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
+      leafSubQ->GetMass().IncrementValue(leafMass, unit);
+      if (std::abs(leafSubQ->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
-        subQ->GetMass().SetValue(0.0, MassUnit::ug);
+          leafSubQ->GetMass().SetValue(0.0, MassUnit::ug);
       }
     }
   }
@@ -1466,8 +1462,6 @@ double Tissue::MoveMassByInstantDiffusion(SELiquidCompartment& source, SELiquidC
   const SELiquidSubstanceQuantity* srcQ = source.GetSubstanceQuantity(sub);
   const SELiquidSubstanceQuantity* tgtQ = target.GetSubstanceQuantity(sub);
 
-  double sConc_ug = srcQ->GetMass(MassUnit::ug);
-  double tConc_ug = tgtQ->GetMass(MassUnit::ug);
   double sConc_ug_Per_mL = srcQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL);
   double tConc_ug_Per_mL = tgtQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL);
   double sVol_mL = source.GetVolume(VolumeUnit::mL);

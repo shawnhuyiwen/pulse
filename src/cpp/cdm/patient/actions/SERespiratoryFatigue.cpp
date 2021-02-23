@@ -22,9 +22,11 @@ void SERespiratoryFatigue::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SERespiratoryFatigue::Copy(const SERespiratoryFatigue& src)
+void SERespiratoryFatigue::Copy(const SERespiratoryFatigue& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SERespiratoryFatigue::IsValid() const
@@ -34,7 +36,21 @@ bool SERespiratoryFatigue::IsValid() const
 
 bool SERespiratoryFatigue::IsActive() const
 {
-  return IsValid() ? !m_Severity->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Severity->IsZero();
+}
+void SERespiratoryFatigue::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SERespiratoryFatigue::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SERespiratoryFatigue::HasSeverity() const

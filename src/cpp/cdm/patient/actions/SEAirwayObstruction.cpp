@@ -22,9 +22,11 @@ void SEAirwayObstruction::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEAirwayObstruction::Copy(const SEAirwayObstruction& src)
+void SEAirwayObstruction::Copy(const SEAirwayObstruction& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEAirwayObstruction::IsValid() const
@@ -34,7 +36,21 @@ bool SEAirwayObstruction::IsValid() const
 
 bool SEAirwayObstruction::IsActive() const
 {
-  return IsValid() ? !m_Severity->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Severity->IsZero();
+}
+void SEAirwayObstruction::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAirwayObstruction::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEAirwayObstruction::HasSeverity() const

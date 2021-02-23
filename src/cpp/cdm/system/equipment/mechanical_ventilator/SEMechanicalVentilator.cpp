@@ -692,7 +692,12 @@ eMechanicalVentilator_DriverWaveform SEMechanicalVentilator::GetInspirationWavef
 
 bool SEMechanicalVentilator::HasFractionInspiredGas() const
 {
-  return m_FractionInspiredGases.size() == 0 ? false : true;
+  if (m_FractionInspiredGases.empty())
+    return false;
+  for (auto a : m_FractionInspiredGases)
+    if (a->HasFractionAmount() && a->GetFractionAmount().IsPositive())
+      return true;
+  return false;
 }
 bool SEMechanicalVentilator::HasFractionInspiredGas(const SESubstance& s) const
 {
@@ -748,7 +753,12 @@ void SEMechanicalVentilator::RemoveFractionInspiredGases()
 
 bool SEMechanicalVentilator::HasConcentrationInspiredAerosol() const
 {
-  return m_ConcentrationInspiredAerosols.size() == 0 ? false : true;
+  if (m_ConcentrationInspiredAerosols.empty())
+    return false;
+  for (auto a : m_ConcentrationInspiredAerosols)
+    if (a->HasConcentration() && a->GetConcentration().IsPositive())
+      return true;
+  return false;
 }
 bool SEMechanicalVentilator::HasConcentrationInspiredAerosol(const SESubstance& substance) const
 {

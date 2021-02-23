@@ -134,9 +134,7 @@ bool SEEnvironment::ProcessChange(SEChangeEnvironmentalConditions& change, SESub
 {
   // If we have data then we merge it, if a file was provided
   // we reset and set the environment to the file, so we only have the file data
-  if (change.HasEnvironmentalConditions())
-    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions(), subMgr);
-  else if (change.HasEnvironmentalConditionsFile())
+  if (change.HasEnvironmentalConditionsFile())
   {
     // Update the action with the file contents
     std::string cfg_file = change.GetEnvironmentalConditionsFile();
@@ -148,6 +146,8 @@ bool SEEnvironment::ProcessChange(SEChangeEnvironmentalConditions& change, SESub
     }
     GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions(), subMgr);
   }
+  else if (change.HasEnvironmentalConditions())
+    GetEnvironmentalConditions().Merge(change.GetEnvironmentalConditions(), subMgr);
   StateChange();
   return true;
 }

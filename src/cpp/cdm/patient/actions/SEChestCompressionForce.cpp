@@ -6,7 +6,7 @@
 #include "properties/SEScalarForce.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SEChestCompressionForce::SEChestCompressionForce(Logger* logger) : SEChestCompression(logger)
+SEChestCompressionForce::SEChestCompressionForce(Logger* logger) : SEPatientAction(logger)
 {
   m_Force = nullptr;
 }
@@ -18,23 +18,39 @@ SEChestCompressionForce::~SEChestCompressionForce()
 
 void SEChestCompressionForce::Clear()
 {
-  SEChestCompression::Clear();
+  SEPatientAction::Clear();
   INVALIDATE_PROPERTY(m_Force);
 }
 
-void SEChestCompressionForce::Copy(const SEChestCompressionForce& src)
+void SEChestCompressionForce::Copy(const SEChestCompressionForce& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEChestCompressionForce::IsValid() const
 {
-  return SEChestCompression::IsValid() && HasForce();
+  return SEPatientAction::IsValid() && HasForce();
 }
 
 bool SEChestCompressionForce::IsActive() const
 {
-  return IsValid() ? !m_Force->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Force->IsZero();
+}
+void SEChestCompressionForce::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEChestCompressionForce::GetScalar(const std::string& name)
+{
+  if (name.compare("Force") == 0)
+    return &GetForce();
+  return nullptr;
 }
 
 bool SEChestCompressionForce::HasForce() const

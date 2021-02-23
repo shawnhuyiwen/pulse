@@ -22,9 +22,11 @@ void SEBronchoconstriction::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEBronchoconstriction::Copy(const SEBronchoconstriction& src)
+void SEBronchoconstriction::Copy(const SEBronchoconstriction& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEBronchoconstriction::IsValid() const
@@ -34,7 +36,21 @@ bool SEBronchoconstriction::IsValid() const
 
 bool SEBronchoconstriction::IsActive() const
 {
-  return IsValid() ? !m_Severity->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Severity->IsZero();
+}
+void SEBronchoconstriction::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEBronchoconstriction::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEBronchoconstriction::HasSeverity() const

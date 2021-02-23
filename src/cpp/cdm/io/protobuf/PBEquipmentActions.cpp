@@ -250,7 +250,7 @@ void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineOxygenTankPressure
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineOxygenTankPressureLossData& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst)
 {
   PBEquipmentAction::Serialize(src.anesthesiamachineaction(), dst);
-  dst.SetActive(src.state() == CDM_BIND::eSwitch::On ? true : false);
+  dst.SetState(src.state() == CDM_BIND::eSwitch::On ? eSwitch::On : eSwitch::Off);
 }
 CDM_BIND::AnesthesiaMachineOxygenTankPressureLossData* PBEquipmentAction::Unload(const SEAnesthesiaMachineOxygenTankPressureLoss& src)
 {
@@ -261,7 +261,7 @@ CDM_BIND::AnesthesiaMachineOxygenTankPressureLossData* PBEquipmentAction::Unload
 void PBEquipmentAction::Serialize(const SEAnesthesiaMachineOxygenTankPressureLoss& src, CDM_BIND::AnesthesiaMachineOxygenTankPressureLossData& dst)
 {
   PBEquipmentAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  dst.set_state(src.IsActive() ? CDM_BIND::eSwitch::On : CDM_BIND::eSwitch::Off);
+  dst.set_state(src.GetState()==eSwitch::On ? CDM_BIND::eSwitch::On : CDM_BIND::eSwitch::Off);
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineOxygenTankPressureLoss& src, SEAnesthesiaMachineOxygenTankPressureLoss& dst)
 {
@@ -279,7 +279,7 @@ void PBEquipmentAction::Load(const CDM_BIND::AnesthesiaMachineOxygenWallPortPres
 void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineOxygenWallPortPressureLossData& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst)
 {
   PBEquipmentAction::Serialize(src.anesthesiamachineaction(), dst);
-  dst.SetActive(src.state() == CDM_BIND::eSwitch::On ? true : false);
+  dst.SetState(src.state() == CDM_BIND::eSwitch::On ? eSwitch::On : eSwitch::Off);
 }
 CDM_BIND::AnesthesiaMachineOxygenWallPortPressureLossData* PBEquipmentAction::Unload(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src)
 {
@@ -290,7 +290,7 @@ CDM_BIND::AnesthesiaMachineOxygenWallPortPressureLossData* PBEquipmentAction::Un
 void PBEquipmentAction::Serialize(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, CDM_BIND::AnesthesiaMachineOxygenWallPortPressureLossData& dst)
 {
   PBEquipmentAction::Serialize(src, *dst.mutable_anesthesiamachineaction());
-  dst.set_state(src.IsActive() ? CDM_BIND::eSwitch::On : CDM_BIND::eSwitch::Off);
+  dst.set_state(src.GetState()==eSwitch::On ? CDM_BIND::eSwitch::On : CDM_BIND::eSwitch::Off);
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, SEAnesthesiaMachineOxygenWallPortPressureLoss& dst)
 {

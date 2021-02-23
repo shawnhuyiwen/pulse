@@ -269,11 +269,10 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
   double venaCavaPressure_mmHg = 4.0;
   double maxSteadyCycles = 1.0 / deltaT_s * 30.0; // must be steady for 30 second
   double convergencePercentage = 0.01; // within 1%
-  double AffResistance_mmHg_Per_mL_Per_s = 0.0;
   //fit parameters for upr curve: 
-  double a = 2.9e-4;
-  double b = -0.017;
-  double c = 0.219;
+  const double a = 2.9e-4;
+  const double b = -0.017;
+  const double c = 0.219;
   SEScalarTime eventTime;
   eventTime.SetValue(0, TimeUnit::s);
 
@@ -321,7 +320,7 @@ void PulseEngineTest::RenalFeedbackTest(RenalFeedback feedback, const std::strin
     bool UPRSteady = false;
     bool convergedCheck = false;
     //validation data of urine production:
-    double urineValidation = (a*pow(MAP, 2) + b*MAP + c);
+    // unused: double urineValidation = (a*pow(MAP, 2) + b*MAP + c);
     //get the permeability and resistance for output:
     double permeabilityCurrentLeft_mL_Per_s_Per_mmHg_Per_m2 = 0.0;
     double permeabilityCurrentRight_mL_Per_s_Per_mmHg_Per_m2 = 0.0;
@@ -564,11 +563,6 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   SEFluidCircuitNode* RightRenalVenaCavaConnectionNode = RenalCircuit.GetNode(pulse::RenalNode::RightVenaCavaConnection);
   SEFluidCircuitNode* LeftRenalArteryNode = RenalCircuit.GetNode(pulse::RenalNode::LeftRenalArtery);
   SEFluidCircuitNode* LeftRenalVenaCavaConnectionNode = RenalCircuit.GetNode(pulse::RenalNode::LeftVenaCavaConnection);
-  SEFluidCircuitNode* LeftUreterNode = RenalCircuit.GetNode(pulse::RenalNode::LeftUreter);
-  SEFluidCircuitNode* RightUreterNode = RenalCircuit.GetNode(pulse::RenalNode::RightUreter);
-  SEFluidCircuitNode* Bladder = RenalCircuit.GetNode(pulse::RenalNode::Bladder);
-  SEFluidCircuitNode* RightPeritubularCapillariesNode = RenalCircuit.GetNode(pulse::RenalNode::RightPeritubularCapillaries);
-  SEFluidCircuitNode* LeftPeritubularCapillariesNode = RenalCircuit.GetNode(pulse::RenalNode::LeftPeritubularCapillaries);
 
   //Renal/vascular compartments
   SELiquidCompartment* BladderCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::UrineCompartment::Bladder);
@@ -576,8 +570,6 @@ void PulseEngineTest::RenalSystemTest(RenalSystems systemtest, const std::string
   SELiquidCompartment* LeftUreterCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::UrineCompartment::LeftUreter);
   SELiquidCompartment* RightArteryCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightRenalArtery);
   SELiquidCompartment* LeftArteryCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftRenalArtery);
-  SELiquidCompartment* RightAfferentArterioleCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightAfferentArteriole);
-  SELiquidCompartment* LeftAfferentArterioleCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftAfferentArteriole);
   SELiquidCompartment* RightPeritubularCapillariesCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightPeritubularCapillaries);
   SELiquidCompartment* LeftPeritubularCapillariesCompartment = pc.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftPeritubularCapillaries);
 

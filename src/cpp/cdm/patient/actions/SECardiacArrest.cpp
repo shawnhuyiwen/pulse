@@ -21,9 +21,11 @@ void SECardiacArrest::Clear()
   m_State = eSwitch::Off;
 }
 
-void SECardiacArrest::Copy(const SECardiacArrest& src)
+void SECardiacArrest::Copy(const SECardiacArrest& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SECardiacArrest::IsValid() const
@@ -33,7 +35,19 @@ bool SECardiacArrest::IsValid() const
 
 bool SECardiacArrest::IsActive() const
 {
-  return IsValid() && m_State == eSwitch::On;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return m_State == eSwitch::On;
+}
+void SECardiacArrest::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SECardiacArrest::GetScalar(const std::string& name)
+{
+  return nullptr;
 }
 
 void SECardiacArrest::ToString(std::ostream &str) const

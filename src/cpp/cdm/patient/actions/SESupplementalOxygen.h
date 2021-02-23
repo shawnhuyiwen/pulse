@@ -18,9 +18,11 @@ public:
   virtual ~SESupplementalOxygen();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SESupplementalOxygen& src);
+  virtual void Copy(const SESupplementalOxygen& src, bool preserveState=false);
 
   virtual bool IsValid() const;
+  virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual eSupplementalOxygen_Device GetDevice() const;
   virtual void SetDevice(eSupplementalOxygen_Device name);
@@ -34,6 +36,8 @@ public:
   virtual double GetVolume(const VolumeUnit& unit) const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eSupplementalOxygen_Device              m_Device;

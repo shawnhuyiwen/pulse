@@ -15,10 +15,11 @@ public:
   virtual ~SEConsumeNutrients();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEConsumeNutrients& src);
+  virtual void Copy(const SEConsumeNutrients& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   bool HasNutrition() const;
   SENutrition& GetNutrition();
@@ -29,6 +30,8 @@ public:
   virtual bool HasNutritionFile() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SENutrition* m_Nutrition;

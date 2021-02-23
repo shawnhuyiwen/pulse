@@ -329,14 +329,19 @@ double SEEnvironmentalConditions::GetRespirationAmbientTemperature(const Tempera
 
 bool SEEnvironmentalConditions::HasAmbientGas() const
 {
-  return m_AmbientGases.size() == 0 ? false : true;
+  if (m_AmbientGases.empty())
+    return false;
+  for (auto g : m_AmbientGases)
+    if (g->HasFractionAmount() && g->GetFractionAmount().IsPositive())
+      return true;
+  return false;
 }
 bool SEEnvironmentalConditions::HasAmbientGas(const SESubstance& s) const
 {
   for (const SESubstanceFraction* sf : m_AmbientGases)
   {
     if (&s == &sf->GetSubstance())
-      return sf->GetFractionAmount() > 0;
+      return sf->HasFractionAmount() && sf->GetFractionAmount() > 0;
   }
   return false;
 }
@@ -385,14 +390,19 @@ void SEEnvironmentalConditions::RemoveAmbientGases()
 
 bool SEEnvironmentalConditions::HasAmbientAerosol() const
 {
-  return m_AmbientAerosols.size() == 0 ? false : true;
+  if (m_AmbientAerosols.empty())
+    return false;
+  for (auto a : m_AmbientAerosols)
+    if (a->HasConcentration() && a->GetConcentration().IsPositive())
+      return true;
+  return false;
 }
 bool SEEnvironmentalConditions::HasAmbientAerosol(const SESubstance& substance) const
 {
   for (SESubstanceConcentration* sc : m_AmbientAerosols)
   {
     if (&substance == &sc->GetSubstance())
-      return sc->GetConcentration().IsPositive();
+      return sc->HasConcentration() && sc->GetConcentration().IsPositive();
   }
   return false;
 }

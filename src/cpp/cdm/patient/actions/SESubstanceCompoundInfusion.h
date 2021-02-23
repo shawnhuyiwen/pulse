@@ -5,7 +5,7 @@
 #include "patient/actions/SESubstanceAdministration.h"
 class SESubstanceCompound;
 
-class CDM_DECL SESubstanceCompoundInfusion : public SESubstanceAdministration
+class CDM_DECL SESubstanceCompoundInfusion : public SEPatientAction
 {
   friend class PBPatientAction;//friend the serialization class
 public:
@@ -14,10 +14,11 @@ public:
   virtual ~SESubstanceCompoundInfusion();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SESubstanceCompoundInfusion& src);
+  virtual void Copy(const SESubstanceCompoundInfusion& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasBagVolume() const;
   virtual SEScalarVolume& GetBagVolume();
@@ -31,6 +32,8 @@ public:
   virtual const SESubstanceCompound& GetSubstanceCompound() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalarVolume*                  m_BagVolume;
