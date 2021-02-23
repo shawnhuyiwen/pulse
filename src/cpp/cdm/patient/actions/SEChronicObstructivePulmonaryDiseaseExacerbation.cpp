@@ -25,9 +25,11 @@ void SEChronicObstructivePulmonaryDiseaseExacerbation::Clear()
   INVALIDATE_PROPERTY(m_EmphysemaSeverity);
 }
 
-void SEChronicObstructivePulmonaryDiseaseExacerbation::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src)
+void SEChronicObstructivePulmonaryDiseaseExacerbation::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEChronicObstructivePulmonaryDiseaseExacerbation::IsValid() const
@@ -37,9 +39,23 @@ bool SEChronicObstructivePulmonaryDiseaseExacerbation::IsValid() const
 
 bool SEChronicObstructivePulmonaryDiseaseExacerbation::IsActive() const
 {
-  if (!IsValid())
+  if (!SEPatientAction::IsActive())
     return false;
   return GetBronchitisSeverity() > 0 || GetEmphysemaSeverity() > 0;
+}
+void SEChronicObstructivePulmonaryDiseaseExacerbation::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEChronicObstructivePulmonaryDiseaseExacerbation::GetScalar(const std::string& name)
+{
+  if (name.compare("BronchitisSeverity") == 0)
+    return &GetBronchitisSeverity();
+  if (name.compare("EmphysemaSeverity") == 0)
+    return &GetEmphysemaSeverity();
+  return nullptr;
 }
 
 bool SEChronicObstructivePulmonaryDiseaseExacerbation::HasBronchitisSeverity() const

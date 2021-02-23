@@ -15,7 +15,7 @@
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarTemperature.h"
 
-SEEnvironmentActionCollection::SEEnvironmentActionCollection(Logger* logger) : Loggable(logger)
+SEEnvironmentActionCollection::SEEnvironmentActionCollection(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
 {
   m_ChangeEnvironmentalConditions = nullptr;
   m_ThermalApplication = nullptr;
@@ -32,14 +32,13 @@ void SEEnvironmentActionCollection::Clear()
   RemoveThermalApplication();
 }
 
-bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action, SESubstanceManager& subMgr)
+bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& action)
 {
   const SEChangeEnvironmentalConditions* conditions = dynamic_cast<const SEChangeEnvironmentalConditions*>(&action);
   if (conditions != nullptr)
   {
-    if (m_ChangeEnvironmentalConditions == nullptr)
-      m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions(GetLogger());
-    m_ChangeEnvironmentalConditions->Copy(*conditions, subMgr);
+    GetChangeEnvironmentalConditions().Copy(*conditions, m_SubMgr, true);
+    m_ChangeEnvironmentalConditions->Activate();
     if (!m_ChangeEnvironmentalConditions->IsActive())
       RemoveChangeEnvironmentalConditions();
     return true;
@@ -48,9 +47,8 @@ bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& act
   const SEThermalApplication *thermal = dynamic_cast<const SEThermalApplication*>(&action);
   if (thermal != nullptr)
   {
-    if (m_ThermalApplication == nullptr)
-      m_ThermalApplication = new SEThermalApplication();
-    m_ThermalApplication->Copy(*thermal);
+    GetThermalApplication().Copy(*thermal, true);
+    m_ThermalApplication->Activate();
     if (!m_ThermalApplication->IsActive())
       RemoveThermalApplication();
     return true;
@@ -63,11 +61,13 @@ bool SEEnvironmentActionCollection::ProcessAction(const SEEnvironmentAction& act
 
 bool SEEnvironmentActionCollection::HasChangeEnvironmentalConditions() const
 {
-  return m_ChangeEnvironmentalConditions == nullptr ? false : true;
+  return m_ChangeEnvironmentalConditions == nullptr ? false : m_ChangeEnvironmentalConditions->IsActive();
 }
-SEChangeEnvironmentalConditions* SEEnvironmentActionCollection::GetChangeEnvironmentalConditions()
+SEChangeEnvironmentalConditions& SEEnvironmentActionCollection::GetChangeEnvironmentalConditions()
 {
-  return m_ChangeEnvironmentalConditions;
+  if (m_ChangeEnvironmentalConditions == nullptr)
+    m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions();
+  return *m_ChangeEnvironmentalConditions;
 }
 const SEChangeEnvironmentalConditions* SEEnvironmentActionCollection::GetChangeEnvironmentalConditions() const
 {
@@ -75,16 +75,19 @@ const SEChangeEnvironmentalConditions* SEEnvironmentActionCollection::GetChangeE
 }
 void SEEnvironmentActionCollection::RemoveChangeEnvironmentalConditions()
 {
-  SAFE_DELETE(m_ChangeEnvironmentalConditions);
+  if (m_ChangeEnvironmentalConditions)
+    m_ChangeEnvironmentalConditions->Deactivate();
 }
 
 bool SEEnvironmentActionCollection::HasThermalApplication() const
 {
-  return m_ThermalApplication != nullptr;
+  return m_ThermalApplication == nullptr ? false : m_ThermalApplication->IsActive();
 }
-SEThermalApplication* SEEnvironmentActionCollection::GetThermalApplication()
+SEThermalApplication& SEEnvironmentActionCollection::GetThermalApplication()
 {
-  return m_ThermalApplication;
+  if (m_ThermalApplication == nullptr)
+    m_ThermalApplication = new SEThermalApplication();
+  return *m_ThermalApplication;
 }
 const SEThermalApplication* SEEnvironmentActionCollection::GetThermalApplication() const
 {
@@ -92,7 +95,8 @@ const SEThermalApplication* SEEnvironmentActionCollection::GetThermalApplication
 }
 void SEEnvironmentActionCollection::RemoveThermalApplication()
 {
-  SAFE_DELETE(m_ThermalApplication);
+  if (m_ThermalApplication)
+    m_ThermalApplication->Deactivate();
 }
 
 void SEEnvironmentActionCollection::GetAllActions(std::vector<const SEAction*>& actions) const
@@ -101,4 +105,14 @@ void SEEnvironmentActionCollection::GetAllActions(std::vector<const SEAction*>& 
     actions.push_back(GetChangeEnvironmentalConditions());
   if (HasThermalApplication())
     actions.push_back(GetThermalApplication());
+}
+
+const SEScalar* SEEnvironmentActionCollection::GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property)
+{
+  if (actionName == "ChangeEnvironmentalConditions")
+    return GetChangeEnvironmentalConditions().GetScalar(property);
+  if (actionName == "ThermalApplication")
+    return GetThermalApplication().GetScalar(property);
+
+  return nullptr;
 }

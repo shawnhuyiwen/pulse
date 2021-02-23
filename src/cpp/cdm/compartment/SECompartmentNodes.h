@@ -22,6 +22,13 @@ public:
   virtual void StateChange(); //analyze and cache for optimization
 
   virtual bool HasMapping() const { return !m_AllNodes.empty(); }
+  virtual bool HasMapping(const NodeType& n) const 
+  { 
+    for (auto mine : m_AllNodes)
+      if (&n == mine)
+        return true;
+    return false;
+  }
   virtual const std::vector<NodeType*>& GetNodes() const { return m_AllNodes; }
   virtual const std::vector<NodeType*>& GetQuantityNodes() const { return m_QuantityNodes; }
   virtual void RemoveNode(NodeType& node);

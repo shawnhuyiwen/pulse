@@ -10,6 +10,7 @@ SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 {
   Set(dr);
   m_Category = dr.m_Category;
+  m_ActionName = dr.m_ActionName;
   m_CompartmentName = dr.m_CompartmentName;
   m_SubstanceName = dr.m_SubstanceName;
   m_PropertyName = dr.m_PropertyName;
@@ -20,6 +21,7 @@ SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 SEDataRequest::SEDataRequest(eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDecimalFormat(dfault)
 {
   m_Category = category;
+  m_ActionName = "";
   m_CompartmentName = "";
   m_SubstanceName = "";
   m_PropertyName="";
@@ -29,6 +31,7 @@ SEDataRequest::SEDataRequest(eDataRequest_Category category, const SEDecimalForm
 
 SEDataRequest::~SEDataRequest()
 {
+  m_ActionName = "";
   m_CompartmentName = "";
   m_SubstanceName = "";
   m_PropertyName = "";
@@ -38,6 +41,7 @@ SEDataRequest::~SEDataRequest()
 
 void SEDataRequest::Clear()
 {
+  m_ActionName = "";
   m_CompartmentName = "";
   m_SubstanceName = "";
   m_PropertyName="";
@@ -76,6 +80,12 @@ bool SEDataRequest::IsValid()
         std::cout << "Ignoring compartment and substance name on environment data request" << std::endl;
       return true;
     }
+    case eDataRequest_Category::Action:
+    {
+      if (!HasActionName())
+        return false;
+      return true;
+    }
     case eDataRequest_Category::GasCompartment:
     case eDataRequest_Category::LiquidCompartment:
     case eDataRequest_Category::ThermalCompartment:
@@ -104,7 +114,24 @@ size_t SEDataRequest::HashCode() const
 
 eDataRequest_Category SEDataRequest::GetCategory() const 
 { 
-  return m_Category; 
+  return m_Category;
+}
+
+std::string SEDataRequest::GetActionName() const
+{
+  return m_ActionName;
+}
+void SEDataRequest::SetActionName(const std::string& name)
+{
+  m_ActionName = name;
+}
+bool SEDataRequest::HasActionName() const
+{
+  return m_ActionName.empty() ? false : true;
+}
+void SEDataRequest::InvalidateActionName()
+{
+  m_ActionName = "";
 }
 
 std::string SEDataRequest::GetCompartmentName() const

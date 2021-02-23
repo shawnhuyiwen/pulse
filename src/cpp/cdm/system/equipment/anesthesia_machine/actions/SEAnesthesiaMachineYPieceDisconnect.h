@@ -12,16 +12,19 @@ public:
   virtual ~SEAnesthesiaMachineYPieceDisconnect();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineYPieceDisconnect& src);
+  virtual void Copy(const SEAnesthesiaMachineYPieceDisconnect& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
 

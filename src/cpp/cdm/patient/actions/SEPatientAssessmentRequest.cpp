@@ -21,9 +21,11 @@ void SEPatientAssessmentRequest::Clear()
   m_Type=ePatientAssessment_Type::CompleteBloodCount;
 }
 
-void SEPatientAssessmentRequest::Copy(const SEPatientAssessmentRequest& src)
+void SEPatientAssessmentRequest::Copy(const SEPatientAssessmentRequest& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEPatientAssessmentRequest::IsValid() const
@@ -33,7 +35,17 @@ bool SEPatientAssessmentRequest::IsValid() const
 
 bool SEPatientAssessmentRequest::IsActive() const
 {
-  return IsValid();
+  return SEPatientAction::IsActive();
+}
+void SEPatientAssessmentRequest::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEPatientAssessmentRequest::GetScalar(const std::string& name)
+{
+  return nullptr;
 }
 
 ePatientAssessment_Type SEPatientAssessmentRequest::GetType() const

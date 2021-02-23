@@ -20,9 +20,11 @@ void SEUrinate::Clear()
   SEPatientAction::Clear();
 }
 
-void SEUrinate::Copy(const SEUrinate& src)
+void SEUrinate::Copy(const SEUrinate& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEUrinate::IsValid() const
@@ -32,7 +34,17 @@ bool SEUrinate::IsValid() const
 
 bool SEUrinate::IsActive() const
 {
-  return IsValid();
+  return SEPatientAction::IsActive();
+}
+void SEUrinate::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEUrinate::GetScalar(const std::string& name)
+{
+  return nullptr;
 }
 
 void SEUrinate::ToString(std::ostream &str) const

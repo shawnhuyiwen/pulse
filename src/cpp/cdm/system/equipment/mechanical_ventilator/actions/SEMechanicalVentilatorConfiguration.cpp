@@ -36,7 +36,7 @@ void SEMechanicalVentilatorConfiguration::Clear()
     m_Configuration->Clear();
 }
 
-void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr)
+void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
@@ -44,6 +44,21 @@ void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfi
 bool SEMechanicalVentilatorConfiguration::IsValid() const
 {
   return SEMechanicalVentilatorAction::IsValid() && (HasConfiguration() || HasConfigurationFile());
+}
+
+bool SEMechanicalVentilatorConfiguration::IsActive() const
+{
+  return SEMechanicalVentilatorAction::IsActive();
+}
+void SEMechanicalVentilatorConfiguration::Deactivate()
+{
+  SEMechanicalVentilatorAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEMechanicalVentilatorConfiguration::GetScalar(const std::string& name)
+{
+  return GetConfiguration().GetScalar(name);
 }
 
 bool SEMechanicalVentilatorConfiguration::HasConfiguration() const

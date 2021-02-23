@@ -300,7 +300,7 @@ void AnesthesiaMachine::PreProcess()
 {
   if (m_actions->HasAnesthesiaMachineConfiguration())
   {
-    ProcessConfiguration(*m_actions->GetAnesthesiaMachineConfiguration(), m_data.GetSubstances());
+    ProcessConfiguration(m_actions->GetAnesthesiaMachineConfiguration(), m_data.GetSubstances());
     m_actions->RemoveAnesthesiaMachineConfiguration();
   }
   //Do nothing if the machine is off and not initialized
@@ -374,7 +374,7 @@ void AnesthesiaMachine::CalculateScrubber()
 
   if (m_actions->HasAnesthesiaMachineSodaLimeFailure())
   {
-    double SodaLimeFailSeverity = m_actions->GetAnesthesiaMachineSodaLimeFailure()->GetSeverity().GetValue();
+    double SodaLimeFailSeverity = m_actions->GetAnesthesiaMachineSodaLimeFailure().GetSeverity().GetValue();
     CO2Volume = SodaLimeFailSeverity * m_scubberCO2->GetVolume(VolumeUnit::L);
   }
 
@@ -403,7 +403,7 @@ void AnesthesiaMachine::CalculateGasSourceSubstances()
 
   if(m_actions->HasAnesthesiaMachineVaporizerFailure()) 
   {
-    VaporizerFailureSeverity = m_actions->GetAnesthesiaMachineVaporizerFailure()->GetSeverity().GetValue();
+    VaporizerFailureSeverity = m_actions->GetAnesthesiaMachineVaporizerFailure().GetSeverity().GetValue();
   }
   if(GetLeftChamber().GetState() == eSwitch::On && GetLeftChamber().HasSubstance() && GetLeftChamber().HasSubstanceFraction())
   {
@@ -586,11 +586,11 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
 
         if (m_actions->HasAnesthesiaMachineTubeCuffLeak())
         {
-          CuffLeakSeverity = m_actions->GetAnesthesiaMachineTubeCuffLeak()->GetSeverity().GetValue();
+          CuffLeakSeverity = m_actions->GetAnesthesiaMachineTubeCuffLeak().GetSeverity().GetValue();
         }
         if (m_actions->HasAnesthesiaMachineYPieceDisconnect())
         {
-          YPieceDisconnectSeverity = m_actions->GetAnesthesiaMachineYPieceDisconnect()->GetSeverity().GetValue();
+          YPieceDisconnectSeverity = m_actions->GetAnesthesiaMachineYPieceDisconnect().GetSeverity().GetValue();
         }
 
         //Combine the severities
@@ -614,11 +614,11 @@ void AnesthesiaMachine::CalculateEquipmentLeak()
 
         if (m_actions->HasAnesthesiaMachineMaskLeak())
         {
-          MaskLeakSeverity = m_actions->GetAnesthesiaMachineMaskLeak()->GetSeverity().GetValue();
+          MaskLeakSeverity = m_actions->GetAnesthesiaMachineMaskLeak().GetSeverity().GetValue();
         }
         if (m_actions->HasAnesthesiaMachineYPieceDisconnect())
         {
-          YPieceDisconnectSeverity = m_actions->GetAnesthesiaMachineYPieceDisconnect()->GetSeverity().GetValue();
+          YPieceDisconnectSeverity = m_actions->GetAnesthesiaMachineYPieceDisconnect().GetSeverity().GetValue();
         }
 
         //Combine the severities
@@ -655,23 +655,23 @@ void AnesthesiaMachine::CalculateValveResistances()
   //Handle leaks and obstructions
   if (m_actions->HasAnesthesiaMachineInspiratoryValveLeak())
   {
-    double severity = m_actions->GetAnesthesiaMachineInspiratoryValveLeak()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineInspiratoryValveLeak().GetSeverity().GetValue();
     dInspValveOpenResistance = GeneralMath::ExponentialDecayFunction(10.0, dInspValveClosedResistance, dInspValveOpenResistance, severity);
   }
   else if (m_actions->HasAnesthesiaMachineInspiratoryValveObstruction())
   {
-    double severity = m_actions->GetAnesthesiaMachineInspiratoryValveObstruction()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineInspiratoryValveObstruction().GetSeverity().GetValue();
     dInspValveClosedResistance = GeneralMath::ExponentialDecayFunction(10.0, dInspValveOpenResistance, dInspValveClosedResistance, severity);
   }
 
   if (m_actions->HasAnesthesiaMachineExpiratoryValveLeak())
   {
-    double severity = m_actions->GetAnesthesiaMachineExpiratoryValveLeak()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineExpiratoryValveLeak().GetSeverity().GetValue();
     dExpValveOpenResistance = GeneralMath::ExponentialDecayFunction(10.0, dExpValveClosedResistance, dExpValveOpenResistance, severity);
   }
   else if (m_actions->HasAnesthesiaMachineExpiratoryValveObstruction())
   {
-    double severity = m_actions->GetAnesthesiaMachineExpiratoryValveObstruction()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineExpiratoryValveObstruction().GetSeverity().GetValue();
     dExpValveClosedResistance = GeneralMath::ExponentialDecayFunction(10.0, dExpValveOpenResistance, dExpValveClosedResistance, severity);
   }
   
@@ -713,7 +713,7 @@ void AnesthesiaMachine::CalculateVentilatorPressure()
   }  
   if (m_actions->HasAnesthesiaMachineVentilatorPressureLoss())
   {
-    double severity = m_actions->GetAnesthesiaMachineVentilatorPressureLoss()->GetSeverity().GetValue();
+    double severity = m_actions->GetAnesthesiaMachineVentilatorPressureLoss().GetSeverity().GetValue();
     dDriverPressure *= (1 - severity);
   }
   m_pEnvironmentToVentilator->GetNextPressureSource().SetValue(dDriverPressure, PressureUnit::cmH2O);

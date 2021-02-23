@@ -22,9 +22,11 @@ void SEExercise::Clear()
   INVALIDATE_PROPERTY(m_Intensity);
 }
 
-void SEExercise::Copy(const SEExercise& src)
+void SEExercise::Copy(const SEExercise& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEExercise::IsValid() const
@@ -34,9 +36,23 @@ bool SEExercise::IsValid() const
 
 bool SEExercise::IsActive() const
 {
+  if (!SEPatientAction::IsActive())
+    return false;
   if (HasIntensity())
     return m_Intensity->IsPositive();
-  return false;  
+  return false;
+}
+void SEExercise::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEExercise::GetScalar(const std::string& name)
+{
+  if (name.compare("Intensity") == 0)
+    return &GetIntensity();
+  return nullptr;
 }
 
 bool SEExercise::HasIntensity() const

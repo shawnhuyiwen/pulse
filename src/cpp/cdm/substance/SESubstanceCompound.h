@@ -26,10 +26,10 @@ public:
 
   bool HasComponent() const;
   bool HasComponent(const SESubstance& substance) const;
-  const std::vector<SESubstanceConcentration*>& GetComponents();  
+  const std::vector<SESubstanceConcentration*>& GetComponents();
   const std::vector<const SESubstanceConcentration*>& GetComponents() const;
-  const SESubstanceConcentration& GetComponent(SESubstance& substance);
-  const SESubstanceConcentration* GetComponent(SESubstance& substance) const;
+  SESubstanceConcentration& GetComponent(const SESubstance& substance);
+  const SESubstanceConcentration* GetComponent(const SESubstance& substance) const;
   void RemoveComponent(const SESubstance& substance);
 
 protected: 

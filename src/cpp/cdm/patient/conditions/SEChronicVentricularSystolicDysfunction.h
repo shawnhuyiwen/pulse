@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/conditions/SEChronicHeartFailure.h"
+#include "patient/conditions/SEPatientCondition.h"
 
-class CDM_DECL SEChronicVentricularSystolicDysfunction : public SEChronicHeartFailure
+class CDM_DECL SEChronicVentricularSystolicDysfunction : public SEPatientCondition
 {
   friend class PBPatientCondition;//friend the serialization class
 public:

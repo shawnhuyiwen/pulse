@@ -21,7 +21,7 @@ void SEAnesthesiaMachineVaporizerFailure::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEAnesthesiaMachineVaporizerFailure::Copy(const SEAnesthesiaMachineVaporizerFailure& src)
+void SEAnesthesiaMachineVaporizerFailure::Copy(const SEAnesthesiaMachineVaporizerFailure& src, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
@@ -33,7 +33,21 @@ bool SEAnesthesiaMachineVaporizerFailure::IsValid() const
 
 bool SEAnesthesiaMachineVaporizerFailure::IsActive() const
 {
+  if (!SEAnesthesiaMachineAction::IsActive())
+    return false;
   return HasSeverity() ? !m_Severity->IsZero() : false;
+}
+void SEAnesthesiaMachineVaporizerFailure::Deactivate()
+{
+  SEAnesthesiaMachineAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAnesthesiaMachineVaporizerFailure::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEAnesthesiaMachineVaporizerFailure::HasSeverity() const

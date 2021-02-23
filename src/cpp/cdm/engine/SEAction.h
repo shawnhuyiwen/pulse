@@ -17,9 +17,12 @@ public:
   
   /** Test if the action has all data it needs */
   virtual bool IsValid() const { return true; }
+
   /** Actions can be turned off or on with various data combinations
   *  This method will encapsulate that logic in a single function */
-  virtual bool IsActive() const { return IsValid(); }
+  virtual bool IsActive() const { return !m_Active ? false : IsValid(); }
+  virtual void Activate() { m_Active = true; }
+  virtual void Deactivate() { m_Active = false; }
 
   virtual std::string GetComment() const;
   virtual void SetComment(const std::string& comment);
@@ -28,8 +31,10 @@ public:
 
   virtual void ToString(std::ostream &str)const=0;
 
-protected:
+  virtual const SEScalar* GetScalar(const std::string& name)=0;
 
+protected:
+  bool                  m_Active = true;
   std::string           m_Comment;
 };  
 

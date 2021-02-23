@@ -13,10 +13,11 @@ public:
   virtual ~SEChestOcclusiveDressing();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEChestOcclusiveDressing& src);
+  virtual void Copy(const SEChestOcclusiveDressing& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual eSwitch GetState() const { return m_State; }
   virtual void SetState(eSwitch s) { m_State = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }
@@ -27,6 +28,8 @@ public:
   virtual void InvalidateSide();
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   eSide m_Side;

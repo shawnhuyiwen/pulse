@@ -39,7 +39,7 @@ void SEChangeEnvironmentalConditions::Clear()
     m_EnvironmentalConditions->Clear();
 }
 
-void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr)
+void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr, bool preserveState)
 {// Using Bindings to make a copy
   PBEnvironmentAction::Copy(src, *this, subMgr);
 }
@@ -47,6 +47,21 @@ void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions
 bool SEChangeEnvironmentalConditions::IsValid() const
 {
   return SEEnvironmentAction::IsValid() && (HasEnvironmentalConditions() || HasEnvironmentalConditionsFile());
+}
+
+bool SEChangeEnvironmentalConditions::IsActive() const
+{
+  return SEEnvironmentAction::IsActive();
+}
+void SEChangeEnvironmentalConditions::Deactivate()
+{
+  SEEnvironmentAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEChangeEnvironmentalConditions::GetScalar(const std::string& name)
+{
+  return GetEnvironmentalConditions().GetScalar(name);
 }
 
 bool SEChangeEnvironmentalConditions::HasEnvironmentalConditions() const

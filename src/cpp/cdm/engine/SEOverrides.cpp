@@ -31,19 +31,6 @@ bool SEOverrides::IsValid() const
   return HasProperty();
 }
 
-void SEOverrides::ToString(std::ostream &str) const
-{  
-  if(HasComment())
-    str<<"\n\tComment : "<<m_Comment;
-  for (auto itr : m_ScalarProperties)
-  {
-    if(itr.unit.empty())
-      str << "\n\tOverride " << itr.name << " with " << itr.value;
-    else
-      str << "\n\tOverride " << itr.name << " with " << itr.value << "("<<itr.unit<<")";
-  }
-}
-
 bool SEOverrides::HasProperty() const
 {
   return m_ScalarProperties.size()>1;
@@ -71,4 +58,23 @@ const std::vector<SEScalarProperty>& SEOverrides::GetScalarProperties() const
 void SEOverrides::RemoveProperties()
 {
   m_ScalarProperties.clear();
+}
+
+void SEOverrides::ToString(std::ostream& str) const
+{
+  if (HasComment())
+    str << "\n\tComment : " << m_Comment;
+  for (auto itr : m_ScalarProperties)
+  {
+    if (itr.unit.empty())
+      str << "\n\tOverride " << itr.name << " with " << itr.value;
+    else
+      str << "\n\tOverride " << itr.name << " with " << itr.value << "(" << itr.unit << ")";
+  }
+}
+
+const SEScalar* SEOverrides::GetScalar(const std::string& name)
+{
+  // Probably want to iterate over the properties and look for the name?
+  return nullptr;
 }

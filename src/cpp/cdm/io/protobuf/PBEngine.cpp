@@ -204,17 +204,17 @@ void PBEngine::Serialize(const SEConditionManager& src, CDM_BIND::ConditionListD
     dst.mutable_anycondition()->AddAllocated(PBCondition::Unload(*src.m_InitialEnvironmentalConditions));
 }
 
-void PBEngine::Load(const CDM_BIND::ActionListData& src, SEActionManager& dst, SESubstanceManager& subMgr)
+void PBEngine::Load(const CDM_BIND::ActionListData& src, SEActionManager& dst)
 {
   dst.Clear();
-  PBEngine::Serialize(src, dst, subMgr);
+  PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst, SESubstanceManager& subMgr)
+void PBEngine::Serialize(const CDM_BIND::ActionListData& src, SEActionManager& dst)
 {
   for (int i = 0; i < src.anyaction_size(); i++)
   {
-    SEAction* a = PBAction::Load(src.anyaction()[i], subMgr);
-    dst.ProcessAction(*a, subMgr);
+    SEAction* a = PBAction::Load(src.anyaction()[i], dst.m_SubMgr);
+    dst.ProcessAction(*a);
     delete a;
   }
 }
@@ -290,8 +290,10 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Bronchoconstriction));
   if (src.HasCardiacArrest())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_CardiacArrest));
-  if (src.HasChestCompression())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompression));
+  if (src.HasChestCompressionForce())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionForce));
+  else if (src.HasChestCompressionForceScale())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionForceScale));
   if (src.HasLeftChestOcclusiveDressing())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftChestOcclusiveDressing));
   if (src.HasRightChestOcclusiveDressing())
@@ -308,8 +310,11 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Exercise));
   if (src.HasHemorrhage())
   {
-    for (auto itr : src.m_Hemorrhages)
-      dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*itr.second));
+    for (auto h : src.m_Hemorrhages)
+    {
+      if(h->IsActive())
+        dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*h));
+    }
   }
   if (src.HasImpairedAlveolarExchangeExacerbation())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ImpairedAlveolarExchangeExacerbation));
@@ -337,12 +342,21 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightClosedTensionPneumothorax));
   if (src.GetRightOpenTensionPneumothorax())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RightOpenTensionPneumothorax));
-  for (auto itr : src.m_SubstanceBolus)
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*itr.second));
-  for (auto itr : src.m_SubstanceInfusions)
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*itr.second));
-  for (auto itr : src.m_SubstanceCompoundInfusions)
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*itr.second));
+  for (auto b : src.m_SubstanceBoluses)
+  {
+    if(b->IsActive())
+      dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*b));
+  }
+  for (auto i : src.m_SubstanceInfusions)
+  {
+    if(i->IsActive())
+      dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*i));
+  }
+  for (auto ci : src.m_SubstanceCompoundInfusions)
+  {
+    if(ci->IsActive())
+      dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*ci));
+  }
   if (src.HasUrinate())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Urinate));
 }
@@ -434,6 +448,7 @@ void PBEngine::Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& ds
 {
   if(src.has_decimalformat())
     PBEngine::Serialize(src.decimalformat(), dst);
+  dst.m_ActionName = src.actionname();
   dst.m_CompartmentName = src.compartmentname();
   dst.m_SubstanceName = src.substancename();
   dst.m_PropertyName = src.propertyname();
@@ -449,6 +464,8 @@ void PBEngine::Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& ds
 {
   PBEngine::Serialize(src, *dst.mutable_decimalformat());
   dst.set_category((CDM_BIND::DataRequestData::eCategory)src.m_Category);
+  if (src.HasActionName())
+    dst.set_actionname(src.m_ActionName);
   if (src.HasCompartmentName())
     dst.set_compartmentname(src.m_CompartmentName);
   if (src.HasSubstanceName())
@@ -581,20 +598,20 @@ bool PBEngine::SerializeToFile(const SEActionManager& src, const std::string& fi
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m, SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m)
 {
   CDM_BIND::ActionListData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst, subMgr);
+  PBEngine::Load(data, dst);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEActionManager& dst, SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEActionManager& dst)
 {
   CDM_BIND::ActionListData data;
   if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst, subMgr);
+  PBEngine::Load(data, dst);
   return true;
 }
 

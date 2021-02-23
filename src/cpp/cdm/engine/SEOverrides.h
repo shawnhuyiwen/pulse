@@ -18,8 +18,6 @@ public:
 
   virtual bool IsValid() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual bool HasProperty() const;
   virtual void AddScalarProperty(const std::string& name, double value);
   virtual void AddScalarProperty(const std::string& name, double value, std::string unit);
@@ -27,6 +25,10 @@ public:
   virtual std::vector<SEScalarProperty>& GetScalarProperties();
   virtual const std::vector<SEScalarProperty>& GetScalarProperties() const;
   virtual void RemoveProperties();
+
+  virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   std::vector<SEScalarProperty> m_ScalarProperties;

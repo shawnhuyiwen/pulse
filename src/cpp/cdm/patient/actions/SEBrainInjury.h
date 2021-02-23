@@ -17,10 +17,11 @@ public:
   virtual ~SEBrainInjury();
 
   virtual void Clear();
-  virtual void Copy(const SEBrainInjury& src);
+  virtual void Copy(const SEBrainInjury& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
@@ -30,6 +31,8 @@ public:
   virtual void SetType(eBrainInjury_Type t);
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalar0To1*          m_Severity;

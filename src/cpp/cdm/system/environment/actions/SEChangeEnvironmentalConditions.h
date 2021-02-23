@@ -14,9 +14,11 @@ public:
   virtual ~SEChangeEnvironmentalConditions();
 
   virtual void Clear();
-  virtual void Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr);
+  virtual void Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr, bool preserveState=false);
 
   virtual bool IsValid() const;
+  virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasEnvironmentalConditions() const;
   virtual SEEnvironmentalConditions& GetEnvironmentalConditions();
@@ -27,6 +29,8 @@ public:
   virtual bool HasEnvironmentalConditionsFile() const;
   
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
 

@@ -5,7 +5,7 @@
 #include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
 #include "io/protobuf/PBPatientConditions.h"
 
-SEChronicVentricularSystolicDysfunction::SEChronicVentricularSystolicDysfunction(Logger* logger) : SEChronicHeartFailure(logger)
+SEChronicVentricularSystolicDysfunction::SEChronicVentricularSystolicDysfunction(Logger* logger) : SEPatientCondition(logger)
 {
 }
 
@@ -16,7 +16,7 @@ SEChronicVentricularSystolicDysfunction::~SEChronicVentricularSystolicDysfunctio
 
 void SEChronicVentricularSystolicDysfunction::Clear()
 {
-  SEChronicHeartFailure::Clear();
+  SEPatientCondition::Clear();
 }
 
 void SEChronicVentricularSystolicDysfunction::Copy(const SEChronicVentricularSystolicDysfunction& src)

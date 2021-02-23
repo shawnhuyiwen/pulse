@@ -39,10 +39,10 @@ public:
 
 protected:
 
-  SEScalarTime*         m_Period;
+  SEScalarTime*    m_Period;
   eSwitch          m_PeriodTimeStamps;
   eSwitch          m_AfterActions;
   eSwitch          m_ReloadState;
-  std::string           m_Directory;
-  std::string           m_FileName;
+  std::string      m_Directory;
+  std::string      m_FileName;
 };

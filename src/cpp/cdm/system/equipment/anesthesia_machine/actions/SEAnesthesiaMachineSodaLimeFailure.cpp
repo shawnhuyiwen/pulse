@@ -21,7 +21,7 @@ void SEAnesthesiaMachineSodaLimeFailure::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEAnesthesiaMachineSodaLimeFailure::Copy(const SEAnesthesiaMachineSodaLimeFailure& src)
+void SEAnesthesiaMachineSodaLimeFailure::Copy(const SEAnesthesiaMachineSodaLimeFailure& src, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
@@ -33,7 +33,21 @@ bool SEAnesthesiaMachineSodaLimeFailure::IsValid() const
 
 bool SEAnesthesiaMachineSodaLimeFailure::IsActive() const
 {
+  if (!SEAnesthesiaMachineAction::IsActive())
+    return false;
   return HasSeverity() ? !m_Severity->IsZero() : false;
+}
+void SEAnesthesiaMachineSodaLimeFailure::Deactivate()
+{
+  SEAnesthesiaMachineAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAnesthesiaMachineSodaLimeFailure::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEAnesthesiaMachineSodaLimeFailure::HasSeverity() const

@@ -6,6 +6,8 @@
 // Include the various types you will be using in your code
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEPatientActionCollection.h"
 #include "compartment/SECompartmentManager.h"
 #include "patient/actions/SEHemorrhage.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
@@ -58,8 +60,12 @@ void HowToHemorrhage()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HemoglobinContent",MassUnit::g);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalHemorrhageRate", VolumePerTimeUnit::mL_Per_s);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalHemorrhagedVolume", VolumeUnit::mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateActionCompartmentDataRequest("Hemorrhage", pulse::VascularCompartment::RightLeg, "FlowRate", VolumePerTimeUnit::mL_Per_s);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateActionCompartmentDataRequest("Hemorrhage", pulse::VascularCompartment::RightLeg, "TotalBloodLost", VolumeUnit::mL);
   
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToHemorrhage.csv");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowToHemorrhage.csv");
   
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -69,6 +75,8 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Total Hemorrhage Rate : " << pe->GetCardiovascularSystem()->GetTotalHemorrhageRate(VolumePerTimeUnit::mL_Per_s) << "mL/s");
+  pe->GetLogger()->Info(std::stringstream() << "Total Hemorrhaged Volume : " << pe->GetCardiovascularSystem()->GetTotalHemorrhagedVolume(VolumeUnit::mL) << "mL");
 
   // Hemorrhage Starts - instantiate a hemorrhage action and have the engine process it
   SEHemorrhage hemorrhageLeg;
@@ -89,6 +97,13 @@ void HowToHemorrhage()
     return;
   }
 
+  // You can get the current flow rate based on the severity, as well as the total blood lost from each hemorrhage via the action in the action manager
+  // Note this is a copy of hemorrhageLeg internal to the engine
+  auto hemorrhages = pe->GetActionManager().GetPatientActions().GetHemorrhages();
+  for (auto h : hemorrhages)
+    std::cout << *h << "\n";
+
+
   pe->GetLogger()->Info("The patient has been hemorrhaging for 300s");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Hemoglobin Content : " << pe->GetBloodChemistrySystem()->GetHemoglobinContent(MassUnit::g) << MassUnit::g);
@@ -97,10 +112,17 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Total Hemorrhage Rate : " << pe->GetCardiovascularSystem()->GetTotalHemorrhageRate(VolumePerTimeUnit::mL_Per_s) << "mL/s");
+  pe->GetLogger()->Info(std::stringstream() << "Total Hemorrhaged Volume : " << pe->GetCardiovascularSystem()->GetTotalHemorrhagedVolume(VolumeUnit::mL) << "mL");
 
   // Hemorrhage is sealed
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
   hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//location of hemorrhage
+  //hemorrhageLeg.GetSeverity().SetValue(0.);// Stop the hemorrhage
+  // You can switch between severity and flow if you want,
+  // But you will need to invalidate the severity for the flow to be used
+  // If provided both severity and flow, Pulse will use the severity
+  hemorrhageLeg.GetSeverity().Invalidate();
   hemorrhageLeg.GetFlowRate().SetValue(0,VolumePerTimeUnit::mL_Per_min);//rate is set to 0 to close the bleed
   pe->ProcessAction(hemorrhageLeg);
   
@@ -120,6 +142,8 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Total Hemorrhage Rate : " << pe->GetCardiovascularSystem()->GetTotalHemorrhageRate(VolumePerTimeUnit::mL_Per_s) << "mL/s");
+  pe->GetLogger()->Info(std::stringstream() << "Total Hemorrhaged Volume : " << pe->GetCardiovascularSystem()->GetTotalHemorrhagedVolume(VolumeUnit::mL) << "mL");
 
   // Patient is stabilizing, but not great
 
@@ -144,5 +168,7 @@ void HowToHemorrhage()
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "Total Hemorrhage Rate : " << pe->GetCardiovascularSystem()->GetTotalHemorrhageRate(VolumePerTimeUnit::mL_Per_s) << "mL/s");
+  pe->GetLogger()->Info(std::stringstream() << "Total Hemorrhaged Volume : " << pe->GetCardiovascularSystem()->GetTotalHemorrhagedVolume(VolumeUnit::mL) << "mL");
   pe->GetLogger()->Info("Finished");
 }

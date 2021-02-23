@@ -68,7 +68,7 @@ const std::vector<const SESubstanceConcentration*>& SESubstanceCompound::GetComp
 {
   return m_cComponents;
 }
-const SESubstanceConcentration& SESubstanceCompound::GetComponent(SESubstance& substance)
+SESubstanceConcentration& SESubstanceCompound::GetComponent(const SESubstance& substance)
 {
   for (SESubstanceConcentration* sq : m_Components)
   {
@@ -81,7 +81,7 @@ const SESubstanceConcentration& SESubstanceCompound::GetComponent(SESubstance& s
   m_cComponents.push_back(sq);
   return *sq;
 }
-const SESubstanceConcentration* SESubstanceCompound::GetComponent(SESubstance& substance) const
+const SESubstanceConcentration* SESubstanceCompound::GetComponent(const SESubstance& substance) const
 {
   for (SESubstanceConcentration* sq : m_Components)
   {
@@ -100,6 +100,7 @@ void SESubstanceCompound::RemoveComponent(const SESubstance& substance)
       m_Components.erase(m_Components.begin() + i);
       m_cComponents.erase(m_cComponents.begin() + i);
       delete sq;
+      break;
     }
     i++;
   }

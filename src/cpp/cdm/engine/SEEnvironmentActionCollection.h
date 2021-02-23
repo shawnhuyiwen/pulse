@@ -14,26 +14,28 @@ class CDM_DECL SEEnvironmentActionCollection : public Loggable
   friend class PBEngine;//friend the serialization class
   friend class SEActionManager;
 protected:
-  SEEnvironmentActionCollection(Logger* logger=nullptr);
+  SEEnvironmentActionCollection(SESubstanceManager& subMgr);
 public:
   ~SEEnvironmentActionCollection();
 
   bool HasChangeEnvironmentalConditions() const;
-  SEChangeEnvironmentalConditions* GetChangeEnvironmentalConditions();
+  SEChangeEnvironmentalConditions& GetChangeEnvironmentalConditions();
   const SEChangeEnvironmentalConditions* GetChangeEnvironmentalConditions() const;
   void RemoveChangeEnvironmentalConditions();
 
   bool HasThermalApplication() const;
-  SEThermalApplication* GetThermalApplication();
+  SEThermalApplication& GetThermalApplication();
   const SEThermalApplication* GetThermalApplication() const;
   void RemoveThermalApplication();
 
   void GetAllActions(std::vector<const SEAction*>& v) const;
+  const SEScalar* GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property);
 
 protected:
   void Clear();
-  bool ProcessAction(const SEEnvironmentAction& action, SESubstanceManager&);
+  bool ProcessAction(const SEEnvironmentAction& action);
 
+  SESubstanceManager&               m_SubMgr;
   SEChangeEnvironmentalConditions*  m_ChangeEnvironmentalConditions;
   SEThermalApplication*             m_ThermalApplication;
 };
