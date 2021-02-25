@@ -308,23 +308,24 @@ Each segment is given as a fraction of the total breath, with all summing to a v
 <i>Equation 7.</i>
 </center><br> 
 
-Unless a conscious respiration action is called, all other segment fractions are set to 0. The inspiratory-expiratory ratio will change based on the driver respiration rate. The time series of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is given by @cite Fresnel2014musclePressure,
+Unless a conscious respiration action is called, all other segment fractions are set to 0. The inspiratory-expiratory ratio will change based on the driver respiration rate. The time series(<i>t</i>) of the respiratory muscle pressure (<i>P<sub>mus</sub></i>) is based on empirical data @cite kondili2010estimation as,
 
 \f[{P_{mus}} = \left\{ {\begin{array}{*{20}{l}}
-{{P_{\min }}\left( {1 - {e^{\frac{{{f_{v + 4{P_{0.1}}}}}}{{10}}t}}} \right),}&{0 < t \le {t_1}}\\
+{{P_{\min }} \cdot \sin \left( {\frac{\pi }{2} \cdot \frac{t}{{{t_1}}}} \right),}&{0 < t \le {t_1}}\\
 {{P_{\min }},}&{{t_1} < t \le {t_2}}\\
-{{P_{\min }}\left( {{e^{ - \frac{{{f_{v + \frac{{{P_{0.1}}}}{2}}}}}{{10}}t}}} \right),}&{{t_2} < t \le {t_3}}\\
+{{P_{\min }} \cdot \sin \left( {\frac{\pi }{2} \cdot \frac{{t + {t_3} - 2{t_2}}}{{{t_3} - {t_2}}}} \right),}&{{t_2} < t \le {t_3}}\\
 {0,}&{{t_3} < t \le {t_4}}\\
-{{P_{max}}\left( {1 - {e^{ - \frac{{{f_{v + \frac{{{P_{0.1}}}}{2}}}}}{{10}}t}}} \right),}&{{t_4} < t \le {t_5}}\\
+{{P_{max}} \cdot \sin \left( {\frac{\pi }{2} \cdot \frac{{t - {t_4}}}{{{t_5} - {t_4}}}} \right),}&{{t_4} < t \le {t_5}}\\
 {{P_{max}},}&{{t_5} < t \le {t_6}}\\
-{{P_{max}}\left( {{e^{\frac{{{f_{v + 4{P_{0.1}}}}}}{{10}}t}}} \right),}&{{t_6} < t \le {t_7}}\\
+{{P_{max}} \cdot \sin \left( {\frac{\pi }{2} \cdot \frac{{t + {t_7} - 2{t_6}}}{{{t_7} - {t_6}}}} \right),}&{{t_6} < t \le {t_7}}\\
 {0,}&{{t_7} < t \le {t_{\max }}}
 \end{array}} \right.\f]
+
 <center>
 <i>Equation 8.</i>
 </center><br> 
 
-Where <i>P<sub>0.1</sub></i> is the airway occlusion pressure, measured 100 ms after the onset of inspiration during quiet breathing. We set this to a constant healthy value of 0.75. <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure 3 shows the basic segmented muscle driver waveform used.
+Where <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure 3 shows the basic segmented muscle driver waveform used.
 
 <img src="./plots/Respiratory/DriverWaveform.jpg" width="600">
 <center> 
@@ -1067,7 +1068,7 @@ Insults and Interventions
 
 Disease states are applied to the simulated patient by modifying various parameters. Chronic conditions stabilize to a new homeostatic point before the simulation begins. Pulse simulates both restrictive and obstructive diseases of varying severities with different continuous function mappings. Table 2 shows parameter settings for representative conditions and severities based on trends and values determined from literature @cite brunner2019lung @cite arnal2018parameters @cite harris2005pressure @cite aguirre2018lung @cite arndt1995linear @cite bikker2008end @cite brunner2012pulmonary @cite ibanez1982normal. Most respiratory-specific pathophysiology is applied as parameter multipliers (y) determined by a severity (x) setting between 0 and 1, with the following exponential or linear functions:
 
-\f[y = {10^{\ln \left( {x\frac{b}{a}} \right) + \ln \left( a \right)}}\f] 
+\f[y = {10^{\log \left( {x\frac{b}{a}} \right) + \log \left( a \right)}}\f]
 <center>
 <i>Equation 39.</i>
 </center><br> 
@@ -1108,15 +1109,15 @@ When positive pressure ventilation is applied (i.e., mechanical ventilator or an
     <th>Moderate</th>
     <th>Severe</th>
   </tr>
-  <tr><td>Alveolar Dead Space (L)</td><td>Respiratory</td><td>0</td><td>0</td><td>N/A</td><td>0</td><td>0</td><td>0</td><td>Linear Growth</td><td>0.6</td><td>1.2</td><td>1.8</td></tr>
-  <tr><td>Airway Resistance (cmH20-s/L)</td><td>Respiratory</td><td>1.125</td><td>9</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
-  <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>Respiratory</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Exponential Growth</td><td>1.74</td><td>6.7</td><td>25.8</td></tr>
-  <tr><td>Lung Compliance (L/cmH2O)</td><td>Respiratory</td><td>0.1</td><td>0.04</td><td>Linear Decay</td><td>0.082</td><td>0.064</td><td>0.046</td><td>Linear Growth</td><td>0.13</td><td>0.16</td><td>0.19</td></tr>
-  <tr><td>Inspiratory-Expiratory Ratio</td><td>Respiratory</td><td>0.5</td><td>0.5</td><td>Exponential Growth</td><td>1.1</td><td>2.6</td><td>12.1</td><td>Linear Decay</td><td>0.3</td><td>0.15</td><td>0.03</td></tr>
-  <tr><td>Diffusion Surface Area (m^2)</td><td>Respiratory</td><td>68.3</td><td>68.3</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td><td>Exponential Decay</td><td>34.3</td><td>17.2</td><td>8.6</td></tr>
-  <tr><td>Pulmonary Capillary Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>0.062</td><td>0.062</td><td>N/A</td><td>0.062</td><td>0.062</td><td>0.062</td><td>Linear Growth</td><td>0.094</td><td>0.126</td><td>0.157</td></tr>
-  <tr><td>Pulmonary Shunt Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>8.9</td><td>8.9</td><td>Exponential Decay</td><td>2.23</td><td>0.56</td><td>0.14</td><td>N/A</td><td>8.9</td><td>8.9</td><td>8.9</td></tr>
-  <tr><td>Fatigue Factor</td><td>Respiratory</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td></tr>
+ <tr><td>Alveolar Dead Space (L)</td><td>Respiratory</td><td>0</td><td>0</td><td>Polynomial Growth</td><td>0</td><td>0.03</td><td>0.15</td><td>Linear Growth</td><td>0.3</td><td>0.6</td><td>0.9</td></tr>
+ <tr><td>Airway Resistance (cmH20-s/L)</td><td>Respiratory</td><td>1.125</td><td>12.375</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td><td>N/A</td><td>1.125</td><td>1.125</td><td>1.125</td></tr>
+ <tr><td>Bronchi Resistance (cmH20-s/L)</td><td>Respiratory</td><td>0.45</td><td>0.45</td><td>N/A</td><td>0.45</td><td>0.45</td><td>0.45</td><td>Linear Growth</td><td>8.5</td><td>1.7</td><td>2.4</td></tr>
+ <tr><td>Lung Compliance (L/cmH2O)</td><td>Respiratory</td><td>0.1</td><td>0.04</td><td>Exponential Decay</td><td>0.07</td><td>0.05</td><td>0.04</td><td>Exponential Growth</td><td>0.1</td><td>0.11</td><td>0.14</td></tr>
+ <tr><td>Inspiratory-Expiratory Ratio</td><td>Respiratory</td><td>0.5</td><td>0.5</td><td>Linear Growth</td><td>0.7</td><td>1.1</td><td>1.5</td><td>Linear Decay</td><td>0.35</td><td>0.22</td><td>0.12</td></tr>
+ <tr><td>Diffusion Surface Area (m^2)</td><td>Respiratory</td><td>68</td><td>68</td><td>Exponential Decay</td><td>34</td><td>17</td><td>9</td><td>Exponential Decay</td><td>39</td><td>22</td><td>12</td></tr>
+ <tr><td>Pulmonary Capillary Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>0.062</td><td>0.062</td><td>N/A</td><td>0.062</td><td>0.062</td><td>0.062</td><td>Linear Growth</td><td>0.16</td><td>0.25</td><td>0.35</td></tr>
+ <tr><td>Pulmonary Shunt Resistance (mmHg-s/mL)</td><td>Cardiovascular</td><td>8.9</td><td>8.9</td><td>Exponential Decay</td><td>2.75</td><td>0.81</td><td>0.25</td><td>N/A</td><td>8.9</td><td>8.9</td><td>8.9</td></tr>
+ <tr><td>Fatigue Factor</td><td>Respiratory</td><td>1</td><td>1</td><td>Linear Decay</td><td>0.76</td><td>0.52</td><td>0.28</td><td>Linear Decay</td><td>0.87</td><td>0.76</td><td>0.64</td></tr>
 </table>
 
 Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure 17 shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD.

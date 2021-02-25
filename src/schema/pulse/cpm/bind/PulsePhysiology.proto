@@ -170,11 +170,15 @@ message RespiratoryData
   double                                   InspiratoryRiseFraction                             = 42;
   double                                   InspiratoryToExpiratoryPauseFraction                = 43;
   
+  // Disease States
+  double                                   LeftAlveoliDecrease_L                               = 44;
+  double                                   RightAlveoliDecrease_L                              = 45;
+  
   // Conscious Breathing
-  bool                                     ActiveConsciousRespirationCommand                   = 44;
+  bool                                     ActiveConsciousRespirationCommand                   = 46;
   // Overrides
-  double                                   RespiratoryComplianceOverride_L_Per_cmH2O           = 45;
-  double                                   RespiratoryResistanceOverride_cmH2O_s_Per_L         = 46;
+  double                                   RespiratoryComplianceOverride_L_Per_cmH2O           = 47;
+  double                                   RespiratoryResistanceOverride_cmH2O_s_Per_L         = 48;
 }
 
 message TissueData

@@ -214,6 +214,8 @@ protected:
 
   SEGasCompartment*                m_leftPleuralCavity;
   SEGasCompartment*                m_rightPleuralCavity;
+  SEGasCompartment*                m_PleuralCavity;
+  SEGasCompartment*                m_Ambient;
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;

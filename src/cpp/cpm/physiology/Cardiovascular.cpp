@@ -159,6 +159,8 @@ void Cardiovascular::Clear()
 
   m_leftPleuralCavity = nullptr;
   m_rightPleuralCavity = nullptr;
+  m_PleuralCavity = nullptr;
+  m_Ambient = nullptr;
 
   m_CardiacCycleArterialPressure_mmHg->Clear();
   m_CardiacCycleArterialCO2PartialPressure_mmHg->Clear();
@@ -288,6 +290,8 @@ void Cardiovascular::SetUp()
   //Respiratory Compartments
   m_leftPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::LeftPleuralCavity);
   m_rightPleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::RightPleuralCavity);
+  m_PleuralCavity = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::PleuralCavity);
+  m_Ambient = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   //Nodes
   m_MainPulmonaryArteries = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::MainPulmonaryArteries);
   m_LeftHeart2 = m_CirculatoryCircuit->GetNode(pulse::CardiovascularNode::LeftHeart2);
@@ -981,11 +985,11 @@ void Cardiovascular::Hemorrhage()
   //Check all existing hemorrhage paths, if has a flow source or a resistance (covers both types of hemorrhage), then set to zero
   // - We do not want to assume prior knowledge, so we can ensure we capture the current flow rate or severity
   // - If zero at the end, we will remove these hemorrhages
-  for (auto itr : m_HemorrhageTrack)
+  for (auto htItr : m_HemorrhageTrack)
   {
-    for (auto itr : itr.second->Paths2Links)
+    for (auto plItr : htItr.second->Paths2Links)
     {
-      SEFluidCircuitPath* path = itr.first;
+      SEFluidCircuitPath* path = plItr.first;
       if (path->HasNextFlowSource())
         path->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
       if (path->HasNextResistance())
@@ -1974,14 +1978,47 @@ void Cardiovascular::UpdateHeartRhythm()
 /// When a lung collapses (as with pneumothorax), increased pleural cavity pressure pushes on the 
 /// mediastinum and great veins. As an effect, the mediastinum is displaced and the great veins 
 /// become kinked, leading to decreased venous return to the heart. This leads to increasing cardiac
-/// and respiratory embarrasment. http://medind.nic.in/jac/t08/i1/jact08i1p42.pdf
+/// and respiratory embarrasment. @cite jain2008understanding
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::CalculatePleuralCavityVenousEffects()
 {
-  //The left and right pleural pressures are likely to have large differences only due to a pneumothorax
-  //Pressure difference causes a mediastinum shift
+  double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+
+  //-----------------------------------------------------------------------------------------------------
+
+  //\\\todo Add this and test/tune
+
+  ////Lung volume/pressure has a direct effect on cardiac output ///\cite verhoeff2017cardiopulmonary
+  ////Decreased venous return occurs in disease states and with mechanical ventilation through an increased PEEP ///\cite luecke2005clinical
+
+  ////Get the current pleural cavity pressure (reletive to ambient)
+  //double baselineIntrapleuralPressure_cmH2O = -5.0; /// \cite Levitzky2013pulmonary
+  //double pleuralCavityPressureBaselineDiff_cmH2O = m_PleuralCavity->GetPressure(PressureUnit::cmH2O) - m_Ambient->GetPressure(PressureUnit::cmH2O) - baselineIntrapleuralPressure_cmH2O;
+
+  ////Increase resistance if it's above healthy PEEP
+  ////Healthy PEEP is always zero and pleural cavity pressure is negative during inhalation
+  //if (pleuralCavityPressureBaselineDiff_cmH2O > 0.0)
+  //{
+  //  double maxPressure_cmH2O = 5.0;
+  //  double maxResistanceMultiplier = 10.0;
+  //  pleuralCavityPressureBaselineDiff_cmH2O = MIN(pleuralCavityPressureBaselineDiff_cmH2O, maxPressure_cmH2O);
+
+  //  //Interpolate into a parabola to effect things much more at larger differences
+  //  double min = 1.0;
+  //  double max = maxResistanceMultiplier;
+  //  double a = max - min;
+  //  double factor = pleuralCavityPressureBaselineDiff_cmH2O / maxPressure_cmH2O;
+  //  double resistanceMultiplier = a * factor * factor + min;
+
+  //  rightHeartResistance_mmHg_s_Per_mL *= resistanceMultiplier;
+  //}
+
+  //-----------------------------------------------------------------------------------------------------
+
+  //Pressure difference causes a mediastinum shift, which also effects the venous return
+  //The left and right pleural pressures are likely to have large differences only due to a pneumothorax  
   double pleuralCavityPressureDiff_cmH2O = std::abs(m_leftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_rightPleuralCavity->GetPressure(PressureUnit::cmH2O));
-  
+
   double maxPressureDiff_cmH2O = 20.0;
   double maxResistanceMultiplier = 10.0;
   pleuralCavityPressureDiff_cmH2O = MIN(pleuralCavityPressureDiff_cmH2O, maxPressureDiff_cmH2O);
@@ -1993,20 +2030,23 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
   double factor = pleuralCavityPressureDiff_cmH2O / maxPressureDiff_cmH2O;
   double resistanceMultiplier = a * factor * factor + min;
 
-  double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   rightHeartResistance_mmHg_s_Per_mL *= resistanceMultiplier;
-  
+
+  //-----------------------------------------------------------------------------------------------------
+
   //Dampen the change to prevent potential craziness
-  //It will only change half as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
+  //It will only change a fraction as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
   double dampenFraction_perSec = 0.001 * 50.0;
 
   double previousRightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   double resistanceChange_L_Per_mmHg_s_Per_mL = (rightHeartResistance_mmHg_s_Per_mL - previousRightHeartResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_dT_s;
 
   rightHeartResistance_mmHg_s_Per_mL = previousRightHeartResistance_mmHg_s_Per_mL + resistanceChange_L_Per_mmHg_s_Per_mL;
+
   m_RightHeartResistance->GetNextResistance().SetValue(rightHeartResistance_mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
   //For tuning
+  //m_data.GetDataTrack().Probe("pleuralCavityPressureBaselineDiff_cmH2O", pleuralCavityPressureBaselineDiff_cmH2O);
   //m_data.GetDataTrack().Probe("pleuralCavityPressureDiff_cmH2O", pleuralCavityPressureDiff_cmH2O);
   //m_data.GetDataTrack().Probe("resistanceMultiplier", resistanceMultiplier);
   //m_data.GetDataTrack().Probe("rightHeartResistance_mmHg_s_Per_mL", rightHeartResistance_mmHg_s_Per_mL);
