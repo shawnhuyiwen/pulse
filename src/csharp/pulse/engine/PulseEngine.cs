@@ -113,6 +113,48 @@ namespace Pulse
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern bool GetConditions(IntPtr pulse, int format, out IntPtr conditions);
+    public bool GetConditions(List<SECondition> conditions)
+    {
+      if (!alive)
+        return false;
+      if (!GetConditions(pulse_cptr, (int)thunk_as, out str_addr))
+        return false;
+      string cList = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+      if (cList == null)
+        return false;
+      PBCondition.SerializeFromString(cList, conditions);
+      return true;
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern bool GetPatientAssessment(IntPtr pulse, int type, int format, out IntPtr assessment);
+    public bool GetPatientAssessment(SEPatientAssessment assessment)
+    {
+      if (!alive)
+        return false;
+      int type;
+      if (assessment is SECompleteBloodCount)
+        type = 0;
+      else if (assessment is SEComprehensiveMetabolicPanel)
+        type = 1;
+      else if (assessment is SEPulmonaryFunctionTest)
+        type = 2;
+      else if (assessment is SEUrinalysis)
+        type = 3;
+      else
+        return false;
+
+      if (!GetPatientAssessment(pulse_cptr, type, (int)thunk_as, out str_addr))
+        return false;
+      string a = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+      if (a == null)
+        return false;
+      PBPatientAssessmets.SerializeFromString(a, assessment);
+      return true;
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     static extern void LogToConsole(IntPtr pulse, bool b);
     public void LogToConsole(bool b)
     {
@@ -179,6 +221,21 @@ namespace Pulse
       string any_action_list_str = PBAction.SerializeToString(actions);
       //System.Console.Out.WriteLine(any_action_list_str);
       return ProcessActions(pulse_cptr, any_action_list_str, (int)thunk_as);
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern bool PullActiveActions(IntPtr pulse, int format, out IntPtr actions);
+    public bool PullActiveActions(List<SEAction> actions)
+    {
+      if (!alive)
+        return false;
+      if (!PullActiveActions(pulse_cptr, (int)thunk_as, out str_addr))
+        return false;
+      string aList = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+      if (aList == null)
+        return false;
+      PBAction.SerializeFromString(aList, actions);
+      return true;
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]

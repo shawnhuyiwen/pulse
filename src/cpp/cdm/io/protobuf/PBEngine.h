@@ -60,14 +60,14 @@ public:
   static void Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst);
   static void Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionListData& dst);
 
+  static void Load(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+
   static bool SerializeToString(const SEActionManager& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const SEActionManager& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m);
   static bool SerializeFromFile(const std::string& filename, SEActionManager& dst);
-
-  static void Load(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
-  static void Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
-  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
   static void Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst);
   static CDM_BIND::DataRequestData* Unload(const SEDataRequest& src);

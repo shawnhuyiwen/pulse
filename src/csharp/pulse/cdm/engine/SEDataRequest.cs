@@ -5,7 +5,7 @@ namespace Pulse.CDM
 {
   public enum eDataRequest_Category : int
   {
-    Patient = 0, Physiology, Environment, GasCompartment,
+    Patient = 0, Physiology, Environment, Action, GasCompartment,
     LiquidCompartment, ThermalCompartment, TissueCompartment, Substance,
     AnesthesiaMachine, ECG, Inhaler
   };
@@ -13,6 +13,7 @@ namespace Pulse.CDM
   public class SEDataRequest
   {
     protected eDataRequest_Category Category;
+    protected string ActionName = null;
     protected string CompartmentName = null;
     protected string SubstanceName = null;
     protected string PropertyName = null;
@@ -24,6 +25,8 @@ namespace Pulse.CDM
     }
 
     public eDataRequest_Category GetCategory() { return Category; }
+    public bool HasActionName() { return ActionName != null; }
+    public string GetActionName() { return ActionName; }
     public bool HasCompartmentName() { return CompartmentName != null; }
     public string GetCompartmentName() { return CompartmentName; }
     public bool HasSubstanceName() { return SubstanceName != null; }
@@ -36,6 +39,8 @@ namespace Pulse.CDM
     public new string ToString()
     {
       string str = "";
+      if (HasActionName())
+        str = str + ActionName + "-";
       if (HasCompartmentName())
         str = str + CompartmentName + "-";
       if (HasSubstanceName())
@@ -44,9 +49,10 @@ namespace Pulse.CDM
       return str;
     }
 
-    public static SEDataRequest New(eDataRequest_Category category, string compartment, string substance, string property, string unit)
+    public static SEDataRequest New(eDataRequest_Category category, string action, string compartment, string substance, string property, string unit)
     {
       SEDataRequest dr = new SEDataRequest(category);
+      dr.ActionName = action;
       dr.CompartmentName = compartment;
       dr.SubstanceName = substance;
       dr.PropertyName = property;
@@ -91,6 +97,56 @@ namespace Pulse.CDM
     public static SEDataRequest CreateEnvironmentRequest(string property, string unit)
     {
       SEDataRequest dr = new SEDataRequest(eDataRequest_Category.Environment);
+      dr.PropertyName = property;
+      dr.Unit = unit;
+      return dr;
+    }
+
+    public static SEDataRequest CreateActionDataRequest(string action, string property)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.Action);
+      dr.ActionName = action;
+      dr.PropertyName = property;
+      return dr;
+    }
+    public static SEDataRequest CreateActionDataRequest(string action, string property, string unit)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.Action);
+      dr.ActionName = action;
+      dr.PropertyName = property;
+      dr.Unit = unit;
+      return dr;
+    }
+    public static SEDataRequest CreateActionCompartmentDataRequest(string action, string compartment, string property)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.Action);
+      dr.ActionName = action;
+      dr.CompartmentName = compartment;
+      dr.PropertyName = property;
+      return dr;
+    }
+    public static SEDataRequest CreateActionCompartmentDataRequest(string action, string compartment, string property, string unit)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.Action);
+      dr.ActionName = action;
+      dr.CompartmentName = compartment;
+      dr.PropertyName = property;
+      dr.Unit = unit;
+      return dr;
+    }
+    public static SEDataRequest CreateActionSubstanceDataRequest(string action, string substance, string property)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.Action);
+      dr.ActionName = action;
+      dr.SubstanceName = substance;
+      dr.PropertyName = property;
+      return dr;
+    }
+    public static SEDataRequest CreateActionSubstanceDataRequest(string action, string substance, string property, string unit)
+    {
+      SEDataRequest dr = new SEDataRequest(eDataRequest_Category.Action);
+      dr.ActionName = action;
+      dr.SubstanceName = substance;
       dr.PropertyName = property;
       dr.Unit = unit;
       return dr;

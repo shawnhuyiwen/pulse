@@ -20,7 +20,7 @@ namespace Pulse.CDM
       for (int i = 0; i < src.DataRequest.Count; i++)
       {
         pulse.cdm.bind.DataRequestData dr = src.DataRequest[i];
-        dst.GetDataRequests().Add(SEDataRequest.New((eDataRequest_Category)dr.Category, dr.CompartmentName, dr.SubstanceName, dr.PropertyName, dr.Unit));
+        dst.GetDataRequests().Add(SEDataRequest.New((eDataRequest_Category)dr.Category, dr.ActionName, dr.CompartmentName, dr.SubstanceName, dr.PropertyName, dr.Unit));
       }
     }
     public static bool SerializeFromString(string src, SEDataRequestManager dst, SerializationFormat format)

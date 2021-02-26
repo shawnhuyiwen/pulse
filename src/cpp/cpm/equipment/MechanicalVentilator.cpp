@@ -55,7 +55,11 @@ void MechanicalVentilator::Clear()
   m_Environment = nullptr;
   m_Ventilator = nullptr;
   m_VentilatorAerosol = nullptr;
+  m_VentilatorNode = nullptr;
+  m_ConnectionNode = nullptr;
+  m_AmbientNode = nullptr;
   m_EnvironmentToVentilator = nullptr;
+  m_YPieceToConnection = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------

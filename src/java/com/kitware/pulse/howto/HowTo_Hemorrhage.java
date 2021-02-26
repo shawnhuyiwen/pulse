@@ -12,6 +12,7 @@ import com.kitware.pulse.cdm.engine.SEEventHandler;
 import com.kitware.pulse.cdm.patient.actions.SEHemorrhage;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
+import com.kitware.pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.engine.PulseCompartments;
@@ -96,6 +97,44 @@ public class HowTo_Hemorrhage
     map.setPropertyName("MeanArterialPressure");
     map.setUnit(PressureUnit.mmHg.toString());
     dataRequests.getRequestedData().add(map);
+    SEDataRequest hflow = new SEDataRequest();
+    hflow.setCategory(eCategory.Physiology);
+    hflow.setPropertyName("TotalHemorrhageRate");
+    hflow.setUnit(VolumePerTimeUnit.mL_Per_s.toString());
+    dataRequests.getRequestedData().add(hflow);
+    SEDataRequest hvol = new SEDataRequest();
+    hvol.setCategory(eCategory.Physiology);
+    hvol.setPropertyName("TotalHemorrhagedVolume");
+    hvol.setUnit(VolumeUnit.mL.toString());
+    dataRequests.getRequestedData().add(hvol);
+    SEDataRequest aflow = new SEDataRequest();
+    aflow.setCategory(eCategory.Action);
+    aflow.setActionName("Hemorrhage");
+    aflow.setCompartmentName(PulseCompartments.Vascular.RightArm.name());
+    aflow.setPropertyName("FlowRate");
+    aflow.setUnit(VolumePerTimeUnit.mL_Per_s.toString());
+    dataRequests.getRequestedData().add(aflow);
+    SEDataRequest avol = new SEDataRequest();
+    avol.setCategory(eCategory.Action);
+    avol.setActionName("Hemorrhage");
+    avol.setCompartmentName(PulseCompartments.Vascular.RightArm.name());
+    avol.setPropertyName("TotalBloodLost");
+    avol.setUnit(VolumeUnit.mL.toString());
+    dataRequests.getRequestedData().add(avol);
+    SEDataRequest lflow = new SEDataRequest();
+    lflow.setCategory(eCategory.Action);
+    lflow.setActionName("Hemorrhage");
+    lflow.setCompartmentName(PulseCompartments.Vascular.RightLeg.name());
+    lflow.setPropertyName("FlowRate");
+    lflow.setUnit(VolumePerTimeUnit.mL_Per_s.toString());
+    dataRequests.getRequestedData().add(lflow);
+    SEDataRequest lvol = new SEDataRequest();
+    lvol.setCategory(eCategory.Action);
+    lvol.setActionName("Hemorrhage");
+    lvol.setCompartmentName(PulseCompartments.Vascular.RightLeg.name());
+    lvol.setPropertyName("TotalBloodLost");
+    lvol.setUnit(VolumeUnit.mL.toString());
+    dataRequests.getRequestedData().add(lvol);
     
     List<Double> dataValues;
     pe.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
@@ -107,19 +146,35 @@ public class HowTo_Hemorrhage
     Log.info("Total Lung Volume(mL) " + dataValues.get(3));
     Log.info("Blood Volume(mL) " + dataValues.get(4));
     Log.info("Mean Arterial Pressure(mmHg) " + dataValues.get(5));
+    Log.info("Total  HemorrhageRate(mL/s) " + dataValues.get(6));
+    Log.info("Total Hemorrhaged Volume(mL) " + dataValues.get(7));
+    Log.info("Hemorrhage-RightArm-FlowRate(mL/s) " + dataValues.get(8));
+    Log.info("Hemorrhage-RightArm-TotalBloodLost(mL) " + dataValues.get(9));
+    Log.info("Hemorrhage-RightLeg-FlowRate(mL/s) " + dataValues.get(10));
+    Log.info("Hemorrhage-RightLeg-TotalBloodLost(mL) " + dataValues.get(11));
+    Log.info("");
     
     // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
-    SEHemorrhage h = new SEHemorrhage();
-    
+    SEHemorrhage rightLeg = new SEHemorrhage();
     // Setting up a realistic hemorrhage can be difficult
     // Here is an example of how the engine will act if you create an unrealistic hemorrhage
-    h.setType(HemorrhageData.eType.External);
-    h.setCompartment(PulseCompartments.Vascular.VenaCava);
-    h.getSeverity().setValue(0.8);// This is WAY too much, and will cause the engine to fail
-    pe.processAction(h);
-    // Hypovolemic Shock will be thrown, but this bleed takes so much blood
-    // that we will jump past Cardiovascular Collapse, and straight to irreversible state
+    rightLeg.setType(HemorrhageData.eType.External);
+    rightLeg.setCompartment(PulseCompartments.Vascular.RightLeg);
+    rightLeg.getSeverity().setValue(0.4);
+    pe.processAction(rightLeg);
+    
+    SEHemorrhage rightArm = new SEHemorrhage();
+    rightArm.setType(HemorrhageData.eType.External);
+    rightArm.setCompartment(PulseCompartments.Vascular.RightArm);
+    rightArm.getSeverity().setValue(0.2);
+    pe.processAction(rightArm);
+    
+    // If the hemorrhage is very bad, a Hypovolemic Shock event will be thrown
+    // Eventually Cardiovascular Collapse will be triggered, then you need to shut the engine down.
+    // This collapse should be interpreted as death for a bleeding patient.
+    // If you let it bleed after that, you will eventually get an irreversible state
     // advance time will then return false, and the engine will no longer do anything on subsequent advance time calls and only return false
+    // If the provided hemorrhage is very bad, you may skip cardiovascular collapse and go straight to irreversable state...
     
     for(int i=0; i<=9000; i++)
     {
@@ -137,6 +192,13 @@ public class HowTo_Hemorrhage
         Log.info("Total Lung Volume(mL) " + dataValues.get(3));
         Log.info("Blood Volume(mL) " + dataValues.get(4));
         Log.info("Mean Arterial Pressure(mmHg) " + dataValues.get(5));
+        Log.info("Total  HemorrhageRate(mL/s) " + dataValues.get(6));
+        Log.info("Total Hemorrhaged Volume(mL) " + dataValues.get(7));
+        Log.info("Hemorrhage-RightArm-FlowRate(mL/s) " + dataValues.get(8));
+        Log.info("Hemorrhage-RightArm-TotalBloodLost(mL) " + dataValues.get(9));
+        Log.info("Hemorrhage-RightLeg-FlowRate(mL/s) " + dataValues.get(10));
+        Log.info("Hemorrhage-RightLeg-TotalBloodLost(mL) " + dataValues.get(11));
+        Log.info("");
         
         if(listener.error)
         {

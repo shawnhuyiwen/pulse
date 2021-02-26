@@ -96,6 +96,16 @@ C_EXPORT bool C_CALL GetInitialPatient(PulseEngineThunk * thunk, int format, cha
 }
 
 extern "C"
+C_EXPORT bool C_CALL GetConditions(PulseEngineThunk * thunk, int format, char** conditions)
+{
+  std::string c = thunk->GetConditions((SerializationFormat)format);
+  if (c.empty())
+    return false;
+  *conditions = c_strdup(c.c_str(), c.length());
+  return true;
+}
+
+extern "C"
 C_EXPORT void C_CALL LogToConsole(PulseEngineThunk* thunk, bool b)
 {
   thunk->LogToConsole(b);
@@ -135,7 +145,7 @@ C_EXPORT bool C_CALL PullEvents(PulseEngineThunk* thunk, int format, char** str_
   return true;
 }
 extern "C"
-C_EXPORT bool C_CALL PullActiveEvents(PulseEngineThunk* thunk, int format, char** active)
+C_EXPORT bool C_CALL PullActiveEvents(PulseEngineThunk * thunk, int format, char** active)
 {
   std::string active_events = thunk->PullActiveEvents((SerializationFormat)format);
   if (active_events.empty())
@@ -145,11 +155,31 @@ C_EXPORT bool C_CALL PullActiveEvents(PulseEngineThunk* thunk, int format, char*
 }
 
 extern "C"
-C_EXPORT bool C_CALL ProcessActions(PulseEngineThunk* thunk, const char* actions, int format)
+C_EXPORT bool C_CALL GetPatientAssessment(PulseEngineThunk* thunk, int type, int format, char** assessment)
+{
+  std::string a = thunk->GetPatientAssessment(type, (SerializationFormat)format);
+  if (a.empty())
+    return false;
+  *assessment = c_strdup(a.c_str(), a.length());
+  return true;
+}
+
+extern "C"
+C_EXPORT bool C_CALL ProcessActions(PulseEngineThunk * thunk, const char* actions, int format)
 {
   if (actions == nullptr)
     return true;// Nothing to do...
   return thunk->ProcessActions(actions, (SerializationFormat)format);
+}
+
+extern "C"
+C_EXPORT bool C_CALL PullActiveActions(PulseEngineThunk* thunk, int format, char** actions)
+{
+  std::string a = thunk->PullActiveActions((SerializationFormat)format);
+  if (a.empty())
+    return false;
+  *actions = c_strdup(a.c_str(), a.length());
+  return true;
 }
 
 extern "C"

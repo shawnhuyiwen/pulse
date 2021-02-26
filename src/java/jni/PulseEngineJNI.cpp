@@ -159,7 +159,6 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerial
   return state;
 }
 
-
 extern "C"
 JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format)
 {
@@ -195,6 +194,18 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetIni
   std::string stream = engineJNI->GetInitialPatient((SerializationFormat)format);
   jstring patient = env->NewStringUTF(stream.c_str());
   return patient;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetConditions(JNIEnv * env, jobject obj, jlong ptr, jint format)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  std::string stream = engineJNI->GetConditions((SerializationFormat)format);
+  jstring conditionManager = env->NewStringUTF(stream.c_str());
+  return conditionManager;
 }
 
 extern "C"
@@ -275,6 +286,18 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeProce
 }
 
 extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullActiveActions(JNIEnv * env, jobject obj, jlong ptr, jint format)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  std::string stream = engineJNI->PullActiveActions((SerializationFormat)format);
+  jstring actions = env->NewStringUTF(stream.c_str());
+  return actions;
+}
+
+extern "C"
 JNIEXPORT jdouble JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetTimeStep(JNIEnv * env, jobject obj, jlong ptr, jstring unit, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
@@ -313,7 +336,6 @@ JNIEXPORT jdoubleArray JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeP
   env->SetDoubleArrayRegion(jData, 0, len, data);
   return jData;
 }
-
 
 PulseEngineJNI::PulseEngineJNI() : PulseEngineThunk()
 {

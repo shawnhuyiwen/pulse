@@ -44,7 +44,7 @@ public:
   bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format);
 
   std::string GetInitialPatient(SerializationFormat format);
-  std::string GetPatientAssessment(int type, SerializationFormat format);
+  std::string GetConditions(SerializationFormat format);
 
   void LogToConsole(bool b);
   void KeepLogMessages(bool keep);// Set this to true if you are going to pull messages from the engine
@@ -54,8 +54,10 @@ public:
   void KeepEventChanges(bool keep);
   std::string PullEvents(SerializationFormat format);
   std::string PullActiveEvents(SerializationFormat format);
+  std::string GetPatientAssessment(int type, SerializationFormat format);
 
   bool ProcessActions(std::string const& actions, SerializationFormat format);
+  std::string PullActiveActions(SerializationFormat format);
 
   bool AdvanceTimeStep();
   double GetTimeStep(std::string const& unit);
