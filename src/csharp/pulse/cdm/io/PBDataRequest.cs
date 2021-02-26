@@ -52,6 +52,8 @@ namespace Pulse.CDM
       {
         pulse.cdm.bind.DataRequestData dst_dr = new pulse.cdm.bind.DataRequestData();
         dst_dr.Category = (eCategory)dr.GetCategory();
+        if (dr.HasActionName())
+          dst_dr.ActionName = dr.GetActionName();
         if (dr.HasCompartmentName())
           dst_dr.CompartmentName = dr.GetCompartmentName();
         if (dr.HasSubstanceName())

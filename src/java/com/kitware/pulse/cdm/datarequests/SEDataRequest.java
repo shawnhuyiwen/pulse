@@ -122,6 +122,7 @@ public class SEDataRequest implements Serializable
   
   public String getCompartmentName(){ return compartmentName; }
   public void setCompartmentName(String c){ this.compartmentName = c; }
+  public void setCompartmentName(Enum<?> c){ this.compartmentName = c.name(); }
   public boolean hasCompartmentName(){ return compartmentName==null||compartmentName.isEmpty() ? false : true; }
   
   public String getSubstanceName(){ return substanceName; }
