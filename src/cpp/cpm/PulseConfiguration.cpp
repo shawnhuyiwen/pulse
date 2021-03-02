@@ -45,6 +45,7 @@
 PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(logger)
 {
   m_TimeStep = nullptr;
+  m_AllowDynamicTimeStep = eSwitch::Off;
   m_TimedStabilization = nullptr;
   m_DynamicStabilization = nullptr;
   m_AutoSerialization = nullptr;
@@ -175,6 +176,7 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
 PulseConfiguration::~PulseConfiguration()
 {
   SAFE_DELETE(m_TimeStep);
+  m_AllowDynamicTimeStep = eSwitch::Off;
   SAFE_DELETE(m_AutoSerialization);
   SAFE_DELETE(m_InitialOverrides);
 
@@ -295,6 +297,7 @@ PulseConfiguration::~PulseConfiguration()
 void PulseConfiguration::Clear()
 {
   INVALIDATE_PROPERTY(m_TimeStep);
+  m_AllowDynamicTimeStep = eSwitch::Off;
   RemoveStabilization();
   if(m_AutoSerialization)
     m_AutoSerialization->Clear();
@@ -454,6 +457,7 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
 
   // Reset to default values
   GetTimeStep().SetValue(1.0 / 50.0, TimeUnit::s);
+  m_AllowDynamicTimeStep = eSwitch::Off;
   if (!dataDir.empty())
   {
     GetECGInterpolator().SerializeFromFile(dataDir + "/ecg/StandardECG.json", &GetTimeStep());

@@ -39,6 +39,8 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
 
   if (src.has_timestep())
     PBProperty::Load(src.timestep(), dst.GetTimeStep());
+  if (src.allowdynamictimestep() != CDM_BIND::eSwitch::NullSwitch)
+    dst.AllowDynamicTimeStep((eSwitch)src.allowdynamictimestep());
   if (src.has_timedstabilization())
     PBEngine::Load(src.timedstabilization(), dst.GetTimedStabilization());
   else if (src.has_dynamicstabilization())
@@ -365,6 +367,7 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
     dst.set_allocated_dynamicstabilization(PBEngine::Unload(*src.m_DynamicStabilization));
   if (src.HasTimeStep())
     dst.set_allocated_timestep(PBProperty::Unload(*src.m_TimeStep));
+  dst.set_allowdynamictimestep((CDM_BIND::eSwitch)src.m_AllowDynamicTimeStep);
   if (src.HasAutoSerialization())
     dst.set_allocated_autoserialization(PBEngine::Unload(*src.m_AutoSerialization));
   dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);

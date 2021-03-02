@@ -594,12 +594,20 @@ bool PulseController::AdvanceModelTime()
 
 bool PulseController::AdvanceModelTime(double time, const TimeUnit& unit)
 {
-  double time_s = Convert(time, unit, TimeUnit::s) + m_SpareAdvanceTime_s;
-  int count = (int)(time_s / GetTimeStep().GetValue(TimeUnit::s));
-  for (int i = 0; i < count; i++)
-    if (!AdvanceModelTime())
-      return false;
-  m_SpareAdvanceTime_s = time_s - (count * GetTimeStep().GetValue(TimeUnit::s));
+  if (m_Config->AllowDynamicTimeStep() == eSwitch::On)
+  {
+    m_Config->GetTimeStep().SetValue(time, unit);
+    return AdvanceModelTime();
+  }
+  else
+  {
+    double time_s = Convert(time, unit, TimeUnit::s) + m_SpareAdvanceTime_s;
+    int count = (int)(time_s / GetTimeStep().GetValue(TimeUnit::s));
+    for (int i = 0; i < count; i++)
+      if (!AdvanceModelTime())
+        return false;
+    m_SpareAdvanceTime_s = time_s - (count * GetTimeStep().GetValue(TimeUnit::s));
+  }
   return true;
 }
 
