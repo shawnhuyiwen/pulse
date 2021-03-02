@@ -24,6 +24,7 @@ void PBPulseEquipment::Load(const PULSE_BIND::AnesthesiaMachineData& src, Anesth
   dst.Clear();
   dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.StateChange();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::AnesthesiaMachineData& src, AnesthesiaMachine& dst)
 {
@@ -83,6 +84,7 @@ void PBPulseEquipment::Load(const PULSE_BIND::InhalerData& src, Inhaler& dst)
   dst.Clear();
   dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.StateChange();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::InhalerData& src, Inhaler& dst)
 {
@@ -104,6 +106,7 @@ void PBPulseEquipment::Load(const PULSE_BIND::MechanicalVentilatorData& src, Mec
   dst.Clear();
   dst.SetUp();
   PBPulseEquipment::Serialize(src, dst);
+  dst.StateChange();
 }
 void PBPulseEquipment::Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilator& dst)
 {

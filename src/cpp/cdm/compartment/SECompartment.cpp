@@ -24,5 +24,3 @@ std::string SECompartment::GetName() const
 {
   return m_Name;
 }
-
-
