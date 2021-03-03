@@ -180,6 +180,7 @@ bool PulseScenarioExec::ProcessAction(PhysiologyEngine& engine, const SEAction& 
   return SEScenarioExec::ProcessAction(engine, action);
 }
 
+#define state_ext ".pbb"
 void PulseScenarioExec::AdvanceEngine(PhysiologyEngine& engine)
 {
   if (m_AutoSerializationPeriod_s > 0)
@@ -192,12 +193,12 @@ void PulseScenarioExec::AdvanceEngine(PhysiologyEngine& engine)
       m_AutoSerializationOutput << m_AutoSerializationDirectory <<"/"<< m_AutoSerializationFileName;
       if (m_AutoSerializationTimeStamps == eSwitch::On)
         m_AutoSerializationOutput << "/" << m_AutoSerializationFileName<< "@" << engine.GetSimulationTime(TimeUnit::s);
-      engine.SerializeToFile(m_AutoSerializationOutput.str() + ".json");
-      Info("Serializing state after requested period : " + m_AutoSerializationOutput.str() + ".json");
+      engine.SerializeToFile(m_AutoSerializationOutput.str() + state_ext);
+      Info("Serializing state after requested period : " + m_AutoSerializationOutput.str() + state_ext);
       if (m_AutoSerializationReload == eSwitch::On)
       {
-        engine.SerializeFromFile(m_AutoSerializationOutput.str() + ".json");
-        engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded.json");
+        engine.SerializeFromFile(m_AutoSerializationOutput.str() + state_ext);
+        engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded"+ state_ext);
       }
     }
   }
@@ -208,13 +209,13 @@ void PulseScenarioExec::AdvanceEngine(PhysiologyEngine& engine)
     m_AutoSerializationOutput << m_AutoSerializationDirectory <<"/"<< m_AutoSerializationFileName<<m_AutoSerializationActions.str();
     if (m_AutoSerializationTimeStamps == eSwitch::On)
       m_AutoSerializationOutput << "@" << engine.GetSimulationTime(TimeUnit::s);
-    engine.SerializeToFile(m_AutoSerializationOutput.str() + ".json");
-    Info("Serializing state after actions : " + m_AutoSerializationOutput.str()+".json");
+    engine.SerializeToFile(m_AutoSerializationOutput.str() + state_ext);
+    Info("Serializing state after actions : " + m_AutoSerializationOutput.str()+ state_ext);
     if (m_AutoSerializationReload == eSwitch::On)
     {
-      Info("Reloading and saving reloaded state to : " + m_AutoSerializationOutput.str() + ".Reload.json");
-      engine.SerializeFromFile(m_AutoSerializationOutput.str() + ".json");
-      engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded.json");
+      Info("Reloading and saving reloaded state to : " + m_AutoSerializationOutput.str() + ".Reload"+state_ext);
+      engine.SerializeFromFile(m_AutoSerializationOutput.str() + state_ext);
+      engine.SerializeToFile(m_AutoSerializationOutput.str() + ".Reloaded"+state_ext);
     }
     m_AutoSerializationActions.str("");
   }
