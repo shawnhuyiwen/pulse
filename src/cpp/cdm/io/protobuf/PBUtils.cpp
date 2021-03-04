@@ -70,6 +70,8 @@ bool PBUtils::SerializeToFile(const google::protobuf::Message& src, const std::s
       return false;
     return WriteFile(content, filename);
   }
+  if (!CreateFilePath(filename))
+    return false;
   std::lock_guard<std::mutex> guard(log_mutex);
   g_logger = logger;
   google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
