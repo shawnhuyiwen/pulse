@@ -123,7 +123,6 @@ void AnesthesiaMachine::Initialize()
 //--------------------------------------------------------------------------------------------------
 void AnesthesiaMachine::SetUp()
 {
-  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
   m_actions = &m_data.GetActions().GetEquipmentActions();
   m_dValveOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   m_dValveClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineClosedResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -529,7 +528,7 @@ void AnesthesiaMachine::CalculateSourceStatus()
     double dBottle1Volume_L = GetOxygenBottleOne().GetVolume().GetValue(VolumeUnit::L);
     if (dBottle1Volume_L > 0.0)
     {
-      dBottle1Volume_L -= m_dt_s * dFlow_LPerS * m_O2InletVolumeFraction;
+      dBottle1Volume_L -= m_data.GetTimeStep_s() * dFlow_LPerS * m_O2InletVolumeFraction;
     }
     else if (dBottle1Volume_L <= 0.0) //Empty
     {
@@ -544,7 +543,7 @@ void AnesthesiaMachine::CalculateSourceStatus()
     double dBottle2Volume_L = GetOxygenBottleTwo().GetVolume().GetValue(VolumeUnit::L);
     if (dBottle2Volume_L > 0.0)
     {
-      dBottle2Volume_L -= m_dt_s * dFlow_LPerS * m_O2InletVolumeFraction;
+      dBottle2Volume_L -= m_data.GetTimeStep_s() * dFlow_LPerS * m_O2InletVolumeFraction;
     }
     else if (dBottle2Volume_L <= 0.0)
     {
@@ -731,7 +730,7 @@ void AnesthesiaMachine::CalculateVentilatorPressure()
 void AnesthesiaMachine::CalculateCyclePhase()
 {
   //Determine where we are in the cycle
-  m_currentbreathingCycleTime_s += m_dt_s;
+  m_currentbreathingCycleTime_s += m_data.GetTimeStep_s();
   if (m_currentbreathingCycleTime_s > m_totalBreathingCycleTime_s) //End of the cycle
   {
     m_totalBreathingCycleTime_s=0.0;

@@ -216,6 +216,7 @@ const PulseConfiguration& PulseData::GetConfiguration() const { return *m_Config
 const SEScalarTime& PulseData::GetEngineTime() const { return m_CurrentTime; }
 const SEScalarTime& PulseData::GetSimulationTime() const { return m_SimulationTime; }
 const SEScalarTime& PulseData::GetTimeStep() const { return m_Config->GetTimeStep(); }
+double PulseData::GetTimeStep_s() const { return GetTimeStep().GetValue(TimeUnit::s); }
 
 bool PulseData::HasOverride() const { return m_ScalarOverrides.size() > 0; }
 const std::vector<SEScalarProperty>& PulseData::GetOverrides() const { return m_ScalarOverrides; }
@@ -602,11 +603,11 @@ bool PulseController::AdvanceModelTime(double time, const TimeUnit& unit)
   else
   {
     double time_s = Convert(time, unit, TimeUnit::s) + m_SpareAdvanceTime_s;
-    int count = (int)(time_s / GetTimeStep().GetValue(TimeUnit::s));
+    int count = (int)(time_s / GetTimeStep_s());
     for (int i = 0; i < count; i++)
       if (!AdvanceModelTime())
         return false;
-    m_SpareAdvanceTime_s = time_s - (count * GetTimeStep().GetValue(TimeUnit::s));
+    m_SpareAdvanceTime_s = time_s - (count * GetTimeStep_s());
   }
   return true;
 }

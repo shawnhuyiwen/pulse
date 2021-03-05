@@ -139,8 +139,6 @@ void Energy::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Energy::SetUp()
 {
-  m_dT_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-
   m_AortaHCO3 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(m_data.GetSubstances().GetHCO3());
 
   //Circuit elements
@@ -360,7 +358,7 @@ void Energy::Exercise()
   double lactateRate_W = lactateConstant_W*(normalizedUsableEnergyDeficit + normalizedPeakEnergyDeficit + normalizedMediumEnergyDeficit + normalizedEnduranceEnergyDeficit) / 4.0;
   double tristearinRate_W = tristearinConstant_W*(normalizedUsableEnergyDeficit + normalizedPeakEnergyDeficit + normalizedMediumEnergyDeficit + normalizedEnduranceEnergyDeficit) / 4.0;
 
-  energyIncrement_J = (glucoseRate_W + lactateRate_W + tristearinRate_W)*m_dT_s;
+  energyIncrement_J = (glucoseRate_W + lactateRate_W + tristearinRate_W)*m_data.GetTimeStep_s();
 
   if (m_EnduranceEnergyStore_J + energyIncrement_J > enduranceEnergyStoreFull_J){
     glucoseRate_W = lactateRate_W = tristearinRate_W = 0.0;
@@ -369,10 +367,10 @@ void Energy::Exercise()
 
   double enduranceOutRate_W = (normalizedUsableEnergyDeficit + normalizedPeakEnergyDeficit + normalizedMediumEnergyDeficit)*maxEnduranceOutRate_W;
   BLIM(enduranceOutRate_W, 0.0, maxEnduranceOutRate_W);
-  if (m_EnduranceEnergyStore_J + energyIncrement_J < enduranceOutRate_W*m_dT_s){
-    enduranceOutRate_W = (m_EnduranceEnergyStore_J + energyIncrement_J) / m_dT_s;
+  if (m_EnduranceEnergyStore_J + energyIncrement_J < enduranceOutRate_W*m_data.GetTimeStep_s()){
+    enduranceOutRate_W = (m_EnduranceEnergyStore_J + energyIncrement_J) / m_data.GetTimeStep_s();
   }
-  m_EnduranceEnergyStore_J += energyIncrement_J - enduranceOutRate_W*m_dT_s;
+  m_EnduranceEnergyStore_J += energyIncrement_J - enduranceOutRate_W*m_data.GetTimeStep_s();
 
   // The aerobic store has multiple outflow paths. One path represents purely aerobic energy
   // usage, and the other paths represent the aerobic replenishment of the anaerobic stores. The following
@@ -394,34 +392,34 @@ void Energy::Exercise()
   double mediumFillRate_W = (1.0 - splitFraction)*enduranceToFillRate_W;
 
   // Advance peak store state
-  energyIncrement_J = peakFillRate_W*m_dT_s;
+  energyIncrement_J = peakFillRate_W*m_data.GetTimeStep_s();
   double peakOutRate_W = normalizedUsableEnergyDeficit*maxPeakOutRate_W*energyRateModifier;
   BLIM(peakOutRate_W, 0.0, maxPeakOutRate_W);
-  if (m_PeakPowerEnergyStore_J + energyIncrement_J < peakOutRate_W*m_dT_s){
-    peakOutRate_W = (m_PeakPowerEnergyStore_J + energyIncrement_J) / m_dT_s;
+  if (m_PeakPowerEnergyStore_J + energyIncrement_J < peakOutRate_W*m_data.GetTimeStep_s()){
+    peakOutRate_W = (m_PeakPowerEnergyStore_J + energyIncrement_J) / m_data.GetTimeStep_s();
   }
-  m_PeakPowerEnergyStore_J += energyIncrement_J - peakOutRate_W*m_dT_s;
+  m_PeakPowerEnergyStore_J += energyIncrement_J - peakOutRate_W*m_data.GetTimeStep_s();
   // Advance medium store state
-  energyIncrement_J = mediumFillRate_W*m_dT_s;
+  energyIncrement_J = mediumFillRate_W*m_data.GetTimeStep_s();
   double mediumOutRate_W = normalizedUsableEnergyDeficit*maxMediumOutRate_W*energyRateModifier;
   BLIM(mediumOutRate_W, 0.0, maxMediumOutRate_W);
-  if (m_MediumPowerEnergyStore_J + energyIncrement_J < mediumOutRate_W*m_dT_s){
-    mediumOutRate_W = (m_MediumPowerEnergyStore_J + energyIncrement_J) / m_dT_s;
+  if (m_MediumPowerEnergyStore_J + energyIncrement_J < mediumOutRate_W*m_data.GetTimeStep_s()){
+    mediumOutRate_W = (m_MediumPowerEnergyStore_J + energyIncrement_J) / m_data.GetTimeStep_s();
   }
-  m_MediumPowerEnergyStore_J += energyIncrement_J - mediumOutRate_W*m_dT_s;
+  m_MediumPowerEnergyStore_J += energyIncrement_J - mediumOutRate_W*m_data.GetTimeStep_s();
 
   // Advance usable bucket state
-  energyIncrement_J = (enduranceToUsableRate_W + mediumOutRate_W + peakOutRate_W)*m_dT_s;
-  if (m_UsableEnergyStore_J + energyIncrement_J < workRateDesired_W*m_dT_s)
+  energyIncrement_J = (enduranceToUsableRate_W + mediumOutRate_W + peakOutRate_W)*m_data.GetTimeStep_s();
+  if (m_UsableEnergyStore_J + energyIncrement_J < workRateDesired_W*m_data.GetTimeStep_s())
   {
-    workRate_W = (m_UsableEnergyStore_J + energyIncrement_J) / m_dT_s;
+    workRate_W = (m_UsableEnergyStore_J + energyIncrement_J) / m_data.GetTimeStep_s();
   }
   else 
   {
     workRate_W = workRateDesired_W;
   }
 
-  m_UsableEnergyStore_J += energyIncrement_J - workRate_W*m_dT_s;
+  m_UsableEnergyStore_J += energyIncrement_J - workRate_W*m_data.GetTimeStep_s();
 
   GetTotalWorkRateLevel().SetValue(workRate_W / maxWorkRate_W);
   double fatigue = (normalizedEnduranceEnergyDeficit + normalizedMediumEnergyDeficit + normalizedPeakEnergyDeficit + normalizedUsableEnergyDeficit) / 4.0;
@@ -459,7 +457,7 @@ void Energy::Exercise()
   // We only let exercise control the metabolic rate if it is active, otherwise the heat generation method is in charge of the metabolic rate.
   if (m_data.GetActions().GetPatientActions().HasExercise())
   {
-    double TotalMetabolicRateProduced_kcal_Per_day = currentMetabolicRate_kcal_Per_day + MetabolicRateGain*(TotalMetabolicRateSetPoint_kcal_Per_day - currentMetabolicRate_kcal_Per_day)*m_dT_s;
+    double TotalMetabolicRateProduced_kcal_Per_day = currentMetabolicRate_kcal_Per_day + MetabolicRateGain*(TotalMetabolicRateSetPoint_kcal_Per_day - currentMetabolicRate_kcal_Per_day)*m_data.GetTimeStep_s();
     GetTotalMetabolicRate().SetValue(TotalMetabolicRateProduced_kcal_Per_day, PowerUnit::kcal_Per_day);
   }
 }
@@ -477,7 +475,7 @@ void Energy::Exercise()
 void Energy::Process(bool solve_and_transport)
 {
   if(solve_and_transport)
-    m_circuitCalculator->Process(*m_TemperatureCircuit, m_dT_s);
+    m_circuitCalculator->Process(*m_TemperatureCircuit, m_data.GetTimeStep_s());
   CalculateVitalSigns();
   ComputeExposedModelParameters();
 }
@@ -681,7 +679,7 @@ void Energy::CalculateSweatRate()
 
 
   //Account for mass lost by substracting from the current patient mass
-  double massLost_kg = sweatRate_kg_Per_s*m_dT_s;
+  double massLost_kg = sweatRate_kg_Per_s*m_data.GetTimeStep_s();
   m_data.GetCurrentPatient().GetWeight().IncrementValue(-massLost_kg, MassUnit::kg);
 
   GetSweatRate().SetValue(sweatRate_kg_Per_s, MassPerTimeUnit::kg_Per_s);

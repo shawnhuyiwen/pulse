@@ -229,7 +229,7 @@ void Respiratory::Initialize()
   m_TopBreathElapsedTime_min = 0.0;
   m_BreathingCycle = false;  
   m_VentilationFrequency_Per_min = m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min);
-  m_BreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min + m_dt_s; //Make the engine start at the beginning of a breath
+  m_BreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min + m_data.GetTimeStep_s(); //Make the engine start at the beginning of a breath
   m_DriverPressure_cmH2O = 0.0;
   m_VentilationToTidalVolumeSlope = 30.0;
   //The peak driver pressure is the pressure above the default pressure
@@ -329,9 +329,6 @@ void Respiratory::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::SetUp()
 {
-  //Time Step
-  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-  m_dt_min = m_data.GetTimeStep().GetValue(TimeUnit::min);
   //Patient
   m_PatientActions = &m_data.GetActions().GetPatientActions();
   //Driver
@@ -570,16 +567,16 @@ void Respiratory::Process(bool solve_and_transport)
     SEFluidCircuit& RespirationCircuit = m_data.GetCircuits().GetActiveRespiratoryCircuit();
 
     // Calc the circuits
-    m_Calculator->Process(RespirationCircuit, m_dt_s);
+    m_Calculator->Process(RespirationCircuit, m_data.GetTimeStep_s());
 
     //ModifyPleuralVolume();
     SEGasCompartmentGraph& RespirationGraph = m_data.GetCompartments().GetActiveRespiratoryGraph();
     SELiquidCompartmentGraph& AerosolGraph = m_data.GetCompartments().GetActiveAerosolGraph();
 
     // Transport substances
-    m_GasTransporter->Transport(RespirationGraph, m_dt_s);
+    m_GasTransporter->Transport(RespirationGraph, m_data.GetTimeStep_s());
     if (m_AerosolAirway->HasSubstanceQuantities())
-      m_AerosolTransporter->Transport(AerosolGraph, m_dt_s);
+      m_AerosolTransporter->Transport(AerosolGraph, m_data.GetTimeStep_s());
 
 #ifdef DEBUG
     Debugging(RespirationCircuit);
@@ -693,7 +690,7 @@ void Respiratory::ProcessAerosolSubstances()
     inflammationCoefficient *= 0.01;
     //Airway
     SIDECoeff = &m_data.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(subQ->GetSubstance());// Once for each subQ
-    airwayDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolAirway->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetAirway();
+    airwayDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolAirway->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetAirway();
     if (airwayDepositied_ug > subQ->GetMass(MassUnit::ug))
     {
       airwayDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -706,7 +703,7 @@ void Respiratory::ProcessAerosolSubstances()
     airwayResistanceModifier += airwayTotalDepositied_ug*inflammationCoefficient;
     //Carina
     subQ = m_AerosolCarina->GetSubstanceQuantities()[i];
-    carinaDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolCarina->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetCarina();
+    carinaDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolCarina->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetCarina();
     if (carinaDepositied_ug > subQ->GetMass(MassUnit::ug))
     {
       carinaDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -719,7 +716,7 @@ void Respiratory::ProcessAerosolSubstances()
     carinaResistanceModifier += carinaTotalDepositied_ug*inflammationCoefficient;
     //Left DeadSpace
     subQ = m_AerosolLeftAnatomicDeadSpace->GetSubstanceQuantities()[i];
-    leftDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftAnatomicDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetDeadSpace();
+    leftDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftAnatomicDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetDeadSpace();
     if (leftDeadSpaceDepositied_ug > subQ->GetMass(MassUnit::ug))
     {
       leftDeadSpaceDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -732,7 +729,7 @@ void Respiratory::ProcessAerosolSubstances()
     leftDeadSpaceResistanceModifier += leftDeadSpaceTotalDepositied_ug*inflammationCoefficient;
     //Left Alveoli
     subQ = m_AerosolLeftAlveoli->GetSubstanceQuantities()[i];
-    leftAlveoliDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftAlveoli->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetAlveoli();
+    leftAlveoliDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolLeftAlveoli->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetAlveoli();
     if (leftAlveoliDepositied_ug > subQ->GetMass(MassUnit::ug))
     {
       leftAlveoliDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -745,7 +742,7 @@ void Respiratory::ProcessAerosolSubstances()
     leftAlveoliResistanceModifier += leftAlveoliTotalDepositied_ug*inflammationCoefficient;
     //Right DeadSpace
     subQ = m_AerosolRightAnatomicDeadSpace->GetSubstanceQuantities()[i];
-    rightDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightAnatomicDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetDeadSpace();
+    rightDeadSpaceDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightAnatomicDeadSpace->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetDeadSpace();
     if (rightDeadSpaceDepositied_ug > subQ->GetMass(MassUnit::ug))
     {
       rightDeadSpaceDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -758,7 +755,7 @@ void Respiratory::ProcessAerosolSubstances()
     rightDeadSpaceResistanceModifier += rightDeadSpaceTotalDepositied_ug*inflammationCoefficient;
     //Right Alveoli
     subQ = m_AerosolRightAlveoli->GetSubstanceQuantities()[i];
-    rightAlveoliDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightAlveoli->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_dt_s*SIDECoeff->GetAlveoli();
+    rightAlveoliDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolRightAlveoli->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetAlveoli();
     if (rightAlveoliDepositied_ug > subQ->GetMass(MassUnit::ug))
     {
       rightAlveoliDepositied_ug = subQ->GetMass(MassUnit::ug);
@@ -1042,7 +1039,7 @@ void Respiratory::SupplementalOxygen()
   //Inf volume is assumed to be a wall connection that will never run out
   if (so.GetVolume(VolumeUnit::L) != std::numeric_limits<double>::infinity())
   {
-    so.GetVolume().IncrementValue(-flow_L_Per_min * m_dt_min, VolumeUnit::L);
+    so.GetVolume().IncrementValue(-flow_L_Per_min * m_data.GetTimeStep_s()/60, VolumeUnit::L);
     //Check if the tank is depleated
     if (so.GetVolume(VolumeUnit::L) <= 0.0)
     {
@@ -1082,7 +1079,7 @@ void Respiratory::SupplementalOxygen()
     }
 
     double bagVolume_L = NonRebreatherMaskBag->GetNextVolume(VolumeUnit::L);
-    bagVolume_L = bagVolume_L + (flow_L_Per_min - flowOut_L_Per_min) * m_dt_min;
+    bagVolume_L = bagVolume_L + (flow_L_Per_min - flowOut_L_Per_min) * m_data.GetTimeStep_s()/60;
     if (bagVolume_L < 0.0)
     {
       bagVolume_L = 0.0;
@@ -1342,7 +1339,7 @@ void Respiratory::RespiratoryDriver()
   }  
 
   if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s &&
-    m_BreathingCycleTime_s < InspiratoryReleaseTimeStart_s + m_dt_s) //Only call this once per cycle
+    m_BreathingCycleTime_s < InspiratoryReleaseTimeStart_s + m_data.GetTimeStep_s()) //Only call this once per cycle
   {
     m_data.GetEvents().SetEvent(eEvent::StartOfExhale, true, m_data.GetSimulationTime());
   }
@@ -1398,7 +1395,7 @@ void Respiratory::RespiratoryDriver()
   m_DriverPressurePath->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
 
   //We need to do this here to allow for the inhaler to get called before the next go-around
-  m_BreathingCycleTime_s += m_dt_s;
+  m_BreathingCycleTime_s += m_data.GetTimeStep_s();
   if (m_BreathingCycleTime_s > TotalBreathingCycleTime_s) //End of the cycle or currently not breathing
   {
     if (m_ActiveConsciousRespirationCommand)
@@ -1864,7 +1861,7 @@ void Respiratory::CalculateVitalSigns()
 
   //Record values at the breathing inflection points (i.e. switch between inhale and exhale)  
   // Temporal tolerance to avoid accidental entry in the the inhalation and exhalation code blocks 
-  m_ElapsedBreathingCycleTime_min += m_dt_min;
+  m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s()/60;
 
   if (m_BreathingCycle) //Exhaling
   {    
@@ -2228,7 +2225,7 @@ void Respiratory::TuneCircuit()
   SEFluidCircuit& RespiratoryCircuit = m_data.GetCircuits().GetRespiratoryCircuit();
   //Set the starting/default driver pressure
   m_DriverPressurePath->GetNextPressureSource().Set(m_DriverPressurePath->GetPressureSourceBaseline());
-  m_Calculator->Process(RespiratoryCircuit, m_dt_s);
+  m_Calculator->Process(RespiratoryCircuit, m_data.GetTimeStep_s());
   m_Calculator->PostProcess(RespiratoryCircuit);
 
   //Make sure the new volumes are accounted for with all the substance stuff
@@ -2332,7 +2329,7 @@ void Respiratory::UpdateChestWallCompliances()
     double dampenFraction_perSec = 0.5 * 50.0;
 
     double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-    double complianceChange_L_Per_cmH2O = (chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O) * dampenFraction_perSec * m_dt_s;
+    double complianceChange_L_Per_cmH2O = (chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O) * dampenFraction_perSec * m_data.GetTimeStep_s();
  
     chestWallCompliance_L_Per_cmH2O = previousChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
     chestWallPath->GetNextCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);

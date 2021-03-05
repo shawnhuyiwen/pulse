@@ -78,7 +78,7 @@ void ECG::Initialize()
 
 void ECG::SetUp()
 {
-  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
+
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void ECG::PreProcess()
 //--------------------------------------------------------------------------------------------------
 void ECG::Process(bool solve_and_transport)
 {
-  m_heartRhythmTime_s += m_dt_s;
+  m_heartRhythmTime_s += m_data.GetTimeStep_s();
   if (m_heartRhythmTime_s >= m_heartRhythmPeriod_s)
   {
     m_heartRhythmTime_s = 0;

@@ -135,6 +135,7 @@ public:
 
   virtual const PulseConfiguration&     GetConfiguration() const;
 
+  virtual double                        GetTimeStep_s() const;
   virtual const SEScalarTime&           GetTimeStep() const;
   virtual const SEScalarTime&           GetEngineTime() const;
   virtual const SEScalarTime&           GetSimulationTime() const;

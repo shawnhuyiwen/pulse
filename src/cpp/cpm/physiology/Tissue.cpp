@@ -162,7 +162,6 @@ void Tissue::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Tissue::SetUp()
 {
-  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
   m_RestingPatientMass_kg = m_data.GetInitialPatient().GetWeight(MassUnit::kg);
 
   m_Acetoacetate = &m_data.GetSubstances().GetAcetoacetate();
@@ -302,9 +301,9 @@ void Tissue::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Tissue::PreProcess()
 {
-  ProduceAlbumin(m_dt_s);
+  ProduceAlbumin(m_data.GetTimeStep_s());
   // Glucose and lipid control is currently deactivated for model improvements.
-  // GlucoseLipidControl(m_dt_s);  
+  // GlucoseLipidControl(m_data.GetTimeStep_s());
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -317,7 +316,7 @@ void Tissue::PreProcess()
 //--------------------------------------------------------------------------------------------------
 void Tissue::Process(bool solve_and_transport)
 {
-  CalculateMetabolicConsumptionAndProduction(m_dt_s);
+  CalculateMetabolicConsumptionAndProduction(m_data.GetTimeStep_s());
   CalculatePulmonaryCapillarySubstanceTransfer();
   CalculateDiffusion();
   SEScalarMassPerVolume albuminConcentration;
@@ -397,7 +396,7 @@ void Tissue::CalculateDiffusion()
       {
         if (!tissueKinetics->HasPartitionCoefficient())
           continue;// wtf...? why would it not have it?
-        PerfusionLimitedDiffusion(*tissue, *vascular, *sub, tissueKinetics->GetPartitionCoefficient(), m_dt_s); //Balance happens in the method      
+        PerfusionLimitedDiffusion(*tissue, *vascular, *sub, tissueKinetics->GetPartitionCoefficient(), m_data.GetTimeStep_s()); //Balance happens in the method      
       }
       // Otherwise, the diffusion is computed by either:
       // Instantaneous diffusion (gases and very small molecules), Simple diffusion (all substances), Facilitated diffusion (glucose), or Active diffusion (pumps)
@@ -415,7 +414,7 @@ void Tissue::CalculateDiffusion()
           // Sodium is special. We need to diffuse for renal function.
           // We will not treat sodium any differently once diffusion functionality is fully implemented.
           if (sub == m_Sodium)
-            MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_dt_s);
+            MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_data.GetTimeStep_s());
 
           continue;
         }
@@ -425,7 +424,7 @@ void Tissue::CalculateDiffusion()
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // --- First, instant diffusion ---
-        MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_dt_s);
+        MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_data.GetTimeStep_s());
 
         // --- Second, simple diffusion ---
           // Compute the vascular to extracellular permeability coefficient
@@ -443,7 +442,7 @@ void Tissue::CalculateDiffusion()
         double vToECpermeabilityCoefficient_mL_Per_s = vToECpermeabilityCoefficient_mL_Per_s_g * tissue->GetTotalMass(MassUnit::g);
           // A tuning factor helps tune the dynamics - note that concentrations will ALWAYS equilibrate in steady state given enough time regardless of the permeability
         double vToECPermeabilityTuningFactor = 1.0; 
-        MoveMassBySimpleDiffusion(*vascular, extracellular, *sub, vToECPermeabilityTuningFactor*vToECpermeabilityCoefficient_mL_Per_s, m_dt_s);
+        MoveMassBySimpleDiffusion(*vascular, extracellular, *sub, vToECPermeabilityTuningFactor*vToECpermeabilityCoefficient_mL_Per_s, m_data.GetTimeStep_s());
 
         // --- Third facilitated diffusion ---
         if (sub->HasMaximumDiffusionFlux())
@@ -452,13 +451,13 @@ void Tissue::CalculateDiffusion()
           double capCoverage_cm2 = massToAreaCoefficient_cm2_Per_g * tissue->GetTotalMass(MassUnit::g);
           double maximumMassFlux = sub->GetMaximumDiffusionFlux(MassPerAreaTimeUnit::g_Per_cm2_s);
           double combinedCoefficient_g_Per_s = maximumMassFlux*capCoverage_cm2;
-          MoveMassByFacilitatedDiffusion(*vascular, extracellular, *sub, combinedCoefficient_g_Per_s, m_dt_s);
+          MoveMassByFacilitatedDiffusion(*vascular, extracellular, *sub, combinedCoefficient_g_Per_s, m_data.GetTimeStep_s());
         }
 
         // --- Fourth, and final vascular to EV-EC, Active diffusion ---
         double pumpRate_g_Per_s = 0.0;
         /// \todo Compute the pump rate from an empirically-determined baseline pump rate.
-        MoveMassByActiveTransport(*vascular, extracellular, *sub, pumpRate_g_Per_s, m_dt_s);
+        MoveMassByActiveTransport(*vascular, extracellular, *sub, pumpRate_g_Per_s, m_data.GetTimeStep_s());
         
 #ifdef PROBE_BLOOD_GASES
         if (sub == &m_data.GetSubstances().GetO2() || sub == &m_data.GetSubstances().GetCO2())
@@ -474,12 +473,12 @@ void Tissue::CalculateDiffusion()
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // --- First, instant diffusion ---
-        MoveMassByInstantDiffusion(extracellular, intracellular, *sub, m_dt_s);
+        MoveMassByInstantDiffusion(extracellular, intracellular, *sub, m_data.GetTimeStep_s());
 
         // --- Second, simple diffusion ---
           // Assuming that the capillary permeability coefficient is proportional to the cellular membrane permeability coefficient for a given tissue and substance
         double ECtoICPermeabilityFactor = 1.0; // This is the permeability constant
-        MoveMassBySimpleDiffusion(extracellular, intracellular, *sub, ECtoICPermeabilityFactor*vToECpermeabilityCoefficient_mL_Per_s, m_dt_s);
+        MoveMassBySimpleDiffusion(extracellular, intracellular, *sub, ECtoICPermeabilityFactor*vToECpermeabilityCoefficient_mL_Per_s, m_data.GetTimeStep_s());
 
         // --- Third facilitated diffusion ---
           // In Pulse, only glucose moves by facilitated diffusion, and it is assumed that all glucose that gets to the 
@@ -489,7 +488,7 @@ void Tissue::CalculateDiffusion()
         // --- Fourth, and final vascular to EV-EC, Active diffusion ---
         pumpRate_g_Per_s = 0.0;
         /// \todo Compute the pump rate from an empirically-determined baseline pump rate.
-        MoveMassByActiveTransport(extracellular, intracellular, *sub, pumpRate_g_Per_s, m_dt_s);        
+        MoveMassByActiveTransport(extracellular, intracellular, *sub, pumpRate_g_Per_s, m_data.GetTimeStep_s());
 
 #ifdef PROBE_BLOOD_GASES
         if (sub == &m_data.GetSubstances().GetO2() || sub == &m_data.GetSubstances().GetCO2())
@@ -549,11 +548,11 @@ void Tissue::CalculatePulmonaryCapillarySubstanceTransfer()
 
     //Left Side Alveoli Transfer
     DiffusingCapacityPerSide_mLPerSPermmHg = StandardDiffusingCapacityOfOxygen_mLPersPermmHg * (1 - RightLungRatio);
-    AlveolarPartialPressureGradientDiffusion(*m_LeftAlveoli, *m_LeftPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_dt_s);
+    AlveolarPartialPressureGradientDiffusion(*m_LeftAlveoli, *m_LeftPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_data.GetTimeStep_s());
 
     //Right Side Alveoli Transfer
     DiffusingCapacityPerSide_mLPerSPermmHg = StandardDiffusingCapacityOfOxygen_mLPersPermmHg * RightLungRatio;
-    AlveolarPartialPressureGradientDiffusion(*m_RightAlveoli, *m_RightPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_dt_s);
+    AlveolarPartialPressureGradientDiffusion(*m_RightAlveoli, *m_RightPulmonaryCapillaries, *sub, DiffusingCapacityPerSide_mLPerSPermmHg, m_data.GetTimeStep_s());
 
     if (m_LeftAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_LeftPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0 ||
       m_RightAlveoli->GetSubstanceQuantity(*sub)->GetVolume(VolumeUnit::mL) < 0.0 || m_RightPulmonaryCapillaries->GetSubstanceQuantity(*sub)->GetMass(MassUnit::ug) < 0.0)

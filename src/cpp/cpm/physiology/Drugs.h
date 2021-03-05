@@ -49,7 +49,6 @@ protected:
   void CalculateDrugEffects();
 
   // Stateless member variable (Set in SetUp())
-  double m_dt_s;
   SELiquidCompartment*  m_aortaVascular;
   SELiquidCompartment*  m_venaCavaVascular;
   SELiquidCompartment*  m_muscleIntracellular;
