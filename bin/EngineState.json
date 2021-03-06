@@ -1,4 +1,7 @@
-{"Scenario": {
+{
+  "Configuration": {
+    "TimeStep" : { "ScalarTime": { "Value": 0.02, "Unit": "s" } }
+  },{"Scenario": {
   "Name":"BasicStandard",
   "Description":"Basic scenario measuring patient vitals with no insults or interventions",
   "EngineStateFile":"./states/StandardMale@0s.pbb",
@@ -110,4 +113,4 @@
       "ReloadState": "On"
     }
   }
-}
+}}
