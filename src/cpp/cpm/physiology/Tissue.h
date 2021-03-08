@@ -78,7 +78,6 @@ protected:
   double m_RestingFluidMass_kg;
 
   // Stateless member variable (Set in SetUp())
-  double m_dt_s;
   double m_AlbuminProdutionRate_g_Per_s;
   SESubstance*                m_Albumin;
   SESubstance*                m_Glucose;

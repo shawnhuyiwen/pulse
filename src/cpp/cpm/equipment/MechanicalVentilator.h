@@ -62,8 +62,6 @@ protected:
   eBreathState          m_CurrentBreathState;
 
   // Stateless member variable (Set in SetUp())
-  double                m_dt_s;
-
   SEGasCompartment*     m_Environment;
   SEGasCompartment*     m_Ventilator;
   SELiquidCompartment*  m_VentilatorAerosol;

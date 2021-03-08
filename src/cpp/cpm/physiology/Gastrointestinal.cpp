@@ -124,7 +124,6 @@ void Gastrointestinal::SetUp()
   m_SmallIntestineCalcium = m_SmallIntestine->GetSubstanceQuantity(m_data.GetSubstances().GetCalcium());
   m_SmallIntestineSodium = m_SmallIntestine->GetSubstanceQuantity(m_data.GetSubstances().GetSodium());
   m_SmallIntestineUrea = m_SmallIntestine->GetSubstanceQuantity(m_data.GetSubstances().GetUrea());
-  m_dT_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -160,22 +159,22 @@ void Gastrointestinal::PreProcess()
     if (m_data.GetActions().GetPatientActions().HasConsumeNutrients())
     {
       // Use Default Rates if none provided
-      SEConsumeNutrients* c = m_data.GetActions().GetPatientActions().GetConsumeNutrients();
-      if (c->HasNutritionFile())
+      SEConsumeNutrients& c = m_data.GetActions().GetPatientActions().GetConsumeNutrients();
+      if (c.HasNutritionFile())
       {// Grab file, then load it (note GetNutrition will remove the file name, so get it first)
-        std::string file = c->GetNutritionFile();
-        if (!c->GetNutrition().SerializeFromFile(file))
+        std::string file = c.GetNutritionFile();
+        if (!c.GetNutrition().SerializeFromFile(file))
         {
           /// \error Unable to read consume meal action file
           Error("Could not read provided nutrition file", "Gastrointestinal::PreProcess");
         }
       }
-      DefaultNutritionRates(c->GetNutrition());
-      m_StomachContents->Increment(c->GetNutrition());
-      m_data.GetCurrentPatient().GetWeight().IncrementValue(c->GetNutrition().GetWeight(MassUnit::kg), MassUnit::kg);
+      DefaultNutritionRates(c.GetNutrition());
+      m_StomachContents->Increment(c.GetNutrition());
+      m_data.GetCurrentPatient().GetWeight().IncrementValue(c.GetNutrition().GetWeight(MassUnit::kg), MassUnit::kg);
       m_data.GetActions().GetPatientActions().RemoveConsumeNutrients();
     }
-    DigestStomachNutrients(m_dT_s);
+    DigestStomachNutrients(m_data.GetTimeStep_s());
     absorptionRate_mL_Per_min = 3.3;
   }
   else
@@ -198,7 +197,7 @@ void Gastrointestinal::PreProcess()
     m_SmallIntestineUrea->Balance(BalanceLiquidBy::Mass);
     absorptionRate_mL_Per_min = 1.1;
   }
-  double absorbedVolume_mL = absorptionRate_mL_Per_min * m_dT_s / 60;
+  double absorbedVolume_mL = absorptionRate_mL_Per_min * m_data.GetTimeStep_s() / 60;
   double siVolume_mL = m_SmallIntestineChyme->GetVolume().GetValue(VolumeUnit::mL);
   if (siVolume_mL <= 0)
   {
@@ -207,12 +206,12 @@ void Gastrointestinal::PreProcess()
   else if (absorbedVolume_mL > siVolume_mL)
   {//Only take what we have
     absorbedVolume_mL = siVolume_mL;
-    absorptionRate_mL_Per_min = 60 * (absorbedVolume_mL / m_dT_s);
+    absorptionRate_mL_Per_min = 60 * (absorbedVolume_mL / m_data.GetTimeStep_s());
   }
   m_GItoCVPath->GetNextFlowSource().SetValue(absorptionRate_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
   //Need to manually remove volume, since there isn't a compliance
   if (m_data.GetState() == EngineState::Active) // Only if we are active
-    m_GItoCVPath->GetSourceNode().GetNextVolume().IncrementValue(-absorptionRate_mL_Per_min / 60.0 * m_dT_s, VolumeUnit::mL);
+    m_GItoCVPath->GetSourceNode().GetNextVolume().IncrementValue(-absorptionRate_mL_Per_min / 60.0 * m_data.GetTimeStep_s(), VolumeUnit::mL);
   GetWaterAbsorptionRate().SetValue(absorptionRate_mL_Per_min, VolumePerTimeUnit::mL_Per_min);
 }
 

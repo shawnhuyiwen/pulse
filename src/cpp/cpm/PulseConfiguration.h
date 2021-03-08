@@ -37,6 +37,9 @@ public:
   virtual SEScalarTime& GetTimeStep();
   virtual double GetTimeStep(const TimeUnit& unit) const;
 
+  virtual eSwitch AllowDynamicTimeStep() const { return m_AllowDynamicTimeStep; }
+  virtual void AllowDynamicTimeStep(eSwitch s) { m_AllowDynamicTimeStep = s; }
+
   // You can have either a timed or dynamic stabilization object (cannot have both)
   virtual bool HasStabilization() const;
   virtual SEEngineStabilization* GetStabilization();
@@ -68,6 +71,7 @@ public:
 protected:
 
   SEScalarTime*              m_TimeStep;
+  eSwitch                    m_AllowDynamicTimeStep;
   SETimedStabilization*      m_TimedStabilization;
   SEDynamicStabilization*    m_DynamicStabilization;
   SEAutoSerialization*       m_AutoSerialization;

@@ -20,7 +20,7 @@ SEAutoSerialization::~SEAutoSerialization()
   SAFE_DELETE(m_Period);
   m_PeriodTimeStamps = eSwitch::Off;
   m_AfterActions = eSwitch::Off;
-  m_AfterActions = eSwitch::Off;
+  m_ReloadState = eSwitch::Off;
   m_Directory = "";
   m_FileName = "";
 }
@@ -30,16 +30,16 @@ void SEAutoSerialization::Clear()
   INVALIDATE_PROPERTY(m_Period);
   m_PeriodTimeStamps = eSwitch::Off;
   m_AfterActions = eSwitch::Off;
-  m_AfterActions = eSwitch::Off;
+  m_ReloadState = eSwitch::Off;
   m_Directory = "";
   m_FileName = "";
 }
 
 bool SEAutoSerialization::IsValid() const
 {
-  if (!HasPeriod())
+  if (HasPeriod() && m_Period->IsNegative())
     return false;
-  if (m_Period->IsNegative())
+  else if (m_AfterActions == eSwitch::Off)
     return false;
   if (!HasDirectory())
     return false;

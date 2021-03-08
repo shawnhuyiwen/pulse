@@ -6,6 +6,7 @@
 #include "system/physiology/SECardiovascularSystem.h"
 #include "substance/SESubstanceTransport.h"
 class SEPatient;
+class SEHemorrhage;
 class SELiquidCompartment;
 class SEGasCompartment;
 class SELiquidSubstanceQuantity;
@@ -106,9 +107,6 @@ protected:
   double m_CompressionTime_s;
   double m_CompressionRatio;
   double m_CompressionPeriod_s;
-  //Hemorrhage
-  std::vector<SELiquidCompartmentLink*> m_HemorrhageLinks;
-  std::vector<SEFluidCircuitPath*> m_HemorrhagePaths;
   // Vitals and Averages
   double m_CurrentCardiacCycleTime_s;
   double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
@@ -128,11 +126,20 @@ protected:
   SERunningAverage* m_CardiacCycleSkinFlow_mL_Per_s;
   
   // Stateless member variable (Set in SetUp())
-  double                           m_dT_s;
   bool                             m_TuneCircuit = true;
   std::string                      m_TuningFile;
 
-  double                           m_minIndividialSystemicResistance__mmHg_s_Per_mL;
+  // Hemorrhage
+  struct HemorrhageTrack
+  {
+    SELiquidCompartment* Compartment=nullptr;
+    std::vector<SEFluidCircuitNode*> Nodes;
+    std::map<SEFluidCircuitPath*, SELiquidCompartmentLink*> Paths2Links;
+    short NumNodesWithVolume=0;
+  };
+  std::map<SEHemorrhage*, HemorrhageTrack*>m_HemorrhageTrack;
+
+  double                           m_minIndividialSystemicResistance_mmHg_s_Per_mL;
   
   SEFluidCircuitCalculator*        m_circuitCalculator;
   SELiquidTransporter*             m_transporter;
@@ -206,6 +213,8 @@ protected:
 
   SEGasCompartment*                m_leftPleuralCavity;
   SEGasCompartment*                m_rightPleuralCavity;
+  SEGasCompartment*                m_PleuralCavity;
+  SEGasCompartment*                m_Ambient;
 
   std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
   std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;

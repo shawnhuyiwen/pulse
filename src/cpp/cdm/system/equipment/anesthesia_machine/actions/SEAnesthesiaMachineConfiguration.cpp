@@ -34,7 +34,7 @@ void SEAnesthesiaMachineConfiguration::Clear()
     m_Configuration->Clear();
 }
 
-void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr)
+void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
@@ -42,6 +42,21 @@ void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfigurati
 bool SEAnesthesiaMachineConfiguration::IsValid() const
 {
   return SEAnesthesiaMachineAction::IsValid() && (HasConfiguration() || HasConfigurationFile());
+}
+
+bool SEAnesthesiaMachineConfiguration::IsActive() const
+{
+  return SEAnesthesiaMachineAction::IsActive();
+}
+void SEAnesthesiaMachineConfiguration::Deactivate()
+{
+  SEAnesthesiaMachineAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAnesthesiaMachineConfiguration::GetScalar(const std::string& name)
+{
+  return GetConfiguration().GetScalar(name);
 }
 
 bool SEAnesthesiaMachineConfiguration::HasConfiguration() const

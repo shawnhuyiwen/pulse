@@ -87,14 +87,14 @@ void PulseEngine::SetSimulationTime(const SEScalarTime& time)
   return  m_PulseController->SetSimulationTime(time);
 }
 
-void PulseEngine::AdvanceModelTime()
+bool PulseEngine::AdvanceModelTime()
 {
-  m_PulseController->AdvanceModelTime();
+  return m_PulseController->AdvanceModelTime();
 }
 
-void PulseEngine::AdvanceModelTime(double time, const TimeUnit& unit)
+bool PulseEngine::AdvanceModelTime(double time, const TimeUnit& unit)
 {
-  m_PulseController->AdvanceModelTime(time, unit);
+  return m_PulseController->AdvanceModelTime(time, unit);
 }
 
 bool PulseEngine::ProcessAction(const SEAction& action)

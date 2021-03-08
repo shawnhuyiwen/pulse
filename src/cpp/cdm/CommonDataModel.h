@@ -36,6 +36,7 @@
   #define PUSH_PROTO_WARNINGS() \
     __pragma(pack(push)) \
     __pragma(warning(disable:4127)) \
+    __pragma(warning(disable:4244)) \
     __pragma(warning(disable:4267))
   #define POP_PROTO_WARNINGS() __pragma(pack(pop))
 #else

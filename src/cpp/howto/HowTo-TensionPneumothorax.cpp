@@ -102,13 +102,13 @@ void HowToTensionPneumothorax()
   SENeedleDecompression needleDecomp;
   
   // You can turn it off when you would like to remove the intervention
-  needleDecomp.SetActive(false);
+  needleDecomp.SetState(eSwitch::Off);
   
   // It can be on the Left or right side (it's a good idea to do it on the side of the pneumothorax ;)
   needleDecomp.SetSide(eSide::Right);
   //needleDecomp.SetSide(CDM::enumSide::Left);
   
-  needleDecomp.SetActive(true);
+  needleDecomp.SetState(eSwitch::On);
   pe->ProcessAction(needleDecomp);
   pe->GetLogger()->Info("Giving the patient a needle decompression");
 

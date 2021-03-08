@@ -367,11 +367,6 @@ void PulseEngineTest::CardiovascularCircuitAndTransportTest(CardiovascularDriver
   SEFluidCircuitNode* VenaCava = cvCircuit.GetNode("VenaCava");
   SEFluidCircuitPath *RightCompliance = cvCircuit.GetPath(pulse::CardiovascularPath::RightHeart1ToRightHeart3);
   SEFluidCircuitPath *LeftCompliance = cvCircuit.GetPath(pulse::CardiovascularPath::LeftHeart1ToLeftHeart3);
-  SEFluidCircuitPath *HeartLeft = cvCircuit.GetPath(pulse::CardiovascularPath::LeftHeart1ToAorta2);
-
-  SELiquidSubstanceQuantity* venaCavaN2 = cvGraph.GetCompartment(pulse::VascularCompartment::VenaCava)->GetSubstanceQuantity(pc.GetSubstances().GetN2());
-  SELiquidSubstanceQuantity* leftPulmonaryCapillariesN2 = cvGraph.GetCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries)->GetSubstanceQuantity(pc.GetSubstances().GetN2());
-  SELiquidSubstanceQuantity* rightPulmonaryCapillariesN2 = cvGraph.GetCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries)->GetSubstanceQuantity(pc.GetSubstances().GetN2());
 
   SELiquidTransporter txpt(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, pc.GetLogger());
   SEFluidCircuitCalculator calc(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, pc.GetLogger());
@@ -694,7 +689,7 @@ void PulseEngineTest::CardiovascularCircuitScaleTests(const std::string& sTestDi
   // Note: You could scale the amplitude/elastance of the driver if want (We didn't at the time I wrote it, but its possible!)
   double heartRate_bpm = 72;// Note, you should always pass in a bpm other than <=0 for a well named file
   ss << heartRate_bpm;
-  double comp = 1.0, res = 1.0, vol = 1, sysRes = 1, sysComp = 1, aortaRes = 0.7, aortaComp = 0.7, venaRes = 1, venaComp = 1;
+  const double comp = 1.0, res = 1.0, vol = 1, sysRes = 1, sysComp = 1, aortaRes = 0.7, aortaComp = 0.7, venaRes = 1, venaComp = 1;
 
   //for (double rFactor = 0.3; rFactor <= 1.7; rFactor += 0.1)
   //{

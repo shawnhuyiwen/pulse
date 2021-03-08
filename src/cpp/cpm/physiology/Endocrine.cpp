@@ -65,7 +65,6 @@ void Endocrine::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Endocrine::SetUp()
 {
-  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
   SELiquidCompartment* aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
   SELiquidCompartment* rkidney = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightEfferentArteriole);
   SELiquidCompartment* lkidney = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftEfferentArteriole);
@@ -123,7 +122,7 @@ void Endocrine::SynthesizeInsulin()
     GetInsulinSynthesisRate().SetValue(insulinSynthesisRate_pmol_Per_min, AmountPerTimeUnit::pmol_Per_min);
 
     insulinMassDelta_g = Convert(insulinSynthesisRate_pmol_Per_min, AmountPerTimeUnit::pmol_Per_min, AmountPerTimeUnit::mol_Per_s);
-    insulinMassDelta_g *= m_insulinMolarMass_g_Per_mol * m_dt_s;
+    insulinMassDelta_g *= m_insulinMolarMass_g_Per_mol * m_data.GetTimeStep_s();
   }
   m_splanchnicInsulin->GetMass().IncrementValue(insulinMassDelta_g, MassUnit::g);
   m_splanchnicInsulin->Balance(BalanceLiquidBy::Mass);
@@ -142,7 +141,7 @@ void Endocrine::ReleaseEpinephrine()
   SEPatient& Patient = m_data.GetCurrentPatient();
   double patientWeight_kg = Patient.GetWeight(MassUnit::kg);
   double epinephrineBasalReleaseRate_ug_Per_min = .00229393 * patientWeight_kg; //We want it to be ~.18 ug/min for our StandardMale
-  double epinephrineRelease_ug = (epinephrineBasalReleaseRate_ug_Per_min / 60) * m_dt_s;  //amount released per timestep
+  double epinephrineRelease_ug = (epinephrineBasalReleaseRate_ug_Per_min / 60) * m_data.GetTimeStep_s();  //amount released per timestep
 
   double currentMetabolicRate_W = m_data.GetEnergy().GetTotalMetabolicRate(PowerUnit::W);
   double basalMetabolicRate_W = Patient.GetBasalMetabolicRate(PowerUnit::W);
@@ -163,8 +162,7 @@ void Endocrine::ReleaseEpinephrine()
   // If we have a stress/anxiety response, release more epi
   if (m_data.GetActions().GetPatientActions().HasAcuteStress())
   {
-    SEAcuteStress* s = m_data.GetActions().GetPatientActions().GetAcuteStress();
-    double severity = s->GetSeverity().GetValue();
+    double severity = m_data.GetActions().GetPatientActions().GetAcuteStress().GetSeverity().GetValue();
 
     //The highest stress multiplier we currently support is 30
     releaseMultiplier += GeneralMath::LinearInterpolator(0, 1, 0, 30, severity);

@@ -47,9 +47,11 @@ void SEMechanicalVentilation::Clear()
     sc->Clear();
 }
 
-void SEMechanicalVentilation::Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr)
+void SEMechanicalVentilation::Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this, subMgr);
+  //if(preserveState) // Put back any state
 }
 
 bool SEMechanicalVentilation::IsValid() const
@@ -82,7 +84,23 @@ bool SEMechanicalVentilation::IsValid() const
 
 bool SEMechanicalVentilation::IsActive() const
 {
+  if (!SEPatientAction::IsActive())
+    return false;
   return GetState() == eSwitch::On;
+}
+void SEMechanicalVentilation::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEMechanicalVentilation::GetScalar(const std::string& name)
+{
+  if (name.compare("Flow") == 0)
+    return &GetFlow();
+  if (name.compare("Pressure") == 0)
+    return &GetPressure();
+  return nullptr;
 }
 
 eSwitch SEMechanicalVentilation::GetState() const

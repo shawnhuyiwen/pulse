@@ -22,9 +22,11 @@ void SEPulmonaryShuntExacerbation::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEPulmonaryShuntExacerbation::Copy(const SEPulmonaryShuntExacerbation& src)
+void SEPulmonaryShuntExacerbation::Copy(const SEPulmonaryShuntExacerbation& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEPulmonaryShuntExacerbation::IsValid() const
@@ -34,7 +36,21 @@ bool SEPulmonaryShuntExacerbation::IsValid() const
 
 bool SEPulmonaryShuntExacerbation::IsActive() const
 {
-  return IsValid() ? !m_Severity->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Severity->IsZero();
+}
+void SEPulmonaryShuntExacerbation::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEPulmonaryShuntExacerbation::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEPulmonaryShuntExacerbation::HasSeverity() const

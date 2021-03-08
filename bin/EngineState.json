@@ -1,4 +1,7 @@
 {
+  "Configuration": {
+    "TimeStep" : { "ScalarTime": { "Value": 0.02, "Unit": "s" } }
+  },{"Scenario": {
   "Name":"BasicStandard",
   "Description":"Basic scenario measuring patient vitals with no insults or interventions",
   "EngineStateFile":"./states/StandardMale@0s.pbb",
@@ -93,4 +96,21 @@
     {"DecimalFormat":{"Precision":2}, "Category":"LiquidCompartment","CompartmentName":"Pericardium","PropertyName":"Pressure","Unit":"mmHg"}
   ]},
 
-  "AnyAction":[{"AdvanceTime":{"Time":{"ScalarTime":{"Value":2.0,"Unit":"min"}}}}]}
+  "AnyAction":[{"AdvanceTime":{"Time":{"ScalarTime":{"Value":2.0,"Unit":"min"}}}}]},
+  
+  "Configuration": {
+    "AutoSerialization": {
+      "Directory": "./states/testing/",
+      "Filename": "patient/HemorrhageVaryingSeverity",
+      "AfterActions": "On",
+      "Period": {
+        "ScalarTime": {
+          "Value": 5.0,
+          "Unit": "s"
+        }
+      },
+      "PeriodTimeStamps": "On",
+      "ReloadState": "On"
+    }
+  }
+}}

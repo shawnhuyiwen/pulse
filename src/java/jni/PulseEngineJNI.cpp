@@ -394,8 +394,4 @@ void PulseEngineJNI::ForwardFatal(const std::string& msg, const std::string& ori
       jniFatalMethodID = jniEnv->GetMethodID(jniEnv->GetObjectClass(jniObj), "LogFatal", "(Ljava/lang/String;Ljava/lang/String;)V");
     jniEnv->CallVoidMethod(jniObj, jniFatalMethodID, m, o);
   }
-  std::string err;
-  err.append(msg);
-  err.append(" ");
-  err.append(origin);
 }

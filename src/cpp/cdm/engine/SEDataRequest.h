@@ -8,9 +8,9 @@ class SEDataRequestManager;
 #include "engine/SEDecimalFormat.h"
 
 enum class eDataRequest_Category {
-  Patient = 0, Physiology, Environment, GasCompartment,
-  LiquidCompartment, ThermalCompartment, TissueCompartment, Substance,
-  AnesthesiaMachine, ECG, Inhaler, MechanicalVentilator
+  Patient = 0, Physiology, Environment, Action,
+  GasCompartment, LiquidCompartment, ThermalCompartment, TissueCompartment,
+  Substance, AnesthesiaMachine, ECG, Inhaler, MechanicalVentilator
 };
 extern const std::string& eDataRequest_Category_Name(eDataRequest_Category m);
 
@@ -33,6 +33,12 @@ public:
 
   // The Request Category
   virtual eDataRequest_Category GetCategory() const;
+
+  // OPTIONAL The Action Name holding the property
+  virtual std::string GetActionName() const;
+  virtual void SetActionName(const std::string& name);
+  virtual bool HasActionName() const;
+  virtual void InvalidateActionName();
 
   // OPTIONAL The Compartment Name holding the property
   virtual std::string GetCompartmentName() const;
@@ -70,6 +76,7 @@ public:
 protected:
 
   eDataRequest_Category          m_Category;
+  std::string                    m_ActionName;
   std::string                    m_CompartmentName;
   std::string                    m_SubstanceName;
   std::string                    m_PropertyName;

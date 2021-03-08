@@ -43,7 +43,6 @@ protected:
   // Serializable member variables (Set in Initialize and in schema)
 
   // Stateless member variable (Set in SetUp())
-  double                     m_dt_s;
   SEGasCompartment          *m_Mouthpiece;
   SELiquidCompartment       *m_AerosolMouthpiece;
   SEGasCompartment          *m_AmbientEnv;

@@ -65,7 +65,6 @@ protected:
   double       m_totalBreathingCycleTime_s;
 
   // Stateless member variable (Set in SetUp())
-  double m_dt_s;
   double m_dValveOpenResistance_cmH2O_s_Per_L;
   double m_dValveClosedResistance_cmH2O_s_Per_L;
   double m_dSwitchOpenResistance_cmH2O_s_Per_L;

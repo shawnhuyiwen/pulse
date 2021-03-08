@@ -30,7 +30,7 @@ void SEInhalerConfiguration::Clear()
     m_Configuration->Clear();
 }
 
-void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr)
+void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
@@ -38,6 +38,21 @@ void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESub
 bool SEInhalerConfiguration::IsValid() const
 {
   return SEInhalerAction::IsValid() && (HasConfiguration() || HasConfigurationFile());
+}
+
+bool SEInhalerConfiguration::IsActive() const
+{
+  return SEInhalerAction::IsActive();
+}
+void SEInhalerConfiguration::Deactivate()
+{
+  SEInhalerAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEInhalerConfiguration::GetScalar(const std::string& name)
+{
+  return GetConfiguration().GetScalar(name);
 }
 
 bool SEInhalerConfiguration::HasConfiguration() const

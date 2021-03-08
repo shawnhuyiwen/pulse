@@ -13,10 +13,11 @@ public:
   virtual ~SELobarPneumoniaExacerbation();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SELobarPneumoniaExacerbation& src);
+  virtual void Copy(const SELobarPneumoniaExacerbation& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
@@ -31,6 +32,8 @@ public:
   virtual double GetRightLungAffected() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
 

@@ -328,7 +328,6 @@ void PBSubstance::Serialize(const CDM_BIND::SubstanceCompoundData& src, SESubsta
   std::string err;
 
   const SESubstance* substance = nullptr;
-  SESubstanceConcentration* cc;
   for (int i = 0; i < src.component_size(); i++)
   {
     const CDM_BIND::SubstanceConcentrationData& cData = src.component(i);
@@ -339,10 +338,8 @@ void PBSubstance::Serialize(const CDM_BIND::SubstanceCompoundData& src, SESubsta
       dst.Fatal("Could not load find substance compound component : " + cData.name(), "SESubstanceCompound::Load");
       continue;
     }
-    cc = new SESubstanceConcentration(*substance);
-    PBSubstance::Load(cData, *cc);
-    dst.m_Components.push_back(cc);
-    dst.m_cComponents.push_back(cc);
+    SESubstanceConcentration& sc = dst.GetComponent(*substance);
+    PBSubstance::Load(cData, sc);
   }
 }
 

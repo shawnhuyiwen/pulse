@@ -117,7 +117,7 @@ void HowToEngineUse()
   // and PulseEngine will log and also call the provided method with the message.
   // You can specify a set of functions to be called for any one of the log levels
   MyLogger myLogger;
-  pe->GetLogger()->SetForward(&myLogger);
+  pe->GetLogger()->AddForward(&myLogger);
   pe->GetLogger()->Info("HowTo_EngineUse");
 
   // You can tell the PulseEngine to also notify you of any events as well
@@ -179,9 +179,13 @@ void HowToEngineUse()
 
   // We are ready to execute the engine
   // simply tell the engine how long you would like it to execute
-  tracker.AdvanceModelTime(5);// Note this tracker class takes in seconds
+  if (!tracker.AdvanceModelTime(5))// Note this tracker class takes in seconds
+  {
+    pe->GetLogger()->Fatal("Unable to advance engine time");
+    return;
+  }
   // If not using the tracker call
-  // pe->AdvanceModelTime(5,TimeUnit::s);
+  // pe->AdvanceModelTime(5,TimeUnit::s); // Test for true
   // If you do not provide a time, the engine will execute 1 time step, the Pulse timestep can be retrieved with:
   //pe->GetTimeStep(TimeUnit::s);
 

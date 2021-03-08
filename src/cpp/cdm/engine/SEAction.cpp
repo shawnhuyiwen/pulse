@@ -22,6 +22,7 @@ SEAction::~SEAction()
 void SEAction::Clear()
 {
   m_Comment="";
+  m_Active = false;
 }
 
 std::string SEAction::GetComment() const

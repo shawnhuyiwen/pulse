@@ -179,11 +179,11 @@ void PulseController::SetupCardiovascular()
 
   double systolicPressureTarget_mmHg = m_InitialPatient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
   double heartRate_bpm = m_InitialPatient->GetHeartRateBaseline(FrequencyUnit::Per_min);
-  double strokeVolumeTarget_mL = 81.0;
+  const double strokeVolumeTarget_mL = 81.0;
   double cardiacOutputTarget_mL_Per_s = heartRate_bpm / 60.0 * strokeVolumeTarget_mL;
-  double diastolicPressureTarget_mmHg = 80.0;
-  double centralVenousPressureTarget_mmHg = 4.0;
-  double pulmonaryShuntFractionFactor = 0.009; // Used to set the pulmonary shunt fraction. Actual shunt will be roughly double this value (two lungs).
+  const double diastolicPressureTarget_mmHg = 80.0;
+  const double centralVenousPressureTarget_mmHg = 4.0;
+  const double pulmonaryShuntFractionFactor = 0.009; // Used to set the pulmonary shunt fraction. Actual shunt will be roughly double this value (two lungs).
   // The way this works is we compute resistances and compliances based on the hemodynamic variables above that are either in the patient
   // file or we use the defaults if nothing is there. Because the actual impedance depends on the frequency, the computations assume a resting heart rate.
   // So if a user needs to put pressures in the patient file assuming that the pts baseline hr is in the normal range (around 72).
@@ -193,14 +193,14 @@ void PulseController::SetupCardiovascular()
   // We compute a tuning modifier to adjust some baseline resistances and compliances to get closer to the target systolic and diastolic pressures from the patient file
   // The tuning method in cardiovascular will do the fine tuning. This just speeds up the process.
   /// \todo Make these a function of the systolic and diastolic pressure by fitting a curve to the data from the variations test
-  double systemicResistanceModifier = 0.849;
-  double largeArteriesComplianceModifier = 0.4333;
+  const double systemicResistanceModifier = 0.849;
+  const double largeArteriesComplianceModifier = 0.4333;
 
   // Volume fractions and flow rates from \cite valtin1995renal
   // Pressure targets derived from information available in \cite guyton2006medical and \cite van2013davis
   double VolumeFractionAorta = 0.05, VascularPressureTargetAorta = 1.0 * systolicPressureTarget_mmHg, VascularFlowTargetAorta = 1.0 * cardiacOutputTarget_mL_Per_s;
   double VolumeFractionArmLeft = 0.01, VascularPressureTargetArmLeft = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetArmLeft = male ? 0.01448 * cardiacOutputTarget_mL_Per_s : 0.01664 * cardiacOutputTarget_mL_Per_s;
-  double VolumeFractionArmRight = VolumeFractionArmLeft, VascularPressureTargetArmRight = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetArmRight = VascularFlowTargetArmLeft;
+  double VolumeFractionArmRight = VolumeFractionArmLeft, VascularPressureTargetArmRight = 0.33 * systolicPressureTarget_mmHg;
   double VolumeFractionBone = 0.07, VascularPressureTargetBone = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetBone = 0.05 * cardiacOutputTarget_mL_Per_s;
   double VolumeFractionBrain = 0.012, VascularPressureTargetBrain = 0.08 * systolicPressureTarget_mmHg, VascularFlowTargetBrain = 0.12 * cardiacOutputTarget_mL_Per_s;
   double VolumeFractionFat = male ? 0.05 : 0.085, VascularPressureTargetFat = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetFat = male ? 0.05 * cardiacOutputTarget_mL_Per_s : 0.0085 * cardiacOutputTarget_mL_Per_s;
@@ -209,11 +209,11 @@ void PulseController::SetupCardiovascular()
   double VolumeFractionKidney = 0.0202, VascularPressureTargetKidney = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetKidney = male ? 0.098 * cardiacOutputTarget_mL_Per_s : 0.088 * cardiacOutputTarget_mL_Per_s;
   double VolumeFractionLargeIntestine = 0.019, VascularPressureTargetLargeIntestine = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetLargeIntestine = male ? 0.04 * cardiacOutputTarget_mL_Per_s : 0.05 * cardiacOutputTarget_mL_Per_s;
   double VolumeFractionLegLeft = 0.0151, VascularPressureTargetLegLeft = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetLegLeft = male ? 0.02872 * cardiacOutputTarget_mL_Per_s : 0.0330 * cardiacOutputTarget_mL_Per_s;
-  double VolumeFractionLegRight = VolumeFractionLegLeft, VascularPressureTargetLegRight = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetLegRight = VascularFlowTargetLegLeft;
+  double VolumeFractionLegRight = VolumeFractionLegLeft, VascularPressureTargetLegRight = 0.33 * systolicPressureTarget_mmHg;
   double VolumeFractionLiver = 0.106, VascularPressureTargetLiver = 0.25 * systolicPressureTarget_mmHg, VascularFlowTargetLiver = 0.075 * cardiacOutputTarget_mL_Per_s;
   double VolumeFractionMuscle = male ? 0.14 : 0.105, VascularPressureTargetMuscle = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetMuscle = male ? 0.17 * cardiacOutputTarget_mL_Per_s : 0.12 * cardiacOutputTarget_mL_Per_s;
   double VolumeFractionMyocardium = 0.007, VascularPressureTargetMyocardium = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetMyocardium = male ? 0.04 * cardiacOutputTarget_mL_Per_s : 0.05 * cardiacOutputTarget_mL_Per_s;
-  double VolumeFractionPulmArtRight = 0.034 * RightLungRatio, VascularPressureTargetPulmArtRight = 0.13333 * systolicPressureTarget_mmHg, VascularFlowTargetPulmArtRight = RightLungRatio * cardiacOutputTarget_mL_Per_s * (1 - pulmonaryShuntFractionFactor);
+  double VolumeFractionPulmArtRight = 0.034 * RightLungRatio, VascularPressureTargetPulmArtRight = 0.13333 * systolicPressureTarget_mmHg;
   double VolumeFractionPulmCapRight = 0.023 * RightLungRatio, VascularPressureTargetPulmCapRight = 0.0650 * systolicPressureTarget_mmHg, VascularFlowTargetPulmCapRight = RightLungRatio * cardiacOutputTarget_mL_Per_s * (1 - pulmonaryShuntFractionFactor);
   double VolumeFractionPulmVeinsRight = 0.068 * RightLungRatio, VascularPressureTargetPulmVeinsRight = 0.03846 * systolicPressureTarget_mmHg, VascularFlowTargetPulmVeinsRight = RightLungRatio * cardiacOutputTarget_mL_Per_s * (1 - pulmonaryShuntFractionFactor);
   double VolumeFractionPulmArtLeft = 0.034 * LeftLungRatio, VascularPressureTargetPulmArtLeft = 0.13333 * systolicPressureTarget_mmHg, VascularFlowTargetPulmArtLeft = LeftLungRatio * cardiacOutputTarget_mL_Per_s * (1 - pulmonaryShuntFractionFactor);
@@ -223,8 +223,9 @@ void PulseController::SetupCardiovascular()
   double VolumeFractionSmallIntestine = 0.038, VascularPressureTargetSmallIntestine = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetSmallIntestine = male ? 0.1 * cardiacOutputTarget_mL_Per_s : 0.11 * cardiacOutputTarget_mL_Per_s;
   double VolumeFractionSplanchnic = 0.0116, VascularPressureTargetSplanchnic = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetSplanchnic = male ? 0.0258 * cardiacOutputTarget_mL_Per_s : 0.0255 * cardiacOutputTarget_mL_Per_s;
   double VolumeFractionSpleen = 0.014, VascularPressureTargetSpleen = 0.33 * systolicPressureTarget_mmHg, VascularFlowTargetSpleen = 0.03 * cardiacOutputTarget_mL_Per_s;
-  double VolumeFractionVenaCava = 0.247, VascularPressureTargetVenaCava = 0.0333 * systolicPressureTarget_mmHg, VascularFlowTargetVenaCava = 1.0 * cardiacOutputTarget_mL_Per_s;
-  /*Portal Vein is path only*/                    double VascularPressureTargetPortalVein = 0.25 * systolicPressureTarget_mmHg, VascularFlowTargetPortalVein = VascularFlowTargetLargeIntestine + VascularFlowTargetSmallIntestine + VascularFlowTargetSplanchnic + VascularFlowTargetSpleen;
+  double VolumeFractionVenaCava = 0.247, VascularPressureTargetVenaCava = 0.0333 * systolicPressureTarget_mmHg;
+  /*Portal Vein is path only*/                    
+  double VascularFlowTargetPortalVein = VascularFlowTargetLargeIntestine + VascularFlowTargetSmallIntestine + VascularFlowTargetSplanchnic + VascularFlowTargetSpleen;
 
   // Compute resistances from mean flow rates and pressure targets
   double ResistanceAorta = 1.12 * (VascularPressureTargetHeartLeft - systolicPressureTarget_mmHg) / VascularFlowTargetAorta;                        /*No Downstream Resistance Aorta*/
@@ -242,7 +243,6 @@ void PulseController::SetupCardiovascular()
   double ResistanceLiver = 1.1 * (systolicPressureTarget_mmHg - VascularPressureTargetLiver) / VascularFlowTargetLiver, ResistanceLiverVenous = (VascularPressureTargetLiver - VascularPressureTargetVenaCava) / (VascularFlowTargetLiver + VascularFlowTargetPortalVein);
   double ResistanceMuscle = 1.15 * (systolicPressureTarget_mmHg - VascularPressureTargetMuscle) / VascularFlowTargetMuscle, ResistanceMuscleVenous = (VascularPressureTargetMuscle - VascularPressureTargetVenaCava) / VascularFlowTargetMuscle;
   double ResistanceMyocardium = 0.95 * (systolicPressureTarget_mmHg - VascularPressureTargetMyocardium) / VascularFlowTargetMyocardium, ResistanceMyocardiumVenous = (VascularPressureTargetMyocardium - VascularPressureTargetVenaCava) / VascularFlowTargetMyocardium;
-  double ResistancePulmArtRight = 1.0 * (VascularPressureTargetHeartRight - VascularPressureTargetPulmArtRight) / VascularFlowTargetPulmArtRight;        /*No Downstream Resistance PulmArt*/
   double ResistancePulmCapRight = 1.0 * (VascularPressureTargetPulmArtRight - VascularPressureTargetPulmCapRight) / VascularFlowTargetPulmCapRight;      /*No Downstream Resistance PulmCap*/
   double ResistancePulmVeinsRight = 1.0 * (VascularPressureTargetPulmCapRight - VascularPressureTargetPulmVeinsRight) / VascularFlowTargetPulmVeinsRight;/*No Downstream Resistance PulmVeins*/
   double ResistancePulmArtLeft = 1.0 * (VascularPressureTargetHeartRight - VascularPressureTargetPulmArtLeft) / VascularFlowTargetPulmArtLeft;           /*No Downstream Resistance PulmArt*/
@@ -488,7 +488,7 @@ void PulseController::SetupCardiovascular()
   LeftHeart3ToGround.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::mmHg);
   SEFluidCircuitPath& LeftHeart1ToAorta2 = cCardiovascular.CreatePath(LeftHeart1, Aorta2, pulse::CardiovascularPath::LeftHeart1ToAorta2);
   LeftHeart1ToAorta2.SetNextValve(eGate::Closed);
-  SEFluidCircuitPath& Aorta2ToAorta3 = cCardiovascular.CreatePath(Aorta2, Aorta3, pulse::CardiovascularPath::Aorta2ToAorta3);
+  cCardiovascular.CreatePath(Aorta2, Aorta3, pulse::CardiovascularPath::Aorta2ToAorta3);
   SEFluidCircuitPath& Aorta3ToAorta1 = cCardiovascular.CreatePath(Aorta3, Aorta1, pulse::CardiovascularPath::Aorta3ToAorta1);
   Aorta3ToAorta1.GetResistanceBaseline().SetValue(ResistanceAorta, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   SEFluidCircuitPath& Aorta1ToAorta4 = cCardiovascular.CreatePath(Aorta1, Aorta4, pulse::CardiovascularPath::Aorta1ToAorta4);
@@ -1158,7 +1158,6 @@ void PulseController::SetupRenal()
 
   //assuming there is a left and right kidney node in cardiovascular AND that a baseline volume is set (as a function of patient mass): 
   double leftKidneyFluidVolume_mL = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftKidney1)->GetVolumeBaseline(VolumeUnit::mL);
-  double rightKidneyFluidVolume_mL = cCardiovascular.GetNode(pulse::CardiovascularNode::RightKidney1)->GetVolumeBaseline(VolumeUnit::mL);
   double singleKidneyLargeVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 2;    //Total large vasculature fluid volume
   double singleKidneySmallVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 2;    //Total small vasculature fluid volume 
 
@@ -2748,7 +2747,7 @@ void PulseController::SetupCerebrospinalFluid()
   SEFluidCircuitPath& Brain1ToVascularCSFBarrier = cCombinedCardiovascular.CreatePath(*Brain1, VascularCSFBarrier, pulse::CerebrospinalFluidPath::Brain1ToVascularCSFBarrier);
   Brain1ToVascularCSFBarrier.GetComplianceBaseline().SetValue(brainVascularCompliance, VolumePerPressureUnit::mL_Per_mmHg); //Vascular Volume
 
-  SEFluidCircuitPath& VascularCSFBarrierToIntracranialSpace1 = cCombinedCardiovascular.CreatePath(VascularCSFBarrier, IntracranialSpace1, pulse::CerebrospinalFluidPath::VascularCSFBarrierToIntracranialSpace1);
+  cCombinedCardiovascular.CreatePath(VascularCSFBarrier, IntracranialSpace1, pulse::CerebrospinalFluidPath::VascularCSFBarrierToIntracranialSpace1);
 
   SEFluidCircuitPath& GroundToIntracranialSpace1 = cCombinedCardiovascular.CreatePath(*Ground, IntracranialSpace1, pulse::CerebrospinalFluidPath::GroundToIntracranialSpace1);
   GroundToIntracranialSpace1.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);  //Absorption/Production Path
@@ -2756,7 +2755,7 @@ void PulseController::SetupCerebrospinalFluid()
   SEFluidCircuitPath& IntracranialSpace1ToIntracranialSpace2 = cCombinedCardiovascular.CreatePath(IntracranialSpace1, IntracranialSpace2, pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2);
   IntracranialSpace1ToIntracranialSpace2.GetComplianceBaseline().SetValue(70.0, VolumePerPressureUnit::mL_Per_mmHg); //CSF Volume
 
-  SEFluidCircuitPath& IntracranialSpace2ToGround = cCombinedCardiovascular.CreatePath(IntracranialSpace2, *Ground, pulse::CerebrospinalFluidPath::IntracranialSpace2ToGround);
+  cCombinedCardiovascular.CreatePath(IntracranialSpace2, *Ground, pulse::CerebrospinalFluidPath::IntracranialSpace2ToGround);
 
   cCombinedCardiovascular.SetNextAndCurrentFromBaselines();
   cCombinedCardiovascular.StateChange();
@@ -2782,18 +2781,18 @@ void PulseController::SetupRespiratory()
   cRespiratory.AddNode(*Ambient);
 
   //Input parameters
-  double RespiratorySystemCompliance_L_Per_cmH20 = 0.1; /// \cite Levitzky2013pulmonary
-  double RespiratorySideCompliance_L_Per_cmH2O = RespiratorySystemCompliance_L_Per_cmH20 / 2.0; //compliances in parallel sum, so divide by 2 for each lung
-  double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O; //compliances in series, so multiply by 2 for equal split
-  double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O; // =0.1 L/cmH2O each /// \cite kacmarek2016egan p233
-  double IntrapleuralPressure_cmH2O = -5.0; /// \cite Levitzky2013pulmonary
-  double TotalAirwayResistance_cmH2O_s_Per_L = 1.5; /// \cite Levitzky2013pulmonary
+  const double RespiratorySystemCompliance_L_Per_cmH20 = 0.1; /// \cite Levitzky2013pulmonary
+  const double RespiratorySideCompliance_L_Per_cmH2O = RespiratorySystemCompliance_L_Per_cmH20 / 2.0; //compliances in parallel sum, so divide by 2 for each lung
+  const double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O; //compliances in series, so multiply by 2 for equal split
+  const double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O; // =0.1 L/cmH2O each /// \cite kacmarek2016egan p233
+  const double IntrapleuralPressure_cmH2O = -5.0; /// \cite Levitzky2013pulmonary
+  const double TotalAirwayResistance_cmH2O_s_Per_L = 1.5; /// \cite Levitzky2013pulmonary
 
   //Should add up to 100% of total airway resistance
   /// \cite kacmarek2016egan
-  double TracheaResistancePercent = 0.5;
-  double BronchiResistancePercent = 0.3;
-  double AlveoliDuctResistancePercent = 0.2;
+  const double TracheaResistancePercent = 0.5;
+  const double BronchiResistancePercent = 0.3;
+  const double AlveoliDuctResistancePercent = 0.2;
 
   //Based on equivalent resistance circuit math
   double TracheaResistance = TotalAirwayResistance_cmH2O_s_Per_L - (BronchiResistancePercent * TotalAirwayResistance_cmH2O_s_Per_L + AlveoliDuctResistancePercent * TotalAirwayResistance_cmH2O_s_Per_L) / 2;
@@ -2897,8 +2896,8 @@ void PulseController::SetupRespiratory()
   LeftAlveoliToLeftPleuralConnection.GetComplianceBaseline().SetValue(LungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
   LeftAlveoliToLeftPleuralConnection.SetNextPolarizedState(eGate::Closed);
   //Need a no element path to be able to include a node with no volume, so it doesn't get modified by compliances
-  SEFluidCircuitPath& RightPleuralConnectionToRightPleural = cRespiratory.CreatePath(RightPleuralConnection, RightPleural, pulse::RespiratoryPath::RightPleuralConnectionToRightPleural);
-  SEFluidCircuitPath& LeftPleuralConnectionToLeftPleural = cRespiratory.CreatePath(LeftPleuralConnection, LeftPleural, pulse::RespiratoryPath::LeftPleuralConnectionToLeftPleural);
+  cRespiratory.CreatePath(RightPleuralConnection, RightPleural, pulse::RespiratoryPath::RightPleuralConnectionToRightPleural);
+  cRespiratory.CreatePath(LeftPleuralConnection, LeftPleural, pulse::RespiratoryPath::LeftPleuralConnectionToLeftPleural);
   //----------------------------------------------------------------------------------------------------------------------------------------------
   // Path between alveoli and pleural - for right pleural leak
   SEFluidCircuitPath& RightAlveoliToRightAlveoliLeak = cRespiratory.CreatePath(RightAlveoli, RightAlveoliLeak, pulse::RespiratoryPath::RightAlveoliToRightAlveoliLeak);
@@ -3136,7 +3135,7 @@ void PulseController::SetupGastrointestinal()
 
   SEFluidCircuitPath& SmallIntestineC1ToSmallIntestine1 = cCombinedCardiovascular.CreatePath(SmallIntestineC1, *SmallIntestine1, pulse::ChymePath::SmallIntestineC1ToSmallIntestine1);
   SmallIntestineC1ToSmallIntestine1.GetFlowSourceBaseline().SetValue(0, VolumePerTimeUnit::mL_Per_min);
-  SEFluidCircuitPath& GroundToSmallIntestineC1 = cCombinedCardiovascular.CreatePath(*Ground, SmallIntestineC1, pulse::ChymePath::GroundToSmallIntestineC1);
+  cCombinedCardiovascular.CreatePath(*Ground, SmallIntestineC1, pulse::ChymePath::GroundToSmallIntestineC1);
 
   if (m_Config->IsTissueEnabled())
   {
@@ -3174,7 +3173,6 @@ void PulseController::SetupAnesthesiaMachine()
   double ventilatorVolume_L = 1.0;
   double ventilatorCompliance_L_Per_cmH2O = 0.1;
   double dValveOpenResistance = m_Config->GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  double dValveClosedResistance = m_Config->GetMachineClosedResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double dSwitchOpenResistance = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double dSwitchClosedResistance = m_Config->GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double dLowResistance = 0.01;
@@ -3510,7 +3508,6 @@ void PulseController::SetupMechanicalVentilation()
   //////////////////////
   // GAS COMPARTMENTS //
   SEGasCompartment* gAirway = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Airway);
-  SEGasCompartment* gAmbient = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   //////////////////
   // Compartments //
   SEGasCompartment& gConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilationCompartment::Connection);
@@ -3531,7 +3528,6 @@ void PulseController::SetupMechanicalVentilation()
   ///////////////////////////////////
   // LIQUID (AEROSOL) COMPARTMENTS //
   SELiquidCompartment* lAirway = m_Compartments->GetLiquidCompartment(pulse::PulmonaryCompartment::Airway);
-  SELiquidCompartment* lAmbient = m_Compartments->GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
   //////////////////
   // Compartments //
   SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilationCompartment::Connection);
@@ -3559,10 +3555,10 @@ void PulseController::SetupMechanicalVentilator()
   SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
   ///////////////////////
 
-  double tubeVolume_L = 0.5; //4 total tubes - this is per tube
+  double tubeVolume_L = 0.3; //4 total tubes - this is per tube
                              //22mm ID * 36" length = pi * (0.022m / 2)^2 * 0.91m = 3.46e-4 m^3 = 0.346 L... so decent ballpark
-  double yPieceVolume_L = 0.1;
-  double connectioneVolume_L = 0.01;
+  double yPieceVolume_L = 0.01;
+  double connectionVolume_L = 0.05;
   double tubeResistance_cmH2O_s_Per_L = 0.01; //4 total tubes - this is per tube 
                                               //this is pretty negligable
 
@@ -3599,7 +3595,7 @@ void PulseController::SetupMechanicalVentilator()
 
   SEFluidCircuitNode& Connection = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Connection);
   Connection.GetPressure().Set(Ambient.GetPressure());
-  Connection.GetVolumeBaseline().SetValue(connectioneVolume_L, VolumeUnit::L);
+  Connection.GetVolumeBaseline().SetValue(connectionVolume_L, VolumeUnit::L);
 
   //Paths
   SEFluidCircuitPath& EnvironmentToVentilator = cMechanicalVentilator.CreatePath(Ambient, Ventilator, pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
@@ -3878,7 +3874,7 @@ void PulseController::SetupNonRebreatherMask()
   Ports.GetPressure().SetValue(0.0, PressureUnit::cmH2O);
   Ports.GetNextPressure().SetValue(0.0, PressureUnit::cmH2O);
   // Define path on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
-  SEFluidCircuitPath& GroundToOxygenSource = CombinedNonRebreatherMask.CreatePath(Ambient, OxygenSource, pulse::NonRebreatherMaskPath::NonRebreatherMaskPressure);
+  CombinedNonRebreatherMask.CreatePath(Ambient, OxygenSource, pulse::NonRebreatherMaskPath::NonRebreatherMaskPressure);
   SEFluidCircuitPath& OxygenInlet = CombinedNonRebreatherMask.CreatePath(OxygenSource, Bag, pulse::NonRebreatherMaskPath::NonRebreatherMaskOxygenInlet);
   OxygenInlet.GetResistanceBaseline().SetValue(PortsResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   SEFluidCircuitPath& ReservoirValve = CombinedNonRebreatherMask.CreatePath(Bag, Mask, pulse::NonRebreatherMaskPath::NonRebreatherMaskReservoirValve);
@@ -4021,7 +4017,6 @@ void PulseController::SetupExternalTemperature()
   SEThermalCircuit& exthermal = m_Circuits->GetExternalTemperatureCircuit();
 
   double dNoResistance = m_Config->GetDefaultClosedHeatResistance(HeatResistanceUnit::K_Per_W);
-  double dMaxResistance = m_Config->GetDefaultOpenHeatResistance(HeatResistanceUnit::K_Per_W);
   //Define Nodes
   //Initialize temperatures to a reasonable value (ambient temperature hasn't been read in yet)
   double dAmbientTemperature_K = 295.4; //~72F

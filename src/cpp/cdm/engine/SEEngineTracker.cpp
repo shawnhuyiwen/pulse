@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "engine/SEEngineTracker.h"
+#include "engine/SEActionManager.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
 #include "PhysiologyEngine.h"
@@ -70,8 +71,8 @@ std::string Space2Underscore(const std::string& str)
   return s;
 }
 
-SEEngineTracker::SEEngineTracker(SEPatient& p, SESubstanceManager& s, SECompartmentManager& c, Logger* logger) : Loggable(logger),
-  m_Patient(p), m_SubMgr(s), m_CmptMgr(c)
+SEEngineTracker::SEEngineTracker(SEPatient& p, SEActionManager& a, SESubstanceManager& s, SECompartmentManager& c, Logger* logger) : Loggable(logger),
+  m_Patient(p), m_ActionMgr(a), m_SubMgr(s), m_CmptMgr(c)
 {
   m_DataTrack = new DataTrack(logger);
   m_DataRequestMgr = new SEDataRequestManager(logger);
@@ -162,6 +163,7 @@ void SEEngineTracker::SetupRequests()
     bool isOpen = m_ResultsStream.is_open();
     if (!isOpen || m_ForceConnection)
     {// Process/Hook up all requests with their associated scalers
+      DELETE_MAP_SECOND(m_Request2Scalar);// Get our scalars again
       for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
       {
         if (!TrackRequest(*dr))
@@ -270,6 +272,42 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
       m_DataTrack->SetFormatting(ds->Heading, dr);
       return success;
     }
+    case eDataRequest_Category::Action:
+    {
+      if (dr.HasCompartmentName() && dr.HasSubstanceName())
+      {
+        if (!dr.GetUnit())
+          m_ss << dr.GetActionName() << "-" << dr.GetCompartmentName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName();
+        else
+          m_ss << dr.GetActionName() << "-" << dr.GetCompartmentName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
+      }
+      else if (dr.HasCompartmentName())
+      {
+        if (!dr.GetUnit())
+          m_ss << dr.GetActionName() << "-" << dr.GetCompartmentName() << "-" << dr.GetPropertyName();
+        else
+          m_ss << dr.GetActionName() << "-" << dr.GetCompartmentName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
+      }
+      else if (dr.HasSubstanceName())
+      {
+        if (!dr.GetUnit())
+          m_ss << dr.GetActionName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName();
+        else
+          m_ss << dr.GetActionName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
+      }
+      else
+      {
+        if (!dr.GetUnit())
+          m_ss << dr.GetActionName() << "-" << dr.GetPropertyName();
+        else
+          m_ss << dr.GetActionName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
+      }
+      ds->Heading = Space2Underscore(m_ss.str());
+      m_ss.str("");//Reset Buffer
+      ds->idx = m_DataTrack->Probe(ds->Heading, 0);
+      m_DataTrack->SetFormatting(ds->Heading, dr);
+      return success;
+    }
     case eDataRequest_Category::GasCompartment:
     case eDataRequest_Category::LiquidCompartment:
     case eDataRequest_Category::ThermalCompartment:
@@ -354,6 +392,11 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
         s = m_Environment->GetScalar(propertyName);
       else
         Error("Cannot track environment data as no environment was provide");
+      break;
+    }
+    case eDataRequest_Category::Action:
+    {
+      s = m_ActionMgr.GetScalar(dr.GetActionName(), dr.GetCompartmentName(), dr.GetSubstanceName(), propertyName);
       break;
     }
     case eDataRequest_Category::AnesthesiaMachine:

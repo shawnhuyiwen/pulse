@@ -12,10 +12,11 @@ public:
   virtual ~SEImpairedAlveolarExchangeExacerbation();
   
   virtual void Clear();
-  virtual void Copy(const SEImpairedAlveolarExchangeExacerbation& src);
+  virtual void Copy(const SEImpairedAlveolarExchangeExacerbation& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasImpairedSurfaceArea() const;
   virtual SEScalarArea& GetImpairedSurfaceArea();
@@ -30,6 +31,8 @@ public:
   virtual double GetSeverity() const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   

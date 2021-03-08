@@ -28,9 +28,11 @@ void SEConsumeNutrients::Clear()
   m_NutritionFile = "";
 }
 
-void SEConsumeNutrients::Copy(const SEConsumeNutrients& src)
+void SEConsumeNutrients::Copy(const SEConsumeNutrients& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SEConsumeNutrients::IsValid() const
@@ -40,7 +42,17 @@ bool SEConsumeNutrients::IsValid() const
 
 bool SEConsumeNutrients::IsActive() const
 {
-  return IsValid();
+  return SEPatientAction::IsActive();
+}
+void SEConsumeNutrients::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEConsumeNutrients::GetScalar(const std::string& name)
+{
+  return GetNutrition().GetScalar(name);
 }
 
 bool SEConsumeNutrients::HasNutrition() const

@@ -52,9 +52,6 @@ message CardiovascularData
   pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryArteryPressure_mmHg            = 30;
   pulse.cdm.bind.RunningAverageData         CardiacCycleCentralVenousPressure_mmHg              = 31;
   pulse.cdm.bind.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 32;
-  
-  repeated string                           HemorrhageLinks                                     = 33;
-  repeated string                           HemorrhagePaths                                     = 34;
 }
 
 message DrugData
@@ -173,11 +170,15 @@ message RespiratoryData
   double                                   InspiratoryRiseFraction                             = 42;
   double                                   InspiratoryToExpiratoryPauseFraction                = 43;
   
+  // Disease States
+  double                                   LeftAlveoliDecrease_L                               = 44;
+  double                                   RightAlveoliDecrease_L                              = 45;
+  
   // Conscious Breathing
-  bool                                     ActiveConsciousRespirationCommand                   = 44;
+  bool                                     ActiveConsciousRespirationCommand                   = 46;
   // Overrides
-  double                                   RespiratoryComplianceOverride_L_Per_cmH2O           = 45;
-  double                                   RespiratoryResistanceOverride_cmH2O_s_Per_L         = 46;
+  double                                   RespiratoryComplianceOverride_L_Per_cmH2O           = 47;
+  double                                   RespiratoryResistanceOverride_cmH2O_s_Per_L         = 48;
 }
 
 message TissueData

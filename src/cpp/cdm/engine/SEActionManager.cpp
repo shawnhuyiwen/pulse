@@ -13,11 +13,11 @@
 #include "substance/SESubstanceManager.h"
 #include "io/protobuf/PBEngine.h"
 
-SEActionManager::SEActionManager(Logger* logger) : Loggable(logger)
+SEActionManager::SEActionManager(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
 {
-  m_PatientActions = new SEPatientActionCollection(logger);
-  m_EnvironmentActions = new SEEnvironmentActionCollection(logger);
-  m_EquipmentActions = new SEEquipmentActionCollection(logger);
+  m_PatientActions = new SEPatientActionCollection(m_SubMgr);
+  m_EnvironmentActions = new SEEnvironmentActionCollection(m_SubMgr);
+  m_EquipmentActions = new SEEquipmentActionCollection(m_SubMgr);
 }
 
 SEActionManager::~SEActionManager()
@@ -42,13 +42,13 @@ bool SEActionManager::SerializeToFile(const std::string& filename) const
 {
   return PBEngine::SerializeToFile(*this, filename);
 }
-bool SEActionManager::SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr)
+bool SEActionManager::SerializeFromString(const std::string& src, SerializationFormat m)
 {
-  return PBEngine::SerializeFromString(src, *this, m, subMgr);
+  return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SEActionManager::SerializeFromFile(const std::string& filename, SESubstanceManager& subMgr)
+bool SEActionManager::SerializeFromFile(const std::string& filename)
 {
-  return PBEngine::SerializeFromFile(filename, *this, subMgr);
+  return PBEngine::SerializeFromFile(filename, *this);
 }
 
 // A raw serialize method
@@ -64,7 +64,7 @@ bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SE
   return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }
 
-bool SEActionManager::ProcessAction(const SEAction& action, SESubstanceManager& subMgr)
+bool SEActionManager::ProcessAction(const SEAction& action)
 {
   if (!action.IsValid())
   {
@@ -76,15 +76,15 @@ bool SEActionManager::ProcessAction(const SEAction& action, SESubstanceManager& 
 
   const SEPatientAction* pa = dynamic_cast<const SEPatientAction*>(&action);
   if (pa != nullptr)
-    bRet = m_PatientActions->ProcessAction(*pa, subMgr);
+    bRet = m_PatientActions->ProcessAction(*pa);
 
   const SEEnvironmentAction* ea = dynamic_cast<const SEEnvironmentAction*>(&action);
   if (ea != nullptr)
-    bRet = m_EnvironmentActions->ProcessAction(*ea, subMgr);
+    bRet = m_EnvironmentActions->ProcessAction(*ea);
 
   const SEEquipmentAction* ia = dynamic_cast<const SEEquipmentAction*>(&action);
   if (ia != nullptr)
-    bRet = m_EquipmentActions->ProcessAction(*ia, subMgr);
+    bRet = m_EquipmentActions->ProcessAction(*ia);
 
   if (!bRet)
   {
@@ -99,4 +99,23 @@ void SEActionManager::GetAllActions(std::vector<const SEAction*>& actions) const
   m_PatientActions->GetAllActions(actions);
   m_EnvironmentActions->GetAllActions(actions);
   m_EquipmentActions->GetAllActions(actions);
+}
+
+const SEScalar* SEActionManager::GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property)
+{
+  const SEScalar* scalar;
+
+  scalar = m_PatientActions->GetScalar(actionName,cmptName, substance,property);
+  if (scalar != nullptr)
+    return scalar;
+
+  scalar = m_EnvironmentActions->GetScalar(actionName, cmptName, substance, property);
+  if (scalar != nullptr)
+    return scalar;
+
+  scalar = m_EquipmentActions->GetScalar(actionName, cmptName, substance, property);
+  if (scalar != nullptr)
+    return scalar;
+
+  return nullptr;
 }

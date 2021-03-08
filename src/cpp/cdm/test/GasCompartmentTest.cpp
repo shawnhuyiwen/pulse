@@ -344,8 +344,6 @@ void CommonDataModelTest::TestGasHierarchy(SETestSuite& testSuite, SESubstanceMa
 
   double L2C3_mL = 12;
   double L2C3_mmHg = 12;
-  double L2C3_H20 = 0.5;
-  double L2C3_pH = 7.38;
   SEGasCompartment* L2C3 = &cmptMgr.CreateGasCompartment("L2C3");
   L2C3->GetVolume().SetValue(L2C3_mL, VolumeUnit::mL);
   L2C3->GetPressure().SetValue(L2C3_mmHg, PressureUnit::mmHg);

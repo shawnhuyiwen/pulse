@@ -54,5 +54,5 @@ public:
   ~HowToTracker();
 
   // This class will operate on seconds
-  void AdvanceModelTime(double time_s);
+  bool AdvanceModelTime(double time_s);
 };

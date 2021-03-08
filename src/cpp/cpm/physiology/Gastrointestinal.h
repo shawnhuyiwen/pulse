@@ -57,6 +57,4 @@ protected:
   bool   m_ConsumeRate; // Some substance digestion rates are specified by the user, some by configuration,
   //if the stomach runs out of a substance with a user provided rate, we invalidate the rate (true)
   //if the rate is a configuration rate, we don't want to invalidate it if we run out of the substance (false)
-  double m_dT_s;
-
 };

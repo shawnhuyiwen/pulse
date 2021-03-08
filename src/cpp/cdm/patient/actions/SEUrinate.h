@@ -13,12 +13,15 @@ public:
   virtual ~SEUrinate();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEUrinate& src);
+  virtual void Copy(const SEUrinate& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
 

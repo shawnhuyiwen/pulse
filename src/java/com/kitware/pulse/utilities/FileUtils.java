@@ -35,7 +35,16 @@ public class FileUtils
   {
     boolean b = true;
     for (String lib : libs)
-      b &= loadLibrary(lib, location);
+    {
+      if(!loadLibrary(lib, location))
+      {
+        // Let's see if there is a debug version of this lib we can load
+        if(loadLibrary(lib+"d", location))
+          Log.info("Found debug("+lib+"d) version of "+lib);
+        else
+          b = false;
+      }
+    }
     return b;
   }
   public static boolean loadLibraries(List<String> libs)

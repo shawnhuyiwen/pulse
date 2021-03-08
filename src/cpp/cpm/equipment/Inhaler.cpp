@@ -63,9 +63,6 @@ void Inhaler::Initialize()
 
 void Inhaler::SetUp()
 {
-  // Time step - used by inhaler timer
-  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-
   m_AmbientEnv = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   m_Mouthpiece = m_data.GetCompartments().GetGasCompartment(pulse::InhalerCompartment::Mouthpiece);
   m_AerosolMouthpiece = m_data.GetCompartments().GetLiquidCompartment(pulse::InhalerCompartment::Mouthpiece);
@@ -105,8 +102,8 @@ void Inhaler::PreProcess()
   if (m_data.GetActions().GetEquipmentActions().HasInhalerConfiguration())
   {
     eSwitch state = GetState();
-    SEInhalerConfiguration* config = m_data.GetActions().GetEquipmentActions().GetInhalerConfiguration();
-    ProcessConfiguration(*config, m_data.GetSubstances());
+    SEInhalerConfiguration& config = m_data.GetActions().GetEquipmentActions().GetInhalerConfiguration();
+    ProcessConfiguration(config, m_data.GetSubstances());
     m_data.GetActions().GetEquipmentActions().RemoveInhalerConfiguration();
     if (state != m_State)
     {
@@ -116,13 +113,13 @@ void Inhaler::PreProcess()
   }
   if (m_data.GetActions().GetPatientActions().HasConsciousRespiration())
   {
-    SEConsciousRespiration* cr = m_data.GetActions().GetPatientActions().GetConsciousRespiration();
-    SEConsciousRespirationCommand* cmd = cr->GetActiveCommand();
+    SEConsciousRespiration& cr = m_data.GetActions().GetPatientActions().GetConsciousRespiration();
+    SEConsciousRespirationCommand* cmd = cr.GetActiveCommand();
     SEUseInhaler* ui = dynamic_cast<SEUseInhaler*>(cmd);
     if (ui != nullptr)
     {
       Administer();
-      cr->RemoveActiveCommand();
+      cr.RemoveActiveCommand();
     }
   }
 

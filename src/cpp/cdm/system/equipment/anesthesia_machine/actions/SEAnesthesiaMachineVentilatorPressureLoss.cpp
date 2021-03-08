@@ -21,7 +21,7 @@ void SEAnesthesiaMachineVentilatorPressureLoss::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEAnesthesiaMachineVentilatorPressureLoss::Copy(const SEAnesthesiaMachineVentilatorPressureLoss& src)
+void SEAnesthesiaMachineVentilatorPressureLoss::Copy(const SEAnesthesiaMachineVentilatorPressureLoss& src, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
@@ -33,7 +33,21 @@ bool SEAnesthesiaMachineVentilatorPressureLoss::IsValid() const
 
 bool SEAnesthesiaMachineVentilatorPressureLoss::IsActive() const
 {
+  if (!SEAnesthesiaMachineAction::IsActive())
+    return false;
   return HasSeverity() ? !m_Severity->IsZero() : false;
+}
+void SEAnesthesiaMachineVentilatorPressureLoss::Deactivate()
+{
+  SEAnesthesiaMachineAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAnesthesiaMachineVentilatorPressureLoss::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEAnesthesiaMachineVentilatorPressureLoss::HasSeverity() const

@@ -87,12 +87,14 @@ public:
     Fatal
   };
   void SetLogLevel(Level  level);
-  Level GetLogLevel();
+  Level GetLogLevel() const;
 
   virtual void SetLogTime(const SEScalarTime* time);
 
-  virtual void SetForward(LoggerForward* forward);
-  virtual bool HasForward();
+  virtual bool HasForward() const;
+  virtual void AddForward(LoggerForward* forward);
+  virtual void RemoveForward(LoggerForward* forward);
+  virtual void RemoveForwards();
 
   virtual void Debug(std::string const&  msg, std::string const&  origin = Loggable::empty);
   virtual void Debug(std::stringstream &msg, std::string const&  origin = Loggable::empty);
@@ -119,7 +121,7 @@ protected:
 
   virtual std::string FormatLogMessage(std::string const&  origin, std::string const&  msg);
 
-  LoggerForward*                m_Forward;
+  std::vector<LoggerForward*>   m_Forwards;
   const SEScalarTime*           m_time;
   std::stringstream             m_ss;
 

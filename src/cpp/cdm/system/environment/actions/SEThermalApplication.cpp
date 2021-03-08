@@ -39,7 +39,7 @@ void SEThermalApplication::Clear()
   }
 }
 
-void SEThermalApplication::Copy(const SEThermalApplication& src)
+void SEThermalApplication::Copy(const SEThermalApplication& src, bool preserveState)
 {// Using Bindings to make a copy
   PBEnvironmentAction::Copy(src, *this);
 }
@@ -51,6 +51,8 @@ bool SEThermalApplication::IsValid() const
 
 bool SEThermalApplication::IsActive() const
 {
+  if (!SEEnvironmentAction::IsActive())
+    return false;
   if (HasActiveHeating() && m_ActiveHeating->GetPower().IsPositive())
     return true;
   if (HasActiveCooling() && m_ActiveCooling->GetPower().IsPositive())
@@ -58,6 +60,29 @@ bool SEThermalApplication::IsActive() const
   if (HasAppliedTemperature() && m_AppliedTemperature->GetState() == eSwitch::On)
     return true;
   return false;
+}
+
+void SEThermalApplication::Deactivate()
+{
+  SEEnvironmentAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEThermalApplication::GetScalar(const std::string& name)
+{
+  size_t split = name.find('-');
+  if (split != name.npos)
+  {
+    std::string child = name.substr(0, split);
+    std::string prop = name.substr(split + 1, name.npos);
+    if (child == "ActiveHeating")
+      return GetActiveHeating().GetScalar(prop);
+    if (child == "ActiveCooling")
+      return GetActiveCooling().GetScalar(prop);
+    if (child == "AppliedTemperature")
+      return GetAppliedTemperature().GetScalar(prop);
+  }
+  return nullptr;
 }
 
 bool SEThermalApplication::HasActiveHeating() const

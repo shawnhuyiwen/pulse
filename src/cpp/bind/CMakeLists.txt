@@ -93,3 +93,11 @@ add_library_ex(DataModelBindings
     protobuf::libprotobuf
   LIB_INSTALL_ONLY
 )
+
+if (MSVC)
+    target_compile_options(DataModelBindings PRIVATE  "/wd4100") # 'identifier' : unreferenced formal parameter
+    target_compile_options(DataModelBindings PRIVATE  "/wd4125") # decimal digit terminates octal escape sequence
+    target_compile_options(DataModelBindings PRIVATE  "/wd4127") # conditional expression is constant
+    target_compile_options(DataModelBindings PRIVATE  "/wd4244") # 'conversion' conversion from 'type1' to 'type2', possible loss of data
+    target_compile_options(DataModelBindings PRIVATE  "/wd4267") # 'var' : conversion from 'size_t' to 'type', possible loss of data
+endif()

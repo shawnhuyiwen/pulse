@@ -9,9 +9,8 @@
 #include "properties/SEScalarMassPerVolume.h"
 #include "io/protobuf/PBPatientActions.h"
 
-SESubstanceInfusion::SESubstanceInfusion(const SESubstance& substance, Logger* logger) : SESubstanceAdministration(logger), m_Substance(substance)
+SESubstanceInfusion::SESubstanceInfusion(const SESubstance& substance, Logger* logger) : SEPatientAction(logger), m_Substance(substance)
 {
-
   m_Rate=nullptr;
   m_Concentration=nullptr;
 }
@@ -24,24 +23,42 @@ SESubstanceInfusion::~SESubstanceInfusion()
 
 void SESubstanceInfusion::Clear()
 {
-  SESubstanceAdministration::Clear();
+  SEPatientAction::Clear();
   INVALIDATE_PROPERTY(m_Rate);
   INVALIDATE_PROPERTY(m_Concentration);
 }
 
-void SESubstanceInfusion::Copy(const SESubstanceInfusion& src)
+void SESubstanceInfusion::Copy(const SESubstanceInfusion& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SESubstanceInfusion::IsValid() const
 {
-  return SESubstanceAdministration::IsValid() && HasRate() && HasConcentration();
+  return SEPatientAction::IsValid() && HasRate() && HasConcentration();
 }
 
 bool SESubstanceInfusion::IsActive() const
 {
-  return IsValid() ? !m_Rate->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Rate->IsZero() && !m_Concentration->IsZero();
+}
+void SESubstanceInfusion::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SESubstanceInfusion::GetScalar(const std::string& name)
+{
+  if (name.compare("Rate") == 0)
+    return &GetRate();
+  if (name.compare("Concentration") == 0)
+    return &GetConcentration();
+  return nullptr;
 }
 
 bool SESubstanceInfusion::HasRate() const

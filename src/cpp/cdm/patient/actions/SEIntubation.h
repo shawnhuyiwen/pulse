@@ -17,15 +17,19 @@ public:
   virtual ~SEIntubation();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEIntubation& src);
+  virtual void Copy(const SEIntubation& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual eIntubation_Type GetType() const;
   virtual void SetType(eIntubation_Type t);
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
+
 protected:
   eIntubation_Type m_Type;
 };  

@@ -97,7 +97,7 @@ void PulseEngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
   inhale.GetInspiratoryCapacityFraction().SetValue(1.0);
   inhale.GetInhalePeriod().SetValue(5.0, TimeUnit::s);
 
-  SEUseInhaler& inhaler = cResp.AddUseInhaler();
+  cResp.AddUseInhaler();
 
   SEForcedPause& pause = cResp.AddForcedPause();
   pause.GetPeriod().SetValue(10, TimeUnit::s);
@@ -186,8 +186,6 @@ void PulseEngineTest::SerializationTest(const std::string& sTestDirectory)
   pc->GetLogger()->SetLogFile("SerializationTestSetup.log");
   HowToTracker tracker(*pc);
 
-  const SESubstance* O2 = pc->GetSubstanceManager().GetSubstance("Oxygen");
-  const SESubstance* CO2 = pc->GetSubstanceManager().GetSubstance("CarbonDioxide");
 /*
   SESubstanceDataRequest* subRequest;
   

@@ -21,7 +21,7 @@ void SEAnesthesiaMachineInspiratoryValveLeak::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEAnesthesiaMachineInspiratoryValveLeak::Copy(const SEAnesthesiaMachineInspiratoryValveLeak& src)
+void SEAnesthesiaMachineInspiratoryValveLeak::Copy(const SEAnesthesiaMachineInspiratoryValveLeak& src, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
@@ -33,7 +33,21 @@ bool SEAnesthesiaMachineInspiratoryValveLeak::IsValid() const
 
 bool SEAnesthesiaMachineInspiratoryValveLeak::IsActive() const
 {
+  if (!SEAnesthesiaMachineAction::IsActive())
+    return false;
   return HasSeverity() ? !m_Severity->IsZero() : false;
+}
+void SEAnesthesiaMachineInspiratoryValveLeak::Deactivate()
+{
+  SEAnesthesiaMachineAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SEAnesthesiaMachineInspiratoryValveLeak::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 bool SEAnesthesiaMachineInspiratoryValveLeak::HasSeverity() const

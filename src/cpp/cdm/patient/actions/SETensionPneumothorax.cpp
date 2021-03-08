@@ -28,9 +28,11 @@ void SETensionPneumothorax::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SETensionPneumothorax::Copy(const SETensionPneumothorax& src)
+void SETensionPneumothorax::Copy(const SETensionPneumothorax& src, bool preserveState)
 {
+  //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
+  //if(preserveState) // Put back any state
 }
 
 bool SETensionPneumothorax::IsValid() const
@@ -40,7 +42,21 @@ bool SETensionPneumothorax::IsValid() const
 
 bool SETensionPneumothorax::IsActive() const
 {
-  return IsValid() ? !m_Severity->IsZero() : false;
+  if (!SEPatientAction::IsActive())
+    return false;
+  return !m_Severity->IsZero();
+}
+void SETensionPneumothorax::Deactivate()
+{
+  SEPatientAction::Deactivate();
+  Clear();//No stateful properties
+}
+
+const SEScalar* SETensionPneumothorax::GetScalar(const std::string& name)
+{
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
+  return nullptr;
 }
 
 eGate SETensionPneumothorax::GetType() const

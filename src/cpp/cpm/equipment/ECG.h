@@ -41,5 +41,4 @@ protected:
   SEElectroCardioGramWaveformInterpolator* m_interpolator;
 
   // Stateless member variable (Set in SetUp())
-  double m_dt_s;
 };

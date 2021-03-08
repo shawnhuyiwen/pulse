@@ -13,7 +13,7 @@ int main()
 
   //HowToSandbox();
 
-  HowToEngineUse();
+  //HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
 
@@ -29,7 +29,7 @@ int main()
   //HowToCPR(); 
   //HowToEnvironmentChange();
   //HowToExercise();
-  //HowToHemorrhage();
+  HowToHemorrhage();
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
   //HowToPulmonaryFibrosis();
@@ -56,15 +56,17 @@ HowToTracker::~HowToTracker()
 {
 }
 
-void HowToTracker::AdvanceModelTime(double time_s)
+bool HowToTracker::AdvanceModelTime(double time_s)
 {  
   // This samples the engine at each time step
   int count = static_cast<int>(time_s / m_dT_s);
   for (int i = 0; i < count; i++)
   {    
-    m_Engine.AdvanceModelTime();  // Compute 1 time step
+    if(!m_Engine.AdvanceModelTime())  // Compute 1 time step
+      return false;
 
     // Pull Track will pull data from the engine and append it to the file
     m_Engine.GetEngineTracker()->TrackData(m_Engine.GetSimulationTime(TimeUnit::s));
   }
+  return true;
 }

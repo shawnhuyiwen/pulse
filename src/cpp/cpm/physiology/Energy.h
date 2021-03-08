@@ -63,7 +63,6 @@ protected:
   SERunningAverage* m_BicarbonateMolarity_mmol_Per_L;
 
   // Stateless member variable (Set in SetUp())
-  double                      m_dT_s;
   // Cmpts,Substance, and nodes
   SELiquidSubstanceQuantity*  m_AortaHCO3;
   //Nodes

@@ -95,33 +95,6 @@ void PBPulsePhysiology::Serialize(const PULSE_BIND::CardiovascularData& src, Car
   PBProperty::Load(src.cardiaccyclepulmonaryarterypressure_mmhg(), *dst.m_CardiacCyclePulmonaryArteryPressure_mmHg);
   PBProperty::Load(src.cardiaccyclecentralvenouspressure_mmhg(), *dst.m_CardiacCycleCentralVenousPressure_mmHg);
   PBProperty::Load(src.cardiaccycleskinflow_ml_per_s(), *dst.m_CardiacCycleSkinFlow_mL_Per_s);
-
-  // As these are dynamically added to the system during run time,
-  // We will need to make the association within the system here
-  // Currently, there is no PulseCompartmentManager Load/Unload to do that for us
-  // It looks for the static cmpt/circuit memebers and adds those to the associated system
-  // As these were dynamically created, these will not be handled in that code
-  // (It probably should)
-  // But, anything that is dynamically created needs to be associated by the System Load
-  // So we are doing that here.
-  // Also, Internal Hemorrhage is a subset of Hemorrhage, so internal is associated via
-  // This regular hemorrhage links/paths getting associated properly
-  for (auto name : src.hemorrhagelinks())
-  {
-    SELiquidCompartmentLink* hLink = dst.m_data.GetCompartments().GetLiquidLink(name);
-    dst.m_data.GetCompartments().GetCardiovascularGraph().AddLink(*hLink);
-    dst.m_HemorrhageLinks.push_back(hLink);
-  }
-  if(!dst.m_HemorrhageLinks.empty())
-    dst.m_data.GetCompartments().GetCardiovascularGraph().StateChange();
-  for (auto name : src.hemorrhagepaths())
-  {
-    SEFluidCircuitPath* hPath = dst.m_data.GetCircuits().GetFluidPath(name);
-    dst.m_data.GetCircuits().GetCardiovascularCircuit().AddPath(*hPath);
-    dst.m_HemorrhagePaths.push_back(hPath);
-  }
-  if (!dst.m_HemorrhagePaths.empty())
-    dst.m_data.GetCircuits().GetCardiovascularCircuit().StateChange();
 }
 PULSE_BIND::CardiovascularData* PBPulsePhysiology::Unload(const Cardiovascular& src)
 {
@@ -166,12 +139,6 @@ void PBPulsePhysiology::Serialize(const Cardiovascular& src, PULSE_BIND::Cardiov
   dst.set_allocated_cardiaccyclepulmonaryarterypressure_mmhg(PBProperty::Unload(*src.m_CardiacCyclePulmonaryArteryPressure_mmHg));
   dst.set_allocated_cardiaccyclecentralvenouspressure_mmhg(PBProperty::Unload(*src.m_CardiacCycleCentralVenousPressure_mmHg));
   dst.set_allocated_cardiaccycleskinflow_ml_per_s(PBProperty::Unload(*src.m_CardiacCycleSkinFlow_mL_Per_s));
-
-  for (auto* l : src.m_HemorrhageLinks)
-    dst.add_hemorrhagelinks(l->GetName());
-  for (auto* p : src.m_HemorrhagePaths)
-    dst.add_hemorrhagepaths(p->GetName());
-
 }
 
 void PBPulsePhysiology::Load(const PULSE_BIND::DrugData& src, Drugs& dst)
@@ -441,6 +408,9 @@ void PBPulsePhysiology::Serialize(const PULSE_BIND::RespiratoryData& src, Respir
   dst.m_InspiratoryRiseFraction = src.inspiratoryrisefraction();
   dst.m_InspiratoryToExpiratoryPauseFraction = src.inspiratorytoexpiratorypausefraction();
 
+  dst.m_leftAlveoliDecrease_L = src.leftalveolidecrease_l();
+  dst.m_rightAlveoliDecrease_L = src.rightalveolidecrease_l();
+
   dst.m_ActiveConsciousRespirationCommand = src.activeconsciousrespirationcommand();
 
   dst.m_RespiratoryComplianceOverride_L_Per_cmH2O = src.respiratorycomplianceoverride_l_per_cmh2o();
@@ -500,6 +470,9 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, PULSE_BIND::Respirator
   dst.set_inspiratoryreleasefraction(src.m_InspiratoryReleaseFraction);
   dst.set_inspiratoryrisefraction(src.m_InspiratoryRiseFraction);
   dst.set_inspiratorytoexpiratorypausefraction(src.m_InspiratoryToExpiratoryPauseFraction);
+
+  dst.set_leftalveolidecrease_l(src.m_leftAlveoliDecrease_L);
+  dst.set_rightalveolidecrease_l(src.m_rightAlveoliDecrease_L);
 
   dst.set_activeconsciousrespirationcommand(src.m_ActiveConsciousRespirationCommand);
 

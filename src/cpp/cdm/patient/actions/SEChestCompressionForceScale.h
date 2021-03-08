@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEChestCompression.h"
+#include "patient/actions/SEPatientAction.h"
 
-class CDM_DECL SEChestCompressionForceScale : public SEChestCompression
+class CDM_DECL SEChestCompressionForceScale : public SEPatientAction
 {
   friend class PBPatientAction;//friend the serialization class
 public:
@@ -12,10 +12,11 @@ public:
   virtual ~SEChestCompressionForceScale();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEChestCompressionForceScale& src);
+  virtual void Copy(const SEChestCompressionForceScale& src, bool preserveState=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
+  virtual void Deactivate();
 
   virtual bool HasForceScale() const;
   virtual SEScalar0To1& GetForceScale();
@@ -26,6 +27,8 @@ public:
   virtual double GetForcePeriod(const TimeUnit& unit) const;
 
   virtual void ToString(std::ostream &str) const;
+
+  virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
   SEScalar0To1*           m_ForceScale;

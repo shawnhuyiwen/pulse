@@ -187,7 +187,7 @@ void HowToAnesthesiaMachine()
   tracker.AdvanceModelTime(60);
 
   SEAnesthesiaMachineOxygenWallPortPressureLoss AMpressureloss;
-  AMpressureloss.SetActive(true);
+  AMpressureloss.SetState(eSwitch::On);
   pe->ProcessAction(AMpressureloss);
   pe->GetLogger()->Info("Testing the oxygen pressure loss failure mode. The oxygen pressure from the wall source is dropping.");
 
@@ -201,7 +201,7 @@ void HowToAnesthesiaMachine()
   pe->GetLogger()->Info(std::stringstream() <<"Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
 
-  AMpressureloss.SetActive(false);
+  AMpressureloss.SetState(eSwitch::On);
   pe->ProcessAction(AMpressureloss);
   pe->GetLogger()->Info("Removing the wall oxygen pressure loss action.");
 

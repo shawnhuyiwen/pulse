@@ -141,16 +141,18 @@ protected:
   double m_InspiratoryRiseFraction;
   double m_InspiratoryToExpiratoryPauseFraction;
 
-  //Conscious Respiration
+  // Conscious Respiration
   bool m_ActiveConsciousRespirationCommand;
 
-  //Overrides
+  // Disease States
+  double m_leftAlveoliDecrease_L;
+  double m_rightAlveoliDecrease_L;
+
+  // Overrides
   double m_RespiratoryResistanceOverride_cmH2O_s_Per_L;
   double m_RespiratoryComplianceOverride_L_Per_cmH2O;
 
   // Stateless member variable (Set in SetUp())
-  double m_dt_s;
-  double m_dt_min;
   // Respiratory Driver
   double m_MaxDriverPressure_cmH2O;
   // Configuration parameters
