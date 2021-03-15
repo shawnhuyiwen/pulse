@@ -86,7 +86,37 @@ void PulseEngineTest::EmptyBlackBoxTest(const std::string& outputDir)
 
 void PulseEngineTest::ImposeFlowBlackBoxTest(const std::string& outputDir)
 {
+  std::unique_ptr<PhysiologyEngine> pulse = CreatePulseEngine(m_Logger);
+  Info("--------ImposeFlowBlackBoxTest--------");
 
+  if (!pulse->SerializeFromFile("./states/StandardMale@0s.json"))
+  {
+    pulse->GetLogger()->Error("Could not load state, check the error");
+    Error("Could not load state, check the error");
+    return;
+  }
+
+  SELiquidBlackBox* bb = SetupBBDataRequests(*pulse, outputDir + "/ImposeFlowBlackBoxTest.csv");
+
+  // Run for two mins
+  TimingProfile profile;
+  profile.Start("BB");
+  for (size_t i = 0; i < 120 / pulse->GetTimeStep(TimeUnit::s); i++)
+  {
+    bb->ImposeSourceFlux(0.37, VolumePerTimeUnit::mL_Per_s);
+    bb->ImposeTargetFlux(1.73, VolumePerTimeUnit::mL_Per_s);
+
+    if (!pulse->AdvanceModelTime())
+    {
+      Error("Unable to advance time");
+      return;
+    }
+    pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
+    if (i == 3000)
+      Info("It took " + std::to_string(profile.GetElapsedTime_s("BB")) + "(s) to simulate 60s");
+  }
+  Info("It took " + std::to_string(profile.GetElapsedTime_s("BB")) + "(s) to simulate 60s");
+  profile.Stop("BB");
 }
 
 void PulseEngineTest::ImposePressureAndFlowBlackBoxTest(const std::string& outputDir)
@@ -139,7 +169,7 @@ void PulseEngineTest::ImposePressureAndFlowBlackBoxTest(const std::string& outpu
     if (i == 3000)
       Info("It took " + std::to_string(profile.GetElapsedTime_s("BB")) + "(s) to simulate 60s");
   }
-  Info("It took " + std::to_string(profile.GetElapsedTime_s("eBB")) + "(s) to simulate 60s");
+  Info("It took " + std::to_string(profile.GetElapsedTime_s("BB")) + "(s) to simulate 60s");
   profile.Stop("BB");
 }
 

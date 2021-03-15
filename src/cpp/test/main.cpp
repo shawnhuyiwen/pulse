@@ -89,8 +89,8 @@ int main(int argc, char* argv[])
 
       //Black Box Tests
       //peTest.EmptyBlackBoxTest(peDir);
-      //peTest.ImposeFlowBlackBoxTest(peDir);
-      peTest.ImposePressureAndFlowBlackBoxTest(peDir);
+      peTest.ImposeFlowBlackBoxTest(peDir);
+      //peTest.ImposePressureAndFlowBlackBoxTest(peDir);
       //peTest.ImposeVolumeBlackBoxTest(peDir);
 
       //peTest.AerosolTest(peDir);
