@@ -130,7 +130,11 @@ void SEScenario::AddAction(const SEAction& a)
   // Make a copy using the bindings
   m_Actions.push_back(SEAction::Copy(a,*m_SubMgr));
 }
-const std::vector<const SEAction*>& SEScenario::GetActions() const
+const std::vector<SEAction*>& SEScenario::GetActions()
 {
   return m_Actions;
+}
+const std::vector<const SEAction*>& SEScenario::GetActions() const
+{
+  return *((std::vector<const SEAction*>*) & m_Actions);
 }

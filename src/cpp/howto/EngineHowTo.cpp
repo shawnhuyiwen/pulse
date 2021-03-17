@@ -13,7 +13,7 @@ int main()
 
   //HowToSandbox();
 
-  //HowToEngineUse();
+  HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
 
@@ -38,7 +38,7 @@ int main()
   //HowToTensionPneumothorax();
 
   // This one does not really run, is a pure example
-  HowToRunScenario();
+  //HowToRunScenario();
 
   // More complicated examples that do run
   //HowToConcurrentEngines();

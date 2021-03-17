@@ -93,7 +93,7 @@ protected:
   /// This does not include advance time actions
   /// To override default functionality with those 
   /// actions override the ProcessActions method
-  bool ProcessAction(PhysiologyEngine& pe, const SEAction& action);
+  bool ProcessAction(PhysiologyEngine& pe, SEAction& action);
   void AdvanceEngine(PhysiologyEngine& pe);
 
   eSwitch     m_LogToConsole;

@@ -7,7 +7,7 @@
 #include "utils/ConfigParser.h"
 #include "utils/FileUtils.h"
 
-#define test_serialization true
+#define test_serialization false
 int main(int argc, char* argv[])
 {
   try
@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
     opts.SetLogFilename(logFile);
     opts.SetDataRequestCSVFilename(csvFile);
     opts.SetScenarioFilename(argv[1]);
+    opts.SetSerializationDirectory("./states/");
 
     if (test_serialization)
     {

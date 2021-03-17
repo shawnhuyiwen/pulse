@@ -9,6 +9,7 @@
 #include "engine/SECondition.h"
 #include "engine/SEPatientConfiguration.h"
 #include "engine/SEAdvanceTime.h"
+#include "engine/SESerializeState.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEventManager.h"
 #include "PhysiologyEngine.h"
@@ -144,7 +145,7 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
 
   bool err=false;
   const SEAdvanceTime* adv;
-  for (const SEAction* a : sce.GetActions())
+  for (SEAction* a : sce.GetActions())
   {
     // We override advance time actions in order to advance and 
     // pull requested data at each time step, all other actions 
@@ -199,11 +200,18 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   return !err;
 }
 
-bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, const SEAction& action)
+bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
 {
   if (m_AutoSerializeAfterActions == eSwitch::On && m_SerializationActions.str().empty())
   {
     m_SerializationActions << "AfterActions";
+  }
+  SESerializeState* ss = dynamic_cast<SESerializeState*>(&action);
+  if (ss != nullptr && ss->GetType() == eSerialization_Type::Save)
+  {
+    std::string fn = ss->GetFilename();
+    if (fn.find("./") == 0)
+      ss->SetFilename(m_SerializationDirectory + fn);
   }
   return pe.ProcessAction(action);
 }
