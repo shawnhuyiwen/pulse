@@ -155,6 +155,7 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
       const CDM_BIND::ActiveEventData& e = src.activeevents().activeevent()[i];
       if (e.has_duration())
         PBProperty::Load(e.duration(), time);
+      else
       {
         dst.m_ss << "Active event " << CDM_BIND::eEvent_Name(e.event()) << " does not have time associated with it";
         dst.Debug(dst.m_ss);
