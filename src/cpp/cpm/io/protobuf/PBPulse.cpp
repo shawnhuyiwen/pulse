@@ -36,6 +36,13 @@ void PBPulse::Serialize(const PulseScenario& src, PULSE_BIND::ScenarioData& dst)
   if (src.HasConfiguration())
     dst.set_allocated_configuration(PBPulseConfiguration::Unload(*src.GetConfiguration()));
 }
+void PBPulse::Copy(const PulseScenario& src, PulseScenario& dst)
+{
+  dst.Clear();
+  PULSE_BIND::ScenarioData data;
+  PBPulse::Serialize(src, data);
+  PBPulse::Serialize(data, dst);
+}
 
 bool PBPulse::SerializeToString(const PulseScenario& src, std::string& output, SerializationFormat m)
 {

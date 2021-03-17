@@ -31,9 +31,9 @@ public:
   PulseEngineThunk();
   virtual ~PulseEngineThunk();
 
-  // void SetConfigurationOverride(std::string const& config); // Not Implemented
+  //void SetConfigurationOverride(std::string const& config); // Not Implemented
 
-  bool ExecuteScenario(std::string const& scenario, SerializationFormat format, std::string const& csvFile, std::string const& logFile, std::string const& dataDir="./");
+  bool ExecuteScenario(std::string const& sceExecOpts, SerializationFormat format);
 
   bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format);
   bool SerializeToFile(std::string const& filename);

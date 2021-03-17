@@ -17,6 +17,7 @@ public:
   virtual ~SEScenario();
   
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEScenario& src);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;

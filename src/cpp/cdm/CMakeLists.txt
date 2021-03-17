@@ -56,7 +56,6 @@ add_library_ex(CommonDataModel
     engine/SEActionManager.h
     engine/SEAdvanceHandler.h
     engine/SEAdvanceTime.h
-    engine/SEAutoSerialization.h
     engine/SECondition.h
     engine/SEConditionManager.h
     engine/SEDataRequest.h
@@ -382,7 +381,6 @@ add_library_ex(CommonDataModel
     engine/SEAction.cpp
     engine/SEActionManager.cpp
     engine/SEAdvanceTime.cpp
-    engine/SEAutoSerialization.cpp
     engine/SECondition.cpp
     engine/SEConditionManager.cpp
     engine/SEDataRequest.cpp

@@ -56,6 +56,12 @@ C_EXPORT void C_CALL Deallocate(PulseEngineThunk* thunk)
 }
 
 extern "C"
+C_EXPORT bool C_CALL ExecuteScenario(PulseEngineThunk * thunk, const char* sceOpts, int format)
+{
+  return thunk->ExecuteScenario(sceOpts, (SerializationFormat)format);
+}
+
+extern "C"
 C_EXPORT bool C_CALL SerializeFromFile(PulseEngineThunk* thunk, const char* filename, const char* data_requests, int data_requests_format)
 {
   return thunk->SerializeFromFile(filename==nullptr?"":filename, data_requests==nullptr?"":data_requests, (SerializationFormat)data_requests_format);

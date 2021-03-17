@@ -14,7 +14,6 @@ POP_PROTO_WARNINGS()
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEDecimalFormat.h"
-#include "engine/SEAutoSerialization.h"
 #include "engine/SEDynamicStabilization.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
@@ -663,43 +662,6 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManag
     return false;
   PBEngine::Load(data, dst, subMgr);
   return true;
-}
-
-void PBEngine::Load(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst)
-{
-  dst.Clear();
-  PBEngine::Serialize(src, dst);
-}
-void PBEngine::Serialize(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst)
-{
-  if (src.has_period())
-    PBProperty::Load(src.period(), dst.GetPeriod());
-  if (src.periodtimestamps() != CDM_BIND::eSwitch::NullSwitch)
-    dst.SetPeriodTimeStamps((eSwitch)src.periodtimestamps());
-  if (src.afteractions() != CDM_BIND::eSwitch::NullSwitch)
-    dst.SetAfterActions((eSwitch)src.afteractions());
-  if (src.reloadstate() != CDM_BIND::eSwitch::NullSwitch)
-    dst.SetReloadState((eSwitch)src.reloadstate());
-  dst.SetDirectory(src.directory());
-  dst.SetFileName(src.filename());
-}
-CDM_BIND::AutoSerializationData* PBEngine::Unload(const SEAutoSerialization& src)
-{
-  CDM_BIND::AutoSerializationData *dst = new CDM_BIND::AutoSerializationData();
-  PBEngine::Serialize(src, *dst);
-  return dst;
-}
-void PBEngine::Serialize(const SEAutoSerialization& src, CDM_BIND::AutoSerializationData& dst)
-{
-  if (src.HasPeriod())
-    dst.set_allocated_period(PBProperty::Unload(*src.m_Period));
-  dst.set_periodtimestamps((CDM_BIND::eSwitch)src.m_PeriodTimeStamps);
-  dst.set_afteractions((CDM_BIND::eSwitch)src.m_AfterActions);
-  dst.set_reloadstate((CDM_BIND::eSwitch)src.m_ReloadState);
-  if (src.HasDirectory())
-    dst.set_directory(src.m_Directory);
-  if (src.HasFileName())
-    dst.set_filename(src.m_FileName);
 }
 
 void PBEngine::Load(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStabilization& dst)

@@ -13,6 +13,7 @@ public:
   static PULSE_BIND::ScenarioData* Unload(const PulseScenario& src);
   static void Serialize(const PULSE_BIND::ScenarioData& src, PulseScenario& dst);
   static void Serialize(const PulseScenario& src, PULSE_BIND::ScenarioData& dst);
+  static void Copy(const PulseScenario& src, PulseScenario& dst);
 
   static bool SerializeToString(const PulseScenario& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const PulseScenario& src, const std::string& filename);

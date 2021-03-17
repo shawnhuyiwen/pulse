@@ -37,6 +37,11 @@ void SEScenario::Clear()
   m_DataRequestMgr->Clear();
 }
 
+void SEScenario::Copy(const SEScenario& src)
+{
+  PBScenario::Copy(src, *this);
+}
+
 bool SEScenario::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBScenario::SerializeToString(*this, output, m);

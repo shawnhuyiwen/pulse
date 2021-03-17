@@ -69,7 +69,7 @@ public class SEPatientConfiguration
     if(src.conditions.size()>0)
     {
       for(SECondition c : src.conditions)
-        dst.getConditionsBuilder().addAnyCondition(SECondition.CDM2ANY(c));    
+        dst.getConditionsBuilder().addAnyCondition(SECondition.CDM2ANY(c));
     }
     dst.setDataRoot(src.dataRootDir);
   }
