@@ -4,6 +4,7 @@
 #include "EngineTest.h"
 
 #include "controller/Controller.h"
+#include "PulseScenarioExec.h"
 #include "utils/taskrunner/TaskRunner.h"
 #include "utils/FileUtils.h"
 #include "utils/TimingProfile.h"
@@ -72,7 +73,6 @@ void RunScenarioTask::Run()
 
   ms_initializationMutex.lock();
   std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine();
-  Pulse->GetLogger()->SetLogFile(logFile);
   ms_initializationMutex.unlock();
 
   if (!Pulse)
@@ -80,8 +80,11 @@ void RunScenarioTask::Run()
     std::cerr << "Unable to create PulseEngine" << std::endl;
     return;
   }
-  SEScenarioExec exec(Pulse->GetLogger());
-  exec.Execute(*Pulse, m_scenarioFile, SerializationFormat::JSON, dataFile);
+  SEScenarioExec execOpts;
+  execOpts.SetLogFilename(logFile);
+  execOpts.SetDataRequestCSVFilename(dataFile);
+  execOpts.SetScenarioFilename(m_scenarioFile);
+  PulseScenarioExec::Execute(*Pulse, execOpts);
 }
 
 void PulseEngineTest::MultiEngineTest(const std::string& sTestDirectory)

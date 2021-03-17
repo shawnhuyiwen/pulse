@@ -2,8 +2,6 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.pulse.howto;
 
-import com.kitware.pulse.SerializationType;
-
 import com.kitware.pulse.cdm.actions.SEAdvanceTime;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.datarequests.SEDataRequest;
@@ -11,8 +9,8 @@ import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
 import com.kitware.pulse.cdm.scenario.SEScenario;
+import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.engine.PulseScenarioExec;
-import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.RunConfiguration;
@@ -63,12 +61,16 @@ public class HowTo_RunScenario
   public static void example()
   {
     RunConfiguration cfg = new RunConfiguration();
+    SEScenarioExec execOpts = new SEScenarioExec();
     // Load and run a scenario
     PulseScenarioExec pse = new PulseScenarioExec();
-    String json = FileUtils.readFile(cfg.getScenarioDirectory()+"/patient/BasicStandard.json");
-    pse.runScenario(json, SerializationType.JSON, "./test_results/scenarios/patient/BasicStandardResults.csv", "./test_results/scenarios/patient/BasicStandardResults.log");
+    execOpts.setDataRequestCSVFilename("./test_results/scenarios/patient/BasicStandardResults.csv");
+    execOpts.setLogFilename("./test_results/scenarios/patient/BasicStandardResults.log");
+    execOpts.setScenarioFilename(cfg.getScenarioDirectory()+"/patient/BasicStandard.json");
+    pse.runScenario(execOpts);
     
     // Create and run a scenario
+    execOpts.reset();
     SEScenario sce = new SEScenario();
     sce.setName("HowTo_StaticEngine");
     sce.setDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
@@ -94,6 +96,9 @@ public class HowTo_RunScenario
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);
     sce.getActions().add(adv);
-    pse.runScenario(sce,"./test_results/HowToStaticEngineResults.csv", "./test_results/HowToStaticEngineResults.log");
+    execOpts.setDataRequestCSVFilename("./test_results/HowToStaticEngineResults.csv");
+    execOpts.setLogFilename("./test_results/HowToStaticEngineResults.log");
+    execOpts.setScenarioContent(sce.toJSON());
+    pse.runScenario(execOpts);
   }
 }

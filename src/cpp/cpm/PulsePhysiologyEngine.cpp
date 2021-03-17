@@ -67,8 +67,7 @@ bool PulseEngineThunk::ExecuteScenario(std::string const& execOpts, Serializatio
   SEScenarioExec opts;
   if (!opts.SerializeFromString(execOpts, format))
     return false;
-  PulseEngine eng;
-  return PulseScenarioExec::Execute(eng, opts);
+  return PulseScenarioExec::Execute(*data->eng, opts);
 }
 
 bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format)

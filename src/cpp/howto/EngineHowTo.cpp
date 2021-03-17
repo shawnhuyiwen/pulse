@@ -29,7 +29,7 @@ int main()
   //HowToCPR(); 
   //HowToEnvironmentChange();
   //HowToExercise();
-  HowToHemorrhage();
+  //HowToHemorrhage();
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
   //HowToPulmonaryFibrosis();
@@ -38,7 +38,7 @@ int main()
   //HowToTensionPneumothorax();
 
   // This one does not really run, is a pure example
-  //HowToRunScenario();
+  HowToRunScenario();
 
   // More complicated examples that do run
   //HowToConcurrentEngines();

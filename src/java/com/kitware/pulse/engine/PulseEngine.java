@@ -500,5 +500,5 @@ public class PulseEngine
   protected native String nativeGetConditions(long nativeObj, int format);
   protected native String nativeGetAssessment(long nativeObj, int type, int format);
   
-  protected native boolean nativeExecuteScenario(long nativeObj, String scenario, int format, String csvFile, String logFile, String dataDir);
+  protected native boolean nativeExecuteScenario(long nativeObj, String sceOpts, int format);
 }

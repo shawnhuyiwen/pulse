@@ -52,5 +52,7 @@ bool PulseScenarioExec::Execute(PhysiologyEngine& pe, SEScenarioExec& opts)
   if(sce.HasConfiguration())
     pe.SetConfigurationOverride(&sce.GetConfiguration());
 
-  return opts.Execute(pe, sce);
+  bool b = opts.Execute(pe, sce);
+  pe.SetConfigurationOverride(nullptr);
+  return b;
 }

@@ -7,7 +7,6 @@ import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.SerializationType;
 
 import com.kitware.pulse.cdm.bind.Scenario.ScenarioData;
-import com.kitware.pulse.cdm.engine.SEAutoSerialization;
 import com.kitware.pulse.cdm.testing.SETestDriver;
 import com.kitware.pulse.cdm.testing.SETestJob;
 import com.kitware.pulse.cpm.bind.Pulse;
@@ -21,6 +20,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
   @Override
   public boolean ExecuteTest(SETestJob job)
   {
+    
     String logFilename;
     String resultsFilename;
     String outputFile = job.computedDirectory+"/"+job.name;
@@ -81,10 +81,8 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       	builder.clearPatientConfiguration();
       	builder.setEngineStateFile(pFile);
     }
-
-    if(job.autoSerialization!=null)
-    	pBuilder.getConfigurationBuilder().setAutoSerialization(SEAutoSerialization.unload(job.autoSerialization));
-
+    
+    pBuilder.getConfigurationBuilder();
     try 
     {
       json = JsonFormat.printer().print(pBuilder);
@@ -94,9 +92,13 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       Log.error("Unable to refactor the scenario",ex);
       return false;
     }
+    
+    job.execOpts.setLogFilename(logFilename);
+    job.execOpts.setDataRequestCSVFilename(resultsFilename);
+    job.execOpts.setScenarioContent(json);
     //System.out.println(json);
     PulseScenarioExec pse = new PulseScenarioExec();
-    pse.runScenario(json, SerializationType.JSON, resultsFilename, logFilename);
+    pse.runScenario(job.execOpts);
     Log.info("Completed running "+job.name);
     pse=null;
     return true;

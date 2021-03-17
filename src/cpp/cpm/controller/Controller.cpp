@@ -323,7 +323,6 @@ bool PulseController::SetConfigurationOverride(const SEEngineConfiguration* conf
 {
   if (config != nullptr)
   {
-    // TODO MAKE A COPY!!!!
     m_ConfigOverride = dynamic_cast<const PulseConfiguration*>(config);
     if (m_ConfigOverride == nullptr)
     {
@@ -331,6 +330,8 @@ bool PulseController::SetConfigurationOverride(const SEEngineConfiguration* conf
       return false;
     }
   }
+  else
+    m_ConfigOverride = nullptr;
   return true;
 }
 

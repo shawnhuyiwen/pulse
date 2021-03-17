@@ -7,6 +7,7 @@
 #include "utils/ConfigParser.h"
 #include "utils/FileUtils.h"
 
+#define test_serialization true
 int main(int argc, char* argv[])
 {
   try
@@ -48,15 +49,18 @@ int main(int argc, char* argv[])
     opts.SetDataRequestCSVFilename(csvFile);
     opts.SetScenarioFilename(argv[1]);
 
-    std::string sDir = "./states/auto/" + output;
-    sDir = Replace(sDir, ".json", "/");
-    opts.SetSerializationDirectory(sDir);
-    std::string fn;
-    SplitFilenamePath(output, fn);
-    opts.SetAutoSerializeFilename(fn);
-    opts.SetAutoSerializeAfterActions(eSwitch::On);
-    opts.SetTimeStampSerializedStates(eSwitch::On);
-    opts.SetAutoSerializePeriod_s(5);
+    if (test_serialization)
+    {
+      std::string sDir = "./states/auto/" + output;
+      sDir = Replace(sDir, ".json", "/");
+      opts.SetSerializationDirectory(sDir);
+      std::string fn;
+      SplitFilenamePath(output, fn);
+      opts.SetAutoSerializeFilename(fn);
+      opts.SetAutoSerializeAfterActions(eSwitch::On);
+      opts.SetTimeStampSerializedStates(eSwitch::On);
+      opts.SetAutoSerializePeriod_s(5);
+    }
 
     std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine();
     return PulseScenarioExec::Execute(*Pulse, opts)?0:1;

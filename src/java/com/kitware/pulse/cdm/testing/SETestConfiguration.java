@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
-import com.kitware.pulse.cdm.engine.SEAutoSerialization;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
+import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.RunConfiguration;
@@ -28,7 +28,7 @@ public class SETestConfiguration
   protected double percentDifference=2.0;
 
   protected boolean useStates=false;
-  protected SEAutoSerialization autoSerialization=null;
+  protected SEScenarioExec sceExec=new SEScenarioExec();
   protected String patientFiles;
   protected boolean executeJobs=true;
   protected boolean plotResults=true;
@@ -101,14 +101,13 @@ public class SETestConfiguration
         }
         if(key.equalsIgnoreCase("AutoSerialization"))
         {
-          this.autoSerialization=new SEAutoSerialization();
           // Parse the value
           String[] values = value.split(",");
-          this.autoSerialization.setDirectory(values[0]);
-          this.autoSerialization.getPeriod().setValue(Double.parseDouble(values[1]),TimeUnit.s);
-          this.autoSerialization.setPeriodTimeStamps(eSwitch.valueOf(values[2]));
-          this.autoSerialization.setAfterActions(eSwitch.valueOf(values[3]));
-          this.autoSerialization.setReloadState(eSwitch.valueOf(values[4]));
+          this.sceExec.setSerializationDirectory(values[0]);
+          this.sceExec.setAutoSerializePeriod_s(Double.parseDouble(values[1]));
+          this.sceExec.setTimeStampSerializedStates(eSwitch.valueOf(values[2]));
+          this.sceExec.setAutoSerializeAfterActions(eSwitch.valueOf(values[3]));
+          this.sceExec.setReloadSerializedState(eSwitch.valueOf(values[4]));
           continue; 
         }
         if(key.equalsIgnoreCase("ExecuteTests"))
@@ -150,12 +149,11 @@ public class SETestConfiguration
 
         SETestJob job = new SETestJob();
         job.useState = this.useStates;
-        if(this.autoSerialization != null)
-        {
-          job.autoSerialization = new SEAutoSerialization();
-          SEAutoSerialization.load(SEAutoSerialization.unload(this.autoSerialization), job.autoSerialization);
-          job.autoSerialization.setFilename(key.trim().substring(0, key.trim().length()-sce_ext.length()));
-        }
+        // Copy shared exec options
+        job.execOpts.copy(this.sceExec);
+        String stateDir = this.sceExec.getSerializationDirectory()+key.trim().substring(0, key.trim().length()-sce_ext.length());
+        job.execOpts.setAutoSerializeFilename(stateDir);
+        // More exec options
         if(!executeJobs)
           job.skipExecution = true;
         if(!plotResults)

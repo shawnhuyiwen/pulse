@@ -47,7 +47,6 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/doxygen/DoxygenPreprocessor.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/doxygen/Proto2Doxygen.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEActiveEvent.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEAutoSerialization.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDynamicStabilization.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEDynamicStabilizationEngineConvergence.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/engine/SEEngineConfiguration.java

@@ -99,7 +99,7 @@ namespace HowTo_UseEngine
         case InitializationType.StateString:
           {
             string file_content = File.ReadAllText("./states/Soldier@0s.json");
-            if (!pulse.SerializeFromString(file_content, data_mgr, SerializationFormat.JSON))
+            if (!pulse.SerializeFromString(file_content, data_mgr, eSerializationFormat.JSON))
             {
               Console.WriteLine("Error Initializing Pulse!");
               return;

@@ -404,7 +404,9 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientCon
     so->set_unit(sp.unit);
   }
 
-  dst.set_allocated_conditions(PBEngine::Unload(*src.GetConditions()));
+  if(src.HasConditions())
+    dst.set_allocated_conditions(PBEngine::Unload(*src.GetConditions()));
+
   dst.set_dataroot(src.GetDataRoot());
 }
 
