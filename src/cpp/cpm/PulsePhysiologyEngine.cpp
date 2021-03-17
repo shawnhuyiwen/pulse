@@ -43,8 +43,6 @@ public:
   size_t length;
   std::vector<double> requestedValues;
   double* requestedData = nullptr;
-
-  PulseScenarioExec* exec = nullptr;
 };
 
 PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
@@ -56,7 +54,6 @@ PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
 }
 PulseEngineThunk::~PulseEngineThunk()
 {
-  SAFE_DELETE(data->exec);
   delete data;
 }
 
@@ -65,18 +62,13 @@ PhysiologyEngine& PulseEngineThunk::GetPhysiologyEngine()
   return *data->eng;
 }
 
-bool PulseEngineThunk::ExecuteScenario(std::string const& scenario, SerializationFormat format, std::string const& csvFile, std::string const& logFile, std::string const& dataDir)
+bool PulseEngineThunk::ExecuteScenario(std::string const& execOpts, SerializationFormat format)
 {
-  if (data->exec != nullptr)
-  {
-    data->eng->GetLogger()->Error("Already running a scenario");
+  SEScenarioExec opts;
+  if (!opts.SerializeFromString(execOpts, format))
     return false;
-  }
-  data->exec = new PulseScenarioExec(data->eng->GetLogger());
-  data->exec->GetLogger()->SetLogFile(logFile);
-  bool b = data->exec->Execute(*data->eng, scenario, format, csvFile, dataDir);
-  SAFE_DELETE(data->exec);
-  return b;
+  PulseEngine eng;
+  return PulseScenarioExec::Execute(eng, opts);
 }
 
 bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format)

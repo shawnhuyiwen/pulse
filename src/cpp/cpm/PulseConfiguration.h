@@ -3,7 +3,6 @@
 
 #pragma once
 class SENutrition;
-class SEAutoSerialization;
 class SEEngineStabilization;
 class SEDynamicStabilization;
 class SETimedStabilization;
@@ -37,6 +36,9 @@ public:
   virtual SEScalarTime& GetTimeStep();
   virtual double GetTimeStep(const TimeUnit& unit) const;
 
+  virtual eSwitch AllowDynamicTimeStep() const { return m_AllowDynamicTimeStep; }
+  virtual void AllowDynamicTimeStep(eSwitch s) { m_AllowDynamicTimeStep = s; }
+
   // You can have either a timed or dynamic stabilization object (cannot have both)
   virtual bool HasStabilization() const;
   virtual SEEngineStabilization* GetStabilization();
@@ -55,11 +57,6 @@ public:
   virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == eSwitch::On; }
   virtual void EnableWritePatientBaselineFile(eSwitch s) { m_WritePatientBaselineFile = (s==eSwitch::NullSwitch) ? eSwitch::Off : s; }
 
-  virtual bool HasAutoSerialization() const;
-  virtual SEAutoSerialization& GetAutoSerialization();
-  virtual const SEAutoSerialization* GetAutoSerialization() const;
-  virtual void RemoveAutoSerialization();
-
   // add method here for overrrides
   virtual bool HasInitialOverrides() const;
   virtual SEOverrides& GetInitialOverrides();
@@ -68,9 +65,9 @@ public:
 protected:
 
   SEScalarTime*              m_TimeStep;
+  eSwitch                    m_AllowDynamicTimeStep;
   SETimedStabilization*      m_TimedStabilization;
   SEDynamicStabilization*    m_DynamicStabilization;
-  SEAutoSerialization*       m_AutoSerialization;
   eSwitch                    m_WritePatientBaselineFile;
 
   SEOverrides*               m_InitialOverrides;

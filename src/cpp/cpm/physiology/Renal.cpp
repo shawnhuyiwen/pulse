@@ -298,8 +298,6 @@ void Renal::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Renal::SetUp()
 {
-  m_dt = m_data.GetTimeStep().GetValue(TimeUnit::s);
-
   //Substances
   m_sodium = &m_data.GetSubstances().GetSodium();
   m_urea = &m_data.GetSubstances().GetUrea();
@@ -689,7 +687,7 @@ void Renal::CalculateGluconeogenesis()
       lactateExcreted_mg = m_SubstanceTransport.rightLactateExcretedMass_mg;
     }
 
-    double reabsorptionRate_mg_Per_s = (lactateExcreted_mg + glucoseReabsorptionMass_mg) / m_dt;
+    double reabsorptionRate_mg_Per_s = (lactateExcreted_mg + glucoseReabsorptionMass_mg) / m_data.GetTimeStep_s();
     
     //Convert 1-to-1 Lactate to Glucose and put in PeritubularCapillaries
     //If Converted Glucose + Reabsorbed Glucose > TM, the difference is excreted as Lactate
@@ -699,7 +697,7 @@ void Renal::CalculateGluconeogenesis()
       reabsorptionRate_mg_Per_s = MIN(reabsorptionRate_mg_Per_s, transportMaximum_mg_Per_s);
     }
 
-    double massToMove_mg = reabsorptionRate_mg_Per_s * m_dt;
+    double massToMove_mg = reabsorptionRate_mg_Per_s * m_data.GetTimeStep_s();
     massToMove_mg = MAX(massToMove_mg, 0.0);
     double lactateConverted_mg = massToMove_mg - glucoseReabsorptionMass_mg;
     lactateExcreted_mg = massToMove_mg - (lactateExcreted_mg + glucoseReabsorptionMass_mg);
@@ -721,7 +719,7 @@ void Renal::CalculateGluconeogenesis()
 
     //Set the substance output values
     totalReabsorptionRate_mg_Per_s += reabsorptionRate_mg_Per_s;
-    totalLactateExcretionRate_mg_Per_s += lactateExcreted_mg / m_dt;
+    totalLactateExcretionRate_mg_Per_s += lactateExcreted_mg / m_data.GetTimeStep_s();
   }
 
   //Set the substance output values
@@ -731,7 +729,7 @@ void Renal::CalculateGluconeogenesis()
   double patientWeight_kg = m_data.GetCurrentPatient().GetWeight(MassUnit::kg);
   m_lactate->GetClearance().GetRenalClearance().SetValue(totalLactateExcretionRate_mg_Per_s / plasmaConcentration_mg_Per_mL / patientWeight_kg, VolumePerTimeMassUnit::mL_Per_s_kg);
 
-  double singleExcreted_mg = totalLactateExcretionRate_mg_Per_s * m_dt * 0.5;// We are assuming the kindney's are doing the same amount of work
+  double singleExcreted_mg = totalLactateExcretionRate_mg_Per_s * m_data.GetTimeStep_s() * 0.5;// We are assuming the kindney's are doing the same amount of work
   m_leftKidneyIntracellularLactate->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);
   m_leftKidneyIntracellularLactate->GetMassCleared().IncrementValue(singleExcreted_mg, MassUnit::mg);
   m_rightKidneyIntracellularLactate->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);
@@ -858,7 +856,7 @@ void Renal::CalculateGlomerularTransport(SESubstance& sub)
     //Determine how much is unbound - i.e. available to move
     double fractionUnbound = sub.GetClearance().GetFractionUnboundInPlasma().GetValue();
 
-    double massToMove_mg = concentration_mg_Per_mL * flow_mL_Per_s * m_dt * filterability * fractionUnbound;
+    double massToMove_mg = concentration_mg_Per_mL * flow_mL_Per_s * m_data.GetTimeStep_s() * filterability * fractionUnbound;
     
     //Make sure we don't try to move too much
     massToMove_mg = MIN(massToMove_mg, glomerularSubQ->GetMass().GetValue(MassUnit::mg));
@@ -879,7 +877,7 @@ void Renal::CalculateGlomerularTransport(SESubstance& sub)
     bowmansSubQ->Balance(BalanceLiquidBy::Mass);
     
     //Set the substance output values
-    filtrationRate_mg_Per_s += massToMove_mg / m_dt;
+    filtrationRate_mg_Per_s += massToMove_mg / m_data.GetTimeStep_s();
   }
 
   //Set the substance output values
@@ -1079,13 +1077,13 @@ void Renal::CalculateReabsorptionTransport(SESubstance& sub)
       double massModification = 1.0 / permeabilityModificationFactor;
       //limit the ratio to 1 to allow for concentrated urine
       massModification = MIN(massModification, 1.0);
-      massToMove_mg = concentration_mg_Per_mL * flow_mL_Per_s * m_dt * reabsorptionRatio * massModification;
+      massToMove_mg = concentration_mg_Per_mL * flow_mL_Per_s * m_data.GetTimeStep_s() * reabsorptionRatio * massModification;
     }        
 
     //Make sure we don't try to move too much
     massToMove_mg = MIN(massToMove_mg, tubulesSubQ->GetMass().GetValue(MassUnit::mg));
 
-    double reabsorptionRate_mg_Per_s = massToMove_mg / m_dt;
+    double reabsorptionRate_mg_Per_s = massToMove_mg / m_data.GetTimeStep_s();
     //Stay below the maximum allowable transport
     if (!sub.GetClearance().GetRenalTransportMaximum().IsInfinity())
     {
@@ -1093,7 +1091,7 @@ void Renal::CalculateReabsorptionTransport(SESubstance& sub)
       reabsorptionRate_mg_Per_s = MIN(reabsorptionRate_mg_Per_s, transportMaximum_mg_Per_s);
     }  
     
-    massToMove_mg = reabsorptionRate_mg_Per_s * m_dt;
+    massToMove_mg = reabsorptionRate_mg_Per_s * m_data.GetTimeStep_s();
 
     //Store information about glucose to be used later in Gluconeogenesis
     if (&sub == m_glucose)
@@ -1177,12 +1175,12 @@ void Renal::CalculateExcretion(SESubstance& sub)
       if (kidney == 0)
       {
         //Left
-        m_SubstanceTransport.leftLactateExcretedMass_mg = excretionRate_mg_Per_s * m_dt;
+        m_SubstanceTransport.leftLactateExcretedMass_mg = excretionRate_mg_Per_s * m_data.GetTimeStep_s();
       }
       else
       {
         //Right
-        m_SubstanceTransport.rightLactateExcretedMass_mg = excretionRate_mg_Per_s * m_dt;
+        m_SubstanceTransport.rightLactateExcretedMass_mg = excretionRate_mg_Per_s * m_data.GetTimeStep_s();
       }
     }
   }
@@ -1206,7 +1204,7 @@ void Renal::CalculateExcretion(SESubstance& sub)
     SELiquidSubstanceQuantity* leftKidneySubQ = m_data.GetCompartments().GetIntracellularFluid(*m_leftKidneyTissue).GetSubstanceQuantity(sub);
     SELiquidSubstanceQuantity* rightKidneySubQ = m_data.GetCompartments().GetIntracellularFluid(*m_rightKidneyTissue).GetSubstanceQuantity(sub);
 
-    double singleExcreted_mg = totalExcretionRate_mg_Per_s * m_dt * 0.5;// We are assuming the kindneys are doing the same amount of work
+    double singleExcreted_mg = totalExcretionRate_mg_Per_s * m_data.GetTimeStep_s() * 0.5;// We are assuming the kindneys are doing the same amount of work
     leftKidneySubQ->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);
     leftKidneySubQ->GetMassCleared().IncrementValue(singleExcreted_mg, MassUnit::mg);
     rightKidneySubQ->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);
@@ -1237,7 +1235,7 @@ void Renal::CalculateAutomaticClearance(SESubstance& sub)
     return;//nothing to do
 
   //Renal Volume Cleared - Clearance happens through the renal system
-  renalVolumeCleared_mL = (clearance.GetRenalClearance().GetValue(VolumePerTimeMassUnit::mL_Per_s_kg) * patientWeight_kg * m_dt) / 2;
+  renalVolumeCleared_mL = (clearance.GetRenalClearance().GetValue(VolumePerTimeMassUnit::mL_Per_s_kg) * patientWeight_kg * m_data.GetTimeStep_s()) / 2;
 
   double massCleared_ug = 0.0;
 
@@ -1625,7 +1623,7 @@ void Renal::UpdateBladderVolume()
   //Manually modify the bladder volume based on flow
   //This will work for both filling the bladder and urinating
   double bladderFlow_mL_Per_s = m_bladderToGroundPressurePath->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
-  double volumeIncrement_mL = bladderFlow_mL_Per_s * m_dt;
+  double volumeIncrement_mL = bladderFlow_mL_Per_s * m_data.GetTimeStep_s();
   double bladderVolume_mL = m_bladderNode->GetNextVolume().GetValue(VolumeUnit::mL) + volumeIncrement_mL;  
 
   //Don't let this get below zero during urination

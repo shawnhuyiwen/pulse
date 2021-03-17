@@ -191,3 +191,28 @@ bool IsJSONFile(const std::string& filename)
   size_t ext = filename.find_last_of(".");
   return filename.substr(ext) == ".json";
 }
+
+bool SplitFilenamePath(const std::string& filepath, std::string& filename)
+{
+  auto slash = filepath.find_last_of("/");
+  (slash == std::string::npos) ?
+    slash = 0 : slash++;
+  filename = filepath.substr(slash);
+  return true;
+}
+bool SplitFilenameExt(const std::string& filepath, std::string& filename, std::string& ext)
+{
+  SplitFilenamePath(filepath, filename);
+  auto ePos = filename.find_last_of(".");
+  if (ePos != std::string::npos)
+  {
+    ext = filename.substr(ePos);
+    filename = filename.substr(0, ePos);
+  }
+  else
+  {
+    // No extension...
+    ext = "";
+  }
+  return true;
+}

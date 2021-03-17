@@ -63,31 +63,16 @@ JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeDelete(JN
 //////////////////////
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeExecuteScenario(JNIEnv * env, jobject obj, jlong ptr, jstring scenario, jint scenario_format, jstring csvFilename, jstring logFilename, jstring dataDir)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeExecuteScenario(JNIEnv * env, jobject obj, jlong ptr, jstring sceOpts, jint scenario_format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
   jboolean bRet;
-  const char* sceStr = env->GetStringUTFChars(scenario, JNI_FALSE);
-  const char* csvStr = env->GetStringUTFChars(csvFilename, JNI_FALSE);
-  const char* logStr = env->GetStringUTFChars(logFilename, JNI_FALSE);
-  const char* ddStr = nullptr;
-  if (dataDir != nullptr)
-  {
-    ddStr = env->GetStringUTFChars(dataDir, JNI_FALSE);
-    bRet = engineJNI->ExecuteScenario(sceStr, (SerializationFormat)scenario_format, csvStr, logStr, ddStr);
-  }
-  else
-    bRet = engineJNI->ExecuteScenario(sceStr, (SerializationFormat)scenario_format, csvStr, logStr);
-
-  env->ReleaseStringUTFChars(scenario, sceStr);
-  env->ReleaseStringUTFChars(csvFilename, csvStr);
-  env->ReleaseStringUTFChars(logFilename, logStr);
-  if (ddStr != nullptr)
-    env->ReleaseStringUTFChars(dataDir, ddStr);
-
+  const char* sceOptsStr = env->GetStringUTFChars(sceOpts, JNI_FALSE);
+  bRet = engineJNI->ExecuteScenario(sceOptsStr, (SerializationFormat)scenario_format);
+  env->ReleaseStringUTFChars(sceOpts, sceOptsStr);
   return bRet;
 }
 

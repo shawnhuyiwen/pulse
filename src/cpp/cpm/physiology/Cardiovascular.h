@@ -126,7 +126,6 @@ protected:
   SERunningAverage* m_CardiacCycleSkinFlow_mL_Per_s;
   
   // Stateless member variable (Set in SetUp())
-  double                           m_dT_s;
   bool                             m_TuneCircuit = true;
   std::string                      m_TuningFile;
 

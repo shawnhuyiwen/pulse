@@ -265,7 +265,6 @@ void Cardiovascular::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::SetUp()
 {
-  m_dT_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
   m_minIndividialSystemicResistance_mmHg_s_Per_mL = 0.1;
 
   //Circuits
@@ -529,7 +528,7 @@ void Cardiovascular::ChronicPericardialEffusion()
 
   //Just throw this all on at once
   //Only do this for a single time-step!
-  m_pGndToPericardium->GetNextFlowSource().SetValue(deltaVolume_mL / m_dT_s, VolumePerTimeUnit::mL_Per_s);
+  m_pGndToPericardium->GetNextFlowSource().SetValue(deltaVolume_mL / m_data.GetTimeStep_s(), VolumePerTimeUnit::mL_Per_s);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -626,8 +625,8 @@ void Cardiovascular::Process(bool solve_and_transport)
 {
   if (solve_and_transport)
   {
-    m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
-    m_transporter->Transport(*m_CirculatoryGraph, m_dT_s);
+    m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
+    m_transporter->Transport(*m_CirculatoryGraph, m_data.GetTimeStep_s());
   }
   CalculateVitalSigns();
   ComputeExposedModelParameters();
@@ -698,7 +697,7 @@ void Cardiovascular::CalculateVitalSigns()
     m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
   // Calculate heart rate - Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
-  m_CurrentCardiacCycleDuration_s += m_dT_s;
+  m_CurrentCardiacCycleDuration_s += m_data.GetTimeStep_s();
   if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
   {
     m_HeartFlowDetected = true;
@@ -723,7 +722,7 @@ void Cardiovascular::CalculateVitalSigns()
     m_CardiacCycleDiastolicVolume_mL = LHeartVolume_mL;
 
   // Increment stroke volume. Get samples for running means
-  m_CardiacCycleStrokeVolume_mL += LHeartFlow_mL_Per_s*m_dT_s;
+  m_CardiacCycleStrokeVolume_mL += LHeartFlow_mL_Per_s*m_data.GetTimeStep_s();
   m_CardiacCycleArterialPressure_mmHg->Sample(AortaNodePressure_mmHg);
   m_CardiacCycleArterialCO2PartialPressure_mmHg->Sample(AortaNodeCO2PartialPressure_mmHg);
   m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Sample(PulmVeinNodePressure_mmHg);
@@ -1297,7 +1296,7 @@ void Cardiovascular::Hemorrhage()
         h->GetFlowRate().SetValue(hemorrhagePathFlow_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
       }
       hemorrhagePathFlow_mL_Per_s = h->HasFlowRate() ? h->GetFlowRate(VolumePerTimeUnit::mL_Per_s) : 0;
-      h->GetTotalBloodLost().IncrementValue(hemorrhagePathFlow_mL_Per_s* m_dT_s, VolumeUnit::mL);
+      h->GetTotalBloodLost().IncrementValue(hemorrhagePathFlow_mL_Per_s* m_data.GetTimeStep_s(), VolumeUnit::mL);
     }
   }
 
@@ -1354,7 +1353,7 @@ void Cardiovascular::Hemorrhage()
   InternalHemorrhagePressureApplication();
 
   GetTotalHemorrhageRate().SetValue(TotalLossRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-  GetTotalHemorrhagedVolume().IncrementValue((TotalLossRate_mL_Per_s* m_dT_s), VolumeUnit::mL);
+  GetTotalHemorrhagedVolume().IncrementValue((TotalLossRate_mL_Per_s* m_data.GetTimeStep_s()), VolumeUnit::mL);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1549,7 +1548,7 @@ void Cardiovascular::CalculateAndSetCPRcompressionForce()
     compressionForce_N = m_data.GetActions().GetPatientActions().GetChestCompressionForce().GetForce().GetValue(ForceUnit::N);
   }
 
-  m_CompressionTime_s += m_dT_s;
+  m_CompressionTime_s += m_data.GetTimeStep_s();
 
   if (compressionForce_N > compressionForceMax_N)
   {
@@ -1593,7 +1592,7 @@ void Cardiovascular::CardiacArrest()
     // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
     m_EnterCardiacArrest = true;
     //Force a new cardiac cycle to start when cardiac arrest is removed
-    m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_dT_s;
+    m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
   }
   else
   {
@@ -1670,7 +1669,7 @@ void Cardiovascular::HeartDriver()
 
   if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
   {
-    if (m_CurrentCardiacCycleTime_s >= m_CardiacCyclePeriod_s - m_dT_s)
+    if (m_CurrentCardiacCycleTime_s >= m_CardiacCyclePeriod_s - m_data.GetTimeStep_s())
       m_StartSystole = true; // A new cardiac cycle will begin next time step
 
     AdjustVascularTone();
@@ -1684,7 +1683,7 @@ void Cardiovascular::HeartDriver()
   // Note that the cardiac cycle time (m_CurrentCardiacCycleTime_s) continues to increment until a cardiac cycle begins (a beat happens)
   // So for a normal sinus rhythm, the maximum cardiac cycle time is equal to the cardiac cycle period (m_CardiacCyclePeriod_s).
   // For any ineffective rhythm (no heart beat) the cardiac cycle time will be as long as it has been since the last time there was an effective beat.
-  m_CurrentCardiacCycleTime_s += m_dT_s;
+  m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1944,7 +1943,7 @@ void Cardiovascular::CalculateHeartRate()
 {
   // The time that the flow actually decreased below the threshold was last time slice (when m_HeartFlowDetected
   // was set back to false), so we need to subtract one time step from the interval.
-  double HeartRate_Per_s = 1.0 / (m_CurrentCardiacCycleDuration_s - m_dT_s);
+  double HeartRate_Per_s = 1.0 / (m_CurrentCardiacCycleDuration_s - m_data.GetTimeStep_s());
   GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
   m_CurrentCardiacCycleDuration_s = 0;
 }
@@ -2039,7 +2038,7 @@ void Cardiovascular::CalculatePleuralCavityVenousEffects()
   double dampenFraction_perSec = 0.001 * 50.0;
 
   double previousRightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  double resistanceChange_L_Per_mmHg_s_Per_mL = (rightHeartResistance_mmHg_s_Per_mL - previousRightHeartResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_dT_s;
+  double resistanceChange_L_Per_mmHg_s_Per_mL = (rightHeartResistance_mmHg_s_Per_mL - previousRightHeartResistance_mmHg_s_Per_mL) * dampenFraction_perSec * m_data.GetTimeStep_s();
 
   rightHeartResistance_mmHg_s_Per_mL = previousRightHeartResistance_mmHg_s_Per_mL + resistanceChange_L_Per_mmHg_s_Per_mL;
 
@@ -2103,7 +2102,7 @@ void Cardiovascular::TuneCircuit()
     {
       m_data.AdvanceCallback(-1);
       HeartDriver();
-      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
+      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
       CalculateVitalSigns();
       m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
       //return; //Skip stabelization for debugging
@@ -2115,8 +2114,8 @@ void Cardiovascular::TuneCircuit()
       meanCVP_mmHg = GetMeanCentralVenousPressure(PressureUnit::mmHg);
       blood_mL = GetBloodVolume(VolumeUnit::mL);
 
-      stableTime_s += m_dT_s;
-      currentStableTime_s += m_dT_s;
+      stableTime_s += m_data.GetTimeStep_s();
+      currentStableTime_s += m_data.GetTimeStep_s();
       bool stableMAP = true;
       if (GeneralMath::PercentDifference(tgt_map_mmHg, map_mmHg) > stabPercentTolerance)
       {
@@ -2172,7 +2171,7 @@ void Cardiovascular::TuneCircuit()
           circuitTrk.CreateFile(m_TuningFile.c_str(), circuitFile);
         circuitTrk.StreamTrackToFile(circuitFile);
       }
-      time_s += m_dT_s;
+      time_s += m_data.GetTimeStep_s();
     }
     if (!m_TuneCircuit)
     {
@@ -2447,13 +2446,13 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
     {
       m_data.AdvanceCallback(-1);
       HeartDriver();
-      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
+      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
       CalculateVitalSigns();
       m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
       //return; //Skip stabelization for debugging
 
-      time_s += m_dT_s;
-      currentStableTime_s += m_dT_s;
+      time_s += m_data.GetTimeStep_s();
+      currentStableTime_s += m_data.GetTimeStep_s();
 
       for (size_t m=0; m<tissueResistancePaths.size(); m++)
       {
@@ -2529,10 +2528,10 @@ void Cardiovascular::TuneTissue(double time_s, DataTrack& circuitTrk, std::ofstr
     {
       m_data.AdvanceCallback(-1);
       HeartDriver();
-      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_dT_s);
+      m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
       CalculateVitalSigns();
       m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
-      time_s += m_dT_s;
+      time_s += m_data.GetTimeStep_s();
       if (!m_TuningFile.empty())
       {
         circuitTrk.Track(time_s, *m_CirculatoryCircuit);

@@ -87,8 +87,6 @@ void MechanicalVentilator::Initialize()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::SetUp()
 {
-  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-
   // Compartments
   m_Environment = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   m_Ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
@@ -324,7 +322,7 @@ void MechanicalVentilator::PreProcess()
   SetVentilatorDriver();
   SetResistances();
 
-  m_CurrentPeriodTime_s += m_dt_s;
+  m_CurrentPeriodTime_s += m_data.GetTimeStep_s();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -409,7 +407,7 @@ void MechanicalVentilator::CalculateInspiration()
     return;
   }
 
-  m_CurrentInspiratoryVolume_L += m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) * m_dt_s;
+  m_CurrentInspiratoryVolume_L += m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) * m_data.GetTimeStep_s();
 
   // Check trigger
   if (HasExpirationCycleTime())

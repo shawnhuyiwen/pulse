@@ -110,7 +110,6 @@ void Drugs::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Drugs::SetUp()
 {
-  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
   m_muscleIntracellular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::MuscleIntracellular);
   m_aortaVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
   m_venaCavaVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
@@ -237,7 +236,7 @@ void Drugs::AdministerSubstanceBolus()
     }
     administrationTime_s = bolus->GetAdminDuration(TimeUnit::s);
     concentration_ugPermL = bolus->GetConcentration(MassPerVolumeUnit::ug_Per_mL);
-    massIncrement_ug = dose_mL * concentration_ugPermL * m_dt_s / administrationTime_s;
+    massIncrement_ug = dose_mL * concentration_ugPermL * m_data.GetTimeStep_s() / administrationTime_s;
     subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
     subQ->Balance(BalanceLiquidBy::Mass);
     bolus->GetAdministeredDose().IncrementValue(massIncrement_ug / concentration_ugPermL, VolumeUnit::mL);
@@ -275,7 +274,7 @@ void Drugs::AdministerSubstanceInfusion()
 
     concentration_ug_Per_mL = infusion->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_mL);
     rate_mL_Per_s = infusion->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
-    massIncrement_ug = rate_mL_Per_s*concentration_ug_Per_mL*m_dt_s;
+    massIncrement_ug = rate_mL_Per_s*concentration_ug_Per_mL*m_data.GetTimeStep_s();
     subQ = m_venaCavaVascular->GetSubstanceQuantity(infusion->GetSubstance());
     subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
     /// \todo Enforce limits and remove the fatal error
@@ -336,7 +335,7 @@ void Drugs::AdministerSubstanceCompoundInfusion()
       return;
     }    
 
-    infusion->GetBagVolume().IncrementValue(-rate_mL_Per_s*m_dt_s, VolumeUnit::mL);
+    infusion->GetBagVolume().IncrementValue(-rate_mL_Per_s*m_data.GetTimeStep_s(), VolumeUnit::mL);
     double total_mL = infusion->GetBagVolume().GetValue(VolumeUnit::mL);
     if (total_mL <= 0)
     { /// \todo correct the mass based on what we have left in the bag
@@ -347,7 +346,7 @@ void Drugs::AdministerSubstanceCompoundInfusion()
     for (const SESubstanceConcentration* component : compound->GetComponents())
     {      
       subQ = m_venaCavaVascular->GetSubstanceQuantity(component->GetSubstance());
-      massIncrement_ug = rate_mL_Per_s*component->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_dt_s;
+      massIncrement_ug = rate_mL_Per_s*component->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_data.GetTimeStep_s();
       subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
       subQ->Balance(BalanceLiquidBy::Mass);
     }    
@@ -356,7 +355,7 @@ void Drugs::AdministerSubstanceCompoundInfusion()
       densityFluid_kg_Per_mL = m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
     else if (compound->GetName().compare("Blood") == 0)
       densityFluid_kg_Per_mL = m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
-    patientMass_kg -= rate_mL_Per_s*densityFluid_kg_Per_mL*m_dt_s;
+    patientMass_kg -= rate_mL_Per_s*densityFluid_kg_Per_mL*m_data.GetTimeStep_s();
   }
 
   for (const SESubstanceCompound* c : emptyBags)
@@ -649,7 +648,7 @@ void Drugs::CalculateSubstanceClearance()
     SESubstanceClearance& clearance = sub->GetClearance();
 
     //Renal Volume Cleared - Clearance happens through the renal system
-    RenalVolumeCleared_mL = (clearance.GetRenalClearance().GetValue(VolumePerTimeMassUnit::mL_Per_s_kg) * PatientWeight_kg * m_dt_s);
+    RenalVolumeCleared_mL = (clearance.GetRenalClearance().GetValue(VolumePerTimeMassUnit::mL_Per_s_kg) * PatientWeight_kg * m_data.GetTimeStep_s());
 
     //Intrinsic Clearance
     IntrinsicClearance_mLPersPerkg = clearance.GetIntrinsicClearance().GetValue(VolumePerTimeMassUnit::mL_Per_s_kg);
@@ -657,10 +656,10 @@ void Drugs::CalculateSubstanceClearance()
     //Hepatic Clearance
     double LiverVascularFlow_mL_Per_s = m_liverVascular->GetInFlow().GetValue(VolumePerTimeUnit::mL_Per_s);
     HepaticClearance_mLPers = (LiverVascularFlow_mL_Per_s * FractionUnboundInPlasma * IntrinsicClearance_mLPersPerkg * PatientWeight_kg) / (LiverVascularFlow_mL_Per_s + (FractionUnboundInPlasma * IntrinsicClearance_mLPersPerkg * PatientWeight_kg));
-    HepaticVolumeCleared_mL = HepaticClearance_mLPers * m_dt_s;
+    HepaticVolumeCleared_mL = HepaticClearance_mLPers * m_data.GetTimeStep_s();
 
     //Systemic Clearance
-    TotalVolumeCleared_mL = clearance.GetSystemicClearance().GetValue(VolumePerTimeMassUnit::mL_Per_s_kg) * PatientWeight_kg * m_dt_s;
+    TotalVolumeCleared_mL = clearance.GetSystemicClearance().GetValue(VolumePerTimeMassUnit::mL_Per_s_kg) * PatientWeight_kg * m_data.GetTimeStep_s();
     OtherSystemicVolumeCleared_mL = TotalVolumeCleared_mL - RenalVolumeCleared_mL - HepaticVolumeCleared_mL;
     // The following makes it so that you cannot have more than the total systemic clearance for the substance.
     LLIM(OtherSystemicVolumeCleared_mL, 0.);
@@ -672,7 +671,7 @@ void Drugs::CalculateSubstanceClearance()
     m_data.GetSubstances().CalculateGenericClearance(OtherSystemicVolumeCleared_mL, *m_venaCavaVascular, *sub);
 
     //Hepatic Excretion
-    m_data.GetSubstances().CalculateGenericExcretion(LiverVascularFlow_mL_Per_s, *m_liverTissue, *sub, clearance.GetFractionExcretedInFeces().GetValue(), m_dt_s);
+    m_data.GetSubstances().CalculateGenericExcretion(LiverVascularFlow_mL_Per_s, *m_liverTissue, *sub, clearance.GetFractionExcretedInFeces().GetValue(), m_data.GetTimeStep_s());
   }
 
 }

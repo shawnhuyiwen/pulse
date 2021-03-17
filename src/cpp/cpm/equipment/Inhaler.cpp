@@ -63,9 +63,6 @@ void Inhaler::Initialize()
 
 void Inhaler::SetUp()
 {
-  // Time step - used by inhaler timer
-  m_dt_s = m_data.GetTimeStep().GetValue(TimeUnit::s);
-
   m_AmbientEnv = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   m_Mouthpiece = m_data.GetCompartments().GetGasCompartment(pulse::InhalerCompartment::Mouthpiece);
   m_AerosolMouthpiece = m_data.GetCompartments().GetLiquidCompartment(pulse::InhalerCompartment::Mouthpiece);

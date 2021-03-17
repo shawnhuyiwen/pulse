@@ -17,6 +17,7 @@ public:
   virtual ~PulseScenario();
 
   virtual void Clear();
+  virtual void Copy(const PulseScenario& src);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;

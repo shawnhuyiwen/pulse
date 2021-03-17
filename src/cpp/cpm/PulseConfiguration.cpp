@@ -9,7 +9,6 @@
 #include "substance/SESubstanceManager.h"
 #include "engine/SEDynamicStabilization.h"
 #include "engine/SETimedStabilization.h"
-#include "engine/SEAutoSerialization.h"
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 #include "engine/SEOverrides.h"
@@ -45,9 +44,9 @@
 PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(logger)
 {
   m_TimeStep = nullptr;
+  m_AllowDynamicTimeStep = eSwitch::Off;
   m_TimedStabilization = nullptr;
   m_DynamicStabilization = nullptr;
-  m_AutoSerialization = nullptr;
   m_WritePatientBaselineFile = eSwitch::Off;
   m_InitialOverrides = nullptr;
 
@@ -175,7 +174,7 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
 PulseConfiguration::~PulseConfiguration()
 {
   SAFE_DELETE(m_TimeStep);
-  SAFE_DELETE(m_AutoSerialization);
+  m_AllowDynamicTimeStep = eSwitch::Off;
   SAFE_DELETE(m_InitialOverrides);
 
   // Blood Chemistry
@@ -295,9 +294,8 @@ PulseConfiguration::~PulseConfiguration()
 void PulseConfiguration::Clear()
 {
   INVALIDATE_PROPERTY(m_TimeStep);
+  m_AllowDynamicTimeStep = eSwitch::Off;
   RemoveStabilization();
-  if(m_AutoSerialization)
-    m_AutoSerialization->Clear();
   m_WritePatientBaselineFile = eSwitch::Off;
   if(m_InitialOverrides)
     m_InitialOverrides->Clear();
@@ -454,6 +452,7 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
 
   // Reset to default values
   GetTimeStep().SetValue(1.0 / 50.0, TimeUnit::s);
+  m_AllowDynamicTimeStep = eSwitch::Off;
   if (!dataDir.empty())
   {
     GetECGInterpolator().SerializeFromFile(dataDir + "/ecg/StandardECG.json", &GetTimeStep());
@@ -654,26 +653,6 @@ const SEDynamicStabilization* PulseConfiguration::GetDynamicStabilization() cons
 void PulseConfiguration::RemoveDynamicStabilization()
 {
   SAFE_DELETE(m_DynamicStabilization);
-}
-
-
-bool PulseConfiguration::HasAutoSerialization() const
-{
-  return m_AutoSerialization == nullptr ? false : m_AutoSerialization->IsValid();
-}
-SEAutoSerialization& PulseConfiguration::GetAutoSerialization()
-{
-  if (m_AutoSerialization == nullptr)
-    m_AutoSerialization = new SEAutoSerialization(GetLogger());
-  return *m_AutoSerialization;
-}
-const SEAutoSerialization* PulseConfiguration::GetAutoSerialization() const
-{
-  return m_AutoSerialization;
-}
-void PulseConfiguration::RemoveAutoSerialization()
-{
-  SAFE_DELETE(m_AutoSerialization);
 }
 
 bool PulseConfiguration::HasInitialOverrides() const
