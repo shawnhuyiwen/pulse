@@ -380,10 +380,16 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   {
     SEPatient patient(m_Logger);
     std::string pFile = patient_configuration.GetPatientFile();
-    if (pFile.find("/patients") == std::string::npos)
-    {// Prepend the patient directory if it's not there
-      pFile = m_DataDir+"/patients/";
-      pFile += patient_configuration.GetPatientFile();
+    if (!FileExists(pFile))
+    {
+      if (FileExists(m_DataDir+pFile))
+      {
+        pFile = m_DataDir + pFile;
+      }
+      else if (FileExists(m_DataDir+"/patients/"+pFile))
+      {
+        pFile = m_DataDir+"/patients/"+pFile;
+      }
     }
     if (!patient.SerializeFromFile(pFile))// TODO Support all serialization formats
       return false;
