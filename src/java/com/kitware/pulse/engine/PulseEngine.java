@@ -147,7 +147,7 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to initialize enging", ex);
+        logListener.error("Unable to initialize engine", ex);
       alive = false;
     }
     return alive;

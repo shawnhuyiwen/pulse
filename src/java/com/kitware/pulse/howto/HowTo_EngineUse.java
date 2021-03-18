@@ -223,7 +223,7 @@ public class HowTo_EngineUse
       case PatientFile:
       {
         SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
-        patient_configuration.setPatientFile("./patient/StandardMale.json");
+        patient_configuration.setPatientFile("./patients/StandardMale.json");
         // Optionally add conditions to the patient_configuration
 
         // Allocate an engine
