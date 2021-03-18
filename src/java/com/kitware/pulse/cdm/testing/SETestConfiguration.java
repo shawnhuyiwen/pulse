@@ -21,7 +21,8 @@ import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
 public class SETestConfiguration 
 {
   public static final String ext=".csv";
-  public static final String sce_ext=".json";
+  public static String sce_ext=".json";
+  public static String state_ext=".json";
   protected String testName;
   protected String reportName;
   protected int    numThreads=0;
@@ -108,6 +109,7 @@ public class SETestConfiguration
           this.sceExec.setTimeStampSerializedStates(eSwitch.valueOf(values[2]));
           this.sceExec.setAutoSerializeAfterActions(eSwitch.valueOf(values[3]));
           this.sceExec.setReloadSerializedState(eSwitch.valueOf(values[4]));
+          this.state_ext=values[5];
           continue; 
         }
         if(key.equalsIgnoreCase("ExecuteTests"))
@@ -151,8 +153,11 @@ public class SETestConfiguration
         job.useState = this.useStates;
         // Copy shared exec options
         job.execOpts.copy(this.sceExec);
-        String stateDir = this.sceExec.getSerializationDirectory()+key.trim().substring(0, key.trim().length()-sce_ext.length());
-        job.execOpts.setAutoSerializeFilename(stateDir);
+        String sceDir = key.trim().substring(0, key.trim().length()-sce_ext.length());
+        String stateDir = this.sceExec.getSerializationDirectory()+sceDir+"/";
+        String stateFilename = sceDir.substring(sceDir.lastIndexOf("/")+1);
+        job.execOpts.setSerializationDirectory(stateDir);
+        job.execOpts.setAutoSerializeFilename(stateFilename+"."+state_ext);
         // More exec options
         if(!executeJobs)
           job.skipExecution = true;
