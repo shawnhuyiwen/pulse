@@ -117,13 +117,14 @@ void SEGasCompartment::AddChild(SEGasCompartment& child)
     subQ->AddChild(child.CreateSubstanceQuantity(subQ->GetSubstance()));
 }
 
-SEGasSubstanceQuantity& SEGasCompartment::CreateSubstanceQuantity(SESubstance& substance)
+SEGasSubstanceQuantity& SEGasCompartment::CreateSubstanceQuantity(SESubstance& substance, bool zeroOut)
 {
   SEGasSubstanceQuantity* subQ = GetSubstanceQuantity(substance);
   if (subQ == nullptr)
   {
     subQ = new SEGasSubstanceQuantity(substance, *this);
-    subQ->SetToZero();
+    if(zeroOut)
+      subQ->SetToZero();
     m_SubstanceQuantities.push_back(subQ);
     m_TransportSubstances.push_back(subQ);
   }

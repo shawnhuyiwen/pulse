@@ -229,18 +229,19 @@ void PBSubstance::Serialize(const CDM_BIND::SubstanceClearanceData& src, SESubst
 
   if (src.has_renalclearance())
   {
-    if (src.renalclearance().has_regulation())
+    if (src.renalclearance().has_clearance())
     {
+      dst.m_RenalDynamic = RenalDynamic::Clearance;
+      PBProperty::Load(src.renalclearance().clearance(), dst.GetRenalClearance());
+    }
+    // This if order matters!!!
+    if (src.renalclearance().has_regulation())
+    {// If we have a regulation object, we are regulating, the clearance is bookkeeping only
       dst.m_RenalDynamic = RenalDynamic::Regulation;
       dst.SetChargeInBlood((eCharge)src.renalclearance().regulation().chargeinblood());
       PBProperty::Load(src.renalclearance().regulation().fractionunboundinplasma(), dst.GetFractionUnboundInPlasma());
       PBProperty::Load(src.renalclearance().regulation().reabsorptionratio(), dst.GetRenalReabsorptionRatio());
       PBProperty::Load(src.renalclearance().regulation().transportmaximum(), dst.GetRenalTransportMaximum());
-    }
-    else if (src.renalclearance().has_clearance())
-    {
-      dst.m_RenalDynamic = RenalDynamic::Clearance;
-      PBProperty::Load(src.renalclearance().clearance(), dst.GetRenalClearance());
     }
 
     if (src.renalclearance().has_filtrationrate())
@@ -288,9 +289,9 @@ void PBSubstance::Serialize(const SESubstanceClearance& src, CDM_BIND::Substance
     CDM_BIND::SubstanceRenalClearanceData* rc = new CDM_BIND::SubstanceRenalClearanceData();
     dst.set_allocated_renalclearance(rc);
 
-    if (src.m_RenalDynamic == RenalDynamic::Clearance && src.HasRenalClearance())
+    if (src.HasRenalClearance())
       rc->set_allocated_clearance(PBProperty::Unload(*src.m_RenalClearance));
-    else if (src.m_RenalDynamic == RenalDynamic::Regulation)
+    if (src.m_RenalDynamic == RenalDynamic::Regulation)
     {
       CDM_BIND::SubstanceRenalRegulationData* rr = new CDM_BIND::SubstanceRenalRegulationData();
       rc->set_allocated_regulation(rr);
