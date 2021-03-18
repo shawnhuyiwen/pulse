@@ -13,7 +13,7 @@ public:
   static CDM_BIND::ScenarioData* Unload(const SEScenario& src);
   static void Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst);
   static void Serialize(const SEScenario& src, CDM_BIND::ScenarioData& dst);
-  static void PBScenario::Copy(const SEScenario& src, SEScenario& dst);
+  static void Copy(const SEScenario& src, SEScenario& dst);
 
   static bool SerializeToString(const SEScenario& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const SEScenario& src, const std::string& filename);
