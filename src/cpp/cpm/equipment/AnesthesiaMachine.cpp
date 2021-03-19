@@ -92,7 +92,7 @@ void AnesthesiaMachine::Initialize()
 {
   PulseSystem::Initialize();
 
-  SetConnection(eAnesthesiaMachine_Connection::NullConnection);
+  SetConnection(eAnesthesiaMachine_Connection::Off);
   GetInletFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
   GetRespiratoryRate().SetValue(12.0, FrequencyUnit::Per_min);
   GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
@@ -162,6 +162,8 @@ void AnesthesiaMachine::SetUp()
 
 void AnesthesiaMachine::StateChange()
 {
+  if (m_data.GetAirwayMode() != eAirwayMode::AnesthesiaMachine)
+    return;
   if (HasLeftChamber() && GetLeftChamber().GetState() == eSwitch::On)
   {
     if (GetLeftChamber().HasSubstance())

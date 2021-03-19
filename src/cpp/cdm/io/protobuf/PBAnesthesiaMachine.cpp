@@ -24,7 +24,8 @@ void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineData& src, SEAne
 }
 void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst, const SESubstanceManager& subMgr)
 {
-  dst.SetConnection((eAnesthesiaMachine_Connection)src.connection());
+  dst.m_Connection = (eAnesthesiaMachine_Connection)src.connection();
+
   if (src.has_inletflow())
     PBProperty::Load(src.inletflow(), dst.GetInletFlow());
   if (src.has_inspiratoryexpiratoryratio())

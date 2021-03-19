@@ -22,7 +22,7 @@ void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorData& src,
 }
 void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
-  dst.SetConnection((eMechanicalVentilator_Connection)src.connection());
+  dst.m_Connection = (eMechanicalVentilator_Connection)src.connection();
 
   if (src.has_endotrachealtuberesistance())
     PBProperty::Load(src.endotrachealtuberesistance(), dst.GetEndotrachealTubeResistance());
