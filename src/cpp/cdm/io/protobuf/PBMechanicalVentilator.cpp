@@ -19,6 +19,7 @@ void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorData& src,
 {
   dst.Clear();
   PBMechanicalVentilator::Serialize(src, dst, subMgr);
+  dst.StateChange();
 }
 void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
@@ -110,8 +111,6 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
     }
     PBSubstance::Load(scData, dst.GetConcentrationInspiredAerosol(*sub));
   }
-
-  dst.StateChange();
 }
 
 CDM_BIND::MechanicalVentilatorData* PBMechanicalVentilator::Unload(const SEMechanicalVentilator& src)

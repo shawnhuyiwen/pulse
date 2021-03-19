@@ -21,6 +21,7 @@ void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineData& src, SEAne
 {
   dst.Clear();
   PBAnesthesiaMachine::Serialize(src, dst, subMgr);
+  dst.StateChange();
 }
 void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst, const SESubstanceManager& subMgr)
 {
@@ -52,8 +53,6 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, 
     PBAnesthesiaMachine::Load(src.oxygenbottleone(), dst.GetOxygenBottleOne(), subMgr);
   if (src.has_oxygenbottletwo())
     PBAnesthesiaMachine::Load(src.oxygenbottletwo(), dst.GetOxygenBottleTwo(), subMgr);
-
-  dst.StateChange();
 }
 
 CDM_BIND::AnesthesiaMachineData* PBAnesthesiaMachine::Unload(const SEAnesthesiaMachine& src)

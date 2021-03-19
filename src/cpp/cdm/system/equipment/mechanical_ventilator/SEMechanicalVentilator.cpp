@@ -22,7 +22,7 @@
 
 SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(logger)
 {
-  m_Connection = eMechanicalVentilator_Connection::NullConnection;
+  m_Connection = eMechanicalVentilator_Connection::Off;
   m_EndotrachealTubeResistance = nullptr;
 
   m_PositiveEndExpiredPressure = nullptr;
@@ -58,7 +58,7 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
 
 SEMechanicalVentilator::~SEMechanicalVentilator()
 {
-  m_Connection = eMechanicalVentilator_Connection::NullConnection;
+  m_Connection = eMechanicalVentilator_Connection::Off;
   SAFE_DELETE(m_EndotrachealTubeResistance);
 
   SAFE_DELETE(m_PositiveEndExpiredPressure);
@@ -104,7 +104,7 @@ void SEMechanicalVentilator::Clear()
 {
   SEEquipment::Clear();
 
-  m_Connection = eMechanicalVentilator_Connection::NullConnection;
+  m_Connection = eMechanicalVentilator_Connection::Off;
   INVALIDATE_PROPERTY(m_EndotrachealTubeResistance);
 
   INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
