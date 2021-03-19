@@ -203,7 +203,7 @@ void Drugs::AdministerSubstanceBolus()
       continue;
 
     dose_mL = bolus->GetDose(VolumeUnit::mL);
-    if (bolus->GetAdministeredDose().GetValue(VolumeUnit::mL) >= dose_mL)
+    if (bolus->GetTotalInfusedDose().GetValue(VolumeUnit::mL) >= dose_mL)
     {
       // Finished, remove it
       completedBolus.push_back(&bolus->GetSubstance());
@@ -239,7 +239,7 @@ void Drugs::AdministerSubstanceBolus()
     massIncrement_ug = dose_mL * concentration_ugPermL * m_data.GetTimeStep_s() / administrationTime_s;
     subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
     subQ->Balance(BalanceLiquidBy::Mass);
-    bolus->GetAdministeredDose().IncrementValue(massIncrement_ug / concentration_ugPermL, VolumeUnit::mL);
+    bolus->GetTotalInfusedDose().IncrementValue(massIncrement_ug / concentration_ugPermL, VolumeUnit::mL);
     /// \todo Add fluid amount to fluid system
   }
   // Remove any bolus that are complete
