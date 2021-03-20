@@ -60,7 +60,8 @@ int main(int argc, char* argv[])
       opts.SetAutoSerializeFilename(fn);
       opts.SetAutoSerializeAfterActions(eSwitch::On);
       opts.SetTimeStampSerializedStates(eSwitch::On);
-      opts.SetAutoSerializePeriod_s(5);
+      opts.SetReloadSerializedState(eSwitch::On);
+      opts.SetAutoSerializePeriod_s(0);
     }
 
     std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine();
