@@ -44,6 +44,7 @@ void SEScenarioExec::Clear()
   m_ScenarioContent = "";
   m_ScenarioFilename = "";
 
+  m_SaveNextStep = false;
   m_SerializationDirectory = "./states/";
   m_AutoSerializeFilename = "";
   m_AutoSerializeBaseFilename = "";
@@ -238,8 +239,19 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
     }
   }
   pe.AdvanceModelTime();
+  if (m_SaveNextStep)
+  {
+    m_SaveNextStep = false;
+    m_SerializationOutput.str("");
+    m_SerializationOutput << m_SerializationDirectory << "/" << m_AutoSerializeBaseFilename << "AfterActionReload";
+    if (m_TimeStampSerializedStates == eSwitch::On)
+      m_SerializationOutput << "@" << pe.GetSimulationTime(TimeUnit::s);
+    pe.SerializeToFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
+    pe.GetLogger()->Info("Serializing state again (after the next timestep) : " + m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
+  }
   if (m_SerializationActions.str().length() > 0)
   {
+    m_SaveNextStep = true;
     m_SerializationOutput.str("");
     m_SerializationOutput << m_SerializationDirectory << "/" << m_AutoSerializeBaseFilename << m_SerializationActions.str();
     if (m_TimeStampSerializedStates == eSwitch::On)

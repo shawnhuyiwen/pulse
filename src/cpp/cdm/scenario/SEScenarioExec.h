@@ -114,6 +114,7 @@ protected:
   SerializationFormat m_ContentFormat = SerializationFormat::JSON;
 
   // Settings for serialization
+  bool                       m_SaveNextStep;
   std::string                m_SerializationDirectory;
   std::string                m_AutoSerializeFilename;
   std::string                m_AutoSerializeBaseFilename;
