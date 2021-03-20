@@ -9,7 +9,7 @@ namespace Pulse.CDM
     {
     }
 
-    public override void Clear() 
+    public override void Clear()
     {
       base.Clear();
     }

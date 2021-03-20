@@ -6,6 +6,7 @@ import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.cdm.scenario.SEScenario;
 import com.kitware.pulse.cpm.bind.Pulse.ScenarioData;
 import com.kitware.pulse.utilities.FileUtils;
+import com.kitware.pulse.utilities.Log;
 
 
 public class PulseScenario extends SEScenario 
@@ -29,9 +30,24 @@ public class PulseScenario extends SEScenario
     JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
     PulseScenario.load(builder.build(), this);
   }
-  public void writeFile(String fileName) throws InvalidProtocolBufferException
+  public void writeFile(String fileName)
   {
-    FileUtils.writeFile(fileName, JsonFormat.printer().print(PulseScenario.unload(this)));
+    FileUtils.writeFile(fileName, toJSON());
+  }
+  
+  public String toJSON() 
+  {
+    String json;
+    try
+    {
+      json = JsonFormat.printer().print(PulseScenario.unload(this));
+    }
+    catch (InvalidProtocolBufferException e)
+    {
+      Log.error("Unable to generate json from SEScenario");
+      json = "";
+    }
+    return json;
   }
 
   public static void load(ScenarioData src, PulseScenario dst)

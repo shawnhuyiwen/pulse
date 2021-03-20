@@ -113,11 +113,11 @@ message SubstanceRenalRegulationData
 /** @brief  */
 message SubstanceRenalClearanceData
 {
-  oneof Dynamics
-  {
-    ScalarVolumePerTimeMassData                Clearance                      = 1; /**<< @brief */
-    SubstanceRenalRegulationData               Regulation                     = 2; /**<< @brief */
-  }
+  // For a substance definition, you should only have a Clearance or a Regulation object
+  // If you use a Regulation object, the engine we will create and use the Clearance object for book keeping
+  // Hence why its not in a oneof
+  ScalarVolumePerTimeMassData                  Clearance                      = 1; /**<< @brief */
+  SubstanceRenalRegulationData                 Regulation                     = 2; /**<< @brief */
   ScalarMassPerTimeData                        FiltrationRate                 = 3; /**<< @brief */
   ScalarMassPerTimeData                        ReabsorptionRate               = 4; /**<< @brief */
   ScalarMassPerTimeData                        ExcretionRate                  = 5; /**<< @brief */

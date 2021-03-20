@@ -10,6 +10,7 @@ public class VolumeUnit
 
   public static VolumeUnit L = new VolumeUnit("L");
   public static VolumeUnit mL = new VolumeUnit("mL");
+  public static VolumeUnit uL = new VolumeUnit("uL");
   public static VolumeUnit dL = new VolumeUnit("dL");
   public static VolumeUnit m3 = new VolumeUnit("m^3");
 
@@ -19,6 +20,8 @@ public class VolumeUnit
       return VolumeUnit.L;
     if (u == VolumeUnit.mL.ToString())
       return VolumeUnit.mL;
+    if (u == VolumeUnit.uL.ToString())
+      return VolumeUnit.uL;
     if (u == VolumeUnit.dL.ToString())
       return VolumeUnit.dL;
     if (u == VolumeUnit.m3.ToString())

@@ -123,7 +123,7 @@ namespace Pulse.CDM
       try
       {
         string json = System.IO.File.ReadAllText(filename);
-        return SerializeFromString(json, SerializationFormat.JSON);
+        return SerializeFromString(json, eSerializationFormat.JSON);
       }
       catch (System.Exception ex)
       {
@@ -131,14 +131,14 @@ namespace Pulse.CDM
         return false;
       }
     }
-    public bool SerializeFromString(string src, SerializationFormat fmt)
+    public bool SerializeFromString(string src, eSerializationFormat fmt)
     {
       return PBEnvironment.SerializeFromString(src, this);
     }
 
     public bool SerializeToFile(string filename)
     {
-      string json = SerializeToString(SerializationFormat.JSON);
+      string json = SerializeToString(eSerializationFormat.JSON);
       if (json == null || json.Length == 0)
         return false;
       try
@@ -152,7 +152,7 @@ namespace Pulse.CDM
       }
       return true;
     }
-    public string SerializeToString(SerializationFormat format)
+    public string SerializeToString(eSerializationFormat format)
     {
       return PBEnvironment.SerializeToString(this);
     }

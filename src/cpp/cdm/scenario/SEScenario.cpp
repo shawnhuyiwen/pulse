@@ -37,6 +37,11 @@ void SEScenario::Clear()
   m_DataRequestMgr->Clear();
 }
 
+void SEScenario::Copy(const SEScenario& src)
+{
+  PBScenario::Copy(src, *this);
+}
+
 bool SEScenario::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBScenario::SerializeToString(*this, output, m);
@@ -125,7 +130,11 @@ void SEScenario::AddAction(const SEAction& a)
   // Make a copy using the bindings
   m_Actions.push_back(SEAction::Copy(a,*m_SubMgr));
 }
-const std::vector<const SEAction*>& SEScenario::GetActions() const
+const std::vector<SEAction*>& SEScenario::GetActions()
 {
   return m_Actions;
+}
+const std::vector<const SEAction*>& SEScenario::GetActions() const
+{
+  return *((std::vector<const SEAction*>*) & m_Actions);
 }

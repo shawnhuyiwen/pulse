@@ -17,6 +17,7 @@ public:
   virtual ~SEScenario();
   
   virtual void Clear(); //clear memory
+  virtual void Copy(const SEScenario& src);
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
@@ -42,6 +43,7 @@ public:
   virtual bool HasPatientConfiguration() const;
 
   virtual void AddAction(const SEAction& action);
+  virtual const std::vector<SEAction*>& GetActions();
   virtual const std::vector<const SEAction*>& GetActions() const;
 
   virtual SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
@@ -57,5 +59,5 @@ protected:
   std::string                                 m_EngineStateFile;
   SEPatientConfiguration*                     m_PatientConfiguration;
   SEDataRequestManager*                       m_DataRequestMgr;
-  std::vector<const SEAction*>                m_Actions;
+  std::vector<SEAction*>                      m_Actions;
 };

@@ -138,13 +138,14 @@ void SELiquidCompartment::AddChild(SELiquidCompartment& child)
     subQ->AddChild(child.CreateSubstanceQuantity(subQ->GetSubstance()));
 }
 
-SELiquidSubstanceQuantity& SELiquidCompartment::CreateSubstanceQuantity(SESubstance& substance)
+SELiquidSubstanceQuantity& SELiquidCompartment::CreateSubstanceQuantity(SESubstance& substance, bool zeroOut)
 {
   SELiquidSubstanceQuantity* subQ = GetSubstanceQuantity(substance);
   if (subQ == nullptr)
   {
     subQ = new SELiquidSubstanceQuantity(substance, *this);
-    subQ->SetToZero();
+    if(zeroOut)
+      subQ->SetToZero();
     m_SubstanceQuantities.push_back(subQ);
     m_TransportSubstances.push_back(subQ);
   }

@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kitware.pulse.cdm.actions.SEAction;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
@@ -222,7 +223,7 @@ public class HowTo_EngineUse
       case PatientFile:
       {
         SEPatientConfiguration patient_configuration = new SEPatientConfiguration();
-        patient_configuration.setPatientFile("./patient/StandardMale.json");
+        patient_configuration.setPatientFile("./patients/StandardMale.json");
         // Optionally add conditions to the patient_configuration
 
         // Allocate an engine
@@ -247,6 +248,15 @@ public class HowTo_EngineUse
     Log.info("Age(yr) " + initialPatient.getAge().getValue(TimeUnit.yr));
     Log.info("Height(cm) " + initialPatient.getHeight().getValue(LengthUnit.cm));
     Log.info("Weight(lb) " + initialPatient.getWeight().getValue(MassUnit.lb));
+    
+    // You can pull the condition manager from the engine to see what, if any, conditions are applied to this patient
+    // Note this will not change, its based on how the patient was initially created
+    List<SECondition> conditions = new ArrayList<SECondition>();
+    pe.getConditions(conditions);
+    for(SECondition any : conditions)
+    {
+      Log.info(any.toString());
+    }
 
     // Now we can start telling the engine what to do
     // All the same concepts apply from the C++ HowTo files, so look there if you want to see more examples
@@ -294,6 +304,15 @@ public class HowTo_EngineUse
     {
       Log.error("Engine was unable to process requested actions");
       return;
+    }
+    
+    // At any point you can also pull the current active actions from the engine
+    Log.info("Here are the current active actions in the engine");
+    List<SEAction> actions = new ArrayList<SEAction>();
+    pe.getActiveActions(actions);
+    for(SEAction any : actions)
+    {
+      Log.info(any.toString());
     }
 
     for(int i=1; i<=2; i++)

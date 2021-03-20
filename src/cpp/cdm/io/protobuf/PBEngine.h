@@ -8,7 +8,6 @@ CDM_BIND_DECL(ConditionListData)
 CDM_BIND_DECL2(DataRequest)
 CDM_BIND_DECL2(DataRequestManager)
 CDM_BIND_DECL2(DecimalFormat)
-CDM_BIND_DECL2(AutoSerialization)
 CDM_BIND_DECL2(DynamicStabilization)
 CDM_BIND_DECL2(DynamicStabilizationEngineConvergence)
 CDM_BIND_DECL2(TimedStabilization)
@@ -60,14 +59,14 @@ public:
   static void Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst);
   static void Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionListData& dst);
 
+  static void Load(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+
   static bool SerializeToString(const SEActionManager& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const SEActionManager& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m);
   static bool SerializeFromFile(const std::string& filename, SEActionManager& dst);
-
-  static void Load(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
-  static void Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
-  static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
   static void Load(const CDM_BIND::DataRequestData& src, SEDataRequest& dst);
   static CDM_BIND::DataRequestData* Unload(const SEDataRequest& src);
@@ -90,11 +89,6 @@ public:
   static CDM_BIND::DecimalFormatData* Unload(const SEDecimalFormat& src);
   static void Serialize(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst);
   static void Serialize(const SEDecimalFormat& src, CDM_BIND::DecimalFormatData& dst);
-
-  static void Load(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst);
-  static CDM_BIND::AutoSerializationData* Unload(const SEAutoSerialization& src);
-  static void Serialize(const CDM_BIND::AutoSerializationData& src, SEAutoSerialization& dst);
-  static void Serialize(const SEAutoSerialization& src, CDM_BIND::AutoSerializationData& dst);
 
   static void Load(const CDM_BIND::DynamicStabilizationData& src, SEDynamicStabilization& dst);
   static CDM_BIND::DynamicStabilizationData* Unload(const SEDynamicStabilization& src);

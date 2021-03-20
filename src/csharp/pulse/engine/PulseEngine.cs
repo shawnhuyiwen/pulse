@@ -22,8 +22,16 @@ namespace Pulse
     private IEventHandler event_handler = null; // Forware events to this object
     private List<SEEventChange> event_changes = new List<SEEventChange>();
     private IntPtr str_addr;                    // Used to hold data between C# and C
-    private SerializationFormat thunk_as = SerializationFormat.JSON;
+    private eSerializationFormat thunk_as = eSerializationFormat.JSON;
     // TODO when we allow binary thunking, add many if/switchs below!
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern bool ExecuteScenario(IntPtr pulse, string exeOpts, int format);
+    public bool ExecuteScenario(SEScenarioExec opts)
+    {
+      string opts_str = PBScenario.SerializeToString(opts);
+      return ExecuteScenario(pulse_cptr, opts_str, (int)eSerializationFormat.JSON);
+    }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     public static extern void Initialize();
@@ -50,8 +58,8 @@ namespace Pulse
     public bool SerializeFromFile(string filename, SEDataRequestManager data_mgr)
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
-      string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, SerializationFormat.JSON);
-      alive = SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)SerializationFormat.JSON);
+      string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, eSerializationFormat.JSON);
+      alive = SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)eSerializationFormat.JSON);
       return alive;
     }
 
@@ -66,7 +74,7 @@ namespace Pulse
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     static extern bool SerializeFromString(IntPtr pulse, string state, string data_mgr, int format);
-    public bool SerializeFromString(string state, SEDataRequestManager data_mgr, SerializationFormat format)
+    public bool SerializeFromString(string state, SEDataRequestManager data_mgr, eSerializationFormat format)
     {
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, format);
@@ -76,7 +84,7 @@ namespace Pulse
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
     static extern bool SerializeToString(IntPtr pulse, int format, out IntPtr state_str);
-    public string SerializeToString(SerializationFormat format)
+    public string SerializeToString(eSerializationFormat format)
     {
       if (!alive)
         return null;
@@ -109,6 +117,48 @@ namespace Pulse
       if (patient == null)
         return false;
       PBPatient.SerializeFromString(patient, p);
+      return true;
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern bool GetConditions(IntPtr pulse, int format, out IntPtr conditions);
+    public bool GetConditions(List<SECondition> conditions)
+    {
+      if (!alive)
+        return false;
+      if (!GetConditions(pulse_cptr, (int)thunk_as, out str_addr))
+        return false;
+      string cList = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+      if (cList == null)
+        return false;
+      PBCondition.SerializeFromString(cList, conditions);
+      return true;
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern bool GetPatientAssessment(IntPtr pulse, int type, int format, out IntPtr assessment);
+    public bool GetPatientAssessment(SEPatientAssessment assessment)
+    {
+      if (!alive)
+        return false;
+      int type;
+      if (assessment is SECompleteBloodCount)
+        type = 0;
+      else if (assessment is SEComprehensiveMetabolicPanel)
+        type = 1;
+      else if (assessment is SEPulmonaryFunctionTest)
+        type = 2;
+      else if (assessment is SEUrinalysis)
+        type = 3;
+      else
+        return false;
+
+      if (!GetPatientAssessment(pulse_cptr, type, (int)thunk_as, out str_addr))
+        return false;
+      string a = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+      if (a == null)
+        return false;
+      PBPatientAssessmets.SerializeFromString(a, assessment);
       return true;
     }
 
@@ -179,6 +229,21 @@ namespace Pulse
       string any_action_list_str = PBAction.SerializeToString(actions);
       //System.Console.Out.WriteLine(any_action_list_str);
       return ProcessActions(pulse_cptr, any_action_list_str, (int)thunk_as);
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern bool PullActiveActions(IntPtr pulse, int format, out IntPtr actions);
+    public bool PullActiveActions(List<SEAction> actions)
+    {
+      if (!alive)
+        return false;
+      if (!PullActiveActions(pulse_cptr, (int)thunk_as, out str_addr))
+        return false;
+      string aList = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+      if (aList == null)
+        return false;
+      PBAction.SerializeFromString(aList, actions);
+      return true;
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]

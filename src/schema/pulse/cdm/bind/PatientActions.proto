@@ -345,6 +345,7 @@ message SubstanceBolusData
   ScalarTimeData                            AdministrationDuration          = 4;/**<<@brief Length of time taken to fully administer the bolus. */
   ScalarMassPerVolumeData                   Concentration                   = 5;/**<<@brief Concentration of the dose to administer. */
   ScalarVolumeData                          Dose                            = 6;/**<<@brief Volume of dose to administer. */
+  ScalarVolumeData                          TotalInfusedDose                = 7;/**<<@brief Amount of volume that has been infused at the current time. */
 }
 
 /** @brief Continuous injection of a compound. */

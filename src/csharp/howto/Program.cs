@@ -7,10 +7,12 @@ namespace HowToDriver
   {
     static void Main(string[] args)
     {
-      HowTo_UseEngine.Example.Run();
+      //HowTo_UseEngine.Example.Run();
       //HowTo_PatientStates.Example.Run();
       //HowTo_Environment.Example.Run();
       //HowTo_MechanicalVentilator.Example.Run();
+      //HowTo_DeathState.Example.Run();
+      HowTo_RunScenarios.Example.Run();
     }
   }
 }

@@ -13,7 +13,7 @@ int main()
 
   //HowToSandbox();
 
-  //HowToEngineUse();
+  HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
 
@@ -29,7 +29,7 @@ int main()
   //HowToCPR(); 
   //HowToEnvironmentChange();
   //HowToExercise();
-  HowToHemorrhage();
+  //HowToHemorrhage();
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
   //HowToPulmonaryFibrosis();

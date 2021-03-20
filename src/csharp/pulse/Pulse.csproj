@@ -83,13 +83,19 @@
     <Compile Include="bind\TestReport.cs" />
     <Compile Include="cdm\CommonDataModel.cs" />
     <Compile Include="cdm\engine\SEAction.cs" />
+    <Compile Include="cdm\engine\SEActionManager.cs" />
     <Compile Include="cdm\engine\SECondition.cs" />
     <Compile Include="cdm\engine\SEConditionManager.cs" />
     <Compile Include="cdm\engine\SEDataRequest.cs" />
     <Compile Include="cdm\engine\SEDataRequestManager.cs" />
+    <Compile Include="cdm\engine\SEEnvironmentActionCollection.cs" />
+    <Compile Include="cdm\engine\SEEquipmentActionCollection.cs" />
     <Compile Include="cdm\engine\SEEvents.cs" />
     <Compile Include="cdm\engine\SELogger.cs" />
+    <Compile Include="cdm\engine\SEPatientActionCollection.cs" />
     <Compile Include="cdm\engine\SEPatientConfiguration.cs" />
+    <Compile Include="cdm\io\PBInhaler.cs" />
+    <Compile Include="cdm\io\PBPatientAssessmets.cs" />
     <Compile Include="cdm\io\PBActions.cs" />
     <Compile Include="cdm\io\PBAnesthesiaMachine.cs" />
     <Compile Include="cdm\io\PBEquipmentActions.cs" />
@@ -107,6 +113,7 @@
     <Compile Include="cdm\io\PBPatientConditions.cs" />
     <Compile Include="cdm\io\PBPatientConfiguration.cs" />
     <Compile Include="cdm\io\PBProperties.cs" />
+    <Compile Include="cdm\io\PBScenario.cs" />
     <Compile Include="cdm\patient\actions\SEAcuteRespiratoryDistressSyndromeExacerbation.cs" />
     <Compile Include="cdm\patient\actions\SEConsciousRespiration.cs" />
     <Compile Include="cdm\patient\actions\SEUrinate.cs" />
@@ -138,6 +145,12 @@
     <Compile Include="cdm\patient\actions\SESupplementalOxygen.cs" />
     <Compile Include="cdm\patient\actions\SEChestOcclusiveDressing.cs" />
     <Compile Include="cdm\patient\actions\SETensionPneumothorax.cs" />
+    <Compile Include="cdm\patient\assessments\SECompleteBloodCount.cs" />
+    <Compile Include="cdm\patient\assessments\SEComprehensiveMetabolicPanel.cs" />
+    <Compile Include="cdm\patient\assessments\SEPatientAssessment.cs" />
+    <Compile Include="cdm\patient\assessments\SEPulmonaryFunctionTest.cs" />
+    <Compile Include="cdm\patient\assessments\SEUrinalysis.cs" />
+    <Compile Include="cdm\patient\assessments\SEUrinalysisMicroscopic.cs" />
     <Compile Include="cdm\patient\conditions\SEAcuteRespiratoryDistressSyndrome.cs" />
     <Compile Include="cdm\patient\conditions\SEPulmonaryShunt.cs" />
     <Compile Include="cdm\patient\conditions\SEChronicAnemia.cs" />
@@ -156,6 +169,8 @@
     <Compile Include="cdm\scalars\SEProperty.cs" />
     <Compile Include="cdm\scalars\SEScalar.cs" />
     <Compile Include="cdm\scalars\SEScalar0To1.cs" />
+    <Compile Include="cdm\scalars\SEScalarAmount.cs" />
+    <Compile Include="cdm\scalars\SEScalarAmountPerVolume.cs" />
     <Compile Include="cdm\scalars\SEScalarArea.cs" />
     <Compile Include="cdm\scalars\SEScalarFrequency.cs" />
     <Compile Include="cdm\scalars\SEScalarHeatConductancePerArea.cs" />
@@ -179,6 +194,7 @@
     <Compile Include="cdm\scalars\SEScalarVolumePerTime.cs" />
     <Compile Include="cdm\scalars\SEScalarVolumePerTimeMass.cs" />
     <Compile Include="cdm\scalars\SEScalarVolumePerTimePressure.cs" />
+    <Compile Include="cdm\scenario\SEScenarioExec.cs" />
     <Compile Include="cdm\substance\SESubstanceConcentration.cs" />
     <Compile Include="cdm\substance\SESubstanceFraction.cs" />
     <Compile Include="cdm\system\environment\actions\SEChangeEnvironmentalConditions.cs" />
@@ -206,13 +222,19 @@
     <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachine.cs" />
     <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachineChamber.cs" />
     <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachineOxygenBottle.cs" />
+    <Compile Include="cdm\system\equipment\inhaler\actions\SEInhalerAction.cs" />
+    <Compile Include="cdm\system\equipment\inhaler\actions\SEInhalerConfiguration.cs" />
+    <Compile Include="cdm\system\equipment\inhaler\SEInhaler.cs" />
     <Compile Include="cdm\system\equipment\mechanical_ventilator\actions\SEMechanicalVentilatorAction.cs" />
     <Compile Include="cdm\system\equipment\mechanical_ventilator\actions\SEMechanicalVentilatorConfiguration.cs" />
     <Compile Include="cdm\system\equipment\mechanical_ventilator\SEMechanicalVentilator.cs" />
     <Compile Include="cdm\system\equipment\SEEquipment.cs" />
     <Compile Include="cdm\system\equipment\SEEquipmentAction.cs" />
     <Compile Include="cdm\system\SESystem.cs" />
+    <Compile Include="cdm\utils\RunConfiguration.cs" />
     <Compile Include="engine\PulseEngine.cs" />
+    <Compile Include="SEActionManager.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

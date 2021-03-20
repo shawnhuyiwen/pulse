@@ -16,6 +16,7 @@ public class SEDataRequest implements Serializable
   protected String                  propertyName;
   protected String                  unit;
   protected eCategory               category;
+  protected String                  actionName;
   protected String                  compartmentName;
   protected String                  substanceName;
   protected Integer                 precision;
@@ -31,6 +32,7 @@ public class SEDataRequest implements Serializable
     propertyName    = "";
     unit            = "";
     category        = null;
+    actionName      = "";
     compartmentName = "";
     substanceName   = "";
     precision       = null;
@@ -39,11 +41,12 @@ public class SEDataRequest implements Serializable
   
   public static void load(DataRequestData src, SEDataRequest dst)
   {
-    dst.reset();    
+    dst.reset();
     dst.propertyName = src.getPropertyName();
     dst.unit = src.getUnit();
     if(src.getCategory()!=eCategory.UNRECOGNIZED)
     	dst.category = src.getCategory();
+    dst.actionName = src.getActionName();
     dst.compartmentName = src.getCompartmentName();
     dst.substanceName = src.getSubstanceName();
     if(src.hasDecimalFormat())
@@ -66,6 +69,8 @@ public class SEDataRequest implements Serializable
       dst.setUnit(src.unit);
     if(src.hasCategory())
       dst.setCategory(src.category);
+    if(src.hasActionName())
+      dst.setActionName(src.actionName);
     if(src.hasCompartmentName())
       dst.setCompartmentName(src.compartmentName);
     if(src.hasSubstanceName())
@@ -86,6 +91,8 @@ public class SEDataRequest implements Serializable
       c = 31 * c + unit.hashCode();
     if(category!=null)
       c = 31 * c + category.hashCode();
+    if(actionName!=null)
+      c = 31 * c + actionName.hashCode();
     if(compartmentName!=null)
       c = 31 * c + compartmentName.hashCode();
     if(substanceName!=null)
@@ -109,8 +116,13 @@ public class SEDataRequest implements Serializable
   public void setCategory(eCategory c){ this.category = c; }
   public boolean hasCategory(){ return category==null||category==eCategory.UNRECOGNIZED ? false : true; }
   
+  public String getActionName(){ return actionName; }
+  public void setActionName(String a){ this.actionName = a; }
+  public boolean hasActionName(){ return actionName==null||actionName.isEmpty() ? false : true; }
+  
   public String getCompartmentName(){ return compartmentName; }
   public void setCompartmentName(String c){ this.compartmentName = c; }
+  public void setCompartmentName(Enum<?> c){ this.compartmentName = c.name(); }
   public boolean hasCompartmentName(){ return compartmentName==null||compartmentName.isEmpty() ? false : true; }
   
   public String getSubstanceName(){ return substanceName; }

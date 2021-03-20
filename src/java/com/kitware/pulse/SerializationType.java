@@ -3,7 +3,7 @@
 package com.kitware.pulse;
 
 public enum SerializationType 
-{ JSON(1), BINARY(0);
+{ JSON(0), BINARY(1);
   private final int value;
   private SerializationType(int value) 
   {

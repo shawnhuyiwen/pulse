@@ -403,7 +403,7 @@ void PBCompartment::Serialize(const CDM_BIND::GasCompartmentData& src, SEGasComp
         dst.Error("Could not find a substance for " + d.substancequantity().substance());
         continue;
       }
-      PBSubstanceQuantity::Load(d, dst.CreateSubstanceQuantity(*sub));
+      PBSubstanceQuantity::Load(d, dst.CreateSubstanceQuantity(*sub, false));
     }
   }
 }
@@ -511,7 +511,7 @@ void PBCompartment::Serialize(const CDM_BIND::LiquidCompartmentData& src, SELiqu
         dst.Error("Could not find a substance for " + d.substancequantity().substance());
         continue;
       }
-      PBSubstanceQuantity::Serialize(d, dst.CreateSubstanceQuantity(*sub));
+      PBSubstanceQuantity::Serialize(d, dst.CreateSubstanceQuantity(*sub, false));
     }
   }
   if (src.has_ph())

@@ -33,7 +33,7 @@ public:
   virtual void SetBlackBox(SEGasBlackBox* bb) { m_BlackBox = bb; }
 
 protected:
-  virtual SEGasSubstanceQuantity& CreateSubstanceQuantity(SESubstance& substance);
+  virtual SEGasSubstanceQuantity& CreateSubstanceQuantity(SESubstance& substance, bool zeroOut=true);
  
   std::vector<SEGasCompartment*> m_Children;
   std::vector<SEGasCompartment*> m_Leaves;

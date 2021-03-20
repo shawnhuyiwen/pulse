@@ -3,10 +3,10 @@
 
 namespace Pulse.CDM
 {
-  public enum SerializationFormat : int   // State file serialization format
+  public enum eSerializationFormat : int   // State file serialization format
   {
-    BINARY = 0,
-    JSON
+    JSON = 0,
+    BINARY
   }
 
   public enum eSide : int
