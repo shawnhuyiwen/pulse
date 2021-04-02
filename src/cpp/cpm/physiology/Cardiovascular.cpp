@@ -265,6 +265,7 @@ void Cardiovascular::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::SetUp()
 {
+  m_HemorrhageTrack.clear();
   m_minIndividialSystemicResistance_mmHg_s_Per_mL = 0.1;
 
   //Circuits
