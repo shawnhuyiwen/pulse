@@ -39,11 +39,6 @@ public:
   virtual const std::vector<SELiquidCompartment*>& GetChildren() { return m_Children; }
   virtual const std::vector<SELiquidCompartment*>& GetLeaves() { return m_Leaves; }
 
-  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
-  virtual SELiquidBlackBox* GetBlackBox() { return m_BlackBox; }
-  virtual const SELiquidBlackBox* GetBlackBox() const { return m_BlackBox; }
-  virtual void SetBlackBox(SELiquidBlackBox* bb) { m_BlackBox = bb; }
-
 protected:
   virtual SELiquidSubstanceQuantity& CreateSubstanceQuantity(SESubstance& substance, bool zeroOut=true);
 
@@ -52,6 +47,4 @@ protected:
 
   std::vector<SELiquidCompartment*> m_Children;
   std::vector<SELiquidCompartment*> m_Leaves;
-
-  SELiquidBlackBox* m_BlackBox = nullptr;
 };

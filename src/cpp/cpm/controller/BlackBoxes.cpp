@@ -34,33 +34,7 @@ bool PulseBlackBoxes::IsValidBlackBoxRequest(CompartmentType* srcCmpt, Compartme
     return false;
   }
 
-  if (srcCmpt->HasBlackBox())
-  {
-    Error("Source Compartment already has a black box", "PulseBlackBoxes::IsValidBlackBoxRequest");
-    return false;
-  }
-  if (tgtCmpt->HasBlackBox())
-  {
-    Error("Target Compartment already has a black box", "PulseBlackBoxes::IsValidBlackBoxRequest");
-    return false;
-  }
-
-  // TODO Is this right?
-  // Currently we only support leaf compartments, that are mapped to a circuit with one quantity node
-  if (!srcCmpt->HasChildren() && !tgtCmpt->HasChildren() &&
-       srcCmpt->HasNodeMapping() && tgtCmpt->HasNodeMapping())
-  {
-    if (srcCmpt->GetNodeMapping().GetQuantityNodes().size() == 1 &&
-        tgtCmpt->GetNodeMapping().GetQuantityNodes().size() == 1)
-    {
-      // Make sure the nodes are not associated with a black box (over kill?)
-      if (srcCmpt->GetNodeMapping().GetQuantityNodes()[0]->HasBlackBox() ||
-          tgtCmpt->GetNodeMapping().GetQuantityNodes()[0]->HasBlackBox())
-        return false;
-      return true;
-    }
-  }
-  return false;
+  return true;
 }
 
 template<typename CompartmentType, typename LinkType>
@@ -114,13 +88,8 @@ SELiquidBlackBox* PulseBlackBoxes::CreateLiquidBlackBox(const std::string& srcCm
   SELiquidCompartmentLink* replaceLink = GetLinkBetween<SELiquidCompartment, SELiquidCompartmentLink>(*srcCmpt, *tgtCmpt);
   if (replaceLink != nullptr)
   {
-    if (replaceLink->HasBlackBox() || replaceLink->GetPath()->HasBlackBox())
-    {
-      Error("Replacement Link " + replaceLink->GetName() + " has black box ");
-      return nullptr;
-    }
-    SEFluidCircuitNode& srcNode = *srcCmpt->GetNodeMapping().GetQuantityNodes()[0];
-    SEFluidCircuitNode& tgtNode = *tgtCmpt->GetNodeMapping().GetQuantityNodes()[0];
+    SEFluidCircuitNode& srcNode = replaceLink->GetPath()->GetSourceNode();
+    SEFluidCircuitNode& tgtNode = replaceLink->GetPath()->GetTargetNode();
     if (srcNode.HasBlackBox())
     {
       Error("Source Node already has a black box");

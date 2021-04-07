@@ -4,4 +4,3 @@
 #include "stdafx.h"
 #include "compartment/fluid/SEGasCompartment.h"
 #include "compartment/fluid/SEGasCompartmentLink.h"
-

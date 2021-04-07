@@ -16,10 +16,16 @@
 #include "utils/FileUtils.h"
 #include "utils/TimingProfile.h"
 
-SELiquidBlackBox* SetupBBDataRequests(PhysiologyEngine& pulse, const std::string& csvFilename)
+struct BlackBoxes
 {
-  SELiquidBlackBox* bb = pulse.GetBlackBoxes().GetLiquidBlackBox(pulse::VascularCompartment::Aorta, pulse::VascularCompartment::RightLeg);
+  BlackBoxes(int cnt = 1) { num = cnt; }
 
+  int num = 1;
+  SELiquidBlackBox* aortaToRightLeg = nullptr;
+  SELiquidBlackBox* rightLegToVenaCava = nullptr;
+};
+bool SetupBBDataRequests(BlackBoxes& bbz, PhysiologyEngine& pulse, const std::string& csvFilename)
+{
   pulse.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pulse.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
   pulse.GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
@@ -42,14 +48,32 @@ SELiquidBlackBox* SetupBBDataRequests(PhysiologyEngine& pulse, const std::string
   pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "OutFlow", VolumePerTimeUnit::mL_Per_s);
   pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::VenaCava, "Volume", VolumeUnit::mL);
 
-  pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bb->GetCompartment().GetName(), "Pressure", PressureUnit::mmHg);
-  pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bb->GetCompartment().GetName(), "InFlow", VolumePerTimeUnit::mL_Per_s);
-  pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bb->GetCompartment().GetName(), "OutFlow", VolumePerTimeUnit::mL_Per_s);
-  pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bb->GetCompartment().GetName(), "Volume", VolumeUnit::mL);
+  if (bbz.num >= 1)
+  {
+    bbz.aortaToRightLeg = pulse.GetBlackBoxes().GetLiquidBlackBox(pulse::VascularCompartment::Aorta, pulse::VascularCompartment::RightLeg);
+    if (bbz.aortaToRightLeg == nullptr)
+      return false;
+
+    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.aortaToRightLeg->GetName(), "Pressure", PressureUnit::mmHg);
+    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.aortaToRightLeg->GetName(), "InFlow", VolumePerTimeUnit::mL_Per_s);
+    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.aortaToRightLeg->GetName(), "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.aortaToRightLeg->GetName(), "Volume", VolumeUnit::mL);
+  }
+  if (bbz.num >= 2)
+  {
+    bbz.rightLegToVenaCava = pulse.GetBlackBoxes().GetLiquidBlackBox(pulse::VascularCompartment::RightLeg, pulse::VascularCompartment::VenaCava);
+    if (bbz.rightLegToVenaCava == nullptr)
+      return false;
+
+    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.rightLegToVenaCava->GetName(), "Pressure", PressureUnit::mmHg);
+    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.rightLegToVenaCava->GetName(), "InFlow", VolumePerTimeUnit::mL_Per_s);
+    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.rightLegToVenaCava->GetName(), "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    pulse.GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(bbz.rightLegToVenaCava->GetName(), "Volume", VolumeUnit::mL);
+  }
 
   pulse.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(csvFilename);
 
-  return bb;
+  return true;
 }
 
 void PulseEngineTest::EmptyBlackBoxTest(const std::string& outputDir)
@@ -64,7 +88,13 @@ void PulseEngineTest::EmptyBlackBoxTest(const std::string& outputDir)
     return;
   }
 
-  SetupBBDataRequests(*pulse, outputDir + "/EmptyBlackBoxTest.csv");
+  BlackBoxes bbz;
+  if(!SetupBBDataRequests(bbz, *pulse, outputDir+"/EmptyBlackBoxTest.csv"))
+  {
+    pulse->GetLogger()->Error("Could not create black boxes");
+    Error("Could not create black boxes");
+    return;
+  }
 
   // Run for two mins
   TimingProfile profile;
@@ -96,15 +126,24 @@ void PulseEngineTest::ImposeFlowBlackBoxTest(const std::string& outputDir)
     return;
   }
 
-  SELiquidBlackBox* bb = SetupBBDataRequests(*pulse, outputDir + "/ImposeFlowBlackBoxTest.csv");
+  BlackBoxes bbz(2);
+  if(!SetupBBDataRequests(bbz, *pulse, outputDir+"/ImposeFlowBlackBoxTest.csv"))
+  {
+    pulse->GetLogger()->Error("Could not create black boxes");
+    Error("Could not create black boxes");
+    return;
+  }
 
   // Run for two mins
   TimingProfile profile;
   profile.Start("BB");
   for (size_t i = 0; i < 120 / pulse->GetTimeStep(TimeUnit::s); i++)
   {
-    bb->ImposeSourceFlux(2.1, VolumePerTimeUnit::mL_Per_s);
-    bb->ImposeTargetFlux(2.1, VolumePerTimeUnit::mL_Per_s);
+    bbz.aortaToRightLeg->ImposeSourceFlux(2.1, VolumePerTimeUnit::mL_Per_s);
+    bbz.aortaToRightLeg->ImposeTargetFlux(2.1, VolumePerTimeUnit::mL_Per_s);
+
+    bbz.rightLegToVenaCava->ImposeSourceFlux(2.1, VolumePerTimeUnit::mL_Per_s);
+    bbz.rightLegToVenaCava->ImposeTargetFlux(2.1, VolumePerTimeUnit::mL_Per_s);
 
     if (!pulse->AdvanceModelTime())
     {
@@ -131,7 +170,13 @@ void PulseEngineTest::ImposePressureAndFlowBlackBoxTest(const std::string& outpu
     return;
   }
 
-  SELiquidBlackBox* bb = SetupBBDataRequests(*pulse, outputDir + "/ImposePressureAndFlowBlackBoxTest.csv");
+  BlackBoxes bbz;
+  if (!SetupBBDataRequests(bbz, *pulse, outputDir + "/ImposePressureAndFlowBlackBoxTest.csv"))
+  {
+    pulse->GetLogger()->Error("Could not create black boxes");
+    Error("Could not create black boxes");
+    return;
+  }
 
   double resistance_mmHg_s_Per_mL = 0.1;
   
@@ -145,11 +190,11 @@ void PulseEngineTest::ImposePressureAndFlowBlackBoxTest(const std::string& outpu
     // Calculate a change due to a small resistance
     //It will only change half as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
 
-    double inletFlow_mL_Per_s = bb->GetSourceFlux(VolumePerTimeUnit::mL_Per_s);
-    double outletPressure_mmHg = bb->GetTargetPotential(PressureUnit::mmHg);
+    double inletFlow_mL_Per_s = bbz.aortaToRightLeg->GetSourceFlux(VolumePerTimeUnit::mL_Per_s);
+    double outletPressure_mmHg = bbz.aortaToRightLeg->GetTargetPotential(PressureUnit::mmHg);
 
-    double inletPressure_mmHg = bb->GetSourcePotential(PressureUnit::mmHg);
-    double outletFlow_mL_Per_s = bb->GetTargetFlux(VolumePerTimeUnit::mL_Per_s);
+    double inletPressure_mmHg = bbz.aortaToRightLeg->GetSourcePotential(PressureUnit::mmHg);
+    double outletFlow_mL_Per_s = bbz.aortaToRightLeg->GetTargetFlux(VolumePerTimeUnit::mL_Per_s);
 
     double nextInletPressure_mmhg = inletFlow_mL_Per_s * resistance_mmHg_s_Per_mL + outletPressure_mmHg;
     double next_OutletFlow_mL_Per_s = (nextInletPressure_mmhg - outletPressure_mmHg) / resistance_mmHg_s_Per_mL;
@@ -157,8 +202,8 @@ void PulseEngineTest::ImposePressureAndFlowBlackBoxTest(const std::string& outpu
     double inletPressureChange_mmhg = (nextInletPressure_mmhg - inletPressure_mmHg) * dampenFraction;
     double outletFlowChange_mL_Per_s = (next_OutletFlow_mL_Per_s - outletFlow_mL_Per_s) * dampenFraction;
 
-    bb->ImposeSourcePotential(inletPressure_mmHg + inletPressureChange_mmhg, PressureUnit::mmHg);
-    bb->ImposeTargetFlux(outletFlow_mL_Per_s + outletFlowChange_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+    bbz.aortaToRightLeg->ImposeSourcePotential(inletPressure_mmHg + inletPressureChange_mmhg, PressureUnit::mmHg);
+    bbz.aortaToRightLeg->ImposeTargetFlux(outletFlow_mL_Per_s + outletFlowChange_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
 
     if (!pulse->AdvanceModelTime())
     {

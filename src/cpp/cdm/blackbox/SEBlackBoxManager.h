@@ -45,10 +45,6 @@ protected:
     bb.SetTargetCompartment(&tgtCmpt);
     bb.SetTargetLink(&bb2tgtLink);
 
-    bbCmpt.SetBlackBox(&bb);
-    src2bbLink.SetBlackBox(&bb);
-    bb2tgtLink.SetBlackBox(&bb);
-
     tPath& srcPath = *src2bbLink.GetPath();
     tPath& tgtPath = *bb2tgtLink.GetPath();
 
@@ -84,8 +80,10 @@ protected:
     bb.SetTargetPath(&tgtPath);
 
     bbNode.SetBlackBox(&bb);
-    srcNode.SetBlackBox(&bb);
-    tgtNode.SetBlackBox(&bb);
+    // Source/Target Node's can be associated with more than one black box
+    // So we do not set them, the circuit calculator handles this assumption
+    //srcNode.SetBlackBox(&bb);
+    //tgtNode.SetBlackBox(&bb);
     srcPath.SetBlackBox(&bb);
     tgtPath.SetBlackBox(&bb);
 
