@@ -586,6 +586,7 @@ namespace pulse {
 
     DEFINE_STATIC_STRING(RightLeg1);
     DEFINE_STATIC_STRING(RightLeg2);
+    DEFINE_STATIC_STRING(RightLeg3);
 
     DEFINE_STATIC_STRING(Skin1);
     DEFINE_STATIC_STRING(Skin2);
@@ -708,9 +709,10 @@ namespace pulse {
     DEFINE_STATIC_STRING(RightKidney2ToVenaCava);
     // Right Leg
     DEFINE_STATIC_STRING(Aorta1ToRightLeg1);
-    DEFINE_STATIC_STRING(RightLeg1ToGround);
     DEFINE_STATIC_STRING(RightLeg1ToRightLeg2);
-    DEFINE_STATIC_STRING(RightLeg2ToVenaCava);
+    DEFINE_STATIC_STRING(RightLeg2ToGround);
+    DEFINE_STATIC_STRING(RightLeg2ToRightLeg3);
+    DEFINE_STATIC_STRING(RightLeg3ToVenaCava);
     // Skin
     DEFINE_STATIC_STRING(Aorta1ToSkin1);
     DEFINE_STATIC_STRING(Skin1ToGround);
