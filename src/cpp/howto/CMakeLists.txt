@@ -22,6 +22,7 @@ add_executable_ex(HowToDriver
   HowTo-MechanicalVentilation.cpp
   HowTo-PulmonaryFibrosis.cpp
   HowTo-PulmonaryFunctionTest.cpp
+  HowTo-PulseEnginePool.cpp
   HowTo-RunScenario.cpp
   HowTo-RunThreaded.cpp
   HowTo-RunThreaded.h

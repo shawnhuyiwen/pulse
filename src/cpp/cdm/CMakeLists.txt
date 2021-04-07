@@ -308,6 +308,7 @@ add_library_ex(CommonDataModel
     utils/ScopedMutex.h
     utils/SmartEnum.h
     utils/TimingProfile.h
+    utils/Threadpool.h
     utils/base64.h
     utils/taskrunner/Task.h
     utils/taskrunner/TaskProcessor.h

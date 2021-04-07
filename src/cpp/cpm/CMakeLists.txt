@@ -3,6 +3,7 @@ add_library_ex(CommonPulseModels
   H_FILES
     PulseConfiguration.h
     PulsePhysiologyEngine.h
+    PulsePhysiologyEnginePool.h
     PulsePhysiologySystems.h
     PulseScenario.h
     PulseScenarioExec.h
@@ -40,6 +41,7 @@ add_library_ex(CommonPulseModels
   CPP_FILES
     PulseConfiguration.cpp
     PulsePhysiologyEngine.cpp
+    PulsePhysiologyEnginePool.cpp
     PulseScenario.cpp
     PulseScenarioExec.cpp
     controller/BlackBoxes.cpp
