@@ -941,13 +941,9 @@ There are no planned near term additions.
 The engine modularity could be taken advantage of to add parameters and elements 
 for specific equipment models and manufacturers. 
 
-Including  bag squeeze capability to
-allow the use of manual ventilation as an additional option will expand 
-the functionality of the Anesthesia Machine system.
-
 Further functionality to the Anesthesia Machine system includes the 
 implementation of  synchronized ventilation
-that allows spontaneous breathing along with positive-pressure ventilation.
+that allows spontaneous breathing along with positive-pressure ventilation, similar to the @ref MechanicalVentilatorMethodology VC-AC functionality.
 @anchor anesthesia-appendices
 # Appendices
 
