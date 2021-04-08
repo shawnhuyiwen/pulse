@@ -27,39 +27,45 @@ namespace HowTo_UseStates
     {
       dir = "./death/scenarios/";
       string out_dir = "./death/scenarios/results/";
-      string state_dir = "./death/states/";
 
       Logger log = new Logger("./death/UseStates.log");
       RunConfiguration cfg = new RunConfiguration();
       SEScenarioExec opts = new SEScenarioExec();
       opts.SetDataRootDirectory("./");
       opts.SetDataRequestCSVFilename("");
-      PulseEngine pulse = new PulseEngine();
-      pulse.LogToConsole(true);
 
       DirectoryInfo d = new DirectoryInfo(dir);
       FileInfo[] Files = d.GetFiles("*.json");
       foreach (FileInfo file in Files)
       {
+        log.WriteLine("\n------------------------------------------------------------\n");
         log.WriteLine("Executing Scenario " + file.FullName);
         string base_name = System.IO.Path.GetFileNameWithoutExtension(file.Name);
-        opts.SetLogFilename(out_dir + "/states/" + base_name + ".log");
+        opts.SetLogFilename(out_dir + base_name + ".log");
         opts.SetScenarioFilename(file.FullName);
         opts.SetSerializationDirectory(out_dir);
-        //if (!pulse.ExecuteScenario(opts))
-        //  System.Console.Out.WriteLine("Error running scenario");
-        log.WriteLine("\n------------------------------------------------------------\n");
+
+        PulseEngine pulse = new PulseEngine();
+        pulse.LogToConsole(true);
+        if (!pulse.ExecuteScenario(opts))
+          System.Console.Out.WriteLine("Error running scenario");
       }
 
-      d = new DirectoryInfo(state_dir);
-      Files = d.GetFiles("*.json");
-      out_dir = "./death/states/results/";
+      // Now lets run all the states that these scenarios generated
+      // for 20m each and see if any of them die and how
+      d = new DirectoryInfo(out_dir);
+      Files = d.GetFiles("*.json", SearchOption.AllDirectories);
+      out_dir = "./death/state_results/";
 
       foreach (FileInfo file in Files)
       {
+        log.WriteLine("\n------------------------------------------------------------\n");
         log.WriteLine("Running State " + file.FullName);
 
         string base_name = System.IO.Path.GetFileNameWithoutExtension(file.Name);
+
+        PulseEngine pulse = new PulseEngine();
+        pulse.LogToConsole(true);
         pulse.SetLogFilename(out_dir + base_name + ".log");
 
         List<SEDataRequest> data_requests = new List<SEDataRequest>
@@ -95,7 +101,7 @@ namespace HowTo_UseStates
         DeathCheck death_check = new DeathCheck(pulse, log);
         pulse.SetEventHandler(death_check);
 
-        int time_to_run = 600 * 50;
+        int time_to_run = 1200 * 50;
         int status = 60 * 50;
         // seconds * Hz = total seconds to run, status time for print
 
@@ -117,7 +123,6 @@ namespace HowTo_UseStates
         }
         if (!dead)
           log.WriteLine(file.FullName+" did NOT die");
-        log.WriteLine("\n------------------------------------------------------------\n");
       }
     }
   }

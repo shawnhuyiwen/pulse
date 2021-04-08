@@ -102,31 +102,31 @@ namespace HowTo_DeathState
       if (irreversable_state)
       {
         if (log != null)
-          log.WriteLine("Patient died from irreversable state");
+          log.WriteLine("Patient died from irreversable state @"+data_requests[0]+"s");
         return true;
       }
       if (cardiovascular_collapse)
       {
         if (log != null)
-          log.WriteLine("Patient died from cardiovascular collapse");
+          log.WriteLine("Patient died from cardiovascular collapse @"+data_requests[0]+"s");
         return true;
       }
       if (data_requests[1] >= max_hr_bpm)// Match your data request order!
       {
         if (log != null)
-          log.WriteLine("Patient died from reaching max hr of "+ max_hr_bpm);
+          log.WriteLine("Patient died from reaching max hr of "+max_hr_bpm+" @"+data_requests[0]+"s");
         return true;
       }
       if (brain_o2_deficit && (data_requests[0] - start_brain_o2_deficit_s) > 180)
       {
         if (log != null)
-          log.WriteLine("Patient died from brain O2 deficit of 180s");
+          log.WriteLine("Patient died from brain O2 deficit of 180s @"+data_requests[0]+"s");
         return true;
       }
       if (myocardium_o2_deficit && (data_requests[0] - start_myocardium_o2_deficit_s) > 180)
       {
         if (log != null)
-          log.WriteLine("Patient died from myocardium O2 deficit of 180s");
+          log.WriteLine("Patient died from myocardium O2 deficit of 180s @"+data_requests[0]+"s");
         return true;
       }
 
@@ -140,7 +140,7 @@ namespace HowTo_DeathState
         if ((data_requests[0] - start_spO2_deficit_s) > 140)
         {
           if (log != null)
-            log.WriteLine("Patient died from SpO2 < 85 for 140s");
+            log.WriteLine("Patient died from SpO2 < 85 for 140s @"+data_requests[0]+"s");
           return true;
         }
       }
@@ -150,7 +150,7 @@ namespace HowTo_DeathState
       if (data_requests[4] < 60)// Systolic Blood Pressure (mmHg) Check
       {
         if (log != null)
-          log.WriteLine("Patient died from a SBP < 60");
+          log.WriteLine("Patient died from a SBP < 60 @"+data_requests[0]+"s");
         return true;
       }
 
