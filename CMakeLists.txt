@@ -33,7 +33,8 @@ set(CMAKE_DEBUG_POSTFIX "d")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-project(Pulse VERSION 3.1.0 LANGUAGES C CXX)
+project(Pulse VERSION 3.2.0 LANGUAGES C CXX)
+string(TOLOWER ${PROJECT_NAME} project_name)
 
 #-----------------------------------------------------------------------------
 # Project install directories
@@ -138,7 +139,7 @@ if ( CMAKE_COMPILER_IS_GNUCC )
 endif()
 
 
-set(${PROJECT_NAME}_INSTALL_FOLDER ${PROJECT_NAME}-${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR})
+set(${PROJECT_NAME}_INSTALL_FOLDER ${project_name})
 
 include(Find)# Our find macros
 include(AddLibrary)# Extras to do when creating a library
