@@ -152,6 +152,10 @@ template<CREATE_BLACK_BOX_COMPONENTS_TEMPLATE> bool PulseBlackBoxes::CreateCompo
   CompartmentType& bbCmpt = m_data.GetCompartments().CreateLiquidCompartment(bb.GetName());
   LinkType& src2bbLink = m_data.GetCompartments().CreateLiquidLink(srcCmpt, bbCmpt,  bbCmpt.GetName()+"_To_"+bb.GetName());
   LinkType& bb2tgtLink = m_data.GetCompartments().CreateLiquidLink(bbCmpt,  tgtCmpt, bb.GetName()+"_To_"+tgtCmpt.GetName());
+  // Add our new cmpt to our correct cmpt list TODO AMB Support new cmpts/links to our state
+  if (pulse::VascularCompartment::HasValue(srcCmpt.GetName()) && pulse::VascularCompartment::HasValue(tgtCmpt.GetName()))
+    pulse::VascularCompartment::AddValue(bb.GetName());
+
   // Add new components to the graph
   graph.AddCompartment(bbCmpt);
   graph.AddLink(src2bbLink);
@@ -171,6 +175,9 @@ template<CREATE_BLACK_BOX_COMPONENTS_TEMPLATE> bool PulseBlackBoxes::CreateCompo
   // Paths are new, so map the exiting path fluxes to them
   src2bbPath.GetNextFlux().Set(replaceLink.GetPath()->GetFlux());
   bb2tgtPath.GetNextFlux().Set(replaceLink.GetPath()->GetFlux());
+  // Get rid of the old path/link now
+  m_data.GetCircuits().DeleteFluidPath(replaceLink.GetPath()->GetName());
+  m_data.GetCompartments().DeleteLiquidLink(replaceLink.GetName());
 
   // Set any missing potentials and fluxes to 0
   if (!srcNode.HasNextPotential())
@@ -203,7 +210,7 @@ template<CREATE_BLACK_BOX_COMPONENTS_TEMPLATE> bool PulseBlackBoxes::CreateCompo
 
   // ---------------------------------------------------------
   // Set the changes
-  m_data.GetCompartments().StateChange(); //Aaron - New compartment needs to go in VascularLeafCompartments, but SORT_CMPTS doesn't work because it's not in pulse::VascularCompartment
+  m_data.GetCompartments().StateChange();
   circuit.StateChange();
   graph.StateChange();
   return true;
