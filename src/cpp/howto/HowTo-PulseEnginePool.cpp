@@ -76,26 +76,35 @@ void HowToPulseEnginePool()
       filenames.push_back("./states/StandardMale@0s.json");
   }
 
-  pool.initAll(filenames);
-  for (auto& engine : pool.getEngines())
+  if (!pool.init(filenames))
   {
-      if (!engine.second) 
+      for (auto& engine : pool.getEngines())
       {
-          engine.first->GetLogger()->Error("Could not load state, check the error");
+          if (!engine.second)
+          {
+              engine.first->GetLogger()->Error("Could not load state, check the error");
+          }
       }
   }
 
   // Maybe this call should just return true if all succeeded and false if one or more failed 
 
+  pool.execute([](PulseEngine* p) {
+      return true;
+      });
+
   profiler.Start("s");
-  pool.advanceAll(sim_time_s, TimeUnit::s);
-  for (auto& engine : pool.getEngines())
+  if (!pool.advance(sim_time_s, TimeUnit::s))
   {
-      if (!engine.second)
+      for (auto& engine : pool.getEngines())
       {
-          engine.first->GetLogger()->Error("Advance, check the error");
+          if (!engine.second)
+          {
+              engine.first->GetLogger()->Error("Advance, check the error");
+          }
       }
   }
+
 
   double elapsed_time_s = profiler.GetElapsedTime_s("s");
 

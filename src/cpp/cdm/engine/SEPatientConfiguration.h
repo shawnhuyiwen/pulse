@@ -12,8 +12,12 @@ class CDM_DECL SEPatientConfiguration : public Loggable
 {
   friend class PBEngine;//friend the serialization class
 public:
-  SEPatientConfiguration(Logger* logger=nullptr);
+  explicit SEPatientConfiguration(Logger* logger=nullptr);
   virtual ~SEPatientConfiguration();
+
+  SEPatientConfiguration(const SEPatientConfiguration&) = delete;
+  SEPatientConfiguration operator=(const SEPatientConfiguration&) = delete;
+
   virtual void Clear(); //clear memory
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
