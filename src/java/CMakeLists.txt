@@ -25,22 +25,22 @@ file(GLOB_RECURSE GOOGLE_JAVA_FILES "com/google/*.java")
 add_jar(PulseJava ${PULSE_JAVA_FILES} ${GOOGLE_JAVA_FILES}
     INCLUDE_JARS 
       "jar/commons-collections4-4.4.jar"
-      "jar/commons-compress-1.19.jar"
+      "jar/commons-compress-1.20.jar"
       "jar/commons-math3-3.6.1.jar"
       "jar/error_prone_annotations-2.3.4.jar"
       "jar/gson-2.8.6.jar"
-      "jar/guava-29.0-jre.jar"
-      "jar/java-ordered-properties-1.0.3.jar"
-      "jar/javassist.jar"
-      "jar/jfreechart-1.5.0.jar"
+      "jar/guava-30.1-jre.jar"
+      "jar/java-ordered-properties-1.0.4.jar"
+      "jar/javassist-3.26.0-GA.jar"
+      "jar/jfreechart-1.5.3.jar"
       "jar/logback-classic-1.2.3.jar"
       "jar/logback-core-1.2.3.jar"
-      "jar/poi-4.1.2.jar"
-      "jar/poi-ooxml-4.1.2.jar"
-      "jar/poi-ooxml-schemas-4.1.2.jar"
+      "jar/poi-5.0.0.jar"
+      "jar/poi-ooxml-5.0.0.jar"
+      "jar/poi-ooxml-lite-5.0.0.jar"
       "jar/reflections-0.9.12.jar"
       "jar/slf4j-api-1.7.30.jar"
-      "jar/xmlbeans-3.1.0.jar"
+      "jar/xmlbeans-4.0.0.jar"
     OUTPUT_NAME Pulse
     MANIFEST ${CMAKE_CURRENT_SOURCE_DIR}/MANIFEST.MF)
 get_target_property(_jarFile PulseJava JAR_FILE)
