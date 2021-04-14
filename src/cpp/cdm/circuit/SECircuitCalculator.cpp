@@ -277,14 +277,24 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
     {
       BlackBoxType* bb = n->GetBlackBox();
 
-      // JBW, Not sure why you skipped over the bb node?
-      // It seems you were only updating the matrix for src/tgt nodes only
-      // Doing nothing for bb nodes with imposed potential..
-      //if (n->GetBlackBox()->GetNode() == n)
-      //{
-        //We'll handle this later... it could potentially remain an empty row
-      //  continue;
-      //}
+      //Handle the black box middle node
+      //We'll either explicitly set the potential value or just make it the average of the source and target
+      //If we don't do this, it creates a singular matrix (zero columns) and will take longer to solve
+      if (bb->GetNode() == n)
+      {
+        _eigen->AMatrix(n->GetCalculatorIndex(), n->GetCalculatorIndex()) = 1.0;
+        if (!bb->IsPotentialImposed())
+        {
+          _eigen->bVector(n->GetCalculatorIndex()) = bb->GetPotential(m_PotentialUnit);
+        }
+        else
+        {
+          //BB - Source/2 - Target/2 = 0
+          _eigen->AMatrix(n->GetCalculatorIndex(), bb->GetSourceNode()->GetCalculatorIndex()) = -0.5;
+          _eigen->AMatrix(n->GetCalculatorIndex(), bb->GetTargetNode()->GetCalculatorIndex()) = -0.5;
+        }
+        continue;
+      }
       
       //Phantom path to ground needed to determine flow into/out of the black box
       //Out of node is positive
@@ -721,22 +731,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
       ValueOverride<FluxUnit>(bb->GetTargetPath()->GetNextFlux(), dFlow, m_FluxUnit);
     }
   }
-
-  // Black box nodes
-  for (NodeType* n : m_circuit->GetNodes())
-  {
-    // Only bb nodes have the black box
-    if (n->HasBlackBox())
-    {
-      BlackBoxType* bb = n->GetBlackBox();
-      if (!bb->IsPotentialImposed())
-      {
-        //Just take the average of the source and target
-        double potential = bb->GetSourceNode()->GetNextPotential().GetValue(m_PotentialUnit) / 2.0 + bb->GetTargetNode()->GetNextPotential().GetValue(m_PotentialUnit) / 2.0;
-        ValueOverride<PotentialUnit>(n->GetNextPotential(), potential, m_PotentialUnit);
-      }
-    }
-  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -991,7 +985,7 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::IsCurrentValveStateUnique()
 /// \brief
 /// Add a value to the appropriate location in the Jacobian matrix.
 ///
-/// \param  nKCL              The Node that is currently being analyzed.
+/// \param  n                 The Node that is currently being analyzed.
 /// \param  p                 The Path that is currently being analyzed.
 /// \param  dMultiplier       The value to insert in the Jacobian matrix.
 /// \param  hasPressureSource True if the path has a Pressure Source.

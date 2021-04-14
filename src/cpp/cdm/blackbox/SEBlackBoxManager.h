@@ -82,8 +82,8 @@ protected:
     bbNode.SetBlackBox(&bb);
     // Source/Target Node's can be associated with more than one black box
     // So we do not set them, the circuit calculator handles this assumption
-    //srcNode.SetBlackBox(&bb);
-    //tgtNode.SetBlackBox(&bb);
+    srcNode.SetBlackBox(&bb);
+    tgtNode.SetBlackBox(&bb);
     srcPath.SetBlackBox(&bb);
     tgtPath.SetBlackBox(&bb);
 
