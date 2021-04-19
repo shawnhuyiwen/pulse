@@ -749,18 +749,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateFluxes()
   //Note: flows use source->target convention for positive flow, so the source pressure needs to be larger than the target pressure for positive flow
   for (PathType* p : m_circuit->GetPaths())
   {
-    if (p->HasBlackBox())
-    {
-      BlackBoxType* bb = p->GetBlackBox();
-      if (p == bb->GetSourcePath() && bb->IsSourceFluxImposed())
-      {
-        Override<FluxUnit>(bb->GetSourcePath()->GetFlux(), p->GetNextFlux());
-      }
-      else if(p == bb->GetTargetPath() && bb->IsTargetFluxImposed())
-      {
-        Override<FluxUnit>(bb->GetTargetPath()->GetFlux(), p->GetNextFlux());
-      }
-    }
     if (p->HasNextFluxSource())
     {
       Override<FluxUnit>(p->GetNextFluxSource(), p->GetNextFlux());
