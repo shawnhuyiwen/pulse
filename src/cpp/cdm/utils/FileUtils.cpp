@@ -101,9 +101,22 @@ bool ReadFile(const std::string& filename, std::string& content)
   return true;
 }
 
-void ListFiles(const std::string& dir, std::vector<std::string>& files, const std::string& mask)
+bool IsDirectory(const std::string& dir)
 {
-  DIR *d;
+  DIR* d = opendir(dir.c_str());
+  if (d == nullptr)
+    return false;
+  closedir(d);
+  return true;
+}
+bool IsDirectory(struct dirent* ent)
+{
+  return ent->d_type == DT_DIR;
+}
+
+void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask)
+{
+  DIR *d = nullptr;
   struct dirent *ent;
   std::string filename;
   if ((d = opendir(dir.c_str())) != nullptr)
@@ -126,10 +139,12 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, const st
       }
       else
       {
-        ListFiles(filename, files, mask);
+        if(recursive)
+          ListFiles(filename, files, recursive, mask);
       }
     }
   }
+  closedir(d);
 }
 
 void MakeDirectory(std::string const& dir)
@@ -173,11 +188,6 @@ std::string GetCurrentWorkingDirectory()
   char path[MAXPATH];
   GETCWD(path, MAXPATH);
   return std::string(path);
-}
-
-bool IsDirectory(struct dirent* ent)
-{
-  return ent->d_type == DT_DIR;
 }
 
 bool FileExists(const std::string& filename)
