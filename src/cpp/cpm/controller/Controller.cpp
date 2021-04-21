@@ -317,6 +317,8 @@ void PulseController::Allocate()
 
   m_LogForward = new FatalListner(*m_EventManager, m_CurrentTime);
   m_Logger->AddForward(m_LogForward);
+
+  SetupTracker();
 }
 
 bool PulseController::SetConfigurationOverride(const SEEngineConfiguration* config)
@@ -362,9 +364,21 @@ bool PulseController::InitializeEngine(const std::string& patient_configuration,
 
 bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_configuration)
 {
+  m_State = EngineState::NotReady;
+
+  m_SpareAdvanceTime_s = 0;
+  m_AirwayMode = eAirwayMode::Free;
+  m_Intubation = eSwitch::Off;
+  m_CurrentTime.SetValue(0, TimeUnit::s);
+  m_SimulationTime.SetValue(0, TimeUnit::s);
+  m_Logger->SetLogTime(&m_SimulationTime);
+
   Info("Looking for files in " + patient_configuration.GetDataRoot());
   m_DataDir = patient_configuration.GetDataRoot();
-  m_EngineTrack->ResetFile();
+
+  m_EngineTrack->Clear();
+  m_Config->Initialize("");
+  m_ScalarOverrides.clear();
   m_State = EngineState::Initialization;
   if(patient_configuration.HasOverride())
   {
@@ -454,7 +468,6 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
 
 bool PulseController::Initialize(SEPatient const& patient)
 {
-  m_State = EngineState::NotReady;
   Info("Configuring patient");
   if (!SetupPatient(patient))
     return false;
@@ -494,10 +507,9 @@ bool PulseController::Initialize(SEPatient const& patient)
     m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json");
   }
 
-  
-
   m_Actions->Clear();
   m_Conditions->Clear();
+  m_EventManager->Clear();
 
   // This will also Initialize the environment
   // Due to needing the initial environment values for circuits to construct properly
@@ -510,13 +522,6 @@ bool PulseController::Initialize(SEPatient const& patient)
     ProcessAction(m_Config->GetInitialOverrides());
     OverrideCircuits();// Override any circuit values
   }
-
-  m_SpareAdvanceTime_s = 0;
-  m_AirwayMode = eAirwayMode::Free;
-  m_Intubation = eSwitch::Off;
-  m_CurrentTime.SetValue(0, TimeUnit::s);
-  m_SimulationTime.SetValue(0, TimeUnit::s);
-  m_Logger->SetLogTime(&m_SimulationTime);
 
   Info("Initializing Substances");
   m_Substances->InitializeSubstances();
@@ -538,6 +543,23 @@ bool PulseController::Initialize(SEPatient const& patient)
 
 void PulseController::InitializeSystems()
 {
+  // Clear everything before initializing
+  m_CardiovascularSystem->Clear();
+  m_RespiratorySystem->Clear();
+  m_AnesthesiaMachine->Clear();
+  m_MechanicalVentilator->Clear();
+  m_GastrointestinalSystem->Clear();
+  m_HepaticSystem->Clear();
+  m_RenalSystem->Clear();
+  m_NervousSystem->Clear();
+  m_EndocrineSystem->Clear();
+  m_DrugSystem->Clear();
+  m_EnergySystem->Clear();
+  m_BloodChemistrySystem->Clear();
+  m_TissueSystem->Clear();
+  m_ECG->Clear();
+  m_Inhaler->Clear();
+
   Info("Initializing Systems");
   m_CardiovascularSystem->Initialize();
   m_RespiratorySystem->Initialize();

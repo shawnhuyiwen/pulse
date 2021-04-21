@@ -36,6 +36,11 @@ public:
   PulseBloodChemistrySystem(PulseData& data) : SEBloodChemistrySystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseBloodChemistrySystem() = default;
 
+  void Clear() override
+  {
+    SEBloodChemistrySystem::Clear();
+  }
+
   virtual const SEScalar* GetScalar(const std::string& name) override
   {
     const SEScalar* s = SEBloodChemistrySystem::GetScalar(name);
@@ -56,6 +61,11 @@ class PULSE_DECL PulseCardiovascularSystem : public SECardiovascularSystem, publ
 public:
   PulseCardiovascularSystem(PulseData& data) : SECardiovascularSystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseCardiovascularSystem() = default;
+
+  void Clear() override
+  {
+    SECardiovascularSystem::Clear();
+  }
 
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
@@ -78,6 +88,11 @@ public:
   PulseDrugSystem(PulseData& data) : SEDrugSystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseDrugSystem() = default;
 
+  void Clear() override
+  {
+    SEDrugSystem::Clear();
+  }
+
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
     const SEScalar* s = SEDrugSystem::GetScalar(name);
@@ -98,6 +113,11 @@ class PULSE_DECL PulseEndocrineSystem : public SEEndocrineSystem, public PulseSy
 public:
   PulseEndocrineSystem(PulseData& data) : SEEndocrineSystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseEndocrineSystem() = default;
+
+  void Clear() override
+  {
+    SEEndocrineSystem::Clear();
+  }
 
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
@@ -120,6 +140,11 @@ public:
   PulseEnergySystem(PulseData& data) : SEEnergySystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseEnergySystem() = default;
 
+  void Clear() override
+  {
+    SEEnergySystem::Clear();
+  }
+
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
     const SEScalar* s = SEEnergySystem::GetScalar(name);
@@ -140,6 +165,11 @@ class PULSE_DECL PulseGastrointestinalSystem : public SEGastrointestinalSystem, 
 public:
   PulseGastrointestinalSystem(PulseData& data) : SEGastrointestinalSystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseGastrointestinalSystem() = default;
+
+  void Clear() override
+  {
+    SEGastrointestinalSystem::Clear();
+  }
 
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
@@ -162,6 +192,11 @@ public:
   PulseHepaticSystem(PulseData& data) : SEHepaticSystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseHepaticSystem() = default;
 
+  void Clear() override
+  {
+    SEHepaticSystem::Clear();
+  }
+
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
     const SEScalar* s = SEHepaticSystem::GetScalar(name);
@@ -182,6 +217,11 @@ class PULSE_DECL PulseNervousSystem : public SENervousSystem, public PulseSystem
 public:
   PulseNervousSystem(PulseData& data) : SENervousSystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseNervousSystem() = default;
+
+  void Clear() override
+  {
+    SENervousSystem::Clear();
+  }
 
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
@@ -204,6 +244,11 @@ public:
   PulseRenalSystem(PulseData& data) : SERenalSystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseRenalSystem() = default;
 
+  void Clear() override
+  {
+    SERenalSystem::Clear();
+  }
+
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
     const SEScalar* s = SERenalSystem::GetScalar(name);
@@ -224,6 +269,13 @@ class PULSE_DECL PulseRespiratorySystem : public SERespiratorySystem, public Pul
 public:
   PulseRespiratorySystem(PulseData& data) : SERespiratorySystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseRespiratorySystem() = default;
+
+  void Clear() override
+  {
+    SERespiratorySystem::Clear();
+    m_TotalRespiratoryModelCompliance.Invalidate();
+    m_TotalRespiratoryModelResistance.Invalidate();
+  }
 
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
@@ -249,6 +301,11 @@ public:
   PulseTissueSystem(PulseData& data) : SETissueSystem(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseTissueSystem() = default;
 
+  void Clear() override
+  {
+    SETissueSystem::Clear();
+  }
+
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
     const SEScalar* s = SETissueSystem::GetScalar(name);
@@ -269,6 +326,11 @@ class PULSE_DECL PulseEnvironmentSystem : public SEEnvironment, public PulseSyst
 public:
   PulseEnvironmentSystem(PulseData& data) : SEEnvironment(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseEnvironmentSystem() = default;
+
+  void Clear() override
+  {
+    SEEnvironment::Clear();
+  }
 
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
@@ -291,6 +353,11 @@ public:
   PulseAnesthesiaMachine(PulseData& data) : SEAnesthesiaMachine(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseAnesthesiaMachine() = default;
 
+  void Clear() override
+  {
+    SEAnesthesiaMachine::Clear();
+  }
+
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
     const SEScalar* s = SEAnesthesiaMachine::GetScalar(name);
@@ -311,6 +378,11 @@ class PULSE_DECL PulseElectroCardioGram : public SEElectroCardioGram, public Pul
 public:
   PulseElectroCardioGram(PulseData& data) : SEElectroCardioGram(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseElectroCardioGram() = default;
+
+  void Clear() override
+  {
+    SEElectroCardioGram::Clear();
+  }
 
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
@@ -333,6 +405,11 @@ public:
   PulseInhaler(PulseData& data) : SEInhaler(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseInhaler() = default;
 
+  void Clear() override
+  {
+    SEInhaler::Clear();
+  }
+
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
     const SEScalar* s = SEInhaler::GetScalar(name);
@@ -353,6 +430,11 @@ class PULSE_DECL PulseMechanicalVentilator : public SEMechanicalVentilator, publ
 public:
   PulseMechanicalVentilator(PulseData& data) : SEMechanicalVentilator(data.GetLogger()), PulseSystem(data) {}
   virtual ~PulseMechanicalVentilator() = default;
+
+  void Clear() override
+  {
+    SEMechanicalVentilator::Clear();
+  }
 
   virtual const SEScalar* GetScalar(const std::string & name) override
   {

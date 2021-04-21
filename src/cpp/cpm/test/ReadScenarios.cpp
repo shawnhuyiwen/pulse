@@ -49,7 +49,7 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
   else
   {
     std::vector<std::string> files;
-    ListFiles(sce_dir, files, ".json");
+    ListFiles(sce_dir, files, true, ".json");
     for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it)
     {
       if (it->find("json") != std::string::npos)

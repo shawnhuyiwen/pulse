@@ -17,7 +17,6 @@ PulseEngine::PulseEngine(Logger* logger)
 {
   m_PulseController = new PulseController(logger);
   m_PulseController->Allocate();
-  m_PulseController->SetupTracker();
 }
 
 PulseEngine::~PulseEngine()

@@ -29,6 +29,7 @@ int main(int argc, char* argv[])
       ////////////////////
 
       //peTest.ReadScenarios(peDir);
+      peTest.ReuseEngine(peDir);
 
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
@@ -118,7 +119,7 @@ int main(int argc, char* argv[])
       //cdmTest.BasicBlackBoxComparisonTest(cdmDir);
       //cdmTest.BasicBlackBoxTest(cdmDir);
       //cdmTest.SimpleBlackBoxTest(cdmDir);
-      cdmTest.WindkesselBlackBoxTest(cdmDir);
+      //cdmTest.WindkesselBlackBoxTest(cdmDir);
 
       // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);
