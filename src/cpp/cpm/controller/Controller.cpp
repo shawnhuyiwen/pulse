@@ -376,7 +376,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   Info("Looking for files in " + patient_configuration.GetDataRoot());
   m_DataDir = patient_configuration.GetDataRoot();
 
-  m_EngineTrack->Clear();
+  m_EngineTrack->ResetFile();
   m_Config->Initialize("");
   m_ScalarOverrides.clear();
   m_State = EngineState::Initialization;
