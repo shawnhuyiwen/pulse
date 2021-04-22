@@ -103,8 +103,8 @@ void PulseEngineTest::ImposeFlowBlackBoxTest(const std::string& outputDir)
   profile.Start("BB");
   for (size_t i = 0; i < 120 / pulse->GetTimeStep(TimeUnit::s); i++)
   {
-    bb->ImposeSourceFlux(0.37, VolumePerTimeUnit::mL_Per_s);
-    bb->ImposeTargetFlux(1.73, VolumePerTimeUnit::mL_Per_s);
+    bb->ImposeSourceFlux(2.1, VolumePerTimeUnit::mL_Per_s);
+    bb->ImposeTargetFlux(2.1, VolumePerTimeUnit::mL_Per_s);
 
     if (!pulse->AdvanceModelTime())
     {
@@ -171,9 +171,4 @@ void PulseEngineTest::ImposePressureAndFlowBlackBoxTest(const std::string& outpu
   }
   Info("It took " + std::to_string(profile.GetElapsedTime_s("BB")) + "(s) to simulate 60s");
   profile.Stop("BB");
-}
-
-void PulseEngineTest::ImposeVolumeBlackBoxTest(const std::string& outputDir)
-{
-  // PROVIDE volume and substance masses to be added in the target compartment
 }

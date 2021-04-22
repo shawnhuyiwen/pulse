@@ -222,7 +222,6 @@ public:
   void EmptyBlackBoxTest(const std::string& sOutputDirectory);
   void ImposeFlowBlackBoxTest(const std::string& sOutputDirectory);
   void ImposePressureAndFlowBlackBoxTest(const std::string& sOutputDirectory);
-  void ImposeVolumeBlackBoxTest(const std::string& sOutputDirectory);
 protected:
 
 };
