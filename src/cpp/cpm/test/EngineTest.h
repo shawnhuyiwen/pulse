@@ -189,9 +189,9 @@ protected:
   enum bloodType { ARTERIAL, VENOUS, CAPILLARY, RESPIRATORY_ACIDOSIS, METABOLIC_ALKALOSIS, METABOLIC_ACIDOSIS, RESPIRATORY_ALKALOSIS, CUSTOM };
   void AcidBaseBloodGasTest(PulseController& bg, bloodType compartment, SETestSuite& testSuite);
 
-  /////////////////////
+  ///////////////////
   // Aerosol Tests //
-  /////////////////////
+  ///////////////////
 public:
   void AerosolTest(const std::string& sOutputDirectory);
 protected:
@@ -203,9 +203,10 @@ protected:
 public:
   //////////////////////////
   // General Engine Tests //
+  //////////////////////////
   void ReadScenarios(const std::string& sOutputDirectory);
   void ReuseEngine(const std::string& sOutputDirectory);
-
+  
   void ConditionCombinations(const std::string& rptDirectory);
   void MultiEngineTest(const std::string& sTestDirectory);
   void SerializationTest(const std::string& sTestDirectory);
@@ -214,6 +215,15 @@ protected:
   void InhalerState(PhysiologyEngine* bg, HowToTracker& tracker);
   void InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tracker, const SESubstance& succs);
   
+  //////////////////////
+   // Black Box Tests //
+   /////////////////////
+public:
+  void EmptyBlackBoxTest(const std::string& sOutputDirectory);
+  void ImposeFlowBlackBoxTest(const std::string& sOutputDirectory);
+  void ImposePressureAndFlowBlackBoxTest(const std::string& sOutputDirectory);
+  void ImposeVolumeBlackBoxTest(const std::string& sOutputDirectory);
+protected:
 
 };
 

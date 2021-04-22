@@ -134,5 +134,9 @@ void PulseEngineTest::FillFunctionMap()
   bgeMap.insert(std::make_pair("AcidBaseFourCompartmentTestWithProductionConsumption", &PulseEngineTest::AcidBaseFourCompartmentTestWithProductionConsumption));
   bgeMap.insert(std::make_pair("AcidBaseFiveCompartmentTestWithDiffusion", &PulseEngineTest::AcidBaseFiveCompartmentTestWithDiffusion));
   bgeMap.insert(std::make_pair("AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion", &PulseEngineTest::AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion));
-  
+
+  bgeMap.insert(std::make_pair("EmptyBlackBoxTest", &PulseEngineTest::EmptyBlackBoxTest));
+  bgeMap.insert(std::make_pair("ImposeFlowBlackBoxTest", &PulseEngineTest::ImposeFlowBlackBoxTest));
+  bgeMap.insert(std::make_pair("ImposePressureAndFlowBlackBoxTest", &PulseEngineTest::ImposePressureAndFlowBlackBoxTest));
+  bgeMap.insert(std::make_pair("ImposeVolumeBlackBoxTest", &PulseEngineTest::ImposeVolumeBlackBoxTest));
 }

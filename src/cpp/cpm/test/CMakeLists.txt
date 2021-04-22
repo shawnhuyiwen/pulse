@@ -6,11 +6,12 @@ add_library_ex(CommonPulseModelsTests
     AcidBaseTests.cpp
     AerosolTest.cpp
     AnesthesiaCircuit.cpp
+    BlackBoxTests.cpp
     CardiovascularCircuit.cpp
     ConditionsTest.cpp
     EngineTest.cpp
     FourCompartmentTest.cpp
-	MechanicalVentilatorCircuit.cpp
+    MechanicalVentilatorCircuit.cpp
     MultiEngineTest.cpp
     NervousTests.cpp
     ReadScenarios.cpp
