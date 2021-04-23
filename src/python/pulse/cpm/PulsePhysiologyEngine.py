@@ -1,5 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
+
 import math, copy
 import PyPulse
 from pulse.cdm.patient import SEPatient, SEPatientConfiguration

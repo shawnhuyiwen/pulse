@@ -1,36 +1,50 @@
+/* Distributed under the Apache License, Version 2.0.
+See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-
-#include <chrono>
+#pragma once
 
 #include "CommonDataModel.h"
-#include "Engine.h"
-#include "ThreadPool.h"
+#include "controller/Engine.h"
+#include "utils/ThreadPool.h"
+#include <chrono>
 
-
-using EngineCollection = std::vector<std::pair<std::unique_ptr<PulseEngine>, bool>>;
+// Engine ID
+using EngineCollection = std::map<uint32_t, std::unique_ptr<PulseEngine>>;
 
 class PulsePhysiologyEnginePool
 {
 public:
-    PulsePhysiologyEnginePool(size_t engineNum, size_t poolSize = std::thread::hardware_concurrency());
+    PulsePhysiologyEnginePool(size_t poolSize = std::thread::hardware_concurrency());
+    const size_t GetWorkerCount() const { return m_pool.workerCount(); }
 
-    bool init(std::vector<SEPatientConfiguration*> configurations);
-    bool init(std::vector<std::string> patientFiles);
-    bool advance(double time, TimeUnit unit);
+    bool SerializeFromFile(const std::map<uint32_t, std::string>& stateFilenames);
+    bool SerializeToFile(const std::map<uint32_t, std::string>& stateFilenames);
 
-    bool execute(std::function<bool(PulseEngine*)> f);
+    bool SerializeFromString(const std::map<uint32_t, std::string>& states);
+    bool SerializeToFile(SerializationFormat format, std::map<uint32_t, std::string>& states);
 
-    const std::vector<std::pair<std::unique_ptr<PulseEngine>, bool>>& getEngines();
+    bool InitializeEngine(const std::map<uint32_t, SEPatientConfiguration>& configurations);
 
-    const size_t workerCount() const { return m_pool.workerCount(); }
+    bool GetInitialPatient(SerializationFormat format, std::map<uint32_t, std::string>& states);
+    bool GetConditions(SerializationFormat format, std::map<uint32_t, std::string>& states);
+
+    bool AdvanceModelTime(const std::map<uint32_t, double>& times, const TimeUnit& unit);
+
+    bool AdvanceModelTime(const std::map<uint32_t,double>& times, const TimeUnit& unit);
+
+
+    const EngineCollection& GetEngines();
 
 private:
-    EngineCollection m_engines;
-    ThreadPool m_pool;
+
+  bool Execute(std::function<bool(PulseEngine*)> f);
+
+  EngineCollection m_engines;
+  ThreadPool m_pool;
 };
 
-class EngineRunner {
+class EngineRunner
+{
 public:
     EngineRunner(std::shared_ptr<PulseEngine> engine);
 
