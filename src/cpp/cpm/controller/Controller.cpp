@@ -22,6 +22,7 @@
 #include "physiology/Tissue.h"
 #include "environment/Environment.h"
 #include "equipment/AnesthesiaMachine.h"
+#include "equipment/BagValveMask.h"
 #include "equipment/ECG.h"
 #include "equipment/Inhaler.h"
 #include "equipment/MechanicalVentilator.h"
@@ -127,35 +128,37 @@ void PulseData::SetupTracker()
   if(m_BloodChemistrySystem)
     m_EngineTrack->AddSystem(*m_BloodChemistrySystem);
   if (m_CardiovascularSystem)
-  m_EngineTrack->AddSystem(*m_CardiovascularSystem);
+    m_EngineTrack->AddSystem(*m_CardiovascularSystem);
   if (m_EndocrineSystem)
-  m_EngineTrack->AddSystem(*m_EndocrineSystem);
+    m_EngineTrack->AddSystem(*m_EndocrineSystem);
   if (m_EnergySystem)
-  m_EngineTrack->AddSystem(*m_EnergySystem);
+    m_EngineTrack->AddSystem(*m_EnergySystem);
   if (m_GastrointestinalSystem)
-  m_EngineTrack->AddSystem(*m_GastrointestinalSystem);
+    m_EngineTrack->AddSystem(*m_GastrointestinalSystem);
   if (m_HepaticSystem)
-  m_EngineTrack->AddSystem(*m_HepaticSystem);
+    m_EngineTrack->AddSystem(*m_HepaticSystem);
   if (m_NervousSystem)
-  m_EngineTrack->AddSystem(*m_NervousSystem);
+    m_EngineTrack->AddSystem(*m_NervousSystem);
   if (m_RenalSystem)
-  m_EngineTrack->AddSystem(*m_RenalSystem);
+    m_EngineTrack->AddSystem(*m_RenalSystem);
   if (m_RespiratorySystem)
-  m_EngineTrack->AddSystem(*m_RespiratorySystem);
+    m_EngineTrack->AddSystem(*m_RespiratorySystem);
   if (m_DrugSystem)
-  m_EngineTrack->AddSystem(*m_DrugSystem);
+    m_EngineTrack->AddSystem(*m_DrugSystem);
   if (m_TissueSystem)
-  m_EngineTrack->AddSystem(*m_TissueSystem);
+    m_EngineTrack->AddSystem(*m_TissueSystem);
   if (m_Environment)
-  m_EngineTrack->AddSystem(*m_Environment);
+    m_EngineTrack->AddSystem(*m_Environment);
   if (m_AnesthesiaMachine)
-  m_EngineTrack->AddSystem(*m_AnesthesiaMachine);
+    m_EngineTrack->AddSystem(*m_AnesthesiaMachine);
+  if (m_BagValveMask)
+    m_EngineTrack->AddSystem(*m_BagValveMask);
   if (m_ECG)
-  m_EngineTrack->AddSystem(*m_ECG);
+    m_EngineTrack->AddSystem(*m_ECG);
   if (m_Inhaler)
-  m_EngineTrack->AddSystem(*m_Inhaler);
+    m_EngineTrack->AddSystem(*m_Inhaler);
   if (m_MechanicalVentilator)
-  m_EngineTrack->AddSystem(*m_MechanicalVentilator);
+    m_EngineTrack->AddSystem(*m_MechanicalVentilator);
 }
 
 SEEngineTracker& PulseData::GetEngineTracker() const { return *m_EngineTrack; }
@@ -194,6 +197,8 @@ bool PulseData::HasEnvironment() const { return m_Environment != nullptr; }
 SEEnvironment& PulseData::GetEnvironment() const { return *m_Environment; }
 bool PulseData::HasAnesthesiaMachine() const { return m_AnesthesiaMachine != nullptr; }
 SEAnesthesiaMachine& PulseData::GetAnesthesiaMachine() const { return *m_AnesthesiaMachine; }
+bool PulseData::HasBagValveMask() const { return m_BagValveMask != nullptr; }
+SEBagValveMask& PulseData::GetBagValveMask() const { return *m_BagValveMask; }
 bool PulseData::HasECG() const { return m_ECG != nullptr; }
 SEElectroCardioGram& PulseData::GetECG() const { return *m_ECG; }
 bool PulseData::HasInhaler() const { return m_Inhaler != nullptr; }
@@ -262,6 +267,7 @@ PulseController::~PulseController()
   SAFE_DELETE(m_Environment);
 
   SAFE_DELETE(m_AnesthesiaMachine);
+  SAFE_DELETE(m_BagValveMask);
   SAFE_DELETE(m_ECG);
   SAFE_DELETE(m_Inhaler);
   SAFE_DELETE(m_MechanicalVentilator);
@@ -306,6 +312,7 @@ void PulseController::Allocate()
   m_Environment = new Environment(*this);
 
   m_AnesthesiaMachine = new AnesthesiaMachine(*this);
+  m_BagValveMask = new BagValveMask(*this);
   m_ECG = new ECG(*this);
   m_Inhaler = new Inhaler(*this);
   m_MechanicalVentilator = new MechanicalVentilator(*this);
@@ -549,6 +556,7 @@ void PulseController::InitializeSystems()
   m_CardiovascularSystem->Clear();
   m_RespiratorySystem->Clear();
   m_AnesthesiaMachine->Clear();
+  m_BagValveMask->Clear();
   m_MechanicalVentilator->Clear();
   m_GastrointestinalSystem->Clear();
   m_HepaticSystem->Clear();
@@ -566,6 +574,7 @@ void PulseController::InitializeSystems()
   m_CardiovascularSystem->Initialize();
   m_RespiratorySystem->Initialize();
   m_AnesthesiaMachine->Initialize();
+  m_BagValveMask->Initialize();
   m_MechanicalVentilator->Initialize();
   m_GastrointestinalSystem->Initialize();
   m_HepaticSystem->Initialize();
@@ -652,6 +661,7 @@ void PulseController::AtSteadyState(EngineState state)
   m_Inhaler->AtSteadyState();
   m_RespiratorySystem->AtSteadyState();
   m_AnesthesiaMachine->AtSteadyState();
+  m_BagValveMask->AtSteadyState();
   m_MechanicalVentilator->AtSteadyState();
   m_GastrointestinalSystem->AtSteadyState();
   m_HepaticSystem->AtSteadyState();
@@ -672,6 +682,7 @@ void PulseController::PreProcess()
   m_Inhaler->PreProcess();
   m_RespiratorySystem->PreProcess();
   m_AnesthesiaMachine->PreProcess();
+  m_BagValveMask->PreProcess();
   m_MechanicalVentilator->PreProcess();
   m_GastrointestinalSystem->PreProcess();
   m_HepaticSystem->PreProcess();
@@ -691,6 +702,7 @@ void PulseController::Process()
   m_Inhaler->Process();
   m_RespiratorySystem->Process();
   m_AnesthesiaMachine->Process();
+  m_BagValveMask->Process();
   m_MechanicalVentilator->Process();
   m_GastrointestinalSystem->Process();
   m_HepaticSystem->Process();
@@ -710,6 +722,7 @@ void PulseController::PostProcess()
   m_Inhaler->PostProcess();
   m_RespiratorySystem->PostProcess();
   m_AnesthesiaMachine->PostProcess();
+  m_BagValveMask->PostProcess();
   m_MechanicalVentilator->PostProcess();
   m_GastrointestinalSystem->PostProcess();
   m_HepaticSystem->PostProcess();

@@ -5,6 +5,7 @@ option csharp_namespace = "pulse.cpm.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/AnesthesiaMachine.proto";
+import "pulse/cdm/bind/BagValveMask.proto";
 import "pulse/cdm/bind/ElectroCardioGram.proto";
 import "pulse/cdm/bind/Inhaler.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
@@ -18,6 +19,16 @@ message AnesthesiaMachineData
   double                                           InspirationTime_s              = 4;
   double                                           OxygenInletVolumeFraction      = 5;
   double                                           TotalBreathingCycleTime_s      = 6;
+}
+
+message BagValveMaskData
+{
+  pulse.cdm.bind.BagValveMaskData                  Common                         = 1;
+  pulse.cdm.bind.eBreathState                      CurrentBreathState             = 2;
+  double                                           CurrentInspiratoryVolume_L     = 3;
+  double                                           CurrentPeriodTime_s            = 4;
+  double                                           DriverPressure_cmH2O           = 5;
+  double                                           DriverFlow_L_Per_s             = 6;
 }
 
 message ElectroCardioGramData

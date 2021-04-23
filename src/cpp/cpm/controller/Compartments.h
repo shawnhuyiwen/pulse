@@ -28,6 +28,7 @@ public:
   virtual SEGasCompartmentGraph&    GetActiveRespiratoryGraph();
   virtual SEGasCompartmentGraph&    GetRespiratoryGraph();
   virtual SEGasCompartmentGraph&    GetRespiratoryAndAnesthesiaMachineGraph();
+  virtual SEGasCompartmentGraph&    GetRespiratoryAndBagValveMaskGraph();
   virtual SEGasCompartmentGraph&    GetRespiratoryAndInhalerGraph();
   virtual SEGasCompartmentGraph&    GetRespiratoryAndNasalCannulaGraph();
   virtual SEGasCompartmentGraph&    GetRespiratoryAndSimpleMaskGraph();
@@ -36,10 +37,12 @@ public:
   virtual SEGasCompartmentGraph&    GetRespiratoryAndMechanicalVentilatorGraph();
 
   virtual SEGasCompartmentGraph&    GetAnesthesiaMachineGraph();
+  virtual SEGasCompartmentGraph&    GetBagValveMaskGraph();
   virtual SEGasCompartmentGraph&    GetMechanicalVentilatorGraph();
 
   virtual SELiquidCompartmentGraph& GetActiveAerosolGraph();
   virtual SELiquidCompartmentGraph& GetAerosolGraph();
+  virtual SELiquidCompartmentGraph& GetAerosolAndBagValveMaskGraph();
   virtual SELiquidCompartmentGraph& GetAerosolAndInhalerGraph();
   virtual SELiquidCompartmentGraph& GetAerosolAndMechanicalVentilationGraph();
   virtual SELiquidCompartmentGraph& GetAerosolAndMechanicalVentilatorGraph();
@@ -68,6 +71,12 @@ public:
 
   std::vector<SEGasCompartment*>const& GetAnesthesiaMachineCompartments() { return m_AnesthesiaMachineCompartments; }
   std::vector<SEGasCompartment*>const& GetAnesthesiaMachineLeafCompartments() { return m_AnesthesiaMachineLeafCompartments; }
+
+  std::vector<SEGasCompartment*>const& GetBagValveMaskCompartments() { return m_BagValveMaskCompartments; }
+  std::vector<SEGasCompartment*>const& GetBagValveMaskLeafCompartments() { return m_BagValveMaskLeafCompartments; }
+
+  std::vector<SELiquidCompartment*>const& GetBagValveMaskAerosolCompartments() { return m_BagValveMaskAerosolCompartments; }
+  std::vector<SELiquidCompartment*>const& GetBagValveMaskAerosolLeafCompartments() { return m_BagValveMaskAerosolCompartments; }
 
   std::vector<SEGasCompartment*>const& GetInhalerCompartments() { return m_InhalerCompartments; }
   std::vector<SEGasCompartment*>const& GetInhalerLeafCompartments() { return m_InhalerLeafCompartments; }
@@ -121,6 +130,7 @@ protected:
 
   SEGasCompartmentGraph*     m_RespiratoryGraph;
   SEGasCompartmentGraph*     m_CombinedRespiratoryAnesthesiaGraph;
+  SEGasCompartmentGraph*     m_CombinedRespiratoryBagValveMaskGraph;
   SEGasCompartmentGraph*     m_CombinedRespiratoryInhalerGraph;
   SEGasCompartmentGraph*     m_CombinedRespiratoryNasalCannulaGraph;
   SEGasCompartmentGraph*     m_CombinedRespiratorySimpleMaskGraph;
@@ -128,9 +138,11 @@ protected:
   SEGasCompartmentGraph*     m_CombinedRespiratoryMechanicalVentilationGraph;
   SEGasCompartmentGraph*     m_CombinedRespiratoryMechanicalVentilatorGraph;
   SEGasCompartmentGraph*     m_AnesthesiaMachineGraph;
+  SEGasCompartmentGraph*     m_BagValveMaskGraph;
   SEGasCompartmentGraph*     m_MechanicalVentilatorGraph;
 
   SELiquidCompartmentGraph*  m_AerosolGraph;
+  SELiquidCompartmentGraph*   m_CombinedAerosolBagValveMaskGraph;
   SELiquidCompartmentGraph*  m_CombinedAerosolInhalerGraph;
   SELiquidCompartmentGraph*  m_CombinedAerosolMechanicalVentilationGraph;
   SELiquidCompartmentGraph*  m_CombinedAerosolMechanicalVentilatorGraph;
@@ -151,6 +163,10 @@ protected:
   std::vector<SELiquidCompartment*>  m_VascularLeafCompartments;
   std::vector<SEGasCompartment*>     m_AnesthesiaMachineCompartments;
   std::vector<SEGasCompartment*>     m_AnesthesiaMachineLeafCompartments;
+  std::vector<SEGasCompartment*>     m_BagValveMaskCompartments;
+  std::vector<SEGasCompartment*>     m_BagValveMaskLeafCompartments;
+  std::vector<SELiquidCompartment*>  m_BagValveMaskAerosolCompartments;
+  std::vector<SELiquidCompartment*>  m_BagValveMaskAerosolLeafCompartments;
   std::vector<SEGasCompartment*>     m_InhalerCompartments;
   std::vector<SEGasCompartment*>     m_InhalerLeafCompartments;
   std::vector<SELiquidCompartment*>  m_InhalerAerosolCompartments;

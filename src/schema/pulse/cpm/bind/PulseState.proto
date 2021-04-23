@@ -21,6 +21,7 @@ enum eAirwayMode
 {
   Free                                                               = 0;/**<<@brief Nothing hooked up to the patient airway */
   AnesthesiaMachine                                                  = 1;/**<<@brief Hooked up to this equipment */
+  BagValveMask                                                       = 8;/**<<@brief Hooked up to this equipment */
   Inhaler                                                            = 2;/**<<@brief Hooked up to this equipment */
   MechanicalVentilation                                              = 3;/**<<@brief Physical ventilation being performed */
   MechanicalVentilator                                               = 4;/**<<@brief Hooked up to this equipment */

@@ -3393,6 +3393,237 @@ void PulseController::SetupAnesthesiaMachine()
   gCombinedRespiratoryAnesthesia.StateChange();
 }
 
+void PulseController::SetupBagValveMask()
+{
+  Info("Setting Up BagValveMask");
+  /////////////////////// Circuit Interdependencies
+  SEFluidCircuit& cRespiratory = m_Circuits->GetRespiratoryCircuit();
+  SEGasCompartmentGraph& gRespiratory = m_Compartments->GetRespiratoryGraph();
+  SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
+  ///////////////////////
+
+  double tubeVolume_L = 0.3; //4 total tubes - this is per tube
+                             //22mm ID * 36" length = pi * (0.022m / 2)^2 * 0.91m = 3.46e-4 m^3 = 0.346 L... so decent ballpark
+  double yPieceVolume_L = 0.01;
+  double connectionVolume_L = 0.05;
+  double tubeResistance_cmH2O_s_Per_L = 0.01; //4 total tubes - this is per tube 
+                                              //this is pretty negligable
+
+  /////////////
+  // Circuit //
+  // Nodes
+  SEFluidCircuit& cBagValveMask = m_Circuits->GetBagValveMaskCircuit();
+  SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
+  cBagValveMask.AddNode(Ambient);
+
+  SEFluidCircuitNode& Ventilator = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Ventilator);
+  Ventilator.GetPressure().Set(Ambient.GetPressure());
+  Ventilator.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
+
+  SEFluidCircuitNode& ExpiratoryValve = cBagValveMask.CreateNode(pulse::BagValveMaskNode::ExpiratoryValve);
+  ExpiratoryValve.GetPressure().Set(Ambient.GetPressure());
+  ExpiratoryValve.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& InspiratoryValve = cBagValveMask.CreateNode(pulse::BagValveMaskNode::InspiratoryValve);
+  InspiratoryValve.GetPressure().Set(Ambient.GetPressure());
+  InspiratoryValve.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& ExpiratoryLimb = cBagValveMask.CreateNode(pulse::BagValveMaskNode::ExpiratoryLimb);
+  ExpiratoryLimb.GetPressure().Set(Ambient.GetPressure());
+  ExpiratoryLimb.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& InspiratoryLimb = cBagValveMask.CreateNode(pulse::BagValveMaskNode::InspiratoryLimb);
+  InspiratoryLimb.GetPressure().Set(Ambient.GetPressure());
+  InspiratoryLimb.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& YPiece = cBagValveMask.CreateNode(pulse::BagValveMaskNode::YPiece);
+  YPiece.GetPressure().Set(Ambient.GetPressure());
+  YPiece.GetVolumeBaseline().SetValue(yPieceVolume_L, VolumeUnit::L);
+
+  SEFluidCircuitNode& Connection = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Connection);
+  Connection.GetPressure().Set(Ambient.GetPressure());
+  Connection.GetVolumeBaseline().SetValue(connectionVolume_L, VolumeUnit::L);
+
+  //Paths
+  SEFluidCircuitPath& EnvironmentToVentilator = cBagValveMask.CreatePath(Ambient, Ventilator, pulse::BagValveMaskPath::EnvironmentToVentilator);
+  EnvironmentToVentilator.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
+
+  SEFluidCircuitPath& VentilatorToExpiratoryValve = cBagValveMask.CreatePath(Ventilator, ExpiratoryValve, pulse::BagValveMaskPath::VentilatorToExpiratoryValve);
+  VentilatorToExpiratoryValve.GetResistanceBaseline().SetValue(tubeResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  SEFluidCircuitPath& VentilatorToInspiratoryValve = cBagValveMask.CreatePath(Ventilator, InspiratoryValve, pulse::BagValveMaskPath::VentilatorToInspiratoryValve);
+  VentilatorToInspiratoryValve.GetResistanceBaseline().SetValue(tubeResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  SEFluidCircuitPath& ExpiratoryLimbToExpiratoryValve = cBagValveMask.CreatePath(ExpiratoryLimb, ExpiratoryValve, pulse::BagValveMaskPath::ExpiratoryLimbToExpiratoryValve);
+  ExpiratoryLimbToExpiratoryValve.SetNextValve(eGate::Open);
+
+  SEFluidCircuitPath& InspiratoryValveToInspiratoryLimb = cBagValveMask.CreatePath(InspiratoryValve, InspiratoryLimb, pulse::BagValveMaskPath::InspiratoryValveToInspiratoryLimb);
+  InspiratoryValveToInspiratoryLimb.SetNextValve(eGate::Open);
+
+  SEFluidCircuitPath& ExpiratoryLimbToYPiece = cBagValveMask.CreatePath(ExpiratoryLimb, YPiece, pulse::BagValveMaskPath::ExpiratoryLimbToYPiece);
+  ExpiratoryLimbToYPiece.GetResistanceBaseline().SetValue(tubeResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  SEFluidCircuitPath& InspiratoryLimbToYPiece = cBagValveMask.CreatePath(InspiratoryLimb, YPiece, pulse::BagValveMaskPath::InspiratoryLimbToYPiece);
+  InspiratoryLimbToYPiece.GetResistanceBaseline().SetValue(tubeResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  SEFluidCircuitPath& YPieceToConnection = cBagValveMask.CreatePath(YPiece, Connection, pulse::BagValveMaskPath::YPieceToConnection);
+
+  SEFluidCircuitPath& ConnectionToEnvironment = cBagValveMask.CreatePath(Connection, Ambient, pulse::BagValveMaskPath::ConnectionToEnvironment);
+
+  cBagValveMask.SetNextAndCurrentFromBaselines();
+  cBagValveMask.StateChange();
+
+  //Combined Respiratory and Mechanical Ventilator Circuit
+  SEFluidCircuit& cCombinedBagValveMask = m_Circuits->GetRespiratoryAndBagValveMaskCircuit();
+  cCombinedBagValveMask.AddCircuit(cRespiratory);
+  cCombinedBagValveMask.AddCircuit(cBagValveMask);
+  SEFluidCircuitNode& Airway = *cCombinedBagValveMask.GetNode(pulse::RespiratoryNode::Airway);
+  SEFluidCircuitPath& ConnectionToAirway = cCombinedBagValveMask.CreatePath(Connection, Airway, pulse::CombinedBagValveMaskPath::ConnectionToAirway);
+  cCombinedBagValveMask.RemovePath(pulse::RespiratoryPath::EnvironmentToAirway);
+  cCombinedBagValveMask.RemovePath(pulse::BagValveMaskPath::ConnectionToEnvironment);
+  cCombinedBagValveMask.SetNextAndCurrentFromBaselines();
+  cCombinedBagValveMask.StateChange();
+
+  //////////////////////
+  // GAS COMPARTMENTS //
+  // Grab the Environment Compartment
+  SEGasCompartment* eEnvironment = m_Compartments->GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
+  // Mechanical Ventilator Compartments
+  SEGasCompartment& mVentilator = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::BagValveMask);
+  mVentilator.MapNode(Ventilator);
+  SEGasCompartment& mExpiratoryValve = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::ExpiratoryValve);
+  mExpiratoryValve.MapNode(ExpiratoryValve);
+  SEGasCompartment& mInspiratoryValve = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::InspiratoryValve);
+  mInspiratoryValve.MapNode(InspiratoryValve);
+  SEGasCompartment& mExpiratoryLimb = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::ExpiratoryLimb);
+  mExpiratoryLimb.MapNode(ExpiratoryLimb);
+  SEGasCompartment& mInspiratoryLimb = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::InspiratoryLimb);
+  mInspiratoryLimb.MapNode(InspiratoryLimb);
+  SEGasCompartment& mYPiece = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::YPiece);
+  mYPiece.MapNode(YPiece);
+  SEGasCompartment& mConnection = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::Connection);
+  mConnection.MapNode(Connection);
+
+  // Setup Links //
+  SEGasCompartmentLink& mVentilatorToExpiratoryValve = m_Compartments->CreateGasLink(mVentilator, mExpiratoryValve, pulse::BagValveMaskLink::BagValveMaskToExpiratoryValve);
+  mVentilatorToExpiratoryValve.MapPath(VentilatorToExpiratoryValve);
+  SEGasCompartmentLink& mVentilatorToInspiratoryValve = m_Compartments->CreateGasLink(mVentilator, mInspiratoryValve, pulse::BagValveMaskLink::BagValveMaskToInspiratoryValve);
+  mVentilatorToInspiratoryValve.MapPath(VentilatorToInspiratoryValve);
+  SEGasCompartmentLink& mExpiratoryLimbToExpiratoryValve = m_Compartments->CreateGasLink(mExpiratoryLimb, mExpiratoryValve, pulse::BagValveMaskLink::ExpiratoryLimbToExpiratoryValve);
+  mExpiratoryLimbToExpiratoryValve.MapPath(ExpiratoryLimbToExpiratoryValve);
+  SEGasCompartmentLink& mInspiratoryValveToInspiratoryLimb = m_Compartments->CreateGasLink(mInspiratoryValve, mInspiratoryLimb, pulse::BagValveMaskLink::InspiratoryValveToInspiratoryLimb);
+  mInspiratoryValveToInspiratoryLimb.MapPath(InspiratoryValveToInspiratoryLimb);
+  SEGasCompartmentLink& mExpiratoryLimbToYPiece = m_Compartments->CreateGasLink(mExpiratoryLimb, mYPiece, pulse::BagValveMaskLink::ExpiratoryLimbToYPiece);
+  mExpiratoryLimbToYPiece.MapPath(ExpiratoryLimbToYPiece);
+  SEGasCompartmentLink& mInspiratoryLimbToYPiece = m_Compartments->CreateGasLink(mInspiratoryLimb, mYPiece, pulse::BagValveMaskLink::InspiratoryLimbToYPiece);
+  mInspiratoryLimbToYPiece.MapPath(InspiratoryLimbToYPiece);
+  SEGasCompartmentLink& mYPieceToConnection = m_Compartments->CreateGasLink(mYPiece, mConnection, pulse::BagValveMaskLink::YPieceToConnection);
+  mYPieceToConnection.MapPath(YPieceToConnection);
+  SEGasCompartmentLink& mConnectionToEnvironment = m_Compartments->CreateGasLink(mConnection, *eEnvironment, pulse::BagValveMaskLink::ConnectionToEnvironment);
+  mConnectionToEnvironment.MapPath(ConnectionToEnvironment);
+
+  SEGasCompartmentGraph& gBagValveMask = m_Compartments->GetBagValveMaskGraph();
+  gBagValveMask.AddCompartment(mVentilator);
+  gBagValveMask.AddCompartment(mExpiratoryValve);
+  gBagValveMask.AddCompartment(mInspiratoryValve);
+  gBagValveMask.AddCompartment(mExpiratoryLimb);
+  gBagValveMask.AddCompartment(mInspiratoryLimb);
+  gBagValveMask.AddCompartment(mYPiece);
+  gBagValveMask.AddCompartment(mConnection);
+  gBagValveMask.AddLink(mVentilatorToExpiratoryValve);
+  gBagValveMask.AddLink(mVentilatorToInspiratoryValve);
+  gBagValveMask.AddLink(mExpiratoryLimbToExpiratoryValve);
+  gBagValveMask.AddLink(mInspiratoryValveToInspiratoryLimb);
+  gBagValveMask.AddLink(mExpiratoryLimbToYPiece);
+  gBagValveMask.AddLink(mInspiratoryLimbToYPiece);
+  gBagValveMask.AddLink(mYPieceToConnection);
+  gBagValveMask.AddLink(mConnectionToEnvironment);
+  gBagValveMask.StateChange();
+
+  //Now do the combined transport setup
+  // Grab the Airway from pulmonary
+  SEGasCompartment* pAirway = m_Compartments->GetGasCompartment(pulse::PulmonaryCompartment::Airway);
+  SEGasCompartmentLink& mConnectionToAirway = m_Compartments->CreateGasLink(mConnection, *pAirway, pulse::BagValveMaskLink::ConnectionToAirway);
+  mConnectionToAirway.MapPath(ConnectionToAirway);
+
+  SEGasCompartmentGraph& gCombinedRespiratoryBagValveMask = m_Compartments->GetRespiratoryAndBagValveMaskGraph();
+  gCombinedRespiratoryBagValveMask.AddGraph(gRespiratory);
+  gCombinedRespiratoryBagValveMask.AddGraph(gBagValveMask);
+  gCombinedRespiratoryBagValveMask.RemoveLink(pulse::PulmonaryLink::EnvironmentToAirway);
+  gCombinedRespiratoryBagValveMask.RemoveLink(pulse::BagValveMaskLink::ConnectionToEnvironment);
+  gCombinedRespiratoryBagValveMask.AddLink(mConnectionToAirway);
+  gCombinedRespiratoryBagValveMask.StateChange();
+
+  ///////////////////////////////////
+  // LIQUID (AEROSOL) COMPARTMENTS //
+  // Grab from pulmonary
+  SELiquidCompartment* lAirway = m_Compartments->GetLiquidCompartment(pulse::PulmonaryCompartment::Airway);
+  SELiquidCompartment* lEnvironment = m_Compartments->GetLiquidCompartment(pulse::EnvironmentCompartment::Ambient);
+
+  // Mechanical Ventilator Compartments
+  SELiquidCompartment& lVentilator = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::BagValveMask);
+  lVentilator.MapNode(Ventilator);
+  SELiquidCompartment& lExpiratoryValve = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::ExpiratoryValve);
+  lExpiratoryValve.MapNode(ExpiratoryValve);
+  SELiquidCompartment& lInspiratoryValve = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::InspiratoryValve);
+  lInspiratoryValve.MapNode(InspiratoryValve);
+  SELiquidCompartment& lExpiratoryLimb = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::ExpiratoryLimb);
+  lExpiratoryLimb.MapNode(ExpiratoryLimb);
+  SELiquidCompartment& lInspiratoryLimb = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::InspiratoryLimb);
+  lInspiratoryLimb.MapNode(InspiratoryLimb);
+  SELiquidCompartment& lYPiece = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::YPiece);
+  lYPiece.MapNode(YPiece);
+  SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::Connection);
+  lConnection.MapNode(Connection);
+
+  //Links
+  SELiquidCompartmentLink& lConnectionToAirway = m_Compartments->CreateLiquidLink(lConnection, *lAirway, pulse::BagValveMaskLink::ConnectionToAirway);
+  lConnectionToAirway.MapPath(ConnectionToAirway);
+
+  SELiquidCompartmentLink& lVentilatorToExpiratoryValve = m_Compartments->CreateLiquidLink(lVentilator, lExpiratoryValve, pulse::BagValveMaskLink::BagValveMaskToExpiratoryValve);
+  lVentilatorToExpiratoryValve.MapPath(VentilatorToExpiratoryValve);
+  SELiquidCompartmentLink& lVentilatorToInspiratoryValve = m_Compartments->CreateLiquidLink(lVentilator, lInspiratoryValve, pulse::BagValveMaskLink::BagValveMaskToInspiratoryValve);
+  lVentilatorToInspiratoryValve.MapPath(VentilatorToInspiratoryValve);
+  SELiquidCompartmentLink& lExpiratoryLimbToExpiratoryValve = m_Compartments->CreateLiquidLink(lExpiratoryLimb, lExpiratoryValve, pulse::BagValveMaskLink::ExpiratoryLimbToExpiratoryValve);
+  lExpiratoryLimbToExpiratoryValve.MapPath(ExpiratoryLimbToExpiratoryValve);
+  SELiquidCompartmentLink& lInspiratoryValveToInspiratoryLimb = m_Compartments->CreateLiquidLink(lInspiratoryValve, lInspiratoryLimb, pulse::BagValveMaskLink::InspiratoryValveToInspiratoryLimb);
+  lInspiratoryValveToInspiratoryLimb.MapPath(InspiratoryValveToInspiratoryLimb);
+  SELiquidCompartmentLink& lExpiratoryLimbToYPiece = m_Compartments->CreateLiquidLink(lExpiratoryLimb, lYPiece, pulse::BagValveMaskLink::ExpiratoryLimbToYPiece);
+  lExpiratoryLimbToYPiece.MapPath(ExpiratoryLimbToYPiece);
+  SELiquidCompartmentLink& lInspiratoryLimbToYPiece = m_Compartments->CreateLiquidLink(lInspiratoryLimb, lYPiece, pulse::BagValveMaskLink::InspiratoryLimbToYPiece);
+  lInspiratoryLimbToYPiece.MapPath(InspiratoryLimbToYPiece);
+  SELiquidCompartmentLink& lYPieceToConnection = m_Compartments->CreateLiquidLink(lYPiece, lConnection, pulse::BagValveMaskLink::YPieceToConnection);
+  lYPieceToConnection.MapPath(YPieceToConnection);
+  SELiquidCompartmentLink& lConnectionToEnvironment = m_Compartments->CreateLiquidLink(lConnection, *lEnvironment, pulse::BagValveMaskLink::ConnectionToEnvironment);
+  lConnectionToEnvironment.MapPath(ConnectionToEnvironment);
+
+  //Graph
+  SELiquidCompartmentGraph& lCombinedBagValveMask = m_Compartments->GetAerosolAndBagValveMaskGraph();
+  //Respiratory Graph
+  lCombinedBagValveMask.AddGraph(lAerosol);
+  lCombinedBagValveMask.RemoveLink(pulse::PulmonaryLink::EnvironmentToAirway);
+  //Mechanical Ventilator Additions
+  lCombinedBagValveMask.AddCompartment(lVentilator);
+  lCombinedBagValveMask.AddCompartment(lExpiratoryValve);
+  lCombinedBagValveMask.AddCompartment(lInspiratoryValve);
+  lCombinedBagValveMask.AddCompartment(lExpiratoryLimb);
+  lCombinedBagValveMask.AddCompartment(lInspiratoryLimb);
+  lCombinedBagValveMask.AddCompartment(lYPiece);
+  lCombinedBagValveMask.AddCompartment(lConnection);
+  lCombinedBagValveMask.AddLink(lVentilatorToExpiratoryValve);
+  lCombinedBagValveMask.AddLink(lVentilatorToInspiratoryValve);
+  lCombinedBagValveMask.AddLink(lExpiratoryLimbToExpiratoryValve);
+  lCombinedBagValveMask.AddLink(lInspiratoryValveToInspiratoryLimb);
+  lCombinedBagValveMask.AddLink(lExpiratoryLimbToYPiece);
+  lCombinedBagValveMask.AddLink(lInspiratoryLimbToYPiece);
+  lCombinedBagValveMask.AddLink(lYPieceToConnection);
+  //lCombinedBagValveMask.AddLink(lConnectionToEnvironment);
+  //Connection to Respiratory
+  lCombinedBagValveMask.AddLink(lConnectionToAirway);
+  //Set it
+  lCombinedBagValveMask.StateChange();
+}
+
 void PulseController::SetupInhaler()
 {
   Info("Setting Up Inhaler");

@@ -17,6 +17,7 @@ See accompanying NOTICE file for details.*/
 #include "system/physiology/SETissueSystem.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "system/equipment/bag_valve_mask/SEBagValveMask.h"
 #include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
@@ -361,6 +362,32 @@ public:
   virtual const SEScalar* GetScalar(const std::string & name) override
   {
     const SEScalar* s = SEAnesthesiaMachine::GetScalar(name);
+    if (s != nullptr)
+      return s;
+    // Check to see if this a model specific request
+    //if (name.compare("ModelParameter") == 0)
+    //  return m_ModelParameter;
+    return nullptr;
+  }
+  virtual void ComputeExposedModelParameters() = 0;
+protected:
+  //SEScalar m_ModelParameter;
+};
+
+class PULSE_DECL PulseBagValveMask : public SEBagValveMask, public PulseSystem
+{
+public:
+  PulseBagValveMask(PulseData& data) : SEBagValveMask(data.GetLogger()), PulseSystem(data) {}
+  virtual ~PulseBagValveMask() = default;
+
+  void Clear() override
+  {
+    SEBagValveMask::Clear();
+  }
+
+  virtual const SEScalar* GetScalar(const std::string& name) override
+  {
+    const SEScalar* s = SEBagValveMask::GetScalar(name);
     if (s != nullptr)
       return s;
     // Check to see if this a model specific request

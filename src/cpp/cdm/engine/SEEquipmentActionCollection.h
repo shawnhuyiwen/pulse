@@ -19,6 +19,11 @@ class SEAnesthesiaMachineTubeCuffLeak;
 class SEAnesthesiaMachineVaporizerFailure;
 class SEAnesthesiaMachineVentilatorPressureLoss;
 class SEAnesthesiaMachineYPieceDisconnect;
+class SEBagValveMask;
+class SEBagValveMaskAction;
+class SEBagValveMaskConfiguration;
+class SEBagValveMaskInstantaneous;
+class SEBagValveMaskSqueeze;
 class SEInhaler;
 class SEInhalerAction;
 class SEInhalerConfiguration;
@@ -43,6 +48,11 @@ public:
   SEAnesthesiaMachineConfiguration& GetAnesthesiaMachineConfiguration();
   const SEAnesthesiaMachineConfiguration* GetAnesthesiaMachineConfiguration() const;
   void RemoveAnesthesiaMachineConfiguration();
+
+  bool HasBagValveMaskConfiguration() const;
+  SEBagValveMaskConfiguration& GetBagValveMaskConfiguration();
+  const SEBagValveMaskConfiguration* GetBagValveMaskConfiguration() const;
+  void RemoveBagValveMaskConfiguration();
 
   bool HasInhalerConfiguration() const;
   SEInhalerConfiguration& GetInhalerConfiguration();
@@ -118,6 +128,17 @@ public:
   const SEAnesthesiaMachineYPieceDisconnect* GetAnesthesiaMachineYPieceDisconnect() const;
   void RemoveAnesthesiaMachineYPieceDisconnect();
 
+  // ACTIONS
+  bool HasBagValveMaskInstantaneous() const;
+  SEBagValveMaskInstantaneous& GetBagValveMaskInstantaneous();
+  const SEBagValveMaskInstantaneous* GetBagValveMaskInstantaneous() const;
+  void RemoveBagValveMaskInstantaneous();
+
+  bool HasBagValveMaskSqueeze() const;
+  SEBagValveMaskSqueeze& GetBagValveMaskSqueeze();
+  const SEBagValveMaskSqueeze* GetBagValveMaskSqueeze() const;
+  void RemoveBagValveMaskSqueeze();
+
   void GetAllActions(std::vector<const SEAction*>& v) const;
   const SEScalar* GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property);
   
@@ -143,6 +164,9 @@ protected:
   SEAnesthesiaMachineVentilatorPressureLoss*                   m_AnesthesiaMachineVentilatorPressureLoss;
   SEAnesthesiaMachineYPieceDisconnect*                         m_AnesthesiaMachineYPieceDisconnect;
 
+  SEBagValveMaskConfiguration*                                 m_BagValveMaskConfiguration;
+  SEBagValveMaskInstantaneous*                                 m_BagValveMaskInstantaneous;
+  SEBagValveMaskSqueeze*                                       m_BagValveMaskSqueeze;
 
   SEInhalerConfiguration*                                      m_InhalerConfiguration;
 

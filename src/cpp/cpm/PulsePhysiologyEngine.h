@@ -101,6 +101,7 @@ namespace pulse {
     DEFINE_STATIC_STRING(Renal);
     DEFINE_STATIC_STRING(Respiratory);
     DEFINE_STATIC_STRING(RespiratoryAndAnesthesiaMachine);
+    DEFINE_STATIC_STRING(RespiratoryAndBagValveMask);
     DEFINE_STATIC_STRING(RespiratoryAndInhaler);
     DEFINE_STATIC_STRING(RespiratoryAndMechanicalVentilation);
     DEFINE_STATIC_STRING(RespiratoryAndMechanicalVentilator);
@@ -108,10 +109,12 @@ namespace pulse {
     DEFINE_STATIC_STRING(RespiratoryAndNonRebreatherMask);
     DEFINE_STATIC_STRING(RespiratoryAndSimpleMask);
     DEFINE_STATIC_STRING(Aerosol);
+    DEFINE_STATIC_STRING(AerosolAndBagValveMask);
     DEFINE_STATIC_STRING(AerosolAndInhaler);
     DEFINE_STATIC_STRING(AerosolAndMechanicalVentilation);
     DEFINE_STATIC_STRING(AerosolAndMechanicalVentilator);
     DEFINE_STATIC_STRING(AnesthesiaMachine);
+    DEFINE_STATIC_STRING(BagValveMask);
     DEFINE_STATIC_STRING(MechanicalVentilator);
 
     static const std::vector<std::string>& GetValues()
@@ -124,6 +127,7 @@ namespace pulse {
         _values.push_back(Renal);
         _values.push_back(Respiratory);
         _values.push_back(RespiratoryAndAnesthesiaMachine);
+        _values.push_back(RespiratoryAndBagValveMask);
         _values.push_back(RespiratoryAndInhaler);
         _values.push_back(RespiratoryAndMechanicalVentilation);
         _values.push_back(RespiratoryAndMechanicalVentilator);
@@ -131,9 +135,11 @@ namespace pulse {
         _values.push_back(RespiratoryAndNonRebreatherMask);
         _values.push_back(RespiratoryAndSimpleMask);
         _values.push_back(Aerosol);
+        _values.push_back(AerosolAndBagValveMask);
         _values.push_back(AerosolAndInhaler);
         _values.push_back(AerosolAndMechanicalVentilation);
         _values.push_back(AerosolAndMechanicalVentilator);
+        _values.push_back(BagValveMask);
         _values.push_back(AnesthesiaMachine);
         _values.push_back(MechanicalVentilator);
       }
@@ -1049,6 +1055,70 @@ namespace pulse {
         _values.push_back(ExpiratoryLimbToSelector);
         _values.push_back(YPieceToConnection);
         _values.push_back(ConnectionLeak);
+        _values.push_back(ConnectionToAirway);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class BagValveMaskCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING(BagValveMask);
+    DEFINE_STATIC_STRING_EX(ExpiratoryValve, BagValveMaskExpiratoryValve);
+    DEFINE_STATIC_STRING_EX(InspiratoryValve, BagValveMaskInspiratoryValve);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimb, BagValveMaskExpiratoryLimb);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimb, BagValveMaskInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(YPiece, BagValveMaskYPiece);
+    DEFINE_STATIC_STRING_EX(Connection, BagValveMaskConnection);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(BagValveMask);
+        _values.push_back(ExpiratoryValve);
+        _values.push_back(InspiratoryValve);
+        _values.push_back(ExpiratoryLimb);
+        _values.push_back(InspiratoryLimb);
+        _values.push_back(YPiece);
+        _values.push_back(Connection);
+      }
+      return _values;
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class BagValveMaskLink
+  {
+  public:
+    DEFINE_STATIC_STRING(BagValveMaskToExpiratoryValve);
+    DEFINE_STATIC_STRING(BagValveMaskToInspiratoryValve);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToExpiratoryValve, BagValveMaskExpiratoryLimbToExpiratoryValve);
+    DEFINE_STATIC_STRING_EX(InspiratoryValveToInspiratoryLimb, BagValveMaskInspiratoryValveToInspiratoryLimb);
+    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToYPiece, BagValveMaskExpiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, BagValveMaskInspiratoryLimbToYPiece);
+    DEFINE_STATIC_STRING_EX(YPieceToConnection, BagValveMaskYPieceToConnection);
+    DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, BagValveMaskConnectionToEnvironment);
+    DEFINE_STATIC_STRING_EX(ConnectionToAirway, BagValveMaskConnectionToAirway);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(BagValveMaskToExpiratoryValve);
+        _values.push_back(BagValveMaskToInspiratoryValve);
+        _values.push_back(ExpiratoryLimbToExpiratoryValve);
+        _values.push_back(InspiratoryValveToInspiratoryLimb);
+        _values.push_back(ExpiratoryLimbToYPiece);
+        _values.push_back(InspiratoryLimbToYPiece);
+        _values.push_back(YPieceToConnection);
+        _values.push_back(ConnectionToEnvironment);
         _values.push_back(ConnectionToAirway);
       }
       return _values;

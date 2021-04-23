@@ -262,14 +262,18 @@ message IntubationData
   /** @brief Enumeration Types of Intubation.*/
   enum eType
   {
-   Off                                                                     = 0; /**<< @brief Remove intubation */
-   Esophageal                                                              = 1; /**<< @brief Insert into the Esophagus */
-   LeftMainstem                                                            = 2; /**<< @brief Insert into the left main stem inflating only the left lung */
-   RightMainstem                                                           = 3; /**<< @brief Insert into the right main stem inflating only the right lung  */
-   Tracheal                                                                = 4; /**<< @brief Insert into the Trachea */
+   Off                                                                      = 0; /**<< @brief Remove intubation */
+   Esophageal                                                               = 1; /**<< @brief Insert into the Esophagus */
+   LeftMainstem                                                             = 2; /**<< @brief Insert into the left main stem inflating only the left lung */
+   RightMainstem                                                            = 3; /**<< @brief Insert into the right main stem inflating only the right lung  */
+   Tracheal                                                                 = 4; /**<< @brief Insert into the Trachea */
+   Orpharyngeal                                                             = 5; /**<< @brief Orpharyngeal Adjunct */
+   Nasopharyngeal                                                           = 6; /**<< @brief Nasopharyngeal Adjunct */
   }
   PatientActionData                         PatientAction                   = 1;
   eType                                     Type                            = 2;/**<<@brief @ref IntubationData_eTypeTable*/
+  
+  ScalarPressureTimePerVolumeData           AirwayResistance                = 3;/**<< @brief Resistance introduced to the airway by the equipment. */
 }
 
 /** @brief Worsen the effects of the Lobar Pneumonia condition. */

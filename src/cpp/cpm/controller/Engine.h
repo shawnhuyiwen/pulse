@@ -65,6 +65,7 @@ public:
   virtual const SERespiratorySystem*                   GetRespiratorySystem() const override;
   virtual const SETissueSystem*                        GetTissueSystem() const override;
   virtual const SEAnesthesiaMachine*                   GetAnesthesiaMachine() const override;
+  virtual const SEBagValveMask*                        GetBagValveMask() const override;
   virtual const SEElectroCardioGram*                   GetElectroCardioGram() const override;
   virtual const SEInhaler*                             GetInhaler() const override;
   virtual const SEMechanicalVentilator*                GetMechanicalVentilator() const override;

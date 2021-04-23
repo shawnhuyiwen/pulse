@@ -17,6 +17,7 @@ add_library_ex(CommonPulseModels
     controller/System.h
     environment/Environment.h
     equipment/AnesthesiaMachine.h
+    equipment/BagValveMask.h
     equipment/ECG.h
     equipment/Inhaler.h
     equipment/MechanicalVentilator.h
@@ -54,6 +55,7 @@ add_library_ex(CommonPulseModels
     controller/SetupCircuitsAndCompartments.cpp
     environment/Environment.cpp
     equipment/AnesthesiaMachine.cpp
+    equipment/BagValveMask.cpp
     equipment/ECG.cpp
     equipment/Inhaler.cpp
     equipment/MechanicalVentilator.cpp

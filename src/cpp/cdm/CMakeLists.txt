@@ -80,6 +80,7 @@ add_library_ex(CommonDataModel
     engine/SETimedStabilization.h
     io/protobuf/PBActions.h
     io/protobuf/PBAnesthesiaMachine.h
+    io/protobuf/PBBagValveMask.h
     io/protobuf/PBBlackBox.h
     io/protobuf/PBCircuit.h
     io/protobuf/PBCompartment.h
@@ -280,6 +281,11 @@ add_library_ex(CommonDataModel
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h
+    system/equipment/bag_valve_mask/SEBagValveMask.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskAction.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h
     system/equipment/electrocardiogram/SEElectroCardioGram.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h
@@ -411,6 +417,8 @@ add_library_ex(CommonDataModel
     io/protobuf/PBActions.cpp
     io/protobuf/PBAnesthesiaMachine.cpp
     io/protobuf/PBAnesthesiaMachineEnums.cpp
+    io/protobuf/PBBagValveMask.cpp
+    io/protobuf/PBBagValveMaskEnums.cpp
     io/protobuf/PBBlackBox.cpp
     io/protobuf/PBCircuit.cpp
     io/protobuf/PBCompartment.cpp
@@ -622,6 +630,11 @@ add_library_ex(CommonDataModel
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.cpp
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.cpp
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.cpp
+    system/equipment/bag_valve_mask/SEBagValveMask.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskAction.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cpp
     system/equipment/electrocardiogram/SEElectroCardioGram.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.cpp

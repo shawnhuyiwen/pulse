@@ -12,13 +12,13 @@ message MechanicalVentilatorActionData
   EquipmentActionData                     EquipmentAction             = 1;
 }
 
-/** @brief The configuration of the anesthesia machine to use. */
+/** @brief The configuration of the mechanical ventilator to use. */
 message MechanicalVentilatorConfigurationData
 {
   MechanicalVentilatorActionData          MechanicalVentilatorAction  = 1;
   oneof Option
   {
-    MechanicalVentilatorData              Configuration               = 2;/**<< @brief A mechanical ventilator object with properties to set in the system mechanical ventilator. */
-    string                                ConfigurationFile           = 3;/**<< @brief File containing a mechanical ventilator objet with properties to set in the system mechanical ventilator. */
+    MechanicalVentilatorData              Configuration               = 2;/**<< @brief A mechanical ventilator object with properties to set in the system object. */
+    string                                ConfigurationFile           = 3;/**<< @brief File containing a mechanical ventilator object with properties to set in the system object. */
   }
 }
