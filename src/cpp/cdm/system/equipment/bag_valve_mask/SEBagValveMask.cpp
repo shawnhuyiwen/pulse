@@ -21,33 +21,33 @@
 SEBagValveMask::SEBagValveMask(Logger* logger) : SEEquipment(logger)
 {
   m_Connection = eBagValveMask_Connection::Off;
-  m_BagResistance = nullptr;
-  m_FilterResistance = nullptr;
-  m_FilterVolume = nullptr;
-  m_MaskSealResistance = nullptr;
-  m_ValveResistance = nullptr;
 
   m_BreathFrequency = nullptr;
   m_InspiratoryExpiratoryRatio = nullptr;
   m_PositiveInspiratoryPressure = nullptr;
-  m_TidalVolume = nullptr;
+  m_SqueezeVolume = nullptr;
   m_ValvePositiveEndExpiredPressure = nullptr;
+
+  m_BagResistance = nullptr;
+  m_FilterResistance = nullptr;
+  m_FilterVolume = nullptr;
+  m_ValveResistance = nullptr;
 }
 
 SEBagValveMask::~SEBagValveMask()
 {
   m_Connection = eBagValveMask_Connection::Off;
-  SAFE_DELETE(m_BagResistance);
-  SAFE_DELETE(m_FilterResistance);
-  SAFE_DELETE(m_FilterVolume);
-  SAFE_DELETE(m_MaskSealResistance);
-  SAFE_DELETE(m_ValveResistance);
 
   SAFE_DELETE(m_BreathFrequency);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
   SAFE_DELETE(m_PositiveInspiratoryPressure);
-  SAFE_DELETE(m_TidalVolume);
+  SAFE_DELETE(m_SqueezeVolume);
   SAFE_DELETE(m_ValvePositiveEndExpiredPressure);
+
+  SAFE_DELETE(m_BagResistance);
+  SAFE_DELETE(m_FilterResistance);
+  SAFE_DELETE(m_FilterVolume);
+  SAFE_DELETE(m_ValveResistance);
 
   DELETE_VECTOR(m_FractionInspiredGases);
   m_cFractionInspiredGases.clear();
@@ -63,17 +63,17 @@ void SEBagValveMask::Clear()
   SEEquipment::Clear();
 
   m_Connection = eBagValveMask_Connection::Off;
-  INVALIDATE_PROPERTY(m_BagResistance);
-  INVALIDATE_PROPERTY(m_FilterResistance);
-  INVALIDATE_PROPERTY(m_FilterVolume);
-  INVALIDATE_PROPERTY(m_MaskSealResistance);
-  INVALIDATE_PROPERTY(m_ValveResistance);
 
   INVALIDATE_PROPERTY(m_BreathFrequency);
   INVALIDATE_PROPERTY(m_InspiratoryExpiratoryRatio);
   INVALIDATE_PROPERTY(m_PositiveInspiratoryPressure);
-  INVALIDATE_PROPERTY(m_TidalVolume);
+  INVALIDATE_PROPERTY(m_SqueezeVolume);
   INVALIDATE_PROPERTY(m_ValvePositiveEndExpiredPressure);
+
+  INVALIDATE_PROPERTY(m_BagResistance);
+  INVALIDATE_PROPERTY(m_FilterResistance);
+  INVALIDATE_PROPERTY(m_FilterVolume);
+  INVALIDATE_PROPERTY(m_ValveResistance);
 
   RemoveFractionInspiredGases();
   RemoveConcentrationInspiredAerosols();
@@ -101,13 +101,12 @@ void SEBagValveMask::Merge(const SEBagValveMask& from, SESubstanceManager& subMg
   COPY_PROPERTY(BagResistance);
   COPY_PROPERTY(FilterResistance);
   COPY_PROPERTY(FilterVolume);
-  COPY_PROPERTY(MaskSealResistance);
   COPY_PROPERTY(ValveResistance);
 
   COPY_PROPERTY(BreathFrequency);
   COPY_PROPERTY(InspiratoryExpiratoryRatio);
   COPY_PROPERTY(PositiveInspiratoryPressure);
-  COPY_PROPERTY(TidalVolume);
+  COPY_PROPERTY(SqueezeVolume);
   COPY_PROPERTY(ValvePositiveEndExpiredPressure);
 
   // Always need to provide a full (fractions sum to 1) substance list that replaces current
@@ -185,27 +184,25 @@ bool SEBagValveMask::SerializeFromFile(const std::string& filename, const SESubs
 
 const SEScalar* SEBagValveMask::GetScalar(const std::string& name)
 {
-  if (name == "BagResistance")
-    return &GetBagResistance();
-  if (name == "FilterResistance")
-    return &GetFilterResistance();
-  if (name == "FilterVolume")
-    return &GetFilterVolume();
-  if (name == "MaskSealResistance")
-    return &GetMaskSealResistance();
-  if (name == "ValveResistance")
-    return &GetValveResistance();
-
   if (name == "BreathFrequency")
     return &GetBreathFrequency();
   if (name == "InspiratoryExpiratoryRatio")
     return &GetInspiratoryExpiratoryRatio();
   if (name == "PositiveInspiratoryPressure")
     return &GetPositiveInspiratoryPressure();
-  if (name == "TidalVolume")
-    return &GetTidalVolume();
+  if (name == "SqueezeVolume")
+    return &GetSqueezeVolume();
   if (name == "ValvePositiveEndExpiredPressure")
     return &GetValvePositiveEndExpiredPressure();
+
+  if (name == "BagResistance")
+    return &GetBagResistance();
+  if (name == "FilterResistance")
+    return &GetFilterResistance();
+  if (name == "FilterVolume")
+    return &GetFilterVolume();
+  if (name == "ValveResistance")
+    return &GetValveResistance();
 
   // I did not support for getting a specific gas/aerosol scalars due to lack of coffee
   return nullptr;
@@ -218,91 +215,6 @@ void SEBagValveMask::SetConnection(eBagValveMask_Connection c)
 eBagValveMask_Connection SEBagValveMask::GetConnection() const
 {
   return m_Connection;
-}
-
-bool SEBagValveMask::HasBagResistance() const
-{
-  return m_BagResistance == nullptr ? false : m_BagResistance->IsValid();
-}
-SEScalarPressureTimePerVolume& SEBagValveMask::GetBagResistance()
-{
-  if (m_BagResistance == nullptr)
-    m_BagResistance = new SEScalarPressureTimePerVolume();
-  return *m_BagResistance;
-}
-double SEBagValveMask::GetBagResistance(const PressureTimePerVolumeUnit& unit) const
-{
-  if (m_BagResistance == nullptr)
-    return SEScalar::dNaN();
-  return m_BagResistance->GetValue(unit);
-}
-
-bool SEBagValveMask::HasFilterResistance() const
-{
-  return m_FilterResistance == nullptr ? false : m_FilterResistance->IsValid();
-}
-SEScalarPressureTimePerVolume& SEBagValveMask::GetFilterResistance()
-{
-  if (m_FilterResistance == nullptr)
-    m_FilterResistance = new SEScalarPressureTimePerVolume();
-  return *m_FilterResistance;
-}
-double SEBagValveMask::GetFilterResistance(const PressureTimePerVolumeUnit& unit) const
-{
-  if (m_FilterResistance == nullptr)
-    return SEScalar::dNaN();
-  return m_FilterResistance->GetValue(unit);
-}
-
-bool SEBagValveMask::HasFilterVolume() const
-{
-  return m_FilterVolume == nullptr ? false : m_FilterVolume->IsValid();
-}
-SEScalarVolume& SEBagValveMask::GetFilterVolume()
-{
-  if (m_FilterVolume == nullptr)
-    m_FilterVolume = new SEScalarVolume();
-  return *m_FilterVolume;
-}
-double SEBagValveMask::GetFilterVolume(const VolumeUnit& unit) const
-{
-  if (m_FilterVolume == nullptr)
-    return SEScalar::dNaN();
-  return m_FilterVolume->GetValue(unit);
-}
-
-bool SEBagValveMask::HasMaskSealResistance() const
-{
-  return m_MaskSealResistance == nullptr ? false : m_MaskSealResistance->IsValid();
-}
-SEScalarPressureTimePerVolume& SEBagValveMask::GetMaskSealResistance()
-{
-  if (m_MaskSealResistance == nullptr)
-    m_MaskSealResistance = new SEScalarPressureTimePerVolume();
-  return *m_MaskSealResistance;
-}
-double SEBagValveMask::GetMaskSealResistance(const PressureTimePerVolumeUnit& unit) const
-{
-  if (m_MaskSealResistance == nullptr)
-    return SEScalar::dNaN();
-  return m_MaskSealResistance->GetValue(unit);
-}
-
-bool SEBagValveMask::HasValveResistance() const
-{
-  return m_ValveResistance == nullptr ? false : m_ValveResistance->IsValid();
-}
-SEScalarPressureTimePerVolume& SEBagValveMask::GetValveResistance()
-{
-  if (m_ValveResistance == nullptr)
-    m_ValveResistance = new SEScalarPressureTimePerVolume();
-  return *m_ValveResistance;
-}
-double SEBagValveMask::GetValveResistance(const PressureTimePerVolumeUnit& unit) const
-{
-  if (m_ValveResistance == nullptr)
-    return SEScalar::dNaN();
-  return m_ValveResistance->GetValue(unit);
 }
 
 bool SEBagValveMask::HasBreathFrequency() const
@@ -356,21 +268,21 @@ double SEBagValveMask::GetPositiveInspiratoryPressure(const PressureUnit& unit) 
   return m_PositiveInspiratoryPressure->GetValue(unit);
 }
 
-bool SEBagValveMask::HasTidalVolume() const
+bool SEBagValveMask::HasSqueezeVolume() const
 {
-  return m_TidalVolume == nullptr ? false : m_TidalVolume->IsValid();
+  return m_SqueezeVolume == nullptr ? false : m_SqueezeVolume->IsValid();
 }
-SEScalarVolume& SEBagValveMask::GetTidalVolume()
+SEScalarVolume& SEBagValveMask::GetSqueezeVolume()
 {
-  if (m_TidalVolume == nullptr)
-    m_TidalVolume = new SEScalarVolume();
-  return *m_TidalVolume;
+  if (m_SqueezeVolume == nullptr)
+    m_SqueezeVolume = new SEScalarVolume();
+  return *m_SqueezeVolume;
 }
-double SEBagValveMask::GetTidalVolume(const VolumeUnit& unit) const
+double SEBagValveMask::GetSqueezeVolume(const VolumeUnit& unit) const
 {
-  if (m_TidalVolume == nullptr)
+  if (m_SqueezeVolume == nullptr)
     return SEScalar::dNaN();
-  return m_TidalVolume->GetValue(unit);
+  return m_SqueezeVolume->GetValue(unit);
 }
 
 bool SEBagValveMask::HasValvePositiveEndExpiredPressure() const
@@ -390,6 +302,73 @@ double SEBagValveMask::GetValvePositiveEndExpiredPressure(const PressureUnit& un
   return m_ValvePositiveEndExpiredPressure->GetValue(unit);
 }
 
+bool SEBagValveMask::HasBagResistance() const
+{
+  return m_BagResistance == nullptr ? false : m_BagResistance->IsValid();
+}
+SEScalarPressureTimePerVolume& SEBagValveMask::GetBagResistance()
+{
+  if (m_BagResistance == nullptr)
+    m_BagResistance = new SEScalarPressureTimePerVolume();
+  return *m_BagResistance;
+}
+double SEBagValveMask::GetBagResistance(const PressureTimePerVolumeUnit& unit) const
+{
+  if (m_BagResistance == nullptr)
+    return SEScalar::dNaN();
+  return m_BagResistance->GetValue(unit);
+}
+
+bool SEBagValveMask::HasFilterResistance() const
+{
+  return m_FilterResistance == nullptr ? false : m_FilterResistance->IsValid();
+}
+SEScalarPressureTimePerVolume& SEBagValveMask::GetFilterResistance()
+{
+  if (m_FilterResistance == nullptr)
+    m_FilterResistance = new SEScalarPressureTimePerVolume();
+  return *m_FilterResistance;
+}
+double SEBagValveMask::GetFilterResistance(const PressureTimePerVolumeUnit& unit) const
+{
+  if (m_FilterResistance == nullptr)
+    return SEScalar::dNaN();
+  return m_FilterResistance->GetValue(unit);
+}
+
+bool SEBagValveMask::HasFilterVolume() const
+{
+  return m_FilterVolume == nullptr ? false : m_FilterVolume->IsValid();
+}
+SEScalarVolume& SEBagValveMask::GetFilterVolume()
+{
+  if (m_FilterVolume == nullptr)
+    m_FilterVolume = new SEScalarVolume();
+  return *m_FilterVolume;
+}
+double SEBagValveMask::GetFilterVolume(const VolumeUnit& unit) const
+{
+  if (m_FilterVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_FilterVolume->GetValue(unit);
+}
+
+bool SEBagValveMask::HasValveResistance() const
+{
+  return m_ValveResistance == nullptr ? false : m_ValveResistance->IsValid();
+}
+SEScalarPressureTimePerVolume& SEBagValveMask::GetValveResistance()
+{
+  if (m_ValveResistance == nullptr)
+    m_ValveResistance = new SEScalarPressureTimePerVolume();
+  return *m_ValveResistance;
+}
+double SEBagValveMask::GetValveResistance(const PressureTimePerVolumeUnit& unit) const
+{
+  if (m_ValveResistance == nullptr)
+    return SEScalar::dNaN();
+  return m_ValveResistance->GetValue(unit);
+}
 
 bool SEBagValveMask::HasFractionInspiredGas() const
 {

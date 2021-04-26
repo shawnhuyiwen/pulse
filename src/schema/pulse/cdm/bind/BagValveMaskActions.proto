@@ -31,7 +31,7 @@ message BagValveMaskSqueezeData
   oneof Option
   {
     ScalarPressureData      PositiveInspiratoryPressure = 2;/**<< @brief Maximum extrinsic pressure above atmosphere during inhalation. */
-    ScalarVolumeData        TidalVolume                 = 3;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
+    ScalarVolumeData        SqueezeVolume               = 3;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
  
   }
   

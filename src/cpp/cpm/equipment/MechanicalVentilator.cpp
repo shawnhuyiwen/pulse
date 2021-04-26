@@ -615,12 +615,6 @@ void MechanicalVentilator::CycleMode()
 //--------------------------------------------------------------------------------------------------
 void MechanicalVentilator::SetResistances()
 {
-  if (HasEndotrachealTubeResistance())
-  {
-    /// \todo Figure out how to do this without having to access the respiratory circuit
-    m_data.GetCircuits().GetRespiratoryCircuit().GetPath(pulse::RespiratoryPath::AirwayToCarina)->GetNextResistance().Set(GetEndotrachealTubeResistance());
-  }
-
   if (HasExpirationTubeResistance())
   {
     m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve)->GetNextResistance().Set(GetExpirationTubeResistance());

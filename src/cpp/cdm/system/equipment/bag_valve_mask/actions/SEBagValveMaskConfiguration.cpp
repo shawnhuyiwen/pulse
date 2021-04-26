@@ -102,17 +102,16 @@ void SEBagValveMaskConfiguration::ToString(std::ostream &str) const
   else if (HasConfiguration())
   {
     str << "\n\tConnection: " << eBagValveMask_Connection_Name(m_Configuration->GetConnection());
-    str << "\n\tBagResistance: "; m_Configuration->HasBagResistance() ? str << m_Configuration->GetBagResistance() : str << "NaN";
-    str << "\n\tFilterResistance: "; m_Configuration->HasFilterResistance() ? str << m_Configuration->GetFilterResistance() : str << "NaN";
-    str << "\n\tFilterVolume: "; m_Configuration->HasFilterVolume() ? str << m_Configuration->GetFilterVolume() : str << "NaN";
-    str << "\n\tMaskSealResistance: "; m_Configuration->HasMaskSealResistance() ? str << m_Configuration->GetMaskSealResistance() : str << "NaN";
-    str << "\n\tValveResistance: "; m_Configuration->HasValveResistance() ? str << m_Configuration->GetValveResistance() : str << "NaN";
     str << "\n\tBreathFrequency: "; m_Configuration->HasBreathFrequency() ? str << m_Configuration->GetBreathFrequency() : str << "NaN";
     str << "\n\tInspiratoryExpiratoryRatio: "; m_Configuration->HasInspiratoryExpiratoryRatio() ? str << m_Configuration->GetInspiratoryExpiratoryRatio() : str << "NaN";
     str << "\n\tPositiveInspiratoryPressure: "; m_Configuration->HasPositiveInspiratoryPressure() ? str << m_Configuration->GetPositiveInspiratoryPressure() : str << "NaN";
-    str << "\n\tTidalVolume: "; m_Configuration->HasTidalVolume() ? str << m_Configuration->GetTidalVolume() : str << "NaN";
+    str << "\n\tSqueezeVolume: "; m_Configuration->HasSqueezeVolume() ? str << m_Configuration->GetSqueezeVolume() : str << "NaN";
     str << "\n\tValvePositiveEndExpiredPressure: "; m_Configuration->HasValvePositiveEndExpiredPressure() ? str << m_Configuration->GetValvePositiveEndExpiredPressure() : str << "NaN";
-
+    str << "\n\tBagResistance: "; m_Configuration->HasBagResistance() ? str << m_Configuration->GetBagResistance() : str << "NaN";
+    str << "\n\tFilterResistance: "; m_Configuration->HasFilterResistance() ? str << m_Configuration->GetFilterResistance() : str << "NaN";
+    str << "\n\tFilterVolume: "; m_Configuration->HasFilterVolume() ? str << m_Configuration->GetFilterVolume() : str << "NaN";
+    str << "\n\tValveResistance: "; m_Configuration->HasValveResistance() ? str << m_Configuration->GetValveResistance() : str << "NaN";
+    
     if (m_Configuration->HasFractionInspiredGas())
     {
       for (SESubstanceFraction* sf : m_Configuration->GetFractionInspiredGases())

@@ -2593,10 +2593,20 @@ void Respiratory::UpdateResistances()
   {
     m_data.SetIntubation(eSwitch::On);
     SEIntubation& intubation = m_PatientActions->GetIntubation();
+
+    // jbw What does this action's provided airway resistance mean for each of the cases below?
+
+    // jbw It looks like the logic below does not support going from esophageal, to left mainstem, to tracheal
+    //     shouldnt esophagusResistance_cmH2O_s_Per_L be set to 'normal' in all cases but esophageal?
+    //     same with leftBronchiResistance_cmH2O_s_Per_L and rightBronchiResistance_cmH2O_s_Per_L
+
     switch (intubation.GetType())
     {
     case eIntubation_Type::Tracheal:
     {
+      if (intubation.HasAirwayResistance())// jbw Override the Positive Pressure Ventilation code above?
+        tracheaResistance_cmH2O_s_Per_L = intubation.GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      // else
       //The proper way to intubate
       //Airway mode handles this case by default
       break;
@@ -2623,6 +2633,18 @@ void Respiratory::UpdateResistances()
     }
     case eIntubation_Type::LeftMainstem:
     {
+      rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+      break;
+    }
+    case eIntubation_Type::Orpharyngeal:
+    {
+      // jbw todo
+      rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+      break;
+    }
+    case eIntubation_Type::Nasopharyngeal:
+    {
+      // jbw todo
       rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
       break;
     }

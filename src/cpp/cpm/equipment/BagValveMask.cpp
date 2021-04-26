@@ -3,13 +3,14 @@
 
 
 #include "stdafx.h"
-#include "equipment/MechanicalVentilator.h"
+#include "equipment/BagValveMask.h"
 #include "controller/Controller.h"
 #include "controller/Substances.h"
 #include "controller/Circuits.h"
 #include "controller/Compartments.h"
 #include "PulseConfiguration.h"
-#include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "patient/actions/SEIntubation.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
 #include "engine/SEActionManager.h"
 #include "engine/SEEquipmentActionCollection.h"
 #include "engine/SEPatientActionCollection.h"
@@ -39,19 +40,19 @@
 ========================
 */
 
-MechanicalVentilator::MechanicalVentilator(PulseData& data) : PulseMechanicalVentilator(data)
+BagValveMask::BagValveMask(PulseData& data) : PulseBagValveMask(data)
 {
   Clear();
 }
 
-MechanicalVentilator::~MechanicalVentilator ()
+BagValveMask::~BagValveMask ()
 {
   Clear();
 }
 
-void MechanicalVentilator::Clear()
+void BagValveMask::Clear()
 {
-  SEMechanicalVentilator::Clear();
+  SEBagValveMask::Clear();
   m_Environment = nullptr;
   m_Ventilator = nullptr;
   m_VentilatorAerosol = nullptr;
@@ -66,10 +67,10 @@ void MechanicalVentilator::Clear()
 /// \brief
 /// Initializes system properties to valid homeostatic values.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::Initialize()
+void BagValveMask::Initialize()
 {
   PulseSystem::Initialize();
-  SetConnection(eMechanicalVentilator_Connection::Off);
+  SetConnection(eBagValveMask_Connection::Off);
   m_CurrentBreathState = eBreathState::Exhale;
   m_CurrentPeriodTime_s = 0.0;
   m_DriverPressure_cmH2O = SEScalar::dNaN();
@@ -85,26 +86,26 @@ void MechanicalVentilator::Initialize()
 /// \details
 /// Initializes member variables and system level values on the common data model.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::SetUp()
+void BagValveMask::SetUp()
 {
   // Compartments
   m_Environment = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
-  m_Ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
-  m_VentilatorAerosol = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
+  m_Ventilator = m_data.GetCompartments().GetGasCompartment(pulse::BagValveMaskCompartment::BagValveMask);
+  m_VentilatorAerosol = m_data.GetCompartments().GetLiquidCompartment(pulse::BagValveMaskCompartment::BagValveMask);
 
   // Nodes
-  m_VentilatorNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::Ventilator);
-  m_ConnectionNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::Connection);
-  m_AmbientNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::EnvironmentNode::Ambient);
+  m_VentilatorNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Ventilator);
+  m_ConnectionNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Connection);
+  m_AmbientNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::EnvironmentNode::Ambient);
 
   // Paths
-  m_EnvironmentToVentilator = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
-  m_YPieceToConnection = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::YPieceToConnection);
+  m_EnvironmentToVentilator = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::EnvironmentToVentilator);
+  m_YPieceToConnection = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::YPieceToConnection);
 }
 
-void MechanicalVentilator::StateChange()
+void BagValveMask::StateChange()
 {
-  if (m_data.GetAirwayMode() != eAirwayMode::MechanicalVentilator)
+  if (m_data.GetAirwayMode() != eAirwayMode::BagValveMask)
     return;
   SetConnection();
   m_CurrentBreathState = eBreathState::Exhale;
@@ -193,7 +194,7 @@ void MechanicalVentilator::StateChange()
 /// \brief
 /// Connect to the patient via the ventilator mask, an endotracheal tube, or no connection
 ///
-/// \param  enumMechanicalVentilatorConnection
+/// \param  enumBagValveMaskConnection
 /// Connectoin type : Mask, tube, or off
 /// 
 /// \details
@@ -201,25 +202,25 @@ void MechanicalVentilator::StateChange()
 /// If the enum is set to tube, then the ventilator is connected to the tube
 /// If the enum is set to off, the airway mode is set to free.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::SetConnection(eMechanicalVentilator_Connection c)
+void BagValveMask::SetConnection(eBagValveMask_Connection c)
 {
   if (m_Connection == c)
     return; // No Change
   // Update the Pulse airway mode when this changes
-  SEMechanicalVentilator::SetConnection(c);
-  if (c == eMechanicalVentilator_Connection::Mask && m_data.GetIntubation() == eSwitch::Off)
+  SEBagValveMask::SetConnection(c);
+  if (c == eBagValveMask_Connection::Mask && m_data.GetIntubation() == eSwitch::Off)
   {
-    m_data.SetAirwayMode(eAirwayMode::MechanicalVentilator);
+    m_data.SetAirwayMode(eAirwayMode::BagValveMask);
     return;
   }
-  else if (c == eMechanicalVentilator_Connection::Tube && m_data.GetIntubation() == eSwitch::On)
+  else if (c == eBagValveMask_Connection::Tube && m_data.GetIntubation() == eSwitch::On)
   {
-    m_data.SetAirwayMode(eAirwayMode::MechanicalVentilator);
+    m_data.SetAirwayMode(eAirwayMode::BagValveMask);
     return;
   }
-  else if (c == eMechanicalVentilator_Connection::Mask && m_data.GetIntubation() == eSwitch::On)
+  else if (c == eBagValveMask_Connection::Mask && m_data.GetIntubation() == eSwitch::On)
     Error("Connection failed : Cannot apply mechanical ventilator mask if patient is intubated.");
-  else if (c == eMechanicalVentilator_Connection::Tube && m_data.GetIntubation() == eSwitch::Off)
+  else if (c == eBagValveMask_Connection::Tube && m_data.GetIntubation() == eSwitch::Off)
     Error("Connection failed : Cannot apply mechanical ventilator to tube if patient is not intubated.");
   // Make sure we are active to make sure we go back to free
   m_data.SetAirwayMode(eAirwayMode::Free);
@@ -233,12 +234,12 @@ void MechanicalVentilator::SetConnection(eMechanicalVentilator_Connection c)
 /// If the mask is on or the tube is connected, it is removed and the airway mode is set to free. The action is then removed from 
 /// the action manager.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::InvalidateConnection()
+void BagValveMask::InvalidateConnection()
 {
   // Set airway mode to free
   m_data.SetAirwayMode(eAirwayMode::Free);
   // THEN invalidate
-  m_Connection = eMechanicalVentilator_Connection::Off;
+  m_Connection = eBagValveMask_Connection::Off;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -249,15 +250,15 @@ void MechanicalVentilator::InvalidateConnection()
 /// The gas volumes and volume fractions are initialized and updated based on the airway mode (mask, free, or tube)
 /// and the volume associated with each airway mode.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::SetConnection()
+void BagValveMask::SetConnection()
 {
   switch (m_data.GetAirwayMode())
   {
   case eAirwayMode::Free:
-    m_Connection = eMechanicalVentilator_Connection::Off;
+    m_Connection = eBagValveMask_Connection::Off;
     break;
-  case eAirwayMode::MechanicalVentilator:
-    if (m_Connection == eMechanicalVentilator_Connection::Mask)
+  case eAirwayMode::BagValveMask:
+    if (m_Connection == eBagValveMask_Connection::Mask)
     {
       if (m_data.GetIntubation() == eSwitch::On)// Somebody intubated while we had the mask on
       {
@@ -269,7 +270,7 @@ void MechanicalVentilator::SetConnection()
       //Keep the baseline resistance to ground = an open switch
       //Leaks handled later:L);
     }
-    else if (m_Connection == eMechanicalVentilator_Connection::Tube)
+    else if (m_Connection == eBagValveMask_Connection::Tube)
     {
       if (m_data.GetIntubation() == eSwitch::Off)// Somebody removed intubated while we were connected to it
       {
@@ -294,16 +295,16 @@ void MechanicalVentilator::SetConnection()
 /// \details
 /// Applies all the settings and calculates the instantaneous driver value.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::PreProcess()
+void BagValveMask::PreProcess()
 {
-  if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorConfiguration())
+  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskConfiguration())
   {
-    SEMechanicalVentilator::Clear();
-    ProcessConfiguration(m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorConfiguration(), m_data.GetSubstances());
-    m_data.GetActions().GetEquipmentActions().RemoveMechanicalVentilatorConfiguration();
+    SEBagValveMask::Clear();
+    ProcessConfiguration(m_data.GetActions().GetEquipmentActions().GetBagValveMaskConfiguration(), m_data.GetSubstances());
+    m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskConfiguration();
   }
   //Do nothing if the ventilator is off and not initialized
-  if (GetConnection() == eMechanicalVentilator_Connection::Off)
+  if (GetConnection() == eBagValveMask_Connection::Off)
   {
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
@@ -329,11 +330,11 @@ void MechanicalVentilator::PreProcess()
 /// The current Pulse implementation has no specific process functionality for the mechanical ventilator.
 /// Mechanical ventilator processing is currently done in the Respiratory System with the combined circuit methodology.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::Process(bool solve_and_transport)
+void BagValveMask::Process(bool solve_and_transport)
 {
   ComputeExposedModelParameters();
 }
-void MechanicalVentilator::ComputeExposedModelParameters()
+void BagValveMask::ComputeExposedModelParameters()
 {
 
 }
@@ -347,7 +348,7 @@ void MechanicalVentilator::ComputeExposedModelParameters()
 /// circuit during post process. 
 /// The ventilator volumes are updated based on the previously calculated nodal analysis.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::PostProcess(bool solve_and_transport)
+void BagValveMask::PostProcess(bool solve_and_transport)
 {
 
 }
@@ -356,7 +357,7 @@ void MechanicalVentilator::PostProcess(bool solve_and_transport)
 /// \brief
 /// Set the instantaneous driver pressure or flow on the circuit source.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::SetVentilatorDriver()
+void BagValveMask::SetVentilatorDriver()
 {
   if (!std::isnan(m_DriverPressure_cmH2O) && !std::isnan(m_DriverFlow_L_Per_s))
     {
@@ -395,190 +396,27 @@ void MechanicalVentilator::SetVentilatorDriver()
 /// \brief
 /// Determine the instantaneous driver pressure during inspiration.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::CalculateInspiration()
+void BagValveMask::CalculateInspiration()
 {
-  if (m_CurrentBreathState != eBreathState::Inhale)
-  {
-    m_CurrentInspiratoryVolume_L = 0.0;
-    return;
-  }
-
-  m_CurrentInspiratoryVolume_L += m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) * m_data.GetTimeStep_s();
-
-  // Check trigger
-  if (HasExpirationCycleTime())
-  {
-    if (m_CurrentPeriodTime_s >= GetExpirationCycleTime(TimeUnit::s))
-    {
-      CycleMode();
-      return;
-    }
-  }
-  else if (HasExpirationCyclePressure())
-  {
-    /// \error Fatal: Expiration pressure cycle is not yet supported.
-    Fatal("Expiration pressure cycle is not yet supported.");
-  }
-  else if (HasExpirationCycleVolume())
-  {
-    if (m_CurrentInspiratoryVolume_L >= GetExpirationCycleVolume(VolumeUnit::L))
-    {
-      m_CurrentInspiratoryVolume_L = 0.0;
-      CycleMode();
-      return;
-    }
-  }
-  else if (HasExpirationCycleFlow())
-  {
-    /// \error Fatal: Expiration flow cycle is not yet supported.
-    Fatal("Expiration flow cycle is not yet supported.");
-  }
-  else
-  {
-    /// \error Fatal: No expiration cycle defined.
-    Fatal("No expiration cycle defined.");
-  }
-
-  // Check limit
-  if (HasInspirationLimitPressure() || HasInspirationLimitFlow() || HasInspirationLimitVolume())
-  {
-    /// \error Fatal: Limits are not yet supported.
-    Fatal("Limits are not yet supported.");
-  }
-
-  // Apply waveform
-  if (GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::Square)
-  {
-    if (HasPeakInspiratoryPressure())
-    {
-      m_DriverPressure_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
-      m_DriverFlow_L_Per_s = SEScalar::dNaN();
-    }
-    else if (HasInspirationTargetFlow())
-    {
-      m_DriverFlow_L_Per_s = GetInspirationTargetFlow(VolumePerTimeUnit::L_Per_s);
-      m_DriverPressure_cmH2O = SEScalar::dNaN();
-    }
-    else
-    {
-      /// \error Fatal: Inspiration mode not yet supported.
-      Fatal("Inspiration mode not yet supported.");
-    }
-  }
-  else
-  {
-    /// \error Fatal: Non-square waveforms are not yet supported.
-    Fatal("Non-square waveforms are not yet supported.");
-  }
+  
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Determine the instantaneous driver pressure during pause.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::CalculatePause()
+void BagValveMask::CalculatePause()
 {
-  if (m_CurrentBreathState != eBreathState::Pause)
-  {
-    return;
-  }
-
-  if (HasInspirationPauseTime())
-  {
-    if (m_CurrentPeriodTime_s < GetInspirationPauseTime(TimeUnit::s))
-    {
-      // Hold this pressure
-      m_DriverPressure_cmH2O = m_VentilatorNode->GetNextPressure(PressureUnit::cmH2O);
-      m_DriverFlow_L_Per_s = SEScalar::dNaN();
-    }
-    else
-    {
-      CycleMode();
-    }
-  }
-  else
-  {
-    CycleMode();
-  }
+  
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Determine the instantaneous driver pressure during expiration.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::CalculateExpiration()
+void BagValveMask::CalculateExpiration()
 {
-  if (m_CurrentBreathState != eBreathState::Exhale)
-  {
-    return;
-  }
-
-  // Check trigger
-  bool hasTrigger = false;
-  if (HasInspirationMachineTriggerTime())
-  {
-    if (m_CurrentPeriodTime_s >= GetInspirationMachineTriggerTime(TimeUnit::s))
-    {
-      CycleMode();
-      return;
-    }
-
-    hasTrigger = true;
-  }
-
-  if (HasInspirationPatientTriggerPressure())
-  {
-    double relativePressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-    if (HasPositiveEndExpiredPressure())
-    {
-      relativePressure_cmH2O -= GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
-    }
-    if (relativePressure_cmH2O <= GetInspirationPatientTriggerPressure(PressureUnit::cmH2O))
-    {
-      CycleMode();
-      return;
-    }
-
-    hasTrigger = true;
-  }
-
-  if (HasInspirationPatientTriggerFlow())
-  {
-    /// \error Fatal: Inspiration flow trigger is not yet supported.
-    Fatal("Inspiration flow trigger is not yet supported.");
-    hasTrigger = true;
-  }
-
-  if (!hasTrigger)
-  {
-    /// \error Fatal: No inspiration trigger defined.
-    Fatal("No inspiration trigger defined.");
-  }
-
-  // Apply waveform
-  if (GetExpirationWaveform() == eMechanicalVentilator_DriverWaveform::Square)
-  {
-    if (HasPositiveEndExpiredPressure())
-    {
-      m_DriverPressure_cmH2O = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
-      m_DriverFlow_L_Per_s = SEScalar::dNaN();
-    }
-    else if (HasFunctionalResidualCapacity())
-    {
-      /// \error Fatal: Functional residual capacity expiratory baseline not yet supported.
-      Fatal("Functional residual capacity expiratory baseline not yet supported.");
-    }
-    else
-    {
-      m_DriverPressure_cmH2O = 0.0;
-      m_DriverFlow_L_Per_s = SEScalar::dNaN();
-    }
-  }
-  else
-  {
-    /// \error Fatal: Non-square waveforms are not yet supported.
-    Fatal("Non-square waveforms are not yet supported.");
-  }
+  
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -588,7 +426,7 @@ void MechanicalVentilator::CalculateExpiration()
 /// \details
 /// Inhale to pause, pause to exhale, or exhale to inhale.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::CycleMode()
+void BagValveMask::CycleMode()
 {
   m_CurrentPeriodTime_s = 0.0;
 
@@ -613,31 +451,7 @@ void MechanicalVentilator::CycleMode()
 /// \details
 /// If no values are specified, defaults will be used.
 //--------------------------------------------------------------------------------------------------
-void MechanicalVentilator::SetResistances()
+void BagValveMask::SetResistances()
 {
-  if (HasEndotrachealTubeResistance())
-  {
-    /// \todo Figure out how to do this without having to access the respiratory circuit
-    m_data.GetCircuits().GetRespiratoryCircuit().GetPath(pulse::RespiratoryPath::AirwayToCarina)->GetNextResistance().Set(GetEndotrachealTubeResistance());
-  }
-
-  if (HasExpirationTubeResistance())
-  {
-    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve)->GetNextResistance().Set(GetExpirationTubeResistance());
-  }
-
-  if (HasInspirationTubeResistance())
-  {
-    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve)->GetNextResistance().Set(GetInspirationTubeResistance());
-  }
-
-  if (HasExpirationValveResistance())
-  {
-    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ExpiratoryLimbToYPiece)->GetNextResistance().Set(GetExpirationValveResistance());
-  }
-
-  if (HasInspirationValveResistance())
-  {
-    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::InspiratoryLimbToYPiece)->GetNextResistance().Set(GetInspirationValveResistance());
-  }
+  
 }

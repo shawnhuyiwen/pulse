@@ -24,9 +24,9 @@ public:
   virtual SEScalarPressure& GetPositiveInspiratoryPressure();
   virtual double GetPositiveInspiratoryPressure(const PressureUnit& unit) const;
 
-  virtual bool HasTidalVolume() const;
-  virtual SEScalarVolume& GetTidalVolume();
-  virtual double GetTidalVolume(const VolumeUnit& unit) const;
+  virtual bool HasSqueezeVolume() const;
+  virtual SEScalarVolume& GetSqueezeVolume();
+  virtual double GetSqueezeVolume(const VolumeUnit& unit) const;
 
   virtual bool HasExpiratoryPeriod() const;
   virtual SEScalarTime& GetExpiratoryPeriod();
@@ -43,7 +43,7 @@ public:
 protected:
 
   SEScalarPressure* m_PositiveInspiratoryPressure;
-  SEScalarVolume*   m_TidalVolume;
+  SEScalarVolume*   m_SqueezeVolume;
   SEScalarTime*     m_ExpiratoryPeriod;
   SEScalarTime*     m_InspiratoryPeriod;
 };

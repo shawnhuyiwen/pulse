@@ -52,26 +52,6 @@ public:
   virtual eBagValveMask_Connection GetConnection() const;
   virtual void SetConnection(eBagValveMask_Connection c);
 
-  virtual bool HasBagResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetBagResistance();
-  virtual double GetBagResistance(const PressureTimePerVolumeUnit& unit) const;
-
-  virtual bool HasFilterResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetFilterResistance();
-  virtual double GetFilterResistance(const PressureTimePerVolumeUnit& unit) const;
-
-  virtual bool HasFilterVolume() const;
-  virtual SEScalarVolume& GetFilterVolume();
-  virtual double GetFilterVolume(const VolumeUnit& unit) const;
-
-  virtual bool HasMaskSealResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetMaskSealResistance();
-  virtual double GetMaskSealResistance(const PressureTimePerVolumeUnit& unit) const;
-
-  virtual bool HasValveResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetValveResistance();
-  virtual double GetValveResistance(const PressureTimePerVolumeUnit& unit) const;
-
   virtual bool HasBreathFrequency() const;
   virtual SEScalarFrequency& GetBreathFrequency();
   virtual double GetBreathFrequency(const FrequencyUnit& unit) const;
@@ -84,13 +64,29 @@ public:
   virtual SEScalarPressure& GetPositiveInspiratoryPressure();
   virtual double GetPositiveInspiratoryPressure(const PressureUnit& unit) const;
 
-  virtual bool HasTidalVolume() const;
-  virtual SEScalarVolume& GetTidalVolume();
-  virtual double GetTidalVolume(const VolumeUnit& unit) const;
+  virtual bool HasSqueezeVolume() const;
+  virtual SEScalarVolume& GetSqueezeVolume();
+  virtual double GetSqueezeVolume(const VolumeUnit& unit) const;
 
   virtual bool HasValvePositiveEndExpiredPressure() const;
   virtual SEScalarPressure& GetValvePositiveEndExpiredPressure();
   virtual double GetValvePositiveEndExpiredPressure(const PressureUnit& unit) const;
+
+  virtual bool HasBagResistance() const;
+  virtual SEScalarPressureTimePerVolume& GetBagResistance();
+  virtual double GetBagResistance(const PressureTimePerVolumeUnit& unit) const;
+
+  virtual bool HasFilterResistance() const;
+  virtual SEScalarPressureTimePerVolume& GetFilterResistance();
+  virtual double GetFilterResistance(const PressureTimePerVolumeUnit& unit) const;
+
+  virtual bool HasFilterVolume() const;
+  virtual SEScalarVolume& GetFilterVolume();
+  virtual double GetFilterVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasValveResistance() const;
+  virtual SEScalarPressureTimePerVolume& GetValveResistance();
+  virtual double GetValveResistance(const PressureTimePerVolumeUnit& unit) const;
 
   bool HasFractionInspiredGas() const;
   bool HasFractionInspiredGas(const SESubstance& substance) const;
@@ -112,17 +108,17 @@ public:
 
 protected:
   eBagValveMask_Connection                     m_Connection;
-  SEScalarPressureTimePerVolume*               m_BagResistance;
-  SEScalarPressureTimePerVolume*               m_FilterResistance;
-  SEScalarVolume*                              m_FilterVolume;
-  SEScalarPressureTimePerVolume*               m_MaskSealResistance;
-  SEScalarPressureTimePerVolume*               m_ValveResistance;
   
   SEScalarFrequency*                           m_BreathFrequency;
   SEScalar*                                    m_InspiratoryExpiratoryRatio;
   SEScalarPressure*                            m_PositiveInspiratoryPressure;
-  SEScalarVolume*                              m_TidalVolume;
+  SEScalarVolume*                              m_SqueezeVolume;
   SEScalarPressure*                            m_ValvePositiveEndExpiredPressure;
+
+  SEScalarPressureTimePerVolume*               m_BagResistance;
+  SEScalarPressureTimePerVolume*               m_FilterResistance;
+  SEScalarVolume*                              m_FilterVolume;
+  SEScalarPressureTimePerVolume*               m_ValveResistance;
 
   std::vector<SESubstanceFraction*>            m_FractionInspiredGases;
   std::vector<const SESubstanceFraction*>      m_cFractionInspiredGases;

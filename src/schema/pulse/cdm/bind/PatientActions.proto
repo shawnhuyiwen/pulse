@@ -256,10 +256,10 @@ message ImpairedAlveolarExchangeExacerbationData
   }
 }
 
-/** @brief Insertion of tube into the patient's airway */
+/** @brief Insertion of tube or adjuct into the patient's airway */
 message IntubationData
 {
-  /** @brief Enumeration Types of Intubation.*/
+  /** @brief Enumeration Types of Intubation/Airway Adjuncts. */
   enum eType
   {
    Off                                                                      = 0; /**<< @brief Remove intubation */
