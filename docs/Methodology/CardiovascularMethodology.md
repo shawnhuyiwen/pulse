@@ -193,9 +193,37 @@ The cardiac arrest action is used to externally initiate a cardiac arrest event 
 #### Hemorrhage
 A hemorrhage is a significant reduction in blood volume, which triggers a physiologic response to stabilize cardiovascular function. Hypovolemia is any loss in blood volume, where a loss of more than 35% is considered hypovolemic shock. Hemorrhage causes a reduction in filling pressure for the circulation, leading to a decrease in venous return. This is evidenced by the decrease in mean arterial pressure and cardiac output. If these physiologic values continue to drop, hemorrhagic or hypovolemic shock will occur. There are three stages of shock: a nonprogressive stage, which the normal circulatory responses will lead to a recovery; a progressive stage, which leads to progressively worsening condition and eventual death without intervention; and an irreversible stage, which leads to death regardless of intervention. The sympathetic response is triggered by the decrease in mean arterial blood pressure, specifically by causing the stretch receptors (baroreceptors) to activate. This response triggers an increase in systemic vascular resistance, heart rate, and a decrease in venous compliance. This is discussed in detail in the @ref NervousMethodology. 
 
-Hemorrhage is initiated in the engine by specifying the location (compartment) and bleed rate. Multiple hemorrhages may exist at any given time. The user can specify a cardiovascular compartment to apply a hemorrhage. After the hemorrhage has been specified, the total loss rate is the sum of each individual bleed rate to that compartment. This value is set as a negative flow source. This results in a decrease in total blood volume that is linearly proportional to the total loss rate. An internal hemorrhage can also be specified for abdominal cardiovascular compartments, including the aorta, vena cava, stomach, splanchnic, spleen, right and left kidneys, large and small intestines, and liver. The internal hemorrhage allows blood to flow into the abdominal cavity, increasing the pressure in the cavity. This pressure is applied to the aorta, increasing the localized blood pressure as a result of internal blood accumulation.
+Hemorrhage can be intiated in the engine through two methods. The first method allows the user to characterize the hemorrhage by specifying the location (compartment) and bleed rate. Multiple hemorrhages can be applied to a single compartment or to multiple compartments. The user specifies a cardiovascular compartment to apply a hemorrhage. After the hemorrhage has been specified, the total loss rate is the sum of each individual bleed rate to that compartment. This value is set as a negative flow source. This results in a decrease in total blood volume that is linearly proportional to the total loss rate. This flow rate will remain constant throughout the computation. As the blood volume decreases, the blood flow to each compartment will begin to decrease. This could lead to an invalid flow rate for the compartment over time. A second method for specifying hemorrhage deals with this issue. A hemorrhage can also be characterized by specifying the location (compartment) and a severity. The severity is specified with a value between 0 and 1. A path is added to the cardiovascular circuit, but instead of specifying a negative flow rate, a resistance is specified on the path. This provides a calculated flow rate that will increase and decrease based on the dynamic physics of the circuit. This will prevent the insufficient blood flow/volume errors that can occur if the flow rate is not manually managed. When a hemorrhage is initiated with a severity, a minimum and maximum resistance are calculated to bound the severity, as shown in Equations 3 and 4, respectively.
 
-The hemorrhage response was validated with a comparison to the literature. The mean arterial pressure and cardiac output were computed as a function of their baseline value and plotted with the percent blood loss, as shown in Figure 8. The computed results are shown on the left and the validation data @cite guyton2006medical is shown on the right.
+\f[R<sub>min</sub> = (P-P<sub>T</sub>)/cQ] 
+<center>
+<i>Equation 3.</i>
+</center><br> 
+
+Where R<sub>min</sub> is the minimum resistance, P is the blood pressure at the compartment hemorrhaging, P<sub>T</sub> is the pressure at the hemorrhage flow outlet, Q is the flow through the hemorrhage compartment (not the hemorrhage flow), and c a tuning factor. The tuning factor is employed to ensure a severity of 1.0 corresponds to a hemorrhage rate of approximately 90% of the flow through the compartment. The severity specified in the hemorrhage action is then used to calculate the resistance on the path. 
+
+\f[R<sub>max</sub> = (c<sub>1</sub>)*R<sub>min</sub>/s]  
+<center>
+<i>Equation 4.</i>
+</center><br>
+
+Figure 8 demonstrates the different severity specifications and the impact on the hemorrhage flow rate as the severity is changed or the body responds to the hemorrhage. The results show that the hemorrhage severity changes the flow rate for the hemorrhage as expected, i.e., a 0.5 severity corresponds to 50% of the flow associated with a severity of 1.0. The results also show that as time passes the flow rate will naturally decrease without changing the severity to correspond to the reduction in blood pressure that occurs with hemorrhage. These results also demonstrate the ability to transition from a severity to a flow implementation and back to severity, if required. 
+
+<table>
+<tr>
+<td><img src="./Images/Cardiovascular/HemorrhageSeverity.png" width="550">
+</td>
+<td><img src="./Images/Cardiovascular/HemorrhageSeverityAndFlow.png" width="550">
+</td>
+</tr>
+</table>
+<center>
+*Figure 8. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).*
+</center><br>
+
+An internal hemorrhage can also be specified for abdominal cardiovascular compartments, including the aorta, vena cava, stomach, splanchnic, spleen, right and left kidneys, large and small intestines, and liver. The internal hemorrhage allows blood to flow into the abdominal cavity, increasing the pressure in the cavity. For the severity implementation, the hemorrhage outlet compartment is specified as the abdominal cavity for Equation 3. This pressure is applied to the aorta, increasing the localized blood pressure as a result of internal blood accumulation. At this time, the internal hemorrhage is only associated with the abdominal region. In the future, we will add functionality for the brain and lungs (hemothorax).
+
+The hemorrhage response was validated with a comparison to the literature. The mean arterial pressure and cardiac output were computed as a function of their baseline value and plotted with the percent blood loss, as shown in Figure 9. The computed results are shown on the left and the validation data @cite guyton2006medical is shown on the right.
 
 <table>
 <tr>
@@ -206,12 +234,12 @@ The hemorrhage response was validated with a comparison to the literature. The m
 </tr>
 </table>
 <center>
-*Figure 8. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).*
+*Figure 9. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).*
 </center><br>
 
 For the hemorrhage to shock scenario, our results maintain MAP through a 20% blood loss and CO begins to slowly decrease as expected. At 20%, we see an approximately linear drop in MAP from a as expected compared to experimental data from @cite guyton2006medical. The cardiac output shows the correct trend but a larger error for this region. The “last ditch” plateau is then exhibited from a blood loss of just under 35% to just under 45%. The MAP and CO then drop precipitously as expected. 
 
-The different types of shock are evident in the data collected for groups of dogs and published in @cite guyton2006medical. Groups I, II, and III show cases of nonprogressive shock, Groups IV, and V show cases of progressive shock, and Group VI is an irreversible shock case. The first three groups recover without intervention, the final case leads quickly to death, and the Group IV and V cases show a short rebound before the physiologic decline that occurs without treatment. These cases were duplicated in the Pulse engine. The results and comparison to validation data are shown in Figure 9.
+The different types of shock are evident in the data collected for groups of dogs and published in @cite guyton2006medical. Groups I, II, and III show cases of nonprogressive shock, Groups IV, and V show cases of progressive shock, and Group VI is an irreversible shock case. The first three groups recover without intervention, the final case leads quickly to death, and the Group IV and V cases show a short rebound before the physiologic decline that occurs without treatment. These cases were duplicated in the Pulse engine. The results and comparison to validation data are shown in Figure 10.
 
 <table>
 <tr>
@@ -222,12 +250,12 @@ The different types of shock are evident in the data collected for groups of dog
 </tr>
 </table>
 <center>
-*Figure 9. Normalized mean arterial pressure for different hemorrhage severities to demonstrate the different shock types. The computaed Pulse results are on the left and the validation data @cite guyton2006medical is on the right.*
+*Figure 10. Normalized mean arterial pressure for different hemorrhage severities to demonstrate the different shock types. The computaed Pulse results are on the left and the validation data @cite guyton2006medical is on the right.*
 </center><br>
 
 For the first three group hemorrhage scenarios (90%, 65%, and 50% blood loss), if the hemorrhage is arrested the MAP begins to rise and reaches a stable value. However, for the remaining three scenarios, the hemorrhage is unrecoverable for the patient. This is expected compared to the experimental data and for the degree of shock. However, one limitation of the model is that at the turning point between progressive and irreversible shock, the expected behavior is a temporary recovery lasting minutes to hours followed by deterioration and death. The current model has no ability to reverse the curve once the final deterioration toward deaths occurs. This is triggered at a blood pressure of approximately 40-45 mmHg. While the outcome is the same, the short recovery is not captured. Future work will incorporate this improvement.
 
-We also saw the expected blood volume, pressure, heart rate, and substance concentration values follow expected trends for the fluid resuscitation scenarios. Figures 10 and 11 show the appropriate substance behavior coupled with the blood volume changes. Like blood volume, the decrease in the substance will be linearly proportional to the bleed rate. For more specific information regarding these substances and their loss due to bleeding, see @ref BloodChemistryMethodology and @ref SubstanceTransportMethodology. Figure 10 shows the blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no intervention other than the cessation of hemorrhage. Figure 11 shows a hemorrhage event with subsequent saline administration. Note that the hemoglobin content remains diminished as the blood volume recovers with IV saline. By comparison, [Figure 13](@ref cardiovascular-blood-administration) shows a blood-product intervention following a hemorrhage event. In that figure, the hemoglobin increases with the blood infusion.
+We also saw the expected blood volume, pressure, heart rate, and substance concentration values follow expected trends for the fluid resuscitation scenarios. Figures 11 and 12 show the appropriate substance behavior coupled with the blood volume changes. Like blood volume, the decrease in the substance will be linearly proportional to the bleed rate. For more specific information regarding these substances and their loss due to bleeding, see @ref BloodChemistryMethodology and @ref SubstanceTransportMethodology. Figure 10 shows the blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no intervention other than the cessation of hemorrhage. Figure 12 shows a hemorrhage event with subsequent saline administration. Note that the hemoglobin content remains diminished as the blood volume recovers with IV saline. By comparison, [Figure 14](@ref cardiovascular-blood-administration) shows a blood-product intervention following a hemorrhage event. In that figure, the hemoglobin increases with the blood infusion.
 
 <table>
 <tr>
@@ -239,7 +267,7 @@ We also saw the expected blood volume, pressure, heart rate, and substance conce
 </table>
 <img src="./plots/Cardiovascular/Class4NoFluid_Legend.jpg" width="450">
 <center>
-*Figure 10. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no subsequent intervention.*
+*Figure 11. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no subsequent intervention.*
 </center><br>
 
 <table>
@@ -252,7 +280,7 @@ We also saw the expected blood volume, pressure, heart rate, and substance conce
 </table>
 <img src="./plots/Cardiovascular/Class2Saline_Legend.jpg" width="450">
 <center>
-*Figure 11. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with a subsequent infusion of saline.*
+*Figure 12. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with a subsequent infusion of saline.*
 </center><br>
 
 #### Pericardial Effusion
@@ -291,6 +319,9 @@ Asystole is defined as a cessation of the heart beat. Asystole is currently trig
 ### Cardiac Arrest
 Cardiac Arrest is a condition in which the pumping of the heart is no longer effective @cite nhlbi2011sca. The Cardiac Arrest event can be triggered in the engine either by the Cardiac Arrest action or by the evolution of engine physiology. For instance, an oxygen deficit in the heart muscle will trigger both an asystole event (see below) and a cardiac arrest event. In the current version of the engine, the only rhythm associated with cardiac arrest is asystole, but the cardiac arrest event is included to facilitate control and to allow the future inclusion of other ineffective rhythms such as ventricular fibrillation. In the current engine, it is not possible to recover from cardiac arrest. It is, however, possible to maintain some perfusion by performing chest compressions (see CPR).
 
+### Cardiovascular Collapse
+Cardiovascular collapse occurs when the blood pressure is no longer sufficient to maintain "open" blood vessels. They "collapse" meaning blood can no longer flow through the vessels. This is generally associated with shock, the vascular tone and blood pressure are no longer sufficient to maintain blood flow @cite guyton2006medical. This occurs at at mean arterial pressure of 20 mmHg or lower in the engine. At this time, we do not enforce an irreversible state (stop engine calculation); however, the patient generally does not recover from this, particularly in the presence of shock.
+
 ### Cardiogenic Shock
 In general, the term "shock" refers to inadequate perfusion of the tissues. The several categories of shock serve to signify the origin of the disturbance. Cardiogenic shock is inadequate perfusion due a reduction in the pumping capability of the heart. In the engine, the Cardiogenic Shock event is activated when the cardiac index () is below 2.2 (L/min-m^2) *and* the systolic blood pressure is less than 90.0 (mmHg) *and* the pulmonary capillary wedge pressure is greater than 15.0 (mmHg) @cite dhakam2008review.
 
@@ -319,7 +350,7 @@ Validation results for system and compartment quantities are listed in Tables 1 
 
 Compartment-level quantities show reasonable agreement with the validation values. All of the flows match the reference values within ~10 percent. The volumes show some moderate differences for a few specific compartments. The aorta compartment volume is much smaller than the validated value. The compliance on this compartment needed to remain low in order to preserve the arterial pressure waveform, which led to less volume than expected. Similarly, the vena cava compliance was set in order to maintain the correct cardiac output and arterial pressures; therefore, its expected volume was limited. The right heart pressures and volumes show some disagreement with the validation data. The minimum values for right heart pressure and volume are much lower than valid ranges. This is due to restriction of unstressed volume in the right heart, which currently has an unstressed volume of zero. An increase in unstressed volume would shift the pressure volume minimums up, while also preserving the maximum values within their respective ranges. The %Cardiovascular System is tuned to vitals output validation (Table 1), as well as good agreement with insults' and interventions&rsquo; expected trends and values (see the following section).  In addition, compartment validation was achieved on a reasonable level.
 
-The arterial pressure waveform was validated according to the plot shown in Figure 10. It displays the engine arterial pressure against measured arterial pressure. The diastolic and systolic pressures were validated using data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, we used a waveform from PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. In the future, we may create a patient more representative of the one used for the PhysioNet waveform. This would show both the ability of the engine to model different patients and the pressure waveform feature matching.  The shapes of both waveforms match well, showing rapid pressure increases as the heart contraction begins to occur. The main difference in the shape of each plot is the small pressure oscillations that occur after the initial pressure drop in the validation data. This is the dicrotic notch,  which occurs from slight flow reversal from the aorta back into the left ventricle before the valves close @cite korakianitis2005notch . This is not currently being modeled in the engine, but improvements in the circuit model, including the addition of inertance and diodes that allow retrograde flow, will likely enable the engine waveform to capture more detail.
+The arterial pressure waveform was validated according to the plot shown in Figure 13. It displays the engine arterial pressure against measured arterial pressure. The diastolic and systolic pressures were validated using data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, we used a waveform from PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. In the future, we may create a patient more representative of the one used for the PhysioNet waveform. This would show both the ability of the engine to model different patients and the pressure waveform feature matching.  The shapes of both waveforms match well, showing rapid pressure increases as the heart contraction begins to occur. The main difference in the shape of each plot is the small pressure oscillations that occur after the initial pressure drop in the validation data. This is the dicrotic notch,  which occurs from slight flow reversal from the aorta back into the left ventricle before the valves close @cite korakianitis2005notch . This is not currently being modeled in the engine, but improvements in the circuit model, including the addition of inertance and diodes that allow retrograde flow, will likely enable the engine waveform to capture more detail.
 
 <center>
 <table>
@@ -328,7 +359,7 @@ The arterial pressure waveform was validated according to the plot shown in Figu
 <td><img src="./plots/Cardiovascular/PhysioNetPressure.jpg" width="400"></td>
 </tr>
 </table>
-<i>Figure 12. Arterial pressure waveform comparisons. The diastolic and systolic pressures were validated using the data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, a waveform was found on PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. Both the validation waveform and the engine waveform show sharp increases in pressure during the systolic period. After the contraction occurs, the pressure begins decreasing and that is where the main difference in the engine and the validation data occur. There is a dip and subsequent rise in the arterial pressure that occurs due to the dicrotic notch, which the engine does not capture.</i>
+<i>Figure 13. Arterial pressure waveform comparisons. The diastolic and systolic pressures were validated using the data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, a waveform was found on PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. Both the validation waveform and the engine waveform show sharp increases in pressure during the systolic period. After the contraction occurs, the pressure begins decreasing and that is where the main difference in the engine and the validation data occur. There is a dip and subsequent rise in the arterial pressure that occurs due to the dicrotic notch, which the engine does not capture.</i>
 </center><br>
 
 @anchor cardiovascular-validation-conditions
@@ -380,7 +411,7 @@ There are two CPR scenarios for validation. The first scenario validates the CPR
 
 
 ### Hemorrhage
-The hemorrhage action is tested using several scenarios. The class 2 hemorrhage scenario with blood intravenous (IV) administration begins with a healthy patient. After a few seconds, a hemorrhage action is initiated at a rate of 250 milliliters (mL) per minute. The hemorrhage continues for four minutes before the bleeding rate is reduced to 0 mL per minute. After two minutes, 500 mL of IV blood is administered intravenously over five minutes. The other hemorrhage scenarios are similar but with different subsequent interventions. There are also two multi-compartment hemorrhage scenarios. Figure 11 demonstrates the time-evolution of select data, and the validation results are displayed in Tables 6a-f.
+The hemorrhage action is tested using several scenarios. The class 2 hemorrhage scenario with blood intravenous (IV) administration begins with a healthy patient. After a few seconds, a hemorrhage action is initiated at a rate of 250 milliliters (mL) per minute. The hemorrhage continues for four minutes before the bleeding rate is reduced to 0 mL per minute. After two minutes, 500 mL of IV blood is administered intravenously over five minutes. The other hemorrhage scenarios are similar but with different subsequent interventions. There are also two multi-compartment hemorrhage scenarios. Figure 14 demonstrates the time-evolution of select data, and the validation results are displayed in Tables 6a-f.
 
 The results show decreases in the systolic pressure and minor increases in the diastolic pressure during the course of the hemorrhage. In response to the decreasing arterial pressures, the baroreceptor response raises the heart rate. The blood volume and hemoglobin content were validated through direct calculation by decreasing blood volume by the bleeding rate multiplied by the time. There is a difference between the computed and simulated blood volume post-hemorrhage due to fluid shift between the intravascular and extravascular space. This shift is evident in the period between cessation of hemorrhage and the start of the infusion (top-left panel of Figure 13).
 
@@ -403,7 +434,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 </table>
 <img src="./plots/Cardiovascular/Class2Saline_Legend.jpg" width="500">
 <center>
-*Figure 13. The class 2 hemorrhage scenario shows the blood volume decreasing linearly with the constant 250 milliliter per minute bleeding rate. The blood hemoglobin content follows this exact trend. At the conclusion of the bleed, the blood volume and hemoglobin are at a lower value. Five hundred (500) milliliters of blood is then administered intravenously over the course of 5 minutes. Both the blood volume and hemoglobin content increase linearly with this administration.*
+*Figure 14. The class 2 hemorrhage scenario shows the blood volume decreasing linearly with the constant 250 milliliter per minute bleeding rate. The blood hemoglobin content follows this exact trend. At the conclusion of the bleed, the blood volume and hemoglobin are at a lower value. Five hundred (500) milliliters of blood is then administered intravenously over the course of 5 minutes. Both the blood volume and hemoglobin content increase linearly with this administration.*
 </center>
 
 <br><center>
@@ -497,12 +528,12 @@ The pericardial effusion scenario has a chronic effusion applied to the patient 
 |	Pericardial Effusion Acute	|	Flow into pericardium set to 6 mL/min.		|	150	|<span class="warning">	Slight increase or no change @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="danger">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Slight increase @cite spodick1998tamp	</span>|<span class="success">	NC 	</span>|	
 
 ### Sinus Bradycardia
-Sinus bradycardia was validated by setting the baseline heart rate to 50 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. The cardiac output remains relatively unchanged due to compensatory increases in the stroke volume, which is expected in asymptomatic sinus bradycardia @cite mangrum2000evaluation. The validation data that was found for  systolic and diastolic pressures was vague, only mentioning that the condition was often asymptomatic, indicating relatively normal pressure values. The systolic and diastolic pressures in the engine do change slightly as the heart driver accommodates the increased stroke volume; however, the values remain within normal bounds at 50 beats per minute. The %ECG waveform in bradycardia is similar to a normal sinus waveform, with the exception of an extended R-R interval due to a slower heart rate (see Figure 12), which is also seen in the engine output. Other systemic data is not significantly changed.
+Sinus bradycardia was validated by setting the baseline heart rate to 50 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. The cardiac output remains relatively unchanged due to compensatory increases in the stroke volume, which is expected in asymptomatic sinus bradycardia @cite mangrum2000evaluation. The validation data that was found for  systolic and diastolic pressures was vague, only mentioning that the condition was often asymptomatic, indicating relatively normal pressure values. The systolic and diastolic pressures in the engine do change slightly as the heart driver accommodates the increased stroke volume; however, the values remain within normal bounds at 50 beats per minute. The %ECG waveform in bradycardia is similar to a normal sinus waveform, with the exception of an extended R-R interval due to a slower heart rate (see Figure 15), which is also seen in the engine output. Other systemic data is not significantly changed.
 
 @image html SinusBradycardia_ECGPedia.png
 @image html SinusBradycardia_Engine.PNG
 <center>
-<i>Figure 13. The increased R-R interval is evident in both waveforms. This is the primary indication of the low heart rate. Validation image courtesy of @cite vanderBilt2010sinus .</i>
+<i>Figure 15. The increased R-R interval is evident in both waveforms. This is the primary indication of the low heart rate. Validation image courtesy of @cite vanderBilt2010sinus .</i>
 </center><br>
 
 <br><center>
@@ -514,12 +545,12 @@ Sinus bradycardia was validated by setting the baseline heart rate to 50 beats p
 
 
 ### Sinus Tachycardia
-Sinus Tachycardia was validated by setting the baseline heart rate to 110 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. Validation data predicted a decrease in stroke volume with the increase in heart rate @cite aroesty1985simultaneous, which was also found in the engine. Because of the decrease in stroke volume, the cardiac  output remains relatively unchanged. This is due to the model not currently affecting compression force, only compression rate. The %ECG output in tachycardia is generally similar to normal sinus; however, in some cases, the T wave can experience constructive  interference from the following heart beat&apos;s P wave. This is shown in the %ECG output seen in Figure 13.
+Sinus Tachycardia was validated by setting the baseline heart rate to 110 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. Validation data predicted a decrease in stroke volume with the increase in heart rate @cite aroesty1985simultaneous, which was also found in the engine. Because of the decrease in stroke volume, the cardiac  output remains relatively unchanged. This is due to the model not currently affecting compression force, only compression rate. The %ECG output in tachycardia is generally similar to normal sinus; however, in some cases, the T wave can experience constructive  interference from the following heart beat&apos;s P wave. This is shown in the %ECG output seen in Figure 16.
 
 @image html SinusTachycardia_Physionet.png
 @image html SinusTachycardia_Engine.PNG
 <center>
-<i>Figure 14. Due to the high heart rate, the engine output is summing together the P and T waves. In the image from PhysioNet, the output is not summed together as dramatically, due to the slight physiological compression of the waveform that the current %ECG system and heart model do not support. @cite healey2005detecting @cite goldberger2000physiobank</i>
+<i>Figure 16. Due to the high heart rate, the engine output is summing together the P and T waves. In the image from PhysioNet, the output is not summed together as dramatically, due to the slight physiological compression of the waveform that the current %ECG system and heart model do not support. @cite healey2005detecting @cite goldberger2000physiobank</i>
 </center><br>
 
 <br><center>
@@ -554,8 +585,6 @@ Future Work
 
 Recommended Improvements
 ------------------------
-
-We plan to improve the hemorrhage implementation to accept an initial hemorrhage rate, which is then translated to a resistance path rather than a flow source. This will better manage the natural hemorrhage rate changes that occur as blood pressure drops. You will also be able to provide a severity and the engine will automatically scale the initial hemorrhage rate based on the compartment and severity.
 
 An area of potential future advancement lies in the inertance of the %Cardiovascular System. The @ref CircuitMethodology has the ability to incorporate inertance into the lumped parameter models. In the future, this could be added to the %Cardiovascular Model to provide a more accurate blood pressure waveform.
 
