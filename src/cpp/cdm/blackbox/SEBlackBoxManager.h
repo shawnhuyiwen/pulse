@@ -102,6 +102,8 @@ protected:
     bb.SetSourcePath(&srcPath);
     bb.SetTargetNode(&tgtNode);
     bb.SetTargetPath(&tgtPath);
+
+    return true;
   }
   std::map<std::string, SEElectricalBlackBox*> m_ElectricalBoxes;
   std::map<std::string, SEGasBlackBox*> m_GasBoxes;
