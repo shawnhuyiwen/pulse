@@ -54,7 +54,7 @@ LinkType* GetLinkBetween(CompartmentType& src, CompartmentType& tgt)
   return nullptr;
 }
 
-SEGasBlackBox* PulseBlackBoxes::CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SEGasBlackBox* PulseBlackBoxes::CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
   // TODO Finish
   return nullptr;
@@ -65,8 +65,13 @@ SEGasBlackBox* PulseBlackBoxes::CreateGasBlackBox(const std::string& srcCmptName
                           SEFluidCircuit, SEFluidCircuitNode, SEFluidCircuitPath, \
                           SELiquidCompartmentGraph, SELiquidCompartment, SELiquidCompartmentLink, \
                           PressureUnit, VolumeUnit, VolumePerTimeUnit
-SELiquidBlackBox* PulseBlackBoxes::CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SELiquidBlackBox* PulseBlackBoxes::CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
+  if (HasLiquidBlackBox(name))
+  {
+    Error("There is already a black box " + name);
+    return nullptr;
+  }
   if (HasLiquidBlackBox(srcCmptName, tgtCmptName))
   {
     Error("There is already a black box between " + srcCmptName + " and " + tgtCmptName);
@@ -90,24 +95,14 @@ SELiquidBlackBox* PulseBlackBoxes::CreateLiquidBlackBox(const std::string& srcCm
   {
     SEFluidCircuitNode& srcNode = replaceLink->GetPath()->GetSourceNode();
     SEFluidCircuitNode& tgtNode = replaceLink->GetPath()->GetTargetNode();
-    if (srcNode.HasBlackBox())
-    {
-      Error("Source Node already has a black box");
-      return nullptr;
-    }
-    if (tgtNode.HasBlackBox())
-    {
-      Error("Target Node already has a black box");
-      return nullptr;
-    }
 
-    // \TODO Figure out which circuit(s) and graph(s) to use
+    // \TODO Protect CreateLiquidBlackBox and make new public methods for CreateCardiovascularBlackBox that pass in the circuit and graph to this method
     SEFluidCircuit& circuit = m_data.GetCircuits().GetActiveCardiovascularCircuit();
     SELiquidCompartmentGraph& graph = m_data.GetCompartments().GetActiveCardiovascularGraph();
 
     // ---------------------------------------------------------
     // Create the black box
-    SELiquidBlackBox* bb = SEBlackBoxManager::CreateLiquidBlackBox(srcCmptName, tgtCmptName);
+    SELiquidBlackBox* bb = SEBlackBoxManager::CreateLiquidBlackBox(srcCmptName, tgtCmptName, name);
     if (!CreateComponents<LIQUID_COMPONENTS>(*bb, srcNode, tgtNode, *srcCmpt, *tgtCmpt, *replaceLink, circuit, graph, PressureUnit::mmHg, VolumeUnit::mL, VolumePerTimeUnit::mL_Per_s))
     {
       // Remove bb
@@ -118,7 +113,7 @@ SELiquidBlackBox* PulseBlackBoxes::CreateLiquidBlackBox(const std::string& srcCm
   return nullptr;
 }
 
-SEThermalBlackBox* PulseBlackBoxes::CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SEThermalBlackBox* PulseBlackBoxes::CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
   // TODO Finish
   return nullptr;
@@ -132,9 +127,9 @@ template<CREATE_BLACK_BOX_COMPONENTS_TEMPLATE> bool PulseBlackBoxes::CreateCompo
 {
   // ---------------------------------------------------------
   // Make our black box circuit components
-  NodeType& bbNode = circuit.CreateNode(bb.GetName());
-  PathType& src2bbPath = circuit.CreatePath(srcNode, bbNode, srcNode.GetName()+"_To_"+bb.GetName());
-  PathType& bb2tgtPath = circuit.CreatePath(bbNode, tgtNode, bb.GetName()+"_To_"+tgtNode.GetName());
+  NodeType& bbNode     = circuit.CreateNode(bb.GetName());
+  PathType& src2bbPath = circuit.CreatePath(srcNode, bbNode, bb.GetName()+"Source");
+  PathType& bb2tgtPath = circuit.CreatePath(bbNode, tgtNode, bb.GetName()+"Target");
 
   // ---------------------------------------------------------
   // Initialize quantity
@@ -150,8 +145,8 @@ template<CREATE_BLACK_BOX_COMPONENTS_TEMPLATE> bool PulseBlackBoxes::CreateCompo
   // ---------------------------------------------------------
   // Add our black box compartment components
   CompartmentType& bbCmpt = m_data.GetCompartments().CreateLiquidCompartment(bb.GetName());
-  LinkType& src2bbLink = m_data.GetCompartments().CreateLiquidLink(srcCmpt, bbCmpt,  bbCmpt.GetName()+"_To_"+bb.GetName());
-  LinkType& bb2tgtLink = m_data.GetCompartments().CreateLiquidLink(bbCmpt,  tgtCmpt, bb.GetName()+"_To_"+tgtCmpt.GetName());
+  LinkType& src2bbLink = m_data.GetCompartments().CreateLiquidLink(srcCmpt, bbCmpt,  bb.GetName()+"Source");
+  LinkType& bb2tgtLink = m_data.GetCompartments().CreateLiquidLink(bbCmpt,  tgtCmpt, bb.GetName()+"Target");
   // Add our new cmpt to our correct cmpt list TODO AMB Support new cmpts/links to our state
   if (pulse::VascularCompartment::HasValue(srcCmpt.GetName()) && pulse::VascularCompartment::HasValue(tgtCmpt.GetName()))
     pulse::VascularCompartment::AddValue(bb.GetName());

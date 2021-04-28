@@ -35,72 +35,116 @@ std::string SEBlackBoxManager::GetBlackBoxName(const std::string& srcCmptName, c
   return name;
 }
 
+bool SEBlackBoxManager::HasElectricalBlackBox(const std::string& name) const
+{
+  auto bb = m_ElectricalBoxes.find(name);
+  return bb != m_ElectricalBoxes.end();
+}
 bool SEBlackBoxManager::HasElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) const
 {
   auto bb = m_ElectricalBoxes.find(GetBlackBoxName(srcCmptName, tgtCmptName));
   return bb != m_ElectricalBoxes.end();
 }
-SEElectricalBlackBox* SEBlackBoxManager::GetElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SEElectricalBlackBox* SEBlackBoxManager::GetElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name)
 {
-  auto bb = m_ElectricalBoxes.find(GetBlackBoxName(srcCmptName, tgtCmptName));
+  if (name.empty())
+    name = GetBlackBoxName(srcCmptName, tgtCmptName);
+  auto bb = m_ElectricalBoxes.find(name);
   if (bb != m_ElectricalBoxes.end())
     return bb->second;
-  return CreateElectricalBlackBox(srcCmptName, tgtCmptName);
+  return CreateElectricalBlackBox(srcCmptName, tgtCmptName, name);
 }
-SEElectricalBlackBox* SEBlackBoxManager::CreateElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SEElectricalBlackBox* SEBlackBoxManager::CreateElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
-  return CreateBlackBox<SEElectricalBlackBox>(GetBlackBoxName(srcCmptName, tgtCmptName), m_ElectricalBoxes);
+  SEElectricalBlackBox* bb = CreateBlackBox<SEElectricalBlackBox>(name, m_ElectricalBoxes);
+  std::string genName = GetBlackBoxName(srcCmptName, tgtCmptName);
+  if (name != genName)
+    m_ElectricalBoxes[genName] = bb;
+  return bb;
 }
 
+bool SEBlackBoxManager::HasGasBlackBox(const std::string& name) const
+{
+  auto bb = m_GasBoxes.find(name);
+  return bb != m_GasBoxes.end();
+}
 bool SEBlackBoxManager::HasGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) const
 {
   auto bb = m_GasBoxes.find(GetBlackBoxName(srcCmptName, tgtCmptName));
   return bb != m_GasBoxes.end();
 }
-SEGasBlackBox* SEBlackBoxManager::GetGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SEGasBlackBox* SEBlackBoxManager::GetGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name)
 {
-  auto bb = m_GasBoxes.find(GetBlackBoxName(srcCmptName, tgtCmptName));
+  if (name.empty())
+    name = GetBlackBoxName(srcCmptName, tgtCmptName);
+  auto bb = m_GasBoxes.find(name);
   if (bb != m_GasBoxes.end())
     return bb->second;
-  return CreateGasBlackBox(srcCmptName, tgtCmptName);
+  return CreateGasBlackBox(srcCmptName, tgtCmptName, name);
 }
-SEGasBlackBox* SEBlackBoxManager::CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SEGasBlackBox* SEBlackBoxManager::CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
-  return CreateBlackBox<SEGasBlackBox>(GetBlackBoxName(srcCmptName, tgtCmptName), m_GasBoxes);
+  SEGasBlackBox* bb = CreateBlackBox<SEGasBlackBox>(name, m_GasBoxes);
+  std::string genName = GetBlackBoxName(srcCmptName, tgtCmptName);
+  if (name != genName)
+    m_GasBoxes[genName] = bb;
+  return bb;
 }
 
+bool SEBlackBoxManager::HasLiquidBlackBox(const std::string& name) const
+{
+  auto bb = m_LiquidBoxes.find(name);
+  return bb != m_LiquidBoxes.end();
+}
 bool SEBlackBoxManager::HasLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) const
 {
   auto bb = m_LiquidBoxes.find(GetBlackBoxName(srcCmptName, tgtCmptName));
   return bb != m_LiquidBoxes.end();
 }
-SELiquidBlackBox* SEBlackBoxManager::GetLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SELiquidBlackBox* SEBlackBoxManager::GetLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name)
 {
-  auto bb = m_LiquidBoxes.find(GetBlackBoxName(srcCmptName, tgtCmptName));
+  if (name.empty())
+    name = GetBlackBoxName(srcCmptName, tgtCmptName);
+  auto bb = m_LiquidBoxes.find(name);
   if (bb != m_LiquidBoxes.end())
     return bb->second;
-  return CreateLiquidBlackBox(srcCmptName, tgtCmptName);
+  return CreateLiquidBlackBox(srcCmptName, tgtCmptName, name);
 }
-SELiquidBlackBox* SEBlackBoxManager::CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SELiquidBlackBox* SEBlackBoxManager::CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
-  return CreateBlackBox<SELiquidBlackBox>(GetBlackBoxName(srcCmptName, tgtCmptName), m_LiquidBoxes);
+  SELiquidBlackBox* bb = CreateBlackBox<SELiquidBlackBox>(name, m_LiquidBoxes);
+  std::string genName = GetBlackBoxName(srcCmptName, tgtCmptName);
+  if (name != genName)
+    m_LiquidBoxes[genName] = bb;
+  return bb;
 }
 
+bool SEBlackBoxManager::HasThermalBlackBox(const std::string& name) const
+{
+  auto bb = m_ThermalBoxes.find(name);
+  return bb != m_ThermalBoxes.end();
+}
 bool SEBlackBoxManager::HasThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) const
 {
   auto bb = m_ThermalBoxes.find(GetBlackBoxName(srcCmptName, tgtCmptName));
   return bb != m_ThermalBoxes.end();
 }
-SEThermalBlackBox* SEBlackBoxManager::GetThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SEThermalBlackBox* SEBlackBoxManager::GetThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name)
 {
-  auto bb = m_ThermalBoxes.find(GetBlackBoxName(srcCmptName, tgtCmptName));
+  if (name.empty())
+    name = GetBlackBoxName(srcCmptName, tgtCmptName);
+  auto bb = m_ThermalBoxes.find(name);
   if (bb != m_ThermalBoxes.end())
     return bb->second;
-  return CreateThermalBlackBox(srcCmptName, tgtCmptName);
+  return CreateThermalBlackBox(srcCmptName, tgtCmptName, name);
 }
-SEThermalBlackBox* SEBlackBoxManager::CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+SEThermalBlackBox* SEBlackBoxManager::CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
-  return CreateBlackBox<SEThermalBlackBox>(GetBlackBoxName(srcCmptName,tgtCmptName), m_ThermalBoxes);
+  SEThermalBlackBox* bb = CreateBlackBox<SEThermalBlackBox>(name, m_ThermalBoxes);
+  std::string genName = GetBlackBoxName(srcCmptName, tgtCmptName);
+    if (name != genName)
+      m_ThermalBoxes[genName] = bb;
+  return bb;
 }
 
 template<typename BlackBoxType>

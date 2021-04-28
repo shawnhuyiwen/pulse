@@ -24,9 +24,9 @@ public:
 protected:
   template<COMPATIBLE_BLACK_BOX_TEMPLATE> bool IsValidBlackBoxRequest(CompartmentType* srcCmpt, CompartmentType* tgtCmpt);
 
-  SEGasBlackBox* CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) override;
-  SELiquidBlackBox* CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) override;
-  SEThermalBlackBox* CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) override;
+  SEGasBlackBox* CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name) override;
+  SELiquidBlackBox* CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name) override;
+  SEThermalBlackBox* CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name) override;
 
   template<CREATE_BLACK_BOX_COMPONENTS_TEMPLATE> bool CreateComponents(BlackBoxType& bb,
                                                                        NodeType& srcNode, NodeType& tgtNode,

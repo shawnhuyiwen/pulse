@@ -37,6 +37,44 @@ std::string SECircuitNode<CIRCUIT_NODE_TYPES>::GetName() const
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
+bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsPartOfBlackBox() const
+{
+  return m_BlackBoxType != eBlackBox_Node_Type::None;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+eBlackBox_Node_Type SECircuitNode<CIRCUIT_NODE_TYPES>::GetBlackBoxType() const
+{
+  return m_BlackBoxType;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::SetBlackBoxType(eBlackBox_Node_Type e)
+{
+  m_BlackBoxType = e;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
+SECircuitNode<CIRCUIT_NODE_TYPES>* SECircuitNode<CIRCUIT_NODE_TYPES>::GetBlackBoxSourceNode() const
+{
+  return m_BlackBoxSourceNode;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::SetBlackBoxSourceNode(SECircuitNode<CIRCUIT_NODE_TYPES>* n)
+{
+  m_BlackBoxSourceNode = n;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
+SECircuitNode<CIRCUIT_NODE_TYPES>* SECircuitNode<CIRCUIT_NODE_TYPES>::GetBlackBoxTargetNode() const
+{
+  return m_BlackBoxTargetNode;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::SetBlackBoxTargetNode(SECircuitNode<CIRCUIT_NODE_TYPES>* n)
+{
+  m_BlackBoxTargetNode = n;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
 bool SECircuitNode<CIRCUIT_NODE_TYPES>::HasPotential() const
 {
   return m_Potential == nullptr ? false : m_Potential->IsValid();
@@ -60,6 +98,29 @@ PotentialScalar& SECircuitNode<CIRCUIT_NODE_TYPES>::GetNextPotential()
   if (m_NextPotential == nullptr)
     m_NextPotential = new PotentialScalar();
   return *m_NextPotential;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::RemoveImposedPotential()
+{
+  m_PotentialType = eBlackBox_Property_Type::Calculate;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsPotentialImposed() const
+{
+  return m_PotentialType == eBlackBox_Property_Type::Imposed;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposePotential(double v, const PotentialUnit& unit)
+{
+  m_PotentialType = eBlackBox_Property_Type::Imposed;
+  m_NextPotential->SetValue(v, unit);
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposePotential(const PotentialScalar& s)
+{
+  m_PotentialType = eBlackBox_Property_Type::Imposed;
+  m_NextPotential->Set(s);
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
@@ -99,6 +160,29 @@ QuantityScalar& SECircuitNode<CIRCUIT_NODE_TYPES>::GetQuantityBaseline()
   if (m_QuantityBaseline == nullptr)
     m_QuantityBaseline = new QuantityScalar();
   return *m_QuantityBaseline;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::RemoveImposedQuantity()
+{
+  m_QuantityType = eBlackBox_Property_Type::Calculate;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsQuantityImposed() const
+{
+  return m_QuantityType == eBlackBox_Property_Type::Imposed;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposeQuantity(double v, const QuantityUnit& unit)
+{
+  m_QuantityType = eBlackBox_Property_Type::Imposed;
+  m_NextQuantity->SetValue(v, unit);
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposeQuantity(const QuantityScalar& s)
+{
+  m_QuantityType = eBlackBox_Property_Type::Imposed;
+  m_NextQuantity->Set(s);
 }
 
 template<CIRCUIT_NODE_TEMPLATE>

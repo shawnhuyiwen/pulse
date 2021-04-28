@@ -159,16 +159,17 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
   fluidCircuit2->StateChange();
 
   //Imposed = black box forces it on circuit
+
   //Provided = circuit calculates it
-  BlackBox2.ProvidePotential();
+  BlackBox2.RemoveImposedPotential();
   //BlackBox2.GetSourcePressure().SetType(eBlackBox_Property_Type::Imposed);
   //BlackBox2.GetTargetPressure().SetType(eBlackBox_Property_Type::Imposed);
-  BlackBox2.ProvideSourceFlux();
-  BlackBox2.ProvideTargetFlux();
+  BlackBox2.RemoveImposedSourceFlux();
+  BlackBox2.RemoveImposedTargetFlux();
 
-  BlackBox1.ProvidePotential();
-  BlackBox1.ProvideSourcePotential();
-  BlackBox1.ProvideTargetPotential();
+  BlackBox1.RemoveImposedPotential();
+  BlackBox1.RemoveImposedSourcePotential();
+  BlackBox1.RemoveImposedTargetPotential();
   //BlackBox1.GetSourceFlow().SetType(eBlackBox_Property_Type::Imposed);
   //BlackBox1.GetTargetFlow().SetType(eBlackBox_Property_Type::Imposed);
 
@@ -340,17 +341,17 @@ void CommonDataModelTest::SimpleBlackBoxTest(const std::string& sOutputDirectory
       // Imposed = black box forces it on circuit
       // Provided = circuit calculates it
       // Reset everything to provided
-      blackBoxDriver->ProvidePotential();
-      blackBoxDriver->ProvideSourcePotential();
-      blackBoxDriver->ProvideTargetPotential();
-      blackBoxDriver->ProvideSourceFlux();
-      blackBoxDriver->ProvideTargetFlux();
+      blackBoxDriver->RemoveImposedPotential();
+      blackBoxDriver->RemoveImposedSourcePotential();
+      blackBoxDriver->RemoveImposedTargetPotential();
+      blackBoxDriver->RemoveImposedSourceFlux();
+      blackBoxDriver->RemoveImposedTargetFlux();
 
-      blackBoxPassive->ProvidePotential();
-      blackBoxPassive->ProvideSourcePotential();
-      blackBoxPassive->ProvideTargetPotential();
-      blackBoxPassive->ProvideSourceFlux();
-      blackBoxPassive->ProvideTargetFlux();
+      blackBoxPassive->RemoveImposedPotential();
+      blackBoxPassive->RemoveImposedSourcePotential();
+      blackBoxPassive->RemoveImposedTargetPotential();
+      blackBoxPassive->RemoveImposedSourceFlux();
+      blackBoxPassive->RemoveImposedTargetFlux();
 
       //Initialize all potential black box inputs
       nodeDriverBBSource.GetPressure().SetValue(0.0, PressureUnit::Pa);
@@ -626,17 +627,17 @@ void CommonDataModelTest::WindkesselBlackBoxTest(const std::string& sOutputDirec
       // Imposed = black box forces it on circuit
       // Provided = circuit calculates it
       // Reset everything to provided
-      blackBoxWindkessel->ProvidePotential();
-      blackBoxWindkessel->ProvideSourcePotential();
-      blackBoxWindkessel->ProvideTargetPotential();
-      blackBoxWindkessel->ProvideSourceFlux();
-      blackBoxWindkessel->ProvideTargetFlux();
+      blackBoxWindkessel->RemoveImposedPotential();
+      blackBoxWindkessel->RemoveImposedSourcePotential();
+      blackBoxWindkessel->RemoveImposedTargetPotential();
+      blackBoxWindkessel->RemoveImposedSourceFlux();
+      blackBoxWindkessel->RemoveImposedTargetFlux();
 
-      blackBoxDriver->ProvidePotential();
-      blackBoxDriver->ProvideSourcePotential();
-      blackBoxDriver->ProvideTargetPotential();
-      blackBoxDriver->ProvideSourceFlux();
-      blackBoxDriver->ProvideTargetFlux();
+      blackBoxDriver->RemoveImposedPotential();
+      blackBoxDriver->RemoveImposedSourcePotential();
+      blackBoxDriver->RemoveImposedTargetPotential();
+      blackBoxDriver->RemoveImposedSourceFlux();
+      blackBoxDriver->RemoveImposedTargetFlux();
 
       //Initialize all potential black box inputs
       nodeWindkesselResistance1.GetPressure().SetValue(0.0, PressureUnit::Pa);
