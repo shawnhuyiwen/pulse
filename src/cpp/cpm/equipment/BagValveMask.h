@@ -48,26 +48,29 @@ protected:
   void InvalidateConnection();
 
   void CalculateInspiration();
-  void CalculatePause();
   void CalculateExpiration();
-  void SetVentilatorDriver();
+  void SetPositiveEndExpiratoryPressure();
+  void SetSqeezeDriver();
   void CycleMode();
   void SetResistances();
 
   // Serializable member variables (Set in Initialize and in schema)
   double                m_CurrentPeriodTime_s;
-  double                m_DriverPressure_cmH2O;
-  double                m_DriverFlow_L_Per_s;
-  double                m_CurrentInspiratoryVolume_L;
+  double                m_SqueezePressure_cmH2O;
+  double                m_SqueezeFlow_L_Per_s;
   eBreathState          m_CurrentBreathState;
 
   // Stateless member variable (Set in SetUp())
   SEGasCompartment*     m_Environment;
-  SEGasCompartment*     m_Ventilator;
-  SELiquidCompartment*  m_VentilatorAerosol;
-  SEFluidCircuitNode*   m_VentilatorNode;
+  SEGasCompartment*     m_Reservoir;
+  SELiquidCompartment*  m_ReservoirAerosol;
+  SEFluidCircuitNode*   m_ReservoirNode;
   SEFluidCircuitNode*   m_ConnectionNode;
   SEFluidCircuitNode*   m_AmbientNode;
-  SEFluidCircuitPath*   m_EnvironmentToVentilator;
-  SEFluidCircuitPath*   m_YPieceToConnection;
+  SEFluidCircuitPath*   m_SqueezeToBag;
+  SEFluidCircuitPath*   m_ValveToEnvironment;
+  SEFluidCircuitPath*   m_EnvironmentToPositiveEndExpiratoryPressurePort;
+  SEFluidCircuitPath*   m_ConnectionToEnvironment;
+  double                m_DefaultOpenResistance_cmH2O_s_Per_L;
+  double                m_DefaultClosedResistance_cmH2O_s_Per_L;
 };

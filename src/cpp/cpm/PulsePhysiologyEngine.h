@@ -1066,12 +1066,12 @@ namespace pulse {
   class BagValveMaskCompartment
   {
   public:
-    DEFINE_STATIC_STRING(BagValveMask);
-    DEFINE_STATIC_STRING_EX(ExpiratoryValve, BagValveMaskExpiratoryValve);
-    DEFINE_STATIC_STRING_EX(InspiratoryValve, BagValveMaskInspiratoryValve);
-    DEFINE_STATIC_STRING_EX(ExpiratoryLimb, BagValveMaskExpiratoryLimb);
-    DEFINE_STATIC_STRING_EX(InspiratoryLimb, BagValveMaskInspiratoryLimb);
-    DEFINE_STATIC_STRING_EX(YPiece, BagValveMaskYPiece);
+    DEFINE_STATIC_STRING_EX(Reservoir, BagValveMaskReservoir);
+    DEFINE_STATIC_STRING_EX(ReservoirValve, BagValveMaskReservoirValve);
+    DEFINE_STATIC_STRING_EX(Bag, BagValveMaskBag);
+    DEFINE_STATIC_STRING_EX(BagValve, BagValveMaskBagValve);
+    DEFINE_STATIC_STRING_EX(Valve, BagValveMaskValve);
+    DEFINE_STATIC_STRING_EX(Filter, BagValveMaskFilter);
     DEFINE_STATIC_STRING_EX(Connection, BagValveMaskConnection);
 
     static const std::vector<std::string>& GetValues()
@@ -1079,12 +1079,12 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(BagValveMask);
-        _values.push_back(ExpiratoryValve);
-        _values.push_back(InspiratoryValve);
-        _values.push_back(ExpiratoryLimb);
-        _values.push_back(InspiratoryLimb);
-        _values.push_back(YPiece);
+        _values.push_back(Reservoir);
+        _values.push_back(ReservoirValve);
+        _values.push_back(Bag);
+        _values.push_back(BagValve);
+        _values.push_back(Valve);
+        _values.push_back(Filter);
         _values.push_back(Connection);
       }
       return _values;
@@ -1096,13 +1096,13 @@ namespace pulse {
   class BagValveMaskLink
   {
   public:
-    DEFINE_STATIC_STRING(BagValveMaskToExpiratoryValve);
-    DEFINE_STATIC_STRING(BagValveMaskToInspiratoryValve);
-    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToExpiratoryValve, BagValveMaskExpiratoryLimbToExpiratoryValve);
-    DEFINE_STATIC_STRING_EX(InspiratoryValveToInspiratoryLimb, BagValveMaskInspiratoryValveToInspiratoryLimb);
-    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToYPiece, BagValveMaskExpiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, BagValveMaskInspiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING_EX(YPieceToConnection, BagValveMaskYPieceToConnection);
+    DEFINE_STATIC_STRING_EX(ReservoirToReservoirValve, BagValveMaskReservoirToReservoirValve);
+    DEFINE_STATIC_STRING_EX(ReservoirValveToBag, BagValveMaskReservoirValveToBag);
+    DEFINE_STATIC_STRING_EX(BagToBagValve, BagValveMaskBagToBagValve);
+    DEFINE_STATIC_STRING_EX(BagValveToValve, BagValveMaskBagValveToValve);
+    DEFINE_STATIC_STRING_EX(ValveToEnvironment, BagValveMaskValveToExhaust);
+    DEFINE_STATIC_STRING_EX(ValveToFilter, BagValveMaskValveToFilter);
+    DEFINE_STATIC_STRING_EX(FilterToConnection, BagValveMaskFilterToConnection);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, BagValveMaskConnectionToEnvironment);
     DEFINE_STATIC_STRING_EX(ConnectionToAirway, BagValveMaskConnectionToAirway);
 
@@ -1111,13 +1111,13 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(BagValveMaskToExpiratoryValve);
-        _values.push_back(BagValveMaskToInspiratoryValve);
-        _values.push_back(ExpiratoryLimbToExpiratoryValve);
-        _values.push_back(InspiratoryValveToInspiratoryLimb);
-        _values.push_back(ExpiratoryLimbToYPiece);
-        _values.push_back(InspiratoryLimbToYPiece);
-        _values.push_back(YPieceToConnection);
+        _values.push_back(ReservoirToReservoirValve);
+        _values.push_back(ReservoirValveToBag);
+        _values.push_back(BagToBagValve);
+        _values.push_back(BagValveToValve);
+        _values.push_back(ValveToEnvironment);
+        _values.push_back(ValveToFilter);
+        _values.push_back(FilterToConnection);
         _values.push_back(ConnectionToEnvironment);
         _values.push_back(ConnectionToAirway);
       }

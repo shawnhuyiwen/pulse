@@ -280,26 +280,32 @@ namespace pulse {
   class BagValveMaskNode
   {
   public:
-    DEFINE_STATIC_STRING_EX(Ventilator, BagValveMask);
-    DEFINE_STATIC_STRING_EX(ExpiratoryValve, BagValveMaskExpiratoryValve);
-    DEFINE_STATIC_STRING_EX(InspiratoryValve, BagValveMaskInspiratoryValve);
-    DEFINE_STATIC_STRING_EX(ExpiratoryLimb, BagValveMaskExpiratoryLimb);
-    DEFINE_STATIC_STRING_EX(InspiratoryLimb, BagValveMaskInspiratoryLimb);
-    DEFINE_STATIC_STRING_EX(YPiece, BagValveMaskYPiece);
+    DEFINE_STATIC_STRING_EX(Reservoir, BagValveMaskReservoir);
+    DEFINE_STATIC_STRING_EX(ReservoirValve, BagValveMaskReservoirValve);
+    DEFINE_STATIC_STRING_EX(Bag, BagValveMaskBag);
+    DEFINE_STATIC_STRING_EX(BagValve, BagValveMaskBagValve);
+    DEFINE_STATIC_STRING_EX(Squeeze, BagValveMaskSqueeze);
+    DEFINE_STATIC_STRING_EX(Valve, BagValveMaskValve);
+    DEFINE_STATIC_STRING_EX(PositiveEndExpiratoryPressurePort, BagValveMaskPositiveEndExpiratoryPressurePort);
+    DEFINE_STATIC_STRING_EX(Filter, BagValveMaskFilter);
     DEFINE_STATIC_STRING_EX(Connection, BagValveMaskConnection);
   };
 
   class BagValveMaskPath
   {
   public:
-    DEFINE_STATIC_STRING_EX(EnvironmentToVentilator, EnvironmentToBagValveMask);
-    DEFINE_STATIC_STRING_EX(VentilatorToExpiratoryValve, BagValveMaskToExpiratoryValve);
-    DEFINE_STATIC_STRING_EX(VentilatorToInspiratoryValve, BagValveMaskToInspiratoryValve);
-    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToExpiratoryValve, BagValveMaskExpiratoryLimbToExpiratoryValve);
-    DEFINE_STATIC_STRING_EX(InspiratoryValveToInspiratoryLimb, BagValveMaskInspiratoryValveToInspiratoryLimb);
-    DEFINE_STATIC_STRING_EX(ExpiratoryLimbToYPiece, BagValveMaskExpiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, BagValveMaskInspiratoryLimbToYPiece);
-    DEFINE_STATIC_STRING_EX(YPieceToConnection, BagValveMaskYPieceToConnection);
+    DEFINE_STATIC_STRING_EX(EnvironmentToReservoir, BagValveMaskEnvironmentToReservoir);
+    DEFINE_STATIC_STRING_EX(ReservoirToReservoirValve, BagValveMaskReservoirToReservoirValve);
+    DEFINE_STATIC_STRING_EX(ReservoirValveToBag, BagValveMaskReservoirValveToBag);
+    DEFINE_STATIC_STRING_EX(EnvironmentToSqueeze, BagValveMaskEnvironmentToSqueeze);
+    DEFINE_STATIC_STRING_EX(SqueezeToBag, BagValveMaskSqueezeToBag);
+    DEFINE_STATIC_STRING_EX(BagToBagValve, BagValveMaskBagToBagValve);
+    DEFINE_STATIC_STRING_EX(BagValveToValve, BagValveMaskBagValveToValve);
+    DEFINE_STATIC_STRING_EX(ValveToEnvironment, BagValveMaskValveToExhaust);
+    DEFINE_STATIC_STRING_EX(EnvironmentToPositiveEndExpiratoryPressurePort, BagValveMaskEnvironmentToPositiveEndExpiratoryPressurePort);
+    DEFINE_STATIC_STRING_EX(PositiveEndExpiratoryPressurePortToValve, BagValveMaskBagPositiveEndExpiratoryPressurePortToValve);
+    DEFINE_STATIC_STRING_EX(ValveToFilter, BagValveMaskValveToFilter);
+    DEFINE_STATIC_STRING_EX(FilterToConnection, BagValveMaskFilterToConnection);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, BagValveMaskConnectionToEnvironment);
   };
 

@@ -54,13 +54,15 @@ void BagValveMask::Clear()
 {
   SEBagValveMask::Clear();
   m_Environment = nullptr;
-  m_Ventilator = nullptr;
-  m_VentilatorAerosol = nullptr;
-  m_VentilatorNode = nullptr;
+  m_Reservoir = nullptr;
+  m_ReservoirAerosol = nullptr;
+  m_ReservoirNode = nullptr;
   m_ConnectionNode = nullptr;
   m_AmbientNode = nullptr;
-  m_EnvironmentToVentilator = nullptr;
-  m_YPieceToConnection = nullptr;
+  m_SqueezeToBag = nullptr;
+  m_EnvironmentToPositiveEndExpiratoryPressurePort = nullptr;
+  m_ConnectionToEnvironment = nullptr;
+  m_ValveToEnvironment = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -73,9 +75,8 @@ void BagValveMask::Initialize()
   SetConnection(eBagValveMask_Connection::Off);
   m_CurrentBreathState = eBreathState::Exhale;
   m_CurrentPeriodTime_s = 0.0;
-  m_DriverPressure_cmH2O = SEScalar::dNaN();
-  m_DriverFlow_L_Per_s = SEScalar::dNaN();
-  m_CurrentInspiratoryVolume_L = 0.0;
+  m_SqueezePressure_cmH2O = SEScalar::dNaN();
+  m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
   StateChange();
 }
 
@@ -90,17 +91,22 @@ void BagValveMask::SetUp()
 {
   // Compartments
   m_Environment = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
-  m_Ventilator = m_data.GetCompartments().GetGasCompartment(pulse::BagValveMaskCompartment::BagValveMask);
-  m_VentilatorAerosol = m_data.GetCompartments().GetLiquidCompartment(pulse::BagValveMaskCompartment::BagValveMask);
+  m_Reservoir = m_data.GetCompartments().GetGasCompartment(pulse::BagValveMaskCompartment::Reservoir);
+  m_ReservoirAerosol = m_data.GetCompartments().GetLiquidCompartment(pulse::BagValveMaskCompartment::Reservoir);
 
   // Nodes
-  m_VentilatorNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Ventilator);
+  m_ReservoirNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Reservoir);
   m_ConnectionNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Connection);
   m_AmbientNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::EnvironmentNode::Ambient);
 
   // Paths
-  m_EnvironmentToVentilator = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::EnvironmentToVentilator);
-  m_YPieceToConnection = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::YPieceToConnection);
+  m_SqueezeToBag = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::SqueezeToBag);
+  m_EnvironmentToPositiveEndExpiratoryPressurePort = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::EnvironmentToPositiveEndExpiratoryPressurePort);
+  m_ConnectionToEnvironment = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ConnectionToEnvironment);
+  m_ValveToEnvironment = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ValveToEnvironment);
+
+  m_DefaultOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  m_DefaultClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 void BagValveMask::StateChange()
@@ -110,7 +116,6 @@ void BagValveMask::StateChange()
   SetConnection();
   m_CurrentBreathState = eBreathState::Exhale;
   m_CurrentPeriodTime_s = 0.0;
-  m_CurrentInspiratoryVolume_L = 0.0;
 
   // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
 
@@ -118,13 +123,13 @@ void BagValveMask::StateChange()
   std::vector<SESubstanceFraction*> gasFractions = GetFractionInspiredGases();
 
   //Reset the substance quantities at the connection
-  for (SEGasSubstanceQuantity* subQ : m_Ventilator->GetSubstanceQuantities())
+  for (SEGasSubstanceQuantity* subQ : m_Reservoir->GetSubstanceQuantities())
     subQ->SetToZero();
 
   //Start by setting everything to ambient
   for (auto s : m_Environment->GetSubstanceQuantities())
   {
-    m_Ventilator->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
+    m_Reservoir->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().Set(s->GetVolumeFraction());
   }
 
   //Has fractions defined
@@ -138,39 +143,39 @@ void BagValveMask::StateChange()
 
     //Now set it on the ventilator compartment
     //It has a infinate volume, so this will keep the same volume fraction no matter what's going on around it
-    m_Ventilator->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
+    m_Reservoir->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
   }
 
   double totalFractionDefined = 0.0;
-  for (auto s : m_Ventilator->GetSubstanceQuantities())
+  for (auto s : m_Reservoir->GetSubstanceQuantities())
   {
-    totalFractionDefined += m_Ventilator->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().GetValue();
+    totalFractionDefined += m_Reservoir->GetSubstanceQuantity(s->GetSubstance())->GetVolumeFraction().GetValue();
   }
 
   //Add or remove Nitrogen to balance
   double gasFractionDiff = 1.0 - totalFractionDefined;
-  double currentN2Fraction = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().GetValue();
+  double currentN2Fraction = m_Reservoir->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().GetValue();
   if (currentN2Fraction + gasFractionDiff < 0.0)
   {
-    double FiO2 = m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
+    double FiO2 = m_Reservoir->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
 
     /// \error Error: FiO2 setting + ambient fractions other than N2 is greater than 1.0. Setting FiO2 to max value
     m_ss << "FiO2 setting + ambient fractions other than N2 is greater than 1.0. Setting FiO2 to max value of " << FiO2 + currentN2Fraction + gasFractionDiff << ".";
     Error(m_ss);
-    m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(0.0);
-    m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(FiO2 + currentN2Fraction + gasFractionDiff);
+    m_Reservoir->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(0.0);
+    m_Reservoir->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().SetValue(FiO2 + currentN2Fraction + gasFractionDiff);
   }
   else
   {
     Info("Adding "+cdm::to_string(currentN2Fraction + gasFractionDiff) + "% of N2 to the system");
-    m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
+    m_Reservoir->GetSubstanceQuantity(m_data.GetSubstances().GetN2())->GetVolumeFraction().SetValue(currentN2Fraction + gasFractionDiff);
   }
 
   //Set the aerosol concentrations ********************************************
   std::vector<SESubstanceConcentration*> liquidConcentrations = GetConcentrationInspiredAerosols();
 
   //Reset the substance quantities at the ventilator
-  for (SELiquidSubstanceQuantity* subQ : m_VentilatorAerosol->GetSubstanceQuantities())
+  for (SELiquidSubstanceQuantity* subQ : m_ReservoirAerosol->GetSubstanceQuantities())
     subQ->SetToZero();
 
   if (!liquidConcentrations.empty())
@@ -185,7 +190,7 @@ void BagValveMask::StateChange()
       m_data.GetSubstances().AddActiveSubstance(sub);
       //Now set it on the connection compartment
       //It has infinite volume, so this will keep the same volume fraction no matter what's going on around it
-      m_VentilatorAerosol->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
+      m_ReservoirAerosol->GetSubstanceQuantity(sub)->GetConcentration().Set(concentration);
     }
   }
 }
@@ -308,15 +313,14 @@ void BagValveMask::PreProcess()
   {
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
-    m_CurrentInspiratoryVolume_L = 0.0;
     return;
   }
   
   SetConnection();
   CalculateInspiration();
-  CalculatePause();
   CalculateExpiration();
-  SetVentilatorDriver();
+  SetPositiveEndExpiratoryPressure();
+  SetSqeezeDriver();
   SetResistances();
 
   m_CurrentPeriodTime_s += m_data.GetTimeStep_s();
@@ -355,40 +359,54 @@ void BagValveMask::PostProcess(bool solve_and_transport)
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Set the instantaneous driver pressure or flow on the circuit source.
+/// Set the minimum pressure setting. A leak at the seal could cause the pressure to decrease more.
 //--------------------------------------------------------------------------------------------------
-void BagValveMask::SetVentilatorDriver()
+void BagValveMask::SetPositiveEndExpiratoryPressure()
 {
-  if (!std::isnan(m_DriverPressure_cmH2O) && !std::isnan(m_DriverFlow_L_Per_s))
-    {
-      /// \error Error: Ventilator driver pressure and flow both set, only one allowed. Using the pressure value.
-      Error("Ventilator driver pressure and flow both set, only one allowed. Using the pressure value.");
-    }
-  else if (std::isnan(m_DriverPressure_cmH2O) && std::isnan(m_DriverFlow_L_Per_s))
+  double PEEP_cmH2O = 0.0;
+  if (HasValvePositiveEndExpiredPressure())
   {
-    /// \error Error: Ventilator driver pressure or flow must be set. Using a pressure of 0.
-    Error("Ventilator driver pressure or flow must be set. Using a pressure of 0.");
+    PEEP_cmH2O = GetValvePositiveEndExpiredPressure(PressureUnit::cmH2O);
+  }
+  m_EnvironmentToPositiveEndExpiratoryPressurePort->GetNextPressureSource().SetValue(PEEP_cmH2O, PressureUnit::cmH2O);
+}
 
-    m_DriverPressure_cmH2O = 0.0;
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Set the instantaneous squeeze pressure or flow on the circuit source.
+//--------------------------------------------------------------------------------------------------
+void BagValveMask::SetSqeezeDriver()
+{
+  if (!std::isnan(m_SqueezePressure_cmH2O) && !std::isnan(m_SqueezeFlow_L_Per_s))
+    {
+      /// \error Error: Bag Valve Mask squeeze pressure and flow both set, only one allowed. Using the pressure value.
+      Error("Bag Valve Mask squeeze pressure and flow both set, only one allowed. Using the pressure value.");
+    }
+  else if (std::isnan(m_SqueezePressure_cmH2O) && std::isnan(m_SqueezeFlow_L_Per_s))
+  {
+    /// \error Error:  Bag Valve Mask squeeze pressure or flow must be set. Using a pressure of 0.
+    Error(" Bag Valve Mask squeeze pressure or flow must be set. Using a pressure of 0.");
+
+    m_SqueezePressure_cmH2O = 0.0;
   }
 
-  if (!std::isnan(m_DriverPressure_cmH2O))
+  if (!std::isnan(m_SqueezePressure_cmH2O))
   {
-    if (m_EnvironmentToVentilator->HasNextFlowSource())
+    if (m_SqueezeToBag->HasNextFlowSource())
     {
-      m_EnvironmentToVentilator->GetNextFlowSource().Invalidate();
+      m_SqueezeToBag->GetNextFlowSource().Invalidate();
       m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
     }
-    m_EnvironmentToVentilator->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
+    m_SqueezeToBag->GetNextPressureSource().SetValue(m_SqueezePressure_cmH2O, PressureUnit::cmH2O);
   }
-  else if (!std::isnan(m_DriverFlow_L_Per_s))
+  else if (!std::isnan(m_SqueezeFlow_L_Per_s))
   {
-    if (m_EnvironmentToVentilator->HasNextPressureSource())
+    if (m_SqueezeToBag->HasNextPressureSource())
     {
-      m_EnvironmentToVentilator->GetNextPressureSource().Invalidate();
+      m_SqueezeToBag->GetNextPressureSource().Invalidate();
       m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
     }
-    m_EnvironmentToVentilator->GetNextFlowSource().SetValue(m_DriverFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+    m_SqueezeToBag->GetNextFlowSource().SetValue(m_SqueezeFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
   }
 }
 
@@ -398,16 +416,53 @@ void BagValveMask::SetVentilatorDriver()
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::CalculateInspiration()
 {
-  
-}
+  if (m_CurrentBreathState != eBreathState::Inhale)
+  {
+    return;
+  }
 
-//--------------------------------------------------------------------------------------------------
-/// \brief
-/// Determine the instantaneous driver pressure during pause.
-//--------------------------------------------------------------------------------------------------
-void BagValveMask::CalculatePause()
-{
-  
+  // Set the exhaust valve to not allow any flow
+  m_ValveToEnvironment->GetNextResistance().SetValue(m_DefaultOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  // Check trigger
+  double breathFrequency_Per_s = 0.0;
+  double totalBreathTime_s = 0.0;
+  if (HasBreathFrequency())
+  {
+    breathFrequency_Per_s = GetBreathFrequency(FrequencyUnit::Per_s);
+    totalBreathTime_s = 1.0 / breathFrequency_Per_s;
+  }
+
+  double inspiratoryExpiratoryRatio = 0.5; //Default
+  if (HasInspiratoryExpiratoryRatio())
+  {
+    inspiratoryExpiratoryRatio = GetInspiratoryExpiratoryRatio().GetValue();
+  }
+
+  double inspirationPeriod_s = inspiratoryExpiratoryRatio * totalBreathTime_s / (1.0 + inspiratoryExpiratoryRatio);
+
+  if (m_CurrentPeriodTime_s >= inspirationPeriod_s)
+  {
+    CycleMode();
+    return;
+  }
+
+  // Calculate source - constant pressure or flow during inspiration phase
+  if (HasPositiveInspiratoryPressure())
+  {
+    m_SqueezePressure_cmH2O = GetPositiveInspiratoryPressure(PressureUnit::cmH2O);
+    m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
+  }
+  else if (HasSqueezeVolume())
+  {
+    m_SqueezeFlow_L_Per_s = GetSqueezeVolume(VolumeUnit::L) / inspirationPeriod_s;
+    m_SqueezePressure_cmH2O = SEScalar::dNaN();
+  }
+  else
+  {
+    /// \error Fatal: Inspiration mode needs to be set.
+    Fatal("Inspiration mode needs to be set.");
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -416,7 +471,40 @@ void BagValveMask::CalculatePause()
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::CalculateExpiration()
 {
-  
+  if (m_CurrentBreathState != eBreathState::Exhale)
+  {
+    return;
+  }
+
+  // Set the exhaust valve to not allow any flow
+  m_ValveToEnvironment->GetNextResistance().SetValue(m_DefaultClosedResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+  // Check trigger
+  double breathFrequency_Per_s = 0.0;
+  double totalBreathTime_s = 0.0;
+  if (HasBreathFrequency())
+  {
+    breathFrequency_Per_s = GetBreathFrequency(FrequencyUnit::Per_s);
+    totalBreathTime_s = 1.0 / breathFrequency_Per_s;
+  }
+
+  double inspiratoryExpiratoryRatio = 0.5; //Default
+  if (HasInspiratoryExpiratoryRatio())
+  {
+    inspiratoryExpiratoryRatio = GetInspiratoryExpiratoryRatio().GetValue();
+  }
+
+  double inspirationPeriod_s = inspiratoryExpiratoryRatio * totalBreathTime_s / (1.0 + inspiratoryExpiratoryRatio);
+  double expirationPeriod_s = totalBreathTime_s - inspirationPeriod_s;
+
+  if (m_CurrentPeriodTime_s >= expirationPeriod_s)
+  {
+    CycleMode();
+    return;
+  }
+
+  m_SqueezePressure_cmH2O = 0.0;
+  m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -431,10 +519,6 @@ void BagValveMask::CycleMode()
   m_CurrentPeriodTime_s = 0.0;
 
   if (m_CurrentBreathState == eBreathState::Inhale)
-  {
-    m_CurrentBreathState = eBreathState::Pause;
-  }
-  else if (m_CurrentBreathState == eBreathState::Pause)
   {
     m_CurrentBreathState = eBreathState::Exhale;
   }
@@ -453,5 +537,5 @@ void BagValveMask::CycleMode()
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::SetResistances()
 {
-  
+  //jbw - Do, and set filter volume somewhere
 }
