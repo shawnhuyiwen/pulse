@@ -2577,28 +2577,12 @@ void Respiratory::UpdateResistances()
   double rightAlveoliResistance_cmH2O_s_Per_L = m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double leftAlveoliResistance_cmH2O_s_Per_L = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double esophagusResistance_cmH2O_s_Per_L = m_AirwayToStomach->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  
-  //------------------------------------------------------------------------------------------------------
-  //Positive Pressure Ventilation
-  if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
-    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation || 
-    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
-  {
-    tracheaResistance_cmH2O_s_Per_L *= 11.0;
-  }
 
-  //------------------------------------------------------------------------------------------------------
   //Intubation
   if (m_PatientActions->HasIntubation())
   {
     m_data.SetIntubation(eSwitch::On);
     SEIntubation& intubation = m_PatientActions->GetIntubation();
-
-    // jbw What does this action's provided airway resistance mean for each of the cases below?
-
-    // jbw It looks like the logic below does not support going from esophageal, to left mainstem, to tracheal
-    //     shouldnt esophagusResistance_cmH2O_s_Per_L be set to 'normal' in all cases but esophageal?
-    //     same with leftBronchiResistance_cmH2O_s_Per_L and rightBronchiResistance_cmH2O_s_Per_L
 
     switch (intubation.GetType())
     {
@@ -2606,9 +2590,9 @@ void Respiratory::UpdateResistances()
     {
       if (intubation.HasAirwayResistance())// jbw Override the Positive Pressure Ventilation code above?
         tracheaResistance_cmH2O_s_Per_L = intubation.GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      // else
-      //The proper way to intubate
-      //Airway mode handles this case by default
+      else
+        //Tuned based on mechanical ventilator data
+        tracheaResistance_cmH2O_s_Per_L *= 11.0;
       break;
     }
     case eIntubation_Type::Esophageal:
@@ -2638,14 +2622,12 @@ void Respiratory::UpdateResistances()
     }
     case eIntubation_Type::Orpharyngeal:
     {
-      // jbw todo
-      rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+      tracheaResistance_cmH2O_s_Per_L *= 15.0;
       break;
     }
     case eIntubation_Type::Nasopharyngeal:
     {
-      // jbw todo
-      rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+      tracheaResistance_cmH2O_s_Per_L *= 15.0;
       break;
     }
     }
@@ -2653,6 +2635,15 @@ void Respiratory::UpdateResistances()
   else
   {
     m_data.SetIntubation(eSwitch::Off);
+
+    //Positive Pressure Ventilation assuming a mask if not intubated
+    if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator ||
+      m_data.GetAirwayMode() == eAirwayMode::BagValveMask)
+    {
+      tracheaResistance_cmH2O_s_Per_L *= 20.0;
+    }
   }
 
   //------------------------------------------------------------------------------------------------------
