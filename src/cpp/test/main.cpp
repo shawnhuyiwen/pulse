@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
       ////////////////////
 
       //peTest.ReadScenarios(peDir);
-      peTest.ReuseEngine(peDir);
+      //peTest.ReuseEngine(peDir);
 
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
