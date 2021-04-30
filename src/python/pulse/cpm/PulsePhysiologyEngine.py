@@ -22,12 +22,12 @@ class PulsePhysiologyEngine:
                  "_spare_time_s"]
 
     def __init__(self):
+        self.__pulse = PyPulse.Engine()
         self._is_ready = False
         self._log_forward = None
         self._event_handler = None
         self._results = {}
         self._results_template = {}
-        self.__pulse = PyPulse.Engine()
         self._spare_time_s = 0
         self._dt_s = 0.02 # self.__pulse.get_timestep("s")
         # Timestep only gets set after on load/initialize

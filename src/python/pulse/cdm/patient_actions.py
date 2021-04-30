@@ -73,6 +73,8 @@ class SEAcuteRespiratoryDistressSyndromeExacerbation(SEPatientAction):
                 "  Left Lung Affected: {}").format(self._severity, self._right_lung_affected, self._left_lung_affected)
 
 class SEAcuteStress(SEPatientAction):
+    __slots__ = ["_severity"]
+
     def __init__(self):
         super().__init__()
         self._severity = None
@@ -97,6 +99,8 @@ class SEAcuteStress(SEPatientAction):
                 "  Severity: {}").format(self._severity)
 
 class SEAirwayObstruction(SEPatientAction):
+    __slots__ = ["_severity"]
+
     def __init__(self):
         super().__init__()
         self._severity = None
@@ -121,6 +125,8 @@ class SEAirwayObstruction(SEPatientAction):
                 "  Severity: {}").format(self._severity)
 
 class SEAsthmaAttack(SEPatientAction):
+    __slots__ = ["_severity"]
+
     def __init__(self):
         super().__init__()
         self._severity = None
@@ -188,6 +194,8 @@ class SEBrainInjury(SEPatientAction):
                 "  Injury Type: {}").format(self._severity, self._injury_type)
 
 class SEBronchoconstriction(SEPatientAction):
+    __slots__ = ["_severity"]
+
     def __init__(self):
         super().__init__()
         self._severity = None
@@ -601,6 +609,8 @@ class SEConsumeNutrients(SEPatientAction):
         return self._nutrition
 
 class SEDyspnea(SEPatientAction):
+    __slots__ = ["_severity"]
+
     def __init__(self):
         super().__init__()
         self._severity = None
@@ -956,6 +966,8 @@ class SEPulmonaryShuntExacerbation(SEPatientAction):
                 "  Severity: {}").format(self._severity)
 
 class SERespiratoryFatigue(SEPatientAction):
+    __slots__ = ["severity"]
+
     def __init__(self):
         super().__init__()
         self._severity = None

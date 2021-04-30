@@ -155,6 +155,33 @@ class SEScalarOverride(SEAction):
     def get_scalar_overrides(self):
         return self._scalar_override
 
+class SEAdvanceTime(SEAction):
+    __slots__ = ["_action","_time"]
+
+    def __init__(self):
+        super().__init__()
+        self._time = None
+
+    def clear(self):
+        super().clear()
+        if self._time is not None:
+            self._time.invalidate()
+
+    def is_valid(self):
+        return self.has_time()
+
+    def has_time(self):
+        return self._time is not None
+
+    def get_time(self):
+        if self._time is None:
+            self._time = SEScalarTime()
+        return self._time
+
+    def __repr__(self):
+        return ("Advance Time\n"
+                "  Time: {}").format(self._time)
+
 class SECondition(ABC):
     __slots__ = ["_comment"]
 

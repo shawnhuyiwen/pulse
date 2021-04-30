@@ -1,12 +1,11 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-
 from pulse.cpm.PulsePhysiologyEnginePool import PulsePhysiologyEnginePool
-from pulse.cdm.engine import SEDataRequestManager, SEDataRequest
+from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEAdvanceTime
 from pulse.cdm.patient import eSex, SEPatientConfiguration
 from pulse.cdm.patient_actions import SESubstanceBolus, eSubstance_Administration
-from pulse.cdm.scalars import MassPerVolumeUnit, VolumeUnit
+from pulse.cdm.scalars import MassPerVolumeUnit, TimeUnit, VolumeUnit
 
 def HowTo_PatientPool():
     pool = PulsePhysiologyEnginePool()
@@ -61,7 +60,21 @@ def HowTo_PatientPool():
         print("\n")
 
     # Advance the same amount of time for each patient
-    pool.advance_time_s(60)
+    pool.advance_time_s(5)
+
+    for p in pool.get_patients().values():
+        print("Patient "+str(p.get_id())+" values\n")
+        data_req_mgr.to_console(p.results)
+        print("\n")
+
+    # Advance different amounts of time for each patient
+    t1 = SEAdvanceTime()
+    t1.get_time().set_value(4, TimeUnit.s)
+    p1.actions.append(t1)
+    t2 = SEAdvanceTime()
+    t2.get_time().set_value(14, TimeUnit.s)
+    p2.actions.append(t2)
+    pool.process_actions()
 
     # Pull data from all the engines
     pool.pull_data()

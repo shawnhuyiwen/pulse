@@ -1,6 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+import PyPulse
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.engine import IEventHandler, ILoggerForward
 from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager, SEDataRequest
@@ -44,7 +45,10 @@ class PulsePhysiologyEnginePool:
                  "_patients"]
 
     def __init__(self, num_threads=None):
-        self._is_ready = False
+        self.__pool = PyPulse.EnginePool()
+        self._is_active = False
+        self._spare_time_s = 0
+        self._dt_s = 0.02 # self.__pool.get_timestep("s")
         self._patients = {}
 
     def log_to_console(self, b: bool):
@@ -99,8 +103,12 @@ class PulsePhysiologyEnginePool:
         pass
 
     # process the same action on all engines, is that useful?
-    #def process_action(self, SEAction):
-    #    pass
+    def process_action(self, SEAction):
+        pass
+
+    # process all the actions provided on pool patient action arrays
+    def process_actions(self):
+        pass
 
 
 

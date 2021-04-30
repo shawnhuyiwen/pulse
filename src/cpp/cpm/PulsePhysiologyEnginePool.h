@@ -8,6 +8,62 @@ See accompanying NOTICE file for details.*/
 #include "utils/ThreadPool.h"
 #include <chrono>
 
+/**
+ * An instance of Pulse where the interface is define in stl and base data types.
+ * This interface is a thunk layer using serialized cdm objects to drive a Pulse engine.
+ */
+class PULSE_DECL PulseEnginePoolThunk : public LoggerForward, public SEEventHandler
+{
+public:
+  PulseEnginePoolThunk();
+  virtual ~PulseEnginePoolThunk();
+
+  bool SerializeToFiles(std::string const& filename);
+  std::string SerializeToStrings(SerializationFormat format);
+
+  bool InitializeEngines(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format);
+
+  std::string GetInitialPatients(SerializationFormat format);
+  std::string GetConditions(SerializationFormat format);
+
+  void LogToConsole(bool b);
+  void KeepLogMessages(bool keep);// Set this to true if you are going to pull messages from the engines
+  void SetLogFilenames(std::string const& logfile);// Set to empty if no log file is wanted
+  std::string PullLogMessages(SerializationFormat format);
+
+  void KeepEventChanges(bool keep);
+  std::string PullEvents(SerializationFormat format);
+  std::string PullActiveEvents(SerializationFormat format);
+  std::string GetPatientAssessment(int type, SerializationFormat format);
+
+  bool ProcessActions(std::string const& actions, SerializationFormat format);
+  std::string PullActiveActions(SerializationFormat format);
+
+  bool AdvanceTime_s(double time);
+  double GetTimeStep(std::string const& unit);
+
+  size_t DataLength() const;
+  double* PullDataPtr();
+  void PullData(std::map<int,double>& data);
+
+  virtual void ForwardDebug(const std::string& msg, const std::string& origin);
+  virtual void ForwardInfo(const std::string& msg, const std::string& origin);
+  virtual void ForwardWarning(const std::string& msg, const std::string& origin);
+  virtual void ForwardError(const std::string& msg, const std::string& origin);
+  virtual void ForwardFatal(const std::string& msg, const std::string& origin);
+
+  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
+
+
+protected:
+  void SetupDefaultDataRequests();
+
+  PhysiologyEngine& GetPhysiologyEngine();
+private:
+  class pimpl;
+  pimpl* data;
+};
+
 // Engine ID
 using EngineCollection = std::map<uint32_t, std::unique_ptr<PulseEngine>>;
 
