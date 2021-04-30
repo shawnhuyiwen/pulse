@@ -94,6 +94,11 @@ message ActionListData
   repeated AnyActionData                                AnyAction                 = 1;
 }
 
+message EnginePoolActionListData
+{
+  map<int32, ActionListData>                            ActionList                = 1;
+}
+
 // message DataSetsData // This could hold all on disk data sets (Stabilization Criteria, Substances, Stabilization, Nutrition, Environments, ECG, patients, etc.)
 // At this point I am fine with having to have files on disk to create a new patient configuration
 
@@ -107,6 +112,26 @@ message PatientConfigurationData
   }
   ConditionListData                                     Conditions                = 4;
   repeated ScalarPropertyData                           ScalarOverride            = 5;
+}
+
+message EngineConfigurationData
+{
+  int32                                                 ID                        = 1;/**<< @brief A unique id associated with this engine, required when using pools. */
+  oneof Type
+  {
+    PatientConfigurationData                            Configuration             = 2;/**<< @brief Create an engine using a patient configuration. */
+    string                                              StateFile                 = 3;/**<< @brief Create an engine using a patient state file. */
+    string                                              State                     = 4;/**<< @brief Create an engine using a patient state.*/
+  }
+  DataRequestManagerData                                DataRequests              = 5;/**<< @brief A list of patient states for the pool to load*/
+  string                                                LogFilename               = 6;/**<< @brief Log file to create for engine. */
+  bool                                                  PullLogMessages           = 7;/**<< @brief Pull log messages from engine, used by engine pools. */
+  bool                                                  PullEvents                = 8;/**<< @brief Pull events from engine, used by engine pools. */
+}
+
+message EnginePoolConfigurationData
+{
+  repeated EngineConfigurationData                      EngineConfiguration       = 1;/**<< @brief The pool will create an engine for each provided configuration. */
 }
 
 /** @brief Static timed stabilization lengths */

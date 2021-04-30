@@ -8,6 +8,7 @@ from pulse.cdm.patient_actions import SESubstanceBolus, eSubstance_Administratio
 from pulse.cdm.scalars import MassPerVolumeUnit, TimeUnit, VolumeUnit
 
 def HowTo_PatientPool():
+    # You may also specify how many threads to use via this ctor
     pool = PulsePhysiologyEnginePool()
 
     # Tell all engines to log to console (or not)
