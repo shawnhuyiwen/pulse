@@ -2,9 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-PULSE_BIND_DECL(Inhaler)
-PULSE_BIND_DECL(ElectroCardioGram)
 PULSE_BIND_DECL(AnesthesiaMachine)
+PULSE_BIND_DECL(BagValveMask)
+PULSE_BIND_DECL(ElectroCardioGram)
+PULSE_BIND_DECL(Inhaler)
 PULSE_BIND_DECL(MechanicalVentilator)
 
 class PULSE_DECL PBPulseEquipment
@@ -15,6 +16,11 @@ public:
   static PULSE_BIND::AnesthesiaMachineData* Unload(const AnesthesiaMachine& src);
   static void Serialize(const PULSE_BIND::AnesthesiaMachineData& src, AnesthesiaMachine& dst);
   static void Serialize(const AnesthesiaMachine& src, PULSE_BIND::AnesthesiaMachineData& dst);
+
+  static void Load(const PULSE_BIND::BagValveMaskData& src, BagValveMask& dst);
+  static PULSE_BIND::BagValveMaskData* Unload(const BagValveMask& src);
+  static void Serialize(const PULSE_BIND::BagValveMaskData& src, BagValveMask& dst);
+  static void Serialize(const BagValveMask& src, PULSE_BIND::BagValveMaskData& dst);
 
   static void Load(const PULSE_BIND::ElectroCardioGramData& src, ECG& dst);
   static PULSE_BIND::ElectroCardioGramData* Unload(const ECG& src);

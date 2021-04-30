@@ -25,10 +25,9 @@ message BagValveMaskData
 {
   pulse.cdm.bind.BagValveMaskData                  Common                         = 1;
   pulse.cdm.bind.eBreathState                      CurrentBreathState             = 2;
-  double                                           CurrentInspiratoryVolume_L     = 3;
-  double                                           CurrentPeriodTime_s            = 4;
-  double                                           DriverPressure_cmH2O           = 5;
-  double                                           DriverFlow_L_Per_s             = 6;
+  double                                           CurrentPeriodTime_s            = 3;
+  double                                           SqueezeFlow_L_Per_s            = 4;
+  double                                           SqueezePressure_cmH2O          = 5;
 }
 
 message ElectroCardioGramData

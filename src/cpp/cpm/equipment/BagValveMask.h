@@ -55,10 +55,10 @@ protected:
   void SetResistances();
 
   // Serializable member variables (Set in Initialize and in schema)
-  double                m_CurrentPeriodTime_s;
-  double                m_SqueezePressure_cmH2O;
-  double                m_SqueezeFlow_L_Per_s;
   eBreathState          m_CurrentBreathState;
+  double                m_CurrentPeriodTime_s;
+  double                m_SqueezeFlow_L_Per_s;
+  double                m_SqueezePressure_cmH2O;
 
   // Stateless member variable (Set in SetUp())
   SEGasCompartment*     m_Environment;

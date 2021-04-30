@@ -100,6 +100,7 @@ bool PulseController::CreateCircuitsAndCompartments()
 
   SetupRespiratory();
   SetupAnesthesiaMachine();
+  SetupBagValveMask();
   SetupInhaler();
   SetupMechanicalVentilation();
   SetupMechanicalVentilator();

@@ -247,6 +247,10 @@ bool PBPulseState::Serialize(const PULSE_BIND::StateData& src, PulseController& 
     ss << "Missing Anesthesia Machine State" << std::endl;
   else
     PBPulseEquipment::Load(src.anesthesiamachine(), *dst.m_AnesthesiaMachine);
+  if (!src.has_bagvalvemask())
+    ss << "Missing BagValveMask State" << std::endl;
+  else
+    PBPulseEquipment::Load(src.bagvalvemask(), *dst.m_BagValveMask);
   if (!src.has_electrocardiogram())
     ss << "Missing ECG State" << std::endl;
   else
@@ -340,6 +344,7 @@ bool PBPulseState::Serialize(const PulseController& src, PULSE_BIND::StateData& 
   dst.set_allocated_tissue(PBPulsePhysiology::Unload(*src.m_TissueSystem));
   dst.set_allocated_environment(PBPulseEnvironment::Unload(*src.m_Environment));
   dst.set_allocated_anesthesiamachine(PBPulseEquipment::Unload(*src.m_AnesthesiaMachine));
+  dst.set_allocated_bagvalvemask(PBPulseEquipment::Unload(*src.m_BagValveMask));
   dst.set_allocated_electrocardiogram(PBPulseEquipment::Unload(*src.m_ECG));
   dst.set_allocated_inhaler(PBPulseEquipment::Unload(*src.m_Inhaler));
   dst.set_allocated_mechanicalventilator(PBPulseEquipment::Unload(*src.m_MechanicalVentilator));

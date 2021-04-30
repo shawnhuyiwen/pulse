@@ -768,6 +768,24 @@ SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionDat
     PBEquipmentAction::Load(any.anesthesiamachineypiecedisconnect(), *a);
     return a;
   }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kBagValveMaskConfiguration:
+  {
+    SEBagValveMaskConfiguration* a = new SEBagValveMaskConfiguration(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.bagvalvemaskconfiguration(), *a, subMgr);
+    return a;
+  }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kBagValveMaskInstantaneous:
+  {
+    SEBagValveMaskInstantaneous* a = new SEBagValveMaskInstantaneous(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.bagvalvemaskinstantaneous(), *a, subMgr);
+    return a;
+  }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kBagValveMaskSqueeze:
+  {
+    SEBagValveMaskSqueeze* a = new SEBagValveMaskSqueeze(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.bagvalvemasksqueeze(), *a, subMgr);
+    return a;
+  }
   case CDM_BIND::AnyEquipmentActionData::ActionCase::kInhalerConfiguration:
   {
     SEInhalerConfiguration* a = new SEInhalerConfiguration(subMgr.GetLogger());
@@ -781,7 +799,7 @@ SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionDat
     return a;
   }
   }
-  subMgr.Error("Unknown action type : " + any.Action_case());
+  subMgr.Error("Unknown Equipment action enum :" + std::to_string((int)any.Action_case()));
   return nullptr;
 }
 CDM_BIND::AnyEquipmentActionData* PBEquipmentAction::Unload(const SEEquipmentAction& action)
@@ -792,6 +810,27 @@ CDM_BIND::AnyEquipmentActionData* PBEquipmentAction::Unload(const SEEquipmentAct
   if (amc != nullptr)
   {
     any->set_allocated_anesthesiamachineconfiguration(PBEquipmentAction::Unload(*amc));
+    return any;
+  }
+
+  const SEBagValveMaskConfiguration* bvmc = dynamic_cast<const SEBagValveMaskConfiguration*>(&action);
+  if (bvmc != nullptr)
+  {
+    any->set_allocated_bagvalvemaskconfiguration(PBEquipmentAction::Unload(*bvmc));
+    return any;
+  }
+
+  const SEBagValveMaskInstantaneous* bvmi = dynamic_cast<const SEBagValveMaskInstantaneous*>(&action);
+  if (bvmi != nullptr)
+  {
+    any->set_allocated_bagvalvemaskinstantaneous(PBEquipmentAction::Unload(*bvmi));
+    return any;
+  }
+
+  const SEBagValveMaskSqueeze* bvms = dynamic_cast<const SEBagValveMaskSqueeze*>(&action);
+  if (bvms != nullptr)
+  {
+    any->set_allocated_bagvalvemasksqueeze(PBEquipmentAction::Unload(*bvms));
     return any;
   }
 
