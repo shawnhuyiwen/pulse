@@ -11,6 +11,8 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPatient.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
+#include "engine/SECondition.h"
+#include "engine/SEConditionManager.h"
 #include "engine/SEDataRequest.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEDecimalFormat.h"
@@ -18,11 +20,8 @@ POP_PROTO_WARNINGS()
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
 #include "engine/SETimedStabilization.h"
-#include "engine/SEDataRequest.h"
-#include "engine/SEDataRequestManager.h"
+#include "engine/SEEngineInitialization.h"
 #include "engine/SEPatientConfiguration.h"
-#include "engine/SECondition.h"
-#include "engine/SEConditionManager.h"
 #include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
 #include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 #include "patient/conditions/SEChronicAnemia.h"
@@ -409,7 +408,6 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientCon
 
   dst.set_dataroot(src.GetDataRoot());
 }
-
 
 bool PBEngine::SerializeToString(const SEPatientConfiguration& src, std::string& output, SerializationFormat m)
 {
@@ -853,5 +851,73 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SETimedStabilizati
   if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
   PBEngine::Load(data, dst);
+  return true;
+}
+
+
+void PBEngine::Load(const CDM_BIND::EngineInitializationData& src, SEEngineInitialization& dst, const SESubstanceManager& subMgr)
+{
+  dst.Clear();
+  PBEngine::Serialize(src, dst, subMgr);
+}
+void PBEngine::Serialize(const CDM_BIND::EngineInitializationData& src, SEEngineInitialization& dst, const SESubstanceManager& subMgr)
+{
+  dst.SetID(src.id());
+
+  if (!src.has_patientconfiguration())
+    PBEngine::Load(src.patientconfiguration(), dst.GetPatientConfiguration(), subMgr);
+  else if (!src.statefilename().empty())
+    dst.SetStateFilename(src.statefilename());
+  else if (!src.state().empty())
+    dst.SetState(src.state(), SerializationFormat::JSON);// TODO support binary
+
+  if (!src.has_datarequestmanager())
+    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager(), subMgr);
+
+  if (!src.logfilename().empty())
+    dst.SetLogFilename(src.logfilename());
+
+  dst.SetPullLogMessages(src.pulllogmessages());
+  dst.SetPullEvents(src.pullevents());
+}
+CDM_BIND::EngineInitializationData* PBEngine::Unload(const SEEngineInitialization& src)
+{
+  CDM_BIND::EngineInitializationData* dst = new CDM_BIND::EngineInitializationData();
+  PBEngine::Serialize(src, *dst);
+  return dst;
+}
+void PBEngine::Serialize(const SEEngineInitialization& src, CDM_BIND::EngineInitializationData& dst)
+{
+  dst.set_id(src.m_ID);
+
+  if (src.HasPatientConfiguration())
+    dst.set_allocated_patientconfiguration(PBEngine::Unload(*src.m_PatientConfiguration));
+  else if (src.HasStateFilename())
+    dst.set_statefilename(src.m_StateFilename);
+  else if (src.HasState())
+    dst.set_state(src.m_State);
+
+  if (src.HasDataRequestManager())
+    dst.set_allocated_datarequestmanager(PBEngine::Unload(*src.m_DataRequestManager));
+
+  if (src.HasLogFilename())
+    dst.set_logfilename(src.m_LogFilename);
+
+  dst.set_pulllogmessages(src.PullLogMessages());
+  dst.set_pullevents(src.PullEvents());
+}
+
+bool PBEngine::SerializeToString(const SEEngineInitialization& src, std::string& output, SerializationFormat m)
+{
+  CDM_BIND::EngineInitializationData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
+}
+bool PBEngine::SerializeFromString(const std::string& src, SEEngineInitialization& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+{
+  CDM_BIND::EngineInitializationData data;
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
+    return false;
+  PBEngine::Load(data, dst, subMgr);
   return true;
 }

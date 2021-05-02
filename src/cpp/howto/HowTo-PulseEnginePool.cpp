@@ -6,115 +6,75 @@
 #include <memory>
 
 // Include the various types you will be using in your code
-#include "patient/SEPatient.h"
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "compartment/SECompartmentManager.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
+#include "PulsePhysiologyEnginePool.h"
+#include "engine/SEAdvanceTime.h"
+#include "patient/actions/SEHemorrhage.h"
 #include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstance.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEPatientConfiguration.h"
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
 #include "properties/SEScalarTime.h"
 #include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEFunctionVolumeVsTime.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarLength.h"
 
-#include "PulsePhysiologyEnginePool.h"
 #include "utils/TimingProfile.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Creating a patient
+/// Creating many engines to be run in a thread pool
 ///
-/// \details
-/// Creating a customized patient in Pulse
 //--------------------------------------------------------------------------------------------------
 void HowToPulseEnginePool()
 {
-  size_t numEngine = 16 * 6;
+  size_t numEngine = 5;
   TimingProfile profiler;
-  double sim_time_s = 20;
+  double sim_time_s = 60;
 
-  PulsePhysiologyEnginePool pool(numEngine);
+  SEPhysiologyEnginePool pool;
+  pool.GetLogger()->LogToConsole(true);
+  pool.GetLogger()->SetLogFile("./test_results/HowToPulseEndingPool/Pool.log");
 
-  for (auto& engine : pool.getEngines())
+  pool.Info("Creating a pool with " + std::to_string(pool.GetWorkerCount()) + " workers");
+  pool.Info("Creating a pool with " + std::to_string(numEngine) + " engines");
+  for (size_t i=0; i<numEngine; i++)
   {
-      engine.first->GetLogger()->SetLogFile("./test_results/HowTo_CreateAPatient.log");
-      engine.first->GetLogger()->Info("HowTo_CreateAPatient");
+    SEPhysiologyEnginePoolEngine* e = pool.CreateEngine(i);
+    e->EngineInitialization.SetStateFilename("./states/StandardMale@0s.json");
+    e->EngineInitialization.SetLogFilename("./test_results/HowToPulseEndingPool/PoolEngine"+std::to_string(i)+".log");
   }
 
-//   std::vector<SEPatientConfiguration*> configurations;
-//   for (size_t i = 0; i < numEngine; ++i)
-//   {
-//       auto pc = new SEPatientConfiguration();
-//       SEPatient& patient = pc->GetPatient();
-//       patient.SetName("HowToCreateAPatient");
-//       patient.SetSex((i%2 == 0) ? ePatient_Sex::Male : ePatient_Sex::Female);
-//       patient.GetAge().SetValue(44, TimeUnit::yr);
-//       patient.GetWeight().SetValue(170, MassUnit::lb);
-//       patient.GetHeight().SetValue(71, LengthUnit::in);
-//       patient.GetBodyFatFraction().SetValue(0.21);
-//       patient.GetDiastolicArterialPressureBaseline().SetValue(74, PressureUnit::mmHg);
-//       patient.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
-//       patient.GetRespirationRateBaseline().SetValue(16, FrequencyUnit::Per_min);
-//       patient.GetSystolicArterialPressureBaseline().SetValue(114, PressureUnit::mmHg);
-//       configurations.push_back(pc);
-//   }
-  std::vector<std::string> filenames;
-  for (size_t i = 0; i < numEngine; ++i)
+  // Only retuns false is ALL engines do not initialize
+  // A warning will be logged if any engine could not initialize
+  if (!pool.InitializeEngines())
   {
-      filenames.push_back("./states/StandardMale@0s.json");
+    pool.Fatal("No engines were able to initialize");
+    return;
   }
 
-  if (!pool.init(filenames))
-  {
-      for (auto& engine : pool.getEngines())
-      {
-          if (!engine.second)
-          {
-              engine.first->GetLogger()->Error("Could not load state, check the error");
-          }
-      }
-  }
+  // There are 2 ways to add actions to engines
+  // You can just call Process actions on the pool engine directly
+  // The process will occur on this thread
+  // ProcessAction just copies the action
+  // This is very fast, and fine for all actions execpt SEAdvanceTime
+  // SEAdvanceTime actions advance the engine in the ProcessAction call!
+  // Since you are using a pool, you want to advance the engine in a thread
+  // So add those to the SEPhysiologyEnginePoolEngine Action vector
+  // Actions in this vector are processed in a pool thread
 
-  // Maybe this call should just return true if all succeeded and false if one or more failed 
+  // Add a hemorrhage to one engine on this thread
+  SEHemorrhage h;
+  h.GetSeverity().SetValue(0.8);
+  h.SetType(eHemorrhage_Type::External);
+  h.SetCompartment(pulse::VascularCompartment::RightLeg);
+  pool.GetEngine(0)->Engine->ProcessAction(h);
+  // Advance some time on an engine, in the thread pool
+  SEAdvanceTime adv;
+  adv.GetTime().SetValue(15, TimeUnit::s);
+  pool.GetEngine(0)->Actions.push_back(&adv);
+  pool.ProcessActions();
 
-  pool.execute([](PulseEngine* p) {
-      return true;
-      });
 
   profiler.Start("s");
-  if (!pool.advance(sim_time_s, TimeUnit::s))
-  {
-      for (auto& engine : pool.getEngines())
-      {
-          if (!engine.second)
-          {
-              engine.first->GetLogger()->Error("Advance, check the error");
-          }
-      }
-  }
-
-
+  pool.AdvanceModelTime(sim_time_s, TimeUnit::s);
   double elapsed_time_s = profiler.GetElapsedTime_s("s");
-
-  // Are we still running real time?
-  std::cout << numEngine << " (" << pool.workerCount() << " threads ), needed " << elapsed_time_s << "s to simulate " << sim_time_s << "s\n";
-
-
-
-//   for (auto c : configurations)
-//   {
-//       delete c;
-//   }
+  pool.Info("It took " + std::to_string(elapsed_time_s) + "s to simulate " + std::to_string(sim_time_s)+"s");
+  pool.Info("Engine 0 Blood Volume(mL) :"+std::to_string(pool.GetEngine(0)->Engine->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL)));
+  pool.Info("Engine 1 Blood Volume(mL) :" + std::to_string(pool.GetEngine(1)->Engine->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL)));
 }

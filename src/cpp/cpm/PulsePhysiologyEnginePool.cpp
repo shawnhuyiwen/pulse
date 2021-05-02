@@ -3,126 +3,256 @@ See accompanying NOTICE file for details.*/
 
 #include "stdafx.h"
 #include "PulsePhysiologyEnginePool.h"
-#include "SEPatientConfiguration.h"
+#include "controller/Engine.h"
+#include "engine/SEAdvanceTime.h"
+#include "engine/SEPatientConfiguration.h"
 
 namespace
 {
-  bool GatherResults(std::vector<std::future<bool>>& futures, EngineCollection& engines)
+  bool GatherResults(std::vector<std::future<bool>>& futures)
   {
-    bool result = false;
-    int i = 0;
+    bool result = true;
     for (auto& f : futures)
-    {
-        engines[i].second &= f.get();
-        result &= engines[i].second;
-        ++i;
-    }
+        result &= f.get();
     return result;
   }
 }
 
-PulsePhysiologyEnginePool::PulsePhysiologyEnginePool(size_t poolSize) :
-    m_pool(poolSize)
+SEPhysiologyEnginePoolEngine::SEPhysiologyEnginePoolEngine(Logger* logger) : Loggable(logger), EngineInitialization(logger)
 {
-  
+  Engine = CreatePulseEngine();
+  Engine->GetLogger()->LogToConsole(false);
+};
+
+SEPhysiologyEnginePool::SEPhysiologyEnginePool(size_t poolSize, Logger* logger) : Loggable(logger), m_Pool(poolSize)
+{
+  m_IsActive = false;
+}
+SEPhysiologyEnginePool::~SEPhysiologyEnginePool()
+{
+  DELETE_MAP_SECOND(m_Engines);
 }
 
-/// Blocking version of initialization
-/// returns when all engines have been initialized
-bool PulsePhysiologyEnginePool::CreateEngines(const std::vector<const SEPatientConfiguration*>& configurations)
+bool SEPhysiologyEnginePool::RemoveEngine(__int32 id)
 {
-  std::vector<std::string> states;
-  return CreateEngines(states, configurations);
+  if (m_Engines.find(id) == m_Engines.end())
+    return false;
+  m_Engines.erase(id);
+  return true;
 }
-bool PulsePhysiologyEnginePool::CreateEngines(const std::vector<std::string>& stateFilenames)
+SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::GetEngine(__int32 id) const
 {
-  std::vector<const SEPatientConfiguration*> configurations;
-  return CreateEngines(stateFilenames, configurations);
+  auto e = m_Engines.find(id);
+  if (e != m_Engines.end())
+    return e->second;
+  return nullptr;
 }
-bool PulsePhysiologyEnginePool::CreateEngines(const std::vector<std::string>& stateFilenames,
-  const std::vector<const SEPatientConfiguration*>& configurations)
+const EngineCollection& SEPhysiologyEnginePool::GetEngines() const
 {
-  if (!m_engines.empty())
+  return m_Engines;
+}
+SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::CreateEngine(__int32 id)
+{
+  if (m_IsActive)
+    throw CommonDataModelException("Engine pool has already been initialized, dynamic engine support not implemented");
+
+  auto e = m_Engines.find(id);
+  if (e != m_Engines.end())
   {
-    // We can either
-    // a. create engines in a separate 'initializings' collection
-    //    Once they have all finished loading/stabilizing, put them in the 'running' collection
-    //    This is a dynamic addition of engines to the pool
-    // b. Stop and clear out all current engines
-    //    This is consistent with PhysiologyEngineInterface, if you call Initialize/Serialize on an existing engine
-    //    It is cleared out and started a new with the provided state/configuration
-    // I would recommend implementing b. for the initial implementation of this class
+    Warning("ID " + std::to_string(id) + " already has an engine.");
+    return e->second;
+  }
+
+  SEPhysiologyEnginePoolEngine* epe = new SEPhysiologyEnginePoolEngine(m_Logger);
+  m_Engines.insert({ id, epe });
+  return epe;
+}
+
+bool SEPhysiologyEnginePool::InitializeEngines()
+{
+  if (m_IsActive)
+    throw CommonDataModelException("Engine pool has already been initialized, dynamic engine support not implemented");
+
+  if (m_Engines.empty())
+    return false;
+
+  std::vector<std::future<bool>> futures;
+  for (auto itr : m_Engines)
+  {
+    SEPhysiologyEnginePoolEngine* pe = itr.second;
+    futures.push_back(m_Pool.enqueue([pe]()
+    {
+      pe->IsActive = false;
+      PhysiologyEngine* engine = pe->Engine.get();
+      SEEngineInitialization& init = pe->EngineInitialization;
+
+      if(init.HasLogFilename())
+        engine->GetLogger()->SetLogFile(init.GetLogFilename());
+      if (init.HasPatientConfiguration())
+        pe->IsActive = engine->InitializeEngine(init.GetPatientConfiguration());
+      else if (init.HasStateFilename())
+        pe->IsActive = engine->SerializeFromFile(init.GetStateFilename());
+      else if (init.HasState())
+        pe->IsActive = engine->SerializeFromString(init.GetState(), init.GetStateFormat());
+      
+      if (!pe->IsActive)
+        pe->Warning("Engine "+std::to_string(pe->EngineInitialization.GetID())+" was unable to initialize");
+      return pe->IsActive;
+    }));
+  }
+
+  bool b = GatherResults(futures);
+  if (!b)
+  {// Are any engines ok?
+    size_t errors = 0;
+    for (auto itr : m_Engines)
+    {
+      if (!itr.second->IsActive)
+        errors++;
+    }
+    if (errors > 0)
+      Warning(std::to_string(errors) + " out of " + std::to_string(m_Engines.size()) + " failed");
+    else if (errors == m_Engines.size())
+      return false;
+  }
+  m_IsActive = true;
+  return m_IsActive;
+}
+
+bool SEPhysiologyEnginePool::AdvanceModelTime(double time, const TimeUnit& unit)
+{
+  SEAdvanceTime adv;
+  adv.GetTime().SetValue(time, unit);
+  return ProcessAction(adv);
+}
+bool SEPhysiologyEnginePool::ProcessAction(const SEAction& action)
+{
+  for (auto& itr : m_Engines)
+    itr.second->Actions.push_back(&action);
+  return ProcessActions();
+}
+bool SEPhysiologyEnginePool::ProcessActions()
+{
+  if (!m_IsActive)
+  {
+    Error("Engine pool is not active");
     return false;
   }
 
-  for (size_t i = 0; i < stateFilenames.size() + configurations.size(); ++i)
-  {
-    m_engines.push_back({ std::make_unique<PulseEngine>(), false });
-  }
-
   std::vector<std::future<bool>> futures;
-  for (size_t i = 0; i < m_engines.size(); ++i)
+  for (auto itr : m_Engines)
   {
-    auto engine = m_engines[i].first.get();
-    auto file = stateFilenames[i];
-    futures.push_back(m_pool.enqueue([engine, file]() {
-      return engine->SerializeFromFile(file); }));
-  }
-  for (size_t i = 0; i < m_engines.size(); ++i)
-  {
-    auto engine = m_engines[i].first.get();
-    auto config = configurations[i];
-    futures.push_back(m_pool.enqueue([engine, config]() {
-      return engine->InitializeEngine(*config); }));
-  }
-
-  return GatherResults(futures, m_engines);
-}
-
-bool PulsePhysiologyEnginePool::AdvanceModelTime(double time, const TimeUnit& unit)
-{
-    return Execute([time, unit](auto engine) {return engine->AdvanceModelTime(time, unit); });
-}
-
-bool PulsePhysiologyEnginePool::Execute(std::function<bool(PulseEngine*)> f)
-{
-  std::vector<std::future<bool>> futures;
-  std::for_each(m_engines.begin(), m_engines.end(),
-    [&f, &futures, this](const auto& item)
+    SEPhysiologyEnginePoolEngine* pe = itr.second;
+    if (!pe->IsActive)
     {
-        if (item.second)
-          futures.push_back(m_pool.enqueue(f, item.first.get()));
+      pe->Actions.clear();
+      continue;
     }
-  );
 
-  return GatherResults(futures, m_engines);
+    futures.push_back(m_Pool.enqueue([pe]()
+    {
+      bool f = true;
+      for (const SEAction* a : pe->Actions)
+        f &= pe->Engine->ProcessAction(*a);
+      pe->Actions.clear();
+      return f;
+    }));
+  }
+  return  GatherResults(futures);
 }
 
-const EngineCollection& PulsePhysiologyEnginePool::GetEngines()
+PhysiologyEnginePoolThunk::PhysiologyEnginePoolThunk()
 {
-  return m_engines;
+
 }
+PhysiologyEnginePoolThunk::~PhysiologyEnginePoolThunk()
+{
+
+}
+
+double PhysiologyEnginePoolThunk::GetTimeStep(std::string const& unit)
+{
+  return 0.02;
+}
+
+bool PhysiologyEnginePoolThunk::InitializeEngines(std::string const& engine_initialization, SerializationFormat format)
+{
+  return false;
+}
+
+bool PhysiologyEnginePoolThunk::RemoveEngine(__int32 id)
+{
+  return false;
+}
+
+bool PhysiologyEnginePoolThunk::ProcessActions(std::string const& actions, SerializationFormat format)
+{
+  return false;
+}
+
+size_t PhysiologyEnginePoolThunk::DataLength() const
+{
+  return 0;
+}
+double* PhysiologyEnginePoolThunk::PullDataPtr()
+{
+  return nullptr;
+}
+void PhysiologyEnginePoolThunk::PullData(std::map<int, double>& d)
+{
+
+}
+
+void PhysiologyEnginePoolThunk::ForwardDebug(const std::string& msg, const std::string& origin)
+{
+
+}
+void PhysiologyEnginePoolThunk::ForwardInfo(const std::string& msg, const std::string& origin)
+{
+
+}
+void PhysiologyEnginePoolThunk::ForwardWarning(const std::string& msg, const std::string& origin)
+{
+
+}
+void PhysiologyEnginePoolThunk::ForwardError(const std::string& msg, const std::string& origin)
+{
+
+}
+void PhysiologyEnginePoolThunk::ForwardFatal(const std::string& msg, const std::string& origin)
+{
+
+}
+
+void PhysiologyEnginePoolThunk::HandleEvent(eEvent type, bool active, const SEScalarTime* time)
+{
+
+}
+
+void PhysiologyEnginePoolThunk::SetupDefaultDataRequests()
+{
+
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////
 // Simulation Implementation
 ///
 
+/**
+PulseEngineSimPool::PulseEngineSimPool(size_t poolSize) :
+    m_pool(poolSize)
+{
+}
 
-//PulseEngineSimPool::PulseEngineSimPool(size_t poolSize) :
-//    m_pool(poolSize)
-//{
-//}
-//
-//std::shared_ptr<EngineRunner> PulseEngineSimPool::add(std::string patientFile)
-//{
-//    auto engine = std::make_shared<PulseEngine>();
-//    if (engine->SerializeFromFile(patientFile)) {
-//        return std::make_shared<EngineRunner>(engine);
-//    }
-//    return nullptr;
-//}
-
-
+std::shared_ptr<EngineRunner> PulseEngineSimPool::add(std::string patientFile)
+{
+    auto engine = std::make_shared<PulseEngine>();
+    if (engine->SerializeFromFile(patientFile)) {
+        return std::make_shared<EngineRunner>(engine);
+    }
+    return nullptr;
+}
 
 EngineRunner::EngineRunner(std::shared_ptr<PulseEngine> engine) :
     m_engine(engine),
@@ -155,3 +285,4 @@ void EngineRunner::doNext(std::function<bool(PulseEngine*)> f)
     std::lock_guard<std::mutex> lock(m_callbackMutex);
     m_callbacks.push_back(f);
 }
+*/

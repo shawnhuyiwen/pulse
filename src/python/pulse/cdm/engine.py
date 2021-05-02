@@ -514,6 +514,46 @@ class SEDataRequestManager:
         for key in data_values:
             print("{}={}".format(key, data_values[key]))
 
+class SEEngineInitialization():
+    __slots__ = ["id", "patient_configuration", "state_filename",
+                 "state", "data_request_mgr", "pull_events",
+                 "log_to_console", "log_filename", "pull_log_messages" ]
+
+    def __init__(self):
+        self.id = None
+        self.patient_configuration = None
+        self.state_filename = None
+        self.state = None
+        self.data_request_mgr = None
+        self.log_filename = ""
+        self.log_to_console = False
+        self.pull_events = False
+        self.pull_log_messages = False
+
+class SEEnginePoolEngine:
+    __slots__ = ["is_active",
+                 "engine_initialization",
+                 "initial_patient",
+                 "actions",
+                 "active_events",
+                 "event_handler",
+                 "log_forward",
+                 "results",
+                 "_results_template"]
+
+    def __init__(self):
+        self.is_active = False
+        self.engine_initialization = SEEngineInitialization()
+        self.actions = []
+        self.active_events = []
+        self.log_forward = None
+        self.event_handler = None
+        self.results = {}
+        self._results_template = {}
+
+    def get_id(self):
+        return self.engine_initialization.id
+
 class ILoggerForward():
     def __init__(self):
         pass

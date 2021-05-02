@@ -66,6 +66,7 @@ add_library_ex(CommonDataModel
     engine/SEDynamicStabilizationLedger.h
     engine/SEDynamicStabilizationPropertyConvergence.h
     engine/SEEngineConfiguration.h
+    engine/SEEngineInitialization.h
     engine/SEEngineStabilization.h
     engine/SEEngineTracker.h
     engine/SEEnvironmentActionCollection.h
@@ -391,6 +392,7 @@ add_library_ex(CommonDataModel
     engine/SEDynamicStabilizationEngineConvergence.cpp
     engine/SEDynamicStabilizationLedger.cpp
     engine/SEDynamicStabilizationPropertyConvergence.cpp
+    engine/SEEngineInitialization.cpp
     engine/SEEngineStabilization.cpp
     engine/SEEngineTracker.cpp
     engine/SEEnvironmentActionCollection.cpp

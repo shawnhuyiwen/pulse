@@ -4,47 +4,85 @@ See accompanying NOTICE file for details.*/
 #pragma once
 
 #include "CommonDataModel.h"
-#include "controller/Engine.h"
 #include "utils/ThreadPool.h"
 #include <chrono>
+
+#include "engine/SEEngineInitialization.h"
+
+// TODO Template these class and move to CDM
+// (Template is the PhysiologEngine type)
+
+class SEPhysiologyEnginePoolEngine : public Loggable
+{
+  friend class SEPhysiologyEnginePool;
+  friend class SEPhysiologyEnginePoolThunk;
+protected:
+  SEPhysiologyEnginePoolEngine(Logger* logger = nullptr);
+
+public:
+  ~SEPhysiologyEnginePoolEngine() = default;
+
+  bool                              IsActive=false;
+  SEEngineInitialization            EngineInitialization;
+  std::vector<const SEAction*>      Actions;
+  std::unique_ptr<PhysiologyEngine> Engine;
+};
+using EngineCollection = std::map<__int32, SEPhysiologyEnginePoolEngine*>;
+
+class SEPhysiologyEnginePool : public Loggable
+{
+public:
+  SEPhysiologyEnginePool(size_t poolSize = std::thread::hardware_concurrency(), Logger* logger = nullptr);
+  ~SEPhysiologyEnginePool();
+
+  const size_t GetWorkerCount() const { return m_Pool.workerCount(); }
+
+  bool RemoveEngine(__int32 id);
+  const EngineCollection& GetEngines() const;
+  SEPhysiologyEnginePoolEngine* GetEngine(__int32 id) const;
+  SEPhysiologyEnginePoolEngine* CreateEngine(__int32 id);
+
+  bool InitializeEngines();
+
+  // Advance all engines the same amount of time
+  // If you want to advance individual engines/different times
+  // Add an SEAdvanceTime action to the SEPhysiologyEnginePoolEngine Actions vector
+  bool AdvanceModelTime(double time, const TimeUnit& unit);
+
+  // Process the same action on all engines
+  bool ProcessAction(const SEAction& action);
+
+  // Process all the actions on each engine pool engine
+  bool ProcessActions();
+
+
+protected:
+  bool m_IsActive;
+  EngineCollection m_Engines;
+  ThreadPool m_Pool;
+};
 
 /**
  * An instance of Pulse where the interface is define in stl and base data types.
  * This interface is a thunk layer using serialized cdm objects to drive a Pulse engine.
  */
-class PULSE_DECL PulseEnginePoolThunk : public LoggerForward, public SEEventHandler
+class PULSE_DECL PhysiologyEnginePoolThunk : public LoggerForward, public SEEventHandler
 {
 public:
-  PulseEnginePoolThunk();
-  virtual ~PulseEnginePoolThunk();
+  PhysiologyEnginePoolThunk();
+  virtual ~PhysiologyEnginePoolThunk();
 
-  bool SerializeToFiles(std::string const& filename);
-  std::string SerializeToStrings(SerializationFormat format);
+  double GetTimeStep(std::string const& unit);
 
-  bool InitializeEngines(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format);
+  bool InitializeEngines(std::string const& engine_initialization, SerializationFormat format);
 
-  std::string GetInitialPatients(SerializationFormat format);
-  std::string GetConditions(SerializationFormat format);
-
-  void LogToConsole(bool b);
-  void KeepLogMessages(bool keep);// Set this to true if you are going to pull messages from the engines
-  void SetLogFilenames(std::string const& logfile);// Set to empty if no log file is wanted
-  std::string PullLogMessages(SerializationFormat format);
-
-  void KeepEventChanges(bool keep);
-  std::string PullEvents(SerializationFormat format);
-  std::string PullActiveEvents(SerializationFormat format);
-  std::string GetPatientAssessment(int type, SerializationFormat format);
+  bool RemoveEngine(__int32 id);
 
   bool ProcessActions(std::string const& actions, SerializationFormat format);
-  std::string PullActiveActions(SerializationFormat format);
-
-  bool AdvanceTime_s(double time);
-  double GetTimeStep(std::string const& unit);
 
   size_t DataLength() const;
   double* PullDataPtr();
-  void PullData(std::map<int,double>& data);
+  void PullData(std::map<__int32, double>& d);
 
   virtual void ForwardDebug(const std::string& msg, const std::string& origin);
   virtual void ForwardInfo(const std::string& msg, const std::string& origin);
@@ -54,51 +92,16 @@ public:
 
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
 
-
 protected:
   void SetupDefaultDataRequests();
 
-  PhysiologyEngine& GetPhysiologyEngine();
 private:
   class pimpl;
   pimpl* data;
 };
 
-// Engine ID
-using EngineCollection = std::map<uint32_t, std::unique_ptr<PulseEngine>>;
 
-class PulsePhysiologyEnginePool
-{
-public:
-    PulsePhysiologyEnginePool(size_t poolSize = std::thread::hardware_concurrency());
-    const size_t GetWorkerCount() const { return m_pool.workerCount(); }
-
-    bool SerializeFromFile(const std::map<uint32_t, std::string>& stateFilenames);
-    bool SerializeToFile(const std::map<uint32_t, std::string>& stateFilenames);
-
-    bool SerializeFromString(const std::map<uint32_t, std::string>& states);
-    bool SerializeToFile(SerializationFormat format, std::map<uint32_t, std::string>& states);
-
-    bool InitializeEngine(const std::map<uint32_t, SEPatientConfiguration>& configurations);
-
-    bool GetInitialPatient(SerializationFormat format, std::map<uint32_t, std::string>& states);
-    bool GetConditions(SerializationFormat format, std::map<uint32_t, std::string>& states);
-
-    bool AdvanceModelTime(const std::map<uint32_t, double>& times, const TimeUnit& unit);
-
-    bool AdvanceModelTime(const std::map<uint32_t,double>& times, const TimeUnit& unit);
-
-
-    const EngineCollection& GetEngines();
-
-private:
-
-  bool Execute(std::function<bool(PulseEngine*)> f);
-
-  EngineCollection m_engines;
-  ThreadPool m_pool;
-};
-
+/**
 class EngineRunner
 {
 public:
@@ -146,3 +149,4 @@ private:
 
     std::shared_ptr<PulseEngine> m_engine;
 };
+*/

@@ -2,112 +2,106 @@
 # See accompanying NOTICE file for details.
 
 import PyPulse
-from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cdm.engine import IEventHandler, ILoggerForward
-from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager, SEDataRequest
+from pulse.cdm.engine import SEEngineInitialization, SEEnginePoolEngine, \
+                             SEAction, SEAdvanceTime, eSerializationFormat
 
-class PulsePhysiologyEnginePoolPatient:
-    __slots__ = ["_id", "_is_active",
-                 "actions",
-                 "active_events",
-                 "data_request_mgr",
-                 "results",
-                 "patient_configuration",
-                 "initial_patient",
-                 "state_filename",
-                 "event_handler",
-                 "log_to_console",
-                 "log_forward",
-                 "log_filename",
-                 "_results_template"]
+from pulse.cdm.io.engine import serialize_engine_initializations_to_string, \
+                                serialize_engine_pool_result_list_from_string, \
+                                serialize_engine_pool_actions_to_string
 
-    def __init__(self, id: int):
-        self.id = id
-        self.is_active = False
-        self.actions = []
-        self.log_forward = None
-        self.log_filename = None
-        self.log_to_console = False
-        self.event_handler = None
-        self.results = {}
-        self._results_template = {}
-        self.patient_configuration = None
-        self.state_filename = None
-
-    def get_id(self):
-        return self._id
-    def is_active(self):
-        return self._is_active
+from pulse.cdm.scalars import TimeUnit
 
 class PulsePhysiologyEnginePool:
     __slots__ = ["__pool", "_is_active",
                  "_dt_s", "_spare_time_s",
-                 "_patients"]
+                 "_engines"]
 
     def __init__(self, num_threads=None):
         self.__pool = PyPulse.EnginePool()
         self._is_active = False
         self._spare_time_s = 0
         self._dt_s = 0.02 # self.__pool.get_timestep("s")
-        self._patients = {}
+        self._engines = {}
 
-    def log_to_console(self, b: bool):
-        pass
-
-    def create_patient(self, id :int):
+    def append_engine(self, engine: SEEngineInitialization):
         if self._is_active:
+            # TODO consider dynamic addition later
             raise Exception("Engine pool has already been initialized")
-        if id in self._patients.keys():
-            raise Exception("Engine pool already has patient id "+str(id))
-        pp = PulsePhysiologyEnginePoolPatient(id)
-        self._patients[id] = pp
-        return pp
+        if engine.id in self._engines.keys():
+            raise Exception("Engine pool already has patient id "+str(engine.id))
+        pool_engine = SEEnginePoolEngine()
+        pool_engine.engine_initialization = engine
+        self._engines[engine.id] = pool_engine
+        return pool_engine
 
     def initialize_engines(self):
         if self._is_active:
             raise Exception("Engine pool has already been initialized")
+        ec = []
+        for e in self._engines.values():
+            ec.append(e.engine_initialization)
+        json = serialize_engine_initializations_to_string(ec, eSerializationFormat.JSON)
+        result_json = self.__pool.initialize_engines(json, eSerializationFormat.JSON)
+        serialize_engine_pool_result_list_from_string(result_json, self._engines, eSerializationFormat.JSON)
+        # TODO if at least 1 engine is active, we are good!
+        for e in self._engines.values():
+            e.is_active = True # TODO assume we are good until comms are hooked up
+        self._is_active = True
+        return True
 
-        #self.__pool.keep_event_changes( self._event_handler is not None )
-        #self.__pool.keep_log_messages( self._log_forward is not None )
-        return False
+    def get_engines(self):
+        return self._engines
 
-    def get_patients(self):
-        return self._patients
+    def get_engine(self, id: int):
+        if id not in self._engines.keys():
+            raise Exception("Engine id "+str(id)+", does not exist")
+        return self._engines[id]
 
-    def serialize_to_strings(self):
+    def remove_engine(self, id: int):
+        self.__pool.remove_engine(id)
+        del self._engines[id]
+
+    def serialize_engines_to_strings(self):
         if not self._is_active:
             raise Exception("Engine pool is not initialized")
+        raise Exception("Not implemented")
 
-    def serialize_to_files(self):
+    def serialize_engines_to_files(self):
         if not self._is_active:
             raise Exception("Engine pool is not initialized")
+        raise Exception("Not implemented")
 
     def get_initial_patients(self):
         if not self._is_active:
             raise Exception("Engine pool is not initialized")
-
-    # Will consider dynamic addition later
-    #def add_engine(self, patient_configurations: SEPatientConfiguration):
-    #    pass
-    # Will consider dynamic removal later
-    #def remove_engine(self, id: int):
-    #    pass
+        raise Exception("Not implemented")
 
     def advance_time_s(self, duration_s: float):
-        pass
+        adv = SEAdvanceTime()
+        adv.get_time().set_value(duration_s, TimeUnit.s)
+        self.process_action(adv)
 
-    def pull_data(self):
-        pass
+    # process the same action on all engines
+    def process_action(self, a: SEAction):
+        for e in self._engines:
+            if e.is_active:
+                e.actions.append(a)
+        self.process_actions()
 
-    def pull_active_events(self):
-        pass
-
-    # process the same action on all engines, is that useful?
-    def process_action(self, SEAction):
-        pass
-
-    # process all the actions provided on pool patient action arrays
+    # process all the actions provided on each pool engine action array
     def process_actions(self):
+        json = serialize_engine_pool_actions_to_string(self._engines.values(), eSerializationFormat.JSON)
+        self.__pool.process_actions(json, eSerializationFormat.JSON)
+        print(json)
+        for e in self._engines.values():
+            for a in e.actions:
+                if isinstance(a, SEAdvanceTime):
+                    self._pull_data()
+                    return
+
+    def _pull_data(self):
+        # result_json = self.__pool.pull_data(json, eSerializationFormat.JSON)
+        # serialize_engine_pool_result_list_from_string("", self._engines, eSerializationFormat.JSON)
         pass
 
 

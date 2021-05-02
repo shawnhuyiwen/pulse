@@ -189,6 +189,8 @@ class PulsePhysiologyEngine:
     def process_actions(self, actions: []):
         if not self._is_ready:
             return False
+        if len(actions) == 0:
+            return True
         json = serialize_actions_to_string(actions,eSerializationFormat.JSON)
         #print(json)
         self.__pulse.process_actions(json,PyPulse.serialization_format.json)

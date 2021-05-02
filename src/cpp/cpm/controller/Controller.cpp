@@ -32,6 +32,7 @@
 #include "engine/SEActionManager.h"
 #include "engine/SEEngineTracker.h"
 #include "engine/SEDataRequestManager.h"
+#include "engine/SEAdvanceTime.h"
 #include "engine/SESerializeState.h"
 #include "engine/SEOverrides.h"
 #include "engine/SEEventManager.h"
@@ -739,6 +740,10 @@ bool PulseController::ProcessAction(const SEAction& action)
     return false;
   m_ss << "[Action] " << m_SimulationTime << ", " << action;
   Info(m_ss);
+
+  const SEAdvanceTime* adv = dynamic_cast<const SEAdvanceTime*>(&action);
+  if(adv != nullptr)
+    return AdvanceModelTime(adv->GetTime(TimeUnit::s), TimeUnit::s);
 
   const SESerializeState* serialize = dynamic_cast<const SESerializeState*>(&action);
   if (serialize != nullptr)

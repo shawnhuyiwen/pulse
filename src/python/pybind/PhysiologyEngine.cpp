@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "PulsePhysiologyEngine.h"
+#include "PulsePhysiologyEnginePool.h"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
@@ -36,5 +37,22 @@ void PhysiologyEngine(py::module &m)
        // If we need to, we can not copy, and send a buffer info description
        return py::array(t.DataLength(), r);
      })
+    ;
+}
+
+void PhysiologyEnginePool(py::module& m)
+{
+  py::class_<PhysiologyEnginePoolThunk>(m, "EnginePool", py::buffer_protocol())
+    .def(py::init<>())
+    .def("initialize_engines", &PhysiologyEnginePoolThunk::InitializeEngines)
+    .def("remove_engine", &PhysiologyEnginePoolThunk::RemoveEngine)
+    .def("process_actions", &PhysiologyEnginePoolThunk::ProcessActions)
+    .def("get_timestep", &PhysiologyEnginePoolThunk::GetTimeStep)
+    .def("pull_data", [](PhysiologyEnginePoolThunk& t) -> py::array {
+    double* r = t.PullDataPtr();
+    // This is a copy, but it's pretty small
+    // If we need to, we can not copy, and send a buffer info description
+    return py::array(t.DataLength(), r);
+  })
     ;
 }
