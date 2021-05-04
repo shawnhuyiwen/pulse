@@ -49,25 +49,25 @@ double SEPhysiologyEnginePool::GetTimeStep(const TimeUnit& unit)
   return Convert(0.02, TimeUnit::s, unit);
 }
 
-bool SEPhysiologyEnginePool::RemoveEngine(__int32 id)
+bool SEPhysiologyEnginePool::RemoveEngine(int id)
 {
   if (m_Engines.find(id) == m_Engines.end())
     return false;
   m_Engines.erase(id);
   return true;
 }
-SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::GetEngine(__int32 id) const
+SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::GetEngine(int id) const
 {
   auto e = m_Engines.find(id);
   if (e != m_Engines.end())
     return e->second;
   return nullptr;
 }
-const std::map<__int32, SEPhysiologyEnginePoolEngine*>& SEPhysiologyEnginePool::GetEngines() const
+const std::map<int, SEPhysiologyEnginePoolEngine*>& SEPhysiologyEnginePool::GetEngines() const
 {
   return m_Engines;
 }
-SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::CreateEngine(__int32 id)
+SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::CreateEngine(int id)
 {
   if (m_IsActive)
     throw CommonDataModelException("Engine pool has already been initialized, dynamic engine support not implemented");
@@ -226,7 +226,7 @@ public:
   }
 
   SEPhysiologyEnginePool pool;
-  std::map<__int32, std::vector<const SEAction*>> actionMap;
+  std::map<int, std::vector<const SEAction*>> actionMap;
   std::vector<SEDataRequested*> dataRequested;
 };
 PhysiologyEnginePoolThunk::PhysiologyEnginePoolThunk(size_t poolSize, const std::string& dataDir)
@@ -266,7 +266,7 @@ bool PhysiologyEnginePoolThunk::InitializeEngines(std::string const& engineIniti
   return data->pool.InitializeEngines();
 }
 
-bool PhysiologyEnginePoolThunk::RemoveEngine(__int32 id)
+bool PhysiologyEnginePoolThunk::RemoveEngine(int id)
 {
   return data->pool.RemoveEngine(id);
 }

@@ -677,7 +677,7 @@ void PBEngine::Serialize(const CDM_BIND::ActionListData& src, std::vector<SEActi
   }
 }
 
-bool PBEngine::SerializeFromString(const std::string& src, std::map<__int32, std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, std::map<int, std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::ActionMapData data;
   if (!PBUtils::SerializeFromString(src, data, m, subMgr.GetLogger()))
@@ -685,11 +685,11 @@ bool PBEngine::SerializeFromString(const std::string& src, std::map<__int32, std
   PBEngine::Load(data, dst, subMgr);
   return true;
 }
-void PBEngine::Load(const CDM_BIND::ActionMapData& src, std::map<__int32, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr)
+void PBEngine::Load(const CDM_BIND::ActionMapData& src, std::map<int, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr)
 {
   PBEngine::Serialize(src, dst, subMgr);
 }
-void PBEngine::Serialize(const CDM_BIND::ActionMapData& src, std::map<__int32, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr)
+void PBEngine::Serialize(const CDM_BIND::ActionMapData& src, std::map<int, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr)
 {
   dst.clear();
   for (auto& itr : src.actionmap())

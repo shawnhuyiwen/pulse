@@ -56,11 +56,11 @@ bool SEEngineInitialization::IsValid() const
   return (HasPatientConfiguration() || HasStateFilename() || HasState());
 }
 
-__int32 SEEngineInitialization::GetID() const
+int SEEngineInitialization::GetID() const
 {
   return m_ID;
 }
-void SEEngineInitialization::SetID(__int32 id)
+void SEEngineInitialization::SetID(int id)
 {
   m_ID = id;
 }

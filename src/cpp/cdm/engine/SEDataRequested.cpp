@@ -46,11 +46,11 @@ void SEDataRequested::Clear()
   m_LogMessages.Clear();
 }
 
-__int32 SEDataRequested::GetID() const
+int SEDataRequested::GetID() const
 {
   return m_ID;
 }
-void SEDataRequested::SetID(__int32 id)
+void SEDataRequested::SetID(int id)
 {
   m_ID = id;
 }

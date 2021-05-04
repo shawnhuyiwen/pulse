@@ -41,10 +41,10 @@ public:
   double GetTimeStep(const TimeUnit& unit);
   const size_t GetWorkerCount() const { return m_Pool.workerCount(); }
 
-  bool RemoveEngine(__int32 id);
-  const std::map<__int32, SEPhysiologyEnginePoolEngine*>& GetEngines() const;
-  SEPhysiologyEnginePoolEngine* GetEngine(__int32 id) const;
-  SEPhysiologyEnginePoolEngine* CreateEngine(__int32 id);
+  bool RemoveEngine(int id);
+  const std::map<int, SEPhysiologyEnginePoolEngine*>& GetEngines() const;
+  SEPhysiologyEnginePoolEngine* GetEngine(int id) const;
+  SEPhysiologyEnginePoolEngine* CreateEngine(int id);
 
   bool InitializeEngines();
 
@@ -66,7 +66,7 @@ public:
 protected:
   bool m_IsActive;
   SESubstanceManager m_SubMgr;
-  std::map<__int32, SEPhysiologyEnginePoolEngine*> m_Engines;
+  std::map<int, SEPhysiologyEnginePoolEngine*> m_Engines;
   ThreadPool m_Pool;
 };
 
@@ -84,7 +84,7 @@ public:
 
   bool InitializeEngines(std::string const& engineInitializationList, SerializationFormat format);
 
-  bool RemoveEngine(__int32 id);
+  bool RemoveEngine(int id);
 
   bool ProcessActions(std::string const& actions, SerializationFormat format);
 

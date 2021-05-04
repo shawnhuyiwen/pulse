@@ -67,9 +67,9 @@ public:
   static void Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
   static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
-  static void Load(const CDM_BIND::ActionMapData& src, std::map<__int32, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr);
-  static void Serialize(const CDM_BIND::ActionMapData& src, std::map<__int32, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr);
-  static bool SerializeFromString(const std::string& src, std::map<__int32,std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static void Load(const CDM_BIND::ActionMapData& src, std::map<int, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const CDM_BIND::ActionMapData& src, std::map<int, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::map<int,std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
   static bool SerializeToString(const SEActionManager& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const SEActionManager& src, const std::string& filename);
@@ -82,7 +82,7 @@ public:
   static void Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& dst);
   static void Copy(const SEDataRequest& src, SEDataRequest& dst);
 
-  CDM_BIND::DataRequestedData* PBEngine::Unload(const SEDataRequested& src);
+  CDM_BIND::DataRequestedData* Unload(const SEDataRequested& src);
   static void Serialize(const SEDataRequested& src, CDM_BIND::DataRequestedData& dst);
   static bool SerializeToString(const SEDataRequested& src, std::string& dst, SerializationFormat m);
   static void Serialize(const std::vector<SEDataRequested*>& src, CDM_BIND::DataRequestedListData& dst);

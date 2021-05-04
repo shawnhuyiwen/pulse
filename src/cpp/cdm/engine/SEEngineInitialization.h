@@ -25,8 +25,8 @@ public:
 
   virtual bool IsValid()const;
 
-  virtual __int32 GetID() const;
-  virtual void SetID(__int32 id);
+  virtual int GetID() const;
+  virtual void SetID(int id);
 
   virtual bool HasPatientConfiguration() const;
   virtual SEPatientConfiguration& GetPatientConfiguration();
@@ -56,7 +56,7 @@ public:
   virtual void KeepEventChanges(bool b);
 
 protected:
-  __int32                         m_ID;
+  int                             m_ID;
   SEPatientConfiguration*         m_PatientConfiguration;
   std::string                     m_StateFilename;
   std::string                     m_State;

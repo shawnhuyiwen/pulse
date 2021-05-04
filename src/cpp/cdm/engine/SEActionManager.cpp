@@ -63,7 +63,7 @@ bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SE
 {
   return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }
-bool SEActionManager::SerializeFromString(const std::string& src, std::map<__int32,std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEActionManager::SerializeFromString(const std::string& src, std::map<int,std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }

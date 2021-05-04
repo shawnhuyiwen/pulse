@@ -23,8 +23,8 @@ public:
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   static bool SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, SerializationFormat m);
 
-  virtual __int32 GetID() const;
-  virtual void SetID(__int32 id);
+  virtual int GetID() const;
+  virtual void SetID(int id);
 
   virtual bool IsActive() const;// Set when an Error or Fatal has been loggged
   virtual void SetIsActive(bool b);
@@ -49,7 +49,7 @@ public:
   void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
 
 protected:
-  __int32                         m_ID;
+  int                             m_ID;
   bool                            m_IsActive;
   std::vector<double>             m_Values;
   bool                            m_KeepEventChanges;
