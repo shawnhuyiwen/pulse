@@ -11,6 +11,8 @@ Please let us know if you have a publication you would like added to this list b
 Note that some of the publications prior to 2018 focus on the physiology engine precursor, %BioGears. Authors Clipp, Webb, and Bray have transitioned to the Pulse team.
 
 Pulse Publications:
+- Clipp, R. B. P., Bray, A., Feiger, Bradley, P., Qureshi, Umar M., P., & Webb, J. B. "Recent Advances in the Pulse Physiology Engine." SIAM Conference on Computational Science and Engineering (CSE21) 2021.
+- Aaron Bray. "Pulse Physiology Engine: An Interactive Human Physiology Simulator." JupyterCon. 2020 https://cfp.jupytercon.com/2020/schedule/presentation/101/pulse-physiology-engine-an-interactive-human-physiology-simulator/
 - Rachel B. Clipp, PhD, Aaron Bray, and Jeffrey B. Webb. "An Integrated Model for Hemorrhagic Shock and Fluid Resuscitation." Military Health System Research Symposium (MHSRS). 2020.
 - Jeffrey B. Webb, Aaron Bray, Philip K. Asare, Rachel B. Clipp, Yatin B. Mehta, Sudheer Penupolu, Aalpen A. Patel, S. Mark Poler. "Computational Simulation to Assess Patient Safety of Uncompensated COVID-19 Two-patient Ventilator Sharing Using the Pulse Physiology Engine." PLoS ONE. 2020. https://doi.org/10.1371/journal.pone.0242532
 - Jeffrey B. Webb, Aaron Bray, and Rachel B. Clipp. "Parameterization of Respiratory Physiology and Pathophysiology for Real-Time Simulation." 42nd Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC'20). 2020. https://doi.org/10.1109/EMBC44109.2020.9176364

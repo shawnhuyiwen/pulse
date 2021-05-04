@@ -1,4 +1,4 @@
-Version 3.0.0 {#version}
+Version 3.2.0 {#version}
 =============
 
 Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
@@ -10,6 +10,58 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
 
 - - -
+
+## Pulse v3.2.0 (May 2021)
+
+- Software Architecture Improvements
+  - Support and examples for defining complex, scenario specific death state logic
+  - Support using a dynamic time step provided by users
+  - Improved interface for scenario execution
+    - Now available to run scenarios from C# and Java
+    - Provide batch utilities to organize and execute scenarios that generate application specific states
+  - Added serialization testing support to V&V suite
+    - Now testing serialization of all actions
+      - Fixed many bugs related to missing action state between loading
+    - Improvements for reusing engine to stabilize new patients
+  - Support C#,Java to query active actions, and conditions after loading a state
+  - Add support to create data requests for action data and enum properties
+  - Improved patient loading logic
+  - Improved error handling and logging
+    - Can add more than one log listener now
+  - Cleaning compiler warnings and unused variables
+  - Java module support
+- Physiology Model Improvements
+  - Improved %Respiratory System Validation
+    - Added expiratory sinusoid curve for muscle driver
+    - Improve I/E ration validation (including obstructive I/E ratio)
+    - Improved interface to easily switch between various airway management equipment
+    - Improved Pulmonary Shunting
+  - Improved Mechanical Ventilator Equipment Validation
+  - Improvements to various actions
+    - Ability to create extremely cold environments
+    - Added more data associated with hemorrhages
+      - Expose flows per hemorrhage and total flow
+      - Expose blood lost volume per hemorrhage and total blood lost
+
+
+## Pulse v3.1.0 (December 2020)
+
+- Added Severity/Resistance Hemorrhage model
+- Black Box support for integration of external engines with Pulse circuits
+- Configuration Actions Update
+- Added (optional) Administration Time to Bolus Injection Action
+- Update/Fix Supplemental Oxygen
+- Update exception handling in Java
+- Improved C++ memory management
+- Improvements to C++ architecture to allow fully customized engines
+- Optimizations and Improvements to Data Requests, Plotting, and Reporting
+- Improvements to support more platforms:
+  - Android ARMv7a
+  - Android ARMv8a
+  - WinAMR64 (HoloLens 2)
+  - Magic Leap's Lumin OS
+  - Many Linux
+
 
 ## Pulse v3.0.0 (July 2020)
 
