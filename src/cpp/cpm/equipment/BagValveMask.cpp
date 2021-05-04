@@ -11,6 +11,7 @@
 #include "PulseConfiguration.h"
 #include "patient/actions/SEIntubation.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
 #include "engine/SEActionManager.h"
 #include "engine/SEEquipmentActionCollection.h"
 #include "engine/SEPatientActionCollection.h"
@@ -114,7 +115,7 @@ void BagValveMask::StateChange()
   if (m_data.GetAirwayMode() != eAirwayMode::BagValveMask)
     return;
   SetConnection();
-  m_CurrentBreathState = eBreathState::Exhale;
+  m_CurrentBreathState = eBreathState::Inhale;
   m_CurrentPeriodTime_s = 0.0;
 
   // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
@@ -302,6 +303,20 @@ void BagValveMask::SetConnection()
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::PreProcess()
 {
+  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskInstantaneous())
+  {
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasPressure())
+    {
+      m_SqueezePressure_cmH2O = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetPressure(PressureUnit::cmH2O);
+    }
+    else if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasFlow())
+    {
+      m_SqueezeFlow_L_Per_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetFlow(VolumePerTimeUnit::L_Per_s);
+    }
+    SetSqeezeDriver();
+    return;
+  }
+
   if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskConfiguration())
   {
     SEBagValveMask::Clear();
@@ -475,9 +490,6 @@ void BagValveMask::CalculateExpiration()
   {
     return;
   }
-
-  // Set the exhaust valve to not allow any flow
-  m_ValveToEnvironment->GetNextResistance().SetValue(m_DefaultClosedResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   // Check trigger
   double breathFrequency_Per_s = 0.0;

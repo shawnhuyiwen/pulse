@@ -2588,10 +2588,10 @@ void Respiratory::UpdateResistances()
     {
     case eIntubation_Type::Tracheal:
     {
-      if (intubation.HasAirwayResistance())// jbw Override the Positive Pressure Ventilation code above?
+      if (intubation.HasAirwayResistance())
         tracheaResistance_cmH2O_s_Per_L = intubation.GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       else
-        //Tuned based on mechanical ventilator data
+        //Tuned based on mechanical ventilator validation data
         tracheaResistance_cmH2O_s_Per_L *= 11.0;
       break;
     }
