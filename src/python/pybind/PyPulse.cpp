@@ -8,6 +8,7 @@ namespace py = pybind11;
 
 // Core Physiology Engine
 void PhysiologyEngine(py::module&);
+void PhysiologyEnginePool(py::module&);
 // Studies
 void MultiplexVentilationEngine(py::module&);
 
@@ -31,6 +32,7 @@ PYBIND11_MODULE(PyPulse, m)
     .export_values();
     
   PhysiologyEngine(m);
+  PhysiologyEnginePool(m);
   MultiplexVentilationEngine(m);
 
 #ifdef VERSION_INFO

@@ -1,15 +1,15 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import SEAdvanceTime, SEDataRequestManager, SEDataRequest, \
-                             SEConditionManager, SEEngineInitialization, SEEnginePoolEngine
-from pulse.cdm.bind.Engine_pb2 import ActionListData, AnyActionData, \
+from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, SEDataRequested, \
+                             SEConditionManager, SEEngineInitialization
+from pulse.cdm.bind.Engine_pb2 import AnyActionData, \
+                                      ActionListData, ActionMapData, \
                                       AnyConditionData, ConditionListData, \
                                       PatientConfigurationData, \
                                       DataRequestData, DataRequestManagerData, \
-                                      EnginePoolActionListData, \
-                                      EnginePoolResultListData, EnginePoolResultData, \
-                                      EngineInitializationData, EnginePoolInitializationData, \
+                                      DataRequestedData, DataRequestedListData, \
+                                      EngineInitializationData, EngineInitializationListData, \
                                       LogMessagesData
 from pulse.cdm.bind.Events_pb2 import ActiveEventListData, EventChangeListData
 
@@ -303,6 +303,12 @@ def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
     serialize_actions_to_bind(actions, action_list)
     return json_format.MessageToJson(action_list,True,True)
 
+def serialize_action_map_to_string(src: {int, SEAction}, fmt: eSerializationFormat):
+    dst = ActionMapData()
+    for e in src:
+        serialize_actions_to_bind(e.actions, dst.ActionMap[e.get_id()])
+    return json_format.MessageToJson(dst, True, True)
+
 # Patient Configuration
 def serialize_patient_configuration_to_string(src: SEPatientConfiguration, fmt: eSerializationFormat):
     dst = PatientConfigurationData()
@@ -376,7 +382,6 @@ def serialize_data_request_manager_from_bind(src: DataRequestManagerData, dst: S
     raise Exception("serialize_data_request_manager_from_bind not implemented")
 
 def serialize_engine_initialization_to_bind(src: SEEngineInitialization, dst: EngineInitializationData):
-    dst = EngineInitializationData()
     if src.id is not None:
         dst.ID = src.id
     if src.patient_configuration is not None:
@@ -390,8 +395,8 @@ def serialize_engine_initialization_to_bind(src: SEEngineInitialization, dst: En
     if src.data_request_mgr is not None:
         serialize_data_request_manager_to_bind(src.data_request_mgr, dst.DataRequestManager)
     dst.LogFilename = src.log_filename
-    dst.PullLogMessages = src.pull_log_messages
-    dst.PullEvents = src.pull_events
+    dst.KeepLogMessages = src.keep_log_messages
+    dst.KeepEventChanges = src.keep_event_changes
 
 def serialize_engine_initialization_to_string(src: SEEngineInitialization, fmt: eSerializationFormat):
     dst = EngineInitializationData()
@@ -399,33 +404,25 @@ def serialize_engine_initialization_to_string(src: SEEngineInitialization, fmt: 
     return json_format.MessageToJson(dst, True, True)
 
 def serialize_engine_initializations_to_string(src: [SEEngineInitialization], fmt: eSerializationFormat):
-    dst = EnginePoolInitializationData()
+    dst = EngineInitializationListData()
     for ec in src:
         bind = EngineInitializationData()
         serialize_engine_initialization_to_bind(ec, bind)
         dst.EngineInitialization.append(bind)
     return json_format.MessageToJson(dst, True, True)
 
-def serialize_engine_pool_result_from_bind(src: EnginePoolResultData, dst: SEEnginePoolEngine):
+def serialize_data_requested_result_from_bind(src: DataRequestedData, dst: SEDataRequested):
     dst.is_active = src.IsActive
     if not dst.is_active:
         return
     # TODO FINISH HIM!!
     # dst.results = src.Results
 
-def serialize_engine_pool_result_list_from_string(src: str, dst: {int, SEEnginePoolEngine}, fmt: eSerializationFormat):
-    results = EnginePoolResultListData()
+def serialize_data_requested_list_from_string(src: str, dst: [SEDataRequested], fmt: eSerializationFormat):
+    results = DataRequestedListData()
     json_format.Parse(str, results)
     for id,result in results:
         e = dst[id]
         if e is None:
             raise Exception(str(id)+" not found in destination pool")
-        serialize_engine_pool_result_from_bind(result, e)
-    results
-
-def serialize_engine_pool_actions_to_string(src: [SEEnginePoolEngine], fmt: eSerializationFormat):
-    dst = EnginePoolActionListData()
-    for e in src:
-        if e.is_active:
-            serialize_actions_to_bind(e.actions, dst.ActionMap[e.get_id()])
-    return json_format.MessageToJson(dst, True, True)
+        serialize_data_requested_result_from_bind(result, e)

@@ -47,13 +47,14 @@ public:
 
 PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
 {
-  data = new PulseEngineThunk::pimpl;
+  data = new PulseEngineThunk::pimpl();
   data->eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine().release());
   data->eng->GetLogger()->LogToConsole(false);
   data->eng->GetLogger()->AddForward(this);
 }
 PulseEngineThunk::~PulseEngineThunk()
 {
+  delete[] data->requestedData;
   delete data;
 }
 

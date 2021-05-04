@@ -29,6 +29,10 @@ bool SEEngineInitialization::SerializeFromString(const std::string& src, Seriali
 {
   return PBEngine::SerializeFromString(src, *this, m, subMgr);
 }
+bool SEEngineInitialization::SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+{
+  return PBEngine::SerializeFromString(src, dst, m, subMgr);
+}
 
 void SEEngineInitialization::Clear()
 {
@@ -38,8 +42,13 @@ void SEEngineInitialization::Clear()
   m_State = "";
   SAFE_DELETE(m_DataRequestManager);
   m_StateFilename = "";
-  m_PullLogMessages = false;
-  m_PullEvents = false;
+  m_KeepLogMessages = false;
+  m_KeepEventChanges = false;
+}
+
+void SEEngineInitialization::Copy(const SEEngineInitialization& from, const SESubstanceManager& subMgr)
+{
+  PBEngine::Copy(from, *this, subMgr);
 }
 
 bool SEEngineInitialization::IsValid() const
@@ -130,20 +139,20 @@ bool SEEngineInitialization::HasLogFilename() const
   return !m_LogFilename.empty();
 }
 
-bool SEEngineInitialization::PullLogMessages() const
+bool SEEngineInitialization::KeepLogMessages() const
 {
-  return m_PullLogMessages;
+  return m_KeepLogMessages;
 }
-void SEEngineInitialization::SetPullLogMessages(bool b)
+void SEEngineInitialization::KeepLogMessages(bool b)
 {
-  m_PullLogMessages = b;
+  m_KeepLogMessages = b;
 }
 
-bool SEEngineInitialization::PullEvents() const
+bool SEEngineInitialization::KeepEventChanges() const
 {
-  return m_PullEvents;
+  return m_KeepEventChanges;
 }
-void SEEngineInitialization::SetPullEvents(bool b)
+void SEEngineInitialization::KeepEventChanges(bool b)
 {
-  m_PullEvents = b;
+  m_KeepEventChanges = b;
 }

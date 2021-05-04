@@ -59,6 +59,7 @@ add_library_ex(CommonDataModel
     engine/SECondition.h
     engine/SEConditionManager.h
     engine/SEDataRequest.h
+    engine/SEDataRequested.h
     engine/SEDataRequestManager.h
     engine/SEDecimalFormat.h
     engine/SEDynamicStabilization.h
@@ -386,6 +387,7 @@ add_library_ex(CommonDataModel
     engine/SECondition.cpp
     engine/SEConditionManager.cpp
     engine/SEDataRequest.cpp
+    engine/SEDataRequested.cpp
     engine/SEDataRequestManager.cpp
     engine/SEDecimalFormat.cpp
     engine/SEDynamicStabilization.cpp

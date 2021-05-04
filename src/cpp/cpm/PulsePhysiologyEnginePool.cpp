@@ -4,7 +4,11 @@ See accompanying NOTICE file for details.*/
 #include "stdafx.h"
 #include "PulsePhysiologyEnginePool.h"
 #include "controller/Engine.h"
+#include "engine/SEActionManager.h"
 #include "engine/SEAdvanceTime.h"
+#include "engine/SEDataRequested.h"
+#include "engine/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
 #include "engine/SEPatientConfiguration.h"
 
 namespace
@@ -18,19 +22,31 @@ namespace
   }
 }
 
-SEPhysiologyEnginePoolEngine::SEPhysiologyEnginePoolEngine(Logger* logger) : Loggable(logger), EngineInitialization(logger)
+SEPhysiologyEnginePoolEngine::SEPhysiologyEnginePoolEngine(Logger* logger) : Loggable(logger)
 {
   Engine = CreatePulseEngine();
   Engine->GetLogger()->LogToConsole(false);
+  DataRequested.SetEngine(*Engine);
 };
+SEPhysiologyEnginePoolEngine::~SEPhysiologyEnginePoolEngine()
+{
 
-SEPhysiologyEnginePool::SEPhysiologyEnginePool(size_t poolSize, Logger* logger) : Loggable(logger), m_Pool(poolSize)
+}
+
+SEPhysiologyEnginePool::SEPhysiologyEnginePool(size_t poolSize, const std::string& dataDir, Logger* logger) : Loggable(logger),
+                                                                                            m_Pool(poolSize), m_SubMgr(logger)
 {
   m_IsActive = false;
+  m_SubMgr.LoadSubstanceDirectory(dataDir);
 }
 SEPhysiologyEnginePool::~SEPhysiologyEnginePool()
 {
   DELETE_MAP_SECOND(m_Engines);
+}
+
+double SEPhysiologyEnginePool::GetTimeStep(const TimeUnit& unit)
+{
+  return Convert(0.02, TimeUnit::s, unit);
 }
 
 bool SEPhysiologyEnginePool::RemoveEngine(__int32 id)
@@ -47,7 +63,7 @@ SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::GetEngine(__int32 id) cons
     return e->second;
   return nullptr;
 }
-const EngineCollection& SEPhysiologyEnginePool::GetEngines() const
+const std::map<__int32, SEPhysiologyEnginePoolEngine*>& SEPhysiologyEnginePool::GetEngines() const
 {
   return m_Engines;
 }
@@ -64,6 +80,7 @@ SEPhysiologyEnginePoolEngine* SEPhysiologyEnginePool::CreateEngine(__int32 id)
   }
 
   SEPhysiologyEnginePoolEngine* epe = new SEPhysiologyEnginePoolEngine(m_Logger);
+  epe->EngineInitialization.SetID(id);
   m_Engines.insert({ id, epe });
   return epe;
 }
@@ -84,17 +101,29 @@ bool SEPhysiologyEnginePool::InitializeEngines()
     {
       pe->IsActive = false;
       PhysiologyEngine* engine = pe->Engine.get();
-      SEEngineInitialization& init = pe->EngineInitialization;
+      SEEngineInitialization* init = &pe->EngineInitialization;
+      pe->DataRequested.SetID(init->GetID());
 
-      if(init.HasLogFilename())
-        engine->GetLogger()->SetLogFile(init.GetLogFilename());
-      if (init.HasPatientConfiguration())
-        pe->IsActive = engine->InitializeEngine(init.GetPatientConfiguration());
-      else if (init.HasStateFilename())
-        pe->IsActive = engine->SerializeFromFile(init.GetStateFilename());
-      else if (init.HasState())
-        pe->IsActive = engine->SerializeFromString(init.GetState(), init.GetStateFormat());
-      
+      if(init->HasLogFilename())
+        engine->GetLogger()->SetLogFile(init->GetLogFilename());
+      // Patient/State
+      if (init->HasPatientConfiguration())
+        pe->IsActive = engine->InitializeEngine(init->GetPatientConfiguration());
+      else if (init->HasStateFilename())
+        pe->IsActive = engine->SerializeFromFile(init->GetStateFilename());
+      else if (init->HasState())
+        pe->IsActive = engine->SerializeFromString(init->GetState(), init->GetStateFormat());
+      // Data Requests
+      if (init->HasDataRequestManager())
+        engine->GetEngineTracker()->GetDataRequestManager().Copy(init->GetDataRequestManager(), engine->GetSubstanceManager());
+      // Events
+      pe->DataRequested.KeepEventChanges(init->KeepEventChanges());
+      engine->GetEventManager().ForwardEvents(&pe->DataRequested);
+      // Logging
+      pe->DataRequested.KeepLogMessages(init->KeepLogMessages());
+      engine->GetLogger()->AddForward(&pe->DataRequested);
+      // Set Results Active
+      pe->DataRequested.SetIsActive(pe->IsActive);
       if (!pe->IsActive)
         pe->Warning("Engine "+std::to_string(pe->EngineInitialization.GetID())+" was unable to initialize");
       return pe->IsActive;
@@ -110,10 +139,10 @@ bool SEPhysiologyEnginePool::InitializeEngines()
       if (!itr.second->IsActive)
         errors++;
     }
-    if (errors > 0)
-      Warning(std::to_string(errors) + " out of " + std::to_string(m_Engines.size()) + " failed");
-    else if (errors == m_Engines.size())
+    if (errors == m_Engines.size())
       return false;
+    else if (errors > 0)
+      Warning(std::to_string(errors) + " out of " + std::to_string(m_Engines.size()) + " failed");
   }
   m_IsActive = true;
   return m_IsActive;
@@ -161,9 +190,49 @@ bool SEPhysiologyEnginePool::ProcessActions()
   return  GatherResults(futures);
 }
 
-PhysiologyEnginePoolThunk::PhysiologyEnginePoolThunk()
+void SEPhysiologyEnginePool::ClearDataRequested()
 {
+  for (auto engine : m_Engines)
+  {
+    engine.second->DataRequested.ClearDataRequested();
+  }
+}
+void SEPhysiologyEnginePool::PullDataRequested(std::vector<SEDataRequested*>& dataRequested)
+{
+  dataRequested.clear();
+  for (auto engine : m_Engines)
+  {
+    if (engine.second->IsActive)
+      engine.second->DataRequested.PullDataRequested();
+     dataRequested.push_back(&engine.second->DataRequested);
+     engine.second->IsActive = engine.second->DataRequested.IsActive();
+  }
+}
 
+///////////////////////////////
+// PhysiologyEnginePoolThunk //
+///////////////////////////////
+
+class PhysiologyEnginePoolThunk::pimpl
+{
+public:
+  pimpl(size_t poolSize, const std::string& dataDir) : pool(poolSize, dataDir)
+  {
+
+  }
+  ~pimpl()
+  {
+    
+  }
+
+  SEPhysiologyEnginePool pool;
+  std::map<__int32, std::vector<const SEAction*>> actionMap;
+  std::vector<SEDataRequested*> dataRequested;
+};
+PhysiologyEnginePoolThunk::PhysiologyEnginePoolThunk(size_t poolSize, const std::string& dataDir)
+{
+  data = new PhysiologyEnginePoolThunk::pimpl(poolSize, dataDir);
+  std::cout << "Creating a pool with " << data->pool.GetWorkerCount() << " threads. \n";
 }
 PhysiologyEnginePoolThunk::~PhysiologyEnginePoolThunk()
 {
@@ -172,66 +241,56 @@ PhysiologyEnginePoolThunk::~PhysiologyEnginePoolThunk()
 
 double PhysiologyEnginePoolThunk::GetTimeStep(std::string const& unit)
 {
-  return 0.02;
+  return data->pool.GetTimeStep(TimeUnit::GetCompoundUnit(unit));
 }
 
-bool PhysiologyEnginePoolThunk::InitializeEngines(std::string const& engine_initialization, SerializationFormat format)
+bool PhysiologyEnginePoolThunk::InitializeEngines(std::string const& engineInitializationList, SerializationFormat format)
 {
-  return false;
+  std::vector<SEEngineInitialization*> engines;
+  if (!SEEngineInitialization::SerializeFromString(engineInitializationList, engines, format, data->pool.m_SubMgr))
+  {
+    data->pool.Error("Unable to serialize engine_initializations string");
+    return false;
+  }
+  for (SEEngineInitialization* init : engines)
+  {
+    SEPhysiologyEnginePoolEngine* pEng = data->pool.CreateEngine(init->GetID());
+    if (!pEng)
+    {
+      data->pool.Error("Unable to create engines");
+      return false;
+    }
+    pEng->EngineInitialization.Copy(*init, data->pool.m_SubMgr);
+    delete init;
+  }
+  return data->pool.InitializeEngines();
 }
 
 bool PhysiologyEnginePoolThunk::RemoveEngine(__int32 id)
 {
-  return false;
+  return data->pool.RemoveEngine(id);
 }
 
 bool PhysiologyEnginePoolThunk::ProcessActions(std::string const& actions, SerializationFormat format)
 {
-  return false;
+  SEActionManager::SerializeFromString(actions, data->actionMap, format, data->pool.m_SubMgr);
+  for (auto itr : data->actionMap)
+  {
+    for (const SEAction* a : itr.second)
+    {
+      data->pool.GetEngine(itr.first)->Actions.push_back(a);
+    }
+  }
+  return data->pool.ProcessActions();
 }
 
-size_t PhysiologyEnginePoolThunk::DataLength() const
+std::string PhysiologyEnginePoolThunk::PullRequestedData(SerializationFormat format)
 {
-  return 0;
-}
-double* PhysiologyEnginePoolThunk::PullDataPtr()
-{
-  return nullptr;
-}
-void PhysiologyEnginePoolThunk::PullData(std::map<int, double>& d)
-{
-
-}
-
-void PhysiologyEnginePoolThunk::ForwardDebug(const std::string& msg, const std::string& origin)
-{
-
-}
-void PhysiologyEnginePoolThunk::ForwardInfo(const std::string& msg, const std::string& origin)
-{
-
-}
-void PhysiologyEnginePoolThunk::ForwardWarning(const std::string& msg, const std::string& origin)
-{
-
-}
-void PhysiologyEnginePoolThunk::ForwardError(const std::string& msg, const std::string& origin)
-{
-
-}
-void PhysiologyEnginePoolThunk::ForwardFatal(const std::string& msg, const std::string& origin)
-{
-
-}
-
-void PhysiologyEnginePoolThunk::HandleEvent(eEvent type, bool active, const SEScalarTime* time)
-{
-
-}
-
-void PhysiologyEnginePoolThunk::SetupDefaultDataRequests()
-{
-
+  std::string dst;
+  data->pool.PullDataRequested(data->dataRequested);
+  SEDataRequested::SerializeToString(data->dataRequested, dst, format);
+  data->pool.ClearDataRequested();
+  return dst;
 }
 
 

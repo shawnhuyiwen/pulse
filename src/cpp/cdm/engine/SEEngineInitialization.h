@@ -16,10 +16,12 @@ public:
   SEEngineInitialization(const SEEngineInitialization&) = delete;
   SEEngineInitialization operator=(const SEEngineInitialization&) = delete;
 
+  virtual void Copy(const SEEngineInitialization& from, const SESubstanceManager& subMgr);
   virtual void Clear(); //clear memory
 
   bool SerializeToString(std::string& output, SerializationFormat m) const;
   bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
   virtual bool IsValid()const;
 
@@ -47,11 +49,11 @@ public:
   virtual std::string GetLogFilename() const;
   virtual void SetLogFilename(const std::string& filename);
 
-  virtual bool PullLogMessages() const;
-  virtual void SetPullLogMessages(bool b);
+  virtual bool KeepLogMessages() const;
+  virtual void KeepLogMessages(bool b);
 
-  virtual bool PullEvents() const;
-  virtual void SetPullEvents(bool b);
+  virtual bool KeepEventChanges() const;
+  virtual void KeepEventChanges(bool b);
 
 protected:
   __int32                         m_ID;
@@ -61,6 +63,6 @@ protected:
   SerializationFormat             m_StateFormat;
   SEDataRequestManager*           m_DataRequestManager;
   std::string                     m_LogFilename;
-  bool                            m_PullLogMessages;
-  bool                            m_PullEvents;
+  bool                            m_KeepLogMessages;
+  bool                            m_KeepEventChanges;
 };

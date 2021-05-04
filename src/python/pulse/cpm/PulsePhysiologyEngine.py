@@ -106,6 +106,7 @@ class PulsePhysiologyEngine:
 
     def _pull(self, clean: bool):
         if clean:
+            # TODO is it quicker to just clear the _results value array?
             self._results = copy.deepcopy(self._results_template)
         timestep_result = self.__pulse.pull_data()
         for index, value in enumerate(self._results.keys()):

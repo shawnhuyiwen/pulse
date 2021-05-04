@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 from enum import Enum
 from pulse.cdm.scalars import SEScalarProperty, SEScalarTime
 
@@ -491,6 +492,18 @@ class SEDataRequest:
     def get_unit(self):
         return self._unit
 
+class SEDataRequested: # TODO follow CDM get/set pattern?
+    __slots__ = ['id', 'is_active', 'values']
+
+    def __init__(self):
+        self.id = -1
+        self.is_active = False
+        self.values = OrderedDict()
+
+    def get_value(self, index: int):
+        return list(self.values.items())[index][1]
+
+
 class SEDataRequestManager:
     __slots__ = ["_results_filename", "_samples_per_second", "_data_requests"]
 
@@ -516,8 +529,8 @@ class SEDataRequestManager:
 
 class SEEngineInitialization():
     __slots__ = ["id", "patient_configuration", "state_filename",
-                 "state", "data_request_mgr", "pull_events",
-                 "log_to_console", "log_filename", "pull_log_messages" ]
+                 "state", "data_request_mgr", "keep_event_changes",
+                 "log_to_console", "log_filename", "keep_log_messages" ]
 
     def __init__(self):
         self.id = None
@@ -527,32 +540,8 @@ class SEEngineInitialization():
         self.data_request_mgr = None
         self.log_filename = ""
         self.log_to_console = False
-        self.pull_events = False
-        self.pull_log_messages = False
-
-class SEEnginePoolEngine:
-    __slots__ = ["is_active",
-                 "engine_initialization",
-                 "initial_patient",
-                 "actions",
-                 "active_events",
-                 "event_handler",
-                 "log_forward",
-                 "results",
-                 "_results_template"]
-
-    def __init__(self):
-        self.is_active = False
-        self.engine_initialization = SEEngineInitialization()
-        self.actions = []
-        self.active_events = []
-        self.log_forward = None
-        self.event_handler = None
-        self.results = {}
-        self._results_template = {}
-
-    def get_id(self):
-        return self.engine_initialization.id
+        self.keep_event_changes = False
+        self.keep_log_messages = False
 
 class ILoggerForward():
     def __init__(self):

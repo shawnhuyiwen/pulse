@@ -7,7 +7,9 @@ See accompanying NOTICE file for details.*/
 #include "utils/ThreadPool.h"
 #include <chrono>
 
+#include "engine/SEDataRequested.h"
 #include "engine/SEEngineInitialization.h"
+#include "substance/SESubstanceManager.h"
 
 // TODO Template these class and move to CDM
 // (Template is the PhysiologEngine type)
@@ -15,30 +17,32 @@ See accompanying NOTICE file for details.*/
 class SEPhysiologyEnginePoolEngine : public Loggable
 {
   friend class SEPhysiologyEnginePool;
-  friend class SEPhysiologyEnginePoolThunk;
+  friend class PhysiologyEnginePoolThunk;
 protected:
   SEPhysiologyEnginePoolEngine(Logger* logger = nullptr);
 
 public:
-  ~SEPhysiologyEnginePoolEngine() = default;
+  ~SEPhysiologyEnginePoolEngine();
 
   bool                              IsActive=false;
   SEEngineInitialization            EngineInitialization;
   std::vector<const SEAction*>      Actions;
+  SEDataRequested                   DataRequested;
   std::unique_ptr<PhysiologyEngine> Engine;
 };
-using EngineCollection = std::map<__int32, SEPhysiologyEnginePoolEngine*>;
 
 class SEPhysiologyEnginePool : public Loggable
 {
+  friend class PhysiologyEnginePoolThunk;
 public:
-  SEPhysiologyEnginePool(size_t poolSize = std::thread::hardware_concurrency(), Logger* logger = nullptr);
+  SEPhysiologyEnginePool(size_t poolSize = 0, const std::string& dataDir="./", Logger* logger = nullptr);
   ~SEPhysiologyEnginePool();
 
+  double GetTimeStep(const TimeUnit& unit);
   const size_t GetWorkerCount() const { return m_Pool.workerCount(); }
 
   bool RemoveEngine(__int32 id);
-  const EngineCollection& GetEngines() const;
+  const std::map<__int32, SEPhysiologyEnginePoolEngine*>& GetEngines() const;
   SEPhysiologyEnginePoolEngine* GetEngine(__int32 id) const;
   SEPhysiologyEnginePoolEngine* CreateEngine(__int32 id);
 
@@ -55,10 +59,14 @@ public:
   // Process all the actions on each engine pool engine
   bool ProcessActions();
 
+  void ClearDataRequested();// Call to clear out log/events after you PullData and examine it
+                            // If not, the vector of events/logs can get large...
+  void PullDataRequested(std::vector<SEDataRequested*>&);
 
 protected:
   bool m_IsActive;
-  EngineCollection m_Engines;
+  SESubstanceManager m_SubMgr;
+  std::map<__int32, SEPhysiologyEnginePoolEngine*> m_Engines;
   ThreadPool m_Pool;
 };
 
@@ -66,34 +74,21 @@ protected:
  * An instance of Pulse where the interface is define in stl and base data types.
  * This interface is a thunk layer using serialized cdm objects to drive a Pulse engine.
  */
-class PULSE_DECL PhysiologyEnginePoolThunk : public LoggerForward, public SEEventHandler
+class PULSE_DECL PhysiologyEnginePoolThunk
 {
 public:
-  PhysiologyEnginePoolThunk();
+  PhysiologyEnginePoolThunk(size_t poolSize = 0, const std::string& dataDir="./");
   virtual ~PhysiologyEnginePoolThunk();
 
   double GetTimeStep(std::string const& unit);
 
-  bool InitializeEngines(std::string const& engine_initialization, SerializationFormat format);
+  bool InitializeEngines(std::string const& engineInitializationList, SerializationFormat format);
 
   bool RemoveEngine(__int32 id);
 
   bool ProcessActions(std::string const& actions, SerializationFormat format);
 
-  size_t DataLength() const;
-  double* PullDataPtr();
-  void PullData(std::map<__int32, double>& d);
-
-  virtual void ForwardDebug(const std::string& msg, const std::string& origin);
-  virtual void ForwardInfo(const std::string& msg, const std::string& origin);
-  virtual void ForwardWarning(const std::string& msg, const std::string& origin);
-  virtual void ForwardError(const std::string& msg, const std::string& origin);
-  virtual void ForwardFatal(const std::string& msg, const std::string& origin);
-
-  void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
-
-protected:
-  void SetupDefaultDataRequests();
+  std::string PullRequestedData(SerializationFormat format);
 
 private:
   class pimpl;

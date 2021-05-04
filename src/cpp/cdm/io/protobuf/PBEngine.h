@@ -4,8 +4,11 @@
 #pragma once
 CDM_BIND_DECL(LogMessagesData)
 CDM_BIND_DECL(ActionListData)
+CDM_BIND_DECL(ActionMapData)
 CDM_BIND_DECL(ConditionListData)
+CDM_BIND_DECL(DataRequestedListData)
 CDM_BIND_DECL2(DataRequest)
+CDM_BIND_DECL2(DataRequested)
 CDM_BIND_DECL2(DataRequestManager)
 CDM_BIND_DECL2(DecimalFormat)
 CDM_BIND_DECL2(DynamicStabilization)
@@ -64,6 +67,10 @@ public:
   static void Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr);
   static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
+  static void Load(const CDM_BIND::ActionMapData& src, std::map<__int32, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const CDM_BIND::ActionMapData& src, std::map<__int32, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::map<__int32,std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+
   static bool SerializeToString(const SEActionManager& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const SEActionManager& src, const std::string& filename);
   static bool SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m);
@@ -74,6 +81,12 @@ public:
   static void Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst);
   static void Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& dst);
   static void Copy(const SEDataRequest& src, SEDataRequest& dst);
+
+  CDM_BIND::DataRequestedData* PBEngine::Unload(const SEDataRequested& src);
+  static void Serialize(const SEDataRequested& src, CDM_BIND::DataRequestedData& dst);
+  static bool SerializeToString(const SEDataRequested& src, std::string& dst, SerializationFormat m);
+  static void Serialize(const std::vector<SEDataRequested*>& src, CDM_BIND::DataRequestedListData& dst);
+  static bool SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, SerializationFormat m);
 
   static void Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr);
   static CDM_BIND::DataRequestManagerData* Unload(const SEDataRequestManager& src);
@@ -112,6 +125,8 @@ public:
   static void Serialize(const SEEngineInitialization& src, CDM_BIND::EngineInitializationData& dst);
   static bool SerializeToString(const SEEngineInitialization& src, std::string& output, SerializationFormat m);
   static bool SerializeFromString(const std::string& src, SEEngineInitialization& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static void Copy(const SEEngineInitialization& src, SEEngineInitialization& dst, const SESubstanceManager& subMgr);
 
   static void Load(const CDM_BIND::TimedStabilizationData& src, SETimedStabilization& dst);
   static CDM_BIND::TimedStabilizationData* Unload(const SETimedStabilization& src);
