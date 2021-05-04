@@ -60,7 +60,7 @@ void BagValveMask::Clear()
   m_ReservoirNode = nullptr;
   m_ConnectionNode = nullptr;
   m_AmbientNode = nullptr;
-  m_SqueezeToBag = nullptr;
+  m_ReservoirToBag = nullptr;
   m_EnvironmentToPositiveEndExpiratoryPressurePort = nullptr;
   m_ConnectionToEnvironment = nullptr;
   m_ValveToEnvironment = nullptr;
@@ -101,10 +101,9 @@ void BagValveMask::SetUp()
   m_AmbientNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::EnvironmentNode::Ambient);
 
   // Paths
-  m_SqueezeToBag = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::SqueezeToBag);
-  m_EnvironmentToPositiveEndExpiratoryPressurePort = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::EnvironmentToPositiveEndExpiratoryPressurePort);
   m_ConnectionToEnvironment = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ConnectionToEnvironment);
   m_ValveToEnvironment = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ValveToEnvironment);
+  m_ReservoirToBag = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ReservoirToBag);
 
   m_DefaultOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   m_DefaultClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -334,7 +333,6 @@ void BagValveMask::PreProcess()
   SetConnection();
   CalculateInspiration();
   CalculateExpiration();
-  SetPositiveEndExpiratoryPressure();
   SetSqeezeDriver();
   SetResistances();
 
@@ -374,20 +372,6 @@ void BagValveMask::PostProcess(bool solve_and_transport)
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Set the minimum pressure setting. A leak at the seal could cause the pressure to decrease more.
-//--------------------------------------------------------------------------------------------------
-void BagValveMask::SetPositiveEndExpiratoryPressure()
-{
-  double PEEP_cmH2O = 0.0;
-  if (HasValvePositiveEndExpiredPressure())
-  {
-    PEEP_cmH2O = GetValvePositiveEndExpiredPressure(PressureUnit::cmH2O);
-  }
-  m_EnvironmentToPositiveEndExpiratoryPressurePort->GetNextPressureSource().SetValue(PEEP_cmH2O, PressureUnit::cmH2O);
-}
-
-//--------------------------------------------------------------------------------------------------
-/// \brief
 /// Set the instantaneous squeeze pressure or flow on the circuit source.
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::SetSqeezeDriver()
@@ -407,21 +391,21 @@ void BagValveMask::SetSqeezeDriver()
 
   if (!std::isnan(m_SqueezePressure_cmH2O))
   {
-    if (m_SqueezeToBag->HasNextFlowSource())
+    if (m_ReservoirToBag->HasNextFlowSource())
     {
-      m_SqueezeToBag->GetNextFlowSource().Invalidate();
+      m_ReservoirToBag->GetNextFlowSource().Invalidate();
       m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
     }
-    m_SqueezeToBag->GetNextPressureSource().SetValue(m_SqueezePressure_cmH2O, PressureUnit::cmH2O);
+    m_ReservoirToBag->GetNextPressureSource().SetValue(m_SqueezePressure_cmH2O, PressureUnit::cmH2O);
   }
   else if (!std::isnan(m_SqueezeFlow_L_Per_s))
   {
-    if (m_SqueezeToBag->HasNextPressureSource())
+    if (m_ReservoirToBag->HasNextPressureSource())
     {
-      m_SqueezeToBag->GetNextPressureSource().Invalidate();
+      m_ReservoirToBag->GetNextPressureSource().Invalidate();
       m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
     }
-    m_SqueezeToBag->GetNextFlowSource().SetValue(m_SqueezeFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+    m_ReservoirToBag->GetNextFlowSource().SetValue(m_SqueezeFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
   }
 }
 
@@ -516,6 +500,11 @@ void BagValveMask::CalculateExpiration()
   }
 
   m_SqueezePressure_cmH2O = 0.0;
+  if (HasValvePositiveEndExpiredPressure())
+  {
+    m_SqueezePressure_cmH2O = GetValvePositiveEndExpiredPressure(PressureUnit::cmH2O);
+  }
+
   m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
 }
 

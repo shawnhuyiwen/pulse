@@ -3404,16 +3404,16 @@ void PulseController::SetupBagValveMask()
 
   double reservoirVolume_L = 2.5;
   double bagVolume_L = 1.5;
-  double valveVolume_L = 0.2;
-  double filterVolume_L = 0.2;
-  double connectionVolume_L = 0.2;
+  double valveVolume_L = 0.1;
+  double filterVolume_L = 0.1;
+  double connectionVolume_L = 0.1;
 
   double reservoirResistance_cmH2O_s_Per_L = 0.01;
   double bagResistance_cmH2O_s_Per_L = 0.01;
   double valveResistance_cmH2O_s_Per_L = 0.01;
   double filterResistance_cmH2O_s_Per_L = 0.01;
   double exhaustResistance_cmH2O_s_Per_L = 0.01;
-  double sealResistance_cmH2O_s_Per_L = 1.0;
+  double sealResistance_cmH2O_s_Per_L = 100.0;
 
   //Typical healthy mechanical ventilator PIP ~ 18cmH2O
   //Healthy TV ~ 0.5L
@@ -3432,9 +3432,6 @@ void PulseController::SetupBagValveMask()
   //Reservoir.GetVolumeBaseline().SetValue(reservoirVolume_L, VolumeUnit::L);
   Reservoir.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
 
-  SEFluidCircuitNode& ReservoirValve = cBagValveMask.CreateNode(pulse::BagValveMaskNode::ReservoirValve);
-  ReservoirValve.GetPressure().Set(Ambient.GetPressure());
-
   SEFluidCircuitNode& Bag = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Bag);
   Bag.GetPressure().Set(Ambient.GetPressure());
   Bag.GetVolumeBaseline().SetValue(bagVolume_L, VolumeUnit::L);
@@ -3442,15 +3439,9 @@ void PulseController::SetupBagValveMask()
   SEFluidCircuitNode& BagValve = cBagValveMask.CreateNode(pulse::BagValveMaskNode::BagValve);
   BagValve.GetPressure().Set(Ambient.GetPressure());
 
-  SEFluidCircuitNode& Squeeze = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Squeeze);
-  Squeeze.GetPressure().Set(Ambient.GetPressure());
-
   SEFluidCircuitNode& Valve = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Valve);
   Valve.GetPressure().Set(Ambient.GetPressure());
   Valve.GetVolumeBaseline().SetValue(valveVolume_L, VolumeUnit::L);
-
-  SEFluidCircuitNode& PositiveEndExpiratoryPressurePort = cBagValveMask.CreateNode(pulse::BagValveMaskNode::PositiveEndExpiratoryPressurePort);
-  PositiveEndExpiratoryPressurePort.GetPressure().Set(Ambient.GetPressure());
 
   SEFluidCircuitNode& Filter = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Filter);
   Filter.GetPressure().Set(Ambient.GetPressure());
@@ -3463,35 +3454,17 @@ void PulseController::SetupBagValveMask()
   //Paths
   SEFluidCircuitPath& EnvironmentToReservoir = cBagValveMask.CreatePath(Ambient, Reservoir, pulse::BagValveMaskPath::EnvironmentToReservoir);
 
-  SEFluidCircuitPath& ReservoirToReservoirValve = cBagValveMask.CreatePath(Reservoir, ReservoirValve, pulse::BagValveMaskPath::ReservoirToReservoirValve);
-  ReservoirToReservoirValve.GetResistanceBaseline().SetValue(reservoirResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
-  SEFluidCircuitPath& ReservoirValveToBag = cBagValveMask.CreatePath(ReservoirValve, Bag, pulse::BagValveMaskPath::ReservoirValveToBag);
-  ReservoirValveToBag.SetNextValve(eGate::Open);
-  //ReservoirValveToBag.GetResistanceBaseline().SetValue(reservoirResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
-  SEFluidCircuitPath& EnvironmentToSqueeze = cBagValveMask.CreatePath(Ambient, Squeeze, pulse::BagValveMaskPath::EnvironmentToSqueeze);
-  EnvironmentToSqueeze.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
-
-  SEFluidCircuitPath& SqueezeToBag = cBagValveMask.CreatePath(Squeeze, Bag, pulse::BagValveMaskPath::SqueezeToBag);
-  //SqueezeToBag.GetComplianceBaseline().SetValue(bagCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+  SEFluidCircuitPath& ReservoirToBag = cBagValveMask.CreatePath(Reservoir, Bag, pulse::BagValveMaskPath::ReservoirToBag);
+  ReservoirToBag.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
 
   SEFluidCircuitPath& BagToBagValve = cBagValveMask.CreatePath(Bag, BagValve, pulse::BagValveMaskPath::BagToBagValve);
   BagToBagValve.GetResistanceBaseline().SetValue(bagResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   SEFluidCircuitPath& BagValveToValve = cBagValveMask.CreatePath(BagValve, Valve, pulse::BagValveMaskPath::BagValveToValve);
   BagValveToValve.SetNextValve(eGate::Open);
-  //BagValveToValve.GetResistanceBaseline().SetValue(reservoirResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   SEFluidCircuitPath& ValveToEnvironment = cBagValveMask.CreatePath(Valve, Ambient, pulse::BagValveMaskPath::ValveToEnvironment);
   ValveToEnvironment.GetResistanceBaseline().SetValue(exhaustResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-
-  SEFluidCircuitPath& EnvironmentToPositiveEndExpiratoryPressurePort = cBagValveMask.CreatePath(Ambient, PositiveEndExpiratoryPressurePort, pulse::BagValveMaskPath::EnvironmentToPositiveEndExpiratoryPressurePort);
-  EnvironmentToPositiveEndExpiratoryPressurePort.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);
-
-  SEFluidCircuitPath& PositiveEndExpiratoryPressurePortToValve = cBagValveMask.CreatePath(PositiveEndExpiratoryPressurePort, Valve, pulse::BagValveMaskPath::PositiveEndExpiratoryPressurePortToValve);
-  PositiveEndExpiratoryPressurePortToValve.SetNextValve(eGate::Open);
-  //PositiveEndExpiratoryPressurePortToValve.GetResistanceBaseline().SetValue(reservoirResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   SEFluidCircuitPath& ValveToFilter = cBagValveMask.CreatePath(Valve, Filter, pulse::BagValveMaskPath::ValveToFilter);
   ValveToFilter.GetResistanceBaseline().SetValue(valveResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -3522,8 +3495,6 @@ void PulseController::SetupBagValveMask()
   // Mechanical Ventilator Compartments
   SEGasCompartment& mReservoir = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::Reservoir);
   mReservoir.MapNode(Reservoir);
-  SEGasCompartment& mReservoirValve = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::ReservoirValve);
-  mReservoirValve.MapNode(ReservoirValve);
   SEGasCompartment& mBag = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::Bag);
   mBag.MapNode(Bag);
   SEGasCompartment& mBagValve = m_Compartments->CreateGasCompartment(pulse::BagValveMaskCompartment::BagValve);
@@ -3536,10 +3507,8 @@ void PulseController::SetupBagValveMask()
   mConnection.MapNode(Connection);
 
   // Setup Links //
-  SEGasCompartmentLink& mReservoirToReservoirValve = m_Compartments->CreateGasLink(mReservoir, mReservoirValve, pulse::BagValveMaskLink::ReservoirToReservoirValve);
-  mReservoirToReservoirValve.MapPath(ReservoirToReservoirValve);
-  SEGasCompartmentLink& mReservoirValveToBag = m_Compartments->CreateGasLink(mReservoirValve, mBag, pulse::BagValveMaskLink::ReservoirValveToBag);
-  mReservoirValveToBag.MapPath(ReservoirValveToBag);
+  SEGasCompartmentLink& mReservoirToBag = m_Compartments->CreateGasLink(mReservoir, mBag, pulse::BagValveMaskLink::ReservoirToBag);
+  mReservoirToBag.MapPath(ReservoirToBag);
   SEGasCompartmentLink& mBagToBagValve = m_Compartments->CreateGasLink(mBag, mBagValve, pulse::BagValveMaskLink::BagToBagValve);
   mBagToBagValve.MapPath(BagToBagValve);
   SEGasCompartmentLink& mBagValveToValve = m_Compartments->CreateGasLink(mBagValve, mValve, pulse::BagValveMaskLink::BagValveToValve);
@@ -3555,14 +3524,12 @@ void PulseController::SetupBagValveMask()
 
   SEGasCompartmentGraph& gBagValveMask = m_Compartments->GetBagValveMaskGraph();
   gBagValveMask.AddCompartment(mReservoir);
-  gBagValveMask.AddCompartment(mReservoirValve);
   gBagValveMask.AddCompartment(mBag);
   gBagValveMask.AddCompartment(mBagValve);
   gBagValveMask.AddCompartment(mValve);
   gBagValveMask.AddCompartment(mFilter);
   gBagValveMask.AddCompartment(mConnection);
-  gBagValveMask.AddLink(mReservoirToReservoirValve);
-  gBagValveMask.AddLink(mReservoirValveToBag);
+  gBagValveMask.AddLink(mReservoirToBag);
   gBagValveMask.AddLink(mBagToBagValve);
   gBagValveMask.AddLink(mBagValveToValve);
   gBagValveMask.AddLink(mValveToEnvironment);
@@ -3592,8 +3559,6 @@ void PulseController::SetupBagValveMask()
 
   SELiquidCompartment& lReservoir = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::Reservoir);
   lReservoir.MapNode(Reservoir);
-  SELiquidCompartment& lReservoirValve = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::ReservoirValve);
-  lReservoirValve.MapNode(ReservoirValve);
   SELiquidCompartment& lBag = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::Bag);
   lBag.MapNode(Bag);
   SELiquidCompartment& lBagValve = m_Compartments->CreateLiquidCompartment(pulse::BagValveMaskCompartment::BagValve);
@@ -3609,10 +3574,8 @@ void PulseController::SetupBagValveMask()
   SELiquidCompartmentLink& lConnectionToAirway = m_Compartments->CreateLiquidLink(lConnection, *lAirway, pulse::BagValveMaskLink::ConnectionToAirway);
   lConnectionToAirway.MapPath(ConnectionToAirway);
 
-  SELiquidCompartmentLink& lReservoirToReservoirValve = m_Compartments->CreateLiquidLink(lReservoir, lReservoirValve, pulse::BagValveMaskLink::ReservoirToReservoirValve);
-  lReservoirToReservoirValve.MapPath(ReservoirToReservoirValve);
-  SELiquidCompartmentLink& lReservoirValveToBag = m_Compartments->CreateLiquidLink(lReservoirValve, lBag, pulse::BagValveMaskLink::ReservoirValveToBag);
-  lReservoirValveToBag.MapPath(ReservoirValveToBag);
+  SELiquidCompartmentLink& lReservoirToBag = m_Compartments->CreateLiquidLink(lReservoir, lBag, pulse::BagValveMaskLink::ReservoirToBag);
+  lReservoirToBag.MapPath(ReservoirToBag);
   SELiquidCompartmentLink& lBagToBagValve = m_Compartments->CreateLiquidLink(lBag, lBagValve, pulse::BagValveMaskLink::BagToBagValve);
   lBagToBagValve.MapPath(BagToBagValve);
   SELiquidCompartmentLink& lBagValveToValve = m_Compartments->CreateLiquidLink(lBagValve, lValve, pulse::BagValveMaskLink::BagValveToValve);
@@ -3633,14 +3596,12 @@ void PulseController::SetupBagValveMask()
   lCombinedBagValveMask.RemoveLink(pulse::PulmonaryLink::EnvironmentToAirway);
   //Mechanical Ventilator Additions
   lCombinedBagValveMask.AddCompartment(lReservoir);
-  lCombinedBagValveMask.AddCompartment(lReservoirValve);
   lCombinedBagValveMask.AddCompartment(lBag);
   lCombinedBagValveMask.AddCompartment(lBagValve);
   lCombinedBagValveMask.AddCompartment(lValve);
   lCombinedBagValveMask.AddCompartment(lFilter);
   lCombinedBagValveMask.AddCompartment(lConnection);
-  lCombinedBagValveMask.AddLink(lReservoirToReservoirValve);
-  lCombinedBagValveMask.AddLink(lReservoirValveToBag);
+  lCombinedBagValveMask.AddLink(lReservoirToBag);
   lCombinedBagValveMask.AddLink(lBagToBagValve);
   lCombinedBagValveMask.AddLink(lBagValveToValve);
   lCombinedBagValveMask.AddLink(lValveToEnvironment);

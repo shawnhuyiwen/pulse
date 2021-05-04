@@ -49,7 +49,6 @@ protected:
 
   void CalculateInspiration();
   void CalculateExpiration();
-  void SetPositiveEndExpiratoryPressure();
   void SetSqeezeDriver();
   void CycleMode();
   void SetResistances();
@@ -67,7 +66,7 @@ protected:
   SEFluidCircuitNode*   m_ReservoirNode;
   SEFluidCircuitNode*   m_ConnectionNode;
   SEFluidCircuitNode*   m_AmbientNode;
-  SEFluidCircuitPath*   m_SqueezeToBag;
+  SEFluidCircuitPath*   m_ReservoirToBag;
   SEFluidCircuitPath*   m_ValveToEnvironment;
   SEFluidCircuitPath*   m_EnvironmentToPositiveEndExpiratoryPressurePort;
   SEFluidCircuitPath*   m_ConnectionToEnvironment;

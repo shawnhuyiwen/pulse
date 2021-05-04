@@ -1067,7 +1067,6 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING_EX(Reservoir, BagValveMaskReservoir);
-    DEFINE_STATIC_STRING_EX(ReservoirValve, BagValveMaskReservoirValve);
     DEFINE_STATIC_STRING_EX(Bag, BagValveMaskBag);
     DEFINE_STATIC_STRING_EX(BagValve, BagValveMaskBagValve);
     DEFINE_STATIC_STRING_EX(Valve, BagValveMaskValve);
@@ -1080,7 +1079,6 @@ namespace pulse {
       if (_values.empty())
       {
         _values.push_back(Reservoir);
-        _values.push_back(ReservoirValve);
         _values.push_back(Bag);
         _values.push_back(BagValve);
         _values.push_back(Valve);
@@ -1096,8 +1094,7 @@ namespace pulse {
   class BagValveMaskLink
   {
   public:
-    DEFINE_STATIC_STRING_EX(ReservoirToReservoirValve, BagValveMaskReservoirToReservoirValve);
-    DEFINE_STATIC_STRING_EX(ReservoirValveToBag, BagValveMaskReservoirValveToBag);
+    DEFINE_STATIC_STRING_EX(ReservoirToBag, BagValveMaskReservoirToBag);
     DEFINE_STATIC_STRING_EX(BagToBagValve, BagValveMaskBagToBagValve);
     DEFINE_STATIC_STRING_EX(BagValveToValve, BagValveMaskBagValveToValve);
     DEFINE_STATIC_STRING_EX(ValveToEnvironment, BagValveMaskValveToExhaust);
@@ -1111,8 +1108,7 @@ namespace pulse {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(ReservoirToReservoirValve);
-        _values.push_back(ReservoirValveToBag);
+        _values.push_back(ReservoirToBag);
         _values.push_back(BagToBagValve);
         _values.push_back(BagValveToValve);
         _values.push_back(ValveToEnvironment);
