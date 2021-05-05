@@ -52,6 +52,7 @@ protected:
   void SetSqeezeDriver();
   void CycleMode();
   void SetResistances();
+  void SetVolumes();
 
   // Serializable member variables (Set in Initialize and in schema)
   eBreathState          m_CurrentBreathState;
@@ -67,7 +68,6 @@ protected:
   SEFluidCircuitNode*   m_ConnectionNode;
   SEFluidCircuitNode*   m_AmbientNode;
   SEFluidCircuitPath*   m_ReservoirToBag;
-  SEFluidCircuitPath*   m_ValveToEnvironment;
   SEFluidCircuitPath*   m_EnvironmentToPositiveEndExpiratoryPressurePort;
   SEFluidCircuitPath*   m_ConnectionToEnvironment;
   double                m_DefaultOpenResistance_cmH2O_s_Per_L;

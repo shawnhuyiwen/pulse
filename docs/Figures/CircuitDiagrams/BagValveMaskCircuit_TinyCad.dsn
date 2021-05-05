@@ -146,42 +146,6 @@ download the executable.-->
 				</POLYGON>
 			</TinyCAD>
 		</SYMBOLDEF>
-		<SYMBOLDEF id='2'>
-			<NAME type='0'>D2</NAME>
-			<REF type='0'>D?</REF>
-			<DESCRIPTION>small diode</DESCRIPTION>
-			<PPP>1</PPP>
-			<GUID></GUID>
-			<REF_POINT power='0' part='0' pos='42.00000,26.00000'/>
-			<TinyCAD>
-				<PIN pos='40.00000,26.00000' which='0' elec='0' direction='0' part='0' number='1' show='1' length='30' number_pos='0' centre_name='0'></PIN>
-				<PIN pos='40.00000,12.00000' which='0' elec='0' direction='1' part='0' number='2' show='1' length='30' number_pos='0' centre_name='0'></PIN>
-				<POLYGON pos='38.00000,20.00000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,0.00000' arc='0'/>
-					<POINT pos='4.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='40.00000,18.00000' style='4' fill='0' polygon='0'>
-					<POINT pos='2.00000,2.00000' arc='0'/>
-					<POINT pos='0.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='38.00000,18.00000' style='4' fill='0' polygon='0'>
-					<POINT pos='2.00000,0.00000' arc='0'/>
-					<POINT pos='0.00000,2.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='38.00000,18.00000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,0.00000' arc='0'/>
-					<POINT pos='4.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='40.00000,20.00000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,0.00000' arc='0'/>
-					<POINT pos='0.00000,1.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='40.00000,17.00000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,1.00000' arc='0'/>
-					<POINT pos='0.00000,0.00000' arc='0'/>
-				</POLYGON>
-			</TinyCAD>
-		</SYMBOLDEF>
 		<SYMBOLDEF id='3'>
 			<NAME type='0'>New Symbol</NAME>
 			<REF type='0'>U?</REF>
@@ -224,55 +188,6 @@ download the executable.-->
 					<POINT pos='24.00000,12.00000' arc='0'/>
 					<POINT pos='12.00000,24.00000' arc='0'/>
 					<POINT pos='0.00000,12.00000' arc='0'/>
-				</POLYGON>
-			</TinyCAD>
-		</SYMBOLDEF>
-		<SYMBOLDEF id='4'>
-			<NAME type='0'>RE</NAME>
-			<REF type='0'>R?</REF>
-			<DESCRIPTION>Resistor (USA Style)</DESCRIPTION>
-			<PPP>1</PPP>
-			<GUID></GUID>
-			<REF_POINT power='0' part='0' pos='72.00000,54.00000'/>
-			<REF_POINT power='1' part='0' pos='72.00000,54.00000'/>
-			<TinyCAD>
-				<PIN pos='70.00000,34.00000' which='0' elec='4' direction='1' part='0' number='2' show='0' length='30' number_pos='0' centre_name='0'></PIN>
-				<PIN pos='70.00000,54.00000' which='0' elec='4' direction='0' part='0' number='1' show='0' length='30' number_pos='0' centre_name='0'></PIN>
-				<POLYGON pos='68.00000,40.60000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,1.00000' arc='0'/>
-					<POINT pos='2.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='68.00000,41.60000' style='4' fill='0' polygon='0'>
-					<POINT pos='4.00000,1.00000' arc='0'/>
-					<POINT pos='0.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='68.00000,42.60000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,1.00000' arc='0'/>
-					<POINT pos='4.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='68.00000,43.60000' style='4' fill='0' polygon='0'>
-					<POINT pos='4.00000,1.00000' arc='0'/>
-					<POINT pos='0.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='68.00000,44.60000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,1.00000' arc='0'/>
-					<POINT pos='4.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='68.00000,45.60000' style='4' fill='0' polygon='0'>
-					<POINT pos='4.00000,1.00000' arc='0'/>
-					<POINT pos='0.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='70.00000,46.60000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,1.00000' arc='0'/>
-					<POINT pos='2.00000,0.00000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='70.00000,47.60000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,0.00000' arc='0'/>
-					<POINT pos='0.00000,0.40000' arc='0'/>
-				</POLYGON>
-				<POLYGON pos='70.00000,40.00000' style='4' fill='0' polygon='0'>
-					<POINT pos='0.00000,0.60000' arc='0'/>
-					<POINT pos='0.00000,0.00000' arc='0'/>
 				</POLYGON>
 			</TinyCAD>
 		</SYMBOLDEF>
@@ -464,12 +379,12 @@ download the executable.-->
 			<COLOR_NOTETEXT_LINE>FF0000</COLOR_NOTETEXT_LINE>
 			<COLOR_NOTETEXT_TEXT>FF0000</COLOR_NOTETEXT_TEXT>
 		</OPTIONS>
-		<JUNCTION pos='105.25640,161.15127'/>
-		<JUNCTION pos='105.39645,171.62130'/>
-		<TEXT pos='107.39645,172.82130' direction='3' font='7' color='000000'>Airway (Respiratory System)</TEXT>
-		<TEXT pos='107.59645,162.22130' direction='3' font='6' color='000000'>Connection</TEXT>
-		<WIRE style='2' a='105.19645,171.22130' b='105.19645,161.16130'/>
-		<SYMBOL id='3' pos='108.32857,89.49305' part='0' rotate='2' can_scale='1' show_power='0' scale_x='0.39167' scale_y='0.26667'>
+		<JUNCTION pos='104.84325,161.15127'/>
+		<JUNCTION pos='104.77322,171.69133'/>
+		<TEXT pos='107.12335,172.82130' direction='3' font='7' color='000000'>Airway (Respiratory System)</TEXT>
+		<TEXT pos='107.32335,162.22130' direction='3' font='6' color='000000'>Connection</TEXT>
+		<WIRE style='2' a='104.78330,171.22130' b='104.78330,161.16130'/>
+		<SYMBOL id='3' pos='108.12857,100.60201' part='0' rotate='2' can_scale='1' show_power='0' scale_x='0.39167' scale_y='0.26667'>
 			<FIELD type='0' description='Ref' value='U?' show='0' pos='-6.40008,2.00000'/>
 			<FIELD type='0' description='Name' value='New Symbol' show='0' pos='1.00000,-22.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
@@ -477,77 +392,62 @@ download the executable.-->
 			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='-6.40008,4.40000'/>
 			<FIELD type='0' description='Other' value='..' show='0' pos='-6.40008,6.80000'/>
 		</SYMBOL>
-		<TEXT pos='104.88857,83.49305' direction='3' font='3' color='000000'>-</TEXT>
-		<TEXT pos='104.24857,88.69305' direction='3' font='4' color='000000'>+</TEXT>
-		<POWER pos='105.12857,76.54275' which='3' direction='0'></POWER>
-		<TEXT pos='99.48023,128.73728' direction='3' font='5' color='000000'>Valve</TEXT>
-		<TEXT pos='96.86533,70.36331' direction='3' font='5' color='000000'>Ambient Environment</TEXT>
-		<TEXT pos='107.59409,144.91598' direction='3' font='5' color='000000'>Filter</TEXT>
-		<TEXT pos='93.05094,85.89191' direction='3' font='5' color='000000'>Squeeze</TEXT>
-		<SYMBOL id='4' pos='105.12828,127.36789' part='0' rotate='2' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
-			<FIELD type='0' description='Ref' value='R10v' show='0' pos='-12.00000,2.00000'/>
-			<FIELD type='0' description='Name' value='InspiratoryLimb' show='0' pos='-20.00000,-4.00000'/>
-		</SYMBOL>
-		<SYMBOL id='2' pos='107.10796,124.99886' part='0' rotate='5' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
-			<FIELD type='0' description='Ref' value='D?' show='0' pos='1.00000,-9.60000'/>
-			<FIELD type='0' description='Name' value='' show='1' pos='1.00000,-12.00000'/>
-		</SYMBOL>
-		<TEXT pos='114.73753,87.57820' direction='3' font='5' color='000000'>Or</TEXT>
-		<TEXT pos='90.82721,121.67877' direction='3' font='5' color='000000'>Exhaust</TEXT>
-		<JUNCTION pos='105.10658,125.42304'/>
-		<JUNCTION pos='105.07927,111.36191'/>
-		<JUNCTION pos='105.12760,143.82366'/>
-		<SYMBOL id='6' pos='131.14763,92.87258' part='0' rotate='5' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<TEXT pos='104.68857,94.60201' direction='3' font='3' color='000000'>-</TEXT>
+		<TEXT pos='104.04857,99.80201' direction='3' font='4' color='000000'>+</TEXT>
+		<POWER pos='104.92857,87.65172' which='3' direction='0'></POWER>
+		<TEXT pos='107.22507,126.64625' direction='3' font='5' color='000000'>Valve</TEXT>
+		<TEXT pos='96.66533,81.47228' direction='3' font='5' color='000000'>Ambient Environment</TEXT>
+		<TEXT pos='107.32099,144.91598' direction='3' font='5' color='000000'>Filter</TEXT>
+		<TEXT pos='92.85094,97.00088' direction='3' font='5' color='000000'>Squeeze</TEXT>
+		<TEXT pos='114.53753,98.68717' direction='3' font='5' color='000000'>Or</TEXT>
+		<JUNCTION pos='104.83348,125.42304'/>
+		<JUNCTION pos='104.85450,143.82366'/>
+		<SYMBOL id='6' pos='130.94763,103.98155' part='0' rotate='5' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='U?' show='0' pos='1.00000,-17.20000'/>
 			<FIELD type='0' description='Name' value='New Symbol' show='0' pos='1.00000,-17.20000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='1.00000,-14.80000'/>
 		</SYMBOL>
-		<POWER pos='126.94763,76.47258' which='3' direction='0'></POWER>
-		<SYMBOL id='7' pos='121.00220,85.42437' part='0' rotate='3' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<POWER pos='126.74763,87.58155' which='3' direction='0'></POWER>
+		<SYMBOL id='7' pos='120.80220,96.53334' part='0' rotate='3' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='' show='1' pos='-2.00000,2.00000'/>
 			<FIELD type='0' description='Name' value='' show='1' pos='-2.00000,-2.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='-2.00000,4.40000'/>
 		</SYMBOL>
-		<SYMBOL id='7' pos='112.57329,85.42872' part='0' rotate='6' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<SYMBOL id='7' pos='112.37329,96.53769' part='0' rotate='6' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='' show='1' pos='-2.00000,2.00000'/>
 			<FIELD type='0' description='Name' value='' show='1' pos='-2.00000,-2.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='-2.00000,4.40000'/>
 		</SYMBOL>
-		<WIRE a='120.72758,84.42960' b='110.72758,84.42960'/>
-		<SYMBOL id='11' pos='107.08849,145.63675' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<WIRE a='120.52758,95.53857' b='110.52758,95.53857'/>
+		<SYMBOL id='11' pos='106.81539,145.63675' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='R10v' show='0' pos='1.00000,-18.00000'/>
 			<FIELD type='0' description='Name' value='InspiratoryLimb' show='0' pos='-20.00000,-4.00000'/>
 		</SYMBOL>
-		<POWER pos='87.58807,125.35357' which='3' direction='2'></POWER>
-		<SYMBOL id='1' pos='105.22121,163.22340' part='0' rotate='2' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<SYMBOL id='1' pos='104.94811,163.22340' part='0' rotate='2' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='R10v' show='0' pos='-12.00000,2.00000'/>
 			<FIELD type='0' description='Name' value='InspiratoryLimb' show='0' pos='-20.00000,-4.00000'/>
 		</SYMBOL>
-		<TEXT pos='93.45552,158.54477' direction='3' font='5' color='000000'>Seal</TEXT>
-		<POWER pos='87.54259,161.22992' which='3' direction='2'></POWER>
-		<SYMBOL id='15' pos='107.11470,160.85653' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<TEXT pos='93.18242,158.54477' direction='3' font='5' color='000000'>Seal</TEXT>
+		<POWER pos='87.26949,161.22992' which='3' direction='2'></POWER>
+		<SYMBOL id='15' pos='106.84160,160.85653' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='R10v' show='0' pos='1.00000,-18.00000'/>
 			<FIELD type='0' description='Name' value='InspiratoryLimb' show='0' pos='-20.00000,-4.00000'/>
 		</SYMBOL>
-		<TEXT pos='106.94523,112.33582' direction='3' font='5' color='000000'>Bag Valve</TEXT>
-		<SYMBOL id='15' pos='107.11470,113.99263' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+		<SYMBOL id='15' pos='106.82367,125.19263' part='0' rotate='4' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
 			<FIELD type='0' description='Ref' value='R10v' show='0' pos='1.00000,-18.00000'/>
 			<FIELD type='0' description='Name' value='InspiratoryLimb' show='0' pos='-20.00000,-4.00000'/>
 		</SYMBOL>
-		<JUNCTION pos='105.10287,95.53109'/>
-		<TEXT pos='107.27707,96.59618' direction='3' font='5' color='000000'>Bag</TEXT>
-		<JUNCTION pos='105.10287,76.26008'/>
-		<TEXT pos='107.47328,77.36186' direction='3' font='5' color='000000'>Reservoir</TEXT>
-		<WIRE a='105.00938,95.54529' b='105.00938,89.15358'/>
-		<WIRE a='105.12755,80.51276' b='105.12755,74.41809'/>
-		<WIRE a='98.57215,122.38319' b='90.41648,127.43641'/>
-		<WIRE a='98.58056,122.39456' b='96.19856,122.84297'/>
-		<WIRE a='98.58056,122.35103' b='97.08726,124.31110'/>
+		<JUNCTION pos='104.90287,106.73109'/>
+		<TEXT pos='107.07707,107.79618' direction='3' font='5' color='000000'>Bag</TEXT>
+		<JUNCTION pos='104.90287,87.36905'/>
+		<TEXT pos='107.27328,88.47082' direction='3' font='5' color='000000'>Reservoir</TEXT>
+		<WIRE a='104.80938,106.74529' b='104.80938,100.26254'/>
+		<WIRE a='104.92755,91.62173' b='104.92755,85.52706'/>
 	</TinyCAD>
 </TinyCADSheets>

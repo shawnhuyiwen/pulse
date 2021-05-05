@@ -60,7 +60,7 @@ public:
   virtual SEScalar& GetInspiratoryExpiratoryRatio();
   virtual double GetInspiratoryExpiratoryRatio() const;
 
-  virtual bool HasPositiveInspiratoryPressure() const; //jbw - rename SqueezePressure
+  virtual bool HasPositiveInspiratoryPressure() const; //Aaron - rename SqueezePressure
   virtual SEScalarPressure& GetPositiveInspiratoryPressure();
   virtual double GetPositiveInspiratoryPressure(const PressureUnit& unit) const;
 

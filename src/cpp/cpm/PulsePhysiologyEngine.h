@@ -1068,7 +1068,6 @@ namespace pulse {
   public:
     DEFINE_STATIC_STRING_EX(Reservoir, BagValveMaskReservoir);
     DEFINE_STATIC_STRING_EX(Bag, BagValveMaskBag);
-    DEFINE_STATIC_STRING_EX(BagValve, BagValveMaskBagValve);
     DEFINE_STATIC_STRING_EX(Valve, BagValveMaskValve);
     DEFINE_STATIC_STRING_EX(Filter, BagValveMaskFilter);
     DEFINE_STATIC_STRING_EX(Connection, BagValveMaskConnection);
@@ -1080,7 +1079,6 @@ namespace pulse {
       {
         _values.push_back(Reservoir);
         _values.push_back(Bag);
-        _values.push_back(BagValve);
         _values.push_back(Valve);
         _values.push_back(Filter);
         _values.push_back(Connection);
@@ -1095,9 +1093,7 @@ namespace pulse {
   {
   public:
     DEFINE_STATIC_STRING_EX(ReservoirToBag, BagValveMaskReservoirToBag);
-    DEFINE_STATIC_STRING_EX(BagToBagValve, BagValveMaskBagToBagValve);
-    DEFINE_STATIC_STRING_EX(BagValveToValve, BagValveMaskBagValveToValve);
-    DEFINE_STATIC_STRING_EX(ValveToEnvironment, BagValveMaskValveToExhaust);
+    DEFINE_STATIC_STRING_EX(BagToValve, BagValveMaskBagToValve);
     DEFINE_STATIC_STRING_EX(ValveToFilter, BagValveMaskValveToFilter);
     DEFINE_STATIC_STRING_EX(FilterToConnection, BagValveMaskFilterToConnection);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, BagValveMaskConnectionToEnvironment);
@@ -1109,9 +1105,7 @@ namespace pulse {
       if (_values.empty())
       {
         _values.push_back(ReservoirToBag);
-        _values.push_back(BagToBagValve);
-        _values.push_back(BagValveToValve);
-        _values.push_back(ValveToEnvironment);
+        _values.push_back(BagToValve);
         _values.push_back(ValveToFilter);
         _values.push_back(FilterToConnection);
         _values.push_back(ConnectionToEnvironment);

@@ -63,7 +63,6 @@ void BagValveMask::Clear()
   m_ReservoirToBag = nullptr;
   m_EnvironmentToPositiveEndExpiratoryPressurePort = nullptr;
   m_ConnectionToEnvironment = nullptr;
-  m_ValveToEnvironment = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -102,11 +101,7 @@ void BagValveMask::SetUp()
 
   // Paths
   m_ConnectionToEnvironment = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ConnectionToEnvironment);
-  m_ValveToEnvironment = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ValveToEnvironment);
   m_ReservoirToBag = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ReservoirToBag);
-
-  m_DefaultOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  m_DefaultClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 }
 
 void BagValveMask::StateChange()
@@ -335,6 +330,10 @@ void BagValveMask::PreProcess()
   CalculateExpiration();
   SetSqeezeDriver();
   SetResistances();
+  SetVolumes();
+
+  //Aaron - Add ReservoirSourceFlow and ReservoirVolume (default = 2.5 L)
+  //jbw - Handle source flow like NonRebreatherMask - Set to ambient if volume = 0
 
   m_CurrentPeriodTime_s += m_data.GetTimeStep_s();
 }
@@ -419,9 +418,6 @@ void BagValveMask::CalculateInspiration()
   {
     return;
   }
-
-  // Set the exhaust valve to not allow any flow
-  m_ValveToEnvironment->GetNextResistance().SetValue(m_DefaultOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
   // Check trigger
   double breathFrequency_Per_s = 0.0;
@@ -538,5 +534,41 @@ void BagValveMask::CycleMode()
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::SetResistances()
 {
-  //jbw - Do, and set filter volume somewhere
+  if (HasBagResistance())
+  {
+    m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::BagToValve)->GetNextResistance().Set(GetBagResistance());
+  }
+
+  if (HasValveResistance())
+  {
+    m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ValveToFilter)->GetNextResistance().Set(GetValveResistance());
+  }
+
+  if (HasFilterResistance())
+  {
+    m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::FilterToConnection)->GetNextResistance().Set(GetFilterResistance());
+  }
+
+  //Aaron - Add SealResistance
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Set ventilator circuit resistances.
+///
+/// \details
+/// If no values are specified, defaults will be used.
+//--------------------------------------------------------------------------------------------------
+void BagValveMask::SetVolumes()
+{
+  if (HasFilterVolume())
+  {
+    m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Filter)->GetNextVolume().Set(GetFilterVolume());
+  }
+  else
+  {
+    //Volume doesn't reset to baseline like path elements
+    m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Filter)->GetNextVolume().Set(
+      m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Filter)->GetVolumeBaseline());
+  }
 }

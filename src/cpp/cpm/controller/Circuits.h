@@ -282,7 +282,6 @@ namespace pulse {
   public:
     DEFINE_STATIC_STRING_EX(Reservoir, BagValveMaskReservoir);
     DEFINE_STATIC_STRING_EX(Bag, BagValveMaskBag);
-    DEFINE_STATIC_STRING_EX(BagValve, BagValveMaskBagValve);
     DEFINE_STATIC_STRING_EX(Valve, BagValveMaskValve);
     DEFINE_STATIC_STRING_EX(Filter, BagValveMaskFilter);
     DEFINE_STATIC_STRING_EX(Connection, BagValveMaskConnection);
@@ -293,9 +292,7 @@ namespace pulse {
   public:
     DEFINE_STATIC_STRING_EX(EnvironmentToReservoir, BagValveMaskEnvironmentToReservoir);
     DEFINE_STATIC_STRING_EX(ReservoirToBag, BagValveMaskReservoirToBag);
-    DEFINE_STATIC_STRING_EX(BagToBagValve, BagValveMaskBagToBagValve);
-    DEFINE_STATIC_STRING_EX(BagValveToValve, BagValveMaskBagValveToValve);
-    DEFINE_STATIC_STRING_EX(ValveToEnvironment, BagValveMaskValveToExhaust);
+    DEFINE_STATIC_STRING_EX(BagToValve, BagValveMaskBagToValve);
     DEFINE_STATIC_STRING_EX(ValveToFilter, BagValveMaskValveToFilter);
     DEFINE_STATIC_STRING_EX(FilterToConnection, BagValveMaskFilterToConnection);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, BagValveMaskConnectionToEnvironment);
