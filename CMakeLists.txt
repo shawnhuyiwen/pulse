@@ -160,6 +160,25 @@ endif()
 set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "CMake built-in FindProtobuf.cmake module compatible" FORCE)
 mark_as_advanced(protobuf_MODULE_COMPATIBLE)
 
+if(protobuf_DIR AND NOT EXISTS(${protobuf_DIR}))
+  # Linux systems can build libs to a variety of directories...
+  message(STATUS "Provided protobuf_DIR, does not exist, looking for alternatives...")
+  message(STATUS "  protobuf_DIR : ${protobuf_DIR}")
+  string(FIND ${protobuf_DIR} "/lib/" _idx)
+  if(_idx GREATER_EQUAL 0)
+    # Depending on linux flavor, this could be in a lib64 dir
+    # So, replace /lib/ with /lib64/ and see if that exists
+    string(REPLACE "/lib/" "/lib64/" _lib64 ${protobuf_DIR})
+    if(EXISTS(${_lib64}))
+      set(protobuf_DIR ${_lib64})
+      message(STATUS "New protobuf_DIR is ${protobuf_DIR}")
+    else()
+      message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
+    endif()
+  else()
+    message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
+  endif()
+endif()
 # Try to use the config written by protobuf
 find_package(protobuf QUIET CONFIG NO_DEFAULT_PATH)
 if(protobuf_DIR AND protobuf_FOUND)
