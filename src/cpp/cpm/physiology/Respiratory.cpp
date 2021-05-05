@@ -2622,11 +2622,13 @@ void Respiratory::UpdateResistances()
     }
     case eIntubation_Type::Orpharyngeal: //Aaron - You spelled Orpharyngeal wrong
     {
+      //Airway adjunct
       tracheaResistance_cmH2O_s_Per_L *= 15.0;
       break;
     }
     case eIntubation_Type::Nasopharyngeal:
     {
+      //Airway adjunct
       tracheaResistance_cmH2O_s_Per_L *= 15.0;
       break;
     }

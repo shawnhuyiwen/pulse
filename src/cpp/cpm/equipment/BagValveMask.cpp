@@ -57,12 +57,11 @@ void BagValveMask::Clear()
   m_Environment = nullptr;
   m_Reservoir = nullptr;
   m_ReservoirAerosol = nullptr;
-  m_ReservoirNode = nullptr;
-  m_ConnectionNode = nullptr;
-  m_AmbientNode = nullptr;
+  m_Filter = nullptr;
   m_ReservoirToBag = nullptr;
-  m_EnvironmentToPositiveEndExpiratoryPressurePort = nullptr;
-  m_ConnectionToEnvironment = nullptr;
+  m_BagToValve = nullptr;
+  m_ValveToFilter = nullptr;
+  m_FilterToConnection = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -82,7 +81,7 @@ void BagValveMask::Initialize()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Initializes parameters for the mechanical ventilator class
+/// Initializes parameters for the bag valve mask class
 ///
 /// \details
 /// Initializes member variables and system level values on the common data model.
@@ -95,13 +94,13 @@ void BagValveMask::SetUp()
   m_ReservoirAerosol = m_data.GetCompartments().GetLiquidCompartment(pulse::BagValveMaskCompartment::Reservoir);
 
   // Nodes
-  m_ReservoirNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Reservoir);
-  m_ConnectionNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Connection);
-  m_AmbientNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::EnvironmentNode::Ambient);
+  m_Filter = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Filter);
 
   // Paths
-  m_ConnectionToEnvironment = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ConnectionToEnvironment);
   m_ReservoirToBag = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ReservoirToBag);
+  m_BagToValve = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::BagToValve);
+  m_ValveToFilter = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ValveToFilter);
+  m_FilterToConnection = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::FilterToConnection);
 }
 
 void BagValveMask::StateChange()
@@ -219,9 +218,9 @@ void BagValveMask::SetConnection(eBagValveMask_Connection c)
     return;
   }
   else if (c == eBagValveMask_Connection::Mask && m_data.GetIntubation() == eSwitch::On)
-    Error("Connection failed : Cannot apply mechanical ventilator mask if patient is intubated.");
+    Error("Connection failed : Cannot apply bag valve mask mask if patient is intubated.");
   else if (c == eBagValveMask_Connection::Tube && m_data.GetIntubation() == eSwitch::Off)
-    Error("Connection failed : Cannot apply mechanical ventilator to tube if patient is not intubated.");
+    Error("Connection failed : Cannot apply bag valve mask to tube if patient is not intubated.");
   // Make sure we are active to make sure we go back to free
   m_data.SetAirwayMode(eAirwayMode::Free);
 }
@@ -244,7 +243,7 @@ void BagValveMask::InvalidateConnection()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Initializes gas volumes and volume fractions supplied by the mechanical ventilator depending on the airway mode
+/// Initializes gas volumes and volume fractions supplied by the bag valve mask depending on the airway mode
 ///
 /// \details
 /// The gas volumes and volume fractions are initialized and updated based on the airway mode (mask, free, or tube)
@@ -262,7 +261,7 @@ void BagValveMask::SetConnection()
     {
       if (m_data.GetIntubation() == eSwitch::On)// Somebody intubated while we had the mask on
       {
-        Info("Mechanical Ventilator has been disconnected due to an intubation.");
+        Info("Bag Valve Mask has been disconnected due to an intubation.");
         m_data.SetAirwayMode(eAirwayMode::Free);
         return;
       }
@@ -274,7 +273,7 @@ void BagValveMask::SetConnection()
     {
       if (m_data.GetIntubation() == eSwitch::Off)// Somebody removed intubated while we were connected to it
       {
-        Info("Mechanical Ventilator has been disconnected removal of intubation.");
+        Info("Bag Valve Mask has been disconnected removal of intubation.");
         m_data.SetAirwayMode(eAirwayMode::Free);
         return;
       }
@@ -290,7 +289,7 @@ void BagValveMask::SetConnection()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Mechanical ventilator preprocess function
+/// Bag Valve Mask preprocess function
 ///
 /// \details
 /// Applies all the settings and calculates the instantaneous driver value.
@@ -332,19 +331,20 @@ void BagValveMask::PreProcess()
   SetResistances();
   SetVolumes();
 
-  //Aaron - Add ReservoirSourceFlow and ReservoirVolume (default = 2.5 L)
-  //jbw - Handle source flow like NonRebreatherMask - Set to ambient if volume = 0
+  ///\todo We should add the ability to manually handle source flow and reservoir volume like the NonRebreatherMask.
+  ///      This would entail adding something like ReservoirSourceFlow and ReservoirVolume (default = 2.5 L).
+  ///      If the volume goes to zero, ambient substance values should be used
 
   m_CurrentPeriodTime_s += m_data.GetTimeStep_s();
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Mechanical ventilator process function
+/// Bag Valve Mask process function
 ///
 /// \details
-/// The current Pulse implementation has no specific process functionality for the mechanical ventilator.
-/// Mechanical ventilator processing is currently done in the Respiratory System with the combined circuit methodology.
+/// The current Pulse implementation has no specific process functionality for the bag valve mask.
+/// Bag Valve Mask processing is currently done in the Respiratory System with the combined circuit methodology.
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::Process(bool solve_and_transport)
 {
@@ -357,10 +357,10 @@ void BagValveMask::ComputeExposedModelParameters()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Mechanical ventilator postprocess function
+/// Bag Valve Mask postprocess function
 ///
 /// \details
-/// The substance volumes and the volume fractions are updated for all of the nodes in the mechanical ventilator
+/// The substance volumes and the volume fractions are updated for all of the nodes in the bag valve mask
 /// circuit during post process. 
 /// The ventilator volumes are updated based on the previously calculated nodal analysis.
 //--------------------------------------------------------------------------------------------------
@@ -410,7 +410,7 @@ void BagValveMask::SetSqeezeDriver()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Determine the instantaneous driver pressure during inspiration.
+/// Determine the instantaneous squeeze pressure during inspiration.
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::CalculateInspiration()
 {
@@ -462,7 +462,7 @@ void BagValveMask::CalculateInspiration()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Determine the instantaneous driver pressure during expiration.
+/// Determine the instantaneous squeeze pressure during expiration.
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::CalculateExpiration()
 {
@@ -509,7 +509,7 @@ void BagValveMask::CalculateExpiration()
 /// Go to next breath mode based on current mode.
 ///
 /// \details
-/// Inhale to pause, pause to exhale, or exhale to inhale.
+/// Inhale to exhale or exhale to inhale.
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::CycleMode()
 {
@@ -527,7 +527,7 @@ void BagValveMask::CycleMode()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Set ventilator circuit resistances.
+/// Set Bag Valve Mask circuit resistances.
 ///
 /// \details
 /// If no values are specified, defaults will be used.
@@ -536,25 +536,25 @@ void BagValveMask::SetResistances()
 {
   if (HasBagResistance())
   {
-    m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::BagToValve)->GetNextResistance().Set(GetBagResistance());
+    m_BagToValve->GetNextResistance().Set(GetBagResistance());
   }
 
   if (HasValveResistance())
   {
-    m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ValveToFilter)->GetNextResistance().Set(GetValveResistance());
+    m_ValveToFilter->GetNextResistance().Set(GetValveResistance());
   }
 
   if (HasFilterResistance())
   {
-    m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::FilterToConnection)->GetNextResistance().Set(GetFilterResistance());
+    m_FilterToConnection->GetNextResistance().Set(GetFilterResistance());
   }
 
-  //Aaron - Add SealResistance
+  //Aaron - Add SealResistance for pulse::BagValveMaskPath::ConnectionToEnvironment
 }
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Set ventilator circuit resistances.
+/// Set Bag Valve Mask node/compartment volumes.
 ///
 /// \details
 /// If no values are specified, defaults will be used.
@@ -563,12 +563,11 @@ void BagValveMask::SetVolumes()
 {
   if (HasFilterVolume())
   {
-    m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Filter)->GetNextVolume().Set(GetFilterVolume());
+    m_Filter->GetNextVolume().Set(GetFilterVolume());
   }
   else
   {
     //Volume doesn't reset to baseline like path elements
-    m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Filter)->GetNextVolume().Set(
-      m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Filter)->GetVolumeBaseline());
+    m_Filter->GetNextVolume().Set(m_Filter->GetVolumeBaseline());
   }
 }

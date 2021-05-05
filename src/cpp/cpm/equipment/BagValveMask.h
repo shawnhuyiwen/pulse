@@ -14,7 +14,7 @@ class SEFluidCircuitPath;
 
 /**
  * @brief 
- * Generic mechanical ventilator for positive pressure ventilation.
+ * Generic Bag Valve Mask for positive pressure ventilation.
  */
 class PULSE_DECL BagValveMask : public PulseBagValveMask
 {
@@ -55,6 +55,7 @@ protected:
   void SetVolumes();
 
   // Serializable member variables (Set in Initialize and in schema)
+  //Aaron - Make sure these are serialized
   eBreathState          m_CurrentBreathState;
   double                m_CurrentPeriodTime_s;
   double                m_SqueezeFlow_L_Per_s;
@@ -64,12 +65,9 @@ protected:
   SEGasCompartment*     m_Environment;
   SEGasCompartment*     m_Reservoir;
   SELiquidCompartment*  m_ReservoirAerosol;
-  SEFluidCircuitNode*   m_ReservoirNode;
-  SEFluidCircuitNode*   m_ConnectionNode;
-  SEFluidCircuitNode*   m_AmbientNode;
+  SEFluidCircuitNode*   m_Filter;
   SEFluidCircuitPath*   m_ReservoirToBag;
-  SEFluidCircuitPath*   m_EnvironmentToPositiveEndExpiratoryPressurePort;
-  SEFluidCircuitPath*   m_ConnectionToEnvironment;
-  double                m_DefaultOpenResistance_cmH2O_s_Per_L;
-  double                m_DefaultClosedResistance_cmH2O_s_Per_L;
+  SEFluidCircuitPath*   m_BagToValve;
+  SEFluidCircuitPath*   m_ValveToFilter;
+  SEFluidCircuitPath*   m_FilterToConnection;
 };
