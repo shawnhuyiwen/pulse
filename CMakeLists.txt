@@ -169,9 +169,10 @@ if(protobuf_DIR AND NOT EXISTS(${protobuf_DIR}))
     # Depending on linux flavor, this could be in a lib64 dir
     # So, replace /lib/ with /lib64/ and see if that exists
     string(REPLACE "/lib/" "/lib64/" _lib64 ${protobuf_DIR})
-    if(EXISTS(${_lib64}))
+    message(STATUS "  Checking if this alternative exists : ${_lib64}")
+    if(EXISTS ${_lib64})
       set(protobuf_DIR ${_lib64})
-      message(STATUS "New protobuf_DIR is ${protobuf_DIR}")
+      message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
     else()
       message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
     endif()
