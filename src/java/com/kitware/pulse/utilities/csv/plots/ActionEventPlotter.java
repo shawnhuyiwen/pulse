@@ -663,7 +663,7 @@ public class ActionEventPlotter implements Plotter
     XYPlot plot = (XYPlot) chart.getPlot();
     
     //For Scientific notation
-    NumberFormat formatter = new DecimalFormat("0.######E0");
+    NumberFormat formatter = new DecimalFormat("0.###E0");
     
     for(int i = 0; i < plot.getDomainAxisCount(); i++)
     {

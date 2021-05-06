@@ -188,7 +188,7 @@ public class MultiPlotter implements Plotter
     String YAxisLabel = job.Y1headers.get(0);
     
     JFreeChart chart = ChartFactory.createXYLineChart(
-        job.titleOverride!=null&&job.titleOverride.equalsIgnoreCase("None")?"":title,           // chart title
+        job.titleOverride!=null&&job.titleOverride.equalsIgnoreCase("None")?"":title,// chart title
         XAxisLabel,         // x axis label
         YAxisLabel,         // y axis label
         dataSet1,                   // data
@@ -381,7 +381,7 @@ public class MultiPlotter implements Plotter
     BasicStroke wideLine = new BasicStroke( 2.0f ); 
     
     //For Scientific notation
-    NumberFormat formatter = new DecimalFormat("0.######E0");
+    NumberFormat formatter = new DecimalFormat("0.###E0");
     
     for(int i = 0; i < plot.getDomainAxisCount(); i++)
     {
