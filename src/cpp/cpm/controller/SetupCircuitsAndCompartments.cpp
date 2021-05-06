@@ -343,8 +343,9 @@ void PulseController::SetupCardiovascular()
 
   SEFluidCircuitNode& LeftArm1 = cCardiovascular.CreateNode(pulse::CardiovascularNode::LeftArm1);
   SEFluidCircuitNode& LeftArm2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::LeftArm2);
-  LeftArm1.GetVolumeBaseline().SetValue(VolumeFractionArmLeft * bloodVolume_mL, VolumeUnit::mL);
-  LeftArm1.GetPressure().SetValue(VascularPressureTargetArmRight, PressureUnit::mmHg);
+  SEFluidCircuitNode& LeftArm3 = cCardiovascular.CreateNode(pulse::CardiovascularNode::LeftArm3);
+  LeftArm2.GetVolumeBaseline().SetValue(VolumeFractionArmLeft * bloodVolume_mL, VolumeUnit::mL);
+  LeftArm2.GetPressure().SetValue(VascularPressureTargetArmLeft, PressureUnit::mmHg);
 
   SEFluidCircuitNode& LeftKidney1 = cCardiovascular.CreateNode(pulse::CardiovascularNode::LeftKidney1);
   SEFluidCircuitNode& LeftKidney2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::LeftKidney2);
@@ -371,8 +372,9 @@ void PulseController::SetupCardiovascular()
 
   SEFluidCircuitNode& RightArm1 = cCardiovascular.CreateNode(pulse::CardiovascularNode::RightArm1);
   SEFluidCircuitNode& RightArm2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::RightArm2);
-  RightArm1.GetVolumeBaseline().SetValue(VolumeFractionArmRight * bloodVolume_mL, VolumeUnit::mL);
-  RightArm1.GetPressure().SetValue(VascularPressureTargetArmRight, PressureUnit::mmHg);
+  SEFluidCircuitNode& RightArm3 = cCardiovascular.CreateNode(pulse::CardiovascularNode::RightArm3);
+  RightArm2.GetVolumeBaseline().SetValue(VolumeFractionArmRight * bloodVolume_mL, VolumeUnit::mL);
+  RightArm2.GetPressure().SetValue(VascularPressureTargetArmRight, PressureUnit::mmHg);
 
   SEFluidCircuitNode& RightKidney1 = cCardiovascular.CreateNode(pulse::CardiovascularNode::RightKidney1);
   SEFluidCircuitNode& RightKidney2 = cCardiovascular.CreateNode(pulse::CardiovascularNode::RightKidney2);
@@ -532,12 +534,13 @@ void PulseController::SetupCardiovascular()
   LargeIntestineToPortalVein.GetResistanceBaseline().SetValue(systemicResistanceModifier * ResistanceLargeIntestineVenous, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
   SEFluidCircuitPath& Aorta1ToLeftArm1 = cCardiovascular.CreatePath(Aorta1, LeftArm1, pulse::CardiovascularPath::Aorta1ToLeftArm1);
-  Aorta1ToLeftArm1.GetResistanceBaseline().SetValue(systemicResistanceModifier * ResistanceArmLeft, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  SEFluidCircuitPath& LeftArm1ToGround = cCardiovascular.CreatePath(LeftArm1, Ground, pulse::CardiovascularPath::LeftArm1ToGround);
-  LeftArm1ToGround.GetComplianceBaseline().SetValue(0.0, VolumePerPressureUnit::mL_Per_mmHg);
   SEFluidCircuitPath& LeftArm1ToLeftArm2 = cCardiovascular.CreatePath(LeftArm1, LeftArm2, pulse::CardiovascularPath::LeftArm1ToLeftArm2);
-  LeftArm1ToLeftArm2.GetResistanceBaseline().SetValue(systemicResistanceModifier * ResistanceArmLeftVenous, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  SEFluidCircuitPath& LeftArm2ToVenaCava = cCardiovascular.CreatePath(LeftArm2, VenaCava, pulse::CardiovascularPath::LeftArm2ToVenaCava);
+  LeftArm1ToLeftArm2.GetResistanceBaseline().SetValue(systemicResistanceModifier* ResistanceArmLeft, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  SEFluidCircuitPath& LeftArm2ToGround = cCardiovascular.CreatePath(LeftArm2, Ground, pulse::CardiovascularPath::LeftArm2ToGround);
+  LeftArm2ToGround.GetComplianceBaseline().SetValue(0.0, VolumePerPressureUnit::mL_Per_mmHg);
+  SEFluidCircuitPath& LeftArm2ToLeftArm3 = cCardiovascular.CreatePath(LeftArm2, LeftArm3, pulse::CardiovascularPath::LeftArm2ToLeftArm3);
+  LeftArm2ToLeftArm3.GetResistanceBaseline().SetValue(systemicResistanceModifier* ResistanceArmLeftVenous, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  SEFluidCircuitPath& LeftArm3ToVenaCava = cCardiovascular.CreatePath(LeftArm3, VenaCava, pulse::CardiovascularPath::LeftArm3ToVenaCava);
 
   SEFluidCircuitPath& Aorta1ToLeftKidney1 = cCardiovascular.CreatePath(Aorta1, LeftKidney1, pulse::CardiovascularPath::Aorta1ToLeftKidney1);
   Aorta1ToLeftKidney1.GetResistanceBaseline().SetValue(systemicResistanceModifier * ResistanceKidney, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -587,12 +590,13 @@ void PulseController::SetupCardiovascular()
   GroundToPericardium.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
   SEFluidCircuitPath& Aorta1ToRightArm1 = cCardiovascular.CreatePath(Aorta1, RightArm1, pulse::CardiovascularPath::Aorta1ToRightArm1);
-  Aorta1ToRightArm1.GetResistanceBaseline().SetValue(systemicResistanceModifier * ResistanceArmRight, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  SEFluidCircuitPath& RightArm1ToGround = cCardiovascular.CreatePath(RightArm1, Ground, pulse::CardiovascularPath::RightArm1ToGround);
-  RightArm1ToGround.GetComplianceBaseline().SetValue(0.0, VolumePerPressureUnit::mL_Per_mmHg);
   SEFluidCircuitPath& RightArm1ToRightArm2 = cCardiovascular.CreatePath(RightArm1, RightArm2, pulse::CardiovascularPath::RightArm1ToRightArm2);
-  RightArm1ToRightArm2.GetResistanceBaseline().SetValue(systemicResistanceModifier * ResistanceArmRightVenous, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-  SEFluidCircuitPath& RightArm2ToVenaCava = cCardiovascular.CreatePath(RightArm2, VenaCava, pulse::CardiovascularPath::RightArm2ToVenaCava);
+  RightArm1ToRightArm2.GetResistanceBaseline().SetValue(systemicResistanceModifier* ResistanceArmRight, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  SEFluidCircuitPath& RightArm2ToGround = cCardiovascular.CreatePath(RightArm2, Ground, pulse::CardiovascularPath::RightArm2ToGround);
+  RightArm2ToGround.GetComplianceBaseline().SetValue(0.0, VolumePerPressureUnit::mL_Per_mmHg);
+  SEFluidCircuitPath& RightArm2ToRightArm3 = cCardiovascular.CreatePath(RightArm2, RightArm3, pulse::CardiovascularPath::RightArm2ToRightArm3);
+  RightArm2ToRightArm3.GetResistanceBaseline().SetValue(systemicResistanceModifier* ResistanceArmRightVenous, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+  SEFluidCircuitPath& RightArm3ToVenaCava = cCardiovascular.CreatePath(RightArm3, VenaCava, pulse::CardiovascularPath::RightArm3ToVenaCava);
 
   SEFluidCircuitPath& Aorta1ToRightKidney1 = cCardiovascular.CreatePath(Aorta1, RightKidney1, pulse::CardiovascularPath::Aorta1ToRightKidney1);
   Aorta1ToRightKidney1.GetResistanceBaseline().SetValue(systemicResistanceModifier * ResistanceKidney, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -710,12 +714,12 @@ void PulseController::SetupCardiovascular()
   Fat1.GetVolumeBaseline().SetValue(VolumeModifierFat * Fat1.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   LargeIntestine.GetVolumeBaseline().SetValue(VolumeModifierLargeIntestine * LargeIntestine.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   Liver1.GetVolumeBaseline().SetValue(VolumeModifierLiver * Liver1.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
-  LeftArm1.GetVolumeBaseline().SetValue(VolumeModifierArmL * LeftArm1.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
+  LeftArm2.GetVolumeBaseline().SetValue(VolumeModifierArmL * LeftArm2.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   LeftKidney1.GetVolumeBaseline().SetValue(VolumeModifierKidneyL * LeftKidney1.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   LeftLeg2.GetVolumeBaseline().SetValue(VolumeModifierLegL * LeftLeg2.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   Muscle1.GetVolumeBaseline().SetValue(VolumeModifierMuscle * Muscle1.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   Myocardium1.GetVolumeBaseline().SetValue(VolumeModifierMyocard * Myocardium1.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
-  RightArm1.GetVolumeBaseline().SetValue(VolumeModifierArmR * RightArm1.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
+  RightArm2.GetVolumeBaseline().SetValue(VolumeModifierArmR * RightArm2.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   RightKidney1.GetVolumeBaseline().SetValue(VolumeModifierKidneyR * RightKidney1.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   RightLeg2.GetVolumeBaseline().SetValue(VolumeModifierLegR * RightLeg2.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
   Skin1.GetVolumeBaseline().SetValue(VolumeModifierSkin * Skin1.GetVolumeBaseline(VolumeUnit::mL), VolumeUnit::mL);
@@ -831,6 +835,7 @@ void PulseController::SetupCardiovascular()
   SELiquidCompartment& vLeftArm = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::LeftArm);
   vLeftArm.MapNode(LeftArm1);
   vLeftArm.MapNode(LeftArm2);
+  vLeftArm.MapNode(LeftArm3);
   /////////////////
   // Left Kidney //
   SELiquidCompartment& vLeftKidney = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::LeftKidney);
@@ -861,6 +866,7 @@ void PulseController::SetupCardiovascular()
   SELiquidCompartment& vRightArm = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::RightArm);
   vRightArm.MapNode(RightArm1);
   vRightArm.MapNode(RightArm2);
+  vRightArm.MapNode(RightArm3);
   //////////////////
   // Right Kidney // 
   SELiquidCompartment& vRightKidney = m_Compartments->CreateLiquidCompartment(pulse::VascularCompartment::RightKidney);
@@ -1002,7 +1008,7 @@ void PulseController::SetupCardiovascular()
   SELiquidCompartmentLink& vAortaToLeftArm = m_Compartments->CreateLiquidLink(vAorta, vLeftArm, pulse::VascularLink::AortaToLeftArm);
   vAortaToLeftArm.MapPath(Aorta1ToLeftArm1);
   SELiquidCompartmentLink& vLeftArmToVenaCava = m_Compartments->CreateLiquidLink(vLeftArm, vVenaCava, pulse::VascularLink::LeftArmToVenaCava);
-  vLeftArmToVenaCava.MapPath(LeftArm2ToVenaCava);
+  vLeftArmToVenaCava.MapPath(LeftArm3ToVenaCava);
   /////////////////
   // Left Kidney //
   SELiquidCompartmentLink& vAortaToLeftKidney = m_Compartments->CreateLiquidLink(vAorta, vLeftKidney, pulse::VascularLink::AortaToLeftKidney);
@@ -1032,7 +1038,7 @@ void PulseController::SetupCardiovascular()
   SELiquidCompartmentLink& vAortaToRightArm = m_Compartments->CreateLiquidLink(vAorta, vRightArm, pulse::VascularLink::AortaToRightArm);
   vAortaToRightArm.MapPath(Aorta1ToRightArm1);
   SELiquidCompartmentLink& vRightArmToVenaCava = m_Compartments->CreateLiquidLink(vRightArm, vVenaCava, pulse::VascularLink::RightArmToVenaCava);
-  vRightArmToVenaCava.MapPath(RightArm2ToVenaCava);
+  vRightArmToVenaCava.MapPath(RightArm3ToVenaCava);
   //////////////////
   // Right Kidney // 
   SELiquidCompartmentLink& vAortaToRightKidney = m_Compartments->CreateLiquidLink(vAorta, vRightKidney, pulse::VascularLink::AortaToRightKidney);

@@ -563,6 +563,7 @@ namespace pulse {
 
     DEFINE_STATIC_STRING(LeftArm1);
     DEFINE_STATIC_STRING(LeftArm2);
+    DEFINE_STATIC_STRING(LeftArm3);
 
     DEFINE_STATIC_STRING(LeftKidney1);
     DEFINE_STATIC_STRING(LeftKidney2);
@@ -581,6 +582,7 @@ namespace pulse {
 
     DEFINE_STATIC_STRING(RightArm1);
     DEFINE_STATIC_STRING(RightArm2);
+    DEFINE_STATIC_STRING(RightArm3);
 
     DEFINE_STATIC_STRING(RightKidney1);
     DEFINE_STATIC_STRING(RightKidney2);
@@ -666,9 +668,10 @@ namespace pulse {
     DEFINE_STATIC_STRING(LargeIntestineToPortalVein);
     // Left Arm
     DEFINE_STATIC_STRING(Aorta1ToLeftArm1);
-    DEFINE_STATIC_STRING(LeftArm1ToGround);
     DEFINE_STATIC_STRING(LeftArm1ToLeftArm2);
-    DEFINE_STATIC_STRING(LeftArm2ToVenaCava);
+    DEFINE_STATIC_STRING(LeftArm2ToGround);
+    DEFINE_STATIC_STRING(LeftArm2ToLeftArm3);
+    DEFINE_STATIC_STRING(LeftArm3ToVenaCava);
     // Left Kidney
     DEFINE_STATIC_STRING(Aorta1ToLeftKidney1);
     DEFINE_STATIC_STRING(LeftKidney1ToGround);
@@ -701,9 +704,10 @@ namespace pulse {
     DEFINE_STATIC_STRING(GroundToPericardium1);
     // Right Arm
     DEFINE_STATIC_STRING(Aorta1ToRightArm1);
-    DEFINE_STATIC_STRING(RightArm1ToGround);
     DEFINE_STATIC_STRING(RightArm1ToRightArm2);
-    DEFINE_STATIC_STRING(RightArm2ToVenaCava);
+    DEFINE_STATIC_STRING(RightArm2ToGround);
+    DEFINE_STATIC_STRING(RightArm2ToRightArm3);
+    DEFINE_STATIC_STRING(RightArm3ToVenaCava);
     // Right Kidney
     DEFINE_STATIC_STRING(Aorta1ToRightKidney1);
     DEFINE_STATIC_STRING(RightKidney1ToGround);
