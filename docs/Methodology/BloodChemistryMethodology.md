@@ -31,7 +31,7 @@ The Stewart approach has been the subject of criticism. Some researchers have us
 - %Respiratory and metabolic acid-base disturbances
 
 ### Existing
-A simple oxygen-hemoglobin binging curve.
+A simple oxygen-hemoglobin binding curve.
 
 @anchor bloodchemistry-approach
 ### Approach
@@ -236,7 +236,7 @@ Published values from the literature were compared to the engine output to perfo
 
 @insert ./test_results/tables/BloodChemistryValidationTable.md
 
-Overall, the engine meets validation, with 37 of the 44 validation parameters having less than a 10% error when compared to published values.  An additional two parameters have less than a 30% error. The parameters with greater than 30% error are all related to carbon dioxide saturation and binding in the blood stream.  A detailed explanation of how these values are calculated can be found @ref bloodchemistry-approach "above", with additional information in @ref tissue-diffusion "Tissue". This binding calculation will be reviewed to correct errors in the future.
+Overall, the engine meets validation, with all but two of the validation parameters having less than a 10% error when compared to published values.  Only one parameter has an error greater than than 30%. 
 
 Validation - Conditions and Actions
 -----------------------
