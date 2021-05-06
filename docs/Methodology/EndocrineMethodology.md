@@ -100,7 +100,7 @@ Actions
 -------
 ### Insults
 #### Acute Stress
-The Acute Stress action is used to directly modify the production of epinephrine. In the human body, stress or anxiety causes a sympathetic release of epinephrine and norepinephrine from the adrenal medullae. In the engine, an Acute Stress action is rated a severity between 0 and 1, and that severity is used to modify the epinephrine release rate linearly. A severity of 0 will return the rate to the normal, basal level, while a severity of 1 will increase the release rate by a factor of 30. This model was chosen to approximate the physiological responses observed during mild pain, mental stress tests, and panic attacks @cite greisen2001acute @cite herd1991cardiovascular @cite wilkinson1998sympathetic.
+The Acute Stress action is used to directly modify the production of epinephrine. In the human body, stress or anxiety causes a sympathetic release of epinephrine and norepinephrine from the adrenal medullae. In the engine, an Acute Stress action is rated a severity between 0 and 1, and that severity is used to modify the epinephrine release rate linearly. A severity of 0 will return the rate to the normal, basal level, while a severity of 1 will increase the release rate by a factor of 30. This model was chosen to approximate the physiological responses observed during mild pain, mental stress tests, and panic attacks @cite greisen2001acute @cite herd1991cardiovascular @cite wilkinson1998sympathetic. This does does incorporate the effects of adrenaline on the physiology, which is also released during stress, fear, etc.
 
 Results and Conclusions
 =======================
@@ -162,7 +162,7 @@ Future Work
 Coming Soon
 -----------
 
-Future work will focus on a complete endocrine response to glucose regulation including: detection of glucose levels in the blood stream and release of insulin to appropriately manage those levels. Pathology states of glucose in the patient will be included.
+Future work will focus on a complete endocrine response to glucose regulation including: detection of glucose levels in the blood stream and release of insulin to appropriately manage those levels. Pathology states of glucose in the patient will be included. We plan to add adrenaline and its link to the acute stress action.
 
 Recommended Improvements
 ------------------------
