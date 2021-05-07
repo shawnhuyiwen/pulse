@@ -24,9 +24,11 @@
 #include "substance/SESubstance.h"
 #include "substance/SESubstanceFraction.h"
 #include "substance/SESubstanceConcentration.h"
+#include "patient/SEPatient.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarMass.h"
 #include "properties/SEScalarMassPerVolume.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarPressureTimePerVolume.h"
@@ -455,8 +457,11 @@ void BagValveMask::CalculateInspiration()
   }
   else
   {
-    /// \error Fatal: Inspiration mode needs to be set.
-    Fatal("Inspiration mode needs to be set.");
+    // Set a default squeeze volume that attempts to acheive the ideal tidal volume (7 mL/kg(ideal))
+    double idealBodyWeight_kg = m_data.GetInitialPatient().GetIdealBodyWeight(MassUnit::kg);
+    double tidalVolume_mL = 7.0 * idealBodyWeight_kg;
+    m_SqueezeFlow_L_Per_s = (tidalVolume_mL / 1000.0) / inspirationPeriod_s;
+    m_SqueezePressure_cmH2O = SEScalar::dNaN();
   }
 }
 
