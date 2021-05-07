@@ -472,13 +472,14 @@ void BagValveMask::CalculateExpiration()
   }
 
   // Check trigger
-  double breathFrequency_Per_s = 0.0;
-  double totalBreathTime_s = 0.0;
+  // Give defaults, if not user defined
+  double breathFrequency_Per_s = 12.0 / 60.0; //12 bpm
   if (HasBreathFrequency())
   {
     breathFrequency_Per_s = GetBreathFrequency(FrequencyUnit::Per_s);
-    totalBreathTime_s = 1.0 / breathFrequency_Per_s;
   }
+
+  double totalBreathTime_s = 1.0 / breathFrequency_Per_s;
 
   double inspiratoryExpiratoryRatio = 0.5; //Default
   if (HasInspiratoryExpiratoryRatio())
