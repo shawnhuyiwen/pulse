@@ -110,7 +110,7 @@
             "Connection": "Tube",
             "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
             "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
-            "PositiveInspiratoryPressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
+            "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } }

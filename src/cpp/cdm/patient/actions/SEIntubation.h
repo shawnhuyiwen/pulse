@@ -6,7 +6,7 @@
 
 // Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
 enum class eIntubation_Type { Off = 0, Esophageal, LeftMainstem, RightMainstem, Tracheal,
-  Orpharyngeal, Nasopharyngeal };
+  Oropharyngeal, Nasopharyngeal };
 extern const std::string& eIntubation_Type_Name(eIntubation_Type m);
 
 class CDM_DECL SEIntubation : public SEPatientAction

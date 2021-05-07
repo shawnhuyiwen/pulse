@@ -443,9 +443,9 @@ void BagValveMask::CalculateInspiration()
   }
 
   // Calculate source - constant pressure or flow during inspiration phase
-  if (HasPositiveInspiratoryPressure())
+  if (HasSqueezePressure())
   {
-    m_SqueezePressure_cmH2O = GetPositiveInspiratoryPressure(PressureUnit::cmH2O);
+    m_SqueezePressure_cmH2O = GetSqueezePressure(PressureUnit::cmH2O);
     m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
   }
   else if (HasSqueezeVolume())

@@ -110,7 +110,7 @@
             "Connection": "Mask",
             "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
             "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
-            "PositiveInspiratoryPressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
+            "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
           }
       }
@@ -119,13 +119,13 @@
   
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" } } } },
   
-  { "PatientAction": { "Intubation": { "Type": "Orpharyngeal" } } },
+  { "PatientAction": { "Intubation": { "Type": "Oropharyngeal" } } },
   
   {
     "EquipmentAction": {
       "BagValveMaskConfiguration": {
         "BagValveMaskAction": { "EquipmentAction": { "Action": {
-          "Comment": "Add the orphryngeal airway." }}},
+          "Comment": "Add the oropharyngeal airway." }}},
           "Configuration":
           {
             "Connection": "Tube",

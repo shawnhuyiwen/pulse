@@ -29,8 +29,8 @@ void PBBagValveMask::Serialize(const CDM_BIND::BagValveMaskData& src, SEBagValve
     PBProperty::Load(src.breathfrequency(), dst.GetBreathFrequency());
   if (src.has_inspiratoryexpiratoryratio())
     PBProperty::Load(src.inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
-  if (src.has_positiveinspiratorypressure())
-    PBProperty::Load(src.positiveinspiratorypressure(), dst.GetPositiveInspiratoryPressure());
+  if (src.has_squeezepressure())
+    PBProperty::Load(src.squeezepressure(), dst.GetSqueezePressure());
   if (src.has_squeezevolume())
     PBProperty::Load(src.squeezevolume(), dst.GetSqueezeVolume());
   if (src.has_valvepositiveendexpiredpressure())
@@ -95,8 +95,8 @@ void PBBagValveMask::Serialize(const SEBagValveMask& src, CDM_BIND::BagValveMask
     dst.set_allocated_breathfrequency(PBProperty::Unload(*src.m_BreathFrequency));
   if (src.HasInspiratoryExpiratoryRatio())
     dst.set_allocated_inspiratoryexpiratoryratio(PBProperty::Unload(*src.m_InspiratoryExpiratoryRatio));
-  if (src.HasPositiveInspiratoryPressure())
-    dst.set_allocated_positiveinspiratorypressure(PBProperty::Unload(*src.m_PositiveInspiratoryPressure));
+  if (src.HasSqueezePressure())
+    dst.set_allocated_squeezepressure(PBProperty::Unload(*src.m_SqueezePressure));
   if (src.HasSqueezeVolume())
     dst.set_allocated_squeezevolume(PBProperty::Unload(*src.m_SqueezeVolume));
   if (src.HasValvePositiveEndExpiredPressure())

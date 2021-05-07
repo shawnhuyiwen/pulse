@@ -60,9 +60,9 @@ public:
   virtual SEScalar& GetInspiratoryExpiratoryRatio();
   virtual double GetInspiratoryExpiratoryRatio() const;
 
-  virtual bool HasPositiveInspiratoryPressure() const; //Aaron - rename SqueezePressure
-  virtual SEScalarPressure& GetPositiveInspiratoryPressure();
-  virtual double GetPositiveInspiratoryPressure(const PressureUnit& unit) const;
+  virtual bool HasSqueezePressure() const;
+  virtual SEScalarPressure& GetSqueezePressure();
+  virtual double GetSqueezePressure(const PressureUnit& unit) const;
 
   virtual bool HasSqueezeVolume() const;
   virtual SEScalarVolume& GetSqueezeVolume();
@@ -111,7 +111,7 @@ protected:
   
   SEScalarFrequency*                           m_BreathFrequency;
   SEScalar*                                    m_InspiratoryExpiratoryRatio;
-  SEScalarPressure*                            m_PositiveInspiratoryPressure;
+  SEScalarPressure*                            m_SqueezePressure;
   SEScalarVolume*                              m_SqueezeVolume;
   SEScalarPressure*                            m_ValvePositiveEndExpiredPressure;
 

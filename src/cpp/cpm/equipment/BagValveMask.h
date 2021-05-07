@@ -55,7 +55,6 @@ protected:
   void SetVolumes();
 
   // Serializable member variables (Set in Initialize and in schema)
-  //Aaron - Make sure these are serialized
   eBreathState          m_CurrentBreathState;
   double                m_CurrentPeriodTime_s;
   double                m_SqueezeFlow_L_Per_s;

@@ -551,8 +551,8 @@ void PBEquipmentAction::Load(const CDM_BIND::BagValveMaskSqueezeData& src, SEBag
 void PBEquipmentAction::Serialize(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst, const SESubstanceManager& subMgr)
 {
   PBEquipmentAction::Serialize(src.bagvalvemaskaction(), dst);
-  if (src.has_positiveinspiratorypressure())
-    PBProperty::Load(src.positiveinspiratorypressure(), dst.GetPositiveInspiratoryPressure());
+  if (src.has_squeezepressure())
+    PBProperty::Load(src.squeezepressure(), dst.GetSqueezePressure());
   else if (!src.has_squeezevolume())
     PBProperty::Load(src.squeezevolume(), dst.GetSqueezeVolume());
   if (src.has_expiratoryperiod())
@@ -569,8 +569,8 @@ CDM_BIND::BagValveMaskSqueezeData* PBEquipmentAction::Unload(const SEBagValveMas
 void PBEquipmentAction::Serialize(const SEBagValveMaskSqueeze& src, CDM_BIND::BagValveMaskSqueezeData& dst)
 {
   PBEquipmentAction::Serialize(src, *dst.mutable_bagvalvemaskaction());
-  if (src.HasPositiveInspiratoryPressure())
-    dst.set_allocated_positiveinspiratorypressure(PBProperty::Unload(*src.m_PositiveInspiratoryPressure));
+  if (src.HasSqueezePressure())
+    dst.set_allocated_squeezepressure(PBProperty::Unload(*src.m_SqueezePressure));
   else if (src.HasSqueezeVolume())
     dst.set_allocated_squeezevolume(PBProperty::Unload(*src.m_SqueezeVolume));
   if (src.HasExpiratoryPeriod())

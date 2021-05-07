@@ -18,7 +18,7 @@
 
 SEBagValveMaskSqueeze::SEBagValveMaskSqueeze(Logger* logger) : SEBagValveMaskAction(logger)
 {
-  m_PositiveInspiratoryPressure = nullptr;
+  m_SqueezePressure = nullptr;
   m_SqueezeVolume = nullptr;
   m_ExpiratoryPeriod = nullptr;
   m_InspiratoryPeriod = nullptr;
@@ -26,7 +26,7 @@ SEBagValveMaskSqueeze::SEBagValveMaskSqueeze(Logger* logger) : SEBagValveMaskAct
 
 SEBagValveMaskSqueeze::~SEBagValveMaskSqueeze()
 {
-  SAFE_DELETE(m_PositiveInspiratoryPressure);
+  SAFE_DELETE(m_SqueezePressure);
   SAFE_DELETE(m_SqueezeVolume);
   SAFE_DELETE(m_ExpiratoryPeriod);
   SAFE_DELETE(m_InspiratoryPeriod);
@@ -35,7 +35,7 @@ SEBagValveMaskSqueeze::~SEBagValveMaskSqueeze()
 void SEBagValveMaskSqueeze::Clear()
 {
   SEBagValveMaskAction::Clear();
-  INVALIDATE_PROPERTY(m_PositiveInspiratoryPressure);
+  INVALIDATE_PROPERTY(m_SqueezePressure);
   INVALIDATE_PROPERTY(m_SqueezeVolume);
   INVALIDATE_PROPERTY(m_ExpiratoryPeriod);
   INVALIDATE_PROPERTY(m_InspiratoryPeriod);
@@ -49,7 +49,7 @@ void SEBagValveMaskSqueeze::Copy(const SEBagValveMaskSqueeze& src, const SESubst
 bool SEBagValveMaskSqueeze::IsValid() const
 {
   return SEBagValveMaskAction::IsValid() &&
-    (HasPositiveInspiratoryPressure() || HasSqueezeVolume()) &&
+    (HasSqueezePressure() || HasSqueezeVolume()) &&
     HasExpiratoryPeriod() && HasInspiratoryPeriod();
 }
 
@@ -65,8 +65,8 @@ void SEBagValveMaskSqueeze::Deactivate()
 
 const SEScalar* SEBagValveMaskSqueeze::GetScalar(const std::string& name)
 {
-  if (name == "PositiveInspiratoryPressure")
-    return &GetPositiveInspiratoryPressure();
+  if (name == "SqueezePressure")
+    return &GetSqueezePressure();
   if (name == "SqueezeVolume")
     return &GetSqueezeVolume();
   if (name == "ExpiratoryPeriod")
@@ -76,21 +76,21 @@ const SEScalar* SEBagValveMaskSqueeze::GetScalar(const std::string& name)
   return nullptr;
 }
 
-bool SEBagValveMaskSqueeze::HasPositiveInspiratoryPressure() const
+bool SEBagValveMaskSqueeze::HasSqueezePressure() const
 {
-  return m_PositiveInspiratoryPressure == nullptr ? false : m_PositiveInspiratoryPressure->IsValid();
+  return m_SqueezePressure == nullptr ? false : m_SqueezePressure->IsValid();
 }
-SEScalarPressure& SEBagValveMaskSqueeze::GetPositiveInspiratoryPressure()
+SEScalarPressure& SEBagValveMaskSqueeze::GetSqueezePressure()
 {
-  if (m_PositiveInspiratoryPressure == nullptr)
-    m_PositiveInspiratoryPressure = new SEScalarPressure();
-  return *m_PositiveInspiratoryPressure;
+  if (m_SqueezePressure == nullptr)
+    m_SqueezePressure = new SEScalarPressure();
+  return *m_SqueezePressure;
 }
-double SEBagValveMaskSqueeze::GetPositiveInspiratoryPressure(const PressureUnit& unit) const
+double SEBagValveMaskSqueeze::GetSqueezePressure(const PressureUnit& unit) const
 {
-  if (m_PositiveInspiratoryPressure == nullptr)
+  if (m_SqueezePressure == nullptr)
     return SEScalar::dNaN();
-  return m_PositiveInspiratoryPressure->GetValue(unit);
+  return m_SqueezePressure->GetValue(unit);
 }
 
 bool SEBagValveMaskSqueeze::HasSqueezeVolume() const
@@ -149,7 +149,7 @@ void SEBagValveMaskSqueeze::ToString(std::ostream &str) const
   str << "Mechanical Ventilator Squeeze";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tPositiveInspiratoryPressure: ";HasPositiveInspiratoryPressure() ? str << *m_PositiveInspiratoryPressure : str << "NaN";
+  str << "\n\tSqueezePressure: ";HasSqueezePressure() ? str << *m_SqueezePressure : str << "NaN";
   str << "\n\tSqueezeVolume: "; HasSqueezeVolume() ? str << *m_SqueezeVolume : str << "NaN";
   str << "\n\tExpiratoryPeriod: "; HasExpiratoryPeriod() ? str << *m_ExpiratoryPeriod : str << "NaN";
   str << "\n\tInspiratoryPeriod: "; HasInspiratoryPeriod() ? str << *m_InspiratoryPeriod : str << "NaN";

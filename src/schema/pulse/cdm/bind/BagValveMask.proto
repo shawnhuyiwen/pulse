@@ -22,7 +22,7 @@ message BagValveMaskData
   
   ScalarFrequencyData                 BreathFrequency                 = 2;/**<< @brief Bag squeeze rate, translates to respiration rate. */
   ScalarData                          InspiratoryExpiratoryRatio      = 3;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
-  ScalarPressureData                  PositiveInspiratoryPressure     = 4;/**<< @brief Extrinsic pressure above atmosphere at the end of inhalation. */
+  ScalarPressureData                  SqueezePressure                 = 4;/**<< @brief Extrinsic pressure above atmosphere at the end of inhalation. */
   ScalarVolumeData                    SqueezeVolume                   = 5;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
   ScalarPressureData                  ValvePositiveEndExpiredPressure = 6;/**<< @brief Maximum extrinsic pressure above atmosphere at the end of exhalation. */
   
