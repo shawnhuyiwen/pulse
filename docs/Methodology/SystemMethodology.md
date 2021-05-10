@@ -484,6 +484,10 @@ Four scenarios were created to showcase the ability of the open-source physiolog
 
 A team of soldiers is conducting a patrol when an explosive device detonates, injuring one of the soldiers. The squad medic applies direct pressure to a hemorrhaging wound, and, suspecting a tension pneumothorax, performs a needle decompression. Direct pressure is not controlling the bleeding, so a tourniquet is applied. Morphine and IV fluids are administered.
 
+<center><br>
+*Table 9. The validation results for the Combat Multitrauma Showcase scenario.*
+</center>
+
 See <a href="CombatMultitraumaValidation.pdf">Combat Multitrauma Validation Matrix</a> for complete details on validation.
 
 <center>
@@ -507,7 +511,27 @@ See <a href="CombatMultitraumaValidation.pdf">Combat Multitrauma Validation Matr
 
 A 40 year old female with a history of asthma is having an asthma attack. She arrives at the hospital ten minutes after the beginning of the attack. A doctor administers albuterol and her condition improves.
 
-See <a href="AsthmaAttackValidation.pdf">Asthma Attack Validation Matrix</a> for complete details on validation.
+<center><br>
+*Table 10. The validation results for the Asthma Attack Showcase scenario.*
+</center>
+
+|	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Heart Stroke Volume (mL)	|	Mean Arterial Pressure  (mmHg)	|	Systolic Pressure  (mmHg)	|	Cardiac Output (mL/min)	|	Respiration Rate (breaths/min)	|	Oxygen Saturation (fraction)	|	End Tidal CO2 (fraction)	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	pH (mmHg)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	"Begin Asthma Attack
+(Severity 0.7)"	|	10 minutes of asthma attack	|	60	|	660	|<span class="success">	Increase @cite adams2012patient	</span>|<span class="success">	"Decrease @cite bergeronSME
+
+Decrease is expected with increased heart rate"	</span>|<span class="success">	Increase @cite adams2012patient	</span>|<span class="warning">	Increase @cite adams2012patient	</span>|<span class="warning">	Increase  @cite adams2012patient	</span>|<span class="success">	Increase  @cite adams2012patient @cite Raimondi2013acid	</span>|<span class="success">	Decrease  @cite adams2012patient	</span>|<span class="success">	Decreased peak @cite Nowak1983arterial	</span>|<span class="success">	71.5 ± 12 @cite Nowak1983arterial	</span>|<span class="success">	35.8 ± 6.9 @cite Nowak1983arterial	</span>|<span class="danger">	Increase @cite Mountain1990acid @cite Raimondi2013acid	</span>|
+|	"Administer Albuterol
+(Albuterol inhaler used correctly, 90.0 ug dose, nozzle loss fraction 0.04)"	|	Drug Onset in < 	|	660	|	960	|<span class="danger">	Decrease @cite adams2012patient	</span>|<span class="warning">	No Change @cite bergeronSME	</span>|<span class="warning">	Decrease @cite adams2012patient	</span>|<span class="success">	Decrease @cite adams2012patient	</span>|<span class="warning">	No Change @cite bergeronSME	</span>|<span class="success">	Decrease  @cite adams2012patient @cite Raimondi2013acid	</span>|<span class="success">	Increase back to baseline  @cite adams2012patient	</span>|<span class="warning">	Back to baseline @cite metoyer2016SME	</span>|<span class="success">	78.0 ± 12.7 @cite Nowak1983arterial	</span>|<span class="success">	32.3 ± 4.6 @cite Nowak1983arterial	</span>|<span class="success">	Back to baseline @cite Mountain1990acid @cite Raimondi2013acid	</span>|
+
+<center>
+<table border="0">
+<tr>
+    <td><img src="./plots/System/AsthmaAttack_PFT.jpg" width="550"></td>
+</tr>
+</table>
+</center>
+<center><i>Figure 12. The pulmonary function test for the asthma patient shows overall good agreement with the expected results. The residual volume may appear lower than expected. @cite bergeronSME</i></center>
 
 <center>
 <table border="0">
@@ -524,13 +548,45 @@ See <a href="AsthmaAttackValidation.pdf">Asthma Attack Validation Matrix</a> for
 </tr>
 </table>
 </center>
-<center><i>Figure 12. Select outputs from the Asthma Attack showcase scenario.</i></center>
+<center><i>Figure 13. Select outputs from the Asthma Attack showcase scenario.</i></center>
 
 ### Heat Stroke
 
 A 25 year old male is hiking towards a rock formation to begin a recreational free climb. During the hike, he is working at ~10% of his maximum capacity. The man arrives at a rock formation and begins climbing at an intensity of ~1/2 of his maximum capacity. At the top of the rock formation, the man becomes dizzy and passes out. An off-duty medic takes action to treat a heat injury.
 
-See <a href="HeatStrokeValidation.pdf">Heat Stroke Validation Matrix</a> for complete details on validation.
+<center><br>
+*Table 11. The validation results for the Heat Stroke Showcase scenario.*
+</center>
+
+|	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Heart Stroke Volume (mL)	|	Mean Arterial Pressure (mmHg)	|	Systolic Arterial Pressure (mmHg)	|	Diastolic Arterial Pressure (mmHg)	|	Oxygen Saturation  (mmHg)	|	Core Temperate (C)	|	Skin Temperature (C)	|	Sweat Rate  (mL/min)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	"Hike
+(Hiking at exercise intensity 0.1)"	|	 Exercising heavily for 20 minutes in bulky clothing at an ambient temperature of 16 to 20C	|	60	|	1260	</span>|<span class="success">	> 80 @cite metoyer2016SME	</span>|<span class="danger">	Increase @cite rmetoyer2016SME	</span>|<span class="danger">	Increase @cite Pickering1982blood	</span>|<span class="danger">	"Increase
+< 34.4% above resting (168) Christie1987clinical
+< 28.8% above resting (161) [7]"	</span>|<span class="warning">	No significant change (86) @cite Christie1987clinical, (80) @cite Pickering1982blood	</span>|<span class="success">	Decreasing @cite Brutsaert2000higher	</span>|<span class="success">	Increase  @cite rmetoyer2016SME	</span>|<span class="success">	< Core @cite Benzinger1969heat	</span>|<span class="success">	For direct calc = 2.3045e-5*(core-37.1) NOTE this may be low @cite Benzinger1969heat	</span>|
+|	"Rest
+"	|		|	1260	|	1320	</span>|<span class="danger">	Decrease @cite metoyer2016SME	</span>|<span class="success">	Some recovery@cite rmetoyer2016SME	</span>|<span class="danger">	Some recovery @cite rmetoyer2016SME	</span>|<span class="success">	Some recovery @cite rmetoyer2016SME	</span>|<span class="danger">	Some recovery @cite rmetoyer2016SME	</span>|<span class="danger">	Some recovery @cite rmetoyer2016SME	</span>|<span class="success">	No change  @cite rmetoyer2016SME	</span>|<span class="success">	< Core @cite Benzinger1969heat	</span>|<span class="success">	No change @cite rmetoyer2016SME	</span>|
+|	"Climb
+(Climbing at exercise intensity 0.45)"	|	Heat stroke is evident after 10 more minutes of exercise at a rising temperature	|	1320	|	1920	</span>|<span class="success">	120 - 180 @cite Pickering1982blood	|<span class="danger">	"121.9 @cite ODonnell1977hemodynamic
+101 - 121 @cite Christie1987clinical"	</span>|<span class="success">	Increasing @cite Pickering1982blood then decreasing with heat stroke @cite ODonnell1977hemodynamic	</span>|<span class="danger">	"Increase toward max exertion values
+34.4% above resting (168) @cite Christie1987clinical
+28.8% above resting (161) @cite Pickering1982blood"	</span>|<span class="warning">	No significant change (86) @cite Christie1987clinical, (80) @cite Pickering1982blood	</span>|<span class="danger">	Decreasing @cite Brutsaert2000higher	</span>|<span class="warning">	>40 degC @cite Bouchama2002heat	</span>|<span class="success">	< Core @cite Benzinger1969heat	</span>|<span class="success">	"
+For direct calc = 2.3045e-5*(core-37.1) NOTE this may be low @cite Benzinger1969heat"	</span>|
+|	"Bystander Actions
+(Move to cooler environment, remove clothing, apply cold pack, and start IV fluids)"	|	 The patient's clothing is removed. IV saline is administered and active cooling begun. 	|	1920	|	2010	</span>|<span class="success">	Decreasing (to baseline over 12 hours) @cite ODonnell1977hemodynamic	</span>|<span class="danger">	Decreasing (to baseline over 12 hours) @cite ODonnell1977hemodynamic	</span>|<span class="danger">	Decrease @cite ODonnell1977hemodynamic	</span>|<span class="danger">	< 120 @cite Bouchama2002heat	</span>|<span class="warning">	"No significant change (86) @cite Christie1987clinical, (80) @cite Pickering1982blood
+Possible slight decrease  @cite Bouchama2002heat, @cite Benzinger1969heat"	</span>|<span class="danger">	Increase @cite rmetoyer2016SME	</span>|<span class="warning">	Decreasing with treatment  @cite rmetoyer2016SME	</span>|<span class="success">	< Core @cite Benzinger1969heat	</span>|<span class="success">	"
+For direct calc = 2.3045e-5*(core-37.1) NOTE this may be low @cite Benzinger1969heat"	</span>|
+|	Transportation	|	 The patient is transported to a medical treatment facility.	|	2010	|	2610	</span>|<span class="success">	Decreasing (to baseline over 12 hours) @cite ODonnell1977hemodynamic	</span>|<span class="danger">	Decreasing (to baseline over 12 hours) @cite ODonnell1977hemodynamic	</span>|<span class="success">	Decrease @cite ODonnell1977hemodynamic	</span>|<span class="danger">	< 120 @cite Bouchama2002heat	</span>|<span class="warning">	"No significant change (86) @cite Christie1987clinical, (80) @cite Pickering1982blood
+Possible slight decrease  @cite Bouchama2002heat, @cite Benzinger1969heat"	</span>|<span class="success">	Increase @cite rmetoyer2016SME	</span>|<span class="success">	Decreasing with treatment  @cite rmetoyer2016SME	</span>|<span class="success">	< Core @cite Benzinger1969heat	</span>|<span class="success">
+For direct calc = 2.3045e-5*(core-37.1) NOTE this may be low @cite Benzinger1969heat	</span>|
+
+A blood chemistry panel assessment is completed at the end of the scenario. The results are shown in Table 11.
+
+<center><br>
+*Table 11. The validation results for the blood chemistry assessment for the heat stroke patient.*
+</center>
+
+
 
 <center>
 <table border="0">
@@ -547,13 +603,34 @@ See <a href="HeatStrokeValidation.pdf">Heat Stroke Validation Matrix</a> for com
 </tr>
 </table>
 </center>
-<center><i>Figure 13. Select outputs from the Heat Stroke showcase scenario.</i></center>
+<center><i>Figure 14. Select outputs from the Heat Stroke showcase scenario.</i></center>
 
 ### %Environment Exposure
 
 A 17 year old female leaves her Alaskan home in the mid-winter to retrieve a newspaper. The door closes as she exits the house. She is stuck outside for 45 minutes where it is -10<sup>o</sup>C. When the woman's housemates realize that she is outside, they bring her back in and sit her next to a fire.
 
-See <a href="EnvironmentExposureValidation.pdf">Environment Exposure Validation Matrix</a> for complete details on validation.
+<center><br>
+*Table 12. The validation results for the Environmental Exposure Showcase scenario.*
+</center>
+
+|	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	"Mean Arterial Pressure
+(mmHg)"	|	"Systolic Arterial Pressure
+(mmHg)"	|	"Respiration Rate
+(Breaths/min)"	|	"Core Temperature
+(C)"	|	"Oxygen Consumption
+(mL/min)"	|	"Carbon Dioxide Production
+(mL/min)"	|	"Metabolic Rate
+(W)"	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	"Cold Exposure
+(Environment change to Alaska outdoors for 10 minutes)"	|	Patient  exposed to very low temeratures for 10 minutes	|	60	|	2460	</span>|<span class="warning">	Increase initially then decrease @cite mallet2002pathophysiology	</span>|<span class="success">	Small rise then gradual fall below baseline @cite reuler1978hypothermia	</span>|<span class="success">	Small rise then gradual fall below baseline @cite reuler1978hypothermia	</span>|<span class="success">	Increasing @cite mallet2002pathophysiology	</span>|<span class="warning">	< 35 @cite reuler1978hypothermia	</span>|<span class="success">	"Decrease in hypothermia @cite reuler1978hypothermia
+
+1130 - 1320 with light activity [1]"	</span>|<span class="success">	Decrease in hypothermia @cite reuler1978hypothermia	</span>|<span class="warning">	approximately 350% increase over BMR (304.38 W for this patient) @cite williams2005rewarming	</span>|
+|	"Active Heating and Additional Clothing
+(Environment change to indoors and active heating applied to skin)"	|	Patient  indoors and actively heated for 10 minutes	|	2460	|	3090	</span>|<span class="warning">	Back toward baseline @cite rmetoyer2016SME	</span>|<span class="success">	"Increasing back to baseline @cite reuler1978hypothermia
+
+Back to baseline @cite rmetoyer2016SME"	</span>|<span class="success">	Increasing back to baseline reuler1978hypothermia	</span>|<span class="success">	Decreasing to baseline @cite mallet2002pathophysiology	</span>|<span class="success">	> 35 @cite reuler1978hypothermia	</span>|<span class="success">	Increase @cite reuler1978hypothermia	</span>|<span class="success">	Increase @cite reuler1978hypothermia	</span>|<span class="success">	Back toward baseline @cite rmetoyer2016SME	</span>|
+
 
 <center>
 <table border="0">
@@ -571,6 +648,13 @@ See <a href="EnvironmentExposureValidation.pdf">Environment Exposure Validation 
 </table>
 </center>
 <center><i>Figure 14. Select outputs from the %Environment Exposure showcase scenario.</i></center>
+
+### %COVID-18
+
+<center><br>
+*Table 13. The validation results for the COVID-19 Showcase scenario.*
+</center>
+
 
 ## Conclusion
 
