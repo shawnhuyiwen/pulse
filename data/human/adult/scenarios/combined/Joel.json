@@ -1,6 +1,6 @@
 {
   "Name": "Joel",
-  "Description": "Airway obstruction occurs at the beginning of the scenario. The airway obstruction is removed. A Ventilator mask is placed on Joel and oxygen is supplied from an anesthesia machine. Etomidate and succinylcholine are administered and the Ventilator mask is removed. An endotracheal tube is placed.",
+  "Description": "Airway obstruction occurs at the beginning of the scenario. The airway obstruction is removed. A mask is placed on Joel and oxygen is supplied from a ventilator. Etomidate and succinylcholine are administered and the mask is removed. An endotracheal tube is placed.",
   "PatientConfiguration": {
       "PatientFile": "Joel.json"
   },
@@ -452,66 +452,22 @@
       }
     }
   }, {
-    "EquipmentAction": {
-      "AnesthesiaMachineConfiguration": {
-        "Configuration": {
-          "Connection": "Mask",
-          "InletFlow": {
+    "PatientAction": {
+      "SupplementalOxygen": {
+        "Device": "SimpleMask",
+		"Flow": {
             "ScalarVolumePerTime": {
-              "Value": 5.0,
+              "Value": 1.0,
               "Unit": "L/min"
             }
-          },
-          "InspiratoryExpiratoryRatio": {
-            "Value": 0.5
-          },
-          "OxygenFraction": {
-            "Scalar0To1": {
-              "Value": 0.23
-            }
-          },
-          "OxygenSource": "BottleOne",
-          "PositiveEndExpiredPressure": {
-            "ScalarPressure": {
-              "Unit": "cmH2O"
-            }
-          },
-          "PrimaryGas": "Nitrogen",
-          "RespiratoryRate": {
-            "ScalarFrequency": {
-              "Value": 16.0,
-              "Unit": "1/min"
-            }
-          },
-          "PeakInspiratoryPressure": {
-            "ScalarPressure": {
-              "Unit": "cmH2O"
-            }
-          },
-          "OxygenBottleOne": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
-          },
-          "OxygenBottleTwo": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
-          }
-        }
+		}
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 60.0,
+          "Value": 15.0,
           "Unit": "s"
         }
       }
@@ -562,6 +518,12 @@
       }
     }
   }, {
+    "PatientAction": {
+      "SupplementalOxygen": {
+        "Device": "None"
+      }
+    }
+  }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
@@ -576,61 +538,23 @@
         "Type": "Tracheal"
       }
     }
-  }, {
+  }, {	
     "EquipmentAction": {
-      "AnesthesiaMachineConfiguration": {
-        "Configuration": {
+      "MechanicalVentilatorConfiguration": {
+        "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
+              "Comment": "Attach the mechanical ventilator - PC-CMV: RR = 16 bpm, I:E = 0.5, TV = 7 mL/kg(ideal)" }}},
+        "Configuration":
+        {
           "Connection": "Tube",
-          "InletFlow": {
-            "ScalarVolumePerTime": {
-              "Value": 5.0,
-              "Unit": "L/min"
-            }
-          },
-          "InspiratoryExpiratoryRatio": {
-            "Value": 0.5
-          },
-          "OxygenFraction": {
-            "Scalar0To1": {
-              "Value": 0.23
-            }
-          },
-          "OxygenSource": "Wall",
-          "PositiveEndExpiredPressure": {
-            "ScalarPressure": {
-              "Value": 5,
-              "Unit": "cmH2O"
-            }
-          },
-          "PrimaryGas": "Nitrogen",
-          "RespiratoryRate": {
-            "ScalarFrequency": {
-              "Value": 16.0,
-              "Unit": "1/min"
-            }
-          },
-          "PeakInspiratoryPressure": {
-            "ScalarPressure": {
-              "Value": 15,
-              "Unit": "cmH2O"
-            }
-          },
-          "OxygenBottleOne": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
-          },
-          "OxygenBottleTwo": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
-          }
+          "InspirationWaveform": "Square",
+          "ExpirationWaveform": "Square",
+          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 17.2, "Unit": "cmH2O" } },
+          "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
+          "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.5, "Unit": "s" } },
+          "ExpirationCycleTime": { "ScalarTime": { "Value": 1.25, "Unit": "s" } },
+          "FractionInspiredGas": [
+            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } }
+          ]
         }
       }
     }

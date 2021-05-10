@@ -1,6 +1,6 @@
 {
   "Name": "Nathan",
-  "Description": "Nathan is injected with Fentanyl before a Ventilator mask is placed and oxygen is administered via an anesthesia machine. An oxygen wall port pressure loss occurs, and then the oxygen source is transferred to another oxygen container.",
+  "Description": "Nathan is injected with Fentanyl before a mask is placed and oxygen is administered via an anesthesia machine. An oxygen wall port pressure loss occurs, and then the oxygen source is transferred to another oxygen container.",
   "PatientConfiguration": {
       "PatientFile": "Nathan.json"
   },
