@@ -160,7 +160,7 @@ endif()
 set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "CMake built-in FindProtobuf.cmake module compatible" FORCE)
 mark_as_advanced(protobuf_MODULE_COMPATIBLE)
 
-if(protobuf_DIR AND NOT EXISTS(${protobuf_DIR}))
+if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
   # Linux systems can build libs to a variety of directories...
   message(STATUS "Provided protobuf_DIR, does not exist, looking for alternatives...")
   message(STATUS "  protobuf_DIR : ${protobuf_DIR}")

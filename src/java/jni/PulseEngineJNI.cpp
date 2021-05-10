@@ -40,11 +40,13 @@ JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDrive
   ////////////////////
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeAllocate(JNIEnv *env, jobject obj, jstring dataDir)
 { 
-  PulseEngineJNI *engineJNI = new PulseEngineJNI();
+  const char* dataDirStr = env->GetStringUTFChars(dataDir, JNI_FALSE);
+  PulseEngineJNI *engineJNI = new PulseEngineJNI(dataDirStr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
+  env->ReleaseStringUTFChars(dataDir, dataDirStr);
   
   return reinterpret_cast<jlong>(engineJNI);
 }
@@ -322,7 +324,7 @@ JNIEXPORT jdoubleArray JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeP
   return jData;
 }
 
-PulseEngineJNI::PulseEngineJNI() : PulseEngineThunk()
+PulseEngineJNI::PulseEngineJNI(const std::string& dataDir) : PulseEngineThunk(dataDir)
 {
   Reset();
 }

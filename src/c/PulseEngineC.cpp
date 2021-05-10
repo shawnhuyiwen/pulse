@@ -44,9 +44,9 @@ C_EXPORT void C_CALL PulseDeinitialize()
 }
 
 extern "C"
-C_EXPORT PulseEngineThunk* C_CALL Allocate()
+C_EXPORT PulseEngineThunk* C_CALL Allocate(const char* dataDir)
 {
-  return new PulseEngineThunk();
+  return new PulseEngineThunk(dataDir);
 }
 
 extern "C"

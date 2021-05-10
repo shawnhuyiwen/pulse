@@ -14,7 +14,7 @@ namespace py = pybind11;
 void PhysiologyEngine(py::module &m)
 {
   py::class_<PulseEngineThunk>(m, "Engine", py::buffer_protocol())
-    .def(py::init<>())
+    .def(py::init<const std::string&>())
     .def("serialize_from_file", &PulseEngineThunk::SerializeFromFile)
     .def("serialize_to_file", &PulseEngineThunk::SerializeToFile)
     .def("serialize_from_string", &PulseEngineThunk::SerializeFromString)

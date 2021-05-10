@@ -33,11 +33,13 @@ class PulseEngineThunk::pimpl
 {
 public:
   std::unique_ptr<PulseEngine> eng;
+  SESubstanceManager*          subMgr=nullptr;
 
   bool keep_log_msgs = false;
   bool keep_event_changes = false;
 
   LogMessages log_msgs;
+  std::string data_dir;
   std::vector<const SEEventChange*> events;
   std::vector<const SEActiveEvent*> active_events;
   size_t length;
@@ -45,12 +47,13 @@ public:
   double* requestedData = nullptr;
 };
 
-PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
+PulseEngineThunk::PulseEngineThunk(const std::string& dataDir) : SEEventHandler()
 {
   data = new PulseEngineThunk::pimpl();
   data->eng = std::unique_ptr<PulseEngine>((PulseEngine*)CreatePulseEngine().release());
   data->eng->GetLogger()->LogToConsole(false);
   data->eng->GetLogger()->AddForward(this);
+  data->data_dir = dataDir;
 }
 PulseEngineThunk::~PulseEngineThunk()
 {
@@ -133,8 +136,22 @@ std::string PulseEngineThunk::SerializeToString(SerializationFormat format)
 
 bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format)
 {
+  const SESubstanceManager* subMgr;
+  if (data->eng->GetSubstanceManager().GetSubstances().empty())
+  {
+    if (data->subMgr == nullptr)
+    {
+      // We need to use our subMgr here
+      data->subMgr = new SESubstanceManager(data->eng->GetLogger());
+      data->subMgr->LoadSubstanceDirectory(data->data_dir);
+    }
+    subMgr = data->subMgr;
+  }
+  else
+    subMgr = &data->eng->GetSubstanceManager();
+
   SEPatientConfiguration pc(data->eng->GetLogger());
-  if (!pc.SerializeFromString(patient_configuration, format, data->eng->GetSubstanceManager()))
+  if (!pc.SerializeFromString(patient_configuration, format, *subMgr))
   {
     data->eng->GetLogger()->Error("Unable to load patient configuration string");
     return false;
@@ -143,7 +160,7 @@ bool PulseEngineThunk::InitializeEngine(std::string const& patient_configuration
   // Load up the data requests
   if (!data_requests.empty())
   {
-    if (!data->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, data->eng->GetSubstanceManager()))
+    if (!data->eng->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, *subMgr))
     {
       data->eng->GetLogger()->Error("Unable to load data request string");
       return false;

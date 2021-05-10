@@ -382,14 +382,16 @@ class eDataRequest_category(Enum):
     Patient = 0
     Physiology = 1
     Environment = 2
-    GasCompartment = 3
-    LiquidCompartment = 4
-    ThermalCompartment = 5
-    TissueCompartment = 6
-    Substance = 7
-    AnesthesiaMachine = 8
-    ECG = 9
-    Inhaler = 10
+    Action = 3
+    GasCompartment = 4
+    LiquidCompartment = 5
+    ThermalCompartment = 6
+    TissueCompartment = 7
+    Substance = 8
+    AnesthesiaMachine = 9
+    ECG = 10
+    Inhaler = 11
+    MechanicalVentilator = 12
 
 class SEDataRequest:
     __slots__ = ['_category', '_compartment_name', '_substance_name', '_property_name', '_unit']

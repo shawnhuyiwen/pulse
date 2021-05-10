@@ -21,8 +21,8 @@ class PulsePhysiologyEngine:
                  "_event_handler", "_log_forward",
                  "_spare_time_s"]
 
-    def __init__(self):
-        self.__pulse = PyPulse.Engine()
+    def __init__(self, data_root_dir="./"):
+        self.__pulse = PyPulse.Engine(data_root_dir)
         self._is_ready = False
         self._log_forward = None
         self._event_handler = None
