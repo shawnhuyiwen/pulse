@@ -7,7 +7,7 @@ Overview
 
 Abstract
 --------
-The %Cardiovascular system is a closed-loop system of compartments that represents the human circulatory system. The cardiovascular system is sometimes described as two separate circulations: the systemic circulation and the pulmonary circulation. Both circulations are represented in the %Cardiovascular system, as well as the lymph. The dynamical state of the %Cardiovascular System is determined at every timestep through a three-step process. First, intra- and inter-system feedback is applied during the preprocess step. Next, the state of the circulatory system is determined by solving an equivalent circuit. Finally, the state of the system is updated in preparation of time advancement. Through system and action validation, we demonstrate the accuracy of the model at resting physiology and a variety of cardiovascular related insults and interventions with appropriate system feedback. 
+The cardiovascular system is a closed-loop system of compartments that represents the human circulatory system. The cardiovascular system is sometimes described as two separate circulations: the systemic circulation and the pulmonary circulation. Both circulations are represented in the %Cardiovascular system, as well as the lymph. The dynamical state of the %Cardiovascular System is determined at every timestep through a three-step process. First, intra- and inter-system feedback is applied during the preprocess step. Next, the state of the circulatory system is determined by solving an equivalent circuit. Finally, the state of the system is updated in preparation of time advancement. Through system and action validation, we demonstrate the accuracy of the model at resting physiology and a variety of cardiovascular related insults and interventions with appropriate system feedback. 
 
 Introduction
 ------------
@@ -23,7 +23,7 @@ The cardiovascular system is a large organ system comprised of the heart and the
 </center>
 @endhtmlonly
 <center>
-<i>Figure 1. The %Cardiovascular System with pulmonary and systemic circulations of the human body @cite KVDP2014Circulatory . 
+<i>Figure 1. The cardiovascular System with pulmonary and systemic circulations of the human body @cite KVDP2014Circulatory. 
 Both the pulmonary and systemic circulation originate in the heart, which acts as a pump driving the blood through the entire body. The blood then returns to the right heart via the vena cava, where the right ventricle sends it to the pulmonary arteries and into the lungs. Gas exchange occurs in the vascular arterioles, creating oxygen-rich blood. This blood then returns via the pulmonary veins to the left atrium of the heart. The oxygen-rich blood enters the systemic circulation, providing oxygen to the rest of the body.</i>
 </center>
 <br>

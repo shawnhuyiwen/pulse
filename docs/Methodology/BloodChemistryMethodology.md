@@ -6,7 +6,7 @@ Overview
 ========
 Abstract
 --------
-The purpose of the Blood Chemistry System is primarily to hold the system-level blood substance data. It also uses information about the blood to compute plasma volume and whole-body mass and concentration information. In the future, all blood chemistry computations will take place in the Blood Chemistry system, including the acid-base balance computations of blood gas binding and species distribution that are currently performed by the Saturation class. For that reason, the saturation and acid-base balance models are described in the [appraoch](@ref bloodchemistry-approach) section of this document.
+The purpose of the Blood Chemistry System is primarily to hold the system-level blood substance data. It also uses information about the blood to compute plasma volume and whole-body mass and concentration information. In the future, all blood chemistry computations will take place in the Blood Chemistry system, including the acid-base balance computations of blood gas binding and species distribution that are currently performed by the Saturation class. For that reason, the saturation and acid-base balance models are described in the [approach](@ref bloodchemistry-approach) section of this document.
 
 Introduction
 ------------

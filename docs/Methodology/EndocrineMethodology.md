@@ -7,7 +7,7 @@ Overview
 Abstract
 --------
 
-The %Endocrine System is a basic system implementation of endocrine signaling. There are currently two hormones included in the %Endocrine system: epinephrine and insulin. The effects of epinephrine are modeled by leveraging the [parmacodynamics](@ref DrugsMethodology) model. The insulin model is under construction, and when it is finished, insulin will have a regulatory effect on the concentration of glucose in the blood. Functionality that is in the development stage now will enable future releases of the endocrine system to affect:
+The %Endocrine System is a basic system implementation of endocrine signaling. There are currently two hormones included in the %Endocrine system: epinephrine and insulin. The effects of epinephrine are modeled by leveraging the [pharmacodynamics](@ref DrugsMethodology) model. The insulin model is under construction, and when it is finished, insulin will have a regulatory effect on the concentration of glucose in the blood. Functionality that is in the development stage now will enable future releases of the endocrine system to affect:
 -   Metabolic function
 -   %Renal function
 -   Ion regulation
@@ -47,7 +47,7 @@ The %Endocrine System currently contains only two hormones: epinephrine and insu
 
 ### Insulin
 Insulin is secreted by the pancreatic beta cells in response to increased blood glucose.
-The model utilized for insulin synthesis is a linear function capturing the insulin/glucose relationship described in polonsky @cite polonsky1987insulin.
+The model utilized for insulin synthesis is a linear function capturing the insulin/glucose relationship described in Polonsky @cite polonsky1987insulin.
 The synthesis rate is defined by:
 
 \f[f(I)= (5.357 * G) - 328.56 \f] 
