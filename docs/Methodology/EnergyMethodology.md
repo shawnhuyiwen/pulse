@@ -154,11 +154,11 @@ The exercise action is initiated by specifying the exercise intensity. The exerc
 |Jogging at about 2.2 m/s (5 mph) @cite johnson2000exercise                                  |0.06 |70   |
 |Rest  |0.0 |0 |
 
-The exercise capacity of the body is physiologically and psychologically limited @cite noakes2012fatigue. The amount of work produced by the exercise action is limited by the fatigue model; however, this limitation is purely physiologic. Fatigue is modeled as a system of interconnected energy storage compartments, as shown in Figure 4.
+The exercise capacity of the body is physiologically and psychologically limited @cite noakes2012fatigue. The amount of work produced by the exercise action is limited by the fatigue model; however, this limitation is purely physiologic. Fatigue is modeled as a system of interconnected energy storage compartments, as shown in Figure 3.
 
 <center>
 @image html fatigue.png
-*Figure 4. The fatigue compartment model. The energy stores are represented by the blue buckets. The solid lines  show the energy flow pathways, and flow directions are indicated by the arrowheads. The dashed line is a future information pathway to control the endurance energy store fill rate. The amount of energy in each store is computed using equations 7 and 8. The energy flow rates through each path, labeled %Energy Path 1 through 7 in the figure, are  computed using equations 9 to 18. The refill rate of the endurance energy store is computed using equation 19. The outflow of energy from the usable energy store is only non-zero when the activity level of the body is above zero, and it is computed directly from the total work rate.*
+*Figure 3. The fatigue compartment model. The energy stores are represented by the blue buckets. The solid lines  show the energy flow pathways, and flow directions are indicated by the arrowheads. The dashed line is a future information pathway to control the endurance energy store fill rate. The amount of energy in each store is computed using equations 7 and 8. The energy flow rates through each path, labeled %Energy Path 1 through 7 in the figure, are  computed using equations 9 to 18. The refill rate of the endurance energy store is computed using equation 19. The outflow of energy from the usable energy store is only non-zero when the activity level of the body is above zero, and it is computed directly from the total work rate.*
 </center><br>
 
 The energy available for work is found/stored in the
@@ -233,11 +233,11 @@ Conditions
 ** Please note that the Starvation and Dehydration conditions are temporarily disabled.**
 
 ### Starvation
-**The starvation condition is disabled in the current release. An improved starvation condition will be included with the next release.**
+**The starvation condition is disabled in the current release. An improved starvation condition is coming soon.**
 The starvation functionality simulates an extended time period without nutrient intake. This is accomplished by assuming a coarse timestep over which numerous mechanisms lead to the decay of nutrients in the body. With regards to the %Energy system, metabolic consumption calculations are carried out over the interval of the coarse timestep. This leads to a large decrement of vital nutrients in the tissues and increment of waste by-products at the beginning of condition stabilization. Other systems handle starvation in a similar manner. %Renal and systemic clearance volumes are calculated over the coarse timestep, and the resulting decrement in substances is distributed based on volume across all vascular and tissue compartments. For more information on renal and systemic clearance, see @ref RenalMethodology and @ref DrugsMethodology.
 
 ### Dehydration
-**The dehydration condition is disabled in the current release. An improved dehydration condition will be included with the next release.**
+**The dehydration condition is disabled in the current release. An improved dehydration condition is coming soon.**
 Dehydration functionality is simulated completely in the %Energy system. Similar to starvation, dehydration assumes a coarse timestep over which the fluid loss would occur. According to the Journal of Sports Medicine and Physical Fitness @cite shirreffs2000hydration , the average loss rate on the first day without liquid intake is 2600 milliliters. This rate decreases to 1600 milliliters for each subsequent day. The %Energy system uses these average rates and the time since last liquid consumption to calculate volume lost. The volume decrement is distributed via volume weighting instantaneously to all vascular and tissue compartments. 
 
 @anchor energy-events
@@ -378,7 +378,7 @@ The starvation and dehydration conditions are currently disabled while we make i
 
 Conclusions
 -----------
-The %%Energy system has provided a method for handling metabolic consumption and production and heat transfer in the human body. This system is fundamentally connected to all of the other systems, and provides dynamic feedback according to changes in the external environment. In its current state, the energy system accurately calculates resting thermal physiology and nutrient consumption and production. The energy system can be used by developers who wish to model thermal changes due to the environment or through strenuous activity. This may be a simple simulation, or connection with a mannequin for real-time interfacing.
+The %Energy system has provided a method for handling metabolic consumption and production and heat transfer in the human body. This system is fundamentally connected to all of the other systems, and provides dynamic feedback according to changes in the external environment. In its current state, the energy system accurately calculates resting thermal physiology and nutrient consumption and production. The energy system can be used by developers who wish to model thermal changes due to the environment or through strenuous activity. This may be a simple simulation, or connection with a mannequin for real-time interfacing.
 
 @anchor energy-future
 Future Work

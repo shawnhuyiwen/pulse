@@ -38,7 +38,7 @@ The Post Process step moves everything calculated in Process from the next time 
 
 Features, Capabilities, and Dependencies
 ----------------------------------------
-Pharmacokinetic models quantify the time evolution of drug distribution from the administration of a dose. Pharmacodynamic models, on the other hand, characterize the events from the arrival of the drug at the site of action to the “onset, magnitude and duration of the biological response @cite rosenbaum2012basic.” The %Drug system contains both pharmacokinetic and pharmacodynamic models.
+Pharmacokinetic models quantify the time evolution of drug distribution from the administration of a dose. Pharmacodynamic models, on the other hand, characterize the events from the arrival of the drug at the site of action to the onset, magnitude and duration of the biological response @cite rosenbaum2012basic. The %Drug system contains both pharmacokinetic and pharmacodynamic models.
 
 @anchor pharmacokinetics
 ### Pharmacokinetics
