@@ -488,42 +488,20 @@ A team of soldiers is conducting a patrol when an explosive device detonates, in
 *Table 9. The validation results for the Combat Multitrauma Showcase scenario.*
 </center>
 
-|	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)		Mean Arterial Pressure  (mmHg)		Cardiac Output  (mL/min)		Mean Central Venous Pressure (mmHg)		"Respiration Rate
-(Breaths/min)"		"Oxygen Saturation
-(fraction)"		"Tidal Volume
-(mL)"	|
----	|	---	|	---	|	---	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	"Begin Tension Pneumothorax
-(Left side, closed, severity 0.75)
-Begin Massive Hemorrhage
-(Right leg, rate 350 mL/min)"	|	"Massive hemorrhage from the right leg.
-350 mL/min
-Tension pneumothorax has progressed untreated for 2 minutes."	|	60	|	120	|<span class="success">	"~25% Increase@cite gutierrez2004clinical
-Tachycardia @cite leigh2005tension"	|<span class="success">	"NC or decrease @cite leigh2005tension
-"	|<span class="success">	Decrease @cite guyton2006medical	|<span class="success">	Increase @cite echt1974effective	|<span class="success">	"40 @cite chrisp2000action
-14-20 @cite gutierrez2004clinical
-Tachypnea @cite waisman2013transient @cite army200968w @cite leigh2005tensio"	|<span class="success">	Decrease @cite chrisp2000action @cite army200968w @cite leigh2005tension @cite khorasani2008assessment	|<span class="success">	"~25% Decrease @cite waisman2013transient
-"	</span>|
-|	"Non-tourniquet bleeding control
-(Manual pressure reduces hemorrhage to 50 mL/min)
-"	|	"A pressure dressing  is applied
-Tension pneumothorax has progressed untreated for 3 minutes."	|	120	|	180	|<span class="success">	~25% Increase @cite gutierrez2004clinical
-Tachycardia @cite leigh2005tension	|<span class="success">	NC or decrease @cite leigh2005tension	|<span class="success">	Decrease @cite guyton2006medical	|<span class="success">	Increase @cite echt1974effective	|<span class="success">	"40 @cite chrisp2000action
-14-20 @cite gutierrez2004clinical
-Tachypnea @cite waisman2013transient @cite army200968w @cite leigh2005tensio"	|<span class="success">	Decrease@cite chrisp2000action @cite khorasani2008assessment
-Plateaus @cite waisman2013transient	|<span class="success">	~25% Decrease @cite waisman2013transient	</span>|
-|	Needle Decompression	|	A needle decompression procedure is applied on the affected side.	|	180	|	420	|<span class="warning">	90 - 110 @cite metoyer2016SME	|<span class="success">	Decreases @cite guyton2006medical	|<span class="success">	Decrease @cite guyton2006medical	|<span class="success">
-NC or Slight Decrease @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Increase > 0.95 @cite rim2011life	|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
-|	Tourniquet Application
-(Hemorrhage completely controlled, rate 0 mL/min)	|	A "tourniquet" is applied to the hemorrhaging leg. 	|	420	|	450	|<span class="success">	"117.9 @cite khorasani2008assessment
- Possibly no significant change @cite price2006novel	|<span class="success">	NC @cite guyton2006medical	|<span class="success">	NC @cite guyton2006medical	|<span class="warning">
-NC or Slight Decrease @cite bergeronSME"	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
-|	Intravenous Fluid Resuscitation
-(Saline, 500 mL at rate of 100 mL/min)	|	Saline is administered over 5 minutes at a rate of 100 mL/min.	|	450	|	570	|<span class="success">	Slight decrease because of partial correction of the hypovolemia.@cite metoyer2016SME
-Stress-Induced Moderate Tachycardia @cite bergeronSME |<span class="success">	Increase @cite grmec2009relationship	|<span class="success">	Increase @cite guyton2006medical  	|<span class="warning">	Move toward Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
-|	Narcotics (Morphine) Administration
-(5 mL of morphine IV at concentration of 1 mg/mL)	|	A bolus of 5 mg of morphine is administered intravenously. Saline administration continues	|	570	|	730	|<span class="success">	Decrease @cite Morgan2006Clinical	|<span class="success">	Mild Decrease @cite Morgan2006Clinical      Increase @cite guyton2006medical  	|<span class="success">	Increase @cite guyton2006medical  	|<span class="success">	Mild Decrease @cite bergeronSME	|<span class="success">	15-20% Decrease @cite Morgan2006Clinical	|<span class="success">
-Decrease @cite drummond2010oxygen |<span class="warning">	Moderate Decrease @cite bergeronSME	</span>|
+|	Segment	|	Notes	|	Action Occurrence Time  (s)	|	Sample Scenario Time  (s)	|	Heart Rate  (beats/min)	|	Mean Arterial Pressure  (mmHg)	|	Cardiac Output  (mL/min)	|	Mean Central Venous Pressure (mmHg)	|	Respiration Rate (Breaths/min)	|	Oxygen Saturation (fraction)	|	Tidal Volume (mL)	|
+---	|	---	|	---	|	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Begin Tension Pneumothorax (Left side, closed, severity 0.75) Begin Massive Hemorrhage (Right leg, rate 350 mL/min)	|	Injuries are untreated.	|	60	|	120	|<span class="success">	~25% Increase; @cite gutierrez2004clinical Tachycardia @cite leigh2005tension	|<span class="success">	NC or decrease @cite leigh2005tension	|<span class="success">	Decrease @cite guyton2006medical	|<span class="success">	Increase @cite echt1974effective	|<span class="success">	40; @cite chrisp2000action 14-20; @cite gutierrez2004clinical Tachypnea @cite waisman2013transient @cite army200968w @cite leigh2005tension	|<span class="success">	Decrease @cite chrisp2000action @cite army200968w @cite leigh2005tension @cite khorasani2008assessment	|<span class="success">	~25% Decrease @cite waisman2013transient	</span>|
+|	Non-tourniquet bleeding control (Manual pressure reduces hemorrhage to 50 mL/min)	|	A pressure dressing  is applied.	|	120	|	180	|<span class="success">	~25% Increase; @cite gutierrez2004clinical Tachycardia @cite leigh2005tension	|<span class="success">	NC or decrease @cite leigh2005tension	|<span class="success">	Decrease @cite guyton2006medical	|<span class="success">	Increase @cite echt1974effective	|<span class="success">	40; @cite chrisp2000action 14-20; @cite gutierrez2004clinical Tachypnea @cite waisman2013transient @cite army200968w @cite leigh2005tension	|<span class="success">	Decrease; @cite chrisp2000action @cite khorasani2008assessment Plateaus @cite waisman2013transient	|<span class="success">	~25% Decrease @cite waisman2013transient	</span>|
+|	Needle Decompression	|	A needle decompression procedure is applied on the affected side.	|	180	|	420	|<span class="warning">	90 - 110 @cite metoyer2016SME	|<span class="success">	Decreases @cite guyton2006medical	|<span class="success">	Decrease @cite guyton2006medical	|<span class="success">	NC or Slight Decrease @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Increase > 0.95 @cite rim2011life	|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
+|	Tourniquet (Hemorrhage completely controlled, rate 0 mL/min)	|	A "tourniquet" is applied to the hemorrhaging leg. 	|	420	|	450	|<span class="success">	117.9; @cite khorasani2008assessment Possibly no significant change @cite price2006novel	|<span class="success">	NC @cite guyton2006medical	|<span class="success">	NC @cite guyton2006medical	|<span class="warning">	NC or Slight Decrease @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
+|	Intravenous Fluid Resuscitation (Saline, 500 mL at rate of 100 mL/min)	|	Saline is administered over 5 minutes at a rate of 100 mL/min.	|	450	|	570	|<span class="success">	Slight decrease because of partial correction of the hypovolemia; @cite metoyer2016SME Stress-Induced Moderate Tachycardia @cite bergeronSME	|<span class="success">	Increase @cite grmec2009relationship	|<span class="success">	Increase @cite guyton2006medical  	|<span class="warning">	Move toward Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	|<span class="success">	Back to Baseline @cite bergeronSME	</span>|
+|	Narcotics (Morphine) Administration (5 mL of morphine IV at concentration of 1 mg/mL)	|	A bolus of 5 mg of morphine is administered intravenously. Saline administration continues	|	570	|	730	|<span class="success">	Decrease @cite Morgan2006Clinical	|<span class="success">	Mild Decrease; @cite Morgan2006Clinical  Increase @cite guyton2006medical  	|<span class="success">	Increase @cite guyton2006medical  	|<span class="success">	Mild Decrease @cite bergeronSME	|<span class="success">	15-20% Decrease @cite Morgan2006Clinical	|<span class="success">	Decrease @cite drummond2010oxygen	|<span class="warning">	Moderate Decrease @cite bergeronSME	</span>|
+
+
+
+
+
+
 
 
 
