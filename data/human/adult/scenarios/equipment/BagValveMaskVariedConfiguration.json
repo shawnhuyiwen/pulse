@@ -99,6 +99,21 @@
   { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
   
   { "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
+
+  {
+    "EquipmentAction": {
+      "BagValveMaskConfiguration": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {
+          "Comment": "Attach the bag valve mask with all defulats that will set flow to give TV ~ 7 mL/kg(ideal)" }}},
+          "Configuration":
+          {
+            "Connection": "Tube"
+          }
+      }
+    }
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
   
   {
     "EquipmentAction": {
@@ -111,28 +126,6 @@
             "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
             "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
             "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
-            "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
-            "FractionInspiredGas": [
-              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } }
-            ]
-          }
-      }
-    }
-  },
-  
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
-  
-  {
-    "EquipmentAction": {
-      "BagValveMaskConfiguration": {
-        "BagValveMaskAction": { "EquipmentAction": { "Action": {
-          "Comment": "Attach the bag valve mask with a set flow to give TV ~ 7 mL/kg(ideal)" }}},
-          "Configuration":
-          {
-            "Connection": "Tube",
-            "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
-            "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
-            "SqueezeVolume": { "ScalarVolume": { "Value": 0.540, "Unit": "L" } },
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } }
