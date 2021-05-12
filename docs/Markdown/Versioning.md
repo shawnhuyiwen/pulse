@@ -14,34 +14,33 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 ## Pulse v3.2.0 (May 2021)
 
 - Software Architecture Improvements
-  - Support and examples for defining complex, scenario specific death state logic
-  - Support using a dynamic time step provided by users
+  - Added support and examples for defining complex, scenario specific death state logic
+  - Added support for using a dynamic time step provided by the users
   - Improved interface for scenario execution
     - Now available to run scenarios from C# and Java
     - Provide batch utilities to organize and execute scenarios that generate application specific states
-  - Added serialization testing support to V&V suite
-    - Now testing serialization of all actions
-      - Fixed many bugs related to missing action state between loading
+  - Added serialization testing support to verification and validation suite
+    - Now testing serialization of all actions and fixed many bugs related to missing action state between loading
     - Improvements for reusing engine to stabilize new patients
-  - Support C#,Java to query active actions, and conditions after loading a state
-  - Add support to create data requests for action data and enum properties
+  - Added support C#,Java to query active actions and conditions after loading a state
+  - Added support to create data requests for action data and enum properties
   - Improved patient loading logic
-  - Improved error handling and logging
-    - Can add more than one log listener now
-  - Cleaning compiler warnings and unused variables
-  - Java module support
+  - Improved error handling and logging, including adding more than one log listener
+  - Cleaned compiler warnings and unused variables
+  - Added Java module support
 - Physiology Model Improvements
-  - Improved %Respiratory System Validation
-    - Added expiratory sinusoid curve for muscle driver
-    - Improve I/E ration validation (including obstructive I/E ratio)
+  - Improved %Respiratory system validation
+    - Added sinusoid curve for muscle driver
+    - Improved I:E ratio validation (including obstructive I:E ratio changes)
     - Improved interface to easily switch between various airway management equipment
-    - Improved Pulmonary Shunting
-  - Improved Mechanical Ventilator Equipment Validation
-  - Improvements to various actions
-    - Ability to create extremely cold environments
+    - Improved pulmonary shunting model
+    - Improved dead space model
+  - Improved Mechanical Ventilator equipment validation
+  - Improved various actions
+    - Added ability to create extremely cold environments
     - Added more data associated with hemorrhages
-      - Expose flows per hemorrhage and total flow
-      - Expose blood lost volume per hemorrhage and total blood lost
+      - Exposed flows per hemorrhage and total flow
+      - Exposed blood lost volume per hemorrhage and total blood lost
 
 
 ## Pulse v3.1.0 (December 2020)
