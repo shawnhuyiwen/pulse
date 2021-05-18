@@ -13,11 +13,13 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
   private static final long serialVersionUID = 5044648250444265871L;
   protected SEScalarArea impairedSurfaceArea;
   protected SEScalar0To1 impairedFraction;
+  protected SEScalar0To1 severity;
   
   public SEImpairedAlveolarExchangeExacerbation()
   {
     impairedSurfaceArea = null;
     impairedFraction = null;
+    severity = null;
   }
   
   public void copy(SEImpairedAlveolarExchangeExacerbation other)
@@ -29,10 +31,16 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
       getImpairedSurfaceArea().set(other.getImpairedSurfaceArea());
     else if (impairedSurfaceArea != null)
       impairedSurfaceArea.invalidate();
+    
     if (other.impairedFraction != null)
       getImpairedFraction().set(other.getImpairedFraction());
     else if (impairedFraction != null)
       impairedFraction.invalidate();
+
+    if (other.severity != null)
+      getSeverity().set(other.getSeverity());
+    else if (severity != null)
+      severity.invalidate();
   }
   
   @Override
@@ -43,12 +51,14 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
       impairedSurfaceArea.invalidate();
     if (impairedFraction != null)
       impairedFraction.invalidate();
+    if (severity != null)
+      severity.invalidate();
   }
   
   @Override
   public boolean isValid()
   {
-    return hasImpairedSurfaceArea() || hasImpairedFraction();
+    return hasImpairedSurfaceArea() || hasImpairedFraction() || hasSeverity();
   }
   
   public static void load(ImpairedAlveolarExchangeExacerbationData src, SEImpairedAlveolarExchangeExacerbation dst)
@@ -56,8 +66,10 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasImpairedSurfaceArea())
       SEScalarArea.load(src.getImpairedSurfaceArea(),dst.getImpairedSurfaceArea());
-    if(src.hasImpairedFraction())
+    else if(src.hasImpairedFraction())
       SEScalar0To1.load(src.getImpairedFraction(),dst.getImpairedFraction());
+    else if(src.hasSeverity())
+      SEScalar0To1.load(src.getSeverity(),dst.getSeverity());
   }
   
   public static ImpairedAlveolarExchangeExacerbationData unload(SEImpairedAlveolarExchangeExacerbation src)
@@ -72,8 +84,10 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
     SEPatientAction.unload(src, dst.getPatientActionBuilder());
     if (src.hasImpairedSurfaceArea())
       dst.setImpairedSurfaceArea(SEScalarArea.unload(src.impairedSurfaceArea));
-    if (src.hasImpairedFraction())
+    else if (src.hasImpairedFraction())
       dst.setImpairedFraction(SEScalar0To1.unload(src.impairedFraction));
+    else if (src.hasSeverity())
+      dst.setSeverity(SEScalar0To1.unload(src.severity));
   }
   
   public boolean hasImpairedSurfaceArea()
@@ -98,6 +112,17 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
     return impairedFraction;
   }
   
+  public boolean hasSeverity()
+  {
+    return severity == null ? false : severity.isValid();
+  }
+  public SEScalar0To1 getSeverity()
+  {
+    if (severity == null)
+      severity = new SEScalar0To1();
+    return severity;
+  }
+  
   @Override
   public String toString()
   {
@@ -107,6 +132,9 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
     else if (impairedSurfaceArea != null)
       return "ImpairedAlveolarExchange" 
           + "\n\tImpairedSurfaceArea: " + getImpairedSurfaceArea();
+    else if (severity != null)
+      return "Severity" 
+          + "\n\tSeverity: " + getSeverity();
     else
       return "Action not specified properly";
   }

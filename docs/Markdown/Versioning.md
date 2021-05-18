@@ -14,6 +14,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 ## Pulse v3.2.0 (May 2021)
 
 - Software Architecture Improvements
+  - Added support for Python to create and manage a pool for engines to optimize integration of Pulse with ML frameworks
   - Added support and examples for defining complex, scenario specific death state logic
   - Added support for using a dynamic time step provided by the users
   - Improved interface for scenario execution

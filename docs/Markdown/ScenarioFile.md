@@ -260,6 +260,7 @@ The following are links to the Condition class specification along with XML exam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #### Impaired Alveolar Exchange
+Specify one of 3 different parameters
 @copybrief ImpairedAlveolarExchangeData
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyCondition": [{
@@ -277,6 +278,16 @@ or
   "PatientCondition": {
     "ImpairedAlveolarExchange": {
       "ImpairedFraction": { "Scalar0To1": { "Value": 0.8 } }
+    }
+  }
+}]
+
+or
+
+"AnyCondition": [{
+  "PatientCondition": {
+    "ImpairedAlveolarExchange": {
+      "Severity": { "Scalar0To1": { "Value": 0.2 } }
     }
   }
 }]
@@ -303,6 +314,22 @@ or
 "AnyCondition": [{
   "PatientCondition": {
     "PulmonaryShunt": {
+      "Severity": {
+        "Scalar0To1": {
+          "Value": 0.8
+        }
+      }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#### Pulmonary Fibrosis
+@copybrief PulmonaryFibrosisData
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyCondition": [{
+  "PatientCondition": {
+    "PulmonaryFibrosis": {
       "Severity": {
         "Scalar0To1": {
           "Value": 0.8
@@ -438,6 +465,18 @@ Substance data is provided about a substance and its current state in the body a
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 { "Category":"Substance", "SubstanceName":"CarbonDioxide", "PropertyName":"AlveolarTransfer", "Unit":"mL/s" },
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### Action Data
+
+Actions can contain parameters that update as the actions persists in the engine.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+{ "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "RightLegVasculature", "PropertyName": "FlowRate", "Unit": "mL/s"},
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+{ "Category": "Action", "ActionName": "Hemorrhage", "CompartmentName": "RightLegVasculature", "PropertyName": "TotalBloodLost", "Unit": "mL"},
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
@@ -747,7 +786,6 @@ the system to react.
 
 #or
 
-# File must be in the ./bin/nutrition directory -->
 "AnyAction": [{
   "PatientAction": {
     "ConsumeNutrients": {
@@ -801,6 +839,18 @@ FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
     "Hemorrhage": { 
       "Compartment":"RightLeg",
       "Type":"External",
+      "Severity": { "Scalar0To1": { "Value":0.25 } }
+    }
+  }
+}]
+
+or
+
+"AnyAction": [{
+  "PatientAction": {
+    "Hemorrhage": { 
+      "Compartment":"RightLeg",
+      "Type":"External",
       "Rate": { "ScalarVolumePerTime": { "Value":250.0, "Unit":"mL/min" } }
     }
   }
@@ -813,11 +863,40 @@ FATAL: Cannot have bleeding rate greater than cardiac output or less than 0
 @copybrief ImpairedAlveolarExchangeExacerbationData <br>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
-  "PatientCondition": {
-    "ImpairedAlveolarExchange": {
+  "PatientAction": {
+    "ImpairedAlveolarExchangeExacerbation": {
+      "ImpairedSurfaceArea": {
+        "ScalarArea": {
+          "Value": 25,  "Unit": "m^2"
+        }
+      }
+    }
+  }
+}]
+
+or
+
+"AnyAction": [{
+  "PatientAction": {
+    "ImpairedAlveolarExchangeExacerbation": {
       "ImpairedFraction": {
         "Scalar0To1": {
           "Value": 0.09
+        }
+      }
+    }
+  }
+}]
+
+
+or
+
+"AnyAction": [{
+  "PatientAction": {
+    "ImpairedAlveolarExchangeExacerbation": {
+      "Severity": {
+        "Scalar0To1": {
+          "Value": 0.5
         }
       }
     }

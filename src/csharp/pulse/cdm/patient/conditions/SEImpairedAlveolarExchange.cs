@@ -7,11 +7,13 @@ namespace Pulse.CDM
   {
     protected SEScalarArea impaired_surface_area;
     protected SEScalar0To1 impaired_fraction;
+    protected SEScalar0To1 severity;
 
     public SEImpairedAlveolarExchange()
     {
       impaired_surface_area = null;
       impaired_fraction = null;
+      severity = null;
     }
 
     public override void Clear()
@@ -21,11 +23,13 @@ namespace Pulse.CDM
         impaired_surface_area.Invalidate();
       if (impaired_fraction != null)
         impaired_fraction.Invalidate();
+      if (severity != null)
+        severity.Invalidate();
     }
 
     public override bool IsValid()
     {
-      return HasImpairedSurfaceArea() && HasImpairedFraction();
+      return HasImpairedSurfaceArea() || HasImpairedFraction() || HasSeverity();
     }
 
     public bool HasImpairedSurfaceArea()
@@ -50,5 +54,15 @@ namespace Pulse.CDM
       return impaired_fraction;
     }
 
+    public bool HasSeverity()
+    {
+      return severity == null ? false : severity.IsValid();
+    }
+    public SEScalar0To1 GetSeverity()
+    {
+      if (severity == null)
+        severity = new SEScalar0To1();
+      return severity;
+    }
   }
 }

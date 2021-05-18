@@ -29,7 +29,7 @@ namespace Pulse.CDM
 
     public override bool IsValid()
     {
-      return HasSeverity() && (HasImpairedSurfaceArea() || HasImpairedFraction());
+      return HasSeverity() || HasImpairedSurfaceArea() || HasImpairedFraction();
     }
 
     public bool HasImpairedSurfaceArea()
