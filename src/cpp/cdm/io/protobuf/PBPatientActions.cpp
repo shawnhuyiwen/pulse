@@ -1109,6 +1109,8 @@ void PBPatientAction::Serialize(const CDM_BIND::SubstanceBolusData& src, SESubst
     PBProperty::Load(src.dose(), dst.GetDose());
   if (src.has_concentration())
     PBProperty::Load(src.concentration(), dst.GetConcentration());
+  if (src.has_totalinfuseddose())
+    PBProperty::Load(src.totalinfuseddose(), dst.GetTotalInfusedDose());
 }
 CDM_BIND::SubstanceBolusData* PBPatientAction::Unload(const SESubstanceBolus& src)
 {
@@ -1127,6 +1129,8 @@ void PBPatientAction::Serialize(const SESubstanceBolus& src, CDM_BIND::Substance
     dst.set_allocated_dose(PBProperty::Unload(*src.m_Dose));
   if (src.HasConcentration())
     dst.set_allocated_concentration(PBProperty::Unload(*src.m_Concentration));
+  if(src.HasTotalInfusedDose())
+    dst.set_allocated_totalinfuseddose(PBProperty::Unload(*src.m_TotalInfusedDose));
 }
 void PBPatientAction::Copy(const SESubstanceBolus& src, SESubstanceBolus& dst)
 {

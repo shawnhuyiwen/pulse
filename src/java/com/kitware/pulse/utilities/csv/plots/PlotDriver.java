@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.kitware.pulse.utilities.Log;
-import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.RunConfiguration;
 import com.kitware.pulse.utilities.JNIBridge;
 import com.kitware.pulse.utilities.csv.CSVContents;
@@ -401,13 +400,13 @@ public class PlotDriver
             else if(key.equalsIgnoreCase("Y2UpperBound"))
             {job.Y2UpperBound = Double.parseDouble(value); continue;}
             else if(key.equalsIgnoreCase("X1Label"))
-            {job.X1Label = value; continue;}
+            {job.X1Label = value.replace("_", " "); continue;}
             else if(key.equalsIgnoreCase("Y1Label"))
-            {job.Y1Label = value; continue;}
+            {job.Y1Label = value.replace("_", " "); continue;}
             else if(key.equalsIgnoreCase("X2Label"))
-            {job.X2Label = value; continue;}
+            {job.X2Label = value.replace("_", " "); continue;}
             else if(key.equalsIgnoreCase("Y2Label"))
-            {job.Y2Label = value; continue;}
+            {job.Y2Label = value.replace("_", " "); continue;}
             else if(key.equalsIgnoreCase("ValidationData"))
             {job.experimentalData = cfg.getValidationDirectory()+"/"+value; continue;}
             else if(key.equalsIgnoreCase("DataFileOverride"))

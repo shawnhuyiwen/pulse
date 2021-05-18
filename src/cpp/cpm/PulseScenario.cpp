@@ -22,6 +22,11 @@ void PulseScenario::Clear()
   SAFE_DELETE(m_Configuration);
 }
 
+void PulseScenario::Copy(const PulseScenario& src)
+{
+  PBPulse::Copy(src, *this);
+}
+
 bool PulseScenario::SerializeToString(std::string& output, SerializationFormat m) const
 {
   return PBPulse::SerializeToString(*this, output, m);

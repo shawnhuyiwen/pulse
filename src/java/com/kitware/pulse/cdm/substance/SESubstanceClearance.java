@@ -5,7 +5,6 @@ package com.kitware.pulse.cdm.substance;
 import com.kitware.pulse.cdm.bind.Enums.eCharge;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceClearanceData;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceRenalClearanceData;
-import com.kitware.pulse.cdm.bind.Substance.SubstanceRenalClearanceData.DynamicsCase;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceRenalRegulationData;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceSystemicClearanceData;
 import com.kitware.pulse.cdm.properties.SEScalar;
@@ -69,7 +68,7 @@ public class SESubstanceClearance
   
   public boolean isValid()
   {
-   return (hasSystemic() || hasRenalClearance() || hasRenalRegulation());    
+   return (hasSystemic() || hasRenalClearance() || hasRenalRegulation());
   }
   
   public boolean hasSystemic()
@@ -126,13 +125,13 @@ public class SESubstanceClearance
     if(src.hasRenalClearance())
     {
       SubstanceRenalClearanceData rc = src.getRenalClearance();
-      if(rc.getDynamicsCase() == DynamicsCase.CLEARANCE)
+      if(rc.hasClearance())
       {
         if(!Double.isNaN(sys_rc) && rc.getClearance().getScalarVolumePerTimeMass().getValue()!=sys_rc)
           Log.error("Different RenalClearance values between Systemic and RenalDynamic, using RenalDynamic");
         SEScalarVolumePerTimeMass.load(rc.getClearance(),dst.getRenalClearance());
       }
-      else if(rc.getDynamicsCase() == DynamicsCase.REGULATION)
+      if(rc.hasRegulation())
       {
         SubstanceRenalRegulationData rr = rc.getRegulation();
         dst.chargeInBlood = rr.getChargeInBlood();
@@ -201,12 +200,10 @@ public class SESubstanceClearance
         if(src.hasRenalTransportMaximum())
           rrd.setTransportMaximum(SEScalarMassPerTime.unload(src.renalTransportMaximum));
         if(src.hasFractionUnboundInPlasma())
-          rrd.setFractionUnboundInPlasma(SEScalar0To1.unload(src.fractionUnboundInPlasma));     
-      }        
-      else
-      {
+          rrd.setFractionUnboundInPlasma(SEScalar0To1.unload(src.fractionUnboundInPlasma));
+      }
+      if(src.hasRenalClearance())
         rcd.setClearance(SEScalarVolumePerTimeMass.unload(src.renalClearance)); 
-      }    
       if(src.hasRenalFiltrationRate())
         rcd.setFiltrationRate(SEScalarMassPerTime.unload(src.renalFiltrationRate));
       if(src.hasRenalReabsorptionRate())
@@ -216,7 +213,6 @@ public class SESubstanceClearance
       if(src.hasGlomerularFilterability())
         rcd.setGlomerularFilterability(SEScalar.unload(src.glomerularFilterability));
     }
-        
   }
   
   public SEScalar0To1 getFractionExcretedInFeces() 

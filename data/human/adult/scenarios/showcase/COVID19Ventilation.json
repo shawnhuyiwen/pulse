@@ -222,6 +222,7 @@
       }
     },  
   
-    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } }
+    { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "min" } } } },
+    { "Serialize": { "Type": "Save" } }
   ]
 }

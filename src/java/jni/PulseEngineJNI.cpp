@@ -63,31 +63,16 @@ JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeDelete(JN
 //////////////////////
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeExecuteScenario(JNIEnv * env, jobject obj, jlong ptr, jstring scenario, jint scenario_format, jstring csvFilename, jstring logFilename, jstring dataDir)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeExecuteScenario(JNIEnv * env, jobject obj, jlong ptr, jstring sceOpts, jint scenario_format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
   jboolean bRet;
-  const char* sceStr = env->GetStringUTFChars(scenario, JNI_FALSE);
-  const char* csvStr = env->GetStringUTFChars(csvFilename, JNI_FALSE);
-  const char* logStr = env->GetStringUTFChars(logFilename, JNI_FALSE);
-  const char* ddStr = nullptr;
-  if (dataDir != nullptr)
-  {
-    ddStr = env->GetStringUTFChars(dataDir, JNI_FALSE);
-    bRet = engineJNI->ExecuteScenario(sceStr, (SerializationFormat)scenario_format, csvStr, logStr, ddStr);
-  }
-  else
-    bRet = engineJNI->ExecuteScenario(sceStr, (SerializationFormat)scenario_format, csvStr, logStr);
-
-  env->ReleaseStringUTFChars(scenario, sceStr);
-  env->ReleaseStringUTFChars(csvFilename, csvStr);
-  env->ReleaseStringUTFChars(logFilename, logStr);
-  if (ddStr != nullptr)
-    env->ReleaseStringUTFChars(dataDir, ddStr);
-
+  const char* sceOptsStr = env->GetStringUTFChars(sceOpts, JNI_FALSE);
+  bRet = engineJNI->ExecuteScenario(sceOptsStr, (SerializationFormat)scenario_format);
+  env->ReleaseStringUTFChars(sceOpts, sceOptsStr);
   return bRet;
 }
 
@@ -159,7 +144,6 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerial
   return state;
 }
 
-
 extern "C"
 JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeInitializeEngine(JNIEnv *env, jobject obj, jlong ptr, jstring patient_configuration, jstring dataRequests, jint format)
 {
@@ -195,6 +179,18 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetIni
   std::string stream = engineJNI->GetInitialPatient((SerializationFormat)format);
   jstring patient = env->NewStringUTF(stream.c_str());
   return patient;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetConditions(JNIEnv * env, jobject obj, jlong ptr, jint format)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  std::string stream = engineJNI->GetConditions((SerializationFormat)format);
+  jstring conditionManager = env->NewStringUTF(stream.c_str());
+  return conditionManager;
 }
 
 extern "C"
@@ -275,6 +271,18 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeProce
 }
 
 extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullActiveActions(JNIEnv * env, jobject obj, jlong ptr, jint format)
+{
+  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
+  engineJNI->jniEnv = env;
+  engineJNI->jniObj = obj;
+
+  std::string stream = engineJNI->PullActiveActions((SerializationFormat)format);
+  jstring actions = env->NewStringUTF(stream.c_str());
+  return actions;
+}
+
+extern "C"
 JNIEXPORT jdouble JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetTimeStep(JNIEnv * env, jobject obj, jlong ptr, jstring unit, jint format)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
@@ -313,7 +321,6 @@ JNIEXPORT jdoubleArray JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeP
   env->SetDoubleArrayRegion(jData, 0, len, data);
   return jData;
 }
-
 
 PulseEngineJNI::PulseEngineJNI() : PulseEngineThunk()
 {

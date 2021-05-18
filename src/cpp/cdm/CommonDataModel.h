@@ -131,7 +131,7 @@ template class __declspec(dllexport) std::vector<std::string>;
 #endif
 
 //Utilities
-enum SerializationFormat { BINARY = 0, JSON };
+enum SerializationFormat { JSON = 0, BINARY };
 
 struct CommonDataModelException : public std::runtime_error
 {

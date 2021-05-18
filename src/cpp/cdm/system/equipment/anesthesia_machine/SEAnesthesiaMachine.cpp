@@ -20,14 +20,14 @@
 
 SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
 {
-  m_Connection = eAnesthesiaMachine_Connection::NullConnection;
+  m_Connection = eAnesthesiaMachine_Connection::Off;
   m_InletFlow = nullptr;
   m_InspiratoryExpiratoryRatio = nullptr;
   m_OxygenFraction = nullptr;
-  m_OxygenSource = eAnesthesiaMachine_OxygenSource::NullSource;
+  m_OxygenSource = eAnesthesiaMachine_OxygenSource::NoSource;
   m_PeakInspiratoryPressure = nullptr;
   m_PositiveEndExpiredPressure = nullptr;
-  m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NullGas;  
+  m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NoGas;
   m_RespiratoryRate = nullptr;
   m_ReliefValvePressure = nullptr;
   m_LeftChamber = nullptr;
@@ -38,13 +38,13 @@ SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
 
 SEAnesthesiaMachine::~SEAnesthesiaMachine()
 {
-  m_Connection = eAnesthesiaMachine_Connection::NullConnection;
+  m_Connection = eAnesthesiaMachine_Connection::Off;
   SAFE_DELETE(m_InletFlow);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
   SAFE_DELETE(m_OxygenFraction);
-  m_OxygenSource = eAnesthesiaMachine_OxygenSource::NullSource;
+  m_OxygenSource = eAnesthesiaMachine_OxygenSource::NoSource;
   SAFE_DELETE(m_PositiveEndExpiredPressure);
-  m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NullGas;
+  m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NoGas;
   SAFE_DELETE(m_RespiratoryRate);
   SAFE_DELETE(m_ReliefValvePressure);
   SAFE_DELETE(m_PeakInspiratoryPressure);
@@ -58,13 +58,13 @@ void SEAnesthesiaMachine::Clear()
 {
   SEEquipment::Clear();
 
-  m_Connection = eAnesthesiaMachine_Connection::NullConnection;
+  m_Connection = eAnesthesiaMachine_Connection::Off;
   INVALIDATE_PROPERTY(m_InletFlow);
   INVALIDATE_PROPERTY(m_InspiratoryExpiratoryRatio);
   INVALIDATE_PROPERTY(m_OxygenFraction);
-  m_OxygenSource = eAnesthesiaMachine_OxygenSource::NullSource;
+  m_OxygenSource = eAnesthesiaMachine_OxygenSource::NoSource;
   INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
-  m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NullGas;
+  m_PrimaryGas = eAnesthesiaMachine_PrimaryGas::NoGas;
   INVALIDATE_PROPERTY(m_RespiratoryRate);
   INVALIDATE_PROPERTY(m_ReliefValvePressure);
   INVALIDATE_PROPERTY(m_PeakInspiratoryPressure);

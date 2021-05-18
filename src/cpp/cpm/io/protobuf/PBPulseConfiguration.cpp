@@ -16,7 +16,6 @@ POP_PROTO_WARNINGS()
 #include "patient/SENutrition.h"
 #include "engine/SEDynamicStabilization.h"
 #include "engine/SETimedStabilization.h"
-#include "engine/SEAutoSerialization.h"
 #include "system/environment/SEEnvironmentalConditions.h"
 #include "properties/SEScalarMassPerTime.h"
 #include "utils/FileUtils.h"
@@ -54,8 +53,6 @@ void PBPulseConfiguration::Serialize(const PULSE_BIND::ConfigurationData& src, P
         dst.RemoveStabilization();
       }
   }
-  if (src.has_autoserialization())
-    PBEngine::Load(src.autoserialization(), dst.GetAutoSerialization());
   if (src.writepatientbaselinefile() != CDM_BIND::eSwitch::NullSwitch)
     dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
 
@@ -368,8 +365,6 @@ void PBPulseConfiguration::Serialize(const PulseConfiguration& src, PULSE_BIND::
   if (src.HasTimeStep())
     dst.set_allocated_timestep(PBProperty::Unload(*src.m_TimeStep));
   dst.set_allowdynamictimestep((CDM_BIND::eSwitch)src.m_AllowDynamicTimeStep);
-  if (src.HasAutoSerialization())
-    dst.set_allocated_autoserialization(PBEngine::Unload(*src.m_AutoSerialization));
   dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);
   if (src.HasInitialOverrides())
     dst.set_allocated_initialoverrides(PBAction::Unload(*src.m_InitialOverrides));

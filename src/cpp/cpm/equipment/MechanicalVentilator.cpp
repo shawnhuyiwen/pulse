@@ -55,7 +55,11 @@ void MechanicalVentilator::Clear()
   m_Environment = nullptr;
   m_Ventilator = nullptr;
   m_VentilatorAerosol = nullptr;
+  m_VentilatorNode = nullptr;
+  m_ConnectionNode = nullptr;
+  m_AmbientNode = nullptr;
   m_EnvironmentToVentilator = nullptr;
+  m_YPieceToConnection = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -65,7 +69,7 @@ void MechanicalVentilator::Clear()
 void MechanicalVentilator::Initialize()
 {
   PulseSystem::Initialize();
-  SetConnection(eMechanicalVentilator_Connection::NullConnection);
+  SetConnection(eMechanicalVentilator_Connection::Off);
   m_CurrentBreathState = eBreathState::Exhale;
   m_CurrentPeriodTime_s = 0.0;
   m_DriverPressure_cmH2O = SEScalar::dNaN();
@@ -100,13 +104,9 @@ void MechanicalVentilator::SetUp()
 
 void MechanicalVentilator::StateChange()
 {
-  SetConnection();
-
   if (m_data.GetAirwayMode() != eAirwayMode::MechanicalVentilator)
-  {
     return;
-  }
-
+  SetConnection();
   m_CurrentBreathState = eBreathState::Exhale;
   m_CurrentPeriodTime_s = 0.0;
   m_CurrentInspiratoryVolume_L = 0.0;

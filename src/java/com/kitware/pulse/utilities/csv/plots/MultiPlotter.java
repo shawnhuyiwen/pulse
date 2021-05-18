@@ -83,6 +83,7 @@ public class MultiPlotter implements Plotter
       } catch (IOException e)
       {
         Log.error("Could not analyze file " + job.dataPath + job.dataFile);
+        return;
       }
     }
     //Get data contents when we're also using experimental files
@@ -114,21 +115,35 @@ public class MultiPlotter implements Plotter
         {
           List<Double> headerData = new ArrayList<>();
           dataCsv.readHeader(dataCsv.unitUnderscoreToSpace(job.Y1headers.get(i)), headerData);
+          if(job.percentOfBaseline)
+          {
+            double baseline = headerData.get(0);
+            for(int j=0; j < headerData.size(); j++)
+              headerData.set(j, (headerData.get(j)/baseline)*100);
+          }
           data.put(job.Y1headers.get(i), headerData);
         }
         List<Double> headerData = new ArrayList<>();
         dataCsv.readHeader(dataCsv.unitUnderscoreToSpace(job.X1header), headerData);
-        data.put(job.X1header, headerData);  
-        
-        for (int i = 0; i < job.Y2headers.size(); i++)
+        if(job.percentOfBaseline)
         {
-          List<Double> headerData2 = new ArrayList<>();
-          expCsv.readHeader(expCsv.unitUnderscoreToSpace(job.Y2headers.get(i)), headerData2);
-          expData.put(job.Y2headers.get(i), headerData2);
+          double baseline = headerData.get(0);
+          for(int j=0; j < headerData.size(); j++)
+            headerData.set(j, (1-(headerData.get(j)/baseline))*100);
         }
-        List<Double> headerData2 = new ArrayList<>();
-        expCsv.readHeader(expCsv.unitUnderscoreToSpace(job.X2header), headerData2);
-        expData.put(job.X2header, headerData2);  
+        data.put(job.X1header, headerData);  
+        if(job.Y2headers.size()>0 && !job.X2header.isEmpty())
+        {
+          for (int i = 0; i < job.Y2headers.size(); i++)
+          {
+            List<Double> headerData2 = new ArrayList<>();
+            expCsv.readHeader(expCsv.unitUnderscoreToSpace(job.Y2headers.get(i)), headerData2);
+            expData.put(job.Y2headers.get(i), headerData2);
+          }
+          List<Double> headerData2 = new ArrayList<>();
+          expCsv.readHeader(expCsv.unitUnderscoreToSpace(job.X2header), headerData2);
+          expData.put(job.X2header, headerData2);
+        }
       } catch (Exception e)
       {
         Log.error("A problem was encountered reading headers from files.");
@@ -154,10 +169,15 @@ public class MultiPlotter implements Plotter
     for(int i = 0; i < job.Y1headers.size(); i++)
     {
       XYSeries dataSeries;
-      if(job.experimentalData != null)
-        dataSeries = plotTool.createXYSeries("Engine "+job.Y1headers.get(i),data.get(job.X1header),data.get(job.Y1headers.get(i)));
+      String yLabel;
+      if(job.Y1headers.size()==1 && job.Y1Label != null && !job.Y1Label.isEmpty())
+        yLabel = job.Y1Label;
       else
-        dataSeries = plotTool.createXYSeries(job.Y1headers.get(i),data.get(job.X1header),data.get(job.Y1headers.get(i)));
+        yLabel = job.Y1headers.get(i);
+      if(job.experimentalData != null)
+        dataSeries = plotTool.createXYSeries(yLabel,data.get(job.X1header),data.get(job.Y1headers.get(i)));
+      else
+        dataSeries = plotTool.createXYSeries(yLabel,data.get(job.X1header),data.get(job.Y1headers.get(i)));
       dataSet1.addSeries(dataSeries);
       title = title + job.Y1headers.get(i) + "_";
       maxY1 = maxY1 < dataSeries.getMaxY() ? dataSeries.getMaxY() : maxY1;
@@ -166,10 +186,15 @@ public class MultiPlotter implements Plotter
     for(int i = 0; i < job.Y2headers.size(); i++)
     {
       XYSeries dataSeries;
-      if(job.experimentalData != null)
-        dataSeries = plotTool.createXYSeries("Experimental "+job.Y2headers.get(i),expData.get(job.X2header),expData.get(job.Y2headers.get(i)));
+      String yLabel;
+      if(job.Y2headers.size()==1 && job.Y2Label != null && !job.Y2Label.isEmpty())
+        yLabel = job.Y2Label;
       else
-        dataSeries = plotTool.createXYSeries(job.Y2headers.get(i),data.get(job.X2header),data.get(job.Y2headers.get(i)));
+        yLabel = job.Y2headers.get(i);
+      if(job.experimentalData != null)
+        dataSeries = plotTool.createXYSeries(yLabel,expData.get(job.X2header),expData.get(job.Y2headers.get(i)));
+      else
+        dataSeries = plotTool.createXYSeries(yLabel,data.get(job.X2header),data.get(job.Y2headers.get(i)));
       dataSet2.addSeries(dataSeries);
       title = title + job.Y2headers.get(i) + "_";
       maxY2 = maxY2 < dataSeries.getMaxY() ? dataSeries.getMaxY() : maxY2;
@@ -188,7 +213,7 @@ public class MultiPlotter implements Plotter
     String YAxisLabel = job.Y1headers.get(0);
     
     JFreeChart chart = ChartFactory.createXYLineChart(
-        job.titleOverride!=null&&job.titleOverride.equalsIgnoreCase("None")?"":title,           // chart title
+        job.titleOverride!=null&&job.titleOverride.equalsIgnoreCase("None")?"":title,// chart title
         XAxisLabel,         // x axis label
         YAxisLabel,         // y axis label
         dataSet1,                   // data
@@ -381,7 +406,7 @@ public class MultiPlotter implements Plotter
     BasicStroke wideLine = new BasicStroke( 2.0f ); 
     
     //For Scientific notation
-    NumberFormat formatter = new DecimalFormat("0.######E0");
+    NumberFormat formatter = new DecimalFormat("0.###E0");
     
     for(int i = 0; i < plot.getDomainAxisCount(); i++)
     {
@@ -397,7 +422,7 @@ public class MultiPlotter implements Plotter
       plot.getRangeAxis(i).setLabelPaint(job.bgColor==Color.red?Color.white:Color.black);
       plot.getRangeAxis(i).setTickLabelPaint(job.bgColor==Color.red?Color.white:Color.black);
       NumberAxis rangeAxis = (NumberAxis)plot.getRangeAxis(i);
-      rangeAxis.setNumberFormatOverride(formatter);
+      //rangeAxis.setNumberFormatOverride(formatter);
     }
 
     //White background outside of plottable area

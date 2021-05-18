@@ -4,6 +4,7 @@
 #include "EngineHowTo.h"
 
 // Include the various types you will be using in your code
+#include "PulseScenarioExec.h"
 #include "scenario/SEScenario.h"
 #include "scenario/SEScenarioExec.h"
 #include "engine/SEPatientConfiguration.h"
@@ -45,12 +46,7 @@ public:
 void HowToRunScenario()
 {
   // Create an engine object
-  // PulseEngines will always output log messages to stdout and a log file  
-  // If you want this engine to write a log file, include the name 
-  // of the log file. If nullptr is given, the engine will only output to the console
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_RunScenario.log");
-  pe->GetLogger()->Info("HowTo_RunScenario");
 
   // Let's do something everytime the engine advances
   pe->SetAdvanceHandler(new MyCustomExec());
@@ -66,8 +62,6 @@ void HowToRunScenario()
 
   // You can forward logs as demonstrated in HowTo-EngineUse
 
-  // Create a Scenario Executor
-  SEScenarioExec executor(pe->GetLogger());
   // Let's make a scenario (you could just point the executor to a scenario json file on disk as well)
   SEScenario sce(pe->GetLogger());
   sce.SetName("HowToRunScenario");
@@ -82,10 +76,6 @@ void HowToRunScenario()
   sce.GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate",FrequencyUnit::Per_min);
   sce.GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   sce.GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  // you can specify where the file goes 
-  sce.GetDataRequestManager().SetResultsFilename("./HowTo-RunScenarioResults.csv");
-  // If you don't set the file name it will try to make a place for the results in a bin/Scenarios/ folder
-  // Let's just run for 2 minutes
   // NOTE: the scenario will make it's own copy of this action
   // Once you set it, any changes will not be reflected in the scenario
   // You can reuse this object for future actions
@@ -93,5 +83,11 @@ void HowToRunScenario()
   adv.GetTime().SetValue(2, TimeUnit::min);
   sce.AddAction(adv);
 
-  executor.Execute(*pe, sce, "./HowTo-RunScenarioResults.csv");
+  std::string json;
+  SEScenarioExec execOpts;
+  sce.SerializeToString(json, SerializationFormat::JSON);
+  execOpts.SetLogFilename("./test_results/HowTo-RunScenarioResults.log");
+  execOpts.SetDataRequestCSVFilename("./test_results/HowTo-RunScenarioResults.csv");
+  execOpts.SetScenarioContent(json);
+  PulseScenarioExec::Execute(*pe, execOpts);
 }

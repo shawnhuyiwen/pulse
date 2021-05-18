@@ -45,7 +45,7 @@ public:
   virtual void SetBlackBox(SELiquidBlackBox* bb) { m_BlackBox = bb; }
 
 protected:
-  virtual SELiquidSubstanceQuantity& CreateSubstanceQuantity(SESubstance& substance);
+  virtual SELiquidSubstanceQuantity& CreateSubstanceQuantity(SESubstance& substance, bool zeroOut=true);
 
   SEScalar* m_pH;
   SEScalar0To1* m_WaterVolumeFraction;

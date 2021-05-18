@@ -55,6 +55,56 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEScalarAmount
+    public static void Load(pulse.cdm.bind.ScalarAmountData src, SEScalarAmount dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ScalarAmountData src, SEScalarAmount dst)
+    {
+      dst.Invalidate();
+      dst.SetValue(src.ScalarAmount.Value, AmountUnit.FromString(src.ScalarAmount.Unit));
+    }
+    public static pulse.cdm.bind.ScalarAmountData Unload(SEScalarAmount src)
+    {
+      pulse.cdm.bind.ScalarAmountData dst = new pulse.cdm.bind.ScalarAmountData();
+      Serialize(src, dst);
+      return dst;
+    }
+
+    public static void Serialize(SEScalarAmount src, pulse.cdm.bind.ScalarAmountData dst)
+    {
+      dst.ScalarAmount = new pulse.cdm.bind.ScalarData();
+      dst.ScalarAmount.Value = src.GetValue();
+      dst.ScalarAmount.Unit = src.GetUnit().ToString();
+    }
+    #endregion
+
+    #region SEScalarAmountPerVolume
+    public static void Load(pulse.cdm.bind.ScalarAmountPerVolumeData src, SEScalarAmountPerVolume dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ScalarAmountPerVolumeData src, SEScalarAmountPerVolume dst)
+    {
+      dst.Invalidate();
+      dst.SetValue(src.ScalarAmountPerVolume.Value, AmountPerVolumeUnit.FromString(src.ScalarAmountPerVolume.Unit));
+    }
+    public static pulse.cdm.bind.ScalarAmountPerVolumeData Unload(SEScalarAmountPerVolume src)
+    {
+      pulse.cdm.bind.ScalarAmountPerVolumeData dst = new pulse.cdm.bind.ScalarAmountPerVolumeData();
+      Serialize(src, dst);
+      return dst;
+    }
+
+    public static void Serialize(SEScalarAmountPerVolume src, pulse.cdm.bind.ScalarAmountPerVolumeData dst)
+    {
+      dst.ScalarAmountPerVolume = new pulse.cdm.bind.ScalarData();
+      dst.ScalarAmountPerVolume.Value = src.GetValue();
+      dst.ScalarAmountPerVolume.Unit = src.GetUnit().ToString();
+    }
+    #endregion
+
     #region SEScalarArea
     public static void Load(pulse.cdm.bind.ScalarAreaData src, SEScalarArea dst)
     {

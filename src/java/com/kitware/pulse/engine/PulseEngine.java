@@ -11,6 +11,9 @@ import com.kitware.pulse.SerializationType;
 
 import com.kitware.pulse.cdm.actions.SEAction;
 import com.kitware.pulse.cdm.bind.Engine.ActionListData;
+import com.kitware.pulse.cdm.bind.Engine.AnyActionData;
+import com.kitware.pulse.cdm.bind.Engine.AnyConditionData;
+import com.kitware.pulse.cdm.bind.Engine.ConditionListData;
 import com.kitware.pulse.cdm.bind.Events.ActiveEventData;
 import com.kitware.pulse.cdm.bind.Events.ActiveEventListData;
 import com.kitware.pulse.cdm.bind.Events.EventChangeData;
@@ -21,6 +24,7 @@ import com.kitware.pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanel
 import com.kitware.pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.UrinalysisData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
+import com.kitware.pulse.cdm.conditions.SECondition;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEActiveEvent;
 import com.kitware.pulse.cdm.engine.SEEventHandler;
@@ -143,7 +147,7 @@ public class PulseEngine
     catch(Exception ex)
     {
       if(logListener!=null)
-        logListener.error("Unable to initialize enging", ex);
+        logListener.error("Unable to initialize engine", ex);
       alive = false;
     }
     return alive;
@@ -167,6 +171,31 @@ public class PulseEngine
     {
       if(logListener!=null)
         logListener.error("Unable to get initial patient", ex);
+      return false;
+    }
+    return true;
+  }
+  
+  public boolean getConditions(List<SECondition> conditions)
+  {
+    if(!alive)
+    {
+      Log.error("Engine has not been initialized");
+      return alive;
+    }
+    try
+    {
+      conditions.clear();
+      ConditionListData.Builder b = ConditionListData.newBuilder();
+      String str = nativeGetConditions(nativeObj, thunkType.value());
+      JsonFormat.parser().merge(str, b);
+      for(AnyConditionData any : b.getAnyConditionList())
+        conditions.add(SECondition.ANY2CDM(any));
+    }
+    catch(Exception ex)
+    {
+      if(logListener!=null)
+        logListener.error("Unable to get conditions", ex);
       return false;
     }
     return true;
@@ -337,6 +366,31 @@ public class PulseEngine
     return alive;
   }
   
+  public boolean getActiveActions(List<SEAction> actions)
+  {
+    if(!alive)
+    {
+      Log.error("Engine has not been initialized");
+      return alive;
+    }
+    try
+    {
+      actions.clear();
+      ActionListData.Builder b = ActionListData.newBuilder();
+      String str = nativePullActiveActions(nativeObj, thunkType.value());
+      JsonFormat.parser().merge(str, b);
+      for(AnyActionData any : b.getAnyActionList())
+        actions.add(SEAction.ANY2CDM(any));
+    }
+    catch(Exception ex)
+    {
+      if(logListener!=null)
+        logListener.error("Unable to get active actions", ex);
+      return false;
+    }
+    return true;
+  }
+  
   ///////////////////////
   // LISTENER/HANDLERS //
   ///////////////////////
@@ -437,12 +491,14 @@ public class PulseEngine
   protected native String nativePullActiveEvents(long nativeObj, int format);
   
   protected native boolean nativeProcessActions(long nativeObj, String actions, int format);
+  protected native String  nativePullActiveActions(long nativeObj, int format);
   
   protected native boolean nativeAdvanceTimeStep(long nativeObj);
   protected native double[] nativePullData(long nativeObj);
   
   protected native String nativeGetInitialPatient(long nativeObj, int format);
+  protected native String nativeGetConditions(long nativeObj, int format);
   protected native String nativeGetAssessment(long nativeObj, int type, int format);
   
-  protected native boolean nativeExecuteScenario(long nativeObj, String scenario, int format, String csvFile, String logFile, String dataDir);
+  protected native boolean nativeExecuteScenario(long nativeObj, String sceOpts, int format);
 }

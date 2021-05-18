@@ -43,16 +43,16 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool HasAdministeredDose() const;
-  virtual SEScalarVolume& GetAdministeredDose();
-  virtual double GetAdministeredDose(const VolumeUnit& unit) const;
+  virtual bool HasTotalInfusedDose() const;
+  virtual SEScalarVolume& GetTotalInfusedDose();
+  virtual double GetTotalInfusedDose(const VolumeUnit& unit) const;
 
 protected:
 
   const SESubstance&             m_Substance;
   eSubstanceAdministration_Route m_AdminRoute;
   SEScalarTime*                  m_AdminDuration;
-  SEScalarVolume*                m_AdministeredDose;
   SEScalarMassPerVolume*         m_Concentration;
   SEScalarVolume*                m_Dose;
+  SEScalarVolume*                m_TotalInfusedDose;
 };

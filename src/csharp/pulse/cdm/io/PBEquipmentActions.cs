@@ -553,6 +553,48 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEInhalerAction
+    public static void Serialize(pulse.cdm.bind.InhalerActionData src, SEInhalerAction dst)
+    {
+      PBEquipmentAction.Serialize(src.EquipmentAction, dst);
+    }
+    protected static void Serialize(SEInhalerAction src, pulse.cdm.bind.InhalerActionData dst)
+    {
+      dst.EquipmentAction = new pulse.cdm.bind.EquipmentActionData();
+      PBEquipmentAction.Serialize(src, dst.EquipmentAction);
+    }
+    #endregion
+
+    #region SEInhalerConfiguration
+    public static void Load(pulse.cdm.bind.InhalerConfigurationData src, SEInhalerConfiguration dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.InhalerConfigurationData src, SEInhalerConfiguration dst)
+    {
+      Serialize(src.InhalerAction, dst);
+      if (src.ConfigurationFile != null)
+        dst.SetConfigurationFile(src.ConfigurationFile);
+      else if (src.Configuration != null)
+        PBInhaler.Load(src.Configuration, dst.GetConfiguration());
+    }
+    public static pulse.cdm.bind.InhalerConfigurationData Unload(SEInhalerConfiguration src)
+    {
+      pulse.cdm.bind.InhalerConfigurationData dst = new pulse.cdm.bind.InhalerConfigurationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEInhalerConfiguration src, pulse.cdm.bind.InhalerConfigurationData dst)
+    {
+      dst.InhalerAction = new pulse.cdm.bind.InhalerActionData();
+      Serialize(src, dst.InhalerAction);
+      if (src.HasConfigurationFile())
+        dst.ConfigurationFile = src.GetConfigurationFile();
+      else if (src.HasConfiguration())
+        dst.Configuration = PBInhaler.Unload(src.GetConfiguration());
+    }
+    #endregion
+
     #region SEMechanicalVentilatorAction
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorActionData src, SEMechanicalVentilatorAction dst)
     {

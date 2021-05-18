@@ -99,7 +99,7 @@ namespace HowTo_UseEngine
         case InitializationType.StateString:
           {
             string file_content = File.ReadAllText("./states/Soldier@0s.json");
-            if (!pulse.SerializeFromString(file_content, data_mgr, SerializationFormat.JSON))
+            if (!pulse.SerializeFromString(file_content, data_mgr, eSerializationFormat.JSON))
             {
               Console.WriteLine("Error Initializing Pulse!");
               return;
@@ -183,6 +183,15 @@ namespace HowTo_UseEngine
       Console.WriteLine("Height " + initialPatient.GetHeight().ToString());
       Console.WriteLine("Weight " + initialPatient.GetWeight().ToString());
 
+      // You can pull the condition manager from the engine to see what, if any, conditions are applied to this patient
+      // Note this will not change, its based on how the patient was initially created
+      List<SECondition> conditions = new List<SECondition>();
+      pulse.GetConditions(conditions);
+      foreach (SECondition any in conditions)
+      {
+        Console.WriteLine(any.ToString());
+      }
+
       // Now we can start telling the engine what to do
       // All the same concepts apply from the C++ HowTo files, so look there if you want to see more examples
 
@@ -208,6 +217,10 @@ namespace HowTo_UseEngine
           }
         }
       }
+
+      // At any time you can get a patient assessment from the engine
+      SECompleteBloodCount cbc = new SECompleteBloodCount();
+      pulse.GetPatientAssessment(cbc);
 
       // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
       List<SEAction> actions = new List<SEAction>();
@@ -239,6 +252,14 @@ namespace HowTo_UseEngine
         data_values = pulse.PullData();
         // And write it out to the console
         data_mgr.ToConsole(data_values);
+      }
+
+      // At any point you can also pull the current active actions from the engine
+      Console.WriteLine("Here are the current active actions in the engine");
+      pulse.PullActiveActions(actions);
+      foreach (SEAction any in actions)
+      {
+        Console.WriteLine(any.ToString());
       }
 
       // Stop the hemorrhage

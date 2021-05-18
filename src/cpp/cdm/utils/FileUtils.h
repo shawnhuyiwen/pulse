@@ -15,3 +15,7 @@ void CDM_DECL DeleteDirectory(const std::string &dir, bool bDeleteSubdirectories
 bool CDM_DECL IsDirectory(struct dirent* ent);
 bool CDM_DECL FileExists(const std::string& filename);
 bool CDM_DECL IsJSONFile(const std::string& filename);
+// Get the filename (with extension) from a filepath
+bool CDM_DECL SplitFilenamePath(const std::string& filepath, std::string& filename);
+// Get the base filename and extension of a filepath
+bool CDM_DECL SplitFilenameExt(const std::string& filepath, std::string& filename, std::string& ext);

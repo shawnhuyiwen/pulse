@@ -1,6 +1,6 @@
 {
   "Name": "Cynthia",
-  "Description": "Inject Cynthia with Midazolam. Reaction to sedative causes an airway obstruction. An anesthesia machine mask is applied to attempt to supply Oxygen. Ketamine is administered and the airway obstruction is cleared. Rocuronium is administered. Patient is then intubated.",
+  "Description": "Inject Cynthia with Midazolam. Reaction to sedative causes an airway obstruction. A  mask is applied to attempt to supply Oxygen. Ketamine is administered and the airway obstruction is cleared. Rocuronium is administered. Patient is then intubated.",
   "PatientConfiguration": {
       "PatientFile": "Cynthia.json"
   },
@@ -469,61 +469,15 @@
       }
     }
   }, {
-    "EquipmentAction": {
-      "AnesthesiaMachineConfiguration": {
-        "Configuration": {
-          "Connection": "Mask",
-          "InletFlow": {
+    "PatientAction": {
+      "SupplementalOxygen": {
+        "Device": "SimpleMask",
+		"Flow": {
             "ScalarVolumePerTime": {
-              "Value": 5.0,
+              "Value": 1.0,
               "Unit": "L/min"
             }
-          },
-          "InspiratoryExpiratoryRatio": {
-            "Value": 0.5
-          },
-          "OxygenFraction": {
-            "Scalar0To1": {
-              "Value": 0.23
-            }
-          },
-          "OxygenSource": "Wall",
-          "PositiveEndExpiredPressure": {
-            "ScalarPressure": {
-              "Value": 8,
-              "Unit": "cmH2O"
-            }
-          },
-          "PrimaryGas": "Nitrogen",
-          "RespiratoryRate": {
-            "ScalarFrequency": {
-              "Value": 16.0,
-              "Unit": "1/min"
-            }
-          },
-          "PeakInspiratoryPressure": {
-            "ScalarPressure": {
-              "Value": 15,
-              "Unit": "cmH2O"
-            }
-          },
-          "OxygenBottleOne": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
-          },
-          "OxygenBottleTwo": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
-          }
-        }
+		}
       }
     }
   }, {
@@ -600,15 +554,33 @@
     }
   }, {
     "PatientAction": {
+      "SupplementalOxygen": {
+        "Device": "None"
+      }
+    }
+  }, {
+    "PatientAction": {
       "Intubation": {
         "Type": "Tracheal"
       }
     }
   }, {
     "EquipmentAction": {
-      "AnesthesiaMachineConfiguration": {
-        "Configuration": {
-          "Connection": "Tube"
+      "MechanicalVentilatorConfiguration": {
+        "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
+              "Comment": "Attach the mechanical ventilator - PC-CMV: RR = 15 bpm, I:E = 0.6, TV = 7 mL/kg(ideal)" }}},
+        "Configuration":
+        {
+          "Connection": "Tube",
+          "InspirationWaveform": "Square",
+          "ExpirationWaveform": "Square",
+          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 13.2, "Unit": "cmH2O" } },
+          "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
+          "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 3.25, "Unit": "s" } },
+          "ExpirationCycleTime": { "ScalarTime": { "Value": 1.75, "Unit": "s" } },
+          "FractionInspiredGas": [
+            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } }
+          ]
         }
       }
     }

@@ -6,8 +6,8 @@ from enum import Enum
 from pulse.cdm.scalars import SEScalarProperty, SEScalarTime
 
 class eSerializationFormat(Enum):
-    BINARY = 0
-    JSON = 1
+    JSON = 0
+    BINARY = 1
 
 class eSide(Enum):
     NullSide = 0

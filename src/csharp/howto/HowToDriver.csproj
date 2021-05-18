@@ -64,6 +64,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HowTo_RunScenarios.cs" />
+    <Compile Include="HowTo_DeathState.cs" />
     <Compile Include="HowTo_EngineUse.cs" />
     <Compile Include="HowTo_MechanicalVentilator.cs" />
     <Compile Include="HowTo_Environment.cs" />

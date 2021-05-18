@@ -43,8 +43,6 @@ public:
   size_t length;
   std::vector<double> requestedValues;
   double* requestedData = nullptr;
-
-  PulseScenarioExec* exec = nullptr;
 };
 
 PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
@@ -56,7 +54,6 @@ PulseEngineThunk::PulseEngineThunk() : SEEventHandler()
 }
 PulseEngineThunk::~PulseEngineThunk()
 {
-  SAFE_DELETE(data->exec);
   delete data;
 }
 
@@ -65,18 +62,12 @@ PhysiologyEngine& PulseEngineThunk::GetPhysiologyEngine()
   return *data->eng;
 }
 
-bool PulseEngineThunk::ExecuteScenario(std::string const& scenario, SerializationFormat format, std::string const& csvFile, std::string const& logFile, std::string const& dataDir)
+bool PulseEngineThunk::ExecuteScenario(std::string const& execOpts, SerializationFormat format)
 {
-  if (data->exec != nullptr)
-  {
-    data->eng->GetLogger()->Error("Already running a scenario");
+  SEScenarioExec opts;
+  if (!opts.SerializeFromString(execOpts, format))
     return false;
-  }
-  data->exec = new PulseScenarioExec(data->eng->GetLogger());
-  data->exec->GetLogger()->SetLogFile(logFile);
-  bool b = data->exec->Execute(*data->eng, scenario, format, csvFile, dataDir);
-  SAFE_DELETE(data->exec);
-  return b;
+  return PulseScenarioExec::Execute(*data->eng, opts);
 }
 
 bool PulseEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format)
@@ -174,43 +165,10 @@ std::string PulseEngineThunk::GetInitialPatient(SerializationFormat format)
   return stream;
 }
 
-std::string PulseEngineThunk::GetPatientAssessment(int type, SerializationFormat format)
+std::string PulseEngineThunk::GetConditions(SerializationFormat format)
 {
   std::string stream;
-  switch (type)
-  {
-  case 0: // CBC
-  {
-    SECompleteBloodCount cbc(data->eng->GetLogger());
-    data->eng->GetPatientAssessment(cbc);
-    cbc.SerializeToString(stream, format);
-    break;
-  }
-  case 1: // CMP
-  {
-    SEComprehensiveMetabolicPanel cmp(data->eng->GetLogger());
-    data->eng->GetPatientAssessment(cmp);
-    cmp.SerializeToString(stream, format);
-    break;
-  }
-  case 2:// PFT
-  {
-    SEPulmonaryFunctionTest pft(data->eng->GetLogger());
-    data->eng->GetPatientAssessment(pft);
-    pft.SerializeToString(stream, format);
-    break;
-  }
-  case 3: // U
-  {
-    SEUrinalysis u(data->eng->GetLogger());
-    data->eng->GetPatientAssessment(u);
-    u.SerializeToString(stream, format);
-    break;
-  }
-  default:
-    stream = "Unsupported assessment type";
-  };
-
+  data->eng->GetConditionManager().SerializeToString(stream, format);
   return stream;
 }
 
@@ -260,6 +218,46 @@ std::string PulseEngineThunk::PullActiveEvents(SerializationFormat format)
   return active_events;
 }
 
+std::string PulseEngineThunk::GetPatientAssessment(int type, SerializationFormat format)
+{
+  std::string stream;
+  switch (type)
+  {
+  case 0: // CBC
+  {
+    SECompleteBloodCount cbc(data->eng->GetLogger());
+    data->eng->GetPatientAssessment(cbc);
+    cbc.SerializeToString(stream, format);
+    break;
+  }
+  case 1: // CMP
+  {
+    SEComprehensiveMetabolicPanel cmp(data->eng->GetLogger());
+    data->eng->GetPatientAssessment(cmp);
+    cmp.SerializeToString(stream, format);
+    break;
+  }
+  case 2:// PFT
+  {
+    SEPulmonaryFunctionTest pft(data->eng->GetLogger());
+    data->eng->GetPatientAssessment(pft);
+    pft.SerializeToString(stream, format);
+    break;
+  }
+  case 3: // U
+  {
+    SEUrinalysis u(data->eng->GetLogger());
+    data->eng->GetPatientAssessment(u);
+    u.SerializeToString(stream, format);
+    break;
+  }
+  default:
+    stream = "Unsupported assessment type";
+  };
+
+  return stream;
+}
+
 bool PulseEngineThunk::ProcessActions(std::string const& actions, SerializationFormat format)
 {
   bool success = true;
@@ -296,6 +294,13 @@ bool PulseEngineThunk::ProcessActions(std::string const& actions, SerializationF
 
   return success;
 }
+std::string PulseEngineThunk::PullActiveActions(SerializationFormat format)
+{
+  std::string stream;
+  data->eng->GetActionManager().SerializeToString(stream, format);
+  return stream;
+}
+
 double PulseEngineThunk::GetTimeStep(std::string const& unit)
 {
   TimeUnit time_unit = TimeUnit::GetCompoundUnit(unit);

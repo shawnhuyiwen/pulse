@@ -2,10 +2,8 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.pulse.engine;
 
-import com.google.protobuf.util.JsonFormat;
-import com.kitware.pulse.SerializationType;
-
-import com.kitware.pulse.cdm.scenario.SEScenario;
+import com.kitware.pulse.cdm.bind.Scenario.eSerializationFormat;
+import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.JNIBridge;
@@ -48,32 +46,15 @@ public class PulseScenarioExec
     engine = null;
   }
   
-  public boolean runScenario(SEScenario scenario, String resultsFile, String logFile)
+  public boolean runScenario(SEScenarioExec execOpts)
   {
-    return runScenario(scenario, resultsFile, logFile, "./");
-  }
-  public boolean runScenario(SEScenario scenario, String resultsFile, String logFile, String dataDir)
-  {
-    try
-    {
-      String sString =  JsonFormat.printer().print(SEScenario.unload(scenario));
-      return runScenario(sString, SerializationType.JSON, resultsFile, logFile, dataDir);
-    }
-    catch(Exception ex)
-    {
-      Log.error("Unable to run scenario");
-    }
-    return false;
-  }
-  
-  public boolean runScenario(String scenario, SerializationType format, String resultsFile, String logFile)
-  {
-    return runScenario(scenario, format, resultsFile, logFile, "./");
-  }
-  public boolean runScenario(String scenario, SerializationType format, String resultsFile, String logFile, String dataDir)
-  {
-    listener.origin = resultsFile.substring(resultsFile.lastIndexOf("/")+1,resultsFile.lastIndexOf("."));
-    return engine.nativeExecuteScenario(engine.nativeObj, scenario, format.value(), resultsFile, logFile, dataDir);
+    String resultsFile = execOpts.getDataRequestCSVFilename();
+    if(resultsFile.isEmpty())
+      listener.origin = "Scenario";
+    else
+      listener.origin = resultsFile.substring(resultsFile.lastIndexOf("/")+1,resultsFile.lastIndexOf("."));
+    
+    return engine.nativeExecuteScenario(engine.nativeObj, execOpts.toJSON(), eSerializationFormat.JSON_VALUE);
   }
   
   protected PulseEngine engine;

@@ -5,16 +5,51 @@ option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Engine.proto";
+import "pulse/cdm/bind/Enums.proto";
+
+enum eSerializationFormat
+{
+  JSON     = 0;
+  BINARY   = 1;
+}
 
 message ScenarioData
 {
-  string                           Name                      = 1;
-  string                           Description               = 2;
+  string                           Name                          = 1;
+  string                           Description                   = 2;
+  
   oneof StartType
   {
-    string                         EngineStateFile           = 3;
-    PatientConfigurationData       PatientConfiguration      = 4;
+    string                         EngineStateFile               = 3;
+    PatientConfigurationData       PatientConfiguration          = 4;
   }
-  DataRequestManagerData           DataRequestManager        = 5;
-  repeated AnyActionData           AnyAction                 = 6;
+  DataRequestManagerData           DataRequestManager            = 5;
+  repeated AnyActionData           AnyAction                     = 6;
+}
+
+message ScenarioExecData
+{
+  eSwitch                          LogToConsole                  = 1;
+  string                           LogFilename                   = 2;/**<< @brief Log file to create, leave blank to not create file*/
+  string                           DataRequestCSVFilename        = 3;/**<< @brief CSV file to create, leave blank to not create file*/
+  string                           DataRootDirectory             = 4;/**<< @brief Root location of all input files for stabilization, generally install/bin of the build*/
+  
+  string                           SerializationDirectory        = 5;/**<< Directory to prepend all non absolute SerializationAction paths, default is the working directory */
+  string                           AutoSerializeFilename         = 6;/**<< @brief Filename to use when serializing after actions and at a period */
+  eSwitch                          AutoSerializeAfterActions     = 7;/**<< @brief Save state after an action is added to the action manager, then again after it is processed. (These states are always time stamped.) */
+  double                           AutoSerializePeriod_s         = 8;/**<< @brief The frequency at which to write a file, 1s would write a file every second. 0 will not save out at all (if you wanted after actions only.) */    
+  eSwitch                          TimeStampSerializedStates     = 9;/**<< @brief Put a time stamp at the end of the period state filename, Off will overwrite the same individual file, On will create new files every period, named with the simulation time. */
+  eSwitch                          ReloadSerializedState         = 10;/**<< @brief Load the data back into the engine, this is primarily used for testing */
+  oneof EngineConfiguration
+  {
+    string                         EngineConfigurationContent    = 11;
+    string                         EngineConfigurationFilename   = 12;
+  }
+  oneof Scenario
+  {
+    string                         ScenarioContent               = 13;
+    string                         ScenarioFilename              = 14;
+  }
+  eSerializationFormat             ContentFormat                 = 15;
+  
 }

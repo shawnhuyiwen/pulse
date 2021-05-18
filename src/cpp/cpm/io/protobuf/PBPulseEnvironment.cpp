@@ -14,6 +14,7 @@ void PBPulseEnvironment::Load(const PULSE_BIND::EnvironmentData& src, Environmen
   dst.Clear();
   dst.SetUp();
   PBPulseEnvironment::Serialize(src, dst);
+  dst.StateChange();
 }
 void PBPulseEnvironment::Serialize(const PULSE_BIND::EnvironmentData& src, Environment& dst)
 {

@@ -20,10 +20,10 @@ namespace Pulse.CDM
       for (int i = 0; i < src.DataRequest.Count; i++)
       {
         pulse.cdm.bind.DataRequestData dr = src.DataRequest[i];
-        dst.GetDataRequests().Add(SEDataRequest.New((eDataRequest_Category)dr.Category, dr.CompartmentName, dr.SubstanceName, dr.PropertyName, dr.Unit));
+        dst.GetDataRequests().Add(SEDataRequest.New((eDataRequest_Category)dr.Category, dr.ActionName, dr.CompartmentName, dr.SubstanceName, dr.PropertyName, dr.Unit));
       }
     }
-    public static bool SerializeFromString(string src, SEDataRequestManager dst, SerializationFormat format)
+    public static bool SerializeFromString(string src, SEDataRequestManager dst, eSerializationFormat format)
     {
       try
       {
@@ -52,6 +52,8 @@ namespace Pulse.CDM
       {
         pulse.cdm.bind.DataRequestData dst_dr = new pulse.cdm.bind.DataRequestData();
         dst_dr.Category = (eCategory)dr.GetCategory();
+        if (dr.HasActionName())
+          dst_dr.ActionName = dr.GetActionName();
         if (dr.HasCompartmentName())
           dst_dr.CompartmentName = dr.GetCompartmentName();
         if (dr.HasSubstanceName())
@@ -63,7 +65,7 @@ namespace Pulse.CDM
         dst.DataRequest.Add(dst_dr);
       }
     }
-    public static string SerializeToString(SEDataRequestManager src, SerializationFormat format)
+    public static string SerializeToString(SEDataRequestManager src, eSerializationFormat format)
     {
       var pb = PBDataRequest.Unload(src);
       return pb.ToString();

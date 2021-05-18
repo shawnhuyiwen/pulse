@@ -544,7 +544,7 @@ public class ActionEventPlotter implements Plotter
               new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{15.0f, 30.0f}, 0.0f)
               );
           renderer.setDrawSeriesLineAsPath(true);
-          renderer.setUseFillPaint(true);  
+          renderer.setUseFillPaint(true);
           renderer.setDefaultShapesVisible(false);//setBaseShapesVisible(false);
           renderer.setSeriesFillPaint(i, Color.black); 
           renderer.setSeriesPaint(i, Color.black); 
@@ -646,7 +646,7 @@ public class ActionEventPlotter implements Plotter
         filename = filename + ".jpg";
       File JPGFile = new File(filename);
       if(job.imageHeight != null && job.imageWidth != null)
-        ChartUtils.saveChartAsJPEG(JPGFile, chart, job.imageWidth, job.imageHeight);
+        ChartUtils.saveChartAsPNG(JPGFile, chart, job.imageWidth, job.imageHeight);
       else if(!job.hideAELegend && !job.removeAllLegends)
         ChartUtils.saveChartAsJPEG(JPGFile, chart, 1600, verticalPixels);
       else
@@ -663,7 +663,7 @@ public class ActionEventPlotter implements Plotter
     XYPlot plot = (XYPlot) chart.getPlot();
     
     //For Scientific notation
-    NumberFormat formatter = new DecimalFormat("0.######E0");
+    NumberFormat formatter = new DecimalFormat("0.###E0");
     
     for(int i = 0; i < plot.getDomainAxisCount(); i++)
     {
@@ -679,7 +679,7 @@ public class ActionEventPlotter implements Plotter
       plot.getRangeAxis(i).setLabelPaint(job.bgColor==Color.red?Color.white:Color.black);
       plot.getRangeAxis(i).setTickLabelPaint(job.bgColor==Color.red?Color.white:Color.black);
       NumberAxis rangeAxis = (NumberAxis)plot.getRangeAxis(i);
-      rangeAxis.setNumberFormatOverride(formatter);
+      //rangeAxis.setNumberFormatOverride(formatter);
     }
 
     //White background outside of plottable area

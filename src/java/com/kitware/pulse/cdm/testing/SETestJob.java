@@ -3,7 +3,7 @@ package com.kitware.pulse.cdm.testing;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kitware.pulse.cdm.engine.SEAutoSerialization;
+import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
@@ -12,9 +12,9 @@ public class SETestJob extends LogListener
 {
   public enum State {Provisioned, Executing, Executed, Comparing, Complete}
   
-  public SETestJob(){ listen(false);  }
+  public SETestJob(){ listen(false); }
   public boolean      useState=false;
-  public SEAutoSerialization autoSerialization=null;
+  public SEScenarioExec execOpts=new SEScenarioExec();
   public String       patientFile = null;
   public State        state=State.Provisioned;
   public String       name;

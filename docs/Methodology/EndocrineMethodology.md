@@ -7,7 +7,7 @@ Overview
 Abstract
 --------
 
-The %Endocrine System is a basic system implementation of endocrine signaling. There are currently two hormones included in the %Endocrine system: epinephrine and insulin. The effects of epinephrine are modeled by leveraging the [parmacodynamics](@ref DrugsMethodology) model. The insulin model is under construction, and when it is finished, insulin will have a regulatory effect on the concentration of glucose in the blood. Functionality that is in the development stage now will enable future releases of the endocrine system to affect:
+The %Endocrine System is a basic system implementation of endocrine signaling. There are currently two hormones included in the %Endocrine system: epinephrine and insulin. The effects of epinephrine are modeled by leveraging the [pharmacodynamics](@ref DrugsMethodology) model. The insulin model is under construction, and when it is finished, insulin will have a regulatory effect on the concentration of glucose in the blood. Functionality that is in the development stage now will enable future releases of the endocrine system to affect:
 -   Metabolic function
 -   %Renal function
 -   Ion regulation
@@ -47,7 +47,7 @@ The %Endocrine System currently contains only two hormones: epinephrine and insu
 
 ### Insulin
 Insulin is secreted by the pancreatic beta cells in response to increased blood glucose.
-The model utilized for insulin synthesis is a linear function capturing the insulin/glucose relationship described in polonsky @cite polonsky1987insulin.
+The model utilized for insulin synthesis is a linear function capturing the insulin/glucose relationship described in Polonsky @cite polonsky1987insulin.
 The synthesis rate is defined by:
 
 \f[f(I)= (5.357 * G) - 328.56 \f] 
@@ -100,7 +100,7 @@ Actions
 -------
 ### Insults
 #### Acute Stress
-The Acute Stress action is used to directly modify the production of epinephrine. In the human body, stress or anxiety causes a sympathetic release of epinephrine and norepinephrine from the adrenal medullae. In the engine, an Acute Stress action is rated a severity between 0 and 1, and that severity is used to modify the epinephrine release rate linearly. A severity of 0 will return the rate to the normal, basal level, while a severity of 1 will increase the release rate by a factor of 30. This model was chosen to approximate the physiological responses observed during mild pain, mental stress tests, and panic attacks @cite greisen2001acute @cite herd1991cardiovascular @cite wilkinson1998sympathetic.
+The Acute Stress action is used to directly modify the production of epinephrine. In the human body, stress or anxiety causes a sympathetic release of epinephrine and norepinephrine from the adrenal medullae. In the engine, an Acute Stress action is rated a severity between 0 and 1, and that severity is used to modify the epinephrine release rate linearly. A severity of 0 will return the rate to the normal, basal level, while a severity of 1 will increase the release rate by a factor of 30. This model was chosen to approximate the physiological responses observed during mild pain, mental stress tests, and panic attacks @cite greisen2001acute @cite herd1991cardiovascular @cite wilkinson1998sympathetic. This does does incorporate the effects of adrenaline on the physiology, which is also released during stress, fear, etc.
 
 Results and Conclusions
 =======================
@@ -162,7 +162,7 @@ Future Work
 Coming Soon
 -----------
 
-Future work will focus on a complete endocrine response to glucose regulation including: detection of glucose levels in the blood stream and release of insulin to appropriately manage those levels. Pathology states of glucose in the patient will be included.
+Future work will focus on a complete endocrine response to glucose regulation including: detection of glucose levels in the blood stream and release of insulin to appropriately manage those levels. Pathology states of glucose in the patient will be included. We plan to add adrenaline and its link to the acute stress action.
 
 Recommended Improvements
 ------------------------

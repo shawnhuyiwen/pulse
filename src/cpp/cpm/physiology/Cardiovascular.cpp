@@ -265,6 +265,7 @@ void Cardiovascular::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::SetUp()
 {
+  m_HemorrhageTrack.clear();
   m_minIndividialSystemicResistance_mmHg_s_Per_mL = 0.1;
 
   //Circuits
@@ -980,22 +981,7 @@ void Cardiovascular::TraumaticBrainInjury()
 /// with the new value. Compartments can overlap.
 //--------------------------------------------------------------------------------------------------
 void Cardiovascular::Hemorrhage()
-{ 
-  //Check all existing hemorrhage paths, if has a flow source or a resistance (covers both types of hemorrhage), then set to zero
-  // - We do not want to assume prior knowledge, so we can ensure we capture the current flow rate or severity
-  // - If zero at the end, we will remove these hemorrhages
-  for (auto htItr : m_HemorrhageTrack)
-  {
-    for (auto plItr : htItr.second->Paths2Links)
-    {
-      SEFluidCircuitPath* path = plItr.first;
-      if (path->HasNextFlowSource())
-        path->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
-      if (path->HasNextResistance())
-        path->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    }
-  }
-
+{
   bool completeStateChange = false;
   double TotalLossRate_mL_Per_s = 0.0;
   std::vector<SEHemorrhage*> invalid_hemorrhages;
@@ -1016,6 +1002,20 @@ void Cardiovascular::Hemorrhage()
     {
       trk = new Cardiovascular::HemorrhageTrack();
       m_HemorrhageTrack[h] = trk;
+    }
+
+    //Check all existing hemorrhage paths, if has a flow source or a resistance (covers both types of hemorrhage), then set to zero
+    // - We do not want to assume prior knowledge, so we can ensure we capture the current flow rate or severity
+    // - If zero at the end, we will remove these hemorrhages
+    // NOTE we can do this in the hems loop becuase we assume that only 1 path/hemorrhage is associated with a compartment
+    // If we ever change that assumption, we will need to move this out, as well as increment flow sources
+    for (auto p2l : trk->Paths2Links)
+    {
+      SEFluidCircuitPath* path = p2l.first;
+      if (path->HasNextFlowSource())
+        path->GetNextFlowSource().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
+      if (path->HasNextResistance())
+        path->GetNextResistance().SetValue(0.0, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     }
 
     if (trk->Compartment == nullptr)
@@ -1179,19 +1179,14 @@ void Cardiovascular::Hemorrhage()
         //Update the existing bleed path
         else // Static Flow Rate
         {
-          if (!hemorrhagePath->HasResistanceBaseline())
-          {
-            //Increment value to allow overlapping compartments
-            hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
-          }
-          else
+          if (hemorrhagePath->HasResistanceBaseline())
           {
             hemorrhagePath->GetResistance().Invalidate();
             hemorrhagePath->GetNextResistance().Invalidate();
             hemorrhagePath->GetResistanceBaseline().Invalidate();
-            hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
             completeStateChange = true;
           }
+          hemorrhagePath->GetNextFlowSource().SetValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
         }
       }
       else //new hemorrhage path
@@ -1225,8 +1220,7 @@ void Cardiovascular::Hemorrhage()
         }
         else
         {
-          //Increment value to allow overlapping compartments
-          hemorrhagePath->GetNextFlowSource().IncrementValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
+          hemorrhagePath->GetNextFlowSource().SetValue(thisNodeRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);
         }
 
         completeStateChange = true;

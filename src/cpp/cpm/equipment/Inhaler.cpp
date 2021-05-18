@@ -66,18 +66,6 @@ void Inhaler::SetUp()
   m_AmbientEnv = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
   m_Mouthpiece = m_data.GetCompartments().GetGasCompartment(pulse::InhalerCompartment::Mouthpiece);
   m_AerosolMouthpiece = m_data.GetCompartments().GetLiquidCompartment(pulse::InhalerCompartment::Mouthpiece);
- 
-  if (m_State == eSwitch::On)
-  {
-    if (m_Substance == nullptr)
-    {
-      Fatal("State is on, but without a substance");
-    }
-    else
-    {
-      m_InhalerDrug = m_AerosolMouthpiece->GetSubstanceQuantity(*m_Substance);
-    }
-  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -142,7 +130,17 @@ void Inhaler::PreProcess()
 void Inhaler::StateChange()
 {
   SEInhaler::StateChange();
-
+  if (m_State == eSwitch::On)
+  {
+    if (m_Substance == nullptr)
+    {
+      Fatal("State is on, but without a substance");
+    }
+    if(m_InhalerDrug == nullptr)
+    {
+      m_InhalerDrug = m_AerosolMouthpiece->GetSubstanceQuantity(*m_Substance);
+    }
+  }
 }
 
 

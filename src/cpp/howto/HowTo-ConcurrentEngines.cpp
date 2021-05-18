@@ -6,8 +6,7 @@
 // Include the various types you will be using in your code
 #include "utils/FileUtils.h"
 #include "utils/taskrunner/TaskRunner.h"
-
-#include "scenario/SEScenarioExec.h"
+#include "PulseScenarioExec.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -66,8 +65,11 @@ void RunScenarioTask::Run()
   }
 
   // Run the scenario
-  SEScenarioExec exec(pe->GetLogger());
-  exec.Execute(*pe, m_scenarioFile, SerializationFormat::JSON, dataFile);
+  SEScenarioExec execOpts;
+  execOpts.SetLogFilename(logFile);
+  execOpts.SetDataRequestCSVFilename(dataFile);
+  execOpts.SetScenarioFilename(m_scenarioFile);
+  PulseScenarioExec::Execute(*pe, execOpts);
 }
 
 //--------------------------------------------------------------------------------------------------

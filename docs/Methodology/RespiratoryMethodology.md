@@ -19,7 +19,12 @@ The %Respiratory System supplies oxygen and removes waste carbon dioxide from th
 
 The human %Respiratory System consists of the upper airways (region above the cricoid cartilage), the lower airways, the lungs, and the respiratory muscles. The lower airways begin at the trachea and extend to the bronchi, bronchioles, and the alveoli. At the carina, the trachea divides into two mainstem bronchi, the right and left. The bronchi bifurcate into smaller bronchioles that continue branching for up to 23 generations, forming the tracheobronchial tree that terminates with the alveoli. Alveolar ducts and alveolar sacs are the operating units of the lungs where gas exchange occurs with the pulmonary capillaries. The first several generations of airways, where no gas exchange occurs, constitute the anatomic dead space and are referred to as the conducting zone. In contrast, alveolar ducts and sacs that terminate the tracheobronchial tree are referred to as the respiration zone.
 
-@image html RespiratorySystemDiagram.png
+@htmlonly
+<center>
+<a href="./Images/Respiratory/RespiratorySystemDiagram.png"><img src="./Images/Respiratory/RespiratorySystemDiagram.png"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 1. The %Respiratory System consists of the upper and lower airways. The diaphragm acts as a respiratory muscle taking part in the ventilatory driver mechanics. The trachea branches into the right and left bronchi, each of which further bifurcates into multiple generations of smaller bronchioles. These bronchioles form the tracheobronchial tree, which terminates at the alveoli. @cite LadyofHats2014Respiratory </i>
 </center><br>
@@ -210,7 +215,12 @@ analogue, the model predicts the dynamic properties of the %Respiratory System.
 Figure 2 depicts the network of respiratory circuit elements and their
 interconnections.
 
-<img src="./Images/Respiratory/RespiratoryCircuit.png" width="650">
+@htmlonly
+<center>
+<a href="./Images/Respiratory/RespiratoryCircuit.png"><img src="./Images/Respiratory/RespiratoryCircuit.png" width="650"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 2. Circuit diagram of the %Respiratory System. The diagram depicts a
 closed circuit of the major compartments and the subordinate compartments. The circuit depicts the muscle
@@ -327,8 +337,14 @@ Unless a conscious respiration action is called, all other segment fractions are
 
 Where <i>P<sub>min</sub></i> is the largest negative pressure value during inhalation and <i>P<sub>max</sub></i> is the largest positive pressure value during exhalation, the combination of which specifies the amplitude of the pressure source signal. Each time value (<i>t</i> with a subscript) is determined using set fractions and the total breath time to achieve the desired inspiratory-expiratory ratio.  Figure 3 shows the basic segmented muscle driver waveform used.
 
-<img src="./plots/Respiratory/DriverWaveform.jpg" width="600">
-<center> 
+@htmlonly
+<center>
+<a href="./plots/Respiratory/DriverWaveform.jpg">
+<img src="./plots/Respiratory/DriverWaveform.jpg" width="600"></a>
+<br> 
+</center>
+@endhtmlonly
+<center>
 <i>Figure 3. Conscious respiration muscle pressure waveform showing all segments with a duration of 1s each to minimum and maximum pressure.  These segment functions are presented in the equation above. The fraction of each segment duration compared to the total breath duration is set based on the inspiratory-expiratory ratio - many often set to zero. The total time of each breath is determined from a target respiration rate.</i>
 </center><br>
 
@@ -370,7 +386,13 @@ where <i>V<sup><b>.</b></sup><sub>E</sub></i> is calculated using the relation
 
 <i>V<sup><b>.</b></sup><sub>D</sub></i> is the dead space ventilation and is obtained by taking the product of the dead space volume and the respiration rate. The target tidal volume <i>V<sub>T</sub></i> needed to predict <i>f<sub>v</sub></i> is calculated from the pulmonary ventilation based on a piecewise linear relationship between the tidal volume and the minute ventilation as shown by Watson @cite watson1974tidalVolume . In the article, the author presented data that  describes the relationship between the minute ventilation and tidal volume by straight line. The data is reproduced in Figure 4 below.
 
-<img src="./Images/Respiratory/Respiratory_Figure05.png" width="800">
+@htmlonly
+<center>
+<a href="./Images/Respiratory/Respiratory_Figure05.png">
+<img src="./Images/Respiratory/Respiratory_Figure05.png" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 4. The figure shows data from literature that presents the linear relationship between the minute ventilation 
 and tidal volume. The relationship was derived from a line fit of experimental data with a wide range of varying carbon dioxide, exercise, postures, alveolar gas tensions, adrenaline, mild acidaemia, alkalosis, morphine, mederidine, mild hypoxia, and breathing through a small fixed resistance.  All test cases matched this trend of two intersecting straight lines.  The figure is reproduced from @cite watson1974tidalVolume .</i>
@@ -416,20 +438,22 @@ The model described above is implemented in the engine with reference values and
 
 Figure 5 depicts the time-dependent driver pressure source of the %Respiratory System as obtained during simulation of the standard patient model of the engine (77 kg adult male) under normal physiological conditions. For comparison, the driver pressure is plotted with the alveolar, intrapleural, and transpulmonary pressures. The figure shows the pressures for several breathing cycles. The model driver pressure exhibits distinct waveforms during the inspiration and expiration phases. These patterns represent the active distension and passive relaxation behaviors of the inspiratory muscles. As a result of such input, the model distinguishes between the active inspiratory and passive expiratory phases of the breathing cycle. The time-dependent muscle pressure together with the atmospheric pressure and the compliances act in tandem to generate the pleural and alveolar pressure waveforms shown in the figure.
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/Muscle_Pressure.jpg" width="800"></td>    
+    <td><a href="./plots/Respiratory/Muscle_Pressure.jpg"><img src="./plots/Respiratory/Muscle_Pressure.jpg" width="800"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/Pleural_and_Alveoli_Pressure.jpg" width="800"></td>
+    <td><a href="./plots/Respiratory/Pleural_and_Alveoli_Pressure.jpg"><img src="./plots/Respiratory/Pleural_and_Alveoli_Pressure.jpg" width="800"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/Transpulmonary_Pressure.jpg" width="800"></td>
+    <td><a href="./plots/Respiratory/Transpulmonary_Pressure.jpg"><img src="./plots/Respiratory/Transpulmonary_Pressure.jpg" width="800"></a></td>
 </tr>
 </table>
+<br>
 </center>
-
+@endhtmlonly
 <center>
 <i>Figure 5. The driver pressure, or pressure source, that serves as an electrical analogue voltage source for the respiratory circuit is plotted along with the alveolar, intrapleural, and transpulmonary pressures.  The pressure source generates a subatmospheric intrapleural pressure that facilitates the inspiration and expiration phases of spontaneous breathing.</i>
 </center><br>
@@ -438,7 +462,12 @@ Figure 5 depicts the time-dependent driver pressure source of the %Respiratory S
 
 The Pulse respiratory system is separated into four compliances (see the circuit diagram in Figure 6) defined by the left and right chest walls and lungs. The pressure-volume relationship has been well studied in describing the mechanical behavior of the lungs during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. Figure 6 shows the right side (combined chest wall and lung) compliance curve for the healthy standard patient. This function is varied based on patient settings. During simulations, the instantaneous compliances based on this curve are determined using the current lung volume.
 
-<center><img src="./Images/Respiratory/ComplianceCurve.png" width="550"></center>
+<center>
+<a href="./Images/Respiratory/ComplianceCurve.png">
+<img src="./Images/Respiratory/ComplianceCurve.png" width="550"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 6. The healthy single lung compliance curve is determined by standard patient lung volume parameters and a baseline compliance (C<sub>baseline</sub>) value.</i>
 </center><br>
@@ -569,7 +598,13 @@ cycles. The %Respiratory Model outputs the value of V<sub>T</sub> for each
 breathing cycle. Figure 7 presents the plot of the total lung volume and V<sub>T</sub> as a
 function of time.
 
-<center><img src="./plots/Respiratory/TidalVolume_from_TotalLungVolume.jpg" width="800"></center>
+@htmlonly
+<center>
+<a href="./plots/Respiratory/TidalVolume_from_TotalLungVolume.jpg">
+<img src="./plots/Respiratory/TidalVolume_from_TotalLungVolume.jpg" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 7. This shows the relationship of the total lung volume with the tidal
 volume. The tidal volume for each cycle is determined by taking the difference between the maximum and
@@ -681,7 +716,13 @@ nodes. The right and left anatomic dead space volumes when
 compared to the right and left alveoli volumes are shown in Figure 8. When the patient weight is factored into the 
 calculation, the alveolar ventilation predicted from the model is close to the expected value.
 
-<center><img src="./plots/Respiratory/Alveoli_and_Dead_Space_Volumes.jpg" width="800"></center>
+@htmlonly
+<center>
+<a href="./plots/Respiratory/Alveoli_and_Dead_Space_Volumes.jpg">
+<img src="./plots/Respiratory/Alveoli_and_Dead_Space_Volumes.jpg" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 8. The right and left anatomic dead space volumes together with the right and left 
 alveoli volumes. The difference in the alveoli volumes is due to the difference in 
@@ -704,7 +745,13 @@ resistance <i>R<sub>trachea</sub></i> as:
 <i>P<sub>mouth</sub></i> and <i>P<sub>carina</sub></i> are the pressures at the mouth and the carina nodes,
 respectively. The figure shown below presents the absolute flow rate (no distinction for flow direction) for one breathing cycle.
 
-<center><img src="./plots/Respiratory/Total_Flow_Through_Trachea.jpg" width="800"></center>
+@htmlonly
+<center>
+<a href="./plots/Respiratory/Total_Flow_Through_Trachea.jpg">
+<img src="./plots/Respiratory/Total_Flow_Through_Trachea.jpg" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 9. Tracheal airflow and total lung volume during one typical breathing
 cycle. At the peak of the inspiration phase, the flow rate goes to zero.</i>
@@ -724,7 +771,13 @@ volume for one breathing cycle. The alveolar pressure in the engine is absolute 
 to atmospheric pressure), so the relative pressure can be determined by subtracting the standard atmospheric pressure of 1033 cmH2O - giving outputs close to the range of  -1.8 cm H<SUB>2</SUB>O to 1.8 cm H<SUB>2</SUB>O
 found in the literature @cite otis1947measurement . 
 
-<center><img src="./plots/Respiratory/Lung_Pressure_And_Volume.jpg" width="800"></center>
+@htmlonly
+<center>
+<a href="./plots/Respiratory/Lung_Pressure_And_Volume.jpg">
+<img src="./plots/Respiratory/Lung_Pressure_And_Volume.jpg" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 10. Typical lung pressures. The plot shows the instantaneous pressure of
 the left alveoli for one breathing cycle. For comparison, the plot also
@@ -748,18 +801,21 @@ Transpulmonary pressure is defined as the difference between the alveolar
  possibly the average values is a consequence of the specific driver pressure and 
  patient parameters employed in the engine.
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/Engine_Pressures.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/Guyton_Lung_Pressures.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/Engine_Pressures.jpg"><img src="./plots/Respiratory/Engine_Pressures.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/Guyton_Lung_Pressures.jpg"><img src="./plots/Respiratory/Guyton_Lung_Pressures.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/Engine_Lung_Volume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/Guyton_Lung_Volume.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/Engine_Lung_Volume.jpg"><img src="./plots/Respiratory/Engine_Lung_Volume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/Guyton_Lung_Volume.jpg"><img src="./plots/Respiratory/Guyton_Lung_Volume.jpg" width="550"></a></td>
 </tr>
 </table>
+<br>
 </center>
+@endhtmlonly
 <center>
 <i>Figure 11. A plot showing the transpulmonary pressure obtained from the engine with 
 that found and digitized from literature @cite guyton2006medical. The left plots use absolute pressure, while the right Guyton plots use the pressure difference from ambient (1033 cmH2O).  For comparison, the plot also shows the lung volumes from the two sources.</i>
@@ -779,14 +835,17 @@ Figure 12 presents the pressure-volume diagram of data extracted from the
 As shown in the figure, the %Respiratory Model mimics the expected 
 hysteresis of the P-V curve.
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/Engine_Pulmonary_Compliance.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/Guyton_Pulmonary_Compliance.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/Engine_Pulmonary_Compliance.jpg"><img src="./plots/Respiratory/Engine_Pulmonary_Compliance.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/Guyton_Pulmonary_Compliance.jpg"><img src="./plots/Respiratory/Guyton_Pulmonary_Compliance.jpg" width="550"></a></td>
 </tr>
 </table>
+<br>
 </center>
+@endhtmlonly
 <center>
 <i>Figure 12. The pressure-volume curve for the standard patient of the %Respiratory Model 
 under normal physiological conditions. For comparison, the figure includes plot reproduced from 
@@ -844,7 +903,13 @@ of the standard patient. Typically, the average alveolar partial pressure of oxy
  is 104 mmHg @cite Levitzky2013pulmonary . The value from the engine is close to that of the 
  literature.
 
-<center><img src="./plots/Respiratory/Alveolar_Oxygen_Partial_Pressure.jpg" width="800"></center>
+@htmlonly
+<center>
+<a href="./plots/Respiratory/Alveolar_Oxygen_Partial_Pressure.jpg">
+<img src="./plots/Respiratory/Alveolar_Oxygen_Partial_Pressure.jpg" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 13. Alveolar O<SUB>2</SUB> partial pressure. The partial pressure of O<SUB>2</SUB> at the two
 alveoli nodes is calculated by using the pressure and the O<SUB>2</SUB> volume fraction at
@@ -860,7 +925,13 @@ pressure for the left and right alveoli nodes. Typically, the average alveolar C
 The prediction from the engine is close to the expected
 literature value.
 
-<center><img src="./plots/Respiratory/Alveolar_Carbon_Dioxide_Partial_Pressure.jpg" width="800"></center>
+@htmlonly
+<center>
+<a href="./plots/Respiratory/Alveolar_Carbon_Dioxide_Partial_Pressure.jpg">
+<img src="./plots/Respiratory/Alveolar_Carbon_Dioxide_Partial_Pressure.jpg" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 14. Alveolar CO<SUB>2</SUB> partial pressure. The partial pressure of CO<SUB>2</SUB> at the two
 alveoli is calculated by using the pressure and the CO<SUB>2</SUB> volume fraction at each
@@ -878,7 +949,13 @@ depicts the time variation of tracheal CO<SUB>2</SUB> partial pressure. The wave
 CO<SUB>2</SUB> partial pressure appears similar to those found in normal capnograph at the mouth
 (Fig.3.9, Ref @cite Levitzky2013pulmonary ). 
 
-<center><img src="./plots/Respiratory/Trachea_Carbon_Dioxide_Partial_Pressure.jpg" width="800"></center>
+@htmlonly
+<center>
+<a href="./plots/Respiratory/Trachea_Carbon_Dioxide_Partial_Pressure.jpg">
+<img src="./plots/Respiratory/Trachea_Carbon_Dioxide_Partial_Pressure.jpg" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 15. Tracheal CO<SUB>2</SUB> partial pressure. The partial pressure of CO<SUB>2</SUB> at the
 trachea is calculated by using the pressure and the CO<SUB>2</SUB> volume fraction at the
@@ -893,7 +970,13 @@ calculates the tracheal O<SUB>2</SUB> partial pressure by making use of the pres
 carina node. The output of the tracheal O<SUB>2</SUB> partial
 pressure calculation is presented in Figure 16.
 
-<center><img src="./plots/Respiratory/Trachea_Oxygen_Partial_Pressure.jpg" width="800"></center>
+@htmlonly
+<center>
+<a href="./plots/Respiratory/Trachea_Oxygen_Partial_Pressure.jpg">
+<img src="./plots/Respiratory/Trachea_Oxygen_Partial_Pressure.jpg" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 16. Tracheal O<SUB>2</SUB> partial pressure. The partial pressure of O<SUB>2</SUB> at the
 trachea is calculated by using the pressure and the O<SUB>2</SUB> volume fraction at the
@@ -1122,12 +1205,24 @@ When positive pressure ventilation is applied (i.e., mechanical ventilator or an
 
 Modifications to respiratory circuit resistances and compliances can further be examined and validated through volume-flow curves, like those created during spirometry testing. Figure 17 shows results from a simulated pulmonary function test with the standard patient healthy and with moderate ARDS and COPD.
 
-<center><img src="./Images/Respiratory/FlowVolumeCurves.png" width="800"></center>
+@htmlonly
+<center>
+<a href="./Images/Respiratory/FlowVolumeCurves.png">
+<img src="./Images/Respiratory/FlowVolumeCurves.png" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 17. A spirometry simulation comparing healthy, obstructive (COPD), and restrictive (ARDS) forced breath loops. COPD and ARDS severities of 0.6 and conscious respiration actions are used in the simulation. Results match those expected and presented in literature @cite barreiro2004approach.</i>
 </center><br>
 
-<center><img src="./Images/Respiratory/SpirometryVolumeCurves.png" width="800"></center>
+@htmlonly
+<center>
+<a href="./Images/Respiratory/SpirometryVolumeCurves.png">
+<img src="./Images/Respiratory/SpirometryVolumeCurves.png" width="800"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 18. Volume vs. time results from the same pulmonary function test as Figure 17. This scenario uses the COPD and ARDS exacerbation action to simulate all three modalities with the conscious respiration action to complete a full exhale-inhale cycle. Changes in the functional residual capacity, residual volume, and total lung capacity can be seen at the maximum and minimum points. Results match those expected and presented in literature @cite kliegman2007nelson.</i>
 </center><br>
@@ -1277,7 +1372,13 @@ from the lung into the plural space as in laceration of the lung following blunt
 trauma. The model evaluates the physiological responses arising from increased
 intrapleural pressure and leakage in the airflow of the respiratory circuit.
 
-<img src="./Images/Respiratory/PneumoCirucit.png" width="550">
+@htmlonly
+<center>
+<a href="./Images/Respiratory/PneumoCirucit.png">
+<img src="./Images/Respiratory/PneumoCirucit.png" width="550"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 19. Both lungs in the engine have elements to mimic the effects of open and closed tension pneumothorax insults as well as chest occlusive dressing (for open) and needle decompression (for both) interventions. The red boxes denote these additional elements.</i>
 </center><br>
@@ -1304,7 +1405,13 @@ Each of the three supplemental oxygen devices is modeled using a different lumpe
 
 The seal resistance in each circuit dictates how much air escapes due to be secured imperfectly. The nasal cannula has a low seal value to realistically represent the prongs in the patient's nostrils.
 
-<img src="./Images/Respiratory/SupplementalOxygenCirucits.png" width="1000">
+@htmlonly
+<center>
+<a href="./Images/Respiratory/SupplementalOxygenCirucits.png">
+<img src="./Images/Respiratory/SupplementalOxygenCirucits.png" width="1000"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 20. Each supplemental oxygen device has a different circuit to mimic the air mixing nuances of each.</i>
 </center><br>
@@ -1320,14 +1427,17 @@ Conscious respiration consists of a set of commands that model forced exhalation
 
 Conscious respiration has any number of potential applications and is likely to be implemented to attain proper breathing while using an inhaler, generate a spirometry curve, or simulate coughing.  Figure 21 shows the results for a cough scenario that leverages the conscious respiration action compared to empirical data.
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/Engine_Cough_Flow.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/Experimental_Cough_Flow.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/Engine_Cough_Flow.jpg"><img src="./plots/Respiratory/Engine_Cough_Flow.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/Experimental_Cough_Flow.jpg"><img src="./plots/Respiratory/Experimental_Cough_Flow.jpg" width="550"></a></td>
 </tr>
 </table>
+<br>
 </center>
+@endhtmlonly
 <center>
 <i>Figure 21. The airflow curve of a simulated cough in engine generated from a conscious respiration with quick forced inhale and exhale in series. For comparison, the figure includes a plot reproduced from 
 literature determined by a voluntary cough immediately following office-based vocal fold medialization injections @cite ruddy2014improved.</i>
@@ -1418,7 +1528,7 @@ The actions and interventions associated with the %Respiratory System were valid
 |	COPDSevereBronchitisLeft	|	Severe Chronic Bronchitis	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
 |	ARDSModerateBothLungs	|	Moderate Acute Respiratory Distress Syndrome	|<span class="success">	9	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	LobarPneumoniaSevereLeftLobe	|	Severe Lobar Pneumonia in one lobe in the left lung	|<span class="success">	2	</span>|<span class="warning">	5	</span>|<span class="danger">	2	</span>|
-|	LobarPneumoniaSevereRightLung	|	Severe Lobar Pneumonia in two lobes of right lung	|<span class="success">	4	</span>|<span class="warning">	3	</span>|<span class="danger">	2	</span>|
+|	LobarPneumoniaSevereRightLung	|	Severe Lobar Pneumonia in two lobes of right lung	|<span class="success">	6	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
 |	LobarPneumoniaModerateBothLungs	|	Moderate Lobar Pneumonia in both lungs	|<span class="success">	6	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
 |	PulmonaryFibrosisSevere	|	Severe Pulmonary Fibrosis	|<span class="success">	7	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
 |	TensionPneumothoraxOpenVaried	|	Varied open pneumothorax severities and interventions	|<span class="success">	40	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
@@ -1429,7 +1539,7 @@ The actions and interventions associated with the %Respiratory System were valid
 |	EsophagealIntubation	|	Esophageal intubation and correction (with Succs)	|<span class="success">	10	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Dyspnea	|	Varied severities of respiratory apnea	|<span class="success">	6	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Supplemental Oxygen	|	Nasal cannula, simple mask, and non-rebreather mask	|<span class="success">	3	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	250	</span>|<span class="warning">	22	</span>|<span class="danger">	22	</span>|
+|		|	Total	|<span class="success">	252	</span>|<span class="warning">	20	</span>|<span class="danger">	22	</span>|
 
 @anchor respiratory-conditionvalidation
 Validation - Conditions
@@ -1485,7 +1595,7 @@ The lobar pneumonia condition was validated against three scenarios; severe pneu
 
 |	Condition	|	Notes	|	Sampled Scenario Time (s)	|	Respiration Rate (breaths/min)	|	Tidal Volume (mL)	|	Heart Rate (beats/min)	|	Systolic Pressure (mmHg)	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	IERatio	|	Core Body Temperature  (Degrees C)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Severe Lobar Pneumonia: Right Lung Severity = 0.70 Left Lung = 0% Right Lung  = 67%	|	Severe lobar pneumonia in two lobes of the  right lung. Current model does not include metabolic effects.	|	120	|<span class="success">	Increase,  Tachypnea, Dypsnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="warning">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="success">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="warning">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="warning">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
+|	Severe Lobar Pneumonia: Right Lung Severity = 0.70 Left Lung = 0% Right Lung  = 67%	|	Severe lobar pneumonia in two lobes of the  right lung. Current model does not include metabolic effects.	|	120	|<span class="success">	Increase,  Tachypnea, Dypsnea  > 20 @cite ebell2007predicting	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	Increase,  Tachycardia, > 100 @cite ebell2007predicting	</span>|<span class="danger">	Decrease, < 90 mm Hg @cite fine1997prediction	</span>|<span class="success">	Decrease , < 95% @cite majumdar2010oxygen	</span>|<span class="success">	Decrease,  Hypoxemia @cite fine1997prediction < 60 mm Hg	</span>|<span class="warning">	Increase @cite bergeronSME	</span>|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="danger">	Increase,   > 37.8 C (100 F) @cite ebell2007predicting	</span>|
 
 <center><br>
 <i>Table 10. Validation matrix for moderate lobar pneumonia in both lungs. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
@@ -1515,24 +1625,29 @@ Validation - Actions
 
 The airway obstruction action was validated with a scenario that applies varying severities of 0.3, 0.6, and 1.0. Varying the severity of the obstruction simulates partial obstructions and a complete obstruction. The severity levels logarithmically increase the airway resistance. The resulting outputs from the engine are shown in Table 12 for common clinical parameters.
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/AirwayObstruction_TidalVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/AirwayObstruction_CO2PP.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/AirwayObstruction_TidalVolume.jpg"><img src="./plots/Respiratory/AirwayObstruction_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/AirwayObstruction_CO2PP.jpg"><img src="./plots/Respiratory/AirwayObstruction_CO2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/AirwayObstruction_O2Sat.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/AirwayObstruction_MAP.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/AirwayObstruction_O2Sat.jpg"><img src="./plots/Respiratory/AirwayObstruction_O2Sat.jpg" width="550"></a></td>
+    <td><a href="/plots/Respiratory/AirwayObstruction_MAP.jpg"><img src="./plots/Respiratory/AirwayObstruction_MAP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Respiratory/AirwayObstructionLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Respiratory/AirwayObstructionLegend.jpg"><img src="./plots/Respiratory/AirwayObstructionLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
+<br>
 </center>
-<center><i>Figure 22. Select outputs from the airway obstruction scenario.</i></center>
- 
-<center><br>
+@endhtmlonly
+<center>
+<i>Figure 22. Select outputs from the airway obstruction scenario.</i>
+</center><br>
+
+<center>
 <i>Table 12. Validation matrix for physiological responses due to varying severities of airway obstruction.</i>
 </center>
 
@@ -1549,24 +1664,29 @@ The airway obstruction action was validated with a scenario that applies varying
 
 The bronchoconstriction action was validated with a scenario that applies varying severities of 0.3, 0.6, and 1.0 to the patient. Varying the severity of the obstruction simulates the constriction of the bronchii, leading to obstructed air flow. The severity levels logarithmically increase the airway resistance.
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/BronchoConstrictionVaried_TidalVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/BronchoConstrictionVaried_CO2PP.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/BronchoConstrictionVaried_TidalVolume.jpg"><img src="./plots/Respiratory/BronchoConstrictionVaried_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/BronchoConstrictionVaried_CO2PP.jpg"><img src="./plots/Respiratory/BronchoConstrictionVaried_CO2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/BronchoConstrictionVaried_O2Sat.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/BronchoConstrictionVaried_MAP.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/BronchoConstrictionVaried_O2Sat.jpg"><img src="./plots/Respiratory/BronchoConstrictionVaried_O2Sat.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/BronchoConstrictionVaried_MAP.jpg"><img src="./plots/Respiratory/BronchoConstrictionVaried_MAP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Respiratory/BronchoConstrictionVariedLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Respiratory/BronchoConstrictionVariedLegend.jpg"><img src="./plots/Respiratory/BronchoConstrictionVariedLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
+<br>
 </center>
-<center><i>Figure 23. Select outputs from the bronchoconstriction scenario.</i></center>
+@endhtmlonly
+<center>
+<i>Figure 23. Select outputs from the bronchoconstriction scenario.</i>
+</center><br>
 
-<center><br>
+<center>
 <i>Table 13. Validation matrix for physiological responses due to varying severities of bronchoconstriction.</i>
 </center>
 
@@ -1585,24 +1705,29 @@ Two scenarios were used to validate tension pneuomthorax and its associated inte
 
 It is important to note nervous system responses of a conscious patient due to pain or panicking are not included with the Pneumothorax action. Some of these responses can be attained by including an Acute Stress action (see @ref endocrine-actions "Endocrine Methodology").
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_LeftLungVolume.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/TensionPneumothoraxOpenVaried_TotalLungVolume.jpg"><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_TotalLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/TensionPneumothoraxOpenVaried_LeftLungVolume.jpg"><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_LeftLungVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_O2Sat.jpg" width="550"></td>
-	<td><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_MAP.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/TensionPneumothoraxOpenVaried_O2Sat.jpg"><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_O2Sat.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/TensionPneumothoraxOpenVaried_MAP.jpg"><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_MAP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Respiratory/TensionPNeumothoraxOpenVariedLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Respiratory/TensionPNeumothoraxOpenVariedLegend.jpg"><img src="./plots/Respiratory/TensionPNeumothoraxOpenVariedLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
+<br>
 </center>
-<center><i>Figure 24. Select outputs from the open tension pneumothorax scenario.</i></center>
+@endhtmlonly
+<center>
+<i>Figure 24. Select outputs from the open tension pneumothorax scenario.</i>
+</center><br>
 
-<center><br>
+<center>
 <i>Table 14. Validation matrix for physiological responses due to varying severities of open tension pneumothorax, as well as occlusive dressing and needle decompression interventions.</i>
 </center>
 
@@ -1615,24 +1740,29 @@ It is important to note nervous system responses of a conscious patient due to p
 |	Apply Chest Occlusive dressing on the left side 	|	Represents the closing of chest wound on the left side	|	960	|	1000	|<span class="success">	No Change or Increased  @cite bergeronSME	</span>|<span class="success">	No Change 	</span>|<span class="success">	Tachycardia > 120 @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Slightly improved to no change  @cite bergeronSME	</span>|<span class="success">	Modest decrease to no change  @cite bergeronSME	</span>|
 |	Apply needle decompression	|	Needle decompression is applied on the left side of the chest	|	1020	|	1320	|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Returning toward normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Slightly diminished from normal @cite bergeronSME	</span>|<span class="success">	Normal @cite bergeronSME	</span>|
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxClosedVaried_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxClosedVaried_RightLungVolume.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/TensionPneumothoraxClosedVaried_TotalLungVolume.jpg"><img src="./plots/Respiratory/TensionPneumothoraxClosedVaried_TotalLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/TensionPneumothoraxClosedVaried_RightLungVolume.jpg"><img src="./plots/Respiratory/TensionPneumothoraxClosedVaried_RightLungVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxClosedVaried_O2Sat.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/TensionPneumothoraxClosedVaried_MAP.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/TensionPneumothoraxClosedVaried_O2Sat.jpg"><img src="./plots/Respiratory/TensionPneumothoraxClosedVaried_O2Sat.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/TensionPneumothoraxClosedVaried_MAP.jpg"><img src="./plots/Respiratory/TensionPneumothoraxClosedVaried_MAP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Respiratory/TensionPneumothoraxClosedVariedLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Respiratory/TensionPneumothoraxClosedVariedLegend.jpg"><img src="./plots/Respiratory/TensionPneumothoraxClosedVariedLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
+<br>
 </center>
-<center><i>Figure 25. Select outputs from the closed tension pneumothorax scenario.</i></center>
+@endhtmlonly
+<center>
+<i>Figure 25. Select outputs from the closed tension pneumothorax scenario.</i>
+</center><br>
 
-<center><br>
+<center>
 <i>Table 15. Validation matrix for physiological responses due to varying severities of closed tension pneumothorax, as well as needle decompression interventions.</i>
 </center>
 
@@ -1650,24 +1780,29 @@ The right and left mainstem intubation actions were validated with a scenario th
 
 Common clinical vital signs were compared to validation data, as shown in Table 16.
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/MainstemIntubation_LeftLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/MainstemIntubation_TidalVolume.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/MainstemIntubation_LeftLungVolume.jpg"><img src="./plots/Respiratory/MainstemIntubation_LeftLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/MainstemIntubation_TidalVolume.jpg"><img src="./plots/Respiratory/MainstemIntubation_TidalVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/MainstemIntubation_RightLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/MainstemIntubation_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/MainstemIntubation_RightLungVolume.jpg"><img src="./plots/Respiratory/MainstemIntubation_RightLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/MainstemIntubation_O2Sat.jpg"><img src="./plots/Respiratory/MainstemIntubation_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Respiratory/MainstemIntubationLegend.jpg" width="800"></td>
+    <td colspan="2"><a href="./plots/Respiratory/MainstemIntubationLegend.jpg"><img src="./plots/Respiratory/MainstemIntubationLegend.jpg" width="800"></a></td>
 </tr>
 </table>
+<br>
 </center>
-<center><i>Figure 26. Select outputs from the right mainstem intubation scenario.</i></center>
+@endhtmlonly
+<center>
+<i>Figure 26. Select outputs from the right mainstem intubation scenario.</i>
+</center><br>
 
-<center><br>
+<center>
 <i>Table 16. Validation matrix for physiological responses due to varying severities of right mainstem intubation and correction.</i>
 </center>
 
@@ -1682,24 +1817,29 @@ Common clinical vital signs were compared to validation data, as shown in Table 
 
 The esophageal intubation action was validated with a scenario with multiple intubation attempts, a failed esophageal intubation following by a successful endotracheal intubation. In this scenario, the patient is injected with succinycholine, followed by mechanical ventilation via an endotracheal tube. The first attempt at intubation results in an esophageal intubation. A second attempt is successful. 
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/EsophagealIntubation_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/EsophagealIntubation_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/EsophagealIntubation_TotalLungVolume.jpg"><img src="./plots/Respiratory/EsophagealIntubation_TotalLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/EsophagealIntubation_O2Sat.jpg"><img src="./plots/Respiratory/EsophagealIntubation_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/EsophagealIntubation_StomachInflow.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/EsophagealIntubation_MAP.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/EsophagealIntubation_StomachInflow.jpg"><img src="./plots/Respiratory/EsophagealIntubation_StomachInflow.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/EsophagealIntubation_MAP.jpg"><img src="./plots/Respiratory/EsophagealIntubation_MAP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Respiratory/EsophagealIntubationLegend.jpg" width="800"></td>
+    <td colspan="2"><a href="./plots/Respiratory/EsophagealIntubationLegend.jpg"><img src="./plots/Respiratory/EsophagealIntubationLegend.jpg" width="800"></a></td>
 </tr>
 </table>
+<br>
 </center>
-<center><i>Figure 27. Select outputs from the esophageal intubation scenario.</i></center>
+@endhtmlonly
+<center>
+<i>Figure 27. Select outputs from the esophageal intubation scenario.</i>
+</center><br>
 
-<center><br>
+<center>
 <i>Table 17. Validation matrix for physiological responses due esophageal intubation and correction.</i>
 </center>
 
@@ -1712,24 +1852,29 @@ The esophageal intubation action was validated with a scenario with multiple int
 
 The acute asthma action was validated against three scenarios: moderate (severity = 0.3), severe (severity = 0.7), and life-threatening (severity = 0.9). 
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/AsthmaAttackModerateAcute_TidalVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/AsthmaAttackModerateAcute_IERatio.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackModerateAcute_TidalVolume.jpg"><img src="./plots/Respiratory/AsthmaAttackModerateAcute_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackModerateAcute_IERatio.jpg"><img src="./plots/Respiratory/AsthmaAttackModerateAcute_IERatio.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/AsthmaAttackModerateAcute_O2PP.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/AsthmaAttackModerateAcute_RR.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackModerateAcute_O2PP.jpg"><img src="./plots/Respiratory/AsthmaAttackModerateAcute_O2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackModerateAcute_RR.jpg"><img src="./plots/Respiratory/AsthmaAttackModerateAcute_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Respiratory/AsthmaAttackModerateAcuteLegend.jpg" width="300"></td>
+    <td colspan="2"><center><a href="./plots/Respiratory/AsthmaAttackModerateAcuteLegend.jpg"><img src="./plots/Respiratory/AsthmaAttackModerateAcuteLegend.jpg" width="300"></a></center></td>
 </tr>
 </table>
+<br>
 </center>
-<center><i>Figure 28. Select outputs from the moderate airway obstruction scenario.</i></center>
+@endhtmlonly
+<center>
+<i>Figure 28. Select outputs from the moderate airway obstruction scenario.</i>
+</center><br>
 
-<center><br>
+<center>
 <i>Table 18. Validation matrix for physiological responses due to moderate acute asthma and correction.</i>
 </center>
 
@@ -1738,22 +1883,27 @@ The acute asthma action was validated against three scenarios: moderate (severit
 |	Moderate acute asthma attack (Severity = 0.3)	|		|	30	|	550	|<span class="success">	75% to 90% of normal @cite britishGuideline2014asthma	</span>|<span class="success">	Slight Increase @cite britishGuideline2014asthma	</span>|<span class="success">	 ~95% of normal @cite limmer2011emergency	</span>|<span class="success">	No Change @cite britishGuideline2014asthma	</span>|<span class="success">	No Change @cite papiris2001clinical	</span>|<span class="success">	No Change @cite britishGuideline2014asthma	</span>|<span class="success">	No Change @cite britishGuideline2014asthma	</span>|<span class="success">	No Change @cite britishGuideline2014asthma	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
 |	No asthma (Severity = 0.0)	|		|	580	|	775	|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/AsthmaAttackSevereAcute_TidalVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/AsthmaAttackSevereAcute_IERatio.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackSevereAcute_TidalVolume.jpg"><img src="./plots/Respiratory/AsthmaAttackSevereAcute_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackSevereAcute_IERatio.jpg"><img src="./plots/Respiratory/AsthmaAttackSevereAcute_IERatio.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/AsthmaAttackSevereAcute_O2PP.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/AsthmaAttackSevereAcute_RR.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackSevereAcute_O2PP.jpg"><img src="./plots/Respiratory/AsthmaAttackSevereAcute_O2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackSevereAcute_RR.jpg"><img src="./plots/Respiratory/AsthmaAttackSevereAcute_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Respiratory/AsthmaAttackSevereAcuteLegend.jpg" width="300"></td>
+    <td colspan="2"><center><a href="./plots/Respiratory/AsthmaAttackSevereAcuteLegend.jpg"><img src="./plots/Respiratory/AsthmaAttackSevereAcuteLegend.jpg" width="300"></a></center></td>
 </tr>
 </table>
+<br>
 </center>
-<center><i>Figure 29. Select outputs from the severe asthma attack scenario.</i></center>
+@endhtmlonly
+<center>
+<i>Figure 29. Select outputs from the severe asthma attack scenario.</i>
+</center><br>
 
 <center><br>
 <i>Table 19. Validation matrix for physiological responses due to severe acute asthma and correction.</i>
@@ -1764,24 +1914,29 @@ The acute asthma action was validated against three scenarios: moderate (severit
 |	Severe acute asthma attack (Severity = 0.7)	|		|	30	|	550	|<span class="success">	< 50% of Normal @cite papiris2001clinical, @cite britishGuideline2014asthma	</span>|<span class="warning">	> 25 @cite britishGuideline2014asthma	</span>|<span class="success">	< 60% of normal @cite limmer2011emergency	</span>|<span class="danger">	> 120 @cite papiris2001clinical; > 110 @cite britishGuideline2014asthma	</span>|<span class="danger">	Decrease Pulsus Paradoxus 85 mm Hg @cite papiris2001clinical	</span>|<span class="warning">	< 90% @cite papiris2001clinical; < 92% @cite britishGuideline2014asthma	</span>|<span class="warning">	Decrease Mild Hypoxemia @cite bergeronSME; < 60 mmHg @cite papiris2001clinical, @cite britishGuideline2014asthma	</span>|<span class="success">	Normal or Slight Increase > 45 mm Hg @cite papiris2001clinical, @cite britishGuideline2014asthma 	</span>|<span class="success">	Decrease @cite van1991physical	</span>|
 |	No asthma (Severity = 0.0)	|		|	580	|	775	|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|<span class="success">	Normal	</span>|
 
+@htmlonly
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_TidalVolume.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_IERatio.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_TidalVolume.jpg"><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_TidalVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_IERatio.jpg"><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_IERatio.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_O2PP.jpg" width="550"></td>
-    <td><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_RR.jpg" width="550"></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_O2PP.jpg"><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_O2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_RR.jpg"><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcute_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcuteLegend.jpg" width="300"></td>
+    <td colspan="2"><center><a href="./plots/Respiratory/AsthmaAttackLifeThreateningAcuteLegend.jpg"><img src="./plots/Respiratory/AsthmaAttackLifeThreateningAcuteLegend.jpg" width="300"></a></center></td>
 </tr>
 </table>
+<br>
 </center>
-<center><i>Figure 30. Select outputs from the life threatening asthma attack scenario.</i></center>
+@endhtmlonly
+<center>
+<i>Figure 30. Select outputs from the life threatening asthma attack scenario.</i>
+</center><br>
 
-<center><br>
+<center>
 <i>Table 20. Validation matrix for physiological responses due to life threatening acute asthma and correction.</i>
 </center>
 
@@ -1847,7 +2002,13 @@ Validation - Assessments
 
 Validation of the pulmonary function test may be concluded from the validation of the resting physiologic quantities. The collection of values produced from the pulmonary function test were validated above. Additional validation comes by comparing the general shape of the produced waveform to an expected waveform. The plot shown in Figure 31 presents a way of representing the engine pulmonary function test visually. There is excellent agreement with the plot produced from the engine and the plot found in the literature @cite Kapwatt2014Lungvolumes.
 
-<center><img src="./plots/Respiratory/Pulmonary_Function_Test_Results.jpg" width="1000"></center>
+@htmlonly
+<center>
+<a href="./plots/Respiratory/Pulmonary_Function_Test_Results.jpg">
+<img src="./plots/Respiratory/Pulmonary_Function_Test_Results.jpg" width="1000"></a>
+<br>
+</center>
+@endhtmlonly
 <center>
 <i>Figure 31. The lung volume plot from the pulmonary function test displays the lung volume waveform. The waveform has a frequency associated with the respiration rate of the patient at the time of the pulmonary function test. The inspiratory and expiratory reserve volumes are shown with a dilated period to represent a forced component of the inspiration and expiration. The lung volume plot shown is presented with 100 data points.</i>
 </center><br>

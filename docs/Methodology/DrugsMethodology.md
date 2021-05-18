@@ -38,7 +38,7 @@ The Post Process step moves everything calculated in Process from the next time 
 
 Features, Capabilities, and Dependencies
 ----------------------------------------
-Pharmacokinetic models quantify the time evolution of drug distribution from the administration of a dose. Pharmacodynamic models, on the other hand, characterize the events from the arrival of the drug at the site of action to the “onset, magnitude and duration of the biological response @cite rosenbaum2012basic.” The %Drug system contains both pharmacokinetic and pharmacodynamic models.
+Pharmacokinetic models quantify the time evolution of drug distribution from the administration of a dose. Pharmacodynamic models, on the other hand, characterize the events from the arrival of the drug at the site of action to the onset, magnitude and duration of the biological response @cite rosenbaum2012basic. The %Drug system contains both pharmacokinetic and pharmacodynamic models.
 
 @anchor pharmacokinetics
 ### Pharmacokinetics
@@ -479,7 +479,7 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
 Conclusions
 -----------
 
-In general, the drugs in the data library have strong agreement with both the published data and subject matter expertise. The biggest limitation lies in the transient response to drugs. Currently, the system tolerances provide a response within 30-60 seconds for all drugs, regardless of the physiologic onset time. The drug response also wears off quickly for all drugs. It is difficult to specify the desired pharmacodynamic response without a well thought out set of parameters. These issues will be addressed as part of future work on the engine by validating the pharmacokinetic model and implementing and validating a pharmacodynamic model.
+In general, the drugs in the data library have strong agreement with both the published data and subject matter expertise. The biggest limitation lies in the transient response to drugs. Currently, the system tolerances provide a response within 30-60 seconds for all drugs, regardless of the physiologic onset time. The drug response also wears off quickly for all drugs. We plan to improve our determination of the EC50 parameter. The EC50 values are too high for each drug leading to an early spike corresponding to the spike in plasma concentration and rapid diffusion into the tissues. We will incorporate a minimum diffusion amount, then determine the EC50 parameter to improve the onset and duration of effects. We will also add a suppression of the chemoreceptor responses due to sedation in the future. We plan to add more drugs to the library that are relevant to sedation and pain management. We are also investigating the implementation of an intoxication model, as our current model only represents the "normal" drug response range.
 
 These models and the combination of these models represent a positive step forward for drug simulation. The parameters are intuitive and accurate for each drug and additional drugs can be added for an expanded drug library.
 
@@ -489,13 +489,12 @@ Future Work
 
 Coming Soon
 -----------
-- Improved plasma concentration computation
 - Intoxication
 - Expanded drug library
+- Improved drug onset and duration times
 
 Recommended Improvements
 ------------------------
-- Efficacy-based, receptor-binding pharmacodynamics
 - Combinatory effects of kinetics
 - Long-term drug effects, including physiological changes
 - Additional drugs 

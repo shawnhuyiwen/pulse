@@ -89,7 +89,7 @@ message ConsumeMealData
   }
 }
 
-/** @brief Generic way to specify the effectivness of alveolar exchange. */
+/** @brief Generic way to specify the effectiveness of alveolar exchange. */
 message ImpairedAlveolarExchangeData
 {
   PatientConditionData                        PatientCondition                      = 1;

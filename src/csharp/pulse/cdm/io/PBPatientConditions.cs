@@ -332,8 +332,10 @@ namespace Pulse.CDM
       Serialize(src.PatientCondition, dst);
       if (src.ImpairedSurfaceArea != null)
         PBProperty.Load(src.ImpairedSurfaceArea, dst.GetImpairedSurfaceArea());
-      if (src.ImpairedFraction != null)
+      else if (src.ImpairedFraction != null)
         PBProperty.Load(src.ImpairedFraction, dst.GetImpairedFraction());
+      else if (src.Severity != null)
+        PBProperty.Load(src.Severity, dst.GetSeverity());
     }
     public static pulse.cdm.bind.ImpairedAlveolarExchangeData Unload(SEImpairedAlveolarExchange src)
     {
@@ -347,8 +349,10 @@ namespace Pulse.CDM
       Serialize(src, dst.PatientCondition);
       if (src.HasImpairedSurfaceArea())
         dst.ImpairedSurfaceArea = PBProperty.Unload(src.GetImpairedSurfaceArea());
-      if (src.HasImpairedFraction())
+      else if (src.HasImpairedFraction())
         dst.ImpairedFraction = PBProperty.Unload(src.GetImpairedFraction());
+      else if (src.HasSeverity())
+        dst.Severity = PBProperty.Unload(src.GetSeverity());
     }
     #endregion
 
