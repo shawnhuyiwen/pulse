@@ -1,2 +1,2 @@
-We are currently only accepting pull requests that fix issues/extend the build scripts for building and executing the code base on various platforms.
+Please visit our <a href="https://gitlab.kitware.com/physiology/engine/-/wikis/Contributing%20to%20Pulse"> Wiki for details on contributing </a> to Pulse
 
