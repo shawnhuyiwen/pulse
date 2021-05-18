@@ -28,7 +28,7 @@ PULSE_DECL std::unique_ptr<PhysiologyEngine> CreatePulseEngine(Logger* logger=nu
 class PULSE_DECL PulseEngineThunk : public LoggerForward, public SEEventHandler
 {
 public:
-  PulseEngineThunk();
+  PulseEngineThunk(const std::string& dataDir = "./");
   virtual ~PulseEngineThunk();
 
   //void SetConfigurationOverride(std::string const& config); // Not Implemented

@@ -33,11 +33,25 @@ namespace Pulse.CDM
     public void SetDataRequests(List<SEDataRequest> data_requests) { this.data_requests = data_requests; }
     public List<SEDataRequest> GetDataRequests() { return data_requests; }
 
-    public void ToConsole(double[] data_values)
+    public void WriteData(double[] data_values, Logger log=null)
     {
-      Console.WriteLine("SimTime(s)=" + data_values[0]);
+      if (log != null)
+        log.WriteLine("SimTime(s)=" + data_values[0]);
+      else
+        Console.WriteLine("SimTime(s)=" + data_values[0]);
+
       for (int d = 1; d < data_values.Length; d++)
-        Console.WriteLine(data_requests[d - 1].ToString() + "=" + data_values[d]);
+      {
+        if (log != null)
+          log.WriteLine(data_requests[d - 1].ToString() + "=" + data_values[d]);
+        else
+          Console.WriteLine(data_requests[d - 1].ToString() + "=" + data_values[d]);
+      }
+
+      if (log != null)
+        log.WriteLine("");
+      else
+        Console.WriteLine("");
     }
   }
 }

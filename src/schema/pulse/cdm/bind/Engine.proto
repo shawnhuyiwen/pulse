@@ -5,6 +5,7 @@ option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Enums.proto";
+import "pulse/cdm/bind/Events.proto";
 import "pulse/cdm/bind/Actions.proto";
 import "pulse/cdm/bind/Patient.proto";
 import "pulse/cdm/bind/PatientActions.proto";
@@ -47,51 +48,70 @@ message DataRequestData
     MechanicalVentilator = 12;
   }
   
-  DecimalFormatData                                    DecimalFormat             = 1;/**<<@brief If writing to a file, specify the decimal formatting */
-  eCategory                                            Category                  = 2;/**<<@brief A category assocated with the Name */
-  string                                               ActionName                = 3;/**<<@brief The action name the property is on */
-  string                                               CompartmentName           = 4;/**<<@brief The compartment name the property could be associated with */
-  string                                               SubstanceName             = 5;/**<<@brief The substance name the property could be associated with */
-  string                                               PropertyName              = 6;/**<<@brief The name of the property requested */
-  string                                               Unit                      = 7;/**<<@brief If writing to a file, the unit the data will be in. */
+  DecimalFormatData                                    DecimalFormat                   = 1;/**<<@brief If writing to a file, specify the decimal formatting */
+  eCategory                                            Category                        = 2;/**<<@brief A category assocated with the Name */
+  string                                               ActionName                      = 3;/**<<@brief The action name the property is on */
+  string                                               CompartmentName                 = 4;/**<<@brief The compartment name the property could be associated with */
+  string                                               SubstanceName                   = 5;/**<<@brief The substance name the property could be associated with */
+  string                                               PropertyName                    = 6;/**<<@brief The name of the property requested */
+  string                                               Unit                            = 7;/**<<@brief If writing to a file, the unit the data will be in. */
 }
 message DataRequestManagerData
 {
-  string                                               ResultsFilename           = 1;
-  double                                               SamplesPerSecond          = 2;
-  DecimalFormatData                                    DefaultDecimalFormatting  = 3;
-  DecimalFormatData                                    OverrideDecimalFormatting = 4;
-  repeated DataRequestData                             DataRequest               = 5;
+  string                                               ResultsFilename                 = 1;
+  double                                               SamplesPerSecond                = 2;
+  DecimalFormatData                                    DefaultDecimalFormatting        = 3;
+  DecimalFormatData                                    OverrideDecimalFormatting       = 4;
+  repeated DataRequestData                             DataRequest                     = 5;
+}
+
+message DataRequestedData
+{
+  int32                                                ID                              = 1;/**<< @brief A unique id associated with this engine, required when using pools. */
+  bool                                                 IsActive                        = 2;
+  repeated double                                      Value                           = 3;
+  repeated EventChangeData                             EventChange                     = 4;
+  LogMessagesData                                      LogMessages                     = 5;
+}
+
+message DataRequestedListData
+{
+  repeated DataRequestedData                           DataRequested                   = 1;
 }
 
 message AnyConditionData
 {
   oneof Condition
   {
-    AnyPatientConditionData                            PatientCondition          = 1;
-    AnyEnvironmentConditionData                        EnvironmentCondition      = 2;
+    AnyPatientConditionData                            PatientCondition                = 1;
+    AnyEnvironmentConditionData                        EnvironmentCondition            = 2;
   }
 }
 message ConditionListData
 {
-  repeated AnyConditionData                            AnyCondition              = 1;
+  repeated AnyConditionData                            AnyCondition                    = 1;
 }
 
 message AnyActionData
 {
   oneof Action
   {
-    AdvanceTimeData                                     AdvanceTime               = 1;
-    SerializeStateData                                  Serialize                 = 2;
-    OverridesData                                       Overrides                 = 3;
-    AnyPatientActionData                                PatientAction             = 4;
-    AnyEnvironmentActionData                            EnvironmentAction         = 5;
-    AnyEquipmentActionData                              EquipmentAction           = 6;
+    AdvanceTimeData                                     AdvanceTime                    = 1;
+    SerializeStateData                                  Serialize                      = 2;
+    OverridesData                                       Overrides                      = 3;
+    AnyPatientActionData                                PatientAction                  = 4;
+    AnyEnvironmentActionData                            EnvironmentAction              = 5;
+    AnyEquipmentActionData                              EquipmentAction                = 6;
   }
 }
 message ActionListData
 {
-  repeated AnyActionData                                AnyAction                 = 1;
+  repeated AnyActionData                                AnyAction                      = 1;
+}
+
+message ActionMapData
+{
+  map<int32, ActionListData>                            ActionMap                      = 1;
 }
 
 // message DataSetsData // This could hold all on disk data sets (Stabilization Criteria, Substances, Stabilization, Nutrition, Environments, ECG, patients, etc.)
@@ -99,14 +119,34 @@ message ActionListData
 
 message PatientConfigurationData
 {
-  string                                                DataRoot                  = 1;
+  string                                                DataRoot                       = 1;
   oneof PatientType
   {
-    PatientData                                         Patient                   = 2;
-    string                                              PatientFile               = 3;
+    PatientData                                         Patient                        = 2;
+    string                                              PatientFile                    = 3;
   }
-  ConditionListData                                     Conditions                = 4;
-  repeated ScalarPropertyData                           ScalarOverride            = 5;
+  ConditionListData                                     Conditions                     = 4;
+  repeated ScalarPropertyData                           ScalarOverride                 = 5;
+}
+
+message EngineInitializationData
+{
+  int32                                                 ID                             = 1;/**<< @brief A unique id associated with this engine, required when using pools. */
+  oneof StartType
+  {
+    PatientConfigurationData                            PatientConfiguration           = 2;/**<< @brief Create an engine using a patient configuration. */
+    string                                              StateFilename                  = 3;/**<< @brief Create an engine using a patient state file. */
+    string                                              State                          = 4;/**<< @brief Create an engine using a patient state.*/
+  }
+  DataRequestManagerData                                DataRequestManager             = 5;/**<< @brief Data Requests to use for this engine*/
+  string                                                LogFilename                    = 6;/**<< @brief Log file to create for engine. */
+  bool                                                  KeepLogMessages                = 7;/**<< @brief Keep log messages from engine, used when building DataRequested objects. */
+  bool                                                  KeepEventChanges               = 8;/**<< @brief Keep event changes from engine, used when building DataRequested objects. */
+}
+
+message EngineInitializationListData
+{
+  repeated EngineInitializationData                     EngineInitialization           = 1;/**<< @brief Create an engine for each provided configuration. */
 }
 
 /** @brief Static timed stabilization lengths */
@@ -149,3 +189,4 @@ message LogMessagesData
   repeated string                                       ErrorMessages                   = 4;
   repeated string                                       FatalMessages                   = 5;
 }
+

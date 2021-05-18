@@ -168,3 +168,38 @@ public:
   std::vector<std::string> error_msgs;
   std::vector<std::string> fatal_msgs;
 };
+
+inline std::ostream& operator<< (std::ostream& out, const LogMessages& a)
+{
+  if (!a.debug_msgs.empty())
+  {
+    out << "Debug Messages: \n";
+    for (auto& m : a.debug_msgs)
+      out << m << "\n";
+  }
+  if (!a.info_msgs.empty())
+  {
+    out << "Info Messages: \n";
+    for (auto& m : a.info_msgs)
+      out << m << "\n";
+  }
+  if (!a.warning_msgs.empty())
+  {
+    out << "Warning Messages: \n";
+    for (auto& m : a.warning_msgs)
+      out << m << "\n";
+  }
+  if (!a.error_msgs.empty())
+  {
+    out << "Error Messages: \n";
+    for (auto& m : a.error_msgs)
+      out << m << "\n";
+  }
+  if (!a.fatal_msgs.empty())
+  {
+    out << "Fatal Messages: \n";
+    for (auto& m : a.fatal_msgs)
+      out << m << "\n";
+  }
+  return out;
+}

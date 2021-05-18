@@ -9,7 +9,7 @@
 class PulseEngineJNI : public PulseEngineThunk
 {
 public:
-  PulseEngineJNI();
+  PulseEngineJNI(const std::string& dataDir);
   ~PulseEngineJNI();
 
   void Reset();

@@ -59,6 +59,7 @@ add_library_ex(CommonDataModel
     engine/SECondition.h
     engine/SEConditionManager.h
     engine/SEDataRequest.h
+    engine/SEDataRequested.h
     engine/SEDataRequestManager.h
     engine/SEDecimalFormat.h
     engine/SEDynamicStabilization.h
@@ -66,6 +67,7 @@ add_library_ex(CommonDataModel
     engine/SEDynamicStabilizationLedger.h
     engine/SEDynamicStabilizationPropertyConvergence.h
     engine/SEEngineConfiguration.h
+    engine/SEEngineInitialization.h
     engine/SEEngineStabilization.h
     engine/SEEngineTracker.h
     engine/SEEnvironmentActionCollection.h
@@ -308,6 +310,7 @@ add_library_ex(CommonDataModel
     utils/ScopedMutex.h
     utils/SmartEnum.h
     utils/TimingProfile.h
+    utils/ThreadPool.h
     utils/base64.h
     utils/taskrunner/Task.h
     utils/taskrunner/TaskProcessor.h
@@ -384,12 +387,14 @@ add_library_ex(CommonDataModel
     engine/SECondition.cpp
     engine/SEConditionManager.cpp
     engine/SEDataRequest.cpp
+    engine/SEDataRequested.cpp
     engine/SEDataRequestManager.cpp
     engine/SEDecimalFormat.cpp
     engine/SEDynamicStabilization.cpp
     engine/SEDynamicStabilizationEngineConvergence.cpp
     engine/SEDynamicStabilizationLedger.cpp
     engine/SEDynamicStabilizationPropertyConvergence.cpp
+    engine/SEEngineInitialization.cpp
     engine/SEEngineStabilization.cpp
     engine/SEEngineTracker.cpp
     engine/SEEnvironmentActionCollection.cpp

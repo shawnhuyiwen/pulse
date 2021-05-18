@@ -8,18 +8,15 @@
 #include "utils/FileUtils.h"
 
 #define test_serialization false
-int main(int argc, char* argv[])
+
+
+bool ExecuteScenario(const std::string& filename, const std::string& statesDir="./states")
 {
   try
   {
-    if (argc <= 1)
-    {
-      std::cerr << "Must provide a scenario filename\n";
-      return 1;
-    }
-    std::string logFile = argv[1];
-    std::string csvFile = argv[1];
-    std::string output = argv[1];
+    std::string logFile = filename;
+    std::string csvFile = filename;
+    std::string output = filename;
     // Try to read our config file to properly place results in a development structure
     std::string scenario_dir;
     ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
@@ -47,8 +44,8 @@ int main(int argc, char* argv[])
     opts.SetLogToConsole(eSwitch::On);
     opts.SetLogFilename(logFile);
     opts.SetDataRequestCSVFilename(csvFile);
-    opts.SetScenarioFilename(argv[1]);
-    opts.SetSerializationDirectory("./states/");
+    opts.SetScenarioFilename(filename);
+    opts.SetSerializationDirectory(statesDir+"/");
 
     if (test_serialization)
     {
@@ -97,7 +94,35 @@ int main(int argc, char* argv[])
   catch (std::exception ex)
   {
     std::cerr << ex.what() << std::endl;
+    return false;
+  }
+  return false;
+}
+
+bool ExecuteDirectory(const std::string& dir)
+{
+  std::vector<std::string> scenarios;
+  ListFiles(dir, scenarios, true, ".json");
+
+  for (auto filename : scenarios)
+  {
+    ExecuteScenario(filename, dir);
+  }
+  return true;
+}
+
+int main(int argc, char* argv[])
+{
+  if (argc <= 1)
+  {
+    std::cerr << "Must provide a scenario filename or a directory\n";
     return 1;
   }
-  return 1;
+  std::string input = argv[1];
+  if (IsDirectory(input))
+  {
+    return ExecuteDirectory(input);
+  }
+  else
+    return !ExecuteScenario(input);
 }

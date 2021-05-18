@@ -205,7 +205,7 @@ namespace HowTo_UseEngine
           // Pull data from pulse
           data_values = pulse.PullData();
           // And write it out to the console
-          data_mgr.ToConsole(data_values);
+          data_mgr.WriteData(data_values);
 
           // The engine can provide you with all the current
           // active events and how long they have been active for
@@ -251,7 +251,7 @@ namespace HowTo_UseEngine
         // Get the values of the data you requested at this time
         data_values = pulse.PullData();
         // And write it out to the console
-        data_mgr.ToConsole(data_values);
+        data_mgr.WriteData(data_values);
       }
 
       // At any point you can also pull the current active actions from the engine
@@ -281,7 +281,7 @@ namespace HowTo_UseEngine
         // Pull data from pulse
         data_values = pulse.PullData();
         // And write it out to the console
-        data_mgr.ToConsole(data_values);
+        data_mgr.WriteData(data_values);
       }
 
       // Administer Drugs
@@ -336,7 +336,7 @@ namespace HowTo_UseEngine
         // Pull data from pulse
         data_values = pulse.PullData();
         // And write it out to the console
-        data_mgr.ToConsole(data_values);
+        data_mgr.WriteData(data_values);
       }
     }
   }

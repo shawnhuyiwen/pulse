@@ -1,88 +1,88 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-public class TimeUnit
+namespace Pulse.CDM
 {
-  private TimeUnit(string v) { Value = v; }
-  protected string Value { get; }
-
-  public new string ToString() { return Value; }
-
-  public static TimeUnit s = new TimeUnit("s");
-  public static TimeUnit min = new TimeUnit("min");
-  public static TimeUnit hr = new TimeUnit("hr");
-  public static TimeUnit day = new TimeUnit("day");
-  public static TimeUnit yr = new TimeUnit("yr");
-
-  public static TimeUnit FromString(string u)
+  public class TimeUnit : Unit
   {
-    if (u == TimeUnit.s.ToString())
-      return TimeUnit.s;
-    if (u == TimeUnit.min.ToString())
-      return TimeUnit.min;
-    if (u == TimeUnit.hr.ToString())
-      return TimeUnit.hr;
-    if (u == TimeUnit.day.ToString())
-      return TimeUnit.day;
-    if (u == TimeUnit.yr.ToString())
-      return TimeUnit.yr;
+    private TimeUnit(string v) { Value = v; }
 
-    throw new System.ArgumentException(u + " is not a know time unit");
-  }
-}
+    public static TimeUnit s = new TimeUnit("s");
+    public static TimeUnit min = new TimeUnit("min");
+    public static TimeUnit hr = new TimeUnit("hr");
+    public static TimeUnit day = new TimeUnit("day");
+    public static TimeUnit yr = new TimeUnit("yr");
 
-public class SEScalarTime : SEScalar
-{
-  protected TimeUnit unit;
-
-  public SEScalarTime() : base()
-  {
-
-  }
-
-  public SEScalarTime(SEScalarTime from)
-  {
-    Set(from);
-  }
-
-  public SEScalarTime(double value, TimeUnit unit)
-  {
-    SetValue(value, unit);
-  }
-
-  public void Set(SEScalarTime from)
-  {
-    if (from == null)
+    public static TimeUnit FromString(string u)
     {
-      Invalidate();
-      return;
+      if (u == TimeUnit.s.ToString())
+        return TimeUnit.s;
+      if (u == TimeUnit.min.ToString())
+        return TimeUnit.min;
+      if (u == TimeUnit.hr.ToString())
+        return TimeUnit.hr;
+      if (u == TimeUnit.day.ToString())
+        return TimeUnit.day;
+      if (u == TimeUnit.yr.ToString())
+        return TimeUnit.yr;
+
+      throw new System.ArgumentException(u + " is not a know time unit");
     }
-    SetValue(from.value, from.unit);
   }
 
-  public new void SetValue(double value)
+  public class SEScalarTime : SEScalar
   {
-    throw new System.NotSupportedException("You must provide a unit");
-  }
+    protected TimeUnit unit;
 
-  public void SetValue(double value, TimeUnit unit)
-  {
-    this.value = value;
-    this.unit = unit;
-  }
+    public SEScalarTime() : base()
+    {
 
-  public double GetValue(TimeUnit unit)
-  {
-    throw new System.NotImplementedException();
-  }
+    }
 
-  public TimeUnit GetUnit()
-  {
-    return unit;
-  }
+    public SEScalarTime(SEScalarTime from)
+    {
+      Set(from);
+    }
 
-  public new string ToString()
-  {
-    return this.value + "(" + this.unit.ToString() + ")";
+    public SEScalarTime(double value, TimeUnit unit)
+    {
+      SetValue(value, unit);
+    }
+
+    public void Set(SEScalarTime from)
+    {
+      if (from == null)
+      {
+        Invalidate();
+        return;
+      }
+      SetValue(from.value, from.unit);
+    }
+
+    public new void SetValue(double value)
+    {
+      throw new System.NotSupportedException("You must provide a unit");
+    }
+
+    public void SetValue(double value, TimeUnit unit)
+    {
+      this.value = value;
+      this.unit = unit;
+    }
+
+    public double GetValue(TimeUnit unit)
+    {
+      return UnitConverter.Convert(this.value, this.unit, unit);
+    }
+
+    public TimeUnit GetUnit()
+    {
+      return unit;
+    }
+
+    public new string ToString()
+    {
+      return this.value + "(" + this.unit.ToString() + ")";
+    }
   }
 }

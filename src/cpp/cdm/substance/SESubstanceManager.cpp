@@ -281,84 +281,56 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
 {
   bool succeed = true;
   Clear();
-  std::stringstream ss;
-  DIR *sdir;
-  DIR *cdir;
-  struct dirent *ent;
-  std::string ext = ".json";
 
-#if defined(_WIN32)
-  sdir = opendir(std::string(data_dir + "/substances/").c_str());
-  cdir = opendir(std::string(data_dir + "/substances/compounds/").c_str());
-#else
-  // Find the absolute dir?
-  sdir = opendir(std::string(data_dir + "/substances/").c_str());
-  cdir = opendir(std::string(data_dir + "/substances/compounds/").c_str());
-#endif
+  std::vector<std::string> substances;
+  ListFiles(data_dir+"/substances/", substances, false, ".json");
 
-  if (sdir != nullptr)
+  std::vector<std::string> compounds;
+  ListFiles(data_dir+"/substances/compounds/", compounds, false, ".json");
+
+  std::string name, ext;
+  for (auto filename : substances)
   {
-    while ((ent = readdir(sdir)) != nullptr)
+    try
     {
-      ss.str("");
-      ss << data_dir << "/substances/" << ent->d_name;
-      if (!IsDirectory(ent) && strlen(ent->d_name) > 2 && ss.str().find_last_of(ext) == (ss.str().length()-1))
+      // I am assuming the filename is also the substance name
+      // If we don't want to make that assumption, we need to have
+      // a map of filename to substance ptr and use it rather than GetSubstance by name.
+      SplitFilenameExt(filename, name, ext);
+      SESubstance* sub = GetSubstance(name);
+      if (!sub->SerializeFromFile(filename))
       {
-        try
-        {
+        Error("Unable to read substance " + filename);
+        continue;
+      }
+    }
+    catch (...)
+    {
+      Info("I caught something in " + filename);
+      continue;
+    }
+  }
 
-          // I am assuming the filename is also the substance name
-          // If we don't want to make that assumption, we need to have
-          // a map of filename to substance ptr and use it rather than GetSubstance by name.
-          std::string name(ent->d_name);
-          name=name.substr(0, name.size()-ext.size());
-          SESubstance* sub = GetSubstance(name);
-          if (!sub->SerializeFromFile(ss.str()))
-          {
-            Error("Unable to read substance " + ss.str());
-            continue;
-          }
-        }
-        catch (...)
+  for (auto filename : compounds)
+  {
+      try
+      {
+        // I am assuming the filename is also the substance name
+        // If we don't want to make that assumption, we need to have
+        // a map of filename to substance ptr and use it rather than GetSubstance by name.
+        SplitFilenameExt(filename, name, ext);
+        SESubstanceCompound* cmpd = GetCompound(name);
+        if (!cmpd->SerializeFromFile(filename, *this))
         {
-          Info("I caught something in " + ss.str());
+          Error("Unable to read substance compound " + filename);
           continue;
         }
       }
-    }
-  }
-  closedir(sdir);
-
-  if (cdir != nullptr)
-  {
-    while ((ent = readdir(cdir)) != nullptr)
-    {
-      ss.str("");
-      ss << data_dir << "/substances/compounds/" << ent->d_name;
-      if (!IsDirectory(ent) && strlen(ent->d_name) > 2 && ss.str().find_last_of(ext) == (ss.str().length()-1))
+      catch (...)
       {
-        try
-        {
-          // I am assuming the filename is also the substance name
-          // If we don't want to make that assumption, we need to have
-          // a map of filename to substance ptr and use it rather than GetSubstance by name.
-          std::string name(ent->d_name);
-          name = name.substr(0, name.size() - ext.size());
-          SESubstanceCompound* cmpd = GetCompound(name);
-          if (!cmpd->SerializeFromFile(ss.str(), *this))
-          {
-            Error("Unable to read substance compound " + ss.str());
-            continue;
-          }
-        }
-        catch (...)
-        {
-          Info("I caught something in " + ss.str());
-          continue;
-        }
+        Info("I caught something in " + filename);
+        continue;
       }
-    }
   }
-  closedir(cdir);
   return succeed;
 }

@@ -46,7 +46,7 @@ namespace HowTo_MechanicalVentilator
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console
-      data_mgr.ToConsole(data_values);
+      data_mgr.WriteData(data_values);
 
       SEMechanicalVentilatorConfiguration mv_config = new SEMechanicalVentilatorConfiguration();
       SEMechanicalVentilator mv = mv_config.GetConfiguration();
@@ -73,7 +73,7 @@ namespace HowTo_MechanicalVentilator
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console
-      data_mgr.ToConsole(data_values);
+      data_mgr.WriteData(data_values);
     }
   }
 }

@@ -24,6 +24,7 @@ public:
   bool SerializeFromFile(const std::string& filename);
 
   static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::map<int,std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
 
   bool ProcessAction(const SEAction& action);// Will make a copy
 

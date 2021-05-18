@@ -16,6 +16,7 @@ add_library_ex(CommonPulseModelsTests
     ReadScenarios.cpp
     RenalCircuit.cpp
     RespiratoryCircuit.cpp
+    ReuseEngine.cpp
     SerializationTest.cpp
     SolverTests.cpp
     TemperatureCircuit.cpp

@@ -761,12 +761,13 @@ void PBPatientAction::Load(const CDM_BIND::ImpairedAlveolarExchangeExacerbationD
 void PBPatientAction::Serialize(const CDM_BIND::ImpairedAlveolarExchangeExacerbationData& src, SEImpairedAlveolarExchangeExacerbation& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.has_impairedfraction())
-    PBProperty::Load(src.impairedfraction(), dst.GetImpairedFraction());
-  if (src.has_impairedsurfacearea())
-    PBProperty::Load(src.impairedsurfacearea(), dst.GetImpairedSurfaceArea());
   if (src.has_severity())
     PBProperty::Load(src.severity(), dst.GetSeverity());
+  else if (src.has_impairedfraction())
+    PBProperty::Load(src.impairedfraction(), dst.GetImpairedFraction());
+  else if (src.has_impairedsurfacearea())
+    PBProperty::Load(src.impairedsurfacearea(), dst.GetImpairedSurfaceArea());
+  
 }
 CDM_BIND::ImpairedAlveolarExchangeExacerbationData* PBPatientAction::Unload(const SEImpairedAlveolarExchangeExacerbation& src)
 {
@@ -777,12 +778,12 @@ CDM_BIND::ImpairedAlveolarExchangeExacerbationData* PBPatientAction::Unload(cons
 void PBPatientAction::Serialize(const SEImpairedAlveolarExchangeExacerbation& src, CDM_BIND::ImpairedAlveolarExchangeExacerbationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasImpairedFraction())
-    dst.set_allocated_impairedfraction(PBProperty::Unload(*src.m_ImpairedFraction));
-  if (src.HasImpairedSurfaceArea())
-    dst.set_allocated_impairedsurfacearea(PBProperty::Unload(*src.m_ImpairedSurfaceArea));
   if (src.HasSeverity())
     dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+  else if (src.HasImpairedFraction())
+    dst.set_allocated_impairedfraction(PBProperty::Unload(*src.m_ImpairedFraction));
+  else if (src.HasImpairedSurfaceArea())
+    dst.set_allocated_impairedsurfacearea(PBProperty::Unload(*src.m_ImpairedSurfaceArea));
 }
 void PBPatientAction::Copy(const SEImpairedAlveolarExchangeExacerbation& src, SEImpairedAlveolarExchangeExacerbation& dst)
 {

@@ -1,5 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
+
 import math, copy
 import PyPulse
 from pulse.cdm.patient import SEPatient, SEPatientConfiguration
@@ -20,13 +21,13 @@ class PulsePhysiologyEngine:
                  "_event_handler", "_log_forward",
                  "_spare_time_s"]
 
-    def __init__(self):
+    def __init__(self, data_root_dir="./"):
+        self.__pulse = PyPulse.Engine(data_root_dir)
         self._is_ready = False
         self._log_forward = None
         self._event_handler = None
         self._results = {}
         self._results_template = {}
-        self.__pulse = PyPulse.Engine()
         self._spare_time_s = 0
         self._dt_s = 0.02 # self.__pulse.get_timestep("s")
         # Timestep only gets set after on load/initialize
@@ -105,6 +106,7 @@ class PulsePhysiologyEngine:
 
     def _pull(self, clean: bool):
         if clean:
+            # TODO is it quicker to just clear the _results value array?
             self._results = copy.deepcopy(self._results_template)
         timestep_result = self.__pulse.pull_data()
         for index, value in enumerate(self._results.keys()):
@@ -188,6 +190,8 @@ class PulsePhysiologyEngine:
     def process_actions(self, actions: []):
         if not self._is_ready:
             return False
+        if len(actions) == 0:
+            return True
         json = serialize_actions_to_string(actions,eSerializationFormat.JSON)
         #print(json)
         self.__pulse.process_actions(json,PyPulse.serialization_format.json)

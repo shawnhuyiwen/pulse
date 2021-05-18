@@ -49,7 +49,10 @@ Nervous::~Nervous()
 void Nervous::Clear()
 {
   SENervousSystem::Clear();
+  m_IntracranialSpace = nullptr;
   m_CSFProductAbsorptionPath = nullptr;
+  m_BrainVasculatureCompliancePath = nullptr;
+  m_BrainVasculatureResistancePath = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -78,14 +81,17 @@ void Nervous::Initialize()
   GetRightEyePupillaryResponse().GetReactivityModifier().SetValue(0);
 
   // Set when feedback is turned on
+  m_BaroreceptorFeedbackStatus = false;
+  m_BaroreceptorSaturationStatus = false;
   m_ArterialOxygenBaseline_mmHg = 0;
   m_ArterialCarbonDioxideBaseline_mmHg = 0;
   m_BaroreceptorActiveTime_s = 0.0;
-  m_BaroreceptorFeedbackStatus = false;
-  m_BaroreceptorMeanArterialPressureBaseline_mmHg = 0;
-  m_BaroreceptorSaturationStatus = false;
-  m_BaroreceptorSaturationTime_s = 0.0;
   m_BaroreceptorEffectivenessParameter = 1.0;
+  m_BaroreceptorMeanArterialPressureBaseline_mmHg = 0;
+  m_BaroreceptorSaturationTime_s = 0.0;
+  m_LastMeanArterialPressure_mmHg = 0.0;
+  m_PreviousBloodVolume_mL = 0.0;
+  m_TotalSympatheticFraction = 0.0;
 
   m_CSFAbsorptionRate_mLPermin = 0;
   m_CSFProductionRate_mlPermin = 0;

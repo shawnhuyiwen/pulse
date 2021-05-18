@@ -159,7 +159,6 @@ protected:
 
   EngineState                           m_State;
   SEEngineTracker*                      m_EngineTrack;
-  DataTrack*                            m_DataTrack;
 
   SEScalarTime                          m_CurrentTime;
   SEScalarTime                          m_SimulationTime;

@@ -231,7 +231,9 @@
     <Compile Include="cdm\system\equipment\SEEquipment.cs" />
     <Compile Include="cdm\system\equipment\SEEquipmentAction.cs" />
     <Compile Include="cdm\system\SESystem.cs" />
+    <Compile Include="cdm\utils\Logger.cs" />
     <Compile Include="cdm\utils\RunConfiguration.cs" />
+    <Compile Include="cdm\utils\UnitConverter.cs" />
     <Compile Include="engine\PulseEngine.cs" />
     <Compile Include="SEActionManager.cs" />
   </ItemGroup>

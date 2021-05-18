@@ -11,18 +11,18 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPatient.h"
 #include "io/protobuf/PBProperties.h"
 #include "io/protobuf/PBUtils.h"
+#include "engine/SECondition.h"
+#include "engine/SEConditionManager.h"
 #include "engine/SEDataRequest.h"
+#include "engine/SEDataRequested.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEDecimalFormat.h"
 #include "engine/SEDynamicStabilization.h"
 #include "engine/SEDynamicStabilizationEngineConvergence.h"
 #include "engine/SEDynamicStabilizationPropertyConvergence.h"
 #include "engine/SETimedStabilization.h"
-#include "engine/SEDataRequest.h"
-#include "engine/SEDataRequestManager.h"
+#include "engine/SEEngineInitialization.h"
 #include "engine/SEPatientConfiguration.h"
-#include "engine/SECondition.h"
-#include "engine/SEConditionManager.h"
 #include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
 #include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 #include "patient/conditions/SEChronicAnemia.h"
@@ -410,7 +410,6 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientCon
   dst.set_dataroot(src.GetDataRoot());
 }
 
-
 bool PBEngine::SerializeToString(const SEPatientConfiguration& src, std::string& output, SerializationFormat m)
 {
   CDM_BIND::PatientConfigurationData data;
@@ -484,6 +483,46 @@ void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
   CDM_BIND::DataRequestData data;
   PBEngine::Serialize(src, data);
   PBEngine::Serialize(data, dst);
+}
+
+
+CDM_BIND::DataRequestedData* PBEngine::Unload(const SEDataRequested& src)
+{
+  CDM_BIND::DataRequestedData* dst = new CDM_BIND::DataRequestedData();
+  PBEngine::Serialize(src, *dst);
+  return dst;
+}
+void PBEngine::Serialize(const SEDataRequested& src, CDM_BIND::DataRequestedData& dst)
+{
+  dst.set_id(src.GetID());
+  dst.set_isactive(src.IsActive());
+  if (src.KeepLogMessages())
+  {
+    // TODO Write Logs
+  }
+  if (src.KeepEventChanges())
+  {
+    // TODO Write Event Changes
+  }
+  for(double d : src.GetValues())
+    dst.add_value(d);
+}
+bool PBEngine::SerializeToString(const SEDataRequested& src, std::string& dst, SerializationFormat m)
+{
+  CDM_BIND::DataRequestedData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToString(data, dst, m, nullptr);
+}
+void PBEngine::Serialize(const std::vector<SEDataRequested*>& src, CDM_BIND::DataRequestedListData& dst)
+{
+  for (SEDataRequested* s : src)
+    Serialize(*s, *dst.add_datarequested());
+}
+bool PBEngine::SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, SerializationFormat m)
+{
+  CDM_BIND::DataRequestedListData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToString(data, dst, m, nullptr);
 }
 
 void PBEngine::Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
@@ -630,10 +669,37 @@ void PBEngine::Load(const CDM_BIND::ActionListData& src, std::vector<SEAction*>&
 }
 void PBEngine::Serialize(const CDM_BIND::ActionListData& src, std::vector<SEAction*>& dst, const SESubstanceManager& subMgr)
 {
+  dst.clear();
   for (int i = 0; i < src.anyaction_size(); i++)
   {
     SEAction* a = PBAction::Load(src.anyaction()[i], subMgr);
     dst.push_back(a);
+  }
+}
+
+bool PBEngine::SerializeFromString(const std::string& src, std::map<int, std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+{
+  CDM_BIND::ActionMapData data;
+  if (!PBUtils::SerializeFromString(src, data, m, subMgr.GetLogger()))
+    return false;
+  PBEngine::Load(data, dst, subMgr);
+  return true;
+}
+void PBEngine::Load(const CDM_BIND::ActionMapData& src, std::map<int, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr)
+{
+  PBEngine::Serialize(src, dst, subMgr);
+}
+void PBEngine::Serialize(const CDM_BIND::ActionMapData& src, std::map<int, std::vector<const SEAction*>>& dst, const SESubstanceManager& subMgr)
+{
+  dst.clear();
+  for (auto& itr : src.actionmap())
+  {
+    auto& v=dst[itr.first];
+    for (int i = 0; i < itr.second.anyaction_size(); i++)
+    {
+      SEAction* a = PBAction::Load(itr.second.anyaction()[i], subMgr);
+      v.push_back(a);
+    }
   }
 }
 
@@ -854,4 +920,93 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SETimedStabilizati
     return false;
   PBEngine::Load(data, dst);
   return true;
+}
+
+
+void PBEngine::Load(const CDM_BIND::EngineInitializationData& src, SEEngineInitialization& dst, const SESubstanceManager& subMgr)
+{
+  dst.Clear();
+  PBEngine::Serialize(src, dst, subMgr);
+}
+void PBEngine::Serialize(const CDM_BIND::EngineInitializationData& src, SEEngineInitialization& dst, const SESubstanceManager& subMgr)
+{
+  dst.SetID(src.id());
+
+  if (src.has_patientconfiguration())
+    PBEngine::Load(src.patientconfiguration(), dst.GetPatientConfiguration(), subMgr);
+  else if (!src.statefilename().empty())
+    dst.SetStateFilename(src.statefilename());
+  else if (!src.state().empty())
+    dst.SetState(src.state(), SerializationFormat::JSON);// TODO support binary
+
+  if (src.has_datarequestmanager())
+    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager(), subMgr);
+
+  if (!src.logfilename().empty())
+    dst.SetLogFilename(src.logfilename());
+
+  dst.KeepLogMessages(src.keeplogmessages());
+  dst.KeepEventChanges(src.keepeventchanges());
+}
+CDM_BIND::EngineInitializationData* PBEngine::Unload(const SEEngineInitialization& src)
+{
+  CDM_BIND::EngineInitializationData* dst = new CDM_BIND::EngineInitializationData();
+  PBEngine::Serialize(src, *dst);
+  return dst;
+}
+void PBEngine::Serialize(const SEEngineInitialization& src, CDM_BIND::EngineInitializationData& dst)
+{
+  dst.set_id(src.m_ID);
+
+  if (src.HasPatientConfiguration())
+    dst.set_allocated_patientconfiguration(PBEngine::Unload(*src.m_PatientConfiguration));
+  else if (src.HasStateFilename())
+    dst.set_statefilename(src.m_StateFilename);
+  else if (src.HasState())
+    dst.set_state(src.m_State);
+
+  if (src.HasDataRequestManager())
+    dst.set_allocated_datarequestmanager(PBEngine::Unload(*src.m_DataRequestManager));
+
+  if (src.HasLogFilename())
+    dst.set_logfilename(src.m_LogFilename);
+
+  dst.set_keeplogmessages(src.KeepLogMessages());
+  dst.set_keepeventchanges(src.KeepEventChanges());
+}
+
+bool PBEngine::SerializeToString(const SEEngineInitialization& src, std::string& output, SerializationFormat m)
+{
+  CDM_BIND::EngineInitializationData data;
+  PBEngine::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
+}
+bool PBEngine::SerializeFromString(const std::string& src, SEEngineInitialization& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+{
+  CDM_BIND::EngineInitializationData data;
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
+    return false;
+  PBEngine::Load(data, dst, subMgr);
+  return true;
+}
+bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+{
+  CDM_BIND::EngineInitializationListData data;
+  if (!PBUtils::SerializeFromString(src, data, m, subMgr.GetLogger()))
+    return false;
+  for (int i = 0; i < data.engineinitialization_size(); i++)
+  {
+    SEEngineInitialization* ei = new SEEngineInitialization(subMgr.GetLogger());
+    PBEngine::Load(data.engineinitialization()[i], *ei, subMgr);
+    dst.push_back(ei);
+  }
+  return true;
+}
+
+void PBEngine::Copy(const SEEngineInitialization& src, SEEngineInitialization& dst, const SESubstanceManager& subMgr)
+{
+  dst.Clear();
+  CDM_BIND::EngineInitializationData data;
+  PBEngine::Serialize(src, data);
+  PBEngine::Serialize(data, dst, subMgr);
 }

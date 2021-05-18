@@ -272,6 +272,7 @@ void Respiratory::Initialize()
   GetEndTidalOxygenFraction().SetValue(0.0);
   GetEndTidalOxygenPressure().SetValue(0.0, PressureUnit::mmHg);
 
+  GetInspiratoryFlow().SetValue(0, VolumePerTimeUnit::L_Per_s);
   GetIntrapleuralPressure().SetValue(0.0, PressureUnit::cmH2O);
   GetTransrespiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
   GetTransairwayPressure().SetValue(0.0, PressureUnit::cmH2O);
@@ -1793,7 +1794,7 @@ void Respiratory::CalculateVitalSigns()
   double tracheaFlow_L_Per_s = m_AirwayToCarina->GetNextFlow().GetValue(VolumePerTimeUnit::L_Per_s);
   double previousInspiratoryFlow_L_Per_s = GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s);
   GetInspiratoryFlow().SetValue(tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
-  GetExpiratoryFlow().SetValue(-tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);  
+  GetExpiratoryFlow().SetValue(-tracheaFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
 
   /// \cite kacmarek2016egan page 227-228 ---------------------------------------------------
   double airwayOpeningPressure_cmH2O = m_Airway->GetPressure(PressureUnit::cmH2O);

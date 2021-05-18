@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 from enum import Enum
 from pulse.cdm.scalars import SEScalarProperty, SEScalarTime
 
@@ -154,6 +155,33 @@ class SEScalarOverride(SEAction):
         return self._scalar_override is not None
     def get_scalar_overrides(self):
         return self._scalar_override
+
+class SEAdvanceTime(SEAction):
+    __slots__ = ["_action","_time"]
+
+    def __init__(self):
+        super().__init__()
+        self._time = None
+
+    def clear(self):
+        super().clear()
+        if self._time is not None:
+            self._time.invalidate()
+
+    def is_valid(self):
+        return self.has_time()
+
+    def has_time(self):
+        return self._time is not None
+
+    def get_time(self):
+        if self._time is None:
+            self._time = SEScalarTime()
+        return self._time
+
+    def __repr__(self):
+        return ("Advance Time\n"
+                "  Time: {}").format(self._time)
 
 class SECondition(ABC):
     __slots__ = ["_comment"]
@@ -354,14 +382,16 @@ class eDataRequest_category(Enum):
     Patient = 0
     Physiology = 1
     Environment = 2
-    GasCompartment = 3
-    LiquidCompartment = 4
-    ThermalCompartment = 5
-    TissueCompartment = 6
-    Substance = 7
-    AnesthesiaMachine = 8
-    ECG = 9
-    Inhaler = 10
+    Action = 3
+    GasCompartment = 4
+    LiquidCompartment = 5
+    ThermalCompartment = 6
+    TissueCompartment = 7
+    Substance = 8
+    AnesthesiaMachine = 9
+    ECG = 10
+    Inhaler = 11
+    MechanicalVentilator = 12
 
 class SEDataRequest:
     __slots__ = ['_category', '_compartment_name', '_substance_name', '_property_name', '_unit']
@@ -464,6 +494,18 @@ class SEDataRequest:
     def get_unit(self):
         return self._unit
 
+class SEDataRequested: # TODO follow CDM get/set pattern?
+    __slots__ = ['id', 'is_active', 'values']
+
+    def __init__(self):
+        self.id = -1
+        self.is_active = False
+        self.values = OrderedDict()
+
+    def get_value(self, index: int):
+        return list(self.values.items())[index][1]
+
+
 class SEDataRequestManager:
     __slots__ = ["_results_filename", "_samples_per_second", "_data_requests"]
 
@@ -486,6 +528,22 @@ class SEDataRequestManager:
     def to_console(self, data_values):
         for key in data_values:
             print("{}={}".format(key, data_values[key]))
+
+class SEEngineInitialization():
+    __slots__ = ["id", "patient_configuration", "state_filename",
+                 "state", "data_request_mgr", "keep_event_changes",
+                 "log_to_console", "log_filename", "keep_log_messages" ]
+
+    def __init__(self):
+        self.id = None
+        self.patient_configuration = None
+        self.state_filename = None
+        self.state = None
+        self.data_request_mgr = None
+        self.log_filename = ""
+        self.log_to_console = False
+        self.keep_event_changes = False
+        self.keep_log_messages = False
 
 class ILoggerForward():
     def __init__(self):

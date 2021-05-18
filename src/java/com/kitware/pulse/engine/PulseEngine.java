@@ -52,8 +52,12 @@ public class PulseEngine
 
   public PulseEngine()
   {
+    this("./");
+  }
+  public PulseEngine(String dataDir)
+  {
     JNIBridge.initialize();
-    nativeObj=nativeAllocate();
+    nativeObj=nativeAllocate(dataDir);
     timeStep_s = nativeGetTimeStep(nativeObj,"s");
   }
 
@@ -469,7 +473,7 @@ public class PulseEngine
   
   protected long nativeObj;
   protected SerializationType thunkType = SerializationType.JSON;
-  protected native long nativeAllocate();
+  protected native long nativeAllocate(String dataDir);
   protected native void nativeDelete(long nativeObj);
 
   protected native double nativeGetTimeStep(long nativeObj, String unit);

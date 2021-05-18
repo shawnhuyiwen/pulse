@@ -33,7 +33,8 @@ set(CMAKE_DEBUG_POSTFIX "d")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-project(Pulse VERSION 3.1.0 LANGUAGES C CXX)
+project(Pulse VERSION 3.2.0 LANGUAGES C CXX)
+string(TOLOWER ${PROJECT_NAME} project_name)
 
 #-----------------------------------------------------------------------------
 # Project install directories
@@ -138,7 +139,7 @@ if ( CMAKE_COMPILER_IS_GNUCC )
 endif()
 
 
-set(${PROJECT_NAME}_INSTALL_FOLDER ${PROJECT_NAME}-${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR})
+set(${PROJECT_NAME}_INSTALL_FOLDER ${project_name})
 
 include(Find)# Our find macros
 include(AddLibrary)# Extras to do when creating a library
@@ -159,6 +160,26 @@ endif()
 set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "CMake built-in FindProtobuf.cmake module compatible" FORCE)
 mark_as_advanced(protobuf_MODULE_COMPATIBLE)
 
+if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
+  # Linux systems can build libs to a variety of directories...
+  message(STATUS "Provided protobuf_DIR, does not exist, looking for alternatives...")
+  message(STATUS "  protobuf_DIR : ${protobuf_DIR}")
+  string(FIND ${protobuf_DIR} "/lib/" _idx)
+  if(_idx GREATER_EQUAL 0)
+    # Depending on linux flavor, this could be in a lib64 dir
+    # So, replace /lib/ with /lib64/ and see if that exists
+    string(REPLACE "/lib/" "/lib64/" _lib64 ${protobuf_DIR})
+    message(STATUS "  Checking if this alternative exists : ${_lib64}")
+    if(EXISTS ${_lib64})
+      set(protobuf_DIR ${_lib64})
+      message(STATUS "It does! New protobuf_DIR is ${protobuf_DIR}")
+    else()
+      message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
+    endif()
+  else()
+    message(FATAL_ERROR "Could not find protobuf_DIR : ${protobuf_DIR}")
+  endif()
+endif()
 # Try to use the config written by protobuf
 find_package(protobuf QUIET CONFIG NO_DEFAULT_PATH)
 if(protobuf_DIR AND protobuf_FOUND)

@@ -25,7 +25,7 @@ void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
   testSuite.SetName(testName);
 
   std::vector<std::string> files;
-  ListFiles(dir, files, ".json");
+  ListFiles(dir, files, true, ".json");
   for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) 
   {
     if(it->find("json")!=std::string::npos)

@@ -26,6 +26,7 @@ bool PulseController::SetupPatient(SEPatient const& patient)
   bool err = false;
   std::stringstream ss;
   m_InitialPatient->Copy(patient);
+  m_CurrentPatient->Clear();
 
   //Sex is the only thing we absolutely need to be defined, the CDM assumes male if not provided
 

@@ -60,7 +60,7 @@ namespace HowTo_Environment
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console
-      data_mgr.ToConsole(data_values);
+      data_mgr.WriteData(data_values);
 
       // Change the environment
       SEChangeEnvironmentalConditions change = new SEChangeEnvironmentalConditions();
@@ -99,7 +99,7 @@ namespace HowTo_Environment
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console
-      data_mgr.ToConsole(data_values);
+      data_mgr.WriteData(data_values);
     }
   }
 }
