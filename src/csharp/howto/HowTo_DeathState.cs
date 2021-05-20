@@ -1,4 +1,4 @@
-﻿/* Distributed under the Apache License, Version 2.0.
+/* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
 using System;
@@ -36,8 +36,13 @@ namespace HowTo_DeathState
     public void HandleEvent(SEEventChange change)
     {
       if(change.Event != eEvent.StartOfCardiacCycle && change.Event != eEvent.StartOfExhale && change.Event != eEvent.StartOfInhale)
-        log.WriteLine(change.Event + " is " + change.Active + " at time " + change.SimTime.GetValue(TimeUnit.s) + "s\n");
-
+      {
+        if (log != null)
+        {
+          log.WriteLine(change.Event + " is " + change.Active + " at time " + change.SimTime.GetValue(TimeUnit.s) + "s\n");
+        }
+      }
+      
       if (change.Event == eEvent.IrreversibleState)
       {
         irreversable_state = change.Active;
