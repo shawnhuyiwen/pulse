@@ -12,6 +12,7 @@
 #include "patient/actions/SEIntubation.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "engine/SEActionManager.h"
 #include "engine/SEEquipmentActionCollection.h"
 #include "engine/SEPatientActionCollection.h"
@@ -439,6 +440,14 @@ void BagValveMask::CalculateInspiration()
 
   double inspirationPeriod_s = inspiratoryExpiratoryRatio * totalBreathTime_s / (1.0 + inspiratoryExpiratoryRatio);
 
+  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+  {
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasInspiratoryPeriod())
+    {
+      inspirationPeriod_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetInspiratoryPeriod(TimeUnit::s);
+    }
+  }
+
   if (m_CurrentPeriodTime_s >= inspirationPeriod_s)
   {
     CycleMode();
@@ -463,6 +472,20 @@ void BagValveMask::CalculateInspiration()
     double tidalVolume_mL = 7.0 * idealBodyWeight_kg;
     m_SqueezeFlow_L_Per_s = (tidalVolume_mL / 1000.0) / inspirationPeriod_s;
     m_SqueezePressure_cmH2O = SEScalar::dNaN();
+  }
+
+  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+  {
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasSqueezePressure())
+    {
+      m_SqueezePressure_cmH2O = m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetSqueezePressure(PressureUnit::cmH2O);
+      m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
+    }
+    else if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasSqueezeVolume())
+    {
+      m_SqueezeFlow_L_Per_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetSqueezeVolume(VolumeUnit::L) / inspirationPeriod_s;
+      m_SqueezePressure_cmH2O = SEScalar::dNaN();
+    }
   }
 }
 
@@ -495,6 +518,14 @@ void BagValveMask::CalculateExpiration()
 
   double inspirationPeriod_s = inspiratoryExpiratoryRatio * totalBreathTime_s / (1.0 + inspiratoryExpiratoryRatio);
   double expirationPeriod_s = totalBreathTime_s - inspirationPeriod_s;
+
+  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+  {
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasExpiratoryPeriod())
+    {
+      expirationPeriod_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetExpiratoryPeriod(TimeUnit::s);
+    }
+  }
 
   if (m_CurrentPeriodTime_s >= expirationPeriod_s)
   {
@@ -529,6 +560,12 @@ void BagValveMask::CycleMode()
   else if (m_CurrentBreathState == eBreathState::Exhale)
   {
     m_CurrentBreathState = eBreathState::Inhale;
+
+    //End of breath, so remove the squeeze action
+    if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+    {
+      m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskSqueeze();
+    }
   }
 }
 

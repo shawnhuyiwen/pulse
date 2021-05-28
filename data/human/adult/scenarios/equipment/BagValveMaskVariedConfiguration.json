@@ -99,6 +99,31 @@
   { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
   
   { "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
+  
+  { "EquipmentAction": { "BagValveMaskInstantaneous": { "Pressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } } } } },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
+  
+  { "EquipmentAction": { "BagValveMaskInstantaneous": { "Pressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } } } } },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } },
+
+  {
+    "EquipmentAction": {
+      "BagValveMaskSqueeze": {
+          "Configuration":
+          {
+            "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
+            "InspiratoryPeriod": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
+            "InspiratoryPeriod": { "ScalarTime": { "Value": 3.0, "Unit": "s" } },
+          }
+      }
+    }
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } },
 
   {
     "EquipmentAction": {
