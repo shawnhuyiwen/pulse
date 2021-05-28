@@ -518,7 +518,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::BagValveMaskInstantaneousData&
   PBEquipmentAction::Serialize(src.bagvalvemaskaction(), dst);
   if (src.has_flow())
     PBProperty::Load(src.flow(), dst.GetFlow());
-  else if (!src.has_pressure())
+  else if (src.has_pressure())
     PBProperty::Load(src.pressure(), dst.GetPressure());
 }
 CDM_BIND::BagValveMaskInstantaneousData* PBEquipmentAction::Unload(const SEBagValveMaskInstantaneous& src)

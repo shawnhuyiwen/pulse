@@ -96,35 +96,53 @@
   [
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 30.0, "Unit": "s" } } } },
   
-  { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
-  
   { "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
   
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
-  
-  { "EquipmentAction": { "BagValveMaskInstantaneous": { "Pressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } } } } },
+
+  { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
   
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
-  
-  { "EquipmentAction": { "BagValveMaskInstantaneous": { "Pressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } } } } },
-  
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } },
 
   {
     "EquipmentAction": {
-      "BagValveMaskSqueeze": {
+      "BagValveMaskConfiguration": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
           "Configuration":
           {
-            "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
-            "InspiratoryPeriod": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
-            "InspiratoryPeriod": { "ScalarTime": { "Value": 3.0, "Unit": "s" } },
+            "Connection": "Tube"
+          }
+      }
+    }
+  },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskSqueeze": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {} } },
+          "SqueezePressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
+          "ExpiratoryPeriod": { "ScalarTime": { "Value": 4.0, "Unit": "s" } }, 
+          "InspiratoryPeriod": { "ScalarTime": { "Value": 6.0, "Unit": "s" } }
+      }
+    }
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskConfiguration": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
+          "Configuration":
+          {
+            "Connection": "Off"
           }
       }
     }
   },
   
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } },
-
+  
   {
     "EquipmentAction": {
       "BagValveMaskConfiguration": {
@@ -160,6 +178,19 @@
     }
   },
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } }
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "EquipmentAction": { "BagValveMaskInstantaneous": { "BagValveMaskAction": { "EquipmentAction": { "Action": {} } },
+     "Pressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } } } }
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
+  
+  { "EquipmentAction": { "BagValveMaskInstantaneous": { "BagValveMaskAction": { "EquipmentAction": { "Action": {} } },
+     "Pressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } } } }
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }
+  
   ]
 }

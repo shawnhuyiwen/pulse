@@ -138,7 +138,7 @@ void BagValveMask::StateChange()
     //Do this, just in case it's something new
     m_data.GetSubstances().AddActiveSubstance(sub);
 
-    //Now set it on the ventilator compartment
+    //Now set it on the compartment
     //It has a infinate volume, so this will keep the same volume fraction no matter what's going on around it
     m_Reservoir->GetSubstanceQuantity(sub)->GetVolumeFraction().SetValue(fraction);
   }
@@ -171,7 +171,7 @@ void BagValveMask::StateChange()
   //Set the aerosol concentrations ********************************************
   std::vector<SESubstanceConcentration*> liquidConcentrations = GetConcentrationInspiredAerosols();
 
-  //Reset the substance quantities at the ventilator
+  //Reset the substance quantities
   for (SELiquidSubstanceQuantity* subQ : m_ReservoirAerosol->GetSubstanceQuantities())
     subQ->SetToZero();
 
@@ -194,14 +194,14 @@ void BagValveMask::StateChange()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Connect to the patient via the ventilator mask, an endotracheal tube, or no connection
+/// Connect to the patient via the mask, a tube, or no connection
 ///
 /// \param  enumBagValveMaskConnection
 /// Connectoin type : Mask, tube, or off
 /// 
 /// \details
 /// If the enum is set to mask, then the mask is applied to the face
-/// If the enum is set to tube, then the ventilator is connected to the tube
+/// If the enum is set to tube, then the BVM is connected to the tube
 /// If the enum is set to off, the airway mode is set to free.
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::SetConnection(eBagValveMask_Connection c)
@@ -301,16 +301,37 @@ void BagValveMask::PreProcess()
 {
   if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskInstantaneous())
   {
-    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasPressure())
+    if (GetConnection() == eBagValveMask_Connection::Off)
     {
-      m_SqueezePressure_cmH2O = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetPressure(PressureUnit::cmH2O);
+      /// \error Error: The Bag Valve Mask must be connected (i.e., connection type configured) to run the Instantaneous action.
+      Error("The Bag Valve Mask must be connected (i.e., connection type configured) to run the Instantaneous action.");
+      
+      m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskInstantaneous();
     }
-    else if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasFlow())
+    else
     {
-      m_SqueezeFlow_L_Per_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetFlow(VolumePerTimeUnit::L_Per_s);
+      if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasPressure())
+      {
+        m_SqueezePressure_cmH2O = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetPressure(PressureUnit::cmH2O);
+      }
+      else if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasFlow())
+      {
+        m_SqueezeFlow_L_Per_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetFlow(VolumePerTimeUnit::L_Per_s);
+      }
+      SetSqeezeDriver();
+      return;
     }
-    SetSqeezeDriver();
-    return;
+  }
+
+  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+  {
+    if (GetConnection() == eBagValveMask_Connection::Off)
+    {
+      /// \error Error: The Bag Valve Mask must be connected (i.e., connection type configured) to run the Squeeze action.
+      Error("The Bag Valve Mask must be connected (i.e., connection type configured) to run the Squeeze action.");
+
+      m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskSqueeze();
+    }
   }
 
   if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskConfiguration())
@@ -319,14 +340,14 @@ void BagValveMask::PreProcess()
     ProcessConfiguration(m_data.GetActions().GetEquipmentActions().GetBagValveMaskConfiguration(), m_data.GetSubstances());
     m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskConfiguration();
   }
-  //Do nothing if the ventilator is off and not initialized
+  //Do nothing if the BVM is off and not initialized
   if (GetConnection() == eBagValveMask_Connection::Off)
   {
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
     return;
   }
-  
+
   SetConnection();
   CalculateInspiration();
   CalculateExpiration();
@@ -365,7 +386,7 @@ void BagValveMask::ComputeExposedModelParameters()
 /// \details
 /// The substance volumes and the volume fractions are updated for all of the nodes in the bag valve mask
 /// circuit during post process. 
-/// The ventilator volumes are updated based on the previously calculated nodal analysis.
+/// The volumes are updated based on the previously calculated nodal analysis.
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::PostProcess(bool solve_and_transport)
 {
