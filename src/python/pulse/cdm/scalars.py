@@ -139,6 +139,54 @@ class SEScalarArea(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a AreaUnit")
 
+class EquivalentWeightPerVolumeUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == EquivalentWeightPerVolumeUnit.Eq_Per_L.get_string():
+            return EquivalentWeightPerVolumeUnit.Eq_Per_L
+        if string == EquivalentWeightPerVolumeUnit.Eq_Per_mL.get_string():
+            return EquivalentWeightPerVolumeUnit.Eq_Per_mL
+        if string == EquivalentWeightPerVolumeUnit.mEq_Per_L.get_string():
+            return EquivalentWeightPerVolumeUnit.mEq_Per_L
+        if string == EquivalentWeightPerVolumeUnit.mEq_Per_mL.get_string():
+            return EquivalentWeightPerVolumeUnit.mEq_Per_mL
+        raise Exception("No EquivalentWeightPerVolumeUnit defined for " + string)
+EquivalentWeightPerVolumeUnit.Eq_Per_L = EquivalentWeightPerVolumeUnit("Eq/L")
+EquivalentWeightPerVolumeUnit.Eq_Per_mL = EquivalentWeightPerVolumeUnit("Eq/mL")
+EquivalentWeightPerVolumeUnit.mEq_Per_L = EquivalentWeightPerVolumeUnit("mEq/L")
+EquivalentWeightPerVolumeUnit.mEq_Per_mL = EquivalentWeightPerVolumeUnit("mEq/mL")
+class SEScalarEquivalentWeightPerVolume(SEScalarQuantity):
+
+    def __init__(self, value: float = None, units: EquivalentWeightPerVolumeUnit = None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarEquivalentWeightPerVolume, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarEquivalentWeightPerVolume")
+
+    def get_value(self, units: EquivalentWeightPerVolumeUnit = None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: EquivalentWeightPerVolumeUnit):
+        if isinstance(units, EquivalentWeightPerVolumeUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a EquivalentWeightPerVolumeUnit")
+
 
 class ForceUnit(SEScalarUnit):
     @staticmethod

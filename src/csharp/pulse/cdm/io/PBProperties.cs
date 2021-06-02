@@ -130,6 +130,31 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEScalarEquivalentWeightPerVolume
+    public static void Load(pulse.cdm.bind.ScalarEquivalentWeightPerVolumeData src, SEScalarEquivalentWeightPerVolume dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ScalarEquivalentWeightPerVolumeData src, SEScalarEquivalentWeightPerVolume dst)
+    {
+      dst.Invalidate();
+      dst.SetValue(src.ScalarEquivalentWeightPerVolume.Value, EquivalentWeightPerVolumeUnit.FromString(src.ScalarEquivalentWeightPerVolume.Unit));
+    }
+    public static pulse.cdm.bind.ScalarEquivalentWeightPerVolumeData Unload(SEScalarEquivalentWeightPerVolume src)
+    {
+      pulse.cdm.bind.ScalarEquivalentWeightPerVolumeData dst = new pulse.cdm.bind.ScalarEquivalentWeightPerVolumeData();
+      Serialize(src, dst);
+      return dst;
+    }
+
+    public static void Serialize(SEScalarEquivalentWeightPerVolume src, pulse.cdm.bind.ScalarEquivalentWeightPerVolumeData dst)
+    {
+      dst.ScalarEquivalentWeightPerVolume = new pulse.cdm.bind.ScalarData();
+      dst.ScalarEquivalentWeightPerVolume.Value = src.GetValue();
+      dst.ScalarEquivalentWeightPerVolume.Unit = src.GetUnit().ToString();
+    }
+    #endregion
+
     #region SEScalarForce
     public static void Load(pulse.cdm.bind.ScalarForceData src, SEScalarForce dst)
     {

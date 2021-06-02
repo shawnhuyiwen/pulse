@@ -189,6 +189,7 @@ class SEScalarElectricResistance; class ElectricResistanceUnit;
 class SEScalarEnergy; class EnergyUnit;
 class SEScalarEnergyPerAmount; class EnergyPerAmountUnit;
 class SEScalarEnergyPerMass; class EnergyPerMassUnit;
+class SEScalarEquivalentWeightPerVolume; class EquivalentWeightPerVolumeUnit;
 class SEScalarForce; class ForceUnit;
 class SEScalar0To1;
 class SEScalarFrequency; class FrequencyUnit;

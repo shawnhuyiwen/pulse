@@ -20,6 +20,7 @@ CDM_BIND_DECL(ScalarElectricResistanceData)
 CDM_BIND_DECL(ScalarEnergyData)
 CDM_BIND_DECL(ScalarEnergyPerAmountData)
 CDM_BIND_DECL(ScalarEnergyPerMassData)
+CDM_BIND_DECL(ScalarEquivalentWeightPerVolume)
 CDM_BIND_DECL(ScalarForceData)
 CDM_BIND_DECL(ScalarFrequencyData)
 CDM_BIND_DECL(ScalarHeatCapacitanceData)
@@ -162,6 +163,11 @@ public:
   static CDM_BIND::ScalarEnergyPerMassData* Unload(const SEScalarEnergyPerMass& src);
   static void Serialize(const CDM_BIND::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst);
   static void Serialize(const SEScalarEnergyPerMass& src, CDM_BIND::ScalarEnergyPerMassData& dst);
+
+  static void Load(const CDM_BIND::ScalarEquivalentWeightPerVolumeData& src, SEScalarEquivalentWeightPerVolume& dst);
+  static CDM_BIND::ScalarEquivalentWeightPerVolumeData* Unload(const SEScalarEquivalentWeightPerVolume& src);
+  static void Serialize(const CDM_BIND::ScalarEquivalentWeightPerVolumeData& src, SEScalarEquivalentWeightPerVolume& dst);
+  static void Serialize(const SEScalarEquivalentWeightPerVolume& src, CDM_BIND::ScalarEquivalentWeightPerVolumeData& dst);
 
   static void Load(const CDM_BIND::ScalarForceData& src, SEScalarForce& dst);
   static CDM_BIND::ScalarForceData* Unload(const SEScalarForce& src);

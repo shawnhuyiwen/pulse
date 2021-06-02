@@ -41,9 +41,10 @@
 
 #include "patient/SEPatient.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
+#include "patient/assessments/SEArterialBloodGasTest.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "patient/assessments/SEPulmonaryFunctionTest.h"
 #include "patient/assessments/SEUrinalysis.h"
 
 #include "utils/FileUtils.h"
@@ -780,35 +781,18 @@ bool PulseController::ProcessAction(const SEAction& action)
   {
     switch (patientAss->GetType())
     {
-    case ePatientAssessment_Type::PulmonaryFunctionTest:
+    case ePatientAssessment_Type::ArterialBloodGasTest:
     {
-      SEPulmonaryFunctionTest pft(m_Logger);
-      GetPatientAssessment(pft);
-
-      // Write out the Assessement
-      std::string pftFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
-      if (pftFile.empty())
-        pftFile = "PulmonaryFunctionTest";
-      m_ss << "PFT@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
-      pftFile = Replace(pftFile, "Results", m_ss.str());
-      pftFile = Replace(pftFile, ".csv", ".json");
-      m_ss << "PulmonaryFunctionTest@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
-      pft.SerializeToFile(pftFile);
-      break;
-    }
-    case ePatientAssessment_Type::Urinalysis:
-    {
-      SEUrinalysis upan(m_Logger);
-      GetPatientAssessment(upan);
-
-      std::string upanFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
-      if (upanFile.empty())
-        upanFile = "Urinalysis";
-      m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
-      upanFile = Replace(upanFile, "Results", m_ss.str());
-      upanFile = Replace(upanFile, ".csv", ".json");
-      m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
-      upan.SerializeToFile(upanFile);
+      SEArterialBloodGasTest abg(m_Logger);
+      GetPatientAssessment(abg);
+      std::string abgFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (abgFile.empty())
+        abgFile = "ArterialBloodGasTest";
+      m_ss << "ABG@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      abgFile = Replace(abgFile, "Results", m_ss.str());
+      abgFile = Replace(abgFile, ".csv", ".json");
+      m_ss << "ArterialBloodGasTest@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      abg.SerializeToFile(abgFile);
       break;
     }
 
@@ -841,6 +825,39 @@ bool PulseController::ProcessAction(const SEAction& action)
       mp.SerializeToFile(mpFile);
       break;
     }
+
+    case ePatientAssessment_Type::PulmonaryFunctionTest:
+    {
+      SEPulmonaryFunctionTest pft(m_Logger);
+      GetPatientAssessment(pft);
+
+      // Write out the Assessement
+      std::string pftFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (pftFile.empty())
+        pftFile = "PulmonaryFunctionTest";
+      m_ss << "PFT@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      pftFile = Replace(pftFile, "Results", m_ss.str());
+      pftFile = Replace(pftFile, ".csv", ".json");
+      m_ss << "PulmonaryFunctionTest@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      pft.SerializeToFile(pftFile);
+      break;
+    }
+    case ePatientAssessment_Type::Urinalysis:
+    {
+      SEUrinalysis upan(m_Logger);
+      GetPatientAssessment(upan);
+
+      std::string upanFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
+      if (upanFile.empty())
+        upanFile = "Urinalysis";
+      m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
+      upanFile = Replace(upanFile, "Results", m_ss.str());
+      upanFile = Replace(upanFile, ".csv", ".json");
+      m_ss << "Urinalysis@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
+      upan.SerializeToFile(upanFile);
+      break;
+    }
+
     default:
     {
       m_ss << "Unsupported assessment request " << ePatientAssessment_Type_Name(patientAss->GetType());
@@ -858,9 +875,10 @@ bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) cons
 {
   if (!IsReady())
     return false;
-  SEPulmonaryFunctionTest* pft = dynamic_cast<SEPulmonaryFunctionTest*>(&assessment);
-  if (pft != nullptr)
-    return m_RespiratorySystem->CalculatePulmonaryFunctionTest(*pft);
+
+  SEArterialBloodGasTest* abg = dynamic_cast<SEArterialBloodGasTest*>(&assessment);
+  if (abg != nullptr)
+    return m_BloodChemistrySystem->CalculateArterialBloodGasTest(*abg);
 
   SECompleteBloodCount* cbc = dynamic_cast<SECompleteBloodCount*>(&assessment);
   if (cbc != nullptr)
@@ -869,6 +887,10 @@ bool PulseController::GetPatientAssessment(SEPatientAssessment& assessment) cons
   SEComprehensiveMetabolicPanel* cmp = dynamic_cast<SEComprehensiveMetabolicPanel*>(&assessment);
   if (cmp != nullptr)
     return m_BloodChemistrySystem->CalculateComprehensiveMetabolicPanel(*cmp);
+
+  SEPulmonaryFunctionTest* pft = dynamic_cast<SEPulmonaryFunctionTest*>(&assessment);
+  if (pft != nullptr)
+    return m_RespiratorySystem->CalculatePulmonaryFunctionTest(*pft);
 
   SEUrinalysis* u = dynamic_cast<SEUrinalysis*>(&assessment);
   if (u != nullptr)

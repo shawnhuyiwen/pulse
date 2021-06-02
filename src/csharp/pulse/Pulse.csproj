@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Google.Protobuf">
-      <HintPath>..\..\..\..\..\Builds\pulse-engine\External\protobuf\src\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
+      <HintPath>..\..\..\..\..\builds\pulse-engine\External\protobuf\src\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -145,6 +145,7 @@
     <Compile Include="cdm\patient\actions\SESupplementalOxygen.cs" />
     <Compile Include="cdm\patient\actions\SEChestOcclusiveDressing.cs" />
     <Compile Include="cdm\patient\actions\SETensionPneumothorax.cs" />
+    <Compile Include="cdm\patient\assessments\SEArterialBloodGasTest.cs" />
     <Compile Include="cdm\patient\assessments\SECompleteBloodCount.cs" />
     <Compile Include="cdm\patient\assessments\SEComprehensiveMetabolicPanel.cs" />
     <Compile Include="cdm\patient\assessments\SEPatientAssessment.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="cdm\scalars\SEScalarAmount.cs" />
     <Compile Include="cdm\scalars\SEScalarAmountPerVolume.cs" />
     <Compile Include="cdm\scalars\SEScalarArea.cs" />
+    <Compile Include="cdm\scalars\SEScalarEquivalentWeightPerVolume.cs" />
     <Compile Include="cdm\scalars\SEScalarFrequency.cs" />
     <Compile Include="cdm\scalars\SEScalarHeatConductancePerArea.cs" />
     <Compile Include="cdm\scalars\SEScalarHeatResistanceArea.cs" />

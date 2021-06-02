@@ -25,6 +25,7 @@ SESubstance::SESubstance(const std::string& name, Logger* logger) : Loggable(log
   m_State = eSubstance_State::NullState;
   m_Density = nullptr;
   m_MolarMass = nullptr;
+  m_Valence = nullptr;
 
   m_MaximumDiffusionFlux = nullptr;
   m_MichaelisCoefficient = nullptr;
@@ -55,6 +56,7 @@ SESubstance::~SESubstance()
   m_State = eSubstance_State::NullState;
   SAFE_DELETE(m_Density);
   SAFE_DELETE(m_MolarMass);
+  SAFE_DELETE(m_Valence);
 
   SAFE_DELETE(m_MaximumDiffusionFlux);
   SAFE_DELETE(m_MichaelisCoefficient);
@@ -85,6 +87,7 @@ void SESubstance::Clear()
   m_State = eSubstance_State::NullState;
   INVALIDATE_PROPERTY(m_Density);
   INVALIDATE_PROPERTY(m_MolarMass);
+  INVALIDATE_PROPERTY(m_Valence);
   
   INVALIDATE_PROPERTY(m_MaximumDiffusionFlux);
   INVALIDATE_PROPERTY(m_MichaelisCoefficient);
@@ -244,6 +247,23 @@ double SESubstance::GetMolarMass(const MassPerAmountUnit& unit) const
   if (m_MolarMass == nullptr)
     return SEScalar::dNaN();
   return m_MolarMass->GetValue(unit);
+}
+
+bool SESubstance::HasValence() const
+{
+  return (m_Valence == nullptr) ? false : m_Valence->IsValid();
+}
+SEScalar& SESubstance::GetValence()
+{
+  if (m_Valence == nullptr)
+    m_Valence = new SEScalar();
+  return *m_Valence;
+}
+double SESubstance::GetValence() const
+{
+  if (m_Valence == nullptr)
+    return SEScalar::dNaN();
+  return m_Valence->GetValue();
 }
 
 bool SESubstance::HasMaximumDiffusionFlux() const

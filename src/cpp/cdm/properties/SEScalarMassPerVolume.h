@@ -21,7 +21,7 @@ public:
   static const MassPerVolumeUnit g_Per_L;
   static const MassPerVolumeUnit g_Per_mL;
   static const MassPerVolumeUnit g_Per_cm3;
-  static const MassPerVolumeUnit g_Per_m3;  
+  static const MassPerVolumeUnit g_Per_m3;
   static const MassPerVolumeUnit mg_Per_mL;
   static const MassPerVolumeUnit mg_Per_L;
   static const MassPerVolumeUnit mg_Per_dL;

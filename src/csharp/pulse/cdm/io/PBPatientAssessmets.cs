@@ -93,6 +93,68 @@ namespace Pulse.CDM
     }
     #endregion
 
+
+    #region SEArterialBloodGasTest
+    public static void Load(pulse.cdm.bind.ArterialBloodGasTestData src, SEArterialBloodGasTest dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ArterialBloodGasTestData src, SEArterialBloodGasTest dst)
+    {
+      Serialize(src.PatientAssessment, dst);
+      if (src.BloodPH != null)
+        PBProperty.Load(src.BloodPH, dst.GetBloodPH());
+      if (src.Bicarbonate != null)
+        PBProperty.Load(src.Bicarbonate, dst.GetBicarbonate());
+      if (src.PartialPressureOfOxygen != null)
+        PBProperty.Load(src.PartialPressureOfOxygen, dst.GetPartialPressureOfOxygen());
+      if (src.PartialPressureOfCarbonDioxide != null)
+        PBProperty.Load(src.PartialPressureOfCarbonDioxide, dst.GetPartialPressureOfCarbonDioxide());
+      if (src.OxygenSaturation != null)
+        PBProperty.Load(src.OxygenSaturation, dst.GetOxygenSaturation());
+    }
+    public static bool SerializeFromString(string src, SEArterialBloodGasTest dst)
+    {
+      try
+      {
+        pulse.cdm.bind.ArterialBloodGasTestData data = JsonParser.Default.Parse<pulse.cdm.bind.ArterialBloodGasTestData>(src);
+        PBPatientAssessmets.Load(data, dst);
+      }
+      catch (Google.Protobuf.InvalidJsonException)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    public static pulse.cdm.bind.ArterialBloodGasTestData Unload(SEArterialBloodGasTest src)
+    {
+      pulse.cdm.bind.ArterialBloodGasTestData dst = new pulse.cdm.bind.ArterialBloodGasTestData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEArterialBloodGasTest src, pulse.cdm.bind.ArterialBloodGasTestData dst)
+    {
+      dst.PatientAssessment = new pulse.cdm.bind.PatientAssessmentData();
+      Serialize(src, dst.PatientAssessment);
+      if (src.HasBloodPH())
+        dst.BloodPH = (PBProperty.Unload(src.GetBloodPH()));
+      if (src.HasBicarbonate())
+        dst.Bicarbonate = (PBProperty.Unload(src.GetBicarbonate()));
+      if (src.HasPartialPressureOfOxygen())
+        dst.PartialPressureOfOxygen = (PBProperty.Unload(src.GetPartialPressureOfOxygen()));
+      if (src.HasPartialPressureOfCarbonDioxide())
+        dst.PartialPressureOfCarbonDioxide = (PBProperty.Unload(src.GetPartialPressureOfCarbonDioxide()));
+      if (src.HasOxygenSaturation())
+        dst.OxygenSaturation = (PBProperty.Unload(src.GetOxygenSaturation()));
+    }
+    public static string SerializeToString(SEArterialBloodGasTest src)
+    {
+      var pb = PBPatientAssessmets.Unload(src);
+      return pb.ToString();
+    }
+    #endregion
+
     #region SECompleteBloodCount
     public static void Load(pulse.cdm.bind.CompleteBloodCountData src, SECompleteBloodCount dst)
     {

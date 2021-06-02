@@ -23,6 +23,7 @@ POP_PROTO_WARNINGS()
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarEnergyPerAmount.h"
 #include "properties/SEScalarEnergyPerMass.h"
+#include "properties/SEScalarEquivalentWeightPerVolume.h"
 #include "properties/SEScalarVolumePerPressure.h"
 #include "properties/SEScalarPressurePerVolume.h"
 #include "properties/SEScalarPressureTimeSquaredPerVolume.h"
@@ -471,6 +472,28 @@ CDM_BIND::ScalarEnergyPerMassData* PBProperty::Unload(const SEScalarEnergyPerMas
 void PBProperty::Serialize(const SEScalarEnergyPerMass& src, CDM_BIND::ScalarEnergyPerMassData& dst)
 {
   PBProperty::Serialize(src, *dst.mutable_scalarenergypermass());
+}
+
+void PBProperty::Load(const CDM_BIND::ScalarEquivalentWeightPerVolumeData& src, SEScalarEquivalentWeightPerVolume& dst)
+{
+  dst.Clear();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::ScalarEquivalentWeightPerVolumeData& src, SEScalarEquivalentWeightPerVolume& dst)
+{
+  PBProperty::Serialize(src.scalarequivalentweightpervolume(), dst);
+}
+CDM_BIND::ScalarEquivalentWeightPerVolumeData* PBProperty::Unload(const SEScalarEquivalentWeightPerVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::ScalarEquivalentWeightPerVolumeData* dst = new CDM_BIND::ScalarEquivalentWeightPerVolumeData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SEScalarEquivalentWeightPerVolume& src, CDM_BIND::ScalarEquivalentWeightPerVolumeData& dst)
+{
+  PBProperty::Serialize(src, *dst.mutable_scalarequivalentweightpervolume());
 }
 
 void PBProperty::Load(const CDM_BIND::ScalarForceData& src, SEScalarForce& dst)

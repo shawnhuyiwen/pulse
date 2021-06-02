@@ -55,6 +55,12 @@ def serialize_scalar_area_to_bind(src: SEScalarArea, dst: ScalarAreaData):
 def serialize_scalar_area_from_bind(src: ScalarAreaData, dst: SEScalarArea):
     dst.set_value(src.ScalarArea.Value, AreaUnit.from_string(src.ScalarArea.Unit))
 
+def serialize_scalar_equivalent_weight_per_volume_to_bind(src: SEScalarEquivalentWeightPerVolume, dst: ScalarEquivalentWeightPerVolumeData):
+    dst.ScalarEquivalentWeightPerVolume.Value = src.get_value()
+    dst.ScalarEquivalentWeightPerVolume.Unit = src.get_unit().get_string()
+def serialize_scalar_equivalent_weight_per_volume_from_bind(src: ScalarEquivalentWeightPerVolumeData, dst: SEScalarEquivalentWeightPerVolume):
+    dst.set_value(src.ScalarEquivalentWeightPerVolume.Value, EquivalentWeightPerVolumeUnit.from_string(src.ScalarEquivalentWeightPerVolume.Unit))
+
 def serialize_scalar_force_to_bind(src: SEScalarForce, dst: ScalarForceData):
     dst.ScalarForce.Value = src.get_value()
     dst.ScalarForce.Unit = src.get_unit().get_string()

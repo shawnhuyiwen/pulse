@@ -3,6 +3,7 @@
 
 #pragma once
 CDM_BIND_DECL2(PatientAssessment)
+CDM_BIND_DECL2(ArterialBloodGasTest)
 CDM_BIND_DECL2(CompleteBloodCount)
 CDM_BIND_DECL2(ComprehensiveMetabolicPanel)
 CDM_BIND_DECL2(PulmonaryFunctionTest)
@@ -15,6 +16,13 @@ public:
 
   static void Serialize(const CDM_BIND::PatientAssessmentData& src, SEPatientAssessment& dst);
   static void Serialize(const SEPatientAssessment& src, CDM_BIND::PatientAssessmentData& dst);
+
+  static bool SerializeToString(const SEArterialBloodGasTest& src, std::string& output, SerializationFormat m);
+  static bool SerializeToFile(const SEArterialBloodGasTest& src, const std::string& filename);
+  static void Load(const CDM_BIND::ArterialBloodGasTestData& src, SEArterialBloodGasTest& dst);
+  static CDM_BIND::ArterialBloodGasTestData* Unload(const SEArterialBloodGasTest& src);
+  static void Serialize(const CDM_BIND::ArterialBloodGasTestData& src, SEArterialBloodGasTest& dst);
+  static void Serialize(const SEArterialBloodGasTest& src, CDM_BIND::ArterialBloodGasTestData& dst);
 
   static bool SerializeToString(const SECompleteBloodCount& src, std::string& output, SerializationFormat m);
   static bool SerializeToFile(const SECompleteBloodCount& src, const std::string& filename);

@@ -587,6 +587,11 @@ public class DataSetReader
       substance.getMolarMass().setValue(Double.parseDouble(value),unit);
       return true;
     }
+    if(property.equals("Valence"))
+    {
+      substance.getValence().setValue(Double.parseDouble(value),unit);
+      return true;
+    }
     // Diffusion-ish
     if(property.equals("MaximumDiffusionFlux"))
     {

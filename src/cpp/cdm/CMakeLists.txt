@@ -146,6 +146,7 @@ add_library_ex(CommonDataModel
     patient/actions/SETensionPneumothorax.h
     patient/actions/SEUrinate.h
     patient/actions/SEUseInhaler.h
+    patient/assessments/SEArterialBloodGasTest.h
     patient/assessments/SECompleteBloodCount.h
     patient/assessments/SEComprehensiveMetabolicPanel.h
     patient/assessments/SEPatientAssessment.h
@@ -193,6 +194,7 @@ add_library_ex(CommonDataModel
     properties/SEScalarEnergy.h
     properties/SEScalarEnergyPerAmount.h
     properties/SEScalarEnergyPerMass.h
+    properties/SEScalarEquivalentWeightPerVolume.h
     properties/SEScalarForce.h
     properties/SEScalarFrequency.h
     properties/SEScalarHeatCapacitance.h
@@ -486,6 +488,7 @@ add_library_ex(CommonDataModel
     patient/actions/SETensionPneumothorax.cpp
     patient/actions/SEUrinate.cpp
     patient/actions/SEUseInhaler.cpp
+    patient/assessments/SEArterialBloodGasTest.cpp
     patient/assessments/SECompleteBloodCount.cpp
     patient/assessments/SEComprehensiveMetabolicPanel.cpp
     patient/assessments/SEPatientAssessment.cpp
@@ -533,6 +536,7 @@ add_library_ex(CommonDataModel
     properties/SEScalarEnergy.cpp
     properties/SEScalarEnergyPerAmount.cpp
     properties/SEScalarEnergyPerMass.cpp
+    properties/SEScalarEquivalentWeightPerVolume.cpp
     properties/SEScalarForce.cpp
     properties/SEScalarFrequency.cpp
     properties/SEScalarHeatCapacitance.cpp

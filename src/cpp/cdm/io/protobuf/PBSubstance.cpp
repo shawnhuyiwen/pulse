@@ -58,6 +58,8 @@ void PBSubstance::Serialize(const CDM_BIND::SubstanceData& src, SESubstance& dst
     PBProperty::Load(src.density(), dst.GetDensity());
   if (src.has_molarmass())
     PBProperty::Load(src.molarmass(), dst.GetMolarMass());
+  if (src.has_valence())
+    PBProperty::Load(src.valence(), dst.GetValence());
 
   if (src.has_maximumdiffusionflux())
     PBProperty::Load(src.maximumdiffusionflux(), dst.GetMaximumDiffusionFlux());
@@ -117,6 +119,8 @@ void PBSubstance::Serialize(const SESubstance& src, CDM_BIND::SubstanceData& dst
     dst.set_allocated_density(PBProperty::Unload(*src.m_Density));
   if (src.HasMolarMass())
     dst.set_allocated_molarmass(PBProperty::Unload(*src.m_MolarMass));
+  if (src.HasValence())
+    dst.set_allocated_valence(PBProperty::Unload(*src.m_Valence));
 
   if (src.HasMaximumDiffusionFlux())
     dst.set_allocated_maximumdiffusionflux(PBProperty::Unload(*src.m_MaximumDiffusionFlux));

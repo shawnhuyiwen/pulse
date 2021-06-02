@@ -10,6 +10,7 @@
 // Dependent Systems
 #include "system/physiology/SECardiovascularSystem.h"
 // Assessments
+#include "patient/assessments/SEArterialBloodGasTest.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 // CDM
@@ -19,17 +20,16 @@
 #include "compartment/fluid/SELiquidCompartment.h"
 #include "compartment/substances/SELiquidSubstanceQuantity.h"
 #include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarMassPerAmount.h"
 #include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalarTime.h"
+#include "properties/SEScalarEquivalentWeightPerVolume.h"
 #include "properties/SEScalarHeatCapacitancePerMass.h"
+#include "properties/SEScalarMass.h"
+#include "properties/SEScalarMassPerAmount.h"
+#include "properties/SEScalarMassPerVolume.h"
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarTime.h"
+#include "properties/SEScalarVolume.h"
+#include "properties/SEScalarVolumePerTime.h"
 #include "properties/SERunningAverage.h"
 #include "utils/DataTrack.h"
 
@@ -447,6 +447,28 @@ void BloodChemistry::CheckBloodGasLevels()
       m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, false, m_data.GetSimulationTime());
     }
   }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Sets data on the complete blood count object.
+///
+/// \details
+/// Sets data on the complete blood count object to create the [CBC](@ref bloodchemistry-assessments).
+//--------------------------------------------------------------------------------------------------
+bool BloodChemistry::CalculateArterialBloodGasTest(SEArterialBloodGasTest& abg) const
+{
+  abg.Clear();
+  abg.GetBloodPH().SetValue(GetBloodPH());
+  double HCO3_mg_Per_L = m_data.GetSubstances().GetBicarbonate().GetBloodConcentration(MassPerVolumeUnit::mg_Per_L);
+  double HCO3_g_Per_mol = m_data.GetSubstances().GetBicarbonate().GetMolarMass(MassPerAmountUnit::g_Per_mol);
+  double HCO3_valence = m_data.GetSubstances().GetBicarbonate().GetValence().GetValue();
+  std::cout << HCO3_mg_Per_L << " " << HCO3_g_Per_mol << " " << HCO3_valence  << std::endl;
+  abg.GetBicarbonate().SetValue(HCO3_mg_Per_L / HCO3_g_Per_mol * HCO3_valence,EquivalentWeightPerVolumeUnit::mEq_Per_L);
+  abg.GetPartialPressureOfOxygen().SetValue(GetArterialOxygenPressure(PressureUnit::mmHg),PressureUnit::mmHg);
+  abg.GetPartialPressureOfCarbonDioxide().SetValue(GetArterialCarbonDioxidePressure(PressureUnit::mmHg), PressureUnit::mmHg);
+  abg.GetOxygenSaturation().SetValue(GetOxygenSaturation());
+  return true;
 }
 
 //--------------------------------------------------------------------------------------------------

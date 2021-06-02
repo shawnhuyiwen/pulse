@@ -132,6 +132,12 @@ message ScalarEnergyPerMassData
   ScalarData ScalarEnergyPerMass = 1;
 }
 
+/** @brief A scalar for holding equivalent weight(mass / substance atomic weight * valence) per volume (ex. mEq/L) */
+message ScalarEquivalentWeightPerVolumeData 
+{
+  ScalarData ScalarEquivalentWeightPerVolume = 1;
+}
+
 /** @brief A scalar for holding force quantities (ex. N) */
 message ScalarForceData 
 {

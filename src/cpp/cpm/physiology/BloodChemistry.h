@@ -4,6 +4,7 @@
 #pragma once
 #include "PulsePhysiologySystems.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
+class SEArterialBloodGasTest;
 class SECompleteBloodCount;
 class SEComprehensiveMetabolicPanel;
 class SELiquidCompartment;
@@ -38,6 +39,7 @@ public:
   void Process(bool solve_and_transport=true);
   void PostProcess(bool solve_and_transport=true);
 
+  bool CalculateArterialBloodGasTest(SEArterialBloodGasTest& abg) const;
   bool CalculateCompleteBloodCount(SECompleteBloodCount& cbc) const;
   bool CalculateComprehensiveMetabolicPanel(SEComprehensiveMetabolicPanel& cmp) const;
 

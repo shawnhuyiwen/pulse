@@ -347,6 +347,55 @@ public class CommonUnits
    * in place of method that take this enum.
    * Unit Abbreviation Standards: http://www.bipm.org/en/si/
    */
+  public enum EquivalentWeightPerVolumeUnit 
+  {
+    Eq_Per_L("Eq/L"),
+    Eq_Per_mL("Eq/mL"),
+    mEq_Per_L("mEq/L"),
+    mEq_Per_mL("mEq/mL");
+    private String unit;
+    private EquivalentWeightPerVolumeUnit(String unit)
+    {
+      this.unit=unit;
+    }
+    @Override
+    public String toString(){return this.unit;}
+    public static boolean contains(String unit)
+    {
+      for(EquivalentWeightPerVolumeUnit v : EquivalentWeightPerVolumeUnit.values())
+      {
+        if(v.toString().equals(unit))
+          return true;
+      }
+      return false;
+    }
+    /**
+     * Test if unit string provided is a
+     * valid unit abbreviation for this quantity
+     * Does not need to be an enumerated value.
+     * Can be any string of standard unit 
+     * abbreviations that represent this quantity
+     * Unit Abbreviation Standards: http://www.bipm.org/en/si/
+     */
+    public static boolean validUnit(String unit)
+    {
+      if(unit == null || unit.isEmpty())
+        return false;
+      if(EquivalentWeightPerVolumeUnit.contains(unit))
+        return true;
+      return UnitConverter.isOfQuantityType("Eq/L", unit);
+    }
+  }
+  
+  
+  /**
+   * Enumeration of commonly used units for this type
+   * Units are not limited to this enum.
+   * Any method that accepts this enum will have another method
+   * that takes any valid standard unit abbreviation string 
+   * in place of method that take this enum.
+   * Unit Abbreviation Standards: http://www.bipm.org/en/si/
+   */
   public enum ForceUnit 
   {
     N("N"),

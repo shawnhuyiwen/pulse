@@ -44,6 +44,10 @@ public:
   virtual SEScalarMassPerAmount& GetMolarMass();
   virtual double GetMolarMass(const MassPerAmountUnit& unit) const;
 
+  virtual bool HasValence() const;
+  virtual SEScalar& GetValence();
+  virtual double GetValence() const;
+
   // Diffusion-ish
   virtual bool HasMaximumDiffusionFlux() const;
   virtual SEScalarMassPerAreaTime& GetMaximumDiffusionFlux();
@@ -134,6 +138,7 @@ protected:
   eSubstance_State                  m_State;
   SEScalarMassPerVolume*            m_Density;
   SEScalarMassPerAmount*            m_MolarMass;
+  SEScalar*                         m_Valence;
 
   SEScalarMassPerAreaTime*          m_MaximumDiffusionFlux;
   SEScalar*                         m_MichaelisCoefficient;

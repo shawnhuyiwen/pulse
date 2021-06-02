@@ -598,6 +598,8 @@ template class SEScalarQuantity<EnergyUnit>;
 template class SEScalarQuantity<EnergyPerAmountUnit>;
 #include "properties/SEScalarEnergyPerMass.h"
 template class SEScalarQuantity<EnergyPerMassUnit>;
+#include "properties/SEScalarEquivalentWeightPerVolume.h"
+template class SEScalarQuantity<EquivalentWeightPerVolumeUnit>;
 #include "properties/SEScalarForce.h"
 template class SEScalarQuantity<ForceUnit>;
 #include "properties/SEScalarFrequency.h"

@@ -8,6 +8,7 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBUtils.h"
 #include "io/protobuf/PBPatientAssessments.h"
 #include "io/protobuf/PBProperties.h"
+#include "patient/assessments/SEArterialBloodGasTest.h"
 #include "patient/assessments/SECompleteBloodCount.h"
 #include "patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "patient/assessments/SEPulmonaryFunctionTest.h"
@@ -24,6 +25,60 @@ void PBPatientAssessment::Serialize(const CDM_BIND::PatientAssessmentData& src, 
 void PBPatientAssessment::Serialize(const SEPatientAssessment& src, CDM_BIND::PatientAssessmentData& dst)
 {
 
+}
+
+bool PBPatientAssessment::SerializeToString(const SEArterialBloodGasTest& src, std::string& output, SerializationFormat m)
+{
+  CDM_BIND::ArterialBloodGasTestData data;
+  PBPatientAssessment::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
+}
+bool PBPatientAssessment::SerializeToFile(const SEArterialBloodGasTest& src, const std::string& filename)
+{
+  CDM_BIND::ArterialBloodGasTestData data;
+  PBPatientAssessment::Serialize(src, data);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
+}
+
+void PBPatientAssessment::Load(const CDM_BIND::ArterialBloodGasTestData& src, SEArterialBloodGasTest& dst)
+{
+  dst.Clear();
+  PBPatientAssessment::Serialize(src, dst);
+}
+void PBPatientAssessment::Serialize(const CDM_BIND::ArterialBloodGasTestData& src, SEArterialBloodGasTest& dst)
+{
+  PBPatientAssessment::Serialize(src.patientassessment(), dst);
+  if (src.has_bloodph())
+    PBProperty::Load(src.bloodph(), dst.GetBloodPH());
+  if (src.has_bicarbonate())
+    PBProperty::Load(src.bicarbonate(), dst.GetBicarbonate());
+  if (src.has_partialpressureofoxygen())
+    PBProperty::Load(src.partialpressureofoxygen(), dst.GetPartialPressureOfOxygen());
+  if (src.has_partialpressureofcarbondioxide())
+    PBProperty::Load(src.partialpressureofcarbondioxide(), dst.GetPartialPressureOfCarbonDioxide());
+  if (src.has_oxygensaturation())
+    PBProperty::Load(src.oxygensaturation(), dst.GetOxygenSaturation());
+}
+
+CDM_BIND::ArterialBloodGasTestData* PBPatientAssessment::Unload(const SEArterialBloodGasTest& src)
+{
+  CDM_BIND::ArterialBloodGasTestData* dst = new CDM_BIND::ArterialBloodGasTestData();
+  PBPatientAssessment::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAssessment::Serialize(const SEArterialBloodGasTest& src, CDM_BIND::ArterialBloodGasTestData& dst)
+{
+  PBPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
+  if (src.HasBloodPH())
+    dst.set_allocated_bloodph(PBProperty::Unload(*src.m_BloodPH));
+  if (src.HasBicarbonate())
+    dst.set_allocated_bicarbonate(PBProperty::Unload(*src.m_Bicarbonate));
+  if (src.HasPartialPressureOfOxygen())
+    dst.set_allocated_partialpressureofoxygen(PBProperty::Unload(*src.m_PartialPressureOfOxygen));
+  if (src.HasPartialPressureOfCarbonDioxide())
+    dst.set_allocated_partialpressureofcarbondioxide(PBProperty::Unload(*src.m_PartialPressureOfCarbonDioxide));
+  if (src.HasOxygenSaturation())
+    dst.set_allocated_oxygensaturation(PBProperty::Unload(*src.m_OxygenSaturation));
 }
 
 bool PBPatientAssessment::SerializeToString(const SECompleteBloodCount& src, std::string& output, SerializationFormat m)

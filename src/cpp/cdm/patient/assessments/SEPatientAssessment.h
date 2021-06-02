@@ -5,7 +5,8 @@
 
 // Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
 enum class ePatientAssessment_Type {
-  CompleteBloodCount = 0,
+  ArterialBloodGasTest = 0,
+  CompleteBloodCount,
   ComprehensiveMetabolicPanel,
   PulmonaryFunctionTest,
   Urinalysis
