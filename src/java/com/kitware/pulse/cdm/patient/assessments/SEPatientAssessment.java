@@ -40,6 +40,14 @@ public abstract class SEPatientAssessment
   {
     try
     {
+      SEArterialBloodGasTest abg = new SEArterialBloodGasTest();
+      abg.readFile(fileName);
+      return abg;
+    }
+    catch(InvalidProtocolBufferException ex){}
+    
+    try
+    {
       SECompleteBloodCount cbc = new SECompleteBloodCount();
       cbc.readFile(fileName);
       return cbc;
@@ -68,6 +76,8 @@ public abstract class SEPatientAssessment
   }
   public static boolean writeAssement(String fileName, SEPatientAssessment ass) throws InvalidProtocolBufferException
   {
+    if(ass instanceof SEArterialBloodGasTest)
+      return FileUtils.writeFile(fileName, JsonFormat.printer().print(SEArterialBloodGasTest.unload((SEArterialBloodGasTest)ass)));
     if(ass instanceof SECompleteBloodCount)
       return FileUtils.writeFile(fileName, JsonFormat.printer().print(SECompleteBloodCount.unload((SECompleteBloodCount)ass)));
     if(ass instanceof SEComprehensiveMetabolicPanel)

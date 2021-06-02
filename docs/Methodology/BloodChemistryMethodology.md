@@ -10,7 +10,7 @@ The purpose of the Blood Chemistry System is primarily to hold the system-level 
 
 Introduction
 ------------
-The Blood Chemistry System holds the system-level blood substance data that is computed on the compartment level by other systems. The Blood Chemistry system provides a link for systems and users to acquire blood substance data. In other words, if a user or another system needs to know the concentration of a substance in the blood or plasma, that information is obtained from the Blood Chemistry system data. The Blood Chemistry system also processes information about the blood to compute plasma volume, and it computes the Complete Blood Count and Metabolic Panel [assessments](@ref bloodchemistry-assessments).
+The Blood Chemistry System holds the system-level blood substance data that is computed on the compartment level by other systems. The Blood Chemistry system provides a link for systems and users to acquire blood substance data. In other words, if a user or another system needs to know the concentration of a substance in the blood or plasma, that information is obtained from the Blood Chemistry system data. The Blood Chemistry system also processes information about the blood to compute plasma volume, and it computes the Arterial Blood Gas, Complete Blood Count, and Metabolic Panel [assessments](@ref bloodchemistry-assessments).
 
 Although they currently reside in a different class, the blood gas distribution models in the Saturation class are conceptually a part of the Blood Chemistry system. Therefore, models from the Saturation class are described here.
 
@@ -19,7 +19,7 @@ System Design
 =============
 Background and Scope
 --------------------
-The analysis of the blood constituents is important for assessing physiological function. %Respiratory function and acid-base status are assessed by analyzing the distribution of gas species in the blood. Because respiratory, renal, and cardiovascular system functions integrate to maintain acid-base homeostasis, abnormal function in any of those systems can cause an acid-base disturbance. For example, respiratory conditions which lead to an increase in the amount of dissolved CO2 in the blood, such as bronchitis, are associated with respiratory acidosis. Metabolic acidosis often accompanies renal pathologies. In order to investigate the origin of an acid-base disturbance, a provider may order a metabolic panel or a complete blood count. These two assessments, along with a blood gas analysis, provide a detailed account of the composition of a person's blood, and this information is used, along with a physiological model of acid-base balance, to determine the causes of acid-base disturbances. 
+The analysis of the blood constituents is important for assessing physiological function. %Respiratory function and acid-base status are assessed by analyzing the distribution of gas species in the blood. Because respiratory, renal, and cardiovascular system functions integrate to maintain acid-base homeostasis, abnormal function in any of those systems can cause an acid-base disturbance. For example, respiratory conditions which lead to an increase in the amount of dissolved CO2 in the blood, such as bronchitis, are associated with respiratory acidosis. Metabolic acidosis often accompanies renal pathologies. In order to investigate the origin of an acid-base disturbance, a provider may order an arterial blood gas test, metabolic panel, or a complete blood count. These three assessments, provide a detailed account of the composition of a person's blood, and this information is used, along with a physiological model of acid-base balance, to determine the causes of acid-base disturbances. 
 
 There are three models commonly used for acid-base analysis. One model, often called the Boston model, is easy to understand and remember, but it is based entirely on the Henderson-Hasselbalch equation, and bicarbonate equilibrium alone is demonstrably insufficient for predicting carbon dioxide species distribution in human blood @cite wooten2010standard. To compensate, the Boston model includes six bicarbonate-based rules that are used to assess acid-base status at the bedside. Another model extends the Boston approach by introducing a new parameter called "base excess" to quantify the metabolic component of an acid-base disturbance @cite siggaard1977van. The problem with base-excess is that it is not CO2-invariant in vivo due to the ionic shifts between the intravascular and interstitial compartments. However, base excess is CO2-invariant when it is computed from measured plasma pH and PCO2, but at a constant hemoglobin concentration of 50 g/L. A third model, developed by Peter Stewart and thus called the Stewart approach, describes acid-base balance mechanistically through the electrochemical equilibrium dynamics @cite kellum2009stewart.
 
@@ -130,7 +130,7 @@ During Process, the blood concentrations, blood gases, and other blood propertie
 There is no system specific function for Post Process in Blood Chemistry.
 
 ### Assessments
-Assessments are data collected and packaged to resemble a report or analysis that might be ordered by a physician. There are two assessments in the Blood Chemistry system: a Metabolic panel and a complete blood count (CBC). The metabolic panel is modeled after the Chem-14 blood test. Currently, eight of the fourteen Chem-14 components are included in the metabolic panel. 
+Assessments are data collected and packaged to resemble a report or analysis that might be ordered by a physician. There are three assessments in the Blood Chemistry system: an Arterial Blood Gas Test (ABG), a Metabolic panel, and a Complete Blood Count (CBC). The metabolic panel is modeled after the Chem-14 blood test. Currently, eight of the fourteen Chem-14 components are included in the metabolic panel. 
 
 @anchor bloodchemistry-features
 Features and Capabilities
@@ -214,6 +214,11 @@ while respiratory induced acidosis/alkalosis is due to a chance in arterial carb
 @anchor bloodchemistry-assessments
 Assessments
 -----------
+
+### Arterial Blood Gas Test
+
+An arterial blood gas test is a measure of the oxygen and carbon dioxide in the blood and the blood pH. These factors are used to identify poor lung or kidney function. Many conditions can be associated with an imbalance of blood oxygen, carbon dioxide, and pH, such as COPD and asthma. A complete list of the components of this assessment and the results can be found in the [Validation](@ref bloodchemistry-validation-assessments) section.
+
 ### Complete Blood Count
 
 A CBC is a blood test that is used to assess a patient&rsquo;s overall health. It measures several components of the blood including red blood cells, white blood cells, hemoglobin concentration, and hematocrit. When measured, these values can reveal a variety of disorders, including anemia and infection. A complete list of the components of this assessment and the results can be found in the [Validation](@ref bloodchemistry-validation-assessments) section.
@@ -255,16 +260,22 @@ The Blood Chemistry system does not have any conditions or actions directly embe
 @anchor bloodchemistry-validation-assessments
 Validation - Assessments
 ------------------------
-The two assessments in the blood chemistry system provide the outputs associated with a Chem-14 blood panel and a CBC in a single output request from the engine. These assessments were validated with published data, as shown in Table&nbsp;2 and Table&nbsp;3. As with the resting physiology, the references for all values are provided and the results are color coded. 
+There are three asessments in the Blood Chemistry system. Each assessment provides all of the values associated with a specific "blood test" as a single output. The three assessments currently supported are a metabolic panel (Chem-14), an arterial blood gas test, and a complete blood count. These assessments were validated with published data, as shown in Table&nbsp;2, Table&nbsp;3, and Table&nbsp;4. As with the resting physiology, the references for all values are provided and the results are color coded. 
 
 <center>
 *Table 2. Results of the metabolic panel as compiled during the healthy resting physiology.*
 </center>
 
+@insert ./test_results/tables/ArterialBloodGasTestValidationTable.md
+
+<center>
+*Table 3. Results of the metabolic panel as compiled during the healthy resting physiology.*
+</center>
+
 @insert ./test_results/tables/CompleteMetabolicPanelValidationTable.md
 
 <center>
-*Table 3. Results of the complete blood count as compiled during the healthy resting physiology.*
+*Table 4. Results of the complete blood count as compiled during the healthy resting physiology.*
 </center>
 
 @insert ./test_results/tables/CompleteBloodCountValidationTable.md
@@ -281,10 +292,10 @@ As mentioned above, the Blood Chemistry system serves the primary purpose of sto
 *Figure 4. The simplified Four Compartment test uses only Pulmonary, Arteries, Capillaries, and Veins to hone in on the functionality in the Blood Chemistry system.*
 </center><br>
 
-Pressures, volumes, and substances were initialized to good values (see Table 4 below), and then the simplified Four Compartment system was run as the engine would run the normal, complete model using the Preprocess, Process, Postprocess paradigm. In the Preprocess step, oxygen is removed and carbon dioxide is added in the Capillaries to simulate metabolism while oxygen is added and carbon dioxide is removed in the Pulmonary compartment to represent respiration. If a tissue compartment was present, diffusion could also occur in this stage. In the Process step, circuit calculation and substance transport are done. Then, the Postprocess step moves the "Next" values to "Current". For more information about this paradigm, see @ref CircuitMethodology.
+Pressures, volumes, and substances were initialized to good values (see Table 5 below), and then the simplified Four Compartment system was run as the engine would run the normal, complete model using the Preprocess, Process, Postprocess paradigm. In the Preprocess step, oxygen is removed and carbon dioxide is added in the Capillaries to simulate metabolism while oxygen is added and carbon dioxide is removed in the Pulmonary compartment to represent respiration. If a tissue compartment was present, diffusion could also occur in this stage. In the Process step, circuit calculation and substance transport are done. Then, the Postprocess step moves the "Next" values to "Current". For more information about this paradigm, see @ref CircuitMethodology.
 
 <center>
-*Table 4. Initial values for the Four Compartment test. Variables with an asterisk indicate that the values were pulled from a simulation run to a stable point.*
+*Table 5. Initial values for the Four Compartment test. Variables with an asterisk indicate that the values were pulled from a simulation run to a stable point.*
 | Variable | Initial Value |
 | :---------------- | :---------- |
 | Veins Pressure | 4 mmHg @cite Leeuwen2015laboratory |
@@ -320,7 +331,7 @@ Pressures, volumes, and substances were initialized to good values (see Table 4 
 
 Because the Four Compartment test is initialized to good values, and because of the design of the engine and Blood Chemistry system, output values should be within physiological ranges. Indeed, the outputs shown below reflect the proper function of the Blood Chemistry system.
 <center>
-*Table 5. Stable results of the Four Compartment test.*
+*Table 6. Stable results of the Four Compartment test.*
 Variable			|	Four Compartment Test Ending Value	|	Valid Value	|
 ------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|
 Arteries HCO3			|	0.0158445	|<span class="success">	[0.134, 0.159] g/dL @cite valtin1995renal	</span>|
@@ -369,7 +380,7 @@ Appendices
 Acronyms and Symbols
 --------
 <center>
-*Table 6. List of acronyms and symbols.*
+*Table 7. List of acronyms and symbols.*
 | Symbol or Acronym | Description |
 | :---------------- | :---------- |
 | *A<sup>-</sup>* | The sum of all weak anions that are the conjugate base of all non-volatile weak acids |

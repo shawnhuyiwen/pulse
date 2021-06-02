@@ -280,7 +280,10 @@ public abstract class ValidationTool
               String cellValue = cell.getStringCellValue();
               if(cellValue==null||cellValue.isEmpty())
                 continue;// No property, skip it
-              cellValue = row.getCell(1).getStringCellValue();
+              //if(cellValue.compareTo("Color")==0)
+              //  System.out.println("Here!");
+              if (row.getCell(1) != null)
+                cellValue = row.getCell(1).getStringCellValue();
               if(cellValue!=null&&cellValue.equals("Units"))
                 continue;// Header
 
@@ -292,7 +295,7 @@ public abstract class ValidationTool
                 cellValue = null;
                 cell = row.getCell(c);
                 if(cell==null)
-                  continue;       
+                  continue;
                 switch(cell.getCellType())
                 {
                   case NUMERIC:
@@ -543,8 +546,8 @@ public abstract class ValidationTool
   
   protected boolean buildExpectedHeader(ValidationRow vRow)
   {
-    if(vRow.name.startsWith("Bladder-Lactate-Concentration"))
-     Log.info("Here");
+    //if(vRow.name.startsWith("Bladder-Lactate-Concentration"))
+    // Log.info("Here");
     if(vRow.name.contains("*"))
     {
       vRow.error = warning+"Not Validating"+endSpan;
@@ -976,8 +979,8 @@ public abstract class ValidationTool
   
   protected boolean getResult(ValidationRow vRow)
   {
-    if(vRow.name.startsWith("Bladder-Lactate-Concentration"))
-      Log.info("Here");
+    //if(vRow.name.startsWith("Bladder-Lactate-Concentration"))
+    //  Log.info("Here");
     
     if(vRow.dType == DataType.MinPerIdealWeight || vRow.dType == DataType.MaxPerIdealWeight || vRow.dType == DataType.MeanPerIdealWeight|| 
        vRow.dType == DataType.WaveformMinPerIdealWeight || vRow.dType == DataType.WaveformMaxPerIdealWeight)
