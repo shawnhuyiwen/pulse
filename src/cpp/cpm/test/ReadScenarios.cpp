@@ -54,10 +54,11 @@ void PulseEngineTest::ReadScenarios(const std::string& rptDirectory)
     {
       if (it->find("json") != std::string::npos)
       {
-        if (it->find("PFT@") != std::string::npos ||
-          it->find("CBC@") != std::string::npos ||
-          it->find("MP@") != std::string::npos ||
-          it->find("Urinalysis@") != std::string::npos)// Ignore PFT, CBC, UPanel  and MP files
+        if (it->find("ABG@") != std::string::npos ||
+            it->find("PFT@") != std::string::npos ||
+            it->find("CBC@") != std::string::npos ||
+            it->find("MP@") != std::string::npos ||
+            it->find("Urinalysis@") != std::string::npos)// Ignore PFT, CBC, UPanel  and MP files
           continue;// TODO should actually peek the file and ensure it starts with a <scenario> tag
 
         pTimer.Start("Case");
