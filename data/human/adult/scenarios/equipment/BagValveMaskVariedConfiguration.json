@@ -101,8 +101,6 @@
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
 
   { "PatientAction": { "Intubation": { "Type": "Tracheal" } } },
-  
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
 
   {
     "EquipmentAction": {
@@ -115,6 +113,8 @@
       }
     }
   },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
   
   {
     "EquipmentAction": {
@@ -135,25 +135,60 @@
         "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
           "Configuration":
           {
-            "Connection": "Off"
+            "Connection": "Tube",
+            "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
           }
       }
     }
   },
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } },
+  {
+    "EquipmentAction": {
+      "BagValveMaskSqueeze": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {} } },
+          "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
+          "ExpiratoryPeriod": { "ScalarTime": { "Value": 3.0, "Unit": "s" } }, 
+          "InspiratoryPeriod": { "ScalarTime": { "Value": 2.0, "Unit": "s" } }
+      }
+    }
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 20.0, "Unit": "s" } } } },
   
   {
     "EquipmentAction": {
       "BagValveMaskConfiguration": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
+          "Configuration":
+          {
+            "Connection": "Tube",
+            "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } }
+          }
+      }
+    }
+  },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskAutomated": {
         "BagValveMaskAction": { "EquipmentAction": { "Action": {
-          "Comment": "Attach the bag valve mask with all defulats that will set flow to give TV ~ 7 mL/kg(ideal)" }}},
+          "Comment": "Run the bag valve mask with all defaults, giving a squeeze pressure to achieve TV ~ 7 mL/kg(ideal)" }}}
+      }
+    }
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskConfiguration": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
           "Configuration":
           {
             "Connection": "Tube",
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "FractionInspiredGas": [
-              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } }
+              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.52, "Unit": "" } } }
             ]
           }
       }
@@ -164,10 +199,10 @@
     "EquipmentAction": {
       "BagValveMaskAutomated": {
         "BagValveMaskAction": { "EquipmentAction": { "Action": {
-          "Comment": "Attach the bag valve mask with a squeeze pressure to give TV ~ 7 mL/kg(ideal)" }}},
-          "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
-          "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
-          "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } }
+          "Comment": "Change the settings" }}},
+          "BreathFrequency": { "ScalarFrequency": { "Value": 20, "Unit": "1/min" } },
+          "InspiratoryExpiratoryRatio": { "Value": 1.0, "Unit": "" },
+          "SqueezePressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } }
       }
     }
   },
@@ -181,7 +216,21 @@
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
   
   { "EquipmentAction": { "BagValveMaskInstantaneous": { "BagValveMaskAction": { "EquipmentAction": { "Action": {} } },
-     "Pressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } } } }
+     "Pressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } } } }
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskConfiguration": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
+          "Configuration":
+          {
+            "Connection": "Off"
+          }
+      }
+    }
   },
   
   { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } }

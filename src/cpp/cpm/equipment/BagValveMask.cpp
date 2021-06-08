@@ -363,7 +363,18 @@ void BagValveMask::PreProcess()
   m_ExpiratoryPeriod = nullptr;
   m_InspiratoryPeriod = nullptr;
 
-  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskAutomated())
+  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+  {
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasSqueezePressure())
+      m_SqueezePressure = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetSqueezePressure();
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasSqueezeVolume())
+      m_SqueezeVolume = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetSqueezeVolume();
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasExpiratoryPeriod())
+      m_ExpiratoryPeriod = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetExpiratoryPeriod();
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasExpiratoryPeriod())
+      m_InspiratoryPeriod = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetInspiratoryPeriod();
+  }
+  else if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskAutomated())
   {
     if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasBreathFrequency())
       m_BreathFrequency = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetBreathFrequency();
@@ -374,15 +385,19 @@ void BagValveMask::PreProcess()
     if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasSqueezeVolume())
       m_SqueezeVolume = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetSqueezeVolume();
   }
-  else if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
-  {
-    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasSqueezePressure())
-      m_SqueezePressure = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetSqueezePressure();
-    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasSqueezeVolume())
-      m_SqueezeVolume = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetSqueezeVolume();
-  }
   else
+  {
+    //Hold this pressure until an action is called or the BVM is turned off
+    m_SqueezePressure_cmH2O = 0.0;
+    if (HasValvePositiveEndExpiredPressure())
+    {
+      m_SqueezePressure_cmH2O = GetValvePositiveEndExpiredPressure(PressureUnit::cmH2O);
+    }
+    m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
+
+    SetSqeezeDriver();
     return;
+  }
 
   CalculateInspiration();
   CalculateExpiration();
