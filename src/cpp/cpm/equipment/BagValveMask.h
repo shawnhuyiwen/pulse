@@ -61,6 +61,13 @@ protected:
   double                m_SqueezePressure_cmH2O;
 
   // Stateless member variable (Set in SetUp())
+  SEScalarFrequency*    m_BreathFrequency;
+  SEScalar*             m_InspiratoryExpiratoryRatio;
+  SEScalarPressure*     m_SqueezePressure;
+  SEScalarVolume*       m_SqueezeVolume;
+  SEScalarTime*         m_ExpiratoryPeriod;
+  SEScalarTime*         m_InspiratoryPeriod;
+
   SEGasCompartment*     m_Environment;
   SEGasCompartment*     m_Reservoir;
   SELiquidCompartment*  m_ReservoirAerosol;

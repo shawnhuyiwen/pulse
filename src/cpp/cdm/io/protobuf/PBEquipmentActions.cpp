@@ -29,6 +29,7 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBBagValveMask.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAction.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
 #include "io/protobuf/PBInhaler.h"
@@ -508,12 +509,12 @@ void PBEquipmentAction::Copy(const SEBagValveMaskConfiguration& src, SEBagValveM
   PBEquipmentAction::Serialize(data, dst, subMgr);
 }
 
-void PBEquipmentAction::Load(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst, const SESubstanceManager& subMgr)
+void PBEquipmentAction::Load(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst)
 {
   dst.Clear();
-  PBEquipmentAction::Serialize(src, dst, subMgr);
+  PBEquipmentAction::Serialize(src, dst);
 }
-void PBEquipmentAction::Serialize(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst, const SESubstanceManager& subMgr)
+void PBEquipmentAction::Serialize(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst)
 {
   PBEquipmentAction::Serialize(src.bagvalvemaskaction(), dst);
   if (src.has_flow())
@@ -535,20 +536,20 @@ void PBEquipmentAction::Serialize(const SEBagValveMaskInstantaneous& src, CDM_BI
   else if (src.HasPressure())
     dst.set_allocated_pressure(PBProperty::Unload(*src.m_Pressure));
 }
-void PBEquipmentAction::Copy(const SEBagValveMaskInstantaneous& src, SEBagValveMaskInstantaneous& dst, const SESubstanceManager& subMgr)
+void PBEquipmentAction::Copy(const SEBagValveMaskInstantaneous& src, SEBagValveMaskInstantaneous& dst)
 {
   dst.Clear();
   CDM_BIND::BagValveMaskInstantaneousData data;
   PBEquipmentAction::Serialize(src, data);
-  PBEquipmentAction::Serialize(data, dst, subMgr);
+  PBEquipmentAction::Serialize(data, dst);
 }
 
-void PBEquipmentAction::Load(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst, const SESubstanceManager& subMgr)
+void PBEquipmentAction::Load(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst)
 {
   dst.Clear();
-  PBEquipmentAction::Serialize(src, dst, subMgr);
+  PBEquipmentAction::Serialize(src, dst);
 }
-void PBEquipmentAction::Serialize(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst, const SESubstanceManager& subMgr)
+void PBEquipmentAction::Serialize(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst)
 {
   PBEquipmentAction::Serialize(src.bagvalvemaskaction(), dst);
   if (src.has_squeezepressure())
@@ -578,12 +579,56 @@ void PBEquipmentAction::Serialize(const SEBagValveMaskSqueeze& src, CDM_BIND::Ba
   if (src.HasInspiratoryPeriod())
     dst.set_allocated_inspiratoryperiod(PBProperty::Unload(*src.m_InspiratoryPeriod));
 }
-void PBEquipmentAction::Copy(const SEBagValveMaskSqueeze& src, SEBagValveMaskSqueeze& dst, const SESubstanceManager& subMgr)
+void PBEquipmentAction::Copy(const SEBagValveMaskSqueeze& src, SEBagValveMaskSqueeze& dst)
 {
   dst.Clear();
   CDM_BIND::BagValveMaskSqueezeData data;
   PBEquipmentAction::Serialize(src, data);
-  PBEquipmentAction::Serialize(data, dst, subMgr);
+  PBEquipmentAction::Serialize(data, dst);
+}
+
+void PBEquipmentAction::Load(const CDM_BIND::BagValveMaskAutomatedData& src, SEBagValveMaskAutomated& dst)
+{
+  dst.Clear();
+  PBEquipmentAction::Serialize(src, dst);
+}
+void PBEquipmentAction::Serialize(const CDM_BIND::BagValveMaskAutomatedData& src, SEBagValveMaskAutomated& dst)
+{
+  PBEquipmentAction::Serialize(src.bagvalvemaskaction(), dst);
+  if (src.has_breathfrequency())
+    PBProperty::Load(src.breathfrequency(), dst.GetBreathFrequency());
+  if (src.has_inspiratoryexpiratoryratio())
+    PBProperty::Load(src.inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
+  if (src.has_squeezepressure())
+    PBProperty::Load(src.squeezepressure(), dst.GetSqueezePressure());
+  else if (src.has_squeezevolume())
+    PBProperty::Load(src.squeezevolume(), dst.GetSqueezeVolume());
+}
+CDM_BIND::BagValveMaskAutomatedData* PBEquipmentAction::Unload(const SEBagValveMaskAutomated& src)
+{
+  CDM_BIND::BagValveMaskAutomatedData* dst = new CDM_BIND::BagValveMaskAutomatedData();
+  PBEquipmentAction::Serialize(src, *dst);
+  return dst;
+}
+void PBEquipmentAction::Serialize(const SEBagValveMaskAutomated& src, CDM_BIND::BagValveMaskAutomatedData& dst)
+{
+  PBEquipmentAction::Serialize(src, *dst.mutable_bagvalvemaskaction());
+
+  if (src.HasBreathFrequency())
+    dst.set_allocated_breathfrequency(PBProperty::Unload(*src.m_BreathFrequency));
+  if (src.HasInspiratoryExpiratoryRatio())
+    dst.set_allocated_inspiratoryexpiratoryratio(PBProperty::Unload(*src.m_InspiratoryExpiratoryRatio));
+  if (src.HasSqueezePressure())
+    dst.set_allocated_squeezepressure(PBProperty::Unload(*src.m_SqueezePressure));
+  else if (src.HasSqueezeVolume())
+    dst.set_allocated_squeezevolume(PBProperty::Unload(*src.m_SqueezeVolume));
+}
+void PBEquipmentAction::Copy(const SEBagValveMaskAutomated& src, SEBagValveMaskAutomated& dst)
+{
+  dst.Clear();
+  CDM_BIND::BagValveMaskAutomatedData data;
+  PBEquipmentAction::Serialize(src, data);
+  PBEquipmentAction::Serialize(data, dst);
 }
 
 /////////////
@@ -774,16 +819,22 @@ SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionDat
     PBEquipmentAction::Load(any.bagvalvemaskconfiguration(), *a, subMgr);
     return a;
   }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kBagValveMaskAutomated:
+  {
+    SEBagValveMaskAutomated* a = new SEBagValveMaskAutomated(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.bagvalvemaskautomated(), *a);
+    return a;
+  }
   case CDM_BIND::AnyEquipmentActionData::ActionCase::kBagValveMaskInstantaneous:
   {
     SEBagValveMaskInstantaneous* a = new SEBagValveMaskInstantaneous(subMgr.GetLogger());
-    PBEquipmentAction::Load(any.bagvalvemaskinstantaneous(), *a, subMgr);
+    PBEquipmentAction::Load(any.bagvalvemaskinstantaneous(), *a);
     return a;
   }
   case CDM_BIND::AnyEquipmentActionData::ActionCase::kBagValveMaskSqueeze:
   {
     SEBagValveMaskSqueeze* a = new SEBagValveMaskSqueeze(subMgr.GetLogger());
-    PBEquipmentAction::Load(any.bagvalvemasksqueeze(), *a, subMgr);
+    PBEquipmentAction::Load(any.bagvalvemasksqueeze(), *a);
     return a;
   }
   case CDM_BIND::AnyEquipmentActionData::ActionCase::kInhalerConfiguration:

@@ -283,6 +283,7 @@ add_library_ex(CommonDataModel
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h
     system/equipment/bag_valve_mask/SEBagValveMask.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskAction.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h
@@ -632,6 +633,7 @@ add_library_ex(CommonDataModel
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.cpp
     system/equipment/bag_valve_mask/SEBagValveMask.cpp
     system/equipment/bag_valve_mask/actions/SEBagValveMaskAction.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.cpp
     system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.cpp
     system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.cpp
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cpp

@@ -25,23 +25,14 @@ void PBBagValveMask::Serialize(const CDM_BIND::BagValveMaskData& src, SEBagValve
 {
   dst.m_Connection = (eBagValveMask_Connection)src.connection();
 
-  if (src.has_breathfrequency())
-    PBProperty::Load(src.breathfrequency(), dst.GetBreathFrequency());
-  if (src.has_inspiratoryexpiratoryratio())
-    PBProperty::Load(src.inspiratoryexpiratoryratio(), dst.GetInspiratoryExpiratoryRatio());
-  if (src.has_squeezepressure())
-    PBProperty::Load(src.squeezepressure(), dst.GetSqueezePressure());
-  if (src.has_squeezevolume())
-    PBProperty::Load(src.squeezevolume(), dst.GetSqueezeVolume());
-  if (src.has_valvepositiveendexpiredpressure())
-    PBProperty::Load(src.valvepositiveendexpiredpressure(), dst.GetValvePositiveEndExpiredPressure());
-
   if (src.has_bagresistance())
     PBProperty::Load(src.bagresistance(), dst.GetBagResistance());
   if (src.has_filterresistance())
     PBProperty::Load(src.filterresistance(), dst.GetFilterResistance());
   if (src.has_filtervolume())
     PBProperty::Load(src.filtervolume(), dst.GetFilterVolume());
+  if (src.has_valvepositiveendexpiredpressure())
+    PBProperty::Load(src.valvepositiveendexpiredpressure(), dst.GetValvePositiveEndExpiredPressure());
   if (src.has_valveresistance())
     PBProperty::Load(src.valveresistance(), dst.GetValveResistance());
 
@@ -91,23 +82,14 @@ void PBBagValveMask::Serialize(const SEBagValveMask& src, CDM_BIND::BagValveMask
 {
   dst.set_connection((CDM_BIND::BagValveMaskData::eConnection)src.m_Connection);
 
-  if (src.HasBreathFrequency())
-    dst.set_allocated_breathfrequency(PBProperty::Unload(*src.m_BreathFrequency));
-  if (src.HasInspiratoryExpiratoryRatio())
-    dst.set_allocated_inspiratoryexpiratoryratio(PBProperty::Unload(*src.m_InspiratoryExpiratoryRatio));
-  if (src.HasSqueezePressure())
-    dst.set_allocated_squeezepressure(PBProperty::Unload(*src.m_SqueezePressure));
-  if (src.HasSqueezeVolume())
-    dst.set_allocated_squeezevolume(PBProperty::Unload(*src.m_SqueezeVolume));
-  if (src.HasValvePositiveEndExpiredPressure())
-    dst.set_allocated_valvepositiveendexpiredpressure(PBProperty::Unload(*src.m_ValvePositiveEndExpiredPressure));
-
   if (src.HasBagResistance())
     dst.set_allocated_bagresistance(PBProperty::Unload(*src.m_BagResistance));
   if (src.HasFilterResistance())
     dst.set_allocated_filterresistance(PBProperty::Unload(*src.m_FilterResistance));
   if (src.HasFilterVolume())
     dst.set_allocated_filtervolume(PBProperty::Unload(*src.m_FilterVolume));
+  if (src.HasValvePositiveEndExpiredPressure())
+    dst.set_allocated_valvepositiveendexpiredpressure(PBProperty::Unload(*src.m_ValvePositiveEndExpiredPressure));
   if (src.HasValveResistance())
     dst.set_allocated_valveresistance(PBProperty::Unload(*src.m_ValveResistance));
 

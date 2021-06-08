@@ -14,7 +14,7 @@ public:
   virtual ~SEBagValveMaskInstantaneous();
 
   virtual void Clear();
-  virtual void Copy(const SEBagValveMaskInstantaneous& src, const SESubstanceManager& subMgr, bool preserveState = false);
+  virtual void Copy(const SEBagValveMaskInstantaneous& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

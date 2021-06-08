@@ -25,6 +25,17 @@ message BagValveMaskConfigurationData
 }
 
 /** @brief Specify a single squeeze cycle of the bag. Repeat as needed. Newly added actions will override a previous unfinished squeeze cycle. */
+message BagValveMaskAutomatedData
+{
+  BagValveMaskActionData    BagValveMaskAction          = 1;
+  
+  ScalarFrequencyData       BreathFrequency             = 2;/**<< @brief Bag squeeze rate, translates to respiration rate. */
+  ScalarData                InspiratoryExpiratoryRatio  = 3;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
+  ScalarPressureData        SqueezePressure             = 4;/**<< @brief Extrinsic pressure above atmosphere at the end of inhalation. */
+  ScalarVolumeData          SqueezeVolume               = 5;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
+}
+
+/** @brief Specify a single squeeze cycle of the bag. Repeat as needed. Newly added actions will override a previous unfinished squeeze cycle. */
 message BagValveMaskSqueezeData
 {
   BagValveMaskActionData    BagValveMaskAction          = 1;

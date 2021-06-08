@@ -29,8 +29,9 @@ message AnyEquipmentActionData
     AnesthesiaMachineOxygenTankPressureLossData             AnesthesiaMachineOxygenTankPressureLoss      = 13;
     
     BagValveMaskConfigurationData                           BagValveMaskConfiguration                    = 301;
-    BagValveMaskInstantaneousData                           BagValveMaskInstantaneous                    = 302;
-    BagValveMaskSqueezeData                                 BagValveMaskSqueeze                          = 303;
+    BagValveMaskAutomatedData                               BagValveMaskAutomated                        = 302;
+    BagValveMaskInstantaneousData                           BagValveMaskInstantaneous                    = 303;
+    BagValveMaskSqueezeData                                 BagValveMaskSqueeze                          = 304;
     
     InhalerConfigurationData                                InhalerConfiguration                         = 101;
     

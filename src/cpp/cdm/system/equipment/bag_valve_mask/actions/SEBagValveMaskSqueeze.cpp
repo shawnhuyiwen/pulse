@@ -41,9 +41,9 @@ void SEBagValveMaskSqueeze::Clear()
   INVALIDATE_PROPERTY(m_InspiratoryPeriod);
 }
 
-void SEBagValveMaskSqueeze::Copy(const SEBagValveMaskSqueeze& src, const SESubstanceManager& subMgr, bool preserveState)
+void SEBagValveMaskSqueeze::Copy(const SEBagValveMaskSqueeze& src)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this, subMgr);
+  PBEquipmentAction::Copy(src, *this);
 }
 
 bool SEBagValveMaskSqueeze::IsValid() const

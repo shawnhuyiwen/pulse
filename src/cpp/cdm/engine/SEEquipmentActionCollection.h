@@ -22,6 +22,7 @@ class SEAnesthesiaMachineYPieceDisconnect;
 class SEBagValveMask;
 class SEBagValveMaskAction;
 class SEBagValveMaskConfiguration;
+class SEBagValveMaskAutomated;
 class SEBagValveMaskInstantaneous;
 class SEBagValveMaskSqueeze;
 class SEInhaler;
@@ -129,6 +130,11 @@ public:
   void RemoveAnesthesiaMachineYPieceDisconnect();
 
   // ACTIONS
+  bool HasBagValveMaskAutomated() const;
+  SEBagValveMaskAutomated& GetBagValveMaskAutomated();
+  const SEBagValveMaskAutomated* GetBagValveMaskAutomated() const;
+  void RemoveBagValveMaskAutomated();
+
   bool HasBagValveMaskInstantaneous() const;
   SEBagValveMaskInstantaneous& GetBagValveMaskInstantaneous();
   const SEBagValveMaskInstantaneous* GetBagValveMaskInstantaneous() const;
@@ -165,6 +171,7 @@ protected:
   SEAnesthesiaMachineYPieceDisconnect*                         m_AnesthesiaMachineYPieceDisconnect;
 
   SEBagValveMaskConfiguration*                                 m_BagValveMaskConfiguration;
+  SEBagValveMaskAutomated*                                     m_BagValveMaskAutomated;
   SEBagValveMaskInstantaneous*                                 m_BagValveMaskInstantaneous;
   SEBagValveMaskSqueeze*                                       m_BagValveMaskSqueeze;
 

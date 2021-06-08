@@ -104,15 +104,24 @@
     "EquipmentAction": {
       "BagValveMaskConfiguration": {
         "BagValveMaskAction": { "EquipmentAction": { "Action": {
-          "Comment": "Attach the bag valve mask with a squeeze pressure to give TV ~ 7 mL/kg(ideal)" }}},
+          "Comment": "Attach the bag valve mask with a mask connection" }}},
           "Configuration":
           {
             "Connection": "Mask",
-            "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
-            "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
-            "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
           }
+      }
+    }
+  },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskAutomated": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {
+          "Comment": "Automate a squeeze pressure to give TV ~ 7 mL/kg(ideal)" }}},
+          "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
+          "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
+          "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } }
       }
     }
   },
@@ -129,11 +138,20 @@
           "Configuration":
           {
             "Connection": "Tube",
-            "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
-            "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
-            "SqueezeVolume": { "ScalarVolume": { "Value": 0.540, "Unit": "L" } },
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
           }
+      }
+    }
+  },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskAutomated": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {
+          "Comment": "Automate the squeezings." }}},
+          "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
+          "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
+          "SqueezeVolume": { "ScalarVolume": { "Value": 0.540, "Unit": "L" } }
       }
     }
   },
@@ -148,9 +166,6 @@
           "Configuration":
           {
             "Connection": "Tube",
-            "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
-            "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
-            "SqueezeVolume": { "ScalarVolume": { "Value": 0.540, "Unit": "L" } },
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.28, "Unit": "" } } }

@@ -11,6 +11,7 @@
 #include "PulseConfiguration.h"
 #include "patient/actions/SEIntubation.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "engine/SEActionManager.h"
@@ -299,56 +300,90 @@ void BagValveMask::SetConnection()
 //--------------------------------------------------------------------------------------------------
 void BagValveMask::PreProcess()
 {
-  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskInstantaneous())
+  if (GetConnection() == eBagValveMask_Connection::Off && !m_data.GetActions().GetEquipmentActions().HasBagValveMaskConfiguration())
   {
-    if (GetConnection() == eBagValveMask_Connection::Off)
+    if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskAutomated())
+    {
+      /// \error Error: The Bag Valve Mask must be connected (i.e., connection type configured) to run the Squeeze action.
+      Error("The Bag Valve Mask must be connected (i.e., connection type configured) to run the automated action.");
+      m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskAutomated();
+    }
+    if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskInstantaneous())
     {
       /// \error Error: The Bag Valve Mask must be connected (i.e., connection type configured) to run the Instantaneous action.
       Error("The Bag Valve Mask must be connected (i.e., connection type configured) to run the Instantaneous action.");
-      
       m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskInstantaneous();
     }
-    else
-    {
-      if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasPressure())
-      {
-        m_SqueezePressure_cmH2O = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetPressure(PressureUnit::cmH2O);
-      }
-      else if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasFlow())
-      {
-        m_SqueezeFlow_L_Per_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetFlow(VolumePerTimeUnit::L_Per_s);
-      }
-      SetSqeezeDriver();
-      return;
-    }
-  }
-
-  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
-  {
-    if (GetConnection() == eBagValveMask_Connection::Off)
+    if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
     {
       /// \error Error: The Bag Valve Mask must be connected (i.e., connection type configured) to run the Squeeze action.
       Error("The Bag Valve Mask must be connected (i.e., connection type configured) to run the Squeeze action.");
-
       m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskSqueeze();
     }
+    return;
   }
 
   if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskConfiguration())
   {
-    SEBagValveMask::Clear();
     ProcessConfiguration(m_data.GetActions().GetEquipmentActions().GetBagValveMaskConfiguration(), m_data.GetSubstances());
     m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskConfiguration();
+
+    SetConnection();
   }
-  //Do nothing if the BVM is off and not initialized
+  // BVM is being turned off, remove any bvm actions and stop our preprocess
   if (GetConnection() == eBagValveMask_Connection::Off)
   {
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
+
+    m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskAutomated();
+    m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskInstantaneous();
+    m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskSqueeze();
     return;
   }
 
-  SetConnection();
+  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskInstantaneous())
+  {
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasPressure())
+    {
+      m_SqueezePressure_cmH2O = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetPressure(PressureUnit::cmH2O);
+    }
+    else if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().HasFlow())
+    {
+      m_SqueezeFlow_L_Per_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskInstantaneous().GetFlow(VolumePerTimeUnit::L_Per_s);
+    }
+    SetSqeezeDriver();
+    return;
+  }
+
+  m_BreathFrequency = nullptr;
+  m_InspiratoryExpiratoryRatio = nullptr;
+  m_SqueezePressure = nullptr;
+  m_SqueezeVolume = nullptr;
+  m_ExpiratoryPeriod = nullptr;
+  m_InspiratoryPeriod = nullptr;
+
+  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskAutomated())
+  {
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasBreathFrequency())
+      m_BreathFrequency = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetBreathFrequency();
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasInspiratoryExpiratoryRatio())
+      m_InspiratoryExpiratoryRatio = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetInspiratoryExpiratoryRatio();
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasSqueezePressure())
+      m_SqueezePressure = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetSqueezePressure();
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasSqueezeVolume())
+      m_SqueezeVolume = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetSqueezeVolume();
+  }
+  else if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+  {
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasSqueezePressure())
+      m_SqueezePressure = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetSqueezePressure();
+    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().HasSqueezeVolume())
+      m_SqueezeVolume = &m_data.GetActions().GetEquipmentActions().GetBagValveMaskAutomated().GetSqueezeVolume();
+  }
+  else
+    return;
+
   CalculateInspiration();
   CalculateExpiration();
   SetSqeezeDriver();
@@ -446,27 +481,24 @@ void BagValveMask::CalculateInspiration()
   // Check trigger
   // Give defaults, if not user defined
   double breathFrequency_Per_s = 12.0 / 60.0; //12 bpm
-  if (HasBreathFrequency())
+  if (m_BreathFrequency != nullptr)
   {
-    breathFrequency_Per_s = GetBreathFrequency(FrequencyUnit::Per_s);
+    breathFrequency_Per_s = m_BreathFrequency->GetValue(FrequencyUnit::Per_s);
   }
 
   double totalBreathTime_s = 1.0 / breathFrequency_Per_s;
 
   double inspiratoryExpiratoryRatio = 0.5; //Default
-  if (HasInspiratoryExpiratoryRatio())
+  if (m_InspiratoryExpiratoryRatio != nullptr)
   {
-    inspiratoryExpiratoryRatio = GetInspiratoryExpiratoryRatio().GetValue();
+    inspiratoryExpiratoryRatio = m_InspiratoryExpiratoryRatio->GetValue();
   }
 
   double inspirationPeriod_s = inspiratoryExpiratoryRatio * totalBreathTime_s / (1.0 + inspiratoryExpiratoryRatio);
 
-  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+  if (m_InspiratoryPeriod != nullptr)
   {
-    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasInspiratoryPeriod())
-    {
-      inspirationPeriod_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetInspiratoryPeriod(TimeUnit::s);
-    }
+    inspirationPeriod_s = m_InspiratoryPeriod->GetValue(TimeUnit::s);
   }
 
   if (m_CurrentPeriodTime_s >= inspirationPeriod_s)
@@ -476,14 +508,14 @@ void BagValveMask::CalculateInspiration()
   }
 
   // Calculate source - constant pressure or flow during inspiration phase
-  if (HasSqueezePressure())
+  if (m_SqueezePressure != nullptr)
   {
-    m_SqueezePressure_cmH2O = GetSqueezePressure(PressureUnit::cmH2O);
+    m_SqueezePressure_cmH2O = m_SqueezePressure->GetValue(PressureUnit::cmH2O);
     m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
   }
-  else if (HasSqueezeVolume())
+  else if (m_SqueezeVolume != nullptr)
   {
-    m_SqueezeFlow_L_Per_s = GetSqueezeVolume(VolumeUnit::L) / inspirationPeriod_s;
+    m_SqueezeFlow_L_Per_s = m_SqueezeVolume->GetValue(VolumeUnit::L) / inspirationPeriod_s;
     m_SqueezePressure_cmH2O = SEScalar::dNaN();
   }
   else
@@ -493,20 +525,6 @@ void BagValveMask::CalculateInspiration()
     double tidalVolume_mL = 7.0 * idealBodyWeight_kg;
     m_SqueezeFlow_L_Per_s = (tidalVolume_mL / 1000.0) / inspirationPeriod_s;
     m_SqueezePressure_cmH2O = SEScalar::dNaN();
-  }
-
-  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
-  {
-    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasSqueezePressure())
-    {
-      m_SqueezePressure_cmH2O = m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetSqueezePressure(PressureUnit::cmH2O);
-      m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
-    }
-    else if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasSqueezeVolume())
-    {
-      m_SqueezeFlow_L_Per_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetSqueezeVolume(VolumeUnit::L) / inspirationPeriod_s;
-      m_SqueezePressure_cmH2O = SEScalar::dNaN();
-    }
   }
 }
 
@@ -524,28 +542,25 @@ void BagValveMask::CalculateExpiration()
   // Check trigger
   // Give defaults, if not user defined
   double breathFrequency_Per_s = 12.0 / 60.0; //12 bpm
-  if (HasBreathFrequency())
+  if (m_BreathFrequency != nullptr)
   {
-    breathFrequency_Per_s = GetBreathFrequency(FrequencyUnit::Per_s);
+    breathFrequency_Per_s = m_BreathFrequency->GetValue(FrequencyUnit::Per_s);
   }
 
   double totalBreathTime_s = 1.0 / breathFrequency_Per_s;
 
   double inspiratoryExpiratoryRatio = 0.5; //Default
-  if (HasInspiratoryExpiratoryRatio())
+  if (m_InspiratoryExpiratoryRatio != nullptr)
   {
-    inspiratoryExpiratoryRatio = GetInspiratoryExpiratoryRatio().GetValue();
+    inspiratoryExpiratoryRatio = m_InspiratoryExpiratoryRatio->GetValue();
   }
 
   double inspirationPeriod_s = inspiratoryExpiratoryRatio * totalBreathTime_s / (1.0 + inspiratoryExpiratoryRatio);
   double expirationPeriod_s = totalBreathTime_s - inspirationPeriod_s;
 
-  if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())
+  if (m_ExpiratoryPeriod != nullptr)
   {
-    if (m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().HasExpiratoryPeriod())
-    {
-      expirationPeriod_s = m_data.GetActions().GetEquipmentActions().GetBagValveMaskSqueeze().GetExpiratoryPeriod(TimeUnit::s);
-    }
+    expirationPeriod_s = m_ExpiratoryPeriod->GetValue(TimeUnit::s);
   }
 
   if (m_CurrentPeriodTime_s >= expirationPeriod_s)

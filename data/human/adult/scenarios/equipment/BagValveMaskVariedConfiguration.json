@@ -127,7 +127,7 @@
     }
   },
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 5.0, "Unit": "s" } } } },
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 10.0, "Unit": "s" } } } },
   
   {
     "EquipmentAction": {
@@ -150,30 +150,24 @@
           "Comment": "Attach the bag valve mask with all defulats that will set flow to give TV ~ 7 mL/kg(ideal)" }}},
           "Configuration":
           {
-            "Connection": "Tube"
-          }
-      }
-    }
-  },
-  
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
-  
-  {
-    "EquipmentAction": {
-      "BagValveMaskConfiguration": {
-        "BagValveMaskAction": { "EquipmentAction": { "Action": {
-          "Comment": "Attach the bag valve mask with a squeeze pressure to give TV ~ 7 mL/kg(ideal)" }}},
-          "Configuration":
-          {
             "Connection": "Tube",
-            "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
-            "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
-            "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } },
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } }
             ]
           }
+      }
+    }
+  },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskAutomated": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {
+          "Comment": "Attach the bag valve mask with a squeeze pressure to give TV ~ 7 mL/kg(ideal)" }}},
+          "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
+          "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
+          "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } }
       }
     }
   },

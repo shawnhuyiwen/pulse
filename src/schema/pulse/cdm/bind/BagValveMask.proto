@@ -19,19 +19,13 @@ message BagValveMaskData
   }
   
   eConnection                         Connection                      = 1;/**<< @brief @ref BagValveMaskData_eConnectionTable */
-  
-  ScalarFrequencyData                 BreathFrequency                 = 2;/**<< @brief Bag squeeze rate, translates to respiration rate. */
-  ScalarData                          InspiratoryExpiratoryRatio      = 3;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
-  ScalarPressureData                  SqueezePressure                 = 4;/**<< @brief Extrinsic pressure above atmosphere at the end of inhalation. */
-  ScalarVolumeData                    SqueezeVolume                   = 5;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
-  ScalarPressureData                  ValvePositiveEndExpiredPressure = 6;/**<< @brief Maximum extrinsic pressure above atmosphere at the end of exhalation. */
-  
-  // More advanced parameterization
-  ScalarPressureTimePerVolumeData     BagResistance                   = 7;/**<< @brief Bag resistance. */
-  ScalarPressureTimePerVolumeData     FilterResistance                = 8;/**<< @brief Filter resistance. */
-  ScalarVolumeData                    FilterVolume                    = 9;/**<< @brief Dead space volume of the filter. */
-  ScalarPressureTimePerVolumeData     ValveResistance                 = 10;/**<< @brief Valve Resistance. */
-  
-  repeated SubstanceFractionData      FractionInspiredGas             = 11;/**<< @brief Break down of the gases, such as FiO2. */
-  repeated SubstanceConcentrationData ConcentrationInspiredAerosol    = 12;/**<< @brief Concentration of added aerosolized substances. */
+
+  ScalarPressureTimePerVolumeData     BagResistance                   = 2;/**<< @brief Bag resistance. */
+  ScalarPressureTimePerVolumeData     FilterResistance                = 3;/**<< @brief Filter resistance. */
+  ScalarVolumeData                    FilterVolume                    = 4;/**<< @brief Dead space volume of the filter. */
+  ScalarPressureData                  ValvePositiveEndExpiredPressure = 5;/**<< @brief Maximum extrinsic pressure above atmosphere at the end of exhalation. */
+  ScalarPressureTimePerVolumeData     ValveResistance                 = 6;/**<< @brief Valve Resistance. */
+
+  repeated SubstanceFractionData      FractionInspiredGas             = 7;/**<< @brief Break down of the gases, such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol    = 8;/**<< @brief Concentration of added aerosolized substances. */
 }

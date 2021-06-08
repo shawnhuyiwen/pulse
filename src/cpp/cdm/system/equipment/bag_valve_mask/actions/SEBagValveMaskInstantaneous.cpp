@@ -30,9 +30,9 @@ void SEBagValveMaskInstantaneous::Clear()
   INVALIDATE_PROPERTY(m_Pressure);
 }
 
-void SEBagValveMaskInstantaneous::Copy(const SEBagValveMaskInstantaneous& src, const SESubstanceManager& subMgr, bool preserveState)
+void SEBagValveMaskInstantaneous::Copy(const SEBagValveMaskInstantaneous& src)
 {// Using Bindings to make a copy
-  PBEquipmentAction::Copy(src, *this, subMgr);
+  PBEquipmentAction::Copy(src, *this);
 }
 
 bool SEBagValveMaskInstantaneous::IsValid() const

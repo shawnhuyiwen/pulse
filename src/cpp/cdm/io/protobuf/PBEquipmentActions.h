@@ -20,6 +20,7 @@ CDM_BIND_DECL2(AnesthesiaMachineVentilatorPressureLoss)
 CDM_BIND_DECL2(AnesthesiaMachineYPieceDisconnect)
 CDM_BIND_DECL2(BagValveMaskAction)
 CDM_BIND_DECL2(BagValveMaskConfiguration)
+CDM_BIND_DECL2(BagValveMaskAutomated)
 CDM_BIND_DECL2(BagValveMaskSqueeze)
 CDM_BIND_DECL2(BagValveMaskInstantaneous)
 CDM_BIND_DECL2(InhalerAction)
@@ -138,17 +139,23 @@ public:
   static void Serialize(const SEBagValveMaskConfiguration& src, CDM_BIND::BagValveMaskConfigurationData& dst);
   static void Copy(const SEBagValveMaskConfiguration& src, SEBagValveMaskConfiguration& dst, const SESubstanceManager& subMgr);
 
-  static void Load(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst, const SESubstanceManager& subMgr);
-  static CDM_BIND::BagValveMaskSqueezeData* Unload(const SEBagValveMaskSqueeze& src);
-  static void Serialize(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst, const SESubstanceManager& subMgr);
-  static void Serialize(const SEBagValveMaskSqueeze& src, CDM_BIND::BagValveMaskSqueezeData& dst);
-  static void Copy(const SEBagValveMaskSqueeze& src, SEBagValveMaskSqueeze& dst, const SESubstanceManager& subMgr);
+  static void Load(const CDM_BIND::BagValveMaskAutomatedData& src, SEBagValveMaskAutomated& dst);
+  static CDM_BIND::BagValveMaskAutomatedData* Unload(const SEBagValveMaskAutomated& src);
+  static void Serialize(const CDM_BIND::BagValveMaskAutomatedData& src, SEBagValveMaskAutomated& dst);
+  static void Serialize(const SEBagValveMaskAutomated& src, CDM_BIND::BagValveMaskAutomatedData& dst);
+  static void Copy(const SEBagValveMaskAutomated& src, SEBagValveMaskAutomated& dst);
 
-  static void Load(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst, const SESubstanceManager& subMgr);
+  static void Load(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst);
+  static CDM_BIND::BagValveMaskSqueezeData* Unload(const SEBagValveMaskSqueeze& src);
+  static void Serialize(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst);
+  static void Serialize(const SEBagValveMaskSqueeze& src, CDM_BIND::BagValveMaskSqueezeData& dst);
+  static void Copy(const SEBagValveMaskSqueeze& src, SEBagValveMaskSqueeze& dst);
+
+  static void Load(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst);
   static CDM_BIND::BagValveMaskInstantaneousData* Unload(const SEBagValveMaskInstantaneous& src);
-  static void Serialize(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst);
   static void Serialize(const SEBagValveMaskInstantaneous& src, CDM_BIND::BagValveMaskInstantaneousData& dst);
-  static void Copy(const SEBagValveMaskInstantaneous& src, SEBagValveMaskInstantaneous& dst, const SESubstanceManager& subMgr);
+  static void Copy(const SEBagValveMaskInstantaneous& src, SEBagValveMaskInstantaneous& dst);
 
   /////////////
   // Inhaler //
