@@ -16,10 +16,12 @@ int main()
   //HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
-  HowToPulseEnginePool();
+  //HowToPulseEnginePool();
+  
   //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToAsthmaAttack();
+  HowToBagValveMask();
   //HowToBolusDrug();
   //HowToBrainInjury();
   //HowToCombatMultitrauma();

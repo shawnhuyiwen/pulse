@@ -1,0 +1,146 @@
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+
+#include "EngineHowTo.h"
+
+// Include the various types you will be using in your code
+#include "engine/SEDataRequestManager.h"
+#include "engine/SEEngineTracker.h"
+#include "system/equipment/bag_valve_mask/SEBagValveMask.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
+#include "compartment/SECompartmentManager.h"
+#include "compartment/fluid/SEGasCompartment.h"
+#include "system/physiology/SEBloodChemistrySystem.h"
+#include "system/physiology/SECardiovascularSystem.h"
+#include "system/physiology/SERespiratorySystem.h"
+#include "properties/SEScalar0To1.h"
+#include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarMass.h"
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarTime.h"
+#include "properties/SEScalarVolume.h"
+
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Usage for applying  Bag,Valve,Mask equipment to the patient
+///
+/// \details
+/// Refer to the SEBagValveMask class
+//--------------------------------------------------------------------------------------------------
+void HowToBagValveMask()
+{
+  // Create the engine and load the patient
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/HowTo_BagValveMask.log");
+  pe->GetLogger()->Info("HowTo_BagValveMask");
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+  {
+    pe->GetLogger()->Error("Could not load state, check the error");
+    return;
+  }
+
+    // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
+  HowToTracker tracker(*pe);
+
+  // Create data requests for each value that should be written to the output log as the engine is executing
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HemoglobinContent",MassUnit::g);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
+  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest(pulse::PulmonaryCompartment::Carina, "InFlow");
+
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowToBagValveMask.csv");
+  // Cache off compartments of interest!
+  const SEGasCompartment* carina = pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
+
+  // You can apply the BVM at any point, the patient may or may not be sedated
+  // Using the BVM requires 2 actions
+  // 1.) to put it on the patient
+  SEBagValveMaskConfiguration cfg;
+  cfg.GetConfiguration().SetConnection(eBagValveMask_Connection::Mask);
+  // If the patient is intubated, use the Tube connection
+  pe->ProcessAction(cfg);
+  
+  // 2.) specify how you will work with the BVM
+  // Any of the below actions (a, b, c) will remove the other
+  // ex. If you are in automatic mode, then you provide a squeeze action, the automatic mode will be removed then the squeeze added
+  // (The automatic mode will NOT come back on)
+  
+  // 2a.)This is the automatic BVM action, you specify the timing and profile you want Pulse to continuously sqeeze the bag for you
+  SEBagValveMaskAutomated automatic;
+  // You don't need to set anything, Pulse will use default timing/power values to continuously squeeze the bag for you
+  // But you can customize 
+  automatic.GetBreathFrequency().SetValue(12, FrequencyUnit::Per_min);
+  automatic.GetInspiratoryExpiratoryRatio().SetValue(0.5);
+  // When setting the squeeze 'profile' you can set the pressure OR the Volume
+  //automatic.GetSqueezePressure().SetValue(10, PressureUnit::cmH2O);
+  //automatic.GetSqueezeVolume().SetValue(10, VolumeUnit::mL);
+  pe->ProcessAction(automatic);
+
+  // Advance some time
+  tracker.AdvanceModelTime(60);
+
+  pe->GetLogger()->Info("The patient is nice and healthy");
+  pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() <<"Hemoglobin Content : " << pe->GetBloodChemistrySystem()->GetHemoglobinContent(MassUnit::g) << MassUnit::g);
+  pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() <<"InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
+  pe->GetLogger()->Info(std::stringstream() <<"Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
+
+  // 2b.)This is the manual squeeze BVM action, you specify the profile of ONE sqeeze of the bag
+  SEBagValveMaskSqueeze squeeze;
+  // You don't need to set anything, Pulse will use default profile values of the squeeze  for you
+  // But you can customize 
+  squeeze.GetExpiratoryPeriod().SetValue(4, TimeUnit::s);
+  squeeze.GetInspiratoryPeriod().SetValue(6, TimeUnit::s);
+  // When setting the squeeze 'profile' you can set the pressure OR the Volume
+  squeeze.GetSqueezePressure().SetValue(15, PressureUnit::cmH2O);
+  //squeeze.GetSqueezeVolume().SetValue(10, VolumeUnit::mL);
+  pe->ProcessAction(squeeze);
+
+  // Advance some time (Not too much, its only one squeeze!)
+  tracker.AdvanceModelTime(10);
+
+  pe->GetLogger()->Info("The patient is nice and healthy");
+  pe->GetLogger()->Info(std::stringstream() << "Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() << "Hemoglobin Content : " << pe->GetBloodChemistrySystem()->GetHemoglobinContent(MassUnit::g) << MassUnit::g);
+  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
+  pe->GetLogger()->Info(std::stringstream() << "Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
+
+  // 2c.)This is the instantaneous value of the current time step of a squeeze, generally this is for connecting to a hardware sensor
+  SEBagValveMaskInstantaneous instantaneous;
+  // When setting the squeeze 'profile' you can set the pressure OR the flow
+  instantaneous.GetFlow().SetValue(15, VolumePerTimeUnit::mL_Per_s);
+  instantaneous.GetPressure().SetValue(10, PressureUnit::cmH2O);
+  pe->ProcessAction(squeeze);
+
+  // Advance some time (Not too much, its only one squeeze!)
+  tracker.AdvanceModelTime(10);
+
+  pe->GetLogger()->Info("The patient is nice and healthy");
+  pe->GetLogger()->Info(std::stringstream() << "Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
+  pe->GetLogger()->Info(std::stringstream() << "Hemoglobin Content : " << pe->GetBloodChemistrySystem()->GetHemoglobinContent(MassUnit::g) << MassUnit::g);
+  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
+  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
+  pe->GetLogger()->Info(std::stringstream() << "InspiratoryExpiratoryRatio : " << pe->GetRespiratorySystem()->GetInspiratoryExpiratoryRatio());
+  pe->GetLogger()->Info(std::stringstream() << "Carina InFlow : " << carina->GetInFlow(VolumePerTimeUnit::L_Per_s) << VolumePerTimeUnit::L_Per_s);
+
+
+  pe->GetLogger()->Info("Finished");
+}
