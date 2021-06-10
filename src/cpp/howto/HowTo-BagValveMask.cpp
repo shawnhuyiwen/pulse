@@ -6,6 +6,7 @@
 // Include the various types you will be using in your code
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
+#include "patient/actions/SEDyspnea.h"
 #include "system/equipment/bag_valve_mask/SEBagValveMask.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
@@ -13,6 +14,8 @@
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "compartment/SECompartmentManager.h"
 #include "compartment/fluid/SEGasCompartment.h"
+#include "substance/SESubstanceManager.h"
+#include "substance/SESubstanceFraction.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SERespiratorySystem.h"
@@ -43,7 +46,7 @@ void HowToBagValveMask()
     return;
   }
 
-    // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
+  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
   HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
@@ -61,13 +64,23 @@ void HowToBagValveMask()
   const SEGasCompartment* carina = pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
 
   // You can apply the BVM at any point, the patient may or may not be sedated
+  // For this example, the patient is not breathing
+  SEDyspnea dyspnea;
+  dyspnea.GetSeverity().SetValue(1.0);
+  pe->ProcessAction(dyspnea);
+
   // Using the BVM requires 2 actions
   // 1.) to put it on the patient
   SEBagValveMaskConfiguration cfg;
+  // If the patient is intubated, use the Tube connection instead
   cfg.GetConfiguration().SetConnection(eBagValveMask_Connection::Mask);
-  // If the patient is intubated, use the Tube connection
+  // There are several parameters that have defaults if not set
+  // We will set the PEEP and FiO2
+  cfg.GetConfiguration().GetValvePositiveEndExpiredPressure().SetValue(5, PressureUnit::cmH2O);
+  const SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");
+  cfg.GetConfiguration().GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(0.3);
   pe->ProcessAction(cfg);
-  
+
   // 2.) specify how you will work with the BVM
   // Any of the below actions (a, b, c) will remove the other
   // ex. If you are in automatic mode, then you provide a squeeze action, the automatic mode will be removed then the squeeze added
@@ -80,8 +93,8 @@ void HowToBagValveMask()
   automatic.GetBreathFrequency().SetValue(12, FrequencyUnit::Per_min);
   automatic.GetInspiratoryExpiratoryRatio().SetValue(0.5);
   // When setting the squeeze 'profile' you can set the pressure OR the Volume
-  //automatic.GetSqueezePressure().SetValue(10, PressureUnit::cmH2O);
-  //automatic.GetSqueezeVolume().SetValue(10, VolumeUnit::mL);
+  //automatic.GetSqueezePressure().SetValue(15, PressureUnit::cmH2O);
+  automatic.GetSqueezeVolume().SetValue(500, VolumeUnit::mL);
   pe->ProcessAction(automatic);
 
   // Advance some time
@@ -101,11 +114,11 @@ void HowToBagValveMask()
   SEBagValveMaskSqueeze squeeze;
   // You don't need to set anything, Pulse will use default profile values of the squeeze  for you
   // But you can customize 
-  squeeze.GetExpiratoryPeriod().SetValue(4, TimeUnit::s);
-  squeeze.GetInspiratoryPeriod().SetValue(6, TimeUnit::s);
+  squeeze.GetExpiratoryPeriod().SetValue(2, TimeUnit::s);
+  squeeze.GetInspiratoryPeriod().SetValue(3, TimeUnit::s);
   // When setting the squeeze 'profile' you can set the pressure OR the Volume
   squeeze.GetSqueezePressure().SetValue(15, PressureUnit::cmH2O);
-  //squeeze.GetSqueezeVolume().SetValue(10, VolumeUnit::mL);
+  //squeeze.GetSqueezeVolume().SetValue(500, VolumeUnit::mL);
   pe->ProcessAction(squeeze);
 
   // Advance some time (Not too much, its only one squeeze!)
@@ -124,12 +137,19 @@ void HowToBagValveMask()
   // 2c.)This is the instantaneous value of the current time step of a squeeze, generally this is for connecting to a hardware sensor
   SEBagValveMaskInstantaneous instantaneous;
   // When setting the squeeze 'profile' you can set the pressure OR the flow
-  instantaneous.GetFlow().SetValue(15, VolumePerTimeUnit::mL_Per_s);
-  instantaneous.GetPressure().SetValue(10, PressureUnit::cmH2O);
+  //instantaneous.GetFlow().SetValue(15, VolumePerTimeUnit::mL_Per_s);
+  instantaneous.GetPressure().SetValue(15, PressureUnit::cmH2O);
   pe->ProcessAction(squeeze);
 
-  // Advance some time (Not too much, its only one squeeze!)
-  tracker.AdvanceModelTime(10);
+  // Advance some time (Not too much, its only inhale!)
+  tracker.AdvanceModelTime(2);
+
+  // Set it to release the bag to zero or the PEEP to exhale
+  instantaneous.GetPressure().SetValue(5, PressureUnit::cmH2O);
+  pe->ProcessAction(squeeze);
+
+  // Advance some time (Not too much, its only exhale!)
+  tracker.AdvanceModelTime(3);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
