@@ -823,7 +823,7 @@
     "EquipmentAction": {
       "AnesthesiaMachineConfiguration": {
         "Configuration": {
-          "Connection": "Mask"
+          "Connection": "Tube"
         }
       }
     }
@@ -848,7 +848,7 @@
     }
   }, {
     "EquipmentAction": {
-      "AnesthesiaMachineMaskLeak": {
+      "AnesthesiaMachineTubeCuffLeak": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.1
