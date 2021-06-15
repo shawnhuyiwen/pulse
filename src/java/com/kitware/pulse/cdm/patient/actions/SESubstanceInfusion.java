@@ -5,6 +5,7 @@ package com.kitware.pulse.cdm.patient.actions;
 
 import com.kitware.pulse.cdm.bind.PatientActions.SubstanceInfusionData;
 import com.kitware.pulse.cdm.properties.SEScalarMassPerVolume;
+import com.kitware.pulse.cdm.properties.SEScalarVolume;
 import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
 
 public class SESubstanceInfusion extends SEPatientAction
@@ -13,12 +14,14 @@ public class SESubstanceInfusion extends SEPatientAction
   private static final long serialVersionUID = 8029916816858227270L;
   protected SEScalarMassPerVolume concentration;
   protected SEScalarVolumePerTime rate;
+  protected SEScalarVolume volume;
   protected String substance;
   
   public SESubstanceInfusion()
   {
     this.rate = null;
     this.concentration = null;
+    this.volume = null;
     this.substance = "";
   }
   
@@ -38,6 +41,11 @@ public class SESubstanceInfusion extends SEPatientAction
       getConcentration().set(other.concentration);
     else if (concentration != null)
       concentration.invalidate();
+    
+    if (other.volume != null)
+      getVolume().set(other.volume);
+    else if (volume != null)
+      volume.invalidate();
   }
   
   @Override
@@ -48,6 +56,8 @@ public class SESubstanceInfusion extends SEPatientAction
       rate.invalidate();
     if (concentration != null)
       concentration.invalidate();
+    if (volume != null)
+      volume.invalidate();
   }
   
   @Override
@@ -64,6 +74,8 @@ public class SESubstanceInfusion extends SEPatientAction
       SEScalarVolumePerTime.load(src.getRate(),dst.getRate());
     if(src.hasConcentration())
       SEScalarMassPerVolume.load(src.getConcentration(),dst.getConcentration());
+    if(src.hasVolume())
+      SEScalarVolume.load(src.getVolume(),dst.getVolume());
   }
   
   public static SubstanceInfusionData unload(SESubstanceInfusion src)
@@ -80,6 +92,8 @@ public class SESubstanceInfusion extends SEPatientAction
       dst.setRate(SEScalarVolumePerTime.unload(src.rate));
     if (src.hasConcentration())
       dst.setConcentration(SEScalarMassPerVolume.unload(src.concentration));
+    if (src.hasVolume())
+      dst.setVolume(SEScalarVolume.unload(src.volume));
     dst.setSubstance(src.substance);
   }
   
@@ -105,6 +119,17 @@ public class SESubstanceInfusion extends SEPatientAction
     return rate;
   }
   
+  public boolean hasVolume()
+  {
+    return volume ==  null ? false : volume.isValid();
+  }
+  public SEScalarVolume getVolume()
+  {
+    if (volume == null)
+      volume = new SEScalarVolume();
+    return volume;
+  }
+  
   public boolean hasSubstance() { return substance != null; }
   public void setSubstance(String name)
   {
@@ -122,6 +147,7 @@ public class SESubstanceInfusion extends SEPatientAction
       return "Substance Infusion"
           + "\n\tRate: " + getRate()
           + "\n\tConcentration: " + getConcentration()
+          + "\n\tVolume: " + getVolume()
           + "\n\tSubstance: " + getSubstance();
     else
       return "Action not specified properly";

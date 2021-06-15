@@ -1189,6 +1189,8 @@ void PBPatientAction::Serialize(const CDM_BIND::SubstanceInfusionData& src, SESu
     PBProperty::Load(src.rate(), dst.GetRate());
   if (src.has_concentration())
     PBProperty::Load(src.concentration(), dst.GetConcentration());
+  if (src.has_volume())
+    PBProperty::Load(src.volume(), dst.GetVolume());
 }
 CDM_BIND::SubstanceInfusionData* PBPatientAction::Unload(const SESubstanceInfusion& src)
 {
@@ -1204,6 +1206,8 @@ void PBPatientAction::Serialize(const SESubstanceInfusion& src, CDM_BIND::Substa
     dst.set_allocated_rate(PBProperty::Unload(*src.m_Rate));
   if (src.HasConcentration())
     dst.set_allocated_concentration(PBProperty::Unload(*src.m_Concentration));
+  if (src.HasVolume())
+    dst.set_allocated_volume(PBProperty::Unload(*src.m_Volume));
 }
 void PBPatientAction::Copy(const SESubstanceInfusion& src, SESubstanceInfusion& dst)
 {

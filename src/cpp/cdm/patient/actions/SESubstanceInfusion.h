@@ -28,6 +28,10 @@ public:
   virtual SEScalarVolumePerTime& GetRate();
   virtual double GetRate(const VolumePerTimeUnit& unit) const;
 
+  virtual bool HasVolume() const;
+  virtual SEScalarVolume& GetVolume();
+  virtual double GetVolume(const VolumeUnit& unit) const;
+
   virtual SESubstance& GetSubstance();
   virtual const SESubstance& GetSubstance() const;
 
@@ -38,5 +42,6 @@ public:
 protected:
   SEScalarMassPerVolume*                  m_Concentration;
   SEScalarVolumePerTime*                  m_Rate;
+  SEScalarVolume*                         m_Volume;
   const SESubstance&                      m_Substance;
 };

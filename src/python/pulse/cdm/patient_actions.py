@@ -1119,12 +1119,13 @@ class SESubstanceCompoundInfusion(SEPatientAction):
                 "  Rate: {}").format(self._bag_volume, self._compound, self._rate)
 
 class SESubstanceInfusion(SEPatientAction):
-    __slots__ = ["_concentration", "_rate", "_substance"]
+    __slots__ = ["_concentration", "_rate", "_volume", "_substance"]
 
     def __init__(self):
         super().__init__()
         self._concentration = None
         self._rate = None
+        self._volume = None
         self._substance = None
 
     def clear(self):
@@ -1133,17 +1134,13 @@ class SESubstanceInfusion(SEPatientAction):
             self._concentration = None
         if self._rate is not None:
             self._rate = None
+        if self._volume is not None:
+            self._volume = None
         if self._substance is not None:
             self._substance = None
 
     def is_valid(self):
         return self.has_rate() and self.has_substance() and self.has_concentration()
-    def has_rate(self):
-        return self._rate is not None
-    def get_rate(self):
-        if self._rate is None:
-            self._rate = SEScalarVolumePerTime()
-        return self._rate
 
     def has_substance(self):
         return self._substance is not None
@@ -1158,11 +1155,27 @@ class SESubstanceInfusion(SEPatientAction):
         if self._concentration is None:
             self._concentration = SEScalarMassPerVolume()
         return self._concentration
+
+    def has_rate(self):
+        return self._rate is not None
+    def get_rate(self):
+        if self._rate is None:
+            self._rate = SEScalarVolumePerTime()
+        return self._rate
+
+    def has_volume(self):
+        return self._volume is not None
+    def get_volume(self):
+        if self._volume is None:
+            self._volume = SEScalarVolume()
+        return self._volume
+
     def __repr__(self):
         return ("Substance Infusion\n"
                 "  Concentration: {}\n"
                 "  Substance: {}\n"
-                "  Rate: {}").format(self._concentration, self._substance, self._rate)
+                "  Rate: {}\n"
+                "  Volume: {}").format(self._concentration, self._substance, self._rate, self._volume)
 
 class eDevice(Enum):
     NullDevice = 0

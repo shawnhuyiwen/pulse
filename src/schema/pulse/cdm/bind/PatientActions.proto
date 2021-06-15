@@ -353,7 +353,7 @@ message SubstanceCompoundInfusionData
 {
   PatientActionData                         PatientAction                   = 1;
   string                                    SubstanceCompound               = 2;/**<<@brief */
-  ScalarVolumeData                          BagVolume                       = 3;/**<<@brief @ref SubstanceCompoundTable */
+  ScalarVolumeData                          BagVolume                       = 3;/**<<@brief Amount of substance in bag */
   ScalarVolumePerTimeData                   Rate                            = 4;/**<<@brief Flow rate of the infusion into the body. */
 }
 
@@ -364,6 +364,7 @@ message SubstanceInfusionData
   string                                    Substance                       = 2;/**<<@brief @ref SubstanceTable */
   ScalarMassPerVolumeData                   Concentration                   = 3;/**<<@brief Concentration of the dose to administer. */
   ScalarVolumePerTimeData                   Rate                            = 4;/**<<@brief Flow rate of the infusion into the body. */
+  ScalarVolumeData                          Volume                          = 5;/**<<@brief Amount of substance to infuse */
 }
 
 /** @brief Extra Oxygen provided to the patient. */
