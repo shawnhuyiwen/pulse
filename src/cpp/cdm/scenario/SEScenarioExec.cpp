@@ -80,7 +80,11 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
     // Initialize the engine with a state or initial parameters
     if (sce.HasEngineStateFile())
     {
-      pe.SerializeFromFile(sce.GetEngineStateFile());
+      if (!pe.SerializeFromFile(sce.GetEngineStateFile()))
+      {
+        pe.GetLogger()->Error("Unable to load state file: "+ sce.GetEngineStateFile());
+        return false;
+      }
       // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
       // Make a copy of the data requests, note this clears out data requests from the engine
       pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager(), pe.GetSubstanceManager());

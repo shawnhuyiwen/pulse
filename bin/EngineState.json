@@ -1,7 +1,7 @@
 {
   "Configuration": {
     "TimeStep" : { "ScalarTime": { "Value": 0.02, "Unit": "s" } }
-  },{"Scenario": {
+  },"Scenario": {
   "Name":"BasicStandard",
   "Description":"Basic scenario measuring patient vitals with no insults or interventions",
   "EngineStateFile":"./states/StandardMale@0s.pbb",
@@ -97,20 +97,5 @@
   ]},
 
   "AnyAction":[{"AdvanceTime":{"Time":{"ScalarTime":{"Value":2.0,"Unit":"min"}}}}]},
-  
-  "Configuration": {
-    "AutoSerialization": {
-      "Directory": "./states/testing/",
-      "Filename": "patient/HemorrhageVaryingSeverity",
-      "AfterActions": "On",
-      "Period": {
-        "ScalarTime": {
-          "Value": 5.0,
-          "Unit": "s"
-        }
-      },
-      "PeriodTimeStamps": "On",
-      "ReloadState": "On"
-    }
-  }
-}}
+
+}

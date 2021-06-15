@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Google.Protobuf">
-      <HintPath>..\..\..\..\..\builds\pulse-engine\External\protobuf\src\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
+      <HintPath>..\..\..\..\..\Builds\pulse-engine\External\protobuf\src\csharp\src\Google.Protobuf\bin\Release\net45\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
