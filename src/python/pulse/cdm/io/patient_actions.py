@@ -409,6 +409,8 @@ def serialize_substance_infusion_to_bind(src:SESubstanceInfusion, dst: Substance
         serialize_scalar_mass_per_volume_to_bind(src.get_concentration(), dst.Concentration)
     if src.has_rate():
         serialize_scalar_volume_per_time_to_bind(src.get_rate(), dst.Rate)
+    if src.has_volume():
+        serialize_scalar_volume_to_bind(src.get_volume(), dst.Volume)
     if src.has_substance():
         dst.Substance = src.get_substance()
 

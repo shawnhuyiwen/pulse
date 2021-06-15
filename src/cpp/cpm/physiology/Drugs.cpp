@@ -110,6 +110,8 @@ void Drugs::Initialize()
 //--------------------------------------------------------------------------------------------------
 void Drugs::SetUp()
 {
+  m_Saline = m_data.GetSubstances().GetCompound("Saline");
+  m_Blood = m_data.GetSubstances().GetCompound("Blood");
   m_muscleIntracellular = m_data.GetCompartments().GetLiquidCompartment(pulse::ExtravascularCompartment::MuscleIntracellular);
   m_aortaVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
   m_venaCavaVascular = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
@@ -266,14 +268,25 @@ void Drugs::AdministerSubstanceInfusion()
   double concentration_ug_Per_mL;
   double rate_mL_Per_s;
   double massIncrement_ug = 0;
+  std::vector<const SESubstance*> finished;
 
   for (auto infusion : infusions)
   {
     if (!infusion->IsActive())
       continue;
 
+    if (!infusion->HasVolume())
+      infusion->GetVolume().SetValue(1000, VolumeUnit::mL);
+
     concentration_ug_Per_mL = infusion->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_mL);
     rate_mL_Per_s = infusion->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
+    infusion->GetVolume().IncrementValue(-rate_mL_Per_s * m_data.GetTimeStep_s(), VolumeUnit::mL);
+    if (infusion->GetVolume().IsZero() || infusion->GetVolume().IsNegative())
+    { /// \todo correct the mass based on what we have left in the bag
+      finished.push_back(&infusion->GetSubstance());
+      continue;
+    }
+
     massIncrement_ug = rate_mL_Per_s*concentration_ug_Per_mL*m_data.GetTimeStep_s();
     subQ = m_venaCavaVascular->GetSubstanceQuantity(infusion->GetSubstance());
     subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
@@ -288,8 +301,11 @@ void Drugs::AdministerSubstanceInfusion()
     }
 
     /// \todo Need to add fluid amount to fluid system
-
-    /// \todo Support state, and how would a user remove this action?
+  }
+  for (const SESubstance* sub : finished)
+  {
+    Info("Completed infusion of " + sub->GetName());
+    m_data.GetActions().GetPatientActions().RemoveSubstanceInfusion(*sub);
   }
 }
 
@@ -320,10 +336,11 @@ void Drugs::AdministerSubstanceCompoundInfusion()
 
   for(auto infusion : infusions)
   {
+    compound = &infusion->GetSubstanceCompound();
+
     if (!infusion->IsActive())
       continue;
 
-    compound = &infusion->GetSubstanceCompound();
     rate_mL_Per_s = infusion->GetRate().GetValue(VolumePerTimeUnit::mL_Per_s);
     totalRate_mL_Per_s += rate_mL_Per_s;
     /// \todo Enforce limits and remove the fatal error
@@ -333,33 +350,35 @@ void Drugs::AdministerSubstanceCompoundInfusion()
       m_ss<<"Cannot specify an Infusion rate greater than 285 mL/min. Current administration rate is: "<< infusion->GetRate();
       Fatal(m_ss);
       return;
-    }    
+    }
 
     infusion->GetBagVolume().IncrementValue(-rate_mL_Per_s*m_data.GetTimeStep_s(), VolumeUnit::mL);
-    double total_mL = infusion->GetBagVolume().GetValue(VolumeUnit::mL);
-    if (total_mL <= 0)
+    if (infusion->GetBagVolume().IsZero() || infusion->GetBagVolume().IsNegative())
     { /// \todo correct the mass based on what we have left in the bag
       emptyBags.push_back(compound);
       continue;
     }
-      
+
     for (const SESubstanceConcentration* component : compound->GetComponents())
     {      
       subQ = m_venaCavaVascular->GetSubstanceQuantity(component->GetSubstance());
       massIncrement_ug = rate_mL_Per_s*component->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_data.GetTimeStep_s();
       subQ->GetMass().IncrementValue(massIncrement_ug, MassUnit::ug);
       subQ->Balance(BalanceLiquidBy::Mass);
-    }    
+    }
 
-    if (compound->GetName().compare("Saline") == 0)
+    if (compound == m_Saline)
       densityFluid_kg_Per_mL = m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
-    else if (compound->GetName().compare("Blood") == 0)
+    else if (compound == m_Blood)
       densityFluid_kg_Per_mL = m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
     patientMass_kg -= rate_mL_Per_s*densityFluid_kg_Per_mL*m_data.GetTimeStep_s();
   }
 
   for (const SESubstanceCompound* c : emptyBags)
+  {
+    Info("Completed infusion of " + c->GetName());
     m_data.GetActions().GetPatientActions().RemoveSubstanceCompoundInfusion(*c);
+  }
 
   m_data.GetCurrentPatient().GetWeight().SetValue(patientMass_kg, MassUnit::kg);
   m_IVToVenaCava->GetNextFlowSource().SetValue(totalRate_mL_Per_s, VolumePerTimeUnit::mL_Per_s);

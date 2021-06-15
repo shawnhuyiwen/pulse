@@ -7,6 +7,7 @@
 class SEFluidCircuitPath;
 class SELiquidCompartment;
 class SETissueCompartment;
+class SESubstanceCompound;
 
 /**
  * @brief
@@ -48,7 +49,9 @@ protected:
   void CalculatePlasmaSubstanceConcentration();
   void CalculateDrugEffects();
 
-  // Stateless member variable (Set in SetUp())
+  // Stateless member variable (Set in SetUp)
+  SESubstanceCompound*  m_Saline;
+  SESubstanceCompound*  m_Blood;
   SELiquidCompartment*  m_aortaVascular;
   SELiquidCompartment*  m_venaCavaVascular;
   SELiquidCompartment*  m_muscleIntracellular;

@@ -1304,6 +1304,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.Concentration, dst.GetConcentration());
       if (src.Rate != null)
         PBProperty.Load(src.Rate, dst.GetRate());
+      if (src.Volume != null)
+        PBProperty.Load(src.Volume, dst.GetVolume());
     }
     public static pulse.cdm.bind.SubstanceInfusionData Unload(SESubstanceInfusion src)
     {
@@ -1320,6 +1322,8 @@ namespace Pulse.CDM
         dst.Concentration = PBProperty.Unload(src.GetConcentration());
       if (src.HasRate())
         dst.Rate = PBProperty.Unload(src.GetRate());
+      if (src.HasVolume())
+        dst.Volume = PBProperty.Unload(src.GetVolume());
     }
     #endregion
 
