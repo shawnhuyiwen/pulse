@@ -553,6 +553,157 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEBagValveMaskAction
+    public static void Serialize(pulse.cdm.bind.BagValveMaskActionData src, SEBagValveMaskAction dst)
+    {
+      PBEquipmentAction.Serialize(src.EquipmentAction, dst);
+    }
+    protected static void Serialize(SEBagValveMaskAction src, pulse.cdm.bind.BagValveMaskActionData dst)
+    {
+      dst.EquipmentAction = new pulse.cdm.bind.EquipmentActionData();
+      PBEquipmentAction.Serialize(src, dst.EquipmentAction);
+    }
+    #endregion
+
+    #region SEBagValveMaskConfiguration
+    public static void Load(pulse.cdm.bind.BagValveMaskConfigurationData src, SEBagValveMaskConfiguration dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.BagValveMaskConfigurationData src, SEBagValveMaskConfiguration dst)
+    {
+      Serialize(src.BagValveMaskAction, dst);
+      if (src.ConfigurationFile != null)
+        dst.SetConfigurationFile(src.ConfigurationFile);
+      else if (src.Configuration != null)
+        PBBagValveMask.Load(src.Configuration, dst.GetConfiguration());
+    }
+    public static pulse.cdm.bind.BagValveMaskConfigurationData Unload(SEBagValveMaskConfiguration src)
+    {
+      pulse.cdm.bind.BagValveMaskConfigurationData dst = new pulse.cdm.bind.BagValveMaskConfigurationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEBagValveMaskConfiguration src, pulse.cdm.bind.BagValveMaskConfigurationData dst)
+    {
+      dst.BagValveMaskAction = new pulse.cdm.bind.BagValveMaskActionData();
+      Serialize(src, dst.BagValveMaskAction);
+      if (src.HasConfigurationFile())
+        dst.ConfigurationFile = src.GetConfigurationFile();
+      else if (src.HasConfiguration())
+        dst.Configuration = PBBagValveMask.Unload(src.GetConfiguration());
+    }
+    #endregion
+
+    #region SEBagValveMaskAutomated
+    public static void Load(pulse.cdm.bind.BagValveMaskAutomatedData src, SEBagValveMaskAutomated dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.BagValveMaskAutomatedData src, SEBagValveMaskAutomated dst)
+    {
+      Serialize(src.BagValveMaskAction, dst);
+      if (src.BreathFrequency != null)
+        PBProperty.Load(src.BreathFrequency, dst.GetBreathFrequency());
+      if (src.InspiratoryExpiratoryRatio != null)
+        PBProperty.Load(src.InspiratoryExpiratoryRatio, dst.GetInspiratoryExpiratoryRatio());
+      if (src.SqueezePressure != null)
+        PBProperty.Load(src.SqueezePressure, dst.GetSqueezePressure());
+      if (src.SqueezeVolume != null)
+        PBProperty.Load(src.SqueezeVolume, dst.GetSqueezeVolume());
+    }
+
+    public static pulse.cdm.bind.BagValveMaskAutomatedData Unload(SEBagValveMaskAutomated src)
+    {
+      pulse.cdm.bind.BagValveMaskAutomatedData dst = new pulse.cdm.bind.BagValveMaskAutomatedData();
+      Serialize(src, dst);
+      return dst;
+    }
+    protected static void Serialize(SEBagValveMaskAutomated src, pulse.cdm.bind.BagValveMaskAutomatedData dst)
+    {
+      dst.BagValveMaskAction = new pulse.cdm.bind.BagValveMaskActionData();
+      Serialize(src, dst.BagValveMaskAction);
+      if (src.HasBreathFrequency())
+        dst.BreathFrequency = PBProperty.Unload(src.GetBreathFrequency());
+      if (src.HasInspiratoryExpiratoryRatio())
+        dst.InspiratoryExpiratoryRatio = PBProperty.Unload(src.GetInspiratoryExpiratoryRatio());
+      if (src.HasSqueezePressure())
+        dst.SqueezePressure = PBProperty.Unload(src.GetSqueezePressure());
+      if (src.HasSqueezeVolume())
+        dst.SqueezeVolume = PBProperty.Unload(src.GetSqueezeVolume());
+    }
+    #endregion
+
+    #region SEBagValveMaskInstantaneous
+    public static void Load(pulse.cdm.bind.BagValveMaskInstantaneousData src, SEBagValveMaskInstantaneous dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.BagValveMaskInstantaneousData src, SEBagValveMaskInstantaneous dst)
+    {
+      Serialize(src.BagValveMaskAction, dst);
+      if (src.Flow != null)
+        PBProperty.Load(src.Flow, dst.GetFlow());
+      if (src.Pressure != null)
+        PBProperty.Load(src.Pressure, dst.GetPressure());
+    }
+
+    public static pulse.cdm.bind.BagValveMaskInstantaneousData Unload(SEBagValveMaskInstantaneous src)
+    {
+      pulse.cdm.bind.BagValveMaskInstantaneousData dst = new pulse.cdm.bind.BagValveMaskInstantaneousData();
+      Serialize(src, dst);
+      return dst;
+    }
+    protected static void Serialize(SEBagValveMaskInstantaneous src, pulse.cdm.bind.BagValveMaskInstantaneousData dst)
+    {
+      dst.BagValveMaskAction = new pulse.cdm.bind.BagValveMaskActionData();
+      Serialize(src, dst.BagValveMaskAction);
+      if (src.HasFlow())
+        dst.Flow = PBProperty.Unload(src.GetFlow());
+      if (src.HasPressure())
+        dst.Pressure = PBProperty.Unload(src.GetPressure());
+    }
+    #endregion
+
+    #region SEBagValveMaskSqueeze
+    public static void Load(pulse.cdm.bind.BagValveMaskSqueezeData src, SEBagValveMaskSqueeze dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.BagValveMaskSqueezeData src, SEBagValveMaskSqueeze dst)
+    {
+      Serialize(src.BagValveMaskAction, dst);
+      if (src.SqueezePressure != null)
+        PBProperty.Load(src.SqueezePressure, dst.GetSqueezePressure());
+      if (src.SqueezeVolume != null)
+        PBProperty.Load(src.SqueezeVolume, dst.GetSqueezeVolume());
+      if (src.ExpiratoryPeriod != null)
+        PBProperty.Load(src.ExpiratoryPeriod, dst.GetExpiratoryPeriod());
+      if (src.InspiratoryPeriod != null)
+        PBProperty.Load(src.InspiratoryPeriod, dst.GetInspiratoryPeriod());
+    }
+
+    public static pulse.cdm.bind.BagValveMaskSqueezeData Unload(SEBagValveMaskSqueeze src)
+    {
+      pulse.cdm.bind.BagValveMaskSqueezeData dst = new pulse.cdm.bind.BagValveMaskSqueezeData();
+      Serialize(src, dst);
+      return dst;
+    }
+    protected static void Serialize(SEBagValveMaskSqueeze src, pulse.cdm.bind.BagValveMaskSqueezeData dst)
+    {
+      dst.BagValveMaskAction = new pulse.cdm.bind.BagValveMaskActionData();
+      Serialize(src, dst.BagValveMaskAction);
+      if (src.HasSqueezePressure())
+        dst.SqueezePressure = PBProperty.Unload(src.GetSqueezePressure());
+      if (src.HasSqueezeVolume())
+        dst.SqueezeVolume = PBProperty.Unload(src.GetSqueezeVolume());
+      if (src.HasExpiratoryPeriod())
+        dst.ExpiratoryPeriod = PBProperty.Unload(src.GetExpiratoryPeriod());
+      if (src.HasInspiratoryPeriod())
+        dst.InspiratoryPeriod = PBProperty.Unload(src.GetInspiratoryPeriod());
+    }
+    #endregion
+
     #region SEInhalerAction
     public static void Serialize(pulse.cdm.bind.InhalerActionData src, SEInhalerAction dst)
     {

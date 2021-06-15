@@ -24,7 +24,6 @@ namespace Pulse.CDM
     }
 
     protected Connection connection;
-    protected SEScalarPressureTimePerVolume endotracheal_tube_resistance;
 
     // Expiratory Baseline (Only set one)
     protected SEScalarPressure positive_end_expired_pressure;
@@ -68,8 +67,6 @@ namespace Pulse.CDM
     public SEMechanicalVentilator()
     {
       connection = Connection.NullConnection;
-      endotracheal_tube_resistance = null;
-      positive_end_expired_pressure = null;
       functional_residual_capacity = null;
       expiration_cycle_flow = null;
       expiration_cycle_pressure = null;
@@ -101,8 +98,6 @@ namespace Pulse.CDM
     {
       base.Clear();
       connection = Connection.NullConnection;
-      if (endotracheal_tube_resistance != null)
-        endotracheal_tube_resistance.Invalidate();
       if (positive_end_expired_pressure != null)
         positive_end_expired_pressure.Invalidate();
       if (functional_residual_capacity != null)
@@ -155,8 +150,6 @@ namespace Pulse.CDM
       base.Copy(from);
       if (from.connection != Connection.NullConnection)
         this.connection = from.connection;
-      if (from.HasEndotrachealTubeResistance())
-        this.GetEndotrachealTubeResistance().Set(from.GetEndotrachealTubeResistance());
       if (from.HasPositiveEndExpiredPressure())
         this.GetPositiveEndExpiredPressure().Set(from.GetPositiveEndExpiredPressure());
       if (from.HasFunctionalResidualCapacity())
@@ -235,17 +228,6 @@ namespace Pulse.CDM
     public bool HasConnection()
     {
       return connection != Connection.NullConnection;
-    }
-
-    public SEScalarPressureTimePerVolume GetEndotrachealTubeResistance()
-    {
-      if (endotracheal_tube_resistance == null)
-        endotracheal_tube_resistance = new SEScalarPressureTimePerVolume();
-      return endotracheal_tube_resistance;
-    }
-    public bool HasEndotrachealTubeResistance()
-    {
-      return endotracheal_tube_resistance == null ? false : endotracheal_tube_resistance.IsValid();
     }
 
     public SEScalarPressure GetPositiveEndExpiredPressure()
@@ -593,7 +575,6 @@ namespace Pulse.CDM
     {
       string str = "Mechanical Ventilator"
       + "\n\tConnection: " + (HasConnection() ? PBMechanicalVentilator.Connection_Name(GetConnection()) : "NotProvided")
-      + "\n\tEndotrachealTubeResistance: " + (HasEndotrachealTubeResistance() ? GetEndotrachealTubeResistance().ToString() : "Not Provided")
       + "\n\tPositiveEndExpiredPressure: " + (HasPositiveEndExpiredPressure() ? GetPositiveEndExpiredPressure().ToString() : "Not Provided")
       + "\n\tFunctionalResidualCapacity: " + (HasFunctionalResidualCapacity() ? GetFunctionalResidualCapacity().ToString() : "Not Provided")
       + "\n\tExpirationCycleFlow: " + (HasExpirationCycleFlow() ? GetExpirationCycleFlow().ToString() : "Not Provided")

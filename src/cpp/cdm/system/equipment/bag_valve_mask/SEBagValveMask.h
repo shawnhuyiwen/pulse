@@ -13,10 +13,6 @@ class SESubstanceConcentration;
 enum class eBagValveMask_Connection { NullConnection = 0, Off, Mask, Tube };
 extern const std::string& eBagValveMask_Connection_Name(eBagValveMask_Connection m);
 
-// Keep enums in sync with appropriate schema/cdm/BagValveMask.proto file !!
-enum class eBagValveMask_DriverWaveform { NullDriverWaveform = 0, Square };
-extern const std::string& eBagValveMask_DriverWaveform_Name(eBagValveMask_DriverWaveform m);
-
 class CDM_DECL SEBagValveMask : public SEEquipment
 {
   friend class PBBagValveMask;//friend the serialization class

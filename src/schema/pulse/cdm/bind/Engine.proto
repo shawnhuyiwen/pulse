@@ -43,9 +43,10 @@ message DataRequestData
     TissueCompartment    = 7;
     Substance            = 8;
     AnesthesiaMachine    = 9;
-    ECG                  = 10;
-    Inhaler              = 11;
-    MechanicalVentilator = 12;
+    BagValveMask         = 10;
+    ECG                  = 11;
+    Inhaler              = 12;
+    MechanicalVentilator = 13;
   }
   
   DecimalFormatData                                    DecimalFormat                   = 1;/**<<@brief If writing to a file, specify the decimal formatting */

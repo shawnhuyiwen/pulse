@@ -368,6 +368,14 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem AnesthesiaMachineYPieceDisconnectTable "Y-Piece Disconnect"
 @endsecreflist
 
+#### Bag Valve Mask Actions
+@secreflist
+  @refitem BagValveMaskConfigurationTable "Bag Valve Mask Configuration"
+  @refitem BagValveMaskAutomatedTable "Bag Valve Mask Automated"
+  @refitem BagValveMaskInstantaneousTable "Bag Valve Mask Instantaneous"
+  @refitem BagValveMaskSqueezeTable "Bag Valve Mask Squeeze"
+@endsecreflist
+
 #### %Inhaler Actions
 @secreflist
   @refitem InhalerConfigurationTable "Inhaler Configuration"

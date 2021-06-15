@@ -9,8 +9,6 @@ from pulse.cdm.io.scalars import *
 
 def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: MechanicalVentilatorData):
     dst.Connection = src.get_connection().value
-    if src.has_endotracheal_tube_resistance():
-        serialize_scalar_pressure_time_per_volume_to_bind(src.get_endotracheal_tube_resistance(), dst.EndotrachealTubeResistance)
 
     if src.has_positive_end_expired_pressure():
         serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiredPressure)
