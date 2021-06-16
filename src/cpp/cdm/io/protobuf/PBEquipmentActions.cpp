@@ -871,6 +871,13 @@ CDM_BIND::AnyEquipmentActionData* PBEquipmentAction::Unload(const SEEquipmentAct
     return any;
   }
 
+  const SEBagValveMaskAutomated* bvma = dynamic_cast<const SEBagValveMaskAutomated*>(&action);
+  if (bvma != nullptr)
+  {
+    any->set_allocated_bagvalvemaskautomated(PBEquipmentAction::Unload(*bvma));
+    return any;
+  }
+
   const SEBagValveMaskInstantaneous* bvmi = dynamic_cast<const SEBagValveMaskInstantaneous*>(&action);
   if (bvmi != nullptr)
   {

@@ -141,7 +141,7 @@ double SEBagValveMaskAutomated::GetSqueezeVolume(const VolumeUnit& unit) const
 
 void SEBagValveMaskAutomated::ToString(std::ostream &str) const
 {
-  str << "Mechanical Ventilator Automated";
+  str << "Bag Valve Mask Automated";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   str << "\n\tBreathFrequency: "; HasBreathFrequency() ? str << *m_BreathFrequency : str << "NaN";

@@ -41,6 +41,8 @@ POP_PROTO_WARNINGS()
 #include "engine/SEEnvironmentActionCollection.h"
 #include "engine/SEEquipmentActionCollection.h"
 #include "engine/SEPatientActionCollection.h"
+#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
+#include "system/environment/actions/SEThermalApplication.h"
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
@@ -55,8 +57,10 @@ POP_PROTO_WARNINGS()
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h"
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
-#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
-#include "system/environment/actions/SEThermalApplication.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "patient/actions/SEPatientAssessmentRequest.h"
@@ -234,16 +238,10 @@ void PBEngine::Serialize(const SEEquipmentActionCollection& src, CDM_BIND::Actio
 {
   if (src.HasAnesthesiaMachineConfiguration())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineConfiguration));
-  if (src.HasInhalerConfiguration())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_InhalerConfiguration));
-  if (src.HasMechanicalVentilatorConfiguration())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorConfiguration));
-
   if (src.HasAnesthesiaMachineOxygenTankPressureLoss())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineOxygenTankPressureLoss));
   if (src.HasAnesthesiaMachineOxygenWallPortPressureLoss())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineOxygenWallPortPressureLoss));
-
   if (src.HasAnesthesiaMachineExpiratoryValveLeak())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineExpiratoryValveLeak));
   if (src.HasAnesthesiaMachineExpiratoryValveObstruction())
@@ -264,6 +262,21 @@ void PBEngine::Serialize(const SEEquipmentActionCollection& src, CDM_BIND::Actio
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineVentilatorPressureLoss));
   if (src.HasAnesthesiaMachineYPieceDisconnect())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineYPieceDisconnect));
+
+  if (src.HasBagValveMaskConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BagValveMaskConfiguration));
+  if (src.HasBagValveMaskAutomated())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BagValveMaskAutomated));
+  if (src.HasBagValveMaskInstantaneous())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BagValveMaskInstantaneous));
+  if (src.HasBagValveMaskSqueeze())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BagValveMaskSqueeze));
+
+  if (src.HasInhalerConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_InhalerConfiguration));
+
+  if (src.HasMechanicalVentilatorConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorConfiguration));
 }
 void PBEngine::Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst)
 {
