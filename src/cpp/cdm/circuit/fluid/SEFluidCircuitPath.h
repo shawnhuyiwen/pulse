@@ -19,6 +19,13 @@ public:
   virtual SEFluidCircuitNode& GetSourceNode() const { return m_FluidSourceNode; }
   virtual SEFluidCircuitNode& GetTargetNode() const { return m_FluidTargetNode; }
 
+  virtual bool HasFlow() const;
+  virtual SEScalarVolumePerTime& GetFlow();
+  virtual double GetFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasNextFlow() const;
+  virtual SEScalarVolumePerTime& GetNextFlow();
+  virtual double GetNextFlow(const VolumePerTimeUnit& unit) const;
+
   virtual bool HasResistance() const;
   virtual SEScalarPressureTimePerVolume& GetResistance();
   virtual double GetResistance(const PressureTimePerVolumeUnit& unit) const;
@@ -28,6 +35,7 @@ public:
   virtual bool HasResistanceBaseline() const;
   virtual SEScalarPressureTimePerVolume& GetResistanceBaseline();
   virtual double GetResistanceBaseline(const PressureTimePerVolumeUnit& unit) const;
+  virtual void RemoveResistance() override;
 
   virtual bool HasCompliance() const;
   virtual SEScalarVolumePerPressure& GetCompliance();
@@ -38,6 +46,7 @@ public:
   virtual bool HasComplianceBaseline() const;
   virtual SEScalarVolumePerPressure& GetComplianceBaseline();
   virtual double GetComplianceBaseline(const VolumePerPressureUnit& unit) const;
+  virtual void RemoveCompliance();
 
   virtual bool HasInertance() const;
   virtual SEScalarPressureTimeSquaredPerVolume& GetInertance();
@@ -48,13 +57,8 @@ public:
   virtual bool HasInertanceBaseline() const;
   virtual SEScalarPressureTimeSquaredPerVolume& GetInertanceBaseline();
   virtual double GetInertanceBaseline(const PressureTimeSquaredPerVolumeUnit& unit) const;
+  virtual void RemoveInertance();
 
-  virtual bool HasFlow() const;
-  virtual SEScalarVolumePerTime& GetFlow();
-  virtual double GetFlow(const VolumePerTimeUnit& unit) const;
-  virtual bool HasNextFlow() const;
-  virtual SEScalarVolumePerTime& GetNextFlow();
-  virtual double GetNextFlow(const VolumePerTimeUnit& unit) const; 
   virtual bool HasFlowSource() const;
   virtual SEScalarVolumePerTime& GetFlowSource();
   virtual double GetFlowSource(const VolumePerTimeUnit& unit) const;
@@ -64,6 +68,7 @@ public:
   virtual bool HasFlowSourceBaseline() const;
   virtual SEScalarVolumePerTime& GetFlowSourceBaseline();
   virtual double GetFlowSourceBaseline(const VolumePerTimeUnit& unit) const;
+  virtual void RemoveFlowSource();
 
   virtual bool HasPressureSource() const;
   virtual SEScalarPressure& GetPressureSource();
@@ -74,6 +79,8 @@ public:
   virtual bool HasPressureSourceBaseline() const;
   virtual SEScalarPressure& GetPressureSourceBaseline();
   virtual double GetPressureSourceBaseline(const PressureUnit& unit) const;
+  virtual void RemovePressureSource();
+
   virtual bool HasValveBreakdownPressure() const;
   virtual SEScalarPressure& GetValveBreakdownPressure();
   virtual double GetValveBreakdownPressure(const PressureUnit& unit) const;

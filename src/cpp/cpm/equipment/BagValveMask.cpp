@@ -462,12 +462,18 @@ void BagValveMask::SetSqeezeDriver()
     m_SqueezePressure_cmH2O = 0.0;
   }
 
+  bool stateChange = false;
   if (!std::isnan(m_SqueezePressure_cmH2O))
   {
     if (m_ReservoirToBag->HasNextFlowSource())
     {
-      m_ReservoirToBag->GetNextFlowSource().Invalidate();
-      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+      stateChange = true;
+      m_ReservoirToBag->RemoveFlowSource();
+    }
+    if (!m_ReservoirToBag->HasNextPressureSource())
+    {
+      stateChange = true;
+      m_ReservoirToBag->GetPressureSourceBaseline().SetValue(0, PressureUnit::cmH2O);
     }
     m_ReservoirToBag->GetNextPressureSource().SetValue(m_SqueezePressure_cmH2O, PressureUnit::cmH2O);
   }
@@ -475,11 +481,18 @@ void BagValveMask::SetSqeezeDriver()
   {
     if (m_ReservoirToBag->HasNextPressureSource())
     {
-      m_ReservoirToBag->GetNextPressureSource().Invalidate();
-      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+      stateChange = true;
+      m_ReservoirToBag->RemovePressureSource();
+    }
+    if (!m_ReservoirToBag->HasNextFlowSource())
+    {
+      stateChange = true;
+      m_ReservoirToBag->GetFlowSourceBaseline().SetValue(0, VolumePerTimeUnit::L_Per_s);
     }
     m_ReservoirToBag->GetNextFlowSource().SetValue(m_SqueezeFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
   }
+  if(stateChange)
+    m_data.GetCircuits().GetRespiratoryAndBagValveMaskCircuit().StateChange();
 }
 
 //--------------------------------------------------------------------------------------------------

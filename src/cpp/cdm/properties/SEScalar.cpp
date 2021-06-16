@@ -89,6 +89,13 @@ void SEScalar::Invalidate()
   *(reinterpret_cast<unsigned long long int *>(&m_value)) = NaN;
 }
 
+void SEScalar::ForceInvalidate()
+{
+  m_isnan = true;
+  m_isinf = false;
+  *(reinterpret_cast<unsigned long long int*>(&m_value)) = NaN;
+}
+
 bool SEScalar::IsValid() const 
 {
   if(m_isnan)
@@ -269,6 +276,13 @@ template<typename Unit>
 void SEScalarQuantity<Unit>::Invalidate()
 {
   SEScalar::Invalidate();
+  m_unit = nullptr;
+}
+
+template<typename Unit>
+void SEScalarQuantity<Unit>::ForceInvalidate()
+{
+  SEScalar::ForceInvalidate();
   m_unit = nullptr;
 }
 

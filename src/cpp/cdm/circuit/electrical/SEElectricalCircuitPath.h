@@ -19,6 +19,13 @@ public:
   virtual SEElectricalCircuitNode& GetSourceNode() const { return m_ElectricalSourceNode; }
   virtual SEElectricalCircuitNode& GetTargetNode() const { return m_ElectricalTargetNode; }
 
+  virtual bool HasCurrent() const;
+  virtual SEScalarElectricCurrent& GetCurrent();
+  virtual double GetCurrent(const ElectricCurrentUnit& unit) const;
+  virtual bool HasNextCurrent() const;
+  virtual SEScalarElectricCurrent& GetNextCurrent();
+  virtual double GetNextCurrent(const ElectricCurrentUnit& unit) const;
+
   virtual bool HasResistance() const;
   virtual SEScalarElectricResistance& GetResistance();
   virtual double GetResistance(const ElectricResistanceUnit& unit) const;
@@ -28,6 +35,7 @@ public:
   virtual bool HasResistanceBaseline() const;
   virtual SEScalarElectricResistance& GetResistanceBaseline();
   virtual double GetResistanceBaseline(const ElectricResistanceUnit& unit) const;
+  virtual void RemoveResistance() override;
 
   virtual bool HasCapacitance() const;
   virtual SEScalarElectricCapacitance& GetCapacitance();
@@ -38,6 +46,7 @@ public:
   virtual bool HasCapacitanceBaseline() const;
   virtual SEScalarElectricCapacitance& GetCapacitanceBaseline();
   virtual double GetCapacitanceBaseline(const ElectricCapacitanceUnit& unit) const;
+  virtual void RemoveCapacitance() override;
 
   virtual bool HasInductance() const;
   virtual SEScalarElectricInductance& GetInductance();
@@ -48,13 +57,8 @@ public:
   virtual bool HasInductanceBaseline() const;
   virtual SEScalarElectricInductance& GetInductanceBaseline();
   virtual double GetInductanceBaseline(const ElectricInductanceUnit& unit) const;
+  virtual void RemoveInductance() override;
 
-  virtual bool HasCurrent() const;
-  virtual SEScalarElectricCurrent& GetCurrent();
-  virtual double GetCurrent(const ElectricCurrentUnit& unit) const;
-  virtual bool HasNextCurrent() const;
-  virtual SEScalarElectricCurrent& GetNextCurrent();
-  virtual double GetNextCurrent(const ElectricCurrentUnit& unit) const;  
   virtual bool HasCurrentSource() const;
   virtual SEScalarElectricCurrent& GetCurrentSource();
   virtual double GetCurrentSource(const ElectricCurrentUnit& unit) const;
@@ -64,6 +68,7 @@ public:
   virtual bool HasCurrentSourceBaseline() const;
   virtual SEScalarElectricCurrent& GetCurrentSourceBaseline();
   virtual double GetCurrentSourceBaseline(const ElectricCurrentUnit& unit) const;
+  virtual void RemoveCurrentSource();
 
   virtual bool HasVoltageSource() const;
   virtual SEScalarElectricPotential& GetVoltageSource();
@@ -74,6 +79,8 @@ public:
   virtual bool HasVoltageSourceBaseline() const;
   virtual SEScalarElectricPotential& GetVoltageSourceBaseline();
   virtual double GetVoltageSourceBaseline(const ElectricPotentialUnit& unit) const;
+  virtual void RemoveVoltageSource();
+
   virtual bool HasValveBreakdownVoltage() const;
   virtual SEScalarElectricPotential& GetValveBreakdownVoltage();
   virtual double GetValveBreakdownVoltage(const ElectricPotentialUnit& unit) const;

@@ -72,6 +72,10 @@ double SEFluidCircuitPath::GetResistanceBaseline(const PressureTimePerVolumeUnit
     return SEScalar::dNaN();
   return m_ResistanceBaseline->GetValue(unit);
 }
+void SEFluidCircuitPath::RemoveResistance()
+{
+  SECircuitPath::RemoveResistance();
+}
 
 //////////////////////////////////
 // Fluid Capacitance Types //
@@ -119,6 +123,10 @@ double SEFluidCircuitPath::GetComplianceBaseline(const VolumePerPressureUnit& un
     return SEScalar::dNaN();
   return m_CapacitanceBaseline->GetValue(unit);
 }
+void SEFluidCircuitPath::RemoveCompliance()
+{
+  SECircuitPath::RemoveCapacitance();
+}
 
 /////////////////////////////////
 // Fluid Inductance Types //
@@ -165,6 +173,10 @@ double SEFluidCircuitPath::GetInertanceBaseline(const PressureTimeSquaredPerVolu
   if (m_InductanceBaseline == nullptr)
     return SEScalar::dNaN();
   return m_InductanceBaseline->GetValue(unit);
+}
+void SEFluidCircuitPath::RemoveInertance()
+{
+  SECircuitPath::RemoveInductance();
 }
 
 
@@ -241,6 +253,10 @@ double SEFluidCircuitPath::GetFlowSourceBaseline(const VolumePerTimeUnit& unit) 
     return SEScalar::dNaN();
   return m_FluxSourceBaseline->GetValue(unit);
 }
+void SEFluidCircuitPath::RemoveFlowSource()
+{
+  SECircuitPath::RemoveFluxSource();
+}
 
 ////////////////////////////////
 // Fluid Potential Types //
@@ -287,6 +303,11 @@ double SEFluidCircuitPath::GetPressureSourceBaseline(const PressureUnit& unit) c
     return SEScalar::dNaN();
   return m_PotentialSourceBaseline->GetValue(unit);
 }
+void SEFluidCircuitPath::RemovePressureSource()
+{
+  SECircuitPath::RemovePotentialSource();
+}
+
 bool SEFluidCircuitPath::HasValveBreakdownPressure() const
 {
   return HasValveBreakdownPotential();

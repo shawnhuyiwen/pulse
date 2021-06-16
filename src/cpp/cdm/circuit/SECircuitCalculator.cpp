@@ -1088,18 +1088,12 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PostProcess(CircuitType& cir
     if (p->HasNextPolarizedState())
       p->SetPolarizedState(p->GetNextPolarizedState());
 
-    if (p->HasNextFlux())
-      Override<FluxUnit>(p->GetNextFlux(), p->GetFlux());
-    if (p->HasNextFluxSource())
-      Override<FluxUnit>(p->GetNextFluxSource(), p->GetFluxSource());
-    if (p->HasNextResistance())
-      Override<ResistanceUnit>(p->GetNextResistance(), p->GetResistance());
-    if (p->HasNextCapacitance())
-      Override<CapacitanceUnit>(p->GetNextCapacitance(), p->GetCapacitance());
-    if (p->HasNextInductance())
-      Override<InductanceUnit>(p->GetNextInductance(), p->GetInductance());
-    if (p->HasNextPotentialSource())
-      Override<PotentialUnit>(p->GetNextPotentialSource(), p->GetPotentialSource());
+    Override<FluxUnit>(p->GetNextFlux(), p->GetFlux());
+    Override<FluxUnit>(p->GetNextFluxSource(), p->GetFluxSource());
+    Override<ResistanceUnit>(p->GetNextResistance(), p->GetResistance());
+    Override<CapacitanceUnit>(p->GetNextCapacitance(), p->GetCapacitance());
+    Override<InductanceUnit>(p->GetNextInductance(), p->GetInductance());
+    Override<PotentialUnit>(p->GetNextPotentialSource(), p->GetPotentialSource());
 
     // 2) Set Next Path elements to the Baseline values
     //    We won't touch Valves or Switches.  Valves should keep their state to efficiently solve based on assumed states
