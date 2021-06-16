@@ -694,7 +694,7 @@ add_library_ex(CommonDataModel
 )
 
 if(WIN32)
-  target_include_directories(CommonDataModel PUBLIC ${Dirent_INCLUDE_DIR})
+  target_include_directories(CommonDataModel PRIVATE ${Dirent_INCLUDE_DIR})
 endif()
 target_include_directories(CommonDataModel PRIVATE ${EIGEN3_INCLUDE_DIR})
 

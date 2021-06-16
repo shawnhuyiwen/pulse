@@ -108,6 +108,7 @@ function(add_library_ex target)
   #-----------------------------------------------------------------------------
   target_include_directories( ${target} PUBLIC
     ${target_BUILD_INTERFACE_LIST}
+    $<INSTALL_INTERFACE:include>
     $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_INSTALL_FOLDER}>
     )
 
