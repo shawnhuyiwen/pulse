@@ -25,6 +25,7 @@ class SERespiratorySystem;
 class SETissueSystem;
 class SEEnvironment;
 class SEAnesthesiaMachine;
+class SEBagValveMask;
 class SEElectroCardioGram;
 class SEInhaler;
 class SEMechanicalVentilator;
@@ -344,6 +345,13 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
+  /// Returns the current state of the Bag Valve Mask
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEBagValveMask* GetBagValveMask() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
   /// Returns the current state of the Electrocardiogram machine
   ///
   //--------------------------------------------------------------------------------------------------
@@ -357,10 +365,10 @@ public:
   virtual const SEInhaler* GetInhaler() const = 0;
 
   //--------------------------------------------------------------------------------------------------
- /// \brief
- /// Returns the current state of the Mechanical ventilator
- ///
- //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Returns the current state of the Mechanical ventilator
+  ///
+  //--------------------------------------------------------------------------------------------------
   virtual const SEMechanicalVentilator* GetMechanicalVentilator() const = 0;
 
   //--------------------------------------------------------------------------------------------------

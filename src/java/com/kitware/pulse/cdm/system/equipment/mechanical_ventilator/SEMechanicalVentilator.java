@@ -22,7 +22,6 @@ import com.kitware.pulse.utilities.Log;
 public class SEMechanicalVentilator extends SEEquipment
 {
   protected eConnection                       connection;
-  protected SEScalarPressureTimePerVolume     endotrachealTubeResistance;
   
   // Expiratory Baseline Properties (Only set 1)
   protected SEScalarPressure                  positiveEndExpiredPressure;
@@ -69,7 +68,6 @@ public class SEMechanicalVentilator extends SEEquipment
   public SEMechanicalVentilator()
   {
     connection = null;
-    endotrachealTubeResistance = null;
 
     positiveEndExpiredPressure = null;
     functionalResidualCapacity = null;
@@ -109,8 +107,6 @@ public class SEMechanicalVentilator extends SEEquipment
   public void reset()
   {
     connection = null;
-    if (endotrachealTubeResistance != null)
-      endotrachealTubeResistance.invalidate();
 
     if (positiveEndExpiredPressure != null)
       positiveEndExpiredPressure.invalidate();
@@ -170,8 +166,6 @@ public class SEMechanicalVentilator extends SEEquipment
     reset();
     if(from.connection!=null && from.connection != eConnection.NullConnection)
     	this.connection=from.connection;
-    if(from.hasEndotrachealTubeResistance())
-      this.getEndotrachealTubeResistance().set(from.getEndotrachealTubeResistance());
     
     if(from.hasPositiveEndExpiredPressure())
       this.getPositiveEndExpiredPressure().set(from.getPositiveEndExpiredPressure());
@@ -399,17 +393,6 @@ public class SEMechanicalVentilator extends SEEquipment
   public boolean hasConnection()
   {
     return connection != null;
-  }
-  
-  public SEScalarPressureTimePerVolume getEndotrachealTubeResistance()
-  {
-    if (endotrachealTubeResistance == null)
-      endotrachealTubeResistance = new SEScalarPressureTimePerVolume();
-    return endotrachealTubeResistance;
-  }
-  public boolean hasEndotrachealTubeResistance()
-  {
-    return endotrachealTubeResistance == null ? false : endotrachealTubeResistance.isValid();
   }
   
   public SEScalarPressure getPositiveEndExpiredPressure()
@@ -764,8 +747,6 @@ public class SEMechanicalVentilator extends SEEquipment
   {
     String str = "Mechanical Ventilator"
         + "\n\tConnection: " + (hasConnection()?getConnection():"NotProvided")
-        
-        + "\n\tEndotrachealTubeResistance: " + (hasEndotrachealTubeResistance()?getEndotrachealTubeResistance():"NotProvided")
         
         + "\n\tPositiveEndExpiredPressure: " + (hasPositiveEndExpiredPressure()?getPositiveEndExpiredPressure():"NotProvided")
         + "\n\tFunctionalResidualCapacity: " + (hasFunctionalResidualCapacity()?getFunctionalResidualCapacity():"NotProvided")

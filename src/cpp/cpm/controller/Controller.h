@@ -34,6 +34,7 @@ class Environment;
 
 class ECG;
 class AnesthesiaMachine;
+class BagValveMask;
 class Inhaler;
 class MechanicalVentilator;
 
@@ -55,6 +56,7 @@ enum class EngineState { NotReady=0,
 // Keep enums in sync with appropriate proto file !!
 enum class eAirwayMode{ Free=0, 
                         AnesthesiaMachine,
+                        BagValveMask,
                         Inhaler,
                         MechanicalVentilation,// Action
                         MechanicalVentilator, // Equipment
@@ -114,6 +116,8 @@ public:
   virtual SEEnvironment&                GetEnvironment() const;
   virtual bool                          HasAnesthesiaMachine() const;
   virtual SEAnesthesiaMachine&          GetAnesthesiaMachine() const;
+  virtual bool                          HasBagValveMask() const;
+  virtual SEBagValveMask&               GetBagValveMask() const;
   virtual bool                          HasECG() const;
   virtual SEElectroCardioGram&          GetECG() const;
   virtual bool                          HasInhaler() const;
@@ -195,6 +199,8 @@ protected:
 
   AnesthesiaMachine*                    m_AnesthesiaMachine=nullptr;
 
+  BagValveMask*                         m_BagValveMask=nullptr;
+
   Inhaler*                              m_Inhaler=nullptr;
 
   MechanicalVentilator*                 m_MechanicalVentilator=nullptr;
@@ -261,6 +267,7 @@ protected:
   virtual void SetupGastrointestinal();
   virtual void SetupRespiratory();
   virtual void SetupAnesthesiaMachine();
+  virtual void SetupBagValveMask();
   virtual void SetupInhaler();
   virtual void SetupMechanicalVentilation();
   virtual void SetupMechanicalVentilator();

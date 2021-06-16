@@ -23,7 +23,6 @@
 SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(logger)
 {
   m_Connection = eMechanicalVentilator_Connection::Off;
-  m_EndotrachealTubeResistance = nullptr;
 
   m_PositiveEndExpiredPressure = nullptr;
   m_FunctionalResidualCapacity = nullptr;
@@ -59,7 +58,6 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
 SEMechanicalVentilator::~SEMechanicalVentilator()
 {
   m_Connection = eMechanicalVentilator_Connection::Off;
-  SAFE_DELETE(m_EndotrachealTubeResistance);
 
   SAFE_DELETE(m_PositiveEndExpiredPressure);
   SAFE_DELETE(m_FunctionalResidualCapacity);
@@ -105,7 +103,6 @@ void SEMechanicalVentilator::Clear()
   SEEquipment::Clear();
 
   m_Connection = eMechanicalVentilator_Connection::Off;
-  INVALIDATE_PROPERTY(m_EndotrachealTubeResistance);
 
   INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
   INVALIDATE_PROPERTY(m_FunctionalResidualCapacity);
@@ -160,7 +157,6 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
 {
   if(from.m_Connection!=eMechanicalVentilator_Connection::NullConnection)
     SetConnection(from.m_Connection);
-  COPY_PROPERTY(EndotrachealTubeResistance);
 
   COPY_PROPERTY(PositiveEndExpiredPressure);
   COPY_PROPERTY(FunctionalResidualCapacity);
@@ -269,9 +265,6 @@ bool SEMechanicalVentilator::SerializeFromFile(const std::string& filename, cons
 
 const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
 {
-  if (name == "EndotrachealTubeResistance")
-    return &GetEndotrachealTubeResistance();
-
   if (name == "PositiveEndExpiredPressure")
     return &GetPositiveEndExpiredPressure();
   if (name == "FunctionalResidualCapacity")
@@ -330,23 +323,6 @@ void SEMechanicalVentilator::SetConnection(eMechanicalVentilator_Connection c)
 eMechanicalVentilator_Connection SEMechanicalVentilator::GetConnection() const
 {
   return m_Connection;
-}
-
-bool SEMechanicalVentilator::HasEndotrachealTubeResistance() const
-{
-  return m_EndotrachealTubeResistance == nullptr ? false : m_EndotrachealTubeResistance->IsValid();
-}
-SEScalarPressureTimePerVolume& SEMechanicalVentilator::GetEndotrachealTubeResistance()
-{
-  if (m_EndotrachealTubeResistance == nullptr)
-    m_EndotrachealTubeResistance = new SEScalarPressureTimePerVolume();
-  return *m_EndotrachealTubeResistance;
-}
-double SEMechanicalVentilator::GetEndotrachealTubeResistance(const PressureTimePerVolumeUnit& unit) const
-{
-  if (m_EndotrachealTubeResistance == nullptr)
-    return SEScalar::dNaN();
-  return m_EndotrachealTubeResistance->GetValue(unit);
 }
 
 bool SEMechanicalVentilator::HasPositiveEndExpiredPressure() const

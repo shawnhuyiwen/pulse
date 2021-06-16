@@ -2577,28 +2577,22 @@ void Respiratory::UpdateResistances()
   double rightAlveoliResistance_cmH2O_s_Per_L = m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double leftAlveoliResistance_cmH2O_s_Per_L = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double esophagusResistance_cmH2O_s_Per_L = m_AirwayToStomach->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-  
-  //------------------------------------------------------------------------------------------------------
-  //Positive Pressure Ventilation
-  if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
-    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation || 
-    m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
-  {
-    tracheaResistance_cmH2O_s_Per_L *= 11.0;
-  }
 
-  //------------------------------------------------------------------------------------------------------
   //Intubation
   if (m_PatientActions->HasIntubation())
   {
     m_data.SetIntubation(eSwitch::On);
     SEIntubation& intubation = m_PatientActions->GetIntubation();
+
     switch (intubation.GetType())
     {
     case eIntubation_Type::Tracheal:
     {
-      //The proper way to intubate
-      //Airway mode handles this case by default
+      if (intubation.HasAirwayResistance())
+        tracheaResistance_cmH2O_s_Per_L = intubation.GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      else
+        //Tuned based on mechanical ventilator validation data
+        tracheaResistance_cmH2O_s_Per_L *= 11.0;
       break;
     }
     case eIntubation_Type::Esophageal:
@@ -2626,11 +2620,32 @@ void Respiratory::UpdateResistances()
       rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
       break;
     }
+    case eIntubation_Type::Oropharyngeal:
+    {
+      //Airway adjunct
+      tracheaResistance_cmH2O_s_Per_L *= 15.0;
+      break;
+    }
+    case eIntubation_Type::Nasopharyngeal:
+    {
+      //Airway adjunct
+      tracheaResistance_cmH2O_s_Per_L *= 15.0;
+      break;
+    }
     }
   }
   else
   {
     m_data.SetIntubation(eSwitch::Off);
+
+    //Positive Pressure Ventilation assuming a mask if not intubated
+    if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator ||
+      m_data.GetAirwayMode() == eAirwayMode::BagValveMask)
+    {
+      tracheaResistance_cmH2O_s_Per_L *= 20.0;
+    }
   }
 
   //------------------------------------------------------------------------------------------------------

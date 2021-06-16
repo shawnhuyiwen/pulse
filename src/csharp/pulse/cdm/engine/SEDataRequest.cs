@@ -7,7 +7,7 @@ namespace Pulse.CDM
   {
     Patient = 0, Physiology, Environment, Action, GasCompartment,
     LiquidCompartment, ThermalCompartment, TissueCompartment, Substance,
-    AnesthesiaMachine, ECG, Inhaler, MechanicalVentilator
+    AnesthesiaMachine, BagValveMask, ECG, Inhaler, MechanicalVentilator
   };
 
   public class SEDataRequest

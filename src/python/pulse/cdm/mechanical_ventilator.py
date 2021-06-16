@@ -25,7 +25,6 @@ class eDriverWaveform(Enum):
 
 class SEMechanicalVentilator(SEEquipment):
     __slots__ = ["_connection",
-                 "_endotracheal_tube_resistance",
                  # One of
                  "_positive_end_expired_pressure",
                  "_functional_residual_capacity",
@@ -63,7 +62,6 @@ class SEMechanicalVentilator(SEEquipment):
     def __init__(self):
         super().__init__()
         self._connection = eConnection.NullConnection
-        self._endotracheal_tube_resistance = None
 
         self._positive_end_expired_pressure = None
         self._functional_residual_capacity = None
@@ -100,7 +98,6 @@ class SEMechanicalVentilator(SEEquipment):
 
     def clear(self):
         self._connection = eConnection.NullConnection
-        if self._endotracheal_tube_resistance is not None: self._endotracheal_tube_resistance.invalidate()
 
         if self._positive_end_expired_pressure is not None: self._positive_end_expired_pressure.invalidate()
         if self._functional_residual_capacity is not None: self._functional_residual_capacity.invalidate()
@@ -140,7 +137,6 @@ class SEMechanicalVentilator(SEEquipment):
             raise Exception("Provided argument must be a SEMechanicalVentilator")
         self.clear()
         self._connection = src._connection
-        if src.has_endotracheal_tube_resistance(): self.get_endotracheal_tube_resistance().set(src._endotracheal_tube_resistance)
 
         if src.has_positive_end_expired_pressure(): self.get_positive_end_expired_pressure().set(src._positive_end_expired_pressure)
         if src.has_functional_residual_capacity(): self.get_functional_residual_capacity().set(src._functional_residual_capacity)
@@ -181,13 +177,6 @@ class SEMechanicalVentilator(SEEquipment):
         return self._connection
     def set_connection(self, t: eConnection):
         self._connection = t
-
-    def has_endotracheal_tube_resistance(self):
-        return False if self._endotracheal_tube_resistance is None else self._endotracheal_tube_resistance.is_valid()
-    def get_endotracheal_tube_resistance(self):
-        if self._endotracheal_tube_resistance is None:
-            self._endotracheal_tube_resistance = SEScalarPressureTimePerVolume()
-        return self._endotracheal_tube_resistance
     
     def has_positive_end_expired_pressure(self):
         return False if self._positive_end_expired_pressure is None else self._positive_end_expired_pressure.is_valid()

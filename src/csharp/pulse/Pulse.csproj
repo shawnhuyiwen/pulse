@@ -49,6 +49,8 @@
     <Compile Include="bind\Actions.cs" />
     <Compile Include="bind\AnesthesiaMachine.cs" />
     <Compile Include="bind\AnesthesiaMachineActions.cs" />
+    <Compile Include="bind\BagValveMask.cs" />
+    <Compile Include="bind\BagValveMaskActions.cs" />
     <Compile Include="bind\Circuit.cs" />
     <Compile Include="bind\Compartment.cs" />
     <Compile Include="bind\Conditions.cs" />
@@ -95,6 +97,7 @@
     <Compile Include="cdm\engine\SEPatientActionCollection.cs" />
     <Compile Include="cdm\engine\SEPatientConfiguration.cs" />
     <Compile Include="cdm\io\PBInhaler.cs" />
+    <Compile Include="cdm\io\PBBagValveMask.cs" />
     <Compile Include="cdm\io\PBPatientAssessmets.cs" />
     <Compile Include="cdm\io\PBActions.cs" />
     <Compile Include="cdm\io\PBAnesthesiaMachine.cs" />
@@ -224,9 +227,15 @@
     <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachine.cs" />
     <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachineChamber.cs" />
     <Compile Include="cdm\system\equipment\anesthesia_machine\SEAnesthesiaMachineOxygenBottle.cs" />
+    <Compile Include="cdm\system\equipment\bag_valve_mask\actions\SEBagValveMaskAutomated.cs" />
+    <Compile Include="cdm\system\equipment\bag_valve_mask\actions\SEBagValveMaskInstantaneous.cs" />
+    <Compile Include="cdm\system\equipment\bag_valve_mask\actions\SEBagValveMaskSqueeze.cs" />
     <Compile Include="cdm\system\equipment\inhaler\actions\SEInhalerAction.cs" />
     <Compile Include="cdm\system\equipment\inhaler\actions\SEInhalerConfiguration.cs" />
     <Compile Include="cdm\system\equipment\inhaler\SEInhaler.cs" />
+    <Compile Include="cdm\system\equipment\bag_valve_mask\actions\SEBagValveMaskAction.cs" />
+    <Compile Include="cdm\system\equipment\bag_valve_mask\actions\SEBagValveMaskConfiguration.cs" />
+    <Compile Include="cdm\system\equipment\bag_valve_mask\SEBagValveMask.cs" />
     <Compile Include="cdm\system\equipment\mechanical_ventilator\actions\SEMechanicalVentilatorAction.cs" />
     <Compile Include="cdm\system\equipment\mechanical_ventilator\actions\SEMechanicalVentilatorConfiguration.cs" />
     <Compile Include="cdm\system\equipment\mechanical_ventilator\SEMechanicalVentilator.cs" />

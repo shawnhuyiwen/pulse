@@ -7,10 +7,12 @@ PUSH_PROTO_WARNINGS()
 POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPulseEquipment.h"
 #include "io/protobuf/PBAnesthesiaMachine.h"
+#include "io/protobuf/PBBagValveMask.h"
 #include "io/protobuf/PBElectroCardioGram.h"
 #include "io/protobuf/PBInhaler.h"
 #include "io/protobuf/PBMechanicalVentilator.h"
 #include "equipment/AnesthesiaMachine.h"
+#include "equipment/BagValveMask.h"
 #include "equipment/ECG.h"
 #include "equipment/Inhaler.h"
 #include "equipment/MechanicalVentilator.h"
@@ -49,6 +51,36 @@ void PBPulseEquipment::Serialize(const AnesthesiaMachine& src, PULSE_BIND::Anest
   dst.set_inspirationtime_s(src.m_inspirationTime_s);
   dst.set_oxygeninletvolumefraction(src.m_O2InletVolumeFraction);
   dst.set_totalbreathingcycletime_s(src.m_totalBreathingCycleTime_s);
+}
+
+void PBPulseEquipment::Load(const PULSE_BIND::BagValveMaskData& src, BagValveMask& dst)
+{
+  dst.Clear();
+  dst.SetUp();
+  PBPulseEquipment::Serialize(src, dst);
+  dst.StateChange();
+}
+void PBPulseEquipment::Serialize(const PULSE_BIND::BagValveMaskData& src, BagValveMask& dst)
+{
+  PBBagValveMask::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
+  dst.m_CurrentBreathState = (eBreathState)src.currentbreathstate();
+  dst.m_CurrentPeriodTime_s = src.currentperiodtime_s();
+  dst.m_SqueezeFlow_L_Per_s = src.squeezeflow_l_per_s();
+  dst.m_SqueezePressure_cmH2O = src.squeezepressure_cmh2o();
+}
+PULSE_BIND::BagValveMaskData* PBPulseEquipment::Unload(const BagValveMask& src)
+{
+  PULSE_BIND::BagValveMaskData* dst = new PULSE_BIND::BagValveMaskData();
+  PBPulseEquipment::Serialize(src, *dst);
+  return dst;
+}
+void PBPulseEquipment::Serialize(const BagValveMask& src, PULSE_BIND::BagValveMaskData& dst)
+{
+  PBBagValveMask::Serialize(src, *dst.mutable_common());
+  dst.set_currentbreathstate((CDM_BIND::eBreathState)src.m_CurrentBreathState);
+  dst.set_currentperiodtime_s(src.m_CurrentPeriodTime_s);
+  dst.set_squeezeflow_l_per_s(src.m_SqueezeFlow_L_Per_s);
+  dst.set_squeezepressure_cmh2o(src.m_SqueezePressure_cmH2O);
 }
 
 void PBPulseEquipment::Load(const PULSE_BIND::ElectroCardioGramData& src, ECG& dst)

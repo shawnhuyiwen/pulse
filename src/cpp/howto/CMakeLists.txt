@@ -5,6 +5,7 @@ add_executable_ex(HowToDriver
   HowTo-AirwayObstruction.cpp
   HowTo-AnesthesiaMachine.cpp
   HowTo-Asthma.cpp
+  HowTo-BagValveMask.cpp
   HowTo-BolusDrug.cpp
   HowTo-BrainInjury.cpp
   HowTo-CombatMultitrauma.cpp

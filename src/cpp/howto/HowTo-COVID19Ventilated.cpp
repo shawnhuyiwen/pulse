@@ -120,8 +120,7 @@ void HowToCOVID19Ventilated()
   mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);
   mv.GetPositiveEndExpiredPressure().SetValue(10.0, PressureUnit::cmH2O);
   const SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");
-  SESubstanceFraction* fractionFiO2 = &mv.GetFractionInspiredGas(*oxygen);
-  fractionFiO2->GetFractionAmount().SetValue(0.5);
+  mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(0.5);
   double respirationRate_per_min = 20.0;
   double IERatio = 0.5;
 

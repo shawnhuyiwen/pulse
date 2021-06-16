@@ -207,6 +207,11 @@ const SEAnesthesiaMachine* PulseEngine::GetAnesthesiaMachine() const
   return &m_PulseController->GetData().GetAnesthesiaMachine();
 }
 
+const SEBagValveMask* PulseEngine::GetBagValveMask() const
+{
+  return &m_PulseController->GetData().GetBagValveMask();
+}
+
 const SEElectroCardioGram* PulseEngine::GetElectroCardioGram() const
 {
   return &m_PulseController->GetData().GetECG();

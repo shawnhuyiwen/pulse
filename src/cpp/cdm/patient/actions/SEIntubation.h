@@ -5,7 +5,8 @@
 #include "patient/actions/SEPatientAction.h"
 
 // Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
-enum class eIntubation_Type { Off = 0, Esophageal, LeftMainstem, RightMainstem, Tracheal };
+enum class eIntubation_Type { Off = 0, Esophageal, LeftMainstem, RightMainstem, Tracheal,
+  Oropharyngeal, Nasopharyngeal };
 extern const std::string& eIntubation_Type_Name(eIntubation_Type m);
 
 class CDM_DECL SEIntubation : public SEPatientAction
@@ -26,10 +27,15 @@ public:
   virtual eIntubation_Type GetType() const;
   virtual void SetType(eIntubation_Type t);
 
+  virtual bool HasAirwayResistance() const;
+  virtual SEScalarPressureTimePerVolume& GetAirwayResistance();
+  virtual double GetAirwayResistance(const PressureTimePerVolumeUnit& unit) const;
+
   virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
-  eIntubation_Type m_Type;
+  eIntubation_Type               m_Type;
+  SEScalarPressureTimePerVolume* m_AirwayResistance;
 };  

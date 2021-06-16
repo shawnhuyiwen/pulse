@@ -450,6 +450,8 @@ System level data from a piece of equipment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 { "Category":"AnesthesiaMachine", "PropertyName":"InletFlow", "Unit":"mL/min" },
 
+{ "Category":"BagValveMask", "PropertyName":"FilterVolume", "Unit":"mL" },
+
 { "Category":"ECG", PropertyName:"Lead3ElectricPotential", "Unit":"1/min" },
 
 { "Category":"Inhaler", "PropertyName":"MeteredDose", "Unit":"ug" },
@@ -1427,12 +1429,78 @@ Severity value must be >=0.0 and <=1.0
 
 - - -
 
+%BagValveMask
+------------------------
+
+#### %BagValveMask Configuration 
+@copybrief BagValveMaskConfigurationData <br>
+FATAL: Cannot have bvm, mechanical ventilator, and anesthesia machine on at the same time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "EquipmentAction": {
+    "BagValveMaskConfiguration": {
+      "BagValveMaskAction": { "EquipmentAction": { "Action": {
+        "Comment": "Attach the bag valve mask with a mask connection" }}},
+        "Configuration":
+        {
+          "Connection": "Mask",
+          "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
+        }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#### %BagValveMask Automated 
+@copybrief BagValveMaskAutomatedData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": 
+  "EquipmentAction": {
+    "BagValveMaskAutomated": {
+      "BagValveMaskAction": { "EquipmentAction": { "Action": {
+        "Comment": "Automate a squeeze pressure to give TV ~ 7 mL/kg(ideal)" }}},
+        "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
+        "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
+        "SqueezePressure": { "ScalarPressure": { "Value": 12.3, "Unit": "cmH2O" } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#### %BagValveMask Instantaneous 
+@copybrief BagValveMaskInstantaneousData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{ 
+  "EquipmentAction": {
+    "BagValveMaskInstantaneous": {
+      "BagValveMaskAction": { "EquipmentAction": { "Action": {} } },
+      "Pressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } } } }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#### %BagValveMask Squeeze 
+@copybrief BagValveMaskSqueezeData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "EquipmentAction": {
+    "BagValveMaskSqueeze": {
+      "BagValveMaskAction": { "EquipmentAction": { "Action": {} } },
+        "SqueezePressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
+        "ExpiratoryPeriod": { "ScalarTime": { "Value": 4.0, "Unit": "s" } }, 
+        "InspiratoryPeriod": { "ScalarTime": { "Value": 6.0, "Unit": "s" } }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
 %Inhaler
 ------------------------
 
 #### %Inhaler Configuration 
 @copybrief InhalerConfigurationData <br>
-FATAL: Cannot have mechanical ventilator and anesthesia machine on at the same time
+FATAL: Cannot have bvm, mechanical ventilator, and anesthesia machine on with inhaler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "InhalerAction": {
@@ -1453,7 +1521,7 @@ Mechanical Ventilator
 
 #### Mechanical Ventilator Configuration 
 @copybrief MechanicalVentilatorConfigurationData <br>
-FATAL: Cannot have inhaler and anesthesia machine on at the same time
+FATAL: Cannot have bvm, inhaler, and anesthesia machine on at the same time
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "EquipmentAction": {

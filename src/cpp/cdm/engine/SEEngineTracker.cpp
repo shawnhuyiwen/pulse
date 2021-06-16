@@ -597,7 +597,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
 
   if (s != nullptr)
   {
-    ds.SetScalar(s, dr);
+    ds.SetScalarRequest(*s, dr);
     return true;
   }
   m_ss << "Unhandled data request : " << propertyName << std::endl;
@@ -605,14 +605,9 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
   return false;
 }
 
-void SEDataRequestScalar::SetScalar(const SEScalar* s, SEDataRequest& dr)
+void SEDataRequestScalar::SetScalarRequest(const SEScalar& s, SEDataRequest& dr)
 {
-  if (s==nullptr)
-  {
-    Error("Unknown Data Request : " + dr.GetPropertyName());
-    return;
-  }
-  SEGenericScalar::SetScalar(*s);
+  SEGenericScalar::SetScalar(s);
   if (m_UnitScalar != nullptr)
   {
     if (!dr.HasRequestedUnit())// Use set unit if none provide

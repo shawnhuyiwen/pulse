@@ -10,7 +10,7 @@ class SEDataRequestManager;
 enum class eDataRequest_Category {
   Patient = 0, Physiology, Environment, Action,
   GasCompartment, LiquidCompartment, ThermalCompartment, TissueCompartment,
-  Substance, AnesthesiaMachine, ECG, Inhaler, MechanicalVentilator
+  Substance, AnesthesiaMachine, BagValveMask, ECG, Inhaler, MechanicalVentilator
 };
 extern const std::string& eDataRequest_Category_Name(eDataRequest_Category m);
 

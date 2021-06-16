@@ -20,6 +20,11 @@
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h"
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
+#include "system/equipment/bag_valve_mask/SEBagValveMask.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
+#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "system/equipment/inhaler/SEInhaler.h"
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
@@ -33,6 +38,7 @@
 SEEquipmentActionCollection::SEEquipmentActionCollection(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
 {
   m_AnesthesiaMachineConfiguration = nullptr;
+  m_BagValveMaskConfiguration = nullptr;
   m_InhalerConfiguration = nullptr;
   m_MechanicalVentilatorConfiguration = nullptr;
 
@@ -49,6 +55,10 @@ SEEquipmentActionCollection::SEEquipmentActionCollection(SESubstanceManager& sub
   m_AnesthesiaMachineVaporizerFailure = nullptr;
   m_AnesthesiaMachineVentilatorPressureLoss = nullptr;
   m_AnesthesiaMachineYPieceDisconnect = nullptr;
+
+  m_BagValveMaskAutomated = nullptr;
+  m_BagValveMaskInstantaneous = nullptr;
+  m_BagValveMaskSqueeze = nullptr;
 }
 
 SEEquipmentActionCollection::~SEEquipmentActionCollection()
@@ -62,6 +72,7 @@ void SEEquipmentActionCollection::Clear()
   RemoveAnesthesiaMachineConfiguration();
   RemoveInhalerConfiguration();
   RemoveMechanicalVentilatorConfiguration();
+  RemoveBagValveMaskConfiguration();
   // Incidents
   RemoveAnesthesiaMachineOxygenTankPressureLoss();
   RemoveAnesthesiaMachineOxygenWallPortPressureLoss();
@@ -76,6 +87,10 @@ void SEEquipmentActionCollection::Clear()
   RemoveAnesthesiaMachineVaporizerFailure();
   RemoveAnesthesiaMachineVentilatorPressureLoss();
   RemoveAnesthesiaMachineYPieceDisconnect();
+  // Actions
+  RemoveBagValveMaskAutomated();
+  RemoveBagValveMaskInstantaneous();
+  RemoveBagValveMaskSqueeze();
 }
 
 bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
@@ -90,6 +105,65 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
       m_MechanicalVentilatorConfiguration->Activate();
       if (!m_MechanicalVentilatorConfiguration->IsActive())
         RemoveMechanicalVentilatorConfiguration();
+      return true;
+    }
+  }
+
+  const SEBagValveMaskAction* bvm = dynamic_cast<const SEBagValveMaskAction*>(&action);
+  if (bvm != nullptr)
+  {
+    const SEBagValveMaskConfiguration* config = dynamic_cast<const SEBagValveMaskConfiguration*>(&action);
+    if (config != nullptr)
+    {
+      GetBagValveMaskConfiguration().Copy(*config, m_SubMgr, true);
+      m_BagValveMaskConfiguration->Activate();
+      if (!m_BagValveMaskConfiguration->IsActive())
+        RemoveBagValveMaskConfiguration();
+      return true;
+    }
+
+    const SEBagValveMaskAutomated* automated = dynamic_cast<const SEBagValveMaskAutomated*>(&action);
+    if (automated != nullptr)
+    {
+      GetBagValveMaskAutomated().Copy(*automated);
+      m_BagValveMaskAutomated->Activate();
+      if (!m_BagValveMaskAutomated->IsActive())
+        RemoveBagValveMaskAutomated();
+      else
+      {
+        RemoveBagValveMaskInstantaneous();
+        RemoveBagValveMaskSqueeze();
+      }
+      return true;
+    }
+
+    const SEBagValveMaskInstantaneous* inst = dynamic_cast<const SEBagValveMaskInstantaneous*>(&action);
+    if (inst != nullptr)
+    {
+      GetBagValveMaskInstantaneous().Copy(*inst);
+      m_BagValveMaskInstantaneous->Activate();
+      if (!m_BagValveMaskInstantaneous->IsActive())
+        RemoveBagValveMaskInstantaneous();
+      else
+      {
+        RemoveBagValveMaskAutomated();
+        RemoveBagValveMaskSqueeze();
+      }
+      return true;
+    }
+
+    const SEBagValveMaskSqueeze* squeeze = dynamic_cast<const SEBagValveMaskSqueeze*>(&action);
+    if (squeeze != nullptr)
+    {
+      GetBagValveMaskSqueeze().Copy(*squeeze);
+      m_BagValveMaskSqueeze->Activate();
+      if (!m_BagValveMaskSqueeze->IsActive())
+        RemoveBagValveMaskSqueeze();
+      else
+      {
+        RemoveBagValveMaskAutomated();
+        RemoveBagValveMaskInstantaneous();
+      }
       return true;
     }
   }
@@ -507,6 +581,86 @@ void SEEquipmentActionCollection::RemoveAnesthesiaMachineYPieceDisconnect()
     m_AnesthesiaMachineYPieceDisconnect->Deactivate();
 }
 
+bool SEEquipmentActionCollection::HasBagValveMaskConfiguration() const
+{
+  return m_BagValveMaskConfiguration == nullptr ? false : m_BagValveMaskConfiguration->IsActive();
+}
+SEBagValveMaskConfiguration& SEEquipmentActionCollection::GetBagValveMaskConfiguration()
+{
+  if (m_BagValveMaskConfiguration == nullptr)
+    m_BagValveMaskConfiguration = new SEBagValveMaskConfiguration();
+  return *m_BagValveMaskConfiguration;
+}
+const SEBagValveMaskConfiguration* SEEquipmentActionCollection::GetBagValveMaskConfiguration() const
+{
+  return m_BagValveMaskConfiguration;
+}
+void SEEquipmentActionCollection::RemoveBagValveMaskConfiguration()
+{
+  if (m_BagValveMaskConfiguration)
+    m_BagValveMaskConfiguration->Deactivate();
+}
+
+bool SEEquipmentActionCollection::HasBagValveMaskAutomated() const
+{
+  return m_BagValveMaskAutomated == nullptr ? false : m_BagValveMaskAutomated->IsActive();
+}
+SEBagValveMaskAutomated& SEEquipmentActionCollection::GetBagValveMaskAutomated()
+{
+  if (m_BagValveMaskAutomated == nullptr)
+    m_BagValveMaskAutomated = new SEBagValveMaskAutomated();
+  return *m_BagValveMaskAutomated;
+}
+const SEBagValveMaskAutomated* SEEquipmentActionCollection::GetBagValveMaskAutomated() const
+{
+  return m_BagValveMaskAutomated;
+}
+void SEEquipmentActionCollection::RemoveBagValveMaskAutomated()
+{
+  if (m_BagValveMaskAutomated)
+    m_BagValveMaskAutomated->Deactivate();
+}
+
+bool SEEquipmentActionCollection::HasBagValveMaskInstantaneous() const
+{
+  return m_BagValveMaskInstantaneous == nullptr ? false : m_BagValveMaskInstantaneous->IsActive();
+}
+SEBagValveMaskInstantaneous& SEEquipmentActionCollection::GetBagValveMaskInstantaneous()
+{
+  if (m_BagValveMaskInstantaneous == nullptr)
+    m_BagValveMaskInstantaneous = new SEBagValveMaskInstantaneous();
+  return *m_BagValveMaskInstantaneous;
+}
+const SEBagValveMaskInstantaneous* SEEquipmentActionCollection::GetBagValveMaskInstantaneous() const
+{
+  return m_BagValveMaskInstantaneous;
+}
+void SEEquipmentActionCollection::RemoveBagValveMaskInstantaneous()
+{
+  if (m_BagValveMaskInstantaneous)
+    m_BagValveMaskInstantaneous->Deactivate();
+}
+
+bool SEEquipmentActionCollection::HasBagValveMaskSqueeze() const
+{
+  return m_BagValveMaskSqueeze == nullptr ? false : m_BagValveMaskSqueeze->IsActive();
+}
+SEBagValveMaskSqueeze& SEEquipmentActionCollection::GetBagValveMaskSqueeze()
+{
+  if (m_BagValveMaskSqueeze == nullptr)
+    m_BagValveMaskSqueeze = new SEBagValveMaskSqueeze();
+  return *m_BagValveMaskSqueeze;
+}
+const SEBagValveMaskSqueeze* SEEquipmentActionCollection::GetBagValveMaskSqueeze() const
+{
+  return m_BagValveMaskSqueeze;
+}
+void SEEquipmentActionCollection::RemoveBagValveMaskSqueeze()
+{
+  if (m_BagValveMaskSqueeze)
+    m_BagValveMaskSqueeze->Deactivate();
+}
+
 bool SEEquipmentActionCollection::HasInhalerConfiguration() const
 {
   return m_InhalerConfiguration == nullptr ? false : m_InhalerConfiguration->IsActive();
@@ -576,6 +730,15 @@ void SEEquipmentActionCollection::GetAllActions(std::vector<const SEAction*>& ac
   if (HasAnesthesiaMachineYPieceDisconnect())
     actions.push_back(GetAnesthesiaMachineYPieceDisconnect());
 
+  if (HasBagValveMaskConfiguration())
+    actions.push_back(GetBagValveMaskConfiguration());
+  if (HasBagValveMaskAutomated())
+    actions.push_back(GetBagValveMaskAutomated());
+  if (HasBagValveMaskInstantaneous())
+    actions.push_back(GetBagValveMaskInstantaneous());
+  if (HasBagValveMaskSqueeze())
+    actions.push_back(GetBagValveMaskSqueeze());
+
   if(HasInhalerConfiguration())
     actions.push_back(GetInhalerConfiguration());
 
@@ -611,6 +774,15 @@ const SEScalar* SEEquipmentActionCollection::GetScalar(const std::string& action
     return GetAnesthesiaMachineVentilatorPressureLoss().GetScalar(property);
   if (actionName == "AnesthesiaMachineYPieceDisconnect")
     return GetAnesthesiaMachineYPieceDisconnect().GetScalar(property);
+
+  if (actionName == "BagValveMaskConfiguration")
+    return GetBagValveMaskConfiguration().GetScalar(property);
+  if (actionName == "BagValveMaskAutomated")
+    return GetBagValveMaskAutomated().GetScalar(property);
+  if (actionName == "BagValveMaskInstantaneous")
+    return GetBagValveMaskInstantaneous().GetScalar(property);
+  if (actionName == "BagValveMaskSqueeze")
+    return GetBagValveMaskSqueeze().GetScalar(property);
 
   if (actionName == "InhalerConfiguration")
     return GetInhalerConfiguration().GetScalar(property);

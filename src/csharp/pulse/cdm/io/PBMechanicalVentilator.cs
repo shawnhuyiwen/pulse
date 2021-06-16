@@ -23,8 +23,6 @@ namespace Pulse.CDM
     {
       dst.Clear();
       dst.SetConnection((SEMechanicalVentilator.Connection)src.Connection);
-      if (src.EndotrachealTubeResistance != null)
-        PBProperty.Load(src.EndotrachealTubeResistance, dst.GetEndotrachealTubeResistance());
 
       if (src.PositiveEndExpiredPressure != null)
         PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
@@ -95,8 +93,6 @@ namespace Pulse.CDM
     protected static void Unload(SEMechanicalVentilator src, pulse.cdm.bind.MechanicalVentilatorData dst)
     {
       dst.Connection = (pulse.cdm.bind.MechanicalVentilatorData.Types.eConnection)(int)src.GetConnection();
-      if (src.HasEndotrachealTubeResistance())
-        dst.EndotrachealTubeResistance = PBProperty.Unload(src.GetEndotrachealTubeResistance());
 
       if (src.HasPositiveEndExpiredPressure())
         dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());

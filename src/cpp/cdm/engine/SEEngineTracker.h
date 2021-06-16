@@ -34,6 +34,7 @@ class SEDataRequestScalar : public SEGenericScalar
 {
   friend class SEEngineTracker;
   friend class SEDynamicStabilizationPropertyConvergence;
+
 protected:
   SEDataRequestScalar(Logger* logger) : SEGenericScalar(logger)
   {
@@ -46,7 +47,7 @@ protected:
   }
   
   void UpdateScalar();
-  void SetScalar(const SEScalar* s, SEDataRequest& dr);// SEScalar* in order to internnally throw error if the Track cannot find the requested property, it will pass in nullptr if it cannot find it
+  void SetScalarRequest(const SEScalar& s, SEDataRequest& dr);
 
   size_t                        idx;
   std::string                   Heading;

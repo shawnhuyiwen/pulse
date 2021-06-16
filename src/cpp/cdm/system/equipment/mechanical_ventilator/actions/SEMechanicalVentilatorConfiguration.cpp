@@ -101,7 +101,6 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
   else if (HasConfiguration())
   {
     str << "\n\tConnection: " << eMechanicalVentilator_Connection_Name(m_Configuration->GetConnection());
-    str << "\n\tEndotrachealTubeResistance: "; m_Configuration->HasEndotrachealTubeResistance() ? str << m_Configuration->GetEndotrachealTubeResistance() : str << "NaN";
     str << "\n\tPositiveEndExpiredPressure: "; m_Configuration->HasPositiveEndExpiredPressure() ? str << m_Configuration->GetPositiveEndExpiredPressure() : str << "NaN";
     str << "\n\tFunctionalResidualCapacity: "; m_Configuration->HasFunctionalResidualCapacity() ? str << m_Configuration->GetFunctionalResidualCapacity() : str << "NaN";
     str << "\n\tExpirationCycleFlow: "; m_Configuration->HasExpirationCycleFlow() ? str << m_Configuration->GetExpirationCycleFlow() : str << "NaN";

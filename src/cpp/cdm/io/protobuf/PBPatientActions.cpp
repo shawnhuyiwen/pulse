@@ -802,6 +802,8 @@ void PBPatientAction::Serialize(const CDM_BIND::IntubationData& src, SEIntubatio
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetType((eIntubation_Type)src.type());
+  if (src.has_airwayresistance())
+    PBProperty::Load(src.airwayresistance(), dst.GetAirwayResistance());
 }
 CDM_BIND::IntubationData* PBPatientAction::Unload(const SEIntubation& src)
 {
@@ -813,6 +815,8 @@ void PBPatientAction::Serialize(const SEIntubation& src, CDM_BIND::IntubationDat
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.set_type((CDM_BIND::IntubationData::eType)src.m_Type);
+  if (src.HasAirwayResistance())
+    dst.set_allocated_airwayresistance(PBProperty::Unload(*src.m_AirwayResistance));
 }
 void PBPatientAction::Copy(const SEIntubation& src, SEIntubation& dst)
 {

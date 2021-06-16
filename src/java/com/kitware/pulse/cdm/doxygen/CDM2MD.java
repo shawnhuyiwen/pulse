@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.kitware.pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.pulse.cdm.bind.BagValveMask.BagValveMaskData;
 import com.kitware.pulse.cdm.bind.Enums.eCharge;
 import com.kitware.pulse.cdm.bind.Enums.eGate;
 import com.kitware.pulse.cdm.bind.Enums.eSide;
@@ -44,6 +45,7 @@ import com.kitware.pulse.cdm.properties.SEScalar;
 import com.kitware.pulse.cdm.system.environment.actions.SEEnvironmentAction;
 import com.kitware.pulse.cdm.system.environment.conditions.SEEnvironmentCondition;
 import com.kitware.pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineAction;
+import com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions.SEBagValveMaskAction;
 import com.kitware.pulse.cdm.system.equipment.inhaler.actions.SEInhalerAction;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions.SEMechanicalVentilatorAction;
 import com.kitware.pulse.utilities.FileUtils;
@@ -169,6 +171,16 @@ public class CDM2MD
       WriteDoxyTable(AnesthesiaMachineData.eOxygenSource.class, "AnesthesiaMachineData_", writer, skipProperties);
       WriteDoxyTable(AnesthesiaMachineData.ePrimaryGas.class, "AnesthesiaMachineData_", writer, skipProperties);
 
+      // BAG VALVE MASK
+      writer.append("#### The following tables describe the bag valve mask\n<hr>\n");
+      Set<Class<? extends Object>> bvm = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.bag_valve_mask");
+      for(Class<?> c : bvm)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends SEBagValveMaskAction>> bvmActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions", SEBagValveMaskAction.class);
+      for(Class<?> c : bvmActions)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      WriteDoxyTable(BagValveMaskData.eConnection.class, "BagValveMaskData_", writer, skipProperties);
+      
       // ECG
       writer.append("#### The following tables describe the %ECG\n<hr>\n");
       Set<Class<? extends Object>> ecg = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.electrocardiogram");
@@ -194,7 +206,7 @@ public class CDM2MD
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(MechanicalVentilatorData.eConnection.class, "MechanicalVentilatorData_", writer, skipProperties);
       WriteDoxyTable(MechanicalVentilatorData.eDriverWaveform.class, "MechanicalVentilatorData_", writer, skipProperties);
-
+      
       // SUBSTSANCE
       writer.append("#### The following tables describe substances used in Pulse\n<hr>\n");
       Set<Class<? extends Object>> subs = FindObjects.findAllClasses("com.kitware.pulse.cdm.substance");

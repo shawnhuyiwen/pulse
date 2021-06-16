@@ -51,7 +51,7 @@ bool SEDynamicStabilizationPropertyConvergence::Test(double time_s)
 
 void SEDynamicStabilizationPropertyConvergence::TrackScalar(const SEScalar& s) 
 { 
-  m_DataRequestScalar->SetScalar(&s, m_DataRequest); 
+  m_DataRequestScalar->SetScalarRequest(s, m_DataRequest); 
 }
 SEDataRequestScalar& SEDynamicStabilizationPropertyConvergence::GetDataRequestScalar() 
 { 

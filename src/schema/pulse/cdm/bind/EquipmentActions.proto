@@ -5,6 +5,7 @@ option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/AnesthesiaMachineActions.proto";
+import "pulse/cdm/bind/BagValveMaskActions.proto";
 import "pulse/cdm/bind/InhalerActions.proto";
 import "pulse/cdm/bind/MechanicalVentilatorActions.proto";
 
@@ -26,6 +27,11 @@ message AnyEquipmentActionData
     AnesthesiaMachineYPieceDisconnectData                   AnesthesiaMachineYPieceDisconnect            = 11;
     AnesthesiaMachineOxygenWallPortPressureLossData         AnesthesiaMachineOxygenWallPortPressureLoss  = 12;
     AnesthesiaMachineOxygenTankPressureLossData             AnesthesiaMachineOxygenTankPressureLoss      = 13;
+    
+    BagValveMaskConfigurationData                           BagValveMaskConfiguration                    = 301;
+    BagValveMaskAutomatedData                               BagValveMaskAutomated                        = 302;
+    BagValveMaskInstantaneousData                           BagValveMaskInstantaneous                    = 303;
+    BagValveMaskSqueezeData                                 BagValveMaskSqueeze                          = 304;
     
     InhalerConfigurationData                                InhalerConfiguration                         = 101;
     

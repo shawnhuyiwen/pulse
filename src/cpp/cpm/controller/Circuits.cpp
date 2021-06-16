@@ -24,8 +24,10 @@ void PulseCircuits::Clear()
   m_RenalCircuit = nullptr;
   m_RespiratoryCircuit = nullptr;
   m_AnesthesiaMachineCircuit = nullptr;
+  m_BagValveMaskCircuit = nullptr;
   m_MechanicalVentilatorCircuit = nullptr;
   m_CombinedRespiratoryAnesthesiaCircuit = nullptr;
+  m_CombinedRespiratoryBagValveMaskCircuit = nullptr;
   m_CombinedRespiratoryInhalerCircuit = nullptr;
   m_CombinedRespiratoryNasalCannulaCircuit = nullptr;
   m_CombinedRespiratorySimpleMaskCircuit = nullptr;
@@ -64,6 +66,11 @@ void PulseCircuits::StateChange()
   {
     Error("Could not find circuit : " + std::string(pulse::Circuits::AnesthesiaMachine));
   }
+  m_BagValveMaskCircuit = GetFluidCircuit(pulse::Circuits::BagValveMask);
+  if (m_BagValveMaskCircuit == nullptr)
+  {
+    Error("Could not find circuit : " + std::string(pulse::Circuits::BagValveMask));
+  }
   m_MechanicalVentilatorCircuit = GetFluidCircuit(pulse::Circuits::MechanicalVentilator);
   if (m_MechanicalVentilatorCircuit == nullptr)
   {
@@ -73,6 +80,11 @@ void PulseCircuits::StateChange()
   if (m_CombinedRespiratoryAnesthesiaCircuit == nullptr)
   {
     Error("Could not find circuit : " + std::string(pulse::Circuits::RespiratoryAnesthesia));
+  }
+  m_CombinedRespiratoryBagValveMaskCircuit = GetFluidCircuit(pulse::Circuits::RespiratoryBagValveMask);
+  if (m_CombinedRespiratoryBagValveMaskCircuit == nullptr)
+  {
+    Error("Could not find circuit : " + std::string(pulse::Circuits::RespiratoryBagValveMask));
   }
   m_CombinedRespiratoryInhalerCircuit = GetFluidCircuit(pulse::Circuits::RespiratoryInhaler);
   if (m_CombinedRespiratoryInhalerCircuit == nullptr)
@@ -169,6 +181,8 @@ SEFluidCircuit& PulseCircuits::GetActiveRespiratoryCircuit()
     return *m_RespiratoryCircuit;
   case eAirwayMode::AnesthesiaMachine:
     return *m_CombinedRespiratoryAnesthesiaCircuit;
+  case eAirwayMode::BagValveMask:
+    return *m_CombinedRespiratoryBagValveMaskCircuit;
   case eAirwayMode::Inhaler:
     return *m_CombinedRespiratoryInhalerCircuit;
   case eAirwayMode::MechanicalVentilation:
@@ -197,6 +211,12 @@ SEFluidCircuit& PulseCircuits::GetAnesthesiaMachineCircuit()
     m_AnesthesiaMachineCircuit = &CreateFluidCircuit(pulse::Circuits::AnesthesiaMachine);
   return *m_AnesthesiaMachineCircuit;
 }
+SEFluidCircuit& PulseCircuits::GetBagValveMaskCircuit()
+{
+  if (m_BagValveMaskCircuit == nullptr)
+    m_BagValveMaskCircuit = &CreateFluidCircuit(pulse::Circuits::BagValveMask);
+  return *m_BagValveMaskCircuit;
+}
 SEFluidCircuit& PulseCircuits::GetMechanicalVentilatorCircuit()
 {
   if (m_MechanicalVentilatorCircuit == nullptr)
@@ -208,6 +228,12 @@ SEFluidCircuit& PulseCircuits::GetRespiratoryAndAnesthesiaMachineCircuit()
   if (m_CombinedRespiratoryAnesthesiaCircuit == nullptr)
     m_CombinedRespiratoryAnesthesiaCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryAnesthesia);
   return *m_CombinedRespiratoryAnesthesiaCircuit;
+}
+SEFluidCircuit& PulseCircuits::GetRespiratoryAndBagValveMaskCircuit()
+{
+  if (m_CombinedRespiratoryBagValveMaskCircuit == nullptr)
+    m_CombinedRespiratoryBagValveMaskCircuit = &CreateFluidCircuit(pulse::Circuits::RespiratoryBagValveMask);
+  return *m_CombinedRespiratoryBagValveMaskCircuit;
 }
 SEFluidCircuit& PulseCircuits::GetRespiratoryAndInhalerCircuit()
 {
