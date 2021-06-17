@@ -73,6 +73,10 @@ double SEElectricalCircuitPath::GetResistanceBaseline(const ElectricResistanceUn
     return SEScalar::dNaN();
   return m_ResistanceBaseline->GetValue(unit);
 }
+void SEElectricalCircuitPath::RemoveResistance()
+{
+  SECircuitPath::RemoveResistance();
+}
 
 //////////////////////////////////
 // Electrical Capacitance Types //
@@ -120,6 +124,10 @@ double SEElectricalCircuitPath::GetCapacitanceBaseline(const ElectricCapacitance
     return SEScalar::dNaN();
   return m_CapacitanceBaseline->GetValue(unit);
 }
+void SEElectricalCircuitPath::RemoveCapacitance()
+{
+  SECircuitPath::RemoveCapacitance();
+}
 
 /////////////////////////////////
 // Electrical Inductance Types //
@@ -166,6 +174,10 @@ double SEElectricalCircuitPath::GetInductanceBaseline(const ElectricInductanceUn
   if (m_InductanceBaseline == nullptr)
     return SEScalar::dNaN();
   return m_InductanceBaseline->GetValue(unit);
+}
+void SEElectricalCircuitPath::RemoveInductance()
+{
+  SECircuitPath::RemoveInductance();
 }
 
 
@@ -242,6 +254,10 @@ double SEElectricalCircuitPath::GetCurrentSourceBaseline(const ElectricCurrentUn
     return SEScalar::dNaN();
   return m_FluxSourceBaseline->GetValue(unit);
 }
+void SEElectricalCircuitPath::RemoveCurrentSource()
+{
+  SECircuitPath::RemoveFluxSource();
+}
 
 ////////////////////////////////
 // Electrical Potential Types //
@@ -288,6 +304,11 @@ double SEElectricalCircuitPath::GetVoltageSourceBaseline(const ElectricPotential
     return SEScalar::dNaN();
   return m_PotentialSourceBaseline->GetValue(unit);
 }
+void SEElectricalCircuitPath::RemoveVoltageSource()
+{
+  SECircuitPath::RemovePotentialSource();
+}
+
 bool SEElectricalCircuitPath::HasValveBreakdownVoltage() const
 {
   return HasValveBreakdownPotential();

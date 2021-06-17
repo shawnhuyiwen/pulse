@@ -95,9 +95,9 @@ SECircuitNode<CIRCUIT_NODE_TYPES>& SECircuitPath<CIRCUIT_PATH_TYPES>::GetTargetN
   return m_TargetNode;
 }
 
-/////////////////////////    
-// Valves and Switches //    
-///////////////////////// 
+/////////////////////////
+// Valves and Switches //
+/////////////////////////
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasValidElements() const
 {
@@ -215,6 +215,12 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateNextSwitch()
 {
   m_NextSwitch = eGate::NullGate;
 }
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::RemoveSwitch()
+{
+  m_Switch = eGate::NullGate;
+  m_NextSwitch = eGate::NullGate;
+}
 
 template<CIRCUIT_PATH_TEMPLATE>
 eGate SECircuitPath<CIRCUIT_PATH_TYPES>::GetValve() const
@@ -265,6 +271,12 @@ bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasNextValve() const
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidateNextValve()
 {
+  m_NextValve = eGate::NullGate;
+}
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::RemoveValve()
+{
+  m_Valve = eGate::NullGate;
   m_NextValve = eGate::NullGate;
 }
 
@@ -321,9 +333,9 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::InvalidatePolarizedState()
 }
 
 
-/////////////////
-//  Resistance //
-/////////////////
+////////////////
+// Resistance //
+////////////////
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasResistance() const
 {
@@ -359,6 +371,16 @@ ResistanceScalar& SECircuitPath<CIRCUIT_PATH_TYPES>::GetResistanceBaseline()
   if (m_ResistanceBaseline == nullptr)
     m_ResistanceBaseline = new ResistanceScalar();
   return *m_ResistanceBaseline;
+}
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::RemoveResistance()
+{
+  if (m_Resistance != nullptr)
+    m_Resistance->ForceInvalidate();
+  if (m_NextResistance != nullptr)
+    m_NextResistance->ForceInvalidate();
+  if (m_ResistanceBaseline != nullptr)
+    m_ResistanceBaseline->ForceInvalidate();
 }
 
 ///////////////////////
@@ -400,6 +422,16 @@ CapacitanceScalar& SECircuitPath<CIRCUIT_PATH_TYPES>::GetCapacitanceBaseline()
     m_CapacitanceBaseline = new CapacitanceScalar();
   return *m_CapacitanceBaseline;
 }
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::RemoveCapacitance()
+{
+  if (m_Capacitance != nullptr)
+    m_Capacitance->ForceInvalidate();
+  if (m_NextCapacitance != nullptr)
+    m_NextCapacitance->ForceInvalidate();
+  if (m_CapacitanceBaseline != nullptr)
+    m_CapacitanceBaseline->ForceInvalidate();
+}
 
 //////////////////////
 // Inductance Types //
@@ -439,6 +471,16 @@ InductanceScalar& SECircuitPath<CIRCUIT_PATH_TYPES>::GetInductanceBaseline()
   if (m_InductanceBaseline == nullptr)
     m_InductanceBaseline = new InductanceScalar();
   return *m_InductanceBaseline;
+}
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::RemoveInductance()
+{
+  if (m_Inductance != nullptr)
+    m_Inductance->ForceInvalidate();
+  if (m_NextInductance != nullptr)
+    m_NextInductance->ForceInvalidate();
+  if (m_InductanceBaseline != nullptr)
+    m_InductanceBaseline->ForceInvalidate();
 }
 
 ////////////////
@@ -504,6 +546,16 @@ FluxScalar& SECircuitPath<CIRCUIT_PATH_TYPES>::GetFluxSourceBaseline()
     m_FluxSourceBaseline = new FluxScalar();
   return *m_FluxSourceBaseline;
 }
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::RemoveFluxSource()
+{
+  if (m_FluxSource != nullptr)
+    m_FluxSource->ForceInvalidate();
+  if (m_NextFluxSource != nullptr)
+    m_NextFluxSource->ForceInvalidate();
+  if (m_FluxSourceBaseline != nullptr)
+    m_FluxSourceBaseline->ForceInvalidate();
+}
 
 /////////////////////
 // Potential Types //
@@ -544,6 +596,18 @@ PotentialScalar& SECircuitPath<CIRCUIT_PATH_TYPES>::GetPotentialSourceBaseline()
     m_PotentialSourceBaseline = new PotentialScalar();
   return *m_PotentialSourceBaseline;
 }
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::RemovePotentialSource()
+{
+  if (m_PotentialSource != nullptr)
+    m_PotentialSource->ForceInvalidate();
+  if (m_NextPotentialSource != nullptr)
+    m_NextPotentialSource->ForceInvalidate();
+  if (m_PotentialSourceBaseline != nullptr)
+    m_PotentialSourceBaseline->ForceInvalidate();
+}
+
+
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::HasValveBreakdownPotential() const
 {

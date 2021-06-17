@@ -889,24 +889,30 @@ void Respiratory::MechanicalVentilation()
       }
     }
 
+    bool stateChange = false;
     //Apply the instantaneous flow ********************************************
     if (mv.HasFlow())
     {
-      m_ConnectionToAirway->GetNextFlowSource().Set(mv.GetFlow());
-      //It may or may not be there
-      if (!m_ConnectionToAirway->HasFlowSource())
+      if (!m_ConnectionToAirway->HasNextFlowSource())
       {
-        m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+        m_ConnectionToAirway->GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::L_Per_s);
+        stateChange = true;
       }
+      m_ConnectionToAirway->GetNextFlowSource().Set(mv.GetFlow());
     }
     else
     {
-      //If there's no flow specified, we need to remove the flow source    
+      //If there's no flow specified, we need to remove the flow source
       if (m_ConnectionToAirway->HasNextFlowSource())
       {
-        m_ConnectionToAirway->GetNextFlowSource().Invalidate();
-        m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+        m_ConnectionToAirway->RemoveFlowSource();
+        stateChange = true;
       }
+    }
+
+    if (stateChange)
+    {
+      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
     }
 
     //Apply the instantaneous pressure ********************************************  

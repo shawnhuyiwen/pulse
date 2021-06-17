@@ -43,12 +43,14 @@ public:
   virtual FluxScalar& GetFlux();
   virtual bool HasNextFlux() const;
   virtual FluxScalar& GetNextFlux();
+
   virtual bool HasFluxSource() const;
   virtual FluxScalar& GetFluxSource();
   virtual bool HasNextFluxSource() const;
   virtual FluxScalar& GetNextFluxSource();
   virtual bool HasFluxSourceBaseline() const;
   virtual FluxScalar& GetFluxSourceBaseline();
+  virtual void RemoveFluxSource();
 
   virtual bool HasResistance() const;
   virtual ResistanceScalar& GetResistance();
@@ -56,6 +58,7 @@ public:
   virtual ResistanceScalar& GetNextResistance();
   virtual bool HasResistanceBaseline() const;
   virtual ResistanceScalar& GetResistanceBaseline();
+  virtual void RemoveResistance();
 
   virtual bool HasCapacitance() const;
   virtual CapacitanceScalar& GetCapacitance();
@@ -63,6 +66,7 @@ public:
   virtual CapacitanceScalar& GetNextCapacitance();
   virtual bool HasCapacitanceBaseline() const;
   virtual CapacitanceScalar& GetCapacitanceBaseline();
+  virtual void RemoveCapacitance();
 
   virtual bool HasInductance() const;
   virtual InductanceScalar& GetInductance();
@@ -70,6 +74,7 @@ public:
   virtual InductanceScalar& GetNextInductance();
   virtual bool HasInductanceBaseline() const;
   virtual InductanceScalar& GetInductanceBaseline();
+  virtual void RemoveInductance();
 
   virtual bool HasPotentialSource() const;
   virtual PotentialScalar& GetPotentialSource();
@@ -77,48 +82,49 @@ public:
   virtual PotentialScalar& GetNextPotentialSource();
   virtual bool HasPotentialSourceBaseline() const;
   virtual PotentialScalar& GetPotentialSourceBaseline();
+  virtual void RemovePotentialSource();
+
   virtual bool HasValveBreakdownPotential() const;
   virtual PotentialScalar& GetValveBreakdownPotential();
-  
-  virtual bool HasValidElements() const;
-  virtual unsigned short NumberOfElements() const { return m_NumElements; }
-  virtual unsigned short NumberOfNextElements() const { return m_NumNextElements; }
 
   virtual eGate GetSwitch() const;
   virtual void SetSwitch(eGate state);
   virtual void FlipSwitch();
   virtual bool HasSwitch() const;
   virtual void InvalidateSwitch();
-
   virtual eGate GetNextSwitch() const;
   virtual void SetNextSwitch(eGate state);
   virtual void FlipNextSwitch();
   virtual bool HasNextSwitch() const;
   virtual void InvalidateNextSwitch();
+  virtual void RemoveSwitch();
 
   virtual eGate GetValve() const;
   virtual void SetValve(eGate state);
   virtual void FlipValve();
   virtual bool HasValve() const;
   virtual void InvalidateValve();
-
   virtual eGate GetNextValve() const;
   virtual void SetNextValve(eGate state);
   virtual void FlipNextValve();
   virtual bool HasNextValve() const;
   virtual void InvalidateNextValve();
+  virtual void RemoveValve();
 
   virtual eGate GetPolarizedState() const;
   virtual void SetPolarizedState(eGate state);
   virtual void FlipPolarizedState();
   virtual bool HasPolarizedState() const;
   virtual void InvalidatePolarizedState();
-
   virtual eGate GetNextPolarizedState() const;
   virtual void SetNextPolarizedState(eGate state);
   virtual void FlipNextPolarizedState();
   virtual bool HasNextPolarizedState() const;
   virtual void InvalidateNextPolarizedState();
+
+  virtual bool HasValidElements() const;
+  virtual unsigned short NumberOfElements() const { return m_NumElements; }
+  virtual unsigned short NumberOfNextElements() const { return m_NumNextElements; }
 
   virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
   virtual BlackBoxType* GetBlackBox() const { return m_BlackBox; }

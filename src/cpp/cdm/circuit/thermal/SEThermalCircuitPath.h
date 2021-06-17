@@ -19,6 +19,13 @@ public:
   virtual SEThermalCircuitNode& GetSourceNode() const;
   virtual SEThermalCircuitNode& GetTargetNode() const;
 
+  virtual bool HasHeatTransferRate() const;
+  virtual SEScalarPower& GetHeatTransferRate();
+  virtual double GetHeatTransferRate(const PowerUnit& unit) const;
+  virtual bool HasNextHeatTransferRate() const;
+  virtual SEScalarPower& GetNextHeatTransferRate();
+  virtual double GetNextHeatTransferRate(const PowerUnit& unit) const;
+
   virtual bool HasResistance() const;
   virtual SEScalarHeatResistance& GetResistance();
   virtual double GetResistance(const HeatResistanceUnit& unit) const;
@@ -28,6 +35,7 @@ public:
   virtual bool HasResistanceBaseline() const;
   virtual SEScalarHeatResistance& GetResistanceBaseline();
   virtual double GetResistanceBaseline(const HeatResistanceUnit& unit) const;
+  virtual void RemoveResistance() override;
 
   virtual bool HasCapacitance() const;
   virtual SEScalarHeatCapacitance& GetCapacitance();
@@ -38,6 +46,7 @@ public:
   virtual bool HasCapacitanceBaseline() const;
   virtual SEScalarHeatCapacitance& GetCapacitanceBaseline();
   virtual double GetCapacitanceBaseline(const HeatCapacitanceUnit& unit) const;
+  virtual void RemoveCapacitance() override;
 
   virtual bool HasInductance() const;
   virtual SEScalarHeatInductance& GetInductance();
@@ -48,13 +57,8 @@ public:
   virtual bool HasInductanceBaseline() const;
   virtual SEScalarHeatInductance& GetInductanceBaseline();
   virtual double GetInductanceBaseline(const HeatInductanceUnit& unit) const;
+  virtual void RemoveInductance() override;
 
-  virtual bool HasHeatTransferRate() const;
-  virtual SEScalarPower& GetHeatTransferRate();
-  virtual double GetHeatTransferRate(const PowerUnit& unit) const;
-  virtual bool HasNextHeatTransferRate() const;
-  virtual SEScalarPower& GetNextHeatTransferRate();
-  virtual double GetNextHeatTransferRate(const PowerUnit& unit) const; 
   virtual bool HasHeatSource() const;
   virtual SEScalarPower& GetHeatSource();
   virtual double GetHeatSource(const PowerUnit& unit) const;
@@ -64,6 +68,7 @@ public:
   virtual bool HasHeatSourceBaseline() const;
   virtual SEScalarPower& GetHeatSourceBaseline();
   virtual double GetHeatSourceBaseline(const PowerUnit& unit) const;
+  virtual void RemoveHeatSource();
 
   virtual bool HasTemperatureSource() const;
   virtual SEScalarTemperature& GetTemperatureSource();
@@ -74,6 +79,8 @@ public:
   virtual bool HasTemperatureSourceBaseline() const;
   virtual SEScalarTemperature& GetTemperatureSourceBaseline();
   virtual double GetTemperatureSourceBaseline(const TemperatureUnit& unit) const;
+  virtual void RemoveTemperatureSource();
+
   virtual bool HasValveBreakdownTemperature() const;
   virtual SEScalarTemperature& GetValveBreakdownTemperature();
   virtual double GetValveBreakdownTemperature(const TemperatureUnit& unit) const;

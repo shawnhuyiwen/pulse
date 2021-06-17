@@ -264,7 +264,7 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
     pe.GetLogger()->Info("Serializing state after actions : " + m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
     if (m_ReloadSerializedState == eSwitch::On)
     {
-      pe.GetLogger()->Info("Reloading and saving reloaded state to : " + m_SerializationOutput.str() + ".Reload" + m_AutoSerializeFilenameExt);
+      pe.GetLogger()->Info("Reloading and saving reloaded state to : " + m_SerializationOutput.str() + ".Reloaded" + m_AutoSerializeFilenameExt);
       pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
       pe.SerializeToFile(m_SerializationOutput.str() + ".Reloaded" + m_AutoSerializeFilenameExt);
     }

@@ -51,6 +51,7 @@ public:
   Note that this does not affect bounds
   */
   virtual void Invalidate();
+  virtual void ForceInvalidate();
 
   /**
   * Copies ONLY the value and unit
@@ -125,6 +126,12 @@ public:
     SEScalar::Invalidate();
     m_enum = (Enum)-1;
   }
+  virtual void ForceInvalidate()
+  {
+    SEScalar::ForceInvalidate();
+    m_enum = (Enum)-1;
+  }
+
   bool Set(const SEScalarEnum<Enum>& s)
   {
     SEScalar::Set(s);
@@ -181,6 +188,7 @@ public:
 
   virtual bool IsValid() const = 0;
   virtual void Invalidate() = 0;
+  virtual void ForceInvalidate() = 0;
   virtual bool HasUnit() const = 0;
   virtual const CCompoundUnit* GetUnit() const = 0;
 
@@ -206,6 +214,7 @@ public:
 
   virtual void Clear();
   virtual void Invalidate();
+  virtual void ForceInvalidate();
   virtual bool IsValid() const;
 
 protected:

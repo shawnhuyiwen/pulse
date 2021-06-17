@@ -371,12 +371,18 @@ void MechanicalVentilator::SetVentilatorDriver()
     m_DriverPressure_cmH2O = 0.0;
   }
 
+  bool stateChange = false;
   if (!std::isnan(m_DriverPressure_cmH2O))
   {
     if (m_EnvironmentToVentilator->HasNextFlowSource())
     {
-      m_EnvironmentToVentilator->GetNextFlowSource().Invalidate();
-      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+      stateChange = true;
+      m_EnvironmentToVentilator->RemoveFlowSource();
+    }
+    if (!m_EnvironmentToVentilator->HasNextPressureSource())
+    {
+      stateChange = true;
+      m_EnvironmentToVentilator->GetPressureSourceBaseline().SetValue(0, PressureUnit::cmH2O);
     }
     m_EnvironmentToVentilator->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
   }
@@ -384,11 +390,18 @@ void MechanicalVentilator::SetVentilatorDriver()
   {
     if (m_EnvironmentToVentilator->HasNextPressureSource())
     {
-      m_EnvironmentToVentilator->GetNextPressureSource().Invalidate();
-      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+      stateChange = true;
+      m_EnvironmentToVentilator->RemovePressureSource();
+    }
+    if (!m_EnvironmentToVentilator->HasNextFlowSource())
+    {
+      stateChange = true;
+      m_EnvironmentToVentilator->GetFlowSourceBaseline().SetValue(0, VolumePerTimeUnit::L_Per_s);
     }
     m_EnvironmentToVentilator->GetNextFlowSource().SetValue(m_DriverFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
   }
+  if (stateChange)
+    m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
 }
 
 //--------------------------------------------------------------------------------------------------
