@@ -6,6 +6,7 @@ PUSH_PROTO_WARNINGS()
 #include "pulse/cdm/bind/Properties.pb.h"
 POP_PROTO_WARNINGS()
 #include "io/protobuf/PBProperties.h"
+#include "properties/SECurve.h"
 
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarAmount.h"
@@ -73,6 +74,230 @@ POP_PROTO_WARNINGS()
 #include "properties/SEHistogramFractionVsLength.h"
 
 #include "properties/SERunningAverage.h"
+
+
+void PBProperty::Load(const CDM_BIND::CurveData& src, SECurve& dst)
+{
+  dst.Invalidate();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::CurveData& src, SECurve& dst)
+{
+  for (size_t s = 0; s<src.segment_size(); s++)
+  {
+    const CDM_BIND::AnySegmentData& sData = src.segment()[s];
+    if (sData.has_constantsegment())
+    {
+      PBProperty::Load(sData.constantsegment(), dst.AddConstantSegment());
+      continue;
+    }
+    if (sData.has_linearsegment())
+    {
+      PBProperty::Load(sData.linearsegment(), dst.AddLinearSegment());
+      continue;
+    }
+    if (sData.has_parabolicsegment())
+    {
+      PBProperty::Load(sData.parabolicsegment(), dst.AddParabolicSegment());
+      continue;
+    }
+    if (sData.has_sigmoidalsegment())
+    {
+      PBProperty::Load(sData.sigmoidalsegment(), dst.AddSigmoidalSegment());
+      continue;
+    }
+  }
+}
+CDM_BIND::CurveData* PBProperty::Unload(const SECurve& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::CurveData* dst = new CDM_BIND::CurveData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SECurve& src, CDM_BIND::CurveData& dst)
+{
+  for (const SESegment* seg : src.GetSegments())
+  {
+    const SESegmentConstant* c = dynamic_cast<const SESegmentConstant*>(seg);
+    if (c != nullptr)
+    {
+      PBProperty::Serialize(*c, *dst.add_segment()->mutable_constantsegment());
+      continue;
+    }
+    const SESegmentLinear* l = dynamic_cast<const SESegmentLinear*>(seg);
+    if (l != nullptr)
+    {
+      PBProperty::Serialize(*l, *dst.add_segment()->mutable_linearsegment());
+      continue;
+    }
+    const SESegmentParabolic* p = dynamic_cast<const SESegmentParabolic*>(seg);
+    if (p != nullptr)
+    {
+      PBProperty::Serialize(*p, *dst.add_segment()->mutable_parabolicsegment());
+      continue;
+    }
+    const SESegmentSigmoidal* s = dynamic_cast<const SESegmentSigmoidal*>(seg);
+    if (s != nullptr)
+    {
+      PBProperty::Serialize(*s, *dst.add_segment()->mutable_sigmoidalsegment());
+      continue;
+    }
+  }
+}
+
+void PBProperty::Load(const CDM_BIND::SegmentConstantData& src, SESegmentConstant& dst)
+{
+  dst.Clear();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::SegmentConstantData& src, SESegmentConstant& dst)
+{
+  if (src.has_beginvolume())
+    PBProperty::Load(src.beginvolume(), dst.GetBeginVolume());
+  if (src.has_endvolume())
+    PBProperty::Load(src.endvolume(), dst.GetEndVolume());
+  if (src.has_compliance())
+    PBProperty::Load(src.compliance(), dst.GetCompliance());
+}
+CDM_BIND::SegmentConstantData* PBProperty::Unload(const SESegmentConstant& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::SegmentConstantData* dst = new CDM_BIND::SegmentConstantData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SESegmentConstant& src, CDM_BIND::SegmentConstantData& dst)
+{
+  if (src.HasBeginVolume())
+    dst.set_allocated_beginvolume(PBProperty::Unload(*src.m_BeginVolume));
+  if (src.HasEndVolume())
+    dst.set_allocated_endvolume(PBProperty::Unload(*src.m_EndVolume));
+  if (src.HasCompliance())
+    dst.set_allocated_compliance(PBProperty::Unload(*src.m_Compliance));
+}
+
+void PBProperty::Load(const CDM_BIND::SegmentLinearData& src, SESegmentLinear& dst)
+{
+  dst.Clear();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::SegmentLinearData& src, SESegmentLinear& dst)
+{
+  if (src.has_beginvolume())
+    PBProperty::Load(src.beginvolume(), dst.GetBeginVolume());
+  if (src.has_endvolume())
+    PBProperty::Load(src.endvolume(), dst.GetEndVolume());
+  if (src.has_slope())
+    PBProperty::Load(src.slope(), dst.GetSlope());
+  if (src.has_yintercept())
+    PBProperty::Load(src.yintercept(), dst.GetYIntercept());
+}
+CDM_BIND::SegmentLinearData* PBProperty::Unload(const SESegmentLinear& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::SegmentLinearData* dst = new CDM_BIND::SegmentLinearData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SESegmentLinear& src, CDM_BIND::SegmentLinearData& dst)
+{
+  if (src.HasBeginVolume())
+    dst.set_allocated_beginvolume(PBProperty::Unload(*src.m_BeginVolume));
+  if (src.HasEndVolume())
+    dst.set_allocated_endvolume(PBProperty::Unload(*src.m_EndVolume));
+  if (src.HasSlope())
+    dst.set_allocated_slope(PBProperty::Unload(*src.m_Slope));
+  if (src.HasYIntercept())
+    dst.set_allocated_yintercept(PBProperty::Unload(*src.m_YIntercept));
+}
+
+void PBProperty::Load(const CDM_BIND::SegmentParabolicData& src, SESegmentParabolic& dst)
+{
+  dst.Clear();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::SegmentParabolicData& src, SESegmentParabolic& dst)
+{
+  if (src.has_beginvolume())
+    PBProperty::Load(src.beginvolume(), dst.GetBeginVolume());
+  if (src.has_endvolume())
+    PBProperty::Load(src.endvolume(), dst.GetEndVolume());
+  if (src.has_coefficient1())
+    PBProperty::Load(src.coefficient1(), dst.GetCoefficient1());
+  if (src.has_coefficient2())
+    PBProperty::Load(src.coefficient2(), dst.GetCoefficient2());
+  if (src.has_coefficient3())
+    PBProperty::Load(src.coefficient3(), dst.GetCoefficient3());
+  if (src.has_coefficient4())
+    PBProperty::Load(src.coefficient4(), dst.GetCoefficient4());
+}
+CDM_BIND::SegmentParabolicData* PBProperty::Unload(const SESegmentParabolic& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::SegmentParabolicData* dst = new CDM_BIND::SegmentParabolicData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SESegmentParabolic& src, CDM_BIND::SegmentParabolicData& dst)
+{
+  if (src.HasBeginVolume())
+    dst.set_allocated_beginvolume(PBProperty::Unload(*src.m_BeginVolume));
+  if (src.HasEndVolume())
+    dst.set_allocated_endvolume(PBProperty::Unload(*src.m_EndVolume));
+  if (src.HasCoefficient1())
+    dst.set_allocated_coefficient1(PBProperty::Unload(*src.m_Coefficient1));
+  if (src.HasCoefficient2())
+    dst.set_allocated_coefficient2(PBProperty::Unload(*src.m_Coefficient2));
+  if (src.HasCoefficient3())
+    dst.set_allocated_coefficient3(PBProperty::Unload(*src.m_Coefficient3));
+  if (src.HasCoefficient4())
+    dst.set_allocated_coefficient4(PBProperty::Unload(*src.m_Coefficient4));
+}
+
+void PBProperty::Load(const CDM_BIND::SegmentSigmoidalData& src, SESegmentSigmoidal& dst)
+{
+  dst.Clear();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::SegmentSigmoidalData& src, SESegmentSigmoidal& dst)
+{
+  if (src.has_beginvolume())
+    PBProperty::Load(src.beginvolume(), dst.GetBeginVolume());
+  if (src.has_endvolume())
+    PBProperty::Load(src.endvolume(), dst.GetEndVolume());
+  if (src.has_lowercorner())
+    PBProperty::Load(src.lowercorner(), dst.GetLowerCorner());
+  if (src.has_uppercorner())
+    PBProperty::Load(src.uppercorner(), dst.GetUpperCorner());
+  if (src.has_baselinecompliance())
+    PBProperty::Load(src.baselinecompliance(), dst.GetBaselineCompliance());
+}
+CDM_BIND::SegmentSigmoidalData* PBProperty::Unload(const SESegmentSigmoidal& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::SegmentSigmoidalData* dst = new CDM_BIND::SegmentSigmoidalData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SESegmentSigmoidal& src, CDM_BIND::SegmentSigmoidalData& dst)
+{
+  if (src.HasBeginVolume())
+    dst.set_allocated_beginvolume(PBProperty::Unload(*src.m_BeginVolume));
+  if (src.HasEndVolume())
+    dst.set_allocated_endvolume(PBProperty::Unload(*src.m_EndVolume));
+  if (src.HasUpperCorner())
+    dst.set_allocated_uppercorner(PBProperty::Unload(*src.m_UpperCorner));
+  if (src.HasLowerCorner())
+    dst.set_allocated_lowercorner(PBProperty::Unload(*src.m_LowerCorner));
+  if (src.HasBaselineCompliance())
+    dst.set_allocated_baselinecompliance(PBProperty::Unload(*src.m_BaselineCompliance));
+}
 
 void PBProperty::Load(const CDM_BIND::ScalarData& src, SEScalar& dst)
 {

@@ -20,6 +20,16 @@ POP_PROTO_WARNINGS()
 #include "substance/SESubstanceManager.h"
 #include "properties/SEScalarTime.h"
 
+const std::string& eAppliedRespiratoryCycle_Name(eAppliedRespiratoryCycle c)
+{
+  return CDM_BIND::eAppliedRespiratoryCycle_Name((CDM_BIND::eAppliedRespiratoryCycle)c);
+}
+
+const std::string& eMergeType_Name(eMergeType m)
+{
+  return CDM_BIND::eMergeType_Name((CDM_BIND::eMergeType)m);
+}
+
 SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, const SESubstanceManager& subMgr)
 {
   switch (action.Action_case())

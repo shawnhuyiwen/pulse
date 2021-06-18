@@ -21,12 +21,14 @@ SEBagValveMaskConfiguration::SEBagValveMaskConfiguration(Logger* logger) : SEBag
 {
   m_ConfigurationFile = "";
   m_Configuration = nullptr;
+  m_MergeType = eMergeType::Append;
 }
 
 SEBagValveMaskConfiguration::~SEBagValveMaskConfiguration()
 {
   m_ConfigurationFile = "";
   SAFE_DELETE(m_Configuration);
+  m_MergeType = eMergeType::Append;
 }
 
 void SEBagValveMaskConfiguration::Clear()
@@ -35,6 +37,7 @@ void SEBagValveMaskConfiguration::Clear()
   m_ConfigurationFile = "";
   if (m_Configuration)
     m_Configuration->Clear();
+  m_MergeType = eMergeType::Append;
 }
 
 void SEBagValveMaskConfiguration::Copy(const SEBagValveMaskConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
@@ -90,6 +93,15 @@ bool SEBagValveMaskConfiguration::HasConfigurationFile() const
   return !m_ConfigurationFile.empty();
 }
 
+void SEBagValveMaskConfiguration::SetMergeType(eMergeType m)
+{
+  m_MergeType = m;
+}
+eMergeType SEBagValveMaskConfiguration::GetMergeType() const
+{
+  return m_MergeType;
+}
+
 void SEBagValveMaskConfiguration::ToString(std::ostream &str) const
 {
   str << "Bag Valve Mask Configuration";
@@ -126,5 +138,6 @@ void SEBagValveMaskConfiguration::ToString(std::ostream &str) const
       }
     }
   }
+  str << "\n\tMergeType: " << eMergeType_Name(m_MergeType);
   str << std::flush;
 }

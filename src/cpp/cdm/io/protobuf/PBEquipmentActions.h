@@ -27,6 +27,7 @@ CDM_BIND_DECL2(InhalerAction)
 CDM_BIND_DECL2(InhalerConfiguration)
 CDM_BIND_DECL2(MechanicalVentilatorAction)
 CDM_BIND_DECL2(MechanicalVentilatorConfiguration)
+CDM_BIND_DECL2(MechanicalVentilatorHold)
 class SESubstanceManager;
 
 class CDM_DECL PBEquipmentAction
@@ -182,4 +183,10 @@ public:
   static void Serialize(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEMechanicalVentilatorConfiguration& src, CDM_BIND::MechanicalVentilatorConfigurationData& dst);
   static void Copy(const SEMechanicalVentilatorConfiguration& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr);
+
+  static void Load(const CDM_BIND::MechanicalVentilatorHoldData& src, SEMechanicalVentilatorHold& dst);
+  static CDM_BIND::MechanicalVentilatorHoldData* Unload(const SEMechanicalVentilatorHold& src);
+  static void Serialize(const CDM_BIND::MechanicalVentilatorHoldData& src, SEMechanicalVentilatorHold& dst);
+  static void Serialize(const SEMechanicalVentilatorHold& src, CDM_BIND::MechanicalVentilatorHoldData& dst);
+  static void Copy(const SEMechanicalVentilatorHold& src, SEMechanicalVentilatorHold& dst);
 };

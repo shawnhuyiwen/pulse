@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "properties/SESegmentConstant.h"
 
-#include "properties/SEScalarPressureTimePerVolume.h"
+#include "properties/SEScalarVolumePerPressure.h"
 
 SESegmentConstant::SESegmentConstant()
 {
@@ -31,13 +31,13 @@ bool SESegmentConstant::HasCompliance() const
 {
   return m_Compliance == nullptr ? false : m_Compliance->IsValid();
 }
-SEScalarPressureTimePerVolume& SESegmentConstant::GetCompliance()
+SEScalarVolumePerPressure& SESegmentConstant::GetCompliance()
 {
   if (m_Compliance == nullptr)
-    m_Compliance = new SEScalarPressureTimePerVolume();
+    m_Compliance = new SEScalarVolumePerPressure();
   return *m_Compliance;
 }
-double SESegmentConstant::GetCompliance(const PressureTimePerVolumeUnit& unit) const
+double SESegmentConstant::GetCompliance(const VolumePerPressureUnit& unit) const
 {
   if (m_Compliance == nullptr)
     return SEScalar::dNaN();

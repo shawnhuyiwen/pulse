@@ -33,6 +33,7 @@ void PBEnvironmentAction::Serialize(const CDM_BIND::ChangeEnvironmentalCondition
     dst.SetEnvironmentalConditionsFile(src.environmentalconditionsfile());
   else if (src.has_environmentalconditions())
     PBEnvironment::Load(src.environmentalconditions(), dst.GetEnvironmentalConditions(), subMgr);
+  dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::ChangeEnvironmentalConditionsData* PBEnvironmentAction::Unload(const SEChangeEnvironmentalConditions& src)
 {
@@ -47,6 +48,7 @@ void PBEnvironmentAction::Serialize(const SEChangeEnvironmentalConditions& src, 
     dst.set_environmentalconditionsfile(src.m_EnvironmentalConditionsFile);
   else if (src.HasEnvironmentalConditions())
     dst.set_allocated_environmentalconditions(PBEnvironment::Unload(*src.m_EnvironmentalConditions));
+  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBEnvironmentAction::Copy(const SEChangeEnvironmentalConditions& src, SEChangeEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {

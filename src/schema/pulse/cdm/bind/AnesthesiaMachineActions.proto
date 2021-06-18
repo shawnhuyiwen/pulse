@@ -23,6 +23,7 @@ message AnesthesiaMachineConfigurationData
     AnesthesiaMachineData                  Configuration               = 2;/**<< @brief An anesthesia machine object with properties to set in the system anesthesia machine. */
     string                                 ConfigurationFile           = 3;/**<< @brief File containing an anesthesia machine objet with properties to set in the system anesthesia machine. */
   }
+  eMergeType                               MergeType                   = 4;/**<< @brief How to apply provided configuration to internal data model. */
 }
 
 /** @brief A leak in the expiritory valve. */

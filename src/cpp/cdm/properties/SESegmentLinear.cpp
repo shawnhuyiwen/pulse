@@ -5,7 +5,7 @@
 #include "properties/SESegmentLinear.h"
 
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
+#include "properties/SEScalarPressurePerVolume.h"
 
 SESegmentLinear::SESegmentLinear()
 {
@@ -35,13 +35,13 @@ bool SESegmentLinear::HasSlope() const
 {
   return m_Slope == nullptr ? false : m_Slope->IsValid();
 }
-SEScalarPressureTimePerVolume& SESegmentLinear::GetSlope()
+SEScalarPressurePerVolume& SESegmentLinear::GetSlope()
 {
   if (m_Slope == nullptr)
-    m_Slope = new SEScalarPressureTimePerVolume();
+    m_Slope = new SEScalarPressurePerVolume();
   return *m_Slope;
 }
-double SESegmentLinear::GetSlope(const PressureTimePerVolumeUnit& unit) const
+double SESegmentLinear::GetSlope(const PressurePerVolumeUnit& unit) const
 {
   if (m_Slope == nullptr)
     return SEScalar::dNaN();

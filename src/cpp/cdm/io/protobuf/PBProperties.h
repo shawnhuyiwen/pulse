@@ -3,6 +3,12 @@
 
 #pragma once
    // Forward Declaire SE and Protobuf Property Types
+CDM_BIND_DECL(CurveData)
+CDM_BIND_DECL(SegmentConstantData)
+CDM_BIND_DECL(SegmentLinearData)
+CDM_BIND_DECL(SegmentParabolicData)
+CDM_BIND_DECL(SegmentSigmoidalData)
+
 CDM_BIND_DECL(ScalarData)
 CDM_BIND_DECL(Scalar0To1Data)
 CDM_BIND_DECL(ScalarAmountData)
@@ -75,6 +81,31 @@ CDM_BIND_DECL2(RunningAverage)
 class CDM_DECL PBProperty
 {
 public:
+  // Curve/Segments
+  static void Load(const CDM_BIND::CurveData& src, SECurve& dst);
+  static CDM_BIND::CurveData* Unload(const SECurve& src);
+  static void Serialize(const CDM_BIND::CurveData& src, SECurve& dst);
+  static void Serialize(const SECurve& src, CDM_BIND::CurveData& dst);
+
+  static void Load(const CDM_BIND::SegmentConstantData& src, SESegmentConstant& dst);
+  static CDM_BIND::SegmentConstantData* Unload(const SESegmentConstant& src);
+  static void Serialize(const CDM_BIND::SegmentConstantData& src, SESegmentConstant& dst);
+  static void Serialize(const SESegmentConstant& src, CDM_BIND::SegmentConstantData& dst);
+
+  static void Load(const CDM_BIND::SegmentLinearData& src, SESegmentLinear& dst);
+  static CDM_BIND::SegmentLinearData* Unload(const SESegmentLinear& src);
+  static void Serialize(const CDM_BIND::SegmentLinearData& src, SESegmentLinear& dst);
+  static void Serialize(const SESegmentLinear& src, CDM_BIND::SegmentLinearData& dst);
+
+  static void Load(const CDM_BIND::SegmentParabolicData& src, SESegmentParabolic& dst);
+  static CDM_BIND::SegmentParabolicData* Unload(const SESegmentParabolic& src);
+  static void Serialize(const CDM_BIND::SegmentParabolicData& src, SESegmentParabolic& dst);
+  static void Serialize(const SESegmentParabolic& src, CDM_BIND::SegmentParabolicData& dst);
+
+  static void Load(const CDM_BIND::SegmentSigmoidalData& src, SESegmentSigmoidal& dst);
+  static CDM_BIND::SegmentSigmoidalData* Unload(const SESegmentSigmoidal& src);
+  static void Serialize(const CDM_BIND::SegmentSigmoidalData& src, SESegmentSigmoidal& dst);
+  static void Serialize(const SESegmentSigmoidal& src, CDM_BIND::SegmentSigmoidalData& dst);
 
   // Scalars
   static void Load(const CDM_BIND::ScalarData& src, SEScalar& dst);

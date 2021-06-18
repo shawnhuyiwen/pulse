@@ -132,6 +132,8 @@ bool SEEnvironment::ProcessChange(SEInitialEnvironmentalConditions& change, SESu
 
 bool SEEnvironment::ProcessChange(SEChangeEnvironmentalConditions& change, SESubstanceManager& subMgr)
 {
+  if (change.GetMergeType() == eMergeType::Replace)
+    Clear();
   // If we have data then we merge it, if a file was provided
   // we reset and set the environment to the file, so we only have the file data
   if (change.HasEnvironmentalConditionsFile())

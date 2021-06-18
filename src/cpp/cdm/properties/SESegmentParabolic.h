@@ -8,6 +8,7 @@
 class CDM_DECL SESegmentParabolic : public SESegment
 {
 protected:
+  friend class PBProperty;//friend the serialization class
   friend class SECurve;
   SESegmentParabolic();
 public:

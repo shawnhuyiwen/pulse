@@ -29,6 +29,7 @@
 #include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 #include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
 #include "properties/SEScalarVolume.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
@@ -59,6 +60,7 @@ SEEquipmentActionCollection::SEEquipmentActionCollection(SESubstanceManager& sub
   m_BagValveMaskAutomated = nullptr;
   m_BagValveMaskInstantaneous = nullptr;
   m_BagValveMaskSqueeze = nullptr;
+  m_MechanicalVentilatorHold = nullptr;
 }
 
 SEEquipmentActionCollection::~SEEquipmentActionCollection()
@@ -91,6 +93,7 @@ void SEEquipmentActionCollection::Clear()
   RemoveBagValveMaskAutomated();
   RemoveBagValveMaskInstantaneous();
   RemoveBagValveMaskSqueeze();
+  RemoveMechanicalVentilatorHold();
 }
 
 bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
@@ -105,6 +108,16 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
       m_MechanicalVentilatorConfiguration->Activate();
       if (!m_MechanicalVentilatorConfiguration->IsActive())
         RemoveMechanicalVentilatorConfiguration();
+      return true;
+    }
+
+    const SEMechanicalVentilatorHold* hold = dynamic_cast<const SEMechanicalVentilatorHold*>(&action);
+    if (hold != nullptr)
+    {
+      GetMechanicalVentilatorHold().Copy(*hold, true);
+      m_MechanicalVentilatorHold->Activate();
+      if (!m_MechanicalVentilatorHold->IsActive())
+        RemoveMechanicalVentilatorHold();
       return true;
     }
   }
@@ -701,6 +714,26 @@ void SEEquipmentActionCollection::RemoveMechanicalVentilatorConfiguration()
     m_MechanicalVentilatorConfiguration->Deactivate();
 }
 
+bool SEEquipmentActionCollection::HasMechanicalVentilatorHold() const
+{
+  return m_MechanicalVentilatorHold == nullptr ? false : m_MechanicalVentilatorHold->IsActive();
+}
+SEMechanicalVentilatorHold& SEEquipmentActionCollection::GetMechanicalVentilatorHold()
+{
+  if (m_MechanicalVentilatorHold == nullptr)
+    m_MechanicalVentilatorHold = new SEMechanicalVentilatorHold();
+  return *m_MechanicalVentilatorHold;
+}
+const SEMechanicalVentilatorHold* SEEquipmentActionCollection::GetMechanicalVentilatorHold() const
+{
+  return m_MechanicalVentilatorHold;
+}
+void SEEquipmentActionCollection::RemoveMechanicalVentilatorHold()
+{
+  if (m_MechanicalVentilatorHold)
+    m_MechanicalVentilatorHold->Deactivate();
+}
+
 void SEEquipmentActionCollection::GetAllActions(std::vector<const SEAction*>& actions) const
 {
   if (HasAnesthesiaMachineConfiguration())
@@ -744,6 +777,8 @@ void SEEquipmentActionCollection::GetAllActions(std::vector<const SEAction*>& ac
 
   if(HasMechanicalVentilatorConfiguration())
     actions.push_back(GetMechanicalVentilatorConfiguration());
+  if (HasMechanicalVentilatorHold())
+    actions.push_back(GetMechanicalVentilatorHold());
 }
 
 const SEScalar* SEEquipmentActionCollection::GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property)
@@ -789,6 +824,8 @@ const SEScalar* SEEquipmentActionCollection::GetScalar(const std::string& action
 
   if (actionName == "MechanicalVentilatorConfiguration")
     return GetMechanicalVentilatorConfiguration().GetScalar(property);
+  if (actionName == "MechanicalVentilatorHold")
+    return GetMechanicalVentilatorHold().GetScalar(property);
 
   return nullptr;
 }

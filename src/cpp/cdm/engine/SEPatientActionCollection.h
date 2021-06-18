@@ -29,6 +29,7 @@ class SENeedleDecompression;
 class SEPericardialEffusion;
 class SEPulmonaryShuntExacerbation;
 class SERespiratoryFatigue;
+class SERespiratoryMechanicsConfiguration;
 class SESubstanceBolus;
 class SESubstanceCompoundInfusion;
 class SESubstanceInfusion;
@@ -183,6 +184,11 @@ public:
   const SERespiratoryFatigue* GetRespiratoryFatigue() const;
   void RemoveRespiratoryFatigue();
 
+  bool HasRespiratoryMechanicsConfiguration() const;
+  SERespiratoryMechanicsConfiguration& GetRespiratoryMechanicsConfiguration();
+  const SERespiratoryMechanicsConfiguration* GetRespiratoryMechanicsConfiguration() const;
+  void RemoveRespiratoryMechanicsConfiguration();
+
   bool HasSubstanceBolus() const;
   bool HasSubstanceBolus(const SESubstance& sub) const;
   SESubstanceBolus& GetSubstanceBolus(const SESubstance& sub);
@@ -273,6 +279,7 @@ protected:
   SEPericardialEffusion*                            m_PericardialEffusion;
   SEPulmonaryShuntExacerbation*                     m_PulmonaryShuntExacerbation;
   SERespiratoryFatigue*                             m_RespiratoryFatigue;
+  SERespiratoryMechanicsConfiguration*              m_RespiratoryMechanicsConfiguration;
   SESupplementalOxygen*                             m_SupplementalOxygen;
   SETensionPneumothorax*                            m_LeftClosedTensionPneumothorax;
   SETensionPneumothorax*                            m_LeftOpenTensionPneumothorax;

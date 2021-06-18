@@ -36,5 +36,6 @@ message AnyEquipmentActionData
     InhalerConfigurationData                                InhalerConfiguration                         = 101;
     
     MechanicalVentilatorConfigurationData                   MechanicalVentilatorConfiguration            = 201;
+    MechanicalVentilatorHoldData                            MechanicalVentilatorHold                     = 202;
   }
 }

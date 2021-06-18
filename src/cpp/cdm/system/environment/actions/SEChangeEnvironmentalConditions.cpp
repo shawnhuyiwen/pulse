@@ -23,12 +23,14 @@ SEChangeEnvironmentalConditions::SEChangeEnvironmentalConditions(Logger* logger)
 {
   m_EnvironmentalConditions = nullptr;
   m_EnvironmentalConditionsFile = "";
+  m_MergeType = eMergeType::Append;
 }
 
 SEChangeEnvironmentalConditions::~SEChangeEnvironmentalConditions()
 {
   m_EnvironmentalConditionsFile = "";
   SAFE_DELETE(m_EnvironmentalConditions);
+  m_MergeType = eMergeType::Append;
 }
 
 void SEChangeEnvironmentalConditions::Clear()
@@ -37,6 +39,7 @@ void SEChangeEnvironmentalConditions::Clear()
   m_EnvironmentalConditionsFile = "";
   if (m_EnvironmentalConditions)
     m_EnvironmentalConditions->Clear();
+  m_MergeType = eMergeType::Append;
 }
 
 void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr, bool preserveState)
@@ -92,6 +95,15 @@ bool SEChangeEnvironmentalConditions::HasEnvironmentalConditionsFile() const
   return !m_EnvironmentalConditionsFile.empty();
 }
 
+void SEChangeEnvironmentalConditions::SetMergeType(eMergeType m)
+{
+  m_MergeType = m;
+}
+eMergeType SEChangeEnvironmentalConditions::GetMergeType() const
+{
+  return m_MergeType;
+}
+
 void SEChangeEnvironmentalConditions::ToString(std::ostream &str) const
 {
   str << "Environment Action : Change Environmental Conditions"; 
@@ -127,5 +139,6 @@ void SEChangeEnvironmentalConditions::ToString(std::ostream &str) const
       }
     }
   }
+  str << "\n\tMergeType: " << eMergeType_Name(m_MergeType);
   str << std::flush;
 }

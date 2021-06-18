@@ -28,6 +28,9 @@ public:
   virtual void SetConfigurationFile(const std::string& fileName);
   virtual bool HasConfigurationFile() const;
 
+  virtual eMergeType GetMergeType() const;
+  virtual void SetMergeType(eMergeType m);
+
   virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
@@ -36,4 +39,5 @@ protected:
 
   std::string               m_ConfigurationFile;
   SEMechanicalVentilator*   m_Configuration;
+  eMergeType                m_MergeType;
 };

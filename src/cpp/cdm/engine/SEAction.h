@@ -4,6 +4,12 @@
 #pragma once
 class SESubstanceManager;
 
+enum class eMergeType { Append = 0, Replace };
+extern const std::string& eMergeType_Name(eMergeType m);
+
+enum class eAppliedRespiratoryCycle { Expiratory=0, Inspiratory, Instantaneous };
+extern const std::string& eAppliedRespiratoryCycle_Name(eAppliedRespiratoryCycle m);
+
 class CDM_DECL SEAction : public Loggable
 {
   friend class PBAction;//friend the serialization class

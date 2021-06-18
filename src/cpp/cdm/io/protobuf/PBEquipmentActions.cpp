@@ -38,6 +38,7 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBMechanicalVentilator.h"
 #include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
 #include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
 #include "substance/SESubstanceManager.h"
 
 void PBEquipmentAction::Serialize(const CDM_BIND::EquipmentActionData& src, SEEquipmentAction& dst)
@@ -70,6 +71,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::AnesthesiaMachineConfiguration
     dst.SetConfigurationFile(src.configurationfile());
   else if (src.has_configuration())
     PBAnesthesiaMachine::Load(src.configuration(), dst.GetConfiguration(), subMgr);
+  dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::AnesthesiaMachineConfigurationData* PBEquipmentAction::Unload(const SEAnesthesiaMachineConfiguration& src)
 {
@@ -84,6 +86,7 @@ void PBEquipmentAction::Serialize(const SEAnesthesiaMachineConfiguration& src, C
     dst.set_configurationfile(src.m_ConfigurationFile); 
   else if (src.HasConfiguration())
     dst.set_allocated_configuration(PBAnesthesiaMachine::Unload(*src.m_Configuration));
+  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBEquipmentAction::Copy(const SEAnesthesiaMachineConfiguration& src, SEAnesthesiaMachineConfiguration& dst, const SESubstanceManager& subMgr)
 {
@@ -486,6 +489,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::BagValveMaskConfigurationData&
     dst.SetConfigurationFile(src.configurationfile());
   else if (src.has_configuration())
     PBBagValveMask::Load(src.configuration(), dst.GetConfiguration(), subMgr);
+  dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::BagValveMaskConfigurationData* PBEquipmentAction::Unload(const SEBagValveMaskConfiguration& src)
 {
@@ -500,6 +504,7 @@ void PBEquipmentAction::Serialize(const SEBagValveMaskConfiguration& src, CDM_BI
     dst.set_configurationfile(src.m_ConfigurationFile);
   else if (src.HasConfiguration())
     dst.set_allocated_configuration(PBBagValveMask::Unload(*src.m_Configuration));
+  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBEquipmentAction::Copy(const SEBagValveMaskConfiguration& src, SEBagValveMaskConfiguration& dst, const SESubstanceManager& subMgr)
 {
@@ -656,6 +661,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::InhalerConfigurationData& src,
     dst.SetConfigurationFile(src.configurationfile());
   else if (src.has_configuration())
     PBInhaler::Load(src.configuration(), dst.GetConfiguration(), subMgr);
+  dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::InhalerConfigurationData* PBEquipmentAction::Unload(const SEInhalerConfiguration& src)
 {
@@ -669,7 +675,8 @@ void PBEquipmentAction::Serialize(const SEInhalerConfiguration& src, CDM_BIND::I
   if (src.HasConfigurationFile())
     dst.set_configurationfile(src.m_ConfigurationFile); 
   else if (src.HasConfiguration())
-    dst.set_allocated_configuration(PBInhaler::Unload(*src.m_Configuration));
+    dst.set_allocated_configuration(PBInhaler::Unload(*src.m_Configuration));;
+  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBEquipmentAction::Copy(const SEInhalerConfiguration& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr)
 {
@@ -704,6 +711,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorConfigurat
     dst.SetConfigurationFile(src.configurationfile());
   else if (src.has_configuration())
     PBMechanicalVentilator::Load(src.configuration(), dst.GetConfiguration(), subMgr);
+  dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::MechanicalVentilatorConfigurationData* PBEquipmentAction::Unload(const SEMechanicalVentilatorConfiguration& src)
 {
@@ -717,7 +725,8 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorConfiguration& src
   if (src.HasConfigurationFile())
     dst.set_configurationfile(src.m_ConfigurationFile); 
   else if (src.HasConfiguration())
-    dst.set_allocated_configuration(PBMechanicalVentilator::Unload(*src.m_Configuration));
+    dst.set_allocated_configuration(PBMechanicalVentilator::Unload(*src.m_Configuration));;
+  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBEquipmentAction::Copy(const SEMechanicalVentilatorConfiguration& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr)
 {
@@ -725,6 +734,37 @@ void PBEquipmentAction::Copy(const SEMechanicalVentilatorConfiguration& src, SEM
   CDM_BIND::MechanicalVentilatorConfigurationData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst, subMgr);
+}
+
+void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorHoldData& src, SEMechanicalVentilatorHold& dst)
+{
+  dst.Clear();
+  PBEquipmentAction::Serialize(src, dst);
+}
+void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorHoldData& src, SEMechanicalVentilatorHold& dst)
+{
+  PBEquipmentAction::Serialize(src.mechanicalventilatoraction(), dst);
+  dst.SetState((eSwitch)src.state());
+  dst.SetAppliedRespiratoryCycle((eAppliedRespiratoryCycle)src.appliedrespiratorycycle());
+}
+CDM_BIND::MechanicalVentilatorHoldData* PBEquipmentAction::Unload(const SEMechanicalVentilatorHold& src)
+{
+  CDM_BIND::MechanicalVentilatorHoldData* dst = new CDM_BIND::MechanicalVentilatorHoldData();
+  PBEquipmentAction::Serialize(src, *dst);
+  return dst;
+}
+void PBEquipmentAction::Serialize(const SEMechanicalVentilatorHold& src, CDM_BIND::MechanicalVentilatorHoldData& dst)
+{
+  PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatoraction());
+  dst.set_state((CDM_BIND::eSwitch)src.m_State);
+  dst.set_appliedrespiratorycycle((CDM_BIND::eAppliedRespiratoryCycle)src.m_AppliedRespiratoryCycle);
+}
+void PBEquipmentAction::Copy(const SEMechanicalVentilatorHold& src, SEMechanicalVentilatorHold& dst)
+{
+  dst.Clear();
+  CDM_BIND::MechanicalVentilatorHoldData data;
+  PBEquipmentAction::Serialize(src, data);
+  PBEquipmentAction::Serialize(data, dst);
 }
 
 ///////////////////////////
@@ -849,6 +889,12 @@ SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionDat
     PBEquipmentAction::Load(any.mechanicalventilatorconfiguration(), *a, subMgr);
     return a;
   }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kMechanicalVentilatorHold:
+  {
+    SEMechanicalVentilatorHold* a = new SEMechanicalVentilatorHold(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.mechanicalventilatorhold(), *a);
+    return a;
+  }
   }
   subMgr.Error("Unknown Equipment action enum :" + std::to_string((int)any.Action_case()));
   return nullptr;
@@ -903,6 +949,13 @@ CDM_BIND::AnyEquipmentActionData* PBEquipmentAction::Unload(const SEEquipmentAct
   if (mvc != nullptr)
   {
     any->set_allocated_mechanicalventilatorconfiguration(PBEquipmentAction::Unload(*mvc));
+    return any;
+  }
+
+  const SEMechanicalVentilatorHold* mvh = dynamic_cast<const SEMechanicalVentilatorHold*>(&action);
+  if (mvh != nullptr)
+  {
+    any->set_allocated_mechanicalventilatorhold(PBEquipmentAction::Unload(*mvh));
     return any;
   }
 

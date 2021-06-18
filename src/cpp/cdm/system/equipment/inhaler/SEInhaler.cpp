@@ -84,6 +84,8 @@ void SEInhaler::Merge(const SEInhaler& from, SESubstanceManager& subMgr)
 
 void SEInhaler::ProcessConfiguration(SEInhalerConfiguration& config, SESubstanceManager& subMgr)
 {
+  if (config.GetMergeType() == eMergeType::Replace)
+    Clear();
   if (config.HasConfiguration())
     Merge(config.GetConfiguration(), subMgr);
   else if (config.HasConfigurationFile())

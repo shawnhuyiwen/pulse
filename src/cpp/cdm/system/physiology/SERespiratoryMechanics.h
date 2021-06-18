@@ -5,6 +5,7 @@
 
 class CDM_DECL SERespiratoryMechanics : public Loggable
 {
+  friend class PBPhysiology;
 public:
 
   SERespiratoryMechanics(Logger* logger);

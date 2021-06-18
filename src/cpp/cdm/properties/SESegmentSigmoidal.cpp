@@ -5,7 +5,7 @@
 #include "properties/SESegmentSigmoidal.h"
 
 #include "properties/SEScalarPressure.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
+#include "properties/SEScalarVolumePerPressure.h"
 
 SESegmentSigmoidal::SESegmentSigmoidal()
 {
@@ -73,13 +73,13 @@ bool SESegmentSigmoidal::HasBaselineCompliance() const
 {
   return m_BaselineCompliance == nullptr ? false : m_BaselineCompliance->IsValid();
 }
-SEScalarPressureTimePerVolume& SESegmentSigmoidal::GetBaselineCompliance()
+SEScalarVolumePerPressure& SESegmentSigmoidal::GetBaselineCompliance()
 {
   if (m_BaselineCompliance == nullptr)
-    m_BaselineCompliance = new SEScalarPressureTimePerVolume();
+    m_BaselineCompliance = new SEScalarVolumePerPressure();
   return *m_BaselineCompliance;
 }
-double SESegmentSigmoidal::GetBaselineCompliance(const PressureTimePerVolumeUnit& unit) const
+double SESegmentSigmoidal::GetBaselineCompliance(const VolumePerPressureUnit& unit) const
 {
   if (m_BaselineCompliance == nullptr)
     return SEScalar::dNaN();

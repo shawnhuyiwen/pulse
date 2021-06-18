@@ -4,12 +4,13 @@ option java_package = "com.kitware.pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
-import "pulse/cdm/bind/Enums.proto";
-import "pulse/cdm/bind/Properties.proto";
-import "pulse/cdm/bind/Substance.proto";
-import "pulse/cdm/bind/PatientNutrition.proto";
 import "pulse/cdm/bind/Actions.proto";
+import "pulse/cdm/bind/Enums.proto";
 import "pulse/cdm/bind/PatientAssessments.proto";
+import "pulse/cdm/bind/Properties.proto";
+import "pulse/cdm/bind/PatientNutrition.proto";
+import "pulse/cdm/bind/Physiology.proto";
+import "pulse/cdm/bind/Substance.proto";
 
 message AnyPatientActionData
 {
@@ -40,13 +41,14 @@ message AnyPatientActionData
     PericardialEffusionData                            PericardialEffusion                            = 23;
     PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 24;
     RespiratoryFatigueData                             RespiratoryFatigue                             = 25;
+    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 32;
     SubstanceBolusData                                 SubstanceBolus                                 = 26;
     SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 27;
     SubstanceInfusionData                              SubstanceInfusion                              = 28;
     SupplementalOxygenData                             SupplementalOxygen                             = 29;
     TensionPneumothoraxData                            TensionPneumothorax                            = 30;
     UrinateData                                        Urinate                                        = 31;
-  }
+  }// Last number: 32
 }
 
 message PatientActionData
@@ -323,6 +325,19 @@ message RespiratoryFatigueData
 {
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 no dyspnea, 1 having dyspnea. */
+}
+
+/** @brief Update the parameters of the %Respiratory mechanics. */
+message RespiratoryMechanicsConfigurationData
+{
+  PatientActionData                         PatientAction                   = 1;
+  oneof Option
+  {
+    RespiratoryMechanicsData                Configuration                   = 2;/**<< @brief A RespiratoryMechanics object with properties to set in the system object. */
+    string                                  ConfigurationFile               = 3;/**<< @brief File containing a RespiratoryMechanics object with properties to set in the system object. */
+  }
+  eAppliedRespiratoryCycle                  AppliedCycle                    = 4;/**<< @brief When to apply these mechanics in the respiratory cycle. */
+  eMergeType                                MergeType                       = 5;/**<< @brief How to apply provided configuration to internal data model. */
 }
 
 /** @brief An administration of a substance that is given all at one time to raise its concentration in blood to an effective level. */

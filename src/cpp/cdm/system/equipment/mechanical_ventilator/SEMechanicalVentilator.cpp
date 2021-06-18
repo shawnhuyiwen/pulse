@@ -162,6 +162,8 @@ void SEMechanicalVentilator::Clear()
 
 void SEMechanicalVentilator::ProcessConfiguration(SEMechanicalVentilatorConfiguration& config, SESubstanceManager& subMgr)
 {
+  if (config.GetMergeType() == eMergeType::Replace)
+    Clear();
   if (config.HasConfiguration())
     Merge(config.GetConfiguration(), subMgr);
   else if (config.HasConfigurationFile())

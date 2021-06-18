@@ -8,6 +8,7 @@
 class CDM_DECL SESegmentConstant : public SESegment
 {
 protected:
+  friend class PBProperty;//friend the serialization class
   friend class SECurve;
   SESegmentConstant();
 public:
@@ -17,8 +18,8 @@ public:
   virtual bool IsValid() const override;
 
   virtual bool HasCompliance() const;
-  virtual SEScalarPressureTimePerVolume& GetCompliance();
-  virtual double GetCompliance(const PressureTimePerVolumeUnit& unit) const;
+  virtual SEScalarVolumePerPressure& GetCompliance();
+  virtual double GetCompliance(const VolumePerPressureUnit& unit) const;
 
   virtual std::string ToString() const override;
   virtual void ToString(std::ostream& str) const override;
@@ -26,5 +27,5 @@ public:
 protected:
   virtual void Abstract() override { };
 
-  SEScalarPressureTimePerVolume* m_Compliance;
+  SEScalarVolumePerPressure* m_Compliance;
 };

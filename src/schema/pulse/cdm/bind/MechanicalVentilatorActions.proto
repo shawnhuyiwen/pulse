@@ -4,8 +4,9 @@ option java_package = "com.kitware.pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
-import "pulse/cdm/bind/MechanicalVentilator.proto";
 import "pulse/cdm/bind/Actions.proto";
+import "pulse/cdm/bind/Enums.proto";
+import "pulse/cdm/bind/MechanicalVentilator.proto";
 
 message MechanicalVentilatorActionData
 {
@@ -21,4 +22,12 @@ message MechanicalVentilatorConfigurationData
     MechanicalVentilatorData              Configuration               = 2;/**<< @brief A mechanical ventilator object with properties to set in the system object. */
     string                                ConfigurationFile           = 3;/**<< @brief File containing a mechanical ventilator object with properties to set in the system object. */
   }
+  eMergeType                              MergeType                   = 4;/**<< @brief How to apply provided configuration to internal data model. */
+}
+
+message MechanicalVentilatorHoldData
+{
+  MechanicalVentilatorActionData          MechanicalVentilatorAction  = 1;
+  eSwitch                                 State                       = 2;/**<< @brief On = Activate the hold. Off = Release the hold. */
+  eAppliedRespiratoryCycle                AppliedRespiratoryCycle     = 3;/**<< @brief When, in the respiratory cycle, to apply the hold. Not used if Switch is Off. */
 }

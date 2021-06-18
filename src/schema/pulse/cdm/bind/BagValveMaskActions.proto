@@ -22,6 +22,7 @@ message BagValveMaskConfigurationData
     BagValveMaskData        Configuration               = 2;/**<< @brief A BVM object with properties to set in the system object. */
     string                  ConfigurationFile           = 3;/**<< @brief File containing a BVM object with properties to set in the system object. */
   }
+  eMergeType                MergeType                   = 4;/**<< @brief How to apply provided configuration to internal data model. */
 }
 
 /** @brief Specify a single squeeze cycle of the bag. Repeat as needed. Newly added actions will override a previous unfinished squeeze cycle. */
@@ -46,9 +47,8 @@ message BagValveMaskSqueezeData
  
   }
   
-  ScalarTimeData            ExpiratoryPeriod            = 4; /**<< @brief Total length of expiration phase. */
-  ScalarTimeData            InspiratoryPeriod           = 5; /**<< @brief Total length of inspiration phase. */
-    
+  ScalarTimeData            ExpiratoryPeriod            = 4;/**<< @brief Total length of expiration phase. */
+  ScalarTimeData            InspiratoryPeriod           = 5;/**<< @brief Total length of inspiration phase. */
 }
 
 /** @brief BVM action to be used when connecting to hardware sensors or specifying your own waveform. Values will remain constant until explicitly changed*/

@@ -14,12 +14,14 @@ SEInhalerConfiguration::SEInhalerConfiguration(Logger* logger) : SEInhalerAction
 {
   m_ConfigurationFile = "";
   m_Configuration = nullptr;
+  m_MergeType = eMergeType::Append;
 }
 
 SEInhalerConfiguration::~SEInhalerConfiguration()
 {
   m_ConfigurationFile = "";
   SAFE_DELETE(m_Configuration);
+  m_MergeType = eMergeType::Append;
 }
 
 void SEInhalerConfiguration::Clear()
@@ -28,6 +30,7 @@ void SEInhalerConfiguration::Clear()
   m_ConfigurationFile = "";
   if (m_Configuration)
     m_Configuration->Clear();
+  m_MergeType = eMergeType::Append;
 }
 
 void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
@@ -83,6 +86,15 @@ bool SEInhalerConfiguration::HasConfigurationFile() const
   return !m_ConfigurationFile.empty();
 }
 
+void SEInhalerConfiguration::SetMergeType(eMergeType m)
+{
+  m_MergeType = m;
+}
+eMergeType SEInhalerConfiguration::GetMergeType() const
+{
+  return m_MergeType;
+}
+
 void SEInhalerConfiguration::ToString(std::ostream &str) const
 {
   str << "Inhaler Configuration";
@@ -100,5 +112,6 @@ void SEInhalerConfiguration::ToString(std::ostream &str) const
     str << "\n\tSpacerVolume: "; m_Configuration->HasSpacerVolume() ? str << m_Configuration->GetSpacerVolume() : str << "NaN";
     str << "\n\tSubstance: "; m_Configuration->HasSubstance() ? str << m_Configuration->GetSubstance()->GetName() : str << "Not Set";
   }
+  str << "\n\tMergeType: " << eMergeType_Name(m_MergeType);
   str << std::flush;
 }

@@ -36,3 +36,4 @@ enum eCharge
   Neutral    = 2;/**<< @brief Charge is neutral. */
   Positive   = 3;/**<< @brief Charge is positive. */
 }
+

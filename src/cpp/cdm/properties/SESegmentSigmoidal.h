@@ -8,6 +8,7 @@
 class CDM_DECL SESegmentSigmoidal : public SESegment
 {
 protected:
+  friend class PBProperty;//friend the serialization class
   friend class SECurve;
   SESegmentSigmoidal();
 public:
@@ -25,8 +26,8 @@ public:
   virtual double GetUpperCorner(const PressureUnit& unit) const;
 
   virtual bool HasBaselineCompliance() const;
-  virtual SEScalarPressureTimePerVolume& GetBaselineCompliance();
-  virtual double GetBaselineCompliance(const PressureTimePerVolumeUnit& unit) const;
+  virtual SEScalarVolumePerPressure& GetBaselineCompliance();
+  virtual double GetBaselineCompliance(const VolumePerPressureUnit& unit) const;
 
   virtual std::string ToString() const override;
   virtual void ToString(std::ostream& str) const override;
@@ -36,5 +37,5 @@ protected:
 
   SEScalarPressure*              m_LowerCorner;
   SEScalarPressure*              m_UpperCorner;
-  SEScalarPressureTimePerVolume* m_BaselineCompliance;
+  SEScalarVolumePerPressure*     m_BaselineCompliance;
 };

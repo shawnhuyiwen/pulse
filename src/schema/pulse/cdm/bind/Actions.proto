@@ -6,6 +6,22 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Properties.proto";
 
+
+/** @brief Enumeration for how to apply action data (Such as configurations). */
+enum eMergeType
+{
+  Append  = 0;/**<< @brief Only change what is provided. All data on target object not in the associated message will be preserved. */
+  Replace = 1;/**<< @brief Clear all data on target object, and then apply the data provided in the associated message. */
+}
+
+/** @brief Enumeration for when to apply actions related to the respiratory cycle. */
+enum eAppliedRespiratoryCycle
+{
+  Expiration     = 0;/**<< @brief Wait to apply  until the beginning of the expiration. */
+  Inspiration    = 1;/**<< @brief Wait to apply  until the beginning of the inspiration. */
+  Instantaneous  = 2;/**<< @brief Apply once the action is received */
+}
+
 message ActionData
 {
   string                Comment  = 1;

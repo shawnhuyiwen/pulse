@@ -316,7 +316,6 @@ void MechanicalVentilator::PreProcess()
 {
   if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorConfiguration())
   {
-    SEMechanicalVentilator::Clear();
     ProcessConfiguration(m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorConfiguration(), m_data.GetSubstances());
     m_data.GetActions().GetEquipmentActions().RemoveMechanicalVentilatorConfiguration();
   }

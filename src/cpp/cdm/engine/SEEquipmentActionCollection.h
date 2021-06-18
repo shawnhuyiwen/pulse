@@ -31,6 +31,7 @@ class SEInhalerConfiguration;
 class SEMechanicalVentilator;
 class SEMechanicalVentilatorAction;
 class SEMechanicalVentilatorConfiguration;
+class SEMechanicalVentilatorHold;
 class SESubstanceManager;
 CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(AnyEquipmentActionData)
@@ -130,6 +131,7 @@ public:
   void RemoveAnesthesiaMachineYPieceDisconnect();
 
   // ACTIONS
+
   bool HasBagValveMaskAutomated() const;
   SEBagValveMaskAutomated& GetBagValveMaskAutomated();
   const SEBagValveMaskAutomated* GetBagValveMaskAutomated() const;
@@ -144,6 +146,11 @@ public:
   SEBagValveMaskSqueeze& GetBagValveMaskSqueeze();
   const SEBagValveMaskSqueeze* GetBagValveMaskSqueeze() const;
   void RemoveBagValveMaskSqueeze();
+
+  bool HasMechanicalVentilatorHold() const;
+  SEMechanicalVentilatorHold& GetMechanicalVentilatorHold();
+  const SEMechanicalVentilatorHold* GetMechanicalVentilatorHold() const;
+  void RemoveMechanicalVentilatorHold();
 
   void GetAllActions(std::vector<const SEAction*>& v) const;
   const SEScalar* GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property);
@@ -178,4 +185,5 @@ protected:
   SEInhalerConfiguration*                                      m_InhalerConfiguration;
 
   SEMechanicalVentilatorConfiguration*                         m_MechanicalVentilatorConfiguration;
+  SEMechanicalVentilatorHold*                                  m_MechanicalVentilatorHold;
 };

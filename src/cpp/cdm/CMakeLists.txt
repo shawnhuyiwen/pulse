@@ -139,6 +139,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEPericardialEffusion.h
     patient/actions/SEPulmonaryShuntExacerbation.h
     patient/actions/SERespiratoryFatigue.h
+    patient/actions/SERespiratoryMechanicsConfiguration.h
     patient/actions/SESubstanceAdministration.h
     patient/actions/SESubstanceBolus.h
     patient/actions/SESubstanceCompoundInfusion.h
@@ -302,6 +303,7 @@ add_library_ex(CommonDataModel
     system/equipment/mechanical_ventilator/SEMechanicalVentilator.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h
     system/physiology/SEBloodChemistrySystem.h
     system/physiology/SECardiovascularSystem.h
     system/physiology/SEDrugSystem.h
@@ -496,6 +498,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEPericardialEffusion.cpp
     patient/actions/SEPulmonaryShuntExacerbation.cpp
     patient/actions/SERespiratoryFatigue.cpp
+    patient/actions/SERespiratoryMechanicsConfiguration.cpp
     patient/actions/SESubstanceAdministration.cpp
     patient/actions/SESubstanceBolus.cpp
     patient/actions/SESubstanceCompoundInfusion.cpp
@@ -659,6 +662,7 @@ add_library_ex(CommonDataModel
     system/equipment/mechanical_ventilator/SEMechanicalVentilator.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.cpp
     system/physiology/SEBloodChemistrySystem.cpp
     system/physiology/SECardiovascularSystem.cpp
     system/physiology/SEDrugSystem.cpp

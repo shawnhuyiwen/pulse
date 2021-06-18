@@ -28,6 +28,7 @@
 #include "patient/actions/SEPericardialEffusion.h"
 #include "patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "patient/actions/SERespiratoryFatigue.h"
+#include "patient/actions/SERespiratoryMechanicsConfiguration.h"
 #include "patient/actions/SESubstanceBolus.h"
 #include "patient/actions/SESubstanceCompoundInfusion.h"
 #include "patient/actions/SESubstanceInfusion.h"
@@ -68,6 +69,7 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_LeftNeedleDecompression = nullptr;
   m_RightNeedleDecompression = nullptr;
   m_RespiratoryFatigue = nullptr;
+  m_RespiratoryMechanicsConfiguration = nullptr;
   m_PericardialEffusion = nullptr;
   m_PulmonaryShuntExacerbation = nullptr;
   m_SupplementalOxygen = nullptr;
@@ -105,6 +107,7 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_PulmonaryShuntExacerbation);
   SAFE_DELETE(m_RespiratoryFatigue);
+  SAFE_DELETE(m_RespiratoryMechanicsConfiguration);
   SAFE_DELETE(m_SupplementalOxygen);
   SAFE_DELETE(m_LeftClosedTensionPneumothorax);
   SAFE_DELETE(m_LeftOpenTensionPneumothorax);
@@ -145,6 +148,7 @@ void SEPatientActionCollection::Clear()
   RemovePericardialEffusion();
   RemovePulmonaryShuntExacerbation();
   RemoveRespiratoryFatigue();
+  RemoveRespiratoryMechanicsConfiguration();
   RemoveLeftOpenTensionPneumothorax();
   RemoveLeftClosedTensionPneumothorax();
   RemoveRightOpenTensionPneumothorax();
@@ -455,6 +459,16 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_RespiratoryFatigue->Activate();
     if (!m_RespiratoryFatigue->IsActive())
       RemoveRespiratoryFatigue();
+    return true;
+  }
+
+  const SERespiratoryMechanicsConfiguration* rmc = dynamic_cast<const SERespiratoryMechanicsConfiguration*>(&action);
+  if (rmc != nullptr)
+  {
+    GetRespiratoryMechanicsConfiguration().Copy(*rmc, true);
+    m_RespiratoryMechanicsConfiguration->Activate();
+    if (!m_RespiratoryMechanicsConfiguration->IsActive())
+      RemoveRespiratoryMechanicsConfiguration();
     return true;
   }
 
@@ -1123,6 +1137,26 @@ void SEPatientActionCollection::RemoveRespiratoryFatigue()
     m_RespiratoryFatigue->Deactivate();
 }
 
+bool SEPatientActionCollection::HasRespiratoryMechanicsConfiguration() const
+{
+  return m_RespiratoryMechanicsConfiguration == nullptr ? false : m_RespiratoryMechanicsConfiguration->IsActive();
+}
+SERespiratoryMechanicsConfiguration& SEPatientActionCollection::GetRespiratoryMechanicsConfiguration()
+{
+  if (m_RespiratoryMechanicsConfiguration == nullptr)
+    m_RespiratoryMechanicsConfiguration = new SERespiratoryMechanicsConfiguration();
+  return *m_RespiratoryMechanicsConfiguration;
+}
+const SERespiratoryMechanicsConfiguration* SEPatientActionCollection::GetRespiratoryMechanicsConfiguration() const
+{
+  return m_RespiratoryMechanicsConfiguration;
+}
+void SEPatientActionCollection::RemoveRespiratoryMechanicsConfiguration()
+{
+  if (m_RespiratoryMechanicsConfiguration)
+    m_RespiratoryMechanicsConfiguration->Deactivate();
+}
+
 bool SEPatientActionCollection::HasSupplementalOxygen() const
 {
   return m_SupplementalOxygen == nullptr ? false : m_SupplementalOxygen->IsActive();
@@ -1445,6 +1479,8 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetPulmonaryShuntExacerbation());
   if (HasRespiratoryFatigue())
     actions.push_back(GetRespiratoryFatigue());
+  if (HasRespiratoryMechanicsConfiguration())
+    actions.push_back(GetRespiratoryMechanicsConfiguration());
   if (HasLeftClosedTensionPneumothorax())
     actions.push_back(GetLeftClosedTensionPneumothorax());
   if (HasLeftOpenTensionPneumothorax())
@@ -1526,6 +1562,8 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetPulmonaryShuntExacerbation().GetScalar(property);
   if (actionName == "RespiratoryFatigue")
     return GetRespiratoryFatigue().GetScalar(property);
+  if (actionName == "RespiratoryMechanicsConfiguration")
+    return GetRespiratoryMechanicsConfiguration().GetScalar(property);
   if (actionName == "LeftClosedTensionPneumothorax")
     return GetLeftClosedTensionPneumothorax().GetScalar(property);
   if (actionName == "LeftOpenTensionPneumothorax")

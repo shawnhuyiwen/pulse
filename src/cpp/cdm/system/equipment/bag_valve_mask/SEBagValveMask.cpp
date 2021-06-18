@@ -77,6 +77,8 @@ void SEBagValveMask::Clear()
 
 void SEBagValveMask::ProcessConfiguration(SEBagValveMaskConfiguration& config, SESubstanceManager& subMgr)
 {
+  if (config.GetMergeType() == eMergeType::Replace)
+    Clear();
   if (config.HasConfiguration())
     Merge(config.GetConfiguration(), subMgr);
   else if (config.HasConfigurationFile())

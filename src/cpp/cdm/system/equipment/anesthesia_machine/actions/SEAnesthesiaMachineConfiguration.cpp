@@ -18,12 +18,14 @@ SEAnesthesiaMachineConfiguration::SEAnesthesiaMachineConfiguration(Logger* logge
 {
   m_ConfigurationFile = "";
   m_Configuration = nullptr;
+  m_MergeType = eMergeType::Append;
 }
 
 SEAnesthesiaMachineConfiguration::~SEAnesthesiaMachineConfiguration()
 {
   m_ConfigurationFile = "";
   SAFE_DELETE(m_Configuration);
+  m_MergeType = eMergeType::Append;
 }
 
 void SEAnesthesiaMachineConfiguration::Clear()
@@ -32,6 +34,7 @@ void SEAnesthesiaMachineConfiguration::Clear()
   m_ConfigurationFile = "";
   if (m_Configuration)
     m_Configuration->Clear();
+  m_MergeType = eMergeType::Append;
 }
 
 void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
@@ -87,6 +90,15 @@ bool SEAnesthesiaMachineConfiguration::HasConfigurationFile() const
   return !m_ConfigurationFile.empty();
 }
 
+void SEAnesthesiaMachineConfiguration::SetMergeType(eMergeType m)
+{
+  m_MergeType = m;
+}
+eMergeType SEAnesthesiaMachineConfiguration::GetMergeType() const
+{
+  return m_MergeType;
+}
+
 void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
 {
   str << "Anesthesia Machine Configuration";
@@ -129,5 +141,6 @@ void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
       str << "\n\tOxygenBottleTwoVolume: "; m_Configuration->GetOxygenBottleTwo().HasVolume() ? str << m_Configuration->GetOxygenBottleTwo().GetVolume() : str << "Not Set";
     }
   }
+  str << "\n\tMergeType: " << eMergeType_Name(m_MergeType);
   str << std::flush;
 }

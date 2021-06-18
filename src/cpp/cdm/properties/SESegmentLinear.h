@@ -8,6 +8,7 @@
 class CDM_DECL SESegmentLinear : public SESegment
 {
 protected:
+  friend class PBProperty;//friend the serialization class
   friend class SECurve;
   SESegmentLinear();
 public:
@@ -17,8 +18,8 @@ public:
   virtual bool IsValid() const override;
 
   virtual bool HasSlope() const;
-  virtual SEScalarPressureTimePerVolume& GetSlope();
-  virtual double GetSlope(const PressureTimePerVolumeUnit& unit) const;
+  virtual SEScalarPressurePerVolume& GetSlope();
+  virtual double GetSlope(const PressurePerVolumeUnit& unit) const;
 
   virtual bool HasYIntercept() const;
   virtual SEScalarPressure& GetYIntercept();
@@ -30,6 +31,6 @@ public:
 protected:
   virtual void Abstract() override { };
 
-  SEScalarPressureTimePerVolume* m_Slope;
+  SEScalarPressurePerVolume*     m_Slope;
   SEScalarPressure*              m_YIntercept;
 };

@@ -34,4 +34,4 @@ public:
 protected:
   eSide m_Side;
   eSwitch m_State;
-};    
+};

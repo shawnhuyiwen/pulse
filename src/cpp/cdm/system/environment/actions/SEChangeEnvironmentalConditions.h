@@ -27,6 +27,9 @@ public:
   virtual std::string GetEnvironmentalConditionsFile() const;
   virtual void SetEnvironmentalConditionsFile(const std::string& fileName);
   virtual bool HasEnvironmentalConditionsFile() const;
+
+  virtual eMergeType GetMergeType() const;
+  virtual void SetMergeType(eMergeType m);
   
   virtual void ToString(std::ostream &str) const;
 
@@ -36,4 +39,5 @@ protected:
 
   std::string                m_EnvironmentalConditionsFile;
   SEEnvironmentalConditions* m_EnvironmentalConditions;
+  eMergeType                 m_MergeType;
 };  
