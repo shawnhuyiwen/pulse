@@ -11,7 +11,7 @@ public:
   SESystem(Logger* logger);
   virtual ~SESystem();
 
-  virtual void Clear();// Deletes all members
+  virtual void Clear();
   
   /** @name GetScalar
   *   @brief - A reflextion type call that will return the Scalar associated
@@ -21,7 +21,7 @@ public:
   *              This is best used, and intended for, you to dynamically prepopulate
   *              a mapping data structure that will help access what you need
   */
-  virtual const SEScalar* GetScalar(const std::string& name) = 0; 
+  virtual const SEScalar* GetScalar(const std::string& name) = 0;
 
   /** @name GetScalar
   *   @brief - Look for the Scalar property in the systems contained in the provided vector

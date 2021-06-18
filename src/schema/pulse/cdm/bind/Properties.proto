@@ -4,6 +4,63 @@ option java_package = "com.kitware.pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
+/////////////////////////
+// Curve/Segments Data //
+/////////////////////////
+
+message SegmentConstantData
+{
+  ScalarVolumeData                 BeginVolume            = 1; /**<< @brief Blahb.*/
+  ScalarVolumeData                 EndVolume              = 2; /**<< @brief Blahb.*/
+  ScalarVolumePerPressureData      Compliance             = 3; /**<< @brief Blahb.*/
+}
+
+message SegmentLinearData
+{
+  ScalarVolumeData                 BeginVolume            = 1; /**<< @brief Blahb.*/
+  ScalarVolumeData                 EndVolume              = 2; /**<< @brief Blahb.*/
+  ScalarPressurePerVolumeData      Slope                  = 3; /**<< @brief Blahb.*/
+  ScalarPressureData               YIntercept             = 4; /**<< @brief Blahb.*/
+}
+
+message SegmentParabolicData
+{
+  ScalarVolumeData                 BeginVolume            = 1; /**<< @brief Blahb.*/
+  ScalarVolumeData                 EndVolume              = 2; /**<< @brief Blahb.*/
+  ScalarData                       Coefficient1           = 3; /**<< @brief Blahb.*/
+  ScalarData                       Coefficient2           = 4; /**<< @brief Blahb.*/
+  ScalarData                       Coefficient3           = 5; /**<< @brief Blahb.*/
+  ScalarData                       Coefficient4           = 6; /**<< @brief Blahb.*/
+}
+
+message SegmentSigmoidalData
+{
+  ScalarVolumeData                 BeginVolume            = 1; /**<< @brief Blahb.*/
+  ScalarVolumeData                 EndVolume              = 2; /**<< @brief Blahb.*/
+  ScalarPressureData               LowerCorner            = 3; /**<< @brief Blahb.*/
+  ScalarPressureData               UpperCorner            = 4; /**<< @brief Blahb.*/
+  ScalarVolumePerPressureData      BaselineCompliance     = 5; /**<< @brief Blahb.*/
+}
+
+message AnySegmentData
+{
+  oneof Action
+  {
+    SegmentConstantData            ConstantSegment        = 1; /**<< @brief Blahb.*/
+    SegmentLinearData              LinearSegment          = 2; /**<< @brief Blahb.*/
+    SegmentParabolicData           ParabolicSegment       = 3; /**<< @brief Blahb.*/
+    SegmentSigmoidalData           SigmoidalSegment       = 4; /**<< @brief Blahb.*/
+  }
+}
+
+message CurveData
+{
+  repeated AnySegmentData          Segment                = 1;
+}
+
+//////////////////
+// Average Data //
+//////////////////
 
 message RunningAverageData
 {
@@ -11,6 +68,9 @@ message RunningAverageData
   uint32 NumSamples  = 2;
 }
 
+////////////////
+// Scalar Data //
+////////////////
 
 /** @brief A scalar and its property name. */
 message ScalarPropertyData

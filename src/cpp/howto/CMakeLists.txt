@@ -21,9 +21,11 @@ add_executable_ex(HowToDriver
   HowTo-Hemorrhage.cpp
   HowTo-LobarPneumonia.cpp
   HowTo-MechanicalVentilation.cpp
+  HowTo-MechanicalVentilator.cpp
   HowTo-PulmonaryFibrosis.cpp
   HowTo-PulmonaryFunctionTest.cpp
   HowTo-PulseEnginePool.cpp
+  HowTo-RespiratoryMechanics.cpp
   HowTo-RunScenario.cpp
   HowTo-RunThreaded.cpp
   HowTo-RunThreaded.h

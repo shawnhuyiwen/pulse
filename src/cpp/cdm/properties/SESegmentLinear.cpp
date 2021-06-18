@@ -1,0 +1,78 @@
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+
+#include "stdafx.h"
+#include "properties/SESegmentLinear.h"
+
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarPressureTimePerVolume.h"
+
+SESegmentLinear::SESegmentLinear()
+{
+  m_Slope = nullptr;
+  m_YIntercept = nullptr;
+}
+
+SESegmentLinear::~SESegmentLinear()
+{
+  SAFE_DELETE(m_Slope);
+  SAFE_DELETE(m_YIntercept);
+}
+
+void SESegmentLinear::Clear()
+{
+  SESegment::Clear();
+  INVALIDATE_PROPERTY(m_Slope);
+  INVALIDATE_PROPERTY(m_YIntercept);
+}
+
+bool SESegmentLinear::IsValid() const
+{
+  return SESegment::IsValid() && HasSlope() && HasYIntercept();
+}
+
+bool SESegmentLinear::HasSlope() const
+{
+  return m_Slope == nullptr ? false : m_Slope->IsValid();
+}
+SEScalarPressureTimePerVolume& SESegmentLinear::GetSlope()
+{
+  if (m_Slope == nullptr)
+    m_Slope = new SEScalarPressureTimePerVolume();
+  return *m_Slope;
+}
+double SESegmentLinear::GetSlope(const PressureTimePerVolumeUnit& unit) const
+{
+  if (m_Slope == nullptr)
+    return SEScalar::dNaN();
+  return m_Slope->GetValue(unit);
+}
+
+bool SESegmentLinear::HasYIntercept() const
+{
+  return m_YIntercept == nullptr ? false : m_YIntercept->IsValid();
+}
+SEScalarPressure& SESegmentLinear::GetYIntercept()
+{
+  if (m_YIntercept == nullptr)
+    m_YIntercept = new SEScalarPressure();
+  return *m_YIntercept;
+}
+double SESegmentLinear::GetYIntercept(const PressureUnit& unit) const
+{
+  if (m_YIntercept == nullptr)
+    return SEScalar::dNaN();
+  return m_YIntercept->GetValue(unit);
+}
+
+std::string SESegmentLinear::ToString() const
+{
+  std::string str = "\n\t\tLinear Segment" + SESegment::ToString();
+  str += "\n\t\t\tSlope: "; HasSlope() ? str += m_Slope->ToString() : str += "Not Set";
+  str += "\n\t\t\tYIntercept: "; HasYIntercept() ? str += m_YIntercept->ToString() : str += "Not Set";
+  return str;
+}
+void SESegmentLinear::ToString(std::ostream& str) const
+{
+  str << ToString();
+}

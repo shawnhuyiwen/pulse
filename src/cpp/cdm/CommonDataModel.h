@@ -170,6 +170,7 @@ extern const std::string& eCharge_Name(eCharge m);
 
 class CCompoundUnit;
 
+class SECurve;
 class SERunningAverage;
 class SEScalar; class SEUnitScalar; class SEGenericScalar; class NoUnit;
 class SEScalar0To1; 
@@ -238,3 +239,9 @@ class SEFunctionElectricPotentialVsTime;
 
 class SEHistogram;
 class SEHistogramFractionVsLength;
+
+class SESegment;
+class SESegmentConstant;
+class SESegmentLinear;
+class SESegmentParabolic;
+class SESegmentSigmoidal;

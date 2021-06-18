@@ -447,7 +447,7 @@ void Energy::Exercise()
     GetAchievedExerciseLevel().SetValue(achievedExerciseFraction);
   }    
   else
-    GetAchievedExerciseLevel().Clear();
+    GetAchievedExerciseLevel().Invalidate();
   // End fatigue calculations
   
   double TotalMetabolicRateSetPoint_kcal_Per_day = basalMetabolicRate_kcal_Per_day + workRate_W*kcal_Per_day_Per_Watt;

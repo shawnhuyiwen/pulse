@@ -1835,7 +1835,7 @@ void Respiratory::CalculateVitalSigns()
   }
   else
   {
-    GetAlveolarArterialGradient().Clear();
+    GetAlveolarArterialGradient().Invalidate();
   }
 
   m_MeanAirwayPressure_cmH2O->Sample(airwayOpeningPressure_cmH2O - bodySurfacePressure_cmH2O);
@@ -1974,8 +1974,8 @@ void Respiratory::CalculateVitalSigns()
       }
       else
       {
-        GetCarricoIndex().Clear();
-        GetOxygenationIndex().Clear();
+        GetCarricoIndex().Invalidate();
+        GetOxygenationIndex().Invalidate();
       }
 
       if (m_data.HasBloodChemistry())
@@ -1985,8 +1985,8 @@ void Respiratory::CalculateVitalSigns()
       }
       else
       {
-        GetSaturationAndFractionOfInspiredOxygenRatio().Clear();
-        GetOxygenSaturationIndex().Clear();
+        GetSaturationAndFractionOfInspiredOxygenRatio().Invalidate();
+        GetOxygenSaturationIndex().Invalidate();
       }
 
       m_BottomBreathTotalVolume_L = totalLungVolume_L;

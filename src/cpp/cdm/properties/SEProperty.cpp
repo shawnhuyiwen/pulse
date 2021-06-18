@@ -6,16 +6,12 @@
 
 SEProperty::SEProperty()
 {
-  Clear();
+
 }
 
 SEProperty::~SEProperty()
 {
-  Clear();
-}
 
-void SEProperty::Clear()
-{
 }
 
 #include "properties/SEScalarAmount.h"

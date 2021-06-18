@@ -37,15 +37,14 @@ class CDM_DECL SEScalar : public SEProperty
 protected:
   double m_value;
 
-  bool   m_isnan;
-  bool   m_isinf;
-  bool   m_readOnly;
+  bool   m_isnan=true;
+  bool   m_isinf=false;
+  bool   m_readOnly=false;
 
 public:
   SEScalar();
   virtual ~SEScalar();
 
-  virtual void Clear();
   /**
   Sets the value to NaN and removes the unit
   Note that this does not affect bounds
@@ -118,15 +117,15 @@ template <typename Enum>
 class CDM_DECL SEScalarEnum : public SEScalar
 {
 public:
-  SEScalarEnum() : SEScalar() { Clear(); }
-  virtual ~SEScalarEnum() { Clear(); }
+  SEScalarEnum() : SEScalar() { Invalidate(); }
+  virtual ~SEScalarEnum() { Invalidate(); }
 
-  virtual void Invalidate()
+  virtual void Invalidate() override
   {
     SEScalar::Invalidate();
     m_enum = (Enum)-1;
   }
-  virtual void ForceInvalidate()
+  virtual void ForceInvalidate() override
   {
     SEScalar::ForceInvalidate();
     m_enum = (Enum)-1;
@@ -209,28 +208,27 @@ class SEScalarQuantity : public SEUnitScalar
 {
   friend class PBProperty;//friend the serialization class
 public:
-  SEScalarQuantity();
+  SEScalarQuantity() : SEUnitScalar() {};
   virtual ~SEScalarQuantity();
 
-  virtual void Clear();
-  virtual void Invalidate();
-  virtual void ForceInvalidate();
-  virtual bool IsValid() const;
+  virtual void Invalidate() override;
+  virtual void ForceInvalidate() override;
+  virtual bool IsValid() const override;
 
 protected:
 
   // We need to support the SEUnitScalar interface,  but make these protected
   // If you want access in a generic unit way, us an SEGenericScalar wrapper
-  bool Set(const SEScalar& s);
-  void Copy(const SEScalar& s);
+  bool Set(const SEScalar& s) override;
+  void Copy(const SEScalar& s) override;
 
-  virtual double GetValue(const CCompoundUnit& unit) const;
-  virtual void   SetValue(double d, const CCompoundUnit& unit);
-  virtual void   ForceValue(double d, const CCompoundUnit& unit);
-  virtual double IncrementValue(double d, const CCompoundUnit& unit);
-  virtual double MultiplyValue(double d, const CCompoundUnit& unit);
+  virtual double GetValue(const CCompoundUnit& unit) const override;
+  virtual void   SetValue(double d, const CCompoundUnit& unit) override;
+  virtual void   ForceValue(double d, const CCompoundUnit& unit) override;
+  virtual double IncrementValue(double d, const CCompoundUnit& unit) override;
+  virtual double MultiplyValue(double d, const CCompoundUnit& unit) override;
 
-  virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const;
+  virtual const CCompoundUnit* GetCompoundUnit(const std::string& unit) const override;
 
 public:
 

@@ -71,6 +71,8 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_TranspulmonaryPressure = nullptr;
   m_TransrespiratoryPressure = nullptr;
   m_TransthoracicPressure = nullptr;
+
+  m_RespiratoryMechanics = nullptr;
 }
 
 SERespiratorySystem::~SERespiratorySystem()
@@ -128,6 +130,8 @@ SERespiratorySystem::~SERespiratorySystem()
   SAFE_DELETE(m_TranspulmonaryPressure);
   SAFE_DELETE(m_TransrespiratoryPressure);
   SAFE_DELETE(m_TransthoracicPressure);
+
+  SAFE_DELETE(m_RespiratoryMechanics);
 }
 
 void SERespiratorySystem::Clear()
@@ -187,6 +191,9 @@ void SERespiratorySystem::Clear()
   INVALIDATE_PROPERTY(m_TranspulmonaryPressure);
   INVALIDATE_PROPERTY(m_TransrespiratoryPressure);
   INVALIDATE_PROPERTY(m_TransthoracicPressure);
+
+  if (m_RespiratoryMechanics != nullptr)
+    m_RespiratoryMechanics->Clear();
 }
 
 const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
@@ -298,6 +305,10 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetTransrespiratoryPressure();
   if (name.compare("TransthoracicPressure") == 0)
     return &GetTransthoracicPressure();
+
+  if (m_RespiratoryMechanics != nullptr)
+    return m_RespiratoryMechanics->GetScalar(name);
+
   return nullptr;
 }
 
@@ -1199,4 +1210,19 @@ double SERespiratorySystem::GetTransthoracicPressure(const PressureUnit& unit) c
   if (m_TransthoracicPressure == nullptr)
     return SEScalar::dNaN();
   return m_TransthoracicPressure->GetValue(unit);
+}
+
+bool SERespiratorySystem::HasRespiratoryMechanics() const
+{
+  return m_RespiratoryMechanics != nullptr;
+}
+SERespiratoryMechanics& SERespiratorySystem::GetRespiratoryMechanics()
+{
+  if (m_RespiratoryMechanics == nullptr)
+    m_RespiratoryMechanics = new SERespiratoryMechanics(GetLogger());
+  return *m_RespiratoryMechanics;
+}
+const SERespiratoryMechanics* SERespiratorySystem::GetRespiratoryMechanics() const
+{
+  return m_RespiratoryMechanics;
 }

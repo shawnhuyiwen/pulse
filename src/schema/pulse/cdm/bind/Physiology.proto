@@ -243,6 +243,33 @@ message RenalSystemData
   ScalarMassPerVolumeData             UrineUreaNitrogenConcentration                 = 54;/**<< @brief Scaled concentration of Urea in the bladder  */ 
 }
 
+/**@brief A set of properties to specify and customize the respiratory circuit and driver.*/
+message RespiratoryMechanicsData
+{
+  
+  CurveData                           LeftComplianceCurve                            = 1; /**<< @brief Blahb.*/
+  CurveData                           RightComplianceCurve                           = 2; /**<< @brief Blahb.*/
+  
+  ScalarPressureTimePerVolumeData     LeftExpiratoryResistance                       = 3; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     LeftInspiratoryResistance                      = 4; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     RightExpiratoryResistance                      = 5; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     RightInspiratoryResistance                     = 6; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 7; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 8; /**<< @brief Blahb.*/
+  
+  // Muscle Pressue Driver
+  ScalarPressureData                  InspiratoryPeakPressure                        = 9; /**<< @brief Blahb.*/
+  ScalarPressureData                  ExpiratoryPeakPressure                         = 10;/**<< @brief Blahb.*/
+  
+  ScalarTimeData                      InspiratoryRiseTime                            = 11;/**<< @brief Blahb.*/
+  ScalarTimeData                      InspiratoryHoldTime                            = 12;/**<< @brief Blahb.*/
+  ScalarTimeData                      InspiratoryReleaseTime                         = 13;/**<< @brief Blahb.*/
+  ScalarTimeData                      InspiratoryToExpiratoryPauseTime               = 14;/**<< @brief Blahb.*/
+  ScalarTimeData                      ExpiratoryRiseTime                             = 15;/**<< @brief Blahb.*/
+  ScalarTimeData                      ExpiratoryHoldTime                             = 16;/**<< @brief Blahb.*/
+  ScalarTimeData                      ExpiratoryReleaseTime                          = 17;/**<< @brief Blahb.*/
+  ScalarTimeData                      ResidueTime                                    = 18;/**<< @brief Blahb.*/
+}
 enum eBreathState
 {
   Inhale = 0;
@@ -307,6 +334,8 @@ message RespiratorySystemData
   ScalarPressureData                  TranspulmonaryPressure                         = 51;/**<< @brief The pressure difference between the alveoli and the intrapleural space.*/
   ScalarPressureData                  TransrespiratoryPressure                       = 52;/**<< @brief The pressure difference between the airway opening and body surface.*/
   ScalarPressureData                  TransthoracicPressure                          = 53;/**<< @brief The pressure difference between the alveoli and body surface.*/
+  
+  RespiratoryMechanicsData            RespiratoryMechanics                           = 54;
 }
 
 /** @brief Provides data pertaining to the extracellular and intracelluar space */

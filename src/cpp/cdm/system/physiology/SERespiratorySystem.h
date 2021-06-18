@@ -3,8 +3,9 @@
 
 #pragma once
 #include "system/SESystem.h"
+#include "system/physiology/SERespiratoryMechanics.h"
 
-   // Keep enums in sync with appropriate schema/cdm/PhysiologyEnums.proto file !!
+// Keep enums in sync with appropriate schema/cdm/PhysiologyEnums.proto file !!
 enum class eBreathState { Inhale = 0, Pause, Exhale };
 extern const std::string& eBreathState_Name(eBreathState m);
 
@@ -16,7 +17,7 @@ public:
   SERespiratorySystem(Logger* logger);
   virtual ~SERespiratorySystem();
 
-  virtual void Clear();// Deletes all members
+  virtual void Clear();
   
   virtual const SEScalar* GetScalar(const std::string& name);
 
@@ -232,6 +233,9 @@ public:
   virtual SEScalarPressure& GetTransthoracicPressure();
   virtual double GetTransthoracicPressure(const PressureUnit& unit) const;
 
+  virtual bool HasRespiratoryMechanics() const;
+  virtual SERespiratoryMechanics& GetRespiratoryMechanics();
+  virtual const SERespiratoryMechanics* GetRespiratoryMechanics() const;
 
 protected:
 
@@ -288,4 +292,6 @@ protected:
   SEScalarPressure*              m_TranspulmonaryPressure;
   SEScalarPressure*              m_TransrespiratoryPressure;
   SEScalarPressure*              m_TransthoracicPressure;
+
+  SERespiratoryMechanics*        m_RespiratoryMechanics;
 };

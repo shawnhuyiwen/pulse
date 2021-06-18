@@ -45,8 +45,8 @@ public:
   virtual BlackBoxType* GetBlackBox() const { return m_BlackBox; }
   virtual void SetBlackBox(BlackBoxType* bb) { m_BlackBox = bb; }
 
-  void SetCalculatorIndex(const size_t index);
-  size_t GetCalculatorIndex() const;
+  void SetCalculatorIndex(const int index);
+  int GetCalculatorIndex() const;
 
   bool IsReferenceNode() const;
   void SetAsReferenceNode();
@@ -68,6 +68,6 @@ protected:
   BlackBoxType* m_BlackBox = nullptr;
 
 private:
-  size_t                  m_CalculatorIndex;
+  int                     m_CalculatorIndex;
   bool                    m_IsReferenceNode = false;
 };

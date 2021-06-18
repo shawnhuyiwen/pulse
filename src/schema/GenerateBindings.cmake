@@ -129,8 +129,8 @@ if(Pulse_JAVA_API)
                           #unittest_lite_imports_nonlite.proto
                           unittest_mset.proto
                           unittest_mset_wire_format.proto
-                          unittest_no_arena.proto
-                          unittest_no_arena_import.proto
+                          #unittest_no_arena.proto
+                          #unittest_no_arena_import.proto
                           #unittest_no_arena_lite.proto
                           unittest_no_field_presence.proto
                           unittest_no_generic_services.proto

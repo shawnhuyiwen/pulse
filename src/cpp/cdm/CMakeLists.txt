@@ -167,10 +167,11 @@ add_library_ex(CommonDataModel
     patient/conditions/SEPulmonaryFibrosis.h
     patient/conditions/SEPulmonaryShunt.h
     patient/conditions/SESepsis.h
-    properties/SEArray.h
-    properties/SEArrayPressure.h
-    properties/SEArrayVolume.h
-    properties/SEArrayVolumePerTime.h
+    #properties/SEArray.h
+    #properties/SEArrayPressure.h
+    #properties/SEArrayVolume.h
+    #properties/SEArrayVolumePerTime.h
+    properties/SECurve.h
     properties/SEFunction.h
     properties/SEFunctionElectricPotentialVsTime.h
     properties/SEFunctionVolumeVsTime.h
@@ -178,6 +179,11 @@ add_library_ex(CommonDataModel
     properties/SEHistogramFractionVsLength.h
     properties/SEProperty.h
     properties/SERunningAverage.h
+    properties/SESegment.h
+    properties/SESegmentConstant.h
+    properties/SESegmentLinear.h
+    properties/SESegmentParabolic.h
+    properties/SESegmentSigmoidal.h
     properties/SEScalar.h
     properties/SEScalar0To1.h
     properties/SEScalarAmount.h
@@ -306,6 +312,7 @@ add_library_ex(CommonDataModel
     system/physiology/SENervousSystem.h
     system/physiology/SEPupillaryResponse.h
     system/physiology/SERenalSystem.h
+    system/physiology/SERespiratoryMechanics.h
     system/physiology/SERespiratorySystem.h
     system/physiology/SETissueSystem.h
     utils/ConfigParser.h
@@ -520,7 +527,8 @@ add_library_ex(CommonDataModel
     #properties/SEArray.cpp
     #properties/SEArrayPressure.cpp
     #properties/SEArrayVolume.cpp
-    #properties/SEArrayVolumePerTime.cpp
+    #properties/SEArrayVolumePerTime.cppcpp
+    properties/SECurve.cpp
     properties/SEFunction.cpp
     properties/SEFunctionElectricPotentialVsTime.cpp
     properties/SEFunctionVolumeVsTime.cpp
@@ -528,6 +536,11 @@ add_library_ex(CommonDataModel
     properties/SEHistogramFractionVsLength.cpp
     properties/SEProperty.cpp
     properties/SERunningAverage.cpp
+    properties/SESegment.cpp
+    properties/SESegmentConstant.cpp
+    properties/SESegmentLinear.cpp
+    properties/SESegmentParabolic.cpp
+    properties/SESegmentSigmoidal.cpp
     properties/SEScalar.cpp
     properties/SEScalar0To1.cpp
     properties/SEScalarAmount.cpp
@@ -656,6 +669,7 @@ add_library_ex(CommonDataModel
     system/physiology/SENervousSystem.cpp
     system/physiology/SEPupillaryResponse.cpp
     system/physiology/SERenalSystem.cpp
+    system/physiology/SERespiratoryMechanics.cpp
     system/physiology/SERespiratorySystem.cpp
     system/physiology/SETissueSystem.cpp
     utils/ConfigParser.cpp

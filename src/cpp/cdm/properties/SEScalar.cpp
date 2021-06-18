@@ -36,20 +36,13 @@ bool SEScalar::IsNumber(double d)
 const NoUnit NoUnit::unitless;
 
 SEScalar::SEScalar() : SEProperty()
-{  
-  Clear();
+{
+
 }
 
 SEScalar::~SEScalar()
 {
-  Clear();
-}
 
-void SEScalar::Clear()
-{
-  SEProperty::Clear();
-  m_readOnly = false;
-  Invalidate();
 }
 
 bool SEScalar::Set(const SEScalar& s)
@@ -229,7 +222,7 @@ bool SEScalar::Equals(const SEScalar& to) const
 std::string SEScalar::ToString() const
 {
   return cdm::to_string(m_value);
-}                                      
+}
 void SEScalar::ToString(std::ostream &str) const
 {
   str<<m_value<<std::flush;
@@ -254,22 +247,9 @@ bool SEScalar::IsZero(double d, double limit)
 //////////////////////
 
 template<typename Unit>
-SEScalarQuantity<Unit>::SEScalarQuantity() : SEUnitScalar()
-{
-  Clear();
-}
-
-template<typename Unit>
 SEScalarQuantity<Unit>::~SEScalarQuantity()
 {
-  this->Clear();
-}
 
-template<typename Unit>
-void SEScalarQuantity<Unit>::Clear()
-{
-  SEScalar::Clear();
-  m_unit = nullptr;
 }
 
 template<typename Unit>
