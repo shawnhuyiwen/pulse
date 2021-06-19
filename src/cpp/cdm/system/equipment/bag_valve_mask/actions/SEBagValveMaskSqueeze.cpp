@@ -48,9 +48,7 @@ void SEBagValveMaskSqueeze::Copy(const SEBagValveMaskSqueeze& src)
 
 bool SEBagValveMaskSqueeze::IsValid() const
 {
-  return SEBagValveMaskAction::IsValid() &&
-    (HasSqueezePressure() || HasSqueezeVolume()) &&
-    HasExpiratoryPeriod() && HasInspiratoryPeriod();
+  return SEBagValveMaskAction::IsValid();
 }
 
 bool SEBagValveMaskSqueeze::IsActive() const

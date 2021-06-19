@@ -554,7 +554,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::BagValveMaskSqueezeData& src, 
   PBEquipmentAction::Serialize(src.bagvalvemaskaction(), dst);
   if (src.has_squeezepressure())
     PBProperty::Load(src.squeezepressure(), dst.GetSqueezePressure());
-  else if (!src.has_squeezevolume())
+  else if (src.has_squeezevolume())
     PBProperty::Load(src.squeezevolume(), dst.GetSqueezeVolume());
   if (src.has_expiratoryperiod())
     PBProperty::Load(src.expiratoryperiod(), dst.GetExpiratoryPeriod());
