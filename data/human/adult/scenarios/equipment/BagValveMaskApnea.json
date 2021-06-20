@@ -98,13 +98,58 @@
   
   { "PatientAction": { "Dyspnea": { "Severity": { "Scalar0To1": { "Value": 1.0 } } } } },
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" } } } },
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "PatientAction": { "Intubation": { "Type": "Oropharyngeal" } } },
   
   {
     "EquipmentAction": {
       "BagValveMaskConfiguration": {
         "BagValveMaskAction": { "EquipmentAction": { "Action": {
-          "Comment": "Attach the bag valve mask with a mask connection" }}},
+          "Comment": "Add the oropharyngeal airway." }}},
+          "Configuration":
+          {
+            "Connection": "Tube"
+          }
+      }
+    }
+  },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskAutomated": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {
+          "Comment": "Automate a squeeze pressure to give TV ~ 7 mL/kg(ideal)" }}},
+          "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
+          "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
+          "SqueezePressure": { "ScalarPressure": { "Value": 9.3, "Unit": "cmH2O" } }
+      }
+    }
+  },  
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskAutomated": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {
+          "Comment": "Automate the squeezings." }}},
+          "BreathFrequency": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
+          "InspiratoryExpiratoryRatio": { "Value": 0.5, "Unit": "" },
+          "SqueezeVolume": { "ScalarVolume": { "Value": 0.540, "Unit": "L" } }
+      }
+    }
+  },
+  
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
+  { "PatientAction": { "Intubation": { "Type": "Off" } } },
+  
+  {
+    "EquipmentAction": {
+      "BagValveMaskConfiguration": {
+        "BagValveMaskAction": { "EquipmentAction": { "Action": {
+          "Comment": "Attach the mask and provide a PEEP" }}},
           "Configuration":
           {
             "Connection": "Mask",
@@ -126,23 +171,7 @@
     }
   },
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" } } } },
-  
-  { "PatientAction": { "Intubation": { "Type": "Oropharyngeal" } } },
-  
-  {
-    "EquipmentAction": {
-      "BagValveMaskConfiguration": {
-        "BagValveMaskAction": { "EquipmentAction": { "Action": {
-          "Comment": "Add the oropharyngeal airway." }}},
-          "Configuration":
-          {
-            "Connection": "Tube",
-            "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
-          }
-      }
-    }
-  },
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
   
   {
     "EquipmentAction": {
@@ -156,8 +185,8 @@
     }
   },
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" } } } },
-
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } },
+  
   {
     "EquipmentAction": {
       "BagValveMaskConfiguration": {
@@ -165,16 +194,17 @@
           "Comment": "Attach oxygen to the reservoir." }}},
           "Configuration":
           {
-            "Connection": "Tube",
+            "Connection": "Mask",
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "FractionInspiredGas": [
-              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.28, "Unit": "" } } }
+              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } }
             ]
           }
       }
     }
   },
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" } } } }
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } }
+  
   ]
 }

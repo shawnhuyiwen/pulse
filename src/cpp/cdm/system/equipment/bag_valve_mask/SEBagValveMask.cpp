@@ -24,7 +24,10 @@ SEBagValveMask::SEBagValveMask(Logger* logger) : SEEquipment(logger)
 
   m_BagResistance = nullptr;
   m_FilterResistance = nullptr;
+  m_SealResistance = nullptr;
   m_FilterVolume = nullptr;
+  m_ConnectionVolume = nullptr;
+  m_ValveVolume = nullptr;
   m_ValvePositiveEndExpiredPressure = nullptr;
   m_ValveResistance = nullptr;
 }
@@ -35,7 +38,10 @@ SEBagValveMask::~SEBagValveMask()
 
   SAFE_DELETE(m_BagResistance);
   SAFE_DELETE(m_FilterResistance);
+  SAFE_DELETE(m_SealResistance);
   SAFE_DELETE(m_FilterVolume);
+  SAFE_DELETE(m_ConnectionVolume);
+  SAFE_DELETE(m_ValveVolume);
   SAFE_DELETE(m_ValvePositiveEndExpiredPressure);
   SAFE_DELETE(m_ValveResistance);
 
@@ -58,7 +64,10 @@ void SEBagValveMask::Clear()
 
   INVALIDATE_PROPERTY(m_BagResistance);
   INVALIDATE_PROPERTY(m_FilterResistance);
+  INVALIDATE_PROPERTY(m_SealResistance);
   INVALIDATE_PROPERTY(m_FilterVolume);
+  INVALIDATE_PROPERTY(m_ConnectionVolume);
+  INVALIDATE_PROPERTY(m_ValveVolume);
   INVALIDATE_PROPERTY(m_ValveResistance);
 
   RemoveFractionInspiredGases();
@@ -86,7 +95,10 @@ void SEBagValveMask::Merge(const SEBagValveMask& from, SESubstanceManager& subMg
     SetConnection(from.m_Connection);
   COPY_PROPERTY(BagResistance);
   COPY_PROPERTY(FilterResistance);
+  COPY_PROPERTY(SealResistance);
   COPY_PROPERTY(FilterVolume);
+  COPY_PROPERTY(ConnectionVolume);
+  COPY_PROPERTY(ValveVolume);
   COPY_PROPERTY(ValveResistance);
 
   COPY_PROPERTY(ValvePositiveEndExpiredPressure);
@@ -170,8 +182,14 @@ const SEScalar* SEBagValveMask::GetScalar(const std::string& name)
     return &GetBagResistance();
   if (name == "FilterResistance")
     return &GetFilterResistance();
+  if (name == "SealResistance")
+    return &GetSealResistance();
   if (name == "FilterVolume")
     return &GetFilterVolume();
+  if (name == "ConnectionVolume")
+    return &GetConnectionVolume();
+  if (name == "ValveVolume")
+    return &GetValveVolume();
   if (name == "ValvePositiveEndExpiredPressure")
     return &GetValvePositiveEndExpiredPressure();
   if (name == "ValveResistance")
@@ -241,6 +259,23 @@ double SEBagValveMask::GetFilterResistance(const PressureTimePerVolumeUnit& unit
   return m_FilterResistance->GetValue(unit);
 }
 
+bool SEBagValveMask::HasSealResistance() const
+{
+  return m_SealResistance == nullptr ? false : m_SealResistance->IsValid();
+}
+SEScalarPressureTimePerVolume& SEBagValveMask::GetSealResistance()
+{
+  if (m_SealResistance == nullptr)
+    m_SealResistance = new SEScalarPressureTimePerVolume();
+  return *m_SealResistance;
+}
+double SEBagValveMask::GetSealResistance(const PressureTimePerVolumeUnit& unit) const
+{
+  if (m_SealResistance == nullptr)
+    return SEScalar::dNaN();
+  return m_SealResistance->GetValue(unit);
+}
+
 bool SEBagValveMask::HasFilterVolume() const
 {
   return m_FilterVolume == nullptr ? false : m_FilterVolume->IsValid();
@@ -256,6 +291,40 @@ double SEBagValveMask::GetFilterVolume(const VolumeUnit& unit) const
   if (m_FilterVolume == nullptr)
     return SEScalar::dNaN();
   return m_FilterVolume->GetValue(unit);
+}
+
+bool SEBagValveMask::HasConnectionVolume() const
+{
+  return m_ConnectionVolume == nullptr ? false : m_ConnectionVolume->IsValid();
+}
+SEScalarVolume& SEBagValveMask::GetConnectionVolume()
+{
+  if (m_ConnectionVolume == nullptr)
+    m_ConnectionVolume = new SEScalarVolume();
+  return *m_ConnectionVolume;
+}
+double SEBagValveMask::GetConnectionVolume(const VolumeUnit& unit) const
+{
+  if (m_ConnectionVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_ConnectionVolume->GetValue(unit);
+}
+
+bool SEBagValveMask::HasValveVolume() const
+{
+  return m_ValveVolume == nullptr ? false : m_ValveVolume->IsValid();
+}
+SEScalarVolume& SEBagValveMask::GetValveVolume()
+{
+  if (m_ValveVolume == nullptr)
+    m_ValveVolume = new SEScalarVolume();
+  return *m_ValveVolume;
+}
+double SEBagValveMask::GetValveVolume(const VolumeUnit& unit) const
+{
+  if (m_ValveVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_ValveVolume->GetValue(unit);
 }
 
 bool SEBagValveMask::HasValveResistance() const

@@ -131,6 +131,30 @@ public:
   virtual SEScalarPressureTimePerVolume& GetInspirationValveResistance();
   virtual double GetInspirationValveResistance(const PressureTimePerVolumeUnit& unit) const;
 
+  virtual bool HasExpirationLimbVolume() const;
+  virtual SEScalarVolume& GetExpirationLimbVolume();
+  virtual double GetExpirationLimbVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasExpirationValveVolume() const;
+  virtual SEScalarVolume& GetExpirationValveVolume();
+  virtual double GetExpirationValveVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasInspirationLimbVolume() const;
+  virtual SEScalarVolume& GetInspirationLimbVolume();
+  virtual double GetInspirationLimbVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasInspirationValveVolume() const;
+  virtual SEScalarVolume& GetInspirationValveVolume();
+  virtual double GetInspirationValveVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasYPieceVolume() const;
+  virtual SEScalarVolume& GetYPieceVolume();
+  virtual double GetYPieceVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasConnectionVolume() const;
+  virtual SEScalarVolume& GetConnectionVolume();
+  virtual double GetConnectionVolume(const VolumeUnit& unit) const;
+
   virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
   virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
 
@@ -168,6 +192,8 @@ protected:
 
   SEScalarPressureTimePerVolume*               m_ExpirationTubeResistance;
   SEScalarPressureTimePerVolume*               m_ExpirationValveResistance;
+  SEScalarVolume*                              m_ExpirationLimbVolume;
+  SEScalarVolume*                              m_ExpirationValveVolume;
   eMechanicalVentilator_DriverWaveform         m_ExpirationWaveform;
 
   // Inspiratory Limit Properties (Only set 1)
@@ -190,7 +216,12 @@ protected:
 
   SEScalarPressureTimePerVolume*               m_InspirationTubeResistance;
   SEScalarPressureTimePerVolume*               m_InspirationValveResistance;
+  SEScalarVolume*                              m_InspirationLimbVolume;
+  SEScalarVolume*                              m_InspirationValveVolume;
   eMechanicalVentilator_DriverWaveform         m_InspirationWaveform;
+
+  SEScalarVolume*                              m_YPieceVolume;
+  SEScalarVolume*                              m_ConnectionVolume;
 
   std::vector<SESubstanceFraction*>            m_FractionInspiredGases;
   std::vector<const SESubstanceFraction*>      m_cFractionInspiredGases;

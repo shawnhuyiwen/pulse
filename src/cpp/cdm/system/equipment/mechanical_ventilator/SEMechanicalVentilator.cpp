@@ -53,6 +53,13 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
   m_InspirationTubeResistance = nullptr;
   m_InspirationValveResistance = nullptr;
   m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+
+  m_ExpirationLimbVolume = nullptr;
+  m_ExpirationValveVolume = nullptr;
+  m_InspirationLimbVolume = nullptr;
+  m_InspirationValveVolume = nullptr;
+  m_YPieceVolume = nullptr;
+  m_ConnectionVolume = nullptr;
 }
 
 SEMechanicalVentilator::~SEMechanicalVentilator()
@@ -88,6 +95,13 @@ SEMechanicalVentilator::~SEMechanicalVentilator()
   SAFE_DELETE(m_InspirationTubeResistance);
   SAFE_DELETE(m_InspirationValveResistance);
   m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+
+  SAFE_DELETE(m_ExpirationLimbVolume);
+  SAFE_DELETE(m_ExpirationValveVolume);
+  SAFE_DELETE(m_InspirationLimbVolume);
+  SAFE_DELETE(m_InspirationValveVolume);
+  SAFE_DELETE(m_YPieceVolume);
+  SAFE_DELETE(m_ConnectionVolume);
 
   DELETE_VECTOR(m_FractionInspiredGases);
   m_cFractionInspiredGases.clear();
@@ -133,6 +147,13 @@ void SEMechanicalVentilator::Clear()
   INVALIDATE_PROPERTY(m_InspirationTubeResistance);
   INVALIDATE_PROPERTY(m_InspirationValveResistance);
   m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+
+  INVALIDATE_PROPERTY(m_ExpirationLimbVolume);
+  INVALIDATE_PROPERTY(m_ExpirationValveVolume);
+  INVALIDATE_PROPERTY(m_InspirationLimbVolume);
+  INVALIDATE_PROPERTY(m_InspirationValveVolume);
+  INVALIDATE_PROPERTY(m_YPieceVolume);
+  INVALIDATE_PROPERTY(m_ConnectionVolume);
 
   RemoveFractionInspiredGases();
   RemoveConcentrationInspiredAerosols();
@@ -189,6 +210,13 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
   COPY_PROPERTY(InspirationValveResistance);
   if (from.m_InspirationWaveform != eMechanicalVentilator_DriverWaveform::NullDriverWaveform)
     SetInspirationWaveform(from.m_InspirationWaveform);
+
+  COPY_PROPERTY(ExpirationLimbVolume);
+  COPY_PROPERTY(ExpirationValveVolume);
+  COPY_PROPERTY(InspirationLimbVolume);
+  COPY_PROPERTY(InspirationValveVolume);
+  COPY_PROPERTY(YPieceVolume);
+  COPY_PROPERTY(ConnectionVolume);
 
   // Always need to provide a full (fractions sum to 1) substance list that replaces current
   if (from.HasFractionInspiredGas())
@@ -311,6 +339,19 @@ const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
     return &GetInspirationTubeResistance();
   if (name == "InspirationValveResistance")
     return &GetInspirationValveResistance();
+
+  if (name == "ExpirationLimbVolume")
+    return &GetExpirationLimbVolume();
+  if (name == "ExpirationValveVolume")
+    return &GetExpirationValveVolume();
+  if (name == "InspirationLimbVolume")
+    return &GetInspirationLimbVolume();
+  if (name == "InspirationValveVolume")
+    return &GetInspirationValveVolume();
+  if (name == "YPieceVolume")
+    return &GetYPieceVolume();
+  if (name == "ConnectionVolume")
+    return &GetConnectionVolume();
 
   // I did not support for getting a specific gas/aerosol scalars due to lack of coffee
   return nullptr;
@@ -655,6 +696,108 @@ double SEMechanicalVentilator::GetInspirationValveResistance(const PressureTimeP
   if (m_InspirationValveResistance == nullptr)
     return SEScalar::dNaN();
   return m_InspirationValveResistance->GetValue(unit);
+}
+
+bool SEMechanicalVentilator::HasExpirationLimbVolume() const
+{
+  return m_ExpirationLimbVolume == nullptr ? false : m_ExpirationLimbVolume->IsValid();
+}
+SEScalarVolume& SEMechanicalVentilator::GetExpirationLimbVolume()
+{
+  if (m_ExpirationLimbVolume == nullptr)
+    m_ExpirationLimbVolume = new SEScalarVolume();
+  return *m_ExpirationLimbVolume;
+}
+double SEMechanicalVentilator::GetExpirationLimbVolume(const VolumeUnit& unit) const
+{
+  if (m_ExpirationLimbVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_ExpirationLimbVolume->GetValue(unit);
+}
+
+bool SEMechanicalVentilator::HasExpirationValveVolume() const
+{
+  return m_ExpirationValveVolume == nullptr ? false : m_ExpirationValveVolume->IsValid();
+}
+SEScalarVolume& SEMechanicalVentilator::GetExpirationValveVolume()
+{
+  if (m_ExpirationValveVolume == nullptr)
+    m_ExpirationValveVolume = new SEScalarVolume();
+  return *m_ExpirationValveVolume;
+}
+double SEMechanicalVentilator::GetExpirationValveVolume(const VolumeUnit& unit) const
+{
+  if (m_ExpirationValveVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_ExpirationValveVolume->GetValue(unit);
+}
+
+bool SEMechanicalVentilator::HasInspirationLimbVolume() const
+{
+  return m_InspirationLimbVolume == nullptr ? false : m_InspirationLimbVolume->IsValid();
+}
+SEScalarVolume& SEMechanicalVentilator::GetInspirationLimbVolume()
+{
+  if (m_InspirationLimbVolume == nullptr)
+    m_InspirationLimbVolume = new SEScalarVolume();
+  return *m_InspirationLimbVolume;
+}
+double SEMechanicalVentilator::GetInspirationLimbVolume(const VolumeUnit& unit) const
+{
+  if (m_InspirationLimbVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_InspirationLimbVolume->GetValue(unit);
+}
+
+bool SEMechanicalVentilator::HasInspirationValveVolume() const
+{
+  return m_InspirationValveVolume == nullptr ? false : m_InspirationValveVolume->IsValid();
+}
+SEScalarVolume& SEMechanicalVentilator::GetInspirationValveVolume()
+{
+  if (m_InspirationValveVolume == nullptr)
+    m_InspirationValveVolume = new SEScalarVolume();
+  return *m_InspirationValveVolume;
+}
+double SEMechanicalVentilator::GetInspirationValveVolume(const VolumeUnit& unit) const
+{
+  if (m_InspirationValveVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_InspirationValveVolume->GetValue(unit);
+}
+
+bool SEMechanicalVentilator::HasYPieceVolume() const
+{
+  return m_YPieceVolume == nullptr ? false : m_YPieceVolume->IsValid();
+}
+SEScalarVolume& SEMechanicalVentilator::GetYPieceVolume()
+{
+  if (m_YPieceVolume == nullptr)
+    m_YPieceVolume = new SEScalarVolume();
+  return *m_YPieceVolume;
+}
+double SEMechanicalVentilator::GetYPieceVolume(const VolumeUnit& unit) const
+{
+  if (m_YPieceVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_YPieceVolume->GetValue(unit);
+}
+
+bool SEMechanicalVentilator::HasConnectionVolume() const
+{
+  return m_ConnectionVolume == nullptr ? false : m_ConnectionVolume->IsValid();
+}
+SEScalarVolume& SEMechanicalVentilator::GetConnectionVolume()
+{
+  if (m_ConnectionVolume == nullptr)
+    m_ConnectionVolume = new SEScalarVolume();
+  return *m_ConnectionVolume;
+}
+double SEMechanicalVentilator::GetConnectionVolume(const VolumeUnit& unit) const
+{
+  if (m_ConnectionVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_ConnectionVolume->GetValue(unit);
 }
 
 void SEMechanicalVentilator::SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w)

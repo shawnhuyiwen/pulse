@@ -29,8 +29,14 @@ void PBBagValveMask::Serialize(const CDM_BIND::BagValveMaskData& src, SEBagValve
     PBProperty::Load(src.bagresistance(), dst.GetBagResistance());
   if (src.has_filterresistance())
     PBProperty::Load(src.filterresistance(), dst.GetFilterResistance());
+  if (src.has_sealresistance())
+    PBProperty::Load(src.sealresistance(), dst.GetSealResistance());
   if (src.has_filtervolume())
     PBProperty::Load(src.filtervolume(), dst.GetFilterVolume());
+  if (src.has_connectionvolume())
+    PBProperty::Load(src.connectionvolume(), dst.GetConnectionVolume());
+  if (src.has_valvevolume())
+    PBProperty::Load(src.valvevolume(), dst.GetValveVolume());
   if (src.has_valvepositiveendexpiredpressure())
     PBProperty::Load(src.valvepositiveendexpiredpressure(), dst.GetValvePositiveEndExpiredPressure());
   if (src.has_valveresistance())
@@ -86,8 +92,14 @@ void PBBagValveMask::Serialize(const SEBagValveMask& src, CDM_BIND::BagValveMask
     dst.set_allocated_bagresistance(PBProperty::Unload(*src.m_BagResistance));
   if (src.HasFilterResistance())
     dst.set_allocated_filterresistance(PBProperty::Unload(*src.m_FilterResistance));
+  if (src.HasSealResistance())
+    dst.set_allocated_sealresistance(PBProperty::Unload(*src.m_SealResistance));
   if (src.HasFilterVolume())
     dst.set_allocated_filtervolume(PBProperty::Unload(*src.m_FilterVolume));
+  if (src.HasConnectionVolume())
+    dst.set_allocated_connectionvolume(PBProperty::Unload(*src.m_ConnectionVolume));
+  if (src.HasValveVolume())
+    dst.set_allocated_valvevolume(PBProperty::Unload(*src.m_ValveVolume));
   if (src.HasValvePositiveEndExpiredPressure())
     dst.set_allocated_valvepositiveendexpiredpressure(PBProperty::Unload(*src.m_ValvePositiveEndExpiredPressure));
   if (src.HasValveResistance())

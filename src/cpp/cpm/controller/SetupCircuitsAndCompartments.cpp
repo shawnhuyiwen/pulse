@@ -3402,9 +3402,9 @@ void PulseController::SetupBagValveMask()
   SELiquidCompartmentGraph& lAerosol = m_Compartments->GetAerosolGraph();
   ///////////////////////
 
-  double valveVolume_L = 0.05;
-  double filterVolume_L = 0.05;
-  double connectionVolume_L = 0.05;
+  double valveVolume_L = 0.01;
+  double filterVolume_L = 0.01;
+  double connectionVolume_L = 0.01;
 
   double bagResistance_cmH2O_s_Per_L = 0.01;
   double valveResistance_cmH2O_s_Per_L = 0.01;

@@ -74,6 +74,19 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
     PBProperty::Load(src.inspirationvalveresistance(), dst.GetInspirationValveResistance());
   dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
 
+  if (src.has_expirationlimbvolume())
+    PBProperty::Load(src.expirationlimbvolume(), dst.GetExpirationLimbVolume());
+  if (src.has_expirationvalvevolume())
+    PBProperty::Load(src.expirationvalvevolume(), dst.GetExpirationValveVolume());
+  if (src.has_inspirationlimbvolume())
+    PBProperty::Load(src.inspirationlimbvolume(), dst.GetInspirationLimbVolume());
+  if (src.has_inspirationvalvevolume())
+    PBProperty::Load(src.inspirationvalvevolume(), dst.GetInspirationValveVolume());
+  if (src.has_ypiecevolume())
+    PBProperty::Load(src.ypiecevolume(), dst.GetYPieceVolume());
+  if (src.has_connectionvolume())
+    PBProperty::Load(src.connectionvolume(), dst.GetConnectionVolume());
+
   const SESubstance* sub;
   for (int i = 0; i < src.fractioninspiredgas_size(); i++)
   {

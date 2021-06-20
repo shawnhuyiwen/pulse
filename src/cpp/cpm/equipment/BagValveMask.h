@@ -71,9 +71,12 @@ protected:
   SEGasCompartment*     m_Environment;
   SEGasCompartment*     m_Reservoir;
   SELiquidCompartment*  m_ReservoirAerosol;
-  SEFluidCircuitNode*   m_Filter;
+  SEFluidCircuitNode*   m_FilterNode;
+  SEFluidCircuitNode*   m_ConnectionNode;
+  SEFluidCircuitNode*   m_ValveNode;
   SEFluidCircuitPath*   m_ReservoirToBag;
   SEFluidCircuitPath*   m_BagToValve;
   SEFluidCircuitPath*   m_ValveToFilter;
   SEFluidCircuitPath*   m_FilterToConnection;
+  SEFluidCircuitPath*   m_ConnectionToEnvironment;
 };
