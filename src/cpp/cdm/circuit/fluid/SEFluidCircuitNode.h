@@ -35,4 +35,13 @@ public:
   virtual bool HasVolumeBaseline() const;
   virtual SEScalarVolume& GetVolumeBaseline();
   virtual double GetVolumeBaseline(const VolumeUnit& unit) const;
+
+  SEFluidCircuitNode* GetBlackBoxSourceNode() const;
+  void SetBlackBoxSourceNode(SEFluidCircuitNode* n);
+  SEFluidCircuitNode* GetBlackBoxTargetNode() const;
+  void SetBlackBoxTargetNode(SEFluidCircuitNode* n);
+
+protected:
+  SEFluidCircuitNode* m_BlackBoxSourceNode;// Only set on middle Fluid
+  SEFluidCircuitNode* m_BlackBoxTargetNode;// Only set on middle Fluid
 };

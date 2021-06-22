@@ -36,4 +36,13 @@ public:
   virtual bool HasHeatBaseline() const;
   virtual SEScalarEnergy& GetHeatBaseline();
   virtual double GetHeatBaseline(const EnergyUnit& unit) const;
+
+  SEThermalCircuitNode* GetBlackBoxSourceNode() const;
+  void SetBlackBoxSourceNode(SEThermalCircuitNode* n);
+  SEThermalCircuitNode* GetBlackBoxTargetNode() const;
+  void SetBlackBoxTargetNode(SEThermalCircuitNode* n);
+
+protected:
+  SEThermalCircuitNode* m_BlackBoxSourceNode;// Only set on middle nodes
+  SEThermalCircuitNode* m_BlackBoxTargetNode;// Only set on middle nodes
 };

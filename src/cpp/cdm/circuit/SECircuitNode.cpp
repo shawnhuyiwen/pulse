@@ -53,28 +53,6 @@ void SECircuitNode<CIRCUIT_NODE_TYPES>::SetBlackBoxType(eBlackBox_Node_Type e)
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
-SECircuitNode<CIRCUIT_NODE_TYPES>* SECircuitNode<CIRCUIT_NODE_TYPES>::GetBlackBoxSourceNode() const
-{
-  return m_BlackBoxSourceNode;
-}
-template<CIRCUIT_NODE_TEMPLATE>
-void SECircuitNode<CIRCUIT_NODE_TYPES>::SetBlackBoxSourceNode(SECircuitNode<CIRCUIT_NODE_TYPES>* n)
-{
-  m_BlackBoxSourceNode = n;
-}
-
-template<CIRCUIT_NODE_TEMPLATE>
-SECircuitNode<CIRCUIT_NODE_TYPES>* SECircuitNode<CIRCUIT_NODE_TYPES>::GetBlackBoxTargetNode() const
-{
-  return m_BlackBoxTargetNode;
-}
-template<CIRCUIT_NODE_TEMPLATE>
-void SECircuitNode<CIRCUIT_NODE_TYPES>::SetBlackBoxTargetNode(SECircuitNode<CIRCUIT_NODE_TYPES>* n)
-{
-  m_BlackBoxTargetNode = n;
-}
-
-template<CIRCUIT_NODE_TEMPLATE>
 bool SECircuitNode<CIRCUIT_NODE_TYPES>::HasPotential() const
 {
   return m_Potential == nullptr ? false : m_Potential->IsValid();

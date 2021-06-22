@@ -51,10 +51,6 @@ public:
   virtual bool IsPartOfBlackBox() const;
   virtual eBlackBox_Node_Type GetBlackBoxType() const;
   virtual void SetBlackBoxType(eBlackBox_Node_Type e);
-  SECircuitNode* GetBlackBoxSourceNode() const;
-  void SetBlackBoxSourceNode(SECircuitNode* n);
-  SECircuitNode* GetBlackBoxTargetNode() const;
-  void SetBlackBoxTargetNode(SECircuitNode* n);
 
   virtual bool HasPotential() const;
   virtual PotentialScalar& GetPotential();
@@ -87,9 +83,7 @@ public:
 
 protected:
   std::string             m_Name;
-  eBlackBox_Node_Type     m_BlackBoxType = eBlackBox_Node_Type::None;
-  SECircuitNode<CIRCUIT_NODE_TYPES>* m_BlackBoxSourceNode;// Only set on middle nodes
-  SECircuitNode<CIRCUIT_NODE_TYPES>* m_BlackBoxTargetNode;// Only set on middle nodes
+  eBlackBox_Node_Type   m_BlackBoxType = eBlackBox_Node_Type::None;
 
   PotentialScalar*        m_Potential;
   PotentialScalar*        m_NextPotential;

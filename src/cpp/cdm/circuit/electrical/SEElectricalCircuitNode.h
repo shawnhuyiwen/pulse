@@ -37,4 +37,13 @@ public:
   virtual bool HasChargeBaseline() const;
   virtual SEScalarElectricCharge& GetChargeBaseline();
   virtual double GetChargeBaseline(const ElectricChargeUnit& unit) const;
+
+  SEElectricalCircuitNode* GetBlackBoxSourceNode() const;
+  void SetBlackBoxSourceNode(SEElectricalCircuitNode* n);
+  SEElectricalCircuitNode* GetBlackBoxTargetNode() const;
+  void SetBlackBoxTargetNode(SEElectricalCircuitNode* n);
+
+protected:
+  SEElectricalCircuitNode* m_BlackBoxSourceNode;// Only set on middle nodes
+  SEElectricalCircuitNode* m_BlackBoxTargetNode;// Only set on middle nodes
 };

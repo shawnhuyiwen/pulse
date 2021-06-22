@@ -278,14 +278,14 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
 
       //Phantom path to ground needed to determine flow into/out of the black box
       //Out of node is positive
-      NodeType* sourceNode;//Aaron = n->GetBlackBoxSourceNode();
+      NodeType* sourceNode = n->GetBlackBoxSourceNode();
       if (sourceNode->IsPotentialImposed())
       {
         _eigen->AMatrix(sourceNode->GetCalculatorIndex(), m_blackBoxPotentialSources[sourceNode]) += 1.0;
         _eigen->bVector(sourceNode->GetCalculatorIndex()) = sourceNode->GetNextPotential().GetValue(m_PotentialUnit);
       }
 
-      NodeType* targetNode;//Aaron = n->GetBlackBoxTargetNode();
+      NodeType* targetNode = n->GetBlackBoxTargetNode();
       if (targetNode->IsPotentialImposed())
       {
         _eigen->AMatrix(targetNode->GetCalculatorIndex(), m_blackBoxPotentialSources[targetNode]) -= 1.0;
