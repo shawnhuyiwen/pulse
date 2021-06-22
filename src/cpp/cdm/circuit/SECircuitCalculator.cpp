@@ -210,7 +210,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
 
   size_t numVars = m_circuit->GetNodes().size() - numRefNodes;
   m_potentialSources.clear();
-  m_blackBoxPotentialSources.clear();
   for (PathType* p : m_circuit->GetPaths())
   { 
     //Set aside the pressure sources, since the Flow through them will be directly solved by adding them to the bottom of the matrix.
@@ -223,29 +222,17 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       m_potentialSources[p] = numVars++;
     }
   }
+  
   //Black boxes with imposed potentials are like potential sources to ground, but without a path defined
+  m_blackBoxPotentialSources.clear();
   for (NodeType* n : m_circuit->GetNodes())
   {
-    // Only the black box node is mapped to a black box
-    // If there is an imposed pressure on the src or tgt,
-    // we need to add the potential source for those as well
-    // Note that a src and tgt node can be associated with more than one
-    // black box, so we only need to add those nodes once to our map
-    if (n->IsPartOfBlackBox())
+    if (!n->IsReferenceNode() && n->IsPartOfBlackBox())
     {
-      if(!n->IsReferenceNode() && n->IsPotentialImposed() &&
-         m_blackBoxPotentialSources.find(n) == m_blackBoxPotentialSources.end())
+      if (n->IsPotentialImposed())
+      {
         m_blackBoxPotentialSources[n] = numVars++;
-
-//      NodeType* srcNode = bb->GetSourceNode();
-//      if (!srcNode->IsReferenceNode() && bb->IsSourcePotentialImposed() &&
-//          m_blackBoxPotentialSources.find(srcNode) == m_blackBoxPotentialSources.end())
-//        m_blackBoxPotentialSources[srcNode] = numVars++;
-//
-//      NodeType* tgtNode = bb->GetTargetNode();
-//      if (!tgtNode->IsReferenceNode() && bb->IsTargetPotentialImposed() &&
-//          m_blackBoxPotentialSources.find(tgtNode) == m_blackBoxPotentialSources.end())
-//        m_blackBoxPotentialSources[tgtNode] = numVars++;
+      }
     }
   }
 
@@ -272,34 +259,40 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       continue;
     }
 
-    if (n->IsPartOfBlackBox())
+    if (n->IsPartOfBlackBox() && n->GetBlackBoxType() == eBlackBox_Node_Type::Middle)
     {
       //Handle the black box middle node
       //We'll either explicitly set the potential value or just make it the average of the source and target
       //If we don't do this, it creates a singular matrix (zero columns) and will take longer to solve
-      if (n->GetBlackBoxType() == eBlackBox_Node_Type::Middle)
+      _eigen->AMatrix(n->GetCalculatorIndex(), n->GetCalculatorIndex()) = 1.0;
+      if (n->IsPotentialImposed())
       {
-        _eigen->AMatrix(n->GetCalculatorIndex(), n->GetCalculatorIndex()) = 1.0;
-        if (!n->IsPotentialImposed())
-        {
-          _eigen->bVector(n->GetCalculatorIndex()) = n->GetNextPotential().GetValue(m_PotentialUnit);
-        }
-        else
-        {
-          //BB - Source/2 - Target/2 = 0
-          _eigen->AMatrix(n->GetCalculatorIndex(), n->GetBlackBoxSourceNode()->GetCalculatorIndex()) = -0.5;
-          _eigen->AMatrix(n->GetCalculatorIndex(), n->GetBlackBoxTargetNode()->GetCalculatorIndex()) = -0.5;
-        }
-        continue;
+        _eigen->bVector(n->GetCalculatorIndex()) = n->GetNextPotential().GetValue(m_PotentialUnit);
       }
-      
-//      //Phantom path to ground needed to determine flow into/out of the black box
-//      //Out of node is positive
-//      if (bb->IsSourcePotentialImposed())
-//        _eigen->AMatrix(n->GetCalculatorIndex(), m_blackBoxPotentialSources[bb->GetSourceNode()]) += 1.0;
-//
-//      if (bb->IsTargetPotentialImposed())
-//        _eigen->AMatrix(n->GetCalculatorIndex(), m_blackBoxPotentialSources[bb->GetTargetNode()]) += -1.0;
+      else
+      {
+        //BB - Source/2 - Target/2 = 0
+        _eigen->AMatrix(n->GetCalculatorIndex(), n->GetBlackBoxSourceNode()->GetCalculatorIndex()) = -0.5;
+        _eigen->AMatrix(n->GetCalculatorIndex(), n->GetBlackBoxTargetNode()->GetCalculatorIndex()) = -0.5;
+      }
+
+      //Phantom path to ground needed to determine flow into/out of the black box
+      //Out of node is positive
+      NodeType* sourceNode;//Aaron = n->GetBlackBoxSourceNode();
+      if (sourceNode->IsPotentialImposed())
+      {
+        _eigen->AMatrix(sourceNode->GetCalculatorIndex(), m_blackBoxPotentialSources[sourceNode]) += 1.0;
+        _eigen->bVector(sourceNode->GetCalculatorIndex()) = sourceNode->GetNextPotential().GetValue(m_PotentialUnit);
+      }
+
+      NodeType* targetNode;//Aaron = n->GetBlackBoxTargetNode();
+      if (targetNode->IsPotentialImposed())
+      {
+        _eigen->AMatrix(targetNode->GetCalculatorIndex(), m_blackBoxPotentialSources[targetNode]) -= 1.0;
+        _eigen->bVector(targetNode->GetCalculatorIndex()) = targetNode->GetNextPotential().GetValue(m_PotentialUnit);
+      }
+
+      continue;
     }
 
     for (PathType* p : *m_circuit->GetConnectedPaths(*n))
@@ -684,36 +677,28 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
   for (auto itr : m_potentialSources)
   {
     //The potential source fluxes are all in order after the Node Pressures.
-    double dFlow = _eigen->xVector(itr.second);
+    double flux = _eigen->xVector(itr.second);
     //We define pressure sources as the difference in pressure from source to target.
     //Therefore, a positive value means the target pressure is greater than the source (and reverse for negative values).
     //This means flow would go Target to Source (high to low pressure), and we need to reverse the sign.
-    ValueOverride<FluxUnit>(itr.first->GetNextFlux(), -dFlow, m_FluxUnit);
+    ValueOverride<FluxUnit>(itr.first->GetNextFlux(), -flux, m_FluxUnit);
   }
-  
-  // TODO JBW Not sure how to convert this yet... 
-  //for (auto itr : m_blackBoxPotentialSources)
-  //{
-  //  NodeType* n = itr.first;
-  //  if (!n->IsPartOfBlackBox())
-  //    continue;
-  //
-  //  //The potential source fluxes are all in order after the Node Pressures.
-  //  double dFlow = _eigen->xVector(itr.second);
-  //
-  //  BlackBoxType* bb = n->GetBlackBox();
-  //
-  //  if (n == &bb->GetSourcePath()->GetSourceNode() ||
-  //      n == &bb->GetSourcePath()->GetTargetNode())
-  //  {
-  //    ValueOverride<FluxUnit>(bb->GetSourcePath()->GetNextFlux(), dFlow, m_FluxUnit);
-  //  }
-  //  else if (n == &bb->GetTargetPath()->GetSourceNode() ||
-  //           n == &bb->GetTargetPath()->GetTargetNode())
-  //  {
-  //    ValueOverride<FluxUnit>(bb->GetTargetPath()->GetNextFlux(), dFlow, m_FluxUnit);
-  //  }
-  //}
+
+  for (auto itr : m_blackBoxPotentialSources)
+  {
+    //The potential source fluxes are all in order after the Node Pressures.
+    double flux = _eigen->xVector(itr.second);
+    NodeType* n = itr.first;
+
+    for (PathType* p : m_circuit->GetPaths())
+    {
+      if (p->IsPartOfBlackBox() && !p->IsFluxImposed() &&
+        (&p->GetSourceNode() == n || &p->GetTargetNode() == n))
+      {
+        ValueOverride<FluxUnit>(p->GetNextFlux(), flux, m_FluxUnit);
+      }
+    }
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1110,27 +1095,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseInPotentialSources()
 template<CIRCUIT_CALCULATOR_TEMPLATE>
 void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseInBlackBoxNodes()
 {
-  //Treat like a potential sources from ground
-  //for (auto itr : m_blackBoxPotentialSources)
-  //{
-  //  NodeType* n = itr.first;
-  //
-  //  _eigen->AMatrix(itr.second, n->GetCalculatorIndex()) = 1;
-  //
-  //  BlackBoxType* bb = n->GetBlackBox();
-  //  if (n == bb->GetNode())
-  //  {
-  //    _eigen->bVector(itr.second) += bb->GetPotential(m_PotentialUnit);
-  //  }
-  //  else if (n == bb->GetSourceNode())
-  //  {
-  //    _eigen->bVector(itr.second) += bb->GetSourcePotential(m_PotentialUnit);
-  //  }
-  //  else if (n == bb->GetTargetNode())
-  //  {
-  //    _eigen->bVector(itr.second) += bb->GetTargetPotential(m_PotentialUnit);
-  //  }
-  //}
+  //jbw - remove
 }
 
 template<CIRCUIT_CALCULATOR_TEMPLATE>
