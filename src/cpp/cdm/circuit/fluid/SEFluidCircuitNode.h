@@ -42,6 +42,6 @@ public:
   void SetBlackBoxTargetNode(SEFluidCircuitNode* n);
 
 protected:
-  SEFluidCircuitNode* m_BlackBoxSourceNode;// Only set on middle Fluid
-  SEFluidCircuitNode* m_BlackBoxTargetNode;// Only set on middle Fluid
+  SEFluidCircuitNode* m_BlackBoxSourceNode=nullptr;// Only set on middle Fluid
+  SEFluidCircuitNode* m_BlackBoxTargetNode=nullptr;// Only set on middle Fluid
 };

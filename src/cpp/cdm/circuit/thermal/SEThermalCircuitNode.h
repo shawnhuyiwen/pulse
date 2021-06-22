@@ -43,6 +43,6 @@ public:
   void SetBlackBoxTargetNode(SEThermalCircuitNode* n);
 
 protected:
-  SEThermalCircuitNode* m_BlackBoxSourceNode;// Only set on middle nodes
-  SEThermalCircuitNode* m_BlackBoxTargetNode;// Only set on middle nodes
+  SEThermalCircuitNode* m_BlackBoxSourceNode=nullptr;// Only set on middle nodes
+  SEThermalCircuitNode* m_BlackBoxTargetNode=nullptr;// Only set on middle nodes
 };

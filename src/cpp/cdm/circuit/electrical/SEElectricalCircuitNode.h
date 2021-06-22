@@ -44,6 +44,6 @@ public:
   void SetBlackBoxTargetNode(SEElectricalCircuitNode* n);
 
 protected:
-  SEElectricalCircuitNode* m_BlackBoxSourceNode;// Only set on middle nodes
-  SEElectricalCircuitNode* m_BlackBoxTargetNode;// Only set on middle nodes
+  SEElectricalCircuitNode* m_BlackBoxSourceNode=nullptr;// Only set on middle nodes
+  SEElectricalCircuitNode* m_BlackBoxTargetNode=nullptr;// Only set on middle nodes
 };
