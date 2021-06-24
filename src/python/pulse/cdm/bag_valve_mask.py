@@ -18,10 +18,13 @@ class eConnection(Enum):
 class SEBagValveMask(SEEquipment):
     __slots__ = ["_connection",
                  "_bag_resistance",
+                 "_connection_volume",
                  "_filter_resistance",
                  "_filter_volume",
+                 "_seal_resistance",
                  "_valve_positive_end_expired_pressure",
                  "_valve_resistance",
+                 "_valve_volume",
 
                  "_fraction_inspired_gasses",
                  "_concentration_inspired_aerosol"]
@@ -30,10 +33,13 @@ class SEBagValveMask(SEEquipment):
         super().__init__()
         self._connection = eConnection.NullConnection
         self._bag_resistance = None
+        self._connection_volume = None
         self._filter_resistance = None
         self._filter_volume = None
+        self._seal_resistance = None
         self._valve_positive_end_expired_pressure = None
         self._valve_resistance = None
+        self._valve_volume = None
 
         self._fraction_inspired_gasses = []
         self._concentration_inspired_aerosol = []
@@ -41,10 +47,13 @@ class SEBagValveMask(SEEquipment):
     def clear(self):
         self._connection = eConnection.NullConnection
         if self._bag_resistance is not None: self._bag_resistance.invalidate()
+        if self._connection_volume is not None: self._connection_volume.invalidate()
         if self._filter_resistance is not None: self._filter_resistance.invalidate()
         if self._filter_volume is not None: self._filter_volume.invalidate()
+        if self._seal_resistance is not None: self._bag_resistance.invalidate()
         if self._valve_positive_end_expired_pressure is not None: self._valve_positive_end_expired_pressure.invalidate()
         if self._valve_resistance is not None: self._valve_resistance.invalidate()
+        if self._valve_volume is not None: self._valve_volume.invalidate()
 
         self._fraction_inspired_gasses = []
         self._concentration_inspired_aerosol = []
@@ -55,10 +64,13 @@ class SEBagValveMask(SEEquipment):
         self.clear()
         self._connection = src._connection
         if src.has_bag_resistance(): self.get_bag_resistance().set(src._bag_resistance)
+        if src.has_connection_volume(): self.get_connection_volume().set(src._connection_volume)
         if src.has_filter_resistance(): self.get_filter_resistance().set(src._filter_resistance)
         if src.has_filter_volume(): self.get_filter_volume().set(src._filter_volume)
+        if src.has_seal_resistance(): self.get_seal_resistance().set(src._seal_resistance)
         if src.has_valve_positive_end_expired_pressure(): self.get_valve_positive_end_expired_pressure().set(src._valve_positive_end_expired_pressure)
         if src.has_valve_resistance(): self.get_valve_resistance().set(src._valve_resistance)
+        if src.has_valve_volume(): self.get_valve_volume().set(src._valve_volume)
 
         if src.has_fraction_inspired_gasses:
             self._fraction_inspired_gasses.append(src._fraction_inspired_gasses[:])
@@ -77,6 +89,13 @@ class SEBagValveMask(SEEquipment):
             self._bag_resistance = SEScalarPressureTimePerVolume()
         return self._bag_resistance
 
+    def has_connection_volume(self):
+        return False if self._connection_volume is None else self._connection_volume.is_valid()
+    def get_connection_volume(self):
+        if self._connection_volume is None:
+            self._connection_volume = SEScalarVolume()
+        return self._connection_volume
+
     def has_filter_resistance(self):
         return False if self._filter_resistance is None else self._filter_resistance.is_valid()
     def get_filter_resistance(self):
@@ -90,6 +109,13 @@ class SEBagValveMask(SEEquipment):
         if self._filter_volume is None:
             self._filter_volume = SEScalarVolume()
         return self._filter_volume
+
+    def has_seal_resistance(self):
+        return False if self._seal_resistance is None else self._seal_resistance.is_valid()
+    def get_seal_resistance(self):
+        if self._seal_resistance is None:
+            self._seal_resistance = SEScalarPressureTimePerVolume()
+        return self._seal_resistance
     
     def has_valve_positive_end_expired_pressure(self):
         return False if self._valve_positive_end_expired_pressure is None else self._valve_positive_end_expired_pressure.is_valid()
@@ -104,6 +130,13 @@ class SEBagValveMask(SEEquipment):
         if self._valve_resistance is None:
             self._valve_resistance = SEScalarPressureTimePerVolume()
         return self._valve_resistance
+
+    def has_valve_volume(self):
+        return False if self._valve_volume is None else self._valve_volume.is_valid()
+    def get_valve_volume(self):
+        if self._valve_volume is None:
+            self._valve_volume = SEScalarVolume()
+        return self._valve_volume
         
     def has_fraction_inspired_gas(self, substance_name: str = None):
         if substance_name is None:

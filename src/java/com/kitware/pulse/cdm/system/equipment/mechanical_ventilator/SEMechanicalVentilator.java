@@ -32,9 +32,11 @@ public class SEMechanicalVentilator extends SEEquipment
   protected SEScalarPressure                  expirationCyclePressure;
   protected SEScalarVolume                    expirationCycleVolume;
   protected SEScalarTime                      expirationCycleTime;
-  
+
+  protected SEScalarVolume                    expirationLimbVolume;
   protected SEScalarPressureTimePerVolume     expirationTubeResistance;
   protected SEScalarPressureTimePerVolume     expirationValveResistance;
+  protected SEScalarVolume                    expirationValveVolume;
   protected eDriverWaveform                   expirationWaveform;
 
   // Inspiratory Limit Properties (Only set 1)
@@ -57,9 +59,14 @@ public class SEMechanicalVentilator extends SEEquipment
   protected SEScalarPressure                  inspirationPatientTriggerPressure;
   
 
+  protected SEScalarVolume                    inspirationLimbVolume;
   protected SEScalarPressureTimePerVolume     inspirationTubeResistance;
   protected SEScalarPressureTimePerVolume     inspirationValveResistance;
+  protected SEScalarVolume                    inspirationValveVolume;
   protected eDriverWaveform                   inspirationWaveform;
+
+  protected SEScalarVolume                    yPieceVolume;
+  protected SEScalarVolume                    connectionVolume;
   
   protected List<SESubstanceFraction>         fractionInspiredGases;
   protected List<SESubstanceConcentration>    concentrationInspiredAerosol;
@@ -77,8 +84,10 @@ public class SEMechanicalVentilator extends SEEquipment
     expirationCycleVolume = null;
     expirationCycleTime = null;
 
+    expirationLimbVolume = null;
     expirationTubeResistance = null;
     expirationValveResistance = null;
+    expirationValveVolume = null;
     expirationWaveform = null;
 
     inspirationLimitFlow = null;
@@ -95,9 +104,14 @@ public class SEMechanicalVentilator extends SEEquipment
     inspirationPatientTriggerFlow = null;
     inspirationPatientTriggerPressure = null;
 
+    inspirationLimbVolume = null;
     inspirationTubeResistance = null;
     inspirationValveResistance = null;
+    inspirationValveVolume = null;
     inspirationWaveform = null;
+
+    yPieceVolume = null;
+    connectionVolume = null;
 
     this.fractionInspiredGases=new ArrayList<SESubstanceFraction>();
     this.concentrationInspiredAerosol=new ArrayList<SESubstanceConcentration>();
@@ -122,10 +136,14 @@ public class SEMechanicalVentilator extends SEEquipment
     if (expirationCycleTime != null)
       expirationCycleTime.invalidate();
 
+    if (expirationLimbVolume != null)
+      expirationLimbVolume.invalidate();
     if (expirationTubeResistance != null)
       expirationTubeResistance.invalidate();
     if (expirationValveResistance != null)
       expirationValveResistance.invalidate();
+    if (expirationValveVolume != null)
+      expirationValveVolume.invalidate();
     expirationWaveform = null;
 
     if (inspirationLimitFlow != null)
@@ -151,11 +169,20 @@ public class SEMechanicalVentilator extends SEEquipment
     if (inspirationPatientTriggerPressure != null)
       inspirationPatientTriggerPressure.invalidate();
 
+    if (inspirationLimbVolume != null)
+      inspirationLimbVolume.invalidate();
     if (inspirationTubeResistance != null)
       inspirationTubeResistance.invalidate();
     if (inspirationValveResistance != null)
       inspirationValveResistance.invalidate();
+    if (inspirationValveVolume != null)
+      inspirationValveVolume.invalidate();
     inspirationWaveform = null;
+    
+    if (yPieceVolume != null)
+      yPieceVolume.invalidate();
+    if (connectionVolume != null)
+      connectionVolume.invalidate();
     
     this.fractionInspiredGases.clear();
     this.concentrationInspiredAerosol.clear();
@@ -181,10 +208,14 @@ public class SEMechanicalVentilator extends SEEquipment
     if(from.hasExpirationCycleTime())
       this.getExpirationCycleTime().set(from.getExpirationCycleTime());
     
+    if(from.hasExpirationLimbVolume())
+      this.getExpirationLimbVolume().set(from.getExpirationLimbVolume());
     if(from.hasExpirationTubeResistance())
       this.getExpirationTubeResistance().set(from.getExpirationTubeResistance());
     if(from.hasExpirationValveResistance())
       this.getExpirationValveResistance().set(from.getExpirationValveResistance());
+    if(from.hasExpirationValveVolume())
+      this.getExpirationValveVolume().set(from.getExpirationValveVolume());
     if(from.expirationWaveform!=null && from.expirationWaveform != eDriverWaveform.NullDriverWaveform)
       this.expirationWaveform=from.expirationWaveform;
     
@@ -210,13 +241,22 @@ public class SEMechanicalVentilator extends SEEquipment
       this.getInspirationPatientTriggerFlow().set(from.getInspirationPatientTriggerFlow());
     if(from.hasInspirationPatientTriggerPressure())
       this.getInspirationPatientTriggerPressure().set(from.getInspirationPatientTriggerPressure());
-    
+
+    if(from.hasInspirationLimbVolume())
+      this.getInspirationLimbVolume().set(from.getInspirationLimbVolume());
     if(from.hasInspirationTubeResistance())
       this.getInspirationTubeResistance().set(from.getInspirationTubeResistance());
     if(from.hasInspirationValveResistance())
       this.getInspirationValveResistance().set(from.getInspirationValveResistance());
+    if(from.hasInspirationValveVolume())
+      this.getInspirationValveVolume().set(from.getInspirationValveVolume());
     if(from.inspirationWaveform!=null && from.inspirationWaveform != eDriverWaveform.NullDriverWaveform)
       this.inspirationWaveform=from.inspirationWaveform;
+    
+    if(from.hasYPieceVolume())
+      this.getYPieceVolume().set(from.getYPieceVolume());
+    if(from.hasConnectionVolume())
+      this.getConnectionVolume().set(from.getConnectionVolume());
     
     if(from.fractionInspiredGases!=null)
     {
@@ -260,10 +300,14 @@ public class SEMechanicalVentilator extends SEEquipment
     else if (src.hasExpirationCycleTime())
       SEScalarTime.load(src.getExpirationCycleTime(), dst.getExpirationCycleTime());
     
+    if (src.hasExpirationLimbVolume())
+      SEScalarVolume.load(src.getExpirationLimbVolume(), dst.getExpirationLimbVolume());
     if (src.hasExpirationTubeResistance())
       SEScalarPressureTimePerVolume.load(src.getExpirationTubeResistance(), dst.getExpirationTubeResistance());
     if (src.hasExpirationValveResistance())
       SEScalarPressureTimePerVolume.load(src.getExpirationValveResistance(), dst.getExpirationValveResistance());
+    if (src.hasExpirationValveVolume())
+      SEScalarVolume.load(src.getExpirationValveVolume(), dst.getExpirationValveVolume());
     if (src.getExpirationWaveform()!=eDriverWaveform.UNRECOGNIZED)
       dst.setExpirationWaveform(src.getExpirationWaveform());
     
@@ -289,13 +333,22 @@ public class SEMechanicalVentilator extends SEEquipment
       SEScalarVolumePerTime.load(src.getInspirationPatientTriggerFlow(), dst.getInspirationPatientTriggerFlow());
     else if (src.hasInspirationPatientTriggerPressure())
       SEScalarPressure.load(src.getInspirationPatientTriggerPressure(), dst.getInspirationPatientTriggerPressure());
-    
+
+    if (src.hasInspirationLimbVolume())
+      SEScalarVolume.load(src.getInspirationLimbVolume(), dst.getInspirationLimbVolume());
     if (src.hasInspirationTubeResistance())
       SEScalarPressureTimePerVolume.load(src.getInspirationTubeResistance(), dst.getInspirationTubeResistance());
     if (src.hasInspirationValveResistance())
       SEScalarPressureTimePerVolume.load(src.getInspirationValveResistance(), dst.getInspirationValveResistance());
+    if (src.hasInspirationValveVolume())
+      SEScalarVolume.load(src.getInspirationValveVolume(), dst.getInspirationValveVolume());
     if (src.getInspirationWaveform()!=eDriverWaveform.UNRECOGNIZED)
       dst.setInspirationWaveform(src.getInspirationWaveform());
+    
+    if (src.hasYPieceVolume())
+      SEScalarVolume.load(src.getYPieceVolume(), dst.getYPieceVolume());
+    if (src.hasConnectionVolume())
+      SEScalarVolume.load(src.getConnectionVolume(), dst.getConnectionVolume());
     
     if(src.getFractionInspiredGasList()!=null)
     {
@@ -338,10 +391,14 @@ public class SEMechanicalVentilator extends SEEquipment
     else if (src.hasExpirationCycleTime())
       dst.setExpirationCycleTime(SEScalarTime.unload(src.getExpirationCycleTime()));
     
+    if(src.hasExpirationLimbVolume())
+      dst.setExpirationLimbVolume(SEScalarVolume.unload(src.getExpirationLimbVolume()));
     if(src.hasExpirationTubeResistance())
       dst.setExpirationTubeResistance(SEScalarPressureTimePerVolume.unload(src.getExpirationTubeResistance()));
     if(src.hasExpirationValveResistance())
       dst.setExpirationValveResistance(SEScalarPressureTimePerVolume.unload(src.getExpirationValveResistance()));
+    if(src.hasExpirationValveVolume())
+      dst.setExpirationValveVolume(SEScalarVolume.unload(src.getExpirationValveVolume()));
     if (src.hasExpirationWaveform())
       dst.setExpirationWaveform(src.expirationWaveform);
     
@@ -368,12 +425,21 @@ public class SEMechanicalVentilator extends SEEquipment
     else if (src.hasInspirationPatientTriggerPressure())
       dst.setInspirationPatientTriggerPressure(SEScalarPressure.unload(src.getInspirationPatientTriggerPressure()));
     
+    if(src.hasInspirationLimbVolume())
+      dst.setInspirationLimbVolume(SEScalarVolume.unload(src.getInspirationLimbVolume()));
     if(src.hasInspirationTubeResistance())
       dst.setInspirationTubeResistance(SEScalarPressureTimePerVolume.unload(src.getInspirationTubeResistance()));
     if(src.hasInspirationValveResistance())
       dst.setInspirationValveResistance(SEScalarPressureTimePerVolume.unload(src.getInspirationValveResistance()));
+    if(src.hasInspirationValveVolume())
+      dst.setInspirationValveVolume(SEScalarVolume.unload(src.getInspirationValveVolume()));
     if (src.hasInspirationWaveform())
       dst.setInspirationWaveform(src.inspirationWaveform);
+    
+    if(src.hasYPieceVolume())
+      dst.setYPieceVolume(SEScalarVolume.unload(src.getYPieceVolume()));
+    if(src.hasConnectionVolume())
+      dst.setConnectionVolume(SEScalarVolume.unload(src.getConnectionVolume()));
     
     for(SESubstanceFraction ambSub : src.fractionInspiredGases)
       dst.addFractionInspiredGas(SESubstanceFraction.unload(ambSub));
@@ -460,6 +526,17 @@ public class SEMechanicalVentilator extends SEEquipment
     return expirationCycleTime == null ? false : expirationCycleTime.isValid();
   }
   
+  public SEScalarVolume getExpirationLimbVolume()
+  {
+    if (expirationLimbVolume == null)
+      expirationLimbVolume = new SEScalarVolume();
+    return expirationLimbVolume;
+  }
+  public boolean hasExpirationLimbVolume()
+  {
+    return expirationLimbVolume == null ? false : expirationLimbVolume.isValid();
+  }
+  
   public SEScalarPressureTimePerVolume getExpirationTubeResistance()
   {
     if (expirationTubeResistance == null)
@@ -480,6 +557,17 @@ public class SEMechanicalVentilator extends SEEquipment
   public boolean hasExpirationValveResistance()
   {
     return expirationValveResistance == null ? false : expirationValveResistance.isValid();
+  }
+  
+  public SEScalarVolume getExpirationValveVolume()
+  {
+    if (expirationValveVolume == null)
+      expirationValveVolume = new SEScalarVolume();
+    return expirationValveVolume;
+  }
+  public boolean hasExpirationValveVolume()
+  {
+    return expirationValveVolume == null ? false : expirationValveVolume.isValid();
   }
   
   public eDriverWaveform getExpirationWaveform()
@@ -594,6 +682,17 @@ public class SEMechanicalVentilator extends SEEquipment
     return inspirationPatientTriggerPressure == null ? false : inspirationPatientTriggerPressure.isValid();
   }
   
+  public SEScalarVolume getInspirationLimbVolume()
+  {
+    if (inspirationLimbVolume == null)
+      inspirationLimbVolume = new SEScalarVolume();
+    return inspirationLimbVolume;
+  }
+  public boolean hasInspirationLimbVolume()
+  {
+    return inspirationLimbVolume == null ? false : inspirationLimbVolume.isValid();
+  }
+  
   public SEScalarPressureTimePerVolume getInspirationTubeResistance()
   {
     if (inspirationTubeResistance == null)
@@ -616,6 +715,17 @@ public class SEMechanicalVentilator extends SEEquipment
     return inspirationValveResistance == null ? false : inspirationValveResistance.isValid();
   }
   
+  public SEScalarVolume getInspirationValveVolume()
+  {
+    if (inspirationValveVolume == null)
+      inspirationValveVolume = new SEScalarVolume();
+    return inspirationValveVolume;
+  }
+  public boolean hasInspirationValveVolume()
+  {
+    return inspirationValveVolume == null ? false : inspirationValveVolume.isValid();
+  }
+  
   public eDriverWaveform getInspirationWaveform()
   {
     return inspirationWaveform;
@@ -629,6 +739,27 @@ public class SEMechanicalVentilator extends SEEquipment
     return inspirationWaveform != null;
   }
   
+  public SEScalarVolume getYPieceVolume()
+  {
+    if (yPieceVolume == null)
+      yPieceVolume = new SEScalarVolume();
+    return yPieceVolume;
+  }
+  public boolean hasYPieceVolume()
+  {
+    return yPieceVolume == null ? false : yPieceVolume.isValid();
+  }
+  
+  public SEScalarVolume getConnectionVolume()
+  {
+    if (connectionVolume == null)
+      connectionVolume = new SEScalarVolume();
+    return connectionVolume;
+  }
+  public boolean hasConnectionVolume()
+  {
+    return connectionVolume == null ? false : connectionVolume.isValid();
+  }
   //////////////////////////////
   // Fraction Of Inspired Gas //
   //////////////////////////////

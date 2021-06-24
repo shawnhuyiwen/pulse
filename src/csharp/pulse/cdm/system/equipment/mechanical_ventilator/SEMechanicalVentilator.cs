@@ -35,8 +35,10 @@ namespace Pulse.CDM
     protected SEScalarTime expiration_cycle_time;
     protected SEScalarVolume expiration_cycle_volume;
 
+    protected SEScalarVolume expiration_limb_volume;
     protected SEScalarPressureTimePerVolume expiration_tube_resistance;
     protected SEScalarPressureTimePerVolume expiration_valve_resistance;
+    protected SEScalarVolume expiration_valve_volume;
     protected DriverWaveform expiration_waveform;
 
     // Inspiration Limit (Only set one)
@@ -57,9 +59,14 @@ namespace Pulse.CDM
     protected SEScalarVolumePerTime inspiration_patient_trigger_flow;
     protected SEScalarPressure inspiration_patient_trigger_pressure;
 
+    protected SEScalarVolume inspiration_limb_volume;
     protected SEScalarPressureTimePerVolume inspiration_tube_resistance;
     protected SEScalarPressureTimePerVolume inspiration_valve_resistance;
+    protected SEScalarVolume inspiration_valve_volume;
     protected DriverWaveform inspiration_waveform;
+        
+    protected SEScalarVolume y_piece_volume;
+    protected SEScalarVolume connection_volume;
 
     protected List<SESubstanceFraction> fraction_inspired_gases;
     protected List<SESubstanceConcentration> concentration_inspired_aerosols;
@@ -72,8 +79,11 @@ namespace Pulse.CDM
       expiration_cycle_pressure = null;
       expiration_cycle_time = null;
       expiration_cycle_volume = null;
+
+      expiration_limb_volume = null;
       expiration_tube_resistance = null;
       expiration_valve_resistance = null;
+      expiration_valve_volume = null;
       expiration_waveform = DriverWaveform.NullDriverWaveform;
 
 
@@ -86,9 +96,15 @@ namespace Pulse.CDM
       inspiration_machine_trigger_time = null;
       inspiration_patient_trigger_flow = null;
       inspiration_patient_trigger_pressure = null;
+
+      inspiration_limb_volume = null;
       inspiration_tube_resistance = null;
       inspiration_valve_resistance = null;
+      inspiration_valve_volume = null;
       inspiration_waveform = DriverWaveform.NullDriverWaveform;
+
+      y_piece_volume = null;
+      connection_volume null;
 
       this.fraction_inspired_gases = new List<SESubstanceFraction>();
       this.concentration_inspired_aerosols = new List<SESubstanceConcentration>();
@@ -110,10 +126,15 @@ namespace Pulse.CDM
         expiration_cycle_time.Invalidate();
       if (expiration_cycle_volume != null)
         expiration_cycle_volume.Invalidate();
+
+      if (expiration_limb_volume != null)
+        expiration_limb_volume.Invalidate();
       if (expiration_tube_resistance != null)
         expiration_tube_resistance.Invalidate();
       if (expiration_valve_resistance != null)
         expiration_valve_resistance.Invalidate();
+      if (expiration_valve_volume != null)
+        expiration_valve_volume.Invalidate();
       expiration_waveform = DriverWaveform.NullDriverWaveform;
 
 
@@ -135,11 +156,21 @@ namespace Pulse.CDM
         inspiration_patient_trigger_flow.Invalidate();
       if (inspiration_patient_trigger_pressure != null)
         inspiration_patient_trigger_pressure.Invalidate();
+
+      if (inspiration_limb_volume != null)
+        inspiration_limb_volume.Invalidate();
       if (inspiration_tube_resistance != null)
         inspiration_tube_resistance.Invalidate();
       if (inspiration_valve_resistance != null)
         inspiration_valve_resistance.Invalidate();
+      if (inspiration_valve_volume != null)
+        inspiration_valve_volume.Invalidate();
       inspiration_waveform = DriverWaveform.NullDriverWaveform;
+
+      if (y_piece_volume != null)
+        y_piece_volume.Invalidate();
+      if (connection_volume != null)
+        connection_volume.Invalidate();
 
       fraction_inspired_gases.Clear();
       concentration_inspired_aerosols.Clear();
@@ -162,10 +193,15 @@ namespace Pulse.CDM
         this.GetExpirationCycleTime().Set(from.GetExpirationCycleTime());
       if (from.HasExpirationCycleVolume())
         this.GetExpirationCycleVolume().Set(from.GetExpirationCycleVolume());
+
+      if (from.HasExpirationLimbVolume())
+        this.GetExpirationLimbVolume().Set(from.GetExpirationLimbVolume());
       if (from.HasExpirationTubeResistance())
         this.GetExpirationTubeResistance().Set(from.GetExpirationTubeResistance());
       if (from.HasExpirationValveResistance())
         this.GetExpirationValveResistance().Set(from.GetExpirationValveResistance());
+      if (from.HasExpirationValveVolume())
+        this.GetExpirationValveVolume().Set(from.GetExpirationValveVolume());
       if (from.expiration_waveform != DriverWaveform.NullDriverWaveform)
         this.expiration_waveform = from.expiration_waveform;
 
@@ -187,12 +223,22 @@ namespace Pulse.CDM
         this.GetInspirationPatientTriggerFlow().Set(from.GetInspirationPatientTriggerFlow());
       if (from.HasInspirationPatientTriggerPressure())
         this.GetInspirationPatientTriggerPressure().Set(from.GetInspirationPatientTriggerPressure());
+
+      if (from.HasInspirationLimbVolume())
+        this.GetInspirationLimbVolume().Set(from.GetInspirationLimbVolume());
       if (from.HasInspirationTubeResistance())
         this.GetInspirationTubeResistance().Set(from.GetInspirationTubeResistance());
       if (from.HasInspirationValveResistance())
         this.GetInspirationValveResistance().Set(from.GetInspirationValveResistance());
+      if (from.HasInspirationValveVolume())
+        this.GetInspirationValveVolume().Set(from.GetInspirationValveVolume());
       if (from.inspiration_waveform != DriverWaveform.NullDriverWaveform)
         this.inspiration_waveform = from.inspiration_waveform;
+
+      if (from.HasYPieceVolume())
+        this.GetYPieceVolume().Set(from.GetYPieceVolume());
+      if (from.HasConnectionVolume())
+        this.GetConnectionVolume().Set(from.GetConnectionVolume());
 
       if (from.fraction_inspired_gases != null)
       {
@@ -296,6 +342,17 @@ namespace Pulse.CDM
       return expiration_cycle_volume == null ? false : expiration_cycle_volume.IsValid();
     }
 
+    public SEScalarVolume GetExpirationLimbVolume()
+    {
+      if (expiration_limb_volume == null)
+        expiration_limb_volume = new SEScalarVolume();
+      return expiration_limb_volume;
+    }
+    public bool HasExpirationLimbVolume()
+    {
+      return expiration_limb_volume == null ? false : expiration_limb_volume.IsValid();
+    }
+
     public SEScalarPressureTimePerVolume GetExpirationTubeResistance()
     {
       if (expiration_tube_resistance == null)
@@ -316,6 +373,17 @@ namespace Pulse.CDM
     public bool HasExpirationValveResistance()
     {
       return expiration_valve_resistance == null ? false : expiration_valve_resistance.IsValid();
+    }
+
+    public SEScalarVolume GetExpirationValveVolume()
+    {
+      if (expiration_valve_volume == null)
+        expiration_valve_volume = new SEScalarVolume();
+      return expiration_valve_volume;
+    }
+    public bool HasExpirationValveVolume()
+    {
+      return expiration_valve_volume == null ? false : expiration_valve_volume.IsValid();
     }
 
     public DriverWaveform GetExpirationWaveform()
@@ -430,6 +498,17 @@ namespace Pulse.CDM
       return inspiration_patient_trigger_pressure == null ? false : inspiration_patient_trigger_pressure.IsValid();
     }
 
+    public SEScalarVolume GetInspirationLimbVolume()
+    {
+      if (inspiration_limb_volume == null)
+        inspiration_limb_volume = new SEScalarVolume();
+      return inspiration_limb_volume;
+    }
+    public bool HasInspirationLimbVolume()
+    {
+      return inspiration_limb_volume == null ? false : inspiration_limb_volume.IsValid();
+    }
+
     public SEScalarPressureTimePerVolume GetInspirationTubeResistance()
     {
       if (inspiration_tube_resistance == null)
@@ -452,6 +531,16 @@ namespace Pulse.CDM
       return inspiration_valve_resistance == null ? false : inspiration_valve_resistance.IsValid();
     }
 
+    public SEScalarVolume GetInspirationValveVolume()
+    {
+      if (inspiration_valve_volume == null)
+        inspiration_valve_volume = new SEScalarVolume();
+      return inspiration_valve_volume;
+    }
+    public bool HasInspirationValveVolume()
+    {
+      return inspiration_valve_volume == null ? false : inspiration_valve_volume.IsValid();
+    }
 
     public DriverWaveform GetInspirationWaveform()
     {
@@ -466,6 +555,27 @@ namespace Pulse.CDM
       return inspiration_waveform != DriverWaveform.NullDriverWaveform;
     }
 
+    public SEScalarVolume GetYPieceVolume()
+    {
+      if (y_piece_volume == null)
+        y_piece_volume = new SEScalarVolume();
+      return y_piece_volume;
+    }
+    public bool HasYPieceVolume()
+    {
+      return y_piece_volume == null ? false : y_piece_volume.IsValid();
+    }
+
+    public SEScalarVolume GetConnectionVolume()
+    {
+      if (connection_volume == null)
+        connection_volume = new SEScalarVolume();
+      return connection_volume;
+    }
+    public bool HasConnectionVolume()
+    {
+      return connection_volume == null ? false : connection_volume.IsValid();
+    }
 
     public SESubstanceFraction CreateFractionInspiredGas(string substance)
     {

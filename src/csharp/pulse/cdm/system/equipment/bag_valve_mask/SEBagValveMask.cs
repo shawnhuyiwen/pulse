@@ -19,10 +19,13 @@ namespace Pulse.CDM
 
     protected Connection connection;
     protected SEScalarPressureTimePerVolume bag_resistance;
+    protected SEScalarVolume connection_volume;
     protected SEScalarPressureTimePerVolume filter_resistance;
     protected SEScalarVolume filter_volume;
+    protected SEScalarPressureTimePerVolume seal_resistance;
     protected SEScalarPressure valve_positive_end_expired_pressure;
     protected SEScalarPressureTimePerVolume valve_resistance;
+    protected SEScalarVolume valve_volume;
 
     protected List<SESubstanceFraction> fraction_inspired_gases;
     protected List<SESubstanceConcentration> concentration_inspired_aerosols;
@@ -30,10 +33,14 @@ namespace Pulse.CDM
     public SEBagValveMask()
     {
       connection = Connection.NullConnection;
+      bag_resistance = null;
+      connection_volume = null;
       filter_resistance = null;
       filter_volume = null;
+      seal_resistance = null;
       valve_positive_end_expired_pressure = null;
       valve_resistance = null;
+      valve_volume = null;
 
       this.fraction_inspired_gases = new List<SESubstanceFraction>();
       this.concentration_inspired_aerosols = new List<SESubstanceConcentration>();
@@ -45,14 +52,20 @@ namespace Pulse.CDM
       connection = Connection.NullConnection;
       if (bag_resistance != null)
         bag_resistance.Invalidate();
+      if (connection_volume != null)
+        connection_volume.Invalidate();
       if (filter_resistance != null)
         filter_resistance.Invalidate();
       if (filter_volume != null)
         filter_volume.Invalidate();
+      if (seal_resistance != null)
+        seal_resistance.Invalidate();
       if (valve_positive_end_expired_pressure != null)
         valve_positive_end_expired_pressure.Invalidate();
       if (valve_resistance != null)
         valve_resistance.Invalidate();
+      if (valve_volume != null)
+        valve_volume.Invalidate();
 
       fraction_inspired_gases.Clear();
       concentration_inspired_aerosols.Clear();
@@ -65,14 +78,20 @@ namespace Pulse.CDM
         this.connection = from.connection;
       if (from.HasBagResistance())
         this.GetBagResistance().Set(from.GetBagResistance());
+      if (from.HasConnectionVolume())
+        this.GetConnectionVolume().Set(from.GetConnectionVolume());
       if (from.HasFilterResistance())
         this.GetFilterResistance().Set(from.GetFilterResistance());
       if (from.HasFilterVolume())
         this.GetFilterVolume().Set(from.GetFilterVolume());
+      if (from.HasSealResistance())
+        this.GetSealResistance().Set(from.GetSealResistance());
       if (from.HasValvePositiveEndExpiredPressure())
         this.GetValvePositiveEndExpiredPressure().Set(from.GetValvePositiveEndExpiredPressure());
       if (from.HasValveResistance())
         this.GetValveResistance().Set(from.GetValveResistance());
+      if (from.HasValveVolume())
+        this.GetValveVolume().Set(from.GetValveVolume());
 
       if (from.fraction_inspired_gases != null)
       {
@@ -121,6 +140,17 @@ namespace Pulse.CDM
       return bag_resistance == null ? false : bag_resistance.IsValid();
     }
 
+    public SEScalarVolume GetConnectionVolume()
+    {
+      if (connection_volume == null)
+        connection_volume = new SEScalarVolume();
+      return connection_volume;
+    }
+    public bool HasConnectionVolume()
+    {
+      return connection_volume == null ? false : connection_volume.IsValid();
+    }
+
     public SEScalarPressureTimePerVolume GetFilterResistance()
     {
       if (filter_resistance == null)
@@ -141,6 +171,17 @@ namespace Pulse.CDM
     public bool HasFilterVolume()
     {
       return filter_volume == null ? false : filter_volume.IsValid();
+    }
+
+    public SEScalarPressureTimePerVolume GetSealResistance()
+    {
+      if (seal_resistance == null)
+        seal_resistance = new SEScalarPressureTimePerVolume();
+      return seal_resistance;
+    }
+    public bool HasSealResistance()
+    {
+      return seal_resistance == null ? false : seal_resistance.IsValid();
     }
 
     public SEScalarPressure GetValvePositiveEndExpiredPressure()
@@ -164,6 +205,18 @@ namespace Pulse.CDM
     {
       return valve_resistance == null ? false : valve_resistance.IsValid();
     }
+
+    public SEScalarVolume GetValveVolume()
+    {
+      if (valve_volume == null)
+        valve_volume = new SEScalarVolume();
+      return valve_volume;
+    }
+    public bool HasValveVolume()
+    {
+      return valve_volume == null ? false : valve_volume.IsValid();
+    }
+
     public SESubstanceFraction CreateFractionInspiredGas(string substance)
     {
       return GetFractionInspiredGas(substance);

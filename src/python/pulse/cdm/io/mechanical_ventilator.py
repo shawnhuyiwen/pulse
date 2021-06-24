@@ -24,10 +24,14 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
     elif src.has_expiration_cycle_volume():
         serialize_scalar_volume_to_bind(src.get_expiration_cycle_volume(), dst.ExpirationCycleVolume)
 
+    if src.has_expiration_limb_volume():
+        serialize_scalar_volume_to_bind(src.get_expiration_limb_volume(), dst.ExpirationLimbVolume)
     if src.has_expiration_tube_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_expiration_tube_resistance(), dst.ExpirationTubeResistance)
     if src.has_expiration_valve_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_expiration_valve_resistance(), dst.ExpirationValveResistance)
+    if src.has_expiration_valve_volume():
+        serialize_scalar_volume_to_bind(src.get_expiration_valve_volume(), dst.ExpirationValveVolume)
     dst.ExpirationWaveform = src.get_expiration_waveform().value
 
     if src.has_inspiration_limit_flow():
@@ -53,11 +57,20 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
     if src.has_inspiration_patient_trigger_pressure():
         serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationPatientTriggerPressure)
 
+    if src.has_inspiration_limb_volume():
+        serialize_scalar_volume_to_bind(src.get_inspiration_limb_volume(), dst.InspirationLimbVolume)
     if src.has_inspiration_tube_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_inspiration_tube_resistance(), dst.InspirationTubeResistance)
     if src.has_inspiration_valve_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_inspiration_valve_resistance(), dst.InspirationValveResistance)
+    if src.has_inspiration_valve_volume():
+        serialize_scalar_volume_to_bind(src.get_inspiration_valve_volume(), dst.InspirationValveVolume)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
+
+    if src.has_y_piece_volume():
+        serialize_scalar_volume_to_bind(src.get_y_piece_volume(), dst.YPieceVolume)
+    if src.has_connection_volume():
+        serialize_scalar_volume_to_bind(src.get_connection_volume(), dst.ConnectionVolume)
 
     for aGas in src.get_fraction_inspired_gasses():
         sf = SubstanceFractionData()
