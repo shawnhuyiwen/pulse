@@ -39,17 +39,18 @@ std::string SECircuitNode<CIRCUIT_NODE_TYPES>::GetName() const
 template<CIRCUIT_NODE_TEMPLATE>
 bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsPartOfBlackBox() const
 {
-  return m_BlackBoxType != eBlackBox_Node_Type::None;
+  return m_IsPartOfBlackBox;
 }
 template<CIRCUIT_NODE_TEMPLATE>
-eBlackBox_Node_Type SECircuitNode<CIRCUIT_NODE_TYPES>::GetBlackBoxType() const
+void SECircuitNode<CIRCUIT_NODE_TYPES>::SetPartOfBlackBox(bool b)
 {
-  return m_BlackBoxType;
+  m_IsPartOfBlackBox = b;
 }
+
 template<CIRCUIT_NODE_TEMPLATE>
-void SECircuitNode<CIRCUIT_NODE_TYPES>::SetBlackBoxType(eBlackBox_Node_Type e)
+bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsBlackBoxMiddle() const
 {
-  m_BlackBoxType = e;
+  return m_IsBlackBoxMiddle;
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
@@ -168,12 +169,12 @@ void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposeQuantity(const QuantityScalar& s)
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
-size_t SECircuitNode<CIRCUIT_NODE_TYPES>::GetCalculatorIndex() const
+int SECircuitNode<CIRCUIT_NODE_TYPES>::GetCalculatorIndex() const
 {
   return m_CalculatorIndex;
 }
 template<CIRCUIT_NODE_TEMPLATE>
-void SECircuitNode<CIRCUIT_NODE_TYPES>::SetCalculatorIndex(const size_t index)
+void SECircuitNode<CIRCUIT_NODE_TYPES>::SetCalculatorIndex(const int index)
 {
   m_CalculatorIndex = index;
 }

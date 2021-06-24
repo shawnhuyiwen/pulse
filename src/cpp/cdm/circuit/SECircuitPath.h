@@ -31,12 +31,6 @@
 #define THERMAL_CIRCUIT_PATH SEScalarPower, SEScalarHeatResistance, SEScalarHeatCapacitance, SEScalarHeatInductance, SEScalarTemperature, SEScalarEnergy, \
                              PowerUnit, HeatResistanceUnit, HeatCapacitanceUnit, HeatInductanceUnit, TemperatureUnit, EnergyUnit
 
-enum class eBlackBox_Path_Type
-{
-  None = 0,
-  Source,
-  Target
-};
 
 template<CIRCUIT_PATH_TEMPLATE>
 class SECircuitPath : public Loggable
@@ -53,8 +47,7 @@ public:
   virtual std::string GetName() const;
 
   virtual bool IsPartOfBlackBox() const;
-  virtual eBlackBox_Path_Type GetBlackBoxType() const;
-  virtual void SetBlackBoxType(eBlackBox_Path_Type e);
+  virtual void SetPartOfBlackBox(bool b);
 
   virtual SECircuitNode<CIRCUIT_NODE_TYPES>& GetSourceNode() const;
   virtual SECircuitNode<CIRCUIT_NODE_TYPES>& GetTargetNode() const;
@@ -151,17 +144,13 @@ public:
   virtual unsigned short NumberOfElements() const { return m_NumElements; }
   virtual unsigned short NumberOfNextElements() const { return m_NumNextElements; }
 
-  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
-  virtual BlackBoxType* GetBlackBox() const { return m_BlackBox; }
-  virtual void SetBlackBox(BlackBoxType* bb) { m_BlackBox = bb; }
-
 protected:
   std::string                         m_Name;
   SECircuitNode<CIRCUIT_NODE_TYPES>&  m_SourceNode;
   SECircuitNode<CIRCUIT_NODE_TYPES>&  m_TargetNode;
   mutable unsigned short              m_NumElements;
   mutable unsigned short              m_NumNextElements;
-  eBlackBox_Path_Type                 m_BlackBoxType = eBlackBox_Path_Type::None;
+  bool                                m_IsPartOfBlackBox = false;
   /////////////////////////
   // Valves and Switches //
   /////////////////////////

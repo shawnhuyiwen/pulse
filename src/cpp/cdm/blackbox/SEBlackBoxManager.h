@@ -78,23 +78,12 @@ protected:
       tgtNode = tgtPath.GetSourceNode();
     }
 
-    if (srcNode.GetBlackBoxType() != eBlackBox_Node_Type::None &&
-      srcNode.GetBlackBoxType() != eBlackBox_Node_Type::Source)
-    {
-      Warning("Changing a preexisting black box node type to Source");
-    }
-    if (tgtNode.GetBlackBoxType() != eBlackBox_Node_Type::None &&
-      tgtNode.GetBlackBoxType() != eBlackBox_Node_Type::Target)
-    {
-      Warning("Changing a preexisting black box node type to Target");
-    }
-    midNode.SetBlackBoxType(eBlackBox_Node_Type::Middle);
-    midNode.SetBlackBoxSourceNode(&srcNode);
-    midNode.SetBlackBoxTargetNode(&tgtNode);
-    srcNode.SetBlackBoxType(eBlackBox_Node_Type::Source);
-    tgtNode.SetBlackBoxType(eBlackBox_Node_Type::Target);
-    srcPath.SetBlackBoxType(eBlackBox_Path_Type::Source);
-    tgtPath.SetBlackBoxType(eBlackBox_Path_Type::Target);
+    midNode.SetPartOfBlackBox(true);
+    midNode.SetBlackBoxSourceTargetNodes(srcNode, tgtNode);
+    srcNode.SetPartOfBlackBox(true);
+    tgtNode.SetPartOfBlackBox(true);
+    srcPath.SetPartOfBlackBox(true);
+    tgtPath.SetPartOfBlackBox(true);
 
 
     bb.SetMiddleNode(&midNode);

@@ -15,15 +15,6 @@ enum class eBlackBox_Property_Type
   Imposed
 };
 
-enum class eBlackBox_Node_Type
-{
-  //Aaron - Just make this a middle bool, since nodes can belong to multiple black boxes sources/targets?
-  None = 0,
-  Source,
-  Target,
-  Middle
-};
-
 #define CIRCUIT_NODE_TEMPLATE typename PotentialScalar, typename QuantityScalar, \
                               typename PotentialUnit, typename QuantityUnit
 #define CIRCUIT_NODE_TYPES PotentialScalar,QuantityScalar, \
@@ -50,8 +41,8 @@ public:
   virtual std::string GetName() const;
 
   virtual bool IsPartOfBlackBox() const;
-  virtual eBlackBox_Node_Type GetBlackBoxType() const;
-  virtual void SetBlackBoxType(eBlackBox_Node_Type e);
+  virtual void SetPartOfBlackBox(bool b);
+  virtual bool IsBlackBoxMiddle() const;
 
   virtual bool HasPotential() const;
   virtual PotentialScalar& GetPotential();
@@ -75,8 +66,8 @@ public:
   virtual void ImposeQuantity(const QuantityScalar& s);
   virtual void ImposeQuantity(double v, const QuantityUnit& unit);
 
-  void SetCalculatorIndex(const size_t index);
-  size_t GetCalculatorIndex() const;
+  void SetCalculatorIndex(const int index);
+  int GetCalculatorIndex() const;
 
   bool IsReferenceNode() const;
   void SetAsReferenceNode();
@@ -84,7 +75,8 @@ public:
 
 protected:
   std::string             m_Name;
-  eBlackBox_Node_Type   m_BlackBoxType = eBlackBox_Node_Type::None;
+  bool                    m_IsPartOfBlackBox = false;
+  bool                    m_IsBlackBoxMiddle = false;
 
   PotentialScalar*        m_Potential;
   PotentialScalar*        m_NextPotential;
@@ -99,6 +91,6 @@ protected:
   eBlackBox_Property_Type m_QuantityType = eBlackBox_Property_Type::Calculate;
 
 private:
-  size_t                  m_CalculatorIndex;
+  int                     m_CalculatorIndex;
   bool                    m_IsReferenceNode = false;
 };

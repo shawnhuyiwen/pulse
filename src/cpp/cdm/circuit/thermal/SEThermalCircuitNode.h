@@ -38,9 +38,8 @@ public:
   virtual double GetHeatBaseline(const EnergyUnit& unit) const;
 
   SEThermalCircuitNode* GetBlackBoxSourceNode() const;
-  void SetBlackBoxSourceNode(SEThermalCircuitNode* n);
   SEThermalCircuitNode* GetBlackBoxTargetNode() const;
-  void SetBlackBoxTargetNode(SEThermalCircuitNode* n);
+  void SetBlackBoxSourceTargetNodes(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt);
 
 protected:
   SEThermalCircuitNode* m_BlackBoxSourceNode=nullptr;// Only set on middle nodes

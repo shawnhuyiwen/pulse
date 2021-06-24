@@ -153,7 +153,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   }
 
   // Assign calculator index to the nodes in the circuit
-  size_t numVars = 0;
+  int numVars = 0;
   for (NodeType* n : m_circuit->GetNodes())
   {
     //There should never be a next pressure value set on a node
@@ -258,7 +258,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       continue;
     }
 
-    if (n->IsPartOfBlackBox() && n->GetBlackBoxType() == eBlackBox_Node_Type::Middle)
+    if (n->IsBlackBoxMiddle())
     {
       //Handle the black box middle node
       //We'll either explicitly set the potential value or just make it the average of the source and target

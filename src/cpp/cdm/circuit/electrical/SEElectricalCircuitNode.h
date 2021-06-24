@@ -39,9 +39,8 @@ public:
   virtual double GetChargeBaseline(const ElectricChargeUnit& unit) const;
 
   SEElectricalCircuitNode* GetBlackBoxSourceNode() const;
-  void SetBlackBoxSourceNode(SEElectricalCircuitNode* n);
   SEElectricalCircuitNode* GetBlackBoxTargetNode() const;
-  void SetBlackBoxTargetNode(SEElectricalCircuitNode* n);
+  void SetBlackBoxSourceTargetNodes(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt);
 
 protected:
   SEElectricalCircuitNode* m_BlackBoxSourceNode=nullptr;// Only set on middle nodes

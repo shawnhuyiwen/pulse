@@ -100,16 +100,13 @@ SEFluidCircuitNode* SEFluidCircuitNode::GetBlackBoxSourceNode() const
 {
   return m_BlackBoxSourceNode;
 }
-void SEFluidCircuitNode::SetBlackBoxSourceNode(SEFluidCircuitNode* n)
-{
-  m_BlackBoxSourceNode = n;
-}
-
 SEFluidCircuitNode* SEFluidCircuitNode::GetBlackBoxTargetNode() const
 {
   return m_BlackBoxTargetNode;
 }
-void SEFluidCircuitNode::SetBlackBoxTargetNode(SEFluidCircuitNode* n)
+void SEFluidCircuitNode::SetBlackBoxSourceTargetNodes(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt)
 {
-  m_BlackBoxTargetNode = n;
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourceNode = &src;
+  m_BlackBoxTargetNode = &tgt;
 }

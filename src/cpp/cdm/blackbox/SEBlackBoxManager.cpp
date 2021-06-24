@@ -25,8 +25,7 @@ SEBlackBoxManager::~SEBlackBoxManager()
 {
   DELETE_MAP_SECOND(m_ElectricalBoxes);
   DELETE_MAP_SECOND(m_GasBoxes);
-  //Aaron - It craps out here
-  //DELETE_MAP_SECOND(m_LiquidBoxes);
+  DELETE_MAP_SECOND(m_LiquidBoxes);
   DELETE_MAP_SECOND(m_ThermalBoxes);
 }
 
@@ -58,9 +57,7 @@ SEElectricalBlackBox* SEBlackBoxManager::GetElectricalBlackBox(const std::string
 SEElectricalBlackBox* SEBlackBoxManager::CreateElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
   SEElectricalBlackBox* bb = CreateBlackBox<SEElectricalBlackBox>(name, m_ElectricalBoxes);
-  std::string genName = GetBlackBoxName(srcCmptName, tgtCmptName);
-  if (name != genName)
-    m_ElectricalBoxes[genName] = bb;
+  m_ElectricalBoxes[name] = bb;
   return bb;
 }
 
@@ -86,9 +83,7 @@ SEGasBlackBox* SEBlackBoxManager::GetGasBlackBox(const std::string& srcCmptName,
 SEGasBlackBox* SEBlackBoxManager::CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
   SEGasBlackBox* bb = CreateBlackBox<SEGasBlackBox>(name, m_GasBoxes);
-  std::string genName = GetBlackBoxName(srcCmptName, tgtCmptName);
-  if (name != genName)
-    m_GasBoxes[genName] = bb;
+ m_GasBoxes[name] = bb;
   return bb;
 }
 
@@ -114,9 +109,7 @@ SELiquidBlackBox* SEBlackBoxManager::GetLiquidBlackBox(const std::string& srcCmp
 SELiquidBlackBox* SEBlackBoxManager::CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
   SELiquidBlackBox* bb = CreateBlackBox<SELiquidBlackBox>(name, m_LiquidBoxes);
-  std::string genName = GetBlackBoxName(srcCmptName, tgtCmptName);
-  if (name != genName)
-    m_LiquidBoxes[genName] = bb;
+ m_LiquidBoxes[name] = bb;
   return bb;
 }
 
@@ -142,9 +135,7 @@ SEThermalBlackBox* SEBlackBoxManager::GetThermalBlackBox(const std::string& srcC
 SEThermalBlackBox* SEBlackBoxManager::CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
 {
   SEThermalBlackBox* bb = CreateBlackBox<SEThermalBlackBox>(name, m_ThermalBoxes);
-  std::string genName = GetBlackBoxName(srcCmptName, tgtCmptName);
-    if (name != genName)
-      m_ThermalBoxes[genName] = bb;
+  m_ThermalBoxes[name] = bb;
   return bb;
 }
 

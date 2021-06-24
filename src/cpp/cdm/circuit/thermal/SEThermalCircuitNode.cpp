@@ -101,16 +101,13 @@ SEThermalCircuitNode* SEThermalCircuitNode::GetBlackBoxSourceNode() const
 {
   return m_BlackBoxSourceNode;
 }
-void SEThermalCircuitNode::SetBlackBoxSourceNode(SEThermalCircuitNode* n)
-{
-  m_BlackBoxSourceNode = n;
-}
-
 SEThermalCircuitNode* SEThermalCircuitNode::GetBlackBoxTargetNode() const
 {
   return m_BlackBoxTargetNode;
 }
-void SEThermalCircuitNode::SetBlackBoxTargetNode(SEThermalCircuitNode* n)
+void SEThermalCircuitNode::SetBlackBoxSourceTargetNodes(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt)
 {
-  m_BlackBoxTargetNode = n;
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourceNode = &src;
+  m_BlackBoxTargetNode = &tgt;
 }

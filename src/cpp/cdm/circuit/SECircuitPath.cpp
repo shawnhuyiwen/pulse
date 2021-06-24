@@ -86,17 +86,12 @@ std::string SECircuitPath<CIRCUIT_PATH_TYPES>::GetName() const
 template<CIRCUIT_PATH_TEMPLATE>
 bool SECircuitPath<CIRCUIT_PATH_TYPES>::IsPartOfBlackBox() const
 {
-  return m_BlackBoxType != eBlackBox_Path_Type::None;
+  return m_IsPartOfBlackBox;
 }
 template<CIRCUIT_PATH_TEMPLATE>
-eBlackBox_Path_Type SECircuitPath<CIRCUIT_PATH_TYPES>::GetBlackBoxType() const
+void SECircuitPath<CIRCUIT_PATH_TYPES>::SetPartOfBlackBox(bool b)
 {
-  return m_BlackBoxType;
-}
-template<CIRCUIT_PATH_TEMPLATE>
-void SECircuitPath<CIRCUIT_PATH_TYPES>::SetBlackBoxType(eBlackBox_Path_Type e)
-{
-  m_BlackBoxType = e;
+  m_IsPartOfBlackBox = b;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>

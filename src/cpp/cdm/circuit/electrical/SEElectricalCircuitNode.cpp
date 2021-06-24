@@ -100,16 +100,13 @@ SEElectricalCircuitNode* SEElectricalCircuitNode::GetBlackBoxSourceNode() const
 {
   return m_BlackBoxSourceNode;
 }
-void SEElectricalCircuitNode::SetBlackBoxSourceNode(SEElectricalCircuitNode* n)
-{
-  m_BlackBoxSourceNode = n;
-}
-
 SEElectricalCircuitNode* SEElectricalCircuitNode::GetBlackBoxTargetNode() const
 {
   return m_BlackBoxTargetNode;
 }
-void SEElectricalCircuitNode::SetBlackBoxTargetNode(SEElectricalCircuitNode* n)
+void SEElectricalCircuitNode::SetBlackBoxSourceTargetNodes(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt)
 {
-  m_BlackBoxTargetNode = n;
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourceNode = &src;
+  m_BlackBoxTargetNode = &tgt;
 }

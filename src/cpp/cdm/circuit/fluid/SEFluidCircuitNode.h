@@ -37,9 +37,8 @@ public:
   virtual double GetVolumeBaseline(const VolumeUnit& unit) const;
 
   SEFluidCircuitNode* GetBlackBoxSourceNode() const;
-  void SetBlackBoxSourceNode(SEFluidCircuitNode* n);
   SEFluidCircuitNode* GetBlackBoxTargetNode() const;
-  void SetBlackBoxTargetNode(SEFluidCircuitNode* n);
+  void SetBlackBoxSourceTargetNodes(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt);
 
   //Aaron  - Add black box source and target paths
 
