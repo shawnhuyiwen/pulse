@@ -56,10 +56,19 @@ void MechanicalVentilator::Clear()
   m_Ventilator = nullptr;
   m_VentilatorAerosol = nullptr;
   m_VentilatorNode = nullptr;
+  m_ExpiratoryLimbNode = nullptr;
+  m_ExpiratoryValveNode = nullptr;
+  m_InspiratoryLimbNode = nullptr;
+  m_InspiratoryValveNode = nullptr;
+  m_YPieceNode = nullptr;
   m_ConnectionNode = nullptr;
   m_AmbientNode = nullptr;
   m_EnvironmentToVentilator = nullptr;
   m_YPieceToConnection = nullptr;
+  m_VentilatorToExpiratoryValve = nullptr;
+  m_VentilatorToInspiratoryValve = nullptr;
+  m_ExpiratoryLimbToYPiece = nullptr;
+  m_InspiratoryLimbToYPiece = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -94,12 +103,21 @@ void MechanicalVentilator::SetUp()
 
   // Nodes
   m_VentilatorNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::Ventilator);
+  m_ExpiratoryLimbNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::ExpiratoryLimb);
+  m_ExpiratoryValveNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::ExpiratoryValve);
+  m_InspiratoryLimbNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::InspiratoryLimb);
+  m_InspiratoryValveNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::InspiratoryValve);
+  m_YPieceNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::YPiece);
   m_ConnectionNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::MechanicalVentilatorNode::Connection);
   m_AmbientNode = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetNode(pulse::EnvironmentNode::Ambient);
 
   // Paths
   m_EnvironmentToVentilator = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
   m_YPieceToConnection = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::YPieceToConnection);
+  m_VentilatorToExpiratoryValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve);
+  m_VentilatorToInspiratoryValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve);
+  m_ExpiratoryLimbToYPiece = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ExpiratoryLimbToYPiece);
+  m_InspiratoryLimbToYPiece = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::InspiratoryLimbToYPiece);
 }
 
 void MechanicalVentilator::StateChange()
@@ -630,21 +648,91 @@ void MechanicalVentilator::SetResistances()
 {
   if (HasExpirationTubeResistance())
   {
-    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve)->GetNextResistance().Set(GetExpirationTubeResistance());
+    m_VentilatorToExpiratoryValve->GetNextResistance().Set(GetExpirationTubeResistance());
   }
 
   if (HasInspirationTubeResistance())
   {
-    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve)->GetNextResistance().Set(GetInspirationTubeResistance());
+    m_VentilatorToInspiratoryValve->GetNextResistance().Set(GetInspirationTubeResistance());
   }
 
   if (HasExpirationValveResistance())
   {
-    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ExpiratoryLimbToYPiece)->GetNextResistance().Set(GetExpirationValveResistance());
+    m_ExpiratoryLimbToYPiece->GetNextResistance().Set(GetExpirationValveResistance());
   }
 
   if (HasInspirationValveResistance())
   {
-    m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::InspiratoryLimbToYPiece)->GetNextResistance().Set(GetInspirationValveResistance());
+    m_InspiratoryLimbToYPiece->GetNextResistance().Set(GetInspirationValveResistance());
+  }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Set ventialtor node/compartment volumes.
+///
+/// \details
+/// If no values are specified, defaults will be used.
+//--------------------------------------------------------------------------------------------------
+void MechanicalVentilator::SetVolumes()
+{
+  if (HasExpirationLimbVolume())
+  {
+    m_ExpiratoryLimbNode->GetNextVolume().Set(GetExpirationLimbVolume());
+  }
+  else
+  {
+    //Volume doesn't reset to baseline like path elements
+    m_ExpiratoryLimbNode->GetNextVolume().Set(m_ExpiratoryLimbNode->GetVolumeBaseline());
+  }
+
+  if (HasExpirationValveVolume())
+  {
+    m_ExpiratoryValveNode->GetNextVolume().Set(GetExpirationValveVolume());
+  }
+  else
+  {
+    //Volume doesn't reset to baseline like path elements
+    m_ExpiratoryValveNode->GetNextVolume().Set(m_ExpiratoryValveNode->GetVolumeBaseline());
+  }
+
+  if (HasInspirationLimbVolume())
+  {
+    m_InspiratoryLimbNode->GetNextVolume().Set(GetInspirationLimbVolume());
+  }
+  else
+  {
+    //Volume doesn't reset to baseline like path elements
+    m_InspiratoryLimbNode->GetNextVolume().Set(m_InspiratoryLimbNode->GetVolumeBaseline());
+  }
+
+  if (HasInspirationValveVolume())
+  {
+    m_InspiratoryValveNode->GetNextVolume().Set(GetInspirationValveVolume());
+  }
+  else
+  {
+    //Volume doesn't reset to baseline like path elements
+    m_InspiratoryValveNode->GetNextVolume().Set(m_InspiratoryValveNode->GetVolumeBaseline());
+  }
+
+  if (HasYPieceVolume())
+  {
+    m_YPieceNode->GetNextVolume().Set(GetYPieceVolume());
+  }
+  else
+  {
+    //Volume doesn't reset to baseline like path elements
+    m_YPieceNode->GetNextVolume().Set(m_YPieceNode->GetVolumeBaseline());
+  }
+
+  if (HasConnectionVolume())
+  {
+    m_ConnectionNode->GetNextVolume().Set(GetConnectionVolume());
+  }
+  else
+  {
+    //Volume doesn't reset to baseline like path elements
+    m_ConnectionNode->GetNextVolume().Set(m_ConnectionNode->GetVolumeBaseline());
   }
 }

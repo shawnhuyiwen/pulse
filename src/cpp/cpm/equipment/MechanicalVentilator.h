@@ -53,6 +53,7 @@ protected:
   void SetVentilatorDriver();
   void CycleMode();
   void SetResistances();
+  void SetVolumes();
 
   // Serializable member variables (Set in Initialize and in schema)
   double                m_CurrentPeriodTime_s;
@@ -66,8 +67,17 @@ protected:
   SEGasCompartment*     m_Ventilator;
   SELiquidCompartment*  m_VentilatorAerosol;
   SEFluidCircuitNode*   m_VentilatorNode;
+  SEFluidCircuitNode*   m_ExpiratoryLimbNode;
+  SEFluidCircuitNode*   m_ExpiratoryValveNode;
+  SEFluidCircuitNode*   m_InspiratoryLimbNode;
+  SEFluidCircuitNode*   m_InspiratoryValveNode;
+  SEFluidCircuitNode*   m_YPieceNode;
   SEFluidCircuitNode*   m_ConnectionNode;
   SEFluidCircuitNode*   m_AmbientNode;
   SEFluidCircuitPath*   m_EnvironmentToVentilator;
   SEFluidCircuitPath*   m_YPieceToConnection;
+  SEFluidCircuitPath*   m_VentilatorToExpiratoryValve;
+  SEFluidCircuitPath*   m_VentilatorToInspiratoryValve;
+  SEFluidCircuitPath*   m_ExpiratoryLimbToYPiece;
+  SEFluidCircuitPath*   m_InspiratoryLimbToYPiece;
 };

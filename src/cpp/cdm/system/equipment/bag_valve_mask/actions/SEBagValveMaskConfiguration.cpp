@@ -105,7 +105,10 @@ void SEBagValveMaskConfiguration::ToString(std::ostream &str) const
     str << "\n\tValvePositiveEndExpiredPressure: "; m_Configuration->HasValvePositiveEndExpiredPressure() ? str << m_Configuration->GetValvePositiveEndExpiredPressure() : str << "NaN";
     str << "\n\tBagResistance: "; m_Configuration->HasBagResistance() ? str << m_Configuration->GetBagResistance() : str << "NaN";
     str << "\n\tFilterResistance: "; m_Configuration->HasFilterResistance() ? str << m_Configuration->GetFilterResistance() : str << "NaN";
+    str << "\n\tSealResistance: "; m_Configuration->HasSealResistance() ? str << m_Configuration->GetSealResistance() : str << "NaN";
     str << "\n\tFilterVolume: "; m_Configuration->HasFilterVolume() ? str << m_Configuration->GetFilterVolume() : str << "NaN";
+    str << "\n\tConnectionVolume: "; m_Configuration->HasConnectionVolume() ? str << m_Configuration->GetConnectionVolume() : str << "NaN";
+    str << "\n\tValveVolume: "; m_Configuration->HasValveVolume() ? str << m_Configuration->GetValveVolume() : str << "NaN";
     str << "\n\tValveResistance: "; m_Configuration->HasValveResistance() ? str << m_Configuration->GetValveResistance() : str << "NaN";
     
     if (m_Configuration->HasFractionInspiredGas())

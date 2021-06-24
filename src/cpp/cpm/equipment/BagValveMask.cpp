@@ -61,11 +61,14 @@ void BagValveMask::Clear()
   m_Environment = nullptr;
   m_Reservoir = nullptr;
   m_ReservoirAerosol = nullptr;
-  m_Filter = nullptr;
+  m_FilterNode = nullptr;
+  m_ConnectionNode = nullptr;
+  m_ValveNode = nullptr;
   m_ReservoirToBag = nullptr;
   m_BagToValve = nullptr;
   m_ValveToFilter = nullptr;
   m_FilterToConnection = nullptr;
+  m_ConnectionToEnvironment = nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -98,13 +101,16 @@ void BagValveMask::SetUp()
   m_ReservoirAerosol = m_data.GetCompartments().GetLiquidCompartment(pulse::BagValveMaskCompartment::Reservoir);
 
   // Nodes
-  m_Filter = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Filter);
+  m_FilterNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Filter);
+  m_ConnectionNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Connection);
+  m_ValveNode = m_data.GetCircuits().GetBagValveMaskCircuit().GetNode(pulse::BagValveMaskNode::Valve);
 
   // Paths
   m_ReservoirToBag = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ReservoirToBag);
   m_BagToValve = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::BagToValve);
   m_ValveToFilter = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ValveToFilter);
   m_FilterToConnection = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::FilterToConnection);
+  m_ConnectionToEnvironment = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ConnectionToEnvironment);
 }
 
 void BagValveMask::StateChange()
@@ -657,7 +663,10 @@ void BagValveMask::SetResistances()
     m_FilterToConnection->GetNextResistance().Set(GetFilterResistance());
   }
 
-  //Aaron - Add SealResistance for pulse::BagValveMaskPath::ConnectionToEnvironment
+  if (HasSealResistance())
+  {
+    m_ConnectionToEnvironment->GetNextResistance().Set(GetSealResistance());
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -671,11 +680,31 @@ void BagValveMask::SetVolumes()
 {
   if (HasFilterVolume())
   {
-    m_Filter->GetNextVolume().Set(GetFilterVolume());
+    m_FilterNode->GetNextVolume().Set(GetFilterVolume());
   }
   else
   {
     //Volume doesn't reset to baseline like path elements
-    m_Filter->GetNextVolume().Set(m_Filter->GetVolumeBaseline());
+    m_FilterNode->GetNextVolume().Set(m_FilterNode->GetVolumeBaseline());
+  }
+
+  if (HasConnectionVolume())
+  {
+    m_ConnectionNode->GetNextVolume().Set(GetConnectionVolume());
+  }
+  else
+  {
+    //Volume doesn't reset to baseline like path elements
+    m_ConnectionNode->GetNextVolume().Set(m_ConnectionNode->GetVolumeBaseline());
+  }
+
+  if (HasValveVolume())
+  {
+    m_ValveNode->GetNextVolume().Set(GetValveVolume());
+  }
+  else
+  {
+    //Volume doesn't reset to baseline like path elements
+    m_ValveNode->GetNextVolume().Set(m_ValveNode->GetVolumeBaseline());
   }
 }

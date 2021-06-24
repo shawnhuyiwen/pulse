@@ -21,10 +21,13 @@ public class SEBagValveMask extends SEEquipment
   protected eConnection                       connection;
   
   protected SEScalarPressureTimePerVolume     bagResistance;
+  protected SEScalarVolume                    connectionVolume;
   protected SEScalarPressureTimePerVolume     filterResistance;
   protected SEScalarVolume                    filterVolume;
+  protected SEScalarPressureTimePerVolume     sealResistance;
   protected SEScalarPressure                  valvePositiveEndExpiredPressure;
   protected SEScalarPressureTimePerVolume     valveResistance;
+  protected SEScalarVolume                    valveVolume;
   
   protected List<SESubstanceFraction>         fractionInspiredGases;
   protected List<SESubstanceConcentration>    concentrationInspiredAerosol;
@@ -34,10 +37,13 @@ public class SEBagValveMask extends SEEquipment
   {
     connection = null;
     bagResistance = null;
+    connectionVolume = null;
     filterResistance = null;
     filterVolume = null;
+    sealResistance = null;
     valvePositiveEndExpiredPressure = null;
     valveResistance = null;
+    valveVolume = null;
 
     this.fractionInspiredGases=new ArrayList<SESubstanceFraction>();
     this.concentrationInspiredAerosol=new ArrayList<SESubstanceConcentration>();
@@ -49,14 +55,20 @@ public class SEBagValveMask extends SEEquipment
     connection = null;
     if (bagResistance != null)
       bagResistance.invalidate();
+    if (connectionVolume != null)
+      connectionVolume.invalidate();
     if (filterResistance != null)
       filterResistance.invalidate();
     if (filterVolume != null)
       filterVolume.invalidate();
+    if (sealResistance != null)
+      sealResistance.invalidate();
     if (valvePositiveEndExpiredPressure != null)
       valvePositiveEndExpiredPressure.invalidate();
     if (valveResistance != null)
       valveResistance.invalidate();
+    if (valveVolume != null)
+      valveVolume.invalidate();
     
     this.fractionInspiredGases.clear();
     this.concentrationInspiredAerosol.clear();
@@ -70,14 +82,20 @@ public class SEBagValveMask extends SEEquipment
     
     if(from.hasBagResistance())
       this.getBagResistance().set(from.getBagResistance());
+    if(from.hasConnectionVolume())
+      this.getConnectionVolume().set(from.getConnectionVolume());
     if(from.hasFilterResistance())
       this.getFilterResistance().set(from.getFilterResistance());
     if(from.hasFilterVolume())
       this.getFilterVolume().set(from.getFilterVolume());
+    if(from.hasSealResistance())
+      this.getSealResistance().set(from.getSealResistance());
     if(from.hasValvePositiveEndExpiredPressure())
       this.getValvePositiveEndExpiredPressure().set(from.getValvePositiveEndExpiredPressure());
     if(from.hasValveResistance())
       this.getValveResistance().set(from.getValveResistance());
+    if(from.hasValveVolume())
+      this.getValveVolume().set(from.getValveVolume());
     
     if(from.fractionInspiredGases!=null)
     {
@@ -109,14 +127,20 @@ public class SEBagValveMask extends SEEquipment
     
     if (src.hasBagResistance())
       SEScalarPressureTimePerVolume.load(src.getBagResistance(), dst.getBagResistance());
+    if (src.hasConnectionVolume())
+      SEScalarVolume.load(src.getConnectionVolume(), dst.getConnectionVolume());
     if (src.hasFilterResistance())
       SEScalarPressureTimePerVolume.load(src.getFilterResistance(), dst.getFilterResistance());
     if (src.hasFilterVolume())
       SEScalarVolume.load(src.getFilterVolume(), dst.getFilterVolume());
+    if (src.hasSealResistance())
+      SEScalarPressureTimePerVolume.load(src.getSealResistance(), dst.getSealResistance());
     if (src.hasValvePositiveEndExpiredPressure())
       SEScalarPressure.load(src.getValvePositiveEndExpiredPressure(), dst.getValvePositiveEndExpiredPressure());
     if (src.hasValveResistance())
       SEScalarPressureTimePerVolume.load(src.getValveResistance(), dst.getValveResistance());
+    if (src.hasValveVolume())
+      SEScalarVolume.load(src.getValveVolume(), dst.getValveVolume());
     
     if(src.getFractionInspiredGasList()!=null)
     {
@@ -145,16 +169,22 @@ public class SEBagValveMask extends SEEquipment
     if (src.hasConnection())
       dst.setConnection(src.connection);
     
+    if (src.hasConnectionVolume())
+      dst.setConnectionVolume(SEScalarVolume.unload(src.getConnectionVolume()));
     if(src.hasBagResistance())
       dst.setBagResistance(SEScalarPressureTimePerVolume.unload(src.getBagResistance()));
     if (src.hasFilterResistance())
       dst.setFilterResistance(SEScalarPressureTimePerVolume.unload(src.getFilterResistance()));
     if (src.hasFilterVolume())
       dst.setFilterVolume(SEScalarVolume.unload(src.getFilterVolume()));
+    if(src.hasSealResistance())
+        dst.setSealResistance(SEScalarPressureTimePerVolume.unload(src.getSealResistance()));
     if(src.hasValvePositiveEndExpiredPressure())
       dst.setValvePositiveEndExpiredPressure(SEScalarPressure.unload(src.getValvePositiveEndExpiredPressure()));
     if (src.hasValveResistance())
       dst.setValveResistance(SEScalarPressureTimePerVolume.unload(src.getValveResistance()));
+    if (src.hasValveVolume())
+      dst.setValveVolume(SEScalarVolume.unload(src.getValveVolume()));
     
     for(SESubstanceFraction ambSub : src.fractionInspiredGases)
       dst.addFractionInspiredGas(SESubstanceFraction.unload(ambSub));
@@ -187,6 +217,17 @@ public class SEBagValveMask extends SEEquipment
     return bagResistance == null ? false : bagResistance.isValid();
   }
   
+  public SEScalarVolume getConnectionVolume()
+  {
+    if (connectionVolume == null)
+      connectionVolume = new SEScalarVolume();
+    return connectionVolume;
+  }
+  public boolean hasConnectionVolume()
+  {
+    return connectionVolume == null ? false : connectionVolume.isValid();
+  }
+  
   public SEScalarPressureTimePerVolume getFilterResistance()
   {
     if (filterResistance == null)
@@ -209,6 +250,17 @@ public class SEBagValveMask extends SEEquipment
     return filterVolume == null ? false : filterVolume.isValid();
   }
   
+  public SEScalarPressureTimePerVolume getSealResistance()
+  {
+    if (sealResistance == null)
+      sealResistance = new SEScalarPressureTimePerVolume();
+    return sealResistance;
+  }
+  public boolean hasSealResistance()
+  {
+    return sealResistance == null ? false : sealResistance.isValid();
+  }
+  
   public SEScalarPressure getValvePositiveEndExpiredPressure()
   {
     if (valvePositiveEndExpiredPressure == null)
@@ -229,6 +281,17 @@ public class SEBagValveMask extends SEEquipment
   public boolean hasValveResistance()
   {
     return valveResistance == null ? false : valveResistance.isValid();
+  }
+  
+  public SEScalarVolume getValveVolume()
+  {
+    if (valveVolume == null)
+      valveVolume = new SEScalarVolume();
+    return valveVolume;
+  }
+  public boolean hasValveVolume()
+  {
+    return valveVolume == null ? false : valveVolume.isValid();
   }
 
   //////////////////////////////

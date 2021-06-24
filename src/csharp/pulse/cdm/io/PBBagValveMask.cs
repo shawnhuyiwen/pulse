@@ -21,14 +21,20 @@ namespace Pulse.CDM
       dst.SetConnection((SEBagValveMask.Connection)src.Connection);
       if (src.BagResistance != null)
         PBProperty.Load(src.BagResistance, dst.GetBagResistance());
+      if (src.ConnectionVolume != null)
+        PBProperty.Load(src.ConnectionVolume, dst.GetConnectionVolume());
       if (src.FilterResistance != null)
         PBProperty.Load(src.FilterResistance, dst.GetFilterResistance());
-      else if (src.FilterVolume != null)
+      if (src.FilterVolume != null)
         PBProperty.Load(src.FilterVolume, dst.GetFilterVolume());
-      else if (src.ValvePositiveEndExpiredPressure != null)
+      if (src.SealResistance != null)
+        PBProperty.Load(src.SealResistance, dst.GetSealResistance());
+      if (src.ValvePositiveEndExpiredPressure != null)
         PBProperty.Load(src.ValvePositiveEndExpiredPressure, dst.GetValvePositiveEndExpiredPressure());
-      else if (src.ValveResistance != null)
+      if (src.ValveResistance != null)
         PBProperty.Load(src.ValveResistance, dst.GetValveResistance());
+      if (src.ValveVolume != null)
+        PBProperty.Load(src.ValveVolume, dst.GetValveVolume());
 
       foreach (pulse.cdm.bind.SubstanceFractionData sf in src.FractionInspiredGas)
       {
@@ -52,14 +58,20 @@ namespace Pulse.CDM
       dst.Connection = (pulse.cdm.bind.BagValveMaskData.Types.eConnection)(int)src.GetConnection();
       if (src.HasBagResistance())
         dst.BagResistance = PBProperty.Unload(src.GetBagResistance());
+      if (src.HasConnectionVolume())
+        dst.ConnectionVolume = PBProperty.Unload(src.GetConnectionVolume());
       if (src.HasFilterResistance())
         dst.FilterResistance = PBProperty.Unload(src.GetFilterResistance());
-      else if (src.HasFilterVolume())
+      if (src.HasFilterVolume())
         dst.FilterVolume = PBProperty.Unload(src.GetFilterVolume());
-      else if (src.HasValvePositiveEndExpiredPressure())
+      if (src.HasSealResistance())
+        dst.SealResistance = PBProperty.Unload(src.GetSealResistance());
+      if (src.HasValvePositiveEndExpiredPressure())
         dst.ValvePositiveEndExpiredPressure = PBProperty.Unload(src.GetValvePositiveEndExpiredPressure());
-      else if (src.HasValveResistance())
+      if (src.HasValveResistance())
         dst.ValveResistance = PBProperty.Unload(src.GetValveResistance());
+      if (src.HasValveVolume())
+        dst.ValveVolume = PBProperty.Unload(src.GetValveVolume());
 
       foreach (SESubstanceFraction aGas in src.GetFractionInspiredGases())
       {

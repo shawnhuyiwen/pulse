@@ -56,9 +56,21 @@ public:
   virtual SEScalarPressureTimePerVolume& GetFilterResistance();
   virtual double GetFilterResistance(const PressureTimePerVolumeUnit& unit) const;
 
+  virtual bool HasSealResistance() const;
+  virtual SEScalarPressureTimePerVolume& GetSealResistance();
+  virtual double GetSealResistance(const PressureTimePerVolumeUnit& unit) const;
+
   virtual bool HasFilterVolume() const;
   virtual SEScalarVolume& GetFilterVolume();
   virtual double GetFilterVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasConnectionVolume() const;
+  virtual SEScalarVolume& GetConnectionVolume();
+  virtual double GetConnectionVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasValveVolume() const;
+  virtual SEScalarVolume& GetValveVolume();
+  virtual double GetValveVolume(const VolumeUnit& unit) const;
 
   virtual bool HasValveResistance() const;
   virtual SEScalarPressureTimePerVolume& GetValveResistance();
@@ -91,7 +103,10 @@ protected:
 
   SEScalarPressureTimePerVolume*               m_BagResistance;
   SEScalarPressureTimePerVolume*               m_FilterResistance;
+  SEScalarPressureTimePerVolume*               m_SealResistance;
   SEScalarVolume*                              m_FilterVolume;
+  SEScalarVolume*                              m_ConnectionVolume;
+  SEScalarVolume*                              m_ValveVolume;
   SEScalarPressure*                            m_ValvePositiveEndExpiredPressure;
   SEScalarPressureTimePerVolume*               m_ValveResistance;
 

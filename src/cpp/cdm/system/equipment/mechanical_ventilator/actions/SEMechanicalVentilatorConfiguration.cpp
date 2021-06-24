@@ -122,6 +122,12 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tInspirationTubeResistance: "; m_Configuration->HasInspirationTubeResistance() ? str << m_Configuration->GetInspirationTubeResistance() : str << "NaN";
     str << "\n\tInspirationValveResistance: "; m_Configuration->HasInspirationValveResistance() ? str << m_Configuration->GetInspirationValveResistance() : str << "NaN";
     str << "\n\tInspirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Configuration->GetInspirationWaveform());
+    str << "\n\tExpirationLimbVolume: "; m_Configuration->HasExpirationLimbVolume() ? str << m_Configuration->GetExpirationLimbVolume() : str << "NaN";
+    str << "\n\tExpirationValveVolume: "; m_Configuration->HasExpirationValveVolume() ? str << m_Configuration->GetExpirationValveVolume() : str << "NaN";
+    str << "\n\tInspirationLimbVolume: "; m_Configuration->HasInspirationLimbVolume() ? str << m_Configuration->GetInspirationLimbVolume() : str << "NaN";
+    str << "\n\tInspirationValveVolume: "; m_Configuration->HasInspirationValveVolume() ? str << m_Configuration->GetInspirationValveVolume() : str << "NaN";
+    str << "\n\tYPieceVolume: "; m_Configuration->HasYPieceVolume() ? str << m_Configuration->GetYPieceVolume() : str << "NaN";
+    str << "\n\tConnectionVolume: "; m_Configuration->HasConnectionVolume() ? str << m_Configuration->GetConnectionVolume() : str << "NaN";
     if (m_Configuration->HasFractionInspiredGas())
     {
       for (SESubstanceFraction* sf : m_Configuration->GetFractionInspiredGases())

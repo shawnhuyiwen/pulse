@@ -39,10 +39,14 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   if (src.has_expirationcycletime())
     PBProperty::Load(src.expirationcycletime(), dst.GetExpirationCycleTime());
 
+  if (src.has_expirationlimbvolume())
+    PBProperty::Load(src.expirationlimbvolume(), dst.GetExpirationLimbVolume());
   if (src.has_expirationtuberesistance())
     PBProperty::Load(src.expirationtuberesistance(), dst.GetExpirationTubeResistance());
   if (src.has_expirationvalveresistance())
     PBProperty::Load(src.expirationvalveresistance(), dst.GetExpirationValveResistance());
+  if (src.has_expirationvalvevolume())
+    PBProperty::Load(src.expirationvalvevolume(), dst.GetExpirationValveVolume());
   dst.SetExpirationWaveform((eMechanicalVentilator_DriverWaveform)src.expirationwaveform());
 
   if (src.has_inspirationlimitflow())
@@ -68,11 +72,20 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   if (src.has_inspirationpatienttriggerpressure())
     PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());  
 
+  if (src.has_inspirationlimbvolume())
+    PBProperty::Load(src.inspirationlimbvolume(), dst.GetInspirationLimbVolume());
   if (src.has_inspirationtuberesistance())
     PBProperty::Load(src.inspirationtuberesistance(), dst.GetInspirationTubeResistance());
   if (src.has_inspirationvalveresistance())
     PBProperty::Load(src.inspirationvalveresistance(), dst.GetInspirationValveResistance());
+  if (src.has_inspirationvalvevolume())
+    PBProperty::Load(src.inspirationvalvevolume(), dst.GetInspirationValveVolume());
   dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+
+  if (src.has_ypiecevolume())
+    PBProperty::Load(src.ypiecevolume(), dst.GetYPieceVolume());
+  if (src.has_connectionvolume())
+    PBProperty::Load(src.connectionvolume(), dst.GetConnectionVolume());
 
   const SESubstance* sub;
   for (int i = 0; i < src.fractioninspiredgas_size(); i++)
@@ -134,8 +147,12 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
   if (src.HasExpirationCycleTime())
     dst.set_allocated_expirationcycletime(PBProperty::Unload(*src.m_ExpirationCycleTime));
 
+  if (src.HasExpirationLimbVolume())
+    dst.set_allocated_expirationlimbvolume(PBProperty::Unload(*src.m_ExpirationLimbVolume));
   if (src.HasExpirationTubeResistance())
     dst.set_allocated_expirationtuberesistance(PBProperty::Unload(*src.m_ExpirationTubeResistance));
+  if (src.HasExpirationValveVolume())
+    dst.set_allocated_expirationvalvevolume(PBProperty::Unload(*src.m_ExpirationValveVolume));
   if (src.HasExpirationValveResistance())
     dst.set_allocated_expirationvalveresistance(PBProperty::Unload(*src.m_ExpirationValveResistance));
   dst.set_expirationwaveform((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)src.m_ExpirationWaveform);
@@ -167,7 +184,16 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
     dst.set_allocated_inspirationtuberesistance(PBProperty::Unload(*src.m_InspirationTubeResistance));
   if (src.HasInspirationValveResistance())
     dst.set_allocated_inspirationvalveresistance(PBProperty::Unload(*src.m_InspirationValveResistance));
+  if (src.HasInspirationLimbVolume())
+    dst.set_allocated_inspirationlimbvolume(PBProperty::Unload(*src.m_InspirationLimbVolume));
+  if (src.HasInspirationValveVolume())
+    dst.set_allocated_inspirationvalvevolume(PBProperty::Unload(*src.m_InspirationValveVolume));
   dst.set_inspirationwaveform((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)src.m_InspirationWaveform);
+
+  if (src.HasYPieceVolume())
+    dst.set_allocated_ypiecevolume(PBProperty::Unload(*src.m_YPieceVolume));
+  if (src.HasConnectionVolume())
+    dst.set_allocated_connectionvolume(PBProperty::Unload(*src.m_ConnectionVolume));
 
   for (SESubstanceFraction* sf : src.m_FractionInspiredGases)
     dst.mutable_fractioninspiredgas()->AddAllocated(PBSubstance::Unload(*sf));

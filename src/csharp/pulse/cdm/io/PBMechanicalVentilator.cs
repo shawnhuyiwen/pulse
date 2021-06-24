@@ -38,10 +38,14 @@ namespace Pulse.CDM
       else if (src.ExpirationCycleVolume != null)
         PBProperty.Load(src.ExpirationCycleVolume, dst.GetExpirationCycleVolume());
 
+      if (src.ExpirationLimbVolume != null)
+        PBProperty.Load(src.ExpirationLimbVolume, dst.GetExpirationLimbVolume());
       if (src.ExpirationTubeResistance != null)
         PBProperty.Load(src.ExpirationTubeResistance, dst.GetExpirationTubeResistance());
       if (src.ExpirationValveResistance != null)
         PBProperty.Load(src.ExpirationValveResistance, dst.GetExpirationValveResistance());
+      if (src.ExpirationValveVolume != null)
+        PBProperty.Load(src.ExpirationValveVolume, dst.GetExpirationValveVolume());
       dst.SetExpirationWaveform((SEMechanicalVentilator.DriverWaveform)src.ExpirationWaveform);
 
       if (src.InspirationLimitFlow != null)
@@ -67,11 +71,20 @@ namespace Pulse.CDM
       else if (src.InspirationPatientTriggerPressure != null)
         PBProperty.Load(src.InspirationPatientTriggerPressure, dst.GetInspirationPatientTriggerPressure());
 
+      if (src.InspirationLimbVolume != null)
+        PBProperty.Load(src.InspirationLimbVolume, dst.GetInspirationLimbVolume());
       if (src.InspirationTubeResistance != null)
         PBProperty.Load(src.InspirationTubeResistance, dst.GetInspirationTubeResistance());
       if (src.InspirationValveResistance != null)
         PBProperty.Load(src.InspirationValveResistance, dst.GetInspirationValveResistance());
+      if (src.InspirationValveVolume != null)
+        PBProperty.Load(src.InspirationValveVolume, dst.GetInspirationValveVolume());
       dst.SetInspirationWaveform((SEMechanicalVentilator.DriverWaveform)src.InspirationWaveform);
+
+      if (src.YPieceVolume != null)
+        PBProperty.Load(src.YPieceVolume, dst.GetYPieceVolume());
+      if (src.ConnectionVolume != null)
+        PBProperty.Load(src.ConnectionVolume, dst.GetConnectionVolume());
 
       foreach (pulse.cdm.bind.SubstanceFractionData sf in src.FractionInspiredGas)
       {
@@ -108,10 +121,14 @@ namespace Pulse.CDM
       else if (src.HasExpirationCycleVolume())
         dst.ExpirationCycleVolume = PBProperty.Unload(src.GetExpirationCycleVolume());
 
+      if (src.HasExpirationLimbVolume())
+        dst.ExpirationLimbVolume = PBProperty.Unload(src.GetExpirationLimbVolume());
       if (src.HasExpirationTubeResistance())
         dst.ExpirationTubeResistance = PBProperty.Unload(src.GetExpirationTubeResistance());
       if (src.HasExpirationValveResistance())
         dst.ExpirationValveResistance = PBProperty.Unload(src.GetExpirationValveResistance());
+      if (src.HasExpirationValveVolume())
+        dst.ExpirationValveVolume = PBProperty.Unload(src.GetExpirationValveVolume());
       dst.ExpirationWaveform = (pulse.cdm.bind.MechanicalVentilatorData.Types.eDriverWaveform)(int)src.GetExpirationWaveform();
 
       if (src.HasInspirationLimitFlow())
@@ -137,11 +154,20 @@ namespace Pulse.CDM
       else if (src.HasInspirationPatientTriggerPressure())
         dst.InspirationPatientTriggerPressure = PBProperty.Unload(src.GetInspirationPatientTriggerPressure());
 
+      if (src.HasInspirationLimbVolume())
+        dst.InspirationLimbVolume = PBProperty.Unload(src.GetInspirationLimbVolume());
       if (src.HasInspirationTubeResistance())
         dst.InspirationTubeResistance = PBProperty.Unload(src.GetInspirationTubeResistance());
       if (src.HasInspirationValveResistance())
         dst.InspirationValveResistance = PBProperty.Unload(src.GetInspirationValveResistance());
+      if (src.HasInspirationValveVolume())
+        dst.InspirationValveVolume = PBProperty.Unload(src.GetInspirationValveVolume());
       dst.InspirationWaveform = (pulse.cdm.bind.MechanicalVentilatorData.Types.eDriverWaveform)(int)src.GetInspirationWaveform();
+
+      if (src.HasYPieceVolume())
+        dst.YPieceVolume = PBProperty.Unload(src.GetYPieceVolume());
+      if (src.HasConnectionVolume())
+        dst.ConnectionVolume = PBProperty.Unload(src.GetConnectionVolume());
 
       foreach (SESubstanceFraction aGas in src.GetFractionInspiredGases())
       {

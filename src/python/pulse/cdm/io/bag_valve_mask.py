@@ -12,14 +12,20 @@ def serialize_bag_valve_mask_to_bind(src: SEBagValveMask, dst: BagValveMaskData)
     
     if src.has_bag_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_bag_resistance(), dst.BagResistance)
+    if src.has_connection_volume():
+        serialize_scalar_volume_to_bind(src.get_connection_volume()(), dst.ConnectionVolume)
     if src.has_filter_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_filter_resistance(), dst.FilterResistance)
     if src.has_filter_volume():
         serialize_scalar_volume_to_bind(src.get_filter_volume(), dst.FilterVolume)
+    if src.has_seal_resistance():
+        serialize_scalar_pressure_time_per_volume_to_bind(src.get_seal_resistance(), dst.SealResistance)
     if src.has_valve_positive_end_expired_pressure():
         serialize_scalar_pressure_to_bind(src.get_valve_positive_end_expired_pressure(), dst.ValvePositiveEndExpiredPressure)
     if src.has_valve_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_valve_resistance(), dst.ValveResistance)
+    if src.has_valve_volume():
+        serialize_scalar_volume_to_bind(src.get_valve_volume(), dst.ValveVolume)
 
     for aGas in src.get_fraction_inspired_gasses():
         sf = SubstanceFractionData()
