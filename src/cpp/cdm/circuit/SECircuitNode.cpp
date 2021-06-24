@@ -92,12 +92,16 @@ template<CIRCUIT_NODE_TEMPLATE>
 void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposePotential(double v, const PotentialUnit& unit)
 {
   m_PotentialType = eBlackBox_Property_Type::Imposed;
+  if (m_NextPotential == nullptr)
+    m_NextPotential = new PotentialScalar();
   m_NextPotential->SetValue(v, unit);
 }
 template<CIRCUIT_NODE_TEMPLATE>
 void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposePotential(const PotentialScalar& s)
 {
   m_PotentialType = eBlackBox_Property_Type::Imposed;
+  if (m_NextPotential == nullptr)
+    m_NextPotential = new PotentialScalar();
   m_NextPotential->Set(s);
 }
 

@@ -25,7 +25,8 @@ SEBlackBoxManager::~SEBlackBoxManager()
 {
   DELETE_MAP_SECOND(m_ElectricalBoxes);
   DELETE_MAP_SECOND(m_GasBoxes);
-  DELETE_MAP_SECOND(m_LiquidBoxes);
+  //Aaron - It craps out here
+  //DELETE_MAP_SECOND(m_LiquidBoxes);
   DELETE_MAP_SECOND(m_ThermalBoxes);
 }
 

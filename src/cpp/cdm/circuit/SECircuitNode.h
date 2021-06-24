@@ -17,6 +17,7 @@ enum class eBlackBox_Property_Type
 
 enum class eBlackBox_Node_Type
 {
+  //Aaron - Just make this a middle bool, since nodes can belong to multiple black boxes sources/targets?
   None = 0,
   Source,
   Target,

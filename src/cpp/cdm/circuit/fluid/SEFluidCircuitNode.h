@@ -41,6 +41,8 @@ public:
   SEFluidCircuitNode* GetBlackBoxTargetNode() const;
   void SetBlackBoxTargetNode(SEFluidCircuitNode* n);
 
+  //Aaron  - Add black box source and target paths
+
 protected:
   SEFluidCircuitNode* m_BlackBoxSourceNode=nullptr;// Only set on middle Fluid
   SEFluidCircuitNode* m_BlackBoxTargetNode=nullptr;// Only set on middle Fluid

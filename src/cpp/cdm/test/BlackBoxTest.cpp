@@ -23,7 +23,7 @@ void CommonDataModelTest::BasicBlackBoxComparisonTest(const std::string& sOutput
 
   //jbw - Add transport
 
-  std::cout << "BlackBoxComparisonCircuitTest\n";
+  std::cout << "BasicBlackBoxComparisonTest\n";
 
   m_Logger->SetLogFile(sOutputDirectory + "/BasicBlackBoxComparisonTest.log");
   TimingProfile p;
@@ -94,7 +94,7 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
 {
   //jbw - Add transport
 
-  std::cout << "BlackBoxTest\n";
+  std::cout << "BasicBlackBoxTest\n";
   m_Logger->SetLogFile(sOutputDirectory + "/BasicBlackBoxTest.log");
   TimingProfile p;
   double timeStep_s = 1.0 / 50.0;
@@ -146,68 +146,34 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
   SEFluidCircuitNode& BB1Node = fluidCircuit1->CreateNode("BB1Node");
   SEFluidCircuitPath& BB1Path1 = fluidCircuit1->CreatePath(Node2, BB1Node, "BB1Path1");
   SEFluidCircuitPath& BB1Path2 = fluidCircuit1->CreatePath(BB1Node, Node4, "BB1Path2");
-  SEFluidBlackBox& BlackBox1 = *BBmgr.GetLiquidBlackBox("BB1","");// jbw correct names
+  SEFluidBlackBox& BlackBox1 = *BBmgr.GetLiquidBlackBox("Node2","Node4","BB1");
   BBmgr.MapBlackBox<MAP_FLUID_BLACK_BOX>(BlackBox1, BB1Path1, BB1Path2);
 
   SEFluidCircuitNode& BB2Node = fluidCircuit2->CreateNode("BB2Node");
   SEFluidCircuitPath& BB2Path1 = fluidCircuit2->CreatePath(Node6, BB2Node, "BB2Path1");
   SEFluidCircuitPath& BB2Path2 = fluidCircuit2->CreatePath(BB2Node, Node5, "BB2Path2");
-  SEFluidBlackBox& BlackBox2 = *BBmgr.GetLiquidBlackBox("BB2", "");// jbw correct names
+  SEFluidBlackBox& BlackBox2 = *BBmgr.GetLiquidBlackBox("Node6", "Node5", "BB2");
   BBmgr.MapBlackBox<MAP_FLUID_BLACK_BOX>(BlackBox2, BB2Path1, BB2Path2);
 
   fluidCircuit1->StateChange();
   fluidCircuit2->StateChange();
 
-  //Imposed = black box forces it on circuit
-
-  //Provided = circuit calculates it
-  BlackBox2.RemoveImposedPotential();
-  //BlackBox2.GetSourcePressure().SetType(eBlackBox_Property_Type::Imposed);
-  //BlackBox2.GetTargetPressure().SetType(eBlackBox_Property_Type::Imposed);
-  BlackBox2.RemoveImposedSourceFlux();
-  BlackBox2.RemoveImposedTargetFlux();
-
-  BlackBox1.RemoveImposedPotential();
-  BlackBox1.RemoveImposedSourcePotential();
-  BlackBox1.RemoveImposedTargetPotential();
-  //BlackBox1.GetSourceFlow().SetType(eBlackBox_Property_Type::Imposed);
-  //BlackBox1.GetTargetFlow().SetType(eBlackBox_Property_Type::Imposed);
-
   Node2.GetPressure().SetValue(0.0, PressureUnit::Pa);
   Node4.GetPressure().SetValue(0.0, PressureUnit::Pa);
   BB2Path2.GetFlow().SetValue(0.0, VolumePerTimeUnit::m3_Per_s);
-
-  //BlackBox1.GetPressure().SetType(eBlackBox_Property_Type::Provided);
-  //BlackBox1.GetSourcePressure().SetType(eBlackBox_Property_Type::Imposed);
-  //BlackBox1.GetTargetPressure().SetType(eBlackBox_Property_Type::Provided);
-  //BlackBox1.GetSourceFlow().SetType(eBlackBox_Property_Type::Provided);
-  //BlackBox1.GetTargetFlow().SetType(eBlackBox_Property_Type::Provided);
-
-  //BlackBox2.GetPressure().SetType(eBlackBox_Property_Type::Provided);
-  //BlackBox2.GetSourcePressure().SetType(eBlackBox_Property_Type::Provided);
-  //BlackBox2.GetTargetPressure().SetType(eBlackBox_Property_Type::Provided);
-  //BlackBox2.GetSourceFlow().SetType(eBlackBox_Property_Type::Provided);
-  //BlackBox2.GetTargetFlow().SetType(eBlackBox_Property_Type::Imposed);
-
-  //Node5.GetPressure().SetValue(8.0, PressureUnit::Pa);
-  //BB1Path2.GetFlow().SetValue(0.32, VolumePerTimeUnit::m3_Per_s);
 
   //Run -----------------------------------------------------------------------------
   double sample = 0;
   while (currentTime_s < 100)
   {
     //Black Box settings ------------------------------------------------------------
+    //Imposed = black box forces it on circuit
     BlackBox2.ImposeSourcePotential(Node4.GetPressure());
     BlackBox2.ImposeTargetPotential(Node2.GetPressure());
     BlackBox1.ImposeSourceFlux(BB2Path2.GetFlow());
     BlackBox1.ImposeTargetFlux(BB2Path2.GetFlow());
 
-    //BlackBox1.GetSourcePressure().Set(Node5.GetPressure());
-    //BlackBox2.GetTargetFlow().Set(BB1Path2.GetFlow());
-
-    //BlackBox1.GetSourcePressure().SetValue(Node5.GetPressure(PressureUnit::Pa), PressureUnit::Pa);
-    //BlackBox2.GetTargetFlow().SetValue(BB1Path2.GetFlow(VolumePerTimeUnit::m3_Per_s), VolumePerTimeUnit::m3_Per_s);
-        
+    //Circuit1 has the source
     FluidPreProcess(*fluidCircuit1, currentTime_s);
 
     fluidCalculator.Process(*fluidCircuit1, timeStep_s);
@@ -215,7 +181,7 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
 
     fluidCalculator.PostProcess(*fluidCircuit1);
     fluidCalculator.PostProcess(*fluidCircuit2);
-    
+
     currentTime_s += timeStep_s;
     sample += timeStep_s;
     if (sample > 0.1) //every 0.1 seconds, track state of circuit
@@ -257,6 +223,7 @@ void CommonDataModelTest::SimpleBlackBoxTest(const std::string& sOutputDirectory
     bool imposePassiveSourceFlow = iter & 0x040;
     bool imposePassiveTargetFlow = iter & 0x080;
 
+    //jbw - I think every possible combination is technically valid now?
     bool isValid = int(imposeDriverSourcePressure) + int(imposeDriverSourceFlow) == 1 &&
       int(imposeDriverTargetPressure) + int(imposeDriverTargetFlow) == 1 &&
       int(imposePassiveSourcePressure) + int(imposePassiveSourceFlow) == 1 &&
@@ -328,14 +295,14 @@ void CommonDataModelTest::SimpleBlackBoxTest(const std::string& sOutputDirectory
       SEFluidCircuitNode& nodeBBPassive = circuitDriver->CreateNode("nodeBBPassive");
       SEFluidCircuitPath& pathBBPassiveSource = circuitDriver->CreatePath(nodeDriverBBSource, nodeBBPassive, "pathBBPassiveSource");
       SEFluidCircuitPath& pathBBPassiveTarget = circuitDriver->CreatePath(nodeBBPassive, nodeDriverBBTarget, "pathBBPassiveTarget");
-      blackBoxPassive = managerBlackBox.GetLiquidBlackBox("blackBoxPassive", "");// jbw correct names
+      blackBoxPassive = managerBlackBox.GetLiquidBlackBox("nodeDriverBBSource","nodeDriverBBTarget", "BBPassive");
       managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxPassive, pathBBPassiveSource, pathBBPassiveTarget);
 
       //Replaces Driver
       SEFluidCircuitNode& nodeBBDriver = circuitPassive->CreateNode("nodeBBDriver");
       SEFluidCircuitPath& pathBBDriverSource = circuitPassive->CreatePath(nodePassiveBBSource, nodeBBDriver, "pathBBDriverSource");
       SEFluidCircuitPath& pathBBDriverTarget = circuitPassive->CreatePath(nodeBBDriver, nodePassiveBBTarget, "pathBBDriverTarget");
-      blackBoxDriver = managerBlackBox.GetLiquidBlackBox("blackBoxDriver", "");// jbw correct names
+      blackBoxDriver = managerBlackBox.GetLiquidBlackBox("nodePassiveBBSource", "nodePassiveBBTarget", "BBDriver");
       managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxDriver, pathBBDriverSource, pathBBDriverTarget);
 
       // Imposed = black box forces it on circuit
@@ -614,14 +581,14 @@ void CommonDataModelTest::WindkesselBlackBoxTest(const std::string& sOutputDirec
       SEFluidCircuitNode& nodeBlackBoxDriver = circuitWindkessel->CreateNode("nodeBlackBoxDriver");
       SEFluidCircuitPath& pathBlackBoxDriverSource = circuitWindkessel->CreatePath(nodeWindkesselResistance2, nodeBlackBoxDriver, "pathBlackBoxDriverSource");
       SEFluidCircuitPath& pathBlackBoxDriverTarget = circuitWindkessel->CreatePath(nodeBlackBoxDriver, nodeWindkesselResistance1, "pathBlackBoxDriverTarget");
-      blackBoxDriver = managerBlackBox.GetLiquidBlackBox("blackBoxDriver", "");// jbw correct names
+      blackBoxDriver = managerBlackBox.GetLiquidBlackBox("nodeWindkesselResistance2", "nodeWindkesselResistance1", "BlackBoxDriver");
       managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxDriver, pathBlackBoxDriverSource, pathBlackBoxDriverTarget);
 
       //Replaces the Windkessel
       SEFluidCircuitNode& nodeBlackBoxWindkessel = circuitDriver->CreateNode("nodeBlackBoxWindkessel");
       SEFluidCircuitPath& pathBlackBoxWindkesselSource = circuitDriver->CreatePath(nodeDriverResistance2, nodeBlackBoxWindkessel, "pathBlackBoxWindkesselSource");
       SEFluidCircuitPath& pathBlackBoxWindkesselTarget = circuitDriver->CreatePath(nodeBlackBoxWindkessel, nodeDriverResistance1, "pathBlackBoxWindkesselTarget");
-      blackBoxWindkessel = managerBlackBox.GetLiquidBlackBox("blackBoxWindkessel", "");// jbw correct names
+      blackBoxWindkessel = managerBlackBox.GetLiquidBlackBox("nodeDriverResistance2", "nodeDriverResistance1", "BlackBoxWindkessel");
       managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxWindkessel, pathBlackBoxWindkesselSource, pathBlackBoxWindkesselTarget);
 
       // Imposed = black box forces it on circuit

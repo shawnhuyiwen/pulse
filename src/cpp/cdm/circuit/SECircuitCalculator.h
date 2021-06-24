@@ -47,8 +47,6 @@ protected:
   // Valve Support
   virtual bool CheckAndModifyValves();
   virtual bool IsCurrentValveStateUnique();
-  // Black Box Support
-  virtual void ParseInBlackBoxNodes();
   // Eigen Support
   virtual void PopulateAMatrix(NodeType& nKCL, PathType& p, double dMultiplier, bool hasPotentialSource = false);  
   // These are all transient and cleared/set at the start of the process call

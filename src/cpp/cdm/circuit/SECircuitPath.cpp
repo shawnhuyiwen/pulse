@@ -586,12 +586,16 @@ template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::ImposeFlux(double v, const FluxUnit& unit)
 {
   m_FluxType = eBlackBox_Property_Type::Imposed;
+  if (m_NextFlux == nullptr)
+    m_NextFlux = new FluxScalar();
   m_NextFlux->SetValue(v, unit);
 }
 template<CIRCUIT_PATH_TEMPLATE>
 void SECircuitPath<CIRCUIT_PATH_TYPES>::ImposeFlux(const FluxScalar& s)
 {
   m_FluxType = eBlackBox_Property_Type::Imposed;
+  if (m_NextFlux == nullptr)
+    m_NextFlux = new FluxScalar();
   m_NextFlux->Set(s);
 }
 
