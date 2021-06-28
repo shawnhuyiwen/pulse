@@ -118,6 +118,20 @@ void SECircuit<CIRCUIT_TYPES>::StateChange()
       m_PolarizedElementPaths.push_back(p);
   }
 
+  // Check blackbox nodes
+  for (NodeType* n : m_Nodes)
+  {
+    if (n->IsBlackBoxMiddle())
+    {
+      auto paths = GetConnectedPaths(*n);
+      if(paths->size() != 2)
+      {
+        ///\error Fatal: Invalid Blackbox in the Circuit.
+        Fatal(n->GetName() + " has invalid black box configuration, must have only 2 paths associated");
+      }
+    }
+  }
+
   if ((m_ValvePaths.size()+m_PolarizedElementPaths.size()) > 64)
   {
     ///\error Fatal: There are too many assumed state options.  The Circuit solver can only handle up to 64 Diodes and Polar Elements in a single circuit (i.e. ~1.8e19 possible combinations).

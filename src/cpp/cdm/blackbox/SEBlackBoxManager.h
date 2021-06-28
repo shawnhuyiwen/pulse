@@ -41,6 +41,9 @@ protected:
   template<typename tBlackBox, typename tCompartment, typename tLink, typename tNode, typename tPath>
   bool MapBlackBox(tBlackBox& bb, tLink& src2bbLink, tLink& bb2tgtLink)
   {
+    if (bb.HasCompartment())
+      Warning("Blackbox " + bb.GetName() + " already has a compartment mapped, only 1 black box can be between 2 compartments");
+
     tCompartment& midCmpt = src2bbLink.GetTargetCompartment();
     tCompartment& srcCmpt = src2bbLink.GetSourceCompartment();
     tCompartment& tgtCmpt = bb2tgtLink.GetTargetCompartment();
@@ -60,6 +63,9 @@ protected:
   template<typename tBlackBox, typename tNode, typename tPath>
   bool MapBlackBox(tBlackBox& bb, tPath& srcPath, tPath& tgtPath)
   {
+    if (bb.HasMiddleNode())
+      Warning("Blackbox " + bb.GetName() + " already has nodes mapped, only 1 blackbox can be between nodes");
+
     tNode& midNode = srcPath.GetTargetNode();
     tNode& srcNode = srcPath.GetSourceNode();
     tNode& tgtNode = tgtPath.GetTargetNode();
@@ -84,7 +90,6 @@ protected:
     tgtNode.SetPartOfBlackBox(true);
     srcPath.SetPartOfBlackBox(true);
     tgtPath.SetPartOfBlackBox(true);
-
 
     bb.SetMiddleNode(&midNode);
     bb.SetSourceNode(&srcNode);
