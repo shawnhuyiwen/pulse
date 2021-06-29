@@ -8,18 +8,14 @@
 #include "utils/FileUtils.h"
 #include "io/protobuf/PBCompartment.h"
 
-CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger())
-{
-  m_Circuits = new SECircuitManager(m_Logger);
-  myLogger = true;
-  FillFunctionMap();
-}
-
-CommonDataModelTest::CommonDataModelTest(Logger* logger) : Loggable(logger)
+CommonDataModelTest::CommonDataModelTest(Logger* logger) : SETestManager(logger)
 {
   m_Circuits = new SECircuitManager(m_Logger);
   myLogger = false;
-  FillFunctionMap();
+}
+CommonDataModelTest::CommonDataModelTest() : CommonDataModelTest(new Logger())
+{
+
 }
 
 CommonDataModelTest::~CommonDataModelTest()

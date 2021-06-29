@@ -472,7 +472,7 @@ void Respiratory::AtSteadyState()
   else if (m_data.GetState() == EngineState::AtSecondaryStableState)
     typeString = "Secondary Stabilization Homeostasis: ";
   else if (m_data.GetState() == EngineState::Active)
-    typeString = "Final Stabilization Homeostasis: ";
+    typeString = "Starting ";
 
   std::stringstream ss;
   ss << typeString << "Patient tidal volume = " << tidalVolumeBaseline_L << " L.";

@@ -84,7 +84,6 @@ bool PulseController::CreateCircuitsAndCompartments()
 
   // This node is shared between the respiratory, anesthesia, and inhaler circuits
   SEFluidCircuitNode& Ambient = m_Circuits->CreateFluidNode(pulse::EnvironmentNode::Ambient);
-  Ambient.GetPressure().SetValue(1033.23, PressureUnit::cmH2O); // default = 1 atm
   Ambient.GetNextVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
   Ambient.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
   SEGasCompartment& gEnvironment = m_Compartments->CreateGasCompartment(pulse::EnvironmentCompartment::Ambient);
@@ -93,11 +92,8 @@ bool PulseController::CreateCircuitsAndCompartments()
   lEnvironment.MapNode(Ambient);
   Ambient.SetAsReferenceNode();
 
+  m_Environment->Clear();
   m_Environment->Initialize();
-  m_Environment->GetEnvironmentalConditions().Copy(m_Config->GetInitialEnvironmentalConditions(), *m_Substances);
-  m_Environment->StateChange();
-  // Update the environment pressures on all the 'air' circuits to match what the environment was set to
-  gEnvironment.GetPressure().Set(m_Environment->GetEnvironmentalConditions().GetAtmosphericPressure());
 
   SetupRespiratory();
   SetupAnesthesiaMachine();
@@ -1158,7 +1154,7 @@ void PulseController::SetupRenal()
   // Circuit Interdependence
   SEFluidCircuit& cCardiovascular = m_Circuits->GetCardiovascularCircuit();
 
-  //assuming there is a left and right kidney node in cardiovascular AND that a baseline volume is set (as a function of patient mass): 
+  //assuming there is a left and right kidney node in cardiovascular AND that a baseline volume is set (as a function of patient mass):
   double leftKidneyFluidVolume_mL = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftKidney1)->GetVolumeBaseline(VolumeUnit::mL);
   double singleKidneyLargeVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 2;    //Total large vasculature fluid volume
   double singleKidneySmallVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 2;    //Total small vasculature fluid volume 
@@ -2812,69 +2808,69 @@ void PulseController::SetupRespiratory()
 
   // Airway
   SEFluidCircuitNode& Airway = cRespiratory.CreateNode(pulse::RespiratoryNode::Airway);
-  Airway.GetPressure().Set(Ambient.GetPressure());
+  Airway.GetPressure().Set(Ambient.GetNextPressure());
   Airway.GetVolumeBaseline().SetValue(0.0206, VolumeUnit::L);
   // Carina
   SEFluidCircuitNode& Carina = cRespiratory.CreateNode(pulse::RespiratoryNode::Carina);
-  Carina.GetPressure().Set(Ambient.GetPressure());
+  Carina.GetPressure().Set(Ambient.GetNextPressure());
   Carina.GetVolumeBaseline().SetValue(0.05 * FunctionalResidualCapacity_L / 2.4, VolumeUnit::L); //Trachea Volume
   // Right Anatomic Dead Space
   SEFluidCircuitNode& RightAnatomicDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAnatomicDeadSpace);
-  RightAnatomicDeadSpace.GetPressure().Set(Ambient.GetPressure());
+  RightAnatomicDeadSpace.GetPressure().Set(Ambient.GetNextPressure());
   RightAnatomicDeadSpace.GetVolumeBaseline().SetValue(RightLungRatio * anatomicDeadSpaceVolume_L, VolumeUnit::L);
   // Left Anatomic Dead Space
   SEFluidCircuitNode& LeftAnatomicDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAnatomicDeadSpace);
-  LeftAnatomicDeadSpace.GetPressure().Set(Ambient.GetPressure());
+  LeftAnatomicDeadSpace.GetPressure().Set(Ambient.GetNextPressure());
   LeftAnatomicDeadSpace.GetVolumeBaseline().SetValue(LeftLungRatio * anatomicDeadSpaceVolume_L, VolumeUnit::L);
   // Right Alveolar Dead Space
   SEFluidCircuitNode& RightAlveolarDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveolarDeadSpace);
-  RightAlveolarDeadSpace.GetPressure().Set(Ambient.GetPressure());
+  RightAlveolarDeadSpace.GetPressure().Set(Ambient.GetNextPressure());
   RightAlveolarDeadSpace.GetVolumeBaseline().SetValue(RightLungRatio * alveolarDeadSpaceVolume_L, VolumeUnit::L);
   // Left Alveolar Dead Space
   SEFluidCircuitNode& LeftAlveolarDeadSpace = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAlveolarDeadSpace);
-  LeftAlveolarDeadSpace.GetPressure().Set(Ambient.GetPressure());
+  LeftAlveolarDeadSpace.GetPressure().Set(Ambient.GetNextPressure());
   LeftAlveolarDeadSpace.GetVolumeBaseline().SetValue(LeftLungRatio * alveolarDeadSpaceVolume_L, VolumeUnit::L);
   // Right Alveoli
   SEFluidCircuitNode& RightAlveoli = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveoli);
-  RightAlveoli.GetPressure().Set(Ambient.GetPressure());
+  RightAlveoli.GetPressure().Set(Ambient.GetNextPressure());
   RightAlveoli.GetVolumeBaseline().SetValue(RightLungRatio * FunctionalResidualCapacity_L - RightLungRatio * physiologicDeadSpaceVolume_L, VolumeUnit::L);
   // Left Alveoli
   SEFluidCircuitNode& LeftAlveoli = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAlveoli);
-  LeftAlveoli.GetPressure().Set(Ambient.GetPressure());
+  LeftAlveoli.GetPressure().Set(Ambient.GetNextPressure());
   LeftAlveoli.GetVolumeBaseline().SetValue(LeftLungRatio * FunctionalResidualCapacity_L - LeftLungRatio * physiologicDeadSpaceVolume_L, VolumeUnit::L);
   // Node for right alveoli leak
   SEFluidCircuitNode& RightAlveoliLeak = cRespiratory.CreateNode(pulse::RespiratoryNode::RightAlveoliLeak);
-  RightAlveoliLeak.GetPressure().Set(Ambient.GetPressure());
+  RightAlveoliLeak.GetPressure().Set(Ambient.GetNextPressure());
   // Node for left alveoli leak
   SEFluidCircuitNode& LeftAlveoliLeak = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftAlveoliLeak);
-  LeftAlveoliLeak.GetPressure().Set(Ambient.GetPressure());
+  LeftAlveoliLeak.GetPressure().Set(Ambient.GetNextPressure());
   // Right Pleural Connection - no volume, so it doesn't get modified by compliances
   SEFluidCircuitNode& RightPleuralConnection = cRespiratory.CreateNode(pulse::RespiratoryNode::RightPleuralConnection);
-  RightPleuralConnection.GetPressure().SetValue(Ambient.GetPressure(PressureUnit::cmH2O) + IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
+  RightPleuralConnection.GetPressure().SetValue(Ambient.GetNextPressure(PressureUnit::cmH2O) + IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
   // Left Pleural Connection - no volume, so it doesn't get modified by compliances
   SEFluidCircuitNode& LeftPleuralConnection = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftPleuralConnection);
-  LeftPleuralConnection.GetPressure().SetValue(Ambient.GetPressure(PressureUnit::cmH2O) + IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
+  LeftPleuralConnection.GetPressure().SetValue(Ambient.GetNextPressure(PressureUnit::cmH2O) + IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
   // Right Pleural
   SEFluidCircuitNode& RightPleural = cRespiratory.CreateNode(pulse::RespiratoryNode::RightPleural);
-  RightPleural.GetPressure().SetValue(Ambient.GetPressure(PressureUnit::cmH2O) + IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
+  RightPleural.GetPressure().SetValue(Ambient.GetNextPressure(PressureUnit::cmH2O) + IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
   RightPleural.GetVolumeBaseline().SetValue(RightLungRatio * PleuralVolume_L, VolumeUnit::L);
   // Left Pleural 
   SEFluidCircuitNode& LeftPleural = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftPleural);
-  LeftPleural.GetPressure().SetValue(Ambient.GetPressure(PressureUnit::cmH2O) + IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
+  LeftPleural.GetPressure().SetValue(Ambient.GetNextPressure(PressureUnit::cmH2O) + IntrapleuralPressure_cmH2O, PressureUnit::cmH2O);
   LeftPleural.GetVolumeBaseline().SetValue(LeftLungRatio * PleuralVolume_L, VolumeUnit::L);
   // Node for left chest leak
   SEFluidCircuitNode& LeftChestLeak = cRespiratory.CreateNode(pulse::RespiratoryNode::LeftChestLeak);
-  LeftChestLeak.GetPressure().Set(Ambient.GetPressure());
+  LeftChestLeak.GetPressure().Set(Ambient.GetNextPressure());
   // Node for right Alveoli leak
   SEFluidCircuitNode& RightChestLeak = cRespiratory.CreateNode(pulse::RespiratoryNode::RightChestLeak);
-  RightChestLeak.GetPressure().Set(Ambient.GetPressure());
+  RightChestLeak.GetPressure().Set(Ambient.GetNextPressure());
   // Stomach
   SEFluidCircuitNode& Stomach = cRespiratory.CreateNode(pulse::RespiratoryNode::Stomach);
-  Stomach.GetPressure().Set(Ambient.GetPressure());
+  Stomach.GetPressure().Set(Ambient.GetNextPressure());
   Stomach.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   // Respiratory Muscle - corresponds to a node representing the inspiratory muscles, particularly diaphragm 
   SEFluidCircuitNode& RespiratoryMuscle = cRespiratory.CreateNode(pulse::RespiratoryNode::RespiratoryMuscle);
-  RespiratoryMuscle.GetPressure().Set(Ambient.GetPressure());
+  RespiratoryMuscle.GetPressure().Set(Ambient.GetNextPressure());
 
   // Environment to Airway connections, the path has no element.
   SEFluidCircuitPath& EnvironmentToAirway = cRespiratory.CreatePath(Ambient, Airway, pulse::RespiratoryPath::EnvironmentToAirway);
@@ -2928,7 +2924,7 @@ void PulseController::SetupRespiratory()
   LeftChestLeakToLeftPleural.SetNextValve(eGate::Closed);
   // Paths for the Driver
   SEFluidCircuitPath& EnvironmentToRespiratoryMuscle = cRespiratory.CreatePath(Ambient, RespiratoryMuscle, pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
-  EnvironmentToRespiratoryMuscle.GetPressureSourceBaseline().SetValue(RespiratoryMuscle.GetPressure(PressureUnit::cmH2O) - Ambient.GetPressure(PressureUnit::cmH2O), PressureUnit::cmH2O);
+  EnvironmentToRespiratoryMuscle.GetPressureSourceBaseline().SetValue(RespiratoryMuscle.GetPressure(PressureUnit::cmH2O) - Ambient.GetNextPressure(PressureUnit::cmH2O), PressureUnit::cmH2O);
   // Esophageal (Stomach) path
   SEFluidCircuitPath& AirwayToStomach = cRespiratory.CreatePath(Airway, Stomach, pulse::RespiratoryPath::AirwayToStomach);
   AirwayToStomach.GetResistanceBaseline().SetValue(OpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -3185,50 +3181,50 @@ void PulseController::SetupAnesthesiaMachine()
   // Ventilator //
   SEFluidCircuitNode& Ventilator = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::Ventilator);
   Ventilator.GetVolumeBaseline().SetValue(ventilatorVolume_L, VolumeUnit::L);
-  Ventilator.GetPressure().Set(Ambient.GetPressure());
+  Ventilator.GetPressure().Set(Ambient.GetNextPressure());
   /////////////////
   // ReliefValve //
   SEFluidCircuitNode& ReliefValve = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::ReliefValve);
-  ReliefValve.GetPressure().Set(Ambient.GetPressure());
+  ReliefValve.GetPressure().Set(Ambient.GetNextPressure());
   //////////////
   // Selector //
   SEFluidCircuitNode& Selector = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::Selector);
-  Selector.GetPressure().Set(Ambient.GetPressure());
+  Selector.GetPressure().Set(Ambient.GetNextPressure());
   Selector.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   //////////////
   // Scrubber //
   SEFluidCircuitNode& Scrubber = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::Scrubber);
-  Scrubber.GetPressure().Set(Ambient.GetPressure());
+  Scrubber.GetPressure().Set(Ambient.GetNextPressure());
   Scrubber.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   ////////////
   // YPiece //
   SEFluidCircuitNode& Ypiece = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::YPiece);
-  Ypiece.GetPressure().Set(Ambient.GetPressure());
+  Ypiece.GetPressure().Set(Ambient.GetNextPressure());
   Ypiece.GetVolumeBaseline().SetValue(0.01, VolumeUnit::L);
   //////////////
   // GasInlet //
   SEFluidCircuitNode& GasInlet = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::GasInlet);
-  GasInlet.GetPressure().Set(Ambient.GetPressure());
+  GasInlet.GetPressure().Set(Ambient.GetNextPressure());
   GasInlet.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   ///////////////
   // GasSource //
   SEFluidCircuitNode& GasSource = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::GasSource);
-  GasSource.GetPressure().Set(Ambient.GetPressure());
+  GasSource.GetPressure().Set(Ambient.GetNextPressure());
   GasSource.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
   //////////////////////////
   // AnesthesiaConnection //
   SEFluidCircuitNode& AnesthesiaConnection = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::Connection);
-  AnesthesiaConnection.GetPressure().Set(Ambient.GetPressure());
+  AnesthesiaConnection.GetPressure().Set(Ambient.GetNextPressure());
   AnesthesiaConnection.GetVolumeBaseline().SetValue(0.01, VolumeUnit::L);
   /////////////////////
   // InspiratoryLimb //
   SEFluidCircuitNode& InspiratoryLimb = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::InspiratoryLimb);
-  InspiratoryLimb.GetPressure().Set(Ambient.GetPressure());
+  InspiratoryLimb.GetPressure().Set(Ambient.GetNextPressure());
   InspiratoryLimb.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   ////////////////////
   // ExpiratoryLimb //
   SEFluidCircuitNode& ExpiratoryLimb = cAnesthesia.CreateNode(pulse::AnesthesiaMachineNode::ExpiratoryLimb);
-  ExpiratoryLimb.GetPressure().Set(Ambient.GetPressure());
+  ExpiratoryLimb.GetPressure().Set(Ambient.GetNextPressure());
   ExpiratoryLimb.GetVolumeBaseline().SetValue(0.1, VolumeUnit::L);
   /////////////////////////////
   // EnvironmentToVentilator //
@@ -3419,22 +3415,22 @@ void PulseController::SetupBagValveMask()
   cBagValveMask.AddNode(Ambient);
 
   SEFluidCircuitNode& Reservoir = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Reservoir);
-  Reservoir.GetPressure().Set(Ambient.GetPressure());
+  Reservoir.GetPressure().Set(Ambient.GetNextPressure());
   Reservoir.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
 
   SEFluidCircuitNode& Bag = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Bag);
-  Bag.GetPressure().Set(Ambient.GetPressure());
+  Bag.GetPressure().Set(Ambient.GetNextPressure());
 
   SEFluidCircuitNode& Valve = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Valve);
-  Valve.GetPressure().Set(Ambient.GetPressure());
+  Valve.GetPressure().Set(Ambient.GetNextPressure());
   Valve.GetVolumeBaseline().SetValue(valveVolume_L, VolumeUnit::L);
 
   SEFluidCircuitNode& Filter = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Filter);
-  Filter.GetPressure().Set(Ambient.GetPressure());
+  Filter.GetPressure().Set(Ambient.GetNextPressure());
   Filter.GetVolumeBaseline().SetValue(filterVolume_L, VolumeUnit::L);
 
   SEFluidCircuitNode& Connection = cBagValveMask.CreateNode(pulse::BagValveMaskNode::Connection);
-  Connection.GetPressure().Set(Ambient.GetPressure());
+  Connection.GetPressure().Set(Ambient.GetNextPressure());
   Connection.GetVolumeBaseline().SetValue(connectionVolume_L, VolumeUnit::L);
 
   //Paths
@@ -3676,7 +3672,7 @@ void PulseController::SetupMechanicalVentilation()
   SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
   // Define node on the combined graph, this is a simple circuit, no reason to make a independent circuit at this point
   SEFluidCircuitNode& Connection = m_CombinedMechanicalVentilation.CreateNode(pulse::MechanicalVentilationNode::Connection);
-  Connection.GetPressure().Set(Ambient.GetPressure());
+  Connection.GetPressure().Set(Ambient.GetNextPressure());
   Connection.GetNextPressure().Set(Ambient.GetNextPressure());
   Connection.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
   // Paths
@@ -3753,31 +3749,31 @@ void PulseController::SetupMechanicalVentilator()
   cMechanicalVentilator.AddNode(Ambient);
 
   SEFluidCircuitNode& Ventilator = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Ventilator);
-  Ventilator.GetPressure().Set(Ambient.GetPressure());
+  Ventilator.GetPressure().Set(Ambient.GetNextPressure());
   Ventilator.GetVolumeBaseline().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
 
   SEFluidCircuitNode& ExpiratoryValve = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::ExpiratoryValve);
-  ExpiratoryValve.GetPressure().Set(Ambient.GetPressure());
+  ExpiratoryValve.GetPressure().Set(Ambient.GetNextPressure());
   ExpiratoryValve.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
 
   SEFluidCircuitNode& InspiratoryValve = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::InspiratoryValve);
-  InspiratoryValve.GetPressure().Set(Ambient.GetPressure());
+  InspiratoryValve.GetPressure().Set(Ambient.GetNextPressure());
   InspiratoryValve.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
 
   SEFluidCircuitNode& ExpiratoryLimb = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::ExpiratoryLimb);
-  ExpiratoryLimb.GetPressure().Set(Ambient.GetPressure());
+  ExpiratoryLimb.GetPressure().Set(Ambient.GetNextPressure());
   ExpiratoryLimb.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
 
   SEFluidCircuitNode& InspiratoryLimb = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::InspiratoryLimb);
-  InspiratoryLimb.GetPressure().Set(Ambient.GetPressure());
+  InspiratoryLimb.GetPressure().Set(Ambient.GetNextPressure());
   InspiratoryLimb.GetVolumeBaseline().SetValue(tubeVolume_L, VolumeUnit::L);
 
   SEFluidCircuitNode& YPiece = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::YPiece);
-  YPiece.GetPressure().Set(Ambient.GetPressure());
+  YPiece.GetPressure().Set(Ambient.GetNextPressure());
   YPiece.GetVolumeBaseline().SetValue(yPieceVolume_L, VolumeUnit::L);
 
   SEFluidCircuitNode& Connection = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Connection);
-  Connection.GetPressure().Set(Ambient.GetPressure());
+  Connection.GetPressure().Set(Ambient.GetNextPressure());
   Connection.GetVolumeBaseline().SetValue(connectionVolume_L, VolumeUnit::L);
 
   //Paths

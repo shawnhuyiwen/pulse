@@ -416,7 +416,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
     }
     if (!patient.SerializeFromFile(pFile))// TODO Support all serialization formats
       return false;
-    if (!PulseController::Initialize(patient))
+    if (!Initialize(patient))
       return false;
   }
   else
@@ -426,52 +426,22 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   SEEventHandler* event_handler = m_EventManager->GetEventHandler();
   m_EventManager->ForwardEvents(nullptr);
 
-  // Stabilize the engine to a resting state (with a standard meal and environment)
-  if (!m_Config->HasStabilization())
+  if (!Stabilize(patient_configuration))
   {
     Error("Pulse needs stabilization criteria, none provided in configuration file");
     return false;
   }
 
-  m_State = EngineState::InitialStabilization;
-  if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
-    return false;
-
-  // Copy any changes to the current patient to the initial patient
-  m_InitialPatient->Copy(*m_CurrentPatient);
-
-  // We need to copy conditions here, so systems can prepare for them in their AtSteadyState method
-  if (patient_configuration.HasConditions())
-    m_Conditions->Copy(*patient_configuration.GetConditions(), *m_Substances);
-  AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
-
-  m_State = EngineState::SecondaryStabilization;
-  // Apply conditions and anything else to the physiology
-  // now that it's steady with provided patient, environment, and feedback
-  if (!m_Conditions->IsEmpty())
-  {// Now restabilize the patient with any conditions that were applied
-   // Push conditions into condition manager
-    if (!m_Config->GetStabilization()->StabilizeConditions(*m_Stabilizer, *m_Conditions))
-      return false;
-  }
-  AtSteadyState(EngineState::AtSecondaryStableState);
- 
   // Don't allow any changes to Quantity/Potential/Flux values directly
   // Use Quantity/Potential/Flux Sources
   m_Circuits->SetReadOnly(true);
 
   AtSteadyState(EngineState::Active);
-  Info("Finalizing homeostasis...");
-  // Run this again to clear out any bumps from systems resetting baselines in the last AtSteadyState call
-  // AdvanceModelTime(30, TimeUnit::s); // I would rather run Feedback stablization again, but...
-  // This does not work for a few patients, they will not stay stable (???)  
-  //if (!m_Config->GetStabilizationCriteria()->StabilizeFeedbackState(*this))
-  //  return false;
-
   if (!m_Config->GetStabilization()->IsTrackingStabilization())
     m_SimulationTime.SetValue(0, TimeUnit::s);
   // Hook up the handlers (Note events will still be in the log)
   m_EventManager->ForwardEvents(event_handler);
+
   return true;
 }
 
@@ -544,6 +514,7 @@ bool PulseController::Initialize(SEPatient const& patient)
     m_Substances->InitializeLiquidCompartmentGases();
     m_Substances->InitializeLiquidCompartmentNonGases();
   }
+  Info("Initializing Systems");
   InitializeSystems();
 
   AdvanceCallback(-1);
@@ -552,6 +523,8 @@ bool PulseController::Initialize(SEPatient const& patient)
 
 void PulseController::InitializeSystems()
 {
+  // Environment is cleared and initialized in circuit setup
+
   // Clear everything before initializing
   m_CardiovascularSystem->Clear();
   m_RespiratorySystem->Clear();
@@ -587,6 +560,40 @@ void PulseController::InitializeSystems()
   m_TissueSystem->Initialize(); // Depends on some parameters that Blood Chemistry initializes,needs to be after
   m_ECG->Initialize();
   m_Inhaler->Initialize();
+}
+
+bool PulseController::Stabilize(const SEPatientConfiguration& patient_configuration)
+{
+  // Stabilize the engine to a resting state (with a standard meal and environment)
+  if (!m_Config->HasStabilization())
+  {
+    Error("Pulse needs stabilization criteria, none provided in configuration file");
+    return false;
+  }
+
+  m_State = EngineState::InitialStabilization;
+  if (!m_Config->GetStabilization()->StabilizeRestingState(*m_Stabilizer))
+    return false;
+
+  // Copy any changes to the current patient to the initial patient
+  m_InitialPatient->Copy(*m_CurrentPatient);
+
+  // We need to copy conditions here, so systems can prepare for them in their AtSteadyState method
+  if (patient_configuration.HasConditions())
+    m_Conditions->Copy(*patient_configuration.GetConditions(), *m_Substances);
+  AtSteadyState(EngineState::AtInitialStableState);// This will peek at conditions
+
+  m_State = EngineState::SecondaryStabilization;
+  // Apply conditions and anything else to the physiology
+  // now that it's steady with provided patient, environment, and feedback
+  if (!m_Conditions->IsEmpty())
+  {// Now restabilize the patient with any conditions that were applied
+   // Push conditions into condition manager
+    if (!m_Config->GetStabilization()->StabilizeConditions(*m_Stabilizer, *m_Conditions))
+      return false;
+  }
+  AtSteadyState(EngineState::AtSecondaryStableState);
+  return true;
 }
 
 void PulseController::SetSimulationTime(const SEScalarTime& time)

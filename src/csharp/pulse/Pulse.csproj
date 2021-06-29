@@ -246,7 +246,6 @@
     <Compile Include="cdm\utils\RunConfiguration.cs" />
     <Compile Include="cdm\utils\UnitConverter.cs" />
     <Compile Include="engine\PulseEngine.cs" />
-    <Compile Include="SEActionManager.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

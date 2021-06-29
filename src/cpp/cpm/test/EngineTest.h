@@ -1,43 +1,26 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-// The following tests will be exported and runnable
-#include <math.h>
-class PulseController;
+#include "utils/testing/SETestManager.h"
 #include "PulsePhysiologyEngine.h"
-
-#define ENGINE_TEST_DECL
-#ifdef SHARED_ENGINE_TEST
-  #if defined (__clang__)
-    #define ENGINE_TEST_DECL
-  #elif defined(__gnu_linux__)
-    #define ENGINE_TEST_DECL __attribute__ ((visibility ("default")))
-  #else
-    #ifdef SHARED_ENGINE_TEST
-      #define ENGINE_TEST_DECL __declspec(dllexport)
-    #else
-      #define ENGINE_TEST_DECL __declspec(dllimport)
-    #endif
-  #endif
-#endif
 
 class SESubstance;
 class SETestSuite;
 class HowToTracker;
+class PulseController;
 
-class ENGINE_TEST_DECL PulseEngineTest : Loggable
+class ENGINE_TEST_DECL PulseEngineTest : public SETestManager
 {
 public:
   PulseEngineTest(Logger* logger=nullptr);
   virtual ~PulseEngineTest();
 
-  bool RunTest(const std::string& testName, const std::string& sOutputDirectory);
-  void FillFunctionMap();
+  virtual bool RunTest(const std::string& testName, const std::string& sOutputDirectory) override;
 
 protected:
+  virtual void FillFunctionMap() override;
   typedef void(PulseEngineTest::*testFunction)(const std::string&);
-  typedef std::map<std::string, testFunction> testMap;
-  testMap bgeMap;
+  std::map<std::string, testFunction> testMap;
   std::stringstream m_ss;
 
   //////////////////////////////////////////////////////////

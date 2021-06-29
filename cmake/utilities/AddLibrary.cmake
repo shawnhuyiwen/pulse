@@ -67,7 +67,6 @@ function(add_library_ex target)
     ${target_H_FILES}
     ${target_CPP_FILES}
     )
-    
 
   if(target_SHARED)
     add_custom_command(TARGET ${target} POST_BUILD
@@ -111,6 +110,7 @@ function(add_library_ex target)
     $<INSTALL_INTERFACE:include>
     $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_INSTALL_FOLDER}>
     )
+  target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/src/cpp)
 
   #-----------------------------------------------------------------------------
   # Set compile flags for the target

@@ -70,10 +70,11 @@ std::vector<std::string>& SETestSuite::GetRequirements()
   return m_Requirements;
 }
 
-SETestCase& SETestSuite::CreateTestCase()
+SETestCase& SETestSuite::CreateTestCase(const std::string& name)
 {
   SETestCase* test = new SETestCase(GetLogger());
   m_TestCase.push_back(test);
+  test->SetName(name);
   return *test;
 }
 

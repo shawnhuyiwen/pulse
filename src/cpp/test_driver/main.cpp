@@ -4,7 +4,8 @@
 
 #define ENGINE_TESTS
 #ifdef ENGINE_TESTS
-  #include "EngineTest.h"
+  #include "cpm/test/EngineTest.h"
+  #include "engine/respiratory/test/RespiratoryEngineTest.h"
 #endif
 #include "utils/FileUtils.h"
 
@@ -18,18 +19,27 @@ int main(int argc, char* argv[])
   Logger peLogger(peDir + "/PulseUnitTests.log");
   PulseEngineTest peTest(&peLogger);
 
+  std::string reDir = "./test_results/unit_tests/respiratory_engine";
+  Logger reLogger(reDir + "/RespiratoryEngineUnitTests.log");
+  RespiratoryEngineTest reTest(&reLogger);
+
   if (argc == 1)
   {
     try
     {
       // Easily run various tests of your choosing
 
+      //////////////////////////////
+      // Respiratory Engine Tests //
+      //////////////////////////////
+      reTest.SmokeTest(reDir);
+
       ////////////////////
       // Pulse Tests //
       ////////////////////
 
       //peTest.ReadScenarios(peDir);
-      peTest.ReuseEngine(peDir);
+      //peTest.ReuseEngine(peDir);
 
       //peTest.CardiovascularCircuitAndTransportTest(peDir);
       //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);

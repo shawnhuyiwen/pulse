@@ -280,6 +280,7 @@ protected:
   virtual bool Initialize(const SEPatient& patient);
   virtual bool SetupPatient(const SEPatient& patient);
   virtual void InitializeSystems();
+  virtual bool Stabilize(const SEPatientConfiguration& patient_configuration);
 
   // Notify systems that steady state has been achieved
   virtual void AtSteadyState(EngineState state);

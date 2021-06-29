@@ -6,6 +6,7 @@ function(add_executable_ex target)
         message ("No files associated with target ${target}")
     endif ()
   add_executable(${target} ${files})
+  target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/src/cpp)
   set_target_properties(${target} PROPERTIES
     DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
   set_target_properties (${target} PROPERTIES 

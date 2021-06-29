@@ -104,7 +104,7 @@ namespace Pulse.CDM
       inspiration_waveform = DriverWaveform.NullDriverWaveform;
 
       y_piece_volume = null;
-      connection_volume null;
+      connection_volume = null;
 
       this.fraction_inspired_gases = new List<SESubstanceFraction>();
       this.concentration_inspired_aerosols = new List<SESubstanceConcentration>();

@@ -113,6 +113,9 @@ void Environment::Initialize()
   double patientHeight_m = m_data.GetCurrentPatient().GetHeight(LengthUnit::m);
   double pi = 3.14159;
   m_PatientEquivalentDiameter_m = pow(Convert(patientMass_g / patientDensity_g_Per_mL, VolumeUnit::mL, VolumeUnit::m3) / (pi*patientHeight_m), 0.5);
+
+  GetEnvironmentalConditions().Copy(*m_data.GetConfiguration().GetInitialEnvironmentalConditions(), m_data.GetSubstances());
+  StateChange();
 }
 
 void Environment::SetUp()
@@ -138,6 +141,7 @@ void Environment::SetUp()
   m_GroundToEnvironmentPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::GroundToEnvironment);
   m_EnvironmentSkinToGroundPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ExternalSkinToGround);
   m_EnvironmentCoreToGroundPath = m_EnvironmentCircuit->GetPath(pulse::ExternalTemperaturePath::ExternalCoreToGround);
+
 }
 
 //--------------------------------------------------------------------------------------------------

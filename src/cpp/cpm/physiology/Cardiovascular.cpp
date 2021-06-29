@@ -391,7 +391,7 @@ void Cardiovascular::AtSteadyState()
 {
    std::string typeString;
   if (m_data.GetState() == EngineState::Active)
-    typeString = "Final Stabilization Homeostasis: ";
+    typeString = "Starting ";
   else
   {
     m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());

@@ -336,6 +336,7 @@ add_library_ex(CommonDataModel
     utils/taskrunner/TaskRunner.h
     utils/testing/SETestCase.h
     utils/testing/SETestErrorStatistics.h
+    utils/testing/SETestManager.h
     utils/testing/SETestReport.h
     utils/testing/SETestSuite.h
     utils/unitconversion/CompoundUnit.h
