@@ -16,7 +16,6 @@ public:
   virtual ~SEGasSubstanceQuantity();
 
   virtual void Clear();
-  virtual void Invalidate();
 
   virtual std::string GetCompartmentName() override;
 

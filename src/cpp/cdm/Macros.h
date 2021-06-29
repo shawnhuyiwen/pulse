@@ -43,6 +43,10 @@ inline size_t _Hash_value(_InIt _Begin, _InIt _End)
   if(name!=nullptr) \
     name->Invalidate();
 
+#define FORCE_INVALIDATE_PROPERTY(name) \
+  if(name!=nullptr) \
+    name->ForceInvalidate();
+
 #define COPY_PROPERTY(name) \
   if(from.Has##name()) \
     Get##name().Set(*from.m_##name);

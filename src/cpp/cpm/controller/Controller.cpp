@@ -502,19 +502,19 @@ bool PulseController::Initialize(SEPatient const& patient)
     OverrideCircuits();// Override any circuit values
   }
 
-  Info("Initializing Substances");
   m_Substances->InitializeSubstances();
   if (m_RespiratorySystem && m_Environment)
   {
+    Info("Initializing Gas Substances");
     m_Substances->InitializeGasCompartments();
   }
   if (m_SaturationCalculator && m_CardiovascularSystem)
   {
+    Info("Initializing Liquid Substances");
     m_SaturationCalculator->Setup();
     m_Substances->InitializeLiquidCompartmentGases();
     m_Substances->InitializeLiquidCompartmentNonGases();
   }
-  Info("Initializing Systems");
   InitializeSystems();
 
   AdvanceCallback(-1);

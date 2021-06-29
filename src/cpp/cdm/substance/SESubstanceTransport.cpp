@@ -203,7 +203,7 @@ void SESubstanceTransporter<GraphType, FluxUnit, QuantityUnit, ExtensiveUnit, In
       {
         if (!v->HasQuantity())
         {
-          q->Invalidate();
+          q->Clear();
           continue;
         }
         double newIntensiveVlaue = xVector(i);

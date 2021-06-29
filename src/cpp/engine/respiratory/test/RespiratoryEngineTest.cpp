@@ -16,7 +16,7 @@
 
 RespiratoryEngineTest::RespiratoryEngineTest(Logger* logger) : SETestManager(logger)
 {
-
+  FillFunctionMap();
 }
 RespiratoryEngineTest::~RespiratoryEngineTest()
 {

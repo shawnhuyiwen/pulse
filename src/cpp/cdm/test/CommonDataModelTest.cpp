@@ -10,18 +10,15 @@
 
 CommonDataModelTest::CommonDataModelTest(Logger* logger) : SETestManager(logger)
 {
+  FillFunctionMap();
   m_Circuits = new SECircuitManager(m_Logger);
   myLogger = false;
-}
-CommonDataModelTest::CommonDataModelTest() : CommonDataModelTest(new Logger())
-{
-
+  m_PercentTolerance = 2;
 }
 
 CommonDataModelTest::~CommonDataModelTest()
 {
-  if (myLogger)
-    SAFE_DELETE(m_Logger);
+
 }
 
 bool CommonDataModelTest::RunTest(const std::string& testName, const std::string& sOutputDirectory)

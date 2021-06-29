@@ -266,7 +266,7 @@ public:
   virtual void ToString(std::ostream &str) const;
 
 protected:
-  const Unit* m_unit;
+  const Unit* m_unit=nullptr;
 };
 
 

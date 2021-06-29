@@ -18,7 +18,6 @@ public:
   virtual ~SELiquidSubstanceQuantity();
 
   virtual void Clear();
-  virtual void Invalidate();
 
   virtual std::string GetCompartmentName() override;
 

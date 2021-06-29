@@ -22,12 +22,13 @@
 class ENGINE_TEST_DECL SETestManager : public Loggable
 {
 public:
-  SETestManager(Logger* logger = nullptr) : Loggable(logger) { FillFunctionMap(); }
+  SETestManager(Logger* logger = nullptr) : Loggable(logger) {};
+
   virtual ~SETestManager() = default;
 
   virtual bool RunTest(const std::string& testName, const std::string& sOutputDirectory) = 0;
 
 protected:
-  virtual void FillFunctionMap() {};
+  virtual void FillFunctionMap()=0;
   std::stringstream m_ss;
 };

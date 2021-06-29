@@ -16,7 +16,7 @@ class SESubstanceTransportAmount
 public:
   virtual ~SESubstanceTransportAmount() {}
 
-  virtual void Invalidate() = 0;
+  virtual void Clear() = 0;
 
   virtual bool HasExtensive() const = 0;
   virtual ExtensiveScalar& GetExtensive() = 0;

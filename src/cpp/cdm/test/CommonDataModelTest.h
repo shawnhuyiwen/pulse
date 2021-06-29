@@ -41,18 +41,15 @@ enum enumCDMTestSourceType
 class CDM_TEST_DECL CommonDataModelTest : public SETestManager
 {
 public:
-  CommonDataModelTest();
-  CommonDataModelTest(Logger* logger);
+  CommonDataModelTest(Logger* logger=nullptr);
   virtual ~CommonDataModelTest();
 
   virtual bool RunTest(const std::string& testName, const std::string& sOutputDirectory) override;
 
 protected:
   virtual void FillFunctionMap() override;
-  bool                myLogger;
   double              m_PercentTolerance;
   std::string         m_OutDirectory;
-  std::stringstream   m_ss;
 
   typedef void(CommonDataModelTest::*testFunction)(const std::string&);
   typedef std::map<std::string, testFunction> testMap;

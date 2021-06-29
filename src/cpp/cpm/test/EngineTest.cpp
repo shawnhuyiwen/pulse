@@ -5,7 +5,7 @@
 
 PulseEngineTest::PulseEngineTest(Logger* logger) : SETestManager(logger)
 {
-
+  FillFunctionMap();
 }
 
 PulseEngineTest::~PulseEngineTest()

@@ -51,28 +51,6 @@ SELiquidSubstanceQuantity::SELiquidSubstanceQuantity(SESubstance& sub, SELiquidC
 
 SELiquidSubstanceQuantity::~SELiquidSubstanceQuantity()
 {
-  Clear();
-}
-void SELiquidSubstanceQuantity::Invalidate()
-{
-  if (m_Concentration!=nullptr)
-    m_Concentration->Invalidate();
-  if (m_Mass != nullptr)
-    m_Mass->Invalidate();
-  if (m_MassCleared != nullptr)
-    m_MassCleared->Invalidate();
-  if (m_MassDeposited != nullptr)
-    m_MassDeposited->Invalidate();
-  if (m_MassExcreted != nullptr)
-    m_MassExcreted->Invalidate();
-  if (m_PartialPressure != nullptr && m_Substance.GetState() == eSubstance_State::Gas)
-    m_PartialPressure->Invalidate();
-  if (m_Saturation != nullptr)
-    m_Saturation->Invalidate();
-}
-
-void SELiquidSubstanceQuantity::Clear()
-{
   SAFE_DELETE(m_Concentration);
   SAFE_DELETE(m_Mass);
   SAFE_DELETE(m_MassCleared);
@@ -81,6 +59,18 @@ void SELiquidSubstanceQuantity::Clear()
   SAFE_DELETE(m_Molarity);
   SAFE_DELETE(m_PartialPressure);
   SAFE_DELETE(m_Saturation);
+}
+
+void SELiquidSubstanceQuantity::Clear()
+{
+  FORCE_INVALIDATE_PROPERTY(m_Concentration);
+  FORCE_INVALIDATE_PROPERTY(m_Mass);
+  FORCE_INVALIDATE_PROPERTY(m_MassCleared);
+  FORCE_INVALIDATE_PROPERTY(m_MassDeposited);
+  FORCE_INVALIDATE_PROPERTY(m_MassExcreted);
+  FORCE_INVALIDATE_PROPERTY(m_Molarity);
+  FORCE_INVALIDATE_PROPERTY(m_PartialPressure);
+  FORCE_INVALIDATE_PROPERTY(m_Saturation);
   m_Children.clear();
 }
 
@@ -166,7 +156,7 @@ void SELiquidSubstanceQuantity::Balance(BalanceLiquidBy by)
   SEScalarVolume& volume = m_Compartment.GetVolume();
   if (!volume.IsValid())
   {
-    Invalidate();
+    Clear();
     return;
   }  
   if (!m_Children.empty())
@@ -554,7 +544,7 @@ double SELiquidSubstanceQuantity::GetSaturation() const
       // Could speed this up by looping the cmpt subQ's and doing if checks against its sub
       double volume_mL = cmpt->GetVolume(VolumeUnit::mL);
       Hb_mmol += cmpt->GetSubstanceQuantity(*m_Hb)->GetMolarity(AmountPerVolumeUnit::mmol_Per_mL)*volume_mL;
-      HbO2_mmol += cmpt->GetSubstanceQuantity(*m_HbO2)->GetMolarity(AmountPerVolumeUnit::mmol_Per_mL)*volume_mL;      
+      HbO2_mmol += cmpt->GetSubstanceQuantity(*m_HbO2)->GetMolarity(AmountPerVolumeUnit::mmol_Per_mL)*volume_mL;
       HbCO2_mmol += cmpt->GetSubstanceQuantity(*m_HbCO2)->GetMolarity(AmountPerVolumeUnit::mmol_Per_mL)*volume_mL;
       HbO2CO2_mmol += cmpt->GetSubstanceQuantity(*m_HbO2CO2)->GetMolarity(AmountPerVolumeUnit::mmol_Per_mL)*volume_mL;
 

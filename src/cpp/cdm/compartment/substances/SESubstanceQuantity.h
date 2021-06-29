@@ -11,8 +11,7 @@ public:
   SESubstanceQuantity(SESubstance& sub);
   virtual ~SESubstanceQuantity();
 
-  virtual void Clear() = 0; //clear memory
-  virtual void Invalidate() = 0;
+  virtual void Clear() = 0;
 
   virtual std::string GetCompartmentName() = 0;
   virtual SESubstance& GetSubstance() { return m_Substance; }
