@@ -38,6 +38,7 @@
 #include "patient/actions/SENeedleDecompression.h"
 #include "patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "patient/actions/SERespiratoryFatigue.h"
+#include "patient/actions/SERespiratoryMechanicsConfiguration.h"
 #include "patient/actions/SESupplementalOxygen.h"
 #include "patient/actions/SETensionPneumothorax.h"
 // Assessments
@@ -61,6 +62,7 @@
 #include "compartment/fluid/SEGasCompartmentGraph.h"
 #include "compartment/fluid/SELiquidCompartmentGraph.h"
 // Properties
+#include "properties/SECurve.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarArea.h"
 #include "properties/SEScalarFrequency.h"
@@ -95,6 +97,8 @@
 //Flag for setting things constant to test
 //Should be commented out, unless debugging/tuning
 //#define TUNING
+
+//jbw - Allow setting any combination of this with RespiratoryMechanics settings
 
 Respiratory::Respiratory(PulseData& data) : PulseRespiratorySystem(data)
 {
@@ -1129,7 +1133,7 @@ void Respiratory::RespiratoryDriver()
   if (m_data.GetEvents().IsEventActive(eEvent::StartOfInhale))
     m_data.GetEvents().SetEvent(eEvent::StartOfInhale, false, m_data.GetSimulationTime());
 
-  //Keep a running average of the Arterial Partial Pressures  
+  //Keep a running average of the Arterial Partial Pressures
   m_ArterialO2RunningAverage_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
   m_ArterialCO2RunningAverage_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
   //Reset at start of cardiac cycle 
@@ -1147,11 +1151,7 @@ void Respiratory::RespiratoryDriver()
   m_ArterialCO2PartialPressure_mmHg = 40.0;
 #endif  
 
-  double TotalBreathingCycleTime_s = 0.0;
-  if (m_VentilationFrequency_Per_min > 1.0 || m_ActiveConsciousRespirationCommand)
-  {
-    TotalBreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min; //Total time of one breathing cycle  
-  }
+  double TotalBreathingCycleTime_s = GetBreathCycleTime();
 
   //Prepare for the next cycle -------------------------------------------------------------------------------
   if ((m_BreathingCycleTime_s > TotalBreathingCycleTime_s) ||                              //End of the cycle or currently not breathing
@@ -1328,7 +1328,14 @@ void Respiratory::RespiratoryDriver()
   }
 
   //Run the driver based on the waveform -------------------------------------------------------------------------------
-  TotalBreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min; //Recalculate, in case we just calculated a new breath
+  TotalBreathingCycleTime_s = GetBreathCycleTime(); //Recalculate, in case we just calculated a new breath
+
+  if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
+  {
+    m_PeakInspiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryPeakPressure(PressureUnit::cmH2O);
+    m_PeakExpiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryPeakPressure(PressureUnit::cmH2O);
+    SetBreathCycleFractions();
+  }
 
   double InspiratoryRiseTimeStart_s = 0.0;
   double InspiratoryHoldTimeStart_s = InspiratoryRiseTimeStart_s + m_InspiratoryRiseFraction * TotalBreathingCycleTime_s;
@@ -1443,6 +1450,19 @@ void Respiratory::SetBreathCycleFractions()
   m_ExpiratoryRiseFraction = 0.0;
   m_ExpiratoryHoldFraction = 0.0;
   m_ExpiratoryReleaseFraction = 0.0;
+
+  if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
+  {
+    double totalBreathCycleTime_s = GetBreathCycleTime();
+
+    m_InspiratoryRiseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryRiseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    m_InspiratoryHoldFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryHoldTime(TimeUnit::s) / totalBreathCycleTime_s;
+    m_InspiratoryReleaseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryReleaseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    m_InspiratoryToExpiratoryPauseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryToExpiratoryPauseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    m_ExpiratoryRiseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryRiseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    m_ExpiratoryHoldFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryHoldTime(TimeUnit::s) / totalBreathCycleTime_s;
+    m_ExpiratoryReleaseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryReleaseTime(TimeUnit::s) / totalBreathCycleTime_s;
+  }
  }
 
 //--------------------------------------------------------------------------------------------------
@@ -2257,73 +2277,171 @@ void Respiratory::TuneCircuit()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::UpdateChestWallCompliances()
 {
-  /// \cite venegas1998comprehensive
-
   double rightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
   double leftLungRatio = 1.0 - rightLungRatio;
-
-  double rightVolume_L = m_RightLung->GetVolume(VolumeUnit::L) - m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L) + m_rightAlveoliDecrease_L;
-  double leftVolume_L = m_LeftLung->GetVolume(VolumeUnit::L) - m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L) + m_leftAlveoliDecrease_L;
 
   for (unsigned int iterLung = 0; iterLung < 2; iterLung++)
   {
     //0 = right lung, 1 = left lung
 
+    // Get properties ---------------------------------------------------------
+
     double lungRatio = 0.0;
     double lungVolume_L = 0.0;
-    SEFluidCircuitPath* chestWallPath;
-    SEFluidCircuitPath* lungPath;
-    
-    if (iterLung == 0)
+    SEFluidCircuitPath* chestWallPath = nullptr;
+    SEFluidCircuitPath* lungPath = nullptr;
+    double healthyChestWallCompliance_L_Per_cmH2O = 0.0;
+    double healthyLungCompliance_L_Per_cmH2O = 0.0;
+
+    bool hasRespiratoryMechanicsCompliance = false;
+    std::vector<SESegment*> segments;
+    SESegment* segment = nullptr;
+
+    if (iterLung == 0) //right lung
     {
       lungRatio = rightLungRatio;
-      lungVolume_L = rightVolume_L;
+      lungVolume_L = m_RightLung->GetVolume(VolumeUnit::L) - m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L) + m_rightAlveoliDecrease_L;
       chestWallPath = m_RightPleuralToRespiratoryMuscle;
       lungPath = m_RightAlveoliToRightPleuralConnection;
+      healthyChestWallCompliance_L_Per_cmH2O = m_RightPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+      healthyLungCompliance_L_Per_cmH2O = m_RightAlveoliToRightPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+
+      if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
+      {
+        hasRespiratoryMechanicsCompliance = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasRightComplianceCurve();
+        if (hasRespiratoryMechanicsCompliance)
+        {
+          segments = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetRightComplianceCurve().GetSegments();
+        }
+      }
+    }
+    else //left lung
+    {
+      lungRatio = leftLungRatio;
+      lungVolume_L = m_LeftLung->GetVolume(VolumeUnit::L) - m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L) + m_leftAlveoliDecrease_L;
+      chestWallPath = m_LeftPleuralToRespiratoryMuscle;
+      lungPath = m_LeftAlveoliToLeftPleuralConnection;
+      healthyChestWallCompliance_L_Per_cmH2O = m_LeftPleuralToRespiratoryMuscle->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+      healthyLungCompliance_L_Per_cmH2O = m_LeftAlveoliToLeftPleuralConnection->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+
+      if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
+      {
+        hasRespiratoryMechanicsCompliance = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasLeftComplianceCurve();
+        if (hasRespiratoryMechanicsCompliance)
+        {
+          segments = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftComplianceCurve().GetSegments();
+        }
+      }
+    }
+
+    // Define/Get compliance curve ---------------------------------------------------------
+
+    double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) * lungRatio;
+
+    double baselineCompliance_L_Per_cmH2O = 0.0;
+    double lowerCorner_cmH2O = 0.0;
+    double upperCorner_cmH2O = 0.0;
+
+    if (hasRespiratoryMechanicsCompliance)
+    {
+      //Specified externally
+      SEScalarVolume volume; //jbw - new?
+      volume.SetValue(lungVolume_L, VolumeUnit::L);
+      segment = GetCurrentSegement(segments, volume);
     }
     else
     {
-      lungRatio = leftLungRatio;
-      lungVolume_L = leftVolume_L;
-      chestWallPath = m_LeftPleuralToRespiratoryMuscle;
-      lungPath = m_LeftAlveoliToLeftPleuralConnection;
+      /// \cite venegas1998comprehensive
+
+      double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L) * lungRatio;
+      double vitalCapacity_L = m_data.GetInitialPatient().GetVitalCapacity(VolumeUnit::L) * lungRatio;
+      baselineCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthyChestWallCompliance_L_Per_cmH2O + 1.0 / healthyLungCompliance_L_Per_cmH2O);
+      // \\\todo Figure out why the upper corner uses vital capacity instead of total lung capacity
+      upperCorner_cmH2O = (vitalCapacity_L - functionalResidualCapacity_L) / baselineCompliance_L_Per_cmH2O;
+      lowerCorner_cmH2O = (residualVolume_L - functionalResidualCapacity_L) / baselineCompliance_L_Per_cmH2O;
     }
 
-    double healthyChestWallCompliance_L_Per_cmH2O = chestWallPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
-    double healthyLungCompliance_L_Per_cmH2O = lungPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
-
-    double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L) * lungRatio;
-    double vitalCapacity_L = m_data.GetInitialPatient().GetVitalCapacity(VolumeUnit::L) * lungRatio;
-    double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) * lungRatio;
-        
-    double healthySideCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthyChestWallCompliance_L_Per_cmH2O + 1.0 / healthyLungCompliance_L_Per_cmH2O);
+    // Apply compliance curve ---------------------------------------------------------
 
     double minCompliance_L_Per_cmH2O = 0.01; //Minimum possible compliance
     double sideCompliance_L_Per_cmH2O = minCompliance_L_Per_cmH2O;
-    if (lungVolume_L > residualVolume_L && lungVolume_L < vitalCapacity_L + residualVolume_L)
+
+    const SESegmentSigmoidal* sigmoidal = dynamic_cast<const SESegmentSigmoidal*>(segment);
+    const SESegmentConstant* constant = dynamic_cast<const SESegmentConstant*>(segment);
+    const SESegmentLinear* linear = dynamic_cast<const SESegmentLinear*>(segment);
+    const SESegmentParabolic* parabolic = dynamic_cast<const SESegmentParabolic*>(segment);
+
+    if (segment == nullptr || //default
+      sigmoidal != nullptr)
     {
-      double pressureCornerUpper_cmH2O = (vitalCapacity_L - functionalResidualCapacity_L) / healthySideCompliance_L_Per_cmH2O;
-      double naturalLog = log((functionalResidualCapacity_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - functionalResidualCapacity_L));
-      double c = -(pressureCornerUpper_cmH2O / 2.0 * naturalLog) / (1.0 / 2.0 - naturalLog);
-      double d = (pressureCornerUpper_cmH2O - c) / 2.0;
-      double expectedPressure_cmH2O = d * log((lungVolume_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - lungVolume_L)) + c;
-      double volumeAtZeroPressure = residualVolume_L + (vitalCapacity_L / (1.0 + exp(c / d)));
-
-      sideCompliance_L_Per_cmH2O = healthySideCompliance_L_Per_cmH2O;
-
-      if (!SEScalar::IsZero(expectedPressure_cmH2O, ZERO_APPROX))
+      if (segment != nullptr)
       {
-        //Not dividing by ~0
-        sideCompliance_L_Per_cmH2O = (lungVolume_L - volumeAtZeroPressure) / expectedPressure_cmH2O;
+        baselineCompliance_L_Per_cmH2O = sigmoidal->GetBaselineCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+        lowerCorner_cmH2O = sigmoidal->GetLowerCorner(PressureUnit::cmH2O);
+        upperCorner_cmH2O = sigmoidal->GetUpperCorner(PressureUnit::cmH2O);
       }
 
-      if (SEScalar::IsZero(sideCompliance_L_Per_cmH2O,ZERO_APPROX))
+      double d = (upperCorner_cmH2O - lowerCorner_cmH2O) / 4.0;
+      double c = lowerCorner_cmH2O + 2.0 * d;
+      double residualVolume_L = baselineCompliance_L_Per_cmH2O * lowerCorner_cmH2O + functionalResidualCapacity_L;
+      double vitalCapacity_L = baselineCompliance_L_Per_cmH2O * upperCorner_cmH2O + functionalResidualCapacity_L;
+
+      double healthyLungCompliance_L_Per_cmH2O = lungPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+      double healthySideCompliance_L_Per_cmH2O = baselineCompliance_L_Per_cmH2O;
+      healthyChestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthySideCompliance_L_Per_cmH2O - 1.0 / healthyLungCompliance_L_Per_cmH2O);
+
+      if (lungVolume_L > residualVolume_L && lungVolume_L < vitalCapacity_L + residualVolume_L)
       {
+        double expectedPressure_cmH2O = d * log((lungVolume_L - residualVolume_L) / (residualVolume_L + vitalCapacity_L - lungVolume_L)) + c;
+        double volumeAtZeroPressure = residualVolume_L + (vitalCapacity_L / (1.0 + exp(c / d)));
+
         sideCompliance_L_Per_cmH2O = healthySideCompliance_L_Per_cmH2O;
+        if (!SEScalar::IsZero(expectedPressure_cmH2O, ZERO_APPROX))
+        {
+          //Not dividing by ~0
+          sideCompliance_L_Per_cmH2O = (lungVolume_L - volumeAtZeroPressure) / expectedPressure_cmH2O;
+        }
+
+        if (SEScalar::IsZero(sideCompliance_L_Per_cmH2O, ZERO_APPROX))
+        {
+          sideCompliance_L_Per_cmH2O = healthySideCompliance_L_Per_cmH2O;
+        }
+        sideCompliance_L_Per_cmH2O = MAX(sideCompliance_L_Per_cmH2O, minCompliance_L_Per_cmH2O);
       }
-      sideCompliance_L_Per_cmH2O = MAX(sideCompliance_L_Per_cmH2O, minCompliance_L_Per_cmH2O);
     }
-    
+    else if (constant != nullptr)
+    {
+      sideCompliance_L_Per_cmH2O = constant->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+    }
+    else if (linear != nullptr)
+    {
+      //Assumes 0L at FRC
+      double apparentVolume_L = lungVolume_L - functionalResidualCapacity_L;
+      double a0 = linear->GetYIntercept(PressureUnit::cmH2O);
+      double a1 = linear->GetSlope(PressurePerVolumeUnit::cmH2O_Per_L);
+      double expectedPressure_cmH2O = a0 + a1 * apparentVolume_L;
+      sideCompliance_L_Per_cmH2O = apparentVolume_L / expectedPressure_cmH2O;
+    }
+    else if (parabolic != nullptr)
+    {
+      //Assumes 0L at FRC
+      double apparentVolume_L = lungVolume_L - functionalResidualCapacity_L;
+      double a0 = parabolic->GetCoefficient1();
+      double a1 = parabolic->GetCoefficient2();
+      double a2 = parabolic->GetCoefficient3();
+      double a3 = parabolic->GetCoefficient4();
+      double expectedPressure_cmH2O = (a0 + a1 * apparentVolume_L + a2 * std::pow(apparentVolume_L, 2.0)) / (a3 - apparentVolume_L);
+      sideCompliance_L_Per_cmH2O = apparentVolume_L / expectedPressure_cmH2O;
+    }
+    else
+    {
+      /// \error Error: Unknown respiratory compliance type.
+      Error("Unknown respiratory compliance type.");
+    }
+
+    //Break up between healthy lung compliance and chest wall compliance
+    //Set chest wall compliance only to allow for conditions/actions changing lung compliance
+
     double chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O;
     //Can't divide by zero
     if (sideCompliance_L_Per_cmH2O != 0.0 && sideCompliance_L_Per_cmH2O != healthyLungCompliance_L_Per_cmH2O)
@@ -2337,10 +2455,10 @@ void Respiratory::UpdateChestWallCompliances()
 
     double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
     double complianceChange_L_Per_cmH2O = (chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O) * dampenFraction_perSec * m_data.GetTimeStep_s();
- 
+
     chestWallCompliance_L_Per_cmH2O = previousChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
     chestWallPath->GetNextCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
-  }  
+  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -2584,73 +2702,111 @@ void Respiratory::UpdateResistances()
   double leftAlveoliResistance_cmH2O_s_Per_L = m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   double esophagusResistance_cmH2O_s_Per_L = m_AirwayToStomach->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
-  //Intubation
-  if (m_PatientActions->HasIntubation())
+  bool inhaling = false;
+  if (m_AirwayToCarina->GetNextFlow(VolumePerTimeUnit::L_Per_s) > 0.0)
   {
-    m_data.SetIntubation(eSwitch::On);
-    SEIntubation& intubation = m_PatientActions->GetIntubation();
-
-    switch (intubation.GetType())
-    {
-    case eIntubation_Type::Tracheal:
-    {
-      if (intubation.HasAirwayResistance())
-        tracheaResistance_cmH2O_s_Per_L = intubation.GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      else
-        //Tuned based on mechanical ventilator validation data
-        tracheaResistance_cmH2O_s_Per_L *= 11.0;
-      break;
-    }
-    case eIntubation_Type::Esophageal:
-    {
-      //During mechanical ventilation, one of the clinical complications of endotracheal intubation is esophageal intubation. This involves the
-      //misplacement of the tube down the esophagus. Such event prohibits air flow into or out of the lungs. The circuit handles
-      //this respiratory distress by manipulating the tracheal resistance. When esophageal intubation incidence is triggered, significantly large
-      //resistance is assigned to the trachea compartment. Otherwise, the esophageal compartment resistance is set to be significantly
-      //large value under normal condition.
-
-      // Allow air flow between Airway and Stomach
-      esophagusResistance_cmH2O_s_Per_L = 1.2;
-      // Stop air flow between the Airway and Carina
-      //This is basically an open switch.  We don't need to worry about anyone else modifying it if this action is on.
-      tracheaResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
-      break;
-    }
-    case eIntubation_Type::RightMainstem:
-    {
-      leftBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
-      break;
-    }
-    case eIntubation_Type::LeftMainstem:
-    {
-      rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
-      break;
-    }
-    case eIntubation_Type::Oropharyngeal:
-    {
-      //Airway adjunct
-      tracheaResistance_cmH2O_s_Per_L *= 15.0;
-      break;
-    }
-    case eIntubation_Type::Nasopharyngeal:
-    {
-      //Airway adjunct
-      tracheaResistance_cmH2O_s_Per_L *= 15.0;
-      break;
-    }
-    }
+    inhaling = true;
   }
-  else
-  {
-    m_data.SetIntubation(eSwitch::Off);
 
-    //Positive Pressure Ventilation assuming a mask if not intubated
-    if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
-      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
-      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator ||
-      m_data.GetAirwayMode() == eAirwayMode::BagValveMask)
+  //Specified externally
+  if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
+  {
+    double leftResistance_cmH2O_s_Per_L = 0.0;
+    double rightResistance_cmH2O_s_Per_L = 0.0;
+
+    //Should sum to 1.0
+    double bronchiResistanceFraction = 0.6;
+    double alveoliDuctResistanceFraction = 0.4;
+    if (inhaling)
     {
-      tracheaResistance_cmH2O_s_Per_L *= 20.0;
+      tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetUpperInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      
+    }
+    else //exhaling
+    {
+      tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetUpperExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+
+    //Resistances in series sum
+    leftBronchiResistance_cmH2O_s_Per_L = leftResistance_cmH2O_s_Per_L * bronchiResistanceFraction;
+    leftAlveoliResistance_cmH2O_s_Per_L = leftResistance_cmH2O_s_Per_L * alveoliDuctResistanceFraction;
+    rightBronchiResistance_cmH2O_s_Per_L = rightResistance_cmH2O_s_Per_L * bronchiResistanceFraction;
+    rightAlveoliResistance_cmH2O_s_Per_L = rightResistance_cmH2O_s_Per_L * alveoliDuctResistanceFraction;
+  }
+  else //Don't do this if we've specified externally - other conditions/actions will still work
+  {
+    //Intubation
+    if (m_PatientActions->HasIntubation())
+    {
+      m_data.SetIntubation(eSwitch::On);
+      SEIntubation& intubation = m_PatientActions->GetIntubation();
+
+      switch (intubation.GetType())
+      {
+      case eIntubation_Type::Tracheal:
+      {
+        if (intubation.HasAirwayResistance())
+          tracheaResistance_cmH2O_s_Per_L = intubation.GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        else
+          //Tuned based on mechanical ventilator validation data
+          tracheaResistance_cmH2O_s_Per_L *= 11.0;
+        break;
+      }
+      case eIntubation_Type::Esophageal:
+      {
+        //During mechanical ventilation, one of the clinical complications of endotracheal intubation is esophageal intubation. This involves the
+        //misplacement of the tube down the esophagus. Such event prohibits air flow into or out of the lungs. The circuit handles
+        //this respiratory distress by manipulating the tracheal resistance. When esophageal intubation incidence is triggered, significantly large
+        //resistance is assigned to the trachea compartment. Otherwise, the esophageal compartment resistance is set to be significantly
+        //large value under normal condition.
+
+        // Allow air flow between Airway and Stomach
+        esophagusResistance_cmH2O_s_Per_L = 1.2;
+        // Stop air flow between the Airway and Carina
+        //This is basically an open switch.  We don't need to worry about anyone else modifying it if this action is on.
+        tracheaResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
+        break;
+      }
+      case eIntubation_Type::RightMainstem:
+      {
+        leftBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+        break;
+      }
+      case eIntubation_Type::LeftMainstem:
+      {
+        rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+        break;
+      }
+      case eIntubation_Type::Oropharyngeal:
+      {
+        //Airway adjunct
+        tracheaResistance_cmH2O_s_Per_L *= 15.0;
+        break;
+      }
+      case eIntubation_Type::Nasopharyngeal:
+      {
+        //Airway adjunct
+        tracheaResistance_cmH2O_s_Per_L *= 15.0;
+        break;
+      }
+      }
+    }
+    else
+    {
+      m_data.SetIntubation(eSwitch::Off);
+
+      //Positive Pressure Ventilation assuming a mask if not intubated
+      if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+        m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
+        m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator ||
+        m_data.GetAirwayMode() == eAirwayMode::BagValveMask)
+      {
+        tracheaResistance_cmH2O_s_Per_L *= 20.0;
+      }
     }
   }
 
@@ -3622,6 +3778,72 @@ void Respiratory::SetRespiratoryCompliance()
   m_RightAlveoliToRightPleuralConnection->GetNextCompliance().SetValue(LungCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
   m_LeftPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(ChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
   m_RightPleuralToRespiratoryMuscle->GetNextCompliance().SetValue(ChestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Total time of one breathing cycle in seconds.
+///
+//--------------------------------------------------------------------------------------------------
+double Respiratory::GetBreathCycleTime()
+{
+  double TotalBreathingCycleTime_s = 0.0;
+  if (m_VentilationFrequency_Per_min > 1.0 || m_ActiveConsciousRespirationCommand)
+  {
+    TotalBreathingCycleTime_s = 60.0 / m_VentilationFrequency_Per_min;
+  }
+
+  if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
+  {
+    TotalBreathingCycleTime_s =
+      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryRiseTime(TimeUnit::s) +
+      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryHoldTime(TimeUnit::s) +
+      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryReleaseTime(TimeUnit::s) +
+      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryToExpiratoryPauseTime(TimeUnit::s) +
+      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryRiseTime(TimeUnit::s) +
+      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryHoldTime(TimeUnit::s) +
+      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryReleaseTime(TimeUnit::s);
+  }
+
+  return TotalBreathingCycleTime_s;
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Total time of one breathing cycle in seconds.
+///
+//--------------------------------------------------------------------------------------------------
+SESegment* Respiratory::GetCurrentSegement(std::vector<SESegment*> segments, SEScalarVolume volume)
+{
+  for (auto& segment : segments)
+  {
+    bool inBegin = false;
+    bool inEnd = false;
+    if (volume.IsInfinity()) //jbw - Make sure this works with -inf
+    {
+      inBegin = true;
+    }
+    else if (volume.GetValue(VolumeUnit::L) >= segment->GetBeginVolume(VolumeUnit::L))
+    {
+      inBegin = true;
+    }
+
+    if (segment->GetEndVolume().IsInfinity())
+    {
+      inEnd = true;
+    }
+    else if (volume.GetValue(VolumeUnit::L) <= segment->GetEndVolume(VolumeUnit::L))
+    {
+      inEnd = true;
+    }
+
+    if (inBegin && inEnd)
+    {
+      return segment;
+    }
+  }
+
+  return nullptr;
 }
 
 //--------------------------------------------------------------------------------------------------

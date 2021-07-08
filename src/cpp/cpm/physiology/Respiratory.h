@@ -68,6 +68,8 @@ protected:
   void UpdateDiffusion();
   void UpdatePulmonaryCapillary();
   void UpdatePulmonaryShunt();
+  double GetBreathCycleTime();
+  SESegment* GetCurrentSegement(std::vector<SESegment*> segments, SEScalarVolume volume);
   //Overrides
   void SetRespiratoryResistance();
   void SetRespiratoryCompliance();

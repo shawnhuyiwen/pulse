@@ -30,7 +30,7 @@ add_executable_ex(HowToDriver
   HowTo-RunThreaded.cpp
   HowTo-RunThreaded.h
   HowTo-Sandbox.cpp
-  HowTo-SceanrioBase.cpp
+  HowTo-ScenarioBase.cpp
   HowTo-Serialize.cpp
   HowTo-Smoke.cpp
   HowTo-TensionPneumothorax.cpp
