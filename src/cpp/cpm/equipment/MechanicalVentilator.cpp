@@ -460,8 +460,11 @@ void MechanicalVentilator::CalculateInspiration()
   }
   else if (HasExpirationCycleFlow())
   {
-    /// \error Fatal: Expiration flow cycle is not yet supported.
-    Fatal("Expiration flow cycle is not yet supported.");
+    if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) <= GetExpirationCycleFlow(VolumePerTimeUnit::L_Per_s))
+    {
+      CycleMode();
+      return;
+    }
   }
   else
   {
@@ -476,8 +479,17 @@ void MechanicalVentilator::CalculateInspiration()
     Fatal("Limits are not yet supported.");
   }
 
+  // Check waveform
+  if (GetInspirationWaveform() != eMechanicalVentilator_DriverWaveform::Square &&
+    !HasInspirationWaveformPeriod())
+  {
+    /// \error Fatal: Non-square waveforms require a period.
+    Fatal("Non-square waveforms require a period.");
+  }
+
   // Apply waveform
-  if (GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::Square)
+  if (GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::Square ||
+    (HasInspirationWaveformPeriod() && m_CurrentPeriodTime_s > GetInspirationWaveformPeriod(TimeUnit::s)))
   {
     if (HasPeakInspiratoryPressure())
     {
@@ -495,10 +507,37 @@ void MechanicalVentilator::CalculateInspiration()
       Fatal("Inspiration mode not yet supported.");
     }
   }
+  else if (GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::Ramp)
+  {
+    if (HasPeakInspiratoryPressure())
+    {
+      double initialPressure_cmH2O = 0.0;
+      if (HasPositiveEndExpiredPressure())
+      {
+        initialPressure_cmH2O = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+      }
+
+      double finalPressure_cmH2O = GetPeakInspiratoryPressure(PressureUnit::cmH2O);
+      m_DriverPressure_cmH2O = initialPressure_cmH2O + (finalPressure_cmH2O - initialPressure_cmH2O) * m_CurrentPeriodTime_s / GetInspirationWaveformPeriod(TimeUnit::s);
+      m_DriverFlow_L_Per_s = SEScalar::dNaN();
+    }
+    else if (HasInspirationTargetFlow())
+    {
+      double initialFlow_L_Per_s = 0.0;
+      double finalFlow_L_Per_s = GetInspirationTargetFlow(VolumePerTimeUnit::L_Per_s);
+      m_DriverFlow_L_Per_s = initialFlow_L_Per_s + (finalFlow_L_Per_s - initialFlow_L_Per_s) * m_CurrentPeriodTime_s / GetInspirationWaveformPeriod(TimeUnit::s);
+      m_DriverPressure_cmH2O = SEScalar::dNaN();
+    }
+    else
+    {
+      /// \error Fatal: Inspiration mode not yet supported.
+      Fatal("Inspiration mode not yet supported.");
+    }
+  }
   else
   {
-    /// \error Fatal: Non-square waveforms are not yet supported.
-    Fatal("Non-square waveforms are not yet supported.");
+    /// \error Fatal: Waveform type not yet supported.
+    Fatal("Waveform type not yet supported.");
   }
 }
 
@@ -544,7 +583,6 @@ void MechanicalVentilator::CalculateExpiration()
   }
 
   // Check trigger
-  bool hasTrigger = false;
   if (HasInspirationMachineTriggerTime())
   {
     if (m_CurrentPeriodTime_s >= GetInspirationMachineTriggerTime(TimeUnit::s))
@@ -552,11 +590,8 @@ void MechanicalVentilator::CalculateExpiration()
       CycleMode();
       return;
     }
-
-    hasTrigger = true;
   }
-
-  if (HasInspirationPatientTriggerPressure())
+  else if (HasInspirationPatientTriggerPressure())
   {
     double relativePressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
     if (HasPositiveEndExpiredPressure())
@@ -568,18 +603,16 @@ void MechanicalVentilator::CalculateExpiration()
       CycleMode();
       return;
     }
-
-    hasTrigger = true;
   }
-
-  if (HasInspirationPatientTriggerFlow())
+  else if (HasInspirationPatientTriggerFlow())
   {
-    /// \error Fatal: Inspiration flow trigger is not yet supported.
-    Fatal("Inspiration flow trigger is not yet supported.");
-    hasTrigger = true;
+    if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s))
+    {
+      CycleMode();
+      return;
+    }
   }
-
-  if (!hasTrigger)
+  else
   {
     /// \error Fatal: No inspiration trigger defined.
     Fatal("No inspiration trigger defined.");

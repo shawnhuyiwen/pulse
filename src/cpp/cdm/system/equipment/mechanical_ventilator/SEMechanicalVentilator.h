@@ -14,7 +14,7 @@ enum class eMechanicalVentilator_Connection { NullConnection = 0, Off, Mask, Tub
 extern const std::string& eMechanicalVentilator_Connection_Name(eMechanicalVentilator_Connection m);
 
 // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-enum class eMechanicalVentilator_DriverWaveform { NullDriverWaveform = 0, Square };
+enum class eMechanicalVentilator_DriverWaveform { NullDriverWaveform = 0, Square, Exponential, Ramp, Sinusoidal, Sigmoidal };
 extern const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform m);
 
 class CDM_DECL SEMechanicalVentilator : public SEEquipment
@@ -87,6 +87,10 @@ public:
   virtual eMechanicalVentilator_DriverWaveform GetExpirationWaveform() const;
   virtual void SetExpirationWaveform(eMechanicalVentilator_DriverWaveform w);
 
+  virtual bool HasExpirationWaveformPeriod() const;
+  virtual SEScalarTime& GetExpirationWaveformPeriod();
+  virtual double GetExpirationWaveformPeriod(const TimeUnit& unit) const;
+
   virtual bool HasInspirationLimitFlow() const;
   virtual SEScalarVolumePerTime& GetInspirationLimitFlow();
   virtual double GetInspirationLimitFlow(const VolumePerTimeUnit& unit) const;
@@ -158,6 +162,10 @@ public:
   virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
   virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
 
+  virtual bool HasInspirationWaveformPeriod() const;
+  virtual SEScalarTime& GetInspirationWaveformPeriod();
+  virtual double GetInspirationWaveformPeriod(const TimeUnit& unit) const;
+
   bool HasFractionInspiredGas() const;
   bool HasFractionInspiredGas(const SESubstance& substance) const;
   const std::vector<SESubstanceFraction*>& GetFractionInspiredGases();
@@ -195,6 +203,7 @@ protected:
   SEScalarVolume*                              m_ExpirationLimbVolume;
   SEScalarVolume*                              m_ExpirationValveVolume;
   eMechanicalVentilator_DriverWaveform         m_ExpirationWaveform;
+  SEScalarTime*                                m_ExpirationWaveformPeriod;
 
   // Inspiratory Limit Properties (Only set 1)
   SEScalarVolumePerTime*                       m_InspirationLimitFlow;
@@ -219,6 +228,7 @@ protected:
   SEScalarVolume*                              m_InspirationLimbVolume;
   SEScalarVolume*                              m_InspirationValveVolume;
   eMechanicalVentilator_DriverWaveform         m_InspirationWaveform;
+  SEScalarTime*                                m_InspirationWaveformPeriod;
 
   SEScalarVolume*                              m_YPieceVolume;
   SEScalarVolume*                              m_ConnectionVolume;

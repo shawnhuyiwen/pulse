@@ -498,6 +498,17 @@ void Respiratory::AtSteadyState()
 //--------------------------------------------------------------------------------------------------
 void Respiratory::PreProcess()
 {
+  //Intubation
+  if (m_PatientActions->HasIntubation())
+  {
+    m_data.SetIntubation(eSwitch::On);
+    SEIntubation& intubation = m_PatientActions->GetIntubation();
+  }
+  else
+  {
+    m_data.SetIntubation(eSwitch::Off);
+  }
+
   if (m_data.HasOverride())
   {
     // Look for any known overrides
@@ -2345,7 +2356,7 @@ void Respiratory::UpdateChestWallCompliances()
     if (hasRespiratoryMechanicsCompliance)
     {
       //Specified externally
-      SEScalarVolume volume; //jbw - new?
+      SEScalarVolume volume;
       volume.SetValue(lungVolume_L, VolumeUnit::L);
       segment = GetCurrentSegement(segments, volume);
     }
@@ -2742,15 +2753,12 @@ void Respiratory::UpdateResistances()
     //Intubation
     if (m_PatientActions->HasIntubation())
     {
-      m_data.SetIntubation(eSwitch::On);
-      SEIntubation& intubation = m_PatientActions->GetIntubation();
-
-      switch (intubation.GetType())
+      switch (m_PatientActions->GetIntubation().GetType())
       {
       case eIntubation_Type::Tracheal:
       {
-        if (intubation.HasAirwayResistance())
-          tracheaResistance_cmH2O_s_Per_L = intubation.GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        if (m_PatientActions->GetIntubation().HasAirwayResistance())
+          tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         else
           //Tuned based on mechanical ventilator validation data
           tracheaResistance_cmH2O_s_Per_L *= 11.0;
@@ -2797,8 +2805,6 @@ void Respiratory::UpdateResistances()
     }
     else
     {
-      m_data.SetIntubation(eSwitch::Off);
-
       //Positive Pressure Ventilation assuming a mask if not intubated
       if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
         m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
@@ -3819,7 +3825,7 @@ SESegment* Respiratory::GetCurrentSegement(std::vector<SESegment*> segments, SES
   {
     bool inBegin = false;
     bool inEnd = false;
-    if (volume.IsInfinity()) //jbw - Make sure this works with -inf
+    if (segment->GetBeginVolume().IsInfinity()) //jbw - How should this work with -inf?
     {
       inBegin = true;
     }

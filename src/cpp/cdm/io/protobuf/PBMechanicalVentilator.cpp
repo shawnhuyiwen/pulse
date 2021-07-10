@@ -48,6 +48,8 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   if (src.has_expirationvalvevolume())
     PBProperty::Load(src.expirationvalvevolume(), dst.GetExpirationValveVolume());
   dst.SetExpirationWaveform((eMechanicalVentilator_DriverWaveform)src.expirationwaveform());
+  if (src.has_expirationwaveformperiod())
+    PBProperty::Load(src.expirationwaveformperiod(), dst.GetExpirationWaveformPeriod());
 
   if (src.has_inspirationlimitflow())
     PBProperty::Load(src.inspirationlimitflow(), dst.GetInspirationLimitFlow());
@@ -81,6 +83,8 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   if (src.has_inspirationvalvevolume())
     PBProperty::Load(src.inspirationvalvevolume(), dst.GetInspirationValveVolume());
   dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+  if (src.has_inspirationwaveformperiod())
+    PBProperty::Load(src.inspirationwaveformperiod(), dst.GetInspirationWaveformPeriod());
 
   if (src.has_ypiecevolume())
     PBProperty::Load(src.ypiecevolume(), dst.GetYPieceVolume());
@@ -156,6 +160,8 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
   if (src.HasExpirationValveResistance())
     dst.set_allocated_expirationvalveresistance(PBProperty::Unload(*src.m_ExpirationValveResistance));
   dst.set_expirationwaveform((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)src.m_ExpirationWaveform);
+  if (src.HasExpirationWaveformPeriod())
+    dst.set_allocated_expirationwaveformperiod(PBProperty::Unload(*src.m_ExpirationWaveformPeriod));
 
   if (src.HasInspirationLimitFlow())
     dst.set_allocated_inspirationlimitflow(PBProperty::Unload(*src.m_InspirationLimitFlow));
@@ -189,6 +195,8 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
   if (src.HasInspirationValveVolume())
     dst.set_allocated_inspirationvalvevolume(PBProperty::Unload(*src.m_InspirationValveVolume));
   dst.set_inspirationwaveform((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)src.m_InspirationWaveform);
+  if (src.HasInspirationWaveformPeriod())
+    dst.set_allocated_inspirationwaveformperiod(PBProperty::Unload(*src.m_InspirationWaveformPeriod));
 
   if (src.HasYPieceVolume())
     dst.set_allocated_ypiecevolume(PBProperty::Unload(*src.m_YPieceVolume));

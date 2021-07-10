@@ -35,6 +35,7 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
   m_ExpirationTubeResistance = nullptr;
   m_ExpirationValveResistance = nullptr;
   m_ExpirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_ExpirationWaveformPeriod = nullptr;
 
   m_InspirationLimitFlow = nullptr;
   m_InspirationLimitPressure = nullptr;
@@ -53,6 +54,7 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
   m_InspirationTubeResistance = nullptr;
   m_InspirationValveResistance = nullptr;
   m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_InspirationWaveformPeriod = nullptr;
 
   m_ExpirationLimbVolume = nullptr;
   m_ExpirationValveVolume = nullptr;
@@ -77,6 +79,7 @@ SEMechanicalVentilator::~SEMechanicalVentilator()
   SAFE_DELETE(m_ExpirationTubeResistance);
   SAFE_DELETE(m_ExpirationValveResistance);
   m_ExpirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  SAFE_DELETE(m_ExpirationWaveformPeriod);
 
   SAFE_DELETE(m_InspirationLimitFlow);
   SAFE_DELETE(m_InspirationLimitPressure);
@@ -95,6 +98,7 @@ SEMechanicalVentilator::~SEMechanicalVentilator()
   SAFE_DELETE(m_InspirationTubeResistance);
   SAFE_DELETE(m_InspirationValveResistance);
   m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  SAFE_DELETE(m_InspirationWaveformPeriod);
 
   SAFE_DELETE(m_ExpirationLimbVolume);
   SAFE_DELETE(m_ExpirationValveVolume);
@@ -129,6 +133,7 @@ void SEMechanicalVentilator::Clear()
   INVALIDATE_PROPERTY(m_ExpirationTubeResistance);
   INVALIDATE_PROPERTY(m_ExpirationValveResistance);
   m_ExpirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  INVALIDATE_PROPERTY(m_ExpirationWaveformPeriod);
 
   INVALIDATE_PROPERTY(m_InspirationLimitFlow);
   INVALIDATE_PROPERTY(m_InspirationLimitPressure);
@@ -147,6 +152,7 @@ void SEMechanicalVentilator::Clear()
   INVALIDATE_PROPERTY(m_InspirationTubeResistance);
   INVALIDATE_PROPERTY(m_InspirationValveResistance);
   m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  INVALIDATE_PROPERTY(m_InspirationWaveformPeriod);
 
   INVALIDATE_PROPERTY(m_ExpirationLimbVolume);
   INVALIDATE_PROPERTY(m_ExpirationValveVolume);
@@ -193,6 +199,7 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
   COPY_PROPERTY(ExpirationValveResistance);
   if (from.m_ExpirationWaveform != eMechanicalVentilator_DriverWaveform::NullDriverWaveform)
     SetExpirationWaveform(from.m_ExpirationWaveform);
+  COPY_PROPERTY(ExpirationWaveformPeriod);
 
   COPY_PROPERTY(InspirationLimitFlow);
   COPY_PROPERTY(InspirationLimitPressure);
@@ -212,6 +219,7 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
   COPY_PROPERTY(InspirationValveResistance);
   if (from.m_InspirationWaveform != eMechanicalVentilator_DriverWaveform::NullDriverWaveform)
     SetInspirationWaveform(from.m_InspirationWaveform);
+  COPY_PROPERTY(InspirationWaveformPeriod);
 
   COPY_PROPERTY(ExpirationLimbVolume);
   COPY_PROPERTY(ExpirationValveVolume);
@@ -308,6 +316,8 @@ const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
     return &GetExpirationCycleVolume();
   if (name == "ExpirationCycleTime")
     return &GetExpirationCycleTime();
+  if (name == "ExpirationWaveformPeriod")
+    return &GetExpirationWaveformPeriod();
 
   if (name == "ExpirationTubeResistance")
     return &GetExpirationTubeResistance();
@@ -336,6 +346,8 @@ const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
     return &GetInspirationPatientTriggerFlow();
   if (name == "InspirationPatientTriggerPressure")
     return &GetInspirationPatientTriggerPressure();
+  if (name == "InspirationWaveformPeriod")
+    return &GetInspirationWaveformPeriod();
 
   if (name == "InspirationTubeResistance")
     return &GetInspirationTubeResistance();
@@ -511,6 +523,23 @@ void SEMechanicalVentilator::SetExpirationWaveform(eMechanicalVentilator_DriverW
 eMechanicalVentilator_DriverWaveform SEMechanicalVentilator::GetExpirationWaveform() const
 {
   return m_ExpirationWaveform;
+}
+
+bool SEMechanicalVentilator::HasExpirationWaveformPeriod() const
+{
+  return m_ExpirationWaveformPeriod == nullptr ? false : m_ExpirationWaveformPeriod->IsValid();
+}
+SEScalarTime& SEMechanicalVentilator::GetExpirationWaveformPeriod()
+{
+  if (m_ExpirationWaveformPeriod == nullptr)
+    m_ExpirationWaveformPeriod = new SEScalarTime();
+  return *m_ExpirationWaveformPeriod;
+}
+double SEMechanicalVentilator::GetExpirationWaveformPeriod(const TimeUnit& unit) const
+{
+  if (m_ExpirationWaveformPeriod == nullptr)
+    return SEScalar::dNaN();
+  return m_ExpirationWaveformPeriod->GetValue(unit);
 }
 
 bool SEMechanicalVentilator::HasInspirationLimitFlow() const
@@ -809,6 +838,23 @@ void SEMechanicalVentilator::SetInspirationWaveform(eMechanicalVentilator_Driver
 eMechanicalVentilator_DriverWaveform SEMechanicalVentilator::GetInspirationWaveform() const
 {
   return m_InspirationWaveform;
+}
+
+bool SEMechanicalVentilator::HasInspirationWaveformPeriod() const
+{
+  return m_InspirationWaveformPeriod == nullptr ? false : m_InspirationWaveformPeriod->IsValid();
+}
+SEScalarTime& SEMechanicalVentilator::GetInspirationWaveformPeriod()
+{
+  if (m_InspirationWaveformPeriod == nullptr)
+    m_InspirationWaveformPeriod = new SEScalarTime();
+  return *m_InspirationWaveformPeriod;
+}
+double SEMechanicalVentilator::GetInspirationWaveformPeriod(const TimeUnit& unit) const
+{
+  if (m_InspirationWaveformPeriod == nullptr)
+    return SEScalar::dNaN();
+  return m_InspirationWaveformPeriod->GetValue(unit);
 }
 
 bool SEMechanicalVentilator::HasFractionInspiredGas() const
