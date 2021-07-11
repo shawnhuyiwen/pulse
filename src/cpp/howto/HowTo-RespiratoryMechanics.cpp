@@ -70,30 +70,65 @@ void HowToRespiratoryMechanics()
   SERespiratoryMechanicsConfiguration config;
   SERespiratoryMechanics& mechanics = config.GetConfiguration();
   // Create a mechanics profile
-  mechanics.GetLeftExpiratoryResistance().SetValue(5, PressureTimePerVolumeUnit::cmH2O_s_Per_mL);
+  double resistance_cmH2O_s_Per_L = 13.0;
+  double compliance_mL_Per_cmH2O = 50.0;
+  double musclePressure_cmH2O = 13.0;
+  double respirationRate_bpm = 15.0;
+  double inspiratoryTime_s = 0.9;
+
+  const double UpperResistancePercent = 0.5;
+  const double BronchiResistancePercent = 0.3;
+  const double AlveoliDuctResistancePercent = 0.2;
+
+  double upperResistance = resistance_cmH2O_s_Per_L - (BronchiResistancePercent * resistance_cmH2O_s_Per_L + AlveoliDuctResistancePercent * resistance_cmH2O_s_Per_L) / 2;
+  double bronchiResistance = 2 * (resistance_cmH2O_s_Per_L - upperResistance) - AlveoliDuctResistancePercent * resistance_cmH2O_s_Per_L;
+  double alveoliDuctResistance = 2 * (resistance_cmH2O_s_Per_L - upperResistance) - bronchiResistance;
+  double sideResistance = bronchiResistance + alveoliDuctResistance;
+
+  double RespiratorySideCompliance_L_Per_cmH2O = compliance_mL_Per_cmH2O / 2.0;
+  double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O;
+  double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O;
+
+  double totalBreathTime_s = 1.0 / (respirationRate_bpm / 60.0);
+  double inspiratoryFraction = inspiratoryTime_s / totalBreathTime_s;
+  double expiratoryFraction = 1.0 - inspiratoryFraction;
+
+  double InspiratoryRiseFraction = inspiratoryFraction;
+  double InspiratoryHoldFraction = 0.0;
+  double InspiratoryReleaseFraction = MIN(inspiratoryFraction, expiratoryFraction * 0.5);
+  double InspiratoryToExpiratoryPauseFraction = 1.0 - InspiratoryRiseFraction - InspiratoryReleaseFraction;
+  double ExpiratoryRiseFraction = 0.0;
+  double ExpiratoryHoldFraction = 0.0;
+  double ExpiratoryReleaseFraction = 0.0;
+
+  mechanics.GetUpperInspiratoryResistance().SetValue(upperResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  mechanics.GetUpperExpiratoryResistance().SetValue(upperResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  mechanics.GetLeftInspiratoryResistance().SetValue(sideResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  mechanics.GetLeftExpiratoryResistance().SetValue(sideResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  mechanics.GetRightInspiratoryResistance().SetValue(sideResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  mechanics.GetRightExpiratoryResistance().SetValue(sideResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
   SECurve& lcc = mechanics.GetLeftComplianceCurve();
-  SESegmentConstant& c = lcc.AddConstantSegment();
-  c.GetBeginVolume().SetValue(-std::numeric_limits<double>::infinity(), VolumeUnit::mL);
-  c.GetEndVolume().SetValue(0, VolumeUnit::mL);
-  c.GetCompliance().SetValue(5, VolumePerPressureUnit::mL_Per_cmH2O);
-  SESegmentLinear& l = lcc.AddLinearSegment();
-  l.GetBeginVolume().SetValue(0, VolumeUnit::mL);
-  l.GetEndVolume().SetValue(10, VolumeUnit::mL);
-  l.GetSlope().SetValue(7, PressurePerVolumeUnit::cmH2O_Per_mL);
-  l.GetYIntercept().SetValue(8, PressureUnit::cmH2O);
-  SESegmentParabolic& p = lcc.AddParabolicSegment();
-  p.GetBeginVolume().SetValue(10, VolumeUnit::mL);
-  p.GetEndVolume().SetValue(1000, VolumeUnit::mL);
-  p.GetCoefficient1().SetValue(11);
-  p.GetCoefficient2().SetValue(13);
-  p.GetCoefficient3().SetValue(15);
-  p.GetCoefficient4().SetValue(17);
-  SESegmentSigmoidal& s = lcc.AddSigmoidalSegment();
-  s.GetBeginVolume().SetValue(1000, VolumeUnit::mL);
-  s.GetEndVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
-  s.GetLowerCorner().SetValue(21, PressureUnit::cmH2O);
-  s.GetUpperCorner().SetValue(23, PressureUnit::cmH2O);
-  s.GetBaselineCompliance().SetValue(22, VolumePerPressureUnit::mL_Per_cmH2O);
+  SESegmentConstant& lc = lcc.AddConstantSegment();
+  lc.GetBeginVolume().SetValue(-std::numeric_limits<double>::infinity(), VolumeUnit::mL);
+  lc.GetEndVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
+  lc.GetCompliance().SetValue(RespiratorySideCompliance_L_Per_cmH2O, VolumePerPressureUnit::mL_Per_cmH2O);
+  SECurve& rcc = mechanics.GetRightComplianceCurve();
+  SESegmentConstant& rc = rcc.AddConstantSegment();
+  rc.GetBeginVolume().SetValue(-std::numeric_limits<double>::infinity(), VolumeUnit::mL);
+  rc.GetEndVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
+  rc.GetCompliance().SetValue(RespiratorySideCompliance_L_Per_cmH2O, VolumePerPressureUnit::mL_Per_cmH2O);
+
+  mechanics.GetInspiratoryRiseTime().SetValue(InspiratoryRiseFraction * totalBreathTime_s, TimeUnit::s);
+  mechanics.GetInspiratoryHoldTime().SetValue(InspiratoryHoldFraction * totalBreathTime_s, TimeUnit::s);
+  mechanics.GetInspiratoryReleaseTime().SetValue(InspiratoryReleaseFraction * totalBreathTime_s, TimeUnit::s);
+  mechanics.GetInspiratoryToExpiratoryPauseTime().SetValue(InspiratoryToExpiratoryPauseFraction * totalBreathTime_s, TimeUnit::s);
+  mechanics.GetExpiratoryRiseTime().SetValue(ExpiratoryRiseFraction * totalBreathTime_s, TimeUnit::s);
+  mechanics.GetExpiratoryHoldTime().SetValue(ExpiratoryHoldFraction * totalBreathTime_s, TimeUnit::s);
+  mechanics.GetExpiratoryReleaseTime().SetValue(ExpiratoryReleaseFraction * totalBreathTime_s, TimeUnit::s);
+
+  mechanics.GetInspiratoryPeakPressure().SetValue(-13.0, PressureUnit::cmH2O);
+  mechanics.GetExpiratoryPeakPressure().SetValue(0.0, PressureUnit::cmH2O);
 
   pe->ProcessAction(config);
 
@@ -109,5 +144,4 @@ void HowToRespiratoryMechanics()
     pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetPulmonaryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << "mL/cmH2O");
     pe->GetLogger()->Info(std::stringstream() << "Total Pulmonary Ventilation : " << pe->GetRespiratorySystem()->GetTotalPulmonaryVentilation(VolumePerTimeUnit::mL_Per_s) << "mL/s\n");
   }
-
 }

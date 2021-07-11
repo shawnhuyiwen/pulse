@@ -98,7 +98,6 @@
 //Should be commented out, unless debugging/tuning
 //#define TUNING
 
-//jbw - Allow setting any combination of this with RespiratoryMechanics settings
 
 Respiratory::Respiratory(PulseData& data) : PulseRespiratorySystem(data)
 {
@@ -1343,8 +1342,10 @@ void Respiratory::RespiratoryDriver()
 
   if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
   {
-    m_PeakInspiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryPeakPressure(PressureUnit::cmH2O);
-    m_PeakExpiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryPeakPressure(PressureUnit::cmH2O);
+    if(m_PatientActions->HasRespiratoryMechanicsConfiguration())
+      m_PeakInspiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryPeakPressure(PressureUnit::cmH2O);
+    if(m_PatientActions->HasRespiratoryMechanicsConfiguration())
+      m_PeakExpiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryPeakPressure(PressureUnit::cmH2O);
     SetBreathCycleFractions();
   }
 
@@ -1466,13 +1467,20 @@ void Respiratory::SetBreathCycleFractions()
   {
     double totalBreathCycleTime_s = GetBreathCycleTime();
 
-    m_InspiratoryRiseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryRiseTime(TimeUnit::s) / totalBreathCycleTime_s;
-    m_InspiratoryHoldFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryHoldTime(TimeUnit::s) / totalBreathCycleTime_s;
-    m_InspiratoryReleaseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryReleaseTime(TimeUnit::s) / totalBreathCycleTime_s;
-    m_InspiratoryToExpiratoryPauseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryToExpiratoryPauseTime(TimeUnit::s) / totalBreathCycleTime_s;
-    m_ExpiratoryRiseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryRiseTime(TimeUnit::s) / totalBreathCycleTime_s;
-    m_ExpiratoryHoldFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryHoldTime(TimeUnit::s) / totalBreathCycleTime_s;
-    m_ExpiratoryReleaseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryReleaseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    if(m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryRiseTime())
+      m_InspiratoryRiseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryRiseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryHoldTime())
+      m_InspiratoryHoldFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryHoldTime(TimeUnit::s) / totalBreathCycleTime_s;
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryReleaseTime())
+      m_InspiratoryReleaseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryReleaseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryToExpiratoryPauseTime())
+      m_InspiratoryToExpiratoryPauseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryToExpiratoryPauseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryRiseTime())
+      m_ExpiratoryRiseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryRiseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryHoldTime())
+      m_ExpiratoryHoldFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryHoldTime(TimeUnit::s) / totalBreathCycleTime_s;
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryReleaseTime())
+      m_ExpiratoryReleaseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryReleaseTime(TimeUnit::s) / totalBreathCycleTime_s;
   }
  }
 
@@ -2730,16 +2738,22 @@ void Respiratory::UpdateResistances()
     double alveoliDuctResistanceFraction = 0.4;
     if (inhaling)
     {
-      tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetUpperInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      if(m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasUpperInspiratoryResistance())
+        tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetUpperInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasLeftInspiratoryResistance())
+        leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasLeftInspiratoryResistance())
+        rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       
     }
     else //exhaling
     {
-      tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetUpperExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasUpperExpiratoryResistance())
+        tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetUpperExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasLeftExpiratoryResistance())
+        leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasLeftExpiratoryResistance())
+        rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     //Resistances in series sum
@@ -3801,14 +3815,21 @@ double Respiratory::GetBreathCycleTime()
 
   if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
   {
-    TotalBreathingCycleTime_s =
-      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryRiseTime(TimeUnit::s) +
-      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryHoldTime(TimeUnit::s) +
-      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryReleaseTime(TimeUnit::s) +
-      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryToExpiratoryPauseTime(TimeUnit::s) +
-      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryRiseTime(TimeUnit::s) +
-      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryHoldTime(TimeUnit::s) +
-      m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryReleaseTime(TimeUnit::s);
+    TotalBreathingCycleTime_s = 0.0;
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryRiseTime())
+      TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryRiseTime(TimeUnit::s);
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryHoldTime())
+      TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryHoldTime(TimeUnit::s);
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryReleaseTime())
+      TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryReleaseTime(TimeUnit::s);
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryToExpiratoryPauseTime())
+      TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryToExpiratoryPauseTime(TimeUnit::s);
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryRiseTime())
+      TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryRiseTime(TimeUnit::s);
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryHoldTime())
+      TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryHoldTime(TimeUnit::s);
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryReleaseTime())
+      TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryReleaseTime(TimeUnit::s);
   }
 
   return TotalBreathingCycleTime_s;
@@ -3825,7 +3846,7 @@ SESegment* Respiratory::GetCurrentSegement(std::vector<SESegment*> segments, SES
   {
     bool inBegin = false;
     bool inEnd = false;
-    if (segment->GetBeginVolume().IsInfinity()) //jbw - How should this work with -inf?
+    if (segment->GetBeginVolume().IsInfinity()) //Aaron - How should this work with -inf?
     {
       inBegin = true;
     }
