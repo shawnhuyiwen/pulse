@@ -136,7 +136,7 @@ void PulseEngineTest::ImposeFlowBlackBoxTest(const std::string& outputDir)
   }
 
 
-  BlackBoxes bbz(BlackBoxes::locations::AORTA);
+  BlackBoxes bbz(BlackBoxes::locations::VENACAVA);
   if(!SetupBBDataRequests(bbz, *pulse, outputDir+"/ImposeFlowBlackBoxTest.csv"))
   {
     pulse->GetLogger()->Error("Could not create black boxes");
@@ -144,13 +144,10 @@ void PulseEngineTest::ImposeFlowBlackBoxTest(const std::string& outputDir)
     return;
   }
 
-  for(int i=0; i<500; i++)
-    pulse->AdvanceModelTime(0.02, TimeUnit::s);
-
   double aortaToRightLegInflow = 2.0;
   double aortaToRightLegOutflow = 1.5;
 
-  double rightLegToVenaCavaInflow = 2.0;
+  double rightLegToVenaCavaInflow = -1.5;
   double rightLegToVenaCavaOutflow = 1.5;
 
   // Run for two mins
@@ -160,32 +157,36 @@ void PulseEngineTest::ImposeFlowBlackBoxTest(const std::string& outputDir)
   {
     if (bbz.aortaToRightLeg != nullptr)
     {
-      Info("Current Aorta Source Potential : " + std::to_string(bbz.aortaToRightLeg->GetSourcePotential(PressureUnit::mmHg)) + " mmHg");
-      Info("Current Aorta Source Flux : " + std::to_string(bbz.aortaToRightLeg->GetSourceFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s");
+      Info("Current Aorta/Right Leg Source Node Potential : " + std::to_string(bbz.aortaToRightLeg->GetSourcePotential(PressureUnit::mmHg)) + " mmHg");
+      Info("Current Aorta/Right Leg Source Compartment Potential : " + std::to_string(bbz.aortaToRightLeg->GetSourceCompartment().GetPressure(PressureUnit::mmHg)) + " mmHg");
+      Info("Current Aorta/Right Leg Source Path Flux : " + std::to_string(bbz.aortaToRightLeg->GetSourceFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s");
       Info("Imposing " + bbz.aortaToRightLeg->GetName() + " source flow, to " + std::to_string(aortaToRightLegInflow) + " mL/s");
       bbz.aortaToRightLeg->ImposeSourceFlux(aortaToRightLegInflow, VolumePerTimeUnit::mL_Per_s);
-      Info("New Aorta Source Flux : " + std::to_string(bbz.aortaToRightLeg->GetSourceFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s\n");
+      Info("New Aorta/Right Leg Source Path Flux : " + std::to_string(bbz.aortaToRightLeg->GetSourceFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s\n");
 
-      Info("Current Aorta Target Potential : " + std::to_string(bbz.aortaToRightLeg->GetTargetPotential(PressureUnit::mmHg)) + " mmHg");
-      Info("Current Aorta Target Flux : " + std::to_string(bbz.aortaToRightLeg->GetTargetFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s");
+      Info("Current Aorta/Right Leg Target Node Potential : " + std::to_string(bbz.aortaToRightLeg->GetTargetPotential(PressureUnit::mmHg)) + " mmHg");
+      Info("Current Aorta/Right Leg Target Compartment Potential : " + std::to_string(bbz.aortaToRightLeg->GetTargetCompartment().GetPressure(PressureUnit::mmHg)) + " mmHg");
+      Info("Current Aorta/Right Leg Target Path Flux : " + std::to_string(bbz.aortaToRightLeg->GetTargetFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s");
       Info("Imposing " + bbz.aortaToRightLeg->GetName() + " target flow, to " + std::to_string(aortaToRightLegOutflow) + " mL/s");
       bbz.aortaToRightLeg->ImposeTargetFlux(aortaToRightLegOutflow, VolumePerTimeUnit::mL_Per_s);
-      Info("New Aorta Target Flux : " + std::to_string(bbz.aortaToRightLeg->GetTargetFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s\n");
+      Info("New Aorta/Right Leg Target Path Flux : " + std::to_string(bbz.aortaToRightLeg->GetTargetFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s\n");
     }
 
     if (bbz.rightLegToVenaCava != nullptr)
     {
-      Info("Current Vena Cava Source Potential : " + std::to_string(bbz.rightLegToVenaCava->GetSourcePotential(PressureUnit::mmHg)) + " mmHg");
-      Info("Current Vena Cava Source Flux : " + std::to_string(bbz.rightLegToVenaCava->GetSourceFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s");
+      Info("Current Right Leg/Vena Cava Source Node Potential : " + std::to_string(bbz.rightLegToVenaCava->GetSourcePotential(PressureUnit::mmHg)) + " mmHg");
+      Info("Current Right Leg/Vena Cava Source Compartment Potential : " + std::to_string(bbz.rightLegToVenaCava->GetSourceCompartment().GetPressure(PressureUnit::mmHg)) + " mmHg");
+      Info("Current Right Leg/Vena Cava Source Path Flux : " + std::to_string(bbz.rightLegToVenaCava->GetSourceFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s");
       Info("Imposing " + bbz.rightLegToVenaCava->GetName() + " source flow, to " + std::to_string(rightLegToVenaCavaInflow) + " mL/s");
       bbz.rightLegToVenaCava->ImposeSourceFlux(rightLegToVenaCavaInflow, VolumePerTimeUnit::mL_Per_s);
-      Info("New Vena Cava Source Flux : " + std::to_string(bbz.rightLegToVenaCava->GetSourceFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s\n");
+      Info("New Vena Right Leg/Cava Source Flux : " + std::to_string(bbz.rightLegToVenaCava->GetSourceFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s\n");
 
-      Info("Current Vena Cava Target Potential : " + std::to_string(bbz.rightLegToVenaCava->GetTargetPotential(PressureUnit::mmHg)) + " mmHg");
-      Info("Current Vena Cava Target Flux : " + std::to_string(bbz.rightLegToVenaCava->GetTargetFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s");
+      Info("Current Right Leg/Vena Cava Target Node Potential : " + std::to_string(bbz.rightLegToVenaCava->GetTargetPotential(PressureUnit::mmHg)) + " mmHg");
+      Info("Current Right Leg/Vena Cava Target Compartment Potential : " + std::to_string(bbz.rightLegToVenaCava->GetTargetCompartment().GetPressure(PressureUnit::mmHg)) + " mmHg");
+      Info("Current Right Leg/Vena Cava Target Path Flux : " + std::to_string(bbz.rightLegToVenaCava->GetTargetFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s");
       Info("Imposing " + bbz.rightLegToVenaCava->GetName() + " target flow, to " + std::to_string(rightLegToVenaCavaOutflow) + " mL/s");
       bbz.rightLegToVenaCava->ImposeTargetFlux(rightLegToVenaCavaOutflow, VolumePerTimeUnit::mL_Per_s);
-      Info("New Vena Cava Target Flux : " + std::to_string(bbz.rightLegToVenaCava->GetTargetFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s\n");
+      Info("New Right Leg/Vena Cava Target Path Flux : " + std::to_string(bbz.rightLegToVenaCava->GetTargetFlux(VolumePerTimeUnit::mL_Per_s)) + " mL/s\n");
     }
 
     if (!pulse->AdvanceModelTime(0.0002, TimeUnit::s))
@@ -193,6 +194,7 @@ void PulseEngineTest::ImposeFlowBlackBoxTest(const std::string& outputDir)
       Error("Unable to advance time");
       return;
     }
+    Info("--------------- Advance Time ---------------\n");
 
     pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
     if (i == 3000)
