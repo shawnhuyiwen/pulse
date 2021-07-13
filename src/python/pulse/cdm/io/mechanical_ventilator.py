@@ -33,6 +33,8 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
     if src.has_expiration_valve_volume():
         serialize_scalar_volume_to_bind(src.get_expiration_valve_volume(), dst.ExpirationValveVolume)
     dst.ExpirationWaveform = src.get_expiration_waveform().value
+    if src.has_expiration_waveform_period():
+        serialize_scalar_time_to_bind(src.get_expiration_waveform_period(), dst.ExpirationWaveformPeriod)
 
     if src.has_inspiration_limit_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_inspiration_limit_flow(), dst.InspirationLimitFlow)
@@ -66,6 +68,8 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
     if src.has_inspiration_valve_volume():
         serialize_scalar_volume_to_bind(src.get_inspiration_valve_volume(), dst.InspirationValveVolume)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
+    if src.has_inspiration_waveform_period():
+        serialize_scalar_time_to_bind(src.get_inspiration_waveform_period(), dst.InspirationWaveformPeriod)
 
     if src.has_y_piece_volume():
         serialize_scalar_volume_to_bind(src.get_y_piece_volume(), dst.YPieceVolume)

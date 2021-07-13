@@ -39,6 +39,7 @@ class SEMechanicalVentilator(SEEquipment):
                  "_expiration_valve_resistance",
                  "_expiration_valve_volume",
                  "_expiration_waveform",
+                 "_expiration_waveform_period",
                  # One of
                  "_inspiration_limit_flow",
                  "_inspiration_limit_pressure",
@@ -59,6 +60,7 @@ class SEMechanicalVentilator(SEEquipment):
                  "_inspiration_valve_resistance",
                  "_inspiration_valve_volume",
                  "_inspiration_waveform",
+                 "_inspiration_waveform_period",
 
                  "_y_piece_volume",
                  "_connection_volume",
@@ -83,6 +85,7 @@ class SEMechanicalVentilator(SEEquipment):
         self._expiration_valve_resistance = None
         self._expiration_valve_volume = None
         self._expiration_waveform = eDriverWaveform.NullDriverWaveform
+        self._expiration_waveform_period = None
 
         self._inspiration_limit_flow = None
         self._inspiration_limit_pressure = None
@@ -103,6 +106,7 @@ class SEMechanicalVentilator(SEEquipment):
         self._inspiration_valve_resistance = None
         self._inspiration_valve_volume = None
         self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
+        self._inspiration_waveform_period = None
 
         self._y_piece_volume_volume = None
         self._connection_volume = None
@@ -126,6 +130,7 @@ class SEMechanicalVentilator(SEEquipment):
         if self._expiration_valve_resistance is not None: self._expiration_valve_resistance.invalidate()
         if self._expiration_valve_volume is not None: self._expiration_valve_volume.invalidate()
         self._expiration_waveform = eDriverWaveform.NullDriverWaveform
+        if self._expiration_waveform_period is not None: self._expiration_waveform_period.invalidate()
 
         if self._inspiration_limit_flow is not None: self._inspiration_limit_flow.invalidate()
         if self._inspiration_limit_pressure is not None: self._inspiration_limit_pressure.invalidate()
@@ -146,6 +151,7 @@ class SEMechanicalVentilator(SEEquipment):
         if self._inspiration_valve_resistance is not None: self._inspiration_valve_resistance.invalidate()
         if self._inspiration_valve_volume is not None: self._inspiration_valve_volume.invalidate()
         self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
+        if self._inspiration_waveform_period is not None: self._inspiration_waveform_period.invalidate()
 
         if self._y_piece_volume is not None: self._y_piece_volume.invalidate()
         if self._connection_volume is not None: self._connection_volume.invalidate()
@@ -172,6 +178,7 @@ class SEMechanicalVentilator(SEEquipment):
         if src.has_expiration_valve_resistance(): self.get_expiration_valve_resistance().set(src._expiration_valve_resistance)
         if src.has_expiration_valve_volume(): self.get_expiration_valve_volume().set(src._expiration_valve_volume)
         self._expiration_waveform = src._expiration_waveform
+        if src.has_expiration_waveform_period(): self.get_expiration_waveform_period().set(src._expiration_waveform_period)
 
         if src.has_inspiration_limit_flow(): self.get_inspiration_limit_flow().set(src._inspiration_limit_flow)
         if src.has_inspiration_limit_pressure(): self.get_inspiration_limit_pressure().set(src._inspiration_limit_pressure)
@@ -192,6 +199,7 @@ class SEMechanicalVentilator(SEEquipment):
         if src.has_inspiration_valve_resistance(): self.get_inspiration_valve_resistance().set(src._inspiration_valve_resistance)
         if src.has_inspiration_valve_volume(): self.get_inspiration_valve_volume().set(src._inspiration_valve_volume)
         self._inspiration_waveform = src._inspiration_waveform
+        if src.has_inspiration_waveform_period(): self.get_inspiration_waveform_period().set(src._inspiration_waveform_period)
 
         if src.has_y_piece_volume(): self.get_y_piece_volume().set(src._y_piece_volume)
         if src.has_connection_volume(): self.get_connection_volume().set(src._connection_volume)
@@ -280,6 +288,13 @@ class SEMechanicalVentilator(SEEquipment):
         return self._expiration_waveform
     def set_expiration_waveform(self, t: eDriverWaveform):
         self._expiration_waveform = t
+
+    def has_expiration_waveform_period(self):
+        return False if self._expiration_waveform_period is None else self._expiration_waveform_period.is_valid()
+    def get_expiration_waveform_period(self):
+        if self._expiration_waveform_period is None:
+            self._expiration_waveform_period = SEScalarTime()
+        return self._expiration_waveform_period
         
     def has_inspiration_limit_flow(self):
         return False if self._inspiration_limit_flow is None else self._inspiration_limit_flow.is_valid()
@@ -390,6 +405,13 @@ class SEMechanicalVentilator(SEEquipment):
         return self._inspiration_waveform
     def set_inspiration_waveform(self, t: eDriverWaveform):
         self._inspiration_waveform = t
+
+    def has_inspiration_waveform_period(self):
+        return False if self._inspiration_waveform_period is None else self._inspiration_waveform_period.is_valid()
+    def get_inspiration_waveform_period(self):
+        if self._inspiration_waveform_period is None:
+            self._inspiration_waveform_period = SEScalarTime()
+        return self._inspiration_waveform_period
         
     def has_fraction_inspired_gas(self, substance_name: str = None):
         if substance_name is None:

@@ -40,6 +40,7 @@ namespace Pulse.CDM
     protected SEScalarPressureTimePerVolume expiration_valve_resistance;
     protected SEScalarVolume expiration_valve_volume;
     protected DriverWaveform expiration_waveform;
+    protected SEScalarTime expiration_waveform_period;
 
     // Inspiration Limit (Only set one)
     protected SEScalarVolumePerTime inspiration_limit_flow;
@@ -64,7 +65,8 @@ namespace Pulse.CDM
     protected SEScalarPressureTimePerVolume inspiration_valve_resistance;
     protected SEScalarVolume inspiration_valve_volume;
     protected DriverWaveform inspiration_waveform;
-        
+    protected SEScalarTime inspiration_waveform_period;
+
     protected SEScalarVolume y_piece_volume;
     protected SEScalarVolume connection_volume;
 
@@ -85,7 +87,7 @@ namespace Pulse.CDM
       expiration_valve_resistance = null;
       expiration_valve_volume = null;
       expiration_waveform = DriverWaveform.NullDriverWaveform;
-
+      expiration_waveform_period = null;
 
       inspiration_limit_flow = null;
       inspiration_limit_pressure = null;
@@ -102,6 +104,7 @@ namespace Pulse.CDM
       inspiration_valve_resistance = null;
       inspiration_valve_volume = null;
       inspiration_waveform = DriverWaveform.NullDriverWaveform;
+      inspiration_waveform_period = null;
 
       y_piece_volume = null;
       connection_volume = null;
@@ -136,7 +139,8 @@ namespace Pulse.CDM
       if (expiration_valve_volume != null)
         expiration_valve_volume.Invalidate();
       expiration_waveform = DriverWaveform.NullDriverWaveform;
-
+      if (expiration_waveform_period != null)
+        expiration_waveform_period.Invalidate();
 
       if (inspiration_limit_flow != null)
         inspiration_limit_flow.Invalidate();
@@ -166,6 +170,8 @@ namespace Pulse.CDM
       if (inspiration_valve_volume != null)
         inspiration_valve_volume.Invalidate();
       inspiration_waveform = DriverWaveform.NullDriverWaveform;
+      if (inspiration_waveform_period != null)
+        inspiration_waveform_period.Invalidate();
 
       if (y_piece_volume != null)
         y_piece_volume.Invalidate();
@@ -204,6 +210,8 @@ namespace Pulse.CDM
         this.GetExpirationValveVolume().Set(from.GetExpirationValveVolume());
       if (from.expiration_waveform != DriverWaveform.NullDriverWaveform)
         this.expiration_waveform = from.expiration_waveform;
+      if (from.HasExpirationWaveformPeriod())
+        this.GetExpirationWaveformPeriod().Set(from.GetExpirationWaveformPeriod());
 
       if (from.HasInspirationLimitFlow())
         this.GetInspirationLimitFlow().Set(from.GetInspirationLimitFlow());
@@ -234,6 +242,8 @@ namespace Pulse.CDM
         this.GetInspirationValveVolume().Set(from.GetInspirationValveVolume());
       if (from.inspiration_waveform != DriverWaveform.NullDriverWaveform)
         this.inspiration_waveform = from.inspiration_waveform;
+      if (from.HasInspirationWaveformPeriod())
+        this.GetInspirationWaveformPeriod().Set(from.GetInspirationWaveformPeriod());
 
       if (from.HasYPieceVolume())
         this.GetYPieceVolume().Set(from.GetYPieceVolume());
@@ -399,6 +409,17 @@ namespace Pulse.CDM
       return expiration_waveform != DriverWaveform.NullDriverWaveform;
     }
 
+    public SEScalarTime GetExpirationWaveformPeriod()
+    {
+      if (expiration_waveform_period == null)
+        expiration_waveform_period = new SEScalarTime();
+      return expiration_waveform_period;
+    }
+    public bool HasExpirationWaveformPeriod()
+    {
+      return expiration_waveform_period == null ? false : expiration_waveform_period.IsValid();
+    }
+
     public SEScalarVolumePerTime GetInspirationLimitFlow()
     {
       if (inspiration_limit_flow == null)
@@ -555,6 +576,17 @@ namespace Pulse.CDM
       return inspiration_waveform != DriverWaveform.NullDriverWaveform;
     }
 
+    public SEScalarTime GetInspirationWaveformPeriod()
+    {
+      if (inspiration_waveform_period == null)
+        inspiration_waveform_period = new SEScalarTime();
+      return inspiration_waveform_period;
+    }
+    public bool HasInspirationWaveformPeriod()
+    {
+      return inspiration_waveform_period == null ? false : inspiration_waveform_period.IsValid();
+    }
+
     public SEScalarVolume GetYPieceVolume()
     {
       if (y_piece_volume == null)
@@ -693,7 +725,9 @@ namespace Pulse.CDM
       + "\n\tExpirationCycleVolume: " + (HasExpirationCycleVolume() ? GetExpirationCycleVolume().ToString() : "Not Provided")
       + "\n\tExpirationTubeResistance: " + (HasExpirationTubeResistance() ? GetExpirationTubeResistance().ToString() : "Not Provided")
       + "\n\tExpirationValveResistance: " + (HasExpirationValveResistance() ? GetExpirationValveResistance().ToString() : "Not Provided")
+      + "\n\tExpirationValveVolume: " + (HasExpirationValveVolume() ? GetExpirationValveVolume().ToString() : "Not Provided")
       + "\n\tExpirationWaveform: " + (HasExpirationWaveform() ? PBMechanicalVentilator.DriverWaveform_Name(expiration_waveform) : "Not Provided")
+      + "\n\tExpirationWaveformPeriod: " + (HasExpirationWaveformPeriod() ? GetExpirationWaveformPeriod().ToString() : "Not Provided")
       + "\n\tInspirationLimitFlow: " + (HasInspirationLimitFlow() ? GetInspirationLimitFlow().ToString() : "Not Provided")
       + "\n\tInspirationLimitPressure: " + (HasInspirationLimitPressure() ? GetInspirationLimitPressure().ToString() : "Not Provided")
       + "\n\tInspirationLimitVolume: " + (HasInspirationLimitVolume() ? GetInspirationLimitVolume().ToString() : "Not Provided")
@@ -705,7 +739,9 @@ namespace Pulse.CDM
       + "\n\tInspirationPatientTriggerPressure: " + (HasInspirationPatientTriggerPressure() ? GetInspirationPatientTriggerPressure().ToString() : "Not Provided")
       + "\n\tInspirationTubeResistance: " + (HasInspirationTubeResistance() ? GetInspirationTubeResistance().ToString() : "Not Provided")
       + "\n\tInspirationValveResistance: " + (HasInspirationValveResistance() ? GetInspirationValveResistance().ToString() : "Not Provided")
-      + "\n\tInspirationWaveform: " + (HasInspirationWaveform() ? PBMechanicalVentilator.DriverWaveform_Name(inspiration_waveform) : "Not Provided");
+      + "\n\tInspirationValveVolume: " + (HasInspirationValveVolume() ? GetInspirationValveVolume().ToString() : "Not Provided")
+      + "\n\tInspirationWaveform: " + (HasInspirationWaveform() ? PBMechanicalVentilator.DriverWaveform_Name(inspiration_waveform) : "Not Provided")
+      + "\n\tInspirationWaveformPeriod: " + (HasInspirationWaveformPeriod() ? GetInspirationWaveformPeriod().ToString() : "Not Provided");
       foreach (SESubstanceFraction sf in this.fraction_inspired_gases)
         str += "\n\t" + sf.GetSubstance();
       foreach (SESubstanceConcentration sc in this.concentration_inspired_aerosols)

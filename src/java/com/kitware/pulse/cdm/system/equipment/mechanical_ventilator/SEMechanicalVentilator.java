@@ -38,6 +38,7 @@ public class SEMechanicalVentilator extends SEEquipment
   protected SEScalarPressureTimePerVolume     expirationValveResistance;
   protected SEScalarVolume                    expirationValveVolume;
   protected eDriverWaveform                   expirationWaveform;
+  protected SEScalarTime                      expirationWaveformPeriod;
 
   // Inspiratory Limit Properties (Only set 1)
   protected SEScalarVolumePerTime             inspirationLimitFlow;
@@ -64,6 +65,7 @@ public class SEMechanicalVentilator extends SEEquipment
   protected SEScalarPressureTimePerVolume     inspirationValveResistance;
   protected SEScalarVolume                    inspirationValveVolume;
   protected eDriverWaveform                   inspirationWaveform;
+  protected SEScalarTime                      inspirationWaveformPeriod;
 
   protected SEScalarVolume                    yPieceVolume;
   protected SEScalarVolume                    connectionVolume;
@@ -89,6 +91,7 @@ public class SEMechanicalVentilator extends SEEquipment
     expirationValveResistance = null;
     expirationValveVolume = null;
     expirationWaveform = null;
+    expirationWaveformPeriod = null;
 
     inspirationLimitFlow = null;
     inspirationLimitPressure = null;
@@ -109,6 +112,7 @@ public class SEMechanicalVentilator extends SEEquipment
     inspirationValveResistance = null;
     inspirationValveVolume = null;
     inspirationWaveform = null;
+    inspirationWaveformPeriod = null;
 
     yPieceVolume = null;
     connectionVolume = null;
@@ -145,6 +149,8 @@ public class SEMechanicalVentilator extends SEEquipment
     if (expirationValveVolume != null)
       expirationValveVolume.invalidate();
     expirationWaveform = null;
+    if (expirationWaveformPeriod != null)
+      expirationWaveformPeriod.invalidate();
 
     if (inspirationLimitFlow != null)
       inspirationLimitFlow.invalidate();
@@ -178,6 +184,8 @@ public class SEMechanicalVentilator extends SEEquipment
     if (inspirationValveVolume != null)
       inspirationValveVolume.invalidate();
     inspirationWaveform = null;
+    if (inspirationWaveformPeriod != null)
+      inspirationWaveformPeriod.invalidate();
     
     if (yPieceVolume != null)
       yPieceVolume.invalidate();
@@ -218,6 +226,8 @@ public class SEMechanicalVentilator extends SEEquipment
       this.getExpirationValveVolume().set(from.getExpirationValveVolume());
     if(from.expirationWaveform!=null && from.expirationWaveform != eDriverWaveform.NullDriverWaveform)
       this.expirationWaveform=from.expirationWaveform;
+    if(from.hasExpirationWaveformPeriod())
+      this.getExpirationWaveformPeriod().set(from.getExpirationWaveformPeriod());
     
     if(from.hasInspirationLimitFlow())
       this.getInspirationLimitFlow().set(from.getInspirationLimitFlow());
@@ -252,6 +262,8 @@ public class SEMechanicalVentilator extends SEEquipment
       this.getInspirationValveVolume().set(from.getInspirationValveVolume());
     if(from.inspirationWaveform!=null && from.inspirationWaveform != eDriverWaveform.NullDriverWaveform)
       this.inspirationWaveform=from.inspirationWaveform;
+    if(from.hasInspirationWaveformPeriod())
+      this.getInspirationWaveformPeriod().set(from.getInspirationWaveformPeriod());
     
     if(from.hasYPieceVolume())
       this.getYPieceVolume().set(from.getYPieceVolume());
@@ -310,6 +322,8 @@ public class SEMechanicalVentilator extends SEEquipment
       SEScalarVolume.load(src.getExpirationValveVolume(), dst.getExpirationValveVolume());
     if (src.getExpirationWaveform()!=eDriverWaveform.UNRECOGNIZED)
       dst.setExpirationWaveform(src.getExpirationWaveform());
+    if (src.hasExpirationWaveformPeriod())
+      SEScalarTime.load(src.getExpirationWaveformPeriod(), dst.getExpirationWaveformPeriod());
     
     if (src.hasInspirationLimitFlow())
       SEScalarVolumePerTime.load(src.getInspirationLimitFlow(), dst.getInspirationLimitFlow());
@@ -344,6 +358,8 @@ public class SEMechanicalVentilator extends SEEquipment
       SEScalarVolume.load(src.getInspirationValveVolume(), dst.getInspirationValveVolume());
     if (src.getInspirationWaveform()!=eDriverWaveform.UNRECOGNIZED)
       dst.setInspirationWaveform(src.getInspirationWaveform());
+    if (src.hasInspirationWaveformPeriod())
+      SEScalarTime.load(src.getInspirationWaveformPeriod(), dst.getInspirationWaveformPeriod());
     
     if (src.hasYPieceVolume())
       SEScalarVolume.load(src.getYPieceVolume(), dst.getYPieceVolume());
@@ -401,6 +417,8 @@ public class SEMechanicalVentilator extends SEEquipment
       dst.setExpirationValveVolume(SEScalarVolume.unload(src.getExpirationValveVolume()));
     if (src.hasExpirationWaveform())
       dst.setExpirationWaveform(src.expirationWaveform);
+    if(src.hasExpirationWaveformPeriod())
+      dst.setExpirationWaveformPeriod(SEScalarTime.unload(src.getExpirationWaveformPeriod()));
     
     if(src.hasInspirationLimitFlow())
       dst.setInspirationLimitFlow(SEScalarVolumePerTime.unload(src.getInspirationLimitFlow()));
@@ -435,6 +453,8 @@ public class SEMechanicalVentilator extends SEEquipment
       dst.setInspirationValveVolume(SEScalarVolume.unload(src.getInspirationValveVolume()));
     if (src.hasInspirationWaveform())
       dst.setInspirationWaveform(src.inspirationWaveform);
+    if(src.hasInspirationWaveformPeriod())
+      dst.setInspirationWaveformPeriod(SEScalarTime.unload(src.getInspirationWaveformPeriod()));
     
     if(src.hasYPieceVolume())
       dst.setYPieceVolume(SEScalarVolume.unload(src.getYPieceVolume()));
@@ -581,6 +601,17 @@ public class SEMechanicalVentilator extends SEEquipment
   public boolean hasExpirationWaveform()
   {
     return expirationWaveform != null;
+  }
+  
+  public SEScalarTime getExpirationWaveformPeriod()
+  {
+    if (expirationWaveformPeriod == null)
+      expirationWaveformPeriod = new SEScalarTime();
+    return expirationWaveformPeriod;
+  }
+  public boolean hasExpirationWaveformPeriod()
+  {
+    return expirationWaveformPeriod == null ? false : expirationWaveformPeriod.isValid();
   }
   
   public SEScalarVolumePerTime getInspirationLimitFlow()
@@ -739,6 +770,17 @@ public class SEMechanicalVentilator extends SEEquipment
     return inspirationWaveform != null;
   }
   
+  public SEScalarTime getInspirationWaveformPeriod()
+  {
+    if (inspirationWaveformPeriod == null)
+      inspirationWaveformPeriod = new SEScalarTime();
+    return inspirationWaveformPeriod;
+  }
+  public boolean hasInspirationWaveformPeriod()
+  {
+    return inspirationWaveformPeriod == null ? false : inspirationWaveformPeriod.isValid();
+  }
+  
   public SEScalarVolume getYPieceVolume()
   {
     if (yPieceVolume == null)
@@ -890,6 +932,7 @@ public class SEMechanicalVentilator extends SEEquipment
         + "\n\tExpirationTubeResistance: " + (hasExpirationTubeResistance()?getExpirationTubeResistance():"NotProvided")
         + "\n\tExpirationValveResistance: " + (hasExpirationValveResistance()?getExpirationValveResistance():"NotProvided")
         + "\n\tExpirationWaveform: " + (hasExpirationWaveform()?getExpirationWaveform():"NotProvided")
+        + "\n\tExpirationWaveformPeriod: " + (hasExpirationWaveformPeriod()?getExpirationWaveformPeriod():"NotProvided")
         
         + "\n\tInspirationLimitFlow: " + (hasInspirationLimitFlow()?getInspirationLimitFlow():"NotProvided")
         + "\n\tInspirationLimitPressure: " + (hasInspirationLimitPressure()?getInspirationLimitPressure():"NotProvided")
@@ -907,8 +950,9 @@ public class SEMechanicalVentilator extends SEEquipment
         
         + "\n\tInspirationTubeResistance: " + (hasInspirationTubeResistance()?getInspirationTubeResistance():"NotProvided")
         + "\n\tInspirationValveResistance: " + (hasInspirationValveResistance()?getInspirationValveResistance():"NotProvided")
-        + "\n\tInspirationWaveform: " + (hasInspirationWaveform()?getInspirationWaveform():"NotProvided");
-        
+        + "\n\tInspirationWaveform: " + (hasInspirationWaveform()?getInspirationWaveform():"NotProvided")
+        + "\n\tInspirationWaveformPeriod: " + (hasInspirationWaveformPeriod()?getInspirationWaveformPeriod():"NotProvided");
+    
     for(SESubstanceFraction sf : this.fractionInspiredGases)
       str += "\n\t"+sf.toString();
     for(SESubstanceConcentration sc : this.concentrationInspiredAerosol)

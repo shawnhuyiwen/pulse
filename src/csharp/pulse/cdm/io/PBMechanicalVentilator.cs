@@ -47,6 +47,8 @@ namespace Pulse.CDM
       if (src.ExpirationValveVolume != null)
         PBProperty.Load(src.ExpirationValveVolume, dst.GetExpirationValveVolume());
       dst.SetExpirationWaveform((SEMechanicalVentilator.DriverWaveform)src.ExpirationWaveform);
+      if (src.ExpirationWaveformPeriod != null)
+        PBProperty.Load(src.ExpirationWaveformPeriod, dst.GetExpirationWaveformPeriod());
 
       if (src.InspirationLimitFlow != null)
         PBProperty.Load(src.InspirationLimitFlow, dst.GetInspirationLimitFlow());
@@ -80,6 +82,8 @@ namespace Pulse.CDM
       if (src.InspirationValveVolume != null)
         PBProperty.Load(src.InspirationValveVolume, dst.GetInspirationValveVolume());
       dst.SetInspirationWaveform((SEMechanicalVentilator.DriverWaveform)src.InspirationWaveform);
+      if (src.InspirationWaveformPeriod != null)
+        PBProperty.Load(src.InspirationWaveformPeriod, dst.GetInspirationWaveformPeriod());
 
       if (src.YPieceVolume != null)
         PBProperty.Load(src.YPieceVolume, dst.GetYPieceVolume());
@@ -130,6 +134,8 @@ namespace Pulse.CDM
       if (src.HasExpirationValveVolume())
         dst.ExpirationValveVolume = PBProperty.Unload(src.GetExpirationValveVolume());
       dst.ExpirationWaveform = (pulse.cdm.bind.MechanicalVentilatorData.Types.eDriverWaveform)(int)src.GetExpirationWaveform();
+      if (src.HasExpirationWaveformPeriod())
+        dst.ExpirationWaveformPeriod = PBProperty.Unload(src.GetExpirationWaveformPeriod());
 
       if (src.HasInspirationLimitFlow())
         dst.InspirationLimitFlow = PBProperty.Unload(src.GetInspirationLimitFlow());
@@ -163,6 +169,8 @@ namespace Pulse.CDM
       if (src.HasInspirationValveVolume())
         dst.InspirationValveVolume = PBProperty.Unload(src.GetInspirationValveVolume());
       dst.InspirationWaveform = (pulse.cdm.bind.MechanicalVentilatorData.Types.eDriverWaveform)(int)src.GetInspirationWaveform();
+      if (src.HasInspirationWaveformPeriod())
+        dst.InspirationWaveformPeriod = PBProperty.Unload(src.GetInspirationWaveformPeriod());
 
       if (src.HasYPieceVolume())
         dst.YPieceVolume = PBProperty.Unload(src.GetYPieceVolume());
