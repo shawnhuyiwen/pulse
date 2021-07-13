@@ -501,7 +501,6 @@ void Respiratory::PreProcess()
   if (m_PatientActions->HasIntubation())
   {
     m_data.SetIntubation(eSwitch::On);
-    SEIntubation& intubation = m_PatientActions->GetIntubation();
   }
   else
   {
@@ -2311,6 +2310,7 @@ void Respiratory::UpdateChestWallCompliances()
     SEFluidCircuitPath* lungPath = nullptr;
     double healthyChestWallCompliance_L_Per_cmH2O = 0.0;
     double healthyLungCompliance_L_Per_cmH2O = 0.0;
+    double healthySideCompliance_L_Per_cmH2O = 0.0;
 
     bool hasRespiratoryMechanicsCompliance = false;
     std::vector<SESegment*> segments;
@@ -2364,9 +2364,7 @@ void Respiratory::UpdateChestWallCompliances()
     if (hasRespiratoryMechanicsCompliance)
     {
       //Specified externally
-      SEScalarVolume volume;
-      volume.SetValue(lungVolume_L, VolumeUnit::L);
-      segment = GetCurrentSegement(segments, volume);
+      segment = GetSegement(segments, lungVolume_L);
     }
     else
     {
@@ -2405,8 +2403,8 @@ void Respiratory::UpdateChestWallCompliances()
       double residualVolume_L = baselineCompliance_L_Per_cmH2O * lowerCorner_cmH2O + functionalResidualCapacity_L;
       double vitalCapacity_L = baselineCompliance_L_Per_cmH2O * upperCorner_cmH2O + functionalResidualCapacity_L;
 
-      double healthyLungCompliance_L_Per_cmH2O = lungPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
-      double healthySideCompliance_L_Per_cmH2O = baselineCompliance_L_Per_cmH2O;
+      healthyLungCompliance_L_Per_cmH2O = lungPath->GetComplianceBaseline(VolumePerPressureUnit::L_Per_cmH2O);
+      healthySideCompliance_L_Per_cmH2O = baselineCompliance_L_Per_cmH2O;
       healthyChestWallCompliance_L_Per_cmH2O = 1.0 / (1.0 / healthySideCompliance_L_Per_cmH2O - 1.0 / healthyLungCompliance_L_Per_cmH2O);
 
       if (lungVolume_L > residualVolume_L && lungVolume_L < vitalCapacity_L + residualVolume_L)
@@ -3840,36 +3838,41 @@ double Respiratory::GetBreathCycleTime()
 /// Total time of one breathing cycle in seconds.
 ///
 //--------------------------------------------------------------------------------------------------
-SESegment* Respiratory::GetCurrentSegement(std::vector<SESegment*> segments, SEScalarVolume volume)
+SESegment* Respiratory::GetSegement(const std::vector<SESegment*>& segments, double volume_L)
 {
-  for (auto& segment : segments)
+  // Currently not checking that segment components are sorted or if there is overlap between segments
+
+  for (SESegment* segment : segments)
   {
-    bool inBegin = false;
-    bool inEnd = false;
-    if (segment->GetBeginVolume().IsInfinity()) //Aaron - How should this work with -inf?
+    if (segment->GetBeginVolume().IsInfinity())
     {
-      inBegin = true;
-    }
-    else if (volume.GetValue(VolumeUnit::L) >= segment->GetBeginVolume(VolumeUnit::L))
-    {
-      inBegin = true;
+      if (segment->GetBeginVolume().IsPositive())
+      {
+        Error("The begninng compliance segment volume be positive infinity");
+        return nullptr;
+      }
+
+      if (volume_L <= segment->GetEndVolume(VolumeUnit::L))
+        return segment;
     }
 
     if (segment->GetEndVolume().IsInfinity())
     {
-      inEnd = true;
-    }
-    else if (volume.GetValue(VolumeUnit::L) <= segment->GetEndVolume(VolumeUnit::L))
-    {
-      inEnd = true;
+      if (segment->GetBeginVolume().IsNegative())
+      {
+        Error("The ending compliance segment volume cannot be negative infinity");
+        return nullptr;
+      }
+
+      if (volume_L >= segment->GetBeginVolume(VolumeUnit::L))
+        return segment;
     }
 
-    if (inBegin && inEnd)
-    {
+    if (volume_L >= segment->GetBeginVolume(VolumeUnit::L) && volume_L <= segment->GetEndVolume(VolumeUnit::L))
       return segment;
-    }
   }
 
+  Error("Could not find a compliance segment that bounds the provided volume "+std::to_string(volume_L)+"L");
   return nullptr;
 }
 
