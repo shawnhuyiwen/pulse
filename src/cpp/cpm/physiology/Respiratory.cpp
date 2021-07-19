@@ -1341,9 +1341,9 @@ void Respiratory::RespiratoryDriver()
 
   if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
   {
-    if(m_PatientActions->HasRespiratoryMechanicsConfiguration())
+    if(m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryPeakPressure())
       m_PeakInspiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryPeakPressure(PressureUnit::cmH2O);
-    if(m_PatientActions->HasRespiratoryMechanicsConfiguration())
+    if(m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryPeakPressure())
       m_PeakExpiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryPeakPressure(PressureUnit::cmH2O);
     SetBreathCycleFractions();
   }
@@ -2726,11 +2726,9 @@ void Respiratory::UpdateResistances()
   }
 
   //Specified externally
+  //Resistances in series sum
   if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
   {
-    double leftResistance_cmH2O_s_Per_L = 0.0;
-    double rightResistance_cmH2O_s_Per_L = 0.0;
-
     //Should sum to 1.0
     double bronchiResistanceFraction = 0.6;
     double alveoliDuctResistanceFraction = 0.4;
@@ -2739,26 +2737,37 @@ void Respiratory::UpdateResistances()
       if(m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasUpperInspiratoryResistance())
         tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetUpperInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasLeftInspiratoryResistance())
-        leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasLeftInspiratoryResistance())
-        rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      
+      {
+        double leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        leftBronchiResistance_cmH2O_s_Per_L = leftResistance_cmH2O_s_Per_L * bronchiResistanceFraction;
+        leftAlveoliResistance_cmH2O_s_Per_L = leftResistance_cmH2O_s_Per_L * alveoliDuctResistanceFraction;
+      }
+      if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasRightInspiratoryResistance())
+      {
+        double rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetRightInspiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        rightAlveoliResistance_cmH2O_s_Per_L = rightResistance_cmH2O_s_Per_L * alveoliDuctResistanceFraction;
+        rightBronchiResistance_cmH2O_s_Per_L = rightResistance_cmH2O_s_Per_L * bronchiResistanceFraction;
+      }
     }
     else //exhaling
     {
       if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasUpperExpiratoryResistance())
         tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetUpperExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
       if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasLeftExpiratoryResistance())
-        leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasLeftExpiratoryResistance())
-        rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      {
+        double leftResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetLeftExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        leftBronchiResistance_cmH2O_s_Per_L = leftResistance_cmH2O_s_Per_L * bronchiResistanceFraction;
+        leftAlveoliResistance_cmH2O_s_Per_L = leftResistance_cmH2O_s_Per_L * alveoliDuctResistanceFraction;
+      }
+      if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasRightExpiratoryResistance())
+      {
+        double rightResistance_cmH2O_s_Per_L = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetRightExpiratoryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        rightAlveoliResistance_cmH2O_s_Per_L = rightResistance_cmH2O_s_Per_L * alveoliDuctResistanceFraction;
+        rightBronchiResistance_cmH2O_s_Per_L = rightResistance_cmH2O_s_Per_L * bronchiResistanceFraction;
+      }
     }
 
-    //Resistances in series sum
-    leftBronchiResistance_cmH2O_s_Per_L = leftResistance_cmH2O_s_Per_L * bronchiResistanceFraction;
-    leftAlveoliResistance_cmH2O_s_Per_L = leftResistance_cmH2O_s_Per_L * alveoliDuctResistanceFraction;
-    rightBronchiResistance_cmH2O_s_Per_L = rightResistance_cmH2O_s_Per_L * bronchiResistanceFraction;
-    rightAlveoliResistance_cmH2O_s_Per_L = rightResistance_cmH2O_s_Per_L * alveoliDuctResistanceFraction;
+    
   }
   else //Don't do this if we've specified externally - other conditions/actions will still work
   {
