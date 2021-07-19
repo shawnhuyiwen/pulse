@@ -3,12 +3,12 @@
 
 #include "stdafx.h"
 #include "PulsePhysiologyEngine.h"
-#include "PulseConfiguration.h"
 #include "engine/respiratory/controller/Controller.h"
+#include "engine/respiratory/controller/Compartments.h"
 // Common Pulse Objects
+#include "PulseConfiguration.h"
 #include "cpm/controller/BlackBoxes.h"
 #include "cpm/controller/Circuits.h"
-#include "cpm/controller/Compartments.h"
 #include "cpm/controller/Substances.h"
 #include "cpm/environment/Environment.h"
 #include "cpm/equipment/MechanicalVentilator.h"
@@ -75,7 +75,7 @@ void Controller::Allocate()
 
   // Create our derived objects
   m_BlackBoxes = new PulseBlackBoxes(*this);
-  m_Compartments = new PulseCompartments(*this);
+  m_Compartments = new Compartments(*this);
   m_Circuits = new PulseCircuits(*this);
 
   m_LogForward = new FatalListner(*m_EventManager, m_CurrentTime);

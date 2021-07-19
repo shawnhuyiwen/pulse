@@ -2,10 +2,12 @@
 add_library_ex(RespiratoryEngine
   H_FILES
     RespiratoryEngine.h
+    controller/Compartments.h
     controller/Controller.h
     controller/Engine.h
   CPP_FILES
     RespiratoryEngine.cpp
+    controller/Compartments.cpp
     controller/Controller.cpp
     controller/Engine.cpp
     controller/SetupCircuitsAndCompartments.cpp

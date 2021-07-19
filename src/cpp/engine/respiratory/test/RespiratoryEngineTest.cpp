@@ -8,6 +8,8 @@
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
+#include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
+#include "cdm/system/physiology/SERespiratoryMechanics.h"
 #include "cdm/utils/testing/SETestReport.h"
 #include "cdm/utils/testing/SETestCase.h"
 #include "cdm/utils/testing/SETestSuite.h"
@@ -116,8 +118,21 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
     return; // No sense in running the rest...
   }
 
+  // Create a mechanics structure to give breath timing to our system
+  SERespiratoryMechanicsConfiguration rConfig;
+  SERespiratoryMechanics& rMech = rConfig.GetConfiguration();
+  rMech.GetInspiratoryRiseTime().SetValue(1.667, TimeUnit::s);
+  rMech.GetInspiratoryHoldTime().SetValue(0, TimeUnit::s);
+  rMech.GetInspiratoryReleaseTime().SetValue(1.667, TimeUnit::s);
+  rMech.GetInspiratoryToExpiratoryPauseTime().SetValue(1.667, TimeUnit::s);
+  rMech.GetExpiratoryRiseTime().SetValue(0, TimeUnit::s);
+  rMech.GetExpiratoryHoldTime().SetValue(0, TimeUnit::s);
+  rMech.GetExpiratoryReleaseTime().SetValue(0, TimeUnit::s);
+  rMech.GetResidueTime().SetValue(0, TimeUnit::s);
+  e->ProcessAction(rConfig);
+
   // Advance time
-  for (int i = 0; i < 30*50; i++)
+  for (int i = 0; i < 120*50; i++)
   {
     if (!e->AdvanceModelTime())  // Compute 1 time step
     {

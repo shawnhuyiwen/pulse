@@ -257,7 +257,7 @@ message RespiratoryMechanicsData
   ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 7; /**<< @brief Blahb.*/
   ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 8; /**<< @brief Blahb.*/
   
-  // Muscle Pressue Driver
+  // Muscle Pressure Driver
   ScalarPressureData                  InspiratoryPeakPressure                        = 9; /**<< @brief Blahb.*/
   ScalarPressureData                  ExpiratoryPeakPressure                         = 10;/**<< @brief Blahb.*/
   
