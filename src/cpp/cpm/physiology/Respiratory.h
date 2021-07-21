@@ -81,7 +81,8 @@ protected:
   void MechanicalVentilation();
   void SupplementalOxygen();
   // Driver
-  void RespiratoryDriver();
+  void CalculateDriver();
+  void ApplyDriver();  
   /**/void SetBreathCycleFractions();
   /**/void ConsciousRespiration();
   /**/double VolumeToDriverPressure(double TargetVolume);
@@ -142,6 +143,7 @@ protected:
   double m_InspiratoryReleaseFraction;
   double m_InspiratoryRiseFraction;
   double m_InspiratoryToExpiratoryPauseFraction;
+  double m_ResidueFraction;
 
   // Conscious Respiration
   bool m_ActiveConsciousRespirationCommand;

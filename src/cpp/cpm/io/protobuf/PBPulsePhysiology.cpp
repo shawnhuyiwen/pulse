@@ -407,6 +407,7 @@ void PBPulsePhysiology::Serialize(const PULSE_BIND::RespiratoryData& src, Respir
   dst.m_InspiratoryReleaseFraction = src.inspiratoryreleasefraction();
   dst.m_InspiratoryRiseFraction = src.inspiratoryrisefraction();
   dst.m_InspiratoryToExpiratoryPauseFraction = src.inspiratorytoexpiratorypausefraction();
+  dst.m_ResidueFraction = src.residuefraction();
 
   dst.m_leftAlveoliDecrease_L = src.leftalveolidecrease_l();
   dst.m_rightAlveoliDecrease_L = src.rightalveolidecrease_l();
@@ -470,6 +471,7 @@ void PBPulsePhysiology::Serialize(const Respiratory& src, PULSE_BIND::Respirator
   dst.set_inspiratoryreleasefraction(src.m_InspiratoryReleaseFraction);
   dst.set_inspiratoryrisefraction(src.m_InspiratoryRiseFraction);
   dst.set_inspiratorytoexpiratorypausefraction(src.m_InspiratoryToExpiratoryPauseFraction);
+  dst.set_residuefraction(src.m_ResidueFraction);
 
   dst.set_leftalveolidecrease_l(src.m_leftAlveoliDecrease_L);
   dst.set_rightalveolidecrease_l(src.m_rightAlveoliDecrease_L);

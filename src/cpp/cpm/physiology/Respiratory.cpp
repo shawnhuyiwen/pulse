@@ -300,6 +300,7 @@ void Respiratory::Initialize()
   m_ExpiratoryRiseFraction = 0;
   m_ExpiratoryHoldFraction = 0;
   m_ExpiratoryReleaseFraction = 0;
+  m_ResidueFraction = 0;
 
   // Disease State
   m_leftAlveoliDecrease_L = 0;
@@ -550,10 +551,8 @@ void Respiratory::PreProcess()
   MechanicalVentilation();
   SupplementalOxygen();
 
-  if (m_data.HasCardiovascular())
-  {
-    RespiratoryDriver();
-  }
+  CalculateDriver();
+  ApplyDriver();
 
   //Do the overrides
   SetRespiratoryResistance();
@@ -1125,7 +1124,7 @@ void Respiratory::SupplementalOxygen()
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Respiratory driver pressure source
+/// Respiratory driver pressure source determination
 ///
 /// \details
 /// Calculates the muscle pressure source pressure by using the chemical stimuli as feedback control mechanism.
@@ -1134,7 +1133,7 @@ void Respiratory::SupplementalOxygen()
 /// used in the equation for muscle pressure source. The muscle pressure source is used as a driver for ventilation.
 /// This method also calculates the drug modifiers that adjusts the depth and frequency of respiration.
 //--------------------------------------------------------------------------------------------------
-void Respiratory::RespiratoryDriver()
+void Respiratory::CalculateDriver()
 {
   /// \event Patient: Start of exhale/inhale
   if (m_data.GetEvents().IsEventActive(eEvent::StartOfExhale))
@@ -1142,28 +1141,29 @@ void Respiratory::RespiratoryDriver()
   if (m_data.GetEvents().IsEventActive(eEvent::StartOfInhale))
     m_data.GetEvents().SetEvent(eEvent::StartOfInhale, false, m_data.GetSimulationTime());
 
-  //Keep a running average of the Arterial Partial Pressures
-  m_ArterialO2RunningAverage_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
-  m_ArterialCO2RunningAverage_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
-  //Reset at start of cardiac cycle 
-  if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
+  if (m_data.HasCardiovascular())
   {
-    m_ArterialO2PartialPressure_mmHg = m_ArterialO2RunningAverage_mmHg->Value();
-    m_ArterialCO2PartialPressure_mmHg = m_ArterialCO2RunningAverage_mmHg->Value();
+    //Keep a running average of the Arterial Partial Pressures
+    m_ArterialO2RunningAverage_mmHg->Sample(m_AortaO2->GetPartialPressure(PressureUnit::mmHg));
+    m_ArterialCO2RunningAverage_mmHg->Sample(m_AortaCO2->GetPartialPressure(PressureUnit::mmHg));
+    //Reset at start of cardiac cycle 
+    if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
+    {
+      m_ArterialO2PartialPressure_mmHg = m_ArterialO2RunningAverage_mmHg->Value();
+      m_ArterialCO2PartialPressure_mmHg = m_ArterialCO2RunningAverage_mmHg->Value();
 
-    m_ArterialO2RunningAverage_mmHg->Clear();
-    m_ArterialCO2RunningAverage_mmHg->Clear();
-  }
+      m_ArterialO2RunningAverage_mmHg->Clear();
+      m_ArterialCO2RunningAverage_mmHg->Clear();
+    }
 
 #ifdef TUNING
-  m_ArterialO2PartialPressure_mmHg = 95.0;
-  m_ArterialCO2PartialPressure_mmHg = 40.0;
-#endif  
-
-  double TotalBreathingCycleTime_s = GetBreathCycleTime();
+    m_ArterialO2PartialPressure_mmHg = 95.0;
+    m_ArterialCO2PartialPressure_mmHg = 40.0;
+#endif
+  }
 
   //Prepare for the next cycle -------------------------------------------------------------------------------
-  if ((m_BreathingCycleTime_s > TotalBreathingCycleTime_s) ||                              //End of the cycle or currently not breathing
+  if ((m_BreathingCycleTime_s > GetBreathCycleTime()) ||                              //End of the cycle or currently not breathing
     (m_PatientActions->HasConsciousRespiration() && !m_ActiveConsciousRespirationCommand)) //Or new consious respiration command to start immediately
   {
     m_BreathingCycleTime_s = 0.0;
@@ -1175,178 +1175,201 @@ void Respiratory::RespiratoryDriver()
     }
     else //Spontaneous breathing
     {
-      m_ActiveConsciousRespirationCommand = false;
-
-      // Make a cardicArrestEffect that is 1.0 unless cardiac arrest is true
-      double cardiacArrestEffect = 1.0;
-      // If the cv system parameter is true, then make the cardicArrestEffect = 0
-      if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+      if (!m_data.HasCardiovascular())
       {
-        cardiacArrestEffect = 0.0;
-      }
+        //No feedback, so this will always just keep the same waveform
+        m_VentilationFrequency_Per_min = m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min);
+        m_IERatioScaleFactor = 1.0;
 
-      //Ventilatory Negative Feedback Control *************************************************************************
-      double PeripheralCO2PartialPressureSetPoint = m_data.GetConfiguration().GetPeripheralControllerCO2PressureSetPoint(PressureUnit::mmHg);
-      double CentralCO2PartialPressureSetPoint = m_data.GetConfiguration().GetCentralControllerCO2PressureSetPoint(PressureUnit::mmHg);
-
-      double metabolicModifier = 1.0;
-      double TMR_W = m_data.GetEnergy().GetTotalMetabolicRate(PowerUnit::W);
-      double BMR_W = m_data.GetCurrentPatient().GetBasalMetabolicRate(PowerUnit::W);
-      double metabolicFraction = TMR_W / BMR_W;
-
-      //Get Drug Effects
-      SEDrugSystem& Drugs = m_data.GetDrugs();
-      double DrugRRChange_Per_min = Drugs.GetRespirationRateChange(FrequencyUnit::Per_min);
-      double DrugsTVChange_L = Drugs.GetTidalVolumeChange(VolumeUnit::L);
-      double NMBModifier = 1.0;
-      double SedationModifier = 1.0;
-      //Make changes to Respiration Rate change based on the neuromuscular block level
-      if (Drugs.GetNeuromuscularBlockLevel().GetValue() > 0.135)
-      {
-        NMBModifier = 0.0;
-        DrugRRChange_Per_min = 0.0;
-        DrugsTVChange_L = 0.0;
-      }
-      else if (Drugs.GetNeuromuscularBlockLevel().GetValue() > 0.11)
-      {
-        NMBModifier = 0.5;
-        DrugRRChange_Per_min = 0.0;
-        DrugsTVChange_L = 0.0;
-      }
-      else if (Drugs.GetSedationLevel().GetValue() > 0.15 && std::abs(m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min) + DrugRRChange_Per_min) < 1.0)
-      {
-        SedationModifier = 0.0;
-        DrugRRChange_Per_min = 0.0;
-        DrugsTVChange_L = 0.0;
-      }
-
-      //Calculate the target Alveolar Ventilation based on the Arterial O2 and CO2 concentrations
-      double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05 * m_ArterialO2PartialPressure_mmHg) * MAX(0., m_ArterialCO2PartialPressure_mmHg - PeripheralCO2PartialPressureSetPoint); //Peripheral portion
-      dTargetAlveolarVentilation_L_Per_min += m_CentralControlGainConstant * MAX(0., m_ArterialCO2PartialPressure_mmHg - CentralCO2PartialPressureSetPoint); //Central portion
-
-      //Metabolic modifier is used to drive the system to reasonable levels achievable during increased metabolic exertion
-      //The modifier is tuned to achieve the correct respiratory response for near maximal exercise. A linear relationship is assumed
-      // for the respiratory effects due to increased metabolic exertion    
-      double tunedVolumeMetabolicSlope = 0.2; //Tuned fractional increase of the tidal volume due to increased metabolic rate
-      metabolicModifier = 1.0 + tunedVolumeMetabolicSlope * (metabolicFraction - 1.0);
-      dTargetAlveolarVentilation_L_Per_min *= metabolicModifier;
-
-      //Only move it part way to where it wants to be.
-      //If it stays there, it will get there, just more controlled/slowly.
-      //This is needed so we don't overshoot and introduce low frequency oscillations into the system (i.e. overdamped).
-      double targetCO2PP_mmHg = 40.0;
-      double changeFraction = 1.0;
-      if (m_data.GetState() <= EngineState::InitialStabilization)
-      {
-        //This gets it nice and stable
-        changeFraction = 0.1;
+        double TargetVolume_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + m_data.GetInitialPatient().GetTidalVolumeBaseline(VolumeUnit::L);
+        m_PeakInspiratoryPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
+        m_PeakExpiratoryPressure_cmH2O = 0.0;
       }
       else
       {
-        //This keeps it from going crazy with modifiers applied
-        changeFraction = std::abs(m_ArterialCO2PartialPressure_mmHg - targetCO2PP_mmHg) / targetCO2PP_mmHg * 0.5;
-      }
-      changeFraction = MIN(changeFraction, 1.0);
+        m_ActiveConsciousRespirationCommand = false;
+
+        // Make a cardicArrestEffect that is 1.0 unless cardiac arrest is true
+        double cardiacArrestEffect = 1.0;
+        // If the cv system parameter is true, then make the cardicArrestEffect = 0
+        if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+        {
+          cardiacArrestEffect = 0.0;
+        }
+
+        //Ventilatory Negative Feedback Control *************************************************************************
+        double PeripheralCO2PartialPressureSetPoint = m_data.GetConfiguration().GetPeripheralControllerCO2PressureSetPoint(PressureUnit::mmHg);
+        double CentralCO2PartialPressureSetPoint = m_data.GetConfiguration().GetCentralControllerCO2PressureSetPoint(PressureUnit::mmHg);
+
+        double metabolicModifier = 1.0;
+        double TMR_W = m_data.GetEnergy().GetTotalMetabolicRate(PowerUnit::W);
+        double BMR_W = m_data.GetCurrentPatient().GetBasalMetabolicRate(PowerUnit::W);
+        double metabolicFraction = TMR_W / BMR_W;
+
+        //Get Drug Effects
+        SEDrugSystem& Drugs = m_data.GetDrugs();
+        double DrugRRChange_Per_min = Drugs.GetRespirationRateChange(FrequencyUnit::Per_min);
+        double DrugsTVChange_L = Drugs.GetTidalVolumeChange(VolumeUnit::L);
+        double NMBModifier = 1.0;
+        double SedationModifier = 1.0;
+        //Make changes to Respiration Rate change based on the neuromuscular block level
+        if (Drugs.GetNeuromuscularBlockLevel().GetValue() > 0.135)
+        {
+          NMBModifier = 0.0;
+          DrugRRChange_Per_min = 0.0;
+          DrugsTVChange_L = 0.0;
+        }
+        else if (Drugs.GetNeuromuscularBlockLevel().GetValue() > 0.11)
+        {
+          NMBModifier = 0.5;
+          DrugRRChange_Per_min = 0.0;
+          DrugsTVChange_L = 0.0;
+        }
+        else if (Drugs.GetSedationLevel().GetValue() > 0.15 && std::abs(m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min) + DrugRRChange_Per_min) < 1.0)
+        {
+          SedationModifier = 0.0;
+          DrugRRChange_Per_min = 0.0;
+          DrugsTVChange_L = 0.0;
+        }
+
+        //Calculate the target Alveolar Ventilation based on the Arterial O2 and CO2 concentrations
+        double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05 * m_ArterialO2PartialPressure_mmHg) * MAX(0., m_ArterialCO2PartialPressure_mmHg - PeripheralCO2PartialPressureSetPoint); //Peripheral portion
+        dTargetAlveolarVentilation_L_Per_min += m_CentralControlGainConstant * MAX(0., m_ArterialCO2PartialPressure_mmHg - CentralCO2PartialPressureSetPoint); //Central portion
+
+        //Metabolic modifier is used to drive the system to reasonable levels achievable during increased metabolic exertion
+        //The modifier is tuned to achieve the correct respiratory response for near maximal exercise. A linear relationship is assumed
+        // for the respiratory effects due to increased metabolic exertion    
+        double tunedVolumeMetabolicSlope = 0.2; //Tuned fractional increase of the tidal volume due to increased metabolic rate
+        metabolicModifier = 1.0 + tunedVolumeMetabolicSlope * (metabolicFraction - 1.0);
+        dTargetAlveolarVentilation_L_Per_min *= metabolicModifier;
+
+        //Only move it part way to where it wants to be.
+        //If it stays there, it will get there, just more controlled/slowly.
+        //This is needed so we don't overshoot and introduce low frequency oscillations into the system (i.e. overdamped).
+        double targetCO2PP_mmHg = 40.0;
+        double changeFraction = 1.0;
+        if (m_data.GetState() <= EngineState::InitialStabilization)
+        {
+          //This gets it nice and stable
+          changeFraction = 0.1;
+        }
+        else
+        {
+          //This keeps it from going crazy with modifiers applied
+          changeFraction = std::abs(m_ArterialCO2PartialPressure_mmHg - targetCO2PP_mmHg) / targetCO2PP_mmHg * 0.5;
+        }
+        changeFraction = MIN(changeFraction, 1.0);
 
 #ifdef TUNING
-      changeFraction = 1.0;
+        changeFraction = 1.0;
 #endif
 
-      dTargetAlveolarVentilation_L_Per_min = m_PreviousTargetAlveolarVentilation_L_Per_min + (dTargetAlveolarVentilation_L_Per_min - m_PreviousTargetAlveolarVentilation_L_Per_min) * changeFraction;
-      m_PreviousTargetAlveolarVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
+        dTargetAlveolarVentilation_L_Per_min = m_PreviousTargetAlveolarVentilation_L_Per_min + (dTargetAlveolarVentilation_L_Per_min - m_PreviousTargetAlveolarVentilation_L_Per_min) * changeFraction;
+        m_PreviousTargetAlveolarVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
 
-      //Target Tidal Volume (i.e. Driver amplitude) *************************************************************************
-      //Calculate the target Tidal Volume based on the Alveolar Ventilation
-      double dTargetPulmonaryVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
+        //Target Tidal Volume (i.e. Driver amplitude) *************************************************************************
+        //Calculate the target Tidal Volume based on the Alveolar Ventilation
+        double dTargetPulmonaryVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
 
-      double dMaximumPulmonaryVentilationRate = m_data.GetConfiguration().GetPulmonaryVentilationRateMaximum(VolumePerTimeUnit::L_Per_min);
-      /// \event Patient: Maximum Pulmonary Ventilation Rate : Pulmonary ventilation exceeds maximum value
-      if (dTargetPulmonaryVentilation_L_Per_min > dMaximumPulmonaryVentilationRate)
-      {
-        dTargetPulmonaryVentilation_L_Per_min = dMaximumPulmonaryVentilationRate;
-        m_data.GetEvents().SetEvent(eEvent::MaximumPulmonaryVentilationRate, true, m_data.GetSimulationTime());
-      }
+        double dMaximumPulmonaryVentilationRate = m_data.GetConfiguration().GetPulmonaryVentilationRateMaximum(VolumePerTimeUnit::L_Per_min);
+        /// \event Patient: Maximum Pulmonary Ventilation Rate : Pulmonary ventilation exceeds maximum value
+        if (dTargetPulmonaryVentilation_L_Per_min > dMaximumPulmonaryVentilationRate)
+        {
+          dTargetPulmonaryVentilation_L_Per_min = dMaximumPulmonaryVentilationRate;
+          m_data.GetEvents().SetEvent(eEvent::MaximumPulmonaryVentilationRate, true, m_data.GetSimulationTime());
+        }
 
-      if (dTargetPulmonaryVentilation_L_Per_min < dMaximumPulmonaryVentilationRate && m_data.GetEvents().IsEventActive(eEvent::MaximumPulmonaryVentilationRate))
-      {
-        m_data.GetEvents().SetEvent(eEvent::MaximumPulmonaryVentilationRate, false, m_data.GetSimulationTime());
-      }
+        if (dTargetPulmonaryVentilation_L_Per_min < dMaximumPulmonaryVentilationRate && m_data.GetEvents().IsEventActive(eEvent::MaximumPulmonaryVentilationRate))
+        {
+          m_data.GetEvents().SetEvent(eEvent::MaximumPulmonaryVentilationRate, false, m_data.GetSimulationTime());
+        }
 
-      //Calculate the target Tidal Volume based on the calculated target pulmonary ventilation, plot slope (determined during initialization), and x-intercept
-      double dTargetTidalVolume_L = dTargetPulmonaryVentilation_L_Per_min / m_VentilationToTidalVolumeSlope + m_VentilationTidalVolumeIntercept;
+        //Calculate the target Tidal Volume based on the calculated target pulmonary ventilation, plot slope (determined during initialization), and x-intercept
+        double dTargetTidalVolume_L = dTargetPulmonaryVentilation_L_Per_min / m_VentilationToTidalVolumeSlope + m_VentilationTidalVolumeIntercept;
 
-      //Modify the target tidal volume due to other external effects - probably eventually replaced by the Nervous system
-      dTargetTidalVolume_L *= cardiacArrestEffect * NMBModifier;
+        //Modify the target tidal volume due to other external effects - probably eventually replaced by the Nervous system
+        dTargetTidalVolume_L *= cardiacArrestEffect * NMBModifier;
 
-      //Apply Drug Effects to the target tidal volume
-      dTargetTidalVolume_L += DrugsTVChange_L;
+        //Apply Drug Effects to the target tidal volume
+        dTargetTidalVolume_L += DrugsTVChange_L;
 
-      //This is a piecewise function that plateaus at the Tidal Volume equal to 1/2 * Vital Capacity
-      //The Respiration Rate will make up for the Alveoli Ventilation difference
-      double dHalfVitalCapacity_L = m_data.GetInitialPatient().GetVitalCapacity(VolumeUnit::L) / 2;
-      dTargetTidalVolume_L = MIN(dTargetTidalVolume_L, dHalfVitalCapacity_L);
+        //This is a piecewise function that plateaus at the Tidal Volume equal to 1/2 * Vital Capacity
+        //The Respiration Rate will make up for the Alveoli Ventilation difference
+        double dHalfVitalCapacity_L = m_data.GetInitialPatient().GetVitalCapacity(VolumeUnit::L) / 2;
+        dTargetTidalVolume_L = MIN(dTargetTidalVolume_L, dHalfVitalCapacity_L);
 
-      //Map the Target Tidal Volume to the Driver
-      double TargetVolume_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + dTargetTidalVolume_L;
-      m_PeakInspiratoryPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
-      //There's a maximum force the driver can try to achieve
-      m_PeakInspiratoryPressure_cmH2O = MAX(m_PeakInspiratoryPressure_cmH2O, m_MaxDriverPressure_cmH2O);
+        //Map the Target Tidal Volume to the Driver
+        double TargetVolume_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + dTargetTidalVolume_L;
+        m_PeakInspiratoryPressure_cmH2O = VolumeToDriverPressure(TargetVolume_L);
+        //There's a maximum force the driver can try to achieve
+        m_PeakInspiratoryPressure_cmH2O = MAX(m_PeakInspiratoryPressure_cmH2O, m_MaxDriverPressure_cmH2O);
 
-      //This is always zero, unless there's conscious respiration
-      m_PeakExpiratoryPressure_cmH2O = 0.0;
+        //This is always zero, unless there's conscious respiration
+        m_PeakExpiratoryPressure_cmH2O = 0.0;
 
-      //Respiration Rate (i.e. Driver frequency) *************************************************************************
-      //Calculate the Respiration Rate given the Alveolar Ventilation and the Target Tidal Volume
-      if (SEScalar::IsZero(dTargetTidalVolume_L, ZERO_APPROX)) //Can't divide by zero
-      {
-        m_VentilationFrequency_Per_min = 0.0;
-        m_NotBreathing = true;
-      }
-      else
-      {
-        m_VentilationFrequency_Per_min = dTargetPulmonaryVentilation_L_Per_min / dTargetTidalVolume_L; //breaths/min
-        m_VentilationFrequency_Per_min *= NMBModifier * SedationModifier;
-        m_VentilationFrequency_Per_min += DrugRRChange_Per_min;
-        m_NotBreathing = false;
-      }
+        //Respiration Rate (i.e. Driver frequency) *************************************************************************
+        //Calculate the Respiration Rate given the Alveolar Ventilation and the Target Tidal Volume
+        if (SEScalar::IsZero(dTargetTidalVolume_L, ZERO_APPROX)) //Can't divide by zero
+        {
+          m_VentilationFrequency_Per_min = 0.0;
+          m_NotBreathing = true;
+        }
+        else
+        {
+          m_VentilationFrequency_Per_min = dTargetPulmonaryVentilation_L_Per_min / dTargetTidalVolume_L; //breaths/min
+          m_VentilationFrequency_Per_min *= NMBModifier * SedationModifier;
+          m_VentilationFrequency_Per_min += DrugRRChange_Per_min;
+          m_NotBreathing = false;
+        }
 
-      m_VentilationFrequency_Per_min = LIMIT(m_VentilationFrequency_Per_min, 0.0, dMaximumPulmonaryVentilationRate / dHalfVitalCapacity_L);
+        m_VentilationFrequency_Per_min = LIMIT(m_VentilationFrequency_Per_min, 0.0, dMaximumPulmonaryVentilationRate / dHalfVitalCapacity_L);
 
-      //Patient Definition *************************************************************************
-      //We need to hit the patient's defined Respiration Rate Baseline, no matter what,
-      //so we'll keep adjusting the slope of the function to achieve this
-      if (m_data.GetState() <= EngineState::InitialStabilization)
-      {
-        double dRespirationRateBaseline_Per_min = m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min);
-        double dPercentError = (m_VentilationFrequency_Per_min - dRespirationRateBaseline_Per_min) / dRespirationRateBaseline_Per_min; //negative if too low
+        //Patient Definition *************************************************************************
+        //We need to hit the patient's defined Respiration Rate Baseline, no matter what,
+        //so we'll keep adjusting the slope of the function to achieve this
+        if (m_data.GetState() <= EngineState::InitialStabilization)
+        {
+          double dRespirationRateBaseline_Per_min = m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min);
+          double dPercentError = (m_VentilationFrequency_Per_min - dRespirationRateBaseline_Per_min) / dRespirationRateBaseline_Per_min; //negative if too low
 
-        //Amplitude set-point - this will set the Tidal Volume baseline when O2 and CO2 are at the correct/balanced level
-        m_VentilationToTidalVolumeSlope = m_VentilationToTidalVolumeSlope - m_VentilationToTidalVolumeSlope * dPercentError;
+          //Amplitude set-point - this will set the Tidal Volume baseline when O2 and CO2 are at the correct/balanced level
+          m_VentilationToTidalVolumeSlope = m_VentilationToTidalVolumeSlope - m_VentilationToTidalVolumeSlope * dPercentError;
 
-        //Put bounds on this
-        m_VentilationToTidalVolumeSlope = LIMIT(m_VentilationToTidalVolumeSlope, 1.0, 100.0);
-      }
+          //Put bounds on this
+          m_VentilationToTidalVolumeSlope = LIMIT(m_VentilationToTidalVolumeSlope, 1.0, 100.0);
+        }
 
 #ifdef TUNING
-      m_VentilationToTidalVolumeSlope = 40.0;
-      m_VentilationFrequency_Per_min = 16.0;
+        m_VentilationToTidalVolumeSlope = 40.0;
+        m_VentilationFrequency_Per_min = 12.0;
 #endif
+      }
 
       SetBreathCycleFractions();
     }
   }
 
-  //Run the driver based on the waveform -------------------------------------------------------------------------------
-  TotalBreathingCycleTime_s = GetBreathCycleTime(); //Recalculate, in case we just calculated a new breath
-
   if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
   {
-    if(m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryPeakPressure())
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasInspiratoryPeakPressure())
       m_PeakInspiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetInspiratoryPeakPressure(PressureUnit::cmH2O);
-    if(m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryPeakPressure())
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryPeakPressure())
       m_PeakExpiratoryPressure_cmH2O = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryPeakPressure(PressureUnit::cmH2O);
     SetBreathCycleFractions();
   }
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// Respiratory driver pressure source application
+///
+/// \details
+/// Apply the already calculated pressure source for inhalation/exhalation.
+//--------------------------------------------------------------------------------------------------
+void Respiratory::ApplyDriver()
+{
+  //Run the driver based on the waveform -------------------------------------------------------------------------------
+  double TotalBreathingCycleTime_s = GetBreathCycleTime();
 
   double InspiratoryRiseTimeStart_s = 0.0;
   double InspiratoryHoldTimeStart_s = InspiratoryRiseTimeStart_s + m_InspiratoryRiseFraction * TotalBreathingCycleTime_s;
@@ -1361,7 +1384,7 @@ void Respiratory::RespiratoryDriver()
     m_InspiratoryRiseFraction != 0.0) //Only call this once per cycle - needed here for conscious respiration
   {
     m_data.GetEvents().SetEvent(eEvent::StartOfInhale, true, m_data.GetSimulationTime());
-  }  
+  }
 
   if (m_BreathingCycleTime_s >= InspiratoryReleaseTimeStart_s &&
     m_BreathingCycleTime_s < InspiratoryReleaseTimeStart_s + m_data.GetTimeStep_s()) //Only call this once per cycle
@@ -1449,7 +1472,7 @@ void Respiratory::SetBreathCycleFractions()
 
   //Healthy = ~1:2 IE Ratio = 0.33 inpiration and 0.67 expiration
   ///\cite Fresnel2014musclePressure
-  //Adjust for standard 12 bpm giving ~0.33 instead of 16 bpm by adding 4  
+  //Adjust for standard 12 bpm giving ~0.33 instead of 16 bpm by adding 4
   double inspiratoryFraction = (0.0125 * (m_VentilationFrequency_Per_min + 4.0) + 0.125) * m_IERatioScaleFactor;
   inspiratoryFraction = LIMIT(inspiratoryFraction, 0.1, 0.9);
   double expiratoryFraction = 1.0 - inspiratoryFraction;
@@ -1461,6 +1484,7 @@ void Respiratory::SetBreathCycleFractions()
   m_ExpiratoryRiseFraction = 0.0;
   m_ExpiratoryHoldFraction = 0.0;
   m_ExpiratoryReleaseFraction = 0.0;
+  m_ResidueFraction = 0.0;
 
   if (m_PatientActions->HasRespiratoryMechanicsConfiguration())
   {
@@ -1480,6 +1504,8 @@ void Respiratory::SetBreathCycleFractions()
       m_ExpiratoryHoldFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryHoldTime(TimeUnit::s) / totalBreathCycleTime_s;
     if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryReleaseTime())
       m_ExpiratoryReleaseFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryReleaseTime(TimeUnit::s) / totalBreathCycleTime_s;
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasResidueTime())
+      m_ResidueFraction = m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetResidueTime(TimeUnit::s) / totalBreathCycleTime_s;
   }
  }
 
@@ -1690,6 +1716,7 @@ void Respiratory::ConsciousRespiration()
   m_ExpiratoryRiseFraction = 0.0;
   m_ExpiratoryHoldFraction = 0.0;
   m_ExpiratoryReleaseFraction = 0.0;
+  m_ResidueFraction = 0.0;
 
   SEConsciousRespirationCommand* cmd = cr.GetActiveCommand();
 
@@ -2468,7 +2495,7 @@ void Respiratory::UpdateChestWallCompliances()
 
     //Dampen the change to prevent potential craziness
     //It will only change half as much as it wants to each time step to ensure it's critically damped and doesn't overshoot
-    double dampenFraction_perSec = 0.5 * 50.0;
+    double dampenFraction_perSec = 0.5 * 50.0; //Default timestep = 20ms = 50Hz, ensuring any timestep will work the same here
 
     double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
     double complianceChange_L_Per_cmH2O = (chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O) * dampenFraction_perSec * m_data.GetTimeStep_s();
@@ -3837,6 +3864,8 @@ double Respiratory::GetBreathCycleTime()
       TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryHoldTime(TimeUnit::s);
     if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasExpiratoryReleaseTime())
       TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetExpiratoryReleaseTime(TimeUnit::s);
+    if (m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().HasResidueTime())
+      TotalBreathingCycleTime_s += m_PatientActions->GetRespiratoryMechanicsConfiguration().GetConfiguration().GetResidueTime(TimeUnit::s);
   }
 
   return TotalBreathingCycleTime_s;
