@@ -436,21 +436,28 @@ void MechanicalVentilator::CalculateInspiration()
   m_CurrentInspiratoryVolume_L += m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) * m_data.GetTimeStep_s();
 
   // Check trigger
+  // Any combination of triggers can be used, but there must be at least one
+  bool triggerDefined = false;
   if (HasExpirationCycleTime())
   {
+    triggerDefined = true;
     if (m_CurrentPeriodTime_s >= GetExpirationCycleTime(TimeUnit::s))
     {
       CycleMode();
       return;
     }
   }
-  else if (HasExpirationCyclePressure())
+  
+  if (HasExpirationCyclePressure())
   {
+    triggerDefined = true;
     /// \error Fatal: Expiration pressure cycle is not yet supported.
     Fatal("Expiration pressure cycle is not yet supported.");
   }
-  else if (HasExpirationCycleVolume())
+  
+  if (HasExpirationCycleVolume())
   {
+    triggerDefined = true;
     if (m_CurrentInspiratoryVolume_L >= GetExpirationCycleVolume(VolumeUnit::L))
     {
       m_CurrentInspiratoryVolume_L = 0.0;
@@ -458,15 +465,18 @@ void MechanicalVentilator::CalculateInspiration()
       return;
     }
   }
-  else if (HasExpirationCycleFlow())
+  
+  if (HasExpirationCycleFlow())
   {
+    triggerDefined = true;
     if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) <= GetExpirationCycleFlow(VolumePerTimeUnit::L_Per_s))
     {
       CycleMode();
       return;
     }
   }
-  else
+  
+  if(!triggerDefined)
   {
     /// \error Fatal: No expiration cycle defined.
     Fatal("No expiration cycle defined.");
@@ -583,16 +593,21 @@ void MechanicalVentilator::CalculateExpiration()
   }
 
   // Check trigger
+  // Any combination of triggers can be used, but there must be at least one
+  bool triggerDefined = false;
   if (HasInspirationMachineTriggerTime())
   {
+    triggerDefined = true;
     if (m_CurrentPeriodTime_s >= GetInspirationMachineTriggerTime(TimeUnit::s))
     {
       CycleMode();
       return;
     }
   }
-  else if (HasInspirationPatientTriggerPressure())
+  
+  if (HasInspirationPatientTriggerPressure())
   {
+    triggerDefined = true;
     double relativePressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
     if (HasPositiveEndExpiredPressure())
     {
@@ -604,15 +619,18 @@ void MechanicalVentilator::CalculateExpiration()
       return;
     }
   }
-  else if (HasInspirationPatientTriggerFlow())
+  
+  if (HasInspirationPatientTriggerFlow())
   {
+    triggerDefined = true;
     if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s))
     {
       CycleMode();
       return;
     }
   }
-  else
+  
+  if(!triggerDefined)
   {
     /// \error Fatal: No inspiration trigger defined.
     Fatal("No inspiration trigger defined.");
