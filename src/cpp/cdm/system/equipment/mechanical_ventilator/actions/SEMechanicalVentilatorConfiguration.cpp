@@ -122,7 +122,7 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tExpirationTubeResistance: "; m_Configuration->HasExpirationTubeResistance() ? str << m_Configuration->GetExpirationTubeResistance() : str << "NaN";
     str << "\n\tExpirationValveResistance: "; m_Configuration->HasExpirationValveResistance() ? str << m_Configuration->GetExpirationValveResistance() : str << "NaN";
     str << "\n\tExpirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Configuration->GetExpirationWaveform());
-    str << "\n\tExpirationWaveformPeriod: " << m_Configuration->HasExpirationWaveformPeriod() ? str << m_Configuration->GetExpirationWaveformPeriod() : str << "NaN";
+    str << "\n\tExpirationWaveformPeriod: "; m_Configuration->HasExpirationWaveformPeriod() ? str << m_Configuration->GetExpirationWaveformPeriod() : str << "NaN";
     str << "\n\tInspirationLimitFlow: "; m_Configuration->HasInspirationLimitFlow() ? str << m_Configuration->GetInspirationLimitFlow() : str << "NaN";
     str << "\n\tInspirationLimitPressure: "; m_Configuration->HasInspirationLimitPressure() ? str << m_Configuration->GetInspirationLimitPressure() : str << "NaN";
     str << "\n\tInspirationLimitVolume: "; m_Configuration->HasInspirationLimitVolume() ? str << m_Configuration->GetInspirationLimitVolume() : str << "NaN";
@@ -135,7 +135,7 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tInspirationTubeResistance: "; m_Configuration->HasInspirationTubeResistance() ? str << m_Configuration->GetInspirationTubeResistance() : str << "NaN";
     str << "\n\tInspirationValveResistance: "; m_Configuration->HasInspirationValveResistance() ? str << m_Configuration->GetInspirationValveResistance() : str << "NaN";
     str << "\n\tInspirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Configuration->GetInspirationWaveform());
-    str << "\n\tInspirationWaveformPeriod: " << m_Configuration->HasInspirationWaveformPeriod() ? str << m_Configuration->GetInspirationWaveformPeriod() : str << "NaN";
+    str << "\n\tInspirationWaveformPeriod: "; m_Configuration->HasInspirationWaveformPeriod() ? str << m_Configuration->GetInspirationWaveformPeriod() : str << "NaN";
     str << "\n\tExpirationLimbVolume: "; m_Configuration->HasExpirationLimbVolume() ? str << m_Configuration->GetExpirationLimbVolume() : str << "NaN";
     str << "\n\tExpirationValveVolume: "; m_Configuration->HasExpirationValveVolume() ? str << m_Configuration->GetExpirationValveVolume() : str << "NaN";
     str << "\n\tInspirationLimbVolume: "; m_Configuration->HasInspirationLimbVolume() ? str << m_Configuration->GetInspirationLimbVolume() : str << "NaN";
