@@ -32,6 +32,7 @@
 #include "patient/actions/SEForcedInhale.h"
 #include "patient/actions/SEForcedExhale.h"
 #include "patient/actions/SEForcedPause.h"
+#include "patient/actions/SEIntubation.h"
 #include "properties/SEScalar0To1.h"
 #include "properties/SEScalarFrequency.h"
 #include "properties/SEScalarMassPerVolume.h"
@@ -292,7 +293,12 @@ void HowToMechanicalVentilator()
   pe->ProcessAction(bolus);
 
   tracker.AdvanceModelTime(60.0);
-  
+
+  // Intubate
+  SEIntubation intubation;
+  intubation.SetType(eIntubation_Type::Tracheal);
+  pe->ProcessAction(intubation);
+
   // Setup the PC-CMV ventilator
   SEMechanicalVentilatorConfiguration MVConfig(pe->GetLogger());
   SEMechanicalVentilator& mv = MVConfig.GetConfiguration();

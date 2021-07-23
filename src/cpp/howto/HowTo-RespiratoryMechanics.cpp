@@ -76,6 +76,7 @@ void HowToRespiratoryMechanics()
   double respirationRate_bpm = 15.0;
   double inspiratoryTime_s = 0.9;
 
+  // These need to add to 1.0 (100%)
   const double UpperResistancePercent = 0.5;
   const double BronchiResistancePercent = 0.3;
   const double AlveoliDuctResistancePercent = 0.2;
