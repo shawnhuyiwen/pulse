@@ -209,6 +209,8 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
   SEIntubation intubation;
   intubation.SetType(eIntubation_Type::Tracheal);
   e->ProcessAction(intubation);
+  // TODO jbw/aaron - Figure out how to intubate and connect via a tube on the same timestep
+  e->AdvanceModelTime();
 
   // Setup the ventilator
   double respirationRate_per_min = 12.0;
@@ -222,6 +224,20 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
   double totalPeriod_s = 60.0 / respirationRate_per_min;
   double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
 
+  SEMechanicalVentilatorConfiguration MVConfig(e->GetLogger());
+  SEMechanicalVentilator& mv = MVConfig.GetConfiguration();
+  mv.SetConnection(eMechanicalVentilator_Connection::Tube);
+  mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+  mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+  mv.GetInspirationTargetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
+  mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
+  mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+  mv.GetInspirationPatientTriggerFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
+  mv.GetExpirationCycleVolume().SetValue(tidalVolume_mL, VolumeUnit::mL);
+  const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
+  mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+  e->ProcessAction(MVConfig);
+
   // Advance time
   double simiulationTime_s = 60.0;
   for (int i = 0; i < simiulationTime_s * 50.0; i++)
@@ -233,22 +249,6 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
     }
     // Pull Track will pull data from the engine and append it to the file
     e->GetEngineTracker()->TrackData(e->GetSimulationTime(TimeUnit::s));
-
-    // TODO jbw/aaron - Figure out how to intubate and connect via a tube on the same timestep
-    SEMechanicalVentilatorConfiguration MVConfig(e->GetLogger());
-    SEMechanicalVentilator& mv = MVConfig.GetConfiguration();
-    mv.SetConnection(eMechanicalVentilator_Connection::Tube);
-    mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-    mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-    mv.GetInspirationTargetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
-    mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-    mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-    mv.GetInspirationPatientTriggerFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
-    mv.GetExpirationCycleVolume().SetValue(tidalVolume_mL, VolumeUnit::mL);
-    const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-    mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
-
-    e->ProcessAction(MVConfig);
   }
 
   testReport.SerializeToFile(sTestDirectory+"/"+testName+"Report.json");

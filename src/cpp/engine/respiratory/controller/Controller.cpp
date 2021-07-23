@@ -48,7 +48,7 @@ Controller::Controller(Logger* logger) : PulseController(logger)
 bool Controller::IsAirwayModeSupported(eAirwayMode mode)
 {
   // Only support two modes
-  return (mode == eAirwayMode::Free || mode == eAirwayMode::MechanicalVentilation);
+  return (mode == eAirwayMode::Free || mode == eAirwayMode::MechanicalVentilator);
 }
 
 void Controller::Allocate()
