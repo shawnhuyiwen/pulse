@@ -386,7 +386,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   m_DataDir = patient_configuration.GetDataRoot();
 
   m_EngineTrack->ResetFile();
-  m_Config->Initialize("");
+  m_Config->Initialize();
   m_ScalarOverrides.clear();
   m_State = EngineState::Initialization;
   if(patient_configuration.HasOverride())
@@ -396,7 +396,7 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   }
   if (patient_configuration.HasPatient())
   {
-    if (!PulseController::Initialize(*patient_configuration.GetPatient()))
+    if (!Initialize(*patient_configuration.GetPatient()))
       return false;
   }
   else if (patient_configuration.HasPatientFile())
@@ -421,6 +421,8 @@ bool PulseController::InitializeEngine(const SEPatientConfiguration& patient_con
   }
   else
     return false;
+  InitializeSystems();
+  AdvanceCallback(-1);
 
   // We don't capture events during initialization
   SEEventHandler* event_handler = m_EventManager->GetEventHandler();
@@ -515,9 +517,6 @@ bool PulseController::Initialize(SEPatient const& patient)
     m_Substances->InitializeLiquidCompartmentGases();
     m_Substances->InitializeLiquidCompartmentNonGases();
   }
-  InitializeSystems();
-
-  AdvanceCallback(-1);
   return true;
 }
 

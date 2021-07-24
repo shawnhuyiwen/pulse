@@ -139,10 +139,10 @@ void PulseEngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, cons
   PulseEngine pe(testSuite.GetLogger());
   PulseController& pc = pe.GetController();
   testSuite.GetLogger()->Info("Running " + sTestName);
+  pc.SetDataRoot("./");
+  pc.Initialize(patient);
   pc.m_Config->EnableRenal(eSwitch::On);
   pc.m_Config->EnableTissue(eSwitch::On);
-  pc.SetupPatient(patient);
-  pc.CreateCircuitsAndCompartments();
 
   SETestCase& testCase = testSuite.CreateTestCase();
   testCase.SetName(sTestName);

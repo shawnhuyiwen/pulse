@@ -2793,8 +2793,6 @@ void Respiratory::UpdateResistances()
         rightBronchiResistance_cmH2O_s_Per_L = rightResistance_cmH2O_s_Per_L * bronchiResistanceFraction;
       }
     }
-
-    
   }
   else //Don't do this if we've specified externally - other conditions/actions will still work
   {
