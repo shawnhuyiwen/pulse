@@ -82,13 +82,6 @@ void HowToSmoke()
   const SESubstance* CO = pe->GetSubstanceManager().GetSubstance("CarbonMonoxide");
   const SESubstance* Particulate = pe->GetSubstanceManager().GetSubstance("ForestFireParticulate");
 
-
-  
-
-
-    // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
@@ -103,7 +96,7 @@ void HowToSmoke()
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToEnvironmentChange.csv");
 
   // Advance some time to get some resting data
-  tracker.AdvanceModelTime(5);
+  AdvanceAndTrackTime_s(5, *pe);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
@@ -134,7 +127,7 @@ void HowToSmoke()
   // Concentrations are independent and do not need to add up to 1.0
   envChange.GetEnvironmentalConditions().GetAmbientAerosol(*Particulate).GetConcentration().SetValue(2.9, MassPerVolumeUnit::mg_Per_m3);
   pe->ProcessAction(envChange);
-  tracker.AdvanceModelTime(30);
+  AdvanceAndTrackTime_s(30, *pe);
 
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
   pe->GetLogger()->Info(std::stringstream() << "CarbonDioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());

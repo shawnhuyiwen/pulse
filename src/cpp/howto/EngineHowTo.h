@@ -45,18 +45,5 @@ void HowToTestSystemCapability();
 
 class SEDataRequest;
 
-/// This class is here to demonstrate executing the engine
-/// and populating a csv file with data from the engine 
-/// This class will handle advancing time on the engine
-class HowToTracker
-{
-private:
-  double m_dT_s;  // Cached Engine Time Step
-  PhysiologyEngine& m_Engine;
-public:
-  HowToTracker(PhysiologyEngine& engine);
-  ~HowToTracker();
-
-  // This class will operate on seconds
-  bool AdvanceModelTime(double time_s);
-};
+/// This mehod will advance time and write each data request value to the specified engine csv
+bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine);

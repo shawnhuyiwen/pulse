@@ -246,29 +246,29 @@ message RenalSystemData
 /**@brief A set of properties to specify and customize the respiratory circuit and driver.*/
 message RespiratoryMechanicsData
 {
+  eSwitch                             Active                                         = 1; /**<< @brief Turn on or off the use of this structure in the physiology implementation. */
+  CurveData                           LeftComplianceCurve                            = 2; /**<< @brief Blahb.*/
+  CurveData                           RightComplianceCurve                           = 3; /**<< @brief Blahb.*/
   
-  CurveData                           LeftComplianceCurve                            = 1; /**<< @brief Blahb.*/
-  CurveData                           RightComplianceCurve                           = 2; /**<< @brief Blahb.*/
-  
-  ScalarPressureTimePerVolumeData     LeftExpiratoryResistance                       = 3; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     LeftInspiratoryResistance                      = 4; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     RightExpiratoryResistance                      = 5; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     RightInspiratoryResistance                     = 6; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 7; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 8; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     LeftExpiratoryResistance                       = 4; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     LeftInspiratoryResistance                      = 5; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     RightExpiratoryResistance                      = 6; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     RightInspiratoryResistance                     = 7; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 8; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 9; /**<< @brief Blahb.*/
   
   // Muscle Pressure Driver
-  ScalarPressureData                  InspiratoryPeakPressure                        = 9; /**<< @brief Blahb.*/
-  ScalarPressureData                  ExpiratoryPeakPressure                         = 10;/**<< @brief Blahb.*/
+  ScalarPressureData                  InspiratoryPeakPressure                        = 10;/**<< @brief Blahb.*/
+  ScalarPressureData                  ExpiratoryPeakPressure                         = 11;/**<< @brief Blahb.*/
   
-  ScalarTimeData                      InspiratoryRiseTime                            = 11;/**<< @brief Blahb.*/
-  ScalarTimeData                      InspiratoryHoldTime                            = 12;/**<< @brief Blahb.*/
-  ScalarTimeData                      InspiratoryReleaseTime                         = 13;/**<< @brief Blahb.*/
-  ScalarTimeData                      InspiratoryToExpiratoryPauseTime               = 14;/**<< @brief Blahb.*/
-  ScalarTimeData                      ExpiratoryRiseTime                             = 15;/**<< @brief Blahb.*/
-  ScalarTimeData                      ExpiratoryHoldTime                             = 16;/**<< @brief Blahb.*/
-  ScalarTimeData                      ExpiratoryReleaseTime                          = 17;/**<< @brief Blahb.*/
-  ScalarTimeData                      ResidueTime                                    = 18;/**<< @brief Blahb.*/
+  ScalarTimeData                      InspiratoryRiseTime                            = 12;/**<< @brief Blahb.*/
+  ScalarTimeData                      InspiratoryHoldTime                            = 13;/**<< @brief Blahb.*/
+  ScalarTimeData                      InspiratoryReleaseTime                         = 14;/**<< @brief Blahb.*/
+  ScalarTimeData                      InspiratoryToExpiratoryPauseTime               = 15;/**<< @brief Blahb.*/
+  ScalarTimeData                      ExpiratoryRiseTime                             = 16;/**<< @brief Blahb.*/
+  ScalarTimeData                      ExpiratoryHoldTime                             = 17;/**<< @brief Blahb.*/
+  ScalarTimeData                      ExpiratoryReleaseTime                          = 18;/**<< @brief Blahb.*/
+  ScalarTimeData                      ResidueTime                                    = 19;/**<< @brief Blahb.*/
 }
 enum eBreathState
 {

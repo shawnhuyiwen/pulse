@@ -50,9 +50,6 @@ void HowToBrainInjury()
     return;
   }
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   // Physiology System Names are defined on the System Objects 
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
@@ -85,7 +82,7 @@ void HowToBrainInjury()
   pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
   pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
 
-  tracker.AdvanceModelTime(30);
+  AdvanceAndTrackTime_s(30, *pe);
   
   // Create an SEBrainInjury object
   // Set the severity (a fraction between 0 and 1; for maximal injury, use 1.)  
@@ -96,7 +93,7 @@ void HowToBrainInjury()
   pe->GetLogger()->Info("Giving the patient a brain injury.");
 
   // Advance time to see how the injury affects the patient
-  tracker.AdvanceModelTime(90);
+  AdvanceAndTrackTime_s(90, *pe);
 
   pe->GetLogger()->Info(std::stringstream() << "The patient has had a brain injury for 90s, not doing well...");
   pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -124,7 +121,7 @@ void HowToBrainInjury()
 
   pe->GetLogger()->Info("Removing the brain injury.");
 
-  tracker.AdvanceModelTime(90);
+  AdvanceAndTrackTime_s(90, *pe);
 
   pe->GetLogger()->Info(std::stringstream() << "The patient's brain injury has been removed for 90s; patient is much better");
   pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -150,7 +147,7 @@ void HowToBrainInjury()
   pe->ProcessAction(tbi);
   pe->GetLogger()->Info("Giving the patient a severe brain injury.");
 
-  tracker.AdvanceModelTime(300);
+  AdvanceAndTrackTime_s(300, *pe);
 
   // You can also get information from the compartment rather than the system, in case you want other metrics
   const SELiquidCompartment* brain = pe->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);

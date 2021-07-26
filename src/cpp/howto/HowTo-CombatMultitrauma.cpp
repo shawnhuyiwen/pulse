@@ -45,9 +45,6 @@ void CreateState()
     return;
   }
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
@@ -101,7 +98,7 @@ void CreateState()
   pe->ProcessAction(hemorrhageVenaCava);
 
   //Advance the engine to the point we would like to load later
-  tracker.AdvanceModelTime(60);
+  AdvanceAndTrackTime_s(60, *pe);
 
   pe->GetLogger()->Info("Patient injured state at serialization");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
@@ -140,9 +137,6 @@ void LoadState()
 
   pe->GetLogger()->Info("State loaded");
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   pe->GetLogger()->Info("Patient loaded injured state");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
   pe->GetLogger()->Info(std::stringstream() << "Blood Volume : " << pe->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -171,7 +165,7 @@ void LoadState()
   hemorrhageVenaCava.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageVenaCava);
 
-  tracker.AdvanceModelTime(60);
+  AdvanceAndTrackTime_s(60, *pe);
 
   // Needle Decompression to help with pneumothorax
   SENeedleDecompression needleDecomp;
@@ -180,7 +174,7 @@ void LoadState()
   pe->ProcessAction(needleDecomp);
 
   // Advance the engine while you prepare to treat the patient
-  tracker.AdvanceModelTime(60.0 * 4.0); //4 min
+  AdvanceAndTrackTime_s(60.0 * 4.0, *pe); //4 min
 
   // Apply a tournaquet and stop the bleeding completely
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
@@ -188,7 +182,7 @@ void LoadState()
   hemorrhageLeg.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
    
-  tracker.AdvanceModelTime(30);
+  AdvanceAndTrackTime_s(30, *pe);
 
   // Give an IV
   const SESubstanceCompound* saline = pe->GetSubstanceManager().GetCompound("Saline");
@@ -197,7 +191,7 @@ void LoadState()
   iVSaline.GetRate().SetValue(100, VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline
   pe->ProcessAction(iVSaline);
 
-  tracker.AdvanceModelTime(60.0 * 2.0); //2 min
+  AdvanceAndTrackTime_s(60.0 * 2.0, *pe); //2 min
 
   // Provide morphine
   const SESubstance* morphine = pe->GetSubstanceManager().GetSubstance("Morphine");
@@ -207,7 +201,7 @@ void LoadState()
   bolus.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
   pe->ProcessAction(bolus);
 
-  tracker.AdvanceModelTime(60.0 * 3.0); //3 min
+  AdvanceAndTrackTime_s(60.0 * 3.0, *pe); //3 min
    
   pe->GetLogger()->Info("Patient state after interventions");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());

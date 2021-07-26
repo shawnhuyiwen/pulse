@@ -42,9 +42,6 @@ void HowToAsthmaAttack()
     return;
   }
 
-    // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
@@ -58,7 +55,7 @@ void HowToAsthmaAttack()
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToAsthma.csv");
 
   // Advance some time to get some healthy data
-  tracker.AdvanceModelTime(50);
+  AdvanceAndTrackTime_s(50, *pe);
   // Cache off compartments of interest!
   const SEGasCompartment* carina = pe->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
   
@@ -81,7 +78,7 @@ void HowToAsthmaAttack()
   asthmaAttack.GetSeverity().SetValue(0.3);
   pe->ProcessAction(asthmaAttack);
 
-  tracker.AdvanceModelTime(550);
+  AdvanceAndTrackTime_s(550, *pe);
 
   pe->GetLogger()->Info("The patient has been having an asthma attack for 550s");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -98,7 +95,7 @@ void HowToAsthmaAttack()
   pe->ProcessAction(asthmaAttack);
   
   // Advance some time while the patient catches their breath
-  tracker.AdvanceModelTime(200);
+  AdvanceAndTrackTime_s(200, *pe);
 
   pe->GetLogger()->Info("The patient has NOT had an asthma attack for 200s");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);

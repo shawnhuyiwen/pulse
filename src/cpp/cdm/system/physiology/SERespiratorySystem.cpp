@@ -1212,6 +1212,10 @@ double SERespiratorySystem::GetTransthoracicPressure(const PressureUnit& unit) c
   return m_TransthoracicPressure->GetValue(unit);
 }
 
+bool SERespiratorySystem::HasActiveRespiratoryMechanics() const
+{
+  return m_RespiratoryMechanics != nullptr && m_RespiratoryMechanics->GetActive() == eSwitch::On;
+}
 bool SERespiratorySystem::HasRespiratoryMechanics() const
 {
   return m_RespiratoryMechanics != nullptr;

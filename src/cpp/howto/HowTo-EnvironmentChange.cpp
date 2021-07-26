@@ -79,9 +79,6 @@ void HowToEnvironmentChange()
   const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
   const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
-    // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
@@ -96,7 +93,7 @@ void HowToEnvironmentChange()
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToEnvironmentChange.csv");
 
   // Advance some time to get some resting data
-  tracker.AdvanceModelTime(50);
+  AdvanceAndTrackTime_s(50, *pe);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -128,7 +125,7 @@ void HowToEnvironmentChange()
   conditions.GetAmbientGas(*O2).GetFractionAmount().SetValue(0.2095);
   conditions.GetAmbientGas(*CO2).GetFractionAmount().SetValue(4.0E-4);
   pe->ProcessAction(env);
-  tracker.AdvanceModelTime(30);
+  AdvanceAndTrackTime_s(30, *pe);
 
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -155,7 +152,7 @@ void HowToEnvironmentChange()
   conditions.GetAmbientGas(*O2).GetFractionAmount().SetValue(0.21);
   conditions.GetAmbientGas(*CO2).GetFractionAmount().SetValue(4.0E-4);
   pe->ProcessAction(env);
-  tracker.AdvanceModelTime(60);
+  AdvanceAndTrackTime_s(60, *pe);
 
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -173,7 +170,7 @@ void HowToEnvironmentChange()
   SEThermalApplication heat;
   heat.GetActiveHeating().GetPower().SetValue(340, PowerUnit::BTU_Per_hr);
   pe->ProcessAction(heat);
-  tracker.AdvanceModelTime(120);
+  AdvanceAndTrackTime_s(120, *pe);
 
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);

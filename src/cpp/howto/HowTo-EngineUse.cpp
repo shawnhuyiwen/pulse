@@ -157,10 +157,6 @@ void HowToEngineUse()
   const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
   const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
-  // The tracker is responsible for advancing the engine time AND outputting the data requests below at each time step
-  // If you do not wish to write data to a file, you do not need to make any data requests
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
@@ -179,7 +175,7 @@ void HowToEngineUse()
 
   // We are ready to execute the engine
   // simply tell the engine how long you would like it to execute
-  if (!tracker.AdvanceModelTime(5))// Note this tracker class takes in seconds
+  if (!AdvanceAndTrackTime_s(5, *pe))// Note this tracker class takes in seconds
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;

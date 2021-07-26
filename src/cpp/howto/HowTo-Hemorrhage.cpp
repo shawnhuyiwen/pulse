@@ -49,9 +49,6 @@ void HowToHemorrhage()
     return;
   }
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
@@ -91,7 +88,7 @@ void HowToHemorrhage()
   pe->ProcessAction(hemorrhageLeg);
 
   // Advance some time to let the body bleed out a bit
-  if(!tracker.AdvanceModelTime(300)) // Check the return of advance time, if your hemorrhage is too extreme, the engine will enter an unsolvable/irreversable state
+  if(!AdvanceAndTrackTime_s(300, *pe)) // Check the return of advance time, if your hemorrhage is too extreme, the engine will enter an unsolvable/irreversable state
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;
@@ -128,7 +125,7 @@ void HowToHemorrhage()
   
   
   // Advance some time while the medic gets the drugs ready
-  if(!tracker.AdvanceModelTime(100))
+  if(!AdvanceAndTrackTime_s(100, *pe))
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;
@@ -154,7 +151,7 @@ void HowToHemorrhage()
   iVSaline.GetRate().SetValue(100,VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline
   pe->ProcessAction(iVSaline);
 
-  if (!tracker.AdvanceModelTime(400))
+  if (!AdvanceAndTrackTime_s(400, *pe))
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;

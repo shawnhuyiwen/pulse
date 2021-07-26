@@ -45,9 +45,6 @@ void HowToPulmonaryFunctionTest()
   // The PFT Calculates a wave form representing total lung volume during a normal breathing cycle, 
   // forced inhalation and exhalation from current tidal volume and engine parameters
 
-    // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
@@ -60,7 +57,7 @@ void HowToPulmonaryFunctionTest()
 
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToPulmonaryFunctionTest.csv");
 
-  tracker.AdvanceModelTime(5);
+  AdvanceAndTrackTime_s(5, *pe);
 
   SEPulmonaryFunctionTest pft(pe->GetLogger());
   pe->GetPatientAssessment(pft);

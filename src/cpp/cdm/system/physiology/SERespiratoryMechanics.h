@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+class SERespiratoryMechanicsConfiguration;
 
 class CDM_DECL SERespiratoryMechanics : public Loggable
 {
@@ -12,6 +13,19 @@ public:
   virtual ~SERespiratoryMechanics();
 
   virtual void Clear();// Deletes all members
+
+  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, SerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
+
+  virtual void Merge(const SERespiratoryMechanics& from);
+  virtual void ProcessConfiguration(SERespiratoryMechanicsConfiguration& config);
+
+
+  virtual bool HasActive() const;
+  virtual eSwitch GetActive() const;
+  virtual void SetActive(eSwitch s);
 
   bool HasLeftComplianceCurve() const;
   SECurve& GetLeftComplianceCurve();
@@ -99,6 +113,7 @@ public:
   virtual void ToString(std::ostream& str) const;
 
 protected:
+  eSwitch                        m_Active;
 
   SECurve*                       m_LeftComplianceCurve;
   SECurve*                       m_RightComplianceCurve;

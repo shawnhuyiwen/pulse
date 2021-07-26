@@ -56,9 +56,6 @@ void HowToLobarPneumonia()
     return;
   }
 
-    // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
@@ -72,7 +69,7 @@ void HowToLobarPneumonia()
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToLobarPneumonia.csv");
 
   // Advance some time to get some data
-  tracker.AdvanceModelTime(500);
+  AdvanceAndTrackTime_s(500, *pe);
 
   pe->GetLogger()->Info("The patient is not very healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);

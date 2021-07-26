@@ -17,6 +17,7 @@ public:
 
   virtual void Invalidate();
   virtual bool IsValid() const override;
+  virtual void Copy(const SECurve& src);
 
   virtual bool HasSegment() const;
 

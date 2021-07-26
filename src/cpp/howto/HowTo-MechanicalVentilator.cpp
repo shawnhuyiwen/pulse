@@ -139,9 +139,6 @@ void HowToMechanicalVentilator()
   MechVentHandler myEventHandler(pe->GetLogger());
   pe->GetEventManager().ForwardEvents(&myEventHandler);
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   // Physiology System Names are defined on the System Objects 
   //System data
@@ -194,7 +191,7 @@ void HowToMechanicalVentilator()
 
   //Go 1 min before doing anything
   //The patient is just doing spontaneous breathing
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
 
   //Let's do a bunch of different actions at the same time!
 
@@ -225,14 +222,14 @@ void HowToMechanicalVentilator()
   // You can add other actions while this action is being processed.
   // Just be aware that this action is still being processed.
   // It is recommended that you advance time for at least the sum of the command periods.
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
 
   //Airway obstruction
   SEAirwayObstruction obstruction;
   obstruction.GetSeverity().SetValue(0.2);
   pe->ProcessAction(obstruction);
   
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
 
   //Pneumothorax
   // Create a Tension Pnuemothorax
@@ -245,7 +242,7 @@ void HowToMechanicalVentilator()
   pneumo.SetSide(eSide::Right);
   pe->ProcessAction(pneumo);
 
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
 
   //Asthma attack
   SEAsthmaAttack asthmaAttack;
@@ -273,7 +270,7 @@ void HowToMechanicalVentilator()
   envConditions.GetMeanRadiantTemperature().SetValue(15.0, TemperatureUnit::C);
   pe->ProcessAction(env);
 
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
   
   //Dyspnea
   //Maybe the muscles are getting weak?
@@ -292,7 +289,7 @@ void HowToMechanicalVentilator()
   bolus.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
   pe->ProcessAction(bolus);
 
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
 
   // Intubate
   SEIntubation intubation;

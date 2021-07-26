@@ -42,9 +42,6 @@ void HowToAirwayObstruction()
     return;
   }
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   // Physiology System Names are defined on the System Objects
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
@@ -65,7 +62,7 @@ void HowToAirwayObstruction()
   pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
 
-  tracker.AdvanceModelTime(50);
+  AdvanceAndTrackTime_s(50, *pe);
   
   // Create an SEAirwayObstruction object
   // Set the obstruction severity (a fraction between 0 and 1. For a complete obstruction use 1.)  
@@ -75,7 +72,7 @@ void HowToAirwayObstruction()
   pe->GetLogger()->Info("Giving the patient an airway obstruction.");
 
   // Advance time to see how the obstruction affects the patient
-  tracker.AdvanceModelTime(90);
+  AdvanceAndTrackTime_s(90, *pe);
 
   pe->GetLogger()->Info(std::stringstream() << "The patient has had an airway obstrcution for 90s, not doing well...");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -92,7 +89,7 @@ void HowToAirwayObstruction()
 
   pe->GetLogger()->Info("Removing the airway obstruction.");
 
-  tracker.AdvanceModelTime(300);
+  AdvanceAndTrackTime_s(300, *pe);
 
   pe->GetLogger()->Info(std::stringstream() << "The patient has had the airway obstruction removed for 300s, Patient is much better");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

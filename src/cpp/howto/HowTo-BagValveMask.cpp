@@ -46,9 +46,6 @@ void HowToBagValveMask()
     return;
   }
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
@@ -98,7 +95,7 @@ void HowToBagValveMask()
   pe->ProcessAction(automatic);
 
   // Advance some time
-  tracker.AdvanceModelTime(60);
+  AdvanceAndTrackTime_s(60, *pe);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -122,7 +119,7 @@ void HowToBagValveMask()
   pe->ProcessAction(squeeze);
 
   // Advance some time (Not too much, its only one squeeze!)
-  tracker.AdvanceModelTime(10);
+  AdvanceAndTrackTime_s(10, *pe);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -142,14 +139,14 @@ void HowToBagValveMask()
   pe->ProcessAction(squeeze);
 
   // Advance some time (Not too much, its only inhale!)
-  tracker.AdvanceModelTime(2);
+  AdvanceAndTrackTime_s(2, *pe);
 
   // Set it to release the bag to zero or the PEEP to exhale
   instantaneous.GetPressure().SetValue(5, PressureUnit::cmH2O);
   pe->ProcessAction(squeeze);
 
   // Advance some time (Not too much, its only exhale!)
-  tracker.AdvanceModelTime(3);
+  AdvanceAndTrackTime_s(3, *pe);
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() << "Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
