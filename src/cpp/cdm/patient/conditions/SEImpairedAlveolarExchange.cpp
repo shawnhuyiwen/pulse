@@ -41,7 +41,7 @@ bool SEImpairedAlveolarExchange::IsActive() const
 {
   if (!IsValid())
     return false;
-  if (GetImpairedFraction() > 0)
+  if (m_ImpairedFraction != nullptr && m_ImpairedFraction->IsPositive())
     return true;
   if (m_ImpairedSurfaceArea!=nullptr && m_ImpairedSurfaceArea->IsPositive())
     return true;
