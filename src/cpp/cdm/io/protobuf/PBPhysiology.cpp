@@ -8,6 +8,7 @@ POP_PROTO_WARNINGS()
 #include "io/protobuf/PBPhysiology.h"
 #include "io/protobuf/PBPatientNutrition.h"
 #include "io/protobuf/PBProperties.h"
+#include "io/protobuf/PBUtils.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
 #include "system/physiology/SECardiovascularSystem.h"
 #include "system/physiology/SEDrugSystem.h"
@@ -827,6 +828,8 @@ void PBPhysiology::Load(const CDM_BIND::RespiratoryMechanicsData& src, SERespira
 }
 void PBPhysiology::Serialize(const CDM_BIND::RespiratoryMechanicsData& src, SERespiratoryMechanics& dst)
 {
+  dst.m_Active = (eSwitch)src.active();
+
   if (src.has_leftcompliancecurve())
     PBProperty::Load(src.leftcompliancecurve(), dst.GetLeftComplianceCurve());
   if (src.has_rightcompliancecurve())
@@ -874,6 +877,8 @@ CDM_BIND::RespiratoryMechanicsData* PBPhysiology::Unload(const SERespiratoryMech
 }
 void PBPhysiology::Serialize(const SERespiratoryMechanics& src, CDM_BIND::RespiratoryMechanicsData& dst)
 {
+  dst.set_active((CDM_BIND::eSwitch)src.m_Active);
+
   if (src.HasLeftComplianceCurve())
     dst.set_allocated_leftcompliancecurve(PBProperty::Unload(*src.m_LeftComplianceCurve));
   if (src.HasRightComplianceCurve())
@@ -913,6 +918,35 @@ void PBPhysiology::Serialize(const SERespiratoryMechanics& src, CDM_BIND::Respir
     dst.set_allocated_residuetime(PBProperty::Unload(*src.m_ResidueTime));
 }
 
+bool PBPhysiology::SerializeToString(const SERespiratoryMechanics& src, std::string& output, SerializationFormat m)
+{
+  CDM_BIND::RespiratoryMechanicsData data;
+  PBPhysiology::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
+}
+bool PBPhysiology::SerializeToFile(const SERespiratoryMechanics& src, const std::string& filename)
+{
+  CDM_BIND::RespiratoryMechanicsData data;
+  PBPhysiology::Serialize(src, data);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
+}
+
+bool PBPhysiology::SerializeFromString(const std::string& src, SERespiratoryMechanics& dst, SerializationFormat m)
+{
+  CDM_BIND::RespiratoryMechanicsData data;
+  if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
+    return false;
+  PBPhysiology::Load(data, dst);
+  return true;
+}
+bool PBPhysiology::SerializeFromFile(const std::string& filename, SERespiratoryMechanics& dst)
+{
+  CDM_BIND::RespiratoryMechanicsData data;
+  if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
+    return false;
+  PBPhysiology::Load(data, dst);
+  return true;
+}
 
 void PBPhysiology::Load(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst)
 {

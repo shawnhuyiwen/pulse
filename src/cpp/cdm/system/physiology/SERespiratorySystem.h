@@ -233,6 +233,7 @@ public:
   virtual SEScalarPressure& GetTransthoracicPressure();
   virtual double GetTransthoracicPressure(const PressureUnit& unit) const;
 
+  virtual bool HasActiveRespiratoryMechanics() const;
   virtual bool HasRespiratoryMechanics() const;
   virtual SERespiratoryMechanics& GetRespiratoryMechanics();
   virtual const SERespiratoryMechanics* GetRespiratoryMechanics() const;

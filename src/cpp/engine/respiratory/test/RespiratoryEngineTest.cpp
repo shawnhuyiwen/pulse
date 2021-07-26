@@ -141,6 +141,7 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
 
   SERespiratoryMechanicsConfiguration config;
   SERespiratoryMechanics& mechanics = config.GetConfiguration();
+  mechanics.SetActive(eSwitch::On);
   // Create a mechanics profile
   double resistance_cmH2O_s_Per_L = 13.0;
   double compliance_mL_Per_cmH2O = 50.0;

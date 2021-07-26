@@ -75,7 +75,13 @@ POP_PROTO_WARNINGS()
 
 #include "properties/SERunningAverage.h"
 
-
+void PBProperty::Copy(const SECurve& src, SECurve& dst)
+{
+  dst.Invalidate();
+  CDM_BIND::CurveData data;
+  PBProperty::Serialize(src, data);
+  PBProperty::Serialize(data, dst);
+}
 void PBProperty::Load(const CDM_BIND::CurveData& src, SECurve& dst)
 {
   dst.Invalidate();

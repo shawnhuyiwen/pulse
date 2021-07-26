@@ -87,6 +87,11 @@ public:
   static CDM_BIND::RespiratoryMechanicsData* Unload(const SERespiratoryMechanics& src);
   static void Serialize(const CDM_BIND::RespiratoryMechanicsData& src, SERespiratoryMechanics& dst);
   static void Serialize(const SERespiratoryMechanics& src, CDM_BIND::RespiratoryMechanicsData& dst);
+  static bool SerializeToString(const SERespiratoryMechanics& src, std::string& output, SerializationFormat m);
+  static bool SerializeToFile(const SERespiratoryMechanics& src, const std::string& filename);
+  static bool SerializeFromString(const std::string& src, SERespiratoryMechanics& dst, SerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SERespiratoryMechanics& dst);
+
 
   static void Load(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst);
   static CDM_BIND::RespiratorySystemData* Unload(const SERespiratorySystem& src);

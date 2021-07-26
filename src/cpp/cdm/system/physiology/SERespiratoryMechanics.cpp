@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "system/physiology/SERespiratoryMechanics.h"
+#include "io/protobuf/PBProperties.h"
+#include "io/protobuf/PBPhysiology.h"
+#include "patient/actions/SERespiratoryMechanicsConfiguration.h"
 
 #include "properties/SECurve.h"
 #include "properties/SEScalarPressure.h"
@@ -11,6 +14,7 @@
 
 SERespiratoryMechanics::SERespiratoryMechanics(Logger* logger) : Loggable(logger)
 {
+  m_Active = eSwitch::NullSwitch;
   m_LeftComplianceCurve = nullptr;
   m_RightComplianceCurve = nullptr;
   m_LeftExpiratoryResistance = nullptr;
@@ -55,6 +59,7 @@ SERespiratoryMechanics::~SERespiratoryMechanics()
 
 void SERespiratoryMechanics::Clear()
 {
+  m_Active = eSwitch::NullSwitch;
   INVALIDATE_PROPERTY(m_LeftComplianceCurve);
   INVALIDATE_PROPERTY(m_RightComplianceCurve);
   INVALIDATE_PROPERTY(m_LeftExpiratoryResistance);
@@ -73,6 +78,66 @@ void SERespiratoryMechanics::Clear()
   INVALIDATE_PROPERTY(m_ExpiratoryHoldTime);
   INVALIDATE_PROPERTY(m_ExpiratoryReleaseTime);
   INVALIDATE_PROPERTY(m_ResidueTime);
+}
+
+bool SERespiratoryMechanics::SerializeToString(std::string& output, SerializationFormat m) const
+{
+  return PBPhysiology::SerializeToString(*this, output, m);
+}
+bool SERespiratoryMechanics::SerializeToFile(const std::string& filename) const
+{
+  return PBPhysiology::SerializeToFile(*this, filename);
+}
+bool SERespiratoryMechanics::SerializeFromString(const std::string& src, SerializationFormat m)
+{
+  return PBPhysiology::SerializeFromString(src, *this, m);
+}
+bool SERespiratoryMechanics::SerializeFromFile(const std::string& filename)
+{
+  return PBPhysiology::SerializeFromFile(filename, *this);
+}
+
+void SERespiratoryMechanics::ProcessConfiguration(SERespiratoryMechanicsConfiguration& config)
+{
+  if (config.GetMergeType() == eMergeType::Replace)
+    Clear();
+  if (config.HasConfiguration())
+    Merge(config.GetConfiguration());
+  else if (config.HasConfigurationFile())
+  {
+    // Update the action with the file contents
+    std::string cfg_file = config.GetConfigurationFile();
+    if (!config.GetConfiguration().SerializeFromFile(cfg_file))
+      Error("Unable to load configuration file", "SERespiratoryMechanics::ProcessConfiguration");
+    Merge(config.GetConfiguration());
+  }
+}
+void SERespiratoryMechanics::Merge(const SERespiratoryMechanics& from)
+{
+  if (from.m_Active != eSwitch::NullSwitch)
+    SetActive(from.m_Active);
+
+  if (from.HasLeftComplianceCurve())
+    GetLeftComplianceCurve().Copy(*from.m_LeftComplianceCurve);
+  if (from.HasRightComplianceCurve())
+    GetRightComplianceCurve().Copy(*from.m_RightComplianceCurve);
+
+  COPY_PROPERTY(LeftExpiratoryResistance);
+  COPY_PROPERTY(LeftInspiratoryResistance);
+  COPY_PROPERTY(RightExpiratoryResistance);
+  COPY_PROPERTY(RightInspiratoryResistance);
+  COPY_PROPERTY(UpperExpiratoryResistance);
+  COPY_PROPERTY(UpperInspiratoryResistance);
+  COPY_PROPERTY(InspiratoryPeakPressure);
+  COPY_PROPERTY(ExpiratoryPeakPressure);
+  COPY_PROPERTY(InspiratoryRiseTime);
+  COPY_PROPERTY(InspiratoryHoldTime);
+  COPY_PROPERTY(InspiratoryReleaseTime);
+  COPY_PROPERTY(InspiratoryToExpiratoryPauseTime);
+  COPY_PROPERTY(ExpiratoryRiseTime);
+  COPY_PROPERTY(ExpiratoryHoldTime);
+  COPY_PROPERTY(ExpiratoryReleaseTime);
+  COPY_PROPERTY(ResidueTime);
 }
 
 const SEScalar* SERespiratoryMechanics::GetScalar(const std::string& name)
@@ -112,6 +177,21 @@ const SEScalar* SERespiratoryMechanics::GetScalar(const std::string& name)
 
   return nullptr;
 }
+
+
+bool SERespiratoryMechanics::HasActive() const
+{
+  return m_Active!=eSwitch::NullSwitch;
+}
+void SERespiratoryMechanics::SetActive(eSwitch s)
+{
+  m_Active = s;
+}
+eSwitch SERespiratoryMechanics::GetActive() const
+{
+  return m_Active;
+}
+
 
 bool SERespiratoryMechanics::HasLeftComplianceCurve() const
 {
@@ -418,6 +498,7 @@ double SERespiratoryMechanics::GetResidueTime(const TimeUnit& unit) const
 std::string SERespiratoryMechanics::ToString() const
 {
   std::string str = "Respiratory Mechanics";
+  str += "\n\tActive: "; HasActive() ? str += eSwitch_Name(m_Active) : str += "Not Set";
   str += "\n\tLeftComplianceCurve: "; HasLeftComplianceCurve() ? str += m_LeftComplianceCurve->ToString() : str += "Not Set";
   str += "\n\tRightComplianceCurve: "; HasRightComplianceCurve() ? str += m_RightComplianceCurve->ToString() : str += "Not Set";
   str += "\n\tLeftExpiratoryResistance: "; HasLeftExpiratoryResistance() ? str += m_LeftExpiratoryResistance->ToString() : str += "Not Set";

@@ -26,7 +26,7 @@ CDM_BIND_DECL(ScalarElectricResistanceData)
 CDM_BIND_DECL(ScalarEnergyData)
 CDM_BIND_DECL(ScalarEnergyPerAmountData)
 CDM_BIND_DECL(ScalarEnergyPerMassData)
-CDM_BIND_DECL(ScalarEquivalentWeightPerVolume)
+CDM_BIND_DECL(ScalarEquivalentWeightPerVolumeData)
 CDM_BIND_DECL(ScalarForceData)
 CDM_BIND_DECL(ScalarFrequencyData)
 CDM_BIND_DECL(ScalarHeatCapacitanceData)
@@ -82,6 +82,7 @@ class CDM_DECL PBProperty
 {
 public:
   // Curve/Segments
+  static void Copy(const SECurve& src, SECurve& dst);
   static void Load(const CDM_BIND::CurveData& src, SECurve& dst);
   static CDM_BIND::CurveData* Unload(const SECurve& src);
   static void Serialize(const CDM_BIND::CurveData& src, SECurve& dst);

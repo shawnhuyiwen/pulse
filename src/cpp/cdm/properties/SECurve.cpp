@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "properties/SECurve.h"
+#include "io/protobuf/PBProperties.h"
 
 SECurve::SECurve()
 {
@@ -29,6 +30,11 @@ bool SECurve::IsValid() const
 
   // TODO JBW Make sure no segment gaps and anything else
   return true;
+}
+
+void SECurve::Copy(const SECurve& src)
+{
+  PBProperty::Copy(src, *this);
 }
 
 bool SECurve::HasSegment() const
