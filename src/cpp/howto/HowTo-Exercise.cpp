@@ -45,9 +45,6 @@ void HowToExercise()
     return;
   }
 
-    // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
@@ -65,7 +62,7 @@ void HowToExercise()
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToExercise.csv");
 
   // Advance some time to get some resting data
-  tracker.AdvanceModelTime(20);
+  AdvanceAndTrackTime_s(20, *pe);
   
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -90,7 +87,7 @@ void HowToExercise()
   SEExercise ex;
   ex.GetIntensity().SetValue(0.5);
   pe->ProcessAction(ex);
-  tracker.AdvanceModelTime(30);
+  AdvanceAndTrackTime_s(30, *pe);
 
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -111,7 +108,7 @@ void HowToExercise()
   pe->ProcessAction(ex);
   
   // Advance some time while the medic gets the drugs ready
-  tracker.AdvanceModelTime(30);
+  AdvanceAndTrackTime_s(30, *pe);
 
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);

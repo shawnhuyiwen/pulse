@@ -32,7 +32,7 @@
 /// \details
 /// Refer to the SEConsumeNutrients class
 //--------------------------------------------------------------------------------------------------
-void HowToConsumeNutrients() 
+void HowToConsumeNutrients()
 {
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
@@ -43,9 +43,6 @@ void HowToConsumeNutrients()
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
@@ -59,7 +56,7 @@ void HowToConsumeNutrients()
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToConsumeNutrients.csv");
 
   // Advance some time to get some resting data
-  tracker.AdvanceModelTime(50);
+  AdvanceAndTrackTime_s(50, *pe);
   
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
@@ -76,7 +73,7 @@ void HowToConsumeNutrients()
   eat.GetNutrition().GetWater().SetValue(50, VolumeUnit::mL);
   pe->ProcessAction(eat);
 
-  tracker.AdvanceModelTime(30);
+  AdvanceAndTrackTime_s(30, *pe);
 
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Blood Volume : " << pe->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);

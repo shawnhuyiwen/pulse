@@ -68,6 +68,7 @@ namespace HowTo_UseEngine
       // The rest of the data values are in order of the data_requests list provided
 
       // Instantiate a Pulse engine
+      String here = System.IO.Directory.GetCurrentDirectory();
       PulseEngine pulse = new PulseEngine();
 
       // You can ask Pulse to write out a log file if you want

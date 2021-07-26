@@ -43,9 +43,6 @@ void HowToBolusDrug()
     return;
   }
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
@@ -66,7 +63,7 @@ void HowToBolusDrug()
   pe->GetLogger()->Info(std::stringstream() <<"Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());;
 
-  tracker.AdvanceModelTime(50);
+  AdvanceAndTrackTime_s(50, *pe);
 
   // Get the Succinylcholine substance from the substance manager
   const SESubstance* succs = pe->GetSubstanceManager().GetSubstance("Succinylcholine");
@@ -80,7 +77,7 @@ void HowToBolusDrug()
   pe->ProcessAction(bolus);
   pe->GetLogger()->Info("Giving the patient Succinylcholine.");
 
-  tracker.AdvanceModelTime(200);
+  AdvanceAndTrackTime_s(200, *pe);
 
   pe->GetLogger()->Info("It has been 200s since the administration, not doing well...");
   pe->GetLogger()->Info(std::stringstream() <<"Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

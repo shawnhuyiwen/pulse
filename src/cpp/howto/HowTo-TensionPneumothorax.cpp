@@ -43,8 +43,6 @@ void HowToTensionPneumothorax()
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-    // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
@@ -67,7 +65,7 @@ void HowToTensionPneumothorax()
   pe->GetLogger()->Info(std::stringstream() <<"Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);;
 
-  tracker.AdvanceModelTime(50);
+  AdvanceAndTrackTime_s(50, *pe);
 
   // Create a Tension Pnuemothorax 
   // Set the severity (a fraction between 0 and 1)
@@ -87,7 +85,7 @@ void HowToTensionPneumothorax()
   pe->GetLogger()->Info("Giving the patient a tension pneumothorax");
   pe->GetLogger()->Info("ICD-9: 860.0");
 
-  tracker.AdvanceModelTime(120);//This will advance the engine
+  AdvanceAndTrackTime_s(120, *pe);//This will advance the engine
 
   pe->GetLogger()->Info("The patient has had a tension pneumothorax for 120");
   pe->GetLogger()->Info(std::stringstream() <<"Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -112,7 +110,7 @@ void HowToTensionPneumothorax()
   pe->ProcessAction(needleDecomp);
   pe->GetLogger()->Info("Giving the patient a needle decompression");
 
-  tracker.AdvanceModelTime(400);
+  AdvanceAndTrackTime_s(400, *pe);
 
   pe->GetLogger()->Info("The patient has had a needle decompressed tension pneumothorax for 400s");
   pe->GetLogger()->Info(std::stringstream() <<"Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

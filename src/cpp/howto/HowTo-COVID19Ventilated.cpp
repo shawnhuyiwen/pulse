@@ -51,9 +51,6 @@ void HowToCOVID19Ventilated()
     return;
   }
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   // Physiology System Names are defined on the System Objects
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
@@ -83,7 +80,7 @@ void HowToCOVID19Ventilated()
   pe->ProcessAction(overrides);
 
   // Advance time enough to achieve a new pathophysiogical homeostatic state
-  tracker.AdvanceModelTime(10.0 * 60.0); // 10 min
+  AdvanceAndTrackTime_s(10.0 * 60.0, *pe); // 10 min
 
   pe->GetLogger()->Info(std::stringstream() << "The patient has moderate COVID-19");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -138,7 +135,7 @@ void HowToCOVID19Ventilated()
   pe->ProcessAction(overrides);
 
   // Advance time enough to achieve a new homeostatic state
-  tracker.AdvanceModelTime(10.0 * 60.0); // 10 min
+  AdvanceAndTrackTime_s(10.0 * 60.0, *pe); // 10 min
 
   pe->GetLogger()->Info("The patient has been successfully ventilated and stabilized");
   pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

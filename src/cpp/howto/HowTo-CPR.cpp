@@ -69,9 +69,6 @@ void HowToCPR()
     return;
   }
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
@@ -106,7 +103,7 @@ void HowToCPR()
   pe->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << pe->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());;
 
-  tracker.AdvanceModelTime(50);
+  AdvanceAndTrackTime_s(50, *pe);
 
   // Put the patient into cardiac arrest
   SECardiacArrest c;
@@ -119,7 +116,7 @@ void HowToCPR()
   MyListener l(pe->GetLogger());
   pe->GetEventManager().ForwardEvents(&l);
   
-  tracker.AdvanceModelTime(10);
+  AdvanceAndTrackTime_s(10, *pe);
 
   pe->GetLogger()->Info("It has been 10s since the administration, not doing well...");
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -161,7 +158,7 @@ void HowToCPR()
       pe->ProcessAction(chestCompression);
 
             // Time is advanced until it is time to remove the compression
-      tracker.AdvanceModelTime(timeOn);
+      AdvanceAndTrackTime_s(timeOn, *pe);
             
             // Increment timer1 by the time the chest was compressed
       timer1 += timeOn;
@@ -176,7 +173,7 @@ void HowToCPR()
       pe->ProcessAction(chestCompression);
             
             // Time is advanced until it is time to compress the chest again
-      tracker.AdvanceModelTime(timeOff);
+      AdvanceAndTrackTime_s(timeOff, *pe);
             
             // Increment timer1 by the time the chest was no compressed
       timer1 += timeOff;

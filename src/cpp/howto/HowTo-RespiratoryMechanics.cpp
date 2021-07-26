@@ -43,8 +43,7 @@ void HowToRespiratoryMechanics()
     return;
   }
 
-  // Note we can only request data from the respiratory system or mechanical ventilator
-  // Those are the only systems this engine uses
+  // Setup data requests to write to a csv file so we can plot data
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
@@ -52,11 +51,11 @@ void HowToRespiratoryMechanics()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_MechanicalVentilation.csv");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_RespiratoryMechanics.csv");
 
   for (size_t i = 0; i < 6; i++)
   {
-    pe->AdvanceModelTime(10, TimeUnit::s);
+    AdvanceAndTrackTime_s(10, *pe);
     pe->GetLogger()->Info(std::stringstream() << "\nSimTime : " << pe->GetSimulationTime(TimeUnit::s) << "s");
     pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
     pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -69,6 +68,7 @@ void HowToRespiratoryMechanics()
 
   SERespiratoryMechanicsConfiguration config;
   SERespiratoryMechanics& mechanics = config.GetConfiguration();
+  mechanics.SetActive(eSwitch::On);
   // Create a mechanics profile
   double resistance_cmH2O_s_Per_L = 13.0;
   double compliance_mL_Per_cmH2O = 50.0;
@@ -135,7 +135,7 @@ void HowToRespiratoryMechanics()
 
   for (size_t i = 0; i < 12; i++)
   {
-    pe->AdvanceModelTime(10, TimeUnit::s);
+    AdvanceAndTrackTime_s(10, *pe);
     pe->GetLogger()->Info(std::stringstream() << "\nSimTime : " << pe->GetSimulationTime(TimeUnit::s) << "s");
     pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
     pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
