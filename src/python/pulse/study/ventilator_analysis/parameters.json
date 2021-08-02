@@ -1,0 +1,28 @@
+{
+    "paths" : {
+        "groundTruthDataJSON" : "./gt/gt.json",
+        "picsFolder" : "./gt/",
+        "pulseResultsFolder" : "./Pulse_Results/"
+    },
+    "patientTypes" : [
+        "Normal",
+        "ARDS",
+        "COPD"
+    ],
+    "ventilatorModes" : [
+         "VC-AC",
+         "PC-AC",
+         "CPAP"
+    ],
+    "picNamingConvention" : {
+        "extensions" : ["jpg"],
+        "separator" : "_",
+        "comment" : "patientTypes_ventilatorModes"
+    },
+    "plots" : {
+        "InspiratoryFlow(L/min)" : "Flow(L/min)",
+        "TotalLungVolume(mL)" : "Volume(mL)",
+        "TransrespiratoryPressure(cmH2O)" : "P1",
+        "IntrapulmonaryPressure(cmH2O)" : "P2"
+    }
+}

@@ -1,0 +1,188 @@
+{
+    "patientSettings" : {
+        "Normal" : {
+            "Resistance" : 13,
+            "ResistanceUnits": "cmH2O-s/L",
+            "Compliance" : 50,
+            "ComplianceUnits": "mL/cmH2O",
+            "MusclePressure" : 13,
+            "MusclePressureUnits": "cmH2O",
+            "SpontaneousRespirationRate" : 15,
+            "SpontaneousRespirationRateUnits": "bpm",
+            "NeuralInspiratoryTime" : 0.9,
+            "NeuralInspiratoryTimeUnits": "s"
+        },
+        "ARDS" : {
+            "Resistance": 20,
+            "ResistanceUnits": "cmH2O-s/L",
+            "Compliance": 30,
+            "ComplianceUnits": "mL/cmH2O",
+            "MusclePressure": 8,
+            "MusclePressureUnits": "cmH2O",
+            "SpontaneousRespirationRate": 25,
+            "SpontaneousRespirationRateUnits": "bpm",
+            "NeuralInspiratoryTime": 0.6,
+            "NeuralInspiratoryTimeUnits": "s"
+        },
+        "COPD" : {
+            "Resistance": 21,
+            "ResistanceUnits": "cmH2O-s/L",
+            "Compliance": 53,
+            "ComplianceUnits": "mL/cmH2O",
+            "MusclePressure": 14,
+            "MusclePressureUnits": "cmH2O",
+            "SpontaneousRespirationRate": 18,
+            "SpontaneousRespirationRateUnits": "bpm",
+            "NeuralInspiratoryTime": 1.0,
+            "NeuralInspiratoryTimeUnits": "s"
+        }
+    },
+    "ventilatorSettings" :{
+        "Normal_VC-AC": {
+            "TidalVolume": 900,
+            "TidalVolumeUnits": "mL",
+            "InspiratoryTime": 1.0,
+            "InspiratoryTimeUnits": "s",
+            "RespirationRate" : 12,
+            "RespirationRateUnits" : "/min",
+            "PositiveEndExpiredPressure": 5,
+            "PositiveEndExpiredPressureUnits": "cmH2O",
+            "Flow": 60,
+            "FlowUnits": "L/min"
+        },
+        "Normal_PC-AC": {
+            "InspiratoryTime": 1.0,
+            "InspiratoryTimeUnits": "s",
+            "RespirationRate": 12,
+            "RespirationRateUnits": "/min",
+            "PositiveEndExpiredPressure": 5,
+            "PositiveEndExpiredPressureUnits": "cmH2O",
+            "PeakInspiratoryPressure": 19,
+            "PeakInspiratoryPressureUnits": "cmH2O"
+        },
+        "Normal_CPAP": {
+            "DeltaPressureSupport": 10,
+            "DeltaPressureSupportUnits": "cmH2O",
+            "PositiveEndExpiredPressure": 5,
+            "PositiveEndExpiredPressureUnits": "cmH2O",
+            "Slope": 0.2,
+            "SlopeUnits": "s"
+        },
+        "ARDS_VC-AC": {
+            "TidalVolume": 550,
+            "TidalVolumeUnits": "mL",
+            "InspiratoryTime": 1.1,
+            "InspiratoryTimeUnits": "s",
+            "RespirationRate": 12,
+            "RespirationRateUnits": "/min",
+            "PositiveEndExpiredPressure": 5,
+            "PositiveEndExpiredPressureUnits": "cmH2O",
+            "Flow": 40,
+            "FlowUnits": "L/min"
+        },
+        "ARDS_PC-AC": {
+            "InspiratoryTime": 1.1,
+            "InspiratoryTimeUnits": "s",
+            "RespirationRate": 12,
+            "RespirationRateUnits": "/min",
+            "PositiveEndExpiredPressure": 5,
+            "PositiveEndExpiredPressureUnits": "cmH2O",
+            "PeakInspiratoryPressure": 23,
+            "PeakInspiratoryPressureUnits": "cmH2O"
+        },
+        "ARDS_CPAP": {
+            "DeltaPressureSupport": 10,
+            "DeltaPressureSupportUnits": "cmH2O",
+            "PositiveEndExpiredPressure": 5,
+            "PositiveEndExpiredPressureUnits": "cmH2O",
+            "Slope": 0.2,
+            "SlopeUnits": "s"
+        },
+        "COPD_VC-AC": {
+            "TidalVolume": 500,
+            "TidalVolumeUnits": "mL",
+            "InspiratoryTime": 1.1,
+            "InspiratoryTimeUnits": "s",
+            "RespirationRate": 12,
+            "RespirationRateUnits": "/min",
+            "PositiveEndExpiredPressure": 5,
+            "PositiveEndExpiredPressureUnits": "cmH2O",
+            "Flow": 40,
+            "FlowUnits": "L/min"
+        },
+        "COPD_PC-AC": {
+            "InspiratoryTime": 1.2,
+            "InspiratoryTimeUnits": "s",
+            "RespirationRate": 12,
+            "RespirationRateUnits": "/min",
+            "PositiveEndExpiredPressure": 5,
+            "PositiveEndExpiredPressureUnits": "cmH2O",
+            "PeakInspiratoryPressure": 12,
+            "PeakInspiratoryPressureUnits": "cmH2O"
+        },
+        "COPD_CPAP": {
+            "DeltaPressureSupport": 10,
+            "DeltaPressureSupportUnits": "cmH2O",
+            "PositiveEndExpiredPressure": 5,
+            "PositiveEndExpiredPressureUnits": "cmH2O",
+            "Slope": 0.2,
+            "SlopeUnits": "s"
+        }
+    },
+    "validationData" : {
+        "Normal_VC-AC": {
+            "TidalVolume(mL)" : 900,
+            "RespirationRate(1/min)" : 15,
+            "InspiratoryExpiratoryRatio": 0.370,
+            "MeanAirwayPressure(cmH2O)": 7.9
+        },
+        "Normal_PC-AC": {
+            "TidalVolume(mL)": 1047,
+            "RespirationRate(1/min)": 16,
+            "InspiratoryExpiratoryRatio": 0.357,
+            "MeanAirwayPressure(cmH2O)": 8.6
+        },
+        "Normal_CPAP": {
+            "TidalVolume(mL)": 905,
+            "RespirationRate(1/min)": 15,
+            "InspiratoryExpiratoryRatio": 0.370,
+            "MeanAirwayPressure(cmH2O)": 6.9
+        },
+        "ARDS_VC-AC": {
+            "TidalVolume(mL)": 550,
+            "RespirationRate(1/min)": 25,
+            "InspiratoryExpiratoryRatio": 1.0,
+            "MeanAirwayPressure(cmH2O)": 13
+        },
+        "ARDS_PC-AC": {
+            "TidalVolume(mL)": 528,
+            "RespirationRate(1/min)": 25,
+            "InspiratoryExpiratoryRatio": 1.0,
+            "MeanAirwayPressure(cmH2O)": 12
+        },
+        "ARDS_CPAP": {
+            "TidalVolume(mL)": 387,
+            "RespirationRate(1/min)": 25,
+            "InspiratoryExpiratoryRatio": 0.588,
+            "MeanAirwayPressure(cmH2O)": 10
+        },
+        "COPD_VC-AC": {
+            "TidalVolume(mL)": 493,
+            "RespirationRate(1/min)": 18,
+            "InspiratoryExpiratoryRatio": 0.556,
+            "MeanAirwayPressure(cmH2O)": 7.3
+        },
+        "COPD_PC-AC": {
+            "TidalVolume(mL)": 571,
+            "RespirationRate(1/min)": 18,
+            "InspiratoryExpiratoryRatio": 0.625,
+            "MeanAirwayPressure(cmH2O)": 7.8
+        },
+        "COPD_CPAP": {
+            "TidalVolume(mL)": 657,
+            "RespirationRate(1/min)": 17,
+            "InspiratoryExpiratoryRatio": 0.588,
+            "MeanAirwayPressure(cmH2O)": 8.5
+        }
+    }
+}
