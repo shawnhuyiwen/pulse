@@ -1019,6 +1019,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.pulmonarycompliance(), dst.GetPulmonaryCompliance());
   if (src.has_pulmonaryelastance())
     PBProperty::Load(src.pulmonaryelastance(), dst.GetPulmonaryElastance());
+  if (src.has_relativetotallungvolume())
+    PBProperty::Load(src.relativetotallungvolume(), dst.GetRelativeTotalLungVolume());
   if (src.has_resistiveexpiratoryworkofbreathing())
     PBProperty::Load(src.resistiveexpiratoryworkofbreathing(), dst.GetResistiveExpiratoryWorkOfBreathing());
   if (src.has_resistiveinspiratoryworkofbreathing())
@@ -1138,6 +1140,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_pulmonarycompliance(PBProperty::Unload(*src.m_PulmonaryCompliance));
   if (src.HasPulmonaryElastance())
     dst.set_allocated_pulmonaryelastance(PBProperty::Unload(*src.m_PulmonaryElastance));
+  if (src.HasRelativeTotalLungVolume())
+    dst.set_allocated_relativetotallungvolume(PBProperty::Unload(*src.m_RelativeTotalLungVolume));
   if (src.HasResistiveExpiratoryWorkOfBreathing())
     dst.set_allocated_resistiveexpiratoryworkofbreathing(PBProperty::Unload(*src.m_ResistiveExpiratoryWorkOfBreathing));
   if (src.HasResistiveInspiratoryWorkOfBreathing())

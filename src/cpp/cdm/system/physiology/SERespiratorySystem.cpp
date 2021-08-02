@@ -50,6 +50,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_PositiveEndExpiratoryPressure = nullptr;
   m_PulmonaryCompliance = nullptr;
   m_PulmonaryElastance = nullptr;
+  m_RelativeTotalLungVolume = nullptr;
   m_ResistiveExpiratoryWorkOfBreathing = nullptr;
   m_ResistiveInspiratoryWorkOfBreathing = nullptr;
   m_RespirationRate = nullptr;
@@ -109,6 +110,7 @@ SERespiratorySystem::~SERespiratorySystem()
   SAFE_DELETE(m_PositiveEndExpiratoryPressure);
   SAFE_DELETE(m_PulmonaryCompliance);
   SAFE_DELETE(m_PulmonaryElastance);
+  SAFE_DELETE(m_RelativeTotalLungVolume);
   SAFE_DELETE(m_ResistiveExpiratoryWorkOfBreathing);
   SAFE_DELETE(m_ResistiveInspiratoryWorkOfBreathing);
   SAFE_DELETE(m_RespirationRate);
@@ -170,6 +172,7 @@ void SERespiratorySystem::Clear()
   INVALIDATE_PROPERTY(m_PositiveEndExpiratoryPressure);
   INVALIDATE_PROPERTY(m_PulmonaryCompliance);
   INVALIDATE_PROPERTY(m_PulmonaryElastance);
+  INVALIDATE_PROPERTY(m_RelativeTotalLungVolume);
   INVALIDATE_PROPERTY(m_ResistiveExpiratoryWorkOfBreathing);
   INVALIDATE_PROPERTY(m_ResistiveInspiratoryWorkOfBreathing);
   INVALIDATE_PROPERTY(m_RespirationRate);
@@ -263,6 +266,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetPulmonaryCompliance();
   if (name.compare("PulmonaryElastance") == 0)
     return &GetPulmonaryElastance();
+  if (name.compare("RelativeTotalLungVolume") == 0)
+    return &GetRelativeTotalLungVolume();
   if (name.compare("ResistiveExpiratoryWorkOfBreathing") == 0)
     return &GetResistiveExpiratoryWorkOfBreathing();
   if (name.compare("ResistiveInspiratoryWorkOfBreathing") == 0)
@@ -853,6 +858,23 @@ double SERespiratorySystem::GetPulmonaryElastance(const PressurePerVolumeUnit& u
   if (m_PulmonaryElastance == nullptr)
     return SEScalar::dNaN();
   return m_PulmonaryElastance->GetValue(unit);
+}
+
+bool SERespiratorySystem::HasRelativeTotalLungVolume() const
+{
+  return m_RelativeTotalLungVolume == nullptr ? false : m_RelativeTotalLungVolume->IsValid();
+}
+SEScalarVolume& SERespiratorySystem::GetRelativeTotalLungVolume()
+{
+  if (m_RelativeTotalLungVolume == nullptr)
+    m_RelativeTotalLungVolume = new SEScalarVolume();
+  return *m_RelativeTotalLungVolume;
+}
+double SERespiratorySystem::GetRelativeTotalLungVolume(const VolumeUnit& unit) const
+{
+  if (m_RelativeTotalLungVolume == nullptr)
+    return SEScalar::dNaN();
+  return m_RelativeTotalLungVolume->GetValue(unit);
 }
 
 bool SERespiratorySystem::HasResistiveExpiratoryWorkOfBreathing() const

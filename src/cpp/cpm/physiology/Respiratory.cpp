@@ -247,6 +247,8 @@ void Respiratory::Initialize()
   m_rightAlveoliDecrease_L = 0;
 
   //System data
+  GetTotalLungVolume().Set(m_data.GetCurrentPatient().GetFunctionalResidualCapacity());
+  GetRelativeTotalLungVolume().SetValue(0.0, VolumeUnit::L);
   double TidalVolume_L = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L);
   double RespirationRate_Per_min = m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min);
   GetTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
@@ -1863,6 +1865,10 @@ void Respiratory::CalculateVitalSigns()
   double totalLungVolume_L = m_Lungs->GetVolume(VolumeUnit::L);
   GetTotalLungVolume().SetValue(totalLungVolume_L, VolumeUnit::L);
 
+  double bottomBreathTotalVolume_L = GetTidalVolume(VolumeUnit::L) / GetSpecificVentilation().GetValue();
+  double relativeTotalLungVolume_L = totalLungVolume_L - bottomBreathTotalVolume_L;
+  GetRelativeTotalLungVolume().SetValue(relativeTotalLungVolume_L, VolumeUnit::L);
+
   double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetNextVolume(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetNextVolume(VolumeUnit::L);
   double AlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L) + m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
   GetAnatomicDeadSpace().SetValue(AnatomicDeadSpace_L, VolumeUnit::L);  
@@ -1943,7 +1949,7 @@ void Respiratory::CalculateVitalSigns()
   m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s()/60;
 
   if (m_BreathingCycle) //Exhaling
-  {    
+  {
     if (totalLungVolume_L <= m_BottomBreathTotalVolume_L)
     {
       m_BottomBreathTotalVolume_L = totalLungVolume_L;

@@ -149,6 +149,10 @@ public:
   virtual SEScalarPressurePerVolume& GetPulmonaryElastance();
   virtual double GetPulmonaryElastance(const PressurePerVolumeUnit& unit) const;
 
+  virtual bool HasRelativeTotalLungVolume() const;
+  virtual SEScalarVolume& GetRelativeTotalLungVolume();
+  virtual double GetRelativeTotalLungVolume(const VolumeUnit& unit) const;
+
   virtual bool HasResistiveExpiratoryWorkOfBreathing() const;
   virtual SEScalarEnergy& GetResistiveExpiratoryWorkOfBreathing();
   virtual double GetResistiveExpiratoryWorkOfBreathing(const EnergyUnit& unit) const;
@@ -272,6 +276,7 @@ protected:
   SEScalarPressure*              m_PositiveEndExpiratoryPressure;
   SEScalarVolumePerPressure*     m_PulmonaryCompliance;
   SEScalarPressurePerVolume*     m_PulmonaryElastance;
+  SEScalarVolume*                m_RelativeTotalLungVolume;
   SEScalarEnergy*                m_ResistiveExpiratoryWorkOfBreathing;
   SEScalarEnergy*                m_ResistiveInspiratoryWorkOfBreathing;
   SEScalarFrequency*             m_RespirationRate;
