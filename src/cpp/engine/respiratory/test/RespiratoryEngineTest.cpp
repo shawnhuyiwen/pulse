@@ -453,8 +453,8 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
       e->ProcessAction(MVConfig);
 
       // Advance time
-      double twoCycles_s = 2.0 * 60.0 / respirationRate_bpm;
-      double simiulationTime_s = 20.0 + twoCycles_s;
+      double threeCycles_s = 3.0 * 60.0 / respirationRate_bpm;
+      double simiulationTime_s = 15.0 + threeCycles_s;
       for (int i = 0; i < simiulationTime_s * 50.0; i++)
       {
         if (!e->AdvanceModelTime())  // Compute 1 time step
@@ -464,7 +464,7 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
         }
 
         // Do 2 cycles cycle before recording data
-        if (i > twoCycles_s * 50.0)
+        if (i > threeCycles_s * 50.0)
         {
           // Pull Track will pull data from the engine and append it to the file
           e->GetEngineTracker()->TrackData(e->GetSimulationTime(TimeUnit::s));
