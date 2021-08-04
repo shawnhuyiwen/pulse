@@ -5,7 +5,7 @@ The work performed here focuses specifically on the coupled cardiovascular-respi
 models, consisting of discrete circuit elements analagous to an electrical circuit. The values of these circuit elements influence simulation results, but
 these values cannot be measured clinically, This study uses sensitivity analysis as a path towards improved lumped parameter optimization.
 
-As well as the C++ files provided in this folder, we also used several python scripts for simulation results analysis that can be found [here](https://gitlab.kitware.com/physiology/engine/-/tree/study/cv_sensitivity/src/python/pulse/study/sensitivity_analysis)
+As well as the C++ files provided in this folder, we also used several python scripts for simulation results analysis that can be found [here](/src/python/pulse/study/sensitivity_analysis)
 
 ---
 
@@ -17,14 +17,14 @@ The sensitivity analysis engine will be built as part of the general Pulse build
 
 ### Data Model
 
-The data model for this study can be found [here](https://gitlab.kitware.com/physiology/engine/-/blob/study/cv_sensitivity/src/schema/pulse/study/bind/SensitivityAnalysis.proto).
+The data model for this study can be found [here](/src/schema/pulse/study/bind/SensitivityAnalysis.proto).
 
 ---
 
 ### Data
 
 The data used in this study consists of combinations of lumped parameter values that override the learned values during the simulation.
-The lumped parameter values are generated in [Python](https://gitlab.kitware.com/physiology/engine/-/tree/study/cv_sensitivity/src/python/pulse/study/sensitivity_analysis) and stored in a JSON file.
+The lumped parameter values are generated in [Python](/src/python/pulse/study/sensitivity_analysis) and stored in a JSON file.
 
 ---
 
@@ -64,6 +64,6 @@ This sim_list_results.json file was used for data analysis.
 
 ---
 ### Analysis
-All data analysis was performed with Python scripts found [here]https://gitlab.kitware.com/physiology/engine/-/tree/study/cv_sensitivity/src/python/pulse/study/sensitivity_analysis
+All data analysis was performed with Python scripts found [here](/src/python/pulse/study/sensitivity_analysis)
 
 
