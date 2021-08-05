@@ -133,55 +133,46 @@
         "Normal_VC-AC": {
             "TidalVolume(mL)" : 900,
             "RespirationRate(1/min)" : 15,
-            "InspiratoryExpiratoryRatio": 0.333,
             "MeanAirwayPressure(cmH2O)": 7.9
         },
         "Normal_PC-AC": {
             "TidalVolume(mL)": 1047,
             "RespirationRate(1/min)": 15,
-            "InspiratoryExpiratoryRatio": 0.333,
             "MeanAirwayPressure(cmH2O)": 8.6
         },
         "Normal_CPAP": {
             "TidalVolume(mL)": 905,
             "RespirationRate(1/min)": 15,
-            "InspiratoryExpiratoryRatio": 0.290,
             "MeanAirwayPressure(cmH2O)": 6.9
         },
         "ARDS_VC-AC": {
             "TidalVolume(mL)": 550,
             "RespirationRate(1/min)": 25,
-            "InspiratoryExpiratoryRatio": 0.846,
             "MeanAirwayPressure(cmH2O)": 13
         },
         "ARDS_PC-AC": {
             "TidalVolume(mL)": 528,
             "RespirationRate(1/min)": 25,
-            "InspiratoryExpiratoryRatio": 0.846,
             "MeanAirwayPressure(cmH2O)": 12
         },
         "ARDS_CPAP": {
             "TidalVolume(mL)": 387,
             "RespirationRate(1/min)": 25,
-            "InspiratoryExpiratoryRatio": 0.333,
             "MeanAirwayPressure(cmH2O)": 10
         },
         "COPD_VC-AC": {
             "TidalVolume(mL)": 493,
             "RespirationRate(1/min)": 18,
-            "InspiratoryExpiratoryRatio": 0.493,
             "MeanAirwayPressure(cmH2O)": 7.3
         },
         "COPD_PC-AC": {
             "TidalVolume(mL)": 571,
             "RespirationRate(1/min)": 18,
-            "InspiratoryExpiratoryRatio": 0.563,
             "MeanAirwayPressure(cmH2O)": 7.8
         },
         "COPD_CPAP": {
             "TidalVolume(mL)": 657,
             "RespirationRate(1/min)": 18,
-            "InspiratoryExpiratoryRatio": 0.429,
             "MeanAirwayPressure(cmH2O)": 8.5
         }
     }
