@@ -21,7 +21,7 @@
     },
     "plots" : {
         "InspiratoryFlow(L/min)" : "Flow(L/min)",
-        "TotalLungVolume(mL)" : "Volume(mL)",
+        "RelativeTotalLungVolume(mL)" : "Volume(mL)",
         "TransrespiratoryPressure(cmH2O)" : "P1",
         "IntrapulmonaryPressure(cmH2O)" : "P2"
     }
