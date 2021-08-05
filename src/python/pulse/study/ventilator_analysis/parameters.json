@@ -35,5 +35,15 @@
         "RelativeTotalLungVolume",
         "comment: ",
         "this is used to make these plots show in this order - to match the photo"
-    ]
+    ],
+    "plotSizes" : {
+        "default" : {
+            "x" : 6,
+            "y" : 2
+        },
+        "vsPlot" : {
+            "x": 6,
+            "y": 6
+        }
+    }
 }

@@ -95,8 +95,9 @@ def writeHtmlPhotoDoc(saveFilename: str, pics: dict, patientSettings: dict,
                     imgs[ind] = temp
                     matched.append(pics[sel][name]['Pulse'])
 
-            # grab pics that aren't in the priority list
+            # grab pics that aren't in the priority list for last
             if pics[sel][name]['Pulse'] not in matched:
+                temp = temp.replace('setImg', 'squareImg')
                 imgs.append(temp)
 
         # write out the imageset
@@ -243,6 +244,14 @@ def returnPicCSS() -> str:
         height: auto;
     }
 
+    .squareImg {
+        display: block;
+        max-width:500px;
+        max-height:500px;
+        width: auto;
+        height: auto;
+    }
+
     .title {
         display: flex;
         align-items: center;
@@ -382,13 +391,16 @@ def main():
             # they have a $vs$ in them
             x = 'Time(s)'
             name = sel + sep + plot.split('(')[0]
-
+            plotX = param['plotSizes']['default']['x']
+            plotY = param['plotSizes']['default']['y']
             if '$vs$' in plot:
                 splstr = plot.split('$vs$')
                 x = splstr[0]
                 plot = splstr[1]
-                name = sel + sep +  x.split('(')[0] + \
+                name = sel + sep + x.split('(')[0] + \
                     sep + 'vs' + sep + plot.split('(')[0]
+                plotX = param['plotSizes']['vsPlot']['x']
+                plotY = param['plotSizes']['vsPlot']['y']
 
             valPlots[sel][name] = {}
             if plot in csvs[sel].columns:
@@ -402,7 +414,7 @@ def main():
                 plt.title(name)
                 savedPulse = plotsFolder + name + '.png'
                 fig = plt.gcf()
-                fig.set_size_inches(6, 2, forward=True)
+                fig.set_size_inches(plotX, plotY, forward=True)
                 fig.savefig(savedPulse, bbox_inches='tight', dpi=100)
                 valPlots[sel][name]['Pulse'] = savedPulse
 
