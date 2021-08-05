@@ -5,12 +5,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def writeHtmlTableDocument(saveFilename: str, results: pd.DataFrame, jIndex: list) -> str:  # name of report
+def writeHtmlTableDocument(saveFilename: str, results: pd.DataFrame,
+                           jIndex: list) -> str:  # name of report
     '''
     create an HTML document from a dict
     '''
     # render an html table string
-    table = results.to_html(classes='pulseVal', index=False)  # class utilizes our custom css
+    # class utilizes our custom css
+    table = results.to_html(classes='pulseVal', index=False)
 
     # apply the red or green formatting
     table = table.replace('<td>Passed</td>', '<td class="passed">Passed</td>')
@@ -21,88 +23,91 @@ def writeHtmlTableDocument(saveFilename: str, results: pd.DataFrame, jIndex: lis
 
 
 def writeHtmlPhotoDoc(saveFilename: str, pics: dict, patientSettings: dict,
-                      ventSettings: dict, compTable: dict) -> None:
+                      ventSettings: dict, compTable: dict,
+                      priority: list, sep: str) -> None:
     '''
     creates an html doc pointing to the photos
     '''
     # turn the dictionaries into html
     html = ''
-    imgs = ['', '', '']
-    cnt = 0
-    for p in range(0, len(pics['Parameter'])):
-        if cnt == 0:
-            title = pics['Parameter'][p].split('_')
-            html += '<div class="title"><h2>' + title[0] \
-                + ' ' + title[1] + '</h2></div>'
-            # get the settings
-            newPS = {}
-            newPS['Patient Setting'] = []
-            newPS['Value'] = []
-            for k in patientSettings[title[0]].keys():
-                if 'Units' in k:
-                    # add the units
-                    newPS['Patient Setting'][-1] += ' (' + \
-                        patientSettings[title[0]][k] + ')'
-                else:
-                    # append the name
-                    newPS['Patient Setting'].append(k)
-                    newPS['Value'].append(patientSettings[title[0]][k])
-            ps = pd.DataFrame(newPS)
+    for sel in pics.keys():
+        imgs = ['', '', '']  # setup for the 3 main plots
+        matched = []
+        title = sel.split(sep)
+        html += '<div class="title"><h2>' + title[0] \
+            + ' ' + title[1] + '</h2></div>'
+        # get the settings
+        newPS = {}
+        newPS['Patient Setting'] = []
+        newPS['Value'] = []
+        for k in patientSettings[title[0]].keys():
+            if 'Units' in k:
+                # add the units
+                newPS['Patient Setting'][-1] += ' (' + \
+                    patientSettings[title[0]][k] + ')'
+            else:
+                # append the name
+                newPS['Patient Setting'].append(k)
+                newPS['Value'].append(patientSettings[title[0]][k])
+        ps = pd.DataFrame(newPS)
 
-            sel = title[0] + '_' + title[1]
-            newVS = {}
-            newVS['Ventilator Setting'] = []
-            newVS['Value'] = []
-            for k in ventSettings[sel].keys():
-                if 'Units' in k:
-                    # add the units
-                    newVS['Ventilator Setting'][-1] += ' (' + \
-                        ventSettings[sel][k] + ')'
-                else:
-                    # append the name
-                    newVS['Ventilator Setting'].append(k)
-                    newVS['Value'].append(ventSettings[sel][k])
-            vs = pd.DataFrame(newVS)
+        newVS = {}
+        newVS['Ventilator Setting'] = []
+        newVS['Value'] = []
+        for k in ventSettings[sel].keys():
+            if 'Units' in k:
+                # add the units
+                newVS['Ventilator Setting'][-1] += ' (' + \
+                    ventSettings[sel][k] + ')'
+            else:
+                # append the name
+                newVS['Ventilator Setting'].append(k)
+                newVS['Value'].append(ventSettings[sel][k])
+        vs = pd.DataFrame(newVS)
 
-            # add the settings
-            html += '<div class="scene2" style="flex grow: 0;"><div>' + \
-                ps.to_html(classes='pulseVal', index=False) + \
-                '</div><div class="spacer"></div> <div>'
-            html += vs.to_html(classes='pulseVal', index=False) + \
-                '</div></div>'
+        # add the settings
+        html += '<div class="scene2" style="flex grow: 0;"><div>' + \
+            ps.to_html(classes='pulseVal', index=False) + \
+            '</div><div class="spacer"></div> <div>'
+        html += vs.to_html(classes='pulseVal', index=False) + \
+            '</div></div>'
 
-            # add the gt pic once for all 4 of the others
-            html += '<div class="scene">\n' + \
-                '<img class="regularImg" src="' + \
-                pics['Ground Truth'][p] +  \
-                '" /> <div class="imageSet">'
-        # only plot the 3:
-        if ('Flow' in pics['Parameter'][p] or \
-            'Pressure' in pics['Parameter'][p] \
-            or 'Volume' in pics['Parameter'][p]) \
-                and 'Intrapulmonary' not in pics['Parameter'][p]:
+        # add the gt pic once for all of the others
+        html += '<div class="scene">\n' + \
+            '<img class="regularImg" src="' + \
+            pics[sel]['Ground Truth'] +  \
+            '" /> <div class="imageSet">'
+
+        for name in pics[sel].keys():
+            if name == 'Ground Truth':
+                continue
+            if 'Pulse' not in pics[sel][name].keys():
+                continue
             # save the img
             temp = '<img class="setImg" src="' \
-                + pics['Pulse'][p] + '" />'
-            # order them to match the instrument
-            if 'Pressure' in pics['Parameter'][p]:
-                imgs[0] = temp
-            elif 'Flow' in pics['Parameter'][p]:
-                imgs[1] = temp
-            else:
-                imgs[2] = temp
-        cnt += 1
-        if cnt > 3:
-            # write out the imageset
-            for img in imgs:
-                html += img
-            # close out this set
-            html += '</div></div>'
-            # get the comparison
-            comp = pd.DataFrame(compTable[sel])
-            html += '<div>' + \
-                comp.to_html(classes='pulseVal', index=False) + '</div>'
-            cnt = 0
+                + pics[sel][name]['Pulse'] + '" />'
+
+            # plot based on priority - order them to match the instrument
+            for ind in range(0, len(priority)):
+                # compare the name
+                sec = sel + sep + priority[ind]
+                if sec == name:
+                    imgs[ind] = temp
+                    matched.append(pics[sel][name]['Pulse'])
+
+            # grab pics that aren't in the priority list
+            if pics[sel][name]['Pulse'] not in matched:
+                imgs.append(temp)
+
+        # write out the imageset
+        for img in imgs:
+            html += img
+        # close out this set
+        html += '</div></div>'
+        # get the comparison
+        comp = pd.DataFrame(compTable[sel])
+        html += '<div>' + \
+            comp.to_html(classes='pulseVal', index=False) + '</div>'
 
     html = returnHTMLstring('Pulse Validation', returnPicCSS(), html)
 
@@ -290,6 +295,7 @@ def main():
     picFolder = paths['picsFolder']
     pulseResultsFolder = paths['pulseResultsFolder']
     groundTruthDataJSON = paths['groundTruthDataJSON']
+    plotsFolder = paths['plotOutputFolder']
 
     # load in the gt json
     gtData = {}
@@ -321,6 +327,15 @@ def main():
                     # store this for later loading
                     pics[gtSelect] = picfile  # pFile
 
+    # clear plots out of the results folder:
+    pngs = os.listdir(plotsFolder)
+    for png in pngs:
+        if '.png' in png:
+            try:
+                os.remove(plotsFolder + png)
+            except OSError as e:
+                print("Error: %s : %s" % (plotsFolder + png, e.strerror))
+
     # now we have all the data - analyze is
     valTable = {}
     valTable['Parameter'] = []
@@ -332,14 +347,12 @@ def main():
 
     params = []
     valPlots = {}
-    valPlots['Parameter'] = []
-    valPlots['Ground Truth'] = []
-    valPlots['Pulse'] = []
     for sel in gtData['validationData']:
         valPerTable[sel] = {}
         valPerTable[sel]['Parameter'] = []
         valPerTable[sel]['Ground Truth'] = []
         valPerTable[sel]['Pulse'] = []
+        valPlots[sel] = {}
         headers = gtData['validationData'][sel].keys()
         # go through these headers
         for head in headers:
@@ -363,8 +376,21 @@ def main():
                 valPerTable[sel]['Pulse'].append(last)
 
         # setup the plots
-        x = 'Time(s)'
+        valPlots[sel]['Ground Truth'] = pics[sel]
         for plot in param['plots']:
+            # plots use the time column by default - unless
+            # they have a $vs$ in them
+            x = 'Time(s)'
+            name = sel + sep + plot.split('(')[0]
+
+            if '$vs$' in plot:
+                splstr = plot.split('$vs$')
+                x = splstr[0]
+                plot = splstr[1]
+                name = sel + sep +  x.split('(')[0] + \
+                    sep + 'vs' + sep + plot.split('(')[0]
+
+            valPlots[sel][name] = {}
             if plot in csvs[sel].columns:
                 xlist = csvs[sel][x]
                 ylist = csvs[sel][plot]
@@ -373,22 +399,21 @@ def main():
                 plt.tight_layout()
                 plt.fill_between(xlist, ylist, facecolor="blue")
                 # plt.show()
-                name = plot.split('(')[0]
-                plt.title(sel + sep + name)
-                savedPulse = './out/' + sel + sep + name + '.png'
+                plt.title(name)
+                savedPulse = plotsFolder + name + '.png'
                 fig = plt.gcf()
                 fig.set_size_inches(6, 2, forward=True)
                 fig.savefig(savedPulse, bbox_inches='tight', dpi=100)
-                valPlots['Parameter'].append(sel + sep + name)
-                valPlots['Pulse'].append(savedPulse)
-                valPlots['Ground Truth'].append(pics[sel])
+                valPlots[sel][name]['Pulse'] = savedPulse
 
-    #outDF = pd.DataFrame(valTable)
-    #writeHtmlTableDocument('PulseValidation', outDF, valTable.keys())
+    # outDF = pd.DataFrame(valTable)
+    # writeHtmlTableDocument('PulseValidation', outDF, valTable.keys())
+    priority = param['plotPriorityOrder']
     writeHtmlPhotoDoc('PulseValidation', valPlots,
                       gtData['patientSettings'],
                       gtData['ventilatorSettings'],
-                      valPerTable)
+                      valPerTable,
+                      priority, sep)
 
 
 if __name__ == "__main__":
