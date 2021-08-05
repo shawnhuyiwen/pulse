@@ -2,7 +2,8 @@
     "paths" : {
         "groundTruthDataJSON" : "./gt/gt.json",
         "picsFolder" : "./gt/",
-        "pulseResultsFolder" : "./Pulse_Results/"
+        "pulseResultsFolder" : "./Pulse_Results/",
+        "plotOutputFolder" : "./out/"
     },
     "patientTypes" : [
         "Normal",
@@ -15,14 +16,24 @@
          "CPAP"
     ],
     "picNamingConvention" : {
+        "comment1" : "this is used to find the files",
         "extensions" : ["jpg"],
         "separator" : "_",
         "comment" : "patientTypes_ventilatorModes"
     },
     "plots" : {
+        "comment" : "column in CSV : internal name",
         "InspiratoryFlow(L/min)" : "Flow(L/min)",
         "RelativeTotalLungVolume(mL)" : "Volume(mL)",
-        "TransrespiratoryPressure(cmH2O)" : "P1",
-        "IntrapulmonaryPressure(cmH2O)" : "P2"
-    }
+        "TransrespiratoryPressure(cmH2O)": "P1",
+        "RelativeTotalLungVolume(mL)$vs$IntrapulmonaryPressure(cmH2O)": "RelativeTotalLungVolume_vs_IntrapulmonaryPressure",
+        "RelativeTotalLungVolume(mL)$vs$TransrespiratoryPressure(cmH2O)": "RelativeTotalLungVolume_vs_TransrespiratoryPressure"
+    },
+    "plotPriorityOrder" : [
+        "TransrespiratoryPressure",
+        "InspiratoryFlow",
+        "RelativeTotalLungVolume",
+        "comment: ",
+        "this is used to make these plots show in this order - to match the photo"
+    ]
 }
