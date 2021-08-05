@@ -389,25 +389,28 @@ def main():
         for plot in param['plots']:
             # plots use the time column by default - unless
             # they have a $vs$ in them
-            x = 'Time(s)'
+            xLabel = 'Time(s)'
+            yLabel = plot.split('(')[0]
             name = sel + sep + plot.split('(')[0]
             plotX = param['plotSizes']['default']['x']
             plotY = param['plotSizes']['default']['y']
             if '$vs$' in plot:
                 splstr = plot.split('$vs$')
-                x = splstr[0]
-                plot = splstr[1]
-                name = sel + sep + x.split('(')[0] + \
+                xLabel = splstr[0]
+                yLabel = plot = splstr[1]
+                name = sel + sep + xLabel.split('(')[0] + \
                     sep + 'vs' + sep + plot.split('(')[0]
                 plotX = param['plotSizes']['vsPlot']['x']
                 plotY = param['plotSizes']['vsPlot']['y']
 
             valPlots[sel][name] = {}
             if plot in csvs[sel].columns:
-                xlist = csvs[sel][x]
+                xlist = csvs[sel][xLabel]
                 ylist = csvs[sel][plot]
                 plt.clf()
                 plt.plot(xlist, ylist)
+                plt.xlabel(xLabel)
+                plt.ylabel(yLabel)
                 plt.tight_layout()
                 plt.fill_between(xlist, ylist, facecolor="blue")
                 # plt.show()
