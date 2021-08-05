@@ -390,7 +390,7 @@ def main():
             # plots use the time column by default - unless
             # they have a $vs$ in them
             xLabel = 'Time(s)'
-            yLabel = plot.split('(')[0]
+            yLabel = '(' + plot.split('(')[-1]
             name = sel + sep + plot.split('(')[0]
             plotX = param['plotSizes']['default']['x']
             plotY = param['plotSizes']['default']['y']
