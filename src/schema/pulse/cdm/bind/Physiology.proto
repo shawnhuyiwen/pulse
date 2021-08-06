@@ -247,28 +247,28 @@ message RenalSystemData
 message RespiratoryMechanicsData
 {
   eSwitch                             Active                                         = 1; /**<< @brief Turn on or off the use of this structure in the physiology implementation. */
-  CurveData                           LeftComplianceCurve                            = 2; /**<< @brief Blahb.*/
-  CurveData                           RightComplianceCurve                           = 3; /**<< @brief Blahb.*/
+  CurveData                           LeftComplianceCurve                            = 2; /**<< @brief Left static compliance definition as a pressure vs. volume piecewise function.*/
+  CurveData                           RightComplianceCurve                           = 3; /**<< @brief Right static compliance definition as a pressure vs. volume piecewise function.*/
   
-  ScalarPressureTimePerVolumeData     LeftExpiratoryResistance                       = 4; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     LeftInspiratoryResistance                      = 5; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     RightExpiratoryResistance                      = 6; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     RightInspiratoryResistance                     = 7; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 8; /**<< @brief Blahb.*/
-  ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 9; /**<< @brief Blahb.*/
+  ScalarPressureTimePerVolumeData     LeftExpiratoryResistance                       = 4; /**<< @brief Left lung airway resistance during expiration.*/
+  ScalarPressureTimePerVolumeData     LeftInspiratoryResistance                      = 5; /**<< @brief Left lung airway resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData     RightExpiratoryResistance                      = 6; /**<< @brief Right lung airway resistance during expiration.*/
+  ScalarPressureTimePerVolumeData     RightInspiratoryResistance                     = 7; /**<< @brief Right lung airway resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 8; /**<< @brief Upper airway respiratory resistance during expiration.*/
+  ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 9; /**<< @brief Upper airway respiratory resistance during inspiration.*/
   
   // Muscle Pressure Driver
-  ScalarPressureData                  InspiratoryPeakPressure                        = 10;/**<< @brief Blahb.*/
-  ScalarPressureData                  ExpiratoryPeakPressure                         = 11;/**<< @brief Blahb.*/
+  ScalarPressureData                  InspiratoryPeakPressure                        = 10;/**<< @brief The maximum negative pressure during spontaneous inspiration.*/
+  ScalarPressureData                  ExpiratoryPeakPressure                         = 11;/**<< @brief The maximum positive pressure during spontaneous expiration (usually 0).*/
   
-  ScalarTimeData                      InspiratoryRiseTime                            = 12;/**<< @brief Blahb.*/
-  ScalarTimeData                      InspiratoryHoldTime                            = 13;/**<< @brief Blahb.*/
-  ScalarTimeData                      InspiratoryReleaseTime                         = 14;/**<< @brief Blahb.*/
-  ScalarTimeData                      InspiratoryToExpiratoryPauseTime               = 15;/**<< @brief Blahb.*/
-  ScalarTimeData                      ExpiratoryRiseTime                             = 16;/**<< @brief Blahb.*/
-  ScalarTimeData                      ExpiratoryHoldTime                             = 17;/**<< @brief Blahb.*/
-  ScalarTimeData                      ExpiratoryReleaseTime                          = 18;/**<< @brief Blahb.*/
-  ScalarTimeData                      ResidueTime                                    = 19;/**<< @brief Blahb.*/
+  ScalarTimeData                      InspiratoryRiseTime                            = 12;/**<< @brief Spontaneous inspiration rise period length.*/
+  ScalarTimeData                      InspiratoryHoldTime                            = 13;/**<< @brief Spontaneous hold period length at top of breath.*/
+  ScalarTimeData                      InspiratoryReleaseTime                         = 14;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
+  ScalarTimeData                      InspiratoryToExpiratoryPauseTime               = 15;/**<< @brief Spontaneous hold period length between inspiration and expiration.*/
+  ScalarTimeData                      ExpiratoryRiseTime                             = 16;/**<< @brief Spontaneous expiration rise period length.*/
+  ScalarTimeData                      ExpiratoryHoldTime                             = 17;/**<< @brief Spontaneous hold period length at bottom of breath.*/
+  ScalarTimeData                      ExpiratoryReleaseTime                          = 18;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
+  ScalarTimeData                      ResidueTime                                    = 19;/**<< @brief Spontaneous breathing remaining time at 0 pressure after completed waveform.*/
 }
 enum eBreathState
 {
@@ -285,7 +285,7 @@ message RespiratorySystemData
   ScalarVolumeData                    AlveolarDeadSpace                              = 2; /**<< @brief The volume of unperfused alveoli.*/
   ScalarVolumeData                    AnatomicDeadSpace                              = 3; /**<< @brief The total volume of the conducting airways from the nose or mouth down to the level of the terminal bronchioles that does not participate in gas exchange.*/
   ScalarPressureData                  CarricoIndex                                   = 4; /**<< @brief The ratio of arterial partial pressure O2 and the inspired O2. O2 level in blood vs. Concentration of O2 in a breath.*/
-  ScalarVolumePerPressureData         ChestWallCompliance                            = 5; /**<< @brief The relationship between the transmural pressure across the chest wall compared with the chest cavity's volume.*/
+  ScalarVolumePerPressureData         ChestWallCompliance                            = 5; /**<< @brief The static relationship between the transmural pressure across the chest wall compared with the chest cavity's volume.*/
   ScalarEnergyData                    ElasticWorkOfBreathing                         = 6; /**<< @brief The work (generally during the inhalation phase) that is stored as potential energy which is recovered during exhalation.*/
   Scalar0To1Data                      EndTidalCarbonDioxideFraction                  = 7; /**<< @brief The fraction of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
   ScalarPressureData                  EndTidalCarbonDioxidePressure                  = 8; /**<< @brief The pressure of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
@@ -301,7 +301,7 @@ message RespiratorySystemData
   ScalarPressureTimePerVolumeData     InspiratoryPulmonaryResistance                 = 18;/**<< @brief The total resistance to airflow through the lungs during inhalation. */
   ScalarPressureData                  IntrapleuralPressure                           = 19;/**<< @brief The pressure difference across the whole lung.*/
   ScalarPressureData                  IntrapulmonaryPressure                         = 20;/**<< @brief The total respiratory recoil pressure relative to body surface.*/
-  ScalarVolumePerPressureData         LungCompliance                                 = 21;/**<< @brief The measure of the lung's ability to stretch and expand.*/
+  ScalarVolumePerPressureData         LungCompliance                                 = 21;/**<< @brief The static measure of the lung's ability to stretch and expand.*/
   ScalarPressureData                  MaximalInspiratoryPressure                     = 22;/**<< @brief The strength of inspiratory muscles.*/
   ScalarPressureData                  MeanAirwayPressure                             = 23;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */
   ScalarData                          OxygenationIndex                               = 24;/**<< @brief Used in intensive care medicine to measure the usage of oxygen within the body and predict outcomes.  A lower oxygenation index is better. */
@@ -311,8 +311,8 @@ message RespiratorySystemData
   ScalarPressureData                  PeakInspiratoryPressure                        = 28;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
   ScalarVolumeData                    PhysiologicDeadSpace                           = 29;/**<< @brief The sum of the anatomic and alveolar dead space.*/
   ScalarPressureData                  PositiveEndExpiratoryPressure                  = 30;/**<< @brief The pressure in the lungs (alveolar pressure) above atmospheric pressure at the end of expiration.*/
-  ScalarVolumePerPressureData         PulmonaryCompliance                            = 31;/**<< @brief The total compliance of the lungs.*/
-  ScalarPressurePerVolumeData         PulmonaryElastance                             = 32;/**<< @brief The inverse of lung compliance.*/
+  ScalarVolumePerPressureData         PulmonaryCompliance                            = 31;/**<< @brief The total static compliance of the lungs.*/
+  ScalarPressurePerVolumeData         PulmonaryElastance                             = 32;/**<< @brief The inverse of lung static compliance.*/
   ScalarVolumeData                    RelativeTotalLungVolume                        = 33;/**<< @brief The total volume of air within the lungs at any given time above the previous breath minimum volume.*/
   ScalarEnergyData                    ResistiveExpiratoryWorkOfBreathing             = 34;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during exhalation.*/
   ScalarEnergyData                    ResistiveInspiratoryWorkOfBreathing            = 35;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during inhalation.*/
