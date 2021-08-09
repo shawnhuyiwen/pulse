@@ -327,7 +327,7 @@ void MechanicalVentilator::PreProcess()
     m_CurrentInspiratoryVolume_L = 0.0;
     return;
   }
-  
+
   SetConnection();
   CalculateInspiration();
   CalculatePause();
@@ -469,7 +469,8 @@ void MechanicalVentilator::CalculateInspiration()
   if (HasExpirationCycleFlow())
   {
     triggerDefined = true;
-    if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) <= GetExpirationCycleFlow(VolumePerTimeUnit::L_Per_s))
+    if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) <= GetExpirationCycleFlow(VolumePerTimeUnit::L_Per_s) &&
+      m_CurrentPeriodTime_s > 0.0) //Check if we just cycled the mode
     {
       CycleMode();
       return;
@@ -613,7 +614,8 @@ void MechanicalVentilator::CalculateExpiration()
     {
       relativePressure_cmH2O -= GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
     }
-    if (relativePressure_cmH2O <= GetInspirationPatientTriggerPressure(PressureUnit::cmH2O))
+    if (relativePressure_cmH2O <= GetInspirationPatientTriggerPressure(PressureUnit::cmH2O) &&
+      m_CurrentPeriodTime_s > 0.0) //Check if we just cycled the mode
     {
       CycleMode();
       return;
@@ -623,7 +625,8 @@ void MechanicalVentilator::CalculateExpiration()
   if (HasInspirationPatientTriggerFlow())
   {
     triggerDefined = true;
-    if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s))
+    if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s) &&
+      m_CurrentPeriodTime_s > 0.0) //Check if we just cycled the mode
     {
       CycleMode();
       return;

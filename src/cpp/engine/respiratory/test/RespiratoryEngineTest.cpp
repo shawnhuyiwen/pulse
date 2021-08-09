@@ -276,7 +276,7 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
         mv.GetInspirationTargetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
         mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
         mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-        mv.GetInspirationPatientTriggerPressure().SetValue(-0.001, PressureUnit::cmH2O);
+        mv.GetInspirationPatientTriggerFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
         mv.GetExpirationCycleVolume().SetValue(tidalVolume_mL, VolumeUnit::mL);
         const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
         mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
@@ -298,7 +298,7 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
         mv.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
         mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
         mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-        mv.GetInspirationPatientTriggerPressure().SetValue(-0.001, PressureUnit::cmH2O);
+        mv.GetInspirationPatientTriggerFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
         mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
         const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
         mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
@@ -341,7 +341,7 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
         mv.GetInspirationTargetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
         mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
         mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-        mv.GetInspirationPatientTriggerPressure().SetValue(-0.001, PressureUnit::cmH2O);
+        mv.GetInspirationPatientTriggerFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
         mv.GetExpirationCycleVolume().SetValue(tidalVolume_mL, VolumeUnit::mL);
         const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
         mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
@@ -363,7 +363,7 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
         mv.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
         mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
         mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-        mv.GetInspirationPatientTriggerPressure().SetValue(-0.001, PressureUnit::cmH2O);
+        mv.GetInspirationPatientTriggerFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
         mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
         const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
         mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
@@ -406,7 +406,7 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
         mv.GetInspirationTargetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
         mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
         mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-        mv.GetInspirationPatientTriggerPressure().SetValue(-0.001, PressureUnit::cmH2O);
+        mv.GetInspirationPatientTriggerFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
         mv.GetExpirationCycleVolume().SetValue(tidalVolume_mL, VolumeUnit::mL);
         const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
         mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
@@ -428,7 +428,7 @@ void RespiratoryEngineTest::SmokeTest(const std::string& sTestDirectory)
         mv.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
         mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
         mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-        mv.GetInspirationPatientTriggerPressure().SetValue(-0.001, PressureUnit::cmH2O);
+        mv.GetInspirationPatientTriggerFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
         mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
         const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
         mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
