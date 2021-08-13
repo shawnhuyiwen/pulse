@@ -131,7 +131,7 @@ public:
     m_enum = (Enum)-1;
   }
 
-  bool Set(const SEScalarEnum<Enum>& s)
+  void Set(const SEScalarEnum<Enum>& s)
   {
     SEScalar::Set(s);
     m_enum = s.m_enum;
