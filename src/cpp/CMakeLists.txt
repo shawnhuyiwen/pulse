@@ -1,6 +1,5 @@
 add_subdirectory(bind)
 add_subdirectory(cdm)
-add_subdirectory(cpm)
 add_subdirectory(engine)
 add_subdirectory(howto)
 add_subdirectory(scenario_driver)

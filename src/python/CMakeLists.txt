@@ -5,10 +5,11 @@ find_package(pybind11 CONFIG REQUIRED)
 
 pybind11_add_module(PyPulse
   pybind/PyPulse.cpp
-  pybind/PhysiologyEngine.cpp
+  pybind/PulseEngines.cpp
   pybind/MultiplexVentilation.cpp)
 
 target_include_directories(PyPulse PRIVATE ${pybind11_INCLUDE_DIRS})
+target_include_directories(PyPulse PUBLIC ${CMAKE_SOURCE_DIR}/src/cpp)
 
 if(APPLE)
     set_target_properties(PyPulse PROPERTIES MACOSX_RPATH ON)

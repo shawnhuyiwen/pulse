@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "system/physiology/SEGastrointestinalSystem.h"
 #include "patient/SENutrition.h"
 #include "properties/SEScalarMass.h"

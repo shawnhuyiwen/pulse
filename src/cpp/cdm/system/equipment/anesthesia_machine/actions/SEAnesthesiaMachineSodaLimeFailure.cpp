@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
 #include "properties/SEScalar0To1.h"
 #include "io/protobuf/PBEquipmentActions.h"

@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "system/environment/SEEnvironment.h"
 #include "system/environment/SEActiveConditioning.h"
 #include "system/environment/SEAppliedTemperature.h"

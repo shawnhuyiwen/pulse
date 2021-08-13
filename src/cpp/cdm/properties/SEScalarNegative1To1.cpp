@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "properties/SEScalarNegative1To1.h"
 
 SEScalarNegative1To1::SEScalarNegative1To1() : SEScalar()

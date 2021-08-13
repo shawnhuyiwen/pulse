@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "properties/SEScalarHeatInductance.h"
 
 const HeatInductanceUnit HeatInductanceUnit::K_s_Per_W("K s/W");

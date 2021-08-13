@@ -2,29 +2,30 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEngineTracker.h"
-#include "patient/actions/SEDyspnea.h"
-#include "system/equipment/bag_valve_mask/SEBagValveMask.h"
-#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
-#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
-#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
-#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceFraction.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/patient/actions/SEDyspnea.h"
+#include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceFraction.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
 
 
 //--------------------------------------------------------------------------------------------------
@@ -37,7 +38,7 @@
 void HowToBagValveMask()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_BagValveMask.log");
   pe->GetLogger()->Info("HowTo_BagValveMask");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))

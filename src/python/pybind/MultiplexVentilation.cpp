@@ -1,7 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
 #include "MVEngine.h"
 
 #include <pybind11/pybind11.h>
@@ -9,6 +8,7 @@
 #include <pybind11/numpy.h>
 
 namespace py = pybind11;
+using namespace pulse::study::multiplex_ventilation;
 
 void MultiplexVentilationEngine(py::module& m)
 {

@@ -22,9 +22,11 @@
 #if (0)
 #define DEBUGOUT(x) x
 #else
-#define DEBUGOUT(x) 
+#define DEBUGOUT(x)
 #endif
 
+
+#define PULSE_CDM pulse::cdm
 #define CDM_BIND pulse::cdm::bind
 #define CDM_BIND_DECL(type) \
   namespace pulse { namespace cdm { namespace bind { class type; }}}
@@ -33,21 +35,54 @@
   namespace pulse { namespace cdm { namespace bind { class type##Data; }}}
 
 #if defined(_MSC_VER)
-  #define PUSH_PROTO_WARNINGS() \
-    __pragma(pack(push)) \
-    __pragma(warning(disable:4127)) \
-    __pragma(warning(disable:4244)) \
-    __pragma(warning(disable:4267))
-  #define POP_PROTO_WARNINGS() __pragma(pack(pop))
-#else
-  #define PUSH_PROTO_WARNINGS() \
-    _Pragma("pack(push)") \
-    _Pragma("warning(disable:4127)") \
-    _Pragma("warning(disable:4267)")
-  #define POP_PROTO_WARNINGS() _Pragma("pack(pop)")
+  // Modify the following defines if you have to target a platform prior to the ones specified below.
+  // Refer to MSDN for the latest info on corresponding values for different platforms.
+  #ifndef WINVER        // Allow use of features specific to Windows XP or later.
+  #define WINVER 0x0501    // Change this to the appropriate value to target other versions of Windows.
+  #endif
+
+  #ifndef _WIN32_WINNT    // Allow use of features specific to Windows XP or later.
+  #define _WIN32_WINNT 0x0501  // Change this to the appropriate value to target other versions of Windows.
+  #endif
+
+  #ifndef _WIN32_WINDOWS    // Allow use of features specific to Windows 98 or later.
+  #define _WIN32_WINDOWS 0x0410 // Change this to the appropriate value to target Windows Me or later.
+  #endif
+
+  #ifndef _WIN32_IE      // Allow use of features specific to IE 6.0 or later.
+  #define _WIN32_IE 0x0600  // Change this to the appropriate value to target other versions of IE.
+  #endif
+
+  #define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
 #endif
 
+   // See https ://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/
+   // When adding new warnings remember to add the DISABLE_ macro
+   // for all three sections MSVC, GCC/CLANG, other
+#if defined(_MSC_VER)
+  #define DISABLE_WARNING_PUSH           __pragma(warning( push ))
+  #define DISABLE_WARNING_POP            __pragma(warning( pop ))
+  #define DISABLE_WARNING(warningNumber) __pragma(warning( disable : warningNumber ))
+#elif defined(__GNUC__) || defined(__clang__)
+  #define DO_PRAGMA(X) _Pragma(#X)
+  #define DISABLE_WARNING_PUSH           DO_PRAGMA(GCC diagnostic push)
+  #define DISABLE_WARNING_POP            DO_PRAGMA(GCC diagnostic pop)
+  #define DISABLE_WARNING(warningName)   DO_PRAGMA(GCC diagnostic ignored #warningName)
+#else
+  #define DISABLE_WARNING_PUSH
+  #define DISABLE_WARNING_POP
+  #define DISABLE_WARNING
+#endif
 
+// Ignore these warnings from auto generated protobuf headers
+//  4127 : conditional expression is constant
+#define PUSH_PROTO_WARNINGS \
+  DISABLE_WARNING_PUSH \
+  DISABLE_WARNING(4127) \
+  DISABLE_WARNING(4267)
+#define POP_PROTO_WARNINGS DISABLE_WARNING_POP
+
+#define _USE_MATH_DEFINES
 #include <memory>
 #include <stdio.h>
 #include <iostream>
@@ -56,64 +91,20 @@
 #include <algorithm>
 #include <cmath>
 #include <string>
-
-#ifdef _MSC_VER
-#include <direct.h>
-#else
-#include <dirent.h>
-#endif
-
 #include <math.h>
 #include <vector>
 #include <stack>
 #include <map>
 #include <set>
 
-#if defined(_MSC_VER)
-  #include <unordered_map>
-  using namespace stdext;
+#ifdef _MSC_VER
+#include <direct.h>
+#include <unordered_map>
+using namespace stdext;
 #else//if (__GCC__) || (__GNUC__)
-  #include <unordered_map>
+#include <unordered_map>
+#include <dirent.h>
 #endif
-
- /*
-// Take from : https://github.com/CppCodeReviewers/Covariant-Return-Types-and-Smart-Pointers/blob/master/README.md
-namespace xsd
-{
-  template<typename T>
-  struct Serializable
-  {
-    using base_type = T;
-
-    virtual ~Serializable() = default;
-
-    virtual bool Load(const T& in) = 0;
-  protected:
-    virtual T* Unload() const
-    {
-      using base_type = typename T::base_type;
-      static_assert(std::is_base_of<base_type, T>::value, "T object has to derived from T::base_type");
-      auto ptr = static_cast<const base_type&>(object).NewBindType();
-      ptr->Unload(static_cast<T*>(ptr));
-      return std::unique_ptr<T>(static_cast<T*>(ptr));
-    }
-    virtual T* NewBindType() const = 0;
-    virtual void Unload(T& object) const = 0;
-  };
-}
-*/
-
-/*
-template class __declspec(dllexport) std::basic_string<char, 
-                                                      std::char_traits<char>, 
-                                                      std::allocator<char> >;
-
-template class __declspec(dllexport) std::basic_stringstream<char, 
-                                                            std::char_traits<char>, 
-                                                            std::allocator<char> >;
-
-template class __declspec(dllexport) std::vector<std::string>;
-*/
 
 #if defined(_MSC_VER)
   // Disabling the waring about STL classes used have 
@@ -123,7 +114,7 @@ template class __declspec(dllexport) std::vector<std::string>;
   // the project necessary to ensure proper linkage
   // If anyone else has opinions on this, let us know
   // kitware@kitware.com
-  #pragma warning(disable : 4251)
+  #pragma warning(disable:4251)
   #pragma warning(disable:4100) // unreferenced formal parameter (intentional in base classes)
   #pragma warning(disable:4996) // Deprecation
   #pragma warning(disable:4505) // unreferenced local function has been removed (dirent)
@@ -160,6 +151,9 @@ extern const std::string& eSwitch_Name(eSwitch m);
 
 enum class eCharge { NullCharge = 0, Negative, Neutral, Positive };
 extern const std::string& eCharge_Name(eCharge m);
+
+enum class eBreathState { Inhale = 0, Pause, Exhale };
+extern const std::string& eBreathState_Name(eBreathState m);
 
 //
 // End General Enum

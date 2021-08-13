@@ -4,5 +4,5 @@
 //----------------------------------------------------------------------------
 /// @file PrefixDescriptor.cpp
 //----------------------------------------------------------------------------
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "utils/unitconversion/UCCommon.h"

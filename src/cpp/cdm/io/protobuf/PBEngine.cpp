@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "CommonDataModel.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Engine.pb.h"
-POP_PROTO_WARNINGS()
+POP_PROTO_WARNINGS
 #include "io/protobuf/PBEngine.h"
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBConditions.h"
@@ -389,7 +389,7 @@ void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatien
   if (src.has_conditions())
     PBEngine::Load(src.conditions(), dst.GetConditions(), subMgr);
 
-  for (size_t i = 0; i < src.scalaroverride_size(); i++)
+  for (auto i = 0; i < src.scalaroverride_size(); i++)
   {
     const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
     dst.AddScalarOverride(sp.name(), sp.value(), sp.unit());

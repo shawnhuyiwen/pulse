@@ -4,12 +4,12 @@ package com.kitware.pulse.engine.testing;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-import com.kitware.pulse.SerializationType;
 
+import com.kitware.pulse.engine.bind.*;
+import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Scenario.ScenarioData;
 import com.kitware.pulse.cdm.testing.SETestDriver;
 import com.kitware.pulse.cdm.testing.SETestJob;
-import com.kitware.pulse.cpm.bind.Pulse;
 import com.kitware.pulse.engine.PulseScenarioExec;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
@@ -31,7 +31,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       return false;
     }
     ScenarioData.Builder builder;
-    Pulse.ScenarioData.Builder pBuilder = Pulse.ScenarioData.newBuilder();
+    Scenario.ScenarioData.Builder pBuilder = Scenario.ScenarioData.newBuilder();
     try
     {
     	JsonFormat.parser().merge(json, pBuilder);
@@ -93,11 +93,12 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       return false;
     }
     
+    job.execOpts.setLogToConsole(eSwitch.Off);
     job.execOpts.setLogFilename(logFilename);
     job.execOpts.setDataRequestCSVFilename(resultsFilename);
     job.execOpts.setScenarioContent(json);
     //System.out.println(json);
-    PulseScenarioExec pse = new PulseScenarioExec();
+    PulseScenarioExec pse = new PulseScenarioExec(job.modelType);
     pse.runScenario(job.execOpts);
     Log.info("Completed running "+job.name);
     pse=null;

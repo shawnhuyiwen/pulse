@@ -9,7 +9,7 @@ add_library_ex(MultiplexVentilationEngine
     MVGenerator.cpp
     MVRunner.cpp
   PUBLIC_DEPENDS
-    CommonPulseModels
+    PulseEngine
   PRIVATE_DEPENDS
     protobuf::libprotobuf
   INSTALL_HEADER_DIR

@@ -2,33 +2,34 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "patient/SEPatient.h"
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstance.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEEventManager.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEFunctionVolumeVsTime.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarLength.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SEEnergySystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEFunctionVolumeVsTime.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarLength.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -89,10 +90,11 @@ public:
 void HowToEngineUse()
 {
   // Create an engine object
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  // By default, this creates a human adult/whole body physiology engine
+  // You can create other engines by specifying a eModelType enum
+  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
 
-
-  // By default, PulseEngines will always output log messages to stdout
+  // By default, PulseEngine will always output log messages to stdout
   // You can turn that off and on like this
   pe->GetLogger()->LogToConsole(false);
   // If you want this engine to write a log file,provided a log filename

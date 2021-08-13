@@ -9,6 +9,7 @@ import com.google.common.primitives.Doubles;
 import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.SerializationType;
 
+import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.cdm.actions.SEAction;
 import com.kitware.pulse.cdm.bind.Engine.ActionListData;
 import com.kitware.pulse.cdm.bind.Engine.AnyActionData;
@@ -43,7 +44,6 @@ import com.kitware.pulse.utilities.JNIBridge;
 
 public class PulseEngine
 {
-
   protected boolean        alive  = false;
   protected double         timeStep_s = 0.02;
   protected double         timeRemainder = 0;
@@ -52,12 +52,22 @@ public class PulseEngine
 
   public PulseEngine()
   {
-    this("./");
+    this("./", eModelType.HumanAdultWholeBody);
+  }
+  public PulseEngine(eModelType m)
+  {
+    this("./", m);
   }
   public PulseEngine(String dataDir)
   {
+    this(dataDir, eModelType.HumanAdultWholeBody);
+  }
+  public PulseEngine(String dataDir, eModelType m)
+  {
     JNIBridge.initialize();
-    nativeObj=nativeAllocate(dataDir);
+    if(m == eModelType.UNRECOGNIZED)
+      m = eModelType.HumanAdultWholeBody;
+    nativeObj=nativeAllocate(dataDir, m.ordinal());
     timeStep_s = nativeGetTimeStep(nativeObj,"s");
   }
 
@@ -409,32 +419,31 @@ public class PulseEngine
     nativeSetLogFilename(nativeObj, logFilename);
   }
   
-  protected void LogDebug(String msg, String origin)
+  protected void handleDebug(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.debug(msg, origin);
   }
-  protected void LogInfo(String msg, String origin)
+  protected void handleInfo(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.info(msg, origin);
   }
-  protected void LogWarning(String msg, String origin)
+  protected void handleWarn(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.warn(msg, origin);
   }
-  protected void LogError(String msg, String origin)
+  protected void handleError(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.error(msg, origin);
   }
-  protected void LogFatal(String msg, String origin)
+  protected void handleFatal(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.fatal(msg, origin);
   }
-
   
   public void setEventHandler(SEEventHandler eh)
   {
@@ -464,7 +473,6 @@ public class PulseEngine
     {
       Log.error("Unable to pull active events",ex);
     }
-    
   }
   
   ////////////
@@ -473,7 +481,7 @@ public class PulseEngine
   
   protected long nativeObj;
   protected SerializationType thunkType = SerializationType.JSON;
-  protected native long nativeAllocate(String dataDir);
+  protected native long nativeAllocate(String dataDir, int phyiologyModel);
   protected native void nativeDelete(long nativeObj);
 
   protected native double nativeGetTimeStep(long nativeObj, String unit);
@@ -484,7 +492,7 @@ public class PulseEngine
   protected native boolean nativeSerializeFromString(long nativeObj, String state, String dataRequests, int format);
   protected native String  nativeSerializeToString(long nativeObj, String stateFile, int format);
   
-  protected native boolean nativeInitializeEngine(long nativeObj, String patient_configuration, String dataRequests, int thunk_format);
+  protected native boolean nativeInitializeEngine(long nativeObj, String patientConfiguration, String dataRequests, int format);
   
   protected native void nativeLogToConsole(long nativeObj, boolean b);
   protected native void nativeSetLogFilename(long nativeObj, String filename);

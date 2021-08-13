@@ -2,30 +2,31 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "patient/SEPatient.h"
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "compartment/SECompartmentManager.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstance.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEPatientConfiguration.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEFunctionVolumeVsTime.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarLength.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SEEnergySystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEFunctionVolumeVsTime.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarLength.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -36,7 +37,7 @@
 //--------------------------------------------------------------------------------------------------
 void HowToCreateAPatient()
 {
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_CreateAPatient.log");
   pe->GetLogger()->Info("HowTo_CreateAPatient");
 

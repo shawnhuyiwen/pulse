@@ -13,6 +13,7 @@ import java.util.Map;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.scenario.SEScenarioExec;
+import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.RunConfiguration;
@@ -58,7 +59,6 @@ public class SETestConfiguration
     this.executors.clear();
     this.jobs.clear();
 
-    
     String currentGroup = this.testName;
 
     // Parse the config file
@@ -209,6 +209,13 @@ public class SETestConfiguration
             { job.PlottableResults = true; job.plotType=PlotType.FastPlotErrors; continue; }
             if(directive.equalsIgnoreCase("MemoryFastPlot"))
             { job.PlottableResults = true; job.plotType=PlotType.MemoryFastPlot; continue; }
+            try {
+              job.modelType = eModelType.valueOf(directive);
+              continue;
+            }catch(IllegalArgumentException e)
+            { job.modelType = eModelType.UNRECOGNIZED; }
+            
+            Log.warn("Unknown directive : " + directive);
           }
           else
           {

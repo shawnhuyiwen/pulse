@@ -4,9 +4,9 @@ package com.kitware.pulse.engine;
 
 import com.kitware.pulse.cdm.bind.Scenario.eSerializationFormat;
 import com.kitware.pulse.cdm.scenario.SEScenarioExec;
+import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
-import com.kitware.pulse.utilities.JNIBridge;
 
 /**
  * This is a class that will run a scenario through Pulse
@@ -35,8 +35,19 @@ public class PulseScenarioExec
   protected MyListener listener = new MyListener();
   public PulseScenarioExec()
   {
-    JNIBridge.initialize();
-    engine=new PulseEngine();
+    this("./", eModelType.HumanAdultWholeBody);
+  }
+  public PulseScenarioExec(eModelType m)
+  {
+    this("./", m);
+  }
+  public PulseScenarioExec(String dataDir)
+  {
+    this(dataDir, eModelType.HumanAdultWholeBody);
+  }
+  public PulseScenarioExec(String dataDir, eModelType m)
+  {
+    engine=new PulseEngine(dataDir, m);
     engine.setLogListener(listener);
   }
   

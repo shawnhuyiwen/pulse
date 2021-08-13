@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "CommonDataModel.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Actions.pb.h"
 #include "pulse/cdm/bind/Scenario.pb.h"
-POP_PROTO_WARNINGS()
+POP_PROTO_WARNINGS
 #include "io/protobuf/PBActions.h"
 #include "io/protobuf/PBPatientActions.h"
 #include "io/protobuf/PBEnvironmentActions.h"
@@ -182,7 +182,7 @@ void PBAction::Load(const CDM_BIND::OverridesData& src, SEOverrides& dst)
 void PBAction::Serialize(const CDM_BIND::OverridesData& src, SEOverrides& dst)
 {
   PBAction::Serialize(src.action(), dst);
-  for (size_t i=0; i<src.scalaroverride_size(); i++)
+  for (auto i=0; i<src.scalaroverride_size(); i++)
   {
     const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
     dst.AddScalarProperty(sp.name(), sp.value(), sp.unit());

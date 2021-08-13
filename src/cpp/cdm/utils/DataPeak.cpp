@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "utils/DataPeak.h"
 
 DataPeak::DataPeak(unsigned int samples, double epsilon)

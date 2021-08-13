@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "utils/unitconversion/UnitConversionEngine.h"
 
 // This originally started out as a file read from disk

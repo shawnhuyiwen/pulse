@@ -5,7 +5,8 @@ add_library_ex(CommonDataModel
     Doxy.h
     Macros.h
     PhysiologyEngine.h
-    stdafx.h
+    PhysiologyEngineThunk.h
+    PhysiologyEnginePool.h
     blackbox/SEBlackBox.h
     blackbox/SEBlackBoxManager.h
     blackbox/electrical/SEElectricalBlackBox.h
@@ -246,7 +247,6 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimePressureArea.h
     scenario/SEScenario.h
     scenario/SEScenarioExec.h
-    stdafx.h
     substance/SESubstance.h
     substance/SESubstanceAerosolization.h
     substance/SESubstanceClearance.h
@@ -353,7 +353,8 @@ add_library_ex(CommonDataModel
     utils/unitconversion/UnitDimension.h
     utils/unitconversion/UnitStringLexer.h
   CPP_FILES
-    stdafx.cpp
+    PhysiologyEngineThunk.cpp
+    PhysiologyEnginePool.cpp
     blackbox/SEBlackBox.cpp
     blackbox/SEBlackBoxManager.cpp
     blackbox/electrical/SEElectricalBlackBox.cpp
@@ -606,7 +607,6 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimePressureArea.cpp
     scenario/SEScenario.cpp
     scenario/SEScenarioExec.cpp
-    stdafx.cpp
     substance/SESubstance.cpp
     substance/SESubstanceAerosolization.cpp
     substance/SESubstanceClearance.cpp

@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "properties/SEScalarEnergyPerMass.h"
 
 const EnergyPerMassUnit EnergyPerMassUnit::J_Per_kg("J/kg");

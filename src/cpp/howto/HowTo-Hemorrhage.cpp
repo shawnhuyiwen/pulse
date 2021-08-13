@@ -2,30 +2,31 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEActionManager.h"
-#include "engine/SEPatientActionCollection.h"
-#include "compartment/SECompartmentManager.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceCompound.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEActionManager.h"
+#include "cdm/engine/SEPatientActionCollection.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SEEnergySystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceCompound.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -39,7 +40,7 @@
 void HowToHemorrhage() 
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
   pe->GetLogger()->LogToConsole(true);
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");

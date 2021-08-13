@@ -8,6 +8,11 @@ using Pulse.CDM;
 
 namespace Pulse
 {
+  public enum eModelType : int
+  {
+    HumanAdultWholeBody = 0,
+    HumanAdultVentilationMechanics
+  }
   // C# class that wraps the PulseC API
   public class PulseEngine
   {

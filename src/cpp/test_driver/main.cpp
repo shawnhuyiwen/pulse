@@ -4,10 +4,10 @@
 
 #define ENGINE_TESTS
 #ifdef ENGINE_TESTS
-  #include "cpm/test/EngineTest.h"
-  #include "engine/respiratory/test/RespiratoryEngineTest.h"
+  #include "engine/human_adult/whole_body/test/EngineTest.h"
+  #include "engine/human_adult/ventilation_mechanics/test/EngineTest.h"
 #endif
-#include "utils/FileUtils.h"
+#include "cdm/utils/FileUtils.h"
 
 int main(int argc, char* argv[])
 {
@@ -15,13 +15,13 @@ int main(int argc, char* argv[])
   Logger cdmLogger(cdmDir + "/CDMUnitTests.log");
   CommonDataModelTest cdmTest(&cdmLogger);
 
-  std::string peDir = "./test_results/unit_tests/pulse";
-  Logger peLogger(peDir + "/PulseUnitTests.log");
-  PulseEngineTest peTest(&peLogger);
+  std::string hawbDir = "./test_results/unit_tests/human_adult/whole_body";
+  Logger hawbLogger(hawbDir + "/PulseUnitTests.log");
+  pulse::engine::human_adult::whole_body::EngineTest hawbTest(&hawbLogger);
 
-  std::string reDir = "./test_results/unit_tests/respiratory_engine";
-  Logger reLogger(reDir + "/RespiratoryEngineUnitTests.log");
-  RespiratoryEngineTest reTest(&reLogger);
+  std::string havmDir = "./test_results/unit_tests/human_adult/ventilation_mechanics";
+  Logger havmLogger(havmDir + "/RespiratoryEngineUnitTests.log");
+  pulse::engine::human_adult::ventilation_mechanics::EngineTest havmTest(&havmLogger);
 
   if (argc == 1)
   {
@@ -32,83 +32,83 @@ int main(int argc, char* argv[])
       //////////////////////////////
       // Respiratory Engine Tests //
       //////////////////////////////
-      reTest.SmokeTest(reDir);
+      havmTest.SmokeTest(havmDir);
 
       ////////////////////
       // Pulse Tests //
       ////////////////////
 
-      //peTest.ReadScenarios(peDir);
-      //peTest.ReuseEngine(peDir);
+      //hawbTest.ReadScenarios(hawbDir);
+      //hawbTest.ReuseEngine(hawbDir);
 
-      //peTest.CardiovascularCircuitAndTransportTest(peDir);
-      //peTest.CardiovascularAndRenalCircuitAndTransportTest(peDir);
-      //peTest.CardiovascularAndTissueCircuitAndTransportTest(peDir);
-      //peTest.CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(peDir);
-      //peTest.FullCardiovascularCircuitAndTransportTest(peDir);
-      //peTest.CardiovascularBloodGasesTest(peDir);
-      //peTest.TuneCardiovascularCircuitTest(peDir);
+      //hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);
+      //hawbTest.CardiovascularAndRenalCircuitAndTransportTest(hawbDir);
+      //hawbTest.CardiovascularAndTissueCircuitAndTransportTest(hawbDir);
+      //hawbTest.CardiovascularAndCerebrospinalFluidCircuitAndTransportTest(hawbDir);
+      //hawbTest.FullCardiovascularCircuitAndTransportTest(hawbDir);
+      //hawbTest.CardiovascularBloodGasesTest(hawbDir);
+      //hawbTest.TuneCardiovascularCircuitTest(hawbDir);
 
-      //peTest.RenalCircuitAndTransportTest(peDir);
-      //peTest.RenalTGFFeedbackTest(peDir);
-      //peTest.RenalTGFandUPRFeedbackTest(peDir);
-      //peTest.RenalSecretionTest(peDir);
-      //peTest.RenalUrinateTest(peDir);
+      //hawbTest.RenalCircuitAndTransportTest(hawbDir);
+      //hawbTest.RenalTGFFeedbackTest(hawbDir);
+      //hawbTest.RenalTGFandUPRFeedbackTest(hawbDir);
+      //hawbTest.RenalSecretionTest(hawbDir);
+      //hawbTest.RenalUrinateTest(hawbDir);
 
-      //peTest.RespiratoryCircuitAndTransportTest(peDir);
-      //peTest.RespiratoryDriverTest(peDir);
-      //peTest.AnesthesiaMachineCircuitAndTransportTest(peDir);
-      //peTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(peDir);
-      //peTest.MechanicalVentilatorCircuitAndTransportTest(peDir);
-      //peTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(peDir);
-      //peTest.RespiratoryWithInhalerCircuitAndTransportTest(peDir); 
-      //peTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(peDir);
+      //hawbTest.RespiratoryCircuitAndTransportTest(hawbDir);
+      //hawbTest.RespiratoryDriverTest(hawbDir);
+      //hawbTest.AnesthesiaMachineCircuitAndTransportTest(hawbDir);
+      //hawbTest.RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(hawbDir);
+      //hawbTest.MechanicalVentilatorCircuitAndTransportTest(hawbDir);
+      //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
+      //hawbTest.RespiratoryWithInhalerCircuitAndTransportTest(hawbDir); 
+      //hawbTest.RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(hawbDir);
 
-      //peTest.InternalTemperatureVariableBMRCircuitTest(peDir);
-      //peTest.InternalTemperatureVariableSkinCircuitTest(peDir);
-      //peTest.InternalTemperatureVariableCoreCircuitTest(peDir);
-      //peTest.EnvironmentVariableTemperatureCircuitTest(peDir);
-      //peTest.CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(peDir);
-      //peTest.CombinedInternalAndEnvironmentSkinTempDropCircuitTest(peDir);
-      //peTest.EnvironmentISO7730ComparisonTest(peDir);
+      //hawbTest.InternalTemperatureVariableBMRCircuitTest(hawbDir);
+      //hawbTest.InternalTemperatureVariableSkinCircuitTest(hawbDir);
+      //hawbTest.InternalTemperatureVariableCoreCircuitTest(hawbDir);
+      //hawbTest.EnvironmentVariableTemperatureCircuitTest(hawbDir);
+      //hawbTest.CombinedInternalAndEnvironmentVariableBMRandTemperatureCircuitTest(hawbDir);
+      //hawbTest.CombinedInternalAndEnvironmentSkinTempDropCircuitTest(hawbDir);
+      //hawbTest.EnvironmentISO7730ComparisonTest(hawbDir);
 
-      //peTest.DiffusionClearanceExcretionTests(peDir);
-      //peTest.AlveolarOxygenDiffusionTest(peDir);
-      //peTest.AlveolarCarbonDioxideDiffusionTest(peDir);
-      //peTest.InstantPlusSimpleDiffusionTest(peDir);
-      //peTest.SimpleDiffusionTwoCompartmentTest(peDir);
-      //peTest.SimpleDiffusionFourCompartmentTest(peDir);
-      //peTest.SimpleDiffusionHierarchyTest(peDir);
-      //peTest.FacilitatedDiffusionTest(peDir);
+      //hawbTest.DiffusionClearanceExcretionTests(hawbDir);
+      //hawbTest.AlveolarOxygenDiffusionTest(hawbDir);
+      //hawbTest.AlveolarCarbonDioxideDiffusionTest(hawbDir);
+      //hawbTest.InstantPlusSimpleDiffusionTest(hawbDir);
+      //hawbTest.SimpleDiffusionTwoCompartmentTest(hawbDir);
+      //hawbTest.SimpleDiffusionFourCompartmentTest(hawbDir);
+      //hawbTest.SimpleDiffusionHierarchyTest(hawbDir);
+      //hawbTest.FacilitatedDiffusionTest(hawbDir);
 
-      //peTest.BrainInjuryTest(peDir);
+      //hawbTest.BrainInjuryTest(hawbDir);
 
-      //peTest.ConditionCombinations(peDir);
-      //peTest.MultiEngineTest(peDir);
-      //peTest.SerializationTest(peDir);
-      //peTest.SolverSpeedTest(peDir);
+      //hawbTest.ConditionCombinations(hawbDir);
+      //hawbTest.MultiEngineTest(hawbDir);
+      //hawbTest.SerializationTest(hawbDir);
+      //hawbTest.SolverSpeedTest(hawbDir);
 
       //Acid Base Tests
-      //peTest.AcidBaseMathTest(peDir);
-      //peTest.AcidBaseFeedbackTest(peDir);
-      //peTest.AcidBaseLimitsTest(peDir);
-      //peTest.AcidBaseExtremeTest(peDir);
-      //peTest.AcidBaseBloodGasTests(peDir);
+      //hawbTest.AcidBaseMathTest(hawbDir);
+      //hawbTest.AcidBaseFeedbackTest(hawbDir);
+      //hawbTest.AcidBaseLimitsTest(hawbDir);
+      //hawbTest.AcidBaseExtremeTest(hawbDir);
+      //hawbTest.AcidBaseBloodGasTests(hawbDir);
 
       //Aerosol Tests
-      //peTest.AerosolTest(peDir);
+      //hawbTest.AerosolTest(hawbDir);
 
-      //peTest.FourCompartmentTestSimple(peDir);
-      //peTest.AcidBaseFourCompartmentTest(peDir);
-      //peTest.FiveCompartmentTestWithDiffusion(peDir);
-      //peTest.AcidBaseFourCompartmentTestWithProductionConsumption(peDir);
-      //peTest.AcidBaseFiveCompartmentTestWithDiffusion(peDir);
-      //peTest.AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(peDir);
+      //hawbTest.FourCompartmentTestSimple(hawbDir);
+      //hawbTest.AcidBaseFourCompartmentTest(hawbDir);
+      //hawbTest.FiveCompartmentTestWithDiffusion(hawbDir);
+      //hawbTest.AcidBaseFourCompartmentTestWithProductionConsumption(hawbDir);
+      //hawbTest.AcidBaseFiveCompartmentTestWithDiffusion(hawbDir);
+      //hawbTest.AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(hawbDir);
 
       // Our CV Characterization Driver  (Not part of the test suite)
       //std::string cvDir = "./test_results/unit_tests/pulse/CVTuningTests";
       //MKDIR(cvDir.c_str());
-      //peTest.CardiovascularCircuitScaleTests(cvDir);
+      //hawbTest.CardiovascularCircuitScaleTests(cvDir);
 
       ///////////////
       // CDM Tests //
@@ -328,7 +328,7 @@ int main(int argc, char* argv[])
   {
     if (cdmTest.RunTest(argv[1], "./test_results/unit_tests/cdm"))
       return 0;
-    //if (peTest.RunTest(argv[1], "./test_results/unit_tests/pulse"))
+    //if (hawbTest.RunTest(argv[1], "./test_results/unit_tests/pulse"))
     //  return 0;
   }
   return 1;

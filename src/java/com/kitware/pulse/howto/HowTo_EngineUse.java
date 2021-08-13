@@ -31,9 +31,8 @@ import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
-import com.kitware.pulse.cdm.properties.SEScalarTime;
-import com.kitware.pulse.engine.PulseCompartments;
 import com.kitware.pulse.engine.PulseEngine;
+import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.JNIBridge;
@@ -293,7 +292,7 @@ public class HowTo_EngineUse
     // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
     SEHemorrhage h = new SEHemorrhage();
     h.setType(HemorrhageData.eType.External);
-    h.setCompartment(PulseCompartments.Vascular.RightLeg);
+    h.setCompartment("RightLegVasculature");
     h.getSeverity().setValue(0.8);
     // Optionally, You can set the flow rate of the hemorrhage,
     // This needs to be provided the proper flow rate associated with the anatomy

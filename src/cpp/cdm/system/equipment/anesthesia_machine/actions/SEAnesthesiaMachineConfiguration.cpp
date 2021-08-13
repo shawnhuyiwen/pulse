@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
 #include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 #include "system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"

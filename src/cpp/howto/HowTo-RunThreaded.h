@@ -4,8 +4,7 @@
 #include <mutex>
 #include <thread>
 
-#include "CommonDataModel.h"
-#include "PulsePhysiologyEngine.h"
+#include "PulseEngine.h"
 // This class will run Pulse in it's own thread and accept changes to hemorrage and iv flow as the engine is running
 
 // Forward declare what we will use in our thread

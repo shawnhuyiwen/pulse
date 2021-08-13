@@ -6,20 +6,21 @@
 #include <memory>
 
 // Include the various types you will be using in your code
-#include "PulsePhysiologyEnginePool.h"
-#include "engine/SEAdvanceTime.h"
-#include "engine/SEDataRequestManager.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "utils/DataTrack.h"
-#include "utils/TimingProfile.h"
+#include "PulseEnginePool.h"
+
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/utils/DataTrack.h"
+#include "cdm/utils/TimingProfile.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -33,15 +34,15 @@ void HowToPulseEnginePool()
   TimingProfile profiler;
   double sim_time_s = 60;
 
-  SEPhysiologyEnginePool pool;
+  pulse::engine::PulseEnginePool pool;
   pool.GetLogger()->LogToConsole(true);
   pool.GetLogger()->SetLogFile("./test_results/HowToPulseEnginePool/Pool.log");
 
   pool.Info("Creating a pool with " + std::to_string(pool.GetWorkerCount()) + " workers");
   pool.Info("Creating a pool with " + std::to_string(numEngine) + " engines");
-  for (size_t i=0; i<numEngine; i++)
+  for (int i=0; i<numEngine; i++)
   {
-    SEPhysiologyEnginePoolEngine* e = pool.CreateEngine(i);
+    SEPhysiologyEnginePoolEngine* e = pool.CreateEngine(i, pulse::engine::eModelType::HumanAdultWholeBody);
     e->EngineInitialization.SetStateFilename("./states/StandardMale@0s.json");
     e->EngineInitialization.SetLogFilename("./test_results/HowToPulseEndingPool/PoolEngine"+std::to_string(i)+".log");
     // The engine IsActive flag will be set to false on any engine error/fatal messages

@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "patient/assessments/SEUrinalysis.h"
 #include "patient/assessments/SEUrinalysisMicroscopic.h"
 #include "properties/SEScalarTime.h"

@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
 #include "system/equipment/bag_valve_mask/SEBagValveMask.h"
 #include "substance/SESubstance.h"

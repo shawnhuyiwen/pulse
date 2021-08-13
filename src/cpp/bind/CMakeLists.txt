@@ -35,14 +35,14 @@ add_library_ex(DataModelBindings
     "${CDM_PACKAGE}/Substance.pb.h"
     "${CDM_PACKAGE}/SubstanceQuantity.pb.h"
     "${CDM_PACKAGE}/TestReport.pb.h"
-# cpm bindings
-    "${CPM_PACKAGE}/Pulse.pb.h"
-    "${CPM_PACKAGE}/PulseConfiguration.pb.h"
-    "${CPM_PACKAGE}/PulseEnvironment.pb.h"
-    "${CPM_PACKAGE}/PulseEquipment.pb.h"
-    "${CPM_PACKAGE}/PulsePhysiology.pb.h"
-    "${CPM_PACKAGE}/PulseState.pb.h"
-# impl bindings
+# engine bindings
+    "${ENGINE_PACKAGE}/Configuration.pb.h"
+    "${ENGINE_PACKAGE}/Enums.pb.h"
+    "${ENGINE_PACKAGE}/Environment.pb.h"
+    "${ENGINE_PACKAGE}/Equipment.pb.h"
+    "${ENGINE_PACKAGE}/Physiology.pb.h"
+    "${ENGINE_PACKAGE}/Scenario.pb.h"
+    "${ENGINE_PACKAGE}/State.pb.h"
 # study bindings
     "${STUDY_PACKAGE}/Hydrocephalus.pb.h"
     "${STUDY_PACKAGE}/MultiplexVentilation.pb.h"
@@ -81,14 +81,14 @@ add_library_ex(DataModelBindings
     "${CDM_PACKAGE}/Substance.pb.cc"
     "${CDM_PACKAGE}/SubstanceQuantity.pb.cc"
     "${CDM_PACKAGE}/TestReport.pb.cc"
-# cpm bindings
-    "${CPM_PACKAGE}/Pulse.pb.cc"
-    "${CPM_PACKAGE}/PulseConfiguration.pb.cc"
-    "${CPM_PACKAGE}/PulseEnvironment.pb.cc"
-    "${CPM_PACKAGE}/PulseEquipment.pb.cc"
-    "${CPM_PACKAGE}/PulsePhysiology.pb.cc"
-    "${CPM_PACKAGE}/PulseState.pb.cc"
-# impl bindings
+# engine bindings
+    "${ENGINE_PACKAGE}/Configuration.pb.cc"
+    "${ENGINE_PACKAGE}/Enums.pb.cc"
+    "${ENGINE_PACKAGE}/Environment.pb.cc"
+    "${ENGINE_PACKAGE}/Equipment.pb.cc"
+    "${ENGINE_PACKAGE}/Physiology.pb.cc"
+    "${ENGINE_PACKAGE}/Scenario.pb.cc"
+    "${ENGINE_PACKAGE}/State.pb.cc"
 # study bindings
     "${STUDY_PACKAGE}/Hydrocephalus.pb.cc"
     "${STUDY_PACKAGE}/MultiplexVentilation.pb.cc"

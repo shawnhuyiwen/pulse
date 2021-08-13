@@ -11,10 +11,10 @@ src/schema/schema_last_built
 /src/csharp/pulse/bind
 /src/java/com/google
 /src/java/com/kitware/pulse/cdm/bind
-/src/java/com/kitware/pulse/cpm/bind
+/src/java/com/kitware/pulse/engine/bind
 /src/java/com/kitware/pulse/study/bind
 /src/python/pulse/cdm/bind
-/src/python/pulse/cpm/bind
+/src/python/pulse/engine/bind
 /src/python/pulse/study/bind
 /src/python/google
 

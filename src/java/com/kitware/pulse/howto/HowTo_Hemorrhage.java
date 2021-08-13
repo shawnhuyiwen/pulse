@@ -3,6 +3,7 @@
 package com.kitware.pulse.howto;
 
 import java.util.List;
+
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
@@ -14,9 +15,8 @@ import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
-import com.kitware.pulse.cdm.properties.SEScalarTime;
-import com.kitware.pulse.engine.PulseCompartments;
 import com.kitware.pulse.engine.PulseEngine;
+import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.JNIBridge;
@@ -110,28 +110,28 @@ public class HowTo_Hemorrhage
     SEDataRequest aflow = new SEDataRequest();
     aflow.setCategory(eCategory.Action);
     aflow.setActionName("Hemorrhage");
-    aflow.setCompartmentName(PulseCompartments.Vascular.RightArm);
+    aflow.setCompartmentName("RightArmVasculature");
     aflow.setPropertyName("FlowRate");
     aflow.setUnit(VolumePerTimeUnit.mL_Per_s.toString());
     dataRequests.getRequestedData().add(aflow);
     SEDataRequest avol = new SEDataRequest();
     avol.setCategory(eCategory.Action);
     avol.setActionName("Hemorrhage");
-    avol.setCompartmentName(PulseCompartments.Vascular.RightArm);
+    avol.setCompartmentName("RightArm");
     avol.setPropertyName("TotalBloodLost");
     avol.setUnit(VolumeUnit.mL.toString());
     dataRequests.getRequestedData().add(avol);
     SEDataRequest lflow = new SEDataRequest();
     lflow.setCategory(eCategory.Action);
     lflow.setActionName("Hemorrhage");
-    lflow.setCompartmentName(PulseCompartments.Vascular.RightLeg);
+    lflow.setCompartmentName("RightLeg");
     lflow.setPropertyName("FlowRate");
     lflow.setUnit(VolumePerTimeUnit.mL_Per_s.toString());
     dataRequests.getRequestedData().add(lflow);
     SEDataRequest lvol = new SEDataRequest();
     lvol.setCategory(eCategory.Action);
     lvol.setActionName("Hemorrhage");
-    lvol.setCompartmentName(PulseCompartments.Vascular.RightLeg);
+    lvol.setCompartmentName("RightLeg");
     lvol.setPropertyName("TotalBloodLost");
     lvol.setUnit(VolumeUnit.mL.toString());
     dataRequests.getRequestedData().add(lvol);
@@ -159,13 +159,13 @@ public class HowTo_Hemorrhage
     // Setting up a realistic hemorrhage can be difficult
     // Here is an example of how the engine will act if you create an unrealistic hemorrhage
     rightLeg.setType(HemorrhageData.eType.External);
-    rightLeg.setCompartment(PulseCompartments.Vascular.RightLeg);
+    rightLeg.setCompartment("RightLeg");
     rightLeg.getSeverity().setValue(0.4);
     pe.processAction(rightLeg);
     
     SEHemorrhage rightArm = new SEHemorrhage();
     rightArm.setType(HemorrhageData.eType.External);
-    rightArm.setCompartment(PulseCompartments.Vascular.RightArm);
+    rightArm.setCompartment("RightArm");
     rightArm.getSeverity().setValue(0.2);
     pe.processAction(rightArm);
     

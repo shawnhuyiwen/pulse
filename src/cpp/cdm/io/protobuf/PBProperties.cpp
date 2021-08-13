@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "CommonDataModel.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Properties.pb.h"
-POP_PROTO_WARNINGS()
+POP_PROTO_WARNINGS
 #include "io/protobuf/PBProperties.h"
 #include "properties/SECurve.h"
 
@@ -89,7 +89,7 @@ void PBProperty::Load(const CDM_BIND::CurveData& src, SECurve& dst)
 }
 void PBProperty::Serialize(const CDM_BIND::CurveData& src, SECurve& dst)
 {
-  for (size_t s = 0; s<src.segment_size(); s++)
+  for (auto s = 0; s<src.segment_size(); s++)
   {
     const CDM_BIND::AnySegmentData& sData = src.segment()[s];
     if (sData.has_constantsegment())

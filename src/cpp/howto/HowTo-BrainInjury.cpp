@@ -2,29 +2,30 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEngineTracker.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SENervousSystem.h"
-#include "system/physiology/SEPupillaryResponse.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarLength.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalar0To1.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SENervousSystem.h"
+#include "cdm/system/physiology/SEPupillaryResponse.h"
+#include "cdm/patient/actions/SEBrainInjury.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
 
 int GlasgowEstimator(double);
 
@@ -40,7 +41,7 @@ void HowToBrainInjury()
 {
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_BrainInjury.log");
   
   pe->GetLogger()->Info("HowTo_BrainInjury");

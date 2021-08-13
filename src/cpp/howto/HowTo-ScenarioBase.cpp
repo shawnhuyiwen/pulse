@@ -2,14 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEEngineTracker.h"
-#include "scenario/SEScenario.h"
-#include "engine/SEPatientConfiguration.h"
-#include "engine/SEAdvanceTime.h"
-#include "engine/SEDataRequestManager.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/scenario/SEScenario.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/properties/SEScalarTime.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -21,7 +22,7 @@
 void HowToScenarioBase()
 {
   // Create our engine
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_ScenarioBase.log");
   pe->GetLogger()->Info("HowTo_ScenarioBase");
   

@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "CommonDataModel.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Conditions.pb.h"
 #include "pulse/cdm/bind/Scenario.pb.h"
-POP_PROTO_WARNINGS()
+POP_PROTO_WARNINGS
 #include "io/protobuf/PBConditions.h"
 #include "io/protobuf/PBPatientConditions.h"
 #include "io/protobuf/PBEnvironmentConditions.h"

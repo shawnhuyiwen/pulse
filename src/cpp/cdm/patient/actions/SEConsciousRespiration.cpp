@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "patient/actions/SEConsciousRespiration.h"
 #include "patient/actions/SEConsciousRespirationCommand.h"
 #include "patient/actions/SEForcedPause.h"

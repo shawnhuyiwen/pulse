@@ -2,10 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 // The following how-to functions demonstrate various ways of interacting with the Pulse engine
-#include "EngineHowTo.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEDataRequest.h"
-#include "properties/SEScalarTime.h"
+#include "howto/EngineHowTo.h"
+
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequest.h"
+#include "cdm/properties/SEScalarTime.h"
 
 int main()
 {
@@ -37,7 +38,7 @@ int main()
   //HowToMechanicalVentilator();
   //HowToPulmonaryFibrosis();
   //HowToPulmonaryFunctionTest();
-  HowToRespiratoryMechanics();
+  //HowToRespiratoryMechanics();
   //HowToSmoke();
   //HowToTensionPneumothorax();
 
@@ -49,6 +50,8 @@ int main()
   //HowToDynamicHemorrhage();
 
   //HowToTestSystemCapability();
+
+  HowToVentilationMechanics();
 }
 
 bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine)

@@ -1,13 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarTime.h"
-#include "compartment/SECompartmentManager.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -20,7 +21,7 @@ void HowToSandbox()
 {
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/PulseSandbox.log");
   const SELiquidCompartment* g = pe->GetCompartments().GetLiquidCompartment("Ground");
   if (!pe->SerializeFromFile("./states/testing/equipment/AnesthesiaMachineVariedConfiguration/AnesthesiaMachineVariedConfigurationAfterActions@30.02.json"))

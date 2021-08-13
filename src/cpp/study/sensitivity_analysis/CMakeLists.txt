@@ -5,7 +5,7 @@ add_library_ex(SensitivityAnalysisEngine
   CPP_FILES
     SARunner.cpp
   PUBLIC_DEPENDS
-    CommonPulseModels
+    PulseEngine
   PRIVATE_DEPENDS
     protobuf::libprotobuf
   INSTALL_HEADER_DIR

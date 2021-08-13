@@ -12,7 +12,7 @@
 /// square root.
 //----------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "utils/unitconversion/UCCommon.h"
 
 // We need one translation unit that processes the header file in

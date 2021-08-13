@@ -5,10 +5,6 @@
 #include "system/SESystem.h"
 #include "system/physiology/SERespiratoryMechanics.h"
 
-// Keep enums in sync with appropriate schema/cdm/PhysiologyEnums.proto file !!
-enum class eBreathState { Inhale = 0, Pause, Exhale };
-extern const std::string& eBreathState_Name(eBreathState m);
-
 class CDM_DECL SERespiratorySystem : public SESystem
 {
   friend class PBPhysiology;//friend the serialization class

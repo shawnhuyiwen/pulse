@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "compartment/electrical/SEElectricalCompartment.h"
 #include "compartment/electrical/SEElectricalCompartmentLink.h"
 #include "circuit/SECircuitManager.h"

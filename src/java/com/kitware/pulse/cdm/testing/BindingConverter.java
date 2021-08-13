@@ -22,11 +22,11 @@ public class BindingConverter
     for(String pba_filename : FileUtils.findFiles("verification\\scenarios", ".pba", true))
     {
       com.kitware.pulse.cdm.bind.Scenario.ScenarioData.Builder builder = com.kitware.pulse.cdm.bind.Scenario.ScenarioData.newBuilder();
-      com.kitware.pulse.cpm.bind.Pulse.ScenarioData.Builder pbuilder = com.kitware.pulse.cpm.bind.Pulse.ScenarioData.newBuilder();
-      com.kitware.pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData.Builder pftData = com.kitware.pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData.newBuilder();
+       com.kitware.pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData.Builder pftData = com.kitware.pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData.newBuilder();
       com.kitware.pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanelData.Builder cmpData = com.kitware.pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanelData.newBuilder();
       com.kitware.pulse.cdm.bind.PatientAssessments.CompleteBloodCountData.Builder cbcData = com.kitware.pulse.cdm.bind.PatientAssessments.CompleteBloodCountData.newBuilder();
       com.kitware.pulse.cdm.bind.PatientAssessments.UrinalysisData.Builder uData = com.kitware.pulse.cdm.bind.PatientAssessments.UrinalysisData.newBuilder();
+      com.kitware.pulse.engine.bind.Scenario.ScenarioData.Builder pbuilder = com.kitware.pulse.engine.bind.Scenario.ScenarioData.newBuilder();
 
       Log.info("Converting file "+pba_filename);
       String json_filename = pba_filename.replace(".pba", ".json");

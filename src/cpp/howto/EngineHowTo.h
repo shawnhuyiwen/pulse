@@ -4,8 +4,7 @@
 // Note that this project is set with the following Additional Include Paths: ../include;../include/cdm;../include/cdm/bind
 // This will build an executable that is intended to execute a how-to method
 
-#include "CommonDataModel.h"
-#include "PulsePhysiologyEngine.h"
+#include "PhysiologyEngine.h"
 
 // The following how-to functions are defined in their own file
 void HowToEngineUse();
@@ -42,6 +41,8 @@ void HowToDynamicHemorrhage();
 
 void HowToSandbox();
 void HowToTestSystemCapability();
+
+void HowToVentilationMechanics();
 
 class SEDataRequest;
 

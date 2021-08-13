@@ -2,6 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+#include "CommonDataModel.h"
+#include "utils/Logger.h"
 
 class SEAdvanceHandler;
 class SEPatient;
@@ -51,9 +53,10 @@ struct PhysiologyEngineException : public CommonDataModelException
     : CommonDataModelException(_Message) {}
 };
 
-class CDM_DECL PhysiologyEngine
+class CDM_DECL PhysiologyEngine : public Loggable
 {
 public:
+  PhysiologyEngine(Logger* logger = nullptr) : Loggable(logger) {}
   virtual ~PhysiologyEngine() {}
 
   //--------------------------------------------------------------------------------------------------
@@ -136,12 +139,6 @@ public:
   /// returns the engine configuration.
   //--------------------------------------------------------------------------------------------------
   virtual const SEEngineConfiguration* GetConfiguration() const = 0;
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Retrieve the Logger associated with this engine
-  //--------------------------------------------------------------------------------------------------
-  virtual Logger* GetLogger() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

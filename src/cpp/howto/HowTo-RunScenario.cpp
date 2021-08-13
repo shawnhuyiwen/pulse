@@ -2,20 +2,20 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
+#include "PulseScenarioExec.h"
 
 // Include the various types you will be using in your code
-#include "PulseScenarioExec.h"
-#include "scenario/SEScenario.h"
-#include "scenario/SEScenarioExec.h"
-#include "engine/SEPatientConfiguration.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEAdvanceTime.h"
-#include "compartment/SECompartmentManager.h"
-#include "engine/SEAdvanceHandler.h"
-
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
+#include "cdm/scenario/SEScenario.h"
+#include "cdm/scenario/SEScenarioExec.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/engine/SEAdvanceHandler.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
 
 
 //--------------------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ public:
 void HowToRunScenario()
 {
   // Create an engine object
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
 
   // Let's do something everytime the engine advances
   pe->SetAdvanceHandler(new MyCustomExec());
@@ -90,5 +90,5 @@ void HowToRunScenario()
   execOpts.SetLogFilename("./test_results/HowTo-RunScenarioResults.log");
   execOpts.SetDataRequestCSVFilename("./test_results/HowTo-RunScenarioResults.csv");
   execOpts.SetScenarioContent(json);
-  PulseScenarioExec::Execute(*pe, execOpts);
+  pulse::engine::PulseScenarioExec::Execute(*pe, execOpts);
 }

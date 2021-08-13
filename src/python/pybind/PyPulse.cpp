@@ -2,13 +2,13 @@
    See accompanying NOTICE file for details.*/
 
 #include <pybind11/pybind11.h>
-#include "PulsePhysiologyEngine.h"
+#include "PulseEngineThunk.h"
 
 namespace py = pybind11;
 
 // Core Physiology Engine
-void PhysiologyEngine(py::module&);
-void PhysiologyEnginePool(py::module&);
+void PulseEngine(py::module&);
+void PulseEnginePool(py::module&);
 // Studies
 void MultiplexVentilationEngine(py::module&);
 
@@ -30,9 +30,13 @@ PYBIND11_MODULE(PyPulse, m)
     .value("binary", SerializationFormat::BINARY)
     .value("json", SerializationFormat::JSON)
     .export_values();
-    
-  PhysiologyEngine(m);
-  PhysiologyEnginePool(m);
+   py::enum_<pulse::engine::eModelType>(m, "model_type")
+     .value("human_adult_whole_body", pulse::engine::eModelType::HumanAdultWholeBody)
+     .value("human_adult_ventilation_mechanics", pulse::engine::eModelType::HumanAdultVentilationMechanics)
+     .export_values();
+
+  PulseEngine(m);
+  PulseEnginePool(m);
   MultiplexVentilationEngine(m);
 
 #ifdef VERSION_INFO

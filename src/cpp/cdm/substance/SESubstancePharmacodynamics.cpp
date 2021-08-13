@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "substance/SESubstancePharmacodynamics.h"
 #include "system/physiology/SEPupillaryResponse.h"
 #include "properties/SEScalarNegative1To1.h"

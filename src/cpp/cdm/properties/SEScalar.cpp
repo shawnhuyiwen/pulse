@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "properties/SEScalar.h"
 #include "utils/GeneralMath.h"
 
@@ -221,7 +221,7 @@ bool SEScalar::Equals(const SEScalar& to) const
 
 std::string SEScalar::ToString() const
 {
-  return cdm::to_string(m_value);
+  return pulse::cdm::to_string(m_value);
 }
 void SEScalar::ToString(std::ostream &str) const
 {
@@ -490,9 +490,9 @@ template<typename Unit>
 std::string SEScalarQuantity<Unit>::ToString() const
 {
   if (m_isnan || m_isinf)
-    return cdm::to_string(m_value);
+    return pulse::cdm::to_string(m_value);
   else
-    return cdm::to_string(m_value) + "(" + m_unit->GetString() + ")";
+    return pulse::cdm::to_string(m_value) + "(" + m_unit->GetString() + ")";
 }
 template<typename Unit>
 void SEScalarQuantity<Unit>::ToString(std::ostream& str) const

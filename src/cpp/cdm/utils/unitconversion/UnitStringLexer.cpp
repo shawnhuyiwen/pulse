@@ -6,7 +6,7 @@
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include <ctype.h>
 #include "utils/unitconversion/UCCommon.h"
 

@@ -1,0 +1,27 @@
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+
+#pragma once
+#include "cdm/utils/testing/SETestManager.h"
+#include "engine/human_adult/ventilation_mechanics/Engine.h"
+
+namespace HUMAN_ADULT_VENT_MECH
+{
+  class ENGINE_TEST_DECL EngineTest : public SETestManager
+  {
+  public:
+    EngineTest(Logger* logger = nullptr);
+    virtual ~EngineTest();
+
+    virtual bool RunTest(const std::string& testName, const std::string& sOutputDirectory) override;
+
+  protected:
+    virtual void FillFunctionMap() override;
+    typedef void(EngineTest::* testFunction)(const std::string&);
+    std::map<std::string, testFunction> testMap;
+    std::stringstream m_ss;
+
+  public:
+    void SmokeTest(const std::string& sTestDirectory);
+  };
+}

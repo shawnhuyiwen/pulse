@@ -1,0 +1,423 @@
+/* Distributed under the Apache License, Version 2.0.
+   See accompanying NOTICE file for details.*/
+
+#include "CommonDataModel.h"
+#include "PhysiologyEngineThunk.h"
+
+#include "patient/SEPatient.h"
+#include "patient/assessments/SECompleteBloodCount.h"
+#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "patient/assessments/SEPulmonaryFunctionTest.h"
+#include "patient/assessments/SEUrinalysis.h"
+#include "engine/SEAction.h"
+#include "engine/SEDataRequest.h"
+#include "engine/SEDataRequestManager.h"
+#include "engine/SEActionManager.h"
+#include "engine/SEConditionManager.h"
+#include "engine/SEEngineTracker.h"
+#include "engine/SEPatientConfiguration.h"
+#include "substance/SESubstance.h"
+#include "substance/SESubstanceManager.h"
+#include "properties/SEScalarElectricPotential.h"
+#include "properties/SEScalarFrequency.h"
+#include "properties/SEScalarPressure.h"
+#include "properties/SEScalarTemperature.h"
+#include "properties/SEScalarTime.h"
+#include "properties/SEScalarVolume.h"
+#include "utils/DataTrack.h"
+#include "utils/Logger.h"
+
+PhysiologyEngineThunk::PhysiologyEngineThunk(const std::string& dataDir) : SEEventHandler()
+{
+  m_dataDir = dataDir;
+}
+PhysiologyEngineThunk::~PhysiologyEngineThunk()
+{
+  delete[] m_requestedData;
+}
+
+bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format)
+{
+  if (!m_engine->SerializeFromFile(filename))
+    return false;
+  m_engine->GetEventManager().ForwardEvents(this);
+
+  // Load up the data requests
+  if (!data_requests.empty())
+  {
+    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, data_requests_format, m_engine->GetSubstanceManager()))
+    {
+      m_engine->GetLogger()->Error("Unable to load data requests string");
+      return false;
+    }
+  }
+  else
+  {
+    SetupDefaultDataRequests();
+    m_engine->GetLogger()->Info("No data requested, will return default vitals");
+  }
+
+  return true;
+}
+
+bool PhysiologyEngineThunk::SerializeToFile(std::string const& filename)
+{
+  return m_engine->SerializeToFile(filename);
+}
+
+
+bool PhysiologyEngineThunk::SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format)
+{
+  if (!m_engine->SerializeFromString(state, format))
+    return false;
+  m_engine->GetEventManager().ForwardEvents(this);
+
+  // Load up the data requests
+  if (!data_requests.empty())
+  {
+    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, m_engine->GetSubstanceManager()))
+    {
+      m_engine->GetLogger()->Error("Unable to load data requests string");
+      return false;
+    }
+  }
+  else
+    SetupDefaultDataRequests();
+
+  return true;
+}
+
+
+std::string PhysiologyEngineThunk::SerializeToString(SerializationFormat format)
+{
+  std::string state;
+  if (!m_engine->SerializeToString(state, format))
+    state.clear();
+  return state;
+}
+
+bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format)
+{
+  const SESubstanceManager* subMgr;
+  if (m_engine->GetSubstanceManager().GetSubstances().empty())
+  {
+    if (m_subMgr == nullptr)
+    {
+      // We need to use our subMgr here
+      m_subMgr = new SESubstanceManager(m_engine->GetLogger());
+      m_subMgr->LoadSubstanceDirectory(m_dataDir);
+    }
+    subMgr = m_subMgr;
+  }
+  else
+    subMgr = &m_engine->GetSubstanceManager();
+
+  SEPatientConfiguration pc(m_engine->GetLogger());
+  if (!pc.SerializeFromString(patient_configuration, format, *subMgr))
+  {
+    m_engine->GetLogger()->Error("Unable to load patient configuration string");
+    return false;
+  }
+
+  // Load up the data requests
+  if (!data_requests.empty())
+  {
+    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, *subMgr))
+    {
+      m_engine->GetLogger()->Error("Unable to load data request string");
+      return false;
+    }
+  }
+  else
+    SetupDefaultDataRequests();
+
+  // Ok, crank 'er up!
+  if (!m_engine->InitializeEngine(pc))
+    return false;
+  m_engine->GetEventManager().ForwardEvents(this);
+  return true;
+}
+
+std::string PhysiologyEngineThunk::GetInitialPatient(SerializationFormat format)
+{
+  std::string stream;
+  m_engine->GetInitialPatient().SerializeToString(stream, format);
+  return stream;
+}
+
+std::string PhysiologyEngineThunk::GetConditions(SerializationFormat format)
+{
+  std::string stream;
+  m_engine->GetConditionManager().SerializeToString(stream, format);
+  return stream;
+}
+
+void PhysiologyEngineThunk::LogToConsole(bool b)
+{
+  m_engine->GetLogger()->LogToConsole(b);
+}
+void PhysiologyEngineThunk::KeepLogMessages(bool keep)
+{
+  m_keepLogMsgs = keep;
+}
+void PhysiologyEngineThunk::SetLogFilename(std::string const& logfile)
+{
+  m_engine->GetLogger()->SetLogFile(logfile);
+}
+std::string PhysiologyEngineThunk::PullLogMessages(SerializationFormat format)
+{
+  std::string log_msgs;
+  if (m_logMsgs.IsEmpty())
+    return log_msgs;
+
+  LogMessages::SerializeToString(m_logMsgs, log_msgs, format, m_engine->GetLogger());
+  m_logMsgs.Clear();
+  return log_msgs;
+}
+
+void PhysiologyEngineThunk::KeepEventChanges(bool keep)
+{
+  m_keepEventChanges = keep;
+}
+std::string PhysiologyEngineThunk::PullEvents(SerializationFormat format)
+{
+  std::string events;
+  if (m_events.empty())
+    return events;
+  SEEventChange::SerializeToString(m_events, events, format, m_engine->GetLogger());
+  DELETE_VECTOR(m_events);
+  return events;
+}
+std::string PhysiologyEngineThunk::PullActiveEvents(SerializationFormat format)
+{
+  std::string active_events;
+  if (!m_engine->GetEventManager().GetActiveEvents(m_activeEvents))
+    active_events.clear();
+  SEActiveEvent::SerializeToString(m_activeEvents, active_events, SerializationFormat::JSON, m_engine->GetLogger());
+  DELETE_VECTOR(m_activeEvents);
+  return active_events;
+}
+
+std::string PhysiologyEngineThunk::GetPatientAssessment(int type, SerializationFormat format)
+{
+  std::string stream;
+  switch (type)
+  {
+  case 0: // CBC
+  {
+    SECompleteBloodCount cbc(m_engine->GetLogger());
+    m_engine->GetPatientAssessment(cbc);
+    cbc.SerializeToString(stream, format);
+    break;
+  }
+  case 1: // CMP
+  {
+    SEComprehensiveMetabolicPanel cmp(m_engine->GetLogger());
+    m_engine->GetPatientAssessment(cmp);
+    cmp.SerializeToString(stream, format);
+    break;
+  }
+  case 2:// PFT
+  {
+    SEPulmonaryFunctionTest pft(m_engine->GetLogger());
+    m_engine->GetPatientAssessment(pft);
+    pft.SerializeToString(stream, format);
+    break;
+  }
+  case 3: // U
+  {
+    SEUrinalysis u(m_engine->GetLogger());
+    m_engine->GetPatientAssessment(u);
+    u.SerializeToString(stream, format);
+    break;
+  }
+  default:
+    stream = "Unsupported assessment type";
+  };
+
+  return stream;
+}
+
+bool PhysiologyEngineThunk::ProcessActions(std::string const& actions, SerializationFormat format)
+{
+  bool success = true;
+  if (actions.empty())
+    return success;
+
+  try
+  {
+    std::vector<SEAction*> vActions;
+    if (!SEActionManager::SerializeFromString(actions, vActions, format, m_engine->GetSubstanceManager()))
+      return false;
+
+    for (const SEAction* a : vActions)
+    {
+      if (!m_engine->ProcessAction(*a))
+        success = false;
+      delete a;
+    }
+  }
+  catch (CommonDataModelException& ex)
+  {
+    success = false;
+    m_engine->GetLogger()->Error(ex.what());
+  }
+  catch (std::exception& ex)
+  {
+    success = false;
+    m_engine->GetLogger()->Error(ex.what());
+  }
+  catch (...)
+  {
+    success = false;
+  }
+
+  return success;
+}
+std::string PhysiologyEngineThunk::PullActiveActions(SerializationFormat format)
+{
+  std::string stream;
+  m_engine->GetActionManager().SerializeToString(stream, format);
+  return stream;
+}
+
+double PhysiologyEngineThunk::GetTimeStep(std::string const& unit)
+{
+  TimeUnit time_unit = TimeUnit::GetCompoundUnit(unit);
+  return m_engine->GetTimeStep(time_unit);
+}
+bool PhysiologyEngineThunk::AdvanceTimeStep()
+{
+  bool success = true;
+  try
+  {
+    success = m_engine->AdvanceModelTime();
+  }
+  catch (CommonDataModelException& ex)
+  {
+    m_engine->GetLogger()->Error(ex.what());
+    success = false;
+  }
+  catch (std::exception& ex)
+  {
+    m_engine->GetLogger()->Error(ex.what());
+    success = false;
+  }
+  catch (...)
+  {
+    m_engine->GetLogger()->Error("Caught Unknown Exception");
+    success = false;
+  }
+  return success;
+}
+
+double* PhysiologyEngineThunk::PullDataPtr()
+{
+  double currentTime_s = m_engine->GetSimulationTime(TimeUnit::s);
+  m_engine->GetEngineTracker()->TrackData(currentTime_s);
+  if (m_requestedData == nullptr)
+  {
+    // +1 for the sim time
+    m_length = m_engine->GetEngineTracker()->GetDataTrack().NumTracks() + 1;
+    m_requestedData = new double[m_length];
+  }
+  // Always put the sim time in index 0 as seconds
+  m_requestedData[0] = currentTime_s;
+  // Pull all data we requested and pack into our array for return to the caller
+  for (size_t i = 1; i<m_length; i++)
+    m_requestedData[i] = m_engine->GetEngineTracker()->GetDataTrack().GetProbe(i-1);
+
+  return m_requestedData;
+}
+
+size_t PhysiologyEngineThunk::DataLength() const
+{
+  return m_length;
+}
+void PhysiologyEngineThunk::PullData(std::vector<double>& d)
+{
+  std::cout << "Trying to pull data" << std::endl;
+  double* v = PullDataPtr();
+  std::cout << "Pult " << m_length << " data" << std::endl;
+  if (d.size() != m_length)
+  {
+    std::cout << "Reserving result" << std::endl;
+    d.reserve(m_length);
+    std::cout << "Ok" << std::endl;
+  }
+  for (int i = 0; i < m_length; i++)
+  {
+
+    std::cout << "Beep " << d[i] << std::endl;
+    d[i] = v[i];
+
+    std::cout << "Boop" << d[i] << std::endl;
+  }
+
+  std::cout << "Added data to the array? " << m_length << " data" << std::endl;
+}
+
+void PhysiologyEngineThunk::SetupDefaultDataRequests()
+{// Default to vitals data
+  //eng->GetLogger()->Info("No data requests provided, setting up default data requests");
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CoreTemperature", TemperatureUnit::C);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+  m_engine->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+}
+
+void PhysiologyEngineThunk::ForwardDebug(const std::string& msg, const std::string& origin)
+{
+  if (m_ForwardLogs)
+    m_ForwardLogs->ForwardDebug(msg, origin);
+  if (m_keepLogMsgs)
+    m_logMsgs.debug_msgs.push_back(msg + origin);
+}
+
+void PhysiologyEngineThunk::ForwardInfo(const std::string& msg, const std::string& origin)
+{
+  if (m_ForwardLogs)
+    m_ForwardLogs->ForwardInfo(msg, origin);
+  if (m_keepLogMsgs)
+    m_logMsgs.info_msgs.push_back(msg + origin);
+}
+
+void PhysiologyEngineThunk::ForwardWarning(const std::string& msg, const std::string& origin)
+{
+  if (m_ForwardLogs)
+    m_ForwardLogs->ForwardWarning(msg, origin);
+  if (m_keepLogMsgs)
+    m_logMsgs.warning_msgs.push_back(msg + origin);
+}
+
+void PhysiologyEngineThunk::ForwardError(const std::string& msg, const std::string& origin)
+{
+  if (m_ForwardLogs)
+    m_ForwardLogs->ForwardError(msg, origin);
+  if (m_keepLogMsgs)
+    m_logMsgs.error_msgs.push_back(msg + origin);
+}
+
+void PhysiologyEngineThunk::ForwardFatal(const std::string& msg, const std::string& origin)
+{
+  if (m_ForwardLogs)
+    m_ForwardLogs->ForwardFatal(msg, origin);
+  if (m_keepLogMsgs)
+    m_logMsgs.fatal_msgs.push_back(msg + origin);
+}
+
+void PhysiologyEngineThunk::HandleEvent(eEvent type, bool active, const SEScalarTime* time)
+{
+  if (m_ForwardEvents)
+    m_ForwardEvents->HandleEvent(type, active, time);
+  if (m_keepEventChanges)
+    m_events.push_back(new SEEventChange(type, active, time));
+}

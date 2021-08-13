@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "engine/SEAction.h"
 #include "engine/SEActionManager.h"
 #include "patient/actions/SEPatientAction.h"

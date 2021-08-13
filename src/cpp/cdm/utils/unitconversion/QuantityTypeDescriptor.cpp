@@ -5,7 +5,7 @@
 /// @file QuantityTypeDescriptor.cpp
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "utils/unitconversion/UCCommon.h"
 
 //----------------------------------------------------------------------------

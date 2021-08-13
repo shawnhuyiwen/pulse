@@ -3,6 +3,8 @@
 
 #include "SARunner.h"
 
+using namespace pulse::study::sensitivity_analysis;
+
 int main(int argc, char* argv[])
 {
   try

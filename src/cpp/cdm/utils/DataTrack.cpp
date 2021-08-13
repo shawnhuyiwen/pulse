@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "utils/DataTrack.h"
 #include "engine/SEDecimalFormat.h"
 #include "circuit/electrical/SEElectricalCircuit.h"

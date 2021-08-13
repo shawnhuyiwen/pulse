@@ -3,22 +3,24 @@
 
 #include "HowTo-RunThreaded.h"
 
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceCompound.h"
+#include "PulseEngine.h"
 
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceCompound.h"
 
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 void HowToDynamicHemorrhage()
 {
@@ -61,7 +63,7 @@ void HowToDynamicHemorrhage()
 PulseThread::PulseThread(const std::string& logfile) : m_thread()
 {
   // Create our engine with the standard patient
-  m_pe = CreatePulseEngine();
+  m_pe = pulse::engine::CreatePulseEngine();
   m_pe->GetLogger()->SetLogFile(logfile);
   const SESubstanceCompound* saline = m_pe->GetSubstanceManager().GetCompound("Saline");
 

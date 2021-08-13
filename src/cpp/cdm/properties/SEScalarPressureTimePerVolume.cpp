@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "CommonDataModel.h"
 #include "properties/SEScalarPressureTimePerVolume.h"
 
 const PressureTimePerVolumeUnit PressureTimePerVolumeUnit::cmH2O_s_Per_L("cmH2O s/L");

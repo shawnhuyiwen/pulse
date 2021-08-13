@@ -2,18 +2,21 @@
    See accompanying NOTICE file for details.*/
 
 #include "PulseScenarioDriver.h"
-#include "PulsePhysiologyEngine.h"
 #include "PulseScenarioExec.h"
-#include "utils/ConfigParser.h"
-#include "utils/FileUtils.h"
+#include "engine/human_adult//whole_body/Engine.h"
+#include "engine/human_adult/whole_body/Engine.h"
+#include "cdm/utils/ConfigParser.h"
+#include "cdm/utils/FileUtils.h"
 
 #define test_serialization false
 
-
-bool ExecuteScenario(const std::string& filename, const std::string& statesDir="./states")
+bool ExecuteScenario(const std::string& filename, pulse::engine::eModelType t, const std::string& statesDir="./states")
 {
   try
   {
+    if (t == (pulse::engine::eModelType)-1)
+      t = pulse::engine::eModelType::HumanAdultWholeBody;
+
     std::string logFile = filename;
     std::string csvFile = filename;
     std::string output = filename;
@@ -75,20 +78,22 @@ bool ExecuteScenario(const std::string& filename, const std::string& statesDir="
       sDir = Replace(sDir, ".json", "/");
       opts.SetSerializationDirectory(sDir);
       opts.SetReloadSerializedState(eSwitch::On);
-      std::unique_ptr<PhysiologyEngine> PulseReloadOn = CreatePulseEngine();
-      return PulseScenarioExec::Execute(*PulseReloadOn, opts) ? 0 : 1;
+
+      auto PulseReloadOn = pulse::engine::CreatePulseEngine(t);
+      return pulse::engine::PulseScenarioExec::Execute(*PulseReloadOn, opts) ? 0 : 1;
 
       sDir = "./states/reload_off/" + output;
       sDir = Replace(sDir, ".json", "/");
       opts.SetSerializationDirectory(sDir);
       opts.SetReloadSerializedState(eSwitch::Off);
-      std::unique_ptr<PhysiologyEngine> PulseReloadOff = CreatePulseEngine();
-      return PulseScenarioExec::Execute(*PulseReloadOff, opts) ? 0 : 1;
+
+      auto PulseReloadOff = pulse::engine::CreatePulseEngine(t);
+      return pulse::engine::PulseScenarioExec::Execute(*PulseReloadOff, opts) ? 0 : 1;
     }
     else
     {
-      std::unique_ptr<PhysiologyEngine> Pulse = CreatePulseEngine();
-      return PulseScenarioExec::Execute(*Pulse, opts) ? 0 : 1;
+      auto e = pulse::engine::CreatePulseEngine(t);
+      return pulse::engine::PulseScenarioExec::Execute(*e, opts) ? 0 : 1;
     }
   }
   catch (std::exception ex)
@@ -99,14 +104,14 @@ bool ExecuteScenario(const std::string& filename, const std::string& statesDir="
   return false;
 }
 
-bool ExecuteDirectory(const std::string& dir)
+bool ExecuteDirectory(const std::string& dir, pulse::engine::eModelType t)
 {
   std::vector<std::string> scenarios;
   ListFiles(dir, scenarios, true, ".json");
 
   for (auto filename : scenarios)
   {
-    ExecuteScenario(filename, dir);
+    ExecuteScenario(filename, t, dir);
   }
   return true;
 }
@@ -119,10 +124,14 @@ int main(int argc, char* argv[])
     return 1;
   }
   std::string input = argv[1];
+  pulse::engine::eModelType t = (pulse::engine::eModelType)-1;
+  if (argc >= 3)
+    pulse::engine::valueOf(argv[2], t);
+
   if (IsDirectory(input))
   {
-    return ExecuteDirectory(input);
+    return ExecuteDirectory(input, t);
   }
   else
-    return !ExecuteScenario(input);
+    return !ExecuteScenario(input, t);
 }

@@ -35,5 +35,6 @@ add_executable_ex(HowToDriver
   HowTo-Smoke.cpp
   HowTo-TensionPneumothorax.cpp
   HowTo-TestSystemCapability.cpp
+  HowTo-VentilationMechanics.cpp
 )
-target_link_libraries(HowToDriver CommonPulseModels)
+target_link_libraries(HowToDriver PulseEngine)

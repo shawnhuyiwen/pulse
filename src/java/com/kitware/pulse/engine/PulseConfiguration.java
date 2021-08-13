@@ -1,6 +1,6 @@
 package com.kitware.pulse.engine;
 
-import com.kitware.pulse.cpm.bind.PulseConfiguration.ConfigurationData;
+import com.kitware.pulse.engine.bind.Configuration.ConfigurationData;
 
 public class PulseConfiguration
 {

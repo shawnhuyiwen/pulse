@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "CommonDataModel.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Substance.pb.h"
-POP_PROTO_WARNINGS()
+POP_PROTO_WARNINGS
 #include "substance/SESubstance.h"
 #include "substance/SESubstancePhysicochemicals.h"
 
