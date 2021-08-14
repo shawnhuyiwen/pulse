@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/SESystem.h"
-#include "system/physiology/SERespiratoryMechanics.h"
+#include "cdm/system/SESystem.h"
+#include "cdm/system/physiology/SERespiratoryMechanics.h"
 
 class CDM_DECL SERespiratorySystem : public SESystem
 {

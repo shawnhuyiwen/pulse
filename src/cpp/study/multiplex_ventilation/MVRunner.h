@@ -21,9 +21,9 @@ namespace pulse::study::multiplex_ventilation
     static bool RunSimulationToStableSpO2(pulse::study::bind::multiplex_ventilation::SimulationData& sim, const std::string& dataDir = "./");
   protected:
     bool Run();
-    bool SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationListData& src, std::string& dst, SerializationFormat f) const;
+    bool SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationListData& src, std::string& dst, eSerializationFormat f) const;
     bool SerializeToFile(pulse::study::bind::multiplex_ventilation::SimulationListData& src, const std::string& filename) const;
-    bool SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationListData& dst, SerializationFormat f);
+    bool SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationListData& dst, eSerializationFormat f);
     bool SerializeFromFile(const std::string& filename, pulse::study::bind::multiplex_ventilation::SimulationListData& dst);
 
     void ControllerLoop();

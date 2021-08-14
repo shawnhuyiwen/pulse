@@ -1,18 +1,18 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SEDynamicStabilization.h"
-#include "engine/SEDynamicStabilizationLedger.h"
-#include "engine/SEDynamicStabilizationEngineConvergence.h"
-#include "engine/SEDynamicStabilizationPropertyConvergence.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SECondition.h"
-#include "engine/SEConditionManager.h"
-#include "engine/SEDataRequest.h"
-#include "properties/SEScalarTime.h"
-#include "utils/TimingProfile.h"
-#include "io/protobuf/PBEngine.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SEDynamicStabilization.h"
+#include "cdm/engine/SEDynamicStabilizationLedger.h"
+#include "cdm/engine/SEDynamicStabilizationEngineConvergence.h"
+#include "cdm/engine/SEDynamicStabilizationPropertyConvergence.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SECondition.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEDataRequest.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/TimingProfile.h"
+#include "cdm/io/protobuf/PBEngine.h"
 
 
 SEDynamicStabilization::SEDynamicStabilization(Logger *logger) : SEEngineStabilization(logger)
@@ -41,7 +41,7 @@ void SEDynamicStabilization::Clear()
   DELETE_MAP_SECOND(m_ConditionConvergence);
 }
 
-bool SEDynamicStabilization::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEDynamicStabilization::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
@@ -49,7 +49,7 @@ bool SEDynamicStabilization::SerializeToFile(const std::string& filename) const
 {
   return PBEngine::SerializeToFile(*this, filename);
 }
-bool SEDynamicStabilization::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEDynamicStabilization::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }

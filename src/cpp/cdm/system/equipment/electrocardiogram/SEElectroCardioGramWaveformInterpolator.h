@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
 
 class CDM_DECL SEElectroCardioGramWaveformInterpolator : public Loggable
 {
@@ -15,9 +15,9 @@ public:
   virtual void Clear();// Deletes all members
   virtual void Copy(const SEElectroCardioGramWaveformInterpolator& src);
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* timeStep = nullptr);
+  bool SerializeFromString(const std::string& src, eSerializationFormat m, const SEScalarTime* timeStep = nullptr);
   bool SerializeFromFile(const std::string& filename, const SEScalarTime* timeStep = nullptr);
 
   virtual void Interpolate(const SEScalarTime& timeStep);

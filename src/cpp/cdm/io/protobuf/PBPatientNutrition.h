@@ -15,9 +15,9 @@ public:
   static void Serialize(const SENutrition& src, CDM_BIND::NutritionData& dst);
   static void Copy(const SENutrition& src, SENutrition& dst);
 
-  static bool SerializeToString(const SENutrition& src, std::string& output, SerializationFormat m);
+  static bool SerializeToString(const SENutrition& src, std::string& output, eSerializationFormat m);
   static bool SerializeToFile(const SENutrition& src, const std::string& filename);
-  static bool SerializeFromString(const std::string& src, SENutrition& dst, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SENutrition& dst, eSerializationFormat m);
   static bool SerializeFromFile(const std::string& filename, SENutrition& dst);
 
   static void Load(const CDM_BIND::MealData& src, SEMeal& dst);
@@ -26,8 +26,8 @@ public:
   static void Serialize(const SEMeal& src, CDM_BIND::MealData& dst);
   static void Copy(const SEMeal& src, SEMeal& dst);
 
-  static bool SerializeToString(const SEMeal& src, std::string& output, SerializationFormat m);
+  static bool SerializeToString(const SEMeal& src, std::string& output, eSerializationFormat m);
   static bool SerializeToFile(const SEMeal& src, const std::string& filename);
-  static bool SerializeFromString(const std::string& src, SEMeal& dst, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SEMeal& dst, eSerializationFormat m);
   static bool SerializeFromFile(const std::string& filename, SEMeal& dst);
 };

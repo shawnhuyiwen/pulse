@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
     else
     {
       HRunner hr("./test_results/hydrocephalus/HydrocephalusRunner.log");
-      hr.Run(argv[1], SerializationFormat::JSON);
+      hr.Run(argv[1], eSerializationFormat::JSON);
       return 0;
     };
     // convert string to back to lower case

@@ -1,13 +1,13 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/json_util.h>
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBUtils.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/utils/FileUtils.h"
 
 std::mutex log_mutex;
 Logger* g_logger = nullptr;
@@ -45,7 +45,7 @@ bool PBUtils::SerializeFromFile(const std::string& filename, google::protobuf::M
     std::string content;
     if (!ReadFile(filename, content))
       return false;
-    if (!SerializeFromString(content, dst, JSON, logger))
+    if (!SerializeFromString(content, dst, eSerializationFormat::JSON, logger))
       return false;
     return true;
   }
@@ -66,7 +66,7 @@ bool PBUtils::SerializeToFile(const google::protobuf::Message& src, const std::s
   if (IsJSONFile(filename))
   {
     std::string content;
-    if (!SerializeToString(src, content, JSON, logger))
+    if (!SerializeToString(src, content, eSerializationFormat::JSON, logger))
       return false;
     return WriteFile(content, filename);
   }
@@ -83,11 +83,11 @@ bool PBUtils::SerializeToFile(const google::protobuf::Message& src, const std::s
 }
 
 
-bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Message& dst, SerializationFormat m, Logger* logger)
+bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Message& dst, eSerializationFormat m, Logger* logger)
 {
   std::lock_guard<std::mutex> guard(log_mutex);
   bool ret = true;
-  if (m == JSON)
+  if (m == eSerializationFormat::JSON)
   {
     g_logger = logger;
     google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
@@ -115,11 +115,11 @@ bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Mess
   return ret;
 }
 
-bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::string& output, SerializationFormat m, Logger* logger)
+bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
   std::lock_guard<std::mutex> guard(log_mutex);
   bool ret = true;
-  if (m == JSON)
+  if (m == eSerializationFormat::JSON)
   {
     g_logger = logger;
     google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));

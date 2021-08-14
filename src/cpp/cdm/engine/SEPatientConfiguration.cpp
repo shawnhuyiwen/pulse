@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SEPatientConfiguration.h"
-#include "engine/SEConditionManager.h"
-#include "engine/SEEngineConfiguration.h"
-#include "patient/SEPatient.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalar.h"
-#include "io/protobuf/PBEngine.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEEngineConfiguration.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalar.h"
+#include "cdm/io/protobuf/PBEngine.h"
 
 SEPatientConfiguration::SEPatientConfiguration(Logger* logger) : Loggable(logger)
 {
@@ -25,7 +25,7 @@ SEPatientConfiguration::~SEPatientConfiguration()
   SAFE_DELETE(m_Conditions);
 }
 
-bool SEPatientConfiguration::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEPatientConfiguration::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
@@ -33,7 +33,7 @@ bool SEPatientConfiguration::SerializeToFile(const std::string& filename) const
 {
   return PBEngine::SerializeToFile(*this, filename);
 }
-bool SEPatientConfiguration::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEPatientConfiguration::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, *this, m, subMgr);
 }

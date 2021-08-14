@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/SECompartmentLink.h"
-#include "substance/SESubstanceTransport.h"
-#include "compartment/fluid/SEFluidCompartment.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/compartment/SECompartmentLink.h"
+#include "cdm/substance/SESubstanceTransport.h"
+#include "cdm/compartment/fluid/SEFluidCompartment.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
 
 #define FLUID_COMPARTMENT_LINK_TEMPLATE typename EdgeType, typename VertexType, typename CompartmentType
 #define FLUID_COMPARTMENT_LINK_TYPES EdgeType, VertexType, CompartmentType

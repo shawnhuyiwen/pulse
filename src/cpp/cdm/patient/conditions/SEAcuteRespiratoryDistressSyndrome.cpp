@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBPatientConditions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBPatientConditions.h"
 
 SEAcuteRespiratoryDistressSyndrome::SEAcuteRespiratoryDistressSyndrome(Logger* logger) : SEPatientCondition(logger)
 {

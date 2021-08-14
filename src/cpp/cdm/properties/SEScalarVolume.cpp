@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarVolume.h"
 
 const VolumeUnit VolumeUnit::L("L");
 const VolumeUnit VolumeUnit::dL("dL");

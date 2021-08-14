@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "compartment/SECompartmentGraph.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/compartment/SECompartmentGraph.h"
 
 template<COMPARTMENT_GRAPH_TEMPLATE>
 SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::SECompartmentGraph(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)
@@ -158,7 +158,7 @@ void SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>::RemoveLink(const std::string& 
   }
 }
 
-#include "compartment/fluid/SEGasCompartmentGraph.h"
+#include "cdm/compartment/fluid/SEGasCompartmentGraph.h"
 template class SECompartmentGraph<SEGasCompartment, SEGasCompartmentLink>;
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentGraph.h"
 template class SECompartmentGraph<SELiquidCompartment, SELiquidCompartmentLink>;

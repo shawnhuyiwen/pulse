@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "utils/Logger.h"
-#include "utils/FileUtils.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/Logger.h"
+#include "cdm/utils/FileUtils.h"
+#include "cdm/properties/SEScalarTime.h"
 
 const std::string Loggable::empty("");
 

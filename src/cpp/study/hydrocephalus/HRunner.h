@@ -46,16 +46,16 @@ namespace pulse::study::hydrocephalus
     HRunner(const std::string& logfileName, const std::string& dataDir = ".");
     virtual ~HRunner();
 
-    bool Run(const std::string& filename, SerializationFormat f);
+    bool Run(const std::string& filename, eSerializationFormat f);
     bool Run(pulse::study::bind::hydrocephalus::SimulationListData& simList);
 
     bool RunSimulationUntilStable(std::string const& outDir, pulse::study::bind::hydrocephalus::SimulationData& sim, const std::string& dataDir = "./");
   protected:
     bool Run();
-    bool SerializeToString(pulse::study::bind::hydrocephalus::SimulationListData& src, std::string& dst, SerializationFormat f) const;
-    bool SerializeToFile(pulse::study::bind::hydrocephalus::SimulationListData& src, const std::string& filename, SerializationFormat f) const;
-    bool SerializeFromString(const std::string& src, pulse::study::bind::hydrocephalus::SimulationListData& dst, SerializationFormat f);
-    bool SerializeFromFile(const std::string& filename, pulse::study::bind::hydrocephalus::SimulationListData& dst, SerializationFormat f);
+    bool SerializeToString(pulse::study::bind::hydrocephalus::SimulationListData& src, std::string& dst, eSerializationFormat f) const;
+    bool SerializeToFile(pulse::study::bind::hydrocephalus::SimulationListData& src, const std::string& filename, eSerializationFormat f) const;
+    bool SerializeFromString(const std::string& src, pulse::study::bind::hydrocephalus::SimulationListData& dst, eSerializationFormat f);
+    bool SerializeFromFile(const std::string& filename, pulse::study::bind::hydrocephalus::SimulationListData& dst, eSerializationFormat f);
 
     void ControllerLoop();
     void FinalizeSimulation(pulse::study::bind::hydrocephalus::SimulationData& sim);

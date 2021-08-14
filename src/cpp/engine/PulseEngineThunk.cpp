@@ -21,7 +21,7 @@ namespace pulse::engine
 
   }
 
-  bool PulseEngineThunk::ExecuteScenario(std::string const& sceExecOpts, SerializationFormat format)
+  bool PulseEngineThunk::ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format)
   {
     SEScenarioExec opts;
     if (!opts.SerializeFromString(sceExecOpts, format))

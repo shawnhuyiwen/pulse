@@ -5,8 +5,8 @@
 /// @file CompoundUnit.cpp
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
-#include "CommonDataModel.h"
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 //----------------------------------------------------------------------------
 void CCompoundUnit::ParseString(const std::string &unitString)

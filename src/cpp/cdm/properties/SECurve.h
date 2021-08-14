@@ -2,11 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "SEProperty.h"
-#include "properties/SESegmentConstant.h"
-#include "properties/SESegmentLinear.h"
-#include "properties/SESegmentParabolic.h"
-#include "properties/SESegmentSigmoidal.h"
+#include "cdm/properties/SEProperty.h"
+#include "cdm/properties/SESegmentConstant.h"
+#include "cdm/properties/SESegmentLinear.h"
+#include "cdm/properties/SESegmentParabolic.h"
+#include "cdm/properties/SESegmentSigmoidal.h"
 
 class CDM_DECL SECurve : public SEProperty
 {

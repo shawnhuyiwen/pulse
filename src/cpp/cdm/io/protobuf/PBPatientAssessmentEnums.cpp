@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/PatientAssessments.pb.h"
 POP_PROTO_WARNINGS
-#include "patient/assessments/SEPatientAssessment.h"
-#include "patient/assessments/SEUrinalysisMicroscopic.h"
+#include "cdm/patient/assessments/SEPatientAssessment.h"
+#include "cdm/patient/assessments/SEUrinalysisMicroscopic.h"
 
 const std::string& ePatientAssessment_Type_Name(ePatientAssessment_Type m)
 {

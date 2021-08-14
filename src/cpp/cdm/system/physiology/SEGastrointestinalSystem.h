@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/SESystem.h"
+#include "cdm/system/SESystem.h"
 class SENutrition;
 
 class CDM_DECL SEGastrointestinalSystem : public SESystem

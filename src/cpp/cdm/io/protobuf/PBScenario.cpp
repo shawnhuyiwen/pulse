@@ -1,17 +1,17 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Scenario.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBScenario.h"
-#include "io/protobuf/PBActions.h"
-#include "io/protobuf/PBEngine.h"
-#include "io/protobuf/PBUtils.h"
-#include "scenario/SEScenario.h"
-#include "scenario/SEScenarioExec.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBScenario.h"
+#include "cdm/io/protobuf/PBActions.h"
+#include "cdm/io/protobuf/PBEngine.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/scenario/SEScenario.h"
+#include "cdm/scenario/SEScenarioExec.h"
+#include "cdm/utils/FileUtils.h"
 
 void PBScenario::Load(const CDM_BIND::ScenarioData& src, SEScenario& dst)
 {
@@ -68,7 +68,7 @@ void PBScenario::Copy(const SEScenario& src, SEScenario& dst)
   PBScenario::Serialize(data, dst);
 }
 
-bool PBScenario::SerializeToString(const SEScenario& src, std::string& output, SerializationFormat m)
+bool PBScenario::SerializeToString(const SEScenario& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::ScenarioData data;
   PBScenario::Serialize(src, data);
@@ -80,7 +80,7 @@ bool PBScenario::SerializeToFile(const SEScenario& src, const std::string& filen
   PBScenario::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBScenario::SerializeFromString(const std::string& src, SEScenario& dst, SerializationFormat m)
+bool PBScenario::SerializeFromString(const std::string& src, SEScenario& dst, eSerializationFormat m)
 {
   CDM_BIND::ScenarioData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
@@ -145,7 +145,7 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioExecData& src, SEScenarioExec
   }
   }
 
-  dst.SetContentFormat((SerializationFormat)src.contentformat());
+  dst.SetContentFormat((eSerializationFormat)src.contentformat());
 }
 
 CDM_BIND::ScenarioExecData* PBScenario::Unload(const SEScenarioExec& src)
@@ -181,13 +181,13 @@ void PBScenario::Serialize(const SEScenarioExec& src, CDM_BIND::ScenarioExecData
   dst.set_contentformat((CDM_BIND::eSerializationFormat)src.GetContentFormat());
 }
 
-bool PBScenario::SerializeToString(const SEScenarioExec& src, std::string& output, SerializationFormat m, Logger* logger)
+bool PBScenario::SerializeToString(const SEScenarioExec& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
   CDM_BIND::ScenarioExecData data;
   PBScenario::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, logger);
 }
-bool PBScenario::SerializeFromString(const std::string& src, SEScenarioExec& dst, SerializationFormat m, Logger* logger)
+bool PBScenario::SerializeFromString(const std::string& src, SEScenarioExec& dst, eSerializationFormat m, Logger* logger)
 {
   CDM_BIND::ScenarioExecData data;
   if (!PBUtils::SerializeFromString(src, data, m, logger))

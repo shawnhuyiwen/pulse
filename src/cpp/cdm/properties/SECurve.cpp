@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SECurve.h"
-#include "io/protobuf/PBProperties.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SECurve.h"
+#include "cdm/io/protobuf/PBProperties.h"
 
 SECurve::SECurve()
 {

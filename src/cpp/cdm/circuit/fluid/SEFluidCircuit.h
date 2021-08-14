@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuit.h"
-#include "circuit/fluid/SEFluidCircuitNode.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/circuit/SECircuit.h"
+#include "cdm/circuit/fluid/SEFluidCircuitNode.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
 
 class SECircuitManager;
 

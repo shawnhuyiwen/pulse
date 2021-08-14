@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SESubstanceAdministration.h"
+#include "cdm/patient/actions/SESubstanceAdministration.h"
 class SESubstance;
 
 class CDM_DECL SESubstanceBolus : public SEPatientAction

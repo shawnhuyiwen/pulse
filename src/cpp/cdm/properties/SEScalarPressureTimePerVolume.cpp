@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
 
 const PressureTimePerVolumeUnit PressureTimePerVolumeUnit::cmH2O_s_Per_L("cmH2O s/L");
 const PressureTimePerVolumeUnit PressureTimePerVolumeUnit::cmH2O_s_Per_mL("cmH2O s/mL");

@@ -26,9 +26,9 @@ PYBIND11_MODULE(PyPulse, m)
            serialize_to_string
     )pbdoc";
    
-   py::enum_<SerializationFormat>(m, "serialization_format")
-    .value("binary", SerializationFormat::BINARY)
-    .value("json", SerializationFormat::JSON)
+   py::enum_<eSerializationFormat>(m, "serialization_format")
+    .value("binary", eSerializationFormat::BINARY)
+    .value("json", eSerializationFormat::JSON)
     .export_values();
    py::enum_<pulse::engine::eModelType>(m, "model_type")
      .value("human_adult_whole_body", pulse::engine::eModelType::HumanAdultWholeBody)

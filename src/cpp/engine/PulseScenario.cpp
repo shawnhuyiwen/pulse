@@ -27,7 +27,7 @@ namespace PULSE_ENGINE
     PBScenario::Copy(src, *this);
   }
 
-  bool PulseScenario::SerializeToString(std::string& output, SerializationFormat m) const
+  bool PulseScenario::SerializeToString(std::string& output, eSerializationFormat m) const
   {
     return PBScenario::SerializeToString(*this, output, m);
   }
@@ -35,7 +35,7 @@ namespace PULSE_ENGINE
   {
     return PBScenario::SerializeToFile(*this, filename);
   }
-  bool PulseScenario::SerializeFromString(const std::string& src, SerializationFormat m)
+  bool PulseScenario::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
     return PBScenario::SerializeFromString(src, *this, m);
   }

@@ -17,9 +17,9 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, SerializationFormat m);
+  bool SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, eSerializationFormat m);
   bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
   virtual std::string GetName() const;

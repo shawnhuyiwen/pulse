@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarOsmolality.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarOsmolality.h"
 
 const OsmolalityUnit OsmolalityUnit::Osm_Per_kg("Osm/kg");
 const OsmolalityUnit OsmolalityUnit::mOsm_Per_kg("mOsm/kg");

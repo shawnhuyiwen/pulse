@@ -586,7 +586,7 @@ namespace PULSE_ENGINE
     tissue->set_enabletissue((CDM_BIND::eSwitch)src.m_TissueEnabled);
   }
 
-  bool PBConfiguration::SerializeToString(const PulseConfiguration& src, std::string& output, SerializationFormat m)
+  bool PBConfiguration::SerializeToString(const PulseConfiguration& src, std::string& output, eSerializationFormat m)
   {
     PULSE_BIND::ConfigurationData data;
     PBConfiguration::Serialize(src, data);
@@ -599,7 +599,7 @@ namespace PULSE_ENGINE
     return PBUtils::SerializeToFile(data, filename, src.GetLogger());
   }
 
-  bool PBConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m, SESubstanceManager& subMgr)
+  bool PBConfiguration::SerializeFromString(const std::string& src, PulseConfiguration& dst, eSerializationFormat m, SESubstanceManager& subMgr)
   {
     PULSE_BIND::ConfigurationData data;
     if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

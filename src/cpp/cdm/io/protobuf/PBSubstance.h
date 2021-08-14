@@ -24,9 +24,9 @@ public:
   static void Serialize(const CDM_BIND::SubstanceData& src, SESubstance& dst);
   static void Serialize(const SESubstance& src, CDM_BIND::SubstanceData& dst);
 
-  static bool SerializeToString(const SESubstance& src, std::string& output, SerializationFormat m);
+  static bool SerializeToString(const SESubstance& src, std::string& output, eSerializationFormat m);
   static bool SerializeToFile(const SESubstance& src, const std::string& filename);
-  static bool SerializeFromString(const std::string& src, SESubstance& dst, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SESubstance& dst, eSerializationFormat m);
   static bool SerializeFromFile(const std::string& filename, SESubstance& dst);
 
   static void Load(const CDM_BIND::SubstanceAerosolizationData& src, SESubstanceAerosolization& dst);
@@ -44,9 +44,9 @@ public:
   static void Serialize(const CDM_BIND::SubstanceCompoundData& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SESubstanceCompound& src, CDM_BIND::SubstanceCompoundData& dst);
 
-  static bool SerializeToString(const SESubstanceCompound& src, std::string& output, SerializationFormat m);
+  static bool SerializeToString(const SESubstanceCompound& src, std::string& output, eSerializationFormat m);
   static bool SerializeToFile(const SESubstanceCompound& src, const std::string& filename);
-  static bool SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, eSerializationFormat m);
   static bool SerializeFromFile(const std::string& filename, SESubstanceCompound& dst, const SESubstanceManager& subMgr);
 
   static void Load(const CDM_BIND::SubstanceConcentrationData& src, SESubstanceConcentration& dst);

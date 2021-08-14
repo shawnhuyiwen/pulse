@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "circuit/thermal/SEThermalCircuit.h"
-#include "circuit/SECircuitManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/thermal/SEThermalCircuit.h"
+#include "cdm/circuit/SECircuitManager.h"
 
 SEThermalCircuit::SEThermalCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<SEThermalCircuitNode, SEThermalCircuitPath>(name, mgr.GetLogger()), m_Mgr(mgr)
 {

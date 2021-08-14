@@ -1,18 +1,18 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 
-#include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SEGasCompartmentLink.h"
-#include "substance/SESubstanceTransport.h"
-#include "substance/SESubstance.h"
+#include "cdm/compartment/substances/SEGasSubstanceQuantity.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SEGasCompartmentLink.h"
+#include "cdm/substance/SESubstanceTransport.h"
+#include "cdm/substance/SESubstance.h"
 
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalar0To1.h"
-#include "utils/GeneralMath.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/utils/GeneralMath.h"
 
 SEGasSubstanceQuantity::SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartment& compartment) : SESubstanceQuantity(sub), m_Compartment(compartment)
 {

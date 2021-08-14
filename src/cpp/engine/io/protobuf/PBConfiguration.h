@@ -17,9 +17,9 @@ namespace PULSE_ENGINE
     static void Serialize(const PulseConfiguration& src, PULSE_BIND::ConfigurationData& dst);
     static void Merge(const PulseConfiguration& src, PulseConfiguration& dst, SESubstanceManager& subMgr);
 
-    static bool SerializeToString(const PulseConfiguration& src, std::string& output, SerializationFormat m);
+    static bool SerializeToString(const PulseConfiguration& src, std::string& output, eSerializationFormat m);
     static bool SerializeToFile(const PulseConfiguration& src, const std::string& filename);
-    static bool SerializeFromString(const std::string& src, PulseConfiguration& dst, SerializationFormat m, SESubstanceManager& subMgr);
+    static bool SerializeFromString(const std::string& src, PulseConfiguration& dst, eSerializationFormat m, SESubstanceManager& subMgr);
     static bool SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SESubstanceManager& subMgr);
   };
 }

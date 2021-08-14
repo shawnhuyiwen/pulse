@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarHeatResistance.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarHeatResistance.h"
 
 const HeatResistanceUnit HeatResistanceUnit::K_Per_W("K/W");
 const HeatResistanceUnit HeatResistanceUnit::C_Per_W("degC/W");

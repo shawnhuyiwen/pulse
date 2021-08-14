@@ -69,7 +69,7 @@ namespace pulse::study::multiplex_ventilation
 
   }
 
-  bool MVEngine::CreateEngine(const std::string& simulationDataStr, SerializationFormat fmt)
+  bool MVEngine::CreateEngine(const std::string& simulationDataStr, eSerializationFormat fmt)
   {
     SAFE_DELETE(m_SimulationData);
     m_SimulationData = new pulse::study::bind::multiplex_ventilation::SimulationData();
@@ -499,7 +499,7 @@ namespace pulse::study::multiplex_ventilation
         b = false;
     return b;
   }
-  bool MVEngine::ProcessActions(std::string const& actions, SerializationFormat format)
+  bool MVEngine::ProcessActions(std::string const& actions, eSerializationFormat format)
   {
     if (m_Controllers.empty())
     {
@@ -541,13 +541,13 @@ namespace pulse::study::multiplex_ventilation
     return success;
   }
 
-  std::string MVEngine::GetSimulationState(SerializationFormat fmt)
+  std::string MVEngine::GetSimulationState(eSerializationFormat fmt)
   {
     if (!GetSimulationState(*m_SimulationData))
       return "";
 
     std::string content;
-    SerializeToString(*m_SimulationData, content, SerializationFormat::JSON);
+    SerializeToString(*m_SimulationData, content, eSerializationFormat::JSON);
     return content;
   }
   bool MVEngine::GetSimulationState(pulse::study::bind::multiplex_ventilation::SimulationData& sim)
@@ -671,7 +671,7 @@ namespace pulse::study::multiplex_ventilation
     trkr.SetupRequests();
   }
 
-  bool MVEngine::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst, SerializationFormat f)
+  bool MVEngine::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationData& src, std::string& dst, eSerializationFormat f)
   {
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
@@ -679,7 +679,7 @@ namespace pulse::study::multiplex_ventilation
     printOpts.always_print_primitive_fields = true;
     return google::protobuf::util::MessageToJsonString(src, &dst, printOpts).ok();
   }
-  bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst, SerializationFormat f)
+  bool MVEngine::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationData& dst, eSerializationFormat f)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
     google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)

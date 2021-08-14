@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuitCalculator.h"
-#include "circuit/thermal/SEThermalCircuit.h"
+#include "cdm/circuit/SECircuitCalculator.h"
+#include "cdm/circuit/thermal/SEThermalCircuit.h"
 
 class CDM_DECL SEThermalCircuitCalculator : public SECircuitCalculator<SEThermalCircuit, SEThermalCircuitNode, SEThermalCircuitPath, SEThermalBlackBox, HeatCapacitanceUnit, PowerUnit, HeatInductanceUnit, TemperatureUnit, EnergyUnit, HeatResistanceUnit>
 {

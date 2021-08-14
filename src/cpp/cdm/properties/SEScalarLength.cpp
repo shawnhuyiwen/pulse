@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarLength.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarLength.h"
 
 const LengthUnit LengthUnit::m("m");
 const LengthUnit LengthUnit::cm("cm");

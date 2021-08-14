@@ -6,8 +6,8 @@
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
 
-#include "CommonDataModel.h"
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 #include <algorithm>
 #include <cctype>

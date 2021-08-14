@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
-#include "system/equipment/inhaler/SEInhaler.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarVolume.h"
-#include "io/protobuf/PBEquipmentActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
+#include "cdm/system/equipment/inhaler/SEInhaler.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/io/protobuf/PBEquipmentActions.h"
 
 SEInhalerConfiguration::SEInhalerConfiguration(Logger* logger) : SEInhalerAction(logger)
 {

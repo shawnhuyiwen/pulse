@@ -1,22 +1,22 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 // State Actions
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
 
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarTime.h"
-#include "io/protobuf/PBAnesthesiaMachine.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/io/protobuf/PBAnesthesiaMachine.h"
 
 SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
 {
@@ -117,7 +117,7 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from, SESubstanceMana
   MERGE_CHILD(OxygenBottleTwo, subMgr);
 }
 
-bool SEAnesthesiaMachine::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEAnesthesiaMachine::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBAnesthesiaMachine::SerializeToString(*this, output, m);
 }
@@ -125,7 +125,7 @@ bool SEAnesthesiaMachine::SerializeToFile(const std::string& filename) const
 {
   return PBAnesthesiaMachine::SerializeToFile(*this, filename);
 }
-bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBAnesthesiaMachine::SerializeFromString(src, *this, m, subMgr);
 }

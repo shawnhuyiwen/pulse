@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/actions/SESupplementalOxygen.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/actions/SESupplementalOxygen.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SESupplementalOxygen::SESupplementalOxygen(Logger* logger) : SEPatientAction(logger)
 {

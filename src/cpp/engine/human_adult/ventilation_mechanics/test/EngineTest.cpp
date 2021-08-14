@@ -134,9 +134,9 @@ namespace HUMAN_ADULT_VENT_MECH
           unsupported.AddFailure("Respiratory Engine does not support SerializeFromFile, but says it does?");
         if (e->SerializeToFile("Not Suported"))
           unsupported.AddFailure("Respiratory Engine does not support SerializeToFile, but says it does?");
-        if (e->SerializeFromString("Not Suported", SerializationFormat::JSON))
+        if (e->SerializeFromString("Not Suported", eSerializationFormat::JSON))
           unsupported.AddFailure("Respiratory Engine does not support SerializeFromString, but says it does?");
-        if (e->SerializeToString(output, SerializationFormat::JSON))
+        if (e->SerializeToString(output, eSerializationFormat::JSON))
           unsupported.AddFailure("Respiratory Engine does not support SerializeToString, but says it does?");
 
         // Setup a few data requests  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);

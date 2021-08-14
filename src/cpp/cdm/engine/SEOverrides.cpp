@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SEOverrides.h"
-#include "io/protobuf/PBActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SEOverrides.h"
+#include "cdm/io/protobuf/PBActions.h"
 
 SEOverrides::SEOverrides(Logger* logger) : SEAction(logger)
 {

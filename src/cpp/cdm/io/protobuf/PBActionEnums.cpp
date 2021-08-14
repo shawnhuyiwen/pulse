@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Actions.pb.h"
 POP_PROTO_WARNINGS
-#include "engine/SESerializeState.h"
+#include "cdm/engine/SESerializeState.h"
 
 const std::string& eSerialization_Type_Name(eSerialization_Type m)
 {

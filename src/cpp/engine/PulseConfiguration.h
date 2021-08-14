@@ -30,9 +30,9 @@ namespace PULSE_ENGINE
     void Merge(const PulseConfiguration&, SESubstanceManager& subMgr);
     virtual void Initialize(const std::string& dataDir = "", SESubstanceManager* subMgr = nullptr);
 
-    bool SerializeToString(std::string& output, SerializationFormat m) const;
+    bool SerializeToString(std::string& output, eSerializationFormat m) const;
     bool SerializeToFile(const std::string& filename) const;
-    bool SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr);
+    bool SerializeFromString(const std::string& src, eSerializationFormat m, SESubstanceManager& subMgr);
     bool SerializeFromFile(const std::string& filename, SESubstanceManager& subMgr);
 
 

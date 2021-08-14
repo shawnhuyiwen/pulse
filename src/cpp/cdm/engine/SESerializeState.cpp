@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SESerializeState.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SESerializeState.h"
 
 SESerializeState::SESerializeState(Logger* logger) : SEAction(logger)
 {

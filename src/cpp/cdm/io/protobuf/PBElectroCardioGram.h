@@ -27,9 +27,9 @@ public:
   static void Serialize(const SEElectroCardioGramWaveformInterpolator& src, CDM_BIND::ElectroCardioGramWaveformListData& dst);
   static void Copy(const SEElectroCardioGramWaveformInterpolator& src, SEElectroCardioGramWaveformInterpolator& dst);
 
-  static bool SerializeToString(const SEElectroCardioGramWaveformInterpolator& src, std::string& output, SerializationFormat m);
+  static bool SerializeToString(const SEElectroCardioGramWaveformInterpolator& src, std::string& output, eSerializationFormat m);
   static bool SerializeToFile(const SEElectroCardioGramWaveformInterpolator& src, const std::string& filename);
-  static bool SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m);
+  static bool SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, eSerializationFormat m);
   static bool SerializeFromFile(const std::string& filename, SEElectroCardioGramWaveformInterpolator& dst);
 
 };

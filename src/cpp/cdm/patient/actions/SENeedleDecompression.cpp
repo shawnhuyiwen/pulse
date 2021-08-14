@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/actions/SENeedleDecompression.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/actions/SENeedleDecompression.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SENeedleDecompression::SENeedleDecompression(Logger* logger) : SEPatientAction(logger)
 {

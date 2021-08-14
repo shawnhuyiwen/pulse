@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SEDynamicStabilizationLedger.h"
-#include "engine/SEDynamicStabilizationEngineConvergence.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEDynamicStabilizationPropertyConvergence.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SEDynamicStabilizationLedger.h"
+#include "cdm/engine/SEDynamicStabilizationEngineConvergence.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDynamicStabilizationPropertyConvergence.h"
+#include "cdm/properties/SEScalarTime.h"
 
 SEDynamicStabilizationLedger::SEDynamicStabilizationLedger(double timeStep_s, const SEDynamicStabilizationEngineConvergence& criteria, Logger* logger) : Loggable(logger), m_properties(criteria.GetPropertyConvergence())
 {

@@ -59,7 +59,7 @@ namespace pulse::study::sensitivity_analysis
     SARunner(const std::string& logfileName, const std::string& dataDir = ".");
     virtual ~SARunner();
 
-    bool Run(const std::string& filename, SerializationFormat f);
+    bool Run(const std::string& filename, eSerializationFormat f);
     bool Run(pulse::study::bind::sensitivity_analysis::SimulationListData& simList);
 
     bool RunSimulationUntilStable(std::string const& outDir, pulse::study::bind::sensitivity_analysis::SimulationData& sim, const std::string& dataDir = "./");
@@ -67,10 +67,10 @@ namespace pulse::study::sensitivity_analysis
 
   protected:
     bool Run();
-    bool SerializeToString(pulse::study::bind::sensitivity_analysis::SimulationListData& src, std::string& dst, SerializationFormat f) const;
-    bool SerializeToFile(pulse::study::bind::sensitivity_analysis::SimulationListData& src, const std::string& filename, SerializationFormat f) const;
-    bool SerializeFromString(const std::string& src, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, SerializationFormat f);
-    bool SerializeFromFile(const std::string& filename, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, SerializationFormat f);
+    bool SerializeToString(pulse::study::bind::sensitivity_analysis::SimulationListData& src, std::string& dst, eSerializationFormat f) const;
+    bool SerializeToFile(pulse::study::bind::sensitivity_analysis::SimulationListData& src, const std::string& filename, eSerializationFormat f) const;
+    bool SerializeFromString(const std::string& src, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, eSerializationFormat f);
+    bool SerializeFromFile(const std::string& filename, pulse::study::bind::sensitivity_analysis::SimulationListData& dst, eSerializationFormat f);
 
     void ControllerLoop();
     void FinalizeSimulation(pulse::study::bind::sensitivity_analysis::SimulationData& sim);

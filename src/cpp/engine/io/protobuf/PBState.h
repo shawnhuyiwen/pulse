@@ -19,7 +19,7 @@ namespace PULSE_ENGINE
     static bool SerializeFromFile(const std::string& filename, Controller& dst, const SEEngineConfiguration* config = nullptr);
     static bool SerializeToFile(const Controller& src, const std::string& filename);
 
-    static bool SerializeFromString(const std::string& src, Controller& dst, SerializationFormat m, const SEEngineConfiguration* config = nullptr);
-    static bool SerializeToString(const Controller& src, std::string& output, SerializationFormat m);
+    static bool SerializeFromString(const std::string& src, Controller& dst, eSerializationFormat m, const SEEngineConfiguration* config = nullptr);
+    static bool SerializeToString(const Controller& src, std::string& output, eSerializationFormat m);
   };
 }

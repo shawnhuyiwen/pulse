@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
       }
 
       SARunner sar("./test_results/sensitivity_analysis/SensitivityAnalysisRunner.log");
-      sar.Run(argv[2], SerializationFormat::JSON);
+      sar.Run(argv[2], eSerializationFormat::JSON);
     }
   }
   catch (std::exception ex)

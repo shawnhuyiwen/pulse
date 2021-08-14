@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalar0To1.h"
-#include "utils/GeneralMath.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/utils/GeneralMath.h"
 
 SEGasCompartment::SEGasCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {

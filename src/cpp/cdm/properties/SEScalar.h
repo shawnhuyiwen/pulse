@@ -2,7 +2,7 @@
 See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEProperty.h"
+#include "cdm/properties/SEProperty.h"
 
 #define ZERO_APPROX 1e-10
 

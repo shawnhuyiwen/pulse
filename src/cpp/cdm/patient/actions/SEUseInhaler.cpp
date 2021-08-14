@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/actions/SEUseInhaler.h"
-#include "substance/SESubstance.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarVolume.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/actions/SEUseInhaler.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEUseInhaler::SEUseInhaler(Logger* logger) : SEConsciousRespirationCommand(logger)
 {

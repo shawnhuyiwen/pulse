@@ -1,19 +1,19 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/MechanicalVentilator.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBMechanicalVentilator.h"
-#include "io/protobuf/PBSubstance.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarTime.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBMechanicalVentilator.h"
+#include "cdm/io/protobuf/PBSubstance.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/FileUtils.h"
 
 void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
@@ -210,7 +210,7 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
     dst.mutable_concentrationinspiredaerosol()->AddAllocated(PBSubstance::Unload(*sc));
 }
 
-bool PBMechanicalVentilator::SerializeToString(const SEMechanicalVentilator& src, std::string& output, SerializationFormat m)
+bool PBMechanicalVentilator::SerializeToString(const SEMechanicalVentilator& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::MechanicalVentilatorData data;
   PBMechanicalVentilator::Serialize(src, data);
@@ -223,7 +223,7 @@ bool PBMechanicalVentilator::SerializeToFile(const SEMechanicalVentilator& src, 
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMechanicalVentilator& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMechanicalVentilator& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::MechanicalVentilatorData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

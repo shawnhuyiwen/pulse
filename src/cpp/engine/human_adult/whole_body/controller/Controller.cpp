@@ -54,11 +54,11 @@ namespace HUMAN_ADULT_WHOLE_BODY
     return pmc::Controller::SerializeToFile(filename);
   }
 
-  bool Controller::SerializeFromString(const std::string& src, SerializationFormat m)
+  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
     return pmc::Controller::SerializeFromString(src, m);
   }
-  bool Controller::SerializeToString(std::string& output, SerializationFormat m) const
+  bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
     return pmc::Controller::SerializeToString(output, m);
   }

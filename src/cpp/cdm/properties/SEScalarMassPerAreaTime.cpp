@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarMassPerAreaTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarMassPerAreaTime.h"
 
 const MassPerAreaTimeUnit MassPerAreaTimeUnit::g_Per_cm2_s("g/cm^2 s");
 

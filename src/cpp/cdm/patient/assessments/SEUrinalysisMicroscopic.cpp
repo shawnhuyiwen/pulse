@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/assessments/SEUrinalysisMicroscopic.h"
-#include "properties/SEScalarAmount.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/assessments/SEUrinalysisMicroscopic.h"
+#include "cdm/properties/SEScalarAmount.h"
 
 SEUrinalysisMicroscopic::SEUrinalysisMicroscopic(Logger* logger) : Loggable(logger)
 {

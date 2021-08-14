@@ -1,40 +1,40 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Substance.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBSubstance.h"
-#include "io/protobuf/PBPhysiology.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceAerosolization.h"
-#include "substance/SESubstanceClearance.h"
-#include "substance/SESubstanceCompound.h"
-#include "substance/SESubstanceConcentration.h"
-#include "substance/SESubstanceFraction.h"
-#include "substance/SESubstancePharmacodynamics.h"
-#include "substance/SESubstancePharmacokinetics.h"
-#include "substance/SESubstancePhysicochemicals.h"
-#include "substance/SESubstanceTissuePharmacokinetics.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/io/protobuf/PBSubstance.h"
+#include "cdm/io/protobuf/PBPhysiology.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceAerosolization.h"
+#include "cdm/substance/SESubstanceClearance.h"
+#include "cdm/substance/SESubstanceCompound.h"
+#include "cdm/substance/SESubstanceConcentration.h"
+#include "cdm/substance/SESubstanceFraction.h"
+#include "cdm/substance/SESubstancePharmacodynamics.h"
+#include "cdm/substance/SESubstancePharmacokinetics.h"
+#include "cdm/substance/SESubstancePhysicochemicals.h"
+#include "cdm/substance/SESubstanceTissuePharmacokinetics.h"
+#include "cdm/substance/SESubstanceManager.h"
 
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarNegative1To1.h"
-#include "properties/SEScalarInversePressure.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalarMassPerAreaTime.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolumePerTimeMass.h"
-#include "properties/SEScalarVolumePerTimePressure.h"
-#include "properties/SEHistogramFractionVsLength.h"
-#include "utils/FileUtils.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarNegative1To1.h"
+#include "cdm/properties/SEScalarInversePressure.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerAmount.h"
+#include "cdm/properties/SEScalarMassPerAreaTime.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolumePerTimeMass.h"
+#include "cdm/properties/SEScalarVolumePerTimePressure.h"
+#include "cdm/properties/SEHistogramFractionVsLength.h"
+#include "cdm/utils/FileUtils.h"
 
 
 void PBSubstance::Load(const CDM_BIND::SubstanceData& src, SESubstance& dst)
@@ -593,7 +593,7 @@ void PBSubstance::Serialize(const SESubstanceTissuePharmacokinetics& src, CDM_BI
     dst.set_allocated_partitioncoefficient(PBProperty::Unload(*src.m_PartitionCoefficient));
 }
 
-bool PBSubstance::SerializeToString(const SESubstance& src, std::string& output, SerializationFormat m)
+bool PBSubstance::SerializeToString(const SESubstance& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::SubstanceData data;
   PBSubstance::Serialize(src, data);
@@ -606,7 +606,7 @@ bool PBSubstance::SerializeToFile(const SESubstance& src, const std::string& fil
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBSubstance::SerializeFromString(const std::string& src, SESubstance& dst, SerializationFormat m)
+bool PBSubstance::SerializeFromString(const std::string& src, SESubstance& dst, eSerializationFormat m)
 {
   CDM_BIND::SubstanceData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
@@ -623,7 +623,7 @@ bool PBSubstance::SerializeFromFile(const std::string& filename, SESubstance& ds
   return true;
 }
 
-bool PBSubstance::SerializeToString(const SESubstanceCompound& src, std::string& output, SerializationFormat m)
+bool PBSubstance::SerializeToString(const SESubstanceCompound& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::SubstanceCompoundData data;
   PBSubstance::Serialize(src, data);
@@ -636,7 +636,7 @@ bool PBSubstance::SerializeToFile(const SESubstanceCompound& src, const std::str
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBSubstance::SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, SerializationFormat m)
+bool PBSubstance::SerializeFromString(const std::string& src, SESubstanceCompound& dst, const SESubstanceManager& subMgr, eSerializationFormat m)
 {
   CDM_BIND::SubstanceCompoundData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

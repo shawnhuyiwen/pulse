@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h" 
-#include "circuit/fluid/SEFluidCircuitNode.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
+#include "cdm/CommonDataModel.h" 
+#include "cdm/circuit/fluid/SEFluidCircuitNode.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
 
 SEFluidCircuitNode::SEFluidCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<FLUID_CIRCUIT_NODE>(name,logger)
 {

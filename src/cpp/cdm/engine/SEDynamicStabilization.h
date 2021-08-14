@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "engine/SEEngineStabilization.h"
+#include "cdm/engine/SEEngineStabilization.h"
 class SEDynamicStabilizationEngineConvergence;
 
 class CDM_DECL SEDynamicStabilization : public SEEngineStabilization
@@ -14,9 +14,9 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
+  bool SerializeFromString(const std::string& src, eSerializationFormat m);
   bool SerializeFromFile(const std::string& filename);
 
   virtual bool StabilizeRestingState(Controller& engine);

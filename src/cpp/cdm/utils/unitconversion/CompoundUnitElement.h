@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------
 #pragma once
 
-#include "SnapValue.h"
+#include "cdm/utils/unitconversion/SnapValue.h"
 
 class CCompoundUnitElement
 {

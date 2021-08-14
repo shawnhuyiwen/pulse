@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "utils/testing/SETestReport.h"
-#include "utils/testing/SETestCase.h"
-#include "utils/testing/SETestSuite.h"
-#include "utils/testing/SETestErrorStatistics.h"
-#include "io/protobuf/PBTestReport.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/testing/SETestReport.h"
+#include "cdm/utils/testing/SETestCase.h"
+#include "cdm/utils/testing/SETestSuite.h"
+#include "cdm/utils/testing/SETestErrorStatistics.h"
+#include "cdm/io/protobuf/PBTestReport.h"
 
 SETestReport::SETestReport(Logger* logger) : Loggable(logger)
 {
@@ -26,7 +26,7 @@ void SETestReport::Reset()
 {
 }
 
-bool SETestReport::SerializeToString(std::string& output, SerializationFormat m) const
+bool SETestReport::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBTestReport::SerializeToString(*this, output, m);
 }
@@ -34,7 +34,7 @@ bool SETestReport::SerializeToFile(const std::string& filename) const
 {
   return PBTestReport::SerializeToFile(*this, filename);
 }
-bool SETestReport::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SETestReport::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBTestReport::SerializeFromString(src, *this, m);
 }

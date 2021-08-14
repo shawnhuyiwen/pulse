@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "compartment/SECompartmentNodes.h"
-#include "properties/SEScalar.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/compartment/SECompartmentNodes.h"
+#include "cdm/properties/SEScalar.h"
 
 template<COMPARTMENT_NODE_TEMPLATE>
 SECompartmentNodes<COMPARTMENT_NODE_TYPES>::SECompartmentNodes(Logger* logger) : Loggable(logger)
@@ -153,7 +153,7 @@ void SECompartmentNodes<COMPARTMENT_NODE_TYPES>::StateChange()
     SortNode(*node);
 }
 
-#include "compartment/fluid/SEFluidCompartment.h"
+#include "cdm/compartment/fluid/SEFluidCompartment.h"
 template class SECompartmentNodes<FLUID_COMPARTMENT_NODE>;
-#include "compartment/thermal/SEThermalCompartment.h"
+#include "cdm/compartment/thermal/SEThermalCompartment.h"
 template class SECompartmentNodes<THERMAL_COMPARTMENT_NODE>;

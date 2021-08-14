@@ -126,6 +126,8 @@ add_library_ex(PulseEngine
     CommonDataModel
   PRIVATE_DEPENDS
     protobuf::libprotobuf
+  INSTALL_HEADER_DIR
+    engine
 )
 target_include_directories(PulseEngine PRIVATE ${EIGEN3_INCLUDE_DIR})
 
@@ -161,7 +163,6 @@ add_library_ex(PulseEngineTests
     human_adult/ventilation_mechanics/test/EngineTest.cpp
   PUBLIC_DEPENDS
     PulseEngine
-  INSTALL_HEADER_DIR
-    test/
+  LIB_INSTALL_ONLY
 )
 

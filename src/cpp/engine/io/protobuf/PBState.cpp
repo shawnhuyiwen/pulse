@@ -374,13 +374,13 @@ namespace PULSE_ENGINE
     return PBUtils::SerializeToFile(data, filename, src.GetLogger());
   }
 
-  bool PBState::SerializeToString(const Controller& src, std::string& output, SerializationFormat m)
+  bool PBState::SerializeToString(const Controller& src, std::string& output, eSerializationFormat m)
   {
     PULSE_BIND::StateData data;
     PBState::Serialize(src, data);
     return PBUtils::SerializeToString(data, output, m, src.GetLogger());
   }
-  bool PBState::SerializeFromString(const std::string& src, Controller& dst, SerializationFormat m, const SEEngineConfiguration* config)
+  bool PBState::SerializeFromString(const std::string& src, Controller& dst, eSerializationFormat m, const SEEngineConfiguration* config)
   {
     PULSE_BIND::StateData data;
     if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
 See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "PhysiologyEnginePool.h"
-#include "engine/SEActionManager.h"
-#include "engine/SEAdvanceTime.h"
-#include "engine/SEDataRequested.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEPatientConfiguration.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/PhysiologyEnginePool.h"
+#include "cdm/engine/SEActionManager.h"
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SEDataRequested.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEPatientConfiguration.h"
 
 namespace
 {
@@ -234,7 +234,7 @@ PhysiologyEnginePoolThunk::~PhysiologyEnginePoolThunk()
 
 }
 
-bool PhysiologyEnginePoolThunk::InitializeEngines(std::string const& engineInitializationList, SerializationFormat format)
+bool PhysiologyEnginePoolThunk::InitializeEngines(std::string const& engineInitializationList, eSerializationFormat format)
 {
   std::vector<SEEngineInitialization*> engines;
   if (!SEEngineInitialization::SerializeFromString(engineInitializationList, engines, format, data->pool->m_SubMgr))
@@ -261,7 +261,7 @@ bool PhysiologyEnginePoolThunk::RemoveEngine(int id)
   return data->pool->RemoveEngine(id);
 }
 
-bool PhysiologyEnginePoolThunk::ProcessActions(std::string const& actions, SerializationFormat format)
+bool PhysiologyEnginePoolThunk::ProcessActions(std::string const& actions, eSerializationFormat format)
 {
   SEActionManager::SerializeFromString(actions, data->actionMap, format, data->pool->m_SubMgr);
   for (auto itr : data->actionMap)
@@ -274,7 +274,7 @@ bool PhysiologyEnginePoolThunk::ProcessActions(std::string const& actions, Seria
   return data->pool->ProcessActions();
 }
 
-std::string PhysiologyEnginePoolThunk::PullRequestedData(SerializationFormat format)
+std::string PhysiologyEnginePoolThunk::PullRequestedData(eSerializationFormat format)
 {
   std::string dst;
   data->pool->PullDataRequested(data->dataRequested);

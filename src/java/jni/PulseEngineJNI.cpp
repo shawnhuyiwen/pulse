@@ -74,7 +74,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeExecu
 
   jboolean bRet;
   const char* sceOptsStr = env->GetStringUTFChars(sceOpts, JNI_FALSE);
-  bRet = engineJNI->ExecuteScenario(sceOptsStr, (SerializationFormat)scenario_format);
+  bRet = engineJNI->ExecuteScenario(sceOptsStr, (eSerializationFormat)scenario_format);
   env->ReleaseStringUTFChars(sceOpts, sceOptsStr);
   return bRet;
 }
@@ -94,7 +94,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSeria
   const char* dmStr = nullptr;
   if(dataRequests != nullptr)
     dmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
-  jboolean bRet = engineJNI->SerializeFromFile(fnStr, dmStr, (SerializationFormat)dataRequestsFormat);
+  jboolean bRet = engineJNI->SerializeFromFile(fnStr, dmStr, (eSerializationFormat)dataRequestsFormat);
 
   env->ReleaseStringUTFChars(stateFilename, fnStr);
   if(dmStr != nullptr)
@@ -128,7 +128,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSeria
   if (dataRequests != nullptr)
     dmStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);\
   const char* sStr = env->GetStringUTFChars(state, JNI_FALSE);
-  bRet = engineJNI->SerializeFromString(sStr, dmStr, (SerializationFormat)format);
+  bRet = engineJNI->SerializeFromString(sStr, dmStr, (eSerializationFormat)format);
 
   env->ReleaseStringUTFChars(state, sStr);
   if (dmStr != nullptr)
@@ -142,7 +142,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeSerial
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
-  std::string out = engineJNI->SerializeToString((SerializationFormat)format);
+  std::string out = engineJNI->SerializeToString((eSerializationFormat)format);
   jstring state = env->NewStringUTF(out.c_str());
   return state;
 }
@@ -163,7 +163,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeIniti
   if (dataRequests != nullptr)
     drStr = env->GetStringUTFChars(dataRequests, JNI_FALSE);
 
-  bRet = engineJNI->InitializeEngine(pcStr, drStr, (SerializationFormat)format);
+  bRet = engineJNI->InitializeEngine(pcStr, drStr, (eSerializationFormat)format);
 
   env->ReleaseStringUTFChars(patient_configuration, pcStr);
   if(drStr != nullptr)
@@ -179,7 +179,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetIni
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
-  std::string stream = engineJNI->GetInitialPatient((SerializationFormat)format);
+  std::string stream = engineJNI->GetInitialPatient((eSerializationFormat)format);
   jstring patient = env->NewStringUTF(stream.c_str());
   return patient;
 }
@@ -191,7 +191,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetCon
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
-  std::string stream = engineJNI->GetConditions((SerializationFormat)format);
+  std::string stream = engineJNI->GetConditions((eSerializationFormat)format);
   jstring conditionManager = env->NewStringUTF(stream.c_str());
   return conditionManager;
 }
@@ -203,7 +203,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetAss
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
-  std::string stream = engineJNI->GetPatientAssessment(type,(SerializationFormat)format);
+  std::string stream = engineJNI->GetPatientAssessment(type,(eSerializationFormat)format);
   jstring assessment = env->NewStringUTF(stream.c_str());
   return assessment;
 }
@@ -242,7 +242,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullEv
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
-  std::string out = engineJNI->PullEvents((SerializationFormat)format);
+  std::string out = engineJNI->PullEvents((eSerializationFormat)format);
   jstring events = env->NewStringUTF(out.c_str());
   return events;
 }
@@ -253,7 +253,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullAc
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
-  std::string out = engineJNI->PullActiveEvents((SerializationFormat)format);
+  std::string out = engineJNI->PullActiveEvents((eSerializationFormat)format);
   jstring events = env->NewStringUTF(out.c_str());
   return events;
 }
@@ -268,7 +268,7 @@ JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeProce
   engineJNI->jniObj = obj;
 
   const char* aStr = env->GetStringUTFChars(actions, JNI_FALSE);
-  jboolean bRet = engineJNI->ProcessActions(aStr, (SerializationFormat)format);
+  jboolean bRet = engineJNI->ProcessActions(aStr, (eSerializationFormat)format);
   env->ReleaseStringUTFChars(actions, aStr);
   return bRet;
 }
@@ -280,7 +280,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullAc
   engineJNI->jniEnv = env;
   engineJNI->jniObj = obj;
 
-  std::string stream = engineJNI->PullActiveActions((SerializationFormat)format);
+  std::string stream = engineJNI->PullActiveActions((eSerializationFormat)format);
   jstring actions = env->NewStringUTF(stream.c_str());
   return actions;
 }

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 
 // Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
 enum class eIntubation_Type { Off = 0, Esophageal, LeftMainstem, RightMainstem, Tracheal,

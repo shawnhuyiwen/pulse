@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 
 // Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
 enum class eSubstanceAdministration_Route {

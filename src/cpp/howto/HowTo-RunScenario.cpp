@@ -85,7 +85,7 @@ void HowToRunScenario()
 
   std::string json;
   SEScenarioExec execOpts;
-  sce.SerializeToString(json, SerializationFormat::JSON);
+  sce.SerializeToString(json, eSerializationFormat::JSON);
   std::cout << json << std::endl;
   execOpts.SetLogFilename("./test_results/HowTo-RunScenarioResults.log");
   execOpts.SetDataRequestCSVFilename("./test_results/HowTo-RunScenarioResults.csv");

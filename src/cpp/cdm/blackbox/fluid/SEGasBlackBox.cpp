@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "blackbox/fluid/SEGasBlackBox.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/blackbox/fluid/SEGasBlackBox.h"
 
 SEGasBlackBox::SEGasBlackBox(const std::string& name, Logger* logger) : SEFluidBlackBox(name, logger)
 {

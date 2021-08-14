@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Substance.pb.h"
 POP_PROTO_WARNINGS
-#include "substance/SESubstance.h"
-#include "substance/SESubstancePhysicochemicals.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstancePhysicochemicals.h"
 
 const std::string& eSubstance_State_Name(eSubstance_State m)
 {

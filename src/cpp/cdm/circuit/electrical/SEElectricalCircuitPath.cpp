@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
 See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "circuit/electrical/SEElectricalCircuitPath.h"
-#include "properties/SEScalarElectricResistance.h"
-#include "properties/SEScalarElectricCapacitance.h"
-#include "properties/SEScalarElectricInductance.h"
-#include "properties/SEScalarElectricCurrent.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "properties/SEScalarElectricCharge.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/properties/SEScalarElectricResistance.h"
+#include "cdm/properties/SEScalarElectricCapacitance.h"
+#include "cdm/properties/SEScalarElectricInductance.h"
+#include "cdm/properties/SEScalarElectricCurrent.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/properties/SEScalarElectricCharge.h"
 
 SEElectricalCircuitPath::SEElectricalCircuitPath(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt, const std::string& name) :
   SECircuitPath<ELECTRICAL_CIRCUIT_PATH>(src,tgt,name),

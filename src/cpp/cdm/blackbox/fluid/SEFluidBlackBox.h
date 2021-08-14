@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "blackbox/SEBlackBox.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/blackbox/SEBlackBox.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
 
 class CDM_DECL SEFluidBlackBox : public SEBlackBox<FLUID_BLACK_BOX>
 {

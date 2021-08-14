@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "substance/SESubstancePharmacokinetics.h"
-#include "substance/SESubstancePhysicochemicals.h"
-#include "substance/SESubstanceTissuePharmacokinetics.h"
-#include "properties/SEScalar0To1.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/substance/SESubstancePharmacokinetics.h"
+#include "cdm/substance/SESubstancePhysicochemicals.h"
+#include "cdm/substance/SESubstanceTissuePharmacokinetics.h"
+#include "cdm/properties/SEScalar0To1.h"
 
 SESubstancePharmacokinetics::SESubstancePharmacokinetics(Logger* logger) : Loggable(logger)
 {

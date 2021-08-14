@@ -24,10 +24,10 @@ namespace PULSE_ENGINE
     virtual bool SerializeFromFile(const std::string& file) override;
     virtual bool SerializeToFile(const std::string& file) const override;
 
-    virtual bool SerializeFromString(const std::string& state, SerializationFormat m) override;
-    virtual bool SerializeToString(std::string& state, SerializationFormat m) const override;
+    virtual bool SerializeFromString(const std::string& state, eSerializationFormat m) override;
+    virtual bool SerializeToString(std::string& state, eSerializationFormat m) const override;
 
-    virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m) override;
+    virtual bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m) override;
     virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration) override;
 
     virtual bool SetConfigurationOverride(const SEEngineConfiguration* config) override;

@@ -6,8 +6,8 @@
 /// @author Chris Volpe
 ///
 
-#include "CommonDataModel.h"
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 CQuantityConversionKey::CQuantityConversionKey(int fromID, int toID)
 {

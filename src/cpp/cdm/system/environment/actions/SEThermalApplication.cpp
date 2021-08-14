@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "system/environment/actions/SEThermalApplication.h"
-#include "system/environment/SEActiveConditioning.h"
-#include "system/environment/SEAppliedTemperature.h"
-#include "properties/SEScalarArea.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarTemperature.h"
-#include "io/protobuf/PBEnvironmentActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/environment/actions/SEThermalApplication.h"
+#include "cdm/system/environment/SEActiveConditioning.h"
+#include "cdm/system/environment/SEAppliedTemperature.h"
+#include "cdm/properties/SEScalarArea.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/io/protobuf/PBEnvironmentActions.h"
 
 SEThermalApplication::SEThermalApplication(Logger* logger) : SEEnvironmentAction(logger)
 {

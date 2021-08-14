@@ -11,7 +11,7 @@ class SEFluidCircuit;
 class SEThermalCircuit;
 class SEGasCompartmentGraph;
 class SELiquidCompartmentGraph;
-#include "engine/SEDecimalFormat.h"
+#include "cdm/engine/SEDecimalFormat.h"
 
 class CDM_DECL DataTrack : public Loggable
 {

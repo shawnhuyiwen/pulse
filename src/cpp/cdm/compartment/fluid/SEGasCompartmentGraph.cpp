@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "compartment/fluid/SEGasCompartmentGraph.h"
-#include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "compartment/SECompartmentManager.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalar0To1.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/compartment/fluid/SEGasCompartmentGraph.h"
+#include "cdm/compartment/substances/SEGasSubstanceQuantity.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
 
 void SEGasCompartmentGraph::BalanceByIntensive()
 {

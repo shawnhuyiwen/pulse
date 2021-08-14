@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/actions/SEChestCompressionForce.h"
-#include "properties/SEScalarForce.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/actions/SEChestCompressionForce.h"
+#include "cdm/properties/SEScalarForce.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEChestCompressionForce::SEChestCompressionForce(Logger* logger) : SEPatientAction(logger)
 {

@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarEquivalentWeightPerVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarEquivalentWeightPerVolume.h"
 
 const EquivalentWeightPerVolumeUnit EquivalentWeightPerVolumeUnit::Eq_Per_L("Eq/L");
 const EquivalentWeightPerVolumeUnit EquivalentWeightPerVolumeUnit::Eq_Per_mL("Eq/mL");

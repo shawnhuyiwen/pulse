@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarLengthPerTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarLengthPerTime.h"
 
 const LengthPerTimeUnit LengthPerTimeUnit::m_Per_s("m/s");
 const LengthPerTimeUnit LengthPerTimeUnit::cm_Per_s("cm/s");

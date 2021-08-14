@@ -24,8 +24,8 @@ namespace HUMAN_ADULT_WHOLE_BODY
     virtual bool SerializeFromFile(const std::string& file) override;
     virtual bool SerializeToFile(const std::string& file) const override;
 
-    virtual bool SerializeFromString(const std::string& state, SerializationFormat m) override;
-    virtual bool SerializeToString(std::string& state, SerializationFormat m) const override;
+    virtual bool SerializeFromString(const std::string& state, eSerializationFormat m) override;
+    virtual bool SerializeToString(std::string& state, eSerializationFormat m) const override;
 
     virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const override;
 

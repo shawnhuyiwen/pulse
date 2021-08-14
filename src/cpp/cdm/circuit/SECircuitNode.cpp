@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "circuit/SECircuitNode.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/SECircuitNode.h"
 
 
 template<CIRCUIT_NODE_TEMPLATE>
@@ -128,9 +128,9 @@ bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsReferenceNode() const
   return m_IsReferenceNode;
 }
 
-#include "circuit/fluid/SEFluidCircuitNode.h"
+#include "cdm/circuit/fluid/SEFluidCircuitNode.h"
 template class SECircuitNode<FLUID_CIRCUIT_NODE>;
-#include "circuit/electrical/SEElectricalCircuitNode.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitNode.h"
 template class SECircuitNode<ELECTRICAL_CIRCUIT_NODE>;
-#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "cdm/circuit/thermal/SEThermalCircuitNode.h"
 template class SECircuitNode<THERMAL_CIRCUIT_NODE>;

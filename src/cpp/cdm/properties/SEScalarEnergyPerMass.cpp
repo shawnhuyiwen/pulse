@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarEnergyPerMass.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarEnergyPerMass.h"
 
 const EnergyPerMassUnit EnergyPerMassUnit::J_Per_kg("J/kg");
 const EnergyPerMassUnit EnergyPerMassUnit::kJ_Per_kg("kJ/kg");

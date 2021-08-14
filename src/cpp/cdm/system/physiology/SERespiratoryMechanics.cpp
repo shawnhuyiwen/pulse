@@ -1,16 +1,16 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/physiology/SERespiratoryMechanics.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBPhysiology.h"
-#include "patient/actions/SERespiratoryMechanicsConfiguration.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/physiology/SERespiratoryMechanics.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBPhysiology.h"
+#include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
 
-#include "properties/SECurve.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/properties/SECurve.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarTime.h"
 
 SERespiratoryMechanics::SERespiratoryMechanics(Logger* logger) : Loggable(logger)
 {
@@ -80,7 +80,7 @@ void SERespiratoryMechanics::Clear()
   INVALIDATE_PROPERTY(m_ResidueTime);
 }
 
-bool SERespiratoryMechanics::SerializeToString(std::string& output, SerializationFormat m) const
+bool SERespiratoryMechanics::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBPhysiology::SerializeToString(*this, output, m);
 }
@@ -88,7 +88,7 @@ bool SERespiratoryMechanics::SerializeToFile(const std::string& filename) const
 {
   return PBPhysiology::SerializeToFile(*this, filename);
 }
-bool SERespiratoryMechanics::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SERespiratoryMechanics::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBPhysiology::SerializeFromString(src, *this, m);
 }

@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
 See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
-#include "properties/SEScalarHeatResistance.h"
-#include "properties/SEScalarHeatCapacitance.h"
-#include "properties/SEScalarHeatInductance.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarEnergy.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/properties/SEScalarHeatResistance.h"
+#include "cdm/properties/SEScalarHeatCapacitance.h"
+#include "cdm/properties/SEScalarHeatInductance.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarEnergy.h"
 
 SEThermalCircuitPath::SEThermalCircuitPath(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt, const std::string& name) :
   SECircuitPath<THERMAL_CIRCUIT_PATH>(src, tgt ,name),

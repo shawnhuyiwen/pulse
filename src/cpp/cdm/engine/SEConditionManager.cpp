@@ -1,26 +1,26 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SEConditionManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SEConditionManager.h"
    //Patient Conditions
-#include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
-#include "patient/conditions/SEChronicAnemia.h"
-#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "patient/conditions/SEChronicRenalStenosis.h"
-#include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
-#include "patient/conditions/SEConsumeMeal.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
-#include "patient/conditions/SELobarPneumonia.h"
-#include "patient/conditions/SEPulmonaryFibrosis.h"
-#include "patient/conditions/SEPulmonaryShunt.h"
-#include "patient/conditions/SESepsis.h"
+#include "cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
+#include "cdm/patient/conditions/SEChronicAnemia.h"
+#include "cdm/patient/conditions/SEChronicObstructivePulmonaryDisease.h"
+#include "cdm/patient/conditions/SEChronicPericardialEffusion.h"
+#include "cdm/patient/conditions/SEChronicRenalStenosis.h"
+#include "cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h"
+#include "cdm/patient/conditions/SEConsumeMeal.h"
+#include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
+#include "cdm/patient/conditions/SELobarPneumonia.h"
+#include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
+#include "cdm/patient/conditions/SEPulmonaryShunt.h"
+#include "cdm/patient/conditions/SESepsis.h"
 // Environment Conditions
-#include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBEngine.h"
+#include "cdm/system/environment/conditions/SEInitialEnvironmentalConditions.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/io/protobuf/PBEngine.h"
 
 SEConditionManager::SEConditionManager(Logger* logger) : Loggable(logger)
 {
@@ -73,7 +73,7 @@ void SEConditionManager::Clear()
   SAFE_DELETE(m_Sepsis);
 }
 
-bool SEConditionManager::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEConditionManager::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
@@ -81,7 +81,7 @@ bool SEConditionManager::SerializeToFile(const std::string& filename) const
 {
   return PBEngine::SerializeToFile(*this, filename);
 }
-bool SEConditionManager::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEConditionManager::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, *this, m, subMgr);
 }

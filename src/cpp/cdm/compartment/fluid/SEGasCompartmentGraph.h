@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SEGasCompartmentLink.h"
-#include "compartment/SECompartmentTransportGraph.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SEGasCompartmentLink.h"
+#include "cdm/compartment/SECompartmentTransportGraph.h"
 class SECompartmentManager;
 
 class CDM_DECL SEGasCompartmentGraph : public SECompartmentTransportGraph<SEGasTransportGraph, SEGasTransportVertex, SEGasTransportEdge, SEGasCompartment, SEGasCompartmentLink>

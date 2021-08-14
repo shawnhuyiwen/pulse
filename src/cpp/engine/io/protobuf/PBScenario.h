@@ -18,9 +18,9 @@ namespace PULSE_ENGINE
     static void Serialize(const PulseScenario& src, PULSE_BIND::ScenarioData& dst);
     static void Copy(const PulseScenario& src, PulseScenario& dst);
 
-    static bool SerializeToString(const PulseScenario& src, std::string& output, SerializationFormat m);
+    static bool SerializeToString(const PulseScenario& src, std::string& output, eSerializationFormat m);
     static bool SerializeToFile(const PulseScenario& src, const std::string& filename);
-    static bool SerializeFromString(const std::string& src, PulseScenario& dst, SerializationFormat m);
+    static bool SerializeFromString(const std::string& src, PulseScenario& dst, eSerializationFormat m);
     static bool SerializeFromFile(const std::string& filename, PulseScenario& dst);
   };
 }

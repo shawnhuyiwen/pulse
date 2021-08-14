@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "circuit/fluid/SEFluidCircuitCalculator.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/fluid/SEFluidCircuitCalculator.h"
 
 
 SEFluidCircuitCalculator::SEFluidCircuitCalculator(Logger* logger) : SECircuitCalculator<SEFluidCircuit,SEFluidCircuitNode,SEFluidCircuitPath, SEFluidBlackBox, VolumePerPressureUnit, VolumePerTimeUnit, PressureTimeSquaredPerVolumeUnit, PressureUnit, VolumeUnit, PressureTimePerVolumeUnit>(

@@ -2,19 +2,19 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuitNode.h"
-#include "properties/SEScalarElectricCapacitance.h"
-#include "properties/SEScalarElectricCurrent.h"
-#include "properties/SEScalarElectricInductance.h"
-#include "properties/SEScalarElectricResistance.h"
-#include "properties/SEScalarVolumePerPressure.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
-#include "properties/SEScalarHeatCapacitance.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarHeatInductance.h"
-#include "properties/SEScalarHeatResistance.h"
+#include "cdm/circuit/SECircuitNode.h"
+#include "cdm/properties/SEScalarElectricCapacitance.h"
+#include "cdm/properties/SEScalarElectricCurrent.h"
+#include "cdm/properties/SEScalarElectricInductance.h"
+#include "cdm/properties/SEScalarElectricResistance.h"
+#include "cdm/properties/SEScalarVolumePerPressure.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarPressureTimeSquaredPerVolume.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarHeatCapacitance.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarHeatInductance.h"
+#include "cdm/properties/SEScalarHeatResistance.h"
 
 #define CIRCUIT_PATH_TEMPLATE typename BlackBoxType, typename FluxScalar, typename ResistanceScalar, typename CapacitanceScalar, typename InductanceScalar, typename PotentialScalar, typename QuantityScalar
 #define CIRCUIT_PATH_TYPES BlackBoxType, FluxScalar,ResistanceScalar,CapacitanceScalar,InductanceScalar,PotentialScalar,QuantityScalar

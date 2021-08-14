@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "SEPatientCondition.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/conditions/SEPatientCondition.h"
 
 SEPatientCondition::SEPatientCondition(Logger* logger) : SECondition(logger)
 {

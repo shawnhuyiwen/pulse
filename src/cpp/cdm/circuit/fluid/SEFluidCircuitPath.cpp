@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
-#include "properties/SEScalarVolumePerPressure.h"
-#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarVolumePerPressure.h"
+#include "cdm/properties/SEScalarPressureTimeSquaredPerVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
 
 SEFluidCircuitPath::SEFluidCircuitPath(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt, const std::string& name) :
   SECircuitPath<FLUID_CIRCUIT_PATH>(src, tgt, name),

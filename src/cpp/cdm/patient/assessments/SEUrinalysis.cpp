@@ -1,19 +1,19 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/assessments/SEUrinalysis.h"
-#include "patient/assessments/SEUrinalysisMicroscopic.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarOsmolarity.h"
-#include "properties/SEScalarOsmolality.h"
-#include "io/protobuf/PBPatientAssessments.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/assessments/SEUrinalysis.h"
+#include "cdm/patient/assessments/SEUrinalysisMicroscopic.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalarOsmolarity.h"
+#include "cdm/properties/SEScalarOsmolality.h"
+#include "cdm/io/protobuf/PBPatientAssessments.h"
 
 SEUrinalysis::SEUrinalysis(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -71,7 +71,7 @@ void SEUrinalysis::Clear()
     m_Microscopic->Clear();
 }
 
-bool SEUrinalysis::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEUrinalysis::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }

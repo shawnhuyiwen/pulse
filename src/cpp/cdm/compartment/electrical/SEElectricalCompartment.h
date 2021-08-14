@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "blackbox/SEBlackBox.h"
-#include "compartment/SECompartment.h"
-#include "compartment/SECompartmentNodes.h"
-#include "circuit/electrical/SEElectricalCircuitNode.h"
+#include "cdm/blackbox/SEBlackBox.h"
+#include "cdm/compartment/SECompartment.h"
+#include "cdm/compartment/SECompartmentNodes.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitNode.h"
 class SEElectricalCircuitNode;
 class SEElectricalCompartmentLink;
 

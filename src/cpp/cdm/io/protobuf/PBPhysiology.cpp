@@ -1,27 +1,27 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Physiology.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBPhysiology.h"
-#include "io/protobuf/PBPatientNutrition.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEDrugSystem.h"
-#include "system/physiology/SEEndocrineSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SEGastrointestinalSystem.h"
-#include "system/physiology/SEHepaticSystem.h"
-#include "system/physiology/SENervousSystem.h"
-#include "system/physiology/SEPupillaryResponse.h"
-#include "system/physiology/SERenalSystem.h"
-#include "system/physiology/SERespiratoryMechanics.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "system/physiology/SETissueSystem.h"
+#include "cdm/io/protobuf/PBPhysiology.h"
+#include "cdm/io/protobuf/PBPatientNutrition.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SEDrugSystem.h"
+#include "cdm/system/physiology/SEEndocrineSystem.h"
+#include "cdm/system/physiology/SEEnergySystem.h"
+#include "cdm/system/physiology/SEGastrointestinalSystem.h"
+#include "cdm/system/physiology/SEHepaticSystem.h"
+#include "cdm/system/physiology/SENervousSystem.h"
+#include "cdm/system/physiology/SEPupillaryResponse.h"
+#include "cdm/system/physiology/SERenalSystem.h"
+#include "cdm/system/physiology/SERespiratoryMechanics.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/system/physiology/SETissueSystem.h"
 
 void PBPhysiology::Load(const CDM_BIND::BloodChemistrySystemData& src, SEBloodChemistrySystem& dst)
 {
@@ -918,7 +918,7 @@ void PBPhysiology::Serialize(const SERespiratoryMechanics& src, CDM_BIND::Respir
     dst.set_allocated_residuetime(PBProperty::Unload(*src.m_ResidueTime));
 }
 
-bool PBPhysiology::SerializeToString(const SERespiratoryMechanics& src, std::string& output, SerializationFormat m)
+bool PBPhysiology::SerializeToString(const SERespiratoryMechanics& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::RespiratoryMechanicsData data;
   PBPhysiology::Serialize(src, data);
@@ -931,7 +931,7 @@ bool PBPhysiology::SerializeToFile(const SERespiratoryMechanics& src, const std:
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBPhysiology::SerializeFromString(const std::string& src, SERespiratoryMechanics& dst, SerializationFormat m)
+bool PBPhysiology::SerializeFromString(const std::string& src, SERespiratoryMechanics& dst, eSerializationFormat m)
 {
   CDM_BIND::RespiratoryMechanicsData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

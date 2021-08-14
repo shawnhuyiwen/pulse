@@ -1,15 +1,15 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/PatientNutrition.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBPatientNutrition.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "patient/SEMeal.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBPatientNutrition.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/patient/SEMeal.h"
+#include "cdm/utils/FileUtils.h"
 
 
 void PBPatientNutrition::Load(const CDM_BIND::NutritionData& src, SENutrition& dst)
@@ -74,7 +74,7 @@ void PBPatientNutrition::Copy(const SENutrition& src, SENutrition& dst)
   PBPatientNutrition::Serialize(data, dst);
 }
 
-bool PBPatientNutrition::SerializeToString(const SENutrition& src, std::string& output, SerializationFormat m)
+bool PBPatientNutrition::SerializeToString(const SENutrition& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::NutritionData data;
   PBPatientNutrition::Serialize(src, data);
@@ -87,7 +87,7 @@ bool PBPatientNutrition::SerializeToFile(const SENutrition& src, const std::stri
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBPatientNutrition::SerializeFromString(const std::string& src, SENutrition& dst, SerializationFormat m)
+bool PBPatientNutrition::SerializeFromString(const std::string& src, SENutrition& dst, eSerializationFormat m)
 {
   CDM_BIND::NutritionData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
@@ -135,7 +135,7 @@ void PBPatientNutrition::Copy(const SEMeal& src, SEMeal& dst)
   PBPatientNutrition::Serialize(data, dst);
 }
 
-bool PBPatientNutrition::SerializeToString(const SEMeal& src, std::string& output, SerializationFormat m)
+bool PBPatientNutrition::SerializeToString(const SEMeal& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::MealData data;
   PBPatientNutrition::Serialize(src, data);
@@ -148,7 +148,7 @@ bool PBPatientNutrition::SerializeToFile(const SEMeal& src, const std::string& f
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBPatientNutrition::SerializeFromString(const std::string& src, SEMeal& dst, SerializationFormat m)
+bool PBPatientNutrition::SerializeFromString(const std::string& src, SEMeal& dst, eSerializationFormat m)
 {
   CDM_BIND::MealData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

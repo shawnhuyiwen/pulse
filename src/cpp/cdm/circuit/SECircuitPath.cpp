@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "circuit/SECircuitPath.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/SECircuitPath.h"
 
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -621,9 +621,9 @@ PotentialScalar& SECircuitPath<CIRCUIT_PATH_TYPES>::GetValveBreakdownPotential()
   return *m_ValveBreakdownPotential;
 }
 
-#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
 template class SECircuitPath<FLUID_CIRCUIT_PATH>;
-#include "circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
 template class SECircuitPath<ELECTRICAL_CIRCUIT_PATH>;
-#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
 template class SECircuitPath<THERMAL_CIRCUIT_PATH>;

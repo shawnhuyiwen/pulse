@@ -12,12 +12,12 @@
 //----------------------------------------------------------------------------
 #pragma once
 
-#include "QuantityTypeDescriptor.h"
-#include "UnitDescriptor.h"
-#include "PrefixDescriptor.h"
-#include "QuantityConversionDescriptor.h"
-#include "QuantityConversionKey.h"
-#include "UnitDimension.h"
+#include "cdm/utils/unitconversion/QuantityTypeDescriptor.h"
+#include "cdm/utils/unitconversion/UnitDescriptor.h"
+#include "cdm/utils/unitconversion/PrefixDescriptor.h"
+#include "cdm/utils/unitconversion/QuantityConversionDescriptor.h"
+#include "cdm/utils/unitconversion/QuantityConversionKey.h"
+#include "cdm/utils/unitconversion/UnitDimension.h"
 #include <cassert>
 
 class CDM_DECL CUnitConversionEngine

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 
 class CDM_DECL SEUrinate : public SEPatientAction
 {

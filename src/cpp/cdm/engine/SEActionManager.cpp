@@ -1,17 +1,17 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SEAction.h"
-#include "engine/SEActionManager.h"
-#include "patient/actions/SEPatientAction.h"
-#include "engine/SEPatientActionCollection.h"
-#include "system/environment/actions/SEEnvironmentAction.h"
-#include "engine/SEEnvironmentActionCollection.h"
-#include "system/equipment/SEEquipmentAction.h"
-#include "engine/SEEquipmentActionCollection.h"
-#include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBEngine.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SEAction.h"
+#include "cdm/engine/SEActionManager.h"
+#include "cdm/patient/actions/SEPatientAction.h"
+#include "cdm/engine/SEPatientActionCollection.h"
+#include "cdm/system/environment/actions/SEEnvironmentAction.h"
+#include "cdm/engine/SEEnvironmentActionCollection.h"
+#include "cdm/system/equipment/SEEquipmentAction.h"
+#include "cdm/engine/SEEquipmentActionCollection.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/io/protobuf/PBEngine.h"
 
 SEActionManager::SEActionManager(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
 {
@@ -34,7 +34,7 @@ void SEActionManager::Clear()
   m_EquipmentActions->Clear();
 }
 
-bool SEActionManager::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEActionManager::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
@@ -42,7 +42,7 @@ bool SEActionManager::SerializeToFile(const std::string& filename) const
 {
   return PBEngine::SerializeToFile(*this, filename);
 }
-bool SEActionManager::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEActionManager::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }
@@ -59,11 +59,11 @@ bool SEActionManager::SerializeFromFile(const std::string& filename)
 // A hemorrhage with no flow rate isinvalid and used to turn off an existing hemorrhage
 // So we need to serialize that invalid action in, and have it processed by the engine action manager
 // So this method is intended to be a middle man between the socket/language client and an engine.
-bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEActionManager::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }
-bool SEActionManager::SerializeFromString(const std::string& src, std::map<int,std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEActionManager::SerializeFromString(const std::string& src, std::map<int,std::vector<const SEAction*>>& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }

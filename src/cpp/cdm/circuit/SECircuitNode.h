@@ -2,12 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalarElectricCharge.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarEnergy.h"
+#include "cdm/properties/SEScalarElectricCharge.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarEnergy.h"
 
 #define CIRCUIT_NODE_TEMPLATE typename BlackBoxType, typename PotentialScalar, typename QuantityScalar
 #define CIRCUIT_NODE_TYPES BlackBoxType,PotentialScalar,QuantityScalar

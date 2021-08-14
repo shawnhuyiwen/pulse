@@ -1,19 +1,19 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "circuit/SECircuitManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/SECircuitManager.h"
 
-#include "circuit/fluid/SEFluidCircuit.h"
-#include "circuit/fluid/SEFluidCircuitNode.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/circuit/fluid/SEFluidCircuit.h"
+#include "cdm/circuit/fluid/SEFluidCircuitNode.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
 
-#include "circuit/thermal/SEThermalCircuit.h"
-#include "circuit/thermal/SEThermalCircuitNode.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/circuit/thermal/SEThermalCircuit.h"
+#include "cdm/circuit/thermal/SEThermalCircuitNode.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
 
-#include "circuit/electrical/SEElectricalCircuit.h"
-#include "circuit/electrical/SEElectricalCircuitNode.h"
-#include "circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/circuit/electrical/SEElectricalCircuit.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitNode.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
 
 
 template<CIRCUIT_LEDGER_TEMPLATE>

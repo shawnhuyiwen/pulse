@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceConcentration.h"
-#include "properties/SEScalarMassPerVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceConcentration.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
 
 SESubstanceConcentration::SESubstanceConcentration(const SESubstance& substance) : Loggable(substance.GetLogger()), m_Substance(substance)
 {

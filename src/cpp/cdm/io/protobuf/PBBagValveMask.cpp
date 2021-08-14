@@ -1,19 +1,19 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/BagValveMask.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBBagValveMask.h"
-#include "io/protobuf/PBSubstance.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "system/equipment/bag_valve_mask/SEBagValveMask.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarTime.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBBagValveMask.h"
+#include "cdm/io/protobuf/PBSubstance.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/FileUtils.h"
 
 void PBBagValveMask::Load(const CDM_BIND::BagValveMaskData& src, SEBagValveMask& dst, const SESubstanceManager& subMgr)
 {
@@ -112,7 +112,7 @@ void PBBagValveMask::Serialize(const SEBagValveMask& src, CDM_BIND::BagValveMask
     dst.mutable_concentrationinspiredaerosol()->AddAllocated(PBSubstance::Unload(*sc));
 }
 
-bool PBBagValveMask::SerializeToString(const SEBagValveMask& src, std::string& output, SerializationFormat m)
+bool PBBagValveMask::SerializeToString(const SEBagValveMask& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::BagValveMaskData data;
   PBBagValveMask::Serialize(src, data);
@@ -125,7 +125,7 @@ bool PBBagValveMask::SerializeToFile(const SEBagValveMask& src, const std::strin
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBBagValveMask::SerializeFromString(const std::string& src, SEBagValveMask& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBBagValveMask::SerializeFromString(const std::string& src, SEBagValveMask& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::BagValveMaskData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

@@ -1,22 +1,22 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Environment.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBEnvironment.h"
-#include "io/protobuf/PBSubstance.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "system/environment/SEEnvironment.h"
-#include "system/environment/SEActiveConditioning.h"
-#include "system/environment/SEAppliedTemperature.h"
-#include "system/environment/SEEnvironmentalConditions.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarPower.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBEnvironment.h"
+#include "cdm/io/protobuf/PBSubstance.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/system/environment/SEEnvironment.h"
+#include "cdm/system/environment/SEActiveConditioning.h"
+#include "cdm/system/environment/SEAppliedTemperature.h"
+#include "cdm/system/environment/SEEnvironmentalConditions.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/utils/FileUtils.h"
 
 void PBEnvironment::Load(const CDM_BIND::EnvironmentData& src, SEEnvironment& dst, const SESubstanceManager& subMgr)
 {
@@ -275,7 +275,7 @@ void PBEnvironment::Copy(const SEActiveConditioning& src, SEActiveConditioning& 
   PBEnvironment::Serialize(data, dst);
 }
 
-bool PBEnvironment::SerializeToString(const SEEnvironmentalConditions& src, std::string& output, SerializationFormat m)
+bool PBEnvironment::SerializeToString(const SEEnvironmentalConditions& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::EnvironmentalConditionsData data;
   PBEnvironment::Serialize(src, data);
@@ -288,7 +288,7 @@ bool PBEnvironment::SerializeToFile(const SEEnvironmentalConditions& src, const 
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalConditions& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEnvironment::SerializeFromString(const std::string& src, SEEnvironmentalConditions& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::EnvironmentalConditionsData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

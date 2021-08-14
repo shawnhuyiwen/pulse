@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "utils/testing/SETestCase.h"
-#include "utils/testing/SETestSuite.h"
-#include "utils/testing/SETestErrorStatistics.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/testing/SETestCase.h"
+#include "cdm/utils/testing/SETestSuite.h"
+#include "cdm/utils/testing/SETestErrorStatistics.h"
+#include "cdm/properties/SEScalarTime.h"
 
 SETestSuite::SETestSuite(Logger* logger) : Loggable(logger)
 {

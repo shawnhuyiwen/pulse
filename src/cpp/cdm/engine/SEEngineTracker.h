@@ -18,7 +18,7 @@ class SEGasSubstanceQuantity;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 class SEThermalCompartment;
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 enum class CompartmentUpdate {None,
                               InFlow, OutFlow,

@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/physiology/SETissueSystem.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/physiology/SETissueSystem.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 SETissueSystem::SETissueSystem(Logger* logger) : SESystem(logger)
 {

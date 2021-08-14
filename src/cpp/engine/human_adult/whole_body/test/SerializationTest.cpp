@@ -110,9 +110,9 @@ namespace HUMAN_ADULT_WHOLE_BODY
     // Save and Load the Engine State
     pc->GetLogger()->Info("Serializing");
     std::string state;
-    pc->SerializeToString(state, BINARY);
+    pc->SerializeToString(state, eSerializationFormat::BINARY);
     now.SetValue(pc->GetSimulationTime(TimeUnit::s), TimeUnit::s);
-    pc->SerializeFromString(state, BINARY);
+    pc->SerializeFromString(state, eSerializationFormat::BINARY);
     pc->SetSimulationTime(now);
 
     // Change the results file

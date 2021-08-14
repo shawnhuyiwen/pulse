@@ -1,24 +1,24 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 #include <sstream>
-#include "utils/GeneralMath.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/fluid/SELiquidCompartmentLink.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarInversePressure.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarOsmolarity.h"
-#include "properties/SEScalarOsmolality.h"
+#include "cdm/utils/GeneralMath.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentLink.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarInversePressure.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarMassPerAmount.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalarOsmolarity.h"
+#include "cdm/properties/SEScalarOsmolality.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief

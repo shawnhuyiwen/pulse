@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 class CDM_DECL SEProperty
 {

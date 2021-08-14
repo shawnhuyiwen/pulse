@@ -1,16 +1,16 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/EnvironmentConditions.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBEnvironmentConditions.h"
-#include "io/protobuf/PBEnvironment.h"
-#include "io/protobuf/PBConditions.h"
-#include "system/environment/SEEnvironment.h"
-#include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/io/protobuf/PBEnvironmentConditions.h"
+#include "cdm/io/protobuf/PBEnvironment.h"
+#include "cdm/io/protobuf/PBConditions.h"
+#include "cdm/system/environment/SEEnvironment.h"
+#include "cdm/system/environment/conditions/SEInitialEnvironmentalConditions.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 void PBEnvironmentCondition::Serialize(const CDM_BIND::EnvironmentConditionData& src, SEEnvironmentCondition& dst)
 {

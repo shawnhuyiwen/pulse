@@ -34,7 +34,7 @@ namespace pulse::study::hydrocephalus
     m_SimulationResultsList = new pulse::study::bind::hydrocephalus::SimulationListData();
     if (FileExists(m_SimulationResultsListFile))
     {
-      if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList, SerializationFormat::JSON))
+      if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList, eSerializationFormat::JSON))
       {
         GetLogger()->Warning("Unable to read found results file");
       }
@@ -45,7 +45,7 @@ namespace pulse::study::hydrocephalus
     return b;
   }
 
-  bool HRunner::Run(const std::string& filename, SerializationFormat f)
+  bool HRunner::Run(const std::string& filename, eSerializationFormat f)
   {
     SAFE_DELETE(m_SimulationList);
     SAFE_DELETE(m_SimulationResultsList);
@@ -300,7 +300,7 @@ namespace pulse::study::hydrocephalus
     m_mutex.lock();
     auto rSim = m_SimulationResultsList->mutable_simulation()->Add();
     rSim->CopyFrom(sim);
-    SerializeToFile(*m_SimulationResultsList, m_SimulationResultsListFile, SerializationFormat::JSON);
+    SerializeToFile(*m_SimulationResultsList, m_SimulationResultsListFile, eSerializationFormat::JSON);
     Info("Completed Simulation " + std::to_string(m_SimulationResultsList->simulation_size()) + " of " + std::to_string(m_SimulationList->simulation_size()));
     if (sim.achievedstabilization())
       Info("  Stabilized Run " + std::to_string(sim.id()) + " : " + sim.name());
@@ -309,7 +309,7 @@ namespace pulse::study::hydrocephalus
     m_mutex.unlock();
   }
 
-  bool HRunner::SerializeToString(pulse::study::bind::hydrocephalus::SimulationListData& src, std::string& output, SerializationFormat f) const
+  bool HRunner::SerializeToString(pulse::study::bind::hydrocephalus::SimulationListData& src, std::string& output, eSerializationFormat f) const
   {
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
@@ -322,14 +322,14 @@ namespace pulse::study::hydrocephalus
     }
     return true;
   }
-  bool HRunner::SerializeToFile(pulse::study::bind::hydrocephalus::SimulationListData& src, const std::string& filename, SerializationFormat f) const
+  bool HRunner::SerializeToFile(pulse::study::bind::hydrocephalus::SimulationListData& src, const std::string& filename, eSerializationFormat f) const
   {
     std::string content;
     if (!SerializeToString(src, content, f))
       return false;
     return WriteFile(content, filename);
   }
-  bool HRunner::SerializeFromString(const std::string& src, pulse::study::bind::hydrocephalus::SimulationListData& dst, SerializationFormat f)
+  bool HRunner::SerializeFromString(const std::string& src, pulse::study::bind::hydrocephalus::SimulationListData& dst, eSerializationFormat f)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
     google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
@@ -344,7 +344,7 @@ namespace pulse::study::hydrocephalus
     }
     return true;
   }
-  bool HRunner::SerializeFromFile(const std::string& filename, pulse::study::bind::hydrocephalus::SimulationListData& dst, SerializationFormat f)
+  bool HRunner::SerializeFromFile(const std::string& filename, pulse::study::bind::hydrocephalus::SimulationListData& dst, eSerializationFormat f)
   {
     std::string content;
     if (!ReadFile(filename, content))

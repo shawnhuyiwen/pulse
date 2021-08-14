@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarTime.h"
 
 // Keep enums in sync with appropriate schema/cdm/Event.proto file !!
 enum class eEvent
@@ -76,8 +76,8 @@ public:
   SEActiveEvent(eEvent e, const SEScalarTime& duration);
   SEActiveEvent(eEvent e, double duration, const TimeUnit& unit);
 
-  static bool SerializeToString(std::vector<const SEActiveEvent*>& active, std::string& output, SerializationFormat m, Logger* logger);
-  static bool SerializeFromString(const std::string& src, std::vector<const SEActiveEvent*>& active, SerializationFormat m, Logger* logger);
+  static bool SerializeToString(std::vector<const SEActiveEvent*>& active, std::string& output, eSerializationFormat m, Logger* logger);
+  static bool SerializeFromString(const std::string& src, std::vector<const SEActiveEvent*>& active, eSerializationFormat m, Logger* logger);
 
   eEvent GetEvent() const { return m_Event; }
   const SEScalarTime& GetDuration() const { return m_Duration; }
@@ -92,8 +92,8 @@ class CDM_DECL SEEventChange
 public:
   SEEventChange(eEvent e, bool active, const SEScalarTime* simTime = nullptr);
 
-  static bool SerializeToString(std::vector<const SEEventChange*>& changes, std::string& output, SerializationFormat m, Logger* logger);
-  static bool SerializeFromString(const std::string& src, std::vector<const SEEventChange*>& changes, SerializationFormat m, Logger* logger);
+  static bool SerializeToString(std::vector<const SEEventChange*>& changes, std::string& output, eSerializationFormat m, Logger* logger);
+  static bool SerializeFromString(const std::string& src, std::vector<const SEEventChange*>& changes, eSerializationFormat m, Logger* logger);
 
   eEvent GetEvent() const { return m_Event; }
   bool   GetActive() const { return m_Active; }

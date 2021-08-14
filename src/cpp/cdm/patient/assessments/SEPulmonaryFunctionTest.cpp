@@ -1,16 +1,16 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "patient/SEPatient.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEFunctionVolumeVsTime.h"
-#include "io/protobuf/PBPatientAssessments.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEFunctionVolumeVsTime.h"
+#include "cdm/io/protobuf/PBPatientAssessments.h"
 
 SEPulmonaryFunctionTest::SEPulmonaryFunctionTest(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -71,7 +71,7 @@ void SEPulmonaryFunctionTest::Clear()
   INVALIDATE_PROPERTY(m_LungVolumePlot);
 }
 
-bool SEPulmonaryFunctionTest::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEPulmonaryFunctionTest::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }

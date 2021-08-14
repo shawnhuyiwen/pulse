@@ -1,21 +1,21 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "blackbox/SEBlackBoxManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/blackbox/SEBlackBoxManager.h"
 
-#include "compartment/electrical/SEElectricalCompartment.h"
-#include "compartment/electrical/SEElectricalCompartmentLink.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SEGasCompartmentLink.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/fluid/SELiquidCompartmentLink.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/thermal/SEThermalCompartmentLink.h"
+#include "cdm/compartment/electrical/SEElectricalCompartment.h"
+#include "cdm/compartment/electrical/SEElectricalCompartmentLink.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SEGasCompartmentLink.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentLink.h"
+#include "cdm/compartment/thermal/SEThermalCompartment.h"
+#include "cdm/compartment/thermal/SEThermalCompartmentLink.h"
 
-#include "circuit/electrical/SEElectricalCircuitPath.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
 
 SEBlackBoxManager::SEBlackBoxManager(Logger* logger) : Loggable(logger)
 {

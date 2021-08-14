@@ -1,20 +1,20 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/AnesthesiaMachine.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBAnesthesiaMachine.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarTime.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBAnesthesiaMachine.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/FileUtils.h"
 
 
 void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst, const SESubstanceManager& subMgr)
@@ -152,7 +152,7 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachineOxygenBottle& src, 
     dst.set_allocated_volume(PBProperty::Unload(*src.m_Volume));
 }
 
-bool PBAnesthesiaMachine::SerializeToString(const SEAnesthesiaMachine& src, std::string& output, SerializationFormat m)
+bool PBAnesthesiaMachine::SerializeToString(const SEAnesthesiaMachine& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::AnesthesiaMachineData data;
   PBAnesthesiaMachine::Serialize(src, data);
@@ -165,7 +165,7 @@ bool PBAnesthesiaMachine::SerializeToFile(const SEAnesthesiaMachine& src, const 
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthesiaMachine& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBAnesthesiaMachine::SerializeFromString(const std::string& src, SEAnesthesiaMachine& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::AnesthesiaMachineData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

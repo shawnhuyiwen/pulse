@@ -11,7 +11,7 @@ endmacro()
 
 function(add_library_ex target)
 
-  set(options VERBOSE SHARED LIB_INSTALL_ONLY)
+  set(options VERBOSE SHARED LIB_INSTALL_ONLY NO_INSTALL)
   set(oneValueArgs)
   set(multiValueArgs H_FILES CPP_FILES SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS INSTALL_HEADER_DIR)
   include(CMakeParseArguments)
@@ -121,30 +121,34 @@ function(add_library_ex target)
                            $<$<CXX_COMPILER_ID:MSVC>:
                                 -W4 -MP>)
 
-  if(NOT target_LIB_INSTALL_ONLY)
+  if(NOT target_NO_INSTALL)
+    if(NOT target_LIB_INSTALL_ONLY)
+      #-----------------------------------------------------------------------------
+      # Install headers
+      #-----------------------------------------------------------------------------
+      foreach(h ${target_H_FILES})
+        #message(STATUS "Header at ${h}")
+        get_filename_component(DEST_DIR ${h} DIRECTORY)
+        #message(STATUS "Going to ${target_INSTALL_HEADER_DIR}/${DEST_DIR}")
+        install(FILES
+          ${h}
+          DESTINATION include/${${PROJECT_NAME}_INSTALL_FOLDER}/${target_INSTALL_HEADER_DIR}/${DEST_DIR}
+          COMPONENT Development
+        )
+      endforeach()
+    endif()
+    
     #-----------------------------------------------------------------------------
-    # Install headers
+    # Install library
     #-----------------------------------------------------------------------------
-    foreach(h ${target_H_FILES})
-      #message(STATUS "Header at ${h}")
-      get_filename_component(DEST_DIR ${h} DIRECTORY)
-      #message(STATUS "Going to ${target_INSTALL_HEADER_DIR}/${DEST_DIR}")
-      install(FILES
-        ${h}
-        DESTINATION include/${${PROJECT_NAME}_INSTALL_FOLDER}/${target_INSTALL_HEADER_DIR}/${DEST_DIR}
-        COMPONENT Development
+    install( TARGETS ${target} EXPORT ${PROJECT_NAME}Targets
+      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION lib COMPONENT Development
       )
-    endforeach()
+  else()
+    message(STATUS "Not installing ${target}")
   endif()
-  
-  #-----------------------------------------------------------------------------
-  # Install library
-  #-----------------------------------------------------------------------------
-  install( TARGETS ${target} EXPORT ${PROJECT_NAME}Targets
-    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib COMPONENT Development
-    )
 
   #-----------------------------------------------------------------------------
   # Add the target to project folders

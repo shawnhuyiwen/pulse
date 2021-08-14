@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarAmountPerVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
 
 AmountPerVolumeUnit AmountPerVolumeUnit::mol_Per_L("mol/L");
 AmountPerVolumeUnit AmountPerVolumeUnit::mol_Per_mL("mol/mL");

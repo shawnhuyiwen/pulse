@@ -1,18 +1,18 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "io/protobuf/PBEquipmentActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/io/protobuf/PBEquipmentActions.h"
 
 SEAnesthesiaMachineConfiguration::SEAnesthesiaMachineConfiguration(Logger* logger) : SEAnesthesiaMachineAction(logger)
 {

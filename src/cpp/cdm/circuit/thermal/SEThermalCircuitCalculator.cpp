@@ -1,15 +1,15 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "circuit/thermal/SEThermalCircuitCalculator.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/thermal/SEThermalCircuitCalculator.h"
 
-#include "properties/SEScalarHeatCapacitance.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarHeatInductance.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarEnergy.h"
-#include "properties/SEScalarHeatResistance.h"
+#include "cdm/properties/SEScalarHeatCapacitance.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarHeatInductance.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarEnergy.h"
+#include "cdm/properties/SEScalarHeatResistance.h"
 
 
 SEThermalCircuitCalculator::SEThermalCircuitCalculator(Logger* logger) : SECircuitCalculator<SEThermalCircuit, SEThermalCircuitNode,SEThermalCircuitPath, SEThermalBlackBox, HeatCapacitanceUnit, PowerUnit, HeatInductanceUnit, TemperatureUnit, EnergyUnit, HeatResistanceUnit>(

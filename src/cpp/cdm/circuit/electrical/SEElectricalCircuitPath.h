@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuitPath.h"
-#include "circuit/electrical/SEElectricalCircuitNode.h"
+#include "cdm/circuit/SECircuitPath.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitNode.h"
 
 class CDM_DECL SEElectricalCircuitPath : public SECircuitPath<ELECTRICAL_CIRCUIT_PATH>
 {

@@ -1,24 +1,24 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Actions.pb.h"
 #include "pulse/cdm/bind/Scenario.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBActions.h"
-#include "io/protobuf/PBPatientActions.h"
-#include "io/protobuf/PBEnvironmentActions.h"
-#include "io/protobuf/PBEquipmentActions.h"
-#include "io/protobuf/PBProperties.h"
-#include "patient/actions/SEPatientAction.h"
-#include "system/environment/actions/SEEnvironmentAction.h"
-#include "system/equipment/SEEquipmentAction.h"
-#include "engine/SEAdvanceTime.h"
-#include "engine/SESerializeState.h"
-#include "engine/SEOverrides.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/io/protobuf/PBActions.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
+#include "cdm/io/protobuf/PBEnvironmentActions.h"
+#include "cdm/io/protobuf/PBEquipmentActions.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/patient/actions/SEPatientAction.h"
+#include "cdm/system/environment/actions/SEEnvironmentAction.h"
+#include "cdm/system/equipment/SEEquipmentAction.h"
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SESerializeState.h"
+#include "cdm/engine/SEOverrides.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarTime.h"
 
 const std::string& eAppliedRespiratoryCycle_Name(eAppliedRespiratoryCycle c)
 {

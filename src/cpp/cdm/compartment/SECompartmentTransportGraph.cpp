@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "compartment/SECompartmentTransportGraph.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/compartment/SECompartmentTransportGraph.h"
 
 template<COMPARTMENT_TRANSPORT_GRAPH_TEMPLATE>
 SECompartmentTransportGraph<COMPARTMENT_TRANSPORT_GRAPH_TYPES>::SECompartmentTransportGraph(const std::string& name, Logger* logger) : SECompartmentGraph<COMPARTMENT_GRAPH_TYPES>(name,logger)
@@ -104,7 +104,7 @@ const std::vector<GraphEdgeType*>* SECompartmentTransportGraph<COMPARTMENT_TRANS
   return itr->second;
 }
 
-#include "compartment/fluid/SEGasCompartmentGraph.h"
+#include "cdm/compartment/fluid/SEGasCompartmentGraph.h"
 template class SECompartmentTransportGraph<SEGasTransportGraph, SEGasTransportVertex, SEGasTransportEdge, SEGasCompartment, SEGasCompartmentLink>;
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentGraph.h"
 template class SECompartmentTransportGraph<SELiquidTransportGraph, SELiquidTransportVertex, SELiquidTransportEdge, SELiquidCompartment, SELiquidCompartmentLink>;

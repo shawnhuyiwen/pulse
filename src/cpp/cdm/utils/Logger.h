@@ -135,8 +135,8 @@ public:
   LogMessages() {}
   virtual ~LogMessages() {};
 
-  bool static SerializeToString(const LogMessages& msgs, std::string& output, SerializationFormat m, Logger* logger);
-  bool static SerializeFromString(const std::string& src, LogMessages& msgs, SerializationFormat m, Logger* logger);
+  bool static SerializeToString(const LogMessages& msgs, std::string& output, eSerializationFormat m, Logger* logger);
+  bool static SerializeFromString(const std::string& src, LogMessages& msgs, eSerializationFormat m, Logger* logger);
 
   void Clear()
   {

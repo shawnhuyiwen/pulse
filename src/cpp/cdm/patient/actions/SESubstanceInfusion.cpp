@@ -1,13 +1,13 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/actions/SESubstanceInfusion.h"
-#include "substance/SESubstance.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/actions/SESubstanceInfusion.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SESubstanceInfusion::SESubstanceInfusion(const SESubstance& substance, Logger* logger) : SEPatientAction(logger), m_Substance(substance)
 {

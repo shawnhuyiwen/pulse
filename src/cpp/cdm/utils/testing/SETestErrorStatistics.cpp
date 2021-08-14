@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "utils/testing/SETestErrorStatistics.h"
-#include "properties/SEFunction.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/testing/SETestErrorStatistics.h"
+#include "cdm/properties/SEFunction.h"
 
 SETestErrorStatistics::SETestErrorStatistics(Logger* logger) : Loggable(logger)
 {

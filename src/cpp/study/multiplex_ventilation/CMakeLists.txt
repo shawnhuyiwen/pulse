@@ -14,6 +14,7 @@ add_library_ex(MultiplexVentilationEngine
     protobuf::libprotobuf
   INSTALL_HEADER_DIR
     study/multiplex_ventilation
+  NO_INSTALL
   )
 set_target_properties(MultiplexVentilationEngine PROPERTIES FOLDER "Studies//MultiplexVentilation")
 

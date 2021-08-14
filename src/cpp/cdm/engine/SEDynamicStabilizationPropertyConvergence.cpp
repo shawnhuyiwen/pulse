@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SEDynamicStabilizationPropertyConvergence.h"
-#include "engine/SEDataRequest.h"
-#include "engine/SEEngineTracker.h"
-#include "properties/SEScalar.h"
-#include "utils/GeneralMath.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SEDynamicStabilizationPropertyConvergence.h"
+#include "cdm/engine/SEDataRequest.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/properties/SEScalar.h"
+#include "cdm/utils/GeneralMath.h"
 
 SEDynamicStabilizationPropertyConvergence::SEDynamicStabilizationPropertyConvergence(SEDataRequest& dr, Logger* logger) : Loggable(logger), m_DataRequest(dr)
 {

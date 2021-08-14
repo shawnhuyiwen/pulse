@@ -15,6 +15,7 @@ add_library_ex(PulseJNI SHARED
   PUBLIC_DEPENDS
     CommonDataModelTests
     PulseEngineTests
+  LIB_INSTALL_ONLY
 )
 target_include_directories(PulseJNI PRIVATE ${JNI_INCLUDE_DIRS})
 set_target_properties (PulseJNI PROPERTIES FOLDER ${PROJECT_NAME})

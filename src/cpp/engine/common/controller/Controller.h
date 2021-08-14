@@ -239,10 +239,10 @@ namespace PULSE_ENGINE
     virtual bool SerializeFromFile(const std::string& file);
     virtual bool SerializeToFile(const std::string& file) const;
 
-    virtual bool SerializeFromString(const std::string& state, SerializationFormat m);
-    virtual bool SerializeToString(std::string& state, SerializationFormat m) const;
+    virtual bool SerializeFromString(const std::string& state, eSerializationFormat m);
+    virtual bool SerializeToString(std::string& state, eSerializationFormat m) const;
 
-    virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m);
+    virtual bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m);
     virtual bool InitializeEngine(const SEPatientConfiguration& patient_configuration);
     virtual bool IsReady() const;
 

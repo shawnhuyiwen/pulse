@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEHistogramFractionVsLength.h"
-#include "properties/SEScalarLength.h"
-#include "properties/SEScalar0To1.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEHistogramFractionVsLength.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalar0To1.h"
 #include <numeric>
 
 

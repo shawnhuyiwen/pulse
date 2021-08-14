@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "compartment/SECompartmentLink.h"
-#include "circuit/SECircuitManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/compartment/SECompartmentLink.h"
+#include "cdm/circuit/SECircuitManager.h"
 
 SECompartmentLink::SECompartmentLink(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)
 {

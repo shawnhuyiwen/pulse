@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 
-#include "SEInhalerAction.h"
+#include "cdm/system/equipment/inhaler/actions/SEInhalerAction.h"
 class SEInhaler;
 
 class CDM_DECL SEInhalerConfiguration : public SEInhalerAction

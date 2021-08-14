@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 
 #define ENGINE_TEST_DECL
 #ifdef SHARED_ENGINE_TEST

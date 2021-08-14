@@ -37,16 +37,16 @@ namespace PULSE_ENGINE
     return GetController().SerializeToFile(filename);
   }
 
-  bool Engine::SerializeFromString(const std::string& src, SerializationFormat m)
+  bool Engine::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
     return GetController().SerializeFromString(src, m);
   }
-  bool Engine::SerializeToString(std::string& output, SerializationFormat m) const
+  bool Engine::SerializeToString(std::string& output, eSerializationFormat m) const
   {
     return GetController().SerializeToString(output, m);
   }
 
-  bool Engine::InitializeEngine(const std::string& patient_configuration, SerializationFormat m)
+  bool Engine::InitializeEngine(const std::string& patient_configuration, eSerializationFormat m)
   {
     return GetController().InitializeEngine(patient_configuration, m);
   }

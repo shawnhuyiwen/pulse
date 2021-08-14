@@ -3,13 +3,13 @@ See accompanying NOTICE file for details.*/
 
 #pragma once
 
-#include "PhysiologyEngineThunk.h"
-#include "utils/ThreadPool.h"
+#include "cdm/PhysiologyEngineThunk.h"
+#include "cdm/utils/ThreadPool.h"
 #include <chrono>
 
-#include "engine/SEDataRequested.h"
-#include "engine/SEEngineInitialization.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/engine/SEDataRequested.h"
+#include "cdm/engine/SEEngineInitialization.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 // TODO Template these class and move to CDM
 // (Template is the PhysiologEngine type)
@@ -81,13 +81,13 @@ public:
   PhysiologyEnginePoolThunk(size_t poolSize = 0, const std::string& dataDir="./");
   virtual ~PhysiologyEnginePoolThunk();
 
-  bool InitializeEngines(std::string const& engineInitializationList, SerializationFormat format);
+  bool InitializeEngines(std::string const& engineInitializationList, eSerializationFormat format);
 
   bool RemoveEngine(int id);
 
-  bool ProcessActions(std::string const& actions, SerializationFormat format);
+  bool ProcessActions(std::string const& actions, eSerializationFormat format);
 
-  std::string PullRequestedData(SerializationFormat format);
+  std::string PullRequestedData(eSerializationFormat format);
 
 private:
   class pimpl;

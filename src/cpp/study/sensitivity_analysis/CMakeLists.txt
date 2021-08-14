@@ -10,6 +10,7 @@ add_library_ex(SensitivityAnalysisEngine
     protobuf::libprotobuf
   INSTALL_HEADER_DIR
     study/sensitivity_analysis
+  NO_INSTALL
   )
 set_target_properties(SensitivityAnalysisEngine PROPERTIES FOLDER "Studies//SensitivityAnalysis")
 

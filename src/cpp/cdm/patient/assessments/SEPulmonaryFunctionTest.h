@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/assessments/SEPatientAssessment.h"
+#include "cdm/patient/assessments/SEPatientAssessment.h"
 class SEPatient;
 class SERespiratorySystem;
 
@@ -16,7 +16,7 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
 
   virtual int GetNumberOfPlotPoints(){ return m_NumberOfPlotPoints; }

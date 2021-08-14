@@ -1,17 +1,17 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "properties/SEScalarArea.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarAmountPerTime.h"
-#include "properties/SEScalarPressure.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/physiology/SEEnergySystem.h"
+#include "cdm/properties/SEScalarArea.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarAmountPerTime.h"
+#include "cdm/properties/SEScalarPressure.h"
 
 SEEnergySystem::SEEnergySystem(Logger* logger) : SESystem(logger)
 {

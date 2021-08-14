@@ -1,17 +1,17 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Inhaler.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBInhaler.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "system/equipment/inhaler/SEInhaler.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBInhaler.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/system/equipment/inhaler/SEInhaler.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/utils/FileUtils.h"
 
 void PBInhaler::Load(const CDM_BIND::InhalerData& src, SEInhaler& dst, const SESubstanceManager& subMgr)
 {
@@ -52,7 +52,7 @@ void PBInhaler::Serialize(const SEInhaler& src, CDM_BIND::InhalerData& dst)
     dst.set_substance(src.m_Substance->GetName());
 }
 
-bool PBInhaler::SerializeToString(const SEInhaler& src, std::string& output, SerializationFormat m)
+bool PBInhaler::SerializeToString(const SEInhaler& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::InhalerData data;
   PBInhaler::Serialize(src, data);
@@ -65,7 +65,7 @@ bool PBInhaler::SerializeToFile(const SEInhaler& src, const std::string& filenam
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBInhaler::SerializeFromString(const std::string& src, SEInhaler& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::InhalerData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

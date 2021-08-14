@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/actions/SEIntubation.h"
-#include "io/protobuf/PBPatientActions.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/actions/SEIntubation.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
 
 SEIntubation::SEIntubation(Logger* logger) : SEPatientAction(logger)
 {

@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SESegmentLinear.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SESegmentLinear.h"
 
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarPressurePerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
 
 SESegmentLinear::SESegmentLinear()
 {

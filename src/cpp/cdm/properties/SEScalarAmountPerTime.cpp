@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarAmountPerTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarAmountPerTime.h"
 
 AmountPerTimeUnit AmountPerTimeUnit::mol_Per_day("mol/day");
 AmountPerTimeUnit AmountPerTimeUnit::mol_Per_s("mol/s");

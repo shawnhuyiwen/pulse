@@ -1,15 +1,15 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SEDataRequested.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEEventManager.h"
-#include "engine/SEPatientConfiguration.h"
-#include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBEngine.h"
-#include "utils/DataTrack.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SEDataRequested.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/io/protobuf/PBEngine.h"
+#include "cdm/utils/DataTrack.h"
 
 SEDataRequested::SEDataRequested()
 {
@@ -28,11 +28,11 @@ void SEDataRequested::SetEngine(const PhysiologyEngine& engine)
   m_Engine = &engine;
 }
 
-bool SEDataRequested::SerializeToString(std::string& dst, SerializationFormat m) const
+bool SEDataRequested::SerializeToString(std::string& dst, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, dst, m);
 }
-bool SEDataRequested::SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, SerializationFormat m)
+bool SEDataRequested::SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, eSerializationFormat m)
 {
   return PBEngine::SerializeToString(src, dst, m);
 }

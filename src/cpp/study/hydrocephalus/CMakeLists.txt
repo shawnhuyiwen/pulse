@@ -10,6 +10,7 @@ add_library_ex(HydrocephalusEngine
     protobuf::libprotobuf
   INSTALL_HEADER_DIR
     study/hydrocephalus
+  NO_INSTALL
   )
 set_target_properties(HydrocephalusEngine PROPERTIES FOLDER "Studies//Hydrocephalus")
 

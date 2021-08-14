@@ -1,31 +1,31 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "PhysiologyEngineThunk.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/PhysiologyEngineThunk.h"
 
-#include "patient/SEPatient.h"
-#include "patient/assessments/SECompleteBloodCount.h"
-#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "patient/assessments/SEUrinalysis.h"
-#include "engine/SEAction.h"
-#include "engine/SEDataRequest.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEActionManager.h"
-#include "engine/SEConditionManager.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEPatientConfiguration.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "utils/DataTrack.h"
-#include "utils/Logger.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/patient/assessments/SECompleteBloodCount.h"
+#include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
+#include "cdm/patient/assessments/SEUrinalysis.h"
+#include "cdm/engine/SEAction.h"
+#include "cdm/engine/SEDataRequest.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEActionManager.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/utils/DataTrack.h"
+#include "cdm/utils/Logger.h"
 
 PhysiologyEngineThunk::PhysiologyEngineThunk(const std::string& dataDir) : SEEventHandler()
 {
@@ -36,7 +36,7 @@ PhysiologyEngineThunk::~PhysiologyEngineThunk()
   delete[] m_requestedData;
 }
 
-bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format)
+bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::string const& data_requests, eSerializationFormat data_requests_format)
 {
   if (!m_engine->SerializeFromFile(filename))
     return false;
@@ -66,7 +66,7 @@ bool PhysiologyEngineThunk::SerializeToFile(std::string const& filename)
 }
 
 
-bool PhysiologyEngineThunk::SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format)
+bool PhysiologyEngineThunk::SerializeFromString(std::string const& state, std::string const& data_requests, eSerializationFormat format)
 {
   if (!m_engine->SerializeFromString(state, format))
     return false;
@@ -88,7 +88,7 @@ bool PhysiologyEngineThunk::SerializeFromString(std::string const& state, std::s
 }
 
 
-std::string PhysiologyEngineThunk::SerializeToString(SerializationFormat format)
+std::string PhysiologyEngineThunk::SerializeToString(eSerializationFormat format)
 {
   std::string state;
   if (!m_engine->SerializeToString(state, format))
@@ -96,7 +96,7 @@ std::string PhysiologyEngineThunk::SerializeToString(SerializationFormat format)
   return state;
 }
 
-bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format)
+bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, eSerializationFormat format)
 {
   const SESubstanceManager* subMgr;
   if (m_engine->GetSubstanceManager().GetSubstances().empty())
@@ -138,14 +138,14 @@ bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configur
   return true;
 }
 
-std::string PhysiologyEngineThunk::GetInitialPatient(SerializationFormat format)
+std::string PhysiologyEngineThunk::GetInitialPatient(eSerializationFormat format)
 {
   std::string stream;
   m_engine->GetInitialPatient().SerializeToString(stream, format);
   return stream;
 }
 
-std::string PhysiologyEngineThunk::GetConditions(SerializationFormat format)
+std::string PhysiologyEngineThunk::GetConditions(eSerializationFormat format)
 {
   std::string stream;
   m_engine->GetConditionManager().SerializeToString(stream, format);
@@ -164,7 +164,7 @@ void PhysiologyEngineThunk::SetLogFilename(std::string const& logfile)
 {
   m_engine->GetLogger()->SetLogFile(logfile);
 }
-std::string PhysiologyEngineThunk::PullLogMessages(SerializationFormat format)
+std::string PhysiologyEngineThunk::PullLogMessages(eSerializationFormat format)
 {
   std::string log_msgs;
   if (m_logMsgs.IsEmpty())
@@ -179,7 +179,7 @@ void PhysiologyEngineThunk::KeepEventChanges(bool keep)
 {
   m_keepEventChanges = keep;
 }
-std::string PhysiologyEngineThunk::PullEvents(SerializationFormat format)
+std::string PhysiologyEngineThunk::PullEvents(eSerializationFormat format)
 {
   std::string events;
   if (m_events.empty())
@@ -188,17 +188,17 @@ std::string PhysiologyEngineThunk::PullEvents(SerializationFormat format)
   DELETE_VECTOR(m_events);
   return events;
 }
-std::string PhysiologyEngineThunk::PullActiveEvents(SerializationFormat format)
+std::string PhysiologyEngineThunk::PullActiveEvents(eSerializationFormat format)
 {
   std::string active_events;
   if (!m_engine->GetEventManager().GetActiveEvents(m_activeEvents))
     active_events.clear();
-  SEActiveEvent::SerializeToString(m_activeEvents, active_events, SerializationFormat::JSON, m_engine->GetLogger());
+  SEActiveEvent::SerializeToString(m_activeEvents, active_events, eSerializationFormat::JSON, m_engine->GetLogger());
   DELETE_VECTOR(m_activeEvents);
   return active_events;
 }
 
-std::string PhysiologyEngineThunk::GetPatientAssessment(int type, SerializationFormat format)
+std::string PhysiologyEngineThunk::GetPatientAssessment(int type, eSerializationFormat format)
 {
   std::string stream;
   switch (type)
@@ -238,7 +238,7 @@ std::string PhysiologyEngineThunk::GetPatientAssessment(int type, SerializationF
   return stream;
 }
 
-bool PhysiologyEngineThunk::ProcessActions(std::string const& actions, SerializationFormat format)
+bool PhysiologyEngineThunk::ProcessActions(std::string const& actions, eSerializationFormat format)
 {
   bool success = true;
   if (actions.empty())
@@ -274,7 +274,7 @@ bool PhysiologyEngineThunk::ProcessActions(std::string const& actions, Serializa
 
   return success;
 }
-std::string PhysiologyEngineThunk::PullActiveActions(SerializationFormat format)
+std::string PhysiologyEngineThunk::PullActiveActions(eSerializationFormat format)
 {
   std::string stream;
   m_engine->GetActionManager().SerializeToString(stream, format);

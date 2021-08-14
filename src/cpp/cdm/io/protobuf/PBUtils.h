@@ -11,8 +11,8 @@ public:
   static bool SerializeFromFile(const std::string& filename, google::protobuf::Message& dst, Logger* logger);
   static bool SerializeToFile(const google::protobuf::Message& src, const std::string& filename, Logger* logger);
 
-  static bool SerializeFromString(const std::string& src, google::protobuf::Message& dst, SerializationFormat m, Logger* logger);
-  static bool SerializeToString(const google::protobuf::Message& src, std::string& output, SerializationFormat m, Logger* logger);
+  static bool SerializeFromString(const std::string& src, google::protobuf::Message& dst, eSerializationFormat m, Logger* logger);
+  static bool SerializeToString(const google::protobuf::Message& src, std::string& output, eSerializationFormat m, Logger* logger);
 
   static void ProtobufLogHandler(google::protobuf::LogLevel level, const char* filename, int line, const std::string& message);
 

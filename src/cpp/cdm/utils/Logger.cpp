@@ -1,15 +1,15 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "io/protobuf/PBEngine.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/io/protobuf/PBEngine.h"
 #include <cstring>
 
-bool LogMessages::SerializeToString(const LogMessages& msgs, std::string& output, SerializationFormat m, Logger* logger)
+bool LogMessages::SerializeToString(const LogMessages& msgs, std::string& output, eSerializationFormat m, Logger* logger)
 {
   return PBEngine::SerializeToString(msgs, output, m, logger);
 }
-bool LogMessages::SerializeFromString(const std::string& src, LogMessages& msgs, SerializationFormat m, Logger* logger)
+bool LogMessages::SerializeFromString(const std::string& src, LogMessages& msgs, eSerializationFormat m, Logger* logger)
 {
   return PBEngine::SerializeFromString(src, msgs, m, logger);
 }

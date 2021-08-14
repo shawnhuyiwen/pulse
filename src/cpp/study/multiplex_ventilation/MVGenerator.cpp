@@ -353,7 +353,7 @@ namespace pulse::study::multiplex_ventilation
     m_mutex.unlock();
   }
 
-  bool MVGenerator::SerializeToString(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, std::string& output, SerializationFormat f) const
+  bool MVGenerator::SerializeToString(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, std::string& output, eSerializationFormat f) const
   {
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
@@ -370,7 +370,7 @@ namespace pulse::study::multiplex_ventilation
   {
     return PBUtils::SerializeToFile(src, filename, GetLogger());
   }
-  bool MVGenerator::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::PatientStateListData& dst, SerializationFormat f)
+  bool MVGenerator::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::PatientStateListData& dst, eSerializationFormat f)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
     google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)

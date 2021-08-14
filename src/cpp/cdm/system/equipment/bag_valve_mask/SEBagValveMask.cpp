@@ -1,22 +1,22 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/equipment/bag_valve_mask/SEBagValveMask.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceConcentration.h"
-#include "substance/SESubstanceFraction.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceConcentration.h"
+#include "cdm/substance/SESubstanceFraction.h"
 
 // State Actions
-#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
-#include "properties/SEScalarVolume.h"
-#include "io/protobuf/PBBagValveMask.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/io/protobuf/PBBagValveMask.h"
 
 SEBagValveMask::SEBagValveMask(Logger* logger) : SEEquipment(logger)
 {
@@ -161,7 +161,7 @@ void SEBagValveMask::Merge(const SEBagValveMask& from, SESubstanceManager& subMg
   }
 }
 
-bool SEBagValveMask::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEBagValveMask::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBBagValveMask::SerializeToString(*this, output, m);
 }
@@ -169,7 +169,7 @@ bool SEBagValveMask::SerializeToFile(const std::string& filename) const
 {
   return PBBagValveMask::SerializeToFile(*this, filename);
 }
-bool SEBagValveMask::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEBagValveMask::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBBagValveMask::SerializeFromString(src, *this, m, subMgr);
 }

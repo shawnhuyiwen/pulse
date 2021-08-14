@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "utils/FileUtils.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/FileUtils.h"
 #include "dirent.h"
 #include <iterator>
 

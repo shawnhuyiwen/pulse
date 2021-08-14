@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarMassPerTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
 
 const MassPerTimeUnit MassPerTimeUnit::g_Per_s("g/s");
 const MassPerTimeUnit MassPerTimeUnit::g_Per_min("g/min");

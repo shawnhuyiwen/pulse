@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarVolume.h"
 
 SEAnesthesiaMachineOxygenBottle::SEAnesthesiaMachineOxygenBottle(Logger* logger) : Loggable(logger)
 {

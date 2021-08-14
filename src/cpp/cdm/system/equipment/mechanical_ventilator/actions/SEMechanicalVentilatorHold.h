@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
 class SEMechanicalVentilator;
 class SESubstanceManager;
 

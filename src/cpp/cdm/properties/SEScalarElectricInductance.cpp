@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarElectricInductance.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarElectricInductance.h"
 
 const ElectricInductanceUnit ElectricInductanceUnit::H("H");
 

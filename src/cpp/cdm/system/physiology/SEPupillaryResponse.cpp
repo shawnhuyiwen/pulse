@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/physiology/SEPupillaryResponse.h"
-#include "properties/SEScalarNegative1To1.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/physiology/SEPupillaryResponse.h"
+#include "cdm/properties/SEScalarNegative1To1.h"
 
 SEPupillaryResponse::SEPupillaryResponse(Logger* logger)
 {

@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 // CDM Features in use
-#include "PhysiologyEngine.h"
-#include "engine/SEEventManager.h"
-#include "utils/ScopedMutex.h"
+#include "cdm/PhysiologyEngine.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/utils/ScopedMutex.h"
 
 /**
  * An instance of an engine where the interface is define in stl and base data types.
@@ -21,33 +21,33 @@ public:
 
   //virtual void SetConfigurationOverride(std::string const& config)=0; // Not Implemented
 
-  virtual bool ExecuteScenario(std::string const& sceExecOpts, SerializationFormat format) = 0;
+  virtual bool ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format) = 0;
 
-  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, SerializationFormat data_requests_format);
+  bool SerializeFromFile(std::string const& filename, std::string const& data_requests, eSerializationFormat data_requests_format);
   bool SerializeToFile(std::string const& filename);
 
-  bool SerializeFromString(std::string const& state, std::string const& data_requests, SerializationFormat format);
-  std::string SerializeToString(SerializationFormat format);
+  bool SerializeFromString(std::string const& state, std::string const& data_requests, eSerializationFormat format);
+  std::string SerializeToString(eSerializationFormat format);
 
-  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, SerializationFormat format);
+  bool InitializeEngine(std::string const& patient_configuration, std::string const& data_requests, eSerializationFormat format);
 
-  std::string GetInitialPatient(SerializationFormat format);
-  std::string GetConditions(SerializationFormat format);
+  std::string GetInitialPatient(eSerializationFormat format);
+  std::string GetConditions(eSerializationFormat format);
 
   void LogToConsole(bool b);
   void KeepLogMessages(bool keep);// Set this to true if you are going to pull messages from the engine
   void SetLogFilename(std::string const& logfile);// Set to empty if no log file is wanted
-  std::string PullLogMessages(SerializationFormat format);
+  std::string PullLogMessages(eSerializationFormat format);
   void SetLoggerForward(LoggerForward* lf) { m_ForwardLogs = lf; }
 
   void KeepEventChanges(bool keep);
-  std::string PullEvents(SerializationFormat format);
-  std::string PullActiveEvents(SerializationFormat format);
-  std::string GetPatientAssessment(int type, SerializationFormat format);
+  std::string PullEvents(eSerializationFormat format);
+  std::string PullActiveEvents(eSerializationFormat format);
+  std::string GetPatientAssessment(int type, eSerializationFormat format);
   void SetEventHandler(SEEventHandler* eh) { m_ForwardEvents = eh; }
 
-  bool ProcessActions(std::string const& actions, SerializationFormat format);
-  std::string PullActiveActions(SerializationFormat format);
+  bool ProcessActions(std::string const& actions, eSerializationFormat format);
+  std::string PullActiveActions(eSerializationFormat format);
 
   bool AdvanceTimeStep();
   double GetTimeStep(std::string const& unit);

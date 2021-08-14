@@ -1,24 +1,24 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "scenario/SEScenarioExec.h"
-#include "scenario/SEScenario.h"
-#include "io/protobuf/PBScenario.h"
-#include "engine/SEAction.h"
-#include "engine/SECondition.h"
-#include "engine/SEPatientConfiguration.h"
-#include "engine/SEAdvanceTime.h"
-#include "engine/SESerializeState.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEventManager.h"
-#include "PhysiologyEngine.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEEngineConfiguration.h"
-#include "patient/SEPatient.h"
-#include "properties/SEScalarTime.h"
-#include "utils/TimingProfile.h"
-#include "utils/FileUtils.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/scenario/SEScenarioExec.h"
+#include "cdm/scenario/SEScenario.h"
+#include "cdm/io/protobuf/PBScenario.h"
+#include "cdm/engine/SEAction.h"
+#include "cdm/engine/SECondition.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SESerializeState.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/PhysiologyEngine.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEEngineConfiguration.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/TimingProfile.h"
+#include "cdm/utils/FileUtils.h"
 
 SEScenarioExec::SEScenarioExec()
 {
@@ -58,11 +58,11 @@ void SEScenarioExec::Clear()
   m_SerializationActions.str("");
 }
 
-bool SEScenarioExec::SerializeToString(std::string& output, SerializationFormat m, Logger* logger) const
+bool SEScenarioExec::SerializeToString(std::string& output, eSerializationFormat m, Logger* logger) const
 {
   return PBScenario::SerializeToString(*this, output, m, logger);
 }
-bool SEScenarioExec::SerializeFromString(const std::string& src, SerializationFormat m, Logger* logger)
+bool SEScenarioExec::SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger)
 {
   return PBScenario::SerializeFromString(src, *this, m, logger);
 }

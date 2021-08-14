@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "system/equipment/inhaler/actions/SEInhalerAction.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/inhaler/actions/SEInhalerAction.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 SEInhalerAction::SEInhalerAction(Logger* logger) : SEEquipmentAction(logger)
 {

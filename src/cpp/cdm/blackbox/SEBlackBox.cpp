@@ -1,17 +1,17 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "blackbox/SEBlackBox.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/blackbox/SEBlackBox.h"
 
-#include "circuit/electrical/SEElectricalCircuitPath.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
 
-#include "blackbox/electrical/SEElectricalBlackBox.h"
+#include "cdm/blackbox/electrical/SEElectricalBlackBox.h"
 template class SEBlackBox<FLUID_BLACK_BOX>;
-#include "blackbox/fluid/SEGasBlackBox.h"
-#include "blackbox/fluid/SELiquidBlackBox.h"
+#include "cdm/blackbox/fluid/SEGasBlackBox.h"
+#include "cdm/blackbox/fluid/SELiquidBlackBox.h"
 template class SEBlackBox<ELECTRICAL_BLACK_BOX>;
-#include "blackbox/thermal/SEThermalBlackBox.h"
+#include "cdm/blackbox/thermal/SEThermalBlackBox.h"
 template class SEBlackBox<THERMAL_BLACK_BOX>;

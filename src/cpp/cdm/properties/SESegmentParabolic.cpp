@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SESegmentParabolic.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SESegmentParabolic.h"
 
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 SESegmentParabolic::SESegmentParabolic()
 {

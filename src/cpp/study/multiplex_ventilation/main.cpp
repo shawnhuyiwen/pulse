@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     //{
     //  std::cout << "Creating patient " << i << std::endl;
     //  PulseController* pc = new PulseController("./test/multiplex_patient_" + cdm::to_string(i) + ".log", ".");
-    //  if (!pc->SerializeFromFile("./test_results/multiplex_ventilation/solo_states/comp=0.01_peep=10_pip=55_imp=0.3_FiO2=0.21.json", SerializationFormat::JSON))
+    //  if (!pc->SerializeFromFile("./test_results/multiplex_ventilation/solo_states/comp=0.01_peep=10_pip=55_imp=0.3_FiO2=0.21.json", eSerializationFormat::JSON))
     //  {
     //    std::cerr << "Unable to load file " << std::endl;
     //    return 1;

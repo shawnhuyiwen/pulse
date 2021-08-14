@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/equipment/SEEquipment.h"
+#include "cdm/system/equipment/SEEquipment.h"
 class SEEventHandler;
 class SEMechanicalVentilatorConfiguration;
 class SESubstance;
@@ -29,9 +29,9 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr);
   bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
 protected:

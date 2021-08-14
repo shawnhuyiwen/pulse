@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "utils/Logger.h"
-#include "utils/FileUtils.h"
+#include "cdm/utils/Logger.h"
+#include "cdm/utils/FileUtils.h"
 
 class SEAction;
 class SEScenario;
@@ -56,8 +56,8 @@ public:
     m_ScenarioFilename = fn;
   }
 
-  SerializationFormat GetContentFormat() const { return m_ContentFormat; }
-  void SetContentFormat(SerializationFormat s) { m_ContentFormat = s; }
+  eSerializationFormat GetContentFormat() const { return m_ContentFormat; }
+  void SetContentFormat(eSerializationFormat s) { m_ContentFormat = s; }
 
   std::string GetSerializationDirectory() const { return m_SerializationDirectory; }
   void SetSerializationDirectory(const std::string& d) { m_SerializationDirectory = d; }
@@ -82,8 +82,8 @@ public:
   eSwitch GetReloadSerializedState() const { return m_ReloadSerializedState; }
   void SetReloadSerializedState(eSwitch s) { m_ReloadSerializedState = s; }
 
-  bool SerializeToString(std::string& output, SerializationFormat m, Logger* logger=nullptr) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m, Logger* logger=nullptr);
+  bool SerializeToString(std::string& output, eSerializationFormat m, Logger* logger=nullptr) const;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger=nullptr);
 
   bool Execute(PhysiologyEngine& pe, SEScenario& sce);
 
@@ -111,7 +111,7 @@ protected:
   std::string m_ScenarioFilename;
 
   // For both the EC and Scenrio Content
-  SerializationFormat m_ContentFormat = SerializationFormat::JSON;
+  eSerializationFormat m_ContentFormat = eSerializationFormat::JSON;
 
   // Settings for serialization
   bool                       m_SaveNextStep;

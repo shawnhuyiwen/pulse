@@ -3,7 +3,7 @@
 
 #pragma once
 class SESubstanceManager;
-#include "system/SESystem.h"
+#include "cdm/system/SESystem.h"
 
 class CDM_DECL SEEquipment : public SESystem
 {

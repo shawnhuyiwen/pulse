@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEHistogram.h"
+#include "cdm/properties/SEHistogram.h"
 
 class CDM_DECL SEHistogramFractionVsLength : public SEHistogram
 {

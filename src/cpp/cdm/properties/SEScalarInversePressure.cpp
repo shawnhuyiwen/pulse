@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarInversePressure.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarInversePressure.h"
 
 const InversePressureUnit InversePressureUnit::Inverse_Pa("1/Pa");
 const InversePressureUnit InversePressureUnit::Inverse_mmHg("1/mmHg");

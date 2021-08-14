@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "properties/SESegment.h"
+#include "cdm/properties/SESegment.h"
 
 class CDM_DECL SESegmentSigmoidal : public SESegment
 {

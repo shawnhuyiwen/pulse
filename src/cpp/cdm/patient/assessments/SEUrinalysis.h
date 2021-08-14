@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/assessments/SEPatientAssessment.h"
+#include "cdm/patient/assessments/SEPatientAssessment.h"
 class SEUrinalysisMicroscopic;
 
 // Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
@@ -43,7 +43,7 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
 
   virtual bool HasColorResult() const;

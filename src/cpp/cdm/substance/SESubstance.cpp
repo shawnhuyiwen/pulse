@@ -1,23 +1,23 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceAerosolization.h"
-#include "substance/SESubstanceClearance.h"
-#include "substance/SESubstancePhysicochemicals.h"
-#include "substance/SESubstancePharmacokinetics.h"
-#include "substance/SESubstancePharmacodynamics.h"
-#include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarInversePressure.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerAreaTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarVolumePerTimePressure.h"
-#include "io/protobuf/PBSubstance.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceAerosolization.h"
+#include "cdm/substance/SESubstanceClearance.h"
+#include "cdm/substance/SESubstancePhysicochemicals.h"
+#include "cdm/substance/SESubstancePharmacokinetics.h"
+#include "cdm/substance/SESubstancePharmacodynamics.h"
+#include "cdm/properties/SEScalarMassPerAmount.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarInversePressure.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerAreaTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolumePerTimePressure.h"
+#include "cdm/io/protobuf/PBSubstance.h"
 
 SESubstance::SESubstance(const std::string& name, Logger* logger) : Loggable(logger)
 {
@@ -117,7 +117,7 @@ void SESubstance::Clear()
     m_PD->Clear();
 }
 
-bool SESubstance::SerializeToString(std::string& output, SerializationFormat m) const
+bool SESubstance::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBSubstance::SerializeToString(*this, output, m);
 }
@@ -125,7 +125,7 @@ bool SESubstance::SerializeToFile(const std::string& filename) const
 {
   return PBSubstance::SerializeToFile(*this, filename);
 }
-bool SESubstance::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SESubstance::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBSubstance::SerializeFromString(src, *this, m);
 }

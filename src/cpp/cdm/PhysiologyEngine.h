@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "CommonDataModel.h"
-#include "utils/Logger.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/Logger.h"
 
 class SEAdvanceHandler;
 class SEPatient;
@@ -85,7 +85,7 @@ public:
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromString(const std::string& state, SerializationFormat m) = 0;
+  virtual bool SerializeFromString(const std::string& state, eSerializationFormat m) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -93,7 +93,7 @@ public:
   /// The state can be saved as JSON or bytes in the given string.
   /// Note that the bytes are binary, not text; we only use the string class as a convenient container.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeToString(std::string& state, SerializationFormat m) const = 0;
+  virtual bool SerializeToString(std::string& state, eSerializationFormat m) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -104,7 +104,7 @@ public:
   /// But it may also have more stuctures associated with it, it's up to the engine.
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m) = 0;
+  virtual bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

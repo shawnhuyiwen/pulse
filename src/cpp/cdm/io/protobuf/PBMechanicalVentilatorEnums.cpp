@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/MechanicalVentilator.pb.h"
 POP_PROTO_WARNINGS
-#include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 
 const std::string& eMechanicalVentilator_Connection_Name(eMechanicalVentilator_Connection c)
 {

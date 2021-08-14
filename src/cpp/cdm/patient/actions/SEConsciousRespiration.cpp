@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/actions/SEConsciousRespiration.h"
-#include "patient/actions/SEConsciousRespirationCommand.h"
-#include "patient/actions/SEForcedPause.h"
-#include "patient/actions/SEForcedExhale.h"
-#include "patient/actions/SEForcedInhale.h"
-#include "patient/actions/SEUseInhaler.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/actions/SEConsciousRespiration.h"
+#include "cdm/patient/actions/SEConsciousRespirationCommand.h"
+#include "cdm/patient/actions/SEForcedPause.h"
+#include "cdm/patient/actions/SEForcedExhale.h"
+#include "cdm/patient/actions/SEForcedInhale.h"
+#include "cdm/patient/actions/SEUseInhaler.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEConsciousRespiration::SEConsciousRespiration(Logger* logger) : SEPatientAction(logger)
 {

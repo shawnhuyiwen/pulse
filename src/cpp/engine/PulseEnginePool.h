@@ -3,9 +3,8 @@ See accompanying NOTICE file for details.*/
 
 #pragma once
 
-#include "PulseEngine.h"
-
-#include "PhysiologyEnginePool.h"
+#include "engine/PulseEngine.h"
+#include "cdm/PhysiologyEnginePool.h"
 
 namespace pulse::engine
 {

@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/SEMeal.h"
-#include "properties/SEScalarTime.h"
-#include "io/protobuf/PBPatientNutrition.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/SEMeal.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/io/protobuf/PBPatientNutrition.h"
 
 SEMeal::SEMeal(Logger* logger) : SENutrition(logger)
 {
@@ -22,7 +22,7 @@ void SEMeal::Clear()
   INVALIDATE_PROPERTY(m_ElapsedTime);
 }
 
-bool SEMeal::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEMeal::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBPatientNutrition::SerializeToString(*this, output, m);
 }
@@ -30,7 +30,7 @@ bool SEMeal::SerializeToFile(const std::string& filename) const
 {
   return PBPatientNutrition::SerializeToFile(*this, filename);
 }
-bool SEMeal::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEMeal::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBPatientNutrition::SerializeFromString(src, *this, m);
 }

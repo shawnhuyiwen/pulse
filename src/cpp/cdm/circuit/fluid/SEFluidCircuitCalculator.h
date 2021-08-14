@@ -3,8 +3,8 @@
 
 #pragma once
 //CDM_BIND_DECL(FluidCircuitData)
-#include "circuit/SECircuitCalculator.h"
-#include "circuit/fluid/SEFluidCircuit.h"
+#include "cdm/circuit/SECircuitCalculator.h"
+#include "cdm/circuit/fluid/SEFluidCircuit.h"
 
 class CDM_DECL SEFluidCircuitCalculator : public SECircuitCalculator<SEFluidCircuit, SEFluidCircuitNode, SEFluidCircuitPath, SEFluidBlackBox, VolumePerPressureUnit, VolumePerTimeUnit, PressureTimeSquaredPerVolumeUnit, PressureUnit, VolumeUnit, PressureTimePerVolumeUnit>
 {

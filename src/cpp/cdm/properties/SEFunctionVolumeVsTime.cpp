@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEFunctionVolumeVsTime.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEFunctionVolumeVsTime.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
 
 
 SEFunctionVolumeVsTime::SEFunctionVolumeVsTime() : SEFunction()

@@ -1,25 +1,25 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 
-#include "patient/SEPatient.h"
-#include "patient/SENutrition.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/patient/SENutrition.h"
 
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarLength.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarPressurePerVolume.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarArea.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarPressurePerVolume.h"
-#include "io/protobuf/PBPatient.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarArea.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
+#include "cdm/io/protobuf/PBPatient.h"
 
 
 SEPatient::SEPatient(Logger* logger) : Loggable(logger)
@@ -129,7 +129,7 @@ void SEPatient::Copy(const SEPatient& src)
   PBPatient::Copy(src, *this);
 }
 
-bool SEPatient::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEPatient::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBPatient::SerializeToString(*this, output, m);
 }
@@ -137,7 +137,7 @@ bool SEPatient::SerializeToFile(const std::string& filename) const
 {
   return PBPatient::SerializeToFile(*this, filename);
 }
-bool SEPatient::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEPatient::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBPatient::SerializeFromString(src, *this, m);
 }

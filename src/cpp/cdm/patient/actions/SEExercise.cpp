@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/actions/SEExercise.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/actions/SEExercise.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEExercise::SEExercise(Logger* logger) : SEPatientAction(logger)
 {

@@ -1,20 +1,20 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/PatientAssessments.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBUtils.h"
-#include "io/protobuf/PBPatientAssessments.h"
-#include "io/protobuf/PBProperties.h"
-#include "patient/assessments/SEArterialBloodGasTest.h"
-#include "patient/assessments/SECompleteBloodCount.h"
-#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "patient/assessments/SEUrinalysis.h"
-#include "patient/assessments/SEUrinalysisMicroscopic.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/io/protobuf/PBPatientAssessments.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/patient/assessments/SEArterialBloodGasTest.h"
+#include "cdm/patient/assessments/SECompleteBloodCount.h"
+#include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
+#include "cdm/patient/assessments/SEUrinalysis.h"
+#include "cdm/patient/assessments/SEUrinalysisMicroscopic.h"
+#include "cdm/utils/FileUtils.h"
 
 
 void PBPatientAssessment::Serialize(const CDM_BIND::PatientAssessmentData& src, SEPatientAssessment& dst)
@@ -27,7 +27,7 @@ void PBPatientAssessment::Serialize(const SEPatientAssessment& src, CDM_BIND::Pa
 
 }
 
-bool PBPatientAssessment::SerializeToString(const SEArterialBloodGasTest& src, std::string& output, SerializationFormat m)
+bool PBPatientAssessment::SerializeToString(const SEArterialBloodGasTest& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::ArterialBloodGasTestData data;
   PBPatientAssessment::Serialize(src, data);
@@ -81,7 +81,7 @@ void PBPatientAssessment::Serialize(const SEArterialBloodGasTest& src, CDM_BIND:
     dst.set_allocated_oxygensaturation(PBProperty::Unload(*src.m_OxygenSaturation));
 }
 
-bool PBPatientAssessment::SerializeToString(const SECompleteBloodCount& src, std::string& output, SerializationFormat m)
+bool PBPatientAssessment::SerializeToString(const SECompleteBloodCount& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::CompleteBloodCountData data;
   PBPatientAssessment::Serialize(src, data);
@@ -147,7 +147,7 @@ void PBPatientAssessment::Serialize(const SECompleteBloodCount& src, CDM_BIND::C
     dst.set_allocated_whitebloodcellcount(PBProperty::Unload(*src.m_WhiteBloodCellCount));
 }
 
-bool PBPatientAssessment::SerializeToString(const SEComprehensiveMetabolicPanel& src, std::string& output, SerializationFormat m)
+bool PBPatientAssessment::SerializeToString(const SEComprehensiveMetabolicPanel& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::ComprehensiveMetabolicPanelData data;
   PBPatientAssessment::Serialize(src, data);
@@ -238,7 +238,7 @@ void PBPatientAssessment::Serialize(const SEComprehensiveMetabolicPanel& src, CD
 }
 
 
-bool PBPatientAssessment::SerializeToString(const SEPulmonaryFunctionTest& src, std::string& output, SerializationFormat m)
+bool PBPatientAssessment::SerializeToString(const SEPulmonaryFunctionTest& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::PulmonaryFunctionTestData data;
   PBPatientAssessment::Serialize(src, data);
@@ -327,7 +327,7 @@ void PBPatientAssessment::Serialize(const SEPulmonaryFunctionTest& src, CDM_BIND
     dst.set_allocated_lungvolumeplot(PBProperty::Unload(*src.m_LungVolumePlot));
 }
 
-bool PBPatientAssessment::SerializeToString(const SEUrinalysis& src, std::string& output, SerializationFormat m)
+bool PBPatientAssessment::SerializeToString(const SEUrinalysis& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::UrinalysisData data;
   PBPatientAssessment::Serialize(src, data);

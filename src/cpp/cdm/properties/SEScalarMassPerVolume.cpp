@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarMassPerVolume.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
 
 const MassPerVolumeUnit MassPerVolumeUnit::g_Per_dL("g/dL");
 const MassPerVolumeUnit MassPerVolumeUnit::g_Per_cm3("g/cm^3");

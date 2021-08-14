@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Engine.pb.h"
 POP_PROTO_WARNINGS
-#include "engine/SEDataRequest.h"
+#include "cdm/engine/SEDataRequest.h"
 
 const std::string& eDataRequest_Category_Name(eDataRequest_Category m)
 {

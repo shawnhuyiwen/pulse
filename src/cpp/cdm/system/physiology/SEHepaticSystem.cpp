@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/physiology/SEHepaticSystem.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/physiology/SEHepaticSystem.h"
 
 SEHepaticSystem::SEHepaticSystem(Logger* logger) : SESystem(logger)
 {

@@ -38,12 +38,12 @@ namespace HUMAN_ADULT_VENT_MECH
     return false;
   }
 
-  bool Controller::SerializeFromString(const std::string& src, SerializationFormat m)
+  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
     Error("Serialization is not supported in this engine");
     return false;
   }
-  bool Controller::SerializeToString(std::string& output, SerializationFormat m) const
+  bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
     Error("Serialization is not supported in this engine");
     return false;

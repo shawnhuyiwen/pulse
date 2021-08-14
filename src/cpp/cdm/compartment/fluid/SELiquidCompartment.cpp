@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalar.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/compartment/substances/SELiquidSubstanceQuantity.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalar.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 SELiquidCompartment::SELiquidCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {

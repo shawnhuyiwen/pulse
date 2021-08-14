@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarPower.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarPower.h"
 
 const PowerUnit PowerUnit::W("W");
 const PowerUnit PowerUnit::kcal_Per_s("kcal/s");

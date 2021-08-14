@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "PulseConfiguration.h"
+#include "engine/PulseConfiguration.h"
 #include "cdm/scenario/SEScenario.h"
 
 namespace PULSE_ENGINE
@@ -22,9 +22,9 @@ namespace PULSE_ENGINE
     virtual void Clear();
     virtual void Copy(const PulseScenario& src);
 
-    bool SerializeToString(std::string& output, SerializationFormat m) const;
+    bool SerializeToString(std::string& output, eSerializationFormat m) const;
     bool SerializeToFile(const std::string& filename) const;
-    bool SerializeFromString(const std::string& src, SerializationFormat m);
+    bool SerializeFromString(const std::string& src, eSerializationFormat m);
     bool SerializeFromFile(const std::string& filename);
 
     virtual PulseConfiguration& GetConfiguration();

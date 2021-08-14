@@ -710,6 +710,8 @@ add_library_ex(CommonDataModel
     DataModelBindings
   PRIVATE_DEPENDS
     protobuf::libprotobuf
+  INSTALL_HEADER_DIR
+    cdm
 )
 
 if(WIN32)

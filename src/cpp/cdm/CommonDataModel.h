@@ -125,7 +125,7 @@ using namespace stdext;
 #endif
 
 //Utilities
-enum SerializationFormat { JSON = 0, BINARY };
+enum class eSerializationFormat { JSON = 0, BINARY };
 
 struct CommonDataModelException : public std::runtime_error
 {
@@ -136,8 +136,8 @@ struct CommonDataModelException : public std::runtime_error
     : std::runtime_error(_Message) {}
 };
 // Basics
-#include "Macros.h"
-#include "utils/Logger.h"
+#include "cdm/Macros.h"
+#include "cdm/utils/Logger.h"
 
 
 // General Enums

@@ -13,8 +13,8 @@ public:
   static void Serialize(const CDM_BIND::BagValveMaskData& src, SEBagValveMask& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEBagValveMask& src, CDM_BIND::BagValveMaskData& dst);
 
-  static bool SerializeToString(const SEBagValveMask& src, std::string& output, SerializationFormat m);
+  static bool SerializeToString(const SEBagValveMask& src, std::string& output, eSerializationFormat m);
   static bool SerializeToFile(const SEBagValveMask& src, const std::string& filename);
-  static bool SerializeFromString(const std::string& src, SEBagValveMask& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, SEBagValveMask& dst, eSerializationFormat m, const SESubstanceManager& subMgr);
   static bool SerializeFromFile(const std::string& filename, SEBagValveMask& dst, const SESubstanceManager& subMgr);
 };

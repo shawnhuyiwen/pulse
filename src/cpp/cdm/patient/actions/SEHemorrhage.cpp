@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEHemorrhage::SEHemorrhage(Logger* logger) : SEPatientAction(logger)
 {

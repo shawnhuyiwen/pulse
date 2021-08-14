@@ -281,16 +281,16 @@ namespace PULSE_ENGINE
     return PBState::SerializeToFile(*this, filename);
   }
 
-  bool Controller::SerializeFromString(const std::string& src, SerializationFormat m)
+  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
     return PBState::SerializeFromString(src, *this, m);
   }
-  bool Controller::SerializeToString(std::string& output, SerializationFormat m) const
+  bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
     return PBState::SerializeToString(*this, output, m);
   }
 
-  bool Controller::InitializeEngine(const std::string& patient_configuration, SerializationFormat m)
+  bool Controller::InitializeEngine(const std::string& patient_configuration, eSerializationFormat m)
   {
     SEPatientConfiguration pc(GetLogger());
     pc.SerializeFromString(patient_configuration, m, *m_Substances);

@@ -5,8 +5,8 @@
 /// @file QuantityTypeDescriptor.cpp
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
-#include "CommonDataModel.h"
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 //----------------------------------------------------------------------------
 CQuantityTypeDescriptor::CQuantityTypeDescriptor(const std::string &name, int fundIdx, bool twentyLog)

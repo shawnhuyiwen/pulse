@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 class SERespiratoryMechanics;
 
 class CDM_DECL SERespiratoryMechanicsConfiguration : public SEPatientAction

@@ -1,18 +1,18 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/equipment/inhaler/SEInhaler.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/inhaler/SEInhaler.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
 // State Actions
-#include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
+#include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarVolume.h"
 
-#include "io/protobuf/PBInhaler.h"
+#include "cdm/io/protobuf/PBInhaler.h"
 
 SEInhaler::SEInhaler(Logger* logger) : SEEquipment(logger)
 {
@@ -43,7 +43,7 @@ void SEInhaler::Clear()
   m_Substance = nullptr;
 }
 
-bool SEInhaler::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEInhaler::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBInhaler::SerializeToString(*this, output, m);
 }
@@ -51,7 +51,7 @@ bool SEInhaler::SerializeToFile(const std::string& filename) const
 {
   return PBInhaler::SerializeToFile(*this, filename);
 }
-bool SEInhaler::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEInhaler::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBInhaler::SerializeFromString(src, *this, m, subMgr);
 }

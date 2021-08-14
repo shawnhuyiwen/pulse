@@ -1,18 +1,18 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/TestReport.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBTestReport.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "utils/testing/SETestCase.h"
-#include "utils/testing/SETestErrorStatistics.h"
-#include "utils/testing/SETestReport.h"
-#include "utils/testing/SETestSuite.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBTestReport.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/utils/testing/SETestCase.h"
+#include "cdm/utils/testing/SETestErrorStatistics.h"
+#include "cdm/utils/testing/SETestReport.h"
+#include "cdm/utils/testing/SETestSuite.h"
+#include "cdm/utils/FileUtils.h"
 
 
 void PBTestReport::Load(const CDM_BIND::TestCaseData& src, SETestCase& dst)
@@ -199,7 +199,7 @@ void PBTestReport::Serialize(const SETestSuite& src, CDM_BIND::TestSuiteData& ds
 }
 
 
-bool PBTestReport::SerializeToString(const SETestReport& src, std::string& output, SerializationFormat m)
+bool PBTestReport::SerializeToString(const SETestReport& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::TestReportData data;
   PBTestReport::Serialize(src, data);
@@ -211,7 +211,7 @@ bool PBTestReport::SerializeToFile(const SETestReport& src, const std::string& f
   PBTestReport::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBTestReport::SerializeFromString(const std::string& src, SETestReport& dst, SerializationFormat m)
+bool PBTestReport::SerializeFromString(const std::string& src, SETestReport& dst, eSerializationFormat m)
 {
   CDM_BIND::TestReportData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

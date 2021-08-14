@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuitPath.h"
-#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "cdm/circuit/SECircuitPath.h"
+#include "cdm/circuit/thermal/SEThermalCircuitNode.h"
 
 class CDM_DECL SEThermalCircuitPath : public SECircuitPath<THERMAL_CIRCUIT_PATH>
 {

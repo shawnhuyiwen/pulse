@@ -1,22 +1,22 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
-#include "system/environment/SEEnvironmentalConditions.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceFraction.h"
-#include "substance/SESubstanceConcentration.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/environment/actions/SEChangeEnvironmentalConditions.h"
+#include "cdm/system/environment/SEEnvironmentalConditions.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceFraction.h"
+#include "cdm/substance/SESubstanceConcentration.h"
+#include "cdm/substance/SESubstanceManager.h"
 
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarHeatConductancePerArea.h"
-#include "properties/SEScalarLengthPerTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarHeatResistanceArea.h"
-#include "io/protobuf/PBEnvironmentActions.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarHeatConductancePerArea.h"
+#include "cdm/properties/SEScalarLengthPerTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarHeatResistanceArea.h"
+#include "cdm/io/protobuf/PBEnvironmentActions.h"
 
 
 SEChangeEnvironmentalConditions::SEChangeEnvironmentalConditions(Logger* logger) : SEEnvironmentAction(logger)

@@ -1,16 +1,16 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
-#include "system/equipment/bag_valve_mask/SEBagValveMask.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceConcentration.h"
-#include "substance/SESubstanceFraction.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "io/protobuf/PBEquipmentActions.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
+#include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceConcentration.h"
+#include "cdm/substance/SESubstanceFraction.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/io/protobuf/PBEquipmentActions.h"
 
 SEBagValveMaskAutomated::SEBagValveMaskAutomated(Logger* logger) : SEBagValveMaskAction(logger)
 {

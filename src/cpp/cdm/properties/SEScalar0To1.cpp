@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalar0To1.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalar0To1.h"
 
 SEScalar0To1::SEScalar0To1() : SEScalar()
 {

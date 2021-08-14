@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/fluid/SEFluidCompartment.h"
-#include "compartment/fluid/SELiquidCompartmentLink.h"
-#include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "substance/SESubstanceTransport.h"
+#include "cdm/compartment/fluid/SEFluidCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentLink.h"
+#include "cdm/compartment/substances/SELiquidSubstanceQuantity.h"
+#include "cdm/substance/SESubstanceTransport.h"
 class SELiquidBlackBox;
 
 class CDM_DECL SELiquidCompartment : public SEFluidCompartment<SELiquidCompartmentLink, SELiquidTransportVertex, SELiquidTransportSubstance, SELiquidSubstanceQuantity>

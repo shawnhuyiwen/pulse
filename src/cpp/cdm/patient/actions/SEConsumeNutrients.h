@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "patient/actions/SEPatientAction.h"
-#include "patient/SENutrition.h"
+#include "cdm/patient/actions/SEPatientAction.h"
+#include "cdm/patient/SENutrition.h"
 
 class CDM_DECL SEConsumeNutrients : public SEPatientAction
 {

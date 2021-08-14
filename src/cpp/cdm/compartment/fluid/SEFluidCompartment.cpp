@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "compartment/fluid/SEFluidCompartment.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "circuit/SECircuitManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/compartment/fluid/SEFluidCompartment.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/circuit/SECircuitManager.h"
 
 template<FLUID_COMPARTMENT_TEMPLATE>
 SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::SEFluidCompartment(const std::string& name, Logger* logger) : SECompartment(name, logger), m_Nodes(logger)
@@ -398,9 +398,9 @@ bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasChild(const std::string& na
 }
 
 
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/substances/SEGasSubstanceQuantity.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/substances/SEGasSubstanceQuantity.h"
 template class SEFluidCompartment<SEGasCompartmentLink, SEGasTransportVertex, SEGasTransportSubstance, SEGasSubstanceQuantity>;
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/substances/SELiquidSubstanceQuantity.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/compartment/substances/SELiquidSubstanceQuantity.h"
 template class SEFluidCompartment<SELiquidCompartmentLink, SELiquidTransportVertex, SELiquidTransportSubstance, SELiquidSubstanceQuantity>;

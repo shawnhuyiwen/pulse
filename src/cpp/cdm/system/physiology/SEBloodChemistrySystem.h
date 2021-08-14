@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/SESystem.h"
+#include "cdm/system/SESystem.h"
 
 /** @copydoc Physiology_BloodChemistrySystemData
   @nosubgrouping */

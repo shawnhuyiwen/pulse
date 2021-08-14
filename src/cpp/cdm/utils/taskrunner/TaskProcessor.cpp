@@ -1,10 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "TaskProcessor.h"
-#include "TaskQueue.h"
-
-#include "Task.h"
+#include "cdm/utils/taskrunner/TaskProcessor.h"
+#include "cdm/utils/taskrunner/TaskQueue.h"
+#include "cdm/utils/taskrunner/Task.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief

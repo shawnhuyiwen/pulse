@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "circuit/fluid/SEFluidCircuit.h"
-#include "circuit/SECircuitManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/circuit/fluid/SEFluidCircuit.h"
+#include "cdm/circuit/SECircuitManager.h"
 
 SEFluidCircuit::SEFluidCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<SEFluidCircuitNode, SEFluidCircuitPath>(name, mgr.GetLogger()), m_Mgr(mgr)
 {

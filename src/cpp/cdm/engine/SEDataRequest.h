@@ -5,7 +5,7 @@
 class SESubstanceManager;
 class CCompoundUnit;
 class SEDataRequestManager;
-#include "engine/SEDecimalFormat.h"
+#include "cdm/engine/SEDecimalFormat.h"
 
 enum class eDataRequest_Category {
   Patient = 0, Physiology, Environment, Action,

@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarHeatResistanceArea.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarHeatResistanceArea.h"
 
 const HeatResistanceAreaUnit HeatResistanceAreaUnit::rsi("rsi");
 const HeatResistanceAreaUnit HeatResistanceAreaUnit::clo("clo");

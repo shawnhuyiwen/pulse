@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h" 
-#include "circuit/electrical/SEElectricalCircuitNode.h"
-#include "properties/SEScalarElectricCharge.h"
-#include "properties/SEScalarElectricPotential.h"
+#include "cdm/CommonDataModel.h" 
+#include "cdm/circuit/electrical/SEElectricalCircuitNode.h"
+#include "cdm/properties/SEScalarElectricCharge.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
 
 SEElectricalCircuitNode::SEElectricalCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<ELECTRICAL_CIRCUIT_NODE>(name, logger)
 {

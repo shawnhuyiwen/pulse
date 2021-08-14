@@ -429,7 +429,7 @@ void PulseConfiguration::Merge(const PulseConfiguration& src, SESubstanceManager
   PBConfiguration::Merge(src, *this, subMgr);
 }
 
-bool PulseConfiguration::SerializeToString(std::string& output, SerializationFormat m) const
+bool PulseConfiguration::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBConfiguration::SerializeToString(*this, output, m);
 }
@@ -437,7 +437,7 @@ bool PulseConfiguration::SerializeToFile(const std::string& filename) const
 {
   return PBConfiguration::SerializeToFile(*this, filename);
 }
-bool PulseConfiguration::SerializeFromString(const std::string& src, SerializationFormat m, SESubstanceManager& subMgr)
+bool PulseConfiguration::SerializeFromString(const std::string& src, eSerializationFormat m, SESubstanceManager& subMgr)
 {
   return PBConfiguration::SerializeFromString(src, *this, m, subMgr);
 }

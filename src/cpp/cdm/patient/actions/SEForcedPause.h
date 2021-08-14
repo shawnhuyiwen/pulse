@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEConsciousRespirationCommand.h"
+#include "cdm/patient/actions/SEConsciousRespirationCommand.h"
 
 class CDM_DECL SEForcedPause : public SEConsciousRespirationCommand
 {

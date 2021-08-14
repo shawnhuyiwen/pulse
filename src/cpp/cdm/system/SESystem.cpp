@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/SESystem.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/SESystem.h"
 
 SESystem::SESystem(Logger* logger) : Loggable(logger)
 {

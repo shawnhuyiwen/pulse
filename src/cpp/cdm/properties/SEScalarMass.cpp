@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarMass.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarMass.h"
 
 const MassUnit MassUnit::g("g");
 const MassUnit MassUnit::ug("ug");

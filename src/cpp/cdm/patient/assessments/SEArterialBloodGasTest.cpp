@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "patient/assessments/SEArterialBloodGasTest.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "properties/SEScalarEquivalentWeightPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "io/protobuf/PBPatientAssessments.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/patient/assessments/SEArterialBloodGasTest.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/properties/SEScalarEquivalentWeightPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/io/protobuf/PBPatientAssessments.h"
 
 SEArterialBloodGasTest::SEArterialBloodGasTest(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -36,7 +36,7 @@ void SEArterialBloodGasTest::Clear()
   INVALIDATE_PROPERTY(m_OxygenSaturation);
 }
 
-bool SEArterialBloodGasTest::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEArterialBloodGasTest::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }

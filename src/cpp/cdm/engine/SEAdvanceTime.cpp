@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "engine/SEAdvanceTime.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/properties/SEScalarTime.h"
 
 SEAdvanceTime::SEAdvanceTime(Logger* logger) : SEAction(logger)
 {

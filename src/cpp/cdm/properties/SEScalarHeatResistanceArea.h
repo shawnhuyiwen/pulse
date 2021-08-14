@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL HeatResistanceAreaUnit : public CCompoundUnit
 {

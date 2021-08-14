@@ -5,8 +5,8 @@
 /// @file CompoundUnitElement.cpp
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
-#include "CommonDataModel.h"
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 //----------------------------------------------------------------------------
 double CCompoundUnitElement::GetBigness() const

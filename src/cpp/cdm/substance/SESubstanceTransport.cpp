@@ -1,13 +1,13 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "substance/SESubstanceTransport.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/substance/SESubstanceTransport.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 #include <Eigen/Core>
 #include <Eigen/LU>

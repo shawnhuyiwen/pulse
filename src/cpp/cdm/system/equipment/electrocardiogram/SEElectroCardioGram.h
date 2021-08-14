@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/equipment/SEEquipment.h"
+#include "cdm/system/equipment/SEEquipment.h"
 
 class CDM_DECL SEElectroCardioGram : public SEEquipment
 {

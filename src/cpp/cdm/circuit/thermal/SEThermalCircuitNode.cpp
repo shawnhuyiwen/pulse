@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h" 
-#include "circuit/thermal/SEThermalCircuitNode.h"
-#include "properties/SEScalarEnergy.h"
-#include "properties/SEScalarTemperature.h"
+#include "cdm/CommonDataModel.h" 
+#include "cdm/circuit/thermal/SEThermalCircuitNode.h"
+#include "cdm/properties/SEScalarEnergy.h"
+#include "cdm/properties/SEScalarTemperature.h"
 
 SEThermalCircuitNode::SEThermalCircuitNode(const std::string& name, Logger* logger) : SECircuitNode<THERMAL_CIRCUIT_NODE>(name,logger)
 {

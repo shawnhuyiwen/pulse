@@ -1,13 +1,13 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "substance/SESubstanceAerosolization.h"
-#include "properties/SEScalarLength.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEHistogramFractionVsLength.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarNegative1To1.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/substance/SESubstanceAerosolization.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEHistogramFractionVsLength.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarNegative1To1.h"
 
 SESubstanceAerosolization::SESubstanceAerosolization(Logger* logger) : Loggable(logger)
 {

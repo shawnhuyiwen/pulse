@@ -1,24 +1,24 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceConcentration.h"
-#include "substance/SESubstanceFraction.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceConcentration.h"
+#include "cdm/substance/SESubstanceFraction.h"
 
 // State Actions
-#include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarTime.h"
-#include "io/protobuf/PBMechanicalVentilator.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/io/protobuf/PBMechanicalVentilator.h"
 
 SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(logger)
 {
@@ -284,7 +284,7 @@ void SEMechanicalVentilator::Merge(const SEMechanicalVentilator& from, SESubstan
   }
 }
 
-bool SEMechanicalVentilator::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEMechanicalVentilator::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBMechanicalVentilator::SerializeToString(*this, output, m);
 }
@@ -292,7 +292,7 @@ bool SEMechanicalVentilator::SerializeToFile(const std::string& filename) const
 {
   return PBMechanicalVentilator::SerializeToFile(*this, filename);
 }
-bool SEMechanicalVentilator::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEMechanicalVentilator::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBMechanicalVentilator::SerializeFromString(src, *this, m, subMgr);
 }

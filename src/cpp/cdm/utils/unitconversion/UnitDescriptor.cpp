@@ -5,8 +5,8 @@
 /// @file UnitDescriptor.cpp
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
-#include "CommonDataModel.h"
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 //----------------------------------------------------------------------------
 CUnitDescriptor::CUnitDescriptor(const std::string &name, const std::string &symbol, unsigned int quantityTypeId, 

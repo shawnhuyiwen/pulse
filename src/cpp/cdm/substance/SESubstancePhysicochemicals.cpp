@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "substance/SESubstancePhysicochemicals.h"
-#include "properties/SEScalar0To1.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/substance/SESubstancePhysicochemicals.h"
+#include "cdm/properties/SEScalar0To1.h"
 
 SESubstancePhysicochemicals::SESubstancePhysicochemicals(Logger* logger) : Loggable(logger)
 {

@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "ConfigParser.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/utils/ConfigParser.h"
 
 #include <tuple>
 #include <fstream>

@@ -1,22 +1,22 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 
-#include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/fluid/SELiquidCompartmentLink.h"
-#include "substance/SESubstance.h"
+#include "cdm/compartment/substances/SELiquidSubstanceQuantity.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentLink.h"
+#include "cdm/substance/SESubstance.h"
 
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarInversePressure.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarMassPerAmount.h"
-#include "utils/GeneralMath.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarInversePressure.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarMassPerAmount.h"
+#include "cdm/utils/GeneralMath.h"
 
 SELiquidSubstanceQuantity::SELiquidSubstanceQuantity(SESubstance& sub, SELiquidCompartment& compartment) : SESubstanceQuantity(sub), m_Compartment(compartment)
 {

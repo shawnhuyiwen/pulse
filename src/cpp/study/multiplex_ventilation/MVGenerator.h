@@ -27,9 +27,9 @@ namespace pulse::study::multiplex_ventilation
     static double DefaultRespirationRate_Per_Min() { return 20; }
     static double DefaultIERatio() { return 0.5; }
   protected:
-    bool SerializeToString(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, std::string& dst, SerializationFormat f) const;
+    bool SerializeToString(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, std::string& dst, eSerializationFormat f) const;
     bool SerializeToFile(pulse::study::bind::multiplex_ventilation::PatientStateListData& src, const std::string& filename) const;
-    bool SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::PatientStateListData& dst, SerializationFormat f);
+    bool SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::PatientStateListData& dst, eSerializationFormat f);
     bool SerializeFromFile(const std::string& filename);
 
     void GeneratePatientList();

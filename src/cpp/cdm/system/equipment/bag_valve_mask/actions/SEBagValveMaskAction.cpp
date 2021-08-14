@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "system/equipment/bag_valve_mask/actions/SEBagValveMaskAction.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAction.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 SEBagValveMaskAction::SEBagValveMaskAction(Logger* logger) : SEEquipmentAction(logger)
 {

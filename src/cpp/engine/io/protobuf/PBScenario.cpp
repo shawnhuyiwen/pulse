@@ -46,7 +46,7 @@ namespace PULSE_ENGINE
     PBScenario::Serialize(data, dst);
   }
 
-  bool PBScenario::SerializeToString(const PulseScenario& src, std::string& output, SerializationFormat m)
+  bool PBScenario::SerializeToString(const PulseScenario& src, std::string& output, eSerializationFormat m)
   {
     PULSE_BIND::ScenarioData data;
     PBScenario::Serialize(src, data);
@@ -59,7 +59,7 @@ namespace PULSE_ENGINE
     return PBUtils::SerializeToFile(data, filename, src.GetLogger());
   }
 
-  bool PBScenario::SerializeFromString(const std::string& src, PulseScenario& dst, SerializationFormat m)
+  bool PBScenario::SerializeFromString(const std::string& src, PulseScenario& dst, eSerializationFormat m)
   {
     PULSE_BIND::ScenarioData data;
     dst.GetLogger()->Info("Loading scenario...");

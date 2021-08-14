@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/environment/actions/SEEnvironmentAction.h"
+#include "cdm/system/environment/actions/SEEnvironmentAction.h"
 class SESubstanceManager;
 class SEEnvironmentalConditions;
 

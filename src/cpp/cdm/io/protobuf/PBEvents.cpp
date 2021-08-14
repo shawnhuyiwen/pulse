@@ -1,22 +1,22 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
+#include "cdm/CommonDataModel.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Events.pb.h"
 POP_PROTO_WARNINGS
-#include "io/protobuf/PBEvents.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "engine/SEEventManager.h"
-#include "utils/FileUtils.h"
+#include "cdm/io/protobuf/PBEvents.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/utils/FileUtils.h"
 
 const std::string& eEvent_Name(eEvent m)
 {
   return CDM_BIND::eEvent_Name((CDM_BIND::eEvent)m);
 }
 
-bool PBEvents::SerializeToString(std::vector<const SEEventChange*>& changes, std::string& output, SerializationFormat m, Logger* logger)
+bool PBEvents::SerializeToString(std::vector<const SEEventChange*>& changes, std::string& output, eSerializationFormat m, Logger* logger)
 {
   if (changes.empty())
     return false;
@@ -35,7 +35,7 @@ bool PBEvents::SerializeToString(std::vector<const SEEventChange*>& changes, std
   return true;
 }
 
-bool PBEvents::SerializeFromString(const std::string& src, std::vector<const SEEventChange*>& changes, SerializationFormat m, Logger* logger)
+bool PBEvents::SerializeFromString(const std::string& src, std::vector<const SEEventChange*>& changes, eSerializationFormat m, Logger* logger)
 {
   SEScalarTime time;
   CDM_BIND::EventChangeListData data;
@@ -55,7 +55,7 @@ bool PBEvents::SerializeFromString(const std::string& src, std::vector<const SEE
   return true;
 }
 
-bool PBEvents::SerializeToString(std::vector<const SEActiveEvent*>& active_events, std::string& output, SerializationFormat m, Logger* logger)
+bool PBEvents::SerializeToString(std::vector<const SEActiveEvent*>& active_events, std::string& output, eSerializationFormat m, Logger* logger)
 {
   if (active_events.empty())
     return false;
@@ -73,7 +73,7 @@ bool PBEvents::SerializeToString(std::vector<const SEActiveEvent*>& active_event
   return true;
 }
 
-bool PBEvents::SerializeFromString(const std::string& src, std::vector<const SEActiveEvent*>& active_events, SerializationFormat m, Logger* logger)
+bool PBEvents::SerializeFromString(const std::string& src, std::vector<const SEActiveEvent*>& active_events, eSerializationFormat m, Logger* logger)
 {
   SEScalarTime time;
   CDM_BIND::ActiveEventListData data;

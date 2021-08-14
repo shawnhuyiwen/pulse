@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "CommonDataModel.h"
-#include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 SEMechanicalVentilatorAction::SEMechanicalVentilatorAction(Logger* logger) : SEEquipmentAction(logger)
 {

@@ -438,7 +438,7 @@ namespace pulse::study::multiplex_ventilation
     m_mutex.unlock();
   }
 
-  bool MVRunner::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationListData& src, std::string& output, SerializationFormat f) const
+  bool MVRunner::SerializeToString(pulse::study::bind::multiplex_ventilation::SimulationListData& src, std::string& output, eSerializationFormat f) const
   {
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
@@ -455,7 +455,7 @@ namespace pulse::study::multiplex_ventilation
   {
     return PBUtils::SerializeToFile(src, filename, GetLogger());
   }
-  bool MVRunner::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationListData& dst, SerializationFormat f)
+  bool MVRunner::SerializeFromString(const std::string& src, pulse::study::bind::multiplex_ventilation::SimulationListData& dst, eSerializationFormat f)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
     google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)

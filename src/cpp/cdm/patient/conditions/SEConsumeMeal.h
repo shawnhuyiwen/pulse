@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/conditions/SEPatientCondition.h"
-#include "patient/SEMeal.h"
+#include "cdm/patient/conditions/SEPatientCondition.h"
+#include "cdm/patient/SEMeal.h"
 
 class CDM_DECL SEConsumeMeal : public SEPatientCondition
 {

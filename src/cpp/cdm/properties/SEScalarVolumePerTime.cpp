@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 const VolumePerTimeUnit VolumePerTimeUnit::L_Per_s("L/s");
 const VolumePerTimeUnit VolumePerTimeUnit::mL_Per_s("mL/s");

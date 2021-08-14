@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "PhysiologyEngine.h"
-#include "engine/SEEventManager.h"
+#include "cdm/PhysiologyEngine.h"
+#include "cdm/engine/SEEventManager.h"
 
 class CDM_DECL SEDataRequested : public LoggerForward, public SEEventHandler
 {
@@ -20,8 +20,8 @@ public:
 
   virtual void Clear(); //clear memory
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
-  static bool SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, SerializationFormat m);
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
+  static bool SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, eSerializationFormat m);
 
   virtual int GetID() const;
   virtual void SetID(int id);

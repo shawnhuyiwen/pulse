@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/assessments/SEPatientAssessment.h"
+#include "cdm/patient/assessments/SEPatientAssessment.h"
 
 // Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
 enum class eUrinalysis_MicroscopicObservationType {

@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuit.h"
-#include "circuit/thermal/SEThermalCircuitNode.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/circuit/SECircuit.h"
+#include "cdm/circuit/thermal/SEThermalCircuitNode.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
 
 class SECircuitManager;
 

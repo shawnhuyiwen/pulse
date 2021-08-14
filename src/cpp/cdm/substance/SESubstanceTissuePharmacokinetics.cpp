@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "substance/SESubstanceTissuePharmacokinetics.h"
-#include "properties/SEScalar.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/substance/SESubstanceTissuePharmacokinetics.h"
+#include "cdm/properties/SEScalar.h"
 
 SESubstanceTissuePharmacokinetics::SESubstanceTissuePharmacokinetics(const std::string& name, Logger* logger) : Loggable(logger), m_Name(name)
 {

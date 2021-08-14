@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "engine/SEAction.h"
-#include "properties/SEScalar.h"
+#include "cdm/engine/SEAction.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL SEOverrides : public SEAction
 {

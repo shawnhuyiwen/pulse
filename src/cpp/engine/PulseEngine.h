@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "CommonDataModel.h"
-#include "PhysiologyEngine.h"
+#include "cdm/CommonDataModel.h"
+#include "cdm/PhysiologyEngine.h"
 #include "cdm/utils/ScopedMutex.h"
 
 // I bet there is a way cool macro you could do for these enums...

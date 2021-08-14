@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "patient/conditions/SEPatientCondition.h"
+#include "cdm/patient/conditions/SEPatientCondition.h"
 
 class CDM_DECL SEImpairedAlveolarExchange : public SEPatientCondition
 {
