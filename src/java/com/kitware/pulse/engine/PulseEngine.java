@@ -429,7 +429,7 @@ public class PulseEngine
     if(this.logListener!=null)
       this.logListener.info(msg, origin);
   }
-  protected void handleWarn(String msg, String origin)
+  protected void handleWarning(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.warn(msg, origin);

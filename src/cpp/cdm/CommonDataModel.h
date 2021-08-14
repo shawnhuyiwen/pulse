@@ -56,6 +56,9 @@
   #define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
 #endif
 
+// See https ://www.fluentcpp.com/2019/08/30/how-to-disable-a-warning-in-cpp/
+// When adding new warnings remember to add the DISABLE_ macro
+// for all three sections MSVC, GCC/CLANG, other
 #if defined(_MSC_VER)
   #define DISABLE_WARNING_PUSH           __pragma(warning( push ))
   #define DISABLE_WARNING_POP            __pragma(warning( pop ))
@@ -63,8 +66,8 @@
 
   #define PUSH_PROTO_WARNINGS \
     DISABLE_WARNING_PUSH \
-    DISABLE_WARNING(4127) \ // conditional expression is constant
-    DISABLE_WARNING(4267)   // conversion from 'size_t' to 'type', possible loss of data
+    DISABLE_WARNING(4127) \
+    DISABLE_WARNING(4267)
   #define POP_PROTO_WARNINGS DISABLE_WARNING_POP
 #elif defined(__GNUC__) || defined(__clang__)
   #define DO_PRAGMA(X) _Pragma(#X)
