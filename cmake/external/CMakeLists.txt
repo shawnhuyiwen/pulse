@@ -105,7 +105,6 @@ ExternalProject_Add( ${PROJECT_NAME}
     -D${PROJECT_NAME}_SUPERBUILD:BOOL=OFF
     -D${PROJECT_NAME}_JAVA_API:BOOL=${${PROJECT_NAME}_JAVA_API}
     -D${PROJECT_NAME}_PYTHON_API:BOOL=${${PROJECT_NAME}_PYTHON_API}
-    -DDirent_DIR:PATH=${Dirent_DIR}
     -DEigen3_DIR:PATH=${Eigen3_DIR}
     -Dprotobuf_DIR:PATH=${protobuf_DIR}
     -Dprotobuf_SRC:PATH=${protobuf_SRC}

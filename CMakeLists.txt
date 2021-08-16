@@ -80,10 +80,6 @@ if(${PROJECT_NAME}_SUPERBUILD)
   endmacro()
 
   define_dependency(Eigen3)
-  if(WIN32)
-    # *nix systems have this already
-    define_dependency(Dirent)
-  endif()
   define_dependency(protobuf)
   if(${PROJECT_NAME}_PYTHON_API)
     find_package (Python3 COMPONENTS Interpreter Development)
@@ -150,10 +146,6 @@ include(AddExecutable)# Extras to do when creating an executable
 #-----------------------------------------------------------------------------
 
 find_package(Eigen3 REQUIRED)
-if(WIN32)
-  # *nix systems have this already
-  find_package(Dirent REQUIRED)
-endif()
 
 # Tell protobuf-config.cmake to try to be compatible with FindProtobuf.cmake;
 # this makes it easier for us to work with either one

@@ -1,37 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/utils/FileUtils.h"
-#include "dirent.h"
 #include <iterator>
-
-
-#if defined(_MSC_VER) || defined(__MINGW64_VERSION_MAJOR)
-  #include <windows.h>
-  #define MAXPATH MAX_PATH
-  #define GETCWD _getcwd
-  #define MKDIR(x) mkdir(x)
-#else
-  #include <unistd.h>
-  #if defined(__APPLE__)
-    #if defined(__clang__)
-      #include <sys/syslimits.h>
-    #endif
-  #endif
-  #if defined __GNUC__
-    #include <sys/types.h>
-    #include <sys/stat.h>
-  #endif
-
-  #define MAXPATH PATH_MAX
-  #define GETCWD getcwd
-  #define MKDIR(x) mkdir(x, 0755)
-
-  #if defined(__gnu_linux__)
-    #include <cstring>
-  #endif
-#endif
+#include <filesystem>
 
 std::string Replace(const std::string& original, const std::string& replace, const std::string& withThis)
 {
@@ -63,16 +36,16 @@ bool CreatePath(const std::string& path)
     }
   }
 
-  MKDIR(path.c_str());
+  MakeDirectory(path.c_str());
   return true;
 }
 
 bool CreateFilePath(const std::string& filenamePath)
 {
   // Separate path from file, and create the path
-  auto const sep = filenamePath.find_last_of("\\/");
+    auto const sep = filenamePath.find_last_of("\\/");
   if (sep != std::string::npos && sep > 0)
-    return CreatePath(filenamePath.substr(0, sep));
+    return std::filesystem::create_directory(filenamePath.substr(0, sep));
   return true; // Nothing to do... 
 }
 
@@ -103,97 +76,58 @@ bool ReadFile(const std::string& filename, std::string& content)
 
 bool IsDirectory(const std::string& dir)
 {
-  DIR* d = opendir(dir.c_str());
-  if (d == nullptr)
-    return false;
-  closedir(d);
-  return true;
-}
-bool IsDirectory(struct dirent* ent)
-{
-  return ent->d_type == DT_DIR;
+  return std::filesystem::is_directory(dir);
 }
 
 void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask)
 {
-  DIR *d = nullptr;
-  struct dirent *ent;
   std::string filename;
-  if ((d = opendir(dir.c_str())) != nullptr)
+  if (recursive)
   {
-    while ((ent = readdir(d)) != nullptr)
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(dir))
     {
-      size_t nameLength = strlen(ent->d_name);
-
-      if (ent->d_name[0] == '.' &&
-        ((nameLength == 1) || (nameLength == 2 && ent->d_name[1] == '.')))
-        continue;
-      filename = dir;
-      filename += "/";
-      filename += ent->d_name;
-
-      if (!IsDirectory(ent))
+      if (entry.exists() && entry.is_regular_file())
       {
+        filename = entry.path().filename().string();
         if (filename.find(mask) != std::string::npos)
           files.push_back(filename);
       }
-      else
-      {
-        if(recursive)
-          ListFiles(filename, files, recursive, mask);
-      }
+
     }
   }
-  closedir(d);
+  else
+  {
+    for (const auto& entry : std::filesystem::directory_iterator(dir))
+    {
+      if (entry.exists() && entry.is_regular_file())
+      {
+        filename = entry.path().filename().string();
+        if (filename.find(mask) != std::string::npos)
+          files.push_back(filename);
+      }
+      
+    }
+  }
 }
 
 void MakeDirectory(std::string const& dir)
 {
-  MKDIR(dir.c_str());
+  std::filesystem::create_directory(dir);
 }
 
-void DeleteDirectory(const std::string &dir, bool bDeleteSubdirectories)
+bool DeleteDirectory(const std::string &dir)
 {
-  DIR *d;
-  struct dirent *ent;
-  std::string filename;
-  if ((d = opendir(dir.c_str())) != nullptr)
-  {
-    while ((ent = readdir(d)) != nullptr)
-    {
-      size_t nameLength = strlen(ent->d_name);
-
-      if (ent->d_name[0] == '.' &&
-        ((nameLength == 1) || (nameLength == 2 && ent->d_name[1] == '.')))
-        continue;
-      filename = dir;
-      filename += "/";
-      filename += ent->d_name;
-
-      if (!IsDirectory(ent))
-      {
-        std::remove(filename.c_str());
-      }
-      else
-      {
-        DeleteDirectory(filename, bDeleteSubdirectories);
-      }
-    }
-  }
-  rmdir(dir.c_str());
+  return std::filesystem::remove_all(dir);
 }
 
 std::string GetCurrentWorkingDirectory()
 {
-  char path[MAXPATH];
-  GETCWD(path, MAXPATH);
-  return std::string(path);
+  return std::filesystem::current_path().string();
 }
 
 bool FileExists(const std::string& filename)
 {
-  struct stat buffer;
-  return (stat(filename.c_str(), &buffer) == 0);
+  return std::filesystem::exists(filename);
 }
 
 bool IsJSONFile(const std::string& filename)
