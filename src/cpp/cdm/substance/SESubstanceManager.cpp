@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceCompound.h"
@@ -149,12 +149,6 @@ void SESubstanceManager::RemoveActiveSubstance(const SESubstance& substance)
       break;
     }
   }
-}
-
-void SESubstanceManager::RemoveActiveSubstances(const std::vector<SESubstance*>& substances)
-{
-  for(SESubstance* sub : m_ActiveSubstances)
-    RemoveActiveSubstance(*sub);
 }
 
 void SESubstanceManager::RemoveActiveSubstances()

@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/properties/SEScalarVolume.h"
@@ -21,7 +21,7 @@ void SEAnesthesiaMachineOxygenBottle::Clear()
   INVALIDATE_PROPERTY(m_Volume);
 }
 
-void SEAnesthesiaMachineOxygenBottle::Merge(const SEAnesthesiaMachineOxygenBottle& from, SESubstanceManager& subMgr)
+void SEAnesthesiaMachineOxygenBottle::Merge(const SEAnesthesiaMachineOxygenBottle& from)
 {
   COPY_PROPERTY(Volume);
 }

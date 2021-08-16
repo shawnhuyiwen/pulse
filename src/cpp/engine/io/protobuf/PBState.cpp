@@ -96,7 +96,7 @@ namespace PULSE_ENGINE
     if (src.has_datarequestmanager())
     {
       dst.m_EngineTrack->GetDataRequestManager().Clear();
-      PBEngine::Load(src.datarequestmanager(), dst.m_EngineTrack->GetDataRequestManager(), *dst.m_Substances);
+      PBEngine::Load(src.datarequestmanager(), dst.m_EngineTrack->GetDataRequestManager());
       dst.m_EngineTrack->ForceConnection();// I don't want to rest the file because I would loose all my data
     }
 

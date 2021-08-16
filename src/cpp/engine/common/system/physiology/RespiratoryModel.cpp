@@ -598,7 +598,7 @@ namespace PULSE_ENGINE
         m_AerosolTransporter->Transport(AerosolGraph, m_data.GetTimeStep_s());
 
   #ifdef DEBUG
-      Debugging(RespirationCircuit);
+      Debugging();
   #endif
     }
     //Update system data
@@ -3978,7 +3978,7 @@ namespace PULSE_ENGINE
   /// \brief
   /// Output data tracks for debugging purposes
   //--------------------------------------------------------------------------------------------------
-  void RespiratoryModel::Debugging(SEFluidCircuit& RespirationCircuit)
+  void RespiratoryModel::Debugging()
   {
     //m_data.GetDataTrack().Probe(RespirationCircuit);
 

@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
 #include "cdm/properties/SEScalarArea.h"
 #include "cdm/properties/SEScalar0To1.h"
@@ -27,12 +27,14 @@ void SEImpairedAlveolarExchangeExacerbation::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEImpairedAlveolarExchangeExacerbation::Copy(const SEImpairedAlveolarExchangeExacerbation & src, bool preserveState)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
+DISABLE_WARNING_POP
 
 bool SEImpairedAlveolarExchangeExacerbation::IsValid() const
 {

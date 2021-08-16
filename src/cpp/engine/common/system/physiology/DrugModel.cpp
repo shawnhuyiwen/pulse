@@ -149,6 +149,7 @@ namespace PULSE_ENGINE
     AdministerSubstanceCompoundInfusion();
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Substances process function
@@ -171,6 +172,12 @@ namespace PULSE_ENGINE
       CalculateDrugEffects();
     ComputeExposedModelParameters();
   }
+  void DrugModel::PostProcess(bool solve_and_transport)
+  {
+
+  }
+  DISABLE_WARNING_POP
+
   void DrugModel::ComputeExposedModelParameters()
   {
 

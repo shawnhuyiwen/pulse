@@ -1,6 +1,6 @@
 // The following tests will be exported and runnable
 
-#include "CommonDataModel.h"
+#include "CommonDefs.h"
 #include "utils/testing/SETestManager.h"
 class SEFluidCircuit;
 class SECircuitManager;

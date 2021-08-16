@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "cdm/system/equipment/inhaler/SEInhaler.h"
 #include "cdm/substance/SESubstance.h"
@@ -33,10 +33,12 @@ void SEInhalerConfiguration::Clear()
   m_MergeType = eMergeType::Append;
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
+DISABLE_WARNING_POP
 
 bool SEInhalerConfiguration::IsValid() const
 {

@@ -301,6 +301,7 @@ namespace PULSE_ENGINE
     // GlucoseLipidControl(m_data.GetTimeStep_s());
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Process completes substance transport by performing diffusion and alveoli transfer
@@ -333,10 +334,6 @@ namespace PULSE_ENGINE
     CalculateVitals();
     ComputeExposedModelParameters();
   }
-  void TissueModel::ComputeExposedModelParameters()
-  {
-
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -346,6 +343,12 @@ namespace PULSE_ENGINE
   /// There are currently no postprocess steps in the tissue system.
   //--------------------------------------------------------------------------------------------------
   void TissueModel::PostProcess(bool solve_and_transport)
+  {
+
+  }
+  DISABLE_WARNING_POP
+
+  void TissueModel::ComputeExposedModelParameters()
   {
 
   }

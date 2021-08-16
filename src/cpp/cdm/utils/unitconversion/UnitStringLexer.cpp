@@ -6,7 +6,7 @@
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/utils/unitconversion/UCCommon.h"
 
 void CUnitStringLexer::ScanNextToken()

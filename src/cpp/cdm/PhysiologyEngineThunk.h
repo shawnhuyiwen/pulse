@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 // CDM Features in use
 #include "cdm/PhysiologyEngine.h"
 #include "cdm/engine/SEEventManager.h"

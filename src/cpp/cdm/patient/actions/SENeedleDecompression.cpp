@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/patient/actions/SENeedleDecompression.h"
 #include "cdm/io/protobuf/PBPatientActions.h"
 
@@ -24,12 +24,14 @@ void SENeedleDecompression::Clear()
   m_Side= eSide::NullSide;
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SENeedleDecompression::Copy(const SENeedleDecompression& src, bool preserveState)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
+DISABLE_WARNING_POP
 
 bool SENeedleDecompression::IsValid() const
 {
@@ -48,10 +50,12 @@ void SENeedleDecompression::Deactivate()
   Clear();//No stateful properties
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 const SEScalar* SENeedleDecompression::GetScalar(const std::string& name)
 {
   return nullptr;
 }
+DISABLE_WARNING_POP
 
 eSwitch SENeedleDecompression::GetState() const
 {

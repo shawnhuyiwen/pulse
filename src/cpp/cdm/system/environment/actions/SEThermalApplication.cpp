@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/system/environment/actions/SEThermalApplication.h"
 #include "cdm/system/environment/SEActiveConditioning.h"
 #include "cdm/system/environment/SEAppliedTemperature.h"
@@ -39,10 +39,12 @@ void SEThermalApplication::Clear()
   }
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEThermalApplication::Copy(const SEThermalApplication& src, bool preserveState)
 {// Using Bindings to make a copy
   PBEnvironmentAction::Copy(src, *this);
 }
+DISABLE_WARNING_POP
 
 bool SEThermalApplication::IsValid() const
 {

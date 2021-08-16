@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 #include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
 #include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
@@ -110,11 +110,11 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from, SESubstanceMana
   COPY_PROPERTY(RespiratoryRate);
   COPY_PROPERTY(ReliefValvePressure);
 
-  MERGE_CHILD(LeftChamber, subMgr);
-  MERGE_CHILD(RightChamber, subMgr);
+  MERGE_CHILD_SUBS(LeftChamber, subMgr);
+  MERGE_CHILD_SUBS(RightChamber, subMgr);
  
-  MERGE_CHILD(OxygenBottleOne, subMgr);
-  MERGE_CHILD(OxygenBottleTwo, subMgr);
+  MERGE_CHILD(OxygenBottleOne);
+  MERGE_CHILD(OxygenBottleTwo);
 }
 
 bool SEAnesthesiaMachine::SerializeToString(std::string& output, eSerializationFormat m) const

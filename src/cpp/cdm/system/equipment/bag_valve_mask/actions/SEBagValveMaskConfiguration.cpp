@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
 #include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
 #include "cdm/substance/SESubstance.h"
@@ -40,10 +40,12 @@ void SEBagValveMaskConfiguration::Clear()
   m_MergeType = eMergeType::Append;
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEBagValveMaskConfiguration::Copy(const SEBagValveMaskConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
+DISABLE_WARNING_POP
 
 bool SEBagValveMaskConfiguration::IsValid() const
 {

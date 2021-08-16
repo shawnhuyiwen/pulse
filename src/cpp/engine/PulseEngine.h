@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/PhysiologyEngine.h"
 #include "cdm/utils/ScopedMutex.h"
 

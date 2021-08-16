@@ -34,6 +34,8 @@
 // will, but I don't trust my intuition on IEEE 754.
 #define SNAP_TOLERANCE (FLT_EPSILON * 16.0)
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
+
 class CSnapValue
 {
 private:
@@ -328,3 +330,5 @@ inline double pow(double x, const CSnapValue &y)
 {
   return pow(x,y.GetValue());
 }
+
+DISABLE_WARNING_POP

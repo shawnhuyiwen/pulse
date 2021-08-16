@@ -141,7 +141,7 @@ C_EXPORT bool C_CALL PullLogMessages(PhysiologyEngineThunk* thunk, int format, c
 extern "C"
 C_EXPORT void C_CALL KeepEventChanges(PhysiologyEngineThunk* thunk, bool keep)
 {
-  thunk->KeepEventChanges(true);
+  thunk->KeepEventChanges(keep);
 }
 extern "C"
 C_EXPORT bool C_CALL PullEvents(PhysiologyEngineThunk* thunk, int format, char** str_addr)

@@ -3,7 +3,6 @@
 
 #pragma once
 class SEAnesthesiaMachine;
-class SESubstanceManager;
 
 class CDM_DECL SEAnesthesiaMachineOxygenBottle : Loggable
 {
@@ -16,7 +15,7 @@ public:
 
   virtual void Clear();
 
-  virtual void Merge(const SEAnesthesiaMachineOxygenBottle& from, SESubstanceManager& subMgr);
+  virtual void Merge(const SEAnesthesiaMachineOxygenBottle& from);
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

@@ -12,6 +12,8 @@
 
 #include "cdm/utils/unitconversion/SnapValue.h"
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
+
 class CCompoundUnitElement
 {
 public:
@@ -141,3 +143,4 @@ private:
   int m_iPrefixID;
 };
 
+DISABLE_WARNING_POP

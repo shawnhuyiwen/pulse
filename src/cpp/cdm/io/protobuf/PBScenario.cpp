@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Scenario.pb.h"
 POP_PROTO_WARNINGS
@@ -29,7 +29,7 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioData& src, SEScenario& dst)
     PBEngine::Load(src.patientconfiguration(), dst.GetPatientConfiguration(), *dst.m_SubMgr);
 
   if (src.has_datarequestmanager())
-    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager(), *dst.m_SubMgr);
+    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager());
 
   for (int i = 0; i < src.anyaction_size(); i++)
   {

@@ -7,6 +7,8 @@
 #include "engine/human_adult/whole_body/test/EngineTest.h"
 #include "engine/human_adult/ventilation_mechanics/test/EngineTest.h"
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
+
   /////////////////////
   // TESTING SUPPORT //
   /////////////////////
@@ -286,7 +288,7 @@ JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativePullAc
 }
 
 extern "C"
-JNIEXPORT jdouble JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetTimeStep(JNIEnv * env, jobject obj, jlong ptr, jstring unit, jint format)
+JNIEXPORT jdouble JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetTimeStep(JNIEnv * env, jobject obj, jlong ptr, jstring unit)
 {
   PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
   engineJNI->jniEnv = env;
@@ -405,3 +407,5 @@ void PulseEngineJNI::ForwardFatal(const std::string& msg, const std::string& ori
     jniEnv->CallVoidMethod(jniObj, jniFatalMethodID, m, o);
   }
 }
+
+DISABLE_WARNING_POP

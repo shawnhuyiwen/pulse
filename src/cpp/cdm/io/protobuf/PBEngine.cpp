@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Engine.pb.h"
 POP_PROTO_WARNINGS
@@ -538,12 +538,12 @@ bool PBEngine::SerializeToString(const std::vector<SEDataRequested*>& src, std::
   return PBUtils::SerializeToString(data, dst, m, nullptr);
 }
 
-void PBEngine::Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+void PBEngine::Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst)
 {
   dst.Clear();
-  PBEngine::Serialize(src, dst, subMgr);
+  PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst)
 {
   dst.m_ResultsFilename = src.resultsfilename();
   dst.m_SamplesPerSecond = src.samplespersecond();
@@ -580,12 +580,12 @@ void PBEngine::Serialize(const SEDataRequestManager& src, CDM_BIND::DataRequestM
   for (SEDataRequest* dr : src.m_Requests)
     dst.mutable_datarequest()->AddAllocated(PBEngine::Unload(*dr));
 }
-void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst)
 {
   dst.Clear();
   CDM_BIND::DataRequestManagerData data;
   PBEngine::Serialize(src, data);
-  PBEngine::Serialize(data, dst, subMgr);
+  PBEngine::Serialize(data, dst);
 }
 
 void PBEngine::Load(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst)
@@ -728,20 +728,20 @@ bool PBEngine::SerializeToFile(const SEDataRequestManager& src, const std::strin
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEDataRequestManager& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, SEDataRequestManager& dst, eSerializationFormat m)
 {
   CDM_BIND::DataRequestManagerData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst, subMgr);
+  PBEngine::Load(data, dst);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManager& dst)
 {
   CDM_BIND::DataRequestManagerData data;
   if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst, subMgr);
+  PBEngine::Load(data, dst);
   return true;
 }
 
@@ -953,7 +953,7 @@ void PBEngine::Serialize(const CDM_BIND::EngineInitializationData& src, SEEngine
     dst.SetState(src.state(), eSerializationFormat::JSON);// TODO support binary
 
   if (src.has_datarequestmanager())
-    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager(), subMgr);
+    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager());
 
   if (!src.logfilename().empty())
     dst.SetLogFilename(src.logfilename());

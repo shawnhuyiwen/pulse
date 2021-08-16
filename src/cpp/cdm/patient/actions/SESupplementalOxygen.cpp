@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/patient/actions/SESupplementalOxygen.h"
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
@@ -29,12 +29,14 @@ void SESupplementalOxygen::Clear()
   INVALIDATE_PROPERTY(m_Volume);
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SESupplementalOxygen::Copy(const SESupplementalOxygen& src, bool preserveState)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
+DISABLE_WARNING_POP
 
 bool SESupplementalOxygen::IsValid() const
 {

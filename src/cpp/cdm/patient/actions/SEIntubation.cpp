@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/io/protobuf/PBPatientActions.h"
 #include "cdm/properties/SEScalarPressureTimePerVolume.h"
@@ -25,12 +25,15 @@ void SEIntubation::Clear()
   INVALIDATE_PROPERTY(m_AirwayResistance);
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEIntubation::Copy(const SEIntubation& src, bool preserveState)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
+DISABLE_WARNING_POP
+
 bool SEIntubation::IsValid() const
 {
   return true;

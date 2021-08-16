@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/engine/SEOverrides.h"
 #include "cdm/io/protobuf/PBActions.h"
 
@@ -73,8 +73,10 @@ void SEOverrides::ToString(std::ostream& str) const
   }
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 const SEScalar* SEOverrides::GetScalar(const std::string& name)
 {
   // Probably want to iterate over the properties and look for the name?
   return nullptr;
 }
+DISABLE_WARNING_POP

@@ -25,7 +25,7 @@ namespace HUMAN_ADULT_VENT_MECH
   {
 
   }
-
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   // Serialization is not supported
   bool Controller::SerializeFromFile(const std::string& filename)
   {
@@ -60,6 +60,7 @@ namespace HUMAN_ADULT_VENT_MECH
     // Only support two modes
     return (mode == pmc::eAirwayMode::Free || mode == pmc::eAirwayMode::MechanicalVentilator);
   }
+  DISABLE_WARNING_POP
 
   void Controller::Allocate()
   {

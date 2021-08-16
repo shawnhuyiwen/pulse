@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Patient.pb.h"
 #include "pulse/cdm/bind/PatientNutrition.pb.h"

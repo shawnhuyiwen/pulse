@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/engine/SEEquipmentActionCollection.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
@@ -781,6 +781,7 @@ void SEEquipmentActionCollection::GetAllActions(std::vector<const SEAction*>& ac
     actions.push_back(GetMechanicalVentilatorHold());
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 const SEScalar* SEEquipmentActionCollection::GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property)
 {
   if (actionName == "AnesthesiaMachineConfiguration")
@@ -829,3 +830,4 @@ const SEScalar* SEEquipmentActionCollection::GetScalar(const std::string& action
 
   return nullptr;
 }
+DISABLE_WARNING_POP

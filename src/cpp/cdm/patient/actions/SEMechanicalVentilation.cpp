@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/patient/actions/SEMechanicalVentilation.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceConcentration.h"
@@ -47,12 +47,14 @@ void SEMechanicalVentilation::Clear()
     sc->Clear();
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEMechanicalVentilation::Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool preserveState)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this, subMgr);
   //if(preserveState) // Put back any state
 }
+DISABLE_WARNING_POP
 
 bool SEMechanicalVentilation::IsValid() const
 {

@@ -24,6 +24,7 @@
 #include "utils/DataTrack.h"
 #include "engine/SEDecimalFormat.h"
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
 {
   std::ofstream file;
@@ -89,3 +90,4 @@ void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
 
   file.close();
 }
+DISABLE_WARNING_POP

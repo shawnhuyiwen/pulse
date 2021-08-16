@@ -237,6 +237,7 @@ Constructors
 
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Inhaler system process function
@@ -248,10 +249,6 @@ Constructors
   {
     ComputeExposedModelParameters();
   }
-  void InhalerModel::ComputeExposedModelParameters()
-  {
-
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -261,6 +258,12 @@ Constructors
   /// Currently not used.
   //--------------------------------------------------------------------------------------------------
   void InhalerModel::PostProcess(bool solve_and_transport)
+  {
+
+  }
+  DISABLE_WARNING_POP
+
+  void InhalerModel::ComputeExposedModelParameters()
   {
 
   }

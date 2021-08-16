@@ -1,7 +1,7 @@
 
 add_library_ex(CommonDataModel
   H_FILES
-    CommonDataModel.h
+    CommonDefs.h
     Doxy.h
     Macros.h
     PhysiologyEngine.h
@@ -713,10 +713,6 @@ add_library_ex(CommonDataModel
   INSTALL_HEADER_DIR
     cdm
 )
-
-if(WIN32)
-  target_include_directories(CommonDataModel PRIVATE ${Dirent_INCLUDE_DIR})
-endif()
 target_include_directories(CommonDataModel PRIVATE ${EIGEN3_INCLUDE_DIR})
 
 add_subdirectory(test)

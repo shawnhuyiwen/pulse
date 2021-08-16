@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/properties/SEScalarPressureTimeSquaredPerVolume.h"
 
 const PressureTimeSquaredPerVolumeUnit PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL("mmHg s^2/mL");

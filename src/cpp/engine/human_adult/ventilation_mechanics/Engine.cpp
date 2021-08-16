@@ -6,7 +6,7 @@
 
 namespace HUMAN_ADULT_VENT_MECH
 {
-  Engine::Engine(Logger* logger) : HUMAN_ADULT_WHOLE_BODY::Engine()
+  Engine::Engine(Logger* logger) : HUMAN_ADULT_WHOLE_BODY::Engine(logger)
   {
     
   }

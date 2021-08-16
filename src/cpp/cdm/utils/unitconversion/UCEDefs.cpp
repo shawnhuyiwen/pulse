@@ -1,4 +1,4 @@
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/utils/unitconversion/UnitConversionEngine.h"
 
 // This originally started out as a file read from disk

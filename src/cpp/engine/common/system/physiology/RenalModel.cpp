@@ -470,6 +470,7 @@ namespace PULSE_ENGINE
     ProcessActions();
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Conducts the substance transport for renal
@@ -486,10 +487,6 @@ namespace PULSE_ENGINE
     CalculateVitalSigns();
     ComputeExposedModelParameters();
   }
-  void RenalModel::ComputeExposedModelParameters()
-  {
-
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -502,6 +499,12 @@ namespace PULSE_ENGINE
   void RenalModel::PostProcess(bool solve_and_transport)
   {
     //Circuit PostProcessing is done on the entire circulatory circuit elsewhere
+  }
+  DISABLE_WARNING_POP
+
+  void RenalModel::ComputeExposedModelParameters()
+  {
+
   }
 
   //--------------------------------------------------------------------------------------------------

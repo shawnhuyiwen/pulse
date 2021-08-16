@@ -88,16 +88,16 @@ public:
   static void Serialize(const std::vector<SEDataRequested*>& src, CDM_BIND::DataRequestedListData& dst);
   static bool SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, eSerializationFormat m);
 
-  static void Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr);
+  static void Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst);
   static CDM_BIND::DataRequestManagerData* Unload(const SEDataRequestManager& src);
-  static void Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst);
   static void Serialize(const SEDataRequestManager& src, CDM_BIND::DataRequestManagerData& dst);
-  static void Copy(const SEDataRequestManager& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr);
+  static void Copy(const SEDataRequestManager& src, SEDataRequestManager& dst);
 
   static bool SerializeToString(const SEDataRequestManager& src, std::string& output, eSerializationFormat m);
   static bool SerializeToFile(const SEDataRequestManager& src, const std::string& filename);
-  static bool SerializeFromString(const std::string& src, SEDataRequestManager& dst, eSerializationFormat m, const SESubstanceManager& subMgr);
-  static bool SerializeFromFile(const std::string& filename, SEDataRequestManager& dst, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, SEDataRequestManager& dst, eSerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SEDataRequestManager& dst);
 
   static void Load(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst);
   static CDM_BIND::DecimalFormatData* Unload(const SEDecimalFormat& src);

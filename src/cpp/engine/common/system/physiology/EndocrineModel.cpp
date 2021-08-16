@@ -85,6 +85,7 @@ namespace PULSE_ENGINE
 
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Endocrine process function
@@ -101,6 +102,12 @@ namespace PULSE_ENGINE
     SynthesizeInsulin();
     ComputeExposedModelParameters();
   }
+  void EndocrineModel::PostProcess(bool solve_and_transport)
+  {
+
+  }
+  DISABLE_WARNING_POP
+
   void EndocrineModel::ComputeExposedModelParameters()
   {
 

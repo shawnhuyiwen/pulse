@@ -26,9 +26,9 @@ public:
   static void Serialize(const CDM_BIND::AnesthesiaMachineChamberData& src, SEAnesthesiaMachineChamber& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEAnesthesiaMachineChamber& src, CDM_BIND::AnesthesiaMachineChamberData& dst);
 
-  static void Load(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst, const SESubstanceManager& subMgr);
+  static void Load(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst);
   static CDM_BIND::AnesthesiaMachineOxygenBottleData* Unload(const SEAnesthesiaMachineOxygenBottle& src);
-  static void Serialize(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst);
   static void Serialize(const SEAnesthesiaMachineOxygenBottle& src, CDM_BIND::AnesthesiaMachineOxygenBottleData& dst);
 
 };

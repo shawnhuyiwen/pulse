@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/properties/SEScalar0To1.h"
 
 SEScalar0To1::SEScalar0To1() : SEScalar()
@@ -16,6 +16,7 @@ void SEScalar0To1::SetValue(double d)
   SEScalar::SetValue(d);
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEScalar0To1::SetValue(double d, const NoUnit& unitless)
 { 
   SEScalar0To1::SetValue(d);
@@ -30,3 +31,4 @@ void SEScalar0To1::ForceValue(double d, const NoUnit& unitless)
 {
   SEScalar::ForceValue(d);
 }
+DISABLE_WARNING_POP

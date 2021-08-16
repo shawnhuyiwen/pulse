@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/properties/SEScalar.h"
 #include "cdm/utils/GeneralMath.h"
 
@@ -549,6 +549,14 @@ bool SEGenericScalar::IsValidUnit(const CCompoundUnit& unit) const
 {
   if (m_UnitScalar == nullptr)
     return false;
+  if (*m_UnitScalar->GetUnit()->GetDimension() == *unit.GetDimension())
+    return true;
+  // See if the quantity types (Dimensions) are convertable
+  double fromExp;
+  CCompoundUnit mappingUnit;
+  CUnitConversionEngine& uce = CUnitConversionEngine::GetEngine();
+  if (uce.GetQuantityConversionParams(m_UnitScalar->GetUnit()->GetDimension(), unit.GetDimension(), fromExp, mappingUnit))
+    return true;
   return false;
 }
 

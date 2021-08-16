@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/system/physiology/SEDrugSystem.h"
 #include "cdm/system/physiology/SEPupillaryResponse.h"
 #include "cdm/properties/SEScalar.h"

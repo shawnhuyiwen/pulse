@@ -25,7 +25,7 @@
 
 */
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/utils/base64.h"
 
 static const std::string base64_chars = 

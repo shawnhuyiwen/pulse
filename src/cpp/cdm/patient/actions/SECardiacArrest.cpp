@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/patient/actions/SECardiacArrest.h"
 #include "cdm/io/protobuf/PBPatientActions.h"
 
@@ -21,12 +21,14 @@ void SECardiacArrest::Clear()
   m_State = eSwitch::Off;
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SECardiacArrest::Copy(const SECardiacArrest& src, bool preserveState)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
+DISABLE_WARNING_POP
 
 bool SECardiacArrest::IsValid() const
 {
@@ -45,10 +47,12 @@ void SECardiacArrest::Deactivate()
   Clear();//No stateful properties
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 const SEScalar* SECardiacArrest::GetScalar(const std::string& name)
 {
   return nullptr;
 }
+DISABLE_WARNING_POP
 
 void SECardiacArrest::ToString(std::ostream &str) const
 {

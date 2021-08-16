@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 #include "cdm/substance/SESubstance.h"
@@ -39,10 +39,12 @@ void SEMechanicalVentilatorConfiguration::Clear()
   m_MergeType = eMergeType::Append;
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEMechanicalVentilatorConfiguration::Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
+DISABLE_WARNING_POP
 
 bool SEMechanicalVentilatorConfiguration::IsValid() const
 {

@@ -55,7 +55,7 @@ void HowToScenarioBase()
   // NOTE : You can just make a DataRequests file that holds only data requests
   // And serialize that in instead of a scenario file, if all you want is a consistent
   // This will clear out any requests already in the object
-  pe->GetEngineTracker()->GetDataRequestManager().SerializeFromFile("YourDataRequestsFile.json", pe->GetSubstanceManager());
+  pe->GetEngineTracker()->GetDataRequestManager().SerializeFromFile("YourDataRequestsFile.json");
   // Don't need to delete drData as obj is wrapped in a unique_ptr
  
 

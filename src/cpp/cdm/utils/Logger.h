@@ -8,6 +8,8 @@ class SEScalarTime;
 class log_lib; // Encapsulates 3rd party logging library
 #include <sstream>
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
+
 namespace pulse::cdm
 {
   // Not happy with how std does this for floats/doubles
@@ -203,3 +205,4 @@ inline std::ostream& operator<< (std::ostream& out, const LogMessages& a)
   }
   return out;
 }
+DISABLE_WARNING_POP

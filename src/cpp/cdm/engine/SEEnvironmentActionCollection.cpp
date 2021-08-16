@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/engine/SEEnvironmentActionCollection.h"
 #include "cdm/system/environment/SEEnvironment.h"
 #include "cdm/system/environment/actions/SEChangeEnvironmentalConditions.h"
@@ -107,6 +107,7 @@ void SEEnvironmentActionCollection::GetAllActions(std::vector<const SEAction*>& 
     actions.push_back(GetThermalApplication());
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 const SEScalar* SEEnvironmentActionCollection::GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property)
 {
   if (actionName == "ChangeEnvironmentalConditions")
@@ -116,3 +117,4 @@ const SEScalar* SEEnvironmentActionCollection::GetScalar(const std::string& acti
 
   return nullptr;
 }
+DISABLE_WARNING_POP

@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/system/environment/actions/SEChangeEnvironmentalConditions.h"
 #include "cdm/system/environment/SEEnvironmentalConditions.h"
 #include "cdm/substance/SESubstance.h"
@@ -42,10 +42,12 @@ void SEChangeEnvironmentalConditions::Clear()
   m_MergeType = eMergeType::Append;
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr, bool preserveState)
 {// Using Bindings to make a copy
   PBEnvironmentAction::Copy(src, *this, subMgr);
 }
+DISABLE_WARNING_POP
 
 bool SEChangeEnvironmentalConditions::IsValid() const
 {

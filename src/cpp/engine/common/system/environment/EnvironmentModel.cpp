@@ -255,6 +255,7 @@ namespace PULSE_ENGINE
     CalculateRespiration();
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// There is nothing to do here.  Processing the combined Energy-Environment circuit is handled by
@@ -264,11 +265,14 @@ namespace PULSE_ENGINE
   {
     ComputeExposedModelParameters();
   }
+  DISABLE_WARNING_POP
+
   void EnvironmentModel::ComputeExposedModelParameters()
   {
 
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// There is nothing to do here.  Postprocessing the combined Energy-Environment circuit is handled by
@@ -278,6 +282,7 @@ namespace PULSE_ENGINE
   {
 
   }
+  DISABLE_WARNING_POP
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

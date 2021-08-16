@@ -145,6 +145,7 @@ namespace PULSE_ENGINE
   {
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Blood Chemistry process method
@@ -249,10 +250,6 @@ namespace PULSE_ENGINE
     // 1.6 comes from reading http://www.drkaslow.com/html/proteins_-_albumin-_globulins-_etc.html
     ComputeExposedModelParameters();
   }
-  void BloodChemistryModel::ComputeExposedModelParameters()
-  {
-
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -262,6 +259,12 @@ namespace PULSE_ENGINE
   /// The current Pulse implementation has no specific postprocess functionality.
   //--------------------------------------------------------------------------------------------------
   void BloodChemistryModel::PostProcess(bool solve_and_transport)
+  {
+
+  }
+  DISABLE_WARNING_POP
+
+  void BloodChemistryModel::ComputeExposedModelParameters()
   {
 
   }

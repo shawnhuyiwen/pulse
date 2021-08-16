@@ -202,6 +202,7 @@ namespace PULSE_ENGINE
 
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Nervous Process Step
@@ -215,10 +216,6 @@ namespace PULSE_ENGINE
     SetPupilEffects();
     ComputeExposedModelParameters();
   }
-  void NervousModel::ComputeExposedModelParameters()
-  {
-
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -231,6 +228,13 @@ namespace PULSE_ENGINE
   {
 
   }
+  DISABLE_WARNING_POP
+
+  void NervousModel::ComputeExposedModelParameters()
+  {
+
+  }
+
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

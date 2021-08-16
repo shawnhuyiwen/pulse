@@ -323,6 +323,7 @@ namespace PULSE_ENGINE
     CheckReliefValve();
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Anesthesia machine process function
@@ -339,10 +340,6 @@ namespace PULSE_ENGINE
     }
     ComputeExposedModelParameters();
   }
-  void AnesthesiaMachineModel::ComputeExposedModelParameters()
-  {
-
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -354,6 +351,12 @@ namespace PULSE_ENGINE
   /// The ventilator volumes are updated based on the previously calculated nodal analysis.
   //--------------------------------------------------------------------------------------------------
   void AnesthesiaMachineModel::PostProcess(bool solve_and_transport)
+  {
+
+  }
+  DISABLE_WARNING_POP
+
+  void AnesthesiaMachineModel::ComputeExposedModelParameters()
   {
 
   }

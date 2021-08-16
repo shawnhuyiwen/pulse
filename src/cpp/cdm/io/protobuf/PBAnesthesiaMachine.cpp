@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/AnesthesiaMachine.pb.h"
 POP_PROTO_WARNINGS
@@ -50,9 +50,9 @@ void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, 
   if (src.has_rightchamber())
     PBAnesthesiaMachine::Load(src.rightchamber(), dst.GetRightChamber(), subMgr);
   if (src.has_oxygenbottleone())
-    PBAnesthesiaMachine::Load(src.oxygenbottleone(), dst.GetOxygenBottleOne(), subMgr);
+    PBAnesthesiaMachine::Load(src.oxygenbottleone(), dst.GetOxygenBottleOne());
   if (src.has_oxygenbottletwo())
-    PBAnesthesiaMachine::Load(src.oxygenbottletwo(), dst.GetOxygenBottleTwo(), subMgr);
+    PBAnesthesiaMachine::Load(src.oxygenbottletwo(), dst.GetOxygenBottleTwo());
 }
 
 CDM_BIND::AnesthesiaMachineData* PBAnesthesiaMachine::Unload(const SEAnesthesiaMachine& src)
@@ -129,12 +129,12 @@ void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachineChamber& src, CDM_B
     dst.set_substance(src.m_Substance->GetName());
 }
 
-void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst, const SESubstanceManager& subMgr)
+void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst)
 {
   dst.Clear();
-  PBAnesthesiaMachine::Serialize(src, dst, subMgr);
+  PBAnesthesiaMachine::Serialize(src, dst);
 }
-void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst, const SESubstanceManager& subMgr)
+void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineOxygenBottleData& src, SEAnesthesiaMachineOxygenBottle& dst)
 {
   if (src.has_volume())
     PBProperty::Load(src.volume(), dst.GetVolume());

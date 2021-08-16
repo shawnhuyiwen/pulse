@@ -418,6 +418,7 @@ namespace PULSE_ENGINE
     m_CurrentPeriodTime_s += m_data.GetTimeStep_s();
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Bag Valve Mask process function
@@ -430,10 +431,6 @@ namespace PULSE_ENGINE
   {
     ComputeExposedModelParameters();
   }
-  void BagValveMaskModel::ComputeExposedModelParameters()
-  {
-
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -445,6 +442,12 @@ namespace PULSE_ENGINE
   /// The volumes are updated based on the previously calculated nodal analysis.
   //--------------------------------------------------------------------------------------------------
   void BagValveMaskModel::PostProcess(bool solve_and_transport)
+  {
+
+  }
+  DISABLE_WARNING_POP
+
+  void BagValveMaskModel::ComputeExposedModelParameters()
   {
 
   }

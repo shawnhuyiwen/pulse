@@ -3,6 +3,8 @@
 
 #pragma once
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
+
 class SESubstance;
 class SESubstanceManager;
 class SECircuitManager;
@@ -189,3 +191,5 @@ protected:
   SESubstance* m_HbCO;
   SESubstanceManager& m_subMgr;
 };
+
+DISABLE_WARNING_POP

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 
 class CDM_DECL SEEngineConfiguration : public Loggable
 {

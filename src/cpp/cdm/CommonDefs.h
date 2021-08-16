@@ -60,6 +60,9 @@
 // When adding new warnings remember to add the DISABLE_ macro
 // for all three sections MSVC, GCC/CLANG, other
 #if defined(_MSC_VER)
+
+  //#pragma warning(disable:4100) // unreferenced formal parameter (intentional in base classes)
+
   #define DISABLE_WARNING_PUSH           __pragma(warning( push ))
   #define DISABLE_WARNING_POP            __pragma(warning( pop ))
   #define DISABLE_WARNING(warningNumber) __pragma(warning( disable : warningNumber ))
@@ -69,6 +72,11 @@
     DISABLE_WARNING(4127) \
     DISABLE_WARNING(4267)
   #define POP_PROTO_WARNINGS DISABLE_WARNING_POP
+
+  #define DISABLE_UNREFERENCED_FORMAL_PARAMETER \
+    DISABLE_WARNING_PUSH \
+    DISABLE_WARNING(4100)
+
 #elif defined(__GNUC__) || defined(__clang__)
   #define DO_PRAGMA(X) _Pragma(#X)
   #define DISABLE_WARNING_PUSH           DO_PRAGMA(GCC diagnostic push)
@@ -78,10 +86,13 @@
   #define PUSH_PROTO_WARNINGS \
     DISABLE_WARNING_PUSH
   #define POP_PROTO_WARNINGS DISABLE_WARNING_POP
+
+  #define DISABLE_UNREFERENCED_FORMAL_PARAMETER
 #else
   #define DISABLE_WARNING_PUSH
   #define DISABLE_WARNING_POP
   #define DISABLE_WARNING
+  #define DISABLE_UNREFERENCED_FORMAL_PARAMETER
 #endif
 
 #define _USE_MATH_DEFINES
@@ -106,22 +117,6 @@
 using namespace stdext;
 #else//if (__GCC__) || (__GNUC__)
 #include <unordered_map>
-#include <dirent.h>
-#endif
-
-#if defined(_MSC_VER)
-  // Disabling the waring about STL classes used have 
-  // to have a dll interface to be used by clients
-  // From what I have read STL is compiler dependent
-  // But since we are releasing source, you can build
-  // the project necessary to ensure proper linkage
-  // If anyone else has opinions on this, let us know
-  // kitware@kitware.com
-  #pragma warning(disable:4251)
-  #pragma warning(disable:4100) // unreferenced formal parameter (intentional in base classes)
-  #pragma warning(disable:4996) // Deprecation
-  #pragma warning(disable:4505) // unreferenced local function has been removed (dirent)
-  #pragma warning(disable:4503)
 #endif
 
 //Utilities

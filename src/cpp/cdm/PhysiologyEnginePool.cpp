@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
 See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/PhysiologyEnginePool.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEAdvanceTime.h"
@@ -110,7 +110,7 @@ bool SEPhysiologyEnginePool::InitializeEngines()
         pe->IsActive = engine->SerializeFromString(init->GetState(), init->GetStateFormat());
       // Data Requests
       if (init->HasDataRequestManager())
-        engine->GetEngineTracker()->GetDataRequestManager().Copy(init->GetDataRequestManager(), engine->GetSubstanceManager());
+        engine->GetEngineTracker()->GetDataRequestManager().Copy(init->GetDataRequestManager());
       // Events
       pe->DataRequested.KeepEventChanges(init->KeepEventChanges());
       engine->GetEventManager().ForwardEvents(&pe->DataRequested);
@@ -211,7 +211,7 @@ void SEPhysiologyEnginePool::PullDataRequested(std::vector<SEDataRequested*>& da
 class PhysiologyEnginePoolThunk::pimpl
 {
 public:
-  pimpl(size_t poolSize, const std::string& dataDir)
+  pimpl()
   {
 
   }
@@ -226,7 +226,7 @@ public:
 };
 PhysiologyEnginePoolThunk::PhysiologyEnginePoolThunk(size_t poolSize, const std::string& dataDir)
 {
-  data = new PhysiologyEnginePoolThunk::pimpl(poolSize, dataDir);
+  data = new PhysiologyEnginePoolThunk::pimpl();
   std::cout << "Creating a pool with " << data->pool->GetWorkerCount() << " threads. \n";
 }
 PhysiologyEnginePoolThunk::~PhysiologyEnginePoolThunk()

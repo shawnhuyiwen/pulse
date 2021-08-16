@@ -95,6 +95,7 @@ namespace PULSE_ENGINE
 
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Process creates the ECG output
@@ -135,10 +136,6 @@ namespace PULSE_ENGINE
     m_interpolator->CalculateWaveformsElectricPotential();
     ComputeExposedModelParameters();
   }
-  void ElectroCardioGramModel::ComputeExposedModelParameters()
-  {
-
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -150,6 +147,11 @@ namespace PULSE_ENGINE
   /// models developed in the future.
   //--------------------------------------------------------------------------------------------------
   void ElectroCardioGramModel::PostProcess(bool solve_and_transport)
+  {
+
+  }
+  DISABLE_WARNING_POP
+  void ElectroCardioGramModel::ComputeExposedModelParameters()
   {
 
   }

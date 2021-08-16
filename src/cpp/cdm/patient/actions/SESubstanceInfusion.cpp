@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/patient/actions/SESubstanceInfusion.h"
 #include "cdm/substance/SESubstance.h"
 #include "cdm/properties/SEScalarVolume.h"
@@ -31,12 +31,14 @@ void SESubstanceInfusion::Clear()
   INVALIDATE_PROPERTY(m_Volume);
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SESubstanceInfusion::Copy(const SESubstanceInfusion& src, bool preserveState)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
+DISABLE_WARNING_POP
 
 bool SESubstanceInfusion::IsValid() const
 {

@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/PhysiologyEngineThunk.h"
 
 #include "cdm/patient/SEPatient.h"
@@ -45,7 +45,7 @@ bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::
   // Load up the data requests
   if (!data_requests.empty())
   {
-    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, data_requests_format, m_engine->GetSubstanceManager()))
+    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, data_requests_format))
     {
       m_engine->GetLogger()->Error("Unable to load data requests string");
       return false;
@@ -75,7 +75,7 @@ bool PhysiologyEngineThunk::SerializeFromString(std::string const& state, std::s
   // Load up the data requests
   if (!data_requests.empty())
   {
-    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, m_engine->GetSubstanceManager()))
+    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format))
     {
       m_engine->GetLogger()->Error("Unable to load data requests string");
       return false;
@@ -122,7 +122,7 @@ bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configur
   // Load up the data requests
   if (!data_requests.empty())
   {
-    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format, *subMgr))
+    if (!m_engine->GetEngineTracker()->GetDataRequestManager().SerializeFromString(data_requests, format))
     {
       m_engine->GetLogger()->Error("Unable to load data request string");
       return false;
@@ -193,7 +193,7 @@ std::string PhysiologyEngineThunk::PullActiveEvents(eSerializationFormat format)
   std::string active_events;
   if (!m_engine->GetEventManager().GetActiveEvents(m_activeEvents))
     active_events.clear();
-  SEActiveEvent::SerializeToString(m_activeEvents, active_events, eSerializationFormat::JSON, m_engine->GetLogger());
+  SEActiveEvent::SerializeToString(m_activeEvents, active_events, format, m_engine->GetLogger());
   DELETE_VECTOR(m_activeEvents);
   return active_events;
 }

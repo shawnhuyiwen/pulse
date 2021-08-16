@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/io/protobuf/PBPatientActions.h"
@@ -25,12 +25,14 @@ void SEChronicObstructivePulmonaryDiseaseExacerbation::Clear()
   INVALIDATE_PROPERTY(m_EmphysemaSeverity);
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEChronicObstructivePulmonaryDiseaseExacerbation::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, bool preserveState)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
+DISABLE_WARNING_POP
 
 bool SEChronicObstructivePulmonaryDiseaseExacerbation::IsValid() const
 {

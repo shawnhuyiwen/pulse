@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/scenario/SEScenarioExec.h"
 #include "cdm/scenario/SEScenario.h"
 #include "cdm/io/protobuf/PBScenario.h"
@@ -87,7 +87,7 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
       }
       // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
       // Make a copy of the data requests, note this clears out data requests from the engine
-      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager(), pe.GetSubstanceManager());
+      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager());
       if(!m_DataRequestCSVFilename.empty())
         pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
     }
@@ -95,7 +95,7 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
     {
       sce.GetPatientConfiguration().SetDataRoot(m_DataRootDirectory);
       // Make a copy of the data requests, note this clears out data requests from the engine
-      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager(), pe.GetSubstanceManager());
+      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager());
       if (!m_DataRequestCSVFilename.empty())
         pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
       if (!pe.InitializeEngine(sce.GetPatientConfiguration()))

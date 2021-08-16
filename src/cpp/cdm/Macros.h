@@ -51,9 +51,13 @@ inline size_t _Hash_value(_InIt _Begin, _InIt _End)
   if(from.Has##name()) \
     Get##name().Set(*from.m_##name);
 
-#define MERGE_CHILD(name, subMgr) \
+#define MERGE_CHILD_SUBS(name, subMgr) \
   if(from.Has##name()) \
     Get##name().Merge(*from.m_##name, subMgr);
+
+#define MERGE_CHILD(name) \
+  if(from.Has##name()) \
+    Get##name().Merge(*from.m_##name);
 
 #define CDM_COPY(clazz, from, to) \
   { \

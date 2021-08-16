@@ -97,7 +97,7 @@ namespace PULSE_ENGINE
 
     //Process
     void CalculateVitalSigns();
-    void Debugging(SEFluidCircuit& RespiratoryCircuit);
+    void Debugging();
 
     // Serializable member variables (Set in Initialize and in schema)
 

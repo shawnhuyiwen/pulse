@@ -1,6 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "cdm/CommonDataModel.h"
+#include "cdm/CommonDefs.h"
 #include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/io/protobuf/PBEquipmentActions.h"
@@ -21,10 +21,12 @@ void SEAnesthesiaMachineVentilatorPressureLoss::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
+DISABLE_UNREFERENCED_FORMAL_PARAMETER
 void SEAnesthesiaMachineVentilatorPressureLoss::Copy(const SEAnesthesiaMachineVentilatorPressureLoss& src, bool preserveState)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
+DISABLE_WARNING_POP
 
 bool SEAnesthesiaMachineVentilatorPressureLoss::IsValid() const
 {

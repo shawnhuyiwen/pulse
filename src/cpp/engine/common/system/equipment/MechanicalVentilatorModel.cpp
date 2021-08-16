@@ -337,6 +337,7 @@ namespace PULSE_ENGINE
     m_CurrentPeriodTime_s += m_data.GetTimeStep_s();
   }
 
+  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Mechanical ventilator process function
@@ -349,10 +350,6 @@ namespace PULSE_ENGINE
   {
     ComputeExposedModelParameters();
   }
-  void MechanicalVentilatorModel::ComputeExposedModelParameters()
-  {
-
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -364,6 +361,12 @@ namespace PULSE_ENGINE
   /// The ventilator volumes are updated based on the previously calculated nodal analysis.
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::PostProcess(bool solve_and_transport)
+  {
+
+  }
+  DISABLE_WARNING_POP
+
+  void MechanicalVentilatorModel::ComputeExposedModelParameters()
   {
 
   }
