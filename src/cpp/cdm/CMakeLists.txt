@@ -301,6 +301,7 @@ add_library_ex(CommonDataModel
     system/equipment/inhaler/actions/SEInhalerAction.h
     system/equipment/inhaler/actions/SEInhalerConfiguration.h
     system/equipment/mechanical_ventilator/SEMechanicalVentilator.h
+    system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h
@@ -661,6 +662,7 @@ add_library_ex(CommonDataModel
     system/equipment/inhaler/actions/SEInhalerAction.cpp
     system/equipment/inhaler/actions/SEInhalerConfiguration.cpp
     system/equipment/mechanical_ventilator/SEMechanicalVentilator.cpp
+    system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.cpp

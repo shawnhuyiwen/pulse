@@ -256,7 +256,7 @@ namespace HUMAN_ADULT_VENT_MECH
 
         // Setup the ventilator
         SEMechanicalVentilatorConfiguration MVConfig(e->GetLogger());
-        SEMechanicalVentilator& mv = MVConfig.GetConfiguration();
+        SEMechanicalVentilatorSettings& mv = MVConfig.GetSettings();
         mv.SetConnection(eMechanicalVentilator_Connection::Tube);
 
         if (currentPatientType == PatientType::Normal && currentVentilatorMode == VentilatorMode::VC_AC)

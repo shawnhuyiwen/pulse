@@ -6,6 +6,7 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Actions.proto";
 import "pulse/cdm/bind/Enums.proto";
+import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
 
 message MechanicalVentilatorActionData
@@ -16,18 +17,69 @@ message MechanicalVentilatorActionData
 /** @brief The configuration of the mechanical ventilator to use. */
 message MechanicalVentilatorConfigurationData
 {
-  MechanicalVentilatorActionData          MechanicalVentilatorAction  = 1;
+ MechanicalVentilatorActionData          MechanicalVentilatorAction  = 1;
   oneof Option
   {
-    MechanicalVentilatorData              Configuration               = 2;/**<< @brief A mechanical ventilator object with properties to set in the system object. */
-    string                                ConfigurationFile           = 3;/**<< @brief File containing a mechanical ventilator object with properties to set in the system object. */
+    MechanicalVentilatorSettingsData      Settings                    = 2;/**<< @brief A settings object with properties to set in the system object. */
+    string                                SettingsFile                = 3;/**<< @brief File containing a settings object with properties to set in the system object. */
   }
   eMergeType                              MergeType                   = 4;/**<< @brief How to apply provided configuration to internal data model. */
 }
 
 message MechanicalVentilatorHoldData
 {
-  MechanicalVentilatorActionData          MechanicalVentilatorAction  = 1;
-  eSwitch                                 State                       = 2;/**<< @brief On = Activate the hold. Off = Release the hold. */
-  eAppliedRespiratoryCycle                AppliedRespiratoryCycle     = 3;/**<< @brief When, in the respiratory cycle, to apply the hold. Not used if Switch is Off. */
+  MechanicalVentilatorActionData          MechanicalVentilatorAction    = 1;
+  eSwitch                                 State                         = 2;/**<< @brief On = Activate the hold. Off = Release the hold. */
+  eAppliedRespiratoryCycle                AppliedRespiratoryCycle       = 3;/**<< @brief When, in the respiratory cycle, to apply the hold. Not used if Switch is Off. */
 }
+
+message MechanicalVentilatorModeData
+{
+  MechanicalVentilatorActionData          MechanicalVentilatorAction    = 1;
+}
+
+message MechanicalVentilatorModeContinuousPositiveAirwayPressureData
+{
+  MechanicalVentilatorActionData          MechanicalVentilatorModeData  = 1;
+  
+  ScalarPressureData                      DeltaPressureSupport          = 2;
+  Scalar0To1Data                          FractionInspiredOxygen        = 3;
+  ScalarPressureData                      PositiveEndExpiredPressure    = 4;
+  ScalarTimeData                          Slope                         = 5;
+}
+
+message MechanicalVentilatorModePressureControlledData
+{
+  enum eMode
+  {
+    AssistedControl                = 0;
+    ContinuousMandatoryVentilation = 1;
+  }
+  
+  MechanicalVentilatorActionData          MechanicalVentilatorModeData  = 1;
+  
+  Scalar0To1Data                          FractionInspiredOxygen        = 2;
+  ScalarTimeData                          InspiratoryPeriod             = 3;
+  ScalarPressureData                      InspiratoryPressure           = 4;
+  ScalarPressureData                      PositiveEndExpiredPressure    = 5;
+  ScalarFrequencyData                     RespirationRate               = 6;
+  ScalarTimeData                          Slope                         = 7;
+}
+message MechanicalVentilatorModeVolumeControlledData
+{
+  enum eMode
+  {
+    AssistedControl                = 0;
+    ContinuousMandatoryVentilation = 1;
+  }
+  
+  MechanicalVentilatorActionData          MechanicalVentilatorModeData  = 1;
+  
+  ScalarVolumePerTimeData                 Flow                          = 2;
+  Scalar0To1Data                          FractionInspiredOxygen        = 3;
+  ScalarTimeData                          InspiratoryPeriod             = 4;
+  ScalarPressureData                      PositiveEndExpiredPressure    = 5;
+  ScalarFrequencyData                     RespirationRate               = 6;
+  ScalarVolumeData                        TidalVolume                   = 7;
+}
+

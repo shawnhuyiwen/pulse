@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.*;
+import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eConnection;
+import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
 import com.kitware.pulse.cdm.bind.PatientActions.IntubationData.eType;
 import com.kitware.pulse.cdm.datarequests.SEDataRequest;
@@ -162,23 +164,23 @@ public class HowTo_MechanicalVentilator
     
     // Configure the Mechanical Ventilator
     SEMechanicalVentilatorConfiguration ventilatorAction = new SEMechanicalVentilatorConfiguration();
-    ventilatorAction.getConfiguration().setConnection(eConnection.Tube);
-    ventilatorAction.getConfiguration().setExpirationWaveform(eDriverWaveform.Square);
-    ventilatorAction.getConfiguration().setInspirationWaveform(eDriverWaveform.Square);
-    ventilatorAction.getConfiguration().getPeakInspiratoryPressure().setValue(21, PressureUnit.cmH2O);
-    ventilatorAction.getConfiguration().getPositiveEndExpiredPressure().setValue(10, PressureUnit.cmH2O);
+    ventilatorAction.getSettings().setConnection(eConnection.Tube);
+    ventilatorAction.getSettings().setExpirationWaveform(eDriverWaveform.Square);
+    ventilatorAction.getSettings().setInspirationWaveform(eDriverWaveform.Square);
+    ventilatorAction.getSettings().getPeakInspiratoryPressure().setValue(21, PressureUnit.cmH2O);
+    ventilatorAction.getSettings().getPositiveEndExpiredPressure().setValue(10, PressureUnit.cmH2O);
 
     double desiredRR = 20.0;
     double ieRatio = 0.5;
     double totalPeriodS = 60.0 / desiredRR;
     double inspiratoryPeriodS = ieRatio * totalPeriodS / (1.0 + ieRatio);
     double expiratoryPeriodS = totalPeriodS - inspiratoryPeriodS;
-    ventilatorAction.getConfiguration().getInspirationMachineTriggerTime().setValue(expiratoryPeriodS, TimeUnit.s);
-    ventilatorAction.getConfiguration().getExpirationCycleTime().setValue(inspiratoryPeriodS, TimeUnit.s);
+    ventilatorAction.getSettings().getInspirationMachineTriggerTime().setValue(expiratoryPeriodS, TimeUnit.s);
+    ventilatorAction.getSettings().getExpirationCycleTime().setValue(inspiratoryPeriodS, TimeUnit.s);
 
-    ventilatorAction.getConfiguration().getFractionInspiredGas().clear();
-    ventilatorAction.getConfiguration().getFractionInspiredGas("Oxygen").getAmount().setValue(0.5);
-    ventilatorAction.getConfiguration().getConcentrationInspiredAerosol("Albuterol").getConcentration().setValue(12, MassPerVolumeUnit.ug_Per_mL);
+    ventilatorAction.getSettings().getFractionInspiredGas().clear();
+    ventilatorAction.getSettings().getFractionInspiredGas("Oxygen").getAmount().setValue(0.5);
+    ventilatorAction.getSettings().getConcentrationInspiredAerosol("Albuterol").getConcentration().setValue(12, MassPerVolumeUnit.ug_Per_mL);
     
     pe.processAction(ventilatorAction);
     

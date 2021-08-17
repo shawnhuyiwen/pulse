@@ -263,7 +263,7 @@ namespace pulse::study::multiplex_ventilation
 
       Info("Configuring Mechanical Ventilator");
       m_MVC = new SEMechanicalVentilatorConfiguration(GetLogger());
-      auto& mv = m_MVC->GetConfiguration();
+      auto& mv = m_MVC->GetSettings();
       mv.SetConnection(eMechanicalVentilator_Connection::Tube);
       mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
       mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
@@ -565,16 +565,16 @@ namespace pulse::study::multiplex_ventilation
       // For Completeness, Write out the ventilator settings
 
       // Translate ventilator settings
-      double expiratoryPeriod_s = pc->GetMechanicalVentilator().GetInspirationMachineTriggerTime(TimeUnit::s);
-      double inspiratoryPeriod_s = pc->GetMechanicalVentilator().GetExpirationCycleTime(TimeUnit::s);
+      double expiratoryPeriod_s = pc->GetMechanicalVentilator().GetSettings().GetInspirationMachineTriggerTime(TimeUnit::s);
+      double inspiratoryPeriod_s = pc->GetMechanicalVentilator().GetSettings().GetExpirationCycleTime(TimeUnit::s);
       double respirationRate_per_min = 60.0 / (inspiratoryPeriod_s + inspiratoryPeriod_s);
       double IERatio = inspiratoryPeriod_s / expiratoryPeriod_s;
 
       multiVentilation->set_respirationrate_per_min(respirationRate_per_min);
       multiVentilation->set_ieratio(IERatio);
-      multiVentilation->set_peep_cmh2o(pc->GetMechanicalVentilator().GetPositiveEndExpiredPressure(PressureUnit::cmH2O));
-      multiVentilation->set_pip_cmh2o(pc->GetMechanicalVentilator().GetPeakInspiratoryPressure(PressureUnit::cmH2O));
-      multiVentilation->set_fio2(pc->GetMechanicalVentilator().GetFractionInspiredGas(pc->GetSubstances().GetO2()).GetFractionAmount().GetValue());
+      multiVentilation->set_peep_cmh2o(pc->GetMechanicalVentilator().GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O));
+      multiVentilation->set_pip_cmh2o(pc->GetMechanicalVentilator().GetSettings().GetPeakInspiratoryPressure(PressureUnit::cmH2O));
+      multiVentilation->set_fio2(pc->GetMechanicalVentilator().GetSettings().GetFractionInspiredGas(pc->GetSubstances().GetO2()).GetFractionAmount().GetValue());
       // Write out all the vitals
       multiVentilation->set_airwayflow_l_per_min(pc->GetRespiratory().GetInspiratoryFlow(VolumePerTimeUnit::L_Per_min));
       multiVentilation->set_airwaypressure_cmh2o(pc->GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Airway)->GetPressure(PressureUnit::cmH2O));

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
-class SEMechanicalVentilator;
+class SEMechanicalVentilatorSettings;
 class SESubstanceManager;
 
 class CDM_DECL SEMechanicalVentilatorConfiguration : public SEMechanicalVentilatorAction
@@ -20,13 +20,13 @@ public:
   virtual bool IsActive() const;
   virtual void Deactivate();
 
-  bool HasConfiguration() const;
-  SEMechanicalVentilator& GetConfiguration();
-  const SEMechanicalVentilator* GetConfiguration() const;
+  bool HasSettings() const;
+  SEMechanicalVentilatorSettings& GetSettings();
+  const SEMechanicalVentilatorSettings* GetSettings() const;
 
-  virtual std::string GetConfigurationFile() const;
-  virtual void SetConfigurationFile(const std::string& fileName);
-  virtual bool HasConfigurationFile() const;
+  virtual std::string GetSettingsFile() const;
+  virtual void SetSettingsFile(const std::string& fileName);
+  virtual bool HasSettingsFile() const;
 
   virtual eMergeType GetMergeType() const;
   virtual void SetMergeType(eMergeType m);
@@ -37,7 +37,7 @@ public:
 
 protected:
 
-  std::string               m_ConfigurationFile;
-  SEMechanicalVentilator*   m_Configuration;
-  eMergeType                m_MergeType;
+  std::string                       m_SettingsFile;
+  SEMechanicalVentilatorSettings*   m_Settings;
+  eMergeType                        m_MergeType;
 };

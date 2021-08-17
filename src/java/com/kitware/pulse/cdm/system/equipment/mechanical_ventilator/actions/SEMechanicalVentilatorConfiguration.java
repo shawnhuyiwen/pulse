@@ -4,15 +4,15 @@
 package com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions;
 
 import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.MechanicalVentilatorConfigurationData;
-import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.SEMechanicalVentilator;
+import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.SEMechanicalVentilatorSettings;
 import com.kitware.pulse.utilities.Log;
 
 public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorAction
 {
 
   private static final long serialVersionUID = -1487014080271791164L;
-  protected SEMechanicalVentilator configuration=null;
-  protected String                 configurationFile="";
+  protected SEMechanicalVentilatorSettings settings=null;
+  protected String                         settingsFile="";
   
   public SEMechanicalVentilatorConfiguration()
   {
@@ -30,9 +30,9 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
     if(this==other)
       return;
     super.copy(other);
-    if(other.configuration!=null)
-      this.getConfiguration().copy(other.configuration);
-    this.configurationFile=other.configurationFile;
+    if(other.settings!=null)
+      this.getSettings().copy(other.settings);
+    this.settingsFile=other.settingsFile;
   }
   
   @Override
@@ -40,15 +40,15 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   {
     super.reset();
     
-    if (this.configuration != null)
-      this.configuration.reset();
-    this.configurationFile="";
+    if (this.settings != null)
+      this.settings.reset();
+    this.settingsFile="";
   }
   
   @Override
   public boolean isValid()
   {
-    return hasConfiguration() || hasConfigurationFile();
+    return hasSettings() || hasSettingsFile();
   }
   
   public static void load(MechanicalVentilatorConfigurationData src, SEMechanicalVentilatorConfiguration dst)
@@ -56,11 +56,11 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
     SEMechanicalVentilatorAction.load(src.getMechanicalVentilatorAction(),dst);
     switch(src.getOptionCase())
     {
-    case CONFIGURATIONFILE:
-      dst.configurationFile = src.getConfigurationFile();
+    case SETTINGSFILE:
+      dst.settingsFile = src.getSettingsFile();
       break;
-    case CONFIGURATION:
-      SEMechanicalVentilator.load(src.getConfiguration(),dst.getConfiguration());
+    case SETTINGS:
+      SEMechanicalVentilatorSettings.load(src.getSettings(),dst.getSettings());
       break;
     default:
     	Log.error("Unknown MechanicalVentilatorConfigurationData Option");
@@ -75,45 +75,45 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   protected static void unload(SEMechanicalVentilatorConfiguration src, MechanicalVentilatorConfigurationData.Builder dst)
   {
     SEMechanicalVentilatorAction.unload(src, dst.getMechanicalVentilatorActionBuilder());
-    if(src.hasConfigurationFile())
-      dst.setConfigurationFile(src.configurationFile);
-    else if(src.hasConfiguration())
-      dst.setConfiguration(SEMechanicalVentilator.unload(src.configuration));
+    if(src.hasSettingsFile())
+      dst.setSettingsFile(src.settingsFile);
+    else if(src.hasSettings())
+      dst.setSettings(SEMechanicalVentilatorSettings.unload(src.settings));
   }
   
-  public boolean hasConfiguration()
+  public boolean hasSettings()
   {
-    return this.configuration!=null;
+    return this.settings!=null;
   }
-  public SEMechanicalVentilator getConfiguration()
+  public SEMechanicalVentilatorSettings getSettings()
   {
-    if(this.configuration==null)
-      this.configuration=new SEMechanicalVentilator();
-    return this.configuration;
+    if(this.settings==null)
+      this.settings=new SEMechanicalVentilatorSettings();
+    return this.settings;
   }
   
-  public boolean hasConfigurationFile()
+  public boolean hasSettingsFile()
   {
-    return this.configurationFile!=null&&!this.configurationFile.isEmpty();
+    return this.settingsFile!=null&&!this.settingsFile.isEmpty();
   }
-  public String getConfigurationFile()
+  public String getSettingsFile()
   {
-    return this.configurationFile;
+    return this.settingsFile;
   }
-  public void setConfigurationFile(String s)
+  public void setSettingsFile(String s)
   {
-    this.configurationFile = s;
+    this.settingsFile = s;
   }
   
   @Override
   public String toString()
   {
     String str = "Mechanical Ventilator Configuration";
-    if(this.hasConfigurationFile())
-      str +="\n\tConfiguration File: "+this.configurationFile;
-    else if(hasConfiguration())
+    if(this.hasSettingsFile())
+      str +="\n\tCSettings File: "+this.settingsFile;
+    else if(hasSettings())
     {
-      str += configuration.toString();
+      str += settings.toString();
     }
     
     return str;

@@ -707,10 +707,10 @@ void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorConfigurationDa
 void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr)
 {
   PBEquipmentAction::Serialize(src.mechanicalventilatoraction(), dst);
-  if (!src.configurationfile().empty())
-    dst.SetConfigurationFile(src.configurationfile());
-  else if (src.has_configuration())
-    PBMechanicalVentilator::Load(src.configuration(), dst.GetConfiguration(), subMgr);
+  if (!src.settingsfile().empty())
+    dst.SetSettingsFile(src.settingsfile());
+  else if (src.has_settings())
+    PBMechanicalVentilator::Load(src.settings(), dst.GetSettings(), subMgr);
   dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::MechanicalVentilatorConfigurationData* PBEquipmentAction::Unload(const SEMechanicalVentilatorConfiguration& src)
@@ -722,10 +722,10 @@ CDM_BIND::MechanicalVentilatorConfigurationData* PBEquipmentAction::Unload(const
 void PBEquipmentAction::Serialize(const SEMechanicalVentilatorConfiguration& src, CDM_BIND::MechanicalVentilatorConfigurationData& dst)
 {
   PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatoraction());
-  if (src.HasConfigurationFile())
-    dst.set_configurationfile(src.m_ConfigurationFile); 
-  else if (src.HasConfiguration())
-    dst.set_allocated_configuration(PBMechanicalVentilator::Unload(*src.m_Configuration));;
+  if (src.HasSettingsFile())
+    dst.set_settingsfile(src.m_SettingsFile);
+  else if (src.HasSettings())
+    dst.set_allocated_settings(PBMechanicalVentilator::Unload(*src.m_Settings));
   dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBEquipmentAction::Copy(const SEMechanicalVentilatorConfiguration& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr)

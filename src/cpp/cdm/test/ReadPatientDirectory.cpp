@@ -17,7 +17,7 @@ void CommonDataModelTest::ReadPatientDirectory(const std::string& rptDirectory)
   Logger logger(rptDirectory + "/" + testName+".log");
   SEPatient obj (&logger);
 
-  std::string dir = GetCurrentWorkingDirectory();  
+  std::string dir = GetCurrentWorkingDirectory();
   dir.append("/patients");
 
   SETestReport testReport(&logger);

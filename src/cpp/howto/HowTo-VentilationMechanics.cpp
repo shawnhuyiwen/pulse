@@ -135,7 +135,7 @@ void HowToVentilationMechanics()
 
   // Setup the ventilator
   SEMechanicalVentilatorConfiguration MVConfig(pe->GetLogger());
-  SEMechanicalVentilator& mv = MVConfig.GetConfiguration();
+  SEMechanicalVentilatorSettings& mv = MVConfig.GetSettings();
   mv.SetConnection(eMechanicalVentilator_Connection::Tube);
 
   double ventRespirationRate_per_min = 12.0;

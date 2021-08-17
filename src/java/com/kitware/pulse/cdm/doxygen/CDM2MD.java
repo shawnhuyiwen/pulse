@@ -19,6 +19,7 @@ import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Environment.EnvironmentalConditionsData;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData;
+import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData;
 import com.kitware.pulse.cdm.bind.Patient.PatientData;
 import com.kitware.pulse.cdm.bind.PatientActions.BrainInjuryData;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
@@ -204,8 +205,8 @@ public class CDM2MD
       Set<Class<? extends SEMechanicalVentilatorAction>> mvActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions", SEMechanicalVentilatorAction.class);
       for(Class<?> c : mvActions)
         WriteDoxyTable(c, "", writer, skipProperties);
-      WriteDoxyTable(MechanicalVentilatorData.eConnection.class, "MechanicalVentilatorData_", writer, skipProperties);
-      WriteDoxyTable(MechanicalVentilatorData.eDriverWaveform.class, "MechanicalVentilatorData_", writer, skipProperties);
+      WriteDoxyTable(MechanicalVentilatorSettingsData.eConnection.class, "MechanicalVentilatorSettingsData_", writer, skipProperties);
+      WriteDoxyTable(MechanicalVentilatorSettingsData.eDriverWaveform.class, "MechanicalVentilatorSettingsData_", writer, skipProperties);
       
       // SUBSTSANCE
       writer.append("#### The following tables describe substances used in Pulse\n<hr>\n");

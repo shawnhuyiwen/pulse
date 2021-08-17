@@ -23,6 +23,30 @@ void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorData& src,
 }
 void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData& src, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
 {
+
+  if (src.has_settings())
+    PBMechanicalVentilator::Load(src.settings(), dst.GetSettings(), subMgr);
+}
+CDM_BIND::MechanicalVentilatorData* PBMechanicalVentilator::Unload(const SEMechanicalVentilator& src)
+{
+  CDM_BIND::MechanicalVentilatorData* dst = new CDM_BIND::MechanicalVentilatorData();
+  PBMechanicalVentilator::Serialize(src, *dst);
+  return dst;
+}
+void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BIND::MechanicalVentilatorData& dst)
+{
+
+  if (src.HasSettings())
+    dst.set_allocated_settings(PBMechanicalVentilator::Unload(*src.m_Settings));
+}
+
+void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorSettingsData& src, SEMechanicalVentilatorSettings& dst, const SESubstanceManager& subMgr)
+{
+  dst.Clear();
+  PBMechanicalVentilator::Serialize(src, dst, subMgr);
+}
+void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSettingsData& src, SEMechanicalVentilatorSettings& dst, const SESubstanceManager& subMgr)
+{
   dst.m_Connection = (eMechanicalVentilator_Connection)src.connection();
 
   if (src.has_positiveendexpiredpressure())
@@ -127,15 +151,15 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
   }
 }
 
-CDM_BIND::MechanicalVentilatorData* PBMechanicalVentilator::Unload(const SEMechanicalVentilator& src)
+CDM_BIND::MechanicalVentilatorSettingsData* PBMechanicalVentilator::Unload(const SEMechanicalVentilatorSettings& src)
 {
-  CDM_BIND::MechanicalVentilatorData* dst = new CDM_BIND::MechanicalVentilatorData();
+  CDM_BIND::MechanicalVentilatorSettingsData* dst = new CDM_BIND::MechanicalVentilatorSettingsData();
   PBMechanicalVentilator::Serialize(src, *dst);
   return dst;
 }
-void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BIND::MechanicalVentilatorData& dst)
+void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src, CDM_BIND::MechanicalVentilatorSettingsData& dst)
 {
-  dst.set_connection((CDM_BIND::MechanicalVentilatorData::eConnection)src.m_Connection);
+  dst.set_connection((CDM_BIND::MechanicalVentilatorSettingsData::eConnection)src.m_Connection);
 
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
@@ -159,7 +183,7 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
     dst.set_allocated_expirationvalvevolume(PBProperty::Unload(*src.m_ExpirationValveVolume));
   if (src.HasExpirationValveResistance())
     dst.set_allocated_expirationvalveresistance(PBProperty::Unload(*src.m_ExpirationValveResistance));
-  dst.set_expirationwaveform((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)src.m_ExpirationWaveform);
+  dst.set_expirationwaveform((CDM_BIND::MechanicalVentilatorSettingsData::eDriverWaveform)src.m_ExpirationWaveform);
   if (src.HasExpirationWaveformPeriod())
     dst.set_allocated_expirationwaveformperiod(PBProperty::Unload(*src.m_ExpirationWaveformPeriod));
 
@@ -194,7 +218,7 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
     dst.set_allocated_inspirationlimbvolume(PBProperty::Unload(*src.m_InspirationLimbVolume));
   if (src.HasInspirationValveVolume())
     dst.set_allocated_inspirationvalvevolume(PBProperty::Unload(*src.m_InspirationValveVolume));
-  dst.set_inspirationwaveform((CDM_BIND::MechanicalVentilatorData::eDriverWaveform)src.m_InspirationWaveform);
+  dst.set_inspirationwaveform((CDM_BIND::MechanicalVentilatorSettingsData::eDriverWaveform)src.m_InspirationWaveform);
   if (src.HasInspirationWaveformPeriod())
     dst.set_allocated_inspirationwaveformperiod(PBProperty::Unload(*src.m_InspirationWaveformPeriod));
 
@@ -210,30 +234,30 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
     dst.mutable_concentrationinspiredaerosol()->AddAllocated(PBSubstance::Unload(*sc));
 }
 
-bool PBMechanicalVentilator::SerializeToString(const SEMechanicalVentilator& src, std::string& output, eSerializationFormat m)
+bool PBMechanicalVentilator::SerializeToString(const SEMechanicalVentilatorSettings& src, std::string& output, eSerializationFormat m)
 {
-  CDM_BIND::MechanicalVentilatorData data;
+  CDM_BIND::MechanicalVentilatorSettingsData data;
   PBMechanicalVentilator::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBMechanicalVentilator::SerializeToFile(const SEMechanicalVentilator& src, const std::string& filename)
+bool PBMechanicalVentilator::SerializeToFile(const SEMechanicalVentilatorSettings& src, const std::string& filename)
 {
-  CDM_BIND::MechanicalVentilatorData data;
+  CDM_BIND::MechanicalVentilatorSettingsData data;
   PBMechanicalVentilator::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMechanicalVentilator& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
+bool PBMechanicalVentilator::SerializeFromString(const std::string& src, SEMechanicalVentilatorSettings& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
-  CDM_BIND::MechanicalVentilatorData data;
+  CDM_BIND::MechanicalVentilatorSettingsData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
   PBMechanicalVentilator::Load(data, dst, subMgr);
   return true;
 }
-bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMechanicalVentilator& dst, const SESubstanceManager& subMgr)
+bool PBMechanicalVentilator::SerializeFromFile(const std::string& filename, SEMechanicalVentilatorSettings& dst, const SESubstanceManager& subMgr)
 {
-  CDM_BIND::MechanicalVentilatorData data;
+  CDM_BIND::MechanicalVentilatorSettingsData data;
   if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
   PBMechanicalVentilator::Load(data, dst, subMgr);
