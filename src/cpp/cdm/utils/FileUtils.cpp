@@ -43,10 +43,13 @@ bool CreatePath(const std::string& path)
 bool CreateFilePath(const std::string& filenamePath)
 {
   // Separate path from file, and create the path
-    auto const sep = filenamePath.find_last_of("\\/");
-  if (sep != std::string::npos && sep > 0)
-    return std::filesystem::create_directory(filenamePath.substr(0, sep));
-  return true; // Nothing to do... 
+  auto const sep = filenamePath.find_last_of("\\/");
+  bool result = true;
+  if (sep != std::string::npos && sep > 0) {
+    std::error_code e;
+    result = std::filesystem::create_directories(filenamePath.substr(0, sep), e);
+  }
+  return result; // Nothing to do... 
 }
 
 bool WriteFile(const std::string& content, const std::string& filename)
@@ -88,7 +91,7 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
     {
       if (entry.exists() && entry.is_regular_file())
       {
-        filename = entry.path().filename().string();
+        filename = entry.path().string();
         if (filename.find(mask) != std::string::npos)
           files.push_back(filename);
       }
@@ -101,7 +104,7 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
     {
       if (entry.exists() && entry.is_regular_file())
       {
-        filename = entry.path().filename().string();
+        filename = entry.path().string();
         if (filename.find(mask) != std::string::npos)
           files.push_back(filename);
       }
