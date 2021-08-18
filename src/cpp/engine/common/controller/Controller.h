@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "engine/CommonDefs.h"
 #include "engine/PulseConfiguration.h"
 #include "engine/common/controller/BlackBoxManager.h"
 #include "engine/common/controller/CircuitManager.h"

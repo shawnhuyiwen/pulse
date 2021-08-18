@@ -2,7 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "engine/common/CommonDefs.h"
+
+#include "engine/CommonDefs.h"
 #include "cdm/scenario/SEScenarioExec.h"
 
 namespace PULSE_ENGINE

@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "common/CommonDefs.h"
 
+#include "engine/CommonDefs.h"
 #include "cdm/engine/SEEngineConfiguration.h"
 class SENutrition;
 class SEEngineStabilization;

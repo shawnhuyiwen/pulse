@@ -3,7 +3,7 @@ See accompanying NOTICE file for details.*/
 
 #pragma once
 
-#include "engine/PulseEngine.h"
+#include "engine/CommonDefs.h"
 #include "cdm/PhysiologyEnginePool.h"
 
 namespace pulse::engine

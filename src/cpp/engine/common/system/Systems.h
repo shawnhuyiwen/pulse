@@ -3,6 +3,7 @@ See accompanying NOTICE file for details.*/
 
 #pragma once
 
+#include "engine/CommonDefs.h"
 #include "engine/common/controller/Controller.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"

@@ -2,9 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+
+#include "engine/CommonDefs.h"
+#include "cdm/circuit/SECircuitManager.h"
 class SEFluidCircuit;
 class SEThermalCircuit;
-#include "cdm/circuit/SECircuitManager.h"
 
 namespace PULSE_ENGINE
 {

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 
-#include "common/CommonDefs.h"
+#include "engine/CommonDefs.h"
 
 namespace PULSE_ENGINE
 {

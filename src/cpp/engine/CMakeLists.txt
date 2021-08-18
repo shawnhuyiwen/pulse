@@ -8,7 +8,7 @@ add_library_ex(PulseEngine
     PulseScenario.h
     PulseScenarioExec.h
     # Common
-    common/CommonDefs.h
+    CommonDefs.h
     common/Engine.h
     common/controller/BlackBoxManager.h
     common/controller/CircuitManager.h

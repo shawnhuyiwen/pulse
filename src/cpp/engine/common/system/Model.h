@@ -2,6 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+
+#include "engine/CommonDefs.h"
 #include "engine/common/controller/Controller.h"
 
 namespace PULSE_ENGINE

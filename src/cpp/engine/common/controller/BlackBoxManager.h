@@ -2,6 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+
+#include "engine/CommonDefs.h"
 #include "cdm/blackbox/SEBlackBoxManager.h"
 
 #define COMPATIBLE_BLACK_BOX_TEMPLATE typename CompartmentType

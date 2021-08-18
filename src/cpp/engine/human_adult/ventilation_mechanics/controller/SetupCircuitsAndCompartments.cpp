@@ -1,7 +1,7 @@
 ﻿/* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "engine/common/CommonDefs.h"
+#include "engine/CommonDefs.h"
 #include "engine/human_adult/ventilation_mechanics/controller/Controller.h"
 #include "engine/human_adult/ventilation_mechanics/controller/CompartmentManager.h"
 #include "engine/human_adult/whole_body/controller/CircuitManager.h"

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "engine/common/CommonDefs.h"
+#include "engine/CommonDefs.h"
 
 class SESubstance;
 class SESubstanceManager;

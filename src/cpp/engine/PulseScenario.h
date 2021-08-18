@@ -2,6 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+
+#include "engine/CommonDefs.h"
 #include "engine/PulseConfiguration.h"
 #include "cdm/scenario/SEScenario.h"
 
