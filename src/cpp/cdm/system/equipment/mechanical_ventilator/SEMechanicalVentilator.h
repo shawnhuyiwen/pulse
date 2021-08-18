@@ -27,7 +27,41 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
+  virtual bool HasAirwayPressure() const;
+  virtual SEScalarPressure& GetAirwayPressure();
+  virtual double GetAirwayPressure(const PressureUnit& unit) const;
 
+  virtual bool HasEndTidalCarbonDioxideFraction() const;
+  virtual SEScalar0To1& GetEndTidalCarbonDioxideFraction();
+  virtual double GetEndTidalCarbonDioxideFraction() const;
+
+  virtual bool HasEndTidalCarbonDioxidePressure() const;
+  virtual SEScalarPressure& GetEndTidalCarbonDioxidePressure();
+  virtual double GetEndTidalCarbonDioxidePressure(const PressureUnit& unit) const;
+
+  virtual bool HasEndTidalOxygenFraction() const;
+  virtual SEScalar0To1& GetEndTidalOxygenFraction();
+  virtual double GetEndTidalOxygenFraction() const;
+
+  virtual bool HasEndTidalOxygenPressure() const;
+  virtual SEScalarPressure& GetEndTidalOxygenPressure();
+  virtual double GetEndTidalOxygenPressure(const PressureUnit& unit) const;
+
+  virtual bool HasExpiratoryFlow() const;
+  virtual SEScalarVolumePerTime& GetExpiratoryFlow();
+  virtual double GetExpiratoryFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasExpiratoryTidalVolume() const;
+  virtual SEScalarVolumePerTime& GetExpiratoryTidalVolume();
+  virtual double GetExpiratoryTidalVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasInspiratoryExpiratoryRatio() const;
+  virtual SEScalar& GetInspiratoryExpiratoryRatio();
+  virtual double GetInspiratoryExpiratoryRatio() const;
+
+  virtual bool HasInspiratoryFlow() const;
+  virtual SEScalarVolumePerTime& GetInspiratoryFlow();
+  virtual double GetInspiratoryFlow(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasSettings() const;
   virtual SEMechanicalVentilatorSettings& GetSettings();

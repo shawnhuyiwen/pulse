@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "engine/common/CommonDefs.h"
+#include "engine/CommonDefs.h"
 #include "engine/common/controller/BlackBoxManager.h"
 #include "engine/common/controller/Controller.h"
 #include "engine/common/controller/CircuitManager.h"
