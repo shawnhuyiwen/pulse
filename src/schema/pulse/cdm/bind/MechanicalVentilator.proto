@@ -91,22 +91,22 @@ message MechanicalVentilatorSettingsData
 
 message MechanicalVentilatorData
 {
-  ScalarPressureData                  AirwayPressure                      = 1;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */
+  ScalarPressureData                  AirwayPressure                      = 1;/**<< @brief Instantaneous pressure applied during positive-pressure mechanical ventilation. */
   Scalar0To1Data                      EndTidalCarbonDioxideFraction       = 2; /**<< @brief The fraction of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
   ScalarPressureData                  EndTidalCarbonDioxidePressure       = 3; /**<< @brief The pressure of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
   Scalar0To1Data                      EndTidalOxygenFraction              = 4; /**<< @brief The fraction of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
   ScalarPressureData                  EndTidalOxygenPressure              = 5;/**<< @brief The pressure of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
   ScalarVolumePerTimeData             ExpiratoryFlow                      = 6;/**<< @brief Instantaneous airflow out of the lungs (negative value when inhaling).*/
-  ScalarVolumeData                    ExpiratoryTidalVolume               = 7;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
+  ScalarVolumeData                    ExpiratoryTidalVolume               = 7;/**<< @brief The volume of air moved into or out of the lungs during normal expiration.*/
   ScalarData                          InspiratoryExpiratoryRatio          = 8;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
   ScalarVolumePerTimeData             InspiratoryFlow                     = 9;/**<< @brief The instantaneous airflow into the lungs (negative value when exhaling).*/
-  ScalarVolumeData                    InspiratoryTidalVolume              = 10;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
-  ScalarPressureData                  IntrinsicPositiveEndExpiredPressure = 11; /**<< @brief The pressure of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
+  ScalarVolumeData                    InspiratoryTidalVolume              = 10;/**<< @brief The volume of air moved into or out of the lungs during normal inspiration.*/
+  ScalarPressureData                  IntrinsicPositiveEndExpiredPressure = 11; /**<< @brief .*/
   Scalar0To1Data                      LeakFractionOrSeverity              = 12; /**<< @brief The fraction of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
   ScalarPressureData                  MeanAirwayPressure                  = 13;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */
   ScalarPressureData                  PeakInspiratoryPressure             = 14;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
-  ScalarPressureData                  PositiveEndExpiredPressure          = 15; /**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
-  ScalarPressureData                  PlateauPressure                     = 16; /**<< @brief ??. */
+  ScalarPressureData                  PlateauPressure                     = 15; /**<< @brief ??. */
+  ScalarPressureData                  PositiveEndExpiratoryPressure       = 16; /**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
   ScalarVolumePerPressureData         PulmonaryCompliance                 = 17;/**<< @brief The total compliance of the lungs.*/
   ScalarPressurePerVolumeData         PulmonaryElastance                  = 18;/**<< @brief The inverse of lung compliance.*/
   ScalarVolumeData                    RelativeTotalLungVolume             = 19;/**<< @brief The total volume of air within the lungs at any given time.*/
