@@ -45,9 +45,12 @@ bool CreateFilePath(const std::string& filenamePath)
   // Separate path from file, and create the path
   auto const sep = filenamePath.find_last_of("\\/");
   bool result = true;
-  if (sep != std::string::npos && sep > 0) {
+  if (sep != std::string::npos && sep > 0)
+  {
     std::error_code e;
-    result = std::filesystem::create_directories(filenamePath.substr(0, sep), e);
+    std::string dirs = filenamePath.substr(0, sep);
+    if(!std::filesystem::exists(dirs))
+      result = std::filesystem::create_directories(dirs, e);
   }
   return result; // Nothing to do... 
 }
