@@ -77,7 +77,7 @@ namespace PULSE_ENGINE
   void MechanicalVentilatorModel::Initialize()
   {
     Model::Initialize();
-    SetConnection(eMechanicalVentilator_Connection::Off);
+    GetSettings().SetConnection(eMechanicalVentilator_Connection::Off);
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
     m_DriverPressure_cmH2O = SEScalar::dNaN();
@@ -121,9 +121,10 @@ namespace PULSE_ENGINE
 
   void MechanicalVentilatorModel::StateChange()
   {
+    UpdateAirwayMode();
     if (m_data.GetAirwayMode() != eAirwayMode::MechanicalVentilator)
       return;
-    SetConnection();
+    UpdateConnection();
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
     m_CurrentInspiratoryVolume_L = 0.0;
@@ -218,12 +219,9 @@ namespace PULSE_ENGINE
   /// If the enum is set to tube, then the ventilator is connected to the tube
   /// If the enum is set to off, the airway mode is set to free.
   //--------------------------------------------------------------------------------------------------
-  void MechanicalVentilatorModel::SetConnection(eMechanicalVentilator_Connection c)
+  void MechanicalVentilatorModel::UpdateAirwayMode()
   {
-    if (GetSettings().GetConnection() == c)
-      return; // No Change
-    // Update the Pulse airway mode when this changes
-    GetSettings().SetConnection(c);
+    eMechanicalVentilator_Connection c = GetSettings().GetConnection();
     if (c == eMechanicalVentilator_Connection::Mask && m_data.GetIntubation() == eSwitch::Off)
     {
       m_data.SetAirwayMode(eAirwayMode::MechanicalVentilator);
@@ -260,13 +258,10 @@ namespace PULSE_ENGINE
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Initializes gas volumes and volume fractions supplied by the mechanical ventilator depending on the airway mode
+  /// Checks the state of the airway and updates the mode if something changed
   ///
-  /// \details
-  /// The gas volumes and volume fractions are initialized and updated based on the airway mode (mask, free, or tube)
-  /// and the volume associated with each airway mode.
   //--------------------------------------------------------------------------------------------------
-  void MechanicalVentilatorModel::SetConnection()
+  void MechanicalVentilatorModel::UpdateConnection()
   {
     switch (m_data.GetAirwayMode())
     {
@@ -328,7 +323,7 @@ namespace PULSE_ENGINE
       return;
     }
 
-    SetConnection();
+    UpdateConnection();
     CalculateInspiration();
     CalculatePause();
     CalculateExpiration();

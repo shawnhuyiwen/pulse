@@ -47,8 +47,8 @@ namespace PULSE_ENGINE
 
     void ComputeExposedModelParameters() override;
 
-    void SetConnection();
-    void SetConnection(eMechanicalVentilator_Connection c);
+    void UpdateAirwayMode();
+    void UpdateConnection();
     void InvalidateConnection();
 
     void CalculateInspiration();
@@ -67,22 +67,22 @@ namespace PULSE_ENGINE
     eBreathState          m_CurrentBreathState;
 
     // Stateless member variable (Set in SetUp())
-    SEGasCompartment* m_Environment;
-    SEGasCompartment* m_Ventilator;
+    SEGasCompartment*    m_Environment;
+    SEGasCompartment*    m_Ventilator;
     SELiquidCompartment* m_VentilatorAerosol;
-    SEFluidCircuitNode* m_VentilatorNode;
-    SEFluidCircuitNode* m_ExpiratoryLimbNode;
-    SEFluidCircuitNode* m_ExpiratoryValveNode;
-    SEFluidCircuitNode* m_InspiratoryLimbNode;
-    SEFluidCircuitNode* m_InspiratoryValveNode;
-    SEFluidCircuitNode* m_YPieceNode;
-    SEFluidCircuitNode* m_ConnectionNode;
-    SEFluidCircuitNode* m_AmbientNode;
-    SEFluidCircuitPath* m_EnvironmentToVentilator;
-    SEFluidCircuitPath* m_YPieceToConnection;
-    SEFluidCircuitPath* m_VentilatorToExpiratoryValve;
-    SEFluidCircuitPath* m_VentilatorToInspiratoryValve;
-    SEFluidCircuitPath* m_ExpiratoryLimbToYPiece;
-    SEFluidCircuitPath* m_InspiratoryLimbToYPiece;
+    SEFluidCircuitNode*  m_VentilatorNode;
+    SEFluidCircuitNode*  m_ExpiratoryLimbNode;
+    SEFluidCircuitNode*  m_ExpiratoryValveNode;
+    SEFluidCircuitNode*  m_InspiratoryLimbNode;
+    SEFluidCircuitNode*  m_InspiratoryValveNode;
+    SEFluidCircuitNode*  m_YPieceNode;
+    SEFluidCircuitNode*  m_ConnectionNode;
+    SEFluidCircuitNode*  m_AmbientNode;
+    SEFluidCircuitPath*  m_EnvironmentToVentilator;
+    SEFluidCircuitPath*  m_YPieceToConnection;
+    SEFluidCircuitPath*  m_VentilatorToExpiratoryValve;
+    SEFluidCircuitPath*  m_VentilatorToInspiratoryValve;
+    SEFluidCircuitPath*  m_ExpiratoryLimbToYPiece;
+    SEFluidCircuitPath*  m_InspiratoryLimbToYPiece;
   };
 }
