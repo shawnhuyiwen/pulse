@@ -28,14 +28,12 @@ void SEConsumeNutrients::Clear()
   m_NutritionFile = "";
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEConsumeNutrients::Copy(const SEConsumeNutrients& src, bool preserveState)
+void SEConsumeNutrients::Copy(const SEConsumeNutrients& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEConsumeNutrients::IsValid() const
 {

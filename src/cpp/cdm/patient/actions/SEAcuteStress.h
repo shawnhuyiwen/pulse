@@ -13,7 +13,7 @@ public:
   virtual ~SEAcuteStress();
 
   virtual void Clear();
-  virtual void Copy(const SEAcuteStress& src, bool preserveState=false);
+  virtual void Copy(const SEAcuteStress& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

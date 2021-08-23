@@ -21,12 +21,10 @@ void SEAnesthesiaMachineOxygenWallPortPressureLoss::Clear()
   m_State.SetEnum(eSwitch::Off);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEAnesthesiaMachineOxygenWallPortPressureLoss::Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, bool preserveState)
+void SEAnesthesiaMachineOxygenWallPortPressureLoss::Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
-DISABLE_WARNING_POP
 
 bool SEAnesthesiaMachineOxygenWallPortPressureLoss::IsValid() const
 {

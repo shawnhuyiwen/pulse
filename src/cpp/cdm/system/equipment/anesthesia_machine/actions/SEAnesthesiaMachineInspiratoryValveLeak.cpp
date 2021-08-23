@@ -21,12 +21,10 @@ void SEAnesthesiaMachineInspiratoryValveLeak::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEAnesthesiaMachineInspiratoryValveLeak::Copy(const SEAnesthesiaMachineInspiratoryValveLeak& src, bool preserveState)
+void SEAnesthesiaMachineInspiratoryValveLeak::Copy(const SEAnesthesiaMachineInspiratoryValveLeak& src, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
-DISABLE_WARNING_POP
 
 bool SEAnesthesiaMachineInspiratoryValveLeak::IsValid() const
 {

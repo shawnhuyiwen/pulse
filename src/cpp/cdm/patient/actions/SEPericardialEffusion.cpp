@@ -22,14 +22,12 @@ void SEPericardialEffusion::Clear()
   INVALIDATE_PROPERTY(m_EffusionRate);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEPericardialEffusion::Copy(const SEPericardialEffusion& src, bool preserveState)
+void SEPericardialEffusion::Copy(const SEPericardialEffusion& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEPericardialEffusion::IsValid() const
 {

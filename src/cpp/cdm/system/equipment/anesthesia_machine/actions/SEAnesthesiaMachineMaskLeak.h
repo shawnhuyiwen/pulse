@@ -12,7 +12,7 @@ public:
   virtual ~SEAnesthesiaMachineMaskLeak();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineMaskLeak& src, bool preserveState=false);
+  virtual void Copy(const SEAnesthesiaMachineMaskLeak& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
@@ -29,4 +29,4 @@ public:
 protected:
 
   SEScalar0To1*     m_Severity;
-};  
+};

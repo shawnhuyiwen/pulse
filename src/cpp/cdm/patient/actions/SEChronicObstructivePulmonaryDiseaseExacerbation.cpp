@@ -25,14 +25,12 @@ void SEChronicObstructivePulmonaryDiseaseExacerbation::Clear()
   INVALIDATE_PROPERTY(m_EmphysemaSeverity);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEChronicObstructivePulmonaryDiseaseExacerbation::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, bool preserveState)
+void SEChronicObstructivePulmonaryDiseaseExacerbation::Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEChronicObstructivePulmonaryDiseaseExacerbation::IsValid() const
 {

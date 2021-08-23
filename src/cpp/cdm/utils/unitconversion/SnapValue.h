@@ -34,8 +34,6 @@
 // will, but I don't trust my intuition on IEEE 754.
 #define SNAP_TOLERANCE (FLT_EPSILON * 16.0)
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-
 class CSnapValue
 {
 private:
@@ -43,7 +41,7 @@ private:
   // so that the compiler can resolve to the correct constructor. This
   // skips the snapping because we're negating the value from an existing
   // CSnapValue
-  CSnapValue(const CSnapValue &src, bool dummyflag)
+  CSnapValue(const CSnapValue &src, bool /*dummyflag*/)
     :m_dVal(-src.m_dVal)
   {
     // nothing
@@ -330,5 +328,3 @@ inline double pow(double x, const CSnapValue &y)
 {
   return pow(x,y.GetValue());
 }
-
-DISABLE_WARNING_POP

@@ -85,7 +85,6 @@ namespace PULSE_ENGINE
 
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Endocrine process function
@@ -96,17 +95,16 @@ namespace PULSE_ENGINE
   /// nervous system response. The masses of the hormones are increased in the kidneys' efferent arterioles. 
   /// The hormones will then circulate using the transport and substances methodology.
   //--------------------------------------------------------------------------------------------------
-  void EndocrineModel::Process(bool solve_and_transport)
+  void EndocrineModel::Process(bool /*solve_and_transport*/)
   {
     ReleaseEpinephrine();
     SynthesizeInsulin();
     ComputeExposedModelParameters();
   }
-  void EndocrineModel::PostProcess(bool solve_and_transport)
+  void EndocrineModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   void EndocrineModel::ComputeExposedModelParameters()
   {

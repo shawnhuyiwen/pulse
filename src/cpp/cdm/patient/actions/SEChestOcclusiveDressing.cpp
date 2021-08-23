@@ -24,14 +24,12 @@ void SEChestOcclusiveDressing::Clear()
   m_Side= eSide::NullSide;
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEChestOcclusiveDressing::Copy(const SEChestOcclusiveDressing& src, bool preserveState)
+void SEChestOcclusiveDressing::Copy(const SEChestOcclusiveDressing& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEChestOcclusiveDressing::IsValid() const
 {
@@ -50,12 +48,10 @@ void SEChestOcclusiveDressing::Deactivate()
   Clear();//No stateful properties
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SEChestOcclusiveDressing::GetScalar(const std::string& name)
+const SEScalar* SEChestOcclusiveDressing::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }
-DISABLE_WARNING_POP
 
 eSide SEChestOcclusiveDressing::GetSide() const
 {

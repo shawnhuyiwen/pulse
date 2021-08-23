@@ -34,12 +34,10 @@ void SEMechanicalVentilatorHold::Clear()
   m_State = eSwitch::Off;
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEMechanicalVentilatorHold::Copy(const SEMechanicalVentilatorHold& src, bool preserveState)
+void SEMechanicalVentilatorHold::Copy(const SEMechanicalVentilatorHold& src, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
-DISABLE_WARNING_POP
 
 bool SEMechanicalVentilatorHold::IsValid() const
 {
@@ -56,12 +54,10 @@ void SEMechanicalVentilatorHold::Deactivate()
   Clear();//No stateful properties
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SEMechanicalVentilatorHold::GetScalar(const std::string& name)
+const SEScalar* SEMechanicalVentilatorHold::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }
-DISABLE_WARNING_POP
 
 void SEMechanicalVentilatorHold::SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle c)
 {

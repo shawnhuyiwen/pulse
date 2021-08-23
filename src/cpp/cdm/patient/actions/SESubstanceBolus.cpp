@@ -37,14 +37,12 @@ void SESubstanceBolus::Clear()
   INVALIDATE_PROPERTY(m_TotalInfusedDose);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SESubstanceBolus::Copy(const SESubstanceBolus& src, bool preserveState)
+void SESubstanceBolus::Copy(const SESubstanceBolus& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SESubstanceBolus::IsValid() const
 {

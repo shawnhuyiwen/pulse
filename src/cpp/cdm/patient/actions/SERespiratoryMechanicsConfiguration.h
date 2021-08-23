@@ -14,7 +14,7 @@ public:
   virtual ~SERespiratoryMechanicsConfiguration();
 
   virtual void Clear();
-  virtual void Copy(const SERespiratoryMechanicsConfiguration& src, bool preserveState=false);
+  virtual void Copy(const SERespiratoryMechanicsConfiguration& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

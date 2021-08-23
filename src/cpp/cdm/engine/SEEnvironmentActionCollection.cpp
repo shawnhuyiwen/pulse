@@ -107,8 +107,7 @@ void SEEnvironmentActionCollection::GetAllActions(std::vector<const SEAction*>& 
     actions.push_back(GetThermalApplication());
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SEEnvironmentActionCollection::GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property)
+const SEScalar* SEEnvironmentActionCollection::GetScalar(const std::string& actionName, const std::string& /*cmptName*/, const std::string& /*substance*/, const std::string& property)
 {
   if (actionName == "ChangeEnvironmentalConditions")
     return GetChangeEnvironmentalConditions().GetScalar(property);
@@ -117,4 +116,3 @@ const SEScalar* SEEnvironmentActionCollection::GetScalar(const std::string& acti
 
   return nullptr;
 }
-DISABLE_WARNING_POP

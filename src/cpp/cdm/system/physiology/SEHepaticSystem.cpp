@@ -20,9 +20,7 @@ void SEHepaticSystem::Clear()
 
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SEHepaticSystem::GetScalar(const std::string& name)
+const SEScalar* SEHepaticSystem::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }
-DISABLE_WARNING_POP

@@ -22,14 +22,12 @@ void SEExercise::Clear()
   INVALIDATE_PROPERTY(m_Intensity);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEExercise::Copy(const SEExercise& src, bool preserveState)
+void SEExercise::Copy(const SEExercise& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEExercise::IsValid() const
 {

@@ -71,14 +71,13 @@ namespace PULSE_ENGINE
 
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Process function
   ///
   /// \details
   //--------------------------------------------------------------------------------------------------
-  void HepaticModel::Process(bool solve_and_transport)
+  void HepaticModel::Process(bool /*solve_and_transport*/)
   {
     ComputeExposedModelParameters();
   }
@@ -89,11 +88,10 @@ namespace PULSE_ENGINE
   ///
   /// \details
   //--------------------------------------------------------------------------------------------------
-  void HepaticModel::PostProcess(bool solve_and_transport)
+  void HepaticModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   void HepaticModel::ComputeExposedModelParameters()
   {

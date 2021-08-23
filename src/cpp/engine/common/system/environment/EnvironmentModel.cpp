@@ -255,34 +255,30 @@ namespace PULSE_ENGINE
     CalculateRespiration();
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// There is nothing to do here.  Processing the combined Energy-Environment circuit is handled by
   /// the Energy system.
   //--------------------------------------------------------------------------------------------------
-  void EnvironmentModel::Process(bool solve_and_transport)
+  void EnvironmentModel::Process(bool /*solve_and_transport*/)
   {
     ComputeExposedModelParameters();
   }
-  DISABLE_WARNING_POP
 
   void EnvironmentModel::ComputeExposedModelParameters()
   {
 
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// There is nothing to do here.  Postprocessing the combined Energy-Environment circuit is handled by
   /// the Energy system.
   //--------------------------------------------------------------------------------------------------
-  void EnvironmentModel::PostProcess(bool solve_and_transport)
+  void EnvironmentModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

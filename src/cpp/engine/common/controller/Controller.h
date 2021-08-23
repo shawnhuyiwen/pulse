@@ -151,11 +151,9 @@ namespace PULSE_ENGINE
     virtual const SEScalarTime&           GetEngineTime() const;
     virtual const SEScalarTime&           GetSimulationTime() const;
 
-    DISABLE_UNREFERENCED_FORMAL_PARAMETER
-    virtual bool                          IsAirwayModeSupported(eAirwayMode mode) { return true; }
+    virtual bool                          IsAirwayModeSupported(eAirwayMode /*mode*/) { return true; }
     virtual eAirwayMode                   GetAirwayMode() const { return m_AirwayMode; }
     virtual void                          SetAirwayMode(eAirwayMode mode);
-    DISABLE_WARNING_POP
 
     virtual eSwitch                       GetIntubation() const { return m_Intubation; }
     virtual void                          SetIntubation(eSwitch s);
@@ -318,18 +316,17 @@ namespace PULSE_ENGINE
     PULSE_ENGINE::Controller& _pc;
   };
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   class FatalListner : public LoggerForward
   {
   public:
     FatalListner(SEEventManager& mgr, SEScalarTime& ct) : m_Events(mgr), m_CurrentTime(ct) {};
     ~FatalListner() = default;
 
-    virtual void ForwardDebug(const std::string& msg, const std::string& origin) override { }
-    virtual void ForwardInfo(const std::string& msg, const std::string& origin) override  { }
-    virtual void ForwardWarning(const std::string& msg, const std::string& origin) override  { }
-    virtual void ForwardError(const std::string& msg, const std::string& origin) override  { }
-    virtual void ForwardFatal(const std::string& msg, const std::string& origin) override
+    virtual void ForwardDebug(const std::string& /*msg*/, const std::string& /*origin*/) override { }
+    virtual void ForwardInfo(const std::string& /*msg*/, const std::string& /*origin*/) override  { }
+    virtual void ForwardWarning(const std::string& /*msg*/, const std::string& /*origin*/) override  { }
+    virtual void ForwardError(const std::string& /*msg*/, const std::string& /*origin*/) override  { }
+    virtual void ForwardFatal(const std::string& /*msg*/, const std::string& /*origin*/) override
     {
       m_Events.SetEvent(eEvent::IrreversibleState, true, m_CurrentTime);
     }
@@ -338,6 +335,5 @@ namespace PULSE_ENGINE
     SEEventManager& m_Events;
     SEScalarTime& m_CurrentTime;
   };
-  DISABLE_WARNING_POP
 
 }

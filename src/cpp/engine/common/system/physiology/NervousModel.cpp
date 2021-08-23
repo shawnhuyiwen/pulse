@@ -202,7 +202,6 @@ namespace PULSE_ENGINE
 
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Nervous Process Step
@@ -210,7 +209,7 @@ namespace PULSE_ENGINE
   /// \details
   /// The only current Process-specific function checks the brain status to set events.
   //--------------------------------------------------------------------------------------------------
-  void NervousModel::Process(bool solve_and_transport)
+  void NervousModel::Process(bool /*solve_and_transport*/)
   {
     CheckBrainStatus();
     SetPupilEffects();
@@ -224,11 +223,10 @@ namespace PULSE_ENGINE
   /// \details
   /// Currently no nervous postprocess methods.
   //--------------------------------------------------------------------------------------------------
-  void NervousModel::PostProcess(bool solve_and_transport)
+  void NervousModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   void NervousModel::ComputeExposedModelParameters()
   {

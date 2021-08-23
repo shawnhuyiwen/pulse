@@ -323,7 +323,6 @@ namespace PULSE_ENGINE
     CheckReliefValve();
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Anesthesia machine process function
@@ -332,7 +331,7 @@ namespace PULSE_ENGINE
   /// The current Pulse implementation has no specific process functionality for the anesthesia machine.
   /// Anesthesia machine processing is currently done in the Respiratory System with the combined circuit methodology.
   //--------------------------------------------------------------------------------------------------
-  void AnesthesiaMachineModel::Process(bool solve_and_transport)
+  void AnesthesiaMachineModel::Process(bool /*solve_and_transport*/)
   {
     if (GetConnection() != eAnesthesiaMachine_Connection::Off)
     {
@@ -350,11 +349,10 @@ namespace PULSE_ENGINE
   /// circuit during post process. 
   /// The ventilator volumes are updated based on the previously calculated nodal analysis.
   //--------------------------------------------------------------------------------------------------
-  void AnesthesiaMachineModel::PostProcess(bool solve_and_transport)
+  void AnesthesiaMachineModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   void AnesthesiaMachineModel::ComputeExposedModelParameters()
   {

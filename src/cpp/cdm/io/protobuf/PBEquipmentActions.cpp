@@ -39,6 +39,10 @@ POP_PROTO_WARNINGS
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
 #include "cdm/substance/SESubstanceManager.h"
 
 void PBEquipmentAction::Serialize(const CDM_BIND::EquipmentActionData& src, SEEquipmentAction& dst)
@@ -767,6 +771,208 @@ void PBEquipmentAction::Copy(const SEMechanicalVentilatorHold& src, SEMechanical
   PBEquipmentAction::Serialize(data, dst);
 }
 
+void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorLeakData& src, SEMechanicalVentilatorLeak& dst)
+{
+  dst.Clear();
+  PBEquipmentAction::Serialize(src, dst);
+}
+void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorLeakData& src, SEMechanicalVentilatorLeak& dst)
+{
+  PBEquipmentAction::Serialize(src.mechanicalventilatoraction(), dst);
+  if (src.has_severity())
+    PBProperty::Load(src.severity(), dst.GetSeverity());
+}
+CDM_BIND::MechanicalVentilatorLeakData* PBEquipmentAction::Unload(const SEMechanicalVentilatorLeak& src)
+{
+  CDM_BIND::MechanicalVentilatorLeakData* dst = new CDM_BIND::MechanicalVentilatorLeakData();
+  PBEquipmentAction::Serialize(src, *dst);
+  return dst;
+}
+void PBEquipmentAction::Serialize(const SEMechanicalVentilatorLeak& src, CDM_BIND::MechanicalVentilatorLeakData& dst)
+{
+  PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatoraction());
+  if (src.HasSeverity())
+    dst.set_allocated_severity(PBProperty::Unload(*src.m_Severity));
+}
+void PBEquipmentAction::Copy(const SEMechanicalVentilatorLeak& src, SEMechanicalVentilatorLeak& dst)
+{
+  dst.Clear();
+  CDM_BIND::MechanicalVentilatorLeakData data;
+  PBEquipmentAction::Serialize(src, data);
+  PBEquipmentAction::Serialize(data, dst);
+}
+
+void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorModeData& src, SEMechanicalVentilatorMode& dst)
+{
+  dst.Clear();
+  PBEquipmentAction::Serialize(src, dst);
+}
+void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorModeData& src, SEMechanicalVentilatorMode& dst)
+{
+  PBEquipmentAction::Serialize(src.mechanicalventilatoraction(), dst);
+  dst.m_Connection = (eMechanicalVentilator_Connection)src.connection();
+}
+CDM_BIND::MechanicalVentilatorModeData* PBEquipmentAction::Unload(const SEMechanicalVentilatorMode& src)
+{
+  CDM_BIND::MechanicalVentilatorModeData* dst = new CDM_BIND::MechanicalVentilatorModeData();
+  PBEquipmentAction::Serialize(src, *dst);
+  return dst;
+}
+void PBEquipmentAction::Serialize(const SEMechanicalVentilatorMode& src, CDM_BIND::MechanicalVentilatorModeData& dst)
+{
+  PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatoraction());
+  dst.set_connection((CDM_BIND::MechanicalVentilatorSettingsData::eConnection)src.m_Connection);
+}
+
+void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData& src, SEMechanicalVentilatorContinuousPositiveAirwayPressure& dst)
+{
+  dst.Clear();
+  PBEquipmentAction::Serialize(src, dst);
+}
+void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData& src, SEMechanicalVentilatorContinuousPositiveAirwayPressure& dst)
+{
+  PBEquipmentAction::Serialize(src.mechanicalventilatormode(), dst);
+  if (src.has_deltapressuresupport())
+    PBProperty::Load(src.deltapressuresupport(), dst.GetDeltaPressureSupport());
+  if (src.has_fractioninspiredoxygen())
+    PBProperty::Load(src.fractioninspiredoxygen(), dst.GetFractionInspiredOxygen());
+  if (src.has_positiveendexpiredpressure())
+    PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
+  if (src.has_slope())
+    PBProperty::Load(src.slope(), dst.GetSlope());
+}
+CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData* PBEquipmentAction::Unload(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src)
+{
+  CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData* dst = new CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData();
+  PBEquipmentAction::Serialize(src, *dst);
+  return dst;
+}
+void PBEquipmentAction::Serialize(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData& dst)
+{
+  PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatormode());
+  if (src.HasDeltaPressureSupport())
+    dst.set_allocated_deltapressuresupport(PBProperty::Unload(*src.m_DeltaPressureSupport));
+  if (src.HasFractionInspiredOxygen())
+    dst.set_allocated_fractioninspiredoxygen(PBProperty::Unload(*src.m_FractionInspiredOxygen));
+  if (src.HasPositiveEndExpiredPressure())
+    dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
+  if (src.HasSlope())
+    dst.set_allocated_slope(PBProperty::Unload(*src.m_Slope));
+}
+void PBEquipmentAction::Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, SEMechanicalVentilatorContinuousPositiveAirwayPressure& dst)
+{
+  dst.Clear();
+  CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData data;
+  PBEquipmentAction::Serialize(src, data);
+  PBEquipmentAction::Serialize(data, dst);
+}
+
+void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorPressureControlData& src, SEMechanicalVentilatorPressureControl& dst)
+{
+  dst.Clear();
+  PBEquipmentAction::Serialize(src, dst);
+}
+void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorPressureControlData& src, SEMechanicalVentilatorPressureControl& dst)
+{
+  PBEquipmentAction::Serialize(src.mechanicalventilatormode(), dst);
+  dst.m_Mode = (eMechanicalVentilator_PressureControlMode)src.mode();
+  if (src.has_fractioninspiredoxygen())
+    PBProperty::Load(src.fractioninspiredoxygen(), dst.GetFractionInspiredOxygen());
+  if (src.has_inspiratoryperiod())
+    PBProperty::Load(src.inspiratoryperiod(), dst.GetInspiratoryPeriod());
+  if (src.has_inspiratorypressure())
+    PBProperty::Load(src.inspiratorypressure(), dst.GetInspiratoryPressure());
+  if (src.has_positiveendexpiredpressure())
+    PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
+  if (src.has_respirationrate())
+    PBProperty::Load(src.respirationrate(), dst.GetRespirationRate());
+  if (src.has_slope())
+    PBProperty::Load(src.slope(), dst.GetSlope());
+}
+CDM_BIND::MechanicalVentilatorPressureControlData* PBEquipmentAction::Unload(const SEMechanicalVentilatorPressureControl& src)
+{
+  CDM_BIND::MechanicalVentilatorPressureControlData* dst = new CDM_BIND::MechanicalVentilatorPressureControlData();
+  PBEquipmentAction::Serialize(src, *dst);
+  return dst;
+}
+void PBEquipmentAction::Serialize(const SEMechanicalVentilatorPressureControl& src, CDM_BIND::MechanicalVentilatorPressureControlData& dst)
+{
+  PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatormode());
+  dst.set_mode((CDM_BIND::MechanicalVentilatorPressureControlData::eMode)src.m_Mode);
+  if (src.HasFractionInspiredOxygen())
+    dst.set_allocated_fractioninspiredoxygen(PBProperty::Unload(*src.m_FractionInspiredOxygen));
+  if (src.HasInspiratoryPeriod())
+    dst.set_allocated_inspiratoryperiod(PBProperty::Unload(*src.m_InspiratoryPeriod));
+  if (src.HasInspiratoryPressure())
+    dst.set_allocated_inspiratorypressure(PBProperty::Unload(*src.m_InspiratoryPressure));
+  if (src.HasPositiveEndExpiredPressure())
+    dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
+  if (src.HasRespirationRate())
+    dst.set_allocated_respirationrate(PBProperty::Unload(*src.m_RespirationRate));
+  if (src.HasSlope())
+    dst.set_allocated_slope(PBProperty::Unload(*src.m_Slope));
+}
+void PBEquipmentAction::Copy(const SEMechanicalVentilatorPressureControl& src, SEMechanicalVentilatorPressureControl& dst)
+{
+  dst.Clear();
+  CDM_BIND::MechanicalVentilatorPressureControlData data;
+  PBEquipmentAction::Serialize(src, data);
+  PBEquipmentAction::Serialize(data, dst);
+}
+
+void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorVolumeControlData& src, SEMechanicalVentilatorVolumeControl& dst)
+{
+  dst.Clear();
+  PBEquipmentAction::Serialize(src, dst);
+}
+void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorVolumeControlData& src, SEMechanicalVentilatorVolumeControl& dst)
+{
+  PBEquipmentAction::Serialize(src.mechanicalventilatormode(), dst);
+  dst.m_Mode = (eMechanicalVentilator_VolumeControlMode)src.mode();
+  if (src.has_flow())
+    PBProperty::Load(src.flow(), dst.GetFlow());
+  if (src.has_fractioninspiredoxygen())
+    PBProperty::Load(src.fractioninspiredoxygen(), dst.GetFractionInspiredOxygen());
+  if (src.has_inspiratoryperiod())
+    PBProperty::Load(src.inspiratoryperiod(), dst.GetInspiratoryPeriod());
+  if (src.has_positiveendexpiredpressure())
+    PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
+  if (src.has_respirationrate())
+    PBProperty::Load(src.respirationrate(), dst.GetRespirationRate());
+  if (src.has_tidalvolume())
+    PBProperty::Load(src.tidalvolume(), dst.GetTidalVolume());
+}
+CDM_BIND::MechanicalVentilatorVolumeControlData* PBEquipmentAction::Unload(const SEMechanicalVentilatorVolumeControl& src)
+{
+  CDM_BIND::MechanicalVentilatorVolumeControlData* dst = new CDM_BIND::MechanicalVentilatorVolumeControlData();
+  PBEquipmentAction::Serialize(src, *dst);
+  return dst;
+}
+void PBEquipmentAction::Serialize(const SEMechanicalVentilatorVolumeControl& src, CDM_BIND::MechanicalVentilatorVolumeControlData& dst)
+{
+  PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatormode());
+  dst.set_mode((CDM_BIND::MechanicalVentilatorVolumeControlData::eMode)src.m_Mode);
+  if (src.HasFlow())
+    dst.set_allocated_flow(PBProperty::Unload(*src.m_Flow));
+  if (src.HasFractionInspiredOxygen())
+    dst.set_allocated_fractioninspiredoxygen(PBProperty::Unload(*src.m_FractionInspiredOxygen));
+  if (src.HasInspiratoryPeriod())
+    dst.set_allocated_inspiratoryperiod(PBProperty::Unload(*src.m_InspiratoryPeriod));
+  if (src.HasPositiveEndExpiredPressure())
+    dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
+  if (src.HasRespirationRate())
+    dst.set_allocated_respirationrate(PBProperty::Unload(*src.m_RespirationRate));
+  if (src.HasTidalVolume())
+    dst.set_allocated_tidalvolume(PBProperty::Unload(*src.m_TidalVolume));
+}
+void PBEquipmentAction::Copy(const SEMechanicalVentilatorVolumeControl& src, SEMechanicalVentilatorVolumeControl& dst)
+{
+  dst.Clear();
+  CDM_BIND::MechanicalVentilatorVolumeControlData data;
+  PBEquipmentAction::Serialize(src, data);
+  PBEquipmentAction::Serialize(data, dst);
+}
+
 ///////////////////////////
 // Equipment Load/Unload //
 ///////////////////////////
@@ -895,6 +1101,30 @@ SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionDat
     PBEquipmentAction::Load(any.mechanicalventilatorhold(), *a);
     return a;
   }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kMechanicalVentilatorLeak:
+  {
+    SEMechanicalVentilatorLeak* a = new SEMechanicalVentilatorLeak(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.mechanicalventilatorleak(), *a);
+    return a;
+  }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kMechanicalVentilatorContinuousPositiveAirwayPressure:
+  {
+    SEMechanicalVentilatorContinuousPositiveAirwayPressure* a = new SEMechanicalVentilatorContinuousPositiveAirwayPressure(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.mechanicalventilatorcontinuouspositiveairwaypressure(), *a);
+    return a;
+  }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kMechanicalVentilatorPressureControl:
+  {
+    SEMechanicalVentilatorPressureControl* a = new SEMechanicalVentilatorPressureControl(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.mechanicalventilatorpressurecontrol(), *a);
+    return a;
+  }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kMechanicalVentilatorVolumeControl:
+  {
+    SEMechanicalVentilatorVolumeControl* a = new SEMechanicalVentilatorVolumeControl(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.mechanicalventilatorvolumecontrol(), *a);
+    return a;
+  }
   }
   subMgr.Error("Unknown Equipment action enum :" + std::to_string((int)any.Action_case()));
   return nullptr;
@@ -956,6 +1186,34 @@ CDM_BIND::AnyEquipmentActionData* PBEquipmentAction::Unload(const SEEquipmentAct
   if (mvh != nullptr)
   {
     any->set_allocated_mechanicalventilatorhold(PBEquipmentAction::Unload(*mvh));
+    return any;
+  }
+
+  const SEMechanicalVentilatorLeak* mvl = dynamic_cast<const SEMechanicalVentilatorLeak*>(&action);
+  if (mvl != nullptr)
+  {
+    any->set_allocated_mechanicalventilatorleak(PBEquipmentAction::Unload(*mvl));
+    return any;
+  }
+
+  const SEMechanicalVentilatorContinuousPositiveAirwayPressure* mvcpap = dynamic_cast<const SEMechanicalVentilatorContinuousPositiveAirwayPressure*>(&action);
+  if (mvcpap != nullptr)
+  {
+    any->set_allocated_mechanicalventilatorcontinuouspositiveairwaypressure(PBEquipmentAction::Unload(*mvcpap));
+    return any;
+  }
+
+  const SEMechanicalVentilatorPressureControl* mvpc = dynamic_cast<const SEMechanicalVentilatorPressureControl*>(&action);
+  if (mvpc != nullptr)
+  {
+    any->set_allocated_mechanicalventilatorpressurecontrol(PBEquipmentAction::Unload(*mvpc));
+    return any;
+  }
+
+  const SEMechanicalVentilatorVolumeControl* mvvc = dynamic_cast<const SEMechanicalVentilatorVolumeControl*>(&action);
+  if (mvvc != nullptr)
+  {
+    any->set_allocated_mechanicalventilatorvolumecontrol(PBEquipmentAction::Unload(*mvvc));
     return any;
   }
 

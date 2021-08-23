@@ -39,12 +39,10 @@ void SEThermalApplication::Clear()
   }
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEThermalApplication::Copy(const SEThermalApplication& src, bool preserveState)
+void SEThermalApplication::Copy(const SEThermalApplication& src, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEnvironmentAction::Copy(src, *this);
 }
-DISABLE_WARNING_POP
 
 bool SEThermalApplication::IsValid() const
 {

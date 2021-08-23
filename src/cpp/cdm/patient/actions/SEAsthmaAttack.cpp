@@ -22,14 +22,12 @@ void SEAsthmaAttack::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEAsthmaAttack::Copy(const SEAsthmaAttack& src, bool preserveState)
+void SEAsthmaAttack::Copy(const SEAsthmaAttack& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEAsthmaAttack::IsValid() const
 {

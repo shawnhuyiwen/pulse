@@ -16,8 +16,7 @@ void SEScalar0To1::SetValue(double d)
   SEScalar::SetValue(d);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEScalar0To1::SetValue(double d, const NoUnit& unitless)
+void SEScalar0To1::SetValue(double d, const NoUnit& /*unitless*/)
 { 
   SEScalar0To1::SetValue(d);
 }
@@ -27,8 +26,7 @@ void SEScalar0To1::ForceValue(double d)
   SEScalar::ForceValue(d);
 }
 
-void SEScalar0To1::ForceValue(double d, const NoUnit& unitless)
+void SEScalar0To1::ForceValue(double d, const NoUnit& /*unitless*/)
 {
   SEScalar::ForceValue(d);
 }
-DISABLE_WARNING_POP

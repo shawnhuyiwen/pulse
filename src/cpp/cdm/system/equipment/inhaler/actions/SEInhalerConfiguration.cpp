@@ -33,12 +33,10 @@ void SEInhalerConfiguration::Clear()
   m_MergeType = eMergeType::Append;
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
+void SEInhalerConfiguration::Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
-DISABLE_WARNING_POP
 
 bool SEInhalerConfiguration::IsValid() const
 {

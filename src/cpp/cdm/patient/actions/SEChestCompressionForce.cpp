@@ -22,14 +22,12 @@ void SEChestCompressionForce::Clear()
   INVALIDATE_PROPERTY(m_Force);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEChestCompressionForce::Copy(const SEChestCompressionForce& src, bool preserveState)
+void SEChestCompressionForce::Copy(const SEChestCompressionForce& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEChestCompressionForce::IsValid() const
 {

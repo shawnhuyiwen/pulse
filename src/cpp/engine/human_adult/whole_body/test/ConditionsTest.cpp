@@ -15,7 +15,7 @@
 
 namespace HUMAN_ADULT_WHOLE_BODY
 {
-  void EngineTest::ConditionCombinations(const std::string& rptDirectory)
+  void EngineTest::ConditionCombinations(const std::string& /*rptDirectory*/)
   {
     Logger log("ConditionsPermutationsReport.log");
 

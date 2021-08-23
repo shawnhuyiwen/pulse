@@ -24,14 +24,12 @@ void SENeedleDecompression::Clear()
   m_Side= eSide::NullSide;
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SENeedleDecompression::Copy(const SENeedleDecompression& src, bool preserveState)
+void SENeedleDecompression::Copy(const SENeedleDecompression& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SENeedleDecompression::IsValid() const
 {
@@ -50,12 +48,10 @@ void SENeedleDecompression::Deactivate()
   Clear();//No stateful properties
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SENeedleDecompression::GetScalar(const std::string& name)
+const SEScalar* SENeedleDecompression::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }
-DISABLE_WARNING_POP
 
 eSwitch SENeedleDecompression::GetState() const
 {

@@ -4,7 +4,6 @@
 #pragma once
 #include "cdm/properties/SEScalar.h"
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
 class CDM_DECL SEScalarNegative1To1 : public SEScalar
 {
 
@@ -13,10 +12,9 @@ public:
   virtual ~SEScalarNegative1To1() {}
 
   double GetValue() const { return SEScalar::GetValue(); }
-  double GetValue(const NoUnit& unitless) const { return SEScalar::GetValue(); }
+  double GetValue(const NoUnit& /*unitless*/) const { return SEScalar::GetValue(); }
   void SetValue(double d);
   void SetValue(double d, const NoUnit& unitless);
   void ForceValue(double d);
   void ForceValue(double d, const NoUnit& unitless);
 };
-DISABLE_WARNING_POP

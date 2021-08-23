@@ -22,14 +22,12 @@ void SEAcuteStress::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEAcuteStress::Copy(const SEAcuteStress& src, bool preserveState)
+void SEAcuteStress::Copy(const SEAcuteStress& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEAcuteStress::IsValid() const
 {

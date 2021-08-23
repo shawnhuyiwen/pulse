@@ -149,7 +149,6 @@ namespace PULSE_ENGINE
     AdministerSubstanceCompoundInfusion();
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Substances process function
@@ -160,7 +159,7 @@ namespace PULSE_ENGINE
   /// The drug effects categories and system level drug effects are calculated and the values are set on the common data
   /// model for use in other systems. Drug effects are only calculated if the PD is enabled.
   //--------------------------------------------------------------------------------------------------
-  void DrugModel::Process(bool solve_and_transport)
+  void DrugModel::Process(bool /*solve_and_transport*/)
   {
     CalculatePartitionCoefficients();
 
@@ -172,11 +171,10 @@ namespace PULSE_ENGINE
       CalculateDrugEffects();
     ComputeExposedModelParameters();
   }
-  void DrugModel::PostProcess(bool solve_and_transport)
+  void DrugModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   void DrugModel::ComputeExposedModelParameters()
   {

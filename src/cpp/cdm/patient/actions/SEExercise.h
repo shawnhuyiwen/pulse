@@ -13,7 +13,7 @@ public:
   virtual ~SEExercise();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEExercise& src, bool preserveState=false);
+  virtual void Copy(const SEExercise& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

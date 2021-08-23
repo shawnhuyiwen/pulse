@@ -21,12 +21,10 @@ void SEAnesthesiaMachineMaskLeak::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEAnesthesiaMachineMaskLeak::Copy(const SEAnesthesiaMachineMaskLeak& src, bool preserveState)
+void SEAnesthesiaMachineMaskLeak::Copy(const SEAnesthesiaMachineMaskLeak& src, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
-DISABLE_WARNING_POP
 
 bool SEAnesthesiaMachineMaskLeak::IsValid() const
 {

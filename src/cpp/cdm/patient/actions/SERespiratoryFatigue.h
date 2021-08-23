@@ -13,7 +13,7 @@ public:
   virtual ~SERespiratoryFatigue();
 
   virtual void Clear();
-  virtual void Copy(const SERespiratoryFatigue& src, bool preserveState=false);
+  virtual void Copy(const SERespiratoryFatigue& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

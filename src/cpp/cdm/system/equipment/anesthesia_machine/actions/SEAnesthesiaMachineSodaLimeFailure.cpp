@@ -21,12 +21,10 @@ void SEAnesthesiaMachineSodaLimeFailure::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEAnesthesiaMachineSodaLimeFailure::Copy(const SEAnesthesiaMachineSodaLimeFailure& src, bool preserveState)
+void SEAnesthesiaMachineSodaLimeFailure::Copy(const SEAnesthesiaMachineSodaLimeFailure& src, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
-DISABLE_WARNING_POP
 
 bool SEAnesthesiaMachineSodaLimeFailure::IsValid() const
 {

@@ -28,14 +28,12 @@ void SELobarPneumoniaExacerbation::Clear()
   INVALIDATE_PROPERTY(m_RightLungAffected);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SELobarPneumoniaExacerbation::Copy(const SELobarPneumoniaExacerbation& src, bool preserveState)
+void SELobarPneumoniaExacerbation::Copy(const SELobarPneumoniaExacerbation& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SELobarPneumoniaExacerbation::IsValid() const
 {

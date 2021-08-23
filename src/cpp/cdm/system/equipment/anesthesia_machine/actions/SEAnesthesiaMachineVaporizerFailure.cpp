@@ -21,12 +21,10 @@ void SEAnesthesiaMachineVaporizerFailure::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEAnesthesiaMachineVaporizerFailure::Copy(const SEAnesthesiaMachineVaporizerFailure& src, bool preserveState)
+void SEAnesthesiaMachineVaporizerFailure::Copy(const SEAnesthesiaMachineVaporizerFailure& src, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }
-DISABLE_WARNING_POP
 
 bool SEAnesthesiaMachineVaporizerFailure::IsValid() const
 {

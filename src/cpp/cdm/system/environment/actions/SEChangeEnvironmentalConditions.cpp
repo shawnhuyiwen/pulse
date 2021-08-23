@@ -42,12 +42,10 @@ void SEChangeEnvironmentalConditions::Clear()
   m_MergeType = eMergeType::Append;
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr, bool preserveState)
+void SEChangeEnvironmentalConditions::Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEnvironmentAction::Copy(src, *this, subMgr);
 }
-DISABLE_WARNING_POP
 
 bool SEChangeEnvironmentalConditions::IsValid() const
 {

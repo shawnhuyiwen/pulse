@@ -22,14 +22,12 @@ void SERespiratoryFatigue::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SERespiratoryFatigue::Copy(const SERespiratoryFatigue& src, bool preserveState)
+void SERespiratoryFatigue::Copy(const SERespiratoryFatigue& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SERespiratoryFatigue::IsValid() const
 {

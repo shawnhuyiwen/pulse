@@ -18,7 +18,7 @@ public:
   virtual ~SEIntubation();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEIntubation& src, bool preserveState=false);
+  virtual void Copy(const SEIntubation& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

@@ -28,14 +28,12 @@ void SEConsciousRespiration::Clear()
   m_StartImmediately = false;
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEConsciousRespiration::Copy(const SEConsciousRespiration& src, bool preserveState)
+void SEConsciousRespiration::Copy(const SEConsciousRespiration& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEConsciousRespiration::IsValid() const
 {
@@ -52,12 +50,10 @@ void SEConsciousRespiration::Deactivate()
   Clear();//No stateful properties
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SEConsciousRespiration::GetScalar(const std::string& name)
+const SEScalar* SEConsciousRespiration::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }
-DISABLE_WARNING_POP
 
 bool SEConsciousRespiration::StartImmediately() const
 {

@@ -418,7 +418,6 @@ namespace PULSE_ENGINE
     m_CurrentPeriodTime_s += m_data.GetTimeStep_s();
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Bag Valve Mask process function
@@ -427,7 +426,7 @@ namespace PULSE_ENGINE
   /// The current Pulse implementation has no specific process functionality for the bag valve mask.
   /// Bag Valve Mask processing is currently done in the Respiratory System with the combined circuit methodology.
   //--------------------------------------------------------------------------------------------------
-  void BagValveMaskModel::Process(bool solve_and_transport)
+  void BagValveMaskModel::Process(bool /*solve_and_transport*/)
   {
     ComputeExposedModelParameters();
   }
@@ -441,11 +440,10 @@ namespace PULSE_ENGINE
   /// circuit during post process. 
   /// The volumes are updated based on the previously calculated nodal analysis.
   //--------------------------------------------------------------------------------------------------
-  void BagValveMaskModel::PostProcess(bool solve_and_transport)
+  void BagValveMaskModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   void BagValveMaskModel::ComputeExposedModelParameters()
   {

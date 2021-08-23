@@ -81,7 +81,6 @@ CDM_BIND::MechanicalVentilatorData* PBMechanicalVentilator::Unload(const SEMecha
 }
 void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BIND::MechanicalVentilatorData& dst)
 {
-
   if (src.HasAirwayPressure())
     dst.set_allocated_airwaypressure(PBProperty::Unload(*src.m_AirwayPressure));
   if (src.HasEndTidalCarbonDioxideFraction())

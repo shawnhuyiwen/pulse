@@ -84,13 +84,11 @@ namespace PULSE_ENGINE
     return nullptr;
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
-  SEGasBlackBox* BlackBoxManager::CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+  SEGasBlackBox* BlackBoxManager::CreateGasBlackBox(const std::string& /*srcCmptName*/, const std::string& /*tgtCmptName*/)
   {
     // TODO Finish
     return nullptr;
   }
-  DISABLE_WARNING_POP
 
 
 #define LIQUID_COMPONENTS SELiquidBlackBox, \
@@ -155,13 +153,11 @@ namespace PULSE_ENGINE
     return nullptr;
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
-  SEThermalBlackBox* BlackBoxManager::CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+  SEThermalBlackBox* BlackBoxManager::CreateThermalBlackBox(const std::string& /*srcCmptName*/, const std::string& /*tgtCmptName*/)
   {
     // TODO Finish
     return nullptr;
   }
-  DISABLE_WARNING_POP
 
   template<CREATE_BLACK_BOX_COMPONENTS_TEMPLATE> bool BlackBoxManager::CreateComponents(BlackBoxType& bb,
     NodeType& srcNode, NodeType& tgtNode,

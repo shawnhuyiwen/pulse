@@ -14,7 +14,7 @@ public:
   virtual ~SEMechanicalVentilatorConfiguration();
 
   virtual void Clear();
-  virtual void Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr, bool preserveState = false);
+  virtual void Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/ = false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

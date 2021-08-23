@@ -21,14 +21,12 @@ void SEPatientAssessmentRequest::Clear()
   m_Type=ePatientAssessment_Type::CompleteBloodCount;
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEPatientAssessmentRequest::Copy(const SEPatientAssessmentRequest& src, bool preserveState)
+void SEPatientAssessmentRequest::Copy(const SEPatientAssessmentRequest& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEPatientAssessmentRequest::IsValid() const
 {
@@ -45,12 +43,10 @@ void SEPatientAssessmentRequest::Deactivate()
   Clear();//No stateful properties
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SEPatientAssessmentRequest::GetScalar(const std::string& name)
+const SEScalar* SEPatientAssessmentRequest::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }
-DISABLE_WARNING_POP
 
 ePatientAssessment_Type SEPatientAssessmentRequest::GetType() const
 {

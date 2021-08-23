@@ -12,7 +12,7 @@ public:
   virtual ~SEChestCompressionForceScale();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEChestCompressionForceScale& src, bool preserveState=false);
+  virtual void Copy(const SEChestCompressionForceScale& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

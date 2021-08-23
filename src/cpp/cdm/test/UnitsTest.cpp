@@ -42,8 +42,7 @@ void CommonDataModelTest::ConvertList(std::vector<std::string> stringList)
   }
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void CommonDataModelTest::UnitsTest(const std::string& sOutputDirectory)
+void CommonDataModelTest::UnitsTest(const std::string& /*sOutputDirectory*/)
 {
   try
   {
@@ -191,4 +190,3 @@ void CommonDataModelTest::UnitsTest(const std::string& sOutputDirectory)
     std::cout << "caught exception: " << e.what() << std::endl;
   }
 }
-DISABLE_WARNING_POP

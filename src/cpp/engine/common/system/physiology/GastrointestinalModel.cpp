@@ -382,7 +382,6 @@ namespace PULSE_ENGINE
       n.GetProteinDigestionRate().SetValue(m_data.GetConfiguration().GetDefaultProteinDigestionRate(MassPerTimeUnit::g_Per_min), MassPerTimeUnit::g_Per_min);
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Gastrointestinal Preprocess function
@@ -390,7 +389,7 @@ namespace PULSE_ENGINE
   /// \details
   /// The current Pulse implementation has no functionality in the process function for Gastrointestinal.
   //--------------------------------------------------------------------------------------------------
-  void GastrointestinalModel::Process(bool solve_and_transport)
+  void GastrointestinalModel::Process(bool /*solve_and_transport*/)
   {
     ComputeExposedModelParameters();
   }
@@ -401,11 +400,10 @@ namespace PULSE_ENGINE
   /// \details
   /// The current Pulse implementation has no specific postprocess functionality.
   //--------------------------------------------------------------------------------------------------
-  void GastrointestinalModel::PostProcess(bool solve_and_transport)
+  void GastrointestinalModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   void GastrointestinalModel::ComputeExposedModelParameters()
   {

@@ -32,6 +32,10 @@ class SEMechanicalVentilator;
 class SEMechanicalVentilatorAction;
 class SEMechanicalVentilatorConfiguration;
 class SEMechanicalVentilatorHold;
+class SEMechanicalVentilatorLeak;
+class SEMechanicalVentilatorContinuousPositiveAirwayPressure;
+class SEMechanicalVentilatorPressureControl;
+class SEMechanicalVentilatorVolumeControl;
 class SESubstanceManager;
 CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(AnyEquipmentActionData)
@@ -152,6 +156,26 @@ public:
   const SEMechanicalVentilatorHold* GetMechanicalVentilatorHold() const;
   void RemoveMechanicalVentilatorHold();
 
+  bool HasMechanicalVentilatorLeak() const;
+  SEMechanicalVentilatorLeak& GetMechanicalVentilatorLeak();
+  const SEMechanicalVentilatorLeak* GetMechanicalVentilatorLeak() const;
+  void RemoveMechanicalVentilatorLeak();
+
+  bool HasMechanicalVentilatorContinuousPositiveAirwayPressure() const;
+  SEMechanicalVentilatorContinuousPositiveAirwayPressure& GetMechanicalVentilatorContinuousPositiveAirwayPressure();
+  const SEMechanicalVentilatorContinuousPositiveAirwayPressure* GetMechanicalVentilatorContinuousPositiveAirwayPressure() const;
+  void RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+
+  bool HasMechanicalVentilatorPressureControl() const;
+  SEMechanicalVentilatorPressureControl& GetMechanicalVentilatorPressureControl();
+  const SEMechanicalVentilatorPressureControl* GetMechanicalVentilatorPressureControl() const;
+  void RemoveMechanicalVentilatorPressureControl();
+
+  bool HasMechanicalVentilatorVolumeControl() const;
+  SEMechanicalVentilatorVolumeControl& GetMechanicalVentilatorVolumeControl();
+  const SEMechanicalVentilatorVolumeControl* GetMechanicalVentilatorVolumeControl() const;
+  void RemoveMechanicalVentilatorVolumeControl();
+
   void GetAllActions(std::vector<const SEAction*>& v) const;
   const SEScalar* GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property);
   
@@ -186,4 +210,8 @@ protected:
 
   SEMechanicalVentilatorConfiguration*                         m_MechanicalVentilatorConfiguration;
   SEMechanicalVentilatorHold*                                  m_MechanicalVentilatorHold;
+  SEMechanicalVentilatorLeak*                                  m_MechanicalVentilatorLeak;
+  SEMechanicalVentilatorContinuousPositiveAirwayPressure*      m_MechanicalVentilatorContinuousPositiveAirwayPressure;
+  SEMechanicalVentilatorPressureControl*                       m_MechanicalVentilatorPressureControl;
+  SEMechanicalVentilatorVolumeControl*                         m_MechanicalVentilatorVolumeControl;
 };

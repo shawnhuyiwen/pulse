@@ -26,14 +26,12 @@ void SEChestCompressionForceScale::Clear()
   INVALIDATE_PROPERTY(m_ForcePeriod);
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEChestCompressionForceScale::Copy(const SEChestCompressionForceScale& src, bool preserveState)
+void SEChestCompressionForceScale::Copy(const SEChestCompressionForceScale& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEChestCompressionForceScale::IsValid() const
 {

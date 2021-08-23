@@ -12,7 +12,7 @@ public:
   virtual ~SEAnesthesiaMachineVaporizerFailure();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineVaporizerFailure& src, bool preserveState=false);
+  virtual void Copy(const SEAnesthesiaMachineVaporizerFailure& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

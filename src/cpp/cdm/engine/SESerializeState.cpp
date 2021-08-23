@@ -61,9 +61,7 @@ void SESerializeState::ToString(std::ostream &str) const
   str << "\n\tFilename : " << m_Filename;
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SESerializeState::GetScalar(const std::string& name)
+const SEScalar* SESerializeState::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }
-DISABLE_WARNING_POP

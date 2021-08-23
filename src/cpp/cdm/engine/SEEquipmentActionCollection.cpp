@@ -30,6 +30,10 @@
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
@@ -61,6 +65,10 @@ SEEquipmentActionCollection::SEEquipmentActionCollection(SESubstanceManager& sub
   m_BagValveMaskInstantaneous = nullptr;
   m_BagValveMaskSqueeze = nullptr;
   m_MechanicalVentilatorHold = nullptr;
+  m_MechanicalVentilatorLeak = nullptr;
+  m_MechanicalVentilatorContinuousPositiveAirwayPressure = nullptr;
+  m_MechanicalVentilatorPressureControl = nullptr;
+  m_MechanicalVentilatorVolumeControl = nullptr;
 }
 
 SEEquipmentActionCollection::~SEEquipmentActionCollection()
@@ -94,6 +102,10 @@ void SEEquipmentActionCollection::Clear()
   RemoveBagValveMaskInstantaneous();
   RemoveBagValveMaskSqueeze();
   RemoveMechanicalVentilatorHold();
+  RemoveMechanicalVentilatorLeak();
+  RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+  RemoveMechanicalVentilatorPressureControl();
+  RemoveMechanicalVentilatorVolumeControl();
 }
 
 bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
@@ -101,6 +113,10 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
   const SEMechanicalVentilatorAction* mva = dynamic_cast<const SEMechanicalVentilatorAction*>(&action);
   if (mva != nullptr)
   {
+    // NOTE Ventilator mode actions are translated into the ventilator configuration action
+    // So any new mode will need to be handled the same way and Removes, ToConfiguration calls
+    // will need to be peppered through out this insides of this if block. Just follow the pattern
+
     const SEMechanicalVentilatorConfiguration* config = dynamic_cast<const SEMechanicalVentilatorConfiguration*>(&action);
     if (config != nullptr)
     {
@@ -108,6 +124,11 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
       m_MechanicalVentilatorConfiguration->Activate();
       if (!m_MechanicalVentilatorConfiguration->IsActive())
         RemoveMechanicalVentilatorConfiguration();
+      {
+        RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+        RemoveMechanicalVentilatorPressureControl();
+        RemoveMechanicalVentilatorVolumeControl();
+      }
       return true;
     }
 
@@ -118,6 +139,67 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
       m_MechanicalVentilatorHold->Activate();
       if (!m_MechanicalVentilatorHold->IsActive())
         RemoveMechanicalVentilatorHold();
+      return true;
+    }
+
+    const SEMechanicalVentilatorLeak* leak = dynamic_cast<const SEMechanicalVentilatorLeak*>(&action);
+    if (leak != nullptr)
+    {
+      GetMechanicalVentilatorLeak().Copy(*leak, true);
+      m_MechanicalVentilatorLeak->Activate();
+      if (!m_MechanicalVentilatorLeak->IsActive())
+        RemoveMechanicalVentilatorLeak();
+      return true;
+    }
+
+    const SEMechanicalVentilatorContinuousPositiveAirwayPressure* cpap = dynamic_cast<const SEMechanicalVentilatorContinuousPositiveAirwayPressure*>(&action);
+    if (cpap != nullptr)
+    {
+      GetMechanicalVentilatorContinuousPositiveAirwayPressure().Copy(*cpap, true);
+      m_MechanicalVentilatorContinuousPositiveAirwayPressure->Activate();
+      if (!m_MechanicalVentilatorContinuousPositiveAirwayPressure->IsActive())
+        RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+      {
+        RemoveMechanicalVentilatorPressureControl();
+        RemoveMechanicalVentilatorVolumeControl();
+        // Convert to a SEMechanicalVentilatorConfiguration
+        GetMechanicalVentilatorContinuousPositiveAirwayPressure().ToConfiguration(GetMechanicalVentilatorConfiguration());
+        m_MechanicalVentilatorConfiguration->Activate();
+      }
+      return true;
+    }
+
+    const SEMechanicalVentilatorPressureControl* pc = dynamic_cast<const SEMechanicalVentilatorPressureControl*>(&action);
+    if (pc != nullptr)
+    {
+      GetMechanicalVentilatorPressureControl().Copy(*pc, true);
+      m_MechanicalVentilatorPressureControl->Activate();
+      if (!m_MechanicalVentilatorPressureControl->IsActive())
+        RemoveMechanicalVentilatorPressureControl();
+      {
+        RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+        RemoveMechanicalVentilatorVolumeControl();
+        // Convert to a SEMechanicalVentilatorConfiguration
+        GetMechanicalVentilatorPressureControl().ToConfiguration(GetMechanicalVentilatorConfiguration());
+        m_MechanicalVentilatorConfiguration->Activate();
+      }
+      return true;
+    }
+
+    const SEMechanicalVentilatorVolumeControl* vc = dynamic_cast<const SEMechanicalVentilatorVolumeControl*>(&action);
+    if (vc != nullptr)
+    {
+      GetMechanicalVentilatorVolumeControl().Copy(*vc, true);
+      m_MechanicalVentilatorVolumeControl->Activate();
+      if (!m_MechanicalVentilatorVolumeControl->IsActive())
+        RemoveMechanicalVentilatorVolumeControl();
+      {
+        RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+        RemoveMechanicalVentilatorPressureControl();
+        // Convert to a SEMechanicalVentilatorConfiguration
+        GetMechanicalVentilatorVolumeControl().ToConfiguration(GetMechanicalVentilatorConfiguration());
+        m_MechanicalVentilatorConfiguration->Activate();
+      }
       return true;
     }
   }
@@ -734,6 +816,86 @@ void SEEquipmentActionCollection::RemoveMechanicalVentilatorHold()
     m_MechanicalVentilatorHold->Deactivate();
 }
 
+bool SEEquipmentActionCollection::HasMechanicalVentilatorLeak() const
+{
+  return m_MechanicalVentilatorLeak == nullptr ? false : m_MechanicalVentilatorLeak->IsActive();
+}
+SEMechanicalVentilatorLeak& SEEquipmentActionCollection::GetMechanicalVentilatorLeak()
+{
+  if (m_MechanicalVentilatorLeak == nullptr)
+    m_MechanicalVentilatorLeak = new SEMechanicalVentilatorLeak();
+  return *m_MechanicalVentilatorLeak;
+}
+const SEMechanicalVentilatorLeak* SEEquipmentActionCollection::GetMechanicalVentilatorLeak() const
+{
+  return m_MechanicalVentilatorLeak;
+}
+void SEEquipmentActionCollection::RemoveMechanicalVentilatorLeak()
+{
+  if (m_MechanicalVentilatorLeak)
+    m_MechanicalVentilatorLeak->Deactivate();
+}
+
+bool SEEquipmentActionCollection::HasMechanicalVentilatorContinuousPositiveAirwayPressure() const
+{
+  return m_MechanicalVentilatorContinuousPositiveAirwayPressure == nullptr ? false : m_MechanicalVentilatorContinuousPositiveAirwayPressure->IsActive();
+}
+SEMechanicalVentilatorContinuousPositiveAirwayPressure& SEEquipmentActionCollection::GetMechanicalVentilatorContinuousPositiveAirwayPressure()
+{
+  if (m_MechanicalVentilatorContinuousPositiveAirwayPressure == nullptr)
+    m_MechanicalVentilatorContinuousPositiveAirwayPressure = new SEMechanicalVentilatorContinuousPositiveAirwayPressure();
+  return *m_MechanicalVentilatorContinuousPositiveAirwayPressure;
+}
+const SEMechanicalVentilatorContinuousPositiveAirwayPressure* SEEquipmentActionCollection::GetMechanicalVentilatorContinuousPositiveAirwayPressure() const
+{
+  return m_MechanicalVentilatorContinuousPositiveAirwayPressure;
+}
+void SEEquipmentActionCollection::RemoveMechanicalVentilatorContinuousPositiveAirwayPressure()
+{
+  if (m_MechanicalVentilatorContinuousPositiveAirwayPressure)
+    m_MechanicalVentilatorContinuousPositiveAirwayPressure->Deactivate();
+}
+
+bool SEEquipmentActionCollection::HasMechanicalVentilatorPressureControl() const
+{
+  return m_MechanicalVentilatorPressureControl == nullptr ? false : m_MechanicalVentilatorPressureControl->IsActive();
+}
+SEMechanicalVentilatorPressureControl& SEEquipmentActionCollection::GetMechanicalVentilatorPressureControl()
+{
+  if (m_MechanicalVentilatorPressureControl == nullptr)
+    m_MechanicalVentilatorPressureControl = new SEMechanicalVentilatorPressureControl();
+  return *m_MechanicalVentilatorPressureControl;
+}
+const SEMechanicalVentilatorPressureControl* SEEquipmentActionCollection::GetMechanicalVentilatorPressureControl() const
+{
+  return m_MechanicalVentilatorPressureControl;
+}
+void SEEquipmentActionCollection::RemoveMechanicalVentilatorPressureControl()
+{
+  if (m_MechanicalVentilatorPressureControl)
+    m_MechanicalVentilatorPressureControl->Deactivate();
+}
+
+bool SEEquipmentActionCollection::HasMechanicalVentilatorVolumeControl() const
+{
+  return m_MechanicalVentilatorVolumeControl == nullptr ? false : m_MechanicalVentilatorVolumeControl->IsActive();
+}
+SEMechanicalVentilatorVolumeControl& SEEquipmentActionCollection::GetMechanicalVentilatorVolumeControl()
+{
+  if (m_MechanicalVentilatorVolumeControl == nullptr)
+    m_MechanicalVentilatorVolumeControl = new SEMechanicalVentilatorVolumeControl();
+  return *m_MechanicalVentilatorVolumeControl;
+}
+const SEMechanicalVentilatorVolumeControl* SEEquipmentActionCollection::GetMechanicalVentilatorVolumeControl() const
+{
+  return m_MechanicalVentilatorVolumeControl;
+}
+void SEEquipmentActionCollection::RemoveMechanicalVentilatorVolumeControl()
+{
+  if (m_MechanicalVentilatorVolumeControl)
+    m_MechanicalVentilatorVolumeControl->Deactivate();
+}
+
 void SEEquipmentActionCollection::GetAllActions(std::vector<const SEAction*>& actions) const
 {
   if (HasAnesthesiaMachineConfiguration())
@@ -779,10 +941,17 @@ void SEEquipmentActionCollection::GetAllActions(std::vector<const SEAction*>& ac
     actions.push_back(GetMechanicalVentilatorConfiguration());
   if (HasMechanicalVentilatorHold())
     actions.push_back(GetMechanicalVentilatorHold());
+  if (HasMechanicalVentilatorLeak())
+    actions.push_back(GetMechanicalVentilatorLeak());
+  if (HasMechanicalVentilatorContinuousPositiveAirwayPressure())
+    actions.push_back(GetMechanicalVentilatorContinuousPositiveAirwayPressure());
+  if (HasMechanicalVentilatorPressureControl())
+    actions.push_back(GetMechanicalVentilatorPressureControl());
+  if (HasMechanicalVentilatorVolumeControl())
+    actions.push_back(GetMechanicalVentilatorVolumeControl());
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SEEquipmentActionCollection::GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property)
+const SEScalar* SEEquipmentActionCollection::GetScalar(const std::string& actionName, const std::string& /*cmptName*/, const std::string& /*substance*/, const std::string& property)
 {
   if (actionName == "AnesthesiaMachineConfiguration")
     return GetAnesthesiaMachineConfiguration().GetScalar(property);
@@ -827,7 +996,14 @@ const SEScalar* SEEquipmentActionCollection::GetScalar(const std::string& action
     return GetMechanicalVentilatorConfiguration().GetScalar(property);
   if (actionName == "MechanicalVentilatorHold")
     return GetMechanicalVentilatorHold().GetScalar(property);
+  if (actionName == "MechanicalVentilatorLeak")
+    return GetMechanicalVentilatorLeak().GetScalar(property);
+  if (actionName == "MechanicalVentilatorContinuousPositiveAirwayPressure")
+    return GetMechanicalVentilatorContinuousPositiveAirwayPressure().GetScalar(property);
+  if (actionName == "MechanicalVentilatorPressureControl")
+    return GetMechanicalVentilatorPressureControl().GetScalar(property);
+  if (actionName == "MechanicalVentilatorVolumeControl")
+    return GetMechanicalVentilatorVolumeControl().GetScalar(property);
 
   return nullptr;
 }
-DISABLE_WARNING_POP

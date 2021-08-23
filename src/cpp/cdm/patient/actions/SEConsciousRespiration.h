@@ -18,7 +18,7 @@ public:
   virtual ~SEConsciousRespiration();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEConsciousRespiration& src, bool preserveState=false);
+  virtual void Copy(const SEConsciousRespiration& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

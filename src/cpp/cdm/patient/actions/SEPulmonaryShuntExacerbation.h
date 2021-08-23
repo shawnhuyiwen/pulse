@@ -13,7 +13,7 @@ public:
   virtual ~SEPulmonaryShuntExacerbation();
 
   virtual void Clear();
-  virtual void Copy(const SEPulmonaryShuntExacerbation& src, bool preserveState=false);
+  virtual void Copy(const SEPulmonaryShuntExacerbation& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

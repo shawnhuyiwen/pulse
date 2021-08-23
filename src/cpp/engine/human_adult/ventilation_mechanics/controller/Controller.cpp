@@ -25,31 +25,31 @@ namespace HUMAN_ADULT_VENT_MECH
   {
 
   }
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
+ 
   // Serialization is not supported
-  bool Controller::SerializeFromFile(const std::string& filename)
+  bool Controller::SerializeFromFile(const std::string& /*filename*/)
   {
     Error("Serialization is not supported in this engine");
     return false;
   }
-  bool Controller::SerializeToFile(const std::string& filename) const
-  {
-    Error("Serialization is not supported in this engine");
-    return false;
-  }
-
-  bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
-  {
-    Error("Serialization is not supported in this engine");
-    return false;
-  }
-  bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
+  bool Controller::SerializeToFile(const std::string& /*filename*/) const
   {
     Error("Serialization is not supported in this engine");
     return false;
   }
 
-  bool Controller::GetPatientAssessment(SEPatientAssessment& assessment) const
+  bool Controller::SerializeFromString(const std::string& /*src*/, eSerializationFormat /*m*/)
+  {
+    Error("Serialization is not supported in this engine");
+    return false;
+  }
+  bool Controller::SerializeToString(std::string& /*output*/, eSerializationFormat /*m*/) const
+  {
+    Error("Serialization is not supported in this engine");
+    return false;
+  }
+
+  bool Controller::GetPatientAssessment(SEPatientAssessment& /*assessment*/) const
   {
     Error("No assesments are supported in this engine");
     return false;
@@ -60,7 +60,6 @@ namespace HUMAN_ADULT_VENT_MECH
     // Only support two modes
     return (mode == pmc::eAirwayMode::Free || mode == pmc::eAirwayMode::MechanicalVentilator);
   }
-  DISABLE_WARNING_POP
 
   void Controller::Allocate()
   {

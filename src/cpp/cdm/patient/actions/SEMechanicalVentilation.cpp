@@ -47,14 +47,12 @@ void SEMechanicalVentilation::Clear()
     sc->Clear();
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEMechanicalVentilation::Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool preserveState)
+void SEMechanicalVentilation::Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this, subMgr);
   //if(preserveState) // Put back any state
 }
-DISABLE_WARNING_POP
 
 bool SEMechanicalVentilation::IsValid() const
 {

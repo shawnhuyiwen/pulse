@@ -73,10 +73,8 @@ void SEOverrides::ToString(std::ostream& str) const
   }
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-const SEScalar* SEOverrides::GetScalar(const std::string& name)
+const SEScalar* SEOverrides::GetScalar(const std::string& /*name*/)
 {
   // Probably want to iterate over the properties and look for the name?
   return nullptr;
 }
-DISABLE_WARNING_POP

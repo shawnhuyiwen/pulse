@@ -15,7 +15,7 @@ public:
   virtual ~SEConsumeNutrients();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEConsumeNutrients& src, bool preserveState=false);
+  virtual void Copy(const SEConsumeNutrients& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

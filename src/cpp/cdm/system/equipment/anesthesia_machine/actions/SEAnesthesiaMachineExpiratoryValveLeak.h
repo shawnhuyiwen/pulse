@@ -12,7 +12,7 @@ public:
   virtual ~SEAnesthesiaMachineExpiratoryValveLeak();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineExpiratoryValveLeak& src, bool preserveState=false);
+  virtual void Copy(const SEAnesthesiaMachineExpiratoryValveLeak& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

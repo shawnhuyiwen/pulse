@@ -470,7 +470,6 @@ namespace PULSE_ENGINE
     ProcessActions();
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Conducts the substance transport for renal
@@ -480,7 +479,7 @@ namespace PULSE_ENGINE
   /// occur in Cardiovascular::Process. This series of functions clears all of the necessary substances to 
   /// the bladder, restores bicarbonate if necessary and calculates the renal systemic outputs.
   //--------------------------------------------------------------------------------------------------
-  void RenalModel::Process(bool solve_and_transport)
+  void RenalModel::Process(bool /*solve_and_transport*/)
   {
     //Circuit Processing is done on the entire circulatory circuit elsewhere
     CalculateActiveTransport();
@@ -496,11 +495,10 @@ namespace PULSE_ENGINE
   /// The renal circuit post processing occurs with the cardiovascular system's post process. There is 
   /// currently no other functionality needed for renal post process.
   //--------------------------------------------------------------------------------------------------
-  void RenalModel::PostProcess(bool solve_and_transport)
+  void RenalModel::PostProcess(bool /*solve_and_transport*/)
   {
     //Circuit PostProcessing is done on the entire circulatory circuit elsewhere
   }
-  DISABLE_WARNING_POP
 
   void RenalModel::ComputeExposedModelParameters()
   {

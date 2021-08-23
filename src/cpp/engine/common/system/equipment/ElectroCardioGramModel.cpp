@@ -95,7 +95,6 @@ namespace PULSE_ENGINE
 
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Process creates the ECG output
@@ -109,7 +108,7 @@ namespace PULSE_ENGINE
   /// reach the end of the interpolated waveform data. If there are no active iterators, the output
   /// defaults to 0 mV.
   //--------------------------------------------------------------------------------------------------
-  void ElectroCardioGramModel::Process(bool solve_and_transport)
+  void ElectroCardioGramModel::Process(bool /*solve_and_transport*/)
   {
     m_heartRhythmTime_s += m_data.GetTimeStep_s();
     if (m_heartRhythmTime_s >= m_heartRhythmPeriod_s)
@@ -146,11 +145,11 @@ namespace PULSE_ENGINE
   /// The PostProcess function is included to preserve our system methodology and as a placeholder for
   /// models developed in the future.
   //--------------------------------------------------------------------------------------------------
-  void ElectroCardioGramModel::PostProcess(bool solve_and_transport)
+  void ElectroCardioGramModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
+
   void ElectroCardioGramModel::ComputeExposedModelParameters()
   {
 

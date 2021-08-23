@@ -15,7 +15,7 @@
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
-#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
@@ -297,25 +297,32 @@ void HowToMechanicalVentilator()
   pe->ProcessAction(intubation);
 
   // Setup the PC-CMV ventilator
-  SEMechanicalVentilatorConfiguration MVConfig(pe->GetLogger());
-  SEMechanicalVentilatorSettings& mv = MVConfig.GetSettings();
-  mv.SetConnection(eMechanicalVentilator_Connection::Tube);
-  mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);
-  mv.GetPositiveEndExpiredPressure().SetValue(10.0, PressureUnit::cmH2O);
-  const SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");
-  mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(0.5);
-  double respirationRate_per_min = 20.0;
-  double IERatio = 0.5;
+  SEMechanicalVentilatorPressureControl pc_cmv;
+  pc_cmv.SetConnection(eMechanicalVentilator_Connection::Tube);
+  pc_cmv.SetMode(eMechanicalVentilator_PressureControlMode::ContinuousMandatoryVentilation);
+  pc_cmv.GetFractionInspiredOxygen().SetValue(0.5);
+  pc_cmv.GetInspiratoryPeriod().SetValue(1, TimeUnit::s);// ??
+  pc_cmv.GetInspiratoryPressure().SetValue(21, PressureUnit::cmH2O);
+  pc_cmv.GetPositiveEndExpiredPressure().SetValue(10, PressureUnit::cmH2O);
+  pc_cmv.GetRespirationRate().SetValue(20, FrequencyUnit::Per_min);
+  pc_cmv.GetSlope().SetValue(0, TimeUnit::s); // ??
+  pe->ProcessAction(pc_cmv);
 
-  // Translate ventilator settings
-  double totalPeriod_s = 60.0 / respirationRate_per_min;
-  double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
-  double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-  mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-  mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
-  pe->ProcessAction(MVConfig);
+  //mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+  //mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+  //mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);
+  //mv.GetPositiveEndExpiredPressure().SetValue(10.0, PressureUnit::cmH2O);
+  //const SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");
+  //mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(0.5);
+  //double respirationRate_per_min = 20.0;
+  //double IERatio = 0.5;
+  //
+  //// Translate ventilator settings
+  //double totalPeriod_s = 60.0 / respirationRate_per_min;
+  //double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
+  //double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
+  //mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+  //mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
 
   pe->GetLogger()->Info("Finished");
 }

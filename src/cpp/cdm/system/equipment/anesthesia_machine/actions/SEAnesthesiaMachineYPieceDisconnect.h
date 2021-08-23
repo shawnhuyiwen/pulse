@@ -12,7 +12,7 @@ public:
   virtual ~SEAnesthesiaMachineYPieceDisconnect();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineYPieceDisconnect& src, bool preserveState=false);
+  virtual void Copy(const SEAnesthesiaMachineYPieceDisconnect& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

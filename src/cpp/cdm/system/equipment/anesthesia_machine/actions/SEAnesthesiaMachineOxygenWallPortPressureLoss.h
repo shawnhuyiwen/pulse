@@ -12,7 +12,7 @@ public:
   virtual ~SEAnesthesiaMachineOxygenWallPortPressureLoss();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, bool preserveState=false);
+  virtual void Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

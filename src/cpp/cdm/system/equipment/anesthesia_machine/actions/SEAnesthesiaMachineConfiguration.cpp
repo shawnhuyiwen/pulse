@@ -37,12 +37,10 @@ void SEAnesthesiaMachineConfiguration::Clear()
   m_MergeType = eMergeType::Append;
 }
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
+void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
-DISABLE_WARNING_POP
 
 bool SEAnesthesiaMachineConfiguration::IsValid() const
 {

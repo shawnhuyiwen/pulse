@@ -12,8 +12,6 @@
 
 #include "cdm/utils/unitconversion/SnapValue.h"
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-
 class CCompoundUnitElement
 {
 public:
@@ -114,7 +112,7 @@ public:
   // for this if we want to export the vector of these contained in CompoundUnit. It
   // even says we can just return true if there's no sensible interpretation of
   // "operator<" for this class.
-  bool operator< (const CCompoundUnitElement &ref) const
+  bool operator< (const CCompoundUnitElement&) const
   {
     return true; // Dummy implementation
   }
@@ -142,5 +140,3 @@ private:
   ExponentType m_CExponent;
   int m_iPrefixID;
 };
-
-DISABLE_WARNING_POP

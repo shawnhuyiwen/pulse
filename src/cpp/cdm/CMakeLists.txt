@@ -304,7 +304,12 @@ add_library_ex(CommonDataModel
     system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorMode.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h
     system/physiology/SEBloodChemistrySystem.h
     system/physiology/SECardiovascularSystem.h
     system/physiology/SEDrugSystem.h
@@ -665,7 +670,12 @@ add_library_ex(CommonDataModel
     system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorMode.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.cpp
     system/physiology/SEBloodChemistrySystem.cpp
     system/physiology/SECardiovascularSystem.cpp
     system/physiology/SEDrugSystem.cpp

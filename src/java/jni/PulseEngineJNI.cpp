@@ -7,28 +7,26 @@
 #include "engine/human_adult/whole_body/test/EngineTest.h"
 #include "engine/human_adult/ventilation_mechanics/test/EngineTest.h"
 
-DISABLE_UNREFERENCED_FORMAL_PARAMETER
-
   /////////////////////
   // TESTING SUPPORT //
   /////////////////////
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv *env, jobject obj)
+JNIEXPORT jlong JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv* /*env*/, jobject /*obj*/)
 {
   auto *executor = new pulse::engine::human_adult::whole_body::EngineTest();
   return reinterpret_cast<jlong>(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeDelete(JNIEnv *env, jobject obj, jlong ptr)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeDelete(JNIEnv* /*env*/, jobject /*obj*/, jlong ptr)
 {
   auto *executor = reinterpret_cast<pulse::engine::human_adult::whole_body::EngineTest*>(ptr);
   SAFE_DELETE(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeExecute(JNIEnv * env, jobject obj, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeExecute(JNIEnv * env, jobject /*obj*/, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
@@ -407,5 +405,3 @@ void PulseEngineJNI::ForwardFatal(const std::string& msg, const std::string& ori
     jniEnv->CallVoidMethod(jniObj, jniFatalMethodID, m, o);
   }
 }
-
-DISABLE_WARNING_POP

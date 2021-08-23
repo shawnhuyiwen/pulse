@@ -301,7 +301,6 @@ namespace PULSE_ENGINE
     // GlucoseLipidControl(m_data.GetTimeStep_s());
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Process completes substance transport by performing diffusion and alveoli transfer
@@ -310,7 +309,7 @@ namespace PULSE_ENGINE
   /// This function completes substance transport between systems by calculating the oxygen and carbon dioxide saturation
   /// throughout the cardiovascular system and calculating diffusion and alveoli transfer of substances.
   //--------------------------------------------------------------------------------------------------
-  void TissueModel::Process(bool solve_and_transport)
+  void TissueModel::Process(bool /*solve_and_transport*/)
   {
     CalculateMetabolicConsumptionAndProduction(m_data.GetTimeStep_s());
     CalculatePulmonaryCapillarySubstanceTransfer();
@@ -342,11 +341,10 @@ namespace PULSE_ENGINE
   /// \details
   /// There are currently no postprocess steps in the tissue system.
   //--------------------------------------------------------------------------------------------------
-  void TissueModel::PostProcess(bool solve_and_transport)
+  void TissueModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   void TissueModel::ComputeExposedModelParameters()
   {

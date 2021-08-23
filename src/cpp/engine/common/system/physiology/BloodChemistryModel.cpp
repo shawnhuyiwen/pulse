@@ -145,7 +145,6 @@ namespace PULSE_ENGINE
   {
   }
 
-  DISABLE_UNREFERENCED_FORMAL_PARAMETER
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// Blood Chemistry process method
@@ -155,7 +154,7 @@ namespace PULSE_ENGINE
   /// or changed by other systems are set on the blood chemistry system data objects. Events 
   /// are triggered at specific blood concentrations of certain substances in CheckBloodGasLevels().
   //--------------------------------------------------------------------------------------------------
-  void BloodChemistryModel::Process(bool solve_and_transport)
+  void BloodChemistryModel::Process(bool /*solve_and_transport*/)
   {
     //Push the compartment values of O2 and CO2 partial pressures on the corresponding system data.
     GetOxygenSaturation().Set(m_aortaO2->GetSaturation());
@@ -258,11 +257,10 @@ namespace PULSE_ENGINE
   /// \details
   /// The current Pulse implementation has no specific postprocess functionality.
   //--------------------------------------------------------------------------------------------------
-  void BloodChemistryModel::PostProcess(bool solve_and_transport)
+  void BloodChemistryModel::PostProcess(bool /*solve_and_transport*/)
   {
 
   }
-  DISABLE_WARNING_POP
 
   void BloodChemistryModel::ComputeExposedModelParameters()
   {
