@@ -471,7 +471,7 @@
       "MechanicalVentilatorConfiguration": {
         "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
               "Comment": "Attach the mechanical ventilator - PC-CMV: RR = 12 bpm, I:E = 0.66, TV = 7 mL/kg(ideal)" }}},
-        "Configuration":
+        "Settings":
         {
           "Connection": "Tube",
           "InspirationWaveform": "Square",

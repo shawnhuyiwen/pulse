@@ -101,7 +101,7 @@
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
                 "Comment": "Attach the mechanical ventilator with rate = 12 bpm and I:E Ratio = 1:2" }}},
-          "Configuration":
+          "Settings":
           {
             "Connection": "Mask",
             "InspirationWaveform": "Square",
@@ -129,7 +129,7 @@
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
                 "Comment": "Attach the mechanical ventilator with rate = 20 bpm and I:E Ratio = 1:1" }}},
-          "Configuration":
+          "Settings":
           {
             "Connection": "Tube",
             "InspirationWaveform": "Square",

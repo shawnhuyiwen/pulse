@@ -1528,7 +1528,7 @@ FATAL: Cannot have bvm, inhaler, and anesthesia machine on at the same time
     "MechanicalVentilatorConfiguration": {
       "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
             "Comment": "Attach the mechanical ventilator with rate = 20 bpm and I:E Ratio = 1:1" }}},
-      "Configuration":
+      "Settings":
       {
         "Connection": "Tube",
         "InspirationWaveform": "Square",

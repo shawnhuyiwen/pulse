@@ -75,6 +75,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
               {
                 err++;
                 testCase.AddFailure(*it + " is not a valid scenario!");
+                std::cerr << *it << " has failed to load!.\n";
               }
               // todo check to see that all compartment, substances, property names are valid
             }
@@ -82,12 +83,14 @@ namespace HUMAN_ADULT_WHOLE_BODY
             {
               err++;
               testCase.AddFailure(*it + " has failed to load!");
+              std::cerr << *it << " has failed to load!.\n";
             }
           }
           catch (...)
           {
             err++;
             testCase.AddFailure(*it + " has failed to load! unknown exception.");
+            std::cerr << *it << " has failed to load!.\n";
           }
           testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
           testCase.SetName(*it);

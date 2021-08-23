@@ -96,7 +96,7 @@
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
                 "Comment": "Attach the mechanical ventilator" }}},
-          "Configuration":
+          "Settings":
           {
             "Connection": "Tube",
             "InspirationWaveform": "Square",
@@ -125,7 +125,7 @@
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
                 "Comment": "Adjust ventilator settings" }}},
-          "Configuration":
+          "Settings":
           {
             "Connection": "Tube",
             "InspirationWaveform": "Square",
@@ -165,7 +165,7 @@
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
                 "Comment": "Adjust ventilator settings" }}},
-          "Configuration":
+          "Settings":
           {
             "Connection": "Tube",
             "InspirationWaveform": "Square",
@@ -204,7 +204,7 @@
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
                 "Comment": "Adjust ventilator settings" }}},
-          "Configuration":
+          "Settings":
           {
             "Connection": "Tube",
             "InspirationWaveform": "Square",

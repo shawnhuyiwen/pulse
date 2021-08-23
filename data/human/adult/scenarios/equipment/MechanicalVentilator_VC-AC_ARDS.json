@@ -107,7 +107,7 @@
       "MechanicalVentilatorConfiguration": {
         "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
               "Comment": "Attach the mechanical ventilator" }}},
-        "Configuration":
+        "Settings":
         {
           "Connection": "Tube",
           "InspirationWaveform": "Square",
