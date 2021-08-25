@@ -23,5 +23,6 @@ namespace HUMAN_ADULT_VENT_MECH
 
   public:
     void SmokeTest(const std::string& sTestDirectory);
+    void GenerateScenarios();
   };
 }

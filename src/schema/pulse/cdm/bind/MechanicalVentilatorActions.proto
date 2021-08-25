@@ -49,7 +49,7 @@ message MechanicalVentilatorModeData
 
 message MechanicalVentilatorContinuousPositiveAirwayPressureData
 {
-  MechanicalVentilatorActionData               MechanicalVentilatorMode     = 1;
+  MechanicalVentilatorModeData                 MechanicalVentilatorMode     = 1;
   
   ScalarPressureData                           DeltaPressureSupport          = 2;
   Scalar0To1Data                               FractionInspiredOxygen        = 3;
@@ -65,7 +65,7 @@ message MechanicalVentilatorPressureControlData
     ContinuousMandatoryVentilation = 1;
   }
   
-  MechanicalVentilatorActionData               MechanicalVentilatorMode      = 1;
+  MechanicalVentilatorModeData                 MechanicalVentilatorMode      = 1;
   
   eMode                                        Mode                          = 2;
   Scalar0To1Data                               FractionInspiredOxygen        = 3;
@@ -83,7 +83,7 @@ message MechanicalVentilatorVolumeControlData
     ContinuousMandatoryVentilation = 1;
   }
   
-  MechanicalVentilatorActionData               MechanicalVentilatorMode      = 1;
+  MechanicalVentilatorModeData                 MechanicalVentilatorMode      = 1;
   
   eMode                                        Mode                          = 2;
   ScalarVolumePerTimeData                      Flow                          = 3;

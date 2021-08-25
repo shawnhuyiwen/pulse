@@ -2,6 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #include "engine/human_adult/ventilation_mechanics/test/EngineTest.h"
+#include "cdm/utils/testing/SETestReport.h"
+#include "cdm/utils/testing/SETestCase.h"
+#include "cdm/utils/testing/SETestSuite.h"
 
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEEngineTracker.h"
@@ -13,16 +16,15 @@
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
-#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
-#include "cdm/system/physiology/SERespiratoryMechanics.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
 #include "cdm/system/physiology/SERespiratoryMechanics.h"
-#include "cdm/utils/testing/SETestReport.h"
-#include "cdm/utils/testing/SETestCase.h"
-#include "cdm/utils/testing/SETestSuite.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
 #include "cdm/properties/SEScalarPressureTimePerVolume.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
@@ -89,6 +91,40 @@ namespace HUMAN_ADULT_VENT_MECH
 
   void EngineTest::SmokeTest(const std::string& sTestDirectory)
   {
+    m_Logger->SetLogFile(sTestDirectory + "/VentilationMechanicsSmokeTest.log");
+
+    std::unique_ptr<PhysiologyEngine> e;
+
+    SETestReport testReport(m_Logger);
+    SETestSuite& testSuite = testReport.CreateTestSuite();
+    SETestCase& ctor = testSuite.CreateTestCase("ctor");
+    try
+    {
+      e = CreatePulseEngine(eModelType::HumanAdultVentilationMechanics, m_Logger);
+    }
+    catch (...)
+    {
+      ctor.AddFailure("Unable to instantiate a Respiratory Engine");
+      return; // No sense in running the rest
+    }
+
+    std::string output;
+    SETestCase& unsupported = testSuite.CreateTestCase("serialization");
+    if (e->SerializeFromFile("Not Suported"))
+      unsupported.AddFailure("Respiratory Engine does not support SerializeFromFile, but says it does?");
+    if (e->SerializeToFile("Not Suported"))
+      unsupported.AddFailure("Respiratory Engine does not support SerializeToFile, but says it does?");
+    if (e->SerializeFromString("Not Suported", eSerializationFormat::JSON))
+      unsupported.AddFailure("Respiratory Engine does not support SerializeFromString, but says it does?");
+    if (e->SerializeToString(output, eSerializationFormat::JSON))
+      unsupported.AddFailure("Respiratory Engine does not support SerializeToString, but says it does?");
+  }
+
+
+  void EngineTest::GenerateScenarios()
+  {
+    std::string sTestDirectory = "./test_results/scenarios/miscellaneous/ventilation_mechanics/";
+
     enum PatientType { Normal = 0, ARDS, COPD };
     enum VentilatorMode { VC_AC = 0, PC_AC, CPAP };
 
@@ -128,18 +164,8 @@ namespace HUMAN_ADULT_VENT_MECH
           return; // No sense in running the rest...
         }
 
-        std::string output;
-        SETestCase& unsupported = testSuite.CreateTestCase("serialization");
-        if (e->SerializeFromFile("Not Suported"))
-          unsupported.AddFailure("Respiratory Engine does not support SerializeFromFile, but says it does?");
-        if (e->SerializeToFile("Not Suported"))
-          unsupported.AddFailure("Respiratory Engine does not support SerializeToFile, but says it does?");
-        if (e->SerializeFromString("Not Suported", eSerializationFormat::JSON))
-          unsupported.AddFailure("Respiratory Engine does not support SerializeFromString, but says it does?");
-        if (e->SerializeToString(output, eSerializationFormat::JSON))
-          unsupported.AddFailure("Respiratory Engine does not support SerializeToString, but says it does?");
-
-        // Setup a few data requests  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+        // Setup a few data requests
+        e->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
         e->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
         e->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RelativeTotalLungVolume", VolumeUnit::mL);
         e->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
@@ -152,6 +178,30 @@ namespace HUMAN_ADULT_VENT_MECH
         e->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         e->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         e->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::mL_Per_cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit::cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction");
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("EndTidalOxygenFraction");
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("EndTidalOxygenPressure", PressureUnit::cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("ExpiratoryFlow", VolumePerTimeUnit::L_Per_s);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit::L);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("InspiratoryExpiratoryRatio");
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_s);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit::L);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiredPressure", PressureUnit::cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("LeakFractionOrSeverity");
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("MeanAirwayPressure", PressureUnit::cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit::cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PlateauPressure", PressureUnit::cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PositiveEndExpiratoryPressure", PressureUnit::cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PulmonaryElastance", PressurePerVolumeUnit::cmH2O_Per_L);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("RelativeTotalLungVolume", VolumeUnit::L);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("RespirationRate", FrequencyUnit::Per_min);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit::L);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit::L);
+        e->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_s);
         e->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(sTestDirectory + "/" + testName + ".csv");
 
         SEPatientConfiguration pCfg(m_Logger);
@@ -255,208 +305,112 @@ namespace HUMAN_ADULT_VENT_MECH
         e->AdvanceModelTime();
 
         // Setup the ventilator
-        SEMechanicalVentilatorConfiguration MVConfig(e->GetLogger());
-        SEMechanicalVentilatorSettings& mv = MVConfig.GetSettings();
-        mv.SetConnection(eMechanicalVentilator_Connection::Tube);
 
         if (currentPatientType == PatientType::Normal && currentVentilatorMode == VentilatorMode::VC_AC)
         {
-          double ventRespirationRate_per_min = 12.0;
-          double inspiratoryPeriod_s = 1.0;
-          double tidalVolume_mL = 900.0;
-          double positiveEndExpiredPressure_cmH2O = 5.0;
-          double flow_L_Per_min = 60.0;
-          double fractionInspiredOxygen = 0.21;
-
-          // Translate ventilator settings
-          double totalPeriod_s = 60.0 / ventRespirationRate_per_min;
-          double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-
-          mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.GetInspirationTargetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
-          mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-          mv.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
-          mv.GetExpirationCycleVolume().SetValue(tidalVolume_mL, VolumeUnit::mL);
-          const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-          mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+          SEMechanicalVentilatorVolumeControl vc_ac;
+          vc_ac.SetConnection(eMechanicalVentilator_Connection::Tube);
+          vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
+          vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
+          vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
+          vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
+          vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
+          vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
+          e->ProcessAction(vc_ac);
         }
         else if (currentPatientType == PatientType::Normal && currentVentilatorMode == VentilatorMode::PC_AC)
         {
-          double ventRespirationRate_per_min = 12.0;
-          double inspiratoryPeriod_s = 1.0;
-          double peakInspiratoryPressure_cmH2O = 19.0;
-          double positiveEndExpiredPressure_cmH2O = 5.0;
-          double fractionInspiredOxygen = 0.21;
-
-          // Translate ventilator settings
-          double totalPeriod_s = 60.0 / ventRespirationRate_per_min;
-          double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-
-          mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-          mv.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
-          mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
-          const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-          mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+          SEMechanicalVentilatorPressureControl pc_ac;
+          pc_ac.SetConnection(eMechanicalVentilator_Connection::Tube);
+          pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
+          pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
+          pc_ac.GetInspiratoryPressure().SetValue(19.0, PressureUnit::cmH2O);
+          pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
+          pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
+          e->ProcessAction(pc_ac);
         }
         else if (currentPatientType == PatientType::Normal && currentVentilatorMode == VentilatorMode::CPAP)
         {
-          double deltaPressure_cmH2O = 10.0;
-          double positiveEndExpiredPressure_cmH2O = 5.0;
-          double slope_s = 0.2;
-          double fractionInspiredOxygen = 0.21;
-
-          // Translate ventilator settings
-          double peakInspiratoryPressure_cmH2O = positiveEndExpiredPressure_cmH2O + deltaPressure_cmH2O;
-
-          mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Ramp);
-          mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.GetInspirationWaveformPeriod().SetValue(slope_s, TimeUnit::s);
-          mv.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
-          mv.GetExpirationCycleFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
-          const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-          mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+          SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
+          cpap.SetConnection(eMechanicalVentilator_Connection::Tube);
+          cpap.GetFractionInspiredOxygen().SetValue(0.21);
+          cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
+          cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          cpap.GetSlope().SetValue(0.2, TimeUnit::s);
+          e->ProcessAction(cpap);
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::VC_AC)
         {
-          double ventRespirationRate_per_min = 12.0;
-          double inspiratoryPeriod_s = 1.1;
-          double tidalVolume_mL = 550.0;
-          double positiveEndExpiredPressure_cmH2O = 5.0;
-          double flow_L_Per_min = 40.0;
-          double fractionInspiredOxygen = 0.21;
-
-          // Translate ventilator settings
-          double totalPeriod_s = 60.0 / ventRespirationRate_per_min;
-          double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-
-          mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.GetInspirationTargetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
-          mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-          mv.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
-          mv.GetExpirationCycleVolume().SetValue(tidalVolume_mL, VolumeUnit::mL);
-          const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-          mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+          SEMechanicalVentilatorVolumeControl vc_ac;
+          vc_ac.SetConnection(eMechanicalVentilator_Connection::Tube);
+          vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
+          vc_ac.GetFlow().SetValue(40.0, VolumePerTimeUnit::L_Per_min);
+          vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
+          vc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
+          vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
+          vc_ac.GetTidalVolume().SetValue(550.0, VolumeUnit::mL);
+          e->ProcessAction(vc_ac);
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::PC_AC)
         {
-          double ventRespirationRate_per_min = 12.0;
-          double inspiratoryPeriod_s = 1.1;
-          double peakInspiratoryPressure_cmH2O = 23.0;
-          double positiveEndExpiredPressure_cmH2O = 5.0;
-          double fractionInspiredOxygen = 0.21;
-
-          // Translate ventilator settings
-          double totalPeriod_s = 60.0 / ventRespirationRate_per_min;
-          double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-
-          mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-          mv.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
-          mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
-          const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-          mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+          SEMechanicalVentilatorPressureControl pc_ac;
+          pc_ac.SetConnection(eMechanicalVentilator_Connection::Tube);
+          pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
+          pc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
+          pc_ac.GetInspiratoryPressure().SetValue(23.0, PressureUnit::cmH2O);
+          pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
+          pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
+          e->ProcessAction(pc_ac);
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::CPAP)
         {
-          double deltaPressure_cmH2O = 10.0;
-          double positiveEndExpiredPressure_cmH2O = 5.0;
-          double slope_s = 0.2;
-          double fractionInspiredOxygen = 0.21;
-
-          // Translate ventilator settings
-          double peakInspiratoryPressure_cmH2O = positiveEndExpiredPressure_cmH2O + deltaPressure_cmH2O;
-
-          mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Ramp);
-          mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.GetInspirationWaveformPeriod().SetValue(slope_s, TimeUnit::s);
-          mv.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
-          mv.GetExpirationCycleFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
-          const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-          mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+          SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
+          cpap.SetConnection(eMechanicalVentilator_Connection::Tube);
+          cpap.GetFractionInspiredOxygen().SetValue(0.21);
+          cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
+          cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          cpap.GetSlope().SetValue(0.2, TimeUnit::s);
+          e->ProcessAction(cpap);
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::VC_AC)
         {
-          double ventRespirationRate_per_min = 12.0;
-          double inspiratoryPeriod_s = 1.1;
-          double tidalVolume_mL = 500.0;
-          double positiveEndExpiredPressure_cmH2O = 5.0;
-          double flow_L_Per_min = 40.0;
-          double fractionInspiredOxygen = 0.21;
-
-          // Translate ventilator settings
-          double totalPeriod_s = 60.0 / ventRespirationRate_per_min;
-          double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-
-          mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.GetInspirationTargetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
-          mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-          mv.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
-          mv.GetExpirationCycleVolume().SetValue(tidalVolume_mL, VolumeUnit::mL);
-          const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-          mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+          SEMechanicalVentilatorVolumeControl vc_ac;
+          vc_ac.SetConnection(eMechanicalVentilator_Connection::Tube);
+          vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
+          vc_ac.GetFlow().SetValue(40.0, VolumePerTimeUnit::L_Per_min);
+          vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
+          vc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
+          vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
+          vc_ac.GetTidalVolume().SetValue(500.0, VolumeUnit::mL);
+          e->ProcessAction(vc_ac);
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::PC_AC)
         {
-          double ventRespirationRate_per_min = 12.0;
-          double inspiratoryPeriod_s = 1.2;
-          double peakInspiratoryPressure_cmH2O = 12.0;
-          double positiveEndExpiredPressure_cmH2O = 5.0;
-          double fractionInspiredOxygen = 0.21;
-          // Use Slope of 0
-
-          // Translate ventilator settings
-          double totalPeriod_s = 60.0 / ventRespirationRate_per_min;
-          double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-
-          mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-          mv.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
-          mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
-          const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-          mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+          SEMechanicalVentilatorPressureControl pc_ac;
+          pc_ac.SetConnection(eMechanicalVentilator_Connection::Tube);
+          pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
+          pc_ac.GetInspiratoryPeriod().SetValue(1.2, TimeUnit::s);
+          pc_ac.GetInspiratoryPressure().SetValue(12.0, PressureUnit::cmH2O);
+          pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
+          pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
+          e->ProcessAction(pc_ac);
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::CPAP)
         {
-          double deltaPressure_cmH2O = 10.0;
-          double positiveEndExpiredPressure_cmH2O = 5.0;
-          double slope_s = 0.2;
-          double fractionInspiredOxygen = 0.21;
-
-          // Translate ventilator settings
-          double peakInspiratoryPressure_cmH2O = positiveEndExpiredPressure_cmH2O + deltaPressure_cmH2O;
-
-          mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Ramp);
-          mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-          mv.GetInspirationWaveformPeriod().SetValue(slope_s, TimeUnit::s);
-          mv.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-          mv.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
-          mv.GetExpirationCycleFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
-          const SESubstance* oxygen = e->GetSubstanceManager().GetSubstance("Oxygen");
-          mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
+          SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
+          cpap.SetConnection(eMechanicalVentilator_Connection::Tube);
+          cpap.GetFractionInspiredOxygen().SetValue(0.21);
+          cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
+          cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+          cpap.GetSlope().SetValue(0.2, TimeUnit::s);
+          e->ProcessAction(cpap);
         }
-
-        e->ProcessAction(MVConfig);
 
         // Advance time
         double threeCycles_s = 3.0 * 60.0 / respirationRate_bpm;

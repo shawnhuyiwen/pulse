@@ -6,6 +6,7 @@
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/io/protobuf/PBEquipmentActions.h"
 
 SEMechanicalVentilatorPressureControl::SEMechanicalVentilatorPressureControl(Logger* logger) : SEMechanicalVentilatorMode(logger)
@@ -66,7 +67,7 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
     s.GetExpirationCycleTime().Set(GetInspiratoryPeriod());
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
     if(GetMode() == eMechanicalVentilator_PressureControlMode::AssistedControl)
-      s.GetInspirationPatientTriggerPressure().SetValue(-0.001, PressureUnit::cmH2O);
+      s.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
   }
   return true;
 }
