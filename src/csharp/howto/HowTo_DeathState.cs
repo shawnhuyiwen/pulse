@@ -173,27 +173,28 @@ namespace HowTo_DeathState
 
       List<SEDataRequest> data_requests = new List<SEDataRequest>
       {
-        SEDataRequest.CreatePhysiologyRequest("HeartRate", "1/min"),
-        SEDataRequest.CreatePhysiologyRequest("ArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("MeanArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("SystolicArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("DiastolicArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("OxygenSaturation"),
-        SEDataRequest.CreatePhysiologyRequest("EndTidalCarbonDioxidePressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("RespirationRate", "1/min"),
-        SEDataRequest.CreatePhysiologyRequest("SkinTemperature", "degC"),
-        SEDataRequest.CreateGasCompartmentSubstanceRequest("Carina", "CarbonDioxide", "PartialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("BloodVolume", "mL"),
-        SEDataRequest.CreateECGRequest("Lead3ElectricPotential", "mV"),
+        // Vitals Monitor Data
+        SEDataRequest.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("OxygenSaturation"),
+        SEDataRequest.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit.C),
+        SEDataRequest.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL),
+        SEDataRequest.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit.mV),
         // Hemorrhage Related Data Requests
-        SEDataRequest.CreatePhysiologyRequest("TotalHemorrhageRate", "mL/s"),
-        SEDataRequest.CreatePhysiologyRequest("TotalHemorrhagedVolume", "mL"),
-        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "VenaCava","FlowRate", "mL/s"),
-        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "VenaCava","TotalBloodLost", "mL"),
-        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightArmVasculature","FlowRate", "mL/s"),
-        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightArmVasculature","TotalBloodLost", "mL"),
-        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightLegVasculature","FlowRate", "mL/s"),
-        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightLegVasculature","TotalBloodLost", "mL"),
+        SEDataRequest.CreatePhysiologyDataRequest("TotalHemorrhageRate", VolumePerTimeUnit.mL_Per_s),
+        SEDataRequest.CreatePhysiologyDataRequest("TotalHemorrhagedVolume", VolumeUnit.mL),
+        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "VenaCava","FlowRate", VolumePerTimeUnit.mL_Per_s),
+        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "VenaCava","TotalBloodLost", VolumeUnit.mL),
+        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightArmVasculature","FlowRate", VolumePerTimeUnit.mL_Per_s),
+        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightArmVasculature","TotalBloodLost", VolumeUnit.mL),
+        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightLegVasculature","FlowRate", VolumePerTimeUnit.mL_Per_s),
+        SEDataRequest.CreateActionCompartmentDataRequest("Hemorrhage", "RightLegVasculature","TotalBloodLost", VolumeUnit.mL),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
       // Create a reference to a double[] that will contain the data returned from Pulse

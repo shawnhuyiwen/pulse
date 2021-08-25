@@ -47,13 +47,26 @@ void SEMechanicalVentilatorPressureControl::Copy(const SEMechanicalVentilatorPre
   PBEquipmentAction::Copy(src, *this);
 }
 
-bool SEMechanicalVentilatorPressureControl::ToConfiguration(SEMechanicalVentilatorConfiguration& cfg)
+bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr)
 {
-  if (!SEMechanicalVentilatorMode::ToConfiguration(cfg))
+  if (!SEMechanicalVentilatorMode::ToSettings(s, subMgr))
     return false;
   if (SEMechanicalVentilatorMode::IsActive())
   {
-    // Return false if something in the conversion does not add up...
+    // Translate ventilator settings
+    double totalPeriod_s = 60.0 / GetRespirationRate(FrequencyUnit::Per_min);
+    double expiratoryPeriod_s = totalPeriod_s - GetInspiratoryPeriod(TimeUnit::s);
+
+    s.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Ramp);
+    s.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+    s.GetInspirationWaveformPeriod().Set(GetSlope());
+    s.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+    s.GetPeakInspiratoryPressure().Set(GetInspiratoryPressure());
+    s.GetPositiveEndExpiredPressure().Set(GetPositiveEndExpiredPressure());
+    s.GetExpirationCycleTime().Set(GetInspiratoryPeriod());
+    s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
+    if(GetMode() == eMechanicalVentilator_PressureControlMode::AssistedControl)
+      s.GetInspirationPatientTriggerPressure().SetValue(-0.001, PressureUnit::cmH2O);
   }
   return true;
 }

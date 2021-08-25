@@ -8,24 +8,24 @@
 
 SERespiratoryMechanicsConfiguration::SERespiratoryMechanicsConfiguration(Logger* logger) : SEPatientAction(logger)
 {
-  m_ConfigurationFile = "";
-  m_Configuration = nullptr;
+  m_SettingsFile = "";
+  m_Settings = nullptr;
   m_AppliedRespiratoryCycle = eAppliedRespiratoryCycle::Expiratory;
   m_MergeType = eMergeType::Append;
 }
 
 SERespiratoryMechanicsConfiguration::~SERespiratoryMechanicsConfiguration()
 {
-  m_ConfigurationFile = "";
-  SAFE_DELETE(m_Configuration);
+  m_SettingsFile = "";
+  SAFE_DELETE(m_Settings);
 }
 
 void SERespiratoryMechanicsConfiguration::Clear()
 {
   SEPatientAction::Clear();
-  m_ConfigurationFile = "";
-  if (m_Configuration)
-    m_Configuration->Clear();
+  m_SettingsFile = "";
+  if (m_Settings)
+    m_Settings->Clear();
   m_AppliedRespiratoryCycle = eAppliedRespiratoryCycle::Expiratory;
   m_MergeType = eMergeType::Append;
 }
@@ -39,7 +39,7 @@ void SERespiratoryMechanicsConfiguration::Copy(const SERespiratoryMechanicsConfi
 
 bool SERespiratoryMechanicsConfiguration::IsValid() const
 {
-  return SEPatientAction::IsValid() &&(HasConfiguration() || HasConfigurationFile());
+  return SEPatientAction::IsValid() &&(HasSettings() || HasSettingsFile());
 }
 
 bool SERespiratoryMechanicsConfiguration::IsActive() const
@@ -54,35 +54,35 @@ void SERespiratoryMechanicsConfiguration::Deactivate()
 
 const SEScalar* SERespiratoryMechanicsConfiguration::GetScalar(const std::string& name)
 {
-  return GetConfiguration().GetScalar(name);
+  return GetSettings().GetScalar(name);
 }
 
-bool SERespiratoryMechanicsConfiguration::HasConfiguration() const
+bool SERespiratoryMechanicsConfiguration::HasSettings() const
 {
-  return m_Configuration != nullptr;
+  return m_Settings != nullptr;
 }
-SERespiratoryMechanics& SERespiratoryMechanicsConfiguration::GetConfiguration()
+SERespiratoryMechanics& SERespiratoryMechanicsConfiguration::GetSettings()
 {
-  if (m_Configuration == nullptr)
-    m_Configuration = new SERespiratoryMechanics(GetLogger());
-  return *m_Configuration;
+  if (m_Settings == nullptr)
+    m_Settings = new SERespiratoryMechanics(GetLogger());
+  return *m_Settings;
 }
-const SERespiratoryMechanics* SERespiratoryMechanicsConfiguration::GetConfiguration() const
+const SERespiratoryMechanics* SERespiratoryMechanicsConfiguration::GetSettings() const
 {
-  return m_Configuration;
+  return m_Settings;
 }
 
-std::string SERespiratoryMechanicsConfiguration::GetConfigurationFile() const
+std::string SERespiratoryMechanicsConfiguration::GetSettingsFile() const
 {
-  return m_ConfigurationFile;
+  return m_SettingsFile;
 }
-void SERespiratoryMechanicsConfiguration::SetConfigurationFile(const std::string& fileName)
+void SERespiratoryMechanicsConfiguration::SetSettingsFile(const std::string& fileName)
 {
-  m_ConfigurationFile = fileName;
+  m_SettingsFile = fileName;
 }
-bool SERespiratoryMechanicsConfiguration::HasConfigurationFile() const
+bool SERespiratoryMechanicsConfiguration::HasSettingsFile() const
 {
-  return !m_ConfigurationFile.empty();
+  return !m_SettingsFile.empty();
 }
 
 void SERespiratoryMechanicsConfiguration::SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle c)
@@ -108,14 +108,14 @@ void SERespiratoryMechanicsConfiguration::ToString(std::ostream& str) const
   str << "Respiratory Mechanics Configuration";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  if (HasConfigurationFile())
+  if (HasSettingsFile())
   {
-    str << "\n\tConfiguration File: "; str << m_ConfigurationFile;
+    str << "\n\tConfiguration File: "; str << m_SettingsFile;
   }
-  else if (HasConfiguration())
+  else if (HasSettings())
   {
     str << "\n";
-    m_Configuration->ToString(str);
+    m_Settings->ToString(str);
     str << "\n\tAppliedRespiratoryCycle: " << eAppliedRespiratoryCycle_Name(m_AppliedRespiratoryCycle);
     str << "\n\tMergeType: " << eMergeType_Name(m_MergeType);
   }

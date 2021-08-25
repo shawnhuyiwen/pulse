@@ -766,10 +766,11 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorConfigurationData src, SEMechanicalVentilatorConfiguration dst)
     {
       Serialize(src.MechanicalVentilatorAction, dst);
-      if (src.ConfigurationFile != null)
-        dst.SetConfigurationFile(src.ConfigurationFile);
-      else if (src.Configuration != null)
-        PBMechanicalVentilator.Load(src.Configuration, dst.GetConfiguration());
+      if (src.SettingsFile != null)
+        dst.SetConfigurationFile(src.SettingsFile);
+      else if (src.Settings != null)
+        PBMechanicalVentilator.Load(src.Settings, dst.GetSettings());
+      dst.SetMergeType((eMergeType)src.MergeType);
     }
     public static pulse.cdm.bind.MechanicalVentilatorConfigurationData Unload(SEMechanicalVentilatorConfiguration src)
     {
@@ -781,10 +782,11 @@ namespace Pulse.CDM
     {
       dst.MechanicalVentilatorAction = new pulse.cdm.bind.MechanicalVentilatorActionData();
       Serialize(src, dst.MechanicalVentilatorAction);
-      if (src.HasConfigurationFile())
-        dst.ConfigurationFile = src.GetConfigurationFile();
-      else if (src.HasConfiguration())
-        dst.Configuration = PBMechanicalVentilator.Unload(src.GetConfiguration());
+      if (src.HasSettingsFile())
+        dst.SettingsFile = src.GetSettingsFile();
+      else if (src.HasSettings())
+        dst.Settings = PBMechanicalVentilator.Unload(src.GetSettings());
+      dst.MergeType = (pulse.cdm.bind.eMergeType)(int)src.GetMergeType();
     }
     #endregion
   }

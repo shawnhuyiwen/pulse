@@ -5,8 +5,9 @@ namespace Pulse.CDM
 {
   public class SEMechanicalVentilatorConfiguration : SEMechanicalVentilatorAction
   {
-    protected SEMechanicalVentilator configuration = null;
-    protected string configurationFile = "";
+    protected SEMechanicalVentilatorSettings settings = null;
+    protected string settingsFile = "";
+    protected eMergeType mergeType = eMergeType.Append;
 
     public SEMechanicalVentilatorConfiguration()
     {
@@ -18,62 +19,71 @@ namespace Pulse.CDM
       Copy(other);
     }
 
-    public void copy(SEMechanicalVentilatorConfiguration other)
+    public void Copy(SEMechanicalVentilatorConfiguration other)
     {
       base.Copy(other);
-      if(other.configuration != null)
-        this.GetConfiguration().Copy(other.configuration);
-      this.configurationFile = other.configurationFile;
+      if(other.settings != null)
+        this.GetSettings().Copy(other.settings);
+      this.settingsFile = other.settingsFile;
+      mergeType = other.mergeType;
     }
 
     public override void Clear()
     {
       base.Clear();
-      if (this.configuration != null)
-        this.configuration.Clear();
-      this.configurationFile = "";
+      if (this.settings != null)
+        this.settings.Clear();
+      this.settingsFile = "";
+      mergeType = eMergeType.Append;
     }
 
     public override bool IsValid()
     {
-      return HasConfiguration() || HasConfigurationFile();
+      return HasSettings() || HasSettingsFile();
     }
 
+    public bool HasSettings()
+    {
+      return this.settings != null;
+    }
+    public SEMechanicalVentilatorSettings GetSettings()
+    {
+      if (this.settings == null)
+        this.settings = new SEMechanicalVentilatorSettings();
+      return this.settings;
+    }
 
-    public bool HasConfiguration()
+    public bool HasSettingsFile()
     {
-      return this.configuration != null;
+      return !string.IsNullOrEmpty(this.settingsFile);
     }
-    public SEMechanicalVentilator GetConfiguration()
+    public string GetSettingsFile()
     {
-      if (this.configuration == null)
-        this.configuration = new SEMechanicalVentilator();
-      return this.configuration;
-    }
-
-    public bool HasConfigurationFile()
-    {
-      return !string.IsNullOrEmpty(this.configurationFile);
-    }
-    public string GetConfigurationFile()
-    {
-      return this.configurationFile;
+      return this.settingsFile;
     }
     public void SetConfigurationFile(string s)
     {
-      this.configurationFile = s;
+      this.settingsFile = s;
+    }
+    public eMergeType GetMergeType()
+    {
+      return mergeType;
+    }
+    public void SetMergeType(eMergeType m)
+    {
+      mergeType = m;
     }
 
     public override string ToString()
     {
       string str = "Mechanical Ventilator Configuration";
-      if (this.HasConfigurationFile())
-        str += "\n\tConfiguration File: " + this.configurationFile;
-      else if (HasConfiguration())
+      if (this.HasSettingsFile())
+        str += "\n\tSettings File: " + this.settingsFile;
+      else if (HasSettings())
       {
-        str += configuration.ToString();
+        str += settings.ToString();
       }
-      
+      str += "\n\tMerge Type: " + this.mergeType;
       return str;
     }
   }

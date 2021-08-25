@@ -170,16 +170,14 @@ endif()
 ## C# Bindings ##
 #################
 
-set(csharp_bindings_DIR "${SRC_ROOT}/csharp/pulse/bind")
+set(csharp_bindings_DIR "${DST_ROOT}/csharp")
 file(MAKE_DIRECTORY "${csharp_bindings_DIR}")
-file(GLOB _OLD_BIND_FILES "${csharp_bindings_DIR}/*")
-if(_OLD_BIND_FILES)
-  file(REMOVE ${_OLD_BIND_FILES})
-endif()
+delete_bindings(${csharp_bindings_DIR})
 foreach(f ${_FILES})
   message(STATUS "C# Binding file ${f}")
   execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
                                     --csharp_out=${csharp_bindings_DIR}
+                                    --csharp_opt=base_namespace
                                     ${f})
 endforeach()
 message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )

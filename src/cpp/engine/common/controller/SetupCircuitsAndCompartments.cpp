@@ -2784,13 +2784,14 @@ namespace PULSE_ENGINE
 
     //Should add up to 100% of total airway resistance
     /// \cite kacmarek2016egan
-    const double TracheaResistancePercent = 0.5;
-    const double BronchiResistancePercent = 0.3;
-    const double AlveoliDuctResistancePercent = 0.2;
+    // const double TracheaResistanceFraction = 0.5;
+    // TracheaResistanceFraction is implied
+    const double BronchiResistanceFraction = 0.3;
+    const double AlveoliDuctResistanceFraction = 0.2;
 
     //Based on equivalent resistance circuit math
-    double TracheaResistance = TotalAirwayResistance_cmH2O_s_Per_L - (BronchiResistancePercent * TotalAirwayResistance_cmH2O_s_Per_L + AlveoliDuctResistancePercent * TotalAirwayResistance_cmH2O_s_Per_L) / 2;
-    double BronchiResistance = 2 * (TotalAirwayResistance_cmH2O_s_Per_L - TracheaResistance) - AlveoliDuctResistancePercent * TotalAirwayResistance_cmH2O_s_Per_L;
+    double TracheaResistance = TotalAirwayResistance_cmH2O_s_Per_L - (BronchiResistanceFraction * TotalAirwayResistance_cmH2O_s_Per_L + AlveoliDuctResistanceFraction * TotalAirwayResistance_cmH2O_s_Per_L) / 2;
+    double BronchiResistance = 2 * (TotalAirwayResistance_cmH2O_s_Per_L - TracheaResistance) - AlveoliDuctResistanceFraction * TotalAirwayResistance_cmH2O_s_Per_L;
     double AlveoliDuctResistance = 2 * (TotalAirwayResistance_cmH2O_s_Per_L - TracheaResistance) - BronchiResistance;
 
     double FunctionalResidualCapacity_L = m_InitialPatient->GetFunctionalResidualCapacity(VolumeUnit::L);

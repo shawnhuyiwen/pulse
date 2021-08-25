@@ -3,22 +3,23 @@
 
 namespace Pulse.CDM
 {
+  public enum eBrainInjury_Type : int
+  {
+    Diffuse = 0,
+    LeftFocal,
+    RightFocal
+  }
+
   public class SEBrainInjury : SEPatientAction
   {
-    public enum eType : int
-    {
-      Diffuse = 0,
-      LeftFocal,
-      RightFocal
-    }
-
+    
     protected SEScalar0To1 severity;
-    protected eType injury_type;
+    protected eBrainInjury_Type injury_type;
 
     public SEBrainInjury()
     {
       severity = null;
-      injury_type = eType.Diffuse;
+      injury_type = eBrainInjury_Type.Diffuse;
     }
 
     public override void Clear()
@@ -26,7 +27,7 @@ namespace Pulse.CDM
       base.Clear();
       if (severity != null)
         severity.Invalidate();
-      injury_type = eType.Diffuse;
+      injury_type = eBrainInjury_Type.Diffuse;
     }
 
     public override bool IsValid()
@@ -45,7 +46,7 @@ namespace Pulse.CDM
       return severity;
     }
 
-    public eType GetInjuryType() { return injury_type; }
-    public void SetInjuryType(eType s) { injury_type = s; }
+    public eBrainInjury_Type GetInjuryType() { return injury_type; }
+    public void SetInjuryType(eBrainInjury_Type s) { injury_type = s; }
   }
 }

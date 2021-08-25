@@ -5,6 +5,7 @@
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/io/protobuf/PBEquipmentActions.h"
 
 SEMechanicalVentilatorContinuousPositiveAirwayPressure::SEMechanicalVentilatorContinuousPositiveAirwayPressure(Logger* logger) : SEMechanicalVentilatorMode(logger)
@@ -37,13 +38,24 @@ void SEMechanicalVentilatorContinuousPositiveAirwayPressure::Copy(const SEMechan
   PBEquipmentAction::Copy(src, *this);
 }
 
-bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToConfiguration(SEMechanicalVentilatorConfiguration& cfg)
+bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr)
 {
-  if (!SEMechanicalVentilatorMode::ToConfiguration(cfg))
+  if (!SEMechanicalVentilatorMode::ToSettings(s, subMgr))
     return false;
   if (SEMechanicalVentilatorMode::IsActive())
   {
-    // Return false if something in the conversion does not add up...
+    // Translate ventilator settings
+    double peakInspiratoryPressure_cmH2O =
+      GetPositiveEndExpiredPressure(PressureUnit::cmH2O) + GetDeltaPressureSupport(PressureUnit::cmH2O);
+
+    s.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Ramp);
+    s.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+    s.GetInspirationWaveformPeriod().Set(GetSlope());
+    s.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
+    s.GetPositiveEndExpiredPressure().Set(GetPositiveEndExpiredPressure());
+    s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
+    s.GetExpirationCycleFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
+    s.GetInspirationPatientTriggerFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
   }
   return true;
 }

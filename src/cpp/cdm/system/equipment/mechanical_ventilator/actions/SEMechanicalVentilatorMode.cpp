@@ -34,12 +34,13 @@ bool SEMechanicalVentilatorMode::IsActive() const
   return false;
 }
 
-bool SEMechanicalVentilatorMode::ToConfiguration(SEMechanicalVentilatorConfiguration& cfg)
+bool SEMechanicalVentilatorMode::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& /*subMgr*/)
 {
   if (!IsValid())
     return false;
 
-  cfg.GetSettings().SetConnection(m_Connection);
+  s.Clear();
+  s.SetConnection(m_Connection);
   return true;
 }
 

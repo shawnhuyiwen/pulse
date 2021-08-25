@@ -62,7 +62,7 @@ void HowToVentilationMechanics()
   // Since this engine is just the ventilation mechanics
   // You configure the patient respiratory via the RespiratoryMechanics structure
   SERespiratoryMechanicsConfiguration config;
-  SERespiratoryMechanics& mechanics = config.GetConfiguration();
+  SERespiratoryMechanics& mechanics = config.GetSettings();
   mechanics.SetActive(eSwitch::On);
   // Create a mechanics profile
   double resistance_cmH2O_s_Per_L = 13.0;

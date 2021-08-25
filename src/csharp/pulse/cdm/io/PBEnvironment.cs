@@ -89,7 +89,7 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.EnvironmentalConditionsData src, SEEnvironmentalConditions dst)
     {
-      dst.SetSurroundingType((SEEnvironmentalConditions.eSurroundingType)(int)src.SurroundingType);
+      dst.SetSurroundingType((eSurroundingType)(int)src.SurroundingType);
       if (src.AirDensity != null)
         PBProperty.Load(src.AirDensity, dst.GetAirDensity());
       if (src.AirVelocity != null)

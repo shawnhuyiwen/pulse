@@ -40,23 +40,19 @@ namespace HowTo_UseEngine
       // Create a list of Data Requests to specify all the data we want from Pulse
       List<SEDataRequest> data_requests = new List<SEDataRequest>
       {
-        SEDataRequest.CreatePhysiologyRequest("HeartRate", "1/min"),
-        SEDataRequest.CreatePhysiologyRequest("ArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("MeanArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("SystolicArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("DiastolicArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("OxygenSaturation"),
-        SEDataRequest.CreatePhysiologyRequest("EndTidalCarbonDioxidePressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("RespirationRate", "1/min"),
-        SEDataRequest.CreatePhysiologyRequest("SkinTemperature", "degC"),
-        SEDataRequest.CreateGasCompartmentSubstanceRequest("Carina", "CarbonDioxide", "PartialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("BloodVolume", "mL"),
-        SEDataRequest.CreateECGRequest("Lead3ElectricPotential", "mV"),
-        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("BrainVasculature", "Oxygen", "PartialPressure", "mmHg"),
-        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("BrainVasculature", "CarbonDioxide", "PartialPressure", "mmHg"),
-        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("MyocardiumVasculature", "Oxygen", "PartialPressure", "mmHg"),
-        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("MyocardiumVasculature", "CarbonDioxide", "PartialPressure", "mmHg"),
-        SEDataRequest.CreateSubstanceRequest("Hemoglobin", "BloodConcentration", "g/dL"),
+        // Vitals Monitor Data
+        SEDataRequest.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("OxygenSaturation"),
+        SEDataRequest.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit.C),
+        SEDataRequest.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL),
+        SEDataRequest.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit.mV),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
       // In addition to getting this data back via this API

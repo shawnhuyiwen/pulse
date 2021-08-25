@@ -35,7 +35,7 @@ int main()
   //HowToHemorrhage();
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
-  //HowToMechanicalVentilator();
+  HowToMechanicalVentilator();
   //HowToPulmonaryFibrosis();
   //HowToPulmonaryFunctionTest();
   //HowToRespiratoryMechanics();
@@ -51,7 +51,7 @@ int main()
 
   //HowToTestSystemCapability();
 
-  HowToVentilationMechanics();
+  //HowToVentilationMechanics();
 }
 
 bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine)

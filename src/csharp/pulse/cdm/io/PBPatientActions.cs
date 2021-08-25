@@ -153,6 +153,12 @@ namespace Pulse.CDM
         Serialize(any.RespiratoryFatigue, rf);
         return rf;
       }
+      if (any.RespiratoryMechanicsConfiguration != null)
+      {
+        SERespiratoryMechanicsConfiguration rmc = new SERespiratoryMechanicsConfiguration();
+        Serialize(any.RespiratoryMechanicsConfiguration, rmc);
+        return rmc;
+      }
       if (any.SubstanceBolus != null)
       {
         SESubstanceBolus sb = new SESubstanceBolus();
@@ -314,6 +320,11 @@ namespace Pulse.CDM
       if (action.GetType().IsAssignableFrom(typeof(SERespiratoryFatigue)))
       {
         any.RespiratoryFatigue = Unload((SERespiratoryFatigue)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SERespiratoryMechanicsConfiguration)))
+      {
+        any.RespiratoryMechanicsConfiguration = Unload((SERespiratoryMechanicsConfiguration)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SESubstanceBolus)))
@@ -485,7 +496,7 @@ namespace Pulse.CDM
       Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
-      dst.SetInjuryType((SEBrainInjury.eType)(int)src.Type);
+      dst.SetInjuryType((eBrainInjury_Type)(int)src.Type);
     }
     public static pulse.cdm.bind.BrainInjuryData Unload(SEBrainInjury src)
     {
@@ -939,7 +950,7 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.HemorrhageData src, SEHemorrhage dst)
     {
       Serialize(src.PatientAction, dst);
-      dst.SetType((SEHemorrhage.eType)(int)src.Type);
+      dst.SetType((eHemorrhage_Type)(int)src.Type);
       if (src.Compartment != null)
         dst.SetCompartment(src.Compartment);
       if (src.FlowRate != null)
@@ -1009,7 +1020,7 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.IntubationData src, SEIntubation dst)
     {
       Serialize(src.PatientAction, dst);
-      dst.SetType((SEIntubation.eType)(int)src.Type);
+      dst.SetType((eIntubation_Type)(int)src.Type);
     }
     public static pulse.cdm.bind.IntubationData Unload(SEIntubation src)
     {
@@ -1218,6 +1229,38 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SERespiratoryMechanicsConfiguration
+    public static void Load(pulse.cdm.bind.RespiratoryMechanicsConfigurationData src, SERespiratoryMechanicsConfiguration dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.RespiratoryMechanicsConfigurationData src, SERespiratoryMechanicsConfiguration dst)
+    {
+      Serialize(src.PatientAction, dst);
+      if (src.SettingsFile != null)
+        dst.SetConfigurationFile(src.SettingsFile);
+      else if (src.Settings != null)
+        PBPhysiology.Load(src.Settings, dst.GetSettings());
+      dst.SetMergeType((eMergeType)src.MergeType);
+    }
+    public static pulse.cdm.bind.RespiratoryMechanicsConfigurationData Unload(SERespiratoryMechanicsConfiguration src)
+    {
+      pulse.cdm.bind.RespiratoryMechanicsConfigurationData dst = new pulse.cdm.bind.RespiratoryMechanicsConfigurationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SERespiratoryMechanicsConfiguration src, pulse.cdm.bind.RespiratoryMechanicsConfigurationData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasSettingsFile())
+        dst.SettingsFile = src.GetSettingsFile();
+      else if (src.HasSettings())
+        dst.Settings = PBPhysiology.Unload(src.GetSettings());
+      dst.MergeType = (pulse.cdm.bind.eMergeType)(int)src.GetMergeType();
+    }
+    #endregion
+
     #region SESubstanceBolus
     public static void Load(pulse.cdm.bind.SubstanceBolusData src, SESubstanceBolus dst)
     {
@@ -1228,7 +1271,7 @@ namespace Pulse.CDM
       Serialize(src.PatientAction, dst);
       if (src.Substance != null)
         dst.SetSubstance(src.Substance);
-      dst.SetAdminRoute((SESubstanceBolus.eAdministration)(int)src.AdministrationRoute);
+      dst.SetAdminRoute((eSubstanceAdministration_Route)(int)src.AdministrationRoute);
 
       if (src.Concentration != null)
         PBProperty.Load(src.Concentration, dst.GetConcentration());
@@ -1335,7 +1378,7 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.SupplementalOxygenData src, SESupplementalOxygen dst)
     {
       Serialize(src.PatientAction, dst);
-      dst.SetDevice((SESupplementalOxygen.eDevice)(int)src.Device);
+      dst.SetDevice((eSupplementalOxygen_Device)(int)src.Device);
       if (src.Flow != null)
         PBProperty.Load(src.Flow, dst.GetFlow());
       if (src.Volume != null)

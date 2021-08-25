@@ -570,6 +570,18 @@ double SEGenericScalar::GetValue(const CCompoundUnit& unit) const
     return SEScalar::dNaN();
   return m_UnitScalar->GetValue(unit);
 }
+
+std::string SEGenericScalar::GetString() const
+{
+  if (!IsValid())
+    return "NaN";
+  std::string str = pulse::cdm::to_string(GetValue());
+  const CCompoundUnit* unit = GetUnit();
+  if (unit != nullptr)
+    str += " " + unit->GetString();
+  return str;
+}
+
 #include "cdm/properties/SEScalarAmount.h"
 template class SEScalarQuantity<AmountUnit>;
 #include "cdm/properties/SEScalarAmountPerMass.h"

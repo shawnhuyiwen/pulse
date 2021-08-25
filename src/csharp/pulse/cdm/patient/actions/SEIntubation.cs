@@ -3,40 +3,42 @@
 
 namespace Pulse.CDM
 {
+  public enum eIntubation_Type : int
+  {
+    Off = 0,
+    Esophageal,
+    LeftMainstem,
+    RightMainstem,
+    Tracheal,
+    Oropharyngeal,
+    Nasopharyngeal
+  }
+
   public class SEIntubation : SEPatientAction
   {
-    public enum eType : int
-    {
-      Off = 0,
-      Esophageal,
-      LeftMainstem,
-      RightMainstem,
-      Tracheal
-    }
-
-    protected eType type;
+    protected eIntubation_Type type;
 
     public SEIntubation()
     {
-      type = eType.Off;
+      type = eIntubation_Type.Off;
     }
 
     public override void Clear()
     {
       base.Clear();
-      type = eType.Off;
+      type = eIntubation_Type.Off;
     }
 
     public override bool IsValid()
     {
-      return type != eType.Off;
+      return type != eIntubation_Type.Off;
     }
 
-    public new eType GetType()
+    public new eIntubation_Type GetType()
     {
       return type;
     }
-    public void SetType(eType t)
+    public void SetType(eIntubation_Type t)
     {
       type = t;
     }

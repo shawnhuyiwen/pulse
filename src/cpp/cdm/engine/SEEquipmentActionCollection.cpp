@@ -163,7 +163,8 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
         RemoveMechanicalVentilatorPressureControl();
         RemoveMechanicalVentilatorVolumeControl();
         // Convert to a SEMechanicalVentilatorConfiguration
-        GetMechanicalVentilatorContinuousPositiveAirwayPressure().ToConfiguration(GetMechanicalVentilatorConfiguration());
+        GetMechanicalVentilatorConfiguration().Clear();
+        GetMechanicalVentilatorContinuousPositiveAirwayPressure().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr);
         m_MechanicalVentilatorConfiguration->Activate();
       }
       return true;
@@ -180,7 +181,8 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
         RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
         RemoveMechanicalVentilatorVolumeControl();
         // Convert to a SEMechanicalVentilatorConfiguration
-        GetMechanicalVentilatorPressureControl().ToConfiguration(GetMechanicalVentilatorConfiguration());
+        GetMechanicalVentilatorConfiguration().Clear();
+        GetMechanicalVentilatorPressureControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr);
         m_MechanicalVentilatorConfiguration->Activate();
       }
       return true;
@@ -197,7 +199,8 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
         RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
         RemoveMechanicalVentilatorPressureControl();
         // Convert to a SEMechanicalVentilatorConfiguration
-        GetMechanicalVentilatorVolumeControl().ToConfiguration(GetMechanicalVentilatorConfiguration());
+        GetMechanicalVentilatorConfiguration().Clear();
+        GetMechanicalVentilatorVolumeControl().ToSettings(GetMechanicalVentilatorConfiguration().GetSettings(), m_SubMgr);
         m_MechanicalVentilatorConfiguration->Activate();
       }
       return true;

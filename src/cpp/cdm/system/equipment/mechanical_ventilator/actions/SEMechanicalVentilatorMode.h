@@ -17,7 +17,7 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual bool ToConfiguration(SEMechanicalVentilatorConfiguration& cfg);
+  virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr);
 
   virtual eMechanicalVentilator_Connection GetConnection() const;
   virtual void SetConnection(eMechanicalVentilator_Connection c);

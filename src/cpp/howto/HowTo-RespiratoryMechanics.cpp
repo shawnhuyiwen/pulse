@@ -68,7 +68,7 @@ void HowToRespiratoryMechanics()
   }
 
   SERespiratoryMechanicsConfiguration config;
-  SERespiratoryMechanics& mechanics = config.GetConfiguration();
+  SERespiratoryMechanics& mechanics = config.GetSettings();
   mechanics.SetActive(eSwitch::On);
   // Create a mechanics profile
   double resistance_cmH2O_s_Per_L = 13.0;
@@ -78,12 +78,13 @@ void HowToRespiratoryMechanics()
   double inspiratoryTime_s = 0.9;
 
   // These need to add to 1.0 (100%)
-  const double UpperResistancePercent = 0.5;
-  const double BronchiResistancePercent = 0.3;
-  const double AlveoliDuctResistancePercent = 0.2;
+  // const double UpperResistanceFraction = 0.5;
+  // UpperResistanceFraction is implied
+  const double BronchiResistanceFraction = 0.3;
+  const double AlveoliDuctResistanceFraction = 0.2;
 
-  double upperResistance = resistance_cmH2O_s_Per_L - (BronchiResistancePercent * resistance_cmH2O_s_Per_L + AlveoliDuctResistancePercent * resistance_cmH2O_s_Per_L) / 2;
-  double bronchiResistance = 2 * (resistance_cmH2O_s_Per_L - upperResistance) - AlveoliDuctResistancePercent * resistance_cmH2O_s_Per_L;
+  double upperResistance = resistance_cmH2O_s_Per_L - (BronchiResistanceFraction * resistance_cmH2O_s_Per_L + AlveoliDuctResistanceFraction * resistance_cmH2O_s_Per_L) / 2;
+  double bronchiResistance = 2 * (resistance_cmH2O_s_Per_L - upperResistance) - AlveoliDuctResistanceFraction * resistance_cmH2O_s_Per_L;
   double alveoliDuctResistance = 2 * (resistance_cmH2O_s_Per_L - upperResistance) - bronchiResistance;
   double sideResistance = bronchiResistance + alveoliDuctResistance;
 

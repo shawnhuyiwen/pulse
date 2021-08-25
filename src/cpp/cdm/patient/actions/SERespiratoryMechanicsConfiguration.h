@@ -20,13 +20,13 @@ public:
   virtual bool IsActive() const;
   virtual void Deactivate();
 
-  bool HasConfiguration() const;
-  SERespiratoryMechanics& GetConfiguration();
-  const SERespiratoryMechanics* GetConfiguration() const;
+  bool HasSettings() const;
+  SERespiratoryMechanics& GetSettings();
+  const SERespiratoryMechanics* GetSettings() const;
 
-  virtual std::string GetConfigurationFile() const;
-  virtual void SetConfigurationFile(const std::string& fileName);
-  virtual bool HasConfigurationFile() const;
+  virtual std::string GetSettingsFile() const;
+  virtual void SetSettingsFile(const std::string& fileName);
+  virtual bool HasSettingsFile() const;
 
   virtual eAppliedRespiratoryCycle GetAppliedRespiratoryCycle() const;
   virtual void SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle c);
@@ -41,6 +41,6 @@ public:
 protected:
   eAppliedRespiratoryCycle m_AppliedRespiratoryCycle;
   eMergeType               m_MergeType;
-  std::string              m_ConfigurationFile;
-  SERespiratoryMechanics*  m_Configuration;
+  std::string              m_SettingsFile;
+  SERespiratoryMechanics*  m_Settings;
 };

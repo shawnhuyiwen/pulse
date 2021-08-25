@@ -46,8 +46,6 @@ function(add_library_ex target)
     _subdir_list(target_SUBDIR_LIST ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
   
-  
-
   list(APPEND target_BUILD_INTERFACE_LIST "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
   foreach(subdir ${target_SUBDIR_LIST})
     if( NOT ${subdir} STREQUAL "test")

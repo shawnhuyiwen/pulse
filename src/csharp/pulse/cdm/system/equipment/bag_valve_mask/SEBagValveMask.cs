@@ -5,19 +5,21 @@ using System.Collections.Generic;
 
 namespace Pulse.CDM
 {
+  public enum eBagValveMask_Connection : int
+  {
+    NullConnection = 0,/** Signals not provided, or no change */
+    Off,
+    Mask,
+    Tube
+  }
+
   // TODO Substance Fractions and Concentrations!!!
   public class SEBagValveMask : SEEquipment
   {
     // Keep enums in sync with appropriate schema/cdm/BagValveMask.proto file !!
-    public enum Connection : int
-    {
-      NullConnection = 0,/** Signals not provided, or no change */
-      Off,
-      Mask,
-      Tube
-    }
+    
 
-    protected Connection connection;
+    protected eBagValveMask_Connection connection;
     protected SEScalarPressureTimePerVolume bag_resistance;
     protected SEScalarVolume connection_volume;
     protected SEScalarPressureTimePerVolume filter_resistance;
@@ -32,7 +34,7 @@ namespace Pulse.CDM
 
     public SEBagValveMask()
     {
-      connection = Connection.NullConnection;
+      connection = eBagValveMask_Connection.NullConnection;
       bag_resistance = null;
       connection_volume = null;
       filter_resistance = null;
@@ -49,7 +51,7 @@ namespace Pulse.CDM
     public override void Clear()
     {
       base.Clear();
-      connection = Connection.NullConnection;
+      connection = eBagValveMask_Connection.NullConnection;
       if (bag_resistance != null)
         bag_resistance.Invalidate();
       if (connection_volume != null)
@@ -74,7 +76,7 @@ namespace Pulse.CDM
     public void Copy(SEBagValveMask from)
     {
       base.Copy(from);
-      if (from.connection != Connection.NullConnection)
+      if (from.connection != eBagValveMask_Connection.NullConnection)
         this.connection = from.connection;
       if (from.HasBagResistance())
         this.GetBagResistance().Set(from.GetBagResistance());
@@ -116,17 +118,17 @@ namespace Pulse.CDM
       }
     }
 
-    public Connection GetConnection()
+    public eBagValveMask_Connection GetConnection()
     {
       return connection;
     }
-    public void SetConnection(Connection c)
+    public void SetConnection(eBagValveMask_Connection c)
     {
       connection = c;
     }
     public bool HasConnection()
     {
-      return connection != Connection.NullConnection;
+      return connection != eBagValveMask_Connection.NullConnection;
     }
 
     public SEScalarPressureTimePerVolume GetBagResistance()
@@ -324,7 +326,7 @@ namespace Pulse.CDM
     public override string ToString()
     {
       string str = "Bag Valve Mask"
-      + "\n\tConnection: " + (HasConnection() ? PBBagValveMask.Connection_Name(GetConnection()) : "NotProvided")
+      + "\n\tConnection: " + (HasConnection() ? eBagValveMask.Connection_Name(GetConnection()) : "NotProvided")
       + "\n\tBagResistance: " + (HasBagResistance() ? GetBagResistance().ToString() : "Not Provided")
       + "\n\tFilterResistance: " + (HasFilterResistance() ? GetFilterResistance().ToString() : "Not Provided")
       + "\n\tFilterVolume: " + (HasFilterVolume() ? GetFilterVolume().ToString() : "Not Provided")

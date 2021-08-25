@@ -3,26 +3,28 @@
 
 namespace Pulse.CDM
 {
+  static class eMechanicalVentilator
+  {
+    public static string Connection_Name(this eMechanicalVentilator_Connection c)
+    {
+      return ((pulse.cdm.bind.MechanicalVentilatorSettingsData.Types.eConnection)(int)c).ToString();
+    }
+    public static string DriverWaveform_Name(this eMechanicalVentilator_DriverWaveform w)
+    {
+      return ((pulse.cdm.bind.MechanicalVentilatorSettingsData.Types.eDriverWaveform)(int)w).ToString();
+    }
+  }
   public class PBMechanicalVentilator
   {
-    public static string Connection_Name(SEMechanicalVentilator.Connection c)
-    {
-      return ((pulse.cdm.bind.MechanicalVentilatorData.Types.eConnection)(int)c).ToString();
-    }
-    public static string DriverWaveform_Name(SEMechanicalVentilator.DriverWaveform w)
-    {
-      return ((pulse.cdm.bind.MechanicalVentilatorData.Types.eDriverWaveform)(int)w).ToString();
-    }
-
     #region SEMechanicalVentilator
-    public static void Load(pulse.cdm.bind.MechanicalVentilatorData src, SEMechanicalVentilator dst/*, SESubstanceManager subMgr*/)
+    public static void Load(pulse.cdm.bind.MechanicalVentilatorSettingsData src, SEMechanicalVentilatorSettings dst/*, SESubstanceManager subMgr*/)
     {
       Serialize(src, dst);
     }
-    public static void Serialize(pulse.cdm.bind.MechanicalVentilatorData src, SEMechanicalVentilator dst/*, SESubstanceManager subMgr*/)
+    public static void Serialize(pulse.cdm.bind.MechanicalVentilatorSettingsData src, SEMechanicalVentilatorSettings dst/*, SESubstanceManager subMgr*/)
     {
       dst.Clear();
-      dst.SetConnection((SEMechanicalVentilator.Connection)src.Connection);
+      dst.SetConnection((eMechanicalVentilator_Connection)src.Connection);
 
       if (src.PositiveEndExpiredPressure != null)
         PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
@@ -46,7 +48,7 @@ namespace Pulse.CDM
         PBProperty.Load(src.ExpirationValveResistance, dst.GetExpirationValveResistance());
       if (src.ExpirationValveVolume != null)
         PBProperty.Load(src.ExpirationValveVolume, dst.GetExpirationValveVolume());
-      dst.SetExpirationWaveform((SEMechanicalVentilator.DriverWaveform)src.ExpirationWaveform);
+      dst.SetExpirationWaveform((eMechanicalVentilator_DriverWaveform)src.ExpirationWaveform);
       if (src.ExpirationWaveformPeriod != null)
         PBProperty.Load(src.ExpirationWaveformPeriod, dst.GetExpirationWaveformPeriod());
 
@@ -81,7 +83,7 @@ namespace Pulse.CDM
         PBProperty.Load(src.InspirationValveResistance, dst.GetInspirationValveResistance());
       if (src.InspirationValveVolume != null)
         PBProperty.Load(src.InspirationValveVolume, dst.GetInspirationValveVolume());
-      dst.SetInspirationWaveform((SEMechanicalVentilator.DriverWaveform)src.InspirationWaveform);
+      dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.InspirationWaveform);
       if (src.InspirationWaveformPeriod != null)
         PBProperty.Load(src.InspirationWaveformPeriod, dst.GetInspirationWaveformPeriod());
 
@@ -101,15 +103,15 @@ namespace Pulse.CDM
       }
     }
 
-    public static pulse.cdm.bind.MechanicalVentilatorData Unload(SEMechanicalVentilator src)
+    public static pulse.cdm.bind.MechanicalVentilatorSettingsData Unload(SEMechanicalVentilatorSettings src)
     {
-      pulse.cdm.bind.MechanicalVentilatorData dst = new pulse.cdm.bind.MechanicalVentilatorData();
+      pulse.cdm.bind.MechanicalVentilatorSettingsData dst = new pulse.cdm.bind.MechanicalVentilatorSettingsData();
       Unload(src, dst);
       return dst;
     }
-    protected static void Unload(SEMechanicalVentilator src, pulse.cdm.bind.MechanicalVentilatorData dst)
+    protected static void Unload(SEMechanicalVentilatorSettings src, pulse.cdm.bind.MechanicalVentilatorSettingsData dst)
     {
-      dst.Connection = (pulse.cdm.bind.MechanicalVentilatorData.Types.eConnection)(int)src.GetConnection();
+      dst.Connection = (pulse.cdm.bind.MechanicalVentilatorSettingsData.Types.eConnection)(int)src.GetConnection();
 
       if (src.HasPositiveEndExpiredPressure())
         dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
@@ -133,7 +135,7 @@ namespace Pulse.CDM
         dst.ExpirationValveResistance = PBProperty.Unload(src.GetExpirationValveResistance());
       if (src.HasExpirationValveVolume())
         dst.ExpirationValveVolume = PBProperty.Unload(src.GetExpirationValveVolume());
-      dst.ExpirationWaveform = (pulse.cdm.bind.MechanicalVentilatorData.Types.eDriverWaveform)(int)src.GetExpirationWaveform();
+      dst.ExpirationWaveform = (pulse.cdm.bind.MechanicalVentilatorSettingsData.Types.eDriverWaveform)(int)src.GetExpirationWaveform();
       if (src.HasExpirationWaveformPeriod())
         dst.ExpirationWaveformPeriod = PBProperty.Unload(src.GetExpirationWaveformPeriod());
 
@@ -168,7 +170,7 @@ namespace Pulse.CDM
         dst.InspirationValveResistance = PBProperty.Unload(src.GetInspirationValveResistance());
       if (src.HasInspirationValveVolume())
         dst.InspirationValveVolume = PBProperty.Unload(src.GetInspirationValveVolume());
-      dst.InspirationWaveform = (pulse.cdm.bind.MechanicalVentilatorData.Types.eDriverWaveform)(int)src.GetInspirationWaveform();
+      dst.InspirationWaveform = (pulse.cdm.bind.MechanicalVentilatorSettingsData.Types.eDriverWaveform)(int)src.GetInspirationWaveform();
       if (src.HasInspirationWaveformPeriod())
         dst.InspirationWaveformPeriod = PBProperty.Unload(src.GetInspirationWaveformPeriod());
 

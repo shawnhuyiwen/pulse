@@ -297,6 +297,8 @@ public:
   virtual double GetValue() const;
   virtual double GetValue(const CCompoundUnit& unit) const;
 
+  std::string GetString() const;
+
 protected:
 
   const SEScalar*     m_Scalar;

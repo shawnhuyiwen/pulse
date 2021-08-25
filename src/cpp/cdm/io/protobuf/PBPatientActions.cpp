@@ -1109,10 +1109,10 @@ void PBPatientAction::Load(const CDM_BIND::RespiratoryMechanicsConfigurationData
 void PBPatientAction::Serialize(const CDM_BIND::RespiratoryMechanicsConfigurationData& src, SERespiratoryMechanicsConfiguration& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  if (!src.configurationfile().empty())
-    dst.SetConfigurationFile(src.configurationfile());
-  else if (src.has_configuration())
-    PBPhysiology::Load(src.configuration(), dst.GetConfiguration());
+  if (!src.settingsfile().empty())
+    dst.SetSettingsFile(src.settingsfile());
+  else if (src.has_settings())
+    PBPhysiology::Load(src.settings(), dst.GetSettings());
   dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::RespiratoryMechanicsConfigurationData* PBPatientAction::Unload(const SERespiratoryMechanicsConfiguration& src)
@@ -1124,10 +1124,10 @@ CDM_BIND::RespiratoryMechanicsConfigurationData* PBPatientAction::Unload(const S
 void PBPatientAction::Serialize(const SERespiratoryMechanicsConfiguration& src, CDM_BIND::RespiratoryMechanicsConfigurationData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  if (src.HasConfigurationFile())
-    dst.set_configurationfile(src.m_ConfigurationFile);
-  else if (src.HasConfiguration())
-    dst.set_allocated_configuration(PBPhysiology::Unload(*src.m_Configuration));
+  if (src.HasSettingsFile())
+    dst.set_settingsfile(src.m_SettingsFile);
+  else if (src.HasSettings())
+    dst.set_allocated_settings(PBPhysiology::Unload(*src.m_Settings));
   dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBPatientAction::Copy(const SERespiratoryMechanicsConfiguration& src, SERespiratoryMechanicsConfiguration& dst)

@@ -101,15 +101,15 @@ void SERespiratoryMechanics::ProcessConfiguration(SERespiratoryMechanicsConfigur
 {
   if (config.GetMergeType() == eMergeType::Replace)
     Clear();
-  if (config.HasConfiguration())
-    Merge(config.GetConfiguration());
-  else if (config.HasConfigurationFile())
+  if (config.HasSettings())
+    Merge(config.GetSettings());
+  else if (config.HasSettingsFile())
   {
     // Update the action with the file contents
-    std::string cfg_file = config.GetConfigurationFile();
-    if (!config.GetConfiguration().SerializeFromFile(cfg_file))
+    std::string cfg_file = config.GetSettingsFile();
+    if (!config.GetSettings().SerializeFromFile(cfg_file))
       Error("Unable to load configuration file", "SERespiratoryMechanics::ProcessConfiguration");
-    Merge(config.GetConfiguration());
+    Merge(config.GetSettings());
   }
 }
 void SERespiratoryMechanics::Merge(const SERespiratoryMechanics& from)

@@ -3,23 +3,23 @@
 
 namespace Pulse.CDM
 {
+  public enum eSubstanceAdministration_Route : int
+  {
+    Intravenous = 0,
+    Epidural,
+    Intraosseous,
+    Intraarterial,
+    Intracardiac,
+    Intracerebral,
+    Intracerebroventricular,
+    Intradermal,
+    Intramuscular,
+    Subcutaneous
+  }
+
   public class SESubstanceBolus : SEPatientAction
   {
-    public enum eAdministration : int
-    {
-      Intravenous = 0,
-      Epidural,
-      Intraosseous,
-      Intraarterial,
-      Intracardiac,
-      Intracerebral,
-      Intracerebroventricular,
-      Intradermal,
-      Intramuscular,
-      Subcutaneous
-    }
-
-    protected eAdministration admin_route;
+    protected eSubstanceAdministration_Route admin_route;
     protected SEScalarTime admin_duration;
     protected SEScalarMassPerVolume concentration;
     protected SEScalarVolume dose;
@@ -27,7 +27,7 @@ namespace Pulse.CDM
 
     public SESubstanceBolus()
     {
-      this.admin_route = eAdministration.Intravenous;
+      this.admin_route = eSubstanceAdministration_Route.Intravenous;
       this.admin_duration = null;
       this.dose = null;
       this.concentration = null;
@@ -38,7 +38,7 @@ namespace Pulse.CDM
     {
       base.Clear();
       substance = null;
-      admin_route = eAdministration.Intravenous;
+      admin_route = eSubstanceAdministration_Route.Intravenous;
       if (admin_duration != null)
         admin_duration.Invalidate();
       if (dose != null)
@@ -52,11 +52,11 @@ namespace Pulse.CDM
       return HasDose() && HasConcentration() && HasSubstance();
     }
 
-    public eAdministration GetAdminRoute()
+    public eSubstanceAdministration_Route GetAdminRoute()
     {
       return admin_route;
     }
-    public void SetAdminRoute(eAdministration adminRoute)
+    public void SetAdminRoute(eSubstanceAdministration_Route adminRoute)
     {
       this.admin_route = adminRoute;
     }

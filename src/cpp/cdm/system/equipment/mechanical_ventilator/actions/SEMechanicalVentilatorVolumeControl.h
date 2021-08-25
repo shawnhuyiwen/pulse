@@ -17,7 +17,7 @@ public:
 
   virtual void Clear();
   virtual void Copy(const SEMechanicalVentilatorVolumeControl& src, bool /*preserveState*/ = false);
-  virtual bool ToConfiguration(SEMechanicalVentilatorConfiguration& cfg) override;
+  virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr) override;
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

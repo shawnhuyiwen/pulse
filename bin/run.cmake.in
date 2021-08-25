@@ -92,6 +92,7 @@ elseif(TYPE STREQUAL "doxygen")
 elseif(TYPE STREQUAL "protoc")
   file(REMOVE @CMAKE_SOURCE_DIR@/src/schema/schema_last_built)
   execute_process(COMMAND ${CMAKE_COMMAND} -DSRC_ROOT:PATH=@CMAKE_SOURCE_DIR@/src
+                                           -DDST_ROOT:PATH=@CMAKE_BINARY_DIR@/src
                                            -Dprotobuf_SRC:PATH=@protobuf_SRC@
                                            -DProtobuf_PROTOC_EXECUTABLE:PATH=@Protobuf_PROTOC_EXECUTABLE@
                                            -DPulse_JAVA_API:BOOL=@Pulse_JAVA_API@

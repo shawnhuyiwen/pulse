@@ -3,16 +3,15 @@
 
 namespace Pulse.CDM
 {
+  public enum ePatient_Sex : int
+  {
+    Male = 0,
+    Female
+  }
   public class SEPatient
   {
-    public enum eSex : int
-    {
-      Male = 0,
-      Female
-    }
-
     protected string name;
-    protected eSex sex;
+    protected ePatient_Sex sex;
     protected SEScalarTime age;
     protected SEScalarMass weight;
     protected SEScalarLength height;
@@ -47,7 +46,7 @@ namespace Pulse.CDM
     public SEPatient()
     {
       name = null;
-      sex = eSex.Male;
+      sex = ePatient_Sex.Male;
       age = null;
       weight = null;
       height = null;
@@ -83,7 +82,7 @@ namespace Pulse.CDM
     public void Clear()
     {
       name = null;
-      sex = eSex.Male;
+      sex = ePatient_Sex.Male;
       if (age != null) { age.Invalidate(); }
       if (weight != null) { weight.Invalidate(); }
       if (height != null) { height.Invalidate(); }
@@ -197,8 +196,8 @@ namespace Pulse.CDM
     public bool HasName() { return name != null; }
     public void InvalidateName() { name = null; }
 
-    public eSex GetSex() { return sex; }
-    public void SetSex(eSex s) { sex = s; }
+    public ePatient_Sex GetSex() { return sex; }
+    public void SetSex(ePatient_Sex s) { sex = s; }
 
     public bool HasAge()
     {

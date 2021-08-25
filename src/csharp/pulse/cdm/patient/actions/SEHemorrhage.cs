@@ -3,22 +3,21 @@
 
 namespace Pulse.CDM
 {
+  public enum eHemorrhage_Type : int
+  {
+    External = 0,
+    Internal
+  }
   public class SEHemorrhage : SEPatientAction
   {
-    public enum eType : int
-    {
-      External = 0,
-      Internal
-    }
-
-    protected eType type;
+    protected eHemorrhage_Type type;
     protected string compartment;
     protected SEScalarVolumePerTime flow_rate;
     protected SEScalar0To1 severity;
 
     public SEHemorrhage()
     {
-      type = eType.External;
+      type = eHemorrhage_Type.External;
       compartment = null;
       flow_rate = null;
       severity = null;
@@ -27,7 +26,7 @@ namespace Pulse.CDM
     public override void Clear()
     {
       base.Clear();
-      type = eType.External;
+      type = eHemorrhage_Type.External;
       compartment = null;
       if (flow_rate != null)
         flow_rate.Invalidate();
@@ -40,11 +39,11 @@ namespace Pulse.CDM
       return HasCompartment() && (HasFlowRate() || HasSeverity());
     }
 
-    public new eType GetType()
+    public new eHemorrhage_Type GetType()
     {
       return type;
     }
-    public void SetType(eType t)
+    public void SetType(eHemorrhage_Type t)
     {
       type = t;
     }

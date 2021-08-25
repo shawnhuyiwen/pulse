@@ -192,6 +192,21 @@ void SEEngineTracker::SetupRequests()
   }
 }
 
+void SEEngineTracker::LogRequestedValues(bool pullData)
+{
+  SEDataRequestScalar* ds;
+  for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
+  {
+    ds = m_Request2Scalar[dr];
+    if(pullData)
+      ds->UpdateScalar();
+    if(!ds->IsValid())
+      Info(ds->Heading + " NaN");
+    else
+      Info(ds->Heading +" "+ pulse::cdm::to_string(ds->GetValue()));
+  }
+}
+
 void SEEngineTracker::TrackData(double time_s)
 {
   if (!m_DataRequestMgr->HasDataRequests())
@@ -250,10 +265,15 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 
   bool success = ConnectRequest(dr, *ds);
 
+  if(dr.GetCategory() == eDataRequest_Category::Patient)
+    m_ss << "Patient-";
+  else if(dr.GetCategory() == eDataRequest_Category::MechanicalVentilator)
+    m_ss << "MechanicalVentilator-";
+  // TODO We probably should prefix all equipment amb
+
   switch (dr.GetCategory())
   {
     case eDataRequest_Category::Patient:
-      m_ss << "Patient";
     case eDataRequest_Category::Physiology:
     case eDataRequest_Category::Environment:
     case eDataRequest_Category::AnesthesiaMachine:

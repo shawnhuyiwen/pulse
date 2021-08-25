@@ -333,8 +333,8 @@ message RespiratoryMechanicsConfigurationData
   PatientActionData                         PatientAction                   = 1;
   oneof Option
   {
-    RespiratoryMechanicsData                Configuration                   = 2;/**<< @brief A RespiratoryMechanics object with properties to set in the system object. */
-    string                                  ConfigurationFile               = 3;/**<< @brief File containing a RespiratoryMechanics object with properties to set in the system object. */
+    RespiratoryMechanicsData                Settings                        = 2;/**<< @brief A RespiratoryMechanics object with properties to set in the system object. */
+    string                                  SettingsFile                    = 3;/**<< @brief File containing a RespiratoryMechanics object with properties to set in the system object. */
   }
   eAppliedRespiratoryCycle                  AppliedCycle                    = 4;/**<< @brief When to apply these mechanics in the respiratory cycle. */
   eMergeType                                MergeType                       = 5;/**<< @brief How to apply provided configuration to internal data model. */

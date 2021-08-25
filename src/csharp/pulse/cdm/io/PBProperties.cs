@@ -8,6 +8,70 @@ namespace Pulse.CDM
 {
   public class PBProperty
   {
+    #region SECurve
+    public static void Load(pulse.cdm.bind.CurveData src, SECurve dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.CurveData src, SECurve dst)
+    {
+      dst.Invalidate();
+      foreach(pulse.cdm.bind.AnySegmentData sData in src.Segment)
+      {
+        if(sData.ConstantSegment != null)
+        {
+          PBProperty.Load(sData.ConstantSegment, dst.AddConstantSegment());
+          continue;
+        }
+        if (sData.LinearSegment != null)
+        {
+          PBProperty.Load(sData.LinearSegment, dst.AddLinearSegment());
+          continue;
+        }
+        if (sData.ParabolicSegment != null)
+        {
+          PBProperty.Load(sData.ParabolicSegment, dst.AddParabolicSegment());
+          continue;
+        }
+        if (sData.SigmoidalSegment != null)
+        {
+          PBProperty.Load(sData.SigmoidalSegment, dst.AddSigmoidalSegment());
+          continue;
+        }
+      }
+    }
+    public static pulse.cdm.bind.CurveData Unload(SECurve src)
+    {
+      pulse.cdm.bind.CurveData dst = new pulse.cdm.bind.CurveData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SECurve src, pulse.cdm.bind.CurveData dst)
+    {
+      foreach(SESegment s in src.GetSegments())
+      {
+        pulse.cdm.bind.AnySegmentData sData = new pulse.cdm.bind.AnySegmentData();
+        if(s is SESegmentConstant)
+        {
+          sData.ConstantSegment = PBProperty.Unload((SESegmentConstant)s);
+        }
+        if (s is SESegmentLinear)
+        {
+          sData.LinearSegment = PBProperty.Unload((SESegmentLinear)s);
+        }
+        if (s is SESegmentParabolic)
+        {
+          sData.ParabolicSegment = PBProperty.Unload((SESegmentParabolic)s);
+        }
+        if (s is SESegmentSigmoidal)
+        {
+          sData.SigmoidalSegment = PBProperty.Unload((SESegmentSigmoidal)s);
+        }
+        dst.Segment.Add(sData);
+      }
+    }
+    #endregion
+
     #region SEScalar
     public static void Load(pulse.cdm.bind.ScalarData src, SEScalar dst)
     {
@@ -502,6 +566,31 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEScalarPressurePerVolume
+    public static void Load(pulse.cdm.bind.ScalarPressurePerVolumeData src, SEScalarPressurePerVolume dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ScalarPressurePerVolumeData src, SEScalarPressurePerVolume dst)
+    {
+      dst.Invalidate();
+      dst.SetValue(src.ScalarPressurePerVolume.Value, PressurePerVolumeUnit.FromString(src.ScalarPressurePerVolume.Unit));
+    }
+    public static pulse.cdm.bind.ScalarPressurePerVolumeData Unload(SEScalarPressurePerVolume src)
+    {
+      pulse.cdm.bind.ScalarPressurePerVolumeData dst = new pulse.cdm.bind.ScalarPressurePerVolumeData();
+      Serialize(src, dst);
+      return dst;
+    }
+
+    public static void Serialize(SEScalarPressurePerVolume src, pulse.cdm.bind.ScalarPressurePerVolumeData dst)
+    {
+      dst.ScalarPressurePerVolume = new pulse.cdm.bind.ScalarData();
+      dst.ScalarPressurePerVolume.Value = src.GetValue();
+      dst.ScalarPressurePerVolume.Unit = src.GetUnit().ToString();
+    }
+    #endregion
+
     #region SEScalarPressureTimePerVolume
     public static void Load(pulse.cdm.bind.ScalarPressureTimePerVolumeData src, SEScalarPressureTimePerVolume dst)
     {
@@ -674,6 +763,31 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEScalarVolumePerPressure
+    public static void Load(pulse.cdm.bind.ScalarVolumePerPressureData src, SEScalarVolumePerPressure dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ScalarVolumePerPressureData src, SEScalarVolumePerPressure dst)
+    {
+      dst.Invalidate();
+      dst.SetValue(src.ScalarVolumePerPressure.Value, VolumePerPressureUnit.FromString(src.ScalarVolumePerPressure.Unit));
+    }
+    public static pulse.cdm.bind.ScalarVolumePerPressureData Unload(SEScalarVolumePerPressure src)
+    {
+      pulse.cdm.bind.ScalarVolumePerPressureData dst = new pulse.cdm.bind.ScalarVolumePerPressureData();
+      Serialize(src, dst);
+      return dst;
+    }
+
+    public static void Serialize(SEScalarVolumePerPressure src, pulse.cdm.bind.ScalarVolumePerPressureData dst)
+    {
+      dst.ScalarVolumePerPressure = new pulse.cdm.bind.ScalarData();
+      dst.ScalarVolumePerPressure.Value = src.GetValue();
+      dst.ScalarVolumePerPressure.Unit = src.GetUnit().ToString();
+    }
+    #endregion
+
     #region SEScalarVolumePerTimePressure
     public static void Load(pulse.cdm.bind.ScalarVolumePerTimePressureData src, SEScalarVolumePerTimePressure dst)
     {
@@ -696,6 +810,158 @@ namespace Pulse.CDM
       dst.ScalarVolumePerTimePressure = new pulse.cdm.bind.ScalarData();
       dst.ScalarVolumePerTimePressure.Value = src.GetValue();
       dst.ScalarVolumePerTimePressure.Unit = src.GetUnit().ToString();
+    }
+    #endregion
+
+    #region SESegmentConstant
+    public static void Load(pulse.cdm.bind.SegmentConstantData src, SESegmentConstant dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.SegmentConstantData src, SESegmentConstant dst)
+    {
+      dst.Clear();
+      if (src.BeginVolume != null)
+        PBProperty.Load(src.BeginVolume, dst.GetBeginVolume());
+      if (src.EndVolume != null)
+        PBProperty.Load(src.EndVolume, dst.GetEndVolume());
+      if (src.Compliance != null)
+        PBProperty.Load(src.Compliance, dst.GetCompliance());
+    }
+    public static pulse.cdm.bind.SegmentConstantData Unload(SESegmentConstant src)
+    {
+      pulse.cdm.bind.SegmentConstantData dst = new pulse.cdm.bind.SegmentConstantData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SESegmentConstant src, pulse.cdm.bind.SegmentConstantData dst)
+    {
+      if (src.HasBeginVolume())
+        dst.BeginVolume = PBProperty.Unload(src.GetBeginVolume());
+      if (src.HasEndVolume())
+        dst.EndVolume = PBProperty.Unload(src.GetEndVolume());
+      if (src.HasCompliance())
+        dst.Compliance = PBProperty.Unload(src.GetCompliance());
+    }
+    #endregion
+
+    #region SESegmentLinear
+    public static void Load(pulse.cdm.bind.SegmentLinearData src, SESegmentLinear dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.SegmentLinearData src, SESegmentLinear dst)
+    {
+      dst.Clear();
+      if (src.BeginVolume != null)
+        PBProperty.Load(src.BeginVolume, dst.GetBeginVolume());
+      if (src.EndVolume != null)
+        PBProperty.Load(src.EndVolume, dst.GetEndVolume());
+      if (src.Slope != null)
+        PBProperty.Load(src.Slope, dst.GetSlope());
+      if (src.YIntercept != null)
+        PBProperty.Load(src.YIntercept, dst.GetYIntercept());
+    }
+    public static pulse.cdm.bind.SegmentLinearData Unload(SESegmentLinear src)
+    {
+      pulse.cdm.bind.SegmentLinearData dst = new pulse.cdm.bind.SegmentLinearData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SESegmentLinear src, pulse.cdm.bind.SegmentLinearData dst)
+    {
+      if (src.HasBeginVolume())
+        dst.BeginVolume = PBProperty.Unload(src.GetBeginVolume());
+      if (src.HasEndVolume())
+        dst.EndVolume = PBProperty.Unload(src.GetEndVolume());
+      if (src.HasSlope())
+        dst.Slope = PBProperty.Unload(src.GetSlope());
+      if (src.HasYIntercept())
+        dst.YIntercept = PBProperty.Unload(src.GetYIntercept());
+    }
+    #endregion
+
+    #region SESegmentParabolic
+    public static void Load(pulse.cdm.bind.SegmentParabolicData src, SESegmentParabolic dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.SegmentParabolicData src, SESegmentParabolic dst)
+    {
+      dst.Clear();
+      if (src.BeginVolume != null)
+        PBProperty.Load(src.BeginVolume, dst.GetBeginVolume());
+      if (src.EndVolume != null)
+        PBProperty.Load(src.EndVolume, dst.GetEndVolume());
+      if (src.Coefficient1 != null)
+        PBProperty.Load(src.Coefficient1, dst.GetCoefficient1());
+      if (src.Coefficient2 != null)
+        PBProperty.Load(src.Coefficient2, dst.GetCoefficient2());
+      if (src.Coefficient3 != null)
+        PBProperty.Load(src.Coefficient3, dst.GetCoefficient3());
+      if (src.Coefficient4 != null)
+        PBProperty.Load(src.Coefficient4, dst.GetCoefficient4());
+    }
+    public static pulse.cdm.bind.SegmentParabolicData Unload(SESegmentParabolic src)
+    {
+      pulse.cdm.bind.SegmentParabolicData dst = new pulse.cdm.bind.SegmentParabolicData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SESegmentParabolic src, pulse.cdm.bind.SegmentParabolicData dst)
+    {
+      if (src.HasBeginVolume())
+        dst.BeginVolume = PBProperty.Unload(src.GetBeginVolume());
+      if (src.HasEndVolume())
+        dst.EndVolume = PBProperty.Unload(src.GetEndVolume());
+      if (src.HasCoefficient1())
+        dst.Coefficient1 = PBProperty.Unload(src.GetCoefficient1());
+      if (src.HasCoefficient2())
+        dst.Coefficient2 = PBProperty.Unload(src.GetCoefficient2());
+      if (src.HasCoefficient3())
+        dst.Coefficient3 = PBProperty.Unload(src.GetCoefficient3());
+      if (src.HasCoefficient4())
+        dst.Coefficient4 = PBProperty.Unload(src.GetCoefficient4());
+    }
+    #endregion
+
+    #region SESegmentSigmoidal
+    public static void Load(pulse.cdm.bind.SegmentSigmoidalData src, SESegmentSigmoidal dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.SegmentSigmoidalData src, SESegmentSigmoidal dst)
+    {
+      dst.Clear();
+      if (src.BeginVolume != null)
+        PBProperty.Load(src.BeginVolume, dst.GetBeginVolume());
+      if (src.EndVolume != null)
+        PBProperty.Load(src.EndVolume, dst.GetEndVolume());
+      if (src.LowerCorner != null)
+        PBProperty.Load(src.LowerCorner, dst.GetLowerCorner());
+      if (src.UpperCorner != null)
+        PBProperty.Load(src.UpperCorner, dst.GetUpperCorner());
+      if (src.BaselineCompliance != null)
+        PBProperty.Load(src.BaselineCompliance, dst.GetBaselineCompliance());
+    }
+    public static pulse.cdm.bind.SegmentSigmoidalData Unload(SESegmentSigmoidal src)
+    {
+      pulse.cdm.bind.SegmentSigmoidalData dst = new pulse.cdm.bind.SegmentSigmoidalData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SESegmentSigmoidal src, pulse.cdm.bind.SegmentSigmoidalData dst)
+    {
+      if (src.HasBeginVolume())
+        dst.BeginVolume = PBProperty.Unload(src.GetBeginVolume());
+      if (src.HasEndVolume())
+        dst.EndVolume = PBProperty.Unload(src.GetEndVolume());
+      if (src.HasLowerCorner())
+        dst.LowerCorner = PBProperty.Unload(src.GetLowerCorner());
+      if (src.HasUpperCorner())
+        dst.UpperCorner = PBProperty.Unload(src.GetUpperCorner());
+      if (src.HasBaselineCompliance())
+        dst.BaselineCompliance = PBProperty.Unload(src.GetBaselineCompliance());
     }
     #endregion
 

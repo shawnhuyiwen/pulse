@@ -16,7 +16,7 @@ namespace Pulse.CDM
     {
       dst.Clear();
       dst.SetName(src.Name);
-      dst.SetSex((SEPatient.eSex)(int)src.Sex);
+      dst.SetSex((ePatient_Sex)(int)src.Sex);
       if (src.Age != null)
         PBProperty.Load(src.Age, dst.GetAge());
       if (src.Weight != null)

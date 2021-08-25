@@ -160,11 +160,11 @@ namespace HUMAN_ADULT_VENT_MECH
         if (!e->InitializeEngine(pCfg))
         {
           simpleRun.AddFailure("Could not initialize Respiratory Engine.");
-          return; // No sense in running the rest...
+          return; // No sense in running the rest
         }
 
         SERespiratoryMechanicsConfiguration config;
-        SERespiratoryMechanics& mechanics = config.GetConfiguration();
+        SERespiratoryMechanics& mechanics = config.GetSettings();
         mechanics.SetActive(eSwitch::On);
         // Create a mechanics profile
         double resistance_cmH2O_s_Per_L = 13.0;
@@ -419,6 +419,7 @@ namespace HUMAN_ADULT_VENT_MECH
           double peakInspiratoryPressure_cmH2O = 12.0;
           double positiveEndExpiredPressure_cmH2O = 5.0;
           double fractionInspiredOxygen = 0.21;
+          // Use Slope of 0
 
           // Translate ventilator settings
           double totalPeriod_s = 60.0 / ventRespirationRate_per_min;

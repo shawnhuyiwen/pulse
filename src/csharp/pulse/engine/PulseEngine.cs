@@ -45,10 +45,10 @@ namespace Pulse
     public static extern void Deinitialize();
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern IntPtr Allocate(string data_dir);
-    public PulseEngine(string data_dir="./")
+    static extern IntPtr Allocate(int model, string data_dir);
+    public PulseEngine(eModelType m=eModelType.HumanAdultWholeBody, string data_dir = "./")
     {
-      pulse_cptr = Allocate(data_dir);
+      pulse_cptr = Allocate((int)m, data_dir);
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
