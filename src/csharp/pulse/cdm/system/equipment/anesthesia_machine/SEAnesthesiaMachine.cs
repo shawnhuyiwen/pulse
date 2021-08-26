@@ -4,14 +4,6 @@
 namespace Pulse.CDM
 {
   // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
-  public enum eAnesthesiaMachine_Connection : int
-  {
-    NullConnection = 0,/** Signals not provided, or no change */
-    Off,
-    Mask,
-    Tube
-  }
-  // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
   public enum eAnesthesiaMachine_OxygenSource : int
   {
     NullSource = 0,/** Signals not provided, or no change */
@@ -31,7 +23,7 @@ namespace Pulse.CDM
 
   public class SEAnesthesiaMachine : SEEquipment
   {
-    protected eAnesthesiaMachine_Connection connection;
+    protected eSwitch connection;
     protected SEScalarVolumePerTime inletFlow;
     protected SEScalar inspiratoryExpiratoryRatio;
     protected SEScalar0To1 oxygenFraction;
@@ -52,7 +44,7 @@ namespace Pulse.CDM
 
     public SEAnesthesiaMachine()
     {
-      connection = eAnesthesiaMachine_Connection.NullConnection;
+      connection = eSwitch.NullSwitch;
       inletFlow = null;
       inspiratoryExpiratoryRatio = null;
       oxygenFraction = null;
@@ -73,7 +65,7 @@ namespace Pulse.CDM
     public override void Clear()
     {
       base.Clear();
-      connection = eAnesthesiaMachine_Connection.NullConnection;
+      connection = eSwitch.NullSwitch;
       if (inletFlow != null)
         inletFlow.Invalidate();
       if (inspiratoryExpiratoryRatio != null)
@@ -106,7 +98,7 @@ namespace Pulse.CDM
     //public void Copy(SEAnesthesiaMachine from)
     //{
     //  Clear();
-    //  if(from.connection!=null && from.connection != Connection.NullConnection)
+    //  if(from.connection!=null && from.connection != Connection.NullSwitch)
     //  	this.connection=from.connection;
     //  if(from.HasInletFlow())
     //    this.GetInletFlow().Set(from.GetInletFlow());
@@ -150,17 +142,17 @@ namespace Pulse.CDM
     //  return this.events.Get(type);
     //}
 
-    public eAnesthesiaMachine_Connection GetConnection()
+    public eSwitch GetConnection()
     {
       return connection;
     }
-    public void SetConnection(eAnesthesiaMachine_Connection c)
+    public void SetConnection(eSwitch c)
     {
       connection = c;
     }
     public bool HasConnection()
     {
-      return connection != eAnesthesiaMachine_Connection.NullConnection;
+      return connection != eSwitch.NullSwitch;
     }
 
     public SEScalar GetInspiratoryExpiratoryRatio()
@@ -347,7 +339,7 @@ namespace Pulse.CDM
       //}
 
       return "Anesthesia Machine"
-      + "\n\tConnection: " + (HasConnection() ? eAnesthesiaMachine.Connection_Name(GetConnection()) : "NotProvided")
+      + "\n\tConnection: " + (HasConnection() ? eEnum.Name(GetConnection()) : "NotProvided")
       + "\n\tInletFlow: " + GetInletFlow()
       + "\n\tInspiratoryExpiratoryRatio: " + GetInspiratoryExpiratoryRatio()
       + "\n\tOxygenFraction: " + GetOxygenFraction()

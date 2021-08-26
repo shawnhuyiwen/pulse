@@ -110,7 +110,7 @@ void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
   }
   else if (HasConfiguration())
   {
-    str << "\n\tConnection: " << eAnesthesiaMachine_Connection_Name(m_Configuration->GetConnection());
+    str << "\n\tConnection: " << eSwitch_Name(m_Configuration->GetConnection());
     str << "\n\tInlet Flow Rate: "; m_Configuration->HasInletFlow() ? str << m_Configuration->GetInletFlow() : str << "NaN";
     str << "\n\tInspiratoryExpiratory Ratio: "; m_Configuration->HasInspiratoryExpiratoryRatio() ? str << m_Configuration->GetInspiratoryExpiratoryRatio() : str << "NaN";
     str << "\n\tOxygen Fraction: "; m_Configuration->HasOxygenFraction() ? str << m_Configuration->GetOxygenFraction() : str << "NaN";

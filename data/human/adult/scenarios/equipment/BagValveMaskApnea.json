@@ -109,7 +109,7 @@
           "Comment": "Add the oropharyngeal airway." }}},
           "Configuration":
           {
-            "Connection": "Tube"
+            "Connection": "On"
           }
       }
     }
@@ -152,7 +152,7 @@
           "Comment": "Attach the mask and provide a PEEP" }}},
           "Configuration":
           {
-            "Connection": "Mask",
+            "Connection": "On",
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
           }
       }
@@ -194,7 +194,7 @@
           "Comment": "Attach oxygen to the reservoir." }}},
           "Configuration":
           {
-            "Connection": "Mask",
+            "Connection": "On",
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } }

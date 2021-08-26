@@ -3,9 +3,9 @@
 package com.kitware.pulse.cdm.system.equipment.anesthesia_machine;
 
 import com.kitware.pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData;
-import com.kitware.pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.eConnection;
 import com.kitware.pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.eOxygenSource;
 import com.kitware.pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData.ePrimaryGas;
+import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.properties.SEScalar;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 import com.kitware.pulse.cdm.properties.SEScalarFrequency;
@@ -15,7 +15,7 @@ import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
 public class SEAnesthesiaMachine extends SEEquipment
 {
-  protected eConnection                       connection;
+  protected eSwitch                       connection;
   protected SEScalarVolumePerTime             inletFlow;
   protected SEScalar                          inspiratoryExpiratoryRatio;
   protected SEScalar0To1                      oxygenFraction;
@@ -91,7 +91,7 @@ public class SEAnesthesiaMachine extends SEEquipment
   public void copy(SEAnesthesiaMachine from)
   {
     reset();
-    if(from.connection!=null && from.connection != eConnection.NullConnection)
+    if(from.connection!=null && from.connection != eSwitch.NullSwitch)
     	this.connection=from.connection;      
     if(from.hasInletFlow())
       this.getInletFlow().set(from.getInletFlow());
@@ -125,7 +125,7 @@ public class SEAnesthesiaMachine extends SEEquipment
   public static void load(AnesthesiaMachineData src, SEAnesthesiaMachine dst)
   {
     dst.reset();
-    if (src.getConnection()!=eConnection.UNRECOGNIZED)
+    if (src.getConnection()!=eSwitch.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
     if (src.hasInletFlow())
       SEScalarVolumePerTime.load(src.getInletFlow(), dst.getInletFlow());
@@ -193,13 +193,13 @@ public class SEAnesthesiaMachine extends SEEquipment
       dst.setOxygenBottleTwo(SEAnesthesiaMachineOxygenBottle.unload(src.oxygenBottleTwo));
   }
   
-  public eConnection getConnection()
+  public eSwitch getConnection()
   {
     return connection;
   }
-  public void setConnection(eConnection c)
+  public void setConnection(eSwitch c)
   {
-    connection = (c == eConnection.UNRECOGNIZED) ? null : c;
+    connection = (c == eSwitch.UNRECOGNIZED) ? null : c;
   }
   public boolean hasConnection()
   {

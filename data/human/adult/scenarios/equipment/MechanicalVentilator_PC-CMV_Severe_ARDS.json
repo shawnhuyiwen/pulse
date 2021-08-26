@@ -115,7 +115,7 @@
               "Comment": "Attach the mechanical ventilator - PC-CMV: RR = 25 bpm, I:E = 0.9, TV = 6 mL/kg(ideal)" }}},
         "Settings":
         {
-          "Connection": "Tube",
+          "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
           "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 33.0, "Unit": "cmH2O" } },

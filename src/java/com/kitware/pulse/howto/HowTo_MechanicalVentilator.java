@@ -5,8 +5,8 @@ package com.kitware.pulse.howto;
 import java.util.List;
 
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
+import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.*;
-import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eConnection;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
 import com.kitware.pulse.cdm.bind.PatientActions.IntubationData.eType;
@@ -164,7 +164,7 @@ public class HowTo_MechanicalVentilator
     
     // Configure the Mechanical Ventilator
     SEMechanicalVentilatorConfiguration ventilatorAction = new SEMechanicalVentilatorConfiguration();
-    ventilatorAction.getSettings().setConnection(eConnection.Tube);
+    ventilatorAction.getSettings().setConnection(eSwitch.On);
     ventilatorAction.getSettings().setExpirationWaveform(eDriverWaveform.Square);
     ventilatorAction.getSettings().setInspirationWaveform(eDriverWaveform.Square);
     ventilatorAction.getSettings().getPeakInspiratoryPressure().setValue(21, PressureUnit.cmH2O);

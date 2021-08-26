@@ -157,7 +157,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
     tracker.AdvanceModelTime(15);
 
     SEAnesthesiaMachineConfiguration amConfig(pc->GetLogger());
-    amConfig.GetConfiguration().SetConnection(eAnesthesiaMachine_Connection::Mask);
+    amConfig.GetConfiguration().SetConnection(eSwitch::On);
     amConfig.GetConfiguration().GetInletFlow().SetValue(5, VolumePerTimeUnit::L_Per_min);
     amConfig.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
     amConfig.GetConfiguration().GetOxygenFraction().SetValue(0.4);

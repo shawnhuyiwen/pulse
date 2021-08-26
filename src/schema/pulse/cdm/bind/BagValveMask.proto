@@ -4,21 +4,13 @@ option java_package = "com.kitware.pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
+import "pulse/cdm/bind/Enums.proto";
 import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/Substance.proto";
 
 message BagValveMaskData
 {
-
-  enum eConnection
-  {
-    NullConnection = 0;/**<< Signals not provided, or no change */
-    Off            = 1;
-    Mask           = 2;
-    Tube           = 3;
-  }
-  
-  eConnection                         Connection                      = 1;/**<<  @brief @ref BagValveMaskData_eConnectionTable */
+  eSwitch                             Connection                      = 1;/**<<  @brief @ref BagValveMaskData_eConnectionTable */
                                                                                  
   ScalarPressureTimePerVolumeData     BagResistance                   = 2;/**<<  @brief Bag resistance. */
   ScalarVolumeData                    ConnectionVolume                = 3;/**<<  @brief Dead space volume of the connection (i.e., mask/tube). */

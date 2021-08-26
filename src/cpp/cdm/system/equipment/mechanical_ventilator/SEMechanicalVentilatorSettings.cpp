@@ -16,7 +16,7 @@
 
 SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) : Loggable(logger)
 {
-  m_Connection = eMechanicalVentilator_Connection::Off;
+  m_Connection = eSwitch::Off;
 
   m_PositiveEndExpiredPressure = nullptr;
   m_FunctionalResidualCapacity = nullptr;
@@ -60,7 +60,7 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
 
 SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 {
-  m_Connection = eMechanicalVentilator_Connection::Off;
+  m_Connection = eSwitch::Off;
 
   SAFE_DELETE(m_PositiveEndExpiredPressure);
   SAFE_DELETE(m_FunctionalResidualCapacity);
@@ -112,7 +112,7 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 
 void SEMechanicalVentilatorSettings::Clear()
 {
-  m_Connection = eMechanicalVentilator_Connection::Off;
+  m_Connection = eSwitch::Off;
 
   INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
   INVALIDATE_PROPERTY(m_FunctionalResidualCapacity);
@@ -174,7 +174,7 @@ void SEMechanicalVentilatorSettings::ProcessConfiguration(SEMechanicalVentilator
 }
 void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings& from, SESubstanceManager& subMgr)
 {
-  if(from.m_Connection!=eMechanicalVentilator_Connection::NullConnection)
+  if(from.m_Connection!=eSwitch::NullSwitch)
     SetConnection(from.m_Connection);
 
   COPY_PROPERTY(PositiveEndExpiredPressure);
@@ -272,6 +272,10 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
       mine.GetConcentration().Set(sc->GetConcentration());
     }
   }
+
+  //std::string out;
+  //this->SerializeToString(out, eSerializationFormat::JSON);
+  //std::cout << out << std::endl;
 }
 
 bool SEMechanicalVentilatorSettings::SerializeToString(std::string& output, eSerializationFormat m) const
@@ -361,11 +365,11 @@ const SEScalar* SEMechanicalVentilatorSettings::GetScalar(const std::string& nam
   return nullptr;
 }
 
-void SEMechanicalVentilatorSettings::SetConnection(eMechanicalVentilator_Connection c)
+void SEMechanicalVentilatorSettings::SetConnection(eSwitch c)
 {
   m_Connection = c;
 }
-eMechanicalVentilator_Connection SEMechanicalVentilatorSettings::GetConnection() const
+eSwitch SEMechanicalVentilatorSettings::GetConnection() const
 {
   return m_Connection;
 }

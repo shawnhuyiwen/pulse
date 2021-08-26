@@ -78,6 +78,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBBagValveMask.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBConditions.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBDataRequest.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnums.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnvironment.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnvironmentActions.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnvironmentConditions.cs

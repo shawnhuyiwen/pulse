@@ -113,7 +113,7 @@ void SEBagValveMaskConfiguration::ToString(std::ostream &str) const
   }
   else if (HasConfiguration())
   {
-    str << "\n\tConnection: " << eBagValveMask_Connection_Name(m_Configuration->GetConnection());
+    str << "\n\tConnection: " << eSwitch_Name(m_Configuration->GetConnection());
     str << "\n\tValvePositiveEndExpiredPressure: "; m_Configuration->HasValvePositiveEndExpiredPressure() ? str << m_Configuration->GetValvePositiveEndExpiredPressure() : str << "NaN";
     str << "\n\tBagResistance: "; m_Configuration->HasBagResistance() ? str << m_Configuration->GetBagResistance() : str << "NaN";
     str << "\n\tFilterResistance: "; m_Configuration->HasFilterResistance() ? str << m_Configuration->GetFilterResistance() : str << "NaN";

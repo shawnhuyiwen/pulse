@@ -46,8 +46,8 @@ namespace PULSE_ENGINE
 
     void ComputeExposedModelParameters() override;
 
-    void SetConnection();
-    void SetConnection(eBagValveMask_Connection c);
+    void UpdateAirwayMode();
+    void UpdateConnection();
     void InvalidateConnection();
 
     void CalculateInspiration();

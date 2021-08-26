@@ -125,7 +125,7 @@
               "Comment": "Attach the mechanical ventilator: RR = 15 bpm, I:E = 0.43, TV = 9.0 mL/kg(ideal)" }}},
         "Settings":
         {
-          "Connection": "Tube",
+          "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
           "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 30.0, "Unit": "cmH2O" } },

@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.kitware.pulse.cdm.bind.BagValveMask.BagValveMaskData;
-import com.kitware.pulse.cdm.bind.BagValveMask.BagValveMaskData.eConnection;
+import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceConcentrationData;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceFractionData;
 import com.kitware.pulse.cdm.properties.*;
@@ -18,7 +18,7 @@ import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
 public class SEBagValveMask extends SEEquipment
 {
-  protected eConnection                       connection;
+  protected eSwitch                          connection;
   
   protected SEScalarPressureTimePerVolume     bagResistance;
   protected SEScalarVolume                    connectionVolume;
@@ -77,7 +77,7 @@ public class SEBagValveMask extends SEEquipment
   public void copy(SEBagValveMask from)
   {
     reset();
-    if(from.connection!=null && from.connection != eConnection.NullConnection)
+    if(from.connection!=null && from.connection != eSwitch.NullSwitch)
     	this.connection=from.connection;
     
     if(from.hasBagResistance())
@@ -122,7 +122,7 @@ public class SEBagValveMask extends SEEquipment
   public static void load(BagValveMaskData src, SEBagValveMask dst)
   {
     dst.reset();
-    if (src.getConnection()!=eConnection.UNRECOGNIZED)
+    if (src.getConnection()!=eSwitch.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
     
     if (src.hasBagResistance())
@@ -193,13 +193,13 @@ public class SEBagValveMask extends SEEquipment
       dst.addConcentrationInspiredAerosol(SESubstanceConcentration.unload(ambSub));
   }
   
-  public eConnection getConnection()
+  public eSwitch getConnection()
   {
     return connection;
   }
-  public void setConnection(eConnection c)
+  public void setConnection(eSwitch c)
   {
-    connection = (c == eConnection.UNRECOGNIZED) ? null : c;
+    connection = (c == eSwitch.UNRECOGNIZED) ? null : c;
   }
   public boolean hasConnection()
   {

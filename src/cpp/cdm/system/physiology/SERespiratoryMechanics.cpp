@@ -138,6 +138,8 @@ void SERespiratoryMechanics::Merge(const SERespiratoryMechanics& from)
   COPY_PROPERTY(ExpiratoryHoldTime);
   COPY_PROPERTY(ExpiratoryReleaseTime);
   COPY_PROPERTY(ResidueTime);
+
+  //std::cout << this->ToString() << std::endl;
 }
 
 const SEScalar* SERespiratoryMechanics::GetScalar(const std::string& name)

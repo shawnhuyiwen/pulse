@@ -20,7 +20,7 @@
 
 SEBagValveMask::SEBagValveMask(Logger* logger) : SEEquipment(logger)
 {
-  m_Connection = eBagValveMask_Connection::Off;
+  m_Connection = eSwitch::Off;
 
   m_BagResistance = nullptr;
   m_FilterResistance = nullptr;
@@ -34,7 +34,7 @@ SEBagValveMask::SEBagValveMask(Logger* logger) : SEEquipment(logger)
 
 SEBagValveMask::~SEBagValveMask()
 {
-  m_Connection = eBagValveMask_Connection::Off;
+  m_Connection = eSwitch::Off;
 
   SAFE_DELETE(m_BagResistance);
   SAFE_DELETE(m_FilterResistance);
@@ -58,7 +58,7 @@ void SEBagValveMask::Clear()
 {
   SEEquipment::Clear();
 
-  m_Connection = eBagValveMask_Connection::Off;
+  m_Connection = eSwitch::Off;
 
   INVALIDATE_PROPERTY(m_ValvePositiveEndExpiredPressure);
 
@@ -89,11 +89,10 @@ void SEBagValveMask::ProcessConfiguration(SEBagValveMaskConfiguration& config, S
       Error("Unable to load configuration file", "SEBagValveMask::ProcessConfiguration");
     Merge(config.GetConfiguration(), subMgr);
   }
-  StateChange();
 }
 void SEBagValveMask::Merge(const SEBagValveMask& from, SESubstanceManager& subMgr)
 {
-  if(from.m_Connection!=eBagValveMask_Connection::NullConnection)
+  if(from.m_Connection!=eSwitch::NullSwitch)
     SetConnection(from.m_Connection);
   COPY_PROPERTY(BagResistance);
   COPY_PROPERTY(FilterResistance);
@@ -201,11 +200,11 @@ const SEScalar* SEBagValveMask::GetScalar(const std::string& name)
   return nullptr;
 }
 
-void SEBagValveMask::SetConnection(eBagValveMask_Connection c)
+void SEBagValveMask::SetConnection(eSwitch c)
 {
   m_Connection = c;
 }
-eBagValveMask_Connection SEBagValveMask::GetConnection() const
+eSwitch SEBagValveMask::GetConnection() const
 {
   return m_Connection;
 }

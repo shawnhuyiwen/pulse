@@ -10,10 +10,6 @@
 class SEMechanicalVentilatorConfiguration;
 
 // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-enum class eMechanicalVentilator_Connection { NullConnection = 0, Off, Mask, Tube };
-extern const std::string& eMechanicalVentilator_Connection_Name(eMechanicalVentilator_Connection m);
-
-// Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
 enum class eMechanicalVentilator_DriverWaveform { NullDriverWaveform = 0, Square, Exponential, Ramp, Sinusoidal, Sigmoidal };
 extern const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform m);
 
@@ -37,8 +33,8 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual eMechanicalVentilator_Connection GetConnection() const;
-  virtual void SetConnection(eMechanicalVentilator_Connection c);
+  virtual eSwitch GetConnection() const;
+  virtual void SetConnection(eSwitch c);
 
   virtual bool HasPositiveEndExpiredPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiredPressure();
@@ -174,7 +170,7 @@ public:
 
 protected:
   
-  eMechanicalVentilator_Connection             m_Connection;
+  eSwitch                                      m_Connection;
 
   // Expiratory Baseline Properties (Only set 1)
   SEScalarPressure*                            m_PositiveEndExpiredPressure;

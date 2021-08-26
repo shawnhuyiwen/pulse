@@ -226,7 +226,7 @@ void SEMechanicalVentilatorVolumeControl::ToString(std::ostream& str) const
   str << "Mechanical Ventilator Action : Volume Control";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tConnection: " << eMechanicalVentilator_Connection_Name(m_Connection);
+  str << "\n\tConnection: " << eSwitch_Name(m_Connection);
   str << "\n\tMode: " << eMechanicalVentilator_VolumeControlMode_Name(m_Mode);
   str << "\n\tFlow :"; HasFlow() ? str << *m_Flow : str << "NaN";
   str << "\n\tFractionInspiredOxygen :"; HasFractionInspiredOxygen() ? str << *m_FractionInspiredOxygen : str << "NaN";

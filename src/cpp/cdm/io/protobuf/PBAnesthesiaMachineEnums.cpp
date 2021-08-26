@@ -16,8 +16,3 @@ const std::string& eAnesthesiaMachine_PrimaryGas_Name(eAnesthesiaMachine_Primary
 {
   return CDM_BIND::AnesthesiaMachineData::ePrimaryGas_Name((CDM_BIND::AnesthesiaMachineData::ePrimaryGas)m);
 }
-
-const std::string& eAnesthesiaMachine_Connection_Name(eAnesthesiaMachine_Connection m)
-{
-  return CDM_BIND::AnesthesiaMachineData::eConnection_Name((CDM_BIND::AnesthesiaMachineData::eConnection)m);
-}

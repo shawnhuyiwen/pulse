@@ -103,7 +103,7 @@
                 "Comment": "Attach the mechanical ventilator with rate = 12 bpm and I:E Ratio = 1:2" }}},
           "Settings":
           {
-            "Connection": "Mask",
+            "Connection": "On",
             "InspirationWaveform": "Square",
             "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
@@ -131,7 +131,7 @@
                 "Comment": "Attach the mechanical ventilator with rate = 20 bpm and I:E Ratio = 1:1" }}},
           "Settings":
           {
-            "Connection": "Tube",
+            "Connection": "On",
             "InspirationWaveform": "Square",
             "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },

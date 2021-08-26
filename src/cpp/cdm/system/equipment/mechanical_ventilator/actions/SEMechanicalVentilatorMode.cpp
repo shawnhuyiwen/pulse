@@ -5,33 +5,30 @@
 
 SEMechanicalVentilatorMode::SEMechanicalVentilatorMode(Logger* logger) : SEMechanicalVentilatorAction(logger)
 {
-  m_Connection = eMechanicalVentilator_Connection::Off;
+  m_Connection = eSwitch::Off;
 }
 
 SEMechanicalVentilatorMode::~SEMechanicalVentilatorMode()
 {
-  m_Connection = eMechanicalVentilator_Connection::Off;
+  m_Connection = eSwitch::Off;
 }
 
 void SEMechanicalVentilatorMode::Clear()
 {
   SEMechanicalVentilatorAction::Clear();
-  m_Connection = eMechanicalVentilator_Connection::Off;
+  m_Connection = eSwitch::Off;
 }
 
 bool SEMechanicalVentilatorMode::IsValid() const
 {
-  if (m_Connection == eMechanicalVentilator_Connection::NullConnection)
+  if (m_Connection == eSwitch::NullSwitch)
     return false;
   return SEMechanicalVentilatorAction::IsValid();
 }
 
 bool SEMechanicalVentilatorMode::IsActive() const
 {
-  if (m_Connection == eMechanicalVentilator_Connection::Mask ||
-    m_Connection == eMechanicalVentilator_Connection::Tube)
-    return true;
-  return false;
+  return m_Connection == eSwitch::On;
 }
 
 bool SEMechanicalVentilatorMode::ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& /*subMgr*/)
@@ -44,11 +41,11 @@ bool SEMechanicalVentilatorMode::ToSettings(SEMechanicalVentilatorSettings& s, c
   return true;
 }
 
-void SEMechanicalVentilatorMode::SetConnection(eMechanicalVentilator_Connection c)
+void SEMechanicalVentilatorMode::SetConnection(eSwitch c)
 {
   m_Connection = c;
 }
-eMechanicalVentilator_Connection SEMechanicalVentilatorMode::GetConnection() const
+eSwitch SEMechanicalVentilatorMode::GetConnection() const
 {
   return m_Connection;
 }

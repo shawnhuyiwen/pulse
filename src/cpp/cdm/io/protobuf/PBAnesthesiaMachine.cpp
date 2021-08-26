@@ -25,7 +25,7 @@ void PBAnesthesiaMachine::Load(const CDM_BIND::AnesthesiaMachineData& src, SEAne
 }
 void PBAnesthesiaMachine::Serialize(const CDM_BIND::AnesthesiaMachineData& src, SEAnesthesiaMachine& dst, const SESubstanceManager& subMgr)
 {
-  dst.m_Connection = (eAnesthesiaMachine_Connection)src.connection();
+  dst.m_Connection = (eSwitch)src.connection();
 
   if (src.has_inletflow())
     PBProperty::Load(src.inletflow(), dst.GetInletFlow());
@@ -63,7 +63,7 @@ CDM_BIND::AnesthesiaMachineData* PBAnesthesiaMachine::Unload(const SEAnesthesiaM
 }
 void PBAnesthesiaMachine::Serialize(const SEAnesthesiaMachine& src, CDM_BIND::AnesthesiaMachineData& dst)
 {
-  dst.set_connection((CDM_BIND::AnesthesiaMachineData::eConnection)src.m_Connection);
+  dst.set_connection((CDM_BIND::eSwitch)src.m_Connection);
   if (src.HasInletFlow())
     dst.set_allocated_inletflow(PBProperty::Unload(*src.m_InletFlow));
   if (src.HasInspiratoryExpiratoryRatio())

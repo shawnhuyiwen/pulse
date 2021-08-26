@@ -661,7 +661,7 @@
     "EquipmentAction": {
       "AnesthesiaMachineConfiguration": {
         "Configuration": {
-          "Connection": "Tube",
+          "Connection": "On",
           "InletFlow": {
             "ScalarVolumePerTime": {
               "Value": 5.0,
@@ -823,7 +823,7 @@
     "EquipmentAction": {
       "AnesthesiaMachineConfiguration": {
         "Configuration": {
-          "Connection": "Tube"
+          "Connection": "On"
         }
       }
     }

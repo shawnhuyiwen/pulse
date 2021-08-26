@@ -81,7 +81,7 @@ void HowToAnesthesiaMachine()
   // Modifying the class will keep any old settings that are not provided in the config
   // Using a json will set the anesthesia machine to only the property states specified in the file
   SEAnesthesiaMachine& config = AMConfig.GetConfiguration();
-  config.SetConnection(eAnesthesiaMachine_Connection::Mask);
+  config.SetConnection(eSwitch::On);
   config.GetInletFlow().SetValue(2.0, VolumePerTimeUnit::L_Per_min);
   config.GetInspiratoryExpiratoryRatio().SetValue(.5);
   config.GetOxygenFraction().SetValue(.5);

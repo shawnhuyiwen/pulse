@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.h"
 
 class CDM_DECL SEMechanicalVentilatorMode : public SEMechanicalVentilatorAction
@@ -19,12 +19,12 @@ public:
 
   virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr);
 
-  virtual eMechanicalVentilator_Connection GetConnection() const;
-  virtual void SetConnection(eMechanicalVentilator_Connection c);
+  virtual eSwitch GetConnection() const;
+  virtual void SetConnection(eSwitch c);
 
   virtual void ToString(std::ostream &str) const = 0;
 
 protected:
 
-  eMechanicalVentilator_Connection             m_Connection;
+  eSwitch             m_Connection;
 };  
