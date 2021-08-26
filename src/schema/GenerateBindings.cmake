@@ -169,18 +169,19 @@ endif()
 #################
 ## C# Bindings ##
 #################
-
-set(csharp_bindings_DIR "${DST_ROOT}/csharp")
-file(MAKE_DIRECTORY "${csharp_bindings_DIR}")
-delete_bindings(${csharp_bindings_DIR})
-foreach(f ${_FILES})
-  message(STATUS "C# Binding file ${f}")
-  execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
-                                    --csharp_out=${csharp_bindings_DIR}
-                                    --csharp_opt=base_namespace
-                                    ${f})
-endforeach()
-message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )
+if(Pulse_CSHARP_API)
+  set(csharp_bindings_DIR "${DST_ROOT}/csharp")
+  file(MAKE_DIRECTORY "${csharp_bindings_DIR}")
+  delete_bindings(${csharp_bindings_DIR})
+  foreach(f ${_FILES})
+    message(STATUS "C# Binding file ${f}")
+    execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
+                                      --csharp_out=${csharp_bindings_DIR}
+                                      --csharp_opt=base_namespace
+                                      ${f})
+  endforeach()
+  message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )
+endif()
 
 if(Pulse_PYTHON_API)
   #####################
