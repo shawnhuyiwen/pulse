@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class JNIBridge 
 { 
   private static boolean loaded  =  false;
-  private static String  libName = "PulseJNId";
+  private static String  libName = "PulseJNI";
   
   public static void initialize()
   {
