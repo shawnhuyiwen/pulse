@@ -414,6 +414,7 @@ public:
   void BasicBlackBoxTest(const std::string& sOutputDirectory);
   void SimpleBlackBoxTest(const std::string& sOutputDirectory);
   void WindkesselBlackBoxTest(const std::string& sOutputDirectory);
+  void BlackBoxComplianceTest(const std::string& sOutputDirectory);
 
   ///////////////
   // I/O Tests //

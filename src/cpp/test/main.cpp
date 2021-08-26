@@ -92,8 +92,9 @@ int main(int argc, char* argv[])
       //cdmTest.BasicBlackBoxTest(peDir);
       //cdmTest.SimpleBlackBoxTest(peDir);
       //cdmTest.WindkesselBlackBoxTest(peDir);
+      //cdmTest.BlackBoxComplianceTest(peDir);
       //peTest.EmptyBlackBoxTest(peDir);
-      peTest.ImposeFlowBlackBoxTest(peDir);
+      //peTest.ImposeFlowBlackBoxTest(peDir);
       //peTest.ImposePressureAndFlowBlackBoxTest(peDir);
 
       //peTest.AerosolTest(peDir);

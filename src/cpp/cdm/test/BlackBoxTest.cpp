@@ -780,3 +780,107 @@ void CommonDataModelTest::WindkesselBlackBoxTest(const std::string& sOutputDirec
     m_Circuits->Clear();
   }
 }
+
+void CommonDataModelTest::BlackBoxComplianceTest(const std::string& sOutputDirectory)
+{
+  for (unsigned int iter = 0; iter < 2; iter++)
+  {
+    std::string name = "";
+    if (iter == 0)
+    {
+      name = "BlackBoxComplianceTest1";
+    }
+    else
+    {
+      name = "BlackBoxComplianceTest2";
+    }
+
+    std::cout << name << "\n";
+    m_Logger->SetLogFile(sOutputDirectory + "/" + name + ".log");
+
+    TimingProfile p;
+    double timeStep_s = 1.0 / 50.0;
+    double currentTime_s = 0.0;
+    DataTrack trk;
+
+    SEFluidCircuitCalculator fluidCalculator(m_Logger);
+
+    //Circuit 1
+    SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("fluidCircuit");
+
+    //Nodes
+    SEFluidCircuitNode& Node1 = fluidCircuit->CreateNode("Node1");
+    SEFluidCircuitNode& Node2 = fluidCircuit->CreateNode("Node2");
+    SEFluidCircuitNode& Node3 = fluidCircuit->CreateNode("Node3");
+    SEFluidCircuitNode& Node4 = fluidCircuit->CreateNode("Node4");
+    SEFluidCircuitNode& BBNode = fluidCircuit->CreateNode("BBNode");
+
+    Node4.SetAsReferenceNode();
+    Node4.GetNextPressure().SetValue(0, PressureUnit::Pa);
+
+    //Pressure source
+    SEFluidCircuitPath& Path1 = fluidCircuit->CreatePath(Node4, Node1, "Path1");
+    Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
+    //Paths
+    SEFluidCircuitPath& Path2 = fluidCircuit->CreatePath(Node1, Node2, "Path2");
+    SEFluidCircuitPath& Path3 = fluidCircuit->CreatePath(Node2, BBNode, "Path3");
+    SEFluidCircuitPath& Path4 = fluidCircuit->CreatePath(BBNode, Node3, "Path4");
+    SEFluidCircuitPath& Path5 = fluidCircuit->CreatePath(Node3, Node4, "Path5");
+    Path5.GetNextResistance().SetValue(10, PressureTimePerVolumeUnit::Pa_s_Per_m3);
+    SEFluidCircuitPath* Path6;
+    if (iter == 0)
+    {
+      Path6 = &fluidCircuit->CreatePath(Node2, Node4, "Path6");
+    }
+    else
+    {
+      Path6 = &fluidCircuit->CreatePath(Node1, Node4, "Path6");
+    }
+    Path6->GetNextCompliance().SetValue(0.1, VolumePerPressureUnit::m3_Per_Pa);
+
+    //Black Boxes
+    SEBlackBoxManager BBmgr(m_Logger);
+
+    //Black Box Elements
+    SEFluidBlackBox& BlackBox = *BBmgr.GetLiquidBlackBox("Node2", "Node3", "BlackBox");
+    BBmgr.MapBlackBox<MAP_FLUID_BLACK_BOX>(BlackBox, Path3, Path4);
+
+    fluidCircuit->StateChange();
+
+    Node2.GetPressure().SetValue(0.0, PressureUnit::Pa);
+    Node3.GetPressure().SetValue(0.0, PressureUnit::Pa);
+
+    double blackBoxResistance_Pa_s_Per_m3 = 10;
+
+    //Run -----------------------------------------------------------------------------
+    double sample = 0;
+    while (currentTime_s < 20)
+    {
+      //Black Box settings ------------------------------------------------------------
+      //Imposed = black box forces it on circuit
+      double flow_m3_Per_s = Node2.GetPressure(PressureUnit::Pa) / blackBoxResistance_Pa_s_Per_m3;
+      BlackBox.ImposeSourceFlux(flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+      BlackBox.ImposeTargetFlux(flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+
+      //Circuit1 has the source
+      double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
+      fluidCircuit->GetPath("Path1")->GetNextPressureSource().SetValue(potential_Pa, PressureUnit::Pa);
+
+      fluidCalculator.Process(*fluidCircuit, timeStep_s);
+
+      fluidCalculator.PostProcess(*fluidCircuit);
+
+      currentTime_s += timeStep_s;
+      sample += timeStep_s;
+      if (sample > 0.1) //every 0.1 seconds, track state of circuit
+      {
+        sample = 0;
+        trk.Track(currentTime_s, *fluidCircuit);
+      }
+    }
+
+    std::string sOutputFile = sOutputDirectory + "/" + name +"Circuit.csv";
+    trk.WriteTrackToFile(sOutputFile.c_str());
+    m_Circuits->Clear();
+  }
+}
