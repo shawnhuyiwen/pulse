@@ -3,11 +3,11 @@
 
 from pulse.cdm.engine import eSerializationFormat, eSwitch
 from pulse.cdm.environment_actions import SEThermalApplication
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.scalars import AreaUnit, PowerUnit, TemperatureUnit
 
 def HowTo_ThermalApplication():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_ThermalApplication.log")
     pulse.log_to_console(True)
 

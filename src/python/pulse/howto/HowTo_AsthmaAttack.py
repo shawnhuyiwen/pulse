@@ -3,10 +3,10 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEAsthmaAttack
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_AsthmaAttack():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_AsthmaAttack.log")
     pulse.log_to_console(True)
 

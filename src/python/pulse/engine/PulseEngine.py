@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 
 import math, copy
+from enum import Enum
 import PyPulse
 from pulse.cdm.patient import SEPatient, SEPatientConfiguration
 from pulse.cdm.engine import SEAction, eSerializationFormat, SEDataRequestManager, SEDataRequest
@@ -14,15 +15,18 @@ from pulse.cdm.io.engine import serialize_actions_to_string, \
                                 serialize_log_messages_from_string
 from pulse.cdm.io.patient import serialize_patient_from_string
 
+class eModelType(Enum):
+    HumanAdultWholeBody = 0
+    HumanAdultVentilationMechanics = 1
 
-class PulsePhysiologyEngine:
+class PulseEngine:
     __slots__ = ['__pulse', "_is_ready", "_dt_s",
                  "_results", "_results_template",
                  "_event_handler", "_log_forward",
                  "_spare_time_s"]
 
-    def __init__(self, data_root_dir="./"):
-        self.__pulse = PyPulse.Engine(data_root_dir)
+    def __init__(self, eModelType=eModelType.HumanAdultWholeBody, data_root_dir="./"):
+        self.__pulse = PyPulse.Engine(PyPulse.model_type.human_adult_whole_body, data_root_dir)
         self._is_ready = False
         self._log_forward = None
         self._event_handler = None

@@ -3,10 +3,10 @@
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SEPulmonaryShuntExacerbation
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_PulmonaryShunt():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_pulmonary_shunt.log")
     pulse.log_to_console(True)
 

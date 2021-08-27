@@ -12,7 +12,7 @@ endmacro()
 function(add_library_ex target)
 
   set(options VERBOSE SHARED LIB_INSTALL_ONLY NO_INSTALL)
-  set(oneValueArgs)
+  set(oneValueArgs SOURCE_ROOT)
   set(multiValueArgs H_FILES CPP_FILES SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS INSTALL_HEADER_DIR)
   include(CMakeParseArguments)
   cmake_parse_arguments(target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
@@ -103,10 +103,13 @@ function(add_library_ex target)
   #-----------------------------------------------------------------------------
   # Include directories
   #-----------------------------------------------------------------------------
-  target_include_directories( ${target} PUBLIC
-    ${target_BUILD_INTERFACE_LIST}
-    $<INSTALL_INTERFACE:include>
-    $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_INSTALL_FOLDER}>
+  target_include_directories( ${target}
+    PUBLIC
+      ${target_BUILD_INTERFACE_LIST}
+      $<INSTALL_INTERFACE:include>
+      $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_INSTALL_FOLDER}>
+    PRIVATE # Bind files
+      ${DST_ROOT}/cpp
     )
   target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/src/cpp)
 
@@ -152,12 +155,18 @@ function(add_library_ex target)
   # Add the target to project folders
   #-----------------------------------------------------------------------------
   set_target_properties (${target} PROPERTIES FOLDER ${PROJECT_NAME})
-  foreach(h ${target_H_FILES})
-    list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${h}")
-  endforeach()
-  foreach(cpp ${target_CPP_FILES})
-    list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${cpp}")
-  endforeach()
-  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${target_FILES})
+  
+  if(NOT target_SOURCE_ROOT)
+    foreach(h ${target_H_FILES})
+      list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${h}")
+    endforeach()
+    foreach(cpp ${target_CPP_FILES})
+      list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${cpp}")
+    endforeach()
+    source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${target_H_FILES} ${target_CPP_FILES})
+  else()
+  
+    source_group(TREE "${target_SOURCE_ROOT}" FILES ${target_FILES})
+  endif()
 
 endfunction()

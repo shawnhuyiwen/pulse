@@ -14,7 +14,7 @@ namespace pulse
   
   namespace engine
   {
-    enum class eModelType { HumanAdultWholeBody, HumanAdultVentilationMechanics };
+    enum class eModelType { HumanAdultWholeBody=0, HumanAdultVentilationMechanics };
     bool valueOf(const std::string s, eModelType& t);
 
     std::unique_ptr<PhysiologyEngine> CreatePulseEngine(eModelType type=eModelType::HumanAdultWholeBody, Logger* logger = nullptr);

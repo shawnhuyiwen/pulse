@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Pulse</name>
+	<name>bind</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,4 +14,17 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>java</name>
+			<type>2</type>
+			<locationURI>PULSE_BUILD/Innerbuild/src/java</locationURI>
+		</link>
+	</linkedResources>
+	<variableList>
+		<variable>
+			<name>PULSE_BIND</name>
+			<value>$%7BPULSE_BUILD%7D/Innerbuild/src/java/com</value>
+		</variable>
+	</variableList>
 </projectDescription>

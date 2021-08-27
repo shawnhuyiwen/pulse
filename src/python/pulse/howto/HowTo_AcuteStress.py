@@ -4,10 +4,10 @@
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEAcuteStress
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_AcuteStress():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_AcuteStress.log")
     pulse.log_to_console(True)
 

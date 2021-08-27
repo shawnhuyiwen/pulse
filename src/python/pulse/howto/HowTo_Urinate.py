@@ -2,10 +2,10 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.patient_actions import SEUrinate
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_Urinate():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_Urinate.log")
     pulse.log_to_console(True)
 

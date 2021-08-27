@@ -3,10 +3,10 @@
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SELobarPneumoniaExacerbation
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_UseLPE():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_LobarPneumonia.log")
     pulse.log_to_console(True)
 

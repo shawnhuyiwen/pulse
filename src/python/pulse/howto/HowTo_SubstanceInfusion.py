@@ -4,10 +4,10 @@
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.scalars import VolumePerTimeUnit, MassPerVolumeUnit
 from pulse.cdm.patient_actions import SESubstanceInfusion
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_SubstanceInfusion():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_SubstanceInfusion.log")
     pulse.log_to_console(True)
 
