@@ -724,7 +724,28 @@ namespace PULSE_ENGINE
     {
       double severity = m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorLeak().GetSeverity().GetValue();
       double resistance_cmH2O_s_Per_L = m_LeakConnectionToEnvironment->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      resistance_cmH2O_s_Per_L = GeneralMath::ExponentialDecayFunction(20.0, resistance_cmH2O_s_Per_L, 1.0, severity);
+      //Piecewise linear
+      if (severity > 0.9)
+      {
+        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.9, 1.0, 50.0, 1.0, severity);
+      }
+      else if (severity > 0.6)
+      {
+        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.6, 0.9, 100.0, 50.0, severity);
+      }
+      else if (severity > 0.3)
+      {
+        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.3, 0.6, 500.0, 100.0, severity);
+      }
+      else if (severity > 0.1)
+      {
+        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.1, 0.3, 1000.0, 500.0, severity);
+      }
+      else
+      {
+        resistance_cmH2O_s_Per_L = GeneralMath::LinearInterpolator(0.0, 0.1, resistance_cmH2O_s_Per_L, 1000.0, severity);
+      }
+
       m_LeakConnectionToEnvironment->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
   }
