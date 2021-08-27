@@ -297,6 +297,8 @@ namespace PULSE_ENGINE
     GetTotalRespiratoryModelCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
     GetTotalRespiratoryModelResistance().SetValue(1.5, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
+    GetInspiratoryFlow().SetValue(0, VolumePerTimeUnit::L_Per_s);
+
     // Muscle Pressure Waveform
     m_InspiratoryRiseFraction = 0;
     m_InspiratoryHoldFraction = 0;
@@ -503,16 +505,6 @@ namespace PULSE_ENGINE
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::PreProcess()
   {
-    //Intubation
-    if (m_PatientActions->HasIntubation())
-    {
-      m_data.SetIntubation(eSwitch::On);
-    }
-    else
-    {
-      m_data.SetIntubation(eSwitch::Off);
-    }
-
     if (m_data.HasOverride())
     {
       // Look for any known overrides

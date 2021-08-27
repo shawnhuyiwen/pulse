@@ -16,6 +16,8 @@
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
@@ -100,7 +102,7 @@ void HowToMechanicalVentilator()
   pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit::L);
   pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit::L);
   pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_s);
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowTo/HowToMechanicalVentilator.csv");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowTo/HowTo_MechanicalVentilator.cpp.csv");
 
   //Dyspnea
   SEDyspnea Dyspnea;
@@ -119,8 +121,8 @@ void HowToMechanicalVentilator()
 
   SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
   cpap.SetConnection(eSwitch::On);
-  cpap.GetFractionInspiredOxygen().SetValue(0.21);
   cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
+  cpap.GetFractionInspiredOxygen().SetValue(0.21);
   cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   cpap.GetSlope().SetValue(0.2, TimeUnit::s);
   pe->ProcessAction(cpap);
@@ -156,7 +158,7 @@ void HowToMechanicalVentilator()
 
   // Here is an example of programming a custom ventilator mode
   SEMechanicalVentilatorConfiguration mv_config;
-  SEMechanicalVentilatorSettings mv = mv_config.GetSettings();
+  SEMechanicalVentilatorSettings& mv = mv_config.GetSettings();
   mv.SetConnection(eSwitch::On);
   mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
@@ -177,6 +179,26 @@ void HowToMechanicalVentilator()
   pe->GetEngineTracker()->LogRequestedValues(false);
 
   // You can also perform a hold
+  SEMechanicalVentilatorHold hold;
+  hold.SetState(eSwitch::On);
+  pe->ProcessAction(hold);
+  AdvanceAndTrackTime_s(5, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+  hold.SetState(eSwitch::Off);
+  pe->ProcessAction(hold);
+  AdvanceAndTrackTime_s(5, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+
+  // A leak can be specified
+  SEMechanicalVentilatorLeak leak;
+  leak.GetSeverity().SetValue(0.5);
+  pe->ProcessAction(leak);
+  AdvanceAndTrackTime_s(5, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
+  leak.GetSeverity().SetValue(0.0);// Turn off the leak
+  pe->ProcessAction(leak);
+  AdvanceAndTrackTime_s(5, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
 
   pe->GetLogger()->Info("Finished");
 }

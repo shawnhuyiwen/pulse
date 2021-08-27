@@ -54,6 +54,7 @@ set(PULSE_CSHARP_HOWTO_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_PatientStates.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RespiratoryMechanics.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RunScenarios.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_VentilationMechanics.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_UseStates.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/Program.cs
 )
@@ -234,6 +235,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorMode.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/physiology/SERespiratoryMechanics.cs

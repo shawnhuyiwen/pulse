@@ -50,7 +50,7 @@ namespace Pulse.CDM
     }
     protected static void Unload(SEBagValveMask src, pulse.cdm.bind.BagValveMaskData dst)
     {
-      dst.Connection = (pulse.cdm.bind.BagValveMaskData.Types.eConnection)(int)src.GetConnection();
+      dst.Connection = (pulse.cdm.bind.eSwitch)(int)src.GetConnection();
       if (src.HasBagResistance())
         dst.BagResistance = PBProperty.Unload(src.GetBagResistance());
       if (src.HasConnectionVolume())

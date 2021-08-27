@@ -56,6 +56,7 @@ bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::
     SetupDefaultDataRequests();
     m_engine->GetLogger()->Info("No data requested, will return default vitals");
   }
+  m_engine->GetEngineTracker()->SetupRequests();
 
   return true;
 }
@@ -83,6 +84,7 @@ bool PhysiologyEngineThunk::SerializeFromString(std::string const& state, std::s
   }
   else
     SetupDefaultDataRequests();
+  m_engine->GetEngineTracker()->SetupRequests();
 
   return true;
 }
@@ -130,6 +132,7 @@ bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configur
   }
   else
     SetupDefaultDataRequests();
+  m_engine->GetEngineTracker()->SetupRequests();
 
   // Ok, crank 'er up!
   if (!m_engine->InitializeEngine(pc))
@@ -292,6 +295,8 @@ bool PhysiologyEngineThunk::AdvanceTimeStep()
   try
   {
     success = m_engine->AdvanceModelTime();
+    if (m_engine->GetEngineTracker()->GetDataRequestManager().HasResultsFilename())
+      m_engine->GetEngineTracker()->TrackData(m_engine->GetSimulationTime(TimeUnit::s));
   }
   catch (CommonDataModelException& ex)
   {
@@ -314,7 +319,7 @@ bool PhysiologyEngineThunk::AdvanceTimeStep()
 double* PhysiologyEngineThunk::PullDataPtr()
 {
   double currentTime_s = m_engine->GetSimulationTime(TimeUnit::s);
-  m_engine->GetEngineTracker()->TrackData(currentTime_s);
+  m_engine->GetEngineTracker()->PullData();
   if (m_requestedData == nullptr)
   {
     // +1 for the sim time

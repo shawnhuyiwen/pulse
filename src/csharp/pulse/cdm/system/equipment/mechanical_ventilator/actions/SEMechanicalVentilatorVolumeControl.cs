@@ -8,7 +8,7 @@ namespace Pulse.CDM
     AssistedControl = 0,
     ContinuousMandatoryVentilation
   }
-  public class SEMechanicalVentilatorVolumeControl : SEMechanicalVentilatorAction
+  public class SEMechanicalVentilatorVolumeControl : SEMechanicalVentilatorMode
   {
     protected eMechanicalVentilator_VolumeControlMode mode;
     protected SEScalarVolumePerTime                   flow;

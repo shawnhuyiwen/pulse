@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using Pulse;
 using Pulse.CDM;
 
-namespace HowTo_RespiratoryMechanics
+namespace HowTo_VentilationMechanics
 {
   class Example
   {
     public static void Run()
     {
       // Create our pulse engine
-      PulseEngine pulse = new PulseEngine();
+      PulseEngine pulse = new PulseEngine(eModelType.HumanAdultVentilationMechanics);
       pulse.LogToConsole(true);// Easily view what is happening
 
       List<SEDataRequest> data_requests = new List<SEDataRequest>
@@ -22,49 +22,68 @@ namespace HowTo_RespiratoryMechanics
         SEDataRequest.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min),
         SEDataRequest.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit.mL),
         SEDataRequest.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit.mL),
-        SEDataRequest.CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
-        SEDataRequest.CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
-        SEDataRequest.CreatePhysiologyDataRequest("PulmonaryCompliance",VolumePerPressureUnit.L_Per_cmH2O),
-        SEDataRequest.CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio"),
+        SEDataRequest.CreatePhysiologyDataRequest("MeanAirwayPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreatePhysiologyDataRequest("TransrespiratoryPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreatePhysiologyDataRequest("IntrapulmonaryPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreatePhysiologyDataRequest("InspiratoryFlow", VolumePerTimeUnit.L_Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_mL),
+        SEDataRequest.CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_mL),
+        SEDataRequest.CreatePhysiologyDataRequest("PulmonaryCompliance",VolumePerPressureUnit.mL_Per_cmH2O),
+        SEDataRequest.CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.mL_Per_min),
+        // Ventilator Monitor Data
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction"),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalOxygenFraction"),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalOxygenPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("ExpiratoryFlow", VolumePerTimeUnit.L_Per_s),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit.L),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("InspiratoryExpiratoryRatio"),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit.L_Per_s),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit.L),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiredPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("LeakFraction"),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("MeanAirwayPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("PlateauPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("PositiveEndExpiratoryPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("PulmonaryCompliance", VolumePerPressureUnit.L_Per_cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("PulmonaryElastance", PressurePerVolumeUnit.cmH2O_Per_L),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("RelativeTotalLungVolume", VolumeUnit.L),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("RespirationRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit.L),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit.L),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_s),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
-      data_mgr.SetResultsFilename("./test_results/howto/HowTo_RespiratoryMechanics.cs.csv");
+      data_mgr.SetResultsFilename("./test_results/howto/HowTo_VentilationMechanics.cs.csv");
       // Create a reference to a double[] that will contain the data returned from Pulse
       double[] data_values;
       // data_values[0] is ALWAYS the simulation time in seconds
       // The rest of the data values are in order of the data_requests list provided
 
-      if (!pulse.SerializeFromFile("./states/StandardMale@0s.pbb", data_mgr))
-      {
-        Console.WriteLine("Error Initializing Pulse!");
-        return;
-      }
-      // Get the values of the data you requested at this time
-      data_values = pulse.PullData();
-      // And write it out to the console
-      data_mgr.WriteData(data_values);
+      // You only need to set a sex
+      SEPatientConfiguration pCfg = new SEPatientConfiguration();
+      pCfg.GetPatient().SetSex(ePatient_Sex.Male);
 
-      for (int i = 0; i < 6; i++)
-      {
-        pulse.AdvanceTime_s(10);
-        // Get the values of the data you requested at this time
-        data_values = pulse.PullData();
-        // And write it out to the console
-        data_mgr.WriteData(data_values);
-      }
+      // State serialization is not needed, this initializes instantaneously
+      pulse.InitializeEngine(pCfg, data_mgr);
 
+      // Since this engine is just the ventilation mechanics
+      // You configure the patient respiratory via the RespiratoryMechanics structure
       SERespiratoryMechanicsConfiguration config = new SERespiratoryMechanicsConfiguration();
       SERespiratoryMechanics mechanics = config.GetSettings();
       mechanics.SetActive(eSwitch.On);
       // Create a mechanics profile
       double resistance_cmH2O_s_Per_L = 13.0;
       double compliance_mL_Per_cmH2O = 50.0;
+      double musclePressure_cmH2O = 13.0;
       double respirationRate_bpm = 15.0;
       double inspiratoryTime_s = 0.9;
 
       // These need to add to 1.0 (100%)
-      // const double UpperResistanceFraction = 0.5;
-      // UpperResistanceFraction is implied
+      const double UpperResistanceFraction = 0.5;
       const double BronchiResistanceFraction = 0.3;
       const double AlveoliDuctResistanceFraction = 0.2;
 
@@ -114,11 +133,26 @@ namespace HowTo_RespiratoryMechanics
       mechanics.GetExpiratoryRiseTime().SetValue(ExpiratoryRiseFraction * totalBreathTime_s, TimeUnit.s);
       mechanics.GetExpiratoryHoldTime().SetValue(ExpiratoryHoldFraction * totalBreathTime_s, TimeUnit.s);
       mechanics.GetExpiratoryReleaseTime().SetValue(ExpiratoryReleaseFraction * totalBreathTime_s, TimeUnit.s);
-
       mechanics.GetInspiratoryPeakPressure().SetValue(-13.0, PressureUnit.cmH2O);
       mechanics.GetExpiratoryPeakPressure().SetValue(0.0, PressureUnit.cmH2O);
-
       pulse.ProcessAction(config);
+
+      // Intubate
+      SEIntubation intubation = new SEIntubation();
+      intubation.SetType(eIntubation_Type.Tracheal);
+      pulse.ProcessAction(intubation);
+
+      // Setup the ventilator
+      SEMechanicalVentilatorPressureControl pc_ac = new SEMechanicalVentilatorPressureControl();
+      pc_ac.SetConnection(eSwitch.On);
+      pc_ac.SetMode(eMechanicalVentilator_PressureControlMode.AssistedControl);
+      pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
+      pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit.s);
+      pc_ac.GetInspiratoryPressure().SetValue(19.0, PressureUnit.cmH2O);
+      pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit.cmH2O);
+      pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit.Per_min);
+      pc_ac.GetSlope().SetValue(0.2, TimeUnit.s);
+      pulse.ProcessAction(pc_ac);
 
       for (int i = 0; i < 12; i++)
       {

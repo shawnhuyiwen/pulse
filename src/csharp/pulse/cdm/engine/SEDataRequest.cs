@@ -89,7 +89,9 @@ namespace Pulse.CDM
           str += "MechanicalVentilator-";
           break;
       }
-      str += PropertyName + "(" + Unit + ")";
+      str += PropertyName;
+      if (Unit != null)
+       str += " (" + Unit.ToString() + ")";
       return str;
     }
 

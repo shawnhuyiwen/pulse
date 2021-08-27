@@ -33,13 +33,13 @@ int main(int argc, char* argv[])
       // Respiratory Engine Tests //
       //////////////////////////////
       //havmTest.SmokeTest(havmDir);
-//      havmTest.GenerateScenarios();
+      havmTest.GenerateScenarios();
 
       ////////////////////
       // Pulse Tests //
       ////////////////////
 
-      hawbTest.ReadScenarios(hawbDir);
+      //hawbTest.ReadScenarios(hawbDir);
       //hawbTest.ReuseEngine(hawbDir);
 
       //hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);

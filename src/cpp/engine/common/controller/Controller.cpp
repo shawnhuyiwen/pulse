@@ -22,6 +22,7 @@
 #include "engine/common/system/physiology/TissueModel.h"
 #include "engine/io/protobuf/PBState.h"
 
+#include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEActionManager.h"
@@ -34,6 +35,7 @@
 #include "cdm/engine/SEAdvanceHandler.h"
 #include "cdm/engine/SEEngineStabilization.h"
 #include "cdm/patient/SEPatient.h"
+#include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/patient/actions/SEPatientAssessmentRequest.h"
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
@@ -72,6 +74,14 @@ namespace PULSE_ENGINE
     }
   }
 
+  void Data::CheckIntubation()
+  {
+    if (m_Actions->GetPatientActions().HasIntubation())
+      m_Intubation = eSwitch::On;
+    else
+      m_Intubation = eSwitch::Off;
+  }
+
   void Data::SetAirwayMode(eAirwayMode mode)
   {
     if (mode == m_AirwayMode)
@@ -80,22 +90,16 @@ namespace PULSE_ENGINE
       throw CommonDataModelException("Can only change airway mode from the Free mode, Disable other equipment first.");
     if (!IsAirwayModeSupported(mode))
       throw CommonDataModelException("Unsupported airwaymode : " + eAirwayMode_Name(mode));
+    if (m_Intubation == eSwitch::On)
+    {
+      if(m_AirwayMode == eAirwayMode::Inhaler)
+        throw CommonDataModelException("Cannot apply inhaler if intubated.");
+    }
     m_Compartments->UpdateAirwayGraph();
     m_AirwayMode = mode;
     std::stringstream ss;
     ss << "Airway Mode : " << eAirwayMode_Name(m_AirwayMode);
     Info(ss);
-  }
-
-  void Data::SetIntubation(eSwitch s)
-  {
-    if (s == eSwitch::NullSwitch)
-      s = eSwitch::Off;
-    if (m_Intubation == s)
-      return;// do nazing!
-    if (m_AirwayMode == eAirwayMode::Inhaler)
-      throw CommonDataModelException("Cannot intubate if the inhaler is active.");
-    m_Intubation = s;
   }
 
   void Data::SetupTracker()
@@ -502,6 +506,7 @@ namespace PULSE_ENGINE
     if (!IsReady())
       return false;
 
+    CheckIntubation();
     PreProcess();
     Process();
     PostProcess();

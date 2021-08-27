@@ -96,6 +96,7 @@ elseif(TYPE STREQUAL "protoc")
                                            -Dprotobuf_SRC:PATH=@protobuf_SRC@
                                            -DProtobuf_PROTOC_EXECUTABLE:PATH=@Protobuf_PROTOC_EXECUTABLE@
                                            -DPulse_JAVA_API:BOOL=@Pulse_JAVA_API@
+                                           -DPulse_CSHARP_API:BOOL=@Pulse_CSHARP_API@
                                            -DPulse_PYTHON_API:BOOL=@Pulse_PYTHON_API@
                                            -P "@CMAKE_SOURCE_DIR@/src/schema/GenerateBindings.cmake")
 elseif(TYPE STREQUAL "updateBaselines")
