@@ -1160,6 +1160,7 @@ namespace pulse
     DEFINE_STATIC_STRING_EX(ExpiratoryLimbToYPiece, MechanicalVentilatorExpiratoryLimbToYPiece);
     DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, MechanicalVentilatorInspiratoryLimbToYPiece);
     DEFINE_STATIC_STRING_EX(YPieceToConnection, MechanicalVentilatorYPieceToConnection);
+    DEFINE_STATIC_STRING_EX(LeakConnectionToEnvironment, MechanicalVentilatorLeakConnectionToEnvironment);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, MechanicalVentilatorConnectionToEnvironment);
     DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilatorConnectionToAirway);
 
@@ -1175,6 +1176,7 @@ namespace pulse
         _values.push_back(ExpiratoryLimbToYPiece);
         _values.push_back(InspiratoryLimbToYPiece);
         _values.push_back(YPieceToConnection);
+        _values.push_back(LeakConnectionToEnvironment);
         _values.push_back(ConnectionToEnvironment);
         _values.push_back(ConnectionToAirway);
       }

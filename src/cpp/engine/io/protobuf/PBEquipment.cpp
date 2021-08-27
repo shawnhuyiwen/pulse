@@ -12,6 +12,7 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBElectroCardioGram.h"
 #include "cdm/io/protobuf/PBInhaler.h"
 #include "cdm/io/protobuf/PBMechanicalVentilator.h"
+#include "cdm/io/protobuf/PBProperties.h"
 #include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 #include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
@@ -142,10 +143,14 @@ namespace PULSE_ENGINE
   {
     PBMechanicalVentilator::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
     dst.m_CurrentBreathState = (eBreathState)src.currentbreathstate();
-    dst.m_CurrentInspiratoryVolume_L = src.currentinspiratoryvolume_l();
     dst.m_CurrentPeriodTime_s = src.currentperiodtime_s();
     dst.m_DriverFlow_L_Per_s = src.driverflow_l_per_s();
     dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
+    dst.m_CurrentVentilatorVolume_L = src.currentventilatorvolume_l();
+    dst.m_CurrentRespiratoryVolume_L = src.currentrespiratoryvolume_l();
+    dst.m_InspirationTime_s = src.inspirationtime_s();
+    dst.m_InspiratoryFlow_L_Per_s = src.inspiratoryflow_l_per_s();
+    PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
   }
   PULSE_BIND::MechanicalVentilatorData* PBEquipment::Unload(const MechanicalVentilatorModel& src)
   {
@@ -157,9 +162,13 @@ namespace PULSE_ENGINE
   {
     PBMechanicalVentilator::Serialize(src, *dst.mutable_common());
     dst.set_currentbreathstate((CDM_BIND::eBreathState)src.m_CurrentBreathState);
-    dst.set_currentinspiratoryvolume_l(src.m_CurrentInspiratoryVolume_L);
     dst.set_currentperiodtime_s(src.m_CurrentPeriodTime_s);
     dst.set_driverflow_l_per_s(src.m_DriverFlow_L_Per_s);
     dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
+    dst.set_currentventilatorvolume_l(src.m_CurrentVentilatorVolume_L);
+    dst.set_currentrespiratoryvolume_l(src.m_CurrentRespiratoryVolume_L);
+    dst.set_inspirationtime_s(src.m_InspirationTime_s);
+    dst.set_inspiratoryflow_l_per_s(src.m_InspiratoryFlow_L_Per_s);
+    dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
   }
 }

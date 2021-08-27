@@ -170,43 +170,29 @@ namespace HUMAN_ADULT_VENT_MECH
         SEDataRequestManager& drMgr = s.GetDataRequestManager();
 #endif
 
-        // Setup a few data requests
-        drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-        drMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-        drMgr.CreatePhysiologyDataRequest("RelativeTotalLungVolume", VolumeUnit::mL);
-        drMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-        drMgr.CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
-        drMgr.CreatePhysiologyDataRequest("MeanAirwayPressure", PressureUnit::cmH2O);
-        drMgr.CreatePhysiologyDataRequest("TransrespiratoryPressure", PressureUnit::cmH2O);
-        drMgr.CreatePhysiologyDataRequest("IntrapulmonaryPressure", PressureUnit::cmH2O);
-        drMgr.CreatePhysiologyDataRequest("IntrapleuralPressure", PressureUnit::cmH2O);
-        drMgr.CreatePhysiologyDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_min);
-        drMgr.CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-        drMgr.CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-        drMgr.CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::mL_Per_cmH2O);
-        drMgr.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+        // Setup data requests
         drMgr.CreateMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit::cmH2O);
+        drMgr.CreateMechanicalVentilatorDataRequest("DynamicPulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction");
         drMgr.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("EndTidalOxygenFraction");
         drMgr.CreateMechanicalVentilatorDataRequest("EndTidalOxygenPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("ExpiratoryFlow", VolumePerTimeUnit::L_Per_s);
-        drMgr.CreateMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit::L);
+        drMgr.CreateMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit::mL);
         drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryExpiratoryRatio");
-        drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_s);
-        drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit::L);
+        drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_min);
+        drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit::mL);
         drMgr.CreateMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiredPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("LeakFraction");
         drMgr.CreateMechanicalVentilatorDataRequest("MeanAirwayPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("PlateauPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("PositiveEndExpiratoryPressure", PressureUnit::cmH2O);
-        drMgr.CreateMechanicalVentilatorDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
-        drMgr.CreateMechanicalVentilatorDataRequest("PulmonaryElastance", PressurePerVolumeUnit::cmH2O_Per_L);
-        drMgr.CreateMechanicalVentilatorDataRequest("RelativeTotalLungVolume", VolumeUnit::L);
+        drMgr.CreateMechanicalVentilatorDataRequest("PulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         drMgr.CreateMechanicalVentilatorDataRequest("RespirationRate", FrequencyUnit::Per_min);
-        drMgr.CreateMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit::L);
-        drMgr.CreateMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit::L);
+        drMgr.CreateMechanicalVentilatorDataRequest("StaticPulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+        drMgr.CreateMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit::mL);
+        drMgr.CreateMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit::mL);
         drMgr.CreateMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_s);
 
 #ifdef RUN_PULSE

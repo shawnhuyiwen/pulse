@@ -56,6 +56,11 @@ namespace PULSE_ENGINE
     void CalculateExpiration();
     void SetVentilatorDriver();
     void CycleMode();
+    void SetLeak();
+    void CalculateRespiratoryParameters();
+    void CalculateInspiratoryRespiratoryParameters();
+    void CalculatePauseRespiratoryParameters();
+    void CalculateExpiratoryRespiratoryParameters();
     void SetResistances();
     void SetVolumes();
 
@@ -63,8 +68,13 @@ namespace PULSE_ENGINE
     double                m_CurrentPeriodTime_s;
     double                m_DriverPressure_cmH2O;
     double                m_DriverFlow_L_Per_s;
-    double                m_CurrentInspiratoryVolume_L;
+    double                m_CurrentVentilatorVolume_L;
+    double                m_CurrentRespiratoryVolume_L;
+    double                m_InspirationTime_s;
+    double                m_InspiratoryFlow_L_Per_s;
     eBreathState          m_CurrentBreathState;
+
+    SERunningAverage* m_MeanAirwayPressure_cmH2O;
 
     // Stateless member variable (Set in SetUp())
     SEGasCompartment*    m_Environment;
@@ -84,5 +94,7 @@ namespace PULSE_ENGINE
     SEFluidCircuitPath*  m_VentilatorToInspiratoryValve;
     SEFluidCircuitPath*  m_ExpiratoryLimbToYPiece;
     SEFluidCircuitPath*  m_InspiratoryLimbToYPiece;
+    SEFluidCircuitPath*  m_LeakConnectionToEnvironment;
+    SEFluidCircuitPath*  m_ConnectionToAirway;
   };
 }

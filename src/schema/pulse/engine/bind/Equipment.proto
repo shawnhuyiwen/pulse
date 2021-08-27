@@ -9,6 +9,7 @@ import "pulse/cdm/bind/BagValveMask.proto";
 import "pulse/cdm/bind/ElectroCardioGram.proto";
 import "pulse/cdm/bind/Inhaler.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
+import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/Physiology.proto";
 
 message AnesthesiaMachineData
@@ -52,4 +53,9 @@ message MechanicalVentilatorData
   double                                           CurrentPeriodTime_s            = 4;
   double                                           DriverPressure_cmH2O           = 5;
   double                                           DriverFlow_L_Per_s             = 6;
+  double                                           CurrentVentilatorVolume_L      = 7;
+  double                                           CurrentRespiratoryVolume_L     = 8;
+  double                                           InspirationTime_s              = 9;
+  double                                           InspiratoryFlow_L_Per_s        = 10;
+  pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O       = 11;
 }

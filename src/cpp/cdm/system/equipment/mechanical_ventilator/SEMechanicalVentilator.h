@@ -31,6 +31,10 @@ public:
   virtual SEScalarPressure& GetAirwayPressure();
   virtual double GetAirwayPressure(const PressureUnit& unit) const;
 
+  virtual bool HasDynamicPulmonaryCompliance() const;
+  virtual SEScalarVolumePerPressure& GetDynamicPulmonaryCompliance();
+  virtual double GetDynamicPulmonaryCompliance(const VolumePerPressureUnit& unit) const;
+
   virtual bool HasEndTidalCarbonDioxideFraction() const;
   virtual SEScalar0To1& GetEndTidalCarbonDioxideFraction();
   virtual double GetEndTidalCarbonDioxideFraction() const;
@@ -91,21 +95,17 @@ public:
   virtual SEScalarPressure& GetPositiveEndExpiratoryPressure();
   virtual double GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
 
-  virtual bool HasPulmonaryCompliance() const;
-  virtual SEScalarVolumePerPressure& GetPulmonaryCompliance();
-  virtual double GetPulmonaryCompliance(const VolumePerPressureUnit& unit) const;
-
-  virtual bool HasPulmonaryElastance() const;
-  virtual SEScalarPressurePerVolume& GetPulmonaryElastance();
-  virtual double GetPulmonaryElastance(const PressurePerVolumeUnit& unit) const;
-
-  virtual bool HasRelativeTotalLungVolume() const;
-  virtual SEScalarVolume& GetRelativeTotalLungVolume();
-  virtual double GetRelativeTotalLungVolume(const VolumeUnit& unit) const;
+  virtual bool HasPulmonaryResistance() const;
+  virtual SEScalarPressureTimePerVolume& GetPulmonaryResistance();
+  virtual double GetPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const;
 
   virtual bool HasRespirationRate() const;
   virtual SEScalarFrequency& GetRespirationRate();
   virtual double GetRespirationRate(const FrequencyUnit& unit) const;
+
+  virtual bool HasStaticPulmonaryCompliance() const;
+  virtual SEScalarVolumePerPressure& GetStaticPulmonaryCompliance();
+  virtual double GetStaticPulmonaryCompliance(const VolumePerPressureUnit& unit) const;
 
   virtual bool HasTidalVolume() const;
   virtual SEScalarVolume& GetTidalVolume();
@@ -127,6 +127,7 @@ public:
 protected:
 
   SEScalarPressure*                  m_AirwayPressure;
+  SEScalarVolumePerPressure*         m_DynamicPulmonaryCompliance;
   SEScalar0To1*                      m_EndTidalCarbonDioxideFraction;
   SEScalarPressure*                  m_EndTidalCarbonDioxidePressure;
   SEScalar0To1*                      m_EndTidalOxygenFraction;
@@ -142,10 +143,9 @@ protected:
   SEScalarPressure*                  m_PeakInspiratoryPressure;
   SEScalarPressure*                  m_PlateauPressure;
   SEScalarPressure*                  m_PositiveEndExpiratoryPressure;
-  SEScalarVolumePerPressure*         m_PulmonaryCompliance;
-  SEScalarPressurePerVolume*         m_PulmonaryElastance;
-  SEScalarVolume*                    m_RelativeTotalLungVolume;
+  SEScalarPressureTimePerVolume*     m_PulmonaryResistance;
   SEScalarFrequency*                 m_RespirationRate;
+  SEScalarVolumePerPressure*         m_StaticPulmonaryCompliance;
   SEScalarVolume*                    m_TidalVolume;
   SEScalarVolume*                    m_TotalLungVolume;
   SEScalarVolumePerTime*             m_TotalPulmonaryVentilation;
