@@ -503,16 +503,6 @@ namespace PULSE_ENGINE
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::PreProcess()
   {
-    //Intubation
-    if (m_PatientActions->HasIntubation())
-    {
-      m_data.SetIntubation(eSwitch::On);
-    }
-    else
-    {
-      m_data.SetIntubation(eSwitch::Off);
-    }
-
     if (m_data.HasOverride())
     {
       // Look for any known overrides

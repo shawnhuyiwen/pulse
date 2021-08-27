@@ -162,6 +162,7 @@ namespace PULSE_ENGINE
 
   void AnesthesiaMachineModel::StateChange()
   {
+    UpdateAirwayMode();
     if (m_data.GetAirwayMode() != eAirwayMode::AnesthesiaMachine)
       return;
     if (HasLeftChamber() && GetLeftChamber().GetState() == eSwitch::On)

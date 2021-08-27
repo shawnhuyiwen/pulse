@@ -156,7 +156,6 @@ namespace PULSE_ENGINE
     virtual void                          SetAirwayMode(eAirwayMode mode);
 
     virtual eSwitch                       GetIntubation() const { return m_Intubation; }
-    virtual void                          SetIntubation(eSwitch s);
 
     virtual void                          SetAdvanceHandler(SEAdvanceHandler* handler) { m_AdvanceHandler = handler; }
 
@@ -166,6 +165,7 @@ namespace PULSE_ENGINE
     std::stringstream                     m_ss;
   protected:
     virtual void                          SetupTracker();
+    virtual void                          CheckIntubation();
 
     EngineState                           m_State;
     SEEngineTracker*                      m_EngineTrack;
