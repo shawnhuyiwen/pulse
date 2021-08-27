@@ -13,13 +13,13 @@
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
-#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
-#include "cdm/system/physiology/SERespiratoryMechanics.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
 #include "cdm/system/physiology/SERespiratoryMechanics.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
 #include "cdm/properties/SEScalarPressureTimePerVolume.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
@@ -41,16 +41,44 @@ void HowToVentilationMechanics()
   pe->GetLogger()->Info("HowToVentilationMechanics");
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  // Physiology System Names are defined on the System Objects 
+  // Physiology System Names are defined on the System Objects
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanAirwayPressure", PressureUnit::cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TransrespiratoryPressure", PressureUnit::cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntrapulmonaryPressure", PressureUnit::cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowToBrainInjury.csv");
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::mL_Per_cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::mL_Per_min);
+  // Ventilator Monitor Data
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit::cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction");
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("EndTidalOxygenFraction");
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("EndTidalOxygenPressure", PressureUnit::cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("ExpiratoryFlow", VolumePerTimeUnit::L_Per_s);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit::L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("InspiratoryExpiratoryRatio");
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit::L_Per_s);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit::L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiredPressure", PressureUnit::cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("LeakFractionOrSeverity");
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("MeanAirwayPressure", PressureUnit::cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit::cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PlateauPressure", PressureUnit::cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PositiveEndExpiratoryPressure", PressureUnit::cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("PulmonaryElastance", PressurePerVolumeUnit::cmH2O_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("RelativeTotalLungVolume", VolumeUnit::L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit::L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit::L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_s);
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_VentilationMechanics.cpp.csv");
 
   // You only need to set a sex
   SEPatientConfiguration pCfg(pe->GetLogger());
@@ -131,50 +159,24 @@ void HowToVentilationMechanics()
   intubation.SetType(eIntubation_Type::Tracheal);
   pe->ProcessAction(intubation);
   // TODO jbw/aaron - Figure out how to intubate and connect via a tube on the same timestep
-  pe->AdvanceModelTime();
+  AdvanceAndTrackTime_s(0.02, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
 
   // Setup the ventilator
-  SEMechanicalVentilatorConfiguration MVConfig(pe->GetLogger());
-  SEMechanicalVentilatorSettings& mv = MVConfig.GetSettings();
-  mv.SetConnection(eSwitch::On);
+  SEMechanicalVentilatorPressureControl pc_ac;
+  pc_ac.SetConnection(eSwitch::On);
+  pc_ac.SetMode(eMechanicalVentilator_PressureControlMode::AssistedControl);
+  pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
+  pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
+  pc_ac.GetInspiratoryPressure().SetValue(19.0, PressureUnit::cmH2O);
+  pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+  pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
+  pc_ac.GetSlope().SetValue(0.2, TimeUnit::s);
+  pe->ProcessAction(pc_ac);
 
-  double ventRespirationRate_per_min = 12.0;
-  double inspiratoryPeriod_s = 1.0;
-  double tidalVolume_mL = 900.0;
-  double positiveEndExpiredPressure_cmH2O = 5.0;
-  double flow_L_Per_min = 60.0;
-  double fractionInspiredOxygen = 0.21;
-
-  // Translate ventilator settings
-  double totalPeriod_s = 60.0 / ventRespirationRate_per_min;
-  double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
-
-  mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.GetInspirationTargetFlow().SetValue(flow_L_Per_min, VolumePerTimeUnit::L_Per_min);
-  mv.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-  mv.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-  mv.GetInspirationPatientTriggerPressure().SetValue(-0.000001, PressureUnit::cmH2O);
-  mv.GetExpirationCycleVolume().SetValue(tidalVolume_mL, VolumeUnit::mL);
-  const SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");
-  mv.GetFractionInspiredGas(*oxygen).GetFractionAmount().SetValue(fractionInspiredOxygen);
-  pe->ProcessAction(MVConfig);
-
-  // Advance time
-  double twoCycles_s = 2.0 * 60.0 / respirationRate_bpm;
-  double simiulationTime_s = 20.0 + twoCycles_s;
-  for (int i = 0; i < simiulationTime_s * 50.0; i++)
+  for (int i = 0; i < 12; i++)
   {
-    if (!pe->AdvanceModelTime())  // Compute 1 time step
-    {
-      break;
-    }
-
-    // Do 2 cycles cycle before recording data
-    if (i > twoCycles_s * 50.0)
-    {
-      // Pull Track will pull data from the engine and append it to the file
-      pe->GetEngineTracker()->TrackData(pe->GetSimulationTime(TimeUnit::s));
-    }
+    AdvanceAndTrackTime_s(10.0, *pe);
+    pe->GetEngineTracker()->LogRequestedValues(false);
   }
 }

@@ -57,6 +57,7 @@ namespace HowTo_MechanicalVentilator
         SEDataRequest.CreateMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_s),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
+      data_mgr.SetResultsFilename("./test_results/howto/HowTo_MechanicalVentilator.cs.csv");
       // Create a reference to a double[] that will contain the data returned from Pulse
       double[] data_values;
       // data_values[0] is ALWAYS the simulation time in seconds
@@ -91,31 +92,36 @@ namespace HowTo_MechanicalVentilator
       // For example, if you wanted to lengthen the InspirationPatientTriggerFlow of the mode
 
       SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap = new SEMechanicalVentilatorContinuousPositiveAirwayPressure();
+      cpap.SetConnection(eSwitch.On);
       cpap.GetFractionInspiredOxygen().SetValue(0.21);
       cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit.cmH2O);
       cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit.cmH2O);
       cpap.GetSlope().SetValue(0.2, TimeUnit.s);
       pulse.ProcessAction(cpap);
-      pulse.AdvanceTime_s(30);
+      pulse.AdvanceTime_s(10);
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
 
       SEMechanicalVentilatorPressureControl pc_ac = new SEMechanicalVentilatorPressureControl();
+      pc_ac.SetConnection(eSwitch.On);
+      pc_ac.SetMode(eMechanicalVentilator_PressureControlMode.AssistedControl);
       pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
       pc_ac.GetInspiratoryPeriod().SetValue(1.0,TimeUnit.s);
       pc_ac.GetInspiratoryPressure().SetValue(19.0, PressureUnit.cmH2O);
       pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit.cmH2O);
       pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit.Per_min);
+      pc_ac.GetSlope().SetValue(0, TimeUnit.s);
       pulse.ProcessAction(pc_ac);
-      pulse.AdvanceTime_s(30);
+      pulse.AdvanceTime_s(10);
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
 
       SEMechanicalVentilatorVolumeControl vc_ac = new SEMechanicalVentilatorVolumeControl();
+      vc_ac.SetConnection(eSwitch.On);
       vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode.AssistedControl);
       vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit.L_Per_min);
       vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
@@ -124,7 +130,7 @@ namespace HowTo_MechanicalVentilator
       vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit.Per_min);
       vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit.mL);
       pulse.ProcessAction(vc_ac);
-      pulse.AdvanceTime_s(30);
+      pulse.AdvanceTime_s(10);
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console
@@ -150,7 +156,45 @@ namespace HowTo_MechanicalVentilator
       mv.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit.s);
       pulse.ProcessAction(mv_config);
       // Advance some time and print out the vitals
-      pulse.AdvanceTime_s(30);
+      pulse.AdvanceTime_s(10);
+      // Get the values of the data you requested at this time
+      data_values = pulse.PullData();
+      // And write it out to the console
+      data_mgr.WriteData(data_values);
+
+      // You can also perform a hold
+      SEMechanicalVentilatorHold hold = new SEMechanicalVentilatorHold();
+      hold.SetState(eSwitch.On);
+      pulse.ProcessAction(hold);
+      // Advance some time and print out the vitals
+      pulse.AdvanceTime_s(5);
+      // Get the values of the data you requested at this time
+      data_values = pulse.PullData();
+      // And write it out to the console
+      data_mgr.WriteData(data_values);
+      hold.SetState(eSwitch.Off);
+      pulse.ProcessAction(hold);
+      // Advance some time and print out the vitals
+      pulse.AdvanceTime_s(5);
+      // Get the values of the data you requested at this time
+      data_values = pulse.PullData();
+      // And write it out to the console
+      data_mgr.WriteData(data_values);
+
+      // A leak can be specified
+      SEMechanicalVentilatorLeak leak = new SEMechanicalVentilatorLeak();
+      leak.GetSeverity().SetValue(0.5);
+      pulse.ProcessAction(leak);
+      // Advance some time and print out the vitals
+      pulse.AdvanceTime_s(5);
+      // Get the values of the data you requested at this time
+      data_values = pulse.PullData();
+      // And write it out to the console
+      data_mgr.WriteData(data_values);
+      leak.GetSeverity().SetValue(0.0);// Turn off the leak
+      pulse.ProcessAction(leak);
+      // Advance some time and print out the vitals
+      pulse.AdvanceTime_s(5);
       // Get the values of the data you requested at this time
       data_values = pulse.PullData();
       // And write it out to the console

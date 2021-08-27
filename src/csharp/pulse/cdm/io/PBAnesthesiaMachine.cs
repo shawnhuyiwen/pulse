@@ -60,7 +60,7 @@ namespace Pulse.CDM
     }
     protected static void Unload(SEAnesthesiaMachine src, pulse.cdm.bind.AnesthesiaMachineData dst)
     {
-      dst.Connection = (pulse.cdm.bind.AnesthesiaMachineData.Types.eConnection)(int)src.GetConnection();
+      dst.Connection = (pulse.cdm.bind.eSwitch)(int)src.GetConnection();
       if (src.HasInletFlow())
         dst.InletFlow = PBProperty.Unload(src.GetInletFlow());
       if (src.HasInspiratoryExpiratoryRatio())

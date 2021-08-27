@@ -52,19 +52,12 @@ void HowToRespiratoryMechanics()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_RespiratoryMechanics.csv");
+  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowTo_RespiratoryMechanics.cpp.csv");
 
   for (size_t i = 0; i < 6; i++)
   {
     AdvanceAndTrackTime_s(10, *pe);
-    pe->GetLogger()->Info(std::stringstream() << "\nSimTime : " << pe->GetSimulationTime(TimeUnit::s) << "s");
-    pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-    pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
-    pe->GetLogger()->Info(std::stringstream() << "Total Lung Volume : " << pe->GetRespiratorySystem()->GetTotalLungVolume(VolumeUnit::mL) << "mL");
-    pe->GetLogger()->Info(std::stringstream() << "Expiratory Pulmonary Resistance : " << pe->GetRespiratorySystem()->GetExpiratoryPulmonaryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_mL) << "cmH2O s/mL");
-    pe->GetLogger()->Info(std::stringstream() << "Inspiratory Pulmonary Resistance : " << pe->GetRespiratorySystem()->GetInspiratoryPulmonaryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_mL) << "cmH2O s/mL");
-    pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetPulmonaryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << "mL/cmH2O");
-    pe->GetLogger()->Info(std::stringstream() << "Total Pulmonary Ventilation : " << pe->GetRespiratorySystem()->GetTotalPulmonaryVentilation(VolumePerTimeUnit::mL_Per_s) << "mL/s\n");
+    pe->GetEngineTracker()->LogRequestedValues(false);
   }
 
   SERespiratoryMechanicsConfiguration config;
@@ -138,13 +131,6 @@ void HowToRespiratoryMechanics()
   for (size_t i = 0; i < 12; i++)
   {
     AdvanceAndTrackTime_s(10, *pe);
-    pe->GetLogger()->Info(std::stringstream() << "\nSimTime : " << pe->GetSimulationTime(TimeUnit::s) << "s");
-    pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-    pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);
-    pe->GetLogger()->Info(std::stringstream() << "Total Lung Volume : " << pe->GetRespiratorySystem()->GetTotalLungVolume(VolumeUnit::mL) << "mL");
-    pe->GetLogger()->Info(std::stringstream() << "Expiratory Pulmonary Resistance : " << pe->GetRespiratorySystem()->GetExpiratoryPulmonaryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_mL) << "cmH2O s/mL");
-    pe->GetLogger()->Info(std::stringstream() << "Inspiratory Pulmonary Resistance : " << pe->GetRespiratorySystem()->GetInspiratoryPulmonaryResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_mL) << "cmH2O s/mL");
-    pe->GetLogger()->Info(std::stringstream() << "Pulmonary Compliance : " << pe->GetRespiratorySystem()->GetPulmonaryCompliance(VolumePerPressureUnit::mL_Per_cmH2O) << "mL/cmH2O");
-    pe->GetLogger()->Info(std::stringstream() << "Total Pulmonary Ventilation : " << pe->GetRespiratorySystem()->GetTotalPulmonaryVentilation(VolumePerTimeUnit::mL_Per_s) << "mL/s\n");
+    pe->GetEngineTracker()->LogRequestedValues(false);
   }
 }

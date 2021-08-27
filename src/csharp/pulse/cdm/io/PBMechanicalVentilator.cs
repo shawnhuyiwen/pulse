@@ -107,7 +107,7 @@ namespace Pulse.CDM
     }
     protected static void Unload(SEMechanicalVentilatorSettings src, pulse.cdm.bind.MechanicalVentilatorSettingsData dst)
     {
-      dst.Connection = (pulse.cdm.bind.MechanicalVentilatorSettingsData.Types.eConnection)(int)src.GetConnection();
+      dst.Connection = (pulse.cdm.bind.eSwitch)(int)src.GetConnection();
 
       if (src.HasPositiveEndExpiredPressure())
         dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());

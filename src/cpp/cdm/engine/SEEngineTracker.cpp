@@ -195,15 +195,20 @@ void SEEngineTracker::SetupRequests()
 void SEEngineTracker::LogRequestedValues(bool pullData)
 {
   SEDataRequestScalar* ds;
+  if (pullData)
+    PullData();
   for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
   {
     ds = m_Request2Scalar[dr];
-    if(pullData)
-      ds->UpdateScalar();
     if(!ds->IsValid())
       Info(ds->Heading + " NaN");
     else
-      Info(ds->Heading +" "+ pulse::cdm::to_string(ds->GetValue()));
+    {
+      if(!dr->HasUnit())
+        Info(ds->Heading + " " + pulse::cdm::to_string(ds->GetValue()));
+      else
+        Info(ds->Heading + " " + pulse::cdm::to_string(ds->GetValue(*dr->GetUnit())));
+    }
   }
 }
 

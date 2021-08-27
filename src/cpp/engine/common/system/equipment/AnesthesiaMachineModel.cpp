@@ -243,7 +243,8 @@ namespace PULSE_ENGINE
     {
     case eAirwayMode::Free:
     {
-      SetConnection(eSwitch::Off);
+      if (GetConnection() != eSwitch::Off)
+        SetConnection(eSwitch::Off);
       break;
     }
     case eAirwayMode::AnesthesiaMachine:
@@ -253,7 +254,10 @@ namespace PULSE_ENGINE
       break;
     }
     default:
-      Fatal("Unhandled Airway Mode.");
+    {
+      // Something else is hooked up
+      break;
+    }
     }
   }
 

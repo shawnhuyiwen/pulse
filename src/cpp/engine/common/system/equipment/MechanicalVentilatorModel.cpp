@@ -227,7 +227,7 @@ namespace PULSE_ENGINE
       m_data.SetAirwayMode(eAirwayMode::MechanicalVentilator);
       return;
     }
-    else if (c == eSwitch::Off)
+    else if (c == eSwitch::Off && m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation)
     {
       // Make sure we are active to make sure we go back to free
       m_data.SetAirwayMode(eAirwayMode::Free);
@@ -261,7 +261,8 @@ namespace PULSE_ENGINE
     {
     case eAirwayMode::Free:
     {
-      GetSettings().SetConnection(eSwitch::Off);
+      if (GetSettings().GetConnection() != eSwitch::Off)
+        GetSettings().SetConnection(eSwitch::Off);
       break;
     }
     case eAirwayMode::MechanicalVentilator:
@@ -271,7 +272,10 @@ namespace PULSE_ENGINE
       break;
     }
     default:
-      Fatal("Unhandled Airway Mode.");
+    {
+      // Something else is hooked up
+      break;
+    }
     }
   }
 

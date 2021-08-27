@@ -16,27 +16,28 @@ set(protobuf_REF "${protobuf_SRC}/csharp/src/Google.Protobuf/bin/Release/net45/G
 file(COPY ${protobuf_REF} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 # Bindings
-add_library(PulseCSharpBindings SHARED
-  ${PULSE_CSHARP_BIND_FILES})
-source_group(TREE "${PULSE_CSHARP_BIND_DIR}" FILES ${PULSE_CSHARP_BIND_FILES})
-set_target_properties (PulseCSharpBindings PROPERTIES FOLDER ${PROJECT_NAME}CSharp)
-set_property(TARGET PulseCSharpBindings PROPERTY DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
-set_property(TARGET PulseCSharpBindings PROPERTY VS_DOTNET_REFERENCES
-  ${protobuf_REF})
-add_custom_command(TARGET PulseCSharpBindings POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy $(TargetPath) ${CMAKE_INSTALL_PREFIX}/bin)
-install(TARGETS PulseCSharpBindings EXPORT ${PROJECT_NAME}Targets
-      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries)
+#add_library(PulseCSharpBindings SHARED
+#  ${PULSE_CSHARP_BIND_FILES})
+#source_group(TREE "${PULSE_CSHARP_BIND_DIR}" FILES ${PULSE_CSHARP_BIND_FILES})
+#set_target_properties (PulseCSharpBindings PROPERTIES FOLDER ${PROJECT_NAME})
+#set_property(TARGET PulseCSharpBindings PROPERTY DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
+#set_property(TARGET PulseCSharpBindings PROPERTY VS_DOTNET_REFERENCES
+#  ${protobuf_REF})
+#add_custom_command(TARGET PulseCSharpBindings POST_BUILD
+#                   COMMAND ${CMAKE_COMMAND} -E copy $(TargetPath) ${CMAKE_INSTALL_PREFIX}/bin)
+#install(TARGETS PulseCSharpBindings EXPORT ${PROJECT_NAME}Targets
+#      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries)
 
 # Pulse API
 add_library(PulseCSharp SHARED
-  ${PULSE_CSHARP_FILES})
+  ${PULSE_CSHARP_FILES} ${PULSE_CSHARP_BIND_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${PULSE_CSHARP_FILES})
-set_target_properties (PulseCSharp PROPERTIES FOLDER ${PROJECT_NAME}CSharp)
+source_group(TREE "${PULSE_CSHARP_BIND_DIR}" FILES ${PULSE_CSHARP_BIND_FILES})
+set_target_properties (PulseCSharp PROPERTIES FOLDER ${PROJECT_NAME})
 set_property(TARGET PulseCSharp PROPERTY DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
 set_property(TARGET PulseCSharp PROPERTY VS_DOTNET_REFERENCES
   "${protobuf_REF}")
-add_dependencies(PulseCSharp PulseCSharpBindings)
+#add_dependencies(PulseCSharp PulseCSharpBindings)
 add_custom_command(TARGET PulseCSharp POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $(TargetPath) ${CMAKE_INSTALL_PREFIX}/bin)
 install(TARGETS PulseCSharp EXPORT ${PROJECT_NAME}Targets
@@ -46,7 +47,7 @@ install(TARGETS PulseCSharp EXPORT ${PROJECT_NAME}Targets
 add_executable(PulseCSharpHowTo
   ${PULSE_CSHARP_HOWTO_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${PULSE_CSHARP_HOWTO_FILES})
-set_target_properties (PulseCSharpHowTo PROPERTIES FOLDER ${PROJECT_NAME}CSharp)
+set_target_properties (PulseCSharpHowTo PROPERTIES FOLDER ${PROJECT_NAME})
 set_property(TARGET PulseCSharpHowTo PROPERTY DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
 set_property(TARGET PulseCSharpHowTo PROPERTY VS_DOTNET_REFERENCES
   "System")

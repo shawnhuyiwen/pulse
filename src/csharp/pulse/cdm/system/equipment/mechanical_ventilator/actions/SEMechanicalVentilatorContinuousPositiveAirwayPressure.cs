@@ -3,7 +3,7 @@
 
 namespace Pulse.CDM
 {
-  public class SEMechanicalVentilatorContinuousPositiveAirwayPressure : SEMechanicalVentilatorAction
+  public class SEMechanicalVentilatorContinuousPositiveAirwayPressure : SEMechanicalVentilatorMode
   {
     protected SEScalarPressure deltaPressureSupport;
     protected SEScalar0To1     fractionInspiredOxygen;
