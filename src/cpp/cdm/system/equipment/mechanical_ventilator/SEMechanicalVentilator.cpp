@@ -25,7 +25,7 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
   m_InspiratoryFlow = nullptr;
   m_InspiratoryTidalVolume = nullptr;
   m_IntrinsicPositiveEndExpiredPressure = nullptr;
-  m_LeakFractionOrSeverity = nullptr;
+  m_LeakFraction = nullptr;
   m_MeanAirwayPressure = nullptr;
   m_PeakInspiratoryPressure = nullptr;
   m_PlateauPressure = nullptr;
@@ -54,7 +54,7 @@ SEMechanicalVentilator::~SEMechanicalVentilator()
   SAFE_DELETE(m_InspiratoryFlow);
   SAFE_DELETE(m_InspiratoryTidalVolume);
   SAFE_DELETE(m_IntrinsicPositiveEndExpiredPressure);
-  SAFE_DELETE(m_LeakFractionOrSeverity);
+  SAFE_DELETE(m_LeakFraction);
   SAFE_DELETE(m_MeanAirwayPressure);
   SAFE_DELETE(m_PeakInspiratoryPressure);
   SAFE_DELETE(m_PlateauPressure);
@@ -85,7 +85,7 @@ void SEMechanicalVentilator::Clear()
   INVALIDATE_PROPERTY(m_InspiratoryFlow);
   INVALIDATE_PROPERTY(m_InspiratoryTidalVolume);
   INVALIDATE_PROPERTY(m_IntrinsicPositiveEndExpiredPressure);
-  INVALIDATE_PROPERTY(m_LeakFractionOrSeverity);
+  INVALIDATE_PROPERTY(m_LeakFraction);
   INVALIDATE_PROPERTY(m_MeanAirwayPressure);
   INVALIDATE_PROPERTY(m_PeakInspiratoryPressure);
   INVALIDATE_PROPERTY(m_PlateauPressure);
@@ -126,8 +126,8 @@ const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
     return &GetInspiratoryTidalVolume();
   if (name.compare("IntrinsicPositiveEndExpiredPressure") == 0)
     return &GetIntrinsicPositiveEndExpiredPressure();
-  if (name.compare("LeakFractionOrSeverity") == 0)
-    return &GetLeakFractionOrSeverity();
+  if (name.compare("LeakFraction") == 0)
+    return &GetLeakFraction();
   if (name.compare("MeanAirwayPressure") == 0)
     return &GetMeanAirwayPressure();
   if (name.compare("PeakInspiratoryPressure") == 0)
@@ -341,21 +341,21 @@ double SEMechanicalVentilator::GetIntrinsicPositiveEndExpiredPressure(const Pres
   return m_IntrinsicPositiveEndExpiredPressure->GetValue(unit);
 }
 
-bool SEMechanicalVentilator::HasLeakFractionOrSeverity() const
+bool SEMechanicalVentilator::HasLeakFraction() const
 {
-  return m_LeakFractionOrSeverity == nullptr ? false : m_LeakFractionOrSeverity->IsValid();
+  return m_LeakFraction == nullptr ? false : m_LeakFraction->IsValid();
 }
-SEScalar0To1& SEMechanicalVentilator::GetLeakFractionOrSeverity()
+SEScalar0To1& SEMechanicalVentilator::GetLeakFraction()
 {
-  if (m_LeakFractionOrSeverity == nullptr)
-    m_LeakFractionOrSeverity = new SEScalar0To1();
-  return *m_LeakFractionOrSeverity;
+  if (m_LeakFraction == nullptr)
+    m_LeakFraction = new SEScalar0To1();
+  return *m_LeakFraction;
 }
-double SEMechanicalVentilator::GetLeakFractionOrSeverity() const
+double SEMechanicalVentilator::GetLeakFraction() const
 {
-  if (m_LeakFractionOrSeverity == nullptr)
+  if (m_LeakFraction == nullptr)
     return SEScalar::dNaN();
-  return m_LeakFractionOrSeverity->GetValue();
+  return m_LeakFraction->GetValue();
 }
 
 bool SEMechanicalVentilator::HasMeanAirwayPressure() const

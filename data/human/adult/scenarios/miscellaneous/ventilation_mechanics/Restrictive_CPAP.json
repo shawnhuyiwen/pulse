@@ -200,7 +200,7 @@
      "Precision": 6
     },
     "Category": "MechanicalVentilator",
-    "PropertyName": "LeakFractionOrSeverity"
+    "PropertyName": "LeakFraction"
    },
    {
     "DecimalFormat": {

@@ -95,7 +95,7 @@ message MechanicalVentilatorData
   ScalarVolumePerTimeData             InspiratoryFlow                     = 9; /**<< @brief The instantaneous airflow into the lungs (negative value when exhaling).*/
   ScalarVolumeData                    InspiratoryTidalVolume              = 10;/**<< @brief The volume of air moved into or out of the lungs during normal inspiration.*/
   ScalarPressureData                  IntrinsicPositiveEndExpiredPressure = 11;/**<< @brief The alveolar pressure at the end of expiration - also known as auto-PEEP, air trapping, or dynamic hyperinflation.*/
-  Scalar0To1Data                      LeakFractionOrSeverity              = 12;/**<< @brief The fraction of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
+  Scalar0To1Data                      LeakFraction                        = 12;/**<< @brief The fraction of gas volume lost during the ventilation cycle determined from the air volume in and out difference.*/
   ScalarPressureData                  MeanAirwayPressure                  = 13;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */
   ScalarPressureData                  PeakInspiratoryPressure             = 14;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
   ScalarPressureData                  PlateauPressure                     = 15;/**<< @brief The pressure applied by the ventilator measured at end-inspiration with an inspiratory hold maneuver.*/

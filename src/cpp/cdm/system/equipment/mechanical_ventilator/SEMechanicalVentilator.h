@@ -71,9 +71,9 @@ public:
   virtual SEScalarPressure& GetIntrinsicPositiveEndExpiredPressure();
   virtual double GetIntrinsicPositiveEndExpiredPressure(const PressureUnit& unit) const;
 
-  virtual bool HasLeakFractionOrSeverity() const;
-  virtual SEScalar0To1& GetLeakFractionOrSeverity();
-  virtual double GetLeakFractionOrSeverity() const;
+  virtual bool HasLeakFraction() const;
+  virtual SEScalar0To1& GetLeakFraction();
+  virtual double GetLeakFraction() const;
 
   virtual bool HasMeanAirwayPressure() const;
   virtual SEScalarPressure& GetMeanAirwayPressure();
@@ -137,7 +137,7 @@ protected:
   SEScalarVolumePerTime*             m_InspiratoryFlow;
   SEScalarVolume*                    m_InspiratoryTidalVolume;
   SEScalarPressure*                  m_IntrinsicPositiveEndExpiredPressure;
-  SEScalar0To1*                      m_LeakFractionOrSeverity;
+  SEScalar0To1*                      m_LeakFraction;
   SEScalarPressure*                  m_MeanAirwayPressure;
   SEScalarPressure*                  m_PeakInspiratoryPressure;
   SEScalarPressure*                  m_PlateauPressure;

@@ -45,8 +45,8 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
     PBProperty::Load(src.inspiratorytidalvolume(), dst.GetInspiratoryTidalVolume());
   if (src.has_intrinsicpositiveendexpiredpressure())
     PBProperty::Load(src.intrinsicpositiveendexpiredpressure(), dst.GetIntrinsicPositiveEndExpiredPressure());
-  if (src.has_leakfractionorseverity())
-    PBProperty::Load(src.leakfractionorseverity(), dst.GetLeakFractionOrSeverity());
+  if (src.has_leakfraction())
+    PBProperty::Load(src.leakfraction(), dst.GetLeakFraction());
   if (src.has_meanairwaypressure())
     PBProperty::Load(src.meanairwaypressure(), dst.GetMeanAirwayPressure());
   if (src.has_peakinspiratorypressure())
@@ -103,8 +103,8 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
     dst.set_allocated_inspiratorytidalvolume(PBProperty::Unload(*src.m_InspiratoryTidalVolume));
   if (src.HasIntrinsicPositiveEndExpiredPressure())
     dst.set_allocated_intrinsicpositiveendexpiredpressure(PBProperty::Unload(*src.m_IntrinsicPositiveEndExpiredPressure));
-  if (src.HasLeakFractionOrSeverity())
-    dst.set_allocated_leakfractionorseverity(PBProperty::Unload(*src.m_LeakFractionOrSeverity));
+  if (src.HasLeakFraction())
+    dst.set_allocated_leakfraction(PBProperty::Unload(*src.m_LeakFraction));
   if (src.HasMeanAirwayPressure())
     dst.set_allocated_meanairwaypressure(PBProperty::Unload(*src.m_MeanAirwayPressure));
   if (src.HasPeakInspiratoryPressure())
