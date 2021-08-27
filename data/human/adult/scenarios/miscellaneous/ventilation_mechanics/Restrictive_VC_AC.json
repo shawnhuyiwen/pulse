@@ -9,114 +9,17 @@
     "DecimalFormat": {
      "Precision": 6
     },
-    "Category": "Physiology",
-    "PropertyName": "RespirationRate",
-    "Unit": "1/min"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "TidalVolume",
-    "Unit": "mL"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "RelativeTotalLungVolume",
-    "Unit": "mL"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "InspiratoryExpiratoryRatio"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "MeanAirwayPressure",
+    "Category": "MechanicalVentilator",
+    "PropertyName": "AirwayPressure",
     "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "TransrespiratoryPressure",
-    "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "IntrapulmonaryPressure",
-    "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "IntrapleuralPressure",
-    "Unit": "cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "InspiratoryFlow",
-    "Unit": "L/min"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "InspiratoryPulmonaryResistance",
-    "Unit": "cmH2O s/L"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "ExpiratoryPulmonaryResistance",
-    "Unit": "cmH2O s/L"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "Physiology",
-    "PropertyName": "PulmonaryCompliance",
-    "Unit": "mL/cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "GasCompartment",
-    "CompartmentName": "Carina",
-    "SubstanceName": "CarbonDioxide",
-    "PropertyName": "PartialPressure",
-    "Unit": "mmHg"
    },
    {
     "DecimalFormat": {
      "Precision": 6
     },
     "Category": "MechanicalVentilator",
-    "PropertyName": "AirwayPressure",
-    "Unit": "cmH2O"
+    "PropertyName": "DynamicPulmonaryCompliance",
+    "Unit": "L/cmH2O"
    },
    {
     "DecimalFormat": {
@@ -162,7 +65,7 @@
     },
     "Category": "MechanicalVentilator",
     "PropertyName": "ExpiratoryTidalVolume",
-    "Unit": "L"
+    "Unit": "mL"
    },
    {
     "DecimalFormat": {
@@ -177,7 +80,7 @@
     },
     "Category": "MechanicalVentilator",
     "PropertyName": "InspiratoryFlow",
-    "Unit": "L/s"
+    "Unit": "L/min"
    },
    {
     "DecimalFormat": {
@@ -185,7 +88,7 @@
     },
     "Category": "MechanicalVentilator",
     "PropertyName": "InspiratoryTidalVolume",
-    "Unit": "L"
+    "Unit": "mL"
    },
    {
     "DecimalFormat": {
@@ -239,24 +142,8 @@
      "Precision": 6
     },
     "Category": "MechanicalVentilator",
-    "PropertyName": "PulmonaryCompliance",
-    "Unit": "L/cmH2O"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "PulmonaryElastance",
-    "Unit": "cmH2O/L"
-   },
-   {
-    "DecimalFormat": {
-     "Precision": 6
-    },
-    "Category": "MechanicalVentilator",
-    "PropertyName": "RelativeTotalLungVolume",
-    "Unit": "L"
+    "PropertyName": "PulmonaryResistance",
+    "Unit": "cmH2O s/L"
    },
    {
     "DecimalFormat": {
@@ -271,8 +158,16 @@
      "Precision": 6
     },
     "Category": "MechanicalVentilator",
+    "PropertyName": "StaticPulmonaryCompliance",
+    "Unit": "L/cmH2O"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
     "PropertyName": "TidalVolume",
-    "Unit": "L"
+    "Unit": "mL"
    },
    {
     "DecimalFormat": {
@@ -280,7 +175,7 @@
     },
     "Category": "MechanicalVentilator",
     "PropertyName": "TotalLungVolume",
-    "Unit": "L"
+    "Unit": "mL"
    },
    {
     "DecimalFormat": {
