@@ -47,14 +47,12 @@ namespace PULSE_ENGINE
 
     void CalculateScrubber();
 
-    // Extending some functionality to these base class methods
-    // We will update the Pulse Airway mode when these are called
-    virtual void SetConnection(eAnesthesiaMachine_Connection c);
+    void UpdateAirwayMode();
+    void UpdateConnection();
     virtual void InvalidateConnection();
 
     void CalculateSourceStatus();
     void CalculateEquipmentLeak();
-    void SetConnection();
     void CalculateValveResistances();
     void CalculateVentilatorPressure();
     void CalculateGasSourceSubstances();

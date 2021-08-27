@@ -165,7 +165,7 @@ void SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToString(std::ostre
   str << "Mechanical Ventilator Action : Continuous Positive Airway Pressure";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tConnection: " << eMechanicalVentilator_Connection_Name(m_Connection);
+  str << "\n\tConnection: " << eSwitch_Name(m_Connection);
   str << "\n\tDeltaPressureSupport :"; HasDeltaPressureSupport() ? str << *m_DeltaPressureSupport : str << "NaN";
   str << "\n\tFractionInspiredOxygen :"; HasFractionInspiredOxygen() ? str << *m_FractionInspiredOxygen : str << "NaN";
   str << "\n\tPositiveEndExpiredPressure :"; HasPositiveEndExpiredPressure() ? str << *m_PositiveEndExpiredPressure : str << "NaN";

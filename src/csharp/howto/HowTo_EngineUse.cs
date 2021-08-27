@@ -136,7 +136,7 @@ namespace HowTo_UseEngine
             // Grab the patient and fill in some data
             SEPatient patient = cfg.GetPatient();
             patient.SetName("Owen");
-            patient.SetSex(SEPatient.eSex.Male);
+            patient.SetSex(ePatient_Sex.Male);
             patient.GetAge().SetValue(30, TimeUnit.yr);
             patient.GetWeight().SetValue(200, MassUnit.lb);
             patient.GetHeight().SetValue(74, LengthUnit.inch);
@@ -223,7 +223,7 @@ namespace HowTo_UseEngine
       List<SEAction> actions = new List<SEAction>();
 
       SEHemorrhage h = new SEHemorrhage();
-      h.SetType(SEHemorrhage.eType.External);
+      h.SetType(eHemorrhage_Type.External);
       h.SetCompartment("RightLeg");
       h.GetSeverity().SetValue(0.8);
       // Optionally, You can set the flow rate of the hemorrhage,
@@ -297,14 +297,14 @@ namespace HowTo_UseEngine
       // But if you want to interact with a haptic device, use that action with data from your device
       // Or program up a sinusoidal or square wave for applying pressure
       SEAnesthesiaMachineConfiguration am = new SEAnesthesiaMachineConfiguration();
-      am.GetConfiguration().SetConnection(SEAnesthesiaMachine.Connection.Tube);
+      am.GetConfiguration().SetConnection(eSwitch.On);
       am.GetConfiguration().GetInletFlow().SetValue(5, VolumePerTimeUnit.L_Per_min);
       am.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
       am.GetConfiguration().GetOxygenFraction().SetValue(0.23);
-      am.GetConfiguration().SetOxygenSource(SEAnesthesiaMachine.OxygenSource.Wall);
+      am.GetConfiguration().SetOxygenSource(eAnesthesiaMachine_OxygenSource.Wall);
       am.GetConfiguration().GetPeakInspiratoryPressure().SetValue(10.5, PressureUnit.cmH2O);
       am.GetConfiguration().GetPositiveEndExpiredPressure().SetValue(1, PressureUnit.cmH2O);
-      am.GetConfiguration().SetPrimaryGas(SEAnesthesiaMachine.PrimaryGas.Nitrogen);
+      am.GetConfiguration().SetPrimaryGas(eAnesthesiaMachine_PrimaryGas.Nitrogen);
       am.GetConfiguration().GetRespiratoryRate().SetValue(16, FrequencyUnit.Per_min);
       if (!pulse.ProcessAction(am))
       {

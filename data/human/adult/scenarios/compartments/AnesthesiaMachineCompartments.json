@@ -1197,7 +1197,7 @@
     "EquipmentAction": {
       "AnesthesiaMachineConfiguration": {
         "Configuration": {
-          "Connection": "Mask",
+          "Connection": "On",
           "InspiratoryExpiratoryRatio": {
             "Value": 0.5
           },

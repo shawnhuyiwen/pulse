@@ -49,7 +49,7 @@ namespace HowTo_PatientStates
       injury_set_names.Add("MinorLegBleed");
       List<SEAction> injury_set_1 = new List<SEAction>();
       SEHemorrhage h1 = new SEHemorrhage();
-      h1.SetType(SEHemorrhage.eType.External);
+      h1.SetType(eHemorrhage_Type.External);
       h1.SetCompartment("RightLeg");
       h1.GetSeverity().SetValue(0.33);
       injury_set_1.Add(h1);
@@ -59,7 +59,7 @@ namespace HowTo_PatientStates
       injury_set_names.Add("ModerateLegBleed");
       List<SEAction> injury_set_2 = new List<SEAction>();
       SEHemorrhage h2 = new SEHemorrhage();
-      h2.SetType(SEHemorrhage.eType.External);
+      h2.SetType(eHemorrhage_Type.External);
       h2.SetCompartment("RightLeg");
       h2.GetSeverity().SetValue(0.66);
       injury_set_2.Add(h2);

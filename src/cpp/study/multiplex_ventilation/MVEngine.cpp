@@ -264,7 +264,7 @@ namespace pulse::study::multiplex_ventilation
       Info("Configuring Mechanical Ventilator");
       m_MVC = new SEMechanicalVentilatorConfiguration(GetLogger());
       auto& mv = m_MVC->GetSettings();
-      mv.SetConnection(eMechanicalVentilator_Connection::Tube);
+      mv.SetConnection(eSwitch::On);
       mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
       mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
       mv.GetPeakInspiratoryPressure().SetValue(sim.pip_cmh2o(), PressureUnit::cmH2O);

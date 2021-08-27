@@ -6,8 +6,8 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Actions.proto";
 import "pulse/cdm/bind/Enums.proto";
-import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
+import "pulse/cdm/bind/Properties.proto";
 
 message MechanicalVentilatorActionData
 {
@@ -44,7 +44,7 @@ message MechanicalVentilatorModeData
 {
   MechanicalVentilatorActionData               MechanicalVentilatorAction    = 1;
   
-  MechanicalVentilatorSettingsData.eConnection Connection                    = 2; /**<< @brief @ref MechanicalVentilatorData_eConnectionTable */
+  eSwitch                                      Connection                    = 2; /**<< @brief @ref eSwitchTable */
 }
 
 message MechanicalVentilatorContinuousPositiveAirwayPressureData

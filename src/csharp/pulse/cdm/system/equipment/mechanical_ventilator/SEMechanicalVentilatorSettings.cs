@@ -6,14 +6,6 @@ using System.Collections.Generic;
 namespace Pulse.CDM
 {
   // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-  public enum eMechanicalVentilator_Connection : int
-  {
-    NullConnection = 0,/** Signals not provided, or no change */
-    Off,
-    Mask,
-    Tube
-  }
-  // Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
   public enum eMechanicalVentilator_DriverWaveform : int
   {
     NullDriverWaveform = 0,/** Signals not provided, or no change */
@@ -23,7 +15,7 @@ namespace Pulse.CDM
   // TODO Substance Fractions and Concentrations!!!
   public class SEMechanicalVentilatorSettings : SEEquipment
   {
-    protected eMechanicalVentilator_Connection connection;
+    protected eSwitch connection;
 
     // Expiratory Baseline (Only set one)
     protected SEScalarPressure positive_end_expired_pressure;
@@ -75,7 +67,7 @@ namespace Pulse.CDM
 
     public SEMechanicalVentilatorSettings()
     {
-      connection = eMechanicalVentilator_Connection.NullConnection;
+      connection = eSwitch.NullSwitch;
       functional_residual_capacity = null;
       expiration_cycle_flow = null;
       expiration_cycle_pressure = null;
@@ -116,7 +108,7 @@ namespace Pulse.CDM
     public override void Clear()
     {
       base.Clear();
-      connection = eMechanicalVentilator_Connection.NullConnection;
+      connection = eSwitch.NullSwitch;
       if (positive_end_expired_pressure != null)
         positive_end_expired_pressure.Invalidate();
       if (functional_residual_capacity != null)
@@ -185,7 +177,7 @@ namespace Pulse.CDM
     public void Copy(SEMechanicalVentilatorSettings from)
     {
       base.Copy(from);
-      if (from.connection != eMechanicalVentilator_Connection.NullConnection)
+      if (from.connection != eSwitch.NullSwitch)
         this.connection = from.connection;
       if (from.HasPositiveEndExpiredPressure())
         this.GetPositiveEndExpiredPressure().Set(from.GetPositiveEndExpiredPressure());
@@ -273,17 +265,17 @@ namespace Pulse.CDM
       }
     }
 
-    public eMechanicalVentilator_Connection GetConnection()
+    public eSwitch GetConnection()
     {
       return connection;
     }
-    public void SetConnection(eMechanicalVentilator_Connection c)
+    public void SetConnection(eSwitch c)
     {
       connection = c;
     }
     public bool HasConnection()
     {
-      return connection != eMechanicalVentilator_Connection.NullConnection;
+      return connection != eSwitch.NullSwitch;
     }
 
     public SEScalarPressure GetPositiveEndExpiredPressure()
@@ -716,7 +708,7 @@ namespace Pulse.CDM
     public override string ToString()
     {
       string str = "Mechanical Ventilator Settings"
-      + "\n\tConnection: " + (HasConnection() ? eMechanicalVentilator.Connection_Name(GetConnection()) : "NotProvided")
+      + "\n\tConnection: " + (HasConnection() ? eEnum.Name(GetConnection()) : "NotProvided")
       + "\n\tPositiveEndExpiredPressure: " + (HasPositiveEndExpiredPressure() ? GetPositiveEndExpiredPressure().ToString() : "Not Provided")
       + "\n\tFunctionalResidualCapacity: " + (HasFunctionalResidualCapacity() ? GetFunctionalResidualCapacity().ToString() : "Not Provided")
       + "\n\tExpirationCycleFlow: " + (HasExpirationCycleFlow() ? GetExpirationCycleFlow().ToString() : "Not Provided")

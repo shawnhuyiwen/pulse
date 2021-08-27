@@ -112,7 +112,7 @@ void HowToCOVID19Ventilated()
   // Setup the PC-CMV ventilator
   SEMechanicalVentilatorConfiguration MVConfig(pe->GetLogger());
   SEMechanicalVentilatorSettings& mv = MVConfig.GetSettings();
-  mv.SetConnection(eMechanicalVentilator_Connection::Tube);
+  mv.SetConnection(eSwitch::On);
   mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);

@@ -71,7 +71,7 @@ void HowToBagValveMask()
   // 1.) to put it on the patient
   SEBagValveMaskConfiguration cfg;
   // If the patient is intubated, use the Tube connection instead
-  cfg.GetConfiguration().SetConnection(eBagValveMask_Connection::Mask);
+  cfg.GetConfiguration().SetConnection(eSwitch::On);
   // There are several parameters that have defaults if not set
   // We will set the PEEP and FiO2
   cfg.GetConfiguration().GetValvePositiveEndExpiredPressure().SetValue(5, PressureUnit::cmH2O);

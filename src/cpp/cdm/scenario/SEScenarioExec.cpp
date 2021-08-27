@@ -163,7 +163,7 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
 
       double time_s = adv->GetTime(TimeUnit::s);
       int count = (int)(time_s/dT_s);
-      for(int i=0;i<=count;i++)
+      for(int i=0;i<count;i++)
       {
         AdvanceEngine(pe);
 

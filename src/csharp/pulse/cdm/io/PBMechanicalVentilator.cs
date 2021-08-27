@@ -5,10 +5,6 @@ namespace Pulse.CDM
 {
   static class eMechanicalVentilator
   {
-    public static string Connection_Name(this eMechanicalVentilator_Connection c)
-    {
-      return ((pulse.cdm.bind.MechanicalVentilatorSettingsData.Types.eConnection)(int)c).ToString();
-    }
     public static string DriverWaveform_Name(this eMechanicalVentilator_DriverWaveform w)
     {
       return ((pulse.cdm.bind.MechanicalVentilatorSettingsData.Types.eDriverWaveform)(int)w).ToString();
@@ -24,7 +20,7 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorSettingsData src, SEMechanicalVentilatorSettings dst/*, SESubstanceManager subMgr*/)
     {
       dst.Clear();
-      dst.SetConnection((eMechanicalVentilator_Connection)src.Connection);
+      dst.SetConnection((eSwitch)src.Connection);
 
       if (src.PositiveEndExpiredPressure != null)
         PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());

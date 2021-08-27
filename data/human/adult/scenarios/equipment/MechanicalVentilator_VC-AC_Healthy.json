@@ -105,7 +105,7 @@
               "Comment": "Attach the mechanical ventilator - VC-AC: TV = 7 mL/kg(ideal)" }}},
         "Settings":
         {
-          "Connection": "Tube",
+          "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
           "InspirationTargetFlow": { "ScalarVolumePerTime": { "Value": 0.351, "Unit": "L/s" } },

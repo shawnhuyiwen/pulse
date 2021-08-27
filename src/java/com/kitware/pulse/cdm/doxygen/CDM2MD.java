@@ -168,7 +168,6 @@ public class CDM2MD
       Set<Class<? extends SEAnesthesiaMachineAction>> aActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.anesthesia_machine.actions", SEAnesthesiaMachineAction.class);
       for(Class<?> c : aActions)
         WriteDoxyTable(c, "", writer, skipProperties);
-      WriteDoxyTable(AnesthesiaMachineData.eConnection.class, "AnesthesiaMachineData_", writer, skipProperties);
       WriteDoxyTable(AnesthesiaMachineData.eOxygenSource.class, "AnesthesiaMachineData_", writer, skipProperties);
       WriteDoxyTable(AnesthesiaMachineData.ePrimaryGas.class, "AnesthesiaMachineData_", writer, skipProperties);
 
@@ -180,7 +179,6 @@ public class CDM2MD
       Set<Class<? extends SEBagValveMaskAction>> bvmActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions", SEBagValveMaskAction.class);
       for(Class<?> c : bvmActions)
         WriteDoxyTable(c, "", writer, skipProperties);
-      WriteDoxyTable(BagValveMaskData.eConnection.class, "BagValveMaskData_", writer, skipProperties);
       
       // ECG
       writer.append("#### The following tables describe the %ECG\n<hr>\n");
@@ -205,7 +203,6 @@ public class CDM2MD
       Set<Class<? extends SEMechanicalVentilatorAction>> mvActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions", SEMechanicalVentilatorAction.class);
       for(Class<?> c : mvActions)
         WriteDoxyTable(c, "", writer, skipProperties);
-      WriteDoxyTable(MechanicalVentilatorSettingsData.eConnection.class, "MechanicalVentilatorSettingsData_", writer, skipProperties);
       WriteDoxyTable(MechanicalVentilatorSettingsData.eDriverWaveform.class, "MechanicalVentilatorSettingsData_", writer, skipProperties);
       
       // SUBSTSANCE

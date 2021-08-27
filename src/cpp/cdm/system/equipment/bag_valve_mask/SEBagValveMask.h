@@ -9,10 +9,6 @@ class SESubstance;
 class SESubstanceFraction;
 class SESubstanceConcentration;
 
-// Keep enums in sync with appropriate schema/cdm/BagValveMask.proto file !!
-enum class eBagValveMask_Connection { NullConnection = 0, Off, Mask, Tube };
-extern const std::string& eBagValveMask_Connection_Name(eBagValveMask_Connection m);
-
 class CDM_DECL SEBagValveMask : public SEEquipment
 {
   friend class PBBagValveMask;//friend the serialization class
@@ -45,8 +41,8 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual eBagValveMask_Connection GetConnection() const;
-  virtual void SetConnection(eBagValveMask_Connection c);
+  virtual eSwitch GetConnection() const;
+  virtual void SetConnection(eSwitch c);
 
   virtual bool HasBagResistance() const;
   virtual SEScalarPressureTimePerVolume& GetBagResistance();
@@ -99,7 +95,7 @@ public:
   void RemoveConcentrationInspiredAerosols();
 
 protected:
-  eBagValveMask_Connection                     m_Connection;
+  eSwitch                                      m_Connection;
 
   SEScalarPressureTimePerVolume*               m_BagResistance;
   SEScalarPressureTimePerVolume*               m_FilterResistance;

@@ -7,7 +7,6 @@
 #include "engine/common/controller/SubstanceManager.h"
 #include "engine/common/system/equipment/BagValveMaskModel.h"
 
-#include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
@@ -78,7 +77,7 @@ namespace PULSE_ENGINE
   void BagValveMaskModel::Initialize()
   {
     Model::Initialize();
-    SetConnection(eBagValveMask_Connection::Off);
+    SetConnection(eSwitch::Off);
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
     m_SqueezePressure_cmH2O = SEScalar::dNaN();
@@ -115,9 +114,9 @@ namespace PULSE_ENGINE
 
   void BagValveMaskModel::StateChange()
   {
+    UpdateAirwayMode();
     if (m_data.GetAirwayMode() != eAirwayMode::BagValveMask)
       return;
-    SetConnection();
     m_CurrentBreathState = eBreathState::Inhale;
     m_CurrentPeriodTime_s = 0.0;
 
@@ -211,28 +210,19 @@ namespace PULSE_ENGINE
   /// If the enum is set to tube, then the BVM is connected to the tube
   /// If the enum is set to off, the airway mode is set to free.
   //--------------------------------------------------------------------------------------------------
-  void BagValveMaskModel::SetConnection(eBagValveMask_Connection c)
+  void BagValveMaskModel::UpdateAirwayMode()
   {
-    if (m_Connection == c)
-      return; // No Change
-    // Update the Pulse airway mode when this changes
-    SEBagValveMask::SetConnection(c);
-    if (c == eBagValveMask_Connection::Mask && m_data.GetIntubation() == eSwitch::Off)
+    eSwitch c = GetConnection();
+    if (c == eSwitch::On)
     {
       m_data.SetAirwayMode(eAirwayMode::BagValveMask);
       return;
     }
-    else if (c == eBagValveMask_Connection::Tube && m_data.GetIntubation() == eSwitch::On)
+    else if (c == eSwitch::Off)
     {
-      m_data.SetAirwayMode(eAirwayMode::BagValveMask);
-      return;
+      // Make sure we are active to make sure we go back to free
+      m_data.SetAirwayMode(eAirwayMode::Free);
     }
-    else if (c == eBagValveMask_Connection::Mask && m_data.GetIntubation() == eSwitch::On)
-      Error("Connection failed : Cannot apply bag valve mask mask if patient is intubated.");
-    else if (c == eBagValveMask_Connection::Tube && m_data.GetIntubation() == eSwitch::Off)
-      Error("Connection failed : Cannot apply bag valve mask to tube if patient is not intubated.");
-    // Make sure we are active to make sure we go back to free
-    m_data.SetAirwayMode(eAirwayMode::Free);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -248,7 +238,7 @@ namespace PULSE_ENGINE
     // Set airway mode to free
     m_data.SetAirwayMode(eAirwayMode::Free);
     // THEN invalidate
-    m_Connection = eBagValveMask_Connection::Off;
+    m_Connection = eSwitch::Off;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -259,39 +249,21 @@ namespace PULSE_ENGINE
   /// The gas volumes and volume fractions are initialized and updated based on the airway mode (mask, free, or tube)
   /// and the volume associated with each airway mode.
   //--------------------------------------------------------------------------------------------------
-  void BagValveMaskModel::SetConnection()
+  void BagValveMaskModel::UpdateConnection()
   {
     switch (m_data.GetAirwayMode())
     {
     case eAirwayMode::Free:
-      m_Connection = eBagValveMask_Connection::Off;
+    {
+      SetConnection(eSwitch::Off);
       break;
+    }
     case eAirwayMode::BagValveMask:
-      if (m_Connection == eBagValveMask_Connection::Mask)
-      {
-        if (m_data.GetIntubation() == eSwitch::On)// Somebody intubated while we had the mask on
-        {
-          Info("Bag Valve Mask has been disconnected due to an intubation.");
-          m_data.SetAirwayMode(eAirwayMode::Free);
-          return;
-        }
-
-        //Keep the baseline resistance to ground = an open switch
-        //Leaks handled later:L);
-      }
-      else if (m_Connection == eBagValveMask_Connection::Tube)
-      {
-        if (m_data.GetIntubation() == eSwitch::Off)// Somebody removed intubated while we were connected to it
-        {
-          Info("Bag Valve Mask has been disconnected removal of intubation.");
-          m_data.SetAirwayMode(eAirwayMode::Free);
-          return;
-        }
-
-        //Keep the baseline resistance to ground = an open switch
-        //Leaks handled later:L);
-      }
+    {
+      if (GetConnection() == eSwitch::Off)
+        SetConnection(eSwitch::On);
       break;
+    }
     default:
       Fatal("Unhandled Airway Mode.");
     }
@@ -306,7 +278,7 @@ namespace PULSE_ENGINE
   //--------------------------------------------------------------------------------------------------
   void BagValveMaskModel::PreProcess()
   {
-    if (GetConnection() == eBagValveMask_Connection::Off && !m_data.GetActions().GetEquipmentActions().HasBagValveMaskConfiguration())
+    if (GetConnection() == eSwitch::Off && !m_data.GetActions().GetEquipmentActions().HasBagValveMaskConfiguration())
     {
       if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskAutomated())
       {
@@ -333,11 +305,12 @@ namespace PULSE_ENGINE
     {
       ProcessConfiguration(m_data.GetActions().GetEquipmentActions().GetBagValveMaskConfiguration(), m_data.GetSubstances());
       m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskConfiguration();
-
-      SetConnection();
+      StateChange();
     }
+
+    UpdateConnection();
     // BVM is being turned off, remove any bvm actions and stop our preprocess
-    if (GetConnection() == eBagValveMask_Connection::Off)
+    if (GetConnection() == eSwitch::Off)
     {
       m_CurrentBreathState = eBreathState::Exhale;
       m_CurrentPeriodTime_s = 0.0;

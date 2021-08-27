@@ -77,7 +77,7 @@ namespace PULSE_ENGINE
   void MechanicalVentilatorModel::Initialize()
   {
     Model::Initialize();
-    GetSettings().SetConnection(eMechanicalVentilator_Connection::Off);
+    GetSettings().SetConnection(eSwitch::Off);
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
     m_DriverPressure_cmH2O = SEScalar::dNaN();
@@ -221,23 +221,17 @@ namespace PULSE_ENGINE
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::UpdateAirwayMode()
   {
-    eMechanicalVentilator_Connection c = GetSettings().GetConnection();
-    if (c == eMechanicalVentilator_Connection::Mask && m_data.GetIntubation() == eSwitch::Off)
+    eSwitch c = GetSettings().GetConnection();
+    if (c == eSwitch::On)
     {
       m_data.SetAirwayMode(eAirwayMode::MechanicalVentilator);
       return;
     }
-    else if (c == eMechanicalVentilator_Connection::Tube && m_data.GetIntubation() == eSwitch::On)
+    else if (c == eSwitch::Off)
     {
-      m_data.SetAirwayMode(eAirwayMode::MechanicalVentilator);
-      return;
+      // Make sure we are active to make sure we go back to free
+      m_data.SetAirwayMode(eAirwayMode::Free);
     }
-    else if (c == eMechanicalVentilator_Connection::Mask && m_data.GetIntubation() == eSwitch::On)
-      Error("Connection failed : Cannot apply mechanical ventilator mask if patient is intubated.");
-    else if (c == eMechanicalVentilator_Connection::Tube && m_data.GetIntubation() == eSwitch::Off)
-      Error("Connection failed : Cannot apply mechanical ventilator to tube if patient is not intubated.");
-    // Make sure we are active to make sure we go back to free
-    m_data.SetAirwayMode(eAirwayMode::Free);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -253,7 +247,7 @@ namespace PULSE_ENGINE
     // Set airway mode to free
     m_data.SetAirwayMode(eAirwayMode::Free);
     // THEN invalidate
-    GetSettings().SetConnection(eMechanicalVentilator_Connection::Off);
+    GetSettings().SetConnection(eSwitch::Off);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -266,34 +260,16 @@ namespace PULSE_ENGINE
     switch (m_data.GetAirwayMode())
     {
     case eAirwayMode::Free:
-      GetSettings().SetConnection(eMechanicalVentilator_Connection::Off);
+    {
+      GetSettings().SetConnection(eSwitch::Off);
       break;
+    }
     case eAirwayMode::MechanicalVentilator:
-      if (GetSettings().GetConnection() == eMechanicalVentilator_Connection::Mask)
-      {
-        if (m_data.GetIntubation() == eSwitch::On)// Somebody intubated while we had the mask on
-        {
-          Info("Mechanical Ventilator has been disconnected due to an intubation.");
-          m_data.SetAirwayMode(eAirwayMode::Free);
-          return;
-        }
-
-        //Keep the baseline resistance to ground = an open switch
-        //Leaks handled later:L);
-      }
-      else if (GetSettings().GetConnection() == eMechanicalVentilator_Connection::Tube)
-      {
-        if (m_data.GetIntubation() == eSwitch::Off)// Somebody removed intubated while we were connected to it
-        {
-          Info("Mechanical Ventilator has been disconnected removal of intubation.");
-          m_data.SetAirwayMode(eAirwayMode::Free);
-          return;
-        }
-
-        //Keep the baseline resistance to ground = an open switch
-        //Leaks handled later:L);
-      }
+    {
+      if (GetSettings().GetConnection() == eSwitch::Off)
+        GetSettings().SetConnection(eSwitch::On);
       break;
+    }
     default:
       Fatal("Unhandled Airway Mode.");
     }
@@ -314,8 +290,10 @@ namespace PULSE_ENGINE
       m_data.GetActions().GetEquipmentActions().RemoveMechanicalVentilatorConfiguration();
       StateChange();
     }
+
+    UpdateConnection();
     //Do nothing if the ventilator is off and not initialized
-    if (GetSettings().GetConnection() == eMechanicalVentilator_Connection::Off)
+    if (GetSettings().GetConnection() == eSwitch::Off)
     {
       m_CurrentBreathState = eBreathState::Exhale;
       m_CurrentPeriodTime_s = 0.0;
@@ -323,7 +301,6 @@ namespace PULSE_ENGINE
       return;
     }
 
-    UpdateConnection();
     CalculateInspiration();
     CalculatePause();
     CalculateExpiration();

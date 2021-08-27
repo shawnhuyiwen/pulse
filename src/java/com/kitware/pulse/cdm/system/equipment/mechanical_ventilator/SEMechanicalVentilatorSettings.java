@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData;
-import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eConnection;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceConcentrationData;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceData.eState;
@@ -21,7 +21,7 @@ import com.kitware.pulse.utilities.Log;
 
 public class SEMechanicalVentilatorSettings extends SEEquipment
 {
-  protected eConnection                       connection;
+  protected eSwitch                       connection;
   
   // Expiratory Baseline Properties (Only set 1)
   protected SEScalarPressure                  positiveEndExpiredPressure;
@@ -199,7 +199,7 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
   public void copy(SEMechanicalVentilatorSettings from)
   {
     reset();
-    if(from.connection!=null && from.connection != eConnection.NullConnection)
+    if(from.connection!=null && from.connection != eSwitch.NullSwitch)
     	this.connection=from.connection;
     
     if(from.hasPositiveEndExpiredPressure())
@@ -295,7 +295,7 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
   public static void load(MechanicalVentilatorSettingsData src, SEMechanicalVentilatorSettings dst)
   {
     dst.reset();
-    if (src.getConnection()!=eConnection.UNRECOGNIZED)
+    if (src.getConnection()!=eSwitch.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
     
     if (src.hasPositiveEndExpiredPressure())
@@ -468,13 +468,13 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
       dst.addConcentrationInspiredAerosol(SESubstanceConcentration.unload(ambSub));
   }
   
-  public eConnection getConnection()
+  public eSwitch getConnection()
   {
     return connection;
   }
-  public void setConnection(eConnection c)
+  public void setConnection(eSwitch c)
   {
-    connection = (c == eConnection.UNRECOGNIZED) ? null : c;
+    connection = (c == eSwitch.UNRECOGNIZED) ? null : c;
   }
   public boolean hasConnection()
   {

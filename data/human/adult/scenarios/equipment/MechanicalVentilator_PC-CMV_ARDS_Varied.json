@@ -113,7 +113,7 @@
               "Comment": "Attach the mechanical ventilator" }}},
         "Settings":
         {
-          "Connection": "Tube",
+          "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
           "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
@@ -145,7 +145,7 @@
               "Comment": "Attach the mechanical ventilator" }}},
         "Settings":
         {
-          "Connection": "Tube",
+          "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
           "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 25.0, "Unit": "cmH2O" } },
@@ -177,7 +177,7 @@
                 "Comment": "Attach the mechanical ventilator" }}},
           "Settings":
           {
-            "Connection": "Tube",
+            "Connection": "On",
             "InspirationWaveform": "Square",
             "ExpirationWaveform": "Square",
             "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 32.0, "Unit": "cmH2O" } },

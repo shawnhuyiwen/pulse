@@ -139,7 +139,7 @@ void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorSettingsDa
 }
 void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSettingsData& src, SEMechanicalVentilatorSettings& dst, const SESubstanceManager& subMgr)
 {
-  dst.m_Connection = (eMechanicalVentilator_Connection)src.connection();
+  dst.m_Connection = (eSwitch)src.connection();
 
   if (src.has_positiveendexpiredpressure())
     PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
@@ -251,7 +251,7 @@ CDM_BIND::MechanicalVentilatorSettingsData* PBMechanicalVentilator::Unload(const
 }
 void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src, CDM_BIND::MechanicalVentilatorSettingsData& dst)
 {
-  dst.set_connection((CDM_BIND::MechanicalVentilatorSettingsData::eConnection)src.m_Connection);
+  dst.set_connection((CDM_BIND::eSwitch)src.m_Connection);
 
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));

@@ -109,7 +109,7 @@
               "Comment": "Attach the mechanical ventilator" }}},
         "Settings":
         {
-          "Connection": "Tube",
+          "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 5.0, "Unit": "s" } },

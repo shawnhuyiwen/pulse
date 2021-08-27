@@ -226,7 +226,7 @@ void SEMechanicalVentilatorPressureControl::ToString(std::ostream& str) const
   str << "Mechanical Ventilator Action : Pressure Control";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
-  str << "\n\tConnection: " << eMechanicalVentilator_Connection_Name(m_Connection);
+  str << "\n\tConnection: " << eSwitch_Name(m_Connection);
   str << "\n\tMode: " << eMechanicalVentilator_PressureControlMode_Name(m_Mode);
   str << "\n\tFractionInspiredOxygen :"; HasFractionInspiredOxygen() ? str << *m_FractionInspiredOxygen : str << "NaN";
   str << "\n\tInspiratoryPeriod :"; HasInspiratoryPeriod() ? str << *m_InspiratoryPeriod : str << "NaN";

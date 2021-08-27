@@ -3,14 +3,6 @@
 
 namespace Pulse.CDM
 {
-  static class eBagValveMask
-  {
-    public static string Connection_Name(eBagValveMask_Connection c)
-    {
-      return ((pulse.cdm.bind.BagValveMaskData.Types.eConnection)(int)c).ToString();
-    }
-  }
-
   public class PBBagValveMask
   {
     #region SEBagValveMask
@@ -21,7 +13,7 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.BagValveMaskData src, SEBagValveMask dst/*, SESubstanceManager subMgr*/)
     {
       dst.Clear();
-      dst.SetConnection((eBagValveMask_Connection)src.Connection);
+      dst.SetConnection((eSwitch)src.Connection);
       if (src.BagResistance != null)
         PBProperty.Load(src.BagResistance, dst.GetBagResistance());
       if (src.ConnectionVolume != null)

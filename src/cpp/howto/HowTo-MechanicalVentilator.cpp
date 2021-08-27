@@ -15,6 +15,7 @@
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
@@ -117,7 +118,7 @@ void HowToMechanicalVentilator()
   // For example, if you wanted to lengthen the InspirationPatientTriggerFlow of the mode
 
   SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
-  cpap.SetConnection(eMechanicalVentilator_Connection::Mask);
+  cpap.SetConnection(eSwitch::On);
   cpap.GetFractionInspiredOxygen().SetValue(0.21);
   cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
   cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
@@ -127,7 +128,7 @@ void HowToMechanicalVentilator()
   pe->GetEngineTracker()->LogRequestedValues(false);
 
   SEMechanicalVentilatorPressureControl pc_ac;
-  pc_ac.SetConnection(eMechanicalVentilator_Connection::Mask);
+  pc_ac.SetConnection(eSwitch::On);
   // There are several different modes to choose from
   pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
   pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
@@ -140,7 +141,7 @@ void HowToMechanicalVentilator()
   pe->GetEngineTracker()->LogRequestedValues(false);
 
   SEMechanicalVentilatorVolumeControl vc_ac;
-  vc_ac.SetConnection(eMechanicalVentilator_Connection::Mask);
+  vc_ac.SetConnection(eSwitch::On);
   // There are several different modes to choose from
   vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
   vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
@@ -156,7 +157,7 @@ void HowToMechanicalVentilator()
   // Here is an example of programming a custom ventilator mode
   SEMechanicalVentilatorConfiguration mv_config;
   SEMechanicalVentilatorSettings mv = mv_config.GetSettings();
-  mv.SetConnection(eMechanicalVentilator_Connection::Mask);
+  mv.SetConnection(eSwitch::On);
   mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
   mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);

@@ -172,7 +172,7 @@ namespace pulse::study::multiplex_ventilation
     // Setup the PC-CMV ventilator
     SEMechanicalVentilatorConfiguration mvc(engine->GetLogger());
     auto& mv = mvc.GetSettings();
-    mv.SetConnection(eMechanicalVentilator_Connection::Tube);
+    mv.SetConnection(eSwitch::On);
     mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
     mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
     mv.GetPeakInspiratoryPressure().SetValue(pData.pip_cmh2o(), PressureUnit::cmH2O);

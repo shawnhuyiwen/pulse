@@ -5,10 +5,6 @@ namespace Pulse.CDM
 {
   static class eAnesthesiaMachine
   {
-    public static string Connection_Name(this eAnesthesiaMachine_Connection c)
-    {
-      return ((pulse.cdm.bind.AnesthesiaMachineData.Types.eConnection)(int)c).ToString();
-    }
     public static string OxygenSource_Name(this eAnesthesiaMachine_OxygenSource os)
     {
       return ((pulse.cdm.bind.AnesthesiaMachineData.Types.eOxygenSource)(int)os).ToString();
@@ -29,7 +25,7 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineData src, SEAnesthesiaMachine dst/*, SESubstanceManager subMgr*/)
     {
       dst.Clear();
-      dst.SetConnection((eAnesthesiaMachine_Connection)src.Connection);
+      dst.SetConnection((eSwitch)src.Connection);
       if (src.InletFlow != null)
         PBProperty.Load(src.InletFlow, dst.GetInletFlow());
       if (src.InspiratoryExpiratoryRatio != null)

@@ -108,7 +108,7 @@
         "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
           "Configuration":
           {
-            "Connection": "Tube"
+            "Connection": "On"
           }
       }
     }
@@ -135,7 +135,7 @@
         "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
           "Configuration":
           {
-            "Connection": "Tube",
+            "Connection": "On",
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
           }
       }
@@ -161,7 +161,7 @@
         "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
           "Configuration":
           {
-            "Connection": "Tube",
+            "Connection": "On",
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 0.0, "Unit": "cmH2O" } }
           }
       }
@@ -185,7 +185,7 @@
         "BagValveMaskAction": { "EquipmentAction": { "Action": {}}},
           "Configuration":
           {
-            "Connection": "Tube",
+            "Connection": "On",
             "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "FractionInspiredGas": [
               { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.52, "Unit": "" } } }

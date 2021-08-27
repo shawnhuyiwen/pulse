@@ -23,15 +23,6 @@ message AnesthesiaMachineOxygenBottleData
 
 message AnesthesiaMachineData
 {
-
-  enum eConnection
-  {
-    NullConnection = 0;/**<< Signals not provided, or no change */
-    Off            = 1;
-    Mask           = 2;
-    Tube           = 3;
-  }
-  
   enum eOxygenSource
   {
     NullSource   = 0;/**<< Signals not provided, or no change */
@@ -49,7 +40,7 @@ message AnesthesiaMachineData
     Nitrogen = 3;
   }
   
-  eConnection                       Connection                    = 1; /**<< @brief @ref AnesthesiaMachineData_eConnectionTable */
+  eSwitch                           Connection                    = 1; /**<< @brief @ref AnesthesiaMachineData_eConnectionTable */
   ScalarVolumePerTimeData           InletFlow                     = 2; /**<< @brief The total fresh gas inlet flow. */
   ScalarData                        InspiratoryExpiratoryRatio    = 3; /**<< @brief The ratio of time spent in the inspiratory phase vs the expiratory phase of respiration. */
   Scalar0To1Data                    OxygenFraction                = 4; /**<< @brief The fraction of the fresh gas inlet flow that is oxygen. */

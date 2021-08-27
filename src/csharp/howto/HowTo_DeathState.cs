@@ -220,19 +220,19 @@ namespace HowTo_DeathState
       SEHemorrhage rightLeg = new SEHemorrhage();
       // Setting up a realistic hemorrhage can be difficult
       // Here is an example of how the engine will act if you create an unrealistic hemorrhage
-      rightLeg.SetType(SEHemorrhage.eType.External);
+      rightLeg.SetType(eHemorrhage_Type.External);
       rightLeg.SetCompartment("RightLegVasculature");
       rightLeg.GetSeverity().SetValue(0.8);
       pulse.ProcessAction(rightLeg);
 
       SEHemorrhage rightArm = new SEHemorrhage();
-      rightArm.SetType(SEHemorrhage.eType.External);
+      rightArm.SetType(eHemorrhage_Type.External);
       rightArm.SetCompartment("RightArmVasculature");
       rightArm.GetSeverity().SetValue(0.9);
       pulse.ProcessAction(rightArm);
 
       SEHemorrhage venaCava = new SEHemorrhage();
-      venaCava.SetType(SEHemorrhage.eType.External);
+      venaCava.SetType(eHemorrhage_Type.External);
       venaCava.SetCompartment("VenaCava");
       venaCava.GetSeverity().SetValue(0.1);
       pulse.ProcessAction(venaCava);

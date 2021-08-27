@@ -810,7 +810,7 @@ void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorModeData& src, 
 void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorModeData& src, SEMechanicalVentilatorMode& dst)
 {
   PBEquipmentAction::Serialize(src.mechanicalventilatoraction(), dst);
-  dst.m_Connection = (eMechanicalVentilator_Connection)src.connection();
+  dst.m_Connection = (eSwitch)src.connection();
 }
 CDM_BIND::MechanicalVentilatorModeData* PBEquipmentAction::Unload(const SEMechanicalVentilatorMode& src)
 {
@@ -821,7 +821,7 @@ CDM_BIND::MechanicalVentilatorModeData* PBEquipmentAction::Unload(const SEMechan
 void PBEquipmentAction::Serialize(const SEMechanicalVentilatorMode& src, CDM_BIND::MechanicalVentilatorModeData& dst)
 {
   PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatoraction());
-  dst.set_connection((CDM_BIND::MechanicalVentilatorSettingsData::eConnection)src.m_Connection);
+  dst.set_connection((CDM_BIND::eSwitch)src.m_Connection);
 }
 
 void PBEquipmentAction::Load(const CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData& src, SEMechanicalVentilatorContinuousPositiveAirwayPressure& dst)

@@ -92,7 +92,7 @@ namespace PULSE_ENGINE
   {
     Model::Initialize();
 
-    SetConnection(eAnesthesiaMachine_Connection::Off);
+    SetConnection(eSwitch::Off);
     GetInletFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
     GetRespiratoryRate().SetValue(12.0, FrequencyUnit::Per_min);
     GetPositiveEndExpiredPressure().SetValue(3.0, PressureUnit::cmH2O);
@@ -198,28 +198,19 @@ namespace PULSE_ENGINE
   /// If the enum is set to tube, then the machine is connected to the tube
   /// If the enum is set to off, the airway mode is set to free.
   //--------------------------------------------------------------------------------------------------
-  void AnesthesiaMachineModel::SetConnection(eAnesthesiaMachine_Connection c)
+  void AnesthesiaMachineModel::UpdateAirwayMode()
   {
-    if (m_Connection == c)
-      return; // No Change
-    // Update the Pulse airway mode when this changes
-    SEAnesthesiaMachine::SetConnection(c);
-    if (c == eAnesthesiaMachine_Connection::Mask && m_data.GetIntubation() == eSwitch::Off)
+    eSwitch c = GetConnection();
+    if (c == eSwitch::On)
     {
       m_data.SetAirwayMode(eAirwayMode::AnesthesiaMachine);
       return;
     }
-    else if (c == eAnesthesiaMachine_Connection::Tube && m_data.GetIntubation() == eSwitch::On)
+    else if (c == eSwitch::Off)
     {
-      m_data.SetAirwayMode(eAirwayMode::AnesthesiaMachine);
-      return;
+      // Make sure we are active to make sure we go back to free
+      m_data.SetAirwayMode(eAirwayMode::Free);
     }
-    else if (c == eAnesthesiaMachine_Connection::Mask && m_data.GetIntubation() == eSwitch::On)
-      Error("Connection failed : Cannot apply anesthesia machine mask if patient is intubated.");
-    else if (c == eAnesthesiaMachine_Connection::Tube && m_data.GetIntubation() == eSwitch::Off)
-      Error("Connection failed : Cannot apply anesthesia machine to tube if patient is not intubated.");
-    // Make sure we are active to make sure we go back to free
-    m_data.SetAirwayMode(eAirwayMode::Free);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -235,7 +226,7 @@ namespace PULSE_ENGINE
     // Set airway mode to free
     m_data.SetAirwayMode(eAirwayMode::Free);
     // THEN invalidate
-    m_Connection = eAnesthesiaMachine_Connection::Off;
+    m_Connection = eSwitch::Off;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -246,43 +237,23 @@ namespace PULSE_ENGINE
   /// The gas volumes and volume fractions are initialized and updated based on the airway mode (mask, free, or tube)
   /// and the volume associated with each airway mode.
   //--------------------------------------------------------------------------------------------------
-  void AnesthesiaMachineModel::SetConnection()
+  void AnesthesiaMachineModel::UpdateConnection()
   {
     switch (m_data.GetAirwayMode())
     {
     case eAirwayMode::Free:
-      //Basically a full leak to ground
-      m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(m_dSwitchClosedResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    {
+      SetConnection(eSwitch::Off);
       break;
+    }
     case eAirwayMode::AnesthesiaMachine:
-      if (m_Connection == eAnesthesiaMachine_Connection::Mask)
-      {
-        if (m_data.GetIntubation() == eSwitch::On)// Somebody intubated while we had the mask on
-        {
-          Info("Anesthesia Machine has been disconnected due to an intubation.");
-          m_data.SetAirwayMode(eAirwayMode::Free);
-          return;
-        }
-
-        //Keep the baseline resistance to ground = an open switch
-        //Leaks handled later:L);
-      }
-      else if (m_Connection == eAnesthesiaMachine_Connection::Tube)
-      {
-        if (m_data.GetIntubation() == eSwitch::Off)// Somebody removed intubated while we were connected to it
-        {
-          Info("Anesthesia Machine has been disconnected removal of intubation.");
-          m_data.SetAirwayMode(eAirwayMode::Free);
-          return;
-        }
-
-        //Keep the baseline resistance to ground = an open switch
-        //Leaks handled later:L);
-      }
+    {
+      if (GetConnection() == eSwitch::Off)
+        SetConnection(eSwitch::On);
       break;
+    }
     default:
-      // Something else is connected
-      break;
+      Fatal("Unhandled Airway Mode.");
     }
   }
 
@@ -303,9 +274,12 @@ namespace PULSE_ENGINE
     {
       ProcessConfiguration(m_actions->GetAnesthesiaMachineConfiguration(), m_data.GetSubstances());
       m_actions->RemoveAnesthesiaMachineConfiguration();
+      StateChange();
     }
+
+    UpdateConnection();
     //Do nothing if the machine is off and not initialized
-    if (GetConnection() == eAnesthesiaMachine_Connection::Off)
+    if (GetConnection() == eSwitch::Off)
     {
       m_inhaling = true;
       m_currentbreathingCycleTime_s = 0.0;
@@ -314,7 +288,6 @@ namespace PULSE_ENGINE
 
     CalculateCyclePhase();
     CalculateSourceStatus();
-    SetConnection();
     CalculateValveResistances();
     CalculateEquipmentLeak();
     CalculateVentilatorPressure();
@@ -333,10 +306,8 @@ namespace PULSE_ENGINE
   //--------------------------------------------------------------------------------------------------
   void AnesthesiaMachineModel::Process(bool /*solve_and_transport*/)
   {
-    if (GetConnection() != eAnesthesiaMachine_Connection::Off)
-    {
+    if (GetConnection() == eSwitch::On)
       CalculateScrubber();
-    }
     ComputeExposedModelParameters();
   }
 
@@ -578,7 +549,7 @@ namespace PULSE_ENGINE
     }
     else if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine)
     {
-      if (m_Connection == eAnesthesiaMachine_Connection::Tube)
+      if (m_data.GetIntubation() == eSwitch::On)
       {
         if (m_actions->HasAnesthesiaMachineTubeCuffLeak() || m_actions->HasAnesthesiaMachineYPieceDisconnect())
         {
@@ -606,7 +577,7 @@ namespace PULSE_ENGINE
           m_pAnesthesiaConnectionToEnvironment->GetNextResistance().SetValue(dResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
         }
       }
-      else if (m_Connection == eAnesthesiaMachine_Connection::Mask)
+      else
       {
         if (m_actions->HasAnesthesiaMachineMaskLeak() || m_actions->HasAnesthesiaMachineYPieceDisconnect())
         {

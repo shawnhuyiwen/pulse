@@ -20,7 +20,7 @@
 
 SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
 {
-  m_Connection = eAnesthesiaMachine_Connection::Off;
+  m_Connection = eSwitch::Off;
   m_InletFlow = nullptr;
   m_InspiratoryExpiratoryRatio = nullptr;
   m_OxygenFraction = nullptr;
@@ -38,7 +38,7 @@ SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
 
 SEAnesthesiaMachine::~SEAnesthesiaMachine()
 {
-  m_Connection = eAnesthesiaMachine_Connection::Off;
+  m_Connection = eSwitch::Off;
   SAFE_DELETE(m_InletFlow);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
   SAFE_DELETE(m_OxygenFraction);
@@ -58,7 +58,7 @@ void SEAnesthesiaMachine::Clear()
 {
   SEEquipment::Clear();
 
-  m_Connection = eAnesthesiaMachine_Connection::Off;
+  m_Connection = eSwitch::Off;
   INVALIDATE_PROPERTY(m_InletFlow);
   INVALIDATE_PROPERTY(m_InspiratoryExpiratoryRatio);
   INVALIDATE_PROPERTY(m_OxygenFraction);
@@ -92,11 +92,10 @@ void SEAnesthesiaMachine::ProcessConfiguration(SEAnesthesiaMachineConfiguration&
       Error("Unable to load configuration file", "SEAnesthesiaMachine::ProcessConfiguration");
     Merge(config.GetConfiguration(), subMgr);
   }
-  StateChange();
 }
 void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from, SESubstanceManager& subMgr)
 {
-  if(from.m_Connection!=eAnesthesiaMachine_Connection::NullConnection)
+  if(from.m_Connection!=eSwitch::NullSwitch)
     SetConnection(from.m_Connection);
   COPY_PROPERTY(InletFlow);
   COPY_PROPERTY(InspiratoryExpiratoryRatio);
@@ -170,11 +169,11 @@ const SEScalar* SEAnesthesiaMachine::GetScalar(const std::string& name)
   return nullptr;
 }
 
-void SEAnesthesiaMachine::SetConnection(eAnesthesiaMachine_Connection c)
+void SEAnesthesiaMachine::SetConnection(eSwitch c)
 {
   m_Connection = c;
 }
-eAnesthesiaMachine_Connection SEAnesthesiaMachine::GetConnection() const
+eSwitch SEAnesthesiaMachine::GetConnection() const
 {
   return m_Connection;
 }
