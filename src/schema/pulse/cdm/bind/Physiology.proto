@@ -304,7 +304,7 @@ message RespiratorySystemData
   ScalarVolumeData                    InspiratoryTidalVolume                         = 21;/**<< @brief The volume of air moved into or out of the lungs during normal inspiration.*/
   ScalarPressureData                  IntrapleuralPressure                           = 22;/**<< @brief The pressure difference across the whole lung.*/
   ScalarPressureData                  IntrapulmonaryPressure                         = 23;/**<< @brief The total respiratory recoil pressure relative to body surface.*/
-  ScalarPressureData                  IntrinsicPositiveEndExpiredPressure            = 24; /**<< @brief .*/
+  ScalarPressureData                  IntrinsicPositiveEndExpiredPressure            = 24;/**<< @brief The alveolar pressure at the end of expiration - also known as auto-PEEP, air trapping, or dynamic hyperinflation.*/
   ScalarVolumePerPressureData         LungCompliance                                 = 25;/**<< @brief The static measure of the lung's ability to stretch and expand.*/
   ScalarPressureData                  MaximalInspiratoryPressure                     = 26;/**<< @brief The strength of inspiratory muscles.*/
   ScalarPressureData                  MeanAirwayPressure                             = 27;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */

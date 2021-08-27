@@ -249,6 +249,8 @@ namespace PULSE_ENGINE
     double TidalVolume_L = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L);
     double RespirationRate_Per_min = m_data.GetCurrentPatient().GetRespirationRateBaseline(FrequencyUnit::Per_min);
     GetTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
+    GetExpiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
+    GetInspiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
     GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
     GetInspiratoryExpiratoryRatio().SetValue(0.5);
     GetCarricoIndex().SetValue(452.0, PressureUnit::mmHg);
@@ -256,7 +258,9 @@ namespace PULSE_ENGINE
     GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(0.0);
     GetOxygenationIndex().SetValue(0.0);
     GetOxygenSaturationIndex().SetValue(0.0, PressureUnit::cmH2O);
+    GetAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetMeanAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
+    GetIntrinsicPositiveEndExpiredPressure().SetValue(0.0, PressureUnit::cmH2O);
 
     double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetVolumeBaseline(VolumeUnit::L);
     double AlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L) + m_RightAlveolarDeadSpace->GetVolumeBaseline(VolumeUnit::L);
@@ -274,14 +278,16 @@ namespace PULSE_ENGINE
     GetEndTidalOxygenFraction().SetValue(0.0);
     GetEndTidalOxygenPressure().SetValue(0.0, PressureUnit::mmHg);
 
-    GetInspiratoryFlow().SetValue(0, VolumePerTimeUnit::L_Per_s);
+    GetRespiratoryMusclePressure().SetValue(0.0, PressureUnit::cmH2O);
     GetIntrapleuralPressure().SetValue(0.0, PressureUnit::cmH2O);
+    GetIntrapulmonaryPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetTransrespiratoryPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetTransairwayPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetTranspulmonaryPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetTransalveolarPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetTransthoracicPressure().SetValue(0.0, PressureUnit::cmH2O);
     GetTransChestWallPressure().SetValue(0.0, PressureUnit::cmH2O);
+    GetTransMusclePressure().SetValue(0.0, PressureUnit::cmH2O);
 
     GetPulmonaryCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
     GetLungCompliance().SetValue(0.1, VolumePerPressureUnit::L_Per_cmH2O);
@@ -1868,7 +1874,7 @@ namespace PULSE_ENGINE
 
     double AnatomicDeadSpace_L = m_LeftAnatomicDeadSpace->GetNextVolume(VolumeUnit::L) + m_RightAnatomicDeadSpace->GetNextVolume(VolumeUnit::L);
     double AlveolarDeadSpace_L = m_LeftAlveolarDeadSpace->GetNextVolume(VolumeUnit::L) + m_RightAlveolarDeadSpace->GetNextVolume(VolumeUnit::L);
-    GetAnatomicDeadSpace().SetValue(AnatomicDeadSpace_L, VolumeUnit::L);  
+    GetAnatomicDeadSpace().SetValue(AnatomicDeadSpace_L, VolumeUnit::L);
     GetAlveolarDeadSpace().SetValue(AlveolarDeadSpace_L, VolumeUnit::L);
     GetPhysiologicDeadSpace().SetValue(AnatomicDeadSpace_L + AlveolarDeadSpace_L, VolumeUnit::L);
 
@@ -1896,6 +1902,7 @@ namespace PULSE_ENGINE
     double transChestWallPressure_cmH2O = pleuralPressure_cmH2O - bodySurfacePressure_cmH2O;
     double transMusclePressure_cmH2O = musclePressure_cmH2O - bodySurfacePressure_cmH2O;
 
+    GetAirwayPressure().SetValue(airwayOpeningPressure_cmH2O, PressureUnit::cmH2O);
     GetRespiratoryMusclePressure().SetValue(musclePressure_cmH2O, PressureUnit::cmH2O);
     GetIntrapleuralPressure().SetValue(transChestWallPressure_cmH2O, PressureUnit::cmH2O);
     GetIntrapulmonaryPressure().SetValue(-transMusclePressure_cmH2O, PressureUnit::cmH2O);
@@ -2034,9 +2041,11 @@ namespace PULSE_ENGINE
         // Calculate the Tidal Volume from the last peak
         double TidalVolume_L = std::abs(m_TopBreathTotalVolume_L - m_BottomBreathTotalVolume_L);
         GetTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
+        GetExpiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
 
         GetPeakInspiratoryPressure().SetValue(m_PeakAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
         GetPositiveEndExpiratoryPressure().SetValue(m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
+        GetIntrinsicPositiveEndExpiredPressure().SetValue(m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
         GetMaximalInspiratoryPressure().SetValue(m_MaximalAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
 
         // Calculate Ventilations
@@ -2080,6 +2089,10 @@ namespace PULSE_ENGINE
       {
         //Transition to exhaling
         m_BreathingCycle = true;
+
+        // Calculate the Tidal Volume from the last trough
+        double TidalVolume_L = std::abs(m_TopBreathTotalVolume_L - m_BottomBreathTotalVolume_L);
+        GetInspiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
 
         //We want the peak Carina O2 value - this should be the inspired value
         double FiO2 = m_TopCarinaO2;
