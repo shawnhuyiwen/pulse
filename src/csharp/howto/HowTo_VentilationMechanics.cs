@@ -43,7 +43,7 @@ namespace HowTo_VentilationMechanics
         SEDataRequest.CreateMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit.L_Per_s),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit.L),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiredPressure", PressureUnit.cmH2O),
-        SEDataRequest.CreateMechanicalVentilatorDataRequest("LeakFractionOrSeverity"),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("LeakFraction"),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("MeanAirwayPressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("PlateauPressure", PressureUnit.cmH2O),
@@ -141,12 +141,6 @@ namespace HowTo_VentilationMechanics
       SEIntubation intubation = new SEIntubation();
       intubation.SetType(eIntubation_Type.Tracheal);
       pulse.ProcessAction(intubation);
-      // TODO jbw/aaron - Figure out how to intubate and connect via a tube on the same timestep
-      pulse.AdvanceTime_s(0.02);
-      // Get the values of the data you requested at this time
-      data_values = pulse.PullData();
-      // And write it out to the console
-      data_mgr.WriteData(data_values);
 
       // Setup the ventilator
       SEMechanicalVentilatorPressureControl pc_ac = new SEMechanicalVentilatorPressureControl();

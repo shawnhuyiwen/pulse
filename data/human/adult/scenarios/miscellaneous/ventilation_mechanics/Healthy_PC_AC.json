@@ -453,17 +453,6 @@
    }
   },
   {
-   "AdvanceTime": {
-    "Action": {},
-    "Time": {
-     "ScalarTime": {
-      "Value": 0.02,
-      "Unit": "s"
-     }
-    }
-   }
-  },
-  {
    "EquipmentAction": {
     "MechanicalVentilatorPressureControl": {
      "MechanicalVentilatorMode": {

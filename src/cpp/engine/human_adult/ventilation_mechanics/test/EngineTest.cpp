@@ -123,7 +123,7 @@ namespace HUMAN_ADULT_VENT_MECH
       unsupported.AddFailure("Respiratory Engine does not support SerializeToString, but says it does?");
   }
 
-#define RUN_PULSE
+//#define RUN_PULSE
 //#define TRIM_CSV
 
   void EngineTest::GenerateScenarios()
@@ -306,19 +306,12 @@ namespace HUMAN_ADULT_VENT_MECH
 #endif
 
         // Intubate
-        // TODO jbw/aaron - Figure out how to intubate and connect via a tube on the same timestep
         SEIntubation intubation;
         intubation.SetType(eIntubation_Type::Tracheal);
 #ifdef RUN_PULSE
         e->ProcessAction(intubation);
-        e->AdvanceModelTime();
-#ifndef TRIM_CSV
-        e->GetEngineTracker()->TrackData(e->GetSimulationTime(TimeUnit::s));
-#endif
 #else
         s.AddAction(intubation);
-        adv.GetTime().SetValue(0.02, TimeUnit::s);
-        s.AddAction(adv);
 #endif
 
         // Setup the ventilator
