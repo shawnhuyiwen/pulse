@@ -697,6 +697,8 @@ namespace PULSE_ENGINE
   {
     if (m_CurrentBreathState == eBreathState::Inhale)
     {
+      CalculateInspiratoryRespiratoryParameters();
+
       if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
         m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorHold().GetAppliedRespiratoryCycle() == eAppliedRespiratoryCycle::Inspiratory)
       {
@@ -706,19 +708,17 @@ namespace PULSE_ENGINE
 
       m_InspirationTime_s += m_CurrentPeriodTime_s;
       m_CurrentBreathState = eBreathState::Pause;
-      CalculateInspiratoryRespiratoryParameters();
     }
     else if (m_CurrentBreathState == eBreathState::InspiratoryHold)
     {
       m_InspirationTime_s += m_CurrentPeriodTime_s;
       m_CurrentBreathState = eBreathState::Pause;
-      CalculateInspiratoryRespiratoryParameters();
     }
     else if (m_CurrentBreathState == eBreathState::Pause)
     {
       m_InspirationTime_s += m_CurrentPeriodTime_s;
-      m_CurrentBreathState = eBreathState::Exhale;
       CalculatePauseRespiratoryParameters();
+      m_CurrentBreathState = eBreathState::Exhale;
     }
     else if (m_CurrentBreathState == eBreathState::Exhale)
     {
@@ -729,15 +729,15 @@ namespace PULSE_ENGINE
         return;
       }
 
+      CalculateExpiratoryRespiratoryParameters();
       m_InspirationTime_s = 0.0;
       m_CurrentBreathState = eBreathState::Inhale;
-      CalculateExpiratoryRespiratoryParameters();
     }
     else if (m_CurrentBreathState == eBreathState::ExpiratoryHold)
     {
+      CalculateExpiratoryRespiratoryParameters();
       m_InspirationTime_s = 0.0;
       m_CurrentBreathState = eBreathState::Inhale;
-      CalculateExpiratoryRespiratoryParameters();
     }
 
     m_CurrentPeriodTime_s = 0.0;
@@ -1026,7 +1026,7 @@ namespace PULSE_ENGINE
 
     double resistance_cmH2O_s_Per_L = 0.0;
     if(m_InspiratoryFlow_L_Per_s > ZERO_APPROX)
-      resistance_cmH2O_s_Per_L = (GetPeakInspiratoryPressure(PressureUnit::cmH2O) - GetPlateauPressure(PressureUnit::cmH2O) / m_InspiratoryFlow_L_Per_s);
+      resistance_cmH2O_s_Per_L = (GetPeakInspiratoryPressure(PressureUnit::cmH2O) - GetPlateauPressure(PressureUnit::cmH2O)) / m_InspiratoryFlow_L_Per_s;
     GetPulmonaryResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
     m_CurrentVentilatorVolume_L = 0.0;
