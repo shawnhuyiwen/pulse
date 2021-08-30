@@ -57,6 +57,7 @@ namespace PULSE_ENGINE
     void SetVentilatorDriver();
     void CycleMode();
     void SetLeak();
+    void SetHold();
     void CalculateRespiratoryParameters();
     void CalculateInspiratoryRespiratoryParameters();
     void CalculatePauseRespiratoryParameters();

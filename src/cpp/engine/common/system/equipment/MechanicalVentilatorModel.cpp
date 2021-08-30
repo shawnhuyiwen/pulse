@@ -9,6 +9,7 @@
 
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h"
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEEquipmentActionCollection.h"
 #include "cdm/engine/SEPatientActionCollection.h"
@@ -350,9 +351,11 @@ namespace PULSE_ENGINE
     CalculateInspiration();
     CalculatePause();
     CalculateExpiration();
-    SetVentilatorDriver();
+    SetHold();
     SetLeak();
+    SetVentilatorDriver();
     SetResistances();
+    SetVolumes();
 
     m_CurrentPeriodTime_s += m_data.GetTimeStep_s();
   }
@@ -694,6 +697,19 @@ namespace PULSE_ENGINE
   {
     if (m_CurrentBreathState == eBreathState::Inhale)
     {
+      if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
+        m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorHold().GetAppliedRespiratoryCycle() == eAppliedRespiratoryCycle::Inspiratory)
+      {
+        m_CurrentBreathState = eBreathState::InspiratoryHold;
+        return;
+      }
+
+      m_InspirationTime_s += m_CurrentPeriodTime_s;
+      m_CurrentBreathState = eBreathState::Pause;
+      CalculateInspiratoryRespiratoryParameters();
+    }
+    else if (m_CurrentBreathState == eBreathState::InspiratoryHold)
+    {
       m_InspirationTime_s += m_CurrentPeriodTime_s;
       m_CurrentBreathState = eBreathState::Pause;
       CalculateInspiratoryRespiratoryParameters();
@@ -705,6 +721,19 @@ namespace PULSE_ENGINE
       CalculatePauseRespiratoryParameters();
     }
     else if (m_CurrentBreathState == eBreathState::Exhale)
+    {
+      if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
+        m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorHold().GetAppliedRespiratoryCycle() == eAppliedRespiratoryCycle::Expiratory)
+      {
+        m_CurrentBreathState = eBreathState::ExpiratoryHold;
+        return;
+      }
+
+      m_InspirationTime_s = 0.0;
+      m_CurrentBreathState = eBreathState::Inhale;
+      CalculateExpiratoryRespiratoryParameters();
+    }
+    else if (m_CurrentBreathState == eBreathState::ExpiratoryHold)
     {
       m_InspirationTime_s = 0.0;
       m_CurrentBreathState = eBreathState::Inhale;
@@ -747,6 +776,34 @@ namespace PULSE_ENGINE
       }
 
       m_LeakConnectionToEnvironment->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------
+/// \brief
+/// Set the resistance to ground that causes air to leak out of the ventilator-respiratory system.
+//--------------------------------------------------------------------------------------------------
+  void MechanicalVentilatorModel::SetHold()
+  {
+    if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
+      m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorHold().GetAppliedRespiratoryCycle() == eAppliedRespiratoryCycle::Instantaneous)
+    {
+      m_DriverFlow_L_Per_s = 0.0;
+      m_DriverPressure_cmH2O = SEScalar::dNaN();
+      return;
+    }
+    else if (m_CurrentBreathState == eBreathState::ExpiratoryHold ||
+      m_CurrentBreathState == eBreathState::InspiratoryHold)
+    {
+      if (!m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold())
+      {
+        //Hold turned off
+        CycleMode();
+        return;
+      }
+
+      m_DriverFlow_L_Per_s = 0.0;
+      m_DriverPressure_cmH2O = SEScalar::dNaN();
     }
   }
 

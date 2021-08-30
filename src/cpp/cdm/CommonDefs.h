@@ -144,7 +144,7 @@ extern const std::string& eSwitch_Name(eSwitch m);
 enum class eCharge { NullCharge = 0, Negative, Neutral, Positive };
 extern const std::string& eCharge_Name(eCharge m);
 
-enum class eBreathState { Inhale = 0, Pause, Exhale };
+enum class eBreathState { Inhale = 0, Pause, Exhale, ExpiratoryHold, InspiratoryHold };
 extern const std::string& eBreathState_Name(eBreathState m);
 
 //

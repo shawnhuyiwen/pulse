@@ -46,7 +46,9 @@ bool SEMechanicalVentilatorHold::IsValid() const
 
 bool SEMechanicalVentilatorHold::IsActive() const
 {
-  return SEMechanicalVentilatorAction::IsActive();
+  if (!SEMechanicalVentilatorAction::IsActive())
+    return false;
+  return GetState() == eSwitch::On;
 }
 void SEMechanicalVentilatorHold::Deactivate()
 {

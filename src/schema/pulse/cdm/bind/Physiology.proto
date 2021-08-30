@@ -275,6 +275,8 @@ enum eBreathState
   Inhale = 0;
   Pause  = 1;
   Exhale = 2;
+  ExpiratoryHold = 3;
+  InspiratoryHold = 4;
 }
 /**@brief Provides ventilation and gas exchange of the human respiratory system.
    @details Supports changes in the lungs volume and pressure data during the flow
