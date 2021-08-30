@@ -9,7 +9,7 @@ from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggerForward, eEven
 
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 from pulse.cdm.patient_actions import SEExercise
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, MassPerVolumeUnit, \
                               PressureUnit, TemperatureUnit, TimeUnit
 
@@ -57,13 +57,13 @@ class local_log_fowrwad(ILoggerForward):
 
 def HowTo_UseEngine():
 
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
 
     # Let's print out events from the engine
     pulse.set_event_handler(local_event_handler())
 
     #  Logging manipulation:
-    #  Passing the log_forward object to PulsePhysiologyEngine will allow you to control the logging of the engine.
+    #  Passing the log_forward object to PulseEngine will allow you to control the logging of the engine.
     #  A pre-existing class has been used here,
     #  which forwards the logging to the Python console via the logging package.
     # This is the recommended approach to logging

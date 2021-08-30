@@ -3,7 +3,7 @@
 
 import sys
 import json
-from pulse.cpm.PulsePhysiologyEnginePool import PulsePhysiologyEnginePool
+from pulse.engine.PulseEnginePool import PulseEnginePool
 from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, \
                              SEAdvanceTime
 from pulse.cdm.patient import eSex, SEPatientConfiguration
@@ -13,7 +13,7 @@ from pulse.cdm.scalars import MassPerVolumeUnit, TimeUnit, VolumeUnit
 
 def HowTo_PatientPool():
     # You may also specify how many threads to use via this ctor
-    pool = PulsePhysiologyEnginePool()
+    pool = PulseEnginePool()
 
     # Create a data request object that we will use for all patients
     # i.e. We want the same data from each of our patients

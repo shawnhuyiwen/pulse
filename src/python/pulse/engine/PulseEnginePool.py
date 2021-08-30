@@ -22,11 +22,11 @@ class SEEnginePoolEngine: # TODO follow CDM get/set pattern?
     def get_id(self):
         return self.engine_initialization.id
 
-from pulse.cpm.io.PulsePhysiologyEnginePool import serialize_pool_engine_initializations_to_string, \
+from pulse.engine.io.PulseEnginePool import serialize_pool_engine_initializations_to_string, \
                                                    serialize_pool_actions_to_string, \
                                                    serialize_pool_data_requested_from_string
 
-class PulsePhysiologyEnginePool:
+class PulseEnginePool:
     __slots__ = ["__pool", "_is_active",
                  "_dt_s", "_spare_time_s",
                  "_engines"]

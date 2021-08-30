@@ -1,41 +1,54 @@
 # I used this command in windows cmd: dir /a-D /S /B
+
+set(PULSE_BIND_JAVA_FILES
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Actions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/AnesthesiaMachine.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/AnesthesiaMachineActions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/BagValveMask.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/BagValveMaskActions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/BlackBox.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Circuit.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Compartment.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Conditions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/ElectroCardioGram.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Engine.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Enums.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Environment.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/EnvironmentActions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/EnvironmentConditions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/EquipmentActions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Events.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Inhaler.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/InhalerActions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/MechanicalVentilator.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/MechanicalVentilatorActions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Patient.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientActions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientAssessments.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientConditions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/PatientNutrition.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Physiology.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Properties.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Scenario.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Substance.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/SubstanceQuantity.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/TestReport.java
+  ${DST_ROOT}/java/com/kitware/pulse/engine/bind/Configuration.java
+  ${DST_ROOT}/java/com/kitware/pulse/engine/bind/Enums.java
+  ${DST_ROOT}/java/com/kitware/pulse/engine/bind/Environment.java
+  ${DST_ROOT}/java/com/kitware/pulse/engine/bind/Equipment.java
+  ${DST_ROOT}/java/com/kitware/pulse/engine/bind/Physiology.java
+  ${DST_ROOT}/java/com/kitware/pulse/engine/bind/Scenario.java
+  ${DST_ROOT}/java/com/kitware/pulse/engine/bind/State.java
+  ${DST_ROOT}/java/com/kitware/pulse/study/bind/hydrocephalus/Hydrocephalus.java
+  ${DST_ROOT}/java/com/kitware/pulse/study/bind/multiplex_ventilation/MultiplexVentilation.java
+  ${DST_ROOT}/java/com/kitware/pulse/study/bind/sensitivity_analysis/SensitivityAnalysis.java
+)
 set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/SerializationType.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SEAction.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SEAdvanceTime.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/actions/SESerializeState.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Actions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/AnesthesiaMachine.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/AnesthesiaMachineActions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/BagValveMask.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/BagValveMaskActions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/BlackBox.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Circuit.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Compartment.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Conditions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/ElectroCardioGram.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Engine.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Enums.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Environment.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/EnvironmentActions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/EnvironmentConditions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/EquipmentActions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Events.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Inhaler.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/InhalerActions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/MechanicalVentilator.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/MechanicalVentilatorActions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Patient.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/PatientActions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/PatientAssessments.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/PatientConditions.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/PatientNutrition.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Physiology.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Properties.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Scenario.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/Substance.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/SubstanceQuantity.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/bind/TestReport.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SECompartment.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SECompartmentManager.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/compartment/SEFluidCompartment.java
@@ -265,13 +278,6 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/PulseEngine.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/PulseScenario.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/PulseScenarioExec.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/bind/Configuration.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/bind/Enums.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/bind/Environment.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/bind/Equipment.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/bind/Physiology.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/bind/Scenario.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/bind/State.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/testing/EngineUnitTestDriver.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/testing/ScenarioTestDriver.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_AnesthesiaMachine.java
@@ -280,9 +286,6 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_Hemorrhage.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_MechanicalVentilator.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_RunScenario.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/study/bind/hydrocephalus/Hydrocephalus.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/study/bind/multiplex_ventilation/MultiplexVentilation.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/study/bind/sensitivity_analysis/SensitivityAnalysis.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/Base64.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/CurrentClass.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/DoubleUtils.java

@@ -9,7 +9,7 @@ from pulse.cdm.engine import SEDataRequestManager, SEDataRequest
 from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggerForward
 
 from pulse.cdm.patient import eSex, SEPatientConfiguration
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, MassPerVolumeUnit, \
                               PressureUnit, TemperatureUnit, TimeUnit
 
@@ -27,7 +27,7 @@ class PoolPatient:
     def __init__(self, id: int):
         self._id = id
         self.is_active = False
-        self.pulse = PulsePhysiologyEngine()
+        self.pulse = PulseEngine()
         self.data_request_mgr = None
         self.patient_configuration = None
         self.state_filename = None

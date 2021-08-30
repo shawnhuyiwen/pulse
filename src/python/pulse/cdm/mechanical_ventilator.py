@@ -2,18 +2,13 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
+from pulse.cdm.engine import eSwitch
 from pulse.cdm.equipment import SEEquipment
 from pulse.cdm.substance import SESubstanceFraction, \
                                 SESubstanceConcentration
 from pulse.cdm.scalars import SEScalarPressureTimePerVolume, SEScalarVolumePerTime, \
                               SEScalarPressure, SEScalarTime, SEScalarVolume, \
                               MassPerVolumeUnit
-
-class eConnection(Enum):
-    NullConnection = 0
-    Off = 1
-    Mask = 2
-    Tube = 3
 
 class eDriverWaveform(Enum):
     NullDriverWaveform = 0
@@ -70,7 +65,7 @@ class SEMechanicalVentilator(SEEquipment):
 
     def __init__(self):
         super().__init__()
-        self._connection = eConnection.NullConnection
+        self._connection = eSwitch.NullSwitch
 
         self._positive_end_expired_pressure = None
         self._functional_residual_capacity = None
@@ -115,7 +110,7 @@ class SEMechanicalVentilator(SEEquipment):
         self._concentration_inspired_aerosol = []
 
     def clear(self):
-        self._connection = eConnection.NullConnection
+        self._connection = eSwitch.NullSwitch
 
         if self._positive_end_expired_pressure is not None: self._positive_end_expired_pressure.invalidate()
         if self._functional_residual_capacity is not None: self._functional_residual_capacity.invalidate()
@@ -211,7 +206,7 @@ class SEMechanicalVentilator(SEEquipment):
 
     def get_connection(self):
         return self._connection
-    def set_connection(self, t: eConnection):
+    def set_connection(self, t: eSwitch):
         self._connection = t
     
     def has_positive_end_expired_pressure(self):

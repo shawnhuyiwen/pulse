@@ -8,8 +8,8 @@ pybind11_add_module(PyPulse
   pybind/PulseEngines.cpp
   pybind/MultiplexVentilation.cpp)
 
-target_include_directories(PyPulse PRIVATE ${pybind11_INCLUDE_DIRS})
 target_include_directories(PyPulse PUBLIC ${CMAKE_SOURCE_DIR}/src/cpp)
+target_include_directories(PyPulse PRIVATE ${pybind11_INCLUDE_DIRS} ${DST_ROOT}/cpp)
 
 if(APPLE)
     set_target_properties(PyPulse PROPERTIES MACOSX_RPATH ON)

@@ -2,13 +2,13 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.engine import eSerializationFormat
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.mechanical_ventilator_actions import SEMechanicalVentilatorConfiguration
 from pulse.cdm.scalars import PressureUnit, TimeUnit, MassPerVolumeUnit
 from pulse.cdm.mechanical_ventilator import eConnection, eDriverWaveform
 
 def HowTo_MechanicalVentilator():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_MechanicalVentilator.log")
     pulse.log_to_console(True)
 

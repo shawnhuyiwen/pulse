@@ -3,10 +3,10 @@
 
 from pulse.cdm.patient_actions import SEConsumeNutrients
 from pulse.cdm.scalars import MassUnit, MassPerTimeUnit, VolumeUnit
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_ConsumeNutrients():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_ConsumeNutrients.log")
     pulse.log_to_console(True)
 

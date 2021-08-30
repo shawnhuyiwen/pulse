@@ -2,18 +2,13 @@
 # See accompanying NOTICE file for details.
 
 from enum import Enum
+from pulse.cdm.engine import eSwitch
 from pulse.cdm.equipment import SEEquipment
 from pulse.cdm.substance import SESubstanceFraction, \
                                 SESubstanceConcentration
 from pulse.cdm.scalars import SEScalarPressureTimePerVolume, SEScalarVolumePerTime, \
                               SEScalarPressure, SEScalarTime, SEScalarVolume, \
                               MassPerVolumeUnit
-
-class eConnection(Enum):
-    NullConnection = 0
-    Off = 1
-    Mask = 2
-    Tube = 3
 
 class SEBagValveMask(SEEquipment):
     __slots__ = ["_connection",
@@ -31,7 +26,7 @@ class SEBagValveMask(SEEquipment):
 
     def __init__(self):
         super().__init__()
-        self._connection = eConnection.NullConnection
+        self._connection = eSwitch.NullSwitch
         self._bag_resistance = None
         self._connection_volume = None
         self._filter_resistance = None
@@ -45,7 +40,7 @@ class SEBagValveMask(SEEquipment):
         self._concentration_inspired_aerosol = []
 
     def clear(self):
-        self._connection = eConnection.NullConnection
+        self._connection = eSwitch.NullSwitch
         if self._bag_resistance is not None: self._bag_resistance.invalidate()
         if self._connection_volume is not None: self._connection_volume.invalidate()
         if self._filter_resistance is not None: self._filter_resistance.invalidate()
@@ -79,7 +74,7 @@ class SEBagValveMask(SEEquipment):
 
     def get_connection(self):
         return self._connection
-    def set_connection(self, t: eConnection):
+    def set_connection(self, t: eSwitch):
         self._connection = t
 
     def has_bag_resistance(self):

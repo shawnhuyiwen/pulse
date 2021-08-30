@@ -77,9 +77,19 @@ namespace PULSE_ENGINE
   void Data::CheckIntubation()
   {
     if (m_Actions->GetPatientActions().HasIntubation())
-      m_Intubation = eSwitch::On;
-    else
+    {
+      if (m_Intubation == eSwitch::Off)
+      {
+        Info("Intubating Patient");
+        m_Intubation = eSwitch::On;
+      }
+      return;
+    }
+    if (m_Intubation == eSwitch::On)
+    {
+      Info("Extubating Patient");
       m_Intubation = eSwitch::Off;
+    }
   }
 
   void Data::SetAirwayMode(eAirwayMode mode)

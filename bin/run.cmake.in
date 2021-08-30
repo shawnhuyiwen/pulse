@@ -98,6 +98,7 @@ elseif(TYPE STREQUAL "protoc")
                                            -DPulse_JAVA_API:BOOL=@Pulse_JAVA_API@
                                            -DPulse_CSHARP_API:BOOL=@Pulse_CSHARP_API@
                                            -DPulse_PYTHON_API:BOOL=@Pulse_PYTHON_API@
+                                           -DFORCE:BOOL=ON
                                            -P "@CMAKE_SOURCE_DIR@/src/schema/GenerateBindings.cmake")
 elseif(TYPE STREQUAL "updateBaselines")
   execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@/data" --target UpdateVerification)

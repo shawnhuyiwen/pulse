@@ -1,7 +1,7 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cpm.PulsePhysiologyEnginePool import SEEnginePoolEngine
+from pulse.engine.PulseEnginePool import SEEnginePoolEngine
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.io.engine import serialize_engine_initialization_to_bind, \

@@ -2,10 +2,10 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_UseAnemia():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_Anemia.log")
     pulse.log_to_console(True)
 

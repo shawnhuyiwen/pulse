@@ -3,11 +3,11 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEHemorrhage, eHemorrhageType
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.scalars import VolumePerTimeUnit
 
 def HowTo_Hemorrhage():
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
     pulse.set_log_filename("./test_results/pypulse_Hemorrhage.log")
     pulse.log_to_console(True)
 

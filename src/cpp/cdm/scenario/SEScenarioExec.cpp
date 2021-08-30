@@ -150,6 +150,8 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
 
   bool err=false;
   const SEAdvanceTime* adv;
+  double expectedFinalSimTime_s = 0;
+  double spareAdvanceTime_s = 0;
   for (SEAction* a : sce.GetActions())
   {
     // We override advance time actions in order to advance and 
@@ -160,9 +162,11 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     {
       ss << "[Action] " << *a;
       pe.GetLogger()->Info(ss);
+      expectedFinalSimTime_s += adv->GetTime(TimeUnit::s);
 
-      double time_s = adv->GetTime(TimeUnit::s);
+      double time_s = adv->GetTime(TimeUnit::s) + spareAdvanceTime_s;
       int count = (int)(time_s/dT_s);
+      spareAdvanceTime_s = time_s - (count * dT_s);
       for(int i=0;i<count;i++)
       {
         AdvanceEngine(pe);
@@ -198,11 +202,23 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     if(pe.GetEventManager().IsEventActive(eEvent::IrreversibleState))
       return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
   }
+
   ss << "It took " << profiler.GetElapsedTime_s("Total") << "s to run this simulation";
   profiler.Clear();
   pe.GetLogger()->Info(ss);
 
-  return !err;
+  expectedFinalSimTime_s = std::round(expectedFinalSimTime_s * 100.0) / 100.0;
+  double simTime_s = std::round(pe.GetSimulationTime(TimeUnit::s) * 100.0) / 100.0;
+
+  pe.GetLogger()->Info("Final SimTime(s) " + pulse::cdm::to_string(simTime_s));
+  pe.GetLogger()->Info("Expected Final SimTime(s) " + pulse::cdm::to_string(expectedFinalSimTime_s));
+  if (expectedFinalSimTime_s != simTime_s)
+  {
+    err = true;
+    pe.GetLogger()->Error("!!!! Simulation time does not equal expected end time !!!!");
+  }
+
+  return err;
 }
 
 bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
