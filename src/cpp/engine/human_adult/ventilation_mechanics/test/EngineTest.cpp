@@ -22,6 +22,7 @@
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
 #include "cdm/system/physiology/SERespiratoryMechanics.h"
 #include "cdm/properties/SEScalar0To1.h"
@@ -313,10 +314,15 @@ namespace HUMAN_ADULT_VENT_MECH
           vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
+
+          SEMechanicalVentilatorLeak leak;
+          leak.GetSeverity().SetValue(0.49);
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
+          e->ProcessAction(leak);
 #else
           s.AddAction(vc_ac);
+          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::Normal && currentVentilatorMode == VentilatorMode::PC_AC)
@@ -329,10 +335,15 @@ namespace HUMAN_ADULT_VENT_MECH
           pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
+
+          SEMechanicalVentilatorLeak leak;
+          leak.GetSeverity().SetValue(0.47);
 #ifdef RUN_PULSE
           e->ProcessAction(pc_ac);
+          e->ProcessAction(leak);
 #else
           s.AddAction(pc_ac);
+          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::Normal && currentVentilatorMode == VentilatorMode::CPAP)
@@ -343,10 +354,15 @@ namespace HUMAN_ADULT_VENT_MECH
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
           cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
+
+          SEMechanicalVentilatorLeak leak;
+          leak.GetSeverity().SetValue(0.42);
 #ifdef RUN_PULSE
           e->ProcessAction(cpap);
+          e->ProcessAction(leak);
 #else
           s.AddAction(cpap);
+          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::VC_AC)
@@ -360,10 +376,15 @@ namespace HUMAN_ADULT_VENT_MECH
           vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(550.0, VolumeUnit::mL);
+
+          SEMechanicalVentilatorLeak leak;
+          leak.GetSeverity().SetValue(0.38);
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
+          e->ProcessAction(leak);
 #else
           s.AddAction(vc_ac);
+          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::PC_AC)
@@ -376,10 +397,15 @@ namespace HUMAN_ADULT_VENT_MECH
           pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
+
+          SEMechanicalVentilatorLeak leak;
+          leak.GetSeverity().SetValue(0.32);
 #ifdef RUN_PULSE
           e->ProcessAction(pc_ac);
+          e->ProcessAction(leak);
 #else
           s.AddAction(pc_ac);
+          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::CPAP)
@@ -390,10 +416,15 @@ namespace HUMAN_ADULT_VENT_MECH
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
           cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
+
+          SEMechanicalVentilatorLeak leak;
+          leak.GetSeverity().SetValue(0.26);
 #ifdef RUN_PULSE
           e->ProcessAction(cpap);
+          e->ProcessAction(leak);
 #else
           s.AddAction(cpap);
+          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::VC_AC)
@@ -407,10 +438,15 @@ namespace HUMAN_ADULT_VENT_MECH
           vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(500.0, VolumeUnit::mL);
+
+          SEMechanicalVentilatorLeak leak;
+          leak.GetSeverity().SetValue(0.37);
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
+          e->ProcessAction(leak);
 #else
           s.AddAction(vc_ac);
+          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::PC_AC)
@@ -423,10 +459,15 @@ namespace HUMAN_ADULT_VENT_MECH
           pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
+
+          SEMechanicalVentilatorLeak leak;
+          leak.GetSeverity().SetValue(0.36);
 #ifdef RUN_PULSE
           e->ProcessAction(pc_ac);
+          e->ProcessAction(leak);
 #else
           s.AddAction(pc_ac);
+          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::CPAP)
@@ -437,15 +478,20 @@ namespace HUMAN_ADULT_VENT_MECH
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
           cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
+
+          SEMechanicalVentilatorLeak leak;
+          leak.GetSeverity().SetValue(0.45);
 #ifdef RUN_PULSE
           e->ProcessAction(cpap);
+          e->ProcessAction(leak);
 #else
           s.AddAction(cpap);
+          s.AddAction(leak);
 #endif
         }
 
-        double threeCycles_s = 3.0 * 60.0 / respirationRate_bpm;
-        double simiulationTime_s = 15.0 + threeCycles_s;
+        double fiveCycles_s = 5.0 * 60.0 / respirationRate_bpm;
+        double simiulationTime_s = 15.0 + fiveCycles_s;
 #ifdef RUN_PULSE
         // Advance time
         
@@ -457,9 +503,9 @@ namespace HUMAN_ADULT_VENT_MECH
             break;
           }
 
-          // Do 2 cycles cycle before recording data
+          // Do some cycles cycle before recording data
 #ifdef TRIM_CSV
-          if (i > threeCycles_s * 50.0)
+          if (i > fiveCycles_s * 50.0)
 #endif
           {
             // Pull Track will pull data from the engine and append it to the file
