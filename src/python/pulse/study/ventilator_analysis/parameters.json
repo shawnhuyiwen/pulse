@@ -23,16 +23,14 @@
     },
     "plots" : {
         "comment" : "column in CSV : internal name",
-        "InspiratoryFlow(L/min)" : "Flow(L/min)",
-        "RelativeTotalLungVolume(mL)" : "Volume(mL)",
-        "TransrespiratoryPressure(cmH2O)": "P1",
-        "RelativeTotalLungVolume(mL)$vs$IntrapulmonaryPressure(cmH2O)": "RelativeTotalLungVolume_vs_IntrapulmonaryPressure",
-        "RelativeTotalLungVolume(mL)$vs$TransrespiratoryPressure(cmH2O)": "RelativeTotalLungVolume_vs_TransrespiratoryPressure"
+        "MechanicalVentilator-InspiratoryFlow(L/min)" : "Flow(L/min)",
+        "MechanicalVentilator-TotalLungVolume(mL)" : "Volume(mL)",
+        "MechanicalVentilator-AirwayPressure(cmH2O)": "P1"
     },
     "plotPriorityOrder" : [
-        "TransrespiratoryPressure",
-        "InspiratoryFlow",
-        "RelativeTotalLungVolume",
+        "MechanicalVentilator-AirwayPressure",
+        "MechanicalVentilator-InspiratoryFlow",
+        "MechanicalVentilator-TotalLungVolume",
         "comment: ",
         "this is used to make these plots show in this order - to match the photo"
     ],
