@@ -121,7 +121,7 @@ void HowToMechanicalVentilator()
 
   SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
   cpap.SetConnection(eSwitch::On);
-  cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
+  cpap.GetDeltaPressureSupport().SetValue(8.0, PressureUnit::cmH2O);
   cpap.GetFractionInspiredOxygen().SetValue(0.21);
   cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   cpap.GetSlope().SetValue(0.2, TimeUnit::s);
@@ -134,10 +134,9 @@ void HowToMechanicalVentilator()
   // There are several different modes to choose from
   pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
   pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
-  pc_ac.GetInspiratoryPressure().SetValue(19.0, PressureUnit::cmH2O);
+  pc_ac.GetInspiratoryPressure().SetValue(13.0, PressureUnit::cmH2O);
   pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
-  pc_ac.GetSlope().SetValue(0.2, TimeUnit::s);
   pe->ProcessAction(pc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
@@ -146,12 +145,12 @@ void HowToMechanicalVentilator()
   vc_ac.SetConnection(eSwitch::On);
   // There are several different modes to choose from
   vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
-  vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
+  vc_ac.GetFlow().SetValue(50.0, VolumePerTimeUnit::L_Per_min);
   vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
   vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
   vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
-  vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
+  vc_ac.GetTidalVolume().SetValue(600.0, VolumeUnit::mL);
   pe->ProcessAction(vc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
