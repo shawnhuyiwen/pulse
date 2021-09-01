@@ -25,7 +25,8 @@
         "comment" : "column in CSV : internal name",
         "MechanicalVentilator-InspiratoryFlow(L/min)" : "Flow(L/min)",
         "MechanicalVentilator-TotalLungVolume(mL)" : "Volume(mL)",
-        "MechanicalVentilator-AirwayPressure(cmH2O)": "P1"
+        "MechanicalVentilator-AirwayPressure(cmH2O)": "P1",
+        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-AirwayPressure(cmH2O)": "LungVolume_vs_AirwayPressure"
     },
     "plotPriorityOrder" : [
         "MechanicalVentilator-AirwayPressure",
