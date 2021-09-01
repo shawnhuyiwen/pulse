@@ -420,8 +420,8 @@ def main():
             valPlots[sel][name] = {}
             if plot in csvs[sel].columns:
                 if reverseAxes:
-                    xlist = csvs[sel][xLabel]
-                    ylist = csvs[sel][plot]
+                    ylist = csvs[sel][xLabel]
+                    xlist = csvs[sel][plot]
                     temp = xLabel
                     xLabel = yLabel
                     yLabel = temp
