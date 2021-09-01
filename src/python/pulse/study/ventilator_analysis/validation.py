@@ -335,7 +335,12 @@ def main():
                 if os.path.exists(pFile):
                     # store this for later loading
                     pics[gtSelect] = picfile  # pFile
-
+    # create out folder if not there
+    if not os.path.exists(plotsFolder):
+        try:
+            os.mkdir(plotsFolder)
+        except Exception as ex:
+            print('error making folder: ' + plotsFolder + ': ' + str(ex))
     # clear plots out of the results folder:
     pngs = os.listdir(plotsFolder)
     for png in pngs:
@@ -394,6 +399,15 @@ def main():
             name = sel + sep + plot.split('(')[0]
             plotX = param['plotSizes']['default']['x']
             plotY = param['plotSizes']['default']['y']
+            # Setting for filling in the plot
+            fillPlot = True
+            if plot in param['plotNoFill']:
+                fillPlot = False
+            # setting for plots that need to have reversed axes
+            reverseAxes = False
+            if plot in param['plotReverseAxes']:
+                reverseAxes = True
+            # special plots with vs in them
             if '$vs$' in plot:
                 splstr = plot.split('$vs$')
                 xLabel = splstr[0]
@@ -405,14 +419,23 @@ def main():
 
             valPlots[sel][name] = {}
             if plot in csvs[sel].columns:
-                xlist = csvs[sel][xLabel]
-                ylist = csvs[sel][plot]
+                if reverseAxes:
+                    xlist = csvs[sel][xLabel]
+                    ylist = csvs[sel][plot]
+                    temp = xLabel
+                    xLabel = yLabel
+                    yLabel = temp
+                else:
+                    xlist = csvs[sel][xLabel]
+                    ylist = csvs[sel][plot]
                 plt.clf()
                 plt.plot(xlist, ylist)
                 plt.xlabel(xLabel)
                 plt.ylabel(yLabel)
                 plt.tight_layout()
-                plt.fill_between(xlist, ylist, facecolor="blue")
+                # check for no fill setting
+                if fillPlot:
+                    plt.fill_between(xlist, ylist, facecolor="blue")
                 # plt.show()
                 plt.title(name)
                 savedPulse = plotsFolder + name + '.png'

@@ -1,47 +1,57 @@
 {
-    "paths" : {
-        "groundTruthDataJSON" : "./gt/gt.json",
-        "picsFolder" : "./gt/",
-        "pulseResultsFolder" : "./Pulse_Results/",
-        "plotOutputFolder" : "./out/"
+    "paths": {
+        "groundTruthDataJSON": "./gt/gt.json",
+        "picsFolder": "./gt/",
+        "pulseResultsFolder": "./Pulse_Results/",
+        "plotOutputFolder": "./out/"
     },
-    "patientTypes" : [
+    "patientTypes": [
         "Normal",
         "ARDS",
         "COPD"
     ],
-    "ventilatorModes" : [
-         "VC-AC",
-         "PC-AC",
-         "CPAP"
+    "ventilatorModes": [
+        "VC-AC",
+        "PC-AC",
+        "CPAP"
     ],
-    "picNamingConvention" : {
-        "comment1" : "this is used to find the files",
-        "extensions" : ["jpg"],
-        "separator" : "_",
-        "comment" : "patientTypes_ventilatorModes"
+    "picNamingConvention": {
+        "comment1": "this is used to find the files",
+        "extensions": [
+            "jpg"
+        ],
+        "separator": "_",
+        "comment": "patientTypes_ventilatorModes"
     },
-    "plots" : {
-        "comment" : "column in CSV : internal name",
-        "MechanicalVentilator-InspiratoryFlow(L/min)" : "Flow(L/min)",
-        "MechanicalVentilator-TotalLungVolume(mL)" : "Volume(mL)",
+    "plots": {
+        "comment": "column in CSV : internal name",
+        "MechanicalVentilator-InspiratoryFlow(L/min)": "Flow(L/min)",
+        "MechanicalVentilator-TotalLungVolume(mL)": "Volume(mL)",
         "MechanicalVentilator-AirwayPressure(cmH2O)": "P1",
         "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-AirwayPressure(cmH2O)": "LungVolume_vs_AirwayPressure",
         "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-InspiratoryFlow(L/min)": "LungVolume_vs_InspiratoryFlow"
     },
-    "plotPriorityOrder" : [
+    "plotNoFill" : [
+        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-AirwayPressure(cmH2O)",
+        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-InspiratoryFlow(L/min)"
+    ],
+    "plotReverseAxes" : [
+        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-AirwayPressure(cmH2O)",
+        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-InspiratoryFlow(L/min)"
+    ],
+    "plotPriorityOrder": [
         "MechanicalVentilator-AirwayPressure",
         "MechanicalVentilator-InspiratoryFlow",
         "MechanicalVentilator-TotalLungVolume",
         "comment: ",
         "this is used to make these plots show in this order - to match the photo"
     ],
-    "plotSizes" : {
-        "default" : {
-            "x" : 6,
-            "y" : 2
+    "plotSizes": {
+        "default": {
+            "x": 6,
+            "y": 2
         },
-        "vsPlot" : {
+        "vsPlot": {
             "x": 6,
             "y": 6
         }
