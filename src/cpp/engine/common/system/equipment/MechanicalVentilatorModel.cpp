@@ -268,7 +268,7 @@ namespace PULSE_ENGINE
       m_data.SetAirwayMode(eAirwayMode::MechanicalVentilator);
       return;
     }
-    else if (c == eSwitch::Off && m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation)
+    else if (c == eSwitch::Off && m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
     {
       // Make sure we are active to make sure we go back to free
       m_data.SetAirwayMode(eAirwayMode::Free);
