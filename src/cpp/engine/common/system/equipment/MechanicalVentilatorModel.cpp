@@ -86,7 +86,6 @@ namespace PULSE_ENGINE
   void MechanicalVentilatorModel::Initialize()
   {
     Model::Initialize();
-    GetSettings().SetConnection(eSwitch::Off);
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
     m_DriverPressure_cmH2O = SEScalar::dNaN();
@@ -95,7 +94,6 @@ namespace PULSE_ENGINE
     m_CurrentRespiratoryVolume_L = 0.0;
     m_InspirationTime_s = 0.0;
     m_InspiratoryFlow_L_Per_s = 0.0;
-    StateChange();
 
     //System data
     GetAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
@@ -121,6 +119,9 @@ namespace PULSE_ENGINE
     GetTidalVolume().SetValue(0.0, VolumeUnit::L);
     GetTotalLungVolume().SetValue(0.0, VolumeUnit::L);
     GetTotalPulmonaryVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
+    GetSettings().SetConnection(eSwitch::Off);
+
+    StateChange();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -163,8 +164,10 @@ namespace PULSE_ENGINE
   {
     UpdateAirwayMode();
     if (m_data.GetAirwayMode() != eAirwayMode::MechanicalVentilator)
+    {
+      TurnOff();
       return;
-    UpdateConnection();
+    }
     m_CurrentBreathState = eBreathState::Exhale;
     m_CurrentPeriodTime_s = 0.0;
     m_CurrentVentilatorVolume_L = 0.0;
@@ -275,50 +278,6 @@ namespace PULSE_ENGINE
     }
   }
 
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Removes the connection to the patient
-  ///
-  /// \details
-  /// If the mask is on or the tube is connected, it is removed and the airway mode is set to free. The action is then removed from 
-  /// the action manager.
-  //--------------------------------------------------------------------------------------------------
-  void MechanicalVentilatorModel::InvalidateConnection()
-  {
-    // Set airway mode to free
-    m_data.SetAirwayMode(eAirwayMode::Free);
-    // THEN invalidate
-    GetSettings().SetConnection(eSwitch::Off);
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Checks the state of the airway and updates the mode if something changed
-  ///
-  //--------------------------------------------------------------------------------------------------
-  void MechanicalVentilatorModel::UpdateConnection()
-  {
-    switch (m_data.GetAirwayMode())
-    {
-    case eAirwayMode::Free:
-    {
-      if (GetSettings().GetConnection() != eSwitch::Off)
-        GetSettings().SetConnection(eSwitch::Off);
-      break;
-    }
-    case eAirwayMode::MechanicalVentilator:
-    {
-      if (GetSettings().GetConnection() == eSwitch::Off)
-        GetSettings().SetConnection(eSwitch::On);
-      break;
-    }
-    default:
-    {
-      // Something else is hooked up
-      break;
-    }
-    }
-  }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -336,7 +295,6 @@ namespace PULSE_ENGINE
       StateChange();
     }
 
-    UpdateConnection();
     //Do nothing if the ventilator is off and not initialized
     if (GetSettings().GetConnection() == eSwitch::Off)
     {

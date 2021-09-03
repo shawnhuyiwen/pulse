@@ -48,8 +48,6 @@ namespace PULSE_ENGINE
     void ComputeExposedModelParameters() override;
 
     void UpdateAirwayMode();
-    void UpdateConnection();
-    void InvalidateConnection();
 
     void CalculateInspiration();
     void CalculatePause();

@@ -14,6 +14,7 @@ public:
   virtual ~SEMechanicalVentilator();
 
   virtual void Clear();
+  virtual void TurnOff();
 
 protected:
   /** @name StateChange

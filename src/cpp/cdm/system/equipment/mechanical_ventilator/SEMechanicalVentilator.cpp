@@ -103,6 +103,37 @@ void SEMechanicalVentilator::Clear()
     m_Settings->Clear();
 }
 
+void SEMechanicalVentilator::TurnOff()
+{
+  // Set anything that has a value, to 0
+  ZERO_UNIT_SCALAR(m_AirwayPressure);
+  ZERO_UNIT_SCALAR(m_DynamicPulmonaryCompliance);
+  ZERO_SCALAR(m_EndTidalCarbonDioxideFraction);
+  ZERO_UNIT_SCALAR(m_EndTidalCarbonDioxidePressure);
+  ZERO_SCALAR(m_EndTidalOxygenFraction);
+  ZERO_UNIT_SCALAR(m_EndTidalOxygenPressure);
+  ZERO_UNIT_SCALAR(m_ExpiratoryFlow);
+  ZERO_UNIT_SCALAR(m_ExpiratoryTidalVolume);
+  ZERO_SCALAR(m_InspiratoryExpiratoryRatio);
+  ZERO_UNIT_SCALAR(m_InspiratoryFlow);
+  ZERO_UNIT_SCALAR(m_InspiratoryTidalVolume);
+  ZERO_UNIT_SCALAR(m_IntrinsicPositiveEndExpiredPressure);
+  ZERO_SCALAR(m_LeakFraction);
+  ZERO_UNIT_SCALAR(m_MeanAirwayPressure);
+  ZERO_UNIT_SCALAR(m_PeakInspiratoryPressure);
+  ZERO_UNIT_SCALAR(m_PlateauPressure);
+  ZERO_UNIT_SCALAR(m_PositiveEndExpiratoryPressure);
+  ZERO_UNIT_SCALAR(m_PulmonaryResistance);
+  ZERO_UNIT_SCALAR(m_RespirationRate);
+  ZERO_UNIT_SCALAR(m_StaticPulmonaryCompliance);
+  ZERO_UNIT_SCALAR(m_TidalVolume);
+  ZERO_UNIT_SCALAR(m_TotalLungVolume);
+  ZERO_UNIT_SCALAR(m_TotalPulmonaryVentilation);
+
+  if (m_Settings)
+    m_Settings->Clear();
+}
+
 const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
 {
   if (name.compare("AirwayPressure") == 0)

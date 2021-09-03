@@ -164,7 +164,10 @@ namespace PULSE_ENGINE
   {
     UpdateAirwayMode();
     if (m_data.GetAirwayMode() != eAirwayMode::AnesthesiaMachine)
+    {
+      // TurnOff();
       return;
+    }
     if (HasLeftChamber() && GetLeftChamber().GetState() == eSwitch::On)
     {
       if (GetLeftChamber().HasSubstance())
@@ -216,54 +219,6 @@ namespace PULSE_ENGINE
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Removes the connection to the patient
-  ///
-  /// \details
-  /// If the mask is on or the tube is connected, it is removed and the airway mode is set to free. The action is then removed from 
-  /// the action manager.
-  //--------------------------------------------------------------------------------------------------
-  void AnesthesiaMachineModel::InvalidateConnection()
-  {
-    // Set airway mode to free
-    m_data.SetAirwayMode(eAirwayMode::Free);
-    // THEN invalidate
-    m_Connection = eSwitch::Off;
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Initializes gas volumes and volume fractions supplied by the anesthesia machine depending on the airway mode
-  ///
-  /// \details
-  /// The gas volumes and volume fractions are initialized and updated based on the airway mode (mask, free, or tube)
-  /// and the volume associated with each airway mode.
-  //--------------------------------------------------------------------------------------------------
-  void AnesthesiaMachineModel::UpdateConnection()
-  {
-    switch (m_data.GetAirwayMode())
-    {
-    case eAirwayMode::Free:
-    {
-      if (GetConnection() != eSwitch::Off)
-        SetConnection(eSwitch::Off);
-      break;
-    }
-    case eAirwayMode::AnesthesiaMachine:
-    {
-      if (GetConnection() == eSwitch::Off)
-        SetConnection(eSwitch::On);
-      break;
-    }
-    default:
-    {
-      // Something else is hooked up
-      break;
-    }
-    }
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
   /// Anesthesia machine preprocess function
   ///
   /// \details
@@ -282,7 +237,6 @@ namespace PULSE_ENGINE
       StateChange();
     }
 
-    UpdateConnection();
     //Do nothing if the machine is off and not initialized
     if (GetConnection() == eSwitch::Off)
     {

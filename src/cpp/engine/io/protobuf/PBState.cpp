@@ -200,66 +200,82 @@ namespace PULSE_ENGINE
       ss << "Missing Blood Chemistry State" << std::endl;
     else
       PBPhysiology::Load(src.bloodchemistry(), *dst.m_BloodChemistryModel);
+
     if (!src.has_cardiovascular())
       ss << "Missing Cardiovascular State" << std::endl;
     else
       PBPhysiology::Load(src.cardiovascular(), *dst.m_CardiovascularModel);
+
     if (!src.has_drug())
       ss << "Missing Drug State" << std::endl;
     else
       PBPhysiology::Load(src.drug(), *dst.m_DrugModel);
+
     if (!src.has_endocrine())
       ss << "Missing Endocrine State" << std::endl;
     else
       PBPhysiology::Load(src.endocrine(), *dst.m_EndocrineModel);
+
     if (!src.has_energy())
       ss << "Missing Energy State" << std::endl;
     else
       PBPhysiology::Load(src.energy(), *dst.m_EnergyModel);
+
     if (!src.has_gastrointestinal())
       ss << "Missing Gastrointestinal State" << std::endl;
     else
       PBPhysiology::Load(src.gastrointestinal(), *dst.m_GastrointestinalModel);
+
     if (!src.has_hepatic())
       ss << "Missing Hepatic State" << std::endl;
     else
       PBPhysiology::Load(src.hepatic(), *dst.m_HepaticModel);
+
     if (!src.has_nervous())
       ss << "Missing Nervous State" << std::endl;
     else
       PBPhysiology::Load(src.nervous(), *dst.m_NervousModel);
+
     if (!src.has_renal())
       ss << "Missing Renal State" << std::endl;
     else
       PBPhysiology::Load(src.renal(), *dst.m_RenalModel);
+
     if (!src.has_respiratory())
       ss << "Missing Respiratory State" << std::endl;
     else
       PBPhysiology::Load(src.respiratory(), *dst.m_RespiratoryModel);
+
     if (!src.has_tissue())
       ss << "Missing Tissue State" << std::endl;
     else
       PBPhysiology::Load(src.tissue(), *dst.m_TissueModel);
+
     if (!src.has_environment())
       ss << "Missing Environment State" << std::endl;
     else
       PBEnvironment::Load(src.environment(), *dst.m_EnvironmentModel);
+
     if (!src.has_anesthesiamachine())
       ss << "Missing Anesthesia Machine State" << std::endl;
     else
       PBEquipment::Load(src.anesthesiamachine(), *dst.m_AnesthesiaMachineModel);
+
     if (!src.has_bagvalvemask())
       ss << "Missing BagValveMask State" << std::endl;
     else
       PBEquipment::Load(src.bagvalvemask(), *dst.m_BagValveMaskModel);
+
     if (!src.has_electrocardiogram())
       ss << "Missing ECG State" << std::endl;
     else
       PBEquipment::Load(src.electrocardiogram(), *dst.m_ElectroCardioGramModel);
+
     if (!src.has_inhaler())
       ss << "Missing Inhaler State" << std::endl;
     else
       PBEquipment::Load(src.inhaler(), *dst.m_InhalerModel);
+
     if (!src.has_mechanicalventilator())
       ss << "Missing Mechanical Ventilator State" << std::endl;
     else

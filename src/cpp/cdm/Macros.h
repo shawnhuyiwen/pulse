@@ -47,6 +47,14 @@ inline size_t _Hash_value(_InIt _Begin, _InIt _End)
   if(name!=nullptr) \
     name->ForceInvalidate();
 
+#define ZERO_SCALAR(name) \
+  if(name!=nullptr && name->IsValid()) \
+    name->SetValue(0);
+
+#define ZERO_UNIT_SCALAR(name) \
+  if(name!=nullptr && name->IsValid()) \
+    name->SetValue(0,*name->GetUnit());
+
 #define COPY_PROPERTY(name) \
   if(from.Has##name()) \
     Get##name().Set(*from.m_##name);

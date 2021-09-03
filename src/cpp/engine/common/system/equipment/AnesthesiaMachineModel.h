@@ -48,8 +48,6 @@ namespace PULSE_ENGINE
     void CalculateScrubber();
 
     void UpdateAirwayMode();
-    void UpdateConnection();
-    virtual void InvalidateConnection();
 
     void CalculateSourceStatus();
     void CalculateEquipmentLeak();
