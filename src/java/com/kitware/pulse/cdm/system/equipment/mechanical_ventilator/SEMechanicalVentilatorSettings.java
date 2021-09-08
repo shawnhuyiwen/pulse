@@ -11,13 +11,11 @@ import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceConcentrationData;
-import com.kitware.pulse.cdm.bind.Substance.SubstanceData.eState;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceFractionData;
 import com.kitware.pulse.cdm.properties.*;
 import com.kitware.pulse.cdm.substance.SESubstanceConcentration;
 import com.kitware.pulse.cdm.substance.SESubstanceFraction;
 import com.kitware.pulse.cdm.system.equipment.SEEquipment;
-import com.kitware.pulse.utilities.Log;
 
 public class SEMechanicalVentilatorSettings extends SEEquipment
 {

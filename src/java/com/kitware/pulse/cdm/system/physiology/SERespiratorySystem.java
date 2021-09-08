@@ -72,6 +72,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarPressure              transpulmonaryPressure;
   protected SEScalarPressure              transrespiratoryPressure;
   protected SEScalarPressure              transthoracicPressure;
+  
+  protected SERespiratoryMechanics        respiratoryMechanics;
 
 
   public SERespiratorySystem()
@@ -129,6 +131,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     transpulmonaryPressure = null;
     transrespiratoryPressure = null;
     transthoracicPressure = null;
+    
+    respiratoryMechanics = null;
   }
 
   @Override
@@ -240,6 +244,9 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       transrespiratoryPressure.invalidate();
     if (transthoracicPressure != null)
       transthoracicPressure.invalidate();
+    
+    if(respiratoryMechanics != null)
+      respiratoryMechanics.clear();
   }
 
   public static void load(RespiratorySystemData src, SERespiratorySystem dst)
@@ -350,6 +357,9 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarPressure.load(src.getTransrespiratoryPressure(),dst.getTransrespiratoryPressure());
     if (src.hasTransthoracicPressure())
       SEScalarPressure.load(src.getTransthoracicPressure(),dst.getTransthoracicPressure());
+    
+    if(src.hasRespiratoryMechanics())
+      SERespiratoryMechanics.load(src.getRespiratoryMechanics(), dst.getRespiratoryMechanics());
   }
 
   public static RespiratorySystemData unload(SERespiratorySystem src)
@@ -467,6 +477,9 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setTransrespiratoryPressure(SEScalarPressure.unload(src.getTransrespiratoryPressure()));
     if (src.hasTransthoracicPressure())
       dst.setTransthoracicPressure(SEScalarPressure.unload(src.getTransthoracicPressure()));
+    
+    if (src.hasRespiratoryMechanics())
+      dst.setRespiratoryMechanics(SERespiratoryMechanics.unload(src.getRespiratoryMechanics()));
   }
 
   public boolean hasAlveolarArterialGradient()
@@ -1050,5 +1063,16 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     if (transthoracicPressure == null)
       transthoracicPressure = new SEScalarPressure();
     return transthoracicPressure;
+  }
+  
+  public boolean hasRespiratoryMechanics()
+  {
+    return respiratoryMechanics == null ? false : true;
+  }
+  public SERespiratoryMechanics getRespiratoryMechanics()
+  {
+    if (respiratoryMechanics == null)
+      respiratoryMechanics = new SERespiratoryMechanics();
+    return respiratoryMechanics;
   }
 }

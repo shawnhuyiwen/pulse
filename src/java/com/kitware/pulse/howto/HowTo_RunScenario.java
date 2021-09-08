@@ -5,6 +5,7 @@ package com.kitware.pulse.howto;
 import com.kitware.pulse.cdm.actions.SEAdvanceTime;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.datarequests.SEDataRequest;
+import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
@@ -64,8 +65,8 @@ public class HowTo_RunScenario
     SEScenarioExec execOpts = new SEScenarioExec();
     // Load and run a scenario
     PulseScenarioExec pse = new PulseScenarioExec();
-    execOpts.setDataRequestCSVFilename("./test_results/scenarios/patient/BasicStandardResults.csv");
-    execOpts.setLogFilename("./test_results/scenarios/patient/BasicStandardResults.log");
+    execOpts.setDataRequestCSVFilename("./test_results/howto/scenarios/patient/BasicStandardResults.csv");
+    execOpts.setLogFilename("./test_results/howto/scenarios/patient/BasicStandardResults.log");
     execOpts.setScenarioFilename(cfg.getScenarioDirectory()+"/patient/BasicStandard.json");
     pse.runScenario(execOpts);
     
@@ -77,21 +78,11 @@ public class HowTo_RunScenario
     sce.getPatientConfiguration().setPatientFile("./patients/StandardMale.json");
     // When filling out a data request, units are optional
     // The units will be set to whatever units the engine uses.
-    SEDataRequest hr = new SEDataRequest();
-    hr.setCategory(eCategory.Physiology);
-    hr.setPropertyName("HeartRate");
-    hr.setUnit(FrequencyUnit.Per_min.toString());
-    sce.getDataRequestManager().getRequestedData().add(hr);
-    SEDataRequest rr = new SEDataRequest();
-    rr.setCategory(eCategory.Physiology);
-    rr.setPropertyName("RespirationRate");
-    rr.setUnit(FrequencyUnit.Per_min.toString());
-    sce.getDataRequestManager().getRequestedData().add(rr);
-    SEDataRequest tlv = new SEDataRequest();   
-    tlv.setCategory(eCategory.Physiology); 
-    tlv.setPropertyName("TotalLungVolume");
-    tlv.setUnit(VolumeUnit.mL.toString());
-    sce.getDataRequestManager().getRequestedData().add(tlv);
+    SEDataRequestManager dataRequests = sce.getDataRequestManager();
+    dataRequests.createPhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("TotalLungVolume", VolumeUnit.mL);
+    dataRequests.createPhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("BloodVolume", VolumeUnit.mL);
     // Let's just run for 2 minutes
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);

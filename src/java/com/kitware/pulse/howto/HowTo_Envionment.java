@@ -41,61 +41,28 @@ public class HowTo_Envionment
     JNIBridge.initialize();
     PulseEngine pe = new PulseEngine();
     pe.setLogListener(new MyListener());
-    pe.setLogFilename("./test_results/HowTo_Environment.java.log");
+    pe.setLogFilename("./test_results/howto/HowTo_Environment.java.log");
 
     SEDataRequestManager dataRequests = new SEDataRequestManager();
-    SEDataRequest tVol = new SEDataRequest();
-    tVol.setCategory(eCategory.Physiology);
-    tVol.setPropertyName("TidalVolume");
-    tVol.setUnit(VolumeUnit.L.toString());
-    dataRequests.getRequestedData().add(tVol);
+    dataRequests.createPhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("TotalLungVolume", VolumeUnit.mL);
+    dataRequests.createPhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("CoreTemperature", TemperatureUnit.F);
+    dataRequests.createPhysiologyDataRequest("SkinTemperature", TemperatureUnit.F);
 
-    SEDataRequest etCO2 = new SEDataRequest();
-    etCO2.setCategory(eCategory.Physiology);
-    etCO2.setPropertyName("EndTidalOxygenFraction");
-    dataRequests.getRequestedData().add(etCO2);
-
-    SEDataRequest rr = new SEDataRequest();
-    rr.setCategory(eCategory.Physiology);
-    rr.setPropertyName("RespirationRate");
-    rr.setUnit(FrequencyUnit.Per_min.toString());
-    dataRequests.getRequestedData().add(rr);
-    
-    SEDataRequest coretemp = new SEDataRequest();
-    coretemp.setCategory(eCategory.Physiology);
-    coretemp.setPropertyName("CoreTemperature");
-    coretemp.setUnit(TemperatureUnit.F.toString());
-    dataRequests.getRequestedData().add(coretemp);
-
-    SEDataRequest skinTemp = new SEDataRequest();
-    skinTemp.setCategory(eCategory.Physiology);
-    skinTemp.setPropertyName("SkinTemperature");
-    skinTemp.setUnit(TemperatureUnit.F.toString());
-    dataRequests.getRequestedData().add(skinTemp);
-    
     pe.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
     
     dataValues = pe.pullData();
-    Log.info("Simulation Time(s) " + dataValues.get(0));
-    Log.info("TidalVolume (L) " + dataValues.get(1));
-    Log.info("EndTidalOxygenFraction " + dataValues.get(2));
-    Log.info("Respiration Rate (bpm) " + dataValues.get(3));
-    Log.info("Core Temp (F) " + dataValues.get(4));
-    Log.info("Skin Temp (F) " + dataValues.get(5));
-    
+    dataRequests.writeData(dataValues);
+
     SEChangeEnvironmentalConditions env = new SEChangeEnvironmentalConditions();
     env.setEnvironmentalConditionsFile("./environments/AnchorageDecember.json");
     pe.processAction(env);
-    
+
     pe.advanceTime(time);
 
     dataValues = pe.pullData();
-    Log.info("Simulation Time(s) " + dataValues.get(0));
-    Log.info("TidalVolume (L) " + dataValues.get(1));
-    Log.info("EndTidalOxygenFraction " + dataValues.get(2));
-    Log.info("Respiration Rate (bpm) " + dataValues.get(3));
-    Log.info("Core Temp (F) " + dataValues.get(4));
-    Log.info("Skin Temp (F) " + dataValues.get(5));
+    dataRequests.writeData(dataValues);
   }
 
 }

@@ -57,11 +57,20 @@ public class HowTo_AnesthesiaMachine
     ///Engine
     PulseEngine pe = new PulseEngine();
     pe.setLogListener(new MyListener());
-    pe.setLogFilename("/test_results/HowTo_AnesthesiaMachineVentilator.java.log");
+    pe.setLogFilename("/test_results/howto/HowTo_AnesthesiaMachineVentilator.java.log");
 
-    if (useStateFile) {
-      pe.serializeFromFile("./states/StandardMale@0s.json", createDataRequests());
-    } else {
+    SEDataRequestManager dataRequests = new SEDataRequestManager();
+    dataRequests.createPhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("TotalLungVolume", VolumeUnit.mL);
+    dataRequests.createPhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("BloodVolume", VolumeUnit.mL);
+
+    if (useStateFile)
+    {
+      pe.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
+    }
+    else
+    {
       SEPatientConfiguration sepc = new SEPatientConfiguration();
 
       SEPatient patient = sepc.getPatient();
@@ -75,12 +84,10 @@ public class HowTo_AnesthesiaMachine
       patient.getDiastolicArterialPressureBaseline().setValue(72., PressureUnit.mmHg);
       patient.getSystolicArterialPressureBaseline().setValue(114., PressureUnit.mmHg);
       patient.getRespirationRateBaseline().setValue(16, FrequencyUnit.Per_min);
-
-      SEDataRequestManager dataRequests = createDataRequests();
-
+      
       pe.initializeEngine(sepc, dataRequests);
     }
-
+    
     //Test
     List<Double> data;
     SEScalarTime time = new SEScalarTime(1, TimeUnit.s);
@@ -97,105 +104,8 @@ public class HowTo_AnesthesiaMachine
     pe.advanceTime(time);
 
     data = pe.pullData();
-    Log.info("Data:");
-    Log.info("\tSimulation Time(s) " + data.get(0));
-    Log.info("\tHeight(in) " + data.get(1));
-    Log.info("\tWeight(kg) " + data.get(2));
-    Log.info("\tBloodPH " + data.get(3));
-    Log.info("\tArterialOxygenPressure(mmHg) " + data.get(4));
-    Log.info("\tArterialCarbonDioxidePressure(mmHg) " + data.get(5));
-    Log.info("\tTidalVolume(L) " + data.get(6));
-    Log.info("\tEndTidalOxygenFraction " + data.get(7));
-    Log.info("\tCarricoIndex(mmHg) " + data.get(8));
-    Log.info("\tRespiration Rate(bpm) " + data.get(9));
-    Log.info("\tRocuronium PlasmaConcentration(bpm) " + data.get(10));
-    Log.info("\tSuccinylcholine PlasmaConcentration(bpm) " + data.get(11));
-    Log.info("\tInspirationMachineTriggerTime(s) " + data.get(12));
-    Log.info("\tPositiveEndExpiredPressure(cmH2O) " + data.get(13));
+    dataRequests.writeData(data);
 
   }
 
-  private static SEDataRequestManager createDataRequests()
-  {
-    SEDataRequestManager dataRequests = new SEDataRequestManager();
-    SEDataRequest ht = new SEDataRequest();
-    ht.setCategory(eCategory.Patient);
-    ht.setPropertyName("Height");
-    ht.setUnit(LengthUnit.in.toString());
-    dataRequests.getRequestedData().add(ht);
-
-    SEDataRequest wt = new SEDataRequest();
-    wt.setCategory(eCategory.Patient);
-    wt.setPropertyName("Weight");
-    wt.setUnit(MassUnit.kg.toString());
-    dataRequests.getRequestedData().add(wt);
-
-    SEDataRequest pH = new SEDataRequest();
-    pH.setCategory(eCategory.Physiology);
-    pH.setPropertyName("BloodPH");
-    dataRequests.getRequestedData().add(pH);
-
-    SEDataRequest aO2 = new SEDataRequest();
-    aO2.setCategory(eCategory.Physiology);
-    aO2.setPropertyName("ArterialOxygenPressure");
-    aO2.setUnit(PressureUnit.mmHg.toString());
-    dataRequests.getRequestedData().add(aO2);
-
-    SEDataRequest aCO2 = new SEDataRequest();
-    aCO2.setCategory(eCategory.Physiology);
-    aCO2.setPropertyName("ArterialCarbonDioxidePressure");
-    aCO2.setUnit(PressureUnit.mmHg.toString());
-    dataRequests.getRequestedData().add(aCO2);
-
-    SEDataRequest tVol = new SEDataRequest();
-    tVol.setCategory(eCategory.Physiology);
-    tVol.setPropertyName("TidalVolume");
-    tVol.setUnit(VolumeUnit.L.toString());
-    dataRequests.getRequestedData().add(tVol);
-
-    SEDataRequest etCO2 = new SEDataRequest();
-    etCO2.setCategory(eCategory.Physiology);
-    etCO2.setPropertyName("EndTidalOxygenFraction");
-    dataRequests.getRequestedData().add(etCO2);
-
-    SEDataRequest ci = new SEDataRequest();
-    ci.setCategory(eCategory.Physiology);
-    ci.setPropertyName("CarricoIndex");
-    ci.setUnit(PressureUnit.mmHg.toString());
-    dataRequests.getRequestedData().add(ci);
-
-    SEDataRequest rr = new SEDataRequest();
-    rr.setCategory(eCategory.Physiology);
-    rr.setPropertyName("RespirationRate");
-    rr.setUnit(FrequencyUnit.Per_min.toString());
-    dataRequests.getRequestedData().add(rr);
-
-    SEDataRequest rpc = new SEDataRequest();
-    rpc.setCategory(eCategory.Substance);
-    rpc.setSubstanceName("Rocuronium");
-    rpc.setPropertyName("PlasmaConcentration");
-    rpc.setUnit(MassPerVolumeUnit.ug_Per_L.toString());
-    dataRequests.getRequestedData().add(rpc);
-
-    SEDataRequest spc = new SEDataRequest();
-    spc.setCategory(eCategory.Substance);
-    spc.setSubstanceName("Succinylcholine");
-    spc.setPropertyName("PlasmaConcentration");
-    spc.setUnit(MassPerVolumeUnit.ug_Per_L.toString());
-    dataRequests.getRequestedData().add(spc);
-
-    SEDataRequest mv_imtt = new SEDataRequest();
-    mv_imtt.setCategory(eCategory.MechanicalVentilator);
-    mv_imtt.setPropertyName("InspirationMachineTriggerTime");
-    mv_imtt.setUnit(TimeUnit.s.toString());
-    dataRequests.getRequestedData().add(mv_imtt);
-
-    SEDataRequest mv_peep = new SEDataRequest();
-    mv_peep.setCategory(eCategory.MechanicalVentilator);
-    mv_peep.setPropertyName("PositiveEndExpiredPressure");
-    mv_peep.setUnit(PressureUnit.cmH2O.toString());
-    dataRequests.getRequestedData().add(mv_peep);
-
-    return dataRequests;
-  }
 }

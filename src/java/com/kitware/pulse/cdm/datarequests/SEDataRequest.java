@@ -8,13 +8,15 @@ import java.io.Serializable;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Engine.DecimalFormatData.eType;
+import com.kitware.pulse.cdm.properties.CommonUnits;
+import com.kitware.pulse.cdm.properties.CommonUnits.Unit;
 
 public class SEDataRequest implements Serializable
 {
   private static final long serialVersionUID = -6340908837323396480L;
   
   protected String                  propertyName;
-  protected String                  unit;
+  protected Unit                    unit;
   protected eCategory               category;
   protected String                  actionName;
   protected String                  compartmentName;
@@ -22,16 +24,16 @@ public class SEDataRequest implements Serializable
   protected Integer                 precision;
   protected eType                   format;
   
-  public SEDataRequest() 
+  public SEDataRequest(eCategory c) 
   {
     reset();
+    category = c;
   }
   
   public void reset()
   {
     propertyName    = "";
-    unit            = "";
-    category        = null;
+    unit            = null;
     actionName      = "";
     compartmentName = "";
     substanceName   = "";
@@ -43,7 +45,7 @@ public class SEDataRequest implements Serializable
   {
     dst.reset();
     dst.propertyName = src.getPropertyName();
-    dst.unit = src.getUnit();
+    dst.unit = CommonUnits.getUnit(src.getUnit());
     if(src.getCategory()!=eCategory.UNRECOGNIZED)
     	dst.category = src.getCategory();
     dst.actionName = src.getActionName();
@@ -66,7 +68,7 @@ public class SEDataRequest implements Serializable
     if(src.hasPropertyName())
       dst.setPropertyName(src.propertyName);
     if(src.hasUnit())
-      dst.setUnit(src.unit);
+      dst.setUnit(src.unit.toString());
     if(src.hasCategory())
       dst.setCategory(src.category);
     if(src.hasActionName())
@@ -108,12 +110,12 @@ public class SEDataRequest implements Serializable
   public void setPropertyName(String name){ this.propertyName = name; }
   public boolean hasPropertyName() { return propertyName==null||propertyName.isEmpty() ? false : true; }
   
-  public String getUnit(){ return unit; }
-  public void setUnit(String unit){ this.unit = unit; }
-  public boolean hasUnit(){ return unit==null||unit.isEmpty() ? false : true; }
+  public Unit getUnit(){ return unit; }
+  public void setUnit(Unit unit){ this.unit = unit; }
+  public boolean hasUnit(){ return unit==null ? false : true; }
   
   public eCategory getCategory(){ return category; }
-  public void setCategory(eCategory c){ this.category = c; }
+  //public void setCategory(eCategory c){ this.category = c; }
   public boolean hasCategory(){ return category==null||category==eCategory.UNRECOGNIZED ? false : true; }
   
   public String getActionName(){ return actionName; }
@@ -136,5 +138,67 @@ public class SEDataRequest implements Serializable
   public Integer getPrecision(){ return precision; }
   public void setPrecision(Integer p){ this.precision = p; }
   public boolean hasPrecision(){ return precision==null ? false : true; }
+  
+  public String toString()
+  {
+    String str = "";
+    switch(category)
+    {
+      case Patient:
+        str += "Patient-";
+        break;
+      case Physiology:
+        str += "Physiology-";
+        break;
+      case Environment:
+        str += "Environment-";
+        break;
+      case Action:
+        str += actionName + "-";
+        break;
+      case GasCompartment:
+        str += "GasCompartment-";
+        str += compartmentName + "-";
+        break;
+      case LiquidCompartment:
+        str += "LiquidCompartment-";
+        str += compartmentName + "-";
+        break;
+      case ThermalCompartment:
+        str += "ThermalCompartment-";
+        str += compartmentName + "-";
+        break;
+      case TissueCompartment:
+        str += "TissueCompartment-";
+        str+= compartmentName + "-";
+        break;
+      case Substance:
+        str += "Substance-";
+        str += substanceName + "-";
+        break;
+      case AnesthesiaMachine:
+        str += "AnesthesiaMachine-";
+        break;
+      case BagValveMask:
+        str += "BagValveMask-";
+        break;
+      case ECG:
+        str += "ECG-";
+        break;
+      case Inhaler:
+        str += "Inhaler-";
+        break;
+      case MechanicalVentilator:
+        str += "MechanicalVentilator-";
+        break;
+      default:
+        str += "Unknown-";
+        break;
+    }
+    str += propertyName;
+    if (unit != null)
+     str += " (" + unit.toString() + ")";
+    return str;
+  }
   
 }

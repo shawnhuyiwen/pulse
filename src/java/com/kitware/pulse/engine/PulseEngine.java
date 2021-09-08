@@ -20,6 +20,7 @@ import com.kitware.pulse.cdm.bind.Events.ActiveEventListData;
 import com.kitware.pulse.cdm.bind.Events.EventChangeData;
 import com.kitware.pulse.cdm.bind.Events.EventChangeListData;
 import com.kitware.pulse.cdm.bind.Patient.PatientData;
+import com.kitware.pulse.cdm.bind.PatientAssessments.ArterialBloodGasTestData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.CompleteBloodCountData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanelData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
@@ -30,6 +31,7 @@ import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEActiveEvent;
 import com.kitware.pulse.cdm.engine.SEEventHandler;
 import com.kitware.pulse.cdm.engine.SEPatientConfiguration;
+import com.kitware.pulse.cdm.patient.assessments.SEArterialBloodGasTest;
 import com.kitware.pulse.cdm.patient.assessments.SECompleteBloodCount;
 import com.kitware.pulse.cdm.patient.assessments.SEComprehensiveMetabolicPanel;
 import com.kitware.pulse.cdm.patient.assessments.SEPatientAssessment;
@@ -224,12 +226,12 @@ public class PulseEngine
     }
     try
     {
-      if(assessment instanceof SEPulmonaryFunctionTest)
+      if(assessment instanceof SEArterialBloodGasTest)
       {
-        PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
-        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.PulmonaryFunctionTest.ordinal(), thunkType.value());
+        ArterialBloodGasTestData.Builder b = ArterialBloodGasTestData.newBuilder();
+        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.ArterialBloodGasTest.ordinal(), thunkType.value());
         JsonFormat.parser().merge(str, b);
-        SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
+        SEArterialBloodGasTest.load(b.build(),((SEArterialBloodGasTest)assessment));
         return true;
       }
       
@@ -248,6 +250,15 @@ public class PulseEngine
         String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.ComprehensiveMetabolicPanel.ordinal(), thunkType.value());
         JsonFormat.parser().merge(str, b);
         SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
+        return true;
+      }
+      
+      if(assessment instanceof SEPulmonaryFunctionTest)
+      {
+        PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
+        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.PulmonaryFunctionTest.ordinal(), thunkType.value());
+        JsonFormat.parser().merge(str, b);
+        SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
         return true;
       }
       
@@ -314,12 +325,17 @@ public class PulseEngine
   
   public synchronized boolean advanceTime(SEScalarTime time)
   {
+    return advanceTime_s(time.getValue(TimeUnit.s));
+  }
+  
+  public synchronized boolean advanceTime_s(double time)
+  {
     if(!alive)
     {
       Log.error("Engine has not been initialized");
       return alive;
     }
-    timeRemainder += time.getValue(TimeUnit.s);
+    timeRemainder += time;
     int cnt = (int)(timeRemainder/timeStep_s);
     timeRemainder = timeRemainder - (timeStep_s*cnt);
     for(int i=0; i<cnt; i++)

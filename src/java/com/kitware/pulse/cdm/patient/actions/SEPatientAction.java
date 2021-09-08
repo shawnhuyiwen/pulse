@@ -193,6 +193,12 @@ public abstract class SEPatientAction extends SEAction
       SERespiratoryFatigue.load(c.getRespiratoryFatigue(), dst);
       return dst;
     }
+    case RESPIRATORYMECHANICSCONFIGURATION:
+    {
+      SERespiratoryMechanicsConfiguration dst = new SERespiratoryMechanicsConfiguration();
+      SERespiratoryMechanicsConfiguration.load(c.getRespiratoryMechanicsConfiguration(), dst);
+      return dst;
+    }
     case SUBSTANCEBOLUS:
     {
       SESubstanceBolus dst = new SESubstanceBolus();
@@ -362,6 +368,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SERespiratoryFatigue)
     {
       dst.setRespiratoryFatigue(SERespiratoryFatigue.unload((SERespiratoryFatigue)c));
+      return dst.build();
+    }
+    if(c instanceof SERespiratoryMechanicsConfiguration)
+    {
+      dst.setRespiratoryMechanicsConfiguration(SERespiratoryMechanicsConfiguration.unload((SERespiratoryMechanicsConfiguration)c));
       return dst.build();
     }
     if(c instanceof SESubstanceBolus)

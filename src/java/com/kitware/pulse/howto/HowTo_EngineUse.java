@@ -28,6 +28,7 @@ import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.LengthUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.MassUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
+import com.kitware.pulse.cdm.properties.CommonUnits.TemperatureUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
@@ -126,7 +127,7 @@ public class HowTo_EngineUse
     PulseEngine pe = new PulseEngine();
 
     // By default, no log file is written
-    pe.setLogFilename("./test_results/HowTo_EngineUse.java.log");
+    pe.setLogFilename("./test_results/howto/HowTo_EngineUse.java.log");
 
     // The Pulse API provides a Log class
     // It can be used to write to easily forward messages to the console and any LogListener
@@ -150,26 +151,10 @@ public class HowTo_EngineUse
 
     // Here is how to specify the data to get back from the engine
     SEDataRequestManager dataRequests = new SEDataRequestManager();
-    SEDataRequest hr = new SEDataRequest();
-    hr.setCategory(eCategory.Physiology);
-    hr.setPropertyName("HeartRate");
-    hr.setUnit(FrequencyUnit.Per_min.toString());
-    dataRequests.getRequestedData().add(hr);
-    SEDataRequest rr = new SEDataRequest();
-    rr.setCategory(eCategory.Physiology);
-    rr.setPropertyName("RespirationRate");
-    rr.setUnit(FrequencyUnit.Per_min.toString());
-    dataRequests.getRequestedData().add(rr);
-    SEDataRequest tlv = new SEDataRequest(); 
-    tlv.setCategory(eCategory.Physiology);   
-    tlv.setPropertyName("TotalLungVolume");
-    tlv.setUnit(VolumeUnit.mL.toString());
-    dataRequests.getRequestedData().add(tlv);
-    SEDataRequest bv = new SEDataRequest();
-    bv.setCategory(eCategory.Physiology);  
-    bv.setPropertyName("BloodVolume");
-    bv.setUnit(VolumeUnit.mL.toString());
-    dataRequests.getRequestedData().add(bv);
+    dataRequests.createPhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("TotalLungVolume", VolumeUnit.mL);
+    dataRequests.createPhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("BloodVolume", VolumeUnit.mL);
     // In addition to getting this data back via this API
     // You can have Pulse write the data you have requested to a CSV file
     dataRequests.setResultsFilename("./test_results/HowTo_EngineUse.java.csv");
@@ -267,12 +252,8 @@ public class HowTo_EngineUse
     }
 
     dataValues = pe.pullData();
-    Log.info("Simulation Time(s) " + dataValues.get(0));
-    Log.info("Heart Rate(bpm) " + dataValues.get(1));
-    Log.info("Respiration Rate(bpm) " + dataValues.get(2));
-    Log.info("Total Lung Volume(mL) " + dataValues.get(3));
-    Log.info("Blood Volume(mL) " + dataValues.get(4));
-
+    dataRequests.writeData(dataValues);
+    
     SEScalarTime time = new SEScalarTime(0, TimeUnit.s);
     time.setValue(1, TimeUnit.s);
     Log.info("Advancing "+time+"...");
@@ -283,11 +264,7 @@ public class HowTo_EngineUse
     }
 
     dataValues = pe.pullData();
-    Log.info("Simulation Time(s) " + dataValues.get(0));
-    Log.info("Heart Rate(bpm) " + dataValues.get(1));
-    Log.info("Respiration Rate(bpm) " + dataValues.get(2));
-    Log.info("Total Lung Volume(mL) " + dataValues.get(3));
-    Log.info("Blood Volume(mL) " + dataValues.get(4));
+    dataRequests.writeData(dataValues);
 
     // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
     SEHemorrhage h = new SEHemorrhage();
@@ -324,11 +301,7 @@ public class HowTo_EngineUse
         return;
       }
       dataValues = pe.pullData();
-      Log.info("Simulation Time(s) " + dataValues.get(0));
-      Log.info("Heart Rate(bpm) " + dataValues.get(1));
-      Log.info("Respiration Rate(bpm) " + dataValues.get(2));
-      Log.info("Total Lung Volume(mL) " + dataValues.get(3));
-      Log.info("Blood Volume(mL) " + dataValues.get(4));
+      dataRequests.writeData(dataValues);
     }
 
     // Stop the hemorrhage
@@ -350,11 +323,7 @@ public class HowTo_EngineUse
         return;
       }
       dataValues = pe.pullData();
-      Log.info("Simulation Time(s) " + dataValues.get(0));
-      Log.info("Heart Rate(bpm) " + dataValues.get(1));
-      Log.info("Respiration Rate(bpm) " + dataValues.get(2));
-      Log.info("Total Lung Volume(mL) " + dataValues.get(3));
-      Log.info("Blood Volume(mL) " + dataValues.get(4));
+      dataRequests.writeData(dataValues);
     }
 
     // Infuse some fluids
@@ -378,11 +347,7 @@ public class HowTo_EngineUse
         return;
       }
       dataValues = pe.pullData();
-      Log.info("Simulation Time(s) " + dataValues.get(0));
-      Log.info("Heart Rate(bpm) " + dataValues.get(1));
-      Log.info("Respiration Rate(bpm) " + dataValues.get(2));
-      Log.info("Total Lung Volume(mL) " + dataValues.get(3));
-      Log.info("Blood Volume(mL) " + dataValues.get(4));
+      dataRequests.writeData(dataValues);
     }
 
     // You can explicitly check if the patient is in a specific state/event
