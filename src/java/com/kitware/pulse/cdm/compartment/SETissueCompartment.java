@@ -36,9 +36,9 @@ public class SETissueCompartment extends SECompartment
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (acidicPhospohlipidConcentration != null)
       acidicPhospohlipidConcentration.invalidate();
     if (matrixVolume != null)

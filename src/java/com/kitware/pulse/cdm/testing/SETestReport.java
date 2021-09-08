@@ -58,7 +58,7 @@ public class SETestReport
     knownFailingSuites = new ArrayList<>();
   }
   
-  public void reset()
+  public void clear()
   {
   	name="";
   	fileName="";
@@ -124,7 +124,7 @@ public class SETestReport
   }
   public static void load(TestReportData src, SETestReport dst)
   {
-  	dst.reset();
+  	dst.clear();
   	for(TestSuiteData tsd : src.getTestSuiteList())
   	{
   		SETestSuite ts = dst.createTestSuite();

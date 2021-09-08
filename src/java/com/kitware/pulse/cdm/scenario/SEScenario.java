@@ -33,17 +33,17 @@ public class SEScenario
   public SEScenario()
   {
     JNIBridge.initialize();
-    reset();
+    clear();
   }
 
-  public void reset() 
+  public void clear() 
   {
     this.name            = "";
     this.description     = "";
     this.params          = null;
     this.engineStateFile = null;
     this.actions.clear();    
-    this.drMgr.reset();
+    this.drMgr.clear();
   }
 
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -74,7 +74,7 @@ public class SEScenario
 
   public static void load(ScenarioData src, SEScenario dst)
   {
-    dst.reset();
+    dst.clear();
 
     dst.name = src.getName();
     dst.description = src.getDescription();

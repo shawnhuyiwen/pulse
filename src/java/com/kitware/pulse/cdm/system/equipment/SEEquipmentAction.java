@@ -30,9 +30,9 @@ public abstract class SEEquipmentAction extends SEAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
   }
   
   public static void load(EquipmentActionData src, SEEquipmentAction dst) 

@@ -44,9 +44,9 @@ public class SEBagValveMaskAutomated extends SEBagValveMaskAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     
     if (breathFrequency != null)
       breathFrequency.invalidate();
@@ -66,7 +66,7 @@ public class SEBagValveMaskAutomated extends SEBagValveMaskAction
   
   public static void load(BagValveMaskAutomatedData src, SEBagValveMaskAutomated dst)
   {
-    dst.reset();
+    dst.clear();
     SEBagValveMaskAction.load(src.getBagValveMaskAction(),dst);
     if (src.hasBreathFrequency())
       SEScalarFrequency.load(src.getBreathFrequency(), dst.getBreathFrequency());

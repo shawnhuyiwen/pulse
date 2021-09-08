@@ -24,7 +24,7 @@ public class SESubstanceCompound
     
   }
   
-  public void reset()
+  public void clear()
   {
     this.name=null;
     
@@ -45,7 +45,7 @@ public class SESubstanceCompound
   
   public static void load(SubstanceCompoundData src, SESubstanceCompound dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.getName()!=null)
       dst.setName(src.getName());
 

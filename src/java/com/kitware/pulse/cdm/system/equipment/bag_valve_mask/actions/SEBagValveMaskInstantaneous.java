@@ -36,9 +36,9 @@ public class SEBagValveMaskInstantaneous extends SEBagValveMaskAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     
     if (flow != null)
       flow.invalidate();
@@ -54,7 +54,7 @@ public class SEBagValveMaskInstantaneous extends SEBagValveMaskAction
   
   public static void load(BagValveMaskInstantaneousData src, SEBagValveMaskInstantaneous dst)
   {
-    dst.reset();
+    dst.clear();
     SEBagValveMaskAction.load(src.getBagValveMaskAction(),dst);
     if (src.hasFlow())
       SEScalarVolumePerTime.load(src.getFlow(), dst.getFlow());

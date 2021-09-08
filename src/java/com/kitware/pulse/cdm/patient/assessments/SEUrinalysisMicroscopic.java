@@ -21,19 +21,6 @@ public class SEUrinalysisMicroscopic
   public void clear()
   {
     this.observationType = null;
-    this.redBloodCells = null;
-    this.whiteBloodCells = null;
-    this.epithelialCells = null;
-    this.casts = null;
-    this.crystals = null;
-    this.bacteria = null;
-    this.trichomonads = null;
-    this.yeast = null;
-  }
-  
-  public void reset()
-  {
-    this.observationType = null;
     if(this.redBloodCells!=null)
       this.redBloodCells.invalidate();
     if(this.whiteBloodCells!=null)

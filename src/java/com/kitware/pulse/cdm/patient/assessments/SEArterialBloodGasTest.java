@@ -21,17 +21,6 @@ public class SEArterialBloodGasTest extends SEPatientAssessment
   public void clear()
   {
     super.clear();
-    this.bloodPH = null;
-    this.bicarbonate = null;
-    this.partialPressureOfOxygen = null;
-    this.partialPressureOfCarbonDioxide = null;
-    this.oxygenSaturation = null;
-  }
-  
-  @Override
-  public void reset()
-  {
-    super.reset();
     if(this.bloodPH!=null)
       this.bloodPH.invalidate();
     if(this.bicarbonate!=null)

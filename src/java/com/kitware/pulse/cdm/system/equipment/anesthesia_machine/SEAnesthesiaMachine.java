@@ -15,17 +15,16 @@ import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
 public class SEAnesthesiaMachine extends SEEquipment
 {
-  protected eSwitch                       connection;
+  protected eSwitch                           connection;
   protected SEScalarVolumePerTime             inletFlow;
   protected SEScalar                          inspiratoryExpiratoryRatio;
   protected SEScalar0To1                      oxygenFraction;
   protected eOxygenSource                     oxygenSource;
+  protected SEScalarPressure                  peakInspiratoryPressure;
   protected SEScalarPressure                  positiveEndExpiredPressure;
   protected ePrimaryGas                       primaryGas;
-  protected SEScalarFrequency                 respiratoryRate;
   protected SEScalarPressure                  reliefValvePressure;
-
-  protected SEScalarPressure                  peakInspiratoryPressure;
+  protected SEScalarFrequency                 respiratoryRate;
 
   protected SEAnesthesiaMachineChamber        leftChamber;
   protected SEAnesthesiaMachineChamber        rightChamber;
@@ -57,8 +56,9 @@ public class SEAnesthesiaMachine extends SEEquipment
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
+    super.clear();
     connection = null;
     if (inletFlow != null)
       inletFlow.invalidate();
@@ -78,21 +78,21 @@ public class SEAnesthesiaMachine extends SEEquipment
       peakInspiratoryPressure.invalidate();
 
     if (hasLeftChamber())
-      leftChamber.reset();
+      leftChamber.clear();
     if (hasRightChamber())
-      rightChamber.reset();
+      rightChamber.clear();
     if (hasOxygenBottleOne())
-      oxygenBottleOne.reset();
+      oxygenBottleOne.clear();
     if (hasOxygenBottleTwo())
-      oxygenBottleTwo.reset();
+      oxygenBottleTwo.clear();
 
   }
 
   public void copy(SEAnesthesiaMachine from)
   {
-    reset();
+    clear();
     if(from.connection!=null && from.connection != eSwitch.NullSwitch)
-    	this.connection=from.connection;      
+    	this.connection=from.connection;
     if(from.hasInletFlow())
       this.getInletFlow().set(from.getInletFlow());
     if(from.hasInspiratoryExpiratoryRatio())
@@ -124,7 +124,7 @@ public class SEAnesthesiaMachine extends SEEquipment
 
   public static void load(AnesthesiaMachineData src, SEAnesthesiaMachine dst)
   {
-    dst.reset();
+    dst.clear();
     if (src.getConnection()!=eSwitch.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
     if (src.hasInletFlow())

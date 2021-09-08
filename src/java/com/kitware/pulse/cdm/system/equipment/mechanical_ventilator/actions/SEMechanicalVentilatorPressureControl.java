@@ -70,7 +70,7 @@ public class SEMechanicalVentilatorPressureControl extends SEMechanicalVentilato
     
     public static void load(MechanicalVentilatorPressureControlData src, SEMechanicalVentilatorPressureControl dst)
     {
-      dst.reset();
+      dst.clear();
       SEMechanicalVentilatorMode.load(src.getMechanicalVentilatorMode(),dst);
       if (src.hasFractionInspiredOxygen())
         SEScalar0To1.load(src.getFractionInspiredOxygen(), dst.getFractionInspiredOxygen());

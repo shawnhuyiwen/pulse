@@ -21,19 +21,11 @@ public class SEInhaler extends SEEquipment
   {
     clear();
   }
-  
-  public void clear()
-  {
-    state = eSwitch.Off;
-    meteredDose = null;
-    nozzleLoss = null;
-    spacerVolume = null;
-    substance = "";
-  }
 
   @Override
-  public void reset()
+  public void clear()
   {
+    super.clear();
     state = eSwitch.Off;
     if (meteredDose != null)
       meteredDose.invalidate();
@@ -46,8 +38,7 @@ public class SEInhaler extends SEEquipment
 
   public void copy(SEInhaler from)
   {
-    reset();
-
+    clear();
     setState(from.getState());
     meteredDose = from.getMeteredDose();
     nozzleLoss = from.getNozzleLoss();

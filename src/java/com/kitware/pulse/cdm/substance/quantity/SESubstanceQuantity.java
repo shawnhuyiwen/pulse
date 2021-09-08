@@ -14,13 +14,13 @@ public abstract class SESubstanceQuantity
   {
     substance=s;
   }
-  public void reset()
+  public void clear()
   {
     
   }
   public static void load(SubstanceQuantityData src, SESubstanceQuantity dst)
   {
-    dst.reset();
+    dst.clear();
   }
   protected static void unload(SESubstanceQuantity src, SubstanceQuantityData.Builder dst)
   {

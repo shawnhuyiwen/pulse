@@ -37,7 +37,7 @@ public class SEMechanicalVentilatorHold extends SEMechanicalVentilatorAction
   
   public static void load(MechanicalVentilatorHoldData src, SEMechanicalVentilatorHold dst)
   {
-    dst.reset();
+    dst.clear();
     SEMechanicalVentilatorAction.load(src.getMechanicalVentilatorAction(),dst);
     dst.setState(src.getState());
     dst.setAppliedRespiratoryCycle(src.getAppliedRespiratoryCycle());

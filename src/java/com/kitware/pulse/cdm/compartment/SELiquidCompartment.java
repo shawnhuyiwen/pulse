@@ -25,12 +25,12 @@ public class SELiquidCompartment extends SEFluidCompartment
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     pH=null;
     for (SELiquidSubstanceQuantity sq : this.substanceQuantities)
-      sq.reset();
+      sq.clear();
   }
   
   public static void load(LiquidCompartmentData src, SELiquidCompartment dst, SESubstanceManager subMgr)

@@ -29,18 +29,18 @@ public abstract class SEAction implements Serializable
   
   public void copy(SEAction other) 
   {
-    reset();
+    clear();
     comment = other.comment;
   }
   
-  public void reset() 
+  public void clear() 
   {
     comment = null;
   }
   
   public static void load(ActionData src, SEAction dst) 
   {
-    dst.reset();
+    dst.clear();
     if(!src.getComment().isEmpty())
       dst.setComment(src.getComment());
   }

@@ -37,9 +37,9 @@ public class SETensionPneumothorax extends SEPatientAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     type = null;
     side = null;
     if (severity != null)

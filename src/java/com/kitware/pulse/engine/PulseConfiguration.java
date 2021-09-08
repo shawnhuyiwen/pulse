@@ -5,7 +5,7 @@ import com.kitware.pulse.engine.bind.Configuration.ConfigurationData;
 public class PulseConfiguration
 {
 
-  public void reset() 
+  public void clear() 
   {
     
   }

@@ -20,9 +20,9 @@ public class SEChronicObstructivePulmonaryDisease extends SEPatientCondition
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (bronchitisSeverity != null)
       bronchitisSeverity.invalidate();
     if (emphysemaSeverity != null)

@@ -49,9 +49,9 @@ public class SESubstanceInfusion extends SEPatientAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (rate != null)
       rate.invalidate();
     if (concentration != null)

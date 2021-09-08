@@ -17,10 +17,10 @@ public class PulseScenario extends SEScenario
     super();
   }
 
-  public void reset() 
+  public void clear() 
   {
     if(this.config != null)
-    this.config.reset();
+    this.config.clear();
   }
 
   public void readFile(String fileName) throws InvalidProtocolBufferException

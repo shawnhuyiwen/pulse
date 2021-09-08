@@ -57,7 +57,7 @@ public class SESubstance
     
   }
   
-  public void reset()
+  public void clear()
   {
     this.name=null;
     this.state=null;
@@ -74,7 +74,7 @@ public class SESubstance
       this.michaelisCoefficient.invalidate();
     
     if(this.aerosolization!=null)
-      this.aerosolization.reset();
+      this.aerosolization.clear();
     if(this.bloodConcentration!=null)
        this.bloodConcentration.invalidate();
     if(this.massInBody!=null)
@@ -104,11 +104,11 @@ public class SESubstance
       this.solubilityCoefficient.invalidate();
     
     if(this.clearance!=null)
-      this.clearance.reset();
+      this.clearance.clear();
     if(this.pk!=null)
-      this.pk.reset();
+      this.pk.clear();
     if(this.pd!=null)
-      this.pd.reset();    
+      this.pd.clear();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -124,7 +124,7 @@ public class SESubstance
   
   public static void load(SubstanceData src, SESubstance dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.getName()!=null)
       dst.setName(src.getName());
     if(src.getState()!=eState.UNRECOGNIZED)

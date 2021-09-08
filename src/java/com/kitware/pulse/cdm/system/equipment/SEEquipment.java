@@ -6,7 +6,7 @@ public class SEEquipment implements SESystem
 {
 
   @Override
-  public void reset()
+  public void clear()
   {
   }
 

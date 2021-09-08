@@ -8,14 +8,14 @@ import com.kitware.pulse.cdm.system.SESystem;
 
 public class SENervousSystem extends SEPhysiologySystem implements SESystem
 {
+  protected SEScalar            chemoreceptorHeartRateScale;
+  protected SEScalar            chemoreceptorHeartElastanceScale;
   protected SEScalar            baroreceptorHeartRateScale;
   protected SEScalar            baroreceptorHeartElastanceScale;
   protected SEScalar            baroreceptorResistanceScale;
   protected SEScalar            baroreceptorComplianceScale;
   protected SEPupillaryResponse leftPupillaryResponse;
   protected SEPupillaryResponse rightPupillaryResponse;
-  protected SEScalar            chemoreceptorHeartRateScale;
-  protected SEScalar            chemoreceptorHeartElastanceScale;
 
   public SENervousSystem()
   {
@@ -30,7 +30,7 @@ public class SENervousSystem extends SEPhysiologySystem implements SESystem
   }
 
   @Override
-  public void reset()
+  public void clear()
   {    
     if(baroreceptorHeartRateScale!=null)
       baroreceptorHeartRateScale.invalidate();
@@ -41,9 +41,9 @@ public class SENervousSystem extends SEPhysiologySystem implements SESystem
     if(baroreceptorComplianceScale!=null)
       baroreceptorComplianceScale.invalidate();
     if(leftPupillaryResponse != null)
-      this.leftPupillaryResponse.reset();
+      this.leftPupillaryResponse.clear();
     if(rightPupillaryResponse != null)
-      this.rightPupillaryResponse.reset();
+      this.rightPupillaryResponse.clear();
     if(chemoreceptorHeartRateScale!=null)
       chemoreceptorHeartRateScale.invalidate();
     if(chemoreceptorHeartElastanceScale!=null)

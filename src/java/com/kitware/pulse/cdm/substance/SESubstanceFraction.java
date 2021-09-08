@@ -19,7 +19,7 @@ public class SESubstanceFraction
     this.substance=s;
   }
   
-  public void reset()
+  public void clear()
   {
     if(this.amount!=null)
       this.amount.invalidate();
@@ -34,7 +34,7 @@ public class SESubstanceFraction
   
   public static void load(SubstanceFractionData src, SESubstanceFraction dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.hasAmount())
       SEScalar0To1.load(src.getAmount(), dst.getAmount());
   }

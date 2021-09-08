@@ -18,9 +18,9 @@ public class SEAnesthesiaMachineOxygenWallPortPressureLoss extends SEAnesthesiaM
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     state = eSwitch.On;
   }
   

@@ -17,9 +17,9 @@ public class SEAnesthesiaMachineOxygenTankPressureLoss extends SEAnesthesiaMachi
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     state = eSwitch.Off;
   }
 

@@ -36,12 +36,12 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     
     if (this.settings != null)
-      this.settings.reset();
+      this.settings.clear();
     this.settingsFile="";
   }
   

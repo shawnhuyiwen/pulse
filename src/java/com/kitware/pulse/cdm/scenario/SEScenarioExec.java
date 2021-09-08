@@ -34,10 +34,10 @@ public class SEScenarioExec
   
   public SEScenarioExec()
   {
-    reset();
+    clear();
   }
   
-  public void reset()
+  public void clear()
   {
     logToConsole = eSwitch.Off;
     logFilename = "";
@@ -67,7 +67,7 @@ public class SEScenarioExec
   
   public static void load(ScenarioExecData src, SEScenarioExec dst)
   {
-    dst.reset();
+    dst.clear();
     dst.logToConsole = src.getLogToConsole();
     if(src.getLogFilename()!=null)
       dst.logFilename = src.getLogFilename();

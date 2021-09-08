@@ -35,7 +35,7 @@ public class SEMechanicalVentilatorLeak extends SEMechanicalVentilatorAction
   
   public static void load(MechanicalVentilatorLeakData src, SEMechanicalVentilatorLeak dst)
   {
-    dst.reset();
+    dst.clear();
     SEMechanicalVentilatorAction.load(src.getMechanicalVentilatorAction(),dst);
     if (src.hasSeverity())
       SEScalar0To1.load(src.getSeverity(), dst.getSeverity());

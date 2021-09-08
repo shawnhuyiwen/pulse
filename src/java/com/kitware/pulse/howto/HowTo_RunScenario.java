@@ -71,7 +71,7 @@ public class HowTo_RunScenario
     pse.runScenario(execOpts);
     
     // Create and run a scenario
-    execOpts.reset();
+    execOpts.clear();
     SEScenario sce = new SEScenario();
     sce.setName("HowTo_StaticEngine");
     sce.setDescription("Simple Scenario to demonstraight building a scenario by the CDM API");

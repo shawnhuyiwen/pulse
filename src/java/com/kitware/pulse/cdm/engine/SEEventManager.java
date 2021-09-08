@@ -20,7 +20,7 @@ public class SEEventManager
   
   }
   
-  public void reset()
+  public void clear()
   {
     handler = null;
     states.clear();

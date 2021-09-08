@@ -25,7 +25,7 @@ public class SESubstancePhysicochemicals
     
   }
   
-  public void reset()
+  public void clear()
   {
     if(this.acidDissociationConstant!=null)
       this.acidDissociationConstant.invalidate();
@@ -55,7 +55,7 @@ public class SESubstancePhysicochemicals
   
   public static void load(SubstancePhysicochemicalsData src, SESubstancePhysicochemicals dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.hasAcidDissociationConstant())
       SEScalar.load(src.getAcidDissociationConstant(),dst.getAcidDissociationConstant());
     if(src.getBindingProtein()!=eBindingProtein.NullBindingProtein)

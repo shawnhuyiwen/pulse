@@ -23,11 +23,11 @@ public class SEGasCompartment extends SEFluidCompartment
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     for (SEGasSubstanceQuantity sq : this.substanceQuantities)
-      sq.reset();
+      sq.clear();
   }
   
   public static void load(GasCompartmentData src, SEGasCompartment dst, SESubstanceManager subMgr)

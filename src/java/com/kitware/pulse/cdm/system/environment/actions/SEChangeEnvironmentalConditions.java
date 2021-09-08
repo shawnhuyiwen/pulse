@@ -35,11 +35,11 @@ public class SEChangeEnvironmentalConditions extends SEEnvironmentAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if(this.environmentalConditions!=null)
-      this.environmentalConditions.reset();
+      this.environmentalConditions.clear();
     this.environmentalConditionsFile=null;
   }
   

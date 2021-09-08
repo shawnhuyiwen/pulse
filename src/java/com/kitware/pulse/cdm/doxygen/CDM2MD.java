@@ -93,8 +93,8 @@ public class CDM2MD
 
       // PATIENT
       writer.append("#### The following tables describe a patient for Pulse to simulate\n<hr>\n");
-      WriteDoxyTable(SEPatient.class, "", writer, skipProperties);    
-      WriteDoxyTable(PatientData.eSex.class, "PatientData_", writer, skipProperties);  
+      WriteDoxyTable(SEPatient.class, "", writer, skipProperties);
+      WriteDoxyTable(PatientData.eSex.class, "PatientData_", writer, skipProperties);
 
       writer.append("#### The following tables describe the physiologic and equipment states Pulse supports.\n<hr>\n");
       WriteDoxyTable(eEvent.class, "", writer, skipProperties);
@@ -302,7 +302,7 @@ public class CDM2MD
 
     try
     {
-      // Create file and start the table      
+      // Create file and start the table
       writer.println("");
       writer.println("@anchor "+StringUtils.removeSpaces(tableName)+"Table");
       if(c.isEnum())

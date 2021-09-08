@@ -18,9 +18,9 @@ public class SEAcuteStress extends SEPatientAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (severity != null)
       severity.invalidate();
   }

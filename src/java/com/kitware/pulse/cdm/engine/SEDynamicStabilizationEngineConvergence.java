@@ -24,7 +24,7 @@ public class SEDynamicStabilizationEngineConvergence
   protected SEScalarTime maximumAllowedStabilizationTime;
   protected List<PropertyConvergence> properties=new ArrayList<>();
   
-  public void reset()
+  public void clear()
   {
     this.convergenceTime=null;
     this.minimumReactionTime=null;

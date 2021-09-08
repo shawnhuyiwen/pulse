@@ -51,9 +51,9 @@ public class SESubstanceBolus extends SEPatientAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     adminRoute = null;
     if (adminDuration != null)
       adminDuration.invalidate();

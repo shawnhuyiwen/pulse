@@ -43,7 +43,7 @@ public class SEEnvironment implements SESystem
   }
   
   @Override
-  public void reset()
+  public void clear()
   {    
     if (convectiveHeatLoss != null)
       convectiveHeatLoss.invalidate();
@@ -62,18 +62,18 @@ public class SEEnvironment implements SESystem
     if (skinHeatLoss != null)
       skinHeatLoss.invalidate();
     if (environmentalConditions != null)
-      environmentalConditions.reset();
+      environmentalConditions.clear();
     if (activeHeating != null)
-      activeHeating.reset();
+      activeHeating.clear();
     if (activeCooling != null)
-      activeCooling.reset();
+      activeCooling.clear();
     if (appliedTemperature != null)
-      appliedTemperature.reset();
+      appliedTemperature.clear();
   }
   
   public static void load(EnvironmentData src, SEEnvironment dst)
   {    
-    dst.reset();
+    dst.clear();
     if (src.hasConvectiveHeatLoss())
       SEScalarPower.load(src.getConvectiveHeatLoss(),dst.getConvectiveHeatLoss());
     if (src.hasConvectiveHeatTranferCoefficient())

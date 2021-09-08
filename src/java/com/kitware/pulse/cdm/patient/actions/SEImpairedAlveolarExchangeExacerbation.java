@@ -44,9 +44,9 @@ public class SEImpairedAlveolarExchangeExacerbation extends SEPatientAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (impairedSurfaceArea != null)
       impairedSurfaceArea.invalidate();
     if (impairedFraction != null)

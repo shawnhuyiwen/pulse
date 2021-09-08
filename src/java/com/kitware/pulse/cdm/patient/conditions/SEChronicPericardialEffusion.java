@@ -18,9 +18,9 @@ public class SEChronicPericardialEffusion extends SEPatientCondition
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (accumulatedVolume != null)
       accumulatedVolume.invalidate();
   }

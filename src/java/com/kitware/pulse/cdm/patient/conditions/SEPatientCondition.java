@@ -23,9 +23,9 @@ public abstract class SEPatientCondition extends SECondition
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
   }
   
   public static void load(PatientConditionData src, SEPatientCondition dst)

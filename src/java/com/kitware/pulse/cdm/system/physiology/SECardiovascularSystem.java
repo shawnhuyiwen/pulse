@@ -83,7 +83,7 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
     if (arterialPressure != null)
       arterialPressure.invalidate();

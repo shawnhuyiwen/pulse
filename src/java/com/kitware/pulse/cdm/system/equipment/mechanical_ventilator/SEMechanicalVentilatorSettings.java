@@ -120,7 +120,7 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
     connection = null;
 
@@ -196,7 +196,7 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
 
   public void copy(SEMechanicalVentilatorSettings from)
   {
-    reset();
+    clear();
     if(from.connection!=null && from.connection != eSwitch.NullSwitch)
     	this.connection=from.connection;
     
@@ -292,7 +292,7 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
 
   public static void load(MechanicalVentilatorSettingsData src, SEMechanicalVentilatorSettings dst)
   {
-    dst.reset();
+    dst.clear();
     if (src.getConnection()!=eSwitch.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
     

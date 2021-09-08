@@ -32,26 +32,6 @@ public class SEPulmonaryFunctionTest extends SEPatientAssessment
   public void clear()
   {
     super.clear();
-    this.expiratoryReserveVolume = null;
-    this.forcedVitalCapacity = null;
-    this.forcedExpiratoryVolume = null;
-    this.forcedExpiratoryFlow = null;
-    this.functionalResidualCapacity = null;
-    this.inspiratoryCapacity = null;
-    this.inspiratoryReserveVolume = null;
-    this.maximumVoluntaryVentilation = null;
-    this.peakExpiratoryFlow = null;
-    this.residualVolume = null;
-    this.slowVitalCapacity = null;
-    this.totalLungCapacity = null;
-    this.vitalCapacity = null;
-    this.lungVolumePlot = null;
-  }
-  
-  @Override
-  public void reset()
-  {
-    super.reset();
     if(this.expiratoryReserveVolume!=null)
       this.expiratoryReserveVolume.invalidate();
     if(this.forcedVitalCapacity!=null)

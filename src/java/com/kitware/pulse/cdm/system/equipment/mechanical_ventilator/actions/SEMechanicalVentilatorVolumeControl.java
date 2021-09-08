@@ -71,7 +71,7 @@ public class SEMechanicalVentilatorVolumeControl extends SEMechanicalVentilatorM
   
   public static void load(MechanicalVentilatorVolumeControlData src, SEMechanicalVentilatorVolumeControl dst)
   {
-    dst.reset();
+    dst.clear();
     SEMechanicalVentilatorMode.load(src.getMechanicalVentilatorMode(),dst);
     if (src.hasFlow())
       SEScalarVolumePerTime.load(src.getFlow(), dst.getFlow());

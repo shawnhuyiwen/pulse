@@ -35,7 +35,7 @@ public class SEMechanicalVentilatorMode extends SEMechanicalVentilatorAction
   
   protected static void load(MechanicalVentilatorModeData src, SEMechanicalVentilatorMode dst)
   {
-    dst.reset();
+    dst.clear();
     SEMechanicalVentilatorAction.load(src.getMechanicalVentilatorAction(),dst);
     dst.setConnection(src.getConnection());
   }

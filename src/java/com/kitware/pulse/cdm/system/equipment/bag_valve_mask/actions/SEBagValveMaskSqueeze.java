@@ -44,9 +44,9 @@ public class SEBagValveMaskSqueeze extends SEBagValveMaskAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     
     if (squeezePressure != null)
       squeezePressure.invalidate();
@@ -66,7 +66,7 @@ public class SEBagValveMaskSqueeze extends SEBagValveMaskAction
   
   public static void load(BagValveMaskSqueezeData src, SEBagValveMaskSqueeze dst)
   {
-    dst.reset();
+    dst.clear();
     SEBagValveMaskAction.load(src.getBagValveMaskAction(),dst);
     if (src.hasSqueezePressure())
       SEScalarPressure.load(src.getSqueezePressure(), dst.getSqueezePressure());

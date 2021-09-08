@@ -22,14 +22,9 @@ public abstract class SEPatientAssessment
     
   }
   
-  public void reset()
-  {
-    
-  }
-  
   public static void load(PatientAssessmentData src, SEPatientAssessment dst) 
   {
-    dst.reset();
+    dst.clear();
   }
   protected static void unload(SEPatientAssessment src, PatientAssessmentData.Builder dst)
   {

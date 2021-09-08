@@ -20,9 +20,9 @@ public class SEChronicRenalStenosis extends SEPatientCondition
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (leftKidneySeverity != null)
       leftKidneySeverity.invalidate();
     if (rightKidneySeverity != null)

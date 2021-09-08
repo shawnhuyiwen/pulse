@@ -14,14 +14,14 @@ public abstract class SECompartment
     
   }
   
-  public void reset()
+  public void clear()
   {
     
   }
   
   public static void load(CompartmentData src, SECompartment dst)
   {
-    dst.reset();
+    dst.clear();
   }
   protected static void unload(SECompartment src, CompartmentData dst)
   {

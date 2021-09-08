@@ -23,7 +23,7 @@ public class SETestCase
 		eqOpts.trackDifferences(true);
 	}
 	
-	public void reset()
+	public void clear()
 	{
 		this.name=null;
 		if(this.duration!=null)
@@ -33,7 +33,7 @@ public class SETestCase
 	
 	public static void load(TestCaseData src, SETestCase dst)
   {
-    dst.reset();
+    dst.clear();
     dst.setName(src.getName());
     for(String failure : src.getFailureList())
     	dst.failures.add(failure);

@@ -18,7 +18,7 @@ import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
 public class SEBagValveMask extends SEEquipment
 {
-  protected eSwitch                          connection;
+  protected eSwitch                           connection;
   
   protected SEScalarPressureTimePerVolume     bagResistance;
   protected SEScalarVolume                    connectionVolume;
@@ -50,8 +50,9 @@ public class SEBagValveMask extends SEEquipment
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
+    super.clear();
     connection = null;
     if (bagResistance != null)
       bagResistance.invalidate();
@@ -76,7 +77,7 @@ public class SEBagValveMask extends SEEquipment
 
   public void copy(SEBagValveMask from)
   {
-    reset();
+    clear();
     if(from.connection!=null && from.connection != eSwitch.NullSwitch)
     	this.connection=from.connection;
     
@@ -121,7 +122,7 @@ public class SEBagValveMask extends SEEquipment
 
   public static void load(BagValveMaskData src, SEBagValveMask dst)
   {
-    dst.reset();
+    dst.clear();
     if (src.getConnection()!=eSwitch.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
     

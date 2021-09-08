@@ -26,11 +26,11 @@ public class SEDataRequest implements Serializable
   
   public SEDataRequest(eCategory c) 
   {
-    reset();
+    clear();
     category = c;
   }
   
-  public void reset()
+  public void clear()
   {
     propertyName    = "";
     unit            = null;
@@ -43,7 +43,7 @@ public class SEDataRequest implements Serializable
   
   public static void load(DataRequestData src, SEDataRequest dst)
   {
-    dst.reset();
+    dst.clear();
     dst.propertyName = src.getPropertyName();
     dst.unit = CommonUnits.getUnit(src.getUnit());
     if(src.getCategory()!=eCategory.UNRECOGNIZED)

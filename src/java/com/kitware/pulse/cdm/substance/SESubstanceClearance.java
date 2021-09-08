@@ -35,7 +35,7 @@ public class SESubstanceClearance
     
   }
   
-  public void reset()
+  public void clear()
   {
     if(this.fractionExcretedInFeces!=null)
       this.fractionExcretedInFeces.invalidate();
@@ -93,7 +93,7 @@ public class SESubstanceClearance
   
   public static void load(SubstanceClearanceData src, SESubstanceClearance dst)
   {
-    dst.reset();
+    dst.clear();
     
     double sys_rc = Double.NaN;
     double fuip = Double.NaN;

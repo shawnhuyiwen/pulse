@@ -55,7 +55,7 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
   
   public static void load(MechanicalVentilatorContinuousPositiveAirwayPressureData src, SEMechanicalVentilatorContinuousPositiveAirwayPressure dst)
   {
-    dst.reset();
+    dst.clear();
     SEMechanicalVentilatorMode.load(src.getMechanicalVentilatorMode(),dst);
     if (src.hasDeltaPressureSupport())
       SEScalarPressure.load(src.getDeltaPressureSupport(), dst.getDeltaPressureSupport());

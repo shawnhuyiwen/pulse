@@ -33,28 +33,28 @@ public class SEThermalApplication extends SEEnvironmentAction
     if (other.activeHeating != null)
       getActiveHeating().copy(other.getActiveHeating());
     else if (activeHeating != null)
-      activeHeating.reset();
+      activeHeating.clear();
     if (other.activeCooling != null)
       getActiveCooling().copy(other.getActiveCooling());
     else if (activeCooling != null)
-      activeCooling.reset();
+      activeCooling.clear();
     if (other.appliedTemperature != null)
       getAppliedTemperature().copy(other.getAppliedTemperature());
     else if (appliedTemperature != null)
-      appliedTemperature.reset();
+      appliedTemperature.clear();
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     appendToPrevious = null;
     if (activeHeating != null)
-      activeHeating.reset();
+      activeHeating.clear();
     if (activeCooling != null)
-      activeCooling.reset();
+      activeCooling.clear();
     if (appliedTemperature != null)
-      appliedTemperature.reset();
+      appliedTemperature.clear();
   }
   
   @Override

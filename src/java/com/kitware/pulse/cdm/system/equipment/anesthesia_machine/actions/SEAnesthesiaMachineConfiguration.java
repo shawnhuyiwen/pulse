@@ -35,12 +35,12 @@ public class SEAnesthesiaMachineConfiguration extends SEAnesthesiaMachineAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     
     if (this.configuration != null)
-      this.configuration.reset();
+      this.configuration.clear();
     this.configurationFile="";
   }
   

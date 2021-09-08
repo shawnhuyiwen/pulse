@@ -16,9 +16,9 @@ public class SEChronicVentricularSystolicDysfunction extends SEPatientCondition
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
   }
   
   public void copy(SEChronicVentricularSystolicDysfunction other)

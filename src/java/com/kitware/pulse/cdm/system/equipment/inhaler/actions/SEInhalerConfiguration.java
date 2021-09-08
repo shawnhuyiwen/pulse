@@ -35,12 +35,11 @@ public class SEInhalerConfiguration extends SEInhalerAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
-    
+    super.clear();
     if (this.configuration != null)
-      this.configuration.reset();
+      this.configuration.clear();
     this.configurationFile="";
   }
   
@@ -52,7 +51,7 @@ public class SEInhalerConfiguration extends SEInhalerAction
   
   public static void load(InhalerConfigurationData src, SEInhalerConfiguration dst)
   {
-    dst.reset();
+    dst.clear();
     switch(src.getOptionCase())
     {
     case CONFIGURATIONFILE:

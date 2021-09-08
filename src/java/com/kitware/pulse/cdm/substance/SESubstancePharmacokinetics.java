@@ -20,10 +20,10 @@ public class SESubstancePharmacokinetics
     
   }
   
-  public void reset()
+  public void clear()
   {
     if(this.physicochemicals!=null)
-      this.physicochemicals.reset();
+      this.physicochemicals.clear();
     
     if(this.TissueKinetics!=null)
       this.TissueKinetics.clear();
@@ -33,14 +33,14 @@ public class SESubstancePharmacokinetics
   {
     if(hasTissueKinetics())
       return true;
-    if(hasPhysicochemicals())       
+    if(hasPhysicochemicals())
       return true;
     return false;
   }
   
   public static void load(SubstancePharmacokineticsData src, SESubstancePharmacokinetics dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.hasPhysicochemicals())
       SESubstancePhysicochemicals.load(src.getPhysicochemicals(), dst.getPhysicochemicals());
     

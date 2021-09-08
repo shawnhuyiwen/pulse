@@ -20,10 +20,10 @@ public class SEDataRequestManager
   
   public SEDataRequestManager()
   {
-    reset();
+    clear();
   }
   
-  public void reset() 
+  public void clear() 
   {
     this.resultsFilename = "";
     this.samplesPerSecond = 0;
@@ -32,7 +32,7 @@ public class SEDataRequestManager
   
   public static void load(DataRequestManagerData src, SEDataRequestManager dst)
   {
-    dst.reset();
+    dst.clear();
     dst.setResultsFilename(src.getResultsFilename());
     if(src.getSamplesPerSecond()>0)
       dst.setSamplesPerSecond(src.getSamplesPerSecond());

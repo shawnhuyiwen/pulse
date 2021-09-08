@@ -38,9 +38,9 @@ public class SELiquidSubstanceQuantity extends SESubstanceQuantity
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (concentration != null)
       concentration.invalidate();
     if (mass != null)

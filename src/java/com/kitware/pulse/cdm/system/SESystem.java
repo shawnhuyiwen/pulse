@@ -5,5 +5,5 @@ package com.kitware.pulse.cdm.system;
 
 public interface SESystem
 {
-  void reset();
+  public void clear();
 }

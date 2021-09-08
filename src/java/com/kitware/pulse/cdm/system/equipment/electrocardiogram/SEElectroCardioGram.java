@@ -17,7 +17,7 @@ public class SEElectroCardioGram implements SESystem
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
     if (hasLead3ElectricPotential())
       lead3ElectricPotential.invalidate();

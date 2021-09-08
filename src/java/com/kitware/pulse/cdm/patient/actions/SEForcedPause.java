@@ -33,9 +33,9 @@ public class SEForcedPause extends SEConsciousRespirationCommand
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
 
     if (period != null)
       period.invalidate();

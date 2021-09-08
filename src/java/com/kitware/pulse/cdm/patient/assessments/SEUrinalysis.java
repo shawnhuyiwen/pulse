@@ -38,27 +38,6 @@ public class SEUrinalysis extends SEPatientAssessment
     this.appearance = null;
     this.urobilinogen = null;
     this.ketone = null;
-    this.bilirubin = null;
-    this.specificGravity = null;
-    this.blood = null;
-    this.pH = null;
-    this.protein = null;
-    this.urobilinogen = null;
-    this.nitrite = null;
-    this.leukocyteEsterase = null;
-    
-    if(this.microscopic != null)
-      this.microscopic.clear();
-  }
-  
-  @Override
-  public void reset()
-  {
-    super.reset();
-    this.color = null;
-    this.appearance = null;
-    this.urobilinogen = null;
-    this.ketone = null;
     if(this.bilirubin!=null)
       this.bilirubin.invalidate();
     if(this.specificGravity!=null)
@@ -73,7 +52,7 @@ public class SEUrinalysis extends SEPatientAssessment
     this.leukocyteEsterase = null;
     
     if(this.microscopic != null)
-      this.microscopic.reset();
+      this.microscopic.clear();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException

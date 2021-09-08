@@ -43,9 +43,9 @@ public class SEHemorrhage extends SEPatientAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     type = eType.External;
     compartment = null;
     if (flowRate != null)

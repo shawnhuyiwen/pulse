@@ -16,7 +16,7 @@ public class SEEndocrineSystem extends SEPhysiologySystem implements SESystem
   }
 
   @Override
-  public void reset()
+  public void clear()
   {    
     if (insulinSynthesisRate != null)
       insulinSynthesisRate.invalidate();
