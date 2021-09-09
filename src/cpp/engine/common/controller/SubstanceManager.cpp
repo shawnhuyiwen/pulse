@@ -48,6 +48,7 @@ namespace PULSE_ENGINE
     m_HbO2CO2 = nullptr;
     m_HCO3 = nullptr;
     m_epi = nullptr;
+    m_norepi = nullptr;
 
     m_acetoacetate = nullptr;
     m_albumin = nullptr;
@@ -77,6 +78,7 @@ namespace PULSE_ENGINE
     m_HbO2CO2 = GetSubstance("OxyCarbaminohemoglobin");
     m_HCO3 = GetSubstance("Bicarbonate");
     m_epi = GetSubstance("Epinephrine");
+      m_norepi = GetSubstance("Norepinephrine");
 
     if (m_O2 == nullptr)
     {
@@ -134,9 +136,15 @@ namespace PULSE_ENGINE
       return false;
     }
 
+    if (m_norepi == nullptr)
+    {
+      Error("Norepinephrine Definition not found");
+      return false;
+    }
+
     if (m_O2 == nullptr || m_CO == nullptr || m_CO2 == nullptr || m_N2 == nullptr ||
       m_Hb == nullptr || m_HbO2 == nullptr || m_HbCO2 == nullptr || m_HbCO == nullptr || m_HbO2CO2 == nullptr ||
-      m_epi == nullptr || m_HCO3 == nullptr)
+      m_epi == nullptr || m_norepi == nullptr || m_HCO3 == nullptr)
       return false;
 
     m_acetoacetate = GetSubstance("Acetoacetate");
@@ -220,6 +228,7 @@ namespace PULSE_ENGINE
     AddActiveSubstance(*m_HbO2CO2);
     AddActiveSubstance(*m_HCO3);
     AddActiveSubstance(*m_epi);
+    AddActiveSubstance(*m_norepi);
 
     AddActiveSubstance(*m_acetoacetate);
     AddActiveSubstance(*m_albumin);
@@ -726,14 +735,18 @@ namespace PULSE_ENGINE
     SetSubstanceMolarity(*m_creatinine, tissue, molarity1);
 
     // EPINEPHRINE //
-    // Initializing to artificial plasma concentration because BG plasma is BS
-    //double hematocritGuess = 0.45;
     concentration.SetValue(0.034, MassPerVolumeUnit::ug_Per_L);
     SetSubstanceConcentration(*m_epi, vascular, concentration);
     // Tissue
     molarity1.SetValue(1.8558e-7, AmountPerVolumeUnit::mmol_Per_L); //epinephrine: 183.2044 g/mol
-    //molarity1.SetValue(0, AmountPerVolumeUnit::mmol_Per_L); //epinephrine: 183.2044 g/mol
     SetSubstanceMolarity(*m_epi, tissue, molarity1);
+
+    // NOREPINEPHRINE //
+    concentration.SetValue(0.275, MassPerVolumeUnit::ug_Per_L);
+    SetSubstanceConcentration(*m_norepi, vascular, concentration);
+    // Tissue
+    molarity1.SetValue(2.7137e-7, AmountPerVolumeUnit::mmol_Per_L); //epinephrine: 169.18 g/mol
+    SetSubstanceMolarity(*m_norepi, tissue, molarity1);
 
     // GLUCOSE //
     concentration.SetValue(95, MassPerVolumeUnit::mg_Per_dL);

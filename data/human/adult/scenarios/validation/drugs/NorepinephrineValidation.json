@@ -1,6 +1,6 @@
 {
   "Name": "NorNorepinephrine",
-  "Description": "Inject standard patient with NorNorepinephrine.",
+  "Description": "Infuse standard patient with Norepinephrine.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
@@ -968,7 +968,88 @@
         }
       }
     }
-}, {
+  }, {
+    "PatientAction": {
+      "SubstanceInfusion": {
+        "Substance": "Norepinephrine",
+        "Concentration": {
+          "ScalarMassPerVolume": {
+            "Value": 1.0,
+            "Unit": "ug/mL"
+          }
+        },
+        "Rate": {
+          "ScalarVolumePerTime": {
+            "Value": 0.013,
+            "Unit": "mL/s"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "min"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "SubstanceInfusion": {
+        "Substance": "Norepinephrine",
+        "Concentration": {
+          "ScalarMassPerVolume": {
+            "Value": 1.0,
+            "Unit": "ug/mL"
+          }
+        },
+        "Rate": {
+          "ScalarVolumePerTime": {
+		    "Value": 0.077,
+            "Unit": "mL/s"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "min"
+        }
+      }
+    }
+	  }, {
+    "PatientAction": {
+      "SubstanceInfusion": {
+        "Substance": "Norepinephrine",
+        "Concentration": {
+          "ScalarMassPerVolume": {
+            "Value": 1.0,
+            "Unit": "ug/mL"
+          }
+        },
+        "Rate": {
+          "ScalarVolumePerTime": {
+		    "Value": 0.13,
+            "Unit": "mL/s"
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "min"
+        }
+      }
+    }
+	  }, {
     "PatientAction": {
       "SubstanceInfusion": {
         "Substance": "Norepinephrine",
