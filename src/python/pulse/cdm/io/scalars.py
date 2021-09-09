@@ -25,6 +25,9 @@ from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarNegative1To1, \
                               SEScalarVolumePerTime, VolumePerTimeUnit, \
                               SEScalarVolumePerTimeMass, VolumePerTimeMassUnit, \
                               SEScalarVolumePerTimePressure, VolumePerTimePressureUnit
+from pulse.cdm.bind.Properties_pb2 import ScalarData, Scalar0To1Data, ScalarNegative1To1Data, \
+                                          ScalarAreaData, ScalarForceData, ScalarEquivalentWeightPerVolumeData, \
+                                          ScalarFrequencyData, ScalarHeatResistanceAreaData, \
 from pulse.cdm.bind.Properties_pb2 import ScalarData, Scalar0To1Data, ScalarNegative1To1Data, ScalarAreaData, \
                                           ScalarEquivalentWeightPerVolumeData, \
                                           ScalarForceData, ScalarFrequencyData,ScalarHeatResistanceAreaData, \
