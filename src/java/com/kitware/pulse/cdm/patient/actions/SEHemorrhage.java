@@ -10,6 +10,36 @@ import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
 
 public class SEHemorrhage extends SEPatientAction
 {
+  public enum ExternalCompartment
+  {
+    RightLeg("RightLeg"), LeftLeg("LeftLeg"),
+    RightArm("RightArm"), LeftArm("LeftArm"),
+    Skin("Skin"), Muscle("Muscle"), Brain("Brain"),
+    LeftKidney("LeftKidney"), RightKidney("RightKidney"),
+    Liver("Liver"), Spleen("Spleen"), Splanchnic("Splanchnic"), 
+    SmallIntestine("SmallIntestine"), LargeIntestine("LargeIntestine"),
+    Aorta("Aorta"), VenaCava("VenaCava");
+    private String compartment;
+    private ExternalCompartment(String cmpt)
+    {
+      compartment = cmpt;
+    }
+    public String toString(){return compartment;}
+  }
+  
+  public enum InternalCompartment
+  {
+    LeftKidney("LeftKidney"), RightKidney("RightKidney"),
+    Liver("Liver"), Spleen("Spleen"), Splanchnic("Splanchnic"), 
+    SmallIntestine("SmallIntestine"), LargeIntestine("LargeIntestine"),
+    Aorta("Aorta"), VenaCava("VenaCava");
+    private String compartment;
+    private InternalCompartment(String cmpt)
+    {
+      compartment = cmpt;
+    }
+    public String toString(){return compartment;}
+  }
 
   private static final long serialVersionUID = -1654353830396880L;
   protected String                compartment;
@@ -118,6 +148,18 @@ public class SEHemorrhage extends SEPatientAction
   public boolean hasCompartment()
   {
     return compartment == null ? false : !compartment.isEmpty();
+  }
+  
+  public void setExternal(ExternalCompartment c)
+  {
+    type = eType.External;
+    compartment = c.toString();
+  }
+  
+  public void setInternal(InternalCompartment c)
+  {
+    type = eType.Internal;
+    compartment = c.toString();
   }
   
   public boolean hasFlowRate()

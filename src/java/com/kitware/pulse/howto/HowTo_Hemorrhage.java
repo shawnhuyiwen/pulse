@@ -100,14 +100,12 @@ public class HowTo_Hemorrhage
     SEHemorrhage rightLeg = new SEHemorrhage();
     // Setting up a realistic hemorrhage can be difficult
     // Here is an example of how the engine will act if you create an unrealistic hemorrhage
-    rightLeg.setType(HemorrhageData.eType.External);
-    rightLeg.setCompartment("RightLeg");
+    rightLeg.setExternal(SEHemorrhage.ExternalCompartment.RightLeg);
     rightLeg.getSeverity().setValue(0.4);
     pe.processAction(rightLeg);
     
     SEHemorrhage rightArm = new SEHemorrhage();
-    rightArm.setType(HemorrhageData.eType.External);
-    rightArm.setCompartment("RightArm");
+    rightArm.setExternal(SEHemorrhage.ExternalCompartment.RightArm);
     rightArm.getSeverity().setValue(0.2);
     pe.processAction(rightArm);
     
