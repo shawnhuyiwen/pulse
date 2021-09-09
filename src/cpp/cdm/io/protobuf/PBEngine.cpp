@@ -92,6 +92,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEPericardialEffusion.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
+#include "cdm/patient/actions/SESupplementalOxygen.h"
 #include "cdm/patient/actions/SESubstanceBolus.h"
 #include "cdm/patient/actions/SESubstanceInfusion.h"
 #include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
