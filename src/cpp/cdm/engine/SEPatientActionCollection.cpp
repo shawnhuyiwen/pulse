@@ -1481,6 +1481,8 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetRespiratoryFatigue());
   if (HasRespiratoryMechanicsConfiguration())
     actions.push_back(GetRespiratoryMechanicsConfiguration());
+  if (HasSupplementalOxygen())
+    actions.push_back(GetSupplementalOxygen());
   if (HasLeftClosedTensionPneumothorax())
     actions.push_back(GetLeftClosedTensionPneumothorax());
   if (HasLeftOpenTensionPneumothorax())
@@ -1564,6 +1566,8 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetRespiratoryFatigue().GetScalar(property);
   if (actionName == "RespiratoryMechanicsConfiguration")
     return GetRespiratoryMechanicsConfiguration().GetScalar(property);
+  if (actionName == "SupplementalOxygen")
+    return GetSupplementalOxygen().GetScalar(property);
   if (actionName == "LeftClosedTensionPneumothorax")
     return GetLeftClosedTensionPneumothorax().GetScalar(property);
   if (actionName == "LeftOpenTensionPneumothorax")

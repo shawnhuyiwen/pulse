@@ -346,6 +346,8 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PulmonaryShuntExacerbation));
   if (src.HasRespiratoryFatigue())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RespiratoryFatigue));
+  if (src.HasSupplementalOxygen())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_SupplementalOxygen));
   if (src.HasLeftClosedTensionPneumothorax())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftClosedTensionPneumothorax));
   if (src.HasLeftOpenTensionPneumothorax())
