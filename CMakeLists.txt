@@ -232,6 +232,19 @@ configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PRE
 set(export_config_name ${PROJECT_NAME})
 set(${PROJECT_NAME}_INSTALL_CONFIG_DIR "lib/cmake/${${PROJECT_NAME}_INSTALL_FOLDER}")
 file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_CONFIG_DIR})
+# Get the latest abbreviated commit hash of the working branch
+find_package(Git)
+if(Git_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE export_git_hash
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+else()
+  set(export_git_hash "unknown")
+endif()
+
 #------------------------------------------------------------------------------
 # Configure ${PROJECT_NAME}ConfigVersion.cmake common to build and install tree
 include(CMakePackageConfigHelpers)
