@@ -78,12 +78,12 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
       - Volume: Ventilator sensor volume change value to trigger inspiration phase
       - Pressure: Ventilator sensor pressure value to trigger inspiration phase      
 	- Waveform (square, exponential, ramp, sinusoidal, sigmoidal): Pattern of driver function
-	- Pause: Time of plateau (i.e., constant driver pressure) between inspiration and expiration
-	- Target (PIP, TV, etc.): Value to set/achieve
+	- Target (PIP or flow): Driver value to set
 	- Limit: Cutoff/maximum
 		- Pressure: Ventilator sensor pressure cutoff/maximum
 		- Flow: Ventilator sensor flow cutoff/maximum
 		- Volume: Total lung volume cutoff/maximum
+  - Pause: Time of plateau (i.e., constant driver pressure) between inspiration and expiration
 - Expiration Phase
 	- Cycle: Transition to expiration
 		- Time: Total length of inspiration phase to trigger expiration phase
@@ -100,7 +100,14 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
 	- Inspiration valve resistance: Total resistance of inspiratory valves
 	- Expiration tube resistance: Total resistance of expiratory limb tubing
 	- Expiration valve resistance: Total resistance of expiratory valves
-	- Endotracheal tube resistance: Total connection resistance
+- Circuit Volumes
+  - Inspiratory limb volume: Total volume of inspiratory limb tubing
+	- Inspiratory valve volume: Total volume of inspiratory valves
+	- Expiratory tube volume: Total volume of expiratory limb tubing
+	- Expiratory valve volume: Total volume of expiratory valves
+	- Y-piece volume: Total volume of the y-piece
+  - Connection volume: Total volume of the mask/endotracheal tube
+- Circuit Compliance: Total compliance of the ventilator circuit
 
 While the parameter list is meant to be all encompassing for all ventilator modes, some typical settings are required to be translated by the user or application.  For example, the respiration rate (<i>RR</i>) and I:E Ratio (<i>IE</i>)settings can be translated to an inspiratory period (<i>P<sub>ins</sub></i>) and expiratory period (<i>P<sub>exp</sub></i>) by:
 
