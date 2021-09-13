@@ -143,6 +143,10 @@ public:
   virtual SEScalarVolume& GetConnectionVolume();
   virtual double GetConnectionVolume(const VolumeUnit& unit) const;
 
+  virtual bool HasCompliance() const;
+  virtual SEScalarVolumePerPressure& GetCompliance();
+  virtual double GetCompliance(const VolumePerPressureUnit& unit) const;
+
   virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
   virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
 
@@ -216,6 +220,8 @@ protected:
 
   SEScalarVolume*                              m_YPieceVolume;
   SEScalarVolume*                              m_ConnectionVolume;
+
+  SEScalarVolumePerPressure*                   m_Compliance;
 
   std::vector<SESubstanceFraction*>            m_FractionInspiredGases;
   std::vector<const SESubstanceFraction*>      m_cFractionInspiredGases;

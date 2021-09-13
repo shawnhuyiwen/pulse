@@ -11,6 +11,7 @@
 #include "cdm/properties/SEScalarPressureTimePerVolume.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerPressure.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/io/protobuf/PBMechanicalVentilator.h"
 
@@ -56,6 +57,7 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
   m_InspirationValveVolume = nullptr;
   m_YPieceVolume = nullptr;
   m_ConnectionVolume = nullptr;
+  m_Compliance = nullptr;
 }
 
 SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
@@ -100,6 +102,8 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
   SAFE_DELETE(m_InspirationValveVolume);
   SAFE_DELETE(m_YPieceVolume);
   SAFE_DELETE(m_ConnectionVolume);
+
+  SAFE_DELETE(m_Compliance);
 
   DELETE_VECTOR(m_FractionInspiredGases);
   m_cFractionInspiredGases.clear();
@@ -152,6 +156,8 @@ void SEMechanicalVentilatorSettings::Clear()
   INVALIDATE_PROPERTY(m_InspirationValveVolume);
   INVALIDATE_PROPERTY(m_YPieceVolume);
   INVALIDATE_PROPERTY(m_ConnectionVolume);
+
+  INVALIDATE_PROPERTY(m_Compliance);
 
   RemoveFractionInspiredGases();
   RemoveConcentrationInspiredAerosols();
@@ -217,6 +223,8 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   COPY_PROPERTY(InspirationValveVolume);
   COPY_PROPERTY(YPieceVolume);
   COPY_PROPERTY(ConnectionVolume);
+
+  COPY_PROPERTY(Compliance);
 
   // Always need to provide a full (fractions sum to 1) substance list that replaces current
   if (from.HasFractionInspiredGas())
@@ -360,6 +368,9 @@ const SEScalar* SEMechanicalVentilatorSettings::GetScalar(const std::string& nam
     return &GetYPieceVolume();
   if (name == "ConnectionVolume")
     return &GetConnectionVolume();
+
+  if (name == "Compliance")
+    return &GetCompliance();
 
   // I did not support for getting a specific gas/aerosol scalars due to lack of coffee
   return nullptr;
@@ -823,6 +834,23 @@ double SEMechanicalVentilatorSettings::GetConnectionVolume(const VolumeUnit& uni
   if (m_ConnectionVolume == nullptr)
     return SEScalar::dNaN();
   return m_ConnectionVolume->GetValue(unit);
+}
+
+bool SEMechanicalVentilatorSettings::HasCompliance() const
+{
+  return m_Compliance == nullptr ? false : m_Compliance->IsValid();
+}
+SEScalarVolumePerPressure& SEMechanicalVentilatorSettings::GetCompliance()
+{
+  if (m_Compliance == nullptr)
+    m_Compliance = new SEScalarVolumePerPressure();
+  return *m_Compliance;
+}
+double SEMechanicalVentilatorSettings::GetCompliance(const VolumePerPressureUnit& unit) const
+{
+  if (m_Compliance == nullptr)
+    return SEScalar::dNaN();
+  return m_Compliance->GetValue(unit);
 }
 
 void SEMechanicalVentilatorSettings::SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w)

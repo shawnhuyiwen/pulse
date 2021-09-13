@@ -207,6 +207,9 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
   if (src.has_connectionvolume())
     PBProperty::Load(src.connectionvolume(), dst.GetConnectionVolume());
 
+  if (src.has_compliance())
+    PBProperty::Load(src.compliance(), dst.GetCompliance());
+
   const SESubstance* sub;
   for (int i = 0; i < src.fractioninspiredgas_size(); i++)
   {
@@ -318,6 +321,9 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
     dst.set_allocated_ypiecevolume(PBProperty::Unload(*src.m_YPieceVolume));
   if (src.HasConnectionVolume())
     dst.set_allocated_connectionvolume(PBProperty::Unload(*src.m_ConnectionVolume));
+
+  if (src.HasCompliance())
+    dst.set_allocated_compliance(PBProperty::Unload(*src.m_Compliance));
 
   for (SESubstanceFraction* sf : src.m_FractionInspiredGases)
     dst.mutable_fractioninspiredgas()->AddAllocated(PBSubstance::Unload(*sf));

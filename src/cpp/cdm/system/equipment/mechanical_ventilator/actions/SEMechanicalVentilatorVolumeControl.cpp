@@ -62,9 +62,10 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
     s.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
     s.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
     s.GetInspirationTargetFlow().Set(GetFlow());
-    s.GetPositiveEndExpiredPressure().Set(GetPositiveEndExpiredPressure());
+    s.GetInspirationLimitVolume().Set(GetTidalVolume());
+    s.GetExpirationCycleTime().Set(GetInspiratoryPeriod());
     s.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-    s.GetExpirationCycleVolume().Set(GetTidalVolume());
+    s.GetPositiveEndExpiredPressure().Set(GetPositiveEndExpiredPressure());
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
     if (GetMode() == eMechanicalVentilator_VolumeControlMode::AssistedControl)
       s.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);

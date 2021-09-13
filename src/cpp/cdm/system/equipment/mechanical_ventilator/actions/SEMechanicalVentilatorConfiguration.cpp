@@ -11,6 +11,7 @@
 #include "cdm/properties/SEScalarMassPerVolume.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarVolumePerPressure.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarTime.h"
@@ -142,6 +143,7 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tInspirationValveVolume: "; m_Settings->HasInspirationValveVolume() ? str << m_Settings->GetInspirationValveVolume() : str << "NaN";
     str << "\n\tYPieceVolume: "; m_Settings->HasYPieceVolume() ? str << m_Settings->GetYPieceVolume() : str << "NaN";
     str << "\n\tConnectionVolume: "; m_Settings->HasConnectionVolume() ? str << m_Settings->GetConnectionVolume() : str << "NaN";
+    str << "\n\tCompliance: "; m_Settings->HasCompliance() ? str << m_Settings->GetCompliance() : str << "NaN";
     if (m_Settings->HasFractionInspiredGas())
     {
       for (SESubstanceFraction* sf : m_Settings->GetFractionInspiredGases())

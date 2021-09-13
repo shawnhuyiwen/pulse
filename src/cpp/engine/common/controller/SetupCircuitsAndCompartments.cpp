@@ -3735,8 +3735,9 @@ namespace PULSE_ENGINE
                                //22mm ID * 36" length = pi * (0.022m / 2)^2 * 0.91m = 3.46e-4 m^3 = 0.346 L... so decent ballpark
     double yPieceVolume_L = 0.01;
     double connectionVolume_L = 0.05;
-    double tubeResistance_cmH2O_s_Per_L = 0.01; //4 total tubes - this is per tube 
-                                                //this is pretty negligable
+    double totalResistance_cmH2O_s_Per_L = 2.0;
+    double tubeResistance_cmH2O_s_Per_L = totalResistance_cmH2O_s_Per_L / 2.0; //2 tubes in series for inhale and 2 tubes in series for exhale
+    double compliance_L_Per_cmH2O = 0.005;
 
     double openResistance = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
@@ -3798,6 +3799,9 @@ namespace PULSE_ENGINE
     InspiratoryLimbToYPiece.GetResistanceBaseline().SetValue(tubeResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
     SEFluidCircuitPath& YPieceToConnection = cMechanicalVentilator.CreatePath(YPiece, Connection, pulse::MechanicalVentilatorPath::YPieceToConnection);
+
+    SEFluidCircuitPath& VentilatorToEnvironment = cMechanicalVentilator.CreatePath(Ventilator, Ambient, pulse::MechanicalVentilatorPath::VentilatorToEnvironment);
+    VentilatorToEnvironment.GetComplianceBaseline().SetValue(compliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
 
     SEFluidCircuitPath& LeakConnectionToEnvironment = cMechanicalVentilator.CreatePath(Connection, Ambient, pulse::MechanicalVentilatorPath::LeakConnectionToEnvironment);
     LeakConnectionToEnvironment.GetResistanceBaseline().SetValue(openResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
