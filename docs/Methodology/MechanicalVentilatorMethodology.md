@@ -64,9 +64,10 @@ directly connected and allowed to share the same fluid. When the machine
 is turned on, both individually defined circuits are combined into a
 single circuit that is then used for calculations.
 
+@anchor ventilator-settings
 ### Mechanical Ventilator Settings
 
-The Mechanical Ventilator parameters were defined to allow for setting all types of ventilation modes - all control variable types and all breath sequences. To achieve this, these hierarchical definitions are implemented:
+The Mechanical Ventilator configuration parameters were defined to allow for setting all types of ventilation modes - all control variable types and all breath sequences. To achieve this, these hierarchical definitions are implemented:
 - Connection (Off, Mask, Tube): Connection type to the %Respiratory System
 - Inspiration Phase
 	- Trigger: Transition to inspiration
@@ -152,6 +153,15 @@ Continuous Positive Airway Pressure (CPAP):
 - Fraction of Inspired Oxygen
 - Positive End Expired Pressure
 - Slope
+
+@anchor ventilator-actions
+### Mechanical Ventilator Actions
+
+The ventilator model includes the application of leak and hold actions.
+
+The leak severity is translated to the connection to environment resistance to allow more or less air to escape.
+
+The hold action can be set to be applied instantaneously, at the end of the expiration cycle, or at the end of the inspiration cycle.  When the hold is active, the driver will be set to a zero flow source.  The hold will remain applied until explicitly removed by the user.
 
 @anchor ventilator-dependencies
 ### Dependencies
