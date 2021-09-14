@@ -520,8 +520,13 @@ namespace PULSE_ENGINE
     if (GetSettings().HasExpirationCyclePressure())
     {
       triggerDefined = true;
-      /// \error Fatal: Expiration pressure cycle is not yet supported.
-      Fatal("Expiration pressure cycle is not yet supported.");
+      double ambientPressure_cmH2O = m_AmbientNode->GetPressure(PressureUnit::cmH2O);
+      double airwayPressure_cmH2O = m_ConnectionNode->GetPressure(PressureUnit::cmH2O);
+      if (airwayPressure_cmH2O - ambientPressure_cmH2O >= GetSettings().GetExpirationCyclePressure(PressureUnit::cmH2O))
+      {
+        CycleMode();
+        return;
+      }
     }
 
     if (GetSettings().HasExpirationCycleVolume())
@@ -759,8 +764,8 @@ namespace PULSE_ENGINE
     }
     else
     {
-      /// \error Fatal: Non-square waveforms are not yet supported.
-      Fatal("Non-square waveforms are not yet supported.");
+      /// \error Fatal: Non-square waveforms are not yet supported for expiration.
+      Fatal("Non-square waveforms are not yet supported for expiration.");
     }
   }
 
