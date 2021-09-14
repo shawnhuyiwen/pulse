@@ -67,16 +67,16 @@ namespace PULSE_ENGINE
     // Serializable member variables (Set in Initialize and in schema)
     double                m_CurrentPeriodTime_s;
     double                m_DriverPressure_cmH2O;
-    double                m_PreviousDriverFlow_L_Per_s; //jbw - serialize
-    double                m_PreviousDriverPressure_cmH2O; //jbw - serialize
+    double                m_PreviousDriverFlow_L_Per_s;
+    double                m_PreviousDriverPressure_cmH2O;
     double                m_DriverFlow_L_Per_s;
     double                m_CurrentVentilatorVolume_L;
     double                m_CurrentRespiratoryVolume_L;
     double                m_InspirationTime_s;
     double                m_InspiratoryFlow_L_Per_s;
-    bool                  m_LimitReached; //jbw - serialize
-    double                m_PreviousYPieceToConnectionFlow_L_Per_s; //jbw - serialize
-    double                m_PreviousConnectionPressure_cmH2O; //jbw - serialize
+    bool                  m_LimitReached;
+    double                m_PreviousYPieceToConnectionFlow_L_Per_s;
+    double                m_PreviousConnectionPressure_cmH2O;
     eBreathState          m_CurrentBreathState;
 
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
