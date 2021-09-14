@@ -244,6 +244,8 @@ class FrequencyUnit(SEScalarUnit):
         if string == FrequencyUnit.Hz.get_string():
             return FrequencyUnit.Hz
         raise Exception("No FrequencyUnit defined for " + string)
+
+
 FrequencyUnit.Per_min = FrequencyUnit("1/min")
 FrequencyUnit.Per_s = FrequencyUnit("1/s")
 FrequencyUnit.Hz = FrequencyUnit("Hz")
@@ -1250,3 +1252,45 @@ class SEScalarVolumePerTimePressure(SEScalarQuantity):
             self._units = units
         else:
             raise Exception("Provided argument must be a VolumePerTimePressureUnit")
+
+class ElectricPotentialUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == ElectricPotentialUnit.V.get_string():
+            return ElectricPotentialUnit.V
+        if string == ElectricPotentialUnit.mV.get_string():
+            return ElectricPotentialUnit.mV
+        raise Exception("No ElectricPotentialUnit defined for " + string)
+ElectricPotentialUnit.V = ElectricPotentialUnit("V")
+ElectricPotentialUnit.mV = ElectricPotentialUnit("mV")
+class SEScalarElectricPotential(SEScalarQuantity):
+
+    def __init__(self, value:float=None, units:ElectricPotentialUnit=None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarElectricPotential, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarElectricPotential")
+
+    def get_value(self, units: ElectricPotentialUnit=None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: ElectricPotentialUnit):
+        if isinstance(units, ElectricPotentialUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a ElectricPotentialUnit")

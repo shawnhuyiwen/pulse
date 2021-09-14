@@ -103,7 +103,7 @@ class SEMechanicalVentilator(SEEquipment):
         self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
         self._inspiration_waveform_period = None
 
-        self._y_piece_volume_volume = None
+        self._y_piece_volume = None
         self._connection_volume = None
 
         self._fraction_inspired_gasses = []
@@ -354,12 +354,12 @@ class SEMechanicalVentilator(SEEquipment):
             self._inspiration_patient_trigger_pressure = SEScalarPressure()
         return self._inspiration_patient_trigger_pressure
 
-    def has_inspiration_valve_volume(self):
-        return False if self._inspiration_valve_volume is None else self._inspiration_valve_volume.is_valid()
-    def get_inspiration_valve_volume(self):
-        if self._inspiration_valve_volume is None:
-            self._inspiration_valve_volume = SEScalarVolume()
-        return self._inspiration_valve_volume
+    def has_inspiration_limb_volume(self):
+        return False if self._inspiration_limb_volume is None else self._inspiration_limb_volume.is_valid()
+    def get_inspiration_limb_volume(self):
+        if self._inspiration_limb_volume is None:
+            self._inspiration_limb_volume = SEScalarVolume()
+        return self._inspiration_limb_volume
 
     def has_inspiration_tube_resistance(self):
         return False if self._inspiration_tube_resistance is None else self._inspiration_tube_resistance.is_valid()

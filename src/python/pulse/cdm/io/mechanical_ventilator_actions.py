@@ -18,10 +18,10 @@ def serialize_mechanical_ventilator_action_from_bind(src: MechanicalVentilatorAc
 
 def serialize_mechanical_ventilator_configuration_to_bind(src: SEMechanicalVentilatorConfiguration, dst: MechanicalVentilatorConfigurationData):
     serialize_mechanical_ventilator_action_to_bind(src, dst.MechanicalVentilatorAction)
-    if src.has_configuration_file():
-        dst.ConfigurationFile = src.get_configuration_file()
-    elif src.has_configuration():
-        serialize_mechanical_ventilator_to_bind(src.get_configuration(), dst.Configuration)
+    if src.has_settings_file():
+        dst.SettingsFile = src.get_settings_file()
+    elif src.has_settings():
+        serialize_mechanical_ventilator_to_bind(src.get_settings(), dst.Settings)
 
 def serialize_mechanical_ventilator_configuration_from_bind(src: MechanicalVentilatorConfigurationData, dst: SEMechanicalVentilatorConfiguration):
     serialize_mechanical_ventilator_action_from_bind(src.MechanicalVentilatorAction, dst)

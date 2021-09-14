@@ -473,7 +473,9 @@ class SEDataRequest:
     @classmethod
     def create_inhaler_request(cls, property, unit=None):
         return cls(eDataRequest_category.Inhaler, property=property,  unit=unit)
-
+    @classmethod
+    def create_mechanical_ventilator_request(cls, property, unit=None):
+        return cls(eDataRequest_category.MechanicalVentilator, property=property,  unit=unit)
 
     def get_category(self):
         return self._category
