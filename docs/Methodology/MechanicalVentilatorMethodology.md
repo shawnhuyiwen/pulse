@@ -7,9 +7,7 @@ Mechanical Ventilator Methodology {#MechanicalVentilatorMethodology}
 ## Abstract
 
 The Mechanical Ventilator Model is a generic representation of a positive-pressure ventilation device and 
-inhaled gas/agent administration. It models a semi-closed circuit breathing system. The current implementation is limited, but the data model is designed for future expansion.
-The results of this system were evaluated for pressure control - continuous mandatory ventilation (PC-CMV), volume control - continuous mandatory ventilation (VC-CMV), and volume control - assist control (VC-AC) ventilation modes. The results show excellent correlation with the expected values. 
-Future work will add more ventilation modes.
+inhaled gas/agent administration. It models a semi-closed circuit breathing system. The results of this system were evaluated for pressure control - continuous mandatory ventilation (PC-CMV), volume control - continuous mandatory ventilation (VC-CMV), pressure control - assist control (PC-AC), volume control - assist control (VC-AC) ventilation, and continuous positive airway pressure (CPAP) modes. The results show excellent correlation with the expected values. Future work will evaluate more ventilation modes.
 
 @anchor ventilator-intro
 ## Introduction
@@ -54,7 +52,7 @@ The Mechanical Ventilator model consists of a pressure source with tubes and val
 
 <img src="./Images/MechanicalVentilator/MechanicalVentilatorCircuit.png" width="400">
 <center>
-<i>Figure 1. Circuit diagram of the Mechanical Ventilator. The circuit employs a driver source (either pressure or flow, depending on the mode and settings), resistances, and valves.</i>
+<i>Figure 1. Circuit diagram of the Mechanical Ventilator. The circuit employs a driver source (either pressure or flow, depending on the mode and settings), resistances, valves, and a compliance.</i>
 </center><br>
 
 ### Connecting to the %Respiratory Circuit
@@ -78,6 +76,7 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
       - Volume: Ventilator sensor volume change value to trigger inspiration phase
       - Pressure: Ventilator sensor pressure value to trigger inspiration phase      
 	- Waveform (square, exponential, ramp, sinusoidal, sigmoidal): Pattern of driver function
+  - Waveform Period: Time to reach maximum driver value
 	- Target (PIP or flow): Driver value to set
 	- Limit: Cutoff/maximum
 		- Pressure: Ventilator sensor pressure cutoff/maximum
@@ -92,6 +91,7 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
 		- Flow: Ventilator sensor flow value to trigger expiration phase
 	- Waveform (square, exponential, ramp, sinusoidal, sigmoidal): Pattern of driver function
 	- Baseline (PEEP or FRC): Value to set/achieve
+- Driver Damping: Fractional change parameter that prevents driver discontinuities (i.e., smoother driver curve)
 - Substances
 	- Fraction of inspired gas (FiO2 and other gases fractions)
 	- Concentration of inspired aerosol (albuterol, etc.)
@@ -128,6 +128,30 @@ While the parameter list is meant to be all encompassing for all ventilator mode
 </center><br> 
 
 Where the I:E Ratio (<i>IE</i>) is defined by a fraction, for example 1:2 is 0.5 and 1:1 is 1.0.
+
+Standard ventilator mode settings have been added to allow for more intuitive application of ventilator modes. The following mode settings are automatically translated to the lower level configuration settings that are listed previously in this section.  Some setting are not exposed (e.g., trigger flow and cycle flow) at this level and default values are used.
+
+Pressure Control (PC-CMV and PC-AC):
+- Fraction of Inspired Oxygen
+- Inspiratory Period
+- Inspiratory Pressure
+- Positive End Expired Pressure
+- Respiration Rate
+- Slope
+
+Volume Control (VC-CMV and VC-AC):
+- Flow
+- Fraction of Inspired Oxygen
+- Inspiratory Period
+- Positive End Expired Pressure
+- Respiration Rate
+- Tidal Volume
+
+Continuous Positive Airway Pressure (CPAP):
+- Delta Pressure Support
+- Fraction of Inspired Oxygen
+- Positive End Expired Pressure
+- Slope
 
 @anchor ventilator-dependencies
 ### Dependencies
@@ -249,8 +273,7 @@ Logic and results for handling more ventilation modes.
 
 ## Recommended Improvements
 
-The engine modularity could be taken advantage of to add parameters and elements 
-for specific equipment models and manufacturers. 
+The engine modularity could be taken advantage of to add parameters and elements for specific equipment models and manufacturers. 
 
 @anchor ventilator-appendices
 # Appendices
