@@ -745,7 +745,7 @@ namespace PULSE_ENGINE
     concentration.SetValue(0.275, MassPerVolumeUnit::ug_Per_L);
     SetSubstanceConcentration(*m_norepi, vascular, concentration);
     // Tissue
-    molarity1.SetValue(2.7137e-7, AmountPerVolumeUnit::mmol_Per_L); //epinephrine: 169.18 g/mol
+    molarity1.SetValue(2.7137e-7, AmountPerVolumeUnit::mmol_Per_L); //norepinephrine: 169.18 g/mol
     SetSubstanceMolarity(*m_norepi, tissue, molarity1);
 
     // GLUCOSE //

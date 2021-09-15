@@ -43,7 +43,7 @@ namespace PULSE_ENGINE
     void ComputeExposedModelParameters() override;
 
     void SynthesizeInsulin();
-    void ReleaseEpinephrine();
+    void ReleaseEpinephrineAndNorepinephrine();
 
     // Serializable member variables (Set in Initialize and in schema)
 
