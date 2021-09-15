@@ -490,6 +490,7 @@ The engine supports the following systems:
 |Code Method                                                                             | CDM Table                                             |
 |---                                                                                     |---                                                    |
 |@code virtual const SEEnvironment* GetEnvironment() = 0; @endcode                       | @ref EnvironmentTable "Environment"                   |
+|@code virtual const SEBagValveMaskSystem* GetBagValveMaskSystem() = 0; @endcode         | @ref BagValveMaskSystemTable "BagValveMask"           |
 |@code virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() = 0; @endcode     | @ref BloodChemistrySystemTable "BloodChemistry"       |
 |@code virtual const SECardiovascularSystem* GetCardiovascularSystem() = 0; @endcode     | @ref CardiovascularSystemTable "Cardiovascular"       |
 |@code virtual const SEEndocrineSystem* GetEndocrineSystem() = 0; @endcode               | @ref EndocrineSystemTable "Endocrine"                 |

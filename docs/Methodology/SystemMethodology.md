@@ -83,6 +83,7 @@ Physiologic:
 Equipment:
 - @ref AnesthesiaMachineMethodology
 - @ref InhalerMethodology
+- @ref BagValveMaskMethodology
 - @ref MechanicalVentilatorMethodology
 - Electrocardiogram (%ECG) Methodology (see @ref CardiovascularMethodology)
 - Supplemental Oxygen Methodology (see @ref RespiratoryMethodology)
@@ -633,6 +634,7 @@ We will continue to improve system modularity.  See the system specific methodol
 
 @secreflist
   @refitem anesthesia-improvements "Anesthesia Machine Future Work"
+  @refitem bvm-improvements "Bag Valve Mask Future Work"
   @refitem bloodchemistry-future "BloodChemistry Future Work"
   @refitem cardiovascular-future "Cardiovascular Future Work"
   @refitem drugs-future "Drugs Future Work"
@@ -641,7 +643,7 @@ We will continue to improve system modularity.  See the system specific methodol
   @refitem environment-future "Environment Future Work"
   @refitem GI-futurework "Gastrointestinal Future Work"
   @refitem inhaler-future "Inhaler Future Work"
-  @refitem ventilator-improvements "Mechanical Ventilator Future Work"  
+  @refitem ventilator-improvements "Mechanical Ventilator Future Work"
   @refitem nervous-future "Nervous Future Work"  
   @refitem renal-futurework "Renal Future Work"
   @refitem respiratory-future "Respiratory Future Work"

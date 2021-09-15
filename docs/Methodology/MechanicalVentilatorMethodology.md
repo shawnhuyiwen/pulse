@@ -48,7 +48,7 @@ specific post process functionality for the mechanical ventilator. All postproce
 
 ### The Mechanical Ventilator Circuit
 
-The Mechanical Ventilator model consists of a pressure source with tubes and valves for inspiration and expiration.  The unidirectional valves are ideal and do not allow any backflow.  Figure 1 shows the Mechanical Ventilator circuit.  The compartments and transport graph mirrors the circuit.  Substance values are set on the Ventilator node/compartment, assuming infinite volume.
+The Mechanical Ventilator model consists of a pressure/flow source with tubes and valves for inspiration and expiration.  The unidirectional valves are ideal and do not allow any backflow.  Figure 1 shows the Mechanical Ventilator circuit.  The compartments and transport graph mirrors the circuit.  Substance values are set on the Ventilator node/compartment, assuming infinite volume.
 
 <img src="./Images/MechanicalVentilator/MechanicalVentilatorCircuit.png" width="400">
 <center>
@@ -191,7 +191,7 @@ System that regulates the atmospheric/reference pressure.
 @anchor ventilator-assumptions
 ## Assumptions and Limitations
 
-Currently, the Mechanical Ventilator uses ideal pressure sources and one-way valves. Only setting appropriate for a PC-CMV, VC-CMV, and VC-AC modes are allowed and tested.  However, the system is defined and implemented to allow for future mode expansion without data model changes. 
+Currently, the Mechanical Ventilator uses ideal pressure sources and one-way valves. Only setting appropriate for a PC-CMV, VC-CMV, PC-AC, VC-AC, and CPAP modes are tested.  However, the system is defined and implemented to allow for future mode expansion without data model changes. 
 
 @anchor ventilator-results
 # Results and Conclusions
@@ -243,7 +243,7 @@ A scenario that varies the VC-AC settings for assisted breathing for a patient w
 The %Respiratory ARDS and COPD models with mild, moderate, and severe severities is extensively tested in the scenarios shown in table 1.  Each row is a separate invasive mechanical ventilation scenario that is run for several minutes to reach a new homeostatic point based on the patient's disease state and ventilator settings. The patient is administered a neuromuscular blockade to prevent spontaneous breathing for all but the VC-AC scenario.  Typical/ideal ventilator setting are used based on literature @cite arnal2013feasibility @cite el2020comparison @cite acute2000ventilation and subject matter @cite chatburnSME input. Results successfully match expected empirical data and trends.
 
 <center><br>
-Table 1. Cumulative validation results for Anesthesia Machine specific conditions and actions scenarios.
+Table 1. Cumulative validation results for ventilator specific scenarios.
 </center>
 
 |	Key	|
