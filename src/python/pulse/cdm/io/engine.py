@@ -297,6 +297,30 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_mechanical_ventilator_configuration_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorConfiguration)
                 dst.AnyAction.append(any_action)
                 continue
+            # if isinstance(action, SEMechanicalVentilatorMode):
+            #     serialize_mechanical_ventilator_mode_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorMode)
+            #     dst.AnyAction.append(any_action)
+            #     continue
+            if isinstance(action, SEMechanicalVentilatorContinuousPositiveAirwayPressure):
+                serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorContinuousPositiveAirwayPressure)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEMechanicalVentilatorPressureControl):
+                serialize_mechanical_ventilator_pressure_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorPressureControl)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEMechanicalVentilatorVolumeControl):
+                serialize_mechanical_ventilator_volume_control_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorVolumeControl)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEMechanicalVentilatorHold):
+                serialize_mechanical_ventilator_hold_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorHold)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEMechanicalVentilatorLeak):
+                serialize_mechanical_ventilator_leak_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorLeak)
+                dst.AnyAction.append(any_action)
+                continue
 
 def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
     action_list = ActionListData()
