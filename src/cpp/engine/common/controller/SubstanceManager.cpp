@@ -78,69 +78,32 @@ namespace PULSE_ENGINE
     m_HbO2CO2 = GetSubstance("OxyCarbaminohemoglobin");
     m_HCO3 = GetSubstance("Bicarbonate");
     m_epi = GetSubstance("Epinephrine");
-      m_norepi = GetSubstance("Norepinephrine");
+    m_norepi = GetSubstance("Norepinephrine");
 
     if (m_O2 == nullptr)
-    {
       Error("Oxygen Definition not found");
-      return false;
-    }
     if (m_CO == nullptr)
-    {
       Error("CarbonMonoxide Definition not found");
-      return false;
-    }
     if (m_CO2 == nullptr)
-    {
       Error("CarbonDioxide Definition not found");
-      return false;
-    }
     if (m_N2 == nullptr)
-    {
       Error("Nitrogen Definition not found");
-      return false;
-    }
     if (m_Hb == nullptr)
-    {
       Error("Hemoglobin Definition not found");
-      return false;
-    }
     if (m_HbO2 == nullptr)
-    {
       Error("Oxyhemoglobin Definition not found");
-      return false;
-    }
     if (m_HbCO2 == nullptr)
-    {
       Error("Carbaminohemoglobin Definition not found");
-      return false;
-    }
     if (m_HbCO == nullptr)
-    {
       Error("Carboxyhemoglobin Definition not found");
-      return false;
-    }
     if (m_HbO2CO2 == nullptr)
-    {
       Error("OxyCarbaminohemoglobin Definition not found");
-      return false;
-    }
     if (m_HCO3 == nullptr)
-    {
       Error("Bicarbonate Definition not found");
-      return false;
-    }
     if (m_epi == nullptr)
-    {
       Error("Epinephrine Definition not found");
-      return false;
-    }
-
     if (m_norepi == nullptr)
-    {
       Error("Norepinephrine Definition not found");
-      return false;
-    }
 
     if (m_O2 == nullptr || m_CO == nullptr || m_CO2 == nullptr || m_N2 == nullptr ||
       m_Hb == nullptr || m_HbO2 == nullptr || m_HbCO2 == nullptr || m_HbCO == nullptr || m_HbO2CO2 == nullptr ||

@@ -49,8 +49,6 @@ namespace PULSE_ENGINE
 
     // Stateless member variable (Set in SetUp())
     double                     m_insulinMolarMass_g_Per_mol;
-    SELiquidSubstanceQuantity* m_aortaGlucose = nullptr;
-    SELiquidSubstanceQuantity* m_aortaEpinephrine = nullptr;
     SELiquidSubstanceQuantity* m_aortaNorepinephrine = nullptr;
     SELiquidSubstanceQuantity* m_rKidneyEpinephrine = nullptr;
     SELiquidSubstanceQuantity* m_lKidneyEpinephrine = nullptr;
