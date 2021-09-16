@@ -11,8 +11,6 @@ The bag valve mask (also known as Ambu bag or manual resuscitator) model is a ge
 <i>Figure 1. A disposable BVM Resuscitator @cite bagvalvemask.</i>
 </center><br>
 
-@cite bagvalvemask
-
 @anchor bvm-system
 # System Design
 
@@ -161,20 +159,9 @@ Table 1. Validation results for the bag valve mask scenario.
 |	Segment	|	Action Occurrence Time (s)	|	Sampled Time (s)	|	Respiration Rate (bpm)	|	Tidal Volume (mL)	|	Inspiratory-Expiratory Ratio	|	Oxygen Saturation	|	Arterial Carbon Dioxide Pressure (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Dyspnea: severity = 1.0 (apnea)	|	30	|	90	|<span class="success">	0 (apnea)	</span>|<span class="success">	0 (apnea)	</span>|<span class="success">	0 (apnea)	</span>|<span class="success">	Decrease	</span>|<span class="success">	Increase	</span>|
-|	"Oropharyngeal intubation; 
-Automated BVM:
-Comment: Automate a squeeze pressure to give TV ~ 7 mL/kg(ideal), 
-BreathFrequency: 12(1/min), 
-InspiratoryExpiratoryRatio: 0.5, 
-SqueezePressure: 9.3(cmH2O),
-SqueezeVolume: NaN"	|	90	|	150	|<span class="success">	12 (setting)	</span>|<span class="success">	540 (setting)	</span>|<span class="success">	0.5 (setting)	</span>|<span class="success">	Increase	</span>|<span class="success">	Decrease	</span>|
+|	Oropharyngeal intubation; Automated BVM: Comment: Automate a squeeze pressure to give TV ~ 7 mL/kg(ideal),  BreathFrequency: 12(1/min),  InspiratoryExpiratoryRatio: 0.5,  SqueezePressure: 9.3(cmH2O), SqueezeVolume: NaN	|	90	|	150	|<span class="success">	12 (setting)	</span>|<span class="success">	540 (setting)	</span>|<span class="success">	0.5 (setting)	</span>|<span class="success">	Increase	</span>|<span class="success">	Decrease	</span>|
 |	Remove SqueezePressure and apply SqueezeVolume: 0.54(L)	|	150	|	210	|<span class="success">	12 (setting)	</span>|<span class="success">	540 (setting)	</span>|<span class="success">	0.5 (setting)	</span>|<span class="success">	No change	</span>|<span class="success">	No change	</span>|
-|	"Remove intubation and attach mask; 
-PEEP: 5(cmH2O)
-BreathFrequency: 12(1/min), 
-InspiratoryExpiratoryRatio: 0.5, 
-SqueezePressure: 12.3(cmH2O),
-SqueezeVolume: NaN"	|	210	|		|<span class="success">	12 (setting)	</span>|<span class="success">	Decrease	</span>|<span class="success">	0.5 (setting)	</span>|<span class="success">	Decrease	</span>|<span class="success">	Increase	</span>|
+|	Remove intubation and attach mask; PEEP: 5(cmH2O) BreathFrequency: 12(1/min), InspiratoryExpiratoryRatio: 0.5, SqueezePressure: 12.3(cmH2O), SqueezeVolume: NaN	|	210	|		|<span class="success">	12 (setting)	</span>|<span class="success">	Decrease	</span>|<span class="success">	0.5 (setting)	</span>|<span class="success">	Decrease	</span>|<span class="success">	Increase	</span>|
 |	Remove SqueezePressure and apply SqueezeVolume: 0.54(L)	|	270	|	330	|<span class="success">	12 (setting)	</span>|<span class="success">	540 (setting)	</span>|<span class="success">	0.5 (setting)	</span>|<span class="success">	Increase	</span>|<span class="success">	Decrease	</span>|
 |	Attach oxygen to the reservoir with FiO2 = 0.3	|	330	|	390	|<span class="success">	12 (setting)	</span>|<span class="success">	540 (setting)	</span>|<span class="success">	0.5 (setting)	</span>|<span class="success">	Increase	</span>|<span class="success">	No change	</span>|
 
@@ -208,7 +195,9 @@ The bag could be modeled as a compliance to be closer to reality.
 ## Acronyms
 
 FiO2 - Fraction of Inpspired Oxygen
+
 PEEP - Positive End Expired Pressure
+
 SpO2 - Oxygen Saturation
 
 ## Compartments

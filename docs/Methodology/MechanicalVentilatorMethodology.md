@@ -295,12 +295,19 @@ The engine modularity could be taken advantage of to add parameters and elements
 ## Acronyms
 
 ARDS - Acute %Respiratory Distress Syndrome
+
 FiO2 - Fraction of Inpspired Oxygen
+
 FRC - Functional Residual Capacity
+
 I:E Ratio - Inspiratory-Expiratory Ratio
+
 PaO2 - Arterial Oxygen Partial Pressure
+
 PEEP - Positive End Expired Pressure
+
 PIP - Peak Inspiratory Pressure
+
 SpO2 - Oxygen Saturation
 
 ## Compartments
