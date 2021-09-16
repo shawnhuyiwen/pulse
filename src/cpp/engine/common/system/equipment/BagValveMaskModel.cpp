@@ -68,6 +68,7 @@ namespace PULSE_ENGINE
     m_ValveToFilter = nullptr;
     m_FilterToConnection = nullptr;
     m_ConnectionToEnvironment = nullptr;
+    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = NULL;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -110,6 +111,9 @@ namespace PULSE_ENGINE
     m_ValveToFilter = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ValveToFilter);
     m_FilterToConnection = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::FilterToConnection);
     m_ConnectionToEnvironment = m_data.GetCircuits().GetBagValveMaskCircuit().GetPath(pulse::BagValveMaskPath::ConnectionToEnvironment);
+
+    // Configuration
+    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
 
   void BagValveMaskModel::StateChange()
@@ -628,22 +632,30 @@ namespace PULSE_ENGINE
   {
     if (HasBagResistance())
     {
-      m_BagToValve->GetNextResistance().Set(GetBagResistance());
+      double resistance_cmH2O_s_Per_L = GetBagResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_BagToValve->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (HasValveResistance())
     {
-      m_ValveToFilter->GetNextResistance().Set(GetValveResistance());
+      double resistance_cmH2O_s_Per_L = GetValveResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_ValveToFilter->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (HasFilterResistance())
     {
-      m_FilterToConnection->GetNextResistance().Set(GetFilterResistance());
+      double resistance_cmH2O_s_Per_L = GetFilterResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_FilterToConnection->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (HasSealResistance())
     {
-      m_ConnectionToEnvironment->GetNextResistance().Set(GetSealResistance());
+      double resistance_cmH2O_s_Per_L = GetSealResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_ConnectionToEnvironment->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
   }
 

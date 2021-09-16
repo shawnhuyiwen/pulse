@@ -102,5 +102,6 @@ namespace PULSE_ENGINE
     SEFluidCircuitPath*  m_InspiratoryLimbToYPiece;
     SEFluidCircuitPath*  m_LeakConnectionToEnvironment;
     SEFluidCircuitPath*  m_ConnectionToAirway;
+    double               m_DefaultClosedFlowResistance_cmH2O_s_Per_L;
   };
 }

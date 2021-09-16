@@ -76,6 +76,7 @@ namespace PULSE_ENGINE
     m_InspiratoryLimbToYPiece = nullptr;
     m_LeakConnectionToEnvironment = nullptr;
     m_ConnectionToAirway = nullptr;
+    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = NULL;
 
     m_MeanAirwayPressure_cmH2O->Clear();
   }
@@ -165,6 +166,9 @@ namespace PULSE_ENGINE
     m_LeakConnectionToEnvironment = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::LeakConnectionToEnvironment);
 
     m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::CombinedMechanicalVentilatorPath::ConnectionToAirway);
+
+    // Configuration
+    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
 
   void MechanicalVentilatorModel::StateChange()
@@ -901,22 +905,30 @@ namespace PULSE_ENGINE
   {
     if (GetSettings().HasExpirationTubeResistance())
     {
-      m_VentilatorToExpiratoryValve->GetNextResistance().Set(GetSettings().GetExpirationTubeResistance());
+      double resistance_cmH2O_s_Per_L = GetSettings().GetExpirationTubeResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_VentilatorToExpiratoryValve->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasInspirationTubeResistance())
     {
-      m_VentilatorToInspiratoryValve->GetNextResistance().Set(GetSettings().GetInspirationTubeResistance());
+      double resistance_cmH2O_s_Per_L = GetSettings().GetInspirationTubeResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_VentilatorToInspiratoryValve->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasExpirationValveResistance())
     {
-      m_ExpiratoryLimbToYPiece->GetNextResistance().Set(GetSettings().GetExpirationValveResistance());
+      double resistance_cmH2O_s_Per_L = GetSettings().GetExpirationValveResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_ExpiratoryLimbToYPiece->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasInspirationValveResistance())
     {
-      m_InspiratoryLimbToYPiece->GetNextResistance().Set(GetSettings().GetInspirationValveResistance());
+      double resistance_cmH2O_s_Per_L = GetSettings().GetInspirationValveResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_InspiratoryLimbToYPiece->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
   }
 
@@ -931,7 +943,10 @@ namespace PULSE_ENGINE
   {
     if (GetSettings().HasCompliance())
     {
-      m_VentilatorToEnvironment->GetNextCompliance().Set(GetSettings().GetCompliance());
+      double compliance_L_Per_cmH2O = GetSettings().GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+      double minCompliance_L_Per_cmH2O = 1e-20;
+      compliance_L_Per_cmH2O = MIN(compliance_L_Per_cmH2O, minCompliance_L_Per_cmH2O);
+      m_VentilatorToEnvironment->GetNextCompliance().SetValue(compliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
     }
   }
 

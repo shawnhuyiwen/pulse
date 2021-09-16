@@ -82,5 +82,6 @@ namespace PULSE_ENGINE
     SEFluidCircuitPath* m_ValveToFilter;
     SEFluidCircuitPath* m_FilterToConnection;
     SEFluidCircuitPath* m_ConnectionToEnvironment;
+    double              m_DefaultClosedFlowResistance_cmH2O_s_Per_L;
   };
 }

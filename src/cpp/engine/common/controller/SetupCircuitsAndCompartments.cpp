@@ -3737,7 +3737,7 @@ namespace PULSE_ENGINE
     double connectionVolume_L = 0.05;
     double totalResistance_cmH2O_s_Per_L = 2.0;
     double tubeResistance_cmH2O_s_Per_L = totalResistance_cmH2O_s_Per_L / 2.0; //2 tubes in series for inhale and 2 tubes in series for exhale
-    double compliance_L_Per_cmH2O = 0.005;
+    double compliance_L_Per_cmH2O = 1e-20; //~0
 
     double openResistance = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
