@@ -462,6 +462,7 @@ Figure 5 depicts the time-dependent driver pressure source of the %Respiratory S
 
 The Pulse respiratory system is separated into four compliances (see the circuit diagram in Figure 6) defined by the left and right chest walls and lungs. The pressure-volume relationship has been well studied in describing the mechanical behavior of the lungs during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. Figure 6 shows the right side (combined chest wall and lung) compliance curve for the healthy standard patient. This function is varied based on patient settings. During simulations, the instantaneous compliances based on this curve are determined using the current lung volume.
 
+@htmlonly
 <center>
 <a href="./Images/Respiratory/ComplianceCurve.png">
 <img src="./Images/Respiratory/ComplianceCurve.png" width="550"></a>

@@ -68,87 +68,87 @@ namespace Pulse.CDM
         this.microscopic.Clear();
     }
 
-    public eUrinalysis_UrineColor GetColorResult() { return this.color; }
-    public void SetColorResult(eUrinalysis_UrineColor color) { this.color = color; }
-    public bool HasColorResult() { return this.color == eUrinalysis_UrineColor.NullColor ? false : color != eUrinalysis_UrineColor.NullColor; }
+    public eUrinalysis_UrineColor GetColor() { return this.color; }
+    public void SetColor(eUrinalysis_UrineColor color) { this.color = color; }
+    public bool HasColor() { return this.color == eUrinalysis_UrineColor.NullColor ? false : color != eUrinalysis_UrineColor.NullColor; }
 
-    public eUrinalysis_ClarityIndicator GetAppearanceResult() { return this.appearance; }
-    public void SetAppearanceResult(eUrinalysis_ClarityIndicator a) { this.appearance = a; }
-    public bool HasAppearanceResult() { return this.appearance == eUrinalysis_ClarityIndicator.NullClarity ? false : appearance != eUrinalysis_ClarityIndicator.NullClarity; }
+    public eUrinalysis_ClarityIndicator GetAppearance() { return this.appearance; }
+    public void SetAppearance(eUrinalysis_ClarityIndicator a) { this.appearance = a; }
+    public bool HasAppearance() { return this.appearance == eUrinalysis_ClarityIndicator.NullClarity ? false : appearance != eUrinalysis_ClarityIndicator.NullClarity; }
 
-    public eUrinalysis_PresenceIndicator GetGlucoseResult() { return this.glucose; }
-    public void SetGlucoseResult(eUrinalysis_PresenceIndicator g) { this.glucose = g; }
-    public bool HasGlucoseResult() { return this.glucose == eUrinalysis_PresenceIndicator.NullPresence ? false : glucose != eUrinalysis_PresenceIndicator.NullPresence; }
+    public eUrinalysis_PresenceIndicator GetGlucose() { return this.glucose; }
+    public void SetGlucose(eUrinalysis_PresenceIndicator g) { this.glucose = g; }
+    public bool HasGlucose() { return this.glucose == eUrinalysis_PresenceIndicator.NullPresence ? false : glucose != eUrinalysis_PresenceIndicator.NullPresence; }
 
-    public eUrinalysis_PresenceIndicator GetKetoneResult() { return this.ketone; }
-    public void SetKetoneResult(eUrinalysis_PresenceIndicator k) { this.ketone = k; }
-    public bool HasKetoneResult() { return this.ketone == eUrinalysis_PresenceIndicator.NullPresence ? false : ketone != eUrinalysis_PresenceIndicator.NullPresence; }
+    public eUrinalysis_PresenceIndicator GetKetone() { return this.ketone; }
+    public void SetKetone(eUrinalysis_PresenceIndicator k) { this.ketone = k; }
+    public bool HasKetone() { return this.ketone == eUrinalysis_PresenceIndicator.NullPresence ? false : ketone != eUrinalysis_PresenceIndicator.NullPresence; }
 
-    public bool HasBilirubinResult()
+    public bool HasBilirubin()
     {
       return bilirubin == null ? false : bilirubin.IsValid();
     }
-    public SEScalar GetBilirubinResult()
+    public SEScalar GetBilirubin()
     {
       if (bilirubin == null)
         bilirubin = new SEScalar();
       return bilirubin;
     }
 
-    public bool HasSpecificGravityResult()
+    public bool HasSpecificGravity()
     {
       return specificGravity == null ? false : specificGravity.IsValid();
     }
-    public SEScalar GetSpecificGravityResult()
+    public SEScalar GetSpecificGravity()
     {
       if (specificGravity == null)
         specificGravity = new SEScalar();
       return specificGravity;
     }
 
-    public eUrinalysis_PresenceIndicator GetBloodResult() { return this.blood; }
-    public void SetBloodResult(eUrinalysis_PresenceIndicator b) { this.blood = b; }
-    public bool HasBloodResult() { return this.blood == eUrinalysis_PresenceIndicator.NullPresence ? false : blood != eUrinalysis_PresenceIndicator.NullPresence; }
+    public eUrinalysis_PresenceIndicator GetBlood() { return this.blood; }
+    public void SetBlood(eUrinalysis_PresenceIndicator b) { this.blood = b; }
+    public bool HasBlood() { return this.blood == eUrinalysis_PresenceIndicator.NullPresence ? false : blood != eUrinalysis_PresenceIndicator.NullPresence; }
 
-    public bool HasPHResult()
+    public bool HasPH()
     {
       return pH == null ? false : pH.IsValid();
     }
-    public SEScalar GetPHResult()
+    public SEScalar GetPH()
     {
       if (pH == null)
         pH = new SEScalar();
       return pH;
     }
 
-    public eUrinalysis_PresenceIndicator GetProteinResult() { return this.protein; }
-    public void SetProteinResult(eUrinalysis_PresenceIndicator p) { this.protein = p; }
-    public bool HasProteinResult() { return this.protein == eUrinalysis_PresenceIndicator.NullPresence ? false : protein != eUrinalysis_PresenceIndicator.NullPresence; }
+    public eUrinalysis_PresenceIndicator GetProtein() { return this.protein; }
+    public void SetProtein(eUrinalysis_PresenceIndicator p) { this.protein = p; }
+    public bool HasProtein() { return this.protein == eUrinalysis_PresenceIndicator.NullPresence ? false : protein != eUrinalysis_PresenceIndicator.NullPresence; }
 
-    public bool HasUrobilinogenResult()
+    public bool HasUrobilinogen()
     {
       return urobilinogen == null ? false : urobilinogen.IsValid();
     }
-    public SEScalarMassPerVolume GetUrobilinogenResult()
+    public SEScalarMassPerVolume GetUrobilinogen()
     {
       if (urobilinogen == null)
         urobilinogen = new SEScalarMassPerVolume();
       return urobilinogen;
     }
 
-    public eUrinalysis_PresenceIndicator GetNitriteResult() { return this.nitrite; }
-    public void SetNitriteResult(eUrinalysis_PresenceIndicator n) { this.nitrite = n; }
-    public bool HasNitriteResult() { return this.nitrite == eUrinalysis_PresenceIndicator.NullPresence ? false : nitrite != eUrinalysis_PresenceIndicator.NullPresence; }
+    public eUrinalysis_PresenceIndicator GetNitrite() { return this.nitrite; }
+    public void SetNitrite(eUrinalysis_PresenceIndicator n) { this.nitrite = n; }
+    public bool HasNitrite() { return this.nitrite == eUrinalysis_PresenceIndicator.NullPresence ? false : nitrite != eUrinalysis_PresenceIndicator.NullPresence; }
 
-    public eUrinalysis_PresenceIndicator GetLeukocyteEsteraseResult() { return this.leukocyteEsterase; }
-    public void SetLeukocyteEsteraseResult(eUrinalysis_PresenceIndicator l) { this.leukocyteEsterase = l; }
-    public bool HasLeukocyteEsteraseResult() { return this.leukocyteEsterase == eUrinalysis_PresenceIndicator.NullPresence ? false : leukocyteEsterase != eUrinalysis_PresenceIndicator.NullPresence; }
+    public eUrinalysis_PresenceIndicator GetLeukocyteEsterase() { return this.leukocyteEsterase; }
+    public void SetLeukocyteEsterase(eUrinalysis_PresenceIndicator l) { this.leukocyteEsterase = l; }
+    public bool HasLeukocyteEsterase() { return this.leukocyteEsterase == eUrinalysis_PresenceIndicator.NullPresence ? false : leukocyteEsterase != eUrinalysis_PresenceIndicator.NullPresence; }
 
-    public bool HasMicroscopicResult()
+    public bool HasMicroscopic()
     {
       return microscopic == null ? false : true;
     }
-    public SEUrinalysisMicroscopic GetMicroscopicResult()
+    public SEUrinalysisMicroscopic GetMicroscopic()
     {
       if (microscopic == null)
         microscopic = new SEUrinalysisMicroscopic();

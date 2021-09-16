@@ -35,11 +35,11 @@ public class DoxygenPreprocessor
 
           List<String> found = FileUtils.findFiles(sDir.getAbsolutePath(), "md", true);
           for (String fName : found)
-          {        
+          {
             if(new File(fName).isDirectory())
               continue;// Not making this recursive at this point
             processFile(fName, tDir, dDir);
-          }      
+          }
         }
         else
         {

@@ -1675,39 +1675,39 @@ namespace PULSE_ENGINE
 
     double urineOsm_Per_kg = GetUrineOsmolality(OsmolalityUnit::mOsm_Per_kg);
     if (urineOsm_Per_kg <= 400)// Need cite for this
-      u.SetColorResult(eUrinalysis_UrineColor::PaleYellow);
+      u.SetColor(eUrinalysis_UrineColor::PaleYellow);
     else if (urineOsm_Per_kg > 400 && urineOsm_Per_kg <= 750)
-      u.SetColorResult(eUrinalysis_UrineColor::Yellow);
+      u.SetColor(eUrinalysis_UrineColor::Yellow);
     else
-      u.SetColorResult(eUrinalysis_UrineColor::DarkYellow);
+      u.SetColor(eUrinalysis_UrineColor::DarkYellow);
 
-    //u.SetApperanceResult();
+    //u.SetApperance();
     double bladder_glucose_mg_Per_dL = m_bladderGlucose->GetConcentration().GetValue(MassPerVolumeUnit::mg_Per_dL);
 
     if (bladder_glucose_mg_Per_dL >= 100.0)/// \cite roxe1990urinalysis
-      u.SetGlucoseResult(eUrinalysis_PresenceIndicator::Positive);
+      u.SetGlucose(eUrinalysis_PresenceIndicator::Positive);
     else
-      u.SetGlucoseResult(eUrinalysis_PresenceIndicator::Negative);
+      u.SetGlucose(eUrinalysis_PresenceIndicator::Negative);
 
     if (bladder_glucose_mg_Per_dL >= 5.0)/// \cite roxe1990urinalysis
-      u.SetKetoneResult(eUrinalysis_PresenceIndicator::Positive);
+      u.SetKetone(eUrinalysis_PresenceIndicator::Positive);
     else
-      u.SetKetoneResult(eUrinalysis_PresenceIndicator::Negative);
+      u.SetKetone(eUrinalysis_PresenceIndicator::Negative);
 
-    //u.SetBilirubinResult();
+    //u.SetBilirubin();
 
-    u.GetSpecificGravityResult().SetValue(GetUrineSpecificGravity());
+    u.GetSpecificGravity().SetValue(GetUrineSpecificGravity());
     if (bladder_glucose_mg_Per_dL > 0.15) /// \cite roxe1990urinalysis
-      u.SetBloodResult(eUrinalysis_PresenceIndicator::Positive);
+      u.SetBlood(eUrinalysis_PresenceIndicator::Positive);
     else
-      u.SetBloodResult(eUrinalysis_PresenceIndicator::Negative);
+      u.SetBlood(eUrinalysis_PresenceIndicator::Negative);
 
-    //u.GetPHResult().Set();
+    //u.GetPH().Set();
 
     if (bladder_glucose_mg_Per_dL > 30.0)/// \cite roxe1990urinalysis
-      u.SetProteinResult(eUrinalysis_PresenceIndicator::Positive);
+      u.SetProtein(eUrinalysis_PresenceIndicator::Positive);
     else
-      u.SetProteinResult(eUrinalysis_PresenceIndicator::Negative);
+      u.SetProtein(eUrinalysis_PresenceIndicator::Negative);
 
     //u.SetUrobilinogen();
     //u.SetNitrite();

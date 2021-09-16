@@ -50,57 +50,57 @@ namespace Pulse.CDM
     public void SetObservationType(eUrinalysis_MicroscopicObservationType observationType) { this.observationType = observationType; }
     public bool HasObservationType() { return this.observationType == eUrinalysis_MicroscopicObservationType.NullObservationType ? false : observationType != eUrinalysis_MicroscopicObservationType.NullObservationType; }
 
-    public bool HasRedBloodCellsResult()
+    public bool HasRedBloodCells()
     {
       return redBloodCells == null ? false : redBloodCells.IsValid();
     }
-    public SEScalarAmount GetRedBloodCellsResult()
+    public SEScalarAmount GetRedBloodCells()
     {
       if (redBloodCells == null)
         redBloodCells = new SEScalarAmount();
       return redBloodCells;
     }
 
-    public bool HasWhiteBloodCellsResult()
+    public bool HasWhiteBloodCells()
     {
       return redBloodCells == null ? false : redBloodCells.IsValid();
     }
-    public SEScalarAmount GetWhiteBloodCellsResult()
+    public SEScalarAmount GetWhiteBloodCells()
     {
       if (redBloodCells == null)
         redBloodCells = new SEScalarAmount();
       return redBloodCells;
     }
 
-    public eUrinalysis_MicroscopicObservationAmount GetEpithelialCellsResult() { return this.epithelialCells; }
-    public void SetEpithelialCellsResult(eUrinalysis_MicroscopicObservationAmount a) { this.epithelialCells = a; }
-    public bool HasEpithelialCellsResult() { return this.epithelialCells == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : epithelialCells != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
+    public eUrinalysis_MicroscopicObservationAmount GetEpithelialCells() { return this.epithelialCells; }
+    public void SetEpithelialCells(eUrinalysis_MicroscopicObservationAmount a) { this.epithelialCells = a; }
+    public bool HasEpithelialCells() { return this.epithelialCells == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : epithelialCells != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
 
-    public bool HasCastsResult()
+    public bool HasCasts()
     {
       return casts == null ? false : casts.IsValid();
     }
-    public SEScalarAmount GetCastsResult()
+    public SEScalarAmount GetCasts()
     {
       if (casts == null)
         casts = new SEScalarAmount();
       return casts;
     }
 
-    public eUrinalysis_MicroscopicObservationAmount GetCrystalsResult() { return this.crystals; }
-    public void SetCrystalsResult(eUrinalysis_MicroscopicObservationAmount g) { this.crystals = g; }
-    public bool HasCrystalsResult() { return this.crystals == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : crystals != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
+    public eUrinalysis_MicroscopicObservationAmount GetCrystals() { return this.crystals; }
+    public void SetCrystals(eUrinalysis_MicroscopicObservationAmount g) { this.crystals = g; }
+    public bool HasCrystals() { return this.crystals == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : crystals != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
 
-    public eUrinalysis_MicroscopicObservationAmount GetBacteriaResult() { return this.bacteria; }
-    public void SetBacteriaResult(eUrinalysis_MicroscopicObservationAmount k) { this.bacteria = k; }
-    public bool HasBacteriaResult() { return this.bacteria == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : bacteria != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
+    public eUrinalysis_MicroscopicObservationAmount GetBacteria() { return this.bacteria; }
+    public void SetBacteria(eUrinalysis_MicroscopicObservationAmount k) { this.bacteria = k; }
+    public bool HasBacteria() { return this.bacteria == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : bacteria != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
 
-    public eUrinalysis_MicroscopicObservationAmount GetTrichomonadsResult() { return this.trichomonads; }
-    public void SetTrichomonadsResult(eUrinalysis_MicroscopicObservationAmount n) { this.trichomonads = n; }
-    public bool HasTrichomonadsResult() { return this.trichomonads == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : trichomonads != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
+    public eUrinalysis_MicroscopicObservationAmount GetTrichomonads() { return this.trichomonads; }
+    public void SetTrichomonads(eUrinalysis_MicroscopicObservationAmount n) { this.trichomonads = n; }
+    public bool HasTrichomonads() { return this.trichomonads == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : trichomonads != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
 
-    public eUrinalysis_MicroscopicObservationAmount GetYeastResult() { return this.yeast; }
-    public void SetYeastResult(eUrinalysis_MicroscopicObservationAmount l) { this.yeast = l; }
-    public bool HasYeastResult() { return this.yeast == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : yeast != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
+    public eUrinalysis_MicroscopicObservationAmount GetYeast() { return this.yeast; }
+    public void SetYeast(eUrinalysis_MicroscopicObservationAmount l) { this.yeast = l; }
+    public bool HasYeast() { return this.yeast == eUrinalysis_MicroscopicObservationAmount.NullObservationAmount ? false : yeast != eUrinalysis_MicroscopicObservationAmount.NullObservationAmount; }
   }
 }
