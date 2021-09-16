@@ -29,15 +29,15 @@
         "MechanicalVentilator-TotalLungVolume(mL)": "Volume(mL)",
         "MechanicalVentilator-AirwayPressure(cmH2O)": "P1",
         "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-AirwayPressure(cmH2O)": "LungVolume_vs_AirwayPressure",
-        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-InspiratoryFlow(L/min)": "LungVolume_vs_InspiratoryFlow"
+        "MechanicalVentilator-InspiratoryFlow(L/min)$vs$MechanicalVentilator-TotalLungVolume(mL)": "InspiratoryFlow_vs_LungVolume"
     },
     "plotNoFill" : [
         "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-AirwayPressure(cmH2O)",
-        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-InspiratoryFlow(L/min)"
+        "MechanicalVentilator-InspiratoryFlow(L/min)$vs$MechanicalVentilator-TotalLungVolume(mL)"
     ],
     "plotReverseAxes" : [
         "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-AirwayPressure(cmH2O)",
-        "MechanicalVentilator-TotalLungVolume(mL)$vs$MechanicalVentilator-InspiratoryFlow(L/min)"
+        "MechanicalVentilator-InspiratoryFlow(L/min)$vs$MechanicalVentilator-TotalLungVolume(mL)"
     ],
     "plotPriorityOrder": [
         "MechanicalVentilator-AirwayPressure",
