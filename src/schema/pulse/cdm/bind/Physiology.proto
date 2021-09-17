@@ -287,7 +287,7 @@ message RespiratorySystemData
   ScalarPressureData                  AlveolarArterialGradient                       = 2; /**<< @brief Measure of the difference between the alveolar concentration of oxygen and the arterial concentration of oxygen to assess the integrity of the alveolar capillary unit.*/
   ScalarVolumeData                    AlveolarDeadSpace                              = 3; /**<< @brief The volume of unperfused alveoli.*/
   ScalarVolumeData                    AnatomicDeadSpace                              = 4; /**<< @brief The total volume of the conducting airways from the nose or mouth down to the level of the terminal bronchioles that does not participate in gas exchange.*/
-  ScalarPressureData                  CarricoIndex                                   = 5; /**<< @brief The ratio of arterial partial pressure O2 and the inspired O2. O2 level in blood vs. Concentration of O2 in a breath.*/
+  ScalarPressureData                  HorowitzIndex                                  = 5; /**<< @brief The ratio of arterial partial pressure O2 and the inspired O2. O2 level in blood vs. Concentration of O2 in a breath.*/
   ScalarVolumePerPressureData         ChestWallCompliance                            = 6; /**<< @brief The static relationship between the transmural pressure across the chest wall compared with the chest cavity's volume.*/
   ScalarEnergyData                    ElasticWorkOfBreathing                         = 7; /**<< @brief The work (generally during the inhalation phase) that is stored as potential energy which is recovered during exhalation.*/
   Scalar0To1Data                      EndTidalCarbonDioxideFraction                  = 8; /**<< @brief The fraction of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
@@ -325,7 +325,7 @@ message RespiratorySystemData
   ScalarFrequencyData                 RespirationRate                                = 40;/**<< @brief The frequency of the respiratory cycle.*/
   Scalar0To1Data                      RespiratoryMuscleFatigue                       = 41;/**<< @brief A measure of respiratory muscle weakness caused by excessive effort relative to the strength and endurance of the muscles.*/
   ScalarPressureData                  RespiratoryMusclePressure                      = 42;/**<< @brief Pressure of the muscles that contribute to inhalation and exhalation, by aiding in the expansion and contraction of the thoracic cavity.*/
-  ScalarData                          SaturationAndFractionOfInspiredOxygenRatio     = 43;/**<< @brief A noninvasive surrogate for PiO2/FiO2 ratio (carrico index). */
+  ScalarData                          SaturationAndFractionOfInspiredOxygenRatio     = 43;/**<< @brief A noninvasive surrogate for PiO2/FiO2 ratio (horowitz index). */
   ScalarData                          SpecificVentilation                            = 44;/**<< @brief The ratio of the volume of gas entering a region of the lung following an inspiration and the end-expiratory volume of that same lung region.*/
   ScalarVolumeData                    TidalVolume                                    = 45;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
   ScalarVolumePerTimeData             TotalAlveolarVentilation                       = 46;/**<< @brief The air flow to the alveoli.*/

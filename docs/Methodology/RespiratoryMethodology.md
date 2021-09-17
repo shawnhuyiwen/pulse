@@ -1574,7 +1574,7 @@ The ARDS condition was validated against a moderate severity scenario.  Further 
 <i>Table 8. Validation matrix for moderate ARDS in both lungs. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
 </center>
 
-|	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Pulmonary Compliance (L/cmH2O)	|	Respiration Rate (breaths/min)	|	Shunt Fraction	|	Heart Rate (beats/min)	|	Total Pulmonary Ventilation (L/min) 	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	Carrico Index [PaO2/FiO2] (mmHg)	|
+|	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Pulmonary Compliance (L/cmH2O)	|	Respiration Rate (breaths/min)	|	Shunt Fraction	|	Heart Rate (beats/min)	|	Total Pulmonary Ventilation (L/min) 	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	Horowitz Index [PaO2/FiO2] (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Moderate ARDS Severity = 0.6 Left Lung = 100% Right Lung  = 100%	|	Chronic condition	|	120	|<span class="success">	Reduced @cite mortelliti2002acute	</span>|<span class="success">	Tachypnea @cite mortelliti2002acute	</span>|<span class="success">	>20% @cite radermacher2017fifty	</span>|<span class="success">	Tachycardia @cite mortelliti2002acute	</span>|<span class="success">	Increased @ cite mortelliti2002acute	</span>|<span class="success">	Hypoxia @cite mortelliti2002acute	</span>|<span class="success">	Hypoxemia @cite radermacher2017fifty	</span>|<span class="success">	Normal or near normal @cite mortelliti2002acute	</span>|<span class="success">	<300 @cite mortelliti2002acute	</span>|
 

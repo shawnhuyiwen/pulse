@@ -22,7 +22,7 @@ SERespiratorySystem::SERespiratorySystem(Logger* logger) : SESystem(logger)
   m_AlveolarArterialGradient = nullptr;
   m_AlveolarDeadSpace = nullptr;
   m_AnatomicDeadSpace = nullptr;
-  m_CarricoIndex = nullptr;
+  m_HorowitzIndex = nullptr;
   m_ChestWallCompliance = nullptr;
   m_ElasticWorkOfBreathing = nullptr;
   m_EndTidalCarbonDioxideFraction = nullptr;
@@ -86,7 +86,7 @@ SERespiratorySystem::~SERespiratorySystem()
   SAFE_DELETE(m_AlveolarArterialGradient);
   SAFE_DELETE(m_AlveolarDeadSpace);
   SAFE_DELETE(m_AnatomicDeadSpace);
-  SAFE_DELETE(m_CarricoIndex);
+  SAFE_DELETE(m_HorowitzIndex);
   SAFE_DELETE(m_ChestWallCompliance);
   SAFE_DELETE(m_ElasticWorkOfBreathing);
   SAFE_DELETE(m_EndTidalCarbonDioxideFraction);
@@ -152,7 +152,7 @@ void SERespiratorySystem::Clear()
   INVALIDATE_PROPERTY(m_AlveolarArterialGradient);
   INVALIDATE_PROPERTY(m_AlveolarDeadSpace);
   INVALIDATE_PROPERTY(m_AnatomicDeadSpace);
-  INVALIDATE_PROPERTY(m_CarricoIndex);
+  INVALIDATE_PROPERTY(m_HorowitzIndex);
   INVALIDATE_PROPERTY(m_ChestWallCompliance);
   INVALIDATE_PROPERTY(m_ElasticWorkOfBreathing);
   INVALIDATE_PROPERTY(m_EndTidalCarbonDioxideFraction);
@@ -221,8 +221,8 @@ const SEScalar* SERespiratorySystem::GetScalar(const std::string& name)
     return &GetAlveolarDeadSpace();
   if (name.compare("AnatomicDeadSpace") == 0)
     return &GetAnatomicDeadSpace();
-  if (name.compare("CarricoIndex") == 0)
-    return &GetCarricoIndex();
+  if (name.compare("HorowitzIndex") == 0)
+    return &GetHorowitzIndex();
   if (name.compare("ChestWallCompliance") == 0)
     return &GetChestWallCompliance();
   if (name.compare("ElasticWorkOfBreathing") == 0)
@@ -404,21 +404,21 @@ double SERespiratorySystem::GetAnatomicDeadSpace(const VolumeUnit& unit) const
   return m_AnatomicDeadSpace->GetValue(unit);
 }
 
-bool SERespiratorySystem::HasCarricoIndex() const
+bool SERespiratorySystem::HasHorowitzIndex() const
 {
-  return m_CarricoIndex == nullptr ? false : m_CarricoIndex->IsValid();
+  return m_HorowitzIndex == nullptr ? false : m_HorowitzIndex->IsValid();
 }
-SEScalarPressure& SERespiratorySystem::GetCarricoIndex()
+SEScalarPressure& SERespiratorySystem::GetHorowitzIndex()
 {
-  if (m_CarricoIndex == nullptr)
-    m_CarricoIndex = new SEScalarPressure();
-  return *m_CarricoIndex;
+  if (m_HorowitzIndex == nullptr)
+    m_HorowitzIndex = new SEScalarPressure();
+  return *m_HorowitzIndex;
 }
-double SERespiratorySystem::GetCarricoIndex(const PressureUnit& unit) const
+double SERespiratorySystem::GetHorowitzIndex(const PressureUnit& unit) const
 {
-  if (m_CarricoIndex == nullptr)
+  if (m_HorowitzIndex == nullptr)
     return SEScalar::dNaN();
-  return m_CarricoIndex->GetValue(unit);
+  return m_HorowitzIndex->GetValue(unit);
 }
 
 bool SERespiratorySystem::HasChestWallCompliance() const

@@ -963,8 +963,8 @@ void PBPhysiology::Serialize(const CDM_BIND::RespiratorySystemData& src, SERespi
     PBProperty::Load(src.alveolardeadspace(), dst.GetAlveolarDeadSpace());
   if (src.has_anatomicdeadspace())
     PBProperty::Load(src.anatomicdeadspace(), dst.GetAnatomicDeadSpace());
-  if (src.has_carricoindex())
-    PBProperty::Load(src.carricoindex(), dst.GetCarricoIndex());
+  if (src.has_horowitzindex())
+    PBProperty::Load(src.horowitzindex(), dst.GetHorowitzIndex());
   if (src.has_chestwallcompliance())
     PBProperty::Load(src.chestwallcompliance(), dst.GetChestWallCompliance());
   if (src.has_elasticworkofbreathing())
@@ -1092,8 +1092,8 @@ void PBPhysiology::Serialize(const SERespiratorySystem& src, CDM_BIND::Respirato
     dst.set_allocated_alveolardeadspace(PBProperty::Unload(*src.m_AlveolarDeadSpace));
   if (src.HasAnatomicDeadSpace())
     dst.set_allocated_anatomicdeadspace(PBProperty::Unload(*src.m_AnatomicDeadSpace));
-  if (src.HasCarricoIndex())
-    dst.set_allocated_carricoindex(PBProperty::Unload(*src.m_CarricoIndex));
+  if (src.HasHorowitzIndex())
+    dst.set_allocated_horowitzindex(PBProperty::Unload(*src.m_HorowitzIndex));
   if (src.HasChestWallCompliance())
     dst.set_allocated_chestwallcompliance(PBProperty::Unload(*src.m_ChestWallCompliance));
   if (src.HasElasticWorkOfBreathing())

@@ -14,7 +14,7 @@
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarArterialGradient",                   "Unit": "mmHg" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AlveolarDeadSpace",                          "Unit": "mL" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "AnatomicDeadSpace",                          "Unit": "mL" },
-        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CarricoIndex",                               "Unit": "mmHg" },
+        { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HorowitzIndex",                               "Unit": "mmHg" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ChestWallCompliance",                        "Unit": "L/cmH2O" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ElasticWorkOfBreathing",                     "Unit": "J" },
         { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxideFraction",              "Unit": "unitless" },
