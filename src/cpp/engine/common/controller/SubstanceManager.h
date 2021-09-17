@@ -60,6 +60,7 @@ namespace PULSE_ENGINE
     inline SESubstance& GetHbO2CO2() { return *m_HbO2CO2; }
     inline SESubstance& GetHCO3() { return *m_HCO3; }
     inline SESubstance& GetEpi() { return *m_epi; }
+    inline SESubstance& GetNorepi() { return *m_norepi; }
 
     inline SESubstance& GetAcetoacetate() { return *m_acetoacetate; }
     inline SESubstance& GetAlbumin() { return *m_albumin; }
@@ -118,6 +119,7 @@ namespace PULSE_ENGINE
     SESubstance* m_HbO2CO2;
     SESubstance* m_HCO3;
     SESubstance* m_epi;
+    SESubstance* m_norepi;
 
     SESubstance* m_acetoacetate;
     SESubstance* m_albumin;

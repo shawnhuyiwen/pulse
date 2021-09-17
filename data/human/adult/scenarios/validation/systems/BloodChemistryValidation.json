@@ -47,6 +47,7 @@
         { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "Hemoglobin",    "PropertyName": "BloodConcentration",  "Unit": "g/dL"  },
         { "DecimalFormat": { "Precision": 3 }, "Category": "Substance",  "SubstanceName": "Insulin",       "PropertyName": "BloodConcentration",  "Unit": "ug/L"  },
         { "DecimalFormat": { "Precision": 3 }, "Category": "Substance",  "SubstanceName": "Lactate",       "PropertyName": "BloodConcentration",  "Unit": "mg/L"  },
+		{ "DecimalFormat": { "Precision": 4 }, "Category": "Substance",  "SubstanceName": "Norepinephrine","PropertyName": "BloodConcentration",  "Unit": "ug/L"  },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Substance",  "SubstanceName": "Potassium",     "PropertyName": "BloodConcentration",  "Unit": "mg/L"  },
         { "DecimalFormat": { "Precision": 3 }, "Category": "Substance",  "SubstanceName": "Sodium",        "PropertyName": "BloodConcentration",  "Unit": "g/dL"  },
         { "DecimalFormat": {                }, "Category": "Substance",  "SubstanceName": "Tristearin",    "PropertyName": "BloodConcentration",  "Unit": "mg/dL" },

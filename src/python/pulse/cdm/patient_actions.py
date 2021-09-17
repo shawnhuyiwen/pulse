@@ -420,7 +420,6 @@ class SEConsciousRespiration(SEPatientAction):
         return ("Conscious Respiration:\n"
                 "  Commands: [{}]").format(self._commands)
 
-
 class SEForcedPause(AnyConsciousRespirationCommand):
     __slots__ = ["_period"]
 
@@ -510,7 +509,6 @@ class SEForcedInhale(AnyConsciousRespirationCommand):
                 "  Hold Period: {}\n"
                 "  Release Period: {}").format(self._inspiratory_capacity_fraction, self._inhale_period,
                                               self._hold_period, self._release_period)
-
 
 class SEForcedExhale(AnyConsciousRespirationCommand):
     __slots__ = ["_exhale_period", "_release_period", "_hold_period", "_expiratory_capacity_fraction"]
@@ -771,6 +769,8 @@ class eIntubationType(Enum):
     LeftMainstem = 2
     RightMainstem = 3
     Tracheal = 4
+    Oropharyngeal = 5
+    Nasopharyngeal = 6
 class SEIntubation(SEPatientAction):
     __slots__ = ["_type"]
 
@@ -937,7 +937,6 @@ class SEPericardialEffusion(SEPatientAction):
     def __repr__(self):
         return ("Pericardial Effusion\n"
                 "  Rate: {}").format(self._effusion_rate)
-
 
 class SEPulmonaryShuntExacerbation(SEPatientAction):
     __slots__ = ["severity"]
@@ -1182,7 +1181,6 @@ class eDevice(Enum):
     NasalCannula = 1
     SimpleMask = 2
     NonRebreatherMask = 3
-
 class SESupplementalOxygen(SEPatientAction):
     __slots__ = ["_device", "_flow", "_volume"]
 

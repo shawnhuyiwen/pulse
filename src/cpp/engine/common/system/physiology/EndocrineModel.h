@@ -43,14 +43,13 @@ namespace PULSE_ENGINE
     void ComputeExposedModelParameters() override;
 
     void SynthesizeInsulin();
-    void ReleaseEpinephrine();
+    void ReleaseEpinephrineAndNorepinephrine();
 
     // Serializable member variables (Set in Initialize and in schema)
 
     // Stateless member variable (Set in SetUp())
     double                     m_insulinMolarMass_g_Per_mol;
-    SELiquidSubstanceQuantity* m_aortaGlucose = nullptr;
-    SELiquidSubstanceQuantity* m_aortaEpinephrine = nullptr;
+    SELiquidSubstanceQuantity* m_aortaNorepinephrine = nullptr;
     SELiquidSubstanceQuantity* m_rKidneyEpinephrine = nullptr;
     SELiquidSubstanceQuantity* m_lKidneyEpinephrine = nullptr;
     SELiquidSubstanceQuantity* m_splanchnicInsulin = nullptr;

@@ -73,7 +73,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.5,
+          "Value": 30.0,
           "Unit": "s"
         }
       }

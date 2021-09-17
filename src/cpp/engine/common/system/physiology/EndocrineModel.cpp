@@ -39,8 +39,6 @@ namespace PULSE_ENGINE
   void EndocrineModel::Clear()
   {
     EndocrineSystem::Clear();
-    m_aortaGlucose = nullptr;
-    m_aortaEpinephrine = nullptr;
     m_splanchnicInsulin = nullptr;
   }
 
@@ -71,10 +69,9 @@ namespace PULSE_ENGINE
     SELiquidCompartment* aorta = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta);
     SELiquidCompartment* rkidney = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightEfferentArteriole);
     SELiquidCompartment* lkidney = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftEfferentArteriole);
-    m_aortaEpinephrine = aorta->GetSubstanceQuantity(m_data.GetSubstances().GetEpi());
+    m_aortaNorepinephrine = aorta->GetSubstanceQuantity(m_data.GetSubstances().GetNorepi());
     m_rKidneyEpinephrine = rkidney->GetSubstanceQuantity(m_data.GetSubstances().GetEpi());
     m_lKidneyEpinephrine = lkidney->GetSubstanceQuantity(m_data.GetSubstances().GetEpi());
-    m_aortaGlucose = aorta->GetSubstanceQuantity(m_data.GetSubstances().GetGlucose());
     SESubstance* insulin = &m_data.GetSubstances().GetInsulin();
     m_insulinMolarMass_g_Per_mol = insulin->GetMolarMass(MassPerAmountUnit::g_Per_mol);
     m_splanchnicInsulin = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Splanchnic)->GetSubstanceQuantity(*insulin);
@@ -97,7 +94,7 @@ namespace PULSE_ENGINE
   //--------------------------------------------------------------------------------------------------
   void EndocrineModel::Process(bool /*solve_and_transport*/)
   {
-    ReleaseEpinephrine();
+    ReleaseEpinephrineAndNorepinephrine();
     SynthesizeInsulin();
     ComputeExposedModelParameters();
   }
@@ -138,22 +135,29 @@ namespace PULSE_ENGINE
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Release epinephrine into the bloodstream and handle sympathetic responses
+  /// Release epinephrine and norepinephrine into the bloodstream and handle sympathetic responses
   ///
   /// \details
   /// Epinephrine is released at a basal rate of .18 ug/min \cite best1982release from the kidneys. During
   /// certain events, the release rate of epinephrine increases. This is sympathetic response.
+  /// 
+  /// Norepinephrine is released at a basal rate of .7 ug/min to maintain basal plasma concentration with drug clearance. The release of norepi 
+  /// is inversely releated to epinephrine release. This is the parasympathetic response.
   //--------------------------------------------------------------------------------------------------
-  void EndocrineModel::ReleaseEpinephrine()
+  void EndocrineModel::ReleaseEpinephrineAndNorepinephrine()
   {
     SEPatient& Patient = m_data.GetCurrentPatient();
     double patientWeight_kg = Patient.GetWeight(MassUnit::kg);
     double epinephrineBasalReleaseRate_ug_Per_min = .00229393 * patientWeight_kg; //We want it to be ~.18 ug/min for our StandardMale
     double epinephrineRelease_ug = (epinephrineBasalReleaseRate_ug_Per_min / 60) * m_data.GetTimeStep_s();  //amount released per timestep
+    
+    double norepinephrineBasalReleaseRate_ug_Per_min = 0.008974 * patientWeight_kg; //We want it to be ~.7 ug/min for our StandardMale
+    double norepinephrineRelease_ug = (norepinephrineBasalReleaseRate_ug_Per_min / 60) * m_data.GetTimeStep_s();  //amount released per timestep
 
     double currentMetabolicRate_W = m_data.GetEnergy().GetTotalMetabolicRate(PowerUnit::W);
     double basalMetabolicRate_W = Patient.GetBasalMetabolicRate(PowerUnit::W);
-    double releaseMultiplier = 1.0;
+    double epiReleaseMultiplier = 1.0;
+    double norepiReleaseMultiplier = 1.0;
 
     // If we have exercise, release more epi. Release multiplier is a sigmoid based on the total metabolic rate
     // with the maximum multiplier adapted from concentration data presented in @cite tidgren1991renal and @cite stratton1985hemodynamic
@@ -164,8 +168,12 @@ namespace PULSE_ENGINE
       double e50_W = 190;
       double eta = 0.035;
       double maxMultiplier = 18.75;
-      releaseMultiplier = 1.0 + GeneralMath::LogisticFunction(maxMultiplier, e50_W, eta, exercise_W);
+      epiReleaseMultiplier = 1.0 + GeneralMath::LogisticFunction(maxMultiplier, e50_W, eta, exercise_W);
+      norepiReleaseMultiplier = 1.0 / epiReleaseMultiplier;
     }
+
+    norepinephrineRelease_ug *= norepiReleaseMultiplier;
+    m_aortaNorepinephrine->GetMass().IncrementValue(norepinephrineRelease_ug, MassUnit::ug);
 
     // If we have a stress/anxiety response, release more epi
     if (m_data.GetActions().GetPatientActions().HasAcuteStress())
@@ -173,10 +181,10 @@ namespace PULSE_ENGINE
       double severity = m_data.GetActions().GetPatientActions().GetAcuteStress().GetSeverity().GetValue();
 
       //The highest stress multiplier we currently support is 30
-      releaseMultiplier += GeneralMath::LinearInterpolator(0, 1, 0, 30, severity);
+      epiReleaseMultiplier += GeneralMath::LinearInterpolator(0, 1, 0, 30, severity);
     }
 
-    epinephrineRelease_ug *= releaseMultiplier;
+    epinephrineRelease_ug *= epiReleaseMultiplier;
 
     m_rKidneyEpinephrine->GetMass().IncrementValue(0.5 * epinephrineRelease_ug, MassUnit::ug);
     m_lKidneyEpinephrine->GetMass().IncrementValue(0.5 * epinephrineRelease_ug, MassUnit::ug);

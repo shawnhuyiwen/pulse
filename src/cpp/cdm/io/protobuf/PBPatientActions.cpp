@@ -1766,6 +1766,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
     any->set_allocated_respiratorymechanicsconfiguration(PBPatientAction::Unload(*rmc));
     return any;
   }
+  const SESupplementalOxygen* sO2 = dynamic_cast<const SESupplementalOxygen*>(&action);
+  if (sO2 != nullptr)
+  {
+    any->set_allocated_supplementaloxygen(PBPatientAction::Unload(*sO2));
+    return any;
+  }
   const SESubstanceBolus* sb = dynamic_cast<const SESubstanceBolus*>(&action);
   if (sb != nullptr)
   {

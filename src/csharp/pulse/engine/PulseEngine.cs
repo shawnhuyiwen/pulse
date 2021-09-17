@@ -149,7 +149,7 @@ namespace Pulse
       int type;
       if (assessment is SEArterialBloodGasTest)
         type = 0;
-      if (assessment is SECompleteBloodCount)
+      else if (assessment is SECompleteBloodCount)
         type = 1;
       else if (assessment is SEComprehensiveMetabolicPanel)
         type = 2;

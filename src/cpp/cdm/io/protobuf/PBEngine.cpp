@@ -92,6 +92,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEPericardialEffusion.h"
 #include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
 #include "cdm/patient/actions/SERespiratoryFatigue.h"
+#include "cdm/patient/actions/SESupplementalOxygen.h"
 #include "cdm/patient/actions/SESubstanceBolus.h"
 #include "cdm/patient/actions/SESubstanceInfusion.h"
 #include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
@@ -346,6 +347,8 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PulmonaryShuntExacerbation));
   if (src.HasRespiratoryFatigue())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RespiratoryFatigue));
+  if (src.HasSupplementalOxygen())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_SupplementalOxygen));
   if (src.HasLeftClosedTensionPneumothorax())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftClosedTensionPneumothorax));
   if (src.HasLeftOpenTensionPneumothorax())

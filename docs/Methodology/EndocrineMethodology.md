@@ -7,7 +7,7 @@ Overview
 Abstract
 --------
 
-The %Endocrine System is a basic system implementation of endocrine signaling. There are currently two hormones included in the %Endocrine system: epinephrine and insulin. The effects of epinephrine are modeled by leveraging the [pharmacodynamics](@ref DrugsMethodology) model. The insulin model is under construction, and when it is finished, insulin will have a regulatory effect on the concentration of glucose in the blood. Functionality that is in the development stage now will enable future releases of the endocrine system to affect:
+The %Endocrine System is a basic system implementation of endocrine signaling. There are currently three hormones included in the %Endocrine system: norepinephrine, epinephrine, and insulin. The effects of norepinephrine and epinephrine are modeled by leveraging the [pharmacodynamics](@ref DrugsMethodology) model. The insulin model is under construction, and when it is finished, insulin will have a regulatory effect on the concentration of glucose in the blood. Functionality that is in the development stage now will enable future releases of the endocrine system to affect:
 -   Metabolic function
 -   %Renal function
 -   Ion regulation
@@ -31,7 +31,7 @@ Hormone values are initialized where necessary during reset. There are no condit
 There is no system-specific function for Preprocess in the %Endocrine System.
 
 ### Process
-During Process, epinephrine is released. This release is augmented in response to exercise and/or stress. The rate of insulin synthesis is calculated and insulin is added to the system.
+During Process, norpeinephrine and epinephrine are released. The release represents the basal production rate of the two hormones. The epinephrine production rate is scale to represent the sympathetic response associated with exercise and/or stress. Norepinephrine production is inversely proportional to the epinephrine production to represent the parasympathetic response. The rate of insulin synthesis is calculated and insulin is added to the system.
 
 ### Post Process
 There is no system specific function for Post Process in the %Endocrine System.
@@ -65,6 +65,11 @@ Insulin does not have any effects attributable to pharmacodynamic model. Its onl
 Epinephrine is released by the adrenal medulla at a basal endogenous rate of approximately 0.18 (&mu;g/min) @cite best1982release. To enable patient variability, the engine uses a mass-normalized basal epinephrine release rate of about 0.003 (&mu;g/kg-min). Because the engine does not have an adrenal gland compartment, epinephrine is released equally from the kidneys' efferent arterioles. The epinephrine clearance rate is constant and will not change with concentration (note that the actual amount cleared is a function of the concentration as well as the hemodynamics). A basal clearance rate of 68.7 (mL/kg-min) was computed from the basal release rate and by assuming a steady-state normal concentration of 0.032 (&mu;g/L) @cite wortsman1984adrenomedullary. The basal clearance rate is a property of the epinephrine substance definition; therefore, the clearance rate can be adjusted in the epinephrine substance file to achieve a desired steady-state concentration. A wide range of normal basal epinephrine concentrations are reported in literature @cite wortsman1984adrenomedullary @cite stratton1985hemodynamic @cite stein1998basal @cite penesova2008role @cite Zauner2000resting. 
 
 Two stimuli, exercise and acute stress, can modify the epinephrine release rate. 
+
+### Norepinephrine 
+Norepinephrine is released  as part of the body's parasympathetic response. The norepinephrine clearance rate is estimated to be 22-27 (mL/kg-min) in @cite Johnston2004pharmacokinetics; however, this is in critically injured head trauma patients. We calculated a basal production rate based on this value, resulting in approximately 0.009 (&mu;g/kg-min) as a mass normalized production rate. Norepinephrine is currently released directly into the bloodstream. The basal concentration rate and those for different infusion rates were tested and validated using the data found in @cite Ensinger1992relationship. The clearance and production rates were adjusted slightly to meet this validation data. More information on the validation can be found in (@ref DrugsMethodology) and (@ref BloodChemistryMethodology).
+
+Two stimuli, exercise and acute stress, can modify the norepinephrine release rate. The norepinephrine release is considered to be inversely proportional to the epinephrine release rate during this circumstances. The epinephrine release was validated as noted below.
 
 #### Exercise
 The increase in epinephrine release as a function of above-basal exercise was developed using data in @cite stratton1985hemodynamic and @cite tidgren1991renal. We assume that the epinephrine clearance rate is constant; therefore, the fractional increase in epinephrine concentration described in @cite stratton1985hemodynamic and @cite tidgren1991renal can be assumed to be due to a similar fractional increase in release rate. Using that assumption, we fit a logistic function to the basal-normalized epinephrine steady-state concentrations during exercise presented in @cite tidgren1991renal. The release modifier varies from 1 to 19.75, as shown in Figure 1, meaning that the epinephrine release rate will be 19.75 times the basal release rate with maximal exercise. The model is implemented by first computing the above-basal metabolic rate and then using the generic logistic function with the appropriate parameter values to compute the release rate multiplier.

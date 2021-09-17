@@ -968,7 +968,7 @@
         }
       }
     }
-  }, {
+}, {
     "PatientAction": {
       "SubstanceInfusion": {
         "Substance": "Norepinephrine",
@@ -980,7 +980,7 @@
         },
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 0.01667,
+		    "Value": 0.18,
             "Unit": "mL/s"
           }
         }
@@ -995,7 +995,7 @@
         }
       }
     }
-  }, {
+	  }, {
     "PatientAction": {
       "SubstanceInfusion": {
         "Substance": "Norepinephrine",
@@ -1007,7 +1007,7 @@
         },
         "Rate": {
           "ScalarVolumePerTime": {
-            "Value": 0.03333,
+		    "Value": 0.26,
             "Unit": "mL/s"
           }
         }
@@ -1017,114 +1017,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "SubstanceInfusion": {
-        "Substance": "Norepinephrine",
-        "Concentration": {
-          "ScalarMassPerVolume": {
-            "Value": 1.0,
-            "Unit": "ug/mL"
-          }
-        },
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Value": 0.06667,
-            "Unit": "mL/s"
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "SubstanceInfusion": {
-        "Substance": "Norepinephrine",
-        "Concentration": {
-          "ScalarMassPerVolume": {
-            "Value": 1.0,
-            "Unit": "ug/mL"
-          }
-        },
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Value": 0.13333,
-            "Unit": "mL/s"
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "SubstanceInfusion": {
-        "Substance": "Norepinephrine",
-        "Concentration": {
-          "ScalarMassPerVolume": {
-            "Value": 1.0,
-            "Unit": "ug/mL"
-          }
-        },
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Value": 0.2667,
-            "Unit": "mL/s"
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "SubstanceInfusion": {
-        "Substance": "Norepinephrine",
-        "Concentration": {
-          "ScalarMassPerVolume": {
-            "Value": 1.0,
-            "Unit": "ug/mL"
-          }
-        },
-        "Rate": {
-          "ScalarVolumePerTime": {
-            "Unit": "mL/s"
-          }
-        }
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
+          "Value": 40.0,
           "Unit": "min"
         }
       }
