@@ -515,7 +515,7 @@ NC @cite ensinger1992relationship"	</span>|<span class="success">	69	|	"[174, 19
 Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	136	|	"[83, 99] 
 Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	100	</span>|
 
-The infusion of phenyephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for four different infusion rates. They are shown in Table 10.
+The infusion of phenylephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for four different infusion rates. They are shown in Table 10.
 
 |	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration  (ug/L)	|	"Experimental Heart Rate Change
 (beats/min)"	|	"Computed Heart Rate Change (beats/min)"	|	"Experimental Systolic Blood Pressure (mmHg)"	|	"Computed Systolic Blood Pressure (mmHg)"	|	"Experimental Diastolic Blood Pressure (mmHg)"	|	"Computed Diastolic Blood Pressure (mmHg)"
