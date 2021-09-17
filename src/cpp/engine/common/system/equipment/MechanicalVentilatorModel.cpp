@@ -402,61 +402,59 @@ namespace PULSE_ENGINE
 
     //Dampen the change
     double driverDampingParameter_Per_s = 25.0; //Aaron - Add this fractional change parameter to the settings with this same default value for all modes to prevent abrupt changes to the driver
+    driverDampingParameter_Per_s = LIMIT(driverDampingParameter_Per_s, 0.0, 1.0 / m_data.GetTimeStep_s());
 
-    if (true) //Aaron - Add a has check. This can be removed if set to zero and negative numbers an invalid.
+    if (!std::isnan(driverPressure_cmH2O))
     {
-      if (!std::isnan(driverPressure_cmH2O))
+      double previousDriverPressure_cmH2O = 0.0;
+      if (std::isnan(m_PreviousDriverPressure_cmH2O))
       {
-        double previousDriverPressure_cmH2O = 0.0;
-        if (std::isnan(m_PreviousDriverPressure_cmH2O))
+        if (m_VentilatorNode->HasNextPressure())
         {
-          if (m_VentilatorNode->HasNextPressure())
-          {
-            previousDriverPressure_cmH2O = m_VentilatorNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-          }
-        }
-        else
-        {
-          previousDriverPressure_cmH2O = m_PreviousDriverPressure_cmH2O;
-        }
-
-        double difference_cmH2O = driverPressure_cmH2O - previousDriverPressure_cmH2O;
-        driverPressure_cmH2O = previousDriverPressure_cmH2O + difference_cmH2O * driverDampingParameter_Per_s * m_data.GetTimeStep_s();
-        if (m_DriverPressure_cmH2O > previousDriverPressure_cmH2O)
-        {
-          driverPressure_cmH2O = LIMIT(driverPressure_cmH2O, previousDriverPressure_cmH2O, m_DriverPressure_cmH2O);
-        }
-        else
-        {
-          driverPressure_cmH2O = LIMIT(driverPressure_cmH2O, m_DriverPressure_cmH2O, previousDriverPressure_cmH2O);
+          previousDriverPressure_cmH2O = m_VentilatorNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
         }
       }
-
-      if (!std::isnan(driverFlow_L_Per_s))
+      else
       {
-        double previousDriverFlow_L_Per_s = 0.0;
-        if (std::isnan(m_PreviousDriverFlow_L_Per_s))
-        {
-          if (m_EnvironmentToVentilator->HasNextFlow())
-          {
-            previousDriverFlow_L_Per_s = m_EnvironmentToVentilator->GetNextFlow(VolumePerTimeUnit::L_Per_s);
-          }
-        }
-        else
-        {
-          previousDriverFlow_L_Per_s = m_PreviousDriverFlow_L_Per_s;
-        }
+        previousDriverPressure_cmH2O = m_PreviousDriverPressure_cmH2O;
+      }
 
-        double difference_L_Per_s = driverFlow_L_Per_s - previousDriverFlow_L_Per_s;
-        driverFlow_L_Per_s = previousDriverFlow_L_Per_s + difference_L_Per_s * driverDampingParameter_Per_s * m_data.GetTimeStep_s();
-        if (m_DriverFlow_L_Per_s > previousDriverFlow_L_Per_s)
+      double difference_cmH2O = driverPressure_cmH2O - previousDriverPressure_cmH2O;
+      driverPressure_cmH2O = previousDriverPressure_cmH2O + difference_cmH2O * driverDampingParameter_Per_s * m_data.GetTimeStep_s();
+      if (m_DriverPressure_cmH2O > previousDriverPressure_cmH2O)
+      {
+        driverPressure_cmH2O = LIMIT(driverPressure_cmH2O, previousDriverPressure_cmH2O, m_DriverPressure_cmH2O);
+      }
+      else
+      {
+        driverPressure_cmH2O = LIMIT(driverPressure_cmH2O, m_DriverPressure_cmH2O, previousDriverPressure_cmH2O);
+      }
+    }
+
+    if (!std::isnan(driverFlow_L_Per_s))
+    {
+      double previousDriverFlow_L_Per_s = 0.0;
+      if (std::isnan(m_PreviousDriverFlow_L_Per_s))
+      {
+        if (m_EnvironmentToVentilator->HasNextFlow())
         {
-          driverFlow_L_Per_s = LIMIT(driverFlow_L_Per_s, previousDriverFlow_L_Per_s, m_DriverFlow_L_Per_s);
+          previousDriverFlow_L_Per_s = m_EnvironmentToVentilator->GetNextFlow(VolumePerTimeUnit::L_Per_s);
         }
-        else
-        {
-          driverFlow_L_Per_s = LIMIT(driverFlow_L_Per_s, m_DriverFlow_L_Per_s, previousDriverFlow_L_Per_s);
-        }
+      }
+      else
+      {
+        previousDriverFlow_L_Per_s = m_PreviousDriverFlow_L_Per_s;
+      }
+
+      double difference_L_Per_s = driverFlow_L_Per_s - previousDriverFlow_L_Per_s;
+      driverFlow_L_Per_s = previousDriverFlow_L_Per_s + difference_L_Per_s * driverDampingParameter_Per_s * m_data.GetTimeStep_s();
+      if (m_DriverFlow_L_Per_s > previousDriverFlow_L_Per_s)
+      {
+        driverFlow_L_Per_s = LIMIT(driverFlow_L_Per_s, previousDriverFlow_L_Per_s, m_DriverFlow_L_Per_s);
+      }
+      else
+      {
+        driverFlow_L_Per_s = LIMIT(driverFlow_L_Per_s, m_DriverFlow_L_Per_s, previousDriverFlow_L_Per_s);
       }
     }
 
