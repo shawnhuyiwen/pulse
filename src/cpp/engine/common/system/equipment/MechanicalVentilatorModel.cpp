@@ -58,6 +58,7 @@ namespace PULSE_ENGINE
     MechanicalVentilatorSystem::Clear();
     m_Environment = nullptr;
     m_Ventilator = nullptr;
+    m_Connection = nullptr;
     m_VentilatorAerosol = nullptr;
     m_VentilatorNode = nullptr;
     m_ExpiratoryLimbNode = nullptr;
@@ -143,6 +144,7 @@ namespace PULSE_ENGINE
     // Compartments
     m_Environment = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
     m_Ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
+    m_Connection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::Connection);
     m_VentilatorAerosol = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
 
     // Nodes
@@ -1077,10 +1079,10 @@ namespace PULSE_ENGINE
     double airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
     GetPlateauPressure().SetValue(airwayPressure_cmH2O - ambientPressure_cmH2O, PressureUnit::cmH2O);
 
-    GetEndTidalCarbonDioxideFraction().Set(m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction());
-    GetEndTidalCarbonDioxidePressure().Set(m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetPartialPressure());
-    GetEndTidalOxygenFraction().Set(m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction());
-    GetEndTidalOxygenPressure().Set(m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure());
+    GetEndTidalCarbonDioxideFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction());
+    GetEndTidalCarbonDioxidePressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetPartialPressure());
+    GetEndTidalOxygenFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction());
+    GetEndTidalOxygenPressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure());
   }
 
   //--------------------------------------------------------------------------------------------------

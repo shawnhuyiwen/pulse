@@ -84,6 +84,7 @@ namespace PULSE_ENGINE
     // Stateless member variable (Set in SetUp())
     SEGasCompartment*    m_Environment;
     SEGasCompartment*    m_Ventilator;
+    SEGasCompartment*    m_Connection;
     SELiquidCompartment* m_VentilatorAerosol;
     SEFluidCircuitNode*  m_VentilatorNode;
     SEFluidCircuitNode*  m_ExpiratoryLimbNode;
