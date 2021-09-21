@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 from enum import Enum
 from pulse.cdm.patient import SENutrition
+from pulse.cdm.physiology import SERespiratoryMechanics
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarForce, \
                               SEScalarMassPerVolume, SEScalarPressure, \
@@ -989,6 +990,49 @@ class SERespiratoryFatigue(SEPatientAction):
     def __repr__(self):
         return ("Respiratory Fatigue\n"
                 "  Severity: {}").format(self._severity)
+
+class SERespiratoryMechanicsConfiguration(SEPatientAction):
+    __slots__ = ["_settings_file",
+                 "_settings"]
+
+    def __init__(self):
+        super().__init__()
+        self._settings_file = None
+        self._settings = None
+
+    def clear(self):
+        self._settings_file = None
+        self._settings = None
+
+    def copy(self, src):
+        if not isinstance(SERespiratoryMechanicsConfiguration, src):
+            raise Exception("Provided argument must be a SEMechanicalVentilatorConfiguration")
+        self.clear()
+        self._settings_file = src._settings_file
+        self._settings.copy(src._settings)
+
+    def is_valid(self):
+        return self.has_settings() or self.has_settings_file()
+
+    def is_active(self):
+        return True
+
+    def has_settings_file(self):
+        return self._settings_file is not None
+    def get_settings_file(self):
+        return self._settings_file
+    def set_settings_file(self, filename: str):
+        self._settings_file = filename
+
+    def has_settings(self):
+        return self._settings is not None
+    def get_settings(self):
+        if self._settings is None:
+            self._settings = SERespiratoryMechanics()
+        return self._settings
+    def __repr__(self):
+        return ("Respiratory Mechanics Configuration\n"
+                "  Setting File: {}").format(self._settings_file)
 
 class eSubstance_Administration(Enum):
     Intravenous = 0,

@@ -84,7 +84,7 @@ class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
     def set_connection(self, src : eSwitch):
         self._connection = src
 
-    def __str__(self):
+    def __repr__(self):
         return "Mechanical Ventilator Mode" + "\n\tConnection: " + str(self._connection)
 
 
@@ -156,7 +156,7 @@ class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentila
             self._slope = SEScalarTime()
         return self._slope
 
-    def __str__(self):
+    def __repr__(self):
         return "Mechanical Ventilator Continuous Positive Airway Pressure" + \
                "\n\tDeltaPressureSupport: " + str(self._delta_pressure_support) if self.has_delta_pressure_support() else "Not Provided" + \
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
@@ -270,7 +270,7 @@ class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
             self._slope = SEScalarTime()
         return self._slope
 
-    def __str__(self):
+    def __repr__(self):
         return "Mechanical Ventilator Pressure Control" + \
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
                "\n\tInspiratoryPeriod: " + str(self._inspiratory_period) if self.has_inspiratory_period() else "Not Provided" + \
@@ -386,7 +386,7 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
             self._tidal_volume = SEScalarVolume()
         return self._tidal_volume
 
-    def __str__(self):
+    def __repr__(self):
         return "Mechanical Ventilator Volume Control" + \
                "\n\tFlow: " + str(self._flow) if self.has_flow() else "Not Provided" + \
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
@@ -431,7 +431,7 @@ class SEMechanicalVentilatorHold(SEMechanicalVentilatorAction):
     def set_applied_respiratory_cycle(self, src : eAppliedRespiratoryCycle):
         self._applied_respiratory_cycle = src
 
-    def __str__(self):
+    def __repr__(self):
         return "Mechanical Ventilator Hold" + \
                "\n\tState: " + str(self._state) + \
                "\n\tAppliedRespiratoryCycle: " + str(self._applied_respiratory_cycle)
@@ -465,6 +465,6 @@ class SEMechanicalVentilatorLeak(SEMechanicalVentilatorAction):
             self._severity = SEScalar0To1()
         return self._severity
 
-    def __str__(self):
+    def __repr__(self):
         return "Mechanical Ventilator Leak" + \
                "\n\tSeverity: " + str(self._severity) if self.has_severity() else "Not Provided"

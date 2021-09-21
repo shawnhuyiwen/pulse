@@ -259,6 +259,10 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_respiratory_fatigue_to_bind(action, any_action.PatientAction.RespiratoryFatigue)
                 dst.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SERespiratoryMechanicsConfiguration):
+                serialize_respiratory_mechanics_configuration_to_bind(action, any_action.PatientAction.RespiratoryMechanicsConfiguration)
+                dst.AnyAction.append(any_action)
+                continue
             if isinstance(action, SESubstanceBolus):
                 serialize_substance_bolus_to_bind(action, any_action.PatientAction.SubstanceBolus)
                 dst.AnyAction.append(any_action)

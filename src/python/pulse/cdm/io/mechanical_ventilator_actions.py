@@ -43,7 +43,7 @@ def serialize_mechanical_ventilator_configuration_to_bind(src: SEMechanicalVenti
 
 def serialize_mechanical_ventilator_configuration_from_bind(src: MechanicalVentilatorConfigurationData, dst: SEMechanicalVentilatorConfiguration):
     serialize_mechanical_ventilator_action_from_bind(src.MechanicalVentilatorAction, dst)
-    raise Exception("serialize_exercise_from_bind not implemented")
+    raise Exception("serialize_mechanical_ventilator_configuration_from_bind not implemented")
 
 def serialize_mechanical_ventilator_mode_to_bind(src: SEMechanicalVentilatorMode, dst: MechanicalVentilatorModeData):
     serialize_mechanical_ventilator_action_to_bind(src, dst.MechanicalVentilatorAction)
@@ -51,7 +51,7 @@ def serialize_mechanical_ventilator_mode_to_bind(src: SEMechanicalVentilatorMode
 
 def serialize_mechanical_ventilator_mode_from_bind(src: MechanicalVentilatorModeData, dst: SEMechanicalVentilatorMode):
     serialize_mechanical_ventilator_action_from_bind(src.MechanicalVentilatorAction, dst)
-    raise Exception("serialize_exercise_from_bind not implemented")
+    raise Exception("serialize_mechanical_ventilator_mode_from_bind not implemented")
 
 def serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(src: SEMechanicalVentilatorContinuousPositiveAirwayPressure, dst: MechanicalVentilatorContinuousPositiveAirwayPressureData):
     serialize_mechanical_ventilator_mode_to_bind(src, dst.MechanicalVentilatorMode)
@@ -96,7 +96,7 @@ def serialize_mechanical_ventilator_hold_to_bind(src: SEMechanicalVentilatorHold
 
 def serialize_mechanical_ventilator_hold_from_bind(src: MechanicalVentilatorHoldData, dst: SEMechanicalVentilatorHold):
     serialize_mechanical_ventilator_action_from_bind(src.MechanicalVentilatorAction, dst)
-    raise Exception("serialize_exercise_from_bind not implemented")
+    raise Exception("serialize_mechanical_ventilator_hold_from_bind not implemented")
 
 def serialize_mechanical_ventilator_leak_to_bind(src: SEMechanicalVentilatorLeak, dst: MechanicalVentilatorLeakData):
     serialize_mechanical_ventilator_action_to_bind(src, dst.MechanicalVentilatorAction)
@@ -104,4 +104,4 @@ def serialize_mechanical_ventilator_leak_to_bind(src: SEMechanicalVentilatorLeak
 
 def serialize_mechanical_ventilator_leak_from_bind(src: MechanicalVentilatorLeakData, dst: SEMechanicalVentilatorLeak):
     serialize_mechanical_ventilator_action_from_bind(src.MechanicalVentilatorAction, dst)
-    raise Exception("serialize_exercise_from_bind not implemented")
+    raise Exception("serialize_mechanical_ventilator_leak_from_bind not implemented")

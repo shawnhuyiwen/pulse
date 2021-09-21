@@ -139,6 +139,50 @@ class SEScalarArea(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a AreaUnit")
 
+
+class ElectricPotentialUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == ElectricPotentialUnit.V.get_string():
+            return ElectricPotentialUnit.V
+        if string == ElectricPotentialUnit.mV.get_string():
+            return ElectricPotentialUnit.mV
+        raise Exception("No ElectricPotentialUnit defined for " + string)
+ElectricPotentialUnit.V = ElectricPotentialUnit("V")
+ElectricPotentialUnit.mV = ElectricPotentialUnit("mV")
+class SEScalarElectricPotential(SEScalarQuantity):
+
+    def __init__(self, value:float=None, units:ElectricPotentialUnit=None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarElectricPotential, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarElectricPotential")
+
+    def get_value(self, units: ElectricPotentialUnit=None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: ElectricPotentialUnit):
+        if isinstance(units, ElectricPotentialUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a ElectricPotentialUnit")
+
+
 class EquivalentWeightPerVolumeUnit(SEScalarUnit):
     @staticmethod
     def from_string(string: str):
@@ -891,6 +935,51 @@ class SEScalarPressure(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a PressureUnit")
 
+class PressurePerVolumeUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == PressurePerVolumeUnit.mmHg_Per_mL.get_string():
+            return PressurePerVolumeUnit.mmHg_Per_mL
+        if string == PressurePerVolumeUnit.cmH2O_Per_mL.get_string():
+            return PressurePerVolumeUnit.cmH2O_Per_mL
+        if string == PressurePerVolumeUnit.cmH2O_Per_L.get_string():
+            return PressurePerVolumeUnit.cmH2O_Per_L
+        else:
+            raise Exception("No PressurePerVolumeUnit defined for " + string)
+PressurePerVolumeUnit.mmHg_Per_mL = PressurePerVolumeUnit("mmHg/mL")
+PressurePerVolumeUnit.cmH2O_Per_mL = PressurePerVolumeUnit("cmH2O/mL")
+PressurePerVolumeUnit.cmH2O_Per_L = PressurePerVolumeUnit("cmH2O/L")
+class SEScalarPressurePerVolume(SEScalarQuantity):
+
+    def __init__(self, value:float=None, units:PressurePerVolumeUnit=None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarPressurePerVolume, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarPressurePerVolume")
+
+    def get_value(self, units: PressurePerVolumeUnit=None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: PressurePerVolumeUnit):
+        if isinstance(units, PressurePerVolumeUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a PressurePerVolumeUnit")
 
 class PressureTimePerVolumeUnit(SEScalarUnit):
     @staticmethod
@@ -1094,6 +1183,57 @@ class SEScalarVolume(SEScalarQuantity):
         else:
             raise Exception("Provided argument must be a VolumeUnit")
 
+class VolumePerPressureUnit(SEScalarUnit):
+    @staticmethod
+    def from_string(string: str):
+        if string == VolumePerPressureUnit.L_Per_Pa.get_string():
+            return VolumePerPressureUnit.L_Per_Pa
+        if string == VolumePerPressureUnit.L_Per_cmH2O.get_string():
+            return VolumePerPressureUnit.L_Per_cmH2O
+        if string == VolumePerPressureUnit.mL_Per_cmH2O.get_string():
+            return VolumePerPressureUnit.mL_Per_cmH2O
+        if string == VolumePerPressureUnit.m3_Per_Pa.get_string():
+            return VolumePerPressureUnit.m3_Per_Pa
+        if string == VolumePerPressureUnit.mL_Per_mmHg.get_string():
+            return VolumePerPressureUnit.mL_Per_mmHg
+        raise Exception("No VolumePerPressureUnit defined for " + string)
+VolumePerPressureUnit.L_Per_Pa = VolumePerPressureUnit("L/Pa")
+VolumePerPressureUnit.L_Per_cmH2O = VolumePerPressureUnit("L/cmH2O")
+VolumePerPressureUnit.mL_Per_cmH2O = VolumePerPressureUnit("mL/cmH2O")
+VolumePerPressureUnit.m3_Per_Pa = VolumePerPressureUnit("m^3/Pa")
+VolumePerPressureUnit.mL_Per_mmHg = VolumePerPressureUnit("mL/mmHg")
+class SEScalarVolumePerPressure(SEScalarQuantity):
+
+    def __init__(self, value:float=None, units:VolumePerPressureUnit=None):
+        if value is None or units is None:
+            self.invalidate()
+        else:
+            self.set_value(value,units)
+
+    def set(self, scalar):
+        if isinstance(SEScalarVolumePerPressure, scalar):
+            self._value = scalar._value
+            self._units = scalar._units
+        else:
+            raise Exception("Provided argument must be a SEScalarVolumePerPressure")
+
+    def get_value(self, units: VolumePerPressureUnit=None):
+        if self.is_valid() is False:
+            return None
+        if units is None:
+            return self._value
+        if self._units is units:
+            return self._value
+        else:
+            raise Exception("Unit converter not connected")
+
+    def set_value(self, value: float, units: VolumePerPressureUnit):
+        if isinstance(units, VolumePerPressureUnit):
+            self._value = value
+            self._units = units
+        else:
+            raise Exception("Provided argument must be a VolumePerPressureUnit")
+
 class VolumePerTimeUnit(SEScalarUnit):
     @staticmethod
     def from_string(string: str):
@@ -1252,45 +1392,3 @@ class SEScalarVolumePerTimePressure(SEScalarQuantity):
             self._units = units
         else:
             raise Exception("Provided argument must be a VolumePerTimePressureUnit")
-
-class ElectricPotentialUnit(SEScalarUnit):
-    @staticmethod
-    def from_string(string: str):
-        if string == ElectricPotentialUnit.V.get_string():
-            return ElectricPotentialUnit.V
-        if string == ElectricPotentialUnit.mV.get_string():
-            return ElectricPotentialUnit.mV
-        raise Exception("No ElectricPotentialUnit defined for " + string)
-ElectricPotentialUnit.V = ElectricPotentialUnit("V")
-ElectricPotentialUnit.mV = ElectricPotentialUnit("mV")
-class SEScalarElectricPotential(SEScalarQuantity):
-
-    def __init__(self, value:float=None, units:ElectricPotentialUnit=None):
-        if value is None or units is None:
-            self.invalidate()
-        else:
-            self.set_value(value,units)
-
-    def set(self, scalar):
-        if isinstance(SEScalarElectricPotential, scalar):
-            self._value = scalar._value
-            self._units = scalar._units
-        else:
-            raise Exception("Provided argument must be a SEScalarElectricPotential")
-
-    def get_value(self, units: ElectricPotentialUnit=None):
-        if self.is_valid() is False:
-            return None
-        if units is None:
-            return self._value
-        if self._units is units:
-            return self._value
-        else:
-            raise Exception("Unit converter not connected")
-
-    def set_value(self, value: float, units: ElectricPotentialUnit):
-        if isinstance(units, ElectricPotentialUnit):
-            self._value = value
-            self._units = units
-        else:
-            raise Exception("Provided argument must be a ElectricPotentialUnit")
