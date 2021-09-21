@@ -49,12 +49,12 @@ message MechanicalVentilatorModeData
 
 message MechanicalVentilatorContinuousPositiveAirwayPressureData
 {
-  MechanicalVentilatorModeData                 MechanicalVentilatorMode     = 1;
+  MechanicalVentilatorModeData                 MechanicalVentilatorMode      = 1;
   
-  ScalarPressureData                           DeltaPressureSupport          = 2;
-  Scalar0To1Data                               FractionInspiredOxygen        = 3;
-  ScalarPressureData                           PositiveEndExpiredPressure    = 4;
-  ScalarTimeData                               Slope                         = 5;
+  ScalarPressureData                           DeltaPressureSupport          = 2; /**<< @brief Defines the driver pressure as the difference between PIP and PEEP */
+  Scalar0To1Data                               FractionInspiredOxygen        = 3; /**<< @brief FiO2 */
+  ScalarPressureData                           PositiveEndExpiredPressure    = 4; /**<< @brief Driver pressure during exhale */
+  ScalarTimeData                               Slope                         = 5; /**<< @brief Time to reach PIP */
 }
 
 message MechanicalVentilatorPressureControlData
@@ -68,12 +68,12 @@ message MechanicalVentilatorPressureControlData
   MechanicalVentilatorModeData                 MechanicalVentilatorMode      = 1;
   
   eMode                                        Mode                          = 2;
-  Scalar0To1Data                               FractionInspiredOxygen        = 3;
-  ScalarTimeData                               InspiratoryPeriod             = 4;
-  ScalarPressureData                           InspiratoryPressure           = 5;
-  ScalarPressureData                           PositiveEndExpiredPressure    = 6;
-  ScalarFrequencyData                          RespirationRate               = 7;
-  ScalarTimeData                               Slope                         = 8;
+  Scalar0To1Data                               FractionInspiredOxygen        = 3; /**<< @brief FiO2 */
+  ScalarTimeData                               InspiratoryPeriod             = 4; /**<< @brief Time for inspiration part of the breathing cycle */
+  ScalarPressureData                           InspiratoryPressure           = 5; /**<< @brief Driver pressure during inspiration */
+  ScalarPressureData                           PositiveEndExpiredPressure    = 6; /**<< @brief Driver pressure during exhale */
+  ScalarFrequencyData                          RespirationRate               = 7; /**<< @brief Driver minimum frequency */
+  ScalarTimeData                               Slope                         = 8; /**<< @brief Time to reach PIP */
 }
 message MechanicalVentilatorVolumeControlData
 {
@@ -86,11 +86,11 @@ message MechanicalVentilatorVolumeControlData
   MechanicalVentilatorModeData                 MechanicalVentilatorMode      = 1;
   
   eMode                                        Mode                          = 2;
-  ScalarVolumePerTimeData                      Flow                          = 3;
-  Scalar0To1Data                               FractionInspiredOxygen        = 4;
-  ScalarTimeData                               InspiratoryPeriod             = 5;
-  ScalarPressureData                           PositiveEndExpiredPressure    = 6;
-  ScalarFrequencyData                          RespirationRate               = 7;
-  ScalarVolumeData                             TidalVolume                   = 8;
+  ScalarVolumePerTimeData                      Flow                          = 3; /**<< @brief Driver flow during inspiration */
+  Scalar0To1Data                               FractionInspiredOxygen        = 4; /**<< @brief FiO2 */
+  ScalarTimeData                               InspiratoryPeriod             = 5; /**<< @brief Time for inspiration part of the breathing cycle */
+  ScalarPressureData                           PositiveEndExpiredPressure    = 6; /**<< @brief Driver pressure during exhale */
+  ScalarFrequencyData                          RespirationRate               = 7; /**<< @brief Driver minimum frequency */
+  ScalarVolumeData                             TidalVolume                   = 8; /**<< @brief Volume target/limit */
 }
 
