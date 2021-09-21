@@ -115,8 +115,8 @@
           "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
-          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
-          "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },
+          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 23.0, "Unit": "cmH2O" } },
+          "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
           "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
           "FractionInspiredGas": [
@@ -147,8 +147,8 @@
           "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
-          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 25.0, "Unit": "cmH2O" } },
-          "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 10.0, "Unit": "cmH2O" } },
+          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 27.0, "Unit": "cmH2O" } },
+          "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
           "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
           "FractionInspiredGas": [
@@ -179,8 +179,8 @@
             "Connection": "On",
             "InspirationWaveform": "Square",
             "ExpirationWaveform": "Square",
-            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 32.0, "Unit": "cmH2O" } },
-            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
+            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 33.0, "Unit": "cmH2O" } },
+            "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
             "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
             "FractionInspiredGas": [
