@@ -32,7 +32,7 @@ void HowToRespiratoryMechanics()
 {
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_RespiratoryMechanics.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_RespiratoryMechanics.cpp.log");
   pe->GetLogger()->Info("HowTo_RespiratoryMechanics");
 
   // With this engine, you do not initialize it, its already ready to go at construction time

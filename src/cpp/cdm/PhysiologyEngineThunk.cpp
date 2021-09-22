@@ -121,6 +121,10 @@ bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configur
     return false;
   }
 
+  // Ok, crank 'er up!
+  if (!m_engine->InitializeEngine(pc))
+    return false;
+
   // Load up the data requests
   if (!data_requests.empty())
   {
@@ -134,9 +138,6 @@ bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configur
     SetupDefaultDataRequests();
   m_engine->GetEngineTracker()->SetupRequests();
 
-  // Ok, crank 'er up!
-  if (!m_engine->InitializeEngine(pc))
-    return false;
   m_engine->GetEventManager().ForwardEvents(this);
   return true;
 }

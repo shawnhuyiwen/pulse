@@ -10,8 +10,7 @@ from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggerForward
 
 from pulse.cdm.patient import eSex, SEPatientConfiguration
 from pulse.engine.PulseEngine import PulseEngine
-from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, MassPerVolumeUnit, \
-                              PressureUnit, TemperatureUnit, TimeUnit
+from pulse.cdm.scalars import FrequencyUnit, PressureUnit, TemperatureUnit, VolumeUnit, VolumePerTimeUnit
 
 # Advance all engines in 10s increments
 _advance_time_s = 10.
@@ -38,7 +37,7 @@ class PoolPatient:
 
 def initialize_engine(p: PoolPatient):
     print("Initializing p" + str(p.get_id()) + "...")
-    p.pulse.set_log_filename("./pool/p"+str(p.get_id())+".log")
+    p.pulse.set_log_filename("./test_results/howto/pool/p"+str(p.get_id())+".log")
     p.pulse.set_event_handler(local_event_handler(p))
     p.pulse.set_log_listener(local_log_fowrwad(p))
     p.pulse.log_to_console(False) # Too many messages if a lot of engines
@@ -109,17 +108,17 @@ class local_log_fowrwad(ILoggerForward):
 def main():
 
     data_requests = [
-        SEDataRequest.create_physiology_request("HeartRate", unit="1/min"),
-        SEDataRequest.create_physiology_request("ArterialPressure", unit="mmHg"),
-        SEDataRequest.create_physiology_request("MeanArterialPressure", unit="mmHg"),
-        SEDataRequest.create_physiology_request("SystolicArterialPressure", unit="mmHg"),
-        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit="mmHg"),
+        SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("ArterialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("MeanArterialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("SystolicArterialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("OxygenSaturation"),
-        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit="mmHg"),
-        SEDataRequest.create_physiology_request("RespirationRate", unit="1/min"),
-        SEDataRequest.create_physiology_request("SkinTemperature", unit="degC"),
-        SEDataRequest.create_physiology_request("CardiacOutput", unit="L/min"),
-        SEDataRequest.create_physiology_request("BloodVolume", unit="mL"),
+        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("SkinTemperature", unit=TemperatureUnit.C),
+        SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
+        SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL)
     ]
     data_req_mgr = SEDataRequestManager(data_requests)
 

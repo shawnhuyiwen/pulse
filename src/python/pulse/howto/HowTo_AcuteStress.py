@@ -8,7 +8,7 @@ from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_AcuteStress():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_AcuteStress.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_AcuteStress.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

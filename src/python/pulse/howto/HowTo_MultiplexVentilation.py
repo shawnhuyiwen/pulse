@@ -6,11 +6,11 @@ from pulse.study.multiplex_ventilation.engine import MVEngine
 
 def HowTo_UseEngine():
     # Create an engine
-    mve = MVEngine("./test_results/multiplex_ventilation/MVEngine.log", True)
+    mve = MVEngine("./test_results/howto/multiplex_ventilation/MVEngine.py.log", True)
 
     sim = SimulationData()
     sim.ID = 42
-    sim.OutputBaseFilename = "./test_results/multiplex_ventilation/mvpy"
+    sim.OutputBaseFilename = "./test_results/howto/multiplex_ventilation/mvpy"
     # Use these ventilator settings
     sim.RespirationRate_Per_min = 20
     sim.IERatio = 0.5

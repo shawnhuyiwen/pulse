@@ -403,7 +403,9 @@ namespace PULSE_ENGINE
     }
 
     //Dampen the change
-    double driverDampingParameter_Per_s = 25.0; //Aaron - Add this fractional change parameter to the settings with this same default value for all modes to prevent abrupt changes to the driver
+    double driverDampingParameter_Per_s = 25.0;
+    if (GetSettings().HasDriverDampingParameter())
+      driverDampingParameter_Per_s = GetSettings().GetDriverDampingParameter(FrequencyUnit::Per_s);
     driverDampingParameter_Per_s = LIMIT(driverDampingParameter_Per_s, 0.0, 1.0 / m_data.GetTimeStep_s());
 
     if (!std::isnan(driverPressure_cmH2O))

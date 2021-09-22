@@ -21,6 +21,12 @@ namespace Pulse.CDM
     {
       dst.Clear();
       dst.SetConnection((eSwitch)src.Connection);
+      if (src.ConnectionVolume != null)
+        PBProperty.Load(src.ConnectionVolume, dst.GetConnectionVolume());
+      if (src.Compliance != null)
+        PBProperty.Load(src.Compliance, dst.GetCompliance());
+      if (src.DriverDampingParameter != null)
+        PBProperty.Load(src.DriverDampingParameter, dst.GetDriverDampingParameter());
 
       if (src.PositiveEndExpiredPressure != null)
         PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
@@ -85,8 +91,6 @@ namespace Pulse.CDM
 
       if (src.YPieceVolume != null)
         PBProperty.Load(src.YPieceVolume, dst.GetYPieceVolume());
-      if (src.ConnectionVolume != null)
-        PBProperty.Load(src.ConnectionVolume, dst.GetConnectionVolume());
 
       foreach (pulse.cdm.bind.SubstanceFractionData sf in src.FractionInspiredGas)
       {
@@ -108,6 +112,12 @@ namespace Pulse.CDM
     protected static void Unload(SEMechanicalVentilatorSettings src, pulse.cdm.bind.MechanicalVentilatorSettingsData dst)
     {
       dst.Connection = (pulse.cdm.bind.eSwitch)(int)src.GetConnection();
+      if (src.HasConnectionVolume())
+        dst.ConnectionVolume = PBProperty.Unload(src.GetConnectionVolume());
+      if (src.HasCompliance())
+        dst.Compliance = PBProperty.Unload(src.GetCompliance());
+      if (src.HasDriverDampingParameter())
+        dst.DriverDampingParameter = PBProperty.Unload(src.GetDriverDampingParameter());
 
       if (src.HasPositiveEndExpiredPressure())
         dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
@@ -172,8 +182,6 @@ namespace Pulse.CDM
 
       if (src.HasYPieceVolume())
         dst.YPieceVolume = PBProperty.Unload(src.GetYPieceVolume());
-      if (src.HasConnectionVolume())
-        dst.ConnectionVolume = PBProperty.Unload(src.GetConnectionVolume());
 
       foreach (SESubstanceFraction aGas in src.GetFractionInspiredGases())
       {

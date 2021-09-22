@@ -19,7 +19,10 @@ import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
 public class SEMechanicalVentilatorSettings extends SEEquipment
 {
-  protected eSwitch                       connection;
+  protected eSwitch                           connection;
+  protected SEScalarVolume                    connectionVolume;
+  protected SEScalarVolumePerPressure         compliance;
+  protected SEScalarFrequency                 driverDampingParameter;
   
   // Expiratory Baseline Properties (Only set 1)
   protected SEScalarPressure                  positiveEndExpiredPressure;
@@ -66,7 +69,6 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
   protected SEScalarTime                      inspirationWaveformPeriod;
 
   protected SEScalarVolume                    yPieceVolume;
-  protected SEScalarVolume                    connectionVolume;
   
   protected List<SESubstanceFraction>         fractionInspiredGases;
   protected List<SESubstanceConcentration>    concentrationInspiredAerosol;
@@ -75,6 +77,9 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
   public SEMechanicalVentilatorSettings()
   {
     connection = null;
+    connectionVolume = null;
+    compliance = null;
+    driverDampingParameter = null;
 
     positiveEndExpiredPressure = null;
     functionalResidualCapacity = null;
@@ -113,7 +118,6 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
     inspirationWaveformPeriod = null;
 
     yPieceVolume = null;
-    connectionVolume = null;
 
     this.fractionInspiredGases=new ArrayList<SESubstanceFraction>();
     this.concentrationInspiredAerosol=new ArrayList<SESubstanceConcentration>();
@@ -123,6 +127,12 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
   public void clear()
   {
     connection = null;
+    if (connectionVolume != null)
+      connectionVolume.invalidate();
+    if (compliance != null)
+      compliance.invalidate();
+    if (driverDampingParameter != null)
+      driverDampingParameter.invalidate();
 
     if (positiveEndExpiredPressure != null)
       positiveEndExpiredPressure.invalidate();
@@ -187,8 +197,6 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
     
     if (yPieceVolume != null)
       yPieceVolume.invalidate();
-    if (connectionVolume != null)
-      connectionVolume.invalidate();
     
     this.fractionInspiredGases.clear();
     this.concentrationInspiredAerosol.clear();
@@ -199,6 +207,12 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
     clear();
     if(from.connection!=null && from.connection != eSwitch.NullSwitch)
     	this.connection=from.connection;
+    if(from.hasConnectionVolume())
+      this.getConnectionVolume().set(from.getConnectionVolume());
+    if(from.hasCompliance())
+      this.getCompliance().set(from.getCompliance());
+    if(from.hasDriverDampingParameter())
+      this.getDriverDampingParameter().set(from.getDriverDampingParameter());
     
     if(from.hasPositiveEndExpiredPressure())
       this.getPositiveEndExpiredPressure().set(from.getPositiveEndExpiredPressure());
@@ -265,8 +279,6 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
     
     if(from.hasYPieceVolume())
       this.getYPieceVolume().set(from.getYPieceVolume());
-    if(from.hasConnectionVolume())
-      this.getConnectionVolume().set(from.getConnectionVolume());
     
     if(from.fractionInspiredGases!=null)
     {
@@ -295,6 +307,12 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
     dst.clear();
     if (src.getConnection()!=eSwitch.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
+    if (src.hasConnectionVolume())
+      SEScalarVolume.load(src.getConnectionVolume(), dst.getConnectionVolume());
+    if (src.hasCompliance())
+      SEScalarVolumePerPressure.load(src.getCompliance(), dst.getCompliance());
+    if (src.hasDriverDampingParameter())
+      SEScalarFrequency.load(src.getDriverDampingParameter(), dst.getDriverDampingParameter());
     
     if (src.hasPositiveEndExpiredPressure())
       SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
@@ -361,8 +379,6 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
     
     if (src.hasYPieceVolume())
       SEScalarVolume.load(src.getYPieceVolume(), dst.getYPieceVolume());
-    if (src.hasConnectionVolume())
-      SEScalarVolume.load(src.getConnectionVolume(), dst.getConnectionVolume());
     
     if(src.getFractionInspiredGasList()!=null)
     {
@@ -390,6 +406,12 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
   {
     if (src.hasConnection())
       dst.setConnection(src.connection);
+    if(src.hasConnectionVolume())
+      dst.setConnectionVolume(SEScalarVolume.unload(src.getConnectionVolume()));
+    if(src.hasCompliance())
+      dst.setCompliance(SEScalarVolumePerPressure.unload(src.getCompliance()));
+    if(src.hasDriverDampingParameter())
+      dst.setDriverDampingParameter(SEScalarFrequency.unload(src.getDriverDampingParameter()));
     
     if(src.hasPositiveEndExpiredPressure())
       dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.getPositiveEndExpiredPressure()));
@@ -456,8 +478,6 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
     
     if(src.hasYPieceVolume())
       dst.setYPieceVolume(SEScalarVolume.unload(src.getYPieceVolume()));
-    if(src.hasConnectionVolume())
-      dst.setConnectionVolume(SEScalarVolume.unload(src.getConnectionVolume()));
     
     for(SESubstanceFraction ambSub : src.fractionInspiredGases)
       dst.addFractionInspiredGas(SESubstanceFraction.unload(ambSub));
@@ -477,6 +497,39 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
   public boolean hasConnection()
   {
     return connection != null;
+  }
+  
+  public SEScalarVolume getConnectionVolume()
+  {
+    if (connectionVolume == null)
+      connectionVolume = new SEScalarVolume();
+    return connectionVolume;
+  }
+  public boolean hasConnectionVolume()
+  {
+    return connectionVolume == null ? false : connectionVolume.isValid();
+  }
+  
+  public SEScalarVolumePerPressure getCompliance()
+  {
+    if (compliance == null)
+      compliance = new SEScalarVolumePerPressure();
+    return compliance;
+  }
+  public boolean hasCompliance()
+  {
+    return compliance == null ? false : compliance.isValid();
+  }
+  
+  public SEScalarFrequency getDriverDampingParameter()
+  {
+    if (driverDampingParameter == null)
+      driverDampingParameter = new SEScalarFrequency();
+    return driverDampingParameter;
+  }
+  public boolean hasDriverDampingParameter()
+  {
+    return driverDampingParameter == null ? false : driverDampingParameter.isValid();
   }
   
   public SEScalarPressure getPositiveEndExpiredPressure()
@@ -790,16 +843,6 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
     return yPieceVolume == null ? false : yPieceVolume.isValid();
   }
   
-  public SEScalarVolume getConnectionVolume()
-  {
-    if (connectionVolume == null)
-      connectionVolume = new SEScalarVolume();
-    return connectionVolume;
-  }
-  public boolean hasConnectionVolume()
-  {
-    return connectionVolume == null ? false : connectionVolume.isValid();
-  }
   //////////////////////////////
   // Fraction Of Inspired Gas //
   //////////////////////////////

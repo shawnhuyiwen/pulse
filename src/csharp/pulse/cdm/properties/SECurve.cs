@@ -23,16 +23,16 @@ namespace Pulse.CDM
     public void Copy(SECurve other)
     {
       base.Copy(other);
-      foreach (SESegment s in segments)
+      foreach (SESegment s in other.GetSegments())
       {
         if(s is SESegmentConstant)
           AddConstantSegment().Copy((SESegmentConstant)s);
         else if (s is SESegmentLinear)
-          AddConstantSegment().Copy((SESegmentLinear)s);
+          AddLinearSegment().Copy((SESegmentLinear)s);
         else if (s is SESegmentParabolic)
-          AddConstantSegment().Copy((SESegmentParabolic)s);
+          AddParabolicSegment().Copy((SESegmentParabolic)s);
         else if (s is SESegmentSigmoidal)
-          AddConstantSegment().Copy((SESegmentSigmoidal)s);
+          AddSigmoidalSegment().Copy((SESegmentSigmoidal)s);
       }
     }
 

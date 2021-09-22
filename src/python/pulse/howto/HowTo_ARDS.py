@@ -7,7 +7,7 @@ from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_ARDS():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_ARDS.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_ARDS.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()

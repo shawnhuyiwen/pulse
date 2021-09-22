@@ -8,7 +8,7 @@ from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_PericardalEffusion():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_PericardialEffusion.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_PericardialEffusion.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()

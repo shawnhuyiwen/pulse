@@ -6,6 +6,7 @@ from pulse.cdm.io.action import serialize_action_from_bind, serialize_action_to_
 from pulse.cdm.patient_actions import *
 from pulse.cdm.bind.PatientActions_pb2 import *
 from pulse.cdm.io.patient import *
+from pulse.cdm.io.physiology import *
 from pulse.cdm.io.scalars import *
 
 def serialize_patient_action_to_bind(src: SEPatientAction, dst: PatientActionData):
@@ -364,6 +365,18 @@ def serialize_respiratory_fatigue_to_bind(src:SERespiratoryFatigue, dst: Respira
         serialize_scalar_0to1_to_bind(src.get_severity(), dst.Severity)
 
 def serialize_respiratory_fatigue_from_bind(src: RespiratoryFatigueData, dst: SERespiratoryFatigue):
+    serialize_patient_action_from_bind(src.PatientAction, dst)
+    raise Exception("serialize_patient_condition_from_bind not implemented")
+
+#################################################################
+
+def serialize_respiratory_mechanics_configuration_to_bind(src:SERespiratoryMechanicsConfiguration, dst: RespiratoryMechanicsConfigurationData):
+    serialize_patient_action_to_bind(src, dst.PatientAction)
+    if src.has_settings_file():
+        dst.SettingsFile = src.get_settings_file()
+    elif src.has_settings():
+        serialize_respiratory_mechanics_to_bind(src.get_settings(), dst.Settings)
+def serialize_respiratory_mechanics_configuration_from_bind(src: RespiratoryMechanicsConfigurationData, dst: SERespiratoryMechanicsConfiguration):
     serialize_patient_action_from_bind(src.PatientAction, dst)
     raise Exception("serialize_patient_condition_from_bind not implemented")
 

@@ -4,9 +4,9 @@
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.engine.PulseEngine import PulseEngine
 
-def HowTo_UseAnemia():
+def HowTo_ChronicVentricularSystolicDysfunction():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_ChronicVentricularSystolicDysfunction.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_ChronicVentricularSystolicDysfunction.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
@@ -28,5 +28,5 @@ def HowTo_UseAnemia():
     results = pulse.pull_data()
     print(results)
 
-HowTo_UseAnemia()
+HowTo_ChronicVentricularSystolicDysfunction()
 
