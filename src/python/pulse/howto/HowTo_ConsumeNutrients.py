@@ -7,7 +7,7 @@ from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_ConsumeNutrients():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_ConsumeNutrients.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_ConsumeNutrients.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

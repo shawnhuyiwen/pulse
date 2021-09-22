@@ -36,7 +36,7 @@ void HowToVentilationMechanics()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine(pulse::engine::eModelType::HumanAdultVentilationMechanics);
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_BrainInjury.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_VentilationMechanics.cpp.log");
 
   pe->GetLogger()->Info("HowToVentilationMechanics");
 

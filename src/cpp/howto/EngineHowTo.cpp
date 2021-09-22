@@ -14,7 +14,7 @@ int main()
 
   //HowToSandbox();
 
-  //HowToEngineUse();
+  HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
@@ -51,7 +51,7 @@ int main()
 
   //HowToTestSystemCapability();
 
-  HowToVentilationMechanics();
+  //HowToVentilationMechanics();
 }
 
 bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine)

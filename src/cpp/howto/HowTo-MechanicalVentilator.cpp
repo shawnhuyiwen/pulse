@@ -54,7 +54,7 @@ void HowToMechanicalVentilator()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo/HowTo_MechanicalVentilator.log");
+  pe->GetLogger()->SetLogFile("./test_results/HowTo/HowTo_MechanicalVentilator.cpp.log");
   
   pe->GetLogger()->Info("HowTo_MechanicalVentilator");
   
@@ -66,18 +66,13 @@ void HowToMechanicalVentilator()
   }
 
   // Vitals Monitor Data
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit::C);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
   // Ventilator Monitor Data
   pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit::cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction");
@@ -134,6 +129,7 @@ void HowToMechanicalVentilator()
   pc_ac.GetInspiratoryPressure().SetValue(13.0, PressureUnit::cmH2O);
   pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
+  pc_ac.GetSlope().SetValue(0.1, TimeUnit::s);
   pe->ProcessAction(pc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);

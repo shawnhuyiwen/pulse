@@ -4,7 +4,7 @@
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from enum import Enum
-from pulse.cdm.scalars import SEScalarProperty, SEScalarTime
+from pulse.cdm.scalars import SEScalarProperty, SEScalarTime, SEScalarUnit
 
 class eSerializationFormat(Enum):
     JSON = 0
@@ -397,7 +397,7 @@ class eDataRequest_category(Enum):
 class SEDataRequest:
     __slots__ = ['_category', '_compartment_name', '_substance_name', '_property_name', '_unit']
 
-    def __init__(self, category: eDataRequest_category, compartment=None, substance=None, property=None, unit=None):
+    def __init__(self, category: eDataRequest_category, compartment:str=None, substance:str=None, property:str=None, unit:SEScalarUnit=None):
         if category is None:
             raise Exception("Must provide a Data Request Category")
         if property is None:
@@ -413,7 +413,10 @@ class SEDataRequest:
         self._compartment_name = compartment
         self._substance_name = substance
         self._property_name = property
-        self._unit = unit
+        if unit is None:
+            self._unit = None
+        else:
+            self._unit = unit.get_string()
 
     def __repr__(self):
         out_string = ""
@@ -428,53 +431,53 @@ class SEDataRequest:
         return self.__repr__()
 
     @classmethod
-    def create_patient_request(cls, property, unit=None):
+    def create_patient_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.Patient, property=property,  unit=unit)
     @classmethod
-    def create_physiology_request(cls, property, unit=None):
+    def create_physiology_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.Physiology, property=property,  unit=unit)
     @classmethod
-    def create_environment_request(cls, property, unit=None):
+    def create_environment_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.Environment, property=property,  unit=unit)
     @classmethod
-    def create_gas_compartment_request(cls, compartment, property, unit=None):
+    def create_gas_compartment_request(cls, compartment:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.GasCompartment, compartment=compartment, property=property,  unit=unit)
     @classmethod
-    def create_gas_compartment_substance_request(cls, compartment, substance, property, unit=None):
+    def create_gas_compartment_substance_request(cls, compartment:str, substance:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.GasCompartment,
                    compartment=compartment,
                    substance=substance,
                    property=property,
                    unit=unit)
     @classmethod
-    def create_liquid_compartment_request(cls, compartment, property, unit=None):
+    def create_liquid_compartment_request(cls, compartment:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.LiquidCompartment, compartment=compartment, property=property,  unit=unit)
     @classmethod
-    def create_liquid_compartment_substance_request(cls, compartment, substance, property, unit=None):
+    def create_liquid_compartment_substance_request(cls, compartment:str, substance:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.LiquidCompartment,
                    compartment=compartment,
                    substance=substance,
                    property=property,
                    unit=unit)
     @classmethod
-    def create_thermal_compartment_request(cls, compartment, property, unit=None):
+    def create_thermal_compartment_request(cls, compartment:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.ThermalCompartment, compartment=compartment, property=property,  unit=unit)
 
     @classmethod
-    def create_substance_request(cls, substance, property, unit=None):
+    def create_substance_request(cls, substance:str, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.Substance, substance=substance, property=property,  unit=unit)
 
     @classmethod
-    def create_ecg_request(cls, property, unit=None):
+    def create_ecg_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.ECG, property=property,  unit=unit)
     @classmethod
-    def create_anesthesia_machine_request(cls, property, unit=None):
+    def create_anesthesia_machine_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.AnesthesiaMachine, property=property,  unit=unit)
     @classmethod
-    def create_inhaler_request(cls, property, unit=None):
+    def create_inhaler_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.Inhaler, property=property,  unit=unit)
     @classmethod
-    def create_mechanical_ventilator_request(cls, property, unit=None):
+    def create_mechanical_ventilator_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.MechanicalVentilator, property=property,  unit=unit)
 
     def get_category(self):

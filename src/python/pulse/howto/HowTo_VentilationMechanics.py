@@ -1,4 +1,7 @@
-from pulse.engine.PulseEngine import PulseEngine
+# Distributed under the Apache License, Version 2.0.
+# See accompanying NOTICE file for details.
+
+from pulse.engine.PulseEngine import PulseEngine, eModelType
 from pulse.cdm.engine import SEDataRequest, SEDataRequestManager
 from pulse.cdm.mechanical_ventilator import eSwitch
 from pulse.cdm.mechanical_ventilator_actions import SEMechanicalVentilatorPressureControl, \
@@ -6,50 +9,48 @@ from pulse.cdm.mechanical_ventilator_actions import SEMechanicalVentilatorPressu
 from pulse.cdm.patient import eSex, SEPatientConfiguration
 from pulse.cdm.patient_actions import eIntubationType, SEIntubation, SERespiratoryMechanicsConfiguration
 from pulse.cdm.scalars import FrequencyUnit, PressureUnit, PressureTimePerVolumeUnit,\
-                              TimeUnit, VolumeUnit, VolumePerPressureUnit
+                              TimeUnit, VolumeUnit, VolumePerPressureUnit, VolumePerTimeUnit
 
 def HowTo_VentilationMechanics():
-    pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_VentilationMechanics.log")
+    pulse = PulseEngine(eModelType.HumanAdultVentilationMechanics)
+    pulse.set_log_filename("./test_results/HowTo_VentilationMechanics.py.log")
     pulse.log_to_console(True)
 
     data_requests = [
-        SEDataRequest.create_physiology_request("RespirationRate", "1/min"),
-        SEDataRequest.create_physiology_request("TidalVolume", "mL"),
-        SEDataRequest.create_physiology_request("TotalLungVolume", "mL"),
+        SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("TidalVolume", unit=VolumeUnit.mL),
+        SEDataRequest.create_physiology_request("TotalLungVolume", unit=VolumeUnit.mL),
         SEDataRequest.create_physiology_request("InspiratoryExpiratoryRatio"),
-        SEDataRequest.create_physiology_request("MeanAirwayPressure", "cmH2O"),
-        SEDataRequest.create_physiology_request("TransrespiratoryPressure", "cmH2O"),
-        SEDataRequest.create_physiology_request("IntrapulmonaryPressure", "cmH2O"),
-        SEDataRequest.create_physiology_request("InspiratoryFlow", "L/min"),
-        SEDataRequest.create_physiology_request("ExpiratoryPulmonaryResistance", "cmH2O s/mL"),
-        SEDataRequest.create_physiology_request("InspiratoryPulmonaryResistance", "cmH2O s/mL"),
-        SEDataRequest.create_physiology_request("PulmonaryCompliance", "mL/cmH2O"),
-        SEDataRequest.create_physiology_request("TotalPulmonaryVentilation", "mL/min"),
+        SEDataRequest.create_physiology_request("MeanAirwayPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_physiology_request("TransrespiratoryPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_physiology_request("IntrapulmonaryPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_physiology_request("InspiratoryFlow", unit=VolumePerTimeUnit.L_Per_min),
+        SEDataRequest.create_physiology_request("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_mL),
+        SEDataRequest.create_physiology_request("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_mL),
+        SEDataRequest.create_physiology_request("PulmonaryCompliance", VolumePerPressureUnit.mL_Per_cmH2O),
+        SEDataRequest.create_physiology_request("TotalPulmonaryVentilation", VolumePerTimeUnit.mL_Per_min),
         # Ventilator Monitor Data
-        SEDataRequest.create_mechanical_ventilator_request("AirwayPressure", "cmH2O"),
+        SEDataRequest.create_mechanical_ventilator_request("AirwayPressure", unit=PressureUnit.cmH2O),
         SEDataRequest.create_mechanical_ventilator_request("EndTidalCarbonDioxideFraction"),
-        SEDataRequest.create_mechanical_ventilator_request("EndTidalCarbonDioxidePressure", "cmH2O"),
+        SEDataRequest.create_mechanical_ventilator_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.cmH2O),
         SEDataRequest.create_mechanical_ventilator_request("EndTidalOxygenFraction"),
-        SEDataRequest.create_mechanical_ventilator_request("EndTidalOxygenPressure", "cmH2O"),
-        SEDataRequest.create_mechanical_ventilator_request("ExpiratoryFlow", "L/s"),
-        SEDataRequest.create_mechanical_ventilator_request("ExpiratoryTidalVolume", "L"),
+        SEDataRequest.create_mechanical_ventilator_request("EndTidalOxygenPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("ExpiratoryFlow", unit=VolumePerTimeUnit.L_Per_s),
+        SEDataRequest.create_mechanical_ventilator_request("ExpiratoryTidalVolume", unit=VolumeUnit.L),
         SEDataRequest.create_mechanical_ventilator_request("InspiratoryExpiratoryRatio"),
-        SEDataRequest.create_mechanical_ventilator_request("InspiratoryFlow", "L/s"),
-        SEDataRequest.create_mechanical_ventilator_request("InspiratoryTidalVolume", "L"),
-        SEDataRequest.create_mechanical_ventilator_request("IntrinsicPositiveEndExpiredPressure", "cmH2O"),
+        SEDataRequest.create_mechanical_ventilator_request("InspiratoryFlow", unit=VolumePerTimeUnit.L_Per_s),
+        SEDataRequest.create_mechanical_ventilator_request("InspiratoryTidalVolume", unit=VolumeUnit.L),
+        SEDataRequest.create_mechanical_ventilator_request("IntrinsicPositiveEndExpiredPressure",
+                                                           unit=PressureUnit.cmH2O),
         SEDataRequest.create_mechanical_ventilator_request("LeakFraction"),
-        SEDataRequest.create_mechanical_ventilator_request("MeanAirwayPressure", "cmH2O"),
-        SEDataRequest.create_mechanical_ventilator_request("PeakInspiratoryPressure", "cmH2O"),
-        SEDataRequest.create_mechanical_ventilator_request("PlateauPressure", "cmH2O"),
-        SEDataRequest.create_mechanical_ventilator_request("PositiveEndExpiratoryPressure", "cmH2O"),
-        # SEDataRequest.create_mechanical_ventilator_request("PulmonaryCompliance", "L/cmH2O"),
-        # SEDataRequest.create_mechanical_ventilator_request("PulmonaryElastance", "cmH2O/L"),
-        # SEDataRequest.create_mechanical_ventilator_request("RelativeTotalLungVolume", "L"),
-        SEDataRequest.create_mechanical_ventilator_request("RespirationRate", "1/min"),
-        SEDataRequest.create_mechanical_ventilator_request("TidalVolume", "L"),
-        SEDataRequest.create_mechanical_ventilator_request("TotalLungVolume", "L"),
-        SEDataRequest.create_mechanical_ventilator_request("TotalPulmonaryVentilation", "L/s")]
+        SEDataRequest.create_mechanical_ventilator_request("MeanAirwayPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("PeakInspiratoryPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("PlateauPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("PositiveEndExpiratoryPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("RespirationRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_mechanical_ventilator_request("TidalVolume", unit=VolumeUnit.L),
+        SEDataRequest.create_mechanical_ventilator_request("TotalLungVolume", unit=VolumeUnit.L),
+        SEDataRequest.create_mechanical_ventilator_request("TotalPulmonaryVentilation", unit=VolumePerTimeUnit.L_Per_s)]
 
     data_mgr = SEDataRequestManager(data_requests)
     data_mgr.set_results_filename("./test_results/howto/HowTo_VentilationMechanics.py.csv")

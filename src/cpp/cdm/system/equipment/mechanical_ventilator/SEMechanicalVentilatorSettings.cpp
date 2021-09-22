@@ -6,6 +6,7 @@
 
 #include "cdm/substance/SESubstance.h"
 #include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarMassPerVolume.h"
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarPressureTimePerVolume.h"
@@ -18,6 +19,9 @@
 SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) : Loggable(logger)
 {
   m_Connection = eSwitch::Off;
+  m_ConnectionVolume = nullptr;
+  m_Compliance = nullptr;
+  m_DriverDampingParameter = nullptr;
 
   m_PositiveEndExpiredPressure = nullptr;
   m_FunctionalResidualCapacity = nullptr;
@@ -56,13 +60,14 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
   m_InspirationLimbVolume = nullptr;
   m_InspirationValveVolume = nullptr;
   m_YPieceVolume = nullptr;
-  m_ConnectionVolume = nullptr;
-  m_Compliance = nullptr;
 }
 
 SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 {
   m_Connection = eSwitch::Off;
+  SAFE_DELETE(m_ConnectionVolume);
+  SAFE_DELETE(m_Compliance);
+  SAFE_DELETE(m_DriverDampingParameter);
 
   SAFE_DELETE(m_PositiveEndExpiredPressure);
   SAFE_DELETE(m_FunctionalResidualCapacity);
@@ -101,9 +106,6 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
   SAFE_DELETE(m_InspirationLimbVolume);
   SAFE_DELETE(m_InspirationValveVolume);
   SAFE_DELETE(m_YPieceVolume);
-  SAFE_DELETE(m_ConnectionVolume);
-
-  SAFE_DELETE(m_Compliance);
 
   DELETE_VECTOR(m_FractionInspiredGases);
   m_cFractionInspiredGases.clear();
@@ -117,6 +119,9 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 void SEMechanicalVentilatorSettings::Clear()
 {
   m_Connection = eSwitch::Off;
+  INVALIDATE_PROPERTY(m_ConnectionVolume);
+  INVALIDATE_PROPERTY(m_Compliance);
+  INVALIDATE_PROPERTY(m_DriverDampingParameter);
 
   INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
   INVALIDATE_PROPERTY(m_FunctionalResidualCapacity);
@@ -155,9 +160,6 @@ void SEMechanicalVentilatorSettings::Clear()
   INVALIDATE_PROPERTY(m_InspirationLimbVolume);
   INVALIDATE_PROPERTY(m_InspirationValveVolume);
   INVALIDATE_PROPERTY(m_YPieceVolume);
-  INVALIDATE_PROPERTY(m_ConnectionVolume);
-
-  INVALIDATE_PROPERTY(m_Compliance);
 
   RemoveFractionInspiredGases();
   RemoveConcentrationInspiredAerosols();
@@ -182,6 +184,9 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
 {
   if(from.m_Connection!=eSwitch::NullSwitch)
     SetConnection(from.m_Connection);
+  COPY_PROPERTY(ConnectionVolume);
+  COPY_PROPERTY(Compliance);
+  COPY_PROPERTY(DriverDampingParameter);
 
   COPY_PROPERTY(PositiveEndExpiredPressure);
   COPY_PROPERTY(FunctionalResidualCapacity);
@@ -222,9 +227,6 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   COPY_PROPERTY(InspirationLimbVolume);
   COPY_PROPERTY(InspirationValveVolume);
   COPY_PROPERTY(YPieceVolume);
-  COPY_PROPERTY(ConnectionVolume);
-
-  COPY_PROPERTY(Compliance);
 
   // Always need to provide a full (fractions sum to 1) substance list that replaces current
   if (from.HasFractionInspiredGas())
@@ -305,6 +307,14 @@ bool SEMechanicalVentilatorSettings::SerializeFromFile(const std::string& filena
 
 const SEScalar* SEMechanicalVentilatorSettings::GetScalar(const std::string& name)
 {
+
+  if (name == "ConnectionVolume")
+    return &GetConnectionVolume();
+  if (name == "Compliance")
+    return &GetCompliance();
+  if (name == "DriverDampingParameter")
+    return &GetDriverDampingParameter();
+
   if (name == "PositiveEndExpiredPressure")
     return &GetPositiveEndExpiredPressure();
   if (name == "FunctionalResidualCapacity")
@@ -366,11 +376,6 @@ const SEScalar* SEMechanicalVentilatorSettings::GetScalar(const std::string& nam
     return &GetInspirationValveVolume();
   if (name == "YPieceVolume")
     return &GetYPieceVolume();
-  if (name == "ConnectionVolume")
-    return &GetConnectionVolume();
-
-  if (name == "Compliance")
-    return &GetCompliance();
 
   // I did not support for getting a specific gas/aerosol scalars due to lack of coffee
   return nullptr;
@@ -851,6 +856,23 @@ double SEMechanicalVentilatorSettings::GetCompliance(const VolumePerPressureUnit
   if (m_Compliance == nullptr)
     return SEScalar::dNaN();
   return m_Compliance->GetValue(unit);
+}
+
+bool SEMechanicalVentilatorSettings::HasDriverDampingParameter() const
+{
+  return m_DriverDampingParameter == nullptr ? false : m_DriverDampingParameter->IsValid();
+}
+SEScalarFrequency& SEMechanicalVentilatorSettings::GetDriverDampingParameter()
+{
+  if (m_DriverDampingParameter == nullptr)
+    m_DriverDampingParameter = new SEScalarFrequency();
+  return *m_DriverDampingParameter;
+}
+double SEMechanicalVentilatorSettings::GetDriverDampingParameter(const FrequencyUnit& unit) const
+{
+  if (m_DriverDampingParameter == nullptr)
+    return SEScalar::dNaN();
+  return m_DriverDampingParameter->GetValue(unit);
 }
 
 void SEMechanicalVentilatorSettings::SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w)

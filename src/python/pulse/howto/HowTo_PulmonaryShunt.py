@@ -7,7 +7,7 @@ from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_PulmonaryShunt():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_pulmonary_shunt.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_PulmonaryShunt.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()

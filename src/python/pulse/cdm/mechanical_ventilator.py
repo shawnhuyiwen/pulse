@@ -6,8 +6,8 @@ from pulse.cdm.engine import eSwitch
 from pulse.cdm.equipment import SEEquipment
 from pulse.cdm.substance import SESubstanceFraction, \
                                 SESubstanceConcentration
-from pulse.cdm.scalars import SEScalarPressureTimePerVolume, SEScalarVolumePerTime, \
-                              SEScalarPressure, SEScalarTime, SEScalarVolume, \
+from pulse.cdm.scalars import SEScalarFrequency, SEScalarPressureTimePerVolume, SEScalarVolumePerTime, \
+                              SEScalarPressure, SEScalarTime, SEScalarVolume, SEScalarVolumePerPressure, \
                               MassPerVolumeUnit
 
 class eDriverWaveform(Enum):
@@ -18,8 +18,11 @@ class eDriverWaveform(Enum):
     Sinusoidal = 4
     Sigmoidal = 5
 
-class SEMechanicalVentilator(SEEquipment):
+class SEMechanicalVentilatorSettings(SEEquipment):
     __slots__ = ["_connection",
+                 "_connection_volume",
+                 "_compliance",
+                 "_driver_damping_parameter",
                  # One of
                  "_positive_end_expired_pressure",
                  "_functional_residual_capacity",
@@ -58,7 +61,6 @@ class SEMechanicalVentilator(SEEquipment):
                  "_inspiration_waveform_period",
 
                  "_y_piece_volume",
-                 "_connection_volume",
 
                  "_fraction_inspired_gasses",
                  "_concentration_inspired_aerosol"]
@@ -66,6 +68,9 @@ class SEMechanicalVentilator(SEEquipment):
     def __init__(self):
         super().__init__()
         self._connection = eSwitch.NullSwitch
+        self._connection_volume = None
+        self._compliance = None
+        self._driver_damping_parameter = None
 
         self._positive_end_expired_pressure = None
         self._functional_residual_capacity = None
@@ -104,13 +109,15 @@ class SEMechanicalVentilator(SEEquipment):
         self._inspiration_waveform_period = None
 
         self._y_piece_volume = None
-        self._connection_volume = None
 
         self._fraction_inspired_gasses = []
         self._concentration_inspired_aerosol = []
 
     def clear(self):
         self._connection = eSwitch.NullSwitch
+        if self._connection_volume is not None: self._connection_volume.invalidate()
+        if self._compliance is not None: self._compliance.invalidate()
+        if self._driver_damping_parameter is not None: self._driver_damping_parameter.invalidate()
 
         if self._positive_end_expired_pressure is not None: self._positive_end_expired_pressure.invalidate()
         if self._functional_residual_capacity is not None: self._functional_residual_capacity.invalidate()
@@ -149,16 +156,18 @@ class SEMechanicalVentilator(SEEquipment):
         if self._inspiration_waveform_period is not None: self._inspiration_waveform_period.invalidate()
 
         if self._y_piece_volume is not None: self._y_piece_volume.invalidate()
-        if self._connection_volume is not None: self._connection_volume.invalidate()
 
         self._fraction_inspired_gasses = []
         self._concentration_inspired_aerosol = []
 
     def copy(self, src):
-        if not isinstance(SEMechanicalVentilator, src):
-            raise Exception("Provided argument must be a SEMechanicalVentilator")
+        if not isinstance(SEMechanicalVentilatorSettings, src):
+            raise Exception("Provided argument must be a SEMechanicalVentilatorSettings")
         self.clear()
         self._connection = src._connection
+        if src.has_connection_volume(): self.get_connection_volume().set(src._connection_volume)
+        if src.has_compliance(): self.get_compliance().set(src._compliance)
+        if src.has_driver_damping_parameter(): self.get_driver_damping_parameter().set(src._driver_damping_parameter)
 
         if src.has_positive_end_expired_pressure(): self.get_positive_end_expired_pressure().set(src._positive_end_expired_pressure)
         if src.has_functional_residual_capacity(): self.get_functional_residual_capacity().set(src._functional_residual_capacity)
@@ -197,7 +206,6 @@ class SEMechanicalVentilator(SEEquipment):
         if src.has_inspiration_waveform_period(): self.get_inspiration_waveform_period().set(src._inspiration_waveform_period)
 
         if src.has_y_piece_volume(): self.get_y_piece_volume().set(src._y_piece_volume)
-        if src.has_connection_volume(): self.get_connection_volume().set(src._connection_volume)
 
         if src.has_fraction_inspired_gasses:
             self._fraction_inspired_gasses.append(src._fraction_inspired_gasses[:])
@@ -208,7 +216,28 @@ class SEMechanicalVentilator(SEEquipment):
         return self._connection
     def set_connection(self, t: eSwitch):
         self._connection = t
-    
+
+    def has_connection_volume(self):
+        return False if self._connection_volume is None else self._connection_volume.is_valid()
+    def get_connection_volume(self):
+        if self._connection_volume is None:
+            self._connection_volume = SEScalarVolume()
+        return self._connection_volume
+
+    def has_compliance(self):
+        return False if self._compliance is None else self._compliance.is_valid()
+    def get_compliance(self):
+        if self._compliance is None:
+            self._compliance = SEScalarVolumePerPressure()
+        return self._compliance
+
+    def has_driver_damping_parameter(self):
+        return False if self._driver_damping_parameter is None else self._driver_damping_parameter.is_valid()
+    def get_driver_damping_parameter(self):
+        if self._driver_damping_parameter is None:
+            self._driver_damping_parameter = SEScalarFrequency()
+        return self._driver_damping_parameter
+
     def has_positive_end_expired_pressure(self):
         return False if self._positive_end_expired_pressure is None else self._positive_end_expired_pressure.is_valid()
     def get_positive_end_expired_pressure(self):
@@ -389,13 +418,6 @@ class SEMechanicalVentilator(SEEquipment):
             self._y_piece_volume = SEScalarVolume()
         return self._y_piece_volume
 
-    def has_connection_volume(self):
-        return False if self._connection_volume is None else self._connection_volume.is_valid()
-    def get_connection_volume(self):
-        if self._connection_volume is None:
-            self._connection_volume = SEScalarVolume()
-        return self._connection_volume
-    
     def get_inspiration_waveform(self):
         return self._inspiration_waveform
     def set_inspiration_waveform(self, t: eDriverWaveform):

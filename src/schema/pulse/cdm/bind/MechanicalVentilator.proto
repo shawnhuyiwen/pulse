@@ -20,7 +20,10 @@ message MechanicalVentilatorSettingsData
     Sigmoidal          = 5;/**<<  */
   }
   
-  eSwitch                             Connection                          = 4; /**<< @brief @ref MechanicalVentilatorData_eConnectionTable */
+  eSwitch                             Connection                          = 1; /**<< @brief @ref MechanicalVentilatorData_eConnectionTable */
+  ScalarVolumeData                    ConnectionVolume                    = 2;/**<< @brief Dead space volume of the connection (i.e., mask/tube). */
+  ScalarVolumePerPressureData         Compliance                          = 3;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
+  ScalarFrequencyData                 DriverDampingParameter              = 4;/**<< @brief Fractional change parameter to prevent abrupt changes to the driver. */
   
   oneof ExpiratoryBaseline
   {
@@ -76,12 +79,9 @@ message MechanicalVentilatorSettingsData
   ScalarTimeData                      InspirationWaveformPeriod           = 31;/**<< @brief Time to reach maximum value */
   
   ScalarVolumeData                    YPieceVolume                        = 32;/**<< @brief Dead space volume of the y-piece. */
-  ScalarVolumeData                    ConnectionVolume                    = 33;/**<< @brief Dead space volume of the connection (i.e., mask/tube). */
   
-  ScalarVolumePerPressureData         Compliance                          = 34;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
-  
-  repeated SubstanceFractionData      FractionInspiredGas                 = 35;/**<< @brief Break down of the gases, such as FiO2. */
-  repeated SubstanceConcentrationData ConcentrationInspiredAerosol        = 36;/**<< @brief Concentration of added aerosolized substances. */
+  repeated SubstanceFractionData      FractionInspiredGas                 = 33;/**<< @brief Break down of the gases, such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol        = 34;/**<< @brief Concentration of added aerosolized substances. */
 }
 
 message MechanicalVentilatorData

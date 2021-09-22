@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.equipment_actions import SEEquipmentAction
-from pulse.cdm.mechanical_ventilator import SEMechanicalVentilator, eSwitch
+from pulse.cdm.mechanical_ventilator import SEMechanicalVentilatorSettings, eSwitch
 from pulse.cdm.scalars import SEScalarPressure, SEScalar0To1, SEScalarTime, \
                               SEScalarFrequency, SEScalarVolumePerTime, SEScalarVolume
 from pulse.cdm.bind.Actions_pb2 import eAppliedRespiratoryCycle
@@ -51,7 +51,7 @@ class SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorAction):
         return self._settings is not None
     def get_settings(self):
         if self._settings is None:
-            self._settings = SEMechanicalVentilator()
+            self._settings = SEMechanicalVentilatorSettings()
         return self._settings
 
 class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):

@@ -1,7 +1,6 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.engine import eSerializationFormat
 from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.mechanical_ventilator_actions import SEMechanicalVentilatorConfiguration, \
                                                     SEMechanicalVentilatorContinuousPositiveAirwayPressure, \
@@ -11,7 +10,8 @@ from pulse.cdm.mechanical_ventilator_actions import SEMechanicalVentilatorConfig
                                                     SEMechanicalVentilatorLeak, \
                                                     eMechanicalVentilator_PressureControlMode, \
                                                     eMechanicalVentilator_VolumeControlMode
-from pulse.cdm.scalars import PressureUnit, TimeUnit, FrequencyUnit, VolumeUnit, VolumePerTimeUnit
+from pulse.cdm.scalars import FrequencyUnit, PressureUnit, PressureTimePerVolumeUnit, \
+                              TimeUnit, VolumeUnit, VolumePerPressureUnit, VolumePerTimeUnit
 from pulse.cdm.mechanical_ventilator import eSwitch, eDriverWaveform
 from pulse.cdm.engine import SEDataRequest, SEDataRequestManager
 from pulse.cdm.patient_actions import SEDyspnea
@@ -19,43 +19,38 @@ from pulse.cdm.patient_actions import SEDyspnea
 
 def HowTo_MechanicalVentilator():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_MechanicalVentilator.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_MechanicalVentilator.py.log")
     pulse.log_to_console(True)
 
     data_requests = [
-        SEDataRequest.create_physiology_request("HeartRate", "1/min"),
-        SEDataRequest.create_physiology_request("ArterialPressure", "mmHg"),
-        SEDataRequest.create_physiology_request("MeanArterialPressure", "mmHg"),
-        SEDataRequest.create_physiology_request("SystolicArterialPressure", "mmHg"),
-        SEDataRequest.create_physiology_request("DiastolicArterialPressure", "mmHg"),
-        SEDataRequest.create_physiology_request("OxygenSaturation"),
-        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", "mmHg"),
-        SEDataRequest.create_physiology_request("RespirationRate", "1/min"),
-        SEDataRequest.create_physiology_request("SkinTemperature", "degC"),
-        SEDataRequest.create_gas_compartment_substance_request("Carina", "CarbonDioxide", "PartialPressure", "mmHg"),
-        SEDataRequest.create_physiology_request("BloodVolume", "mL"),
-        SEDataRequest.create_ecg_request("Lead3ElectricPotential", "mV"),
+        SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("TidalVolume", unit=VolumeUnit.mL),
+        SEDataRequest.create_physiology_request("TotalLungVolume", unit=VolumeUnit.mL),
+        SEDataRequest.create_physiology_request("ExpiratoryPulmonaryResistance", unit=PressureTimePerVolumeUnit.cmH2O_s_Per_L),
+        SEDataRequest.create_physiology_request("InspiratoryPulmonaryResistance", unit=PressureTimePerVolumeUnit.cmH2O_s_Per_L),
+        SEDataRequest.create_physiology_request("PulmonaryCompliance", unit=VolumePerPressureUnit.L_Per_cmH2O),
+        SEDataRequest.create_physiology_request("TotalPulmonaryVentilation", unit=VolumePerTimeUnit.L_Per_min),
         # Ventilator Monitor Data
-        SEDataRequest.create_mechanical_ventilator_request("AirwayPressure", "cmH2O"),
+        SEDataRequest.create_mechanical_ventilator_request("AirwayPressure", unit=PressureUnit.cmH2O),
         SEDataRequest.create_mechanical_ventilator_request("EndTidalCarbonDioxideFraction"),
-        SEDataRequest.create_mechanical_ventilator_request("EndTidalCarbonDioxidePressure", "cmH2O"),
+        SEDataRequest.create_mechanical_ventilator_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.cmH2O),
         SEDataRequest.create_mechanical_ventilator_request("EndTidalOxygenFraction"),
-        SEDataRequest.create_mechanical_ventilator_request("EndTidalOxygenPressure", "cmH2O"),
-        SEDataRequest.create_mechanical_ventilator_request("ExpiratoryFlow", "L/s"),
-        SEDataRequest.create_mechanical_ventilator_request("ExpiratoryTidalVolume", "L"),
+        SEDataRequest.create_mechanical_ventilator_request("EndTidalOxygenPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("ExpiratoryFlow", unit=VolumePerTimeUnit.L_Per_s),
+        SEDataRequest.create_mechanical_ventilator_request("ExpiratoryTidalVolume", unit=VolumeUnit.L),
         SEDataRequest.create_mechanical_ventilator_request("InspiratoryExpiratoryRatio"),
-        SEDataRequest.create_mechanical_ventilator_request("InspiratoryFlow", "L/s"),
-        SEDataRequest.create_mechanical_ventilator_request("InspiratoryTidalVolume", "L"),
-        SEDataRequest.create_mechanical_ventilator_request("IntrinsicPositiveEndExpiredPressure", "cmH2O"),
+        SEDataRequest.create_mechanical_ventilator_request("InspiratoryFlow", unit=VolumePerTimeUnit.L_Per_s),
+        SEDataRequest.create_mechanical_ventilator_request("InspiratoryTidalVolume", unit=VolumeUnit.L),
+        SEDataRequest.create_mechanical_ventilator_request("IntrinsicPositiveEndExpiredPressure", unit=PressureUnit.cmH2O),
         SEDataRequest.create_mechanical_ventilator_request("LeakFraction"),
-        SEDataRequest.create_mechanical_ventilator_request("MeanAirwayPressure", "cmH2O"),
-        SEDataRequest.create_mechanical_ventilator_request("PeakInspiratoryPressure", "cmH2O"),
-        SEDataRequest.create_mechanical_ventilator_request("PlateauPressure", "cmH2O"),
-        SEDataRequest.create_mechanical_ventilator_request("PositiveEndExpiratoryPressure", "cmH2O"),
-        SEDataRequest.create_mechanical_ventilator_request("RespirationRate", "1/min"),
-        SEDataRequest.create_mechanical_ventilator_request("TidalVolume", "L"),
-        SEDataRequest.create_mechanical_ventilator_request("TotalLungVolume", "L"),
-        SEDataRequest.create_mechanical_ventilator_request("TotalPulmonaryVentilation", "L/s")]
+        SEDataRequest.create_mechanical_ventilator_request("MeanAirwayPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("PeakInspiratoryPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("PlateauPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("PositiveEndExpiratoryPressure", unit=PressureUnit.cmH2O),
+        SEDataRequest.create_mechanical_ventilator_request("RespirationRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_mechanical_ventilator_request("TidalVolume", unit=VolumeUnit.L),
+        SEDataRequest.create_mechanical_ventilator_request("TotalLungVolume", unit=VolumeUnit.L),
+        SEDataRequest.create_mechanical_ventilator_request("TotalPulmonaryVentilation", unit=VolumePerTimeUnit.L_Per_s)]
 
     data_mgr = SEDataRequestManager(data_requests)
     data_mgr.set_results_filename("./test_results/howto/HowTo_MechanicalVentilator.py.csv")
@@ -91,7 +86,7 @@ def HowTo_MechanicalVentilator():
     cpap = SEMechanicalVentilatorContinuousPositiveAirwayPressure()
     cpap.set_connection(eSwitch.On)
     cpap.get_fraction_inspired_oxygen().set_value(0.21)
-    cpap.get_delta_pressure_support().set_value(10.0, PressureUnit.cmH2O)
+    cpap.get_delta_pressure_support().set_value(8.0, PressureUnit.cmH2O)
     cpap.get_positive_end_expired_pressure().set_value(5.0, PressureUnit.cmH2O)
     cpap.get_slope().set_value(0.2, TimeUnit.s)
     pulse.process_action(cpap)
@@ -106,10 +101,10 @@ def HowTo_MechanicalVentilator():
     pc_ac.set_mode(eMechanicalVentilator_PressureControlMode.AssistedControl)
     pc_ac.get_fraction_inspired_oxygen().set_value(0.21)
     pc_ac.get_inspiratory_period().set_value(1.0, TimeUnit.s)
-    pc_ac.get_inspiratory_pressure().set_value(19.0, PressureUnit.cmH2O)
+    pc_ac.get_inspiratory_pressure().set_value(13.0, PressureUnit.cmH2O)
     pc_ac.get_positive_end_expired_pressure().set_value(5.0, PressureUnit.cmH2O)
     pc_ac.get_respiration_rate().set_value(12.0, FrequencyUnit.Per_min)
-    pc_ac.get_slope().set_value(0, TimeUnit.s)
+    pc_ac.get_slope().set_value(0.1, TimeUnit.s)
     pulse.process_action(pc_ac)
     pulse.advance_time_s(10)
     # Get the values of the data you requested at this time
@@ -120,12 +115,12 @@ def HowTo_MechanicalVentilator():
     vc_ac = SEMechanicalVentilatorVolumeControl()
     vc_ac.set_connection(eSwitch.On)
     vc_ac.set_mode(eMechanicalVentilator_VolumeControlMode.AssistedControl)
-    vc_ac.get_flow().set_value(60.0, VolumePerTimeUnit.L_Per_min)
+    vc_ac.get_flow().set_value(50.0, VolumePerTimeUnit.L_Per_min)
     vc_ac.get_fraction_inspired_oxygen().set_value(0.21)
     vc_ac.get_inspiratory_period().set_value(1.0, TimeUnit.s)
     vc_ac.get_positive_end_expired_pressure().set_value(5.0, PressureUnit.cmH2O)
     vc_ac.get_respiration_rate().set_value(12.0, FrequencyUnit.Per_min)
-    vc_ac.get_tidal_volume().set_value(900.0, VolumeUnit.mL)
+    vc_ac.get_tidal_volume().set_value(600.0, VolumeUnit.mL)
     pulse.process_action(vc_ac)
     pulse.advance_time_s(10)
     # Get the values of the data you requested at this time

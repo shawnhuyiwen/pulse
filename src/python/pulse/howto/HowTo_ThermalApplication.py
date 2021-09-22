@@ -8,7 +8,7 @@ from pulse.cdm.scalars import AreaUnit, PowerUnit, TemperatureUnit
 
 def HowTo_ThermalApplication():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_ThermalApplication.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_ThermalApplication.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

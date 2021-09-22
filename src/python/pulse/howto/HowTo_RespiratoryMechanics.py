@@ -4,21 +4,22 @@
 from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.engine import SEDataRequest, SEDataRequestManager, eSwitch
 from pulse.cdm.patient_actions import SERespiratoryMechanicsConfiguration
-from pulse.cdm.scalars import TimeUnit, PressureUnit, PressureTimePerVolumeUnit, VolumeUnit, VolumePerPressureUnit
+from pulse.cdm.scalars import FrequencyUnit, PressureUnit, PressureTimePerVolumeUnit,\
+                              TimeUnit, VolumeUnit, VolumePerPressureUnit, VolumePerTimeUnit
 
 def HowTo_RespiratoryMechanics():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_RespiratoryMechanics.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_RespiratoryMechanics.py.log")
     pulse.log_to_console(True)
 
     data_requests = [
-        SEDataRequest.create_physiology_request("RespirationRate", "1/min"),
-        SEDataRequest.create_physiology_request("TidalVolume", "mL"),
-        SEDataRequest.create_physiology_request("TotalLungVolume", "mL"),
-        SEDataRequest.create_physiology_request("ExpiratoryPulmonaryResistance", "cmH2O s/L"),
-        SEDataRequest.create_physiology_request("InspiratoryPulmonaryResistance", "cmH2O s/L"),
-        SEDataRequest.create_physiology_request("PulmonaryCompliance", "L/cmH2O"),
-        SEDataRequest.create_physiology_request("TotalPulmonaryVentilation", "L/min")]
+        SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("TidalVolume", unit=VolumeUnit.mL),
+        SEDataRequest.create_physiology_request("TotalLungVolume", unit=VolumeUnit.mL),
+        SEDataRequest.create_physiology_request("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
+        SEDataRequest.create_physiology_request("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L),
+        SEDataRequest.create_physiology_request("PulmonaryCompliance", VolumePerPressureUnit.L_Per_cmH2O),
+        SEDataRequest.create_physiology_request("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_min)]
 
     data_mgr = SEDataRequestManager(data_requests)
     data_mgr.set_results_filename("./test_results/howto/HowTo_RespiratoryMechanics.py.csv")
