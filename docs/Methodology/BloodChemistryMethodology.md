@@ -205,7 +205,7 @@ The respiratory acidosis event is triggered when the blood pH drops below the lo
 #### %Respiratory Alkalosis
 The respiratory alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries less than 44.0&nbsp;mmHg. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions. An irreversible state is triggered when the pH increases above 8.5.
 
-@image html AcidBaseEvents.png
+<img src="./Images/BloodChemistry/AcidBaseEvents.png">
 <center>
 *Figure 2. The acidosis and alkalosis events are broken down into either metabolic or respiratory induced. Metabolic induced acidosis/alkalosis is driven from a shift in bicarbonate
 while respiratory induced acidosis/alkalosis is due to a chance in arterial carbon dioxide. The shift between either acidosis or alkalosis occurs at a blood pH of 7.4.*

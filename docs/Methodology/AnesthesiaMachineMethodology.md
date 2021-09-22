@@ -245,7 +245,7 @@ the exhaust is connected to a breathing bag reservoir; however, the current vers
 lacks such a reservoir, and the exhaust in the circuit diagram serves as a current 
 source that facilitates appropriate pressure maintenance. 
 
-@image html AnesthesiaMachineCircuitDiagram.png
+<img src="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png">
 <center>
 *Figure 4. Circuit diagram of the Anesthesia Machine. The circuit 
 employs the ventilator as a driver pressure source. 
@@ -380,8 +380,7 @@ extents. Several insults modify the same resistance that leads to ground
 (atmosphere) because the change in flow produced by the ventilator
 reaches the patient in the same way.
 
-@image html AMSeverityMap.png
-
+<img src="./Images/AnesthesiaMachine/AMSeverityMap.png">
 <center>
 *Figure 5. This plot shows the resistance value that is set based on the
 leak severity modifier. The severity is mapped logarithmically in a
@@ -949,7 +948,31 @@ that allows spontaneous breathing along with positive-pressure ventilation, simi
 
 ## Data Model Implementation
 
-@ref AnesthesiaMachineTable "Anesthesia Machine"
+@ref AnesthesiaMachineChamberTable "AnesthesiaMachineChamber"
+
+@ref AnesthesiaMachineOxygenBottleTable "AnesthesiaMachineOxygenBottle"
+
+@ref AnesthesiaMachineVaporizerFailureTable "AnesthesiaMachineVaporizerFailure"
+
+@ref AnesthesiaMachineConfigurationTable "AnesthesiaMachineConfiguration"
+
+@ref AnesthesiaMachineOxygenTankPressureLossTable "AnesthesiaMachineOxygenTankPressureLoss"
+
+@ref AnesthesiaMachineExpiratoryValveObstructionTable "AnesthesiaMachineExpiratoryValveObstruction"
+
+@ref AnesthesiaMachineInspiratoryValveLeakTable "AnesthesiaMachineInspiratoryValveLeak"
+
+@ref AnesthesiaMachineSodaLimeFailureTable "AnesthesiaMachineSodaLimeFailure"
+
+@ref AnesthesiaMachineExpiratoryValveLeakTable "AnesthesiaMachineExpiratoryValveLeak"
+
+@ref AnesthesiaMachineInspiratoryValveObstructionTable "AnesthesiaMachineInspiratoryValveObstruction"
+
+@ref AnesthesiaMachineOxygenWallPortPressureLossTable "AnesthesiaMachineOxygenWallPortPressureLoss"
+
+@ref AnesthesiaMachineVentilatorPressureLossTable "AnesthesiaMachineVentilatorPressureLoss"
+
+@ref AnesthesiaMachineYPieceDisconnectTable "AnesthesiaMachineYPieceDisconnect"
 
 ## Acronyms
 

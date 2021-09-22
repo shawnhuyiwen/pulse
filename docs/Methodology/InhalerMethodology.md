@@ -60,7 +60,7 @@ The inhaler implementation is used to meet the requirement to administer a beta 
 ### Approach
 The pMDI is modeled as a simple circuit (Figure 2) conditionally appended to the existing %Respiratory System circuit model. The inhaler circuit consists of a single inhaler node with a fixed volume connected to the external environment &ldquo;ground.&rdquo; If a spacer is specified in the scenario, the volume of the spacer is added to the inhaler node volume. When the pMDI is actuated during a scenario, the inhaler circuit is connected to the mouth node of the respiratory model, replacing the connection from the mouth to the external environment. Atmospheric air initially fills the inhaler volume and airflow into and out of the respiratory system temporarily passes through the inhaler node. 
 
-@image html Inhaler_Figure02.png
+<img src="./Images/Inhaler/Inhaler_Figure02.png">
 <center>
 <i>Figure 2. %Inhaler circuit (red) connected to the %Respiratory System circuit. The inhaler circuit consists of a single inhaler node that is added the respiratory circuit when the pMDI is actuated.</i>
 </center><br>
@@ -307,7 +307,7 @@ Appendices
 Data Model Implementation
 -------------------------
 
-@ref InhalerTable "Inhaler"
+@ref InhalerConfigurationTable "InhalerConfiguration"
 
 Acronyms
 --------

@@ -85,7 +85,7 @@ Many meteorologic parameters such as ambient temperature, wind speed, atmospheri
 
 The remaining parameters are used for setting and manipulating the surrounding thermal environment.  A simplified one-dimensional representation of the thermodynamic process solved by the %Environment system is shown in Figure 1 @cite handbook2013fundamentals .  The %Environment circuit connects directly to the %Energy system circuit to balance with metabolic rate and body heat storage.
 
-@image html Environment2DModel.png
+<img src="./Images/Environment/Environment2DModel.png">
 <center>
 <i>Figure 1. Human thermoregulation in an environment can be shown with a simplified one dimensional model.  The net heat production is transferred to the environment through the skin surface and respiratory tract.</i>
 </center><br>
@@ -120,7 +120,7 @@ The one-dimensional model shown in Figure 1 is further simplified to a zero-dime
 
 The Ambient node contains both thermal properties (temperature), fluid properties (pressure), and substance properties (volume fraction, aerosol concentration).  It is assigned as the %Respiratory and Anesthesia Machine circuit&rsquo;s reference node, and therefore, interacts with them directly.  Any changes to the Ambient node properties automatically propagates through the other systems.
 
-@image html EnvironmentCircuit.png
+<img src="./Images/Environment/EnvironmentCircuit.png">
 <center>
 <i>Figure 3. The %Environment circuit consists of 6 nodes that are connected via 8 paths. There are 8 parameters representing circuit elements that are modified by feedback mechanisms or actions. The circuit is used to estimate all environment thermal properties each time step.</i>
 </center><br>
@@ -193,7 +193,7 @@ The clothing thermal insulation/resistance in this model is an average lumped va
 ### Aerosol
 An aerosol is a colloidal suspension of either solid or liquid droplet particles suspended in a gas (typically the surrounding air). Real aerosols can be monodispersed but are more often polydispersed, having a range of particle diameters. Particle deposition and retention in the lung depends on a number of, factors including particle aerodynamic diameter @cite carvalho2011influence @cite newman1985aerosol. Other deposition factors, including inhalation flow rate and tidal volume @cite kolanjiyil2016computationally, are accounted for by the breathing patterns simulated by the engine. In order to avoid the computational cost of tracking millions of individual particles or many groups of particles in a distribution throughout the respiratory tract and into the body, aerosols are modeled as a single concentration in the environment. The location of deposition and the deposition efficiency at each location is determined by first computing a particle-size-independent deposition efficiency for each compartment from a defined size-distribution histogram. The size-independent deposition efficiencies are computed from the deposition fractions which are determined for each compartment from the particle diameter using the equations fit by Hinds to the ICRP66 simulation results @cite hinds1999aerosol, as described by @cite rostami2009computational. The deposition fraction equations from @cite rostami2009computational are plotted in Fig. 4, and example mean depositions fractions for a particular histogram are shown. For the model implementation it is assumed that all particles are spherical, thus diameter is the aerodynamic diameter.
 
-@image html depositionfractions.png
+<img src="./Images/Environment/depositionfractions.png">
 <center>
 <i>Figure 4. The deposition fraction in each compartment is computed as a function of particle size, and the deposition fraction for a collection of particles within a histogram bin is computed from the mean deposition fraction within the boundaries of the bin. An 8 bin partition is shown in the figure for illustration purposes. The CDM supports histograms with an arbitrary number of bins.</i>
 </center><br>
@@ -304,7 +304,7 @@ The oxygen saturation curve effects model implemented is adapted from the regres
 *Equation 11.*
 </center><br>
 
-@image html leftShiftCO.png
+<img src="./Images/Environment/leftShiftCO.png">
 <center>
 <i>Figure 7. Oxygen concentration at partial pressure of oxygen in the blood with carboxyhemoglobin present. The dashed lines show what the curves would look like without the characteristic leftward shift.</i>
 </center><br>
@@ -329,7 +329,7 @@ Since the one dimensional model used for the %Environment thermal circuit needs 
 
 Several properties of water are needed at varying temperatures to determine the heat transfer occurring between the skin/clothing/lungs and the air.  Four of these are determined using the best fit of property tables or experimental data, as shown in Figure 8.
 
-@image html EnvironmentWaterPropertyGraphs.png
+<img src="./Images/Environment/EnvironmentWaterPropertyGraphs.png">
 <center>
 <i>Figure 8. These four properties of water are intermediate values needed for further calculations.  A, B, and C are plotted from data presented in a table @cite chase1985journal , while D is reproduced from data in a plot given by experimental data(d) @cite Cordes2014Heat .  Note in B that 1 Centipoise is equal to 0.001 N-s/m<sup>2</sup>.</i>
 </center><br>
@@ -411,7 +411,7 @@ The radiation heat transfer coefficient is used to determine the radiation resis
 
 Figure 9 highlights which elements are modified by the radiation method and by which parameters.
 
-@image html EnvironmentRadiationCircuit.png
+<img src="./Images/Environment/EnvironmentRadiationCircuit.png">
 <center>
 <i>Figure 9. Elements that are directly affected by the radiation calculations are boxed and labeled with parameters that cause them to change.</i>
 </center><br>
@@ -427,7 +427,7 @@ The equation chosen to account for convective effects comes from a study that us
 
 Figure 6 highlights which elements are modified by the convection method and by which parameters.
 
-@image html EnvironmentConvectionCircuit.png
+<img src="./Images/Environment/EnvironmentConvectionCircuit.png">
 <center>
 <i>Figure 10. Elements that are directly affected by the convection calculations are boxed and labeled with parameters that cause them to change.</i>
 </center><br>
@@ -479,7 +479,7 @@ Evaporative heat loss by sweating is directly proportional to the rate of sweat 
 
 Figure 11 highlights which elements are modified by the evaporation method and by which parameters.
 
-@image html EnvironmentEvaporationCircuit.png
+<img src="./Images/Environment/EnvironmentEvaporationCircuit.png">
 <center>
 <i>Figure 11. The evaporation flow source is directly calculated by the evaporation calculations, which is boxed in the circuit diagram.</i>
 </center><br>
@@ -523,7 +523,7 @@ Since heat and water vapor are transferred in the lungs, expired air is saturate
 
 Figure 12 highlights the source element that is modified by the respiration method.
 
-@image html EnvironmentRespirationCircuit.png
+<img src="./Images/Environment/EnvironmentRespirationCircuit.png">
 <center>
 <i>Figure 12. The respiratory flow source is directly calculated by the respiratory calculations, which is boxed in the circuit diagram.</i>
 </center><br>
@@ -572,7 +572,7 @@ The heat transfer coefficient can is determined by @cite boutelier2003experiment
 
 Figure 13 highlights which elements are modified when submerged and by which parameters.  Radiation is handled much like an open switch in a circuit via the resistor and does not allow any transfer.  The evaporation transfer source is directly set to zero.
 
-@image html EnvironmentSubmergedCircuit.png
+<img src="./Images/Environment/EnvironmentSubmergedCircuit.png">
 <center>
 <i>Figure 13. Elements that are directly affected by the submerged calculations are boxed and labeled with the parameters that cause them to change.</i>
 </center><br>
@@ -620,7 +620,7 @@ The environment change action has the option to be done directly or by reading a
 
 The thermal application action can directly add heat, remove heat, or set a temperature over any percentage of the patient&rsquo;s body.  They can be called individually or will sum together if called in combination.  These actions will set the active heat flow source and/or the active temperature source shown in Figure 14.  The applied area or fraction is used to determine the average amount to apply to the patient, since the %Environment is modeled as a one-dimensional circuit.  When actively heating or cooling, the total power is directly scaled using the fraction of the body that is covered using the patient skin surface area.  When applying a specific temperature, the average temperature will be applied between it and the ambient value, weighted by the fraction of the body covered.
 
-@image html EnvironmentActiveCircuit.png
+<img src="./Images/Environment/EnvironmentActiveCircuit.png">
 <center>
 <i>Figure 14. The active flow source is directly set by the heating and/or cooling actions.  It is boxed in the circuit diagram.</i>
 </center><br>
@@ -643,7 +643,7 @@ The following assumptions are made for this verification test:
 - Constant respiration rate of 16 breaths/min
 - Constant sweat rate of 1e-5 kg/s
 
-@image html EnvironmentVerificationCircuit.png
+<img src="./Images/Environment/EnvironmentVerificationCircuit.png">
 <center>
 <i>Figure 15. The %Energy system is replaced for the %Environment unit test by a single heat source to represent the metabolic rate.  None of the energy is stored, but instead directly affects the %Environment.</i>
 </center><br>

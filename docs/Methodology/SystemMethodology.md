@@ -236,7 +236,7 @@ Postprocess advances time by moving the next time step values to the
 current time step values. The next values are then set to the baseline values in
 preparation for the upcoming Preprocess call.
 
-@image html SystemDataFlow.png
+<img src="./Images/System/SystemDataFlow.png">
 <center>
 *Figure 4. This shows the repetitive three-step process used each time
 step to determine the system states. These three processes are mirrored
@@ -264,8 +264,8 @@ Externally available data is defined within the engine in three major ways:
 The engine modeling approach takes the human body and conceptually divides it into various fluid compartments that represents a real division in terms of how portions of the body's water, solutes, and suspended elements are segregated @cite rhoades2012medical.  Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In the engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts.
 	
 Compartments are implemented as conceptual physical divisions of the body.  Anatomical data can be pulled from each compartment through optional node and path mapping. Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts. Figure 5 shows an example of how compartments can be defined in the %Cardiovascular System.
-	
-@image html CompartmentExample.png
+
+<img src="./Images/System/CompartmentExample.png">
 <center>
 <i>Figure 5. This is an example of possible %Cardiovascular System compartments.  This is for explanation purposes only and not necessarily indicative of how things are really defined.  See the @ref CardiovascularMethodology documentation for how they are really defined.</i>
 </center><br>

@@ -190,7 +190,14 @@ The bag could be modeled as a compliance to be closer to reality.
 
 ## Data Model Implementation
 
-@ref BagValveMaskTable "Bag Valve Mask"
+@ref BagValveMaskAutomatedTable "BagValveMaskAutomated"
+
+@ref BagValveMaskConfigurationTable "BagValveMaskConfiguration"
+
+@ref BagValveMaskSqueezeTable "BagValveMaskSqueeze"
+
+@ref BagValveMaskInstantaneousTable "BagValveMaskInstantaneous"
+
 
 ## Acronyms
 
