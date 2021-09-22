@@ -985,7 +985,7 @@ public abstract class ValidationTool
     if(vRow.dType == DataType.MinPerIdealWeight || vRow.dType == DataType.MaxPerIdealWeight || vRow.dType == DataType.MeanPerIdealWeight|| 
        vRow.dType == DataType.WaveformMinPerIdealWeight || vRow.dType == DataType.WaveformMaxPerIdealWeight)
      {// Take off the weight unit from the header and unit we got from the spreadsheet
-       String weightHeader = "PatientIdealBodyWeight("+vRow.weightUnit+")";
+       String weightHeader = "Patient-IdealBodyWeight("+vRow.weightUnit+")";
        vRow.idealWeight = resultData.get(weightHeader);
        if(vRow.idealWeight==null)
        {// Maybe the result is in a different unit than our reference value
@@ -994,7 +994,7 @@ public abstract class ValidationTool
          for(String result : resultData.keySet())
          {
            split = result.split("[(]");
-           if(split.length==2&&split[0].equals("PatientIdealBodyWeight"))
+           if(split.length==2&&split[0].equals("Patient-IdealBodyWeight"))
            {
              newUnit = split[1].substring(0, split[1].indexOf(')'));
              vRow.idealWeight = resultData.get(result);
@@ -1012,7 +1012,7 @@ public abstract class ValidationTool
          }
          if(newUnit==null)// Nope, I don't think the result is there
          {
-           vRow.error = danger+"PatientIdealWeight, Not In Results!"+endSpan;
+           vRow.error = danger+"Patient-IdealWeight, Not In Results!"+endSpan;
            return false;
          }
        } 
@@ -1021,7 +1021,7 @@ public abstract class ValidationTool
     if(vRow.dType == DataType.MinPerWeight || vRow.dType == DataType.MaxPerWeight || vRow.dType == DataType.MeanPerWeight || 
        vRow.dType == DataType.WaveformMinPerWeight || vRow.dType == DataType.WaveformMaxPerWeight)
     {// Take off the weight unit from the header and unit we got from the spreadsheet
-      String weightHeader = "PatientWeight("+vRow.weightUnit+")";
+      String weightHeader = "Patient-Weight("+vRow.weightUnit+")";
       vRow.weight = resultData.get(weightHeader);
       if(vRow.weight==null)
       {// Maybe the result is in a different unit than our reference value
@@ -1030,7 +1030,7 @@ public abstract class ValidationTool
         for(String result : resultData.keySet())
         {
           split = result.split("[(]");
-          if(split.length==2&&split[0].equals("PatientWeight"))
+          if(split.length==2&&split[0].equals("Patient-Weight"))
           {
             newUnit = split[1].substring(0, split[1].indexOf(')'));
             vRow.weight = resultData.get(result);
@@ -1048,7 +1048,7 @@ public abstract class ValidationTool
         }
         if(newUnit==null)// Nope, I don't think the result is there
         {
-          vRow.error = danger+"PatientWeight, Not In Results!"+endSpan;
+          vRow.error = danger+"Patient-Weight, Not In Results!"+endSpan;
           return false;
         }
       } 
