@@ -223,9 +223,7 @@ namespace HowTo_UseEngine
       List<SEAction> actions = new List<SEAction>();
 
       SEHemorrhage h = new SEHemorrhage();
-      h.SetType(eHemorrhage_Type.External);
-      h.SetCompartment("RightLeg");
-      h.GetSeverity().SetValue(0.8);
+      h.SetExternal(SEHemorrhage.ExternalCompartment.RightLeg);
       // Optionally, You can set the flow rate of the hemorrhage,
       // This needs to be provided the proper flow rate associated with the anatomy
       // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures

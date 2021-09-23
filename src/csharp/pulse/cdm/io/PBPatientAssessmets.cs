@@ -18,6 +18,21 @@ namespace Pulse.CDM
     }
     public static bool SerializeFromString(string src, SEPatientAssessment dst)
     {
+      if (dst is SEArterialBloodGasTest)
+      {
+        SEArterialBloodGasTest abg = (SEArterialBloodGasTest)dst;
+        try
+        {
+          pulse.cdm.bind.ArterialBloodGasTestData data = JsonParser.Default.Parse<pulse.cdm.bind.ArterialBloodGasTestData>(src);
+          PBPatientAssessmets.Load(data, abg);
+        }
+        catch (Google.Protobuf.InvalidJsonException)
+        {
+          return false;
+        }
+        return true;
+      }
+
       if (dst is SECompleteBloodCount)
       {
         SECompleteBloodCount cbc = (SECompleteBloodCount)dst;

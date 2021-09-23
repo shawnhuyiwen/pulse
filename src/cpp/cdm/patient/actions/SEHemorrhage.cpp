@@ -118,6 +118,18 @@ void SEHemorrhage::InvalidateCompartment()
   m_Compartment = "";
 }
 
+void SEHemorrhage::SetExternal(const ExternalCompartment& c)
+{
+  SetType(eHemorrhage_Type::External);
+  SetCompartment(c.value);
+}
+
+void SEHemorrhage::SetInternal(const InternalCompartment& c)
+{
+  SetType(eHemorrhage_Type::Internal);
+  SetCompartment(c.value);
+}
+
 bool SEHemorrhage::HasFlowRate() const
 {
   return m_FlowRate==nullptr?false:m_FlowRate->IsValid();
@@ -181,3 +193,32 @@ void SEHemorrhage::ToString(std::ostream &str) const
   str << "\n\tTotalBloodLost: "; HasTotalBloodLost() ? str << *m_TotalBloodLost : str << "Not Set";
   str << std::flush;
 }
+
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::RightLeg("RightLeg");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::LeftLeg("LeftLeg");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::RightArm("RightArm");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::LeftArm("LeftArm");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Skin("Skin");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Muscle("Muscle");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Brain("Brain");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::LeftKidney("LeftKidney");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::RightKidney("RightKidney");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Liver("Liver");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Spleen("Spleen");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Splanchnic("Splanchnic");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::SmallIntestine("SmallIntestine");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::LargeIntestine("LargeIntestine");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::Aorta("Aorta");
+const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::VenaCava("VenaCava");
+SEHemorrhage::ExternalCompartment::ExternalCompartment(const std::string& v) : value(v) {}
+
+const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::LeftKidney("LeftKidney");
+const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::RightKidney("RightKidney");
+const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::Liver("Liver");
+const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::Spleen("Spleen");
+const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::Splanchnic("Splanchnic");
+const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::SmallIntestine("SmallIntestine");
+const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::LargeIntestine("LargeIntestine");
+const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::Aorta("Aorta");
+const SEHemorrhage::InternalCompartment SEHemorrhage::InternalCompartment::VenaCava("VenaCava");
+SEHemorrhage::InternalCompartment::InternalCompartment(const std::string& v) : value(v) {}

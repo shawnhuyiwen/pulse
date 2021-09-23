@@ -13,6 +13,47 @@ class CDM_DECL SEHemorrhage : public SEPatientAction
   friend class PBPatientAction;//friend the serialization class
 public:
 
+  // Convient 'enum' style class for often used compartments
+  // Noted, External Hemorrhages are not limited to these compartments
+  struct ExternalCompartment
+  {
+    ExternalCompartment(const std::string& v);
+    const std::string value;
+
+    static const ExternalCompartment RightLeg;
+    static const ExternalCompartment LeftLeg;
+    static const ExternalCompartment RightArm;
+    static const ExternalCompartment LeftArm;
+    static const ExternalCompartment Skin;
+    static const ExternalCompartment Muscle;
+    static const ExternalCompartment Brain;
+    static const ExternalCompartment LeftKidney;
+    static const ExternalCompartment RightKidney;
+    static const ExternalCompartment Liver;
+    static const ExternalCompartment Spleen;
+    static const ExternalCompartment Splanchnic;
+    static const ExternalCompartment SmallIntestine;
+    static const ExternalCompartment LargeIntestine;
+    static const ExternalCompartment Aorta;
+    static const ExternalCompartment VenaCava;
+  };
+
+  struct InternalCompartment
+  {
+    InternalCompartment(const std::string&);
+    const std::string value;
+
+    static const InternalCompartment LeftKidney;
+    static const InternalCompartment RightKidney;
+    static const InternalCompartment Liver;
+    static const InternalCompartment Spleen;
+    static const InternalCompartment Splanchnic;
+    static const InternalCompartment SmallIntestine;
+    static const InternalCompartment LargeIntestine;
+    static const InternalCompartment Aorta;
+    static const InternalCompartment VenaCava;
+  };
+
   SEHemorrhage(Logger* logger=nullptr);
   virtual ~SEHemorrhage();
 
@@ -30,6 +71,9 @@ public:
   virtual void SetCompartment(const std::string& name);
   virtual bool HasCompartment() const;
   virtual void InvalidateCompartment();
+
+  virtual void SetExternal(const ExternalCompartment& c);
+  virtual void SetInternal(const InternalCompartment& c);
 
   virtual bool HasFlowRate() const;
   virtual SEScalarVolumePerTime& GetFlowRate();

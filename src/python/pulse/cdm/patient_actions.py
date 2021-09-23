@@ -666,6 +666,20 @@ class eHemorrhageType(Enum):
 class SEHemorrhage(SEPatientAction):
     __slots__ = ["_type","_compartment","_flow_rate","_severity"]
 
+    class ExternalCompartment:
+        __slots__ = ["_value"]
+        def __init__(self, value: str):
+            self._value = value
+        def value(self):
+            return self._value
+
+    class InternalCompartment:
+        __slots__ = ["_value"]
+        def __init__(self, value: str):
+            self._value = value
+        def value(self):
+            return self._value
+
     def __init__(self):
         super().__init__()
         self._type = eHemorrhageType.External
@@ -699,6 +713,13 @@ class SEHemorrhage(SEPatientAction):
     def invalidate_compartment(self):
         self._compartment = None
 
+    def set_external(self, c:ExternalCompartment):
+        self._type = eHemorrhageType.External
+        self._compartment = c.value()
+    def set_internal(self, c:InternalCompartment):
+        self._type = eHemorrhageType.Internal
+        self._compartment = c.value()
+
     def has_flow_rate(self):
         return False if self._flow_rate is None else self._flow_rate.is_valid()
     def get_flow_rate(self):
@@ -719,6 +740,33 @@ class SEHemorrhage(SEPatientAction):
                 "  Compartment: {}\n"
                 "  Flow Rate: {}\n"
                 "  Severity: {}").format(self._type,self._compartment,self._flow_rate, self._severity)
+
+SEHemorrhage.ExternalCompartment.RightLeg = SEHemorrhage.ExternalCompartment("RightLeg")
+SEHemorrhage.ExternalCompartment.LeftLeg = SEHemorrhage.ExternalCompartment("LeftLeg")
+SEHemorrhage.ExternalCompartment.RightArm = SEHemorrhage.ExternalCompartment("RightArm")
+SEHemorrhage.ExternalCompartment.LeftArm = SEHemorrhage.ExternalCompartment("LeftArm")
+SEHemorrhage.ExternalCompartment.Skin = SEHemorrhage.ExternalCompartment("Skin")
+SEHemorrhage.ExternalCompartment.Muscle = SEHemorrhage.ExternalCompartment("Muscle")
+SEHemorrhage.ExternalCompartment.Brain = SEHemorrhage.ExternalCompartment("Brain")
+SEHemorrhage.ExternalCompartment.LeftKidney = SEHemorrhage.ExternalCompartment("LeftKidney")
+SEHemorrhage.ExternalCompartment.RightKidney = SEHemorrhage.ExternalCompartment("RightKidney")
+SEHemorrhage.ExternalCompartment.Liver = SEHemorrhage.ExternalCompartment("Liver")
+SEHemorrhage.ExternalCompartment.Spleen = SEHemorrhage.ExternalCompartment("Spleen")
+SEHemorrhage.ExternalCompartment.Splanchnic = SEHemorrhage.ExternalCompartment("Splanchnic")
+SEHemorrhage.ExternalCompartment.SmallIntestine = SEHemorrhage.ExternalCompartment("SmallIntestine")
+SEHemorrhage.ExternalCompartment.LargeIntestine = SEHemorrhage.ExternalCompartment("LargeIntestine")
+SEHemorrhage.ExternalCompartment.Aorta = SEHemorrhage.ExternalCompartment("Aorta")
+SEHemorrhage.ExternalCompartment.VenaCava = SEHemorrhage.ExternalCompartment("VenaCava")
+
+SEHemorrhage.InternalCompartment.LeftKidney = SEHemorrhage.InternalCompartment("LeftKidney")
+SEHemorrhage.InternalCompartment.RightKidney = SEHemorrhage.InternalCompartment("RightKidney")
+SEHemorrhage.InternalCompartment.Liver = SEHemorrhage.InternalCompartment("Liver")
+SEHemorrhage.InternalCompartment.Spleen = SEHemorrhage.InternalCompartment("Spleen")
+SEHemorrhage.InternalCompartment.Splanchnic = SEHemorrhage.InternalCompartment("Splanchnic")
+SEHemorrhage.InternalCompartment.SmallIntestine = SEHemorrhage.InternalCompartment("SmallIntestine")
+SEHemorrhage.InternalCompartment.LargeIntestine = SEHemorrhage.InternalCompartment("LargeIntestine")
+SEHemorrhage.InternalCompartment.Aorta = SEHemorrhage.InternalCompartment("Aorta")
+SEHemorrhage.InternalCompartment.VenaCava = SEHemorrhage.InternalCompartment("VenaCava")
 
 class SEImpairedAlveolarExchangeExacerbation(SEPatientAction):
     __slots__ = ["_impaired_surface_area", "_impaired_fraction", "_severity"]

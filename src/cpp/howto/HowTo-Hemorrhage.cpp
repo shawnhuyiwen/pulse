@@ -44,7 +44,7 @@ void HowToHemorrhage()
   pe->GetLogger()->LogToConsole(true);
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");
-  if (!pe->SerializeFromFile("./states/Gus@1620.36s.pbb"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.pbb"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
@@ -78,9 +78,8 @@ void HowToHemorrhage()
 
   // Hemorrhage Starts - instantiate a hemorrhage action and have the engine process it
   SEHemorrhage hemorrhageLeg;
-  hemorrhageLeg.SetType(eHemorrhage_Type::External);
-  hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
   hemorrhageLeg.GetSeverity().SetValue(0.8);
+  hemorrhageLeg.SetExternal(SEHemorrhage::ExternalCompartment::RightLeg);
   // Optionally, You can set the flow rate of the hemorrhage,
   // This needs to be provided the proper flow rate associated with the anatomy
   // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
