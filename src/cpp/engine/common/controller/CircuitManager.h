@@ -363,6 +363,7 @@ namespace pulse
   {
   public:
     DEFINE_STATIC_STRING_EX(EnvironmentToVentilator, EnvironmentToMechanicalVentilator);
+    DEFINE_STATIC_STRING_EX(VentilatorToEnvironment, MechanicalVentilatorToEnvironment);
     DEFINE_STATIC_STRING_EX(VentilatorToExpiratoryValve, MechanicalVentilatorToExpiratoryValve);
     DEFINE_STATIC_STRING_EX(VentilatorToInspiratoryValve, MechanicalVentilatorToInspiratoryValve);
     DEFINE_STATIC_STRING_EX(ExpiratoryLimbToExpiratoryValve, MechanicalVentilatorExpiratoryLimbToExpiratoryValve);

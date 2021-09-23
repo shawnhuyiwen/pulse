@@ -36,6 +36,18 @@ public:
   virtual eSwitch GetConnection() const;
   virtual void SetConnection(eSwitch c);
 
+  virtual bool HasConnectionVolume() const;
+  virtual SEScalarVolume& GetConnectionVolume();
+  virtual double GetConnectionVolume(const VolumeUnit& unit) const;
+
+  virtual bool HasCompliance() const;
+  virtual SEScalarVolumePerPressure& GetCompliance();
+  virtual double GetCompliance(const VolumePerPressureUnit& unit) const;
+
+  virtual bool HasDriverDampingParameter() const;
+  virtual SEScalarFrequency& GetDriverDampingParameter();
+  virtual double GetDriverDampingParameter(const FrequencyUnit& unit) const;
+
   virtual bool HasPositiveEndExpiredPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiredPressure();
   virtual double GetPositiveEndExpiredPressure(const PressureUnit& unit) const;
@@ -139,9 +151,6 @@ public:
   virtual SEScalarVolume& GetYPieceVolume();
   virtual double GetYPieceVolume(const VolumeUnit& unit) const;
 
-  virtual bool HasConnectionVolume() const;
-  virtual SEScalarVolume& GetConnectionVolume();
-  virtual double GetConnectionVolume(const VolumeUnit& unit) const;
 
   virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
   virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
@@ -171,6 +180,9 @@ public:
 protected:
   
   eSwitch                                      m_Connection;
+  SEScalarVolume*                              m_ConnectionVolume;
+  SEScalarVolumePerPressure*                   m_Compliance;
+  SEScalarFrequency*                           m_DriverDampingParameter;
 
   // Expiratory Baseline Properties (Only set 1)
   SEScalarPressure*                            m_PositiveEndExpiredPressure;
@@ -215,7 +227,6 @@ protected:
   SEScalarTime*                                m_InspirationWaveformPeriod;
 
   SEScalarVolume*                              m_YPieceVolume;
-  SEScalarVolume*                              m_ConnectionVolume;
 
   std::vector<SESubstanceFraction*>            m_FractionInspiredGases;
   std::vector<const SESubstanceFraction*>      m_cFractionInspiredGases;

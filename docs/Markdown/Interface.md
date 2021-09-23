@@ -313,8 +313,8 @@ You will need to create an instance of an action class, fill it out with the nec
 
 #### Patient Actions
 @secreflist
-  @refitem AcuteStressTable "Acute Stress"
   @refitem AcuteRespiratoryDistressSyndromeExacerbationTable "ARDS Exacerbation"
+  @refitem AcuteStressTable "Acute Stress"
   @refitem AirwayObstructionTable "Airway Obstruction"
   @refitem AsthmaAttackTable "Asthma Attack"
   @refitem BrainInjuryTable "Brain Injury"
@@ -326,6 +326,8 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem ConsciousRespirationTable "Conscious Respiration"
   @refitem ConsumeNutrientsTable "Consume Nutrients"
   @refitem ChronicObstructivePulmonaryDiseaseExacerbationTable "COPD Exacerbation"
+  @refitem ConsciousRespirationTable "Conscious Respiration"
+  @refitem ConsumeNutrientsTable "Consume Nutrients"
   @refitem DyspneaTable "Dyspnea"
   @refitem ExerciseTable "Exercise"
   @refitem HemorrhageTable "Hemorrhage"
@@ -337,6 +339,7 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem PericardialEffusionTable "Pericardial Effusion"
   @refitem PulmonaryShuntExacerbationTable "Pulmonary Shunt Exacerbation"
   @refitem RespiratoryFatigueTable "Respiratory Fatigue"
+  @refitem RespiratoryMechanicsConfigurationTable "Respiratory Mechanics Configuration"
   @refitem SubstanceBolusTable "Substance Bolus"
   @refitem SubstanceCompoundInfusionTable "Substance Compound Infusion"
   @refitem SubstanceInfusionTable "Substance Infusion"
@@ -384,6 +387,11 @@ You will need to create an instance of an action class, fill it out with the nec
 #### Mechanical Ventilator Actions
 @secreflist
   @refitem MechanicalVentilatorConfigurationTable "Mechanical Ventilator Configuration"
+  @refitem MechanicalVentilatorHoldTable "Mechanical Ventilator Hold"
+  @refitem MechanicalVentilatorLeakTable "Mechanical Ventilator Leak"
+  @refitem MechanicalVentilatorContinuousPositiveAirwayPressureTable "Mechanical Ventilator CPAP Mode"
+  @refitem MechanicalVentilatorPressureControlTable "Mechanical Ventilator Pressure Control Mode"
+  @refitem MechanicalVentilatorVolumeControlTable "Mechanical Ventilator Volume Control Mode"
 @endsecreflist
 
 You can query the engine's action manager to get action information.
@@ -490,6 +498,7 @@ The engine supports the following systems:
 |Code Method                                                                             | CDM Table                                             |
 |---                                                                                     |---                                                    |
 |@code virtual const SEEnvironment* GetEnvironment() = 0; @endcode                       | @ref EnvironmentTable "Environment"                   |
+|@code virtual const SEBagValveMaskSystem* GetBagValveMaskSystem() = 0; @endcode         | @ref BagValveMaskSystemTable "BagValveMask"           |
 |@code virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() = 0; @endcode     | @ref BloodChemistrySystemTable "BloodChemistry"       |
 |@code virtual const SECardiovascularSystem* GetCardiovascularSystem() = 0; @endcode     | @ref CardiovascularSystemTable "Cardiovascular"       |
 |@code virtual const SEEndocrineSystem* GetEndocrineSystem() = 0; @endcode               | @ref EndocrineSystemTable "Endocrine"                 |

@@ -58,6 +58,7 @@ namespace PULSE_ENGINE
     MechanicalVentilatorSystem::Clear();
     m_Environment = nullptr;
     m_Ventilator = nullptr;
+    m_Connection = nullptr;
     m_VentilatorAerosol = nullptr;
     m_VentilatorNode = nullptr;
     m_ExpiratoryLimbNode = nullptr;
@@ -70,11 +71,13 @@ namespace PULSE_ENGINE
     m_EnvironmentToVentilator = nullptr;
     m_YPieceToConnection = nullptr;
     m_VentilatorToExpiratoryValve = nullptr;
+    m_VentilatorToEnvironment = nullptr;
     m_VentilatorToInspiratoryValve = nullptr;
     m_ExpiratoryLimbToYPiece = nullptr;
     m_InspiratoryLimbToYPiece = nullptr;
     m_LeakConnectionToEnvironment = nullptr;
     m_ConnectionToAirway = nullptr;
+    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = NULL;
 
     m_MeanAirwayPressure_cmH2O->Clear();
   }
@@ -90,10 +93,15 @@ namespace PULSE_ENGINE
     m_CurrentPeriodTime_s = 0.0;
     m_DriverPressure_cmH2O = SEScalar::dNaN();
     m_DriverFlow_L_Per_s = SEScalar::dNaN();
+    m_PreviousDriverPressure_cmH2O = SEScalar::dNaN();
+    m_PreviousDriverFlow_L_Per_s = SEScalar::dNaN();
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;
     m_InspirationTime_s = 0.0;
     m_InspiratoryFlow_L_Per_s = 0.0;
+    m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
+    m_PreviousConnectionPressure_cmH2O = 0.0;
+    m_LimitReached = false;
 
     //System data
     GetAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
@@ -136,6 +144,7 @@ namespace PULSE_ENGINE
     // Compartments
     m_Environment = m_data.GetCompartments().GetGasCompartment(pulse::EnvironmentCompartment::Ambient);
     m_Ventilator = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
+    m_Connection = m_data.GetCompartments().GetGasCompartment(pulse::MechanicalVentilatorCompartment::Connection);
     m_VentilatorAerosol = m_data.GetCompartments().GetLiquidCompartment(pulse::MechanicalVentilatorCompartment::MechanicalVentilator);
 
     // Nodes
@@ -150,6 +159,7 @@ namespace PULSE_ENGINE
 
     // Paths
     m_EnvironmentToVentilator = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToVentilator);
+    m_VentilatorToEnvironment = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToEnvironment);
     m_YPieceToConnection = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::YPieceToConnection);
     m_VentilatorToExpiratoryValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve);
     m_VentilatorToInspiratoryValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve);
@@ -158,6 +168,9 @@ namespace PULSE_ENGINE
     m_LeakConnectionToEnvironment = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::LeakConnectionToEnvironment);
 
     m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::CombinedMechanicalVentilatorPath::ConnectionToAirway);
+
+    // Configuration
+    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
 
   void MechanicalVentilatorModel::StateChange()
@@ -172,6 +185,9 @@ namespace PULSE_ENGINE
     m_CurrentPeriodTime_s = 0.0;
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;
+    m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
+    m_PreviousConnectionPressure_cmH2O = 0.0;
+    m_LimitReached = false;
 
     // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
 
@@ -302,6 +318,9 @@ namespace PULSE_ENGINE
       m_CurrentPeriodTime_s = 0.0;
       m_CurrentVentilatorVolume_L = 0.0;
       m_CurrentRespiratoryVolume_L = 0.0;
+      m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
+      m_PreviousConnectionPressure_cmH2O = 0.0;
+      m_LimitReached = false;
       return;
     }
 
@@ -313,8 +332,19 @@ namespace PULSE_ENGINE
     SetLeak();
     SetVentilatorDriver();
     SetResistances();
+    SetCompliance();
     SetVolumes();
 
+    if (m_YPieceToConnection->HasNextFlow())
+    {
+      m_PreviousYPieceToConnectionFlow_L_Per_s = m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+    }
+
+    if (m_ConnectionNode->HasNextPressure())
+    {
+      m_PreviousConnectionPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
+    }
+    
     m_CurrentPeriodTime_s += m_data.GetTimeStep_s();
   }
 
@@ -356,12 +386,15 @@ namespace PULSE_ENGINE
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::SetVentilatorDriver()
   {
-    if (!std::isnan(m_DriverPressure_cmH2O) && !std::isnan(m_DriverFlow_L_Per_s))
+    double driverPressure_cmH2O = m_DriverPressure_cmH2O;
+    double driverFlow_L_Per_s = m_DriverFlow_L_Per_s;
+
+    if (!std::isnan(driverPressure_cmH2O) && !std::isnan(driverFlow_L_Per_s))
       {
         /// \error Error: Ventilator driver pressure and flow both set, only one allowed. Using the pressure value.
         Error("Ventilator driver pressure and flow both set, only one allowed. Using the pressure value.");
       }
-    else if (std::isnan(m_DriverPressure_cmH2O) && std::isnan(m_DriverFlow_L_Per_s))
+    else if (std::isnan(driverPressure_cmH2O) && std::isnan(driverFlow_L_Per_s))
     {
       /// \error Error: Ventilator driver pressure or flow must be set. Using a pressure of 0.
       Error("Ventilator driver pressure or flow must be set. Using a pressure of 0.");
@@ -369,8 +402,68 @@ namespace PULSE_ENGINE
       m_DriverPressure_cmH2O = 0.0;
     }
 
+    //Dampen the change
+    double driverDampingParameter_Per_s = 25.0;
+    if (GetSettings().HasDriverDampingParameter())
+      driverDampingParameter_Per_s = GetSettings().GetDriverDampingParameter(FrequencyUnit::Per_s);
+    driverDampingParameter_Per_s = LIMIT(driverDampingParameter_Per_s, 0.0, 1.0 / m_data.GetTimeStep_s());
+
+    if (!std::isnan(driverPressure_cmH2O))
+    {
+      double previousDriverPressure_cmH2O = 0.0;
+      if (std::isnan(m_PreviousDriverPressure_cmH2O))
+      {
+        if (m_VentilatorNode->HasNextPressure())
+        {
+          previousDriverPressure_cmH2O = m_VentilatorNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
+        }
+      }
+      else
+      {
+        previousDriverPressure_cmH2O = m_PreviousDriverPressure_cmH2O;
+      }
+
+      double difference_cmH2O = driverPressure_cmH2O - previousDriverPressure_cmH2O;
+      driverPressure_cmH2O = previousDriverPressure_cmH2O + difference_cmH2O * driverDampingParameter_Per_s * m_data.GetTimeStep_s();
+      if (m_DriverPressure_cmH2O > previousDriverPressure_cmH2O)
+      {
+        driverPressure_cmH2O = LIMIT(driverPressure_cmH2O, previousDriverPressure_cmH2O, m_DriverPressure_cmH2O);
+      }
+      else
+      {
+        driverPressure_cmH2O = LIMIT(driverPressure_cmH2O, m_DriverPressure_cmH2O, previousDriverPressure_cmH2O);
+      }
+    }
+
+    if (!std::isnan(driverFlow_L_Per_s))
+    {
+      double previousDriverFlow_L_Per_s = 0.0;
+      if (std::isnan(m_PreviousDriverFlow_L_Per_s))
+      {
+        if (m_EnvironmentToVentilator->HasNextFlow())
+        {
+          previousDriverFlow_L_Per_s = m_EnvironmentToVentilator->GetNextFlow(VolumePerTimeUnit::L_Per_s);
+        }
+      }
+      else
+      {
+        previousDriverFlow_L_Per_s = m_PreviousDriverFlow_L_Per_s;
+      }
+
+      double difference_L_Per_s = driverFlow_L_Per_s - previousDriverFlow_L_Per_s;
+      driverFlow_L_Per_s = previousDriverFlow_L_Per_s + difference_L_Per_s * driverDampingParameter_Per_s * m_data.GetTimeStep_s();
+      if (m_DriverFlow_L_Per_s > previousDriverFlow_L_Per_s)
+      {
+        driverFlow_L_Per_s = LIMIT(driverFlow_L_Per_s, previousDriverFlow_L_Per_s, m_DriverFlow_L_Per_s);
+      }
+      else
+      {
+        driverFlow_L_Per_s = LIMIT(driverFlow_L_Per_s, m_DriverFlow_L_Per_s, previousDriverFlow_L_Per_s);
+      }
+    }
+
     bool stateChange = false;
-    if (!std::isnan(m_DriverPressure_cmH2O))
+    if (!std::isnan(driverPressure_cmH2O))
     {
       if (m_EnvironmentToVentilator->HasNextFlowSource())
       {
@@ -382,9 +475,9 @@ namespace PULSE_ENGINE
         stateChange = true;
         m_EnvironmentToVentilator->GetPressureSourceBaseline().SetValue(0, PressureUnit::cmH2O);
       }
-      m_EnvironmentToVentilator->GetNextPressureSource().SetValue(m_DriverPressure_cmH2O, PressureUnit::cmH2O);
+      m_EnvironmentToVentilator->GetNextPressureSource().SetValue(driverPressure_cmH2O, PressureUnit::cmH2O);
     }
-    else if (!std::isnan(m_DriverFlow_L_Per_s))
+    else if (!std::isnan(driverFlow_L_Per_s))
     {
       if (m_EnvironmentToVentilator->HasNextPressureSource())
       {
@@ -396,10 +489,13 @@ namespace PULSE_ENGINE
         stateChange = true;
         m_EnvironmentToVentilator->GetFlowSourceBaseline().SetValue(0, VolumePerTimeUnit::L_Per_s);
       }
-      m_EnvironmentToVentilator->GetNextFlowSource().SetValue(m_DriverFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
+      m_EnvironmentToVentilator->GetNextFlowSource().SetValue(driverFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
     }
     if (stateChange)
       m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+
+    m_PreviousDriverPressure_cmH2O = driverPressure_cmH2O;
+    m_PreviousDriverFlow_L_Per_s = driverFlow_L_Per_s;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -410,6 +506,7 @@ namespace PULSE_ENGINE
   {
     if (m_CurrentBreathState != eBreathState::Inhale)
     {
+      m_LimitReached = false;
       return;
     }
 
@@ -425,14 +522,19 @@ namespace PULSE_ENGINE
         return;
       }
     }
-    
+
     if (GetSettings().HasExpirationCyclePressure())
     {
       triggerDefined = true;
-      /// \error Fatal: Expiration pressure cycle is not yet supported.
-      Fatal("Expiration pressure cycle is not yet supported.");
+      double ambientPressure_cmH2O = m_AmbientNode->GetPressure(PressureUnit::cmH2O);
+      double airwayPressure_cmH2O = m_ConnectionNode->GetPressure(PressureUnit::cmH2O);
+      if (airwayPressure_cmH2O - ambientPressure_cmH2O >= GetSettings().GetExpirationCyclePressure(PressureUnit::cmH2O))
+      {
+        CycleMode();
+        return;
+      }
     }
-    
+
     if (GetSettings().HasExpirationCycleVolume())
     {
       triggerDefined = true;
@@ -442,7 +544,7 @@ namespace PULSE_ENGINE
         return;
       }
     }
-    
+
     if (GetSettings().HasExpirationCycleFlow())
     {
       triggerDefined = true;
@@ -453,7 +555,7 @@ namespace PULSE_ENGINE
         return;
       }
     }
-    
+
     if(!triggerDefined)
     {
       /// \error Fatal: No expiration cycle defined.
@@ -461,12 +563,38 @@ namespace PULSE_ENGINE
     }
 
     // Check limit
-    if (GetSettings().HasInspirationLimitPressure() ||
-        GetSettings().HasInspirationLimitFlow() ||
-        GetSettings().HasInspirationLimitVolume())
+
+    if (GetSettings().HasInspirationLimitVolume())
     {
-      /// \error Fatal: Limits are not yet supported.
-      Fatal("Limits are not yet supported.");
+      if (m_LimitReached || m_CurrentRespiratoryVolume_L >= GetSettings().GetInspirationLimitVolume(VolumeUnit::L))
+      {
+        m_DriverFlow_L_Per_s = 0.0;
+        m_DriverPressure_cmH2O = SEScalar::dNaN();
+        m_LimitReached = true;
+        return;
+      }
+    }
+
+    if (GetSettings().HasInspirationLimitFlow())
+    {
+      if (m_LimitReached || m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetSettings().GetInspirationLimitFlow(VolumePerTimeUnit::L_Per_s))
+      {
+        m_DriverFlow_L_Per_s = GetSettings().GetInspirationLimitFlow(VolumePerTimeUnit::L_Per_s);
+        m_DriverPressure_cmH2O = SEScalar::dNaN();
+        m_LimitReached = true;
+        return;
+      }
+    }
+
+    if (GetSettings().HasInspirationLimitPressure())
+    {
+      if (m_LimitReached || m_ConnectionNode->GetPressure(PressureUnit::cmH2O) >= GetSettings().GetInspirationLimitPressure(PressureUnit::cmH2O))
+      {
+        m_DriverFlow_L_Per_s = SEScalar::dNaN();
+        m_DriverPressure_cmH2O = GetSettings().GetInspirationLimitPressure(PressureUnit::cmH2O);
+        m_LimitReached = true;
+        return;
+      }
     }
 
     // Check waveform
@@ -546,9 +674,9 @@ namespace PULSE_ENGINE
     {
       if (m_CurrentPeriodTime_s < GetSettings().GetInspirationPauseTime(TimeUnit::s))
       {
-        // Hold this pressure
-        m_DriverPressure_cmH2O = m_VentilatorNode->GetNextPressure(PressureUnit::cmH2O);
-        m_DriverFlow_L_Per_s = SEScalar::dNaN();
+        // Hold with no flow
+        m_DriverPressure_cmH2O = SEScalar::dNaN();
+        m_DriverFlow_L_Per_s = 0.0;
       }
       else
       {
@@ -589,12 +717,14 @@ namespace PULSE_ENGINE
     {
       triggerDefined = true;
       double relativePressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O) - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
+      double previousRelativePressure_cmH2O = m_PreviousConnectionPressure_cmH2O - m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
       if (GetSettings().HasPositiveEndExpiredPressure())
       {
         relativePressure_cmH2O -= GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
       }
       if (relativePressure_cmH2O <= GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O) &&
-        m_CurrentPeriodTime_s > 0.0) //Check if we just cycled the mode
+        m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
+        relativePressure_cmH2O < previousRelativePressure_cmH2O) //Check if it's moving the right direction to prevent premature cycling
       {
         CycleMode();
         return;
@@ -605,7 +735,8 @@ namespace PULSE_ENGINE
     {
       triggerDefined = true;
       if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetSettings().GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s) &&
-        m_CurrentPeriodTime_s > 0.0) //Check if we just cycled the mode
+        m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
+        m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) > m_PreviousYPieceToConnectionFlow_L_Per_s) //Check if it's moving the right direction to prevent premature cycling
       {
         CycleMode();
         return;
@@ -639,8 +770,8 @@ namespace PULSE_ENGINE
     }
     else
     {
-      /// \error Fatal: Non-square waveforms are not yet supported.
-      Fatal("Non-square waveforms are not yet supported.");
+      /// \error Fatal: Non-square waveforms are not yet supported for expiration.
+      Fatal("Non-square waveforms are not yet supported for expiration.");
     }
   }
 
@@ -776,22 +907,48 @@ namespace PULSE_ENGINE
   {
     if (GetSettings().HasExpirationTubeResistance())
     {
-      m_VentilatorToExpiratoryValve->GetNextResistance().Set(GetSettings().GetExpirationTubeResistance());
+      double resistance_cmH2O_s_Per_L = GetSettings().GetExpirationTubeResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_VentilatorToExpiratoryValve->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasInspirationTubeResistance())
     {
-      m_VentilatorToInspiratoryValve->GetNextResistance().Set(GetSettings().GetInspirationTubeResistance());
+      double resistance_cmH2O_s_Per_L = GetSettings().GetInspirationTubeResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_VentilatorToInspiratoryValve->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasExpirationValveResistance())
     {
-      m_ExpiratoryLimbToYPiece->GetNextResistance().Set(GetSettings().GetExpirationValveResistance());
+      double resistance_cmH2O_s_Per_L = GetSettings().GetExpirationValveResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_ExpiratoryLimbToYPiece->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasInspirationValveResistance())
     {
-      m_InspiratoryLimbToYPiece->GetNextResistance().Set(GetSettings().GetInspirationValveResistance());
+      double resistance_cmH2O_s_Per_L = GetSettings().GetInspirationValveResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      m_InspiratoryLimbToYPiece->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------
+/// \brief
+/// Set ventilator circuit compliance.
+///
+/// \details
+/// If no values are specified, defaults will be used.
+//--------------------------------------------------------------------------------------------------
+  void MechanicalVentilatorModel::SetCompliance()
+  {
+    if (GetSettings().HasCompliance())
+    {
+      double compliance_L_Per_cmH2O = GetSettings().GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
+      double minCompliance_L_Per_cmH2O = 1e-20;
+      compliance_L_Per_cmH2O = MIN(compliance_L_Per_cmH2O, minCompliance_L_Per_cmH2O);
+      m_VentilatorToEnvironment->GetNextCompliance().SetValue(compliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
     }
   }
 
@@ -924,10 +1081,10 @@ namespace PULSE_ENGINE
     double airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
     GetPlateauPressure().SetValue(airwayPressure_cmH2O - ambientPressure_cmH2O, PressureUnit::cmH2O);
 
-    GetEndTidalCarbonDioxideFraction().Set(m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction());
-    GetEndTidalCarbonDioxidePressure().Set(m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetPartialPressure());
-    GetEndTidalOxygenFraction().Set(m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction());
-    GetEndTidalOxygenPressure().Set(m_Ventilator->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure());
+    GetEndTidalCarbonDioxideFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction());
+    GetEndTidalCarbonDioxidePressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetPartialPressure());
+    GetEndTidalOxygenFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction());
+    GetEndTidalOxygenPressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure());
   }
 
   //--------------------------------------------------------------------------------------------------

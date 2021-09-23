@@ -261,7 +261,7 @@ namespace pulse::study::multiplex_ventilation
     pData.set_alveolararterialgradient_mmhg(engine->GetRespiratorySystem()->GetAlveolarArterialGradient(PressureUnit::mmHg));
     pData.set_arterialcarbondioxidepartialpressure_mmhg(AortaCO2->GetPartialPressure(PressureUnit::mmHg));
     pData.set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
-    pData.set_carricoindex_mmhg(engine->GetRespiratorySystem()->GetCarricoIndex(PressureUnit::mmHg));
+    pData.set_horowitzindex_mmhg(engine->GetRespiratorySystem()->GetHorowitzIndex(PressureUnit::mmHg));
     pData.set_endtidalcarbondioxidepressure_mmhg(engine->GetRespiratorySystem()->GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg));
     pData.set_idealbodyweight_kg(engine->GetPatient().GetIdealBodyWeight(MassUnit::kg));
     pData.set_meanairwaypressure_cmh2o(engine->GetRespiratorySystem()->GetMeanAirwayPressure(PressureUnit::cmH2O));

@@ -157,7 +157,7 @@ The exercise action is initiated by specifying the exercise intensity. The exerc
 The exercise capacity of the body is physiologically and psychologically limited @cite noakes2012fatigue. The amount of work produced by the exercise action is limited by the fatigue model; however, this limitation is purely physiologic. Fatigue is modeled as a system of interconnected energy storage compartments, as shown in Figure 3.
 
 <center>
-@image html fatigue.png
+<img src="./Images/Energy/fatigue.png">
 *Figure 3. The fatigue compartment model. The energy stores are represented by the blue buckets. The solid lines  show the energy flow pathways, and flow directions are indicated by the arrowheads. The dashed line is a future information pathway to control the endurance energy store fill rate. The amount of energy in each store is computed using equations 7 and 8. The energy flow rates through each path, labeled %Energy Path 1 through 7 in the figure, are  computed using equations 9 to 18. The refill rate of the endurance energy store is computed using equation 19. The outflow of energy from the usable energy store is only non-zero when the activity level of the body is above zero, and it is computed directly from the total work rate.*
 </center><br>
 

@@ -3,7 +3,7 @@
 
 from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarNegative1To1, \
                               SEScalarArea, AreaUnit, \
-                              SEScalarEquivalentWeightPerVolume, \
+                              SEScalarEquivalentWeightPerVolume, EquivalentWeightPerVolumeUnit, \
                               SEScalarForce, ForceUnit, \
                               SEScalarFrequency, FrequencyUnit, \
                               SEScalarHeatResistanceArea, HeatResistanceAreaUnit, \
@@ -17,26 +17,26 @@ from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarNegative1To1, \
                               SEScalarMassPerVolume, MassPerVolumeUnit, \
                               SEScalarPower, PowerUnit, \
                               SEScalarPressure, PressureUnit, \
+                              SEScalarPressurePerVolume, PressurePerVolumeUnit, \
                               SEScalarPressureTimePerVolume, PressureTimePerVolumeUnit, \
                               SEScalarProperty, \
                               SEScalarTemperature, TemperatureUnit, \
                               SEScalarTime, TimeUnit, \
                               SEScalarVolume, VolumeUnit, \
+                              SEScalarVolumePerPressure, VolumePerPressureUnit, \
                               SEScalarVolumePerTime, VolumePerTimeUnit, \
                               SEScalarVolumePerTimeMass, VolumePerTimeMassUnit, \
                               SEScalarVolumePerTimePressure, VolumePerTimePressureUnit
-from pulse.cdm.bind.Properties_pb2 import ScalarData, Scalar0To1Data, ScalarNegative1To1Data, \
-                                          ScalarAreaData, ScalarForceData, ScalarEquivalentWeightPerVolumeData, \
-                                          ScalarFrequencyData, ScalarHeatResistanceAreaData, \
 from pulse.cdm.bind.Properties_pb2 import ScalarData, Scalar0To1Data, ScalarNegative1To1Data, ScalarAreaData, \
                                           ScalarEquivalentWeightPerVolumeData, \
                                           ScalarForceData, ScalarFrequencyData,ScalarHeatResistanceAreaData, \
                                           ScalarInversePressureData, ScalarLengthData, ScalarLengthPerTimeData, \
                                           ScalarMassData, ScalarMassPerAmountData, ScalarMassPerAreaTimeData, \
                                           ScalarMassPerTimeData, ScalarMassPerVolumeData, ScalarPowerData, \
-                                          ScalarPressureTimePerVolumeData, ScalarPressureData, \
-                                          ScalarPropertyData, ScalarTemperatureData, ScalarTimeData, \
-                                          ScalarVolumeData, ScalarVolumePerTimeData, ScalarVolumePerTimeMassData, \
+                                          ScalarPressureTimePerVolumeData, ScalarPressureData,\
+                                          ScalarPressurePerVolumeData, ScalarPropertyData, ScalarTemperatureData, \
+                                          ScalarTimeData, ScalarVolumeData, ScalarVolumePerPressureData, \
+                                          ScalarVolumePerTimeData, ScalarVolumePerTimeMassData, \
                                           ScalarVolumePerTimePressureData
 
 def serialize_scalar_to_bind(src: SEScalar, dst: ScalarData):
@@ -144,6 +144,12 @@ def serialize_scalar_pressure_to_bind(src: SEScalarPressure, dst: ScalarPressure
 def serialize_scalar_pressure_from_bind(src: ScalarPressureData, dst: SEScalarPressure):
     dst.set_value(src.ScalarPressure.Value, PressureUnit.from_string(src.ScalarPressure.Unit))
 
+def serialize_scalar_pressure_per_volume_to_bind(src: SEScalarPressurePerVolume, dst: ScalarPressurePerVolumeData):
+    dst.ScalarPressurePerVolume.Value = src.get_value()
+    dst.ScalarPressurePerVolume.Unit = src.get_unit().get_string()
+def serialize_scalar_pressure_per_volume_from_bind(src: ScalarPressurePerVolumeData, dst: SEScalarPressurePerVolume):
+    dst.set_value(src.ScalarPressurePerVolume.Value, PressurePerVolumeUnit.from_string(src.ScalarPressurePerVolume.Unit))
+
 def serialize_scalar_pressure_time_per_volume_to_bind(src: SEScalarPressureTimePerVolume, dst: ScalarPressureTimePerVolumeData):
     dst.ScalarPressureTimePerVolume.Value = src.get_value()
     dst.ScalarPressureTimePerVolume.Unit = src.get_unit().get_string()
@@ -176,6 +182,12 @@ def serialize_scalar_volume_to_bind(src: SEScalarVolume, dst: ScalarVolumeData):
     dst.ScalarVolume.Unit = src.get_unit().get_string()
 def serialize_scalar_volume_from_bind(src: ScalarVolumeData, dst: SEScalarVolume):
     dst.set_value(src.ScalarVolume.Value, VolumeUnit.from_string(src.ScalarVolume.Unit))
+
+def serialize_scalar_volume_per_pressure_to_bind(src: SEScalarVolumePerPressure, dst: ScalarVolumePerPressureData):
+    dst.ScalarVolumePerPressure.Value = src.get_value()
+    dst.ScalarVolumePerPressure.Unit = src.get_unit().get_string()
+def serialize_scalar_volume_per_pressure_from_bind(src: ScalarVolumePerPressureData, dst: SEScalarVolumePerPressure):
+    dst.set_value(src.ScalarVolumePerPressure.Value, VolumePerPressureUnit.from_string(src.ScalarVolumePerPressure.Unit))
 
 def serialize_scalar_volume_per_time_to_bind(src: SEScalarVolumePerTime, dst: ScalarVolumePerTimeData):
     dst.ScalarVolumePerTime.Value = src.get_value()

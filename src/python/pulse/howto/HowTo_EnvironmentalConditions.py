@@ -13,7 +13,7 @@ from pulse.cdm.io.environment import serialize_environmental_conditions_from_fil
 
 def HowTo_EnvironmentalConditions():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_Environment.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_Environment.py.log")
     pulse.log_to_console(True)
 
     # Initialize the environment to a specific envirionment

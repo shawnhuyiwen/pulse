@@ -6,7 +6,7 @@ from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_UsePulmonaryFibrosis():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_pulmonary_fibrosis.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_pulmonary_fibrosis.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()

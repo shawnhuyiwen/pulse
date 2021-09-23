@@ -8,7 +8,7 @@ from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_SupplementalOxygen():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_SupplementalOxygen.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_SupplementalOxygen.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
@@ -24,7 +24,7 @@ def HowTo_SupplementalOxygen():
     oxygen = SESupplementalOxygen()
     oxygen.set_comment("Patient receives supplemental oxygen ")
     oxygen.set_device(eDevice.NasalCannula)
-    oxygen.get_volume().set_value(20,VolumeUnit.from_string("L"))
+    oxygen.get_volume().set_value(20,VolumeUnit.L)
     oxygen.get_flow().set_value(2, VolumePerTimeUnit.L_Per_min)
     pulse.process_action(oxygen)
 

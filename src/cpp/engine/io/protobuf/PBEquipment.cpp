@@ -142,14 +142,19 @@ namespace PULSE_ENGINE
   void PBEquipment::Serialize(const PULSE_BIND::MechanicalVentilatorData& src, MechanicalVentilatorModel& dst)
   {
     PBMechanicalVentilator::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
-    dst.m_CurrentBreathState = (eBreathState)src.currentbreathstate();
     dst.m_CurrentPeriodTime_s = src.currentperiodtime_s();
-    dst.m_DriverFlow_L_Per_s = src.driverflow_l_per_s();
     dst.m_DriverPressure_cmH2O = src.driverpressure_cmh2o();
+    dst.m_PreviousDriverFlow_L_Per_s = src.previousdriverflow_l_per_s();
+    dst.m_PreviousDriverPressure_cmH2O = src.previousdriverpressure_cmh2o();
+    dst.m_DriverFlow_L_Per_s = src.driverflow_l_per_s();
     dst.m_CurrentVentilatorVolume_L = src.currentventilatorvolume_l();
     dst.m_CurrentRespiratoryVolume_L = src.currentrespiratoryvolume_l();
     dst.m_InspirationTime_s = src.inspirationtime_s();
     dst.m_InspiratoryFlow_L_Per_s = src.inspiratoryflow_l_per_s();
+    dst.m_LimitReached = src.limitreached();
+    dst.m_PreviousYPieceToConnectionFlow_L_Per_s = src.previousypiecetoconnectionflow_l_per_s();
+    dst.m_PreviousConnectionPressure_cmH2O = src.previousconnectionpressure_cmh2o();
+    dst.m_CurrentBreathState = (eBreathState)src.currentbreathstate();
     PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
   }
   PULSE_BIND::MechanicalVentilatorData* PBEquipment::Unload(const MechanicalVentilatorModel& src)
@@ -161,14 +166,19 @@ namespace PULSE_ENGINE
   void PBEquipment::Serialize(const MechanicalVentilatorModel& src, PULSE_BIND::MechanicalVentilatorData& dst)
   {
     PBMechanicalVentilator::Serialize(src, *dst.mutable_common());
-    dst.set_currentbreathstate((CDM_BIND::eBreathState)src.m_CurrentBreathState);
     dst.set_currentperiodtime_s(src.m_CurrentPeriodTime_s);
-    dst.set_driverflow_l_per_s(src.m_DriverFlow_L_Per_s);
     dst.set_driverpressure_cmh2o(src.m_DriverPressure_cmH2O);
+    dst.set_previousdriverflow_l_per_s(src.m_PreviousDriverFlow_L_Per_s);
+    dst.set_previousdriverpressure_cmh2o(src.m_PreviousDriverPressure_cmH2O);
+    dst.set_driverflow_l_per_s(src.m_DriverFlow_L_Per_s);
     dst.set_currentventilatorvolume_l(src.m_CurrentVentilatorVolume_L);
     dst.set_currentrespiratoryvolume_l(src.m_CurrentRespiratoryVolume_L);
     dst.set_inspirationtime_s(src.m_InspirationTime_s);
     dst.set_inspiratoryflow_l_per_s(src.m_InspiratoryFlow_L_Per_s);
+    dst.set_limitreached(src.m_LimitReached);
+    dst.set_previousypiecetoconnectionflow_l_per_s(src.m_PreviousYPieceToConnectionFlow_L_Per_s);
+    dst.set_previousconnectionpressure_cmh2o(src.m_PreviousConnectionPressure_cmH2O);
+    dst.set_currentbreathstate((CDM_BIND::eBreathState)src.m_CurrentBreathState);
     dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
   }
 }

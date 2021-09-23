@@ -6,7 +6,7 @@ from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_UseAnemia():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_Anemia.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_Anemia.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()

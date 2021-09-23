@@ -4,9 +4,9 @@
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.engine.PulseEngine import PulseEngine
 
-def HowTo_UseSepsis():
+def HowTo_Sepsis():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_sepsis.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_Sepsis.py.log")
     pulse.log_to_console(True)
 
     # TODO Model is currently incomplete!
@@ -31,5 +31,5 @@ def HowTo_UseSepsis():
     results = pulse.pull_data()
     print(results)
 
-HowTo_UseSepsis()
+HowTo_Sepsis()
 

@@ -27,7 +27,7 @@ SEMechanicalVentilatorPressureControl::~SEMechanicalVentilatorPressureControl()
   SAFE_DELETE(m_InspiratoryPeriod);
   SAFE_DELETE(m_InspiratoryPressure);
   SAFE_DELETE(m_PositiveEndExpiredPressure);
-  SAFE_DELETE(m_PositiveEndExpiredPressure);
+  SAFE_DELETE(m_RespirationRate);
   SAFE_DELETE(m_Slope);
 }
 

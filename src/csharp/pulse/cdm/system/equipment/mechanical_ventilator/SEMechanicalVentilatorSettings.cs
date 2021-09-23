@@ -16,6 +16,9 @@ namespace Pulse.CDM
   public class SEMechanicalVentilatorSettings : SEEquipment
   {
     protected eSwitch connection;
+    protected SEScalarVolume connection_volume;
+    protected SEScalarVolumePerPressure compliance;
+    protected SEScalarFrequency driver_damping_parameter;
 
     // Expiratory Baseline (Only set one)
     protected SEScalarPressure positive_end_expired_pressure;
@@ -60,7 +63,6 @@ namespace Pulse.CDM
     protected SEScalarTime inspiration_waveform_period;
 
     protected SEScalarVolume y_piece_volume;
-    protected SEScalarVolume connection_volume;
 
     protected List<SESubstanceFraction> fraction_inspired_gases;
     protected List<SESubstanceConcentration> concentration_inspired_aerosols;
@@ -68,6 +70,10 @@ namespace Pulse.CDM
     public SEMechanicalVentilatorSettings()
     {
       connection = eSwitch.NullSwitch;
+      connection_volume = null;
+      compliance = null;
+      driver_damping_parameter = null;
+
       functional_residual_capacity = null;
       expiration_cycle_flow = null;
       expiration_cycle_pressure = null;
@@ -99,7 +105,6 @@ namespace Pulse.CDM
       inspiration_waveform_period = null;
 
       y_piece_volume = null;
-      connection_volume = null;
 
       this.fraction_inspired_gases = new List<SESubstanceFraction>();
       this.concentration_inspired_aerosols = new List<SESubstanceConcentration>();
@@ -109,6 +114,13 @@ namespace Pulse.CDM
     {
       base.Clear();
       connection = eSwitch.NullSwitch;
+      if (connection_volume != null)
+        connection_volume.Invalidate();
+      if (compliance != null)
+        compliance.Invalidate();
+      if (driver_damping_parameter != null)
+        driver_damping_parameter.Invalidate();
+
       if (positive_end_expired_pressure != null)
         positive_end_expired_pressure.Invalidate();
       if (functional_residual_capacity != null)
@@ -167,8 +179,6 @@ namespace Pulse.CDM
 
       if (y_piece_volume != null)
         y_piece_volume.Invalidate();
-      if (connection_volume != null)
-        connection_volume.Invalidate();
 
       fraction_inspired_gases.Clear();
       concentration_inspired_aerosols.Clear();
@@ -179,6 +189,13 @@ namespace Pulse.CDM
       base.Copy(from);
       if (from.connection != eSwitch.NullSwitch)
         this.connection = from.connection;
+      if (from.HasConnectionVolume())
+        this.GetConnectionVolume().Set(from.GetConnectionVolume());
+      if (from.HasCompliance())
+        this.GetCompliance().Set(from.GetCompliance());
+      if (from.HasDriverDampingParameter())
+        this.GetDriverDampingParameter().Set(from.GetDriverDampingParameter());
+
       if (from.HasPositiveEndExpiredPressure())
         this.GetPositiveEndExpiredPressure().Set(from.GetPositiveEndExpiredPressure());
       if (from.HasFunctionalResidualCapacity())
@@ -239,8 +256,6 @@ namespace Pulse.CDM
 
       if (from.HasYPieceVolume())
         this.GetYPieceVolume().Set(from.GetYPieceVolume());
-      if (from.HasConnectionVolume())
-        this.GetConnectionVolume().Set(from.GetConnectionVolume());
 
       if (from.fraction_inspired_gases != null)
       {
@@ -276,6 +291,39 @@ namespace Pulse.CDM
     public bool HasConnection()
     {
       return connection != eSwitch.NullSwitch;
+    }
+
+    public SEScalarVolume GetConnectionVolume()
+    {
+      if (connection_volume == null)
+        connection_volume = new SEScalarVolume();
+      return connection_volume;
+    }
+    public bool HasConnectionVolume()
+    {
+      return connection_volume == null ? false : connection_volume.IsValid();
+    }
+
+
+    public SEScalarVolumePerPressure GetCompliance()
+    {
+      if (compliance == null)
+        compliance = new SEScalarVolumePerPressure();
+      return compliance;
+    }
+    public bool HasCompliance()
+    {
+      return compliance == null ? false : compliance.IsValid();
+    }
+    public SEScalarFrequency GetDriverDampingParameter()
+    {
+      if (driver_damping_parameter == null)
+        driver_damping_parameter = new SEScalarFrequency();
+      return driver_damping_parameter;
+    }
+    public bool HasDriverDampingParameter()
+    {
+      return driver_damping_parameter == null ? false : driver_damping_parameter.IsValid();
     }
 
     public SEScalarPressure GetPositiveEndExpiredPressure()
@@ -588,17 +636,6 @@ namespace Pulse.CDM
     public bool HasYPieceVolume()
     {
       return y_piece_volume == null ? false : y_piece_volume.IsValid();
-    }
-
-    public SEScalarVolume GetConnectionVolume()
-    {
-      if (connection_volume == null)
-        connection_volume = new SEScalarVolume();
-      return connection_volume;
-    }
-    public bool HasConnectionVolume()
-    {
-      return connection_volume == null ? false : connection_volume.IsValid();
     }
 
     public SESubstanceFraction CreateFractionInspiredGas(string substance)

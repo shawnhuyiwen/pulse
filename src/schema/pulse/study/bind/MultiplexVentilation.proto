@@ -24,7 +24,7 @@ message PatientStateData
   double          AlveolarArterialGradient_mmHg             = 13;
   double          ArterialCarbonDioxidePartialPressure_mmHg = 14;
   double          ArterialOxygenPartialPressure_mmHg        = 15;
-  double          CarricoIndex_mmHg                         = 16;
+  double          HorowitzIndex_mmHg                        = 16;
   double          EndTidalCarbonDioxidePressure_mmHg        = 17;
   double          IdealBodyWeight_kg                        = 18;
   double          MeanAirwayPressure_cmH2O                  = 19;

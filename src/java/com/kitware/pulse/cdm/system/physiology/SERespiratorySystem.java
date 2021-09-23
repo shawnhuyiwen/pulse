@@ -23,7 +23,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
   protected SEScalarPressure              alveolarArterialGradient;
   protected SEScalarVolume                alveolarDeadSpace;
   protected SEScalarVolume                anatomicDeadSpace;
-  protected SEScalarPressure              carricoIndex;
+  protected SEScalarPressure              horowitzIndex;
   protected SEScalarVolumePerPressure     chestWallCompliance;
   protected SEScalarEnergy                elasticWorkOfBreathing;
   protected SEScalar0To1                  endTidalCarbonDioxideFraction;
@@ -87,7 +87,7 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     alveolarArterialGradient = null;
     alveolarDeadSpace = null;
     anatomicDeadSpace = null;
-    carricoIndex = null;
+    horowitzIndex = null;
     chestWallCompliance = null;
     elasticWorkOfBreathing = null;
     endTidalCarbonDioxideFraction = null;
@@ -156,8 +156,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       alveolarDeadSpace.invalidate();
     if (anatomicDeadSpace != null)
       anatomicDeadSpace.invalidate();
-    if (carricoIndex != null)
-      carricoIndex.invalidate();
+    if (horowitzIndex != null)
+      horowitzIndex.invalidate();
     if (chestWallCompliance != null)
       chestWallCompliance.invalidate();
     if (elasticWorkOfBreathing != null)
@@ -279,8 +279,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       SEScalarVolume.load(src.getAlveolarDeadSpace(),dst.getAlveolarDeadSpace());
     if (src.hasAnatomicDeadSpace())
       SEScalarVolume.load(src.getAnatomicDeadSpace(),dst.getAnatomicDeadSpace());
-    if (src.hasCarricoIndex())
-      SEScalarPressure.load(src.getCarricoIndex(),dst.getCarricoIndex());
+    if (src.hasHorowitzIndex())
+      SEScalarPressure.load(src.getHorowitzIndex(),dst.getHorowitzIndex());
     if (src.hasChestWallCompliance())
       SEScalarVolumePerPressure.load(src.getChestWallCompliance(),dst.getChestWallCompliance());
     if (src.hasElasticWorkOfBreathing())
@@ -409,8 +409,8 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
       dst.setAlveolarDeadSpace(SEScalarVolume.unload(src.getAlveolarDeadSpace()));
     if (src.hasAnatomicDeadSpace())
       dst.setAnatomicDeadSpace(SEScalarVolume.unload(src.getAnatomicDeadSpace()));
-    if (src.hasCarricoIndex())
-      dst.setCarricoIndex(SEScalarPressure.unload(src.getCarricoIndex()));
+    if (src.hasHorowitzIndex())
+      dst.setHorowitzIndex(SEScalarPressure.unload(src.getHorowitzIndex()));
     if (src.hasChestWallCompliance())
       dst.setChestWallCompliance(SEScalarVolumePerPressure.unload(src.getChestWallCompliance()));
     if (src.hasElasticWorkOfBreathing())
@@ -567,15 +567,15 @@ public class SERespiratorySystem extends SEPhysiologySystem implements SESystem
     return anatomicDeadSpace;
   }
 
-  public boolean hasCarricoIndex()
+  public boolean hasHorowitzIndex()
   {
-    return carricoIndex == null ? false : carricoIndex.isValid();
+    return horowitzIndex == null ? false : horowitzIndex.isValid();
   }
-  public SEScalarPressure getCarricoIndex()
+  public SEScalarPressure getHorowitzIndex()
   {
-    if (carricoIndex == null)
-      carricoIndex = new SEScalarPressure();
-    return carricoIndex;
+    if (horowitzIndex == null)
+      horowitzIndex = new SEScalarPressure();
+    return horowitzIndex;
   }
 
   public boolean hasChestWallCompliance()

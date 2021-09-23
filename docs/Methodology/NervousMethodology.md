@@ -145,7 +145,7 @@ Where x<sub>HR</sub>, x<sub>E</sub>, x<sub>R</sub> and x<sub>C</sub> are the rel
 @endhtmlonly
 <center>
 <i>Figure 2. The plot array demonstrates the normalized organ responses to sympathetic or parasympathetic activity, plotted against the normalized mean arterial pressure.</i>
-</center>
+</center><br>
 
 This model works well for smaller increases in MAP. However, the baroreceptors reach a saturation level and can no longer continue to apply the same level of change to the achieve a MAP response. This can be seen in the case of hemorrhage. Lower levels of hemorrhage result in the ability to fully maintain MAP with the above changes to parameters to the %Cardiovascular System. However, as the blood pressure continues to drop, the baroreceptors become less effective. To account for this, the model includes a saturation parameter. When the sympathetic response reaches 0.78, an event is triggered for baroreceptor saturation. After the baroreceptors reach saturation, Equations 4-7 are scaled to by a baroreceptor effectiveness parameter to reduce the response. When the MAP reaches a level of approximately 45 mmHg, the body responds with a "last-ditch" response. This is a strong burst of baroreceptor activity to attempt to sustain cardiovasclar function @cite guyton2006medical. The baroreceptor effectiveness parameter is increased for a MAP between 40 and 45 mmHg to represent this response. Below 40mmHg, the baroreceptor effectiveness rapidly falls contributing to cardiovascular collapse. The best example of this response is the baroreceptor role in hemorrhage, particularly the role in the cascade to through hemorrhagic (hypovolemic) shock @cite guyton2006medical @cite Batchinsky2007sympathetic.
 

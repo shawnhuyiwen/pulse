@@ -911,7 +911,7 @@ or
 #### Intubation 
 @copybrief IntubationData <br>
 Note: In order to 'turn off' an intubation, use'Off' as the Type  <br>
-Types : Off, Esophageal, LeftMainstem, RightMainstem, Tracheal
+Types : Off, Esophageal, LeftMainstem, RightMainstem, Tracheal, Oropharyngeal, Nasopharyngeal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "PatientAction": {
@@ -999,8 +999,8 @@ EffusionRate of the liquid
 @copybrief PulmonaryShuntExacerbationData <br>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
-  "PatientCondition": {
-    "PulmonaryShunt": {
+  "PatientAction": {
+    "PulmonaryShuntExacerbation": {
       "Severity": {
         "Scalar0To1": {
           "Value": 0.8
@@ -1008,6 +1008,55 @@ EffusionRate of the liquid
       }
     }
   }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Respiratory Mechanics Configuration
+@copybrief RespiratoryMechanicsConfigurationData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "RespiratoryMechanicsConfiguration": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Settings": {
+      "Active": "On",
+      "LeftComplianceCurve": {
+       "Segment": [
+        {
+         "ConstantSegment": {
+          "BeginVolume": { "ScalarVolume": { "Value": "-Infinity", "Unit": "mL" } },
+          "EndVolume": { "ScalarVolume": { "Value": "Infinity", "Unit": "mL" } },
+          "Compliance": { "ScalarVolumePerPressure": { "Value": 25, "Unit": "mL/cmH2O" } }
+         }}]
+      },
+      "RightComplianceCurve": {
+       "Segment": [
+        {
+         "ConstantSegment": { "BeginVolume": { "ScalarVolume": { "Value": "-Infinity", "Unit": "mL" } },
+          "EndVolume": { "ScalarVolume": { "Value": "Infinity", "Unit": "mL" } },
+          "Compliance": { "ScalarVolumePerPressure": { "Value": 25, "Unit": "mL/cmH2O" } }
+         }}]
+      },
+      "LeftExpiratoryResistance": { "ScalarPressureTimePerVolume": { "Value": 6.5, "Unit": "cmH2O s/L" } },
+      "LeftInspiratoryResistance": { "ScalarPressureTimePerVolume": { "Value": 6.5, "Unit": "cmH2O s/L" } },
+      "RightExpiratoryResistance": { "ScalarPressureTimePerVolume": { "Value": 6.5, "Unit": "cmH2O s/L" } },
+      "RightInspiratoryResistance": { "ScalarPressureTimePerVolume": { "Value": 6.5, "Unit": "cmH2O s/L" } },
+      "UpperExpiratoryResistance": { "ScalarPressureTimePerVolume": { "Value": 9.75, "Unit": "cmH2O s/L" } },
+      "UpperInspiratoryResistance": { "ScalarPressureTimePerVolume": { "Value": 9.75, "Unit": "cmH2O s/L" } },
+      "InspiratoryPeakPressure": { "ScalarPressure": { "Value": -13, "Unit": "cmH2O" } },
+      "ExpiratoryPeakPressure": { "ScalarPressure": { "Unit": "cmH2O" } },
+      "InspiratoryRiseTime": { "ScalarTime": { "Value": 0.9, "Unit": "s" } },
+      "InspiratoryHoldTime": { "ScalarTime": { "Unit": "s" } },
+      "InspiratoryReleaseTime": { "ScalarTime": { "Value": 0.4, "Unit": "s" } },
+      "InspiratoryToExpiratoryPauseTime": { "ScalarTime": { "Value": 2.7, "Unit": "s" } },
+      "ExpiratoryRiseTime": { "ScalarTime": { "Unit": "s" } },
+      "ExpiratoryHoldTime": { "ScalarTime": { "Unit": "s" } },
+      "ExpiratoryReleaseTime": { "ScalarTime": { "Unit": "s" } }
+     }}}
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1039,6 +1088,7 @@ The AdminRoute can be one of:
 - "Inhaled"
 
 The Substance element should be set to a name of any of the %Substances.
+AdministrationDuration is optional, a default will be provided by the model.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "PatientAction": {
@@ -1046,7 +1096,8 @@ The Substance element should be set to a name of any of the %Substances.
       "AdministrationRoute":"Intravenous",
       "Substance":"Succinylcholine",
       "Concentration": { "ScalarMassPerVolume": { "Value":4820.0, "Unit":"ug/mL" } },
-      "Dose": { "ScalarVolume": { "Value":30.0, "Unit":"mL" } }
+      "Dose": { "ScalarVolume": { "Value":30.0, "Unit":"mL" } },
+      "AdministrationDuration": { "ScalarTime": { "Value":2.0, "Unit":"s" } }
     }
   }
 }]
@@ -1076,13 +1127,15 @@ Set Rate to 0 to remove Action
 @copybrief SubstanceInfusionData <br>
 The Substance element should be set to a name of any of the %Substances. <br>
 Set Rate to 0 to remove Action
+Volume is optional, if not provided a default will be given by the model.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "PatientAction": {
     "SubstanceInfusion": { 
      "Substance":"Succinylcholine",
       "Concentration": { "ScalarMassPerVolume": { "Value":5000.0, "Unit":"ug/mL"} },
-      "Rate": { "ScalarVolumePerTime": { "Value":100.0, "Unit":"mL/min" } }
+      "Rate": { "ScalarVolumePerTime": { "Value":100.0, "Unit":"mL/min" } },
+      "Volume": { "ScalarVolume": { "Value":100.0, "Unit":"mL" } }
     }
   }
 }]
@@ -1158,18 +1211,14 @@ Anesthesia Machine State
 #### Anesthesia Machine Configuration 
 @copybrief AnesthesiaMachineConfigurationData <br>
 NOTE: Each field is optional. <br>
-Connection can be one of : Off, Mask, Tube <br>
-Patient must be intubated to be connected as Tube <br>
-Anesthesia machine will be disconnected if intubation is removed. <br>
-Patient cannot be intubated to be connected as Mask <br>
-Anesthesia machine will be disconnected if patient is then intubated. <br>
-Cannot have inhaler and anesthesia machine on at the same time <br>
+Connection can be one of : Off, On <br>
+Cannot have any other equipment on at the same time <br>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{ {
   "AnesthesiaMachineAction": {
     "Configuration": {
       "Configuration": {
-        "Connection":"Tube",
+        "Connection":"On",
         "InletFlow": { "ScalarVolumePerTime": { "Value":5.0, "Unit":"L/min" } },
         "InspiratoryExpiratoryRatio": { "Value":0.5 },
         "OxygenFraction": { "Scalar0To1": { "Value":0.23} },
@@ -1440,16 +1489,18 @@ FATAL: Cannot have bvm, mechanical ventilator, and anesthesia machine on at the 
   "EquipmentAction": {
     "BagValveMaskConfiguration": {
       "BagValveMaskAction": { "EquipmentAction": { "Action": {
-        "Comment": "Attach the bag valve mask with a mask connection" }}},
+        "Comment": "Attach the bag valve mask" }}},
         "Configuration":
         {
-          "Connection": "Mask",
+          "Connection": "On",
           "ValvePositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } }
         }
     }
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
 
 #### %BagValveMask Automated 
 @copybrief BagValveMaskAutomatedData <br>
@@ -1467,6 +1518,8 @@ FATAL: Cannot have bvm, mechanical ventilator, and anesthesia machine on at the 
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- - -
+
 #### %BagValveMask Instantaneous 
 @copybrief BagValveMaskInstantaneousData <br>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1477,6 +1530,8 @@ FATAL: Cannot have bvm, mechanical ventilator, and anesthesia machine on at the 
       "Pressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } } } }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
 
 #### %BagValveMask Squeeze 
 @copybrief BagValveMaskSqueezeData <br>
@@ -1530,7 +1585,7 @@ FATAL: Cannot have bvm, inhaler, and anesthesia machine on at the same time
             "Comment": "Attach the mechanical ventilator with rate = 20 bpm and I:E Ratio = 1:1" }}},
       "Settings":
       {
-        "Connection": "Tube",
+        "Connection": "On",
         "InspirationWaveform": "Square",
         "ExpirationWaveform": "Square",
         "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 20.0, "Unit": "cmH2O" } },
@@ -1544,6 +1599,106 @@ FATAL: Cannot have bvm, inhaler, and anesthesia machine on at the same time
       }
     }
   }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Mechanical Ventilator Hold 
+@copybrief MechanicalVentilatorHoldData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "EquipmentAction": {
+    "MechanicalVentilatorHold": {
+     "MechanicalVentilatorAction": {
+      "EquipmentAction": { "Action": {} } },
+     "State": "On",
+     "AppliedRespiratoryCycle": "Inspiration"
+    }
+   }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Mechanical Ventilator Leak 
+@copybrief MechanicalVentilatorLeakData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "EquipmentAction": {
+    "MechanicalVentilatorLeak": {
+     "MechanicalVentilatorAction": {
+      "EquipmentAction": { "Action": {} } },
+     "Severity": { "Scalar0To1": { "Value": 0.42 } }
+    }
+   }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Mechanical Ventilator CPAP 
+@copybrief MechanicalVentilatorContinuousPositiveAirwayPressureData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "EquipmentAction": {
+    "MechanicalVentilatorContinuousPositiveAirwayPressure": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": { "Action": {} } },
+      "Connection": "On" },
+     "DeltaPressureSupport": { "ScalarPressure": { "Value": 10, "Unit": "cmH2O" } },
+     "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.21 } },
+     "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
+     "Slope": { "ScalarTime": { "Value": 0.2, "Unit": "s" } }
+    }
+   }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Mechanical Ventilator Pressure Control 
+@copybrief MechanicalVentilatorPressureControlData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "EquipmentAction": {
+    "MechanicalVentilatorPressureControl": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": { "Action": {} } },
+      "Connection": "On" },
+     "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.21 } },
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" } },
+     "InspiratoryPressure": { "ScalarPressure": { "Value": 19, "Unit": "cmH2O" } },
+     "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
+     "RespirationRate": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
+     "Slope": { "ScalarTime": { "Unit": "s" } }
+     }
+   }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
+#### Mechanical Ventilator Volume Control
+@copybrief MechanicalVentilatorVolumeControlData <br>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "EquipmentAction": {
+    "MechanicalVentilatorVolumeControl": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": { "Action": {} } },
+      "Connection": "On" },
+     "Flow": { "ScalarVolumePerTime": { "Value": 60, "Unit": "L/min" } },
+     "FractionInspiredOxygen": { "Scalar0To1": { "Value": 0.21 } },
+     "InspiratoryPeriod": { "ScalarTime": { "Value": 1, "Unit": "s" } },
+     "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5, "Unit": "cmH2O" } },
+     "RespirationRate": { "ScalarFrequency": { "Value": 12, "Unit": "1/min" } },
+     "TidalVolume": { "ScalarVolume": { "Value": 900, "Unit": "mL" } }
+    }
+   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

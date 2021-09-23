@@ -253,7 +253,7 @@ namespace PULSE_ENGINE
     GetInspiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
     GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
     GetInspiratoryExpiratoryRatio().SetValue(0.5);
-    GetCarricoIndex().SetValue(452.0, PressureUnit::mmHg);
+    GetHorowitzIndex().SetValue(452.0, PressureUnit::mmHg);
     GetFractionOfInsipredOxygen().SetValue(0.21);
     GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(0.0);
     GetOxygenationIndex().SetValue(0.0);
@@ -2093,12 +2093,12 @@ namespace PULSE_ENGINE
 
         if (m_data.HasCardiovascular())
         {
-          GetCarricoIndex().SetValue(m_ArterialO2PartialPressure_mmHg / FiO2, PressureUnit::mmHg);
+          GetHorowitzIndex().SetValue(m_ArterialO2PartialPressure_mmHg / FiO2, PressureUnit::mmHg);
           GetOxygenationIndex().SetValue(FiO2* meanAirwayPressure_mmHg * 100.0 / m_ArterialO2PartialPressure_mmHg);
         }
         else
         {
-          GetCarricoIndex().Invalidate();
+          GetHorowitzIndex().Invalidate();
           GetOxygenationIndex().Invalidate();
         }
 

@@ -141,7 +141,7 @@ namespace pulse::study::multiplex_ventilation
           auto AortaO2 = pc->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Aorta)->GetSubstanceQuantity(pc->GetSubstances().GetO2());
           soloVentilation->set_arterialoxygenpartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
           soloVentilation->set_arterialcarbondioxidepartialpressure_mmhg(AortaO2->GetPartialPressure(PressureUnit::mmHg));
-          soloVentilation->set_carricoindex_mmhg(pc->GetRespiratory().GetCarricoIndex(PressureUnit::mmHg));
+          soloVentilation->set_horowitzindex_mmhg(pc->GetRespiratory().GetHorowitzIndex(PressureUnit::mmHg));
         }
         else if (comparison.has_multiplexventilation())
         {
@@ -581,7 +581,7 @@ namespace pulse::study::multiplex_ventilation
       multiVentilation->set_alveolararterialgradient_mmhg(pc->GetRespiratory().GetAlveolarArterialGradient(PressureUnit::mmHg));
       multiVentilation->set_arterialcarbondioxidepartialpressure_mmhg(m_AortaCO2s[p]->GetPartialPressure(PressureUnit::mmHg));
       multiVentilation->set_arterialoxygenpartialpressure_mmhg(m_AortaO2s[p]->GetPartialPressure(PressureUnit::mmHg));
-      multiVentilation->set_carricoindex_mmhg(pc->GetRespiratory().GetCarricoIndex(PressureUnit::mmHg));
+      multiVentilation->set_horowitzindex_mmhg(pc->GetRespiratory().GetHorowitzIndex(PressureUnit::mmHg));
       multiVentilation->set_endtidalcarbondioxidepressure_mmhg(pc->GetRespiratory().GetEndTidalCarbonDioxidePressure(PressureUnit::mmHg));
       multiVentilation->set_idealbodyweight_kg(pc->GetCurrentPatient().GetIdealBodyWeight(MassUnit::kg));
       multiVentilation->set_meanairwaypressure_cmh2o(pc->GetRespiratory().GetMeanAirwayPressure(PressureUnit::cmH2O));
@@ -645,7 +645,7 @@ namespace pulse::study::multiplex_ventilation
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
-    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("CarricoIndex", PressureUnit::mmHg);
+    trkr.GetDataRequestManager().CreatePhysiologyDataRequest("HorowitzIndex", PressureUnit::mmHg);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryExpiratoryRatio");
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
     trkr.GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);

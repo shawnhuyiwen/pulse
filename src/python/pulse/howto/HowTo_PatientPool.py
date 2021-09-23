@@ -9,7 +9,8 @@ from pulse.cdm.engine import SEDataRequestManager, SEDataRequest, \
 from pulse.cdm.patient import eSex, SEPatientConfiguration
 from pulse.cdm.patient_actions import SEHemorrhage, eHemorrhageType, \
                                       SESubstanceBolus, eSubstance_Administration
-from pulse.cdm.scalars import MassPerVolumeUnit, TimeUnit, VolumeUnit
+from pulse.cdm.scalars import FrequencyUnit, MassPerVolumeUnit, PressureUnit,\
+                              TemperatureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
 
 def HowTo_PatientPool():
     # You may also specify how many threads to use via this ctor
@@ -22,17 +23,17 @@ def HowTo_PatientPool():
     # To learn more about Data Requests please look at the data request section here:
     # https://pulse.kitware.com/_scenario_file.html
     data_requests = [
-        SEDataRequest.create_physiology_request("HeartRate", unit="1/min"),
-        SEDataRequest.create_physiology_request("ArterialPressure", unit="mmHg"),
-        SEDataRequest.create_physiology_request("MeanArterialPressure", unit="mmHg"),
-        SEDataRequest.create_physiology_request("SystolicArterialPressure", unit="mmHg"),
-        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit="mmHg"),
+        SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("ArterialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("MeanArterialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("SystolicArterialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("OxygenSaturation"),
-        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit="mmHg"),
-        SEDataRequest.create_physiology_request("RespirationRate", unit="1/min"),
-        SEDataRequest.create_physiology_request("SkinTemperature", unit="degC"),
-        SEDataRequest.create_physiology_request("CardiacOutput", unit="L/min"),
-        SEDataRequest.create_physiology_request("BloodVolume", unit="mL"),
+        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("SkinTemperature", unit=TemperatureUnit.C),
+        SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
+        SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL)
     ]
     data_req_mgr = SEDataRequestManager(data_requests)
 
@@ -47,12 +48,12 @@ def HowTo_PatientPool():
     pe1.engine_initialization.patient_configuration = SEPatientConfiguration()
     pe1.engine_initialization.patient_configuration.get_patient().set_name("patient_" + str(pe1.get_id()))
     pe1.engine_initialization.patient_configuration.get_patient().set_sex(eSex.Male)
-    pe1.engine_initialization.log_filename = "./test_results/HowTo_PatientPool/engine_" + str(pe1.get_id()) + ".log"
+    pe1.engine_initialization.log_filename = "./test_results/howto/HowTo_PatientPool/engine_" + str(pe1.get_id()) + ".py.log"
     # Or you can use a preexisting state for a patient
     pe2 = pool.create_engine(2)
     pe2.engine_initialization.data_request_mgr = data_req_mgr
     pe2.engine_initialization.state_filename = "./states/StandardMale@0s.json"
-    pe2.engine_initialization.log_filename = "./test_results/HowTo_PatientPool/engine_" + str(pe2.get_id()) + ".log"
+    pe2.engine_initialization.log_filename = "./test_results/howto/HowTo_PatientPool/engine_" + str(pe2.get_id()) + ".py.log"
 
     # Initialize all engines
     # initialize_engines will update engine data/logs/events

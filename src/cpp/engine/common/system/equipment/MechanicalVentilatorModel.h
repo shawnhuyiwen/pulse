@@ -61,16 +61,22 @@ namespace PULSE_ENGINE
     void CalculatePauseRespiratoryParameters();
     void CalculateExpiratoryRespiratoryParameters();
     void SetResistances();
+    void SetCompliance();
     void SetVolumes();
 
     // Serializable member variables (Set in Initialize and in schema)
     double                m_CurrentPeriodTime_s;
     double                m_DriverPressure_cmH2O;
+    double                m_PreviousDriverFlow_L_Per_s;
+    double                m_PreviousDriverPressure_cmH2O;
     double                m_DriverFlow_L_Per_s;
     double                m_CurrentVentilatorVolume_L;
     double                m_CurrentRespiratoryVolume_L;
     double                m_InspirationTime_s;
     double                m_InspiratoryFlow_L_Per_s;
+    bool                  m_LimitReached;
+    double                m_PreviousYPieceToConnectionFlow_L_Per_s;
+    double                m_PreviousConnectionPressure_cmH2O;
     eBreathState          m_CurrentBreathState;
 
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
@@ -78,6 +84,7 @@ namespace PULSE_ENGINE
     // Stateless member variable (Set in SetUp())
     SEGasCompartment*    m_Environment;
     SEGasCompartment*    m_Ventilator;
+    SEGasCompartment*    m_Connection;
     SELiquidCompartment* m_VentilatorAerosol;
     SEFluidCircuitNode*  m_VentilatorNode;
     SEFluidCircuitNode*  m_ExpiratoryLimbNode;
@@ -88,6 +95,7 @@ namespace PULSE_ENGINE
     SEFluidCircuitNode*  m_ConnectionNode;
     SEFluidCircuitNode*  m_AmbientNode;
     SEFluidCircuitPath*  m_EnvironmentToVentilator;
+    SEFluidCircuitPath*  m_VentilatorToEnvironment;
     SEFluidCircuitPath*  m_YPieceToConnection;
     SEFluidCircuitPath*  m_VentilatorToExpiratoryValve;
     SEFluidCircuitPath*  m_VentilatorToInspiratoryValve;
@@ -95,5 +103,6 @@ namespace PULSE_ENGINE
     SEFluidCircuitPath*  m_InspiratoryLimbToYPiece;
     SEFluidCircuitPath*  m_LeakConnectionToEnvironment;
     SEFluidCircuitPath*  m_ConnectionToAirway;
+    double               m_DefaultClosedFlowResistance_cmH2O_s_Per_L;
   };
 }

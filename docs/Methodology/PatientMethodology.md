@@ -289,4 +289,4 @@ CDM - Common Data Model
 Data Model Implementation
 -------------------------
 
-Patient
+@ref PatientTable "Patient"

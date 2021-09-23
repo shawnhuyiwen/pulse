@@ -462,6 +462,7 @@ Figure 5 depicts the time-dependent driver pressure source of the %Respiratory S
 
 The Pulse respiratory system is separated into four compliances (see the circuit diagram in Figure 6) defined by the left and right chest walls and lungs. The pressure-volume relationship has been well studied in describing the mechanical behavior of the lungs during inflation and deflation @cite harris2005pressure. A comprehensive sigmoidal equation for the entire system has been determined from empirical pulmonary pressure-volume data @cite venegas1998comprehensive. This compliance curve has been further broken into two constant values for the left and right lung curves and two sigmoidal functions for the left and right lungs. Figure 6 shows the right side (combined chest wall and lung) compliance curve for the healthy standard patient. This function is varied based on patient settings. During simulations, the instantaneous compliances based on this curve are determined using the current lung volume.
 
+@htmlonly
 <center>
 <a href="./Images/Respiratory/ComplianceCurve.png">
 <img src="./Images/Respiratory/ComplianceCurve.png" width="550"></a>
@@ -1573,7 +1574,7 @@ The ARDS condition was validated against a moderate severity scenario.  Further 
 <i>Table 8. Validation matrix for moderate ARDS in both lungs. The table shows the engine output compared to validation data for respiratory and hemodynamic values.</i>
 </center>
 
-|	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Pulmonary Compliance (L/cmH2O)	|	Respiration Rate (breaths/min)	|	Shunt Fraction	|	Heart Rate (beats/min)	|	Total Pulmonary Ventilation (L/min) 	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	Carrico Index [PaO2/FiO2] (mmHg)	|
+|	Segment	|	Notes	|	Sampled Scenario Time (s)	|	Pulmonary Compliance (L/cmH2O)	|	Respiration Rate (breaths/min)	|	Shunt Fraction	|	Heart Rate (beats/min)	|	Total Pulmonary Ventilation (L/min) 	|	Oxygen Saturation	|	PaO2 (mmHg)	|	PaCO2 (mmHg)	|	Horowitz Index [PaO2/FiO2] (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Moderate ARDS Severity = 0.6 Left Lung = 100% Right Lung  = 100%	|	Chronic condition	|	120	|<span class="success">	Reduced @cite mortelliti2002acute	</span>|<span class="success">	Tachypnea @cite mortelliti2002acute	</span>|<span class="success">	>20% @cite radermacher2017fifty	</span>|<span class="success">	Tachycardia @cite mortelliti2002acute	</span>|<span class="success">	Increased @ cite mortelliti2002acute	</span>|<span class="success">	Hypoxia @cite mortelliti2002acute	</span>|<span class="success">	Hypoxemia @cite radermacher2017fifty	</span>|<span class="success">	Normal or near normal @cite mortelliti2002acute	</span>|<span class="success">	<300 @cite mortelliti2002acute	</span>|
 

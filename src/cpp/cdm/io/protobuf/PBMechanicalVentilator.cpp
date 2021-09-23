@@ -140,6 +140,12 @@ void PBMechanicalVentilator::Load(const CDM_BIND::MechanicalVentilatorSettingsDa
 void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSettingsData& src, SEMechanicalVentilatorSettings& dst, const SESubstanceManager& subMgr)
 {
   dst.m_Connection = (eSwitch)src.connection();
+  if (src.has_connectionvolume())
+    PBProperty::Load(src.connectionvolume(), dst.GetConnectionVolume());
+  if (src.has_compliance())
+    PBProperty::Load(src.compliance(), dst.GetCompliance());
+  if (src.has_driverdampingparameter())
+    PBProperty::Load(src.driverdampingparameter(), dst.GetDriverDampingParameter());
 
   if (src.has_positiveendexpiredpressure())
     PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
@@ -204,8 +210,6 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
 
   if (src.has_ypiecevolume())
     PBProperty::Load(src.ypiecevolume(), dst.GetYPieceVolume());
-  if (src.has_connectionvolume())
-    PBProperty::Load(src.connectionvolume(), dst.GetConnectionVolume());
 
   const SESubstance* sub;
   for (int i = 0; i < src.fractioninspiredgas_size(); i++)
@@ -252,6 +256,12 @@ CDM_BIND::MechanicalVentilatorSettingsData* PBMechanicalVentilator::Unload(const
 void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src, CDM_BIND::MechanicalVentilatorSettingsData& dst)
 {
   dst.set_connection((CDM_BIND::eSwitch)src.m_Connection);
+  if (src.HasConnectionVolume())
+    dst.set_allocated_connectionvolume(PBProperty::Unload(*src.m_ConnectionVolume));
+  if (src.HasCompliance())
+    dst.set_allocated_compliance(PBProperty::Unload(*src.m_Compliance));
+  if (src.HasDriverDampingParameter())
+    dst.set_allocated_driverdampingparameter(PBProperty::Unload(*src.m_DriverDampingParameter));
 
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
@@ -316,8 +326,6 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
 
   if (src.HasYPieceVolume())
     dst.set_allocated_ypiecevolume(PBProperty::Unload(*src.m_YPieceVolume));
-  if (src.HasConnectionVolume())
-    dst.set_allocated_connectionvolume(PBProperty::Unload(*src.m_ConnectionVolume));
 
   for (SESubstanceFraction* sf : src.m_FractionInspiredGases)
     dst.mutable_fractioninspiredgas()->AddAllocated(PBSubstance::Unload(*sf));

@@ -33,9 +33,9 @@ public:
   virtual SEScalarVolume& GetAnatomicDeadSpace();
   virtual double GetAnatomicDeadSpace(const VolumeUnit& unit) const;
 
-  virtual bool HasCarricoIndex() const;
-  virtual SEScalarPressure& GetCarricoIndex();
-  virtual double GetCarricoIndex(const PressureUnit& unit) const;
+  virtual bool HasHorowitzIndex() const;
+  virtual SEScalarPressure& GetHorowitzIndex();
+  virtual double GetHorowitzIndex(const PressureUnit& unit) const;
 
   virtual bool HasChestWallCompliance() const;
   virtual SEScalarVolumePerPressure& GetChestWallCompliance();
@@ -260,7 +260,7 @@ protected:
   SEScalarPressure*              m_AlveolarArterialGradient;
   SEScalarVolume*                m_AlveolarDeadSpace;
   SEScalarVolume*                m_AnatomicDeadSpace;
-  SEScalarPressure*              m_CarricoIndex;
+  SEScalarPressure*              m_HorowitzIndex;
   SEScalarVolumePerPressure*     m_ChestWallCompliance;
   SEScalarEnergy*                m_ElasticWorkOfBreathing;
   SEScalar0To1*                  m_EndTidalCarbonDioxideFraction;

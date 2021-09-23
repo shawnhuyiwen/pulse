@@ -8,7 +8,7 @@ from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_SubstanceBolus():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/pypulse_SubstanceBolus.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_SubstanceBolus.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

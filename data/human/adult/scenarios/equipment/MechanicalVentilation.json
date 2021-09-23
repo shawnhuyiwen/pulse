@@ -389,7 +389,7 @@
         "Precision": 2
       },
       "Category": "Physiology",
-      "PropertyName": "CarricoIndex",
+      "PropertyName": "HorowitzIndex",
       "Unit": "mmHg"
     }, {
       "DecimalFormat": {

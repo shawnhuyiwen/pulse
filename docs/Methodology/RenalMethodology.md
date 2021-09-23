@@ -35,7 +35,7 @@ Figure 1 shows the entire system and is labeled with the following:
 13. Large intestine
 14. Pelvis
 
-@image html RenalSystem.png
+<img src="./Images/Renal/RenalSystem.png">
 <center>
 <i>
 Figure 1. This is an illustration of the human renal system.  The bounds of the system are generally accepted to be the combination of everything encompassing #1-6 (urinary system) and #8 renal artery and vein. @cite Jmarchn2010Urinary
@@ -58,7 +58,7 @@ nitrogen content over long periods of time. Nitrogen waste from the liver is exc
 
 The %Renal model lumps each kidney into a single nephron (Figure 2). The  fluid flow through the kidney is modeled with an electrical circuit analogue, and the substance transport is a combination of the generic transporter and active filtration/reabsorption/secretion based on feedback and substance parameters. Alternatively, excretion can be directly applied and is governed via clearance equations - as with the drug model (@ref DrugsMethodology). This is consistent with other system models, which also employ lumped parameter modeling.
 
-@image html LumpedNephron.png
+<img src="./Images/Renal/LumpedNephron.png">
 <center>
 <i>
 Figure 2. The basic anatomical structure of the nephron. The blood is filtered into the Bowman's capsule from the Glomerular Capillaries. Most of the fluid is then reabsorbed into Peritubluar Capillaries.  The remaining fluid and substances continue through the tubules and are exreted into the bladder. @cite Madhero882010Nephron
@@ -173,8 +173,10 @@ Features, Capabilities, and Dependencies
 ### Circuit
 
 The %Renal circuit (Figure 4) determines blood and urine pressure, flow, and volume, organized by compartments.  These compartments are comprised of lumped parameter models that use resistors, capacitors, pressure sources, and valves.  The number of lumped parameter models used to represent the %Renal System was chosen to provide a level of fidelity that meets the requirements of the overall project and to provide sufficient system capability.
+
 @anchor renal-circuit
-@image html RenalCircuit.png
+
+<img src="./Images/Renal/RenalCircuit.png">
 <center>
 <i>
 Figure 4. The %Renal circuit is made up of nodes and paths with elements.  The fluid mechanics of the system are calculated assuming no transition between blood and urine.  The substance quantities are what distinguish the two fluid types.  Everything above the dashed line can be considered blood.  Fluid below the dashed line transitions to urine as substance filtration and reabsorption change its make-up. The "T" labeled paths are location where transport of each substance is calculated by the %Renal system directly.  All others are done generically.
@@ -223,7 +225,7 @@ The volume distribution of the %Renal system is as follows:
 
 The %Renal circuit contains 11 resistances for each kidney, and a shared urethra resistance - see Figure 5.  The urethra (number 12) is typically set as an open switch (approximately infinite resistance), unless the patient is urinating, when it becomes closed to allow flow out of the bladder.
 
-@image html RenalResistances.png
+<img src="./Images/Renal/RenalResistances.png">
 <center>
 <i>
 Figure 5. The resistances in the left kidney are numbered for further description.
@@ -281,7 +283,7 @@ The net filtration and reabsorption pressures are determined by the sum of the h
 
 The Landis-Pappenheimer equation is applied at the pressure sources numbered in Figure 6.
 
-@image html RenalPressureSources.png
+<img src="./Images/Renal/RenalPressureSources.png">
 <center>
 <i>
 Figure 6. The four pressure sources that represent the colloid osmotic pressure are determined via the local albumin concentration.
@@ -321,7 +323,7 @@ These values are applied in the model as the resistances circled in Figure 7 and
 *Equation 6*
 </center><br>
 
-@image html Filtration.png
+<img src="./Images/Renal/Filtration.png">
 <center>
 <i>
 Figure 7. The membrane fluid filtration for both glomerular filtration and peritubular reabsorption locations are modeled as the resistances circled in red.
@@ -392,7 +394,7 @@ One of the main mechanisms for kidney regulation of renal blood flow due to chan
 
 Within an autoregulatory range of 80 to 180 mmHg for the MAP, the renal blood flow is is maintained by either constricting (increased resistance) or dilating (decreased resistance) the afferent areteriole @cite rhoades2003medical. A higher sodium mass flow rate in the tubules leads to a higher resistance, and a lower mass flow rate leads to a lower resistance (see Figure 11). The minimum and maximum resistances for the afferent arteriole were determined through a unit test to be 1.7 mmHg/mL-s (at MAP of 80 mmHg) and 12.382 mmHg/mL-s (at MAP of 180 mmHg).
 
-@image html TubuloglomerularFeedbackFlow.png
+<img src="./Images/Renal/TubuloglomerularFeedbackFlow.png">
 <center>
 <i>
 Figure 11. A flow diagram showing the tubuloglomerular response to increased and decreased MAP.  @cite rhoades2003medical
@@ -406,8 +408,7 @@ High frequency oscillations of the tubuloglomerular feedback are damped using th
 *Equation 9*
 </center><br>
 
-
-@image html TubuloglomerularFeedback.png
+<img src="./Images/Renal/TubuloglomerularFeedback.png">
 <center>
 <i>
 Figure 12. The circle shows the location used to determine the sodium value, and the resistance where the feedback is applied is denoted with an oval.
@@ -433,7 +434,7 @@ Figure 13. The plots show the flow response to variations in mean arterial press
 
 When osmolarity (plasma sodium concentration) increases/decreases above/below normal the osmoreceptor feedback system compensates in the way shown in Figure 14. Increased water permeability in the distal nephron segments causes increased water reabsorption and excretion of a small volume of concentrated urine @cite guyton2006medical. This mechanism tends to keep the plasma sodium concentration stable and was calibrated with extended multi-hour simulations.
 
-@image html OsmoreceptorFeedbackFlow.png
+<img src="./Images/Renal/OsmoreceptorFeedbackFlow.png">
 <center>
 <i>
 Figure 14. A flow diagram showing the osmoreceptor response to increased and decreased plasma sodium concentration.  @cite guyton2006medical
