@@ -539,7 +539,7 @@ because of differing conventions for those elements.*
 
 The engine has been shown to successfully conserve mass, energy, and momentum within all defined closed-loop systems. The successful conservation of mass provided by the solver is shown in Figure 10. The volume (quantity/charge) within cardiovascular circuit nodes through approximately 2.5 full heart beat cycles.  The total volume of all compartments remains at a constant value of 5L throughout the entire process.
 
-<img src="./Images/BagValveMask/CardiovascularCompartmentVolumes.png">
+<img src="./Images/Circuit/CardiovascularCompartmentVolumes.png">
 <center>
 *Figure 10.  The blood volume within each compartment continuously varies in the cardiovascular circuit.   The sum of these volumes does not change at any time step, and system mass is successfully conserved.*
 </center><br>
