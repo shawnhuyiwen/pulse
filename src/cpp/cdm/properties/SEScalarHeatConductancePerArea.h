@@ -10,6 +10,10 @@ public:
   HeatConductancePerAreaUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~HeatConductancePerAreaUnit() {}
 
+  // Please use static units below
+  HeatConductancePerAreaUnit(const HeatConductancePerAreaUnit&) = delete;
+  HeatConductancePerAreaUnit& operator= (const HeatConductancePerAreaUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const HeatConductancePerAreaUnit& GetCompoundUnit(const std::string& unit);
 

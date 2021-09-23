@@ -10,6 +10,10 @@ public:
   TemperatureUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~TemperatureUnit() {}
 
+  // Please use static units below
+  TemperatureUnit(const TemperatureUnit&) = delete;
+  TemperatureUnit& operator= (const TemperatureUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const TemperatureUnit& GetCompoundUnit(const std::string& unit);
 

@@ -10,6 +10,10 @@ public:
   LengthPerTimePressureUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~LengthPerTimePressureUnit() {}
 
+  // Please use static units below
+  LengthPerTimePressureUnit(const LengthPerTimePressureUnit&) = delete;
+  LengthPerTimePressureUnit& operator= (const LengthPerTimePressureUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const LengthPerTimePressureUnit& GetCompoundUnit(const std::string& unit);
 

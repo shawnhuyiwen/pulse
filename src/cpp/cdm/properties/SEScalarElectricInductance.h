@@ -10,6 +10,10 @@ public:
   ElectricInductanceUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~ElectricInductanceUnit() {}
 
+  // Please use static units below
+  ElectricInductanceUnit(const ElectricInductanceUnit&) = delete;
+  ElectricInductanceUnit& operator= (const ElectricInductanceUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const ElectricInductanceUnit& GetCompoundUnit(const std::string& unit);
 

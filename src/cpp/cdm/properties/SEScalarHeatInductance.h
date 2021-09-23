@@ -10,6 +10,10 @@ public:
   HeatInductanceUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~HeatInductanceUnit() {}
 
+  // Please use static units below
+  HeatInductanceUnit(const HeatInductanceUnit&) = delete;
+  HeatInductanceUnit& operator= (const HeatInductanceUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const HeatInductanceUnit& GetCompoundUnit(const std::string& unit);
 

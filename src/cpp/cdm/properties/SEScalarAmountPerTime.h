@@ -10,9 +10,12 @@ public:
   AmountPerTimeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~AmountPerTimeUnit() {}
 
+  // Please use static units below
+  AmountPerTimeUnit(const AmountPerTimeUnit&) = delete;
+  AmountPerTimeUnit& operator= (const AmountPerTimeUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const AmountPerTimeUnit& GetCompoundUnit(const std::string& unit);
-
 
   static AmountPerTimeUnit mol_Per_day;
   static AmountPerTimeUnit mol_Per_s;

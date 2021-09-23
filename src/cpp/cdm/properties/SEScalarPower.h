@@ -10,6 +10,10 @@ public:
   PowerUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~PowerUnit() {}
 
+  // Please use static units below
+  PowerUnit(const PowerUnit&) = delete;
+  PowerUnit& operator= (const PowerUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const PowerUnit& GetCompoundUnit(const std::string& unit);
 

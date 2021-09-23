@@ -10,6 +10,10 @@ public:
   ElectricChargeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~ElectricChargeUnit() {}
 
+  // Please use static units below
+  ElectricChargeUnit(const ElectricChargeUnit&) = delete;
+  ElectricChargeUnit& operator= (const ElectricChargeUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const ElectricChargeUnit& GetCompoundUnit(const std::string& unit);
 

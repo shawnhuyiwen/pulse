@@ -10,6 +10,10 @@ public:
   MassPerAreaTimeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~MassPerAreaTimeUnit() {}
 
+  // Please use static units below
+  MassPerAreaTimeUnit(const MassPerAreaTimeUnit&) = delete;
+  MassPerAreaTimeUnit& operator= (const MassPerAreaTimeUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const MassPerAreaTimeUnit& GetCompoundUnit(const std::string& unit);
 

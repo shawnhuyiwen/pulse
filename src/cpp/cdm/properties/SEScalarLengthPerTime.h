@@ -10,6 +10,10 @@ public:
   LengthPerTimeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~LengthPerTimeUnit() {}
 
+  // Please use static units below
+  LengthPerTimeUnit(const LengthPerTimeUnit&) = delete;
+  LengthPerTimeUnit& operator= (const LengthPerTimeUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const LengthPerTimeUnit& GetCompoundUnit(const std::string& unit);
 

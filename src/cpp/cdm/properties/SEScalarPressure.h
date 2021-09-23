@@ -10,6 +10,10 @@ public:
   PressureUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~PressureUnit() {}
 
+  // Please use static units below
+  PressureUnit(const PressureUnit&) = delete;
+  PressureUnit& operator= (const PressureUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const PressureUnit& GetCompoundUnit(const std::string& unit);
 

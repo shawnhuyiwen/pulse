@@ -10,6 +10,10 @@ public:
   MassPerAmountUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~MassPerAmountUnit() {}
 
+  // Please use static units below
+  MassPerAmountUnit(const MassPerAmountUnit&) = delete;
+  MassPerAmountUnit& operator= (const MassPerAmountUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const MassPerAmountUnit& GetCompoundUnit(const std::string& unit);
 

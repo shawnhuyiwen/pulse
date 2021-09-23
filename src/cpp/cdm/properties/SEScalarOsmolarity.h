@@ -10,6 +10,10 @@ public:
   OsmolarityUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~OsmolarityUnit() {}
 
+  // Please use static units below
+  OsmolarityUnit(const OsmolarityUnit&) = delete;
+  OsmolarityUnit& operator= (const OsmolarityUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const OsmolarityUnit& GetCompoundUnit(const std::string& unit);
 

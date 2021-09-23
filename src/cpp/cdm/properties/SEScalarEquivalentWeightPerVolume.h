@@ -10,6 +10,10 @@ public:
   EquivalentWeightPerVolumeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~EquivalentWeightPerVolumeUnit() {}
 
+  // Please use static units below
+  EquivalentWeightPerVolumeUnit(const EquivalentWeightPerVolumeUnit&) = delete;
+  EquivalentWeightPerVolumeUnit& operator= (const EquivalentWeightPerVolumeUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const EquivalentWeightPerVolumeUnit& GetCompoundUnit(const std::string& unit);
 

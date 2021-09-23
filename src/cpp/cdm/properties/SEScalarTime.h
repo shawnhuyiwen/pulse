@@ -10,6 +10,10 @@ public:
   TimeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~TimeUnit() {}
 
+  // Please use static units below
+  TimeUnit(const TimeUnit&) = delete;
+  TimeUnit& operator= (const TimeUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const TimeUnit& GetCompoundUnit(const std::string& unit);
 

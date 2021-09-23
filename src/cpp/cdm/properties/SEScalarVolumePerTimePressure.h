@@ -10,6 +10,10 @@ public:
   VolumePerTimePressureUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~VolumePerTimePressureUnit() {}
 
+  // Please use static units below
+  VolumePerTimePressureUnit(const VolumePerTimePressureUnit&) = delete;
+  VolumePerTimePressureUnit& operator= (const VolumePerTimePressureUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const VolumePerTimePressureUnit& GetCompoundUnit(const std::string& unit);
 

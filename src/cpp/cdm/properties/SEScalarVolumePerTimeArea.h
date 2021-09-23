@@ -10,6 +10,10 @@ public:
   VolumePerTimeAreaUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~VolumePerTimeAreaUnit() {}
 
+  // Please use static units below
+  VolumePerTimeAreaUnit(const VolumePerTimeAreaUnit&) = delete;
+  VolumePerTimeAreaUnit& operator= (const VolumePerTimeAreaUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const VolumePerTimeAreaUnit& GetCompoundUnit(const std::string& unit);
 

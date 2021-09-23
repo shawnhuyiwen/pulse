@@ -10,6 +10,10 @@ public:
   FrequencyUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~FrequencyUnit() {}
 
+  // Please use static units below
+  FrequencyUnit(const FrequencyUnit&) = delete;
+  FrequencyUnit& operator= (const FrequencyUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const FrequencyUnit& GetCompoundUnit(const std::string& unit);
 

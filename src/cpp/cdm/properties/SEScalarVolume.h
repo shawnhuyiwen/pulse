@@ -10,6 +10,10 @@ public:
   VolumeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~VolumeUnit() {}
 
+  // Please use static units below
+  VolumeUnit(const VolumeUnit&) = delete;
+  VolumeUnit& operator= (const VolumeUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const VolumeUnit& GetCompoundUnit(const std::string& unit);
 

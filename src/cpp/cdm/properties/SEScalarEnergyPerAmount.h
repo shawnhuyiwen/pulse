@@ -10,6 +10,10 @@ public:
   EnergyPerAmountUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~EnergyPerAmountUnit() {}
 
+  // Please use static units below
+  EnergyPerAmountUnit(const EnergyPerAmountUnit&) = delete;
+  EnergyPerAmountUnit& operator= (const EnergyPerAmountUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const EnergyPerAmountUnit& GetCompoundUnit(const std::string& unit);
 

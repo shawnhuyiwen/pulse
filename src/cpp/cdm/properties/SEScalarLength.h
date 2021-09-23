@@ -10,6 +10,10 @@ public:
   LengthUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~LengthUnit() {}
 
+  // Please use static units below
+  LengthUnit(const LengthUnit&) = delete;
+  LengthUnit& operator= (const LengthUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const LengthUnit& GetCompoundUnit(const std::string& unit);
 

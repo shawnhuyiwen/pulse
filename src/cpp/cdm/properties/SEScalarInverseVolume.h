@@ -10,6 +10,10 @@ public:
   InverseVolumeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~InverseVolumeUnit() {}
 
+  // Please use static units below
+  InverseVolumeUnit(const InverseVolumeUnit&) = delete;
+  InverseVolumeUnit& operator= (const InverseVolumeUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const InverseVolumeUnit& GetCompoundUnit(const std::string& unit);
 

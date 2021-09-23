@@ -10,6 +10,10 @@ public:
   AreaPerTimePressureUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~AreaPerTimePressureUnit() {}
 
+  // Please use static units below
+  AreaPerTimePressureUnit(const AreaPerTimePressureUnit&) = delete;
+  AreaPerTimePressureUnit& operator= (const AreaPerTimePressureUnit&) = delete;
+
   static bool IsValidUnit(const std::string& unit);
   static const AreaPerTimePressureUnit& GetCompoundUnit(const std::string& unit);
 

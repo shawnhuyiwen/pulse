@@ -18,6 +18,9 @@ public:
   SEAction(Logger* logger);
   virtual ~SEAction();
 
+  SEAction(const SEAction&) = delete;
+  SEAction& operator= (const SEAction&) = delete;
+
   virtual void Clear();
   static SEAction* Copy(const SEAction&, const SESubstanceManager&);
   
