@@ -5,6 +5,7 @@
 #include "cdm/PhysiologyEngineThunk.h"
 
 #include "cdm/patient/SEPatient.h"
+#include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
 #include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
@@ -207,28 +208,35 @@ std::string PhysiologyEngineThunk::GetPatientAssessment(int type, eSerialization
   std::string stream;
   switch (type)
   {
-  case 0: // CBC
+  case 0: // ABG
+  {
+    SEArterialBloodGasTest abg(m_engine->GetLogger());
+    m_engine->GetPatientAssessment(abg);
+    abg.SerializeToString(stream, format);
+    break;
+  }
+  case 1: // CBC
   {
     SECompleteBloodCount cbc(m_engine->GetLogger());
     m_engine->GetPatientAssessment(cbc);
     cbc.SerializeToString(stream, format);
     break;
   }
-  case 1: // CMP
+  case 2: // CMP
   {
     SEComprehensiveMetabolicPanel cmp(m_engine->GetLogger());
     m_engine->GetPatientAssessment(cmp);
     cmp.SerializeToString(stream, format);
     break;
   }
-  case 2:// PFT
+  case 3:// PFT
   {
     SEPulmonaryFunctionTest pft(m_engine->GetLogger());
     m_engine->GetPatientAssessment(pft);
     pft.SerializeToString(stream, format);
     break;
   }
-  case 3: // U
+  case 4: // U
   {
     SEUrinalysis u(m_engine->GetLogger());
     m_engine->GetPatientAssessment(u);
@@ -287,7 +295,7 @@ std::string PhysiologyEngineThunk::PullActiveActions(eSerializationFormat format
 
 double PhysiologyEngineThunk::GetTimeStep(std::string const& unit)
 {
-  TimeUnit time_unit = TimeUnit::GetCompoundUnit(unit);
+  const TimeUnit& time_unit = TimeUnit::GetCompoundUnit(unit);
   return m_engine->GetTimeStep(time_unit);
 }
 bool PhysiologyEngineThunk::AdvanceTimeStep()
