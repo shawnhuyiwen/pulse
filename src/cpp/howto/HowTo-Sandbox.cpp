@@ -13,7 +13,7 @@
 #include "cdm/properties/SEScalarMassPerVolume.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
-#include "cdm/properties/SEScalarVolumePerTIme.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/utils/FileUtils.h"
