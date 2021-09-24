@@ -9,7 +9,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - PATCH changes when we make backwards-compatible bug fixes.
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
 
-- - 
+---
 
 ## Pulse v4.0.0 (Sept 2021)
 
