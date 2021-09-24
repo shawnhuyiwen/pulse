@@ -45,6 +45,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Volume Control Mode: Intuitive settings associated with VC-CMV and VC-AC
   - Expanded data available in Respiratory and Mechanical Ventilator Systems
 
+---
 
 ## Pulse v3.2.0 (May 2021)
 
@@ -78,6 +79,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
       - Exposed flows per hemorrhage and total flow
       - Exposed blood lost volume per hemorrhage and total blood lost
 
+---
 
 ## Pulse v3.1.0 (December 2020)
 
@@ -96,6 +98,8 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - WinAMR64 (HoloLens 2)
   - Magic Leap's Lumin OS
   - Many Linux
+
+---
 
 ## Pulse v3.0.0 (July 2020)
 
@@ -131,7 +135,7 @@ Congratulations and thank you to everyone who contributed to this release. This 
   - Bob Marinier of [SoarTech](https://soartech.com/) for helping improve the Java interface
   - Wenye He of [Innovision](https://innovisionllc.com/) for helping to start our Python API, and extend our C# API
 
-## Planned Improvements
+### Planned Improvements
 
 - Sepsis
 - Cerebrospinal fluid model for improved intracranial pressure
@@ -142,6 +146,8 @@ Congratulations and thank you to everyone who contributed to this release. This 
 - Pypi support to pip install Pulse into a python environment
 - Maven build for easy inclusion into Java projects
 - Integration with Hololens 2
+
+---
 
 ## Pulse v2.3.0 (January 2020)
 
@@ -178,7 +184,7 @@ Congratulations and thank you to everyone who contributed to this release. This 
   - Mattias Lantz Cronqvist
   - Anusha Muralidharan
 
-## Planned Improvements
+### Planned Improvements
 
 - Python bindings
 - Black box circuit/compartment components
@@ -192,7 +198,7 @@ Congratulations and thank you to everyone who contributed to this release. This 
 - Official contribution plan for merge requests for methodology/model changes
 
 @anchor known-issues
-## Known Physiology Model Issues and Limitations
+### Known Physiology Model Issues and Limitations
 
 The following are known issues with the current version of the software:
 - Lack of a full sympathetic/parasympathetic nervous system
@@ -204,7 +210,7 @@ The following are known issues with the current version of the software:
   - Limited conversion and use within the engine
 - Oxygen saturation drops too sharply
 
-- - -
+---
 
 ## Pulse v2.2.0 (August 2019)
 
@@ -218,9 +224,13 @@ The following are known issues with the current version of the software:
   - Added the ability to provide supplemental oxygen through a nasal cannula, simple mask, and nonrebreather mask.
   - Updated vascular effects caused by respiratory pleural cavity imbalances, mainly to increased venous return resistance when the patient has a pneumothorax / collapsed lungs.
 
+---
+
 ## Pulse v2.1.0 (February 2019)
 
 - Software updates necessary for integration with Unity
+
+---
 
 ## Pulse v2.0.0 (January 2019)
 
@@ -237,8 +247,9 @@ The following are known issues with the current version of the software:
   - Added support for Packed Red Blood Cells infusion
   - Added dissolved oxygen and carbon dioxide to IV fluids to resolve issues with fluid resuscitation
 
+---
 
-### Pulse v1.1.0 (June 2018)
+## Pulse v1.1.0 (June 2018)
 
 - Updated Wiki for using Pulse in your application
 - Added C# example interface
@@ -258,7 +269,9 @@ The following are known issues with the current version of the software:
 - CMake build improvements
   - Pulse builds and runs on single board pc's and all major operating systems
 
-### Pulse v1.0.0 (September 2017)
+---
+
+## Pulse v1.0.0 (September 2017)
 
 - Fixed multi-platform compiling bugs
 - Moved from an in-source to out-of-source build
