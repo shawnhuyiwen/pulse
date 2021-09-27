@@ -9,6 +9,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 - PATCH changes when we make backwards-compatible bug fixes.
 - Release Stage - We have extended this versioning with a <a href="http://en.wikipedia.org/wiki/Software_release_life_cycle">release stage</a>
 
+
 ---
 
 ## Pulse v4.0.0 (Sept 2021)
@@ -45,6 +46,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Volume Control Mode: Intuitive settings associated with VC-CMV and VC-AC
   - Expanded data available in Respiratory and Mechanical Ventilator Systems
 
+
 ---
 
 ## Pulse v3.2.0 (May 2021)
@@ -79,6 +81,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
       - Exposed flows per hemorrhage and total flow
       - Exposed blood lost volume per hemorrhage and total blood lost
 
+
 ---
 
 ## Pulse v3.1.0 (December 2020)
@@ -98,6 +101,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - WinAMR64 (HoloLens 2)
   - Magic Leap's Lumin OS
   - Many Linux
+
 
 ---
 
@@ -146,6 +150,7 @@ Congratulations and thank you to everyone who contributed to this release. This 
 - Pypi support to pip install Pulse into a python environment
 - Maven build for easy inclusion into Java projects
 - Integration with Hololens 2
+
 
 ---
 
@@ -210,6 +215,7 @@ The following are known issues with the current version of the software:
   - Limited conversion and use within the engine
 - Oxygen saturation drops too sharply
 
+
 ---
 
 ## Pulse v2.2.0 (August 2019)
@@ -224,11 +230,13 @@ The following are known issues with the current version of the software:
   - Added the ability to provide supplemental oxygen through a nasal cannula, simple mask, and nonrebreather mask.
   - Updated vascular effects caused by respiratory pleural cavity imbalances, mainly to increased venous return resistance when the patient has a pneumothorax / collapsed lungs.
 
+
 ---
 
 ## Pulse v2.1.0 (February 2019)
 
 - Software updates necessary for integration with Unity
+
 
 ---
 
@@ -246,6 +254,7 @@ The following are known issues with the current version of the software:
   - External hemorrhage from specific compartments (only Vena Cava before)
   - Added support for Packed Red Blood Cells infusion
   - Added dissolved oxygen and carbon dioxide to IV fluids to resolve issues with fluid resuscitation
+
 
 ---
 
@@ -268,6 +277,7 @@ The following are known issues with the current version of the software:
 - Cleaned up headers
 - CMake build improvements
   - Pulse builds and runs on single board pc's and all major operating systems
+
 
 ---
 
