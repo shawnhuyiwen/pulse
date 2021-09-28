@@ -404,8 +404,8 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Albuterol	|	Administer 90 ug metered dose of Albuterol	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
-|	Etomidate	|	Administer 21 ug injection of Etomidate	|<span class="success">	5	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
+|	Albuterol	|	Administer 90 ug metered dose of Albuterol	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Etomidate	|	Administer 21 ug injection of Etomidate	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Epinephrine	|	Administer 10 ug injection of Epinephrine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	Fentanyl	|	Administer 17 mg injection of Fentanyl	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Ketamine	|	Administer 115 mg injection of Ketamine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
@@ -417,7 +417,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |	Propofol	|	Administer 135 mg injection of Propofol	|<span class="success">	4	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
 |	Rocuronium	|	Administer 52 mg injection of Rocuronium	|<span class="success">	2	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Succinylcholine	|	Administer 96 mg injection of Succinylcholine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	59	</span>|<span class="warning">	3	</span>|<span class="danger">	7	</span>|
+|		|	Total	|<span class="success">	59	</span>|<span class="warning">	2	</span>|<span class="danger">	4	</span>|
 
 <center>
 <i>Table 6. The validation results for liquid-modeled drugs.</i>
@@ -483,6 +483,10 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
 
 Norepinephrine occurs naturally in the body and its basal metabolic value is validated as part of the @ref BloodChemistryMethodology. The infusion of norepinephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for five different infusion rates. They are shown in Table 9.
 
+<center>
+<i>Table 9. The validation results for Norepinephrine.</i>
+</center>
+
 |	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate (beats/min)	|	Computed Heart Rate (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Norepinephrine	|	0.01	|	[0.363, 0.605] @cite ensinger1992relationship	|<span class="warning">	0.761	</span>|	[46, 66] NC to neglible @cite ensinger1992relationship	|<span class="success">	73	</span>|	[125, 145] Minimal Increase @cite ensinger1992relationship	|<span class="warning">	118	</span>|	[65, 75] NC @cite ensinger1992relationship	|<span class="warning">	72	</span>|
@@ -492,6 +496,10 @@ Norepinephrine occurs naturally in the body and its basal metabolic value is val
 |	Norepinephrine	|	0.2	|	[6.404, 8.546] @cite ensinger1992relationship	|<span class="success">	7.1	</span>|	[39, 55] NC @cite ensinger1992relationship	|<span class="success">	69	</span>|	[174, 192]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	136	</span>|	[83, 99] Minimal Increase @cite ensinger1992relationship	|<span class="success">	100	</span>|
 
 The infusion of phenylephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for four different infusion rates. They are shown in Table 10.
+
+<center>
+<i>Table 10. The validation results for Phenylephrine.</i>
+</center>
 
 |	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate Change (beats/min)	|	Computed Heart Rate Change (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
