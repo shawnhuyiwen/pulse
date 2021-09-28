@@ -143,7 +143,7 @@ Pressure Control (PC-CMV and PC-AC):
 Volume Control (VC-CMV and VC-AC):
 - Flow
 - Fraction of Inspired Oxygen
-- Inspiratory Period
+- Inspiratory Period (optional - if not set, transition to exhale when Tidal Volume achieved)
 - Positive End Expired Pressure
 - Respiration Rate
 - Tidal Volume
