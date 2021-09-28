@@ -6,13 +6,13 @@
 #include "engine/human_adult/whole_body/Engine.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL SubstanceManager : public PULSE_ENGINE::SubstanceManager
+  class PULSE_DECL SubstanceManager : public pulse::SubstanceManager
   {
     friend class EngineTest;
   public:
-    SubstanceManager(PULSE_ENGINE::Data& data) : PULSE_ENGINE::SubstanceManager(data) {}
+    SubstanceManager(pulse::Data& data) : pulse::SubstanceManager(data) {}
     virtual ~SubstanceManager() = default;
   };
-}
+END_NAMESPACE_EX

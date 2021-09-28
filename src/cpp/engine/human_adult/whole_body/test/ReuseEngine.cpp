@@ -22,7 +22,7 @@
 #include "cdm/utils/testing/SETestCase.h"
 #include "cdm/utils/testing/SETestSuite.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::ReuseEngine(const std::string& rptDirectory)
   {
@@ -103,4 +103,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     }
     testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json");
   }
-}
+END_NAMESPACE_EX

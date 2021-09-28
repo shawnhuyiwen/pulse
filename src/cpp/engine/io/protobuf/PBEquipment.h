@@ -14,7 +14,7 @@ PULSE_BIND_DECL(MechanicalVentilator)
 #include "engine/common/system/equipment/InhalerModel.h"
 #include "engine/common/system/equipment/MechanicalVentilatorModel.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PULSE_DECL PBEquipment
   {

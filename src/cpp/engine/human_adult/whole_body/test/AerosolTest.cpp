@@ -40,7 +40,7 @@
 #include "cdm/utils/testing/SETestCase.h"
 #include "cdm/utils/testing/SETestSuite.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::AerosolTest(const std::string& sOutputDirectory)
   {
@@ -223,7 +223,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
 
     Engine pe;;
     Controller& pc = (Controller&)pe.GetController();
-    const pulse::engine::SizeIndependentDepositionEfficencyCoefficient& SIDECoeff = pc.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
+    const pulse::SizeIndependentDepositionEfficencyCoefficient& SIDECoeff = pc.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
     m_ss << "Airway: " << SIDECoeff.GetAirway();
     Info(m_ss);
     if (GeneralMath::PercentTolerance(SIDECoeff.GetAirway(), expectedAirwayCoeff) > PercentTolerance)
@@ -283,7 +283,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
     SEGasCompartmentGraph* rGraph = &pc.GetCompartments().GetRespiratoryGraph();
     SELiquidCompartmentGraph* aGraph = &pc.GetCompartments().GetAerosolGraph();
 
-    const pulse::engine::SizeIndependentDepositionEfficencyCoefficient& SIDECoeff = pc.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
+    const pulse::SizeIndependentDepositionEfficencyCoefficient& SIDECoeff = pc.GetSubstances().GetSizeIndependentDepositionEfficencyCoefficient(substance);
 
     SEFluidCircuitPath* driverPath = rCircuit->GetPath(pulse::RespiratoryPath::EnvironmentToRespiratoryMuscle);
     SEGasTransporter    gtxpt(VolumePerTimeUnit::L_Per_s, VolumeUnit::L, VolumeUnit::L, pc.GetLogger());
@@ -526,4 +526,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
 
     tc.GetDuration().SetValue(pTimer.GetElapsedTime_s("Test"), TimeUnit::s);
   }
-}
+END_NAMESPACE_EX

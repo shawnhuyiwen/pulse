@@ -155,7 +155,7 @@ namespace pulse::study::hydrocephalus
     profiler.Start("Total");
     profiler.Start("Status");
 
-    auto pulse = pulse::engine::CreatePulseEngine();
+    auto pulse = CreatePulseEngine();
     pulse->GetLogger()->LogToConsole(true);
     pulse->GetLogger()->SetLogFile(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".log");
 
@@ -175,7 +175,7 @@ namespace pulse::study::hydrocephalus
     pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // Setup Circuit Overrides
-    pulse::engine::PulseConfiguration cfg(pulse->GetLogger());
+    PulseConfiguration cfg(pulse->GetLogger());
     cfg.GetInitialOverrides().AddScalarProperty(pulse::CerebrospinalFluidNode::IntracranialSpace2, sim.intracranialspacevolumebaseline_ml(), VolumeUnit::mL);
     cfg.GetInitialOverrides().AddScalarProperty(pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2, sim.intracranialspacecompliance_ml_per_mmhg(), VolumePerPressureUnit::mL_Per_mmHg);
     cfg.GetInitialOverrides().AddScalarProperty("CerebrospinalFluidAbsorptionRate", sim.cerebrospinalfluidabsorptionrate_ml_per_min(), VolumePerTimeUnit::mL_Per_min);

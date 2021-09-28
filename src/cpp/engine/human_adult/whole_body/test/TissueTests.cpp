@@ -28,7 +28,7 @@
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/utils/DataTrack.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::DistributeMass(SETestSuite& testSuite)
   {
@@ -994,4 +994,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
 
     //testReport.WriteFile(rptDirectory + "/GasCompartmentTest.json");
   }
-}
+END_NAMESPACE_EX

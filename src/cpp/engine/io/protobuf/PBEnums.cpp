@@ -7,7 +7,7 @@ PUSH_PROTO_WARNINGS
 #include "pulse/engine/bind/Enums.pb.h"
 POP_PROTO_WARNINGS
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   const std::string& eAirwayMode_Name(eAirwayMode m)
   {

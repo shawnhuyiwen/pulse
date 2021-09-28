@@ -15,7 +15,7 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBPhysiology.h"
 #include "cdm/io/protobuf/PBProperties.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   void PBPhysiology::Load(const PULSE_BIND::BloodChemistryData& src, BloodChemistryModel& dst)
   {

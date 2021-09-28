@@ -5,13 +5,13 @@
 #include "engine/common/system/environment/EnvironmentModel.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL EnvironmentModel : public PULSE_ENGINE::EnvironmentModel
+  class PULSE_DECL EnvironmentModel : public pulse::EnvironmentModel
   {
     friend class EngineTest;
   public:
-    EnvironmentModel(PULSE_ENGINE::Data& data) : PULSE_ENGINE::EnvironmentModel(data) {}
+    EnvironmentModel(pulse::Data& data) : pulse::EnvironmentModel(data) {}
     virtual ~EnvironmentModel() = default;
   };
-}
+END_NAMESPACE_EX

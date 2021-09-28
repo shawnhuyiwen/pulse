@@ -55,7 +55,7 @@
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarLength.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   EnvironmentModel::EnvironmentModel(Data& data) : EnvironmentSystem(data.GetLogger()), Model(data)
   {
@@ -792,4 +792,4 @@ namespace PULSE_ENGINE
 
     return dWaterVaporPressureInAmbientAir_mmHg;
   }
-}
+END_NAMESPACE

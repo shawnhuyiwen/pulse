@@ -6,7 +6,7 @@
 #include "engine/CommonDefs.h"
 #include "engine/common/controller/Controller.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class Data;
   /**
@@ -32,4 +32,4 @@ namespace PULSE_ENGINE
   protected:
     Data& m_data;
   };
-}
+END_NAMESPACE

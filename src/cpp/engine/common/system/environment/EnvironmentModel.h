@@ -13,7 +13,7 @@ class SEThermalCircuit;
 class SEThermalCircuitNode;
 class SEThermalCircuitPath;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBEnvironment;
   class EngineTest;

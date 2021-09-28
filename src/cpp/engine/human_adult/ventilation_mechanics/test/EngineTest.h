@@ -5,7 +5,7 @@
 #include "cdm/utils/testing/SETestManager.h"
 #include "engine/human_adult/ventilation_mechanics/Engine.h"
 
-namespace HUMAN_ADULT_VENT_MECH
+namespace pulse { namespace human_adult_ventilation_mechanics
 {
   class ENGINE_TEST_DECL EngineTest : public SETestManager
   {
@@ -25,4 +25,4 @@ namespace HUMAN_ADULT_VENT_MECH
     void SmokeTest(const std::string& sTestDirectory);
     void GenerateScenarios();
   };
-}
+END_NAMESPACE_EX

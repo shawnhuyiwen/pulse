@@ -27,7 +27,7 @@
 //--------------------------------------------------------------------------------------------------
 void HowToSandbox()
 {
-  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Sandbox.log");
   pe->GetLogger()->Info("HowTo_Sandbox");
 

@@ -10,7 +10,7 @@ class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 class SEFluidCircuitPath;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -63,4 +63,4 @@ namespace PULSE_ENGINE
     //if the stomach runs out of a substance with a user provided rate, we invalidate the rate (true)
     //if the rate is a configuration rate, we don't want to invalidate it if we run out of the substance (false)
   };
-}
+END_NAMESPACE

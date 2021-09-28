@@ -25,14 +25,13 @@
 #include "cdm/properties/SEScalarPressureTimePerVolume.h"
 #include "cdm/properties/SEScalar0To1.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   /*
-/*
-========================
-Constructors
-========================
-*/
+  ========================
+  Constructors
+  ========================
+  */
 
   InhalerModel::InhalerModel(Data& data) : InhalerSystem(data.GetLogger()), Model(data)
   {
@@ -265,4 +264,4 @@ Constructors
   {
 
   }
-}
+END_NAMESPACE

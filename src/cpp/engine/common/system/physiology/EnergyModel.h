@@ -14,7 +14,7 @@ class SEThermalCircuitNode;
 class SEThermalCircuitPath;
 class SEThermalCircuitCalculator;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -82,5 +82,5 @@ namespace PULSE_ENGINE
     SEThermalCircuit*           m_TemperatureCircuit;
     SEThermalCircuitCalculator* m_circuitCalculator;
   };
-}
+END_NAMESPACE
 

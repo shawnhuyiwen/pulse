@@ -40,8 +40,6 @@
 #include "cdm/properties/SEScalarVolumePerTimePressureArea.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 
-namespace PULSE_ENGINE
-{
 PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(logger)
 {
   m_TimeStep = nullptr;
@@ -426,24 +424,24 @@ void PulseConfiguration::Clear()
 
 void PulseConfiguration::Merge(const PulseConfiguration& src, SESubstanceManager& subMgr)
 {
-  PBConfiguration::Merge(src, *this, subMgr);
+  pulse::PBConfiguration::Merge(src, *this, subMgr);
 }
 
 bool PulseConfiguration::SerializeToString(std::string& output, eSerializationFormat m) const
 {
-  return PBConfiguration::SerializeToString(*this, output, m);
+  return pulse::PBConfiguration::SerializeToString(*this, output, m);
 }
 bool PulseConfiguration::SerializeToFile(const std::string& filename) const
 {
-  return PBConfiguration::SerializeToFile(*this, filename);
+  return pulse::PBConfiguration::SerializeToFile(*this, filename);
 }
 bool PulseConfiguration::SerializeFromString(const std::string& src, eSerializationFormat m, SESubstanceManager& subMgr)
 {
-  return PBConfiguration::SerializeFromString(src, *this, m, subMgr);
+  return pulse::PBConfiguration::SerializeFromString(src, *this, m, subMgr);
 }
 bool PulseConfiguration::SerializeFromFile(const std::string& filename, SESubstanceManager& subMgr)
 {
-  return PBConfiguration::SerializeFromFile(filename, *this, subMgr);
+  return pulse::PBConfiguration::SerializeFromFile(filename, *this, subMgr);
 }
 
 void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManager* subMgr)
@@ -2182,5 +2180,4 @@ double PulseConfiguration::GetVentilationTidalVolumeIntercept(const VolumeUnit& 
   if (m_VentilationTidalVolumeIntercept == nullptr)
     return SEScalar::dNaN();
   return m_VentilationTidalVolumeIntercept->GetValue(unit);
-}
 }

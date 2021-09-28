@@ -32,9 +32,7 @@ std::chrono::microseconds::rep vectorAverage(std::vector<std::chrono::microsecon
     return INT_MAX;
 }
 
-namespace hawb = HUMAN_ADULT_WHOLE_BODY;
-
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::SolverSpeedTest(const std::string& rptDirectory)
   {
@@ -51,7 +49,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
     bool showAllOutput = true; //toggle this to show all Info outputs for all circuits, which will show first-pass solve times and fail rates
 
     Engine pe;
-    hawb::Controller& pc = (hawb::Controller&)pe.GetController();
+    Controller& pc = (Controller&)pe.GetController();
     SEPatient patient(pc.GetLogger());
     patient.SerializeFromFile("./patients/StandardMale.json");
     pc.SetupPatient(patient);
@@ -834,4 +832,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     //What should we write out in the report and/or Track?
     //testReport.WriteFile(rptDirectory + "/SolverSpeedTest.json");
   }
-}
+END_NAMESPACE_EX

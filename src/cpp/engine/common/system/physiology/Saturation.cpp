@@ -21,7 +21,7 @@
 #include "unsupported/Eigen/NonLinearOptimization"
 
 //#define VERBOSE
-namespace PULSE_ENGINE
+namespace pulse
 {
   template<typename _Scalar, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
   struct Functor
@@ -1172,4 +1172,4 @@ namespace PULSE_ENGINE
 
     return true;
   }
-}
+END_NAMESPACE

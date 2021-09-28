@@ -52,7 +52,7 @@
 #include "properties/SEScalarVolumePerTimePressure.h"
 #include "properties/SEScalarNegative1To1.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   DrugModel::DrugModel(Data& data) : DrugSystem(data.GetLogger()), Model(data)
   {
@@ -699,4 +699,4 @@ namespace PULSE_ENGINE
       m_data.GetSubstances().CalculateGenericExcretion(LiverVascularFlow_mL_Per_s, *m_liverTissue, *sub, clearance.GetFractionExcretedInFeces().GetValue(), m_data.GetTimeStep_s());
     }
   }
-}
+END_NAMESPACE

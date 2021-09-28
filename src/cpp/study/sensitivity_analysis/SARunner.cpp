@@ -156,11 +156,11 @@ namespace pulse::study::sensitivity_analysis
     profiler.Start("Total");
     profiler.Start("Status");
 
-    auto pulse = pulse::engine::CreatePulseEngine();
+    auto pulse = CreatePulseEngine();
     pulse->GetLogger()->SetLogFile(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".log");
 
     // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
-    pulse::engine::PulseConfiguration cfg(pulse->GetLogger());
+    PulseConfiguration cfg(pulse->GetLogger());
     cfg.SetBaroreceptorFeedback(eSwitch::Off);
     cfg.SetChemoreceptorFeedback(eSwitch::Off);
     pulse->SetConfigurationOverride(&cfg);
@@ -191,8 +191,8 @@ namespace pulse::study::sensitivity_analysis
     PBAction::Load(sim.overrides(), overrides);
     // Apply Overrides (Note using Force, as these values are locked (for good reason)
     // But we know what we are doing, right?
-    pulse::engine::Controller& pc =
-      ((pulse::engine::Engine*)pulse.get())->GetController();
+    Controller& pc =
+      ((pulse::Engine*)pulse.get())->GetController();
     SEFluidCircuit& cv = pc.GetCircuits().GetActiveCardiovascularCircuit();
     SEFluidCircuit& resp = pc.GetCircuits().GetActiveRespiratoryCircuit();
     bool hasRespOverride = false;
@@ -454,11 +454,11 @@ namespace pulse::study::sensitivity_analysis
     profiler.Start("Total");
     profiler.Start("Status");
 
-    auto pulse = pulse::engine::CreatePulseEngine();
+    auto pulse = CreatePulseEngine();
     pulse->GetLogger()->SetLogFile(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".log");
 
     // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
-    pulse::engine::PulseConfiguration cfg(pulse->GetLogger());
+    PulseConfiguration cfg(pulse->GetLogger());
     // Serialize Overrides
     PBAction::Load(sim.overrides(), cfg.GetInitialOverrides());
     //cfg.SetBaroreceptorFeedback(eSwitch::Off);
@@ -489,8 +489,8 @@ namespace pulse::study::sensitivity_analysis
     //pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
     // check if overriding respiratory path
-    pulse::engine::Controller& pctrl =
-      ((pulse::engine::Engine*)pulse.get())->GetController();
+    pulse::Controller& pctrl =
+      ((pulse::Engine*)pulse.get())->GetController();
     SEFluidCircuit& resp = pctrl.GetCircuits().GetRespiratoryCircuit();
     bool hasRespOverride = false;
     for (auto& sp : cfg.GetInitialOverrides().GetScalarProperties())

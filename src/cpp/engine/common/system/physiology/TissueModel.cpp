@@ -57,7 +57,7 @@
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/GeneralMath.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   TissueModel::TissueModel(Data& data) : TissueSystem(data.GetLogger()), Model(data)
   {
@@ -1593,4 +1593,4 @@ namespace PULSE_ENGINE
 
     return amountIncrement_g;
   } // End ActiveMassTransport
-}
+END_NAMESPACE

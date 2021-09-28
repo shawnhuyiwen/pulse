@@ -28,6 +28,7 @@
 
 #define PULSE_CDM pulse::cdm
 #define CDM_BIND pulse::cdm::bind
+
 #define CDM_BIND_DECL(type) \
   namespace pulse { namespace cdm { namespace bind { class type; }}}
 #define CDM_BIND_DECL2(type) \

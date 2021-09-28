@@ -59,9 +59,7 @@ void CalculateMultipliers(double& dsResistanceMultiplier, double& usResistanceMu
 
 }
 
-namespace hawb = HUMAN_ADULT_WHOLE_BODY;
-
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::BrainInjuryTest(const std::string& sTestDirectory)
   {
@@ -71,7 +69,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
     std::ofstream file;
 
     Engine pe;
-    hawb::Controller& pc = (hawb::Controller&)pe.GetController();
+    Controller& pc = (Controller&)pe.GetController();
     pc.GetLogger()->SetLogFile(sTestDirectory + "/" + tName + ".log");
     pc.GetLogger()->Info("Running " + tName);
     SEPatient patient(pc.GetLogger());
@@ -85,7 +83,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
     pc.m_Config->EnableTissue(eSwitch::On);
     pc.CreateCircuitsAndCompartments();
 
-    hawb::CardiovascularModel& cv = (hawb::CardiovascularModel&)pc.GetCardiovascular();
+    CardiovascularModel& cv = (CardiovascularModel&)pc.GetCardiovascular();
     cv.m_TuneCircuit = true;
     SEFluidCircuit& cvCircuit = pc.GetCircuits().GetActiveCardiovascularCircuit();
 
@@ -157,4 +155,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     }
     outTrk.StreamTrackToFile(file);
   }
-}
+END_NAMESPACE_EX

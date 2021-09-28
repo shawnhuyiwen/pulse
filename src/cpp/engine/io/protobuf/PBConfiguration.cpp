@@ -19,7 +19,7 @@ POP_PROTO_WARNINGS
 #include "cdm/properties/SEScalarMassPerTime.h"
 #include "cdm/utils/FileUtils.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   void PBConfiguration::Merge(const PulseConfiguration& src, PulseConfiguration& dst, SESubstanceManager& subMgr)
   {

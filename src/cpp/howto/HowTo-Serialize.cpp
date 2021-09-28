@@ -32,7 +32,7 @@ void HowToSerialize()
   std::stringstream ss;
   // Create a Pulse Engine and load the standard patient
   // This is a healty patient
-  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Serialize.log");
   if (!pe->SerializeFromFile("./states/Soldier@0s.json"))
   {

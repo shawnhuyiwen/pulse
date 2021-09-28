@@ -40,7 +40,7 @@
 void HowToHemorrhage() 
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->LogToConsole(true);
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");

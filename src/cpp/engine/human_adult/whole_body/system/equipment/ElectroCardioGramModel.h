@@ -5,13 +5,13 @@
 #include "engine/common/system/equipment/ElectroCardioGramModel.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL ElectroCardioGramModel : public PULSE_ENGINE::ElectroCardioGramModel
+  class PULSE_DECL ElectroCardioGramModel : public pulse::ElectroCardioGramModel
   {
     friend class EngineTest;
   public:
-    ElectroCardioGramModel(PULSE_ENGINE::Data& data) : PULSE_ENGINE::ElectroCardioGramModel(data) {}
+    ElectroCardioGramModel(pulse::Data& data) : pulse::ElectroCardioGramModel(data) {}
     virtual ~ElectroCardioGramModel() = default;
   };
-}
+END_NAMESPACE_EX

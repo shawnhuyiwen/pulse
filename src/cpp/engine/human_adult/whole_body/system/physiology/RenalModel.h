@@ -5,13 +5,13 @@
 #include "engine/common/system/physiology/RenalModel.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL RenalModel : public PULSE_ENGINE::RenalModel
+  class PULSE_DECL RenalModel : public pulse::RenalModel
   {
     friend class EngineTest;
   public:
-    RenalModel(PULSE_ENGINE::Data& data) : PULSE_ENGINE::RenalModel(data) {}
+    RenalModel(pulse::Data& data) : pulse::RenalModel(data) {}
     virtual ~RenalModel() = default;
   };
-}
+END_NAMESPACE_EX

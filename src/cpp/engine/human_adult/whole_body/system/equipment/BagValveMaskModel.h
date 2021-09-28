@@ -5,13 +5,13 @@
 #include "engine/common/system/Systems.h"
 #include "engine/common/system/equipment/BagValveMaskModel.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL BagValveMaskModel : public PULSE_ENGINE::BagValveMaskModel
+  class PULSE_DECL BagValveMaskModel : public pulse::BagValveMaskModel
   {
     friend class EngineTest;
   public:
-    BagValveMaskModel(PULSE_ENGINE::Data& data) : PULSE_ENGINE::BagValveMaskModel(data) {}
+    BagValveMaskModel(pulse::Data& data) : pulse::BagValveMaskModel(data) {}
     virtual ~BagValveMaskModel() = default;
   };
-}
+END_NAMESPACE_EX

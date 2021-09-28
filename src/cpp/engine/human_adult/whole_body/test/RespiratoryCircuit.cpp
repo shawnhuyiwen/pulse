@@ -30,7 +30,7 @@
 #include "cdm/utils/TimingProfile.h"
 #include "cdm/utils/DataTrack.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, const std::string & sTestDirectory)
   {
@@ -377,4 +377,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     ss << "It took " << tmr.GetElapsedTime_s("Test") << "s to run";
     pc.GetLogger()->Info(ss.str(), "RespiratoryDriverTest");
   }
-}
+END_NAMESPACE_EX

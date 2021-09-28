@@ -55,7 +55,7 @@
 #include "cdm/properties/SERunningAverage.h"
 #include "cdm/utils/GeneralMath.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   RenalModel::RenalModel(Data& data) : RenalSystem(data.GetLogger()), Model(data)
   {
@@ -2076,4 +2076,4 @@ namespace PULSE_ENGINE
       m_rightRenalArterialPressure_mmHg_runningAvg->Clear();
     }
   }
-}
+END_NAMESPACE

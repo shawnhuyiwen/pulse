@@ -27,7 +27,7 @@
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/GeneralMath.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   SubstanceManager::SubstanceManager(Data& data) : SESubstanceManager(data.GetLogger()), m_data(data)
   {

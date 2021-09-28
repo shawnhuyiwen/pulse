@@ -34,7 +34,7 @@
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarMassPerMass.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   bool Controller::CreateCircuitsAndCompartments()
   {

@@ -14,7 +14,7 @@ class SEGasCompartment;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -125,4 +125,4 @@ namespace PULSE_ENGINE
     std::map<SETissueCompartment*, SELiquidCompartment*> m_TissueToVascular;
     std::vector<SETissueCompartment*>                    m_ConsumptionProdutionTissues;
   };
-}
+END_NAMESPACE

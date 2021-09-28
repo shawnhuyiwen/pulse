@@ -12,14 +12,14 @@
 #include "cdm/utils/FileUtils.h"
 #include "cdm/utils/TimingProfile.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::ReadScenarios(const std::string& rptDirectory)
   {
     TimingProfile pTimer;
     std::string testName = "ReadScenarios";
     m_Logger->SetLogFile(rptDirectory + "/" + testName + ".log");
-    pulse::engine::PulseScenario scenario(m_Logger);
+    PulseScenario scenario(m_Logger);
 
     std::string line;
     std::string sce_dir;
@@ -100,4 +100,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json");
     m_Logger->Info("Opened " + std::to_string(num - err) + " of " + std::to_string(num) + " scenarios");
   }
-}
+END_NAMESPACE_EX

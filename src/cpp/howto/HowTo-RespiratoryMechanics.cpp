@@ -31,7 +31,7 @@
 void HowToRespiratoryMechanics()
 {
   // Create a Pulse Engine and load the standard patient
-  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_RespiratoryMechanics.cpp.log");
   pe->GetLogger()->Info("HowTo_RespiratoryMechanics");
 

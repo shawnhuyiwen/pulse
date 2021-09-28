@@ -18,7 +18,7 @@ POP_PROTO_WARNINGS
 #include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 #include "cdm/system/equipment/inhaler/SEInhaler.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   void PBEquipment::Load(const PULSE_BIND::AnesthesiaMachineData& src, AnesthesiaMachineModel& dst)
   {

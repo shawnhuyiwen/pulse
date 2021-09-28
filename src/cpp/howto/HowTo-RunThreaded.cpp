@@ -63,7 +63,7 @@ void HowToDynamicHemorrhage()
 PulseThread::PulseThread(const std::string& logfile) : m_thread()
 {
   // Create our engine with the standard patient
-  m_pe = pulse::engine::CreatePulseEngine();
+  m_pe = CreatePulseEngine();
   m_pe->GetLogger()->SetLogFile(logfile);
   const SESubstanceCompound* saline = m_pe->GetSubstanceManager().GetCompound("Saline");
 

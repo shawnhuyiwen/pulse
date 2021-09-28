@@ -36,7 +36,7 @@
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/utils/DataTrack.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   //This test holds EnvironmentSkin and EnvironmentCore sources constant and varies BMR
   void EngineTest::InternalTemperatureVariableBMRCircuitTest(const std::string& sTestDirectory)
@@ -823,4 +823,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     std::string sOutputFile = sTestDirectory + "/EnvironmentISO7730Comparison.csv";
     trk.WriteTrackToFile(sOutputFile.c_str());
   }
-}
+END_NAMESPACE_EX

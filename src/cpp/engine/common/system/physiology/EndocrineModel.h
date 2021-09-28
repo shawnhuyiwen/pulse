@@ -8,7 +8,7 @@
 
 class SELiquidSubstanceQuantity;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -54,4 +54,4 @@ namespace PULSE_ENGINE
     SELiquidSubstanceQuantity* m_lKidneyEpinephrine = nullptr;
     SELiquidSubstanceQuantity* m_splanchnicInsulin = nullptr;
   };
-}
+END_NAMESPACE

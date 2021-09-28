@@ -7,10 +7,10 @@
 namespace py = pybind11;
 
 // Core Physiology Engine
-void PulseEngine(py::module&);
-void PulseEnginePool(py::module&);
+void PulseEngineBind(py::module&);
+void PulseEnginePoolBind(py::module&);
 // Studies
-void MultiplexVentilationEngine(py::module&);
+void MultiplexVentilationEngineBind(py::module&);
 
 PYBIND11_MODULE(PyPulse, m)
 {
@@ -30,14 +30,14 @@ PYBIND11_MODULE(PyPulse, m)
     .value("binary", eSerializationFormat::BINARY)
     .value("json", eSerializationFormat::JSON)
     .export_values();
-   py::enum_<pulse::engine::eModelType>(m, "model_type")
-     .value("human_adult_whole_body", pulse::engine::eModelType::HumanAdultWholeBody)
-     .value("human_adult_ventilation_mechanics", pulse::engine::eModelType::HumanAdultVentilationMechanics)
+   py::enum_<eModelType>(m, "model_type")
+     .value("human_adult::ventilation_mechanics", eModelType::HumanAdultWholeBody)
+     .value("human_adult_ventilation_mechanics", eModelType::HumanAdultVentilationMechanics)
      .export_values();
 
-  PulseEngine(m);
-  PulseEnginePool(m);
-  MultiplexVentilationEngine(m);
+  PulseEngineBind(m);
+  PulseEnginePoolBind(m);
+  MultiplexVentilationEngineBind(m);
 
 #ifdef VERSION_INFO
   m.attr("__version__") = VERSION_INFO;

@@ -10,7 +10,7 @@ class SEGasCompartment;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBEquipment;
   class EngineTest;
@@ -53,4 +53,4 @@ namespace PULSE_ENGINE
     SEGasCompartment* m_AmbientEnv;
     SELiquidSubstanceQuantity* m_InhalerDrug;
   };
-}
+END_NAMESPACE

@@ -5,13 +5,13 @@
 #include "engine/common/system/physiology/TissueModel.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL TissueModel : public PULSE_ENGINE::TissueModel
+  class PULSE_DECL TissueModel : public pulse::TissueModel
   {
     friend class EngineTest;
   public:
-    TissueModel(PULSE_ENGINE::Data& data) : PULSE_ENGINE::TissueModel(data) {}
+    TissueModel(pulse::Data& data) : pulse::TissueModel(data) {}
     virtual ~TissueModel() = default;
   };
-}
+END_NAMESPACE_EX

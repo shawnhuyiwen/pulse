@@ -93,7 +93,7 @@
 //Should be commented out, unless debugging/tuning
 //#define TUNING
 
-namespace PULSE_ENGINE
+namespace pulse
 {
 
   RespiratoryModel::RespiratoryModel(Data& data) : RespiratorySystem(data.GetLogger()), Model(data)
@@ -4069,4 +4069,4 @@ namespace PULSE_ENGINE
     double averageShuntResistance_mmHg_s_Per_mL = (rightShuntResistance_mmHg_s_Per_mL + leftShuntResistance_mmHg_s_Per_mL) / 2.0;
     m_data.GetDataTrack().Probe("averageShuntResistance_mmHg_s_Per_mL", averageShuntResistance_mmHg_s_Per_mL);
   }
-}
+END_NAMESPACE

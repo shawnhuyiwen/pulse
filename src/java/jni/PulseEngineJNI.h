@@ -6,10 +6,10 @@
 #include <iostream>
 #include "PulseEngineThunk.h"
 
-class PulseEngineJNI : public pulse::engine::PulseEngineThunk
+class PulseEngineJNI : public PulseEngineThunk
 {
 public:
-  PulseEngineJNI(pulse::engine::eModelType t, const std::string& dataDir);
+  PulseEngineJNI(eModelType t, const std::string& dataDir);
   ~PulseEngineJNI();
 
   void Reset();

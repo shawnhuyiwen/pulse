@@ -10,12 +10,12 @@
 
 #define test_serialization false
 
-bool ExecuteScenario(const std::string& filename, pulse::engine::eModelType t, const std::string& statesDir="./states")
+bool ExecuteScenario(const std::string& filename, eModelType t, const std::string& statesDir="./states")
 {
   try
   {
-    if (t == (pulse::engine::eModelType)-1)
-      t = pulse::engine::eModelType::HumanAdultWholeBody;
+    if (t == (eModelType)-1)
+      t = eModelType::HumanAdultWholeBody;
 
     std::string logFile = filename;
     std::string csvFile = filename;
@@ -79,21 +79,21 @@ bool ExecuteScenario(const std::string& filename, pulse::engine::eModelType t, c
       opts.SetSerializationDirectory(sDir);
       opts.SetReloadSerializedState(eSwitch::On);
 
-      auto PulseReloadOn = pulse::engine::CreatePulseEngine(t);
-      return pulse::engine::PulseScenarioExec::Execute(*PulseReloadOn, opts) ? 0 : 1;
+      auto PulseReloadOn = CreatePulseEngine(t);
+      return PulseScenarioExec::Execute(*PulseReloadOn, opts) ? 0 : 1;
 
       sDir = "./states/reload_off/" + output;
       sDir = Replace(sDir, ".json", "/");
       opts.SetSerializationDirectory(sDir);
       opts.SetReloadSerializedState(eSwitch::Off);
 
-      auto PulseReloadOff = pulse::engine::CreatePulseEngine(t);
-      return pulse::engine::PulseScenarioExec::Execute(*PulseReloadOff, opts) ? 0 : 1;
+      auto PulseReloadOff = CreatePulseEngine(t);
+      return PulseScenarioExec::Execute(*PulseReloadOff, opts) ? 0 : 1;
     }
     else
     {
-      auto e = pulse::engine::CreatePulseEngine(t);
-      return pulse::engine::PulseScenarioExec::Execute(*e, opts) ? 0 : 1;
+      auto e = CreatePulseEngine(t);
+      return PulseScenarioExec::Execute(*e, opts) ? 0 : 1;
     }
   }
   catch (std::exception ex)
@@ -104,7 +104,7 @@ bool ExecuteScenario(const std::string& filename, pulse::engine::eModelType t, c
   return false;
 }
 
-bool ExecuteDirectory(const std::string& dir, pulse::engine::eModelType t)
+bool ExecuteDirectory(const std::string& dir, eModelType t)
 {
   std::vector<std::string> scenarios;
   ListFiles(dir, scenarios, true, ".json");
@@ -124,9 +124,9 @@ int main(int argc, char* argv[])
     return 1;
   }
   std::string input = argv[1];
-  pulse::engine::eModelType t = (pulse::engine::eModelType)-1;
+  eModelType t = (eModelType)-1;
   if (argc >= 3)
-    pulse::engine::valueOf(argv[2], t);
+    eModelType_ValueOf(argv[2], t);
 
   if (IsDirectory(input))
   {

@@ -10,7 +10,7 @@
 namespace py = pybind11;
 using namespace pulse::study::multiplex_ventilation;
 
-void MultiplexVentilationEngine(py::module& m)
+void MultiplexVentilationEngineBind(py::module& m)
 {
   py::class_<MVEngine>(m, "MVEngine", py::buffer_protocol())
     .def(py::init<std::string const&, bool, std::string const&>())

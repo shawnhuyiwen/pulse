@@ -54,7 +54,7 @@
 #include "cdm/properties/SEScalarVolumePerTimeMass.h"
 #include "cdm/properties/SERunningAverage.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   EnergyModel::EnergyModel(Data& data) : EnergySystem(data.GetLogger()), Model(data)
   {

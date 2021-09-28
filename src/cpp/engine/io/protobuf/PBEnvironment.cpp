@@ -8,7 +8,7 @@ POP_PROTO_WARNINGS
 #include "engine/io/protobuf/PBEnvironment.h"
 #include "cdm/io/protobuf/PBEnvironment.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   void PBEnvironment::Load(const PULSE_BIND::EnvironmentData& src, EnvironmentModel& dst)
   {

@@ -6,7 +6,7 @@
 PULSE_BIND_DECL(Environment)
 #include "engine/common/system/environment/EnvironmentModel.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PULSE_DECL PBEnvironment
   {

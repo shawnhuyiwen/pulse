@@ -24,7 +24,7 @@
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/utils/GeneralMath.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   EndocrineModel::EndocrineModel(Data& data) : EndocrineSystem(data.GetLogger()), Model(data)
   {
@@ -189,4 +189,4 @@ namespace PULSE_ENGINE
     m_rKidneyEpinephrine->GetMass().IncrementValue(0.5 * epinephrineRelease_ug, MassUnit::ug);
     m_lKidneyEpinephrine->GetMass().IncrementValue(0.5 * epinephrineRelease_ug, MassUnit::ug);
   }
-}
+END_NAMESPACE

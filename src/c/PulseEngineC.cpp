@@ -48,7 +48,7 @@ C_EXPORT void C_CALL PulseDeinitialize()
 extern "C"
 C_EXPORT PhysiologyEngineThunk* C_CALL Allocate(int engine_model, const char* dataDir)
 {
-  return new pulse::engine::PulseEngineThunk((pulse::engine::eModelType)engine_model, dataDir);
+  return new PulseEngineThunk((eModelType)engine_model, dataDir);
 }
 
 extern "C"

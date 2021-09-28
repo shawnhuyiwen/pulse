@@ -6,7 +6,7 @@
 #include "engine/CommonDefs.h"
 #include "cdm/compartment/SECompartmentManager.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class Data;
   /**
@@ -193,4 +193,4 @@ namespace PULSE_ENGINE
     std::map<SETissueCompartment*, SELiquidCompartment*> m_ExtracellularFluid;
     std::map<SETissueCompartment*, SELiquidCompartment*> m_IntracellularFluid;
   };
-}
+END_NAMESPACE

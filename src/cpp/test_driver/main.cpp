@@ -17,11 +17,11 @@ int main(int argc, char* argv[])
 
   std::string hawbDir = "./test_results/unit_tests/human_adult/whole_body";
   Logger hawbLogger(hawbDir + "/PulseUnitTests.log");
-  pulse::engine::human_adult::whole_body::EngineTest hawbTest(&hawbLogger);
+  pulse::human_adult_whole_body::EngineTest hawbTest(&hawbLogger);
 
   std::string havmDir = "./test_results/unit_tests/human_adult/ventilation_mechanics";
   Logger havmLogger(havmDir + "/RespiratoryEngineUnitTests.log");
-  pulse::engine::human_adult::ventilation_mechanics::EngineTest havmTest(&havmLogger);
+  pulse::human_adult_ventilation_mechanics::EngineTest havmTest(&havmLogger);
 
   if (argc == 1)
   {

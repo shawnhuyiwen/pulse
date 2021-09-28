@@ -34,7 +34,7 @@
 #include "cdm/utils/TimingProfile.h"
 #include "cdm/utils/DataTrack.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::RenalCircuitAndTransportTest(const std::string& sTestDirectory)
   {
@@ -293,7 +293,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
     calc.Process(rCircuit, deltaT_s);//Preprocess wants a circuit full of data, need to calc it once
 
     //This can't think it doing resting stabilization, or it will just keep overwriting the TGF setpoint
-    pc.m_State = pulse::engine::EngineState::Active;
+    pc.m_State = pulse::EngineState::Active;
 
     //Do it every 10 mmHg between 80 and 200
     for (double MAP = 70.0; MAP <= 200.0; MAP += 10.0)
@@ -720,4 +720,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
   {
     RenalSystemTest(Urinating, sTestDirectory, "RenalUrinateOutput");
   }
-}
+END_NAMESPACE_EX

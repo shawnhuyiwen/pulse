@@ -3,7 +3,7 @@
 
 #include "engine/common/system/physiology/HepaticModel.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   HepaticModel::HepaticModel(Data& data) : HepaticSystem(data.GetLogger()), Model(data)
   {
@@ -97,4 +97,4 @@ namespace PULSE_ENGINE
   {
 
   }
-}
+END_NAMESPACE

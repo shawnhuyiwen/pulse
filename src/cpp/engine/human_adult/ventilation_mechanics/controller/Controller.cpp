@@ -16,12 +16,9 @@
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/patient/SEPatient.h"
 
-namespace pmc = PULSE_ENGINE;
-namespace hawb = HUMAN_ADULT_WHOLE_BODY;
-
-namespace HUMAN_ADULT_VENT_MECH
+namespace pulse { namespace human_adult_ventilation_mechanics
 {
-  Controller::Controller(Logger* logger) : hawb::Controller(logger)
+  Controller::Controller(Logger* logger) : pulse::human_adult_whole_body::Controller(logger)
   {
 
   }
@@ -55,40 +52,40 @@ namespace HUMAN_ADULT_VENT_MECH
     return false;
   }
 
-  bool Controller::IsAirwayModeSupported(pmc::eAirwayMode mode)
+  bool Controller::IsAirwayModeSupported(pulse::eAirwayMode mode)
   {
     // Only support two modes
-    return (mode == pmc::eAirwayMode::Free || mode == pmc::eAirwayMode::MechanicalVentilator);
+    return (mode == pulse::eAirwayMode::Free || mode == pulse::eAirwayMode::MechanicalVentilator);
   }
 
   void Controller::Allocate()
   {
     // Create common objects we will use
-    m_Substances = new pmc::SubstanceManager(*this);
+    m_Substances = new pulse::SubstanceManager(*this);
 
     m_InitialPatient = new SEPatient(GetLogger());
     m_CurrentPatient = new SEPatient(GetLogger());
 
-    m_Config = new pmc::PulseConfiguration(GetLogger());
+    m_Config = new PulseConfiguration(GetLogger());
     m_Config->Initialize("");//Setup defaults that don't need files on disk
 
     m_Actions = new SEActionManager(*m_Substances);
     m_Conditions = new SEConditionManager(GetLogger());
 
-    m_EnvironmentModel = new pmc::EnvironmentModel(*this);
+    m_EnvironmentModel = new pulse::EnvironmentModel(*this);
 
-    m_RespiratoryModel = new pmc::RespiratoryModel(*this);
+    m_RespiratoryModel = new pulse::RespiratoryModel(*this);
 
-    m_MechanicalVentilatorModel = new pmc::MechanicalVentilatorModel(*this);
+    m_MechanicalVentilatorModel = new pulse::MechanicalVentilatorModel(*this);
 
     m_EventManager = new SEEventManager(GetLogger());
 
     // Create our derived objects
-    m_BlackBoxes = new pmc::BlackBoxManager(*this);
+    m_BlackBoxes = new pulse::BlackBoxManager(*this);
     m_Compartments = new CompartmentManager(*this);
-    m_Circuits = new pmc::CircuitManager(*this);
+    m_Circuits = new pulse::CircuitManager(*this);
 
-    m_LogForward = new pmc::FatalListner(*m_EventManager, m_CurrentTime);
+    m_LogForward = new pulse::FatalListner(*m_EventManager, m_CurrentTime);
     m_Logger->AddForward(m_LogForward);
 
     SetupTracker();
@@ -112,7 +109,7 @@ namespace HUMAN_ADULT_VENT_MECH
     m_MechanicalVentilatorModel->Initialize();
   }
 
-  void Controller::AtSteadyState(pmc::EngineState state)
+  void Controller::AtSteadyState(pulse::EngineState state)
   {
     m_State = state;
 
@@ -137,4 +134,4 @@ namespace HUMAN_ADULT_VENT_MECH
     m_MechanicalVentilatorModel->PostProcess();
     m_RespiratoryModel->PostProcess();
   }
-}
+END_NAMESPACE_EX

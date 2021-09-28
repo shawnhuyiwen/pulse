@@ -46,7 +46,7 @@
 ========================
 */
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   AnesthesiaMachineModel::AnesthesiaMachineModel(Data& data) : AnesthesiaMachineSystem(data.GetLogger()), Model(data)
   {
@@ -717,4 +717,4 @@ namespace PULSE_ENGINE
     //Always try to let it run without the relief valve operational (i.e. closed (i.e. allowing flow)), otherwise it will always stay shorted
     m_pSelectorToReliefValve->SetNextValve(eGate::Open);
   }
-}
+END_NAMESPACE

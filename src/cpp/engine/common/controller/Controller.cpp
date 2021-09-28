@@ -44,7 +44,7 @@
 #include "cdm/patient/assessments/SEUrinalysis.h"
 #include "cdm/utils/FileUtils.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   Data::Data(Logger* logger) : Loggable(logger)
   {

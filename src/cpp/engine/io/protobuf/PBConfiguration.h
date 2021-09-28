@@ -5,7 +5,7 @@
 #include "PulseConfiguration.h"
 PULSE_BIND_DECL(Configuration)
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PULSE_DECL PBConfiguration
   {
@@ -22,4 +22,4 @@ namespace PULSE_ENGINE
     static bool SerializeFromString(const std::string& src, PulseConfiguration& dst, eSerializationFormat m, SESubstanceManager& subMgr);
     static bool SerializeFromFile(const std::string& filename, PulseConfiguration& dst, SESubstanceManager& subMgr);
   };
-}
+END_NAMESPACE
