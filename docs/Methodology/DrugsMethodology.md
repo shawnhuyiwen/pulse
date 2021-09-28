@@ -405,9 +405,9 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
 |	Albuterol	|	Administer 90 ug metered dose of Albuterol	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
+|	Etomidate	|	Administer 21 ug injection of Etomidate	|<span class="success">	5	</span>|<span class="warning">	1	</span>|<span class="danger">	2	</span>|
 |	Epinephrine	|	Administer 10 ug injection of Epinephrine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	Fentanyl	|	Administer 17 mg injection of Fentanyl	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Furosemide	|	Administer 40 mg injection of Furosemide	|<span class="success">	4	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Ketamine	|	Administer 115 mg injection of Ketamine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	Midazolam	|	Administer 5 mg injection of Midazolam	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Morphine	|	Administer 42 mg injection of Morphine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
@@ -417,7 +417,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |	Propofol	|	Administer 135 mg injection of Propofol	|<span class="success">	4	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
 |	Rocuronium	|	Administer 52 mg injection of Rocuronium	|<span class="success">	2	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Succinylcholine	|	Administer 96 mg injection of Succinylcholine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	54	</span>|<span class="warning">	2	</span>|<span class="danger">	5	</span>|
+|		|	Total	|<span class="success">	59	</span>|<span class="warning">	3	</span>|<span class="danger">	7	</span>|
 
 <center>
 <i>Table 6. The validation results for liquid-modeled drugs.</i>
@@ -426,7 +426,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |	Event	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (breaths/min)	|	Oxygen Saturation	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Administer Epinephrine - 10ug	|	Drug Onset < 1 minute	|	30	|	150	|<span class="success">	25-50% Increase @cite dukeSME	</span>|<span class="success">	25-50% Increase @cite dukeSME 	</span>|<span class="success">	25-50% Increase @cite dukeSME 	</span>|<span class="success">	NC @cite dukeSME	</span>|<span class="success">	NC 	</span>|
-|	Administer Etomidate - 21 mg								Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Little Respiratory Depression @cite Valk2021etomidate	</span>|<span class="success">	NC	</span>|
+|	Administer Etomidate - 21 mg	|	Drug Onset < 1 minute	|	30	|	100	|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Little Respiratory Depression @cite Valk2021etomidate	</span>|<span class="success">	NC	</span>|
 |	Administer Fentanyl - 17 mg	|	Drug Onset < two minutes	|	30	|	100	|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Decrease @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 15-25% Decrease @cite dukeSME	</span>|<span class="success">	NC 	</span>|
 |	Administer Ketamine - 115 mg	|	Drug Onset < 1 minute	|	30	|	200	|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="warning">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Mild Decrease @cite Morgan2006Clinical p200; 25-50% Decrease @cite dukeSME     	</span>|<span class="success">	NC 	</span>|
 |	Administer Midazolam - 5 mg	|	Drug Onset in 1-3 min and lasts 30-60 minutes	|	30	|	70	|<span class="success">	Mild Increase @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; Marked Decrease To 0 @cite dukeSME    	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
@@ -483,59 +483,23 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
 
 Norepinephrine occurs naturally in the body and its basal metabolic value is validated as part of the @ref BloodChemistryMethodology. The infusion of norepinephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for five different infusion rates. They are shown in Table 9.
 
-|	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental           Plasma Concentration (ug/L)	|	Computed              Plasma Concentration  (ug/L)	|	"Experimental           Heart Rate 
-(beats/min)"	|	"Computed         
-     Heart Rate
- (beats/min)"	|	"Experimental           Systolic Blood Pressure
-(mmHg)"	|	"Computed         
-    Systolic Blood Pressure
-(mmHg)"	|	"Experimental           Diastolic Blood Pressure
-(mmHg)"	|	"Computed         
-    Diastolic Blood Pressure
-(mmHg)"	|
+|	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate (beats/min)	|	Computed Heart Rate (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Norepinephrine	|	0.01	|	[0.363, 0.605] @cite ensinger1992relationship	</span>|<span class="warning">	0.761	|	"[46, 66] 
-NC to neglible @cite ensinger1992relationship"	</span>|<span class="success">	73	|	"[125, 145]
-Minimal Increase @cite ensinger1992relationship"	</span>|<span class="warning">	118	|	"[65, 75] 
-NC @cite ensinger1992relationship"	</span>|<span class="warning">	72	</span>|
-|	Norepinephrine	|	0.06	|	[2.265, 3.391] @cite ensinger1992relationship	</span>|<span class="success">	2.32	|	"[41, 57]
-Minimal Decrease @cite ensinger1992relationship"	</span>|<span class="success">	70	|	"[136, 160] 
-Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	118	|	"[70, 84] 
-Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	72	</span>|
-|	Norepinephrine	|	0.1	|	[3.608, 4.408] @cite ensinger1992relationship	</span>|<span class="success">	3.71	|	"[40, 56] 
-Minimal Decrease @cite ensinger1992relationship"	</span>|<span class="success">	68	|	"[146, 168] 
-Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	125	|	"[74, 86] 
-Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	84	</span>|
-	Norepinephrine	|	0.14	|	[4.619, 6.765] @cite ensinger1992relationship	</span>|<span class="success">	5.05	|	"[39, 55] 
-Minimal Decrease@cite ensinger1992relationship"	</span>|<span class="success">	69	|	"[152, 182] 
-Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	135	|	"[77, 93] 
-Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	98	</span>|
-	Norepinephrine	|	0.2	|	[6.404, 8.546] @cite ensinger1992relationship	</span>|<span class="success">	7.1	|	"[39, 55] 
-NC @cite ensinger1992relationship"	</span>|<span class="success">	69	|	"[174, 192] 
-Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	136	|	"[83, 99] 
-Minimal Increase @cite ensinger1992relationship"	</span>|<span class="success">	100	</span>|
+|	Norepinephrine	|	0.01	|	[0.363, 0.605] @cite ensinger1992relationship	|<span class="warning">	0.761	</span>|	[46, 66] NC to neglible @cite ensinger1992relationship	|<span class="success">	73	</span>|	[125, 145] Minimal Increase @cite ensinger1992relationship	|<span class="warning">	118	</span>|	[65, 75] NC @cite ensinger1992relationship	|<span class="warning">	72	</span>|
+|	Norepinephrine	|	0.06	|	[2.265, 3.391] @cite ensinger1992relationship	|<span class="success">	2.32	</span>|	[41, 57]Minimal Decrease @cite ensinger1992relationship	|<span class="success">	70	</span>|	[136, 160]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	118	</span>|	[70, 84]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	72	</span>|
+|	Norepinephrine	|	0.1	|	[3.608, 4.408] @cite ensinger1992relationship	|<span class="success">	3.71	</span>|	[40, 56] Minimal Decrease @cite ensinger1992relationship	|<span class="success">	68	</span>|	[146, 168]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	125	</span>|	[74, 86] Minimal Increase @cite ensinger1992relationship	|<span class="success">	84	</span>|
+|	Norepinephrine	|	0.14	|	[4.619, 6.765] @cite ensinger1992relationship	|<span class="success">	5.05	</span>|	[39, 55] Minimal Decrease@cite ensinger1992relationship	|<span class="success">	69	</span>|	[152, 182]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	135	</span>|	[77, 93] Minimal Increase @cite ensinger1992relationship	|<span class="success">	98	</span>|
+|	Norepinephrine	|	0.2	|	[6.404, 8.546] @cite ensinger1992relationship	|<span class="success">	7.1	</span>|	[39, 55] NC @cite ensinger1992relationship	|<span class="success">	69	</span>|	[174, 192]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	136	</span>|	[83, 99] Minimal Increase @cite ensinger1992relationship	|<span class="success">	100	</span>|
 
 The infusion of phenylephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for four different infusion rates. They are shown in Table 10.
 
-|	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration  (ug/L)	|	"Experimental Heart Rate Change
-(beats/min)"	|	"Computed Heart Rate Change (beats/min)"	|	"Experimental Systolic Blood Pressure (mmHg)"	|	"Computed Systolic Blood Pressure (mmHg)"	|	"Experimental Diastolic Blood Pressure (mmHg)"	|	"Computed Diastolic Blood Pressure (mmHg)"
-|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---
-|	Phenylephrine	|	0.5	|	[2.5, 5.2] @cite martinsson1986analysis	</span>|<span class="warning">	6	|	"[1, -5] 
- @cite martinsson1986analysis"	</span>|<span class="success">	-2	|	"[0, 6]
- @cite martinsson1986analysis"	</span>|<span class="success">	6	|	"[2, 9]
- @cite martinsson1986analysis"	</span>|<span class="success">	9
-|	Phenylephrine	|	1	|	[5.02, 13.0] @cite martinsson1986analysis	[2.5, 5.2] @cite martinsson1986analysis	12.4	|	"[-3, -8] 
- @cite martinsson1986analysis"	</span>|<span class="warning">	-2	|	"[6, 20]
- @cite martinsson1986analysis"	</span>|<span class="success">	9	|	"[9, 15]
- @cite martinsson1986analysis"	</span>|<span class="success">	13
-|	Phenylephrine	|	2	|	[12.4, 26.3] @cite martinsson1986analysis	</span>|<span class="success">	24.9	|	"[-8, -12] 
- @cite martinsson1986analysis"	</span>|<span class="danger">	-1	|	"[16, 53]
- @cite martinsson1986analysis"	</span>|<span class="warning">	13	|	"[15, 21]
- @cite martinsson1986analysis"	</span>|<span class="success">	19
-	Phenylephrine	|	4	|	[35.6, 77.8] @cite martinsson1986analysis	</span>|<span class="success">	48.4	|	"[-10, -13] 
- @cite martinsson1986analysis"	</span>|<span class="danger">	2	|	"[30, 86]
- @cite martinsson1986analysis"	</span>|<span class="warning">	17	|	"[25, 32]
- @cite martinsson1986analysis"	</span>|<span class="success">	25
+|	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate Change (beats/min)	|	Computed Heart Rate Change (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Phenylephrine	|	0.5	|	[2.5, 5.2] @cite martinsson1986analysis	|<span class="warning">	6	</span>|	[1, -5]  @cite martinsson1986analysis	|<span class="success">	-2	</span>|	[0, 6] @cite martinsson1986analysis	|<span class="success">	6	</span>|	[2, 9] @cite martinsson1986analysis	|<span class="success">	9	</span>|
+|	Phenylephrine	|	1	|	[5.02, 13.0] @cite martinsson1986analysis	|<span class="success">	12.4	</span>|	[-3, -8]  @cite martinsson1986analysis	|<span class="warning">	-2	</span>|	[6, 20] @cite martinsson1986analysis	|<span class="success">	9	</span>|	[9, 15] @cite martinsson1986analysis	|<span class="success">	13	</span>|
+|	Phenylephrine	|	2	|	[12.4, 26.3] @cite martinsson1986analysis	|<span class="success">	24.9	</span>|	[-8, -12]  @cite martinsson1986analysis	|<span class="danger">	-1	</span>|	[16, 53] @cite martinsson1986analysis	|<span class="warning">	13	</span>|	[15, 21] @cite martinsson1986analysis	|<span class="success">	19	</span>|
+|	Phenylephrine	|	4	|	[35.6, 77.8] @cite martinsson1986analysis	|<span class="success">	48.4	</span>|	[-10, -13]  @cite martinsson1986analysis	|<span class="danger">	2	</span>|	[30, 86] @cite martinsson1986analysis	|<span class="warning">	17	</span>|	[25, 32] @cite martinsson1986analysis	|<span class="success">	25	</span>|
+
 
 
 @anchor drugs-conclusions
