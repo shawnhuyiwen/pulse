@@ -505,7 +505,7 @@ The engine supports the following systems:
 |@code virtual const SEElectroCardioGram* GetElectroCardioGram() = 0; @endcode           | @ref ElectroCardioGramTable "ElectroCardioGram"       |
 |@code virtual const SEInhaler* GetInhaler() = 0; @endcode                               | @ref InhalerTable "Inhaler"                           |
 |@code virtual const SEMechanicalVentilator* GetMechanicalVentilator() = 0; @endcode     | @ref MechanicalVentilatorTable "MechanicalVentilator" |
-|  <b>Physiology Code Method</b>                                                         |                                                       |
+| <b>Physiology</b>                                                         |                                                       |
 |@code virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() = 0; @endcode     | @ref BloodChemistrySystemTable "BloodChemistry"       |
 |@code virtual const SECardiovascularSystem* GetCardiovascularSystem() = 0; @endcode     | @ref CardiovascularSystemTable "Cardiovascular"       |
 |@code virtual const SEEndocrineSystem* GetEndocrineSystem() = 0; @endcode               | @ref EndocrineSystemTable "Endocrine"                 |
