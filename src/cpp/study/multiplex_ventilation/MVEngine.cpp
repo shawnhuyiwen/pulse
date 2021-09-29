@@ -4,6 +4,24 @@
 #include "MVEngine.h"
 
 #include "engine/common/system/Model.h"
+#include "cdm/system/environment/SEEnvironment.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
+#include "cdm/system/equipment/inhaler/SEInhaler.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SEDrugSystem.h"
+#include "cdm/system/physiology/SEEndocrineSystem.h"
+#include "cdm/system/physiology/SEEnergySystem.h"
+#include "cdm/system/physiology/SEGastrointestinalSystem.h"
+#include "cdm/system/physiology/SEHepaticSystem.h"
+#include "cdm/system/physiology/SENervousSystem.h"
+#include "cdm/system/physiology/SERenalSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/system/physiology/SETissueSystem.h"
+
 using namespace pulse;
 
 namespace pulse::study::multiplex_ventilation
@@ -15,6 +33,9 @@ namespace pulse::study::multiplex_ventilation
   MVEngine::MVEngine(std::string const& logfile, bool cout_enabled, std::string const& data_dir) : Loggable(new Logger(logfile))
   {
     m_TimeStep_s = 0.02;
+    m_CurrentTime_s = 0;
+    m_SpareAdvanceTime_s = 0;
+
     m_SubMgr = nullptr;
     m_Oxygen = nullptr;
 
@@ -330,42 +351,42 @@ namespace pulse::study::multiplex_ventilation
       }
       // PreProcess
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetEnvironment()).PreProcess();
+        dynamic_cast<Model&>(pc->GetEnvironment()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetCardiovascular()).PreProcess();
+        dynamic_cast<Model&>(pc->GetCardiovascular()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetInhaler()).PreProcess();
+        dynamic_cast<Model&>(pc->GetInhaler()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetRespiratory()).PreProcess();
+        dynamic_cast<Model&>(pc->GetRespiratory()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetAnesthesiaMachine()).PreProcess();
+        dynamic_cast<Model&>(pc->GetAnesthesiaMachine()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetMechanicalVentilator()).PreProcess();
+        dynamic_cast<Model&>(pc->GetMechanicalVentilator()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetGastrointestinal()).PreProcess();
+        dynamic_cast<Model&>(pc->GetGastrointestinal()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetHepatic()).PreProcess();
+        dynamic_cast<Model&>(pc->GetHepatic()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetRenal()).PreProcess();
+        dynamic_cast<Model&>(pc->GetRenal()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetNervous()).PreProcess();
+        dynamic_cast<Model&>(pc->GetNervous()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetEnergy()).PreProcess();
+        dynamic_cast<Model&>(pc->GetEnergy()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetEndocrine()).PreProcess();
+        dynamic_cast<Model&>(pc->GetEndocrine()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetDrugs()).PreProcess();
+        dynamic_cast<Model&>(pc->GetDrugs()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetTissue()).PreProcess();
+        dynamic_cast<Model&>(pc->GetTissue()).PreProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetBloodChemistry()).PreProcess();
+        dynamic_cast<Model&>(pc->GetBloodChemistry()).PreProcess();
       // Since this is the last preprocess,
       // Check if we are in mechanical ventilator mode
       int vent_count = 0;
       bool enableMultiplexVentilation = false;
       for (Controller* pc : m_Controllers)
       {
-        ((Model&)pc->GetECG()).PreProcess();
+        dynamic_cast<Model&>(pc->GetECG()).PreProcess();
         if (pc->GetAirwayMode() == eAirwayMode::MechanicalVentilator)
           vent_count++;
       }
@@ -382,11 +403,11 @@ namespace pulse::study::multiplex_ventilation
 
       // Process
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetEnvironment()).Process();
+        dynamic_cast<Model&>(pc->GetEnvironment()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetCardiovascular()).Process();
+        dynamic_cast<Model&>(pc->GetCardiovascular()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetInhaler()).Process();
+        dynamic_cast<Model&>(pc->GetInhaler()).Process();
       if (enableMultiplexVentilation)
       {
         // Solve the multiplex circuit
@@ -403,69 +424,69 @@ namespace pulse::study::multiplex_ventilation
         // This is an intentional application specific optimization
       }
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetRespiratory()).Process(!enableMultiplexVentilation);
+        dynamic_cast<Model&>(pc->GetRespiratory()).Process(!enableMultiplexVentilation);
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetAnesthesiaMachine()).Process();
+        dynamic_cast<Model&>(pc->GetAnesthesiaMachine()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetMechanicalVentilator()).Process();
+        dynamic_cast<Model&>(pc->GetMechanicalVentilator()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetGastrointestinal()).Process();
+        dynamic_cast<Model&>(pc->GetGastrointestinal()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetHepatic()).Process();
+        dynamic_cast<Model&>(pc->GetHepatic()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetRenal()).Process();
+        dynamic_cast<Model&>(pc->GetRenal()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetNervous()).Process();
+        dynamic_cast<Model&>(pc->GetNervous()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetEnergy()).Process();
+        dynamic_cast<Model&>(pc->GetEnergy()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetEndocrine()).Process();
+        dynamic_cast<Model&>(pc->GetEndocrine()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetDrugs()).Process();
+        dynamic_cast<Model&>(pc->GetDrugs()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetTissue()).Process();
+        dynamic_cast<Model&>(pc->GetTissue()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetBloodChemistry()).Process();
+        dynamic_cast<Model&>(pc->GetBloodChemistry()).Process();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetECG()).Process();
+        dynamic_cast<Model&>(pc->GetECG()).Process();
 
       // PostProcess
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetEnvironment()).PostProcess();
+        dynamic_cast<Model&>(pc->GetEnvironment()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetCardiovascular()).PostProcess();
+        dynamic_cast<Model&>(pc->GetCardiovascular()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetInhaler()).PostProcess();
+        dynamic_cast<Model&>(pc->GetInhaler()).PostProcess();
       if (enableMultiplexVentilation)
       {
         m_Calculator->PostProcess(*m_MultiplexVentilationCircuit);
       }
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetRespiratory()).PostProcess(!enableMultiplexVentilation);
+        dynamic_cast<Model&>(pc->GetRespiratory()).PostProcess(!enableMultiplexVentilation);
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetAnesthesiaMachine()).PostProcess();
+        dynamic_cast<Model&>(pc->GetAnesthesiaMachine()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetMechanicalVentilator()).PostProcess();
+        dynamic_cast<Model&>(pc->GetMechanicalVentilator()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetGastrointestinal()).PostProcess();
+        dynamic_cast<Model&>(pc->GetGastrointestinal()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetHepatic()).PostProcess();
+        dynamic_cast<Model&>(pc->GetHepatic()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetRenal()).PostProcess();
+        dynamic_cast<Model&>(pc->GetRenal()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetNervous()).PostProcess();
+        dynamic_cast<Model&>(pc->GetNervous()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetEnergy()).PostProcess();
+        dynamic_cast<Model&>(pc->GetEnergy()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetEndocrine()).PostProcess();
+        dynamic_cast<Model&>(pc->GetEndocrine()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetDrugs()).PostProcess();
+        dynamic_cast<Model&>(pc->GetDrugs()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetTissue()).PostProcess();
+        dynamic_cast<Model&>(pc->GetTissue()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetBloodChemistry()).PostProcess();
+        dynamic_cast<Model&>(pc->GetBloodChemistry()).PostProcess();
       for (Controller* pc : m_Controllers)
-        ((Model&)pc->GetECG()).PostProcess();
+        dynamic_cast<Model&>(pc->GetECG()).PostProcess();
 
       // Increment Times and track data
       for (Controller* pc : m_Controllers)
