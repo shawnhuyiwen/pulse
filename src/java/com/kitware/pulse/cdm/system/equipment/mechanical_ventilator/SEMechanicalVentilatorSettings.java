@@ -17,7 +17,7 @@ import com.kitware.pulse.cdm.substance.SESubstanceConcentration;
 import com.kitware.pulse.cdm.substance.SESubstanceFraction;
 import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
-public class SEMechanicalVentilatorSettings extends SEEquipment
+public class SEMechanicalVentilatorSettings
 {
   protected eSwitch                           connection;
   protected SEScalarVolume                    connectionVolume;
@@ -123,7 +123,6 @@ public class SEMechanicalVentilatorSettings extends SEEquipment
     this.concentrationInspiredAerosol=new ArrayList<SESubstanceConcentration>();
   }
 
-  @Override
   public void clear()
   {
     connection = null;

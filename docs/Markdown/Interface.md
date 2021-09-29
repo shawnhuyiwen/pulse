@@ -495,10 +495,17 @@ The bodies physiology, equipment, and the environment are all systems and each s
 
 The engine supports the following systems:
 
-|Code Method                                                                             | CDM Table                                             |
+
+|  Code Method                                                                           | CDM Table                                             |
 |---                                                                                     |---                                                    |
 |@code virtual const SEEnvironment* GetEnvironment() = 0; @endcode                       | @ref EnvironmentTable "Environment"                   |
-|@code virtual const SEBagValveMaskSystem* GetBagValveMaskSystem() = 0; @endcode         | @ref BagValveMaskSystemTable "BagValveMask"           |
+| <b>Equipment</b>                                                                       |                                                       |
+|@code virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() = 0; @endcode           | @ref AnesthesiaMachineTable "Anesthesia Machine"      |
+|@code virtual const SEBagValveMaskSystem* GetBagValveMaskSystem() = 0; @endcode         | @ref BagValveMaskTable "BagValveMask"                 |
+|@code virtual const SEElectroCardioGram* GetElectroCardioGram() = 0; @endcode           | @ref ElectroCardioGramTable "ElectroCardioGram"       |
+|@code virtual const SEInhaler* GetInhaler() = 0; @endcode                               | @ref InhalerTable "Inhaler"                           |
+|@code virtual const SEMechanicalVentilator* GetMechanicalVentilator() = 0; @endcode     | @ref MechanicalVentilatorTable "MechanicalVentilator" |
+|  <b>Physiology Code Method</b>                                                         |                                                       |
 |@code virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() = 0; @endcode     | @ref BloodChemistrySystemTable "BloodChemistry"       |
 |@code virtual const SECardiovascularSystem* GetCardiovascularSystem() = 0; @endcode     | @ref CardiovascularSystemTable "Cardiovascular"       |
 |@code virtual const SEEndocrineSystem* GetEndocrineSystem() = 0; @endcode               | @ref EndocrineSystemTable "Endocrine"                 |
@@ -509,10 +516,6 @@ The engine supports the following systems:
 |@code virtual const SERespiratorySystem* GetRespiratorySystem() = 0; @endcode           | @ref RespiratorySystemTable "Respiratory"             |
 |@code virtual const SEDrugSystem* GetDrugSystem() = 0; @endcode                         | @ref DrugSystemTable "Drug"                           |
 |@code virtual const SETissueSystem* GetTissueSystem() = 0; @endcode                     | @ref TissueSystemTable "Tissue"                       |
-|@code virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() = 0; @endcode           | @ref AnesthesiaMachineTable "Anesthesia Machine"      |
-|@code virtual const SEElectroCardioGram* GetElectroCardioGram() = 0; @endcode           | @ref ElectroCardioGramTable "ElectroCardioGram"       |
-|@code virtual const SEInhaler* GetInhaler() = 0; @endcode                               | @ref InhalerTable "Inhaler"                           |
-|@code virtual const SEMechanicalVentilator* GetMechanicalVentilator() = 0; @endcode     | @ref MechanicalVentilatorTable "MechanicalVentilator" |
 
 @anchor CompartmentsInterface
 ### Compartments

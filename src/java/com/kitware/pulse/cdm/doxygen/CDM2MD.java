@@ -11,14 +11,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.kitware.pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData;
-import com.kitware.pulse.cdm.bind.BagValveMask.BagValveMaskData;
 import com.kitware.pulse.cdm.bind.Enums.eCharge;
 import com.kitware.pulse.cdm.bind.Enums.eGate;
 import com.kitware.pulse.cdm.bind.Enums.eSide;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Environment.EnvironmentalConditionsData;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
-import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData;
 import com.kitware.pulse.cdm.bind.Patient.PatientData;
 import com.kitware.pulse.cdm.bind.PatientActions.BrainInjuryData;
@@ -161,7 +159,7 @@ public class CDM2MD
       WriteDoxyTable(EnvironmentalConditionsData.eSurroundingType.class, "EnvironmentalConditionsData_", writer, skipProperties);
 
       // ANESTHESIA MACHINE
-      writer.append("#### The following tables describe the anesthesia machine\n<hr>\n"); 
+      writer.append("#### The following tables describe the anesthesia machine\n<hr>\n");
       Set<Class<? extends Object>> anes = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.anesthesia_machine");
       for(Class<?> c : anes)
         WriteDoxyTable(c, "", writer, skipProperties);
@@ -246,7 +244,7 @@ public class CDM2MD
   }
 
   protected static void WriteDoxyTable(Class<?> c, String prefix, PrintWriter writer, List<String> skipProperties)
-  {    
+  {
     String tableName = c.getSimpleName();
     if(tableName.startsWith("SE"))
       tableName = tableName.substring(2);
@@ -258,6 +256,7 @@ public class CDM2MD
     }
     else
       descPrepend = "@copybrief "+prefix+tableName+"Data";
+    Log.info("Creating table for "+tableName);
 
     String columnHeaders[] = new String[3];
     int maxColumnLength[] = new int[columnHeaders.length];
@@ -374,6 +373,16 @@ public class CDM2MD
               writer.print("|"+"@ref SubstanceFractionTable");
             }
             else if(bag.propertyName.equals("AmbientAerosol"))
+            {
+              writer.print("|"+"List of SESubstanceConcentration");
+              writer.print("|"+"@ref SubstanceConcentrationTable");
+            }
+            else if(bag.propertyName.equals("FractionInspiredGas"))
+            {
+              writer.print("|"+"List of SESubstanceFraction");
+              writer.print("|"+"@ref SubstanceFractionTable");
+            }
+            else if(bag.propertyName.equals("ConcentrationInspiredAerosol"))
             {
               writer.print("|"+"List of SESubstanceConcentration");
               writer.print("|"+"@ref SubstanceConcentrationTable");

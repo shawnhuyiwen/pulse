@@ -20,7 +20,7 @@ message MechanicalVentilatorSettingsData
     Sigmoidal          = 5;/**<<  */
   }
   
-  eSwitch                             Connection                          = 1; /**<< @brief @ref MechanicalVentilatorData_eConnectionTable */
+  eSwitch                             Connection                          = 1;/**<< @brief @ref eSwitchTable */
   ScalarVolumeData                    ConnectionVolume                    = 2;/**<< @brief Dead space volume of the connection (i.e., mask/tube). */
   ScalarVolumePerPressureData         Compliance                          = 3;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
   ScalarFrequencyData                 DriverDampingParameter              = 4;/**<< @brief Fractional change parameter to prevent abrupt changes to the driver. */

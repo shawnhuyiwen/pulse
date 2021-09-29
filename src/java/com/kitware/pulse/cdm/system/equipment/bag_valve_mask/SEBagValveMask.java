@@ -16,7 +16,7 @@ import com.kitware.pulse.cdm.substance.SESubstanceConcentration;
 import com.kitware.pulse.cdm.substance.SESubstanceFraction;
 import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
-public class SEBagValveMask extends SEEquipment
+public class SEBagValveMask implements SEEquipment
 {
   protected eSwitch                           connection;
   
@@ -52,7 +52,6 @@ public class SEBagValveMask extends SEEquipment
   @Override
   public void clear()
   {
-    super.clear();
     connection = null;
     if (bagResistance != null)
       bagResistance.invalidate();

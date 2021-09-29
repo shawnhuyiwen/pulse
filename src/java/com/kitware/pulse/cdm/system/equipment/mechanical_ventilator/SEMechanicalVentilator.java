@@ -6,7 +6,7 @@ package com.kitware.pulse.cdm.system.equipment.mechanical_ventilator;
 import com.kitware.pulse.cdm.properties.*;
 import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
-public class SEMechanicalVentilator extends SEEquipment
+public class SEMechanicalVentilator implements SEEquipment
 {
   protected SEScalarPressure                  airwayPressure;
   protected SEScalarVolumePerPressure         dynamicPulmonaryCompliance ;
@@ -62,8 +62,6 @@ public class SEMechanicalVentilator extends SEEquipment
   @Override
   public void clear()
   {
-    super.clear();
-    
     if (airwayPressure != null)
       airwayPressure.invalidate();
     if (dynamicPulmonaryCompliance != null)

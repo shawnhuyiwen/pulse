@@ -6,8 +6,9 @@ package com.kitware.pulse.cdm.system.equipment.electrocardiogram;
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramData;
 import com.kitware.pulse.cdm.properties.SEScalarElectricPotential;
 import com.kitware.pulse.cdm.system.SESystem;
+import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
-public class SEElectroCardioGram implements SESystem
+public class SEElectroCardioGram implements SEEquipment
 {
   protected SEScalarElectricPotential lead3ElectricPotential;
   

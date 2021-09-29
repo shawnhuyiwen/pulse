@@ -13,7 +13,7 @@ import com.kitware.pulse.cdm.properties.SEScalarPressure;
 import com.kitware.pulse.cdm.properties.SEScalarVolumePerTime;
 import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
-public class SEAnesthesiaMachine extends SEEquipment
+public class SEAnesthesiaMachine implements SEEquipment
 {
   protected eSwitch                           connection;
   protected SEScalarVolumePerTime             inletFlow;
@@ -58,7 +58,6 @@ public class SEAnesthesiaMachine extends SEEquipment
   @Override
   public void clear()
   {
-    super.clear();
     connection = null;
     if (inletFlow != null)
       inletFlow.invalidate();
