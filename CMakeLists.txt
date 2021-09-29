@@ -245,6 +245,8 @@ else()
   set(export_git_hash "unknown")
 endif()
 
+configure_file(cmake/PulseBuildConfiguration.h.in ${CMAKE_BINARY_DIR}/PulseBuildConfiguration.h)
+
 #------------------------------------------------------------------------------
 # Configure ${PROJECT_NAME}ConfigVersion.cmake common to build and install tree
 include(CMakePackageConfigHelpers)

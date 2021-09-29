@@ -1,0 +1,6 @@
+#pragma once
+
+// Automatically generated, do not edit
+
+#define PULSE_GIT_HASH "@export_git_hash@"
+#define PULSE_VERSION "@PROJECT_VERSION@"

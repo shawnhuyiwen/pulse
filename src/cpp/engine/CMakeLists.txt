@@ -1,6 +1,7 @@
-
 add_library_ex(PulseEngine
   H_FILES
+    PulseBuildConfiguration.h
+    PulseBuildInformation.h
     PulseConfiguration.h
     PulseEngine.h
     PulseEnginePool.h
@@ -73,6 +74,7 @@ add_library_ex(PulseEngine
     io/protobuf/PBScenario.h
     io/protobuf/PBState.h
   CPP_FILES
+    PulseBuildInformation.cpp
     PulseConfiguration.cpp
     PulseEnginePool.cpp
     PulseEngineThunk.cpp
