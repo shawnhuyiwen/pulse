@@ -12,7 +12,7 @@ def HowTo_UseAnemia():
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")
     anemia = pc.get_conditions().get_chronic_anemia()
-    anemia.get_reduction_factor().set_value(.4)
+    anemia.get_reduction_factor().set_value(.15)
 
     # Initialize the engine with our configuration
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

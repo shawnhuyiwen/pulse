@@ -148,5 +148,11 @@ def main():
         # Remove inactive engines from patients?
 
 if __name__ == "__main__":
+    print("It is not recommended to use python threading with Pulse")
+    print("Pulse is a native library, and each call will use the Python GIL")
+    print("The GIL can sometimes not release from a native return, causing your program to lock")
+    print("You may be better at handling these sorts of things though...")
+    # For more info:
+    # https://stackoverflow.com/questions/53855880/why-gil-is-not-synchrionizing-python-threads-that-are-running-native-c-code-in
     main()
     print("DONE")

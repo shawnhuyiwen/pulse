@@ -31,7 +31,7 @@ PYBIND11_MODULE(PyPulse, m)
     .value("json", eSerializationFormat::JSON)
     .export_values();
    py::enum_<eModelType>(m, "model_type")
-     .value("human_adult::ventilation_mechanics", eModelType::HumanAdultWholeBody)
+     .value("human_adult_whole_body", eModelType::HumanAdultWholeBody)
      .value("human_adult_ventilation_mechanics", eModelType::HumanAdultVentilationMechanics)
      .export_values();
 

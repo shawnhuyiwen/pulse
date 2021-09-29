@@ -35,7 +35,7 @@ class PulseEnginePool:
         self.__pool = PyPulse.EnginePool(num_threads, data_root_dir)
         self._is_active = False
         self._spare_time_s = 0
-        self._dt_s = self.__pool.get_timestep("s")
+        self._dt_s = 0.02 #self.__pool.get_timestep("s")
         self._engines = {}
 
     def create_engine(self, id: int):
