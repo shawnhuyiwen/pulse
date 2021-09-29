@@ -260,10 +260,10 @@ The Blood Chemistry system does not have any conditions or actions directly embe
 @anchor bloodchemistry-validation-assessments
 Validation - Assessments
 ------------------------
-There are three asessments in the Blood Chemistry system. Each assessment provides all of the values associated with a specific "blood test" as a single output. The three assessments currently supported are a metabolic panel (Chem-14), an arterial blood gas test, and a complete blood count. These assessments were validated with published data, as shown in Table&nbsp;2, Table&nbsp;3, and Table&nbsp;4. As with the resting physiology, the references for all values are provided and the results are color coded. 
+There are three asessments in the Blood Chemistry system. Each assessment provides all of the values associated with a specific "blood test" as a single output. The three assessments currently supported are an arterial blood gas test, a metabolic panel (Chem-14), and a complete blood count. These assessments were validated with published data, as shown in Table&nbsp;2, Table&nbsp;3, and Table&nbsp;4, respectively. As with the resting physiology, the references for all values are provided and the results are color coded. 
 
 <center>
-*Table 2. Results of the metabolic panel as compiled during the healthy resting physiology.*
+*Table 2. Results of the arterial blood gas test as compiled during the healthy resting physiology.*
 </center>
 
 @insert ./test_results/tables/ArterialBloodGasTestValidationTable.md
