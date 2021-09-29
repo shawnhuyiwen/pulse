@@ -92,7 +92,7 @@ void HowToEngineUse()
   // Create an engine object
   // By default, this creates a human adult/whole body physiology engine
   // You can create other engines by specifying a eModelType enum
-  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
 
   // By default, PulseEngine will always output log messages to stdout
   // You can turn that off and on like this

@@ -59,7 +59,7 @@
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/GeneralMath.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   CardiovascularModel::CardiovascularModel(Data& data) : CardiovascularSystem(data.GetLogger()), Model(data)
   {
@@ -2547,4 +2547,4 @@ namespace PULSE_ENGINE
       Info("  Final " + p->GetName() + " Flow : " + p->GetFlow().ToString());
     }
   }
-}
+END_NAMESPACE

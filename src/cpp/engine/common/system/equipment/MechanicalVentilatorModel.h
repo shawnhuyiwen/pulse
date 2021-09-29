@@ -13,7 +13,7 @@ class SEGasSubstanceQuantity;
 class SEFluidCircuitNode;
 class SEFluidCircuitPath;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBEquipment;
   class EngineTest;
@@ -105,4 +105,4 @@ namespace PULSE_ENGINE
     SEFluidCircuitPath*  m_ConnectionToAirway;
     double               m_DefaultClosedFlowResistance_cmH2O_s_Per_L;
   };
-}
+END_NAMESPACE

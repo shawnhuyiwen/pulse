@@ -34,7 +34,7 @@ void HowToPulseEnginePool()
   TimingProfile profiler;
   double sim_time_s = 60;
 
-  pulse::engine::PulseEnginePool pool;
+  PulseEnginePool pool;
   pool.GetLogger()->LogToConsole(true);
   pool.GetLogger()->SetLogFile("./test_results/HowToPulseEnginePool/Pool.log");
 
@@ -42,7 +42,7 @@ void HowToPulseEnginePool()
   pool.Info("Creating a pool with " + std::to_string(numEngine) + " engines");
   for (int i=0; i<numEngine; i++)
   {
-    SEPhysiologyEnginePoolEngine* e = pool.CreateEngine(i, pulse::engine::eModelType::HumanAdultWholeBody);
+    SEPhysiologyEnginePoolEngine* e = pool.CreateEngine(i, eModelType::HumanAdultWholeBody);
     e->EngineInitialization.SetStateFilename("./states/StandardMale@0s.json");
     e->EngineInitialization.SetLogFilename("./test_results/HowToPulseEndingPool/PoolEngine"+std::to_string(i)+".log");
     // The engine IsActive flag will be set to false on any engine error/fatal messages

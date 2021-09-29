@@ -25,7 +25,7 @@
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/TimingProfile.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -176,4 +176,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
   {
     MechanicalVentilatorCircuitAndTransportTest(RespiratoryWithMechanicalVentilator, sTestDirectory);
   }
-}
+END_NAMESPACE_EX

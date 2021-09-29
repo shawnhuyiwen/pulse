@@ -13,7 +13,7 @@
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/utils/GeneralMath.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::ConditionCombinations(const std::string& /*rptDirectory*/)
   {
@@ -70,4 +70,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     }
     testReport.SerializeToFile("ConditionsPermutationsReport.json");
   }
-}
+END_NAMESPACE_EX

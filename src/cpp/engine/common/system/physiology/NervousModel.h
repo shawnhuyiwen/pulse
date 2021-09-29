@@ -10,7 +10,7 @@ class SEFluidCircuitNode;
 class SEFluidCircuitPath;
 class SEFluidCircuit;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -81,4 +81,4 @@ namespace PULSE_ENGINE
     SEFluidCircuitPath* m_BrainVasculatureCompliancePath;
     SEFluidCircuitPath* m_BrainVasculatureResistancePath;
   };
-}
+END_NAMESPACE

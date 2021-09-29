@@ -6,7 +6,7 @@
 #include "engine/common/system/Model.h"
 #include "engine/common/system/Systems.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -37,4 +37,4 @@ namespace PULSE_ENGINE
     void ComputeExposedModelParameters() override;
 
   };
-}
+END_NAMESPACE

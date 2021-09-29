@@ -20,7 +20,7 @@
 #include "cdm/compartment/fluid/SELiquidCompartmentLink.h"
 #include "cdm/compartment/fluid/SELiquidCompartmentGraph.h"
 
-namespace HUMAN_ADULT_VENT_MECH
+namespace pulse { namespace human_adult_ventilation_mechanics
 {
   bool Controller::CreateCircuitsAndCompartments()
   {
@@ -56,4 +56,4 @@ namespace HUMAN_ADULT_VENT_MECH
     m_Compartments->StateChange();
     return true;
   }
-}
+END_NAMESPACE_EX

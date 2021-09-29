@@ -13,7 +13,7 @@
 #include "cdm/properties/SEScalarTime.h"
 #include <iomanip>
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   class RunEngineTask : public Task
   {
@@ -81,7 +81,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
     execOpts.SetLogFilename(logFile);
     execOpts.SetDataRequestCSVFilename(dataFile);
     execOpts.SetScenarioFilename(m_scenarioFile);
-    pulse::engine::PulseScenarioExec::Execute(pe, execOpts);
+    PulseScenarioExec::Execute(pe, execOpts);
   }
 
   void EngineTest::MultiEngineTest(const std::string& sTestDirectory)
@@ -164,4 +164,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
 
     std::cin.get();
   }
-}
+END_NAMESPACE_EX

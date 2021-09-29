@@ -12,7 +12,7 @@ class SEGasSubstanceQuantity;
 class SEFluidCircuitNode;
 class SEFluidCircuitPath;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBEquipment;
   class EngineTest;
@@ -95,4 +95,4 @@ namespace PULSE_ENGINE
     SEFluidCircuitPath* m_pEnvironmentToGasSource;
     SEFluidCircuitPath* m_pVentilatorToSelector;
   };
-}
+END_NAMESPACE

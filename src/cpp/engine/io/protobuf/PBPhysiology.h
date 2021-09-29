@@ -25,7 +25,7 @@ PULSE_BIND_DECL(Tissue)
 #include "engine/common/system/physiology/RespiratoryModel.h"
 #include "engine/common/system/physiology/TissueModel.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PULSE_DECL PBPhysiology
   {

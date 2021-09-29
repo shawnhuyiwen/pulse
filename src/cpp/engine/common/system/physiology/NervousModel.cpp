@@ -34,7 +34,7 @@
 
 // #define PROBE
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   NervousModel::NervousModel(Data& data) : NervousSystem(data.GetLogger()), Model(data)
   {
@@ -572,4 +572,4 @@ namespace PULSE_ENGINE
     GetRightEyePupillaryResponse().GetSizeModifier().SetValue(rightPupilSizeResponseLevel);
     GetRightEyePupillaryResponse().GetReactivityModifier().SetValue(rightPupilReactivityResponseLevel);
   }
-}
+END_NAMESPACE

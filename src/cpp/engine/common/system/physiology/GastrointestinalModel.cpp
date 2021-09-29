@@ -40,7 +40,7 @@
 
 //#define logMeal
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   GastrointestinalModel::GastrointestinalModel(Data& data) : GastrointestinalSystem(data.GetLogger()), Model(data)
   {

@@ -36,7 +36,7 @@
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/utils/GeneralMath.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   /*
   ========================
@@ -698,4 +698,4 @@ namespace PULSE_ENGINE
       m_ValveNode->GetNextVolume().Set(m_ValveNode->GetVolumeBaseline());
     }
   }
-}
+END_NAMESPACE

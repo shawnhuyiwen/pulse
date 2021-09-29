@@ -19,7 +19,7 @@ class SEEngineTracker;
 #include "cdm/engine/SEEngineStabilization.h"
 #include "cdm/properties/SEScalarTime.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class StabilizationController;
 
@@ -299,7 +299,7 @@ namespace PULSE_ENGINE
   class PULSE_DECL StabilizationController : public SEEngineStabilization::Controller
   {
   public:
-    StabilizationController(PULSE_ENGINE::Controller& pc) : _pc(pc) {}
+    StabilizationController(pulse::Controller& pc) : _pc(pc) {}
     ~StabilizationController() = default;
 
     virtual bool AdvanceTime() override { return _pc.AdvanceModelTime(); }
@@ -313,7 +313,7 @@ namespace PULSE_ENGINE
     }
 
   protected:
-    PULSE_ENGINE::Controller& _pc;
+    pulse::Controller& _pc;
   };
 
   class FatalListner : public LoggerForward
@@ -335,5 +335,4 @@ namespace PULSE_ENGINE
     SEEventManager& m_Events;
     SEScalarTime& m_CurrentTime;
   };
-
-}
+END_NAMESPACE

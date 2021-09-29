@@ -5,7 +5,7 @@
 #include "engine/common/controller/Controller.h"
 PULSE_BIND_DECL(State)
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PULSE_DECL PBState
   {

@@ -10,7 +10,7 @@ class SESubstanceManager;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   /**
   * @brief
@@ -74,4 +74,4 @@ namespace PULSE_ENGINE
     double m_StrongIonDifference_mmol_Per_L; // BloodChemistrySystemData mmol/L
     double m_Phosphate_mmol_Per_L; //BloodChemistryData mmol/L
   };
-}
+END_NAMESPACE

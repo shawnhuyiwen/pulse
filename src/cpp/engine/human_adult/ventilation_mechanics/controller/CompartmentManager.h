@@ -6,17 +6,17 @@
 #include "engine/human_adult/ventilation_mechanics/Engine.h"
 #include "engine/human_adult/whole_body/controller/CompartmentManager.h"
 
-namespace HUMAN_ADULT_VENT_MECH
+namespace pulse { namespace human_adult_ventilation_mechanics
 {
   /**
   * @brief Manages all compartments and graphs associated with all %Pulse systems/equipment
   */
-  class PULSE_DECL CompartmentManager : public PULSE_ENGINE::CompartmentManager
+  class PULSE_DECL CompartmentManager : public pulse::CompartmentManager
   {
   public:
-    CompartmentManager(PULSE_ENGINE::Data& data);
+    CompartmentManager(pulse::Data& data);
     virtual ~CompartmentManager();
 
     virtual void StateChange() override;
   };
-}
+END_NAMESPACE_EX

@@ -4,7 +4,7 @@
 #include "MVEngine.h"
 
 #include "engine/common/system/Model.h"
-using namespace pulse::engine;
+using namespace pulse;
 
 namespace pulse::study::multiplex_ventilation
 {

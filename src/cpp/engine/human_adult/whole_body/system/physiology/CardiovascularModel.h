@@ -5,13 +5,13 @@
 #include "engine/common/system/physiology/CardiovascularModel.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL CardiovascularModel : public PULSE_ENGINE::CardiovascularModel
+  class PULSE_DECL CardiovascularModel : public pulse::CardiovascularModel
   {
     friend class EngineTest;
   public:
-    CardiovascularModel(PULSE_ENGINE::Data& data) : PULSE_ENGINE::CardiovascularModel(data) {}
+    CardiovascularModel(pulse::Data& data) : pulse::CardiovascularModel(data) {}
     virtual ~CardiovascularModel() = default;
   };
-}
+END_NAMESPACE_EX

@@ -36,7 +36,7 @@
 #include "cdm/properties/SEScalarVolumePerPressure.h"
 #include "cdm/properties/SECurve.h"
 
-namespace HUMAN_ADULT_VENT_MECH
+namespace pulse { namespace human_adult_ventilation_mechanics
 {
   EngineTest::EngineTest(Logger* logger) : SETestManager(logger)
   {
@@ -533,4 +533,4 @@ namespace HUMAN_ADULT_VENT_MECH
       }
     }
   }
-}
+END_NAMESPACE_EX

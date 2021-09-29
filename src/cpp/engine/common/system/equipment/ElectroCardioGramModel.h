@@ -8,7 +8,7 @@
 
 class SEElectroCardioGramWaveformInterpolator;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBEquipment;
   class EngineTest;
@@ -47,4 +47,4 @@ namespace PULSE_ENGINE
 
     // Stateless member variable (Set in SetUp())
   };
-}
+END_NAMESPACE

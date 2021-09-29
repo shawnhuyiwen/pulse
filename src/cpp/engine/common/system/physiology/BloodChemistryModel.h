@@ -12,7 +12,7 @@ class SEComprehensiveMetabolicPanel;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -73,4 +73,4 @@ namespace PULSE_ENGINE
     SELiquidSubstanceQuantity* m_venaCavaO2;
     SELiquidSubstanceQuantity* m_venaCavaCO2;
   };
-}
+END_NAMESPACE

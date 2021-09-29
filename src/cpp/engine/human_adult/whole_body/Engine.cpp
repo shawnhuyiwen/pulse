@@ -4,9 +4,9 @@
 #include "engine/human_adult/whole_body/Engine.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  Engine::Engine(Logger* logger) : PULSE_ENGINE::Engine(logger)
+  Engine::Engine(Logger* logger) : pulse::Engine(logger)
   {
     
   }
@@ -15,4 +15,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     m_Controller = new Controller(GetLogger());
     ((Controller*)m_Controller)->Allocate();
   }
-}
+END_NAMESPACE_EX

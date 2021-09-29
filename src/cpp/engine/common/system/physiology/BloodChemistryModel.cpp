@@ -32,7 +32,7 @@
 #include "cdm/properties/SERunningAverage.h"
 #include "cdm/utils/DataTrack.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   BloodChemistryModel::BloodChemistryModel(Data& data) : BloodChemistrySystem(data.GetLogger()), Model(data)
   {
@@ -527,4 +527,4 @@ namespace PULSE_ENGINE
     cbc.GetWhiteBloodCellCount().SetValue(GetWhiteBloodCellCount(AmountPerVolumeUnit::ct_Per_L), AmountPerVolumeUnit::ct_Per_L);
     return true;
   }
-}
+END_NAMESPACE

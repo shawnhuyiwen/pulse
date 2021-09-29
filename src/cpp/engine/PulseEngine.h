@@ -7,21 +7,17 @@
 #include "cdm/PhysiologyEngine.h"
 #include "cdm/utils/ScopedMutex.h"
 
-// I bet there is a way cool macro you could do for these enums...
+enum class eModelType { HumanAdultWholeBody=0, HumanAdultVentilationMechanics };
+bool eModelType_ValueOf(const std::string s, eModelType& t);
+
+std::unique_ptr<PhysiologyEngine> CreatePulseEngine(eModelType type = eModelType::HumanAdultWholeBody, Logger* logger = nullptr);
+
 namespace pulse
 {
   DEFINE_STATIC_STRING_EX(Version, Pulse_4.0.0);
-  
-  namespace engine
-  {
-    enum class eModelType { HumanAdultWholeBody=0, HumanAdultVentilationMechanics };
-    bool valueOf(const std::string s, eModelType& t);
 
-    std::unique_ptr<PhysiologyEngine> CreatePulseEngine(eModelType type=eModelType::HumanAdultWholeBody, Logger* logger = nullptr);
-  }
-  
   // All Compartments used by Pulse
-  
+
   class Graph
   {
   public:
@@ -1323,5 +1319,4 @@ namespace pulse
   protected:
     static std::vector<std::string> _values;
   };
-
-}
+END_NAMESPACE

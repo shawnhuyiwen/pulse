@@ -10,7 +10,7 @@ class SETestSuite;
 class HowToTracker;
 class PulseController;
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   class ENGINE_TEST_DECL EngineTest : public SETestManager
   {
@@ -200,5 +200,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     void InhalerState(PhysiologyEngine* bg, HowToTracker& tracker);
     void InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tracker, const SESubstance& succs);
   };
-}
-
+END_NAMESPACE_EX

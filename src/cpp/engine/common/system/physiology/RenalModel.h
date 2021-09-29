@@ -16,7 +16,7 @@ class SELiquidSubstanceQuantity;
 class SETissueCompartment;
 class SEUrinalysis;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -218,4 +218,4 @@ namespace PULSE_ENGINE
     SEScalarMass* m_spCleared;
     ActiveTransport m_SubstanceTransport;
   };
-}
+END_NAMESPACE

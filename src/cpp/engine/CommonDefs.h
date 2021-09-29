@@ -3,14 +3,17 @@
 
 #pragma once
 
-#include "PulseEngine.h"
 #define PULSE_DECL CDM_DECL
 
 #define PULSE_BIND pulse::engine::bind
-#define PULSE_ENGINE pulse::engine
+
+#define END_NAMESPACE }
+#define END_NAMESPACE_EX }}
 
 #define PULSE_BIND_DECL(type) \
   namespace PULSE_BIND { class type##Data; }
   
-#define PULSE_ENGINE_DECL(type) \
-  namespace PULSE_ENGINE { class type; }
+#define pulse_DECL(type) \
+  namespace pulse { class type; }
+
+#include "engine/PulseEngine.h"

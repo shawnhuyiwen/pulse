@@ -4,7 +4,7 @@
 
 #include "engine/CommonDefs.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class Controller;
   //--------------------------------------------------------------------------------------------------
@@ -81,4 +81,4 @@ namespace PULSE_ENGINE
     virtual void AllocateController() const = 0;
     mutable Controller* m_Controller=nullptr;
   };
-}
+END_NAMESPACE

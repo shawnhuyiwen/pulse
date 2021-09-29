@@ -12,7 +12,7 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBUtils.h"
 #include "cdm/utils/FileUtils.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   void PBScenario::Load(const PULSE_BIND::ScenarioData& src, PulseScenario& dst)
   {

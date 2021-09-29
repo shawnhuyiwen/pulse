@@ -5,13 +5,13 @@
 #include "engine/common/system/physiology/NervousModel.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL NervousModel : public PULSE_ENGINE::NervousModel
+  class PULSE_DECL NervousModel : public pulse::NervousModel
   {
     friend class EngineTest;
   public:
-    NervousModel(PULSE_ENGINE::Data& data) :PULSE_ENGINE::NervousModel(data) {}
+    NervousModel(pulse::Data& data) :pulse::NervousModel(data) {}
     virtual ~NervousModel() = default;
   };
-}
+END_NAMESPACE_EX

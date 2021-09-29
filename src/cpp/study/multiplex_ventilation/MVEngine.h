@@ -103,8 +103,8 @@ namespace pulse::study::multiplex_ventilation
 
 
     std::string m_DataDir;
-    std::vector<pulse::engine::Engine*> m_Engines;
-    std::vector<pulse::engine::Controller*> m_Controllers;
+    std::vector<pulse::Engine*> m_Engines;
+    std::vector<pulse::Controller*> m_Controllers;
     std::vector<SELiquidSubstanceQuantity*> m_AortaO2s;
     std::vector<SELiquidSubstanceQuantity*> m_AortaCO2s;
     SEMechanicalVentilatorConfiguration* m_MVC;

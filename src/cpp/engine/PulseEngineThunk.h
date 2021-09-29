@@ -6,19 +6,16 @@
 #include "engine/PulseEngine.h"
 #include "cdm/PhysiologyEngineThunk.h"
 
-namespace pulse::engine
+class PulseEngineThunk : public PhysiologyEngineThunk
 {
-  class PulseEngineThunk : public PhysiologyEngineThunk
-  {
-  public:
-    PulseEngineThunk(eModelType t, const std::string& dataDir = "./");
-    virtual ~PulseEngineThunk();
+public:
+  PulseEngineThunk(eModelType t, const std::string& dataDir = "./");
+  virtual ~PulseEngineThunk();
 
-    virtual bool ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format) override;
+  virtual bool ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format) override;
 
-  protected:
-    virtual void AllocateEngine() override;
+protected:
+  virtual void AllocateEngine() override;
 
-    eModelType m_type;
-  };
-}
+  eModelType m_type;
+};

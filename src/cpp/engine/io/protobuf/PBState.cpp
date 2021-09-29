@@ -39,7 +39,7 @@ POP_PROTO_WARNINGS
 #include "cdm/utils/FileUtils.h"
 
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   void PBState::Load(const PULSE_BIND::StateData& src, Controller& dst, const SEEngineConfiguration* config)
   {

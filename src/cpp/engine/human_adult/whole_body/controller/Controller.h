@@ -6,13 +6,13 @@
 #include "engine/common/controller/Controller.h"
 #include "engine/human_adult/whole_body/Engine.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   class EngineTest;
   /**
   * @brief Manages and controls execution of all data/systems in an engine
   */
-  class PULSE_DECL Controller : public PULSE_ENGINE::Controller
+  class PULSE_DECL Controller : public pulse::Controller
   {
     friend Engine;
     friend EngineTest;
@@ -34,9 +34,9 @@ namespace HUMAN_ADULT_WHOLE_BODY
     virtual bool SetupPatient(const SEPatient& patient) override;
 
     virtual void InitializeModels() override;
-    virtual void AtSteadyState(PULSE_ENGINE::EngineState state) override;
+    virtual void AtSteadyState(pulse::EngineState state) override;
     virtual void PreProcess() override;
     virtual void Process() override;
     virtual void PostProcess() override;
   };
-}
+END_NAMESPACE_EX

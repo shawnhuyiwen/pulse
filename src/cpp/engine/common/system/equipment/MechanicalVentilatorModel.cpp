@@ -34,7 +34,7 @@
 #include "cdm/properties/SERunningAverage.h"
 #include "cdm/utils/GeneralMath.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   /*
   ========================
@@ -1147,4 +1147,4 @@ namespace PULSE_ENGINE
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;
   }
-}
+END_NAMESPACE

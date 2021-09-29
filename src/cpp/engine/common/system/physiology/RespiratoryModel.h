@@ -20,7 +20,7 @@ class SEFluidCircuitCalculator;
 class SEConsciousRespirationCommand;
 class SEPulmonaryFunctionTest;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -251,4 +251,4 @@ namespace PULSE_ENGINE
     SEGasTransporter* m_GasTransporter;
     SELiquidTransporter* m_AerosolTransporter;
   };
-}
+END_NAMESPACE

@@ -28,7 +28,7 @@
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarAmountPerVolume.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   double TotalHbMols(SELiquidCompartmentGraph& Graph, SESubstance& Hb, SESubstance& HbO2, SESubstance& HbO2CO2, SESubstance& HbCO2)
   {
@@ -463,4 +463,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
   {
     FourCompartmentTest(true, true, true, sOutputDirectory);
   }
-}
+END_NAMESPACE_EX

@@ -19,7 +19,7 @@
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   bool Controller::SetupPatient(SEPatient const& patient)
   {
@@ -652,4 +652,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
       return false;
     return true;
   }
-}
+END_NAMESPACE_EX

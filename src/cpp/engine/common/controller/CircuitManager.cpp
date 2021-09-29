@@ -7,7 +7,7 @@
 #include "cdm/circuit/fluid/SEFluidCircuitNode.h"
 #include "cdm/circuit/fluid/SEFluidCircuitPath.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   CircuitManager::CircuitManager(Data& data) : SECircuitManager(data.GetLogger()), m_data(data)
   {

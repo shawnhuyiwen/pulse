@@ -8,7 +8,7 @@
 class SELiquidCompartment;
 class SETissueCompartment;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class Data;
   class PULSE_DECL SizeIndependentDepositionEfficencyCoefficient
@@ -141,4 +141,4 @@ namespace PULSE_ENGINE
 
     Data& m_data;
   };
-}
+END_NAMESPACE

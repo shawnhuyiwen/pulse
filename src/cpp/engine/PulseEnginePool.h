@@ -6,20 +6,17 @@ See accompanying NOTICE file for details.*/
 #include "engine/CommonDefs.h"
 #include "cdm/PhysiologyEnginePool.h"
 
-namespace pulse::engine
+class CDM_DECL PulseEnginePool : public SEPhysiologyEnginePool
 {
-  class CDM_DECL PulseEnginePool : public SEPhysiologyEnginePool
-  {
-  public:
-    PulseEnginePool(size_t poolSize = 0, const std::string& dataDir = "./", Logger* logger = nullptr);
-    ~PulseEnginePool() = default;
+public:
+  PulseEnginePool(size_t poolSize = 0, const std::string& dataDir = "./", Logger* logger = nullptr);
+  ~PulseEnginePool() = default;
 
-   virtual  SEPhysiologyEnginePoolEngine* CreateEngine(int id, eModelType type);
+  virtual  SEPhysiologyEnginePoolEngine* CreateEngine(int id, eModelType type);
 
-  protected:
-    using SEPhysiologyEnginePool::CreateEngine;
-    virtual void AllocateEngine(SEPhysiologyEnginePoolEngine& pe) override;
+protected:
+  using SEPhysiologyEnginePool::CreateEngine;
+  virtual void AllocateEngine(SEPhysiologyEnginePoolEngine& pe) override;
 
-    eModelType m_creationType;
-  };
-}
+  eModelType m_creationType;
+};

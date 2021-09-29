@@ -55,7 +55,7 @@ void RunScenarioTask::Run()
   // initialization constructs not being thread safe, we must not construct PulseEngine simultaneously
   // from multiple threads.
   ms_constructionMutex.lock();
-  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile(logFile);
   ms_constructionMutex.unlock();
 
@@ -64,7 +64,7 @@ void RunScenarioTask::Run()
   execOpts.SetLogFilename(logFile);
   execOpts.SetDataRequestCSVFilename(dataFile);
   execOpts.SetScenarioFilename(m_scenarioFile);
-  pulse::engine::PulseScenarioExec::Execute(*pe, execOpts);
+  PulseScenarioExec::Execute(*pe, execOpts);
 }
 
 //--------------------------------------------------------------------------------------------------

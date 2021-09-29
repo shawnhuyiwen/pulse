@@ -8,7 +8,7 @@
 #include "engine/common/controller/CompartmentManager.h"
 #include "engine/common/controller/SubstanceManager.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   Engine::Engine(Logger* logger) : PhysiologyEngine(logger)
   {
@@ -234,4 +234,4 @@ namespace PULSE_ENGINE
   {
     return GetController().GetData().GetBlackBoxes();
   }
-}
+END_NAMESPACE

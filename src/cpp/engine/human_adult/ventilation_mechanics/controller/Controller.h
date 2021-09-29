@@ -6,12 +6,12 @@
 #include "engine/human_adult/whole_body/controller/Controller.h"
 #include "engine/human_adult/ventilation_mechanics/Engine.h"
 
-namespace HUMAN_ADULT_VENT_MECH
+namespace pulse { namespace human_adult_ventilation_mechanics
 {
   /**
   * @brief Manages and controls execution of all data/systems in an engine
   */
-  class PULSE_DECL Controller : public HUMAN_ADULT_WHOLE_BODY::Controller
+  class PULSE_DECL Controller : public pulse::human_adult_whole_body::Controller
   {
     friend Engine;
   protected:// Create via PulseEngine
@@ -27,7 +27,7 @@ namespace HUMAN_ADULT_VENT_MECH
 
     virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const override;
 
-    virtual bool IsAirwayModeSupported(PULSE_ENGINE::eAirwayMode mode) override;
+    virtual bool IsAirwayModeSupported(pulse::eAirwayMode mode) override;
 
     virtual bool CreateCircuitsAndCompartments() override;
 
@@ -37,9 +37,9 @@ namespace HUMAN_ADULT_VENT_MECH
 
     virtual void InitializeModels() override;
     // Notify systems that steady state has been achieved
-    virtual void AtSteadyState(PULSE_ENGINE::EngineState state) override;
+    virtual void AtSteadyState(pulse::EngineState state) override;
     virtual void PreProcess() override;
     virtual void Process() override;
     virtual void PostProcess() override;
   };
-}
+END_NAMESPACE_EX

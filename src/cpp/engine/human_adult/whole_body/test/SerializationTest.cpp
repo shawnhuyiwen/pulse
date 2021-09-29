@@ -65,9 +65,7 @@ public:
   }
 };
 
-namespace hawb = HUMAN_ADULT_WHOLE_BODY;
-
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   void EngineTest::InhalerState(PhysiologyEngine* pc, HowToTracker& tracker)
   {
@@ -330,4 +328,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     }
     pe.SerializeToFile("./FinalEngineState.json");
   }
-}
+END_NAMESPACE_EX

@@ -32,7 +32,7 @@ See accompanying NOTICE file for details.*/
 // They should only contain const pure vitrual methods
 
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PULSE_DECL BloodChemistrySystem : public SEBloodChemistrySystem
   {
@@ -480,4 +480,4 @@ namespace PULSE_ENGINE
   protected:
     //SEScalar m_ModelParameter;
   };
-}
+END_NAMESPACE

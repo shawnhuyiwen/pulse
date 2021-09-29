@@ -12,11 +12,9 @@
 #include "cdm/properties/SEScalarMassPerVolume.h"
 #include "cdm/properties/SEScalarAmountPerVolume.h"
 
-namespace pmc = PULSE_ENGINE;
-
-namespace HUMAN_ADULT_VENT_MECH
+namespace pulse { namespace human_adult_ventilation_mechanics
 {
-  CompartmentManager::CompartmentManager(pmc::Data& data) : pmc::CompartmentManager(data)
+  CompartmentManager::CompartmentManager(pulse::Data& data) : pulse::CompartmentManager(data)
   {
     Clear();
   }
@@ -102,4 +100,4 @@ namespace HUMAN_ADULT_VENT_MECH
       Error("Could not find required Graph " + std::string(pulse::Graph::AerosolAndMechanicalVentilator));
     }
   }
-}
+END_NAMESPACE_EX

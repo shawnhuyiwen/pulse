@@ -5,13 +5,13 @@
 #include "engine/common/system/equipment/MechanicalVentilatorModel.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL MechanicalVentilatorModel : public PULSE_ENGINE::MechanicalVentilatorModel
+  class PULSE_DECL MechanicalVentilatorModel : public pulse::MechanicalVentilatorModel
   {
     friend class EngineTest;
   public:
-    MechanicalVentilatorModel(PULSE_ENGINE::Data& data) : PULSE_ENGINE::MechanicalVentilatorModel(data) {}
+    MechanicalVentilatorModel(pulse::Data& data) : pulse::MechanicalVentilatorModel(data) {}
     virtual ~MechanicalVentilatorModel() = default;
   };
-}
+END_NAMESPACE_EX

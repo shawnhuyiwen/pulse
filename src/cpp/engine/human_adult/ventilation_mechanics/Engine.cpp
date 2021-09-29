@@ -4,9 +4,9 @@
 #include "engine/human_adult/ventilation_mechanics/Engine.h"
 #include "engine/human_adult/ventilation_mechanics/controller/Controller.h"
 
-namespace HUMAN_ADULT_VENT_MECH
+namespace pulse { namespace human_adult_ventilation_mechanics
 {
-  Engine::Engine(Logger* logger) : HUMAN_ADULT_WHOLE_BODY::Engine(logger)
+  Engine::Engine(Logger* logger) : pulse::human_adult_whole_body::Engine(logger)
   {
     
   }
@@ -15,4 +15,4 @@ namespace HUMAN_ADULT_VENT_MECH
     m_Controller = new Controller(GetLogger());
     ((Controller*)m_Controller)->Allocate();
   }
-}
+END_NAMESPACE_EX

@@ -3,7 +3,7 @@
 
 #include "engine/human_adult/whole_body/test/EngineTest.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   EngineTest::EngineTest(Logger* logger) : SETestManager(logger)
   {
@@ -137,4 +137,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     testMap.insert(std::make_pair("AcidBaseFiveCompartmentTestWithDiffusion", &EngineTest::AcidBaseFiveCompartmentTestWithDiffusion));
     testMap.insert(std::make_pair("AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion", &EngineTest::AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion));
   }
-}
+END_NAMESPACE_EX

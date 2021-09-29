@@ -6,13 +6,13 @@
 #include "engine/human_adult/whole_body/Engine.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL BlackBoxManager : public PULSE_ENGINE::BlackBoxManager
+  class PULSE_DECL BlackBoxManager : public pulse::BlackBoxManager
   {
     friend class EngineTest;
   public:
-    BlackBoxManager(PULSE_ENGINE::Controller& c) : PULSE_ENGINE::BlackBoxManager(c) {}
+    BlackBoxManager(pulse::Controller& c) : pulse::BlackBoxManager(c) {}
     virtual ~BlackBoxManager() = default;
   };
-}
+END_NAMESPACE_EX

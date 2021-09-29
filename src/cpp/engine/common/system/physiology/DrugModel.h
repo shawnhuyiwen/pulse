@@ -11,7 +11,7 @@ class SELiquidCompartment;
 class SETissueCompartment;
 class SESubstanceCompound;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -65,4 +65,4 @@ namespace PULSE_ENGINE
     SEFluidCircuitPath* m_IVToVenaCava;
     SETissueCompartment* m_fatTissue;
   };
-}
+END_NAMESPACE

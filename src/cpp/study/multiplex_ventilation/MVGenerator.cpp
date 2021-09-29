@@ -144,7 +144,7 @@ namespace pulse::study::multiplex_ventilation
       "_imp=" + cdm::to_string(pData.impairmentfraction());
 
     MakeDirectory(Dir::Solo + "/csv/");
-    auto engine = pulse::engine::CreatePulseEngine();
+    auto engine = CreatePulseEngine();
     engine->GetLogger()->SetLogFile(Dir::Solo + "/log/" + baseName + ".log");
     engine->SerializeFromFile("./states/StandardMale@0s.pbb");
     MVEngine::TrackData(*engine->GetEngineTracker(), Dir::Solo + "/csv/" + baseName + ".csv");

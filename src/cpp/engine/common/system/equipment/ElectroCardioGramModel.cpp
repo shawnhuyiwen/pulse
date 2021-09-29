@@ -9,7 +9,7 @@
 #include "cdm/properties/SEFunctionElectricPotentialVsTime.h"
 #include "cdm/properties/SEScalarTime.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   /*
   ========================
@@ -154,4 +154,4 @@ namespace PULSE_ENGINE
   {
 
   }
-}
+END_NAMESPACE

@@ -5,13 +5,13 @@
 #include "engine/common/system/physiology/EndocrineModel.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL EndocrineModel : public PULSE_ENGINE::EndocrineModel
+  class PULSE_DECL EndocrineModel : public pulse::EndocrineModel
   {
     friend class EngineTest;
   public:
-    EndocrineModel(PULSE_ENGINE::Data& data) : PULSE_ENGINE::EndocrineModel(data) {}
+    EndocrineModel(pulse::Data& data) : pulse::EndocrineModel(data) {}
     virtual ~EndocrineModel() = default;
   };
-}
+END_NAMESPACE_EX

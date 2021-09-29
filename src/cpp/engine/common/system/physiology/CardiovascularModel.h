@@ -19,7 +19,7 @@ class SEFluidCircuitNode;
 class SEFluidCircuitPath;
 class SEFluidCircuitCalculator;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PBPhysiology;
   class EngineTest;
@@ -224,4 +224,4 @@ namespace PULSE_ENGINE
     std::vector<SEFluidCircuitPath*> m_systemicResistancePaths;
     std::vector<SEFluidCircuitPath*> m_systemicCompliancePaths;
   };
-}
+END_NAMESPACE

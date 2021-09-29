@@ -35,11 +35,9 @@
 #include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/patient/assessments/SEUrinalysis.h"
 
-namespace pmc = PULSE_ENGINE;
-
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  Controller::Controller(Logger* logger) : pmc::Controller(logger)
+  Controller::Controller(Logger* logger) : pulse::Controller(logger)
   {
 
   }
@@ -47,35 +45,35 @@ namespace HUMAN_ADULT_WHOLE_BODY
   // I am pretty sure we will want different states per engine
   bool Controller::SerializeFromFile(const std::string& filename)
   {
-    return pmc::Controller::SerializeFromFile(filename);
+    return pulse::Controller::SerializeFromFile(filename);
   }
   bool Controller::SerializeToFile(const std::string& filename) const
   {
-    return pmc::Controller::SerializeToFile(filename);
+    return pulse::Controller::SerializeToFile(filename);
   }
 
   bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
-    return pmc::Controller::SerializeFromString(src, m);
+    return pulse::Controller::SerializeFromString(src, m);
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
-    return pmc::Controller::SerializeToString(output, m);
+    return pulse::Controller::SerializeToString(output, m);
   }
 
   void Controller::Allocate()
   {
-    m_Stabilizer = new pmc::StabilizationController(*this);
+    m_Stabilizer = new pulse::StabilizationController(*this);
 
     m_Substances = new SubstanceManager(*this);
 
     m_InitialPatient = new SEPatient(GetLogger());
     m_CurrentPatient = new SEPatient(GetLogger());
 
-    m_Config = new pmc::PulseConfiguration(GetLogger());
+    m_Config = new PulseConfiguration(GetLogger());
     m_Config->Initialize("");//Setup defaults that don't need files on disk
 
-    m_SaturationCalculator = new pmc::SaturationCalculator(*this);
+    m_SaturationCalculator = new pulse::SaturationCalculator(*this);
 
     m_Actions = new SEActionManager(*m_Substances);
     m_Conditions = new SEConditionManager(GetLogger());
@@ -107,7 +105,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
 
     m_Circuits = new CircuitManager(*this);
 
-    m_LogForward = new pmc::FatalListner(*m_EventManager, m_CurrentTime);
+    m_LogForward = new pulse::FatalListner(*m_EventManager, m_CurrentTime);
     m_Logger->AddForward(m_LogForward);
 
     SetupTracker();
@@ -154,7 +152,7 @@ namespace HUMAN_ADULT_WHOLE_BODY
     m_InhalerModel->Initialize();
   }
 
-  void Controller::AtSteadyState(pmc::EngineState state)
+  void Controller::AtSteadyState(pulse::EngineState state)
   {
     m_State = state;
     m_EnvironmentModel->AtSteadyState();
@@ -267,4 +265,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     Error("Unsupported patient assessment");
     return false;
   }
-}
+END_NAMESPACE_EX

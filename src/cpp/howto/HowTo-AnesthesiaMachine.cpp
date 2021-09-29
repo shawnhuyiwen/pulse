@@ -40,7 +40,7 @@
 void HowToAnesthesiaMachine()
 {
   // Create the engine and load the patient
-  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile("./test_results/HowTo_AnesthesiaMachine.log");
   pe->GetLogger()->Info("HowTo_AnesthesiaMachine");
   if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))

@@ -37,7 +37,7 @@
 #include "cdm/utils/testing/SETestCase.h"
 #include "cdm/utils/testing/SETestSuite.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
   enum Driver { Sinusoid = 0, Heart };
 
@@ -793,4 +793,4 @@ namespace HUMAN_ADULT_WHOLE_BODY
     //}
 
   }
-}
+END_NAMESPACE_EX

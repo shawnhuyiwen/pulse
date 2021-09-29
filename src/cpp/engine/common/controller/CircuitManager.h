@@ -8,7 +8,7 @@
 class SEFluidCircuit;
 class SEThermalCircuit;
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class Data;
   /**
@@ -976,4 +976,4 @@ namespace pulse
   public:
     DEFINE_STATIC_STRING(GutChymeToSmallIntestineVascular);
   };
-}
+END_NAMESPACE

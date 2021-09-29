@@ -5,13 +5,13 @@
 #include "engine/common/system/physiology/DrugModel.h"
 #include "engine/human_adult/whole_body/controller/Controller.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL DrugModel : public PULSE_ENGINE::DrugModel
+  class PULSE_DECL DrugModel : public pulse::DrugModel
   {
     friend class EngineTest;
   public:
-    DrugModel(PULSE_ENGINE::Data& data) : PULSE_ENGINE::DrugModel(data) {}
+    DrugModel(pulse::Data& data) : pulse::DrugModel(data) {}
     virtual ~DrugModel() = default;
   };
-}
+END_NAMESPACE_EX

@@ -4,12 +4,12 @@
 #pragma once
 #include "engine/common/system/physiology/Saturation.h"
 
-namespace HUMAN_ADULT_WHOLE_BODY
+namespace pulse { namespace human_adult_whole_body
 {
-  class PULSE_DECL SaturationCalculator : public PULSE_ENGINE::SaturationCalculator
+  class PULSE_DECL SaturationCalculator : public pulse::SaturationCalculator
   {
   public:
-    SaturationCalculator(PULSE_ENGINE::Data& data) : PULSE_ENGINE::SaturationCalculator(data) {}
+    SaturationCalculator(pulse::Data& data) : pulse::SaturationCalculator(data) {}
     virtual ~SaturationCalculator() = default;
   };
-}
+END_NAMESPACE_EX

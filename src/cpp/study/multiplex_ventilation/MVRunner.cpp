@@ -3,7 +3,7 @@
 
 #include "MVRunner.h"
 
-using namespace pulse::engine;
+using namespace pulse;
 
 namespace pulse::study::multiplex_ventilation
 {

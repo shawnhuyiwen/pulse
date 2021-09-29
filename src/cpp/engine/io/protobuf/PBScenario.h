@@ -6,7 +6,7 @@
 PULSE_BIND_DECL(Scenario)
 #include "PulseScenario.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class PULSE_DECL PBScenario
   {

@@ -3,9 +3,8 @@
 #pragma once
 
 #include "engine/human_adult/whole_body/Engine.h"
-#define HUMAN_ADULT_VENT_MECH pulse::engine::human_adult::ventilation_mechanics
 
-namespace HUMAN_ADULT_VENT_MECH
+namespace pulse { namespace human_adult_ventilation_mechanics
 {
   //--------------------------------------------------------------------------------------------------
   /// @brief
@@ -15,7 +14,7 @@ namespace HUMAN_ADULT_VENT_MECH
   /// calls as well as assessment calls for obtaining the results. During engine execution a log files
   /// is generated containing information, warning and error data.
   //--------------------------------------------------------------------------------------------------
-  class PULSE_DECL Engine : public HUMAN_ADULT_WHOLE_BODY::Engine
+  class PULSE_DECL Engine : public pulse::human_adult_whole_body::Engine
   {
   public:
     Engine(Logger* logger=nullptr);
@@ -23,4 +22,4 @@ namespace HUMAN_ADULT_VENT_MECH
   protected:
     virtual void AllocateController() const override;
   };
-}
+END_NAMESPACE_EX

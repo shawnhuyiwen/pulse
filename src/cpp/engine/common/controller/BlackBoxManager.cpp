@@ -17,7 +17,7 @@
 #include "cdm/substance/SESubstance.h"
 #include "cdm/properties/SEScalarMassPerVolume.h"
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   BlackBoxManager::BlackBoxManager(Controller& data) : SEBlackBoxManager(data.GetLogger()), m_data(data)
   {

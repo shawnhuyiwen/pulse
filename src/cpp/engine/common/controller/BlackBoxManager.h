@@ -13,7 +13,7 @@
                                              typename GraphType, typename CompartmentType, typename LinkType, \
                                              typename PotentialUnit, typename QuantityUnit, typename FluxUnit
 
-namespace PULSE_ENGINE
+namespace pulse
 {
   class Controller;
   /**
@@ -41,4 +41,4 @@ namespace PULSE_ENGINE
 
     Controller& m_data;
   };
-}
+END_NAMESPACE

@@ -46,7 +46,7 @@ public:
 void HowToRunScenario()
 {
   // Create an engine object
-  std::unique_ptr<PhysiologyEngine> pe = pulse::engine::CreatePulseEngine();
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
 
   // Let's do something everytime the engine advances
   pe->SetAdvanceHandler(new MyCustomExec());
@@ -90,5 +90,5 @@ void HowToRunScenario()
   execOpts.SetLogFilename("./test_results/HowTo-RunScenarioResults.log");
   execOpts.SetDataRequestCSVFilename("./test_results/HowTo-RunScenarioResults.csv");
   execOpts.SetScenarioContent(json);
-  pulse::engine::PulseScenarioExec::Execute(*pe, execOpts);
+  PulseScenarioExec::Execute(*pe, execOpts);
 }
