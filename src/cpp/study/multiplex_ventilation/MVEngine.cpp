@@ -240,8 +240,9 @@ namespace pulse::study::multiplex_ventilation
           for (SEFluidCircuitPath* path : pc->GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPaths())
           {
             if (path->GetName() != pulse::MechanicalVentilatorPath::EnvironmentToVentilator &&     // Don't
-              path->GetName() != pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve && // Add
-              path->GetName() != pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve)  // These
+                path->GetName() != pulse::MechanicalVentilatorPath::VentilatorToEnvironment &&     // Add
+                path->GetName() != pulse::MechanicalVentilatorPath::VentilatorToExpiratoryValve && // These
+                path->GetName() != pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve)  // Paths
               m_MultiplexVentilationCircuit->ForceAddPath(*path);
           }
           SEGasCompartment* expiratoryValveCmpt = nullptr;
@@ -346,6 +347,7 @@ namespace pulse::study::multiplex_ventilation
     {
       for (Controller* pc : m_Controllers)
       {
+        pc->CheckIntubation();
         if (pc->GetEvents().IsEventActive(eEvent::IrreversibleState))
           return false;
       }

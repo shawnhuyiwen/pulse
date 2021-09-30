@@ -74,24 +74,6 @@ namespace pulse
     }
   }
 
-  void Data::CheckIntubation()
-  {
-    if (m_Actions->GetPatientActions().HasIntubation())
-    {
-      if (m_Intubation == eSwitch::Off)
-      {
-        Info("Intubating Patient");
-        m_Intubation = eSwitch::On;
-      }
-      return;
-    }
-    if (m_Intubation == eSwitch::On)
-    {
-      Info("Extubating Patient");
-      m_Intubation = eSwitch::Off;
-    }
-  }
-
   void Data::SetAirwayMode(eAirwayMode mode)
   {
     if (mode == m_AirwayMode)
@@ -509,6 +491,24 @@ namespace pulse
       return false;
     }
     return true;
+  }
+
+  void Controller::CheckIntubation()
+  {
+    if (m_Actions->GetPatientActions().HasIntubation())
+    {
+      if (m_Intubation == eSwitch::Off)
+      {
+        Info("Intubating Patient");
+        m_Intubation = eSwitch::On;
+      }
+      return;
+    }
+    if (m_Intubation == eSwitch::On)
+    {
+      Info("Extubating Patient");
+      m_Intubation = eSwitch::Off;
+    }
   }
 
   bool Controller::AdvanceModelTime()

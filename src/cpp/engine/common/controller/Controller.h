@@ -165,7 +165,6 @@ namespace pulse
     std::stringstream                     m_ss;
   protected:
     virtual void                          SetupTracker();
-    virtual void                          CheckIntubation();
 
     EngineState                           m_State;
     SEEngineTracker*                      m_EngineTrack;
@@ -259,6 +258,8 @@ namespace pulse
 
     virtual bool CreateCircuitsAndCompartments();
     virtual bool OverrideCircuits();
+
+    virtual void                          CheckIntubation();
   protected:
     // Setup Circuit/Compartments for systems
     virtual void SetupCardiovascular();
