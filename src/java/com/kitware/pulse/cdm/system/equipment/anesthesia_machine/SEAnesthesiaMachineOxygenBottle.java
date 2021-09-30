@@ -14,7 +14,7 @@ public class SEAnesthesiaMachineOxygenBottle
     volume = null;
   }
 
-  public void reset()
+  public void clear()
   {
     if (volume != null)
       volume.invalidate();
@@ -22,7 +22,7 @@ public class SEAnesthesiaMachineOxygenBottle
 
   public void copy(SEAnesthesiaMachineOxygenBottle from)
   {
-    reset();
+    clear();
     if(from.hasVolume())
       this.getVolume().set(from.getVolume());
   }

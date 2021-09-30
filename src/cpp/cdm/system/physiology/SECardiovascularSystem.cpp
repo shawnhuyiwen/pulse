@@ -1,18 +1,18 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
-#include "properties/SEScalarPressurePerVolume.h"
-#include "properties/SEScalarPressureTimePerArea.h"
-#include "properties/SEScalarPressureTimePerVolumeArea.h"
-#include "properties/SEScalarVolumePerTimeArea.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
+#include "cdm/properties/SEScalarPressureTimePerArea.h"
+#include "cdm/properties/SEScalarPressureTimePerVolumeArea.h"
+#include "cdm/properties/SEScalarVolumePerTimeArea.h"
 
 SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger)
 {

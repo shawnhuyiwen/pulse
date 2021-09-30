@@ -1,54 +1,56 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/PatientActions.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBPatientActions.h"
-#include "io/protobuf/PBPatientNutrition.h"
-#include "io/protobuf/PBActions.h"
-#include "io/protobuf/PBSubstance.h"
-#include "io/protobuf/PBProperties.h"
-#include "substance/SESubstanceManager.h"
-#include "patient/actions/SEPatientAssessmentRequest.h"
-#include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
-#include "patient/actions/SEAcuteStress.h"
-#include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEAsthmaAttack.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "patient/actions/SEBronchoconstriction.h"
-#include "patient/actions/SECardiacArrest.h"
-#include "patient/actions/SEChestCompressionForce.h"
-#include "patient/actions/SEChestCompressionForceScale.h"
-#include "patient/actions/SEChestOcclusiveDressing.h"
-#include "patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
-#include "patient/actions/SEConsciousRespiration.h"
-/**/#include "patient/actions/SEForcedPause.h"
-/**/#include "patient/actions/SEForcedExhale.h"
-/**/#include "patient/actions/SEForcedInhale.h"
-/**/#include "patient/actions/SEUseInhaler.h"
-#include "patient/actions/SEConsumeNutrients.h"
-#include "patient/actions/SEDyspnea.h"
-#include "patient/actions/SEExercise.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
-#include "patient/actions/SEIntubation.h"
-#include "patient/actions/SELobarPneumoniaExacerbation.h"
-#include "patient/actions/SEMechanicalVentilation.h"
-#include "patient/actions/SENeedleDecompression.h"
-#include "patient/actions/SEPericardialEffusion.h"
-#include "patient/actions/SEPulmonaryShuntExacerbation.h"
-#include "patient/actions/SERespiratoryFatigue.h"
-#include "patient/actions/SESubstanceBolus.h"
-#include "patient/actions/SESubstanceInfusion.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "patient/actions/SESupplementalOxygen.h"
-#include "patient/actions/SETensionPneumothorax.h"
-#include "patient/actions/SEUrinate.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceCompound.h"
-#include "substance/SESubstanceManager.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBPatientActions.h"
+#include "cdm/io/protobuf/PBPatientNutrition.h"
+#include "cdm/io/protobuf/PBActions.h"
+#include "cdm/io/protobuf/PBSubstance.h"
+#include "cdm/io/protobuf/PBPhysiology.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/patient/actions/SEPatientAssessmentRequest.h"
+#include "cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
+#include "cdm/patient/actions/SEAcuteStress.h"
+#include "cdm/patient/actions/SEAirwayObstruction.h"
+#include "cdm/patient/actions/SEAsthmaAttack.h"
+#include "cdm/patient/actions/SEBrainInjury.h"
+#include "cdm/patient/actions/SEBronchoconstriction.h"
+#include "cdm/patient/actions/SECardiacArrest.h"
+#include "cdm/patient/actions/SEChestCompressionForce.h"
+#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestOcclusiveDressing.h"
+#include "cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
+#include "cdm/patient/actions/SEConsciousRespiration.h"
+/**/#include "cdm/patient/actions/SEForcedPause.h"
+/**/#include "cdm/patient/actions/SEForcedExhale.h"
+/**/#include "cdm/patient/actions/SEForcedInhale.h"
+/**/#include "cdm/patient/actions/SEUseInhaler.h"
+#include "cdm/patient/actions/SEConsumeNutrients.h"
+#include "cdm/patient/actions/SEDyspnea.h"
+#include "cdm/patient/actions/SEExercise.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
+#include "cdm/patient/actions/SEIntubation.h"
+#include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
+#include "cdm/patient/actions/SEMechanicalVentilation.h"
+#include "cdm/patient/actions/SENeedleDecompression.h"
+#include "cdm/patient/actions/SEPericardialEffusion.h"
+#include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
+#include "cdm/patient/actions/SERespiratoryFatigue.h"
+#include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
+#include "cdm/patient/actions/SESubstanceBolus.h"
+#include "cdm/patient/actions/SESubstanceInfusion.h"
+#include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
+#include "cdm/patient/actions/SESupplementalOxygen.h"
+#include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SEUrinate.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceCompound.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 void PBPatientAction::Serialize(const CDM_BIND::PatientActionData& src, SEPatientAction& dst)
 {
@@ -802,6 +804,8 @@ void PBPatientAction::Serialize(const CDM_BIND::IntubationData& src, SEIntubatio
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   dst.SetType((eIntubation_Type)src.type());
+  if (src.has_airwayresistance())
+    PBProperty::Load(src.airwayresistance(), dst.GetAirwayResistance());
 }
 CDM_BIND::IntubationData* PBPatientAction::Unload(const SEIntubation& src)
 {
@@ -813,6 +817,8 @@ void PBPatientAction::Serialize(const SEIntubation& src, CDM_BIND::IntubationDat
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   dst.set_type((CDM_BIND::IntubationData::eType)src.m_Type);
+  if (src.HasAirwayResistance())
+    dst.set_allocated_airwayresistance(PBProperty::Unload(*src.m_AirwayResistance));
 }
 void PBPatientAction::Copy(const SEIntubation& src, SEIntubation& dst)
 {
@@ -1095,6 +1101,43 @@ void PBPatientAction::Copy(const SERespiratoryFatigue& src, SERespiratoryFatigue
   PBPatientAction::Serialize(data, dst);
 }
 
+void PBPatientAction::Load(const CDM_BIND::RespiratoryMechanicsConfigurationData& src, SERespiratoryMechanicsConfiguration& dst)
+{
+  dst.Clear();
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::RespiratoryMechanicsConfigurationData& src, SERespiratoryMechanicsConfiguration& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (!src.settingsfile().empty())
+    dst.SetSettingsFile(src.settingsfile());
+  else if (src.has_settings())
+    PBPhysiology::Load(src.settings(), dst.GetSettings());
+  dst.SetMergeType((eMergeType)src.mergetype());
+}
+CDM_BIND::RespiratoryMechanicsConfigurationData* PBPatientAction::Unload(const SERespiratoryMechanicsConfiguration& src)
+{
+  CDM_BIND::RespiratoryMechanicsConfigurationData* dst = new CDM_BIND::RespiratoryMechanicsConfigurationData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SERespiratoryMechanicsConfiguration& src, CDM_BIND::RespiratoryMechanicsConfigurationData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasSettingsFile())
+    dst.set_settingsfile(src.m_SettingsFile);
+  else if (src.HasSettings())
+    dst.set_allocated_settings(PBPhysiology::Unload(*src.m_Settings));
+  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
+}
+void PBPatientAction::Copy(const SERespiratoryMechanicsConfiguration& src, SERespiratoryMechanicsConfiguration& dst)
+{
+  dst.Clear();
+  CDM_BIND::RespiratoryMechanicsConfigurationData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
 void PBPatientAction::Load(const CDM_BIND::SubstanceBolusData& src, SESubstanceBolus& dst)
 {
   dst.Clear();
@@ -1189,6 +1232,8 @@ void PBPatientAction::Serialize(const CDM_BIND::SubstanceInfusionData& src, SESu
     PBProperty::Load(src.rate(), dst.GetRate());
   if (src.has_concentration())
     PBProperty::Load(src.concentration(), dst.GetConcentration());
+  if (src.has_volume())
+    PBProperty::Load(src.volume(), dst.GetVolume());
 }
 CDM_BIND::SubstanceInfusionData* PBPatientAction::Unload(const SESubstanceInfusion& src)
 {
@@ -1204,6 +1249,8 @@ void PBPatientAction::Serialize(const SESubstanceInfusion& src, CDM_BIND::Substa
     dst.set_allocated_rate(PBProperty::Unload(*src.m_Rate));
   if (src.HasConcentration())
     dst.set_allocated_concentration(PBProperty::Unload(*src.m_Concentration));
+  if (src.HasVolume())
+    dst.set_allocated_volume(PBProperty::Unload(*src.m_Volume));
 }
 void PBPatientAction::Copy(const SESubstanceInfusion& src, SESubstanceInfusion& dst)
 {
@@ -1496,6 +1543,12 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.respiratoryfatigue(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kRespiratoryMechanicsConfiguration:
+  {
+    SERespiratoryMechanicsConfiguration* a = new SERespiratoryMechanicsConfiguration();
+    PBPatientAction::Load(any.respiratorymechanicsconfiguration(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientActionData::ActionCase::kSubstanceBolus:
   {
     const SESubstance* sub = subMgr.GetSubstance(any.substancebolus().substance());
@@ -1705,6 +1758,18 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
   if (rf != nullptr)
   {
     any->set_allocated_respiratoryfatigue(PBPatientAction::Unload(*rf));
+    return any;
+  }
+  const SERespiratoryMechanicsConfiguration* rmc = dynamic_cast<const SERespiratoryMechanicsConfiguration*>(&action);
+  if (rmc != nullptr)
+  {
+    any->set_allocated_respiratorymechanicsconfiguration(PBPatientAction::Unload(*rmc));
+    return any;
+  }
+  const SESupplementalOxygen* sO2 = dynamic_cast<const SESupplementalOxygen*>(&action);
+  if (sO2 != nullptr)
+  {
+    any->set_allocated_supplementaloxygen(PBPatientAction::Unload(*sO2));
     return any;
   }
   const SESubstanceBolus* sb = dynamic_cast<const SESubstanceBolus*>(&action);

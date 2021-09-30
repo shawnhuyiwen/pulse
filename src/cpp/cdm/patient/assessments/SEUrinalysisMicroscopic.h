@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/assessments/SEPatientAssessment.h"
+#include "cdm/patient/assessments/SEPatientAssessment.h"
 
 // Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
 enum class eUrinalysis_MicroscopicObservationType {
@@ -33,47 +33,47 @@ public:
 
   virtual void Clear();
 
-  virtual bool HasObservationType() const;  
+  virtual bool HasObservationType() const;
   virtual eUrinalysis_MicroscopicObservationType GetObservationType() const;
   virtual void SetObservationType(eUrinalysis_MicroscopicObservationType p);
   virtual void InvalidateObservationType();
 
-  virtual bool HasRedBloodCellsResult() const;
-  virtual SEScalarAmount& GetRedBloodCellsResult();
-  virtual double GetRedBloodCellsResult(const AmountUnit& unit) const;
+  virtual bool HasRedBloodCells() const;
+  virtual SEScalarAmount& GetRedBloodCells();
+  virtual double GetRedBloodCells(const AmountUnit& unit) const;
 
-  virtual bool HasWhiteBloodCellsResult() const;
-  virtual SEScalarAmount& GetWhiteBloodCellsResult();
-  virtual double GetWhiteBloodCellsResult(const AmountUnit& unit) const;
+  virtual bool HasWhiteBloodCells() const;
+  virtual SEScalarAmount& GetWhiteBloodCells();
+  virtual double GetWhiteBloodCells(const AmountUnit& unit) const;
 
-  virtual bool HasEpithelialCellsResult() const;
-  virtual eUrinalysis_MicroscopicObservationAmount GetEpithelialCellsResult() const;
-  virtual void SetEpithelialCellsResult(eUrinalysis_MicroscopicObservationAmount p);
-  virtual void InvalidateEpithelialCellsResult();
+  virtual bool HasEpithelialCells() const;
+  virtual eUrinalysis_MicroscopicObservationAmount GetEpithelialCells() const;
+  virtual void SetEpithelialCells(eUrinalysis_MicroscopicObservationAmount p);
+  virtual void InvalidateEpithelialCells();
 
-  virtual bool HasCastsResult() const;
-  virtual SEScalarAmount& GetCastsResult();
-  virtual double GetCastsResult(const AmountUnit& unit) const;
+  virtual bool HasCasts() const;
+  virtual SEScalarAmount& GetCasts();
+  virtual double GetCasts(const AmountUnit& unit) const;
 
-  virtual bool HasCrystalsResult() const;
-  virtual eUrinalysis_MicroscopicObservationAmount GetCrystalsResult() const;
-  virtual void SetCrystalsResult(eUrinalysis_MicroscopicObservationAmount p);
-  virtual void InvalidateCrystalsResult();
+  virtual bool HasCrystals() const;
+  virtual eUrinalysis_MicroscopicObservationAmount GetCrystals() const;
+  virtual void SetCrystals(eUrinalysis_MicroscopicObservationAmount p);
+  virtual void InvalidateCrystals();
 
-  virtual bool HasBacteriaResult() const;
-  virtual eUrinalysis_MicroscopicObservationAmount GetBacteriaResult() const;
-  virtual void SetBacteriaResult(eUrinalysis_MicroscopicObservationAmount p);
-  virtual void InvalidateBacteriaResult();
+  virtual bool HasBacteria() const;
+  virtual eUrinalysis_MicroscopicObservationAmount GetBacteria() const;
+  virtual void SetBacteria(eUrinalysis_MicroscopicObservationAmount p);
+  virtual void InvalidateBacteria();
 
-  virtual bool HasTrichomonadsResult() const;
-  virtual eUrinalysis_MicroscopicObservationAmount GetTrichomonadsResult() const;
-  virtual void SetTrichomonadsResult(eUrinalysis_MicroscopicObservationAmount p);
-  virtual void InvalidateTrichomonadsResult();
+  virtual bool HasTrichomonads() const;
+  virtual eUrinalysis_MicroscopicObservationAmount GetTrichomonads() const;
+  virtual void SetTrichomonads(eUrinalysis_MicroscopicObservationAmount p);
+  virtual void InvalidateTrichomonads();
 
-  virtual bool HasYeastResult() const;
-  virtual eUrinalysis_MicroscopicObservationAmount GetYeastResult() const;
-  virtual void SetYeastResult(eUrinalysis_MicroscopicObservationAmount p);
-  virtual void InvalidateYeastResult();
+  virtual bool HasYeast() const;
+  virtual eUrinalysis_MicroscopicObservationAmount GetYeast() const;
+  virtual void SetYeast(eUrinalysis_MicroscopicObservationAmount p);
+  virtual void InvalidateYeast();
 
 protected:
 

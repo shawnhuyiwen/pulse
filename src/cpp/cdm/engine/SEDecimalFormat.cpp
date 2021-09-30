@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "cdm/CommonDefs.h"
 #include <iomanip>
 #include <iostream>
-#include "engine/SEDecimalFormat.h"
+#include "cdm/engine/SEDecimalFormat.h"
 
 SEDecimalFormat::SEDecimalFormat(const SEDecimalFormat* dfault)
 {

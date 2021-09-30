@@ -19,7 +19,7 @@ public class SEAnesthesiaMachineChamber
     this.substanceFraction = null;
   }
 
-  public void reset()
+  public void clear()
   {
     state = eSwitch.Off;
     substance = "";
@@ -29,7 +29,7 @@ public class SEAnesthesiaMachineChamber
 
   public void copy(SEAnesthesiaMachineChamber from)
   {
-    reset();
+    clear();
     this.state=from.state;
     this.substance=from.substance;
     if(from.hasSubstanceFraction())
@@ -38,7 +38,7 @@ public class SEAnesthesiaMachineChamber
 
   public static void load( AnesthesiaMachineChamberData src, SEAnesthesiaMachineChamber dst)
   {
-    dst.reset();
+    dst.clear();
     if (src.getState() != eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
       dst.setState(src.getState());
     if (src.getSubstance()!=null)

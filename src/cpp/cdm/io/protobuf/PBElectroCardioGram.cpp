@@ -1,17 +1,17 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/ElectroCardioGram.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBElectroCardioGram.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
-#include "utils/FileUtils.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBElectroCardioGram.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
+#include "cdm/utils/FileUtils.h"
 
 
 void PBElectroCardioGram::Load(const CDM_BIND::ElectroCardioGramData& src, SEElectroCardioGram& dst)
@@ -150,7 +150,7 @@ void PBElectroCardioGram::Copy(const SEElectroCardioGramWaveformInterpolator& sr
   PBElectroCardioGram::Serialize(data, dst);
 }
 
-bool PBElectroCardioGram::SerializeToString(const SEElectroCardioGramWaveformInterpolator& src, std::string& output, SerializationFormat m)
+bool PBElectroCardioGram::SerializeToString(const SEElectroCardioGramWaveformInterpolator& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::ElectroCardioGramWaveformListData data;
   PBElectroCardioGram::Serialize(src, data);
@@ -162,7 +162,7 @@ bool PBElectroCardioGram::SerializeToFile(const SEElectroCardioGramWaveformInter
   PBElectroCardioGram::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBElectroCardioGram::SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, SerializationFormat m)
+bool PBElectroCardioGram::SerializeFromString(const std::string& src, SEElectroCardioGramWaveformInterpolator& dst, eSerializationFormat m)
 {
   CDM_BIND::ElectroCardioGramWaveformListData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

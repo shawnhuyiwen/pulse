@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
 class SEAnesthesiaMachine;
 class SESubstanceManager;
 
@@ -14,7 +14,7 @@ public:
   virtual ~SEAnesthesiaMachineConfiguration();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr, bool preserveState=false);
+  virtual void Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
@@ -28,6 +28,9 @@ public:
   virtual void SetConfigurationFile(const std::string& fileName);
   virtual bool HasConfigurationFile() const;
 
+  virtual eMergeType GetMergeType() const;
+  virtual void SetMergeType(eMergeType m);
+
   virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
@@ -36,4 +39,5 @@ protected:
 
   std::string          m_ConfigurationFile;
   SEAnesthesiaMachine* m_Configuration;
+  eMergeType           m_MergeType;
 };

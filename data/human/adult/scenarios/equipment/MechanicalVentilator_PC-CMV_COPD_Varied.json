@@ -98,10 +98,9 @@
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "ExpiratoryPulmonaryResistance",     "Unit": "cmH2O s/L" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "PulmonaryCompliance",               "Unit": "L/cmH2O" },
       { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "BloodPH"                            },      
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CarricoIndex",                      "Unit": "mmHg" },
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "HorowitzIndex",                     "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "CarricoIndex",                      "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxidePressure",     "Unit": "mmHg" }
     ]
@@ -121,17 +120,17 @@
       "MechanicalVentilatorConfiguration": {
         "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
               "Comment": "Attach the mechanical ventilator" }}},
-        "Configuration":
+        "Settings":
         {
-          "Connection": "Tube",
+          "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
-          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
+          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 23.0, "Unit": "cmH2O" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
           "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
           "FractionInspiredGas": [
-            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.21, "Unit": "" } } }
+            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.25, "Unit": "" } } }
           ]
         }
       }
@@ -152,12 +151,12 @@
       "MechanicalVentilatorConfiguration": {
         "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
               "Comment": "Attach the mechanical ventilator" }}},
-        "Configuration":
+        "Settings":
         {
-          "Connection": "Tube",
+          "Connection": "On",
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
-          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
+          "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 26.0, "Unit": "cmH2O" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
           "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
@@ -183,17 +182,17 @@
         "MechanicalVentilatorConfiguration": {
           "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
                 "Comment": "Attach the mechanical ventilator" }}},
-          "Configuration":
+          "Settings":
           {
-            "Connection": "Tube",
+            "Connection": "On",
             "InspirationWaveform": "Square",
             "ExpirationWaveform": "Square",
-            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 15.0, "Unit": "cmH2O" } },
+            "PeakInspiratoryPressure": { "ScalarPressure": { "Value": 29.0, "Unit": "cmH2O" } },
             "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
             "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 2.0, "Unit": "s" } },
             "ExpirationCycleTime": { "ScalarTime": { "Value": 1.0, "Unit": "s" } },
             "FractionInspiredGas": [
-              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.5, "Unit": "" } } }
+              { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.35, "Unit": "" } } }
             ]
           }
         }

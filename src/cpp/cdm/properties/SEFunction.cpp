@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "properties/SEFunction.h"
-#include "properties/SEScalar.h"//Utils
+#include "cdm/CommonDefs.h"
+#include "cdm/properties/SEFunction.h"
+#include "cdm/properties/SEScalar.h"//Utils
 
 static std::stringstream err;
 

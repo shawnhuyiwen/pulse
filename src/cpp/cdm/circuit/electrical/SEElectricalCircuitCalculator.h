@@ -3,8 +3,8 @@
 
 #pragma once
 //CDM_BIND_DECL(ElectricalCircuitData)
-#include "circuit/SECircuitCalculator.h"
-#include "circuit/electrical/SEElectricalCircuit.h"
+#include "cdm/circuit/SECircuitCalculator.h"
+#include "cdm/circuit/electrical/SEElectricalCircuit.h"
 
 class CDM_DECL SEElectricalCircuitCalculator : public SECircuitCalculator<SEElectricalCircuit, SEElectricalCircuitNode, SEElectricalCircuitPath, SEElectricalBlackBox, ElectricCapacitanceUnit, ElectricCurrentUnit, ElectricInductanceUnit, ElectricPotentialUnit, ElectricChargeUnit, ElectricResistanceUnit>
 {

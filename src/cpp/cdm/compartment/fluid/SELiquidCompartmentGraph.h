@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/fluid/SELiquidCompartmentLink.h"
-#include "compartment/SECompartmentTransportGraph.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentLink.h"
+#include "cdm/compartment/SECompartmentTransportGraph.h"
 
 class SECompartmentManager;
 

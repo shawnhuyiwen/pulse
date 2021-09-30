@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "compartment/SECompartment.h"
+#include "cdm/compartment/SECompartment.h"
 class SESubstance;
 class SESubstanceManager;
 

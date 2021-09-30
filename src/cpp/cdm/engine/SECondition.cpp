@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SECondition.h"
-#include "substance/SESubstanceManager.h"
-#include "patient/conditions/SEPatientCondition.h"
-#include "system/environment/conditions/SEEnvironmentCondition.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SECondition.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/patient/conditions/SEPatientCondition.h"
+#include "cdm/system/environment/conditions/SEEnvironmentCondition.h"
 
 SECondition::SECondition(Logger* logger) : Loggable(logger)
 {

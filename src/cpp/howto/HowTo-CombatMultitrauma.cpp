@@ -2,32 +2,33 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SETensionPneumothorax.h"
-#include "patient/actions/SENeedleDecompression.h"
-#include "patient/actions/SESubstanceBolus.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "substance/SESubstanceManager.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "system/physiology/SETissueSystem.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEFunctionVolumeVsTime.h"
-#include "properties/SEScalar0To1.h"
-#include "engine/SEEngineTracker.h"
-#include "compartment/SECompartmentManager.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SENeedleDecompression.h"
+#include "cdm/patient/actions/SESubstanceBolus.h"
+#include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/system/physiology/SETissueSystem.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEFunctionVolumeVsTime.h"
+#include "cdm/properties/SEScalar0To1.h"
 
 void CreateState()
 {
@@ -44,9 +45,6 @@ void CreateState()
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
@@ -101,7 +99,7 @@ void CreateState()
   pe->ProcessAction(hemorrhageVenaCava);
 
   //Advance the engine to the point we would like to load later
-  tracker.AdvanceModelTime(60);
+  AdvanceAndTrackTime_s(60, *pe);
 
   pe->GetLogger()->Info("Patient injured state at serialization");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
@@ -140,9 +138,6 @@ void LoadState()
 
   pe->GetLogger()->Info("State loaded");
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   pe->GetLogger()->Info("Patient loaded injured state");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
   pe->GetLogger()->Info(std::stringstream() << "Blood Volume : " << pe->GetCardiovascularSystem()->GetBloodVolume(VolumeUnit::mL) << VolumeUnit::mL);
@@ -171,7 +166,7 @@ void LoadState()
   hemorrhageVenaCava.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageVenaCava);
 
-  tracker.AdvanceModelTime(60);
+  AdvanceAndTrackTime_s(60, *pe);
 
   // Needle Decompression to help with pneumothorax
   SENeedleDecompression needleDecomp;
@@ -180,7 +175,7 @@ void LoadState()
   pe->ProcessAction(needleDecomp);
 
   // Advance the engine while you prepare to treat the patient
-  tracker.AdvanceModelTime(60.0 * 4.0); //4 min
+  AdvanceAndTrackTime_s(60.0 * 4.0, *pe); //4 min
 
   // Apply a tournaquet and stop the bleeding completely
   hemorrhageLeg.SetType(eHemorrhage_Type::External);
@@ -188,7 +183,7 @@ void LoadState()
   hemorrhageLeg.GetSeverity().SetValue(0);//the severity of hemorrhage
   pe->ProcessAction(hemorrhageLeg);
    
-  tracker.AdvanceModelTime(30);
+  AdvanceAndTrackTime_s(30, *pe);
 
   // Give an IV
   const SESubstanceCompound* saline = pe->GetSubstanceManager().GetCompound("Saline");
@@ -197,7 +192,7 @@ void LoadState()
   iVSaline.GetRate().SetValue(100, VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline
   pe->ProcessAction(iVSaline);
 
-  tracker.AdvanceModelTime(60.0 * 2.0); //2 min
+  AdvanceAndTrackTime_s(60.0 * 2.0, *pe); //2 min
 
   // Provide morphine
   const SESubstance* morphine = pe->GetSubstanceManager().GetSubstance("Morphine");
@@ -207,7 +202,7 @@ void LoadState()
   bolus.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
   pe->ProcessAction(bolus);
 
-  tracker.AdvanceModelTime(60.0 * 3.0); //3 min
+  AdvanceAndTrackTime_s(60.0 * 3.0, *pe); //3 min
    
   pe->GetLogger()->Info("Patient state after interventions");
   pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());

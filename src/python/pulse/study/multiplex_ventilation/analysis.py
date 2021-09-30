@@ -32,7 +32,7 @@ def parse_data(simulations):
     names_continuous.append("MAP Mismatch (cmH2O)")
     delta_ImpairmentFraction = []
     names_continuous.append("DIF Mismatch")
-    delta_CarricoIndex_mmHg = []
+    delta_HorowitzIndex_mmHg = []
     names_continuous.append("PF Ratio Mismatch (mmHg)")
     delta_SFRatio = []
     names_continuous.append("SF Ratio Mismatch")
@@ -93,7 +93,7 @@ def parse_data(simulations):
             delta_O2SatIndex.append(abs(p0.OxygenSaturationIndex_mmHg - p1.OxygenSaturationIndex_mmHg))
             detla_MeanAirwayPressure_cmH2O.append(abs(p0.MeanAirwayPressure_cmH2O - p1.MeanAirwayPressure_cmH2O))
             delta_ImpairmentFraction.append(abs(p0.ImpairmentFraction - p1.ImpairmentFraction))
-            delta_CarricoIndex_mmHg.append(abs(p0.CarricoIndex_mmHg - p1.CarricoIndex_mmHg))
+            delta_HorowitzIndex_mmHg.append(abs(p0.HorowitzIndex_mmHg - p1.HorowitzIndex_mmHg))
             delta_SFRatio.append(abs(p0.SFRatio - p1.SFRatio))
             delta_OxygenationIndex.append(abs(p0.OxygenationIndex - p1.OxygenationIndex))
             delta_EndTidalCarbonDioxidePressure_mmHg.append(abs(p0.EndTidalCarbonDioxidePressure_mmHg - p1.EndTidalCarbonDioxidePressure_mmHg))
@@ -145,7 +145,7 @@ def parse_data(simulations):
 
     # Make sure this order matches names_continuous!
     numpy_continuous = np.array([delta_compliance, delta_O2SatIndex, detla_MeanAirwayPressure_cmH2O, delta_ImpairmentFraction,
-                           delta_CarricoIndex_mmHg, delta_SFRatio, delta_OxygenationIndex,
+                           delta_HorowitzIndex_mmHg, delta_SFRatio, delta_OxygenationIndex,
                            delta_EndTidalCarbonDioxidePressure_mmHg, delta_AlveolarArterialGradient_mmHg])
     numpy_continuous = numpy_continuous.astype(float)
     # Make sure this order matches names_categorical!

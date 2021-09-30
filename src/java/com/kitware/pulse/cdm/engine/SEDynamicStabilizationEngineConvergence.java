@@ -24,7 +24,7 @@ public class SEDynamicStabilizationEngineConvergence
   protected SEScalarTime maximumAllowedStabilizationTime;
   protected List<PropertyConvergence> properties=new ArrayList<>();
   
-  public void reset()
+  public void clear()
   {
     this.convergenceTime=null;
     this.minimumReactionTime=null;
@@ -42,7 +42,7 @@ public class SEDynamicStabilizationEngineConvergence
       SEScalarTime.load(src.getMaximumAllowedStabilizationTime(),dst.getMaximumAllowedStabilizationTime());      
     for(DynamicStabilizationPropertyConvergenceData pcData : src.getPropertyConvergenceList())
     {
-    	SEDataRequest dr = new SEDataRequest();
+    	SEDataRequest dr = new SEDataRequest(pcData.getDataRequest().getCategory());
     	SEDataRequest.load(pcData.getDataRequest(), dr);
       dst.createProperty(pcData.getPercentDifference(),dr);
     }

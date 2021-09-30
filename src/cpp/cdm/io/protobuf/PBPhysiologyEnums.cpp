@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Physiology.pb.h"
-POP_PROTO_WARNINGS()
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
+POP_PROTO_WARNINGS
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
 
 const std::string& eHeartRhythm_Name(eHeartRhythm m)
 {

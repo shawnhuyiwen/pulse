@@ -8,7 +8,7 @@ class SEScalarTime;
 class log_lib; // Encapsulates 3rd party logging library
 #include <sstream>
 
-namespace cdm
+namespace pulse::cdm
 {
   // Not happy with how std does this for floats/doubles
   std::string to_string(float f);
@@ -56,11 +56,11 @@ protected:
 class CDM_DECL LoggerForward
 {
 public:
-  virtual void ForwardDebug(std::string const&  msg, std::string const&  origin){};
-  virtual void ForwardInfo(std::string const&  msg, std::string const&  origin){};
-  virtual void ForwardWarning(std::string const&  msg, std::string const&  origin){};
-  virtual void ForwardError(std::string const&  msg, std::string const&  origin){};
-  virtual void ForwardFatal(std::string const&  msg, std::string const&  origin){};
+  virtual void ForwardDebug(std::string const& /*msg*/, std::string const& /*origin*/) {};
+  virtual void ForwardInfo(std::string const& /*msg*/, std::string const& /*origin*/){};
+  virtual void ForwardWarning(std::string const& /*msg*/, std::string const& /*origin*/){};
+  virtual void ForwardError(std::string const& /*msg*/, std::string const& /*origin*/){};
+  virtual void ForwardFatal(std::string const& /*msg*/, std::string const& /*origin*/){};
 };
 
 class CDM_DECL Logger
@@ -135,8 +135,8 @@ public:
   LogMessages() {}
   virtual ~LogMessages() {};
 
-  bool static SerializeToString(const LogMessages& msgs, std::string& output, SerializationFormat m, Logger* logger);
-  bool static SerializeFromString(const std::string& src, LogMessages& msgs, SerializationFormat m, Logger* logger);
+  bool static SerializeToString(const LogMessages& msgs, std::string& output, eSerializationFormat m, Logger* logger);
+  bool static SerializeFromString(const std::string& src, LogMessages& msgs, eSerializationFormat m, Logger* logger);
 
   void Clear()
   {

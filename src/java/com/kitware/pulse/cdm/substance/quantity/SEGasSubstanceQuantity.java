@@ -23,9 +23,9 @@ public class SEGasSubstanceQuantity extends SESubstanceQuantity
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
    if (partialPressure != null)
       partialPressure.invalidate();
     if (volume != null)

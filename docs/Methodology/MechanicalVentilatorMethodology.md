@@ -7,9 +7,7 @@ Mechanical Ventilator Methodology {#MechanicalVentilatorMethodology}
 ## Abstract
 
 The Mechanical Ventilator Model is a generic representation of a positive-pressure ventilation device and 
-inhaled gas/agent administration. It models a semi-closed circuit breathing system. The current implementation is limited, but the data model is designed for future expansion.
-The results of this system were evaluated for pressure control - continuous mandatory ventilation (PC-CMV), volume control - continuous mandatory ventilation (VC-CMV), and volume control - assist control (VC-AC) ventilation modes. The results show excellent correlation with the expected values. 
-Future work will add more ventilation modes.
+inhaled gas/agent administration. It models a semi-closed circuit breathing system. The results of this system were evaluated for pressure control - continuous mandatory ventilation (PC-CMV), volume control - continuous mandatory ventilation (VC-CMV), pressure control - assist control (PC-AC), volume control - assist control (VC-AC) ventilation, and continuous positive airway pressure (CPAP) modes. The results show excellent correlation with the expected values. Future work will evaluate more ventilation modes.
 
 @anchor ventilator-intro
 ## Introduction
@@ -50,11 +48,11 @@ specific post process functionality for the mechanical ventilator. All postproce
 
 ### The Mechanical Ventilator Circuit
 
-The Mechanical Ventilator model consists of a pressure source with tubes and valves for inspiration and expiration.  The unidirectional valves are ideal and do not allow any backflow.  Figure 1 shows the Mechanical Ventilator circuit.  The compartments and transport graph mirrors the circuit.  Substance values are set on the Ventilator node/compartment, assuming infinite volume.
+The Mechanical Ventilator model consists of a pressure/flow source with tubes and valves for inspiration and expiration.  The unidirectional valves are ideal and do not allow any backflow.  Figure 1 shows the Mechanical Ventilator circuit.  The compartments and transport graph mirrors the circuit.  Substance values are set on the Ventilator node/compartment, assuming infinite volume.
 
 <img src="./Images/MechanicalVentilator/MechanicalVentilatorCircuit.png" width="400">
 <center>
-<i>Figure 1. Circuit diagram of the Mechanical Ventilator. The circuit employs a driver source (either pressure or flow, depending on the mode and settings), resistances, and valves.</i>
+<i>Figure 1. Circuit diagram of the Mechanical Ventilator. The circuit employs a driver source (either pressure or flow, depending on the mode and settings), resistances, valves, and a compliance.</i>
 </center><br>
 
 ### Connecting to the %Respiratory Circuit
@@ -66,9 +64,10 @@ directly connected and allowed to share the same fluid. When the machine
 is turned on, both individually defined circuits are combined into a
 single circuit that is then used for calculations.
 
+@anchor ventilator-settings
 ### Mechanical Ventilator Settings
 
-The Mechanical Ventilator parameters were defined to allow for setting all types of ventilation modes - all control variable types and all breath sequences. To achieve this, these hierarchical definitions are implemented:
+The Mechanical Ventilator configuration parameters were defined to allow for setting all types of ventilation modes - all control variable types and all breath sequences. To achieve this, these hierarchical definitions are implemented:
 - Connection (Off, Mask, Tube): Connection type to the %Respiratory System
 - Inspiration Phase
 	- Trigger: Transition to inspiration
@@ -78,12 +77,13 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
       - Volume: Ventilator sensor volume change value to trigger inspiration phase
       - Pressure: Ventilator sensor pressure value to trigger inspiration phase      
 	- Waveform (square, exponential, ramp, sinusoidal, sigmoidal): Pattern of driver function
-	- Pause: Time of plateau (i.e., constant driver pressure) between inspiration and expiration
-	- Target (PIP, TV, etc.): Value to set/achieve
+  - Waveform Period: Time to reach maximum driver value
+	- Target (PIP or flow): Driver value to set
 	- Limit: Cutoff/maximum
 		- Pressure: Ventilator sensor pressure cutoff/maximum
 		- Flow: Ventilator sensor flow cutoff/maximum
 		- Volume: Total lung volume cutoff/maximum
+  - Pause: Time of plateau (i.e., constant driver pressure) between inspiration and expiration
 - Expiration Phase
 	- Cycle: Transition to expiration
 		- Time: Total length of inspiration phase to trigger expiration phase
@@ -92,6 +92,7 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
 		- Flow: Ventilator sensor flow value to trigger expiration phase
 	- Waveform (square, exponential, ramp, sinusoidal, sigmoidal): Pattern of driver function
 	- Baseline (PEEP or FRC): Value to set/achieve
+- Driver Damping: Fractional change parameter that prevents driver discontinuities (i.e., smoother driver curve)
 - Substances
 	- Fraction of inspired gas (FiO2 and other gases fractions)
 	- Concentration of inspired aerosol (albuterol, etc.)
@@ -100,7 +101,14 @@ The Mechanical Ventilator parameters were defined to allow for setting all types
 	- Inspiration valve resistance: Total resistance of inspiratory valves
 	- Expiration tube resistance: Total resistance of expiratory limb tubing
 	- Expiration valve resistance: Total resistance of expiratory valves
-	- Endotracheal tube resistance: Total connection resistance
+- Circuit Volumes
+  - Inspiratory limb volume: Total volume of inspiratory limb tubing
+	- Inspiratory valve volume: Total volume of inspiratory valves
+	- Expiratory tube volume: Total volume of expiratory limb tubing
+	- Expiratory valve volume: Total volume of expiratory valves
+	- Y-piece volume: Total volume of the y-piece
+  - Connection volume: Total volume of the mask/endotracheal tube
+- Circuit Compliance: Total compliance of the ventilator circuit
 
 While the parameter list is meant to be all encompassing for all ventilator modes, some typical settings are required to be translated by the user or application.  For example, the respiration rate (<i>RR</i>) and I:E Ratio (<i>IE</i>)settings can be translated to an inspiratory period (<i>P<sub>ins</sub></i>) and expiratory period (<i>P<sub>exp</sub></i>) by:
 
@@ -121,6 +129,39 @@ While the parameter list is meant to be all encompassing for all ventilator mode
 </center><br> 
 
 Where the I:E Ratio (<i>IE</i>) is defined by a fraction, for example 1:2 is 0.5 and 1:1 is 1.0.
+
+Standard ventilator mode settings have been added to allow for more intuitive application of ventilator modes. The following mode settings are automatically translated to the lower level configuration settings that are listed previously in this section.  Some setting are not exposed (e.g., trigger flow and cycle flow) at this level and default values are used.
+
+Pressure Control (PC-CMV and PC-AC):
+- Fraction of Inspired Oxygen
+- Inspiratory Period
+- Inspiratory Pressure
+- Positive End Expired Pressure
+- Respiration Rate
+- Slope
+
+Volume Control (VC-CMV and VC-AC):
+- Flow
+- Fraction of Inspired Oxygen
+- Inspiratory Period (optional - if not set, transition to exhale when Tidal Volume achieved)
+- Positive End Expired Pressure
+- Respiration Rate
+- Tidal Volume
+
+Continuous Positive Airway Pressure (CPAP):
+- Delta Pressure Support
+- Fraction of Inspired Oxygen
+- Positive End Expired Pressure
+- Slope
+
+@anchor ventilator-actions
+### Mechanical Ventilator Actions
+
+The ventilator model includes the application of leak and hold actions.
+
+The leak severity is translated to the connection to environment resistance to allow more or less air to escape.
+
+The hold action can be set to be applied instantaneously, at the end of the expiration cycle, or at the end of the inspiration cycle.  When the hold is active, the driver will be set to a zero flow source.  The hold will remain applied until explicitly removed by the user.
 
 @anchor ventilator-dependencies
 ### Dependencies
@@ -150,7 +191,7 @@ System that regulates the atmospheric/reference pressure.
 @anchor ventilator-assumptions
 ## Assumptions and Limitations
 
-Currently, the Mechanical Ventilator uses ideal pressure sources and one-way valves. Only setting appropriate for a PC-CMV, VC-CMV, and VC-AC modes are allowed and tested.  However, the system is defined and implemented to allow for future mode expansion without data model changes. 
+Currently, the Mechanical Ventilator uses ideal pressure sources and one-way valves. Only setting appropriate for a PC-CMV, VC-CMV, PC-AC, VC-AC, and CPAP modes are tested.  However, the system is defined and implemented to allow for future mode expansion without data model changes. 
 
 @anchor ventilator-results
 # Results and Conclusions
@@ -202,7 +243,7 @@ A scenario that varies the VC-AC settings for assisted breathing for a patient w
 The %Respiratory ARDS and COPD models with mild, moderate, and severe severities is extensively tested in the scenarios shown in table 1.  Each row is a separate invasive mechanical ventilation scenario that is run for several minutes to reach a new homeostatic point based on the patient's disease state and ventilator settings. The patient is administered a neuromuscular blockade to prevent spontaneous breathing for all but the VC-AC scenario.  Typical/ideal ventilator setting are used based on literature @cite arnal2013feasibility @cite el2020comparison @cite acute2000ventilation and subject matter @cite chatburnSME input. Results successfully match expected empirical data and trends.
 
 <center><br>
-Table 1. Cumulative validation results for Anesthesia Machine specific conditions and actions scenarios.
+Table 1. Cumulative validation results for ventilator specific scenarios.
 </center>
 
 |	Key	|
@@ -242,8 +283,7 @@ Logic and results for handling more ventilation modes.
 
 ## Recommended Improvements
 
-The engine modularity could be taken advantage of to add parameters and elements 
-for specific equipment models and manufacturers. 
+The engine modularity could be taken advantage of to add parameters and elements for specific equipment models and manufacturers. 
 
 @anchor ventilator-appendices
 # Appendices
@@ -255,12 +295,19 @@ for specific equipment models and manufacturers.
 ## Acronyms
 
 ARDS - Acute %Respiratory Distress Syndrome
+
 FiO2 - Fraction of Inpspired Oxygen
+
 FRC - Functional Residual Capacity
+
 I:E Ratio - Inspiratory-Expiratory Ratio
+
 PaO2 - Arterial Oxygen Partial Pressure
+
 PEEP - Positive End Expired Pressure
+
 PIP - Peak Inspiratory Pressure
+
 SpO2 - Oxygen Saturation
 
 ## Compartments

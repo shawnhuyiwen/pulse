@@ -2,10 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 // The following how-to functions demonstrate various ways of interacting with the Pulse engine
-#include "EngineHowTo.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEDataRequest.h"
-#include "properties/SEScalarTime.h"
+#include "howto/EngineHowTo.h"
+
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequest.h"
+#include "cdm/properties/SEScalarTime.h"
 
 int main()
 {
@@ -13,13 +14,15 @@ int main()
 
   //HowToSandbox();
 
-  //HowToEngineUse();
+  HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
-  HowToPulseEnginePool();
+  //HowToPulseEnginePool();
+  
   //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToAsthmaAttack();
+  //HowToBagValveMask();
   //HowToBolusDrug();
   //HowToBrainInjury();
   //HowToCombatMultitrauma();
@@ -32,8 +35,10 @@ int main()
   //HowToHemorrhage();
   //HowToLobarPneumonia();
   //HowToMechanicalVentilation();
+  //HowToMechanicalVentilator();
   //HowToPulmonaryFibrosis();
   //HowToPulmonaryFunctionTest();
+  //HowToRespiratoryMechanics();
   //HowToSmoke();
   //HowToTensionPneumothorax();
 
@@ -45,28 +50,21 @@ int main()
   //HowToDynamicHemorrhage();
 
   //HowToTestSystemCapability();
+
+  //HowToVentilationMechanics();
 }
 
-HowToTracker::HowToTracker(PhysiologyEngine& engine) : m_Engine(engine)
+bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine)
 {
-  m_dT_s = m_Engine.GetTimeStep(TimeUnit::s);
-}
-
-HowToTracker::~HowToTracker()
-{
-}
-
-bool HowToTracker::AdvanceModelTime(double time_s)
-{  
-  // This samples the engine at each time step
-  int count = static_cast<int>(time_s / m_dT_s);
+  double dT_s = engine.GetTimeStep(TimeUnit::s);
+  int count = static_cast<int>(time_s / dT_s);
   for (int i = 0; i < count; i++)
-  {    
-    if(!m_Engine.AdvanceModelTime())  // Compute 1 time step
+  {
+    if (!engine.AdvanceModelTime())  // Compute 1 time step
       return false;
 
     // Pull Track will pull data from the engine and append it to the file
-    m_Engine.GetEngineTracker()->TrackData(m_Engine.GetSimulationTime(TimeUnit::s));
+    engine.GetEngineTracker()->TrackData(engine.GetSimulationTime(TimeUnit::s));
   }
   return true;
 }

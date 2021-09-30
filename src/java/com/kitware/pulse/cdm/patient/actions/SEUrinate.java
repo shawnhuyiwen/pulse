@@ -24,9 +24,9 @@ public class SEUrinate extends SEPatientAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
   }
   
   @Override

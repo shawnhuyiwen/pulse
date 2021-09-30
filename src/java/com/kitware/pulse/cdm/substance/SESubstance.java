@@ -27,6 +27,7 @@ public class SESubstance
   protected String                           name;
   protected SEScalarMassPerVolume            density;
   protected SEScalarMassPerAmount            molarMass;
+  protected SEScalar                         valence;
   // Diffusion related-ish
   protected SEScalarMassPerAreaTime          maximumDiffusionFlux;
   protected SEScalar                         michaelisCoefficient;
@@ -56,7 +57,7 @@ public class SESubstance
     
   }
   
-  public void reset()
+  public void clear()
   {
     this.name=null;
     this.state=null;
@@ -64,6 +65,8 @@ public class SESubstance
       this.density.invalidate();
     if(this.molarMass!=null)
       this.molarMass.invalidate();
+    if(this.valence!=null)
+      this.valence.invalidate();
     
     if(this.maximumDiffusionFlux!=null)
       this.maximumDiffusionFlux.invalidate();
@@ -71,7 +74,7 @@ public class SESubstance
       this.michaelisCoefficient.invalidate();
     
     if(this.aerosolization!=null)
-      this.aerosolization.reset();
+      this.aerosolization.clear();
     if(this.bloodConcentration!=null)
        this.bloodConcentration.invalidate();
     if(this.massInBody!=null)
@@ -101,11 +104,11 @@ public class SESubstance
       this.solubilityCoefficient.invalidate();
     
     if(this.clearance!=null)
-      this.clearance.reset();
+      this.clearance.clear();
     if(this.pk!=null)
-      this.pk.reset();
+      this.pk.clear();
     if(this.pd!=null)
-      this.pd.reset();    
+      this.pd.clear();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -121,15 +124,17 @@ public class SESubstance
   
   public static void load(SubstanceData src, SESubstance dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.getName()!=null)
       dst.setName(src.getName());
     if(src.getState()!=eState.UNRECOGNIZED)
       dst.setState(src.getState());
     if(src.hasDensity())
-      SEScalarMassPerVolume.load(src.getDensity(), dst.getDensity());    
+      SEScalarMassPerVolume.load(src.getDensity(), dst.getDensity());
     if(src.hasMolarMass())
       SEScalarMassPerAmount.load(src.getMolarMass(),dst.getMolarMass());
+    if(src.hasValence())
+      SEScalar.load(src.getValence(),dst.getValence());
     
     if(src.hasMaximumDiffusionFlux())
       SEScalarMassPerAreaTime.load(src.getMaximumDiffusionFlux(),dst.getMaximumDiffusionFlux());
@@ -187,9 +192,11 @@ public class SESubstance
     if(src.hasState())
       dst.setState(src.state);
     if(src.hasDensity())
-      dst.setDensity(SEScalarMassPerVolume.unload(src.density));    
+      dst.setDensity(SEScalarMassPerVolume.unload(src.density));
     if(src.hasMolarMass())
       dst.setMolarMass(SEScalarMassPerAmount.unload(src.molarMass));
+    if(src.hasValence())
+      dst.setValence(SEScalar.unload(src.valence));
     
     if(src.hasMaximumDiffusionFlux())
       dst.setMaximumDiffusionFlux(SEScalarMassPerAreaTime.unload(src.maximumDiffusionFlux));
@@ -257,6 +264,14 @@ public class SESubstance
     return this.molarMass;
   }
   public boolean hasMolarMass() {return this.molarMass==null?false:this.molarMass.isValid();}
+
+  public SEScalar getValence() 
+  { 
+    if(this.valence==null)
+      this.valence=new SEScalar();
+    return this.valence;
+  }
+  public boolean hasValence() {return this.valence==null?false:this.valence.isValid();}
   
   ////////////////
   // Diffusion-ish //

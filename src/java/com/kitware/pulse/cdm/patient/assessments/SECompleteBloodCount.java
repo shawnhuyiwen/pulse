@@ -38,28 +38,6 @@ public class SECompleteBloodCount extends SEPatientAssessment
     this.whiteBloodCellCount = null;
   }
   
-  @Override
-  public void reset()
-  {
-    super.reset();
-    if(this.hematocrit!=null)
-      this.hematocrit.invalidate();
-    if(this.hemoglobin!=null)
-      this.hemoglobin.invalidate();
-    if(this.plateletCount!=null)
-      this.plateletCount.invalidate();
-    if(this.meanCorpuscularHemoglobin!=null)
-      this.meanCorpuscularHemoglobin.invalidate();
-    if(this.meanCorpuscularHemoglobinConcentration!=null)
-      this.meanCorpuscularHemoglobinConcentration.invalidate();
-    if(this.meanCorpuscularVolume!=null)
-      this.meanCorpuscularVolume.invalidate();
-    if(this.redBloodCellCount!=null)
-      this.redBloodCellCount.invalidate();
-    if(this.whiteBloodCellCount!=null)
-      this.whiteBloodCellCount.invalidate();
-  }
-  
   public void readFile(String fileName) throws InvalidProtocolBufferException
   {
     CompleteBloodCountData.Builder builder = CompleteBloodCountData.newBuilder();

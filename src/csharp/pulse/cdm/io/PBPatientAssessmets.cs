@@ -18,6 +18,21 @@ namespace Pulse.CDM
     }
     public static bool SerializeFromString(string src, SEPatientAssessment dst)
     {
+      if (dst is SEArterialBloodGasTest)
+      {
+        SEArterialBloodGasTest abg = (SEArterialBloodGasTest)dst;
+        try
+        {
+          pulse.cdm.bind.ArterialBloodGasTestData data = JsonParser.Default.Parse<pulse.cdm.bind.ArterialBloodGasTestData>(src);
+          PBPatientAssessmets.Load(data, abg);
+        }
+        catch (Google.Protobuf.InvalidJsonException)
+        {
+          return false;
+        }
+        return true;
+      }
+
       if (dst is SECompleteBloodCount)
       {
         SECompleteBloodCount cbc = (SECompleteBloodCount)dst;
@@ -90,6 +105,68 @@ namespace Pulse.CDM
     public static void Serialize(SEPatientAssessment src, pulse.cdm.bind.PatientAssessmentData dst)
     {
 
+    }
+    #endregion
+
+
+    #region SEArterialBloodGasTest
+    public static void Load(pulse.cdm.bind.ArterialBloodGasTestData src, SEArterialBloodGasTest dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ArterialBloodGasTestData src, SEArterialBloodGasTest dst)
+    {
+      Serialize(src.PatientAssessment, dst);
+      if (src.BloodPH != null)
+        PBProperty.Load(src.BloodPH, dst.GetBloodPH());
+      if (src.Bicarbonate != null)
+        PBProperty.Load(src.Bicarbonate, dst.GetBicarbonate());
+      if (src.PartialPressureOfOxygen != null)
+        PBProperty.Load(src.PartialPressureOfOxygen, dst.GetPartialPressureOfOxygen());
+      if (src.PartialPressureOfCarbonDioxide != null)
+        PBProperty.Load(src.PartialPressureOfCarbonDioxide, dst.GetPartialPressureOfCarbonDioxide());
+      if (src.OxygenSaturation != null)
+        PBProperty.Load(src.OxygenSaturation, dst.GetOxygenSaturation());
+    }
+    public static bool SerializeFromString(string src, SEArterialBloodGasTest dst)
+    {
+      try
+      {
+        pulse.cdm.bind.ArterialBloodGasTestData data = JsonParser.Default.Parse<pulse.cdm.bind.ArterialBloodGasTestData>(src);
+        PBPatientAssessmets.Load(data, dst);
+      }
+      catch (Google.Protobuf.InvalidJsonException)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    public static pulse.cdm.bind.ArterialBloodGasTestData Unload(SEArterialBloodGasTest src)
+    {
+      pulse.cdm.bind.ArterialBloodGasTestData dst = new pulse.cdm.bind.ArterialBloodGasTestData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEArterialBloodGasTest src, pulse.cdm.bind.ArterialBloodGasTestData dst)
+    {
+      dst.PatientAssessment = new pulse.cdm.bind.PatientAssessmentData();
+      Serialize(src, dst.PatientAssessment);
+      if (src.HasBloodPH())
+        dst.BloodPH = (PBProperty.Unload(src.GetBloodPH()));
+      if (src.HasBicarbonate())
+        dst.Bicarbonate = (PBProperty.Unload(src.GetBicarbonate()));
+      if (src.HasPartialPressureOfOxygen())
+        dst.PartialPressureOfOxygen = (PBProperty.Unload(src.GetPartialPressureOfOxygen()));
+      if (src.HasPartialPressureOfCarbonDioxide())
+        dst.PartialPressureOfCarbonDioxide = (PBProperty.Unload(src.GetPartialPressureOfCarbonDioxide()));
+      if (src.HasOxygenSaturation())
+        dst.OxygenSaturation = (PBProperty.Unload(src.GetOxygenSaturation()));
+    }
+    public static string SerializeToString(SEArterialBloodGasTest src)
+    {
+      var pb = PBPatientAssessmets.Unload(src);
+      return pb.ToString();
     }
     #endregion
 
@@ -368,25 +445,25 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.UrinalysisData src, SEUrinalysis dst)
     {
       Serialize(src.PatientAssessment, dst);
-      dst.SetColorResult((SEUrinalysis.eUrineColor)(int)src.Color);
-      dst.SetAppearanceResult((SEUrinalysis.eClarityIndicator)(int)src.Appearance);
-      dst.SetGlucoseResult((SEUrinalysis.ePresenceIndicator)(int)src.Glucose);
-      dst.SetKetoneResult((SEUrinalysis.ePresenceIndicator)(int)src.Ketone);
+      dst.SetColor((eUrinalysis_UrineColor)(int)src.Color);
+      dst.SetAppearance((eUrinalysis_ClarityIndicator)(int)src.Appearance);
+      dst.SetGlucose((eUrinalysis_PresenceIndicator)(int)src.Glucose);
+      dst.SetKetone((eUrinalysis_PresenceIndicator)(int)src.Ketone);
       if (src.Bilirubin != null)
-        PBProperty.Load(src.Bilirubin, dst.GetBilirubinResult());
+        PBProperty.Load(src.Bilirubin, dst.GetBilirubin());
       if (src.SpecificGravity != null)
-        PBProperty.Load(src.SpecificGravity, dst.GetSpecificGravityResult());
-      dst.SetBloodResult((SEUrinalysis.ePresenceIndicator)(int)src.Blood);
+        PBProperty.Load(src.SpecificGravity, dst.GetSpecificGravity());
+      dst.SetBlood((eUrinalysis_PresenceIndicator)(int)src.Blood);
       if (src.PH != null)
-        PBProperty.Load(src.PH, dst.GetPHResult());
-      dst.SetProteinResult((SEUrinalysis.ePresenceIndicator)(int)src.Protein);
+        PBProperty.Load(src.PH, dst.GetPH());
+      dst.SetProtein((eUrinalysis_PresenceIndicator)(int)src.Protein);
       if (src.Urobilinogen != null)
-        PBProperty.Load(src.Urobilinogen, dst.GetUrobilinogenResult());
-      dst.SetNitriteResult((SEUrinalysis.ePresenceIndicator)(int)src.Nitrite);
-      dst.SetLeukocyteEsteraseResult((SEUrinalysis.ePresenceIndicator)(int)src.LeukocyteEsterase);
+        PBProperty.Load(src.Urobilinogen, dst.GetUrobilinogen());
+      dst.SetNitrite((eUrinalysis_PresenceIndicator)(int)src.Nitrite);
+      dst.SetLeukocyteEsterase((eUrinalysis_PresenceIndicator)(int)src.LeukocyteEsterase);
 
       if (src.Microscopic != null)
-        PBPatientAssessmets.Load(src.Microscopic, dst.GetMicroscopicResult());
+        PBPatientAssessmets.Load(src.Microscopic, dst.GetMicroscopic());
     }
     public static bool SerializeFromString(string src, SEUrinalysis dst)
     {
@@ -412,33 +489,33 @@ namespace Pulse.CDM
     {
       dst.PatientAssessment = new pulse.cdm.bind.PatientAssessmentData();
       Serialize(src, dst.PatientAssessment);
-      if (src.HasColorResult())
-        dst.Color = (pulse.cdm.bind.UrinalysisData.Types.eUrineColor)(int)src.GetColorResult();
-      if (src.HasAppearanceResult())
-        dst.Appearance = (pulse.cdm.bind.UrinalysisData.Types.eClarityIndicator)(int)src.GetAppearanceResult();
-      if (src.HasGlucoseResult())
-        dst.Glucose = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetGlucoseResult();
-      if (src.HasKetoneResult())
-        dst.Ketone = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetKetoneResult();
-      if (src.HasBilirubinResult())
-        dst.Bilirubin = PBProperty.Unload(src.GetBilirubinResult());
-      if (src.HasSpecificGravityResult())
-        dst.SpecificGravity = PBProperty.Unload(src.GetSpecificGravityResult());
-      if (src.HasBloodResult())
-        dst.Blood = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetBloodResult();
-      if (src.HasPHResult())
-        dst.PH = PBProperty.Unload(src.GetPHResult());
-      if (src.HasProteinResult())
-        dst.Protein = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetProteinResult();
-      if (src.HasUrobilinogenResult())
-        dst.Urobilinogen = PBProperty.Unload(src.GetUrobilinogenResult());
-      if (src.HasNitriteResult())
-        dst.Nitrite = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetNitriteResult();
-      if (src.HasLeukocyteEsteraseResult())
-        dst.LeukocyteEsterase = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetLeukocyteEsteraseResult();
+      if (src.HasColor())
+        dst.Color = (pulse.cdm.bind.UrinalysisData.Types.eUrineColor)(int)src.GetColor();
+      if (src.HasAppearance())
+        dst.Appearance = (pulse.cdm.bind.UrinalysisData.Types.eClarityIndicator)(int)src.GetAppearance();
+      if (src.HasGlucose())
+        dst.Glucose = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetGlucose();
+      if (src.HasKetone())
+        dst.Ketone = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetKetone();
+      if (src.HasBilirubin())
+        dst.Bilirubin = PBProperty.Unload(src.GetBilirubin());
+      if (src.HasSpecificGravity())
+        dst.SpecificGravity = PBProperty.Unload(src.GetSpecificGravity());
+      if (src.HasBlood())
+        dst.Blood = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetBlood();
+      if (src.HasPH())
+        dst.PH = PBProperty.Unload(src.GetPH());
+      if (src.HasProtein())
+        dst.Protein = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetProtein();
+      if (src.HasUrobilinogen())
+        dst.Urobilinogen = PBProperty.Unload(src.GetUrobilinogen());
+      if (src.HasNitrite())
+        dst.Nitrite = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetNitrite();
+      if (src.HasLeukocyteEsterase())
+        dst.LeukocyteEsterase = (pulse.cdm.bind.UrinalysisData.Types.ePresenceIndicator)(int)src.GetLeukocyteEsterase();
 
-      if (src.HasMicroscopicResult())
-        dst.Microscopic = PBPatientAssessmets.Unload(src.GetMicroscopicResult());
+      if (src.HasMicroscopic())
+        dst.Microscopic = PBPatientAssessmets.Unload(src.GetMicroscopic());
     }
     public static string SerializeToString(SEUrinalysis src)
     {
@@ -454,18 +531,18 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.UrinalysisMicroscopicData src, SEUrinalysisMicroscopic dst)
     {
-      dst.SetObservationType((SEUrinalysisMicroscopic.eObservationType)(int)src.ObservationType);
+      dst.SetObservationType((eUrinalysis_MicroscopicObservationType)(int)src.ObservationType);
       if (src.RedBloodCells != null)
-        PBProperty.Load(src.RedBloodCells, dst.GetRedBloodCellsResult());
+        PBProperty.Load(src.RedBloodCells, dst.GetRedBloodCells());
       if (src.WhiteBloodCells != null)
-        PBProperty.Load(src.WhiteBloodCells, dst.GetWhiteBloodCellsResult());
-      dst.SetEpithelialCellsResult((SEUrinalysisMicroscopic.eObservationAmount)(int)src.EpithelialCells);
+        PBProperty.Load(src.WhiteBloodCells, dst.GetWhiteBloodCells());
+      dst.SetEpithelialCells((eUrinalysis_MicroscopicObservationAmount)(int)src.EpithelialCells);
       if (src.Casts != null)
-        PBProperty.Load(src.Casts, dst.GetCastsResult());
-      dst.SetCrystalsResult((SEUrinalysisMicroscopic.eObservationAmount)(int)src.Crystals);
-      dst.SetBacteriaResult((SEUrinalysisMicroscopic.eObservationAmount)(int)src.Bacteria);
-      dst.SetTrichomonadsResult((SEUrinalysisMicroscopic.eObservationAmount)(int)src.Trichomonads);
-      dst.SetYeastResult((SEUrinalysisMicroscopic.eObservationAmount)(int)src.Yeast);
+        PBProperty.Load(src.Casts, dst.GetCasts());
+      dst.SetCrystals((eUrinalysis_MicroscopicObservationAmount)(int)src.Crystals);
+      dst.SetBacteria((eUrinalysis_MicroscopicObservationAmount)(int)src.Bacteria);
+      dst.SetTrichomonads((eUrinalysis_MicroscopicObservationAmount)(int)src.Trichomonads);
+      dst.SetYeast((eUrinalysis_MicroscopicObservationAmount)(int)src.Yeast);
     }
 
     public static pulse.cdm.bind.UrinalysisMicroscopicData Unload(SEUrinalysisMicroscopic src)
@@ -478,22 +555,22 @@ namespace Pulse.CDM
     {
       if (src.HasObservationType())
         dst.ObservationType = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationType)(int)src.GetObservationType();
-      if (src.HasRedBloodCellsResult())
-        dst.RedBloodCells = PBProperty.Unload(src.GetRedBloodCellsResult());
-      if (src.HasWhiteBloodCellsResult())
-        dst.WhiteBloodCells = PBProperty.Unload(src.GetWhiteBloodCellsResult());
-      if (src.HasEpithelialCellsResult())
-        dst.EpithelialCells = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetEpithelialCellsResult();
-      if (src.HasCastsResult())
-        dst.Casts = PBProperty.Unload(src.GetCastsResult());
-      if (src.HasCrystalsResult())
-        dst.Crystals = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetCrystalsResult();
-      if (src.HasBacteriaResult())
-        dst.Bacteria = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetBacteriaResult();
-      if (src.HasTrichomonadsResult())
-        dst.Trichomonads = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetTrichomonadsResult();
-      if (src.HasYeastResult())
-        dst.Yeast = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetYeastResult();
+      if (src.HasRedBloodCells())
+        dst.RedBloodCells = PBProperty.Unload(src.GetRedBloodCells());
+      if (src.HasWhiteBloodCells())
+        dst.WhiteBloodCells = PBProperty.Unload(src.GetWhiteBloodCells());
+      if (src.HasEpithelialCells())
+        dst.EpithelialCells = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetEpithelialCells();
+      if (src.HasCasts())
+        dst.Casts = PBProperty.Unload(src.GetCasts());
+      if (src.HasCrystals())
+        dst.Crystals = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetCrystals();
+      if (src.HasBacteria())
+        dst.Bacteria = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetBacteria();
+      if (src.HasTrichomonads())
+        dst.Trichomonads = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetTrichomonads();
+      if (src.HasYeast())
+        dst.Yeast = (pulse.cdm.bind.UrinalysisMicroscopicData.Types.eObservationAmount)(int)src.GetYeast();
     }
     #endregion
   }

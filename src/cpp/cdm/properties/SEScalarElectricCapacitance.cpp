@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "properties/SEScalarElectricCapacitance.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/properties/SEScalarElectricCapacitance.h"
 
 const ElectricCapacitanceUnit ElectricCapacitanceUnit::F("F");
 

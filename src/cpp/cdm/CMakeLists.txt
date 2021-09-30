@@ -1,11 +1,12 @@
 
 add_library_ex(CommonDataModel
   H_FILES
-    CommonDataModel.h
+    CommonDefs.h
     Doxy.h
     Macros.h
     PhysiologyEngine.h
-    stdafx.h
+    PhysiologyEngineThunk.h
+    PhysiologyEnginePool.h
     blackbox/SEBlackBox.h
     blackbox/SEBlackBoxManager.h
     blackbox/electrical/SEElectricalBlackBox.h
@@ -80,6 +81,7 @@ add_library_ex(CommonDataModel
     engine/SETimedStabilization.h
     io/protobuf/PBActions.h
     io/protobuf/PBAnesthesiaMachine.h
+    io/protobuf/PBBagValveMask.h
     io/protobuf/PBBlackBox.h
     io/protobuf/PBCircuit.h
     io/protobuf/PBCompartment.h
@@ -138,6 +140,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEPericardialEffusion.h
     patient/actions/SEPulmonaryShuntExacerbation.h
     patient/actions/SERespiratoryFatigue.h
+    patient/actions/SERespiratoryMechanicsConfiguration.h
     patient/actions/SESubstanceAdministration.h
     patient/actions/SESubstanceBolus.h
     patient/actions/SESubstanceCompoundInfusion.h
@@ -146,6 +149,7 @@ add_library_ex(CommonDataModel
     patient/actions/SETensionPneumothorax.h
     patient/actions/SEUrinate.h
     patient/actions/SEUseInhaler.h
+    patient/assessments/SEArterialBloodGasTest.h
     patient/assessments/SECompleteBloodCount.h
     patient/assessments/SEComprehensiveMetabolicPanel.h
     patient/assessments/SEPatientAssessment.h
@@ -165,10 +169,11 @@ add_library_ex(CommonDataModel
     patient/conditions/SEPulmonaryFibrosis.h
     patient/conditions/SEPulmonaryShunt.h
     patient/conditions/SESepsis.h
-    properties/SEArray.h
-    properties/SEArrayPressure.h
-    properties/SEArrayVolume.h
-    properties/SEArrayVolumePerTime.h
+    #properties/SEArray.h
+    #properties/SEArrayPressure.h
+    #properties/SEArrayVolume.h
+    #properties/SEArrayVolumePerTime.h
+    properties/SECurve.h
     properties/SEFunction.h
     properties/SEFunctionElectricPotentialVsTime.h
     properties/SEFunctionVolumeVsTime.h
@@ -176,6 +181,11 @@ add_library_ex(CommonDataModel
     properties/SEHistogramFractionVsLength.h
     properties/SEProperty.h
     properties/SERunningAverage.h
+    properties/SESegment.h
+    properties/SESegmentConstant.h
+    properties/SESegmentLinear.h
+    properties/SESegmentParabolic.h
+    properties/SESegmentSigmoidal.h
     properties/SEScalar.h
     properties/SEScalar0To1.h
     properties/SEScalarAmount.h
@@ -193,6 +203,7 @@ add_library_ex(CommonDataModel
     properties/SEScalarEnergy.h
     properties/SEScalarEnergyPerAmount.h
     properties/SEScalarEnergyPerMass.h
+    properties/SEScalarEquivalentWeightPerVolume.h
     properties/SEScalarForce.h
     properties/SEScalarFrequency.h
     properties/SEScalarHeatCapacitance.h
@@ -236,7 +247,6 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimePressureArea.h
     scenario/SEScenario.h
     scenario/SEScenarioExec.h
-    stdafx.h
     substance/SESubstance.h
     substance/SESubstanceAerosolization.h
     substance/SESubstanceClearance.h
@@ -278,6 +288,12 @@ add_library_ex(CommonDataModel
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h
+    system/equipment/bag_valve_mask/SEBagValveMask.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskAction.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h
     system/equipment/electrocardiogram/SEElectroCardioGram.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h
@@ -285,8 +301,15 @@ add_library_ex(CommonDataModel
     system/equipment/inhaler/actions/SEInhalerAction.h
     system/equipment/inhaler/actions/SEInhalerConfiguration.h
     system/equipment/mechanical_ventilator/SEMechanicalVentilator.h
+    system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorMode.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h
     system/physiology/SEBloodChemistrySystem.h
     system/physiology/SECardiovascularSystem.h
     system/physiology/SEDrugSystem.h
@@ -297,6 +320,7 @@ add_library_ex(CommonDataModel
     system/physiology/SENervousSystem.h
     system/physiology/SEPupillaryResponse.h
     system/physiology/SERenalSystem.h
+    system/physiology/SERespiratoryMechanics.h
     system/physiology/SERespiratorySystem.h
     system/physiology/SETissueSystem.h
     utils/ConfigParser.h
@@ -318,6 +342,7 @@ add_library_ex(CommonDataModel
     utils/taskrunner/TaskRunner.h
     utils/testing/SETestCase.h
     utils/testing/SETestErrorStatistics.h
+    utils/testing/SETestManager.h
     utils/testing/SETestReport.h
     utils/testing/SETestSuite.h
     utils/unitconversion/CompoundUnit.h
@@ -334,7 +359,8 @@ add_library_ex(CommonDataModel
     utils/unitconversion/UnitDimension.h
     utils/unitconversion/UnitStringLexer.h
   CPP_FILES
-    stdafx.cpp
+    PhysiologyEngineThunk.cpp
+    PhysiologyEnginePool.cpp
     blackbox/SEBlackBox.cpp
     blackbox/SEBlackBoxManager.cpp
     blackbox/electrical/SEElectricalBlackBox.cpp
@@ -409,6 +435,8 @@ add_library_ex(CommonDataModel
     io/protobuf/PBActions.cpp
     io/protobuf/PBAnesthesiaMachine.cpp
     io/protobuf/PBAnesthesiaMachineEnums.cpp
+    io/protobuf/PBBagValveMask.cpp
+    io/protobuf/PBBagValveMaskEnums.cpp
     io/protobuf/PBBlackBox.cpp
     io/protobuf/PBCircuit.cpp
     io/protobuf/PBCompartment.cpp
@@ -478,6 +506,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEPericardialEffusion.cpp
     patient/actions/SEPulmonaryShuntExacerbation.cpp
     patient/actions/SERespiratoryFatigue.cpp
+    patient/actions/SERespiratoryMechanicsConfiguration.cpp
     patient/actions/SESubstanceAdministration.cpp
     patient/actions/SESubstanceBolus.cpp
     patient/actions/SESubstanceCompoundInfusion.cpp
@@ -486,6 +515,7 @@ add_library_ex(CommonDataModel
     patient/actions/SETensionPneumothorax.cpp
     patient/actions/SEUrinate.cpp
     patient/actions/SEUseInhaler.cpp
+    patient/assessments/SEArterialBloodGasTest.cpp
     patient/assessments/SECompleteBloodCount.cpp
     patient/assessments/SEComprehensiveMetabolicPanel.cpp
     patient/assessments/SEPatientAssessment.cpp
@@ -508,7 +538,8 @@ add_library_ex(CommonDataModel
     #properties/SEArray.cpp
     #properties/SEArrayPressure.cpp
     #properties/SEArrayVolume.cpp
-    #properties/SEArrayVolumePerTime.cpp
+    #properties/SEArrayVolumePerTime.cppcpp
+    properties/SECurve.cpp
     properties/SEFunction.cpp
     properties/SEFunctionElectricPotentialVsTime.cpp
     properties/SEFunctionVolumeVsTime.cpp
@@ -516,6 +547,11 @@ add_library_ex(CommonDataModel
     properties/SEHistogramFractionVsLength.cpp
     properties/SEProperty.cpp
     properties/SERunningAverage.cpp
+    properties/SESegment.cpp
+    properties/SESegmentConstant.cpp
+    properties/SESegmentLinear.cpp
+    properties/SESegmentParabolic.cpp
+    properties/SESegmentSigmoidal.cpp
     properties/SEScalar.cpp
     properties/SEScalar0To1.cpp
     properties/SEScalarAmount.cpp
@@ -533,6 +569,7 @@ add_library_ex(CommonDataModel
     properties/SEScalarEnergy.cpp
     properties/SEScalarEnergyPerAmount.cpp
     properties/SEScalarEnergyPerMass.cpp
+    properties/SEScalarEquivalentWeightPerVolume.cpp
     properties/SEScalarForce.cpp
     properties/SEScalarFrequency.cpp
     properties/SEScalarHeatCapacitance.cpp
@@ -576,7 +613,6 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimePressureArea.cpp
     scenario/SEScenario.cpp
     scenario/SEScenarioExec.cpp
-    stdafx.cpp
     substance/SESubstance.cpp
     substance/SESubstanceAerosolization.cpp
     substance/SESubstanceClearance.cpp
@@ -618,6 +654,12 @@ add_library_ex(CommonDataModel
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.cpp
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.cpp
     system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.cpp
+    system/equipment/bag_valve_mask/SEBagValveMask.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskAction.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.cpp
+    system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cpp
     system/equipment/electrocardiogram/SEElectroCardioGram.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.cpp
@@ -625,8 +667,15 @@ add_library_ex(CommonDataModel
     system/equipment/inhaler/actions/SEInhalerAction.cpp
     system/equipment/inhaler/actions/SEInhalerConfiguration.cpp
     system/equipment/mechanical_ventilator/SEMechanicalVentilator.cpp
+    system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.cpp
     system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorHold.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorMode.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.cpp
+    system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.cpp
     system/physiology/SEBloodChemistrySystem.cpp
     system/physiology/SECardiovascularSystem.cpp
     system/physiology/SEDrugSystem.cpp
@@ -637,6 +686,7 @@ add_library_ex(CommonDataModel
     system/physiology/SENervousSystem.cpp
     system/physiology/SEPupillaryResponse.cpp
     system/physiology/SERenalSystem.cpp
+    system/physiology/SERespiratoryMechanics.cpp
     system/physiology/SERespiratorySystem.cpp
     system/physiology/SETissueSystem.cpp
     utils/ConfigParser.cpp
@@ -672,11 +722,9 @@ add_library_ex(CommonDataModel
     DataModelBindings
   PRIVATE_DEPENDS
     protobuf::libprotobuf
+  INSTALL_HEADER_DIR
+    cdm
 )
-
-if(WIN32)
-  target_include_directories(CommonDataModel PUBLIC ${Dirent_INCLUDE_DIR})
-endif()
 target_include_directories(CommonDataModel PRIVATE ${EIGEN3_INCLUDE_DIR})
 
 add_subdirectory(test)

@@ -5,14 +5,15 @@ using System.Collections.Generic;
 
 namespace Pulse.CDM
 {
+  public enum eSurroundingType : int
+  {
+    NullSurrounding = 0,
+    Air,
+    Water
+  }
+
   public class SEEnvironmentalConditions
   {
-    public enum eSurroundingType : int
-    {
-      NullSurrounding = 0,
-      Air,
-      Water
-    }
     protected eSurroundingType               surrounding_type;
     protected SEScalarMassPerVolume          air_density;
     protected SEScalarLengthPerTime          air_velocity;

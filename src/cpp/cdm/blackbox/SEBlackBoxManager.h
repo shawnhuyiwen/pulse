@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "blackbox/electrical/SEElectricalBlackBox.h"
-#include "blackbox/fluid/SEGasBlackBox.h"
-#include "blackbox/fluid/SELiquidBlackBox.h"
-#include "blackbox/thermal/SEThermalBlackBox.h"
+#include "cdm/blackbox/electrical/SEElectricalBlackBox.h"
+#include "cdm/blackbox/fluid/SEGasBlackBox.h"
+#include "cdm/blackbox/fluid/SELiquidBlackBox.h"
+#include "cdm/blackbox/thermal/SEThermalBlackBox.h"
 
 class CDM_DECL SEBlackBoxManager : public Loggable
 {

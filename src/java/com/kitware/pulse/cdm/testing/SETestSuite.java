@@ -21,22 +21,22 @@ public class SETestSuite
 	
 	protected SETestSuite()
 	{
-		reset();
+	  clear();
 	}
 	
-	public void reset()
+	public void clear()
 	{
 		this.name=null;
 		this.performed=true;
 		this.requirements.clear();
 		this.testCases.clear();
 		this.activeCase = null;
-		this.activeCaseListener.reset();
+		this.activeCaseListener.clear();
 	}
 	
 	public static void load(TestSuiteData src, SETestSuite dst)
   {
-    dst.reset();
+    dst.clear();
     dst.setName(src.getName());
     dst.setPerformed(src.getPerformed());
     for(String req : src.getRequirementList())
@@ -108,7 +108,7 @@ public class SETestSuite
   }
   public void endCase()
   {
-  	activeCaseListener.reset();
+  	activeCaseListener.clear();
   }
   public int getNumErrors() 
   { 

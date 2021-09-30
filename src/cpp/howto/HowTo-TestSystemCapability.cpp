@@ -1,12 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarTime.h"
-#include "utils/TimingProfile.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/TimingProfile.h"
+#include "cdm/Macros.h"
 
 #include <thread>
 #include <atomic>
@@ -17,7 +19,7 @@ class SystemLoadTest
 {
 public:
   SystemLoadTest(size_t tId) : thread_id(tId) {}
-  virtual ~SystemLoadTest() = default;
+  virtual ~SystemLoadTest() { DELETE_VECTOR(engines); }
 
   size_t thread_id;
   size_t engine_count = 4;
@@ -39,7 +41,7 @@ public:
         pe->GetLogger()->Error("Could not load state, check the error");
         return;
       }
-      engines.push_back(pe.release());
+      engines.push_back(pe.get());
     } while (engines.size() < engine_count);
   }
 
@@ -61,7 +63,6 @@ public:
     }
   }
 
-  
 };
 
 

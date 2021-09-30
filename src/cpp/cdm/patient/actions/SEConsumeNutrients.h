@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "patient/actions/SEPatientAction.h"
-#include "patient/SENutrition.h"
+#include "cdm/patient/actions/SEPatientAction.h"
+#include "cdm/patient/SENutrition.h"
 
 class CDM_DECL SEConsumeNutrients : public SEPatientAction
 {
@@ -15,7 +15,7 @@ public:
   virtual ~SEConsumeNutrients();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEConsumeNutrients& src, bool preserveState=false);
+  virtual void Copy(const SEConsumeNutrients& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

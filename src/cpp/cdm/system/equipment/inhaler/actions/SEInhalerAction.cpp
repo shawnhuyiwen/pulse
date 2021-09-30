@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "stdafx.h"
-#include "system/equipment/inhaler/actions/SEInhalerAction.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/equipment/inhaler/actions/SEInhalerAction.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 SEInhalerAction::SEInhalerAction(Logger* logger) : SEEquipmentAction(logger)
 {

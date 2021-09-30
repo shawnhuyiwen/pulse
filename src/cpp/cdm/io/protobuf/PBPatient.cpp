@@ -1,17 +1,17 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Patient.pb.h"
 #include "pulse/cdm/bind/PatientNutrition.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBPatient.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "patient/SEPatient.h"
-#include "properties/SEScalarTime.h"
-#include "utils/FileUtils.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBPatient.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/FileUtils.h"
 
 void PBPatient::Load(const CDM_BIND::PatientData& src, SEPatient& dst)
 {
@@ -159,7 +159,7 @@ void PBPatient::Copy(const SEPatient& src, SEPatient& dst)
   PBPatient::Serialize(data, dst);
 }
 
-bool PBPatient::SerializeToString(const SEPatient& src, std::string& output, SerializationFormat m)
+bool PBPatient::SerializeToString(const SEPatient& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::PatientData data;
   PBPatient::Serialize(src, data);
@@ -172,7 +172,7 @@ bool PBPatient::SerializeToFile(const SEPatient& src, const std::string& filenam
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
 
-bool PBPatient::SerializeFromString(const std::string& src, SEPatient& dst, SerializationFormat m)
+bool PBPatient::SerializeFromString(const std::string& src, SEPatient& dst, eSerializationFormat m)
 {
   CDM_BIND::PatientData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))

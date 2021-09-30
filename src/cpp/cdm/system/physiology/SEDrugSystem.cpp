@@ -1,16 +1,16 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/physiology/SEDrugSystem.h"
-#include "system/physiology/SEPupillaryResponse.h"
-#include "properties/SEScalar.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarNegative1To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarLength.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/physiology/SEDrugSystem.h"
+#include "cdm/system/physiology/SEPupillaryResponse.h"
+#include "cdm/properties/SEScalar.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarNegative1To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarLength.h"
 
 SEDrugSystem::SEDrugSystem(Logger* logger) : SESystem(logger)
 {

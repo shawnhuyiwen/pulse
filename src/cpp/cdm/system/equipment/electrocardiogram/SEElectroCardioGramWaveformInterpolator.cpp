@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "properties/SEFunctionElectricPotentialVsTime.h"
-#include "io/protobuf/PBElectroCardioGram.h"
-#include "utils/GeneralMath.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/properties/SEFunctionElectricPotentialVsTime.h"
+#include "cdm/io/protobuf/PBElectroCardioGram.h"
+#include "cdm/utils/GeneralMath.h"
 
 SEElectroCardioGramWaveformInterpolator::SEElectroCardioGramWaveformInterpolator(Logger* logger) : Loggable(logger)
 {
@@ -34,7 +34,7 @@ void SEElectroCardioGramWaveformInterpolator::Copy(const SEElectroCardioGramWave
   PBElectroCardioGram::Copy(src, *this);
 }
 
-bool SEElectroCardioGramWaveformInterpolator::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEElectroCardioGramWaveformInterpolator::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBElectroCardioGram::SerializeToString(*this, output, m);
 }
@@ -42,7 +42,7 @@ bool SEElectroCardioGramWaveformInterpolator::SerializeToFile(const std::string&
 {
   return PBElectroCardioGram::SerializeToFile(*this, filename);
 }
-bool SEElectroCardioGramWaveformInterpolator::SerializeFromString(const std::string& src, SerializationFormat m, const SEScalarTime* timeStep)
+bool SEElectroCardioGramWaveformInterpolator::SerializeFromString(const std::string& src, eSerializationFormat m, const SEScalarTime* timeStep)
 {
   if (!PBElectroCardioGram::SerializeFromString(src, *this, m))
     return false;

@@ -43,13 +43,29 @@ inline size_t _Hash_value(_InIt _Begin, _InIt _End)
   if(name!=nullptr) \
     name->Invalidate();
 
+#define FORCE_INVALIDATE_PROPERTY(name) \
+  if(name!=nullptr) \
+    name->ForceInvalidate();
+
+#define ZERO_SCALAR(name) \
+  if(name!=nullptr && name->IsValid()) \
+    name->SetValue(0);
+
+#define ZERO_UNIT_SCALAR(name) \
+  if(name!=nullptr && name->IsValid()) \
+    name->SetValue(0,*name->GetUnit());
+
 #define COPY_PROPERTY(name) \
   if(from.Has##name()) \
     Get##name().Set(*from.m_##name);
 
-#define MERGE_CHILD(name, subMgr) \
+#define MERGE_CHILD_SUBS(name, subMgr) \
   if(from.Has##name()) \
     Get##name().Merge(*from.m_##name, subMgr);
+
+#define MERGE_CHILD(name) \
+  if(from.Has##name()) \
+    Get##name().Merge(*from.m_##name);
 
 #define CDM_COPY(clazz, from, to) \
   { \

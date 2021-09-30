@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "properties/SEScalarNegative1To1.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/properties/SEScalarNegative1To1.h"
 
 SEScalarNegative1To1::SEScalarNegative1To1() : SEScalar()
 {
@@ -16,7 +16,7 @@ void SEScalarNegative1To1::SetValue(double d)
   SEScalar::SetValue(d);
 }
 
-void SEScalarNegative1To1::SetValue(double d, const NoUnit& unitless)
+void SEScalarNegative1To1::SetValue(double d, const NoUnit& /*unitless*/)
 { 
   SEScalarNegative1To1::SetValue(d);
 }
@@ -26,7 +26,7 @@ void SEScalarNegative1To1::ForceValue(double d)
   SEScalar::ForceValue(d);
 }
 
-void SEScalarNegative1To1::ForceValue(double d, const NoUnit& unitless)
+void SEScalarNegative1To1::ForceValue(double d, const NoUnit& /*unitless*/)
 {
   SEScalar::ForceValue(d);
 }

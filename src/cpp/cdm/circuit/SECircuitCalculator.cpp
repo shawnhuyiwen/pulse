@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "circuit/SECircuitCalculator.h"
-#include "SECircuit.h"
-#include "SECircuitNode.h"
-#include "SECircuitPath.h"
-#include "properties/SEScalar.h"
-#include "utils/GeneralMath.h"
-#include "utils/TimingProfile.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/circuit/SECircuitCalculator.h"
+#include "cdm/circuit/SECircuit.h"
+#include "cdm/circuit/SECircuitNode.h"
+#include "cdm/circuit/SECircuitPath.h"
+#include "cdm/properties/SEScalar.h"
+#include "cdm/utils/GeneralMath.h"
+#include "cdm/utils/TimingProfile.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -17,7 +17,7 @@
 #include "Eigen/Dense"
 #include "Eigen/SparseLU"
 #include "Eigen/SparseCore"
-   //#include "Eigen/SparseCholesky"
+   //#include "cdm/Eigen/SparseCholesky"
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/SparseQR"
 #ifdef _MSC_VER
@@ -1088,18 +1088,12 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::PostProcess(CircuitType& cir
     if (p->HasNextPolarizedState())
       p->SetPolarizedState(p->GetNextPolarizedState());
 
-    if (p->HasNextFlux())
-      Override<FluxUnit>(p->GetNextFlux(), p->GetFlux());
-    if (p->HasNextFluxSource())
-      Override<FluxUnit>(p->GetNextFluxSource(), p->GetFluxSource());
-    if (p->HasNextResistance())
-      Override<ResistanceUnit>(p->GetNextResistance(), p->GetResistance());
-    if (p->HasNextCapacitance())
-      Override<CapacitanceUnit>(p->GetNextCapacitance(), p->GetCapacitance());
-    if (p->HasNextInductance())
-      Override<InductanceUnit>(p->GetNextInductance(), p->GetInductance());
-    if (p->HasNextPotentialSource())
-      Override<PotentialUnit>(p->GetNextPotentialSource(), p->GetPotentialSource());
+    Override<FluxUnit>(p->GetNextFlux(), p->GetFlux());
+    Override<FluxUnit>(p->GetNextFluxSource(), p->GetFluxSource());
+    Override<ResistanceUnit>(p->GetNextResistance(), p->GetResistance());
+    Override<CapacitanceUnit>(p->GetNextCapacitance(), p->GetCapacitance());
+    Override<InductanceUnit>(p->GetNextInductance(), p->GetInductance());
+    Override<PotentialUnit>(p->GetNextPotentialSource(), p->GetPotentialSource());
 
     // 2) Set Next Path elements to the Baseline values
     //    We won't touch Valves or Switches.  Valves should keep their state to efficiently solve based on assumed states
@@ -1194,12 +1188,12 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Verbose(std::string location
   fout.close();
 }
 
-#include "blackbox/fluid/SEFluidBlackBox.h"
-#include "circuit/fluid/SEFluidCircuit.h"
+#include "cdm/blackbox/fluid/SEFluidBlackBox.h"
+#include "cdm/circuit/fluid/SEFluidCircuit.h"
 template class SECircuitCalculator<SEFluidCircuit, SEFluidCircuitNode, SEFluidCircuitPath, SEFluidBlackBox, VolumePerPressureUnit, VolumePerTimeUnit, PressureTimeSquaredPerVolumeUnit, PressureUnit, VolumeUnit, PressureTimePerVolumeUnit>;
-#include "blackbox/electrical/SEElectricalBlackBox.h"
-#include "circuit/electrical/SEElectricalCircuit.h"
+#include "cdm/blackbox/electrical/SEElectricalBlackBox.h"
+#include "cdm/circuit/electrical/SEElectricalCircuit.h"
 template class SECircuitCalculator<SEElectricalCircuit, SEElectricalCircuitNode, SEElectricalCircuitPath, SEElectricalBlackBox, ElectricCapacitanceUnit, ElectricCurrentUnit, ElectricInductanceUnit, ElectricPotentialUnit, ElectricChargeUnit, ElectricResistanceUnit>;
-#include "blackbox/thermal/SEThermalBlackBox.h"
-#include "circuit/thermal/SEThermalCircuit.h"
+#include "cdm/blackbox/thermal/SEThermalBlackBox.h"
+#include "cdm/circuit/thermal/SEThermalCircuit.h"
 template class SECircuitCalculator<SEThermalCircuit, SEThermalCircuitNode, SEThermalCircuitPath, SEThermalBlackBox, HeatCapacitanceUnit, PowerUnit, HeatInductanceUnit, TemperatureUnit, EnergyUnit, HeatResistanceUnit>;

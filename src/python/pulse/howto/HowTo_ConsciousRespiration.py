@@ -5,11 +5,11 @@ from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.scalars import SEScalarTime, TimeUnit, SEScalar0To1
 from pulse.cdm.patient_actions import SEConsciousRespiration
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_ConsciousRespiration():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_conscious_respiration.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_ConsciousRespiration.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SESubstanceAdministration.h"
+#include "cdm/patient/actions/SESubstanceAdministration.h"
 class SESubstance;
 
 class CDM_DECL SESubstanceBolus : public SEPatientAction
@@ -14,7 +14,7 @@ public:
   virtual ~SESubstanceBolus();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SESubstanceBolus& src, bool preserveState=false);
+  virtual void Copy(const SESubstanceBolus& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

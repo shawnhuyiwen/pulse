@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "properties/SEFunctionElectricPotentialVsTime.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/properties/SEFunctionElectricPotentialVsTime.h"
 
 SEElectroCardioGramWaveform::SEElectroCardioGramWaveform(Logger* logger) : Loggable(logger)
 {

@@ -1,16 +1,16 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/EnvironmentActions.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBEnvironmentActions.h"
-#include "io/protobuf/PBEnvironment.h"
-#include "io/protobuf/PBActions.h"
-#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
-#include "system/environment/actions/SEThermalApplication.h"
-#include "substance/SESubstanceManager.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBEnvironmentActions.h"
+#include "cdm/io/protobuf/PBEnvironment.h"
+#include "cdm/io/protobuf/PBActions.h"
+#include "cdm/system/environment/actions/SEChangeEnvironmentalConditions.h"
+#include "cdm/system/environment/actions/SEThermalApplication.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 void PBEnvironmentAction::Serialize(const CDM_BIND::EnvironmentActionData& src, SEEnvironmentAction& dst)
 {
@@ -33,6 +33,7 @@ void PBEnvironmentAction::Serialize(const CDM_BIND::ChangeEnvironmentalCondition
     dst.SetEnvironmentalConditionsFile(src.environmentalconditionsfile());
   else if (src.has_environmentalconditions())
     PBEnvironment::Load(src.environmentalconditions(), dst.GetEnvironmentalConditions(), subMgr);
+  dst.SetMergeType((eMergeType)src.mergetype());
 }
 CDM_BIND::ChangeEnvironmentalConditionsData* PBEnvironmentAction::Unload(const SEChangeEnvironmentalConditions& src)
 {
@@ -47,6 +48,7 @@ void PBEnvironmentAction::Serialize(const SEChangeEnvironmentalConditions& src, 
     dst.set_environmentalconditionsfile(src.m_EnvironmentalConditionsFile);
   else if (src.HasEnvironmentalConditions())
     dst.set_allocated_environmentalconditions(PBEnvironment::Unload(*src.m_EnvironmentalConditions));
+  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
 }
 void PBEnvironmentAction::Copy(const SEChangeEnvironmentalConditions& src, SEChangeEnvironmentalConditions& dst, const SESubstanceManager& subMgr)
 {

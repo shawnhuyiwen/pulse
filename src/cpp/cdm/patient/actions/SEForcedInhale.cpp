@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEForcedInhale.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarTime.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEForcedInhale.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEForcedInhale::SEForcedInhale(Logger* logger) : SEConsciousRespirationCommand(logger)
 {

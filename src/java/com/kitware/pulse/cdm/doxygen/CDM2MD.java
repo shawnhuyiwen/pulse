@@ -17,7 +17,7 @@ import com.kitware.pulse.cdm.bind.Enums.eSide;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Environment.EnvironmentalConditionsData;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
-import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData;
+import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData;
 import com.kitware.pulse.cdm.bind.Patient.PatientData;
 import com.kitware.pulse.cdm.bind.PatientActions.BrainInjuryData;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
@@ -44,6 +44,7 @@ import com.kitware.pulse.cdm.properties.SEScalar;
 import com.kitware.pulse.cdm.system.environment.actions.SEEnvironmentAction;
 import com.kitware.pulse.cdm.system.environment.conditions.SEEnvironmentCondition;
 import com.kitware.pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineAction;
+import com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions.SEBagValveMaskAction;
 import com.kitware.pulse.cdm.system.equipment.inhaler.actions.SEInhalerAction;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions.SEMechanicalVentilatorAction;
 import com.kitware.pulse.utilities.FileUtils;
@@ -90,8 +91,8 @@ public class CDM2MD
 
       // PATIENT
       writer.append("#### The following tables describe a patient for Pulse to simulate\n<hr>\n");
-      WriteDoxyTable(SEPatient.class, "", writer, skipProperties);    
-      WriteDoxyTable(PatientData.eSex.class, "PatientData_", writer, skipProperties);  
+      WriteDoxyTable(SEPatient.class, "", writer, skipProperties);
+      WriteDoxyTable(PatientData.eSex.class, "PatientData_", writer, skipProperties);
 
       writer.append("#### The following tables describe the physiologic and equipment states Pulse supports.\n<hr>\n");
       WriteDoxyTable(eEvent.class, "", writer, skipProperties);
@@ -158,17 +159,25 @@ public class CDM2MD
       WriteDoxyTable(EnvironmentalConditionsData.eSurroundingType.class, "EnvironmentalConditionsData_", writer, skipProperties);
 
       // ANESTHESIA MACHINE
-      writer.append("#### The following tables describe the anesthesia machine\n<hr>\n"); 
+      writer.append("#### The following tables describe the anesthesia machine\n<hr>\n");
       Set<Class<? extends Object>> anes = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.anesthesia_machine");
       for(Class<?> c : anes)
         WriteDoxyTable(c, "", writer, skipProperties);
       Set<Class<? extends SEAnesthesiaMachineAction>> aActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.anesthesia_machine.actions", SEAnesthesiaMachineAction.class);
       for(Class<?> c : aActions)
         WriteDoxyTable(c, "", writer, skipProperties);
-      WriteDoxyTable(AnesthesiaMachineData.eConnection.class, "AnesthesiaMachineData_", writer, skipProperties);
       WriteDoxyTable(AnesthesiaMachineData.eOxygenSource.class, "AnesthesiaMachineData_", writer, skipProperties);
       WriteDoxyTable(AnesthesiaMachineData.ePrimaryGas.class, "AnesthesiaMachineData_", writer, skipProperties);
 
+      // BAG VALVE MASK
+      writer.append("#### The following tables describe the bag valve mask\n<hr>\n");
+      Set<Class<? extends Object>> bvm = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.bag_valve_mask");
+      for(Class<?> c : bvm)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends SEBagValveMaskAction>> bvmActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions", SEBagValveMaskAction.class);
+      for(Class<?> c : bvmActions)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
       // ECG
       writer.append("#### The following tables describe the %ECG\n<hr>\n");
       Set<Class<? extends Object>> ecg = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.electrocardiogram");
@@ -192,9 +201,8 @@ public class CDM2MD
       Set<Class<? extends SEMechanicalVentilatorAction>> mvActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions", SEMechanicalVentilatorAction.class);
       for(Class<?> c : mvActions)
         WriteDoxyTable(c, "", writer, skipProperties);
-      WriteDoxyTable(MechanicalVentilatorData.eConnection.class, "MechanicalVentilatorData_", writer, skipProperties);
-      WriteDoxyTable(MechanicalVentilatorData.eDriverWaveform.class, "MechanicalVentilatorData_", writer, skipProperties);
-
+      WriteDoxyTable(MechanicalVentilatorSettingsData.eDriverWaveform.class, "MechanicalVentilatorSettingsData_", writer, skipProperties);
+      
       // SUBSTSANCE
       writer.append("#### The following tables describe substances used in Pulse\n<hr>\n");
       Set<Class<? extends Object>> subs = FindObjects.findAllClasses("com.kitware.pulse.cdm.substance");
@@ -236,7 +244,7 @@ public class CDM2MD
   }
 
   protected static void WriteDoxyTable(Class<?> c, String prefix, PrintWriter writer, List<String> skipProperties)
-  {    
+  {
     String tableName = c.getSimpleName();
     if(tableName.startsWith("SE"))
       tableName = tableName.substring(2);
@@ -248,6 +256,7 @@ public class CDM2MD
     }
     else
       descPrepend = "@copybrief "+prefix+tableName+"Data";
+    Log.info("Creating table for "+tableName);
 
     String columnHeaders[] = new String[3];
     int maxColumnLength[] = new int[columnHeaders.length];
@@ -292,7 +301,7 @@ public class CDM2MD
 
     try
     {
-      // Create file and start the table      
+      // Create file and start the table
       writer.println("");
       writer.println("@anchor "+StringUtils.removeSpaces(tableName)+"Table");
       if(c.isEnum())
@@ -364,6 +373,16 @@ public class CDM2MD
               writer.print("|"+"@ref SubstanceFractionTable");
             }
             else if(bag.propertyName.equals("AmbientAerosol"))
+            {
+              writer.print("|"+"List of SESubstanceConcentration");
+              writer.print("|"+"@ref SubstanceConcentrationTable");
+            }
+            else if(bag.propertyName.equals("FractionInspiredGas"))
+            {
+              writer.print("|"+"List of SESubstanceFraction");
+              writer.print("|"+"@ref SubstanceFractionTable");
+            }
+            else if(bag.propertyName.equals("ConcentrationInspiredAerosol"))
             {
               writer.print("|"+"List of SESubstanceConcentration");
               writer.print("|"+"@ref SubstanceConcentrationTable");

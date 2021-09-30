@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/equipment/SEEquipmentAction.h"
+#include "cdm/system/equipment/SEEquipmentAction.h"
 class SESubstanceManager;
 
 class CDM_DECL SEInhalerAction : public SEEquipmentAction

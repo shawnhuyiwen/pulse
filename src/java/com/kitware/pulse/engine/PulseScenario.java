@@ -2,9 +2,8 @@ package com.kitware.pulse.engine;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
-
+import com.kitware.pulse.engine.bind.Scenario.ScenarioData;
 import com.kitware.pulse.cdm.scenario.SEScenario;
-import com.kitware.pulse.cpm.bind.Pulse.ScenarioData;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 
@@ -18,10 +17,10 @@ public class PulseScenario extends SEScenario
     super();
   }
 
-  public void reset() 
+  public void clear() 
   {
     if(this.config != null)
-    this.config.reset();
+    this.config.clear();
   }
 
   public void readFile(String fileName) throws InvalidProtocolBufferException

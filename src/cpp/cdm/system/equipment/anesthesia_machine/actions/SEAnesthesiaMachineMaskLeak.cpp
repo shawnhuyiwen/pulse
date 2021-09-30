@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "stdafx.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBEquipmentActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBEquipmentActions.h"
 
 SEAnesthesiaMachineMaskLeak::SEAnesthesiaMachineMaskLeak(Logger* logger) : SEAnesthesiaMachineAction(logger)
 {
@@ -21,7 +21,7 @@ void SEAnesthesiaMachineMaskLeak::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEAnesthesiaMachineMaskLeak::Copy(const SEAnesthesiaMachineMaskLeak& src, bool preserveState)
+void SEAnesthesiaMachineMaskLeak::Copy(const SEAnesthesiaMachineMaskLeak& src, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }

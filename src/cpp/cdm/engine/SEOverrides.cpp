@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SEOverrides.h"
-#include "io/protobuf/PBActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEOverrides.h"
+#include "cdm/io/protobuf/PBActions.h"
 
 SEOverrides::SEOverrides(Logger* logger) : SEAction(logger)
 {
@@ -73,7 +73,7 @@ void SEOverrides::ToString(std::ostream& str) const
   }
 }
 
-const SEScalar* SEOverrides::GetScalar(const std::string& name)
+const SEScalar* SEOverrides::GetScalar(const std::string& /*name*/)
 {
   // Probably want to iterate over the properties and look for the name?
   return nullptr;

@@ -30,7 +30,7 @@ public:
           
   std::vector<std::string>&  GetRequirements();
 
-  SETestCase& CreateTestCase();
+  SETestCase& CreateTestCase(const std::string& name="");
   const std::vector<SETestCase*>&  GetTestCases() const;
 
   size_t GetNumberOfErrors() const;

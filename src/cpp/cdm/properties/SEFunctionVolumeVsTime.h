@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEFunction.h"
+#include "cdm/properties/SEFunction.h"
 
 class CDM_DECL SEFunctionVolumeVsTime : public SEFunction
 {

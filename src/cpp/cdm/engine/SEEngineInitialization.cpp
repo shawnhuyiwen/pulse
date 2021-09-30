@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SEEngineInitialization.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEPatientConfiguration.h"
-#include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBEngine.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEEngineInitialization.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/io/protobuf/PBEngine.h"
 
 SEEngineInitialization::SEEngineInitialization(Logger* logger) : Loggable(logger)
 {
@@ -21,15 +21,15 @@ SEEngineInitialization::~SEEngineInitialization()
   SAFE_DELETE(m_DataRequestManager);
 }
 
-bool SEEngineInitialization::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEEngineInitialization::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
-bool SEEngineInitialization::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEEngineInitialization::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, *this, m, subMgr);
 }
-bool SEEngineInitialization::SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEEngineInitialization::SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEngine::SerializeFromString(src, dst, m, subMgr);
 }
@@ -101,12 +101,12 @@ std::string SEEngineInitialization::GetState() const
 {
   return m_State;
 }
-void SEEngineInitialization::SetState(const std::string& State, SerializationFormat fmt)
+void SEEngineInitialization::SetState(const std::string& State, eSerializationFormat fmt)
 {
   m_State = State;
   m_StateFormat = fmt;
 }
-SerializationFormat SEEngineInitialization::GetStateFormat() const
+eSerializationFormat SEEngineInitialization::GetStateFormat() const
 {
   return m_StateFormat;
 }

@@ -1,16 +1,16 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/assessments/SECompleteBloodCount.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "io/protobuf/PBPatientAssessments.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/assessments/SECompleteBloodCount.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarMassPerAmount.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/io/protobuf/PBPatientAssessments.h"
 
 SECompleteBloodCount::SECompleteBloodCount(Logger* logger) : SEPatientAssessment(logger)
 {
@@ -49,7 +49,7 @@ void SECompleteBloodCount::Clear()
   INVALIDATE_PROPERTY(m_WhiteBloodCellCount);
 }
 
-bool SECompleteBloodCount::SerializeToString(std::string& output, SerializationFormat m) const
+bool SECompleteBloodCount::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }

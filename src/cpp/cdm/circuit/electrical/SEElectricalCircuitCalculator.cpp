@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "circuit/electrical/SEElectricalCircuitCalculator.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitCalculator.h"
 
 
 SEElectricalCircuitCalculator::SEElectricalCircuitCalculator(Logger* logger) : SECircuitCalculator<SEElectricalCircuit, SEElectricalCircuitNode,SEElectricalCircuitPath, SEElectricalBlackBox, ElectricCapacitanceUnit, ElectricCurrentUnit, ElectricInductanceUnit, ElectricPotentialUnit, ElectricChargeUnit, ElectricResistanceUnit>(

@@ -8,24 +8,17 @@
 #include "utils/FileUtils.h"
 #include "io/protobuf/PBCompartment.h"
 
-CommonDataModelTest::CommonDataModelTest() : Loggable(new Logger())
+CommonDataModelTest::CommonDataModelTest(Logger* logger) : SETestManager(logger)
 {
-  m_Circuits = new SECircuitManager(m_Logger);
-  myLogger = true;
   FillFunctionMap();
-}
-
-CommonDataModelTest::CommonDataModelTest(Logger* logger) : Loggable(logger)
-{
   m_Circuits = new SECircuitManager(m_Logger);
   myLogger = false;
-  FillFunctionMap();
+  m_PercentTolerance = 2;
 }
 
 CommonDataModelTest::~CommonDataModelTest()
 {
-  if (myLogger)
-    SAFE_DELETE(m_Logger);
+
 }
 
 bool CommonDataModelTest::RunTest(const std::string& testName, const std::string& sOutputDirectory)

@@ -2,28 +2,29 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
    // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEPatientConfiguration.h"
-#include "engine/SEConditionManager.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "patient/conditions/SEPulmonaryFibrosis.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalar0To1.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalar0To1.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -52,9 +53,6 @@ void HowToPulmonaryFibrosis()
     return;
   }
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
@@ -70,7 +68,7 @@ void HowToPulmonaryFibrosis()
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToPulmonaryFibrosis.csv");
 
   // Advance some time to get some data
-  tracker.AdvanceModelTime(120);
+  AdvanceAndTrackTime_s(120, *pe);
 
   pe->GetLogger()->Info("The patient is not very healthy");
   pe->GetLogger()->Info(std::stringstream() << "Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);

@@ -33,9 +33,9 @@ public:
   void Copy(const SEConditionManager& src, const SESubstanceManager& subMgr);
   bool Copy(const SECondition& condition, const SESubstanceManager&);
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr);
   bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
   // Not too many conditions, so just have one manager

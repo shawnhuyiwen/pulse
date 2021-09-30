@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 enum class eBlackBox_Property_Type {
   Provided = 0, Imposed

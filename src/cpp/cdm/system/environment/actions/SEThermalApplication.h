@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/environment/actions/SEEnvironmentAction.h"
+#include "cdm/system/environment/actions/SEEnvironmentAction.h"
 class SEActiveConditioning;
 class SEAppliedTemperature;
 
@@ -14,7 +14,7 @@ public:
   virtual ~SEThermalApplication();
 
   virtual void Clear();
-  virtual void Copy(const SEThermalApplication& src, bool preserveState=false);
+  virtual void Copy(const SEThermalApplication& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

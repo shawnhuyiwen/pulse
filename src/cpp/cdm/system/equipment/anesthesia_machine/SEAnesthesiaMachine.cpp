@@ -1,26 +1,26 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 // State Actions
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
 
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarTime.h"
-#include "io/protobuf/PBAnesthesiaMachine.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/io/protobuf/PBAnesthesiaMachine.h"
 
 SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
 {
-  m_Connection = eAnesthesiaMachine_Connection::Off;
+  m_Connection = eSwitch::Off;
   m_InletFlow = nullptr;
   m_InspiratoryExpiratoryRatio = nullptr;
   m_OxygenFraction = nullptr;
@@ -38,7 +38,7 @@ SEAnesthesiaMachine::SEAnesthesiaMachine(Logger* logger) : SEEquipment(logger)
 
 SEAnesthesiaMachine::~SEAnesthesiaMachine()
 {
-  m_Connection = eAnesthesiaMachine_Connection::Off;
+  m_Connection = eSwitch::Off;
   SAFE_DELETE(m_InletFlow);
   SAFE_DELETE(m_InspiratoryExpiratoryRatio);
   SAFE_DELETE(m_OxygenFraction);
@@ -58,7 +58,7 @@ void SEAnesthesiaMachine::Clear()
 {
   SEEquipment::Clear();
 
-  m_Connection = eAnesthesiaMachine_Connection::Off;
+  m_Connection = eSwitch::Off;
   INVALIDATE_PROPERTY(m_InletFlow);
   INVALIDATE_PROPERTY(m_InspiratoryExpiratoryRatio);
   INVALIDATE_PROPERTY(m_OxygenFraction);
@@ -80,6 +80,8 @@ void SEAnesthesiaMachine::Clear()
 
 void SEAnesthesiaMachine::ProcessConfiguration(SEAnesthesiaMachineConfiguration& config, SESubstanceManager& subMgr)
 {
+  if (config.GetMergeType() == eMergeType::Replace)
+    Clear();
   if (config.HasConfiguration())
     Merge(config.GetConfiguration(), subMgr);
   else if (config.HasConfigurationFile())
@@ -90,11 +92,10 @@ void SEAnesthesiaMachine::ProcessConfiguration(SEAnesthesiaMachineConfiguration&
       Error("Unable to load configuration file", "SEAnesthesiaMachine::ProcessConfiguration");
     Merge(config.GetConfiguration(), subMgr);
   }
-  StateChange();
 }
 void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from, SESubstanceManager& subMgr)
 {
-  if(from.m_Connection!=eAnesthesiaMachine_Connection::NullConnection)
+  if(from.m_Connection!=eSwitch::NullSwitch)
     SetConnection(from.m_Connection);
   COPY_PROPERTY(InletFlow);
   COPY_PROPERTY(InspiratoryExpiratoryRatio);
@@ -108,14 +109,14 @@ void SEAnesthesiaMachine::Merge(const SEAnesthesiaMachine& from, SESubstanceMana
   COPY_PROPERTY(RespiratoryRate);
   COPY_PROPERTY(ReliefValvePressure);
 
-  MERGE_CHILD(LeftChamber, subMgr);
-  MERGE_CHILD(RightChamber, subMgr);
+  MERGE_CHILD_SUBS(LeftChamber, subMgr);
+  MERGE_CHILD_SUBS(RightChamber, subMgr);
  
-  MERGE_CHILD(OxygenBottleOne, subMgr);
-  MERGE_CHILD(OxygenBottleTwo, subMgr);
+  MERGE_CHILD(OxygenBottleOne);
+  MERGE_CHILD(OxygenBottleTwo);
 }
 
-bool SEAnesthesiaMachine::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEAnesthesiaMachine::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBAnesthesiaMachine::SerializeToString(*this, output, m);
 }
@@ -123,7 +124,7 @@ bool SEAnesthesiaMachine::SerializeToFile(const std::string& filename) const
 {
   return PBAnesthesiaMachine::SerializeToFile(*this, filename);
 }
-bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEAnesthesiaMachine::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBAnesthesiaMachine::SerializeFromString(src, *this, m, subMgr);
 }
@@ -168,11 +169,11 @@ const SEScalar* SEAnesthesiaMachine::GetScalar(const std::string& name)
   return nullptr;
 }
 
-void SEAnesthesiaMachine::SetConnection(eAnesthesiaMachine_Connection c)
+void SEAnesthesiaMachine::SetConnection(eSwitch c)
 {
   m_Connection = c;
 }
-eAnesthesiaMachine_Connection SEAnesthesiaMachine::GetConnection() const
+eSwitch SEAnesthesiaMachine::GetConnection() const
 {
   return m_Connection;
 }

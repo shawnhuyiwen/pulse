@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "stdafx.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
-#include "properties/SEScalarArea.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBPatientConditions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
+#include "cdm/properties/SEScalarArea.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBPatientConditions.h"
 
 SEImpairedAlveolarExchange::SEImpairedAlveolarExchange(Logger* logger) : SEPatientCondition(logger)
 {
@@ -41,11 +41,11 @@ bool SEImpairedAlveolarExchange::IsActive() const
 {
   if (!IsValid())
     return false;
-  if (GetImpairedFraction() > 0)
+  if (HasImpairedFraction() && m_ImpairedFraction->IsPositive())
     return true;
-  if (m_ImpairedSurfaceArea!=nullptr && m_ImpairedSurfaceArea->IsPositive())
+  if (HasImpairedSurfaceArea() && m_ImpairedSurfaceArea->IsPositive())
     return true;
-  if (HasSeverity())
+  if (HasSeverity() && m_Severity->IsPositive())
     return true;
   return false;
 }

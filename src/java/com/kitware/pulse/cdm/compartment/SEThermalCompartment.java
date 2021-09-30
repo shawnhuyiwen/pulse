@@ -24,9 +24,9 @@ public class SEThermalCompartment extends SECompartment
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (heatTransferRateIn != null)
       heatTransferRateIn.invalidate();
     if (heatTransferRateOut != null)

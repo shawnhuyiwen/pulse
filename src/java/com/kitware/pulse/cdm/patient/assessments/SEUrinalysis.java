@@ -38,27 +38,6 @@ public class SEUrinalysis extends SEPatientAssessment
     this.appearance = null;
     this.urobilinogen = null;
     this.ketone = null;
-    this.bilirubin = null;
-    this.specificGravity = null;
-    this.blood = null;
-    this.pH = null;
-    this.protein = null;
-    this.urobilinogen = null;
-    this.nitrite = null;
-    this.leukocyteEsterase = null;
-    
-    if(this.microscopic != null)
-      this.microscopic.clear();
-  }
-  
-  @Override
-  public void reset()
-  {
-    super.reset();
-    this.color = null;
-    this.appearance = null;
-    this.urobilinogen = null;
-    this.ketone = null;
     if(this.bilirubin!=null)
       this.bilirubin.invalidate();
     if(this.specificGravity!=null)
@@ -73,7 +52,7 @@ public class SEUrinalysis extends SEPatientAssessment
     this.leukocyteEsterase = null;
     
     if(this.microscopic != null)
-      this.microscopic.reset();
+      this.microscopic.clear();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -91,32 +70,32 @@ public class SEUrinalysis extends SEPatientAssessment
   {
     SEPatientAssessment.load(src.getPatientAssessment(), dst);
     if(src.getColor()!=eUrineColor.UNRECOGNIZED)
-      dst.setColorResult(src.getColor());
+      dst.setColor(src.getColor());
     if(src.getAppearance()!=eClarityIndicator.UNRECOGNIZED)
-      dst.setAppearanceResult(src.getAppearance());
+      dst.setAppearance(src.getAppearance());
     if(src.getGlucose()!=ePresenceIndicator.UNRECOGNIZED)
-      dst.setGlucoseResult(src.getGlucose());
+      dst.setGlucose(src.getGlucose());
     if(src.getKetone()!=ePresenceIndicator.UNRECOGNIZED)
-      dst.setKetoneResult(src.getKetone());
+      dst.setKetone(src.getKetone());
     if(src.hasBilirubin())
-      SEScalar.load(src.getBilirubin(),dst.getBilirubinResult());
+      SEScalar.load(src.getBilirubin(),dst.getBilirubin());
     if(src.hasSpecificGravity())
-      SEScalar.load(src.getSpecificGravity(),dst.getSpecificGravityResult());
+      SEScalar.load(src.getSpecificGravity(),dst.getSpecificGravity());
     if(src.getBlood()!=ePresenceIndicator.UNRECOGNIZED)
-      dst.setBloodResult(src.getBlood());
+      dst.setBlood(src.getBlood());
     if(src.hasPH())
-      SEScalar.load(src.getPH(),dst.getPHResult());
+      SEScalar.load(src.getPH(),dst.getPH());
     if(src.getProtein()!=ePresenceIndicator.UNRECOGNIZED)
-      dst.setProteinResult(src.getProtein());
+      dst.setProtein(src.getProtein());
     if(src.hasUrobilinogen())
-      SEScalarMassPerVolume.load(src.getUrobilinogen(),dst.getUrobilinogenResult());
+      SEScalarMassPerVolume.load(src.getUrobilinogen(),dst.getUrobilinogen());
     if(src.getNitrite()!=ePresenceIndicator.UNRECOGNIZED)
-      dst.setNitriteResult(src.getNitrite());
+      dst.setNitrite(src.getNitrite());
     if(src.getLeukocyteEsterase()!=ePresenceIndicator.UNRECOGNIZED)
-      dst.setLeukocyteEsteraseResult(src.getLeukocyteEsterase());
+      dst.setLeukocyteEsterase(src.getLeukocyteEsterase());
     
     if(src.hasMicroscopic())
-      SEUrinalysisMicroscopic.load(src.getMicroscopic(),dst.getMicroscopicResult());
+      SEUrinalysisMicroscopic.load(src.getMicroscopic(),dst.getMicroscopic());
   }
   
   public static UrinalysisData unload(SEUrinalysis src)
@@ -129,117 +108,117 @@ public class SEUrinalysis extends SEPatientAssessment
   protected static void unload(SEUrinalysis src, UrinalysisData.Builder dst)
   {
     SEPatientAssessment.unload(src, dst.getPatientAssessmentBuilder());
-    if (src.hasColorResult())
+    if (src.hasColor())
       dst.setColor(src.color);
-    if (src.hasAppearanceResult())
+    if (src.hasAppearance())
       dst.setAppearance(src.appearance);
-    if (src.hasGlucoseResult())
+    if (src.hasGlucose())
       dst.setGlucose(src.glucose);
-    if (src.hasKetoneResult())
+    if (src.hasKetone())
       dst.setKetone(src.ketone);
-    if (src.hasBilirubinResult())
+    if (src.hasBilirubin())
       dst.setBilirubin(SEScalar.unload(src.bilirubin));
-    if (src.hasSpecificGravityResult())
+    if (src.hasSpecificGravity())
       dst.setSpecificGravity(SEScalar.unload(src.specificGravity));
-    if (src.hasBloodResult())
+    if (src.hasBlood())
       dst.setBlood(src.blood);
-    if (src.hasPHResult())
+    if (src.hasPH())
       dst.setPH(SEScalar.unload(src.pH));
-    if (src.hasProteinResult())
+    if (src.hasProtein())
       dst.setProtein(src.protein);
-    if (src.hasUrobilinogenResult())
+    if (src.hasUrobilinogen())
       dst.setUrobilinogen(SEScalarMassPerVolume.unload(src.urobilinogen));
-    if (src.hasNitriteResult())
+    if (src.hasNitrite())
       dst.setNitrite(src.nitrite);
-    if (src.hasLeukocyteEsteraseResult())
+    if (src.hasLeukocyteEsterase())
       dst.setLeukocyteEsterase(src.leukocyteEsterase);
     
-    if(src.hasMicroscopicResult())
+    if(src.hasMicroscopic())
       dst.setMicroscopic(SEUrinalysisMicroscopic.unload(src.microscopic));
   }
   
-  public eUrineColor getColorResult() { return this.color;}
-  public void    setColorResult(eUrineColor color){this.color=color;}
-  public boolean hasColorResult(){return this.color==null?false:color!=eUrineColor.NullColor;}
+  public eUrineColor getColor() { return this.color;}
+  public void    setColor(eUrineColor color){this.color=color;}
+  public boolean hasColor(){return this.color==null?false:color!=eUrineColor.NullColor;}
   
-  public eClarityIndicator  getAppearanceResult() { return this.appearance;}
-  public void    setAppearanceResult(eClarityIndicator a){this.appearance=a;}
-  public boolean hasAppearanceResult(){return this.appearance==null?false:appearance!=eClarityIndicator.NullClarity;}
+  public eClarityIndicator  getAppearance() { return this.appearance;}
+  public void    setAppearance(eClarityIndicator a){this.appearance=a;}
+  public boolean hasAppearance(){return this.appearance==null?false:appearance!=eClarityIndicator.NullClarity;}
   
-  public ePresenceIndicator  getGlucoseResult() { return this.glucose;}
-  public void    setGlucoseResult(ePresenceIndicator g){this.glucose=g;}
-  public boolean hasGlucoseResult(){return this.glucose==null?false:glucose!=ePresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getGlucose() { return this.glucose;}
+  public void    setGlucose(ePresenceIndicator g){this.glucose=g;}
+  public boolean hasGlucose(){return this.glucose==null?false:glucose!=ePresenceIndicator.NullPresence;}
   
-  public ePresenceIndicator  getKetoneResult() { return this.ketone;}
-  public void    setKetoneResult(ePresenceIndicator k){this.ketone=k;}
-  public boolean hasKetoneResult(){return this.ketone==null?false:ketone!=ePresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getKetone() { return this.ketone;}
+  public void    setKetone(ePresenceIndicator k){this.ketone=k;}
+  public boolean hasKetone(){return this.ketone==null?false:ketone!=ePresenceIndicator.NullPresence;}
   
-  public boolean hasBilirubinResult()
+  public boolean hasBilirubin()
   {
     return bilirubin == null ? false : bilirubin.isValid();
   }
-  public SEScalar getBilirubinResult()
+  public SEScalar getBilirubin()
   {
     if (bilirubin == null)
       bilirubin = new SEScalar();
     return bilirubin;
   }
   
-  public boolean hasSpecificGravityResult()
+  public boolean hasSpecificGravity()
   {
     return specificGravity == null ? false : specificGravity.isValid();
   }
-  public SEScalar getSpecificGravityResult()
+  public SEScalar getSpecificGravity()
   {
     if (specificGravity == null)
       specificGravity = new SEScalar();
     return specificGravity;
   }
   
-  public ePresenceIndicator  getBloodResult() { return this.blood;}
-  public void    setBloodResult(ePresenceIndicator b){this.blood=b;}
-  public boolean hasBloodResult(){return this.blood==null?false:blood!=ePresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getBlood() { return this.blood;}
+  public void    setBlood(ePresenceIndicator b){this.blood=b;}
+  public boolean hasBlood(){return this.blood==null?false:blood!=ePresenceIndicator.NullPresence;}
   
-  public boolean hasPHResult()
+  public boolean hasPH()
   {
     return pH == null ? false : pH.isValid();
   }
-  public SEScalar getPHResult()
+  public SEScalar getPH()
   {
     if (pH == null)
       pH = new SEScalar();
     return pH;
   }
   
-  public ePresenceIndicator  getProteinResult() { return this.protein;}
-  public void    setProteinResult(ePresenceIndicator p){this.protein=p;}
-  public boolean hasProteinResult(){return this.protein==null?false:protein!=ePresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getProtein() { return this.protein;}
+  public void    setProtein(ePresenceIndicator p){this.protein=p;}
+  public boolean hasProtein(){return this.protein==null?false:protein!=ePresenceIndicator.NullPresence;}
  
   
-  public boolean hasUrobilinogenResult()
+  public boolean hasUrobilinogen()
   {
     return urobilinogen == null ? false : urobilinogen.isValid();
   }
-  public SEScalarMassPerVolume getUrobilinogenResult()
+  public SEScalarMassPerVolume getUrobilinogen()
   {
     if (urobilinogen == null)
       urobilinogen = new SEScalarMassPerVolume();
     return urobilinogen;
   }
   
-  public ePresenceIndicator  getNitriteResult() { return this.nitrite;}
-  public void    setNitriteResult(ePresenceIndicator n){this.nitrite=n;}
-  public boolean hasNitriteResult(){return this.nitrite==null?false:nitrite!=ePresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getNitrite() { return this.nitrite;}
+  public void    setNitrite(ePresenceIndicator n){this.nitrite=n;}
+  public boolean hasNitrite(){return this.nitrite==null?false:nitrite!=ePresenceIndicator.NullPresence;}
   
-  public ePresenceIndicator  getLeukocyteEsteraseResult() { return this.leukocyteEsterase;}
-  public void    setLeukocyteEsteraseResult(ePresenceIndicator l){this.leukocyteEsterase=l;}
-  public boolean hasLeukocyteEsteraseResult(){return this.leukocyteEsterase==null?false:leukocyteEsterase!=ePresenceIndicator.NullPresence;}
+  public ePresenceIndicator  getLeukocyteEsterase() { return this.leukocyteEsterase;}
+  public void    setLeukocyteEsterase(ePresenceIndicator l){this.leukocyteEsterase=l;}
+  public boolean hasLeukocyteEsterase(){return this.leukocyteEsterase==null?false:leukocyteEsterase!=ePresenceIndicator.NullPresence;}
 
-  public boolean hasMicroscopicResult()
+  public boolean hasMicroscopic()
   {
     return microscopic == null ? false : true;
   }
-  public SEUrinalysisMicroscopic getMicroscopicResult()
+  public SEUrinalysisMicroscopic getMicroscopic()
   {
     if (microscopic == null)
       microscopic = new SEUrinalysisMicroscopic();

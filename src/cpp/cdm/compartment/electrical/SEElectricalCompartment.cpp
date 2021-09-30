@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "compartment/electrical/SEElectricalCompartment.h"
-#include "compartment/electrical/SEElectricalCompartmentLink.h"
-#include "circuit/electrical/SEElectricalCircuitNode.h"
-#include "circuit/SECircuitManager.h"
-#include "properties/SEScalarElectricCurrent.h"
-#include "properties/SEScalarElectricCharge.h"
-#include "properties/SEScalarElectricPotential.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/compartment/electrical/SEElectricalCompartment.h"
+#include "cdm/compartment/electrical/SEElectricalCompartmentLink.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitNode.h"
+#include "cdm/circuit/SECircuitManager.h"
+#include "cdm/properties/SEScalarElectricCurrent.h"
+#include "cdm/properties/SEScalarElectricCharge.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
 
 SEElectricalCompartment::SEElectricalCompartment(const std::string& name, Logger* logger) : SECompartment(name, logger), m_Nodes(logger)
 {

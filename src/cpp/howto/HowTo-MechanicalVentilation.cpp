@@ -3,51 +3,51 @@
 #define _USE_MATH_DEFINES
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEConditionManager.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceFraction.h"
-#include "substance/SESubstanceManager.h"
-#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "patient/conditions/SELobarPneumonia.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "system/environment/SEEnvironmentalConditions.h"
-#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
-#include "patient/actions/SEMechanicalVentilation.h"
-#include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEAsthmaAttack.h"
-#include "patient/actions/SEAcuteStress.h"
-#include "patient/actions/SEDyspnea.h"
-#include "patient/actions/SETensionPneumothorax.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "patient/actions/SESubstanceBolus.h"
-#include "patient/actions/SEConsciousRespiration.h"
-#include "patient/actions/SEForcedInhale.h"
-#include "patient/actions/SEForcedExhale.h"
-#include "patient/actions/SEForcedPause.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
-#include "properties/SEScalarPressureTimePerVolumeArea.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerPressure.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarVolumePerTimeArea.h"
-#include "properties/SEScalarLengthPerTime.h"
-#include "properties/SEScalar0To1.h"
-#include "engine/SEEventManager.h"
-#include "engine/SEPatientConfiguration.h"
-#include <math.h>
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceFraction.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/patient/conditions/SEChronicObstructivePulmonaryDisease.h"
+#include "cdm/patient/conditions/SELobarPneumonia.h"
+#include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/system/environment/SEEnvironmentalConditions.h"
+#include "cdm/system/environment/actions/SEChangeEnvironmentalConditions.h"
+#include "cdm/patient/actions/SEMechanicalVentilation.h"
+#include "cdm/patient/actions/SEAirwayObstruction.h"
+#include "cdm/patient/actions/SEAsthmaAttack.h"
+#include "cdm/patient/actions/SEAcuteStress.h"
+#include "cdm/patient/actions/SEDyspnea.h"
+#include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SEBrainInjury.h"
+#include "cdm/patient/actions/SESubstanceBolus.h"
+#include "cdm/patient/actions/SEConsciousRespiration.h"
+#include "cdm/patient/actions/SEForcedInhale.h"
+#include "cdm/patient/actions/SEForcedExhale.h"
+#include "cdm/patient/actions/SEForcedPause.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarPressureTimePerVolumeArea.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerPressure.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolumePerTimeArea.h"
+#include "cdm/properties/SEScalarLengthPerTime.h"
+#include "cdm/properties/SEScalar0To1.h"
 
 // Make a custom event handler that you can connect to your code (See EngineUse for more info)
 class MechVentHandler : public Loggable, public SEEventHandler
@@ -137,22 +137,19 @@ void HowToMechanicalVentilation()
   MechVentHandler myEventHandler(pe->GetLogger());
   pe->GetEventManager().ForwardEvents(&myEventHandler);
 
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   // Physiology System Names are defined on the System Objects 
   //System data
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);  
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("RespirationMusclePressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("ExpiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryCapillariesWedgePressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("PulmonaryArterialPressure", PressureUnit::mmHg);
@@ -168,7 +165,7 @@ void HowToMechanicalVentilation()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("VenousCarbonDioxidePressure", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit::L_Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CarricoIndex", PressureUnit::mmHg);
+  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HorowitzIndex", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("AlveolarArterialGradient", PressureUnit::mmHg);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SedationLevel");
   //Patient data
@@ -192,7 +189,7 @@ void HowToMechanicalVentilation()
 
   //Go 1 min before doing anything
   //The patient is just doing spontaneous breathing
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
 
   //Let's do a bunch of different actions at the same time!
 
@@ -223,14 +220,14 @@ void HowToMechanicalVentilation()
   // You can add other actions while this action is being processed.
   // Just be aware that this action is still being processed.
   // It is recommended that you advance time for at least the sum of the command periods.
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
 
   //Airway obstruction
   SEAirwayObstruction obstruction;
   obstruction.GetSeverity().SetValue(0.2);
   pe->ProcessAction(obstruction);
   
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
 
   //Pneumothorax
   // Create a Tension Pnuemothorax 
@@ -243,7 +240,7 @@ void HowToMechanicalVentilation()
   pneumo.SetSide(eSide::Right);
   pe->ProcessAction(pneumo);
 
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
 
   //Asthma attack
   SEAsthmaAttack asthmaAttack;
@@ -271,7 +268,7 @@ void HowToMechanicalVentilation()
   envConditions.GetMeanRadiantTemperature().SetValue(15.0, TemperatureUnit::C);
   pe->ProcessAction(env);
 
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
   
   //Dyspnea
   //Maybe the muscles are getting weak?
@@ -290,7 +287,7 @@ void HowToMechanicalVentilation()
   bolus.SetAdminRoute(eSubstanceAdministration_Route::Intravenous);
   pe->ProcessAction(bolus);
 
-  tracker.AdvanceModelTime(60.0);
+  AdvanceAndTrackTime_s(60.0, *pe);
   
   //Mechanical Ventilation
   // Create an SEMechanicalVentilation object
@@ -325,7 +322,7 @@ void HowToMechanicalVentilation()
     N2frac.GetFractionAmount().SetValue(0.7896);    
     pe->ProcessAction(mechVent);
 
-    tracker.AdvanceModelTime(1);
+    AdvanceAndTrackTime_s(1, *pe);
 
   //Output some random stuff to the log
     pe->GetLogger()->Info(std::stringstream() << "Tidal Volume : " << pe->GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL) << VolumeUnit::mL);

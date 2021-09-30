@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "circuit/SECircuit.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/circuit/SECircuit.h"
 
 #define ZERO_APPROX 1e-10
 #define OPEN_RESISTANCE 1e100
@@ -431,9 +431,9 @@ void SECircuit<CIRCUIT_TYPES>::SetNextAndCurrentFromBaselines()
   }
 }
 
-#include "circuit/electrical/SEElectricalCircuit.h"
+#include "cdm/circuit/electrical/SEElectricalCircuit.h"
 template class SECircuit< SEElectricalCircuitNode, SEElectricalCircuitPath>;
-#include "circuit/fluid/SEFluidCircuit.h"
+#include "cdm/circuit/fluid/SEFluidCircuit.h"
 template class SECircuit< SEFluidCircuitNode, SEFluidCircuitPath>;
-#include "circuit/thermal/SEThermalCircuit.h"
+#include "cdm/circuit/thermal/SEThermalCircuit.h"
 template class SECircuit< SEThermalCircuitNode, SEThermalCircuitPath>;

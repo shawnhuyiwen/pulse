@@ -16,7 +16,7 @@ public class SESubstanceTissuePharmacokinetics
     
   }
   
-  public void reset()
+  public void clear()
   {
     this.name=null;
     if(this.partitionCoefficient!=null)

@@ -2,6 +2,7 @@
 # See accompanying NOTICE file for details.
 from enum import Enum
 from pulse.cdm.patient import SENutrition
+from pulse.cdm.physiology import SERespiratoryMechanics
 from pulse.cdm.engine import SEAction, eSwitch, eSide, eGate
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarForce, \
                               SEScalarMassPerVolume, SEScalarPressure, \
@@ -420,7 +421,6 @@ class SEConsciousRespiration(SEPatientAction):
         return ("Conscious Respiration:\n"
                 "  Commands: [{}]").format(self._commands)
 
-
 class SEForcedPause(AnyConsciousRespirationCommand):
     __slots__ = ["_period"]
 
@@ -510,7 +510,6 @@ class SEForcedInhale(AnyConsciousRespirationCommand):
                 "  Hold Period: {}\n"
                 "  Release Period: {}").format(self._inspiratory_capacity_fraction, self._inhale_period,
                                               self._hold_period, self._release_period)
-
 
 class SEForcedExhale(AnyConsciousRespirationCommand):
     __slots__ = ["_exhale_period", "_release_period", "_hold_period", "_expiratory_capacity_fraction"]
@@ -667,6 +666,20 @@ class eHemorrhageType(Enum):
 class SEHemorrhage(SEPatientAction):
     __slots__ = ["_type","_compartment","_flow_rate","_severity"]
 
+    class ExternalCompartment:
+        __slots__ = ["_value"]
+        def __init__(self, value: str):
+            self._value = value
+        def value(self):
+            return self._value
+
+    class InternalCompartment:
+        __slots__ = ["_value"]
+        def __init__(self, value: str):
+            self._value = value
+        def value(self):
+            return self._value
+
     def __init__(self):
         super().__init__()
         self._type = eHemorrhageType.External
@@ -700,6 +713,13 @@ class SEHemorrhage(SEPatientAction):
     def invalidate_compartment(self):
         self._compartment = None
 
+    def set_external(self, c:ExternalCompartment):
+        self._type = eHemorrhageType.External
+        self._compartment = c.value()
+    def set_internal(self, c:InternalCompartment):
+        self._type = eHemorrhageType.Internal
+        self._compartment = c.value()
+
     def has_flow_rate(self):
         return False if self._flow_rate is None else self._flow_rate.is_valid()
     def get_flow_rate(self):
@@ -720,6 +740,33 @@ class SEHemorrhage(SEPatientAction):
                 "  Compartment: {}\n"
                 "  Flow Rate: {}\n"
                 "  Severity: {}").format(self._type,self._compartment,self._flow_rate, self._severity)
+
+SEHemorrhage.ExternalCompartment.RightLeg = SEHemorrhage.ExternalCompartment("RightLeg")
+SEHemorrhage.ExternalCompartment.LeftLeg = SEHemorrhage.ExternalCompartment("LeftLeg")
+SEHemorrhage.ExternalCompartment.RightArm = SEHemorrhage.ExternalCompartment("RightArm")
+SEHemorrhage.ExternalCompartment.LeftArm = SEHemorrhage.ExternalCompartment("LeftArm")
+SEHemorrhage.ExternalCompartment.Skin = SEHemorrhage.ExternalCompartment("Skin")
+SEHemorrhage.ExternalCompartment.Muscle = SEHemorrhage.ExternalCompartment("Muscle")
+SEHemorrhage.ExternalCompartment.Brain = SEHemorrhage.ExternalCompartment("Brain")
+SEHemorrhage.ExternalCompartment.LeftKidney = SEHemorrhage.ExternalCompartment("LeftKidney")
+SEHemorrhage.ExternalCompartment.RightKidney = SEHemorrhage.ExternalCompartment("RightKidney")
+SEHemorrhage.ExternalCompartment.Liver = SEHemorrhage.ExternalCompartment("Liver")
+SEHemorrhage.ExternalCompartment.Spleen = SEHemorrhage.ExternalCompartment("Spleen")
+SEHemorrhage.ExternalCompartment.Splanchnic = SEHemorrhage.ExternalCompartment("Splanchnic")
+SEHemorrhage.ExternalCompartment.SmallIntestine = SEHemorrhage.ExternalCompartment("SmallIntestine")
+SEHemorrhage.ExternalCompartment.LargeIntestine = SEHemorrhage.ExternalCompartment("LargeIntestine")
+SEHemorrhage.ExternalCompartment.Aorta = SEHemorrhage.ExternalCompartment("Aorta")
+SEHemorrhage.ExternalCompartment.VenaCava = SEHemorrhage.ExternalCompartment("VenaCava")
+
+SEHemorrhage.InternalCompartment.LeftKidney = SEHemorrhage.InternalCompartment("LeftKidney")
+SEHemorrhage.InternalCompartment.RightKidney = SEHemorrhage.InternalCompartment("RightKidney")
+SEHemorrhage.InternalCompartment.Liver = SEHemorrhage.InternalCompartment("Liver")
+SEHemorrhage.InternalCompartment.Spleen = SEHemorrhage.InternalCompartment("Spleen")
+SEHemorrhage.InternalCompartment.Splanchnic = SEHemorrhage.InternalCompartment("Splanchnic")
+SEHemorrhage.InternalCompartment.SmallIntestine = SEHemorrhage.InternalCompartment("SmallIntestine")
+SEHemorrhage.InternalCompartment.LargeIntestine = SEHemorrhage.InternalCompartment("LargeIntestine")
+SEHemorrhage.InternalCompartment.Aorta = SEHemorrhage.InternalCompartment("Aorta")
+SEHemorrhage.InternalCompartment.VenaCava = SEHemorrhage.InternalCompartment("VenaCava")
 
 class SEImpairedAlveolarExchangeExacerbation(SEPatientAction):
     __slots__ = ["_impaired_surface_area", "_impaired_fraction", "_severity"]
@@ -771,6 +818,8 @@ class eIntubationType(Enum):
     LeftMainstem = 2
     RightMainstem = 3
     Tracheal = 4
+    Oropharyngeal = 5
+    Nasopharyngeal = 6
 class SEIntubation(SEPatientAction):
     __slots__ = ["_type"]
 
@@ -938,7 +987,6 @@ class SEPericardialEffusion(SEPatientAction):
         return ("Pericardial Effusion\n"
                 "  Rate: {}").format(self._effusion_rate)
 
-
 class SEPulmonaryShuntExacerbation(SEPatientAction):
     __slots__ = ["severity"]
 
@@ -990,6 +1038,49 @@ class SERespiratoryFatigue(SEPatientAction):
     def __repr__(self):
         return ("Respiratory Fatigue\n"
                 "  Severity: {}").format(self._severity)
+
+class SERespiratoryMechanicsConfiguration(SEPatientAction):
+    __slots__ = ["_settings_file",
+                 "_settings"]
+
+    def __init__(self):
+        super().__init__()
+        self._settings_file = None
+        self._settings = None
+
+    def clear(self):
+        self._settings_file = None
+        self._settings = None
+
+    def copy(self, src):
+        if not isinstance(SERespiratoryMechanicsConfiguration, src):
+            raise Exception("Provided argument must be a SEMechanicalVentilatorConfiguration")
+        self.clear()
+        self._settings_file = src._settings_file
+        self._settings.copy(src._settings)
+
+    def is_valid(self):
+        return self.has_settings() or self.has_settings_file()
+
+    def is_active(self):
+        return True
+
+    def has_settings_file(self):
+        return self._settings_file is not None
+    def get_settings_file(self):
+        return self._settings_file
+    def set_settings_file(self, filename: str):
+        self._settings_file = filename
+
+    def has_settings(self):
+        return self._settings is not None
+    def get_settings(self):
+        if self._settings is None:
+            self._settings = SERespiratoryMechanics()
+        return self._settings
+    def __repr__(self):
+        return ("Respiratory Mechanics Configuration\n"
+                "  Setting File: {}").format(self._settings_file)
 
 class eSubstance_Administration(Enum):
     Intravenous = 0,
@@ -1119,12 +1210,13 @@ class SESubstanceCompoundInfusion(SEPatientAction):
                 "  Rate: {}").format(self._bag_volume, self._compound, self._rate)
 
 class SESubstanceInfusion(SEPatientAction):
-    __slots__ = ["_concentration", "_rate", "_substance"]
+    __slots__ = ["_concentration", "_rate", "_volume", "_substance"]
 
     def __init__(self):
         super().__init__()
         self._concentration = None
         self._rate = None
+        self._volume = None
         self._substance = None
 
     def clear(self):
@@ -1133,17 +1225,13 @@ class SESubstanceInfusion(SEPatientAction):
             self._concentration = None
         if self._rate is not None:
             self._rate = None
+        if self._volume is not None:
+            self._volume = None
         if self._substance is not None:
             self._substance = None
 
     def is_valid(self):
         return self.has_rate() and self.has_substance() and self.has_concentration()
-    def has_rate(self):
-        return self._rate is not None
-    def get_rate(self):
-        if self._rate is None:
-            self._rate = SEScalarVolumePerTime()
-        return self._rate
 
     def has_substance(self):
         return self._substance is not None
@@ -1158,18 +1246,33 @@ class SESubstanceInfusion(SEPatientAction):
         if self._concentration is None:
             self._concentration = SEScalarMassPerVolume()
         return self._concentration
+
+    def has_rate(self):
+        return self._rate is not None
+    def get_rate(self):
+        if self._rate is None:
+            self._rate = SEScalarVolumePerTime()
+        return self._rate
+
+    def has_volume(self):
+        return self._volume is not None
+    def get_volume(self):
+        if self._volume is None:
+            self._volume = SEScalarVolume()
+        return self._volume
+
     def __repr__(self):
         return ("Substance Infusion\n"
                 "  Concentration: {}\n"
                 "  Substance: {}\n"
-                "  Rate: {}").format(self._concentration, self._substance, self._rate)
+                "  Rate: {}\n"
+                "  Volume: {}").format(self._concentration, self._substance, self._rate, self._volume)
 
 class eDevice(Enum):
     NullDevice = 0
     NasalCannula = 1
     SimpleMask = 2
     NonRebreatherMask = 3
-
 class SESupplementalOxygen(SEPatientAction):
     __slots__ = ["_device", "_flow", "_volume"]
 

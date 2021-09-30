@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/physiology/SENervousSystem.h"
-#include "system/physiology/SEPupillaryResponse.h"
-#include "properties/SEScalarPressurePerVolume.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarLength.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/physiology/SENervousSystem.h"
+#include "cdm/system/physiology/SEPupillaryResponse.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
 
 SENervousSystem::SENervousSystem(Logger* logger) : SESystem(logger)
 {

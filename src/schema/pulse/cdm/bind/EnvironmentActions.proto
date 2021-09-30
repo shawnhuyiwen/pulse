@@ -30,6 +30,7 @@ message ChangeEnvironmentalConditionsData
     EnvironmentalConditionsData          EnvironmentalConditions       = 2;/**<< @brief An environment conditions object with properties to set in the system environmental conditions. */
     string                               EnvironmentalConditionsFile   = 3;/**<< @brief File containing an environment conditions objet with properties to set in the environmental conditions. */
   }
+  eMergeType                             MergeType                     = 4;/**<< @brief How to apply provided configuration to internal data model. */
 }
 
 /** @brief Create an external heat source. */

@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/thermal/SEThermalCompartmentLink.h"
-#include "circuit/thermal/SEThermalCircuitNode.h"
-#include "circuit/SECircuitManager.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarEnergy.h"
-#include "properties/SEScalarTemperature.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/compartment/thermal/SEThermalCompartment.h"
+#include "cdm/compartment/thermal/SEThermalCompartmentLink.h"
+#include "cdm/circuit/thermal/SEThermalCircuitNode.h"
+#include "cdm/circuit/SECircuitManager.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarEnergy.h"
+#include "cdm/properties/SEScalarTemperature.h"
 
 SEThermalCompartment::SEThermalCompartment(const std::string& name, Logger* logger) : SECompartment(name, logger), m_Nodes(logger)
 {

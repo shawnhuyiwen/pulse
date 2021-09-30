@@ -1,17 +1,17 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Circuit.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBCircuit.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "circuit/electrical/SEElectricalCircuit.h"
-#include "circuit/fluid/SEFluidCircuit.h"
-#include "circuit/thermal/SEThermalCircuit.h"
-#include "circuit/SECircuitManager.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBCircuit.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/circuit/electrical/SEElectricalCircuit.h"
+#include "cdm/circuit/fluid/SEFluidCircuit.h"
+#include "cdm/circuit/thermal/SEThermalCircuit.h"
+#include "cdm/circuit/SECircuitManager.h"
 
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -122,7 +122,7 @@ bool PBCircuit::LoadCircuitManagerFile(SECircuitManager& mgr, const std::string&
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
   file_stream.close();
-  if (!PBUtils::SerializeFromString(fmsg, src, JSON, mgr.GetLogger()))
+  if (!PBUtils::SerializeFromString(fmsg, src, eSerializationFormat::JSON, mgr.GetLogger()))
     return false;
   PBCircuit::Load(src, mgr);
   return true;
@@ -137,7 +137,7 @@ void PBCircuit::SaveCircuitManagerFile(const SECircuitManager& mgr, const std::s
 {
   std::string content;
   CDM_BIND::CircuitManagerData* src = PBCircuit::Unload(mgr);
-  PBUtils::SerializeToString(*src, content, JSON, mgr.GetLogger());
+  PBUtils::SerializeToString(*src, content, eSerializationFormat::JSON, mgr.GetLogger());
   std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
   ascii_ostream << content;
   ascii_ostream.flush();

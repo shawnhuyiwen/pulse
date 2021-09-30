@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/properties/SEScalarTime.h"
 
 #pragma push_macro("Time")
 #undef min

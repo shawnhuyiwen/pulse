@@ -1,66 +1,66 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEActionManager.h"
-#include "engine/SEDataRequest.h"
-#include "engine/SEDataRequestManager.h"
-#include "PhysiologyEngine.h"
-#include "patient/SEPatient.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEActionManager.h"
+#include "cdm/engine/SEDataRequest.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/PhysiologyEngine.h"
+#include "cdm/patient/SEPatient.h"
 // Compartments
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SEGasCompartmentLink.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/fluid/SELiquidCompartmentLink.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/tissue/SETissueCompartment.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SEGasCompartmentLink.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentLink.h"
+#include "cdm/compartment/thermal/SEThermalCompartment.h"
+#include "cdm/compartment/tissue/SETissueCompartment.h"
 // Circuit
-#include "circuit/fluid/SEFluidCircuit.h"
-#include "circuit/fluid/SEFluidCircuitNode.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
-#include "circuit/thermal/SEThermalCircuit.h"
-#include "circuit/thermal/SEThermalCircuitNode.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
-#include "circuit/electrical/SEElectricalCircuit.h"
-#include "circuit/electrical/SEElectricalCircuitNode.h"
-#include "circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/circuit/fluid/SEFluidCircuit.h"
+#include "cdm/circuit/fluid/SEFluidCircuitNode.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/circuit/thermal/SEThermalCircuit.h"
+#include "cdm/circuit/thermal/SEThermalCircuitNode.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/circuit/electrical/SEElectricalCircuit.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitNode.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
 // Substances
-#include "substance/SESubstance.h"
-#include "substance/SESubstancePharmacokinetics.h"
-#include "substance/SESubstanceTissuePharmacokinetics.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstancePharmacokinetics.h"
+#include "cdm/substance/SESubstanceTissuePharmacokinetics.h"
+#include "cdm/substance/SESubstanceManager.h"
 // Patient
-#include "patient/SEPatient.h"
+#include "cdm/patient/SEPatient.h"
 // Systems
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEDrugSystem.h"
-#include "system/physiology/SEEndocrineSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SEGastrointestinalSystem.h"
-#include "system/physiology/SENervousSystem.h"
-#include "system/physiology/SERenalSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "system/physiology/SETissueSystem.h"
-#include "system/environment/SEEnvironment.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
-#include "system/equipment/inhaler/SEInhaler.h"
-#include "system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SEDrugSystem.h"
+#include "cdm/system/physiology/SEEndocrineSystem.h"
+#include "cdm/system/physiology/SEEnergySystem.h"
+#include "cdm/system/physiology/SEGastrointestinalSystem.h"
+#include "cdm/system/physiology/SENervousSystem.h"
+#include "cdm/system/physiology/SERenalSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/system/physiology/SETissueSystem.h"
+#include "cdm/system/environment/SEEnvironment.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
+#include "cdm/system/equipment/inhaler/SEInhaler.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
 // Scalars
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "utils/DataTrack.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/utils/DataTrack.h"
 
 std::string Space2Underscore(const std::string& str)
 {
@@ -192,6 +192,26 @@ void SEEngineTracker::SetupRequests()
   }
 }
 
+void SEEngineTracker::LogRequestedValues(bool pullData)
+{
+  SEDataRequestScalar* ds;
+  if (pullData)
+    PullData();
+  for (SEDataRequest* dr : m_DataRequestMgr->GetDataRequests())
+  {
+    ds = m_Request2Scalar[dr];
+    if(!ds->IsValid())
+      Info(ds->Heading + " NaN");
+    else
+    {
+      if(!dr->HasUnit())
+        Info(ds->Heading + " " + pulse::cdm::to_string(ds->GetValue()));
+      else
+        Info(ds->Heading + " " + pulse::cdm::to_string(ds->GetValue(*dr->GetUnit())));
+    }
+  }
+}
+
 void SEEngineTracker::TrackData(double time_s)
 {
   if (!m_DataRequestMgr->HasDataRequests())
@@ -250,10 +270,15 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 
   bool success = ConnectRequest(dr, *ds);
 
+  if(dr.GetCategory() == eDataRequest_Category::Patient)
+    m_ss << "Patient-";
+  else if(dr.GetCategory() == eDataRequest_Category::MechanicalVentilator)
+    m_ss << "MechanicalVentilator-";
+  // TODO We probably should prefix all equipment amb
+
   switch (dr.GetCategory())
   {
     case eDataRequest_Category::Patient:
-      m_ss << "Patient";
     case eDataRequest_Category::Physiology:
     case eDataRequest_Category::Environment:
     case eDataRequest_Category::AnesthesiaMachine:
@@ -597,7 +622,7 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
 
   if (s != nullptr)
   {
-    ds.SetScalar(s, dr);
+    ds.SetScalarRequest(*s, dr);
     return true;
   }
   m_ss << "Unhandled data request : " << propertyName << std::endl;
@@ -605,14 +630,9 @@ bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)
   return false;
 }
 
-void SEDataRequestScalar::SetScalar(const SEScalar* s, SEDataRequest& dr)
+void SEDataRequestScalar::SetScalarRequest(const SEScalar& s, SEDataRequest& dr)
 {
-  if (s==nullptr)
-  {
-    Error("Unknown Data Request : " + dr.GetPropertyName());
-    return;
-  }
-  SEGenericScalar::SetScalar(*s);
+  SEGenericScalar::SetScalar(s);
   if (m_UnitScalar != nullptr)
   {
     if (!dr.HasRequestedUnit())// Use set unit if none provide

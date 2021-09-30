@@ -21,4 +21,5 @@ message InhalerConfigurationData
     InhalerData              Configuration       = 2;/**<< @brief An inhaler object with properties to set in the system inhaler. */
     string                   ConfigurationFile   = 3;/**<< @brief File containing an inhaler objet with properties to set in the system inhaler. */
   }
+  eMergeType                 MergeType           = 4;/**<< @brief How to apply provided configuration to internal data model. */
 }

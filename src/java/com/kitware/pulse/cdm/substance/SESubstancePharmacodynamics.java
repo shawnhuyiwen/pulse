@@ -29,7 +29,7 @@ public class SESubstancePharmacodynamics
     
   }
   
-  public void reset()
+  public void clear()
   {
     if(this.bronchodilation!=null)
       this.bronchodilation.invalidate();
@@ -44,7 +44,7 @@ public class SESubstancePharmacodynamics
     if(this.neuromuscularBlock!=null)
       this.neuromuscularBlock.invalidate();
     if(this.pupillaryResponse!=null)
-      this.pupillaryResponse.reset();
+      this.pupillaryResponse.clear();
     if(this.respirationRateModifier!=null)
       this.respirationRateModifier.invalidate();
     if(this.sedation!=null)
@@ -77,7 +77,7 @@ public class SESubstancePharmacodynamics
   
   public static void load(SubstancePharmacodynamicsData src, SESubstancePharmacodynamics dst)
   {
-    dst.reset();
+    dst.clear();
     
     if(src.hasBronchodilation())
       SEScalarNegative1To1.load(src.getBronchodilation(),dst.getBronchodilation());

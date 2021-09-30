@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "io/protobuf/PBCircuit.h"
-#include "io/protobuf/PBSubstance.h"
+#include "cdm/io/protobuf/PBCircuit.h"
+#include "cdm/io/protobuf/PBSubstance.h"
 // Forward Declaire SE and Protobuf Compartment Types
 CDM_BIND_DECL2(Compartment)
 CDM_BIND_DECL2(CompartmentLink)
@@ -19,8 +19,8 @@ CDM_BIND_DECL2(ThermalCompartment);
 CDM_BIND_DECL2(ThermalCompartmentLink);
 CDM_BIND_DECL2(TissueCompartment);
 // Include Templates
-#include "compartment/fluid/SEFluidCompartment.h"
-#include "compartment/fluid/SEFluidCompartmentLink.h"
+#include "cdm/compartment/fluid/SEFluidCompartment.h"
+#include "cdm/compartment/fluid/SEFluidCompartmentLink.h"
 CDM_BIND_DECL(FluidCompartmentData);
 CDM_BIND_DECL(FluidCompartmentLinkData);
 

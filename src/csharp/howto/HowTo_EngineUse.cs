@@ -40,23 +40,19 @@ namespace HowTo_UseEngine
       // Create a list of Data Requests to specify all the data we want from Pulse
       List<SEDataRequest> data_requests = new List<SEDataRequest>
       {
-        SEDataRequest.CreatePhysiologyRequest("HeartRate", "1/min"),
-        SEDataRequest.CreatePhysiologyRequest("ArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("MeanArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("SystolicArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("DiastolicArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("OxygenSaturation"),
-        SEDataRequest.CreatePhysiologyRequest("EndTidalCarbonDioxidePressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("RespirationRate", "1/min"),
-        SEDataRequest.CreatePhysiologyRequest("SkinTemperature", "degC"),
-        SEDataRequest.CreateGasCompartmentSubstanceRequest("Carina", "CarbonDioxide", "PartialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("BloodVolume", "mL"),
-        SEDataRequest.CreateECGRequest("Lead3ElectricPotential", "mV"),
-        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("BrainVasculature", "Oxygen", "PartialPressure", "mmHg"),
-        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("BrainVasculature", "CarbonDioxide", "PartialPressure", "mmHg"),
-        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("MyocardiumVasculature", "Oxygen", "PartialPressure", "mmHg"),
-        SEDataRequest.CreateLiquidCompartmentSubstanceRequest("MyocardiumVasculature", "CarbonDioxide", "PartialPressure", "mmHg"),
-        SEDataRequest.CreateSubstanceRequest("Hemoglobin", "BloodConcentration", "g/dL"),
+        // Vitals Monitor Data
+        SEDataRequest.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("OxygenSaturation"),
+        SEDataRequest.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit.C),
+        SEDataRequest.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL),
+        SEDataRequest.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit.mV),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
       // In addition to getting this data back via this API
@@ -68,6 +64,7 @@ namespace HowTo_UseEngine
       // The rest of the data values are in order of the data_requests list provided
 
       // Instantiate a Pulse engine
+      String here = System.IO.Directory.GetCurrentDirectory();
       PulseEngine pulse = new PulseEngine();
 
       // You can ask Pulse to write out a log file if you want
@@ -139,7 +136,7 @@ namespace HowTo_UseEngine
             // Grab the patient and fill in some data
             SEPatient patient = cfg.GetPatient();
             patient.SetName("Owen");
-            patient.SetSex(SEPatient.eSex.Male);
+            patient.SetSex(ePatient_Sex.Male);
             patient.GetAge().SetValue(30, TimeUnit.yr);
             patient.GetWeight().SetValue(200, MassUnit.lb);
             patient.GetHeight().SetValue(74, LengthUnit.inch);
@@ -226,9 +223,7 @@ namespace HowTo_UseEngine
       List<SEAction> actions = new List<SEAction>();
 
       SEHemorrhage h = new SEHemorrhage();
-      h.SetType(SEHemorrhage.eType.External);
-      h.SetCompartment("RightLeg");
-      h.GetSeverity().SetValue(0.8);
+      h.SetExternal(SEHemorrhage.ExternalCompartment.RightLeg);
       // Optionally, You can set the flow rate of the hemorrhage,
       // This needs to be provided the proper flow rate associated with the anatomy
       // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
@@ -300,14 +295,14 @@ namespace HowTo_UseEngine
       // But if you want to interact with a haptic device, use that action with data from your device
       // Or program up a sinusoidal or square wave for applying pressure
       SEAnesthesiaMachineConfiguration am = new SEAnesthesiaMachineConfiguration();
-      am.GetConfiguration().SetConnection(SEAnesthesiaMachine.Connection.Tube);
+      am.GetConfiguration().SetConnection(eSwitch.On);
       am.GetConfiguration().GetInletFlow().SetValue(5, VolumePerTimeUnit.L_Per_min);
       am.GetConfiguration().GetInspiratoryExpiratoryRatio().SetValue(0.5);
       am.GetConfiguration().GetOxygenFraction().SetValue(0.23);
-      am.GetConfiguration().SetOxygenSource(SEAnesthesiaMachine.OxygenSource.Wall);
+      am.GetConfiguration().SetOxygenSource(eAnesthesiaMachine_OxygenSource.Wall);
       am.GetConfiguration().GetPeakInspiratoryPressure().SetValue(10.5, PressureUnit.cmH2O);
       am.GetConfiguration().GetPositiveEndExpiredPressure().SetValue(1, PressureUnit.cmH2O);
-      am.GetConfiguration().SetPrimaryGas(SEAnesthesiaMachine.PrimaryGas.Nitrogen);
+      am.GetConfiguration().SetPrimaryGas(eAnesthesiaMachine_PrimaryGas.Nitrogen);
       am.GetConfiguration().GetRespiratoryRate().SetValue(16, FrequencyUnit.Per_min);
       if (!pulse.ProcessAction(am))
       {

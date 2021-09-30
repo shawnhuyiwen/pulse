@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SETimedStabilization.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SECondition.h"
-#include "engine/SEConditionManager.h"
-#include "utils/TimingProfile.h"
-#include "properties/SEScalarTime.h"
-#include "io/protobuf/PBEngine.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SETimedStabilization.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SECondition.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/utils/TimingProfile.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/io/protobuf/PBEngine.h"
 
 bool SETimedStabilization::StabilizeRestingState(Controller& engine)
 {
@@ -144,7 +144,7 @@ void SETimedStabilization::Clear()
   DELETE_MAP_SECOND(m_ConditionTimes);
 }
 
-bool SETimedStabilization::SerializeToString(std::string& output, SerializationFormat m) const
+bool SETimedStabilization::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
@@ -152,7 +152,7 @@ bool SETimedStabilization::SerializeToFile(const std::string& filename) const
 {
   return PBEngine::SerializeToFile(*this, filename);
 }
-bool SETimedStabilization::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SETimedStabilization::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBEngine::SerializeFromString(src, *this, m);
 }

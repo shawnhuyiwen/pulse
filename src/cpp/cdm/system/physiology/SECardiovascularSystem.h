@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/SESystem.h"
+#include "cdm/system/SESystem.h"
 
 // Keep enums in sync with appropriate schema/cdm/PhysiologyEnums.proto file !!
 enum class eHeartRhythm { NormalSinus = 0, Asystolic };

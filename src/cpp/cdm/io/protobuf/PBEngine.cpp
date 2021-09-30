@@ -1,103 +1,108 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Engine.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBEngine.h"
-#include "io/protobuf/PBActions.h"
-#include "io/protobuf/PBConditions.h"
-#include "io/protobuf/PBPatient.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "engine/SECondition.h"
-#include "engine/SEConditionManager.h"
-#include "engine/SEDataRequest.h"
-#include "engine/SEDataRequested.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEDecimalFormat.h"
-#include "engine/SEDynamicStabilization.h"
-#include "engine/SEDynamicStabilizationEngineConvergence.h"
-#include "engine/SEDynamicStabilizationPropertyConvergence.h"
-#include "engine/SETimedStabilization.h"
-#include "engine/SEEngineInitialization.h"
-#include "engine/SEPatientConfiguration.h"
-#include "system/environment/conditions/SEInitialEnvironmentalConditions.h"
-#include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
-#include "patient/conditions/SEChronicAnemia.h"
-#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "patient/conditions/SEChronicRenalStenosis.h"
-#include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
-#include "patient/conditions/SEConsumeMeal.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
-#include "patient/conditions/SEPulmonaryShunt.h"
-#include "patient/conditions/SELobarPneumonia.h"
-#include "patient/conditions/SEPulmonaryFibrosis.h"
-#include "patient/conditions/SESepsis.h"
-#include "engine/SEAction.h"
-#include "engine/SEActionManager.h"
-#include "engine/SEEnvironmentActionCollection.h"
-#include "engine/SEEquipmentActionCollection.h"
-#include "engine/SEPatientActionCollection.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
-#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
-#include "system/environment/actions/SEThermalApplication.h"
-#include "system/equipment/inhaler/actions/SEInhalerConfiguration.h"
-#include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
-#include "patient/actions/SEPatientAssessmentRequest.h"
-#include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
-#include "patient/actions/SEAcuteStress.h"
-#include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEAsthmaAttack.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "patient/actions/SEBronchoconstriction.h"
-#include "patient/actions/SECardiacArrest.h"
-#include "patient/actions/SEChestCompressionForce.h"
-#include "patient/actions/SEChestCompressionForceScale.h"
-#include "patient/actions/SEChestOcclusiveDressing.h"
-#include "patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
-#include "patient/actions/SEConsciousRespiration.h"
-/**/#include "patient/actions/SEForcedExhale.h"
-/**/#include "patient/actions/SEForcedInhale.h"
-/**/#include "patient/actions/SEForcedPause.h"
-/**/#include "patient/actions/SEUseInhaler.h"
-#include "patient/actions/SEConsumeNutrients.h"
-#include "patient/actions/SEDyspnea.h"
-#include "patient/actions/SEExercise.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
-#include "patient/actions/SEIntubation.h"
-#include "patient/actions/SELobarPneumoniaExacerbation.h"
-#include "patient/actions/SEMechanicalVentilation.h"
-#include "patient/actions/SENeedleDecompression.h"
-#include "patient/actions/SEPericardialEffusion.h"
-#include "patient/actions/SEPulmonaryShuntExacerbation.h"
-#include "patient/actions/SERespiratoryFatigue.h"
-#include "patient/actions/SESubstanceBolus.h"
-#include "patient/actions/SESubstanceInfusion.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "patient/actions/SETensionPneumothorax.h"
-#include "patient/actions/SEUrinate.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarTime.h"
-#include "utils/unitconversion/UCCommon.h"
-#include "utils/FileUtils.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBEngine.h"
+#include "cdm/io/protobuf/PBActions.h"
+#include "cdm/io/protobuf/PBConditions.h"
+#include "cdm/io/protobuf/PBPatient.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/engine/SECondition.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEDataRequest.h"
+#include "cdm/engine/SEDataRequested.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEDecimalFormat.h"
+#include "cdm/engine/SEDynamicStabilization.h"
+#include "cdm/engine/SEDynamicStabilizationEngineConvergence.h"
+#include "cdm/engine/SEDynamicStabilizationPropertyConvergence.h"
+#include "cdm/engine/SETimedStabilization.h"
+#include "cdm/engine/SEEngineInitialization.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/system/environment/conditions/SEInitialEnvironmentalConditions.h"
+#include "cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
+#include "cdm/patient/conditions/SEChronicAnemia.h"
+#include "cdm/patient/conditions/SEChronicObstructivePulmonaryDisease.h"
+#include "cdm/patient/conditions/SEChronicPericardialEffusion.h"
+#include "cdm/patient/conditions/SEChronicRenalStenosis.h"
+#include "cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h"
+#include "cdm/patient/conditions/SEConsumeMeal.h"
+#include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
+#include "cdm/patient/conditions/SEPulmonaryShunt.h"
+#include "cdm/patient/conditions/SELobarPneumonia.h"
+#include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
+#include "cdm/patient/conditions/SESepsis.h"
+#include "cdm/engine/SEAction.h"
+#include "cdm/engine/SEActionManager.h"
+#include "cdm/engine/SEEnvironmentActionCollection.h"
+#include "cdm/engine/SEEquipmentActionCollection.h"
+#include "cdm/engine/SEPatientActionCollection.h"
+#include "cdm/system/environment/actions/SEChangeEnvironmentalConditions.h"
+#include "cdm/system/environment/actions/SEThermalApplication.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenWallPortPressureLoss.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveLeak.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineExpiratoryValveObstruction.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveLeak.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineInspiratoryValveObstruction.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineMaskLeak.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineSodaLimeFailure.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineTubeCuffLeak.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVaporizerFailure.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineVentilatorPressureLoss.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineYPieceDisconnect.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
+#include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorConfiguration.h"
+#include "cdm/patient/actions/SEPatientAssessmentRequest.h"
+#include "cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
+#include "cdm/patient/actions/SEAcuteStress.h"
+#include "cdm/patient/actions/SEAirwayObstruction.h"
+#include "cdm/patient/actions/SEAsthmaAttack.h"
+#include "cdm/patient/actions/SEBrainInjury.h"
+#include "cdm/patient/actions/SEBronchoconstriction.h"
+#include "cdm/patient/actions/SECardiacArrest.h"
+#include "cdm/patient/actions/SEChestCompressionForce.h"
+#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestOcclusiveDressing.h"
+#include "cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
+#include "cdm/patient/actions/SEConsciousRespiration.h"
+/**/#include "cdm/patient/actions/SEForcedExhale.h"
+/**/#include "cdm/patient/actions/SEForcedInhale.h"
+/**/#include "cdm/patient/actions/SEForcedPause.h"
+/**/#include "cdm/patient/actions/SEUseInhaler.h"
+#include "cdm/patient/actions/SEConsumeNutrients.h"
+#include "cdm/patient/actions/SEDyspnea.h"
+#include "cdm/patient/actions/SEExercise.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
+#include "cdm/patient/actions/SEIntubation.h"
+#include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
+#include "cdm/patient/actions/SEMechanicalVentilation.h"
+#include "cdm/patient/actions/SENeedleDecompression.h"
+#include "cdm/patient/actions/SEPericardialEffusion.h"
+#include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
+#include "cdm/patient/actions/SERespiratoryFatigue.h"
+#include "cdm/patient/actions/SESupplementalOxygen.h"
+#include "cdm/patient/actions/SESubstanceBolus.h"
+#include "cdm/patient/actions/SESubstanceInfusion.h"
+#include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
+#include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SEUrinate.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
+#include "cdm/utils/FileUtils.h"
 
 
 void PBEngine::Load(const CDM_BIND::LogMessagesData& src, LogMessages& dst)
@@ -118,7 +123,7 @@ void PBEngine::Serialize(const CDM_BIND::LogMessagesData& src, LogMessages& dst)
   for (int i = 0; i < src.fatalmessages_size(); i++)
     dst.fatal_msgs.push_back(src.fatalmessages()[i]);
 }
-bool PBEngine::SerializeFromString(const std::string& src, LogMessages& dst, SerializationFormat m, Logger* logger)
+bool PBEngine::SerializeFromString(const std::string& src, LogMessages& dst, eSerializationFormat m, Logger* logger)
 {
   CDM_BIND::LogMessagesData data;
   if (!PBUtils::SerializeFromString(src, data, m, logger))
@@ -146,7 +151,7 @@ void PBEngine::Serialize(const LogMessages& src, CDM_BIND::LogMessagesData& dst)
   for (std::string str : src.fatal_msgs)
     dst.add_fatalmessages(str);
 }
-bool PBEngine::SerializeToString(const LogMessages& src, std::string& output, SerializationFormat m, Logger* logger)
+bool PBEngine::SerializeToString(const LogMessages& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
   CDM_BIND::LogMessagesData data;
   PBEngine::Serialize(src, data);
@@ -234,16 +239,10 @@ void PBEngine::Serialize(const SEEquipmentActionCollection& src, CDM_BIND::Actio
 {
   if (src.HasAnesthesiaMachineConfiguration())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineConfiguration));
-  if (src.HasInhalerConfiguration())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_InhalerConfiguration));
-  if (src.HasMechanicalVentilatorConfiguration())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorConfiguration));
-
   if (src.HasAnesthesiaMachineOxygenTankPressureLoss())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineOxygenTankPressureLoss));
   if (src.HasAnesthesiaMachineOxygenWallPortPressureLoss())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineOxygenWallPortPressureLoss));
-
   if (src.HasAnesthesiaMachineExpiratoryValveLeak())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineExpiratoryValveLeak));
   if (src.HasAnesthesiaMachineExpiratoryValveObstruction())
@@ -264,6 +263,21 @@ void PBEngine::Serialize(const SEEquipmentActionCollection& src, CDM_BIND::Actio
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineVentilatorPressureLoss));
   if (src.HasAnesthesiaMachineYPieceDisconnect())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AnesthesiaMachineYPieceDisconnect));
+
+  if (src.HasBagValveMaskConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BagValveMaskConfiguration));
+  if (src.HasBagValveMaskAutomated())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BagValveMaskAutomated));
+  if (src.HasBagValveMaskInstantaneous())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BagValveMaskInstantaneous));
+  if (src.HasBagValveMaskSqueeze())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BagValveMaskSqueeze));
+
+  if (src.HasInhalerConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_InhalerConfiguration));
+
+  if (src.HasMechanicalVentilatorConfiguration())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_MechanicalVentilatorConfiguration));
 }
 void PBEngine::Serialize(const SEEnvironmentActionCollection& src, CDM_BIND::ActionListData& dst)
 {
@@ -333,6 +347,8 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_PulmonaryShuntExacerbation));
   if (src.HasRespiratoryFatigue())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_RespiratoryFatigue));
+  if (src.HasSupplementalOxygen())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_SupplementalOxygen));
   if (src.HasLeftClosedTensionPneumothorax())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftClosedTensionPneumothorax));
   if (src.HasLeftOpenTensionPneumothorax())
@@ -376,7 +392,7 @@ void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatien
   if (src.has_conditions())
     PBEngine::Load(src.conditions(), dst.GetConditions(), subMgr);
 
-  for (size_t i = 0; i < src.scalaroverride_size(); i++)
+  for (auto i = 0; i < src.scalaroverride_size(); i++)
   {
     const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
     dst.AddScalarOverride(sp.name(), sp.value(), sp.unit());
@@ -410,7 +426,7 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientCon
   dst.set_dataroot(src.GetDataRoot());
 }
 
-bool PBEngine::SerializeToString(const SEPatientConfiguration& src, std::string& output, SerializationFormat m)
+bool PBEngine::SerializeToString(const SEPatientConfiguration& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::PatientConfigurationData data;
   PBEngine::Serialize(src, data);
@@ -422,7 +438,7 @@ bool PBEngine::SerializeToFile(const SEPatientConfiguration& src, const std::str
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEPatientConfiguration& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, SEPatientConfiguration& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::PatientConfigurationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
@@ -507,7 +523,7 @@ void PBEngine::Serialize(const SEDataRequested& src, CDM_BIND::DataRequestedData
   for(double d : src.GetValues())
     dst.add_value(d);
 }
-bool PBEngine::SerializeToString(const SEDataRequested& src, std::string& dst, SerializationFormat m)
+bool PBEngine::SerializeToString(const SEDataRequested& src, std::string& dst, eSerializationFormat m)
 {
   CDM_BIND::DataRequestedData data;
   PBEngine::Serialize(src, data);
@@ -518,19 +534,19 @@ void PBEngine::Serialize(const std::vector<SEDataRequested*>& src, CDM_BIND::Dat
   for (SEDataRequested* s : src)
     Serialize(*s, *dst.add_datarequested());
 }
-bool PBEngine::SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, SerializationFormat m)
+bool PBEngine::SerializeToString(const std::vector<SEDataRequested*>& src, std::string& dst, eSerializationFormat m)
 {
   CDM_BIND::DataRequestedListData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, dst, m, nullptr);
 }
 
-void PBEngine::Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+void PBEngine::Load(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst)
 {
   dst.Clear();
-  PBEngine::Serialize(src, dst, subMgr);
+  PBEngine::Serialize(src, dst);
 }
-void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequestManager& dst)
 {
   dst.m_ResultsFilename = src.resultsfilename();
   dst.m_SamplesPerSecond = src.samplespersecond();
@@ -567,12 +583,12 @@ void PBEngine::Serialize(const SEDataRequestManager& src, CDM_BIND::DataRequestM
   for (SEDataRequest* dr : src.m_Requests)
     dst.mutable_datarequest()->AddAllocated(PBEngine::Unload(*dr));
 }
-void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst)
 {
   dst.Clear();
   CDM_BIND::DataRequestManagerData data;
   PBEngine::Serialize(src, data);
-  PBEngine::Serialize(data, dst, subMgr);
+  PBEngine::Serialize(data, dst);
 }
 
 void PBEngine::Load(const CDM_BIND::DecimalFormatData& src, SEDecimalFormat& dst)
@@ -597,7 +613,7 @@ void PBEngine::Serialize(const SEDecimalFormat& src, CDM_BIND::DecimalFormatData
   dst.set_precision((google::protobuf::uint32)src.m_Precision);
 }
 
-bool PBEngine::SerializeToString(const SEConditionManager& src, std::string& output, SerializationFormat m)
+bool PBEngine::SerializeToString(const SEConditionManager& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::ConditionListData data;
   PBEngine::Serialize(src, data);
@@ -609,7 +625,7 @@ bool PBEngine::SerializeToFile(const SEConditionManager& src, const std::string&
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEConditionManager& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, SEConditionManager& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::ConditionListData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
@@ -626,7 +642,7 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEConditionManager
   return true;
 }
 
-bool PBEngine::SerializeToString(const SEActionManager& src, std::string& output, SerializationFormat m)
+bool PBEngine::SerializeToString(const SEActionManager& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::ActionListData data;
   PBEngine::Serialize(src, data);
@@ -638,7 +654,7 @@ bool PBEngine::SerializeToFile(const SEActionManager& src, const std::string& fi
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEActionManager& dst, SerializationFormat m)
+bool PBEngine::SerializeFromString(const std::string& src, SEActionManager& dst, eSerializationFormat m)
 {
   CDM_BIND::ActionListData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
@@ -655,7 +671,7 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEActionManager& d
   return true;
 }
 
-bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::ActionListData data;
   if (!PBUtils::SerializeFromString(src, data, m, subMgr.GetLogger()))
@@ -677,7 +693,7 @@ void PBEngine::Serialize(const CDM_BIND::ActionListData& src, std::vector<SEActi
   }
 }
 
-bool PBEngine::SerializeFromString(const std::string& src, std::map<int, std::vector<const SEAction*>>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, std::map<int, std::vector<const SEAction*>>& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::ActionMapData data;
   if (!PBUtils::SerializeFromString(src, data, m, subMgr.GetLogger()))
@@ -703,7 +719,7 @@ void PBEngine::Serialize(const CDM_BIND::ActionMapData& src, std::map<int, std::
   }
 }
 
-bool PBEngine::SerializeToString(const SEDataRequestManager& src, std::string& output, SerializationFormat m)
+bool PBEngine::SerializeToString(const SEDataRequestManager& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::DataRequestManagerData data;
   PBEngine::Serialize(src, data);
@@ -715,20 +731,20 @@ bool PBEngine::SerializeToFile(const SEDataRequestManager& src, const std::strin
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEDataRequestManager& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, SEDataRequestManager& dst, eSerializationFormat m)
 {
   CDM_BIND::DataRequestManagerData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst, subMgr);
+  PBEngine::Load(data, dst);
   return true;
 }
-bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManager& dst, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromFile(const std::string& filename, SEDataRequestManager& dst)
 {
   CDM_BIND::DataRequestManagerData data;
   if (!PBUtils::SerializeFromFile(filename, data, dst.GetLogger()))
     return false;
-  PBEngine::Load(data, dst, subMgr);
+  PBEngine::Load(data, dst);
   return true;
 }
 
@@ -864,7 +880,7 @@ void PBEngine::Serialize(const SETimedStabilization& src, CDM_BIND::TimedStabili
   }
 }
 
-bool PBEngine::SerializeToString(const SEDynamicStabilization& src, std::string& output, SerializationFormat m)
+bool PBEngine::SerializeToString(const SEDynamicStabilization& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::DynamicStabilizationData data;
   PBEngine::Serialize(src, data);
@@ -876,7 +892,7 @@ bool PBEngine::SerializeToFile(const SEDynamicStabilization& src, const std::str
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEDynamicStabilization& dst, SerializationFormat m)
+bool PBEngine::SerializeFromString(const std::string& src, SEDynamicStabilization& dst, eSerializationFormat m)
 {
   CDM_BIND::DynamicStabilizationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
@@ -893,7 +909,7 @@ bool PBEngine::SerializeFromFile(const std::string& filename, SEDynamicStabiliza
   return true;
 }
 
-bool PBEngine::SerializeToString(const SETimedStabilization& src, std::string& output, SerializationFormat m)
+bool PBEngine::SerializeToString(const SETimedStabilization& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::TimedStabilizationData data;
   PBEngine::Serialize(src, data);
@@ -905,7 +921,7 @@ bool PBEngine::SerializeToFile(const SETimedStabilization& src, const std::strin
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToFile(data, filename, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SETimedStabilization& dst, SerializationFormat m)
+bool PBEngine::SerializeFromString(const std::string& src, SETimedStabilization& dst, eSerializationFormat m)
 {
   CDM_BIND::TimedStabilizationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
@@ -937,10 +953,10 @@ void PBEngine::Serialize(const CDM_BIND::EngineInitializationData& src, SEEngine
   else if (!src.statefilename().empty())
     dst.SetStateFilename(src.statefilename());
   else if (!src.state().empty())
-    dst.SetState(src.state(), SerializationFormat::JSON);// TODO support binary
+    dst.SetState(src.state(), eSerializationFormat::JSON);// TODO support binary
 
   if (src.has_datarequestmanager())
-    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager(), subMgr);
+    PBEngine::Load(src.datarequestmanager(), dst.GetDataRequestManager());
 
   if (!src.logfilename().empty())
     dst.SetLogFilename(src.logfilename());
@@ -975,13 +991,13 @@ void PBEngine::Serialize(const SEEngineInitialization& src, CDM_BIND::EngineInit
   dst.set_keepeventchanges(src.KeepEventChanges());
 }
 
-bool PBEngine::SerializeToString(const SEEngineInitialization& src, std::string& output, SerializationFormat m)
+bool PBEngine::SerializeToString(const SEEngineInitialization& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::EngineInitializationData data;
   PBEngine::Serialize(src, data);
   return PBUtils::SerializeToString(data, output, m, src.GetLogger());
 }
-bool PBEngine::SerializeFromString(const std::string& src, SEEngineInitialization& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, SEEngineInitialization& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::EngineInitializationData data;
   if (!PBUtils::SerializeFromString(src, data, m, dst.GetLogger()))
@@ -989,7 +1005,7 @@ bool PBEngine::SerializeFromString(const std::string& src, SEEngineInitializatio
   PBEngine::Load(data, dst, subMgr);
   return true;
 }
-bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, SerializationFormat m, const SESubstanceManager& subMgr)
+bool PBEngine::SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   CDM_BIND::EngineInitializationListData data;
   if (!PBUtils::SerializeFromString(src, data, m, subMgr.GetLogger()))

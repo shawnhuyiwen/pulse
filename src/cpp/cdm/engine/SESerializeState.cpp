@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SESerializeState.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SESerializeState.h"
 
 SESerializeState::SESerializeState(Logger* logger) : SEAction(logger)
 {
@@ -61,7 +61,7 @@ void SESerializeState::ToString(std::ostream &str) const
   str << "\n\tFilename : " << m_Filename;
 }
 
-const SEScalar* SESerializeState::GetScalar(const std::string& name)
+const SEScalar* SESerializeState::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

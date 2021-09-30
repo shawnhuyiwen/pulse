@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "stdafx.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBEquipmentActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineOxygenTankPressureLoss.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBEquipmentActions.h"
 
 SEAnesthesiaMachineOxygenTankPressureLoss::SEAnesthesiaMachineOxygenTankPressureLoss(Logger* logger) : SEAnesthesiaMachineAction(logger)
 {
@@ -21,7 +21,7 @@ void SEAnesthesiaMachineOxygenTankPressureLoss::Clear()
   m_State.SetEnum(eSwitch::Off);
 }
 
-void SEAnesthesiaMachineOxygenTankPressureLoss::Copy(const SEAnesthesiaMachineOxygenTankPressureLoss& src, bool preserveState)
+void SEAnesthesiaMachineOxygenTankPressureLoss::Copy(const SEAnesthesiaMachineOxygenTankPressureLoss& src, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this);
 }

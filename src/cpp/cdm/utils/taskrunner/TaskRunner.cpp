@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "CommonDataModel.h"
-#include "TaskRunner.h"
-#include "TaskProcessor.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/utils/taskrunner/TaskRunner.h"
+#include "cdm/utils/taskrunner/TaskProcessor.h"
 
 #include <thread>
 #include <iomanip>

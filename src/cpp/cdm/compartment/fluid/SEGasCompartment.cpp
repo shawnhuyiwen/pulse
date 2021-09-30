@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalar0To1.h"
-#include "utils/GeneralMath.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/utils/GeneralMath.h"
 
 SEGasCompartment::SEGasCompartment(const std::string& name, Logger* logger) : SEFluidCompartment(name, logger)
 {
@@ -44,7 +44,7 @@ void SEGasCompartment::Balance(BalanceGasBy by)
       {
         if (!subQ->HasVolume())
         {
-          subQ->Invalidate();
+          subQ->Clear();
           continue;
         }
         else
@@ -63,7 +63,7 @@ void SEGasCompartment::Balance(BalanceGasBy by)
       {
         for (SEGasSubstanceQuantity* subQ : GetSubstanceQuantities())
         {
-          subQ->Invalidate();
+          subQ->Clear();
           if (HasPressure())
             GeneralMath::CalculatePartialPressureInGas(subQ->GetVolumeFraction(), GetPressure(), subQ->GetPartialPressure(), m_Logger);
         }
@@ -85,7 +85,7 @@ void SEGasCompartment::Balance(BalanceGasBy by)
         for (SEGasSubstanceQuantity* subQ : GetSubstanceQuantities())
         {
           if (!subQ->HasVolumeFraction())
-            subQ->Invalidate();
+            subQ->Clear();
           else
           {
             totalFraction += subQ->GetVolumeFraction().GetValue();

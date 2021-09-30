@@ -24,7 +24,7 @@ public class SEDynamicStabilization
     this.conditionConvergence=new HashMap<>();
   }
   
-  public void reset()
+  public void clear()
   {
     this.trackingStabilization=eSwitch.Off;
     this.restingConvergence=null;

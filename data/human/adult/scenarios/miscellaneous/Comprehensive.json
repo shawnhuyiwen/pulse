@@ -410,6 +410,13 @@
       "Unit": "mmHg"
     }, {
       "DecimalFormat": {
+      },
+      "Category": "GasCompartment",
+      "CompartmentName": "Carina",
+      "PropertyName": "InFlow",
+      "Unit": "L/min"
+    }, {
+      "DecimalFormat": {
         "Precision": 1
       },
       "Category": "LiquidCompartment",
@@ -661,7 +668,7 @@
     "EquipmentAction": {
       "AnesthesiaMachineConfiguration": {
         "Configuration": {
-          "Connection": "Tube",
+          "Connection": "On",
           "InletFlow": {
             "ScalarVolumePerTime": {
               "Value": 5.0,
@@ -823,7 +830,7 @@
     "EquipmentAction": {
       "AnesthesiaMachineConfiguration": {
         "Configuration": {
-          "Connection": "Mask"
+          "Connection": "Off"
         }
       }
     }
@@ -848,7 +855,7 @@
     }
   }, {
     "EquipmentAction": {
-      "AnesthesiaMachineMaskLeak": {
+      "AnesthesiaMachineTubeCuffLeak": {
         "Severity": {
           "Scalar0To1": {
             "Value": 0.1

@@ -4,23 +4,15 @@ package com.kitware.pulse.howto;
 
 import java.util.List;
 
-import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
-import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.*;
-import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
-import com.kitware.pulse.cdm.bind.PatientActions.IntubationData.eType;
-import com.kitware.pulse.cdm.datarequests.SEDataRequest;
+import com.kitware.pulse.cdm.bind.Enums.eSwitch;
+import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.*;
+import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eDriverWaveform;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
-import com.kitware.pulse.cdm.engine.SEPatientConfiguration;
-import com.kitware.pulse.cdm.patient.SEPatient;
-import com.kitware.pulse.cdm.patient.actions.SEIntubation;
-import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.LengthUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.MassUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.MassPerVolumeUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
+import com.kitware.pulse.cdm.patient.actions.SEDyspnea;
+import com.kitware.pulse.cdm.properties.CommonUnits.*;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
+import com.kitware.pulse.cdm.substance.SESubstanceFraction;
+import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.SEMechanicalVentilatorSettings;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions.*;
 import com.kitware.pulse.engine.PulseEngine;
 import com.kitware.pulse.utilities.JNIBridge;
@@ -45,161 +37,171 @@ public class HowTo_MechanicalVentilator
   
   public static void main(String[] args)
   {
-    List<Double> data;
+    List<Double> data_values;
     SEScalarTime time = new SEScalarTime(1,TimeUnit.min);
     
     JNIBridge.initialize();
-    PulseEngine pe = new PulseEngine();
-    pe.setLogListener(new MyListener());
-    pe.setLogFilename("./test_results/HowTo_MechanicalVentilator.java.log");
+    PulseEngine pulse = new PulseEngine();
+    pulse.setLogListener(new MyListener());
+    pulse.setLogFilename("./test_results/howto/HowTo_MechanicalVentilator.java.log");
     
-    SEDataRequestManager dataRequests = new SEDataRequestManager();
-    SEDataRequest ht = new SEDataRequest();
-    ht.setCategory(eCategory.Patient);
-    ht.setPropertyName("Height");
-    ht.setUnit(LengthUnit.in.toString());
-    dataRequests.getRequestedData().add(ht);
+    SEDataRequestManager dataRequests = new SEDataRequestManager();// Vitals Monitor Data
+    dataRequests.createPhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("ArterialPressure", PressureUnit.mmHg);
+    dataRequests.createPhysiologyDataRequest("MeanArterialPressure", PressureUnit.mmHg);
+    dataRequests.createPhysiologyDataRequest("SystolicArterialPressure", PressureUnit.mmHg);
+    dataRequests.createPhysiologyDataRequest("DiastolicArterialPressure", PressureUnit.mmHg);
+    dataRequests.createPhysiologyDataRequest("OxygenSaturation");
+    dataRequests.createPhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.mmHg);
+    dataRequests.createPhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("SkinTemperature", TemperatureUnit.C);
+    dataRequests.createGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit.mmHg);
+    dataRequests.createPhysiologyDataRequest("BloodVolume", VolumeUnit.mL);
+    dataRequests.createECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit.mV);
+    // Ventilator Monitor Data
+    dataRequests.createMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction");
+    dataRequests.createMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("EndTidalOxygenFraction");
+    dataRequests.createMechanicalVentilatorDataRequest("EndTidalOxygenPressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("ExpiratoryFlow", VolumePerTimeUnit.L_Per_s);
+    dataRequests.createMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit.L);
+    dataRequests.createMechanicalVentilatorDataRequest("InspiratoryExpiratoryRatio");
+    dataRequests.createMechanicalVentilatorDataRequest("InspiratoryFlow", VolumePerTimeUnit.L_Per_s);
+    dataRequests.createMechanicalVentilatorDataRequest("InspiratoryTidalVolume", VolumeUnit.L);
+    dataRequests.createMechanicalVentilatorDataRequest("IntrinsicPositiveEndExpiredPressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("LeakFraction");
+    dataRequests.createMechanicalVentilatorDataRequest("MeanAirwayPressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("PeakInspiratoryPressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("PlateauPressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("PositiveEndExpiratoryPressure", PressureUnit.cmH2O);
+    dataRequests.createMechanicalVentilatorDataRequest("RespirationRate", FrequencyUnit.Per_min);
+    dataRequests.createMechanicalVentilatorDataRequest("TidalVolume", VolumeUnit.L);
+    dataRequests.createMechanicalVentilatorDataRequest("TotalLungVolume", VolumeUnit.L);
+    dataRequests.createMechanicalVentilatorDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_s);
     
-    SEDataRequest wt = new SEDataRequest();
-    wt.setCategory(eCategory.Patient);
-    wt.setPropertyName("Weight");
-    wt.setUnit(MassUnit.kg.toString());
-    dataRequests.getRequestedData().add(wt);
+    pulse.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
     
-    SEDataRequest pH = new SEDataRequest();
-    pH.setCategory(eCategory.Physiology);
-    pH.setPropertyName("BloodPH");
-    dataRequests.getRequestedData().add(pH);
+    SEDyspnea dyspnea = new SEDyspnea();
+    dyspnea.getSeverity().setValue(1.0);
+    pulse.processAction(dyspnea);
     
-    SEDataRequest aO2 = new SEDataRequest();
-    aO2.setCategory(eCategory.Physiology);
-    aO2.setPropertyName("ArterialOxygenPressure");
-    aO2.setUnit(PressureUnit.mmHg.toString());
-    dataRequests.getRequestedData().add(aO2);
-    
-    SEDataRequest aCO2 = new SEDataRequest();
-    aCO2.setCategory(eCategory.Physiology);
-    aCO2.setPropertyName("ArterialCarbonDioxidePressure");
-    aCO2.setUnit(PressureUnit.mmHg.toString());
-    dataRequests.getRequestedData().add(aCO2);
-    
-    SEDataRequest tVol = new SEDataRequest();
-    tVol.setCategory(eCategory.Physiology);
-    tVol.setPropertyName("TidalVolume");
-    tVol.setUnit(VolumeUnit.L.toString());
-    dataRequests.getRequestedData().add(tVol);
-    
-    SEDataRequest etCO2 = new SEDataRequest();
-    etCO2.setCategory(eCategory.Physiology);
-    etCO2.setPropertyName("EndTidalOxygenFraction");
-    dataRequests.getRequestedData().add(etCO2);
-    
-    SEDataRequest ci = new SEDataRequest();
-    ci.setCategory(eCategory.Physiology);
-    ci.setPropertyName("CarricoIndex");
-    ci.setUnit(PressureUnit.mmHg.toString());
-    dataRequests.getRequestedData().add(ci);
-    
-    SEDataRequest rr = new SEDataRequest();
-    rr.setCategory(eCategory.Physiology);
-    rr.setPropertyName("RespirationRate");
-    rr.setUnit(FrequencyUnit.Per_min.toString());
-    dataRequests.getRequestedData().add(rr);
-    
-    SEDataRequest rpc = new SEDataRequest();
-    rpc.setCategory(eCategory.Substance);
-    rpc.setSubstanceName("Rocuronium");
-    rpc.setPropertyName("PlasmaConcentration");
-    rpc.setUnit(MassPerVolumeUnit.ug_Per_L.toString());
-    dataRequests.getRequestedData().add(rpc);
-    
-    SEDataRequest spc = new SEDataRequest();
-    spc.setCategory(eCategory.Substance);
-    spc.setSubstanceName("Succinylcholine");
-    spc.setPropertyName("PlasmaConcentration");
-    spc.setUnit(MassPerVolumeUnit.ug_Per_L.toString());
-    dataRequests.getRequestedData().add(spc);
-    
-    SEDataRequest mv_imtt = new SEDataRequest();
-    mv_imtt.setCategory(eCategory.MechanicalVentilator);
-    mv_imtt.setPropertyName("InspirationMachineTriggerTime");
-    mv_imtt.setUnit(TimeUnit.s.toString());
-    dataRequests.getRequestedData().add(mv_imtt);
-    
-    SEDataRequest mv_peep = new SEDataRequest();
-    mv_peep.setCategory(eCategory.MechanicalVentilator);
-    mv_peep.setPropertyName("PositiveEndExpiredPressure");
-    mv_peep.setUnit(PressureUnit.cmH2O.toString());
-    dataRequests.getRequestedData().add(mv_peep);
-    
-    
-    if (false)
-    {
-      pe.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
-    }
-    else
-    {
-      SEPatientConfiguration sepc = new SEPatientConfiguration();
-      SEPatient patient = sepc.getPatient();
-      patient.setName("Johnny Lawrence");
-      patient.setSex(eSex.Male);
-      patient.getAge().setValue(44, TimeUnit.yr);
-      patient.getWeight().setValue(170, MassUnit.lb);
-      patient.getHeight().setValue(71, LengthUnit.in);
-      patient.getBodyFatFraction().setValue(0.21);
-      patient.getHeartRateBaseline().setValue(72, FrequencyUnit.Per_min);
-      patient.getDiastolicArterialPressureBaseline().setValue(72., PressureUnit.mmHg);
-      patient.getSystolicArterialPressureBaseline().setValue(114., PressureUnit.mmHg);
-      patient.getRespirationRateBaseline().setValue(16, FrequencyUnit.Per_min);
+ // We have action support for several commonly used ventilator modes
+    // Pulse is not limited to these modes, These modes are designe for simple understanding
+    // Our implementation supports any ventilator mode, you will just need to translate the user facing inputs
+    // to a timing/control profile using our configuration settings
+    // These modes are internally converted into a configuration setting,
+    // You can retrieve the resulting settings action and use it as a basis for more configurations if you want.
+    // For example, if you wanted to lengthen the InspirationPatientTriggerFlow of the mode
 
-      //sepc.setDataRootDir(binDir);
-      pe.initializeEngine(sepc, dataRequests);
-    }
-    
-    SEIntubation intubate = new SEIntubation();
-    intubate.setType(eType.Tracheal);
-    pe.processAction(intubate);
-    
-    // Configure the Mechanical Ventilator
-    SEMechanicalVentilatorConfiguration ventilatorAction = new SEMechanicalVentilatorConfiguration();
-    ventilatorAction.getConfiguration().setConnection(eConnection.Tube);
-    ventilatorAction.getConfiguration().setExpirationWaveform(eDriverWaveform.Square);
-    ventilatorAction.getConfiguration().setInspirationWaveform(eDriverWaveform.Square);
-    ventilatorAction.getConfiguration().getPeakInspiratoryPressure().setValue(21, PressureUnit.cmH2O);
-    ventilatorAction.getConfiguration().getPositiveEndExpiredPressure().setValue(10, PressureUnit.cmH2O);
+    SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap = new SEMechanicalVentilatorContinuousPositiveAirwayPressure();
+    cpap.setConnection(eSwitch.On);
+    cpap.getFractionInspiredOxygen().setValue(0.21);
+    cpap.getDeltaPressureSupport().setValue(10.0, PressureUnit.cmH2O);
+    cpap.getPositiveEndExpiredPressure().setValue(5.0, PressureUnit.cmH2O);
+    cpap.getSlope().setValue(0.2, TimeUnit.s);
+    pulse.processAction(cpap);
+    pulse.advanceTime_s(10);
+    // get the values of the data you requested at this time
+    data_values = pulse.pullData();
+    // And write it out to the console
+    dataRequests.writeData(data_values);
 
-    double desiredRR = 20.0;
-    double ieRatio = 0.5;
-    double totalPeriodS = 60.0 / desiredRR;
-    double inspiratoryPeriodS = ieRatio * totalPeriodS / (1.0 + ieRatio);
-    double expiratoryPeriodS = totalPeriodS - inspiratoryPeriodS;
-    ventilatorAction.getConfiguration().getInspirationMachineTriggerTime().setValue(expiratoryPeriodS, TimeUnit.s);
-    ventilatorAction.getConfiguration().getExpirationCycleTime().setValue(inspiratoryPeriodS, TimeUnit.s);
+    SEMechanicalVentilatorPressureControl pc_ac = new SEMechanicalVentilatorPressureControl();
+    pc_ac.setConnection(eSwitch.On);
+    pc_ac.setMode(MechanicalVentilatorPressureControlData.eMode.AssistedControl);
+    pc_ac.getFractionInspiredOxygen().setValue(0.21);
+    pc_ac.getInspiratoryPeriod().setValue(1.0,TimeUnit.s);
+    pc_ac.getInspiratoryPressure().setValue(19.0, PressureUnit.cmH2O);
+    pc_ac.getPositiveEndExpiredPressure().setValue(5.0, PressureUnit.cmH2O);
+    pc_ac.getRespirationRate().setValue(12.0, FrequencyUnit.Per_min);
+    pc_ac.getSlope().setValue(0, TimeUnit.s);
+    pulse.processAction(pc_ac);
+    pulse.advanceTime_s(10);
+    // get the values of the data you requested at this time
+    data_values = pulse.pullData();
+    // And write it out to the console
+    dataRequests.writeData(data_values);
 
-    ventilatorAction.getConfiguration().getFractionInspiredGas().clear();
-    ventilatorAction.getConfiguration().getFractionInspiredGas("Oxygen").getAmount().setValue(0.5);
-    ventilatorAction.getConfiguration().getConcentrationInspiredAerosol("Albuterol").getConcentration().setValue(12, MassPerVolumeUnit.ug_Per_mL);
-    
-    pe.processAction(ventilatorAction);
-    
-    pe.advanceTime(time);
-    
-    data = pe.pullData();
-    Log.info("Simulation Time(s) " + data.get(0));
-    Log.info("Height(in) " + data.get(1));
-    Log.info("Weight(kg) " + data.get(2));
-    Log.info("BloodPH " + data.get(3));
-    Log.info("ArterialOxygenPressure(mmHg) " + data.get(4));
-    Log.info("ArterialCarbonDioxidePressure(mmHg) " + data.get(5));
-    Log.info("TidalVolume(L) " + data.get(6));
-    Log.info("EndTidalOxygenFraction " + data.get(7));
-    Log.info("CarricoIndex(mmHg) " + data.get(8));
-    Log.info("Respiration Rate(bpm) " + data.get(9));
-    Log.info("Rocuronium PlasmaConcentration(bpm) " + data.get(10));
-    Log.info("Succinylcholine PlasmaConcentration(bpm) " + data.get(11));
-    Log.info("InspirationMachineTriggerTime(s) " + data.get(12));
-    Log.info("PositiveEndExpiredPressure(cmH2O) " + data.get(13));
-    
+    SEMechanicalVentilatorVolumeControl vc_ac = new SEMechanicalVentilatorVolumeControl();
+    vc_ac.setConnection(eSwitch.On);
+    vc_ac.setMode(MechanicalVentilatorVolumeControlData.eMode.AssistedControl);
+    vc_ac.getFlow().setValue(60.0, VolumePerTimeUnit.L_Per_min);
+    vc_ac.getFractionInspiredOxygen().setValue(0.21);
+    vc_ac.getInspiratoryPeriod().setValue(1.0, TimeUnit.s);
+    vc_ac.getPositiveEndExpiredPressure().setValue(5.0, PressureUnit.cmH2O);
+    vc_ac.getRespirationRate().setValue(12.0, FrequencyUnit.Per_min);
+    vc_ac.getTidalVolume().setValue(900.0, VolumeUnit.mL);
+    pulse.processAction(vc_ac);
+    pulse.advanceTime_s(10);
+    // get the values of the data you requested at this time
+    data_values = pulse.pullData();
+    // And write it out to the console
+    dataRequests.writeData(data_values);
+
+    // Here is an example of programming a custom ventilator mode
+    SEMechanicalVentilatorConfiguration mv_config = new SEMechanicalVentilatorConfiguration();
+    SEMechanicalVentilatorSettings mv = mv_config.getSettings();
+    mv.setConnection(eSwitch.On);
+    mv.setInspirationWaveform(eDriverWaveform.Square);
+    mv.setExpirationWaveform(eDriverWaveform.Square);
+    mv.getPeakInspiratoryPressure().setValue(21.0, PressureUnit.cmH2O);
+    mv.getPositiveEndExpiredPressure().setValue(10.0, PressureUnit.cmH2O);
+    SESubstanceFraction fractionFiO2 = mv.getFractionInspiredGas("Oxygen");
+    fractionFiO2.getAmount().setValue(0.5);
+    double respirationRate_per_min = 20.0;
+    double IERatio = 0.5;
+    // Translate ventilator settings
+    double totalPeriod_s = 60.0 / respirationRate_per_min;
+    double inspiratoryPeriod_s = IERatio * totalPeriod_s / (1 + IERatio);
+    double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
+    mv.getInspirationMachineTriggerTime().setValue(expiratoryPeriod_s, TimeUnit.s);
+    mv.getExpirationCycleTime().setValue(inspiratoryPeriod_s, TimeUnit.s);
+    pulse.processAction(mv_config);
+    // Advance some time and print out the vitals
+    pulse.advanceTime_s(10);
+    // get the values of the data you requested at this time
+    data_values = pulse.pullData();
+    // And write it out to the console
+    dataRequests.writeData(data_values);
+
+    // You can also perform a hold
+    SEMechanicalVentilatorHold hold = new SEMechanicalVentilatorHold();
+    hold.setState(eSwitch.On);
+    pulse.processAction(hold);
+    // Advance some time and print out the vitals
+    pulse.advanceTime_s(5);
+    // get the values of the data you requested at this time
+    data_values = pulse.pullData();
+    // And write it out to the console
+    dataRequests.writeData(data_values);
+    hold.setState(eSwitch.Off);
+    pulse.processAction(hold);
+    // Advance some time and print out the vitals
+    pulse.advanceTime_s(5);
+    // get the values of the data you requested at this time
+    data_values = pulse.pullData();
+    // And write it out to the console
+    dataRequests.writeData(data_values);
+
+    // A leak can be specified
+    SEMechanicalVentilatorLeak leak = new SEMechanicalVentilatorLeak();
+    leak.getSeverity().setValue(0.5);
+    pulse.processAction(leak);
+    // Advance some time and print out the vitals
+    pulse.advanceTime_s(5);
+    // get the values of the data you requested at this time
+    data_values = pulse.pullData();
+    // And write it out to the console
+    dataRequests.writeData(data_values);
+    leak.getSeverity().setValue(0.0);// Turn off the leak
+    pulse.processAction(leak);
+    // Advance some time and print out the vitals
+    pulse.advanceTime_s(5);
+    // get the values of the data you requested at this time
+    data_values = pulse.pullData();
+    // And write it out to the console
+    dataRequests.writeData(data_values);
   }
 
 }

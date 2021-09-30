@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "SEDataRequestManager.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBEngine.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/io/protobuf/PBEngine.h"
 
 SEDataRequestManager::SEDataRequestManager(Logger* logger) : Loggable(logger)
 {
@@ -30,12 +30,12 @@ void SEDataRequestManager::Clear()
   SAFE_DELETE(m_OverrideDecimalFormatting);
 }
 
-void SEDataRequestManager::Copy(const SEDataRequestManager& src, const SESubstanceManager& subMgr)
+void SEDataRequestManager::Copy(const SEDataRequestManager& src)
 {
-  PBEngine::Copy(src, *this, subMgr);
+  PBEngine::Copy(src, *this);
 }
 
-bool SEDataRequestManager::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEDataRequestManager::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBEngine::SerializeToString(*this, output, m);
 }
@@ -43,13 +43,13 @@ bool SEDataRequestManager::SerializeToFile(const std::string& filename) const
 {
   return PBEngine::SerializeToFile(*this, filename);
 }
-bool SEDataRequestManager::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEDataRequestManager::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
-  return PBEngine::SerializeFromString(src, *this, m, subMgr);
+  return PBEngine::SerializeFromString(src, *this, m);
 }
-bool SEDataRequestManager::SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr)
+bool SEDataRequestManager::SerializeFromFile(const std::string& filename)
 {
-  return PBEngine::SerializeFromFile(filename, *this, subMgr);
+  return PBEngine::SerializeFromFile(filename, *this);
 }
 
 bool SEDataRequestManager::HasDefaultDecimalFormatting() const

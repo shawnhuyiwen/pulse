@@ -1,14 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceCompound.h"
-#include "dirent.h"
-#include "utils/FileUtils.h"
-#include "utils/unitconversion/UnitConversionEngine.h"
-#include <cstring>
+#include "cdm/CommonDefs.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceCompound.h"
+#include "cdm/utils/FileUtils.h"
+#include "cdm/utils/unitconversion/UnitConversionEngine.h"
 
 SESubstanceManager::SESubstanceManager(Logger* logger) : Loggable(logger)
 {
@@ -151,12 +149,6 @@ void SESubstanceManager::RemoveActiveSubstance(const SESubstance& substance)
       break;
     }
   }
-}
-
-void SESubstanceManager::RemoveActiveSubstances(const std::vector<SESubstance*>& substances)
-{
-  for(SESubstance* sub : m_ActiveSubstances)
-    RemoveActiveSubstance(*sub);
 }
 
 void SESubstanceManager::RemoveActiveSubstances()

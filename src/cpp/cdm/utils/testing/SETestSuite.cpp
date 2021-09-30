@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "utils/testing/SETestCase.h"
-#include "utils/testing/SETestSuite.h"
-#include "utils/testing/SETestErrorStatistics.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/utils/testing/SETestCase.h"
+#include "cdm/utils/testing/SETestSuite.h"
+#include "cdm/utils/testing/SETestErrorStatistics.h"
+#include "cdm/properties/SEScalarTime.h"
 
 SETestSuite::SETestSuite(Logger* logger) : Loggable(logger)
 {
@@ -70,10 +70,11 @@ std::vector<std::string>& SETestSuite::GetRequirements()
   return m_Requirements;
 }
 
-SETestCase& SETestSuite::CreateTestCase()
+SETestCase& SETestSuite::CreateTestCase(const std::string& name)
 {
   SETestCase* test = new SETestCase(GetLogger());
   m_TestCase.push_back(test);
+  test->SetName(name);
   return *test;
 }
 

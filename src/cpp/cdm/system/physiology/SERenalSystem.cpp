@@ -1,22 +1,22 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/physiology/SERenalSystem.h"
-#include "properties/SEScalarArea.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarVolumePerTimePressure.h"
-#include "properties/SEScalarVolumePerTimeArea.h"
-#include "properties/SEScalarVolumePerTimePressureArea.h"
-#include "properties/SEScalarOsmolality.h"
-#include "properties/SEScalarOsmolarity.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/physiology/SERenalSystem.h"
+#include "cdm/properties/SEScalarArea.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarVolumePerTimePressure.h"
+#include "cdm/properties/SEScalarVolumePerTimeArea.h"
+#include "cdm/properties/SEScalarVolumePerTimePressureArea.h"
+#include "cdm/properties/SEScalarOsmolality.h"
+#include "cdm/properties/SEScalarOsmolarity.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
 
 SERenalSystem::SERenalSystem(Logger* logger) : SESystem(logger)
 {

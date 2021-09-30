@@ -313,8 +313,8 @@ You will need to create an instance of an action class, fill it out with the nec
 
 #### Patient Actions
 @secreflist
-  @refitem AcuteStressTable "Acute Stress"
   @refitem AcuteRespiratoryDistressSyndromeExacerbationTable "ARDS Exacerbation"
+  @refitem AcuteStressTable "Acute Stress"
   @refitem AirwayObstructionTable "Airway Obstruction"
   @refitem AsthmaAttackTable "Asthma Attack"
   @refitem BrainInjuryTable "Brain Injury"
@@ -326,6 +326,8 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem ConsciousRespirationTable "Conscious Respiration"
   @refitem ConsumeNutrientsTable "Consume Nutrients"
   @refitem ChronicObstructivePulmonaryDiseaseExacerbationTable "COPD Exacerbation"
+  @refitem ConsciousRespirationTable "Conscious Respiration"
+  @refitem ConsumeNutrientsTable "Consume Nutrients"
   @refitem DyspneaTable "Dyspnea"
   @refitem ExerciseTable "Exercise"
   @refitem HemorrhageTable "Hemorrhage"
@@ -337,6 +339,7 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem PericardialEffusionTable "Pericardial Effusion"
   @refitem PulmonaryShuntExacerbationTable "Pulmonary Shunt Exacerbation"
   @refitem RespiratoryFatigueTable "Respiratory Fatigue"
+  @refitem RespiratoryMechanicsConfigurationTable "Respiratory Mechanics Configuration"
   @refitem SubstanceBolusTable "Substance Bolus"
   @refitem SubstanceCompoundInfusionTable "Substance Compound Infusion"
   @refitem SubstanceInfusionTable "Substance Infusion"
@@ -368,6 +371,14 @@ You will need to create an instance of an action class, fill it out with the nec
   @refitem AnesthesiaMachineYPieceDisconnectTable "Y-Piece Disconnect"
 @endsecreflist
 
+#### Bag Valve Mask Actions
+@secreflist
+  @refitem BagValveMaskConfigurationTable "Bag Valve Mask Configuration"
+  @refitem BagValveMaskAutomatedTable "Bag Valve Mask Automated"
+  @refitem BagValveMaskInstantaneousTable "Bag Valve Mask Instantaneous"
+  @refitem BagValveMaskSqueezeTable "Bag Valve Mask Squeeze"
+@endsecreflist
+
 #### %Inhaler Actions
 @secreflist
   @refitem InhalerConfigurationTable "Inhaler Configuration"
@@ -376,6 +387,11 @@ You will need to create an instance of an action class, fill it out with the nec
 #### Mechanical Ventilator Actions
 @secreflist
   @refitem MechanicalVentilatorConfigurationTable "Mechanical Ventilator Configuration"
+  @refitem MechanicalVentilatorHoldTable "Mechanical Ventilator Hold"
+  @refitem MechanicalVentilatorLeakTable "Mechanical Ventilator Leak"
+  @refitem MechanicalVentilatorContinuousPositiveAirwayPressureTable "Mechanical Ventilator CPAP Mode"
+  @refitem MechanicalVentilatorPressureControlTable "Mechanical Ventilator Pressure Control Mode"
+  @refitem MechanicalVentilatorVolumeControlTable "Mechanical Ventilator Volume Control Mode"
 @endsecreflist
 
 You can query the engine's action manager to get action information.
@@ -479,9 +495,17 @@ The bodies physiology, equipment, and the environment are all systems and each s
 
 The engine supports the following systems:
 
-|Code Method                                                                             | CDM Table                                             |
+
+|  Code Method                                                                           | CDM Table                                             |
 |---                                                                                     |---                                                    |
 |@code virtual const SEEnvironment* GetEnvironment() = 0; @endcode                       | @ref EnvironmentTable "Environment"                   |
+| <b>Equipment</b>                                                                       |                                                       |
+|@code virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() = 0; @endcode           | @ref AnesthesiaMachineTable "Anesthesia Machine"      |
+|@code virtual const SEBagValveMaskSystem* GetBagValveMaskSystem() = 0; @endcode         | @ref BagValveMaskTable "BagValveMask"                 |
+|@code virtual const SEElectroCardioGram* GetElectroCardioGram() = 0; @endcode           | @ref ElectroCardioGramTable "ElectroCardioGram"       |
+|@code virtual const SEInhaler* GetInhaler() = 0; @endcode                               | @ref InhalerTable "Inhaler"                           |
+|@code virtual const SEMechanicalVentilator* GetMechanicalVentilator() = 0; @endcode     | @ref MechanicalVentilatorTable "MechanicalVentilator" |
+| <b>Physiology</b>                                                         |                                                       |
 |@code virtual const SEBloodChemistrySystem* GetBloodChemistrySystem() = 0; @endcode     | @ref BloodChemistrySystemTable "BloodChemistry"       |
 |@code virtual const SECardiovascularSystem* GetCardiovascularSystem() = 0; @endcode     | @ref CardiovascularSystemTable "Cardiovascular"       |
 |@code virtual const SEEndocrineSystem* GetEndocrineSystem() = 0; @endcode               | @ref EndocrineSystemTable "Endocrine"                 |
@@ -492,10 +516,6 @@ The engine supports the following systems:
 |@code virtual const SERespiratorySystem* GetRespiratorySystem() = 0; @endcode           | @ref RespiratorySystemTable "Respiratory"             |
 |@code virtual const SEDrugSystem* GetDrugSystem() = 0; @endcode                         | @ref DrugSystemTable "Drug"                           |
 |@code virtual const SETissueSystem* GetTissueSystem() = 0; @endcode                     | @ref TissueSystemTable "Tissue"                       |
-|@code virtual const SEAnesthesiaMachine* GetAnesthesiaMachine() = 0; @endcode           | @ref AnesthesiaMachineTable "Anesthesia Machine"      |
-|@code virtual const SEElectroCardioGram* GetElectroCardioGram() = 0; @endcode           | @ref ElectroCardioGramTable "ElectroCardioGram"       |
-|@code virtual const SEInhaler* GetInhaler() = 0; @endcode                               | @ref InhalerTable "Inhaler"                           |
-|@code virtual const SEMechanicalVentilator* GetMechanicalVentilator() = 0; @endcode     | @ref MechanicalVentilatorTable "MechanicalVentilator" |
 
 @anchor CompartmentsInterface
 ### Compartments

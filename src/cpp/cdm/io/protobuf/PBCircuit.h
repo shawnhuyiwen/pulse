@@ -15,9 +15,9 @@ CDM_BIND_DECL2(ThermalCircuit)
 CDM_BIND_DECL2(ThermalCircuitNode)
 CDM_BIND_DECL2(ThermalCircuitPath)
 // Include Templates
-#include "circuit/SECircuit.h"
-#include "circuit/SECircuitNode.h"
-#include "circuit/SECircuitPath.h"
+#include "cdm/circuit/SECircuit.h"
+#include "cdm/circuit/SECircuitNode.h"
+#include "cdm/circuit/SECircuitPath.h"
 CDM_BIND_DECL(CircuitData)
 CDM_BIND_DECL(CircuitNodeData)
 CDM_BIND_DECL(CircuitPathData)

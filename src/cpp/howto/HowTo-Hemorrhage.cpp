@@ -2,30 +2,31 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEActionManager.h"
-#include "engine/SEPatientActionCollection.h"
-#include "compartment/SECompartmentManager.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceCompound.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEActionManager.h"
+#include "cdm/engine/SEPatientActionCollection.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SEEnergySystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceCompound.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -43,14 +44,11 @@ void HowToHemorrhage()
   pe->GetLogger()->LogToConsole(true);
   pe->GetLogger()->SetLogFile("./test_results/HowTo_Hemorrhage.log");
   pe->GetLogger()->Info("HowTo_Hemorrhage");
-  if (!pe->SerializeFromFile("./states/Gus@1620.36s.pbb"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.pbb"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
@@ -80,9 +78,8 @@ void HowToHemorrhage()
 
   // Hemorrhage Starts - instantiate a hemorrhage action and have the engine process it
   SEHemorrhage hemorrhageLeg;
-  hemorrhageLeg.SetType(eHemorrhage_Type::External);
-  hemorrhageLeg.SetCompartment(pulse::VascularCompartment::RightLeg);//the location of the hemorrhage
   hemorrhageLeg.GetSeverity().SetValue(0.8);
+  hemorrhageLeg.SetExternal(SEHemorrhage::ExternalCompartment::RightLeg);
   // Optionally, You can set the flow rate of the hemorrhage,
   // This needs to be provided the proper flow rate associated with the anatomy
   // This is implemented as a flow source, this rate will be constant, and will not be affected by dropping blood pressures
@@ -91,7 +88,7 @@ void HowToHemorrhage()
   pe->ProcessAction(hemorrhageLeg);
 
   // Advance some time to let the body bleed out a bit
-  if(!tracker.AdvanceModelTime(300)) // Check the return of advance time, if your hemorrhage is too extreme, the engine will enter an unsolvable/irreversable state
+  if(!AdvanceAndTrackTime_s(300, *pe)) // Check the return of advance time, if your hemorrhage is too extreme, the engine will enter an unsolvable/irreversable state
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;
@@ -128,7 +125,7 @@ void HowToHemorrhage()
   
   
   // Advance some time while the medic gets the drugs ready
-  if(!tracker.AdvanceModelTime(100))
+  if(!AdvanceAndTrackTime_s(100, *pe))
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;
@@ -154,7 +151,7 @@ void HowToHemorrhage()
   iVSaline.GetRate().SetValue(100,VolumePerTimeUnit::mL_Per_min);//The rate to admnister the compound in the bag in this case saline
   pe->ProcessAction(iVSaline);
 
-  if (!tracker.AdvanceModelTime(400))
+  if (!AdvanceAndTrackTime_s(400, *pe))
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;

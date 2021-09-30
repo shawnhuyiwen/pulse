@@ -5,6 +5,7 @@ option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/AnesthesiaMachineActions.proto";
+import "pulse/cdm/bind/BagValveMaskActions.proto";
 import "pulse/cdm/bind/InhalerActions.proto";
 import "pulse/cdm/bind/MechanicalVentilatorActions.proto";
 
@@ -13,22 +14,32 @@ message AnyEquipmentActionData
 {
   oneof Action
   {
-    AnesthesiaMachineConfigurationData                      AnesthesiaMachineConfiguration               = 1;
-    AnesthesiaMachineExpiratoryValveLeakData                AnesthesiaMachineExpiratoryValveLeak         = 2;
-    AnesthesiaMachineExpiratoryValveObstructionData         AnesthesiaMachineExpiratoryValveObstruction  = 3;
-    AnesthesiaMachineInspiratoryValveLeakData               AnesthesiaMachineInspiratoryValveLeak        = 4;
-    AnesthesiaMachineInspiratoryValveObstructionData        AnesthesiaMachineInspiratoryValveObstruction = 5;
-    AnesthesiaMachineMaskLeakData                           AnesthesiaMachineMaskLeak                    = 6;
-    AnesthesiaMachineSodaLimeFailureData                    AnesthesiaMachineSodaLimeFailure             = 7;
-    AnesthesiaMachineTubeCuffLeakData                       AnesthesiaMachineTubeCuffLeak                = 8;
-    AnesthesiaMachineVaporizerFailureData                   AnesthesiaMachineVaporizerFailure            = 9;
-    AnesthesiaMachineVentilatorPressureLossData             AnesthesiaMachineVentilatorPressureLoss      = 10;
-    AnesthesiaMachineYPieceDisconnectData                   AnesthesiaMachineYPieceDisconnect            = 11;
-    AnesthesiaMachineOxygenWallPortPressureLossData         AnesthesiaMachineOxygenWallPortPressureLoss  = 12;
-    AnesthesiaMachineOxygenTankPressureLossData             AnesthesiaMachineOxygenTankPressureLoss      = 13;
+    AnesthesiaMachineConfigurationData                       AnesthesiaMachineConfiguration                       = 1;
+    AnesthesiaMachineExpiratoryValveLeakData                 AnesthesiaMachineExpiratoryValveLeak                 = 2;
+    AnesthesiaMachineExpiratoryValveObstructionData          AnesthesiaMachineExpiratoryValveObstruction          = 3;
+    AnesthesiaMachineInspiratoryValveLeakData                AnesthesiaMachineInspiratoryValveLeak                = 4;
+    AnesthesiaMachineInspiratoryValveObstructionData         AnesthesiaMachineInspiratoryValveObstruction         = 5;
+    AnesthesiaMachineMaskLeakData                            AnesthesiaMachineMaskLeak                            = 6;
+    AnesthesiaMachineSodaLimeFailureData                     AnesthesiaMachineSodaLimeFailure                     = 7;
+    AnesthesiaMachineTubeCuffLeakData                        AnesthesiaMachineTubeCuffLeak                        = 8;
+    AnesthesiaMachineVaporizerFailureData                    AnesthesiaMachineVaporizerFailure                    = 9;
+    AnesthesiaMachineVentilatorPressureLossData              AnesthesiaMachineVentilatorPressureLoss              = 10;
+    AnesthesiaMachineYPieceDisconnectData                    AnesthesiaMachineYPieceDisconnect                    = 11;
+    AnesthesiaMachineOxygenWallPortPressureLossData          AnesthesiaMachineOxygenWallPortPressureLoss          = 12;
+    AnesthesiaMachineOxygenTankPressureLossData              AnesthesiaMachineOxygenTankPressureLoss              = 13;
     
-    InhalerConfigurationData                                InhalerConfiguration                         = 101;
+    BagValveMaskConfigurationData                            BagValveMaskConfiguration                            = 301;
+    BagValveMaskAutomatedData                                BagValveMaskAutomated                                = 302;
+    BagValveMaskInstantaneousData                            BagValveMaskInstantaneous                            = 303;
+    BagValveMaskSqueezeData                                  BagValveMaskSqueeze                                  = 304;
     
-    MechanicalVentilatorConfigurationData                   MechanicalVentilatorConfiguration            = 201;
+    InhalerConfigurationData                                 InhalerConfiguration                                 = 101;
+    
+    MechanicalVentilatorConfigurationData                    MechanicalVentilatorConfiguration                    = 201;
+    MechanicalVentilatorHoldData                             MechanicalVentilatorHold                             = 202;
+    MechanicalVentilatorLeakData                             MechanicalVentilatorLeak                             = 203;
+    MechanicalVentilatorContinuousPositiveAirwayPressureData MechanicalVentilatorContinuousPositiveAirwayPressure = 204;
+    MechanicalVentilatorPressureControlData                  MechanicalVentilatorPressureControl                  = 205;
+    MechanicalVentilatorVolumeControlData                    MechanicalVentilatorVolumeControl                    = 206;
   }
 }

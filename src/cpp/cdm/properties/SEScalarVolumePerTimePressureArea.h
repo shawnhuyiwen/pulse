@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL VolumePerTimePressureAreaUnit : public CCompoundUnit
 {
 public:
   VolumePerTimePressureAreaUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~VolumePerTimePressureAreaUnit() {}
+
+  // Please use static units below
+  VolumePerTimePressureAreaUnit(const VolumePerTimePressureAreaUnit&) = delete;
+  VolumePerTimePressureAreaUnit& operator= (const VolumePerTimePressureAreaUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const VolumePerTimePressureAreaUnit& GetCompoundUnit(const std::string& unit);

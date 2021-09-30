@@ -1,23 +1,23 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceAerosolization.h"
-#include "substance/SESubstanceClearance.h"
-#include "substance/SESubstancePhysicochemicals.h"
-#include "substance/SESubstancePharmacokinetics.h"
-#include "substance/SESubstancePharmacodynamics.h"
-#include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarInversePressure.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerAreaTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarVolumePerTimePressure.h"
-#include "io/protobuf/PBSubstance.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceAerosolization.h"
+#include "cdm/substance/SESubstanceClearance.h"
+#include "cdm/substance/SESubstancePhysicochemicals.h"
+#include "cdm/substance/SESubstancePharmacokinetics.h"
+#include "cdm/substance/SESubstancePharmacodynamics.h"
+#include "cdm/properties/SEScalarMassPerAmount.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarInversePressure.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerAreaTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolumePerTimePressure.h"
+#include "cdm/io/protobuf/PBSubstance.h"
 
 SESubstance::SESubstance(const std::string& name, Logger* logger) : Loggable(logger)
 {
@@ -25,6 +25,7 @@ SESubstance::SESubstance(const std::string& name, Logger* logger) : Loggable(log
   m_State = eSubstance_State::NullState;
   m_Density = nullptr;
   m_MolarMass = nullptr;
+  m_Valence = nullptr;
 
   m_MaximumDiffusionFlux = nullptr;
   m_MichaelisCoefficient = nullptr;
@@ -55,6 +56,7 @@ SESubstance::~SESubstance()
   m_State = eSubstance_State::NullState;
   SAFE_DELETE(m_Density);
   SAFE_DELETE(m_MolarMass);
+  SAFE_DELETE(m_Valence);
 
   SAFE_DELETE(m_MaximumDiffusionFlux);
   SAFE_DELETE(m_MichaelisCoefficient);
@@ -85,6 +87,7 @@ void SESubstance::Clear()
   m_State = eSubstance_State::NullState;
   INVALIDATE_PROPERTY(m_Density);
   INVALIDATE_PROPERTY(m_MolarMass);
+  INVALIDATE_PROPERTY(m_Valence);
   
   INVALIDATE_PROPERTY(m_MaximumDiffusionFlux);
   INVALIDATE_PROPERTY(m_MichaelisCoefficient);
@@ -114,7 +117,7 @@ void SESubstance::Clear()
     m_PD->Clear();
 }
 
-bool SESubstance::SerializeToString(std::string& output, SerializationFormat m) const
+bool SESubstance::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBSubstance::SerializeToString(*this, output, m);
 }
@@ -122,7 +125,7 @@ bool SESubstance::SerializeToFile(const std::string& filename) const
 {
   return PBSubstance::SerializeToFile(*this, filename);
 }
-bool SESubstance::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SESubstance::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBSubstance::SerializeFromString(src, *this, m);
 }
@@ -244,6 +247,23 @@ double SESubstance::GetMolarMass(const MassPerAmountUnit& unit) const
   if (m_MolarMass == nullptr)
     return SEScalar::dNaN();
   return m_MolarMass->GetValue(unit);
+}
+
+bool SESubstance::HasValence() const
+{
+  return (m_Valence == nullptr) ? false : m_Valence->IsValid();
+}
+SEScalar& SESubstance::GetValence()
+{
+  if (m_Valence == nullptr)
+    m_Valence = new SEScalar();
+  return *m_Valence;
+}
+double SESubstance::GetValence() const
+{
+  if (m_Valence == nullptr)
+    return SEScalar::dNaN();
+  return m_Valence->GetValue();
 }
 
 bool SESubstance::HasMaximumDiffusionFlux() const

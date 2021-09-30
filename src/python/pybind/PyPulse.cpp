@@ -2,15 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #include <pybind11/pybind11.h>
-#include "PulsePhysiologyEngine.h"
+#include "PulseEngineThunk.h"
 
 namespace py = pybind11;
 
 // Core Physiology Engine
-void PhysiologyEngine(py::module&);
-void PhysiologyEnginePool(py::module&);
+void PulseEngineBind(py::module&);
+void PulseEnginePoolBind(py::module&);
 // Studies
-void MultiplexVentilationEngine(py::module&);
+void MultiplexVentilationEngineBind(py::module&);
 
 PYBIND11_MODULE(PyPulse, m)
 {
@@ -26,14 +26,18 @@ PYBIND11_MODULE(PyPulse, m)
            serialize_to_string
     )pbdoc";
    
-   py::enum_<SerializationFormat>(m, "serialization_format")
-    .value("binary", SerializationFormat::BINARY)
-    .value("json", SerializationFormat::JSON)
+   py::enum_<eSerializationFormat>(m, "serialization_format")
+    .value("binary", eSerializationFormat::BINARY)
+    .value("json", eSerializationFormat::JSON)
     .export_values();
-    
-  PhysiologyEngine(m);
-  PhysiologyEnginePool(m);
-  MultiplexVentilationEngine(m);
+   py::enum_<eModelType>(m, "model_type")
+     .value("human_adult_whole_body", eModelType::HumanAdultWholeBody)
+     .value("human_adult_ventilation_mechanics", eModelType::HumanAdultVentilationMechanics)
+     .export_values();
+
+  PulseEngineBind(m);
+  PulseEnginePoolBind(m);
+  MultiplexVentilationEngineBind(m);
 
 #ifdef VERSION_INFO
   m.attr("__version__") = VERSION_INFO;

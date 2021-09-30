@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL MassPerAreaTimeUnit : public CCompoundUnit
 {
 public:
   MassPerAreaTimeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~MassPerAreaTimeUnit() {}
+
+  // Please use static units below
+  MassPerAreaTimeUnit(const MassPerAreaTimeUnit&) = delete;
+  MassPerAreaTimeUnit& operator= (const MassPerAreaTimeUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const MassPerAreaTimeUnit& GetCompoundUnit(const std::string& unit);

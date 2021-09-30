@@ -59,7 +59,7 @@ public class SEPatient
 
   }
 
-  public void reset()
+  public void clear()
   {
     this.name=null;
     this.sex=null;
@@ -136,10 +136,10 @@ public class SEPatient
 
   public static void load(PatientData src, SEPatient dst)
   {
-    dst.reset();
+    dst.clear();
     dst.setName(src.getName());
     if(src.getSex()!=eSex.UNRECOGNIZED)
-    	dst.setSex(src.getSex());
+      dst.setSex(src.getSex());
     if(src.hasAge())
       SEScalarTime.load(src.getAge(),dst.getAge());
     if(src.hasWeight())

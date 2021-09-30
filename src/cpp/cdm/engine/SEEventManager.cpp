@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SEEventManager.h"
-#include "properties/SEScalarTime.h"
-#include "io/protobuf/PBEvents.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/io/protobuf/PBEvents.h"
 
 SEEventManager::SEEventManager(Logger* logger) : Loggable(logger)
 {
@@ -378,11 +378,11 @@ SEEventChange::SEEventChange(eEvent e, bool active, const SEScalarTime* simTime)
   else
     m_SimTime.Invalidate();
 }
-bool SEEventChange::SerializeToString(std::vector<const SEEventChange*>& changes, std::string& output, SerializationFormat m, Logger* logger)
+bool SEEventChange::SerializeToString(std::vector<const SEEventChange*>& changes, std::string& output, eSerializationFormat m, Logger* logger)
 {
   return PBEvents::SerializeToString(changes, output, m, logger);
 }
-bool SEEventChange::SerializeFromString(const std::string& src, std::vector<const SEEventChange*>& changes, SerializationFormat m, Logger* logger)
+bool SEEventChange::SerializeFromString(const std::string& src, std::vector<const SEEventChange*>& changes, eSerializationFormat m, Logger* logger)
 {
   return PBEvents::SerializeFromString(src, changes, m, logger);
 }
@@ -397,11 +397,11 @@ SEActiveEvent::SEActiveEvent(eEvent e, double duration, const TimeUnit& unit)
   m_Event = e;
   m_Duration.SetValue(duration,unit);
 }
-bool SEActiveEvent::SerializeToString(std::vector<const SEActiveEvent*>& active, std::string& output, SerializationFormat m, Logger* logger)
+bool SEActiveEvent::SerializeToString(std::vector<const SEActiveEvent*>& active, std::string& output, eSerializationFormat m, Logger* logger)
 {
   return PBEvents::SerializeToString(active, output, m, logger);
 }
-bool SEActiveEvent::SerializeFromString(const std::string& src, std::vector<const SEActiveEvent*>& active, SerializationFormat m, Logger* logger)
+bool SEActiveEvent::SerializeFromString(const std::string& src, std::vector<const SEActiveEvent*>& active, eSerializationFormat m, Logger* logger)
 {
   return PBEvents::SerializeFromString(src, active, m, logger);
 }

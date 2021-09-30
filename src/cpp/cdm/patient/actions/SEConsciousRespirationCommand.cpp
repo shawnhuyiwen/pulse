@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEConsciousRespirationCommand.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEConsciousRespirationCommand.h"
 
 SEConsciousRespirationCommand::SEConsciousRespirationCommand(Logger* logger) : Loggable(logger)
 {

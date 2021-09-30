@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEConsumeNutrients.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarVolume.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEConsumeNutrients.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEConsumeNutrients::SEConsumeNutrients(Logger* logger) : SEPatientAction(logger)
 {
@@ -28,7 +28,7 @@ void SEConsumeNutrients::Clear()
   m_NutritionFile = "";
 }
 
-void SEConsumeNutrients::Copy(const SEConsumeNutrients& src, bool preserveState)
+void SEConsumeNutrients::Copy(const SEConsumeNutrients& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);

@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "blackbox/SEBlackBox.h"
-#include "compartment/SECompartment.h"
-#include "compartment/SECompartmentNodes.h"
-#include "circuit/thermal/SEThermalCircuitNode.h"
+#include "cdm/blackbox/SEBlackBox.h"
+#include "cdm/compartment/SECompartment.h"
+#include "cdm/compartment/SECompartmentNodes.h"
+#include "cdm/circuit/thermal/SEThermalCircuitNode.h"
 class SEThermalCircuitNode;
 class SEThermalCompartmentLink;
 

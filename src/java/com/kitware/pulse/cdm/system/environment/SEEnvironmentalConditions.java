@@ -63,7 +63,7 @@ public class SEEnvironmentalConditions
 
   }
   
-  public void reset()
+  public void clear()
   {
     surroundingType = null;
     if (airDensity != null)
@@ -91,7 +91,7 @@ public class SEEnvironmentalConditions
   
   public void copy(SEEnvironmentalConditions from)
   {
-    this.reset();
+    this.clear();
     if(from.surroundingType != eSurroundingType.NullSurrounding)
       this.setSurroundingType(from.surroundingType);
     if(from.hasAirDensity())
@@ -149,7 +149,7 @@ public class SEEnvironmentalConditions
   
   public static void load(EnvironmentalConditionsData src, SEEnvironmentalConditions dst)
   {
-    dst.reset();
+    dst.clear();
     if (src.getSurroundingType() != eSurroundingType.UNRECOGNIZED)
       dst.setSurroundingType(src.getSurroundingType());
     if (src.hasAirDensity())

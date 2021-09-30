@@ -25,17 +25,17 @@ public class SEPatientConfiguration
     this.conditions = new ArrayList<>();
   }
   
-  public void reset() 
+  public void clear() 
   {
     if(patient != null)
-      patient.reset();
+      patient.clear();
     patientFile = "";
     conditions.clear();
   }
   
   public static void load(PatientConfigurationData src, SEPatientConfiguration dst)
   {
-    dst.reset();
+    dst.clear();
     
     switch(src.getPatientTypeCase())
     {

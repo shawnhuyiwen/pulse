@@ -3,6 +3,8 @@
 
 #include "HRunner.h"
 
+using namespace pulse::study::hydrocephalus;
+
 int main(int argc, char* argv[])
 {
   try
@@ -16,7 +18,7 @@ int main(int argc, char* argv[])
     else
     {
       HRunner hr("./test_results/hydrocephalus/HydrocephalusRunner.log");
-      hr.Run(argv[1], SerializationFormat::JSON);
+      hr.Run(argv[1], eSerializationFormat::JSON);
       return 0;
     };
     // convert string to back to lower case
@@ -56,7 +58,7 @@ int main(int argc, char* argv[])
       double productionRateMin = 0.23;
       double productionRateMax = 0.53;// 0.52;
       double productionRateStep = 0.1;// 0.05;
-      size_t cnt = 0;
+      unsigned int cnt = 0;
       //compliance loop
       for (double compliance=complianceMin; compliance < complianceMax; compliance += complianceStep)
       {

@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEBrainInjury.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEBrainInjury::SEBrainInjury(Logger* logger) : SEPatientAction(logger)
 {
@@ -25,7 +25,7 @@ void SEBrainInjury::Clear()
   m_Type = eBrainInjury_Type::Diffuse;
 }
 
-void SEBrainInjury::Copy(const SEBrainInjury& src, bool preserveState)
+void SEBrainInjury::Copy(const SEBrainInjury& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);

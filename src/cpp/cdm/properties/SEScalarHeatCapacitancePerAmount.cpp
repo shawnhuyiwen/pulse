@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "properties/SEScalarHeatCapacitancePerAmount.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/properties/SEScalarHeatCapacitancePerAmount.h"
 
 const HeatCapacitancePerAmountUnit HeatCapacitancePerAmountUnit::J_Per_K_mol("J/K mol");
 

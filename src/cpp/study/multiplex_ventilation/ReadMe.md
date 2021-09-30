@@ -9,6 +9,8 @@ This multiplex ventilation engine was used to perform a sensitivity analysis for
 
 As well as the C++ provide in this folder, we also used several python scripts for simulation results analysis that can be found [here](https://gitlab.kitware.com/physiology/engine/-/tree/3.x/src/python/pulse/study/multiplex_ventilation).
 
+This study coincides with the PLOS ONE publication [Computational simulation to assess patient safety of uncompensated COVID-19 two-patient ventilator sharing using the Pulse Physiology Engine](https://doi.org/10.1371/journal.pone.0242532).
+
 ---
 
 ### Building

@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL OsmolalityUnit : public CCompoundUnit
 {
 public:
   OsmolalityUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~OsmolalityUnit() {}
+
+  // Please use static units below
+  OsmolalityUnit(const OsmolalityUnit&) = delete;
+  OsmolalityUnit& operator= (const OsmolalityUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const OsmolalityUnit& GetCompoundUnit(const std::string& unit);

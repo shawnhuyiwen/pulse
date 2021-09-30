@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 
 class CDM_DECL SECardiacArrest : public SEPatientAction
 {
@@ -13,7 +13,7 @@ public:
   virtual ~SECardiacArrest();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SECardiacArrest& src, bool preserveState=false);
+  virtual void Copy(const SECardiacArrest& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

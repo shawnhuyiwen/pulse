@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
 
 // Keep enums in sync with appropriate schema/cdm/CompartmentEnums.proto file !!
 enum class eElectroCardioGram_WaveformLead { NullLead = 0, 

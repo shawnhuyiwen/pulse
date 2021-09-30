@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/fluid/SEFluidCompartmentLink.h"
-#include "compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SEFluidCompartmentLink.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
 class SEGasBlackBox;
 class SEGasCompartment;
 

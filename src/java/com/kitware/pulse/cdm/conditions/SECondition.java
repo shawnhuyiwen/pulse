@@ -24,18 +24,18 @@ public abstract class SECondition implements Serializable
   
   public void copy(SECondition other) 
   {
-    reset();
+    clear();
     comment = other.comment;
   }
   
-  public void reset() 
+  public void clear() 
   {
     this.comment = null;
   }
   
   public static void load(ConditionData src, SECondition dst) 
   {
-    dst.reset();
+    dst.clear();
     if(!src.getComment().isEmpty())
       dst.setComment(src.getComment());
   }

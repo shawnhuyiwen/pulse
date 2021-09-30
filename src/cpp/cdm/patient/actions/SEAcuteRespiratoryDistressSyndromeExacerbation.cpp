@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEAcuteRespiratoryDistressSyndromeExacerbation::SEAcuteRespiratoryDistressSyndromeExacerbation(Logger* logger) : SEPatientAction(logger)
 {
@@ -28,7 +28,7 @@ void SEAcuteRespiratoryDistressSyndromeExacerbation::Clear()
   INVALIDATE_PROPERTY(m_RightLungAffected);
 }
 
-void SEAcuteRespiratoryDistressSyndromeExacerbation::Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool preserveState)
+void SEAcuteRespiratoryDistressSyndromeExacerbation::Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);

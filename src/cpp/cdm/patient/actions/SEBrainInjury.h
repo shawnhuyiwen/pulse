@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 
 // Keep enums in sync with appropriate schema/cdm/PatientActionEnums.proto file !!
 enum class eBrainInjury_Type { Diffuse = 0, LeftFocal, RightFocal };
@@ -17,7 +17,7 @@ public:
   virtual ~SEBrainInjury();
 
   virtual void Clear();
-  virtual void Copy(const SEBrainInjury& src, bool preserveState=false);
+  virtual void Copy(const SEBrainInjury& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

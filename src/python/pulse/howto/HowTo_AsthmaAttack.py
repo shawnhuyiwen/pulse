@@ -3,11 +3,11 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEAsthmaAttack
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_AsthmaAttack():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_AsthmaAttack.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_AsthmaAttack.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

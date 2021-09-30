@@ -16,23 +16,18 @@ else()
 endif()
 
 set(CDM_DIR "pulse/cdm/bind")
-set(CPM_DIR "pulse/cpm/bind")
-set(IMPL_DIR "pulse/impl/bind")
+set(ENGINE_DIR "pulse/engine/bind")
 set(STUDY_DIR "pulse/study/bind")
 # Let the build also know package locations
 get_directory_property(hasParent PARENT_DIRECTORY)
 if(hasParent)
   set(CDM_PACKAGE ${CDM_DIR} PARENT_SCOPE)
-  set(CPM_PACKAGE ${CPM_DIR} PARENT_SCOPE)
-  set(IMPL_PACKAGE ${IMPL_DIR} PARENT_SCOPE)
+  set(ENGINE_PACKAGE ${ENGINE_DIR} PARENT_SCOPE)
   set(STUDY_PACKAGE ${STUDY_DIR} PARENT_SCOPE)
 endif()
 
 macro(delete_bindings _root)
-  file(GLOB _OLD_BIND_FILES "${_root}/${CDM_DIR}/*"
-                            "${_root}/${CPM_DIR}/*"
-                            "${_root}/${IMPL_DIR}/*"
-                            "${_root}/${STUDY_DIR}/*")
+  file(GLOB _OLD_BIND_FILES "${_root}/*")
   if(_OLD_BIND_FILES)
     file(REMOVE ${_OLD_BIND_FILES})
   endif()
@@ -47,14 +42,17 @@ message(STATUS "SCHEMA_SRC: ${SCHEMA_SRC}")
 file(GLOB_RECURSE _FILES "${SCHEMA_SRC}/*.proto")
 
 set(_RUN_PROTOC OFF)
-if(EXISTS ${SCHEMA_SRC}/schema_last_built)
+if(EXISTS ${DST_ROOT}/schema_last_built)
   foreach(f ${_FILES})
-    if(${f} IS_NEWER_THAN ${SCHEMA_SRC}/schema_last_built)
+    if(${f} IS_NEWER_THAN ${DST_ROOT}/schema_last_built)
       message(STATUS "${f} has changed since the last build")
       set(_RUN_PROTOC ON)
     endif()
   endforeach()
 else()
+  set(_RUN_PROTOC ON)
+endif()
+if(FORCE)
   set(_RUN_PROTOC ON)
 endif()
 
@@ -67,13 +65,9 @@ endif()
 ## C++ Bindings ##
 ##################
 
-set(cpp_bindings_DIR "${SRC_ROOT}/cpp/bind")
+set(cpp_bindings_DIR "${DST_ROOT}/cpp")
 file(MAKE_DIRECTORY "${cpp_bindings_DIR}")
-file(GLOB_RECURSE _OLD_CPP_FILES "${cpp_bindings_DIR}/*.h" "${cpp_bindings_DIR}/*.cc")
-if(_OLD_CPP_FILES)
-  file(REMOVE ${_OLD_CPP_FILES})
-endif() 
-
+delete_bindings(${cpp_bindings_DIR})
 foreach(f ${_FILES})
   message(STATUS "C++ Binding file ${f}")
   execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
@@ -89,7 +83,7 @@ if(Pulse_JAVA_API)
   ## Java Bindings ##
   ###################
 
-  set(java_bindings_DIR "${SRC_ROOT}/java")
+  set(java_bindings_DIR "${DST_ROOT}/java")
   file(MAKE_DIRECTORY "${java_bindings_DIR}")
   delete_bindings(${java_bindings_DIR})
 
@@ -129,8 +123,8 @@ if(Pulse_JAVA_API)
                           #unittest_lite_imports_nonlite.proto
                           unittest_mset.proto
                           unittest_mset_wire_format.proto
-                          unittest_no_arena.proto
-                          unittest_no_arena_import.proto
+                          #unittest_no_arena.proto
+                          #unittest_no_arena_import.proto
                           #unittest_no_arena_lite.proto
                           unittest_no_field_presence.proto
                           unittest_no_generic_services.proto
@@ -147,7 +141,7 @@ if(Pulse_JAVA_API)
     #Generate the java API files from their proto files
     foreach(f ${__API_PROTO_FILES})
       execute_process(COMMAND ${BINDER} --proto_path=${protobuf_SRC}/src/
-                                        --java_out=${protobuf_SRC}/java/core/src/main/java/
+                                        --java_out=${java_bindings_DIR}
                                           "${protobuf_SRC}/src/google/protobuf/${f}")
       message(STATUS "Java Binding file ${protobuf_SRC}/src/google/protobuf/${f}")
     endforeach()
@@ -172,20 +166,19 @@ endif()
 #################
 ## C# Bindings ##
 #################
-
-set(csharp_bindings_DIR "${SRC_ROOT}/csharp/pulse/bind")
-file(MAKE_DIRECTORY "${csharp_bindings_DIR}")
-file(GLOB _OLD_BIND_FILES "${csharp_bindings_DIR}/*")
-if(_OLD_BIND_FILES)
-  file(REMOVE ${_OLD_BIND_FILES})
+if(Pulse_CSHARP_API)
+  set(csharp_bindings_DIR "${DST_ROOT}/csharp")
+  file(MAKE_DIRECTORY "${csharp_bindings_DIR}")
+  delete_bindings(${csharp_bindings_DIR})
+  foreach(f ${_FILES})
+    message(STATUS "C# Binding file ${f}")
+    execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
+                                      --csharp_out=${csharp_bindings_DIR}
+                                      --csharp_opt=base_namespace
+                                      ${f})
+  endforeach()
+  message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )
 endif()
-foreach(f ${_FILES})
-  message(STATUS "C# Binding file ${f}")
-  execute_process(COMMAND ${BINDER} --proto_path=${SCHEMA_SRC}
-                                    --csharp_out=${csharp_bindings_DIR}
-                                    ${f})
-endforeach()
-message(STATUS "csharp bindings are here : ${csharp_bindings_DIR}" )
 
 if(Pulse_PYTHON_API)
   #####################
@@ -193,7 +186,7 @@ if(Pulse_PYTHON_API)
   #####################
   find_package (Python3 COMPONENTS Interpreter)
   if(Python3_FOUND)
-    set(python_bindings_DIR "${SRC_ROOT}/python")
+    set(python_bindings_DIR "${DST_ROOT}/python")
     delete_bindings(${python_bindings_DIR})
     set( ENV{PROTOC} ${BINDER} )
     execute_process(COMMAND ${Python3_EXECUTABLE} setup.py build
@@ -209,13 +202,17 @@ if(Pulse_PYTHON_API)
     endforeach()
     # Hard coded for now, will need to be more clever on how it finds each file.
     # Necessary for setup.py file to find the bindings to install.
-    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${CDM_DIR}")
-    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${CPM_DIR}")
-    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${IMPL_DIR}")
-    file(COPY "${python_bindings_DIR}/__init__.py" DESTINATION "${python_bindings_DIR}/${STUDY_DIR}")
+    file(COPY "${SRC_ROOT}/python/__init__.py" DESTINATION "${python_bindings_DIR}")
+    file(COPY "${SRC_ROOT}/python/__init__.py" DESTINATION "${python_bindings_DIR}/pulse")
+    file(COPY "${SRC_ROOT}/python/__init__.py" DESTINATION "${python_bindings_DIR}/pulse/cdm")
+    file(COPY "${SRC_ROOT}/python/__init__.py" DESTINATION "${python_bindings_DIR}/pulse/engine")
+    file(COPY "${SRC_ROOT}/python/__init__.py" DESTINATION "${python_bindings_DIR}/pulse/study")
+    file(COPY "${SRC_ROOT}/python/__init__.py" DESTINATION "${python_bindings_DIR}/pulse/cdm/bind")
+    file(COPY "${SRC_ROOT}/python/__init__.py" DESTINATION "${python_bindings_DIR}/pulse/engine/bind")
+    file(COPY "${SRC_ROOT}/python/__init__.py" DESTINATION "${python_bindings_DIR}/pulse/study/bind")
     message(STATUS "python bindings are here : ${python_bindings_DIR}" )
   endif()
 endif()
 
-file(TOUCH ${SCHEMA_SRC}/schema_last_built)
-message(STATUS "Touch file ${SCHEMA_SRC}/schema_last_built")
+file(TOUCH ${DST_ROOT}/schema_last_built)
+message(STATUS "Touch file ${DST_ROOT}/schema_last_built")

@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/thermal/SEThermalCompartmentLink.h"
-#include "circuit/SECircuitManager.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
-#include "properties/SEScalarPower.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/compartment/thermal/SEThermalCompartment.h"
+#include "cdm/compartment/thermal/SEThermalCompartmentLink.h"
+#include "cdm/circuit/SECircuitManager.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/properties/SEScalarPower.h"
 
 SEThermalCompartmentLink::SEThermalCompartmentLink(SEThermalCompartment& src, SEThermalCompartment & tgt, const std::string& name) : SECompartmentLink(name,src.GetLogger()), m_SourceCmpt(src), m_TargetCmpt(tgt)
 {

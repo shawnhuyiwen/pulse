@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
-#include "patient/assessments/SEPatientAssessment.h"
+#include "cdm/patient/actions/SEPatientAction.h"
+#include "cdm/patient/assessments/SEPatientAssessment.h"
 
 class CDM_DECL SEPatientAssessmentRequest : public SEPatientAction
 {
@@ -14,7 +14,7 @@ public:
   virtual ~SEPatientAssessmentRequest();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEPatientAssessmentRequest& src, bool preserveState=false);
+  virtual void Copy(const SEPatientAssessmentRequest& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

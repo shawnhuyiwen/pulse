@@ -175,8 +175,8 @@ protected:
   void AddSubstance(SESubstance& s, CompartmentType& cmpt) const;
 
   // By default, every compartment gets every substance. Override these if you want to discritize better who gets what
-  virtual bool AllowGasSubstance(SESubstance& s, SEGasCompartment& cmpt) const { return true; }
-  virtual bool AllowLiquidSubstance(SESubstance& s, SELiquidCompartment& cmpt) const { return true; }
+  virtual bool AllowGasSubstance(SESubstance&, SEGasCompartment&) const { return true; }
+  virtual bool AllowLiquidSubstance(SESubstance&, SELiquidCompartment&) const { return true; }
 
 
   SESubstance* m_O2;

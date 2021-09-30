@@ -1,0 +1,26 @@
+syntax = "proto3";
+package pulse.cdm.bind;
+option java_package = "com.kitware.pulse.cdm.bind";
+option csharp_namespace = "pulse.cdm.bind";
+option optimize_for = SPEED;
+
+import "pulse/cdm/bind/Enums.proto";
+import "pulse/cdm/bind/Properties.proto";
+import "pulse/cdm/bind/Substance.proto";
+
+message BagValveMaskData
+{
+  eSwitch                             Connection                      = 1;/**<<  @brief @ref BagValveMaskData_eConnectionTable */
+                                                                                 
+  ScalarPressureTimePerVolumeData     BagResistance                   = 2;/**<<  @brief Bag resistance. */
+  ScalarVolumeData                    ConnectionVolume                = 3;/**<<  @brief Dead space volume of the connection (i.e., mask/tube). */
+  ScalarPressureTimePerVolumeData     FilterResistance                = 4;/**<<  @brief Filter resistance. */
+  ScalarVolumeData                    FilterVolume                    = 5;/**<<  @brief Dead space volume of the filter. */
+  ScalarPressureTimePerVolumeData     SealResistance                  = 6;/**<<  @brief Seal resistance. */
+  ScalarPressureData                  ValvePositiveEndExpiredPressure = 7;/**<<  @brief Maximum extrinsic pressure above atmosphere at the end of exhalation. */
+  ScalarPressureTimePerVolumeData     ValveResistance                 = 8;/**<<  @brief Valve Resistance. */
+  ScalarVolumeData                    ValveVolume                     = 9;/**<<  @brief Dead space volume of the valve. */
+
+  repeated SubstanceFractionData      FractionInspiredGas             = 10;/**<< @brief Break down of the gases, such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol    = 11;/**<< @brief Concentration of added aerosolized substances. */
+}

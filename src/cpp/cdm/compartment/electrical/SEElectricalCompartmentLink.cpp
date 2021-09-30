@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "compartment/electrical/SEElectricalCompartment.h"
-#include "compartment/electrical/SEElectricalCompartmentLink.h"
-#include "circuit/SECircuitManager.h"
-#include "circuit/electrical/SEElectricalCircuitPath.h"
-#include "properties/SEScalarElectricCurrent.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/compartment/electrical/SEElectricalCompartment.h"
+#include "cdm/compartment/electrical/SEElectricalCompartmentLink.h"
+#include "cdm/circuit/SECircuitManager.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/properties/SEScalarElectricCurrent.h"
 
 SEElectricalCompartmentLink::SEElectricalCompartmentLink(SEElectricalCompartment& src, SEElectricalCompartment & tgt, const std::string& name) : SECompartmentLink(name,src.GetLogger()), m_SourceCmpt(src), m_TargetCmpt(tgt)
 {

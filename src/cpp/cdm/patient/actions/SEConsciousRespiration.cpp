@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEConsciousRespiration.h"
-#include "patient/actions/SEConsciousRespirationCommand.h"
-#include "patient/actions/SEForcedPause.h"
-#include "patient/actions/SEForcedExhale.h"
-#include "patient/actions/SEForcedInhale.h"
-#include "patient/actions/SEUseInhaler.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEConsciousRespiration.h"
+#include "cdm/patient/actions/SEConsciousRespirationCommand.h"
+#include "cdm/patient/actions/SEForcedPause.h"
+#include "cdm/patient/actions/SEForcedExhale.h"
+#include "cdm/patient/actions/SEForcedInhale.h"
+#include "cdm/patient/actions/SEUseInhaler.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEConsciousRespiration::SEConsciousRespiration(Logger* logger) : SEPatientAction(logger)
 {
@@ -28,7 +28,7 @@ void SEConsciousRespiration::Clear()
   m_StartImmediately = false;
 }
 
-void SEConsciousRespiration::Copy(const SEConsciousRespiration& src, bool preserveState)
+void SEConsciousRespiration::Copy(const SEConsciousRespiration& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
@@ -50,7 +50,7 @@ void SEConsciousRespiration::Deactivate()
   Clear();//No stateful properties
 }
 
-const SEScalar* SEConsciousRespiration::GetScalar(const std::string& name)
+const SEScalar* SEConsciousRespiration::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

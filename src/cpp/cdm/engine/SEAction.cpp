@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SEAction.h"
-#include "engine/SEAdvanceTime.h"
-#include "engine/SESerializeState.h"
-#include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEAction.h"
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SESerializeState.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/io/protobuf/PBActions.h"
 
 
 SEAction::SEAction(Logger* logger) : Loggable(logger)

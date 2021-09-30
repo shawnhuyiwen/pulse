@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL LengthUnit : public CCompoundUnit
 {
 public:
   LengthUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~LengthUnit() {}
+
+  // Please use static units below
+  LengthUnit(const LengthUnit&) = delete;
+  LengthUnit& operator= (const LengthUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const LengthUnit& GetCompoundUnit(const std::string& unit);

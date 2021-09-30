@@ -28,7 +28,6 @@ public:
   virtual const std::vector<const SESubstance*>&         GetActiveSubstances() const;
   virtual void                                           AddActiveSubstance(const SESubstance& substance);
   virtual void                                           RemoveActiveSubstance(const SESubstance& substance);
-  virtual void                                           RemoveActiveSubstances(const std::vector<SESubstance*>& substances);
   virtual void                                           RemoveActiveSubstances();
   
   virtual const std::vector<SESubstance*>&               GetActiveGases();

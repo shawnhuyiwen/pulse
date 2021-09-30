@@ -22,9 +22,9 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m);
+  bool SerializeFromString(const std::string& src, eSerializationFormat m);
   bool SerializeFromFile(const std::string& filename);
 
   virtual const SEScalar* GetScalar(const std::string& name);
@@ -43,6 +43,10 @@ public:
   virtual bool HasMolarMass() const;
   virtual SEScalarMassPerAmount& GetMolarMass();
   virtual double GetMolarMass(const MassPerAmountUnit& unit) const;
+
+  virtual bool HasValence() const;
+  virtual SEScalar& GetValence();
+  virtual double GetValence() const;
 
   // Diffusion-ish
   virtual bool HasMaximumDiffusionFlux() const;
@@ -134,6 +138,7 @@ protected:
   eSubstance_State                  m_State;
   SEScalarMassPerVolume*            m_Density;
   SEScalarMassPerAmount*            m_MolarMass;
+  SEScalar*                         m_Valence;
 
   SEScalarMassPerAreaTime*          m_MaximumDiffusionFlux;
   SEScalar*                         m_MichaelisCoefficient;

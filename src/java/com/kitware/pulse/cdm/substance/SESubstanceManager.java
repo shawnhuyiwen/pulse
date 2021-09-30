@@ -20,17 +20,11 @@ public class SESubstanceManager
 	{
 		loadSubstanceDirectory();
 	}
-
-	public void reset()
-	{
-
-	}
-
+	
 	public void clear() 
 	{
-		reset();
-		substances.clear();  
-		compounds.clear();    
+		substances.clear();
+		compounds.clear();
 	}
 
 	public List<SESubstance> getSubstances()

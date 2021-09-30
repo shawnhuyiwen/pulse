@@ -3,6 +3,18 @@
 
 namespace Pulse.CDM
 {
+  public enum eMergeType : int
+  {
+    Append = 0,
+    Replace
+  }
+  
+  public enum eAppliedRespiratoryCycle : int
+  {
+    Expiratory = 0,
+    Inspiratory,
+    Instantaneous
+  }
   public abstract class SEAction
   {
     protected string comment;

@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL HeatConductanceUnit : public CCompoundUnit
 {
 public:
   HeatConductanceUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~HeatConductanceUnit() {}
+
+  // Please use static units below
+  HeatConductanceUnit(const HeatConductanceUnit&) = delete;
+  HeatConductanceUnit& operator= (const HeatConductanceUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const HeatConductanceUnit& GetCompoundUnit(const std::string& unit);

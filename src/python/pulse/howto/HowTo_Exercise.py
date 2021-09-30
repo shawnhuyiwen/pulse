@@ -3,11 +3,11 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEExercise
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_Exercise():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_Exercise.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_Exercise.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

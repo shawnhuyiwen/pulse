@@ -18,7 +18,7 @@ public class SEPupillaryResponse
     sizeModifier = null;
   }
 
-  public void reset()
+  public void clear()
   {
     if (reactivityModifier != null)
       reactivityModifier.invalidate();
@@ -30,7 +30,7 @@ public class SEPupillaryResponse
 
   public static void load(PupillaryResponseData src, SEPupillaryResponse dst)
   {
-    dst.reset();
+    dst.clear();
     if (src.hasReactivityModifier())
       SEScalarNegative1To1.load(src.getReactivityModifier(),dst.getReactivityModifier());
     if (src.hasShapeModifier())

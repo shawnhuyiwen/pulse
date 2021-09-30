@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/assessments/SEPatientAssessment.h"
+#include "cdm/patient/assessments/SEPatientAssessment.h"
 class SEUrinalysisMicroscopic;
 
 // Keep enums in sync with appropriate schema/cdm/PatienAssessmentEnums.proto file !!
@@ -43,69 +43,69 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
 
-  virtual bool HasColorResult() const;
-  virtual eUrinalysis_UrineColor GetColorResult() const;
-  virtual void SetColorResult(eUrinalysis_UrineColor color);
-  virtual void InvalidateColorResult();
+  virtual bool HasColor() const;
+  virtual eUrinalysis_UrineColor GetColor() const;
+  virtual void SetColor(eUrinalysis_UrineColor color);
+  virtual void InvalidateColor();
 
-  virtual bool HasAppearanceResult() const;
-  virtual eUrinalysis_ClarityIndicator GetAppearanceResult() const;
-  virtual void SetAppearanceResult(eUrinalysis_ClarityIndicator c);
-  virtual void InvalidateAppearanceResult();
+  virtual bool HasAppearance() const;
+  virtual eUrinalysis_ClarityIndicator GetAppearance() const;
+  virtual void SetAppearance(eUrinalysis_ClarityIndicator c);
+  virtual void InvalidateAppearance();
 
-  virtual bool HasGlucoseResult() const;
-  virtual eUrinalysis_PresenceIndicator GetGlucoseResult() const;
-  virtual void SetGlucoseResult(eUrinalysis_PresenceIndicator p);
-  virtual void InvalidateGlucoseResult();
+  virtual bool HasGlucose() const;
+  virtual eUrinalysis_PresenceIndicator GetGlucose() const;
+  virtual void SetGlucose(eUrinalysis_PresenceIndicator p);
+  virtual void InvalidateGlucose();
 
-  virtual bool HasKetoneResult() const;
-  virtual eUrinalysis_PresenceIndicator GetKetoneResult() const;
-  virtual void SetKetoneResult(eUrinalysis_PresenceIndicator p);
-  virtual void InvalidateKetoneResult();
+  virtual bool HasKetone() const;
+  virtual eUrinalysis_PresenceIndicator GetKetone() const;
+  virtual void SetKetone(eUrinalysis_PresenceIndicator p);
+  virtual void InvalidateKetone();
   
-  virtual bool HasBilirubinResult() const;
-  virtual SEScalar& GetBilirubinResult();
-  virtual double GetBilirubinResult() const;
+  virtual bool HasBilirubin() const;
+  virtual SEScalar& GetBilirubin();
+  virtual double GetBilirubin() const;
 
-  virtual bool HasSpecificGravityResult() const;
-  virtual SEScalar& GetSpecificGravityResult();
-  virtual double GetSpecificGravityResult() const;
+  virtual bool HasSpecificGravity() const;
+  virtual SEScalar& GetSpecificGravity();
+  virtual double GetSpecificGravity() const;
 
-  virtual bool HasBloodResult() const;
-  virtual eUrinalysis_PresenceIndicator GetBloodResult() const;
-  virtual void SetBloodResult(eUrinalysis_PresenceIndicator p);
-  virtual void InvalidateBloodResult();
+  virtual bool HasBlood() const;
+  virtual eUrinalysis_PresenceIndicator GetBlood() const;
+  virtual void SetBlood(eUrinalysis_PresenceIndicator p);
+  virtual void InvalidateBlood();
 
-  virtual bool HasPHResult() const;
-  virtual SEScalar& GetPHResult();
-  virtual double GetPHResult() const;
+  virtual bool HasPH() const;
+  virtual SEScalar& GetPH();
+  virtual double GetPH() const;
 
-  virtual bool HasProteinResult() const;
-  virtual eUrinalysis_PresenceIndicator GetProteinResult() const;
-  virtual void SetProteinResult(eUrinalysis_PresenceIndicator p);
-  virtual void InvalidateProteinResult();
+  virtual bool HasProtein() const;
+  virtual eUrinalysis_PresenceIndicator GetProtein() const;
+  virtual void SetProtein(eUrinalysis_PresenceIndicator p);
+  virtual void InvalidateProtein();
 
-  virtual bool HasUrobilinogenResult() const;
-  virtual SEScalarMassPerVolume& GetUrobilinogenResult();
-  virtual double GetUrobilinogenResult(const MassPerVolumeUnit& unit) const;
+  virtual bool HasUrobilinogen() const;
+  virtual SEScalarMassPerVolume& GetUrobilinogen();
+  virtual double GetUrobilinogen(const MassPerVolumeUnit& unit) const;
 
-  virtual bool HasNitriteResult() const;
-  virtual eUrinalysis_PresenceIndicator GetNitriteResult() const;
-  virtual void SetNitriteResult(eUrinalysis_PresenceIndicator p);
-  virtual void InvalidateNitriteResult();
+  virtual bool HasNitrite() const;
+  virtual eUrinalysis_PresenceIndicator GetNitrite() const;
+  virtual void SetNitrite(eUrinalysis_PresenceIndicator p);
+  virtual void InvalidateNitrite();
 
-  virtual bool HasLeukocyteEsteraseResult() const;
-  virtual eUrinalysis_PresenceIndicator GetLeukocyteEsteraseResult() const;
-  virtual void SetLeukocyteEsteraseResult(eUrinalysis_PresenceIndicator p);
-  virtual void InvalidateLeukocyteEsteraseResult();
+  virtual bool HasLeukocyteEsterase() const;
+  virtual eUrinalysis_PresenceIndicator GetLeukocyteEsterase() const;
+  virtual void SetLeukocyteEsterase(eUrinalysis_PresenceIndicator p);
+  virtual void InvalidateLeukocyteEsterase();
 
-  virtual bool HasMicroscopicResult() const;
-  virtual SEUrinalysisMicroscopic& GetMicroscopicResult();
-  virtual const SEUrinalysisMicroscopic* GetMicroscopicResult() const;
-  virtual void RemoveMicroscopicResult();
+  virtual bool HasMicroscopic() const;
+  virtual SEUrinalysisMicroscopic& GetMicroscopic();
+  virtual const SEUrinalysisMicroscopic* GetMicroscopic() const;
+  virtual void RemoveMicroscopic();
   
 protected:
 

@@ -2,33 +2,34 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "patient/SEPatient.h"
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SEEnergySystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstance.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEEventManager.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEFunctionVolumeVsTime.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarLength.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SEEnergySystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEFunctionVolumeVsTime.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarLength.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -89,10 +90,11 @@ public:
 void HowToEngineUse()
 {
   // Create an engine object
+  // By default, this creates a human adult/whole body physiology engine
+  // You can create other engines by specifying a eModelType enum
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
 
-
-  // By default, PulseEngines will always output log messages to stdout
+  // By default, PulseEngine will always output log messages to stdout
   // You can turn that off and on like this
   pe->GetLogger()->LogToConsole(false);
   // If you want this engine to write a log file,provided a log filename
@@ -157,10 +159,6 @@ void HowToEngineUse()
   const SESubstance* O2 = pe->GetSubstanceManager().GetSubstance("Oxygen");
   const SESubstance* CO2 = pe->GetSubstanceManager().GetSubstance("CarbonDioxide");
 
-  // The tracker is responsible for advancing the engine time AND outputting the data requests below at each time step
-  // If you do not wish to write data to a file, you do not need to make any data requests
-  HowToTracker tracker(*pe);
-
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
@@ -179,7 +177,7 @@ void HowToEngineUse()
 
   // We are ready to execute the engine
   // simply tell the engine how long you would like it to execute
-  if (!tracker.AdvanceModelTime(5))// Note this tracker class takes in seconds
+  if (!AdvanceAndTrackTime_s(5, *pe))// Note this tracker class takes in seconds
   {
     pe->GetLogger()->Fatal("Unable to advance engine time");
     return;

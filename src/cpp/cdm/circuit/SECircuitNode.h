@@ -2,12 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalarElectricCharge.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarEnergy.h"
+#include "cdm/properties/SEScalarElectricCharge.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarEnergy.h"
 
 #define CIRCUIT_NODE_TEMPLATE typename BlackBoxType, typename PotentialScalar, typename QuantityScalar
 #define CIRCUIT_NODE_TYPES BlackBoxType,PotentialScalar,QuantityScalar
@@ -45,8 +45,8 @@ public:
   virtual BlackBoxType* GetBlackBox() const { return m_BlackBox; }
   virtual void SetBlackBox(BlackBoxType* bb) { m_BlackBox = bb; }
 
-  void SetCalculatorIndex(const size_t index);
-  size_t GetCalculatorIndex() const;
+  void SetCalculatorIndex(const int index);
+  int GetCalculatorIndex() const;
 
   bool IsReferenceNode() const;
   void SetAsReferenceNode();
@@ -68,6 +68,6 @@ protected:
   BlackBoxType* m_BlackBox = nullptr;
 
 private:
-  size_t                  m_CalculatorIndex;
+  int                     m_CalculatorIndex;
   bool                    m_IsReferenceNode = false;
 };

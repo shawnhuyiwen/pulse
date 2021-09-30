@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "engine/SECondition.h"
+#include "cdm/engine/SECondition.h"
 
 class CDM_DECL SEPatientCondition : public SECondition
 {

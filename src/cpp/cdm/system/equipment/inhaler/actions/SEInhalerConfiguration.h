@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 #pragma once
 
-#include "SEInhalerAction.h"
+#include "cdm/system/equipment/inhaler/actions/SEInhalerAction.h"
 class SEInhaler;
 
 class CDM_DECL SEInhalerConfiguration : public SEInhalerAction
@@ -14,7 +14,7 @@ public:
   virtual ~SEInhalerConfiguration();
 
   virtual void Clear();
-  virtual void Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr, bool preserveState = false);
+  virtual void Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/ = false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
@@ -28,6 +28,9 @@ public:
   virtual void SetConfigurationFile(const std::string& fileName);
   virtual bool HasConfigurationFile() const;
 
+  virtual eMergeType GetMergeType() const;
+  virtual void SetMergeType(eMergeType m);
+
   virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
@@ -36,4 +39,5 @@ protected:
 
   std::string m_ConfigurationFile;
   SEInhaler*  m_Configuration;
+  eMergeType  m_MergeType;
 };

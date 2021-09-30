@@ -186,15 +186,4 @@ public abstract class LogListener
     }
   }
   protected void handleFatal(Throwable t){handleFatal(t.getMessage());}
-  
-  public final void progress(String state, String info, float percent)
-  {
-    if(this.handleProgress)
-    {
-      handleProgress(state, info, percent);
-    }
-  }
-  
-  // since the default is not to handle progress, leaving this with a default nop implementation
-  protected void handleProgress(String status, String info, float percent) {}
 }

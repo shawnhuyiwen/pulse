@@ -1,28 +1,28 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/PatientConditions.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBPatientConditions.h"
-#include "io/protobuf/PBPatientNutrition.h"
-#include "io/protobuf/PBConditions.h"
-#include "io/protobuf/PBProperties.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBPatientConditions.h"
+#include "cdm/io/protobuf/PBPatientNutrition.h"
+#include "cdm/io/protobuf/PBConditions.h"
+#include "cdm/io/protobuf/PBProperties.h"
 
-#include "substance/SESubstanceManager.h"
-#include "patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
-#include "patient/conditions/SEChronicAnemia.h"
-#include "patient/conditions/SEChronicObstructivePulmonaryDisease.h"
-#include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "patient/conditions/SEChronicRenalStenosis.h"
-#include "patient/conditions/SEChronicVentricularSystolicDysfunction.h"
-#include "patient/conditions/SEConsumeMeal.h"
-#include "patient/conditions/SEImpairedAlveolarExchange.h"
-#include "patient/conditions/SELobarPneumonia.h"
-#include "patient/conditions/SEPulmonaryFibrosis.h"
-#include "patient/conditions/SEPulmonaryShunt.h"
-#include "patient/conditions/SESepsis.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
+#include "cdm/patient/conditions/SEChronicAnemia.h"
+#include "cdm/patient/conditions/SEChronicObstructivePulmonaryDisease.h"
+#include "cdm/patient/conditions/SEChronicPericardialEffusion.h"
+#include "cdm/patient/conditions/SEChronicRenalStenosis.h"
+#include "cdm/patient/conditions/SEChronicVentricularSystolicDysfunction.h"
+#include "cdm/patient/conditions/SEConsumeMeal.h"
+#include "cdm/patient/conditions/SEImpairedAlveolarExchange.h"
+#include "cdm/patient/conditions/SELobarPneumonia.h"
+#include "cdm/patient/conditions/SEPulmonaryFibrosis.h"
+#include "cdm/patient/conditions/SEPulmonaryShunt.h"
+#include "cdm/patient/conditions/SESepsis.h"
 
 void PBPatientCondition::Serialize(const CDM_BIND::PatientConditionData& src, SEPatientCondition& dst)
 {

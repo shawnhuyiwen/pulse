@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 
 class CDM_DECL SEDyspnea : public SEPatientAction
 {
@@ -13,7 +13,7 @@ public:
   virtual ~SEDyspnea();
 
   virtual void Clear();
-  virtual void Copy(const SEDyspnea& src, bool preserveState=false);
+  virtual void Copy(const SEDyspnea& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

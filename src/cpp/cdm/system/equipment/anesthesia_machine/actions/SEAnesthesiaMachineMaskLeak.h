@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
 
 class CDM_DECL SEAnesthesiaMachineMaskLeak : public SEAnesthesiaMachineAction
 {
@@ -12,7 +12,7 @@ public:
   virtual ~SEAnesthesiaMachineMaskLeak();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineMaskLeak& src, bool preserveState=false);
+  virtual void Copy(const SEAnesthesiaMachineMaskLeak& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
@@ -29,4 +29,4 @@ public:
 protected:
 
   SEScalar0To1*     m_Severity;
-};  
+};

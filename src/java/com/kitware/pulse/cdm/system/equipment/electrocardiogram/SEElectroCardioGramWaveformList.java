@@ -20,10 +20,10 @@ public class SEElectroCardioGramWaveformList
  
   public SEElectroCardioGramWaveformList()
   {
-    reset();
+    clear();
   }
   
-  public void reset()
+  public void clear()
   {
     waveforms.clear();
   }
@@ -41,7 +41,7 @@ public class SEElectroCardioGramWaveformList
   
   public static void load(ElectroCardioGramWaveformListData src, SEElectroCardioGramWaveformList dst)
   {
-    dst.reset();
+    dst.clear();
     for(ElectroCardioGramWaveformData wData : src.getWaveformList())
     {
       SEElectroCardioGramWaveform w = new SEElectroCardioGramWaveform();

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL SEScalarNegative1To1 : public SEScalar
 {
@@ -12,10 +12,9 @@ public:
   virtual ~SEScalarNegative1To1() {}
 
   double GetValue() const { return SEScalar::GetValue(); }
-  double GetValue(const NoUnit& unitless) const { return SEScalar::GetValue(); }
+  double GetValue(const NoUnit& /*unitless*/) const { return SEScalar::GetValue(); }
   void SetValue(double d);
   void SetValue(double d, const NoUnit& unitless);
   void ForceValue(double d);
   void ForceValue(double d, const NoUnit& unitless);
 };
-

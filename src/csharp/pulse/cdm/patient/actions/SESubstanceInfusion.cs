@@ -7,12 +7,14 @@ namespace Pulse.CDM
   {
     protected SEScalarMassPerVolume concentration;
     protected SEScalarVolumePerTime rate;
+    protected SEScalarVolume volume;
     protected string substance;
 
     public SESubstanceInfusion()
     {
       this.rate = null;
       this.concentration = null;
+      this.volume = null;
       this.substance = null;
     }
 
@@ -24,6 +26,8 @@ namespace Pulse.CDM
         rate.Invalidate();
       if (concentration != null)
         concentration.Invalidate();
+      if (volume != null)
+        volume.Invalidate();
     }
 
     public override bool IsValid()
@@ -51,6 +55,17 @@ namespace Pulse.CDM
       if (rate == null)
         rate = new SEScalarVolumePerTime();
       return rate;
+    }
+
+    public bool HasVolume()
+    {
+      return volume == null ? false : volume.IsValid();
+    }
+    public SEScalarVolume GetVolume()
+    {
+      if (volume == null)
+        volume = new SEScalarVolume();
+      return volume;
     }
 
     public bool HasSubstance() { return !string.IsNullOrEmpty(substance); }

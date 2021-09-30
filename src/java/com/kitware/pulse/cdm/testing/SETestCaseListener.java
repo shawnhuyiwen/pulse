@@ -22,7 +22,7 @@ public class SETestCaseListener extends LogListener
 
   }
   
-  public void reset()
+  public void clear()
   {
     this.testCase=null;
   }

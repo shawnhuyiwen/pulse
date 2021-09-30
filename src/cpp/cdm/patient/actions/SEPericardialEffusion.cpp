@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEPericardialEffusion.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEPericardialEffusion.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEPericardialEffusion::SEPericardialEffusion(Logger* logger) : SEPatientAction(logger)
 {
@@ -22,7 +22,7 @@ void SEPericardialEffusion::Clear()
   INVALIDATE_PROPERTY(m_EffusionRate);
 }
 
-void SEPericardialEffusion::Copy(const SEPericardialEffusion& src, bool preserveState)
+void SEPericardialEffusion::Copy(const SEPericardialEffusion& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);

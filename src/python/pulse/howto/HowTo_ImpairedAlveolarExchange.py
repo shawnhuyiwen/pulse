@@ -3,11 +3,11 @@
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SEImpairedAlveolarExchangeExacerbation
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
-def HowTo_UseImpairedAvleolarExchange():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_impaired_alveolar_exchange.log")
+def HowTo_ImpairedAvleolarExchange():
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_ImpairedAlveolarExchange.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
@@ -40,5 +40,5 @@ def HowTo_UseImpairedAvleolarExchange():
     results = pulse.pull_data()
     print(results)
 
-HowTo_UseImpairedAvleolarExchange()
+HowTo_ImpairedAvleolarExchange()
 

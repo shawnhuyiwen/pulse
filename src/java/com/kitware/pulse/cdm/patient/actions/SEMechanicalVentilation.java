@@ -2,13 +2,11 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.pulse.cdm.patient.actions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.PatientActions.MechanicalVentilationData;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceConcentrationData;
-import com.kitware.pulse.cdm.bind.Substance.SubstanceData.eState;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceFractionData;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 import com.kitware.pulse.cdm.properties.SEScalarMassPerVolume;
@@ -35,18 +33,9 @@ public class SEMechanicalVentilation extends SEPatientAction
   {
     clear();
   }
-  
-  public void clear()
-  {
-    flow = null;
-    pressure = null;
-    state = eSwitch.Off;
-    this.gasFractions=new ArrayList<>();
-    this.aerosols=new ArrayList<>();
-  }
 
   @Override
-  public void reset()
+  public void clear()
   {
     state = eSwitch.Off;
     if (flow != null)
@@ -59,7 +48,7 @@ public class SEMechanicalVentilation extends SEPatientAction
 
   public void copy(SEMechanicalVentilation from)
   {
-    reset();
+    clear();
 
     setState(from.getState());
     if(from.hasFlow())

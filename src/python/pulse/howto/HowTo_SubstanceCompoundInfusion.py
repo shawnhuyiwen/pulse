@@ -4,11 +4,11 @@
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SESubstanceCompoundInfusion, eSubstance_Administration
 from pulse.cdm.scalars import MassPerVolumeUnit, VolumePerTimeUnit, VolumeUnit, SEScalarVolume
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_CompoundSubstanceInfusion():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_SubstanceCompoundInfusion.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_SubstanceCompoundInfusion.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

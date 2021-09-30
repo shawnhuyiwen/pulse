@@ -3,21 +3,20 @@
 
 namespace Pulse.CDM
 {
-  public class PBAnesthesiaMachine
+  static class eAnesthesiaMachine
   {
-    public static string Connection_Name(SEAnesthesiaMachine.Connection c)
-    {
-      return ((pulse.cdm.bind.AnesthesiaMachineData.Types.eConnection)(int)c).ToString();
-    }
-    public static string OxygenSource_Name(SEAnesthesiaMachine.OxygenSource os)
+    public static string OxygenSource_Name(this eAnesthesiaMachine_OxygenSource os)
     {
       return ((pulse.cdm.bind.AnesthesiaMachineData.Types.eOxygenSource)(int)os).ToString();
     }
-    public static string PrimaryGas_Name(SEAnesthesiaMachine.PrimaryGas pg)
+    public static string PrimaryGas_Name(this eAnesthesiaMachine_PrimaryGas pg)
     {
       return ((pulse.cdm.bind.AnesthesiaMachineData.Types.ePrimaryGas)(int)pg).ToString();
     }
+  }
 
+  public class PBAnesthesiaMachine
+  {
     #region SEAnesthesiaMachine
     public static void Load(pulse.cdm.bind.AnesthesiaMachineData src, SEAnesthesiaMachine dst/*, SESubstanceManager subMgr*/)
     {
@@ -26,19 +25,19 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineData src, SEAnesthesiaMachine dst/*, SESubstanceManager subMgr*/)
     {
       dst.Clear();
-      dst.SetConnection((SEAnesthesiaMachine.Connection)src.Connection);
+      dst.SetConnection((eSwitch)src.Connection);
       if (src.InletFlow != null)
         PBProperty.Load(src.InletFlow, dst.GetInletFlow());
       if (src.InspiratoryExpiratoryRatio != null)
         PBProperty.Load(src.InspiratoryExpiratoryRatio, dst.GetInspiratoryExpiratoryRatio());
       if (src.OxygenFraction != null)
         PBProperty.Load(src.OxygenFraction, dst.GetOxygenFraction());
-      dst.SetOxygenSource((SEAnesthesiaMachine.OxygenSource)src.OxygenSource);
+      dst.SetOxygenSource((eAnesthesiaMachine_OxygenSource)src.OxygenSource);
       if (src.PeakInspiratoryPressure != null)
         PBProperty.Load(src.PeakInspiratoryPressure, dst.GetPeakInspiratoryPressure());
       if (src.PositiveEndExpiredPressure != null)
         PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
-      dst.SetPrimaryGas((SEAnesthesiaMachine.PrimaryGas)src.PrimaryGas);
+      dst.SetPrimaryGas((eAnesthesiaMachine_PrimaryGas)src.PrimaryGas);
       if (src.RespiratoryRate != null)
         PBProperty.Load(src.RespiratoryRate, dst.GetRespiratoryRate());
       if (src.ReliefValvePressure != null)
@@ -61,7 +60,7 @@ namespace Pulse.CDM
     }
     protected static void Unload(SEAnesthesiaMachine src, pulse.cdm.bind.AnesthesiaMachineData dst)
     {
-      dst.Connection = (pulse.cdm.bind.AnesthesiaMachineData.Types.eConnection)(int)src.GetConnection();
+      dst.Connection = (pulse.cdm.bind.eSwitch)(int)src.GetConnection();
       if (src.HasInletFlow())
         dst.InletFlow = PBProperty.Unload(src.GetInletFlow());
       if (src.HasInspiratoryExpiratoryRatio())

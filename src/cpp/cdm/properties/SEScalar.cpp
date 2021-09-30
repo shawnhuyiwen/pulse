@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "properties/SEScalar.h"
-#include "utils/GeneralMath.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/properties/SEScalar.h"
+#include "cdm/utils/GeneralMath.h"
 
 // Declare template classes all Scalar types at the bottom
 
@@ -36,20 +36,13 @@ bool SEScalar::IsNumber(double d)
 const NoUnit NoUnit::unitless;
 
 SEScalar::SEScalar() : SEProperty()
-{  
-  Clear();
+{
+
 }
 
 SEScalar::~SEScalar()
 {
-  Clear();
-}
 
-void SEScalar::Clear()
-{
-  SEProperty::Clear();
-  m_readOnly = false;
-  Invalidate();
 }
 
 bool SEScalar::Set(const SEScalar& s)
@@ -87,6 +80,13 @@ void SEScalar::Invalidate()
   m_isnan = true;
   m_isinf = false;
   *(reinterpret_cast<unsigned long long int *>(&m_value)) = NaN;
+}
+
+void SEScalar::ForceInvalidate()
+{
+  m_isnan = true;
+  m_isinf = false;
+  *(reinterpret_cast<unsigned long long int*>(&m_value)) = NaN;
 }
 
 bool SEScalar::IsValid() const 
@@ -221,8 +221,8 @@ bool SEScalar::Equals(const SEScalar& to) const
 
 std::string SEScalar::ToString() const
 {
-  return cdm::to_string(m_value);
-}                                      
+  return pulse::cdm::to_string(m_value);
+}
 void SEScalar::ToString(std::ostream &str) const
 {
   str<<m_value<<std::flush;
@@ -247,28 +247,22 @@ bool SEScalar::IsZero(double d, double limit)
 //////////////////////
 
 template<typename Unit>
-SEScalarQuantity<Unit>::SEScalarQuantity() : SEUnitScalar()
-{
-  Clear();
-}
-
-template<typename Unit>
 SEScalarQuantity<Unit>::~SEScalarQuantity()
 {
-  this->Clear();
-}
 
-template<typename Unit>
-void SEScalarQuantity<Unit>::Clear()
-{
-  SEScalar::Clear();
-  m_unit = nullptr;
 }
 
 template<typename Unit>
 void SEScalarQuantity<Unit>::Invalidate()
 {
   SEScalar::Invalidate();
+  m_unit = nullptr;
+}
+
+template<typename Unit>
+void SEScalarQuantity<Unit>::ForceInvalidate()
+{
+  SEScalar::ForceInvalidate();
   m_unit = nullptr;
 }
 
@@ -496,9 +490,9 @@ template<typename Unit>
 std::string SEScalarQuantity<Unit>::ToString() const
 {
   if (m_isnan || m_isinf)
-    return cdm::to_string(m_value);
+    return pulse::cdm::to_string(m_value);
   else
-    return cdm::to_string(m_value) + "(" + m_unit->GetString() + ")";
+    return pulse::cdm::to_string(m_value) + "(" + m_unit->GetString() + ")";
 }
 template<typename Unit>
 void SEScalarQuantity<Unit>::ToString(std::ostream& str) const
@@ -555,6 +549,14 @@ bool SEGenericScalar::IsValidUnit(const CCompoundUnit& unit) const
 {
   if (m_UnitScalar == nullptr)
     return false;
+  if (*m_UnitScalar->GetUnit()->GetDimension() == *unit.GetDimension())
+    return true;
+  // See if the quantity types (Dimensions) are convertable
+  double fromExp;
+  CCompoundUnit mappingUnit;
+  CUnitConversionEngine& uce = CUnitConversionEngine::GetEngine();
+  if (uce.GetQuantityConversionParams(m_UnitScalar->GetUnit()->GetDimension(), unit.GetDimension(), fromExp, mappingUnit))
+    return true;
   return false;
 }
 
@@ -568,113 +570,127 @@ double SEGenericScalar::GetValue(const CCompoundUnit& unit) const
     return SEScalar::dNaN();
   return m_UnitScalar->GetValue(unit);
 }
-#include "properties/SEScalarAmount.h"
+
+std::string SEGenericScalar::GetString() const
+{
+  if (!IsValid())
+    return "NaN";
+  std::string str = pulse::cdm::to_string(GetValue());
+  const CCompoundUnit* unit = GetUnit();
+  if (unit != nullptr)
+    str += " " + unit->GetString();
+  return str;
+}
+
+#include "cdm/properties/SEScalarAmount.h"
 template class SEScalarQuantity<AmountUnit>;
-#include "properties/SEScalarAmountPerMass.h"
+#include "cdm/properties/SEScalarAmountPerMass.h"
 template class SEScalarQuantity<AmountPerMassUnit>;
-#include "properties/SEScalarAmountPerTime.h"
+#include "cdm/properties/SEScalarAmountPerTime.h"
 template class SEScalarQuantity<AmountPerTimeUnit>;
-#include "properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
 template class SEScalarQuantity<AmountPerVolumeUnit>;
-#include "properties/SEScalarArea.h"
+#include "cdm/properties/SEScalarArea.h"
 template class SEScalarQuantity<AreaUnit>;
-#include "properties/SEScalarAreaPerTimePressure.h"
+#include "cdm/properties/SEScalarAreaPerTimePressure.h"
 template class SEScalarQuantity<AreaPerTimePressureUnit>;
-#include "properties/SEScalarElectricCapacitance.h"
+#include "cdm/properties/SEScalarElectricCapacitance.h"
 template class SEScalarQuantity<ElectricCapacitanceUnit>;
-#include "properties/SEScalarElectricCharge.h"
+#include "cdm/properties/SEScalarElectricCharge.h"
 template class SEScalarQuantity<ElectricChargeUnit>;
-#include "properties/SEScalarElectricCurrent.h"
+#include "cdm/properties/SEScalarElectricCurrent.h"
 template class SEScalarQuantity<ElectricCurrentUnit>;
-#include "properties/SEScalarElectricInductance.h"
+#include "cdm/properties/SEScalarElectricInductance.h"
 template class SEScalarQuantity<ElectricInductanceUnit>;
-#include "properties/SEScalarElectricPotential.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
 template class SEScalarQuantity<ElectricPotentialUnit>;
-#include "properties/SEScalarElectricResistance.h"
+#include "cdm/properties/SEScalarElectricResistance.h"
 template class SEScalarQuantity<ElectricResistanceUnit>;
-#include "properties/SEScalarEnergy.h"
+#include "cdm/properties/SEScalarEnergy.h"
 template class SEScalarQuantity<EnergyUnit>;
-#include "properties/SEScalarEnergyPerAmount.h"
+#include "cdm/properties/SEScalarEnergyPerAmount.h"
 template class SEScalarQuantity<EnergyPerAmountUnit>;
-#include "properties/SEScalarEnergyPerMass.h"
+#include "cdm/properties/SEScalarEnergyPerMass.h"
 template class SEScalarQuantity<EnergyPerMassUnit>;
-#include "properties/SEScalarForce.h"
+#include "cdm/properties/SEScalarEquivalentWeightPerVolume.h"
+template class SEScalarQuantity<EquivalentWeightPerVolumeUnit>;
+#include "cdm/properties/SEScalarForce.h"
 template class SEScalarQuantity<ForceUnit>;
-#include "properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarFrequency.h"
 template class SEScalarQuantity<FrequencyUnit>;
-#include "properties/SEScalarHeatCapacitance.h"
+#include "cdm/properties/SEScalarHeatCapacitance.h"
 template class SEScalarQuantity<HeatCapacitanceUnit>;
-#include "properties/SEScalarHeatCapacitancePerAmount.h"
+#include "cdm/properties/SEScalarHeatCapacitancePerAmount.h"
 template class SEScalarQuantity<HeatCapacitancePerAmountUnit>;
-#include "properties/SEScalarHeatCapacitancePerMass.h"
+#include "cdm/properties/SEScalarHeatCapacitancePerMass.h"
 template class SEScalarQuantity<HeatCapacitancePerMassUnit>;
-#include "properties/SEScalarHeatConductance.h"
+#include "cdm/properties/SEScalarHeatConductance.h"
 template class SEScalarQuantity<HeatConductanceUnit>;
-#include "properties/SEScalarHeatConductancePerArea.h"
+#include "cdm/properties/SEScalarHeatConductancePerArea.h"
 template class SEScalarQuantity<HeatConductancePerAreaUnit>;
-#include "properties/SEScalarHeatResistance.h"
+#include "cdm/properties/SEScalarHeatResistance.h"
 template class SEScalarQuantity<HeatResistanceUnit>;
-#include "properties/SEScalarHeatResistanceArea.h"
+#include "cdm/properties/SEScalarHeatResistanceArea.h"
 template class SEScalarQuantity<HeatResistanceAreaUnit>;
-#include "properties/SEScalarHeatInductance.h"
+#include "cdm/properties/SEScalarHeatInductance.h"
 template class SEScalarQuantity<HeatInductanceUnit>;
-#include "properties/SEScalarInversePressure.h"
+#include "cdm/properties/SEScalarInversePressure.h"
 template class SEScalarQuantity<InversePressureUnit>;
-#include "properties/SEScalarInverseVolume.h"
+#include "cdm/properties/SEScalarInverseVolume.h"
 template class SEScalarQuantity<InverseVolumeUnit>;
-#include "properties/SEScalarLength.h"
+#include "cdm/properties/SEScalarLength.h"
 template class SEScalarQuantity<LengthUnit>;
-#include "properties/SEScalarLengthPerTime.h"
+#include "cdm/properties/SEScalarLengthPerTime.h"
 template class SEScalarQuantity<LengthPerTimeUnit>;
-#include "properties/SEScalarLengthPerTimePressure.h"
+#include "cdm/properties/SEScalarLengthPerTimePressure.h"
 template class SEScalarQuantity<LengthPerTimePressureUnit>;
-#include "properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMass.h"
 template class SEScalarQuantity<MassUnit>;
-#include "properties/SEScalarMassPerAmount.h"
+#include "cdm/properties/SEScalarMassPerAmount.h"
 template class SEScalarQuantity<MassPerAmountUnit>;
-#include "properties/SEScalarMassPerAreaTime.h"
+#include "cdm/properties/SEScalarMassPerAreaTime.h"
 template class SEScalarQuantity<MassPerAreaTimeUnit>;
-#include "properties/SEScalarMassPerMass.h"
+#include "cdm/properties/SEScalarMassPerMass.h"
 template class SEScalarQuantity<MassPerMassUnit>;
-#include "properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
 template class SEScalarQuantity<MassPerTimeUnit>;
-#include "properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
 template class SEScalarQuantity<MassPerVolumeUnit>;
-#include "properties/SEScalarOsmolality.h"
+#include "cdm/properties/SEScalarOsmolality.h"
 template class SEScalarQuantity<OsmolalityUnit>;
-#include "properties/SEScalarOsmolarity.h"
+#include "cdm/properties/SEScalarOsmolarity.h"
 template class SEScalarQuantity<OsmolarityUnit>;
-#include "properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarPower.h"
 template class SEScalarQuantity<PowerUnit>;
-#include "properties/SEScalarPowerPerAreaTemperatureToTheFourth.h"
+#include "cdm/properties/SEScalarPowerPerAreaTemperatureToTheFourth.h"
 template class SEScalarQuantity<PowerPerAreaTemperatureToTheFourthUnit>;
-#include "properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressure.h"
 template class SEScalarQuantity<PressureUnit>;
-#include "properties/SEScalarPressurePerVolume.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
 template class SEScalarQuantity<PressurePerVolumeUnit>;
-#include "properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
 template class SEScalarQuantity<PressureTimePerVolumeUnit>;
-#include "properties/SEScalarPressureTimePerVolumeArea.h"
+#include "cdm/properties/SEScalarPressureTimePerVolumeArea.h"
 template class SEScalarQuantity<PressureTimePerVolumeAreaUnit>;
-#include "properties/SEScalarPressureTimePerArea.h"
+#include "cdm/properties/SEScalarPressureTimePerArea.h"
 template class SEScalarQuantity<PressureTimePerAreaUnit>;
-#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
+#include "cdm/properties/SEScalarPressureTimeSquaredPerVolume.h"
 template class SEScalarQuantity<PressureTimeSquaredPerVolumeUnit>;
-#include "properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarTime.h"
 template class SEScalarQuantity<TimeUnit>;
-#include "properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTemperature.h"
 template class SEScalarQuantity<TemperatureUnit>;
-#include "properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolume.h"
 template class SEScalarQuantity<VolumeUnit>;
-#include "properties/SEScalarVolumePerPressure.h"
+#include "cdm/properties/SEScalarVolumePerPressure.h"
 template class SEScalarQuantity<VolumePerPressureUnit>;
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 template class SEScalarQuantity<VolumePerTimeUnit>;
-#include "properties/SEScalarVolumePerTimeArea.h"
+#include "cdm/properties/SEScalarVolumePerTimeArea.h"
 template class SEScalarQuantity<VolumePerTimeAreaUnit>;
-#include "properties/SEScalarVolumePerTimePressureArea.h"
+#include "cdm/properties/SEScalarVolumePerTimePressureArea.h"
 template class SEScalarQuantity<VolumePerTimePressureAreaUnit>;
-#include "properties/SEScalarVolumePerTimeMass.h"
+#include "cdm/properties/SEScalarVolumePerTimeMass.h"
 template class SEScalarQuantity<VolumePerTimeMassUnit>;
-#include "properties/SEScalarVolumePerTimePressure.h"
+#include "cdm/properties/SEScalarVolumePerTimePressure.h"
 template class SEScalarQuantity<VolumePerTimePressureUnit>;

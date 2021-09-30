@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "circuit/electrical/SEElectricalCircuit.h"
-#include "circuit/SECircuitManager.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/circuit/electrical/SEElectricalCircuit.h"
+#include "cdm/circuit/SECircuitManager.h"
 
 SEElectricalCircuit::SEElectricalCircuit(const std::string& name, SECircuitManager& mgr) : SECircuit<SEElectricalCircuitNode, SEElectricalCircuitPath>(name, mgr.GetLogger()), m_Mgr(mgr)
 {

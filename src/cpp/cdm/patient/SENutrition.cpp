@@ -1,13 +1,13 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/SENutrition.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "io/protobuf/PBPatientNutrition.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/SENutrition.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/io/protobuf/PBPatientNutrition.h"
 
 SENutrition::SENutrition(Logger* logger) : Loggable(logger)
 {
@@ -53,7 +53,7 @@ void SENutrition::Copy(const SENutrition& src)
   PBPatientNutrition::Copy(src, *this);
 }
 
-bool SENutrition::SerializeToString(std::string& output, SerializationFormat m) const
+bool SENutrition::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBPatientNutrition::SerializeToString(*this, output, m);
 }
@@ -61,7 +61,7 @@ bool SENutrition::SerializeToFile(const std::string& filename) const
 {
   return PBPatientNutrition::SerializeToFile(*this, filename);
 }
-bool SENutrition::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SENutrition::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBPatientNutrition::SerializeFromString(src, *this, m);
 }

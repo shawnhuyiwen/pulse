@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/physiology/SEPupillaryResponse.h"
-#include "properties/SEScalarNegative1To1.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/physiology/SEPupillaryResponse.h"
+#include "cdm/properties/SEScalarNegative1To1.h"
 
-SEPupillaryResponse::SEPupillaryResponse(Logger* logger)
+SEPupillaryResponse::SEPupillaryResponse(Logger* logger) : Loggable(logger)
 {
   m_ReactivityModifier = nullptr;
   m_ShapeModifier = nullptr;

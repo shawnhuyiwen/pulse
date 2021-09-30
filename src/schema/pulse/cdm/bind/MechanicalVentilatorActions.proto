@@ -4,21 +4,93 @@ option java_package = "com.kitware.pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
-import "pulse/cdm/bind/MechanicalVentilator.proto";
 import "pulse/cdm/bind/Actions.proto";
+import "pulse/cdm/bind/Enums.proto";
+import "pulse/cdm/bind/MechanicalVentilator.proto";
+import "pulse/cdm/bind/Properties.proto";
 
 message MechanicalVentilatorActionData
 {
-  EquipmentActionData                     EquipmentAction             = 1;
+  EquipmentActionData                          EquipmentAction             = 1;
 }
 
-/** @brief The configuration of the anesthesia machine to use. */
+/** @brief The configuration of the mechanical ventilator to use. */
 message MechanicalVentilatorConfigurationData
 {
-  MechanicalVentilatorActionData          MechanicalVentilatorAction  = 1;
+ MechanicalVentilatorActionData                MechanicalVentilatorAction  = 1;
   oneof Option
   {
-    MechanicalVentilatorData              Configuration               = 2;/**<< @brief A mechanical ventilator object with properties to set in the system mechanical ventilator. */
-    string                                ConfigurationFile           = 3;/**<< @brief File containing a mechanical ventilator objet with properties to set in the system mechanical ventilator. */
+    MechanicalVentilatorSettingsData           Settings                    = 2;/**<< @brief A settings object with properties to set in the system object. */
+    string                                     SettingsFile                = 3;/**<< @brief File containing a settings object with properties to set in the system object. */
   }
+  eMergeType                                   MergeType                   = 4;/**<< @brief How to apply provided configuration to internal data model. */
 }
+
+message MechanicalVentilatorHoldData
+{
+  MechanicalVentilatorActionData               MechanicalVentilatorAction    = 1;
+  eSwitch                                      State                         = 2;/**<< @brief On = Activate the hold. Off = Release the hold. */
+  eAppliedRespiratoryCycle                     AppliedRespiratoryCycle       = 3;/**<< @brief When, in the respiratory cycle, to apply the hold. Not used if Switch is Off. */
+}
+
+
+message MechanicalVentilatorLeakData
+{
+  MechanicalVentilatorActionData               MechanicalVentilatorAction    = 1;
+  Scalar0To1Data                               Severity                      = 2;/**<< @brief Severity of the Leak, 0 = Off. */
+}
+
+message MechanicalVentilatorModeData
+{
+  MechanicalVentilatorActionData               MechanicalVentilatorAction    = 1;
+  
+  eSwitch                                      Connection                    = 2; /**<< @brief @ref eSwitchTable */
+}
+
+message MechanicalVentilatorContinuousPositiveAirwayPressureData
+{
+  MechanicalVentilatorModeData                 MechanicalVentilatorMode      = 1;
+  
+  ScalarPressureData                           DeltaPressureSupport          = 2; /**<< @brief Defines the driver pressure as the difference between PIP and PEEP */
+  Scalar0To1Data                               FractionInspiredOxygen        = 3; /**<< @brief FiO2 */
+  ScalarPressureData                           PositiveEndExpiredPressure    = 4; /**<< @brief Driver pressure during exhale */
+  ScalarTimeData                               Slope                         = 5; /**<< @brief Time to reach PIP */
+}
+
+message MechanicalVentilatorPressureControlData
+{
+  enum eMode
+  {
+    AssistedControl                = 0;
+    ContinuousMandatoryVentilation = 1;
+  }
+  
+  MechanicalVentilatorModeData                 MechanicalVentilatorMode      = 1;
+  
+  eMode                                        Mode                          = 2;
+  Scalar0To1Data                               FractionInspiredOxygen        = 3; /**<< @brief FiO2 */
+  ScalarTimeData                               InspiratoryPeriod             = 4; /**<< @brief Time for inspiration part of the breathing cycle */
+  ScalarPressureData                           InspiratoryPressure           = 5; /**<< @brief Driver pressure during inspiration */
+  ScalarPressureData                           PositiveEndExpiredPressure    = 6; /**<< @brief Driver pressure during exhale */
+  ScalarFrequencyData                          RespirationRate               = 7; /**<< @brief Driver minimum frequency */
+  ScalarTimeData                               Slope                         = 8; /**<< @brief Time to reach PIP */
+}
+message MechanicalVentilatorVolumeControlData
+{
+  enum eMode
+  {
+    AssistedControl                = 0;
+    ContinuousMandatoryVentilation = 1;
+  }
+  
+  MechanicalVentilatorModeData                 MechanicalVentilatorMode      = 1;
+  
+  eMode                                        Mode                          = 2;
+  ScalarVolumePerTimeData                      Flow                          = 3; /**<< @brief Driver flow during inspiration */
+  Scalar0To1Data                               FractionInspiredOxygen        = 4; /**<< @brief FiO2 */
+  ScalarTimeData                               InspiratoryPeriod             = 5; /**<< @brief Time for inspiration part of the breathing cycle */
+  ScalarPressureData                           PositiveEndExpiredPressure    = 6; /**<< @brief Driver pressure during exhale */
+  ScalarFrequencyData                          RespirationRate               = 7; /**<< @brief Driver minimum frequency */
+  ScalarVolumeData                             TidalVolume                   = 8; /**<< @brief Volume target/limit */
+}
+

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/SECompartmentLink.h"
+#include "cdm/compartment/SECompartmentLink.h"
 class SEElectricalBlackBox;
 class SEElectricalCompartment;
 class SEElectricalCircuitPath;
@@ -46,7 +46,7 @@ protected:
   SEElectricalBlackBox* m_BlackBox = nullptr;
 };
 
-#include "compartment/SECompartmentGraph.h"
+#include "cdm/compartment/SECompartmentGraph.h"
 class SEElectricalCompartmentGraph : public SECompartmentGraph<SEElectricalCompartment, SEElectricalCompartmentLink>
 {
 public:

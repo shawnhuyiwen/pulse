@@ -1,24 +1,24 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "scenario/SEScenarioExec.h"
-#include "scenario/SEScenario.h"
-#include "io/protobuf/PBScenario.h"
-#include "engine/SEAction.h"
-#include "engine/SECondition.h"
-#include "engine/SEPatientConfiguration.h"
-#include "engine/SEAdvanceTime.h"
-#include "engine/SESerializeState.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEventManager.h"
-#include "PhysiologyEngine.h"
-#include "engine/SEEngineTracker.h"
-#include "engine/SEEngineConfiguration.h"
-#include "patient/SEPatient.h"
-#include "properties/SEScalarTime.h"
-#include "utils/TimingProfile.h"
-#include "utils/FileUtils.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/scenario/SEScenarioExec.h"
+#include "cdm/scenario/SEScenario.h"
+#include "cdm/io/protobuf/PBScenario.h"
+#include "cdm/engine/SEAction.h"
+#include "cdm/engine/SECondition.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SESerializeState.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEventManager.h"
+#include "cdm/PhysiologyEngine.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEEngineConfiguration.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/TimingProfile.h"
+#include "cdm/utils/FileUtils.h"
 
 SEScenarioExec::SEScenarioExec()
 {
@@ -58,11 +58,11 @@ void SEScenarioExec::Clear()
   m_SerializationActions.str("");
 }
 
-bool SEScenarioExec::SerializeToString(std::string& output, SerializationFormat m, Logger* logger) const
+bool SEScenarioExec::SerializeToString(std::string& output, eSerializationFormat m, Logger* logger) const
 {
   return PBScenario::SerializeToString(*this, output, m, logger);
 }
-bool SEScenarioExec::SerializeFromString(const std::string& src, SerializationFormat m, Logger* logger)
+bool SEScenarioExec::SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger)
 {
   return PBScenario::SerializeFromString(src, *this, m, logger);
 }
@@ -80,10 +80,14 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
     // Initialize the engine with a state or initial parameters
     if (sce.HasEngineStateFile())
     {
-      pe.SerializeFromFile(sce.GetEngineStateFile());
+      if (!pe.SerializeFromFile(sce.GetEngineStateFile()))
+      {
+        pe.GetLogger()->Error("Unable to load state file: "+ sce.GetEngineStateFile());
+        return false;
+      }
       // WE ARE OVERWRITING ANY DATA REQUESTS IN THE STATE WITH WHATS IN THE SCENARIO!!!
       // Make a copy of the data requests, note this clears out data requests from the engine
-      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager(), pe.GetSubstanceManager());
+      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager());
       if(!m_DataRequestCSVFilename.empty())
         pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
     }
@@ -91,7 +95,7 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
     {
       sce.GetPatientConfiguration().SetDataRoot(m_DataRootDirectory);
       // Make a copy of the data requests, note this clears out data requests from the engine
-      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager(), pe.GetSubstanceManager());
+      pe.GetEngineTracker()->GetDataRequestManager().Copy(sce.GetDataRequestManager());
       if (!m_DataRequestCSVFilename.empty())
         pe.GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_DataRequestCSVFilename);
       if (!pe.InitializeEngine(sce.GetPatientConfiguration()))
@@ -146,6 +150,8 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
 
   bool err=false;
   const SEAdvanceTime* adv;
+  double expectedFinalSimTime_s = 0;
+  double spareAdvanceTime_s = 0;
   for (SEAction* a : sce.GetActions())
   {
     // We override advance time actions in order to advance and 
@@ -156,10 +162,12 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     {
       ss << "[Action] " << *a;
       pe.GetLogger()->Info(ss);
+      expectedFinalSimTime_s += adv->GetTime(TimeUnit::s);
 
-      double time_s = adv->GetTime(TimeUnit::s);
+      double time_s = adv->GetTime(TimeUnit::s) + spareAdvanceTime_s;
       int count = (int)(time_s/dT_s);
-      for(int i=0;i<=count;i++)
+      spareAdvanceTime_s = time_s - (count * dT_s);
+      for(int i=0;i<count;i++)
       {
         AdvanceEngine(pe);
 
@@ -194,11 +202,23 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     if(pe.GetEventManager().IsEventActive(eEvent::IrreversibleState))
       return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
   }
+
   ss << "It took " << profiler.GetElapsedTime_s("Total") << "s to run this simulation";
   profiler.Clear();
   pe.GetLogger()->Info(ss);
 
-  return !err;
+  expectedFinalSimTime_s = std::round(expectedFinalSimTime_s * 100.0) / 100.0;
+  double simTime_s = std::round(pe.GetSimulationTime(TimeUnit::s) * 100.0) / 100.0;
+
+  pe.GetLogger()->Info("Final SimTime(s) " + pulse::cdm::to_string(simTime_s));
+  pe.GetLogger()->Info("Expected Final SimTime(s) " + pulse::cdm::to_string(expectedFinalSimTime_s));
+  if (expectedFinalSimTime_s != simTime_s)
+  {
+    err = true;
+    pe.GetLogger()->Error("!!!! Simulation time does not equal expected end time !!!!");
+  }
+
+  return err;
 }
 
 bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
@@ -260,7 +280,7 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
     pe.GetLogger()->Info("Serializing state after actions : " + m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
     if (m_ReloadSerializedState == eSwitch::On)
     {
-      pe.GetLogger()->Info("Reloading and saving reloaded state to : " + m_SerializationOutput.str() + ".Reload" + m_AutoSerializeFilenameExt);
+      pe.GetLogger()->Info("Reloading and saving reloaded state to : " + m_SerializationOutput.str() + ".Reloaded" + m_AutoSerializeFilenameExt);
       pe.SerializeFromFile(m_SerializationOutput.str() + m_AutoSerializeFilenameExt);
       pe.SerializeToFile(m_SerializationOutput.str() + ".Reloaded" + m_AutoSerializeFilenameExt);
     }

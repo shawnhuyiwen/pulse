@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/substances/SESubstanceQuantity.h"
-#include "substance/SESubstanceTransport.h"
+#include "cdm/compartment/substances/SESubstanceQuantity.h"
+#include "cdm/substance/SESubstanceTransport.h"
 class SELiquidCompartment;
 
 enum class BalanceLiquidBy { Mass, Concentration, Molarity, PartialPressure };
@@ -18,7 +18,6 @@ public:
   virtual ~SELiquidSubstanceQuantity();
 
   virtual void Clear();
-  virtual void Invalidate();
 
   virtual std::string GetCompartmentName() override;
 

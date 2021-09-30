@@ -24,8 +24,8 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   protected SEScalar0To1                   hematocrit;
   protected SEScalarMass                   hemoglobinContent;
   protected SEScalar0To1                   oxygenSaturation;
-  protected SEScalarVolume                 plasmaVolume;
   protected SEScalarAmountPerVolume        phosphate;
+  protected SEScalarVolume                 plasmaVolume;
   protected SEScalar0To1                   pulseOximetry;
   protected SEScalarAmountPerVolume        redBloodCellCount;
   protected SEScalar0To1                   shuntFraction;
@@ -77,7 +77,7 @@ public class SEBloodChemistrySystem extends SEPhysiologySystem implements SESyst
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
     if (bloodDensity != null)
       bloodDensity.invalidate();

@@ -32,7 +32,8 @@ def serialize_patient_from_file(filename: str, dst: SEPatient):
     serialize_patient_from_string(string, dst, eSerializationFormat.JSON)
 
 def serialize_patient_to_bind(src: SEPatient, dst: PatientData):
-    dst.Name = src.get_name()
+    if src.has_name():
+        dst.Name = src.get_name()
     dst.Sex = src.get_sex().value
     if src.has_age():
         serialize_scalar_time_to_bind(src.get_age(), dst.Age)

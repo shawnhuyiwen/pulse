@@ -35,11 +35,11 @@ public class SEConsumeMeal extends SEPatientCondition
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if(this.meal != null)
-      this.meal.reset();
+      this.meal.clear();
     this.mealFile="";
   }
   

@@ -19,12 +19,23 @@ class SEAnesthesiaMachineTubeCuffLeak;
 class SEAnesthesiaMachineVaporizerFailure;
 class SEAnesthesiaMachineVentilatorPressureLoss;
 class SEAnesthesiaMachineYPieceDisconnect;
+class SEBagValveMask;
+class SEBagValveMaskAction;
+class SEBagValveMaskConfiguration;
+class SEBagValveMaskAutomated;
+class SEBagValveMaskInstantaneous;
+class SEBagValveMaskSqueeze;
 class SEInhaler;
 class SEInhalerAction;
 class SEInhalerConfiguration;
 class SEMechanicalVentilator;
 class SEMechanicalVentilatorAction;
 class SEMechanicalVentilatorConfiguration;
+class SEMechanicalVentilatorHold;
+class SEMechanicalVentilatorLeak;
+class SEMechanicalVentilatorContinuousPositiveAirwayPressure;
+class SEMechanicalVentilatorPressureControl;
+class SEMechanicalVentilatorVolumeControl;
 class SESubstanceManager;
 CDM_BIND_DECL(ActionListData)
 CDM_BIND_DECL(AnyEquipmentActionData)
@@ -43,6 +54,11 @@ public:
   SEAnesthesiaMachineConfiguration& GetAnesthesiaMachineConfiguration();
   const SEAnesthesiaMachineConfiguration* GetAnesthesiaMachineConfiguration() const;
   void RemoveAnesthesiaMachineConfiguration();
+
+  bool HasBagValveMaskConfiguration() const;
+  SEBagValveMaskConfiguration& GetBagValveMaskConfiguration();
+  const SEBagValveMaskConfiguration* GetBagValveMaskConfiguration() const;
+  void RemoveBagValveMaskConfiguration();
 
   bool HasInhalerConfiguration() const;
   SEInhalerConfiguration& GetInhalerConfiguration();
@@ -118,6 +134,48 @@ public:
   const SEAnesthesiaMachineYPieceDisconnect* GetAnesthesiaMachineYPieceDisconnect() const;
   void RemoveAnesthesiaMachineYPieceDisconnect();
 
+  // ACTIONS
+
+  bool HasBagValveMaskAutomated() const;
+  SEBagValveMaskAutomated& GetBagValveMaskAutomated();
+  const SEBagValveMaskAutomated* GetBagValveMaskAutomated() const;
+  void RemoveBagValveMaskAutomated();
+
+  bool HasBagValveMaskInstantaneous() const;
+  SEBagValveMaskInstantaneous& GetBagValveMaskInstantaneous();
+  const SEBagValveMaskInstantaneous* GetBagValveMaskInstantaneous() const;
+  void RemoveBagValveMaskInstantaneous();
+
+  bool HasBagValveMaskSqueeze() const;
+  SEBagValveMaskSqueeze& GetBagValveMaskSqueeze();
+  const SEBagValveMaskSqueeze* GetBagValveMaskSqueeze() const;
+  void RemoveBagValveMaskSqueeze();
+
+  bool HasMechanicalVentilatorHold() const;
+  SEMechanicalVentilatorHold& GetMechanicalVentilatorHold();
+  const SEMechanicalVentilatorHold* GetMechanicalVentilatorHold() const;
+  void RemoveMechanicalVentilatorHold();
+
+  bool HasMechanicalVentilatorLeak() const;
+  SEMechanicalVentilatorLeak& GetMechanicalVentilatorLeak();
+  const SEMechanicalVentilatorLeak* GetMechanicalVentilatorLeak() const;
+  void RemoveMechanicalVentilatorLeak();
+
+  bool HasMechanicalVentilatorContinuousPositiveAirwayPressure() const;
+  SEMechanicalVentilatorContinuousPositiveAirwayPressure& GetMechanicalVentilatorContinuousPositiveAirwayPressure();
+  const SEMechanicalVentilatorContinuousPositiveAirwayPressure* GetMechanicalVentilatorContinuousPositiveAirwayPressure() const;
+  void RemoveMechanicalVentilatorContinuousPositiveAirwayPressure();
+
+  bool HasMechanicalVentilatorPressureControl() const;
+  SEMechanicalVentilatorPressureControl& GetMechanicalVentilatorPressureControl();
+  const SEMechanicalVentilatorPressureControl* GetMechanicalVentilatorPressureControl() const;
+  void RemoveMechanicalVentilatorPressureControl();
+
+  bool HasMechanicalVentilatorVolumeControl() const;
+  SEMechanicalVentilatorVolumeControl& GetMechanicalVentilatorVolumeControl();
+  const SEMechanicalVentilatorVolumeControl* GetMechanicalVentilatorVolumeControl() const;
+  void RemoveMechanicalVentilatorVolumeControl();
+
   void GetAllActions(std::vector<const SEAction*>& v) const;
   const SEScalar* GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property);
   
@@ -143,8 +201,17 @@ protected:
   SEAnesthesiaMachineVentilatorPressureLoss*                   m_AnesthesiaMachineVentilatorPressureLoss;
   SEAnesthesiaMachineYPieceDisconnect*                         m_AnesthesiaMachineYPieceDisconnect;
 
+  SEBagValveMaskConfiguration*                                 m_BagValveMaskConfiguration;
+  SEBagValveMaskAutomated*                                     m_BagValveMaskAutomated;
+  SEBagValveMaskInstantaneous*                                 m_BagValveMaskInstantaneous;
+  SEBagValveMaskSqueeze*                                       m_BagValveMaskSqueeze;
 
   SEInhalerConfiguration*                                      m_InhalerConfiguration;
 
   SEMechanicalVentilatorConfiguration*                         m_MechanicalVentilatorConfiguration;
+  SEMechanicalVentilatorHold*                                  m_MechanicalVentilatorHold;
+  SEMechanicalVentilatorLeak*                                  m_MechanicalVentilatorLeak;
+  SEMechanicalVentilatorContinuousPositiveAirwayPressure*      m_MechanicalVentilatorContinuousPositiveAirwayPressure;
+  SEMechanicalVentilatorPressureControl*                       m_MechanicalVentilatorPressureControl;
+  SEMechanicalVentilatorVolumeControl*                         m_MechanicalVentilatorVolumeControl;
 };

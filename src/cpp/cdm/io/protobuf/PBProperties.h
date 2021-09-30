@@ -3,6 +3,12 @@
 
 #pragma once
    // Forward Declaire SE and Protobuf Property Types
+CDM_BIND_DECL(CurveData)
+CDM_BIND_DECL(SegmentConstantData)
+CDM_BIND_DECL(SegmentLinearData)
+CDM_BIND_DECL(SegmentParabolicData)
+CDM_BIND_DECL(SegmentSigmoidalData)
+
 CDM_BIND_DECL(ScalarData)
 CDM_BIND_DECL(Scalar0To1Data)
 CDM_BIND_DECL(ScalarAmountData)
@@ -20,6 +26,7 @@ CDM_BIND_DECL(ScalarElectricResistanceData)
 CDM_BIND_DECL(ScalarEnergyData)
 CDM_BIND_DECL(ScalarEnergyPerAmountData)
 CDM_BIND_DECL(ScalarEnergyPerMassData)
+CDM_BIND_DECL(ScalarEquivalentWeightPerVolumeData)
 CDM_BIND_DECL(ScalarForceData)
 CDM_BIND_DECL(ScalarFrequencyData)
 CDM_BIND_DECL(ScalarHeatCapacitanceData)
@@ -74,6 +81,32 @@ CDM_BIND_DECL2(RunningAverage)
 class CDM_DECL PBProperty
 {
 public:
+  // Curve/Segments
+  static void Copy(const SECurve& src, SECurve& dst);
+  static void Load(const CDM_BIND::CurveData& src, SECurve& dst);
+  static CDM_BIND::CurveData* Unload(const SECurve& src);
+  static void Serialize(const CDM_BIND::CurveData& src, SECurve& dst);
+  static void Serialize(const SECurve& src, CDM_BIND::CurveData& dst);
+
+  static void Load(const CDM_BIND::SegmentConstantData& src, SESegmentConstant& dst);
+  static CDM_BIND::SegmentConstantData* Unload(const SESegmentConstant& src);
+  static void Serialize(const CDM_BIND::SegmentConstantData& src, SESegmentConstant& dst);
+  static void Serialize(const SESegmentConstant& src, CDM_BIND::SegmentConstantData& dst);
+
+  static void Load(const CDM_BIND::SegmentLinearData& src, SESegmentLinear& dst);
+  static CDM_BIND::SegmentLinearData* Unload(const SESegmentLinear& src);
+  static void Serialize(const CDM_BIND::SegmentLinearData& src, SESegmentLinear& dst);
+  static void Serialize(const SESegmentLinear& src, CDM_BIND::SegmentLinearData& dst);
+
+  static void Load(const CDM_BIND::SegmentParabolicData& src, SESegmentParabolic& dst);
+  static CDM_BIND::SegmentParabolicData* Unload(const SESegmentParabolic& src);
+  static void Serialize(const CDM_BIND::SegmentParabolicData& src, SESegmentParabolic& dst);
+  static void Serialize(const SESegmentParabolic& src, CDM_BIND::SegmentParabolicData& dst);
+
+  static void Load(const CDM_BIND::SegmentSigmoidalData& src, SESegmentSigmoidal& dst);
+  static CDM_BIND::SegmentSigmoidalData* Unload(const SESegmentSigmoidal& src);
+  static void Serialize(const CDM_BIND::SegmentSigmoidalData& src, SESegmentSigmoidal& dst);
+  static void Serialize(const SESegmentSigmoidal& src, CDM_BIND::SegmentSigmoidalData& dst);
 
   // Scalars
   static void Load(const CDM_BIND::ScalarData& src, SEScalar& dst);
@@ -162,6 +195,11 @@ public:
   static CDM_BIND::ScalarEnergyPerMassData* Unload(const SEScalarEnergyPerMass& src);
   static void Serialize(const CDM_BIND::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst);
   static void Serialize(const SEScalarEnergyPerMass& src, CDM_BIND::ScalarEnergyPerMassData& dst);
+
+  static void Load(const CDM_BIND::ScalarEquivalentWeightPerVolumeData& src, SEScalarEquivalentWeightPerVolume& dst);
+  static CDM_BIND::ScalarEquivalentWeightPerVolumeData* Unload(const SEScalarEquivalentWeightPerVolume& src);
+  static void Serialize(const CDM_BIND::ScalarEquivalentWeightPerVolumeData& src, SEScalarEquivalentWeightPerVolume& dst);
+  static void Serialize(const SEScalarEquivalentWeightPerVolume& src, CDM_BIND::ScalarEquivalentWeightPerVolumeData& dst);
 
   static void Load(const CDM_BIND::ScalarForceData& src, SEScalarForce& dst);
   static CDM_BIND::ScalarForceData* Unload(const SEScalarForce& src);

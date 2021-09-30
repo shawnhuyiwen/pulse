@@ -1,19 +1,20 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/PatientAssessments.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBUtils.h"
-#include "io/protobuf/PBPatientAssessments.h"
-#include "io/protobuf/PBProperties.h"
-#include "patient/assessments/SECompleteBloodCount.h"
-#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "patient/assessments/SEPulmonaryFunctionTest.h"
-#include "patient/assessments/SEUrinalysis.h"
-#include "patient/assessments/SEUrinalysisMicroscopic.h"
-#include "utils/FileUtils.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/io/protobuf/PBPatientAssessments.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/patient/assessments/SEArterialBloodGasTest.h"
+#include "cdm/patient/assessments/SECompleteBloodCount.h"
+#include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
+#include "cdm/patient/assessments/SEUrinalysis.h"
+#include "cdm/patient/assessments/SEUrinalysisMicroscopic.h"
+#include "cdm/utils/FileUtils.h"
 
 
 void PBPatientAssessment::Serialize(const CDM_BIND::PatientAssessmentData& src, SEPatientAssessment& dst)
@@ -26,7 +27,61 @@ void PBPatientAssessment::Serialize(const SEPatientAssessment& src, CDM_BIND::Pa
 
 }
 
-bool PBPatientAssessment::SerializeToString(const SECompleteBloodCount& src, std::string& output, SerializationFormat m)
+bool PBPatientAssessment::SerializeToString(const SEArterialBloodGasTest& src, std::string& output, eSerializationFormat m)
+{
+  CDM_BIND::ArterialBloodGasTestData data;
+  PBPatientAssessment::Serialize(src, data);
+  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
+}
+bool PBPatientAssessment::SerializeToFile(const SEArterialBloodGasTest& src, const std::string& filename)
+{
+  CDM_BIND::ArterialBloodGasTestData data;
+  PBPatientAssessment::Serialize(src, data);
+  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
+}
+
+void PBPatientAssessment::Load(const CDM_BIND::ArterialBloodGasTestData& src, SEArterialBloodGasTest& dst)
+{
+  dst.Clear();
+  PBPatientAssessment::Serialize(src, dst);
+}
+void PBPatientAssessment::Serialize(const CDM_BIND::ArterialBloodGasTestData& src, SEArterialBloodGasTest& dst)
+{
+  PBPatientAssessment::Serialize(src.patientassessment(), dst);
+  if (src.has_bloodph())
+    PBProperty::Load(src.bloodph(), dst.GetBloodPH());
+  if (src.has_bicarbonate())
+    PBProperty::Load(src.bicarbonate(), dst.GetBicarbonate());
+  if (src.has_partialpressureofoxygen())
+    PBProperty::Load(src.partialpressureofoxygen(), dst.GetPartialPressureOfOxygen());
+  if (src.has_partialpressureofcarbondioxide())
+    PBProperty::Load(src.partialpressureofcarbondioxide(), dst.GetPartialPressureOfCarbonDioxide());
+  if (src.has_oxygensaturation())
+    PBProperty::Load(src.oxygensaturation(), dst.GetOxygenSaturation());
+}
+
+CDM_BIND::ArterialBloodGasTestData* PBPatientAssessment::Unload(const SEArterialBloodGasTest& src)
+{
+  CDM_BIND::ArterialBloodGasTestData* dst = new CDM_BIND::ArterialBloodGasTestData();
+  PBPatientAssessment::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAssessment::Serialize(const SEArterialBloodGasTest& src, CDM_BIND::ArterialBloodGasTestData& dst)
+{
+  PBPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
+  if (src.HasBloodPH())
+    dst.set_allocated_bloodph(PBProperty::Unload(*src.m_BloodPH));
+  if (src.HasBicarbonate())
+    dst.set_allocated_bicarbonate(PBProperty::Unload(*src.m_Bicarbonate));
+  if (src.HasPartialPressureOfOxygen())
+    dst.set_allocated_partialpressureofoxygen(PBProperty::Unload(*src.m_PartialPressureOfOxygen));
+  if (src.HasPartialPressureOfCarbonDioxide())
+    dst.set_allocated_partialpressureofcarbondioxide(PBProperty::Unload(*src.m_PartialPressureOfCarbonDioxide));
+  if (src.HasOxygenSaturation())
+    dst.set_allocated_oxygensaturation(PBProperty::Unload(*src.m_OxygenSaturation));
+}
+
+bool PBPatientAssessment::SerializeToString(const SECompleteBloodCount& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::CompleteBloodCountData data;
   PBPatientAssessment::Serialize(src, data);
@@ -92,7 +147,7 @@ void PBPatientAssessment::Serialize(const SECompleteBloodCount& src, CDM_BIND::C
     dst.set_allocated_whitebloodcellcount(PBProperty::Unload(*src.m_WhiteBloodCellCount));
 }
 
-bool PBPatientAssessment::SerializeToString(const SEComprehensiveMetabolicPanel& src, std::string& output, SerializationFormat m)
+bool PBPatientAssessment::SerializeToString(const SEComprehensiveMetabolicPanel& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::ComprehensiveMetabolicPanelData data;
   PBPatientAssessment::Serialize(src, data);
@@ -183,7 +238,7 @@ void PBPatientAssessment::Serialize(const SEComprehensiveMetabolicPanel& src, CD
 }
 
 
-bool PBPatientAssessment::SerializeToString(const SEPulmonaryFunctionTest& src, std::string& output, SerializationFormat m)
+bool PBPatientAssessment::SerializeToString(const SEPulmonaryFunctionTest& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::PulmonaryFunctionTestData data;
   PBPatientAssessment::Serialize(src, data);
@@ -272,7 +327,7 @@ void PBPatientAssessment::Serialize(const SEPulmonaryFunctionTest& src, CDM_BIND
     dst.set_allocated_lungvolumeplot(PBProperty::Unload(*src.m_LungVolumePlot));
 }
 
-bool PBPatientAssessment::SerializeToString(const SEUrinalysis& src, std::string& output, SerializationFormat m)
+bool PBPatientAssessment::SerializeToString(const SEUrinalysis& src, std::string& output, eSerializationFormat m)
 {
   CDM_BIND::UrinalysisData data;
   PBPatientAssessment::Serialize(src, data);
@@ -293,24 +348,24 @@ void PBPatientAssessment::Load(const CDM_BIND::UrinalysisData& src, SEUrinalysis
 void PBPatientAssessment::Serialize(const CDM_BIND::UrinalysisData& src, SEUrinalysis& dst)
 {
   PBPatientAssessment::Serialize(src.patientassessment(), dst);
-  dst.SetColorResult((eUrinalysis_UrineColor)src.color());
-  dst.SetAppearanceResult((eUrinalysis_ClarityIndicator)src.appearance());
-  dst.SetGlucoseResult((eUrinalysis_PresenceIndicator)src.glucose());
-  dst.SetKetoneResult((eUrinalysis_PresenceIndicator)src.ketone());
-  dst.SetBloodResult((eUrinalysis_PresenceIndicator)src.blood());
-  dst.SetProteinResult((eUrinalysis_PresenceIndicator)src.protein());
-  dst.SetNitriteResult((eUrinalysis_PresenceIndicator)src.nitrite());
-  dst.SetLeukocyteEsteraseResult((eUrinalysis_PresenceIndicator)src.leukocyteesterase());
+  dst.SetColor((eUrinalysis_UrineColor)src.color());
+  dst.SetAppearance((eUrinalysis_ClarityIndicator)src.appearance());
+  dst.SetGlucose((eUrinalysis_PresenceIndicator)src.glucose());
+  dst.SetKetone((eUrinalysis_PresenceIndicator)src.ketone());
+  dst.SetBlood((eUrinalysis_PresenceIndicator)src.blood());
+  dst.SetProtein((eUrinalysis_PresenceIndicator)src.protein());
+  dst.SetNitrite((eUrinalysis_PresenceIndicator)src.nitrite());
+  dst.SetLeukocyteEsterase((eUrinalysis_PresenceIndicator)src.leukocyteesterase());
   if (src.has_bilirubin())
-    PBProperty::Load(src.bilirubin(), dst.GetBilirubinResult());
+    PBProperty::Load(src.bilirubin(), dst.GetBilirubin());
   if (src.has_specificgravity())
-    PBProperty::Load(src.specificgravity(), dst.GetSpecificGravityResult());
+    PBProperty::Load(src.specificgravity(), dst.GetSpecificGravity());
   if (src.has_ph())
-    PBProperty::Load(src.ph(), dst.GetPHResult());
+    PBProperty::Load(src.ph(), dst.GetPH());
   if (src.has_urobilinogen())
-    PBProperty::Load(src.urobilinogen(), dst.GetUrobilinogenResult());
+    PBProperty::Load(src.urobilinogen(), dst.GetUrobilinogen());
   if (src.has_microscopic())
-    PBPatientAssessment::Load(src.microscopic(), dst.GetMicroscopicResult());
+    PBPatientAssessment::Load(src.microscopic(), dst.GetMicroscopic());
 }
 
 CDM_BIND::UrinalysisData* PBPatientAssessment::Unload(const SEUrinalysis& src)
@@ -322,29 +377,29 @@ CDM_BIND::UrinalysisData* PBPatientAssessment::Unload(const SEUrinalysis& src)
 void PBPatientAssessment::Serialize(const SEUrinalysis& src, CDM_BIND::UrinalysisData& dst)
 {
   PBPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
-  if (src.HasColorResult())
+  if (src.HasColor())
     dst.set_color((CDM_BIND::UrinalysisData::eUrineColor)src.m_Color);
-  if (src.HasAppearanceResult())
+  if (src.HasAppearance())
     dst.set_appearance((CDM_BIND::UrinalysisData::eClarityIndicator)src.m_Appearance);
-  if (src.HasGlucoseResult())
+  if (src.HasGlucose())
     dst.set_glucose((CDM_BIND::UrinalysisData::ePresenceIndicator)src.m_Glucose);
-  if (src.HasKetoneResult())
+  if (src.HasKetone())
     dst.set_ketone((CDM_BIND::UrinalysisData::ePresenceIndicator)src.m_Ketone);
-  if (src.HasBloodResult())
+  if (src.HasBlood())
     dst.set_blood((CDM_BIND::UrinalysisData::ePresenceIndicator)src.m_Blood);
-  if (src.HasProteinResult())
+  if (src.HasProtein())
     dst.set_protein((CDM_BIND::UrinalysisData::ePresenceIndicator)src.m_Protein);
-  if (src.HasNitriteResult())
+  if (src.HasNitrite())
     dst.set_nitrite((CDM_BIND::UrinalysisData::ePresenceIndicator)src.m_Nitrite);
-  if (src.HasBilirubinResult())
+  if (src.HasBilirubin())
     dst.set_allocated_bilirubin(PBProperty::Unload(*src.m_Bilirubin));
-  if (src.HasSpecificGravityResult())
+  if (src.HasSpecificGravity())
     dst.set_allocated_specificgravity(PBProperty::Unload(*src.m_SpecificGravity));
-  if (src.HasPHResult())
+  if (src.HasPH())
     dst.set_allocated_ph(PBProperty::Unload(*src.m_pH));
-  if (src.HasUrobilinogenResult())
+  if (src.HasUrobilinogen())
     dst.set_allocated_urobilinogen(PBProperty::Unload(*src.m_Urobilinogen));
-  if (src.HasMicroscopicResult())
+  if (src.HasMicroscopic())
     dst.set_allocated_microscopic(PBPatientAssessment::Unload(*src.m_Microscopic));
 }
 
@@ -356,17 +411,17 @@ void PBPatientAssessment::Load(const CDM_BIND::UrinalysisMicroscopicData& src, S
 void PBPatientAssessment::Serialize(const CDM_BIND::UrinalysisMicroscopicData& src, SEUrinalysisMicroscopic& dst)
 {
   dst.SetObservationType((eUrinalysis_MicroscopicObservationType)src.observationtype());
-  dst.SetEpithelialCellsResult((eUrinalysis_MicroscopicObservationAmount)src.epithelialcells());
-  dst.SetCrystalsResult((eUrinalysis_MicroscopicObservationAmount)src.crystals());
-  dst.SetBacteriaResult((eUrinalysis_MicroscopicObservationAmount)src.bacteria());
-  dst.SetTrichomonadsResult((eUrinalysis_MicroscopicObservationAmount)src.trichomonads());
-  dst.SetYeastResult((eUrinalysis_MicroscopicObservationAmount)src.yeast());
+  dst.SetEpithelialCells((eUrinalysis_MicroscopicObservationAmount)src.epithelialcells());
+  dst.SetCrystals((eUrinalysis_MicroscopicObservationAmount)src.crystals());
+  dst.SetBacteria((eUrinalysis_MicroscopicObservationAmount)src.bacteria());
+  dst.SetTrichomonads((eUrinalysis_MicroscopicObservationAmount)src.trichomonads());
+  dst.SetYeast((eUrinalysis_MicroscopicObservationAmount)src.yeast());
   if (src.has_redbloodcells())
-    PBProperty::Load(src.redbloodcells(), dst.GetRedBloodCellsResult());
+    PBProperty::Load(src.redbloodcells(), dst.GetRedBloodCells());
   if (src.has_whitebloodcells())
-    PBProperty::Load(src.whitebloodcells(), dst.GetWhiteBloodCellsResult());
+    PBProperty::Load(src.whitebloodcells(), dst.GetWhiteBloodCells());
   if (src.has_casts())
-    PBProperty::Load(src.casts(), dst.GetCastsResult());
+    PBProperty::Load(src.casts(), dst.GetCasts());
 }
 
 CDM_BIND::UrinalysisMicroscopicData* PBPatientAssessment::Unload(const SEUrinalysisMicroscopic& src)
@@ -379,20 +434,20 @@ void PBPatientAssessment::Serialize(const SEUrinalysisMicroscopic& src, CDM_BIND
 {
   if (src.HasObservationType())
     dst.set_observationtype((CDM_BIND::UrinalysisMicroscopicData::eObservationType)src.m_ObservationType);
-  if (src.HasEpithelialCellsResult())
+  if (src.HasEpithelialCells())
     dst.set_epithelialcells((CDM_BIND::UrinalysisMicroscopicData::eObservationAmount)src.m_EpithelialCells);
-  if (src.HasCrystalsResult())
+  if (src.HasCrystals())
     dst.set_crystals((CDM_BIND::UrinalysisMicroscopicData::eObservationAmount)src.m_Crystals);
-  if (src.HasBacteriaResult())
+  if (src.HasBacteria())
     dst.set_bacteria((CDM_BIND::UrinalysisMicroscopicData::eObservationAmount)src.m_Bacteria);
-  if (src.HasTrichomonadsResult())
+  if (src.HasTrichomonads())
     dst.set_trichomonads((CDM_BIND::UrinalysisMicroscopicData::eObservationAmount)src.m_Trichomonads);
-  if (src.HasYeastResult())
+  if (src.HasYeast())
     dst.set_yeast((CDM_BIND::UrinalysisMicroscopicData::eObservationAmount)src.m_Yeast);
-  if (src.HasRedBloodCellsResult())
+  if (src.HasRedBloodCells())
     dst.set_allocated_redbloodcells(PBProperty::Unload(*src.m_RedBloodCells));
-  if (src.HasWhiteBloodCellsResult())
+  if (src.HasWhiteBloodCells())
     dst.set_allocated_whitebloodcells(PBProperty::Unload(*src.m_WhiteBloodCells));
-  if (src.HasCastsResult())
+  if (src.HasCasts())
     dst.set_allocated_casts(PBProperty::Unload(*src.m_Casts));
 }

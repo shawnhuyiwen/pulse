@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "blackbox/SEBlackBox.h"
-#include "circuit/electrical/SEElectricalCircuitPath.h"
-#include "compartment/electrical/SEElectricalCompartmentLink.h"
+#include "cdm/blackbox/SEBlackBox.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/compartment/electrical/SEElectricalCompartmentLink.h"
 
 class CDM_DECL SEElectricalBlackBox : public SEBlackBox<ELECTRICAL_BLACK_BOX>
 {

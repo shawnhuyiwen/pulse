@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEExercise.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEExercise.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEExercise::SEExercise(Logger* logger) : SEPatientAction(logger)
 {
@@ -22,7 +22,7 @@ void SEExercise::Clear()
   INVALIDATE_PROPERTY(m_Intensity);
 }
 
-void SEExercise::Copy(const SEExercise& src, bool preserveState)
+void SEExercise::Copy(const SEExercise& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);

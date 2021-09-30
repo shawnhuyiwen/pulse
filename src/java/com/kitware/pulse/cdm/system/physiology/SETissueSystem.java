@@ -14,7 +14,7 @@ public class SETissueSystem extends SEPhysiologySystem implements SESystem
   protected SEScalarVolume        extracellularFluidVolume;
   protected SEScalarVolume        extravascularFluidVolume;
   protected SEScalarVolume        intracellularFluidVolume;
-  protected SEScalar              intracellularFluidPH;  
+  protected SEScalar              intracellularFluidPH;
   protected SEScalarVolumePerTime oxygenConsumptionRate;
   protected SEScalar              respiratoryExchangeRatio;
 
@@ -30,8 +30,8 @@ public class SETissueSystem extends SEPhysiologySystem implements SESystem
   }
 
   @Override
-  public void reset()
-  {    
+  public void clear()
+  {
     if (carbonDioxideProductionRate != null)
       carbonDioxideProductionRate.invalidate();
     if (extracellularFluidVolume != null)

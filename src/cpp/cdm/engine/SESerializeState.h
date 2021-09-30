@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "engine/SEAction.h"
+#include "cdm/engine/SEAction.h"
 
 // Keep enums in sync with appropriate schema/cdm/ActionEnums.proto file !!
 enum class eSerialization_Type { Save = 0, Load };

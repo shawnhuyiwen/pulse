@@ -3,12 +3,12 @@
 
 from pulse.cdm.engine import eSerializationFormat, eSwitch
 from pulse.cdm.environment_actions import SEThermalApplication
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.scalars import AreaUnit, PowerUnit, TemperatureUnit
 
 def HowTo_ThermalApplication():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_ThermalApplication.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_ThermalApplication.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

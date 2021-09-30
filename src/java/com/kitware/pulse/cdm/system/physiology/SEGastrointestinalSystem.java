@@ -19,12 +19,12 @@ public class SEGastrointestinalSystem extends SEPhysiologySystem implements SESy
   }
 
   @Override
-  public void reset()
+  public void clear()
   {    
     if (waterAbsorptionRate != null)
       waterAbsorptionRate.invalidate();
     if (stomachContents != null)
-      stomachContents.reset();
+      stomachContents.clear();
   }
 
   public static void load(GastrointestinalSystemData src, SEGastrointestinalSystem dst)

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.kitware.pulse.cdm.scenario.SEScenarioExec;
+import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
@@ -34,6 +35,7 @@ public class SETestJob extends LogListener
   public String       computedDirectory = null;
   public List<String> reportFiles = new ArrayList<>();
   public String       resultsFiles = null;
+  public eModelType   modelType = eModelType.UNRECOGNIZED;
 
   @Override
   public SETestJob clone()

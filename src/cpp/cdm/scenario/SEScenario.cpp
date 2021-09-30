@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "scenario/SEScenario.h"
-#include "engine/SEAction.h"
-#include "engine/SECondition.h"
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEPatientConfiguration.h"
-#include "substance/SESubstanceManager.h"
-#include "io/protobuf/PBScenario.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/scenario/SEScenario.h"
+#include "cdm/engine/SEAction.h"
+#include "cdm/engine/SECondition.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/io/protobuf/PBScenario.h"
 
 SEScenario::SEScenario(Logger* logger, std::string const& dataDir) : Loggable(logger)
 {
@@ -42,7 +42,7 @@ void SEScenario::Copy(const SEScenario& src)
   PBScenario::Copy(src, *this);
 }
 
-bool SEScenario::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEScenario::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBScenario::SerializeToString(*this, output, m);
 }
@@ -50,7 +50,7 @@ bool SEScenario::SerializeToFile(const std::string& filename) const
 {
   return PBScenario::SerializeToFile(*this, filename);
 }
-bool SEScenario::SerializeFromString(const std::string& src, SerializationFormat m)
+bool SEScenario::SerializeFromString(const std::string& src, eSerializationFormat m)
 {
   return PBScenario::SerializeFromString(src, *this, m);
 }

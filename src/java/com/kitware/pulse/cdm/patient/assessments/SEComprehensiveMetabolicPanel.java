@@ -31,26 +31,6 @@ public class SEComprehensiveMetabolicPanel extends SEPatientAssessment
   public void clear()
   {
     super.clear();
-    this.albumin = null;
-    this.ALP = null;
-    this.ALT = null;
-    this.AST = null;
-    this.BUN = null;
-    this.calcium = null;
-    this.chloride = null;
-    this.CO2 = null;
-    this.creatinine = null;
-    this.glucose = null;
-    this.potassium = null;
-    this.sodium = null;
-    this.totalBilirubin = null;
-    this.totalProtein = null;
-  }
-  
-  @Override
-  public void reset()
-  {
-    super.reset();
     if(this.albumin!=null)
       this.albumin.invalidate();
     if(this.ALP!=null)

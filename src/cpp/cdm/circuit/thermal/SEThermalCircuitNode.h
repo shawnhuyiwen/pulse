@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuitNode.h"
+#include "cdm/circuit/SECircuitNode.h"
 class SEThermalBlackBox;
 
 class CDM_DECL SEThermalCircuitNode : public SECircuitNode<THERMAL_CIRCUIT_NODE>

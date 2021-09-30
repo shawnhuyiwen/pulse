@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SEDynamicStabilizationEngineConvergence.h"
-#include "engine/SEDynamicStabilizationPropertyConvergence.h"
-#include "engine/SEDataRequest.h"
-#include "engine/SEDataRequestManager.h"
-#include "properties/SEScalarTime.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEDynamicStabilizationEngineConvergence.h"
+#include "cdm/engine/SEDynamicStabilizationPropertyConvergence.h"
+#include "cdm/engine/SEDataRequest.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/properties/SEScalarTime.h"
 
 SEDynamicStabilizationEngineConvergence::SEDynamicStabilizationEngineConvergence(Logger *logger) : Loggable(logger)
 {

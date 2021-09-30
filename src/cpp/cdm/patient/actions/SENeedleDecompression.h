@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 
 class CDM_DECL SENeedleDecompression : public SEPatientAction
 {
@@ -13,7 +13,7 @@ public:
   virtual ~SENeedleDecompression();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SENeedleDecompression& src, bool preserveState=false);
+  virtual void Copy(const SENeedleDecompression& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
@@ -34,4 +34,4 @@ public:
 protected:
   eSide m_Side;
   eSwitch m_State;
-};    
+};

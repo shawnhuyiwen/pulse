@@ -18,10 +18,21 @@ CDM_BIND_DECL2(AnesthesiaMachineTubeCuffLeak)
 CDM_BIND_DECL2(AnesthesiaMachineVaporizerFailure)
 CDM_BIND_DECL2(AnesthesiaMachineVentilatorPressureLoss)
 CDM_BIND_DECL2(AnesthesiaMachineYPieceDisconnect)
+CDM_BIND_DECL2(BagValveMaskAction)
+CDM_BIND_DECL2(BagValveMaskConfiguration)
+CDM_BIND_DECL2(BagValveMaskAutomated)
+CDM_BIND_DECL2(BagValveMaskSqueeze)
+CDM_BIND_DECL2(BagValveMaskInstantaneous)
 CDM_BIND_DECL2(InhalerAction)
 CDM_BIND_DECL2(InhalerConfiguration)
 CDM_BIND_DECL2(MechanicalVentilatorAction)
 CDM_BIND_DECL2(MechanicalVentilatorConfiguration)
+CDM_BIND_DECL2(MechanicalVentilatorHold)
+CDM_BIND_DECL2(MechanicalVentilatorLeak)
+CDM_BIND_DECL2(MechanicalVentilatorMode)
+CDM_BIND_DECL2(MechanicalVentilatorContinuousPositiveAirwayPressure)
+CDM_BIND_DECL2(MechanicalVentilatorPressureControl)
+CDM_BIND_DECL2(MechanicalVentilatorVolumeControl)
 class SESubstanceManager;
 
 class CDM_DECL PBEquipmentAction
@@ -121,6 +132,37 @@ public:
   static void Serialize(const SEAnesthesiaMachineYPieceDisconnect& src, CDM_BIND::AnesthesiaMachineYPieceDisconnectData& dst);
   static void Copy(const SEAnesthesiaMachineYPieceDisconnect& src, SEAnesthesiaMachineYPieceDisconnect& dst);
 
+  /////////////////////
+  // Bag Valve Mask //
+  ////////////////////
+
+  static void Serialize(const CDM_BIND::BagValveMaskActionData& src, SEBagValveMaskAction& dst);
+  static void Serialize(const SEBagValveMaskAction& src, CDM_BIND::BagValveMaskActionData& dst);
+
+  static void Load(const CDM_BIND::BagValveMaskConfigurationData& src, SEBagValveMaskConfiguration& dst, const SESubstanceManager& subMgr);
+  static CDM_BIND::BagValveMaskConfigurationData* Unload(const SEBagValveMaskConfiguration& src);
+  static void Serialize(const CDM_BIND::BagValveMaskConfigurationData& src, SEBagValveMaskConfiguration& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const SEBagValveMaskConfiguration& src, CDM_BIND::BagValveMaskConfigurationData& dst);
+  static void Copy(const SEBagValveMaskConfiguration& src, SEBagValveMaskConfiguration& dst, const SESubstanceManager& subMgr);
+
+  static void Load(const CDM_BIND::BagValveMaskAutomatedData& src, SEBagValveMaskAutomated& dst);
+  static CDM_BIND::BagValveMaskAutomatedData* Unload(const SEBagValveMaskAutomated& src);
+  static void Serialize(const CDM_BIND::BagValveMaskAutomatedData& src, SEBagValveMaskAutomated& dst);
+  static void Serialize(const SEBagValveMaskAutomated& src, CDM_BIND::BagValveMaskAutomatedData& dst);
+  static void Copy(const SEBagValveMaskAutomated& src, SEBagValveMaskAutomated& dst);
+
+  static void Load(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst);
+  static CDM_BIND::BagValveMaskSqueezeData* Unload(const SEBagValveMaskSqueeze& src);
+  static void Serialize(const CDM_BIND::BagValveMaskSqueezeData& src, SEBagValveMaskSqueeze& dst);
+  static void Serialize(const SEBagValveMaskSqueeze& src, CDM_BIND::BagValveMaskSqueezeData& dst);
+  static void Copy(const SEBagValveMaskSqueeze& src, SEBagValveMaskSqueeze& dst);
+
+  static void Load(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst);
+  static CDM_BIND::BagValveMaskInstantaneousData* Unload(const SEBagValveMaskInstantaneous& src);
+  static void Serialize(const CDM_BIND::BagValveMaskInstantaneousData& src, SEBagValveMaskInstantaneous& dst);
+  static void Serialize(const SEBagValveMaskInstantaneous& src, CDM_BIND::BagValveMaskInstantaneousData& dst);
+  static void Copy(const SEBagValveMaskInstantaneous& src, SEBagValveMaskInstantaneous& dst);
+
   /////////////
   // Inhaler //
   /////////////
@@ -146,4 +188,39 @@ public:
   static void Serialize(const CDM_BIND::MechanicalVentilatorConfigurationData& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEMechanicalVentilatorConfiguration& src, CDM_BIND::MechanicalVentilatorConfigurationData& dst);
   static void Copy(const SEMechanicalVentilatorConfiguration& src, SEMechanicalVentilatorConfiguration& dst, const SESubstanceManager& subMgr);
+
+  static void Load(const CDM_BIND::MechanicalVentilatorHoldData& src, SEMechanicalVentilatorHold& dst);
+  static CDM_BIND::MechanicalVentilatorHoldData* Unload(const SEMechanicalVentilatorHold& src);
+  static void Serialize(const CDM_BIND::MechanicalVentilatorHoldData& src, SEMechanicalVentilatorHold& dst);
+  static void Serialize(const SEMechanicalVentilatorHold& src, CDM_BIND::MechanicalVentilatorHoldData& dst);
+  static void Copy(const SEMechanicalVentilatorHold& src, SEMechanicalVentilatorHold& dst);
+
+  static void Load(const CDM_BIND::MechanicalVentilatorLeakData& src, SEMechanicalVentilatorLeak& dst);
+  static CDM_BIND::MechanicalVentilatorLeakData* Unload(const SEMechanicalVentilatorLeak& src);
+  static void Serialize(const CDM_BIND::MechanicalVentilatorLeakData& src, SEMechanicalVentilatorLeak& dst);
+  static void Serialize(const SEMechanicalVentilatorLeak& src, CDM_BIND::MechanicalVentilatorLeakData& dst);
+  static void Copy(const SEMechanicalVentilatorLeak& src, SEMechanicalVentilatorLeak& dst);
+
+  static void Load(const CDM_BIND::MechanicalVentilatorModeData& src, SEMechanicalVentilatorMode& dst);
+  static CDM_BIND::MechanicalVentilatorModeData* Unload(const SEMechanicalVentilatorMode& src);
+  static void Serialize(const CDM_BIND::MechanicalVentilatorModeData& src, SEMechanicalVentilatorMode& dst);
+  static void Serialize(const SEMechanicalVentilatorMode& src, CDM_BIND::MechanicalVentilatorModeData& dst);
+
+  static void Load(const CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData& src, SEMechanicalVentilatorContinuousPositiveAirwayPressure& dst);
+  static CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData* Unload(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src);
+  static void Serialize(const CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData& src, SEMechanicalVentilatorContinuousPositiveAirwayPressure& dst);
+  static void Serialize(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData& dst);
+  static void Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, SEMechanicalVentilatorContinuousPositiveAirwayPressure& dst);
+
+  static void Load(const CDM_BIND::MechanicalVentilatorPressureControlData& src, SEMechanicalVentilatorPressureControl& dst);
+  static CDM_BIND::MechanicalVentilatorPressureControlData* Unload(const SEMechanicalVentilatorPressureControl& src);
+  static void Serialize(const CDM_BIND::MechanicalVentilatorPressureControlData& src, SEMechanicalVentilatorPressureControl& dst);
+  static void Serialize(const SEMechanicalVentilatorPressureControl& src, CDM_BIND::MechanicalVentilatorPressureControlData& dst);
+  static void Copy(const SEMechanicalVentilatorPressureControl& src, SEMechanicalVentilatorPressureControl& dst);
+
+  static void Load(const CDM_BIND::MechanicalVentilatorVolumeControlData& src, SEMechanicalVentilatorVolumeControl& dst);
+  static CDM_BIND::MechanicalVentilatorVolumeControlData* Unload(const SEMechanicalVentilatorVolumeControl& src);
+  static void Serialize(const CDM_BIND::MechanicalVentilatorVolumeControlData& src, SEMechanicalVentilatorVolumeControl& dst);
+  static void Serialize(const SEMechanicalVentilatorVolumeControl& src, CDM_BIND::MechanicalVentilatorVolumeControlData& dst);
+  static void Copy(const SEMechanicalVentilatorVolumeControl& src, SEMechanicalVentilatorVolumeControl& dst);
 };

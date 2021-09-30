@@ -11,9 +11,10 @@ endmacro()
 
 function(add_library_ex target)
 
-  set(options VERBOSE SHARED LIB_INSTALL_ONLY)
-  set(oneValueArgs)
-  set(multiValueArgs H_FILES CPP_FILES SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS INSTALL_HEADER_DIR)
+  set(options VERBOSE SHARED LIB_INSTALL_ONLY NO_INSTALL)
+  set(oneValueArgs SOURCE_ROOT)
+  set(multiValueArgs H_FILES CONFIG_H_FILES CPP_FILES CONFIG_CPP_FILES
+                     SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS INSTALL_HEADER_DIR)
   include(CMakeParseArguments)
   cmake_parse_arguments(target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
@@ -46,8 +47,6 @@ function(add_library_ex target)
     _subdir_list(target_SUBDIR_LIST ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
   
-  
-
   list(APPEND target_BUILD_INTERFACE_LIST "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>")
   foreach(subdir ${target_SUBDIR_LIST})
     if( NOT ${subdir} STREQUAL "test")
@@ -63,11 +62,20 @@ function(add_library_ex target)
     set(target_LIB_TYPE SHARED)
   endif()
   
+  string(REPLACE ${CMAKE_SOURCE_DIR}/src/cpp "" REL_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+  foreach(h ${target_CONFIG_H_FILES})
+    list(APPEND target_BUILD_CONFIG_H_FILES ${CMAKE_BINARY_DIR}/src/cpp/${REL_PATH}/${h})
+  endforeach()
+  foreach(cpp ${target_CONFIG_CPP_FILES})
+    list(APPEND target_BUILD_CONFIG_CPP_FILES ${CMAKE_BINARY_DIR}/src/cpp/${REL_PATH}/${cpp})
+  endforeach()
+  
   add_library( ${target} ${target_LIB_TYPE}
     ${target_H_FILES}
+    ${target_BUILD_CONFIG_H_FILES}
     ${target_CPP_FILES}
+    ${target_BUILD_CONFIG_CPP_FILES}
     )
-    
 
   if(target_SHARED)
     add_custom_command(TARGET ${target} POST_BUILD
@@ -106,10 +114,15 @@ function(add_library_ex target)
   #-----------------------------------------------------------------------------
   # Include directories
   #-----------------------------------------------------------------------------
-  target_include_directories( ${target} PUBLIC
-    ${target_BUILD_INTERFACE_LIST}
-    $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_INSTALL_FOLDER}>
+  target_include_directories( ${target}
+    PUBLIC
+      ${target_BUILD_INTERFACE_LIST}
+      $<INSTALL_INTERFACE:include>
+      $<INSTALL_INTERFACE:include/${${PROJECT_NAME}_INSTALL_FOLDER}>
+    PRIVATE # Bind files
+      ${DST_ROOT}/cpp
     )
+  target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR}/src/cpp)
 
   #-----------------------------------------------------------------------------
   # Set compile flags for the target
@@ -120,41 +133,64 @@ function(add_library_ex target)
                            $<$<CXX_COMPILER_ID:MSVC>:
                                 -W4 -MP>)
 
-  if(NOT target_LIB_INSTALL_ONLY)
+  if(NOT target_NO_INSTALL)
+    if(NOT target_LIB_INSTALL_ONLY)
+      #-----------------------------------------------------------------------------
+      # Install headers
+      #-----------------------------------------------------------------------------
+      foreach(h ${target_H_FILES})
+        #message(STATUS "Header at ${h}")
+        get_filename_component(DEST_DIR ${h} DIRECTORY)
+        #message(STATUS "Going to ${target_INSTALL_HEADER_DIR}/${DEST_DIR}")
+        install(FILES
+          ${h}
+          DESTINATION include/${${PROJECT_NAME}_INSTALL_FOLDER}/${target_INSTALL_HEADER_DIR}/${DEST_DIR}
+          COMPONENT Development
+        )
+      endforeach()
+    endif()
+    
     #-----------------------------------------------------------------------------
-    # Install headers
+    # Install library
     #-----------------------------------------------------------------------------
-    foreach(h ${target_H_FILES})
-      #message(STATUS "Header at ${h}")
-      get_filename_component(DEST_DIR ${h} DIRECTORY)
-      #message(STATUS "Going to ${target_INSTALL_HEADER_DIR}/${DEST_DIR}")
-      install(FILES
-        ${h}
-        DESTINATION include/${${PROJECT_NAME}_INSTALL_FOLDER}/${target_INSTALL_HEADER_DIR}/${DEST_DIR}
-        COMPONENT Development
+    install( TARGETS ${target} EXPORT ${PROJECT_NAME}Targets
+      RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION lib COMPONENT Development
       )
-    endforeach()
+  else()
+    message(STATUS "Not installing ${target}")
   endif()
-  
-  #-----------------------------------------------------------------------------
-  # Install library
-  #-----------------------------------------------------------------------------
-  install( TARGETS ${target} EXPORT ${PROJECT_NAME}Targets
-    RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION lib COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION lib COMPONENT Development
-    )
 
   #-----------------------------------------------------------------------------
   # Add the target to project folders
   #-----------------------------------------------------------------------------
   set_target_properties (${target} PROPERTIES FOLDER ${PROJECT_NAME})
-  foreach(h ${target_H_FILES})
-    list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${h}")
-  endforeach()
-  foreach(cpp ${target_CPP_FILES})
-    list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${cpp}")
-  endforeach()
-  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${target_FILES})
+  
+  
+  if(NOT target_SOURCE_ROOT)
+    foreach(h ${target_H_FILES})
+      list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${h}")
+    endforeach()
+    foreach(cpp ${target_CPP_FILES})
+      list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${cpp}")
+    endforeach()
+    source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${target_H_FILES} ${target_CPP_FILES})
+  else()
+   foreach(h ${target_H_FILES})
+     #file(RELATIVE_PATH h_rel ${target_SOURCE_ROOT} ${h})
+     #message(STATUS "Header at ${h_rel}")
+     list(APPEND target_FILES "${h}")
+   endforeach()
+   foreach(cpp ${target_CPP_FILES})
+     #file(RELATIVE_PATH cpp_rel ${target_SOURCE_ROOT} ${cpp})
+     #message(STATUS "Source at ${cpp_rel}")
+     list(APPEND target_FILES "${cpp}")
+   endforeach()
+   source_group(TREE "${target_SOURCE_ROOT}" FILES ${target_FILES})
+  endif()
+  # Configured files in the build directories
+  source_group(TREE "${CMAKE_BINARY_DIR}/src/cpp/${REL_PATH}" FILES ${target_BUILD_CONFIG_H_FILES})
+  source_group(TREE "${CMAKE_BINARY_DIR}/src/cpp/${REL_PATH}" FILES ${target_BUILD_CONFIG_CPP_FILES})
 
 endfunction()

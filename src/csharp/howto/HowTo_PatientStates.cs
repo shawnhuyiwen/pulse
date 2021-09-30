@@ -17,18 +17,19 @@ namespace HowTo_PatientStates
       // Create a list of Data Requests to specify all the data we want from Pulse
       List<SEDataRequest> data_requests = new List<SEDataRequest>
       {
-        SEDataRequest.CreatePhysiologyRequest("HeartRate", "1/min"),
-        SEDataRequest.CreatePhysiologyRequest("ArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("MeanArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("SystolicArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("DiastolicArterialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("OxygenSaturation"),
-        SEDataRequest.CreatePhysiologyRequest("EndTidalCarbonDioxidePressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("RespirationRate", "1/min"),
-        SEDataRequest.CreatePhysiologyRequest("SkinTemperature", "degC"),
-        SEDataRequest.CreateGasCompartmentSubstanceRequest("Carina", "CarbonDioxide", "PartialPressure", "mmHg"),
-        SEDataRequest.CreatePhysiologyRequest("BloodVolume", "mL"),
-        SEDataRequest.CreateECGRequest("Lead3ElectricPotential", "mV"),
+        // Vitals Monitor Data
+        SEDataRequest.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("OxygenSaturation"),
+        SEDataRequest.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min),
+        SEDataRequest.CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit.C),
+        SEDataRequest.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit.mmHg),
+        SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL),
+        SEDataRequest.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit.mV),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
       // Create a reference to a double[] that will contain the data returned from Pulse
@@ -48,7 +49,7 @@ namespace HowTo_PatientStates
       injury_set_names.Add("MinorLegBleed");
       List<SEAction> injury_set_1 = new List<SEAction>();
       SEHemorrhage h1 = new SEHemorrhage();
-      h1.SetType(SEHemorrhage.eType.External);
+      h1.SetType(eHemorrhage_Type.External);
       h1.SetCompartment("RightLeg");
       h1.GetSeverity().SetValue(0.33);
       injury_set_1.Add(h1);
@@ -58,7 +59,7 @@ namespace HowTo_PatientStates
       injury_set_names.Add("ModerateLegBleed");
       List<SEAction> injury_set_2 = new List<SEAction>();
       SEHemorrhage h2 = new SEHemorrhage();
-      h2.SetType(SEHemorrhage.eType.External);
+      h2.SetType(eHemorrhage_Type.External);
       h2.SetCompartment("RightLeg");
       h2.GetSeverity().SetValue(0.66);
       injury_set_2.Add(h2);

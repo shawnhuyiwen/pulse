@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/equipment/electrocardiogram/SEElectroCardioGram.h"
-#include "properties/SEScalarElectricPotential.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
 
 SEElectroCardioGram::SEElectroCardioGram(Logger* logger) : SEEquipment(logger)
 {

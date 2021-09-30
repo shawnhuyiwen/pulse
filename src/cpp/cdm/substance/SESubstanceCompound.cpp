@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "substance/SESubstanceCompound.h"
-#include "substance/SESubstanceConcentration.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "io/protobuf/PBSubstance.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/substance/SESubstanceCompound.h"
+#include "cdm/substance/SESubstanceConcentration.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/io/protobuf/PBSubstance.h"
 
 SESubstanceCompound::SESubstanceCompound(const std::string& name, Logger* logger) : Loggable(logger)
 {
@@ -25,7 +25,7 @@ void SESubstanceCompound::Clear()
     sq->Clear();
 }
 
-bool SESubstanceCompound::SerializeToString(std::string& output, SerializationFormat m) const
+bool SESubstanceCompound::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBSubstance::SerializeToString(*this, output, m);
 }
@@ -33,7 +33,7 @@ bool SESubstanceCompound::SerializeToFile(const std::string& filename) const
 {
   return PBSubstance::SerializeToFile(*this, filename);
 }
-bool SESubstanceCompound::SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, SerializationFormat m)
+bool SESubstanceCompound::SerializeFromString(const std::string& src, const SESubstanceManager& subMgr, eSerializationFormat m)
 {
   return PBSubstance::SerializeFromString(src, *this, subMgr, m);
 }

@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/assessments/SEUrinalysisMicroscopic.h"
-#include "properties/SEScalarAmount.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/assessments/SEUrinalysisMicroscopic.h"
+#include "cdm/properties/SEScalarAmount.h"
 
 SEUrinalysisMicroscopic::SEUrinalysisMicroscopic(Logger* logger) : Loggable(logger)
 {
@@ -44,19 +44,19 @@ void SEUrinalysisMicroscopic::Clear()
   m_Yeast = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
 
-bool SEUrinalysisMicroscopic::HasRedBloodCellsResult() const
+bool SEUrinalysisMicroscopic::HasRedBloodCells() const
 {
   return m_RedBloodCells == nullptr ? false : m_RedBloodCells->IsValid();
 }
-SEScalarAmount& SEUrinalysisMicroscopic::GetRedBloodCellsResult()
+SEScalarAmount& SEUrinalysisMicroscopic::GetRedBloodCells()
 {
   if (m_RedBloodCells == nullptr)
     m_RedBloodCells = new SEScalarAmount();
   return *m_RedBloodCells;
 }
-double SEUrinalysisMicroscopic::GetRedBloodCellsResult(const AmountUnit& unit) const
+double SEUrinalysisMicroscopic::GetRedBloodCells(const AmountUnit& unit) const
 {
-  if (!HasRedBloodCellsResult())
+  if (!HasRedBloodCells())
     return SEScalar::dNaN();
   return m_RedBloodCells->GetValue(unit);
 }
@@ -78,121 +78,121 @@ void SEUrinalysisMicroscopic::InvalidateObservationType()
   m_ObservationType = eUrinalysis_MicroscopicObservationType::NullObservationType;
 }
 
-bool SEUrinalysisMicroscopic::HasWhiteBloodCellsResult() const
+bool SEUrinalysisMicroscopic::HasWhiteBloodCells() const
 {
   return m_WhiteBloodCells == nullptr ? false : m_WhiteBloodCells->IsValid();
 }
-SEScalarAmount& SEUrinalysisMicroscopic::GetWhiteBloodCellsResult()
+SEScalarAmount& SEUrinalysisMicroscopic::GetWhiteBloodCells()
 {
   if (m_WhiteBloodCells == nullptr)
     m_WhiteBloodCells = new SEScalarAmount();
   return *m_WhiteBloodCells;
 }
-double SEUrinalysisMicroscopic::GetWhiteBloodCellsResult(const AmountUnit& unit) const
+double SEUrinalysisMicroscopic::GetWhiteBloodCells(const AmountUnit& unit) const
 {
-  if (!HasWhiteBloodCellsResult())
+  if (!HasWhiteBloodCells())
     return SEScalar::dNaN();
   return m_WhiteBloodCells->GetValue(unit);
 }
 
-bool SEUrinalysisMicroscopic::HasEpithelialCellsResult() const
+bool SEUrinalysisMicroscopic::HasEpithelialCells() const
 {
   return m_EpithelialCells != eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
-eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetEpithelialCellsResult() const
+eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetEpithelialCells() const
 {
   return m_EpithelialCells;
 }
-void SEUrinalysisMicroscopic::SetEpithelialCellsResult(eUrinalysis_MicroscopicObservationAmount c)
+void SEUrinalysisMicroscopic::SetEpithelialCells(eUrinalysis_MicroscopicObservationAmount c)
 {
   m_EpithelialCells = c;
 }
-void SEUrinalysisMicroscopic::InvalidateEpithelialCellsResult()
+void SEUrinalysisMicroscopic::InvalidateEpithelialCells()
 {
   m_EpithelialCells = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
 
-bool SEUrinalysisMicroscopic::HasCastsResult() const
+bool SEUrinalysisMicroscopic::HasCasts() const
 {
   return m_Casts == nullptr ? false : m_Casts->IsValid();
 }
-SEScalarAmount& SEUrinalysisMicroscopic::GetCastsResult()
+SEScalarAmount& SEUrinalysisMicroscopic::GetCasts()
 {
   if (m_Casts == nullptr)
     m_Casts = new SEScalarAmount();
   return *m_Casts;
 }
-double SEUrinalysisMicroscopic::GetCastsResult(const AmountUnit& unit) const
+double SEUrinalysisMicroscopic::GetCasts(const AmountUnit& unit) const
 {
-  if (!HasCastsResult())
+  if (!HasCasts())
     return SEScalar::dNaN();
   return m_Casts->GetValue(unit);
 }
 
-bool SEUrinalysisMicroscopic::HasCrystalsResult() const
+bool SEUrinalysisMicroscopic::HasCrystals() const
 {
   return m_Crystals != eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
-eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetCrystalsResult() const
+eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetCrystals() const
 {
   return m_Crystals;
 }
-void SEUrinalysisMicroscopic::SetCrystalsResult(eUrinalysis_MicroscopicObservationAmount c)
+void SEUrinalysisMicroscopic::SetCrystals(eUrinalysis_MicroscopicObservationAmount c)
 {
   m_Crystals = c;
 }
-void SEUrinalysisMicroscopic::InvalidateCrystalsResult()
+void SEUrinalysisMicroscopic::InvalidateCrystals()
 {
   m_Crystals = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
 
-bool SEUrinalysisMicroscopic::HasBacteriaResult() const
+bool SEUrinalysisMicroscopic::HasBacteria() const
 {
   return m_Bacteria != eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
-eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetBacteriaResult() const
+eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetBacteria() const
 {
   return m_Bacteria;
 }
-void SEUrinalysisMicroscopic::SetBacteriaResult(eUrinalysis_MicroscopicObservationAmount c)
+void SEUrinalysisMicroscopic::SetBacteria(eUrinalysis_MicroscopicObservationAmount c)
 {
   m_Bacteria = c;
 }
-void SEUrinalysisMicroscopic::InvalidateBacteriaResult()
+void SEUrinalysisMicroscopic::InvalidateBacteria()
 {
   m_Bacteria = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
 
-bool SEUrinalysisMicroscopic::HasTrichomonadsResult() const
+bool SEUrinalysisMicroscopic::HasTrichomonads() const
 {
   return m_Trichomonads != eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
-eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetTrichomonadsResult() const
+eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetTrichomonads() const
 {
   return m_Trichomonads;
 }
-void SEUrinalysisMicroscopic::SetTrichomonadsResult(eUrinalysis_MicroscopicObservationAmount c)
+void SEUrinalysisMicroscopic::SetTrichomonads(eUrinalysis_MicroscopicObservationAmount c)
 {
   m_Trichomonads = c;
 }
-void SEUrinalysisMicroscopic::InvalidateTrichomonadsResult()
+void SEUrinalysisMicroscopic::InvalidateTrichomonads()
 {
   m_Trichomonads = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
 
-bool SEUrinalysisMicroscopic::HasYeastResult() const
+bool SEUrinalysisMicroscopic::HasYeast() const
 {
   return m_Yeast != eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }
-eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetYeastResult() const
+eUrinalysis_MicroscopicObservationAmount SEUrinalysisMicroscopic::GetYeast() const
 {
   return m_Yeast;
 }
-void SEUrinalysisMicroscopic::SetYeastResult(eUrinalysis_MicroscopicObservationAmount c)
+void SEUrinalysisMicroscopic::SetYeast(eUrinalysis_MicroscopicObservationAmount c)
 {
   m_Yeast = c;
 }
-void SEUrinalysisMicroscopic::InvalidateYeastResult()
+void SEUrinalysisMicroscopic::InvalidateYeast()
 {
   m_Yeast = eUrinalysis_MicroscopicObservationAmount::NullObservationAmount;
 }

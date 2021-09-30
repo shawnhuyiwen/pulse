@@ -1,21 +1,21 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "system/environment/SEEnvironmentalConditions.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceFraction.h"
-#include "substance/SESubstanceConcentration.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarHeatConductancePerArea.h"
-#include "properties/SEScalarHeatResistanceArea.h"
-#include "properties/SEScalarLengthPerTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
-#include "io/protobuf/PBEnvironment.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/environment/SEEnvironmentalConditions.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceFraction.h"
+#include "cdm/substance/SESubstanceConcentration.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarHeatConductancePerArea.h"
+#include "cdm/properties/SEScalarHeatResistanceArea.h"
+#include "cdm/properties/SEScalarLengthPerTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/io/protobuf/PBEnvironment.h"
 
 
 SEEnvironmentalConditions::SEEnvironmentalConditions(Logger* logger) : Loggable(logger)
@@ -74,7 +74,7 @@ void SEEnvironmentalConditions::Copy(const SEEnvironmentalConditions& src, const
   PBEnvironment::Copy(src, *this, subMgr);
 }
 
-bool SEEnvironmentalConditions::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEEnvironmentalConditions::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBEnvironment::SerializeToString(*this, output, m);
 }
@@ -82,7 +82,7 @@ bool SEEnvironmentalConditions::SerializeToFile(const std::string& filename) con
 {
   return PBEnvironment::SerializeToFile(*this, filename);
 }
-bool SEEnvironmentalConditions::SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr)
+bool SEEnvironmentalConditions::SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr)
 {
   return PBEnvironment::SerializeFromString(src, *this, m, subMgr);
 }

@@ -13,13 +13,13 @@ public class SEHepaticSystem extends SEPhysiologySystem implements SESystem
   }
 
   @Override
-  public void reset()
+  public void clear()
   {    
     
   }
 
   public static void load(HepaticSystemData src, SEHepaticSystem dst)
-  {        
+  {
     
   }
   public static HepaticSystemData unload(SEHepaticSystem src)

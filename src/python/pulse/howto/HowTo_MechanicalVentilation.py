@@ -5,11 +5,11 @@ from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEMechanicalVentilation, eSwitch
 from pulse.cdm.scalars import VolumePerTimeUnit, PressureUnit
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_MechanicalVentilation():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_mechanical_ventilation.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_MechanicalVentilation.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

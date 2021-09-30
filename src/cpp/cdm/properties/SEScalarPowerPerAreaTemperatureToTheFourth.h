@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL PowerPerAreaTemperatureToTheFourthUnit : public CCompoundUnit
 {
 public:
   PowerPerAreaTemperatureToTheFourthUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~PowerPerAreaTemperatureToTheFourthUnit() {}
+
+  // Please use static units below
+  PowerPerAreaTemperatureToTheFourthUnit(const PowerPerAreaTemperatureToTheFourthUnit&) = delete;
+  PowerPerAreaTemperatureToTheFourthUnit& operator= (const PowerPerAreaTemperatureToTheFourthUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const PowerPerAreaTemperatureToTheFourthUnit& GetCompoundUnit(const std::string& unit);

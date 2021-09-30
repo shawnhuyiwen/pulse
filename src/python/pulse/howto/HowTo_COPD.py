@@ -3,11 +3,11 @@
 
 from pulse.cdm.patient import SEPatientConfiguration
 from pulse.cdm.patient_actions import SEChronicObstructivePulmonaryDiseaseExacerbation
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
-def HowTo_UseCOPD():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_COPD.log")
+def HowTo_COPD():
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/phowto/HowTo_COPD.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
@@ -38,5 +38,5 @@ def HowTo_UseCOPD():
     results = pulse.pull_data()
     print(results)
 
-HowTo_UseCOPD()
+HowTo_COPD()
 

@@ -1,81 +1,313 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Properties.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBProperties.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/properties/SECurve.h"
 
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarAmount.h"
-#include "properties/SEScalarAmountPerMass.h"
-#include "properties/SEScalarAmountPerTime.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarArea.h"
-#include "properties/SEScalarAreaPerTimePressure.h"
-#include "properties/SEScalarElectricCapacitance.h"
-#include "properties/SEScalarElectricCharge.h"
-#include "properties/SEScalarElectricCurrent.h"
-#include "properties/SEScalarElectricInductance.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "properties/SEScalarElectricResistance.h"
-#include "properties/SEScalarEnergy.h"
-#include "properties/SEScalarEnergyPerAmount.h"
-#include "properties/SEScalarEnergyPerMass.h"
-#include "properties/SEScalarVolumePerPressure.h"
-#include "properties/SEScalarPressurePerVolume.h"
-#include "properties/SEScalarPressureTimeSquaredPerVolume.h"
-#include "properties/SEScalarPressureTimePerVolume.h"
-#include "properties/SEScalarForce.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarHeatCapacitance.h"
-#include "properties/SEScalarHeatCapacitancePerAmount.h"
-#include "properties/SEScalarHeatCapacitancePerMass.h"
-#include "properties/SEScalarHeatConductance.h"
-#include "properties/SEScalarHeatConductancePerArea.h"
-#include "properties/SEScalarHeatInductance.h"
-#include "properties/SEScalarHeatResistance.h"
-#include "properties/SEScalarHeatResistanceArea.h"
-#include "properties/SEScalarInversePressure.h"
-#include "properties/SEScalarInverseVolume.h"
-#include "properties/SEScalarLength.h"
-#include "properties/SEScalarLengthPerTime.h"
-#include "properties/SEScalarLengthPerTimePressure.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerAmount.h"
-#include "properties/SEScalarMassPerAreaTime.h"
-#include "properties/SEScalarMassPerMass.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarNegative1To1.h"
-#include "properties/SEScalarOsmolality.h"
-#include "properties/SEScalarOsmolarity.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarPowerPerAreaTemperatureToTheFourth.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarPressurePerVolume.h"
-#include "properties/SEScalarPressureTimePerArea.h"
-#include "properties/SEScalarPressureTimePerVolumeArea.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerPressure.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarVolumePerTimeArea.h"
-#include "properties/SEScalarVolumePerTimeMass.h"
-#include "properties/SEScalarVolumePerTimePressure.h"
-#include "properties/SEScalarVolumePerTimePressureArea.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarAmount.h"
+#include "cdm/properties/SEScalarAmountPerMass.h"
+#include "cdm/properties/SEScalarAmountPerTime.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalarArea.h"
+#include "cdm/properties/SEScalarAreaPerTimePressure.h"
+#include "cdm/properties/SEScalarElectricCapacitance.h"
+#include "cdm/properties/SEScalarElectricCharge.h"
+#include "cdm/properties/SEScalarElectricCurrent.h"
+#include "cdm/properties/SEScalarElectricInductance.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/properties/SEScalarElectricResistance.h"
+#include "cdm/properties/SEScalarEnergy.h"
+#include "cdm/properties/SEScalarEnergyPerAmount.h"
+#include "cdm/properties/SEScalarEnergyPerMass.h"
+#include "cdm/properties/SEScalarEquivalentWeightPerVolume.h"
+#include "cdm/properties/SEScalarVolumePerPressure.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
+#include "cdm/properties/SEScalarPressureTimeSquaredPerVolume.h"
+#include "cdm/properties/SEScalarPressureTimePerVolume.h"
+#include "cdm/properties/SEScalarForce.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarHeatCapacitance.h"
+#include "cdm/properties/SEScalarHeatCapacitancePerAmount.h"
+#include "cdm/properties/SEScalarHeatCapacitancePerMass.h"
+#include "cdm/properties/SEScalarHeatConductance.h"
+#include "cdm/properties/SEScalarHeatConductancePerArea.h"
+#include "cdm/properties/SEScalarHeatInductance.h"
+#include "cdm/properties/SEScalarHeatResistance.h"
+#include "cdm/properties/SEScalarHeatResistanceArea.h"
+#include "cdm/properties/SEScalarInversePressure.h"
+#include "cdm/properties/SEScalarInverseVolume.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalarLengthPerTime.h"
+#include "cdm/properties/SEScalarLengthPerTimePressure.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerAmount.h"
+#include "cdm/properties/SEScalarMassPerAreaTime.h"
+#include "cdm/properties/SEScalarMassPerMass.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarNegative1To1.h"
+#include "cdm/properties/SEScalarOsmolality.h"
+#include "cdm/properties/SEScalarOsmolarity.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarPowerPerAreaTemperatureToTheFourth.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarPressurePerVolume.h"
+#include "cdm/properties/SEScalarPressureTimePerArea.h"
+#include "cdm/properties/SEScalarPressureTimePerVolumeArea.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerPressure.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolumePerTimeArea.h"
+#include "cdm/properties/SEScalarVolumePerTimeMass.h"
+#include "cdm/properties/SEScalarVolumePerTimePressure.h"
+#include "cdm/properties/SEScalarVolumePerTimePressureArea.h"
 
-#include "properties/SEFunctionElectricPotentialVsTime.h"
-#include "properties/SEFunctionVolumeVsTime.h"
-#include "properties/SEHistogramFractionVsLength.h"
+#include "cdm/properties/SEFunctionElectricPotentialVsTime.h"
+#include "cdm/properties/SEFunctionVolumeVsTime.h"
+#include "cdm/properties/SEHistogramFractionVsLength.h"
 
-#include "properties/SERunningAverage.h"
+#include "cdm/properties/SERunningAverage.h"
+
+void PBProperty::Copy(const SECurve& src, SECurve& dst)
+{
+  dst.Invalidate();
+  CDM_BIND::CurveData data;
+  PBProperty::Serialize(src, data);
+  PBProperty::Serialize(data, dst);
+}
+void PBProperty::Load(const CDM_BIND::CurveData& src, SECurve& dst)
+{
+  dst.Invalidate();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::CurveData& src, SECurve& dst)
+{
+  for (auto s = 0; s<src.segment_size(); s++)
+  {
+    const CDM_BIND::AnySegmentData& sData = src.segment()[s];
+    if (sData.has_constantsegment())
+    {
+      PBProperty::Load(sData.constantsegment(), dst.AddConstantSegment());
+      continue;
+    }
+    if (sData.has_linearsegment())
+    {
+      PBProperty::Load(sData.linearsegment(), dst.AddLinearSegment());
+      continue;
+    }
+    if (sData.has_parabolicsegment())
+    {
+      PBProperty::Load(sData.parabolicsegment(), dst.AddParabolicSegment());
+      continue;
+    }
+    if (sData.has_sigmoidalsegment())
+    {
+      PBProperty::Load(sData.sigmoidalsegment(), dst.AddSigmoidalSegment());
+      continue;
+    }
+  }
+}
+CDM_BIND::CurveData* PBProperty::Unload(const SECurve& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::CurveData* dst = new CDM_BIND::CurveData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SECurve& src, CDM_BIND::CurveData& dst)
+{
+  for (const SESegment* seg : src.GetSegments())
+  {
+    const SESegmentConstant* c = dynamic_cast<const SESegmentConstant*>(seg);
+    if (c != nullptr)
+    {
+      PBProperty::Serialize(*c, *dst.add_segment()->mutable_constantsegment());
+      continue;
+    }
+    const SESegmentLinear* l = dynamic_cast<const SESegmentLinear*>(seg);
+    if (l != nullptr)
+    {
+      PBProperty::Serialize(*l, *dst.add_segment()->mutable_linearsegment());
+      continue;
+    }
+    const SESegmentParabolic* p = dynamic_cast<const SESegmentParabolic*>(seg);
+    if (p != nullptr)
+    {
+      PBProperty::Serialize(*p, *dst.add_segment()->mutable_parabolicsegment());
+      continue;
+    }
+    const SESegmentSigmoidal* s = dynamic_cast<const SESegmentSigmoidal*>(seg);
+    if (s != nullptr)
+    {
+      PBProperty::Serialize(*s, *dst.add_segment()->mutable_sigmoidalsegment());
+      continue;
+    }
+  }
+}
+
+void PBProperty::Load(const CDM_BIND::SegmentConstantData& src, SESegmentConstant& dst)
+{
+  dst.Clear();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::SegmentConstantData& src, SESegmentConstant& dst)
+{
+  if (src.has_beginvolume())
+    PBProperty::Load(src.beginvolume(), dst.GetBeginVolume());
+  if (src.has_endvolume())
+    PBProperty::Load(src.endvolume(), dst.GetEndVolume());
+  if (src.has_compliance())
+    PBProperty::Load(src.compliance(), dst.GetCompliance());
+}
+CDM_BIND::SegmentConstantData* PBProperty::Unload(const SESegmentConstant& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::SegmentConstantData* dst = new CDM_BIND::SegmentConstantData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SESegmentConstant& src, CDM_BIND::SegmentConstantData& dst)
+{
+  if (src.HasBeginVolume())
+    dst.set_allocated_beginvolume(PBProperty::Unload(*src.m_BeginVolume));
+  if (src.HasEndVolume())
+    dst.set_allocated_endvolume(PBProperty::Unload(*src.m_EndVolume));
+  if (src.HasCompliance())
+    dst.set_allocated_compliance(PBProperty::Unload(*src.m_Compliance));
+}
+
+void PBProperty::Load(const CDM_BIND::SegmentLinearData& src, SESegmentLinear& dst)
+{
+  dst.Clear();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::SegmentLinearData& src, SESegmentLinear& dst)
+{
+  if (src.has_beginvolume())
+    PBProperty::Load(src.beginvolume(), dst.GetBeginVolume());
+  if (src.has_endvolume())
+    PBProperty::Load(src.endvolume(), dst.GetEndVolume());
+  if (src.has_slope())
+    PBProperty::Load(src.slope(), dst.GetSlope());
+  if (src.has_yintercept())
+    PBProperty::Load(src.yintercept(), dst.GetYIntercept());
+}
+CDM_BIND::SegmentLinearData* PBProperty::Unload(const SESegmentLinear& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::SegmentLinearData* dst = new CDM_BIND::SegmentLinearData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SESegmentLinear& src, CDM_BIND::SegmentLinearData& dst)
+{
+  if (src.HasBeginVolume())
+    dst.set_allocated_beginvolume(PBProperty::Unload(*src.m_BeginVolume));
+  if (src.HasEndVolume())
+    dst.set_allocated_endvolume(PBProperty::Unload(*src.m_EndVolume));
+  if (src.HasSlope())
+    dst.set_allocated_slope(PBProperty::Unload(*src.m_Slope));
+  if (src.HasYIntercept())
+    dst.set_allocated_yintercept(PBProperty::Unload(*src.m_YIntercept));
+}
+
+void PBProperty::Load(const CDM_BIND::SegmentParabolicData& src, SESegmentParabolic& dst)
+{
+  dst.Clear();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::SegmentParabolicData& src, SESegmentParabolic& dst)
+{
+  if (src.has_beginvolume())
+    PBProperty::Load(src.beginvolume(), dst.GetBeginVolume());
+  if (src.has_endvolume())
+    PBProperty::Load(src.endvolume(), dst.GetEndVolume());
+  if (src.has_coefficient1())
+    PBProperty::Load(src.coefficient1(), dst.GetCoefficient1());
+  if (src.has_coefficient2())
+    PBProperty::Load(src.coefficient2(), dst.GetCoefficient2());
+  if (src.has_coefficient3())
+    PBProperty::Load(src.coefficient3(), dst.GetCoefficient3());
+  if (src.has_coefficient4())
+    PBProperty::Load(src.coefficient4(), dst.GetCoefficient4());
+}
+CDM_BIND::SegmentParabolicData* PBProperty::Unload(const SESegmentParabolic& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::SegmentParabolicData* dst = new CDM_BIND::SegmentParabolicData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SESegmentParabolic& src, CDM_BIND::SegmentParabolicData& dst)
+{
+  if (src.HasBeginVolume())
+    dst.set_allocated_beginvolume(PBProperty::Unload(*src.m_BeginVolume));
+  if (src.HasEndVolume())
+    dst.set_allocated_endvolume(PBProperty::Unload(*src.m_EndVolume));
+  if (src.HasCoefficient1())
+    dst.set_allocated_coefficient1(PBProperty::Unload(*src.m_Coefficient1));
+  if (src.HasCoefficient2())
+    dst.set_allocated_coefficient2(PBProperty::Unload(*src.m_Coefficient2));
+  if (src.HasCoefficient3())
+    dst.set_allocated_coefficient3(PBProperty::Unload(*src.m_Coefficient3));
+  if (src.HasCoefficient4())
+    dst.set_allocated_coefficient4(PBProperty::Unload(*src.m_Coefficient4));
+}
+
+void PBProperty::Load(const CDM_BIND::SegmentSigmoidalData& src, SESegmentSigmoidal& dst)
+{
+  dst.Clear();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::SegmentSigmoidalData& src, SESegmentSigmoidal& dst)
+{
+  if (src.has_beginvolume())
+    PBProperty::Load(src.beginvolume(), dst.GetBeginVolume());
+  if (src.has_endvolume())
+    PBProperty::Load(src.endvolume(), dst.GetEndVolume());
+  if (src.has_lowercorner())
+    PBProperty::Load(src.lowercorner(), dst.GetLowerCorner());
+  if (src.has_uppercorner())
+    PBProperty::Load(src.uppercorner(), dst.GetUpperCorner());
+  if (src.has_baselinecompliance())
+    PBProperty::Load(src.baselinecompliance(), dst.GetBaselineCompliance());
+}
+CDM_BIND::SegmentSigmoidalData* PBProperty::Unload(const SESegmentSigmoidal& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::SegmentSigmoidalData* dst = new CDM_BIND::SegmentSigmoidalData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SESegmentSigmoidal& src, CDM_BIND::SegmentSigmoidalData& dst)
+{
+  if (src.HasBeginVolume())
+    dst.set_allocated_beginvolume(PBProperty::Unload(*src.m_BeginVolume));
+  if (src.HasEndVolume())
+    dst.set_allocated_endvolume(PBProperty::Unload(*src.m_EndVolume));
+  if (src.HasUpperCorner())
+    dst.set_allocated_uppercorner(PBProperty::Unload(*src.m_UpperCorner));
+  if (src.HasLowerCorner())
+    dst.set_allocated_lowercorner(PBProperty::Unload(*src.m_LowerCorner));
+  if (src.HasBaselineCompliance())
+    dst.set_allocated_baselinecompliance(PBProperty::Unload(*src.m_BaselineCompliance));
+}
 
 void PBProperty::Load(const CDM_BIND::ScalarData& src, SEScalar& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarData& src, SEScalar& dst)
@@ -122,7 +354,7 @@ void PBProperty::Serialize(const SEUnitScalar& src, CDM_BIND::ScalarData& dst)
 
 void PBProperty::Load(const CDM_BIND::Scalar0To1Data& src, SEScalar0To1& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::Scalar0To1Data& src, SEScalar0To1& dst)
@@ -144,7 +376,7 @@ void PBProperty::Serialize(const SEScalar0To1& src, CDM_BIND::Scalar0To1Data& ds
 
 void PBProperty::Load(const CDM_BIND::ScalarAmountData& src, SEScalarAmount& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarAmountData& src, SEScalarAmount& dst)
@@ -167,7 +399,7 @@ void PBProperty::Serialize(const SEScalarAmount& src, CDM_BIND::ScalarAmountData
 
 void PBProperty::Load(const CDM_BIND::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarAmountPerMassData& src, SEScalarAmountPerMass& dst)
@@ -189,7 +421,7 @@ void PBProperty::Serialize(const SEScalarAmountPerMass& src, CDM_BIND::ScalarAmo
 
 void PBProperty::Load(const CDM_BIND::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarAmountPerTimeData& src, SEScalarAmountPerTime& dst)
@@ -211,7 +443,7 @@ void PBProperty::Serialize(const SEScalarAmountPerTime& src, CDM_BIND::ScalarAmo
 
 void PBProperty::Load(const CDM_BIND::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarAmountPerVolumeData& src, SEScalarAmountPerVolume& dst)
@@ -233,7 +465,7 @@ void PBProperty::Serialize(const SEScalarAmountPerVolume& src, CDM_BIND::ScalarA
 
 void PBProperty::Load(const CDM_BIND::ScalarAreaData& src, SEScalarArea& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarAreaData& src, SEScalarArea& dst)
@@ -255,7 +487,7 @@ void PBProperty::Serialize(const SEScalarArea& src, CDM_BIND::ScalarAreaData& ds
 
 void PBProperty::Load(const CDM_BIND::ScalarAreaPerTimePressureData& src, SEScalarAreaPerTimePressure& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarAreaPerTimePressureData& src, SEScalarAreaPerTimePressure& dst)
@@ -277,7 +509,7 @@ void PBProperty::Serialize(const SEScalarAreaPerTimePressure& src, CDM_BIND::Sca
 
 void PBProperty::Load(const CDM_BIND::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarElectricCapacitanceData& src, SEScalarElectricCapacitance& dst)
@@ -299,7 +531,7 @@ void PBProperty::Serialize(const SEScalarElectricCapacitance& src, CDM_BIND::Sca
 
 void PBProperty::Load(const CDM_BIND::ScalarElectricChargeData& src, SEScalarElectricCharge& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarElectricChargeData& src, SEScalarElectricCharge& dst)
@@ -321,7 +553,7 @@ void PBProperty::Serialize(const SEScalarElectricCharge& src, CDM_BIND::ScalarEl
 
 void PBProperty::Load(const CDM_BIND::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarElectricCurrentData& src, SEScalarElectricCurrent& dst)
@@ -343,7 +575,7 @@ void PBProperty::Serialize(const SEScalarElectricCurrent& src, CDM_BIND::ScalarE
 
 void PBProperty::Load(const CDM_BIND::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarElectricInductanceData& src, SEScalarElectricInductance& dst)
@@ -365,7 +597,7 @@ void PBProperty::Serialize(const SEScalarElectricInductance& src, CDM_BIND::Scal
 
 void PBProperty::Load(const CDM_BIND::ScalarElectricPotentialData& src, SEScalarElectricPotential& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarElectricPotentialData& src, SEScalarElectricPotential& dst)
@@ -387,7 +619,7 @@ void PBProperty::Serialize(const SEScalarElectricPotential& src, CDM_BIND::Scala
 
 void PBProperty::Load(const CDM_BIND::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarElectricResistanceData& src, SEScalarElectricResistance& dst)
@@ -409,7 +641,7 @@ void PBProperty::Serialize(const SEScalarElectricResistance& src, CDM_BIND::Scal
 
 void PBProperty::Load(const CDM_BIND::ScalarEnergyData& src, SEScalarEnergy& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarEnergyData& src, SEScalarEnergy& dst)
@@ -431,7 +663,7 @@ void PBProperty::Serialize(const SEScalarEnergy& src, CDM_BIND::ScalarEnergyData
 
 void PBProperty::Load(const CDM_BIND::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarEnergyPerAmountData& src, SEScalarEnergyPerAmount& dst)
@@ -453,7 +685,7 @@ void PBProperty::Serialize(const SEScalarEnergyPerAmount& src, CDM_BIND::ScalarE
 
 void PBProperty::Load(const CDM_BIND::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarEnergyPerMassData& src, SEScalarEnergyPerMass& dst)
@@ -473,9 +705,31 @@ void PBProperty::Serialize(const SEScalarEnergyPerMass& src, CDM_BIND::ScalarEne
   PBProperty::Serialize(src, *dst.mutable_scalarenergypermass());
 }
 
+void PBProperty::Load(const CDM_BIND::ScalarEquivalentWeightPerVolumeData& src, SEScalarEquivalentWeightPerVolume& dst)
+{
+  dst.Invalidate();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::ScalarEquivalentWeightPerVolumeData& src, SEScalarEquivalentWeightPerVolume& dst)
+{
+  PBProperty::Serialize(src.scalarequivalentweightpervolume(), dst);
+}
+CDM_BIND::ScalarEquivalentWeightPerVolumeData* PBProperty::Unload(const SEScalarEquivalentWeightPerVolume& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::ScalarEquivalentWeightPerVolumeData* dst = new CDM_BIND::ScalarEquivalentWeightPerVolumeData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SEScalarEquivalentWeightPerVolume& src, CDM_BIND::ScalarEquivalentWeightPerVolumeData& dst)
+{
+  PBProperty::Serialize(src, *dst.mutable_scalarequivalentweightpervolume());
+}
+
 void PBProperty::Load(const CDM_BIND::ScalarForceData& src, SEScalarForce& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarForceData& src, SEScalarForce& dst)
@@ -497,7 +751,7 @@ void PBProperty::Serialize(const SEScalarForce& src, CDM_BIND::ScalarForceData& 
 
 void PBProperty::Load(const CDM_BIND::ScalarFrequencyData& src, SEScalarFrequency& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarFrequencyData& src, SEScalarFrequency& dst)
@@ -519,7 +773,7 @@ void PBProperty::Serialize(const SEScalarFrequency& src, CDM_BIND::ScalarFrequen
 
 void PBProperty::Load(const CDM_BIND::ScalarHeatCapacitanceData& src, SEScalarHeatCapacitance& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarHeatCapacitanceData& src, SEScalarHeatCapacitance& dst)
@@ -541,7 +795,7 @@ void PBProperty::Serialize(const SEScalarHeatCapacitance& src, CDM_BIND::ScalarH
 
 void PBProperty::Load(const CDM_BIND::ScalarHeatCapacitancePerAmountData& src, SEScalarHeatCapacitancePerAmount& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarHeatCapacitancePerAmountData& src, SEScalarHeatCapacitancePerAmount& dst)
@@ -563,7 +817,7 @@ void PBProperty::Serialize(const SEScalarHeatCapacitancePerAmount& src, CDM_BIND
 
 void PBProperty::Load(const CDM_BIND::ScalarHeatCapacitancePerMassData& src, SEScalarHeatCapacitancePerMass& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarHeatCapacitancePerMassData& src, SEScalarHeatCapacitancePerMass& dst)
@@ -585,7 +839,7 @@ void PBProperty::Serialize(const SEScalarHeatCapacitancePerMass& src, CDM_BIND::
 
 void PBProperty::Load(const CDM_BIND::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarHeatConductanceData& src, SEScalarHeatConductance& dst)
@@ -607,7 +861,7 @@ void PBProperty::Serialize(const SEScalarHeatConductance& src, CDM_BIND::ScalarH
 
 void PBProperty::Load(const CDM_BIND::ScalarHeatConductancePerAreaData& src, SEScalarHeatConductancePerArea& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarHeatConductancePerAreaData& src, SEScalarHeatConductancePerArea& dst)
@@ -629,7 +883,7 @@ void PBProperty::Serialize(const SEScalarHeatConductancePerArea& src, CDM_BIND::
 
 void PBProperty::Load(const CDM_BIND::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarHeatInductanceData& src, SEScalarHeatInductance& dst)
@@ -651,7 +905,7 @@ void PBProperty::Serialize(const SEScalarHeatInductance& src, CDM_BIND::ScalarHe
 
 void PBProperty::Load(const CDM_BIND::ScalarHeatResistanceData& src, SEScalarHeatResistance& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarHeatResistanceData& src, SEScalarHeatResistance& dst)
@@ -673,7 +927,7 @@ void PBProperty::Serialize(const SEScalarHeatResistance& src, CDM_BIND::ScalarHe
 
 void PBProperty::Load(const CDM_BIND::ScalarHeatResistanceAreaData& src, SEScalarHeatResistanceArea& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarHeatResistanceAreaData& src, SEScalarHeatResistanceArea& dst)
@@ -695,7 +949,7 @@ void PBProperty::Serialize(const SEScalarHeatResistanceArea& src, CDM_BIND::Scal
 
 void PBProperty::Load(const CDM_BIND::ScalarInversePressureData& src, SEScalarInversePressure& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarInversePressureData& src, SEScalarInversePressure& dst)
@@ -717,7 +971,7 @@ void PBProperty::Serialize(const SEScalarInversePressure& src, CDM_BIND::ScalarI
 
 void PBProperty::Load(const CDM_BIND::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarInverseVolumeData& src, SEScalarInverseVolume& dst)
@@ -739,7 +993,7 @@ void PBProperty::Serialize(const SEScalarInverseVolume& src, CDM_BIND::ScalarInv
 
 void PBProperty::Load(const CDM_BIND::ScalarLengthData& src, SEScalarLength& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarLengthData& src, SEScalarLength& dst)
@@ -761,7 +1015,7 @@ void PBProperty::Serialize(const SEScalarLength& src, CDM_BIND::ScalarLengthData
 
 void PBProperty::Load(const CDM_BIND::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarLengthPerTimeData& src, SEScalarLengthPerTime& dst)
@@ -783,7 +1037,7 @@ void PBProperty::Serialize(const SEScalarLengthPerTime& src, CDM_BIND::ScalarLen
 
 void PBProperty::Load(const CDM_BIND::ScalarLengthPerTimePressureData& src, SEScalarLengthPerTimePressure& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarLengthPerTimePressureData& src, SEScalarLengthPerTimePressure& dst)
@@ -805,7 +1059,7 @@ void PBProperty::Serialize(const SEScalarLengthPerTimePressure& src, CDM_BIND::S
 
 void PBProperty::Load(const CDM_BIND::ScalarMassData& src, SEScalarMass& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarMassData& src, SEScalarMass& dst)
@@ -827,7 +1081,7 @@ void PBProperty::Serialize(const SEScalarMass& src, CDM_BIND::ScalarMassData& ds
 
 void PBProperty::Load(const CDM_BIND::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarMassPerAmountData& src, SEScalarMassPerAmount& dst)
@@ -849,7 +1103,7 @@ void PBProperty::Serialize(const SEScalarMassPerAmount& src, CDM_BIND::ScalarMas
 
 void PBProperty::Load(const CDM_BIND::ScalarMassPerAreaTimeData& src, SEScalarMassPerAreaTime& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarMassPerAreaTimeData& src, SEScalarMassPerAreaTime& dst)
@@ -871,7 +1125,7 @@ void PBProperty::Serialize(const SEScalarMassPerAreaTime& src, CDM_BIND::ScalarM
 
 void PBProperty::Load(const CDM_BIND::ScalarMassPerMassData& src, SEScalarMassPerMass& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarMassPerMassData& src, SEScalarMassPerMass& dst)
@@ -893,7 +1147,7 @@ void PBProperty::Serialize(const SEScalarMassPerMass& src, CDM_BIND::ScalarMassP
 
 void PBProperty::Load(const CDM_BIND::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarMassPerTimeData& src, SEScalarMassPerTime& dst)
@@ -915,7 +1169,7 @@ void PBProperty::Serialize(const SEScalarMassPerTime& src, CDM_BIND::ScalarMassP
 
 void PBProperty::Load(const CDM_BIND::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarMassPerVolumeData& src, SEScalarMassPerVolume& dst)
@@ -937,7 +1191,7 @@ void PBProperty::Serialize(const SEScalarMassPerVolume& src, CDM_BIND::ScalarMas
 
 void PBProperty::Load(const CDM_BIND::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarNegative1To1Data& src, SEScalarNegative1To1& dst)
@@ -959,7 +1213,7 @@ void PBProperty::Serialize(const SEScalarNegative1To1& src, CDM_BIND::ScalarNega
 
 void PBProperty::Load(const CDM_BIND::ScalarOsmolalityData& src, SEScalarOsmolality& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarOsmolalityData& src, SEScalarOsmolality& dst)
@@ -981,7 +1235,7 @@ void PBProperty::Serialize(const SEScalarOsmolality& src, CDM_BIND::ScalarOsmola
 
 void PBProperty::Load(const CDM_BIND::ScalarOsmolarityData& src, SEScalarOsmolarity& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarOsmolarityData& src, SEScalarOsmolarity& dst)
@@ -1003,7 +1257,7 @@ void PBProperty::Serialize(const SEScalarOsmolarity& src, CDM_BIND::ScalarOsmola
 
 void PBProperty::Load(const CDM_BIND::ScalarPowerData& src, SEScalarPower& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarPowerData& src, SEScalarPower& dst)
@@ -1025,7 +1279,7 @@ void PBProperty::Serialize(const SEScalarPower& src, CDM_BIND::ScalarPowerData& 
 
 void PBProperty::Load(const CDM_BIND::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarPowerPerAreaTemperatureToTheFourthData& src, SEScalarPowerPerAreaTemperatureToTheFourth& dst)
@@ -1047,7 +1301,7 @@ void PBProperty::Serialize(const SEScalarPowerPerAreaTemperatureToTheFourth& src
 
 void PBProperty::Load(const CDM_BIND::ScalarPressureData& src, SEScalarPressure& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarPressureData& src, SEScalarPressure& dst)
@@ -1069,7 +1323,7 @@ void PBProperty::Serialize(const SEScalarPressure& src, CDM_BIND::ScalarPressure
 
 void PBProperty::Load(const CDM_BIND::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarPressurePerVolumeData& src, SEScalarPressurePerVolume& dst)
@@ -1091,7 +1345,7 @@ void PBProperty::Serialize(const SEScalarPressurePerVolume& src, CDM_BIND::Scala
 
 void PBProperty::Load(const CDM_BIND::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarPressureTimePerAreaData& src, SEScalarPressureTimePerArea& dst)
@@ -1113,7 +1367,7 @@ void PBProperty::Serialize(const SEScalarPressureTimePerArea& src, CDM_BIND::Sca
 
 void PBProperty::Load(const CDM_BIND::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarPressureTimePerVolumeData& src, SEScalarPressureTimePerVolume& dst)
@@ -1135,7 +1389,7 @@ void PBProperty::Serialize(const SEScalarPressureTimePerVolume& src, CDM_BIND::S
 
 void PBProperty::Load(const CDM_BIND::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarPressureTimePerVolumeAreaData& src, SEScalarPressureTimePerVolumeArea& dst)
@@ -1157,7 +1411,7 @@ void PBProperty::Serialize(const SEScalarPressureTimePerVolumeArea& src, CDM_BIN
 
 void PBProperty::Load(const CDM_BIND::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarPressureTimeSquaredPerVolumeData& src, SEScalarPressureTimeSquaredPerVolume& dst)
@@ -1179,7 +1433,7 @@ void PBProperty::Serialize(const SEScalarPressureTimeSquaredPerVolume& src, CDM_
 
 void PBProperty::Load(const CDM_BIND::ScalarTemperatureData& src, SEScalarTemperature& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarTemperatureData& src, SEScalarTemperature& dst)
@@ -1201,7 +1455,7 @@ void PBProperty::Serialize(const SEScalarTemperature& src, CDM_BIND::ScalarTempe
 
 void PBProperty::Load(const CDM_BIND::ScalarTimeData& src, SEScalarTime& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarTimeData& src, SEScalarTime& dst)
@@ -1223,7 +1477,7 @@ void PBProperty::Serialize(const SEScalarTime& src, CDM_BIND::ScalarTimeData& ds
 
 void PBProperty::Load(const CDM_BIND::ScalarVolumeData& src, SEScalarVolume& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarVolumeData& src, SEScalarVolume& dst)
@@ -1245,7 +1499,7 @@ void PBProperty::Serialize(const SEScalarVolume& src, CDM_BIND::ScalarVolumeData
 
 void PBProperty::Load(const CDM_BIND::ScalarVolumePerPressureData& src, SEScalarVolumePerPressure& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerPressureData& src, SEScalarVolumePerPressure& dst)
@@ -1267,7 +1521,7 @@ void PBProperty::Serialize(const SEScalarVolumePerPressure& src, CDM_BIND::Scala
 
 void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimeData& src, SEScalarVolumePerTime& dst)
@@ -1289,7 +1543,7 @@ void PBProperty::Serialize(const SEScalarVolumePerTime& src, CDM_BIND::ScalarVol
 
 void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimeAreaData& src, SEScalarVolumePerTimeArea& dst)
@@ -1311,7 +1565,7 @@ void PBProperty::Serialize(const SEScalarVolumePerTimeArea& src, CDM_BIND::Scala
 
 void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimeMassData& src, SEScalarVolumePerTimeMass& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimeMassData& src, SEScalarVolumePerTimeMass& dst)
@@ -1333,7 +1587,7 @@ void PBProperty::Serialize(const SEScalarVolumePerTimeMass& src, CDM_BIND::Scala
 
 void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimePressureData& src, SEScalarVolumePerTimePressure& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimePressureData& src, SEScalarVolumePerTimePressure& dst)
@@ -1355,7 +1609,7 @@ void PBProperty::Serialize(const SEScalarVolumePerTimePressure& src, CDM_BIND::S
 
 void PBProperty::Load(const CDM_BIND::ScalarVolumePerTimePressureAreaData& src, SEScalarVolumePerTimePressureArea& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::ScalarVolumePerTimePressureAreaData& src, SEScalarVolumePerTimePressureArea& dst)
@@ -1381,7 +1635,7 @@ void PBProperty::Serialize(const SEScalarVolumePerTimePressureArea& src, CDM_BIN
 
 void PBProperty::Load(const CDM_BIND::FunctionData& src, SEFunction& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 
   if (!src.dependentunit().empty())
@@ -1421,7 +1675,7 @@ void PBProperty::Serialize(const SEFunction& src, CDM_BIND::FunctionData& dst)
 
 void PBProperty::Load(const CDM_BIND::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::FunctionElectricPotentialVsTimeData& src, SEFunctionElectricPotentialVsTime& dst)
@@ -1448,7 +1702,7 @@ void PBProperty::Serialize(const SEFunctionElectricPotentialVsTime& src, CDM_BIN
 
 void PBProperty::Load(const CDM_BIND::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::FunctionVolumeVsTimeData& src, SEFunctionVolumeVsTime& dst)
@@ -1479,7 +1733,7 @@ void PBProperty::Serialize(const SEFunctionVolumeVsTime& src, CDM_BIND::Function
 
 void PBProperty::Load(const CDM_BIND::HistogramData& src, SEHistogram& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 
   if (!src.histogram().dependentunit().empty())
@@ -1520,7 +1774,7 @@ void PBProperty::Serialize(const SEHistogram& src, CDM_BIND::HistogramData& dst)
 
 void PBProperty::Load(const CDM_BIND::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::HistogramFractionVsLengthData& src, SEHistogramFractionVsLength& dst)
@@ -1548,7 +1802,7 @@ void PBProperty::Serialize(const SEHistogramFractionVsLength& src, CDM_BIND::His
 
 void PBProperty::Load(const CDM_BIND::RunningAverageData& src, SERunningAverage& dst)
 {
-  dst.Clear();
+  dst.Invalidate();
   PBProperty::Serialize(src, dst);
 }
 void PBProperty::Serialize(const CDM_BIND::RunningAverageData& src, SERunningAverage& dst)

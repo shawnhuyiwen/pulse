@@ -5,8 +5,8 @@
 /// @file UnitDimension.cpp
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
-#include "stdafx.h"
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 CUnitDimension::CUnitDimension()
 :m_EList(CUnitConversionEngine::GetEngine().GetNumFundamentalQuantities())

@@ -1,15 +1,15 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarMass.h"
-#include "io/protobuf/PBPatientAssessments.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/io/protobuf/PBPatientAssessments.h"
 
 
 SEComprehensiveMetabolicPanel::SEComprehensiveMetabolicPanel(Logger* logger) : SEPatientAssessment(logger)
@@ -67,7 +67,7 @@ void SEComprehensiveMetabolicPanel::Clear()
   INVALIDATE_PROPERTY(m_TotalProtein);
 }
 
-bool SEComprehensiveMetabolicPanel::SerializeToString(std::string& output, SerializationFormat m) const
+bool SEComprehensiveMetabolicPanel::SerializeToString(std::string& output, eSerializationFormat m) const
 {
   return PBPatientAssessment::SerializeToString(*this, output, m);
 }

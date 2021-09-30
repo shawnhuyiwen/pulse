@@ -1,30 +1,30 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SEGasCompartmentGraph.h"
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/thermal/SEThermalCompartmentLink.h"
-#include "compartment/tissue/SETissueCompartment.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/compartment/fluid/SEGasCompartmentGraph.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentGraph.h"
+#include "cdm/compartment/thermal/SEThermalCompartment.h"
+#include "cdm/compartment/thermal/SEThermalCompartmentLink.h"
+#include "cdm/compartment/tissue/SETissueCompartment.h"
 // Circuits
-#include "circuit/SECircuitManager.h"
-#include "circuit/fluid/SEFluidCircuit.h"
-#include "circuit/fluid/SEFluidCircuitNode.h"
-#include "circuit/fluid/SEFluidCircuitPath.h"
-#include "circuit/thermal/SEThermalCircuit.h"
-#include "circuit/thermal/SEThermalCircuitNode.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
-#include "circuit/electrical/SEElectricalCircuit.h"
-#include "circuit/electrical/SEElectricalCircuitNode.h"
-#include "circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/circuit/SECircuitManager.h"
+#include "cdm/circuit/fluid/SEFluidCircuit.h"
+#include "cdm/circuit/fluid/SEFluidCircuitNode.h"
+#include "cdm/circuit/fluid/SEFluidCircuitPath.h"
+#include "cdm/circuit/thermal/SEThermalCircuit.h"
+#include "cdm/circuit/thermal/SEThermalCircuitNode.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/circuit/electrical/SEElectricalCircuit.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitNode.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
 // Substances
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
 // Properties
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
 
 SECompartmentManager::SECompartmentManager(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_subMgr(subMgr)
 {

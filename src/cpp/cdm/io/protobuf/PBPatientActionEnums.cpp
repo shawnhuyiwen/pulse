@@ -1,16 +1,16 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/PatientActions.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBUtils.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SEIntubation.h"
-#include "patient/actions/SESubstanceAdministration.h"
-#include "patient/actions/SESupplementalOxygen.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/patient/actions/SEBrainInjury.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEIntubation.h"
+#include "cdm/patient/actions/SESubstanceAdministration.h"
+#include "cdm/patient/actions/SESupplementalOxygen.h"
 
 const std::string& eBrainInjury_Type_Name(eBrainInjury_Type m)
 {

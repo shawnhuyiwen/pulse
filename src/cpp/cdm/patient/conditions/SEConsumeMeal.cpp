@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "SEConsumeMeal.h"
-#include "properties/SEScalarMass.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarVolume.h"
-#include "io/protobuf/PBPatientConditions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/conditions/SEConsumeMeal.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/io/protobuf/PBPatientConditions.h"
 
 SEConsumeMeal::SEConsumeMeal(Logger* logger) : SEPatientCondition(logger)
 {

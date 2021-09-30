@@ -2,204 +2,154 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/equipment/SEEquipment.h"
-class SEEventHandler;
-class SEMechanicalVentilatorConfiguration;
-class SESubstance;
-class SESubstanceFraction;
-class SESubstanceConcentration;
-
-// Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-enum class eMechanicalVentilator_Connection { NullConnection = 0, Off, Mask, Tube };
-extern const std::string& eMechanicalVentilator_Connection_Name(eMechanicalVentilator_Connection m);
-
-// Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-enum class eMechanicalVentilator_DriverWaveform { NullDriverWaveform = 0, Square };
-extern const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform m);
+#include "cdm/system/equipment/SEEquipment.h"
+#include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.h"
 
 class CDM_DECL SEMechanicalVentilator : public SEEquipment
 {
   friend class PBMechanicalVentilator;//friend the serialization class
-protected:
-  friend SEMechanicalVentilatorConfiguration;
 public:
 
   SEMechanicalVentilator(Logger* logger);
   virtual ~SEMechanicalVentilator();
 
   virtual void Clear();
-
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
-  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
+  virtual void TurnOff();
 
 protected:
-
   /** @name StateChange
   *   @brief - This method is called when ever there is a state change
   *            Specically a new file has been loaded, configuration action, or the system reset
   *            Engine specific methodology can then update their logic.
   */
-  virtual void StateChange(){};
-  virtual void Merge(const SEMechanicalVentilator& from, SESubstanceManager& subMgr);
-  virtual void ProcessConfiguration(SEMechanicalVentilatorConfiguration& config, SESubstanceManager& subMgr);
+  virtual void StateChange() {};
 
 public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual eMechanicalVentilator_Connection GetConnection() const;
-  virtual void SetConnection(eMechanicalVentilator_Connection c);
+  virtual bool HasAirwayPressure() const;
+  virtual SEScalarPressure& GetAirwayPressure();
+  virtual double GetAirwayPressure(const PressureUnit& unit) const;
 
-  virtual bool HasEndotrachealTubeResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetEndotrachealTubeResistance();
-  virtual double GetEndotrachealTubeResistance(const PressureTimePerVolumeUnit& unit) const;
+  virtual bool HasDynamicPulmonaryCompliance() const;
+  virtual SEScalarVolumePerPressure& GetDynamicPulmonaryCompliance();
+  virtual double GetDynamicPulmonaryCompliance(const VolumePerPressureUnit& unit) const;
 
-  virtual bool HasPositiveEndExpiredPressure() const;
-  virtual SEScalarPressure& GetPositiveEndExpiredPressure();
-  virtual double GetPositiveEndExpiredPressure(const PressureUnit& unit) const;
+  virtual bool HasEndTidalCarbonDioxideFraction() const;
+  virtual SEScalar0To1& GetEndTidalCarbonDioxideFraction();
+  virtual double GetEndTidalCarbonDioxideFraction() const;
 
-  virtual bool HasFunctionalResidualCapacity() const;
-  virtual SEScalarPressure& GetFunctionalResidualCapacity();
-  virtual double GetFunctionalResidualCapacity(const PressureUnit& unit) const;
+  virtual bool HasEndTidalCarbonDioxidePressure() const;
+  virtual SEScalarPressure& GetEndTidalCarbonDioxidePressure();
+  virtual double GetEndTidalCarbonDioxidePressure(const PressureUnit& unit) const;
 
-  virtual bool HasExpirationCycleFlow() const;
-  virtual SEScalarVolumePerTime& GetExpirationCycleFlow();
-  virtual double GetExpirationCycleFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasEndTidalOxygenFraction() const;
+  virtual SEScalar0To1& GetEndTidalOxygenFraction();
+  virtual double GetEndTidalOxygenFraction() const;
 
-  virtual bool HasExpirationCyclePressure() const;
-  virtual SEScalarPressure& GetExpirationCyclePressure();
-  virtual double GetExpirationCyclePressure(const PressureUnit& unit) const;
+  virtual bool HasEndTidalOxygenPressure() const;
+  virtual SEScalarPressure& GetEndTidalOxygenPressure();
+  virtual double GetEndTidalOxygenPressure(const PressureUnit& unit) const;
 
-  virtual bool HasExpirationCycleVolume() const;
-  virtual SEScalarVolume& GetExpirationCycleVolume();
-  virtual double GetExpirationCycleVolume(const VolumeUnit& unit) const;
+  virtual bool HasExpiratoryFlow() const;
+  virtual SEScalarVolumePerTime& GetExpiratoryFlow();
+  virtual double GetExpiratoryFlow(const VolumePerTimeUnit& unit) const;
 
-  virtual bool HasExpirationCycleTime() const;
-  virtual SEScalarTime& GetExpirationCycleTime();
-  virtual double GetExpirationCycleTime(const TimeUnit& unit) const;
+  virtual bool HasExpiratoryTidalVolume() const;
+  virtual SEScalarVolume& GetExpiratoryTidalVolume();
+  virtual double GetExpiratoryTidalVolume(const VolumeUnit& unit) const;
 
-  virtual bool HasExpirationTubeResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetExpirationTubeResistance();
-  virtual double GetExpirationTubeResistance(const PressureTimePerVolumeUnit& unit) const;
+  virtual bool HasInspiratoryExpiratoryRatio() const;
+  virtual SEScalar& GetInspiratoryExpiratoryRatio();
+  virtual double GetInspiratoryExpiratoryRatio() const;
 
-  virtual bool HasExpirationValveResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetExpirationValveResistance();
-  virtual double GetExpirationValveResistance(const PressureTimePerVolumeUnit& unit) const;
+  virtual bool HasInspiratoryFlow() const;
+  virtual SEScalarVolumePerTime& GetInspiratoryFlow();
+  virtual double GetInspiratoryFlow(const VolumePerTimeUnit& unit) const;
 
-  virtual eMechanicalVentilator_DriverWaveform GetExpirationWaveform() const;
-  virtual void SetExpirationWaveform(eMechanicalVentilator_DriverWaveform w);
+  virtual bool HasInspiratoryTidalVolume() const;
+  virtual SEScalarVolume& GetInspiratoryTidalVolume();
+  virtual double GetInspiratoryTidalVolume(const VolumeUnit& unit) const;
 
-  virtual bool HasInspirationLimitFlow() const;
-  virtual SEScalarVolumePerTime& GetInspirationLimitFlow();
-  virtual double GetInspirationLimitFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasIntrinsicPositiveEndExpiredPressure() const;
+  virtual SEScalarPressure& GetIntrinsicPositiveEndExpiredPressure();
+  virtual double GetIntrinsicPositiveEndExpiredPressure(const PressureUnit& unit) const;
 
-  virtual bool HasInspirationLimitPressure() const;
-  virtual SEScalarPressure& GetInspirationLimitPressure();
-  virtual double GetInspirationLimitPressure(const PressureUnit& unit) const;
+  virtual bool HasLeakFraction() const;
+  virtual SEScalar0To1& GetLeakFraction();
+  virtual double GetLeakFraction() const;
 
-  virtual bool HasInspirationLimitVolume() const;
-  virtual SEScalarVolume& GetInspirationLimitVolume();
-  virtual double GetInspirationLimitVolume(const VolumeUnit& unit) const;
-
-  virtual bool HasInspirationPauseTime() const;
-  virtual SEScalarTime& GetInspirationPauseTime();
-  virtual double GetInspirationPauseTime(const TimeUnit& unit) const;
+  virtual bool HasMeanAirwayPressure() const;
+  virtual SEScalarPressure& GetMeanAirwayPressure();
+  virtual double GetMeanAirwayPressure(const PressureUnit& unit) const;
 
   virtual bool HasPeakInspiratoryPressure() const;
   virtual SEScalarPressure& GetPeakInspiratoryPressure();
   virtual double GetPeakInspiratoryPressure(const PressureUnit& unit) const;
 
-  virtual bool HasInspirationTargetFlow() const;
-  virtual SEScalarVolumePerTime& GetInspirationTargetFlow();
-  virtual double GetInspirationTargetFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasPlateauPressure() const;
+  virtual SEScalarPressure& GetPlateauPressure();
+  virtual double GetPlateauPressure(const PressureUnit& unit) const;
 
-  virtual bool HasInspirationMachineTriggerTime() const;
-  virtual SEScalarTime& GetInspirationMachineTriggerTime();
-  virtual double GetInspirationMachineTriggerTime(const TimeUnit& unit) const;
+  virtual bool HasPositiveEndExpiratoryPressure() const;
+  virtual SEScalarPressure& GetPositiveEndExpiratoryPressure();
+  virtual double GetPositiveEndExpiratoryPressure(const PressureUnit& unit) const;
 
-  virtual bool HasInspirationPatientTriggerFlow() const;
-  virtual SEScalarVolumePerTime& GetInspirationPatientTriggerFlow();
-  virtual double GetInspirationPatientTriggerFlow(const VolumePerTimeUnit& unit) const;
+  virtual bool HasPulmonaryResistance() const;
+  virtual SEScalarPressureTimePerVolume& GetPulmonaryResistance();
+  virtual double GetPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const;
 
-  virtual bool HasInspirationPatientTriggerPressure() const;
-  virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
-  virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
+  virtual bool HasRespirationRate() const;
+  virtual SEScalarFrequency& GetRespirationRate();
+  virtual double GetRespirationRate(const FrequencyUnit& unit) const;
 
-  virtual bool HasInspirationTubeResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetInspirationTubeResistance();
-  virtual double GetInspirationTubeResistance(const PressureTimePerVolumeUnit& unit) const;
+  virtual bool HasStaticPulmonaryCompliance() const;
+  virtual SEScalarVolumePerPressure& GetStaticPulmonaryCompliance();
+  virtual double GetStaticPulmonaryCompliance(const VolumePerPressureUnit& unit) const;
 
-  virtual bool HasInspirationValveResistance() const;
-  virtual SEScalarPressureTimePerVolume& GetInspirationValveResistance();
-  virtual double GetInspirationValveResistance(const PressureTimePerVolumeUnit& unit) const;
+  virtual bool HasTidalVolume() const;
+  virtual SEScalarVolume& GetTidalVolume();
+  virtual double GetTidalVolume(const VolumeUnit& unit) const;
 
-  virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
-  virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
+  virtual bool HasTotalLungVolume() const;
+  virtual SEScalarVolume& GetTotalLungVolume();
+  virtual double GetTotalLungVolume(const VolumeUnit& unit) const;
 
-  bool HasFractionInspiredGas() const;
-  bool HasFractionInspiredGas(const SESubstance& substance) const;
-  const std::vector<SESubstanceFraction*>& GetFractionInspiredGases();
-  const std::vector<const SESubstanceFraction*>& GetFractionInspiredGases() const;
-  SESubstanceFraction& GetFractionInspiredGas(const SESubstance& substance);
-  const SESubstanceFraction* GetFractionInspiredGas(const SESubstance& substance) const;
-  void RemoveFractionInspiredGas(const SESubstance& substance);
-  void RemoveFractionInspiredGases();
+  virtual bool HasTotalPulmonaryVentilation() const;
+  virtual SEScalarVolumePerTime& GetTotalPulmonaryVentilation();
+  virtual double GetTotalPulmonaryVentilation(const VolumePerTimeUnit& unit) const;
 
-  bool HasConcentrationInspiredAerosol() const;
-  bool HasConcentrationInspiredAerosol(const SESubstance& substance) const;
-  const std::vector<SESubstanceConcentration*>& GetConcentrationInspiredAerosols();
-  const std::vector<const SESubstanceConcentration*>& GetConcentrationInspiredAerosols() const;
-  SESubstanceConcentration& GetConcentrationInspiredAerosol(const SESubstance& substance);
-  const SESubstanceConcentration* GetConcentrationInspiredAerosol(const SESubstance& substance) const;
-  void RemoveConcentrationInspiredAerosol(const SESubstance& substance);
-  void RemoveConcentrationInspiredAerosols();
+  virtual bool HasSettings() const;
+  virtual SEMechanicalVentilatorSettings& GetSettings();
+  virtual const SEMechanicalVentilatorSettings* GetSettings() const;
+  virtual void RemoveSettings();
 
 protected:
-  
-  eMechanicalVentilator_Connection             m_Connection;
-  SEScalarPressureTimePerVolume*               m_EndotrachealTubeResistance;
 
-  // Expiratory Baseline Properties (Only set 1)
-  SEScalarPressure*                            m_PositiveEndExpiredPressure;
-  SEScalarPressure*                            m_FunctionalResidualCapacity;
+  SEScalarPressure*                  m_AirwayPressure;
+  SEScalarVolumePerPressure*         m_DynamicPulmonaryCompliance;
+  SEScalar0To1*                      m_EndTidalCarbonDioxideFraction;
+  SEScalarPressure*                  m_EndTidalCarbonDioxidePressure;
+  SEScalar0To1*                      m_EndTidalOxygenFraction;
+  SEScalarPressure*                  m_EndTidalOxygenPressure;
+  SEScalarVolumePerTime*             m_ExpiratoryFlow;
+  SEScalarVolume*                    m_ExpiratoryTidalVolume;
+  SEScalar*                          m_InspiratoryExpiratoryRatio;
+  SEScalarVolumePerTime*             m_InspiratoryFlow;
+  SEScalarVolume*                    m_InspiratoryTidalVolume;
+  SEScalarPressure*                  m_IntrinsicPositiveEndExpiredPressure;
+  SEScalar0To1*                      m_LeakFraction;
+  SEScalarPressure*                  m_MeanAirwayPressure;
+  SEScalarPressure*                  m_PeakInspiratoryPressure;
+  SEScalarPressure*                  m_PlateauPressure;
+  SEScalarPressure*                  m_PositiveEndExpiratoryPressure;
+  SEScalarPressureTimePerVolume*     m_PulmonaryResistance;
+  SEScalarFrequency*                 m_RespirationRate;
+  SEScalarVolumePerPressure*         m_StaticPulmonaryCompliance;
+  SEScalarVolume*                    m_TidalVolume;
+  SEScalarVolume*                    m_TotalLungVolume;
+  SEScalarVolumePerTime*             m_TotalPulmonaryVentilation;
 
-  // Expriatory Cycle Properties (Only Set 1)
-  SEScalarVolumePerTime*                       m_ExpirationCycleFlow;
-  SEScalarPressure*                            m_ExpirationCyclePressure;
-  SEScalarVolume*                              m_ExpirationCycleVolume;
-  SEScalarTime*                                m_ExpirationCycleTime;
-
-  SEScalarPressureTimePerVolume*               m_ExpirationTubeResistance;
-  SEScalarPressureTimePerVolume*               m_ExpirationValveResistance;
-  eMechanicalVentilator_DriverWaveform         m_ExpirationWaveform;
-
-  // Inspiratory Limit Properties (Only set 1)
-  SEScalarVolumePerTime*                       m_InspirationLimitFlow;
-  SEScalarPressure*                            m_InspirationLimitPressure;
-  SEScalarVolume*                              m_InspirationLimitVolume;
-
-  SEScalarTime*                                m_InspirationPauseTime;
-
-  // Inspiratory Target Properties (Only set 1)
-  SEScalarPressure*                            m_PeakInspiratoryPressure;
-  SEScalarVolumePerTime*                       m_InspirationTargetFlow;
-
-  // Inspiratory Machine Trigger Properties (Only set 1)
-  SEScalarTime*                                m_InspirationMachineTriggerTime;
-
-  // Inspiratory Patient Trigger Properties (Only set 1)
-  SEScalarVolumePerTime*                       m_InspirationPatientTriggerFlow;
-  SEScalarPressure*                            m_InspirationPatientTriggerPressure;
-
-  SEScalarPressureTimePerVolume*               m_InspirationTubeResistance;
-  SEScalarPressureTimePerVolume*               m_InspirationValveResistance;
-  eMechanicalVentilator_DriverWaveform         m_InspirationWaveform;
-
-  std::vector<SESubstanceFraction*>            m_FractionInspiredGases;
-  std::vector<const SESubstanceFraction*>      m_cFractionInspiredGases;
-
-  std::vector<SESubstanceConcentration*>       m_ConcentrationInspiredAerosols;
-  std::vector<const SESubstanceConcentration*> m_cConcentrationInspiredAerosols;
+  SEMechanicalVentilatorSettings*    m_Settings;
 };

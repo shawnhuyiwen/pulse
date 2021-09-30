@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/conditions/SEPulmonaryShunt.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBPatientConditions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/conditions/SEPulmonaryShunt.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBPatientConditions.h"
 
 SEPulmonaryShunt::SEPulmonaryShunt(Logger* logger) : SEPatientCondition(logger)
 {

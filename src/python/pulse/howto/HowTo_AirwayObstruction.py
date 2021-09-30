@@ -4,11 +4,11 @@
 from enum import Enum
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEAirwayObstruction
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_AirwayObstruction():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_AirwayObstruction.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_AirwayObstruction.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

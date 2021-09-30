@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuitNode.h"
-#include "circuit/SECircuitPath.h"
+#include "cdm/circuit/SECircuitNode.h"
+#include "cdm/circuit/SECircuitPath.h"
 
 #define CIRCUIT_TEMPLATE typename NodeType, typename PathType
 #define CIRCUIT_TYPES NodeType,PathType

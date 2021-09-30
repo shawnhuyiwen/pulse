@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuit.h"
-#include "circuit/electrical/SEElectricalCircuitNode.h"
-#include "circuit/electrical/SEElectricalCircuitPath.h"
+#include "cdm/circuit/SECircuit.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitNode.h"
+#include "cdm/circuit/electrical/SEElectricalCircuitPath.h"
 
 class SECircuitManager;
 

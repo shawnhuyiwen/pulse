@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/PatientAssessments.pb.h"
-POP_PROTO_WARNINGS()
-#include "patient/assessments/SEPatientAssessment.h"
-#include "patient/assessments/SEUrinalysisMicroscopic.h"
+POP_PROTO_WARNINGS
+#include "cdm/patient/assessments/SEPatientAssessment.h"
+#include "cdm/patient/assessments/SEUrinalysisMicroscopic.h"
 
 const std::string& ePatientAssessment_Type_Name(ePatientAssessment_Type m)
 {

@@ -1,6 +1,7 @@
 // The following tests will be exported and runnable
 
-#include "CommonDataModel.h"
+#include "CommonDefs.h"
+#include "utils/testing/SETestManager.h"
 class SEFluidCircuit;
 class SECircuitManager;
 class SEGasCompartment;
@@ -37,21 +38,18 @@ enum enumCDMTestSourceType
   ZEROCENTEREDSIN
 };
 
-class CDM_TEST_DECL CommonDataModelTest : public Loggable
+class CDM_TEST_DECL CommonDataModelTest : public SETestManager
 {
 public:
-  CommonDataModelTest();
-  CommonDataModelTest(Logger* logger);
+  CommonDataModelTest(Logger* logger=nullptr);
   virtual ~CommonDataModelTest();
 
-  bool RunTest(const std::string& testName, const std::string& sOutputDirectory);
-  void FillFunctionMap();
+  virtual bool RunTest(const std::string& testName, const std::string& sOutputDirectory) override;
 
 protected:
-  bool                myLogger;
+  virtual void FillFunctionMap() override;
   double              m_PercentTolerance;
   std::string         m_OutDirectory;
-  std::stringstream   m_ss;
 
   typedef void(CommonDataModelTest::*testFunction)(const std::string&);
   typedef std::map<std::string, testFunction> testMap;

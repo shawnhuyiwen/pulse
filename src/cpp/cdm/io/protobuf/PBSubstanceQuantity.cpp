@@ -1,17 +1,17 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/SubstanceQuantity.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBSubstanceQuantity.h"
-#include "io/protobuf/PBProperties.h"
-#include "substance/SESubstance.h"
-#include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "compartment/substances/SELiquidSubstanceQuantity.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SELiquidCompartment.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBSubstanceQuantity.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/compartment/substances/SEGasSubstanceQuantity.h"
+#include "cdm/compartment/substances/SELiquidSubstanceQuantity.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
 
 void PBSubstanceQuantity::Serialize(const CDM_BIND::SubstanceQuantityData& src, SESubstanceQuantity& dst)
 {

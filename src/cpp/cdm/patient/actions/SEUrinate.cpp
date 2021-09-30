@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEUrinate.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEUrinate.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEUrinate::SEUrinate(Logger* logger) : SEPatientAction(logger)
 {
@@ -20,7 +20,7 @@ void SEUrinate::Clear()
   SEPatientAction::Clear();
 }
 
-void SEUrinate::Copy(const SEUrinate& src, bool preserveState)
+void SEUrinate::Copy(const SEUrinate& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
@@ -42,7 +42,7 @@ void SEUrinate::Deactivate()
   Clear();//No stateful properties
 }
 
-const SEScalar* SEUrinate::GetScalar(const std::string& name)
+const SEScalar* SEUrinate::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

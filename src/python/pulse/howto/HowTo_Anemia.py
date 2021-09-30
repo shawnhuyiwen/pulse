@@ -2,17 +2,17 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 
 def HowTo_UseAnemia():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_Anemia.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_Anemia.py.log")
     pulse.log_to_console(True)
 
     pc = SEPatientConfiguration()
     pc.set_patient_file("./patients/StandardMale.json")
     anemia = pc.get_conditions().get_chronic_anemia()
-    anemia.get_reduction_factor().set_value(.4)
+    anemia.get_reduction_factor().set_value(.15)
 
     # Initialize the engine with our configuration
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data

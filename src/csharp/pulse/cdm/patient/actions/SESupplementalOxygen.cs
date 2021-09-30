@@ -3,24 +3,23 @@
 
 namespace Pulse.CDM
 {
+  public enum eSupplementalOxygen_Device : int
+  {
+    None = 0,
+    NasalCannula,
+    SimpleMask,
+    NonRebreatherMask
+  }
+
   public class SESupplementalOxygen : SEPatientAction
   {
-
-    public enum eDevice : int
-    {
-      None = 0,
-      NasalCannula,
-      SimpleMask,
-      NonRebreatherMask
-    }
-
-    protected eDevice device;
+    protected eSupplementalOxygen_Device device;
     protected SEScalarVolumePerTime flow;
     protected SEScalarVolume volume;
 
     public SESupplementalOxygen()
     {
-      device = eDevice.None;
+      device = eSupplementalOxygen_Device.None;
       flow = null;
       volume = null;
     }
@@ -28,7 +27,7 @@ namespace Pulse.CDM
     public override void Clear()
     {
       base.Clear();
-      device = eDevice.None;
+      device = eSupplementalOxygen_Device.None;
       if (flow != null)
         flow.Invalidate();
       if (volume != null)
@@ -40,8 +39,8 @@ namespace Pulse.CDM
       return HasFlow() && HasVolume();
     }
 
-    public eDevice GetDevice() { return device; }
-    public void SetDevice(eDevice d) { device = d; }
+    public eSupplementalOxygen_Device GetDevice() { return device; }
+    public void SetDevice(eSupplementalOxygen_Device d) { device = d; }
 
     public bool HasFlow()
     {

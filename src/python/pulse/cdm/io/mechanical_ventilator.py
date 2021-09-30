@@ -1,16 +1,20 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.mechanical_ventilator import SEMechanicalVentilator
-from pulse.cdm.bind.MechanicalVentilator_pb2 import MechanicalVentilatorData
+from pulse.cdm.mechanical_ventilator import SEMechanicalVentilatorSettings
+from pulse.cdm.bind.MechanicalVentilator_pb2 import MechanicalVentilatorSettingsData
 from pulse.cdm.bind.Substance_pb2 import SubstanceFractionData, SubstanceConcentrationData
 
 from pulse.cdm.io.scalars import *
 
-def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: MechanicalVentilatorData):
+def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings, dst: MechanicalVentilatorSettingsData):
     dst.Connection = src.get_connection().value
-    if src.has_endotracheal_tube_resistance():
-        serialize_scalar_pressure_time_per_volume_to_bind(src.get_endotracheal_tube_resistance(), dst.EndotrachealTubeResistance)
+    if src.has_connection_volume():
+        serialize_scalar_volume_to_bind(src.get_connection_volume(), dst.ConnectionVolume)
+    if src.has_compliance():
+        serialize_scalar_volume_per_pressure_to_bind(src.get_compliance(), dst.Compliance)
+    if src.has_driver_damping_parameter():
+        serialize_scalar_frequency_to_bind(src.get_driver_damping_parameter(), dst.DriverDampingParameter)
 
     if src.has_positive_end_expired_pressure():
         serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiredPressure)
@@ -26,11 +30,17 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
     elif src.has_expiration_cycle_volume():
         serialize_scalar_volume_to_bind(src.get_expiration_cycle_volume(), dst.ExpirationCycleVolume)
 
+    if src.has_expiration_limb_volume():
+        serialize_scalar_volume_to_bind(src.get_expiration_limb_volume(), dst.ExpirationLimbVolume)
     if src.has_expiration_tube_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_expiration_tube_resistance(), dst.ExpirationTubeResistance)
     if src.has_expiration_valve_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_expiration_valve_resistance(), dst.ExpirationValveResistance)
+    if src.has_expiration_valve_volume():
+        serialize_scalar_volume_to_bind(src.get_expiration_valve_volume(), dst.ExpirationValveVolume)
     dst.ExpirationWaveform = src.get_expiration_waveform().value
+    if src.has_expiration_waveform_period():
+        serialize_scalar_time_to_bind(src.get_expiration_waveform_period(), dst.ExpirationWaveformPeriod)
 
     if src.has_inspiration_limit_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_inspiration_limit_flow(), dst.InspirationLimitFlow)
@@ -55,11 +65,20 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
     if src.has_inspiration_patient_trigger_pressure():
         serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationPatientTriggerPressure)
 
+    if src.has_inspiration_limb_volume():
+        serialize_scalar_volume_to_bind(src.get_inspiration_limb_volume(), dst.InspirationLimbVolume)
     if src.has_inspiration_tube_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_inspiration_tube_resistance(), dst.InspirationTubeResistance)
     if src.has_inspiration_valve_resistance():
         serialize_scalar_pressure_time_per_volume_to_bind(src.get_inspiration_valve_resistance(), dst.InspirationValveResistance)
+    if src.has_inspiration_valve_volume():
+        serialize_scalar_volume_to_bind(src.get_inspiration_valve_volume(), dst.InspirationValveVolume)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
+    if src.has_inspiration_waveform_period():
+        serialize_scalar_time_to_bind(src.get_inspiration_waveform_period(), dst.InspirationWaveformPeriod)
+
+    if src.has_y_piece_volume():
+        serialize_scalar_volume_to_bind(src.get_y_piece_volume(), dst.YPieceVolume)
 
     for aGas in src.get_fraction_inspired_gasses():
         sf = SubstanceFractionData()
@@ -73,5 +92,5 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilator, dst: Me
         serialize_scalar_mass_per_volume_to_bind(aAerosol.get_concentration(), sc.Concentration)
         dst.ConcentrationInspiredAerosol.append(sc)
 
-def serialize_mechanical_ventilator_from_bind(src: MechanicalVentilatorData, dst: SEMechanicalVentilator):
+def serialize_mechanical_ventilator_from_bind(src: MechanicalVentilatorSettingsData, dst: SEMechanicalVentilatorSettings):
     raise Exception("serialize_mechanical_ventilator_from_bind not implemented")

@@ -42,9 +42,9 @@ public  class SESupplementalOxygen extends SEPatientAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     device = null;
     if (flow != null)
       flow.invalidate();

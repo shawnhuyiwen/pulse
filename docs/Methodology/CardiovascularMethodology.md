@@ -203,7 +203,7 @@ The CV model has a waveform limitation because of our ideal diode model. We assu
 Conditions
 ----------
 #### Anemia
-Anemia conditions reduce the oxygen-carrying capacity of the blood. The engine models iron deficiency anemia as a chronic condition, which is characterized by a decrease in hemoglobin concentration and subsequent decreases in hematocrit and blood viscosity @cite Duke1969Hemodynamic. These factors lead to a decrease in systemic vascular resistance @cite guyton2006medical. The engine currently supports up to a 30% decrease in hemoglobin. After engine stabilization, the chronic condition reduces the hemoglobin throughout the circuit and reduces the systemic vascular resistance to represent the change in viscosity. The engine then re-stabilizes based on the chronic condition criteria. For more information, see @ref SystemMethodology. There is an observable increase in venous return due to the decreased systemic vascular resistance. As validation data supports, there are no observable effects from the decreased oxygen-carrying capacity at rest. These effects will be evident in the future with incorporation of exercise.
+Anemia conditions reduce the oxygen-carrying capacity of the blood. The engine models iron deficiency anemia as a chronic condition, which is characterized by a decrease in hemoglobin concentration and subsequent decreases in hematocrit and blood viscosity @cite Duke1969Hemodynamic. These factors lead to a decrease in systemic vascular resistance @cite guyton2006medical. The engine currently supports up to a 30% decrease in hemoglobin. After engine stabilization, the chronic condition reduces the hemoglobin throughout the circuit and reduces the systemic vascular resistance to represent the change in viscosity. The engine then re-stabilizes based on the chronic condition criteria. For more information, see @ref SystemMethodology. There is an observable increase in venous return due to the decreased systemic vascular resistance. As validation data supports, there are no observable effects from the decreased oxygen-carrying capacity at rest. These effects will be evident in the future with incorporation of exercise. This condition is currently not validated.
 
 #### Arrhythmias
 A heart arrhythmia is a deviation from the normal sinus rhythm seen in a healthy heart beat. In the engine, we have implemented two chronic arrhythmias, sinus bradycardia and sinus tachycardia. Bradycardia is a low resting heart rate (less than 60 beats per minute) @cite mangrum2000evaluation, which is generally considered benign when cardiac output is stable. Tachycardia is a high resting heart rate (greater than 100 beats per minute) @cite yusuf2005deciphering. After engine stabilization, the heart rate baseline is modified. After the engine re-stabilizes based on the chronic condition criteria (see @ref SystemMethodology for details), the heart rate value, and corresponding changes in the %ECG waveform, are the only clear sign of the condition. This matches the validation data. A limitation of the current chronic tachycardia model is a lack of changes to the compression force. Currently, only the rate is affected.
@@ -448,9 +448,9 @@ All actions in the CV System were validated. A summary of this validation is sho
 
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Anemia - 30%	|	Hemoglobin content reduced by 30  percent.	|<span class="success">	5	</span>|<span class="warning">		</span>|<span class="danger">	3	</span>|
+|	Anemia - 30%	|	Hemoglobin content reduced by 30  percent. - NOT VALIDATED	|<span class="success">	0	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Arrythmia - Sinus Bradycardia	|	Heart rate set to 50 beats per minute.	|<span class="success">	5	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
-|	Arrythmia - Sinus Tachycardia	|	Heart rate set to 110 beats per minute	|<span class="success">	5	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
+|	Arrythmia - Sinus Tachycardia	|	Heart rate set to 110 beats per minute	|<span class="success">	4	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
 |	CPR 	|	Cardiac arrest is initiated, and CPR is performed.	|<span class="success">	22	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
 |	Hemorrhage Class I - Femoral	|	15% hemorrhage from femoral artery	|<span class="success">	13	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	Hemorrhage Class 2 - Brachial	|	25% hemorrhage from right arm	|<span class="success">	12	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
@@ -463,8 +463,7 @@ All actions in the CV System were validated. A summary of this validation is sho
 |	Pericardial Effusion - Chronic	|	Patient has an effused pericardium with an accumulated volume of 500 ml.	|<span class="success">	9	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Pericardial Effusion - Acute	|	Pericardium volume starts at 500mL and increases at 6 mL/min.	|<span class="success">	16	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Ventricular Systolic Failure	|	Chronic heart failure is initiated. - NOT VALIDATED	|<span class="success">	0	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	181	</span>|<span class="warning">	7	</span>|<span class="danger">	7	</span>|
-
+|		|	Total	|<span class="success">	175	</span>|<span class="warning">	8	</span>|<span class="danger">	4	</span>|
 
 ### Cardiopulmonary Resuscitation (CPR)
 There are two CPR scenarios for validation. The first scenario validates the CPR methodology using the explicit force setting functionality, and the second scenario uses the force scale methodology (see CPR intervention documentation above). In both scenarios, cardiac arrest is initiated externally. Ten seconds later, compressions begin. In both scenarios, the compression rate is set to 80 per minute, and the force is set to 70 pounds to match the conditions in @cite redberg1993physiology. Supplemental literature sources were used to validate outputs not available in @cite redberg1993physiology. All of the physiological variables were within validation ranges in both scenarios with the exception of mean arterial pressure and ejection fraction. The mean arterial pressure in the engine is slightly higher than expected. This is most likely due to the fact that the intravascular pressures are higher than those reported in @cite redberg1993physiology. However, the engine pressures are within ranges reported in other references @cite kim2008direction , @cite gruben1990system. The ejection fraction is considerably lower in the engine during CPR than the value reported in @cite kim2008direction. The engine ejection fraction is lower because blood tends to pool in the engine right heart during cardiac arrest. The validation failures that occur right at cardiac arrest are mostly due residual dynamics following asystole in the engine. Errors associated with the cessation of heart function in the engine are a known issue, and resolving this issue is a part of the cardiac arrest recommended improvements discussed [below](@ref cardiovascular-future).  
@@ -646,21 +645,9 @@ Sinus Tachycardia was validated by setting the baseline heart rate to 110 beats 
 <br><center>
 *Table 15. Validation matrix for sinus tachycardia arrythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
-|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate(beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	%ECG Output (mV)	|
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate(beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Sinus Tachycardia	|	Variable. Set Heart Rate = 110 beats per minute; in Aroestyl, patients were not ideal, a number had previous heart conditions or coronary artery disease. Tachycardia was achieved via atrial pacemakers	|	0	|	120	|<span class="success">	110 @cite yusuf2005deciphering	</span>|<span class="warning">	13% increase @cite still2005prevalence	</span>|<span class="success">	NC @cite yusuf2005deciphering	</span>|<span class="success">	Dependent on SV and HR @cite sohn2007hemodynamic	</span>|<span class="success">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Normal sinus/Tachycardia Waveform 	</span>|
-
-
-### Anemia
-The anemia condition reduces the oxygen carrying capacity of the blood. The anemia validation results are shown in Table 11, and were in excellent agreement with literature.
-
-<center>
-*Table 16. Validation matrix for sinus tachycardia arrythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Condition	|	Notes			|	Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Hemoglobin Concentration (g/dL)	|	Heart Rate (/min)	|	Cardiac Output (L/min)	|	Stroke Volume (mL/beat)	|	Oxygen Saturation %	|	Respiration Rate (/min)	|	Hematocrit %	|	Systemic Vascular Resistance (mmHg*min/L)
-|	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------
-|	Anemia	|	0.3 severity			|	0	|	120	|<span class="success">	10.3 (per severity]	</span>|<span class="success">	"increase @cite Toy2000fatigue "	</span>|<span class="warning">	"Slight increase @cite duke1969hemodynamic"	</span>|<span class="danger">	Slight increase @cite duke1969hemodynamic	</span>|<span class="success">	94.5 @cite duke1969hemodynamic; Should not affect oxygen saturation, especially at our severities @cite moss2016SME	</span>|<span class="success">	NC until exertion @cite toy2000fatigue	</span>|<span class="success">	Decrease as determined by severity and initial hemoglobin @cite duke1969hemodynamic	</span>|<span class="success">	Decrease @cite guyton2006medical
-
+|	Sinus Tachycardia	|	Variable. Set Heart Rate = 110 beats per minute; in Aroestyl, patients were not ideal, a number had previous heart conditions or coronary artery disease. Tachycardia was achieved via atrial pacemakers	|	0	|	120	|<span class="success">	110 @cite yusuf2005deciphering	</span>|<span class="warning">	13% increase @cite still2005prevalence	</span>|<span class="success">	NC @cite yusuf2005deciphering	</span>|<span class="success">	Dependent on SV and HR @cite sohn2007hemodynamic	</span>|<span class="warning">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Normal sinus/Tachycardia Waveform 	</span>|
 
 @anchor cardiovascular-conclusions
 Conclusions
@@ -680,9 +667,7 @@ Another potential area for improvement is simulation of a tourniquet. An interve
 
 The cardiac arrest functionality also needs improvement. Like in the human body, most of the systems require a beating heart to function properly. Also like in the human body, the engine systems tend to go haywire when the heart stops. However, the ways in which the systems go haywire deviate from the human physiological systems' response during cardiac arrest. Improvements to the engine functionality during cardiac arrest would allow for many desirable scenarios, including Advanced Cardiac Life Support (ACLS) scenarios where some recovery of the patient is actually possible. As described in the CPR section, recovery from cardiac arrest is currently impossible in the engine. Rescue breathing would also be a valuable improvement.
 
-Anemia is currently limited to less than 30% reduction in hemoglobin, this should be expanded to cover a wider range of severe anemias.
-
-The ventricular systolic function is how an unvalidated condition in the engine. We will improve the model and validate this condition in the future.
+The ventricular systolic function and anemia are now unvalidated conditions in the engine. We will improve the model and validate this condition in the future.
 
 @anchor cardiovascular-appendices
 Appendices

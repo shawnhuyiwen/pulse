@@ -16,9 +16,9 @@ public class SEMeal extends SENutrition
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (elapsedTime != null)
       elapsedTime.invalidate();  
   }
@@ -32,7 +32,7 @@ public class SEMeal extends SENutrition
   
   public static void load(MealData src, SEMeal dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.hasNutrition())
       SENutrition.load(src.getNutrition(),dst);
     if (src.hasElapsedTime())

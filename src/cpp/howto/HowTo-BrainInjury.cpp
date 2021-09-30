@@ -2,29 +2,30 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
 
 // Include the various types you will be using in your code
-#include "engine/SEDataRequestManager.h"
-#include "engine/SEEngineTracker.h"
-#include "compartment/SECompartmentManager.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "system/physiology/SECardiovascularSystem.h"
-#include "system/physiology/SERespiratorySystem.h"
-#include "system/physiology/SEBloodChemistrySystem.h"
-#include "system/physiology/SENervousSystem.h"
-#include "system/physiology/SEPupillaryResponse.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarLength.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarAmountPerVolume.h"
-#include "properties/SEScalar0To1.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
+#include "cdm/system/physiology/SERespiratorySystem.h"
+#include "cdm/system/physiology/SEBloodChemistrySystem.h"
+#include "cdm/system/physiology/SENervousSystem.h"
+#include "cdm/system/physiology/SEPupillaryResponse.h"
+#include "cdm/patient/actions/SEBrainInjury.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarAmountPerVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
 
 int GlasgowEstimator(double);
 
@@ -49,9 +50,6 @@ void HowToBrainInjury()
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
-
-  // The tracker is responsible for advancing the engine time and outputting the data requests below at each time step
-  HowToTracker tracker(*pe);
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   // Physiology System Names are defined on the System Objects 
@@ -85,7 +83,7 @@ void HowToBrainInjury()
   pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Size Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetSizeModifier());
   pe->GetLogger()->Info(std::stringstream() << "Right Eye Pupil Reactivity Modifier : " << pe->GetNervousSystem()->GetRightEyePupillaryResponse()->GetReactivityModifier());
 
-  tracker.AdvanceModelTime(30);
+  AdvanceAndTrackTime_s(30, *pe);
   
   // Create an SEBrainInjury object
   // Set the severity (a fraction between 0 and 1; for maximal injury, use 1.)  
@@ -96,7 +94,7 @@ void HowToBrainInjury()
   pe->GetLogger()->Info("Giving the patient a brain injury.");
 
   // Advance time to see how the injury affects the patient
-  tracker.AdvanceModelTime(90);
+  AdvanceAndTrackTime_s(90, *pe);
 
   pe->GetLogger()->Info(std::stringstream() << "The patient has had a brain injury for 90s, not doing well...");
   pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -124,7 +122,7 @@ void HowToBrainInjury()
 
   pe->GetLogger()->Info("Removing the brain injury.");
 
-  tracker.AdvanceModelTime(90);
+  AdvanceAndTrackTime_s(90, *pe);
 
   pe->GetLogger()->Info(std::stringstream() << "The patient's brain injury has been removed for 90s; patient is much better");
   pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -150,7 +148,7 @@ void HowToBrainInjury()
   pe->ProcessAction(tbi);
   pe->GetLogger()->Info("Giving the patient a severe brain injury.");
 
-  tracker.AdvanceModelTime(300);
+  AdvanceAndTrackTime_s(300, *pe);
 
   // You can also get information from the compartment rather than the system, in case you want other metrics
   const SELiquidCompartment* brain = pe->GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);

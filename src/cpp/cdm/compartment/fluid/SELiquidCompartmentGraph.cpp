@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
-#include "compartment/SECompartmentManager.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentGraph.h"
+#include "cdm/compartment/SECompartmentManager.h"
 
 void SELiquidCompartmentGraph::BalanceByIntensive()
 {

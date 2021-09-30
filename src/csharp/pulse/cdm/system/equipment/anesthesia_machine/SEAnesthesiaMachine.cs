@@ -3,42 +3,34 @@
 
 namespace Pulse.CDM
 {
+  // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
+  public enum eAnesthesiaMachine_OxygenSource : int
+  {
+    NullSource = 0,/** Signals not provided, or no change */
+    NoSource,
+    Wall,
+    BottleOne,
+    BottleTwo
+  }
+  // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
+  public enum eAnesthesiaMachine_PrimaryGas : int
+  {
+    NullGas = 0,/** Signals not provided, or no change */
+    NoGas,
+    Air,
+    Nitrogen
+  }
+
   public class SEAnesthesiaMachine : SEEquipment
   {
-    // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
-    public enum Connection : int
-    {
-      NullConnection = 0,/** Signals not provided, or no change */
-      Off,
-      Mask,
-      Tube
-    }
-    // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
-    public enum OxygenSource : int
-    {
-      NullSource = 0,/** Signals not provided, or no change */
-      NoSource,
-      Wall,
-      BottleOne,
-      BottleTwo
-    }
-    // Keep enums in sync with appropriate schema/cdm/AnesthesiaMachine.proto file !!
-    public enum PrimaryGas : int
-    {
-      NullGas = 0,/** Signals not provided, or no change */
-      NoGas,
-      Air,
-      Nitrogen
-    }
-
-    protected Connection connection;
+    protected eSwitch connection;
     protected SEScalarVolumePerTime inletFlow;
     protected SEScalar inspiratoryExpiratoryRatio;
     protected SEScalar0To1 oxygenFraction;
-    protected OxygenSource oxygenSource;
+    protected eAnesthesiaMachine_OxygenSource oxygenSource;
     protected SEScalarPressure peakInspiratoryPressure;
     protected SEScalarPressure positiveEndExpiredPressure;
-    protected PrimaryGas primaryGas;
+    protected eAnesthesiaMachine_PrimaryGas primaryGas;
     protected SEScalarFrequency respiratoryRate;
     protected SEScalarPressure reliefValvePressure;
 
@@ -52,14 +44,14 @@ namespace Pulse.CDM
 
     public SEAnesthesiaMachine()
     {
-      connection = Connection.NullConnection;
+      connection = eSwitch.NullSwitch;
       inletFlow = null;
       inspiratoryExpiratoryRatio = null;
       oxygenFraction = null;
-      oxygenSource = OxygenSource.NullSource;
+      oxygenSource = eAnesthesiaMachine_OxygenSource.NullSource;
       peakInspiratoryPressure = null;
       positiveEndExpiredPressure = null;
-      primaryGas = PrimaryGas.NullGas;
+      primaryGas = eAnesthesiaMachine_PrimaryGas.NullGas;
       respiratoryRate = null;
       reliefValvePressure = null;
 
@@ -73,19 +65,19 @@ namespace Pulse.CDM
     public override void Clear()
     {
       base.Clear();
-      connection = Connection.NullConnection;
+      connection = eSwitch.NullSwitch;
       if (inletFlow != null)
         inletFlow.Invalidate();
       if (inspiratoryExpiratoryRatio != null)
         inspiratoryExpiratoryRatio.Invalidate();
       if (oxygenFraction != null)
         oxygenFraction.Invalidate();
-      oxygenSource = OxygenSource.NullSource;
+      oxygenSource = eAnesthesiaMachine_OxygenSource.NullSource;
       if (peakInspiratoryPressure != null)
         peakInspiratoryPressure.Invalidate();
       if (positiveEndExpiredPressure != null)
         positiveEndExpiredPressure.Invalidate();
-      primaryGas = PrimaryGas.NullGas;
+      primaryGas = eAnesthesiaMachine_PrimaryGas.NullGas;
       if (respiratoryRate != null)
         respiratoryRate.Invalidate();
       if (reliefValvePressure != null)
@@ -106,8 +98,8 @@ namespace Pulse.CDM
     //public void Copy(SEAnesthesiaMachine from)
     //{
     //  Clear();
-    //  if(from.connection!=null && from.connection != Connection.NullConnection)
-    //  	this.connection=from.connection;      
+    //  if(from.connection!=null && from.connection != Connection.NullSwitch)
+    //  	this.connection=from.connection;
     //  if(from.HasInletFlow())
     //    this.GetInletFlow().Set(from.GetInletFlow());
     //  if(from.HasInspiratoryExpiratoryRatio())
@@ -150,17 +142,17 @@ namespace Pulse.CDM
     //  return this.events.Get(type);
     //}
 
-    public Connection GetConnection()
+    public eSwitch GetConnection()
     {
       return connection;
     }
-    public void SetConnection(Connection c)
+    public void SetConnection(eSwitch c)
     {
       connection = c;
     }
     public bool HasConnection()
     {
-      return connection != Connection.NullConnection;
+      return connection != eSwitch.NullSwitch;
     }
 
     public SEScalar GetInspiratoryExpiratoryRatio()
@@ -196,17 +188,17 @@ namespace Pulse.CDM
       return oxygenFraction == null ? false : oxygenFraction.IsValid();
     }
 
-    public OxygenSource GetOxygenSource()
+    public eAnesthesiaMachine_OxygenSource GetOxygenSource()
     {
       return oxygenSource;
     }
-    public void SetOxygenSource(OxygenSource os)
+    public void SetOxygenSource(eAnesthesiaMachine_OxygenSource os)
     {
       oxygenSource = os;
     }
     public bool HasOxygenSource()
     {
-      return oxygenSource != OxygenSource.NullSource;
+      return oxygenSource != eAnesthesiaMachine_OxygenSource.NullSource;
     }
 
     public SEScalarPressure GetPeakInspiratoryPressure()
@@ -231,17 +223,17 @@ namespace Pulse.CDM
       return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.IsValid();
     }
 
-    public PrimaryGas GetPrimaryGas()
+    public eAnesthesiaMachine_PrimaryGas GetPrimaryGas()
     {
       return primaryGas;
     }
-    public void SetPrimaryGas(PrimaryGas pg)
+    public void SetPrimaryGas(eAnesthesiaMachine_PrimaryGas pg)
     {
       primaryGas = pg;
     }
     public bool HasPrimaryGas()
     {
-      return primaryGas != PrimaryGas.NullGas;
+      return primaryGas != eAnesthesiaMachine_PrimaryGas.NullGas;
     }
 
     public SEScalarFrequency GetRespiratoryRate()
@@ -347,14 +339,14 @@ namespace Pulse.CDM
       //}
 
       return "Anesthesia Machine"
-      + "\n\tConnection: " + (HasConnection() ? PBAnesthesiaMachine.Connection_Name(GetConnection()) : "NotProvided")
+      + "\n\tConnection: " + (HasConnection() ? eEnum.Name(GetConnection()) : "NotProvided")
       + "\n\tInletFlow: " + GetInletFlow()
       + "\n\tInspiratoryExpiratoryRatio: " + GetInspiratoryExpiratoryRatio()
       + "\n\tOxygenFraction: " + GetOxygenFraction()
-      + "\n\tOxygenSource: " + (HasOxygenSource() ? PBAnesthesiaMachine.OxygenSource_Name(GetOxygenSource()) : "NotProvided")
+      + "\n\tOxygenSource: " + (HasOxygenSource() ? eAnesthesiaMachine.OxygenSource_Name(GetOxygenSource()) : "NotProvided")
       + "\n\tPeakInspiratoryPressure: " + GetPeakInspiratoryPressure()
       + "\n\tPositiveEndExpiredPressure: " + GetPositiveEndExpiredPressure()
-      + "\n\tPrimaryGas: " + (HasPrimaryGas() ? PBAnesthesiaMachine.PrimaryGas_Name(GetPrimaryGas()) : "NotProvided")
+      + "\n\tPrimaryGas: " + (HasPrimaryGas() ? eAnesthesiaMachine.PrimaryGas_Name(GetPrimaryGas()) : "NotProvided")
       + "\n\tRespiratoryRate: " + GetRespiratoryRate()
       + "\n\tReliefValvePressure: " + GetReliefValvePressure()
       + "\n\t" + leftChamber

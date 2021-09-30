@@ -42,7 +42,7 @@ public class SEAppliedTemperature
       surfaceAreaFraction.invalidate();
   }
 
-  public void reset()
+  public void clear()
   {
     state = eSwitch.Off;
     if (temperature != null)
@@ -56,7 +56,7 @@ public class SEAppliedTemperature
 
   public static void load(AppliedTemperatureData src, SEAppliedTemperature dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.getState()!=eSwitch.UNRECOGNIZED && src.getState()!=eSwitch.NullSwitch)
       dst.state = src.getState();
     if(src.hasTemperature())

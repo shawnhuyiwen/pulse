@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "utils/DataPeak.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/utils/DataPeak.h"
 
 DataPeak::DataPeak(unsigned int samples, double epsilon)
 {    

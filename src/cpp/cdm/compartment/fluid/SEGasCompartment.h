@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/fluid/SEFluidCompartment.h"
-#include "compartment/fluid/SEGasCompartmentLink.h"
-#include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "substance/SESubstanceTransport.h"
+#include "cdm/compartment/fluid/SEFluidCompartment.h"
+#include "cdm/compartment/fluid/SEGasCompartmentLink.h"
+#include "cdm/compartment/substances/SEGasSubstanceQuantity.h"
+#include "cdm/substance/SESubstanceTransport.h"
 class SEGasBlackBox;
 
 enum class BalanceGasBy { Volume, VolumeFraction };

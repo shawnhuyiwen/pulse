@@ -1,47 +1,48 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SEPatientActionCollection.h"
-#include "patient/SEPatient.h"
-#include "patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
-#include "patient/actions/SEAcuteStress.h"
-#include "patient/actions/SEAirwayObstruction.h"
-#include "patient/actions/SEBrainInjury.h"
-#include "patient/actions/SEBronchoconstriction.h"
-#include "patient/actions/SECardiacArrest.h"
-#include "patient/actions/SEAsthmaAttack.h"
-#include "patient/actions/SEChestCompressionForce.h"
-#include "patient/actions/SEChestCompressionForceScale.h"
-#include "patient/actions/SEChestOcclusiveDressing.h"
-#include "patient/actions/SEConsciousRespiration.h"
-#include "patient/actions/SEConsumeNutrients.h"
-#include "patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
-#include "patient/actions/SEExercise.h"
-#include "patient/actions/SEDyspnea.h"
-#include "patient/actions/SEHemorrhage.h"
-#include "patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
-#include "patient/actions/SEIntubation.h"
-#include "patient/actions/SELobarPneumoniaExacerbation.h"
-#include "patient/actions/SEMechanicalVentilation.h"
-#include "patient/actions/SENeedleDecompression.h"
-#include "patient/actions/SEPericardialEffusion.h"
-#include "patient/actions/SEPulmonaryShuntExacerbation.h"
-#include "patient/actions/SERespiratoryFatigue.h"
-#include "patient/actions/SESubstanceBolus.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "patient/actions/SESubstanceInfusion.h"
-#include "patient/actions/SESupplementalOxygen.h"
-#include "patient/actions/SETensionPneumothorax.h"
-#include "patient/actions/SEUrinate.h"
-#include "patient/actions/SEPatientAssessmentRequest.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEPatientActionCollection.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
+#include "cdm/patient/actions/SEAcuteStress.h"
+#include "cdm/patient/actions/SEAirwayObstruction.h"
+#include "cdm/patient/actions/SEBrainInjury.h"
+#include "cdm/patient/actions/SEBronchoconstriction.h"
+#include "cdm/patient/actions/SECardiacArrest.h"
+#include "cdm/patient/actions/SEAsthmaAttack.h"
+#include "cdm/patient/actions/SEChestCompressionForce.h"
+#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestOcclusiveDressing.h"
+#include "cdm/patient/actions/SEConsciousRespiration.h"
+#include "cdm/patient/actions/SEConsumeNutrients.h"
+#include "cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
+#include "cdm/patient/actions/SEExercise.h"
+#include "cdm/patient/actions/SEDyspnea.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/patient/actions/SEImpairedAlveolarExchangeExacerbation.h"
+#include "cdm/patient/actions/SEIntubation.h"
+#include "cdm/patient/actions/SELobarPneumoniaExacerbation.h"
+#include "cdm/patient/actions/SEMechanicalVentilation.h"
+#include "cdm/patient/actions/SENeedleDecompression.h"
+#include "cdm/patient/actions/SEPericardialEffusion.h"
+#include "cdm/patient/actions/SEPulmonaryShuntExacerbation.h"
+#include "cdm/patient/actions/SERespiratoryFatigue.h"
+#include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
+#include "cdm/patient/actions/SESubstanceBolus.h"
+#include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
+#include "cdm/patient/actions/SESubstanceInfusion.h"
+#include "cdm/patient/actions/SESupplementalOxygen.h"
+#include "cdm/patient/actions/SETensionPneumothorax.h"
+#include "cdm/patient/actions/SEUrinate.h"
+#include "cdm/patient/actions/SEPatientAssessmentRequest.h"
 
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceCompound.h"
-#include "substance/SESubstanceConcentration.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceCompound.h"
+#include "cdm/substance/SESubstanceConcentration.h"
 
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
 {
@@ -68,6 +69,7 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_LeftNeedleDecompression = nullptr;
   m_RightNeedleDecompression = nullptr;
   m_RespiratoryFatigue = nullptr;
+  m_RespiratoryMechanicsConfiguration = nullptr;
   m_PericardialEffusion = nullptr;
   m_PulmonaryShuntExacerbation = nullptr;
   m_SupplementalOxygen = nullptr;
@@ -105,6 +107,7 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_PericardialEffusion);
   SAFE_DELETE(m_PulmonaryShuntExacerbation);
   SAFE_DELETE(m_RespiratoryFatigue);
+  SAFE_DELETE(m_RespiratoryMechanicsConfiguration);
   SAFE_DELETE(m_SupplementalOxygen);
   SAFE_DELETE(m_LeftClosedTensionPneumothorax);
   SAFE_DELETE(m_LeftOpenTensionPneumothorax);
@@ -145,6 +148,7 @@ void SEPatientActionCollection::Clear()
   RemovePericardialEffusion();
   RemovePulmonaryShuntExacerbation();
   RemoveRespiratoryFatigue();
+  RemoveRespiratoryMechanicsConfiguration();
   RemoveLeftOpenTensionPneumothorax();
   RemoveLeftClosedTensionPneumothorax();
   RemoveRightOpenTensionPneumothorax();
@@ -455,6 +459,16 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_RespiratoryFatigue->Activate();
     if (!m_RespiratoryFatigue->IsActive())
       RemoveRespiratoryFatigue();
+    return true;
+  }
+
+  const SERespiratoryMechanicsConfiguration* rmc = dynamic_cast<const SERespiratoryMechanicsConfiguration*>(&action);
+  if (rmc != nullptr)
+  {
+    GetRespiratoryMechanicsConfiguration().Copy(*rmc, true);
+    m_RespiratoryMechanicsConfiguration->Activate();
+    if (!m_RespiratoryMechanicsConfiguration->IsActive())
+      RemoveRespiratoryMechanicsConfiguration();
     return true;
   }
 
@@ -1123,6 +1137,26 @@ void SEPatientActionCollection::RemoveRespiratoryFatigue()
     m_RespiratoryFatigue->Deactivate();
 }
 
+bool SEPatientActionCollection::HasRespiratoryMechanicsConfiguration() const
+{
+  return m_RespiratoryMechanicsConfiguration == nullptr ? false : m_RespiratoryMechanicsConfiguration->IsActive();
+}
+SERespiratoryMechanicsConfiguration& SEPatientActionCollection::GetRespiratoryMechanicsConfiguration()
+{
+  if (m_RespiratoryMechanicsConfiguration == nullptr)
+    m_RespiratoryMechanicsConfiguration = new SERespiratoryMechanicsConfiguration();
+  return *m_RespiratoryMechanicsConfiguration;
+}
+const SERespiratoryMechanicsConfiguration* SEPatientActionCollection::GetRespiratoryMechanicsConfiguration() const
+{
+  return m_RespiratoryMechanicsConfiguration;
+}
+void SEPatientActionCollection::RemoveRespiratoryMechanicsConfiguration()
+{
+  if (m_RespiratoryMechanicsConfiguration)
+    m_RespiratoryMechanicsConfiguration->Deactivate();
+}
+
 bool SEPatientActionCollection::HasSupplementalOxygen() const
 {
   return m_SupplementalOxygen == nullptr ? false : m_SupplementalOxygen->IsActive();
@@ -1445,6 +1479,10 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetPulmonaryShuntExacerbation());
   if (HasRespiratoryFatigue())
     actions.push_back(GetRespiratoryFatigue());
+  if (HasRespiratoryMechanicsConfiguration())
+    actions.push_back(GetRespiratoryMechanicsConfiguration());
+  if (HasSupplementalOxygen())
+    actions.push_back(GetSupplementalOxygen());
   if (HasLeftClosedTensionPneumothorax())
     actions.push_back(GetLeftClosedTensionPneumothorax());
   if (HasLeftOpenTensionPneumothorax())
@@ -1526,6 +1564,10 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetPulmonaryShuntExacerbation().GetScalar(property);
   if (actionName == "RespiratoryFatigue")
     return GetRespiratoryFatigue().GetScalar(property);
+  if (actionName == "RespiratoryMechanicsConfiguration")
+    return GetRespiratoryMechanicsConfiguration().GetScalar(property);
+  if (actionName == "SupplementalOxygen")
+    return GetSupplementalOxygen().GetScalar(property);
   if (actionName == "LeftClosedTensionPneumothorax")
     return GetLeftClosedTensionPneumothorax().GetScalar(property);
   if (actionName == "LeftOpenTensionPneumothorax")

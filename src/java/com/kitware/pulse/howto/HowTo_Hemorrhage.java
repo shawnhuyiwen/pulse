@@ -3,6 +3,7 @@
 package com.kitware.pulse.howto;
 
 import java.util.List;
+
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Events.eEvent;
 import com.kitware.pulse.cdm.bind.PatientActions.HemorrhageData;
@@ -11,12 +12,13 @@ import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEEventHandler;
 import com.kitware.pulse.cdm.patient.actions.SEHemorrhage;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
+import com.kitware.pulse.cdm.properties.CommonUnits.MassUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
+import com.kitware.pulse.cdm.properties.CommonUnits.TemperatureUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumePerTimeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.VolumeUnit;
-import com.kitware.pulse.cdm.properties.SEScalarTime;
-import com.kitware.pulse.engine.PulseCompartments;
 import com.kitware.pulse.engine.PulseEngine;
+import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.JNIBridge;
@@ -72,100 +74,38 @@ public class HowTo_Hemorrhage
 
     // Here is how to specify the data to get back from the engine
     SEDataRequestManager dataRequests = new SEDataRequestManager();
-    SEDataRequest hr = new SEDataRequest();
-    hr.setCategory(eCategory.Physiology);
-    hr.setPropertyName("HeartRate");
-    hr.setUnit(FrequencyUnit.Per_min.toString());
-    dataRequests.getRequestedData().add(hr);
-    SEDataRequest rr = new SEDataRequest();
-    rr.setCategory(eCategory.Physiology);
-    rr.setPropertyName("RespirationRate");
-    rr.setUnit(FrequencyUnit.Per_min.toString());
-    dataRequests.getRequestedData().add(rr);
-    SEDataRequest tlv = new SEDataRequest(); 
-    tlv.setCategory(eCategory.Physiology);   
-    tlv.setPropertyName("TotalLungVolume");
-    tlv.setUnit(VolumeUnit.mL.toString());
-    dataRequests.getRequestedData().add(tlv);
-    SEDataRequest bv = new SEDataRequest();
-    bv.setCategory(eCategory.Physiology);
-    bv.setPropertyName("BloodVolume");
-    bv.setUnit(VolumeUnit.mL.toString());
-    dataRequests.getRequestedData().add(bv);
-    SEDataRequest map = new SEDataRequest();
-    map.setCategory(eCategory.Physiology);
-    map.setPropertyName("MeanArterialPressure");
-    map.setUnit(PressureUnit.mmHg.toString());
-    dataRequests.getRequestedData().add(map);
-    SEDataRequest hflow = new SEDataRequest();
-    hflow.setCategory(eCategory.Physiology);
-    hflow.setPropertyName("TotalHemorrhageRate");
-    hflow.setUnit(VolumePerTimeUnit.mL_Per_s.toString());
-    dataRequests.getRequestedData().add(hflow);
-    SEDataRequest hvol = new SEDataRequest();
-    hvol.setCategory(eCategory.Physiology);
-    hvol.setPropertyName("TotalHemorrhagedVolume");
-    hvol.setUnit(VolumeUnit.mL.toString());
-    dataRequests.getRequestedData().add(hvol);
-    SEDataRequest aflow = new SEDataRequest();
-    aflow.setCategory(eCategory.Action);
-    aflow.setActionName("Hemorrhage");
-    aflow.setCompartmentName(PulseCompartments.Vascular.RightArm);
-    aflow.setPropertyName("FlowRate");
-    aflow.setUnit(VolumePerTimeUnit.mL_Per_s.toString());
-    dataRequests.getRequestedData().add(aflow);
-    SEDataRequest avol = new SEDataRequest();
-    avol.setCategory(eCategory.Action);
-    avol.setActionName("Hemorrhage");
-    avol.setCompartmentName(PulseCompartments.Vascular.RightArm);
-    avol.setPropertyName("TotalBloodLost");
-    avol.setUnit(VolumeUnit.mL.toString());
-    dataRequests.getRequestedData().add(avol);
-    SEDataRequest lflow = new SEDataRequest();
-    lflow.setCategory(eCategory.Action);
-    lflow.setActionName("Hemorrhage");
-    lflow.setCompartmentName(PulseCompartments.Vascular.RightLeg);
-    lflow.setPropertyName("FlowRate");
-    lflow.setUnit(VolumePerTimeUnit.mL_Per_s.toString());
-    dataRequests.getRequestedData().add(lflow);
-    SEDataRequest lvol = new SEDataRequest();
-    lvol.setCategory(eCategory.Action);
-    lvol.setActionName("Hemorrhage");
-    lvol.setCompartmentName(PulseCompartments.Vascular.RightLeg);
-    lvol.setPropertyName("TotalBloodLost");
-    lvol.setUnit(VolumeUnit.mL.toString());
-    dataRequests.getRequestedData().add(lvol);
+    dataRequests.createPhysiologyDataRequest("HeartRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("TotalLungVolume", VolumeUnit.mL);
+    dataRequests.createPhysiologyDataRequest("RespirationRate", FrequencyUnit.Per_min);
+    dataRequests.createPhysiologyDataRequest("BloodVolume", VolumeUnit.mL);
+
+    dataRequests.createPhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit.mL_Per_min);
+    dataRequests.createPhysiologyDataRequest("MeanArterialPressure", PressureUnit.mmHg);
+    dataRequests.createPhysiologyDataRequest("SystolicArterialPressure", PressureUnit.mmHg);
+    dataRequests.createPhysiologyDataRequest("DiastolicArterialPressure", PressureUnit.mmHg);
+    dataRequests.createPhysiologyDataRequest("HemoglobinContent", MassUnit.g);
+    dataRequests.createPhysiologyDataRequest("TotalHemorrhageRate", VolumePerTimeUnit.mL_Per_s);
+    dataRequests.createPhysiologyDataRequest("TotalHemorrhagedVolume", VolumeUnit.mL);
+    dataRequests.createActionCompartmentDataRequest("Hemorrhage", "RightLeg", "FlowRate", VolumePerTimeUnit.mL_Per_s);
+    dataRequests.createActionCompartmentDataRequest("Hemorrhage", "RightLeg", "TotalBloodLost", VolumeUnit.mL);
     
     List<Double> dataValues;
     pe.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
     
     dataValues = pe.pullData();
-    Log.info("Simulation Time(s) " + dataValues.get(0));
-    Log.info("Heart Rate(bpm) " + dataValues.get(1));
-    Log.info("Respiration Rate(bpm) " + dataValues.get(2));
-    Log.info("Total Lung Volume(mL) " + dataValues.get(3));
-    Log.info("Blood Volume(mL) " + dataValues.get(4));
-    Log.info("Mean Arterial Pressure(mmHg) " + dataValues.get(5));
-    Log.info("Total  HemorrhageRate(mL/s) " + dataValues.get(6));
-    Log.info("Total Hemorrhaged Volume(mL) " + dataValues.get(7));
-    Log.info("Hemorrhage-RightArm-FlowRate(mL/s) " + dataValues.get(8));
-    Log.info("Hemorrhage-RightArm-TotalBloodLost(mL) " + dataValues.get(9));
-    Log.info("Hemorrhage-RightLeg-FlowRate(mL/s) " + dataValues.get(10));
-    Log.info("Hemorrhage-RightLeg-TotalBloodLost(mL) " + dataValues.get(11));
+    dataRequests.writeData(dataValues);
     Log.info("");
     
     // Let's do something to the patient, you can either send actions over one at a time, or pass in a List<SEAction>
     SEHemorrhage rightLeg = new SEHemorrhage();
     // Setting up a realistic hemorrhage can be difficult
     // Here is an example of how the engine will act if you create an unrealistic hemorrhage
-    rightLeg.setType(HemorrhageData.eType.External);
-    rightLeg.setCompartment(PulseCompartments.Vascular.RightLeg);
+    rightLeg.setExternal(SEHemorrhage.ExternalCompartment.RightLeg);
     rightLeg.getSeverity().setValue(0.4);
     pe.processAction(rightLeg);
     
     SEHemorrhage rightArm = new SEHemorrhage();
-    rightArm.setType(HemorrhageData.eType.External);
-    rightArm.setCompartment(PulseCompartments.Vascular.RightArm);
+    rightArm.setExternal(SEHemorrhage.ExternalCompartment.RightArm);
     rightArm.getSeverity().setValue(0.2);
     pe.processAction(rightArm);
     
@@ -186,18 +126,7 @@ public class HowTo_Hemorrhage
       if (i % 3000 == 0 || listener.error)
       {
         dataValues = pe.pullData();
-        Log.info("Simulation Time(s) " + dataValues.get(0));
-        Log.info("Heart Rate(bpm) " + dataValues.get(1));
-        Log.info("Respiration Rate(bpm) " + dataValues.get(2));
-        Log.info("Total Lung Volume(mL) " + dataValues.get(3));
-        Log.info("Blood Volume(mL) " + dataValues.get(4));
-        Log.info("Mean Arterial Pressure(mmHg) " + dataValues.get(5));
-        Log.info("Total  HemorrhageRate(mL/s) " + dataValues.get(6));
-        Log.info("Total Hemorrhaged Volume(mL) " + dataValues.get(7));
-        Log.info("Hemorrhage-RightArm-FlowRate(mL/s) " + dataValues.get(8));
-        Log.info("Hemorrhage-RightArm-TotalBloodLost(mL) " + dataValues.get(9));
-        Log.info("Hemorrhage-RightLeg-FlowRate(mL/s) " + dataValues.get(10));
-        Log.info("Hemorrhage-RightLeg-TotalBloodLost(mL) " + dataValues.get(11));
+        dataRequests.writeData(dataValues);
         Log.info("");
         
         if(listener.error)

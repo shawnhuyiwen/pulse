@@ -4,12 +4,12 @@
 #include <jni.h>
 #include <memory>
 #include <iostream>
-#include "PulsePhysiologyEngine.h"
+#include "PulseEngineThunk.h"
 
 class PulseEngineJNI : public PulseEngineThunk
 {
 public:
-  PulseEngineJNI(const std::string& dataDir);
+  PulseEngineJNI(eModelType t, const std::string& dataDir);
   ~PulseEngineJNI();
 
   void Reset();
@@ -20,7 +20,7 @@ public:
   void ForwardError(const std::string& msg, const std::string& origin) override;
   void ForwardFatal(const std::string& msg, const std::string& origin) override;
 
-  JNIEnv*   jniEnv;
+  JNIEnv* jniEnv;
   jobject   jniObj;
   jmethodID jniDebugMethodID;
   jmethodID jniInfoMethodID;
@@ -28,3 +28,4 @@ public:
   jmethodID jniErrorMethodID;
   jmethodID jniFatalMethodID;
 };
+

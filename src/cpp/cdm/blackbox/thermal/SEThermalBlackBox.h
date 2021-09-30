@@ -2,9 +2,9 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "blackbox/SEBlackBox.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
-#include "compartment/thermal/SEThermalCompartmentLink.h"
+#include "cdm/blackbox/SEBlackBox.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/compartment/thermal/SEThermalCompartmentLink.h"
 
 class CDM_DECL SEThermalBlackBox : public SEBlackBox<THERMAL_BLACK_BOX>
 {

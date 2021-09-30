@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SEPatientAction.h"
+#include "cdm/patient/actions/SEPatientAction.h"
 class Serializer;
 class SESubstance;
 class SESubstanceFraction;
@@ -20,7 +20,7 @@ public:
   virtual ~SEMechanicalVentilation();
 
   virtual void Clear();
-  virtual void Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool preserveState=false);
+  virtual void Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

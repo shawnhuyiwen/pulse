@@ -38,7 +38,7 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
     if (bronchodilationLevel != null)
       bronchodilationLevel.invalidate();
@@ -51,7 +51,7 @@ public class SEDrugSystem extends SEPhysiologySystem implements SESystem
     if (pulsePressureChange != null)
       pulsePressureChange.invalidate();
     if (pupillaryResponse != null)
-      pupillaryResponse.reset();
+      pupillaryResponse.clear();
     if (respirationRateChange != null)
       respirationRateChange.invalidate();
     if (sedationLevel != null)

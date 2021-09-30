@@ -8,6 +8,11 @@ using Pulse.CDM;
 
 namespace Pulse
 {
+  public enum eModelType : int
+  {
+    HumanAdultWholeBody = 0,
+    HumanAdultVentilationMechanics
+  }
   // C# class that wraps the PulseC API
   public class PulseEngine
   {
@@ -40,10 +45,10 @@ namespace Pulse
     public static extern void Deinitialize();
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
-    static extern IntPtr Allocate(string data_dir);
-    public PulseEngine(string data_dir="./")
+    static extern IntPtr Allocate(int model, string data_dir);
+    public PulseEngine(eModelType m=eModelType.HumanAdultWholeBody, string data_dir = "./")
     {
-      pulse_cptr = Allocate(data_dir);
+      pulse_cptr = Allocate((int)m, data_dir);
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -142,14 +147,16 @@ namespace Pulse
       if (!alive)
         return false;
       int type;
-      if (assessment is SECompleteBloodCount)
+      if (assessment is SEArterialBloodGasTest)
         type = 0;
-      else if (assessment is SEComprehensiveMetabolicPanel)
+      else if (assessment is SECompleteBloodCount)
         type = 1;
-      else if (assessment is SEPulmonaryFunctionTest)
+      else if (assessment is SEComprehensiveMetabolicPanel)
         type = 2;
-      else if (assessment is SEUrinalysis)
+      else if (assessment is SEPulmonaryFunctionTest)
         type = 3;
+      else if (assessment is SEUrinalysis)
+        type = 4;
       else
         return false;
 

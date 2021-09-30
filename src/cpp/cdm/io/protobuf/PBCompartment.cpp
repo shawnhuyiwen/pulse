@@ -1,32 +1,32 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-PUSH_PROTO_WARNINGS()
+#include "cdm/CommonDefs.h"
+PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Compartment.pb.h"
-POP_PROTO_WARNINGS()
-#include "io/protobuf/PBCompartment.h"
-#include "io/protobuf/PBSubstanceQuantity.h"
-#include "io/protobuf/PBProperties.h"
-#include "io/protobuf/PBUtils.h"
-#include "compartment/SECompartment.h"
-#include "compartment/SECompartmentGraph.h"
-#include "compartment/SECompartmentLink.h"
-#include "compartment/SECompartmentNodes.h"
-#include "compartment/SECompartmentTransportGraph.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SEGasCompartmentGraph.h"
-#include "compartment/fluid/SEGasCompartmentLink.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "compartment/fluid/SELiquidCompartmentGraph.h"
-#include "compartment/thermal/SEThermalCompartment.h"
-#include "compartment/thermal/SEThermalCompartmentLink.h"
-#include "compartment/tissue/SETissueCompartment.h"
-#include "compartment/SECompartmentManager.h"
-#include "circuit/SECircuitManager.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
+POP_PROTO_WARNINGS
+#include "cdm/io/protobuf/PBCompartment.h"
+#include "cdm/io/protobuf/PBSubstanceQuantity.h"
+#include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/compartment/SECompartment.h"
+#include "cdm/compartment/SECompartmentGraph.h"
+#include "cdm/compartment/SECompartmentLink.h"
+#include "cdm/compartment/SECompartmentNodes.h"
+#include "cdm/compartment/SECompartmentTransportGraph.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SEGasCompartmentGraph.h"
+#include "cdm/compartment/fluid/SEGasCompartmentLink.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartmentGraph.h"
+#include "cdm/compartment/thermal/SEThermalCompartment.h"
+#include "cdm/compartment/thermal/SEThermalCompartmentLink.h"
+#include "cdm/compartment/tissue/SETissueCompartment.h"
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/circuit/SECircuitManager.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 void PBCompartment::Serialize(const CDM_BIND::CompartmentData& src, SECompartment& dst)
 {
@@ -53,7 +53,7 @@ bool PBCompartment::LoadCompartmentManagerFile(SECompartmentManager& mgr, const 
   std::ifstream file_stream(filename, std::ios::in);
   std::string fmsg((std::istreambuf_iterator<char>(file_stream)), std::istreambuf_iterator<char>());
   file_stream.close();
-  if (!PBUtils::SerializeFromString(fmsg, src, JSON, mgr.GetLogger()))
+  if (!PBUtils::SerializeFromString(fmsg, src, eSerializationFormat::JSON, mgr.GetLogger()))
     return false;
   PBCompartment::Load(src, mgr, circuits);
   return true;
@@ -68,7 +68,7 @@ void PBCompartment::SaveCompartmentManagerFile(const SECompartmentManager& mgr, 
 {
   std::string content;
   CDM_BIND::CompartmentManagerData* src = PBCompartment::Unload(mgr);
-  PBUtils::SerializeToString(*src, content,JSON, mgr.GetLogger());
+  PBUtils::SerializeToString(*src, content, eSerializationFormat::JSON, mgr.GetLogger());
   std::ofstream ascii_ostream(filename, std::ios::out | std::ios::trunc);
   ascii_ostream << content;
   ascii_ostream.flush();

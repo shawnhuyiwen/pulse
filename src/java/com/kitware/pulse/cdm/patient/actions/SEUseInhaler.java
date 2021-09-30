@@ -27,9 +27,9 @@ public class SEUseInhaler extends SEConsciousRespirationCommand
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
   }
   
   @Override

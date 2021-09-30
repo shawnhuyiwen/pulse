@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS False)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -33,7 +33,7 @@ set(CMAKE_DEBUG_POSTFIX "d")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-project(Pulse VERSION 3.2.0 LANGUAGES C CXX)
+project(Pulse VERSION 4.0.0 LANGUAGES C CXX)
 string(TOLOWER ${PROJECT_NAME} project_name)
 
 #-----------------------------------------------------------------------------
@@ -64,8 +64,9 @@ set(${PROJECT_NAME}_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 #-----------------------------------------------------------------------------
 option(${PROJECT_NAME}_SUPERBUILD "Initial pull and build of all dependent libraries/executables" ON)
 option(${PROJECT_NAME}_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline result files" OFF)
+option(${PROJECT_NAME}_CSHARP_API "Build C# API" OFF)
 option(${PROJECT_NAME}_JAVA_API "Build Java utils for data generation and testing" ON)
-option(${PROJECT_NAME}_PYTHON_API "Build Python Bindings" OFF)
+option(${PROJECT_NAME}_PYTHON_API "Build Python API" OFF)
 option(${PROJECT_NAME}_SLAVE_BUILD "Pulse is being built as part of a different superbuild" OFF)
 
 if(${PROJECT_NAME}_SUPERBUILD)
@@ -80,10 +81,6 @@ if(${PROJECT_NAME}_SUPERBUILD)
   endmacro()
 
   define_dependency(Eigen3)
-  if(WIN32)
-    # *nix systems have this already
-    define_dependency(Dirent)
-  endif()
   define_dependency(protobuf)
   if(${PROJECT_NAME}_PYTHON_API)
     find_package (Python3 COMPONENTS Interpreter Development)
@@ -150,10 +147,6 @@ include(AddExecutable)# Extras to do when creating an executable
 #-----------------------------------------------------------------------------
 
 find_package(Eigen3 REQUIRED)
-if(WIN32)
-  # *nix systems have this already
-  find_package(Dirent REQUIRED)
-endif()
 
 # Tell protobuf-config.cmake to try to be compatible with FindProtobuf.cmake;
 # this makes it easier for us to work with either one
@@ -239,6 +232,21 @@ configure_file(${CMAKE_SOURCE_DIR}/docs/Doxygen/full.doxy.in ${CMAKE_INSTALL_PRE
 set(export_config_name ${PROJECT_NAME})
 set(${PROJECT_NAME}_INSTALL_CONFIG_DIR "lib/cmake/${${PROJECT_NAME}_INSTALL_FOLDER}")
 file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_CONFIG_DIR})
+# Get the latest abbreviated commit hash of the working branch
+find_package(Git)
+if(Git_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE export_git_hash
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+else()
+  set(export_git_hash "unknown")
+endif()
+
+configure_file(cmake/PulseBuildInformation.cpp.in ${CMAKE_BINARY_DIR}/src/cpp/engine/PulseBuildInformation.cpp)
+
 #------------------------------------------------------------------------------
 # Configure ${PROJECT_NAME}ConfigVersion.cmake common to build and install tree
 include(CMakePackageConfigHelpers)

@@ -243,22 +243,51 @@ message RenalSystemData
   ScalarMassPerVolumeData             UrineUreaNitrogenConcentration                 = 54;/**<< @brief Scaled concentration of Urea in the bladder  */ 
 }
 
+/**@brief A set of properties to specify and customize the respiratory circuit and driver.*/
+message RespiratoryMechanicsData
+{
+  eSwitch                             Active                                         = 1; /**<< @brief Turn on or off the use of this structure in the physiology implementation. */
+  CurveData                           LeftComplianceCurve                            = 2; /**<< @brief Left static compliance definition as a pressure vs. volume piecewise function.*/
+  CurveData                           RightComplianceCurve                           = 3; /**<< @brief Right static compliance definition as a pressure vs. volume piecewise function.*/
+  
+  ScalarPressureTimePerVolumeData     LeftExpiratoryResistance                       = 4; /**<< @brief Left lung airway resistance during expiration.*/
+  ScalarPressureTimePerVolumeData     LeftInspiratoryResistance                      = 5; /**<< @brief Left lung airway resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData     RightExpiratoryResistance                      = 6; /**<< @brief Right lung airway resistance during expiration.*/
+  ScalarPressureTimePerVolumeData     RightInspiratoryResistance                     = 7; /**<< @brief Right lung airway resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 8; /**<< @brief Upper airway respiratory resistance during expiration.*/
+  ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 9; /**<< @brief Upper airway respiratory resistance during inspiration.*/
+  
+  // Muscle Pressure Driver
+  ScalarPressureData                  InspiratoryPeakPressure                        = 10;/**<< @brief The maximum negative pressure during spontaneous inspiration.*/
+  ScalarPressureData                  ExpiratoryPeakPressure                         = 11;/**<< @brief The maximum positive pressure during spontaneous expiration (usually 0).*/
+  
+  ScalarTimeData                      InspiratoryRiseTime                            = 12;/**<< @brief Spontaneous inspiration rise period length.*/
+  ScalarTimeData                      InspiratoryHoldTime                            = 13;/**<< @brief Spontaneous hold period length at top of breath.*/
+  ScalarTimeData                      InspiratoryReleaseTime                         = 14;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
+  ScalarTimeData                      InspiratoryToExpiratoryPauseTime               = 15;/**<< @brief Spontaneous hold period length between inspiration and expiration.*/
+  ScalarTimeData                      ExpiratoryRiseTime                             = 16;/**<< @brief Spontaneous expiration rise period length.*/
+  ScalarTimeData                      ExpiratoryHoldTime                             = 17;/**<< @brief Spontaneous hold period length at bottom of breath.*/
+  ScalarTimeData                      ExpiratoryReleaseTime                          = 18;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
+  ScalarTimeData                      ResidueTime                                    = 19;/**<< @brief Spontaneous breathing remaining time at 0 pressure after completed waveform.*/
+}
 enum eBreathState
 {
   Inhale = 0;
   Pause  = 1;
   Exhale = 2;
+  ExpiratoryHold = 3;
+  InspiratoryHold = 4;
 }
 /**@brief Provides ventilation and gas exchange of the human respiratory system.
    @details Supports changes in the lungs volume and pressure data during the flow
    and transfer of gases between the lungs, the blood and the outside environment.*/
 message RespiratorySystemData
 {
-  ScalarPressureData                  AlveolarArterialGradient                       = 1; /**<< @brief Measure of the difference between the alveolar concentration of oxygen and the arterial concentration of oxygen to assess the integrity of the alveolar capillary unit.*/
-  ScalarVolumeData                    AlveolarDeadSpace                              = 2; /**<< @brief The volume of unperfused alveoli.*/
-  ScalarVolumeData                    AnatomicDeadSpace                              = 3; /**<< @brief The total volume of the conducting airways from the nose or mouth down to the level of the terminal bronchioles that does not participate in gas exchange.*/
-  ScalarPressureData                  CarricoIndex                                   = 4; /**<< @brief The ratio of arterial partial pressure O2 and the inspired O2. O2 level in blood vs. Concentration of O2 in a breath.*/
-  ScalarVolumePerPressureData         ChestWallCompliance                            = 5; /**<< @brief The relationship between the transmural pressure across the chest wall compared with the chest cavity's volume.*/
+  ScalarPressureData                  AirwayPressure                                 = 1;/**<< @brief Instantaneous pressure applied during positive-pressure mechanical ventilation. */
+  ScalarPressureData                  AlveolarArterialGradient                       = 2; /**<< @brief Measure of the difference between the alveolar concentration of oxygen and the arterial concentration of oxygen to assess the integrity of the alveolar capillary unit.*/
+  ScalarVolumeData                    AlveolarDeadSpace                              = 3; /**<< @brief The volume of unperfused alveoli.*/
+  ScalarVolumeData                    AnatomicDeadSpace                              = 4; /**<< @brief The total volume of the conducting airways from the nose or mouth down to the level of the terminal bronchioles that does not participate in gas exchange.*/
+  ScalarVolumePerPressureData         ChestWallCompliance                            = 5; /**<< @brief The static relationship between the transmural pressure across the chest wall compared with the chest cavity's volume.*/
   ScalarEnergyData                    ElasticWorkOfBreathing                         = 6; /**<< @brief The work (generally during the inhalation phase) that is stored as potential energy which is recovered during exhalation.*/
   Scalar0To1Data                      EndTidalCarbonDioxideFraction                  = 7; /**<< @brief The fraction of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
   ScalarPressureData                  EndTidalCarbonDioxidePressure                  = 8; /**<< @brief The pressure of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
@@ -266,47 +295,54 @@ message RespiratorySystemData
   ScalarPressureData                  EndTidalOxygenPressure                         = 10;/**<< @brief The pressure of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
   ScalarVolumePerTimeData             ExpiratoryFlow                                 = 11;/**<< @brief Instantaneous airflow out of the lungs (negative value when inhaling).*/
   ScalarPressureTimePerVolumeData     ExpiratoryPulmonaryResistance                  = 12;/**<< @brief The total resistance to airflow through the lungs during exhalation. */
-  Scalar0To1Data                      FractionOfInsipredOxygen                       = 13;/**<< @brief Fraction of Oxygen being taking into the body. */
-  ScalarPowerData                     ImposedPowerOfBreathing                        = 14;/**<< @brief Externally imposed work of breathing (e.g., from a ventilator).*/
-  ScalarEnergyData                    ImposedWorkOfBreathing                         = 15;/**<< @brief Externally imposed power of breathing (e.g., from a ventilator).*/
-  ScalarData                          InspiratoryExpiratoryRatio                     = 16;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
-  ScalarVolumePerTimeData             InspiratoryFlow                                = 17;/**<< @brief The instantaneous airflow into the lungs (negative value when exhaling).*/
-  ScalarPressureTimePerVolumeData     InspiratoryPulmonaryResistance                 = 18;/**<< @brief The total resistance to airflow through the lungs during inhalation. */
-  ScalarPressureData                  IntrapleuralPressure                           = 19;/**<< @brief The pressure difference across the whole lung.*/
-  ScalarPressureData                  IntrapulmonaryPressure                         = 20;/**<< @brief The total respiratory recoil pressure relative to body surface.*/
-  ScalarVolumePerPressureData         LungCompliance                                 = 21;/**<< @brief The measure of the lung's ability to stretch and expand.*/
-  ScalarPressureData                  MaximalInspiratoryPressure                     = 22;/**<< @brief The strength of inspiratory muscles.*/
-  ScalarPressureData                  MeanAirwayPressure                             = 23;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */
-  ScalarData                          OxygenationIndex                               = 24;/**<< @brief Used in intensive care medicine to measure the usage of oxygen within the body and predict outcomes.  A lower oxygenation index is better. */
-  ScalarPressureData                  OxygenSaturationIndex                          = 25;/**<< @brief Usage of oxygen within the body and predict outcomes. */
-  ScalarPowerData                     PatientPowerOfBreathing                        = 26;/**<< @brief Internally imposed work of breathing from the respiratory muscles.*/
-  ScalarEnergyData                    PatientWorkOfBreathing                         = 27;/**<< @brief Internally imposed power of breathing from the respiratory muscles.*/
-  ScalarPressureData                  PeakInspiratoryPressure                        = 28;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
-  ScalarVolumeData                    PhysiologicDeadSpace                           = 29;/**<< @brief The sum of the anatomic and alveolar dead space.*/
-  ScalarPressureData                  PositiveEndExpiratoryPressure                  = 30;/**<< @brief The pressure in the lungs (alveolar pressure) above atmospheric pressure at the end of expiration.*/
-  ScalarVolumePerPressureData         PulmonaryCompliance                            = 31;/**<< @brief The total compliance of the lungs.*/
-  ScalarPressurePerVolumeData         PulmonaryElastance                             = 32;/**<< @brief The inverse of lung compliance.*/
-  ScalarEnergyData                    ResistiveExpiratoryWorkOfBreathing             = 33;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during exhalation.*/
-  ScalarEnergyData                    ResistiveInspiratoryWorkOfBreathing            = 34;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during inhalation.*/
-  ScalarFrequencyData                 RespirationRate                                = 35;/**<< @brief The frequency of the respiratory cycle.*/
-  Scalar0To1Data                      RespiratoryMuscleFatigue                       = 36;/**<< @brief A measure of respiratory muscle weakness caused by excessive effort relative to the strength and endurance of the muscles.*/
-  ScalarPressureData                  RespiratoryMusclePressure                      = 37;/**<< @brief Pressure of the muscles that contribute to inhalation and exhalation, by aiding in the expansion and contraction of the thoracic cavity.*/
-  ScalarData                          SaturationAndFractionOfInspiredOxygenRatio     = 38;/**<< @brief A noninvasive surrogate for PiO2/FiO2 ratio (carrico index). */
-  ScalarData                          SpecificVentilation                            = 39;/**<< @brief The ratio of the volume of gas entering a region of the lung following an inspiration and the end-expiratory volume of that same lung region.*/
-  ScalarVolumeData                    TidalVolume                                    = 40;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
-  ScalarVolumePerTimeData             TotalAlveolarVentilation                       = 41;/**<< @brief The air flow to the alveoli.*/
-  ScalarVolumePerTimeData             TotalDeadSpaceVentilation                      = 42;/**<< @brief The air flow to the dead space.*/
-  ScalarVolumeData                    TotalLungVolume                                = 43;/**<< @brief The total volume of air within the lungs at any given time.*/
-  ScalarPowerData                     TotalPowerOfBreathing                          = 44;/**<< @brief The sum of the imposed and patient power of breathing.*/
-  ScalarVolumePerTimeData             TotalPulmonaryVentilation                      = 45;/**<< @brief The flow rate representing the exchange of air between the lungs and ambient air.*/
-  ScalarEnergyData                    TotalWorkOfBreathing                           = 46;/**<< @brief The sum of the imposed and patient work of breathing.*/
-  ScalarPressureData                  TransairwayPressure                            = 47;/**<< @brief The pressure difference between the airway opening and alveoli.*/
-  ScalarPressureData                  TransalveolarPressure                          = 48;/**<< @brief The pressure difference between the alveoli and pleural space.*/
-  ScalarPressureData                  TransChestWallPressure                         = 49;/**<< @brief The pressure difference between the pleural space and body surface.*/
-  ScalarPressureData                  TransMusclePressure                            = 50;/**<< @brief The respiratory muscle driver pressure relative to body surface.*/
-  ScalarPressureData                  TranspulmonaryPressure                         = 51;/**<< @brief The pressure difference between the alveoli and the intrapleural space.*/
-  ScalarPressureData                  TransrespiratoryPressure                       = 52;/**<< @brief The pressure difference between the airway opening and body surface.*/
-  ScalarPressureData                  TransthoracicPressure                          = 53;/**<< @brief The pressure difference between the alveoli and body surface.*/
+  ScalarVolumeData                    ExpiratoryTidalVolume                          = 13;/**<< @brief The volume of air moved into or out of the lungs during normal expiration.*/
+  Scalar0To1Data                      FractionOfInsipredOxygen                       = 14;/**<< @brief Fraction of Oxygen being taking into the body. */
+  ScalarPressureData                  HorowitzIndex                                  = 15; /**<< @brief The ratio of arterial partial pressure O2 and the inspired O2. O2 level in blood vs. Concentration of O2 in a breath.*/
+  ScalarPowerData                     ImposedPowerOfBreathing                        = 16;/**<< @brief Externally imposed work of breathing (e.g., from a ventilator).*/
+  ScalarEnergyData                    ImposedWorkOfBreathing                         = 17;/**<< @brief Externally imposed power of breathing (e.g., from a ventilator).*/
+  ScalarData                          InspiratoryExpiratoryRatio                     = 18;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
+  ScalarVolumePerTimeData             InspiratoryFlow                                = 19;/**<< @brief The instantaneous airflow into the lungs (negative value when exhaling).*/
+  ScalarPressureTimePerVolumeData     InspiratoryPulmonaryResistance                 = 20;/**<< @brief The total resistance to airflow through the lungs during inhalation. */
+  ScalarVolumeData                    InspiratoryTidalVolume                         = 21;/**<< @brief The volume of air moved into or out of the lungs during normal inspiration.*/
+  ScalarPressureData                  IntrapleuralPressure                           = 22;/**<< @brief The pressure difference across the whole lung.*/
+  ScalarPressureData                  IntrapulmonaryPressure                         = 23;/**<< @brief The total respiratory recoil pressure relative to body surface.*/
+  ScalarPressureData                  IntrinsicPositiveEndExpiredPressure            = 24;/**<< @brief The alveolar pressure at the end of expiration - also known as auto-PEEP, air trapping, or dynamic hyperinflation.*/
+  ScalarVolumePerPressureData         LungCompliance                                 = 25;/**<< @brief The static measure of the lung's ability to stretch and expand.*/
+  ScalarPressureData                  MaximalInspiratoryPressure                     = 26;/**<< @brief The strength of inspiratory muscles.*/
+  ScalarPressureData                  MeanAirwayPressure                             = 27;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */
+  ScalarData                          OxygenationIndex                               = 28;/**<< @brief Used in intensive care medicine to measure the usage of oxygen within the body and predict outcomes.  A lower oxygenation index is better. */
+  ScalarPressureData                  OxygenSaturationIndex                          = 29;/**<< @brief Usage of oxygen within the body and predict outcomes. */
+  ScalarPowerData                     PatientPowerOfBreathing                        = 30;/**<< @brief Internally imposed work of breathing from the respiratory muscles.*/
+  ScalarEnergyData                    PatientWorkOfBreathing                         = 31;/**<< @brief Internally imposed power of breathing from the respiratory muscles.*/
+  ScalarPressureData                  PeakInspiratoryPressure                        = 32;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
+  ScalarVolumeData                    PhysiologicDeadSpace                           = 33;/**<< @brief The sum of the anatomic and alveolar dead space.*/
+  ScalarPressureData                  PositiveEndExpiratoryPressure                  = 34;/**<< @brief The pressure in the lungs (alveolar pressure) above atmospheric pressure at the end of expiration.*/
+  ScalarVolumePerPressureData         PulmonaryCompliance                            = 35;/**<< @brief The total static compliance of the lungs.*/
+  ScalarPressurePerVolumeData         PulmonaryElastance                             = 36;/**<< @brief The inverse of lung static compliance.*/
+  ScalarVolumeData                    RelativeTotalLungVolume                        = 37;/**<< @brief The total volume of air within the lungs at any given time above the previous breath minimum volume.*/
+  ScalarEnergyData                    ResistiveExpiratoryWorkOfBreathing             = 38;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during exhalation.*/
+  ScalarEnergyData                    ResistiveInspiratoryWorkOfBreathing            = 39;/**<< @brief The work to overcome the frictional resistance to gas flow due to viscosity during inhalation.*/
+  ScalarFrequencyData                 RespirationRate                                = 40;/**<< @brief The frequency of the respiratory cycle.*/
+  Scalar0To1Data                      RespiratoryMuscleFatigue                       = 41;/**<< @brief A measure of respiratory muscle weakness caused by excessive effort relative to the strength and endurance of the muscles.*/
+  ScalarPressureData                  RespiratoryMusclePressure                      = 42;/**<< @brief Pressure of the muscles that contribute to inhalation and exhalation, by aiding in the expansion and contraction of the thoracic cavity.*/
+  ScalarData                          SaturationAndFractionOfInspiredOxygenRatio     = 43;/**<< @brief A noninvasive surrogate for PiO2/FiO2 ratio (horowitz index). */
+  ScalarData                          SpecificVentilation                            = 44;/**<< @brief The ratio of the volume of gas entering a region of the lung following an inspiration and the end-expiratory volume of that same lung region.*/
+  ScalarVolumeData                    TidalVolume                                    = 45;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
+  ScalarVolumePerTimeData             TotalAlveolarVentilation                       = 46;/**<< @brief The air flow to the alveoli.*/
+  ScalarVolumePerTimeData             TotalDeadSpaceVentilation                      = 47;/**<< @brief The air flow to the dead space.*/
+  ScalarVolumeData                    TotalLungVolume                                = 48;/**<< @brief The total volume of air within the lungs at any given time.*/
+  ScalarPowerData                     TotalPowerOfBreathing                          = 49;/**<< @brief The sum of the imposed and patient power of breathing.*/
+  ScalarVolumePerTimeData             TotalPulmonaryVentilation                      = 50;/**<< @brief The flow rate representing the exchange of air between the lungs and ambient air.*/
+  ScalarEnergyData                    TotalWorkOfBreathing                           = 51;/**<< @brief The sum of the imposed and patient work of breathing.*/
+  ScalarPressureData                  TransairwayPressure                            = 52;/**<< @brief The pressure difference between the airway opening and alveoli.*/
+  ScalarPressureData                  TransalveolarPressure                          = 53;/**<< @brief The pressure difference between the alveoli and pleural space.*/
+  ScalarPressureData                  TransChestWallPressure                         = 54;/**<< @brief The pressure difference between the pleural space and body surface.*/
+  ScalarPressureData                  TransMusclePressure                            = 55;/**<< @brief The respiratory muscle driver pressure relative to body surface.*/
+  ScalarPressureData                  TranspulmonaryPressure                         = 56;/**<< @brief The pressure difference between the alveoli and the intrapleural space.*/
+  ScalarPressureData                  TransrespiratoryPressure                       = 57;/**<< @brief The pressure difference between the airway opening and body surface.*/
+  ScalarPressureData                  TransthoracicPressure                          = 58;/**<< @brief The pressure difference between the alveoli and body surface.*/
+  
+  RespiratoryMechanicsData            RespiratoryMechanics                           = 59;
 }
 
 /** @brief Provides data pertaining to the extracellular and intracelluar space */

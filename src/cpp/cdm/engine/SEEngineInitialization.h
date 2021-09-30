@@ -19,9 +19,9 @@ public:
   virtual void Copy(const SEEngineInitialization& from, const SESubstanceManager& subMgr);
   virtual void Clear(); //clear memory
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
-  static bool SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr);
+  static bool SerializeFromString(const std::string& src, std::vector<SEEngineInitialization*>& dst, eSerializationFormat m, const SESubstanceManager& subMgr);
 
   virtual bool IsValid()const;
 
@@ -38,8 +38,8 @@ public:
 
   virtual bool HasState() const;
   virtual std::string GetState() const;
-  virtual void SetState(const std::string& s, SerializationFormat fmt);
-  virtual SerializationFormat GetStateFormat() const;
+  virtual void SetState(const std::string& s, eSerializationFormat fmt);
+  virtual eSerializationFormat GetStateFormat() const;
 
   virtual bool HasDataRequestManager() const;
   virtual SEDataRequestManager& GetDataRequestManager();
@@ -60,7 +60,7 @@ protected:
   SEPatientConfiguration*         m_PatientConfiguration;
   std::string                     m_StateFilename;
   std::string                     m_State;
-  SerializationFormat             m_StateFormat;
+  eSerializationFormat            m_StateFormat;
   SEDataRequestManager*           m_DataRequestManager;
   std::string                     m_LogFilename;
   bool                            m_KeepLogMessages;

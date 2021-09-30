@@ -5,11 +5,12 @@ add_library_ex(SensitivityAnalysisEngine
   CPP_FILES
     SARunner.cpp
   PUBLIC_DEPENDS
-    CommonPulseModels
+    PulseEngine
   PRIVATE_DEPENDS
     protobuf::libprotobuf
   INSTALL_HEADER_DIR
     study/sensitivity_analysis
+  NO_INSTALL
   )
 set_target_properties(SensitivityAnalysisEngine PROPERTIES FOLDER "Studies//SensitivityAnalysis")
 

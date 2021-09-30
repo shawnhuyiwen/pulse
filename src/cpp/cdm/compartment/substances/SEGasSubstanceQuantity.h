@@ -2,8 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/substances/SESubstanceQuantity.h"
-#include "substance/SESubstanceTransport.h"
+#include "cdm/compartment/substances/SESubstanceQuantity.h"
+#include "cdm/substance/SESubstanceTransport.h"
 class SEGasCompartment;
 
 class CDM_DECL SEGasSubstanceQuantity : public SESubstanceQuantity, public SEGasTransportSubstance
@@ -16,7 +16,6 @@ public:
   virtual ~SEGasSubstanceQuantity();
 
   virtual void Clear();
-  virtual void Invalidate();
 
   virtual std::string GetCompartmentName() override;
 

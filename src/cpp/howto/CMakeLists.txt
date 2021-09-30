@@ -5,6 +5,7 @@ add_executable_ex(HowToDriver
   HowTo-AirwayObstruction.cpp
   HowTo-AnesthesiaMachine.cpp
   HowTo-Asthma.cpp
+  HowTo-BagValveMask.cpp
   HowTo-BolusDrug.cpp
   HowTo-BrainInjury.cpp
   HowTo-CombatMultitrauma.cpp
@@ -20,17 +21,20 @@ add_executable_ex(HowToDriver
   HowTo-Hemorrhage.cpp
   HowTo-LobarPneumonia.cpp
   HowTo-MechanicalVentilation.cpp
+  HowTo-MechanicalVentilator.cpp
   HowTo-PulmonaryFibrosis.cpp
   HowTo-PulmonaryFunctionTest.cpp
   HowTo-PulseEnginePool.cpp
+  HowTo-RespiratoryMechanics.cpp
   HowTo-RunScenario.cpp
   HowTo-RunThreaded.cpp
   HowTo-RunThreaded.h
   HowTo-Sandbox.cpp
-  HowTo-SceanrioBase.cpp
+  HowTo-ScenarioBase.cpp
   HowTo-Serialize.cpp
   HowTo-Smoke.cpp
   HowTo-TensionPneumothorax.cpp
   HowTo-TestSystemCapability.cpp
+  HowTo-VentilationMechanics.cpp
 )
-target_link_libraries(HowToDriver CommonPulseModels)
+target_link_libraries(HowToDriver PulseEngine)

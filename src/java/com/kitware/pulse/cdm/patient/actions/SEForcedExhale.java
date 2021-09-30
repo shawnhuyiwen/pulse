@@ -47,9 +47,9 @@ public class SEForcedExhale extends SEConsciousRespirationCommand
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (expiratoryReserveVolumeFraction != null)
       expiratoryReserveVolumeFraction.invalidate();
     if (exhalePeriod != null)

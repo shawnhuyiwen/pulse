@@ -26,9 +26,9 @@ public class SETimedStabilization
     this.conditionStabilizationTimes=new HashMap<>();
   }
   
-  public void reset()
+  public void clear()
   {
-    reset();
+    clear();
     this.trackingStabilization=eSwitch.Off;
     this.restingStabilizationTime=null;
     this.feedbackStabilizationTime=null;

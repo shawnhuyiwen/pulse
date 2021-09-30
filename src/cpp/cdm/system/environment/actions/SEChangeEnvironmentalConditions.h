@@ -1,7 +1,7 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/environment/actions/SEEnvironmentAction.h"
+#include "cdm/system/environment/actions/SEEnvironmentAction.h"
 class SESubstanceManager;
 class SEEnvironmentalConditions;
 
@@ -14,7 +14,7 @@ public:
   virtual ~SEChangeEnvironmentalConditions();
 
   virtual void Clear();
-  virtual void Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr, bool preserveState=false);
+  virtual void Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
@@ -27,6 +27,9 @@ public:
   virtual std::string GetEnvironmentalConditionsFile() const;
   virtual void SetEnvironmentalConditionsFile(const std::string& fileName);
   virtual bool HasEnvironmentalConditionsFile() const;
+
+  virtual eMergeType GetMergeType() const;
+  virtual void SetMergeType(eMergeType m);
   
   virtual void ToString(std::ostream &str) const;
 
@@ -36,4 +39,5 @@ protected:
 
   std::string                m_EnvironmentalConditionsFile;
   SEEnvironmentalConditions* m_EnvironmentalConditions;
+  eMergeType                 m_MergeType;
 };  

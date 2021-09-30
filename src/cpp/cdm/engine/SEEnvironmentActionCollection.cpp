@@ -1,19 +1,19 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SEEnvironmentActionCollection.h"
-#include "system/environment/SEEnvironment.h"
-#include "system/environment/actions/SEChangeEnvironmentalConditions.h"
-#include "system/environment/actions/SEThermalApplication.h"
-#include "substance/SESubstanceManager.h"
-#include "substance/SESubstanceFraction.h"
-#include "properties/SEScalarLengthPerTime.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarHeatConductancePerArea.h"
-#include "properties/SEScalarHeatResistanceArea.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarTemperature.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEEnvironmentActionCollection.h"
+#include "cdm/system/environment/SEEnvironment.h"
+#include "cdm/system/environment/actions/SEChangeEnvironmentalConditions.h"
+#include "cdm/system/environment/actions/SEThermalApplication.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/substance/SESubstanceFraction.h"
+#include "cdm/properties/SEScalarLengthPerTime.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarHeatConductancePerArea.h"
+#include "cdm/properties/SEScalarHeatResistanceArea.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTemperature.h"
 
 SEEnvironmentActionCollection::SEEnvironmentActionCollection(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
 {
@@ -107,7 +107,7 @@ void SEEnvironmentActionCollection::GetAllActions(std::vector<const SEAction*>& 
     actions.push_back(GetThermalApplication());
 }
 
-const SEScalar* SEEnvironmentActionCollection::GetScalar(const std::string& actionName, const std::string& cmptName, const std::string& substance, const std::string& property)
+const SEScalar* SEEnvironmentActionCollection::GetScalar(const std::string& actionName, const std::string& /*cmptName*/, const std::string& /*substance*/, const std::string& property)
 {
   if (actionName == "ChangeEnvironmentalConditions")
     return GetChangeEnvironmentalConditions().GetScalar(property);

@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL ForceUnit : public CCompoundUnit
 {
 public:
   ForceUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~ForceUnit() {}
+
+  // Please use static units below
+  ForceUnit(const ForceUnit&) = delete;
+  ForceUnit& operator= (const ForceUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const ForceUnit& GetCompoundUnit(const std::string& unit);

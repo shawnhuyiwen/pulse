@@ -9,9 +9,9 @@ from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggerForward, eEven
 
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 from pulse.cdm.patient_actions import SEExercise
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
-from pulse.cdm.scalars import FrequencyUnit, LengthUnit, MassUnit, MassPerVolumeUnit, \
-                              PressureUnit, TemperatureUnit, TimeUnit
+from pulse.engine.PulseEngine import PulseEngine
+from pulse.cdm.scalars import ElectricPotentialUnit, FrequencyUnit, LengthUnit, MassUnit, MassPerVolumeUnit, \
+                              PressureUnit, TemperatureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
 
 from pulse.cdm.io.patient import serialize_patient_from_file
 from pulse.cdm.io.environment import serialize_environmental_conditions_from_file
@@ -57,13 +57,13 @@ class local_log_fowrwad(ILoggerForward):
 
 def HowTo_UseEngine():
 
-    pulse = PulsePhysiologyEngine()
+    pulse = PulseEngine()
 
     # Let's print out events from the engine
     pulse.set_event_handler(local_event_handler())
 
     #  Logging manipulation:
-    #  Passing the log_forward object to PulsePhysiologyEngine will allow you to control the logging of the engine.
+    #  Passing the log_forward object to PulseEngine will allow you to control the logging of the engine.
     #  A pre-existing class has been used here,
     #  which forwards the logging to the Python console via the logging package.
     # This is the recommended approach to logging
@@ -71,7 +71,7 @@ def HowTo_UseEngine():
 
     # You can have pulse make a log file for you,
     # Pulse will only write a log if you pass a filename
-    pulse.set_log_filename("./test_results/HowTo_EngineUse.py.log");
+    pulse.set_log_filename("./test_results/howto/HowTo_EngineUse.py.log");
 
     # You can also have Pulse write to the console (std::cout)
     # By default this is off
@@ -84,31 +84,31 @@ def HowTo_UseEngine():
     # To learn more about Data Requests please look at the data request section here:
     # https://pulse.kitware.com/_scenario_file.html
     data_requests = [
-        SEDataRequest.create_physiology_request("HeartRate", unit="1/min"),
-        SEDataRequest.create_physiology_request("ArterialPressure",  unit="mmHg"),
-        SEDataRequest.create_physiology_request("MeanArterialPressure",  unit="mmHg"),
-        SEDataRequest.create_physiology_request("SystolicArterialPressure",  unit="mmHg"),
-        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit="mmHg"),
+        SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("ArterialPressure",  unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("MeanArterialPressure",  unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("SystolicArterialPressure",  unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("OxygenSaturation"),
-        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure",  unit="mmHg"),
-        SEDataRequest.create_physiology_request("RespirationRate",  unit="1/min"),
-        SEDataRequest.create_physiology_request("SkinTemperature",  unit="degC"),
-        SEDataRequest.create_physiology_request("CardiacOutput", unit="L/min"),
-        SEDataRequest.create_physiology_request("BloodVolume",  unit="mL"),
-        SEDataRequest.create_gas_compartment_request("LeftLungPulmonary", "Volume",  unit="mL"),
-        SEDataRequest.create_gas_compartment_request("RightLungPulmonary", "Volume",  unit="L"), # Unit difference is OK!
-        SEDataRequest.create_gas_compartment_substance_request("Carina", "CarbonDioxide", "PartialPressure",  unit="mmHg"),
-        SEDataRequest.create_liquid_compartment_request("Aorta", "Pressure",  unit="mmHg"),
-        SEDataRequest.create_liquid_compartment_substance_request("Aorta", "Oxygen", "PartialPressure",  unit="mmHg"),
-        SEDataRequest.create_ecg_request("Lead3ElectricPotential",  unit="mV"),
-        SEDataRequest.create_substance_request("Oxygen", "AlveolarTransfer", "mL/s"),
-        SEDataRequest.create_substance_request("CarbonDioxide", "AlveolarTransfer", "mL/s"),
+        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure",  unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("RespirationRate",  unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("SkinTemperature",  unit=TemperatureUnit.C),
+        SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
+        SEDataRequest.create_physiology_request("BloodVolume",  unit=VolumeUnit.mL),
+        SEDataRequest.create_gas_compartment_request("LeftLungPulmonary", "Volume",  unit=VolumeUnit.mL),
+        SEDataRequest.create_gas_compartment_request("RightLungPulmonary", "Volume",  unit=VolumeUnit.L), # Unit difference is OK!
+        SEDataRequest.create_gas_compartment_substance_request("Carina", "CarbonDioxide", "PartialPressure",  unit=PressureUnit.mmHg),
+        SEDataRequest.create_liquid_compartment_request("Aorta", "Pressure",  unit=PressureUnit.mmHg),
+        SEDataRequest.create_liquid_compartment_substance_request("Aorta", "Oxygen", "PartialPressure",  unit=PressureUnit.mmHg),
+        SEDataRequest.create_ecg_request("Lead3ElectricPotential",  unit=ElectricPotentialUnit.mV),
+        SEDataRequest.create_substance_request("Oxygen", "AlveolarTransfer", VolumePerTimeUnit.mL_Per_s),
+        SEDataRequest.create_substance_request("CarbonDioxide", "AlveolarTransfer", VolumePerTimeUnit.mL_Per_s),
     ]
     data_req_mgr = SEDataRequestManager(data_requests)
     # NOTE: If No data requests are being provided, Pulse will return the default vitals data
     # In addition to getting this data back via this API
     # You can have Pulse write the data you have requested to a CSV file
-    data_req_mgr.set_results_filename("./test_results/HowTo_EngineUse.py.csv")
+    data_req_mgr.set_results_filename("./test_results/howto/HowTo_EngineUse.py.csv")
 
     # There are several ways to initialize an engine to a patient
     start_type = eStartType.Stabilize_PatientObject

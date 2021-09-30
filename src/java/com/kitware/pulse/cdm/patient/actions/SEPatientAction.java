@@ -24,9 +24,9 @@ public abstract class SEPatientAction extends SEAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
   }
   
   public static void load(PatientActionData src, SEPatientAction dst) 
@@ -191,6 +191,12 @@ public abstract class SEPatientAction extends SEAction
     {
       SERespiratoryFatigue dst = new SERespiratoryFatigue();
       SERespiratoryFatigue.load(c.getRespiratoryFatigue(), dst);
+      return dst;
+    }
+    case RESPIRATORYMECHANICSCONFIGURATION:
+    {
+      SERespiratoryMechanicsConfiguration dst = new SERespiratoryMechanicsConfiguration();
+      SERespiratoryMechanicsConfiguration.load(c.getRespiratoryMechanicsConfiguration(), dst);
       return dst;
     }
     case SUBSTANCEBOLUS:
@@ -362,6 +368,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SERespiratoryFatigue)
     {
       dst.setRespiratoryFatigue(SERespiratoryFatigue.unload((SERespiratoryFatigue)c));
+      return dst.build();
+    }
+    if(c instanceof SERespiratoryMechanicsConfiguration)
+    {
+      dst.setRespiratoryMechanicsConfiguration(SERespiratoryMechanicsConfiguration.unload((SERespiratoryMechanicsConfiguration)c));
       return dst.build();
     }
     if(c instanceof SESubstanceBolus)

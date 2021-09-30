@@ -16,10 +16,10 @@ public class SEElectroCardioGramWaveform
   
   public SEElectroCardioGramWaveform()
   {
-    reset();
+    clear();
   }
   
-  public void reset()
+  public void clear()
   {
     lead = ElectroCardioGramWaveformData.eWaveformLead.NullLead;
     rhythm = null;
@@ -29,7 +29,7 @@ public class SEElectroCardioGramWaveform
   
   public static void load(ElectroCardioGramWaveformData src, SEElectroCardioGramWaveform dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.getRhythm()!=eHeartRhythm.UNRECOGNIZED)
       dst.setRhythm(src.getRhythm());
     if(src.getLead()!=ElectroCardioGramWaveformData.eWaveformLead.UNRECOGNIZED)

@@ -162,6 +162,7 @@ message SubstanceData
   string                                       Name                           = 1; /**<< @brief The unique name of the substance. */
   ScalarMassPerVolumeData                      Density                        = 2; /**<< @brief Mass density of a substance */                   
   ScalarMassPerAmountData                      MolarMass                      = 3; /**<< @brief Molar mass of the substance. */
+  ScalarData                                   Valence                        = 24;/**<< @brief Number of electrons for chemical bond formation. */
   eState                                       State                          = 4; /**<< @brief @ref SubstanceData_eStateTable */
   /** Diffusion */
   ScalarMassPerAreaTimeData                    MaximumDiffusionFlux           = 5; /**<< @brief Maximum mass flux of a substance when diffusing across a membrane. */

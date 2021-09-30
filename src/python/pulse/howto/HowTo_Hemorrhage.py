@@ -3,16 +3,16 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient_actions import SEHemorrhage, eHemorrhageType
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.scalars import VolumePerTimeUnit
 
 def HowTo_Hemorrhage():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_Hemorrhage.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_Hemorrhage.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/Soldier@0s.pbb", None):
+    if not pulse.serialize_from_file("./states/Soldier@0s.json", None):
         print("Unable to load initial state file")
         return
 
@@ -23,8 +23,7 @@ def HowTo_Hemorrhage():
     # Perform an action
     hemorrhage = SEHemorrhage()
     hemorrhage.set_comment("Laceration to the leg")
-    hemorrhage.set_type(eHemorrhageType.External)
-    hemorrhage.set_compartment("RightLeg")
+    hemorrhage.set_external(SEHemorrhage.ExternalCompartment.RightLeg)
     hemorrhage.get_severity().set_value(0.8)
     # Optionally, You can set the flow rate of the hemorrhage,
     # but this needs to be provided the proper flow rate associated with the anatomy

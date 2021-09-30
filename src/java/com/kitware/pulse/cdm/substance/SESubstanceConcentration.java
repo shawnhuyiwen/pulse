@@ -18,7 +18,7 @@ public class SESubstanceConcentration
     this.substance=s;
   }
   
-  public void reset()
+  public void clear()
   {
     if(this.concentration!=null)
       this.concentration.invalidate();
@@ -26,7 +26,7 @@ public class SESubstanceConcentration
   
   public static void load(SubstanceConcentrationData src, SESubstanceConcentration dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.hasConcentration())
       SEScalarMassPerVolume.load(src.getConcentration(), dst.getConcentration());
   }

@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL MassPerVolumeUnit : public CCompoundUnit
 {
 public:
   MassPerVolumeUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~MassPerVolumeUnit() {}
+
+  // Please use static units below
+  MassPerVolumeUnit(const MassPerVolumeUnit&) = delete;
+  MassPerVolumeUnit& operator= (const MassPerVolumeUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const MassPerVolumeUnit& GetCompoundUnit(const std::string& unit);
@@ -21,7 +25,7 @@ public:
   static const MassPerVolumeUnit g_Per_L;
   static const MassPerVolumeUnit g_Per_mL;
   static const MassPerVolumeUnit g_Per_cm3;
-  static const MassPerVolumeUnit g_Per_m3;  
+  static const MassPerVolumeUnit g_Per_m3;
   static const MassPerVolumeUnit mg_Per_mL;
   static const MassPerVolumeUnit mg_Per_L;
   static const MassPerVolumeUnit mg_Per_dL;

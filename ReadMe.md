@@ -215,6 +215,10 @@ In this example we are building on a windows machine, using the Lumin SDK v0.24.
 Please follow the [Lumin instructions on generating a cmake toolchain file](https://developer.magicleap.com/en-us/learn/guides/sdk-mabu-ref-build-and-link-libraries#build-libraries-with-cmake) needed for cross compiling.
 
 I had to modify the toolchain file, adding '-llog' for protobuf's use of the android log methods, as well as '-g -std=c++11 -Wall -pedantic' to add C++11 support.
+`set(CMAKE_CXX_FLAGS "-g -std=c++1z -Wall -pedantic ` <br>
+`set(CMAKE_EXE_LINKER_FLAGS "-llog ` <br>
+`set(CMAKE_SHARED_LINKER_FLAGS "-llog ` <br>
+
 Here is a copy of the [modified toolchain file](https://data.kitware.com/api/v1/file/5f29b9489014a6d84e57067a/download)
 
 To generate a Makefile and build, run :
@@ -222,6 +226,7 @@ To generate a Makefile and build, run :
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # Where -H specifies the Pulse source, and -B is the build directory
 cmake -DPulse_JAVA_API:BOOL=OFF -DCMAKE_TOOLCHAIN_FILE:FILEPATH=C:/Programming/magicleap.0.24.1.toolchain.cmake -BC:/Programming/Builds/pulse-engine-lumin -HC:/Programming/Pulse/engine -G "Unix Makefiles"
+
 # Run make from within your build directory
 N:/Tools/MagicLeap/dev/mlsdk/v0.24.1/tools/mabu/tools/MinGW/bin/mingw32-make.exe
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

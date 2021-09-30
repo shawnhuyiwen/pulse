@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SESubstanceCompoundInfusion.h"
-#include "substance/SESubstanceCompound.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarVolume.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SESubstanceCompoundInfusion.h"
+#include "cdm/substance/SESubstanceCompound.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SESubstanceCompoundInfusion::SESubstanceCompoundInfusion(const SESubstanceCompound& compound, Logger* logger) : SEPatientAction(logger), m_Compound(compound)
 {
@@ -28,7 +28,7 @@ void SESubstanceCompoundInfusion::Clear()
   INVALIDATE_PROPERTY(m_BagVolume);
 }
 
-void SESubstanceCompoundInfusion::Copy(const SESubstanceCompoundInfusion& src, bool preserveState)
+void SESubstanceCompoundInfusion::Copy(const SESubstanceCompoundInfusion& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);

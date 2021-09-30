@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEPatientAssessmentRequest.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEPatientAssessmentRequest.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEPatientAssessmentRequest::SEPatientAssessmentRequest(Logger* logger) : SEPatientAction(logger)
 {
@@ -21,7 +21,7 @@ void SEPatientAssessmentRequest::Clear()
   m_Type=ePatientAssessment_Type::CompleteBloodCount;
 }
 
-void SEPatientAssessmentRequest::Copy(const SEPatientAssessmentRequest& src, bool preserveState)
+void SEPatientAssessmentRequest::Copy(const SEPatientAssessmentRequest& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
@@ -43,7 +43,7 @@ void SEPatientAssessmentRequest::Deactivate()
   Clear();//No stateful properties
 }
 
-const SEScalar* SEPatientAssessmentRequest::GetScalar(const std::string& name)
+const SEScalar* SEPatientAssessmentRequest::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

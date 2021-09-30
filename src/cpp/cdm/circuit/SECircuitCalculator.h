@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "utils/SmartEnum.h"
+#include "cdm/utils/SmartEnum.h"
 
 #define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, typename BlackBoxType, \
                                     typename CapacitanceUnit, typename FluxUnit, typename InductanceUnit, \

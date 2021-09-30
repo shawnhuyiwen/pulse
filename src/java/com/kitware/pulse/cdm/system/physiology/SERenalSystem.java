@@ -19,60 +19,60 @@ import com.kitware.pulse.cdm.system.SESystem;
 
 public class SERenalSystem extends SEPhysiologySystem implements SESystem
 {
-  protected SEScalarVolumePerTime glomerularFiltrationRate;
-  protected SEScalar0To1 filtrationFraction;
-  protected SEScalarPressureTimePerVolume leftAfferentArterioleResistance;
-  protected SEScalarPressure leftBowmansCapsulesHydrostaticPressure;
-  protected SEScalarPressure leftBowmansCapsulesOsmoticPressure;
-  protected SEScalarPressureTimePerVolume leftEfferentArterioleResistance;
-  protected SEScalarPressure leftGlomerularCapillariesHydrostaticPressure;
-  protected SEScalarPressure leftGlomerularCapillariesOsmoticPressure;
-  protected SEScalarVolumePerTimePressure leftGlomerularFiltrationCoefficient;
-  protected SEScalarVolumePerTime leftGlomerularFiltrationRate;
-  protected SEScalarArea leftGlomerularFiltrationSurfaceArea;
+  protected SEScalar0To1                      filtrationFraction;
+  protected SEScalarVolumePerTime             glomerularFiltrationRate;
+  protected SEScalarPressureTimePerVolume     leftAfferentArterioleResistance;
+  protected SEScalarPressure                  leftBowmansCapsulesHydrostaticPressure;
+  protected SEScalarPressure                  leftBowmansCapsulesOsmoticPressure;
+  protected SEScalarPressureTimePerVolume     leftEfferentArterioleResistance;
+  protected SEScalarPressure                  leftGlomerularCapillariesHydrostaticPressure;
+  protected SEScalarPressure                  leftGlomerularCapillariesOsmoticPressure;
+  protected SEScalarVolumePerTimePressure     leftGlomerularFiltrationCoefficient;
+  protected SEScalarVolumePerTime             leftGlomerularFiltrationRate;
+  protected SEScalarArea                      leftGlomerularFiltrationSurfaceArea;
   protected SEScalarVolumePerTimePressureArea leftGlomerularFluidPermeability;
-  protected SEScalar0To1 leftFiltrationFraction;
-  protected SEScalarPressure leftNetFiltrationPressure;
-  protected SEScalarPressure leftNetReabsorptionPressure;
-  protected SEScalarPressure leftPeritubularCapillariesHydrostaticPressure;
-  protected SEScalarPressure leftPeritubularCapillariesOsmoticPressure;
-  protected SEScalarVolumePerTimePressure leftReabsorptionFiltrationCoefficient;
-  protected SEScalarVolumePerTime leftReabsorptionRate;
-  protected SEScalarPressure leftTubularOsmoticPressure;
-  protected SEScalarPressure leftTubularHydrostaticPressure;
-  protected SEScalarArea leftTubularReabsorptionFiltrationSurfaceArea;
+  protected SEScalar0To1                      leftFiltrationFraction;
+  protected SEScalarPressure                  leftNetFiltrationPressure;
+  protected SEScalarPressure                  leftNetReabsorptionPressure;
+  protected SEScalarPressure                  leftPeritubularCapillariesHydrostaticPressure;
+  protected SEScalarPressure                  leftPeritubularCapillariesOsmoticPressure;
+  protected SEScalarVolumePerTimePressure     leftReabsorptionFiltrationCoefficient;
+  protected SEScalarVolumePerTime             leftReabsorptionRate;
+  protected SEScalarPressure                  leftTubularOsmoticPressure;
+  protected SEScalarPressure                  leftTubularHydrostaticPressure;
+  protected SEScalarArea                      leftTubularReabsorptionFiltrationSurfaceArea;
   protected SEScalarVolumePerTimePressureArea leftTubularReabsorptionFluidPermeability;
-  protected SEScalarVolumePerTime renalBloodFlow;
-  protected SEScalarVolumePerTime renalPlasmaFlow;
-  protected SEScalarPressureTimePerVolume renalVascularResistance;
-  protected SEScalarPressureTimePerVolume rightAfferentArterioleResistance;
-  protected SEScalarPressure rightBowmansCapsulesHydrostaticPressure;
-  protected SEScalarPressure rightBowmansCapsulesOsmoticPressure;
-  protected SEScalarPressureTimePerVolume rightEfferentArterioleResistance;
-  protected SEScalarPressure rightGlomerularCapillariesHydrostaticPressure;
-  protected SEScalarPressure rightGlomerularCapillariesOsmoticPressure;
-  protected SEScalarVolumePerTimePressure rightGlomerularFiltrationCoefficient;
-  protected SEScalarVolumePerTime rightGlomerularFiltrationRate;
-  protected SEScalarArea rightGlomerularFiltrationSurfaceArea;
+  protected SEScalarVolumePerTime             renalBloodFlow;
+  protected SEScalarVolumePerTime             renalPlasmaFlow;
+  protected SEScalarPressureTimePerVolume     renalVascularResistance;
+  protected SEScalarPressureTimePerVolume     rightAfferentArterioleResistance;
+  protected SEScalarPressure                  rightBowmansCapsulesHydrostaticPressure;
+  protected SEScalarPressure                  rightBowmansCapsulesOsmoticPressure;
+  protected SEScalarPressureTimePerVolume     rightEfferentArterioleResistance;
+  protected SEScalarPressure                  rightGlomerularCapillariesHydrostaticPressure;
+  protected SEScalarPressure                  rightGlomerularCapillariesOsmoticPressure;
+  protected SEScalarVolumePerTimePressure     rightGlomerularFiltrationCoefficient;
+  protected SEScalarVolumePerTime             rightGlomerularFiltrationRate;
+  protected SEScalarArea                      rightGlomerularFiltrationSurfaceArea;
   protected SEScalarVolumePerTimePressureArea rightGlomerularFluidPermeability;
-  protected SEScalar0To1 rightFiltrationFraction;
-  protected SEScalarPressure rightNetFiltrationPressure;
-  protected SEScalarPressure rightNetReabsorptionPressure;
-  protected SEScalarPressure rightPeritubularCapillariesHydrostaticPressure;
-  protected SEScalarPressure rightPeritubularCapillariesOsmoticPressure;
-  protected SEScalarVolumePerTimePressure rightReabsorptionFiltrationCoefficient;
-  protected SEScalarVolumePerTime rightReabsorptionRate;
-  protected SEScalarPressure rightTubularOsmoticPressure;
-  protected SEScalarPressure rightTubularHydrostaticPressure;
-  protected SEScalarArea rightTubularReabsorptionFiltrationSurfaceArea;
+  protected SEScalar0To1                      rightFiltrationFraction;
+  protected SEScalarPressure                  rightNetFiltrationPressure;
+  protected SEScalarPressure                  rightNetReabsorptionPressure;
+  protected SEScalarPressure                  rightPeritubularCapillariesHydrostaticPressure;
+  protected SEScalarPressure                  rightPeritubularCapillariesOsmoticPressure;
+  protected SEScalarVolumePerTimePressure     rightReabsorptionFiltrationCoefficient;
+  protected SEScalarVolumePerTime             rightReabsorptionRate;
+  protected SEScalarPressure                  rightTubularOsmoticPressure;
+  protected SEScalarPressure                  rightTubularHydrostaticPressure;
+  protected SEScalarArea                      rightTubularReabsorptionFiltrationSurfaceArea;
   protected SEScalarVolumePerTimePressureArea rightTubularReabsorptionFluidPermeability;
-  protected SEScalarVolumePerTime urinationRate;
-  protected SEScalarOsmolality urineOsmolality;
-  protected SEScalarOsmolarity urineOsmolarity;
-  protected SEScalarVolumePerTime urineProductionRate;
-  protected SEScalar urineSpecificGravity;
-  protected SEScalarVolume urineVolume;
-  protected SEScalarMassPerVolume urineUreaNitrogenConcentration;
+  protected SEScalarVolumePerTime             urinationRate;
+  protected SEScalarOsmolality                urineOsmolality;
+  protected SEScalarOsmolarity                urineOsmolarity;
+  protected SEScalarVolumePerTime             urineProductionRate;
+  protected SEScalar                          urineSpecificGravity;
+  protected SEScalarVolume                    urineVolume;
+  protected SEScalarMassPerVolume             urineUreaNitrogenConcentration;
 
   public SERenalSystem()
   {
@@ -133,7 +133,7 @@ public class SERenalSystem extends SEPhysiologySystem implements SESystem
   }
 
   @Override
-  public void reset()
+  public void clear()
   {
     if (glomerularFiltrationRate != null)
       glomerularFiltrationRate.invalidate();

@@ -25,9 +25,9 @@ public class SEAdvanceTime extends SEAction
   }
   
   @Override
-  public void reset() 
+  public void clear() 
   {
-    super.reset();
+    super.clear();
     if (hasTime())
       time.invalidate();
   }

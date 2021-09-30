@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "engine/SEDataRequest.h"
+#include "cdm/engine/SEDataRequest.h"
 class SESubstance;
 class SESubstanceManager;
 
@@ -14,12 +14,12 @@ public:
   ~SEDataRequestManager();
 
   void Clear();
-  void Copy(const SEDataRequestManager& src, const SESubstanceManager& subMgr);
+  void Copy(const SEDataRequestManager& src);
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
-  bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
+  bool SerializeFromString(const std::string& src, eSerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
 
   bool HasResultsFilename() const { return !m_ResultsFilename.empty(); }
   std::string GetResultFilename() const { return m_ResultsFilename; }

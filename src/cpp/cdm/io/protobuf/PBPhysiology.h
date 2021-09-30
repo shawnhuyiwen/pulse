@@ -13,6 +13,7 @@ CDM_BIND_DECL2(HepaticSystem)
 CDM_BIND_DECL2(NervousSystem)
 CDM_BIND_DECL2(PupillaryResponse)
 CDM_BIND_DECL2(RenalSystem)
+CDM_BIND_DECL2(RespiratoryMechanics)
 CDM_BIND_DECL2(RespiratorySystem)
 CDM_BIND_DECL2(TissueSystem)
 
@@ -82,6 +83,16 @@ public:
   static void Serialize(const SERenalSystem& src, CDM_BIND::RenalSystemData& dst);
 
   // Respiratory
+  static void Load(const CDM_BIND::RespiratoryMechanicsData& src, SERespiratoryMechanics& dst);
+  static CDM_BIND::RespiratoryMechanicsData* Unload(const SERespiratoryMechanics& src);
+  static void Serialize(const CDM_BIND::RespiratoryMechanicsData& src, SERespiratoryMechanics& dst);
+  static void Serialize(const SERespiratoryMechanics& src, CDM_BIND::RespiratoryMechanicsData& dst);
+  static bool SerializeToString(const SERespiratoryMechanics& src, std::string& output, eSerializationFormat m);
+  static bool SerializeToFile(const SERespiratoryMechanics& src, const std::string& filename);
+  static bool SerializeFromString(const std::string& src, SERespiratoryMechanics& dst, eSerializationFormat m);
+  static bool SerializeFromFile(const std::string& filename, SERespiratoryMechanics& dst);
+
+
   static void Load(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst);
   static CDM_BIND::RespiratorySystemData* Unload(const SERespiratorySystem& src);
   static void Serialize(const CDM_BIND::RespiratorySystemData& src, SERespiratorySystem& dst);

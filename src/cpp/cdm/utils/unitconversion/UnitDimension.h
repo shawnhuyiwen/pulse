@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------
 #pragma once
 
-#include "CompoundUnitElement.h"
+#include "cdm/utils/unitconversion/CompoundUnitElement.h"
 
 // The nth element in our array contains the total exponent of the nth fundamental
 // quantity type in the transitive closure of the expansion of each unit in 

@@ -24,7 +24,7 @@ circuits have several types of feedback mechanisms that can be set and
 changed at every time step.  Figure&nbsp;1 presents a generic example of very low fidelity lumped
 parameter physiology circuits.  Circuits can be thought of as pipe networks for fluid analysis.
 
-@image html CircuitLumpExample.png
+<img src="./Images/Circuit/CircuitLumpExample.png">
 <center>
 <i>Figure 1.  An example of physiology lumped parameter modeling.  This
 example shows very low fidelity models of specific cardiovascular
@@ -36,7 +36,7 @@ and free breathing model (right) @cite Clipp2012Humansim.</i>
 
 The CDM includes many of the same generic definitions traditionally used to define and analyze circuits.  Paths are ideal conductor branches that may contain elements (i.e., resistors, capacitors, inductors, diodes, etc.).  Nodes are junctions at the intersection of paths.  Figure&nbsp;2 shows these base circuit element definitions.  Paths are each assigned one source and one target node.  We use the convention of positive current from source to target when performing calculations.
 
-@image html CircuitBaseDefinitions.png
+<img src="./Images/Circuit/CircuitBaseDefinitions.png">
 <center>
 <i>Figure 2. Nodes and paths are the lowest level elements used to define all circuits.  Paths correspond to ideal conductors (i.e., wires).  Nodes are placed at the intersections of paths.  In fluid systems, paths can be thought of as frictionless pipes and nodes as pipe junctions.</i>
 </center><br>
@@ -491,7 +491,7 @@ convention of the current across voltage sources is reversed for LTspice,
 because it does not maintain the source-to-target positive current
 standard as is done with the engine.
 
-@image html Comprehensive2CircuitDiagram.png
+<center><img src="./Images/Circuit/Comprehensive2CircuitDiagram.png" width="800"></center>
 <center>
 *Figure 4.  The LTspice circuit diagram for the first comprehensive
 circuit that exemplifies the validation completed on the solver.  Many
@@ -514,7 +514,7 @@ correlated.  The signs of the current through voltage sources are reversed
 because of differing conventions for those elements.*
 </center><br>
 
-@image html Comprehensive1CircuitDiagram.png
+<center><img src="./Images/Circuit/Comprehensive1CircuitDiagram.png" width="800"></center>
 <center>
 *Figure 7.  The LTspice circuit diagram for the second comprehensive
 circuit that exemplifies the validation completed on the solver.  Many
@@ -539,7 +539,7 @@ because of differing conventions for those elements.*
 
 The engine has been shown to successfully conserve mass, energy, and momentum within all defined closed-loop systems. The successful conservation of mass provided by the solver is shown in Figure 10. The volume (quantity/charge) within cardiovascular circuit nodes through approximately 2.5 full heart beat cycles.  The total volume of all compartments remains at a constant value of 5L throughout the entire process.
 
-@image html CardiovascularCompartmentVolumes.png
+<img src="./Images/Circuit/CardiovascularCompartmentVolumes.png">
 <center>
 *Figure 10.  The blood volume within each compartment continuously varies in the cardiovascular circuit.   The sum of these volumes does not change at any time step, and system mass is successfully conserved.*
 </center><br>

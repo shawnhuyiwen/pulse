@@ -2,11 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/SESystem.h"
-
-   // Keep enums in sync with appropriate schema/cdm/PhysiologyEnums.proto file !!
-enum class eBreathState { Inhale = 0, Pause, Exhale };
-extern const std::string& eBreathState_Name(eBreathState m);
+#include "cdm/system/SESystem.h"
+#include "cdm/system/physiology/SERespiratoryMechanics.h"
 
 class CDM_DECL SERespiratorySystem : public SESystem
 {
@@ -16,9 +13,13 @@ public:
   SERespiratorySystem(Logger* logger);
   virtual ~SERespiratorySystem();
 
-  virtual void Clear();// Deletes all members
+  virtual void Clear();
   
   virtual const SEScalar* GetScalar(const std::string& name);
+
+  virtual bool HasAirwayPressure() const;
+  virtual SEScalarPressure& GetAirwayPressure();
+  virtual double GetAirwayPressure(const PressureUnit& unit) const;
 
   virtual bool HasAlveolarArterialGradient() const;
   virtual SEScalarPressure& GetAlveolarArterialGradient();
@@ -32,9 +33,9 @@ public:
   virtual SEScalarVolume& GetAnatomicDeadSpace();
   virtual double GetAnatomicDeadSpace(const VolumeUnit& unit) const;
 
-  virtual bool HasCarricoIndex() const;
-  virtual SEScalarPressure& GetCarricoIndex();
-  virtual double GetCarricoIndex(const PressureUnit& unit) const;
+  virtual bool HasHorowitzIndex() const;
+  virtual SEScalarPressure& GetHorowitzIndex();
+  virtual double GetHorowitzIndex(const PressureUnit& unit) const;
 
   virtual bool HasChestWallCompliance() const;
   virtual SEScalarVolumePerPressure& GetChestWallCompliance();
@@ -68,6 +69,10 @@ public:
   virtual SEScalarPressureTimePerVolume& GetExpiratoryPulmonaryResistance();
   virtual double GetExpiratoryPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const;
 
+  virtual bool HasExpiratoryTidalVolume() const;
+  virtual SEScalarVolume& GetExpiratoryTidalVolume();
+  virtual double GetExpiratoryTidalVolume(const VolumeUnit& unit) const;
+
   virtual bool HasFractionOfInsipredOxygen() const;
   virtual SEScalar0To1& GetFractionOfInsipredOxygen();
   virtual double GetFractionOfInsipredOxygen() const;
@@ -92,6 +97,10 @@ public:
   virtual SEScalarPressureTimePerVolume& GetInspiratoryPulmonaryResistance();
   virtual double GetInspiratoryPulmonaryResistance(const PressureTimePerVolumeUnit& unit) const;
 
+  virtual bool HasInspiratoryTidalVolume() const;
+  virtual SEScalarVolume& GetInspiratoryTidalVolume();
+  virtual double GetInspiratoryTidalVolume(const VolumeUnit& unit) const;
+
   virtual bool HasIntrapleuralPressure() const;
   virtual SEScalarPressure& GetIntrapleuralPressure();
   virtual double GetIntrapleuralPressure(const PressureUnit& unit) const;
@@ -99,6 +108,10 @@ public:
   virtual bool HasIntrapulmonaryPressure() const;
   virtual SEScalarPressure& GetIntrapulmonaryPressure();
   virtual double GetIntrapulmonaryPressure(const PressureUnit& unit) const;
+
+  virtual bool HasIntrinsicPositiveEndExpiredPressure() const;
+  virtual SEScalarPressure& GetIntrinsicPositiveEndExpiredPressure();
+  virtual double GetIntrinsicPositiveEndExpiredPressure(const PressureUnit& unit) const;
 
   virtual bool HasLungCompliance() const;
   virtual SEScalarVolumePerPressure& GetLungCompliance();
@@ -147,6 +160,10 @@ public:
   virtual bool HasPulmonaryElastance() const;
   virtual SEScalarPressurePerVolume& GetPulmonaryElastance();
   virtual double GetPulmonaryElastance(const PressurePerVolumeUnit& unit) const;
+
+  virtual bool HasRelativeTotalLungVolume() const;
+  virtual SEScalarVolume& GetRelativeTotalLungVolume();
+  virtual double GetRelativeTotalLungVolume(const VolumeUnit& unit) const;
 
   virtual bool HasResistiveExpiratoryWorkOfBreathing() const;
   virtual SEScalarEnergy& GetResistiveExpiratoryWorkOfBreathing();
@@ -232,13 +249,18 @@ public:
   virtual SEScalarPressure& GetTransthoracicPressure();
   virtual double GetTransthoracicPressure(const PressureUnit& unit) const;
 
+  virtual bool HasActiveRespiratoryMechanics() const;
+  virtual bool HasRespiratoryMechanics() const;
+  virtual SERespiratoryMechanics& GetRespiratoryMechanics();
+  virtual const SERespiratoryMechanics* GetRespiratoryMechanics() const;
 
 protected:
-
+  
+  SEScalarPressure*              m_AirwayPressure;
   SEScalarPressure*              m_AlveolarArterialGradient;
   SEScalarVolume*                m_AlveolarDeadSpace;
   SEScalarVolume*                m_AnatomicDeadSpace;
-  SEScalarPressure*              m_CarricoIndex;
+  SEScalarPressure*              m_HorowitzIndex;
   SEScalarVolumePerPressure*     m_ChestWallCompliance;
   SEScalarEnergy*                m_ElasticWorkOfBreathing;
   SEScalar0To1*                  m_EndTidalCarbonDioxideFraction;
@@ -247,14 +269,17 @@ protected:
   SEScalarPressure*              m_EndTidalOxygenPressure;
   SEScalarVolumePerTime*         m_ExpiratoryFlow;
   SEScalarPressureTimePerVolume* m_ExpiratoryPulmonaryResistance;
+  SEScalarVolume*                m_ExpiratoryTidalVolume;
   SEScalar0To1*                  m_FractionOfInsipredOxygen;
   SEScalarPower*                 m_ImposedPowerOfBreathing;
   SEScalarEnergy*                m_ImposedWorkOfBreathing;
   SEScalar*                      m_InspiratoryExpiratoryRatio;
   SEScalarVolumePerTime*         m_InspiratoryFlow;
   SEScalarPressureTimePerVolume* m_InspiratoryPulmonaryResistance;
+  SEScalarVolume*                m_InspiratoryTidalVolume;
   SEScalarPressure*              m_IntrapleuralPressure;
   SEScalarPressure*              m_IntrapulmonaryPressure;
+  SEScalarPressure*              m_IntrinsicPositiveEndExpiredPressure;
   SEScalarVolumePerPressure*     m_LungCompliance;
   SEScalarPressure*              m_MaximalInspiratoryPressure;
   SEScalarPressure*              m_MeanAirwayPressure;
@@ -267,6 +292,7 @@ protected:
   SEScalarPressure*              m_PositiveEndExpiratoryPressure;
   SEScalarVolumePerPressure*     m_PulmonaryCompliance;
   SEScalarPressurePerVolume*     m_PulmonaryElastance;
+  SEScalarVolume*                m_RelativeTotalLungVolume;
   SEScalarEnergy*                m_ResistiveExpiratoryWorkOfBreathing;
   SEScalarEnergy*                m_ResistiveInspiratoryWorkOfBreathing;
   SEScalarFrequency*             m_RespirationRate;
@@ -288,4 +314,6 @@ protected:
   SEScalarPressure*              m_TranspulmonaryPressure;
   SEScalarPressure*              m_TransrespiratoryPressure;
   SEScalarPressure*              m_TransthoracicPressure;
+
+  SERespiratoryMechanics*        m_RespiratoryMechanics;
 };

@@ -39,9 +39,9 @@ public class SEConsciousRespiration extends SEPatientAction
   }  
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     commands.clear();
     startImmediately = false;
   }

@@ -25,7 +25,7 @@ After being eaten, food is stored in the stomach, gradually digested, then relea
 At this point, nutrients are either quickly absorbed into the blood through the intestinal wall or further broken down prior to absorption. 
 An overview of the digestive tract is shown in Figure 1.
 
-@image html DigestiveTractDetail.png
+<img src="./Images/GI/DigestiveTractDetail.png">
 <center>
 <i>
 Figure 1. The human digestive tract is composed of several distinct sections @cite LadyofHats2006Digestive. 
@@ -76,7 +76,7 @@ Nutrient data is converted to substance data in the following manner :
               That mass is then decremented from the stomach calcium mass.
               The mass is also multiplied by a configurable calcium absorption factor, 
               and the amount of calcium in the small intestine vasculatur is incremented by that product.
-    - Sodium - A transfer mass is calculated as a function of the concentration of sodium in the stomach and the water digestion rate.
+  - Sodium - A transfer mass is calculated as a function of the concentration of sodium in the stomach and the water digestion rate.
                This mass is decremented from the stomach sodium mass.
                The resulting sodium mass is incremented in the small intestine vasculatur compartment.
   - Water -  A transfer volume is directly calculated from the configurable water digestion rate and engine timestep.
@@ -115,7 +115,7 @@ Features, Capabilities, and Dependencies
 ### Circuit
 
 @anchor GI-circuit
-@image html GICircuit.png
+<img src="./Images/GI/GICircuit.png">
 <center>
 <i>
 Figure 2. The %GI circuit is made up of nodes and paths with elements and is connected to extravascular tissue and the cardiovascular system.

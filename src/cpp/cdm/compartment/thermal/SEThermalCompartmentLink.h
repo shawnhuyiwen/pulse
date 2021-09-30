@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/SECompartmentLink.h"
+#include "cdm/compartment/SECompartmentLink.h"
 class SEThermalBlackBox;
 class SEThermalCompartment;
 class SEThermalCircuitPath;
@@ -46,7 +46,7 @@ protected:
   SEThermalBlackBox* m_BlackBox = nullptr;
 };
 
-#include "compartment/SECompartmentGraph.h"
+#include "cdm/compartment/SECompartmentGraph.h"
 class SEThermalCompartmentGraph : public SECompartmentGraph<SEThermalCompartment, SEThermalCompartmentLink>
 {
 public:

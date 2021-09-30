@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SENeedleDecompression.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SENeedleDecompression.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SENeedleDecompression::SENeedleDecompression(Logger* logger) : SEPatientAction(logger)
 {
@@ -24,7 +24,7 @@ void SENeedleDecompression::Clear()
   m_Side= eSide::NullSide;
 }
 
-void SENeedleDecompression::Copy(const SENeedleDecompression& src, bool preserveState)
+void SENeedleDecompression::Copy(const SENeedleDecompression& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
@@ -48,7 +48,7 @@ void SENeedleDecompression::Deactivate()
   Clear();//No stateful properties
 }
 
-const SEScalar* SENeedleDecompression::GetScalar(const std::string& name)
+const SEScalar* SENeedleDecompression::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/assessments/SEPatientAssessment.h"
+#include "cdm/patient/assessments/SEPatientAssessment.h"
 
 class CDM_DECL SEComprehensiveMetabolicPanel : public SEPatientAssessment
 {
@@ -14,7 +14,7 @@ public:
 
   virtual void Clear(); //clear memory
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
 
   bool HasAlbumin() const;

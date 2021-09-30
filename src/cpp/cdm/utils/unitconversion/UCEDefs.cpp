@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "utils/unitconversion/UnitConversionEngine.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/utils/unitconversion/UnitConversionEngine.h"
 
 // This originally started out as a file read from disk
 // But this file rarely changed, and when it did, 
@@ -116,9 +116,6 @@ void CUnitConversionEngine::GetUCEdefs()
   UCE(UNIT  Distance  fathom        fathom     6           ft   NoPrefixes)
   UCE(UNIT  Distance  cubit         cubit      18          in   NoPrefixes)
 
-  UCE(QUANTITY  FUNDAMENTAL  Osmole)
-  UCE(UNIT  Osmole    osmole        Osm        1.0         *    GoodPrefixes m)
-
   // A radian is 1 / 2pi, or .5 / pi, of a cycle.The derived type is m / m because it's a dimensionless
   // ratio of the length of an arc to the length of an entire circumference.
   // We define this way, instead of the standard definition of a radian as 1.0 m of
@@ -148,6 +145,12 @@ void CUnitConversionEngine::GetUCEdefs()
   // Avogadro's constant is the number of things in a mole of things, or simply "inverse moles". 
   UCE(QUANTITY  DERIVED    InverseAmount  1/mol)
   UCE(UNIT  InverseAmount  AvogadrosConstant  Na  6.02214179E23  *  NoPrefixes)
+
+  UCE(QUANTITY  FUNDAMENTAL  EquivalentWeight)
+  UCE(UNIT  EquivalentWeight    equivalent   Eq   1.0 * GoodPrefixes m)
+
+  UCE(QUANTITY  FUNDAMENTAL  Osmole)
+  UCE(UNIT  Osmole    osmole        Osm        1.0 * GoodPrefixes m)
 
   // Now that we have Avogadro's constant, define other amounts
   UCE(UNIT  AmountOfSubstance  count    ct    1.0      Na^-1  NoPrefixes)
@@ -293,7 +296,6 @@ void CUnitConversionEngine::GetUCEdefs()
 
   UCE(QUANTITY  DERIVED    ActivityRadionuclide  1/s)
   UCE(UNIT  ActivityRadionuclide  becquerel  Bq  1.0    *  AllPrefixes)
-
 
   UCE(QUANTITY  DERIVED    Radiation-Dose  J/kg)
   UCE(UNIT  Radiation-Dose  gray    Gy  1.0   *   AllPrefixes)

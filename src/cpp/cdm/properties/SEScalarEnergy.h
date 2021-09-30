@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL EnergyUnit : public CCompoundUnit
 {
 public:
   EnergyUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~EnergyUnit() {}
+
+  // Please use static units below
+  EnergyUnit(const EnergyUnit&) = delete;
+  EnergyUnit& operator= (const EnergyUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const EnergyUnit& GetCompoundUnit(const std::string& unit);

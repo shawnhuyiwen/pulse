@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "substance/SESubstanceClearance.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarMassPerTime.h"
-#include "properties/SEScalarVolumePerTimeMass.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/substance/SESubstanceClearance.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarMassPerTime.h"
+#include "cdm/properties/SEScalarVolumePerTimeMass.h"
 
 SESubstanceClearance::SESubstanceClearance(Logger* logger) : Loggable(logger)
 {

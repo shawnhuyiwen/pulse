@@ -1,29 +1,31 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "stdafx.h"
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
-#include "system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
-#include "substance/SESubstance.h"
-#include "substance/SESubstanceManager.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarFrequency.h"
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "io/protobuf/PBEquipmentActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineConfiguration.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineChamber.h"
+#include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachineOxygenBottle.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceManager.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/io/protobuf/PBEquipmentActions.h"
 
 SEAnesthesiaMachineConfiguration::SEAnesthesiaMachineConfiguration(Logger* logger) : SEAnesthesiaMachineAction(logger)
 {
   m_ConfigurationFile = "";
   m_Configuration = nullptr;
+  m_MergeType = eMergeType::Append;
 }
 
 SEAnesthesiaMachineConfiguration::~SEAnesthesiaMachineConfiguration()
 {
   m_ConfigurationFile = "";
   SAFE_DELETE(m_Configuration);
+  m_MergeType = eMergeType::Append;
 }
 
 void SEAnesthesiaMachineConfiguration::Clear()
@@ -32,9 +34,10 @@ void SEAnesthesiaMachineConfiguration::Clear()
   m_ConfigurationFile = "";
   if (m_Configuration)
     m_Configuration->Clear();
+  m_MergeType = eMergeType::Append;
 }
 
-void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr, bool preserveState)
+void SEAnesthesiaMachineConfiguration::Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/)
 {// Using Bindings to make a copy
   PBEquipmentAction::Copy(src, *this, subMgr);
 }
@@ -87,6 +90,15 @@ bool SEAnesthesiaMachineConfiguration::HasConfigurationFile() const
   return !m_ConfigurationFile.empty();
 }
 
+void SEAnesthesiaMachineConfiguration::SetMergeType(eMergeType m)
+{
+  m_MergeType = m;
+}
+eMergeType SEAnesthesiaMachineConfiguration::GetMergeType() const
+{
+  return m_MergeType;
+}
+
 void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
 {
   str << "Anesthesia Machine Configuration";
@@ -98,7 +110,7 @@ void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
   }
   else if (HasConfiguration())
   {
-    str << "\n\tConnection: " << eAnesthesiaMachine_Connection_Name(m_Configuration->GetConnection());
+    str << "\n\tConnection: " << eSwitch_Name(m_Configuration->GetConnection());
     str << "\n\tInlet Flow Rate: "; m_Configuration->HasInletFlow() ? str << m_Configuration->GetInletFlow() : str << "NaN";
     str << "\n\tInspiratoryExpiratory Ratio: "; m_Configuration->HasInspiratoryExpiratoryRatio() ? str << m_Configuration->GetInspiratoryExpiratoryRatio() : str << "NaN";
     str << "\n\tOxygen Fraction: "; m_Configuration->HasOxygenFraction() ? str << m_Configuration->GetOxygenFraction() : str << "NaN";
@@ -129,5 +141,6 @@ void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
       str << "\n\tOxygenBottleTwoVolume: "; m_Configuration->GetOxygenBottleTwo().HasVolume() ? str << m_Configuration->GetOxygenBottleTwo().GetVolume() : str << "Not Set";
     }
   }
+  str << "\n\tMergeType: " << eMergeType_Name(m_MergeType);
   str << std::flush;
 }

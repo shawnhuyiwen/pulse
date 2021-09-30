@@ -18,9 +18,9 @@ public class SEAnesthesiaMachineExpiratoryValveObstruction extends SEAnesthesiaM
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (severity != null)
       severity.invalidate();
   }

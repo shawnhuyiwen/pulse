@@ -22,9 +22,9 @@ public:
 
   virtual void Clear();
 
-  virtual bool SerializeToString(std::string& output, SerializationFormat) const = 0;
+  virtual bool SerializeToString(std::string& output, eSerializationFormat) const = 0;
   virtual bool SerializeToFile(const std::string& filename) const = 0;
-  virtual bool SerializeFromString(const std::string& src, SerializationFormat) = 0;
+  virtual bool SerializeFromString(const std::string& src, eSerializationFormat) = 0;
   virtual bool SerializeFromFile(const std::string& filename) = 0;
 
   virtual bool StabilizeRestingState(Controller& engine)=0;

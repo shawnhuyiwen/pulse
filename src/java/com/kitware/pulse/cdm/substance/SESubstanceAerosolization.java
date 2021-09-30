@@ -19,7 +19,7 @@ public class SESubstanceAerosolization
     
   }
   
-  public void reset()
+  public void clear()
   {
     if(this.bronchioleModifier!=null)
       this.bronchioleModifier.invalidate();
@@ -38,7 +38,7 @@ public class SESubstanceAerosolization
   
   public static void load(SubstanceAerosolizationData src, SESubstanceAerosolization dst)
   {
-    dst.reset();
+    dst.clear();
 
     if(src.hasBronchioleModifier())
       SEScalarNegative1To1.load(src.getBronchioleModifier(),dst.getBronchioleModifier());

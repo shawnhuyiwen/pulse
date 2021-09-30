@@ -5,8 +5,8 @@
 /// @file CompoundUnit.cpp
 /// @author Chris Volpe
 //----------------------------------------------------------------------------
-#include "stdafx.h"
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 //----------------------------------------------------------------------------
 void CCompoundUnit::ParseString(const std::string &unitString)

@@ -28,9 +28,9 @@ public class SESerializeState extends SEAction
   }
   
   @Override
-  public void reset() 
+  public void clear() 
   {
-    super.reset();
+    super.clear();
     filename = "";
     type = null;
   }

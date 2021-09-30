@@ -1,14 +1,14 @@
 /* Distributed under the Apache License, Version 2.0.
 See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "circuit/thermal/SEThermalCircuitPath.h"
-#include "properties/SEScalarHeatResistance.h"
-#include "properties/SEScalarHeatCapacitance.h"
-#include "properties/SEScalarHeatInductance.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarTemperature.h"
-#include "properties/SEScalarEnergy.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/circuit/thermal/SEThermalCircuitPath.h"
+#include "cdm/properties/SEScalarHeatResistance.h"
+#include "cdm/properties/SEScalarHeatCapacitance.h"
+#include "cdm/properties/SEScalarHeatInductance.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarTemperature.h"
+#include "cdm/properties/SEScalarEnergy.h"
 
 SEThermalCircuitPath::SEThermalCircuitPath(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt, const std::string& name) :
   SECircuitPath<THERMAL_CIRCUIT_PATH>(src, tgt ,name),
@@ -77,6 +77,10 @@ double SEThermalCircuitPath::GetResistanceBaseline(const HeatResistanceUnit& uni
     return SEScalar::dNaN();
   return m_ResistanceBaseline->GetValue(unit);
 }
+void SEThermalCircuitPath::RemoveResistance()
+{
+  SECircuitPath::RemoveResistance();
+}
 
 //////////////////////////////////
 // Thermal Capacitance Types //
@@ -124,6 +128,10 @@ double SEThermalCircuitPath::GetCapacitanceBaseline(const HeatCapacitanceUnit& u
     return SEScalar::dNaN();
   return m_CapacitanceBaseline->GetValue(unit);
 }
+void SEThermalCircuitPath::RemoveCapacitance()
+{
+  SECircuitPath::RemoveCapacitance();
+}
 
 /////////////////////////////////
 // Thermal Inductance Types //
@@ -170,6 +178,10 @@ double SEThermalCircuitPath::GetInductanceBaseline(const HeatInductanceUnit& uni
   if (m_InductanceBaseline == nullptr)
     return SEScalar::dNaN();
   return m_InductanceBaseline->GetValue(unit);
+}
+void SEThermalCircuitPath::RemoveInductance()
+{
+  SECircuitPath::RemoveInductance();
 }
 
 
@@ -246,6 +258,10 @@ double SEThermalCircuitPath::GetHeatSourceBaseline(const PowerUnit& unit) const
     return SEScalar::dNaN();
   return m_FluxSourceBaseline->GetValue(unit);
 }
+void SEThermalCircuitPath::RemoveHeatSource()
+{
+  SECircuitPath::RemoveFluxSource();
+}
 
 ////////////////////////////////
 // Thermal Potential Types //
@@ -292,6 +308,11 @@ double SEThermalCircuitPath::GetTemperatureSourceBaseline(const TemperatureUnit&
     return SEScalar::dNaN();
   return m_PotentialSourceBaseline->GetValue(unit);
 }
+void SEThermalCircuitPath::RemoveTemperatureSource()
+{
+  SECircuitPath::RemovePotentialSource();
+}
+
 bool SEThermalCircuitPath::HasValveBreakdownTemperature() const
 {
   return HasValveBreakdownPotential();

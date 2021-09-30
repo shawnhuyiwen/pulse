@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
-#include "stdafx.h"
-#include "system/environment/SEAppliedTemperature.h"
-#include "properties/SEScalarArea.h"
-#include "properties/SEScalar0To1.h"
-#include "properties/SEScalarPower.h"
-#include "properties/SEScalarTemperature.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/system/environment/SEAppliedTemperature.h"
+#include "cdm/properties/SEScalarArea.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarPower.h"
+#include "cdm/properties/SEScalarTemperature.h"
 
 SEAppliedTemperature::SEAppliedTemperature(Logger* logger) : Loggable(logger)
 {

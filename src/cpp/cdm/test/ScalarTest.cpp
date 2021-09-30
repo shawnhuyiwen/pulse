@@ -24,7 +24,7 @@
 #include "utils/DataTrack.h"
 #include "engine/SEDecimalFormat.h"
 
-void CommonDataModelTest::ScalarTest(const std::string& sOutputDirectory)
+void CommonDataModelTest::ScalarTest(const std::string& /*sOutputDirectory*/)
 {
   std::ofstream file;
   SEDecimalFormat fixed;

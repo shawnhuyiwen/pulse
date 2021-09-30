@@ -329,6 +329,12 @@ The PK model was validated by comparing the plasma concentration calculated by t
 <i>Figure 4. Albuterol is an aerosol. Alveolar exchange takes place bidirectionally as long as the "gas" (aerosol) is in the blood or in the environment. For that reason, the concentration of Albuterol in the plasma diminishes much faster in the engine than demonstrated in literature @cite anderson1998pharmacokinetics. This is a known issue and an area of future work.</i>
 </center><br>
 
+<img src="./plots/Drugs/Etomidate.jpg" width="1100">
+<center>
+<i>Figure 5. The physical chemical properties of etomidate found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite Hebron1983pharmacokinetics, @cite Valk2021etomidate, and @cite VanHamme1978pharmacokinetics.</i>
+</center><br>
+
+
 <img src="./plots/Drugs/Fentanyl.jpg" width="1100">
 <center>
 <i>Figure 5. The physical chemical properties of fentanyl found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite shankaran2013physiologically.</i>
@@ -336,52 +342,52 @@ The PK model was validated by comparing the plasma concentration calculated by t
 
 <img src="./plots/Drugs/Furosemide.jpg" width="1100">
 <center>
-<i>Figure 5. The physical chemical properties of furosemide found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite hammarlund1985acute.</i>
+<i>Figure 6. The physical chemical properties of furosemide found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite hammarlund1985acute.</i>
 </center><br>
 
 <img src="./plots/Drugs/Ketamine.jpg" width="1100">
 <center>
-<i>Figure 6. The partition coefficients were calculated from initial physical chemical properties found for Ketamine. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite xie2003analgesic.</i>
+<i>Figure 7. The partition coefficients were calculated from initial physical chemical properties found for Ketamine. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite xie2003analgesic.</i>
 </center><br>
 
 <img src="./plots/Drugs/Midazolam.jpg" width="1100">
 <center>
-<i>Figure 7. The engine curve for midazolam plasma concentration shows a good overall fit with the experimental data found in @cite schwagmeier1998midazolam. However, the clearance dominant (end) portion of the curve shows that the engine should be clearing more quickly, while midazolam appears to move into the tissues too quickly during the diffusion dominant portion of the curve (beginning).</i>
+<i>Figure 8. The engine curve for midazolam plasma concentration shows a good overall fit with the experimental data found in @cite schwagmeier1998midazolam. However, the clearance dominant (end) portion of the curve shows that the engine should be clearing more quickly, while midazolam appears to move into the tissues too quickly during the diffusion dominant portion of the curve (beginning).</i>
 </center><br>
 
 <img src="./plots/Drugs/Morphine.jpg" width="1100">
 <center>
-<i>Figure 8. The physical chemical properties of morphine found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite lotsch2002pharmacokinetic.</i>
+<i>Figure 9. The physical chemical properties of morphine found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite lotsch2002pharmacokinetic.</i>
 </center><br>
 
 <img src="./plots/Drugs/Naloxone.jpg" width="1100">
 <center>
-<i>Figure 9.  The partition coefficients were calculated from initial physical chemical properties found for Naloxone. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite aitkenhead1984pharmacokinetics.</i>
+<i>Figure 10.  The partition coefficients were calculated from initial physical chemical properties found for Naloxone. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite aitkenhead1984pharmacokinetics.</i>
 </center><br>
 
 <img src="./plots/Drugs/Pralidoxime.jpg" width="1100">
 <center>
-<i>Figure 10. The pralidoxime experimental data found in @cite abbara2010pharmacokinetic was collected after an intramuscular injection. This administration method is available in the engine, so was used to validate the drug. The overall fit between the engine data and the experimental data was good. A slightly higher concentration throughout was evident and may be attributed to the amount of drug that never exits the muscle when this type of injection occurs. In the future, a loss factor could be added to represent this drug amount.</i>
+<i>Figure 11. The pralidoxime experimental data found in @cite abbara2010pharmacokinetic was collected after an intramuscular injection. This administration method is available in the engine, so was used to validate the drug. The overall fit between the engine data and the experimental data was good. A slightly higher concentration throughout was evident and may be attributed to the amount of drug that never exits the muscle when this type of injection occurs. In the future, a loss factor could be added to represent this drug amount.</i>
 </center><br>
 
 <img src="./plots/Drugs/Prednisone.jpg" width="1100">
 <center>
-<i>Figure 11.  The physical chemical properties of prednisone found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite rose1981dose.</i>
+<i>Figure 12.  The physical chemical properties of prednisone found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite rose1981dose.</i>
 </center><br>
 
 <img src="./plots/Drugs/Propofol.jpg" width="1100">
 <center>
-<i>Figure 12. The propofol experimental data was collected during and after an infusion of propofol. The engine is able to support a rate and concentration input for an infusion; therefore, the infusion methodology was used to adminster propofol in the engine. The infusion explains the initial curve evident in the plasma concentration. The initial diffusion dominant portion of the curve shows a reduced diffusion into the tissues compared to the experimental data; however, the clearance dominant portion of the curve shows good agreement with the data found in @cite ward2002pharmacodynamics.</i>
+<i>Figure 13. The propofol experimental data was collected during and after an infusion of propofol. The engine is able to support a rate and concentration input for an infusion; therefore, the infusion methodology was used to adminster propofol in the engine. The infusion explains the initial curve evident in the plasma concentration. The initial diffusion dominant portion of the curve shows a reduced diffusion into the tissues compared to the experimental data; however, the clearance dominant portion of the curve shows good agreement with the data found in @cite ward2002pharmacodynamics.</i>
 </center><br>
 
 <img src="./plots/Drugs/Rocuronium.jpg" width="1100">
 <center>
-<i>Figure 13. The calculated plasma concentration curve for Rocuronium shows good agreement with the experimental data found in @cite de2014analysis. This is particularly true for the diffusion dominant portion of the curve, while the engine clearance is less than that shown in the experimental data.</i>
+<i>Figure 14. The calculated plasma concentration curve for Rocuronium shows good agreement with the experimental data found in @cite de2014analysis. This is particularly true for the diffusion dominant portion of the curve, while the engine clearance is less than that shown in the experimental data.</i>
 </center><br>
 
 <img src="./plots/Drugs/Succinylcholine.jpg" width="1100">
 <center>
-<i>Figure 14. The succinycholine pharmacokinetics were initially calculated from the values found in literature for the physical chemical properties. However, this were significantly adjusted to attempt to match the calculated plasma concentration to the experimental data found in @cite roy2002concentration.</i>
+<i>Figure 15. The succinycholine pharmacokinetics were initially calculated from the values found in literature for the physical chemical properties. However, this were significantly adjusted to attempt to match the calculated plasma concentration to the experimental data found in @cite roy2002concentration.</i>
 </center><br>
 
 The above results show that, in general, the model chosen for the engine produces good agreement between experimental and calculated data. However, it also reveals that for some drugs, this model does not appear to be valid. Future work will investigate the incorporation of vaporized substance methodologies, and additional partition coefficient calculations that may prove more accurate for specific drug types. Further statistical analysis will also be undertaken to assess the model performance rather than solely relying on a qualitative analysis.
@@ -398,10 +404,10 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
-|	Albuterol	|	Administer 90 ug metered dose of Albuterol	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
+|	Albuterol	|	Administer 90 ug metered dose of Albuterol	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Etomidate	|	Administer 21 ug injection of Etomidate	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Epinephrine	|	Administer 10 ug injection of Epinephrine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	Fentanyl	|	Administer 17 mg injection of Fentanyl	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Furosemide	|	Administer 40 mg injection of Furosemide	|<span class="success">	4	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Ketamine	|	Administer 115 mg injection of Ketamine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	Midazolam	|	Administer 5 mg injection of Midazolam	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Morphine	|	Administer 42 mg injection of Morphine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
@@ -411,27 +417,27 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |	Propofol	|	Administer 135 mg injection of Propofol	|<span class="success">	4	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
 |	Rocuronium	|	Administer 52 mg injection of Rocuronium	|<span class="success">	2	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Succinylcholine	|	Administer 96 mg injection of Succinylcholine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	54	</span>|<span class="warning">	2	</span>|<span class="danger">	5	</span>|
+|		|	Total	|<span class="success">	59	</span>|<span class="warning">	2	</span>|<span class="danger">	4	</span>|
 
 <center>
 <i>Table 6. The validation results for liquid-modeled drugs.</i>
 </center>
 
-|	Event	|	Notes	|	Action Occurance Time (s)	|	Sample Scenario Time (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (breaths/min)	|	Oxygen Saturation	|
+|	Event	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate  (beats/min)	|	Systolic Pressure  (mmHg)	|	Diastolic Pressure  (mmHg)	|	Respiration Rate  (breaths/min)	|	Oxygen Saturation	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Administer Epinephrine - 10ug	|	Drug Onset < 1 minute	|	30	|	150	|<span class="warning">	25-50% Increase @cite dukeSME	</span>|<span class="success">	25-50% Increase @cite dukeSME 	</span>|<span class="success">	25-50% Increase @cite dukeSME 	</span>|<span class="success">	NC @cite dukeSME	</span>|<span class="success">	NC 	</span>|
+|	Administer Epinephrine - 10ug	|	Drug Onset < 1 minute	|	30	|	150	|<span class="success">	25-50% Increase @cite dukeSME	</span>|<span class="success">	25-50% Increase @cite dukeSME 	</span>|<span class="success">	25-50% Increase @cite dukeSME 	</span>|<span class="success">	NC @cite dukeSME	</span>|<span class="success">	NC 	</span>|
+|	Administer Etomidate - 21 mg	|	Drug Onset < 1 minute	|	30	|	100	|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Little Respiratory Depression @cite Valk2021etomidate	</span>|<span class="success">	NC	</span>|
 |	Administer Fentanyl - 17 mg	|	Drug Onset < two minutes	|	30	|	100	|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Decrease @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 15-25% Decrease @cite dukeSME	</span>|<span class="success">	NC 	</span>|
 |	Administer Ketamine - 115 mg	|	Drug Onset < 1 minute	|	30	|	200	|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="warning">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Mild Decrease @cite Morgan2006Clinical p200; 25-50% Decrease @cite dukeSME     	</span>|<span class="success">	NC 	</span>|
 |	Administer Midazolam - 5 mg	|	Drug Onset in 1-3 min and lasts 30-60 minutes	|	30	|	70	|<span class="success">	Mild Increase @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; Marked Decrease To 0 @cite dukeSME    	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
-|	Administer Morphine- 42 mg	|	Drug Onset in less than 2 minutes	|	30	|	100	|<span class="success">	Mild Decrease @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME     	</span>|<span class="success">	Decrease - dose dependant @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Decrease - dose dependant @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME   	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
+|	Administer Morphine- 42 mg	|	Drug Onset in less than 2 minutes	|	30	|	100	|<span class="success">	Mild Decrease @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME     	</span>|<span class="success">	Decrease - dose dependent @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Decrease - dose dependent @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME   	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
 |	Administer Fentanyl - 17 mg	|	Drug Onset < two minutes	|	30	|	100	|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277;  5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Decrease @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 15-25% Decrease @cite dukeSME	</span>|<span class="success">	NC 	</span>|
 |	Administer Naloxone - 30ug	|	Drug Onset in one to two minutes	|	330	|	350	|<span class="success">	NC or Increase @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p285; 5-10% Increase @cite dukeSME   	</span>|<span class="success">	NC or Increase @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p285; 5-10% Increase @cite dukeSME   	</span>|<span class="success">	NC or Increase @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p285; 5-10% Increase @cite dukeSME   	</span>|<span class="success">	Decrease @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p285; Return to resting physiology @cite dukeSME   	</span>|<span class="success">	NC or Increase  	</span>|
 |	Administer Pralidoxime - 135 mg	|	Drug Onset in less than 1 minute	|	30	|	100	|<span class="success">	Tachycardia @cite rxlist	</span>|<span class="success">	Increased @cite rxlist   	</span>|<span class="success">	Increased @cite rxlist   	</span>|<span class="success">	Increased @cite rxlist	</span>|<span class="success">	NC @cite safety  	</span>|
 |	Administer Prednisone - 135 mg	|	Drug Onset in less than 1 minute	|	30	|	100	|<span class="success">	NC @cite safety  	</span>|<span class="success">	NC @cite safety  	</span>|<span class="success">	NC @cite safety  	</span>|<span class="success">	NC @cite safety  	</span>|<span class="success">	NC @cite safety  	</span>|
 |	Administer Propofol - 135 mg	|	Drug Onset in less than 1 minute	|	30	|	100	|<span class="danger">	NC @cite Morgan2006Clinical p200; NC @cite dukeSME     	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 25-40% Decrease @cite dukeSME    	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 25-40% Decrease @cite dukeSME    	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 100% Decrease @cite dukeSME    	</span>|<span class="success">	Begins to drop according to O2 curve 	</span>|
 |	Administer Rocuronium - 52 mg	|	Drug Onset in 60-90 seconds	|	30	|	100	|<span class="danger">	NC @cite PaulGBarash2009 p299; NC @cite dukeSME     	</span>|<span class="danger">	NC @cite PaulGBarash2009 p299; NC @cite dukeSME     	</span>|<span class="danger">	NC @cite PaulGBarash2009 p299; NC @cite dukeSME     	</span>|<span class="success">	Goes to Zero @cite Morgan2006Clinical p224; Goes to Zero @cite dukeSME     	</span>|<span class="success">	Begins to drop according to O2 curve 	</span>|
-|	Administer Succinycholine - 96 mg	|	Drug Onset < 1 minute	|	30	|	100	|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Goes to Zero @cite Morgan2006Clinical p224; Goes to Zero @cite dukeSME     	</span>|<span class="success">	Begins to drop according to O2 curve 	</span>|
-
+|	Administer Succinylcholine - 96 mg	|	Drug Onset < 1 minute	|	30	|	100	|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Mild  Increase @cite Morgan2006Clinical pp210-5; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Goes to Zero @cite Morgan2006Clinical p224; Goes to Zero @cite dukeSME     	</span>|<span class="success">	Begins to drop according to O2 curve 	</span>|
 
 <center>
 <i>Table 7. The validation results for gas-modeled drugs.</i>
@@ -474,6 +480,35 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
 <center>
 <i>Figure 15. The diuretic furosemide causes an inhibition of reabsorption due to its effect on the tubular lumen co-transporter. Total blood volume decreases as urine production and ion excretion increase. Eventually, as the body clears the drug, urine production and ion excretion both begin to return to normal.</i>
 </center><br>
+
+Norepinephrine occurs naturally in the body and its basal metabolic value is validated as part of the @ref BloodChemistryMethodology. The infusion of norepinephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for five different infusion rates. They are shown in Table 9.
+
+<center>
+<i>Table 9. The validation results for Norepinephrine.</i>
+</center>
+
+|	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate (beats/min)	|	Computed Heart Rate (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Norepinephrine	|	0.01	|	[0.363, 0.605] @cite ensinger1992relationship	|<span class="warning">	0.761	</span>|	[46, 66] NC to neglible @cite ensinger1992relationship	|<span class="success">	73	</span>|	[125, 145] Minimal Increase @cite ensinger1992relationship	|<span class="warning">	118	</span>|	[65, 75] NC @cite ensinger1992relationship	|<span class="warning">	72	</span>|
+|	Norepinephrine	|	0.06	|	[2.265, 3.391] @cite ensinger1992relationship	|<span class="success">	2.32	</span>|	[41, 57]Minimal Decrease @cite ensinger1992relationship	|<span class="success">	70	</span>|	[136, 160]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	118	</span>|	[70, 84]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	72	</span>|
+|	Norepinephrine	|	0.1	|	[3.608, 4.408] @cite ensinger1992relationship	|<span class="success">	3.71	</span>|	[40, 56] Minimal Decrease @cite ensinger1992relationship	|<span class="success">	68	</span>|	[146, 168]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	125	</span>|	[74, 86] Minimal Increase @cite ensinger1992relationship	|<span class="success">	84	</span>|
+|	Norepinephrine	|	0.14	|	[4.619, 6.765] @cite ensinger1992relationship	|<span class="success">	5.05	</span>|	[39, 55] Minimal Decrease@cite ensinger1992relationship	|<span class="success">	69	</span>|	[152, 182]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	135	</span>|	[77, 93] Minimal Increase @cite ensinger1992relationship	|<span class="success">	98	</span>|
+|	Norepinephrine	|	0.2	|	[6.404, 8.546] @cite ensinger1992relationship	|<span class="success">	7.1	</span>|	[39, 55] NC @cite ensinger1992relationship	|<span class="success">	69	</span>|	[174, 192]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	136	</span>|	[83, 99] Minimal Increase @cite ensinger1992relationship	|<span class="success">	100	</span>|
+
+The infusion of phenylephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for four different infusion rates. They are shown in Table 10.
+
+<center>
+<i>Table 10. The validation results for Phenylephrine.</i>
+</center>
+
+|	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate Change (beats/min)	|	Computed Heart Rate Change (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
+|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
+|	Phenylephrine	|	0.5	|	[2.5, 5.2] @cite martinsson1986analysis	|<span class="warning">	6	</span>|	[1, -5]  @cite martinsson1986analysis	|<span class="success">	-2	</span>|	[0, 6] @cite martinsson1986analysis	|<span class="success">	6	</span>|	[2, 9] @cite martinsson1986analysis	|<span class="success">	9	</span>|
+|	Phenylephrine	|	1	|	[5.02, 13.0] @cite martinsson1986analysis	|<span class="success">	12.4	</span>|	[-3, -8]  @cite martinsson1986analysis	|<span class="warning">	-2	</span>|	[6, 20] @cite martinsson1986analysis	|<span class="success">	9	</span>|	[9, 15] @cite martinsson1986analysis	|<span class="success">	13	</span>|
+|	Phenylephrine	|	2	|	[12.4, 26.3] @cite martinsson1986analysis	|<span class="success">	24.9	</span>|	[-8, -12]  @cite martinsson1986analysis	|<span class="danger">	-1	</span>|	[16, 53] @cite martinsson1986analysis	|<span class="warning">	13	</span>|	[15, 21] @cite martinsson1986analysis	|<span class="success">	19	</span>|
+|	Phenylephrine	|	4	|	[35.6, 77.8] @cite martinsson1986analysis	|<span class="success">	48.4	</span>|	[-10, -13]  @cite martinsson1986analysis	|<span class="danger">	2	</span>|	[30, 86] @cite martinsson1986analysis	|<span class="warning">	17	</span>|	[25, 32] @cite martinsson1986analysis	|<span class="success">	25	</span>|
+
+
 
 @anchor drugs-conclusions
 Conclusions

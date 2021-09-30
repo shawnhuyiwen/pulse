@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEDyspnea.h"
-#include "properties/SEScalar0To1.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEDyspnea.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEDyspnea::SEDyspnea(Logger* logger) : SEPatientAction(logger)
 {
@@ -22,7 +22,7 @@ void SEDyspnea::Clear()
   INVALIDATE_PROPERTY(m_Severity);
 }
 
-void SEDyspnea::Copy(const SEDyspnea& src, bool preserveState)
+void SEDyspnea::Copy(const SEDyspnea& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);

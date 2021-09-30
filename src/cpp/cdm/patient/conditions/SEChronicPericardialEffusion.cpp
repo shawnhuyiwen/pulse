@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/conditions/SEChronicPericardialEffusion.h"
-#include "properties/SEScalarVolume.h"
-#include "io/protobuf/PBPatientConditions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/conditions/SEChronicPericardialEffusion.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/io/protobuf/PBPatientConditions.h"
 
 SEChronicPericardialEffusion::SEChronicPericardialEffusion(Logger* logger) : SEPatientCondition(logger)
 {

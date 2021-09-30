@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEChestCompressionForce.h"
-#include "properties/SEScalarForce.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEChestCompressionForce.h"
+#include "cdm/properties/SEScalarForce.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEChestCompressionForce::SEChestCompressionForce(Logger* logger) : SEPatientAction(logger)
 {
@@ -22,7 +22,7 @@ void SEChestCompressionForce::Clear()
   INVALIDATE_PROPERTY(m_Force);
 }
 
-void SEChestCompressionForce::Copy(const SEChestCompressionForce& src, bool preserveState)
+void SEChestCompressionForce::Copy(const SEChestCompressionForce& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);

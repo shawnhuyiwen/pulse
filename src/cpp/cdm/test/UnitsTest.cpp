@@ -42,7 +42,7 @@ void CommonDataModelTest::ConvertList(std::vector<std::string> stringList)
   }
 }
 
-void CommonDataModelTest::UnitsTest(const std::string& sOutputDirectory)
+void CommonDataModelTest::UnitsTest(const std::string& /*sOutputDirectory*/)
 {
   try
   {

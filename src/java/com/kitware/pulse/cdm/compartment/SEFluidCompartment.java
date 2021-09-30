@@ -22,9 +22,9 @@ public abstract class SEFluidCompartment extends SECompartment
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
     if (pressure != null)
       pressure.invalidate();
     if (inFlow != null)

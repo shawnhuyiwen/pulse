@@ -9,6 +9,7 @@ import com.google.common.primitives.Doubles;
 import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.SerializationType;
 
+import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.cdm.actions.SEAction;
 import com.kitware.pulse.cdm.bind.Engine.ActionListData;
 import com.kitware.pulse.cdm.bind.Engine.AnyActionData;
@@ -19,6 +20,7 @@ import com.kitware.pulse.cdm.bind.Events.ActiveEventListData;
 import com.kitware.pulse.cdm.bind.Events.EventChangeData;
 import com.kitware.pulse.cdm.bind.Events.EventChangeListData;
 import com.kitware.pulse.cdm.bind.Patient.PatientData;
+import com.kitware.pulse.cdm.bind.PatientAssessments.ArterialBloodGasTestData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.CompleteBloodCountData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanelData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
@@ -29,6 +31,7 @@ import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEActiveEvent;
 import com.kitware.pulse.cdm.engine.SEEventHandler;
 import com.kitware.pulse.cdm.engine.SEPatientConfiguration;
+import com.kitware.pulse.cdm.patient.assessments.SEArterialBloodGasTest;
 import com.kitware.pulse.cdm.patient.assessments.SECompleteBloodCount;
 import com.kitware.pulse.cdm.patient.assessments.SEComprehensiveMetabolicPanel;
 import com.kitware.pulse.cdm.patient.assessments.SEPatientAssessment;
@@ -43,7 +46,6 @@ import com.kitware.pulse.utilities.JNIBridge;
 
 public class PulseEngine
 {
-
   protected boolean        alive  = false;
   protected double         timeStep_s = 0.02;
   protected double         timeRemainder = 0;
@@ -52,12 +54,22 @@ public class PulseEngine
 
   public PulseEngine()
   {
-    this("./");
+    this("./", eModelType.HumanAdultWholeBody);
+  }
+  public PulseEngine(eModelType m)
+  {
+    this("./", m);
   }
   public PulseEngine(String dataDir)
   {
+    this(dataDir, eModelType.HumanAdultWholeBody);
+  }
+  public PulseEngine(String dataDir, eModelType m)
+  {
     JNIBridge.initialize();
-    nativeObj=nativeAllocate(dataDir);
+    if(m == eModelType.UNRECOGNIZED)
+      m = eModelType.HumanAdultWholeBody;
+    nativeObj=nativeAllocate(dataDir, m.ordinal());
     timeStep_s = nativeGetTimeStep(nativeObj,"s");
   }
 
@@ -214,12 +226,12 @@ public class PulseEngine
     }
     try
     {
-      if(assessment instanceof SEPulmonaryFunctionTest)
+      if(assessment instanceof SEArterialBloodGasTest)
       {
-        PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
-        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.PulmonaryFunctionTest.ordinal(), thunkType.value());
+        ArterialBloodGasTestData.Builder b = ArterialBloodGasTestData.newBuilder();
+        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.ArterialBloodGasTest.ordinal(), thunkType.value());
         JsonFormat.parser().merge(str, b);
-        SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
+        SEArterialBloodGasTest.load(b.build(),((SEArterialBloodGasTest)assessment));
         return true;
       }
       
@@ -238,6 +250,15 @@ public class PulseEngine
         String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.ComprehensiveMetabolicPanel.ordinal(), thunkType.value());
         JsonFormat.parser().merge(str, b);
         SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
+        return true;
+      }
+      
+      if(assessment instanceof SEPulmonaryFunctionTest)
+      {
+        PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
+        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.PulmonaryFunctionTest.ordinal(), thunkType.value());
+        JsonFormat.parser().merge(str, b);
+        SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
         return true;
       }
       
@@ -304,12 +325,17 @@ public class PulseEngine
   
   public synchronized boolean advanceTime(SEScalarTime time)
   {
+    return advanceTime_s(time.getValue(TimeUnit.s));
+  }
+  
+  public synchronized boolean advanceTime_s(double time)
+  {
     if(!alive)
     {
       Log.error("Engine has not been initialized");
       return alive;
     }
-    timeRemainder += time.getValue(TimeUnit.s);
+    timeRemainder += time;
     int cnt = (int)(timeRemainder/timeStep_s);
     timeRemainder = timeRemainder - (timeStep_s*cnt);
     for(int i=0; i<cnt; i++)
@@ -409,32 +435,31 @@ public class PulseEngine
     nativeSetLogFilename(nativeObj, logFilename);
   }
   
-  protected void LogDebug(String msg, String origin)
+  protected void handleDebug(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.debug(msg, origin);
   }
-  protected void LogInfo(String msg, String origin)
+  protected void handleInfo(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.info(msg, origin);
   }
-  protected void LogWarning(String msg, String origin)
+  protected void handleWarning(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.warn(msg, origin);
   }
-  protected void LogError(String msg, String origin)
+  protected void handleError(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.error(msg, origin);
   }
-  protected void LogFatal(String msg, String origin)
+  protected void handleFatal(String msg, String origin)
   {
     if(this.logListener!=null)
       this.logListener.fatal(msg, origin);
   }
-
   
   public void setEventHandler(SEEventHandler eh)
   {
@@ -464,7 +489,6 @@ public class PulseEngine
     {
       Log.error("Unable to pull active events",ex);
     }
-    
   }
   
   ////////////
@@ -473,7 +497,7 @@ public class PulseEngine
   
   protected long nativeObj;
   protected SerializationType thunkType = SerializationType.JSON;
-  protected native long nativeAllocate(String dataDir);
+  protected native long nativeAllocate(String dataDir, int phyiologyModel);
   protected native void nativeDelete(long nativeObj);
 
   protected native double nativeGetTimeStep(long nativeObj, String unit);
@@ -484,7 +508,7 @@ public class PulseEngine
   protected native boolean nativeSerializeFromString(long nativeObj, String state, String dataRequests, int format);
   protected native String  nativeSerializeToString(long nativeObj, String stateFile, int format);
   
-  protected native boolean nativeInitializeEngine(long nativeObj, String patient_configuration, String dataRequests, int thunk_format);
+  protected native boolean nativeInitializeEngine(long nativeObj, String patientConfiguration, String dataRequests, int format);
   
   protected native void nativeLogToConsole(long nativeObj, boolean b);
   protected native void nativeSetLogFilename(long nativeObj, String filename);

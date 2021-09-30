@@ -1,24 +1,26 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SESubstanceInfusion.h"
-#include "substance/SESubstance.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalarVolumePerTime.h"
-#include "properties/SEScalarMassPerVolume.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SESubstanceInfusion.h"
+#include "cdm/substance/SESubstance.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SESubstanceInfusion::SESubstanceInfusion(const SESubstance& substance, Logger* logger) : SEPatientAction(logger), m_Substance(substance)
 {
   m_Rate=nullptr;
   m_Concentration=nullptr;
+  m_Volume=nullptr;
 }
 
 SESubstanceInfusion::~SESubstanceInfusion()
 {
   SAFE_DELETE(m_Rate);
   SAFE_DELETE(m_Concentration);
+  SAFE_DELETE(m_Volume);
 }
 
 void SESubstanceInfusion::Clear()
@@ -26,9 +28,10 @@ void SESubstanceInfusion::Clear()
   SEPatientAction::Clear();
   INVALIDATE_PROPERTY(m_Rate);
   INVALIDATE_PROPERTY(m_Concentration);
+  INVALIDATE_PROPERTY(m_Volume);
 }
 
-void SESubstanceInfusion::Copy(const SESubstanceInfusion& src, bool preserveState)
+void SESubstanceInfusion::Copy(const SESubstanceInfusion& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
@@ -44,7 +47,13 @@ bool SESubstanceInfusion::IsActive() const
 {
   if (!SEPatientAction::IsActive())
     return false;
-  return !m_Rate->IsZero() && !m_Concentration->IsZero();
+  if (m_Rate->IsZero())
+    return false;
+  if (m_Concentration->IsZero())
+    return false;
+  if (HasVolume() && m_Volume->IsZero())
+    return false;
+  return true;
 }
 void SESubstanceInfusion::Deactivate()
 {
@@ -58,6 +67,8 @@ const SEScalar* SESubstanceInfusion::GetScalar(const std::string& name)
     return &GetRate();
   if (name.compare("Concentration") == 0)
     return &GetConcentration();
+  if (name.compare("Volume") == 0)
+    return &GetVolume();
   return nullptr;
 }
 
@@ -95,6 +106,23 @@ double SESubstanceInfusion::GetConcentration(const MassPerVolumeUnit& unit) cons
   return m_Concentration->GetValue(unit);
 }
 
+bool SESubstanceInfusion::HasVolume() const
+{
+  return m_Volume == nullptr ? false : m_Volume->IsValid();
+}
+SEScalarVolume& SESubstanceInfusion::GetVolume()
+{
+  if (m_Volume == nullptr)
+    m_Volume = new SEScalarVolume();
+  return *m_Volume;
+}
+double SESubstanceInfusion::GetVolume(const VolumeUnit& unit) const
+{
+  if (m_Volume == nullptr)
+    return SEScalar::dNaN();
+  return m_Volume->GetValue(unit);
+}
+
 SESubstance& SESubstanceInfusion::GetSubstance()
 {
   return const_cast<SESubstance&>(m_Substance);
@@ -111,6 +139,7 @@ void SESubstanceInfusion::ToString(std::ostream &str) const
     str<<"\n\tComment: "<<m_Comment;
   str << "\n\tRate: "; HasRate() ? str << *m_Rate : str << "NaN";
   str << "\n\tConcentration: "; HasConcentration() ? str << *m_Concentration : str << "NaN";
+  str << "\n\tVolume: "; HasVolume() ? str << *m_Volume : str << "NaN";
   str << "\n\tSubstance: " << m_Substance.GetName();
   str  <<std::flush;
 }

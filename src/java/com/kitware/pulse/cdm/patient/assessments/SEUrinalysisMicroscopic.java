@@ -21,19 +21,6 @@ public class SEUrinalysisMicroscopic
   public void clear()
   {
     this.observationType = null;
-    this.redBloodCells = null;
-    this.whiteBloodCells = null;
-    this.epithelialCells = null;
-    this.casts = null;
-    this.crystals = null;
-    this.bacteria = null;
-    this.trichomonads = null;
-    this.yeast = null;
-  }
-  
-  public void reset()
-  {
-    this.observationType = null;
     if(this.redBloodCells!=null)
       this.redBloodCells.invalidate();
     if(this.whiteBloodCells!=null)
@@ -52,21 +39,21 @@ public class SEUrinalysisMicroscopic
     if(src.getObservationType()!=eObservationType.UNRECOGNIZED)
       dst.setObservationType(src.getObservationType());
     if(src.hasRedBloodCells())
-      SEScalarAmount.load(src.getRedBloodCells(),dst.getRedBloodCellsResult());
+      SEScalarAmount.load(src.getRedBloodCells(),dst.getRedBloodCells());
     if(src.hasWhiteBloodCells())
-      SEScalarAmount.load(src.getWhiteBloodCells(),dst.getWhiteBloodCellsResult());
+      SEScalarAmount.load(src.getWhiteBloodCells(),dst.getWhiteBloodCells());
     if(src.getEpithelialCells()!=eObservationAmount.UNRECOGNIZED)
-      dst.setEpithelialCellsResult(src.getEpithelialCells());
+      dst.setEpithelialCells(src.getEpithelialCells());
     if(src.hasCasts())
-      SEScalarAmount.load(src.getCasts(),dst.getCastsResult());
+      SEScalarAmount.load(src.getCasts(),dst.getCasts());
     if(src.getCrystals()!=eObservationAmount.UNRECOGNIZED)
-      dst.setCrystalsResult(src.getCrystals());
+      dst.setCrystals(src.getCrystals());
     if(src.getBacteria()!=eObservationAmount.UNRECOGNIZED)
-      dst.setBacteriaResult(src.getBacteria());
+      dst.setBacteria(src.getBacteria());
     if(src.getTrichomonads()!=eObservationAmount.UNRECOGNIZED)
-      dst.setTrichomonadsResult(src.getTrichomonads());
+      dst.setTrichomonads(src.getTrichomonads());
     if(src.getYeast()!=eObservationAmount.UNRECOGNIZED)
-      dst.setYeastResult(src.getYeast());
+      dst.setYeast(src.getYeast());
   }
   
   public static UrinalysisMicroscopicData unload(SEUrinalysisMicroscopic src)
@@ -80,21 +67,21 @@ public class SEUrinalysisMicroscopic
   {
     if (src.hasObservationType())
       dst.setObservationType(src.observationType);
-    if (src.hasRedBloodCellsResult())
+    if (src.hasRedBloodCells())
       dst.setRedBloodCells(SEScalarAmount.unload(src.redBloodCells));
-    if (src.hasWhiteBloodCellsResult())
+    if (src.hasWhiteBloodCells())
         dst.setWhiteBloodCells(SEScalarAmount.unload(src.whiteBloodCells));
-    if (src.hasEpithelialCellsResult())
+    if (src.hasEpithelialCells())
       dst.setEpithelialCells(src.epithelialCells);
-    if (src.hasCastsResult())
+    if (src.hasCasts())
       dst.setCasts(SEScalarAmount.unload(src.casts));
-    if (src.hasCrystalsResult())
+    if (src.hasCrystals())
       dst.setCrystals(src.crystals);
-    if (src.hasBacteriaResult())
+    if (src.hasBacteria())
       dst.setBacteria(src.bacteria);
-    if (src.hasTrichomonadsResult())
+    if (src.hasTrichomonads())
       dst.setTrichomonads(src.trichomonads);
-    if (src.hasYeastResult())
+    if (src.hasYeast())
       dst.setYeast(src.yeast);
   }
   
@@ -102,56 +89,56 @@ public class SEUrinalysisMicroscopic
   public void    setObservationType(eObservationType observationType){this.observationType=observationType;}
   public boolean hasObservationType(){return this.observationType==null?false:observationType!=eObservationType.NullObservationType;}
   
-  public boolean hasRedBloodCellsResult()
+  public boolean hasRedBloodCells()
   {
     return redBloodCells == null ? false : redBloodCells.isValid();
   }
-  public SEScalarAmount getRedBloodCellsResult()
+  public SEScalarAmount getRedBloodCells()
   {
     if (redBloodCells == null)
       redBloodCells = new SEScalarAmount();
     return redBloodCells;
   }
 
-  public boolean hasWhiteBloodCellsResult()
+  public boolean hasWhiteBloodCells()
   {
     return redBloodCells == null ? false : redBloodCells.isValid();
   }
-  public SEScalarAmount getWhiteBloodCellsResult()
+  public SEScalarAmount getWhiteBloodCells()
   {
     if (redBloodCells == null)
       redBloodCells = new SEScalarAmount();
     return redBloodCells;
   }
   
-  public eObservationAmount  getEpithelialCellsResult() { return this.epithelialCells;}
-  public void    setEpithelialCellsResult(eObservationAmount a){this.epithelialCells=a;}
-  public boolean hasEpithelialCellsResult(){return this.epithelialCells==null?false:epithelialCells!=eObservationAmount.NullObservationAmount;}
+  public eObservationAmount  getEpithelialCells() { return this.epithelialCells;}
+  public void    setEpithelialCells(eObservationAmount a){this.epithelialCells=a;}
+  public boolean hasEpithelialCells(){return this.epithelialCells==null?false:epithelialCells!=eObservationAmount.NullObservationAmount;}
   
-  public boolean hasCastsResult()
+  public boolean hasCasts()
   {
     return casts == null ? false : casts.isValid();
   }
-  public SEScalarAmount getCastsResult()
+  public SEScalarAmount getCasts()
   {
     if (casts == null)
       casts = new SEScalarAmount();
     return casts;
   }
   
-  public eObservationAmount  getCrystalsResult() { return this.crystals;}
-  public void    setCrystalsResult(eObservationAmount g){this.crystals=g;}
-  public boolean hasCrystalsResult(){return this.crystals==null?false:crystals!=eObservationAmount.NullObservationAmount;}
+  public eObservationAmount  getCrystals() { return this.crystals;}
+  public void    setCrystals(eObservationAmount g){this.crystals=g;}
+  public boolean hasCrystals(){return this.crystals==null?false:crystals!=eObservationAmount.NullObservationAmount;}
   
-  public eObservationAmount  getBacteriaResult() { return this.bacteria;}
-  public void    setBacteriaResult(eObservationAmount k){this.bacteria=k;}
-  public boolean hasBacteriaResult(){return this.bacteria==null?false:bacteria!=eObservationAmount.NullObservationAmount;}
+  public eObservationAmount  getBacteria() { return this.bacteria;}
+  public void    setBacteria(eObservationAmount k){this.bacteria=k;}
+  public boolean hasBacteria(){return this.bacteria==null?false:bacteria!=eObservationAmount.NullObservationAmount;}
   
-  public eObservationAmount  getTrichomonadsResult() { return this.trichomonads;}
-  public void    setTrichomonadsResult(eObservationAmount n){this.trichomonads=n;}
-  public boolean hasTrichomonadsResult(){return this.trichomonads==null?false:trichomonads!=eObservationAmount.NullObservationAmount;}
+  public eObservationAmount  getTrichomonads() { return this.trichomonads;}
+  public void    setTrichomonads(eObservationAmount n){this.trichomonads=n;}
+  public boolean hasTrichomonads(){return this.trichomonads==null?false:trichomonads!=eObservationAmount.NullObservationAmount;}
   
-  public eObservationAmount  getYeastResult() { return this.yeast;}
-  public void    setYeastResult(eObservationAmount l){this.yeast=l;}
-  public boolean hasYeastResult(){return this.yeast==null?false:yeast!=eObservationAmount.NullObservationAmount;}
+  public eObservationAmount  getYeast() { return this.yeast;}
+  public void    setYeast(eObservationAmount l){this.yeast=l;}
+  public boolean hasYeast(){return this.yeast==null?false:yeast!=eObservationAmount.NullObservationAmount;}
 }

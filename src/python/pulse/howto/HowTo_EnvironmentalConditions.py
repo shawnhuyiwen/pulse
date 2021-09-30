@@ -3,7 +3,7 @@
 
 from pulse.cdm.engine import eSerializationFormat
 from pulse.cdm.patient import SEPatientConfiguration
-from pulse.cpm.PulsePhysiologyEngine import PulsePhysiologyEngine
+from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.environment_actions import SEChangeEnvironmentalConditions
 from pulse.cdm.scalars import LengthPerTimeUnit, TemperatureUnit, \
                               PressureUnit, HeatResistanceAreaUnit, \
@@ -12,8 +12,8 @@ from pulse.cdm.scalars import LengthPerTimeUnit, TemperatureUnit, \
 from pulse.cdm.io.environment import serialize_environmental_conditions_from_file
 
 def HowTo_EnvironmentalConditions():
-    pulse = PulsePhysiologyEngine()
-    pulse.set_log_filename("./test_results/pypulse_Environment.log")
+    pulse = PulseEngine()
+    pulse.set_log_filename("./test_results/howto/HowTo_Environment.py.log")
     pulse.log_to_console(True)
 
     # Initialize the environment to a specific envirionment

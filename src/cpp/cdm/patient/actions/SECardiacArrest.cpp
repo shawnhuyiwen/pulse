@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SECardiacArrest.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SECardiacArrest.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SECardiacArrest::SECardiacArrest(Logger* logger) : SEPatientAction(logger)
 {
@@ -21,7 +21,7 @@ void SECardiacArrest::Clear()
   m_State = eSwitch::Off;
 }
 
-void SECardiacArrest::Copy(const SECardiacArrest& src, bool preserveState)
+void SECardiacArrest::Copy(const SECardiacArrest& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
@@ -45,7 +45,7 @@ void SECardiacArrest::Deactivate()
   Clear();//No stateful properties
 }
 
-const SEScalar* SECardiacArrest::GetScalar(const std::string& name)
+const SEScalar* SECardiacArrest::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

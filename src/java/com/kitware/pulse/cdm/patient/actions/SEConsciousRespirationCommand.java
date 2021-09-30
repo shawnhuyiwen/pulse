@@ -21,7 +21,7 @@ public abstract class SEConsciousRespirationCommand
   
   public abstract SEConsciousRespirationCommand getCopy();
   
-  public void reset()
+  public void clear()
   {
     comment = "";
   }

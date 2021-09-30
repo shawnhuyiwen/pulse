@@ -1,10 +1,10 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "engine/SEDataRequest.h"
-#include "utils/unitconversion/UCCommon.h"
-#include "io/protobuf/PBEngine.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/engine/SEDataRequest.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
+#include "cdm/io/protobuf/PBEngine.h"
 
 SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 {

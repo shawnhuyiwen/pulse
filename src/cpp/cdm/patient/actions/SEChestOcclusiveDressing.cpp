@@ -1,9 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "patient/actions/SEChestOcclusiveDressing.h"
-#include "io/protobuf/PBPatientActions.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/patient/actions/SEChestOcclusiveDressing.h"
+#include "cdm/io/protobuf/PBPatientActions.h"
 
 SEChestOcclusiveDressing::SEChestOcclusiveDressing(Logger* logger) : SEPatientAction(logger)
 {
@@ -24,7 +24,7 @@ void SEChestOcclusiveDressing::Clear()
   m_Side= eSide::NullSide;
 }
 
-void SEChestOcclusiveDressing::Copy(const SEChestOcclusiveDressing& src, bool preserveState)
+void SEChestOcclusiveDressing::Copy(const SEChestOcclusiveDressing& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
@@ -48,7 +48,7 @@ void SEChestOcclusiveDressing::Deactivate()
   Clear();//No stateful properties
 }
 
-const SEScalar* SEChestOcclusiveDressing::GetScalar(const std::string& name)
+const SEScalar* SEChestOcclusiveDressing::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }

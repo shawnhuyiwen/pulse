@@ -37,7 +37,7 @@ public class SENutrition
     this.water=null;
   }
   
-  public void reset()
+  public void clear()
   {
     if (carbohydrate != null)
       carbohydrate.invalidate();
@@ -52,11 +52,11 @@ public class SENutrition
     if (proteinDigestionRate != null)
       proteinDigestionRate.invalidate();
     if (calcium != null)
-      calcium.invalidate();  
+      calcium.invalidate();
     if (sodium != null)
-      sodium.invalidate();  
+      sodium.invalidate();
     if (water != null)
-      water.invalidate();    
+      water.invalidate();
   }
   
   public void readFile(String fileName) throws InvalidProtocolBufferException
@@ -72,7 +72,7 @@ public class SENutrition
   
   public void copy(SENutrition from)
   {
-    this.reset();
+    this.clear();
     if(from.hasCarbohydrate())
       this.getCarbohydrate().set(from.getCarbohydrate());
     if(from.hasCarbohydrateDigestionRate())

@@ -18,7 +18,7 @@ class SEGasSubstanceQuantity;
 class SELiquidCompartment;
 class SELiquidSubstanceQuantity;
 class SEThermalCompartment;
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 enum class CompartmentUpdate {None,
                               InFlow, OutFlow,
@@ -34,6 +34,7 @@ class SEDataRequestScalar : public SEGenericScalar
 {
   friend class SEEngineTracker;
   friend class SEDynamicStabilizationPropertyConvergence;
+
 protected:
   SEDataRequestScalar(Logger* logger) : SEGenericScalar(logger)
   {
@@ -46,7 +47,7 @@ protected:
   }
   
   void UpdateScalar();
-  void SetScalar(const SEScalar* s, SEDataRequest& dr);// SEScalar* in order to internnally throw error if the Track cannot find the requested property, it will pass in nullptr if it cannot find it
+  void SetScalarRequest(const SEScalar& s, SEDataRequest& dr);
 
   size_t                        idx;
   std::string                   Heading;
@@ -82,6 +83,8 @@ public:
   bool ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds);
 
   virtual void SetupRequests();
+  // Set to false if you have already pulled the latest values
+  virtual void LogRequestedValues(bool pullData=true);
   virtual void TrackData(double currentTime_s=0);
   virtual void PullData();
   virtual bool TrackRequest(SEDataRequest& dr);
@@ -90,9 +93,10 @@ public:
   void SetTrackMode(TrackMode m) { m_Mode = m; }
   TrackMode GetTrackMode() { return m_Mode; }
 
+
   double GetValue(const SEDataRequest& dr) const;
 
-  
+
 protected:
   const SEDataRequestScalar* GetScalar(const SEDataRequest& dr) const;
 

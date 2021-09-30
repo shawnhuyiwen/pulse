@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "compartment/fluid/SEFluidCompartmentLink.h"
-#include "compartment/fluid/SELiquidCompartment.h"
-#include "circuit/SECircuitManager.h"
-#include "properties/SEScalarVolumePerTime.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/compartment/fluid/SEFluidCompartmentLink.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
+#include "cdm/circuit/SECircuitManager.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 template<FLUID_COMPARTMENT_LINK_TEMPLATE>
 SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::SEFluidCompartmentLink(CompartmentType& src, CompartmentType & tgt, const std::string& name) : SECompartmentLink(name, src.GetLogger()), m_SourceCmpt(src), m_TargetCmpt(tgt), m_SourceVertex(src), m_TargetVertex(tgt)
@@ -93,7 +93,7 @@ double SEFluidCompartmentLink<FLUID_COMPARTMENT_LINK_TYPES>::GetResistance(const
   return SEScalar::dNaN();
 }
 
-#include "compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
 template class SEFluidCompartmentLink<SEGasTransportEdge, SEGasTransportVertex, SEGasCompartment>;
-#include "compartment/fluid/SELiquidCompartment.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
 template class SEFluidCompartmentLink<SELiquidTransportEdge, SELiquidTransportVertex, SELiquidCompartment>;

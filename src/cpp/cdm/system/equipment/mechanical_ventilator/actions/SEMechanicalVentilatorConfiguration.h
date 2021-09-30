@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
-class SEMechanicalVentilator;
+#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorAction.h"
+class SEMechanicalVentilatorSettings;
 class SESubstanceManager;
 
 class CDM_DECL SEMechanicalVentilatorConfiguration : public SEMechanicalVentilatorAction
@@ -14,19 +14,22 @@ public:
   virtual ~SEMechanicalVentilatorConfiguration();
 
   virtual void Clear();
-  virtual void Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr, bool preserveState = false);
+  virtual void Copy(const SEMechanicalVentilatorConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/ = false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
   virtual void Deactivate();
 
-  bool HasConfiguration() const;
-  SEMechanicalVentilator& GetConfiguration();
-  const SEMechanicalVentilator* GetConfiguration() const;
+  bool HasSettings() const;
+  SEMechanicalVentilatorSettings& GetSettings();
+  const SEMechanicalVentilatorSettings* GetSettings() const;
 
-  virtual std::string GetConfigurationFile() const;
-  virtual void SetConfigurationFile(const std::string& fileName);
-  virtual bool HasConfigurationFile() const;
+  virtual std::string GetSettingsFile() const;
+  virtual void SetSettingsFile(const std::string& fileName);
+  virtual bool HasSettingsFile() const;
+
+  virtual eMergeType GetMergeType() const;
+  virtual void SetMergeType(eMergeType m);
 
   virtual void ToString(std::ostream &str) const;
 
@@ -34,6 +37,7 @@ public:
 
 protected:
 
-  std::string               m_ConfigurationFile;
-  SEMechanicalVentilator*   m_Configuration;
+  std::string                       m_SettingsFile;
+  SEMechanicalVentilatorSettings*   m_Settings;
+  eMergeType                        m_MergeType;
 };

@@ -4,8 +4,7 @@
 // Note that this project is set with the following Additional Include Paths: ../include;../include/cdm;../include/cdm/bind
 // This will build an executable that is intended to execute a how-to method
 
-#include "CommonDataModel.h"
-#include "PulsePhysiologyEngine.h"
+#include "PhysiologyEngine.h"
 
 // The following how-to functions are defined in their own file
 void HowToEngineUse();
@@ -16,8 +15,9 @@ void HowToPulseEnginePool();
 void HowToAirwayObstruction();
 void HowToAnesthesiaMachine();
 void HowToAsthmaAttack();
-void HowToBrainInjury();
+void HowToBagValveMask();
 void HowToBolusDrug();
+void HowToBrainInjury();
 void HowToCombatMultitrauma();
 void HowToConsumeNutrients();
 void HowToCOPD();
@@ -28,8 +28,10 @@ void HowToExercise();
 void HowToHemorrhage();
 void HowToLobarPneumonia();
 void HowToMechanicalVentilation();
+void HowToMechanicalVentilator();
 void HowToPulmonaryFibrosis();
 void HowToPulmonaryFunctionTest();
+void HowToRespiratoryMechanics();
 void HowToSmoke();
 void HowToTensionPneumothorax();
 
@@ -40,20 +42,9 @@ void HowToDynamicHemorrhage();
 void HowToSandbox();
 void HowToTestSystemCapability();
 
+void HowToVentilationMechanics();
+
 class SEDataRequest;
 
-/// This class is here to demonstrate executing the engine
-/// and populating a csv file with data from the engine 
-/// This class will handle advancing time on the engine
-class HowToTracker
-{
-private:
-  double m_dT_s;  // Cached Engine Time Step
-  PhysiologyEngine& m_Engine;
-public:
-  HowToTracker(PhysiologyEngine& engine);
-  ~HowToTracker();
-
-  // This class will operate on seconds
-  bool AdvanceModelTime(double time_s);
-};
+/// This mehod will advance time and write each data request value to the specified engine csv
+bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine);

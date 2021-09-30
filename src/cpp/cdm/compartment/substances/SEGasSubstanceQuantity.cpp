@@ -1,18 +1,18 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
+#include "cdm/CommonDefs.h"
 
-#include "compartment/substances/SEGasSubstanceQuantity.h"
-#include "compartment/fluid/SEGasCompartment.h"
-#include "compartment/fluid/SEGasCompartmentLink.h"
-#include "substance/SESubstanceTransport.h"
-#include "substance/SESubstance.h"
+#include "cdm/compartment/substances/SEGasSubstanceQuantity.h"
+#include "cdm/compartment/fluid/SEGasCompartment.h"
+#include "cdm/compartment/fluid/SEGasCompartmentLink.h"
+#include "cdm/substance/SESubstanceTransport.h"
+#include "cdm/substance/SESubstance.h"
 
-#include "properties/SEScalarPressure.h"
-#include "properties/SEScalarVolume.h"
-#include "properties/SEScalar0To1.h"
-#include "utils/GeneralMath.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/utils/GeneralMath.h"
 
 SEGasSubstanceQuantity::SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartment& compartment) : SESubstanceQuantity(sub), m_Compartment(compartment)
 {
@@ -26,23 +26,16 @@ SEGasSubstanceQuantity::SEGasSubstanceQuantity(SESubstance& sub, SEGasCompartmen
 
 SEGasSubstanceQuantity::~SEGasSubstanceQuantity()
 {
-  Clear();
-}
-void SEGasSubstanceQuantity::Invalidate()
-{
-  if(m_PartialPressure!=nullptr)
-    m_PartialPressure->Invalidate();
-  if (m_Volume!=nullptr)
-    m_Volume->Invalidate();
-  if (m_VolumeFraction!=nullptr)
-    m_VolumeFraction->Invalidate();
+  SAFE_DELETE(m_PartialPressure);
+  SAFE_DELETE(m_Volume);
+  SAFE_DELETE(m_VolumeFraction);
 }
 
 void SEGasSubstanceQuantity::Clear()
 {
-  SAFE_DELETE(m_PartialPressure);
-  SAFE_DELETE(m_Volume);
-  SAFE_DELETE(m_VolumeFraction);
+  FORCE_INVALIDATE_PROPERTY(m_PartialPressure);
+  FORCE_INVALIDATE_PROPERTY(m_Volume);
+  FORCE_INVALIDATE_PROPERTY(m_VolumeFraction);
   m_Children.clear();
 }
 

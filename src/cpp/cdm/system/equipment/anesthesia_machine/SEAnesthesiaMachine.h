@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "system/equipment/SEEquipment.h"
+#include "cdm/system/equipment/SEEquipment.h"
 class SEEventHandler;
 class SESubstanceManager;
 class SEAnesthesiaMachineChamber;
@@ -19,10 +19,6 @@ extern const std::string& eAnesthesiaMachine_OxygenSource_Name(eAnesthesiaMachin
 enum class eAnesthesiaMachine_PrimaryGas { NullGas = 0, NoGas, Air, Nitrogen };
 extern const std::string& eAnesthesiaMachine_PrimaryGas_Name(eAnesthesiaMachine_PrimaryGas m);
 
-// Keep enums in sync with appropriate schema/cdm/AnesthesiaMachineEnums.proto file !!
-enum class eAnesthesiaMachine_Connection { NullConnection = 0, Off, Mask, Tube };
-extern const std::string& eAnesthesiaMachine_Connection_Name(eAnesthesiaMachine_Connection m);
-
 
 class CDM_DECL SEAnesthesiaMachine : public SEEquipment
 {
@@ -36,9 +32,9 @@ public:
 
   virtual void Clear();
 
-  bool SerializeToString(std::string& output, SerializationFormat m) const;
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, SerializationFormat m, const SESubstanceManager& subMgr);
+  bool SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr);
   bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
 protected:
@@ -56,8 +52,8 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual eAnesthesiaMachine_Connection GetConnection() const;
-  virtual void SetConnection(eAnesthesiaMachine_Connection c);
+  virtual eSwitch GetConnection() const;
+  virtual void SetConnection(eSwitch c);
 
   virtual bool HasInletFlow() const;
   virtual SEScalarVolumePerTime& GetInletFlow();
@@ -115,7 +111,7 @@ public:
 
 protected:
 
-  eAnesthesiaMachine_Connection                          m_Connection;
+  eSwitch                                                m_Connection;
   SEScalarVolumePerTime*                                 m_InletFlow;
   SEScalar*                                              m_InspiratoryExpiratoryRatio;
   SEScalar0To1*                                          m_OxygenFraction;

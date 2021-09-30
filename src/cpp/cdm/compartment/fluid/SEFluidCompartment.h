@@ -2,10 +2,10 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "compartment/SECompartment.h"
-#include "circuit/fluid/SEFluidCircuitNode.h"
-#include "compartment/SECompartmentNodes.h"
-#include "substance/SESubstanceTransport.h"
+#include "cdm/compartment/SECompartment.h"
+#include "cdm/circuit/fluid/SEFluidCircuitNode.h"
+#include "cdm/compartment/SECompartmentNodes.h"
+#include "cdm/substance/SESubstanceTransport.h"
 
 class SESubstance;
 template<typename EdgeType, typename VertexType, typename CompartmentType> class SEFluidCompartmentLink;

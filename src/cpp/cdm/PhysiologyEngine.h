@@ -2,6 +2,8 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+#include "cdm/CommonDefs.h"
+#include "cdm/utils/Logger.h"
 
 class SEAdvanceHandler;
 class SEPatient;
@@ -25,6 +27,7 @@ class SERespiratorySystem;
 class SETissueSystem;
 class SEEnvironment;
 class SEAnesthesiaMachine;
+class SEBagValveMask;
 class SEElectroCardioGram;
 class SEInhaler;
 class SEMechanicalVentilator;
@@ -50,9 +53,10 @@ struct PhysiologyEngineException : public CommonDataModelException
     : CommonDataModelException(_Message) {}
 };
 
-class CDM_DECL PhysiologyEngine
+class CDM_DECL PhysiologyEngine : public Loggable
 {
 public:
+  PhysiologyEngine(Logger* logger = nullptr) : Loggable(logger) {}
   virtual ~PhysiologyEngine() {}
 
   //--------------------------------------------------------------------------------------------------
@@ -81,7 +85,7 @@ public:
   /// Return value indicates engine was able to load provided state file.
   /// Engine will be in a cleared state if this method fails.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeFromString(const std::string& state, SerializationFormat m) = 0;
+  virtual bool SerializeFromString(const std::string& state, eSerializationFormat m) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -89,7 +93,7 @@ public:
   /// The state can be saved as JSON or bytes in the given string.
   /// Note that the bytes are binary, not text; we only use the string class as a convenient container.
   //--------------------------------------------------------------------------------------------------
-  virtual bool SerializeToString(std::string& state, SerializationFormat m) const = 0;
+  virtual bool SerializeToString(std::string& state, eSerializationFormat m) const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -100,7 +104,7 @@ public:
   /// But it may also have more stuctures associated with it, it's up to the engine.
   ///
   //--------------------------------------------------------------------------------------------------
-  virtual bool InitializeEngine(const std::string& patient_configuration, SerializationFormat m) = 0;
+  virtual bool InitializeEngine(const std::string& patient_configuration, eSerializationFormat m) = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -135,12 +139,6 @@ public:
   /// returns the engine configuration.
   //--------------------------------------------------------------------------------------------------
   virtual const SEEngineConfiguration* GetConfiguration() const = 0;
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Retrieve the Logger associated with this engine
-  //--------------------------------------------------------------------------------------------------
-  virtual Logger* GetLogger() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -344,6 +342,13 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
+  /// Returns the current state of the Bag Valve Mask
+  ///
+  //--------------------------------------------------------------------------------------------------
+  virtual const SEBagValveMask* GetBagValveMask() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
   /// Returns the current state of the Electrocardiogram machine
   ///
   //--------------------------------------------------------------------------------------------------
@@ -357,10 +362,10 @@ public:
   virtual const SEInhaler* GetInhaler() const = 0;
 
   //--------------------------------------------------------------------------------------------------
- /// \brief
- /// Returns the current state of the Mechanical ventilator
- ///
- //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Returns the current state of the Mechanical ventilator
+  ///
+  //--------------------------------------------------------------------------------------------------
   virtual const SEMechanicalVentilator* GetMechanicalVentilator() const = 0;
 
   //--------------------------------------------------------------------------------------------------

@@ -9,7 +9,7 @@ import com.kitware.pulse.cdm.properties.SEScalarMass;
 import com.kitware.pulse.cdm.properties.SEScalarVolume;
 import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
-public class SEInhaler extends SEEquipment
+public class SEInhaler implements SEEquipment
 {
   protected eSwitch        state;
   protected SEScalarMass   meteredDose;
@@ -21,18 +21,9 @@ public class SEInhaler extends SEEquipment
   {
     clear();
   }
-  
-  public void clear()
-  {
-    state = eSwitch.Off;
-    meteredDose = null;
-    nozzleLoss = null;
-    spacerVolume = null;
-    substance = "";
-  }
 
   @Override
-  public void reset()
+  public void clear()
   {
     state = eSwitch.Off;
     if (meteredDose != null)
@@ -46,8 +37,7 @@ public class SEInhaler extends SEEquipment
 
   public void copy(SEInhaler from)
   {
-    reset();
-
+    clear();
     setState(from.getState());
     meteredDose = from.getMeteredDose();
     nozzleLoss = from.getNozzleLoss();

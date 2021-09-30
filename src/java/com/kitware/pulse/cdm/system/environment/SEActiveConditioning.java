@@ -38,7 +38,7 @@ public class SEActiveConditioning
       surfaceAreaFraction.invalidate();    
   }
 
-  public void reset()
+  public void clear()
   {
     if (power != null)
       power.invalidate();
@@ -51,7 +51,7 @@ public class SEActiveConditioning
 
   public static void load(ActiveConditioningData src, SEActiveConditioning dst)
   {
-    dst.reset();
+    dst.clear();
     if(src.hasPower())
       SEScalarPower.load(src.getPower(), dst.getPower());
     if(src.hasSurfaceArea())

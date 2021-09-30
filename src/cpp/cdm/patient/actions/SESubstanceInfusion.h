@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "patient/actions/SESubstanceAdministration.h"
+#include "cdm/patient/actions/SESubstanceAdministration.h"
 class SESubstance;
 
 class CDM_DECL SESubstanceInfusion : public SEPatientAction
@@ -14,7 +14,7 @@ public:
   virtual ~SESubstanceInfusion();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SESubstanceInfusion& src, bool preserveState=false);
+  virtual void Copy(const SESubstanceInfusion& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
@@ -28,6 +28,10 @@ public:
   virtual SEScalarVolumePerTime& GetRate();
   virtual double GetRate(const VolumePerTimeUnit& unit) const;
 
+  virtual bool HasVolume() const;
+  virtual SEScalarVolume& GetVolume();
+  virtual double GetVolume(const VolumeUnit& unit) const;
+
   virtual SESubstance& GetSubstance();
   virtual const SESubstance& GetSubstance() const;
 
@@ -38,5 +42,6 @@ public:
 protected:
   SEScalarMassPerVolume*                  m_Concentration;
   SEScalarVolumePerTime*                  m_Rate;
+  SEScalarVolume*                         m_Volume;
   const SESubstance&                      m_Substance;
 };

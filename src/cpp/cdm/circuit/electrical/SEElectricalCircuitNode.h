@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "circuit/SECircuitNode.h"
+#include "cdm/circuit/SECircuitNode.h"
 class SEElectricalBlackBox;
 
 class CDM_DECL SEElectricalCircuitNode : public SECircuitNode<ELECTRICAL_CIRCUIT_NODE>

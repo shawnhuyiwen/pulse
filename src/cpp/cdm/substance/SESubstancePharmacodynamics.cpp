@@ -1,11 +1,11 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "substance/SESubstancePharmacodynamics.h"
-#include "system/physiology/SEPupillaryResponse.h"
-#include "properties/SEScalarNegative1To1.h"
-#include "properties/SEScalarMassPerVolume.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/substance/SESubstancePharmacodynamics.h"
+#include "cdm/system/physiology/SEPupillaryResponse.h"
+#include "cdm/properties/SEScalarNegative1To1.h"
+#include "cdm/properties/SEScalarMassPerVolume.h"
 
 SESubstancePharmacodynamics::SESubstancePharmacodynamics(Logger* logger) : Loggable(logger)
 {

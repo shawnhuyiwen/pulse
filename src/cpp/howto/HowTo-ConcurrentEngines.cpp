@@ -2,11 +2,12 @@
    See accompanying NOTICE file for details.*/
 
 #include "EngineHowTo.h"
+#include "PulseEngine.h"
+#include "PulseScenarioExec.h"
 
 // Include the various types you will be using in your code
-#include "utils/FileUtils.h"
-#include "utils/taskrunner/TaskRunner.h"
-#include "PulseScenarioExec.h"
+#include "cdm/utils/FileUtils.h"
+#include "cdm/utils/taskrunner/TaskRunner.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -51,18 +52,12 @@ void RunScenarioTask::Run()
   remove(dataFile.c_str());
 
   // Aquire the constrution mutex before we create the PulseEngine.  Due to some third-party library
-  // initialization constructs not being thread safe, we must not construct PulseEngines simultaneously
+  // initialization constructs not being thread safe, we must not construct PulseEngine simultaneously
   // from multiple threads.
   ms_constructionMutex.lock();
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
   pe->GetLogger()->SetLogFile(logFile);
   ms_constructionMutex.unlock();
-        
-  if (!pe)
-  {
-    std::cerr << "Unable to create PulseEngine\n";
-    return;
-  }
 
   // Run the scenario
   SEScenarioExec execOpts;

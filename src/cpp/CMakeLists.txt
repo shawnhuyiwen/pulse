@@ -1,9 +1,9 @@
 add_subdirectory(bind)
 add_subdirectory(cdm)
-add_subdirectory(cpm)
-add_subdirectory(scenario_driver)
+add_subdirectory(engine)
 add_subdirectory(howto)
-add_subdirectory(test)
+add_subdirectory(scenario_driver)
+add_subdirectory(test_driver)
 
 add_subdirectory(study/hydrocephalus)
 add_subdirectory(study/multiplex_ventilation)

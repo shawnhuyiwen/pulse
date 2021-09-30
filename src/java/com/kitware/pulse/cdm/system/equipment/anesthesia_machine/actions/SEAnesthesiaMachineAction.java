@@ -24,9 +24,9 @@ public abstract class SEAnesthesiaMachineAction extends SEEquipmentAction
   }
   
   @Override
-  public void reset()
+  public void clear()
   {
-    super.reset();
+    super.clear();
   }
   
   public static void load(AnesthesiaMachineActionData src, SEAnesthesiaMachineAction dst) 

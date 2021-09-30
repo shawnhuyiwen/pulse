@@ -1,12 +1,12 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h"
-#include "properties/SEFunctionElectricPotentialVsTime.h"
-#include "properties/SEScalarTime.h"
-#include "properties/SEScalarElectricPotential.h"
-#include "utils/GeneralMath.h"
-#include "utils/Logger.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/properties/SEFunctionElectricPotentialVsTime.h"
+#include "cdm/properties/SEScalarTime.h"
+#include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/utils/GeneralMath.h"
+#include "cdm/utils/Logger.h"
 
 
 SEFunctionElectricPotentialVsTime::SEFunctionElectricPotentialVsTime() : SEFunction()

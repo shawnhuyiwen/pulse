@@ -484,7 +484,7 @@
     "EquipmentAction": {
       "AnesthesiaMachineConfiguration": {
         "Configuration": {
-          "Connection": "Tube",
+          "Connection": "On",
           "InletFlow": {
             "ScalarVolumePerTime": {
               "Value": 5.0,
@@ -515,7 +515,7 @@
           },
           "PeakInspiratoryPressure": {
             "ScalarPressure": {
-              "Value": 15,
+              "Value": 22,
               "Unit": "cmH2O"
             }
           },

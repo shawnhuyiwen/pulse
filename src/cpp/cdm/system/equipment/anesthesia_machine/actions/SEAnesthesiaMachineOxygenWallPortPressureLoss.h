@@ -1,8 +1,8 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 #pragma once
-#include "system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
-#include "properties/SEScalar.h"
+#include "cdm/system/equipment/anesthesia_machine/actions/SEAnesthesiaMachineAction.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL SEAnesthesiaMachineOxygenWallPortPressureLoss : public SEAnesthesiaMachineAction
 {
@@ -12,7 +12,7 @@ public:
   virtual ~SEAnesthesiaMachineOxygenWallPortPressureLoss();
 
   virtual void Clear();
-  virtual void Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, bool preserveState=false);
+  virtual void Copy(const SEAnesthesiaMachineOxygenWallPortPressureLoss& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;

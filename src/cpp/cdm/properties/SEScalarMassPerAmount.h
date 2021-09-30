@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL MassPerAmountUnit : public CCompoundUnit
 {
 public:
   MassPerAmountUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~MassPerAmountUnit() {}
+
+  // Please use static units below
+  MassPerAmountUnit(const MassPerAmountUnit&) = delete;
+  MassPerAmountUnit& operator= (const MassPerAmountUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const MassPerAmountUnit& GetCompoundUnit(const std::string& unit);

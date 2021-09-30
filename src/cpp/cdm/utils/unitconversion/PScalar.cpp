@@ -12,8 +12,8 @@
 /// square root.
 //----------------------------------------------------------------------------
 
-#include "stdafx.h"
-#include "utils/unitconversion/UCCommon.h"
+#include "cdm/CommonDefs.h"
+#include "cdm/utils/unitconversion/UCCommon.h"
 
 // We need one translation unit that processes the header file in
 // this DLL or else the methods won't be available in the Debug build, 

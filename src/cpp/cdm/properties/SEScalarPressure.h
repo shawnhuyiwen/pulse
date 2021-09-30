@@ -2,13 +2,17 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "properties/SEScalar.h"
+#include "cdm/properties/SEScalar.h"
 
 class CDM_DECL PressureUnit : public CCompoundUnit
 {
 public:
   PressureUnit(const std::string& u) : CCompoundUnit(u) {}
   virtual ~PressureUnit() {}
+
+  // Please use static units below
+  PressureUnit(const PressureUnit&) = delete;
+  PressureUnit& operator= (const PressureUnit&) = delete;
 
   static bool IsValidUnit(const std::string& unit);
   static const PressureUnit& GetCompoundUnit(const std::string& unit);
