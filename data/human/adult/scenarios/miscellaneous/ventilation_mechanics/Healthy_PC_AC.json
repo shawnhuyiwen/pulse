@@ -34,7 +34,7 @@
     },
     "Category": "MechanicalVentilator",
     "PropertyName": "EndTidalCarbonDioxidePressure",
-    "Unit": "cmH2O"
+    "Unit": "mmHg"
    },
    {
     "DecimalFormat": {
@@ -49,7 +49,7 @@
     },
     "Category": "MechanicalVentilator",
     "PropertyName": "EndTidalOxygenPressure",
-    "Unit": "cmH2O"
+    "Unit": "mmHg"
    },
    {
     "DecimalFormat": {

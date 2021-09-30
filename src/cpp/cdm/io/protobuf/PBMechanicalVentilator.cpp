@@ -160,6 +160,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
     PBProperty::Load(src.expirationcyclevolume(), dst.GetExpirationCycleVolume());
   if (src.has_expirationcycletime())
     PBProperty::Load(src.expirationcycletime(), dst.GetExpirationCycleTime());
+  dst.m_ExpirationCycleRespiratoryModel = (eSwitch)src.expirationcyclerespiratorymodel();
 
   if (src.has_expirationlimbvolume())
     PBProperty::Load(src.expirationlimbvolume(), dst.GetExpirationLimbVolume());
@@ -194,7 +195,8 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
   if (src.has_inspirationpatienttriggerflow())
     PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
   if (src.has_inspirationpatienttriggerpressure())
-    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());  
+    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());
+  dst.m_InspirationPatientTriggerRespiratoryModel = (eSwitch)src.inspirationpatienttriggerrespiratorymodel();
 
   if (src.has_inspirationlimbvolume())
     PBProperty::Load(src.inspirationlimbvolume(), dst.GetInspirationLimbVolume());

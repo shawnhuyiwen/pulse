@@ -72,6 +72,9 @@ public:
   virtual SEScalarTime& GetExpirationCycleTime();
   virtual double GetExpirationCycleTime(const TimeUnit& unit) const;
 
+  virtual eSwitch GetExpirationCycleRespiratoryModel() const;
+  virtual void SetExpirationCycleRespiratoryModel(eSwitch c);
+
   virtual bool HasExpirationTubeResistance() const;
   virtual SEScalarPressureTimePerVolume& GetExpirationTubeResistance();
   virtual double GetExpirationTubeResistance(const PressureTimePerVolumeUnit& unit) const;
@@ -122,6 +125,9 @@ public:
   virtual bool HasInspirationPatientTriggerPressure() const;
   virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
   virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
+
+  virtual eSwitch GetInspirationPatientTriggerRespiratoryModel() const;
+  virtual void SetInspirationPatientTriggerRespiratoryModel(eSwitch c);
 
   virtual bool HasInspirationTubeResistance() const;
   virtual SEScalarPressureTimePerVolume& GetInspirationTubeResistance();
@@ -193,6 +199,7 @@ protected:
   SEScalarPressure*                            m_ExpirationCyclePressure;
   SEScalarVolume*                              m_ExpirationCycleVolume;
   SEScalarTime*                                m_ExpirationCycleTime;
+  eSwitch                                      m_ExpirationCycleRespiratoryModel;
 
   SEScalarPressureTimePerVolume*               m_ExpirationTubeResistance;
   SEScalarPressureTimePerVolume*               m_ExpirationValveResistance;
@@ -218,6 +225,7 @@ protected:
   // Inspiratory Patient Trigger Properties (Only set 1)
   SEScalarVolumePerTime*                       m_InspirationPatientTriggerFlow;
   SEScalarPressure*                            m_InspirationPatientTriggerPressure;
+  eSwitch                                      m_InspirationPatientTriggerRespiratoryModel;
 
   SEScalarPressureTimePerVolume*               m_InspirationTubeResistance;
   SEScalarPressureTimePerVolume*               m_InspirationValveResistance;

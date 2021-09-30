@@ -523,6 +523,16 @@ namespace pulse
       }
     }
 
+    if (GetSettings().GetExpirationCycleRespiratoryModel() == eSwitch::On)
+    {
+      triggerDefined = true;
+      if (m_data.GetEvents().IsEventActive(eEvent::StartOfExhale))
+      {
+        CycleMode();
+        return;
+      }
+    }
+
     if (GetSettings().HasExpirationCyclePressure())
     {
       triggerDefined = true;
@@ -703,6 +713,17 @@ namespace pulse
     // Check trigger
     // Any combination of triggers can be used, but there must be at least one
     bool triggerDefined = false;
+
+    if (GetSettings().GetInspirationPatientTriggerRespiratoryModel() == eSwitch::On)
+    {
+      triggerDefined = true;
+      if (m_data.GetEvents().IsEventActive(eEvent::StartOfInhale))
+      {
+        CycleMode();
+        return;
+      }
+    }
+
     if (GetSettings().HasInspirationMachineTriggerTime())
     {
       triggerDefined = true;
@@ -1080,11 +1101,6 @@ namespace pulse
     double ambientPressure_cmH2O = m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
     double airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
     GetPlateauPressure().SetValue(airwayPressure_cmH2O - ambientPressure_cmH2O, PressureUnit::cmH2O);
-
-    GetEndTidalCarbonDioxideFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction());
-    GetEndTidalCarbonDioxidePressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetPartialPressure());
-    GetEndTidalOxygenFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction());
-    GetEndTidalOxygenPressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure());
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1143,6 +1159,11 @@ namespace pulse
     if(m_InspiratoryFlow_L_Per_s > ZERO_APPROX)
       resistance_cmH2O_s_Per_L = (GetPeakInspiratoryPressure(PressureUnit::cmH2O) - GetPlateauPressure(PressureUnit::cmH2O)) / m_InspiratoryFlow_L_Per_s;
     GetPulmonaryResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+    GetEndTidalCarbonDioxideFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction());
+    GetEndTidalCarbonDioxidePressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetPartialPressure());
+    GetEndTidalOxygenFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction());
+    GetEndTidalOxygenPressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure());
 
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;

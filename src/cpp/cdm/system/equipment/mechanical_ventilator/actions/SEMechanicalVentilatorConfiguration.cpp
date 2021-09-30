@@ -120,6 +120,7 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tExpirationCyclePressure: "; m_Settings->HasExpirationCyclePressure() ? str << m_Settings->GetExpirationCyclePressure() : str << "NaN";
     str << "\n\tExpirationCycleVolume: "; m_Settings->HasExpirationCycleVolume() ? str << m_Settings->GetExpirationCycleVolume() : str << "NaN";
     str << "\n\tExpirationCycleTime: "; m_Settings->HasExpirationCycleTime() ? str << m_Settings->GetExpirationCycleTime() : str << "NaN";
+    str << "\n\tExpirationCycleRespiratoryModel: " << eSwitch_Name(m_Settings->GetExpirationCycleRespiratoryModel());
     str << "\n\tExpirationTubeResistance: "; m_Settings->HasExpirationTubeResistance() ? str << m_Settings->GetExpirationTubeResistance() : str << "NaN";
     str << "\n\tExpirationValveResistance: "; m_Settings->HasExpirationValveResistance() ? str << m_Settings->GetExpirationValveResistance() : str << "NaN";
     str << "\n\tExpirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Settings->GetExpirationWaveform());
@@ -133,6 +134,7 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tInspirationMachineTriggerTime: "; m_Settings->HasInspirationMachineTriggerTime() ? str << m_Settings->GetInspirationMachineTriggerTime() : str << "NaN";
     str << "\n\tInspirationPatientTriggerFlow: "; m_Settings->HasInspirationPatientTriggerFlow() ? str << m_Settings->GetInspirationPatientTriggerFlow() : str << "NaN";
     str << "\n\tInspirationPatientTriggerPressure: "; m_Settings->HasInspirationPatientTriggerPressure() ? str << m_Settings->GetInspirationPatientTriggerPressure() : str << "NaN";
+    str << "\n\InspirationPatientTriggerRespiratoryModel: " << eSwitch_Name(m_Settings->GetInspirationPatientTriggerRespiratoryModel());
     str << "\n\tInspirationTubeResistance: "; m_Settings->HasInspirationTubeResistance() ? str << m_Settings->GetInspirationTubeResistance() : str << "NaN";
     str << "\n\tInspirationValveResistance: "; m_Settings->HasInspirationValveResistance() ? str << m_Settings->GetInspirationValveResistance() : str << "NaN";
     str << "\n\tInspirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(m_Settings->GetInspirationWaveform());
