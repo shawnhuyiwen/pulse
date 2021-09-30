@@ -12,21 +12,21 @@
   /////////////////////
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_com_kitware_pulse_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv* /*env*/, jobject /*obj*/)
+JNIEXPORT jlong JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeAllocate(JNIEnv* /*env*/, jobject /*obj*/)
 {
   auto *executor = new pulse::human_adult_whole_body::EngineTest();
   return reinterpret_cast<jlong>(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_pulse_testing_EngineUnitTestDriver_nativeDelete(JNIEnv* /*env*/, jobject /*obj*/, jlong ptr)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeDelete(JNIEnv* /*env*/, jobject /*obj*/, jlong ptr)
 {
   auto *executor = reinterpret_cast<pulse::human_adult_whole_body::EngineTest*>(ptr);
   SAFE_DELETE(executor);
 }
 
 extern "C"
-JNIEXPORT void JNICALL Java_com_kitware_pulse_testing_EngineUnitTestDriver_nativeExecute(JNIEnv * env, jobject /*obj*/, jlong ptr, jstring test, jstring toDir)
+JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_testing_EngineUnitTestDriver_nativeExecute(JNIEnv * env, jobject /*obj*/, jlong ptr, jstring test, jstring toDir)
 {
   const char* testName = env->GetStringUTFChars(test, JNI_FALSE);
   const char* outputDir = env->GetStringUTFChars(toDir, JNI_FALSE);
