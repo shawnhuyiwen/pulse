@@ -33,7 +33,7 @@ set(CMAKE_DEBUG_POSTFIX "d")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-project(Pulse VERSION 3.2.0 LANGUAGES C CXX)
+project(Pulse VERSION 4.0.0 LANGUAGES C CXX)
 string(TOLOWER ${PROJECT_NAME} project_name)
 
 #-----------------------------------------------------------------------------
@@ -245,7 +245,7 @@ else()
   set(export_git_hash "unknown")
 endif()
 
-configure_file(cmake/PulseBuildConfiguration.h.in ${CMAKE_BINARY_DIR}/PulseBuildConfiguration.h)
+configure_file(cmake/PulseBuildInformation.cpp.in ${CMAKE_BINARY_DIR}/src/cpp/engine/PulseBuildInformation.cpp)
 
 #------------------------------------------------------------------------------
 # Configure ${PROJECT_NAME}ConfigVersion.cmake common to build and install tree

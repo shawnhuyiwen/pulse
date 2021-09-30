@@ -7,6 +7,13 @@
 #include "cdm/PhysiologyEngine.h"
 #include "cdm/utils/ScopedMutex.h"
 
+class PULSE_DECL PulseBuildInformation
+{
+  static std::string Time();
+  static std::string Hash();
+  static std::string Version();
+};
+
 enum class eModelType { HumanAdultWholeBody=0, HumanAdultVentilationMechanics };
 bool eModelType_ValueOf(const std::string s, eModelType& t);
 
@@ -14,9 +21,9 @@ std::unique_ptr<PhysiologyEngine> CreatePulseEngine(eModelType type = eModelType
 
 namespace pulse
 {
-  DEFINE_STATIC_STRING_EX(Version, Pulse_4.0.0);
-
-  // All Compartments used by Pulse
+  ////////////////////////////////////
+  // All Compartments used by Pulse //
+  ////////////////////////////////////
 
   class Graph
   {

@@ -13,7 +13,8 @@ function(add_library_ex target)
 
   set(options VERBOSE SHARED LIB_INSTALL_ONLY NO_INSTALL)
   set(oneValueArgs SOURCE_ROOT)
-  set(multiValueArgs H_FILES CPP_FILES SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS INSTALL_HEADER_DIR)
+  set(multiValueArgs H_FILES CONFIG_H_FILES CPP_FILES CONFIG_CPP_FILES
+                     SUBDIR_LIST PUBLIC_DEPENDS PRIVATE_DEPENDS INSTALL_HEADER_DIR)
   include(CMakeParseArguments)
   cmake_parse_arguments(target "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
@@ -61,9 +62,19 @@ function(add_library_ex target)
     set(target_LIB_TYPE SHARED)
   endif()
   
+  string(REPLACE ${CMAKE_SOURCE_DIR}/src/cpp "" REL_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+  foreach(h ${target_CONFIG_H_FILES})
+    list(APPEND target_BUILD_CONFIG_H_FILES ${CMAKE_BINARY_DIR}/src/cpp/${REL_PATH}/${h})
+  endforeach()
+  foreach(cpp ${target_CONFIG_CPP_FILES})
+    list(APPEND target_BUILD_CONFIG_CPP_FILES ${CMAKE_BINARY_DIR}/src/cpp/${REL_PATH}/${cpp})
+  endforeach()
+  
   add_library( ${target} ${target_LIB_TYPE}
     ${target_H_FILES}
+    ${target_BUILD_CONFIG_H_FILES}
     ${target_CPP_FILES}
+    ${target_BUILD_CONFIG_CPP_FILES}
     )
 
   if(target_SHARED)
@@ -156,6 +167,7 @@ function(add_library_ex target)
   #-----------------------------------------------------------------------------
   set_target_properties (${target} PROPERTIES FOLDER ${PROJECT_NAME})
   
+  
   if(NOT target_SOURCE_ROOT)
     foreach(h ${target_H_FILES})
       list(APPEND target_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${h}")
@@ -165,8 +177,20 @@ function(add_library_ex target)
     endforeach()
     source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${target_H_FILES} ${target_CPP_FILES})
   else()
-  
-    source_group(TREE "${target_SOURCE_ROOT}" FILES ${target_FILES})
+   foreach(h ${target_H_FILES})
+     #file(RELATIVE_PATH h_rel ${target_SOURCE_ROOT} ${h})
+     #message(STATUS "Header at ${h_rel}")
+     list(APPEND target_FILES "${h}")
+   endforeach()
+   foreach(cpp ${target_CPP_FILES})
+     #file(RELATIVE_PATH cpp_rel ${target_SOURCE_ROOT} ${cpp})
+     #message(STATUS "Source at ${cpp_rel}")
+     list(APPEND target_FILES "${cpp}")
+   endforeach()
+   source_group(TREE "${target_SOURCE_ROOT}" FILES ${target_FILES})
   endif()
+  # Configured files in the build directories
+  source_group(TREE "${CMAKE_BINARY_DIR}/src/cpp/${REL_PATH}" FILES ${target_BUILD_CONFIG_H_FILES})
+  source_group(TREE "${CMAKE_BINARY_DIR}/src/cpp/${REL_PATH}" FILES ${target_BUILD_CONFIG_CPP_FILES})
 
 endfunction()
