@@ -18,7 +18,7 @@
 
 SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) : Loggable(logger)
 {
-  m_Connection = eSwitch::Off;
+  m_Connection = eSwitch::NullSwitch;
   m_ConnectionVolume = nullptr;
   m_Compliance = nullptr;
   m_DriverDampingParameter = nullptr;
@@ -30,7 +30,7 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
   m_ExpirationCyclePressure = nullptr;
   m_ExpirationCycleVolume = nullptr;
   m_ExpirationCycleTime = nullptr;
-  m_ExpirationCycleRespiratoryModel = eSwitch::Off;
+  m_ExpirationCycleRespiratoryModel = eSwitch::NullSwitch;
 
   m_ExpirationTubeResistance = nullptr;
   m_ExpirationValveResistance = nullptr;
@@ -50,7 +50,7 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
 
   m_InspirationPatientTriggerFlow = nullptr;
   m_InspirationPatientTriggerPressure = nullptr;
-  m_InspirationPatientTriggerRespiratoryModel = eSwitch::Off;
+  m_InspirationPatientTriggerRespiratoryModel = eSwitch::NullSwitch;
 
   m_InspirationTubeResistance = nullptr;
   m_InspirationValveResistance = nullptr;
@@ -66,7 +66,7 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
 
 SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 {
-  m_Connection = eSwitch::Off;
+  m_Connection = eSwitch::NullSwitch;
   SAFE_DELETE(m_ConnectionVolume);
   SAFE_DELETE(m_Compliance);
   SAFE_DELETE(m_DriverDampingParameter);
@@ -78,7 +78,7 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
   SAFE_DELETE(m_ExpirationCyclePressure);
   SAFE_DELETE(m_ExpirationCycleVolume);
   SAFE_DELETE(m_ExpirationCycleTime);
-  m_ExpirationCycleRespiratoryModel = eSwitch::Off;
+  m_ExpirationCycleRespiratoryModel = eSwitch::NullSwitch;
 
   SAFE_DELETE(m_ExpirationTubeResistance);
   SAFE_DELETE(m_ExpirationValveResistance);
@@ -98,7 +98,7 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 
   SAFE_DELETE(m_InspirationPatientTriggerFlow);
   SAFE_DELETE(m_InspirationPatientTriggerPressure);
-  m_InspirationPatientTriggerRespiratoryModel = eSwitch::Off;
+  m_InspirationPatientTriggerRespiratoryModel = eSwitch::NullSwitch;
 
   SAFE_DELETE(m_InspirationTubeResistance);
   SAFE_DELETE(m_InspirationValveResistance);
@@ -122,7 +122,7 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 
 void SEMechanicalVentilatorSettings::Clear()
 {
-  m_Connection = eSwitch::Off;
+  m_Connection = eSwitch::NullSwitch;
   INVALIDATE_PROPERTY(m_ConnectionVolume);
   INVALIDATE_PROPERTY(m_Compliance);
   INVALIDATE_PROPERTY(m_DriverDampingParameter);
@@ -134,7 +134,7 @@ void SEMechanicalVentilatorSettings::Clear()
   INVALIDATE_PROPERTY(m_ExpirationCyclePressure);
   INVALIDATE_PROPERTY(m_ExpirationCycleVolume);
   INVALIDATE_PROPERTY(m_ExpirationCycleTime);
-  m_ExpirationCycleRespiratoryModel = eSwitch::Off;
+  m_ExpirationCycleRespiratoryModel = eSwitch::NullSwitch;
 
   INVALIDATE_PROPERTY(m_ExpirationTubeResistance);
   INVALIDATE_PROPERTY(m_ExpirationValveResistance);
@@ -154,7 +154,7 @@ void SEMechanicalVentilatorSettings::Clear()
 
   INVALIDATE_PROPERTY(m_InspirationPatientTriggerFlow);
   INVALIDATE_PROPERTY(m_InspirationPatientTriggerPressure);
-  m_InspirationPatientTriggerRespiratoryModel = eSwitch::Off;
+  m_InspirationPatientTriggerRespiratoryModel = eSwitch::NullSwitch;
 
   INVALIDATE_PROPERTY(m_InspirationTubeResistance);
   INVALIDATE_PROPERTY(m_InspirationValveResistance);

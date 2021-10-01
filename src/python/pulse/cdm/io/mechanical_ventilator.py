@@ -18,7 +18,7 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings,
 
     if src.has_positive_end_expired_pressure():
         serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiredPressure)
-    if src.has_functional_residual_capacity():
+    elif src.has_functional_residual_capacity():
         serialize_scalar_pressure_to_bind(src.get_functional_residual_capacity(), dst.FunctionalResidualCapacity)
 
     if src.has_expiration_cycle_flow():
@@ -29,6 +29,8 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings,
         serialize_scalar_time_to_bind(src.get_expiration_cycle_time(), dst.ExpirationCycleTime)
     elif src.has_expiration_cycle_volume():
         serialize_scalar_volume_to_bind(src.get_expiration_cycle_volume(), dst.ExpirationCycleVolume)
+    else:
+        dst.ExpirationCycleRespiratoryModel = src.get_expiration_cycle_respiratory_model().value
 
     if src.has_expiration_limb_volume():
         serialize_scalar_volume_to_bind(src.get_expiration_limb_volume(), dst.ExpirationLimbVolume)
@@ -54,7 +56,7 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings,
 
     if src.has_peak_inspiratory_pressure():
         serialize_scalar_pressure_to_bind(src.get_peak_inspiratory_pressure(), dst.PeakInspiratoryPressure)
-    if src.has_inspiration_target_flow():
+    elif src.has_inspiration_target_flow():
         serialize_scalar_pressure_to_bind(src.get_inspiration_target_flow(), dst.InspirationTargetFlow)
 
     if src.has_inspiration_machine_trigger_time():
@@ -62,8 +64,10 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings,
 
     if src.has_inspiration_patient_trigger_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_inspiration_patient_trigger_flow(), dst.InspirationPatientTriggerFlow)
-    if src.has_inspiration_patient_trigger_pressure():
+    elif src.has_inspiration_patient_trigger_pressure():
         serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationPatientTriggerPressure)
+    else:
+        dst.InspirationPatientTriggerRespiratoryModel = src.get_inspiration_patient_trigger_respiratory_model().value
 
     if src.has_inspiration_limb_volume():
         serialize_scalar_volume_to_bind(src.get_inspiration_limb_volume(), dst.InspirationLimbVolume)
