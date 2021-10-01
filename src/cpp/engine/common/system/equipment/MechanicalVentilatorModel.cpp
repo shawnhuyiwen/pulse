@@ -80,6 +80,10 @@ namespace pulse
     m_DefaultClosedFlowResistance_cmH2O_s_Per_L = NULL;
 
     m_MeanAirwayPressure_cmH2O->Clear();
+
+    GetSettings().SetConnection(eSwitch::Off);
+    GetSettings().SetExpirationCycleRespiratoryModel(eSwitch::Off);
+    GetSettings().SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -127,7 +131,10 @@ namespace pulse
     GetTidalVolume().SetValue(0.0, VolumeUnit::L);
     GetTotalLungVolume().SetValue(0.0, VolumeUnit::L);
     GetTotalPulmonaryVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
+
     GetSettings().SetConnection(eSwitch::Off);
+    GetSettings().SetExpirationCycleRespiratoryModel(eSwitch::Off);
+    GetSettings().SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
 
     StateChange();
   }
