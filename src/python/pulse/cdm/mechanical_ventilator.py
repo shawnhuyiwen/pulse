@@ -31,6 +31,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
                  "_expiration_cycle_pressure",
                  "_expiration_cycle_time",
                  "_expiration_cycle_volume",
+                 "_expiration_cycle_respiratory_model",
 
                  "_expiration_limb_volume",
                  "_expiration_tube_resistance",
@@ -52,6 +53,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
                  # One of
                  "_inspiration_patient_trigger_flow",
                  "_inspiration_patient_trigger_pressure",
+                 "_inspiration_patient_trigger_respiratory_model",
 
                  "_inspiration_limb_volume",
                  "_inspiration_tube_resistance",
@@ -79,6 +81,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         self._expiration_cycle_pressure = None
         self._expiration_cycle_time = None
         self._expiration_cycle_volume = None
+        self._expiration_cycle_respiratory_model = eSwitch.NullSwitch
 
         self._expiration_limb_volume = None
         self._expiration_tube_resistance = None
@@ -100,6 +103,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
 
         self._inspiration_patient_trigger_flow = None
         self._inspiration_patient_trigger_pressure = None
+        self._inspiration_patient_trigger_respiratory_model = eSwitch.NullSwitch
 
         self._inspiration_limb_volume = None
         self._inspiration_tube_resistance = None
@@ -126,6 +130,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         if self._expiration_cycle_pressure is not None: self._expiration_cycle_pressure.invalidate()
         if self._expiration_cycle_time is not None: self._expiration_cycle_time.invalidate()
         if self._expiration_cycle_volume is not None: self._expiration_cycle_volume.invalidate()
+        self._expiration_cycle_respiratory_model = eSwitch.NullSwitch
 
         if self._expiration_limb_volume is not None: self._expiration_limb_volume.invalidate()
         if self._expiration_tube_resistance is not None: self._expiration_tube_resistance.invalidate()
@@ -142,7 +147,8 @@ class SEMechanicalVentilatorSettings(SEEquipment):
 
         if self._peak_inspiratory_pressure is not None: self._peak_inspiratory_pressure.invalidate()
         if self._inspiration_target_flow is not None: self._inspiration_target_flow.invalidate()
-        
+        self._inspiration_patient_trigger_respiratory_model = eSwitch.NullSwitch
+
         if self._inspiration_machine_trigger_time is not None: self._inspiration_machine_trigger_time.invalidate()
 
         if self._inspiration_patient_trigger_flow is not None: self._inspiration_patient_trigger_flow.invalidate()
@@ -176,6 +182,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         if src.has_expiration_cycle_pressure(): self.get_expiration_cycle_pressure().set(src._expiration_cycle_pressure)
         if src.has_expiration_cycle_time(): self.get_expiration_cycle_time().set(src._expiration_cycle_time)
         if src.has_expiration_cycle_volume(): self.get_expiration_cycle_volume().set(src._expiration_cycle_volume)
+        self._expiration_cycle_respiratory_model = src._expiration_cycle_respiratory_model
 
         if src.has_expiration_limb_volume(): self.get_expiration_limb_volume().set(src._expiration_limb_volume)
         if src.has_expiration_tube_resistance(): self.get_expiration_tube_resistance().set(src._expiration_tube_resistance)
@@ -197,6 +204,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
 
         if src.has_inspiration_patient_trigger_flow(): self.get_inspiration_patient_trigger_flow().set(src._inspiration_patient_trigger_flow)
         if src.has_inspiration_patient_trigger_pressure(): self.get_inspiration_patient_trigger_pressure().set(src._inspiration_patient_trigger_pressure)
+        self._inspiration_patient_trigger_respiratory_model = src._inspiration_patient_trigger_respiratory_model
 
         if src.has_inspiration_limb_volume(): self.get_inspiration_limb_volume().set(src._inspiration_limb_volume)
         if src.has_inspiration_tube_resistance(): self.get_inspiration_tube_resistance().set(src._inspiration_tube_resistance)
@@ -216,6 +224,8 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         return self._connection
     def set_connection(self, t: eSwitch):
         self._connection = t
+    def has_connection(self):
+        return self._connection != eSwitch.NullSwitch
 
     def has_connection_volume(self):
         return False if self._connection_volume is None else self._connection_volume.is_valid()
@@ -279,6 +289,13 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         if self._expiration_cycle_volume is None:
             self._expiration_cycle_volume = SEScalarVolume()
         return self._expiration_cycle_volume
+
+    def get_expiration_cycle_respiratory_model(self):
+        return self._expiration_cycle_respiratory_model
+    def set_expiration_cycle_respiratory_model(self, s: eSwitch):
+        self._expiration_cycle_respiratory_model = s
+    def has_expiration_cycle_respiratory_model(self):
+        return self._expiration_cycle_respiratory_model != eSwitch.NullSwitch
 
     def has_expiration_limb_volume(self):
         return False if self._expiration_limb_volume is None else self._expiration_limb_volume.is_valid()
@@ -382,6 +399,13 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         if self._inspiration_patient_trigger_pressure is None:
             self._inspiration_patient_trigger_pressure = SEScalarPressure()
         return self._inspiration_patient_trigger_pressure
+
+    def get_inspiration_patient_trigger_respiratory_model(self):
+        return self._inspiration_patient_trigger_respiratory_model
+    def set_inspiration_patient_trigger_respiratory_model(self, s: eSwitch):
+        self._inspiration_patient_trigger_respiratory_model = s
+    def has_inspiration_patient_trigger_respiratory_model(self):
+        return self._inspiration_patient_trigger_respiratory_model != eSwitch.NullSwitch
 
     def has_inspiration_limb_volume(self):
         return False if self._inspiration_limb_volume is None else self._inspiration_limb_volume.is_valid()

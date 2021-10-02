@@ -67,7 +67,7 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
     s.GetExpirationCycleTime().Set(GetInspiratoryPeriod());
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
     if(GetMode() == eMechanicalVentilator_PressureControlMode::AssistedControl)
-      s.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
+      s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
   }
   return true;
 }

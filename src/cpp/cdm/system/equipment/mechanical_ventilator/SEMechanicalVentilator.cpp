@@ -132,6 +132,10 @@ void SEMechanicalVentilator::TurnOff()
 
   if (m_Settings)
     m_Settings->Clear();
+
+  GetSettings().SetConnection(eSwitch::Off);
+  GetSettings().SetExpirationCycleRespiratoryModel(eSwitch::Off);
+  GetSettings().SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
 }
 
 const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
