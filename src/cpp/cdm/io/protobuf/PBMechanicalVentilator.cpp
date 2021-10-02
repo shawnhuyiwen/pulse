@@ -149,17 +149,19 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
 
   if (src.has_positiveendexpiredpressure())
     PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
-  if (src.has_functionalresidualcapacity())
+  else if (src.has_functionalresidualcapacity())
     PBProperty::Load(src.functionalresidualcapacity(), dst.GetFunctionalResidualCapacity());
 
   if (src.has_expirationcycleflow())
     PBProperty::Load(src.expirationcycleflow(), dst.GetExpirationCycleFlow());
-  if (src.has_expirationcyclepressure())
+  else if (src.has_expirationcyclepressure())
     PBProperty::Load(src.expirationcyclepressure(), dst.GetExpirationCyclePressure());
-  if (src.has_expirationcyclevolume())
+  else if (src.has_expirationcyclevolume())
     PBProperty::Load(src.expirationcyclevolume(), dst.GetExpirationCycleVolume());
-  if (src.has_expirationcycletime())
+  else if (src.has_expirationcycletime())
     PBProperty::Load(src.expirationcycletime(), dst.GetExpirationCycleTime());
+  else
+    dst.m_ExpirationCycleRespiratoryModel = (eSwitch)src.expirationcyclerespiratorymodel();
 
   if (src.has_expirationlimbvolume())
     PBProperty::Load(src.expirationlimbvolume(), dst.GetExpirationLimbVolume());
@@ -175,9 +177,9 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
 
   if (src.has_inspirationlimitflow())
     PBProperty::Load(src.inspirationlimitflow(), dst.GetInspirationLimitFlow());
-  if (src.has_inspirationlimitpressure())
+  else if (src.has_inspirationlimitpressure())
     PBProperty::Load(src.inspirationlimitpressure(), dst.GetInspirationLimitPressure());
-  if (src.has_inspirationlimitvolume())
+  else if (src.has_inspirationlimitvolume())
     PBProperty::Load(src.inspirationlimitvolume(), dst.GetInspirationLimitVolume());
 
   if (src.has_inspirationpausetime())
@@ -185,7 +187,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
 
   if (src.has_peakinspiratorypressure())
     PBProperty::Load(src.peakinspiratorypressure(), dst.GetPeakInspiratoryPressure());
-  if (src.has_inspirationtargetflow())
+  else if (src.has_inspirationtargetflow())
     PBProperty::Load(src.inspirationtargetflow(), dst.GetInspirationTargetFlow());
 
   if (src.has_inspirationmachinetriggertime())
@@ -193,8 +195,10 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
 
   if (src.has_inspirationpatienttriggerflow())
     PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
-  if (src.has_inspirationpatienttriggerpressure())
-    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());  
+  else if (src.has_inspirationpatienttriggerpressure())
+    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());
+  else
+    dst.m_InspirationPatientTriggerRespiratoryModel = (eSwitch)src.inspirationpatienttriggerrespiratorymodel();
 
   if (src.has_inspirationlimbvolume())
     PBProperty::Load(src.inspirationlimbvolume(), dst.GetInspirationLimbVolume());
@@ -265,17 +269,19 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
 
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
-  if (src.HasFunctionalResidualCapacity())
+  else if (src.HasFunctionalResidualCapacity())
     dst.set_allocated_functionalresidualcapacity(PBProperty::Unload(*src.m_FunctionalResidualCapacity));
 
   if (src.HasExpirationCycleFlow())
     dst.set_allocated_expirationcycleflow(PBProperty::Unload(*src.m_ExpirationCycleFlow));
-  if (src.HasExpirationCyclePressure())
+  else if (src.HasExpirationCyclePressure())
     dst.set_allocated_expirationcyclepressure(PBProperty::Unload(*src.m_ExpirationCyclePressure));
-  if (src.HasExpirationCycleVolume())
+  else if (src.HasExpirationCycleVolume())
     dst.set_allocated_expirationcyclevolume(PBProperty::Unload(*src.m_ExpirationCycleVolume));
-  if (src.HasExpirationCycleTime())
+  else if (src.HasExpirationCycleTime())
     dst.set_allocated_expirationcycletime(PBProperty::Unload(*src.m_ExpirationCycleTime));
+  else
+    dst.set_expirationcyclerespiratorymodel((CDM_BIND::eSwitch)src.m_ExpirationCycleRespiratoryModel);
 
   if (src.HasExpirationLimbVolume())
     dst.set_allocated_expirationlimbvolume(PBProperty::Unload(*src.m_ExpirationLimbVolume));
@@ -291,9 +297,9 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
 
   if (src.HasInspirationLimitFlow())
     dst.set_allocated_inspirationlimitflow(PBProperty::Unload(*src.m_InspirationLimitFlow));
-  if (src.HasInspirationLimitPressure())
+  else if (src.HasInspirationLimitPressure())
     dst.set_allocated_inspirationlimitpressure(PBProperty::Unload(*src.m_InspirationLimitPressure));
-  if (src.HasInspirationLimitVolume())
+  else if (src.HasInspirationLimitVolume())
     dst.set_allocated_inspirationlimitvolume(PBProperty::Unload(*src.m_InspirationLimitVolume));
 
   if (src.HasInspirationPauseTime())
@@ -301,7 +307,7 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
 
   if (src.HasPeakInspiratoryPressure())
     dst.set_allocated_peakinspiratorypressure(PBProperty::Unload(*src.m_PeakInspiratoryPressure));
-  if (src.HasInspirationTargetFlow())
+  else if (src.HasInspirationTargetFlow())
     dst.set_allocated_inspirationtargetflow(PBProperty::Unload(*src.m_InspirationTargetFlow));
 
   if (src.HasInspirationMachineTriggerTime())
@@ -309,8 +315,10 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
 
   if (src.HasInspirationPatientTriggerFlow())
     dst.set_allocated_inspirationpatienttriggerflow(PBProperty::Unload(*src.m_InspirationPatientTriggerFlow));
-  if (src.HasInspirationPatientTriggerPressure())
-    dst.set_allocated_inspirationpatienttriggerpressure(PBProperty::Unload(*src.m_InspirationPatientTriggerPressure));  
+  else if (src.HasInspirationPatientTriggerPressure())
+    dst.set_allocated_inspirationpatienttriggerpressure(PBProperty::Unload(*src.m_InspirationPatientTriggerPressure));
+  else
+    dst.set_inspirationpatienttriggerrespiratorymodel((CDM_BIND::eSwitch)src.m_InspirationPatientTriggerRespiratoryModel);
 
   if (src.HasInspirationTubeResistance())
     dst.set_allocated_inspirationtuberesistance(PBProperty::Unload(*src.m_InspirationTubeResistance));

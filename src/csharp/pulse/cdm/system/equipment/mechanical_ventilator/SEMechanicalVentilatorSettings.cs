@@ -29,6 +29,7 @@ namespace Pulse.CDM
     protected SEScalarPressure expiration_cycle_pressure;
     protected SEScalarTime expiration_cycle_time;
     protected SEScalarVolume expiration_cycle_volume;
+    protected eSwitch expiration_cycle_respiratory_model;
 
     protected SEScalarVolume expiration_limb_volume;
     protected SEScalarPressureTimePerVolume expiration_tube_resistance;
@@ -54,6 +55,7 @@ namespace Pulse.CDM
     // Inspiration Patient Trigger (Only set one)
     protected SEScalarVolumePerTime inspiration_patient_trigger_flow;
     protected SEScalarPressure inspiration_patient_trigger_pressure;
+    protected eSwitch inspiration_patient_trigger_respiratory_model;
 
     protected SEScalarVolume inspiration_limb_volume;
     protected SEScalarPressureTimePerVolume inspiration_tube_resistance;
@@ -79,6 +81,7 @@ namespace Pulse.CDM
       expiration_cycle_pressure = null;
       expiration_cycle_time = null;
       expiration_cycle_volume = null;
+      expiration_cycle_respiratory_model = eSwitch.NullSwitch;
 
       expiration_limb_volume = null;
       expiration_tube_resistance = null;
@@ -96,6 +99,7 @@ namespace Pulse.CDM
       inspiration_machine_trigger_time = null;
       inspiration_patient_trigger_flow = null;
       inspiration_patient_trigger_pressure = null;
+      inspiration_patient_trigger_respiratory_model = eSwitch.NullSwitch;
 
       inspiration_limb_volume = null;
       inspiration_tube_resistance = null;
@@ -208,6 +212,8 @@ namespace Pulse.CDM
         this.GetExpirationCycleTime().Set(from.GetExpirationCycleTime());
       if (from.HasExpirationCycleVolume())
         this.GetExpirationCycleVolume().Set(from.GetExpirationCycleVolume());
+      if (from.expiration_cycle_respiratory_model != eSwitch.NullSwitch)
+        this.expiration_cycle_respiratory_model = from.expiration_cycle_respiratory_model;
 
       if (from.HasExpirationLimbVolume())
         this.GetExpirationLimbVolume().Set(from.GetExpirationLimbVolume());
@@ -240,6 +246,8 @@ namespace Pulse.CDM
         this.GetInspirationPatientTriggerFlow().Set(from.GetInspirationPatientTriggerFlow());
       if (from.HasInspirationPatientTriggerPressure())
         this.GetInspirationPatientTriggerPressure().Set(from.GetInspirationPatientTriggerPressure());
+      if (from.inspiration_patient_trigger_respiratory_model != eSwitch.NullSwitch)
+        this.inspiration_patient_trigger_respiratory_model = from.inspiration_patient_trigger_respiratory_model;
 
       if (from.HasInspirationLimbVolume())
         this.GetInspirationLimbVolume().Set(from.GetInspirationLimbVolume());
@@ -303,7 +311,6 @@ namespace Pulse.CDM
     {
       return connection_volume == null ? false : connection_volume.IsValid();
     }
-
 
     public SEScalarVolumePerPressure GetCompliance()
     {
@@ -390,6 +397,19 @@ namespace Pulse.CDM
     public bool HasExpirationCycleVolume()
     {
       return expiration_cycle_volume == null ? false : expiration_cycle_volume.IsValid();
+    }
+
+    public eSwitch GetExpirationCycleRespiratoryModel()
+    {
+      return expiration_cycle_respiratory_model;
+    }
+    public void SetExpirationCycleRespiratoryModel(eSwitch s)
+    {
+      expiration_cycle_respiratory_model = s;
+    }
+    public bool HasExpirationCycleRespiratoryModel()
+    {
+      return expiration_cycle_respiratory_model != eSwitch.NullSwitch;
     }
 
     public SEScalarVolume GetExpirationLimbVolume()
@@ -557,6 +577,19 @@ namespace Pulse.CDM
     public bool HasInspirationPatientTriggerPressure()
     {
       return inspiration_patient_trigger_pressure == null ? false : inspiration_patient_trigger_pressure.IsValid();
+    }
+
+    public eSwitch GetInspirationPatientTriggerRespiratoryModel()
+    {
+      return inspiration_patient_trigger_respiratory_model;
+    }
+    public void SetInspirationPatientTriggerRespiratoryModel(eSwitch s)
+    {
+      inspiration_patient_trigger_respiratory_model = s;
+    }
+    public bool HasInspirationPatientTriggerRespiratoryModel()
+    {
+      return inspiration_patient_trigger_respiratory_model != eSwitch.NullSwitch;
     }
 
     public SEScalarVolume GetInspirationLimbVolume()
@@ -752,6 +785,7 @@ namespace Pulse.CDM
       + "\n\tExpirationCyclePressure: " + (HasExpirationCyclePressure() ? GetExpirationCyclePressure().ToString() : "Not Provided")
       + "\n\tExpirationCycleTime: " + (HasExpirationCycleTime() ? GetExpirationCycleTime().ToString() : "Not Provided")
       + "\n\tExpirationCycleVolume: " + (HasExpirationCycleVolume() ? GetExpirationCycleVolume().ToString() : "Not Provided")
+      + "\n\tExpirationCycleRespiratoryModel: " + (HasExpirationCycleRespiratoryModel() ? eEnum.Name(GetExpirationCycleRespiratoryModel()) : "NotProvided")
       + "\n\tExpirationTubeResistance: " + (HasExpirationTubeResistance() ? GetExpirationTubeResistance().ToString() : "Not Provided")
       + "\n\tExpirationValveResistance: " + (HasExpirationValveResistance() ? GetExpirationValveResistance().ToString() : "Not Provided")
       + "\n\tExpirationValveVolume: " + (HasExpirationValveVolume() ? GetExpirationValveVolume().ToString() : "Not Provided")
@@ -766,6 +800,7 @@ namespace Pulse.CDM
       + "\n\tInspirationMachineTriggerTime: " + (HasInspirationMachineTriggerTime() ? GetInspirationMachineTriggerTime().ToString() : "Not Provided")
       + "\n\tInspirationPatientTriggerFlow: " + (HasInspirationPatientTriggerFlow() ? GetInspirationPatientTriggerFlow().ToString() : "Not Provided")
       + "\n\tInspirationPatientTriggerPressure: " + (HasInspirationPatientTriggerPressure() ? GetInspirationPatientTriggerPressure().ToString() : "Not Provided")
+      + "\n\tInspirationPatientTriggerRespiratoryModel: " + (HasInspirationPatientTriggerRespiratoryModel() ? eEnum.Name(GetInspirationPatientTriggerRespiratoryModel()) : "NotProvided")
       + "\n\tInspirationTubeResistance: " + (HasInspirationTubeResistance() ? GetInspirationTubeResistance().ToString() : "Not Provided")
       + "\n\tInspirationValveResistance: " + (HasInspirationValveResistance() ? GetInspirationValveResistance().ToString() : "Not Provided")
       + "\n\tInspirationValveVolume: " + (HasInspirationValveVolume() ? GetInspirationValveVolume().ToString() : "Not Provided")

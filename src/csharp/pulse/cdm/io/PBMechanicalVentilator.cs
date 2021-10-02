@@ -41,6 +41,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.ExpirationCycleTime, dst.GetExpirationCycleTime());
       else if (src.ExpirationCycleVolume != null)
         PBProperty.Load(src.ExpirationCycleVolume, dst.GetExpirationCycleVolume());
+      else
+        dst.SetExpirationCycleRespiratoryModel((eSwitch)src.ExpirationCycleRespiratoryModel);
 
       if (src.ExpirationLimbVolume != null)
         PBProperty.Load(src.ExpirationLimbVolume, dst.GetExpirationLimbVolume());
@@ -76,6 +78,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.InspirationPatientTriggerFlow, dst.GetInspirationPatientTriggerFlow());
       else if (src.InspirationPatientTriggerPressure != null)
         PBProperty.Load(src.InspirationPatientTriggerPressure, dst.GetInspirationPatientTriggerPressure());
+      else
+        dst.SetInspirationPatientTriggerRespiratoryModel((eSwitch)src.InspirationPatientTriggerRespiratoryModel);
 
       if (src.InspirationLimbVolume != null)
         PBProperty.Load(src.InspirationLimbVolume, dst.GetInspirationLimbVolume());
@@ -132,6 +136,8 @@ namespace Pulse.CDM
         dst.ExpirationCycleTime = PBProperty.Unload(src.GetExpirationCycleTime());
       else if (src.HasExpirationCycleVolume())
         dst.ExpirationCycleVolume = PBProperty.Unload(src.GetExpirationCycleVolume());
+      else
+        dst.ExpirationCycleRespiratoryModel = (pulse.cdm.bind.eSwitch)(int)src.GetExpirationCycleRespiratoryModel();
 
       if (src.HasExpirationLimbVolume())
         dst.ExpirationLimbVolume = PBProperty.Unload(src.GetExpirationLimbVolume());
@@ -167,6 +173,8 @@ namespace Pulse.CDM
         dst.InspirationPatientTriggerFlow = PBProperty.Unload(src.GetInspirationPatientTriggerFlow());
       else if (src.HasInspirationPatientTriggerPressure())
         dst.InspirationPatientTriggerPressure = PBProperty.Unload(src.GetInspirationPatientTriggerPressure());
+      else
+        dst.InspirationPatientTriggerRespiratoryModel = (pulse.cdm.bind.eSwitch)(int)src.GetInspirationPatientTriggerRespiratoryModel();
 
       if (src.HasInspirationLimbVolume())
         dst.InspirationLimbVolume = PBProperty.Unload(src.GetInspirationLimbVolume());

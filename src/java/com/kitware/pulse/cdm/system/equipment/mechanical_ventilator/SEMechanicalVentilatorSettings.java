@@ -1,5 +1,6 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
+
 package com.kitware.pulse.cdm.system.equipment.mechanical_ventilator;
 
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import com.kitware.pulse.cdm.bind.Substance.SubstanceFractionData;
 import com.kitware.pulse.cdm.properties.*;
 import com.kitware.pulse.cdm.substance.SESubstanceConcentration;
 import com.kitware.pulse.cdm.substance.SESubstanceFraction;
-import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
 public class SEMechanicalVentilatorSettings
 {
@@ -33,6 +33,7 @@ public class SEMechanicalVentilatorSettings
   protected SEScalarPressure                  expirationCyclePressure;
   protected SEScalarVolume                    expirationCycleVolume;
   protected SEScalarTime                      expirationCycleTime;
+  protected eSwitch                           expirationCycleRespiratoryModel;
 
   protected SEScalarVolume                    expirationLimbVolume;
   protected SEScalarPressureTimePerVolume     expirationTubeResistance;
@@ -59,6 +60,7 @@ public class SEMechanicalVentilatorSettings
   // Inspiratory Patient Trigger Properties (Only set 1)
   protected SEScalarVolumePerTime             inspirationPatientTriggerFlow;
   protected SEScalarPressure                  inspirationPatientTriggerPressure;
+  protected eSwitch                           inspirationPatientTriggerRespiratoryModel;
   
 
   protected SEScalarVolume                    inspirationLimbVolume;
@@ -88,6 +90,7 @@ public class SEMechanicalVentilatorSettings
     expirationCyclePressure = null;
     expirationCycleVolume = null;
     expirationCycleTime = null;
+    expirationCycleRespiratoryModel = null;
 
     expirationLimbVolume = null;
     expirationTubeResistance = null;
@@ -109,6 +112,7 @@ public class SEMechanicalVentilatorSettings
 
     inspirationPatientTriggerFlow = null;
     inspirationPatientTriggerPressure = null;
+    inspirationPatientTriggerRespiratoryModel = null;
 
     inspirationLimbVolume = null;
     inspirationTubeResistance = null;
@@ -146,6 +150,7 @@ public class SEMechanicalVentilatorSettings
       expirationCycleVolume.invalidate();
     if (expirationCycleTime != null)
       expirationCycleTime.invalidate();
+    expirationCycleRespiratoryModel = null;
 
     if (expirationLimbVolume != null)
       expirationLimbVolume.invalidate();
@@ -181,6 +186,7 @@ public class SEMechanicalVentilatorSettings
       inspirationPatientTriggerFlow.invalidate();
     if (inspirationPatientTriggerPressure != null)
       inspirationPatientTriggerPressure.invalidate();
+    inspirationPatientTriggerRespiratoryModel = null;
 
     if (inspirationLimbVolume != null)
       inspirationLimbVolume.invalidate();
@@ -226,6 +232,8 @@ public class SEMechanicalVentilatorSettings
       this.getExpirationCycleVolume().set(from.getExpirationCycleVolume());
     if(from.hasExpirationCycleTime())
       this.getExpirationCycleTime().set(from.getExpirationCycleTime());
+    if(from.expirationCycleRespiratoryModel!=null && from.expirationCycleRespiratoryModel != eSwitch.NullSwitch)
+      this.expirationCycleRespiratoryModel=from.expirationCycleRespiratoryModel;
     
     if(from.hasExpirationLimbVolume())
       this.getExpirationLimbVolume().set(from.getExpirationLimbVolume());
@@ -262,6 +270,8 @@ public class SEMechanicalVentilatorSettings
       this.getInspirationPatientTriggerFlow().set(from.getInspirationPatientTriggerFlow());
     if(from.hasInspirationPatientTriggerPressure())
       this.getInspirationPatientTriggerPressure().set(from.getInspirationPatientTriggerPressure());
+    if(from.inspirationPatientTriggerRespiratoryModel!=null && from.inspirationPatientTriggerRespiratoryModel != eSwitch.NullSwitch)
+      this.inspirationPatientTriggerRespiratoryModel=from.inspirationPatientTriggerRespiratoryModel;
 
     if(from.hasInspirationLimbVolume())
       this.getInspirationLimbVolume().set(from.getInspirationLimbVolume());
@@ -326,6 +336,8 @@ public class SEMechanicalVentilatorSettings
       SEScalarVolume.load(src.getExpirationCycleVolume(), dst.getExpirationCycleVolume());
     else if (src.hasExpirationCycleTime())
       SEScalarTime.load(src.getExpirationCycleTime(), dst.getExpirationCycleTime());
+    else if (src.getExpirationCycleRespiratoryModel()!=eSwitch.UNRECOGNIZED)
+      dst.setExpirationCycleRespiratoryModel(src.getExpirationCycleRespiratoryModel());
     
     if (src.hasExpirationLimbVolume())
       SEScalarVolume.load(src.getExpirationLimbVolume(), dst.getExpirationLimbVolume());
@@ -362,6 +374,8 @@ public class SEMechanicalVentilatorSettings
       SEScalarVolumePerTime.load(src.getInspirationPatientTriggerFlow(), dst.getInspirationPatientTriggerFlow());
     else if (src.hasInspirationPatientTriggerPressure())
       SEScalarPressure.load(src.getInspirationPatientTriggerPressure(), dst.getInspirationPatientTriggerPressure());
+    else if (src.getInspirationPatientTriggerRespiratoryModel()!=eSwitch.UNRECOGNIZED)
+      dst.setInspirationPatientTriggerRespiratoryModel(src.getInspirationPatientTriggerRespiratoryModel());
 
     if (src.hasInspirationLimbVolume())
       SEScalarVolume.load(src.getInspirationLimbVolume(), dst.getInspirationLimbVolume());
@@ -425,6 +439,8 @@ public class SEMechanicalVentilatorSettings
       dst.setExpirationCycleVolume(SEScalarVolume.unload(src.getExpirationCycleVolume()));
     else if (src.hasExpirationCycleTime())
       dst.setExpirationCycleTime(SEScalarTime.unload(src.getExpirationCycleTime()));
+    else if (src.hasExpirationCycleRespiratoryModel())
+      dst.setExpirationCycleRespiratoryModel(src.expirationCycleRespiratoryModel);
     
     if(src.hasExpirationLimbVolume())
       dst.setExpirationLimbVolume(SEScalarVolume.unload(src.getExpirationLimbVolume()));
@@ -453,6 +469,8 @@ public class SEMechanicalVentilatorSettings
       dst.setPeakInspiratoryPressure(SEScalarPressure.unload(src.getPeakInspiratoryPressure()));
     else if (src.hasInspirationTargetFlow())
       dst.setInspirationTargetFlow(SEScalarVolumePerTime.unload(src.getInspirationTargetFlow()));
+    else if (src.hasInspirationPatientTriggerRespiratoryModel())
+      dst.setInspirationPatientTriggerRespiratoryModel(src.inspirationPatientTriggerRespiratoryModel);
     
     if (src.hasInspirationMachineTriggerTime())
       dst.setInspirationMachineTriggerTime(SEScalarTime.unload(src.getInspirationMachineTriggerTime()));
@@ -495,7 +513,7 @@ public class SEMechanicalVentilatorSettings
   }
   public boolean hasConnection()
   {
-    return connection != null;
+    return connection != null && connection != eSwitch.NullSwitch;
   }
   
   public SEScalarVolume getConnectionVolume()
@@ -594,6 +612,19 @@ public class SEMechanicalVentilatorSettings
   public boolean hasExpirationCycleTime()
   {
     return expirationCycleTime == null ? false : expirationCycleTime.isValid();
+  }
+  
+  public eSwitch getExpirationCycleRespiratoryModel()
+  {
+    return expirationCycleRespiratoryModel;
+  }
+  public void setExpirationCycleRespiratoryModel(eSwitch s)
+  {
+    expirationCycleRespiratoryModel = (s == eSwitch.UNRECOGNIZED) ? null : s;
+  }
+  public boolean hasExpirationCycleRespiratoryModel()
+  {
+    return expirationCycleRespiratoryModel != null && expirationCycleRespiratoryModel != eSwitch.NullSwitch;
   }
   
   public SEScalarVolume getExpirationLimbVolume()
@@ -761,6 +792,19 @@ public class SEMechanicalVentilatorSettings
   public boolean hasInspirationPatientTriggerPressure()
   {
     return inspirationPatientTriggerPressure == null ? false : inspirationPatientTriggerPressure.isValid();
+  }
+  
+  public eSwitch getInspirationPatientTriggerRespiratoryModel()
+  {
+    return inspirationPatientTriggerRespiratoryModel;
+  }
+  public void setInspirationPatientTriggerRespiratoryModel(eSwitch s)
+  {
+    inspirationPatientTriggerRespiratoryModel = (s == eSwitch.UNRECOGNIZED) ? null : s;
+  }
+  public boolean hasInspirationPatientTriggerRespiratoryModel()
+  {
+    return inspirationPatientTriggerRespiratoryModel != null && inspirationPatientTriggerRespiratoryModel != eSwitch.NullSwitch;
   }
   
   public SEScalarVolume getInspirationLimbVolume()
@@ -968,6 +1012,7 @@ public class SEMechanicalVentilatorSettings
         + "\n\tExpirationCyclePressure: " + (hasExpirationCyclePressure()?getExpirationCyclePressure():"NotProvided")
         + "\n\tExpirationCycleVolume: " + (hasExpirationCycleVolume()?getExpirationCycleVolume():"NotProvided")
         + "\n\tExpirationCycleTime: " + (hasExpirationCycleTime()?getExpirationCycleTime():"NotProvided")
+        + "\n\tExpirationCycleRespiratoryModel: " + (hasExpirationCycleRespiratoryModel()?getExpirationCycleRespiratoryModel():"NotProvided")
         
         + "\n\tExpirationTubeResistance: " + (hasExpirationTubeResistance()?getExpirationTubeResistance():"NotProvided")
         + "\n\tExpirationValveResistance: " + (hasExpirationValveResistance()?getExpirationValveResistance():"NotProvided")
@@ -987,6 +1032,7 @@ public class SEMechanicalVentilatorSettings
 
         + "\n\tInspirationPatientTriggerFlow: " + (hasInspirationPatientTriggerFlow()?getInspirationPatientTriggerFlow():"NotProvided")
         + "\n\tInspirationPatientTriggerPressure: " + (hasInspirationPatientTriggerPressure()?getInspirationPatientTriggerPressure():"NotProvided")
+        + "\n\tInspirationPatientTriggerRespiratoryModel: " + (hasInspirationPatientTriggerRespiratoryModel()?getInspirationPatientTriggerRespiratoryModel():"NotProvided")
         
         + "\n\tInspirationTubeResistance: " + (hasInspirationTubeResistance()?getInspirationTubeResistance():"NotProvided")
         + "\n\tInspirationValveResistance: " + (hasInspirationValveResistance()?getInspirationValveResistance():"NotProvided")

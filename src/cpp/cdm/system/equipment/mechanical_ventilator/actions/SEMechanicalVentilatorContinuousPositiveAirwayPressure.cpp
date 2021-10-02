@@ -54,8 +54,8 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
     s.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
     s.GetPositiveEndExpiredPressure().Set(GetPositiveEndExpiredPressure());
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
-    s.GetExpirationCycleFlow().SetValue(0.01, VolumePerTimeUnit::L_Per_s);
-    s.GetInspirationPatientTriggerFlow().SetValue(0.1, VolumePerTimeUnit::L_Per_s);
+    s.SetExpirationCycleRespiratoryModel(eSwitch::On);
+    s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
   }
   return true;
 }
