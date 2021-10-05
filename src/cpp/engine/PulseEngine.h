@@ -7,7 +7,7 @@
 #include "cdm/PhysiologyEngine.h"
 #include "cdm/utils/ScopedMutex.h"
 
-class PULSE_DECL PulseBuildInformation
+struct PULSE_DECL PulseBuildInformation
 {
   static std::string Time();
   static std::string Hash();
