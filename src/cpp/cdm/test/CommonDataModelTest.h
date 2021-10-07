@@ -415,6 +415,7 @@ public:
   void SimpleBlackBoxTest(const std::string& sOutputDirectory);
   void WindkesselBlackBoxTest(const std::string& sOutputDirectory);
   void BlackBoxComplianceTest(const std::string& sOutputDirectory);
+  void BlackBoxSourcesTest(const std::string& sOutputDirectory);
 
   ///////////////
   // I/O Tests //

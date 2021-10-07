@@ -93,6 +93,7 @@ int main(int argc, char* argv[])
       //cdmTest.SimpleBlackBoxTest(peDir);
       //cdmTest.WindkesselBlackBoxTest(peDir);
       //cdmTest.BlackBoxComplianceTest(peDir);
+      cdmTest.BlackBoxSourcesTest(peDir);
       //peTest.EmptyBlackBoxTest(peDir);
       //peTest.ImposeFlowBlackBoxTest(peDir);
       //peTest.ImposePressureAndFlowBlackBoxTest(peDir);

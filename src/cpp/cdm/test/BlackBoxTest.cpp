@@ -20,9 +20,6 @@
 
 void CommonDataModelTest::BasicBlackBoxComparisonTest(const std::string& sOutputDirectory)
 {
-
-  //jbw - Add transport
-
   std::cout << "BasicBlackBoxComparisonTest\n";
 
   m_Logger->SetLogFile(sOutputDirectory + "/BasicBlackBoxComparisonTest.log");
@@ -92,8 +89,6 @@ void CommonDataModelTest::BasicBlackBoxComparisonTest(const std::string& sOutput
 
 void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
 {
-  //jbw - Add transport
-
   std::cout << "BasicBlackBoxTest\n";
   m_Logger->SetLogFile(sOutputDirectory + "/BasicBlackBoxTest.log");
   TimingProfile p;
@@ -882,5 +877,229 @@ void CommonDataModelTest::BlackBoxComplianceTest(const std::string& sOutputDirec
     std::string sOutputFile = sOutputDirectory + "/" + name +"Circuit.csv";
     trk.WriteTrackToFile(sOutputFile.c_str());
     m_Circuits->Clear();
+  }
+}
+
+void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirectory)
+{
+  //jbw - Figure out how to do a comparison on sources vs blackboxes
+
+  for (unsigned int iterType = 0; iterType < 2; iterType++)
+  {
+    std::string typeName;
+    std::string firstSourceTypeName;
+    std::string secondSourceTypeName;
+    std::string firstDirectionName;
+    std::string secondDirectionName;
+
+    if (iterType == 0)
+    {
+      typeName = "_Sources";
+    }
+    else
+    {
+      typeName = "_BlackBox";
+    }
+
+    for (unsigned int iterFirstSourceType = 0; iterFirstSourceType < 2; iterFirstSourceType++)
+    {
+      if (iterFirstSourceType == 0)
+      {
+        firstSourceTypeName = "_FlowFirst";
+      }
+      else
+      {
+        firstSourceTypeName = "_PressureFirst";
+      }
+
+      for (unsigned int iterSecondSourceType = 0; iterSecondSourceType < 2; iterSecondSourceType++)
+      {
+        if (iterSecondSourceType == 0)
+        {
+          secondSourceTypeName = "_FlowSecond";
+        }
+        else
+        {
+          secondSourceTypeName = "_PressureSecond";
+        }
+
+        double firstDirectionMultiplier = 0.0;
+        double secondDirectionMultiplier = 0.0;
+        for (unsigned int iterFirstDirection = 0; iterFirstDirection < 2; iterFirstDirection++)
+        {
+          if (iterFirstDirection == 0)
+          {
+            firstDirectionName = "_PositiveFirst";
+            firstDirectionMultiplier = 1.0;
+          }
+          else
+          {
+            firstDirectionName =  "_NegativeFirst";
+            firstDirectionMultiplier = -1.0;
+          }
+
+          for (unsigned int iterSecondDirection = 0; iterSecondDirection < 2; iterSecondDirection++)
+          {
+            if (iterSecondDirection == 0)
+            {
+              secondDirectionName = "_PositiveSecond";
+              secondDirectionMultiplier = 1.0;
+            }
+            else
+            {
+              secondDirectionName = "_NegativeSecond";
+              secondDirectionMultiplier = -1.0;
+            }
+
+            std::string name = "BlackBoxSourcesTest" + typeName + firstSourceTypeName + secondSourceTypeName + firstDirectionName + secondDirectionName;
+            std::cout << name << "\n";
+            m_Logger->SetLogFile(sOutputDirectory + "/" + name + ".log");
+
+            TimingProfile p;
+            double timeStep_s = 1.0 / 50.0;
+            double currentTime_s = 0.0;
+            DataTrack trk;
+
+            SEFluidCircuitCalculator fluidCalculator(m_Logger);
+
+            //Circuit 1
+            SEFluidCircuit* fluidCircuit = &m_Circuits->CreateFluidCircuit("fluidCircuit");
+
+            //Nodes
+            SEFluidCircuitNode& Ground = fluidCircuit->CreateNode("Ground");
+
+            SEFluidCircuitNode& Windkessel1Node1 = fluidCircuit->CreateNode("Windkessel1Node1");
+            SEFluidCircuitNode& Windkessel1Node2 = fluidCircuit->CreateNode("Windkessel1Node2");
+            SEFluidCircuitNode& Windkessel2Node1 = fluidCircuit->CreateNode("Windkessel2Node1");
+            SEFluidCircuitNode& Windkessel2Node2 = fluidCircuit->CreateNode("Windkessel2Node2");
+
+            Ground.SetAsReferenceNode();
+            Ground.GetNextPressure().SetValue(0, PressureUnit::Pa);
+
+            SEFluidCircuitPath& Windkessel1ResistancePath1 = fluidCircuit->CreatePath(Windkessel1Node1, Windkessel1Node2, "Windkessel1ResistancePath1");
+            Windkessel1ResistancePath1.GetNextResistance().SetValue(10.0, PressureTimePerVolumeUnit::Pa_s_Per_m3);
+            SEFluidCircuitPath& Windkessel1ResistancePath2 = fluidCircuit->CreatePath(Windkessel1Node2, Ground, "Windkessel1ResistancePath2");
+            Windkessel1ResistancePath2.GetNextResistance().SetValue(10.0, PressureTimePerVolumeUnit::Pa_s_Per_m3);
+            SEFluidCircuitPath& Windkessel1CompliancePath = fluidCircuit->CreatePath(Windkessel1Node2, Ground, "Windkessel1CompliancePath");
+            Windkessel1CompliancePath.GetNextCompliance().SetValue(10.0, VolumePerPressureUnit::m3_Per_Pa);
+
+            SEFluidCircuitPath& Windkessel2ResistancePath1 = fluidCircuit->CreatePath(Windkessel2Node1, Windkessel2Node2, "Windkessel2ResistancePath1");
+            Windkessel2ResistancePath1.GetNextResistance().SetValue(10.0, PressureTimePerVolumeUnit::Pa_s_Per_m3);
+            SEFluidCircuitPath& Windkessel2ResistancePath2 = fluidCircuit->CreatePath(Windkessel2Node2, Ground, "Windkessel2ResistancePath2");
+            Windkessel2ResistancePath2.GetNextResistance().SetValue(10.0, PressureTimePerVolumeUnit::Pa_s_Per_m3);
+            SEFluidCircuitPath& Windkessel2CompliancePath = fluidCircuit->CreatePath(Windkessel2Node2, Ground, "Windkessel2CompliancePath");
+            Windkessel2CompliancePath.GetNextCompliance().SetValue(10.0, VolumePerPressureUnit::m3_Per_Pa);
+
+            SEFluidCircuitPath* Windkessel1SourcePath;
+            SEFluidCircuitPath* Windkessel2SourcePath;
+            SEFluidCircuitPath* BlackBoxSourcePath;
+            SEFluidCircuitPath* BlackBoxTargetPath;
+            SEFluidBlackBox* BlackBox;
+            SEBlackBoxManager BBmgr(m_Logger);
+            if (iterType == 0)
+            {
+              Windkessel1SourcePath = &fluidCircuit->CreatePath(Ground, Windkessel1Node1, "Windkessel1SourcePath");
+              if (iterFirstSourceType == 0)
+              {
+                Windkessel1SourcePath->GetNextFlowSource().SetValue(firstDirectionMultiplier * 20.0, VolumePerTimeUnit::m3_Per_s);
+              }
+              else
+              {
+                Windkessel1SourcePath->GetNextPressureSource().SetValue(firstDirectionMultiplier * 20.0, PressureUnit::Pa);
+              }
+
+              Windkessel2SourcePath = &fluidCircuit->CreatePath(Ground, Windkessel2Node1,"Windkessel2SourcePath");
+              if (iterSecondSourceType == 0)
+              {
+                Windkessel2SourcePath->GetNextFlowSource().SetValue(secondDirectionMultiplier * 20.0, VolumePerTimeUnit::m3_Per_s);
+              }
+              else
+              {
+                Windkessel2SourcePath->GetNextPressureSource().SetValue(secondDirectionMultiplier * 20.0, PressureUnit::Pa);
+              }
+            }
+            else
+            {
+              SEFluidCircuitNode& BlackBoxNode = fluidCircuit->CreateNode("BlackBoxNode");
+              BlackBoxSourcePath = &fluidCircuit->CreatePath(BlackBoxNode, Windkessel1Node1, "BlackBoxSourcePath");
+              BlackBoxTargetPath = &fluidCircuit->CreatePath(BlackBoxNode, Windkessel2Node1, "BlackBoxTargetPath");
+              BlackBox = BBmgr.GetLiquidBlackBox("Windkessel1Node1", "Windkessel2Node1", "BlackBox");
+              BBmgr.MapBlackBox<MAP_FLUID_BLACK_BOX>(*BlackBox, *BlackBoxSourcePath, *BlackBoxTargetPath);
+            }
+
+            fluidCircuit->StateChange();
+
+            //Run -----------------------------------------------------------------------------
+            double sample = 0;
+            while (currentTime_s < 20)
+            {
+              if (iterType == 0)
+              {
+                if (iterFirstSourceType == 0)
+                {
+                  double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
+                  Windkessel1SourcePath->GetNextFlowSource().SetValue(firstDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+                }
+                else
+                {
+                  double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
+                  Windkessel1SourcePath->GetNextPotentialSource().SetValue(firstDirectionMultiplier* potential_Pa, PressureUnit::Pa);
+                }
+
+                if (iterSecondSourceType == 0)
+                {
+                  double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
+                  Windkessel2SourcePath->GetNextFlowSource().SetValue(secondDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+                }
+                else
+                {
+                  double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
+                  Windkessel2SourcePath->GetNextPotentialSource().SetValue(secondDirectionMultiplier * potential_Pa, PressureUnit::Pa);
+                }
+              }
+              else
+              {
+                if (iterFirstSourceType == 0)
+                {
+                  double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
+                  BlackBox->ImposeSourceFlux(firstDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+                }
+                else
+                {
+                  double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
+                  BlackBox->ImposeSourcePotential(firstDirectionMultiplier * potential_Pa, PressureUnit::Pa);
+                }
+
+                if (iterSecondSourceType == 0)
+                {
+                  double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
+                  BlackBox->ImposeTargetFlux(firstDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+                }
+                else
+                {
+                  double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
+                  BlackBox->ImposeTargetPotential(firstDirectionMultiplier * potential_Pa, PressureUnit::Pa);
+                }
+              }
+
+              fluidCalculator.Process(*fluidCircuit, timeStep_s);
+              fluidCalculator.PostProcess(*fluidCircuit);
+
+              currentTime_s += timeStep_s;
+              sample += timeStep_s;
+              if (sample > 0.1) //every 0.1 seconds, track state of circuit
+              {
+                sample = 0;
+                trk.Track(currentTime_s, *fluidCircuit);
+              }
+            }
+
+            std::string sOutputFile = sOutputDirectory + "/" + name + "_Circuit.csv";
+            trk.WriteTrackToFile(sOutputFile.c_str());
+            m_Circuits->Clear();
+          }
+        }
+      }
+    }
   }
 }
