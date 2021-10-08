@@ -1237,8 +1237,16 @@ namespace pulse
           }
 
           //Calculate the target Alveolar Ventilation based on the Arterial O2 and CO2 concentrations
-          double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05 * m_ArterialO2PartialPressure_mmHg) * MAX(0., m_ArterialCO2PartialPressure_mmHg - PeripheralCO2PartialPressureSetPoint); //Peripheral portion
-          dTargetAlveolarVentilation_L_Per_min += m_CentralControlGainConstant * MAX(0., m_ArterialCO2PartialPressure_mmHg - CentralCO2PartialPressureSetPoint); //Central portion
+          double peripheralCO2SetPoint = PeripheralCO2PartialPressureSetPoint;
+          double centralCO2SetPoint = CentralCO2PartialPressureSetPoint;
+          if (Drugs.GetSedationLevel().GetValue() > 0)
+          {
+              peripheralCO2SetPoint = PeripheralCO2PartialPressureSetPoint / (1.0 - 0.15*Drugs.GetSedationLevel().GetValue());
+              centralCO2SetPoint = CentralCO2PartialPressureSetPoint / (1.0 - 0.15*Drugs.GetSedationLevel().GetValue());
+          }
+
+          double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05 * m_ArterialO2PartialPressure_mmHg) * MAX(0., m_ArterialCO2PartialPressure_mmHg - peripheralCO2SetPoint); //Peripheral portion
+          dTargetAlveolarVentilation_L_Per_min += m_CentralControlGainConstant * MAX(0., m_ArterialCO2PartialPressure_mmHg - centralCO2SetPoint); //Central portion
 
           //Metabolic modifier is used to drive the system to reasonable levels achievable during increased metabolic exertion
           //The modifier is tuned to achieve the correct respiratory response for near maximal exercise. A linear relationship is assumed
@@ -1320,11 +1328,11 @@ namespace pulse
           }
           else
           {
-            m_VentilationFrequency_Per_min = dTargetPulmonaryVentilation_L_Per_min / dTargetTidalVolume_L; //breaths/min
+            m_VentilationFrequency_Per_min = dTargetPulmonaryVentilation_L_Per_min / (dTargetTidalVolume_L - DrugsTVChange_L); //breaths/min
             m_VentilationFrequency_Per_min *= NMBModifier * SedationModifier;
             m_VentilationFrequency_Per_min += DrugRRChange_Per_min;
             m_NotBreathing = false;
-          }
+          }  
 
           m_VentilationFrequency_Per_min = LIMIT(m_VentilationFrequency_Per_min, 0.0, dMaximumPulmonaryVentilationRate / dHalfVitalCapacity_L);
 
