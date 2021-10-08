@@ -643,7 +643,7 @@ namespace pulse
     // Compute compliances from target pressures and baseline volumes
     for (SEFluidCircuitPath* p : cCardiovascular.GetPaths())
     {
-      if (p->HasCapacitanceBaseline())
+      if (p->HasComplianceBaseline())
       {
         SEFluidCircuitNode& src = p->GetSourceNode();
         if (!src.HasVolumeBaseline())
@@ -655,7 +655,7 @@ namespace pulse
     }
     // The vena cava compliance needs to be decreased to ensure proper return
     double venaCavaComplianceTuning = 0.9;
-    VenaCavaToGround.GetCapacitanceBaseline().SetValue(venaCavaComplianceTuning * VenaCavaToGround.GetComplianceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg), VolumePerPressureUnit::mL_Per_mmHg);
+    VenaCavaToGround.GetComplianceBaseline().SetValue(venaCavaComplianceTuning * VenaCavaToGround.GetComplianceBaseline().GetValue(VolumePerPressureUnit::mL_Per_mmHg), VolumePerPressureUnit::mL_Per_mmHg);
 
     // Hearts and pericardium have special compliance computations
     double InitialComplianceHeartRight = 1.0 / 0.0243;
