@@ -288,20 +288,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       //Out of node is positive
       NodeType* sourceNode = n->GetBlackBoxSourceNode();
       NodeType* targetNode = n->GetBlackBoxTargetNode();
-      // Get the paths for this blackbox, we know there are only 2 paths for each middle node
-      PathType* sourcePath = nullptr;
-      PathType* targetPath = nullptr;
-      const std::vector<PathType*>& paths = *m_circuit->GetConnectedPaths(*n);
-      if (sourceNode == &paths[0]->GetSourceNode() || sourceNode == &paths[0]->GetTargetNode())
-      {
-        sourcePath = paths[0];
-        targetPath = paths[1];
-      }
-      else
-      {
-        sourcePath = paths[1];
-        targetPath = paths[0];
-      }
 
       //jbw - Enforce source path needs to be sourceNode->BBNode and target path needs to be BBNode->targetNode
       //jbw - Handle one potential imposed and one flux imposed and all other cases... maybe put all in here for all the flux direct solving/setting

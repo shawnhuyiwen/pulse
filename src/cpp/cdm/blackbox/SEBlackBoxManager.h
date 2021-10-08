@@ -66,35 +66,51 @@ protected:
     if (bb.HasMiddleNode())
       Warning("Blackbox " + bb.GetName() + " already has nodes mapped, only 1 blackbox can be between nodes");
 
-    tNode& midNode = srcPath.GetTargetNode();
-    tNode& srcNode = srcPath.GetSourceNode();
-    tNode& tgtNode = tgtPath.GetTargetNode();
+    tNode* midNode;
+    tNode* srcNode;
+    tNode* tgtNode;
 
-    // Check if things are setup really werid
-    if (&srcPath.GetSourceNode() == &tgtPath.GetSourceNode() ||
-      &srcPath.GetSourceNode() == &tgtPath.GetTargetNode())
+    //Middle node is the shared one
+    if (&srcPath.GetSourceNode() == &tgtPath.GetSourceNode())
     {
-      midNode = srcPath.GetSourceNode();
-      srcNode = srcPath.GetTargetNode();
+      midNode = &srcPath.GetSourceNode();
+      srcNode = &srcPath.GetTargetNode();
+      tgtNode = &tgtPath.GetTargetNode();
     }
-    if (&tgtPath.GetTargetNode() == &srcPath.GetSourceNode() ||
-      &tgtPath.GetTargetNode() == &srcPath.GetTargetNode())
+    else if (&srcPath.GetSourceNode() == &tgtPath.GetTargetNode())
     {
-      midNode = tgtPath.GetTargetNode();
-      tgtNode = tgtPath.GetSourceNode();
+      midNode = &srcPath.GetSourceNode();
+      srcNode = &srcPath.GetTargetNode();
+      tgtNode = &tgtPath.GetSourceNode();
+    }
+    else if (&srcPath.GetTargetNode() == &tgtPath.GetSourceNode())
+    {
+      midNode = &srcPath.GetTargetNode();
+      srcNode = &srcPath.GetSourceNode();
+      tgtNode = &tgtPath.GetTargetNode();
+    }
+    else if (&srcPath.GetTargetNode() == &tgtPath.GetTargetNode())
+    {
+      midNode = &srcPath.GetTargetNode();
+      srcNode = &srcPath.GetSourceNode();
+      tgtNode = &tgtPath.GetSourceNode();
+    }
+    else
+    {
+      Fatal("Blackbox nodes/paths incorrectly setup.");
     }
 
-    midNode.SetPartOfBlackBox(true);
-    midNode.SetBlackBoxSourceTargetNodes(srcNode, tgtNode);
-    srcNode.SetPartOfBlackBox(true);
-    tgtNode.SetPartOfBlackBox(true);
+    midNode->SetPartOfBlackBox(true);
+    midNode->SetBlackBoxSourceTargetNodes(*srcNode, *tgtNode);
+    srcNode->SetPartOfBlackBox(true);
+    tgtNode->SetPartOfBlackBox(true);
     srcPath.SetPartOfBlackBox(true);
     tgtPath.SetPartOfBlackBox(true);
 
-    bb.SetMiddleNode(&midNode);
-    bb.SetSourceNode(&srcNode);
+    bb.SetMiddleNode(midNode);
+    bb.SetSourceNode(srcNode);
     bb.SetSourcePath(&srcPath);
-    bb.SetTargetNode(&tgtNode);
+    bb.SetTargetNode(tgtNode);
     bb.SetTargetPath(&tgtPath);
 
     return true;

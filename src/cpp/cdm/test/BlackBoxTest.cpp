@@ -951,6 +951,13 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
               secondDirectionMultiplier = -1.0;
             }
 
+            //For testing
+            //iterType = 1;
+            //iterFirstSourceType = 0;
+            //iterSecondSourceType = 0;
+            //iterFirstDirection = 0;
+            //iterSecondDirection = 0;
+
             std::string name = "BlackBoxSourcesTest" + typeName + firstSourceTypeName + secondSourceTypeName + firstDirectionName + secondDirectionName;
             std::cout << name << "\n";
             m_Logger->SetLogFile(sOutputDirectory + "/" + name + ".log");
