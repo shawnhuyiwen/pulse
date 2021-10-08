@@ -955,8 +955,10 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
             //iterType = 1;
             //iterFirstSourceType = 0;
             //iterSecondSourceType = 0;
-            //iterFirstDirection = 0;
+            //iterFirstDirection = 1;
+            //firstDirectionMultiplier = -1.0;
             //iterSecondDirection = 0;
+            //secondDirectionMultiplier = 1.0;
 
             std::string name = "BlackBoxSourcesTest" + typeName + firstSourceTypeName + secondSourceTypeName + firstDirectionName + secondDirectionName;
             std::cout << name << "\n";
@@ -1080,12 +1082,12 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
                 if (iterSecondSourceType == 0)
                 {
                   double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
-                  BlackBox->ImposeTargetFlux(firstDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+                  BlackBox->ImposeTargetFlux(secondDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
                 }
                 else
                 {
                   double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
-                  BlackBox->ImposeTargetPotential(firstDirectionMultiplier * potential_Pa, PressureUnit::Pa);
+                  BlackBox->ImposeTargetPotential(secondDirectionMultiplier * potential_Pa, PressureUnit::Pa);
                 }
               }
 
