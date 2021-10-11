@@ -288,22 +288,31 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       //Out of node is positive
       NodeType* sourceNode = n->GetBlackBoxSourceNode();
       NodeType* targetNode = n->GetBlackBoxTargetNode();
+      //jbw - Add these and clean up after we can get the source and target paths from the black box node
+      //PathType* sourcePath = n->GetBlackBoxSourcePath();
+      //PathType* targetPath = n->GetBlackBoxTargetPath();
 
-      //jbw - Enforce source path needs to be sourceNode->BBNode and target path needs to be BBNode->targetNode
-      //jbw - Handle one potential imposed and one flux imposed and all other cases... maybe put all in here for all the flux direct solving/setting
       if (sourceNode->IsPotentialImposed())
       {
         if (sourceNode->IsReferenceNode())
         {
           //Set the reference pressure
           sourceNode->GetPotential().Set(sourceNode->GetNextPotential());
+
           //Set flux equal to other side of black box
-          if (targetNode->IsPotentialImposed())
+          if (false)//(sourcePath->IsFluxImposed())
+          {
+            //Do nothing because this will be directly set
+          }
+          else if (targetNode->IsPotentialImposed())
           {
             _eigen->AMatrix(m_blackBoxPotentialSources[sourceNode], m_blackBoxPotentialSources[sourceNode]) += 1.0;
             _eigen->AMatrix(m_blackBoxPotentialSources[sourceNode], m_blackBoxPotentialSources[targetNode]) -= 1.0;
           }
-          //jbw - Add logic to handle other cases
+          else if (false)//(targetPath->IsFluxImposed())
+          {
+            //jbw - Add logic to handle this case after we can get the source and target paths from the black box node
+          }
         }
         else
         {
@@ -320,13 +329,21 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
         {
           //Set the reference pressure
           targetNode->GetPotential().Set(targetNode->GetNextPotential());
+
           //Set flux equal to other side of black box
-          if (sourceNode->IsPotentialImposed())
+          if (false)//(targetPath->IsFluxImposed())
+          {
+            //Do nothing because this will be directly set
+          }
+          else if (sourceNode->IsPotentialImposed())
           {
             _eigen->AMatrix(m_blackBoxPotentialSources[targetNode], m_blackBoxPotentialSources[targetNode]) += 1.0;
             _eigen->AMatrix(m_blackBoxPotentialSources[targetNode], m_blackBoxPotentialSources[sourceNode]) -= 1.0;
           }
-          //jbw - Add logic to handle other cases
+          else if (false)//(sourcePath->IsFluxImposed())
+          {
+            //jbw - Add logic to handle this case after we can get the source and target paths from the black box node
+          }
         }
         else
         {
@@ -694,7 +711,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
   {
     if (n->IsReferenceNode())
     {
-      //jbw - Shouldn't this be NextPotential?
+      //jbw - Shouldn't this be NextPotential? Make sure that works with Environment ambient pressure changes.
       m_refPotential = n->GetPotential().GetValue(m_PotentialUnit);
       refNodeExists = true;
       break;

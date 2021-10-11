@@ -218,7 +218,7 @@ void CommonDataModelTest::SimpleBlackBoxTest(const std::string& sOutputDirectory
     bool imposePassiveSourceFlow = iter & 0x040;
     bool imposePassiveTargetFlow = iter & 0x080;
 
-    //jbw - I think every possible combination is technically valid now?
+    //\\\ToDo I think every possible combination is technically valid now?
     bool isValid = int(imposeDriverSourcePressure) + int(imposeDriverSourceFlow) == 1 &&
       int(imposeDriverTargetPressure) + int(imposeDriverTargetFlow) == 1 &&
       int(imposePassiveSourcePressure) + int(imposePassiveSourceFlow) == 1 &&
@@ -882,8 +882,6 @@ void CommonDataModelTest::BlackBoxComplianceTest(const std::string& sOutputDirec
 
 void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirectory)
 {
-  //jbw - Figure out how to do a comparison on sources vs blackboxes
-
   for (unsigned int iterType = 0; iterType < 2; iterType++)
   {
     std::string typeName;
