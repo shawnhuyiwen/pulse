@@ -350,44 +350,49 @@ The PK model was validated by comparing the plasma concentration calculated by t
 <i>Figure 7. The partition coefficients were calculated from initial physical chemical properties found for Ketamine. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite xie2003analgesic.</i>
 </center><br>
 
+<img src="./plots/Drugs/Lorazepam.jpg" width="1100">
+<center>
+<i>Figure 8. The engine curve for lorazepam plasma concentration shows a good overall fit with the experimental data found in @cite Swart2003comparitive, @cite Kyriakopoulos1978Clinical, and @cite Greenblatt1981Clinical.</i>
+</center><br>
+
 <img src="./plots/Drugs/Midazolam.jpg" width="1100">
 <center>
-<i>Figure 8. The engine curve for midazolam plasma concentration shows a good overall fit with the experimental data found in @cite schwagmeier1998midazolam. However, the clearance dominant (end) portion of the curve shows that the engine should be clearing more quickly, while midazolam appears to move into the tissues too quickly during the diffusion dominant portion of the curve (beginning).</i>
+<i>Figure 9. The engine curve for midazolam plasma concentration shows a good overall fit with the experimental data found in @cite schwagmeier1998midazolam. However, the clearance dominant (end) portion of the curve shows that the engine should be clearing more quickly, while midazolam appears to move into the tissues too quickly during the diffusion dominant portion of the curve (beginning).</i>
 </center><br>
 
 <img src="./plots/Drugs/Morphine.jpg" width="1100">
 <center>
-<i>Figure 9. The physical chemical properties of morphine found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite lotsch2002pharmacokinetic.</i>
+<i>Figure 10. The physical chemical properties of morphine found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite lotsch2002pharmacokinetic.</i>
 </center><br>
 
 <img src="./plots/Drugs/Naloxone.jpg" width="1100">
 <center>
-<i>Figure 10.  The partition coefficients were calculated from initial physical chemical properties found for Naloxone. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite aitkenhead1984pharmacokinetics.</i>
+<i>Figure 11.  The partition coefficients were calculated from initial physical chemical properties found for Naloxone. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite aitkenhead1984pharmacokinetics.</i>
 </center><br>
 
 <img src="./plots/Drugs/Pralidoxime.jpg" width="1100">
 <center>
-<i>Figure 11. The pralidoxime experimental data found in @cite abbara2010pharmacokinetic was collected after an intramuscular injection. This administration method is available in the engine, so was used to validate the drug. The overall fit between the engine data and the experimental data was good. A slightly higher concentration throughout was evident and may be attributed to the amount of drug that never exits the muscle when this type of injection occurs. In the future, a loss factor could be added to represent this drug amount.</i>
+<i>Figure 12. The pralidoxime experimental data found in @cite abbara2010pharmacokinetic was collected after an intramuscular injection. This administration method is available in the engine, so was used to validate the drug. The overall fit between the engine data and the experimental data was good. A slightly higher concentration throughout was evident and may be attributed to the amount of drug that never exits the muscle when this type of injection occurs. In the future, a loss factor could be added to represent this drug amount.</i>
 </center><br>
 
 <img src="./plots/Drugs/Prednisone.jpg" width="1100">
 <center>
-<i>Figure 12.  The physical chemical properties of prednisone found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite rose1981dose.</i>
+<i>Figure 13.  The physical chemical properties of prednisone found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite rose1981dose.</i>
 </center><br>
 
 <img src="./plots/Drugs/Propofol.jpg" width="1100">
 <center>
-<i>Figure 13. The propofol experimental data was collected during and after an infusion of propofol. The engine is able to support a rate and concentration input for an infusion; therefore, the infusion methodology was used to adminster propofol in the engine. The infusion explains the initial curve evident in the plasma concentration. The initial diffusion dominant portion of the curve shows a reduced diffusion into the tissues compared to the experimental data; however, the clearance dominant portion of the curve shows good agreement with the data found in @cite ward2002pharmacodynamics.</i>
+<i>Figure 14. The propofol experimental data was collected during and after an infusion of propofol. The engine is able to support a rate and concentration input for an infusion; therefore, the infusion methodology was used to adminster propofol in the engine. The infusion explains the initial curve evident in the plasma concentration. The initial diffusion dominant portion of the curve shows a reduced diffusion into the tissues compared to the experimental data; however, the clearance dominant portion of the curve shows good agreement with the data found in @cite ward2002pharmacodynamics.</i>
 </center><br>
 
 <img src="./plots/Drugs/Rocuronium.jpg" width="1100">
 <center>
-<i>Figure 14. The calculated plasma concentration curve for Rocuronium shows good agreement with the experimental data found in @cite de2014analysis. This is particularly true for the diffusion dominant portion of the curve, while the engine clearance is less than that shown in the experimental data.</i>
+<i>Figure 15. The calculated plasma concentration curve for Rocuronium shows good agreement with the experimental data found in @cite de2014analysis. This is particularly true for the diffusion dominant portion of the curve, while the engine clearance is less than that shown in the experimental data.</i>
 </center><br>
 
 <img src="./plots/Drugs/Succinylcholine.jpg" width="1100">
 <center>
-<i>Figure 15. The succinycholine pharmacokinetics were initially calculated from the values found in literature for the physical chemical properties. However, this were significantly adjusted to attempt to match the calculated plasma concentration to the experimental data found in @cite roy2002concentration.</i>
+<i>Figure 16. The succinycholine pharmacokinetics were initially calculated from the values found in literature for the physical chemical properties. However, this were significantly adjusted to attempt to match the calculated plasma concentration to the experimental data found in @cite roy2002concentration.</i>
 </center><br>
 
 The above results show that, in general, the model chosen for the engine produces good agreement between experimental and calculated data. However, it also reveals that for some drugs, this model does not appear to be valid. Future work will investigate the incorporation of vaporized substance methodologies, and additional partition coefficient calculations that may prove more accurate for specific drug types. Further statistical analysis will also be undertaken to assess the model performance rather than solely relying on a qualitative analysis.
@@ -409,6 +414,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |	Epinephrine	|	Administer 10 ug injection of Epinephrine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	Fentanyl	|	Administer 17 mg injection of Fentanyl	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Ketamine	|	Administer 115 mg injection of Ketamine	|<span class="success">	4	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
+|	Lorazepam	|	Administer 2 mg injection of Lorazepam	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Midazolam	|	Administer 5 mg injection of Midazolam	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Morphine	|	Administer 42 mg injection of Morphine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Naloxone	|	Administer 17 mg injection of Fentanyl Followed by 30 ug injection of Naloxone *Validating only Naloxone	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
@@ -417,7 +423,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |	Propofol	|	Administer 135 mg injection of Propofol	|<span class="success">	4	</span>|<span class="warning">	0	</span>|<span class="danger">	1	</span>|
 |	Rocuronium	|	Administer 52 mg injection of Rocuronium	|<span class="success">	2	</span>|<span class="warning">	0	</span>|<span class="danger">	3	</span>|
 |	Succinylcholine	|	Administer 96 mg injection of Succinylcholine	|<span class="success">	5	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	59	</span>|<span class="warning">	2	</span>|<span class="danger">	4	</span>|
+|		|	Total	|<span class="success">	64	</span>|<span class="warning">	2	</span>|<span class="danger">	4	</span>|
 
 <center>
 <i>Table 6. The validation results for liquid-modeled drugs.</i>
@@ -429,6 +435,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 |	Administer Etomidate - 21 mg	|	Drug Onset < 1 minute	|	30	|	100	|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Minimal Changes @cite Valk2021etomidate	</span>|<span class="success">	Little Respiratory Depression @cite Valk2021etomidate	</span>|<span class="success">	NC	</span>|
 |	Administer Fentanyl - 17 mg	|	Drug Onset < two minutes	|	30	|	100	|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Decrease @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 15-25% Decrease @cite dukeSME	</span>|<span class="success">	NC 	</span>|
 |	Administer Ketamine - 115 mg	|	Drug Onset < 1 minute	|	30	|	200	|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="warning">	Moderate Increase @cite Morgan2006Clinical p200; 15-25% Increase @cite dukeSME   	</span>|<span class="success">	Mild Decrease @cite Morgan2006Clinical p200; 25-50% Decrease @cite dukeSME     	</span>|<span class="success">	NC 	</span>|
+|	Administer Lorazepam - 2 mg	|	Drug Onset < 2 minutes	|	30	|	350	|<span class="success">	Mild Decrease @cite Tulen1991dose	</span>|<span class="success">	Mild Decrease @cite Tulen1991dose	</span>|<span class="success">	Mild Decrease @cite Tulen1991dose	</span>|<span class="success">	Mild Decrease @cite Ghiasi2021lorazepam	</span>|<span class="success">	NC	</span>|
 |	Administer Midazolam - 5 mg	|	Drug Onset in 1-3 min and lasts 30-60 minutes	|	30	|	70	|<span class="success">	Mild Increase @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME    	</span>|<span class="success">	Moderate Decrease @cite Morgan2006Clinical p200; Marked Decrease To 0 @cite dukeSME    	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
 |	Administer Morphine- 42 mg	|	Drug Onset in less than 2 minutes	|	30	|	100	|<span class="success">	Mild Decrease @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME     	</span>|<span class="success">	Decrease - dose dependent @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Decrease - dose dependent @cite Morgan2006Clinical p200; 5-10% Decrease @cite dukeSME    	</span>|<span class="success">	Marked Decrease @cite Morgan2006Clinical p200; 15-25% Decrease @cite dukeSME   	</span>|<span class="success">	As long as some respiration rate, little change. If RR=0, then begins to drop along O2 curve. 	</span>|
 |	Administer Fentanyl - 17 mg	|	Drug Onset < two minutes	|	30	|	100	|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Stable @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277;  5-10% Decrease @cite dukeSME  	</span>|<span class="success">	Decrease @cite Morgan2006Clinical p192-7, @cite PaulGBarash2009 p277; 15-25% Decrease @cite dukeSME	</span>|<span class="success">	NC 	</span>|
@@ -478,7 +485,7 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
 </table>
 </center>
 <center>
-<i>Figure 15. The diuretic furosemide causes an inhibition of reabsorption due to its effect on the tubular lumen co-transporter. Total blood volume decreases as urine production and ion excretion increase. Eventually, as the body clears the drug, urine production and ion excretion both begin to return to normal.</i>
+<i>Figure 16. The diuretic furosemide causes an inhibition of reabsorption due to its effect on the tubular lumen co-transporter. Total blood volume decreases as urine production and ion excretion increase. Eventually, as the body clears the drug, urine production and ion excretion both begin to return to normal.</i>
 </center><br>
 
 Norepinephrine occurs naturally in the body and its basal metabolic value is validated as part of the @ref BloodChemistryMethodology. The infusion of norepinephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for five different infusion rates. They are shown in Table 9.

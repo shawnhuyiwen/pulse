@@ -574,7 +574,7 @@ namespace pulse
 
       deltaTubularPermeability += (pd.GetTubularPermeabilityModifier()) * concentrationEffects_unitless;
 
-      if (sedationLevel > 0.15)
+      if (sedationLevel > 0.999)//0.15)
       {
         deltaRespirationRate_Per_min += patient.GetRespirationRateBaseline(FrequencyUnit::Per_min) * pd.GetRespirationRateModifier();
         deltaTidalVolume_mL += patient.GetTidalVolumeBaseline(VolumeUnit::mL) * pd.GetTidalVolumeModifier();
