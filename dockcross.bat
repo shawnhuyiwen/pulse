@@ -70,7 +70,7 @@ echo Usage: dockcross [container-name] [pulse-source-directory] [build-directory
 echo.
 
 echo.
-echo Example Usage: dockcross .\Pulse\engine .\builds linux-x64-clang
+echo Example Usage: dockcross linux-x64-clang .\Pulse\engine .\builds
 echo.
 echo NOTE: You must use backslashes (\) in your argument paths
 echo.
@@ -79,14 +79,14 @@ echo The directory name will be 'pulse-engine-' and the container name
 echo For example: pulse-engine-linux-x64-clang
 echo.
 echo Options:
-echo   pulse-soure-directory The relative directory of the pulse source code
-echo.
-echo   build-directory       The relative directory to build pulse
-echo.
 echo   container-name       This is the name of the container to build in
 echo                        https://hub.docker.com/u/dockcross
 echo                        Only provide the string after 'dockcross/`
 echo                        example : linux-x64-clang
-
+echo.
+echo   pulse-soure-directory The relative directory of the pulse source code
+echo.
+echo   build-directory       The relative directory to build pulse
+echo.
 
 exit /b 1
