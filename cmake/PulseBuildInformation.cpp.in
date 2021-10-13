@@ -17,7 +17,7 @@ namespace
   
     auto out = std::ostringstream();
     out.imbue(std::locale("en-US"));
-    out << std::put_time(&t, "%Y%m%d%H%M%S");
+    out << std::put_time(&t, "%Y/%m/%d-%H:%M:%S");
     return out.str();
   }
 }
