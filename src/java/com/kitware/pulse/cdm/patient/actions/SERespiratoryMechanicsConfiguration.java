@@ -47,7 +47,7 @@ public class SERespiratoryMechanicsConfiguration extends SEPatientAction
       dst.setMergeType(src.getMergeType());
       if (src.hasSettings())
         SERespiratoryMechanics.load(src.getSettings(), dst.getSettings());
-      else if (src.hasSettingsFile())
+      else if (src.getSettingsFile().isEmpty())
         dst.setSettingsFile(src.getSettingsFile());
     }
     public static RespiratoryMechanicsConfigurationData unload(SERespiratoryMechanicsConfiguration src)
