@@ -42,7 +42,7 @@ RUN if [ "$JUPYTER" = "ON" ]; then \
 COPY . /source
 RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto && \
     mkdir build && \
-    mkdir pulse  && \
+    mkdir pulse && \
     cd /build  && \
     cmake -DPulse_PYTHON_API=ON \
           -DCMAKE_INSTALL_PREFIX=/pulse \
@@ -53,13 +53,20 @@ RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto && \
           /source && \
     cd /build && \
     make -j4 && \
-    cd /  && \
+    cd /
+
+# Copy out all needed python files
+RUN mkdir pypulse && \
+    cp /build/Innerbuild/src/python/[PyPulse]* /pypulse && \
+    cp -R /build/Innerbuild/src/python/pulse /pypulse && \
+    cp -R /source/src/python/pulse /pypulse && \
+    rm -rf /source && \
     rm -rf /build
+
+ENV PYTHONPATH /pypulse
     
 RUN if [ "$BASE" = "debian:bullseye" ]; then \
  rm java-1.8.0-amazon-corretto-jdk_8.232.09-1_amd64.deb ;fi
-
-ENV PYTHONPATH /source/src/python:/pulse/bin
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE
