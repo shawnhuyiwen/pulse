@@ -486,6 +486,8 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     mine.Activate();
     if (!mine.IsActive())
       RemoveSubstanceBolus(*sub);
+    else
+      m_SubMgr.AddActiveSubstance(*sub);
     return true;
   }
 
@@ -503,6 +505,8 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     mine.Activate();
     if (!mine.IsActive())
       RemoveSubstanceInfusion(*sub);
+    else
+      m_SubMgr.AddActiveSubstance(*sub);
     return true;
   }
 
@@ -520,6 +524,14 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     mine.Activate();
     if (!mine.IsActive())
       RemoveSubstanceCompoundInfusion(*cmpd);
+    else
+    {
+      m_SubMgr.AddActiveCompound(*cmpd);
+      for (const SESubstanceConcentration* scc : cmpd->GetComponents())
+      {
+        m_SubMgr.AddActiveSubstance(scc->GetSubstance());
+      }
+    }
     return true;
   }
 
@@ -1195,7 +1207,6 @@ SESubstanceBolus& SEPatientActionCollection::GetSubstanceBolus(const SESubstance
       return *b;
   SESubstanceBolus* b = new SESubstanceBolus(sub);
   m_SubstanceBoluses.push_back(b);
-  m_SubMgr.AddActiveSubstance(sub);
   return *b;
 }
 const SESubstanceBolus* SEPatientActionCollection::GetSubstanceBolus(const SESubstance& sub) const
@@ -1236,7 +1247,6 @@ SESubstanceInfusion& SEPatientActionCollection::GetSubstanceInfusion(const SESub
       return *si;
   SESubstanceInfusion* si = new SESubstanceInfusion(sub);
   m_SubstanceInfusions.push_back(si);
-  m_SubMgr.AddActiveSubstance(sub);
   return *si;
 }
 const SESubstanceInfusion* SEPatientActionCollection::GetSubstanceInfusion(const SESubstance& sub) const
@@ -1277,12 +1287,6 @@ SESubstanceCompoundInfusion& SEPatientActionCollection::GetSubstanceCompoundInfu
       return *sci;
   SESubstanceCompoundInfusion* sci = new SESubstanceCompoundInfusion(cmpd);
   m_SubstanceCompoundInfusions.push_back(sci);
-
-  m_SubMgr.AddActiveCompound(cmpd);
-  for (const SESubstanceConcentration* scc : cmpd.GetComponents())
-  {
-    m_SubMgr.AddActiveSubstance(scc->GetSubstance());
-  }
   return *sci;
 }
 const SESubstanceCompoundInfusion* SEPatientActionCollection::GetSubstanceCompoundInfusion(const SESubstanceCompound& cmpd) const
