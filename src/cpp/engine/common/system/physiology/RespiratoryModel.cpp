@@ -443,7 +443,7 @@ namespace pulse
     }
 
     //Substance - Overdose
-    m_Oversedation = m_data.GetSubstances().GetSubstance("Overdose");
+    m_Oversedation = m_data.GetSubstances().GetSubstance("Oversedation");
   }
 
   //--------------------------------------------------------------------------------------------------
