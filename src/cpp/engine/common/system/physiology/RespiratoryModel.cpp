@@ -441,6 +441,9 @@ namespace pulse
       m_AortaO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
       m_AortaCO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
     }
+
+    //Substance - Overdose
+    m_Oversedation = m_data.GetSubstances().GetSubstance("Overdose");
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1241,8 +1244,16 @@ namespace pulse
           double centralCO2SetPoint = CentralCO2PartialPressureSetPoint;
           if (Drugs.GetSedationLevel().GetValue() > 0)
           {
-              peripheralCO2SetPoint = PeripheralCO2PartialPressureSetPoint / (1.0 - 0.15*Drugs.GetSedationLevel().GetValue());
-              centralCO2SetPoint = CentralCO2PartialPressureSetPoint / (1.0 - 0.15*Drugs.GetSedationLevel().GetValue());
+              if (m_data.GetSubstances().IsActive(*m_Oversedation))
+              {
+                  peripheralCO2SetPoint = PeripheralCO2PartialPressureSetPoint / Drugs.GetSedationLevel().GetValue();
+                  centralCO2SetPoint = CentralCO2PartialPressureSetPoint / Drugs.GetSedationLevel().GetValue();
+              }
+              else
+              {
+                  peripheralCO2SetPoint = PeripheralCO2PartialPressureSetPoint / (1.0 - 0.15*Drugs.GetSedationLevel().GetValue());
+                  centralCO2SetPoint = CentralCO2PartialPressureSetPoint / (1.0 - 0.15*Drugs.GetSedationLevel().GetValue());
+              }
           }
 
           double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05 * m_ArterialO2PartialPressure_mmHg) * MAX(0., m_ArterialCO2PartialPressure_mmHg - peripheralCO2SetPoint); //Peripheral portion
