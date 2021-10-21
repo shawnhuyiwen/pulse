@@ -933,8 +933,16 @@
       "Unit": "ug"
     }]
   },
- "AnyAction": [
-  {
+ "AnyAction": [{
+   "AdvanceTime": {
+     "Time": {
+       "ScalarTime": {
+         "Value": 30.0,
+         "Unit": "s"
+       }
+     }
+   }
+  }, {
    "PatientAction": {
     "SubstanceBolus": {
      "PatientAction": {
