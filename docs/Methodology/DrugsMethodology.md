@@ -257,6 +257,8 @@ The %Drugs Methodology is based on the assumption that all substances are suspen
 
 The drug model addresses many of the earlier limitation of the drug model. This includes creating a substance file that uses physical chemical properties to define the pharmacokinetic properties and intuitive modifiers to calculate the pharmacodynamic effects. However, this implementation of a PD model works best with a drug with immediate effects, such as anesthesia medications. This implementation has not been tested for drugs with a later onset due to secondary mechanisms. This is an area for future work. Additionally, no drug interactions or intoxication is modeled.
 
+We have recently added an "oversedation" substance. This uses the PK/PD models, but is an unvalidated, rudimentary implementation of the respiratory distress and eventual respiratory failure associated with oversedation or some forms of intoxication. We will be revisiting this model in the future. However, a user can administer the "oversedation" substance to trigger the associated respiratory distress. We tested with a 50 ug dose.
+
 @anchor drugs-Actions
 Actions
 -------

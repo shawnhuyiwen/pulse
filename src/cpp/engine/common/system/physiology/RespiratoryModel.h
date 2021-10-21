@@ -250,5 +250,8 @@ namespace pulse
     SEFluidCircuitCalculator* m_Calculator;
     SEGasTransporter* m_GasTransporter;
     SELiquidTransporter* m_AerosolTransporter;
+
+    //Substance
+    SESubstance* m_Oversedation;
   };
 END_NAMESPACE
