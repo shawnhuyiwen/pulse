@@ -1,0 +1,93 @@
+{
+ "Name": "Oversedation",
+ "PatientConfiguration": {
+  "DataRoot": "./",
+  "Patient": {
+   "Name": "StandardMale",
+   "Age": {
+    "ScalarTime": {
+     "Value": 44,
+     "Unit": "yr"
+    }
+   },
+   "Weight": {
+    "ScalarMass": {
+     "Value": 170,
+     "Unit": "lb"
+    }
+   },
+   "Height": {
+    "ScalarLength": {
+     "Value": 71,
+     "Unit": "in"
+    }
+   },
+   "BodyFatFraction": {
+    "Scalar0To1": {
+     "Value": 0.21
+    }
+   },
+   "DiastolicArterialPressureBaseline": {
+    "ScalarPressure": {
+     "Value": 73.5,
+     "Unit": "mmHg"
+    }
+   },
+   "HeartRateBaseline": {
+    "ScalarFrequency": {
+     "Value": 72,
+     "Unit": "1/min"
+    }
+   },
+   "RespirationRateBaseline": {
+    "ScalarFrequency": {
+     "Value": 12,
+     "Unit": "1/min"
+    }
+   },
+   "SystolicArterialPressureBaseline": {
+    "ScalarPressure": {
+     "Value": 114,
+     "Unit": "mmHg"
+    }
+   }
+  },
+  "Conditions": {}
+ },
+ "DataRequestManager": {},
+ "AnyAction": [
+  {
+   "PatientAction": {
+    "SubstanceBolus": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Substance": "Oversedation",
+     "Concentration": {
+      "ScalarMassPerVolume": {
+       "Value": 500,
+       "Unit": "ug/mL"
+      }
+     },
+     "Dose": {
+      "ScalarVolume": {
+       "Value": 0.1,
+       "Unit": "mL"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 360,
+      "Unit": "s"
+     }
+    }
+   }
+  }
+ ]
+}
