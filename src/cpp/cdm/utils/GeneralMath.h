@@ -28,5 +28,3 @@ public:
   static double LogisticFunction(double a, double x50, double k, double x);
   static double RootMeanSquaredError(std::vector<double> observed, std::vector<double> predicted, bool normalize = false, double outlierStandardDeviation = -1.0);
 };
-
-

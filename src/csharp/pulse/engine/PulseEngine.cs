@@ -11,7 +11,8 @@ namespace Pulse
   public enum eModelType : int
   {
     HumanAdultWholeBody = 0,
-    HumanAdultVentilationMechanics
+    HumanAdultVentilationMechanics,
+    HumanAdultHemodynamics
   }
   // C# class that wraps the PulseC API
   public class PulseEngine

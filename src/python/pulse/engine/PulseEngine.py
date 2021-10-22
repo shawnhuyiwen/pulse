@@ -20,6 +20,7 @@ from pulse.cdm.scalars import ElectricPotentialUnit, FrequencyUnit, \
 class eModelType(Enum):
     HumanAdultWholeBody = 0
     HumanAdultVentilationMechanics = 1
+    HumanAdultHemodynamics = 2
 
 def version():
     return PyPulse.__version__;

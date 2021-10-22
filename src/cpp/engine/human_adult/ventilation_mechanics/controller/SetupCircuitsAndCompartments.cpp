@@ -51,8 +51,6 @@ namespace pulse { namespace human_adult_ventilation_mechanics
     SetupRespiratory();
     SetupMechanicalVentilator();
 
-    // TODO We might want to update state change to only check compartments we should have
-    // Not sure how I would update this specify which compartments we expect to have in our engine
     m_Compartments->StateChange();
     return true;
   }

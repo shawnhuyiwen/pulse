@@ -84,7 +84,6 @@ namespace pulse { namespace human_adult_whole_body
     pc.CreateCircuitsAndCompartments();
 
     CardiovascularModel& cv = (CardiovascularModel&)pc.GetCardiovascular();
-    cv.m_TuneCircuit = true;
     SEFluidCircuit& cvCircuit = pc.GetCircuits().GetActiveCardiovascularCircuit();
 
     cv.Initialize();

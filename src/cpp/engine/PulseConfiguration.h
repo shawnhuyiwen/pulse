@@ -67,10 +67,10 @@ public:
   virtual void RemoveInitialOverrides();
 protected:
 
-  SEScalarTime* m_TimeStep;
+  SEScalarTime*              m_TimeStep;
   eSwitch                    m_AllowDynamicTimeStep;
-  SETimedStabilization* m_TimedStabilization;
-  SEDynamicStabilization* m_DynamicStabilization;
+  SETimedStabilization*      m_TimedStabilization;
+  SEDynamicStabilization*    m_DynamicStabilization;
   eSwitch                    m_WritePatientBaselineFile;
 
   SEOverrides* m_InitialOverrides;
@@ -95,9 +95,9 @@ public:
   virtual SEScalarAreaPerTimePressure& GetStandardOxygenDiffusionCoefficient();
   virtual double GetStandardOxygenDiffusionCoefficient(const AreaPerTimePressureUnit& unit) const;
 protected:
-  SEScalarMassPerAmount* m_MeanCorpuscularHemoglobin;
-  SEScalarVolume* m_MeanCorpuscularVolume;
-  SEScalarLength* m_StandardDiffusionDistance;
+  SEScalarMassPerAmount*       m_MeanCorpuscularHemoglobin;
+  SEScalarVolume*              m_MeanCorpuscularVolume;
+  SEScalarLength*              m_StandardDiffusionDistance;
   SEScalarAreaPerTimePressure* m_StandardOxygenDiffusionCoefficient;
 
   /////////////////////
@@ -127,13 +127,22 @@ public:
   virtual bool HasStandardPulmonaryCapillaryCoverage() const;
   virtual SEScalar& GetStandardPulmonaryCapillaryCoverage();
   virtual double GetStandardPulmonaryCapillaryCoverage() const;
+
+  virtual eSwitch TuneCardiovascularCircuit() const { return m_TuneCardiovascularCircuit; }
+  virtual void TuneCardiovascularCircuit(eSwitch s) { m_TuneCardiovascularCircuit = s; }
+
+  virtual std::string CardiovascularTuningFile() const { return m_CardiovascularTuningFile; }
+  virtual void CardiovascularTuningFile(const std::string& s) { m_CardiovascularTuningFile = s; }
+
 protected:
   SEScalarPressurePerVolume* m_LeftHeartElastanceMaximum;
   SEScalarPressurePerVolume* m_LeftHeartElastanceMinimum;
-  SEScalar0To1* m_MinimumBloodVolumeFraction;
+  SEScalar0To1*              m_MinimumBloodVolumeFraction;
   SEScalarPressurePerVolume* m_RightHeartElastanceMaximum;
   SEScalarPressurePerVolume* m_RightHeartElastanceMinimum;
-  SEScalar* m_StandardPulmonaryCapillaryCoverage;
+  SEScalar*                  m_StandardPulmonaryCapillaryCoverage;
+  eSwitch                    m_TuneCardiovascularCircuit;
+  std::string                m_CardiovascularTuningFile;
 
   //////////////
   /** Circuit */

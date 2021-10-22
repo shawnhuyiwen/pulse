@@ -129,10 +129,8 @@ namespace pulse
     SERunningAverage* m_CardiacCyclePulmonaryArteryPressure_mmHg;
     SERunningAverage* m_CardiacCycleCentralVenousPressure_mmHg;
     SERunningAverage* m_CardiacCycleSkinFlow_mL_Per_s;
-  
+
     // Stateless member variable (Set in SetUp())
-    bool                             m_TuneCircuit = true;
-    std::string                      m_TuningFile;
 
     // Hemorrhage
     struct HemorrhageTrack

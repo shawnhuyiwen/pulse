@@ -62,6 +62,8 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_RightHeartElastanceMaximum = nullptr;
   m_RightHeartElastanceMinimum = nullptr;
   m_StandardPulmonaryCapillaryCoverage = nullptr;
+  m_TuneCardiovascularCircuit = eSwitch::On;
+  m_CardiovascularTuningFile = "";
 
   // Circuit
   m_CardiovascularOpenResistance = nullptr;
@@ -189,6 +191,8 @@ PulseConfiguration::~PulseConfiguration()
   SAFE_DELETE(m_RightHeartElastanceMaximum);
   SAFE_DELETE(m_RightHeartElastanceMinimum);
   SAFE_DELETE(m_StandardPulmonaryCapillaryCoverage);
+  m_TuneCardiovascularCircuit = eSwitch::On;
+  m_CardiovascularTuningFile = "";
 
   // Circuit
   SAFE_DELETE(m_CardiovascularOpenResistance);
@@ -312,6 +316,8 @@ void PulseConfiguration::Clear()
   INVALIDATE_PROPERTY(m_RightHeartElastanceMaximum);
   INVALIDATE_PROPERTY(m_RightHeartElastanceMinimum);
   INVALIDATE_PROPERTY(m_StandardPulmonaryCapillaryCoverage);
+  m_TuneCardiovascularCircuit = eSwitch::On;
+  m_CardiovascularTuningFile = "";
 
   // Circuit
   INVALIDATE_PROPERTY(m_CardiovascularOpenResistance);
@@ -473,6 +479,8 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetRightHeartElastanceMaximum().SetValue(0.523, PressurePerVolumeUnit::mmHg_Per_mL);
   GetRightHeartElastanceMinimum().SetValue(0.0243, PressurePerVolumeUnit::mmHg_Per_mL);
   GetStandardPulmonaryCapillaryCoverage().SetValue(0.70);
+  m_TuneCardiovascularCircuit = eSwitch::On;
+  m_CardiovascularTuningFile = "";
 
   // Circuits
   GetCardiovascularOpenResistance().SetValue(100.0, PressureTimePerVolumeUnit::mmHg_s_Per_mL);

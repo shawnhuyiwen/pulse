@@ -443,18 +443,22 @@ namespace pulse
       OverrideCircuits();// Override any circuit values
     }
 
-    m_Substances->InitializeSubstances();
-    if (m_RespiratoryModel && m_EnvironmentModel)
+    if ( (m_RespiratoryModel && m_EnvironmentModel) ||
+         (m_SaturationCalculator && m_CardiovascularModel) )
     {
-      Info("Initializing Gas Substances");
-      m_Substances->InitializeGasCompartments();
-    }
-    if (m_SaturationCalculator && m_CardiovascularModel)
-    {
-      Info("Initializing Liquid Substances");
-      m_SaturationCalculator->Setup();
-      m_Substances->InitializeLiquidCompartmentGases();
-      m_Substances->InitializeLiquidCompartmentNonGases();
+      m_Substances->InitializeSubstances();
+      if (m_RespiratoryModel && m_EnvironmentModel)
+      {
+        Info("Initializing Gas Substances");
+        m_Substances->InitializeGasCompartments();
+      }
+      if (m_SaturationCalculator && m_CardiovascularModel)
+      {
+        Info("Initializing Liquid Substances");
+        m_SaturationCalculator->Setup();
+        m_Substances->InitializeLiquidCompartmentGases();
+        m_Substances->InitializeLiquidCompartmentNonGases();
+      }
     }
     return true;
   }

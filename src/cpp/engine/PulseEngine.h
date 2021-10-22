@@ -14,7 +14,7 @@ struct PULSE_DECL PulseBuildInformation
   static std::string Version();
 };
 
-enum class eModelType { HumanAdultWholeBody=0, HumanAdultVentilationMechanics };
+enum class eModelType { HumanAdultWholeBody=0, HumanAdultVentilationMechanics, HumanAdultHemodynamics };
 bool eModelType_ValueOf(const std::string s, eModelType& t);
 
 std::unique_ptr<PhysiologyEngine> CreatePulseEngine(eModelType type = eModelType::HumanAdultWholeBody, Logger* logger = nullptr);

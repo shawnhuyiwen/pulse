@@ -63,7 +63,6 @@ namespace pulse
 {
   CardiovascularModel::CardiovascularModel(Data& data) : CardiovascularSystem(data.GetLogger()), Model(data)
   {
-    m_TuningFile = "";
     m_transporter = new SELiquidTransporter(VolumePerTimeUnit::mL_Per_s, VolumeUnit::mL, MassUnit::ug, MassPerVolumeUnit::ug_Per_mL, data.GetLogger());
     m_circuitCalculator = new SEFluidCircuitCalculator(VolumePerPressureUnit::mL_Per_mmHg, VolumePerTimeUnit::mL_Per_s, PressureTimeSquaredPerVolumeUnit::mmHg_s2_Per_mL, PressureUnit::mmHg, VolumeUnit::mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL, data.GetLogger());
     m_CardiacCycleArterialPressure_mmHg = new SERunningAverage();
@@ -1719,6 +1718,7 @@ namespace pulse
     // Apply drug effects
     if (m_data.GetDrugs().HasHeartRateChange())
       HeartDriverFrequency_Per_Min += m_data.GetDrugs().GetHeartRateChange(FrequencyUnit::Per_min);
+
     BLIM(HeartDriverFrequency_Per_Min, m_data.GetCurrentPatient().GetHeartRateMinimum(FrequencyUnit::Per_min), m_data.GetCurrentPatient().GetHeartRateMaximum(FrequencyUnit::Per_min));
 
     //Apply heart failure effects
@@ -1976,6 +1976,9 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CalculatePleuralCavityVenousEffects()
   {
+    if (!m_data.HasRespiratory())
+      return;
+
     double rightHeartResistance_mmHg_s_Per_mL = m_RightHeartResistance->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
     //-----------------------------------------------------------------------------------------------------
@@ -2010,7 +2013,7 @@ namespace pulse
     //-----------------------------------------------------------------------------------------------------
 
     //Pressure difference causes a mediastinum shift, which also effects the venous return
-    //The left and right pleural pressures are likely to have large differences only due to a pneumothorax  
+    //The left and right pleural pressures are likely to have large differences only due to a pneumothorax
     double pleuralCavityPressureDiff_cmH2O = std::abs(m_leftPleuralCavity->GetPressure(PressureUnit::cmH2O) - m_rightPleuralCavity->GetPressure(PressureUnit::cmH2O));
 
     double maxPressureDiff_cmH2O = 20.0;
@@ -2055,6 +2058,12 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::TuneCircuit()
   {
+    if (m_data.GetConfiguration().TuneCardiovascularCircuit()==eSwitch::Off)
+    {
+      Info("Not tuning cardiovascular circuit");
+      return;
+    }
+
     DataTrack     circuitTrk;
     std::ofstream circuitFile;
 
@@ -2066,7 +2075,7 @@ namespace pulse
     m_ss << "Tuning to patient parameters : HeartRate(bpm):" << heartRateTarget_bpm << " Systolic(mmHg):" << systolicTarget_mmHg << " Diastolic(mmHg):" << diastolicTarget_mmHg;
     Info(m_ss);
 
-    // Tuning variables  
+    // Tuning variables
     double pressuretolerance = 0.01;
     double stabPercentTolerance = 0.25;
     double stabCheckTime_s = 15.0;
@@ -2152,7 +2161,7 @@ namespace pulse
           break;
         }
 
-        if (!m_TuningFile.empty())
+        if (!m_data.GetConfiguration().CardiovascularTuningFile().empty())
         {
           circuitTrk.Track(time_s, *m_CirculatoryCircuit);
           circuitTrk.Track("MAP_mmHg", time_s, map_mmHg);
@@ -2163,16 +2172,10 @@ namespace pulse
           circuitTrk.Track("BloodVolume_mL", time_s, blood_mL);
 
           if (time_s == 0)
-            circuitTrk.CreateFile(m_TuningFile.c_str(), circuitFile);
+            circuitTrk.CreateFile(m_data.GetConfiguration().CardiovascularTuningFile().c_str(), circuitFile);
           circuitTrk.StreamTrackToFile(circuitFile);
         }
         time_s += m_data.GetTimeStep_s();
-      }
-      if (!m_TuneCircuit)
-      {
-        Info("Not tuning circuit");
-        success = true; // Assume this is what you want
-        break;
       }
 
       double systolicError_mmHg = systolicTarget_mmHg - systolic_mmHg;
@@ -2461,7 +2464,7 @@ namespace pulse
             flowMin[m] = current;
         }
 
-        if (!m_TuningFile.empty())
+        if (!m_data.GetConfiguration().CardiovascularTuningFile().empty())
         {
           circuitTrk.Track(time_s, *m_CirculatoryCircuit);
           circuitTrk.Track("MAP_mmHg", time_s, GetMeanArterialPressure(PressureUnit::mmHg));
@@ -2527,7 +2530,7 @@ namespace pulse
         CalculateVitalSigns();
         m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
         time_s += m_data.GetTimeStep_s();
-        if (!m_TuningFile.empty())
+        if (!m_data.GetConfiguration().CardiovascularTuningFile().empty())
         {
           circuitTrk.Track(time_s, *m_CirculatoryCircuit);
           circuitTrk.Track("MAP_mmHg", time_s, GetMeanArterialPressure(PressureUnit::mmHg));

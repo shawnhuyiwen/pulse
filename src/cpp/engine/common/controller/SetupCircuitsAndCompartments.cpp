@@ -175,8 +175,6 @@ namespace pulse
     double heartRate_bpm = m_InitialPatient->GetHeartRateBaseline(FrequencyUnit::Per_min);
     const double strokeVolumeTarget_mL = 81.0;
     double cardiacOutputTarget_mL_Per_s = heartRate_bpm / 60.0 * strokeVolumeTarget_mL;
-    const double diastolicPressureTarget_mmHg = 80.0;
-    const double centralVenousPressureTarget_mmHg = 4.0;
     const double pulmonaryShuntFractionFactor = 0.009; // Used to set the pulmonary shunt fraction. Actual shunt will be roughly double this value (two lungs).
     // The way this works is we compute resistances and compliances based on the hemodynamic variables above that are either in the patient
     // file or we use the defaults if nothing is there. Because the actual impedance depends on the frequency, the computations assume a resting heart rate.

@@ -259,7 +259,7 @@ namespace pulse
     virtual bool CreateCircuitsAndCompartments();
     virtual bool OverrideCircuits();
 
-    virtual void                          CheckIntubation();
+    virtual void CheckIntubation();
   protected:
     virtual void LogBuildInfo() const;
     virtual std::string GetTypeName() const = 0;

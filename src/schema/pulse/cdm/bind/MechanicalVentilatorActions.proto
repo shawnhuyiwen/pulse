@@ -88,7 +88,7 @@ message MechanicalVentilatorVolumeControlData
   eMode                                        Mode                          = 2;
   ScalarVolumePerTimeData                      Flow                          = 3; /**<< @brief Driver flow during inspiration */
   Scalar0To1Data                               FractionInspiredOxygen        = 4; /**<< @brief FiO2 */
-  ScalarTimeData                               InspiratoryPeriod             = 5; /**<< @brief Time for inspiration part of the breathing cycle */
+  ScalarTimeData                               InspiratoryPeriod             = 5; /**<< @brief OPTIONAL Time for inspiration part of the breathing cycle */
   ScalarPressureData                           PositiveEndExpiredPressure    = 6; /**<< @brief Driver pressure during exhale */
   ScalarFrequencyData                          RespirationRate               = 7; /**<< @brief Driver minimum frequency */
   ScalarVolumeData                             TidalVolume                   = 8; /**<< @brief Volume target/limit */
