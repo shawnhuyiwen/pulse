@@ -17,6 +17,7 @@ namespace pulse
 
   Engine::~Engine()
   {
+    GetLogger()->SetLogTime(nullptr);
     SAFE_DELETE(m_Controller);
   }
 
