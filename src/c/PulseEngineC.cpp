@@ -39,6 +39,20 @@ C_EXPORT void C_CALL PulseInitialize()
 }
 
 extern "C"
+C_EXPORT void C_CALL PulseVersion(char** version_str)
+{
+  std::string version = PulseBuildInformation::Version();
+  *version_str = c_strdup(version.c_str(), version.length());
+}
+
+extern "C"
+C_EXPORT void C_CALL PulseHash(char** hash_str)
+{
+  std::string hash = PulseBuildInformation::Hash();
+  *hash_str = c_strdup(hash.c_str(), hash.length());
+}
+
+extern "C"
 C_EXPORT void C_CALL PulseDeinitialize()
 {
   CUnitConversionEngine::DestroyEngine();

@@ -39,9 +39,6 @@ PYBIND11_MODULE(PyPulse, m)
   PulseEnginePoolBind(m);
   MultiplexVentilationEngineBind(m);
 
-#ifdef VERSION_INFO
-  m.attr("__version__") = VERSION_INFO;
-#else
-  m.attr("__version__") = "dev";
-#endif
+  m.attr("__version__") = PulseBuildInformation::Version();
+  m.attr("__hash__") = PulseBuildInformation::Hash();
 }

@@ -33,6 +33,7 @@ namespace HowTo_UseEngine
 
     public static void Run()
     {
+      Console.WriteLine("Using Pulse version " + PulseEngine.Version() + "-" + PulseEngine.Hash());
       // Here is an array to store Event Changes
       List<SEEventChange> event_changes = new List<SEEventChange>();
       // Here is an array to store Active Events
@@ -66,6 +67,8 @@ namespace HowTo_UseEngine
       // Instantiate a Pulse engine
       String here = System.IO.Directory.GetCurrentDirectory();
       PulseEngine pulse = new PulseEngine();
+      // Ask Pulse for any information you might want
+      double ts = pulse.GetTimeStep_s();
 
       // You can ask Pulse to write out a log file if you want
       // By default, no log file is written
