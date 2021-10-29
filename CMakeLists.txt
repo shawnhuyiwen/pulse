@@ -184,10 +184,23 @@ elseif(NOT protobuf_FOUND)
 endif()
 
 # Ensure protobuf exported target exists
-get_target_property(PROTOBUF_LIBRARY_RELEASE protobuf::libprotobuf LOCATION_RELEASE)
 get_target_property(PROTOBUF_LIBRARY_DEBUG protobuf::libprotobuf LOCATION_DEBUG)
-install(FILES ${PROTOBUF_LIBRARY_RELEASE} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
+get_target_property(PROTOBUF_LIBRARY_RELEASE protobuf::libprotobuf LOCATION_RELEASE)
+
+if(MSVC OR XCode)
+  # By default, CMake will choose debug for relwithdebinfo configurations if a relwithdebinfo export package is not provided.
+  # This is the case when Pulse builds protobuf. (It only builds release and debug for MSVC)
+  # This default behavior prevents the Pulse relwithdebinfo from building. (Link mismatch)
+  # So I am just forcing these non standard configurations to release in multiconfig builders
+  set_target_properties(protobuf::libprotobuf PROPERTIES
+    MAP_IMPORTED_CONFIG_MINSIZEREL Release
+    MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release)
+endif()
+
+# We only want to install the libraries
 install(FILES ${PROTOBUF_LIBRARY_DEBUG} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
+install(FILES ${PROTOBUF_LIBRARY_RELEASE} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib OPTIONAL)
+# Filenames are used in our export config
 get_filename_component(PROTOBUF_LIBRARY_DEBUG ${PROTOBUF_LIBRARY_DEBUG} NAME)
 get_filename_component(PROTOBUF_LIBRARY_RELEASE ${PROTOBUF_LIBRARY_RELEASE} NAME)
 
