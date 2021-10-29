@@ -210,7 +210,7 @@ C_EXPORT bool C_CALL AdvanceTimeStep(PhysiologyEngineThunk* thunk)
   return thunk->AdvanceTimeStep();
 }
 extern "C"
-C_EXPORT bool C_CALL GetTimeStep(PhysiologyEngineThunk* thunk, const char* unit)
+C_EXPORT double C_CALL GetTimeStep(PhysiologyEngineThunk* thunk, const char* unit)
 {
   return thunk->GetTimeStep(unit==nullptr?"":unit);
 }
