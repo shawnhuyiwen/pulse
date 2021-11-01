@@ -8,12 +8,12 @@ class SEScalarTime;
 class log_lib; // Encapsulates 3rd party logging library
 #include <sstream>
 
-namespace pulse::cdm
+namespace pulse { namespace cdm
 {
   // Not happy with how std does this for floats/doubles
   std::string to_string(float f);
   std::string to_string(double d);
-}
+}}
 
 class CDM_DECL Loggable
 {
