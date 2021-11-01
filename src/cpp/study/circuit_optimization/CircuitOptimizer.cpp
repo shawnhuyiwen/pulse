@@ -12,6 +12,7 @@
 
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/GeneralMath.h"
+#include "Eigen/Dense"
 
 namespace pulse::study::circuit_optimization
 {
@@ -107,5 +108,71 @@ namespace pulse::study::circuit_optimization
     Info("Finished simulation " +std::to_string(++m_SimulationNum));
 
     return true;
+  }
+  std::map<std::string, double> CircuitOptimizer::ComputeNewModifiers(PulseConfiguration& cfg,
+                                                                      std::vector<SEValidationTarget>& currentTargets,
+                                                                      std::map<std::string, double>& currentModifiers)
+  {
+    // TODO: No bounding constraint has been imposed yet.
+
+    auto nX = currentModifiers.size();
+    auto nY = currentTargets.size();
+    double stepSize = 0.001; // magic number, could be too large/small for different inputs
+
+    // Diff/Error/Y matrix for output targets
+    Eigen::MatrixXd diffY(nY, 1);
+    for (int i = 0; i < currentTargets.size(); i++)
+    {
+      diffY.coeffRef(i, 0) = currentTargets[i].GetError();
+    }
+
+    // Jacobian matrix
+    Eigen::MatrixXd Jacobian(nY, nX);
+
+    // Temporary newTargets for finite differencing
+    std::vector<SEValidationTarget> newTargets;
+    newTargets.reserve(currentTargets.size());
+    for (auto target : currentTargets)
+    {
+      newTargets.push_back(target); // TODO: works?
+    }
+
+    // Compute entries in Jacobian matrix
+    int i = 0;
+    for (auto const & [key, val] : currentModifiers)
+    {
+      cfg.GetModifiers()[key] = val + stepSize;
+      if (!this->GenerateData(cfg, newTargets))
+      {
+        this->m_Logger->Fatal("Error generating data");
+        break;
+      }
+
+      int j = 0;
+      for (SEValidationTarget& vt : newTargets)
+      {
+        Jacobian.coeffRef(j, i)  = (vt.GetError() - diffY.coeffRef(j, 0)) / stepSize;
+        j++;
+      }
+
+      // Reset
+      cfg.GetModifiers()[key] = val;
+      i++;
+    }
+
+    // Least squares fitting using uniform weights.
+    // Assume number of targets is equal or greater than the number of input variables/modifiers,
+    // otherwise J^T * J is non-invertible, and we will need to use other solution method (e.g. null-space method)
+    Eigen::MatrixXd deltaX = (Jacobian.transpose() * Jacobian).inverse() * (Jacobian.transpose() * diffY);
+
+    // Create new modifiers
+    std::map<std::string, double> newModifiers;
+    i = 0;
+    for (auto const & [key, val] : currentModifiers)
+    {
+      newModifiers[key] = val + 0.1 * deltaX.coeff(i,0);
+      i++;
+    }
+    return newModifiers;
   }
 }

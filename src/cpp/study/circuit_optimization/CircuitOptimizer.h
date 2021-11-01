@@ -17,6 +17,9 @@ namespace pulse::study::circuit_optimization
     virtual ~CircuitOptimizer();
 
     bool GenerateData(PulseConfiguration& cfg, std::vector<SEValidationTarget>& targets);
+    std::map<std::string, double> ComputeNewModifiers(PulseConfiguration& cfg,
+                                                      std::vector<SEValidationTarget>& targets,
+                                                      std::map<std::string, double>& currentModifiers);
 
     virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override;
 
