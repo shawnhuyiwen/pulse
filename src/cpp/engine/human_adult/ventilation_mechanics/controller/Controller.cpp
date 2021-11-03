@@ -60,6 +60,11 @@ namespace pulse { namespace human_adult_ventilation_mechanics
 
   void Controller::Allocate()
   {
+    Info("Creating Human Adult Ventilation Mechanics Engine");
+    Info("Version : " + PulseBuildInformation::Version());
+    Info("GitHash : " + PulseBuildInformation::Hash());
+    Info("Build Time : " + PulseBuildInformation::Time());
+
     // Create common objects we will use
     m_Substances = new pulse::SubstanceManager(*this);
 
