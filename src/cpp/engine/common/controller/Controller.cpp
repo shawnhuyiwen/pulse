@@ -252,6 +252,14 @@ namespace pulse
     SAFE_DELETE(m_Circuits);
   }
 
+  void Controller::LogBuildInfo() const
+  {
+    Info(GetTypeName());
+    Info("Version : " + PulseBuildInformation::Version());
+    Info("GitHash : " + PulseBuildInformation::Hash());
+    Info("Build Time : " + PulseBuildInformation::Time());
+  }
+
   bool Controller::SetConfigurationOverride(const SEEngineConfiguration* config)
   {
     if (config != nullptr)
@@ -270,19 +278,25 @@ namespace pulse
 
   bool Controller::SerializeFromFile(const std::string& filename)
   {
+    Info("Serializing from file " + filename);
+    LogBuildInfo();
     return PBState::SerializeFromFile(filename, *this, m_ConfigOverride);
   }
   bool Controller::SerializeToFile(const std::string& filename) const
   {
+    Info("Serializing to file " + filename);
     return PBState::SerializeToFile(*this, filename);
   }
 
   bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
+    Info("Serializing from string");
+    LogBuildInfo();
     return PBState::SerializeFromString(src, *this, m);
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
+    Info("Serializing to string");
     return PBState::SerializeToString(*this, output, m);
   }
 
@@ -295,6 +309,9 @@ namespace pulse
 
   bool Controller::InitializeEngine(const SEPatientConfiguration& patient_configuration)
   {
+    Info("Initializing engine");
+    LogBuildInfo();
+
     m_State = EngineState::NotReady;
 
     m_SpareAdvanceTime_s = 0;

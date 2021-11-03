@@ -61,6 +61,12 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
+  /// Returns the engine type, such as "Human Adult Whole Body"
+  //--------------------------------------------------------------------------------------------------
+  virtual std::string GetTypeName() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
   /// Reset engine and set it to the state in the provided file.
   /// The file may contain json or binary. 
   /// Anything but an extension of .json will be interpreted as binary.

@@ -63,11 +63,6 @@ namespace pulse { namespace human_adult_whole_body
 
   void Controller::Allocate()
   {
-    Info("Creating Human Adult Whole Body Engine");
-    Info("Version : " + PulseBuildInformation::Version());
-    Info("GitHash : " + PulseBuildInformation::Hash());
-    Info("Build Time : " + PulseBuildInformation::Time());
-
     m_Stabilizer = new pulse::StabilizationController(*this);
 
     m_Substances = new SubstanceManager(*this);

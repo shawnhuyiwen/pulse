@@ -261,6 +261,8 @@ namespace pulse
 
     virtual void                          CheckIntubation();
   protected:
+    virtual void LogBuildInfo() const;
+    virtual std::string GetTypeName() const = 0;
     // Setup Circuit/Compartments for systems
     virtual void SetupCardiovascular();
     virtual void SetupRenal();
