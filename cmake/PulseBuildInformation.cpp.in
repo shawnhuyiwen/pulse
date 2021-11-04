@@ -10,15 +10,15 @@ namespace
 {
   std::string dateTimeCode(std::string date, std::string time)
   {
-    std::tm t = {};
-    auto in = std::istringstream(date + " " + time);
-    in.imbue(std::locale("en-US"));
-    in >> std::get_time(&t, "%b %d %Y %H:%M:%S");
-  
-    auto out = std::ostringstream();
-    out.imbue(std::locale("en-US"));
-    out << std::put_time(&t, "%Y/%m/%d-%H:%M:%S");
-    return out.str();
+    char buffer[80];
+    time_t rawtime;
+    struct tm* timeinfo;
+
+    std::time(&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer, 80, "%c", timeinfo);
+    return std::string(buffer);
   }
 }
 
