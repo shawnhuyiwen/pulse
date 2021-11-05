@@ -14,6 +14,7 @@ void HowToPulseEnginePool();
 
 void HowToAirwayObstruction();
 void HowToAnesthesiaMachine();
+void HowToArrythmia();
 void HowToAsthmaAttack();
 void HowToBagValveMask();
 void HowToBolusDrug();
