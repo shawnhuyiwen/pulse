@@ -6,6 +6,7 @@ CDM_BIND_DECL2(PatientAction)
 CDM_BIND_DECL2(AcuteRespiratoryDistressSyndromeExacerbation)
 CDM_BIND_DECL2(AcuteStress)
 CDM_BIND_DECL2(AirwayObstruction)
+CDM_BIND_DECL2(Arrhythmia)
 CDM_BIND_DECL2(AsthmaAttack)
 CDM_BIND_DECL2(BrainInjury)
 CDM_BIND_DECL2(Bronchoconstriction)
@@ -70,6 +71,12 @@ public:
   static void Serialize(const CDM_BIND::AirwayObstructionData& src, SEAirwayObstruction& dst);
   static void Serialize(const SEAirwayObstruction& src, CDM_BIND::AirwayObstructionData& dst);
   static void Copy(const SEAirwayObstruction& src, SEAirwayObstruction& dst);
+
+  static void Load(const CDM_BIND::ArrhythmiaData& src, SEArrhythmia& dst);
+  static CDM_BIND::ArrhythmiaData* Unload(const SEArrhythmia& src);
+  static void Serialize(const CDM_BIND::ArrhythmiaData& src, SEArrhythmia& dst);
+  static void Serialize(const SEArrhythmia& src, CDM_BIND::ArrhythmiaData& dst);
+  static void Copy(const SEArrhythmia& src, SEArrhythmia& dst);
 
   static void Load(const CDM_BIND::AsthmaAttackData& src, SEAsthmaAttack& dst);
   static CDM_BIND::AsthmaAttackData* Unload(const SEAsthmaAttack& src);

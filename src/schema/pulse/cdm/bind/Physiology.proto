@@ -11,8 +11,14 @@ import "pulse/cdm/bind/PatientNutrition.proto";
 
 enum eHeartRhythm
 {
-  NormalSinus = 0;
-  Asystolic   = 1;
+  NormalSinus                     = 0; /**<< @brief */
+  Asystole                        = 1; /**<< @brief */
+  CourseVentricularFibrillation   = 2; /**<< @brief */
+  FineVentricularFibrillation     = 3; /**<< @brief */
+  PulselessElectricalActivity     = 4; /**<< @brief */
+  PulselessVentricularTachycardia = 5; /**<< @brief */
+  StableVentricularTachycardia    = 6; /**<< @brief */
+  UnstableVentricularTachycardia  = 7; /**<< @brief */
 }
 
 /** @brief 

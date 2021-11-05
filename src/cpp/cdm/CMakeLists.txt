@@ -114,6 +114,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h
     patient/actions/SEAcuteStress.h
     patient/actions/SEAirwayObstruction.h
+    patient/actions/SEArrhythmia.h
     patient/actions/SEAsthmaAttack.h
     patient/actions/SEBrainInjury.h
     patient/actions/SEBronchoconstriction.h
@@ -481,6 +482,7 @@ add_library_ex(CommonDataModel
     patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.cpp
     patient/actions/SEAcuteStress.cpp
     patient/actions/SEAirwayObstruction.cpp
+    patient/actions/SEArrhythmia.cpp
     patient/actions/SEAsthmaAttack.cpp
     patient/actions/SEBrainInjury.cpp
     patient/actions/SEBronchoconstriction.cpp

@@ -15,6 +15,7 @@
 // Actions
 #include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEPatientActionCollection.h"
+#include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEChestCompressionForce.h"
 #include "cdm/patient/actions/SEChestCompressionForceScale.h"
@@ -606,7 +607,6 @@ namespace pulse
     // and do the appropriate calculations based on the time location.
     HeartDriver();
     ProcessActions();
-    UpdateHeartRhythm();
     CalculatePleuralCavityVenousEffects();
   }
 
@@ -801,25 +801,17 @@ namespace pulse
         m_data.GetEvents().SetEvent(eEvent::Bradycardia, true, m_data.GetSimulationTime());
       if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 65)
         m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
-      if (GetHeartRate().GetValue(FrequencyUnit::Per_min) == 0 || m_data.GetActions().GetPatientActions().HasCardiacArrest())
-      {
-        m_data.GetEvents().SetEvent(eEvent::Asystole, true, m_data.GetSimulationTime());
-      }
-      else
-      {
-        m_data.GetEvents().SetEvent(eEvent::Asystole, false, m_data.GetSimulationTime());
-      }
     }
 
-    // Irreversible state if asystole persists.
-    if (GetHeartRhythm() == eHeartRhythm::Asystolic)
+    // Irreversible state if cardiac arrest persists. // rbc I turned this from a check on Asystole to Cardiac Arrest
+    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       /// \event Patient: Irreversible State: heart has been in asystole for over 45 min:
-      if (m_data.GetEvents().GetEventDuration(eEvent::Asystole, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
+      if (m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
       {
-        /// \irreversible Heart has been in asystole for over 45 min
+        /// \irreversible Heart has been in cardiac arrest for over 45 min
         m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-        m_ss << "Asystole has occurred for " << m_data.GetEvents().GetEventDuration(eEvent::Asystole, TimeUnit::s) << " seconds, patient is in irreversible state.";
+        m_ss << "Cardiac Arrest has occurred for " << m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s) << " seconds, patient is in irreversible state.";
         Fatal(m_ss);
       }
     }
@@ -936,11 +928,11 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::ProcessActions()
   {
+    Arrhythmia();
     TraumaticBrainInjury();
     Hemorrhage();
     PericardialEffusion();
     CPR();
-    CardiacArrest();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1512,7 +1504,6 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CalculateAndSetCPRcompressionForce()
   {
-
     double compressionForce_N = 0.0;
     double compressionForceMax_N = 500.0;   // The maximum allowed compression force (corresponds to 1.0 when force scale is used)
     double compressionForceMin_N = 0.0;     // The minimum allowed compression force
@@ -1571,27 +1562,35 @@ namespace pulse
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// The cardiac arrest action causes the sudden loss of heart function and breathing.
-  ///
-  /// \details
-  /// Cardiac arrest is the sudden loss of effective blood circulation. When the cardiac arrest
-  /// action is active, the heart will not beat effectively and breathing will not occur.
+  /// The arrythmia action causes the heart to beat too quickly, too slowly, or with an irregular pattern..
   //--------------------------------------------------------------------------------------------------
-  void CardiovascularModel::CardiacArrest()
+  void CardiovascularModel::Arrhythmia()
   {
-    if (m_data.GetActions().GetPatientActions().HasCardiacArrest())
+    if (m_data.GetActions().GetPatientActions().HasArrhythmia())
     {
-      // Flip the cardiac arrest switch
-      // This tells the CV system that a cardiac arrest has been initiated.
-      // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
-      m_EnterCardiacArrest = true;
-      //Force a new cardiac cycle to start when cardiac arrest is removed
-      m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
-    }
-    else
-    {
-      m_EnterCardiacArrest = false;
-      m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+      SetHeartRhythm(m_data.GetActions().GetPatientActions().GetArrhythmia().GetType());
+      m_data.GetActions().GetPatientActions().RemoveArrhythmia();// Done with the action
+
+      switch (GetHeartRhythm())
+      {
+        // rbc, this is new, just mapping what rhythms mean to enter cardiac arrest
+      case eHeartRhythm::Asystole:
+      case eHeartRhythm::CourseVentricularFibrillation:
+      case eHeartRhythm::FineVentricularFibrillation:
+      case eHeartRhythm::PulselessElectricalActivity:
+      case eHeartRhythm::PulselessVentricularTachycardia:
+      {
+        // Flip the cardiac arrest switch
+        // This tells the CV system that a cardiac arrest has been initiated.
+        // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
+        m_EnterCardiacArrest = true;
+        //Force a new cardiac cycle to start when cardiac arrest is removed
+        m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
+        break;
+      }
+      default:// Any other rhythms take us out of cardiac arrest
+        m_EnterCardiacArrest = false;
+      }
     }
   }
 
@@ -1941,27 +1940,6 @@ namespace pulse
     double HeartRate_Per_s = 1.0 / (m_CurrentCardiacCycleDuration_s - m_data.GetTimeStep_s());
     GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
     m_CurrentCardiacCycleDuration_s = 0;
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Determines the heart rhythm.
-  ///
-  /// \details
-  /// The heart rhythm is set to either Asystole or NormalSinus based on if the patient has an
-  /// active cardiac arrest or has triggered the asystole event some other way.
-  //--------------------------------------------------------------------------------------------------
-  void CardiovascularModel::UpdateHeartRhythm()
-  {
-    if (m_data.GetActions().GetPatientActions().HasCardiacArrest() ||
-      m_data.GetEvents().IsEventActive(eEvent::Asystole))
-    {
-      SetHeartRhythm(eHeartRhythm::Asystolic);
-    }
-    else
-    {
-      SetHeartRhythm(eHeartRhythm::NormalSinus);
-    }
   }
 
   //--------------------------------------------------------------------------------------------------

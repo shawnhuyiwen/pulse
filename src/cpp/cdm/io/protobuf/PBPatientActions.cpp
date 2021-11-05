@@ -16,6 +16,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "cdm/patient/actions/SEAcuteStress.h"
 #include "cdm/patient/actions/SEAirwayObstruction.h"
+#include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
@@ -158,6 +159,35 @@ void PBPatientAction::Copy(const SEAirwayObstruction& src, SEAirwayObstruction& 
 {
   dst.Clear();
   CDM_BIND::AirwayObstructionData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const CDM_BIND::ArrhythmiaData& src, SEArrhythmia& dst)
+{
+  dst.Clear();
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::ArrhythmiaData& src, SEArrhythmia& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  dst.SetType((eHeartRhythm)src.type());
+}
+CDM_BIND::ArrhythmiaData* PBPatientAction::Unload(const SEArrhythmia& src)
+{
+  CDM_BIND::ArrhythmiaData* dst = new CDM_BIND::ArrhythmiaData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEArrhythmia& src, CDM_BIND::ArrhythmiaData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  dst.set_type((CDM_BIND::eHeartRhythm)src.m_Type);
+}
+void PBPatientAction::Copy(const SEArrhythmia& src, SEArrhythmia& dst)
+{
+  dst.Clear();
+  CDM_BIND::ArrhythmiaData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }

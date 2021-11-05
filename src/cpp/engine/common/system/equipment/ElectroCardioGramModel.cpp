@@ -122,7 +122,7 @@ namespace pulse
         m_interpolator->StartNewCycle(eHeartRhythm::NormalSinus);
         m_heartRhythmPeriod_s = 1 / m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
       }
-      else if (m_data.GetCardiovascular().GetHeartRhythm() == eHeartRhythm::Asystolic)
+      else if (m_data.GetCardiovascular().GetHeartRhythm() == eHeartRhythm::Asystole)
       {
         // Nothing to do here but be zero
       }

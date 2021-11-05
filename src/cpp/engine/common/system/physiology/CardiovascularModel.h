@@ -75,16 +75,15 @@ namespace pulse
     /****/void MetabolicToneResponse();
     /**/void BeginCardiacCycle();
     /**/void CalculateHeartElastance();
-    /**/void UpdateHeartRhythm();
     void ProcessActions();
     //Action methods
     /**/void CPR();
     /****/void CalculateAndSetCPRcompressionForce();
+    /**/void Arrhythmia();
     /**/void Hemorrhage();
     /**/void InternalHemorrhagePressureApplication();
     /**/void PericardialEffusion();
     /**/void PericardialEffusionPressureApplication();
-    /**/void CardiacArrest();
     /**/void TraumaticBrainInjury();
     //Respiratory effects
     void CalculatePleuralCavityVenousEffects();

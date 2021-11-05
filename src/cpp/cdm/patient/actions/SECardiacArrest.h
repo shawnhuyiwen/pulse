@@ -4,7 +4,7 @@
 #pragma once
 #include "cdm/patient/actions/SEPatientAction.h"
 
-class CDM_DECL SECardiacArrest : public SEPatientAction
+class [[deprecated]] CDM_DECL SECardiacArrest : public SEPatientAction
 {
   friend class PBPatientAction;//friend the serialization class
 public:

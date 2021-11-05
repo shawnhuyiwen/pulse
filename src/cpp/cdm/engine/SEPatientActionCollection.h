@@ -7,10 +7,11 @@ class SEPatientAction;
 class SEAcuteRespiratoryDistressSyndromeExacerbation;
 class SEAcuteStress;
 class SEAirwayObstruction;
+class SEAsthmaAttack;
+class SEArrhythmia;
 class SEBrainInjury;
 class SEBronchoconstriction;
 class SECardiacArrest;
-class SEAsthmaAttack;
 class SEChestCompression;
 class SEChestCompressionForce;
 class SEChestCompressionForceScale;
@@ -65,6 +66,11 @@ public:
   const SEAirwayObstruction* GetAirwayObstruction() const;
   void RemoveAirwayObstruction();
 
+  bool HasArrhythmia() const;
+  SEArrhythmia& GetArrhythmia();
+  const SEArrhythmia* GetArrhythmia() const;
+  void RemoveArrhythmia();
+
   bool HasAsthmaAttack() const;
   SEAsthmaAttack& GetAsthmaAttack();
   const SEAsthmaAttack* GetAsthmaAttack() const;
@@ -79,11 +85,6 @@ public:
   SEBronchoconstriction& GetBronchoconstriction();
   const SEBronchoconstriction* GetBronchoconstriction() const;
   void RemoveBronchoconstriction();
-
-  bool HasCardiacArrest() const;
-  SECardiacArrest& GetCardiacArrest();
-  const SECardiacArrest* GetCardiacArrest() const;
-  void RemoveCardiacArrest();
 
   bool HasChestCompression() const;
   bool HasChestCompressionForce() const;
@@ -257,10 +258,10 @@ protected:
   SEAcuteRespiratoryDistressSyndromeExacerbation*   m_ARDSExacerbation;
   SEAcuteStress*                                    m_AcuteStress;
   SEAirwayObstruction*                              m_AirwayObstruction;
+  SEArrhythmia*                                     m_Arrhythmia;
   SEAsthmaAttack*                                   m_AsthmaAttack;
   SEBrainInjury*                                    m_BrainInjury;
   SEBronchoconstriction*                            m_Bronchoconstriction;
-  SECardiacArrest*                                  m_CardiacArrest;
   SEChestCompressionForce*                          m_ChestCompressionForce;
   SEChestCompressionForceScale*                     m_ChestCompressionForceScale;
   SEChestOcclusiveDressing*                         m_LeftChestOcclusiveDressing;

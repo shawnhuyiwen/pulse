@@ -67,6 +67,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "cdm/patient/actions/SEAcuteStress.h"
 #include "cdm/patient/actions/SEAirwayObstruction.h"
+#include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
@@ -295,14 +296,15 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AcuteStress));
   if (src.HasAirwayObstruction())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AirwayObstruction));
+  if (src.HasArrhythmia())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Arrhythmia));
   if (src.HasAsthmaAttack())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_AsthmaAttack));
   if (src.HasBrainInjury())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_BrainInjury));
   if (src.HasBronchoconstriction())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Bronchoconstriction));
-  if (src.HasCardiacArrest())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_CardiacArrest));
+  
   if (src.HasChestCompressionForce())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionForce));
   else if (src.HasChestCompressionForceScale())
