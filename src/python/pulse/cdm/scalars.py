@@ -35,28 +35,6 @@ class SEScalar():
     def __repr__(self):
         return " {} """.format(self._value)
 
-
-class SEScalarProperty:
-    __slots__ = ["_name", "_value", "_unit"]
-
-    def __init__(self, name: str, value: float, unit: str):
-        self._name = name
-        self._value = value
-        self._unit = unit
-    def get_name(self):
-        return self._name
-    def set_name(self, name: str):
-        self._name = name
-    def get_unit(self):
-        return self._unit
-    def set_unit(self, unit: str):
-        self._unit = unit
-    def get_value(self):
-        return self._value
-    def set_value(self, value: float):
-        self._value = value
-
-
 class SEScalar0To1(SEScalar):
     def set_value(self, value: float):
         if value>1.0 or value<0.0:

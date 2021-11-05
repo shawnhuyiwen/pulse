@@ -57,8 +57,10 @@ namespace pulse
     if (src.writepatientbaselinefile() != CDM_BIND::eSwitch::NullSwitch)
       dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
 
-    if (src.has_initialoverrides())
-      PBAction::Load(src.initialoverrides(), dst.GetInitialOverrides());
+    for (auto& [name, m] : src.modifiers())
+      dst.GetModifiers().insert(std::pair(name,SEScalarPair(m.value(), m.unit())));
+    for (auto& [name, o] : src.overrides())
+      dst.GetOverrides().insert(std::pair(name,SEScalarPair(o.value(), o.unit())));
 
     // Blood Chemistry
     if (src.has_bloodchemistryconfiguration())
@@ -370,8 +372,21 @@ namespace pulse
       dst.set_allocated_timestep(PBProperty::Unload(*src.m_TimeStep));
     dst.set_allowdynamictimestep((CDM_BIND::eSwitch)src.m_AllowDynamicTimeStep);
     dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);
-    if (src.HasInitialOverrides())
-      dst.set_allocated_initialoverrides(PBAction::Unload(*src.m_InitialOverrides));
+
+    for (auto const& [name, m] : src.GetModifiers())
+    {
+      CDM_BIND::ScalarData& scalar =
+        (*dst.mutable_modifiers())[name];
+      scalar.set_value(m.value);
+      scalar.set_unit(m.unit);
+    }
+    for (auto const& [name, o] : src.GetOverrides())
+    {
+      CDM_BIND::ScalarData& scalar =
+        (*dst.mutable_overrides())[name];
+      scalar.set_value(o.value);
+      scalar.set_unit(o.unit);
+    }
 
     // Blood Chemistry
     PULSE_BIND::ConfigurationData_BloodChemistryConfigurationData* bc = dst.mutable_bloodchemistryconfiguration();

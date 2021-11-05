@@ -4,7 +4,6 @@ option java_package = "com.kitware.pulse.engine.bind";
 option csharp_namespace = "pulse.engine.bind";
 option optimize_for = SPEED;
 
-import "pulse/cdm/bind/Actions.proto";
 import "pulse/cdm/bind/Enums.proto";
 import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/Engine.proto";
@@ -202,6 +201,7 @@ message ConfigurationData
   RenalConfigurationData                               RenalConfiguration                                   = 17;
   RespiratoryConfigurationData                         RespiratoryConfiguration                             = 18;
   TissueConfigurationData                              TissueConfiguration                                  = 19;
-  pulse.cdm.bind.OverridesData                         InitialOverrides                                     = 20;
+  map<string,pulse.cdm.bind.ScalarData>                Modifiers                                            = 20;
+  map<string,pulse.cdm.bind.ScalarData>                Overrides                                            = 21;
 }
  

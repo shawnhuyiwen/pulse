@@ -11,7 +11,6 @@ class SEDynamicStabilization;
 class SETimedStabilization;
 class SEEnvironmentalConditions;
 class SEElectroCardioGramWaveformInterpolator;
-class SEOverrides;
 
 namespace pulse { class PBConfiguration; }
 /**
@@ -60,20 +59,23 @@ public:
   virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == eSwitch::On; }
   virtual void EnableWritePatientBaselineFile(eSwitch s) { m_WritePatientBaselineFile = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }
 
-  // add method here for overrrides
-  virtual bool HasInitialOverrides() const;
-  virtual SEOverrides& GetInitialOverrides();
-  virtual const SEOverrides* GetInitialOverrides() const;
-  virtual void RemoveInitialOverrides();
+  virtual bool HasOverrides() const;
+  virtual SEScalarProperties& GetOverrides();
+  virtual const SEScalarProperties& GetOverrides() const;
+
+  virtual bool HasModifiers() const;
+  virtual SEScalarProperties& GetModifiers();
+  virtual const SEScalarProperties& GetModifiers() const;
 protected:
 
-  SEScalarTime*              m_TimeStep;
-  eSwitch                    m_AllowDynamicTimeStep;
-  SETimedStabilization*      m_TimedStabilization;
-  SEDynamicStabilization*    m_DynamicStabilization;
-  eSwitch                    m_WritePatientBaselineFile;
+  SEScalarTime*                 m_TimeStep;
+  eSwitch                       m_AllowDynamicTimeStep;
+  SETimedStabilization*         m_TimedStabilization;
+  SEDynamicStabilization*       m_DynamicStabilization;
+  eSwitch                       m_WritePatientBaselineFile;
 
-  SEOverrides* m_InitialOverrides;
+  SEScalarProperties            m_Overrides;
+  SEScalarProperties            m_Modifiers;
 
   //////////////////////
   /** Blood Chemistry */

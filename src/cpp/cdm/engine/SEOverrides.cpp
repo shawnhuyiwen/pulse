@@ -4,10 +4,11 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/engine/SEOverrides.h"
 #include "cdm/io/protobuf/PBActions.h"
+#include "cdm/properties/SEScalar.h"
 
 SEOverrides::SEOverrides(Logger* logger) : SEAction(logger)
 {
-  
+
 }
 
 SEOverrides::~SEOverrides()
@@ -18,7 +19,7 @@ SEOverrides::~SEOverrides()
 void SEOverrides::Clear()
 {
   SEAction::Clear();
-  RemoveProperties();
+  m_ScalarProperties.clear();
 }
 
 void SEOverrides::Copy(const SEOverrides& src)
@@ -28,48 +29,39 @@ void SEOverrides::Copy(const SEOverrides& src)
 
 bool SEOverrides::IsValid() const
 { 
-  return HasProperty();
+  return HasScalarProperties();
 }
 
-bool SEOverrides::HasProperty() const
+bool SEOverrides::HasScalarProperties() const
 {
-  return m_ScalarProperties.size()>1;
+  return !m_ScalarProperties.empty();
 }
-void SEOverrides::AddScalarProperty(const std::string& name, double value)
-{
-  m_ScalarProperties.push_back(SEScalarProperty(name, value, ""));
-}
-void SEOverrides::AddScalarProperty(const std::string& name, double value, std::string unit)
-{
-  m_ScalarProperties.push_back(SEScalarProperty(name, value, unit));
-}
-void SEOverrides::AddScalarProperty(const std::string& name, double value, const CCompoundUnit& unit)
-{
-  m_ScalarProperties.push_back(SEScalarProperty(name,value,unit.GetString()));
-}
-std::vector<SEScalarProperty>& SEOverrides::GetScalarProperties()
+SEScalarProperties& SEOverrides::GetScalarProperties()
 {
   return m_ScalarProperties;
 }
-const std::vector<SEScalarProperty>& SEOverrides::GetScalarProperties() const
+const SEScalarProperties& SEOverrides::GetScalarProperties() const
 {
   return m_ScalarProperties;
-}
-void SEOverrides::RemoveProperties()
-{
-  m_ScalarProperties.clear();
 }
 
 void SEOverrides::ToString(std::ostream& str) const
 {
   if (HasComment())
     str << "\n\tComment : " << m_Comment;
-  for (auto itr : m_ScalarProperties)
+  if (HasScalarProperties())
   {
-    if (itr.unit.empty())
-      str << "\n\tOverride " << itr.name << " with " << itr.value;
-    else
-      str << "\n\tOverride " << itr.name << " with " << itr.value << "(" << itr.unit << ")";
+    for (auto const& [name, o] : m_ScalarProperties)
+    {
+      if (o.unit.empty())
+        str << "\n\tOverride " << name << " with " << o.value;
+      else
+        str << "\n\tOverride " << name << " with " << o.value << "(" << o.unit << ")";
+    }
+  }
+  else
+  {
+    str << "\n\tNo Properties Provided";
   }
 }
 

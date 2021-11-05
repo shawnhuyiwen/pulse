@@ -9,14 +9,14 @@
 
 SEValidationTarget::SEValidationTarget(Logger* logger) : Loggable(logger)
 {
-
+  m_Type = eValidationTargetType::Mean;
 }
 
-SEValidationTarget::Type SEValidationTarget::GetType() const
+eValidationTargetType SEValidationTarget::GetType() const
 {
   return m_Type;
 }
-void SEValidationTarget::SetType(SEValidationTarget::Type t)
+void SEValidationTarget::SetType(eValidationTargetType t)
 {
   m_Type = t;
 }
@@ -59,22 +59,22 @@ double SEValidationTarget::GetError() const
 }
 bool SEValidationTarget::ComputeError()
 {
-  m_Value = SEScalar::dNaN();
+  m_TypeValue = SEScalar::dNaN();
   switch (m_Type)
   {
-  case Type::Min:
+  case eValidationTargetType::Min:
   {
-    m_Value = *std::min_element(m_Data.begin(), m_Data.end());
+    m_TypeValue = *std::min_element(m_Data.begin(), m_Data.end());
     break;
   }
-  case Type::Max:
+  case eValidationTargetType::Max:
   {
-    m_Value = *std::max_element(m_Data.begin(), m_Data.end());
+    m_TypeValue = *std::max_element(m_Data.begin(), m_Data.end());
     break;
   }
-  case Type::Mean:
+  case eValidationTargetType::Mean:
   {
-    m_Value = std::reduce(m_Data.begin(), m_Data.end()) / m_Data.size();
+    m_TypeValue = std::reduce(m_Data.begin(), m_Data.end()) / m_Data.size();
     break;
   }
   default:
@@ -84,10 +84,10 @@ bool SEValidationTarget::ComputeError()
   }
   }
   // NOTE: We could use PercentTolerance too
-  double minError = GeneralMath::PercentDifference(m_RangeMin, m_Value);
-  double maxError = GeneralMath::PercentDifference(m_RangeMax, m_Value);
+  double minError = GeneralMath::PercentDifference(m_RangeMin, m_TypeValue);
+  double maxError = GeneralMath::PercentDifference(m_RangeMax, m_TypeValue);
   // No error if we are in range
-  if (m_Value >= m_RangeMin && m_Value <= m_RangeMax)
+  if (m_TypeValue >= m_RangeMin && m_TypeValue <= m_RangeMax)
   {
     m_Error = 0;
     return true;

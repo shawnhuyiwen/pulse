@@ -34,15 +34,13 @@ int main(int argc, char* argv[])
       sim->set_id(42);
       sim->set_name("single");
       // Add some overrides
-      auto c = sim->mutable_overrides()->add_scalaroverride();
-      c->set_name("Fat1ToGround");
-      c->set_value(7.33);
-      c->set_unit(VolumePerPressureUnit::mL_Per_mmHg.GetString());
+      auto& c = (*sim->mutable_overrides())["Fat1ToGround"];
+      c.set_value(7.33);
+      c.set_unit(VolumePerPressureUnit::mL_Per_mmHg.GetString());
 
-      auto r = sim->mutable_overrides()->add_scalaroverride();
-      r->set_name("Aorta1ToLiver1");
-      r->set_value(11.94);
-      r->set_unit(PressureTimePerVolumeUnit::mmHg_s_Per_mL.GetString());
+      auto& r = (*sim->mutable_overrides())["Aorta1ToLiver1"];
+      r.set_value(11.94);
+      r.set_unit(PressureTimePerVolumeUnit::mmHg_s_Per_mL.GetString());
 
       sar.Run(simList);
     }

@@ -31,7 +31,7 @@ namespace pulse::study::circuit_optimization
   }
   CircuitOptimizer::~CircuitOptimizer()
   {
-    
+  
   }
 
   void CircuitOptimizer::HandleEvent(eEvent type, bool active, const SEScalarTime*)
@@ -46,7 +46,61 @@ namespace pulse::study::circuit_optimization
     }
   }
 
-  bool CircuitOptimizer::GenerateData(PulseConfiguration& cfg, std::vector<SEValidationTarget>& targets)
+  bool CircuitOptimizer::ConvergeToHemodynamicsTargets(size_t maxLoops, std::vector<SEValidationTarget>& targets)
+  {
+    // TODO
+    // Depending on what circuit we are trying to optimize
+    // We should remove modifiers unrelated to the circuit we are optimizing
+    // Currently GenerateData only runs the CV circuit, so only those modifiers should be used
+    // Currently we only have CV modifiers in the config
+    
+    // Start with the default modifiers
+    PulseConfiguration cfg(GetLogger());
+    // Set all modifiers to 1.0
+    for (auto& [name, modifier] : cfg.GetModifiers())
+      modifier.value = 1.0;
+
+    bool converged;
+    for (unsigned int i = 0; i < maxLoops; ++i)// Maximum loops
+    {
+      // 1. Generate data with current modifiers
+      if (!GenerateHemodynamicsData(cfg, targets))
+      {
+        Fatal("Error generating data");
+        return false;
+      }
+      // 2. Look at the error of each target
+      //    (I am just making up convergence criteria)
+      converged = true;
+      for (SEValidationTarget& vt : targets)
+      {
+        if (vt.GetError() > 10.0)// Just a guess here...
+        {
+          converged = false;
+          break;
+        }
+      }
+      
+      // 3. Test Convergence Criteria
+      if (converged)
+      {
+        Info("We have successfully tuned the circuit!");
+        // TODO Print out the winning modifiers
+        return true;
+      }
+
+      // 4. We did not converge, so compute a new modifier set to test
+      if (!ComputeNewModifiers(cfg, targets))
+        return false;
+
+      Info("Finished Modifier Loop " + std::to_string(i+1));
+    }
+
+    Error("Exceeded maximum number of loops");
+    return false;
+  }
+
+  bool CircuitOptimizer::GenerateHemodynamicsData(PulseConfiguration& cfg, std::vector<SEValidationTarget>& targets)
   {
     pulse::human_adult_hemodynamics::Engine engine(GetLogger());
 
@@ -74,6 +128,8 @@ namespace pulse::study::circuit_optimization
     SEDataRequestManager& drMgr = engine.GetEngineTracker()->GetDataRequestManager();
     for (SEValidationTarget& vt : targets)
     {
+      // Reset the computed data in our targets
+      vt.GetData().clear();
       // Cache off the mapping of our target to this engine
       t2e[vt.GetDataRequest()] = &drMgr.CopyDataRequest(*vt.GetDataRequest());
     }
@@ -109,54 +165,46 @@ namespace pulse::study::circuit_optimization
 
     return true;
   }
-  std::map<std::string, double> CircuitOptimizer::ComputeNewModifiers(PulseConfiguration& cfg,
-                                                                      std::vector<SEValidationTarget>& currentTargets,
-                                                                      std::map<std::string, double>& currentModifiers)
+  bool CircuitOptimizer::ComputeNewModifiers(PulseConfiguration& cfg, std::vector<SEValidationTarget>& targets)
   {
     // TODO: No bounding constraint has been imposed yet.
 
-    auto nX = currentModifiers.size();
-    auto nY = currentTargets.size();
+    auto nX = cfg.GetModifiers().size();
+    auto nY = targets.size();
     double stepSize = 0.001; // magic number, could be too large/small for different inputs
 
     // Diff/Error/Y matrix for output targets
     Eigen::MatrixXd diffY(nY, 1);
-    for (int i = 0; i < currentTargets.size(); i++)
-    {
-      diffY.coeffRef(i, 0) = currentTargets[i].GetError();
-    }
+    for (size_t i = 0; i < targets.size(); i++)
+      diffY.coeffRef(i, 0) = targets[i].GetError();
 
     // Jacobian matrix
     Eigen::MatrixXd Jacobian(nY, nX);
 
-    // Temporary newTargets for finite differencing
-    std::vector<SEValidationTarget> newTargets;
-    newTargets.reserve(currentTargets.size());
-    for (auto target : currentTargets)
-    {
-      newTargets.push_back(target); // TODO: works?
-    }
-
     // Compute entries in Jacobian matrix
-    int i = 0;
-    for (auto const & [key, val] : currentModifiers)
+    // Individually step each modifier and compute
+    size_t i = 0;
+    for (auto& [name, modifier] : cfg.GetModifiers())
     {
-      cfg.GetModifiers()[key] = val + stepSize;
-      if (!this->GenerateData(cfg, newTargets))
+      // Step one modifier and compute
+      double val = modifier.value; // cache it
+      modifier.value = val + stepSize;
+      if (!GenerateHemodynamicsData(cfg, targets)) // TODO this should be a function pointer
       {
-        this->m_Logger->Fatal("Error generating data");
-        break;
+        Fatal("Error generating data");
+        return false;
       }
 
+      // Put all target errors for this one modifier step in our matrix
       int j = 0;
-      for (SEValidationTarget& vt : newTargets)
+      for (SEValidationTarget& vt : targets)
       {
         Jacobian.coeffRef(j, i)  = (vt.GetError() - diffY.coeffRef(j, 0)) / stepSize;
         j++;
       }
 
-      // Reset
-      cfg.GetModifiers()[key] = val;
+      // Reset the modifier from the cache
+      modifier.value = val;
       i++;
     }
 
@@ -165,14 +213,14 @@ namespace pulse::study::circuit_optimization
     // otherwise J^T * J is non-invertible, and we will need to use other solution method (e.g. null-space method)
     Eigen::MatrixXd deltaX = (Jacobian.transpose() * Jacobian).inverse() * (Jacobian.transpose() * diffY);
 
-    // Create new modifiers
-    std::map<std::string, double> newModifiers;
+    // Put the new modifier set into the config
     i = 0;
-    for (auto const & [key, val] : currentModifiers)
+    for (auto& [name, modifier] : cfg.GetModifiers())
     {
-      newModifiers[key] = val + 0.1 * deltaX.coeff(i,0);
+      double val = modifier.value;
+      modifier.value = val + (0.1 * deltaX.coeff(i, 0));
       i++;
     }
-    return newModifiers;
+    return true;
   }
 }

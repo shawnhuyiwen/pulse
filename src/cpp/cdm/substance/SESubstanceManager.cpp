@@ -274,6 +274,12 @@ bool SESubstanceManager::LoadSubstanceDirectory(const std::string& data_dir)
   bool succeed = true;
   Clear();
 
+  if (!FileExists(data_dir + "/substances/"))
+  {
+    Error("Unable to find substance directory : " + data_dir);
+    return false;
+  }
+
   std::vector<std::string> substances;
   ListFiles(data_dir+"/substances/", substances, false, ".json");
 

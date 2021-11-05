@@ -32,6 +32,7 @@ namespace pulse { namespace human_adult_hemodynamics
     virtual bool CreateCircuitsAndCompartments() override;
 
   protected:
+    virtual std::string GetTypeName() const override { return "Human Adult Hemodynamics"; }
     virtual void Allocate() override;
     virtual bool Stabilize(const SEPatientConfiguration& patient_configuration) override;
 

@@ -16,14 +16,14 @@ namespace pulse::study::circuit_optimization
     CircuitOptimizer(Logger* logger=nullptr);
     virtual ~CircuitOptimizer();
 
-    bool GenerateData(PulseConfiguration& cfg, std::vector<SEValidationTarget>& targets);
-    std::map<std::string, double> ComputeNewModifiers(PulseConfiguration& cfg,
-                                                      std::vector<SEValidationTarget>& targets,
-                                                      std::map<std::string, double>& currentModifiers);
+    bool ConvergeToHemodynamicsTargets(size_t maxLoops, std::vector<SEValidationTarget>& targets);
 
     virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override;
 
   protected:
+    bool GenerateHemodynamicsData(PulseConfiguration& cfg, std::vector<SEValidationTarget>& targets);
+    bool ComputeNewModifiers(PulseConfiguration& cfg, std::vector<SEValidationTarget>& targets);
+
     unsigned int m_SimulationNum = 0;
     unsigned int m_StopAtCycle = 5;
     unsigned int m_CardiacCycle = 0;

@@ -7,16 +7,16 @@
 #include "cdm/engine/SEDataRequest.h"
 #include "cdm/engine/SEEventManager.h"
 
+enum class eValidationTargetType { Min, Max, Mean };
+
 class SEValidationTarget : public Loggable
 {
 public:
   SEValidationTarget(Logger* logger = nullptr);
   ~SEValidationTarget() = default;
 
-  enum class Type {Min, Max, Mean};
-
-  Type GetType() const;
-  void SetType(Type t);
+  eValidationTargetType GetType() const;
+  void SetType(eValidationTargetType t);
 
   SEDataRequest* GetDataRequest() const;
   void SetDataRequest(SEDataRequest* dr);
@@ -33,12 +33,12 @@ public:
   bool ComputeError();
 
 protected:
-  Type           m_Type;
+  eValidationTargetType m_Type;
   SEDataRequest* m_DataRequest=nullptr;
-    
-  double m_Value=SEScalar::dNaN();
-  double m_Error=SEScalar::dNaN();
   double m_RangeMin=SEScalar::dNaN();
   double m_RangeMax=SEScalar::dNaN();
+    
+  double m_TypeValue=SEScalar::dNaN();
+  double m_Error=SEScalar::dNaN();
   std::vector<double> m_Data;
 };

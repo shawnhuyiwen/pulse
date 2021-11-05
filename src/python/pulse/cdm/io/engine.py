@@ -366,8 +366,6 @@ def serialize_patient_configuration_to_bind(src: SEPatientConfiguration, dst: Pa
         serialize_patient_to_bind(src.get_patient(), dst.Patient)
     if src.has_conditions():
         serialize_condition_manager_to_bind(src.get_conditions(), dst.Conditions)
-    for override in src.get_scalar_overrides():
-        serialize_scalar_property_to_bind(override, dst.ScalarOverride.add())
     dst.DataRoot = src.get_data_root_dir()
 
 def serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst: SEPatientConfiguration):

@@ -159,8 +159,7 @@ namespace pulse
 
     virtual void                          SetAdvanceHandler(SEAdvanceHandler* handler) { m_AdvanceHandler = handler; }
 
-    virtual bool                          HasOverride() const;
-    virtual const std::vector<SEScalarProperty>& GetOverrides() const;
+    virtual const SEScalarProperties&     GetOverrides() const;
 
     std::stringstream                     m_ss;
   protected:
@@ -216,8 +215,7 @@ namespace pulse
 
     std::string                           m_DataDir;
 
-    std::vector<SEScalarProperty>         m_ScalarOverrides;
-
+    SEScalarProperties                    m_ScalarOverrides;
   };
 
   /**
@@ -257,12 +255,11 @@ namespace pulse
     virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const = 0;
 
     virtual bool CreateCircuitsAndCompartments();
-    virtual bool OverrideCircuits();
 
     virtual void CheckIntubation();
   protected:
-    virtual void LogBuildInfo() const;
     virtual std::string GetTypeName() const = 0;
+    virtual void LogBuildInfo() const;
     // Setup Circuit/Compartments for systems
     virtual void SetupCardiovascular();
     virtual void SetupRenal();
@@ -280,6 +277,9 @@ namespace pulse
     virtual void SetupNonRebreatherMask();
     virtual void SetupExternalTemperature();
     virtual void SetupInternalTemperature();
+
+    virtual bool OverrideCircuits();
+    virtual bool ModifyCircuits(const SEScalarProperties& modifiers);
 
     virtual bool Initialize(const SEPatient& patient);
     virtual bool Stabilize(const SEPatientConfiguration& patient_configuration);

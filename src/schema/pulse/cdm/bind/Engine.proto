@@ -127,7 +127,6 @@ message PatientConfigurationData
     string                                              PatientFile                    = 3;
   }
   ConditionListData                                     Conditions                     = 4;
-  repeated ScalarPropertyData                           ScalarOverride                 = 5;
 }
 
 message EngineInitializationData
@@ -189,5 +188,24 @@ message LogMessagesData
   repeated string                                       WarningMessages                 = 3;
   repeated string                                       ErrorMessages                   = 4;
   repeated string                                       FatalMessages                   = 5;
+}
+
+message ValidationTargetData
+{
+  enum eType
+  {
+    Min           = 0;
+    Max           = 1;
+    Mean          = 2;
+  }
+  eType                                                 Type                            = 1;
+  DataRequestData                                       DataRequest                     = 2;
+  double                                                RangeMin                        = 3;
+  double                                                RangeMax                        = 4;
+}
+
+message ValidationTargetListData
+{
+repeated ValidationTargetData                           ValidationTarget                = 1;
 }
 

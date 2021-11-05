@@ -157,6 +157,23 @@ extern const std::string& eBreathState_Name(eBreathState m);
 
 class CCompoundUnit;
 
+// Used for overrides and modifiers, a super generic way of enumerating a list of properties
+// properties are an actual scalar member variable on an object
+// map<variable_name,SEScalarPair(value,unit)>
+class SEScalarPair
+{
+public:
+  SEScalarPair();
+  SEScalarPair(double v);
+  SEScalarPair(double v, const std::string& u);
+  SEScalarPair(double v, const CCompoundUnit& cc);
+  ~SEScalarPair() = default;
+  double value;
+  std::string unit;
+};
+using SEScalarProperties = std::map<std::string, SEScalarPair>;
+
+
 class SECurve;
 class SERunningAverage;
 class SEScalar; class SEUnitScalar; class SEGenericScalar; class NoUnit;

@@ -3,12 +3,14 @@
 
 #include "engine/PulseConfiguration.h"
 #include "engine/io/protobuf/PBConfiguration.h"
+#include "engine/common/controller/CircuitManager.h"
 
 #include "cdm/patient/SENutrition.h"
 #include "cdm/engine/SEDynamicStabilization.h"
 #include "cdm/engine/SETimedStabilization.h"
 #include "cdm/engine/SEOverrides.h"
 #include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/environment/SEEnvironmentalConditions.h"
 #include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
@@ -22,6 +24,7 @@
 #include "cdm/properties/SEScalarHeatCapacitancePerAmount.h"
 #include "cdm/properties/SEScalarHeatCapacitancePerMass.h"
 #include "cdm/properties/SEScalarHeatResistance.h"
+#include "cdm/properties/SEScalarHeatResistanceArea.h"
 #include "cdm/properties/SEScalarHeatConductance.h"
 #include "cdm/properties/SEScalarInverseVolume.h"
 #include "cdm/properties/SEScalarLength.h"
@@ -40,6 +43,8 @@
 #include "cdm/properties/SEScalarVolumePerTimePressureArea.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 
+#include "cdm/utils/FileUtils.h"
+
 PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(logger)
 {
   m_TimeStep = nullptr;
@@ -47,7 +52,6 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_TimedStabilization = nullptr;
   m_DynamicStabilization = nullptr;
   m_WritePatientBaselineFile = eSwitch::Off;
-  m_InitialOverrides = nullptr;
 
   // Blood Chemistry
   m_MeanCorpuscularHemoglobin = nullptr;
@@ -176,7 +180,8 @@ PulseConfiguration::~PulseConfiguration()
 {
   SAFE_DELETE(m_TimeStep);
   m_AllowDynamicTimeStep = eSwitch::Off;
-  SAFE_DELETE(m_InitialOverrides);
+  m_Overrides.clear();
+  m_Modifiers.clear();
 
   // Blood Chemistry
   SAFE_DELETE(m_MeanCorpuscularHemoglobin);
@@ -300,8 +305,8 @@ void PulseConfiguration::Clear()
   m_AllowDynamicTimeStep = eSwitch::Off;
   RemoveStabilization();
   m_WritePatientBaselineFile = eSwitch::Off;
-  if(m_InitialOverrides)
-    m_InitialOverrides->Clear();
+  m_Overrides.clear();
+  m_Modifiers.clear();
   
   // Blood Chemistry
   INVALIDATE_PROPERTY(m_MeanCorpuscularHemoglobin);
@@ -466,6 +471,34 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   }
   //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
 
+  // Circuit Modifiers
+  m_Modifiers[pulse::CardiovascularPath::Aorta3ToAorta1] =                                             SEScalarPair(1.12);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToLeftArm1] =                                           SEScalarPair(1.15);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToRightArm1] =                                          SEScalarPair(1.15);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToBone1] =                                              SEScalarPair(1.02);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToBrain1] =                                             SEScalarPair(1.0);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToFat1] =                                               SEScalarPair(1.02);
+  m_Modifiers[pulse::CardiovascularPath::VenaCavaToRightHeart2] =                                      SEScalarPair(0.009);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToLeftKidney1] =                                        SEScalarPair(1.5);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToRightKidney1] =                                       SEScalarPair(1.5);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToLargeIntestine] =                                     SEScalarPair(1.05);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToLeftLeg1] =                                           SEScalarPair(1.1);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToRightLeg1] =                                          SEScalarPair(1.1);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToLiver1] =                                             SEScalarPair(1.1);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToMuscle1] =                                            SEScalarPair(1.15);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToMyocardium1] =                                        SEScalarPair(0.95);
+  m_Modifiers[pulse::CardiovascularPath::RightPulmonaryArteriesToRightPulmonaryCapillaries] =          SEScalarPair(1.0);
+  m_Modifiers[pulse::CardiovascularPath::RightPulmonaryCapillariesToRightPulmonaryVeins] =             SEScalarPair(1.0);
+  m_Modifiers[pulse::CardiovascularPath::RightIntermediatePulmonaryArteriesToRightPulmonaryArteries] = SEScalarPair(1.0);
+  m_Modifiers[pulse::CardiovascularPath::LeftIntermediatePulmonaryArteriesToLeftPulmonaryArteries] =   SEScalarPair(1.0);
+  m_Modifiers[pulse::CardiovascularPath::LeftPulmonaryArteriesToLeftPulmonaryCapillaries] =            SEScalarPair(1.0);
+  m_Modifiers[pulse::CardiovascularPath::LeftPulmonaryCapillariesToLeftPulmonaryVeins] =               SEScalarPair(1.0);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToSkin1] =                                              SEScalarPair(1.0);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToSmallIntestine] =                                     SEScalarPair(1.14);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToSplanchnic] =                                         SEScalarPair(0.95);
+  m_Modifiers[pulse::CardiovascularPath::Aorta1ToSpleen] =                                             SEScalarPair(0.95);
+  m_Modifiers[pulse::CardiovascularPath::VenaCavaToGround] =                                           SEScalarPair(0.9);
+
   //Blood Chemistry
   GetMeanCorpuscularVolume().SetValue(9.e-8, VolumeUnit::uL);// Guyton p419
   GetMeanCorpuscularHemoglobin().SetValue(29, MassPerAmountUnit::pg_Per_ct);
@@ -519,8 +552,29 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetAirSpecificHeat().SetValue(1.0035, HeatCapacitancePerMassUnit::kJ_Per_K_kg);
   GetMolarMassOfDryAir().SetValue(0.028964, MassPerAmountUnit::kg_Per_mol);
   GetMolarMassOfWaterVapor().SetValue(0.018016, MassPerAmountUnit::kg_Per_mol);
-  if (!dataDir.empty() && subMgr != nullptr)
-    GetInitialEnvironmentalConditions().SerializeFromFile(dataDir +"/environments/Standard.json", *subMgr);
+  if (subMgr != nullptr)
+  {
+    if (FileExists(dataDir + "/environments/Standard.json"))
+      GetInitialEnvironmentalConditions().SerializeFromFile(dataDir + "/environments/Standard.json", *subMgr);
+    else
+    {
+      // This has been static for a long time, so if no files are present
+      // Let's use this. This helps component engines file requirements
+      Info("No environment files found, using encoded defaults");
+      auto& env = GetInitialEnvironmentalConditions();
+      env.SetSurroundingType(eSurroundingType::Air);
+      env.GetAmbientTemperature().SetValue(22, TemperatureUnit::C);
+      env.GetAtmosphericPressure().SetValue(760.0, PressureUnit::mmHg);
+      env.GetClothingResistance().SetValue(0.5, HeatResistanceAreaUnit::clo);
+      env.GetEmissivity().SetValue(0.95);
+      env.GetMeanRadiantTemperature().SetValue(22, TemperatureUnit::C);
+      env.GetRelativeHumidity().SetValue(0.6);
+      env.GetRespirationAmbientTemperature().SetValue(22, TemperatureUnit::C);
+      env.GetAmbientGas(*subMgr->GetSubstance("Nitrogen")).GetFractionAmount().SetValue(0.7896);
+      env.GetAmbientGas(*subMgr->GetSubstance("Oxygen")).GetFractionAmount().SetValue(0.21);
+      env.GetAmbientGas(*subMgr->GetSubstance("CarbonDioxide")).GetFractionAmount().SetValue(4.0E-4);
+    }
+  }
   GetWaterDensity().SetValue(1000, MassPerVolumeUnit::kg_Per_m3);
 
   // Gastrointestinal
@@ -530,7 +584,7 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   GetDefaultCarbohydrateDigestionRate().SetValue(0.87, MassPerTimeUnit::g_Per_min);// Go through 130g in about 2 hrs, glucose levels should return to basal 2hrs after that
   GetDefaultFatDigestionRate().SetValue(0.055, MassPerTimeUnit::g_Per_min);// Guyton (About 8hr to digest the fat in the default meal)
   GetDefaultProteinDigestionRate().SetValue(0.071, MassPerTimeUnit::g_Per_min);// Dangin2001Digestion (About 5hr to digest the protein in the default meal)
-  if (!dataDir.empty())
+  if (FileExists(dataDir+"/nutrition/Standard.json"))
     GetDefaultStomachContents().SerializeFromFile(dataDir +"/nutrition/Standard.json");// Refs are in the data spreadsheet
   GetFatAbsorptionFraction().SetValue(0.248);// Guyton p797 and the recommended daily value for saturated fat intake according to the AHA //TODO: Add this reference
   // We should be making 30 grams of urea per 100 grams of protein haussinger1990nitrogen
@@ -662,23 +716,30 @@ void PulseConfiguration::RemoveDynamicStabilization()
   SAFE_DELETE(m_DynamicStabilization);
 }
 
-bool PulseConfiguration::HasInitialOverrides() const
+bool PulseConfiguration::HasOverrides() const
 {
-  return m_InitialOverrides != nullptr;
+  return !m_Overrides.empty();
 }
-SEOverrides& PulseConfiguration::GetInitialOverrides()
+SEScalarProperties& PulseConfiguration::GetOverrides()
 {
-  if (m_InitialOverrides == nullptr)
-    m_InitialOverrides = new SEOverrides();
-  return *m_InitialOverrides;
+  return m_Overrides;
 }
-const SEOverrides* PulseConfiguration::GetInitialOverrides() const
+const SEScalarProperties& PulseConfiguration::GetOverrides() const
 {
-  return m_InitialOverrides;
+  return m_Overrides;
 }
-void PulseConfiguration::RemoveInitialOverrides()
+
+bool PulseConfiguration::HasModifiers() const
 {
-  SAFE_DELETE(m_InitialOverrides);
+  return !m_Modifiers.empty();
+}
+SEScalarProperties& PulseConfiguration::GetModifiers()
+{
+  return m_Modifiers;
+}
+const SEScalarProperties& PulseConfiguration::GetModifiers() const
+{
+  return m_Modifiers;
 }
 
 //////////////////////
