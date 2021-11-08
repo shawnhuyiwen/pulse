@@ -1,8 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h" 
+#include "stdafx.h"
 #include "circuit/fluid/SEFluidCircuitNode.h"
+#include "circuit/fluid/SEFluidCircuitPath.h"
 #include "properties/SEScalarPressure.h"
 #include "properties/SEScalarVolume.h"
 
@@ -109,4 +110,19 @@ void SEFluidCircuitNode::SetBlackBoxSourceTargetNodes(SEFluidCircuitNode& src, S
   m_IsBlackBoxMiddle = true;
   m_BlackBoxSourceNode = &src;
   m_BlackBoxTargetNode = &tgt;
+}
+
+SEFluidCircuitPath* SEFluidCircuitNode::GetBlackBoxSourcePath() const
+{
+  return m_BlackBoxSourcePath;
+}
+SEFluidCircuitPath* SEFluidCircuitNode::GetBlackBoxTargetPath() const
+{
+  return m_BlackBoxTargetPath;
+}
+void SEFluidCircuitNode::SetBlackBoxSourceTargetPaths(SEFluidCircuitPath& src, SEFluidCircuitPath& tgt)
+{
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourcePath = &src;
+  m_BlackBoxTargetPath = &tgt;
 }

@@ -4,6 +4,7 @@
 #pragma once
 #include "circuit/SECircuitNode.h"
 class SEFluidBlackBox;
+class SEFluidCircuitPath;
 
 class CDM_DECL SEFluidCircuitNode : public SECircuitNode<FLUID_CIRCUIT_NODE>
 {
@@ -40,9 +41,13 @@ public:
   SEFluidCircuitNode* GetBlackBoxTargetNode() const;
   void SetBlackBoxSourceTargetNodes(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt);
 
-  //Aaron  - Add black box source and target paths
+  SEFluidCircuitPath* GetBlackBoxSourcePath() const;
+  SEFluidCircuitPath* GetBlackBoxTargetPath() const;
+  void SetBlackBoxSourceTargetPaths(SEFluidCircuitPath& src, SEFluidCircuitPath& tgt);
 
 protected:
-  SEFluidCircuitNode* m_BlackBoxSourceNode=nullptr;// Only set on middle Fluid
-  SEFluidCircuitNode* m_BlackBoxTargetNode=nullptr;// Only set on middle Fluid
+  SEFluidCircuitNode* m_BlackBoxSourceNode=nullptr;  // Only set on middle nodes
+  SEFluidCircuitNode* m_BlackBoxTargetNode=nullptr;  // Only set on middle nodes
+  SEFluidCircuitPath* m_BlackBoxSourcePath = nullptr;// Only set on middle nodes
+  SEFluidCircuitPath* m_BlackBoxTargetPath = nullptr;// Only set on middle nodes
 };

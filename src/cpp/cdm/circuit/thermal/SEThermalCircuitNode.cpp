@@ -1,8 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h" 
+#include "stdafx.h"
 #include "circuit/thermal/SEThermalCircuitNode.h"
+#include "circuit/thermal/SEThermalCircuitPath.h"
 #include "properties/SEScalarEnergy.h"
 #include "properties/SEScalarTemperature.h"
 
@@ -110,4 +111,19 @@ void SEThermalCircuitNode::SetBlackBoxSourceTargetNodes(SEThermalCircuitNode& sr
   m_IsBlackBoxMiddle = true;
   m_BlackBoxSourceNode = &src;
   m_BlackBoxTargetNode = &tgt;
+}
+
+SEThermalCircuitPath* SEThermalCircuitNode::GetBlackBoxSourcePath() const
+{
+  return m_BlackBoxSourcePath;
+}
+SEThermalCircuitPath* SEThermalCircuitNode::GetBlackBoxTargetPath() const
+{
+  return m_BlackBoxTargetPath;
+}
+void SEThermalCircuitNode::SetBlackBoxSourceTargetPaths(SEThermalCircuitPath& src, SEThermalCircuitPath& tgt)
+{
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourcePath = &src;
+  m_BlackBoxTargetPath = &tgt;
 }

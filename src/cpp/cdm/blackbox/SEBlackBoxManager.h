@@ -102,6 +102,7 @@ protected:
 
     midNode->SetPartOfBlackBox(true);
     midNode->SetBlackBoxSourceTargetNodes(*srcNode, *tgtNode);
+    midNode->SetBlackBoxSourceTargetPaths(srcPath, tgtPath);
     srcNode->SetPartOfBlackBox(true);
     tgtNode->SetPartOfBlackBox(true);
     srcPath.SetPartOfBlackBox(true);

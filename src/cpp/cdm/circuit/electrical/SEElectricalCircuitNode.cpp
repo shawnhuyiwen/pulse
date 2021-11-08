@@ -1,8 +1,9 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-#include "stdafx.h" 
+#include "stdafx.h"
 #include "circuit/electrical/SEElectricalCircuitNode.h"
+#include "circuit/electrical/SEElectricalCircuitPath.h"
 #include "properties/SEScalarElectricCharge.h"
 #include "properties/SEScalarElectricPotential.h"
 
@@ -109,4 +110,19 @@ void SEElectricalCircuitNode::SetBlackBoxSourceTargetNodes(SEElectricalCircuitNo
   m_IsBlackBoxMiddle = true;
   m_BlackBoxSourceNode = &src;
   m_BlackBoxTargetNode = &tgt;
+}
+
+SEElectricalCircuitPath* SEElectricalCircuitNode::GetBlackBoxSourcePath() const
+{
+  return m_BlackBoxSourcePath;
+}
+SEElectricalCircuitPath* SEElectricalCircuitNode::GetBlackBoxTargetPath() const
+{
+  return m_BlackBoxTargetPath;
+}
+void SEElectricalCircuitNode::SetBlackBoxSourceTargetPaths(SEElectricalCircuitPath& src, SEElectricalCircuitPath& tgt)
+{
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourcePath = &src;
+  m_BlackBoxTargetPath = &tgt;
 }
