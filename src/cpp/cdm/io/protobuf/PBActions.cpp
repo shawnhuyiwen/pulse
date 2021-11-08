@@ -183,7 +183,7 @@ void PBAction::Serialize(const CDM_BIND::OverridesData& src, SEOverrides& dst)
 {
   PBAction::Serialize(src.action(), dst);
   for (auto const& [name, o] : src.scalarproperties())
-    dst.GetScalarProperties().insert(std::pair(name, SEScalarPair(o.value(), o.unit())));
+    dst.GetScalarProperties()[name] = SEScalarPair(o.value(), o.unit());
 }
 CDM_BIND::OverridesData* PBAction::Unload(const SEOverrides& src)
 {

@@ -58,9 +58,9 @@ namespace pulse
       dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
 
     for (auto& [name, m] : src.modifiers())
-      dst.GetModifiers().insert(std::pair(name,SEScalarPair(m.value(), m.unit())));
+      dst.GetModifiers()[name] = SEScalarPair(m.value(), m.unit());
     for (auto& [name, o] : src.overrides())
-      dst.GetOverrides().insert(std::pair(name,SEScalarPair(o.value(), o.unit())));
+      dst.GetOverrides()[name] = SEScalarPair(o.value(), o.unit());
 
     // Blood Chemistry
     if (src.has_bloodchemistryconfiguration())

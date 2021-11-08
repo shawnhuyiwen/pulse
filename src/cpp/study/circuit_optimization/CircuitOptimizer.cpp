@@ -56,6 +56,8 @@ namespace pulse::study::circuit_optimization
     
     // Start with the default modifiers
     PulseConfiguration cfg(GetLogger());
+    cfg.Initialize();
+
     // Set all modifiers to 1.0
     for (auto& [name, modifier] : cfg.GetModifiers())
       modifier.value = 1.0;

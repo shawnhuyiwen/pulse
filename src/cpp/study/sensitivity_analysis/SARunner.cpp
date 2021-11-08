@@ -458,7 +458,7 @@ namespace pulse::study::sensitivity_analysis
     PulseConfiguration cfg(pulse->GetLogger());
     // Serialize Overrides
     for (auto& [name, m] : sim.overrides())
-      cfg.GetOverrides().insert(std::pair(name, SEScalarPair(m.value(), m.unit())));
+      cfg.GetOverrides()[name] = SEScalarPair(m.value(), m.unit());
     //cfg.SetBaroreceptorFeedback(eSwitch::Off);
     //cfg.SetChemoreceptorFeedback(eSwitch::Off);
     pulse->SetConfigurationOverride(&cfg);
