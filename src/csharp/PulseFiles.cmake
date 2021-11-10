@@ -102,6 +102,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEAcuteStress.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEAirwayObstruction.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEArrhythmia.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEAsthmaAttack.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEBrainInjury.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEBronchoconstriction.cs

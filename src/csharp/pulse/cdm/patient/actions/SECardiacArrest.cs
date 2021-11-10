@@ -3,6 +3,7 @@
 
 namespace Pulse.CDM
 {
+  [System.Obsolete("SECardiacArrest has been replaced with SEArrythmia, This action will be removed in the next version", false)]
   public class SECardiacArrest : SEPatientAction
   {
     protected eSwitch state;

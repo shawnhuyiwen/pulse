@@ -125,6 +125,35 @@ class SEAirwayObstruction(SEPatientAction):
         return ("Airway Obstruction\n"
                 "  Severity: {}").format(self._severity)
 
+class eHeartRhythm(Enum):
+    NormalSinus = 0
+    Asystole = 1
+    CourseVentricularFibrillation = 2
+    FineVentricularFibrillation = 3
+    PulselessElectricalActivity = 4
+    PulselessVentricularTachycardia = 5
+    StableVentricularTachycardia = 6
+    UnstableVentricularTachycardia = 7
+
+class SEArrhythmia(SEPatientAction):
+    __slots__ = ["_type"]
+
+    def __init__(self):
+        super().__init__()
+        self._type = eHeartRhythm.NormalSinus
+    def clear(self):
+        super().clear()
+        self._type = eHeartRhythm.NormalSinus
+    def is_valid(self):
+        return True
+    def set_type(self, state: eHeartRhythm):
+        self._type = state
+    def get_type(self):
+        return self._type
+    def __repr__(self):
+        return ("Arrythmia\n"
+         "  Type: {}").format(self._type)
+
 class SEAsthmaAttack(SEPatientAction):
     __slots__ = ["_severity"]
 

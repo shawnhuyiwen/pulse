@@ -163,10 +163,6 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
             dst.AnyAction.append(any_action)
             continue
         if isinstance(action, SEPatientAction):
-            if isinstance(action, SEAsthmaAttack):
-                serialize_asthma_attack_to_bind(action, any_action.PatientAction.AsthmaAttack)
-                dst.AnyAction.append(any_action)
-                continue
             if isinstance(action, SEAcuteRespiratoryDistressSyndromeExacerbation):
                 serialize_acute_respiratory_distress_syndrome_exacerbation_to_bind(action, any_action.PatientAction.AcuteRespiratoryDistressSyndromeExacerbation)
                 dst.AnyAction.append(any_action)
@@ -177,6 +173,18 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 continue
             if isinstance(action, SEAirwayObstruction):
                 serialize_airway_obstruction_to_bind(action, any_action.PatientAction.AirwayObstruction)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEArrhythmia):
+                serialize_arrhythmia_to_bind(action, any_action.PatientAction.Arrhythmia)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEArrhythmia):
+                serialize_arrhythmia_to_bind(action, any_action.PatientAction.Arrhythmia)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEAsthmaAttack):
+                serialize_asthma_attack_to_bind(action, any_action.PatientAction.AsthmaAttack)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEBrainInjury):

@@ -66,6 +66,11 @@ public abstract class SEPatientAction extends SEAction
       SEAirwayObstruction.load(c.getAirwayObstruction(), dst);
       return dst;
     }
+    case ARRHYTHMIA:
+    {
+      SEArrhythmia dst = new SEArrhythmia();
+      SEArrhythmia.load(c.getArrhythmia(), dst);
+    }
     case ASTHMAATTACK:
     {
       SEAsthmaAttack dst = new SEAsthmaAttack();
@@ -263,6 +268,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEAirwayObstruction)
     {
       dst.setAirwayObstruction(SEAirwayObstruction.unload((SEAirwayObstruction)c));
+      return dst.build();
+    }
+    if(c instanceof SEArrhythmia)
+    {
+      dst.setArrhythmia(SEArrhythmia.unload((SEArrhythmia)c));
       return dst.build();
     }
     if(c instanceof SEAsthmaAttack)

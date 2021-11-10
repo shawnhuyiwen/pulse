@@ -76,6 +76,7 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEAcuteStress.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEAirwayObstruction.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEArrhythmia.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEAsthmaAttack.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEBrainInjury.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEBronchoconstriction.java

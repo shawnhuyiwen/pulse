@@ -6,6 +6,7 @@ package com.kitware.pulse.cdm.patient.actions;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.PatientActions.CardiacArrestData;
 
+@Deprecated
 public class SECardiacArrest extends SEPatientAction
 {
   private static final long serialVersionUID = 875699095552953525L;
@@ -14,7 +15,7 @@ public class SECardiacArrest extends SEPatientAction
   
   public SECardiacArrest()
   {
-    state = eSwitch.Off;
+    state = eSwitch.Off; 
   }
   
   public void copy(SECardiacArrest other)
