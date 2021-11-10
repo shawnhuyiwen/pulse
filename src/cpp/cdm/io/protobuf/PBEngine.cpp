@@ -489,6 +489,39 @@ void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
 }
 
 
+void PBEngine::Load(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst)
+{
+  dst.Clear();
+  PBEngine::Serialize(src, dst);
+}
+void PBEngine::Serialize(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst)
+{
+  PBEngine::Serialize(src.datarequest(), dst);
+  dst.SetRangeMax(src.rangemax());
+  dst.SetRangeMin(src.rangemin());
+  dst.SetType((eValidationTargetType)src.type());
+}
+CDM_BIND::ValidationTargetData* PBEngine::Unload(const SEValidationTarget& src)
+{
+  CDM_BIND::ValidationTargetData* dst = new CDM_BIND::ValidationTargetData();
+  PBEngine::Serialize(src, *dst);
+  return dst;
+}
+void PBEngine::Serialize(const SEValidationTarget& src, CDM_BIND::ValidationTargetData& dst)
+{
+  PBEngine::Serialize(src, *dst.mutable_datarequest());
+  dst.set_rangemax(src.GetRangeMax());
+  dst.set_rangemin(src.GetRangeMin());
+  dst.set_type((CDM_BIND::ValidationTargetData::eType)src.m_Type);
+}
+void PBEngine::Copy(const SEValidationTarget& src, SEValidationTarget& dst)
+{
+  dst.Clear();
+  CDM_BIND::ValidationTargetData data;
+  PBEngine::Serialize(src, data);
+  PBEngine::Serialize(data, dst);
+}
+
 CDM_BIND::DataRequestedData* PBEngine::Unload(const SEDataRequested& src)
 {
   CDM_BIND::DataRequestedData* dst = new CDM_BIND::DataRequestedData();
@@ -552,6 +585,16 @@ void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequ
     else
       dst.m_Requests.push_back(dr);
   }
+  for (int i = 0; i < src.validationtarget_size(); i++)
+  {
+    const CDM_BIND::ValidationTargetData& vtData = src.validationtarget(i);
+    SEValidationTarget* vt = new SEValidationTarget((eDataRequest_Category)vtData.datarequest().category(), dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
+    PBEngine::Load(vtData, *vt);
+    if (!vt->IsValid())
+      dst.Error("Ignoring invalid ValidationTarget for property " + vt->m_PropertyName);
+    else
+      dst.m_Targets.push_back(vt);
+  }
 }
 CDM_BIND::DataRequestManagerData* PBEngine::Unload(const SEDataRequestManager& src)
 {
@@ -569,6 +612,8 @@ void PBEngine::Serialize(const SEDataRequestManager& src, CDM_BIND::DataRequestM
     dst.set_allocated_overridedecimalformatting(PBEngine::Unload(*src.m_OverrideDecimalFormatting));
   for (SEDataRequest* dr : src.m_Requests)
     dst.mutable_datarequest()->AddAllocated(PBEngine::Unload(*dr));
+  for (SEValidationTarget* vt : src.m_Targets)
+    dst.mutable_validationtarget()->AddAllocated(PBEngine::Unload(*vt));
 }
 void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst)
 {

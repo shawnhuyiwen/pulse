@@ -79,6 +79,7 @@ add_library_ex(CommonDataModel
     engine/SEPatientConfiguration.h
     engine/SESerializeState.h
     engine/SETimedStabilization.h
+    engine/SEValidationTarget.h
     io/protobuf/PBActions.h
     io/protobuf/PBAnesthesiaMachine.h
     io/protobuf/PBBagValveMask.h
@@ -431,6 +432,7 @@ add_library_ex(CommonDataModel
     engine/SEPatientConfiguration.cpp
     engine/SESerializeState.cpp
     engine/SETimedStabilization.cpp
+    engine/SEValidationTarget.cpp
     io/protobuf/PBActionEnums.cpp
     io/protobuf/PBActions.cpp
     io/protobuf/PBAnesthesiaMachine.cpp

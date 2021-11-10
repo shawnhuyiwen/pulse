@@ -5,18 +5,23 @@ package com.kitware.pulse.cdm.datarequests;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestManagerData;
+import com.kitware.pulse.cdm.bind.Engine.ValidationTargetData;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.properties.CommonUnits.Unit;
+import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 
 public class SEDataRequestManager
 {
   protected String                        resultsFilename;
   // TODO Decimal Formatting Data
-  protected List<SEDataRequest>           dataRequests = new ArrayList<>();  
   protected double                        samplesPerSecond;
+  protected List<SEDataRequest>           dataRequests = new ArrayList<>();
+  protected List<SEValidationTarget>      validationTargets = new ArrayList<>();
   
   public SEDataRequestManager()
   {
@@ -28,6 +33,18 @@ public class SEDataRequestManager
     this.resultsFilename = "";
     this.samplesPerSecond = 0;
     dataRequests.clear();
+    validationTargets.clear();
+  }
+  
+  public void readFile(String fileName) throws InvalidProtocolBufferException
+  {
+    DataRequestManagerData.Builder builder = DataRequestManagerData.newBuilder();
+    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
+    SEDataRequestManager.load(builder.build(), this);
+  }
+  public void writeFile(String fileName) throws InvalidProtocolBufferException
+  {
+    FileUtils.writeFile(fileName, JsonFormat.printer().print(SEDataRequestManager.unload(this)));
   }
   
   public static void load(DataRequestManagerData src, SEDataRequestManager dst)
@@ -41,6 +58,12 @@ public class SEDataRequestManager
       SEDataRequest dr = new SEDataRequest(drData.getCategory());
       SEDataRequest.load(drData,dr);
       dst.dataRequests.add(dr);
+    }
+    for (ValidationTargetData vtData : src.getValidationTargetList())
+    {
+      SEValidationTarget vt = new SEValidationTarget(vtData.getDataRequest().getCategory());
+      SEValidationTarget.load(vtData,vt);
+      dst.validationTargets.add(vt);
     }
   }
   
@@ -58,6 +81,8 @@ public class SEDataRequestManager
       dst.setSamplesPerSecond(src.samplesPerSecond);
     for(SEDataRequest dr : src.dataRequests)
       dst.addDataRequest(SEDataRequest.unload(dr));
+    for(SEValidationTarget vt : src.validationTargets)
+      dst.addValidationTarget(SEValidationTarget.unload(vt));
   }
   
   public boolean hasResultsFilename(){ return this.resultsFilename!=null&&!this.resultsFilename.isEmpty(); }
@@ -68,6 +93,8 @@ public class SEDataRequestManager
   public double getSamplesPerSecond(){ return this.samplesPerSecond; }
   
   public List<SEDataRequest> getRequestedData(){ return dataRequests; }
+
+  public List<SEValidationTarget> getValidationTargets(){ return validationTargets; }
   
   public void writeData(List<Double> data)
   {
@@ -341,5 +368,42 @@ public class SEDataRequestManager
     dataRequests.add(dr);
     return dr;
   }
-  
+
+  public SEValidationTarget createLiquidCompartmentValidationTarget(String compartment, String property)
+  {
+    SEValidationTarget vt = new SEValidationTarget(eCategory.LiquidCompartment);
+    vt.propertyName = property;
+    vt.compartmentName = compartment;
+    validationTargets.add(vt);
+    return vt;
+  }
+  public SEValidationTarget createLiquidCompartmentValidationTarget(String compartment, String property, Unit unit)
+  {
+    SEValidationTarget vt = new SEValidationTarget(eCategory.LiquidCompartment);
+    vt.propertyName = property;
+    vt.compartmentName = compartment;
+    vt.unit = unit;
+    validationTargets.add(vt);
+    return vt;
+  }
+  public SEValidationTarget createLiquidCompartmentValidationTarget(String compartment, String substance, String property)
+  {
+    SEValidationTarget vt = new SEValidationTarget(eCategory.LiquidCompartment);
+    vt.propertyName = property;
+    vt.compartmentName = compartment;
+    vt.substanceName = substance;
+    validationTargets.add(vt);
+    return vt;
+  }
+  public SEValidationTarget createLiquidCompartmentValidationTarget(String compartment, String substance, String property, Unit unit)
+  {
+    SEValidationTarget vt = new SEValidationTarget(eCategory.LiquidCompartment);
+    vt.propertyName = property;
+    vt.compartmentName = compartment;
+    vt.substanceName = substance;
+    vt.unit = unit;
+    validationTargets.add(vt);
+    return vt;
+  }
+
 }

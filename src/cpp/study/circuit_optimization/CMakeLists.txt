@@ -2,10 +2,8 @@
 add_library_ex(CircuitOptimizationEngine
   H_FILES
     CircuitOptimizer.h
-    SEValidationTarget.h
   CPP_FILES
     CircuitOptimizer.cpp
-    SEValidationTarget.cpp
   PUBLIC_DEPENDS
     PulseEngine
   PRIVATE_DEPENDS

@@ -9,17 +9,20 @@
 
 enum class eValidationTargetType { Min, Max, Mean };
 
-class SEValidationTarget : public Loggable
+class SEValidationTarget : public SEDataRequest
 {
+  friend class PBEngine;//friend the serialization class
+  friend class SEDataRequestManager;
+protected:
+  SEValidationTarget(const SEValidationTarget& vt);
+  SEValidationTarget(eDataRequest_Category category, const SEDecimalFormat* dfault = nullptr);
 public:
-  SEValidationTarget(Logger* logger = nullptr);
-  ~SEValidationTarget() = default;
+  virtual ~SEValidationTarget() = default;
+
+  virtual void Clear() override;
 
   eValidationTargetType GetType() const;
   void SetType(eValidationTargetType t);
-
-  SEDataRequest* GetDataRequest() const;
-  void SetDataRequest(SEDataRequest* dr);
 
   double GetRangeMin() const;
   void   SetRangeMin(double min);
@@ -34,11 +37,11 @@ public:
 
 protected:
   eValidationTargetType m_Type;
-  SEDataRequest* m_DataRequest=nullptr;
   double m_RangeMin=SEScalar::dNaN();
   double m_RangeMax=SEScalar::dNaN();
-    
   double m_TypeValue=SEScalar::dNaN();
   double m_Error=SEScalar::dNaN();
+
+  // Not serializing
   std::vector<double> m_Data;
 };

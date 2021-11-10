@@ -7,9 +7,28 @@
 
 #include "cdm/utils/GeneralMath.h"
 
-SEValidationTarget::SEValidationTarget(Logger* logger) : Loggable(logger)
+SEValidationTarget::SEValidationTarget(const SEValidationTarget& vt) : SEDataRequest(vt)
+{
+  m_Type = vt.m_Type;
+  m_RangeMin = vt.m_RangeMin;
+  m_RangeMax = vt.m_RangeMax;
+  m_TypeValue = vt.m_TypeValue;
+  m_Error = vt.m_Error;
+}
+
+SEValidationTarget::SEValidationTarget(eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDataRequest(category,dfault)
+{
+
+}
+
+void SEValidationTarget::Clear()
 {
   m_Type = eValidationTargetType::Mean;
+  m_RangeMin = SEScalar::dNaN();
+  m_RangeMax = SEScalar::dNaN();
+  m_TypeValue = SEScalar::dNaN();
+  m_Error = SEScalar::dNaN();
+  m_Data.clear();
 }
 
 eValidationTargetType SEValidationTarget::GetType() const
@@ -19,15 +38,6 @@ eValidationTargetType SEValidationTarget::GetType() const
 void SEValidationTarget::SetType(eValidationTargetType t)
 {
   m_Type = t;
-}
-
-SEDataRequest* SEValidationTarget::GetDataRequest() const
-{
-  return m_DataRequest;
-}
-void SEValidationTarget::SetDataRequest(SEDataRequest* dr)
-{
-  m_DataRequest = dr;
 }
 
 double SEValidationTarget::GetRangeMin() const
@@ -79,7 +89,6 @@ bool SEValidationTarget::ComputeError()
   }
   default:
   {
-    Error("Unsupported validation target type!");
     return false;
   }
   }

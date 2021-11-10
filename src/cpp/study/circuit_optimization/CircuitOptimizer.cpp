@@ -46,7 +46,7 @@ namespace pulse::study::circuit_optimization
     }
   }
 
-  bool CircuitOptimizer::ConvergeToHemodynamicsTargets(size_t maxLoops, std::vector<SEValidationTarget>& targets)
+  bool CircuitOptimizer::ConvergeToHemodynamicsTargets(size_t maxLoops, std::vector<SEValidationTarget*>& targets)
   {
     // TODO
     // Depending on what circuit we are trying to optimize
@@ -74,9 +74,9 @@ namespace pulse::study::circuit_optimization
       // 2. Look at the error of each target
       //    (I am just making up convergence criteria)
       converged = true;
-      for (SEValidationTarget& vt : targets)
+      for (SEValidationTarget* vt : targets)
       {
-        if (vt.GetError() > 10.0)// Just a guess here...
+        if (vt->GetError() > 10.0)// Just a guess here...
         {
           converged = false;
           break;
@@ -102,7 +102,7 @@ namespace pulse::study::circuit_optimization
     return false;
   }
 
-  bool CircuitOptimizer::GenerateHemodynamicsData(PulseConfiguration& cfg, std::vector<SEValidationTarget>& targets)
+  bool CircuitOptimizer::GenerateHemodynamicsData(PulseConfiguration& cfg, std::vector<SEValidationTarget*>& targets)
   {
     pulse::human_adult_hemodynamics::Engine engine(GetLogger());
 
@@ -125,15 +125,15 @@ namespace pulse::study::circuit_optimization
     engine.GetEventManager().ForwardEvents(this);
 
     // Setup Data Requests
-    std::map<SEDataRequest*, SEDataRequest*> t2e;
+    std::map<SEValidationTarget*, SEValidationTarget*> t2e;
     engine.GetEngineTracker()->SetTrackMode(TrackMode::Dynamic); // No file needed
     SEDataRequestManager& drMgr = engine.GetEngineTracker()->GetDataRequestManager();
-    for (SEValidationTarget& vt : targets)
+    for (SEValidationTarget* vt : targets)
     {
       // Reset the computed data in our targets
-      vt.GetData().clear();
+      vt->GetData().clear();
       // Cache off the mapping of our target to this engine
-      t2e[vt.GetDataRequest()] = &drMgr.CopyDataRequest(*vt.GetDataRequest());
+      t2e[vt] = &drMgr.CopyValidationTarget(*vt);
     }
 
     // Advance for 5 Cardiac Cycles
@@ -147,17 +147,17 @@ namespace pulse::study::circuit_optimization
         return false;
       }
       engine.GetEngineTracker()->TrackData(engine.GetSimulationTime(TimeUnit::s));
-      for (SEValidationTarget& vt : targets)
+      for (SEValidationTarget* vt : targets)
       {
         if (m_StartOfCardiacCycle)
-          vt.GetData().clear();
-        vt.GetData().push_back(engine.GetEngineTracker()->GetValue(*t2e[vt.GetDataRequest()]));
+          vt->GetData().clear();
+        vt->GetData().push_back(engine.GetEngineTracker()->GetValue(*t2e[vt]));
       }
       m_StartOfCardiacCycle = false;
     }
-    for (SEValidationTarget& vt : targets)
+    for (SEValidationTarget* vt : targets)
     {
-      if (!vt.ComputeError())
+      if (!vt->ComputeError())
       {
         Error("Check target dataset");
         return false;
@@ -167,7 +167,7 @@ namespace pulse::study::circuit_optimization
 
     return true;
   }
-  bool CircuitOptimizer::ComputeNewModifiers(PulseConfiguration& cfg, std::vector<SEValidationTarget>& targets)
+  bool CircuitOptimizer::ComputeNewModifiers(PulseConfiguration& cfg, std::vector<SEValidationTarget*>& targets)
   {
     // TODO: No bounding constraint has been imposed yet.
 
@@ -178,7 +178,7 @@ namespace pulse::study::circuit_optimization
     // Diff/Error/Y matrix for output targets
     Eigen::MatrixXd diffY(nY, 1);
     for (size_t i = 0; i < targets.size(); i++)
-      diffY.coeffRef(i, 0) = targets[i].GetError();
+      diffY.coeffRef(i, 0) = targets[i]->GetError();
 
     // Jacobian matrix
     Eigen::MatrixXd Jacobian(nY, nX);
@@ -199,9 +199,9 @@ namespace pulse::study::circuit_optimization
 
       // Put all target errors for this one modifier step in our matrix
       int j = 0;
-      for (SEValidationTarget& vt : targets)
+      for (SEValidationTarget* vt : targets)
       {
-        Jacobian.coeffRef(j, i)  = (vt.GetError() - diffY.coeffRef(j, 0)) / stepSize;
+        Jacobian.coeffRef(j, i)  = (vt->GetError() - diffY.coeffRef(j, 0)) / stepSize;
         j++;
       }
 

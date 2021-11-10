@@ -2142,6 +2142,9 @@ public class CommonUnits
     unit = TimeUnit.fromString(u);
     if(unit != null) return unit;
     
+    unit = VolumeUnit.fromString(u);
+    if(unit != null) return unit;
+    
     unit = VolumePerPressureUnit.fromString(u);
     if(unit != null) return unit;
     

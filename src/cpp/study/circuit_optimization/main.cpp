@@ -17,30 +17,19 @@ int main(int argc, char* argv[])
     Logger log;
     log.SetLogFile("./test_results/circuit_optimization.log");
 
-    // TODO
-    // Import target data from disk
+    std::string filename = "./optimizer/HemodynamicsTargets.json";
     // TODO import targets for the particular circuit we are optimizing
     // Currently CircuitOptimizer only runs the CV circuit, so only those targets should be used
 
     SEDataRequestManager drMgr(&log);
-    std::vector<SEValidationTarget> targets;
-    SEValidationTarget aortaVolume(&log);
-    aortaVolume.SetType(eValidationTargetType::Mean);
-    aortaVolume.SetRangeMin(283.7);
-    aortaVolume.SetRangeMax(283.7);
-    aortaVolume.SetDataRequest(
-      &drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Volume", VolumeUnit::mL));
-    targets.push_back(aortaVolume);
-    SEValidationTarget aortaFlow(&log);
-    aortaFlow.SetType(eValidationTargetType::Mean);
-    aortaFlow.SetRangeMin(94.7);
-    aortaFlow.SetRangeMax(94.7);
-    aortaFlow.SetDataRequest(
-      &drMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "InFlow", VolumePerTimeUnit::mL_Per_s));
-    targets.push_back(aortaFlow);
+    if (!drMgr.SerializeFromFile(filename))
+    {
+      log.Error("Unable to read file " + filename);
+      return 1;
+    }
 
     CircuitOptimizer opt(&log);
-    if(!opt.ConvergeToHemodynamicsTargets(1000, targets))
+    if(!opt.ConvergeToHemodynamicsTargets(1000, drMgr.GetValidationTargets()))
       log.Error("Unable to converge to optimum circuit");
   }
   catch (std::exception ex)
