@@ -1416,6 +1416,12 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.airwayobstruction(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kArrhythmia:
+  {
+    SEArrhythmia* a = new SEArrhythmia();
+    PBPatientAction::Load(any.arrhythmia(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientActionData::ActionCase::kAsthmaAttack:
   {
     SEAsthmaAttack* a = new SEAsthmaAttack();
@@ -1627,6 +1633,12 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
     any->set_allocated_airwayobstruction(PBPatientAction::Unload(*ao));
     return any;
   }
+  const SEArrhythmia* a = dynamic_cast<const SEArrhythmia*>(&action);
+  if (a != nullptr)
+  {
+    any->set_allocated_arrhythmia(PBPatientAction::Unload(*a));
+    return any;
+  }
   const SEAsthmaAttack* aa = dynamic_cast<const SEAsthmaAttack*>(&action);
   if (aa != nullptr)
   {
@@ -1681,10 +1693,10 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
     any->set_allocated_consumenutrients(PBPatientAction::Unload(*cn));
     return any;
   }
-  const SEDyspnea* a = dynamic_cast<const SEDyspnea*>(&action);
-  if (a != nullptr)
+  const SEDyspnea* d = dynamic_cast<const SEDyspnea*>(&action);
+  if (d != nullptr)
   {
-    any->set_allocated_dyspnea(PBPatientAction::Unload(*a));
+    any->set_allocated_dyspnea(PBPatientAction::Unload(*d));
     return any;
   }
   const SEExercise* e = dynamic_cast<const SEExercise*>(&action);
