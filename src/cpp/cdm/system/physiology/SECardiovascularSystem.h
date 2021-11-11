@@ -4,11 +4,19 @@
 #pragma once
 #include "cdm/system/SESystem.h"
 
-// Keep enums in sync with appropriate schema/cdm/PhysiologyEnums.proto file !!
-enum class eHeartRhythm{ NormalSinus = 0, Asystole,
-  CourseVentricularFibrillation, FineVentricularFibrillation,
-  PulselessElectricalActivity, PulselessVentricularTachycardia,
-  StableVentricularTachycardia, UnstableVentricularTachycardia
+// Keep enums in sync with appropriate schema/cdm/Physiology.proto file !!
+enum class eHeartRhythm
+{
+  NormalSinus = 0,
+  SinusBradycardia,
+  SinusTachycardia,
+  Asystole,
+  CourseVentricularFibrillation,
+  FineVentricularFibrillation,
+  PulselessElectricalActivity,
+  PulselessVentricularTachycardia,
+  StableVentricularTachycardia,
+  UnstableVentricularTachycardia
 };
 extern const std::string& eHeartRhythm_Name(eHeartRhythm m);
 

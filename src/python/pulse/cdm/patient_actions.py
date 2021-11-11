@@ -127,13 +127,15 @@ class SEAirwayObstruction(SEPatientAction):
 
 class eHeartRhythm(Enum):
     NormalSinus = 0
-    Asystole = 1
-    CourseVentricularFibrillation = 2
-    FineVentricularFibrillation = 3
-    PulselessElectricalActivity = 4
-    PulselessVentricularTachycardia = 5
-    StableVentricularTachycardia = 6
-    UnstableVentricularTachycardia = 7
+    SinusBradycardia = 1
+    SinusTachycardia = 2
+    Asystole = 3
+    CourseVentricularFibrillation = 4
+    FineVentricularFibrillation = 5
+    PulselessElectricalActivity = 6
+    PulselessVentricularTachycardia = 7
+    StableVentricularTachycardia = 8
+    UnstableVentricularTachycardia = 9
 
 class SEArrhythmia(SEPatientAction):
     __slots__ = ["_type"]

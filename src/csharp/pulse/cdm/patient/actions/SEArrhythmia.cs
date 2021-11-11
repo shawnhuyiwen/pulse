@@ -6,6 +6,8 @@ namespace Pulse.CDM
   public enum eHeartRhythm : int
   {
     NormalSinus = 0,
+    SinusBradycardia,
+    SinusTachycardia,
     Asystole,
     CourseVentricularFibrillation,
     FineVentricularFibrillation,
