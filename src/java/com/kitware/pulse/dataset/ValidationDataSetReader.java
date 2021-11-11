@@ -95,10 +95,10 @@ public class ValidationDataSetReader
         if(property==null||property.isEmpty())
           continue;
         
-        String unit      = row.getCell(1).getStringCellValue();
-        String type      = row.getCell(2).getStringCellValue();
+        String unit      = row.getCell(1).getStringCellValue().trim();
+        String type      = row.getCell(2).getStringCellValue().trim();
         Cell   vCell     = row.getCell(3);
-        String optimizer = row.getCell(12).getStringCellValue();
+        String optimizer = row.getCell(12).getStringCellValue().trim();
         if(optimizer==null||optimizer.isEmpty()||optimizer.equals("OptimizerTargets"))
           continue;
         
@@ -108,18 +108,18 @@ public class ValidationDataSetReader
         
         String[] propertySplit = property.split("-");
         SEValidationTarget tgt =
-            drMgr.createLiquidCompartmentValidationTarget(propertySplit[0], propertySplit[1], CommonUnits.getUnit(unit));
+            drMgr.createLiquidCompartmentValidationTarget(propertySplit[0].trim(), propertySplit[1].trim(), CommonUnits.getUnit(unit));
         tgt.type = eType.valueOf(type);
         
         if(vCell.getCellType() == CellType.STRING)
         {
           values.clear();
-          String sValues = vCell.getStringCellValue();
+          String sValues = vCell.getStringCellValue().trim();
           sValues = sValues.replace('[', ' ');
           sValues = sValues.replace(']', ' ');
           String[] split= sValues.split(",");
           for(String s : split)
-            values.add(Double.parseDouble(s));
+            values.add(Double.parseDouble(s.trim()));
           tgt.rangeMax = DoubleUtils.getMax(values);
           tgt.rangeMin = DoubleUtils.getMin(values);
         }

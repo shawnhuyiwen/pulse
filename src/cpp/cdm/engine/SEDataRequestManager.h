@@ -98,10 +98,10 @@ public:
 
   SEValidationTarget& CopyValidationTarget(const SEValidationTarget& dr);
 
-  SEValidationTarget& CreateLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
-  SEValidationTarget& CreateLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
-  SEValidationTarget& CreateLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& substance, const std::string& property, const SEDecimalFormat* dfault = nullptr);
-  SEValidationTarget& CreateLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEValidationTarget& CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEValidationTarget& CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEValidationTarget& CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& substance, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEValidationTarget& CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
 protected:
   // Methods to find data requests so we don't keep making the same one
@@ -122,10 +122,11 @@ protected:
   SEDataRequest* FindInhalerDataRequest(const std::string& property);
   SEDataRequest* FindMechanicalVentilatorDataRequest(const std::string& property);
 
+  void Remove(const SEDataRequest& dr);
   // Methods to find data requests so we don't keep making the same one
   SEValidationTarget* FindValidationTarget(const SEValidationTarget& dr);
-  SEValidationTarget* FindLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& property);
-  SEValidationTarget* FindLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& substance, const std::string& property);
+  SEValidationTarget* FindLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property);
+  SEValidationTarget* FindLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& substance, const std::string& property);
 
   std::string                      m_ResultsFilename;
   double                           m_SamplesPerSecond;

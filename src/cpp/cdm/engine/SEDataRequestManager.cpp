@@ -17,6 +17,7 @@ SEDataRequestManager::SEDataRequestManager(Logger* logger) : Loggable(logger)
 SEDataRequestManager::~SEDataRequestManager()
 {
   m_SamplesPerSecond = 0; // Sample every time step
+  m_Targets.clear();
   DELETE_VECTOR(m_Requests);
   SAFE_DELETE(m_DefaultDecimalFormatting);
   SAFE_DELETE(m_OverrideDecimalFormatting);
@@ -25,6 +26,7 @@ SEDataRequestManager::~SEDataRequestManager()
 void SEDataRequestManager::Clear()
 {
   m_SamplesPerSecond = 0; // Sample every time step
+  m_Targets.clear();
   DELETE_VECTOR(m_Requests);
   SAFE_DELETE(m_DefaultDecimalFormatting);
   SAFE_DELETE(m_OverrideDecimalFormatting);
@@ -90,6 +92,8 @@ SEDataRequest& SEDataRequestManager::CopyDataRequest(const SEDataRequest& dr)
     my_dr = new SEDataRequest(dr);
     m_Requests.push_back(my_dr);
   }
+
+  my_dr->Copy(dr);
   return *my_dr;
 }
 
@@ -721,7 +725,11 @@ SEValidationTarget& SEDataRequestManager::CopyValidationTarget(const SEValidatio
   {
     my_vt = new SEValidationTarget(vt);
     m_Targets.push_back(my_vt);
+    m_Requests.push_back(my_vt);
   }
+  else
+    std::cout << "Gottem already";
+  my_vt->Copy(vt);
   return *my_vt;
 }
 
@@ -733,42 +741,47 @@ SEValidationTarget* SEDataRequestManager::FindValidationTarget(const SEValidatio
   {
   case eDataRequest_Category::LiquidCompartment:
     if (vt.HasSubstanceName())
-      my_vt = FindLiquidCompartmentValidationTarget(vt.GetCompartmentName(), vt.GetSubstanceName(), vt.GetPropertyName());
+      my_vt = FindLiquidCompartmentValidationTarget(vt.GetType(), vt.GetCompartmentName(), vt.GetSubstanceName(), vt.GetPropertyName());
     else
-      my_vt = FindLiquidCompartmentValidationTarget(vt.GetCompartmentName(), vt.GetPropertyName());
+      my_vt = FindLiquidCompartmentValidationTarget(vt.GetType(), vt.GetCompartmentName(), vt.GetPropertyName());
     return my_vt;
   }
   return nullptr;
 }
 
-SEValidationTarget& SEDataRequestManager::CreateLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault)
+SEValidationTarget& SEDataRequestManager::CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEValidationTarget* vt = FindLiquidCompartmentValidationTarget(cmptName, property);
+  SEValidationTarget* vt = FindLiquidCompartmentValidationTarget(t, cmptName, property);
   if (vt != nullptr)
     return *vt;
-  vt = new SEValidationTarget(eDataRequest_Category::LiquidCompartment, dfault);
+
+  vt = new SEValidationTarget(t, eDataRequest_Category::LiquidCompartment, dfault);
   m_Targets.push_back(vt);
+  m_Requests.push_back(vt);
   vt->SetCompartmentName(cmptName);
   vt->SetPropertyName(property);
   return *vt;
 }
-SEValidationTarget& SEDataRequestManager::CreateLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+SEValidationTarget& SEDataRequestManager::CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEValidationTarget* vt = FindLiquidCompartmentValidationTarget(cmptName, property);
+  SEValidationTarget* vt = FindLiquidCompartmentValidationTarget(t, cmptName, property);
   if (vt != nullptr)
     return *vt;
-  vt = new SEValidationTarget(eDataRequest_Category::LiquidCompartment, dfault);
+
+  vt = new SEValidationTarget(t, eDataRequest_Category::LiquidCompartment, dfault);
   m_Targets.push_back(vt);
+  m_Requests.push_back(vt);
   vt->SetCompartmentName(cmptName);
   vt->SetPropertyName(property);
   vt->SetUnit(unit);
   return *vt;
 }
-SEValidationTarget* SEDataRequestManager::FindLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& property)
+SEValidationTarget* SEDataRequestManager::FindLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property)
 {
   for (SEValidationTarget* vt : m_Targets)
   {
-    if (vt->GetCategory() == eDataRequest_Category::LiquidCompartment &&
+    if (vt->GetType() == t &&
+      vt->GetCategory() == eDataRequest_Category::LiquidCompartment &&
       vt->GetPropertyName() == property &&
       vt->GetCompartmentName() == cmptName)
       return vt;
@@ -776,40 +789,57 @@ SEValidationTarget* SEDataRequestManager::FindLiquidCompartmentValidationTarget(
   return nullptr;
 }
 
-SEValidationTarget& SEDataRequestManager::CreateLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& substance, const std::string& property, const SEDecimalFormat* dfault)
+SEValidationTarget& SEDataRequestManager::CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& substance, const std::string& property, const SEDecimalFormat* dfault)
 {
-  SEValidationTarget* vt = FindLiquidCompartmentValidationTarget(cmptName, substance, property);
+  SEValidationTarget* vt = FindLiquidCompartmentValidationTarget(t, cmptName, substance, property);
   if (vt != nullptr)
     return *vt;
-  vt = new SEValidationTarget(eDataRequest_Category::LiquidCompartment, dfault);
+
+  vt = new SEValidationTarget(t, eDataRequest_Category::LiquidCompartment, dfault);
   m_Targets.push_back(vt);
+  m_Requests.push_back(vt);
   vt->SetCompartmentName(cmptName);
   vt->SetSubstanceName(substance);
   vt->SetPropertyName(property);
   return *vt;
 }
-SEValidationTarget& SEDataRequestManager::CreateLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+SEValidationTarget& SEDataRequestManager::CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
 {
-  SEValidationTarget* vt = FindLiquidCompartmentValidationTarget(cmptName, substance, property);
+  SEValidationTarget* vt = FindLiquidCompartmentValidationTarget(t, cmptName, substance, property);
   if (vt != nullptr)
     return *vt;
-  vt = new SEValidationTarget(eDataRequest_Category::LiquidCompartment, dfault);
+
+  vt = new SEValidationTarget(t, eDataRequest_Category::LiquidCompartment, dfault);
   m_Targets.push_back(vt);
+  m_Requests.push_back(vt);
   vt->SetCompartmentName(cmptName);
   vt->SetSubstanceName(substance);
   vt->SetPropertyName(property);
   vt->SetUnit(unit);
   return *vt;
 }
-SEValidationTarget* SEDataRequestManager::FindLiquidCompartmentValidationTarget(const std::string& cmptName, const std::string& substance, const std::string& property)
+SEValidationTarget* SEDataRequestManager::FindLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& substance, const std::string& property)
 {
   for (SEValidationTarget* vt : m_Targets)
   {
-    if (vt->GetCategory() == eDataRequest_Category::LiquidCompartment &&
+    if (vt->GetType() == t &&
+      vt->GetCategory() == eDataRequest_Category::LiquidCompartment &&
       vt->GetPropertyName() == property &&
       vt->GetCompartmentName() == cmptName &&
       vt->GetSubstanceName() == substance)
       return vt;
   }
   return nullptr;
+}
+
+void SEDataRequestManager::Remove(const SEDataRequest& dr)
+{
+  for (size_t i=0; i<m_Requests.size(); ++i)
+  {
+    if (m_Requests[i] == &dr)
+    {
+      m_Requests.erase(m_Requests.begin() + 1);
+      break;
+    }
+  }
 }

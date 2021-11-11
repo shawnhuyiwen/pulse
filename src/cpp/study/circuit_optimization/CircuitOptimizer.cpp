@@ -59,10 +59,11 @@ namespace pulse::study::circuit_optimization
     cfg.Initialize();
 
     // Set all modifiers to 1.0
-    for (auto& [name, modifier] : cfg.GetModifiers())
-      modifier.value = 1.0;
+    //for (auto& [name, modifier] : cfg.GetModifiers())
+    //  modifier.value = 1.0;
 
     bool converged;
+    std::string check;
     for (unsigned int i = 0; i < maxLoops; ++i)// Maximum loops
     {
       // 1. Generate data with current modifiers
@@ -73,14 +74,19 @@ namespace pulse::study::circuit_optimization
       }
       // 2. Look at the error of each target
       //    (I am just making up convergence criteria)
+      Info("Checking simulation results...[Expected] [Value] [Error]");
       converged = true;
       for (SEValidationTarget* vt : targets)
       {
+        check = "PASS ";
         if (vt->GetError() > 10.0)// Just a guess here...
         {
+          check = "FAIL ";
           converged = false;
-          break;
         }
+        Info(check + vt->GetCompartmentName() + " " + vt->GetPropertyName() +
+          " [" + pulse::cdm::to_string(vt->GetRangeMin()) + ", " + pulse::cdm::to_string(vt->GetRangeMax()) + "] " +
+          pulse::cdm::to_string(vt->GetValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
       }
       
       // 3. Test Convergence Criteria

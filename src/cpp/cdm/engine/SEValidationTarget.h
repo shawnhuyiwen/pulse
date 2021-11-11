@@ -7,7 +7,7 @@
 #include "cdm/engine/SEDataRequest.h"
 #include "cdm/engine/SEEventManager.h"
 
-enum class eValidationTargetType { Min, Max, Mean };
+enum class eValidationTargetType { Mean, Min, Max };
 
 class SEValidationTarget : public SEDataRequest
 {
@@ -15,20 +15,21 @@ class SEValidationTarget : public SEDataRequest
   friend class SEDataRequestManager;
 protected:
   SEValidationTarget(const SEValidationTarget& vt);
-  SEValidationTarget(eDataRequest_Category category, const SEDecimalFormat* dfault = nullptr);
+  SEValidationTarget(eValidationTargetType t, eDataRequest_Category category, const SEDecimalFormat* dfault = nullptr);
 public:
   virtual ~SEValidationTarget() = default;
 
   virtual void Clear() override;
 
   eValidationTargetType GetType() const;
-  void SetType(eValidationTargetType t);
 
   double GetRangeMin() const;
   void   SetRangeMin(double min);
 
   double GetRangeMax() const;
   void   SetRangeMax(double max);
+
+  double GetValue() const { return m_TypeValue; }
 
   std::vector<double>& GetData();
 

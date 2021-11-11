@@ -16,14 +16,13 @@ SEValidationTarget::SEValidationTarget(const SEValidationTarget& vt) : SEDataReq
   m_Error = vt.m_Error;
 }
 
-SEValidationTarget::SEValidationTarget(eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDataRequest(category,dfault)
+SEValidationTarget::SEValidationTarget(eValidationTargetType t, eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDataRequest(category,dfault)
 {
-
+  m_Type = t;
 }
 
 void SEValidationTarget::Clear()
 {
-  m_Type = eValidationTargetType::Mean;
   m_RangeMin = SEScalar::dNaN();
   m_RangeMax = SEScalar::dNaN();
   m_TypeValue = SEScalar::dNaN();
@@ -34,10 +33,6 @@ void SEValidationTarget::Clear()
 eValidationTargetType SEValidationTarget::GetType() const
 {
   return m_Type;
-}
-void SEValidationTarget::SetType(eValidationTargetType t)
-{
-  m_Type = t;
 }
 
 double SEValidationTarget::GetRangeMin() const
@@ -101,9 +96,11 @@ bool SEValidationTarget::ComputeError()
     m_Error = 0;
     return true;
   }
-  // Keep the bigger error
-  m_Error = (minError > maxError) ? minError : maxError;
-  if (std::abs(m_Error) < 1e-15)
+  else if (m_TypeValue > m_RangeMax)
+    m_Error = maxError;
+  else if (m_TypeValue < m_RangeMin)
+    m_Error = minError;
+  else if (std::abs(m_Error) < 1e-15)
     m_Error = 0; // Close enough
   return true;
 }

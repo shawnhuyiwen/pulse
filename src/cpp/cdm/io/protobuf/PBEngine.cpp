@@ -499,7 +499,6 @@ void PBEngine::Serialize(const CDM_BIND::ValidationTargetData& src, SEValidation
   PBEngine::Serialize(src.datarequest(), dst);
   dst.SetRangeMax(src.rangemax());
   dst.SetRangeMin(src.rangemin());
-  dst.SetType((eValidationTargetType)src.type());
 }
 CDM_BIND::ValidationTargetData* PBEngine::Unload(const SEValidationTarget& src)
 {
@@ -578,7 +577,8 @@ void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequ
   for (int i = 0; i < src.datarequest_size(); i++)
   {
     const CDM_BIND::DataRequestData& drData = src.datarequest(i);
-    SEDataRequest* dr = new SEDataRequest((eDataRequest_Category)drData.category(), dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
+    SEDataRequest* dr = new SEDataRequest((eDataRequest_Category)drData.category(),
+      dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
     PBEngine::Load(drData, *dr);
     if (!dr->IsValid())
       dst.Error("Ignoring invalid DataRequest for property " + dr->m_PropertyName);
@@ -588,12 +588,16 @@ void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequ
   for (int i = 0; i < src.validationtarget_size(); i++)
   {
     const CDM_BIND::ValidationTargetData& vtData = src.validationtarget(i);
-    SEValidationTarget* vt = new SEValidationTarget((eDataRequest_Category)vtData.datarequest().category(), dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
+    SEValidationTarget* vt = new SEValidationTarget((eValidationTargetType)vtData.type(), (eDataRequest_Category)vtData.datarequest().category(),
+      dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
     PBEngine::Load(vtData, *vt);
     if (!vt->IsValid())
       dst.Error("Ignoring invalid ValidationTarget for property " + vt->m_PropertyName);
     else
+    {
       dst.m_Targets.push_back(vt);
+      dst.m_Requests.push_back(vt);
+    }
   }
 }
 CDM_BIND::DataRequestManagerData* PBEngine::Unload(const SEDataRequestManager& src)
