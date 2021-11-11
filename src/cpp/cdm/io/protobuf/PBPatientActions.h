@@ -10,7 +10,6 @@ CDM_BIND_DECL2(Arrhythmia)
 CDM_BIND_DECL2(AsthmaAttack)
 CDM_BIND_DECL2(BrainInjury)
 CDM_BIND_DECL2(Bronchoconstriction)
-CDM_BIND_DECL2(CardiacArrest)
 CDM_BIND_DECL2(ChestCompressionForce)
 CDM_BIND_DECL2(ChestCompressionForceScale)
 CDM_BIND_DECL2(ChestOcclusiveDressing)
@@ -95,12 +94,6 @@ public:
   static void Serialize(const CDM_BIND::BronchoconstrictionData& src, SEBronchoconstriction& dst);
   static void Serialize(const SEBronchoconstriction& src, CDM_BIND::BronchoconstrictionData& dst);
   static void Copy(const SEBronchoconstriction& src, SEBronchoconstriction& dst);
-
-  static void Load(const CDM_BIND::CardiacArrestData& src, SECardiacArrest& dst);
-  static CDM_BIND::CardiacArrestData* Unload(const SECardiacArrest& src);
-  static void Serialize(const CDM_BIND::CardiacArrestData& src, SECardiacArrest& dst);
-  static void Serialize(const SECardiacArrest& src, CDM_BIND::CardiacArrestData& dst);
-  static void Copy(const SECardiacArrest& src, SECardiacArrest& dst);
 
   static void Load(const CDM_BIND::ChestCompressionForceData& src, SEChestCompressionForce& dst);
   static CDM_BIND::ChestCompressionForceData* Unload(const SEChestCompressionForce& src);

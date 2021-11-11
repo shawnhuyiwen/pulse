@@ -20,7 +20,6 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
-#include "cdm/patient/actions/SECardiacArrest.h"
 #include "cdm/patient/actions/SEChestCompressionForce.h"
 #include "cdm/patient/actions/SEChestCompressionForceScale.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
@@ -283,36 +282,6 @@ void PBPatientAction::Copy(const SEBronchoconstriction& src, SEBronchoconstricti
 {
   dst.Clear();
   CDM_BIND::BronchoconstrictionData data;
-  PBPatientAction::Serialize(src, data);
-  PBPatientAction::Serialize(data, dst);
-}
-
-void PBPatientAction::Load(const CDM_BIND::CardiacArrestData& src, SECardiacArrest& dst)
-{
-  dst.Clear();
-  PBPatientAction::Serialize(src, dst);
-}
-void PBPatientAction::Serialize(const CDM_BIND::CardiacArrestData& src, SECardiacArrest& dst)
-{
-  PBPatientAction::Serialize(src.patientaction(), dst);
-  if (src.state() != CDM_BIND::eSwitch::NullSwitch)
-    dst.SetState((eSwitch)src.state());
-}
-CDM_BIND::CardiacArrestData* PBPatientAction::Unload(const SECardiacArrest& src)
-{
-  CDM_BIND::CardiacArrestData* dst = new CDM_BIND::CardiacArrestData();
-  PBPatientAction::Serialize(src, *dst);
-  return dst;
-}
-void PBPatientAction::Serialize(const SECardiacArrest& src, CDM_BIND::CardiacArrestData& dst)
-{
-  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_state((CDM_BIND::eSwitch)src.m_State);
-}
-void PBPatientAction::Copy(const SECardiacArrest& src, SECardiacArrest& dst)
-{
-  dst.Clear();
-  CDM_BIND::CardiacArrestData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -1465,12 +1434,6 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.bronchoconstriction(), *a);
     return a;
   }
-  case CDM_BIND::AnyPatientActionData::ActionCase::kCardiacArrest:
-  {
-    SECardiacArrest* a = new SECardiacArrest();
-    PBPatientAction::Load(any.cardiacarrest(), *a);
-    return a;
-  }
   case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompressionForce:
   {
     SEChestCompressionForce* a = new SEChestCompressionForce();
@@ -1680,12 +1643,6 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
   if (b != nullptr)
   {
     any->set_allocated_bronchoconstriction(PBPatientAction::Unload(*b));
-    return any;
-  }
-  const SECardiacArrest* ca = dynamic_cast<const SECardiacArrest*>(&action);
-  if (ca != nullptr)
-  {
-    any->set_allocated_cardiacarrest(PBPatientAction::Unload(*ca));
     return any;
   }
   const SEChestCompressionForce* ccf = dynamic_cast<const SEChestCompressionForce*>(&action);

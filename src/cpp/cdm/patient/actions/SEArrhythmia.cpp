@@ -38,6 +38,7 @@ bool SEArrhythmia::IsActive() const
 {
   if (!SEPatientAction::IsActive())
     return false;
+  return true;
 }
 void SEArrhythmia::Deactivate()
 {
@@ -45,7 +46,7 @@ void SEArrhythmia::Deactivate()
   Clear();//No stateful properties
 }
 
-const SEScalar* SEArrhythmia::GetScalar(const std::string& name)
+const SEScalar* SEArrhythmia::GetScalar(const std::string&)
 {
   return nullptr;
 }

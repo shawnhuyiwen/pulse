@@ -249,25 +249,6 @@ class SEBronchoconstriction(SEPatientAction):
         return ("Bronchoconstriction\n"
                 "  Severity: {}").format(self._severity)
 
-class SECardiacArrest(SEPatientAction):
-    __slots__ = ["_state"]
-
-    def __init__(self):
-        super().__init__()
-        self._state = eSwitch.Off
-    def clear(self):
-        super().clear()
-        self._state = eSwitch.Off
-    def is_valid(self):
-        return True
-    def set_state(self, state: eSwitch):
-        self._state = state
-    def get_state(self):
-        return self._state
-    def __repr__(self):
-        return ("Cardiac Arrest\n"
-         "  State: {}").format(self._state)
-
 class SEChestCompressionForce(SEPatientAction):
     __slots__ = ["_force"]
 

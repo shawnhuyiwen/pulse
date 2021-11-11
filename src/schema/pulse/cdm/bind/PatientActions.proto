@@ -24,31 +24,30 @@ message AnyPatientActionData
     AsthmaAttackData                                   AsthmaAttack                                   = 6;
     BrainInjuryData                                    BrainInjury                                    = 7;
     BronchoconstrictionData                            Bronchoconstriction                            = 8;
-    CardiacArrestData                                  CardiacArrest                                  = 9;
-    ChestCompressionForceData                          ChestCompressionForce                          = 10;
-    ChestCompressionForceScaleData                     ChestCompressionForceScale                     = 11;
-    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 12;
-    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 13;
-    ConsciousRespirationData                           ConsciousRespiration                           = 14;
-    ConsumeNutrientsData                               ConsumeNutrients                               = 15;
-    DyspneaData                                        Dyspnea                                        = 16;
-    ExerciseData                                       Exercise                                       = 17;
-    HemorrhageData                                     Hemorrhage                                     = 18;
-    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 19;
-    IntubationData                                     Intubation                                     = 20;
-    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 21;
-    MechanicalVentilationData                          MechanicalVentilation                          = 22;
-    NeedleDecompressionData                            NeedleDecompression                            = 23;
-    PericardialEffusionData                            PericardialEffusion                            = 24;
-    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 25;
-    RespiratoryFatigueData                             RespiratoryFatigue                             = 26;
-    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 27;
-    SubstanceBolusData                                 SubstanceBolus                                 = 28;
-    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 29;
-    SubstanceInfusionData                              SubstanceInfusion                              = 30;
-    SupplementalOxygenData                             SupplementalOxygen                             = 31;
-    TensionPneumothoraxData                            TensionPneumothorax                            = 32;
-    UrinateData                                        Urinate                                        = 33;
+    ChestCompressionForceData                          ChestCompressionForce                          = 9;
+    ChestCompressionForceScaleData                     ChestCompressionForceScale                     = 10;
+    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 11;
+    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 12;
+    ConsciousRespirationData                           ConsciousRespiration                           = 13;
+    ConsumeNutrientsData                               ConsumeNutrients                               = 14;
+    DyspneaData                                        Dyspnea                                        = 15;
+    ExerciseData                                       Exercise                                       = 16;
+    HemorrhageData                                     Hemorrhage                                     = 17;
+    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 18;
+    IntubationData                                     Intubation                                     = 19;
+    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 20;
+    MechanicalVentilationData                          MechanicalVentilation                          = 21;
+    NeedleDecompressionData                            NeedleDecompression                            = 22;
+    PericardialEffusionData                            PericardialEffusion                            = 23;
+    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 24;
+    RespiratoryFatigueData                             RespiratoryFatigue                             = 25;
+    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 26;
+    SubstanceBolusData                                 SubstanceBolus                                 = 27;
+    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 28;
+    SubstanceInfusionData                              SubstanceInfusion                              = 29;
+    SupplementalOxygenData                             SupplementalOxygen                             = 30;
+    TensionPneumothoraxData                            TensionPneumothorax                            = 31;
+    UrinateData                                        Urinate                                        = 32;
   }
 }
 
@@ -123,14 +122,6 @@ message BronchoconstrictionData
 {
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-}
-
-/** @brief Applies a non-specific cardiac arrest.
-           DEPRICATED - Use ArrhythmiaData. */
-message CardiacArrestData
-{
-  PatientActionData                         PatientAction                   = 1;
-  eSwitch                                   State                           = 2;/**<<@brief @ref eSwitchTable*/
 }
 
 /** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */

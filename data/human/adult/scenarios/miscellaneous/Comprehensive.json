@@ -639,8 +639,8 @@
     }
   }, {
     "PatientAction": {
-      "CardiacArrest": {
-        "State": "On"
+      "Arrhythmia": {
+        "Type": "Asystole"
       }
     }
   }, {
@@ -654,8 +654,8 @@
     }
   }, {
     "PatientAction": {
-      "CardiacArrest": {
-        "State": "Off"
+      "Arrhythmia": {
+        "Type": "NormalSinus"
       }
     }
   }, {

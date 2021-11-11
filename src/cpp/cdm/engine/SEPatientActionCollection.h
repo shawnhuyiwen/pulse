@@ -11,7 +11,6 @@ class SEAsthmaAttack;
 class SEArrhythmia;
 class SEBrainInjury;
 class SEBronchoconstriction;
-class SECardiacArrest;
 class SEChestCompression;
 class SEChestCompressionForce;
 class SEChestCompressionForceScale;

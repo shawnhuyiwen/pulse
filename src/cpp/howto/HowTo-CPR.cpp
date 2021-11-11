@@ -8,7 +8,7 @@
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
 #include "compartment/SECompartmentManager.h"
-#include "patient/actions/SECardiacArrest.h"
+#include "patient/actions/SEArrhythmia.h"
 #include "patient/actions/SEChestCompressionForce.h"
 #include "patient/SEPatient.h"
 #include "patient/actions/SEHemorrhage.h"
@@ -107,9 +107,9 @@ void HowToCPR()
   AdvanceAndTrackTime_s(50, *pe);
 
   // Put the patient into cardiac arrest
-  SECardiacArrest c;
-  c.SetState(eSwitch::On);
-  pe->ProcessAction(c);
+  SEArrhythmia a;
+  a.SetType(eHeartRhythm::Asystole);
+  pe->ProcessAction(a);
   
   pe->GetLogger()->Info("Giving the patient Cardiac Arrest.");
 

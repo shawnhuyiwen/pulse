@@ -89,12 +89,6 @@ public abstract class SEPatientAction extends SEAction
       SEBronchoconstriction.load(c.getBronchoconstriction(), dst);
       return dst;
     }
-    case CARDIACARREST:
-    {
-      SECardiacArrest dst = new SECardiacArrest();
-      SECardiacArrest.load(c.getCardiacArrest(), dst);
-      return dst;
-    }
     case CHESTCOMPRESSIONFORCE:
     {
       SEChestCompressionForce dst = new SEChestCompressionForce();
@@ -288,11 +282,6 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEBronchoconstriction)
     {
       dst.setBronchoconstriction(SEBronchoconstriction.unload((SEBronchoconstriction)c));
-      return dst.build();
-    }
-    if(c instanceof SECardiacArrest)
-    {
-      dst.setCardiacArrest(SECardiacArrest.unload((SECardiacArrest)c));
       return dst.build();
     }
     if(c instanceof SEChestCompressionForce)

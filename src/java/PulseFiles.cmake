@@ -80,7 +80,6 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEAsthmaAttack.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEBrainInjury.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEBronchoconstriction.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SECardiacArrest.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChestCompressionForce.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChestCompressionForceScale.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/actions/SEChestOcclusiveDressing.java

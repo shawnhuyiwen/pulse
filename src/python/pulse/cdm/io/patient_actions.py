@@ -101,16 +101,6 @@ def serialize_bronchoconstriction_from_bind(src: BronchoconstrictionData, dst: S
 
 #################################################################
 
-def serialize_cardiac_arrest_to_bind(src: SECardiacArrest, dst: CardiacArrestData):
-    serialize_patient_action_to_bind(src, dst.PatientAction)
-    dst.State = src.get_state().value
-
-def serialize_cardiac_arrest_from_bind(src: CardiacArrestData, dst: SECardiacArrest):
-    serialize_patient_action_from_bind(src.PatientAction, dst)
-    raise Exception("serialize_patient_action_from_bind not implemented")
-
-#################################################################
-
 def serialize_chest_compression_force_to_bind(src: SEChestCompressionForce, dst: ChestCompressionForceData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_force():

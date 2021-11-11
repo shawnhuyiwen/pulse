@@ -71,7 +71,6 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
-#include "cdm/patient/actions/SECardiacArrest.h"
 #include "cdm/patient/actions/SEChestCompressionForce.h"
 #include "cdm/patient/actions/SEChestCompressionForceScale.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"

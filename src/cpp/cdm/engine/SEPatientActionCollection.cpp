@@ -11,7 +11,6 @@
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
-#include "cdm/patient/actions/SECardiacArrest.h"
 #include "cdm/patient/actions/SEChestCompressionForce.h"
 #include "cdm/patient/actions/SEChestCompressionForceScale.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
@@ -257,20 +256,6 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_Bronchoconstriction->Activate();
     if (!m_Bronchoconstriction->IsActive())
       RemoveBronchoconstriction();
-    return true;
-  }
-
-  const SECardiacArrest* cardiacarrest = dynamic_cast<const SECardiacArrest*>(&action);
-  if (cardiacarrest != nullptr)
-  {
-    // Translate to Arrythmia action until we remove
-    if (cardiacarrest->GetState() == eSwitch::On)
-      GetArrhythmia().SetType(eHeartRhythm::Asystole);
-    else
-      GetArrhythmia().SetType(eHeartRhythm::NormalSinus);
-    m_Arrhythmia->Activate();
-    if (!m_Arrhythmia->IsActive())
-      RemoveArrhythmia();
     return true;
   }
 
