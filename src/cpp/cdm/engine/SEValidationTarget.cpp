@@ -88,8 +88,8 @@ bool SEValidationTarget::ComputeError()
   }
   }
   // NOTE: We could use PercentTolerance too
-  double minError = GeneralMath::PercentDifference(m_RangeMin, m_TypeValue);
-  double maxError = GeneralMath::PercentDifference(m_RangeMax, m_TypeValue);
+  double minError = GeneralMath::PercentTolerance(m_RangeMin, m_TypeValue, 1e-9);
+  double maxError = GeneralMath::PercentTolerance(m_RangeMax, m_TypeValue, 1e-9);
   // No error if we are in range
   if (m_TypeValue >= m_RangeMin && m_TypeValue <= m_RangeMax)
   {

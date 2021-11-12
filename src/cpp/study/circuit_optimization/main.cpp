@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
   {
     Logger log;
     log.SetLogFile("./test_results/circuit_optimization.log");
-
+    log.LogToConsole(true);
     std::string filename = "./optimizer/HemodynamicsTargets.json";
     // TODO import targets for the particular circuit we are optimizing
     // Currently CircuitOptimizer only runs the CV circuit, so only those targets should be used
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     }
 
     CircuitOptimizer opt(&log);
-    if(!opt.ConvergeToHemodynamicsTargets(1000, drMgr.GetValidationTargets()))
+    if(!opt.ConvergeToHemodynamicsTargets(50, drMgr.GetValidationTargets()))
       log.Error("Unable to converge to optimum circuit");
   }
   catch (std::exception ex)

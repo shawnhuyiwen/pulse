@@ -11,8 +11,8 @@
 #include "cdm/engine/SEPatientConfiguration.h"
 
 #include "cdm/utils/DataTrack.h"
-#include "cdm/utils/GeneralMath.h"
 #include "Eigen/Dense"
+#include "common/controller/CircuitManager.h"
 
 namespace pulse::study::circuit_optimization
 {
@@ -53,14 +53,16 @@ namespace pulse::study::circuit_optimization
     // We should remove modifiers unrelated to the circuit we are optimizing
     // Currently GenerateData only runs the CV circuit, so only those modifiers should be used
     // Currently we only have CV modifiers in the config
-    
+
     // Start with the default modifiers
     PulseConfiguration cfg(GetLogger());
     cfg.Initialize();
 
-    // Set all modifiers to 1.0
-    //for (auto& [name, modifier] : cfg.GetModifiers())
-    //  modifier.value = 1.0;
+    int nTarget = (int)targets.size();
+    Info("Number of modifiers: " + std::to_string(cfg.GetModifiers().size()));
+    Info("Number of targets: " + std::to_string(nTarget));
+    for (auto& [name, modifier] : cfg.GetModifiers())
+      Info("Default modifier " + name + ": " + std::to_string(modifier.value));
 
     bool converged;
     std::string check;
@@ -76,18 +78,24 @@ namespace pulse::study::circuit_optimization
       //    (I am just making up convergence criteria)
       Info("Checking simulation results...[Expected] [Value] [Error]");
       converged = true;
+      int nFail = 0;
+      double errorNorm  = 0;
       for (SEValidationTarget* vt : targets)
       {
         check = "PASS ";
         if (vt->GetError() > 10.0)// Just a guess here...
         {
           check = "FAIL ";
+          nFail++;
           converged = false;
         }
         Info(check + vt->GetCompartmentName() + " " + vt->GetPropertyName() +
           " [" + pulse::cdm::to_string(vt->GetRangeMin()) + ", " + pulse::cdm::to_string(vt->GetRangeMax()) + "] " +
           pulse::cdm::to_string(vt->GetValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
+        errorNorm += vt->GetError() * vt->GetError();
       }
+      Info("Total error norm (l2): " + std::to_string(errorNorm) +
+        " Passed: " + std::to_string(nTarget - nFail) + " Failed: " + std::to_string(nFail));
       
       // 3. Test Convergence Criteria
       if (converged)
@@ -104,7 +112,32 @@ namespace pulse::study::circuit_optimization
       Info("Finished Modifier Loop " + std::to_string(i+1));
     }
 
-    Error("Exceeded maximum number of loops");
+    // Check final results
+    if (!GenerateHemodynamicsData(cfg, targets))
+    {
+      Fatal("Error generating data");
+      return false;
+    }
+    Info("Checking simulation results...[Expected] [Value] [Error]");
+    converged = true;
+    int nFail = 0;
+    double errorNorm  = 0;
+    for (SEValidationTarget* vt : targets)
+    {
+      check = "PASS ";
+      if (vt->GetError() > 10.0)// Just a guess here...
+      {
+        check = "FAIL ";
+        converged = false;
+        nFail++;
+      }
+      Info(check + vt->GetCompartmentName() + " " + vt->GetPropertyName() +
+           " [" + pulse::cdm::to_string(vt->GetRangeMin()) + ", " + pulse::cdm::to_string(vt->GetRangeMax()) + "] " +
+           pulse::cdm::to_string(vt->GetValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
+      errorNorm += vt->GetError() * vt->GetError();
+    }
+    Info("Final total error norm (l2): " + std::to_string(errorNorm) +
+         " Passed: " + std::to_string(nTarget - nFail) + " Failed: " + std::to_string(nFail));
     return false;
   }
 
@@ -177,9 +210,17 @@ namespace pulse::study::circuit_optimization
   {
     // TODO: No bounding constraint has been imposed yet.
 
-    auto nX = cfg.GetModifiers().size();
-    auto nY = targets.size();
-    double stepSize = 0.001; // magic number, could be too large/small for different inputs
+    // Manually choose modifiers and targets
+    std::vector<std::string> modifiers;
+    modifiers.emplace_back(pulse::CardiovascularPath::Aorta3ToAorta1);
+    modifiers.emplace_back(pulse::CardiovascularPath::VenaCavaToGround);
+//    modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToLargeIntestine);
+//    modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToLeftKidney1); // doesn't change anything solely, causing stabilization issue jointly
+
+    auto nX = (int)modifiers.size();
+    auto nY = (int)targets.size();
+    double finiteDiferenceStepSize = 0.001; // step size for finite differencing
+    double stepRatio = 0.1; // step ratio for gradient descent
 
     // Diff/Error/Y matrix for output targets
     Eigen::MatrixXd diffY(nY, 1);
@@ -192,11 +233,11 @@ namespace pulse::study::circuit_optimization
     // Compute entries in Jacobian matrix
     // Individually step each modifier and compute
     size_t i = 0;
-    for (auto& [name, modifier] : cfg.GetModifiers())
+    for (auto& name : modifiers)
     {
       // Step one modifier and compute
-      double val = modifier.value; // cache it
-      modifier.value = val + stepSize;
+      double val = cfg.GetModifiers()[name].value; // cache it
+      cfg.GetModifiers()[name].value = val + finiteDiferenceStepSize;
       if (!GenerateHemodynamicsData(cfg, targets)) // TODO this should be a function pointer
       {
         Fatal("Error generating data");
@@ -207,12 +248,12 @@ namespace pulse::study::circuit_optimization
       int j = 0;
       for (SEValidationTarget* vt : targets)
       {
-        Jacobian.coeffRef(j, i)  = (vt->GetError() - diffY.coeffRef(j, 0)) / stepSize;
+        Jacobian.coeffRef(j, i)  = (vt->GetError() - diffY.coeffRef(j, 0)) / finiteDiferenceStepSize;
         j++;
       }
 
       // Reset the modifier from the cache
-      modifier.value = val;
+      cfg.GetModifiers()[name].value = val;
       i++;
     }
 
@@ -223,10 +264,10 @@ namespace pulse::study::circuit_optimization
 
     // Put the new modifier set into the config
     i = 0;
-    for (auto& [name, modifier] : cfg.GetModifiers())
+    for (auto& name : modifiers)
     {
-      double val = modifier.value;
-      modifier.value = val + (0.1 * deltaX.coeff(i, 0));
+      double val = cfg.GetModifiers()[name].value;
+      cfg.GetModifiers()[name].value = val - (stepRatio * deltaX.coeff(i, 0));
       i++;
     }
     return true;
