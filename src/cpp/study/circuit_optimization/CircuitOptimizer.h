@@ -5,6 +5,7 @@
 
 #include "PulseEngine.h"
 #include "PulseConfiguration.h"
+#include "cdm/substance/SESubstanceManager.h"
 
 #include "SEValidationTarget.h"
 
@@ -23,10 +24,12 @@ namespace pulse::study::circuit_optimization
   protected:
     bool GenerateHemodynamicsData(PulseConfiguration& cfg, std::vector<SEValidationTarget*>& targets);
     bool ComputeNewModifiers(PulseConfiguration& cfg, std::vector<SEValidationTarget*>& targets);
+    void WriteModifiers(const PulseConfiguration& cfg, const std::string& filename);
 
-    unsigned int m_SimulationNum = 0;
-    unsigned int m_StopAtCycle = 5;
-    unsigned int m_CardiacCycle = 0;
-    bool         m_StartOfCardiacCycle = false;
+    unsigned int       m_SimulationNum = 0;
+    unsigned int       m_StopAtCycle = 5;
+    unsigned int       m_CardiacCycle = 0;
+    bool               m_StartOfCardiacCycle = false;
+    SESubstanceManager m_SubMgr;
   };
 }

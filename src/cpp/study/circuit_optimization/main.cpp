@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
     log.SetLogFile("./test_results/circuit_optimization.log");
     log.LogToConsole(true);
     std::string filename = "./optimizer/HemodynamicsTargets.json";
+
     // TODO import targets for the particular circuit we are optimizing
     // Currently CircuitOptimizer only runs the CV circuit, so only those targets should be used
 

@@ -4,15 +4,15 @@
 #include "CircuitOptimizer.h"
 
 #include "engine/human_adult/hemodynamics/Engine.h"
+#include "engine/common/controller/CircuitManager.h"
 
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
-
 #include "cdm/utils/DataTrack.h"
+
 #include "Eigen/Dense"
-#include "common/controller/CircuitManager.h"
 
 namespace pulse::study::circuit_optimization
 {
@@ -25,7 +25,7 @@ namespace pulse::study::circuit_optimization
     
   };
 
-  CircuitOptimizer::CircuitOptimizer(Logger* logger) : Loggable(logger)
+  CircuitOptimizer::CircuitOptimizer(Logger* logger) : Loggable(logger), m_SubMgr(logger)
   {
  
   }
@@ -56,7 +56,15 @@ namespace pulse::study::circuit_optimization
 
     // Start with the default modifiers
     PulseConfiguration cfg(GetLogger());
-    cfg.Initialize();
+    // Which modifier set do we want to start with?
+    cfg.Initialize(); // Use the current defaults, or
+    //cfg.SerializeFromFile("modifiesr.json", m_SubMgr);// Use a file we previously generated
+
+    // Ye Han, This is how you write a modifier set you want to save on disk
+    // delete this section when you grok it
+    //for (auto& i : cfg.GetModifiers())
+    //  i.second = 0.123;
+    //WriteModifiers(cfg,"modifiesr.json");
 
     int nTarget = (int)targets.size();
     Info("Number of modifiers: " + std::to_string(cfg.GetModifiers().size()));
@@ -101,7 +109,7 @@ namespace pulse::study::circuit_optimization
       if (converged)
       {
         Info("We have successfully tuned the circuit!");
-        // TODO Print out the winning modifiers
+        WriteModifiers(cfg, "PulseConfig.json");
         return true;
       }
 
@@ -271,5 +279,13 @@ namespace pulse::study::circuit_optimization
       i++;
     }
     return true;
+  }
+
+  void CircuitOptimizer::WriteModifiers(const PulseConfiguration& cfg, const std::string& filename)
+  {
+    PulseConfiguration out;
+    // We only want the modifiers from the given cfg
+    out.GetModifiers() = cfg.GetModifiers();
+    out.SerializeToFile(filename);
   }
 }
