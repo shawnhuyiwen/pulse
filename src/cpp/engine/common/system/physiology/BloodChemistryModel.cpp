@@ -296,10 +296,7 @@ namespace pulse
 
           if (arterialCarbonDioxide_mmHg > carbonDioxideToxicity)
           {
-            /// \irreversible The carbon dioxide partial pressure is greater than 80 mmHg. 
-            m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
             m_ss << "Arterial Carbon Dioxide partial pressure is " << arterialCarbonDioxide_mmHg << ". This is beyond 80 mmHg triggering extreme Hypercapnia, patient is in an irreversible state.";
-            Fatal(m_ss);
           }
         }
         else if (m_data.GetEvents().IsEventActive(eEvent::Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))

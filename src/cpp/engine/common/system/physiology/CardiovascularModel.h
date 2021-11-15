@@ -97,7 +97,7 @@ namespace pulse
     //Driver
     bool   m_StartSystole;
     bool   m_HeartFlowDetected;
-    bool   m_EnterCardiacArrest;// Can't go into cardiac arrest during the middle of a cycle
+    bool   m_CardiacArrest;// Can't go into cardiac arrest during the middle of a cycle
     double m_CardiacCyclePeriod_s;
     double m_CurrentCardiacCycleDuration_s; // How long have we been in this heart beat
     double m_LeftHeartElastanceModifier;// from Heart Failure and such
@@ -120,6 +120,8 @@ namespace pulse
     double m_CardiacCyclePulmonaryArteryPressureHigh_mmHg;
     double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
     double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
+    double m_Patient_Stabilized_HeartRate_Baseline_Per_min; //save patient stabilized heart rate
+    double m_arrhythmia_heart_elastance_modifier; //need to apply a modifier for to the elastance for some arrhythmias
     SERunningAverage* m_CardiacCycleArterialPressure_mmHg;
     SERunningAverage* m_CardiacCycleArterialCO2PartialPressure_mmHg;
     SERunningAverage* m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg;

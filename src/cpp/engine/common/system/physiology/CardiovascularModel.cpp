@@ -206,7 +206,7 @@ namespace pulse
     m_RightHeartElastanceMin_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMinimum(PressurePerVolumeUnit::mmHg_Per_mL);
 
     // CPR and Cardiac Arrest control
-    m_EnterCardiacArrest = false;
+    m_CardiacArrest = false;
     m_CompressionTime_s = 0.0;
     m_CompressionRatio = 0.0;
     m_CompressionPeriod_s = 0.0;
@@ -372,6 +372,7 @@ namespace pulse
     m_AortaResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
     m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
     m_RightHeartResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
+    m_arrhythmia_heart_elastance_modifier = 1.0;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -424,6 +425,8 @@ namespace pulse
     Info(m_ss);
     m_ss << typeString << "Patient mean arterial pressure = " << GetMeanArterialPressure();
     Info(m_ss);
+
+    m_Patient_Stabilized_HeartRate_Baseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1580,17 +1583,54 @@ namespace pulse
       case eHeartRhythm::PulselessElectricalActivity:
       case eHeartRhythm::PulselessVentricularTachycardia:
       {
-        // Flip the cardiac arrest switch
-        // This tells the CV system that a cardiac arrest has been initiated.
-        // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
-        m_EnterCardiacArrest = true;
-        //Force a new cardiac cycle to start when cardiac arrest is removed
-        m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
-        break;
+          // Flip the cardiac arrest switch
+          // This tells the CV system that a cardiac arrest has been initiated.
+          // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
+          m_CardiacArrest = true;
+          m_arrhythmia_heart_elastance_modifier = 1.0;
+          break;
+      }
+      case eHeartRhythm::NormalSinus:
+      {
+          m_CardiacArrest = false;
+          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_Patient_Stabilized_HeartRate_Baseline_Per_min, FrequencyUnit::Per_min);
+          m_arrhythmia_heart_elastance_modifier = 1.0;
+          break;
+      }
+      case eHeartRhythm::SinusTachycardia:
+      {
+          m_CardiacArrest = false;
+          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_Patient_Stabilized_HeartRate_Baseline_Per_min * 1.5, FrequencyUnit::Per_min);
+          m_arrhythmia_heart_elastance_modifier = 1.0;
+          break;
+      }
+      case eHeartRhythm::SinusBradycardia:
+      {
+          m_CardiacArrest = false;
+          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_Patient_Stabilized_HeartRate_Baseline_Per_min * 0.7, FrequencyUnit::Per_min);
+          m_arrhythmia_heart_elastance_modifier = 1.0;
+          break;
+      }
+      case eHeartRhythm::StableVentricularTachycardia:
+      {
+          m_CardiacArrest = false;
+          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_Patient_Stabilized_HeartRate_Baseline_Per_min * 2.2, FrequencyUnit::Per_min);
+          m_arrhythmia_heart_elastance_modifier = 1.0;
+          break;
+      }
+      case eHeartRhythm::UnstableVentricularTachycardia:
+      {
+          m_CardiacArrest = false;
+          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_Patient_Stabilized_HeartRate_Baseline_Per_min * 2.8, FrequencyUnit::Per_min);
+          m_arrhythmia_heart_elastance_modifier = 0.5;
+          break;
       }
       default:// Any other rhythms take us out of cardiac arrest
-        m_EnterCardiacArrest = false;
+          Error("Unsupported heart arrhythmia.");
       }
+      m_data.GetEvents().SetEvent(eEvent::CardiacArrest, m_CardiacArrest, m_data.GetSimulationTime());
+      //Force a new cardiac cycle to start when cardiac arrest is removed
+      m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
     }
   }
 
@@ -1724,7 +1764,7 @@ namespace pulse
     m_LeftHeartElastanceMax_mmHg_Per_mL *= m_LeftHeartElastanceModifier;
 
     // Now set the cardiac cycle period and the cardiac arrest event if applicable
-    if (m_EnterCardiacArrest)
+    if (m_CardiacArrest)
     {
       m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
       m_CardiacCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years) 
@@ -1733,15 +1773,7 @@ namespace pulse
     }
     else
     {
-      if (HeartDriverFrequency_Per_Min == 0)
-      {
-        m_CardiacCyclePeriod_s = 5.0; // Can't divide by 0, but we want to check this again in a while to see if we can get out of asystole
-        GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min); // Will put patient into asystole
-      }
-      else
-      {
         m_CardiacCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
-      }
     }
 
     // Reset the systole flag and the cardiac cycle time
@@ -1778,8 +1810,8 @@ namespace pulse
     double normalizedCardiacTime = m_CurrentCardiacCycleTime_s / m_CardiacCyclePeriod_s;
     double elastanceShapeFunction = (pow(normalizedCardiacTime / alpha1, n1) / (1.0 + pow(normalizedCardiacTime / alpha1, n1))) * (1.0 / (1.0 + pow(normalizedCardiacTime / alpha2, n2))) / maxShape;
 
-    m_LeftHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
-    m_RightHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
+    m_LeftHeartElastance_mmHg_Per_mL = m_arrhythmia_heart_elastance_modifier * oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
+    m_RightHeartElastance_mmHg_Per_mL = m_arrhythmia_heart_elastance_modifier * oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
   }
 
   //--------------------------------------------------------------------------------------------------
