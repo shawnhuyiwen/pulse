@@ -17,8 +17,8 @@ enum eHeartRhythm
   Asystole                        = 3; /**<< @brief */
   CourseVentricularFibrillation   = 4; /**<< @brief */
   FineVentricularFibrillation     = 5; /**<< @brief */
-  PulselessElectricalActivity     = 6; /**<< @brief */
-  PulselessVentricularTachycardia = 7; /**<< @brief */
+  PulselessElectricalActivity     = 6; /**<< @brief Electical signal, but no mechanical function. */
+  PulselessVentricularTachycardia = 7; /**<< @brief Electical signal, but no mechanical function. */
   StableVentricularTachycardia    = 8; /**<< @brief */
   UnstableVentricularTachycardia  = 9; /**<< @brief */
 }

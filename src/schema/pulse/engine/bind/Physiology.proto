@@ -17,9 +17,9 @@ message BloodChemistryData
 message CardiovascularData
 {
   pulse.cdm.bind.CardiovascularSystemData   Common                                              = 1;
-  bool                                      StartSystole                                        = 2;
+  bool                                      CardiacArrest                                       = 2;
   bool                                      HeartFlowDetected                                   = 3;
-  bool                                      EnterCardiacArrest                                  = 4;
+  bool                                      StartSystole                                        = 4;
   double                                    CardiacCyclePeriod_s                                = 5;
   double                                    CurrentCardiacCycleDuration_s                       = 6;
   double                                    LeftHeartElastanceModifier                          = 7;
