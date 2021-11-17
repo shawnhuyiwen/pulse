@@ -55,7 +55,7 @@ namespace pulse
     ::PBPhysiology::Serialize(src.common(), dst);
     dst.m_StartSystole = src.startsystole();
     dst.m_HeartFlowDetected = src.heartflowdetected();
-    dst.m_EnterCardiacArrest = src.entercardiacarrest();
+    dst.m_CardiacArrest = src.entercardiacarrest();
     dst.m_CardiacCyclePeriod_s = src.cardiaccycleperiod_s();
     dst.m_CurrentCardiacCycleDuration_s = src.currentcardiaccycleduration_s();
     dst.m_LeftHeartElastanceModifier = src.leftheartelastancemodifier();
@@ -99,7 +99,7 @@ namespace pulse
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
     dst.set_startsystole(src.m_StartSystole);
     dst.set_heartflowdetected(src.m_HeartFlowDetected);
-    dst.set_entercardiacarrest(src.m_EnterCardiacArrest);
+    dst.set_entercardiacarrest(src.m_CardiacArrest);
     dst.set_cardiaccycleperiod_s(src.m_CardiacCyclePeriod_s);
     dst.set_currentcardiaccycleduration_s(src.m_CurrentCardiacCycleDuration_s);
     dst.set_leftheartelastance_mmhg_per_ml(src.m_LeftHeartElastance_mmHg_Per_mL);
