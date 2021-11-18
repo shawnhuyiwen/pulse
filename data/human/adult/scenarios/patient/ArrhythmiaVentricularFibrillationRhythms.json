@@ -392,7 +392,7 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Type": "CourseVentricularFibrillation"
+        "Rhythm": "CourseVentricularFibrillation"
       }
     }
   }, {
@@ -407,7 +407,7 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Type": "NormalSinus"
+        "Rhythm": "NormalSinus"
       }
     }
   }, {
@@ -422,7 +422,7 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Type": "FineVentricularFibrillation"
+        "Rhythm": "FineVentricularFibrillation"
       }
     }
   }, {
@@ -437,7 +437,7 @@
 		  }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Type": "NormalSinus"
+        "Rhythm": "NormalSinus"
       }
     }
   }, {

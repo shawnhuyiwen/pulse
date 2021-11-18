@@ -91,10 +91,12 @@ namespace pulse
   void PBEquipment::Serialize(const PULSE_BIND::ElectroCardioGramData& src, ElectroCardioGramModel& dst)
   {
     PBElectroCardioGram::Serialize(src.common(), dst);
-    dst.m_heartRhythmTime_s = src.heartrythmtime_s();
-    dst.m_heartRhythmPeriod_s = src.heartrythmperiod_s();
-    PBElectroCardioGram::Load(src.waveforms(), *dst.m_interpolator);
-    dst.m_interpolator->SetLeadElectricPotential(eElectroCardioGram_WaveformLead::Lead3, dst.GetLead3ElectricPotential());
+    dst.m_AmplitudeModifier = src.amplitudemodifier();
+    dst.m_HeartRhythmTime_s = src.heartrythmtime_s();
+    dst.m_HeartRhythmPeriod_s = src.heartrythmperiod_s();
+    dst.m_LastRhythm = (eHeartRhythm)src.lastrhythm();
+    PBElectroCardioGram::Load(src.waveforms(), *dst.m_Interpolator);
+    dst.m_Interpolator->SetLeadElectricPotential(eElectroCardioGram_WaveformLead::Lead3, dst.GetLead3ElectricPotential());
   }
   PULSE_BIND::ElectroCardioGramData* PBEquipment::Unload(const ElectroCardioGramModel& src)
   {
@@ -105,9 +107,11 @@ namespace pulse
   void PBEquipment::Serialize(const ElectroCardioGramModel& src, PULSE_BIND::ElectroCardioGramData& dst)
   {
     PBElectroCardioGram::Serialize(src, *dst.mutable_common());
-    dst.set_heartrythmtime_s(src.m_heartRhythmTime_s);
-    dst.set_heartrythmperiod_s(src.m_heartRhythmPeriod_s);
-    dst.set_allocated_waveforms(PBElectroCardioGram::Unload(*src.m_interpolator));
+    dst.set_amplitudemodifier(src.m_AmplitudeModifier);
+    dst.set_heartrythmtime_s(src.m_HeartRhythmTime_s);
+    dst.set_heartrythmperiod_s(src.m_HeartRhythmPeriod_s);
+    dst.set_lastrhythm((CDM_BIND::eHeartRhythm)src.m_LastRhythm);
+    dst.set_allocated_waveforms(PBElectroCardioGram::Unload(*src.m_Interpolator));
   }
 
   void PBEquipment::Load(const PULSE_BIND::InhalerData& src, InhalerModel& dst)

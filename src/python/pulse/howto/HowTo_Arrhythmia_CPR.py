@@ -22,7 +22,7 @@ def HowTo_Arrhythmia():
 
     arryhthmia = SEArrhythmia()
     arryhthmia.set_comment("Patient experiences cardiac arrest")
-    arryhthmia.set_type(eHeartRhythm.StableVentricularTachycardia)
+    arryhthmia.set_rhythm(eHeartRhythm.StableVentricularTachycardia)
     pulse.process_action(arryhthmia)
 
     # Advance some time and print out the vitals

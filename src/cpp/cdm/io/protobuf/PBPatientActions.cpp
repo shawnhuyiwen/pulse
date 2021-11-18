@@ -170,7 +170,7 @@ void PBPatientAction::Load(const CDM_BIND::ArrhythmiaData& src, SEArrhythmia& ds
 void PBPatientAction::Serialize(const CDM_BIND::ArrhythmiaData& src, SEArrhythmia& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
-  dst.SetType((eHeartRhythm)src.type());
+  dst.SetRhythm((eHeartRhythm)src.rhythm());
 }
 CDM_BIND::ArrhythmiaData* PBPatientAction::Unload(const SEArrhythmia& src)
 {
@@ -181,7 +181,7 @@ CDM_BIND::ArrhythmiaData* PBPatientAction::Unload(const SEArrhythmia& src)
 void PBPatientAction::Serialize(const SEArrhythmia& src, CDM_BIND::ArrhythmiaData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
-  dst.set_type((CDM_BIND::eHeartRhythm)src.m_Type);
+  dst.set_rhythm((CDM_BIND::eHeartRhythm)src.m_Rhythm);
 }
 void PBPatientAction::Copy(const SEArrhythmia& src, SEArrhythmia& dst)
 {

@@ -163,9 +163,9 @@ bool SEElectroCardioGramWaveformInterpolator::InterpolateToTime(SEFunctionElectr
   return true;
 }
 
-bool SEElectroCardioGramWaveformInterpolator::CanInterpolateLeadPotential(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm) const
+bool SEElectroCardioGramWaveformInterpolator::CanInterpolateLeadPotential(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t) const
 {
-  if (!HasWaveform(lead, rhythm))
+  if (!HasWaveform(lead, t))
     return false;
   auto l = m_Leads.find(lead);
   if (l == m_Leads.end())
@@ -177,20 +177,45 @@ void SEElectroCardioGramWaveformInterpolator::SetLeadElectricPotential(eElectroC
   m_Leads[lead] = &ep;
 }
 
-bool SEElectroCardioGramWaveformInterpolator::StartNewCycle(eHeartRhythm rhythm)
+bool SEElectroCardioGramWaveformInterpolator::StartNewCycle(eElectroCardioGram_WaveformType t)
 {
   for (auto l2rw : m_Waveforms)
   {
-    if (m_Leads.find(l2rw.first) == m_Leads.end() && !HasWaveform(l2rw.first, rhythm))
+    if (m_Leads.find(l2rw.first) == m_Leads.end() && !HasWaveform(l2rw.first, t))
     {
       std::stringstream ss;
-      ss << "Waveform not provided for Lead " << eElectroCardioGram_WaveformLead_Name(l2rw.first) << " rhythm " << eHeartRhythm_Name(rhythm);
+      ss << "Waveform not provided for Lead " << eElectroCardioGram_WaveformLead_Name(l2rw.first) << " type " << eElectroCardioGram_WaveformType_Name(t);
       Error(ss);
       return false;
     }
-    l2rw.second[rhythm]->GetActiveIndicies().push_back(0);
+    // Clear out active indicies from other types
+    for (auto& t2w : l2rw.second)
+    {
+      if (t2w.first == t)
+        t2w.second->GetActiveIndicies().push_back(0);
+      else
+        t2w.second->GetActiveIndicies().clear();
+    }
   }
   return true;
+}
+
+double SEElectroCardioGramWaveformInterpolator::GetCycleLength(eElectroCardioGram_WaveformType t, const TimeUnit& unit)
+{
+  for (auto l2rw : m_Waveforms)
+  {
+    if (m_Leads.find(l2rw.first) == m_Leads.end() && !HasWaveform(l2rw.first, t))
+    {
+      std::stringstream ss;
+      ss << "Waveform not provided for Lead " << eElectroCardioGram_WaveformLead_Name(l2rw.first) << " type " << eElectroCardioGram_WaveformType_Name(t);
+      Error(ss);
+      return false;
+    }
+    // Assumes all leads have the same data and all data is the same length and duration
+    auto& f = l2rw.second[t]->GetData();
+    return f.GetTimeValue(f.GetTime().size() - 1, unit);
+  }
+  return SEScalar::dNaN();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -201,7 +226,7 @@ bool SEElectroCardioGramWaveformInterpolator::StartNewCycle(eHeartRhythm rhythm)
 /// CalculateWaveform takes data from all active iterators and sums them together. It also assigns
 /// the unit of millivolts to the output. If there are no active iterators, the output defaults to 0.
 //--------------------------------------------------------------------------------------------------
-void SEElectroCardioGramWaveformInterpolator::CalculateWaveformsElectricPotential()
+void SEElectroCardioGramWaveformInterpolator::CalculateWaveformsElectricPotential(double amplitudeScale)
 {
   // Pull Data from our iterators
   int idx;
@@ -223,53 +248,53 @@ void SEElectroCardioGramWaveformInterpolator::CalculateWaveformsElectricPotentia
       {
         idx = waveform->GetActiveIndicies()[i];
         val = data.GetElectricPotentialValue(idx++, *data.GetElectricPotentialUnit());
-        ep->IncrementValue(val, *data.GetElectricPotentialUnit());
+        ep->IncrementValue(val * amplitudeScale, *data.GetElectricPotentialUnit());
         if (idx == data.Length())
           waveform->GetActiveIndicies().erase(waveform->GetActiveIndicies().begin() + i--);// Remove the iterator if we are at the end
         else
-          waveform->GetActiveIndicies()[i] = idx;// Increment iterator  
+          waveform->GetActiveIndicies()[i] = idx;// Increment iterator
       }
     }
   }
 
 }
 
-bool SEElectroCardioGramWaveformInterpolator::HasWaveform(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm) const
+bool SEElectroCardioGramWaveformInterpolator::HasWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t) const
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())
     return false;
-  auto w = l->second.find(rhythm);
+  auto w = l->second.find(t);
   if (w == l->second.end())
     return false;
   return w->second != nullptr;
 }
-SEElectroCardioGramWaveform& SEElectroCardioGramWaveformInterpolator::GetWaveform(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm)
+SEElectroCardioGramWaveform& SEElectroCardioGramWaveformInterpolator::GetWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t)
 {
-  SEElectroCardioGramWaveform* w = m_Waveforms[lead][rhythm];
+  SEElectroCardioGramWaveform* w = m_Waveforms[lead][t];
   if (w == nullptr)
   {
     w = new SEElectroCardioGramWaveform(GetLogger());
-    m_Waveforms[lead][rhythm] = w;
+    m_Waveforms[lead][t] = w;
   }
   return *w;
 }
-const SEElectroCardioGramWaveform* SEElectroCardioGramWaveformInterpolator::GetWaveform(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm) const
+const SEElectroCardioGramWaveform* SEElectroCardioGramWaveformInterpolator::GetWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t) const
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())
     return nullptr;
-  auto w = l->second.find(rhythm);
+  auto w = l->second.find(t);
   if (w == l->second.end())
     return nullptr;
   return w->second;
 }
-void SEElectroCardioGramWaveformInterpolator::RemoveWaveform(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm)
+void SEElectroCardioGramWaveformInterpolator::RemoveWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t)
 {
   auto l = m_Waveforms.find(lead);
   if (l == m_Waveforms.end())
     return;
-  auto w = l->second.find(rhythm);
+  auto w = l->second.find(t);
   if (w == l->second.end())
     return;
   delete w->second;

@@ -48,70 +48,41 @@ void HowToArrythmia()
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("OxygenSaturation");
+  pe->GetEngineTracker()->GetDataRequestManager().CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
 
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/howto/HowToArrythmia.csv");
 
+  AdvanceAndTrackTime_s(.5, *pe);
   pe->GetLogger()->Info("The patient is nice and healthy");
-  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
-  pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
-
-  AdvanceAndTrackTime_s(5, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(false);
   
   // Create an SEArrythmia object
   SEArrhythmia arrhythmia;
-  arrhythmia.SetType(eHeartRhythm::StableVentricularTachycardia);
-  pe->ProcessAction(arrhythmia);
-  pe->GetLogger()->Info("Giving the patient stable ventricular tachycardia.");
-
-  // Advance time to see how the injury affects the patient
-  AdvanceAndTrackTime_s(10, *pe);
-
-  pe->GetLogger()->Info(std::stringstream() << "The patient has had stable ventricular tachycardia for 10s, not doing well...");
-  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
-  pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
-
-  // You can go back to normal sinus.
-  arrhythmia.SetType(eHeartRhythm::NormalSinus);
-  pe->ProcessAction(arrhythmia);
-
-  pe->GetLogger()->Info("Removing the arrythmia.");
-
-  AdvanceAndTrackTime_s(30, *pe);
-
-  pe->GetLogger()->Info(std::stringstream() << "The patient's arrythmia has been removed for 30s; patient is much better");
-  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
-  pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
-
   
-  arrhythmia.SetType(eHeartRhythm::CourseVentricularFibrillation);
+  //arrhythmia.SetRhythm(eHeartRhythm::StableVentricularTachycardia);
+  //pe->ProcessAction(arrhythmia);
+  //pe->GetLogger()->Info("Giving the patient stable ventricular tachycardia.");
+  //// Advance time to see how the injury affects the patient
+  //AdvanceAndTrackTime_s(10, *pe);
+  //pe->GetLogger()->Info(std::stringstream() << "The patient has had stable ventricular tachycardia for 10s, not doing well...");
+  //pe->GetEngineTracker()->LogRequestedValues(false);
+  //
+  //// You can go back to normal sinus.
+  //arrhythmia.SetRhythm(eHeartRhythm::NormalSinus);
+  //pe->ProcessAction(arrhythmia);
+  //pe->GetLogger()->Info("Removing the arrythmia.");
+  //AdvanceAndTrackTime_s(30, *pe);
+  //pe->GetLogger()->Info(std::stringstream() << "The patient's arrythmia has been removed for 30s; patient is much better");
+  //pe->GetEngineTracker()->LogRequestedValues(false);
+
+  arrhythmia.SetRhythm(eHeartRhythm::FineVentricularFibrillation);
   pe->ProcessAction(arrhythmia);
   pe->GetLogger()->Info("Giving the patient course ventricular fibrillation.");
 
   AdvanceAndTrackTime_s(90, *pe);
-
   pe->GetLogger()->Info(std::stringstream() << "The patient has had course ventricular fibrillation for 90 s");
-  pe->GetLogger()->Info(std::stringstream() << "Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Mean Arterial Pressure : " << pe->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() << "Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Respiration Rate : " << pe->GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min) << "bpm");
-  pe->GetLogger()->Info(std::stringstream() << "Oxygen Saturation : " << pe->GetBloodChemistrySystem()->GetOxygenSaturation());
-  pe->GetLogger()->Info(std::stringstream() << "Carbon Dioxide Saturation : " << pe->GetBloodChemistrySystem()->GetCarbonDioxideSaturation());
+  pe->GetEngineTracker()->LogRequestedValues(false);
+
 
   pe->GetLogger()->Info("Finished");
 }

@@ -58,7 +58,7 @@ def serialize_airway_obstruction_from_bind(src:AirwayObstructionData, dst: SEAir
 
 def serialize_arrhythmia_to_bind(src: SEArrhythmia, dst: ArrhythmiaData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
-    dst.Type = src.get_type().value
+    dst.Rhythm = src.get_rhythm().value
 
 def serialize_arrhythmia_from_bind(src: ArrhythmiaData, dst: SEArrhythmia):
     serialize_patient_action_from_bind(src.PatientAction, dst)

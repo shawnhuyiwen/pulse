@@ -108,7 +108,7 @@ void HowToCPR()
 
   // Put the patient into cardiac arrest
   SEArrhythmia a;
-  a.SetType(eHeartRhythm::Asystole);
+  a.SetRhythm(eHeartRhythm::Asystole);
   pe->ProcessAction(a);
   
   pe->GetLogger()->Info("Giving the patient Cardiac Arrest.");

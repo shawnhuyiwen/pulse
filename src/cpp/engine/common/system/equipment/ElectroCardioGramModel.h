@@ -41,9 +41,11 @@ namespace pulse
     void ComputeExposedModelParameters() override;
 
     // Serializable member variables (Set in Initialize and in schema)
-    double m_heartRhythmTime_s;
-    double m_heartRhythmPeriod_s;
-    SEElectroCardioGramWaveformInterpolator* m_interpolator;
+    double m_AmplitudeModifier;
+    double m_HeartRhythmTime_s;
+    double m_HeartRhythmPeriod_s;
+    eHeartRhythm  m_LastRhythm=eHeartRhythm::NormalSinus;
+    SEElectroCardioGramWaveformInterpolator* m_Interpolator;
 
     // Stateless member variable (Set in SetUp())
   };

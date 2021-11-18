@@ -87,7 +87,7 @@ void PBElectroCardioGram::Load(const CDM_BIND::ElectroCardioGramWaveformData& sr
 }
 void PBElectroCardioGram::Serialize(const CDM_BIND::ElectroCardioGramWaveformData& src, SEElectroCardioGramWaveform& dst)
 {
-  dst.m_Rhythm = (eHeartRhythm)src.rhythm();
+  dst.m_Type = (eElectroCardioGram_WaveformType)src.type();
   dst.m_LeadNumber = (eElectroCardioGram_WaveformLead)src.lead();
   if (src.has_timestep())
     PBProperty::Load(src.timestep(), dst.GetTimeStep());
@@ -104,7 +104,7 @@ CDM_BIND::ElectroCardioGramWaveformData* PBElectroCardioGram::Unload(const SEEle
 }
 void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveform& src, CDM_BIND::ElectroCardioGramWaveformData& dst)
 {
-  dst.set_rhythm((CDM_BIND::eHeartRhythm)src.m_Rhythm);
+  dst.set_type((CDM_BIND::ElectroCardioGramWaveformData::eWaveformType)src.m_Type);
   dst.set_lead((CDM_BIND::ElectroCardioGramWaveformData::eWaveformLead)src.m_LeadNumber);
   if (src.HasData())
   {
@@ -127,7 +127,7 @@ void PBElectroCardioGram::Serialize(const CDM_BIND::ElectroCardioGramWaveformLis
   {
     SEElectroCardioGramWaveform* waveform = new SEElectroCardioGramWaveform(dst.GetLogger());
     PBElectroCardioGram::Load(src.waveform()[i], *waveform);
-    dst.m_Waveforms[waveform->GetLeadNumber()][waveform->GetRhythm()] = waveform;
+    dst.m_Waveforms[waveform->GetLeadNumber()][waveform->GetType()] = waveform;
   }
 }
 CDM_BIND::ElectroCardioGramWaveformListData* PBElectroCardioGram::Unload(const SEElectroCardioGramWaveformInterpolator& src)

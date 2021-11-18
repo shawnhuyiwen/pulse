@@ -20,13 +20,13 @@ namespace pulse
   ElectroCardioGramModel::ElectroCardioGramModel(Data& data) : ElectroCardioGramSystem(data.GetLogger()), Model(data)
   {
     Clear();
-    m_interpolator = new SEElectroCardioGramWaveformInterpolator(data.GetLogger());
+    m_Interpolator = new SEElectroCardioGramWaveformInterpolator(data.GetLogger());
   }
 
   ElectroCardioGramModel::~ElectroCardioGramModel()
   {
     Clear();
-    delete m_interpolator;
+    delete m_Interpolator;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -52,9 +52,11 @@ namespace pulse
   {
     Model::Initialize();
 
-    m_heartRhythmTime_s = 0;
-    m_heartRhythmPeriod_s = 0;
-    m_interpolator->Copy(*m_data.GetConfiguration().GetECGInterpolator());
+    m_HeartRhythmTime_s = 0;
+    m_HeartRhythmPeriod_s = 0;
+    m_AmplitudeModifier = 1.0;
+    m_LastRhythm = eHeartRhythm::NormalSinus;
+    m_Interpolator->Copy(*m_data.GetConfiguration().GetECGInterpolator());
     // You can uncomment this code to compare the original waveform to the interpolated waveform and make sure you are capturing the data properly
   /* Code to write out the ECG data in a format easy to view in plotting tools
     std::vector<double> original_s = m_interpolator.GetWaveform(3, CDM::enumHeartRhythm::NormalSinus).GetData().GetTime();
@@ -64,7 +66,7 @@ namespace pulse
       Original.Track("Original_ECG",original_s[i], original_mV[i]);
     Original.WriteTrackToFile("OriginalECG.csv");
   */
-    m_interpolator->Interpolate(m_data.GetTimeStep());
+    m_Interpolator->Interpolate(m_data.GetTimeStep());
     /* Code to write out the Interpolated ECG data in a format easy to view in plotting tools
       std::vector<double> interpolated_s = m_interpolator.GetWaveform(3, CDM::enumHeartRhythm::NormalSinus).GetData().GetTime();
       std::vector<double> interpolated_mV = m_interpolator.GetWaveform(3, CDM::enumHeartRhythm::NormalSinus).GetData().GetElectricPotential();
@@ -73,7 +75,7 @@ namespace pulse
         Interpolated.Track("Interpolated_ECG", interpolated_s[i], interpolated_mV[i]);
       Interpolated.WriteTrackToFile("InterpolatedECG.csv");
     */
-    m_interpolator->SetLeadElectricPotential(eElectroCardioGram_WaveformLead::Lead3, GetLead3ElectricPotential());
+    m_Interpolator->SetLeadElectricPotential(eElectroCardioGram_WaveformLead::Lead3, GetLead3ElectricPotential());
   }
 
   void ElectroCardioGramModel::SetUp()
@@ -110,29 +112,64 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void ElectroCardioGramModel::Process(bool /*solve_and_transport*/)
   {
-    m_heartRhythmTime_s += m_data.GetTimeStep_s();
-    if (m_heartRhythmTime_s >= m_heartRhythmPeriod_s)
+    m_HeartRhythmTime_s += m_data.GetTimeStep_s();
+    if (m_HeartRhythmTime_s >= m_HeartRhythmPeriod_s ||
+        m_data.GetCardiovascular().GetHeartRhythm() != m_LastRhythm)// ||
+        //m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
-      m_heartRhythmTime_s = 0;
-      m_heartRhythmPeriod_s = 0;
-      // Currently we  have one data set for all currently supported Heart Rhythms
-      // Eventually we will support multiple rhythmic data
-      if (m_data.GetCardiovascular().GetHeartRhythm() == eHeartRhythm::NormalSinus)
+      m_HeartRhythmTime_s = 0;
+      m_HeartRhythmPeriod_s = 0;
+      m_LastRhythm = m_data.GetCardiovascular().GetHeartRhythm();
+
+      switch (m_LastRhythm)
       {
-        m_interpolator->StartNewCycle(eHeartRhythm::NormalSinus);
-        m_heartRhythmPeriod_s = 1 / m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
+      case eHeartRhythm::NormalSinus:
+      case eHeartRhythm::SinusBradycardia:
+      case eHeartRhythm::SinusTachycardia:
+      case eHeartRhythm::PulselessElectricalActivity:
+      {
+        m_AmplitudeModifier = 1.0;
+       if(m_LastRhythm == eHeartRhythm::PulselessElectricalActivity)
+         m_AmplitudeModifier = 0.75;
+        m_Interpolator->StartNewCycle(eElectroCardioGram_WaveformType::Sinus);
+        m_HeartRhythmPeriod_s = 1 / m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
+        break;
       }
-      else if (m_data.GetCardiovascular().GetHeartRhythm() == eHeartRhythm::Asystole)
+      case eHeartRhythm::Asystole:
       {
         // Nothing to do here but be zero
+        //m_heartRhythmPeriod_s = m_heartRhythmTime_s;
+        break;
       }
-      else
+      case eHeartRhythm::CourseVentricularFibrillation:
+      case eHeartRhythm::FineVentricularFibrillation:
       {
-        m_ss << eHeartRhythm_Name(m_data.GetCardiovascular().GetHeartRhythm()) << " is not a supported Heart Rhythm for ECG";
-        Error(m_ss);
+        m_AmplitudeModifier = 1.0;
+        if (m_LastRhythm == eHeartRhythm::FineVentricularFibrillation)
+          m_AmplitudeModifier = 0.5;
+        m_Interpolator->StartNewCycle(eElectroCardioGram_WaveformType::VentricularFibrillation);
+        m_HeartRhythmPeriod_s = m_Interpolator->GetCycleLength(eElectroCardioGram_WaveformType::VentricularFibrillation,TimeUnit::s);
+        break;
+      }
+      case eHeartRhythm::PulselessVentricularTachycardia:
+      case eHeartRhythm::StableVentricularTachycardia:
+      case eHeartRhythm::UnstableVentricularTachycardia:
+      {
+        m_AmplitudeModifier = 1.0;
+        if (m_LastRhythm == eHeartRhythm::PulselessVentricularTachycardia)
+          m_AmplitudeModifier = 0.5;
+        m_Interpolator->StartNewCycle(eElectroCardioGram_WaveformType::VentricularTachycardia);
+        m_HeartRhythmPeriod_s = 1 / m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
+        break;
+      }
+      default:
+      {
+        Error(eHeartRhythm_Name(m_LastRhythm) + " is not a supported Heart Rhythm for ECG");
+      }
       }
     }
-    m_interpolator->CalculateWaveformsElectricPotential();
+
+    m_Interpolator->CalculateWaveformsElectricPotential(m_AmplitudeModifier);
     ComputeExposedModelParameters();
   }
 

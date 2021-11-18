@@ -10,11 +10,11 @@ public class SEArrhythmia extends SEPatientAction
 {
   private static final long serialVersionUID = 875699095552953525L;
   
-  protected eHeartRhythm type;
+  protected eHeartRhythm rhythm;
   
   public SEArrhythmia()
   {
-    type = eHeartRhythm.NormalSinus;
+    rhythm = eHeartRhythm.NormalSinus;
   }
   
   public void copy(SEArrhythmia other)
@@ -22,14 +22,14 @@ public class SEArrhythmia extends SEPatientAction
     if(this==other)
       return;
     super.copy(other);
-    type = other.type;
+    rhythm = other.rhythm;
   }
   
   @Override
   public void clear()
   {
     super.clear();
-    type = eHeartRhythm.NormalSinus;
+    rhythm = eHeartRhythm.NormalSinus;
   }
   
   @Override
@@ -41,8 +41,8 @@ public class SEArrhythmia extends SEPatientAction
   public static void load(ArrhythmiaData src, SEArrhythmia dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
-    if(src.getType()!=eHeartRhythm.UNRECOGNIZED)
-    	dst.type = src.getType();
+    if(src.getRhythm()!=eHeartRhythm.UNRECOGNIZED)
+    	dst.rhythm = src.getRhythm();
   }
   
   public static ArrhythmiaData unload(SEArrhythmia src)
@@ -55,22 +55,22 @@ public class SEArrhythmia extends SEPatientAction
   protected static void unload(SEArrhythmia src, ArrhythmiaData.Builder dst)
   {
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
-    dst.setType(src.type);
+    dst.setRhythm(src.rhythm);
   }
   
-  public eHeartRhythm getType()
+  public eHeartRhythm getRhythm()
   {
-    return type;
+    return rhythm;
   }
-  public void setType(eHeartRhythm t)
+  public void setRhythm(eHeartRhythm t)
   {
-  	this.type = t;
+  	this.rhythm = t;
   }
   
   @Override
   public String toString()
   {
     return "Arrhythmia : "
-        + "\n\tType: " + getType();
+        + "\n\tRhythm: " + getRhythm();
   }
 }

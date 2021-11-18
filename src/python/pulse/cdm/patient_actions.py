@@ -138,23 +138,23 @@ class eHeartRhythm(Enum):
     UnstableVentricularTachycardia = 9
 
 class SEArrhythmia(SEPatientAction):
-    __slots__ = ["_type"]
+    __slots__ = ["_rhythm"]
 
     def __init__(self):
         super().__init__()
-        self._type = eHeartRhythm.NormalSinus
+        self._rhythm = eHeartRhythm.NormalSinus
     def clear(self):
         super().clear()
-        self._type = eHeartRhythm.NormalSinus
+        self._rhythm = eHeartRhythm.NormalSinus
     def is_valid(self):
         return True
-    def set_type(self, state: eHeartRhythm):
-        self._type = state
-    def get_type(self):
-        return self._type
+    def set_rhythm(self, state: eHeartRhythm):
+        self._rhythm = state
+    def get_rhythm(self):
+        return self._rhythm
     def __repr__(self):
         return ("Arrythmia\n"
-         "  Type: {}").format(self._type)
+         "  Rhythm: {}").format(self._rhythm)
 
 class SEAsthmaAttack(SEPatientAction):
     __slots__ = ["_severity"]

@@ -66,6 +66,9 @@ namespace pulse
     dst.m_RightHeartElastanceMax_mmHg_Per_mL = src.rightheartelastancemax_mmhg_per_ml();
     dst.m_RightHeartElastanceMin_mmHg_Per_mL = src.rightheartelastancemin_mmhg_per_ml();
 
+    dst.m_ArrhythmiaHeartElastanceModifier = src.arrhythmiaheartelastancemodifier();
+    dst.m_StabilizedHeartRateBaseline_Per_min = src.stabilizedheartratebaseline_per_min();
+
     dst.m_CompressionTime_s = src.compressiontime_s();
     dst.m_CompressionRatio = src.compressionratio();
     dst.m_CompressionPeriod_s = src.compressionperiod_s();
@@ -113,6 +116,9 @@ namespace pulse
     dst.set_rightheartelastance_mmhg_per_ml(src.m_RightHeartElastance_mmHg_Per_mL);
     dst.set_rightheartelastancemax_mmhg_per_ml(src.m_RightHeartElastanceMax_mmHg_Per_mL);
     dst.set_rightheartelastancemin_mmhg_per_ml(src.m_RightHeartElastanceMin_mmHg_Per_mL);
+
+    dst.set_arrhythmiaheartelastancemodifier(src.m_ArrhythmiaHeartElastanceModifier);
+    dst.set_stabilizedheartratebaseline_per_min(src.m_StabilizedHeartRateBaseline_Per_min);
 
     dst.set_compressiontime_s(src.m_CompressionTime_s);
     dst.set_compressionratio(src.m_CompressionRatio);

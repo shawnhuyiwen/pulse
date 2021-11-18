@@ -19,17 +19,17 @@ namespace Pulse.CDM
 
    public class SEArrhythmia : SEPatientAction
   {
-    protected eHeartRhythm type;
+    protected eHeartRhythm rhythm;
 
     public SEArrhythmia()
     {
-      type = eHeartRhythm.NormalSinus;
+      rhythm = eHeartRhythm.NormalSinus;
     }
 
     public override void Clear()
     {
       base.Clear();
-      type = eHeartRhythm.NormalSinus;
+      rhythm = eHeartRhythm.NormalSinus;
     }
 
     public override bool IsValid()
@@ -37,13 +37,13 @@ namespace Pulse.CDM
       return true;
     }
 
-    public eHeartRhythm GetType()
+    public eHeartRhythm GetRhythm()
     {
-      return type;
+      return rhythm;
     }
-    public void SetType(eHeartRhythm r)
+    public void SetRhythm(eHeartRhythm r)
     {
-      type = r;
+      rhythm = r;
     }
   }
 }

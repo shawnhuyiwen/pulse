@@ -90,7 +90,7 @@ message AirwayObstructionData
 message ArrhythmiaData
 {
   PatientActionData                         PatientAction                   = 1;
-  eHeartRhythm                              Type                            = 2;/**<<@brief @ref eHeartRhythmTable */
+  eHeartRhythm                              Rhythm                          = 2;/**<<@brief @ref eHeartRhythmTable */
 }
 
 /** @brief A common inflammatory disease of the airways where air flow into the lungs is partially obstructed. 

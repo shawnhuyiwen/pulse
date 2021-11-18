@@ -107,6 +107,9 @@ namespace pulse
     double m_RightHeartElastance_mmHg_Per_mL;
     double m_RightHeartElastanceMax_mmHg_Per_mL;
     double m_RightHeartElastanceMin_mmHg_Per_mL;
+    // Arrhythmia
+    double m_ArrhythmiaHeartElastanceModifier; //need to apply a modifier for to the elastance for some arrhythmias
+    double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmia's
     //CPR
     double m_CompressionTime_s;
     double m_CompressionRatio;
@@ -124,8 +127,6 @@ namespace pulse
     double m_CardiacCycleRightHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
     double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
-    double m_Patient_Stabilized_HeartRate_Baseline_Per_min; //save patient stabilized heart rate
-    double m_arrhythmia_heart_elastance_modifier; //need to apply a modifier for to the elastance for some arrhythmias
     SERunningAverage* m_CardiacCycleArterialPressure_mmHg;
     SERunningAverage* m_CardiacCycleArterialCO2PartialPressure_mmHg;
     SERunningAverage* m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg;

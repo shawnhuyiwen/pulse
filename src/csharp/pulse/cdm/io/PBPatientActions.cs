@@ -468,7 +468,7 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.ArrhythmiaData src, SEArrhythmia dst)
     {
       Serialize(src.PatientAction, dst);
-      dst.SetType((eHeartRhythm)(int)src.Type);
+      dst.SetRhythm((eHeartRhythm)(int)src.Rhythm);
     }
     public static pulse.cdm.bind.ArrhythmiaData Unload(SEArrhythmia src)
     {
@@ -480,7 +480,7 @@ namespace Pulse.CDM
     {
       dst.PatientAction = new pulse.cdm.bind.PatientActionData();
       Serialize(src, dst.PatientAction);
-      dst.Type = (pulse.cdm.bind.eHeartRhythm)(int)src.GetType();
+      dst.Rhythm = (pulse.cdm.bind.eHeartRhythm)(int)src.GetRhythm();
     }
     #endregion
 

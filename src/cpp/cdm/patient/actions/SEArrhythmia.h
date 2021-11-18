@@ -20,13 +20,13 @@ public:
   virtual bool IsActive() const;
   virtual void Deactivate();
 
-  virtual eHeartRhythm GetType() const;
-  virtual void SetType(eHeartRhythm t);
+  virtual eHeartRhythm GetRhythm() const;
+  virtual void SetRhythm(eHeartRhythm t);
 
   virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
-  eHeartRhythm           m_Type;
+  eHeartRhythm           m_Rhythm;
 };

@@ -34,9 +34,11 @@ message BagValveMaskData
 message ElectroCardioGramData
 {
   pulse.cdm.bind.ElectroCardioGramData             Common                         = 1;
-  double                                           HeartRythmTime_s               = 2;
-  double                                           HeartRythmPeriod_s             = 3;
-  pulse.cdm.bind.ElectroCardioGramWaveformListData Waveforms                      = 4;
+  double                                           AmplitudeModifier              = 2;
+  double                                           HeartRythmTime_s               = 3;
+  double                                           HeartRythmPeriod_s             = 4;
+  pulse.cdm.bind.eHeartRhythm                      LastRhythm                     = 5;
+  pulse.cdm.bind.ElectroCardioGramWaveformListData Waveforms                      = 6;
 }
 
 
@@ -61,7 +63,7 @@ message MechanicalVentilatorData
   pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O               = 12;
   double                                           PreviousDriverFlow_L_Per_s             = 13;
   double                                           PreviousConnectionPressure_cmH2O       = 14;
-  double                                           PreviousDriverPressure_cmH2O           = 15;  
+  double                                           PreviousDriverPressure_cmH2O           = 15;
   double                                           PreviousYPieceToConnectionFlow_L_Per_s = 16;
   
 }

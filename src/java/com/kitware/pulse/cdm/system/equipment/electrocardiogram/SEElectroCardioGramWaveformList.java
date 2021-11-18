@@ -10,13 +10,13 @@ import com.google.protobuf.util.JsonFormat;
 
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData;
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformLead;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformType;
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformListData;
-import com.kitware.pulse.cdm.bind.Physiology.eHeartRhythm;
 import com.kitware.pulse.utilities.FileUtils;
 
 public class SEElectroCardioGramWaveformList
 {
-  Map<eWaveformLead,Map<eHeartRhythm,SEElectroCardioGramWaveform>> waveforms = new HashMap<>();
+  Map<eWaveformLead,Map<eWaveformType,SEElectroCardioGramWaveform>> waveforms = new HashMap<>();
  
   public SEElectroCardioGramWaveformList()
   {
@@ -46,13 +46,13 @@ public class SEElectroCardioGramWaveformList
     {
       SEElectroCardioGramWaveform w = new SEElectroCardioGramWaveform();
       SEElectroCardioGramWaveform.load(wData,w);
-      Map<eHeartRhythm, SEElectroCardioGramWaveform> leads = dst.waveforms.get(w.getLead());
+      Map<eWaveformType, SEElectroCardioGramWaveform> leads = dst.waveforms.get(w.getLead());
       if(leads == null)
       {
         leads = new HashMap<>();
         dst.waveforms.put(w.getLead(), leads);
       }
-      leads.put(w.getRhythm(), w);
+      leads.put(w.getType(), w);
     }
   }
   public static ElectroCardioGramWaveformListData unload(SEElectroCardioGramWaveformList src)
@@ -63,28 +63,28 @@ public class SEElectroCardioGramWaveformList
   }
   protected static void unload(SEElectroCardioGramWaveformList src, ElectroCardioGramWaveformListData.Builder dst)
   {
-    for(Map<eHeartRhythm, SEElectroCardioGramWaveform> leads : src.waveforms.values())
+    for(Map<eWaveformType, SEElectroCardioGramWaveform> leads : src.waveforms.values())
     {     
       for(SEElectroCardioGramWaveform w : leads.values())
         dst.addWaveform(SEElectroCardioGramWaveform.unload(w));
     }
   }
   
-  public SEElectroCardioGramWaveform getWaveform(eWaveformLead lead, eHeartRhythm rhythm)
+  public SEElectroCardioGramWaveform getWaveform(eWaveformLead lead, eWaveformType type)
   {
-    Map<eHeartRhythm, SEElectroCardioGramWaveform> leads = this.waveforms.get(lead);
+    Map<eWaveformType, SEElectroCardioGramWaveform> leads = this.waveforms.get(lead);
     if(leads == null)
     {
       leads = new HashMap<>();
       this.waveforms.put(lead, leads);
     }
-    if(!leads.containsKey(rhythm))
+    if(!leads.containsKey(type))
     {
     	SEElectroCardioGramWaveform waveform = new SEElectroCardioGramWaveform();
     	waveform.setLead(lead);
-    	waveform.setRhythm(rhythm);
-      leads.put(rhythm, waveform);
+    	waveform.setType(type);
+      leads.put(type, waveform);
     }
-    return leads.get(rhythm);
+    return leads.get(type);
   }
 }

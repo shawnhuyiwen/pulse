@@ -8,18 +8,18 @@
 
 SEArrhythmia::SEArrhythmia(Logger* logger) : SEPatientAction(logger)
 {
-  m_Type = eHeartRhythm::NormalSinus;
+  m_Rhythm = eHeartRhythm::NormalSinus;
 }
 
 SEArrhythmia::~SEArrhythmia()
 {
-  m_Type = eHeartRhythm::NormalSinus;
+  m_Rhythm = eHeartRhythm::NormalSinus;
 }
 
 void SEArrhythmia::Clear()
 {
   SEPatientAction::Clear();
-  m_Type = eHeartRhythm::NormalSinus;
+  m_Rhythm = eHeartRhythm::NormalSinus;
 }
 
 void SEArrhythmia::Copy(const SEArrhythmia& src, bool /*preserveState*/)
@@ -51,13 +51,13 @@ const SEScalar* SEArrhythmia::GetScalar(const std::string&)
   return nullptr;
 }
 
-eHeartRhythm SEArrhythmia::GetType() const
+eHeartRhythm SEArrhythmia::GetRhythm() const
 {
-  return m_Type;
+  return m_Rhythm;
 }
-void SEArrhythmia::SetType(eHeartRhythm Type)
+void SEArrhythmia::SetRhythm(eHeartRhythm r)
 {
-  m_Type = Type;
+  m_Rhythm = r;
 }
 
 void SEArrhythmia::ToString(std::ostream &str) const
@@ -65,6 +65,6 @@ void SEArrhythmia::ToString(std::ostream &str) const
   str << "Patient Action : Arrhythmia";
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tType: "<< eHeartRhythm_Name(GetType());
+  str << "\n\tRhythm: "<< eHeartRhythm_Name(GetRhythm());
   str << std::flush;
 }

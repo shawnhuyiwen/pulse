@@ -640,7 +640,7 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Type": "Asystole"
+        "Rhythm": "Asystole"
       }
     }
   }, {
@@ -655,7 +655,7 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Type": "NormalSinus"
+        "Rhythm": "NormalSinus"
       }
     }
   }, {

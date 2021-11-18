@@ -5,7 +5,6 @@ option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Properties.proto";
-import "pulse/cdm/bind/Physiology.proto";
 
 /** @brief Generic ECG machine to assess the heart rhythm. */
 message ElectroCardioGramData
@@ -26,6 +25,14 @@ message ElectroCardioGramData
 
 message ElectroCardioGramWaveformData
 {
+  /** @brief A type can be used for 1 or more eHeartRhythms */
+  enum eWaveformType
+  {
+    Sinus                                                        = 0;
+    VentricularFibrillation                                      = 1;
+    VentricularTachycardia                                       = 2;
+  }
+
   enum eWaveformLead
   {
     NullLead                                                     = 0;
@@ -44,7 +51,7 @@ message ElectroCardioGramWaveformData
   }
   
   eWaveformLead                          Lead                    = 1;/**<< @brief Lead number of the waveform provided. */
-  eHeartRhythm                           Rhythm                  = 2;/**<< @brief Rhythm type of the waveform provided. */
+  eWaveformType                          Type                    = 2;/**<< @brief Waveform type for an associated rhythm. */
   FunctionElectricPotentialVsTimeData    Data                    = 3;/**<< @brief Dataset of a full heart cycle. */
   ScalarTimeData                         TimeStep                = 4;/**<< @brief Time step of the data provided. */
   repeated int32                         ActiveIndicies          = 5;/**<< @brief Active indicies of the WaveForm Data used to interpolate the current electric potential. */
