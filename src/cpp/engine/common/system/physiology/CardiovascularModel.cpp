@@ -1622,7 +1622,7 @@ namespace pulse
           // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
           m_CardiacArrest = true;
           m_ArrhythmiaHeartElastanceModifier = 1.0;
-          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(0, FrequencyUnit::Per_min);
+          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
           break;
       }
       case eHeartRhythm::NormalSinus:
