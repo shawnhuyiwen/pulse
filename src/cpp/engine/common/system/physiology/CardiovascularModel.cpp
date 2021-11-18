@@ -1038,7 +1038,7 @@ namespace pulse
         if (h->GetType() == eHemorrhage_Type::Internal)
         {
           SELiquidCompartment* abdomenCompartment = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Abdomen);
-          if (!abdomenCompartment->HasChild(trk->Compartment->GetName()))
+          if (!abdomenCompartment->HasChild(*trk->Compartment))
           {
             /// \error Error: Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.
             Error("Internal Hemorrhage is only supported for the abdominal region, including the right and left kidneys, liver, spleen, splanchnic, and small and large intestine vascular compartments.");

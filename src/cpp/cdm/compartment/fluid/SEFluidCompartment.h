@@ -62,7 +62,7 @@ public:
   virtual void RemoveLinks();
   virtual const std::vector<LinkType*>& GetLinks();
 
-  virtual bool HasChild(const std::string& name);
+  virtual bool HasChild(const SEFluidCompartment& cmpt);
 
 protected:
   virtual void RemoveSubstanceQuantity(const SESubstance& substance);

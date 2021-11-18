@@ -318,15 +318,18 @@ const std::vector<SEElectricalCompartmentLink*>& SEElectricalCompartment::GetLin
   return m_Links;
 }
 
-bool SEElectricalCompartment::HasChild(const std::string& name)
+bool SEElectricalCompartment::HasChild(const SEElectricalCompartment& cmpt)
 {
-  for (SEElectricalCompartment* cmpt : m_Children)
+  for (SEElectricalCompartment* child : m_Children)
   {
-    if (name == cmpt->GetName())
+    if (&cmpt == child)
+      return true;
+    if (child->HasChild(cmpt))
       return true;
   }
   return false;
 }
+
 void SEElectricalCompartment::AddChild(SEElectricalCompartment& child)
 {
   if (HasNodeMapping())
@@ -334,7 +337,7 @@ void SEElectricalCompartment::AddChild(SEElectricalCompartment& child)
     Fatal("You cannont add a child compartment to a compartment mapped to nodes");
     return;
   }
-  if (HasChild(child.GetName()))
+  if (HasChild(child))
     return;
   m_Children.push_back(&child);
 }

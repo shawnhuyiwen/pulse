@@ -318,15 +318,18 @@ const std::vector<SEThermalCompartmentLink*>& SEThermalCompartment::GetLinks()
   return m_Links;
 }
 
-bool SEThermalCompartment::HasChild(const std::string& name)
+bool SEThermalCompartment::HasChild(const SEThermalCompartment& cmpt)
 {
-  for (SEThermalCompartment* cmpt : m_Children)
+  for (SEThermalCompartment* child : m_Children)
   {
-    if (name == cmpt->GetName())
+    if (&cmpt == child)
+      return true;
+    if (child->HasChild(cmpt))
       return true;
   }
   return false;
 }
+
 void SEThermalCompartment::AddChild(SEThermalCompartment& child)
 {
   if (HasNodeMapping())
@@ -334,7 +337,7 @@ void SEThermalCompartment::AddChild(SEThermalCompartment& child)
     Fatal("You cannont add a child compartment to a compartment mapped to nodes");
     return;
   }
-  if (HasChild(child.GetName()))
+  if (HasChild(child))
     return;
   m_Children.push_back(&child);
 }
