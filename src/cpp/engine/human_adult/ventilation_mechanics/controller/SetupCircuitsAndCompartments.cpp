@@ -51,6 +51,16 @@ namespace pulse { namespace human_adult_ventilation_mechanics
     SetupRespiratory();
     SetupMechanicalVentilator();
 
+    // We only want modifiers associated with respiratory and the ventilator
+    auto itr = m_Config->GetModifiers().begin();
+    while (itr != m_Config->GetModifiers().end())
+    {
+      if (!m_Circuits->GetRespiratoryAndMechanicalVentilatorCircuit().HasPath(itr->first))
+        m_Config->GetModifiers().erase(itr++);
+      else
+        ++itr;
+    }
+
     m_Compartments->StateChange();
     return true;
   }

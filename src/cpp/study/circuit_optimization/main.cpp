@@ -19,9 +19,6 @@ int main(int argc, char* argv[])
     log.LogToConsole(true);
     std::string filename = "./optimizer/HemodynamicsTargets.json";
 
-    // TODO import targets for the particular circuit we are optimizing
-    // Currently CircuitOptimizer only runs the CV circuit, so only those targets should be used
-
     SEDataRequestManager drMgr(&log);
     if (!drMgr.SerializeFromFile(filename))
     {

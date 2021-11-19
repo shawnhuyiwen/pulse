@@ -48,12 +48,6 @@ namespace pulse::study::circuit_optimization
 
   bool CircuitOptimizer::ConvergeToHemodynamicsTargets(size_t maxLoops, std::vector<SEValidationTarget*>& targets)
   {
-    // TODO
-    // Depending on what circuit we are trying to optimize
-    // We should remove modifiers unrelated to the circuit we are optimizing
-    // Currently GenerateData only runs the CV circuit, so only those modifiers should be used
-    // Currently we only have CV modifiers in the config
-
     // Start with the default modifiers
     PulseConfiguration cfg(GetLogger());
     // Which modifier set do we want to start with?

@@ -36,6 +36,16 @@ namespace pulse { namespace human_adult_hemodynamics
     if (m_Config->IsCerebrospinalFluidEnabled())
       SetupCerebrospinalFluid();
 
+    // We only want modifiers associated with cv circuit
+    auto itr = m_Config->GetModifiers().begin();
+    while (itr != m_Config->GetModifiers().end())
+    {
+      if (m_Circuits->GetActiveCardiovascularCircuit().HasPath(itr->first))
+        ++itr;
+      else
+        m_Config->GetModifiers().erase(itr++);
+    }
+
     m_Compartments->StateChange();
     return true;
   }
