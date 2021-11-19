@@ -298,11 +298,24 @@ void SEElectricalCompartment::AddLink(SEElectricalCompartmentLink& link)
   if (!Contains(m_Links, link))
   {
     m_Links.push_back(&link);
-    // Is it incoming or out going?
-    if (this == &link.GetSourceCompartment())
-      m_OutgoingLinks.push_back(&link);
-    else if(this == &link.GetTargetCompartment())
-      m_IncomingLinks.push_back(&link);
+    if (HasChildren())
+    {
+      SEElectricalCompartment& src = link.GetSourceCompartment();
+      SEElectricalCompartment& tgt = link.GetTargetCompartment();
+
+      if (this != &src && !HasChild(src))
+        m_IncomingLinks.push_back(&link);
+      else if (this != &tgt && !HasChild(tgt))
+        m_OutgoingLinks.push_back(&link);
+    }
+    else
+    {
+      // Is it incoming or out going?
+      if (this == &link.GetSourceCompartment())
+        m_OutgoingLinks.push_back(&link);
+      else if (this == &link.GetTargetCompartment())
+        m_IncomingLinks.push_back(&link);
+    }
   }
 }
 void SEElectricalCompartment::RemoveLink(SEElectricalCompartmentLink& link)
