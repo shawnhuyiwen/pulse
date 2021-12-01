@@ -88,12 +88,6 @@ int main(int argc, char* argv[])
       //Aerosol Tests
 
       //Black Box Tests
-      //cdmTest.BasicBlackBoxComparisonTest(peDir);
-      //cdmTest.BasicBlackBoxTest(peDir);
-      //cdmTest.SimpleBlackBoxTest(peDir);
-      //cdmTest.WindkesselBlackBoxTest(peDir);
-      //cdmTest.BlackBoxComplianceTest(peDir);
-      cdmTest.BlackBoxSourcesTest(peDir);
       //peTest.EmptyBlackBoxTest(peDir);
       //peTest.ImposeFlowBlackBoxTest(peDir);
       //peTest.ImposePressureAndFlowBlackBoxTest(peDir);
@@ -128,10 +122,11 @@ int main(int argc, char* argv[])
       //cdmTest.GasTransportTest(cdmDir);
       
       // BlackBox Tests
-      //cdmTest.BasicBlackBoxComparisonTest(cdmDir);
-      //cdmTest.BasicBlackBoxTest(cdmDir);
-      //cdmTest.SimpleBlackBoxTest(cdmDir);
-      //cdmTest.WindkesselBlackBoxTest(cdmDir);
+      //cdmTest.BasicBlackBoxComparisonTest(peDir);
+      //cdmTest.BasicBlackBoxTest(peDir);
+      //cdmTest.WindkesselBlackBoxTest(peDir);
+      //cdmTest.BlackBoxComplianceTest(peDir);
+      //cdmTest.BlackBoxSourcesTest(peDir);
 
       // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);

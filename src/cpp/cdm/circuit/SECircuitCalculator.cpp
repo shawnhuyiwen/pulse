@@ -288,36 +288,21 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       //Out of node is positive
       NodeType* sourceNode = n->GetBlackBoxSourceNode();
       NodeType* targetNode = n->GetBlackBoxTargetNode();
-      //jbw - Add these and clean up after we can get the source and target paths from the black box node
-      //PathType* sourcePath = n->GetBlackBoxSourcePath();
-      //PathType* targetPath = n->GetBlackBoxTargetPath();
+      PathType* sourcePath = n->GetBlackBoxSourcePath();
+      PathType* targetPath = n->GetBlackBoxTargetPath();
 
       if (sourceNode->IsPotentialImposed())
       {
         if (sourceNode->IsReferenceNode())
         {
-          //Set the reference pressure
-          sourceNode->GetPotential().Set(sourceNode->GetNextPotential());
-
-          //Set flux equal to other side of black box
-          if (false)//(sourcePath->IsFluxImposed())
-          {
-            //Do nothing because this will be directly set
-          }
-          else if (targetNode->IsPotentialImposed())
-          {
-            _eigen->AMatrix(m_blackBoxPotentialSources[sourceNode], m_blackBoxPotentialSources[sourceNode]) += 1.0;
-            _eigen->AMatrix(m_blackBoxPotentialSources[sourceNode], m_blackBoxPotentialSources[targetNode]) -= 1.0;
-          }
-          else if (false)//(targetPath->IsFluxImposed())
-          {
-            //jbw - Add logic to handle this case after we can get the source and target paths from the black box node
-          }
+          /// \error Fatal: Black boxes cannot set the reference node potential
+          Fatal("Black boxes cannot set the reference node potential", sourceNode->GetName());
         }
         else
         {
           //Potential to be set and flux to be directly solved, like potential sources
-          _eigen->AMatrix(sourceNode->GetCalculatorIndex(), m_blackBoxPotentialSources[sourceNode]) -= 1.0;
+          double sign = (sourceNode == &sourcePath->GetSourceNode()) ? -1 : 1;
+          _eigen->AMatrix(sourceNode->GetCalculatorIndex(), m_blackBoxPotentialSources[sourceNode]) += sign;
           _eigen->AMatrix(m_blackBoxPotentialSources[sourceNode], sourceNode->GetCalculatorIndex()) += 1.0;
           _eigen->bVector(m_blackBoxPotentialSources[sourceNode]) = sourceNode->GetNextPotential().GetValue(m_PotentialUnit);
         }
@@ -327,28 +312,14 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       {
         if (targetNode->IsReferenceNode())
         {
-          //Set the reference pressure
-          targetNode->GetPotential().Set(targetNode->GetNextPotential());
-
-          //Set flux equal to other side of black box
-          if (false)//(targetPath->IsFluxImposed())
-          {
-            //Do nothing because this will be directly set
-          }
-          else if (sourceNode->IsPotentialImposed())
-          {
-            _eigen->AMatrix(m_blackBoxPotentialSources[targetNode], m_blackBoxPotentialSources[targetNode]) += 1.0;
-            _eigen->AMatrix(m_blackBoxPotentialSources[targetNode], m_blackBoxPotentialSources[sourceNode]) -= 1.0;
-          }
-          else if (false)//(sourcePath->IsFluxImposed())
-          {
-            //jbw - Add logic to handle this case after we can get the source and target paths from the black box node
-          }
+          /// \error Fatal: Black boxes cannot set the reference node potential
+          Fatal("Black boxes cannot set the reference node potential", targetNode->GetName());
         }
         else
         {
           //Potential to be set and flux to be directly solved, like potential sources
-          _eigen->AMatrix(targetNode->GetCalculatorIndex(), m_blackBoxPotentialSources[targetNode]) -= 1.0;
+          double sign = (targetNode == &targetPath->GetSourceNode()) ? -1 : 1;
+          _eigen->AMatrix(targetNode->GetCalculatorIndex(), m_blackBoxPotentialSources[targetNode]) += sign;
           _eigen->AMatrix(m_blackBoxPotentialSources[targetNode], targetNode->GetCalculatorIndex()) += 1.0;
           _eigen->bVector(m_blackBoxPotentialSources[targetNode]) = targetNode->GetNextPotential().GetValue(m_PotentialUnit);
         }
@@ -751,14 +722,24 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
     double flux = _eigen->xVector(itr.second);
     NodeType* n = itr.first;
 
-    //jbw - Clean up this unnecesary loop after we can get the source and target paths from the black box node
+    if (n->IsBlackBoxMiddle())
+    {
+      continue;
+    }
+
     for (PathType* p : m_circuit->GetPaths())
     {
-      if (p->IsPartOfBlackBox() && !p->IsFluxImposed() &&
-        (&p->GetSourceNode() == n || &p->GetTargetNode() == n))
+      if (!p->IsPartOfBlackBox() || p->IsFluxImposed())
       {
-        //jbw - Add logic to change sign based on source/target after we can get the source and target paths from the black box node
-        ValueOverride<FluxUnit>(p->GetNextFlux(), flux, m_FluxUnit);
+        continue;
+      }
+
+      NodeType* sourceNode = &p->GetSourceNode();
+      NodeType* targetNode = &p->GetTargetNode();
+
+      if (n == sourceNode || n == targetNode)
+      {
+        ValueOverride<FluxUnit>(p->GetNextFlux(), -flux, m_FluxUnit);
       }
     }
   }

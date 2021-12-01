@@ -412,7 +412,6 @@ public:
 public:
   void BasicBlackBoxComparisonTest(const std::string& sOutputDirectory);
   void BasicBlackBoxTest(const std::string& sOutputDirectory);
-  void SimpleBlackBoxTest(const std::string& sOutputDirectory);
   void WindkesselBlackBoxTest(const std::string& sOutputDirectory);
   void BlackBoxComplianceTest(const std::string& sOutputDirectory);
   void BlackBoxSourcesTest(const std::string& sOutputDirectory);

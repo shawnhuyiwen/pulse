@@ -163,7 +163,7 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
   {
     //Black Box settings ------------------------------------------------------------
     //Imposed = black box forces it on circuit
-    BlackBox2.ImposeSourcePotential(Node4.GetPressure());
+    //BlackBox2.ImposeSourcePotential(Node4.GetPressure()); //Not on a reference node
     BlackBox2.ImposeTargetPotential(Node2.GetPressure());
     BlackBox1.ImposeSourceFlux(BB2Path2.GetFlow());
     BlackBox1.ImposeTargetFlux(BB2Path2.GetFlow());
@@ -193,301 +193,6 @@ void CommonDataModelTest::BasicBlackBoxTest(const std::string& sOutputDirectory)
   trk2.WriteTrackToFile(sOutputFile2.c_str());
   m_Circuits->Clear();
 }
-
-void CommonDataModelTest::SimpleBlackBoxTest(const std::string& sOutputDirectory)
-{
-  TimingProfile p;
-  double timeStep_s = 1.0 / 50.0;
-  DataTrack trkDriver;
-  DataTrack trkPassive;
-  DataTrack trkCombined;
-  std::cout << "SimpleBlackBoxTest\n";
-  m_Logger->SetLogFile(sOutputDirectory + "/SimpleBlackBoxTest.log");
-
-  for (unsigned int iter = 0; iter < (1 << 8); ++iter)
-  {
-    bool isCombined = (iter == 0) ? true : false;
-
-    bool imposeDriverSourcePressure = iter & 0x001;
-    bool imposeDriverTargetPressure = iter & 0x002;
-    bool imposeDriverSourceFlow = iter & 0x004;
-    bool imposeDriverTargetFlow = iter & 0x008;
-
-    bool imposePassiveSourcePressure = iter & 0x010;
-    bool imposePassiveTargetPressure = iter & 0x020;
-    bool imposePassiveSourceFlow = iter & 0x040;
-    bool imposePassiveTargetFlow = iter & 0x080;
-
-    //\\\ToDo I think every possible combination is technically valid now?
-    bool isValid = int(imposeDriverSourcePressure) + int(imposeDriverSourceFlow) == 1 &&
-      int(imposeDriverTargetPressure) + int(imposeDriverTargetFlow) == 1 &&
-      int(imposePassiveSourcePressure) + int(imposePassiveSourceFlow) == 1 &&
-      int(imposePassiveTargetPressure) + int(imposePassiveTargetFlow) == 1;
-
-    //only use valid combinations
-    if (!isCombined && !isValid)
-    {
-      continue;
-    }
-
-    SEBlackBoxManager managerBlackBox(m_Logger);
-    SEFluidCircuitCalculator fluidCalculator(m_Logger);
-
-    SEFluidCircuit* circuitCombined = &m_Circuits->CreateFluidCircuit("circuitCombined");
-    SEFluidCircuit* circuitDriver = &m_Circuits->CreateFluidCircuit("circuitDriver");
-    SEFluidCircuit* circuitPassive = &m_Circuits->CreateFluidCircuit("circuitPassive");
-
-    //Driver
-    //Nodes
-    SEFluidCircuitNode& nodeDriverSource = circuitDriver->CreateNode("nodeDriverSource");
-    SEFluidCircuitNode& nodeDriverConnection = circuitDriver->CreateNode("nodeDriverConnection");
-    SEFluidCircuitNode& nodeDriverResistors = circuitDriver->CreateNode("nodeDriverResistors");
-    SEFluidCircuitNode& nodeDriverGround = circuitDriver->CreateNode("nodeDriverGround");
-    SEFluidCircuitNode& nodeDriverBBSource = circuitDriver->CreateNode("nodeDriverBBSource");
-    SEFluidCircuitNode& nodeDriverBBTarget = circuitDriver->CreateNode("nodeDriverBBTarget");
-
-    nodeDriverGround.SetAsReferenceNode();
-    nodeDriverGround.GetNextPressure().SetValue(0, PressureUnit::Pa);
-
-    //Paths
-    SEFluidCircuitPath& pathDriverSourceToConnection = circuitDriver->CreatePath(nodeDriverSource, nodeDriverConnection, "pathDriverSourceToConnection");
-    pathDriverSourceToConnection.GetNextResistance().SetValue(25, PressureTimePerVolumeUnit::Pa_s_Per_m3);
-    SEFluidCircuitPath& pathDriverConnectionToResistors = circuitDriver->CreatePath(nodeDriverConnection, nodeDriverResistors, "pathDriverConnectionToResistors");
-    pathDriverConnectionToResistors.GetNextResistance().SetValue(25, PressureTimePerVolumeUnit::Pa_s_Per_m3);
-    SEFluidCircuitPath& pathDriverResistorsToGround = circuitDriver->CreatePath(nodeDriverResistors, nodeDriverGround, "pathDriverResistorsToGround");
-    pathDriverResistorsToGround.GetNextResistance().SetValue(25, PressureTimePerVolumeUnit::Pa_s_Per_m3);
-    SEFluidCircuitPath& pathDriverConnectionToBBSource = circuitDriver->CreatePath(nodeDriverConnection, nodeDriverBBSource, "pathDriverConnectionToBBSource");
-    //pathDriverConnectionToBBSource.GetNextResistance().SetValue(5, PressureTimePerVolumeUnit::Pa_s_Per_m3);
-    SEFluidCircuitPath& pathDriverBBTargetToGround = circuitDriver->CreatePath(nodeDriverBBTarget, nodeDriverGround, "pathDriverConnectionToBBSource");
-    //pathDriverBBTargetToGround.GetNextResistance().SetValue(5, PressureTimePerVolumeUnit::Pa_s_Per_m3);
-    //Pressure source
-    SEFluidCircuitPath& pathDriverGroundToSource = circuitDriver->CreatePath(nodeDriverGround, nodeDriverSource, "pathDriverGroundToSource");
-    pathDriverGroundToSource.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
-
-    //Passive
-    //Nodes
-    SEFluidCircuitNode& nodePassiveConnection = circuitPassive->CreateNode("nodePassiveConnection");
-    SEFluidCircuitNode& nodePassiveGround = circuitPassive->CreateNode("nodePassiveGround");
-    SEFluidCircuitNode& nodePassiveBBSource = circuitPassive->CreateNode("nodePassiveBBSource");
-    SEFluidCircuitNode& nodePassiveBBTarget = circuitPassive->CreateNode("nodePassiveBBTarget");
-
-    nodePassiveGround.SetAsReferenceNode();
-    nodePassiveGround.GetNextPressure().SetValue(0, PressureUnit::Pa);
-
-    //Paths
-    SEFluidCircuitPath& pathPassiveConnectionToGround = circuitPassive->CreatePath(nodePassiveConnection, nodePassiveGround, "pathPassiveConnectionToGround");
-    pathPassiveConnectionToGround.GetNextResistance().SetValue(25, PressureTimePerVolumeUnit::Pa_s_Per_m3);
-    SEFluidCircuitPath& pathPassiveGroundToBBSource = circuitPassive->CreatePath(nodePassiveGround, nodePassiveBBSource, "pathPassiveGroundToBBSource");
-    //pathPassiveGroundToBBSource.GetNextResistance().SetValue(5, PressureTimePerVolumeUnit::Pa_s_Per_m3);
-    SEFluidCircuitPath& pathPassiveBBTargetToConnection = circuitPassive->CreatePath(nodePassiveBBTarget, nodePassiveConnection, "pathPassiveBBTargetToConnection");
-    //pathPassiveBBTargetToConnection.GetNextResistance().SetValue(5, PressureTimePerVolumeUnit::Pa_s_Per_m3);
-
-    SEFluidBlackBox* blackBoxDriver = nullptr;
-    SEFluidBlackBox* blackBoxPassive = nullptr;
-    if (!isCombined)
-    {
-      //Replaces Passive
-      SEFluidCircuitNode& nodeBBPassive = circuitDriver->CreateNode("nodeBBPassive");
-      SEFluidCircuitPath& pathBBPassiveSource = circuitDriver->CreatePath(nodeDriverBBSource, nodeBBPassive, "pathBBPassiveSource");
-      SEFluidCircuitPath& pathBBPassiveTarget = circuitDriver->CreatePath(nodeBBPassive, nodeDriverBBTarget, "pathBBPassiveTarget");
-      blackBoxPassive = managerBlackBox.GetLiquidBlackBox("nodeDriverBBSource","nodeDriverBBTarget", "BBPassive");
-      managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxPassive, pathBBPassiveSource, pathBBPassiveTarget);
-
-      //Replaces Driver
-      SEFluidCircuitNode& nodeBBDriver = circuitPassive->CreateNode("nodeBBDriver");
-      SEFluidCircuitPath& pathBBDriverSource = circuitPassive->CreatePath(nodePassiveBBSource, nodeBBDriver, "pathBBDriverSource");
-      SEFluidCircuitPath& pathBBDriverTarget = circuitPassive->CreatePath(nodeBBDriver, nodePassiveBBTarget, "pathBBDriverTarget");
-      blackBoxDriver = managerBlackBox.GetLiquidBlackBox("nodePassiveBBSource", "nodePassiveBBTarget", "BBDriver");
-      managerBlackBox.MapBlackBox<MAP_FLUID_BLACK_BOX>(*blackBoxDriver, pathBBDriverSource, pathBBDriverTarget);
-
-      // Imposed = black box forces it on circuit
-      // Provided = circuit calculates it
-      // Reset everything to provided
-      blackBoxDriver->RemoveImposedPotential();
-      blackBoxDriver->RemoveImposedSourcePotential();
-      blackBoxDriver->RemoveImposedTargetPotential();
-      blackBoxDriver->RemoveImposedSourceFlux();
-      blackBoxDriver->RemoveImposedTargetFlux();
-
-      blackBoxPassive->RemoveImposedPotential();
-      blackBoxPassive->RemoveImposedSourcePotential();
-      blackBoxPassive->RemoveImposedTargetPotential();
-      blackBoxPassive->RemoveImposedSourceFlux();
-      blackBoxPassive->RemoveImposedTargetFlux();
-
-      //Initialize all potential black box inputs
-      nodeDriverBBSource.GetPressure().SetValue(0.0, PressureUnit::Pa);
-      nodeDriverBBTarget.GetPressure().SetValue(0.0, PressureUnit::Pa);
-      nodePassiveBBSource.GetPressure().SetValue(0.0, PressureUnit::Pa);
-      nodePassiveBBTarget.GetPressure().SetValue(0.0, PressureUnit::Pa);
-      pathDriverConnectionToBBSource.GetFlow().SetValue(0.0, VolumePerTimeUnit::m3_Per_s);
-      pathDriverBBTargetToGround.GetFlow().SetValue(0.0, VolumePerTimeUnit::m3_Per_s);
-      pathPassiveGroundToBBSource.GetFlow().SetValue(0.0, VolumePerTimeUnit::m3_Per_s);
-      pathPassiveBBTargetToConnection.GetFlow().SetValue(0.0, VolumePerTimeUnit::m3_Per_s);
-    }
-
-    circuitDriver->StateChange();
-    circuitPassive->StateChange();
-
-    if (isCombined)
-    {
-      //Combined circuit for comparison
-      circuitCombined->AddCircuit(*circuitDriver);
-      circuitCombined->AddCircuit(*circuitPassive);
-      circuitCombined->CreatePath(nodeDriverBBSource, nodePassiveBBTarget, "pathCombinedDriverToPassive");
-      circuitCombined->CreatePath(nodePassiveBBSource, nodeDriverBBTarget, "pathCombinedPassiveToDriver");
-      circuitCombined->StateChange();
-    }
-
-    //Run -----------------------------------------------------------------------------
-    double currentTime_s = 0.0;
-    double sample = 0;
-    bool hasError = false;
-    while (currentTime_s < 100)
-    {
-      double dPotential = 20 + 20 * sin(currentTime_s);
-      pathDriverGroundToSource.GetNextPressureSource().SetValue(dPotential, PressureUnit::Pa);
-
-      if (!isCombined)
-      {
-        if (imposePassiveSourcePressure)
-        {
-          blackBoxPassive->ImposeSourcePotential(nodePassiveBBTarget.GetPressure());
-        }
-        if (imposePassiveTargetPressure)
-        {
-          blackBoxPassive->ImposeTargetPotential(nodePassiveBBSource.GetPressure());
-        }
-        if (imposePassiveSourceFlow)
-        {
-          blackBoxPassive->ImposeSourceFlux(pathPassiveBBTargetToConnection.GetFlow());
-        }
-        if (imposePassiveTargetFlow)
-        {
-          blackBoxPassive->ImposeTargetFlux(pathPassiveGroundToBBSource.GetFlow());
-        }
-
-        if (imposeDriverSourcePressure)
-        {
-          blackBoxDriver->ImposeSourcePotential(nodeDriverBBTarget.GetPressure());
-        }
-        if (imposeDriverTargetPressure)
-        {
-          blackBoxDriver->ImposeTargetPotential(nodeDriverBBSource.GetPressure());
-        }
-        if (imposeDriverSourceFlow)
-        {
-          blackBoxDriver->ImposeSourceFlux(pathDriverBBTargetToGround.GetFlow());
-        }
-        if (imposeDriverTargetFlow)
-        {
-          blackBoxDriver->ImposeTargetFlux(pathDriverConnectionToBBSource.GetFlow());
-        }
-
-        try
-        {
-          fluidCalculator.Process(*circuitDriver, timeStep_s);
-          fluidCalculator.Process(*circuitPassive, timeStep_s);
-        }
-        catch (std::exception ex)
-        {
-          hasError = true;
-          break;
-        }
-
-        fluidCalculator.PostProcess(*circuitDriver);
-        fluidCalculator.PostProcess(*circuitPassive);
-      }
-      else
-      {
-        fluidCalculator.Process(*circuitCombined, timeStep_s);
-        fluidCalculator.PostProcess(*circuitCombined);
-      }
-
-      if (sample > 0.1) //every 0.1 seconds, track state of circuit
-      {
-        sample = 0;
-
-        if (!isCombined)
-        {
-          trkPassive.Track(currentTime_s, *circuitPassive);
-          trkDriver.Track(currentTime_s, *circuitDriver);
-        }
-        else
-        {
-          trkCombined.Track(currentTime_s, *circuitCombined);
-        }
-      }
-
-      sample += timeStep_s;
-      currentTime_s += timeStep_s;
-    }
-
-    std::string outputFile;
-
-    if (imposePassiveSourcePressure)
-    {
-      outputFile += "_imposePassiveSourcePressure";
-    }
-    if (imposePassiveTargetPressure)
-    {
-      outputFile += "_imposePassiveTargetPressure";
-    }
-    if (imposePassiveSourceFlow)
-    {
-      outputFile += "_imposePassiveSourceFlow";
-    }
-    if (imposePassiveTargetFlow)
-    {
-      outputFile += "_imposePassiveTargetFlow";
-    }
-
-    if (imposeDriverSourcePressure)
-    {
-      outputFile += "_imposeDriverSourcePressure";
-    }
-    if (imposeDriverTargetPressure)
-    {
-      outputFile += "_imposeDriverTargetPressure";
-    }
-    if (imposeDriverSourceFlow)
-    {
-      outputFile += "_imposeDriverSourceFlow";
-    }
-    if (imposeDriverTargetFlow)
-    {
-      outputFile += "_imposeDriverTargetFlow";
-    }
-
-    if (hasError)
-    {
-      m_Logger->Info("Failure: " + outputFile);
-      std::stringstream ss;
-      ss << "Time(s): " << currentTime_s;
-      m_Logger->Info(ss);
-      m_Circuits->Clear();
-      continue;
-    }
-
-
-    std::string sOutputFileDriver = sOutputDirectory + "/SimpleBlackBoxDriver" + outputFile + ".csv";
-    std::string sOutputFilePassive = sOutputDirectory + "/SimpleBlackBoxPassive" + outputFile + ".csv";
-    std::string sOutputFileCombined = sOutputDirectory + "/SimpleBlackBoxCombined.csv";
-
-    if (!isCombined)
-    {
-      trkDriver.WriteTrackToFile(sOutputFileDriver.c_str());
-      trkPassive.WriteTrackToFile(sOutputFilePassive.c_str());
-    }
-    else
-    {
-      trkCombined.WriteTrackToFile(sOutputFileCombined.c_str());
-    }
-
-    m_Circuits->Clear();
-  }
-}
-
 
 void CommonDataModelTest::WindkesselBlackBoxTest(const std::string& sOutputDirectory)
 {
@@ -899,26 +604,34 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
       typeName = "_BlackBox";
     }
 
-    for (unsigned int iterFirstSourceType = 0; iterFirstSourceType < 2; iterFirstSourceType++)
+    for (unsigned int iterFirstSourceType = 0; iterFirstSourceType < 3; iterFirstSourceType++)
     {
       if (iterFirstSourceType == 0)
       {
         firstSourceTypeName = "_FlowFirst";
       }
-      else
+      else if (iterFirstSourceType == 1)
       {
         firstSourceTypeName = "_PressureFirst";
       }
+      else
+      {
+        firstSourceTypeName = "_FlowAndPressureFirst";
+      }
 
-      for (unsigned int iterSecondSourceType = 0; iterSecondSourceType < 2; iterSecondSourceType++)
+      for (unsigned int iterSecondSourceType = 0; iterSecondSourceType < 3; iterSecondSourceType++)
       {
         if (iterSecondSourceType == 0)
         {
           secondSourceTypeName = "_FlowSecond";
         }
-        else
+        else if (iterSecondSourceType == 1)
         {
           secondSourceTypeName = "_PressureSecond";
+        }
+        else
+        {
+          secondSourceTypeName = "_FlowAndPressureSecond";
         }
 
         double firstDirectionMultiplier = 0.0;
@@ -949,14 +662,14 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
               secondDirectionMultiplier = -1.0;
             }
 
-            //For testing
+            //For individual testing
             //iterType = 1;
-            //iterFirstSourceType = 0;
-            //iterSecondSourceType = 0;
-            //iterFirstDirection = 1;
-            //firstDirectionMultiplier = -1.0;
-            //iterSecondDirection = 0;
-            //secondDirectionMultiplier = 1.0;
+            //iterFirstSourceType = 1;
+            //iterSecondSourceType = 1;
+            //iterFirstDirection = 0;
+            //firstDirectionMultiplier = 1.0;
+            //iterSecondDirection = 1;
+            //secondDirectionMultiplier = -1.0;
 
             std::string name = "BlackBoxSourcesTest" + typeName + firstSourceTypeName + secondSourceTypeName + firstDirectionName + secondDirectionName;
             std::cout << name << "\n";
@@ -999,6 +712,8 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
 
             SEFluidCircuitPath* Windkessel1SourcePath;
             SEFluidCircuitPath* Windkessel2SourcePath;
+            SEFluidCircuitPath* Windkessel1SourcePath2;
+            SEFluidCircuitPath* Windkessel2SourcePath2;
             SEFluidCircuitPath* BlackBoxSourcePath;
             SEFluidCircuitPath* BlackBoxTargetPath;
             SEFluidBlackBox* BlackBox;
@@ -1010,9 +725,15 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
               {
                 Windkessel1SourcePath->GetNextFlowSource().SetValue(firstDirectionMultiplier * 20.0, VolumePerTimeUnit::m3_Per_s);
               }
-              else
+              else if (iterFirstSourceType == 1)
               {
                 Windkessel1SourcePath->GetNextPressureSource().SetValue(firstDirectionMultiplier * 20.0, PressureUnit::Pa);
+              }
+              else
+              {
+                Windkessel1SourcePath->GetNextFlowSource().SetValue(firstDirectionMultiplier * 20.0, VolumePerTimeUnit::m3_Per_s);
+                Windkessel1SourcePath2 = &fluidCircuit->CreatePath(Ground, Windkessel1Node1, "Windkessel1SourcePath2");
+                Windkessel1SourcePath2->GetNextPressureSource().SetValue(firstDirectionMultiplier * 20.0, PressureUnit::Pa);
               }
 
               Windkessel2SourcePath = &fluidCircuit->CreatePath(Ground, Windkessel2Node1,"Windkessel2SourcePath");
@@ -1020,9 +741,15 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
               {
                 Windkessel2SourcePath->GetNextFlowSource().SetValue(secondDirectionMultiplier * 20.0, VolumePerTimeUnit::m3_Per_s);
               }
-              else
+              else if (iterSecondSourceType == 1)
               {
                 Windkessel2SourcePath->GetNextPressureSource().SetValue(secondDirectionMultiplier * 20.0, PressureUnit::Pa);
+              }
+              else
+              {
+                Windkessel2SourcePath->GetNextFlowSource().SetValue(secondDirectionMultiplier * 20.0, VolumePerTimeUnit::m3_Per_s);
+                Windkessel2SourcePath2 = &fluidCircuit->CreatePath(Ground, Windkessel2Node1, "Windkessel2SourcePath2");
+                Windkessel2SourcePath2->GetNextPressureSource().SetValue(secondDirectionMultiplier * 20.0, PressureUnit::Pa);
               }
             }
             else
@@ -1047,10 +774,18 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
                   double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
                   Windkessel1SourcePath->GetNextFlowSource().SetValue(firstDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
                 }
-                else
+                else if (iterFirstSourceType == 1)
                 {
                   double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
                   Windkessel1SourcePath->GetNextPotentialSource().SetValue(firstDirectionMultiplier* potential_Pa, PressureUnit::Pa);
+                }
+                else
+                {
+                  double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
+                  Windkessel1SourcePath->GetNextFlowSource().SetValue(firstDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+
+                  double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
+                  Windkessel1SourcePath2->GetNextPotentialSource().SetValue(firstDirectionMultiplier * potential_Pa, PressureUnit::Pa);
                 }
 
                 if (iterSecondSourceType == 0)
@@ -1058,10 +793,18 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
                   double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
                   Windkessel2SourcePath->GetNextFlowSource().SetValue(secondDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
                 }
-                else
+                else if (iterSecondSourceType == 1)
                 {
                   double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
                   Windkessel2SourcePath->GetNextPotentialSource().SetValue(secondDirectionMultiplier * potential_Pa, PressureUnit::Pa);
+                }
+                else
+                {
+                  double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
+                  Windkessel2SourcePath->GetNextFlowSource().SetValue(secondDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+
+                  double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
+                  Windkessel2SourcePath2->GetNextPotentialSource().SetValue(secondDirectionMultiplier * potential_Pa, PressureUnit::Pa);
                 }
               }
               else
@@ -1071,10 +814,18 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
                   double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
                   BlackBox->ImposeSourceFlux(firstDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
                 }
-                else
+                else if (iterFirstSourceType == 1)
                 {
                   double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
                   BlackBox->ImposeSourcePotential(firstDirectionMultiplier * potential_Pa, PressureUnit::Pa);
+                }
+                else
+                {
+                  double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
+                  BlackBox->ImposeSourceFlux(firstDirectionMultiplier* flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+
+                  double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
+                  BlackBox->ImposeSourcePotential(firstDirectionMultiplier* potential_Pa, PressureUnit::Pa);
                 }
 
                 if (iterSecondSourceType == 0)
@@ -1082,10 +833,18 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
                   double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
                   BlackBox->ImposeTargetFlux(secondDirectionMultiplier * flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
                 }
-                else
+                else if (iterSecondSourceType == 1)
                 {
                   double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
                   BlackBox->ImposeTargetPotential(secondDirectionMultiplier * potential_Pa, PressureUnit::Pa);
+                }
+                else
+                {
+                  double flow_m3_Per_s = 20.0 + 20.0 * sin(currentTime_s);
+                  BlackBox->ImposeTargetFlux(secondDirectionMultiplier* flow_m3_Per_s, VolumePerTimeUnit::m3_Per_s);
+
+                  double potential_Pa = 20.0 + 20.0 * sin(currentTime_s);
+                  BlackBox->ImposeTargetPotential(secondDirectionMultiplier* potential_Pa, PressureUnit::Pa);
                 }
               }
 
