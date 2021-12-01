@@ -811,14 +811,26 @@ namespace pulse
       //Check for Tachycardia, Bradycardia, and asystole
       /// \event Patient: Tachycardia: heart rate exceeds 100 beats per minute.  This state is alleviated if it decreases below 90.
       if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 90)
-        m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
+      {
+          m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
+          SetHeartRhythm(eHeartRhythm::NormalSinus);
+      }
       if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 100)
-        m_data.GetEvents().SetEvent(eEvent::Tachycardia, true, m_data.GetSimulationTime());
+      {
+          m_data.GetEvents().SetEvent(eEvent::Tachycardia, true, m_data.GetSimulationTime());
+          SetHeartRhythm(eHeartRhythm::SinusTachycardia);
+      }
       /// \event Patient: Bradycardia: heart rate falls below 60 beats per minute.  This state is alleviated if it increases above 65.
       if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 60)
-        m_data.GetEvents().SetEvent(eEvent::Bradycardia, true, m_data.GetSimulationTime());
+      {
+          m_data.GetEvents().SetEvent(eEvent::Bradycardia, true, m_data.GetSimulationTime());
+          SetHeartRhythm(eHeartRhythm::SinusBradycardia);
+      }
       if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 65)
-        m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
+      {
+          m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
+          SetHeartRhythm(eHeartRhythm::NormalSinus);
+      }
     }
 
     // Irreversible state if cardiac arrest persists. // rbc I turned this from a check on Asystole to Cardiac Arrest
