@@ -17,13 +17,20 @@ namespace pulse::study::circuit_optimization
     CircuitOptimizer(Logger* logger=nullptr);
     virtual ~CircuitOptimizer();
 
-    bool ConvergeToHemodynamicsTargets(size_t maxLoops, std::vector<SEValidationTarget*>& targets);
+    bool ConvergeToHemodynamicsTargets(size_t maxLoops,
+                                       double stepRatio,
+                                       std::string& startModifierSet,
+                                       std::vector<SEValidationTarget*>& targets,
+                                       std::vector<std::string>& modifiers);
 
     virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr) override;
 
   protected:
     bool GenerateHemodynamicsData(PulseConfiguration& cfg, std::vector<SEValidationTarget*>& targets);
-    bool ComputeNewModifiers(PulseConfiguration& cfg, std::vector<SEValidationTarget*>& targets);
+    bool ComputeNewModifiers(double stepRatio,
+                             PulseConfiguration& cfg,
+                             std::vector<SEValidationTarget*>& targets,
+                             std::vector<std::string>& modifiers);
     void WriteModifiers(const PulseConfiguration& cfg, const std::string& filename);
 
     unsigned int       m_SimulationNum = 0;

@@ -6,6 +6,8 @@
 #include "engine/human_adult/hemodynamics/Engine.h"
 #include "engine/common/controller/CircuitManager.h"
 
+#include "cdm/compartment/SECompartmentManager.h"
+#include "cdm/compartment/fluid/SELiquidCompartment.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
@@ -46,19 +48,19 @@ namespace pulse::study::circuit_optimization
     }
   }
 
-  bool CircuitOptimizer::ConvergeToHemodynamicsTargets(size_t maxLoops, std::vector<SEValidationTarget*>& targets)
+  bool CircuitOptimizer::ConvergeToHemodynamicsTargets(size_t maxLoops,
+                                                       double stepRatio,
+                                                       std::string& startModifierSet,
+                                                       std::vector<SEValidationTarget*>& targets,
+                                                       std::vector<std::string>& modifiers)
   {
     // Start with the default modifiers
     PulseConfiguration cfg(GetLogger());
     // Which modifier set do we want to start with?
-    cfg.Initialize(); // Use the current defaults, or
-    //cfg.SerializeFromFile("modifiesr.json", m_SubMgr);// Use a file we previously generated
-
-    // Ye Han, This is how you write a modifier set you want to save on disk
-    // delete this section when you grok it
-    //for (auto& i : cfg.GetModifiers())
-    //  i.second = 0.123;
-    //WriteModifiers(cfg,"modifiesr.json");
+    if (startModifierSet.empty())
+      cfg.Initialize(); // Use the current defaults, or
+    else
+      cfg.SerializeFromFile(startModifierSet, m_SubMgr);// Use a file we previously generated
 
     int nTarget = (int)targets.size();
     Info("Number of modifiers: " + std::to_string(cfg.GetModifiers().size()));
@@ -68,6 +70,7 @@ namespace pulse::study::circuit_optimization
 
     bool converged;
     std::string check;
+    double previousErrorNorm  = 0;
     for (unsigned int i = 0; i < maxLoops; ++i)// Maximum loops
     {
       // 1. Generate data with current modifiers
@@ -81,6 +84,7 @@ namespace pulse::study::circuit_optimization
       Info("Checking simulation results...[Expected] [Value] [Error]");
       converged = true;
       int nFail = 0;
+      int nPass = nTarget;
       double errorNorm  = 0;
       for (SEValidationTarget* vt : targets)
       {
@@ -89,26 +93,42 @@ namespace pulse::study::circuit_optimization
         {
           check = "FAIL ";
           nFail++;
+          nPass--;
           converged = false;
+          Info(check + vt->GetCompartmentName() + " " + vt->GetPropertyName() +
+               " [" + pulse::cdm::to_string(vt->GetRangeMin()) + ", " + pulse::cdm::to_string(vt->GetRangeMax()) + "] " +
+               pulse::cdm::to_string(vt->GetValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
         }
-        Info(check + vt->GetCompartmentName() + " " + vt->GetPropertyName() +
-          " [" + pulse::cdm::to_string(vt->GetRangeMin()) + ", " + pulse::cdm::to_string(vt->GetRangeMax()) + "] " +
-          pulse::cdm::to_string(vt->GetValue()) + " " + pulse::cdm::to_string(vt->GetError()) + "%");
         errorNorm += vt->GetError() * vt->GetError();
       }
       Info("Total error norm (l2): " + std::to_string(errorNorm) +
-        " Passed: " + std::to_string(nTarget - nFail) + " Failed: " + std::to_string(nFail));
+           " Passed: " + std::to_string(nPass) +
+           " Failed: " + std::to_string(nFail));
       
-      // 3. Test Convergence Criteria
-      if (converged)
+      // 3. Test convergence criteria and whether gradient vanishes
+      if (converged || std::abs(errorNorm - previousErrorNorm) < 0.0001)
       {
-        Info("We have successfully tuned the circuit!");
-        WriteModifiers(cfg, "PulseConfig.json");
-        return true;
+        std::string modifierSetFilename = "./test_results/modifier_set_" +
+                                          std::to_string((int)round(errorNorm)) + "_" +
+                                          std::to_string(nPass) + "_" +
+                                          std::to_string(nFail) + ".json";
+        Info("Modifier set is saved to: " + modifierSetFilename);
+        WriteModifiers(cfg, modifierSetFilename);
+        if (converged)
+        {
+          Info("We have successfully tuned the circuit!");
+          return true;
+        }
+        else
+        {
+          Info("Gradient vanishes, stop early.");
+          return false;
+        }
       }
 
       // 4. We did not converge, so compute a new modifier set to test
-      if (!ComputeNewModifiers(cfg, targets))
+      previousErrorNorm = errorNorm;
+      if (!ComputeNewModifiers(stepRatio, cfg, targets, modifiers))
         return false;
 
       Info("Finished Modifier Loop " + std::to_string(i+1));
@@ -121,8 +141,8 @@ namespace pulse::study::circuit_optimization
       return false;
     }
     Info("Checking simulation results...[Expected] [Value] [Error]");
-    converged = true;
     int nFail = 0;
+    int nPass = nTarget;
     double errorNorm  = 0;
     for (SEValidationTarget* vt : targets)
     {
@@ -130,8 +150,8 @@ namespace pulse::study::circuit_optimization
       if (vt->GetError() > 10.0)// Just a guess here...
       {
         check = "FAIL ";
-        converged = false;
         nFail++;
+        nPass--;
       }
       Info(check + vt->GetCompartmentName() + " " + vt->GetPropertyName() +
            " [" + pulse::cdm::to_string(vt->GetRangeMin()) + ", " + pulse::cdm::to_string(vt->GetRangeMax()) + "] " +
@@ -139,7 +159,14 @@ namespace pulse::study::circuit_optimization
       errorNorm += vt->GetError() * vt->GetError();
     }
     Info("Final total error norm (l2): " + std::to_string(errorNorm) +
-         " Passed: " + std::to_string(nTarget - nFail) + " Failed: " + std::to_string(nFail));
+         " Passed: " + std::to_string(nPass) +
+         " Failed: " + std::to_string(nFail));
+    std::string modifierSetFilename = "./test_results/modifier_set_" +
+                                      std::to_string((int)round(errorNorm)) + "_" +
+                                      std::to_string(nPass) + "_" +
+                                      std::to_string(nFail) + ".json";
+    Info("Modifier set is saved to: " + modifierSetFilename);
+    WriteModifiers(cfg, modifierSetFilename);
     return false;
   }
 
@@ -208,25 +235,19 @@ namespace pulse::study::circuit_optimization
 
     return true;
   }
-  bool CircuitOptimizer::ComputeNewModifiers(PulseConfiguration& cfg, std::vector<SEValidationTarget*>& targets)
+  bool CircuitOptimizer::ComputeNewModifiers(double stepRatio,
+                                             PulseConfiguration& cfg,
+                                             std::vector<SEValidationTarget*>& targets,
+                                             std::vector<std::string>& modifiers)
   {
     // TODO: No bounding constraint has been imposed yet.
-
-    // Manually choose modifiers and targets
-    std::vector<std::string> modifiers;
-    modifiers.emplace_back(pulse::CardiovascularPath::Aorta3ToAorta1);
-    modifiers.emplace_back(pulse::CardiovascularPath::VenaCavaToGround);
-//    modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToLargeIntestine);
-//    modifiers.emplace_back(pulse::CardiovascularPath::Aorta1ToLeftKidney1); // doesn't change anything solely, causing stabilization issue jointly
-
     auto nX = (int)modifiers.size();
     auto nY = (int)targets.size();
-    double finiteDiferenceStepSize = 0.001; // step size for finite differencing
-    double stepRatio = 0.1; // step ratio for gradient descent
+    double finiteDiferenceStepSize = 0.0001; // step size for finite differencing
 
     // Diff/Error/Y matrix for output targets
     Eigen::MatrixXd diffY(nY, 1);
-    for (size_t i = 0; i < targets.size(); i++)
+    for (int i = 0; i < (int)targets.size(); i++)
       diffY.coeffRef(i, 0) = targets[i]->GetError();
 
     // Jacobian matrix
@@ -234,7 +255,7 @@ namespace pulse::study::circuit_optimization
 
     // Compute entries in Jacobian matrix
     // Individually step each modifier and compute
-    size_t i = 0;
+    int i = 0;
     for (auto& name : modifiers)
     {
       // Step one modifier and compute
@@ -262,7 +283,7 @@ namespace pulse::study::circuit_optimization
     // Least squares fitting using uniform weights.
     // Assume number of targets is equal or greater than the number of input variables/modifiers,
     // otherwise J^T * J is non-invertible, and we will need to use other solution method (e.g. null-space method)
-    Eigen::MatrixXd deltaX = (Jacobian.transpose() * Jacobian).inverse() * (Jacobian.transpose() * diffY);
+    Eigen::MatrixXd deltaX = (Jacobian.transpose() * Jacobian).inverse() * (Jacobian.transpose() * diffY); //
 
     // Put the new modifier set into the config
     i = 0;
