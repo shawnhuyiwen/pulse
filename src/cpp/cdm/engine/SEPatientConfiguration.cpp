@@ -110,32 +110,3 @@ bool SEPatientConfiguration::HasConditions() const
 {
   return m_Conditions != nullptr;
 }
-
-bool SEPatientConfiguration::HasOverride() const
-{
-  return m_ScalarOverrides.size() > 1;
-}
-void SEPatientConfiguration::AddScalarOverride(const std::string& name, double value)
-{
-  m_ScalarOverrides.push_back(SEScalarProperty(name, value, ""));
-}
-void SEPatientConfiguration::AddScalarOverride(const std::string& name, double value, std::string unit)
-{
-  m_ScalarOverrides.push_back(SEScalarProperty(name, value, unit));
-}
-void SEPatientConfiguration::AddScalarOverride(const std::string& name, double value, const CCompoundUnit& unit)
-{
-  m_ScalarOverrides.push_back(SEScalarProperty(name, value, unit.GetString()));
-}
-std::vector<SEScalarProperty>& SEPatientConfiguration::GetScalarOverrides()
-{
-  return m_ScalarOverrides;
-}
-const std::vector<SEScalarProperty>& SEPatientConfiguration::GetScalarOverrides() const
-{
-  return m_ScalarOverrides;
-}
-void SEPatientConfiguration::RemoveOverrides()
-{
-  m_ScalarOverrides.clear();
-}

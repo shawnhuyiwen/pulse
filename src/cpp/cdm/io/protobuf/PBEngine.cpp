@@ -392,11 +392,6 @@ void PBEngine::Serialize(const CDM_BIND::PatientConfigurationData& src, SEPatien
   if (src.has_conditions())
     PBEngine::Load(src.conditions(), dst.GetConditions(), subMgr);
 
-  for (auto i = 0; i < src.scalaroverride_size(); i++)
-  {
-    const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
-    dst.AddScalarOverride(sp.name(), sp.value(), sp.unit());
-  }
   dst.SetDataRoot(src.dataroot());
 }
 CDM_BIND::PatientConfigurationData* PBEngine::Unload(const SEPatientConfiguration& src)
@@ -411,14 +406,6 @@ void PBEngine::Serialize(const SEPatientConfiguration& src, CDM_BIND::PatientCon
     dst.set_patientfile(src.m_PatientFile);
   else if (src.HasPatient())
     dst.set_allocated_patient(PBPatient::Unload(*src.m_Patient));
-
-  for (auto& sp : src.GetScalarOverrides())
-  {
-    CDM_BIND::ScalarPropertyData* so = dst.add_scalaroverride();
-    so->set_name(sp.name);
-    so->set_value(sp.value);
-    so->set_unit(sp.unit);
-  }
 
   if(src.HasConditions())
     dst.set_allocated_conditions(PBEngine::Unload(*src.GetConditions()));
@@ -502,6 +489,38 @@ void PBEngine::Copy(const SEDataRequest& src, SEDataRequest& dst)
 }
 
 
+void PBEngine::Load(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst)
+{
+  dst.Clear();
+  PBEngine::Serialize(src, dst);
+}
+void PBEngine::Serialize(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst)
+{
+  PBEngine::Serialize(src.datarequest(), dst);
+  dst.SetRangeMax(src.rangemax());
+  dst.SetRangeMin(src.rangemin());
+}
+CDM_BIND::ValidationTargetData* PBEngine::Unload(const SEValidationTarget& src)
+{
+  CDM_BIND::ValidationTargetData* dst = new CDM_BIND::ValidationTargetData();
+  PBEngine::Serialize(src, *dst);
+  return dst;
+}
+void PBEngine::Serialize(const SEValidationTarget& src, CDM_BIND::ValidationTargetData& dst)
+{
+  PBEngine::Serialize(src, *dst.mutable_datarequest());
+  dst.set_rangemax(src.GetRangeMax());
+  dst.set_rangemin(src.GetRangeMin());
+  dst.set_type((CDM_BIND::ValidationTargetData::eType)src.m_Type);
+}
+void PBEngine::Copy(const SEValidationTarget& src, SEValidationTarget& dst)
+{
+  dst.Clear();
+  CDM_BIND::ValidationTargetData data;
+  PBEngine::Serialize(src, data);
+  PBEngine::Serialize(data, dst);
+}
+
 CDM_BIND::DataRequestedData* PBEngine::Unload(const SEDataRequested& src)
 {
   CDM_BIND::DataRequestedData* dst = new CDM_BIND::DataRequestedData();
@@ -558,12 +577,27 @@ void PBEngine::Serialize(const CDM_BIND::DataRequestManagerData& src, SEDataRequ
   for (int i = 0; i < src.datarequest_size(); i++)
   {
     const CDM_BIND::DataRequestData& drData = src.datarequest(i);
-    SEDataRequest* dr = new SEDataRequest((eDataRequest_Category)drData.category(), dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
+    SEDataRequest* dr = new SEDataRequest((eDataRequest_Category)drData.category(),
+      dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
     PBEngine::Load(drData, *dr);
     if (!dr->IsValid())
       dst.Error("Ignoring invalid DataRequest for property " + dr->m_PropertyName);
     else
       dst.m_Requests.push_back(dr);
+  }
+  for (int i = 0; i < src.validationtarget_size(); i++)
+  {
+    const CDM_BIND::ValidationTargetData& vtData = src.validationtarget(i);
+    SEValidationTarget* vt = new SEValidationTarget((eValidationTargetType)vtData.type(), (eDataRequest_Category)vtData.datarequest().category(),
+      dst.HasOverrideDecimalFormatting() ? dst.m_OverrideDecimalFormatting : dst.m_DefaultDecimalFormatting);
+    PBEngine::Load(vtData, *vt);
+    if (!vt->IsValid())
+      dst.Error("Ignoring invalid ValidationTarget for property " + vt->m_PropertyName);
+    else
+    {
+      dst.m_Targets.push_back(vt);
+      dst.m_Requests.push_back(vt);
+    }
   }
 }
 CDM_BIND::DataRequestManagerData* PBEngine::Unload(const SEDataRequestManager& src)
@@ -582,6 +616,8 @@ void PBEngine::Serialize(const SEDataRequestManager& src, CDM_BIND::DataRequestM
     dst.set_allocated_overridedecimalformatting(PBEngine::Unload(*src.m_OverrideDecimalFormatting));
   for (SEDataRequest* dr : src.m_Requests)
     dst.mutable_datarequest()->AddAllocated(PBEngine::Unload(*dr));
+  for (SEValidationTarget* vt : src.m_Targets)
+    dst.mutable_validationtarget()->AddAllocated(PBEngine::Unload(*vt));
 }
 void PBEngine::Copy(const SEDataRequestManager& src, SEDataRequestManager& dst)
 {

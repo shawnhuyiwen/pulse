@@ -51,8 +51,16 @@ namespace pulse { namespace human_adult_ventilation_mechanics
     SetupRespiratory();
     SetupMechanicalVentilator();
 
-    // TODO We might want to update state change to only check compartments we should have
-    // Not sure how I would update this specify which compartments we expect to have in our engine
+    // We only want modifiers associated with respiratory and the ventilator
+    auto itr = m_Config->GetModifiers().begin();
+    while (itr != m_Config->GetModifiers().end())
+    {
+      if (!m_Circuits->GetRespiratoryAndMechanicalVentilatorCircuit().HasPath(itr->first))
+        m_Config->GetModifiers().erase(itr++);
+      else
+        ++itr;
+    }
+
     m_Compartments->StateChange();
     return true;
   }

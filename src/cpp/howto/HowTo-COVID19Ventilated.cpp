@@ -77,7 +77,7 @@ void HowToCOVID19Ventilated()
   // hypoxemia. @cite gattinoni2020covid @cite gattinoni2020covid2
   pe->GetLogger()->Info("Updating the patient's total respiratory static compliance to a specific constant/linear value.");
   SEOverrides overrides;
-  overrides.AddScalarProperty("RespiratoryCompliance", 100.0, VolumePerPressureUnit::mL_Per_cmH2O);
+  overrides.GetScalarProperties()["RespiratoryCompliance"] = SEScalarPair(100.0, VolumePerPressureUnit::mL_Per_cmH2O);
   pe->ProcessAction(overrides);
 
   // Advance time enough to achieve a new pathophysiogical homeostatic state
@@ -132,7 +132,7 @@ void HowToCOVID19Ventilated()
 
   // Update the compliance for postive pressure ventilation, which differs from negative pressure spontaneous breathing compliance @cite arnal2018parameters
   overrides.Clear();
-  overrides.AddScalarProperty("RespiratoryCompliance", 50.0, VolumePerPressureUnit::mL_Per_cmH2O);
+  overrides.GetScalarProperties()["RespiratoryCompliance"] = SEScalarPair(50.0, VolumePerPressureUnit::mL_Per_cmH2O);
   pe->ProcessAction(overrides);
 
   // Advance time enough to achieve a new homeostatic state

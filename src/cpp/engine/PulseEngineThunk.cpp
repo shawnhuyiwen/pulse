@@ -4,6 +4,7 @@
 #include "PulseEngineThunk.h"
 #include "PulseScenarioExec.h"
 #include "engine/human_adult/whole_body/Engine.h"
+#include "engine/human_adult/hemodynamics/Engine.h"
 #include "engine/human_adult/ventilation_mechanics/Engine.h"
 
 PulseEngineThunk::PulseEngineThunk(eModelType t, const std::string& dataDir) : PhysiologyEngineThunk(dataDir)
@@ -37,6 +38,8 @@ std::unique_ptr<PhysiologyEngine> CreatePulseEngine(eModelType type, Logger* log
   {
   case eModelType::HumanAdultWholeBody:
     return std::move(std::make_unique<pulse::human_adult_whole_body::Engine>(logger));
+  case eModelType::HumanAdultHemodynamics:
+    return std::move(std::make_unique<pulse::human_adult_hemodynamics::Engine>(logger));
   case eModelType::HumanAdultVentilationMechanics:
     return std::move(std::make_unique<pulse::human_adult_ventilation_mechanics::Engine>(logger));
   default:
@@ -48,6 +51,8 @@ bool eModelType_ValueOf(const std::string s, eModelType& t)
 {
   if (s == "HumanAdultWholeBody")
     t = eModelType::HumanAdultWholeBody;
+  else if (s == "HumanAdultHemodynamics")
+    t = eModelType::HumanAdultHemodynamics;
   else if (s == "HumanAdultVentilationMechanics")
     t = eModelType::HumanAdultVentilationMechanics;
   else

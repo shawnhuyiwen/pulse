@@ -508,25 +508,23 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::PreProcess()
   {
-    if (m_data.HasOverride())
+
+    // Look for any known overrides
+    for (auto const& [name, modifier] : m_data.GetOverrides())
     {
-      // Look for any known overrides
-      for (auto& o : m_data.GetOverrides())
+      if (name == "RespiratoryResistance")
       {
-        if (o.name == "RespiratoryResistance")
-        {
-          if (std::isnan(o.value))
-            m_RespiratoryResistanceOverride_cmH2O_s_Per_L = -1;
-          else
-            m_RespiratoryResistanceOverride_cmH2O_s_Per_L = Convert(o.value, PressureTimePerVolumeUnit::GetCompoundUnit(o.unit), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-        }
-        else if (o.name == "RespiratoryCompliance")
-        {
-          if (std::isnan(o.value))
-            m_RespiratoryComplianceOverride_L_Per_cmH2O = -1;
-          else
-            m_RespiratoryComplianceOverride_L_Per_cmH2O = Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::L_Per_cmH2O);
-        }
+        if (std::isnan(modifier.value))
+          m_RespiratoryResistanceOverride_cmH2O_s_Per_L = -1;
+        else
+          m_RespiratoryResistanceOverride_cmH2O_s_Per_L = Convert(modifier.value, PressureTimePerVolumeUnit::GetCompoundUnit(modifier.unit), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
+      else if (name == "RespiratoryCompliance")
+      {
+        if (std::isnan(modifier.value))
+          m_RespiratoryComplianceOverride_L_Per_cmH2O = -1;
+        else
+          m_RespiratoryComplianceOverride_L_Per_cmH2O = Convert(modifier.value, VolumePerPressureUnit::GetCompoundUnit(modifier.unit), VolumePerPressureUnit::L_Per_cmH2O);
       }
     }
 

@@ -693,22 +693,8 @@ void SECompartmentManager::GetChildLinks(CompartmentType* pnt, CompartmentType* 
     for (CompartmentType* grandchild : child->GetChildren())
       GetChildLinks<CompartmentType, LinkType>(child, grandchild);
   }
-  for (LinkType* in : child->m_IncomingLinks)
-  {
-    if (!Contains(pnt->m_Links, (*in)))
-    {
-      pnt->m_Links.push_back(in);
-      pnt->m_IncomingLinks.push_back(in);
-    }
-  }
-  for (LinkType* out : child->m_OutgoingLinks)
-  {
-    if (!Contains(pnt->m_Links, (*out)))
-    {
-      pnt->m_Links.push_back(out);
-      pnt->m_OutgoingLinks.push_back(out);
-    }
-  }
+  for (LinkType* in : child->m_Links)
+    pnt->AddLink(*in);
 }
 
 template<typename CompartmentType>

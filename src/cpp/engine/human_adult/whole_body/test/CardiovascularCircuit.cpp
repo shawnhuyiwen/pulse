@@ -224,6 +224,8 @@ namespace pulse { namespace human_adult_whole_body
     pc.m_Config->EnableRenal(connectRenal ? eSwitch::On : eSwitch::Off);
     pc.m_Config->EnableTissue(connectTissue ? eSwitch::On : eSwitch::Off);
     pc.m_Config->EnableCerebrospinalFluid(connectCSF ? eSwitch::On : eSwitch::Off);
+    pc.m_Config->TuneCardiovascularCircuit(eSwitch::On);// Run the circuit as constructed
+    //pc.m_Config->CardiovascularTuningFile("./test_results/unit_tests/Pulse/"+ sTestName+"Tuning.csv");
     pc.CreateCircuitsAndCompartments();
 
     std::vector<SESubstance*> subs2Track;
@@ -262,8 +264,6 @@ namespace pulse { namespace human_adult_whole_body
     }
 
     CardiovascularModel& cv = (CardiovascularModel&)pc.GetCardiovascular();
-    cv.m_TuneCircuit = true;// Run the circuit as constructed
-    //cv.m_TuningFile = "./test_results/unit_tests/Pulse/"+ sTestName+"Tuning.csv";
 
     SEFluidCircuit& cvCircuit = pc.GetCircuits().GetActiveCardiovascularCircuit();
 

@@ -54,8 +54,7 @@ def run_simulation_list(param_values_df, sobol_params_dict, output_dir):
         sim.ID = index
         sim.Name = "Simulation{}".format(index)
         for unit, path in enumerate(param_values_df.keys()):
-            sim0 = sim.Overrides.ScalarOverride.add()
-            sim0.Name = path
+            sim0 = sim.Overrides[path]
             sim0.Value = row[path]
             sim0.Unit = sobol_params_dict["unit"][unit]
 
@@ -115,8 +114,7 @@ def gen_local_sa_sim_list(percent_variation, baseline_file, distribution, output
         sim = sim_list.Simulation.add()
         sim.ID = index
         sim.Name = "Simulation{}".format(index)
-        sim0 = sim.Overrides.ScalarOverride.add()
-        sim0.Name = row["Path"]
+        sim0 = sim.Overrides[row["Path"]]
         sim0.Value = row["Value"]
         sim0.Unit = row["Unit"]
         if index % 500 == 0 and index > 0:

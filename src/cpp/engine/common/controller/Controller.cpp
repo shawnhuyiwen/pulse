@@ -197,8 +197,7 @@ namespace pulse
   const SEScalarTime& Data::GetTimeStep() const { return m_Config->GetTimeStep(); }
   double Data::GetTimeStep_s() const { return GetTimeStep().GetValue(TimeUnit::s); }
 
-  bool Data::HasOverride() const { return m_ScalarOverrides.size() > 0; }
-  const std::vector<SEScalarProperty>& Data::GetOverrides() const { return m_ScalarOverrides; }
+  const SEScalarProperties& Data::GetOverrides() const { return m_ScalarOverrides; }
 
   Controller::Controller(Logger* logger) : Data(logger)
   {
@@ -326,13 +325,8 @@ namespace pulse
 
     m_EngineTrack->ResetFile();
     m_Config->Initialize();
-    m_ScalarOverrides.clear();
     m_State = EngineState::Initialization;
-    if (patient_configuration.HasOverride())
-    {
-      for (auto& so : patient_configuration.GetScalarOverrides())
-        m_ScalarOverrides.push_back(so);
-    }
+
     if (patient_configuration.HasPatient())
     {
       if (!Initialize(*patient_configuration.GetPatient()))
@@ -436,25 +430,37 @@ namespace pulse
     Info("Creating Circuits and Compartments");
     CreateCircuitsAndCompartments();
 
-    // Appy any prestabilization overrides
-    if (m_Config->HasInitialOverrides())
+    // Apply any prestabilization overrides
+    m_ScalarOverrides.clear();
+    if (m_Config->HasOverrides())
     {
-      ProcessAction(m_Config->GetInitialOverrides());
+      for (auto const& [name, o] : m_Config->GetOverrides())
+        m_ScalarOverrides[name] = SEScalarPair(o.value, o.unit);
       OverrideCircuits();// Override any circuit values
     }
-
-    m_Substances->InitializeSubstances();
-    if (m_RespiratoryModel && m_EnvironmentModel)
+    // Appy any prestabilization modifiers
+    if (m_Config->HasModifiers())
     {
-      Info("Initializing Gas Substances");
-      m_Substances->InitializeGasCompartments();
+      if (!ModifyCircuits(m_Config->GetModifiers()))
+        return false;
     }
-    if (m_SaturationCalculator && m_CardiovascularModel)
+
+    if ( (m_RespiratoryModel && m_EnvironmentModel) ||
+         (m_SaturationCalculator && m_CardiovascularModel) )
     {
-      Info("Initializing Liquid Substances");
-      m_SaturationCalculator->Setup();
-      m_Substances->InitializeLiquidCompartmentGases();
-      m_Substances->InitializeLiquidCompartmentNonGases();
+      m_Substances->InitializeSubstances();
+      if (m_RespiratoryModel && m_EnvironmentModel)
+      {
+        Info("Initializing Gas Substances");
+        m_Substances->InitializeGasCompartments();
+      }
+      if (m_SaturationCalculator && m_CardiovascularModel)
+      {
+        Info("Initializing Liquid Substances");
+        m_SaturationCalculator->Setup();
+        m_Substances->InitializeLiquidCompartmentGases();
+        m_Substances->InitializeLiquidCompartmentNonGases();
+      }
     }
     return true;
   }
@@ -582,11 +588,8 @@ namespace pulse
     const SEOverrides* overrides = dynamic_cast<const SEOverrides*>(&action);
     if (overrides != nullptr)
     {
-      for (auto& so : overrides->GetScalarProperties())
-      {
-        m_ScalarOverrides.push_back(so);
-        Info("Overriding " + so.name + " with " + cdm::to_string(so.value) + " " + so.unit);
-      }
+      for (auto const& [name, o] : overrides->GetScalarProperties())
+        m_ScalarOverrides[name] = SEScalarPair(o.value,o.unit);
       return true;
     }
 
