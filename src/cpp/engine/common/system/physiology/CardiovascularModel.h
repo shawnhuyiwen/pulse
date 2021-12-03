@@ -98,6 +98,7 @@ namespace pulse
     bool   m_StartSystole;
     bool   m_HeartFlowDetected;
     bool   m_CardiacArrest;// Can't go into cardiac arrest during the middle of a cycle
+    bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
     double m_CardiacCyclePeriod_s;
     double m_CurrentCardiacCycleDuration_s; // How long have we been in this heart beat
     double m_LeftHeartElastanceModifier;// from Heart Failure and such

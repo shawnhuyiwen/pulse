@@ -4,7 +4,14 @@
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
-      "DecimalFormat": {
+        "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "ECG",
+      "PropertyName": "Lead3ElectricPotential",
+      "Unit": "mV"
+    }, {
+		"DecimalFormat": {
         "Precision": 1
       },
       "PropertyName": "Weight",
@@ -399,7 +406,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 300.0,
+          "Value": 240.0,
           "Unit": "s"
         }
       }
@@ -414,7 +421,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 120.0,
+          "Value": 420.0,
           "Unit": "s"
         }
       }

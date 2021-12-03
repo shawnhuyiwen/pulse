@@ -4,7 +4,14 @@
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
-      "DecimalFormat": {
+        "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "ECG",
+      "PropertyName": "Lead3ElectricPotential",
+      "Unit": "mV"
+    }, {
+		"DecimalFormat": {
         "Precision": 1
       },
       "PropertyName": "Weight",
@@ -392,36 +399,6 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "Asystole"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 60.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "NormalSinus"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 60.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
         "Rhythm": "PulselessElectricalActivity"
       }
     }
@@ -429,7 +406,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 60.0,
+          "Value": 210.0,
           "Unit": "s"
         }
       }
@@ -444,7 +421,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 60.0,
+          "Value": 210.0,
           "Unit": "s"
         }
       }
@@ -459,7 +436,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 60.0,
+          "Value": 210.0,
           "Unit": "s"
         }
       }
@@ -474,7 +451,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 60.0,
+          "Value": 180.0,
           "Unit": "s"
         }
       }

@@ -178,6 +178,7 @@ namespace pulse
       }
 
     }
+
     if (m_BaroreceptorFeedback == eSwitch::On)
       BaroreceptorFeedback();
 #ifdef PROBE
