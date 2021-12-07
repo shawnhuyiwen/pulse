@@ -396,7 +396,7 @@
         }
       }
     }
-  }, {
+}, {
     "PatientAction": {
       "Arrhythmia": {
         "Rhythm": "PulselessElectricalActivity"
@@ -406,12 +406,12 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 210.0,
+          "Value": 240.0,
           "Unit": "s"
         }
       }
     }
-		  }, {
+}, {
     "PatientAction": {
       "Arrhythmia": {
         "Rhythm": "NormalSinus"
@@ -421,7 +421,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 210.0,
+          "Value": 240.0,
           "Unit": "s"
         }
       }
@@ -436,7 +436,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 210.0,
+          "Value": 240.0,
           "Unit": "s"
         }
       }
@@ -451,7 +451,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 180.0,
+          "Value": 240.0,
           "Unit": "s"
         }
       }

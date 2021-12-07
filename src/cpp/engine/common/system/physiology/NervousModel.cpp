@@ -95,6 +95,10 @@ namespace pulse
 
     m_CSFAbsorptionRate_mLPermin = 0;
     m_CSFProductionRate_mlPermin = 0;
+
+    m_previousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
+    m_BaroreceptorPauseTimerStatus = false;
+
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -141,6 +145,8 @@ namespace pulse
     m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
     m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / m_BaroreceptorMeanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
     m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
+
+    m_previousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -179,8 +185,45 @@ namespace pulse
 
     }
 
-    if (m_BaroreceptorFeedback == eSwitch::On)
-      BaroreceptorFeedback();
+    if (m_data.GetState() == pulse::EngineState::Active)
+    {
+        /*if (m_data.GetCardiovascular().GetHeartRhythm() != m_previousHeartRhythm && m_BaroreceptorFeedback == eSwitch::Off && !m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+        {
+            m_BaroreceptorPauseTimerStatus = true;
+            m_BaroreceptorPauseTimer = 0.0;
+        }
+        if (m_BaroreceptorPauseTimerStatus && m_BaroreceptorPauseTimer > 5.0)
+        {
+            m_BaroreceptorFeedback = eSwitch::On;
+            m_ChemoreceptorFeedback = eSwitch::On;
+            m_BaroreceptorPauseTimerStatus = false;
+            m_BaroreceptorPauseTimer = 0.0;
+        }
+        else
+            m_BaroreceptorPauseTimer += m_data.GetTimeStep_s();*/
+
+        if (m_BaroreceptorFeedback == eSwitch::On)
+            BaroreceptorFeedback();
+        else
+        {
+            GetBaroreceptorHeartRateScale().SetValue(1.0);
+            GetBaroreceptorHeartElastanceScale().SetValue(1.0);
+            GetBaroreceptorResistanceScale().SetValue(1.0);
+            GetBaroreceptorComplianceScale().SetValue(1.0);
+            GetChemoreceptorHeartRateScale().SetValue(1.0);
+            GetLeftEyePupillaryResponse().GetSizeModifier().SetValue(0);
+            GetLeftEyePupillaryResponse().GetShapeModifier().SetValue(0);
+            GetLeftEyePupillaryResponse().GetReactivityModifier().SetValue(0);
+            GetRightEyePupillaryResponse().GetSizeModifier().SetValue(0);
+            GetRightEyePupillaryResponse().GetShapeModifier().SetValue(0);
+            GetRightEyePupillaryResponse().GetReactivityModifier().SetValue(0);
+            m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+        }
+
+    }
+    
+
+
 #ifdef PROBE
     else
     {
@@ -211,6 +254,7 @@ namespace pulse
     CheckBrainStatus();
     SetPupilEffects();
     ComputeExposedModelParameters();
+    m_previousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -229,7 +273,6 @@ namespace pulse
   {
 
   }
-
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -298,6 +341,7 @@ namespace pulse
       if (m_BaroreceptorFeedbackStatus)
         Info("Stopping Baroreceptor timer ");
       m_BaroreceptorFeedbackStatus = false;
+      //m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
     }
 
     // \todo Dampen Baroreceptor response due to sedation

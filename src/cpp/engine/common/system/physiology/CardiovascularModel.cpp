@@ -887,6 +887,8 @@ namespace pulse
     double ejectionFraction = 0.;
     if (m_CardiacCycleDiastolicVolume_mL > ZERO_APPROX)
       ejectionFraction = m_CardiacCycleStrokeVolume_mL / m_CardiacCycleDiastolicVolume_mL;
+    ejectionFraction = MAX(ejectionFraction, 0);
+    ejectionFraction = MIN(1, ejectionFraction);
     GetHeartEjectionFraction().SetValue(ejectionFraction);
     GetCardiacOutput().SetValue(m_CardiacCycleStrokeVolume_mL * GetHeartRate().GetValue(FrequencyUnit::Per_min), VolumePerTimeUnit::mL_Per_min);
     GetCardiacIndex().SetValue(GetCardiacOutput().GetValue(VolumePerTimeUnit::mL_Per_min) / m_data.GetCurrentPatient().GetSkinSurfaceArea(AreaUnit::m2), VolumePerTimeAreaUnit::mL_Per_min_m2);
@@ -1635,11 +1637,21 @@ namespace pulse
       }
       case eHeartRhythm::NormalSinus:
       {
-          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
           m_ArrhythmiaHeartElastanceModifier = 1.0;
           m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
           m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
           m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
+          /*if(m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+          {
+              m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
+              m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
+          }
+          else
+          {
+              m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
+              m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
+          }*/
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
           break;
       }
       case eHeartRhythm::SinusTachycardia:
@@ -1663,7 +1675,7 @@ namespace pulse
       case eHeartRhythm::StableVentricularTachycardia:
       {
           m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-          m_ArrhythmiaHeartElastanceModifier = 1.0;
+          m_ArrhythmiaHeartElastanceModifier = 0.8;
           m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.2, FrequencyUnit::Per_min);
           m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
           m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
@@ -1866,6 +1878,7 @@ namespace pulse
 
     m_LeftHeartElastance_mmHg_Per_mL = m_ArrhythmiaHeartElastanceModifier * oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
     m_RightHeartElastance_mmHg_Per_mL = m_ArrhythmiaHeartElastanceModifier * oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
+
   }
 
   //--------------------------------------------------------------------------------------------------

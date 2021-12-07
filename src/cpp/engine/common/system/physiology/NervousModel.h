@@ -38,6 +38,7 @@ namespace pulse
     void Process(bool solve_and_transport = true);
     void PostProcess(bool solve_and_transport = true);
 
+
   protected:
     void ComputeExposedModelParameters() override;
 
@@ -59,6 +60,9 @@ namespace pulse
     double m_LastMeanArterialPressure_mmHg;
     double m_PreviousBloodVolume_mL;
     double m_TotalSympatheticFraction;
+    double m_BaroreceptorPauseTimer;
+    eHeartRhythm   m_previousHeartRhythm;
+    bool   m_BaroreceptorPauseTimerStatus;
 
     //SERIALIZE THESE AARON - should be system values
     double m_CSFAbsorptionRate_mLPermin;
