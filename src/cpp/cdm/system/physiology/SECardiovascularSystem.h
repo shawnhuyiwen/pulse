@@ -59,10 +59,18 @@ public:
   virtual bool HasCerebralPerfusionPressure() const;
   virtual SEScalarPressure& GetCerebralPerfusionPressure();
   virtual double GetCerebralPerfusionPressure(const PressureUnit& unit) const;
-  
+
   virtual bool HasDiastolicArterialPressure() const;
   virtual SEScalarPressure& GetDiastolicArterialPressure();
   virtual double GetDiastolicArterialPressure(const PressureUnit& unit) const;
+
+  virtual bool HasDiastolicLeftHeartPressure() const;
+  virtual SEScalarPressure& GetDiastolicLeftHeartPressure();
+  virtual double GetDiastolicLeftHeartPressure(const PressureUnit& unit) const;
+
+  virtual bool HasDiastolicRightHeartPressure() const;
+  virtual SEScalarPressure& GetDiastolicRightHeartPressure();
+  virtual double GetDiastolicRightHeartPressure(const PressureUnit& unit) const;
 
   virtual bool HasHeartEjectionFraction() const;
   virtual SEScalar0To1& GetHeartEjectionFraction();
@@ -151,6 +159,14 @@ public:
   virtual SEScalarPressure& GetSystolicArterialPressure();
   virtual double GetSystolicArterialPressure(const PressureUnit& unit) const;
 
+  virtual bool HasSystolicLeftHeartPressure() const;
+  virtual SEScalarPressure& GetSystolicLeftHeartPressure();
+  virtual double GetSystolicLeftHeartPressure(const PressureUnit& unit) const;
+
+  virtual bool HasSystolicRightHeartPressure() const;
+  virtual SEScalarPressure& GetSystolicRightHeartPressure();
+  virtual double GetSystolicRightHeartPressure(const PressureUnit& unit) const;
+
   virtual bool HasTotalHemorrhageRate() const;
   virtual SEScalarVolumePerTime& GetTotalHemorrhageRate();
   virtual double GetTotalHemorrhageRate(const VolumePerTimeUnit& unit) const;
@@ -169,6 +185,8 @@ protected:
   SEScalarVolumePerTime*                 m_CerebralBloodFlow;
   SEScalarPressure*                      m_CerebralPerfusionPressure;
   SEScalarPressure*                      m_DiastolicArterialPressure;
+  SEScalarPressure*                      m_DiastolicLeftHeartPressure;
+  SEScalarPressure*                      m_DiastolicRightHeartPressure;
   SEScalar0To1*                          m_HeartEjectionFraction;
   SEScalarFrequency*                     m_HeartRate;
   eHeartRhythm                           m_HeartRhythm;
@@ -190,6 +208,8 @@ protected:
   SEScalarPressureTimePerVolumeArea*     m_PulmonaryVascularResistanceIndex;
   SEScalarPressure*                      m_PulsePressure;
   SEScalarPressure*                      m_SystolicArterialPressure;
+  SEScalarPressure*                      m_SystolicLeftHeartPressure;
+  SEScalarPressure*                      m_SystolicRightHeartPressure;
   SEScalarPressureTimePerVolume*         m_SystemicVascularResistance;
   SEScalarVolumePerTime*                 m_TotalHemorrhageRate;
   SEScalarVolume*                        m_TotalHemorrhagedVolume;

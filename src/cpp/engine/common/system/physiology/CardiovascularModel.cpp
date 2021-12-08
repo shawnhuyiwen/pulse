@@ -215,10 +215,14 @@ namespace pulse
     GetBloodVolume().Set(m_data.GetCurrentPatient().GetBloodVolumeBaseline());
     m_CardiacCycleAortaPressureHigh_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
     m_CardiacCycleAortaPressureLow_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+    m_CardiacCycleLeftHeartPressureHigh_mmHg = 130;
+    m_CardiacCycleLeftHeartPressureLow_mmHg = 8;
     GetMeanArterialPressure().SetValue((2. / 3. * m_CardiacCycleAortaPressureLow_mmHg) + (1. / 3. * m_CardiacCycleAortaPressureHigh_mmHg), PressureUnit::mmHg);
     m_CardiacCycleArterialPressure_mmHg->Sample(GetMeanArterialPressure().GetValue(PressureUnit::mmHg));
     m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = 26;
     m_CardiacCyclePulmonaryArteryPressureLow_mmHg = 9;
+    m_CardiacCycleRightHeartPressureHigh_mmHg = 30;
+    m_CardiacCycleRightHeartPressureLow_mmHg = 2;
     GetPulmonaryMeanArterialPressure().SetValue(15, PressureUnit::mmHg);
     GetHeartRate().Set(m_data.GetCurrentPatient().GetHeartRateBaseline());
     RecordAndResetCardiacCycle();
@@ -669,7 +673,7 @@ namespace pulse
     // Grab data from the circuit in order to calculate a running mean
     const double AortaNodePressure_mmHg = m_Aorta->GetPressure(PressureUnit::mmHg);
     const double AortaNodeCO2PartialPressure_mmHg = m_AortaCO2 == nullptr ? 0 : m_AortaCO2->GetPartialPressure(PressureUnit::mmHg); // This is here so we can Tune circuit w/o substances
-    const double LeftPulmonaryArteryVolume_mL = m_LeftPulmonaryArteries->GetVolume(VolumeUnit::mL);
+     const double LeftPulmonaryArteryVolume_mL = m_LeftPulmonaryArteries->GetVolume(VolumeUnit::mL);
     const double RightPulmonaryArteryVolume_mL = m_RightPulmonaryArteries->GetVolume(VolumeUnit::mL);
     const double TotalPulmonaryArteryVolume_mL = LeftPulmonaryArteryVolume_mL + RightPulmonaryArteryVolume_mL;
     const double LeftPulmonaryArteryPressure_mmHg = m_LeftPulmonaryArteries->GetPressure(PressureUnit::mmHg);
@@ -693,6 +697,9 @@ namespace pulse
     const double SkinFlow_mL_Per_s = m_pAortaToSkin->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
     const double LHeartFlow_mL_Per_s = m_LeftHeartToAorta->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
     const double LHeartVolume_mL = m_LeftHeart->GetVolume(VolumeUnit::mL);
+    const double LHeartPressure_mmHg = m_LeftHeart->GetPressure(PressureUnit::mmHg);
+    const double RHeartPressure_mmHg = m_RightHeart->GetPressure(PressureUnit::mmHg);
+   
 
     const double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
@@ -716,10 +723,18 @@ namespace pulse
       m_CardiacCycleAortaPressureHigh_mmHg = AortaNodePressure_mmHg;
     if (AortaNodePressure_mmHg < m_CardiacCycleAortaPressureLow_mmHg)
       m_CardiacCycleAortaPressureLow_mmHg = AortaNodePressure_mmHg;
+    if (LHeartPressure_mmHg > m_CardiacCycleLeftHeartPressureHigh_mmHg)
+      m_CardiacCycleLeftHeartPressureHigh_mmHg = LHeartPressure_mmHg;
+    if (LHeartPressure_mmHg < m_CardiacCycleLeftHeartPressureLow_mmHg)
+      m_CardiacCycleLeftHeartPressureLow_mmHg = LHeartPressure_mmHg;
     if (PulmonaryArteryNodePressure_mmHg > m_CardiacCyclePulmonaryArteryPressureHigh_mmHg)
       m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = PulmonaryArteryNodePressure_mmHg;
     if (PulmonaryArteryNodePressure_mmHg < m_CardiacCyclePulmonaryArteryPressureLow_mmHg)
       m_CardiacCyclePulmonaryArteryPressureLow_mmHg = PulmonaryArteryNodePressure_mmHg;
+    if (RHeartPressure_mmHg > m_CardiacCycleRightHeartPressureHigh_mmHg)
+      m_CardiacCycleRightHeartPressureHigh_mmHg = RHeartPressure_mmHg;
+    if (RHeartPressure_mmHg < m_CardiacCycleRightHeartPressureLow_mmHg)
+      m_CardiacCycleRightHeartPressureLow_mmHg = RHeartPressure_mmHg;
 
     // Get Max of Left Ventricle Volume over the course of a heart beat for end diastolic volume
     if (LHeartVolume_mL > m_CardiacCycleDiastolicVolume_mL)
@@ -843,9 +858,13 @@ namespace pulse
   {
     GetSystolicArterialPressure().SetValue(m_CardiacCycleAortaPressureHigh_mmHg, PressureUnit::mmHg);
     GetDiastolicArterialPressure().SetValue(m_CardiacCycleAortaPressureLow_mmHg, PressureUnit::mmHg);
+    GetSystolicLeftHeartPressure().SetValue(m_CardiacCycleLeftHeartPressureHigh_mmHg, PressureUnit::mmHg);
+    GetDiastolicLeftHeartPressure().SetValue(m_CardiacCycleLeftHeartPressureLow_mmHg, PressureUnit::mmHg);
     GetPulmonarySystolicArterialPressure().SetValue(m_CardiacCyclePulmonaryArteryPressureHigh_mmHg, PressureUnit::mmHg);
     GetPulmonaryDiastolicArterialPressure().SetValue(m_CardiacCyclePulmonaryArteryPressureLow_mmHg, PressureUnit::mmHg);
     GetPulsePressure().SetValue(m_CardiacCycleAortaPressureHigh_mmHg - m_CardiacCycleAortaPressureLow_mmHg, PressureUnit::mmHg);
+    GetSystolicRightHeartPressure().SetValue(m_CardiacCycleRightHeartPressureHigh_mmHg, PressureUnit::mmHg);
+    GetDiastolicRightHeartPressure().SetValue(m_CardiacCycleRightHeartPressureLow_mmHg, PressureUnit::mmHg);
 
     m_data.GetCardiovascular().GetHeartStrokeVolume().SetValue(m_CardiacCycleStrokeVolume_mL, VolumeUnit::mL);
     double ejectionFraction = 0.;
@@ -909,8 +928,12 @@ namespace pulse
 
     m_CardiacCycleAortaPressureHigh_mmHg = 0.0;
     m_CardiacCycleAortaPressureLow_mmHg = 10000.0;
+    m_CardiacCycleLeftHeartPressureHigh_mmHg = 0.0;
+    m_CardiacCycleLeftHeartPressureLow_mmHg = 10000.0;
     m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = 0.0;
     m_CardiacCyclePulmonaryArteryPressureLow_mmHg = 10000.0;
+    m_CardiacCycleRightHeartPressureHigh_mmHg = 0.0;
+    m_CardiacCycleRightHeartPressureLow_mmHg = 10000.0;
     m_CardiacCycleDiastolicVolume_mL = 0;
     m_CardiacCycleStrokeVolume_mL = 0;
   }

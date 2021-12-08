@@ -116,8 +116,12 @@ namespace pulse
     double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
     double m_CardiacCycleAortaPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
     double m_CardiacCycleAortaPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
+    double m_CardiacCycleLeftHeartPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
+    double m_CardiacCycleLeftHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_CardiacCyclePulmonaryArteryPressureLow_mmHg;
     double m_CardiacCyclePulmonaryArteryPressureHigh_mmHg;
+    double m_CardiacCycleRightHeartPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
+    double m_CardiacCycleRightHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
     double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
     double m_Patient_Stabilized_HeartRate_Baseline_Per_min; //save patient stabilized heart rate

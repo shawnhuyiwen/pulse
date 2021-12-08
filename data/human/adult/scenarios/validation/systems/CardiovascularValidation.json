@@ -15,6 +15,8 @@
         { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "CerebralBloodFlow",                             "Unit": "mL/min"        },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "CerebralPerfusionPressure",                     "Unit": "mmHg"          },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "DiastolicArterialPressure",                     "Unit": "mmHg"          },
+        { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "DiastolicLeftHeartPressure",                    "Unit": "mmHg"          },
+        { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "DiastolicRightHeartPressure",                   "Unit": "mmHg"          },
         { "DecimalFormat": { "Precision": 5 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction"                                                  },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "HeartRate",                                     "Unit": "1/min"         },
         { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "HeartStrokeVolume",                             "Unit": "mL"            },
@@ -36,6 +38,8 @@
         { "DecimalFormat": {                }, "Category": "Physiology", "PropertyName": "PulsePressure",                                 "Unit": "mmHg"          },
         { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance",                    "Unit": "mmHg s/mL"     },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SystolicArterialPressure",                      "Unit": "mmHg"          },
+        { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SystolicLeftHeartPressure",                     "Unit": "mmHg"          },
+        { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "SystolicRightHeartPressure",                    "Unit": "mmHg"          },
         
         { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "SubstanceName": "Oxygen", "PropertyName": "PartialPressure", "Unit": "mmHg" },
         

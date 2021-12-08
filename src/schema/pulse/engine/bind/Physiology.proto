@@ -36,21 +36,25 @@ message CardiovascularData
   
   double                                    CurrentCardiacCycleTime_s                           = 17;
   double                                    CardiacCycleDiastolicVolume_mL                      = 18;
-  double                                    CardiacCycleAortaPressureLow_mmHg                   = 19;
-  double                                    CardiacCycleAortaPressureHigh_mmHg                  = 20;
-  double                                    CardiacCyclePulmonaryArteryPressureLow_mmHg         = 21;
-  double                                    CardiacCyclePulmonaryArteryPressureHigh_mmHg        = 22;
-  double                                    LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = 23;
-  double                                    CardiacCycleStrokeVolume_mL                         = 24;
+  double                                    CardiacCycleAortaPressureHigh_mmHg                  = 19;
+  double                                    CardiacCycleAortaPressureLow_mmHg                   = 20;
+  double                                    CardiacCycleLeftHeartPressureHigh_mmHg              = 21;
+  double                                    CardiacCycleLeftHeartPressureLow_mmHg               = 22;
+  double                                    CardiacCyclePulmonaryArteryPressureHigh_mmHg        = 23;
+  double                                    CardiacCyclePulmonaryArteryPressureLow_mmHg         = 24;
+  double                                    CardiacCycleRightHeartPressureHigh_mmHg             = 25;
+  double                                    CardiacCycleRightHeartPressureLow_mmHg              = 26;
+  double                                    LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = 27;
+  double                                    CardiacCycleStrokeVolume_mL                         = 28;
   
-  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialPressure_mmHg                   = 25;
-  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialCO2PartialPressure_mmHg         = 26;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesWedgePressure_mmHg  = 27;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesFlow_mL_Per_s       = 28;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryShuntFlow_mL_Per_s             = 29;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryArteryPressure_mmHg            = 30;
-  pulse.cdm.bind.RunningAverageData         CardiacCycleCentralVenousPressure_mmHg              = 31;
-  pulse.cdm.bind.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 32;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialPressure_mmHg                   = 29;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialCO2PartialPressure_mmHg         = 30;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesWedgePressure_mmHg  = 31;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesFlow_mL_Per_s       = 32;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryShuntFlow_mL_Per_s             = 33;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryArteryPressure_mmHg            = 34;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleCentralVenousPressure_mmHg              = 35;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 36;
 }
 
 message DrugData

@@ -74,8 +74,12 @@ namespace pulse
     dst.m_CardiacCycleDiastolicVolume_mL = src.cardiaccyclediastolicvolume_ml();
     dst.m_CardiacCycleAortaPressureLow_mmHg = src.cardiaccycleaortapressurelow_mmhg();
     dst.m_CardiacCycleAortaPressureHigh_mmHg = src.cardiaccycleaortapressurehigh_mmhg();
+    dst.m_CardiacCycleLeftHeartPressureLow_mmHg = src.cardiaccycleleftheartpressurelow_mmhg();
+    dst.m_CardiacCycleLeftHeartPressureHigh_mmHg = src.cardiaccycleleftheartpressurehigh_mmhg();
     dst.m_CardiacCyclePulmonaryArteryPressureLow_mmHg = src.cardiaccyclepulmonaryarterypressurelow_mmhg();
     dst.m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = src.cardiaccyclepulmonaryarterypressurehigh_mmhg();
+    dst.m_CardiacCycleRightHeartPressureLow_mmHg = src.cardiaccyclerightheartpressurelow_mmhg();
+    dst.m_CardiacCycleRightHeartPressureHigh_mmHg = src.cardiaccyclerightheartpressurehigh_mmhg();
     dst.m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = src.lastcardiaccyclemeanarterialco2partialpressure_mmhg();
     dst.m_CardiacCycleStrokeVolume_mL = src.cardiaccyclestrokevolume_ml();
 
@@ -118,8 +122,12 @@ namespace pulse
     dst.set_cardiaccyclediastolicvolume_ml(src.m_CardiacCycleDiastolicVolume_mL);
     dst.set_cardiaccycleaortapressurelow_mmhg(src.m_CardiacCycleAortaPressureLow_mmHg);
     dst.set_cardiaccycleaortapressurehigh_mmhg(src.m_CardiacCycleAortaPressureHigh_mmHg);
+    dst.set_cardiaccycleleftheartpressurelow_mmhg(src.m_CardiacCycleLeftHeartPressureLow_mmHg);
+    dst.set_cardiaccycleleftheartpressurehigh_mmhg(src.m_CardiacCycleLeftHeartPressureHigh_mmHg);
     dst.set_cardiaccyclepulmonaryarterypressurelow_mmhg(src.m_CardiacCyclePulmonaryArteryPressureLow_mmHg);
     dst.set_cardiaccyclepulmonaryarterypressurehigh_mmhg(src.m_CardiacCyclePulmonaryArteryPressureHigh_mmHg);
+    dst.set_cardiaccyclerightheartpressurelow_mmhg(src.m_CardiacCycleRightHeartPressureLow_mmHg);
+    dst.set_cardiaccyclerightheartpressurehigh_mmhg(src.m_CardiacCycleRightHeartPressureHigh_mmHg);
     dst.set_lastcardiaccyclemeanarterialco2partialpressure_mmhg(src.m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg);
     dst.set_cardiaccyclestrokevolume_ml(src.m_CardiacCycleStrokeVolume_mL);
 
