@@ -2,10 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "cdm/system/physiology/SECardiovascularSystem.h"
+
+// Keep enums in sync with appropriate schema/cdm/ElectroCardioGram.proto file !!
+enum class eElectroCardioGram_WaveformType { Sinus = 0, 
+                                             VentricularFibrillation,
+                                             VentricularTachycardia };
+extern const std::string& eElectroCardioGram_WaveformType_Name(eElectroCardioGram_WaveformType m);
 
 // Keep enums in sync with appropriate schema/cdm/CompartmentEnums.proto file !!
-enum class eElectroCardioGram_WaveformLead { NullLead = 0, 
+enum class eElectroCardioGram_WaveformLead { NullLead = 0,
                                              Lead1, 
                                              Lead2,
                                              Lead3,
@@ -36,8 +41,8 @@ public:
   virtual void SetLeadNumber(eElectroCardioGram_WaveformLead n);
   virtual void InvalidateLeadNumber();
 
-  virtual eHeartRhythm GetRhythm() const;
-  virtual void SetRhythm(eHeartRhythm name);
+  virtual eElectroCardioGram_WaveformType GetType() const;
+  virtual void SetType(eElectroCardioGram_WaveformType t);
 
   virtual bool HasData() const;
   virtual SEFunctionElectricPotentialVsTime& GetData();
@@ -52,7 +57,7 @@ public:
 protected:
 
   eElectroCardioGram_WaveformLead          m_LeadNumber;
-  eHeartRhythm                             m_Rhythm;
+  eElectroCardioGram_WaveformType          m_Type;
   SEScalarTime*                            m_TimeStep;
   SEFunctionElectricPotentialVsTime*       m_Data;
   std::vector<unsigned int>                m_ActiveIndicies;

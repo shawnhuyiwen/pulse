@@ -79,6 +79,7 @@ add_library_ex(CommonDataModel
     engine/SEPatientConfiguration.h
     engine/SESerializeState.h
     engine/SETimedStabilization.h
+    engine/SEValidationTarget.h
     io/protobuf/PBActions.h
     io/protobuf/PBAnesthesiaMachine.h
     io/protobuf/PBBagValveMask.h
@@ -113,10 +114,10 @@ add_library_ex(CommonDataModel
     patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h
     patient/actions/SEAcuteStress.h
     patient/actions/SEAirwayObstruction.h
+    patient/actions/SEArrhythmia.h
     patient/actions/SEAsthmaAttack.h
     patient/actions/SEBrainInjury.h
     patient/actions/SEBronchoconstriction.h
-    patient/actions/SECardiacArrest.h
     patient/actions/SEChestCompressionForce.h
     patient/actions/SEChestCompressionForceScale.h
     patient/actions/SEChestOcclusiveDressing.h
@@ -431,6 +432,7 @@ add_library_ex(CommonDataModel
     engine/SEPatientConfiguration.cpp
     engine/SESerializeState.cpp
     engine/SETimedStabilization.cpp
+    engine/SEValidationTarget.cpp
     io/protobuf/PBActionEnums.cpp
     io/protobuf/PBActions.cpp
     io/protobuf/PBAnesthesiaMachine.cpp
@@ -479,10 +481,10 @@ add_library_ex(CommonDataModel
     patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.cpp
     patient/actions/SEAcuteStress.cpp
     patient/actions/SEAirwayObstruction.cpp
+    patient/actions/SEArrhythmia.cpp
     patient/actions/SEAsthmaAttack.cpp
     patient/actions/SEBrainInjury.cpp
     patient/actions/SEBronchoconstriction.cpp
-    patient/actions/SECardiacArrest.cpp
     patient/actions/SEChestCompressionForce.cpp
     patient/actions/SEChestCompressionForceScale.cpp
     patient/actions/SEChestOcclusiveDressing.cpp

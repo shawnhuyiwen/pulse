@@ -34,7 +34,7 @@ double SEFunctionElectricPotentialVsTime::GetTimeValue(size_t index, const TimeU
     throw CommonDataModelException("Independent index out of bounds");
   return Convert(m_Independent[index], *m_TimeUnit, unit);
 }
-std::vector<double>& SEFunctionElectricPotentialVsTime::GetTime()                                  
+std::vector<double>& SEFunctionElectricPotentialVsTime::GetTime()
 {
   return m_Independent;
 }

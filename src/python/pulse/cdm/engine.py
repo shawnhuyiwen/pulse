@@ -33,49 +33,48 @@ class eCharge(Enum):
 
 class eEvent(Enum):
     Antidiuresis = 0
-    Asystole = 1
-    Bradycardia = 2
-    Bradypnea = 3
-    BrainOxygenDeficit = 4
-    CardiacArrest = 5
-    CardiogenicShock = 6
-    CardiovascularCollapse = 7
-    CriticalBrainOxygenDeficit = 8
-    Dehydration = 9
-    Diuresis = 10
-    Fasciculation = 11
-    Fatigue = 12
-    FunctionalIncontinence = 13
-    Hypercapnia = 14
-    Hyperglycemia = 15
-    Hyperthermia = 16
-    Hypoglycemia = 17
-    Hypothermia = 18
-    Hypoxia = 19
-    HypovolemicShock = 20
-    IntracranialHypertension = 21
-    IntracranialHypotension = 22
-    IrreversibleState = 23
-    Ketoacidosis = 24
-    LacticAcidosis = 25
-    MaximumPulmonaryVentilationRate = 26
-    MetabolicAcidosis = 27
-    MetabolicAlkalosis = 28
-    ModerateHyperoxemia = 29
-    ModerateHypocapnia = 30
-    MyocardiumOxygenDeficit = 31
-    Natriuresis = 32
-    NutritionDepleted = 33
-    RenalHypoperfusion = 34
-    RespiratoryAcidosis = 35
-    RespiratoryAlkalosis = 36
-    SevereHyperoxemia = 37
-    SevereHypocapnia = 38
-    StartOfCardiacCycle = 39
-    StartOfExhale = 40
-    StartOfInhale = 41
-    Tachycardia = 42
-    Tachypnea = 43
+    Bradycardia = 1
+    Bradypnea = 2
+    BrainOxygenDeficit = 3
+    CardiacArrest = 4
+    CardiogenicShock = 5
+    CardiovascularCollapse = 6
+    CriticalBrainOxygenDeficit = 7
+    Dehydration = 8
+    Diuresis = 9
+    Fasciculation = 10
+    Fatigue = 11
+    FunctionalIncontinence = 12
+    Hypercapnia = 13
+    Hyperglycemia = 14
+    Hyperthermia = 15
+    Hypoglycemia = 16
+    Hypothermia = 17
+    Hypoxia = 18
+    HypovolemicShock = 19
+    IntracranialHypertension = 20
+    IntracranialHypotension = 21
+    IrreversibleState = 22
+    Ketoacidosis = 23
+    LacticAcidosis = 24
+    MaximumPulmonaryVentilationRate = 25
+    MetabolicAcidosis = 26
+    MetabolicAlkalosis = 27
+    ModerateHyperoxemia = 28
+    ModerateHypocapnia = 29
+    MyocardiumOxygenDeficit = 30
+    Natriuresis = 31
+    NutritionDepleted = 32
+    RenalHypoperfusion = 33
+    RespiratoryAcidosis = 34
+    RespiratoryAlkalosis = 35
+    SevereHyperoxemia = 36
+    SevereHypocapnia = 37
+    StartOfCardiacCycle = 38
+    StartOfExhale = 39
+    StartOfInhale = 40
+    Tachycardia = 41
+    Tachypnea = 42
 
     # Equipment
     AnesthesiaMachineOxygenBottleOneExhausted = 1000
@@ -130,31 +129,6 @@ class SEAction(ABC):
     @abstractmethod
     def is_valid(self):
         pass
-
-class SEScalarOverride(SEAction):
-    __slots__ = ["_action","_scalar_override"]
-
-    def __init__(self):
-        super().__init__()
-        self._action = None
-        self._scalar_overrides = []
-    def clear(self):
-        if self._action is not None:
-            self._action.invalidate()
-        if self._scalar_override is not None:
-            self._scalar_override.invalidate()
-    def set_action(self, action):
-        self._action = action
-    def has_action(self):
-        return self._action is not None
-    def get_action(self):
-        return self._action
-    def add_scalar_override(self, name: str, value: float, unit: str = ""):
-        self._scalar_overrides.append(SEScalarProperty(name, value, unit))
-    def has_scalar_overrides(self):
-        return self._scalar_override is not None
-    def get_scalar_overrides(self):
-        return self._scalar_override
 
 class SEAdvanceTime(SEAction):
     __slots__ = ["_action","_time"]

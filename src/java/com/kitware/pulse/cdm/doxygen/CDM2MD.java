@@ -125,6 +125,7 @@ public class CDM2MD
       for(Class<?> c : cmds)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(BrainInjuryData.eType.class, "BrainInjuryData_", writer, skipProperties);
+      WriteDoxyTable(eHeartRhythm.class, "HeartRhythm_", writer, skipProperties);
       WriteDoxyTable(HemorrhageData.eType.class, "HemorrhageData_", writer, skipProperties);
       WriteDoxyTable(IntubationData.eType.class, "IntubationData_", writer, skipProperties);
       WriteDoxyTable(SubstanceBolusData.eRoute.class, "SubstanceBolusData_", writer, skipProperties);

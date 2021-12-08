@@ -61,6 +61,12 @@ public:
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
+  /// Returns the engine type, such as "Human Adult Whole Body"
+  //--------------------------------------------------------------------------------------------------
+  virtual std::string GetTypeName() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
   /// Reset engine and set it to the state in the provided file.
   /// The file may contain json or binary. 
   /// Anything but an extension of .json will be interpreted as binary.
@@ -128,7 +134,7 @@ public:
   /// \brief
   /// Engines can have a configuration for allowing a user to set certain internal parameters
   /// Engines with configurations will have all configuration parameters defaulted,
-  /// This allow you to change one or more or those parameters.
+  /// This allows you to change one or more or those parameters.
   /// The parameters provided will be applied during SerializeFrom* and InitializeEngine methods.
   /// Use with caution! (Use nullptr to revert back to using all engine defaults)
   //--------------------------------------------------------------------------------------------------

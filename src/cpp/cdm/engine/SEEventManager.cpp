@@ -41,9 +41,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::Antidiuresis:
         m_ss << " Patient has Antidiuresis";
         break;
-      case eEvent::Asystole:
-        m_ss << " Patient has Asystole";
-        break;
       case eEvent::Bradycardia:
         m_ss << " Patient has Bradycardia";
         break;
@@ -180,9 +177,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       {
       case eEvent::Antidiuresis:
         m_ss << " Patient no longer is in Antidiuresis";
-        break;
-      case eEvent::Asystole:
-        m_ss << " Patient no longer is in Asystole";
         break;
       case eEvent::Bradycardia:
         m_ss << " Patient no longer has Bradycardia";

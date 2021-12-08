@@ -20,10 +20,10 @@ message AnyPatientActionData
     AcuteRespiratoryDistressSyndromeExacerbationData   AcuteRespiratoryDistressSyndromeExacerbation   = 2;
     AcuteStressData                                    AcuteStress                                    = 3;
     AirwayObstructionData                              AirwayObstruction                              = 4;
-    AsthmaAttackData                                   AsthmaAttack                                   = 5;
-    BrainInjuryData                                    BrainInjury                                    = 6;
-    BronchoconstrictionData                            Bronchoconstriction                            = 7;
-    CardiacArrestData                                  CardiacArrest                                  = 8;
+    ArrhythmiaData                                     Arrhythmia                                     = 5;
+    AsthmaAttackData                                   AsthmaAttack                                   = 6;
+    BrainInjuryData                                    BrainInjury                                    = 7;
+    BronchoconstrictionData                            Bronchoconstriction                            = 8;
     ChestCompressionForceData                          ChestCompressionForce                          = 9;
     ChestCompressionForceScaleData                     ChestCompressionForceScale                     = 10;
     ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 11;
@@ -41,14 +41,14 @@ message AnyPatientActionData
     PericardialEffusionData                            PericardialEffusion                            = 23;
     PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 24;
     RespiratoryFatigueData                             RespiratoryFatigue                             = 25;
-    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 32;
-    SubstanceBolusData                                 SubstanceBolus                                 = 26;
-    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 27;
-    SubstanceInfusionData                              SubstanceInfusion                              = 28;
-    SupplementalOxygenData                             SupplementalOxygen                             = 29;
-    TensionPneumothoraxData                            TensionPneumothorax                            = 30;
-    UrinateData                                        Urinate                                        = 31;
-  }// Last number: 32
+    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 26;
+    SubstanceBolusData                                 SubstanceBolus                                 = 27;
+    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 28;
+    SubstanceInfusionData                              SubstanceInfusion                              = 29;
+    SupplementalOxygenData                             SupplementalOxygen                             = 30;
+    TensionPneumothoraxData                            TensionPneumothorax                            = 31;
+    UrinateData                                        Urinate                                        = 32;
+  }
 }
 
 message PatientActionData
@@ -68,7 +68,7 @@ message AcuteRespiratoryDistressSyndromeExacerbationData
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
   Scalar0To1Data                            LeftLungAffected                = 3;/**<< @brief Fraction of the Left Lung Affected*/
-  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Left Lung Affected */
+  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Right Lung Affected */
 }
 
 /** @brief Fight or flight.  The body prepares to defend itself. */
@@ -83,6 +83,14 @@ message AirwayObstructionData
 {
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
+}
+
+/** @brief An arrhythmia is a problem with the rate or rhythm of your heartbeat.
+           It means that your heart beats too quickly, too slowly, or with an irregular pattern. */
+message ArrhythmiaData
+{
+  PatientActionData                         PatientAction                   = 1;
+  eHeartRhythm                              Rhythm                          = 2;/**<<@brief @ref eHeartRhythmTable */
 }
 
 /** @brief A common inflammatory disease of the airways where air flow into the lungs is partially obstructed. 
@@ -114,13 +122,6 @@ message BronchoconstrictionData
 {
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
-}
-
-/** @brief Applies a non-specific cardiac arrest. */
-message CardiacArrestData
-{
-  PatientActionData                         PatientAction                   = 1;
-  eSwitch                                   State                           = 2;/**<<@brief @ref eSwitchTable*/
 }
 
 /** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
@@ -284,7 +285,7 @@ message LobarPneumoniaExacerbationData
   PatientActionData                         PatientAction                   = 1;
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
   Scalar0To1Data                            LeftLungAffected                = 3;/**<< @brief Fraction of the Left Lung Affected*/
-  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Left Lung Affected */
+  Scalar0To1Data                            RightLungAffected               = 4;/**<< @brief Fraction of the Right Lung Affected */
 }
 
 /** @brief Mechanically breathing for the patient, such as with a squeeze bag or other equipment. */

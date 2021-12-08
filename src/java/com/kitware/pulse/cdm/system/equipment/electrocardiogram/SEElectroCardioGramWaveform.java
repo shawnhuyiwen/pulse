@@ -3,14 +3,16 @@
 package com.kitware.pulse.cdm.system.equipment.electrocardiogram;
 
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformLead;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformType;
 import com.kitware.pulse.cdm.bind.Physiology.eHeartRhythm;
 import com.kitware.pulse.cdm.properties.SEFunctionElectricPotentialVsTime;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 
 public class SEElectroCardioGramWaveform
 {
-  protected ElectroCardioGramWaveformData.eWaveformLead   lead;
-  protected eHeartRhythm                      rhythm;
+  protected eWaveformLead                     lead;
+  protected eWaveformType                     type;
   protected SEFunctionElectricPotentialVsTime data;
   protected SEScalarTime                      timeStep;
   
@@ -21,8 +23,8 @@ public class SEElectroCardioGramWaveform
   
   public void clear()
   {
-    lead = ElectroCardioGramWaveformData.eWaveformLead.NullLead;
-    rhythm = null;
+    lead = null;
+    type = null;
     data = null;
     timeStep = null;
   }
@@ -30,8 +32,8 @@ public class SEElectroCardioGramWaveform
   public static void load(ElectroCardioGramWaveformData src, SEElectroCardioGramWaveform dst)
   {
     dst.clear();
-    if(src.getRhythm()!=eHeartRhythm.UNRECOGNIZED)
-      dst.setRhythm(src.getRhythm());
+    if(src.getType()!=eWaveformType.UNRECOGNIZED)
+      dst.setType(src.getType());
     if(src.getLead()!=ElectroCardioGramWaveformData.eWaveformLead.UNRECOGNIZED)
      dst.setLead(src.getLead());
     if(src.hasData())
@@ -49,8 +51,8 @@ public class SEElectroCardioGramWaveform
   {
     if(src.hasLead())
       dst.setLead(src.lead);
-    if(src.hasRhythm())
-      dst.setRhythm(src.rhythm);
+    if(src.hasType())
+      dst.setType(src.type);
     if(src.hasData())
       dst.setData(SEFunctionElectricPotentialVsTime.unload(src.data));
     if(src.hasTimeStep())
@@ -74,17 +76,17 @@ public class SEElectroCardioGramWaveform
     this.lead = null;
   }
   
-  public eHeartRhythm getRhythm()
+  public eWaveformType getType()
   {
-    return rhythm;
+    return type;
   }
-  public void setRhythm(eHeartRhythm r)
+  public void setType(eWaveformType t)
   {
-    this.rhythm = r;
+    this.type = t;
   }
-  public boolean hasRhythm()
+  public boolean hasType()
   {
-    return rhythm == null ? false : true;
+    return type == null ? false : true;
   }
   
   public boolean hasData()

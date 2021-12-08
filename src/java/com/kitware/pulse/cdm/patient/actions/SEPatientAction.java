@@ -66,6 +66,11 @@ public abstract class SEPatientAction extends SEAction
       SEAirwayObstruction.load(c.getAirwayObstruction(), dst);
       return dst;
     }
+    case ARRHYTHMIA:
+    {
+      SEArrhythmia dst = new SEArrhythmia();
+      SEArrhythmia.load(c.getArrhythmia(), dst);
+    }
     case ASTHMAATTACK:
     {
       SEAsthmaAttack dst = new SEAsthmaAttack();
@@ -82,12 +87,6 @@ public abstract class SEPatientAction extends SEAction
     {
       SEBronchoconstriction dst = new SEBronchoconstriction();
       SEBronchoconstriction.load(c.getBronchoconstriction(), dst);
-      return dst;
-    }
-    case CARDIACARREST:
-    {
-      SECardiacArrest dst = new SECardiacArrest();
-      SECardiacArrest.load(c.getCardiacArrest(), dst);
       return dst;
     }
     case CHESTCOMPRESSIONFORCE:
@@ -265,6 +264,11 @@ public abstract class SEPatientAction extends SEAction
       dst.setAirwayObstruction(SEAirwayObstruction.unload((SEAirwayObstruction)c));
       return dst.build();
     }
+    if(c instanceof SEArrhythmia)
+    {
+      dst.setArrhythmia(SEArrhythmia.unload((SEArrhythmia)c));
+      return dst.build();
+    }
     if(c instanceof SEAsthmaAttack)
     {
       dst.setAsthmaAttack(SEAsthmaAttack.unload((SEAsthmaAttack)c));
@@ -278,11 +282,6 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEBronchoconstriction)
     {
       dst.setBronchoconstriction(SEBronchoconstriction.unload((SEBronchoconstriction)c));
-      return dst.build();
-    }
-    if(c instanceof SECardiacArrest)
-    {
-      dst.setCardiacArrest(SECardiacArrest.unload((SECardiacArrest)c));
       return dst.build();
     }
     if(c instanceof SEChestCompressionForce)

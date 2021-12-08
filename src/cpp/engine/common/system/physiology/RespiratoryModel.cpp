@@ -441,6 +441,9 @@ namespace pulse
       m_AortaO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
       m_AortaCO2 = Aorta->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
     }
+
+    //Substance - Overdose
+    m_Oversedation = m_data.GetSubstances().GetSubstance("Oversedation");
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -505,25 +508,23 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::PreProcess()
   {
-    if (m_data.HasOverride())
+
+    // Look for any known overrides
+    for (auto const& [name, modifier] : m_data.GetOverrides())
     {
-      // Look for any known overrides
-      for (auto& o : m_data.GetOverrides())
+      if (name == "RespiratoryResistance")
       {
-        if (o.name == "RespiratoryResistance")
-        {
-          if (std::isnan(o.value))
-            m_RespiratoryResistanceOverride_cmH2O_s_Per_L = -1;
-          else
-            m_RespiratoryResistanceOverride_cmH2O_s_Per_L = Convert(o.value, PressureTimePerVolumeUnit::GetCompoundUnit(o.unit), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-        }
-        else if (o.name == "RespiratoryCompliance")
-        {
-          if (std::isnan(o.value))
-            m_RespiratoryComplianceOverride_L_Per_cmH2O = -1;
-          else
-            m_RespiratoryComplianceOverride_L_Per_cmH2O = Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::L_Per_cmH2O);
-        }
+        if (std::isnan(modifier.value))
+          m_RespiratoryResistanceOverride_cmH2O_s_Per_L = -1;
+        else
+          m_RespiratoryResistanceOverride_cmH2O_s_Per_L = Convert(modifier.value, PressureTimePerVolumeUnit::GetCompoundUnit(modifier.unit), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+      }
+      else if (name == "RespiratoryCompliance")
+      {
+        if (std::isnan(modifier.value))
+          m_RespiratoryComplianceOverride_L_Per_cmH2O = -1;
+        else
+          m_RespiratoryComplianceOverride_L_Per_cmH2O = Convert(modifier.value, VolumePerPressureUnit::GetCompoundUnit(modifier.unit), VolumePerPressureUnit::L_Per_cmH2O);
       }
     }
 
@@ -1237,8 +1238,24 @@ namespace pulse
           }
 
           //Calculate the target Alveolar Ventilation based on the Arterial O2 and CO2 concentrations
-          double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05 * m_ArterialO2PartialPressure_mmHg) * MAX(0., m_ArterialCO2PartialPressure_mmHg - PeripheralCO2PartialPressureSetPoint); //Peripheral portion
-          dTargetAlveolarVentilation_L_Per_min += m_CentralControlGainConstant * MAX(0., m_ArterialCO2PartialPressure_mmHg - CentralCO2PartialPressureSetPoint); //Central portion
+          double peripheralCO2SetPoint = PeripheralCO2PartialPressureSetPoint;
+          double centralCO2SetPoint = CentralCO2PartialPressureSetPoint;
+          if (Drugs.GetSedationLevel().GetValue() > 0)
+          {
+              if (m_data.GetSubstances().IsActive(*m_Oversedation))
+              {
+                  peripheralCO2SetPoint = PeripheralCO2PartialPressureSetPoint / Drugs.GetSedationLevel().GetValue();
+                  centralCO2SetPoint = CentralCO2PartialPressureSetPoint / Drugs.GetSedationLevel().GetValue();
+              }
+              else
+              {
+                  peripheralCO2SetPoint = PeripheralCO2PartialPressureSetPoint / (1.0 - 0.15*Drugs.GetSedationLevel().GetValue());
+                  centralCO2SetPoint = CentralCO2PartialPressureSetPoint / (1.0 - 0.15*Drugs.GetSedationLevel().GetValue());
+              }
+          }
+
+          double dTargetAlveolarVentilation_L_Per_min = m_PeripheralControlGainConstant * exp(-0.05 * m_ArterialO2PartialPressure_mmHg) * MAX(0., m_ArterialCO2PartialPressure_mmHg - peripheralCO2SetPoint); //Peripheral portion
+          dTargetAlveolarVentilation_L_Per_min += m_CentralControlGainConstant * MAX(0., m_ArterialCO2PartialPressure_mmHg - centralCO2SetPoint); //Central portion
 
           //Metabolic modifier is used to drive the system to reasonable levels achievable during increased metabolic exertion
           //The modifier is tuned to achieve the correct respiratory response for near maximal exercise. A linear relationship is assumed
@@ -1320,11 +1337,11 @@ namespace pulse
           }
           else
           {
-            m_VentilationFrequency_Per_min = dTargetPulmonaryVentilation_L_Per_min / dTargetTidalVolume_L; //breaths/min
+            m_VentilationFrequency_Per_min = dTargetPulmonaryVentilation_L_Per_min / (dTargetTidalVolume_L - DrugsTVChange_L); //breaths/min
             m_VentilationFrequency_Per_min *= NMBModifier * SedationModifier;
             m_VentilationFrequency_Per_min += DrugRRChange_Per_min;
             m_NotBreathing = false;
-          }
+          }  
 
           m_VentilationFrequency_Per_min = LIMIT(m_VentilationFrequency_Per_min, 0.0, dMaximumPulmonaryVentilationRate / dHalfVitalCapacity_L);
 

@@ -9,7 +9,7 @@ from pulse.cdm.engine import IEventHandler, SEEventChange, ILoggerForward, eEven
 
 from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 from pulse.cdm.patient_actions import SEExercise
-from pulse.engine.PulseEngine import PulseEngine
+from pulse.engine.PulseEngine import PulseEngine, version, hash
 from pulse.cdm.scalars import ElectricPotentialUnit, FrequencyUnit, LengthUnit, MassUnit, MassPerVolumeUnit, \
                               PressureUnit, TemperatureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
 
@@ -56,6 +56,7 @@ class local_log_fowrwad(ILoggerForward):
         print(msg)
 
 def HowTo_UseEngine():
+    print("Using Pulse Version "+version()+"-"+hash())
 
     pulse = PulseEngine()
 

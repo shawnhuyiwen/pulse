@@ -21,19 +21,21 @@ public:
   bool SerializeFromFile(const std::string& filename, const SEScalarTime* timeStep = nullptr);
 
   virtual void Interpolate(const SEScalarTime& timeStep);
-  virtual bool StartNewCycle(eHeartRhythm rhythm);
-  virtual void CalculateWaveformsElectricPotential();
+  virtual void ClearCycles();
+  virtual bool StartNewCycle(eElectroCardioGram_WaveformType t);
+  virtual double GetCycleLength(eElectroCardioGram_WaveformType t, const TimeUnit& unit);
+  virtual void CalculateWaveformsElectricPotential(double amplitudeScale=1.0);
 
   // These are where the interpolator will put the interpolated electric potential data for each lead when you call CalculateWaveformsElectricPotential
   // You must have a waveform for the lead of the current rhythm for these scalars to be populated
-  virtual bool CanInterpolateLeadPotential(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm) const;
+  virtual bool CanInterpolateLeadPotential(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t) const;
   virtual void SetLeadElectricPotential(eElectroCardioGram_WaveformLead lead, SEScalarElectricPotential& ep);
 
 
-  virtual bool HasWaveform(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm) const;
-  virtual SEElectroCardioGramWaveform& GetWaveform(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm);
-  virtual const SEElectroCardioGramWaveform* GetWaveform(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm) const;
-  virtual void RemoveWaveform(eElectroCardioGram_WaveformLead lead, eHeartRhythm rhythm);
+  virtual bool HasWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t) const;
+  virtual SEElectroCardioGramWaveform& GetWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t);
+  virtual const SEElectroCardioGramWaveform* GetWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t) const;
+  virtual void RemoveWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t);
 
 protected:
 
@@ -41,5 +43,5 @@ protected:
   virtual bool InterpolateToTime(SEFunctionElectricPotentialVsTime& waveform, std::vector<double>& newTime, const TimeUnit& unit);
   
   std::map<eElectroCardioGram_WaveformLead, SEScalarElectricPotential*> m_Leads;
-  std::map<eElectroCardioGram_WaveformLead, std::map<eHeartRhythm, SEElectroCardioGramWaveform*>> m_Waveforms;
+  std::map<eElectroCardioGram_WaveformLead, std::map<eElectroCardioGram_WaveformType, SEElectroCardioGramWaveform*>> m_Waveforms;
 };

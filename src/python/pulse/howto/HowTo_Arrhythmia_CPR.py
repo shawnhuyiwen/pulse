@@ -1,14 +1,14 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.cdm.patient_actions import SECardiacArrest, eSwitch, \
+from pulse.cdm.patient_actions import SEArrhythmia, eHeartRhythm, \
                                       SEChestCompressionForceScale, SEChestCompressionForce
 from pulse.cdm.scalars import ForceUnit, TimeUnit
 from pulse.engine.PulseEngine import PulseEngine
 
-def HowTo_CardiacArrest():
+def HowTo_Arrhythmia():
     pulse = PulseEngine()
-    pulse.set_log_filename("./test_results/howto/HowTo_CardiacArrest.py.log")
+    pulse.set_log_filename("./test_results/howto/HowTo_Arrhythmia.py.log")
     pulse.log_to_console(True)
 
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
@@ -20,10 +20,10 @@ def HowTo_CardiacArrest():
     results = pulse.pull_data()
     print(results)
 
-    arrest = SECardiacArrest()
-    arrest.set_comment("Patient experiences cardiac arrest")
-    arrest.set_state(eSwitch.On)
-    pulse.process_action(arrest)
+    arryhthmia = SEArrhythmia()
+    arryhthmia.set_comment("Patient experiences cardiac arrest")
+    arryhthmia.set_rhythm(eHeartRhythm.StableVentricularTachycardia)
+    pulse.process_action(arryhthmia)
 
     # Advance some time and print out the vitals
     pulse.advance_time_s(10)
@@ -56,5 +56,5 @@ def HowTo_CardiacArrest():
     results = pulse.pull_data()
     print(results)
 
-HowTo_CardiacArrest()
+HowTo_Arrhythmia()
 

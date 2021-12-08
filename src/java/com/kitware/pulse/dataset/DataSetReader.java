@@ -18,11 +18,11 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformLead;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformType;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Enums.eCharge;
 import com.kitware.pulse.cdm.bind.Environment.EnvironmentalConditionsData.eSurroundingType;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
-import com.kitware.pulse.cdm.bind.Physiology.eHeartRhythm;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceData.eState;
 import com.kitware.pulse.cdm.bind.Substance.SubstancePhysicochemicalsData.eBindingProtein;
 import com.kitware.pulse.cdm.bind.Substance.SubstancePhysicochemicalsData.eIonicState;
@@ -1431,12 +1431,12 @@ public class DataSetReader
     Set<String> fields = new HashSet<>();
     fields.add("Description");
     fields.add("Lead");
-    fields.add("Rhythm");
+    fields.add("Type");
     fields.add("ElectricPotential");
     fields.add("Time");
     String property,value,unit,cellValue;
     eWaveformLead lead=eWaveformLead.NullLead;
-    eHeartRhythm rhythm=eHeartRhythm.NormalSinus;
+    eWaveformType type=null;
        
     SEElectroCardioGramWaveformList ecg=null;
     Map<String,SEElectroCardioGramWaveformList> map = new HashMap<>();
@@ -1461,27 +1461,27 @@ public class DataSetReader
         {          
           lead = eWaveformLead.values()[((int)(row.getCell(1).getNumericCellValue()))];
         }
-        else if(property.equals("Rhythm"))
+        else if(property.equals("Type"))
         {
-          rhythm = eHeartRhythm.valueOf((row.getCell(1).getStringCellValue()));
+          type = eWaveformType.valueOf((row.getCell(1).getStringCellValue()));
         }
         else if(property.equals("ElectricPotential"))
         {
           cellValue = row.getCell(1).getStringCellValue();
-          split = cellValue.indexOf(" ");           
+          split = cellValue.indexOf(" ");
           value = cellValue.substring(0,split);
-          unit  = cellValue.substring(split+1);        
-          SEElectroCardioGramWaveform waveform = ecg.getWaveform(lead, rhythm);
+          unit  = cellValue.substring(split+1);
+          SEElectroCardioGramWaveform waveform = ecg.getWaveform(lead, type);
           waveform.getData().setElectricPotential(value, unit);
         }
         else if(property.equals("Time"))
         {
           cellValue = row.getCell(1).getStringCellValue();
-          split = cellValue.indexOf(" ");           
+          split = cellValue.indexOf(" ");
           value = cellValue.substring(0,split);
-          unit  = cellValue.substring(split+1);        
-          SEElectroCardioGramWaveform waveform = ecg.getWaveform(lead, rhythm);
-          waveform.getData().setTime(value, unit);          
+          unit  = cellValue.substring(split+1);
+          SEElectroCardioGramWaveform waveform = ecg.getWaveform(lead, type);
+          waveform.getData().setTime(value, unit);
         }        
       }
     }

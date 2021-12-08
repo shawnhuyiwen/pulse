@@ -43,7 +43,7 @@
 #include "cdm/utils/GeneralMath.h"
 #include "cdm/utils/TimingProfile.h"
 
-#include "io/protobuf/PBActions.h"
+#include "io/protobuf/PBProperties.h"
 PUSH_PROTO_WARNINGS
 #include "pulse/study/bind/SensitivityAnalysis.pb.h"
 #include <google/protobuf/text_format.h>

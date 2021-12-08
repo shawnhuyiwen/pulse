@@ -176,10 +176,10 @@ namespace pulse::study::hydrocephalus
 
     // Setup Circuit Overrides
     PulseConfiguration cfg(pulse->GetLogger());
-    cfg.GetInitialOverrides().AddScalarProperty(pulse::CerebrospinalFluidNode::IntracranialSpace2, sim.intracranialspacevolumebaseline_ml(), VolumeUnit::mL);
-    cfg.GetInitialOverrides().AddScalarProperty(pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2, sim.intracranialspacecompliance_ml_per_mmhg(), VolumePerPressureUnit::mL_Per_mmHg);
-    cfg.GetInitialOverrides().AddScalarProperty("CerebrospinalFluidAbsorptionRate", sim.cerebrospinalfluidabsorptionrate_ml_per_min(), VolumePerTimeUnit::mL_Per_min);
-    cfg.GetInitialOverrides().AddScalarProperty("CerebrospinalFluidProductionRate", sim.cerebrospinalfluidproductionrate_ml_per_min(), VolumePerTimeUnit::mL_Per_min);
+    cfg.GetOverrides()[pulse::CerebrospinalFluidNode::IntracranialSpace2] = SEScalarPair(sim.intracranialspacevolumebaseline_ml(), VolumeUnit::mL);
+    cfg.GetOverrides()[pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2] = SEScalarPair(sim.intracranialspacecompliance_ml_per_mmhg(), VolumePerPressureUnit::mL_Per_mmHg);
+    cfg.GetOverrides()["CerebrospinalFluidAbsorptionRate"] = SEScalarPair(sim.cerebrospinalfluidabsorptionrate_ml_per_min(), VolumePerTimeUnit::mL_Per_min);
+    cfg.GetOverrides()["CerebrospinalFluidProductionRate"] = SEScalarPair(sim.cerebrospinalfluidproductionrate_ml_per_min(), VolumePerTimeUnit::mL_Per_min);
     pulse->SetConfigurationOverride(&cfg);
 
     // Stabilize the engine

@@ -17,6 +17,7 @@ namespace pulse
 
   Engine::~Engine()
   {
+    GetLogger()->SetLogTime(nullptr);
     SAFE_DELETE(m_Controller);
   }
 
@@ -25,6 +26,11 @@ namespace pulse
     if (m_Controller == nullptr)
       AllocateController();
     return *m_Controller;
+  }
+
+  std::string Engine::GetTypeName() const
+  {
+    return GetController().GetTypeName();
   }
 
   bool Engine::SerializeFromFile(const std::string& filename)

@@ -95,6 +95,12 @@ namespace pulse
 
     m_CSFAbsorptionRate_mLPermin = 0;
     m_CSFProductionRate_mlPermin = 0;
+
+    m_PreviousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
+
+    //m_BaroreceptorPauseTimer = 0;
+    //m_BaroreceptorPauseTimerStatus = false;
+
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -153,37 +159,63 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void NervousModel::PreProcess()
   {
-    // Check for any overrides
-    if (m_data.HasOverride())
+    // Look for any known overrides
+    for (auto const& [name, modifier] : m_data.GetOverrides())
     {
-      // Look for any known overrides
-      for (auto& o : m_data.GetOverrides())
+      if (name == "CerebrospinalFluidAbsorptionRate")
       {
-        if (o.name == "CerebrospinalFluidAbsorptionRate")
-        {
-          m_CSFAbsorptionRate_mLPermin = Convert(o.value, VolumePerTimeUnit::GetCompoundUnit(o.unit), VolumePerTimeUnit::mL_Per_min);
-          Info("CerebrospinalFluidAbsorptionRate override is " + cdm::to_string(m_CSFAbsorptionRate_mLPermin));
-          continue;
-        }
-        if (o.name == "CerebrospinalFluidProductionRate")
-        {
-          m_CSFProductionRate_mlPermin = Convert(o.value, VolumePerTimeUnit::GetCompoundUnit(o.unit), VolumePerTimeUnit::mL_Per_min);
-          Info("CerebrospinalFluidProductionRate override is " + cdm::to_string(m_CSFProductionRate_mlPermin));
-          continue;
-        }
-        if (o.name == pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2)
-        {
-          Info("Compliance override is " + cdm::to_string(Convert(o.value, VolumePerPressureUnit::GetCompoundUnit(o.unit), VolumePerPressureUnit::mL_Per_mmHg)));
-          // Print this out and manually make sure its what we want it to be.
-          double c = m_data.GetCircuits().GetFluidPath(pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2)->GetCompliance(VolumePerPressureUnit::mL_Per_mmHg);
-          Info("Compliance set to " + cdm::to_string(c));
-          continue;
-        }
+        m_CSFAbsorptionRate_mLPermin = Convert(modifier.value, VolumePerTimeUnit::GetCompoundUnit(modifier.unit), VolumePerTimeUnit::mL_Per_min);
+        Info("CerebrospinalFluidAbsorptionRate override is " + cdm::to_string(m_CSFAbsorptionRate_mLPermin));
+        continue;
+      }
+      if (name == "CerebrospinalFluidProductionRate")
+      {
+        m_CSFProductionRate_mlPermin = Convert(modifier.value, VolumePerTimeUnit::GetCompoundUnit(modifier.unit), VolumePerTimeUnit::mL_Per_min);
+        Info("CerebrospinalFluidProductionRate override is " + cdm::to_string(m_CSFProductionRate_mlPermin));
+        continue;
+      }
+      if (name == pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2)
+      {
+        Info("Compliance override is " + cdm::to_string(Convert(modifier.value, VolumePerPressureUnit::GetCompoundUnit(modifier.unit), VolumePerPressureUnit::mL_Per_mmHg)));
+        // Print this out and manually make sure its what we want it to be.
+        double c = m_data.GetCircuits().GetFluidPath(pulse::CerebrospinalFluidPath::IntracranialSpace1ToIntracranialSpace2)->GetCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+        Info("Compliance set to " + cdm::to_string(c));
+        continue;
       }
 
     }
-    if (m_BaroreceptorFeedback == eSwitch::On)
-      BaroreceptorFeedback();
+
+    if (m_data.GetState() == pulse::EngineState::Active)
+    {
+        /*if (m_data.GetCardiovascular().GetHeartRhythm() != m_previousHeartRhythm && m_BaroreceptorFeedback == eSwitch::Off && !m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+        {
+            m_BaroreceptorPauseTimerStatus = true;
+            m_BaroreceptorPauseTimer = 0.0;
+        }
+        if (m_BaroreceptorPauseTimerStatus && m_BaroreceptorPauseTimer > 5.0)
+        {
+            m_BaroreceptorFeedback = eSwitch::On;
+            m_ChemoreceptorFeedback = eSwitch::On;
+            m_BaroreceptorPauseTimerStatus = false;
+            m_BaroreceptorPauseTimer = 0.0;
+        }
+        else
+            m_BaroreceptorPauseTimer += m_data.GetTimeStep_s();*/
+
+      if (m_BaroreceptorFeedback == eSwitch::On)
+        BaroreceptorFeedback();
+      else
+      {
+        m_BaroreceptorActiveTime_s = 0;
+        GetBaroreceptorHeartRateScale().SetValue(1.0);
+        GetBaroreceptorHeartElastanceScale().SetValue(1.0);
+        GetBaroreceptorResistanceScale().SetValue(1.0);
+        GetBaroreceptorComplianceScale().SetValue(1.0);
+        m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+      }
+
+    }
+
 #ifdef PROBE
     else
     {
@@ -198,6 +230,8 @@ namespace pulse
 #endif
     if (m_ChemoreceptorFeedback == eSwitch::On)
       ChemoreceptorFeedback();
+    else
+      GetChemoreceptorHeartRateScale().SetValue(1.0);
     CerebralSpinalFluidUpdates();
 
   }
@@ -214,6 +248,7 @@ namespace pulse
     CheckBrainStatus();
     SetPupilEffects();
     ComputeExposedModelParameters();
+    m_PreviousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -232,7 +267,6 @@ namespace pulse
   {
 
   }
-
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -301,6 +335,7 @@ namespace pulse
       if (m_BaroreceptorFeedbackStatus)
         Info("Stopping Baroreceptor timer ");
       m_BaroreceptorFeedbackStatus = false;
+      //m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
     }
 
     // \todo Dampen Baroreceptor response due to sedation

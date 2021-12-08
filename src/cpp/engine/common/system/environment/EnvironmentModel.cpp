@@ -158,6 +158,8 @@ namespace pulse
     if (m_AmbientGases == nullptr || m_AmbientAerosols == nullptr)
       return;
 
+    m_AmbientGases->GetPressure().Set(GetEnvironmentalConditions().GetAtmosphericPressure());
+
     if (GetEnvironmentalConditions().HasAmbientGas())
     {
       // Add Gases to the environment
@@ -188,7 +190,6 @@ namespace pulse
         //Set substance volumes to be infinite when compartment/node volume is also infinite
         subQ->GetVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::L);
       }
-      m_AmbientGases->GetPressure().Set(GetEnvironmentalConditions().GetAtmosphericPressure());
       m_AmbientGases->Balance(BalanceGasBy::VolumeFraction);
     }
     // Add aerosols to the environment compartment

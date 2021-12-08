@@ -205,7 +205,7 @@ The respiratory acidosis event is triggered when the blood pH drops below the lo
 #### %Respiratory Alkalosis
 The respiratory alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries less than 44.0&nbsp;mmHg. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions. An irreversible state is triggered when the pH increases above 8.5.
 
-<img src="./Images/BloodChemistry/AcidBaseEvents.png">
+<img src="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png">
 <center>
 *Figure 2. The acidosis and alkalosis events are broken down into either metabolic or respiratory induced. Metabolic induced acidosis/alkalosis is driven from a shift in bicarbonate
 while respiratory induced acidosis/alkalosis is due to a chance in arterial carbon dioxide. The shift between either acidosis or alkalosis occurs at a blood pH of 7.4.*
@@ -287,7 +287,7 @@ Four Compartment Test
 ------------------------
 As mentioned above, the Blood Chemistry system serves the primary purpose of storing and relaying information between the other systems. This heavy reliance on other systems can make it difficult to test the funcitonality of blood gas balance. To this end, the scalability of the engine was leveraged to create a simpler system comprised of only four compartments: Pulmonary, to represent the capillaries in the lungs where oxygen and carbon dioxide exchange occurs; Arteries, representing all of the oxygen-rich vasculature running to the tissues; Capillaries, representing the location of oxygen removal from the vasculature; and Veins, representing the section of the vasulature containing oxygen-poor blood. A diagram of this simplified system can be seen in Figure 4 below.
 
-<img src="./Images/BloodChemistry/FourCompartment.png" width="600">
+<img src="./Images/BloodChemistry/BloodChemistryFourCompartment.png" width="600">
 <center>
 *Figure 4. The simplified Four Compartment test uses only Pulmonary, Arteries, Capillaries, and Veins to hone in on the functionality in the Blood Chemistry system.*
 </center><br>

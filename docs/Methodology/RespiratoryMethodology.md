@@ -1718,7 +1718,7 @@ It is important to note nervous system responses of a conscious patient due to p
     <td><a href="./plots/Respiratory/TensionPneumothoraxOpenVaried_MAP.jpg"><img src="./plots/Respiratory/TensionPneumothoraxOpenVaried_MAP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><a href="./plots/Respiratory/TensionPNeumothoraxOpenVariedLegend.jpg"><img src="./plots/Respiratory/TensionPNeumothoraxOpenVariedLegend.jpg" width="1100"></a></td>
+    <td colspan="2"><a href="./plots/Respiratory/TensionPneumothoraxOpenVariedLegend.jpg"><img src="./plots/Respiratory/TensionPneumothoraxOpenVariedLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 <br>

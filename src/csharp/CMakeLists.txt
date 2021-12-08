@@ -49,6 +49,7 @@ source_group(TREE "${PULSE_CSHARP_BIND_DIR}" FILES ${PULSE_CSHARP_BIND_FILES})
 set_target_properties (PulseCSharp PROPERTIES FOLDER ${PROJECT_NAME})
 set_property(TARGET PulseCSharp PROPERTY DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
 set_property(TARGET PulseCSharp PROPERTY VS_DOTNET_REFERENCES
+  "System"
   "${protobuf_REF}")
 add_custom_command(TARGET PulseCSharp POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $(TargetPath) ${CMAKE_INSTALL_PREFIX}/bin)

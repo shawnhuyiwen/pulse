@@ -35,6 +35,11 @@ bool SEScalar::IsNumber(double d)
 
 const NoUnit NoUnit::unitless;
 
+SEScalarPair::SEScalarPair() { value = SEScalar::dNaN(); unit = ""; }
+SEScalarPair::SEScalarPair(double v) { value = v; unit = ""; }
+SEScalarPair::SEScalarPair(double v, const std::string& u) { value = v; unit = u; }
+SEScalarPair::SEScalarPair(double v, const CCompoundUnit& cc) { value = v; unit = cc.GetString(); }
+
 SEScalar::SEScalar() : SEProperty()
 {
 

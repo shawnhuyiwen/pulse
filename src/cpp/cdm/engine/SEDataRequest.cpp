@@ -21,22 +21,12 @@ SEDataRequest::SEDataRequest(const SEDataRequest& dr)
 SEDataRequest::SEDataRequest(eDataRequest_Category category, const SEDecimalFormat* dfault) : SEDecimalFormat(dfault)
 {
   m_Category = category;
-  m_ActionName = "";
-  m_CompartmentName = "";
-  m_SubstanceName = "";
-  m_PropertyName="";
-  m_RequestedUnit="";
-  m_Unit=nullptr;
+  Clear();
 }
 
 SEDataRequest::~SEDataRequest()
 {
-  m_ActionName = "";
-  m_CompartmentName = "";
-  m_SubstanceName = "";
-  m_PropertyName = "";
-  m_RequestedUnit = "";
-  m_Unit = nullptr;
+  Clear();
 }
 
 void SEDataRequest::Clear()

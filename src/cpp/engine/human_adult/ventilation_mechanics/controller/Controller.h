@@ -32,6 +32,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
     virtual bool CreateCircuitsAndCompartments() override;
 
   protected:
+    virtual std::string GetTypeName() const override { return "Human Adult Ventilation Mechanics"; }
     virtual void Allocate() override;
     virtual bool Stabilize(const SEPatientConfiguration& patient_configuration) override;
 

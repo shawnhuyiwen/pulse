@@ -64,6 +64,13 @@
       "Category": "Physiology",
       "PropertyName": "DiastolicArterialPressure",
       "Unit": "mmHg"
+	}, {
+      "DecimalFormat": {
+        "Precision": 1
+      },
+      "Category": "Physiology",
+      "PropertyName": "DiastolicRightHeartPressure",
+      "Unit": "mmHg"
     }, {
       "DecimalFormat": {
         "Precision": 2
@@ -391,8 +398,8 @@
     }
   }, {
     "PatientAction": {
-      "CardiacArrest": {
-        "State": "On"
+      "Arrhythmia": {
+        "Rhythm": "Asystole"
       }
     }
   }, {

@@ -11,13 +11,13 @@ SEElectroCardioGramWaveform::SEElectroCardioGramWaveform(Logger* logger) : Logga
 {
   m_TimeStep = nullptr;
   m_Data = nullptr;
-  m_Rhythm = eHeartRhythm::NormalSinus;
+  m_Type = eElectroCardioGram_WaveformType::Sinus;
   m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
 }
 
 SEElectroCardioGramWaveform::~SEElectroCardioGramWaveform()
 {
-  m_Rhythm = eHeartRhythm::NormalSinus;
+  m_Type = eElectroCardioGram_WaveformType::Sinus;
   m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
   SAFE_DELETE(m_TimeStep);
   SAFE_DELETE(m_Data);
@@ -26,7 +26,7 @@ SEElectroCardioGramWaveform::~SEElectroCardioGramWaveform()
 
 void SEElectroCardioGramWaveform::Clear()
 {
-  m_Rhythm = eHeartRhythm::NormalSinus;
+  m_Type = eElectroCardioGram_WaveformType::Sinus;
   m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
   INVALIDATE_PROPERTY(m_TimeStep);
   INVALIDATE_PROPERTY(m_Data);
@@ -50,13 +50,13 @@ void SEElectroCardioGramWaveform::InvalidateLeadNumber()
   m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
 }
 
-eHeartRhythm SEElectroCardioGramWaveform::GetRhythm() const
+eElectroCardioGram_WaveformType SEElectroCardioGramWaveform::GetType() const
 {
-  return m_Rhythm;
+  return m_Type;
 }
-void SEElectroCardioGramWaveform::SetRhythm(eHeartRhythm rhythm)
+void SEElectroCardioGramWaveform::SetType(eElectroCardioGram_WaveformType t)
 {
-  m_Rhythm = rhythm;
+  m_Type = t;
 }
 
 bool SEElectroCardioGramWaveform::HasData() const

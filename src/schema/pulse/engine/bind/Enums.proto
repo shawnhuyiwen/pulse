@@ -8,6 +8,7 @@ enum eModelType
 {
   HumanAdultWholeBody            = 0;
   HumanAdultVentilationMechanics = 1;
+  HumanAdultHemodynamics         = 2;
 }
 
 enum eAirwayMode

@@ -110,6 +110,7 @@ public class HowTo_EngineUse
     // As Pulse is a C++ library, a JNI bridge is necessary to pass data between C++ and Java
     // Pulse is contained in a single dynamic/shared library, that will need to be loaded into the JVM
     // By default, an instantiation of the PulseEngine will look for and load the Pulse library in the java.library.path
+    System.out.println("Using Pulse version " + PulseEngine.version() + "-" + PulseEngine.hash());
 
     // If you are using this Pulse API for other things (such as Scalars) (not instantiating an engine right away),
     // you can manually load the native Pulse library like so

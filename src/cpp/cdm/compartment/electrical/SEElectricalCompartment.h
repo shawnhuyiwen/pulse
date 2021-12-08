@@ -53,7 +53,7 @@ public:
   virtual void RemoveLinks();
   virtual const std::vector<SEElectricalCompartmentLink*>& GetLinks();
 
-  virtual bool HasChild(const std::string& name);
+  virtual bool HasChild(const SEElectricalCompartment& cmpt);
   virtual void AddChild(SEElectricalCompartment& child);
 
   virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }

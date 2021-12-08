@@ -3,30 +3,30 @@
 
 #pragma once
 #include "cdm/patient/actions/SEPatientAction.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
 
-class CDM_DECL SECardiacArrest : public SEPatientAction
+class CDM_DECL SEArrhythmia : public SEPatientAction
 {
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SECardiacArrest(Logger* logger=nullptr);
-  virtual ~SECardiacArrest();
+  SEArrhythmia(Logger* logger=nullptr);
+  virtual ~SEArrhythmia();
 
-  virtual void Clear(); //clear memory
-  virtual void Copy(const SECardiacArrest& src, bool /*preserveState*/=false);
+  virtual void Clear();
+  virtual void Copy(const SEArrhythmia& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
   virtual void Deactivate();
 
-  virtual eSwitch GetState() const { return m_State; }
-  virtual void SetState(eSwitch s) { m_State = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }
+  virtual eHeartRhythm GetRhythm() const;
+  virtual void SetRhythm(eHeartRhythm t);
 
   virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
-  eSwitch m_State;
-
+  eHeartRhythm           m_Rhythm;
 };

@@ -163,10 +163,6 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
             dst.AnyAction.append(any_action)
             continue
         if isinstance(action, SEPatientAction):
-            if isinstance(action, SEAsthmaAttack):
-                serialize_asthma_attack_to_bind(action, any_action.PatientAction.AsthmaAttack)
-                dst.AnyAction.append(any_action)
-                continue
             if isinstance(action, SEAcuteRespiratoryDistressSyndromeExacerbation):
                 serialize_acute_respiratory_distress_syndrome_exacerbation_to_bind(action, any_action.PatientAction.AcuteRespiratoryDistressSyndromeExacerbation)
                 dst.AnyAction.append(any_action)
@@ -179,16 +175,24 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_airway_obstruction_to_bind(action, any_action.PatientAction.AirwayObstruction)
                 dst.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEArrhythmia):
+                serialize_arrhythmia_to_bind(action, any_action.PatientAction.Arrhythmia)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEArrhythmia):
+                serialize_arrhythmia_to_bind(action, any_action.PatientAction.Arrhythmia)
+                dst.AnyAction.append(any_action)
+                continue
+            if isinstance(action, SEAsthmaAttack):
+                serialize_asthma_attack_to_bind(action, any_action.PatientAction.AsthmaAttack)
+                dst.AnyAction.append(any_action)
+                continue
             if isinstance(action, SEBrainInjury):
                 serialize_brain_injury_to_bind(action, any_action.PatientAction.BrainInjury)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEBronchoconstriction):
                 serialize_bronchoconstriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
-                dst.AnyAction.append(any_action)
-                continue
-            if isinstance(action, SECardiacArrest):
-                serialize_cardiac_arrest_to_bind(action, any_action.PatientAction.CardiacArrest)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEChestCompressionForce):
@@ -366,8 +370,6 @@ def serialize_patient_configuration_to_bind(src: SEPatientConfiguration, dst: Pa
         serialize_patient_to_bind(src.get_patient(), dst.Patient)
     if src.has_conditions():
         serialize_condition_manager_to_bind(src.get_conditions(), dst.Conditions)
-    for override in src.get_scalar_overrides():
-        serialize_scalar_property_to_bind(override, dst.ScalarOverride.add())
     dst.DataRoot = src.get_data_root_dir()
 
 def serialize_patient_configuration_from_bind(src: PatientConfigurationData, dst: SEPatientConfiguration):

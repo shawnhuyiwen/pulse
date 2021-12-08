@@ -3,7 +3,7 @@
 from enum import Enum
 from pulse.cdm.scalars import SEScalar0To1, SEScalarArea, SEScalarFrequency, SEScalarLength, \
                               SEScalarMass, SEScalarMassPerTime, SEScalarMassPerVolume, SEScalarPower, \
-                              SEScalarPressure, SEScalarTime, SEScalarVolume, SEScalarProperty
+                              SEScalarPressure, SEScalarTime, SEScalarVolume
 from pulse.cdm.engine import SEConditionManager
 
 class eSex(Enum):
@@ -11,7 +11,7 @@ class eSex(Enum):
     Female = 1
 
 class SEPatientConfiguration():
-    __slots__ = ["_patient", "_patient_file", "_condition_manager", "_scalar_overrides", "_data_root_dir"]
+    __slots__ = ["_patient", "_patient_file", "_condition_manager", "_data_root_dir"]
 
     def __init__(self):
         self.clear()
@@ -19,7 +19,6 @@ class SEPatientConfiguration():
     def clear(self):
         self._patient = None
         self._patient_file = None
-        self._scalar_overrides = []
         self._condition_manager = None
         self._data_root_dir = "./"
 
@@ -59,15 +58,6 @@ class SEPatientConfiguration():
         return self._condition_manager
     def invalidate_conditions(self):
         self._condition_manager = None
-
-    def has_overrides(self):
-        return len(self._scalar_overrides) > 0
-    def get_scalar_overrides(self):
-        return self._scalar_overrides
-    def remove_overrides(self):
-        self._scalar_overrides = []
-    def add_scalar_override(self,name: str, value:float, unit:str = ""):
-        self._scalar_overrides.append(SEScalarProperty(name, value, unit))
 
 class SEPatient():
     __slots__ = ["_name", "_sex", "_age", "_weight", "_height",
