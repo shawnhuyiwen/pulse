@@ -53,8 +53,8 @@ namespace pulse
   void PBPhysiology::Serialize(const PULSE_BIND::CardiovascularData& src, CardiovascularModel& dst)
   {
     ::PBPhysiology::Serialize(src.common(), dst);
-    dst.m_CardiacArrest = src.cardiacarrest();
     dst.m_HeartFlowDetected = src.heartflowdetected();
+    dst.m_StartCardiacArrest = src.startcardiacarrest();
     dst.m_StartSystole = src.startsystole();
     dst.m_CardiacCyclePeriod_s = src.cardiaccycleperiod_s();
     dst.m_CurrentCardiacCycleDuration_s = src.currentcardiaccycleduration_s();
@@ -104,8 +104,8 @@ namespace pulse
   void PBPhysiology::Serialize(const CardiovascularModel& src, PULSE_BIND::CardiovascularData& dst)
   {
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
-    dst.set_cardiacarrest(src.m_CardiacArrest);
     dst.set_heartflowdetected(src.m_HeartFlowDetected);
+    dst.set_startcardiacarrest(src.m_StartCardiacArrest);
     dst.set_startsystole(src.m_StartSystole);
     dst.set_cardiaccycleperiod_s(src.m_CardiacCyclePeriod_s);
     dst.set_currentcardiaccycleduration_s(src.m_CurrentCardiacCycleDuration_s);
@@ -286,6 +286,7 @@ namespace pulse
     dst.m_BaroreceptorSaturationTime_s = src.baroreceptorsaturationtime_s();
     dst.m_LastMeanArterialPressure_mmHg = src.lastmeanarterialpressure_mmhg();
     dst.m_PreviousBloodVolume_mL = src.previousbloodvolume_ml();
+    dst.m_PreviousHeartRhythm = (eHeartRhythm)src.previousheartrhythm();
     dst.m_TotalSympatheticFraction = src.totalsympatheticfraction();
   }
   PULSE_BIND::NervousData* PBPhysiology::Unload(const NervousModel& src)
@@ -307,6 +308,7 @@ namespace pulse
     dst.set_baroreceptorsaturationtime_s(src.m_BaroreceptorSaturationTime_s);
     dst.set_lastmeanarterialpressure_mmhg(src.m_LastMeanArterialPressure_mmHg);
     dst.set_previousbloodvolume_ml(src.m_PreviousBloodVolume_mL);
+    dst.set_previousheartrhythm((CDM_BIND::eHeartRhythm)src.m_PreviousHeartRhythm);
     dst.set_totalsympatheticfraction(src.m_TotalSympatheticFraction);
   }
 

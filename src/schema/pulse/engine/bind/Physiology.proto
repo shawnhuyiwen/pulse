@@ -17,8 +17,8 @@ message BloodChemistryData
 message CardiovascularData
 {
   pulse.cdm.bind.CardiovascularSystemData   Common                                              = 1;
-  bool                                      CardiacArrest                                       = 2;
-  bool                                      HeartFlowDetected                                   = 3;
+  bool                                      HeartFlowDetected                                   = 2;
+  bool                                      StartCardiacArrest                                  = 3;
   // Driver Variables
   bool                                      StartSystole                                        = 4;
   double                                    CardiacCyclePeriod_s                                = 5;
@@ -109,7 +109,8 @@ message NervousData
   double                                    BaroreceptorSaturationTime_s                        = 9;
   double                                    LastMeanArterialPressure_mmHg                       = 10;
   double                                    PreviousBloodVolume_mL                              = 11;
-  double                                    TotalSympatheticFraction                            = 12;
+  pulse.cdm.bind.eHeartRhythm               PreviousHeartRhythm                                 = 12;
+  double                                    TotalSympatheticFraction                            = 13;
 }
 
 message RenalData

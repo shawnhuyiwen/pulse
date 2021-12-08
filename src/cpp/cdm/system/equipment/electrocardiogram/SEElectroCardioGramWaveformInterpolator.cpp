@@ -177,6 +177,16 @@ void SEElectroCardioGramWaveformInterpolator::SetLeadElectricPotential(eElectroC
   m_Leads[lead] = &ep;
 }
 
+void SEElectroCardioGramWaveformInterpolator::ClearCycles()
+{
+  for (auto l2rw : m_Waveforms)
+  {
+    for (auto& t2w : l2rw.second)
+    {
+      t2w.second->GetActiveIndicies().clear();
+    }
+  }
+}
 bool SEElectroCardioGramWaveformInterpolator::StartNewCycle(eElectroCardioGram_WaveformType t)
 {
   for (auto l2rw : m_Waveforms)

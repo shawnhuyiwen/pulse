@@ -60,9 +60,10 @@ namespace pulse
     double m_LastMeanArterialPressure_mmHg;
     double m_PreviousBloodVolume_mL;
     double m_TotalSympatheticFraction;
-    double m_BaroreceptorPauseTimer;
-    eHeartRhythm   m_previousHeartRhythm;
-    bool   m_BaroreceptorPauseTimerStatus;
+    // Arrhythmia Support
+    eHeartRhythm   m_PreviousHeartRhythm;
+    //double m_BaroreceptorPauseTimer;
+    //bool   m_BaroreceptorPauseTimerStatus;
 
     //SERIALIZE THESE AARON - should be system values
     double m_CSFAbsorptionRate_mLPermin;

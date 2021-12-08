@@ -117,6 +117,7 @@ namespace pulse
         m_data.GetCardiovascular().GetHeartRhythm() != m_LastRhythm)// ||
         //m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
+      double hr;
       m_HeartRhythmTime_s = 0;
       m_HeartRhythmPeriod_s = 0;
       m_LastRhythm = m_data.GetCardiovascular().GetHeartRhythm();
@@ -128,17 +129,21 @@ namespace pulse
       case eHeartRhythm::SinusTachycardia:
       case eHeartRhythm::PulselessElectricalActivity:
       {
+        // If zero, set our hr to our minimum
+        // Sync back up with the CV after this
+        hr = (m_data.GetCardiovascular().GetHeartRate().IsZero()) ?
+          1.0 : m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
+
         m_AmplitudeModifier = 1.0;
-       if(m_LastRhythm == eHeartRhythm::PulselessElectricalActivity)
-         m_AmplitudeModifier = 0.75;
+        if (m_LastRhythm == eHeartRhythm::PulselessElectricalActivity)
+          m_AmplitudeModifier = 0.75;
         m_Interpolator->StartNewCycle(eElectroCardioGram_WaveformType::Sinus);
-        m_HeartRhythmPeriod_s = 1 / m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
+        m_HeartRhythmPeriod_s = 1 / hr;
         break;
       }
       case eHeartRhythm::Asystole:
       {
-        // Nothing to do here but be zero
-        //m_heartRhythmPeriod_s = m_heartRhythmTime_s;
+        m_Interpolator->ClearCycles();
         break;
       }
       case eHeartRhythm::CourseVentricularFibrillation:
@@ -157,9 +162,18 @@ namespace pulse
       {
         m_AmplitudeModifier = 1.0;
         if (m_LastRhythm == eHeartRhythm::PulselessVentricularTachycardia)
+        {
           m_AmplitudeModifier = 0.5;
+          hr = (m_data.GetCardiovascular().GetHeartRate().IsZero()) ?
+            1.8 : m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
+        }
+        else
+        {
+          hr = (m_data.GetCardiovascular().GetHeartRate().IsZero()) ?
+            1.0 : m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
+        }
         m_Interpolator->StartNewCycle(eElectroCardioGram_WaveformType::VentricularTachycardia);
-        m_HeartRhythmPeriod_s = 1 / m_data.GetCardiovascular().GetHeartRate(FrequencyUnit::Per_s);
+        m_HeartRhythmPeriod_s = 1 / hr;
         break;
       }
       default:

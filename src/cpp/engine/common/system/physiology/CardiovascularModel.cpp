@@ -206,7 +206,6 @@ namespace pulse
     m_RightHeartElastanceMin_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMinimum(PressurePerVolumeUnit::mmHg_Per_mL);
 
     // CPR and Cardiac Arrest control
-    m_CardiacArrest = false;
     m_StartCardiacArrest = false;
     m_CompressionTime_s = 0.0;
     m_CompressionRatio = 0.0;
@@ -812,30 +811,6 @@ namespace pulse
       {
         m_data.GetEvents().SetEvent(eEvent::CardiogenicShock, false, m_data.GetSimulationTime());
       }
-
-      //Check for Tachycardia, Bradycardia, and asystole
-      /// \event Patient: Tachycardia: heart rate exceeds 100 beats per minute.  This state is alleviated if it decreases below 90.
-      if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 90)
-      {
-          m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
-          SetHeartRhythm(eHeartRhythm::NormalSinus);
-      }
-      if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 100)
-      {
-          m_data.GetEvents().SetEvent(eEvent::Tachycardia, true, m_data.GetSimulationTime());
-          SetHeartRhythm(eHeartRhythm::SinusTachycardia);
-      }
-      /// \event Patient: Bradycardia: heart rate falls below 60 beats per minute.  This state is alleviated if it increases above 65.
-      if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 60)
-      {
-          m_data.GetEvents().SetEvent(eEvent::Bradycardia, true, m_data.GetSimulationTime());
-          SetHeartRhythm(eHeartRhythm::SinusBradycardia);
-      }
-      if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 65)
-      {
-          m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
-          SetHeartRhythm(eHeartRhythm::NormalSinus);
-      }
     }
 
     // Irreversible state if cardiac arrest persists. // rbc I turned this from a check on Asystole to Cardiac Arrest
@@ -848,6 +823,26 @@ namespace pulse
         m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
         m_ss << "Cardiac Arrest has occurred for " << m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s) << " seconds, patient is in irreversible state.";
         Fatal(m_ss);
+      }
+      m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
+      m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
+    }
+    else
+    {
+      if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 60)
+      {
+        m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::Bradycardia, true, m_data.GetSimulationTime());
+      }
+      else  if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 100)
+      {
+        m_data.GetEvents().SetEvent(eEvent::Tachycardia, true, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
+      }
+      else
+      {
+        m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
+        m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
       }
     }
 
@@ -1613,10 +1608,14 @@ namespace pulse
   {
     if (m_data.GetActions().GetPatientActions().HasArrhythmia())
     {
-      SetHeartRhythm(m_data.GetActions().GetPatientActions().GetArrhythmia().GetRhythm());
+      auto r = m_data.GetActions().GetPatientActions().GetArrhythmia().GetRhythm();
       m_data.GetActions().GetPatientActions().RemoveArrhythmia();// Done with the action
 
-      switch (GetHeartRhythm())
+      if (r == GetHeartRhythm())
+        return; // Nothing to do
+      SetHeartRhythm(r);
+
+      switch (r)
       {
       case eHeartRhythm::Asystole:
       case eHeartRhythm::CourseVentricularFibrillation:
@@ -1624,76 +1623,71 @@ namespace pulse
       case eHeartRhythm::PulselessElectricalActivity:
       case eHeartRhythm::PulselessVentricularTachycardia:
       {
-          // Flip the cardiac arrest switch
-          // This tells the CV system that a cardiac arrest has been initiated.
-          // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
-          m_StartCardiacArrest = true;
-          m_ArrhythmiaHeartElastanceModifier = 1.0;
-          m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
-          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
-          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
-          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
-          break;
+        // Flip the cardiac arrest switch
+        // This tells the CV system that a cardiac arrest has been initiated.
+        // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
+        m_StartCardiacArrest = true;
+        m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
+        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
+        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
+        break;
       }
       case eHeartRhythm::NormalSinus:
       {
-          m_ArrhythmiaHeartElastanceModifier = 1.0;
-          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
-          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-          /*if(m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
-          {
-              m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-              m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-          }
-          else
-          {
-              m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
-              m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
-          }*/
-          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-          break;
+        m_StartCardiacArrest = false;
+        m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
+        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
+        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
+        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        break;
       }
       case eHeartRhythm::SinusTachycardia:
       {
-          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-          m_ArrhythmiaHeartElastanceModifier = 1.0;
-          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 1.5, FrequencyUnit::Per_min);
-          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-          break;
+        m_StartCardiacArrest = false;
+        m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 1.5, FrequencyUnit::Per_min);
+        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
+        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
+        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        break;
       }
       case eHeartRhythm::SinusBradycardia:
       {
-          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-          m_ArrhythmiaHeartElastanceModifier = 1.0;
-          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 0.7, FrequencyUnit::Per_min);
-          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-          break;
+        m_StartCardiacArrest = false;
+        m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 0.7, FrequencyUnit::Per_min);
+        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
+        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
+        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        break;
       }
       case eHeartRhythm::StableVentricularTachycardia:
       {
-          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-          m_ArrhythmiaHeartElastanceModifier = 0.8;
-          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.2, FrequencyUnit::Per_min);
-          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-          break;
+        m_StartCardiacArrest = false;
+        m_ArrhythmiaHeartElastanceModifier = 0.8;
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.2, FrequencyUnit::Per_min);
+        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
+        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
+        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        break;
       }
       case eHeartRhythm::UnstableVentricularTachycardia:
       {
-          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-          m_ArrhythmiaHeartElastanceModifier = 0.5;
-          m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.8, FrequencyUnit::Per_min);
-          m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-          m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-          break;
+        m_StartCardiacArrest = false;
+        m_ArrhythmiaHeartElastanceModifier = 0.5;
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.8, FrequencyUnit::Per_min);
+        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
+        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
+        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        break;
       }
       default:// Any other rhythms take us out of cardiac arrest
-          Error("Unsupported heart arrhythmia.");
+        Error("Unsupported heart arrhythmia.");
       }
-
+      Info("Setting Heart Rate Baseline to :" + m_data.GetCurrentPatient().GetHeartRateBaseline().ToString());
       //Force a new cardiac cycle to start when cardiac arrest is removed
       m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
     }

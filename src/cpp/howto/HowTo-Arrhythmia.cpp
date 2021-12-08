@@ -7,6 +7,7 @@
 // Include the various types you will be using in your code
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEEventManager.h"
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/compartment/fluid/SELiquidCompartment.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
@@ -77,12 +78,29 @@ void HowToArrythmia()
 
   arrhythmia.SetRhythm(eHeartRhythm::FineVentricularFibrillation);
   pe->ProcessAction(arrhythmia);
-  pe->GetLogger()->Info("Giving the patient course ventricular fibrillation.");
+  pe->GetLogger()->Info("Giving the patient fine ventricular fibrillation.");
 
-  AdvanceAndTrackTime_s(90, *pe);
+  AdvanceAndTrackTime_s(17, *pe);
   pe->GetLogger()->Info(std::stringstream() << "The patient has had course ventricular fibrillation for 90 s");
   pe->GetEngineTracker()->LogRequestedValues(false);
 
+  // Save the state
+  pe->SerializeToFile("./test_results/howto/HowToArrythmia.json");
+  // Load the state back 
+  if (!pe->SerializeFromFile("./test_results/howto/HowToArrythmia.json"))
+  {
+    pe->GetLogger()->Error("Could not load state, check the error");
+    return;
+  }
+
+  // The Cardiac Arrest Event should be on, and you can get the start time
+  if (pe->GetEventManager().IsEventActive(eEvent::CardiacArrest))
+  {
+    double duration_s = pe->GetEventManager().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s);
+    pe->GetLogger()->Info("Cardiac Arrest has been active for " + pulse::cdm::to_string(duration_s)+"s");
+  }
+  else
+    pe->GetLogger()->Error("Cardiac Arrest should be active");
 
   pe->GetLogger()->Info("Finished");
 }

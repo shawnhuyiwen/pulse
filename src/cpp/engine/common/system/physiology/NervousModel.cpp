@@ -96,8 +96,10 @@ namespace pulse
     m_CSFAbsorptionRate_mLPermin = 0;
     m_CSFProductionRate_mlPermin = 0;
 
-    m_previousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
-    m_BaroreceptorPauseTimerStatus = false;
+    m_PreviousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
+
+    //m_BaroreceptorPauseTimer = 0;
+    //m_BaroreceptorPauseTimerStatus = false;
 
   }
 
@@ -145,8 +147,6 @@ namespace pulse
     m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
     m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / m_BaroreceptorMeanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
     m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
-
-    m_previousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -202,27 +202,19 @@ namespace pulse
         else
             m_BaroreceptorPauseTimer += m_data.GetTimeStep_s();*/
 
-        if (m_BaroreceptorFeedback == eSwitch::On)
-            BaroreceptorFeedback();
-        else
-        {
-            GetBaroreceptorHeartRateScale().SetValue(1.0);
-            GetBaroreceptorHeartElastanceScale().SetValue(1.0);
-            GetBaroreceptorResistanceScale().SetValue(1.0);
-            GetBaroreceptorComplianceScale().SetValue(1.0);
-            GetChemoreceptorHeartRateScale().SetValue(1.0);
-            GetLeftEyePupillaryResponse().GetSizeModifier().SetValue(0);
-            GetLeftEyePupillaryResponse().GetShapeModifier().SetValue(0);
-            GetLeftEyePupillaryResponse().GetReactivityModifier().SetValue(0);
-            GetRightEyePupillaryResponse().GetSizeModifier().SetValue(0);
-            GetRightEyePupillaryResponse().GetShapeModifier().SetValue(0);
-            GetRightEyePupillaryResponse().GetReactivityModifier().SetValue(0);
-            m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
-        }
+      if (m_BaroreceptorFeedback == eSwitch::On)
+        BaroreceptorFeedback();
+      else
+      {
+        m_BaroreceptorActiveTime_s = 0;
+        GetBaroreceptorHeartRateScale().SetValue(1.0);
+        GetBaroreceptorHeartElastanceScale().SetValue(1.0);
+        GetBaroreceptorResistanceScale().SetValue(1.0);
+        GetBaroreceptorComplianceScale().SetValue(1.0);
+        m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+      }
 
     }
-    
-
 
 #ifdef PROBE
     else
@@ -238,6 +230,8 @@ namespace pulse
 #endif
     if (m_ChemoreceptorFeedback == eSwitch::On)
       ChemoreceptorFeedback();
+    else
+      GetChemoreceptorHeartRateScale().SetValue(1.0);
     CerebralSpinalFluidUpdates();
 
   }
@@ -254,7 +248,7 @@ namespace pulse
     CheckBrainStatus();
     SetPupilEffects();
     ComputeExposedModelParameters();
-    m_previousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
+    m_PreviousHeartRhythm = m_data.GetCardiovascular().GetHeartRhythm();
   }
 
   //--------------------------------------------------------------------------------------------------

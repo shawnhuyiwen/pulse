@@ -21,6 +21,7 @@ public:
   bool SerializeFromFile(const std::string& filename, const SEScalarTime* timeStep = nullptr);
 
   virtual void Interpolate(const SEScalarTime& timeStep);
+  virtual void ClearCycles();
   virtual bool StartNewCycle(eElectroCardioGram_WaveformType t);
   virtual double GetCycleLength(eElectroCardioGram_WaveformType t, const TimeUnit& unit);
   virtual void CalculateWaveformsElectricPotential(double amplitudeScale=1.0);
