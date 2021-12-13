@@ -421,37 +421,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "FineVentricularFibrillation"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-		  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "NormalSinus"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 240.0,
+          "Value": 360.0,
           "Unit": "s"
         }
       }
