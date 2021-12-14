@@ -146,7 +146,7 @@ namespace pulse
         m_Interpolator->ClearCycles();
         break;
       }
-      case eHeartRhythm::CourseVentricularFibrillation:
+      case eHeartRhythm::CoarseVentricularFibrillation:
       case eHeartRhythm::FineVentricularFibrillation:
       {
         m_AmplitudeModifier = 1.0;

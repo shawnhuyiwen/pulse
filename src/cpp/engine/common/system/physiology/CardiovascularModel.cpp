@@ -827,20 +827,23 @@ namespace pulse
       m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
       m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
     }
-    else
+    else if(!m_StartCardiacArrest)
     {
       if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 60)
       {
+        SetHeartRhythm(eHeartRhythm::SinusBradycardia);
         m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
         m_data.GetEvents().SetEvent(eEvent::Bradycardia, true, m_data.GetSimulationTime());
       }
       else  if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 100)
       {
+        SetHeartRhythm(eHeartRhythm::SinusTachycardia);
         m_data.GetEvents().SetEvent(eEvent::Tachycardia, true, m_data.GetSimulationTime());
         m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
       }
       else
       {
+        SetHeartRhythm(eHeartRhythm::NormalSinus);
         m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
         m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
       }
@@ -1611,14 +1614,11 @@ namespace pulse
       auto r = m_data.GetActions().GetPatientActions().GetArrhythmia().GetRhythm();
       m_data.GetActions().GetPatientActions().RemoveArrhythmia();// Done with the action
 
-      if (r == GetHeartRhythm())
-        return; // Nothing to do
       SetHeartRhythm(r);
-
       switch (r)
       {
       case eHeartRhythm::Asystole:
-      case eHeartRhythm::CourseVentricularFibrillation:
+      case eHeartRhythm::CoarseVentricularFibrillation:
       case eHeartRhythm::FineVentricularFibrillation:
       case eHeartRhythm::PulselessElectricalActivity:
       case eHeartRhythm::PulselessVentricularTachycardia:

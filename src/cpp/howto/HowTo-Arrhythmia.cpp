@@ -5,9 +5,11 @@
 #include "PulseEngine.h"
 
 // Include the various types you will be using in your code
+#include "cdm/engine/SEActionManager.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEEventManager.h"
+#include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/compartment/fluid/SELiquidCompartment.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
@@ -80,9 +82,15 @@ void HowToArrythmia()
   pe->ProcessAction(arrhythmia);
   pe->GetLogger()->Info("Giving the patient fine ventricular fibrillation.");
 
+  const SEArrhythmia* ArrhythmiaAction2 = pe->GetActionManager().GetPatientActions().GetArrhythmia();
+  
+  pe->GetLogger()->Info("Heart is in " + eHeartRhythm_Name(ArrhythmiaAction2->GetRhythm()));
+
   AdvanceAndTrackTime_s(17, *pe);
-  pe->GetLogger()->Info(std::stringstream() << "The patient has had course ventricular fibrillation for 90 s");
+  pe->GetLogger()->Info(std::stringstream() << "The patient has had coarse ventricular fibrillation for 90 s");
   pe->GetEngineTracker()->LogRequestedValues(false);
+
+  pe->GetLogger()->Info("Heart is in " + eHeartRhythm_Name(pe->GetCardiovascularSystem()->GetHeartRhythm()));
 
   // Save the state
   pe->SerializeToFile("./test_results/howto/HowToArrythmia.json");
