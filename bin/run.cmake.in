@@ -102,7 +102,7 @@ elseif(TYPE STREQUAL "protoc")
                                            -DFORCE:BOOL=ON
                                            -P "@CMAKE_SOURCE_DIR@/src/schema/GenerateBindings.cmake")
 elseif(TYPE STREQUAL "updateBaselines")
-  execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@/data" --target UpdateVerification)
+  execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@" --target UpdateVerification)
 elseif(TYPE STREQUAL "jar")
   execute_process(COMMAND ${CMAKE_COMMAND} --build "@CMAKE_CURRENT_BINARY_DIR@/src/java" --target PulseJava)
 elseif(TYPE STREQUAL "rebase")
