@@ -11,7 +11,7 @@ enum class eHeartRhythm
   SinusBradycardia,
   SinusTachycardia,
   Asystole,
-  CourseVentricularFibrillation,
+  CoarseVentricularFibrillation,
   FineVentricularFibrillation,
   PulselessElectricalActivity,
   PulselessVentricularTachycardia,

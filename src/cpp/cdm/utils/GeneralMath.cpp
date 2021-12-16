@@ -35,7 +35,7 @@ bool GeneralMath::CalculateConcentration(const SEScalarMass& mass, const SEScala
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateConcentration: Mass is negative:" << mass_ug << " ug. Setting concentration to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     mass_ug = 0.0;
     ret = false;
   }
@@ -43,7 +43,7 @@ bool GeneralMath::CalculateConcentration(const SEScalarMass& mass, const SEScala
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateConcentration: Volume is negative:" << volume_mL << " mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     volume_mL = 0.0;
     ret = false;
   }
@@ -68,7 +68,7 @@ bool GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMass
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateMass: Mass is negative:" << concentration_ug_Per_mL << " ug/mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     concentration_ug_Per_mL = 0.0;
     ret = false;
   }
@@ -76,7 +76,7 @@ bool GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMass
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateMass: Volume is negative:" << volume_mL << " mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     volume_mL = 0.0;
     ret = false;
   }
@@ -98,7 +98,7 @@ bool GeneralMath::CalculateHenrysLawConcentration(const SESubstance& substance, 
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateHenrysLawConcentration: Pressure is negative:" << pp_mmHg << " mmHg. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     pp_mmHg = 0.0;
     ret = false;
   }
@@ -142,7 +142,7 @@ bool GeneralMath::CalculatePartialPressureInGas(const SEScalar0To1& volumeFracti
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateConcentration: Volume Fraction is negative:" << VolumeFraction << ". Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     VolumeFraction = 0.0;
     ret = false;
   }
@@ -164,7 +164,7 @@ bool GeneralMath::CalculatePartialPressureInLiquid(const SESubstance& substance,
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateConcentration: Concentration is negative:" << concentration_ug_Per_mL << " ug/mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     concentration_ug_Per_mL = 0.0;
     ret = false;
   }
@@ -192,7 +192,7 @@ bool GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SESca
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateSpecificGravity: Mass is negative:" << totalmass_g << " ug. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     totalmass_g = 0.0;
     ret = false;
   }
@@ -200,7 +200,7 @@ bool GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SESca
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateSpecificGravity: Volume is negative:" << volume_mL << " mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     volume_mL = 0.0;
     ret = false;
   }
