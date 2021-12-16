@@ -666,7 +666,6 @@ namespace pulse
   /// Waveform data for the system, such as arterial pressure, is set every at every time slice. Mean data, such
   /// as mean arterial pressure, is set using a running average. Data that are more useful filtered are also set
   /// from a running mean. 
-  /// Several events and irreversible states are detected and set by this method.
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CalculateVitalSigns()
   {
@@ -755,7 +754,6 @@ namespace pulse
     m_CardiacCycleCentralVenousPressure_mmHg->Sample(VenaCavaPressure_mmHg);
     m_CardiacCycleSkinFlow_mL_Per_s->Sample(SkinFlow_mL_Per_s);
 
-    /// \todo Make sure irreversible state is hit before we get here.
     if (m_CardiacCycleAortaPressureLow_mmHg < -2.0)
     {
       Fatal("Diastolic pressure has fallen below zero.");
@@ -813,17 +811,8 @@ namespace pulse
       }
     }
 
-    // Irreversible state if cardiac arrest persists. // rbc I turned this from a check on Asystole to Cardiac Arrest
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      /// \event Patient: Irreversible State: heart has been in asystole for over 45 min:
-      if (m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
-      {
-        /// \irreversible Heart has been in cardiac arrest for over 45 min
-        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-        m_ss << "Cardiac Arrest has occurred for " << m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s) << " seconds, patient is in irreversible state.";
-        Fatal(m_ss);
-      }
       m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
       m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
     }
