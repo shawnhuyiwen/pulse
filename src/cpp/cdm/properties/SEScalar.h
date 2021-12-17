@@ -41,6 +41,7 @@ public:
   * ONLY if the provided scalar is valid.
   */
   bool Set(const SEScalar& s);
+  bool Force(const SEScalar& s);
 
   /**
   * Copies the entire contents
@@ -176,6 +177,7 @@ public:
   virtual const CCompoundUnit* GetUnit() const = 0;
 
   virtual bool Set(const SEScalar& s) = 0;
+  virtual bool Force(const SEScalar& s) = 0;
   virtual void Copy(const SEScalar& s) = 0;
   virtual double GetValue(const CCompoundUnit& unit) const = 0;
   virtual void   SetValue(double d, const CCompoundUnit& unit) = 0;
@@ -205,6 +207,7 @@ protected:
   // If you want access in a generic unit way, us an SEGenericScalar wrapper
   bool Set(const SEScalar& s) override;
   void Copy(const SEScalar& s) override;
+  bool Force(const SEScalar& s) override;
 
   virtual double GetValue(const CCompoundUnit& unit) const override;
   virtual void   SetValue(double d, const CCompoundUnit& unit) override;
@@ -218,6 +221,7 @@ public:
 
   virtual bool Set(const SEScalarQuantity<Unit>& s);
   virtual void Copy(const SEScalarQuantity<Unit>& s);
+  virtual bool Force(const SEScalarQuantity<Unit>& s);
 
   virtual bool HasUnit() const;
   virtual const Unit* GetUnit() const;

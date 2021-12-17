@@ -95,7 +95,7 @@ void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposePotential(double v, const Potentia
   m_PotentialType = eBlackBox_Property_Type::Imposed;
   if (m_NextPotential == nullptr)
     m_NextPotential = new PotentialScalar();
-  m_NextPotential->SetValue(v, unit);
+  m_NextPotential->ForceValue(v, unit);
 }
 template<CIRCUIT_NODE_TEMPLATE>
 void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposePotential(const PotentialScalar& s)
@@ -103,7 +103,7 @@ void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposePotential(const PotentialScalar& s
   m_PotentialType = eBlackBox_Property_Type::Imposed;
   if (m_NextPotential == nullptr)
     m_NextPotential = new PotentialScalar();
-  m_NextPotential->Set(s);
+  m_NextPotential->Force(s);
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
@@ -159,13 +159,13 @@ template<CIRCUIT_NODE_TEMPLATE>
 void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposeQuantity(double v, const QuantityUnit& unit)
 {
   m_QuantityType = eBlackBox_Property_Type::Imposed;
-  m_NextQuantity->SetValue(v, unit);
+  m_NextQuantity->ForceValue(v, unit);
 }
 template<CIRCUIT_NODE_TEMPLATE>
 void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposeQuantity(const QuantityScalar& s)
 {
   m_QuantityType = eBlackBox_Property_Type::Imposed;
-  m_NextQuantity->Set(s);
+  m_NextQuantity->Force(s);
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
