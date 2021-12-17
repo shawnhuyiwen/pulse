@@ -14,40 +14,44 @@ public:
   SEBlackBoxManager(Logger* logger);
   virtual ~SEBlackBoxManager();
 
+  virtual bool HasElectricalBlackBox(const std::string& name) const;
   virtual bool HasElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) const;
+  virtual bool HasGasBlackBox(const std::string& name) const;
   virtual bool HasGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) const;
+  virtual bool HasLiquidBlackBox(const std::string& name) const;
   virtual bool HasLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) const;
+  virtual bool HasThermalBlackBox(const std::string& name) const;
   virtual bool HasThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) const;
 
-  virtual SEElectricalBlackBox* GetElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName);
-  virtual SEGasBlackBox* GetGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName);
-  virtual SELiquidBlackBox* GetLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName);
-  virtual SEThermalBlackBox* GetThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName);
+  virtual SEElectricalBlackBox* GetElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name="");
+  virtual SEGasBlackBox* GetGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name = "");
+  virtual SELiquidBlackBox* GetLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name = "");
+  virtual SEThermalBlackBox* GetThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, std::string name = "");
 
 protected:
-  virtual SEElectricalBlackBox* CreateElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName);
-  virtual SEGasBlackBox* CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName);
-  virtual SELiquidBlackBox* CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName);
-  virtual SEThermalBlackBox* CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName);
+  virtual SEElectricalBlackBox* CreateElectricalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name);
+  virtual SEGasBlackBox* CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name);
+  virtual SELiquidBlackBox* CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name);
+  virtual SEThermalBlackBox* CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name);
 
   virtual std::string GetBlackBoxName(const std::string& srcCmptName, const std::string& tgtCmptName) const;
   template<typename tBlackBox> tBlackBox* CreateBlackBox(const std::string& name, std::map<std::string, tBlackBox*>& ledger);
   
+  // Map circuit compartments in a separate function, to support unit tests
   template<typename tBlackBox, typename tCompartment, typename tLink, typename tNode, typename tPath>
   bool MapBlackBox(tBlackBox& bb, tLink& src2bbLink, tLink& bb2tgtLink)
   {
-    tCompartment& bbCmpt = src2bbLink.GetTargetCompartment();
+    if (bb.HasCompartment())
+      Warning("Blackbox " + bb.GetName() + " already has a compartment mapped, only 1 black box can be between 2 compartments");
+
+    tCompartment& midCmpt = src2bbLink.GetTargetCompartment();
     tCompartment& srcCmpt = src2bbLink.GetSourceCompartment();
     tCompartment& tgtCmpt = bb2tgtLink.GetTargetCompartment();
-    bb.SetCompartment(&bbCmpt);
+    bb.SetCompartment(&midCmpt);
     bb.SetSourceCompartment(&srcCmpt);
     bb.SetSourceLink(&src2bbLink);
     bb.SetTargetCompartment(&tgtCmpt);
     bb.SetTargetLink(&bb2tgtLink);
-
-    bbCmpt.SetBlackBox(&bb);
-    src2bbLink.SetBlackBox(&bb);
-    bb2tgtLink.SetBlackBox(&bb);
 
     tPath& srcPath = *src2bbLink.GetPath();
     tPath& tgtPath = *bb2tgtLink.GetPath();
@@ -55,43 +59,64 @@ protected:
     return MapBlackBox<tBlackBox, tNode, tPath>(bb, srcPath, tgtPath);
   }
 
+  // Map circuit components in a separate function, to support unit tests
   template<typename tBlackBox, typename tNode, typename tPath>
   bool MapBlackBox(tBlackBox& bb, tPath& srcPath, tPath& tgtPath)
   {
-    tNode& bbNode = srcPath.GetTargetNode();
-    tNode& srcNode = srcPath.GetSourceNode();
-    tNode& tgtNode = tgtPath.GetTargetNode();
+    if (bb.HasMiddleNode())
+      Warning("Blackbox " + bb.GetName() + " already has nodes mapped, only 1 blackbox can be between nodes");
 
-    //Check our assumptions
-    if (&srcPath.GetSourceNode() == &tgtPath.GetSourceNode() ||
-      &srcPath.GetSourceNode() == &tgtPath.GetTargetNode())
+    tNode* midNode=nullptr;
+    tNode* srcNode=nullptr;
+    tNode* tgtNode=nullptr;
+
+    //Middle node is the shared one
+    if (&srcPath.GetSourceNode() == &tgtPath.GetSourceNode())
     {
-      bbNode = srcPath.GetSourceNode();
-      srcNode = srcPath.GetTargetNode();
+      midNode = &srcPath.GetSourceNode();
+      srcNode = &srcPath.GetTargetNode();
+      tgtNode = &tgtPath.GetTargetNode();
+    }
+    else if (&srcPath.GetSourceNode() == &tgtPath.GetTargetNode())
+    {
+      midNode = &srcPath.GetSourceNode();
+      srcNode = &srcPath.GetTargetNode();
+      tgtNode = &tgtPath.GetSourceNode();
+    }
+    else if (&srcPath.GetTargetNode() == &tgtPath.GetSourceNode())
+    {
+      midNode = &srcPath.GetTargetNode();
+      srcNode = &srcPath.GetSourceNode();
+      tgtNode = &tgtPath.GetTargetNode();
+    }
+    else if (&srcPath.GetTargetNode() == &tgtPath.GetTargetNode())
+    {
+      midNode = &srcPath.GetTargetNode();
+      srcNode = &srcPath.GetSourceNode();
+      tgtNode = &tgtPath.GetSourceNode();
+    }
+    else
+    {
+      Fatal("Blackbox nodes/paths incorrectly setup.");
+      return false;
     }
 
-    if (&tgtPath.GetTargetNode() == &srcPath.GetSourceNode() ||
-      &tgtPath.GetTargetNode() == &srcPath.GetTargetNode())
-    {
-      bbNode = tgtPath.GetTargetNode();
-      tgtNode = tgtPath.GetSourceNode();
-    }
+    midNode->SetPartOfBlackBox(true);
+    midNode->SetBlackBoxSourceTargetNodes(*srcNode, *tgtNode);
+    midNode->SetBlackBoxSourceTargetPaths(srcPath, tgtPath);
+    srcNode->SetPartOfBlackBox(true);
+    tgtNode->SetPartOfBlackBox(true);
+    srcPath.SetPartOfBlackBox(true);
+    tgtPath.SetPartOfBlackBox(true);
 
-    bb.SetNode(&bbNode);
-    bb.SetSourceNode(&srcNode);
+    bb.SetMiddleNode(midNode);
+    bb.SetSourceNode(srcNode);
     bb.SetSourcePath(&srcPath);
-    bb.SetTargetNode(&tgtNode);
+    bb.SetTargetNode(tgtNode);
     bb.SetTargetPath(&tgtPath);
-
-    bbNode.SetBlackBox(&bb);
-    srcNode.SetBlackBox(&bb);
-    tgtNode.SetBlackBox(&bb);
-    srcPath.SetBlackBox(&bb);
-    tgtPath.SetBlackBox(&bb);
 
     return true;
   }
-
   std::map<std::string, SEElectricalBlackBox*> m_ElectricalBoxes;
   std::map<std::string, SEGasBlackBox*> m_GasBoxes;
   std::map<std::string, SELiquidBlackBox*> m_LiquidBoxes;

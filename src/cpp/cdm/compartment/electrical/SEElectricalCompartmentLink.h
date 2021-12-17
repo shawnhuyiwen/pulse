@@ -32,18 +32,11 @@ public:
   virtual void RemovePath() { m_Path = nullptr; }
   virtual void MapPath(SEElectricalCircuitPath& path) { Clear();  m_Path = &path; }
 
-  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
-  virtual SEElectricalBlackBox* GetBlackBox() { return m_BlackBox; }
-  virtual const SEElectricalBlackBox* GetBlackBox() const { return m_BlackBox; }
-  virtual void SetBlackBox(SEElectricalBlackBox* bb) { m_BlackBox = bb; }
-
 protected:
   SEScalarElectricCurrent*  m_Current;
   SEElectricalCompartment&  m_SourceCmpt;
   SEElectricalCompartment&  m_TargetCmpt;
   SEElectricalCircuitPath*  m_Path;
-
-  SEElectricalBlackBox* m_BlackBox = nullptr;
 };
 
 #include "cdm/compartment/SECompartmentGraph.h"
