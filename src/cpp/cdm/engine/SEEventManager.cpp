@@ -141,7 +141,7 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         m_ss << " The patient is in a state of moderate hyperoxemia";
         break;
       case eEvent::SevereHypocapnia:
-        m_ss << " The patient is in a state of moderate hypocapnia";
+        m_ss << " The patient is in a state of severe hypocapnia";
         break;
       case eEvent::Tachycardia:
         m_ss << " Patient has Tachycardia";
