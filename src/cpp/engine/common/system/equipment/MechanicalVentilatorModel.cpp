@@ -93,7 +93,7 @@ namespace pulse
   void MechanicalVentilatorModel::Initialize()
   {
     Model::Initialize();
-    m_CurrentBreathState = eBreathState::Exhale;
+    m_BreathState = eBreathState::NoBreath;
     m_CurrentPeriodTime_s = 0.0;
     m_DriverPressure_cmH2O = SEScalar::dNaN();
     m_DriverFlow_L_Per_s = SEScalar::dNaN();
@@ -188,7 +188,7 @@ namespace pulse
       TurnOff();
       return;
     }
-    m_CurrentBreathState = eBreathState::Exhale;
+    m_BreathState = eBreathState::EquipmentExhale;
     m_CurrentPeriodTime_s = 0.0;
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;
@@ -321,7 +321,7 @@ namespace pulse
     //Do nothing if the ventilator is off and not initialized
     if (GetSettings().GetConnection() == eSwitch::Off)
     {
-      m_CurrentBreathState = eBreathState::Exhale;
+      m_BreathState = eBreathState::NoBreath;
       m_CurrentPeriodTime_s = 0.0;
       m_CurrentVentilatorVolume_L = 0.0;
       m_CurrentRespiratoryVolume_L = 0.0;
@@ -511,7 +511,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CalculateInspiration()
   {
-    if (m_CurrentBreathState != eBreathState::Inhale)
+    if (m_BreathState != eBreathState::EquipmentInhale)
     {
       m_LimitReached = false;
       return;
@@ -682,7 +682,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CalculatePause()
   {
-    if (m_CurrentBreathState != eBreathState::Pause)
+    if (m_BreathState != eBreathState::EquipmentPause)
     {
       return;
     }
@@ -712,7 +712,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CalculateExpiration()
   {
-    if (m_CurrentBreathState != eBreathState::Exhale)
+    if (m_BreathState != eBreathState::EquipmentExhale)
     {
       return;
     }
@@ -812,49 +812,49 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CycleMode()
   {
-    if (m_CurrentBreathState == eBreathState::Inhale)
+    if (m_BreathState == eBreathState::EquipmentInhale)
     {
       CalculateInspiratoryRespiratoryParameters();
 
       if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
         m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorHold().GetAppliedRespiratoryCycle() == eAppliedRespiratoryCycle::Inspiratory)
       {
-        m_CurrentBreathState = eBreathState::InspiratoryHold;
+        m_BreathState = eBreathState::InspiratoryHold;
         return;
       }
 
       m_InspirationTime_s += m_CurrentPeriodTime_s;
-      m_CurrentBreathState = eBreathState::Pause;
+      m_BreathState = eBreathState::EquipmentPause;
     }
-    else if (m_CurrentBreathState == eBreathState::InspiratoryHold)
+    else if (m_BreathState == eBreathState::InspiratoryHold)
     {
       m_InspirationTime_s += m_CurrentPeriodTime_s;
-      m_CurrentBreathState = eBreathState::Pause;
+      m_BreathState = eBreathState::EquipmentPause;
     }
-    else if (m_CurrentBreathState == eBreathState::Pause)
+    else if (m_BreathState == eBreathState::EquipmentPause)
     {
       m_InspirationTime_s += m_CurrentPeriodTime_s;
       CalculatePauseRespiratoryParameters();
-      m_CurrentBreathState = eBreathState::Exhale;
+      m_BreathState = eBreathState::EquipmentExhale;
     }
-    else if (m_CurrentBreathState == eBreathState::Exhale)
+    else if (m_BreathState == eBreathState::EquipmentExhale)
     {
       if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
         m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorHold().GetAppliedRespiratoryCycle() == eAppliedRespiratoryCycle::Expiratory)
       {
-        m_CurrentBreathState = eBreathState::ExpiratoryHold;
+        m_BreathState = eBreathState::ExpiratoryHold;
         return;
       }
 
       CalculateExpiratoryRespiratoryParameters();
       m_InspirationTime_s = 0.0;
-      m_CurrentBreathState = eBreathState::Inhale;
+      m_BreathState = eBreathState::EquipmentInhale;
     }
-    else if (m_CurrentBreathState == eBreathState::ExpiratoryHold)
+    else if (m_BreathState == eBreathState::ExpiratoryHold)
     {
       CalculateExpiratoryRespiratoryParameters();
       m_InspirationTime_s = 0.0;
-      m_CurrentBreathState = eBreathState::Inhale;
+      m_BreathState = eBreathState::EquipmentInhale;
     }
 
     m_CurrentPeriodTime_s = 0.0;
@@ -909,8 +909,8 @@ namespace pulse
       m_DriverPressure_cmH2O = SEScalar::dNaN();
       return;
     }
-    else if (m_CurrentBreathState == eBreathState::ExpiratoryHold ||
-      m_CurrentBreathState == eBreathState::InspiratoryHold)
+    else if (m_BreathState == eBreathState::ExpiratoryHold ||
+      m_BreathState == eBreathState::InspiratoryHold)
     {
       if (!m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold())
       {

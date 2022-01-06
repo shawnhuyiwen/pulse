@@ -58,7 +58,6 @@ namespace pulse
     void SetVolumes();
 
     // Serializable member variables (Set in Initialize and in schema)
-    eBreathState          m_CurrentBreathState;
     double                m_CurrentPeriodTime_s;
     double                m_SqueezeFlow_L_Per_s;
     double                m_SqueezePressure_cmH2O;

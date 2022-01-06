@@ -62,7 +62,6 @@ namespace pulse
   void PBEquipment::Serialize(const PULSE_BIND::BagValveMaskData& src, BagValveMaskModel& dst)
   {
     PBBagValveMask::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
-    dst.m_CurrentBreathState = (eBreathState)src.currentbreathstate();
     dst.m_CurrentPeriodTime_s = src.currentperiodtime_s();
     dst.m_SqueezeFlow_L_Per_s = src.squeezeflow_l_per_s();
     dst.m_SqueezePressure_cmH2O = src.squeezepressure_cmh2o();
@@ -76,7 +75,6 @@ namespace pulse
   void PBEquipment::Serialize(const BagValveMaskModel& src, PULSE_BIND::BagValveMaskData& dst)
   {
     PBBagValveMask::Serialize(src, *dst.mutable_common());
-    dst.set_currentbreathstate((CDM_BIND::eBreathState)src.m_CurrentBreathState);
     dst.set_currentperiodtime_s(src.m_CurrentPeriodTime_s);
     dst.set_squeezeflow_l_per_s(src.m_SqueezeFlow_L_Per_s);
     dst.set_squeezepressure_cmh2o(src.m_SqueezePressure_cmH2O);
@@ -158,7 +156,6 @@ namespace pulse
     dst.m_LimitReached = src.limitreached();
     dst.m_PreviousYPieceToConnectionFlow_L_Per_s = src.previousypiecetoconnectionflow_l_per_s();
     dst.m_PreviousConnectionPressure_cmH2O = src.previousconnectionpressure_cmh2o();
-    dst.m_CurrentBreathState = (eBreathState)src.currentbreathstate();
     PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
   }
   PULSE_BIND::MechanicalVentilatorData* PBEquipment::Unload(const MechanicalVentilatorModel& src)
@@ -182,7 +179,6 @@ namespace pulse
     dst.set_limitreached(src.m_LimitReached);
     dst.set_previousypiecetoconnectionflow_l_per_s(src.m_PreviousYPieceToConnectionFlow_L_Per_s);
     dst.set_previousconnectionpressure_cmh2o(src.m_PreviousConnectionPressure_cmH2O);
-    dst.set_currentbreathstate((CDM_BIND::eBreathState)src.m_CurrentBreathState);
     dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
   }
 }
