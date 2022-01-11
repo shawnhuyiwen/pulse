@@ -50,6 +50,9 @@ namespace pulse
     // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
     void SetUp();
 
+    void SetHeartRhythm(eHeartRhythm Rhythm) override;
+    void SetHeartRhythm(eHeartRhythm Rhythm, bool force);
+
     void AtSteadyState();
     void PreProcess();
     void Process(bool solve_and_transport=true);

@@ -465,9 +465,12 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   m_AllowDynamicTimeStep = eSwitch::Off;
   if (!dataDir.empty())
   {
-    GetECGInterpolator().SerializeFromFile(dataDir + "/ecg/StandardECG.json", &GetTimeStep());
-    GetDynamicStabilization().SerializeFromFile(dataDir + "/config/DynamicStabilization.json");
-    //GetTimedStabilization().SerializeFromFile(dataDir+"/config/TimedStabilization.json");
+    if (!GetECGInterpolator().SerializeFromFile(dataDir + "/ecg/StandardECG.json", &GetTimeStep()))
+      Error("Unable to read " + dataDir + "/ecg/StandardECG.json");
+    if(!GetDynamicStabilization().SerializeFromFile(dataDir + "/config/DynamicStabilization.json"))
+      Error("Unable to read " + dataDir + "/config/DynamicStabilization.json");
+    if(!GetTimedStabilization().SerializeFromFile(dataDir+"/config/TimedStabilization.json"))
+      Error("Unable to read " + dataDir + "/config/DynamicStabilization.json");
   }
   //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
 

@@ -826,7 +826,7 @@ namespace pulse
       }
       else  if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 100)
       {
-        SetHeartRhythm(eHeartRhythm::SinusTachycardia);
+       SetHeartRhythm(eHeartRhythm::SinusTachycardia);
         m_data.GetEvents().SetEvent(eEvent::Tachycardia, true, m_data.GetSimulationTime());
         m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
       }
@@ -1592,6 +1592,24 @@ namespace pulse
       m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
   }
 
+
+  void CardiovascularModel::SetHeartRhythm(eHeartRhythm r)
+  {
+    SetHeartRhythm(r, false);
+  }
+  void CardiovascularModel::SetHeartRhythm(eHeartRhythm r, bool force)
+  {
+    if (force)
+      SECardiovascularSystem::SetHeartRhythm(r);
+    else
+    {
+      // Make sure that non cardiac arrest rhythms, set by an action, are not reset here
+      if (GetHeartRhythm() == eHeartRhythm::StableVentricularTachycardia ||
+          GetHeartRhythm() == eHeartRhythm::UnstableVentricularTachycardia)
+        return;
+      SECardiovascularSystem::SetHeartRhythm(r);
+    }
+  }
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// The arrythmia action causes the heart to beat too quickly, too slowly, or with an irregular pattern..
@@ -1603,7 +1621,7 @@ namespace pulse
       auto r = m_data.GetActions().GetPatientActions().GetArrhythmia().GetRhythm();
       m_data.GetActions().GetPatientActions().RemoveArrhythmia();// Done with the action
 
-      SetHeartRhythm(r);
+      SetHeartRhythm(r, true);
       switch (r)
       {
       case eHeartRhythm::Asystole:
