@@ -266,7 +266,6 @@ void SEElectroCardioGramWaveformInterpolator::CalculateWaveformsElectricPotentia
       }
     }
   }
-
 }
 
 bool SEElectroCardioGramWaveformInterpolator::HasWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType t) const
