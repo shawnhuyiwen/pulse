@@ -63,20 +63,32 @@ The test suite and data generate tools used are written in Java.
 While there is no dependency on Java when integrating with your application, it is currently required to build/develop/contribute to the code base.
 
 A JAVA_HOME environment variable needs to exist pointing to the Java installation.<br>
-There are many ways to do this, here is a simple walk through to get you going with a JDK:
+There are many ways to do this.
+We recomend using the Amazon Corretto JDK 8
+
+Follow the installation instructions for your operating system <a href="https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/what-is-corretto-8.html">here.</a>
 
 #### Windows
-The JAVA_HOME environment variable pointing to the Java installation needs to be added to the system PATH.<br>
+
+To set a global JAVA_HOME environment variable pointing to the Java installation:
 
 - Download the Windows x64 JDK <a href="https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/downloads-list.html">here.</a>
-- Run the installer.
+- Run the installer for Win.
 - Goto your Control Panel->System and click Advanced system settings on the left. <br>
 - Click the 'Environment Variables' button and add JAVA_HOME as a new 'System variables'.<br>
 - Set the Value to something like: N:/Programming/Tools/jdk1.8.0_212<br>
     - It's a good idea to add the JDK to the system PATH by adding this to the beginning: %JAVA_HOME%/bin;
 - Make sure to start a new cmd window.<br>
 
+#### Mac
+
+Use the <a href="https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/macos-install.html"> instructions provided by amazon. </a> 
+
 #### Linux
+
+Use the <a href="https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/generic-linux-install.html"> instructions provided by amazon. </a> 
+
+If you would like to use the open jdk, follow these instructions:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # Check to see if you have the JDK
