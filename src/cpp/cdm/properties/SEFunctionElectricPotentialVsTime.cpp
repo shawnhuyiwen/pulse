@@ -26,7 +26,7 @@ void SEFunctionElectricPotentialVsTime::Clear()
   m_ElectricPotentialUnit = nullptr;
 }
 
-double SEFunctionElectricPotentialVsTime::GetTimeValue(size_t index, const TimeUnit& unit)
+double SEFunctionElectricPotentialVsTime::GetTimeValue(size_t index, const TimeUnit& unit) const
 {
   if (m_TimeUnit==nullptr)
     throw CommonDataModelException("No time units have been set");
@@ -38,7 +38,7 @@ std::vector<double>& SEFunctionElectricPotentialVsTime::GetTime()
 {
   return m_Independent;
 }
-const TimeUnit* SEFunctionElectricPotentialVsTime::GetTimeUnit()
+const TimeUnit* SEFunctionElectricPotentialVsTime::GetTimeUnit() const
 {
   return m_TimeUnit;
 }
@@ -47,7 +47,7 @@ void SEFunctionElectricPotentialVsTime::SetTimeUnit(const TimeUnit& unit)
   m_TimeUnit = &unit;
 }
 
-double SEFunctionElectricPotentialVsTime::GetElectricPotentialValue(size_t index, const ElectricPotentialUnit& unit)
+double SEFunctionElectricPotentialVsTime::GetElectricPotentialValue(size_t index, const ElectricPotentialUnit& unit) const
 {
   if (m_ElectricPotentialUnit == nullptr)
     throw CommonDataModelException("No electric potential units have been set");
@@ -59,7 +59,7 @@ std::vector<double>& SEFunctionElectricPotentialVsTime::GetElectricPotential()
 {
   return m_Dependent;
 }
-const ElectricPotentialUnit* SEFunctionElectricPotentialVsTime::GetElectricPotentialUnit()
+const ElectricPotentialUnit* SEFunctionElectricPotentialVsTime::GetElectricPotentialUnit() const
 {
   return m_ElectricPotentialUnit;
 }

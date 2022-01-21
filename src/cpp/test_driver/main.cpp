@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
       // Respiratory Engine Tests //
       //////////////////////////////
       //havmTest.SmokeTest(havmDir);
-      havmTest.GenerateScenarios();
+      //havmTest.GenerateScenarios();
 
       ////////////////////
       // Pulse Tests //
@@ -139,6 +139,7 @@ int main(int argc, char* argv[])
       // Property Tests
       //cdmTest.ScalarTest(cdmDir);
       //cdmTest.UnitsTest(cdmDir);
+      cdmTest.WaveformInterpolatorTest(cdmDir);
 
       // Advanced Circuit Tests
       //cdmTest.ElectricalCircuitTest(cdmDir);

@@ -16,6 +16,7 @@ add_library_ex(CommonDataModelTests
     ThermalCompartmentTest.cpp
     TissueCompartmentTest.cpp
     UnitsTest.cpp
+    WaveformInterpolatorTest.cpp
   PUBLIC_DEPENDS
     CommonDataModel
   LIB_INSTALL_ONLY

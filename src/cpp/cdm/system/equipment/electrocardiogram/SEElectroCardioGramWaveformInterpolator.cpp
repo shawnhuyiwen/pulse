@@ -112,7 +112,7 @@ void SEElectroCardioGramWaveformInterpolator::Interpolate(SEElectroCardioGramWav
 /// \details
 /// This function creates the new waveform data for the ECG output by interpolating the data from the
 /// original file. It inherits m_Independent and m_Dependent from the original data and calls
-/// GeneralMath::LinearInterpolator to create the new vector of voltage points that correspond to the 
+/// GeneralMath::LinearInterpolator to create the new vector of voltage points that correspond to the
 /// time points in newTime. It is then assigned the unit of the original data and output as the new
 /// waveform.
 //--------------------------------------------------------------------------------------------------

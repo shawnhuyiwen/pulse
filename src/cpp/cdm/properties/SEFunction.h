@@ -13,19 +13,22 @@ public:
   virtual ~SEFunction();
 
   virtual void Clear(); //clear memory
-  void Copy(const SEFunction& s);
+
+  bool WriteCSVFile(const std::string& filename) const;
 
   virtual bool                          IsValid() const;
   virtual void                          Invalidate();
 
-  virtual size_t                        Length();
+  virtual size_t                        Length() const;
   
-  double                                GetDependentValue(size_t index);
-  std::vector<double>&                  GetDependent();      
+  double                                GetDependentValue(size_t index) const;
+  std::vector<double>&                  GetDependent();
+  virtual const CCompoundUnit*          GetDependentUnit() const {return nullptr;}
 
-  double                                GetIndependentValue(size_t index);
+  double                                GetIndependentValue(size_t index) const;
   std::vector<double>&                  GetIndependent();
-  
+  virtual const CCompoundUnit*          GetIndependentUnit() const {return nullptr;}
+
 protected:
 
   std::vector<double> m_Dependent;
