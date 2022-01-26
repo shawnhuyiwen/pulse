@@ -15,11 +15,9 @@ to ask or share anything and everything about building, using, or understanding 
 
 The code provided utilizes C++17, here is a list of popular compilers and their initial version to implement all of C++17 :
 
-GCC 7 and later
-Clang 5 and later
-MSVC 2017 and later
-
-If you have any questions\comments, don't hesitate to email kitware@kitware.com.
+- GCC 7 and later
+- Clang 5 and later
+- MSVC 2017 and later
 
 While the provided cmake superbuild automatically pulls many libraries it needs to compile, 
 you will still need to have the following tools installed (along with your choice of C++ compiler) :
