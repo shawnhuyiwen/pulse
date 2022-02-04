@@ -510,6 +510,47 @@ void RemoveInterpolation(std::vector<double>& v, size_t idx)
   v.erase(v.begin() + idx);
   v.insert(v.begin() + idx, newValue);
 }
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// A 1D linear interpolator which keeps the min/max value from input
+
+/// \param  v input 1D vector
+/// \param  newSize  number of points in output vector
+
+/// \details
+/// A 1D linear interpolator which sets the min/max values from the original input to the nearest neighbour points
+/// for maintaining the range the original input. Both input and output are assumed to be equally spaced.
+//--------------------------------------------------------------------------------------------------
+void GeneralMath::LinearInterpolator1(std::vector<double> &v, size_t newSize)
+{
+  const auto nInput = v.size();
+  auto outputInterval = ((double)nInput - 1) / ((double)newSize - 1);
+
+  // Linear interpolation
+  std::vector<double> newV;
+  newV.reserve(newSize);
+  for (size_t i = 0; i < newSize-1; ++i)
+  {
+    auto currentIndex = (double)i * outputInterval;
+    double x1 = std::floor(currentIndex);
+    double x2 = std::floor(currentIndex + 1);
+    double y1 = v[(int)x1];
+    double y2 = v[(int)x2];
+    double yPrime = y1 * (currentIndex - x1) + y2 * (x2 - currentIndex);
+    newV.push_back(yPrime);
+  }
+  newV.push_back(v.back());
+
+  // Set min/max value to the nearest points to maintain min/max value
+  auto minmaxElement = std::minmax_element(v.begin(), v.end());
+  auto minIndex = (int)std::round((double)(minmaxElement.first - v.begin()) / outputInterval);
+  auto maxIndex = (int)std::round((double)(minmaxElement.second - v.begin()) / outputInterval);
+  newV[minIndex] = *minmaxElement.first;
+  newV[maxIndex] = *minmaxElement.second;
+
+  v.clear();
+  v = newV;
+}
 bool GeneralMath::LinearInterpolator(std::vector<double>& v, size_t newSize)
 {
   if (newSize == v.size())

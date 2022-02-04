@@ -100,8 +100,9 @@ void SEElectroCardioGramWaveform::GenerateActiveCycle(const SEScalarFrequency& h
   GetActiveCycle().Copy(GetOriginalData());
 
   // Interpolate original to our desired cycle points
-  GeneralMath::SplineInterpolater(GetActiveCycle().GetData(), numCyclePoints);
+  //GeneralMath::SplineInterpolater(GetActiveCycle().GetData(), numCyclePoints);
   //GeneralMath::LinearInterpolator(GetActiveCycle().GetData(), numCyclePoints);
+  GeneralMath::LinearInterpolator1(GetActiveCycle().GetData(), numCyclePoints);
 
   m_ActiveIndex = 0;
 }

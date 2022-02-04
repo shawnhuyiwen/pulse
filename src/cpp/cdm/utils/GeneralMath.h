@@ -22,6 +22,7 @@ public:
   static void   Combinations(std::vector<int> maxValues, std::vector<std::vector<int>>& permutations);
 
   static bool LinearInterpolator(std::vector<double>& v, size_t newSize);
+  static void LinearInterpolator1(std::vector<double>& v, size_t newSize);
   static double LinearInterpolator(double x1, double x2, double y1, double y2, double xPrime);
   static void SplineInterpolater(std::vector<double>& v, size_t newSize);
 
