@@ -13,6 +13,7 @@ public:
   virtual ~SEFunction();
 
   virtual void Clear(); //clear memory
+  void Copy(const SEFunction& src);
 
   bool WriteCSVFile(const std::string& filename) const;
 

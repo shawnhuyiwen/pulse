@@ -69,6 +69,8 @@ POP_PROTO_WARNINGS
 #include "cdm/properties/SEScalarVolumePerTimePressure.h"
 #include "cdm/properties/SEScalarVolumePerTimePressureArea.h"
 
+#include "cdm/properties/SEArrayElectricPotential.h"
+
 #include "cdm/properties/SEFunctionElectricPotentialVsTime.h"
 #include "cdm/properties/SEFunctionVolumeVsTime.h"
 #include "cdm/properties/SEHistogramFractionVsLength.h"
@@ -1629,6 +1631,70 @@ void PBProperty::Serialize(const SEScalarVolumePerTimePressureArea& src, CDM_BIN
 {
   PBProperty::Serialize(src, *dst.mutable_scalarvolumepertimepressurearea());
 }
+
+
+////////////
+// Arrays //
+////////////
+
+void PBProperty::Load(const CDM_BIND::ArrayData& src, SEArray& dst)
+{
+  dst.Invalidate();
+  PBProperty::Serialize(src, dst);
+
+  if (!src.unit().empty())
+  {
+    if (src.unit() != "unitless")
+      throw CommonDataModelException("CDM_BIND::Array API is intended to be unitless, You are trying to load an array with a unit defined");
+  }
+}
+void PBProperty::Serialize(const CDM_BIND::ArrayData& src, SEArray& dst)
+{
+  for (int i = 0; i < src.value().value_size(); i++)
+    dst.m_Data.push_back(src.value().value(i));
+}
+CDM_BIND::ArrayData* PBProperty::Unload(const SEArray& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::ArrayData* dst = new CDM_BIND::ArrayData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SEArray& src, CDM_BIND::ArrayData& dst)
+{
+  for (size_t i = 0; i < src.m_Data.size(); i++)
+  {
+    dst.mutable_value()->add_value(src.m_Data[i]);
+  }
+}
+
+void PBProperty::Load(const CDM_BIND::ArrayElectricPotentialData& src, SEArrayElectricPotential& dst)
+{
+  dst.Invalidate();
+  PBProperty::Serialize(src, dst);
+}
+void PBProperty::Serialize(const CDM_BIND::ArrayElectricPotentialData& src, SEArrayElectricPotential& dst)
+{
+  PBProperty::Serialize(src.arrayelectricpotential(), dst);
+  dst.m_ElectricPotentialUnit = &ElectricPotentialUnit::GetCompoundUnit(src.arrayelectricpotential().unit());
+}
+
+CDM_BIND::ArrayElectricPotentialData* PBProperty::Unload(const SEArrayElectricPotential& src)
+{
+  if (!src.IsValid())
+    return nullptr;
+  CDM_BIND::ArrayElectricPotentialData* dst = new CDM_BIND::ArrayElectricPotentialData();
+  PBProperty::Serialize(src, *dst);
+  return dst;
+}
+void PBProperty::Serialize(const SEArrayElectricPotential& src, CDM_BIND::ArrayElectricPotentialData& dst)
+{
+  PBProperty::Serialize(src, *dst.mutable_arrayelectricpotential());
+  dst.mutable_arrayelectricpotential()->set_unit(src.m_ElectricPotentialUnit->GetString());
+}
+
+
 ///////////////
 // Functions //
 ///////////////

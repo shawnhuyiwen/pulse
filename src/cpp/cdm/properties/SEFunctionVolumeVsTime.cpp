@@ -24,6 +24,16 @@ void SEFunctionVolumeVsTime::Clear()
   m_VolumeUnit = nullptr;
 }
 
+void SEFunctionVolumeVsTime::Copy(const SEFunctionVolumeVsTime& src)
+{
+  SEFunction::Copy(src);
+
+  if (src.m_TimeUnit != nullptr)
+    SetTimeUnit(*m_TimeUnit);
+  if (src.m_VolumeUnit != nullptr)
+    SetVolumeUnit(*m_VolumeUnit);
+}
+
 double SEFunctionVolumeVsTime::GetTimeValue(size_t index, const TimeUnit& unit) const
 {
   if (m_TimeUnit == nullptr)

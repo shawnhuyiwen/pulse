@@ -44,21 +44,25 @@ public:
   virtual eElectroCardioGram_WaveformType GetType() const;
   virtual void SetType(eElectroCardioGram_WaveformType t);
 
-  virtual bool HasData() const;
-  virtual SEFunctionElectricPotentialVsTime& GetData();
-  virtual const SEFunctionElectricPotentialVsTime* GetData() const;
+  virtual bool HasOriginalData() const;
+  virtual SEArrayElectricPotential& GetOriginalData();
+  virtual const SEArrayElectricPotential* GetOriginalData() const;
 
-  virtual bool HasTimeStep() const;
-  virtual SEScalarTime& GetTimeStep();
-  virtual double GetTimeStep(const TimeUnit& unit) const;
+  virtual bool HasActiveCycle() const;
+  virtual SEArrayElectricPotential& GetActiveCycle();
+  virtual const SEArrayElectricPotential* GetActiveCycle() const;
+  virtual void GenerateActiveCycle(const SEScalarFrequency& hr, double amplitudeModifier);
 
-  virtual std::vector<unsigned int>& GetActiveIndicies() { return m_ActiveIndicies; }
+  virtual size_t GetActiveIndex() { return m_ActiveIndex; }
+  virtual void SetActiveIndex(size_t idx) { m_ActiveIndex = idx; }
+
+  virtual void GetCycleValue(SEScalarElectricPotential& v, bool advance);
 
 protected:
 
   eElectroCardioGram_WaveformLead          m_LeadNumber;
   eElectroCardioGram_WaveformType          m_Type;
-  SEScalarTime*                            m_TimeStep;
-  SEFunctionElectricPotentialVsTime*       m_Data;
-  std::vector<unsigned int>                m_ActiveIndicies;
+  SEArrayElectricPotential*                m_OriginalData;
+  SEArrayElectricPotential*                m_ActiveCycle;
+  size_t                                   m_ActiveIndex;
 };

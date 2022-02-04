@@ -10,7 +10,7 @@ class SEEngineStabilization;
 class SEDynamicStabilization;
 class SETimedStabilization;
 class SEEnvironmentalConditions;
-class SEElectroCardioGramWaveformInterpolator;
+class SEElectroCardioGram;
 
 namespace pulse { class PBConfiguration; }
 /**
@@ -241,12 +241,12 @@ protected:
   /** ECG */
   //////////
 public:
-  virtual bool HasECGInterpolator() const;
-  virtual SEElectroCardioGramWaveformInterpolator& GetECGInterpolator();
-  virtual const SEElectroCardioGramWaveformInterpolator* GetECGInterpolator() const;
-  virtual void RemoveECGInterpolator();
+  virtual bool HasECG() const;
+  virtual SEElectroCardioGram& GetECG();
+  virtual const SEElectroCardioGram* GetECG() const;
+  virtual void RemoveECG();
   //protected:
-  SEElectroCardioGramWaveformInterpolator* m_ECGInterpolator;
+  SEElectroCardioGram* m_ECG;
 
   /////////////
   /** Energy */

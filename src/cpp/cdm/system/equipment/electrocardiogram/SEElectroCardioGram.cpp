@@ -3,7 +3,9 @@
 
 #include "cdm/CommonDefs.h"
 #include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
+#include "cdm/properties/SEArrayElectricPotential.h"
 #include "cdm/properties/SEScalarElectricPotential.h"
+#include "cdm/io/protobuf/PBElectroCardioGram.h"
 
 SEElectroCardioGram::SEElectroCardioGram(Logger* logger) : SEEquipment(logger)
 {
@@ -19,6 +21,8 @@ SEElectroCardioGram::SEElectroCardioGram(Logger* logger) : SEEquipment(logger)
   m_Lead10ElectricPotential = nullptr;
   m_Lead11ElectricPotential = nullptr;
   m_Lead12ElectricPotential = nullptr;
+
+  m_ActiveType = eElectroCardioGram_WaveformType::Sinus;
 }
 
 SEElectroCardioGram::~SEElectroCardioGram()
@@ -52,6 +56,30 @@ void SEElectroCardioGram::Clear()
   INVALIDATE_PROPERTY(m_Lead10ElectricPotential);
   INVALIDATE_PROPERTY(m_Lead11ElectricPotential);
   INVALIDATE_PROPERTY(m_Lead12ElectricPotential);
+
+  m_ActiveType = eElectroCardioGram_WaveformType::Sinus;
+}
+
+void SEElectroCardioGram::Copy(const SEElectroCardioGram& src)
+{
+  PBElectroCardioGram::Copy(src, *this);
+}
+
+bool SEElectroCardioGram::SerializeToString(std::string& output, eSerializationFormat m) const
+{
+  return PBElectroCardioGram::SerializeToString(*this, output, m);
+}
+bool SEElectroCardioGram::SerializeToFile(const std::string& filename) const
+{
+  return PBElectroCardioGram::SerializeToFile(*this, filename);
+}
+bool SEElectroCardioGram::SerializeFromString(const std::string& src, eSerializationFormat m)
+{
+  return PBElectroCardioGram::SerializeFromString(src, *this, m);
+}
+bool SEElectroCardioGram::SerializeFromFile(const std::string& filename)
+{
+  return PBElectroCardioGram::SerializeFromFile(filename, *this);
 }
 
 const SEScalar* SEElectroCardioGram::GetScalar(const std::string& name)
@@ -285,4 +313,136 @@ double SEElectroCardioGram::GetLead12ElectricPotential(const ElectricPotentialUn
   if (m_Lead12ElectricPotential == nullptr)
     return SEScalar::dNaN();
   return m_Lead12ElectricPotential->GetValue(unit);
+}
+
+bool SEElectroCardioGram::HasWaveforms()
+{
+  return !m_Waveforms.empty();
+}
+std::vector<SEElectroCardioGramWaveform*>& SEElectroCardioGram::GetWaveforms()
+{
+  return m_Waveforms;
+}
+
+bool SEElectroCardioGram::HasWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType type)
+{
+  for (SEElectroCardioGramWaveform* w : m_Waveforms)
+  {
+    if (w->GetLeadNumber() == lead && w->GetType() == type)
+      return true;
+  }
+  return false;
+}
+SEElectroCardioGramWaveform& SEElectroCardioGram::GetWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType type)
+{
+  for (SEElectroCardioGramWaveform* w : m_Waveforms)
+  {
+    if (w->GetLeadNumber() == lead && w->GetType() == type)
+      return *w;
+  }
+  SEElectroCardioGramWaveform* w = new SEElectroCardioGramWaveform(GetLogger());
+  w->SetLeadNumber(lead);
+  w->SetType(type);
+  m_Waveforms.push_back(w);
+  return *w;
+}
+const SEElectroCardioGramWaveform* SEElectroCardioGram::GetWaveform(eElectroCardioGram_WaveformLead lead, eElectroCardioGram_WaveformType type) const
+{
+  for (SEElectroCardioGramWaveform* w : m_Waveforms)
+  {
+    if (w->GetLeadNumber() == lead && w->GetType() == type)
+      return w;
+  }
+  return nullptr;
+}
+
+void SEElectroCardioGram::ClearCycles()
+{
+  for (SEElectroCardioGramWaveform* w : m_Waveforms)
+    w->GetActiveCycle().Clear();
+}
+
+void SEElectroCardioGram::PullCycleValues()
+{
+  for (SEElectroCardioGramWaveform* w : m_Waveforms)
+  {
+    if (w->GetType() == m_ActiveType)
+    {
+      switch (w->GetLeadNumber())
+      {
+      case eElectroCardioGram_WaveformLead::Lead1:
+      {
+        w->GetCycleValue(GetLead1ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead2:
+      {
+        w->GetCycleValue(GetLead2ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead3:
+      {
+        w->GetCycleValue(GetLead3ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead4:
+      {
+        w->GetCycleValue(GetLead4ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead5:
+      {
+        w->GetCycleValue(GetLead5ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead6:
+      {
+        w->GetCycleValue(GetLead6ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead7:
+      {
+        w->GetCycleValue(GetLead7ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead8:
+      {
+        w->GetCycleValue(GetLead8ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead9:
+      {
+        w->GetCycleValue(GetLead9ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead10:
+      {
+        w->GetCycleValue(GetLead10ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead11:
+      {
+        w->GetCycleValue(GetLead11ElectricPotential(), true);
+        break;
+      }
+      case eElectroCardioGram_WaveformLead::Lead12:
+      {
+        w->GetCycleValue(GetLead12ElectricPotential(), true);
+        break;
+      }
+      }
+    }
+  }
+}
+
+void SEElectroCardioGram::StartNewCycle(eElectroCardioGram_WaveformType t, const SEScalarFrequency& hr, double amplitudeModifier)
+{
+  m_ActiveType = t;
+  for (SEElectroCardioGramWaveform* w : m_Waveforms)
+  {
+    if (w->GetType() == t)
+      w->GenerateActiveCycle(hr, amplitudeModifier);
+    else
+      w->GetActiveCycle().Clear();
+  }
 }

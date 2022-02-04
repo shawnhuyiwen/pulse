@@ -12,7 +12,9 @@ public:
   SEFunctionElectricPotentialVsTime();
   virtual ~SEFunctionElectricPotentialVsTime();
 
-  virtual void Clear();
+  void Clear();
+  void Copy(const SEFunction& src) = delete;
+  void Copy(const SEFunctionElectricPotentialVsTime& src);
 
   double                               GetIndependentValue(size_t index) = delete;
   const CCompoundUnit*                 GetIndependentUnit() const override {return (CCompoundUnit*)m_TimeUnit;}

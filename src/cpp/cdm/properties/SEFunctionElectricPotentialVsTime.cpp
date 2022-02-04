@@ -26,6 +26,16 @@ void SEFunctionElectricPotentialVsTime::Clear()
   m_ElectricPotentialUnit = nullptr;
 }
 
+void SEFunctionElectricPotentialVsTime::Copy(const SEFunctionElectricPotentialVsTime& src)
+{
+  SEFunction::Copy(src);
+
+  if(src.m_TimeUnit!=nullptr)
+    SetTimeUnit(*m_TimeUnit);
+  if(src.m_ElectricPotentialUnit!=nullptr)
+    SetElectricPotentialUnit(*m_ElectricPotentialUnit);
+}
+
 double SEFunctionElectricPotentialVsTime::GetTimeValue(size_t index, const TimeUnit& unit) const
 {
   if (m_TimeUnit==nullptr)

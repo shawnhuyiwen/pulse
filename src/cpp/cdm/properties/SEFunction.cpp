@@ -10,7 +10,7 @@ static std::stringstream err;
 
 SEFunction::SEFunction() : SEProperty()
 {
-
+  Clear();
 }
 
 SEFunction::~SEFunction()
@@ -22,6 +22,22 @@ void SEFunction::Clear()
 {
   m_Dependent.clear();
   m_Independent.clear();
+}
+
+void SEFunction::Copy(const SEFunction& src)
+{
+  Clear();
+
+  std::copy(
+    src.m_Dependent.begin(),
+    src.m_Dependent.end(),
+    std::back_inserter(m_Dependent)
+  );
+  std::copy(
+    src.m_Independent.begin(),
+    src.m_Independent.end(),
+    std::back_inserter(m_Independent)
+  );
 }
 
 bool SEFunction::IsValid() const

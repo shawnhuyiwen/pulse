@@ -21,5 +21,3 @@ add_library_ex(CommonDataModelTests
     CommonDataModel
   LIB_INSTALL_ONLY
 )
-
-target_include_directories(CommonDataModelTests PRIVATE ${EIGEN3_INCLUDE_DIR})

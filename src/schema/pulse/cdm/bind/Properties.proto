@@ -444,6 +444,11 @@ message ArrayData
   string          Unit  = 2;
 }
 
+message ArrayElectricPotentialData
+{
+  ArrayData       ArrayElectricPotential = 1;
+}
+
 message ArrayTimeData
 {
   ArrayData       ArrayTime = 1;

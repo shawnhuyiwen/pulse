@@ -13,6 +13,8 @@ public:
   virtual ~SEFunctionVolumeVsTime();
 
   virtual void Clear();
+  void Copy(const SEFunction& src) = delete;
+  void Copy(const SEFunctionVolumeVsTime& src);
 
   double                       GetIndependentValue(size_t index) = delete;
   const CCompoundUnit*         GetIndependentUnit() const override {return (CCompoundUnit*)m_TimeUnit;}
