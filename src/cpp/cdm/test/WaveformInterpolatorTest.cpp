@@ -13,6 +13,7 @@
 #include "cdm/utils/testing/SETestCase.h"
 
 #include "cdm/properties/SEArrayElectricPotential.h"
+#include "cdm/properties/SEFunctionElectricPotentialVsTime.h"
 #include "cdm/properties/SEScalarElectricPotential.h"
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarTime.h"
@@ -22,6 +23,7 @@ void CommonDataModelTest::WaveformInterpolatorTest(const std::string& sOutputDir
   TimingProfile pTimer;
   std::string testName = "WaveformInterpolatorTest";
   Logger logger(sOutputDirectory + "/" + testName + "/"+ testName + ".log");
+  logger.LogToConsole(true);
 
   SEElectroCardioGram ecg(&logger);
   ecg.SerializeFromFile("./ecg/StandardECG.json");
@@ -31,61 +33,48 @@ void CommonDataModelTest::WaveformInterpolatorTest(const std::string& sOutputDir
   testSuite.SetName(testName);
 
   SEScalarFrequency hr;
-  SEArrayElectricPotential cycleWaveform;
+  std::vector<double> peaks;
 
-  ///////////////////////////////////////
-  // Generate sinus waveform for hr = 185
-  ///////////////////////////////////////
+  ///////////////////////////
+  // Generate sinus waveforms
+  ///////////////////////////
   pTimer.Start("Case");
-  hr.SetValue(185, FrequencyUnit::Per_min);
   SETestCase& testCase = testSuite.CreateTestCase();
-  testCase.SetName("SINUS2HR185");
+  testCase.SetName("Sinus");
 
-  ecg.StartNewCycle(eElectroCardioGram_WaveformType::Sinus, hr, 1.0);
-  cycleWaveform.Copy(ecg.GetWaveform(eElectroCardioGram_WaveformLead::Lead3,eElectroCardioGram_WaveformType::Sinus).GetActiveCycle());
+  peaks.clear();
+  double peakMin = 100;
+  double peakMax = -100;
+  for (size_t i = 60; i < 220; i++)
+  {
+    logger.Info("Generating Sinus rhythm for HR: " + std::to_string(i));
+    hr.SetValue(i, FrequencyUnit::Per_min);
+    ecg.StartNewCycle(eElectroCardioGram_WaveformType::Sinus, hr, 1.0);
+    SEArrayElectricPotential& signal = ecg.GetWaveform(eElectroCardioGram_WaveformLead::Lead3, eElectroCardioGram_WaveformType::Sinus).GetActiveCycle();
 
+    SEFunctionElectricPotentialVsTime cardiacCycle;
+    cardiacCycle.SetElectricPotentialUnit(*signal.GetUnit());
+    cardiacCycle.SetTimeUnit(TimeUnit::s);
+
+    size_t size = signal.GetData().size();
+    for (size_t s = 0; s < size; s++)
+    {
+      cardiacCycle.GetElectricPotential().push_back(signal.GetData()[s]);
+      cardiacCycle.GetTime().push_back(0.02 * s);
+    }
+    logger.Info("  - Generated a waveform of : " + std::to_string(size)+" points. Ending time is "+std::to_string(cardiacCycle.GetTime()[size -1]));
+    double peak = *std::max_element(std::begin(signal.GetData()), std::end(signal.GetData()));
+    peaks.push_back(peak);
+    if (peak > peakMax)
+      peakMax = peak;
+    if (peak < peakMin)
+      peakMin = peak;
+    //cardiacCycle.WriteCSVFile(sOutputDirectory + "/" + testName + "/sinus."+std::to_string(i)+".csv");
+  }
+  // Check that the maxes are very close...
+  if (peakMax - peakMin > 0.001)
+    testCase.AddFailure("Peaks are too far apart");
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
-
-  //////////////////////////////////////
-  // Generate sinus waveform for hr = 60
-  //////////////////////////////////////
-  pTimer.Start("Case");
-  hr.SetValue(60, FrequencyUnit::Per_min);
-  SETestCase& testCase1 = testSuite.CreateTestCase();
-  testCase1.SetName("SINUS2HR60");
-
-  ecg.StartNewCycle(eElectroCardioGram_WaveformType::Sinus, hr, 1.0);
-  cycleWaveform.Copy(ecg.GetWaveform(eElectroCardioGram_WaveformLead::Lead3, eElectroCardioGram_WaveformType::Sinus).GetActiveCycle());
-
-  testCase1.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
-
-  ///////////////////////////////////////
-  // Generate vtach waveform for hr = 185
-  ///////////////////////////////////////
-  pTimer.Start("Case");
-  hr.SetValue(185, FrequencyUnit::Per_min);
-  SETestCase& testCase2 = testSuite.CreateTestCase();
-  testCase2.SetName("VTACH2HR185");
-
-  ecg.StartNewCycle(eElectroCardioGram_WaveformType::VentricularTachycardia, hr, 1.0);
-  cycleWaveform.Copy(ecg.GetWaveform(eElectroCardioGram_WaveformLead::Lead3, eElectroCardioGram_WaveformType::Sinus).GetActiveCycle());
-
-  //vtach185.WriteCSVFile(sOutputDirectory + "/" + testName + "/vtach.185.csv");
-  testCase2.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
-
-  ///////////////////////////////////////
-  // Generate vtach waveform for hr = 165
-  ///////////////////////////////////////
-  pTimer.Start("Case");
-  hr.SetValue(165, FrequencyUnit::Per_min);
-  SETestCase& testCase3 = testSuite.CreateTestCase();
-  testCase3.SetName("VTACH2HR165");
-
-  ecg.StartNewCycle(eElectroCardioGram_WaveformType::VentricularTachycardia, hr, 1.0);
-  cycleWaveform.Copy(ecg.GetWaveform(eElectroCardioGram_WaveformLead::Lead3, eElectroCardioGram_WaveformType::Sinus).GetActiveCycle());
-
-  //vtach165.WriteCSVFile(sOutputDirectory + "/" + testName + "/vtach.165.csv");
-  testCase3.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
 
   testReport.SerializeToFile(sOutputDirectory + "/" + testName + "Report.json");
 }
