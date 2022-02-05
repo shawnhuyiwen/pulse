@@ -53,7 +53,7 @@ namespace pulse
     void CalculatePause();
     void CalculateExpiration();
     void SetVentilatorDriver();
-    void CycleMode();
+    void CycleMode(bool patientTriggered);
     void SetLeak();
     void SetHold();
     void CalculateRespiratoryParameters();
