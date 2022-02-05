@@ -469,8 +469,8 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
       Error("Unable to read " + dataDir + "/ecg/StandardECG.json");
     if(!GetDynamicStabilization().SerializeFromFile(dataDir + "/config/DynamicStabilization.json"))
       Error("Unable to read " + dataDir + "/config/DynamicStabilization.json");
-    if(!GetTimedStabilization().SerializeFromFile(dataDir+"/config/TimedStabilization.json"))
-      Error("Unable to read " + dataDir + "/config/DynamicStabilization.json");
+    //if(!GetTimedStabilization().SerializeFromFile(dataDir+"/config/TimedStabilization.json"))
+    //  Error("Unable to read " + dataDir + "/config/DynamicStabilization.json");
   }
   //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
 
