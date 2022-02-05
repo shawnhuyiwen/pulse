@@ -95,7 +95,7 @@ void SEElectroCardioGramWaveform::GenerateActiveCycle(const SEScalarFrequency& h
     1.0 : hr.GetValue(FrequencyUnit::Per_s);
 
   double cycleTime_s = 1 / bps;
-  size_t numCyclePoints = (size_t)std::floor(cycleTime_s / 0.02 + 1);
+  size_t numCyclePoints = std::ceil(cycleTime_s/0.02)+1;
 
   GetActiveCycle().Copy(GetOriginalData());
 

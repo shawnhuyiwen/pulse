@@ -53,11 +53,9 @@ namespace pulse
   void PBPhysiology::Serialize(const PULSE_BIND::CardiovascularData& src, CardiovascularModel& dst)
   {
     ::PBPhysiology::Serialize(src.common(), dst);
-    dst.m_HeartFlowDetected = src.heartflowdetected();
     dst.m_StartCardiacArrest = src.startcardiacarrest();
     dst.m_StartSystole = src.startsystole();
     dst.m_CardiacCyclePeriod_s = src.cardiaccycleperiod_s();
-    dst.m_CurrentCardiacCycleDuration_s = src.currentcardiaccycleduration_s();
     dst.m_LeftHeartElastanceModifier = src.leftheartelastancemodifier();
     dst.m_LeftHeartElastance_mmHg_Per_mL = src.leftheartelastance_mmhg_per_ml();
     dst.m_LeftHeartElastanceMax_mmHg_Per_mL = src.leftheartelastancemax_mmhg_per_ml();
@@ -104,11 +102,9 @@ namespace pulse
   void PBPhysiology::Serialize(const CardiovascularModel& src, PULSE_BIND::CardiovascularData& dst)
   {
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
-    dst.set_heartflowdetected(src.m_HeartFlowDetected);
     dst.set_startcardiacarrest(src.m_StartCardiacArrest);
     dst.set_startsystole(src.m_StartSystole);
     dst.set_cardiaccycleperiod_s(src.m_CardiacCyclePeriod_s);
-    dst.set_currentcardiaccycleduration_s(src.m_CurrentCardiacCycleDuration_s);
     dst.set_leftheartelastance_mmhg_per_ml(src.m_LeftHeartElastance_mmHg_Per_mL);
     dst.set_leftheartelastancemodifier(src.m_LeftHeartElastanceModifier);
     dst.set_leftheartelastancemax_mmhg_per_ml(src.m_LeftHeartElastanceMax_mmHg_Per_mL);

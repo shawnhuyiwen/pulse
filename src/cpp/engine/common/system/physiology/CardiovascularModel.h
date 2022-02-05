@@ -77,6 +77,7 @@ namespace pulse
     /**/void AdjustVascularTone();
     /****/void MetabolicToneResponse();
     /**/void BeginCardiacCycle();
+    /****/void RecordAndResetCardiacCycle();//Could be called out of order by arrythma
     /**/void CalculateHeartElastance();
     void ProcessActions();
     //Action methods
@@ -93,16 +94,12 @@ namespace pulse
 
     // Process:
     void CalculateVitalSigns();
-    /**/void CalculateHeartRate();
-    /**/void RecordAndResetCardiacCycle();
 
     // Serializable member variables (Set in Initialize and in schema)
     //Driver
     bool   m_StartSystole;
-    bool   m_HeartFlowDetected;
     bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
     double m_CardiacCyclePeriod_s;
-    double m_CurrentCardiacCycleDuration_s; // How long have we been in this heart beat
     double m_LeftHeartElastanceModifier;// from Heart Failure and such
     double m_LeftHeartElastance_mmHg_Per_mL;
     double m_LeftHeartElastanceMax_mmHg_Per_mL;
