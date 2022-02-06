@@ -109,6 +109,7 @@ The Mechanical Ventilator configuration parameters were defined to allow for set
 	- Y-piece volume: Total volume of the y-piece
   - Connection volume: Total volume of the mask/endotracheal tube
 - Circuit Compliance: Total compliance of the ventilator circuit
+- Relief Valve Pressure: Maximum relative pressure allowed
 
 While the parameter list is meant to be all encompassing for all ventilator modes, some typical settings are required to be translated by the user or application.  For example, the respiration rate (<i>RR</i>) and I:E Ratio (<i>IE</i>)settings can be translated to an inspiratory period (<i>P<sub>ins</sub></i>) and expiratory period (<i>P<sub>exp</sub></i>) by:
 
