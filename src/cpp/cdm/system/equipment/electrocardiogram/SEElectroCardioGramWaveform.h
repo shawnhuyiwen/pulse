@@ -36,6 +36,9 @@ public:
 
   virtual void Clear();// Deletes all members
 
+  virtual bool IsContinuous() const { return m_Continuous; }
+  virtual void SetContinuous(bool b) { m_Continuous = b; }
+
   virtual bool HasLeadNumber() const;
   virtual eElectroCardioGram_WaveformLead  GetLeadNumber() const;
   virtual void SetLeadNumber(eElectroCardioGram_WaveformLead n);
@@ -51,7 +54,7 @@ public:
   virtual bool HasActiveCycle() const;
   virtual SEArrayElectricPotential& GetActiveCycle();
   virtual const SEArrayElectricPotential* GetActiveCycle() const;
-  virtual void GenerateActiveCycle(const SEScalarFrequency& hr, double amplitudeModifier);
+  virtual void GenerateActiveCycle(const SEScalarFrequency& hr, const SEScalarTime& step, double amplitudeModifier);
 
   virtual size_t GetActiveIndex() { return m_ActiveIndex; }
   virtual void SetActiveIndex(size_t idx) { m_ActiveIndex = idx; }
@@ -60,6 +63,7 @@ public:
 
 protected:
 
+  bool                                     m_Continuous;
   eElectroCardioGram_WaveformLead          m_LeadNumber;
   eElectroCardioGram_WaveformType          m_Type;
   SEArrayElectricPotential*                m_OriginalData;

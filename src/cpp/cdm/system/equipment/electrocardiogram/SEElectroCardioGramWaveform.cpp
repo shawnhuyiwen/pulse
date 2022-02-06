@@ -6,10 +6,12 @@
 #include "cdm/properties/SEArrayElectricPotential.h"
 #include "cdm/properties/SEScalarElectricPotential.h"
 #include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarTime.h"
 #include "cdm/utils/GeneralMath.h"
 
 SEElectroCardioGramWaveform::SEElectroCardioGramWaveform(Logger* logger) : Loggable(logger)
 {
+  m_Continuous = false;
   m_OriginalData = nullptr;
   m_ActiveCycle = nullptr;
   Clear();
@@ -17,6 +19,7 @@ SEElectroCardioGramWaveform::SEElectroCardioGramWaveform(Logger* logger) : Logga
 
 SEElectroCardioGramWaveform::~SEElectroCardioGramWaveform()
 {
+  m_Continuous = false;
   m_Type = eElectroCardioGram_WaveformType::Sinus;
   m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
   SAFE_DELETE(m_OriginalData);
@@ -26,6 +29,7 @@ SEElectroCardioGramWaveform::~SEElectroCardioGramWaveform()
 
 void SEElectroCardioGramWaveform::Clear()
 {
+  m_Continuous = false;
   m_Type = eElectroCardioGram_WaveformType::Sinus;
   m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
   INVALIDATE_PROPERTY(m_OriginalData);
@@ -89,20 +93,21 @@ const SEArrayElectricPotential* SEElectroCardioGramWaveform::GetActiveCycle() co
   return m_ActiveCycle;
 }
 
-void SEElectroCardioGramWaveform::GenerateActiveCycle(const SEScalarFrequency& hr, double amplitudeModifier)
+void SEElectroCardioGramWaveform::GenerateActiveCycle(const SEScalarFrequency& hr, const SEScalarTime& step, double amplitudeModifier)
 {
-  double bps = (hr.IsZero()) ?
-    1.0 : hr.GetValue(FrequencyUnit::Per_s);
-
-  double cycleTime_s = 1 / bps;
-  size_t numCyclePoints = std::ceil(cycleTime_s/0.02)+1;
-
+  // Get a copy of the original data
   GetActiveCycle().Copy(GetOriginalData());
-
-  // Interpolate original to our desired cycle points
-  //GeneralMath::SplineInterpolater(GetActiveCycle().GetData(), numCyclePoints);
-  //GeneralMath::LinearInterpolator(GetActiveCycle().GetData(), numCyclePoints);
-  GeneralMath::LinearInterpolator1(GetActiveCycle().GetData(), numCyclePoints);
+  if (!hr.IsZero())
+  {
+    double bps = hr.GetValue(FrequencyUnit::Per_s);
+    double cycleTime_s = 1 / bps;
+    size_t numCyclePoints = std::ceil(cycleTime_s / step.GetValue(TimeUnit::s))+1;
+    // Interpolate original to our desired cycle points
+    GeneralMath::LinearInterpolator1(GetActiveCycle().GetData(), numCyclePoints);
+  }
+  // Apply the amplitudeModifier
+  for(size_t i=0; i< GetActiveCycle().GetData().size(); i++)
+    GetActiveCycle().GetData()[i] *= amplitudeModifier;
 
   m_ActiveIndex = 0;
 }
@@ -120,7 +125,8 @@ void SEElectroCardioGramWaveform::GetCycleValue(SEScalarElectricPotential& v, bo
       if (m_ActiveIndex >= m_ActiveCycle->GetData().size())
       {
         m_ActiveIndex = 0;
-        m_ActiveCycle->Clear();
+        if(!m_Continuous)
+          m_ActiveCycle->Clear();
       }
     }
   }

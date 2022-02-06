@@ -141,6 +141,7 @@ void PBElectroCardioGram::Serialize(const CDM_BIND::ElectroCardioGramWaveformDat
   if (src.has_activecycle())
     PBProperty::Load(src.activecycle(), dst.GetActiveCycle());
   dst.SetActiveIndex(src.activecycleindex());
+  dst.SetContinuous(src.continuous());
 }
 CDM_BIND::ElectroCardioGramWaveformData* PBElectroCardioGram::Unload(const SEElectroCardioGramWaveform& src)
 {
@@ -157,4 +158,5 @@ void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveform& src, CDM_
   if (src.HasActiveCycle())
     dst.set_allocated_activecycle(PBProperty::Unload(*src.m_ActiveCycle));
   dst.set_activecycleindex(src.m_ActiveIndex);
+  dst.set_continuous(src.IsContinuous());
 }

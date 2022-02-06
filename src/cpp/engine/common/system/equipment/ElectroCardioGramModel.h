@@ -41,7 +41,6 @@ namespace pulse
     void ComputeExposedModelParameters() override;
 
     // Serializable member variables (Set in Initialize and in schema)
-    eHeartRhythm  m_LastRhythm=eHeartRhythm::NormalSinus;
 
     // Stateless member variable (Set in SetUp())
   };

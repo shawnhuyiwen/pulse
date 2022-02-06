@@ -90,7 +90,6 @@ namespace pulse
   void PBEquipment::Serialize(const PULSE_BIND::ElectroCardioGramData& src, ElectroCardioGramModel& dst)
   {
     PBElectroCardioGram::Serialize(src.common(), dst);
-    dst.m_LastRhythm = (eHeartRhythm)src.lastrhythm();
   }
   PULSE_BIND::ElectroCardioGramData* PBEquipment::Unload(const ElectroCardioGramModel& src)
   {
@@ -101,7 +100,6 @@ namespace pulse
   void PBEquipment::Serialize(const ElectroCardioGramModel& src, PULSE_BIND::ElectroCardioGramData& dst)
   {
     PBElectroCardioGram::Serialize(src, *dst.mutable_common());
-    dst.set_lastrhythm((CDM_BIND::eHeartRhythm)src.m_LastRhythm);
   }
 
   void PBEquipment::Load(const PULSE_BIND::InhalerData& src, InhalerModel& dst)

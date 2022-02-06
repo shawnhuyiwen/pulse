@@ -3,11 +3,11 @@
 
 #include "engine/PulseConfiguration.h"
 #include "engine/common/system/equipment/ElectroCardioGramModel.h"
-
-#include "cdm/utils/GeneralMath.h"
+#include "cdm/patient/SEPatient.h"
 #include "cdm/properties/SEArrayElectricPotential.h"
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/GeneralMath.h"
 
 namespace pulse
 {
@@ -49,7 +49,6 @@ namespace pulse
   void ElectroCardioGramModel::Initialize()
   {
     Model::Initialize();
-    m_LastRhythm = eHeartRhythm::NormalSinus;
     if(m_data.GetConfiguration().HasECG())
       Copy(*m_data.GetConfiguration().GetECG());
   }
@@ -88,27 +87,47 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void ElectroCardioGramModel::Process(bool /*solve_and_transport*/)
   {
-    if (m_data.GetCardiovascular().GetHeartRhythm() != m_LastRhythm ||
-        m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
+    if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
     {
       double amplitudeModifier = 1.0;
-      m_LastRhythm = m_data.GetCardiovascular().GetHeartRhythm();
+      eHeartRhythm rhythm = m_data.GetCardiovascular().GetHeartRhythm();
 
-      switch (m_LastRhythm)
+      switch (rhythm)
       {
       case eHeartRhythm::NormalSinus:
       case eHeartRhythm::SinusBradycardia:
       case eHeartRhythm::SinusTachycardia:
       case eHeartRhythm::PulselessElectricalActivity:
+      case eHeartRhythm::PulselessVentricularTachycardia:
       {
         // If zero, set our hr to our minimum
         // Sync back up with the CV after this
 
-        if (m_LastRhythm == eHeartRhythm::PulselessElectricalActivity)
+        if (rhythm == eHeartRhythm::PulselessElectricalActivity)
+        {
           amplitudeModifier = 0.75;
-        StartNewCycle(eElectroCardioGram_WaveformType::Sinus,
-          m_data.GetCardiovascular().GetHeartRate(),
-          amplitudeModifier);
+          StartNewContinuousCycle(eElectroCardioGram_WaveformType::Sinus,
+            m_data.GetCurrentPatient().GetHeartRateBaseline(),
+            m_data.GetTimeStep(),
+            amplitudeModifier);
+        }
+        else if (rhythm == eHeartRhythm::PulselessVentricularTachycardia)
+        {
+          amplitudeModifier = 0.5;
+          SEScalarFrequency pvtHR;
+          pvtHR.SetValue(120, FrequencyUnit::Per_min);
+          StartNewContinuousCycle(eElectroCardioGram_WaveformType::Sinus,
+            pvtHR,
+            m_data.GetTimeStep(),
+            amplitudeModifier);
+        }
+        else
+        {
+          StartNewCycle(eElectroCardioGram_WaveformType::Sinus,
+            m_data.GetCardiovascular().GetHeartRate(),
+            m_data.GetTimeStep(),
+            amplitudeModifier);
+        }
         break;
       }
       case eHeartRhythm::Asystole:
@@ -119,27 +138,26 @@ namespace pulse
       case eHeartRhythm::CoarseVentricularFibrillation:
       case eHeartRhythm::FineVentricularFibrillation:
       {
-        if (m_LastRhythm == eHeartRhythm::FineVentricularFibrillation)
+        if (rhythm == eHeartRhythm::FineVentricularFibrillation)
           amplitudeModifier = 0.5;
-        StartNewCycle(eElectroCardioGram_WaveformType::VentricularFibrillation,
+        StartNewContinuousCycle(eElectroCardioGram_WaveformType::VentricularFibrillation,
           m_data.GetCardiovascular().GetHeartRate(),
+          m_data.GetTimeStep(),
           amplitudeModifier);
         break;
       }
-      case eHeartRhythm::PulselessVentricularTachycardia:
       case eHeartRhythm::StableVentricularTachycardia:
       case eHeartRhythm::UnstableVentricularTachycardia:
       {
-        if (m_LastRhythm == eHeartRhythm::PulselessVentricularTachycardia)
-          amplitudeModifier = 0.5;
         StartNewCycle(eElectroCardioGram_WaveformType::VentricularTachycardia,
           m_data.GetCardiovascular().GetHeartRate(),
+          m_data.GetTimeStep(),
           amplitudeModifier);
         break;
       }
       default:
       {
-        Error(eHeartRhythm_Name(m_LastRhythm) + " is not a supported Heart Rhythm for ECG");
+        Error(eHeartRhythm_Name(rhythm) + " is not a supported Heart Rhythm for ECG");
       }
       }
     }
@@ -165,4 +183,5 @@ namespace pulse
   {
 
   }
+
 END_NAMESPACE

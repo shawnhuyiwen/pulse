@@ -33,6 +33,8 @@ void CommonDataModelTest::WaveformInterpolatorTest(const std::string& sOutputDir
   testSuite.SetName(testName);
 
   SEScalarFrequency hr;
+  SEScalarTime dt;
+  dt.SetValue(0.02, TimeUnit::s);
   std::vector<double> peaks;
 
   ///////////////////////////
@@ -49,7 +51,7 @@ void CommonDataModelTest::WaveformInterpolatorTest(const std::string& sOutputDir
   {
     logger.Info("Generating Sinus rhythm for HR: " + std::to_string(i));
     hr.SetValue(i, FrequencyUnit::Per_min);
-    ecg.StartNewCycle(eElectroCardioGram_WaveformType::Sinus, hr, 1.0);
+    ecg.StartNewCycle(eElectroCardioGram_WaveformType::Sinus, hr, dt, 1.0);
     SEArrayElectricPotential& signal = ecg.GetWaveform(eElectroCardioGram_WaveformLead::Lead3, eElectroCardioGram_WaveformType::Sinus).GetActiveCycle();
 
     SEFunctionElectricPotentialVsTime cardiacCycle;
@@ -75,6 +77,23 @@ void CommonDataModelTest::WaveformInterpolatorTest(const std::string& sOutputDir
   if (peakMax - peakMin > 0.001)
     testCase.AddFailure("Peaks are too far apart");
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
+
+  // Take a look at a continuous cycle
+  hr.SetValue(0, FrequencyUnit::Per_min);
+  ecg.StartNewContinuousCycle(eElectroCardioGram_WaveformType::Sinus, hr, dt, 1.0);
+  SEArrayElectricPotential& vtach = ecg.GetWaveform(eElectroCardioGram_WaveformLead::Lead3, eElectroCardioGram_WaveformType::VentricularTachycardia).GetActiveCycle();
+
+  SEFunctionElectricPotentialVsTime vtachCycle;
+  vtachCycle.SetElectricPotentialUnit(*vtach.GetUnit());
+  vtachCycle.SetTimeUnit(TimeUnit::s);
+
+  size_t size = vtach.GetData().size();
+  for (size_t s = 0; s < size; s++)
+  {
+    vtachCycle.GetElectricPotential().push_back(vtach.GetData()[s]);
+    vtachCycle.GetTime().push_back(0.02 * s);
+  }
+  vtachCycle.WriteCSVFile(sOutputDirectory + "/" + testName + "/vtach.csv");
 
   testReport.SerializeToFile(sOutputDirectory + "/" + testName + "Report.json");
 }

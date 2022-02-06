@@ -38,6 +38,7 @@ message ElectroCardioGramWaveformData
   ArrayElectricPotentialData             OriginalData            = 3;/**<< @brief The original digitized waveform of one cardiac cycle. */
   ArrayElectricPotentialData             ActiveCycle             = 4;/**<< @brief Active cardiac cycles we are using to calculate the lead value. */
   int32                                  ActiveCycleIndex        = 5;/**<< @brief The current index in the ActiveCycle array for the current time step. */
+  bool                                   Continuous              = 6;/**<< @brief Repeat active cycle data. */
 }
 
 /** @brief Generic ECG machine to assess the heart rhythm. */

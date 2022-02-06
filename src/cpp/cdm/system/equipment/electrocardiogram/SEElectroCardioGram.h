@@ -82,7 +82,8 @@ public:
   virtual eElectroCardioGram_WaveformType GetActiveType() { return m_ActiveType; }
   virtual void ClearCycles();
   virtual void PullCycleValues();
-  virtual void StartNewCycle(eElectroCardioGram_WaveformType t, const SEScalarFrequency& hr, double amplitudeModifier);
+  virtual void StartNewCycle(eElectroCardioGram_WaveformType t, const SEScalarFrequency& hr, const SEScalarTime& dt, double amplitudeModifier);
+  virtual void StartNewContinuousCycle(eElectroCardioGram_WaveformType t, const SEScalarFrequency& hr, const SEScalarTime& dt, double amplitudeModifier);
 
 protected:
   virtual std::vector<SEElectroCardioGramWaveform*>& GetWaveforms();
