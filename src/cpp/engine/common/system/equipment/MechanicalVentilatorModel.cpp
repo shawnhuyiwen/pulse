@@ -76,6 +76,8 @@ namespace pulse
     m_ExpiratoryLimbToYPiece = nullptr;
     m_InspiratoryLimbToYPiece = nullptr;
     m_LeakConnectionToEnvironment = nullptr;
+    m_ConnectionToReliefValve = nullptr;
+    m_EnvironmentToReliefValve = nullptr;
     m_ConnectionToAirway = nullptr;
     m_DefaultClosedFlowResistance_cmH2O_s_Per_L = NULL;
 
@@ -172,6 +174,8 @@ namespace pulse
     m_VentilatorToInspiratoryValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve);
     m_ExpiratoryLimbToYPiece = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ExpiratoryLimbToYPiece);
     m_InspiratoryLimbToYPiece = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::InspiratoryLimbToYPiece);
+    m_ConnectionToReliefValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ConnectionToReliefValve);
+    m_EnvironmentToReliefValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToReliefValve);
     m_LeakConnectionToEnvironment = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::LeakConnectionToEnvironment);
 
     m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::CombinedMechanicalVentilatorPath::ConnectionToAirway);
@@ -341,6 +345,7 @@ namespace pulse
     SetResistances();
     SetCompliance();
     SetVolumes();
+    CheckReliefValve();
 
     if (m_YPieceToConnection->HasNextFlow())
     {
@@ -1180,5 +1185,37 @@ namespace pulse
 
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;
+  }
+
+  //--------------------------------------------------------------------------------------------------
+/// \brief
+/// Checks Relief Valve Pressure
+///
+/// \details
+/// Assigns relief valve pressure as a pressure source based on the pressure setting and checks if the status 
+/// of the relief valve is open or closed.
+//--------------------------------------------------------------------------------------------------
+  void MechanicalVentilatorModel::CheckReliefValve()
+  {
+    //Aaron: Add ReliefValvePressure setting and MechanicalVentilatorReliefValveActive event
+    /*
+    //Set the Pressure Source based on the setting
+    double valvePressure_cmH2O = GetReliefValvePressure(PressureUnit::cmH2O);
+    m_EnvironmentToReliefValve->GetNextPressureSource().SetValue(valvePressure_cmH2O, PressureUnit::cmH2O);
+
+    //Check to see if it reached the pressure threshold  
+    if (!m_data.GetEvents().IsEventActive(eEvent::MechanicalVentilatorReliefValveActive) && m_ConnectionToReliefValve->GetNextValve() == eGate::Closed)
+    {
+      /// \event %MechanicalVentilator: Relief Valve is active. The pressure setting has been exceeded.
+      m_data.GetEvents().SetEvent(eEvent::MechanicalVentilatorReliefValveActive, true, m_data.GetSimulationTime());
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::MechanicalVentilatorReliefValveActive) && m_ConnectionToReliefValve->GetNextValve() == eGate::Open)
+    {
+      m_data.GetEvents().SetEvent(eEvent::MechanicalVentilatorReliefValveActive, false, m_data.GetSimulationTime());
+    }
+
+    //Always try to let it run without the relief valve operational (i.e. closed (i.e. allowing flow)), otherwise it will always stay shorted
+    m_ConnectionToReliefValve->SetNextValve(eGate::Open);
+    */
   }
 END_NAMESPACE

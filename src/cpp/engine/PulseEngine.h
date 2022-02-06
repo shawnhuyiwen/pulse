@@ -1408,6 +1408,7 @@ namespace pulse
     DEFINE_STATIC_STRING_EX(ExpiratoryLimb, MechanicalVentilatorExpiratoryLimb);
     DEFINE_STATIC_STRING_EX(InspiratoryLimb, MechanicalVentilatorInspiratoryLimb);
     DEFINE_STATIC_STRING_EX(YPiece, MechanicalVentilatorYPiece);
+    DEFINE_STATIC_STRING_EX(ReliefValve, MechanicalVentilatorReliefValve);
     DEFINE_STATIC_STRING_EX(Connection, MechanicalVentilatorConnection);
 
     static const std::vector<std::string>& GetValues()
@@ -1421,6 +1422,7 @@ namespace pulse
         _values.push_back(ExpiratoryLimb);
         _values.push_back(InspiratoryLimb);
         _values.push_back(YPiece);
+        _values.push_back(ReliefValve);
         _values.push_back(Connection);
       }
       return _values;
@@ -1452,6 +1454,8 @@ namespace pulse
     DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, MechanicalVentilatorInspiratoryLimbToYPiece);
     DEFINE_STATIC_STRING_EX(YPieceToConnection, MechanicalVentilatorYPieceToConnection);
     DEFINE_STATIC_STRING_EX(LeakConnectionToEnvironment, MechanicalVentilatorLeakConnectionToEnvironment);
+    DEFINE_STATIC_STRING_EX(ConnectionToReliefValve, MechanicalVentilatorConnectionToReliefValve);
+    DEFINE_STATIC_STRING_EX(EnvironmentToReliefValve, MechanicalVentilatorEnvironmentToReliefValve);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, MechanicalVentilatorConnectionToEnvironment);
     DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilatorConnectionToAirway);
 
@@ -1468,6 +1472,8 @@ namespace pulse
         _values.push_back(InspiratoryLimbToYPiece);
         _values.push_back(YPieceToConnection);
         _values.push_back(LeakConnectionToEnvironment);
+        _values.push_back(ConnectionToReliefValve);
+        _values.push_back(EnvironmentToReliefValve);
         _values.push_back(ConnectionToEnvironment);
         _values.push_back(ConnectionToAirway);
       }
