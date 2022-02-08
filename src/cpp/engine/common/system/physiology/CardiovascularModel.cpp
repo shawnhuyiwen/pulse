@@ -375,6 +375,7 @@ namespace pulse
     m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
     m_RightHeartResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
     m_ArrhythmiaHeartElastanceModifier = 1.0;
+    m_ArrhythmiaVascularToneModifier = 1.0;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -404,6 +405,7 @@ namespace pulse
       m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
       // Keep this for moving between arrhythmia's, note InitialPatient is pre conditions
       m_StabilizedHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+      m_StabilizedMAPBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
 
       if (m_data.GetState() == EngineState::AtInitialStableState)
       {// At Resting State, apply conditions if we have them
@@ -1640,8 +1642,10 @@ namespace pulse
         // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
         m_StartCardiacArrest = true;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_ArrhythmiaVascularToneModifier = 1.0;
         m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
         break;
@@ -1650,7 +1654,9 @@ namespace pulse
       {
         m_StartCardiacArrest = false;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_ArrhythmiaVascularToneModifier = 1.0;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1660,7 +1666,9 @@ namespace pulse
       {
         m_StartCardiacArrest = false;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_ArrhythmiaVascularToneModifier = 1.0;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 1.5, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1670,7 +1678,9 @@ namespace pulse
       {
         m_StartCardiacArrest = false;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_ArrhythmiaVascularToneModifier = 1.0;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 0.7, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1679,8 +1689,10 @@ namespace pulse
       case eHeartRhythm::StableVentricularTachycardia:
       {
         m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 0.8;
+        m_ArrhythmiaHeartElastanceModifier = 1.1;
+        m_ArrhythmiaVascularToneModifier = 1.0;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.2, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1689,8 +1701,10 @@ namespace pulse
       case eHeartRhythm::UnstableVentricularTachycardia:
       {
         m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 0.5;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.8, FrequencyUnit::Per_min);
+        m_ArrhythmiaHeartElastanceModifier = 0.3;
+        m_ArrhythmiaVascularToneModifier = 0.5;
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 3.3, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg * 0.7, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1983,7 +1997,7 @@ namespace pulse
       for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
       {
         /// \todo We are treating all systemic resistance paths equally, including the brain.
-        UpdatedResistance_mmHg_s_Per_mL = m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        UpdatedResistance_mmHg_s_Per_mL = m_ArrhythmiaVascularToneModifier * m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
         if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance_mmHg_s_Per_mL)
         {
           UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance_mmHg_s_Per_mL;

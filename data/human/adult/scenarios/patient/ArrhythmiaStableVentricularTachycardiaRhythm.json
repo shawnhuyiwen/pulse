@@ -1,6 +1,6 @@
 {
-  "Name": "ArrhythmiaVentricularTachycardiaRhythms",
-  "Description": "A patient experiences Ventricular Tachycardia via the arrhythmia action set with StableVentricularTachycardia, then back to NormalSinus, then Unstable Ventricular Tachycardia, then back to NormalSinus.",
+  "Name": "ArrhythmiaStableVentricularTachycardiaRhythm",
+  "Description": "A patient experiences Ventricular Tachycardia via the arrhythmia action set with StableVentricularTachycardia, then back to NormalSinus.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
@@ -412,36 +412,6 @@
       }
     }
   }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "NormalSinus"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "UnstableVentricularTachycardia"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-		  }, {
     "PatientAction": {
       "Arrhythmia": {
         "Rhythm": "NormalSinus"
