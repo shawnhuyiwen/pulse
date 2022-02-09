@@ -141,7 +141,7 @@ namespace pulse
         if (rhythm == eHeartRhythm::FineVentricularFibrillation)
           amplitudeModifier = 0.5;
         StartNewContinuousCycle(eElectroCardioGram_WaveformType::VentricularFibrillation,
-          m_data.GetCardiovascular().GetHeartRate(),
+          m_data.GetCardiovascular().GetHeartRate(),// This is expected to be 0
           m_data.GetTimeStep(),
           amplitudeModifier);
         break;
