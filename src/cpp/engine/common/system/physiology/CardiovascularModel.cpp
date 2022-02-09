@@ -213,6 +213,8 @@ namespace pulse
     m_CardiacCyclePeriod_s = std::lround(60.0 / m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min) / m_data.GetTimeStep_s()) * m_data.GetTimeStep_s();
     GetHeartRate().SetValue(1 / m_CardiacCyclePeriod_s * 60, FrequencyUnit::Per_min);
     GetBloodVolume().Set(m_data.GetCurrentPatient().GetBloodVolumeBaseline());
+    GetSystolicArterialPressure().Set(m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline());
+    GetDiastolicArterialPressure().Set(m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline());
     m_CardiacCycleAortaPressureHigh_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
     m_CardiacCycleAortaPressureLow_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
     m_CardiacCycleLeftHeartPressureHigh_mmHg = 130;
