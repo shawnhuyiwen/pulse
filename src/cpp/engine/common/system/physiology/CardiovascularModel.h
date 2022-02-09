@@ -108,8 +108,10 @@ namespace pulse
     double m_RightHeartElastanceMax_mmHg_Per_mL;
     double m_RightHeartElastanceMin_mmHg_Per_mL;
     // Arrhythmia
-    double m_ArrhythmiaHeartElastanceModifier; //need to apply a modifier for to the elastance for some arrhythmias
-    double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmia's
+    double m_ArrhythmiaHeartElastanceModifier; //need to apply a modifier for to the elastance for some arrhythmias //AARON - Serialize/CDM
+    double m_ArrhythmiaVascularToneModifier;  //need to modify the vascular tone to represent some of the pressure drop //AARON - Serialize/CDM
+    double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmias  //AARON - Serialize/CDM
+    double m_StabilizedMAPBaseline_mmHg; //store for moving between arrhythmias   //AARON - Serialize/CDM
     //CPR
     double m_CompressionTime_s;
     double m_CompressionRatio;

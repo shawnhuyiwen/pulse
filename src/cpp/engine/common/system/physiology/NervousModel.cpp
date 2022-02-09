@@ -300,6 +300,7 @@ namespace pulse
     double meanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
 
     //Adjusting the mean arterial pressure set-point to account for cardiovascular drug effects
+    m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
     double meanArterialPressureCombinedBaseline_mmHg = m_BaroreceptorMeanArterialPressureBaseline_mmHg
       + m_data.GetDrugs().GetMeanBloodPressureChange(PressureUnit::mmHg)
       + m_data.GetEnergy().GetExerciseMeanArterialPressureDelta(PressureUnit::mmHg);
