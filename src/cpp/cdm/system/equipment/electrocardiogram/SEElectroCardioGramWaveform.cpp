@@ -23,7 +23,7 @@ SEElectroCardioGramWaveform::~SEElectroCardioGramWaveform()
   SAFE_DELETE(m_OriginalData);
   SAFE_DELETE(m_ActiveCycle);
   m_ActiveIndex = 0;
-  m_Recycled = false;
+  m_Recycling = false;
 }
 
 void SEElectroCardioGramWaveform::Clear()
@@ -33,7 +33,7 @@ void SEElectroCardioGramWaveform::Clear()
   INVALIDATE_PROPERTY(m_OriginalData);
   INVALIDATE_PROPERTY(m_ActiveCycle);
   m_ActiveIndex = 0;
-  m_Recycled = false;
+  m_Recycling = false;
 }
 
 eElectroCardioGram_WaveformLead SEElectroCardioGramWaveform::GetLeadNumber() const
@@ -110,12 +110,9 @@ void SEElectroCardioGramWaveform::GenerateActiveCycle(const SEScalarFrequency& h
   for(size_t i=0; i< GetActiveCycle().GetData().size(); i++)
     GetActiveCycle().GetData()[i] *= amplitudeModifier;
 
-  if (!m_Recycled)// We are starting a new cycle before our cycle ended...
-  {
+  if (!m_Recycling)// We are starting a new cycle before our cycle ended...
     m_ActiveIndex = 0;// Cut the last cycle short, and start the current cycle
-    Info("Cutting cycle short");
-  }
-  m_Recycled = false;
+  m_Recycling = false;
 }
 
 void SEElectroCardioGramWaveform::GetCycleValue(SEScalarElectricPotential& v, bool advance)
@@ -133,7 +130,7 @@ void SEElectroCardioGramWaveform::GetCycleValue(SEScalarElectricPotential& v, bo
         m_ActiveIndex = 0;
         // We have completed the cardiac cycle waveform and a new cardica cycle has not started yet...
         // So use the same waveform, and when the new cycle starts, just use that new waveform at the active index
-        m_Recycled = true;
+        m_Recycling = true;
       }
     }
   }

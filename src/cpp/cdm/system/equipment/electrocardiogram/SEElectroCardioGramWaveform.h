@@ -65,5 +65,5 @@ protected:
   SEArrayElectricPotential*                m_OriginalData;
   SEArrayElectricPotential*                m_ActiveCycle;
   size_t                                   m_ActiveIndex;
-  bool                                     m_Recycled;
+  bool                                     m_Recycling;
 };

@@ -21,29 +21,29 @@ message CardiovascularData
   bool                                      StartCardiacArrest                                  = 3;
   // Driver Variables
   bool                                      StartSystole                                        = 4;
-  double                                    CardiacCyclePeriod_s                                = 5;
-  double                                    CurrentCardiacCycleDuration_s                       = 6;
-  double                                    LeftHeartElastanceModifier                          = 7;
-  double                                    LeftHeartElastance_mmHg_Per_mL                      = 8;
-  double                                    LeftHeartElastanceMax_mmHg_Per_mL                   = 9;
-  double                                    LeftHeartElastanceMin_mmHg_Per_mL                   = 10;
-  double                                    RightHeartElastance_mmHg_Per_mL                     = 11;
-  double                                    RightHeartElastanceMax_mmHg_Per_mL                  = 12;
-  double                                    RightHeartElastanceMin_mmHg_Per_mL                  = 13;
+  double                                    CurrentCardiacCycleTime_s                           = 5;
+  double                                    CurrentDriverCycleTime_s                            = 6;
+  double                                    DriverCyclePeriod_s                                 = 7;
+  double                                    LeftHeartElastanceModifier                          = 8;
+  double                                    LeftHeartElastance_mmHg_Per_mL                      = 9;
+  double                                    LeftHeartElastanceMax_mmHg_Per_mL                   = 10;
+  double                                    LeftHeartElastanceMin_mmHg_Per_mL                   = 11;
+  double                                    RightHeartElastance_mmHg_Per_mL                     = 12;
+  double                                    RightHeartElastanceMax_mmHg_Per_mL                  = 13;
+  double                                    RightHeartElastanceMin_mmHg_Per_mL                  = 14;
   
   // Arrhythmia
-  double                                    ArrhythmiaHeartElastanceModifier                    = 14;
-  double                                    ArrhythmiaVascularToneModifier                      = 15;
-  double                                    StabilizedHeartRateBaseline_Per_min                 = 16;
-  double                                    StabilizedMAPBaseline_mmHg                          = 17;
+  double                                    ArrhythmiaHeartElastanceModifier                    = 15;
+  double                                    ArrhythmiaVascularToneModifier                      = 16;
+  double                                    StabilizedHeartRateBaseline_Per_min                 = 17;
+  double                                    StabilizedMAPBaseline_mmHg                          = 18;
   
   // CPR
-  double                                    CompressionTime_s                                   = 18;
-  double                                    CompressionRatio                                    = 19;
-  double                                    CompressionPeriod_s                                 = 20;
+  double                                    CompressionTime_s                                   = 19;
+  double                                    CompressionRatio                                    = 20;
+  double                                    CompressionPeriod_s                                 = 21;
 
   // Vitals and Averages
-  double                                    CurrentCardiacCycleTime_s                           = 21;
   double                                    CardiacCycleDiastolicVolume_mL                      = 22;
   double                                    CardiacCycleAortaPressureHigh_mmHg                  = 23;
   double                                    CardiacCycleAortaPressureLow_mmHg                   = 24;

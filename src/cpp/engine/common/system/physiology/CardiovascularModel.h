@@ -76,7 +76,7 @@ namespace pulse
     void HeartDriver();
     /**/void AdjustVascularTone();
     /****/void MetabolicToneResponse();
-    /**/void BeginCardiacCycle();
+    /**/void BeginDriverCycle();
     /****/void RecordAndResetCardiacCycle();//Could be called out of order by arrythma
     /**/void CalculateHeartElastance();
     void ProcessActions();
@@ -100,8 +100,9 @@ namespace pulse
     bool   m_StartSystole;
     bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
     bool   m_HeartFlowDetected;
-    double m_CardiacCyclePeriod_s;
-    double m_CurrentCardiacCycleDuration_s;
+    double m_CurrentDriverCycleTime_s;
+    double m_CurrentCardiacCycleTime_s;
+    double m_DriverCyclePeriod_s;
     double m_LeftHeartElastanceModifier;// from Heart Failure and such
     double m_LeftHeartElastance_mmHg_Per_mL;
     double m_LeftHeartElastanceMax_mmHg_Per_mL;
@@ -119,7 +120,6 @@ namespace pulse
     double m_CompressionRatio;
     double m_CompressionPeriod_s;
     // Vitals and Averages
-    double m_CurrentCardiacCycleTime_s;
     double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
     double m_CardiacCycleAortaPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
     double m_CardiacCycleAortaPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
