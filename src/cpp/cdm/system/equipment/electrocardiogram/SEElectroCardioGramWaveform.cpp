@@ -11,7 +11,6 @@
 
 SEElectroCardioGramWaveform::SEElectroCardioGramWaveform(Logger* logger) : Loggable(logger)
 {
-  m_Continuous = false;
   m_OriginalData = nullptr;
   m_ActiveCycle = nullptr;
   Clear();
@@ -19,22 +18,22 @@ SEElectroCardioGramWaveform::SEElectroCardioGramWaveform(Logger* logger) : Logga
 
 SEElectroCardioGramWaveform::~SEElectroCardioGramWaveform()
 {
-  m_Continuous = false;
   m_Type = eElectroCardioGram_WaveformType::Sinus;
   m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
   SAFE_DELETE(m_OriginalData);
   SAFE_DELETE(m_ActiveCycle);
   m_ActiveIndex = 0;
+  m_Recycling = false;
 }
 
 void SEElectroCardioGramWaveform::Clear()
 {
-  m_Continuous = false;
   m_Type = eElectroCardioGram_WaveformType::Sinus;
   m_LeadNumber = eElectroCardioGram_WaveformLead::NullLead;
   INVALIDATE_PROPERTY(m_OriginalData);
   INVALIDATE_PROPERTY(m_ActiveCycle);
   m_ActiveIndex = 0;
+  m_Recycling = false;
 }
 
 eElectroCardioGram_WaveformLead SEElectroCardioGramWaveform::GetLeadNumber() const
@@ -104,12 +103,16 @@ void SEElectroCardioGramWaveform::GenerateActiveCycle(const SEScalarFrequency& h
     size_t numCyclePoints = std::ceil(cycleTime_s / step.GetValue(TimeUnit::s))+1;
     // Interpolate original to our desired cycle points
     GeneralMath::LinearInterpolator1(GetActiveCycle().GetData(), numCyclePoints);
+    if (m_ActiveIndex >= numCyclePoints)
+      m_ActiveIndex = 0;
   }
   // Apply the amplitudeModifier
   for(size_t i=0; i< GetActiveCycle().GetData().size(); i++)
     GetActiveCycle().GetData()[i] *= amplitudeModifier;
 
-  m_ActiveIndex = 0;
+  if (!m_Recycling)// We are starting a new cycle before our cycle ended...
+    m_ActiveIndex = 0;// Cut the last cycle short, and start the current cycle
+  m_Recycling = false;
 }
 
 void SEElectroCardioGramWaveform::GetCycleValue(SEScalarElectricPotential& v, bool advance)
@@ -125,8 +128,9 @@ void SEElectroCardioGramWaveform::GetCycleValue(SEScalarElectricPotential& v, bo
       if (m_ActiveIndex >= m_ActiveCycle->GetData().size())
       {
         m_ActiveIndex = 0;
-        if(!m_Continuous)
-          m_ActiveCycle->Clear();
+        // We have completed the cardiac cycle waveform and a new cardica cycle has not started yet...
+        // So use the same waveform, and when the new cycle starts, just use that new waveform at the active index
+        m_Recycling = true;
       }
     }
   }

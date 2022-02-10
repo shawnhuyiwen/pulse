@@ -442,22 +442,6 @@ void SEElectroCardioGram::StartNewCycle(eElectroCardioGram_WaveformType t, const
   {
     if (w->GetType() == t)
     {
-      w->SetContinuous(false);
-      w->GenerateActiveCycle(hr, dt, amplitudeModifier);
-    }
-    else
-      w->GetActiveCycle().Clear();
-  }
-}
-
-void SEElectroCardioGram::StartNewContinuousCycle(eElectroCardioGram_WaveformType t, const SEScalarFrequency& hr, const SEScalarTime& dt, double amplitudeModifier)
-{
-  m_ActiveType = t;
-  for (SEElectroCardioGramWaveform* w : m_Waveforms)
-  {
-    if (w->GetType() == t)
-    {
-      w->SetContinuous(true);
       w->GenerateActiveCycle(hr, dt, amplitudeModifier);
     }
     else
