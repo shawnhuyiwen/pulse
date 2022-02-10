@@ -190,9 +190,11 @@ namespace pulse
     m_HeartRhythm = eHeartRhythm::NormalSinus;
 
     m_StartSystole = true;
+    m_HeartFlowDetected = false;
 
     m_CardiacCycleDiastolicVolume_mL = 0.0;
     m_CardiacCycleStrokeVolume_mL = 0;
+    m_CurrentCardiacCycleDuration_s = 0;
 
     //Heart Elastance Parameters
     m_LeftHeartElastance_mmHg_Per_mL = 0.0;
@@ -708,16 +710,21 @@ namespace pulse
       m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
       m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
-    // Calculate heart rate - Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
-//    m_CurrentCardiacCycleDuration_s += m_data.GetTimeStep_s();
-//    if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
-//    {
-//      m_HeartFlowDetected = true;
-//      CalculateHeartRate();
-//      RecordAndResetCardiacCycle();
-//    }
-//    if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
-//      m_HeartFlowDetected = false;
+    // Test to see if the cardiac cycle has stopped
+    // Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
+    if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
+    {
+      m_HeartFlowDetected = true;
+      double HeartRate_Per_s = 1.0 / m_CurrentCardiacCycleDuration_s;
+      GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
+      m_CurrentCardiacCycleDuration_s = 0;
+      RecordAndResetCardiacCycle();
+    }
+    else
+      m_CurrentCardiacCycleDuration_s += m_data.GetTimeStep_s();
+
+    if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
+      m_HeartFlowDetected = false;
 
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
@@ -1860,10 +1867,7 @@ namespace pulse
     }
     else
     {
-      // Calculate a cycle period in terms of our timestep
-      m_CardiacCyclePeriod_s = std::lround(60.0 / HeartDriverFrequency_Per_Min / m_data.GetTimeStep_s()) * m_data.GetTimeStep_s();
-      GetHeartRate().SetValue(1 / m_CardiacCyclePeriod_s * 60, FrequencyUnit::Per_min);
-      RecordAndResetCardiacCycle();
+      m_CardiacCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
     }
 
     // Reset the systole flag and the cardiac cycle time

@@ -106,7 +106,7 @@ namespace pulse
         if (rhythm == eHeartRhythm::PulselessElectricalActivity)
         {
           amplitudeModifier = 0.75;
-          StartNewContinuousCycle(eElectroCardioGram_WaveformType::Sinus,
+          StartNewCycle(eElectroCardioGram_WaveformType::Sinus,
             m_data.GetCurrentPatient().GetHeartRateBaseline(),
             m_data.GetTimeStep(),
             amplitudeModifier);
@@ -116,7 +116,7 @@ namespace pulse
           amplitudeModifier = 0.5;
           SEScalarFrequency pvtHR;
           pvtHR.SetValue(120, FrequencyUnit::Per_min);
-          StartNewContinuousCycle(eElectroCardioGram_WaveformType::Sinus,
+          StartNewCycle(eElectroCardioGram_WaveformType::Sinus,
             pvtHR,
             m_data.GetTimeStep(),
             amplitudeModifier);
@@ -140,7 +140,7 @@ namespace pulse
       {
         if (rhythm == eHeartRhythm::FineVentricularFibrillation)
           amplitudeModifier = 0.5;
-        StartNewContinuousCycle(eElectroCardioGram_WaveformType::VentricularFibrillation,
+        StartNewCycle(eElectroCardioGram_WaveformType::VentricularFibrillation,
           m_data.GetCardiovascular().GetHeartRate(),// This is expected to be 0
           m_data.GetTimeStep(),
           amplitudeModifier);

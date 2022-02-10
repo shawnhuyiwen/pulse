@@ -83,7 +83,6 @@ public:
   virtual void ClearCycles();
   virtual void PullCycleValues();
   virtual void StartNewCycle(eElectroCardioGram_WaveformType t, const SEScalarFrequency& hr, const SEScalarTime& dt, double amplitudeModifier);
-  virtual void StartNewContinuousCycle(eElectroCardioGram_WaveformType t, const SEScalarFrequency& hr, const SEScalarTime& dt, double amplitudeModifier);
 
 protected:
   virtual std::vector<SEElectroCardioGramWaveform*>& GetWaveforms();
@@ -101,6 +100,7 @@ protected:
   SEScalarElectricPotential* m_Lead11ElectricPotential;
   SEScalarElectricPotential* m_Lead12ElectricPotential;
 
+  bool                                      m_RefreshCycle;
   eElectroCardioGram_WaveformType           m_ActiveType;
   std::vector<SEElectroCardioGramWaveform*> m_Waveforms;
 };
