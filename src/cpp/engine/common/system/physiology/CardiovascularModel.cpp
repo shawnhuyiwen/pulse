@@ -195,6 +195,7 @@ namespace pulse
     m_CardiacCycleDiastolicVolume_mL = 0.0;
     m_CardiacCycleStrokeVolume_mL = 0;
     m_CurrentCardiacCycleDuration_s = 0;
+    m_CurrentCardiacCycleTime_s = 0.0;
 
     //Heart Elastance Parameters
     m_LeftHeartElastance_mmHg_Per_mL = 0.0;
@@ -228,6 +229,7 @@ namespace pulse
     m_CardiacCycleRightHeartPressureHigh_mmHg = 30;
     m_CardiacCycleRightHeartPressureLow_mmHg = 2;
     GetPulmonaryMeanArterialPressure().SetValue(15, PressureUnit::mmHg);
+    RecordAndResetCardiacCycle();
 
     // Set system data based on physiology norms
     GetMeanCentralVenousPressure().SetValue(5.0, PressureUnit::mmHg);
@@ -249,7 +251,6 @@ namespace pulse
     GetPulmonaryVascularResistance().SetValue(0.14, PressureTimePerVolumeUnit::mmHg_min_Per_mL);
     GetPulmonaryVascularResistanceIndex().SetValue(0.082, PressureTimePerVolumeAreaUnit::mmHg_min_Per_mL_m2);
 
-    m_CurrentCardiacCycleTime_s = 0.0;
 
     CalculateHeartElastance();
 
@@ -873,9 +874,6 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::RecordAndResetCardiacCycle()
   {
-    if (m_CardiacCycleCentralVenousPressure_mmHg->NumSamples() == 0)
-      return;//Nothing to record
-
     GetSystolicArterialPressure().SetValue(m_CardiacCycleAortaPressureHigh_mmHg, PressureUnit::mmHg);
     GetDiastolicArterialPressure().SetValue(m_CardiacCycleAortaPressureLow_mmHg, PressureUnit::mmHg);
     GetSystolicLeftHeartPressure().SetValue(m_CardiacCycleLeftHeartPressureHigh_mmHg, PressureUnit::mmHg);
@@ -1795,7 +1793,7 @@ namespace pulse
 
     if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      if (m_CurrentCardiacCycleTime_s >= m_CardiacCyclePeriod_s)
+      if (m_CurrentCardiacCycleTime_s >= m_CardiacCyclePeriod_s - m_data.GetTimeStep_s())
         m_StartSystole = true; // A new cardiac cycle will begin next time step
 
       AdjustVascularTone();
@@ -1805,10 +1803,6 @@ namespace pulse
     m_pRightHeart->GetNextCompliance().SetValue(1.0 / m_RightHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
     m_pLeftHeart->GetNextCompliance().SetValue(1.0 / m_LeftHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
 
-    // Now that the math is done we can increment the cardiac cycle time
-    // Note that the cardiac cycle time (m_CurrentCardiacCycleTime_s) continues to increment until a cardiac cycle begins (a beat happens)
-    // So for a normal sinus rhythm, the maximum cardiac cycle time is equal to the cardiac cycle period (m_CardiacCyclePeriod_s).
-    // For any ineffective rhythm (no heart beat) the cardiac cycle time will be as long as it has been since the last time there was an effective beat.
     m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
   }
 
