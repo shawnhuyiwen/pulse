@@ -78,9 +78,9 @@ void CommonDataModelTest::WaveformInterpolatorTest(const std::string& sOutputDir
     testCase.AddFailure("Peaks are too far apart");
   testCase.GetDuration().SetValue(pTimer.GetElapsedTime_s("Case"), TimeUnit::s);
 
-  // Take a look at a continuous cycle
+  // Take a look at a vtach cycle
   hr.SetValue(0, FrequencyUnit::Per_min);
-  ecg.StartNewContinuousCycle(eElectroCardioGram_WaveformType::Sinus, hr, dt, 1.0);
+  ecg.StartNewCycle(eElectroCardioGram_WaveformType::Sinus, hr, dt, 1.0);
   SEArrayElectricPotential& vtach = ecg.GetWaveform(eElectroCardioGram_WaveformLead::Lead3, eElectroCardioGram_WaveformType::VentricularTachycardia).GetActiveCycle();
 
   SEFunctionElectricPotentialVsTime vtachCycle;

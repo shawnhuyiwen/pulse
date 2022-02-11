@@ -55,7 +55,10 @@ namespace pulse
     ::PBPhysiology::Serialize(src.common(), dst);
     dst.m_StartCardiacArrest = src.startcardiacarrest();
     dst.m_StartSystole = src.startsystole();
-    dst.m_CardiacCyclePeriod_s = src.cardiaccycleperiod_s();
+    dst.m_HeartFlowDetected = src.heartflowdetected();
+    dst.m_CurrentCardiacCycleTime_s = src.currentcardiaccycletime_s();
+    dst.m_CurrentDriverCycleTime_s = src.currentdrivercycletime_s();
+    dst.m_DriverCyclePeriod_s = src.drivercycleperiod_s();
     dst.m_LeftHeartElastanceModifier = src.leftheartelastancemodifier();
     dst.m_LeftHeartElastance_mmHg_Per_mL = src.leftheartelastance_mmhg_per_ml();
     dst.m_LeftHeartElastanceMax_mmHg_Per_mL = src.leftheartelastancemax_mmhg_per_ml();
@@ -65,13 +68,14 @@ namespace pulse
     dst.m_RightHeartElastanceMin_mmHg_Per_mL = src.rightheartelastancemin_mmhg_per_ml();
 
     dst.m_ArrhythmiaHeartElastanceModifier = src.arrhythmiaheartelastancemodifier();
+    dst.m_ArrhythmiaVascularToneModifier = src.arrhythmiavasculartonemodifier();
     dst.m_StabilizedHeartRateBaseline_Per_min = src.stabilizedheartratebaseline_per_min();
+    dst.m_StabilizedMAPBaseline_mmHg = src.stabilizedmapbaseline_mmhg();
 
     dst.m_CompressionTime_s = src.compressiontime_s();
     dst.m_CompressionRatio = src.compressionratio();
     dst.m_CompressionPeriod_s = src.compressionperiod_s();
 
-    dst.m_CurrentCardiacCycleTime_s = src.currentcardiaccycletime_s();
     dst.m_CardiacCycleDiastolicVolume_mL = src.cardiaccyclediastolicvolume_ml();
     dst.m_CardiacCycleAortaPressureLow_mmHg = src.cardiaccycleaortapressurelow_mmhg();
     dst.m_CardiacCycleAortaPressureHigh_mmHg = src.cardiaccycleaortapressurehigh_mmhg();
@@ -104,7 +108,10 @@ namespace pulse
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
     dst.set_startcardiacarrest(src.m_StartCardiacArrest);
     dst.set_startsystole(src.m_StartSystole);
-    dst.set_cardiaccycleperiod_s(src.m_CardiacCyclePeriod_s);
+    dst.set_heartflowdetected(src.m_HeartFlowDetected);
+    dst.set_currentcardiaccycletime_s(src.m_CurrentCardiacCycleTime_s);
+    dst.set_currentdrivercycletime_s(src.m_CurrentDriverCycleTime_s);
+    dst.set_drivercycleperiod_s(src.m_DriverCyclePeriod_s);
     dst.set_leftheartelastance_mmhg_per_ml(src.m_LeftHeartElastance_mmHg_Per_mL);
     dst.set_leftheartelastancemodifier(src.m_LeftHeartElastanceModifier);
     dst.set_leftheartelastancemax_mmhg_per_ml(src.m_LeftHeartElastanceMax_mmHg_Per_mL);
@@ -114,13 +121,14 @@ namespace pulse
     dst.set_rightheartelastancemin_mmhg_per_ml(src.m_RightHeartElastanceMin_mmHg_Per_mL);
 
     dst.set_arrhythmiaheartelastancemodifier(src.m_ArrhythmiaHeartElastanceModifier);
+    dst.set_arrhythmiavasculartonemodifier(src.m_ArrhythmiaVascularToneModifier);
     dst.set_stabilizedheartratebaseline_per_min(src.m_StabilizedHeartRateBaseline_Per_min);
+    dst.set_stabilizedmapbaseline_mmhg(src.m_StabilizedMAPBaseline_mmHg);
 
     dst.set_compressiontime_s(src.m_CompressionTime_s);
     dst.set_compressionratio(src.m_CompressionRatio);
     dst.set_compressionperiod_s(src.m_CompressionPeriod_s);
 
-    dst.set_currentcardiaccycletime_s(src.m_CurrentCardiacCycleTime_s);
     dst.set_cardiaccyclediastolicvolume_ml(src.m_CardiacCycleDiastolicVolume_mL);
     dst.set_cardiaccycleaortapressurelow_mmhg(src.m_CardiacCycleAortaPressureLow_mmHg);
     dst.set_cardiaccycleaortapressurehigh_mmhg(src.m_CardiacCycleAortaPressureHigh_mmHg);

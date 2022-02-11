@@ -36,9 +36,6 @@ public:
 
   virtual void Clear();// Deletes all members
 
-  virtual bool IsContinuous() const { return m_Continuous; }
-  virtual void SetContinuous(bool b) { m_Continuous = b; }
-
   virtual bool HasLeadNumber() const;
   virtual eElectroCardioGram_WaveformLead  GetLeadNumber() const;
   virtual void SetLeadNumber(eElectroCardioGram_WaveformLead n);
@@ -63,10 +60,10 @@ public:
 
 protected:
 
-  bool                                     m_Continuous;
   eElectroCardioGram_WaveformLead          m_LeadNumber;
   eElectroCardioGram_WaveformType          m_Type;
   SEArrayElectricPotential*                m_OriginalData;
   SEArrayElectricPotential*                m_ActiveCycle;
   size_t                                   m_ActiveIndex;
+  bool                                     m_Recycling;
 };
