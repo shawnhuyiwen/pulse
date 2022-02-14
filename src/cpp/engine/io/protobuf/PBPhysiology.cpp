@@ -286,7 +286,6 @@ namespace pulse
     dst.m_ArterialCarbonDioxideBaseline_mmHg = src.arterialcarbondioxidebaseline_mmhg();
     dst.m_BaroreceptorActiveTime_s = src.baroreceptoractivetime_s();
     dst.m_BaroreceptorEffectivenessParameter = src.baroreceptoreffectivenessparameter();
-    dst.m_BaroreceptorMeanArterialPressureBaseline_mmHg = src.baroreceptormeanarterialpressurebaseline_mmhg();
     dst.m_BaroreceptorSaturationTime_s = src.baroreceptorsaturationtime_s();
     dst.m_LastMeanArterialPressure_mmHg = src.lastmeanarterialpressure_mmhg();
     dst.m_PreviousBloodVolume_mL = src.previousbloodvolume_ml();
@@ -308,7 +307,6 @@ namespace pulse
     dst.set_arterialcarbondioxidebaseline_mmhg(src.m_ArterialCarbonDioxideBaseline_mmHg);
     dst.set_baroreceptoractivetime_s(src.m_BaroreceptorActiveTime_s);
     dst.set_baroreceptoreffectivenessparameter(src.m_BaroreceptorEffectivenessParameter);
-    dst.set_baroreceptormeanarterialpressurebaseline_mmhg(src.m_BaroreceptorMeanArterialPressureBaseline_mmHg);
     dst.set_baroreceptorsaturationtime_s(src.m_BaroreceptorSaturationTime_s);
     dst.set_lastmeanarterialpressure_mmhg(src.m_LastMeanArterialPressure_mmHg);
     dst.set_previousbloodvolume_ml(src.m_PreviousBloodVolume_mL);

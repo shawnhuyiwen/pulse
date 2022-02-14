@@ -87,7 +87,6 @@ namespace pulse
     m_ArterialCarbonDioxideBaseline_mmHg = 0;
     m_BaroreceptorActiveTime_s = 0.0;
     m_BaroreceptorEffectivenessParameter = 1.0;
-    m_BaroreceptorMeanArterialPressureBaseline_mmHg = 0;
     m_BaroreceptorSaturationTime_s = 0.0;
     m_LastMeanArterialPressure_mmHg = 0.0;
     m_PreviousBloodVolume_mL = 0.0;
@@ -143,9 +142,9 @@ namespace pulse
     // The set-points (Baselines) get reset at the end of each stabilization period.
     m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
     m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
-    m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
     m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
-    m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / m_BaroreceptorMeanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
+    double meanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+    m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / meanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
     m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
   }
 
@@ -211,7 +210,6 @@ namespace pulse
         GetBaroreceptorHeartElastanceScale().SetValue(1.0);
         GetBaroreceptorResistanceScale().SetValue(1.0);
         GetBaroreceptorComplianceScale().SetValue(1.0);
-        m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
       }
 
     }
@@ -300,8 +298,8 @@ namespace pulse
     double meanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
 
     //Adjusting the mean arterial pressure set-point to account for cardiovascular drug effects
-    m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
-    double meanArterialPressureCombinedBaseline_mmHg = m_BaroreceptorMeanArterialPressureBaseline_mmHg
+    double meanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+    double meanArterialPressureCombinedBaseline_mmHg = meanArterialPressureBaseline_mmHg
       + m_data.GetDrugs().GetMeanBloodPressureChange(PressureUnit::mmHg)
       + m_data.GetEnergy().GetExerciseMeanArterialPressureDelta(PressureUnit::mmHg);
 
@@ -325,8 +323,9 @@ namespace pulse
           //Reset the time
           m_BaroreceptorActiveTime_s = 0.0;
           //Adjust the threshold by up to 30%
-          m_BaroreceptorMeanArterialPressureBaseline_mmHg += 0.35 * pressureDeviation;
-          m_ss << "Baroreceptor MAP Baseline updated to " << m_BaroreceptorMeanArterialPressureBaseline_mmHg << " mmHg";
+          meanArterialPressureBaseline_mmHg += 0.35 * pressureDeviation;
+          m_ss << "Baroreceptor MAP Baseline updated to " << meanArterialPressureBaseline_mmHg << " mmHg";
+          m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(meanArterialPressureBaseline_mmHg, PressureUnit::mmHg);
           Info(m_ss);
         }
       }
@@ -336,7 +335,6 @@ namespace pulse
       if (m_BaroreceptorFeedbackStatus)
         Info("Stopping Baroreceptor timer ");
       m_BaroreceptorFeedbackStatus = false;
-      //m_BaroreceptorMeanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
     }
 
     // \todo Dampen Baroreceptor response due to sedation

@@ -107,12 +107,11 @@ message NervousData
   bool                                      BaroreceptorSaturationStatus                        = 5;
   double                                    BaroreceptorActiveTime_s                            = 6;
   double                                    BaroreceptorEffectivenessParameter                  = 7;
-  double                                    BaroreceptorMeanArterialPressureBaseline_mmHg       = 8;
-  double                                    BaroreceptorSaturationTime_s                        = 9;
-  double                                    LastMeanArterialPressure_mmHg                       = 10;
-  double                                    PreviousBloodVolume_mL                              = 11;
-  pulse.cdm.bind.eHeartRhythm               PreviousHeartRhythm                                 = 12;
-  double                                    TotalSympatheticFraction                            = 13;
+  double                                    BaroreceptorSaturationTime_s                        = 8;
+  double                                    LastMeanArterialPressure_mmHg                       = 9;
+  double                                    PreviousBloodVolume_mL                              = 10;
+  pulse.cdm.bind.eHeartRhythm               PreviousHeartRhythm                                 = 11;
+  double                                    TotalSympatheticFraction                            = 12;
 }
 
 message RenalData
