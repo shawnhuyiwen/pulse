@@ -6,7 +6,7 @@
 
 // Include the various types you will be using in your code
 #include "cdm/patient/SEPatient.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
+#include "cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.h"
 #include "cdm/compartment/SECompartmentManager.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
@@ -14,6 +14,7 @@
 #include "cdm/system/physiology/SERespiratorySystem.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/substance/SESubstance.h"
+#include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/properties/SEScalar0To1.h"
@@ -47,18 +48,34 @@ void HowToCreateAPatient()
   //Patient sex is the only thing that is absolutely required to be set.
   //All value not explicitly set based or standard values or calculations.
   //If you do something out of bounds or set something you're not allowed to, it will alert you with a warning/error.
-  patient.SetSex(ePatient_Sex::Male);
-  patient.GetAge().SetValue(44, TimeUnit::yr);
-  patient.GetWeight().SetValue(170, MassUnit::lb);
-  patient.GetHeight().SetValue(71, LengthUnit::in);
-  patient.GetBodyFatFraction().SetValue(0.21);
-  patient.GetDiastolicArterialPressureBaseline().SetValue(74, PressureUnit::mmHg);
-  patient.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
-  patient.GetRespirationRateBaseline().SetValue(16, FrequencyUnit::Per_min);
-  patient.GetSystolicArterialPressureBaseline().SetValue(114, PressureUnit::mmHg);
+  patient.SetSex(ePatient_Sex::Female);
+  // Jane
+  //patient.GetAge().SetValue(18, TimeUnit::yr);
+  //patient.GetWeight().SetValue(81, MassUnit::lb);
+  //patient.GetHeight().SetValue(60, LengthUnit::in);
+  //patient.GetBodyFatFraction().SetValue(0.179);
+  //patient.GetDiastolicArterialPressureBaseline().SetValue(75, PressureUnit::mmHg);
+  //patient.GetHeartRateBaseline().SetValue(58, FrequencyUnit::Per_min);
+  //patient.GetRespirationRateBaseline().SetValue(19.5, FrequencyUnit::Per_min);
+  //patient.GetSystolicArterialPressureBaseline().SetValue(118, PressureUnit::mmHg);
+
+  // Carol
+  //patient.GetAge().SetValue(49, TimeUnit::yr);
+  //patient.GetWeight().SetValue(120, MassUnit::lb);
+  //patient.GetHeight().SetValue(63, LengthUnit::in);
+  //patient.GetBodyFatFraction().SetValue(0.219);
+  //patient.GetDiastolicArterialPressureBaseline().SetValue(75, PressureUnit::mmHg);
+  //patient.GetHeartRateBaseline().SetValue(58, FrequencyUnit::Per_min);
+  //patient.GetRespirationRateBaseline().SetValue(19.5, FrequencyUnit::Per_min);
+  //patient.GetSystolicArterialPressureBaseline().SetValue(118, PressureUnit::mmHg);
 
   // You can save off the patient if you want to use it later
   patient.SerializeToFile("./patients/HowToCreateAPatient.json");
+
+  SEAcuteRespiratoryDistressSyndrome& ards = pc.GetConditions().GetAcuteRespiratoryDistressSyndrome();
+  ards.GetSeverity().SetValue(0.9);
+  ards.GetLeftLungAffected().SetValue(1.0);
+  ards.GetRightLungAffected().SetValue(1.0);
 
 
   if (!pe->InitializeEngine(pc))

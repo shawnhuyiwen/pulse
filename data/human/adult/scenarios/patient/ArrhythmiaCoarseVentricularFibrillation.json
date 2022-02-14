@@ -1,6 +1,6 @@
 {
   "Name": "ArrhythmiaVentricularFibrillation",
-  "Description": "A patient moves into cardiac arrest via the arrhythmia action set with CourseVentricularFibrillation, then FineVentricularFibrillation, then NormalSinus.",
+  "Description": "A patient moves into cardiac arrest via the arrhythmia action set with CoarseVentricularFibrillation, then FineVentricularFibrillation, then NormalSinus.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
@@ -399,7 +399,7 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "CourseVentricularFibrillation"
+        "Rhythm": "CoarseVentricularFibrillation"
       }
     }
   }, {
@@ -421,37 +421,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "FineVentricularFibrillation"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-		  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "NormalSinus"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 240.0,
+          "Value": 360.0,
           "Unit": "s"
         }
       }

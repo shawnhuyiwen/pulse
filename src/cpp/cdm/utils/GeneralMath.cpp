@@ -20,6 +20,8 @@
 #include "cdm/properties/SEScalarOsmolarity.h"
 #include "cdm/properties/SEScalarOsmolality.h"
 
+#include "unsupported/Eigen/Splines"
+
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Calculates the concentration of a substance given mass and volume. concentration = mass / volume
@@ -35,7 +37,7 @@ bool GeneralMath::CalculateConcentration(const SEScalarMass& mass, const SEScala
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateConcentration: Mass is negative:" << mass_ug << " ug. Setting concentration to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     mass_ug = 0.0;
     ret = false;
   }
@@ -43,7 +45,7 @@ bool GeneralMath::CalculateConcentration(const SEScalarMass& mass, const SEScala
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateConcentration: Volume is negative:" << volume_mL << " mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     volume_mL = 0.0;
     ret = false;
   }
@@ -68,7 +70,7 @@ bool GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMass
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateMass: Mass is negative:" << concentration_ug_Per_mL << " ug/mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     concentration_ug_Per_mL = 0.0;
     ret = false;
   }
@@ -76,7 +78,7 @@ bool GeneralMath::CalculateMass(const SEScalarVolume& volume, const SEScalarMass
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateMass: Volume is negative:" << volume_mL << " mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     volume_mL = 0.0;
     ret = false;
   }
@@ -98,7 +100,7 @@ bool GeneralMath::CalculateHenrysLawConcentration(const SESubstance& substance, 
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateHenrysLawConcentration: Pressure is negative:" << pp_mmHg << " mmHg. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     pp_mmHg = 0.0;
     ret = false;
   }
@@ -142,7 +144,7 @@ bool GeneralMath::CalculatePartialPressureInGas(const SEScalar0To1& volumeFracti
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateConcentration: Volume Fraction is negative:" << VolumeFraction << ". Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     VolumeFraction = 0.0;
     ret = false;
   }
@@ -164,7 +166,7 @@ bool GeneralMath::CalculatePartialPressureInLiquid(const SESubstance& substance,
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateConcentration: Concentration is negative:" << concentration_ug_Per_mL << " ug/mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     concentration_ug_Per_mL = 0.0;
     ret = false;
   }
@@ -192,7 +194,7 @@ bool GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SESca
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateSpecificGravity: Mass is negative:" << totalmass_g << " ug. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     totalmass_g = 0.0;
     ret = false;
   }
@@ -200,7 +202,7 @@ bool GeneralMath::CalculateSpecificGravity(const SEScalarMass& mass, const SESca
   {
     std::stringstream ss;
     ss << "GeneralMath::CalculateSpecificGravity: Volume is negative:" << volume_mL << " mL. Setting it to 0.";
-    logger->Error(ss);
+    logger->Warning(ss);
     volume_mL = 0.0;
     ret = false;
   }
@@ -491,4 +493,135 @@ double GeneralMath::RootMeanSquaredError(std::vector<double> observed, std::vect
   }
 
   return RMSE;
+}
+
+void InsertInterpolation(std::vector<double>& v, size_t idx)
+{
+  // Get the mid value between where we putting our new point
+  double newValue = (v[idx] + v[idx + 1]) / 2;
+  v.insert(v.begin() + idx, newValue);
+}
+void RemoveInterpolation(std::vector<double>& v, size_t idx)
+{
+  // Get the mid value between the 2 points we are going to remove
+  double newValue = (v[idx] + v[idx + 1]) / 2;
+  // Take out idx and idx+1
+  v.erase(v.begin() + idx);
+  v.erase(v.begin() + idx);
+  v.insert(v.begin() + idx, newValue);
+}
+//--------------------------------------------------------------------------------------------------
+/// \brief
+/// A 1D linear interpolator which keeps the min/max value from input
+
+/// \param  v input 1D vector
+/// \param  newSize  number of points in output vector
+
+/// \details
+/// A 1D linear interpolator which sets the min/max values from the original input to the nearest neighbour points
+/// for maintaining the range the original input. Both input and output are assumed to be equally spaced.
+//--------------------------------------------------------------------------------------------------
+void GeneralMath::LinearInterpolator1(std::vector<double> &v, size_t newSize)
+{
+  const auto nInput = v.size();
+  auto outputInterval = ((double)nInput - 1) / ((double)newSize - 1);
+
+  // Linear interpolation
+  std::vector<double> newV;
+  newV.reserve(newSize);
+  for (size_t i = 0; i < newSize-1; ++i)
+  {
+    auto currentIndex = (double)i * outputInterval;
+    double x1 = std::floor(currentIndex);
+    double x2 = std::floor(currentIndex + 1);
+    double y1 = v[(int)x1];
+    double y2 = v[(int)x2];
+    double yPrime = y1 * (currentIndex - x1) + y2 * (x2 - currentIndex);
+    newV.push_back(yPrime);
+  }
+  newV.push_back(v.back());
+
+  // Set min/max value to the nearest points to maintain min/max value
+  auto minmaxElement = std::minmax_element(v.begin(), v.end());
+  auto minIndex = (int)std::round((double)(minmaxElement.first - v.begin()) / outputInterval);
+  auto maxIndex = (int)std::round((double)(minmaxElement.second - v.begin()) / outputInterval);
+  newV[minIndex] = *minmaxElement.first;
+  newV[maxIndex] = *minmaxElement.second;
+
+  v.clear();
+  v = newV;
+}
+bool GeneralMath::LinearInterpolator(std::vector<double>& v, size_t newSize)
+{
+  if (newSize == v.size())
+    return true; // Done
+  if (newSize > v.size())// Expand
+  {
+    size_t half = std::floor(v.size() / 2);
+    size_t quarter = std::floor(half / 2);
+    // Insert middle
+    InsertInterpolation(v, half);
+    if (newSize == v.size())
+      return true; // Done
+
+    // Insert left middle
+    InsertInterpolation(v, quarter);
+    if (newSize == v.size())
+      return true; // Done
+
+    // Insert right middle
+    InsertInterpolation(v, half + quarter);
+    if (newSize == v.size())
+      return true; // Done
+  }
+  else // Contract
+  {
+    if (newSize <= 2)
+      return false;// Nothing we can do with this...
+
+    size_t half = std::floor(v.size() / 2);
+    size_t quarter = std::floor(half / 2);
+    // Insert middle
+
+    RemoveInterpolation(v, half);
+    if (newSize == v.size())
+      return true; // Done
+
+    // Insert left middle
+    RemoveInterpolation(v, quarter);
+    if (newSize == v.size())
+      return true; // Done
+
+    // Insert right middle
+    RemoveInterpolation(v, half + quarter);
+    if (newSize == v.size())
+      return true; // Done
+  }
+  // Recurse until equal sizes
+  LinearInterpolator(v, newSize);
+}
+
+void GeneralMath::SplineInterpolater(std::vector<double>& v, size_t newSize)
+{
+  // https://eigen.tuxfamily.org/dox/unsupported/structEigen_1_1SplineFitting.html
+  const int nInput = (int)v.size();
+  Eigen::MatrixXd points(2, nInput);
+  for (int i = 0; i < nInput; ++i)
+  {
+    points(0, i) = (double)i / (nInput - 1);
+    points(1, i) = v[i];
+  }
+
+  typedef Eigen::Spline<double, 1, 2> Spline1D;
+  typedef Eigen::SplineFitting<Spline1D> SplineFitting1D;
+  const auto fit = SplineFitting1D::Interpolate(points.row(1), 2, points.row(0));
+  Spline1D spline(fit);
+
+  v.clear();
+  v.reserve(newSize);
+  for (int i = 0; i < newSize; ++i)
+  {
+    auto point = spline((double)i / (newSize - 1));
+    v.push_back(point.coeffRef(0));
+  }
 }

@@ -1,41 +1,24 @@
+/* Distributed under the Apache License, Version 2.0.
+See accompanying NOTICE file for details.*/
+
 #pragma once
-#include "SEProperty.h"
+#include "cdm/properties/SEProperty.h"
 
-class DLL_DECL SEArray : public SEProperty
+class CDM_DECL SEArray : public SEProperty
 {
-protected:  
-  std::vector<double> m_dData;
-  std::shared_ptr<CCompoundUnit> m_unit;
-
+  friend class PBProperty;//friend the serialization class
 public:
   SEArray();
   ~SEArray();
 
-  virtual std::shared_ptr<CDM::PropertyData> UnloadData();
-  std::shared_ptr<CDM::ArrayData> Unload();
-  void Unload(std::shared_ptr<CDM::ArrayData> data);
-  bool Load(std::shared_ptr<CDM::ArrayData> in);
+  virtual void Clear();
+  void Copy(const SEArray& src);
 
-  virtual bool IsValid();
-  virtual void Invalidate();
+  virtual bool                          IsValid() const;
+  virtual void                          Invalidate();
 
-  virtual bool IsValidUnit(const std::string& unit) { return true; };
-  virtual bool IsValidUnit(const std::shared_ptr<CCompoundUnit>& unit);
-  // TODO std::string GetUnit() { return m_unit; }
+  std::vector<double>&                  GetData();
 
-  unsigned int Size();
-  
-  std::string GetStringData(const std::string& unit=SEScalar::unitless);
-  bool SetStringData(const std::string& data, const std::string& unit=SEScalar::unitless);
-
-  bool SetDoubleData(double *data, int len, const std::string& unit=SEScalar::unitless);
-  bool GetDoubleData(double *&data, int &len, const std::string& unit=SEScalar::unitless);
-
-  double GetIndex(unsigned int idx, const std::string& unit=SEScalar::unitless);
-  void   SetIndex(unsigned int idx, double value, const std::string& unit=SEScalar::unitless);
-  bool   Append(double value, const std::string& unit=SEScalar::unitless);
-
-  bool SetVectorData(std::vector<double> data, const std::string&  unit=SEScalar::unitless);
-  bool GetVectorData(std::vector<double> data, const std::string&  unit=SEScalar::unitless);
+protected:
+  std::vector<double> m_Data;
 };
-//STL_DECL template class DLL_DECL std::vector<double>;

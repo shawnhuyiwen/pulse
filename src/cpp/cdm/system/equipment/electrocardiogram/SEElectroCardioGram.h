@@ -3,6 +3,7 @@
 
 #pragma once
 #include "cdm/system/equipment/SEEquipment.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
 
 class CDM_DECL SEElectroCardioGram : public SEEquipment
 {
@@ -16,7 +17,14 @@ public:
 
   virtual void Clear();
 
+  void Copy(const SEElectroCardioGram& src);
+
   virtual const SEScalar* GetScalar(const std::string& name);
+
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
 
   virtual bool HasLead1ElectricPotential() const;
   virtual SEScalarElectricPotential& GetLead1ElectricPotential();
@@ -66,7 +74,19 @@ public:
   virtual SEScalarElectricPotential& GetLead12ElectricPotential();
   virtual double GetLead12ElectricPotential(const ElectricPotentialUnit& unit) const;
 
+  virtual bool HasWaveforms();
+  virtual bool HasWaveform(eElectroCardioGram_WaveformLead, eElectroCardioGram_WaveformType);
+  virtual SEElectroCardioGramWaveform& GetWaveform(eElectroCardioGram_WaveformLead, eElectroCardioGram_WaveformType);
+  virtual const SEElectroCardioGramWaveform* GetWaveform(eElectroCardioGram_WaveformLead, eElectroCardioGram_WaveformType) const;
+
+  virtual eElectroCardioGram_WaveformType GetActiveType() { return m_ActiveType; }
+  virtual void ClearCycles();
+  virtual void PullCycleValues();
+  virtual void StartNewCycle(eElectroCardioGram_WaveformType t, const SEScalarFrequency& hr, const SEScalarTime& dt, double amplitudeModifier);
+
 protected:
+  virtual std::vector<SEElectroCardioGramWaveform*>& GetWaveforms();
+
   SEScalarElectricPotential* m_Lead1ElectricPotential;
   SEScalarElectricPotential* m_Lead2ElectricPotential;
   SEScalarElectricPotential* m_Lead3ElectricPotential;
@@ -79,4 +99,8 @@ protected:
   SEScalarElectricPotential* m_Lead10ElectricPotential;
   SEScalarElectricPotential* m_Lead11ElectricPotential;
   SEScalarElectricPotential* m_Lead12ElectricPotential;
+
+  bool                                      m_RefreshCycle;
+  eElectroCardioGram_WaveformType           m_ActiveType;
+  std::vector<SEElectroCardioGramWaveform*> m_Waveforms;
 };

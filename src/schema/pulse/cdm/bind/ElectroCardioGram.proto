@@ -6,23 +6,6 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Properties.proto";
 
-/** @brief Generic ECG machine to assess the heart rhythm. */
-message ElectroCardioGramData
-{
-  ScalarElectricPotentialData            Lead1ElectricPotential  = 1; /**<< @brief The amount of electric potential given off by lead 1 of the ECG. */
-  ScalarElectricPotentialData            Lead2ElectricPotential  = 2; /**<< @brief The amount of electric potential given off by lead 2 of the ECG. */
-  ScalarElectricPotentialData            Lead3ElectricPotential  = 3; /**<< @brief The amount of electric potential given off by lead 3 of the ECG. */
-  ScalarElectricPotentialData            Lead4ElectricPotential  = 4; /**<< @brief The amount of electric potential given off by lead 4 of the ECG. */
-  ScalarElectricPotentialData            Lead5ElectricPotential  = 5; /**<< @brief The amount of electric potential given off by lead 5 of the ECG. */
-  ScalarElectricPotentialData            Lead6ElectricPotential  = 6; /**<< @brief The amount of electric potential given off by lead 6 of the ECG. */
-  ScalarElectricPotentialData            Lead7ElectricPotential  = 7; /**<< @brief The amount of electric potential given off by lead 7 of the ECG. */
-  ScalarElectricPotentialData            Lead8ElectricPotential  = 8; /**<< @brief The amount of electric potential given off by lead 8 of the ECG. */
-  ScalarElectricPotentialData            Lead9ElectricPotential  = 9; /**<< @brief The amount of electric potential given off by lead 9 of the ECG. */
-  ScalarElectricPotentialData            Lead10ElectricPotential = 10;/**<< @brief The amount of electric potential given off by lead 10 of the ECG. */
-  ScalarElectricPotentialData            Lead11ElectricPotential = 11;/**<< @brief The amount of electric potential given off by lead 11 of the ECG. */
-  ScalarElectricPotentialData            Lead12ElectricPotential = 12;/**<< @brief The amount of electric potential given off by lead 12 of the ECG. */
-}
-
 message ElectroCardioGramWaveformData
 {
   /** @brief A type can be used for 1 or more eHeartRhythms */
@@ -52,12 +35,27 @@ message ElectroCardioGramWaveformData
   
   eWaveformLead                          Lead                    = 1;/**<< @brief Lead number of the waveform provided. */
   eWaveformType                          Type                    = 2;/**<< @brief Waveform type for an associated rhythm. */
-  FunctionElectricPotentialVsTimeData    Data                    = 3;/**<< @brief Dataset of a full heart cycle. */
-  ScalarTimeData                         TimeStep                = 4;/**<< @brief Time step of the data provided. */
-  repeated int32                         ActiveIndicies          = 5;/**<< @brief Active indicies of the WaveForm Data used to interpolate the current electric potential. */
+  ArrayElectricPotentialData             OriginalData            = 3;/**<< @brief The original digitized waveform of one cardiac cycle. */
+  ArrayElectricPotentialData             ActiveCycle             = 4;/**<< @brief Active cardiac cycles we are using to calculate the lead value. */
+  int32                                  ActiveCycleIndex        = 5;/**<< @brief The current index in the ActiveCycle array for the current time step. */
+  bool                                   Recycling               = 6;/**<< @brief Repeating the active cycle data until a new cycle begins. */
 }
 
-message ElectroCardioGramWaveformListData
+/** @brief Generic ECG machine to assess the heart rhythm. */
+message ElectroCardioGramData
 {
-  repeated ElectroCardioGramWaveformData Waveform                = 1;/**<< @brief A waveform for a lead */
+  ScalarElectricPotentialData            Lead1ElectricPotential  = 1; /**<< @brief The amount of electric potential given off by lead 1 of the ECG. */
+  ScalarElectricPotentialData            Lead2ElectricPotential  = 2; /**<< @brief The amount of electric potential given off by lead 2 of the ECG. */
+  ScalarElectricPotentialData            Lead3ElectricPotential  = 3; /**<< @brief The amount of electric potential given off by lead 3 of the ECG. */
+  ScalarElectricPotentialData            Lead4ElectricPotential  = 4; /**<< @brief The amount of electric potential given off by lead 4 of the ECG. */
+  ScalarElectricPotentialData            Lead5ElectricPotential  = 5; /**<< @brief The amount of electric potential given off by lead 5 of the ECG. */
+  ScalarElectricPotentialData            Lead6ElectricPotential  = 6; /**<< @brief The amount of electric potential given off by lead 6 of the ECG. */
+  ScalarElectricPotentialData            Lead7ElectricPotential  = 7; /**<< @brief The amount of electric potential given off by lead 7 of the ECG. */
+  ScalarElectricPotentialData            Lead8ElectricPotential  = 8; /**<< @brief The amount of electric potential given off by lead 8 of the ECG. */
+  ScalarElectricPotentialData            Lead9ElectricPotential  = 9; /**<< @brief The amount of electric potential given off by lead 9 of the ECG. */
+  ScalarElectricPotentialData            Lead10ElectricPotential = 10;/**<< @brief The amount of electric potential given off by lead 10 of the ECG. */
+  ScalarElectricPotentialData            Lead11ElectricPotential = 11;/**<< @brief The amount of electric potential given off by lead 11 of the ECG. */
+  ScalarElectricPotentialData            Lead12ElectricPotential = 12;/**<< @brief The amount of electric potential given off by lead 12 of the ECG. */
+  
+  repeated ElectroCardioGramWaveformData Waveforms               = 13;/**<< @brief All waveform infomration available for ECG values. */
 }

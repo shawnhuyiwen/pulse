@@ -130,7 +130,7 @@ class eHeartRhythm(Enum):
     SinusBradycardia = 1
     SinusTachycardia = 2
     Asystole = 3
-    CourseVentricularFibrillation = 4
+    CoarseVentricularFibrillation = 4
     FineVentricularFibrillation = 5
     PulselessElectricalActivity = 6
     PulselessVentricularTachycardia = 7

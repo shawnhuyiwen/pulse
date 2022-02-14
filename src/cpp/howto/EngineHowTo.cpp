@@ -15,13 +15,13 @@ int main()
   //HowToSandbox();
 
   //HowToEngineUse();
-  //HowToCreateAPatient();
+  HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
   
   //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
-  HowToArrythmia();
+  //HowToArrythmia();
   //HowToAsthmaAttack();
   //HowToBagValveMask();
   //HowToBolusDrug();

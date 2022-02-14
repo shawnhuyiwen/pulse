@@ -60,6 +60,10 @@
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/GeneralMath.h"
 
+//Flag for printing the driver/cycle timing
+//Should be commented out, unless debugging/tuning
+//#define LOG_TIMING
+
 namespace pulse
 {
   CardiovascularModel::CardiovascularModel(Data& data) : CardiovascularSystem(data.GetLogger()), Model(data)
@@ -191,19 +195,19 @@ namespace pulse
 
     m_StartSystole = true;
     m_HeartFlowDetected = false;
-    m_CardiacCyclePeriod_s = 0.8; //seconds per beat
-    m_CardiacCycleDiastolicVolume_mL = 0.0;
-    m_CardiacCycleStrokeVolume_mL = 0;
-    m_CurrentCardiacCycleDuration_s = 0;
+
+    m_DriverCyclePeriod_s = 60 / m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+    m_CurrentCardiacCycleTime_s = m_DriverCyclePeriod_s;
+    m_CurrentDriverCycleTime_s = 0.0;
 
     //Heart Elastance Parameters
     m_LeftHeartElastance_mmHg_Per_mL = 0.0;
-    m_LeftHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
-    m_LeftHeartElastanceMin_mmHg_Per_mL = m_data.GetConfiguration().GetLeftHeartElastanceMinimum(PressurePerVolumeUnit::mmHg_Per_mL);
     m_LeftHeartElastanceModifier = 1.0; //Utilized for reducing the maximum elastance to represent left ventricular systolic dysfunction
     m_RightHeartElastance_mmHg_Per_mL = 0.0;
-    m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
+    m_LeftHeartElastanceMin_mmHg_Per_mL  = m_data.GetConfiguration().GetLeftHeartElastanceMinimum(PressurePerVolumeUnit::mmHg_Per_mL);
     m_RightHeartElastanceMin_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMinimum(PressurePerVolumeUnit::mmHg_Per_mL);
+    m_LeftHeartElastanceMax_mmHg_Per_mL  = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
+    m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
 
     // CPR and Cardiac Arrest control
     m_StartCardiacArrest = false;
@@ -212,19 +216,23 @@ namespace pulse
     m_CompressionPeriod_s = 0.0;
 
     //Initialize system data based on patient file inputs
+    GetHeartRate().Set(m_data.GetCurrentPatient().GetHeartRateBaseline());
     GetBloodVolume().Set(m_data.GetCurrentPatient().GetBloodVolumeBaseline());
+    GetSystolicArterialPressure().Set(m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline());
+    GetDiastolicArterialPressure().Set(m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline());
     m_CardiacCycleAortaPressureHigh_mmHg = m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
     m_CardiacCycleAortaPressureLow_mmHg = m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+    m_CardiacCycleDiastolicVolume_mL = 0.0;
     m_CardiacCycleLeftHeartPressureHigh_mmHg = 130;
     m_CardiacCycleLeftHeartPressureLow_mmHg = 8;
-    GetMeanArterialPressure().SetValue((2. / 3. * m_CardiacCycleAortaPressureLow_mmHg) + (1. / 3. * m_CardiacCycleAortaPressureHigh_mmHg), PressureUnit::mmHg);
-    m_CardiacCycleArterialPressure_mmHg->Sample(GetMeanArterialPressure().GetValue(PressureUnit::mmHg));
+    m_CardiacCycleStrokeVolume_mL = 0;
     m_CardiacCyclePulmonaryArteryPressureHigh_mmHg = 26;
     m_CardiacCyclePulmonaryArteryPressureLow_mmHg = 9;
     m_CardiacCycleRightHeartPressureHigh_mmHg = 30;
     m_CardiacCycleRightHeartPressureLow_mmHg = 2;
+    GetMeanArterialPressure().SetValue((2. / 3. * m_CardiacCycleAortaPressureLow_mmHg) + (1. / 3. * m_CardiacCycleAortaPressureHigh_mmHg), PressureUnit::mmHg);
+    m_CardiacCycleArterialPressure_mmHg->Sample(GetMeanArterialPressure().GetValue(PressureUnit::mmHg));
     GetPulmonaryMeanArterialPressure().SetValue(15, PressureUnit::mmHg);
-    GetHeartRate().Set(m_data.GetCurrentPatient().GetHeartRateBaseline());
     RecordAndResetCardiacCycle();
 
     // Set system data based on physiology norms
@@ -247,7 +255,6 @@ namespace pulse
     GetPulmonaryVascularResistance().SetValue(0.14, PressureTimePerVolumeUnit::mmHg_min_Per_mL);
     GetPulmonaryVascularResistanceIndex().SetValue(0.082, PressureTimePerVolumeAreaUnit::mmHg_min_Per_mL_m2);
 
-    m_CurrentCardiacCycleTime_s = 0.0;
 
     CalculateHeartElastance();
 
@@ -377,6 +384,7 @@ namespace pulse
     m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
     m_RightHeartResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
     m_ArrhythmiaHeartElastanceModifier = 1.0;
+    m_ArrhythmiaVascularToneModifier = 1.0;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -406,6 +414,7 @@ namespace pulse
       m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
       // Keep this for moving between arrhythmia's, note InitialPatient is pre conditions
       m_StabilizedHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+      m_StabilizedMAPBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
 
       if (m_data.GetState() == EngineState::AtInitialStableState)
       {// At Resting State, apply conditions if we have them
@@ -615,6 +624,8 @@ namespace pulse
     HeartDriver();
     ProcessActions();
     CalculatePleuralCavityVenousEffects();
+
+    m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, m_CurrentCardiacCycleTime_s==0, m_data.GetSimulationTime());
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -666,7 +677,6 @@ namespace pulse
   /// Waveform data for the system, such as arterial pressure, is set every at every time slice. Mean data, such
   /// as mean arterial pressure, is set using a running average. Data that are more useful filtered are also set
   /// from a running mean. 
-  /// Several events and irreversible states are detected and set by this method.
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CalculateVitalSigns()
   {
@@ -707,20 +717,48 @@ namespace pulse
       m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
       m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
-    // Calculate heart rate - Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
-    m_CurrentCardiacCycleDuration_s += m_data.GetTimeStep_s();
+    // Test to see if the cardiac cycle is starting, compressing blood out of the heart
+    // If so, push data into the CDM
     if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
     {
+      // Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
       m_HeartFlowDetected = true;
-      CalculateHeartRate();
+      double HeartRate_Per_s = 1.0 / m_CurrentCardiacCycleTime_s;
+      GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
+#ifdef LOG_TIMING
+      Info("Heart flow starting");
+      Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+      Info("  -Setting CDM Heart Rate to: " + std::to_string(HeartRate_Per_s * 60.0));
+      Info("  -Setting Current Cardiac Cycle Time to 0");
+#endif
+      m_CurrentCardiacCycleTime_s = 0;
       RecordAndResetCardiacCycle();
     }
-    if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
-      m_HeartFlowDetected = false;
+    else
+      m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
 
-    //Aaron - I kind of brute force it, maybe a better way?
-    if(m_data.GetEvents().IsEventActive(eEvent::CardiacArrest) && (m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s) > 5.0 && (m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s) < (5.0 + m_data.GetTimeStep_s()))))
+    // Check to see if the cardiac cycle has completed, fully compressed the blood from the heart
+    if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
+    {
+      m_HeartFlowDetected = false;
+#ifdef LOG_TIMING
+      Info("Heart flow stopped");
+      Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+#endif
+    }
+
+    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+    {
+      // Push the arrest values to the CDM, once, when we are 5.02s into the arrest
+      double ArrestTime_s = m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s);
+      if (ArrestTime_s > 5.0 && (ArrestTime_s < (5.0 + m_data.GetTimeStep_s())))
         RecordAndResetCardiacCycle();
+    }
+    else
+    {
+    }
 
     // Record high and low values to compute for systolic and diastolic pressures:
     if (AortaNodePressure_mmHg > m_CardiacCycleAortaPressureHigh_mmHg)
@@ -755,7 +793,6 @@ namespace pulse
     m_CardiacCycleCentralVenousPressure_mmHg->Sample(VenaCavaPressure_mmHg);
     m_CardiacCycleSkinFlow_mL_Per_s->Sample(SkinFlow_mL_Per_s);
 
-    /// \todo Make sure irreversible state is hit before we get here.
     if (m_CardiacCycleAortaPressureLow_mmHg < -2.0)
     {
       Fatal("Diastolic pressure has fallen below zero.");
@@ -813,34 +850,28 @@ namespace pulse
       }
     }
 
-    // Irreversible state if cardiac arrest persists. // rbc I turned this from a check on Asystole to Cardiac Arrest
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      /// \event Patient: Irreversible State: heart has been in asystole for over 45 min:
-      if (m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s) > 2700.0) // \cite: Zijlmans2002EpilepticSeizuresAsystole
-      {
-        /// \irreversible Heart has been in cardiac arrest for over 45 min
-        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-        m_ss << "Cardiac Arrest has occurred for " << m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s) << " seconds, patient is in irreversible state.";
-        Fatal(m_ss);
-      }
       m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
       m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
     }
-    else
+    else if(!m_StartCardiacArrest)
     {
       if (GetHeartRate().GetValue(FrequencyUnit::Per_min) < 60)
       {
+        SetHeartRhythm(eHeartRhythm::SinusBradycardia);
         m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
         m_data.GetEvents().SetEvent(eEvent::Bradycardia, true, m_data.GetSimulationTime());
       }
       else  if (GetHeartRate().GetValue(FrequencyUnit::Per_min) > 100)
       {
+       SetHeartRhythm(eHeartRhythm::SinusTachycardia);
         m_data.GetEvents().SetEvent(eEvent::Tachycardia, true, m_data.GetSimulationTime());
         m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
       }
       else
       {
+        SetHeartRhythm(eHeartRhythm::NormalSinus);
         m_data.GetEvents().SetEvent(eEvent::Tachycardia, false, m_data.GetSimulationTime());
         m_data.GetEvents().SetEvent(eEvent::Bradycardia, false, m_data.GetSimulationTime());
       }
@@ -1600,6 +1631,24 @@ namespace pulse
       m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
   }
 
+
+  void CardiovascularModel::SetHeartRhythm(eHeartRhythm r)
+  {
+    SetHeartRhythm(r, false);
+  }
+  void CardiovascularModel::SetHeartRhythm(eHeartRhythm r, bool force)
+  {
+    if (force)
+      SECardiovascularSystem::SetHeartRhythm(r);
+    else
+    {
+      // Make sure that non cardiac arrest rhythms, set by an action, are not reset here
+      if (GetHeartRhythm() == eHeartRhythm::StableVentricularTachycardia ||
+          GetHeartRhythm() == eHeartRhythm::UnstableVentricularTachycardia)
+        return;
+      SECardiovascularSystem::SetHeartRhythm(r);
+    }
+  }
   //--------------------------------------------------------------------------------------------------
   /// \brief
   /// The arrythmia action causes the heart to beat too quickly, too slowly, or with an irregular pattern..
@@ -1611,14 +1660,11 @@ namespace pulse
       auto r = m_data.GetActions().GetPatientActions().GetArrhythmia().GetRhythm();
       m_data.GetActions().GetPatientActions().RemoveArrhythmia();// Done with the action
 
-      if (r == GetHeartRhythm())
-        return; // Nothing to do
-      SetHeartRhythm(r);
-
+      SetHeartRhythm(r, true);
       switch (r)
       {
       case eHeartRhythm::Asystole:
-      case eHeartRhythm::CourseVentricularFibrillation:
+      case eHeartRhythm::CoarseVentricularFibrillation:
       case eHeartRhythm::FineVentricularFibrillation:
       case eHeartRhythm::PulselessElectricalActivity:
       case eHeartRhythm::PulselessVentricularTachycardia:
@@ -1628,8 +1674,10 @@ namespace pulse
         // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
         m_StartCardiacArrest = true;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
-        m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
+        m_ArrhythmiaVascularToneModifier = 1.0;
+        m_CurrentDriverCycleTime_s = m_DriverCyclePeriod_s;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
         break;
@@ -1638,7 +1686,9 @@ namespace pulse
       {
         m_StartCardiacArrest = false;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_ArrhythmiaVascularToneModifier = 1.0;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1648,7 +1698,9 @@ namespace pulse
       {
         m_StartCardiacArrest = false;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_ArrhythmiaVascularToneModifier = 1.0;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 1.5, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1658,7 +1710,9 @@ namespace pulse
       {
         m_StartCardiacArrest = false;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
+        m_ArrhythmiaVascularToneModifier = 1.0;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 0.7, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1667,8 +1721,10 @@ namespace pulse
       case eHeartRhythm::StableVentricularTachycardia:
       {
         m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 0.8;
+        m_ArrhythmiaHeartElastanceModifier = 1.1;
+        m_ArrhythmiaVascularToneModifier = 1.0;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.2, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1677,8 +1733,10 @@ namespace pulse
       case eHeartRhythm::UnstableVentricularTachycardia:
       {
         m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 0.5;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.8, FrequencyUnit::Per_min);
+        m_ArrhythmiaHeartElastanceModifier = 0.3;
+        m_ArrhythmiaVascularToneModifier = 0.5;
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 3.3, FrequencyUnit::Per_min);
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg * 0.7, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
@@ -1689,7 +1747,7 @@ namespace pulse
       }
       Info("Setting Heart Rate Baseline to :" + m_data.GetCurrentPatient().GetHeartRateBaseline().ToString());
       //Force a new cardiac cycle to start when cardiac arrest is removed
-      m_CurrentCardiacCycleTime_s = m_CardiacCyclePeriod_s - m_data.GetTimeStep_s();
+      m_CurrentDriverCycleTime_s = m_DriverCyclePeriod_s;
     }
   }
 
@@ -1733,36 +1791,54 @@ namespace pulse
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Calculates the contraction and relaxation of the left and right heart during the cardiac cycle
+  /// Calculates the contraction and relaxation of the left and right heart during the driver cycle
   ///
   /// \details
-  /// This function tracks the progress of the current cardiac cycle, and modifies the compliance of the left
+  /// This function tracks the progress of the current driver cycle, and modifies the compliance of the left
   /// and right heart to drive the cardiovascular circuit. The reduced compliance at the beginning of the cycle
   /// acts to increase the pressure, driving flow out of the heart. The compliance is then reduced allowing flow into
   /// the heart. This represents the systolic and diastolic portion of the cardiac cycle. The compliance is
   /// driven by an elastance equation.
-  /// This function also keeps track of the cardiac cycle time and calls BeginCardiacCycle() at the start of
+  /// This function also keeps track of the driver cycle time and calls BeginDriverCycle() at the start of
   /// systole portion of each cycle. Modifications to heart rate and heart compliance are calculated by
-  /// BeginCardiacCycle() and applied for the remained of the current cardiac cycle. Changes to things like
-  /// heart rate and heart contractility can only occur at the top of the current cardiac cycle, after the last cardiac
-  /// cycle has completed. This helps to avoid discontinuous behavior such as the complete cessation of heart function
-  /// mid contraction.
+  /// BeginDriverCycle() and applied for the remained of the current driver cycle.
+  /// NOTE: Changes to CDM values (like heart rate and heart contractility can only occur at the top of the current CARDIAC cycle
+  /// The cardiac cycle is determined independently of the driver cycle. It is based on the heart flow done in CalculateVitalSigns
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::HeartDriver()
   {
-    // Reset start cardiac cycle event if it was activated by BeginCardiacCycle() last time step
-    if (m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle))
-      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
-
     // m_StartSystole is set to true at the end of a cardiac cycle in order to setup the next cardiac cycle.
     // After the next cycle is prepared in BeginCardiacCycle, m_StartSystole is seet back to false.
     if (m_StartSystole)
-      BeginCardiacCycle();
+    {
+#ifdef LOG_TIMING
+      Info("Starting Driver Cycle");
+      Info("  -Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+      Info("  -Old CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
+#endif
+      BeginDriverCycle();
+      m_StartSystole = false;
+      m_CurrentDriverCycleTime_s = 0.0;
+#ifdef LOG_TIMING
+      Info("  -New CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
+      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+      Info("  -Reseting Driver Cycle Time to 0");
+#endif
+    }
 
     if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      if (m_CurrentCardiacCycleTime_s >= m_CardiacCyclePeriod_s - m_data.GetTimeStep_s())
+      // Note the m_CurrentDriverCycleTime_s is locked to the time step
+      // but m_DriverCyclePeriod_s is not, so take away a timestep to ensure we completed the cycle
+      if (m_CurrentDriverCycleTime_s >= m_DriverCyclePeriod_s - m_data.GetTimeStep_s())
+      {
+#ifdef LOG_TIMING
+        Info("Completing Driver Cycle");
+        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+#endif
         m_StartSystole = true; // A new cardiac cycle will begin next time step
+      }
 
       AdjustVascularTone();
       CalculateHeartElastance();
@@ -1771,16 +1847,12 @@ namespace pulse
     m_pRightHeart->GetNextCompliance().SetValue(1.0 / m_RightHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
     m_pLeftHeart->GetNextCompliance().SetValue(1.0 / m_LeftHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
 
-    // Now that the math is done we can increment the cardiac cycle time
-    // Note that the cardiac cycle time (m_CurrentCardiacCycleTime_s) continues to increment until a cardiac cycle begins (a beat happens)
-    // So for a normal sinus rhythm, the maximum cardiac cycle time is equal to the cardiac cycle period (m_CardiacCyclePeriod_s).
-    // For any ineffective rhythm (no heart beat) the cardiac cycle time will be as long as it has been since the last time there was an effective beat.
-    m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
+    m_CurrentDriverCycleTime_s += m_data.GetTimeStep_s();
   }
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
-  /// Sets up the evolution of the next cardiac cycle.
+  /// Sets up the evolution of the next driver cycle.
   ///
   /// \details
   /// This function is directed from CardiovascularModel::HeartDriver. It set's up the evolution of the proceeding cardiac
@@ -1788,10 +1860,8 @@ namespace pulse
   /// These effects will persist for the remainder of the cardiac cycle, at which point this function
   /// is called again if a new heart beat is warranted (i.e. not in cardiac arrest).
   //--------------------------------------------------------------------------------------------------
-  void CardiovascularModel::BeginCardiacCycle()
+  void CardiovascularModel::BeginDriverCycle()
   {
-    m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
-
     // Changes to the heart rate and other hemodynamic parameters are applied at the top of the cardiac cycle.
     // Parameters cannot change during the cardiac cycle because the heart beat is modeled as a changing compliance.
 
@@ -1827,20 +1897,15 @@ namespace pulse
     {
       m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
       m_StartCardiacArrest = false;
-      m_CardiacCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years) 
+      m_DriverCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years) 
       RecordAndResetCardiacCycle();
       GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);
     }
     else
     {
-        m_CardiacCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
+      m_DriverCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
     }
-
-    // Reset the systole flag and the cardiac cycle time
-    m_StartSystole = false;
-    m_CurrentCardiacCycleTime_s = 0.0;
   }
-
 
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -1867,12 +1932,11 @@ namespace pulse
       oxygenDeficitEffect = pow(-3E-9 * eventDuration, 2) + 8E-6 * eventDuration + 0.9865;
     }
 
-    double normalizedCardiacTime = m_CurrentCardiacCycleTime_s / m_CardiacCyclePeriod_s;
+    double normalizedCardiacTime = m_CurrentDriverCycleTime_s / m_DriverCyclePeriod_s;
     double elastanceShapeFunction = (pow(normalizedCardiacTime / alpha1, n1) / (1.0 + pow(normalizedCardiacTime / alpha1, n1))) * (1.0 / (1.0 + pow(normalizedCardiacTime / alpha2, n2))) / maxShape;
 
     m_LeftHeartElastance_mmHg_Per_mL = m_ArrhythmiaHeartElastanceModifier * oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
     m_RightHeartElastance_mmHg_Per_mL = m_ArrhythmiaHeartElastanceModifier * oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
-
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1969,7 +2033,7 @@ namespace pulse
       for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
       {
         /// \todo We are treating all systemic resistance paths equally, including the brain.
-        UpdatedResistance_mmHg_s_Per_mL = m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        UpdatedResistance_mmHg_s_Per_mL = m_ArrhythmiaVascularToneModifier * m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
         if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance_mmHg_s_Per_mL)
         {
           UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance_mmHg_s_Per_mL;
@@ -2015,24 +2079,6 @@ namespace pulse
       }
     }
     MetabolicToneResponse();
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Calculates the heart rate from the period.
-  ///
-  /// \details
-  /// When flow is detected, the heart rate is computed from the cardiac cycle duration. Because a 
-  /// time step is added right before the flow detection (in case the cardiac cycle is continuing)
-  /// we must peel off the time step here.
-  //--------------------------------------------------------------------------------------------------
-  void CardiovascularModel::CalculateHeartRate()
-  {
-    // The time that the flow actually decreased below the threshold was last time slice (when m_HeartFlowDetected
-    // was set back to false), so we need to subtract one time step from the interval.
-    double HeartRate_Per_s = 1.0 / (m_CurrentCardiacCycleDuration_s - m_data.GetTimeStep_s());
-    GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
-    m_CurrentCardiacCycleDuration_s = 0;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -2180,6 +2226,10 @@ namespace pulse
         m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
         CalculateVitalSigns();
         m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
+#ifdef LOG_TIMING
+        SEScalarTime& st = (SEScalarTime&)m_data.GetSimulationTime();
+        st.IncrementValue(m_data.GetTimeStep_s(), TimeUnit::s);
+#endif
         //return; //Skip stabelization for debugging
 
         map_mmHg = GetMeanArterialPressure(PressureUnit::mmHg);
@@ -2253,7 +2303,7 @@ namespace pulse
       double diastolicError_mmHg = diastolicTarget_mmHg - diastolic_mmHg;
       if (stable)
       {
-        // Compute the pressure errors     
+        // Compute the pressure errors
         if (std::abs(systolicError_mmHg / systolicTarget_mmHg) < pressuretolerance && std::abs(diastolicError_mmHg / diastolicTarget_mmHg) < pressuretolerance) //relative error check
         {
           success = true;

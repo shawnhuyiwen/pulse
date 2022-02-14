@@ -122,7 +122,7 @@ public class SEEnvironmentalConditions
         if(sf.hasAmount())
           mine.getAmount().set(sf.getAmount());
       }
-    }    
+    }
     
     if(from.ambientAerosols!=null)
     {
