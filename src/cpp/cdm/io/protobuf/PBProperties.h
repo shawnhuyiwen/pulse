@@ -69,6 +69,9 @@ CDM_BIND_DECL(ScalarVolumePerTimeMassData)
 CDM_BIND_DECL(ScalarVolumePerTimePressureData)
 CDM_BIND_DECL(ScalarVolumePerTimePressureAreaData)
 
+CDM_BIND_DECL(ArrayData)
+CDM_BIND_DECL(ArrayElectricPotentialData)
+
 CDM_BIND_DECL(FunctionData)
 CDM_BIND_DECL(FunctionElectricPotentialVsTimeData)
 CDM_BIND_DECL(FunctionVolumeVsTimeData)
@@ -405,6 +408,17 @@ public:
   static CDM_BIND::ScalarVolumePerTimePressureAreaData* Unload(const SEScalarVolumePerTimePressureArea& src);
   static void Serialize(const CDM_BIND::ScalarVolumePerTimePressureAreaData& src, SEScalarVolumePerTimePressureArea& dst);
   static void Serialize(const SEScalarVolumePerTimePressureArea& src, CDM_BIND::ScalarVolumePerTimePressureAreaData& dst);
+
+  // Arrays
+  static void Load(const CDM_BIND::ArrayData& src, SEArray& dst);
+  static CDM_BIND::ArrayData* Unload(const SEArray& src);
+  static void Serialize(const CDM_BIND::ArrayData& src, SEArray& dst);
+  static void Serialize(const SEArray& src, CDM_BIND::ArrayData& dst);
+
+  static void Load(const CDM_BIND::ArrayElectricPotentialData& src, SEArrayElectricPotential& dst);
+  static CDM_BIND::ArrayElectricPotentialData* Unload(const SEArrayElectricPotential& src);
+  static void Serialize(const CDM_BIND::ArrayElectricPotentialData& src, SEArrayElectricPotential& dst);
+  static void Serialize(const SEArrayElectricPotential& src, CDM_BIND::ArrayElectricPotentialData& dst);
 
   // Functions
   static void Load(const CDM_BIND::FunctionData& src, SEFunction& dst);

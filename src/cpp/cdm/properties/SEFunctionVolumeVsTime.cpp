@@ -24,7 +24,17 @@ void SEFunctionVolumeVsTime::Clear()
   m_VolumeUnit = nullptr;
 }
 
-double SEFunctionVolumeVsTime::GetTimeValue(size_t index, const TimeUnit& unit)
+void SEFunctionVolumeVsTime::Copy(const SEFunctionVolumeVsTime& src)
+{
+  SEFunction::Copy(src);
+
+  if (src.m_TimeUnit != nullptr)
+    SetTimeUnit(*m_TimeUnit);
+  if (src.m_VolumeUnit != nullptr)
+    SetVolumeUnit(*m_VolumeUnit);
+}
+
+double SEFunctionVolumeVsTime::GetTimeValue(size_t index, const TimeUnit& unit) const
 {
   if (m_TimeUnit == nullptr)
     throw CommonDataModelException("No time units have been set");
@@ -36,7 +46,7 @@ std::vector<double>& SEFunctionVolumeVsTime::GetTime()
 {
   return m_Independent;
 }
-const TimeUnit* SEFunctionVolumeVsTime::GetTimeUnit()
+const TimeUnit* SEFunctionVolumeVsTime::GetTimeUnit() const
 {
   return m_TimeUnit;
 }
@@ -45,7 +55,7 @@ void SEFunctionVolumeVsTime::SetTimeUnit(const TimeUnit& unit)
   m_TimeUnit = &unit;
 }
 
-double SEFunctionVolumeVsTime::GetVolumeValue(size_t index, const VolumeUnit& unit)
+double SEFunctionVolumeVsTime::GetVolumeValue(size_t index, const VolumeUnit& unit) const
 {
   if (m_VolumeUnit == nullptr)
     throw CommonDataModelException("No volume units have been set");
@@ -57,7 +67,7 @@ std::vector<double>& SEFunctionVolumeVsTime::GetVolume()
 {
   return m_Dependent;
 }
-const VolumeUnit* SEFunctionVolumeVsTime::GetVolumeUnit()
+const VolumeUnit* SEFunctionVolumeVsTime::GetVolumeUnit() const
 {
   return m_VolumeUnit;
 }

@@ -55,7 +55,6 @@ namespace pulse
     double m_ArterialCarbonDioxideBaseline_mmHg;
     double m_BaroreceptorActiveTime_s;
     double m_BaroreceptorEffectivenessParameter;
-    double m_BaroreceptorMeanArterialPressureBaseline_mmHg;
     double m_BaroreceptorSaturationTime_s;
     double m_LastMeanArterialPressure_mmHg;
     double m_PreviousBloodVolume_mL;

@@ -192,7 +192,7 @@ public class SEArray extends SEProperty
     {
       if (name == null)
         name = "SEArray";
-       options.pushTrack(name);      
+       options.pushTrack(name);
     }
 
     if (from == null || to == null)
@@ -453,13 +453,13 @@ public class SEArray extends SEProperty
     {
       if(idx<0||idx>=this.dData.length)
         throw new ArrayIndexOutOfBoundsException(idx);
-      to.setValue(this.dData[idx],this.unit);     
+      to.setValue(this.dData[idx],this.unit);
     }
     else if(this.dList!=null)
     {
       if(idx<0||idx>=this.dList.size())
         throw new ArrayIndexOutOfBoundsException(idx);
-      to.setValue(this.dList.get(idx),this.unit);     
+      to.setValue(this.dList.get(idx),this.unit);
     }
     else
       throw new ArrayIndexOutOfBoundsException(idx);

@@ -13,7 +13,7 @@
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/environment/SEEnvironmentalConditions.h"
-#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
+#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
 
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarArea.h"
@@ -91,7 +91,7 @@ PulseConfiguration::PulseConfiguration(Logger* logger) : SEEngineConfiguration(l
   m_PDEnabled = eSwitch::On;
 
   // ECG
-  m_ECGInterpolator = nullptr;
+  m_ECG = nullptr;
 
   // Energy
   m_BodySpecificHeat = nullptr;
@@ -220,7 +220,7 @@ PulseConfiguration::~PulseConfiguration()
   // Drugs
 
   //  ECG
-  SAFE_DELETE(m_ECGInterpolator);
+  SAFE_DELETE(m_ECG);
 
   // Energy
   SAFE_DELETE(m_BodySpecificHeat);
@@ -346,8 +346,8 @@ void PulseConfiguration::Clear()
   m_PDEnabled = eSwitch::On;
 
   //  ECG
-  if (m_ECGInterpolator)
-    m_ECGInterpolator->Clear();
+  if (m_ECG)
+    m_ECG->Clear();
 
   // Energy
   INVALIDATE_PROPERTY(m_BodySpecificHeat);
@@ -465,9 +465,12 @@ void PulseConfiguration::Initialize(const std::string& dataDir, SESubstanceManag
   m_AllowDynamicTimeStep = eSwitch::Off;
   if (!dataDir.empty())
   {
-    GetECGInterpolator().SerializeFromFile(dataDir + "/ecg/StandardECG.json", &GetTimeStep());
-    GetDynamicStabilization().SerializeFromFile(dataDir + "/config/DynamicStabilization.json");
-    //GetTimedStabilization().SerializeFromFile(dataDir+"/config/TimedStabilization.json");
+    if (!GetECG().SerializeFromFile(dataDir + "/ecg/StandardECG.json"))
+      Error("Unable to read " + dataDir + "/ecg/StandardECG.json");
+    if(!GetDynamicStabilization().SerializeFromFile(dataDir + "/config/DynamicStabilization.json"))
+      Error("Unable to read " + dataDir + "/config/DynamicStabilization.json");
+    //if(!GetTimedStabilization().SerializeFromFile(dataDir+"/config/TimedStabilization.json"))
+    //  Error("Unable to read " + dataDir + "/config/DynamicStabilization.json");
   }
   //GetDynamicStabilization().TrackStabilization(eSwitch::On);// Hard coded override for debugging
 
@@ -1167,23 +1170,23 @@ double PulseConfiguration::GetUniversalGasConstant(const HeatCapacitancePerAmoun
 /////////
 // ECG //
 /////////
-bool PulseConfiguration::HasECGInterpolator() const
+bool PulseConfiguration::HasECG() const
 {
-  return m_ECGInterpolator != nullptr;
+  return m_ECG != nullptr;
 }
-SEElectroCardioGramWaveformInterpolator& PulseConfiguration::GetECGInterpolator()
+SEElectroCardioGram& PulseConfiguration::GetECG()
 {
-  if (m_ECGInterpolator == nullptr)
-    m_ECGInterpolator = new SEElectroCardioGramWaveformInterpolator(GetLogger());
-  return *m_ECGInterpolator;
+  if (m_ECG == nullptr)
+    m_ECG = new SEElectroCardioGram(GetLogger());
+  return *m_ECG;
 }
-const SEElectroCardioGramWaveformInterpolator* PulseConfiguration::GetECGInterpolator() const
+const SEElectroCardioGram* PulseConfiguration::GetECG() const
 {
-  return m_ECGInterpolator;
+  return m_ECG;
 }
-void PulseConfiguration::RemoveECGInterpolator()
+void PulseConfiguration::RemoveECG()
 {
-  SAFE_DELETE(m_ECGInterpolator);
+  SAFE_DELETE(m_ECG);
 }
 
 /////////////

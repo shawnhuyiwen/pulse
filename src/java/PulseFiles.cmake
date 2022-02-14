@@ -243,7 +243,6 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/electrocardiogram/SEElectroCardioGram.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveform.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveformList.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/inhaler/SEInhaler.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/inhaler/actions/SEInhalerAction.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.java

@@ -572,51 +572,11 @@
     }
   }, {
     "AdvanceTime": {
+      "Action": {
+        "Comment": "Death Events: Exceeded the maximum target pulmonary ventilation" },
       "Time": {
         "ScalarTime": {
-          "Value": 50.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "ConsciousRespiration": {
-        "Command": [{
-          "ForcedInhale": {
-            "InspiratoryCapacityFraction": {
-              "Scalar0To1": {
-                "Value": 1.0
-              }
-            },
-            "InhalePeriod": {
-              "ScalarTime": {
-                "Value": 6.0,
-                "Unit": "s"
-              }
-            }
-          }
-        }, {
-          "ForcedExhale": {
-            "ExpiratoryReserveVolumeFraction": {
-              "Scalar0To1": {
-              }
-            },
-            "ExhalePeriod": {
-              "ScalarTime": {
-                "Value": 6.0,
-                "Unit": "s"
-              }
-            }
-          }
-        }]
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
+          "Value": 800.0,
           "Unit": "s"
         }
       }

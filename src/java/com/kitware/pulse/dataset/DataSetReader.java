@@ -40,8 +40,8 @@ import com.kitware.pulse.cdm.substance.SESubstanceFraction;
 import com.kitware.pulse.cdm.substance.SESubstanceManager;
 import com.kitware.pulse.cdm.substance.SESubstanceTissuePharmacokinetics;
 import com.kitware.pulse.cdm.system.environment.SEEnvironmentalConditions;
+import com.kitware.pulse.cdm.system.equipment.electrocardiogram.SEElectroCardioGram;
 import com.kitware.pulse.cdm.system.equipment.electrocardiogram.SEElectroCardioGramWaveform;
-import com.kitware.pulse.cdm.system.equipment.electrocardiogram.SEElectroCardioGramWaveformList;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.RunConfiguration;
@@ -196,20 +196,20 @@ public class DataSetReader
             throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for dynamic stabilization");
         }
         
-        Map<String,SEElectroCardioGramWaveformList> ecg = readECG(xlWBook.getSheet("ECG"));
-        if(ecg!=null)
+        Map<String,SEElectroCardioGram> ecgs = readECG(xlWBook.getSheet("ECG"));
+        if(ecgs!=null)
         {
-          for(String name : ecg.keySet())
+          for(String name : ecgs.keySet())
           {
-            SEElectroCardioGramWaveformList i = ecg.get(name);
+            SEElectroCardioGram i = ecgs.get(name);
             String fileName = "./ecg/"+name+".json";
             Log.info("Writing : "+fileName);
             i.writeFile(fileName);
-            SEElectroCardioGramWaveformList check = new SEElectroCardioGramWaveformList();
+            SEElectroCardioGram check = new SEElectroCardioGram();
             check.readFile(fileName);
             Log.info("Checking : "+fileName);
-  
-            if(!SEElectroCardioGramWaveformList.unload(i).toString().equals(SEElectroCardioGramWaveformList.unload(check).toString()))
+
+            if(!SEElectroCardioGram.unload(i).toString().equals(SEElectroCardioGram.unload(check).toString()))
               throw new RuntimeException("Serialization is not matching, something is wrong in the load/unload for ECG Interpolator");
           }
         }
@@ -1424,7 +1424,7 @@ public class DataSetReader
     return true;
   }
   
-  protected static Map<String,SEElectroCardioGramWaveformList> readECG(XSSFSheet xlSheet)
+  protected static Map<String,SEElectroCardioGram> readECG(XSSFSheet xlSheet)
   {
     int split;
     // Fields are expected data we must have
@@ -1438,11 +1438,11 @@ public class DataSetReader
     eWaveformLead lead=eWaveformLead.NullLead;
     eWaveformType type=null;
        
-    SEElectroCardioGramWaveformList ecg=null;
-    Map<String,SEElectroCardioGramWaveformList> map = new HashMap<>();
+    SEElectroCardioGram ecg=null;
+    Map<String,SEElectroCardioGram> map = new HashMap<String,SEElectroCardioGram>();
     try
     {
-      int rows = xlSheet.getPhysicalNumberOfRows();     
+      int rows = xlSheet.getPhysicalNumberOfRows();
       for (int r = 0; r < rows; r++) 
       {
         Row row = xlSheet.getRow(r);
@@ -1453,7 +1453,7 @@ public class DataSetReader
           continue;
         if(!fields.contains(property))
         {
-          ecg = new SEElectroCardioGramWaveformList();
+          ecg = new SEElectroCardioGram();
           map.put(property, ecg);
           continue;
         }         
@@ -1471,18 +1471,12 @@ public class DataSetReader
           split = cellValue.indexOf(" ");
           value = cellValue.substring(0,split);
           unit  = cellValue.substring(split+1);
-          SEElectroCardioGramWaveform waveform = ecg.getWaveform(lead, type);
-          waveform.getData().setElectricPotential(value, unit);
+          SEElectroCardioGramWaveform waveform = new SEElectroCardioGramWaveform();
+          waveform.setLead(lead);
+          waveform.setType(type);
+          waveform.getOriginalData().setStringData(value, unit);
+          ecg.getWaveforms().add(waveform);
         }
-        else if(property.equals("Time"))
-        {
-          cellValue = row.getCell(1).getStringCellValue();
-          split = cellValue.indexOf(" ");
-          value = cellValue.substring(0,split);
-          unit  = cellValue.substring(split+1);
-          SEElectroCardioGramWaveform waveform = ecg.getWaveform(lead, type);
-          waveform.getData().setTime(value, unit);
-        }        
       }
     }
     catch(Exception ex)

@@ -9,7 +9,7 @@ namespace Pulse.CDM
     SinusBradycardia,
     SinusTachycardia,
     Asystole,
-    CourseVentricularFibrillation,
+    CoarseVentricularFibrillation,
     FineVentricularFibrillation,
     PulselessElectricalActivity,
     PulselessVentricularTachycardia,
