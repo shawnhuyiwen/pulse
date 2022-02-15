@@ -12,19 +12,23 @@ public:
   SEFunctionElectricPotentialVsTime();
   virtual ~SEFunctionElectricPotentialVsTime();
 
-  virtual void Clear();
+  void Clear();
+  void Copy(const SEFunction& src) = delete;
+  void Copy(const SEFunctionElectricPotentialVsTime& src);
 
   double                               GetIndependentValue(size_t index) = delete;
-  virtual double                       GetTimeValue(size_t index, const TimeUnit& unit);
-  virtual std::vector<double>&         GetTime();
-  virtual const TimeUnit*              GetTimeUnit();
-  virtual void                         SetTimeUnit(const TimeUnit& unit);
+  const CCompoundUnit*                 GetIndependentUnit() const override {return (CCompoundUnit*)m_TimeUnit;}
+  double                               GetTimeValue(size_t index, const TimeUnit& unit) const;
+  std::vector<double>&                 GetTime();
+  const TimeUnit*                      GetTimeUnit() const;
+  void                                 SetTimeUnit(const TimeUnit& unit);
 
   double                               GetDependentValue(size_t index) = delete;
-  virtual double                       GetElectricPotentialValue(size_t index, const ElectricPotentialUnit& unit);
-  virtual std::vector<double>&         GetElectricPotential();
-  virtual const ElectricPotentialUnit* GetElectricPotentialUnit();
-  virtual void                         SetElectricPotentialUnit(const ElectricPotentialUnit& unit);
+  const CCompoundUnit*                 GetDependentUnit() const override {return (CCompoundUnit*)m_ElectricPotentialUnit;}
+  double                               GetElectricPotentialValue(size_t index, const ElectricPotentialUnit& unit) const;
+  std::vector<double>&                 GetElectricPotential();
+  const ElectricPotentialUnit*         GetElectricPotentialUnit() const;
+  void                                 SetElectricPotentialUnit(const ElectricPotentialUnit& unit);
 
 protected:
 

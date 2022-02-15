@@ -248,6 +248,7 @@ void CommonDataModelTest::FillFunctionMap()
 
   cdmMap.insert(std::make_pair("ScalarTest", &CommonDataModelTest::ScalarTest));
   cdmMap.insert(std::make_pair("UnitsTest", &CommonDataModelTest::UnitsTest));
+  cdmMap.insert(std::make_pair("WaveformInterpolatorTest", &CommonDataModelTest::WaveformInterpolatorTest));
 
 }
 

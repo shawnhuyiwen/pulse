@@ -288,16 +288,11 @@ namespace pulse
         double arterialCarbonDioxide_mmHg = m_ArterialCarbonDioxide_mmHg->Value();
         // hypercapnia check
         double hypercapniaFlag = 60.0; // \cite Guyton11thEd p.531 
-        double carbonDioxideToxicity = 80.0;  // \cite labertsen1971CarbonDioxideToxicity
         if (arterialCarbonDioxide_mmHg >= hypercapniaFlag)
         {
           /// \event Patient: Hypercapnia. The carbon dioxide partial pressure has risen above 60 mmHg. The patient is now hypercapnic.
           m_data.GetEvents().SetEvent(eEvent::Hypercapnia, true, m_data.GetSimulationTime());
 
-          if (arterialCarbonDioxide_mmHg > carbonDioxideToxicity)
-          {
-            m_ss << "Arterial Carbon Dioxide partial pressure is " << arterialCarbonDioxide_mmHg << ". This is beyond 80 mmHg triggering extreme Hypercapnia, patient is in an irreversible state.";
-          }
         }
         else if (m_data.GetEvents().IsEventActive(eEvent::Hypercapnia) && arterialCarbonDioxide_mmHg < (hypercapniaFlag - 3))
         {
@@ -308,19 +303,10 @@ namespace pulse
 
         // hypoxia check
         double hypoxiaFlag = 65.0; //Arterial O2 Partial Pressure in mmHg \cite Pierson2000Pathophysiology
-        double hypoxiaIrreversible = 15.0; // \cite hobler1973HypoxemiaCardiacOutput
         if (arterialOxygen_mmHg <= hypoxiaFlag)
         {
           /// \event Patient: Hypoxia Event. The oxygen partial pressure has fallen below 65 mmHg, indicating that the patient is hypoxic.
           m_data.GetEvents().SetEvent(eEvent::Hypoxia, true, m_data.GetSimulationTime());
-
-          if (arterialOxygen_mmHg < hypoxiaIrreversible)
-          {
-            /// \irreversible Arterial oxygen partial pressure has been critically reduced to below 15 mmHg.
-            m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-            m_ss << "Arterial Oxygen partial pressure is " << arterialOxygen_mmHg << ". This is below 15 mmHg triggering extreme Hypoxia, patient is in an irreversible state.";
-            Fatal(m_ss);
-          }
         }
         else if (arterialOxygen_mmHg > (hypoxiaFlag + 3))
         {
@@ -381,8 +367,7 @@ namespace pulse
     {// Don't throw events if we are initializing
 
       // When the brain oxygen partial pressure is too low, events are triggered and event duration is tracked.
-      // If the oxygen tension in the brain remains below the thresholds for the specified amount of time, the body
-      // will go into an irreversible state. The threshold values are chosen based on empirical data reviewed in summary in @cite dhawan2011neurointensive 
+      // The threshold values are chosen based on empirical data reviewed in summary in @cite dhawan2011neurointensive 
       // and from data presented in @cite purins2012brain and @cite doppenberg1998determination.
       if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 19.0) // We are using the mean from dhawan
       {
@@ -392,16 +377,6 @@ namespace pulse
         // If the O2 tension is below a critical threshold, the irreversible damage occurs more quickly
         if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 10.0)
         {
-          // Irreversible damage occurs if the deficit has gone on too long
-          if (m_data.GetEvents().GetEventDuration(eEvent::CriticalBrainOxygenDeficit, TimeUnit::s) > 1800)
-          {
-            /// \irreversible Brain oxygen pressure has been dangerously low for more than 30 minutes.
-            m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-            m_ss << "Brain Oxygen partial pressure is " << m_brainO2->GetPartialPressure(PressureUnit::mmHg) << " and has been below the danger threshold for " <<
-              m_data.GetEvents().GetEventDuration(eEvent::CriticalBrainOxygenDeficit, TimeUnit::s) << " seconds. Damage is irreversible.";
-            Fatal(m_ss);
-          }
-
           /// \event Patient: Critical Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a critically low level.
           m_data.GetEvents().SetEvent(eEvent::CriticalBrainOxygenDeficit, true, m_data.GetSimulationTime());
         }
@@ -425,16 +400,7 @@ namespace pulse
       if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) < 5)
       {
         /// \event Patient: The heart is not receiving enough oxygen. Coronary arteries should dilate to increase blood flow to the heart.
-        m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());
-
-        if (m_data.GetEvents().GetEventDuration(eEvent::MyocardiumOxygenDeficit, TimeUnit::s) > 2400)  // \cite murry1986preconditioning
-        {
-          /// \irreversible Heart has not been receiving enough oxygen for more than 40 min.
-          m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-          m_ss << "Myocardium oxygen partial pressure is  " << m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) << " and has been sustained for " << m_data.GetEvents().GetEventDuration(eEvent::MyocardiumOxygenDeficit, TimeUnit::s) <<
-            "patient heart muscle has experienced necrosis and is in an irreversible state.";
-          Fatal(m_ss);
-        }
+        m_data.GetEvents().SetEvent(eEvent::MyocardiumOxygenDeficit, true, m_data.GetSimulationTime());       
       }
       else if (m_myocardiumO2->GetPartialPressure(PressureUnit::mmHg) > 8)
       {

@@ -53,6 +53,7 @@ namespace pulse { namespace human_adult_whole_body
     pc.GetConditions().GetLobarPneumonia().GetRightLungAffected().SetValue(0.2);
 
     m_Logger->Info("First Stabilization...");
+    //if (!pe.SerializeFromFile("./states/StandardMale@0s.pbb"))
     if (!pe.InitializeEngine(pc))
     {
       testCase.AddFailure("Could not stabilize first initalization, check the error");

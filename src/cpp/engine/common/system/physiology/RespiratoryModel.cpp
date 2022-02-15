@@ -2206,14 +2206,6 @@ namespace pulse
           /// The patient has respiratory acidosis.
           m_data.GetEvents().SetEvent(eEvent::RespiratoryAcidosis, true, m_data.GetSimulationTime());
 
-          /// \event Patient: arterial blood ph has dropped below 6.5.
-          if (m_LastCardiacCycleBloodPH < lowPh)
-          {
-            /// \irreversible Extreme respiratory Acidosis: blood pH below 6.5.
-            m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-            ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is below 6.5, Patient is experiencing extreme respiratory Acidosis and is in an irreversible state.";
-            Fatal(ss);
-          }
         }
         else if (m_LastCardiacCycleBloodPH >= 7.38 && m_ArterialCO2PartialPressure_mmHg < 44.0)
         {
@@ -2229,14 +2221,6 @@ namespace pulse
           /// The patient has respiratory alkalosis.
           m_data.GetEvents().SetEvent(eEvent::RespiratoryAlkalosis, true, m_data.GetSimulationTime());
 
-          /// \event Patient: arterial blood ph has gotten above 8.5.
-          if (m_LastCardiacCycleBloodPH > highPh)
-          {
-            /// \irreversible Extreme respiratory Alkalosis: blood pH above 8.5.
-            m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-            ss << "Arterial blood pH is  " << m_LastCardiacCycleBloodPH << ". This is above 8.5, Patient is experiencing extreme respiratory Alkalosis and is in an irreversible state.";
-            Fatal(ss);
-          }
         }
         else if (m_LastCardiacCycleBloodPH <= 7.43 && m_ArterialCO2PartialPressure_mmHg > 39.0)
         {
@@ -2615,10 +2599,6 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::UpdateVolumes()
   {
-    //Standard male patient ideal weight = 75.3 kg
-    double standardFunctionalResidualCapacity_L = 30.0 * 75.3 / 1000.0;
-    double pateintMultiplier = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) / standardFunctionalResidualCapacity_L;
-    
     //Don't modify the stomach on environment changes
     if (m_Ambient->GetNextPressure(PressureUnit::cmH2O) != m_Ambient->GetPressure(PressureUnit::cmH2O))
     {
@@ -2733,8 +2713,16 @@ namespace pulse
     leftAlveolarDeadSpace_L += leftAlveolarDeadSpaceIncrease_L;
     rightAlveolarDeadSpace_L += rightAlveolarDeadSpaceIncrease_L;
 
+    //Modify based on the specific patient
+    //Standard male patient ideal weight = 75.3 kg
+    double standardFunctionalResidualCapacity_L = 30.0 * 75.3 / 1000.0;
+    double pateintMultiplier = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L) / standardFunctionalResidualCapacity_L;
+
     leftAlveolarDeadSpace_L *= pateintMultiplier;
     rightAlveolarDeadSpace_L *= pateintMultiplier;
+
+    leftAlveoliDecrease_L *= pateintMultiplier;
+    rightAlveoliDecrease_L *= pateintMultiplier;
 
     //---------------------------------------------------------------------------------------------------------------------------------------------
     //Update alveoli volume that participates in gas exchange
@@ -2781,13 +2769,12 @@ namespace pulse
     m_RightAlveolarDeadSpace->GetNextVolume().SetValue(rightAlveolarDeadSpace_L, VolumeUnit::L);
 
     //Update lung volumes
-    //Don't change residual volume or total lung capacity
     double functionalResidualCapacity_L = m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L);
     double residualVolume_L = m_data.GetInitialPatient().GetResidualVolume(VolumeUnit::L);
     double totalLungCapacity_L = m_data.GetInitialPatient().GetTotalLungCapacity(VolumeUnit::L);
     functionalResidualCapacity_L += leftAlveolarDeadSpaceIncrease_L - m_leftAlveoliDecrease_L + rightAlveolarDeadSpaceIncrease_L - m_rightAlveoliDecrease_L;
-    residualVolume_L += leftAlveolarDeadSpaceIncrease_L + rightAlveolarDeadSpaceIncrease_L;
-    totalLungCapacity_L += leftAlveolarDeadSpaceIncrease_L + rightAlveolarDeadSpaceIncrease_L;
+    residualVolume_L += leftAlveolarDeadSpaceIncrease_L - m_leftAlveoliDecrease_L + rightAlveolarDeadSpaceIncrease_L - m_rightAlveoliDecrease_L;
+    totalLungCapacity_L += leftAlveolarDeadSpaceIncrease_L - m_leftAlveoliDecrease_L + rightAlveolarDeadSpaceIncrease_L - m_rightAlveoliDecrease_L;
 
     double tidalVolumeBaseline_L = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L);
 

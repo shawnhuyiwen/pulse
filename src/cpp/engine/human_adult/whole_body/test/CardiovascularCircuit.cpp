@@ -134,7 +134,7 @@ namespace pulse { namespace human_adult_whole_body
     }
     testReport.SerializeToFile(sTestDirectory + "/TuneCardiovascularCircuitReport.json");
   }
-  void EngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient)
+  void EngineTest::TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& /*sTestDirectory*/, const std::string& sTestName, SEPatient& patient)
   {
     TimingProfile timer;
     timer.Start("TestCase");

@@ -37,6 +37,7 @@ namespace pulse
     bool DistributeHemoglobinBySaturation();
 
     Data& m_data;
+    std::stringstream ss;
     // All properties are stateless and are set by either the Initialize method or SetBodyState method
     SESubstance* m_O2;
     SESubstance* m_Hb;

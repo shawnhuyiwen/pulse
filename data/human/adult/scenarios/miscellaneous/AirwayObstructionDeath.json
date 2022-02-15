@@ -89,10 +89,12 @@
     }
   }, {
     "AdvanceTime": {
+      "Action": {
+        "Comment": "Death Events: Low O2 in Brain/Heart with hypocapnia" },
       "Time": {
         "ScalarTime": {
-          "Value": 10.0,
-          "Unit": "min"
+          "Value": 425,
+          "Unit": "s"
         }
       }
     }

@@ -63,10 +63,10 @@ message ConfigurationData
   
   message ECGConfigurationData
   {
-    oneof ElectroCardioGramInterpolator
+    oneof ElectroCardioGram
     {
-      string                                           InterpolatorFileName                                 = 1;/**<< @brief */
-      pulse.cdm.bind.ElectroCardioGramWaveformListData Interpolator                                         = 2;/**<< @brief */
+      pulse.cdm.bind.ElectroCardioGramData             AvailableWaveforms                                   = 1;/**<< @brief */
+      string                                           AvailableWaveformsFile                               = 2;/**<< @brief */
     }
   }
   

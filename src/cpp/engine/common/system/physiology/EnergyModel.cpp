@@ -519,19 +519,11 @@ namespace pulse
     std::stringstream ss;
 
     //Hypothermia check
-    double coreTempIrreversible_degC = 20.0;   /// \cite Stocks2004HumanPhysiologicalResponseCold
+    // \cite Stocks2004HumanPhysiologicalResponseCold coreTempIrreversible_degC = 20.0
     if (coreTemperature_degC < 35.0) /// \cite mallet2001hypothermia
     {
       /// \event Patient: Core temperature has fallen below 35 degrees Celsius. Patient is hypothermic.
       m_data.GetEvents().SetEvent(eEvent::Hypothermia, true, m_data.GetSimulationTime());
-
-      /// \irreversible State: Core temperature has fallen below 20 degrees Celsius.
-      if (coreTemperature_degC < coreTempIrreversible_degC)
-      {
-        m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-        ss << "Core temperature is " << coreTemperature_degC << ". This is below 20 degrees C, patient is experiencing extreme hypothermia and is in an irreversible state.";
-        Fatal(ss);
-      }
 
     }
     else if (m_data.GetEvents().IsEventActive(eEvent::Hypothermia) && coreTemperature_degC > 35.2)
@@ -570,28 +562,13 @@ namespace pulse
           /// \event The patient is in a state of metabolic acidosis
           m_data.GetEvents().SetEvent(eEvent::MetabolicAcidosis, true, m_data.GetSimulationTime());
 
-        /// \irreversible State: arterial blood pH has dropped below 6.5.
-        if (bloodPH < lowPh)
-        {
-          m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-          ss << " Arterial blood PH is " << bloodPH << ". This is below 6.5, patient is experiencing extreme metabolic acidosis and is in an irreversible state.";
-          Fatal(ss);
-        }
-        else if (bloodPH > 7.38 && bloodBicarbonate_mmol_Per_L > 23.0)
+        if (bloodPH > 7.38 && bloodBicarbonate_mmol_Per_L > 23.0)
           /// \event The patient has exited the state state of metabolic acidosis
           m_data.GetEvents().SetEvent(eEvent::MetabolicAcidosis, false, m_data.GetSimulationTime());
 
         if (bloodPH > 7.45 && bloodBicarbonate_mmol_Per_L > 26.0)
           /// \event The patient is in a state of metabolic alkalosis
           m_data.GetEvents().SetEvent(eEvent::MetabolicAlkalosis, true, m_data.GetSimulationTime());
-
-        /// \irreversible State: arterial blood pH has increased above 8.5.
-        if (bloodPH > highPh)
-        {
-          m_data.GetEvents().SetEvent(eEvent::IrreversibleState, true, m_data.GetSimulationTime());
-          ss << " Arterial blood PH is " << bloodPH << ". This is above 8.5, patient is experiencing extreme metabolic Alkalosis and is in an irreversible state.";
-          Fatal(ss);
-        }
 
         else if (bloodPH < 7.42 && bloodBicarbonate_mmol_Per_L < 25.0)
           /// \event The patient has exited the state of metabolic alkalosis

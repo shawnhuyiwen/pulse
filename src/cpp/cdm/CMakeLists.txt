@@ -170,7 +170,8 @@ add_library_ex(CommonDataModel
     patient/conditions/SEPulmonaryFibrosis.h
     patient/conditions/SEPulmonaryShunt.h
     patient/conditions/SESepsis.h
-    #properties/SEArray.h
+    properties/SEArray.h
+    properties/SEArrayElectricPotential.h
     #properties/SEArrayPressure.h
     #properties/SEArrayVolume.h
     #properties/SEArrayVolumePerTime.h
@@ -297,7 +298,6 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h
     system/equipment/electrocardiogram/SEElectroCardioGram.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h
-    system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h
     system/equipment/inhaler/SEInhaler.h
     system/equipment/inhaler/actions/SEInhalerAction.h
     system/equipment/inhaler/actions/SEInhalerConfiguration.h
@@ -537,7 +537,8 @@ add_library_ex(CommonDataModel
     patient/conditions/SEPulmonaryFibrosis.cpp
     patient/conditions/SEPulmonaryShunt.cpp
     patient/conditions/SESepsis.cpp
-    #properties/SEArray.cpp
+    properties/SEArray.cpp
+    properties/SEArrayElectricPotential.cpp
     #properties/SEArrayPressure.cpp
     #properties/SEArrayVolume.cpp
     #properties/SEArrayVolumePerTime.cppcpp
@@ -664,7 +665,6 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cpp
     system/equipment/electrocardiogram/SEElectroCardioGram.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.cpp
-    system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.cpp
     system/equipment/inhaler/SEInhaler.cpp
     system/equipment/inhaler/actions/SEInhalerAction.cpp
     system/equipment/inhaler/actions/SEInhalerConfiguration.cpp

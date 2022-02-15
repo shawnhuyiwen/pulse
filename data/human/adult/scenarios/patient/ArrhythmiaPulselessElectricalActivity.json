@@ -1,17 +1,17 @@
 {
-  "Name": "ArrhythmiaVentricularTachycardiaRhythms",
-  "Description": "A patient experiences Ventricular Tachycardia via the arrhythmia action set with StableVentricularTachycardia, then back to NormalSinus, then Unstable Ventricular Tachycardia, then back to NormalSinus.",
+  "Name": "ArrhythmiaPulselessRhythms",
+  "Description": "A patient moves into cardiac arrest via the arrhythmia action set with Asystole, then back to NormalSinus, then PulselessElectricalActivity, then back to NormalSinus, then PulselessVentricularTachycardia.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
-		"DecimalFormat": {
+        "DecimalFormat": {
         "Precision": 3
       },
       "Category": "ECG",
       "PropertyName": "Lead3ElectricPotential",
       "Unit": "mV"
     }, {
-      "DecimalFormat": {
+		"DecimalFormat": {
         "Precision": 1
       },
       "PropertyName": "Weight",
@@ -396,10 +396,10 @@
         }
       }
     }
-  }, {
+}, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "StableVentricularTachycardia"
+        "Rhythm": "PulselessElectricalActivity"
       }
     }
   }, {
@@ -411,7 +411,7 @@
         }
       }
     }
-  }, {
+}, {
     "PatientAction": {
       "Arrhythmia": {
         "Rhythm": "NormalSinus"
@@ -421,37 +421,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "UnstableVentricularTachycardia"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
-      }
-    }
-		  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "NormalSinus"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 180.0,
+          "Value": 360.0,
           "Unit": "s"
         }
       }
