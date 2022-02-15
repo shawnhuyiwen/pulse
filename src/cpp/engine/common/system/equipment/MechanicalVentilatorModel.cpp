@@ -1205,7 +1205,7 @@ namespace pulse
     double valvePressure_cmH2O = GetSettings().GetReliefValveThreshold(PressureUnit::cmH2O);
     m_EnvironmentToReliefValve->GetNextPressureSource().SetValue(valvePressure_cmH2O, PressureUnit::cmH2O);
 
-    //Check to see if it reached the pressure threshold  
+    //Check to see if it reached the pressure threshold
     if (!m_data.GetEvents().IsEventActive(eEvent::MechanicalVentilatorReliefValveActive) && m_ConnectionToReliefValve->GetNextValve() == eGate::Closed)
     {
       /// \event %MechanicalVentilator: Relief Valve is active. The pressure setting has been exceeded.
@@ -1216,7 +1216,7 @@ namespace pulse
       m_data.GetEvents().SetEvent(eEvent::MechanicalVentilatorReliefValveActive, false, m_data.GetSimulationTime());
     }
 
-    //Always try to let it run without the relief valve operational (i.e. closed (i.e. allowing flow)), otherwise it will always stay shorted
+    //Always try to let it run without the relief valve open (i.e. not allowing flow), otherwise it will always stay shorted
     m_ConnectionToReliefValve->SetNextValve(eGate::Open);
   }
 END_NAMESPACE

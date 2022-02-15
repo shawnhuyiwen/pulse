@@ -88,7 +88,188 @@
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "Oxygen",        "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "LiquidCompartment", "CompartmentName": "Aorta", "SubstanceName": "CarbonDioxide", "PropertyName": "PartialPressure", "Unit": "mmHg" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "OxygenSaturation",                  "Unit": "unitless" },
-      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxidePressure",     "Unit": "mmHg" }
+      { "DecimalFormat": { "Precision": 4 }, "Category": "Physiology", "PropertyName": "EndTidalCarbonDioxidePressure",     "Unit": "mmHg" },
+      
+      {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "AirwayPressure",
+    "Unit": "cmH2O"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "DynamicPulmonaryCompliance",
+    "Unit": "L/cmH2O"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "EndTidalCarbonDioxideFraction"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "EndTidalCarbonDioxidePressure",
+    "Unit": "mmHg"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "EndTidalOxygenFraction"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "EndTidalOxygenPressure",
+    "Unit": "mmHg"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "ExpiratoryFlow",
+    "Unit": "L/s"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "ExpiratoryTidalVolume",
+    "Unit": "mL"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "InspiratoryExpiratoryRatio"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "InspiratoryFlow",
+    "Unit": "L/min"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "InspiratoryTidalVolume",
+    "Unit": "mL"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "IntrinsicPositiveEndExpiredPressure",
+    "Unit": "cmH2O"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "LeakFraction"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "MeanAirwayPressure",
+    "Unit": "cmH2O"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "PeakInspiratoryPressure",
+    "Unit": "cmH2O"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "PlateauPressure",
+    "Unit": "cmH2O"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "PositiveEndExpiratoryPressure",
+    "Unit": "cmH2O"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "PulmonaryResistance",
+    "Unit": "cmH2O s/L"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "RespirationRate",
+    "Unit": "1/min"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "StaticPulmonaryCompliance",
+    "Unit": "L/cmH2O"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "TidalVolume",
+    "Unit": "mL"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "TotalLungVolume",
+    "Unit": "mL"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "MechanicalVentilator",
+    "PropertyName": "TotalPulmonaryVentilation",
+    "Unit": "L/s"
+   }
     ]
   },
   "AnyAction":
@@ -101,7 +282,7 @@
     "EquipmentAction": {
       "MechanicalVentilatorConfiguration": {
         "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
-              "Comment": "Attach the mechanical ventilator - VC-AC: TV = 7 mL/kg(ideal)" }}},
+              "Comment": "Attach the mechanical ventilator - VC-AC: TV = 7 mL/kg(ideal); with a relief valve that will get hit" }}},
         "Settings":
         {
           "Connection": "On",
@@ -110,9 +291,9 @@
           "InspirationTargetFlow": { "ScalarVolumePerTime": { "Value": 0.351, "Unit": "L/s" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 10.0, "Unit": "s" } },
-          "InspirationPatientTriggerPressure": { "ScalarPressure": { "Value": -0.000001, "Unit": "cmH2O" } },
+          "InspirationPatientTriggerRespiratoryModel": "On",
           "ExpirationCycleVolume": { "ScalarVolume": { "Value": 0.527, "Unit": "L" } },
-          "ReliefValveThreshold": { "ScalarPressure": { "Value": 50.0, "Unit": "cmH2O" } },
+          "ReliefValveThreshold": { "ScalarPressure": { "Value": 12.0, "Unit": "cmH2O" } },
           "FractionInspiredGas": [
             { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } }
           ]
@@ -121,6 +302,6 @@
     }
   },  
   
-  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 60.0, "Unit": "min" } } } }
+  { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 1.0, "Unit": "min" } } } }
   ]
 }
