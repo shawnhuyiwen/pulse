@@ -200,6 +200,10 @@ namespace pulse
     m_PreviousConnectionPressure_cmH2O = 0.0;
     m_LimitReached = false;
 
+    // Default the relief valuve threshold if not there
+    if (!GetSettings().HasReliefValveThreshold())
+      GetSettings().GetReliefValveThreshold().SetValue(1000, PressureUnit::cmH2O);
+
     // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
 
     //Set the substance volume fractions ********************************************
@@ -1197,10 +1201,8 @@ namespace pulse
 //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CheckReliefValve()
   {
-    //Aaron: Add ReliefValvePressure setting and MechanicalVentilatorReliefValveActive event
-    /*
     //Set the Pressure Source based on the setting
-    double valvePressure_cmH2O = GetReliefValvePressure(PressureUnit::cmH2O);
+    double valvePressure_cmH2O = GetSettings().GetReliefValveThreshold(PressureUnit::cmH2O);
     m_EnvironmentToReliefValve->GetNextPressureSource().SetValue(valvePressure_cmH2O, PressureUnit::cmH2O);
 
     //Check to see if it reached the pressure threshold  
@@ -1216,6 +1218,5 @@ namespace pulse
 
     //Always try to let it run without the relief valve operational (i.e. closed (i.e. allowing flow)), otherwise it will always stay shorted
     m_ConnectionToReliefValve->SetNextValve(eGate::Open);
-    */
   }
 END_NAMESPACE

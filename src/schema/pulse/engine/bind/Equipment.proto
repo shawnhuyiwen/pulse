@@ -10,7 +10,6 @@ import "pulse/cdm/bind/ElectroCardioGram.proto";
 import "pulse/cdm/bind/Inhaler.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
 import "pulse/cdm/bind/Properties.proto";
-import "pulse/cdm/bind/Physiology.proto";
 
 message AnesthesiaMachineData
 {

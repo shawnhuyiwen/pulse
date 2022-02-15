@@ -80,10 +80,11 @@ message MechanicalVentilatorSettingsData
   eDriverWaveform                     InspirationWaveform                       = 32;/**<< @brief @ref MechanicalVentilatorData_eDriverWaveformTable */
   ScalarTimeData                      InspirationWaveformPeriod                 = 33;/**<< @brief Time to reach maximum value */
   
-  ScalarVolumeData                    YPieceVolume                              = 34;/**<< @brief Dead space volume of the y-piece. */
+  ScalarPressureData                  ReliefValveThreshold                      = 34;/**<< @brief Pressure at which the relief valve opens. */
+  ScalarVolumeData                    YPieceVolume                              = 35;/**<< @brief Dead space volume of the y-piece. */
   
-  repeated SubstanceFractionData      FractionInspiredGas                       = 35;/**<< @brief Break down of the gases, such as FiO2. */
-  repeated SubstanceConcentrationData ConcentrationInspiredAerosol              = 36;/**<< @brief Concentration of added aerosolized substances. */
+  repeated SubstanceFractionData      FractionInspiredGas                       = 36;/**<< @brief Break down of the gases, such as FiO2. */
+  repeated SubstanceConcentrationData ConcentrationInspiredAerosol              = 37;/**<< @brief Concentration of added aerosolized substances. */
 }
 
 message MechanicalVentilatorData

@@ -61,6 +61,8 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
   m_ExpirationValveVolume = nullptr;
   m_InspirationLimbVolume = nullptr;
   m_InspirationValveVolume = nullptr;
+
+  m_ReliefValveThreshold = nullptr;
   m_YPieceVolume = nullptr;
 }
 
@@ -109,6 +111,8 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
   SAFE_DELETE(m_ExpirationValveVolume);
   SAFE_DELETE(m_InspirationLimbVolume);
   SAFE_DELETE(m_InspirationValveVolume);
+
+  SAFE_DELETE(m_ReliefValveThreshold);
   SAFE_DELETE(m_YPieceVolume);
 
   DELETE_VECTOR(m_FractionInspiredGases);
@@ -165,6 +169,8 @@ void SEMechanicalVentilatorSettings::Clear()
   INVALIDATE_PROPERTY(m_ExpirationValveVolume);
   INVALIDATE_PROPERTY(m_InspirationLimbVolume);
   INVALIDATE_PROPERTY(m_InspirationValveVolume);
+
+  INVALIDATE_PROPERTY(m_ReliefValveThreshold);
   INVALIDATE_PROPERTY(m_YPieceVolume);
 
   RemoveFractionInspiredGases();
@@ -834,6 +840,23 @@ double SEMechanicalVentilatorSettings::GetInspirationValveVolume(const VolumeUni
   if (m_InspirationValveVolume == nullptr)
     return SEScalar::dNaN();
   return m_InspirationValveVolume->GetValue(unit);
+}
+
+bool SEMechanicalVentilatorSettings::HasReliefValveThreshold() const
+{
+  return m_ReliefValveThreshold == nullptr ? false : m_ReliefValveThreshold->IsValid();
+}
+SEScalarPressure& SEMechanicalVentilatorSettings::GetReliefValveThreshold()
+{
+  if (m_ReliefValveThreshold == nullptr)
+    m_ReliefValveThreshold = new SEScalarPressure();
+  return *m_ReliefValveThreshold;
+}
+double SEMechanicalVentilatorSettings::GetReliefValveThreshold(const PressureUnit& unit) const
+{
+  if (m_ReliefValveThreshold == nullptr)
+    return SEScalar::dNaN();
+  return m_ReliefValveThreshold->GetValue(unit);
 }
 
 bool SEMechanicalVentilatorSettings::HasYPieceVolume() const

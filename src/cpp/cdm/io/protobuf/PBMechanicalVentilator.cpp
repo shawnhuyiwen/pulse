@@ -214,6 +214,8 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
   if (src.has_inspirationwaveformperiod())
     PBProperty::Load(src.inspirationwaveformperiod(), dst.GetInspirationWaveformPeriod());
 
+  if (src.has_reliefvalvethreshold())
+    PBProperty::Load(src.reliefvalvethreshold(), dst.GetReliefValveThreshold());
   if (src.has_ypiecevolume())
     PBProperty::Load(src.ypiecevolume(), dst.GetYPieceVolume());
 
@@ -334,6 +336,8 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
   if (src.HasInspirationWaveformPeriod())
     dst.set_allocated_inspirationwaveformperiod(PBProperty::Unload(*src.m_InspirationWaveformPeriod));
 
+  if (src.HasReliefValveThreshold())
+    dst.set_allocated_reliefvalvethreshold(PBProperty::Unload(*src.m_ReliefValveThreshold));
   if (src.HasYPieceVolume())
     dst.set_allocated_ypiecevolume(PBProperty::Unload(*src.m_YPieceVolume));
 
