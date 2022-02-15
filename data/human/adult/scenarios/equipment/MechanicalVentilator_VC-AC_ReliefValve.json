@@ -1,7 +1,7 @@
 {
   "Name": "MechanicalVentilator_VC-AC_Healthy",
   "Description": "Apply a VC-AC mode ventilator to a healthy patient.",
-  "EngineStateFile":"./states/StandardMale@0s.pbb",
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":
