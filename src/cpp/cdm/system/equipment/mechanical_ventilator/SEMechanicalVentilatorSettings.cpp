@@ -242,6 +242,7 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
   COPY_PROPERTY(ExpirationValveVolume);
   COPY_PROPERTY(InspirationLimbVolume);
   COPY_PROPERTY(InspirationValveVolume);
+  COPY_PROPERTY(ReliefValveThreshold);
   COPY_PROPERTY(YPieceVolume);
 
   // Always need to provide a full (fractions sum to 1) substance list that replaces current
@@ -391,6 +392,9 @@ const SEScalar* SEMechanicalVentilatorSettings::GetScalar(const std::string& nam
     return &GetInspirationLimbVolume();
   if (name == "InspirationValveVolume")
     return &GetInspirationValveVolume();
+
+  if (name == "ReliefValveThreshold")
+    return &GetReliefValveThreshold();
   if (name == "YPieceVolume")
     return &GetYPieceVolume();
 
