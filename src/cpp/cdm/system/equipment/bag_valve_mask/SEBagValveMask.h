@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+#include "cdm/properties/SEScalar.h"
 #include "cdm/system/equipment/SEEquipment.h"
 class SEEventHandler;
 class SEBagValveMaskConfiguration;
@@ -40,6 +41,9 @@ protected:
 public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
+
+  virtual eBreathState GetBreathState() const;
+  virtual void SetBreathState(eBreathState c);
 
   virtual eSwitch GetConnection() const;
   virtual void SetConnection(eSwitch c);
@@ -95,7 +99,8 @@ public:
   void RemoveConcentrationInspiredAerosols();
 
 protected:
-  eSwitch                                      m_Connection;
+  SEScalarEnum<eBreathState>                   m_BreathState;
+  SEScalarEnum <eSwitch>                       m_Connection;
 
   SEScalarPressureTimePerVolume*               m_BagResistance;
   SEScalarPressureTimePerVolume*               m_FilterResistance;

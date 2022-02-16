@@ -3383,7 +3383,7 @@ namespace pulse
     //////////////////////////////
     // EnvironmentToReliefValve //
     SEFluidCircuitPath& EnvironmentToReliefValve = cAnesthesia.CreatePath(Ambient, ReliefValve, pulse::AnesthesiaMachinePath::EnvironmentToReliefValve);
-    EnvironmentToReliefValve.GetPressureSourceBaseline().SetValue(100.0, PressureUnit::cmH2O);
+    EnvironmentToReliefValve.GetPressureSourceBaseline().SetValue(1000.0, PressureUnit::cmH2O); //Super high, so it's almost certainly not hit unless set to something else by the user
     /////////////////////////////
     // VentilatorToEnvironment //
     SEFluidCircuitPath& VentilatorToEnviornment = cAnesthesia.CreatePath(Ventilator, Ambient, pulse::AnesthesiaMachinePath::VentilatorToEnvironment);
@@ -3925,6 +3925,9 @@ namespace pulse
     YPiece.GetPressure().Set(Ambient.GetNextPressure());
     YPiece.GetVolumeBaseline().SetValue(yPieceVolume_L, VolumeUnit::L);
 
+    SEFluidCircuitNode& ReliefValve = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::ReliefValve);
+    ReliefValve.GetPressure().Set(Ambient.GetNextPressure());
+
     SEFluidCircuitNode& Connection = cMechanicalVentilator.CreateNode(pulse::MechanicalVentilatorNode::Connection);
     Connection.GetPressure().Set(Ambient.GetNextPressure());
     Connection.GetVolumeBaseline().SetValue(connectionVolume_L, VolumeUnit::L);
@@ -3959,6 +3962,12 @@ namespace pulse
     SEFluidCircuitPath& LeakConnectionToEnvironment = cMechanicalVentilator.CreatePath(Connection, Ambient, pulse::MechanicalVentilatorPath::LeakConnectionToEnvironment);
     LeakConnectionToEnvironment.GetResistanceBaseline().SetValue(openResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
+    SEFluidCircuitPath& ConnectionToReliefValve = cMechanicalVentilator.CreatePath(Connection, ReliefValve, pulse::MechanicalVentilatorPath::ConnectionToReliefValve);
+    ConnectionToReliefValve.SetNextValve(eGate::Open);
+
+    SEFluidCircuitPath& EnvironmentToReliefValve = cMechanicalVentilator.CreatePath(Ambient, ReliefValve, pulse::MechanicalVentilatorPath::EnvironmentToReliefValve);
+    EnvironmentToReliefValve.GetPressureSourceBaseline().SetValue(1000.0, PressureUnit::cmH2O); //Super high, so it's almost certainly not hit unless set to something else by the user
+
     SEFluidCircuitPath& ConnectionToEnvironment = cMechanicalVentilator.CreatePath(Connection, Ambient, pulse::MechanicalVentilatorPath::ConnectionToEnvironment);
 
     cMechanicalVentilator.SetNextAndCurrentFromBaselines();
@@ -3992,6 +4001,8 @@ namespace pulse
     mInspiratoryLimb.MapNode(InspiratoryLimb);
     SEGasCompartment& mYPiece = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::YPiece);
     mYPiece.MapNode(YPiece);
+    SEGasCompartment& mReliefValve = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::ReliefValve);
+    mReliefValve.MapNode(ReliefValve);
     SEGasCompartment& mConnection = m_Compartments->CreateGasCompartment(pulse::MechanicalVentilatorCompartment::Connection);
     mConnection.MapNode(Connection);
 
@@ -4012,6 +4023,10 @@ namespace pulse
     mYPieceToConnection.MapPath(YPieceToConnection);
     SEGasCompartmentLink& mLeakConnectionToEnvironment = m_Compartments->CreateGasLink(mYPiece, mConnection, pulse::MechanicalVentilatorLink::LeakConnectionToEnvironment);
     mLeakConnectionToEnvironment.MapPath(LeakConnectionToEnvironment);
+    SEGasCompartmentLink& mConnectionToReliefValve = m_Compartments->CreateGasLink(mConnection, mReliefValve, pulse::MechanicalVentilatorLink::ConnectionToReliefValve);
+    mConnectionToReliefValve.MapPath(ConnectionToReliefValve);
+    SEGasCompartmentLink& mEnvironmentToReliefValve = m_Compartments->CreateGasLink(*eEnvironment, mReliefValve, pulse::MechanicalVentilatorLink::EnvironmentToReliefValve);
+    mEnvironmentToReliefValve.MapPath(EnvironmentToReliefValve);
     SEGasCompartmentLink& mConnectionToEnvironment = m_Compartments->CreateGasLink(mConnection, *eEnvironment, pulse::MechanicalVentilatorLink::ConnectionToEnvironment);
     mConnectionToEnvironment.MapPath(ConnectionToEnvironment);
 
@@ -4031,6 +4046,8 @@ namespace pulse
     gMechanicalVentilator.AddLink(mInspiratoryLimbToYPiece);
     gMechanicalVentilator.AddLink(mYPieceToConnection);
     gMechanicalVentilator.AddLink(mLeakConnectionToEnvironment);
+    gMechanicalVentilator.AddLink(mConnectionToReliefValve);
+    gMechanicalVentilator.AddLink(mEnvironmentToReliefValve);
     gMechanicalVentilator.AddLink(mConnectionToEnvironment);
     gMechanicalVentilator.StateChange();
 
@@ -4067,6 +4084,8 @@ namespace pulse
     lInspiratoryLimb.MapNode(InspiratoryLimb);
     SELiquidCompartment& lYPiece = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::YPiece);
     lYPiece.MapNode(YPiece);
+    SELiquidCompartment& lReliefValve = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::ReliefValve);
+    lReliefValve.MapNode(ReliefValve);
     SELiquidCompartment& lConnection = m_Compartments->CreateLiquidCompartment(pulse::MechanicalVentilatorCompartment::Connection);
     lConnection.MapNode(Connection);
 
@@ -4090,6 +4109,10 @@ namespace pulse
     lYPieceToConnection.MapPath(YPieceToConnection);
     SELiquidCompartmentLink& lLeakConnectionToEnvironment = m_Compartments->CreateLiquidLink(lConnection, *lEnvironment, pulse::MechanicalVentilatorLink::LeakConnectionToEnvironment);
     lLeakConnectionToEnvironment.MapPath(LeakConnectionToEnvironment);
+    SELiquidCompartmentLink& lConnectionToReliefValve = m_Compartments->CreateLiquidLink(lConnection, lReliefValve, pulse::MechanicalVentilatorLink::ConnectionToReliefValve);
+    lConnectionToReliefValve.MapPath(ConnectionToReliefValve);
+    SELiquidCompartmentLink& lEnvironmentToReliefValve = m_Compartments->CreateLiquidLink(*lEnvironment, lReliefValve, pulse::MechanicalVentilatorLink::EnvironmentToReliefValve);
+    lEnvironmentToReliefValve.MapPath(EnvironmentToReliefValve);
     SELiquidCompartmentLink& lConnectionToEnvironment = m_Compartments->CreateLiquidLink(lConnection, *lEnvironment, pulse::MechanicalVentilatorLink::ConnectionToEnvironment);
     lConnectionToEnvironment.MapPath(ConnectionToEnvironment);
 
@@ -4114,6 +4137,8 @@ namespace pulse
     lCombinedMechanicalVentilator.AddLink(lInspiratoryLimbToYPiece);
     lCombinedMechanicalVentilator.AddLink(lYPieceToConnection);
     lCombinedMechanicalVentilator.AddLink(lLeakConnectionToEnvironment);
+    lCombinedMechanicalVentilator.AddLink(lConnectionToReliefValve);
+    lCombinedMechanicalVentilator.AddLink(lEnvironmentToReliefValve);
     //lCombinedMechanicalVentilator.AddLink(lConnectionToEnvironment);
     //Connection to Respiratory
     lCombinedMechanicalVentilator.AddLink(lConnectionToAirway);

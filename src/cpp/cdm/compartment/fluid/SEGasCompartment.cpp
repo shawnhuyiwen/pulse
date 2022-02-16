@@ -17,7 +17,6 @@ SEGasCompartment::~SEGasCompartment()
   
 }
 
-
 void SEGasCompartment::StateChange()
 {
   m_Leaves.clear();

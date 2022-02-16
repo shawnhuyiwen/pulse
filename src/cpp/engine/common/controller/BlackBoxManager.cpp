@@ -21,7 +21,7 @@ namespace pulse
 {
   BlackBoxManager::BlackBoxManager(Controller& data) : SEBlackBoxManager(data.GetLogger()), m_data(data)
   {
-
+  
   }
 
   template<COMPATIBLE_BLACK_BOX_TEMPLATE>
@@ -32,39 +32,13 @@ namespace pulse
       Error("Source Compartment does not exist", "BlackBoxManager::IsValidBlackBoxRequest");
       return false;
     }
-    if (srcCmpt == nullptr)
+    if (tgtCmpt == nullptr)
     {
       Error("Target Compartment, does not exist", "BlackBoxManager::IsValidBlackBoxRequest");
       return false;
     }
 
-    if (srcCmpt->HasBlackBox())
-    {
-      Error("Source Compartment already has a black box", "BlackBoxManager::IsValidBlackBoxRequest");
-      return false;
-    }
-    if (tgtCmpt->HasBlackBox())
-    {
-      Error("Target Compartment already has a black box", "BlackBoxManager::IsValidBlackBoxRequest");
-      return false;
-    }
-
-    // TODO Is this right?
-    // Currently we only support leaf compartments, that are mapped to a circuit with one quantity node
-    if (!srcCmpt->HasChildren() && !tgtCmpt->HasChildren() &&
-      srcCmpt->HasNodeMapping() && tgtCmpt->HasNodeMapping())
-    {
-      if (srcCmpt->GetNodeMapping().GetQuantityNodes().size() == 1 &&
-        tgtCmpt->GetNodeMapping().GetQuantityNodes().size() == 1)
-      {
-        // Make sure the nodes are not associated with a black box (over kill?)
-        if (srcCmpt->GetNodeMapping().GetQuantityNodes()[0]->HasBlackBox() ||
-          tgtCmpt->GetNodeMapping().GetQuantityNodes()[0]->HasBlackBox())
-          return false;
-        return true;
-      }
-    }
-    return false;
+    return true;
   }
 
   template<typename CompartmentType, typename LinkType>
@@ -74,9 +48,9 @@ namespace pulse
     for (LinkType* link : src.GetLinks())
     {
       if ((&link->GetSourceCompartment() == &src &&
-        &link->GetTargetCompartment() == &tgt) ||
-        (&link->GetSourceCompartment() == &tgt &&
-          &link->GetTargetCompartment() == &src))
+           &link->GetTargetCompartment() == &tgt) ||
+          (&link->GetSourceCompartment() == &tgt &&
+           &link->GetTargetCompartment() == &src))
       {
         return link;
       }
@@ -84,19 +58,24 @@ namespace pulse
     return nullptr;
   }
 
-  SEGasBlackBox* BlackBoxManager::CreateGasBlackBox(const std::string& /*srcCmptName*/, const std::string& /*tgtCmptName*/)
+  SEGasBlackBox* BlackBoxManager::CreateGasBlackBox(const std::string& /*srcCmptName*/, const std::string& /*tgtCmptName*/, const std::string& /*name*/)
   {
     // TODO Finish
     return nullptr;
   }
 
 
-#define LIQUID_COMPONENTS SELiquidBlackBox, \
-                          SEFluidCircuit, SEFluidCircuitNode, SEFluidCircuitPath, \
-                          SELiquidCompartmentGraph, SELiquidCompartment, SELiquidCompartmentLink, \
-                          PressureUnit, VolumeUnit, VolumePerTimeUnit
-  SELiquidBlackBox* BlackBoxManager::CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName)
+  #define LIQUID_COMPONENTS SELiquidBlackBox, \
+                            SEFluidCircuit, SEFluidCircuitNode, SEFluidCircuitPath, \
+                            SELiquidCompartmentGraph, SELiquidCompartment, SELiquidCompartmentLink, \
+                            PressureUnit, VolumeUnit, VolumePerTimeUnit
+  SELiquidBlackBox* BlackBoxManager::CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name)
   {
+    if (HasLiquidBlackBox(name))
+    {
+      Error("There is already a black box " + name);
+      return nullptr;
+    }
     if (HasLiquidBlackBox(srcCmptName, tgtCmptName))
     {
       Error("There is already a black box between " + srcCmptName + " and " + tgtCmptName);
@@ -118,31 +97,16 @@ namespace pulse
     SELiquidCompartmentLink* replaceLink = GetLinkBetween<SELiquidCompartment, SELiquidCompartmentLink>(*srcCmpt, *tgtCmpt);
     if (replaceLink != nullptr)
     {
-      if (replaceLink->HasBlackBox() || replaceLink->GetPath()->HasBlackBox())
-      {
-        Error("Replacement Link " + replaceLink->GetName() + " has black box ");
-        return nullptr;
-      }
-      SEFluidCircuitNode& srcNode = *srcCmpt->GetNodeMapping().GetQuantityNodes()[0];
-      SEFluidCircuitNode& tgtNode = *tgtCmpt->GetNodeMapping().GetQuantityNodes()[0];
-      if (srcNode.HasBlackBox())
-      {
-        Error("Source Node already has a black box");
-        return nullptr;
-      }
-      if (tgtNode.HasBlackBox())
-      {
-        Error("Target Node already has a black box");
-        return nullptr;
-      }
+      SEFluidCircuitNode& srcNode = replaceLink->GetPath()->GetSourceNode();
+      SEFluidCircuitNode& tgtNode = replaceLink->GetPath()->GetTargetNode();
 
-      // \TODO Figure out which circuit(s) and graph(s) to use
+      // \TODO Protect CreateLiquidBlackBox and make new public methods for CreateCardiovascularBlackBox that pass in the circuit and graph to this method
       SEFluidCircuit& circuit = m_data.GetCircuits().GetActiveCardiovascularCircuit();
       SELiquidCompartmentGraph& graph = m_data.GetCompartments().GetActiveCardiovascularGraph();
 
       // ---------------------------------------------------------
       // Create the black box
-      SELiquidBlackBox* bb = SEBlackBoxManager::CreateLiquidBlackBox(srcCmptName, tgtCmptName);
+      SELiquidBlackBox* bb = SEBlackBoxManager::CreateLiquidBlackBox(srcCmptName, tgtCmptName, name);
       if (!CreateComponents<LIQUID_COMPONENTS>(*bb, srcNode, tgtNode, *srcCmpt, *tgtCmpt, *replaceLink, circuit, graph, PressureUnit::mmHg, VolumeUnit::mL, VolumePerTimeUnit::mL_Per_s))
       {
         // Remove bb
@@ -153,23 +117,23 @@ namespace pulse
     return nullptr;
   }
 
-  SEThermalBlackBox* BlackBoxManager::CreateThermalBlackBox(const std::string& /*srcCmptName*/, const std::string& /*tgtCmptName*/)
+  SEThermalBlackBox* BlackBoxManager::CreateThermalBlackBox(const std::string& /*srcCmptName*/, const std::string& /*tgtCmptName*/, const std::string& /*name*/)
   {
     // TODO Finish
     return nullptr;
   }
 
   template<CREATE_BLACK_BOX_COMPONENTS_TEMPLATE> bool BlackBoxManager::CreateComponents(BlackBoxType& bb,
-    NodeType& srcNode, NodeType& tgtNode,
-    CompartmentType& srcCmpt, CompartmentType& tgtCmpt, LinkType& replaceLink,
-    CircuitType& circuit, GraphType& graph,
-    const PotentialUnit& pUnit, const QuantityUnit& qUnit, const FluxUnit& fUnit)
+                                                                                        NodeType& srcNode, NodeType& tgtNode,
+                                                                                        CompartmentType& srcCmpt, CompartmentType& tgtCmpt, LinkType& replaceLink,
+                                                                                        CircuitType& circuit, GraphType& graph,
+                                                                                        const PotentialUnit& pUnit, const QuantityUnit& /*qUnit*/, const FluxUnit& fUnit)
   {
     // ---------------------------------------------------------
     // Make our black box circuit components
-    NodeType& bbNode = circuit.CreateNode(bb.GetName());
-    PathType& src2bbPath = circuit.CreatePath(srcNode, bbNode, srcNode.GetName() + "_To_" + bb.GetName());
-    PathType& bb2tgtPath = circuit.CreatePath(bbNode, tgtNode, bb.GetName() + "_To_" + tgtNode.GetName());
+    NodeType& bbNode     = circuit.CreateNode(bb.GetName());
+    PathType& src2bbPath = circuit.CreatePath(srcNode, bbNode, bb.GetName()+"Source");
+    PathType& bb2tgtPath = circuit.CreatePath(bbNode, tgtNode, bb.GetName()+"Target");
 
     // ---------------------------------------------------------
     // Initialize quantity
@@ -185,8 +149,12 @@ namespace pulse
     // ---------------------------------------------------------
     // Add our black box compartment components
     CompartmentType& bbCmpt = m_data.GetCompartments().CreateLiquidCompartment(bb.GetName());
-    LinkType& src2bbLink = m_data.GetCompartments().CreateLiquidLink(srcCmpt, bbCmpt, bbCmpt.GetName() + "_To_" + bb.GetName());
-    LinkType& bb2tgtLink = m_data.GetCompartments().CreateLiquidLink(bbCmpt, tgtCmpt, bb.GetName() + "_To_" + tgtCmpt.GetName());
+    LinkType& src2bbLink = m_data.GetCompartments().CreateLiquidLink(srcCmpt, bbCmpt,  bb.GetName()+"Source");
+    LinkType& bb2tgtLink = m_data.GetCompartments().CreateLiquidLink(bbCmpt,  tgtCmpt, bb.GetName()+"Target");
+    // Add our new cmpt to our correct cmpt list TODO AMB Support new cmpts/links to our state
+    if (pulse::VascularCompartment::HasValue(srcCmpt.GetName()) && pulse::VascularCompartment::HasValue(tgtCmpt.GetName()))
+      pulse::VascularCompartment::AddValue(bb.GetName());
+
     // Add new components to the graph
     graph.AddCompartment(bbCmpt);
     graph.AddLink(src2bbLink);
@@ -206,6 +174,9 @@ namespace pulse
     // Paths are new, so map the exiting path fluxes to them
     src2bbPath.GetNextFlux().Set(replaceLink.GetPath()->GetFlux());
     bb2tgtPath.GetNextFlux().Set(replaceLink.GetPath()->GetFlux());
+    // Get rid of the old path/link now
+    m_data.GetCircuits().DeleteFluidPath(replaceLink.GetPath()->GetName());
+    m_data.GetCompartments().DeleteLiquidLink(replaceLink.GetName());
 
     // Set any missing potentials and fluxes to 0
     if (!srcNode.HasNextPotential())
@@ -238,9 +209,9 @@ namespace pulse
 
     // ---------------------------------------------------------
     // Set the changes
-    m_data.GetCompartments().StateChange(); //Aaron - New compartment needs to go in VascularLeafCompartments, but SORT_CMPTS doesn't work because it's not in pulse::VascularCompartment
+    m_data.GetCompartments().StateChange();
     circuit.StateChange();
     graph.StateChange();
     return true;
   }
-}
+END_NAMESPACE

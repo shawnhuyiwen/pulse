@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.engine import SEAction, SEAdvanceTime
-from pulse.cdm.io.scalars import serialize_scalar_property_to_bind, serialize_scalar_time_to_bind
+from pulse.cdm.io.scalars import serialize_scalar_time_to_bind
 from pulse.cdm.bind.Actions_pb2 import ActionData, AdvanceTimeData, OverridesData
 
 def serialize_action_to_bind(src: SEAction, dst: ActionData):

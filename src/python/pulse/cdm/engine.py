@@ -4,7 +4,7 @@
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from enum import Enum
-from pulse.cdm.scalars import SEScalarProperty, SEScalarTime, SEScalarUnit
+from pulse.cdm.scalars import SEScalarTime, SEScalarUnit
 
 class eSerializationFormat(Enum):
     JSON = 0

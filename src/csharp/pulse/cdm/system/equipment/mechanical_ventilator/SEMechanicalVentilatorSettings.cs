@@ -64,6 +64,7 @@ namespace Pulse.CDM
     protected eMechanicalVentilator_DriverWaveform inspiration_waveform;
     protected SEScalarTime inspiration_waveform_period;
 
+    protected SEScalarPressure relief_valve_threshold;
     protected SEScalarVolume y_piece_volume;
 
     protected List<SESubstanceFraction> fraction_inspired_gases;
@@ -108,6 +109,7 @@ namespace Pulse.CDM
       inspiration_waveform = eMechanicalVentilator_DriverWaveform.NullDriverWaveform;
       inspiration_waveform_period = null;
 
+      relief_valve_threshold = null;
       y_piece_volume = null;
 
       this.fraction_inspired_gases = new List<SESubstanceFraction>();
@@ -180,6 +182,10 @@ namespace Pulse.CDM
       inspiration_waveform = eMechanicalVentilator_DriverWaveform.NullDriverWaveform;
       if (inspiration_waveform_period != null)
         inspiration_waveform_period.Invalidate();
+
+
+      if (relief_valve_threshold != null)
+        relief_valve_threshold.Invalidate();
 
       if (y_piece_volume != null)
         y_piece_volume.Invalidate();
@@ -658,6 +664,17 @@ namespace Pulse.CDM
     public bool HasInspirationWaveformPeriod()
     {
       return inspiration_waveform_period == null ? false : inspiration_waveform_period.IsValid();
+    }
+
+    public SEScalarPressure GetReliefValveThreshold()
+    {
+      if (relief_valve_threshold == null)
+        relief_valve_threshold = new SEScalarPressure();
+      return relief_valve_threshold;
+    }
+    public bool HasReliefValveThreshold()
+    {
+      return relief_valve_threshold == null ? false : relief_valve_threshold.IsValid();
     }
 
     public SEScalarVolume GetYPieceVolume()

@@ -16,11 +16,5 @@ protected:
 public:
   ~SEGasCompartmentLink() {}
 
-  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
-  virtual SEGasBlackBox* GetBlackBox() { return m_BlackBox; }
-  virtual const SEGasBlackBox* GetBlackBox() const { return m_BlackBox; }
-  virtual void SetBlackBox(SEGasBlackBox* bb) { m_BlackBox = bb; }
-
 protected:
-  SEGasBlackBox* m_BlackBox = nullptr;
 };

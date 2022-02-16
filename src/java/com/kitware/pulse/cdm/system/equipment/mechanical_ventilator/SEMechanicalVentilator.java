@@ -3,12 +3,14 @@
 
 package com.kitware.pulse.cdm.system.equipment.mechanical_ventilator;
 
+import com.kitware.pulse.cdm.bind.Enums.eBreathState;
 import com.kitware.pulse.cdm.properties.*;
 import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
 public class SEMechanicalVentilator implements SEEquipment
 {
   protected SEScalarPressure                  airwayPressure;
+  protected eBreathState                      breathState;
   protected SEScalarVolumePerPressure         dynamicPulmonaryCompliance ;
   protected SEScalar0To1                      endTidalCarbonDioxideFraction;
   protected SEScalarPressure                  endTidalCarbonDioxidePressure;
@@ -35,6 +37,7 @@ public class SEMechanicalVentilator implements SEEquipment
   public SEMechanicalVentilator()
   {
     airwayPressure = null;
+    breathState = null;
     dynamicPulmonaryCompliance = null;
     endTidalCarbonDioxideFraction = null;
     endTidalCarbonDioxidePressure = null;
@@ -64,6 +67,7 @@ public class SEMechanicalVentilator implements SEEquipment
   {
     if (airwayPressure != null)
       airwayPressure.invalidate();
+    breathState = null;
     if (dynamicPulmonaryCompliance != null)
       dynamicPulmonaryCompliance.invalidate();
     if (endTidalCarbonDioxideFraction != null)
@@ -119,6 +123,19 @@ public class SEMechanicalVentilator implements SEEquipment
     if (airwayPressure == null)
       airwayPressure = new SEScalarPressure();
     return airwayPressure;
+  }
+  
+  public eBreathState getBreathState()
+  {
+    return breathState;
+  }
+  public void setBreathState(eBreathState b)
+  {
+    breathState = (b == eBreathState.UNRECOGNIZED) ? null : b;
+  }
+  public boolean hasBreathState()
+  {
+    return breathState != null;
   }
   
   public boolean hasDynamicPulmonaryCompliance()

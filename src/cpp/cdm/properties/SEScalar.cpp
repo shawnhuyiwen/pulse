@@ -68,6 +68,22 @@ bool SEScalar::Set(const SEScalar& s)
   }
   return true;
 }
+bool SEScalar::Force(const SEScalar& s)
+{
+  if (dynamic_cast<const SEUnitScalar*>(&s) != nullptr)
+    throw CommonDataModelException("Scalar is not of the proper type");
+  if (!s.IsValid())
+    return false;
+  m_value = s.m_value;
+  m_isnan = false;
+  m_isinf = false;
+  if (!IsNumber(m_value))
+  {
+    m_isnan = (std::isnan(m_value)) ? true : false;
+    m_isinf = (std::isinf(m_value)) ? true : false;
+  }
+  return true;
+}
 
 void SEScalar::Copy(const SEScalar& s)
 {
@@ -289,7 +305,6 @@ bool SEScalarQuantity<Unit>::Set(const SEScalar& s)
     throw CommonDataModelException("Set method called with differnt scalar quantity type");
   return this->Set(*q);
 }
-
 template<typename Unit>
 bool SEScalarQuantity<Unit>::Set(const SEScalarQuantity<Unit>& s)
 {
@@ -317,12 +332,36 @@ void SEScalarQuantity<Unit>::Copy(const SEScalar& s)
     throw CommonDataModelException("Set method called with differnt scalar quantity type");
   this->Copy(*q);
 }
-
 template<typename Unit>
 void SEScalarQuantity<Unit>::Copy(const SEScalarQuantity<Unit>& s)
 {
   SEScalar::Copy(s);
   m_unit = s.m_unit;
+}
+
+template<typename Unit>
+bool SEScalarQuantity<Unit>::Force(const SEScalar& s)
+{
+  const SEScalarQuantity<Unit>* q = dynamic_cast<const SEScalarQuantity<Unit>*>(&s);
+  if (q == nullptr)
+    throw CommonDataModelException("Set method called with differnt scalar quantity type");
+  return this->Force(*q);
+}
+template<typename Unit>
+bool SEScalarQuantity<Unit>::Force(const SEScalarQuantity<Unit>& s)
+{
+  if (!s.IsValid())
+    return false;
+  m_value = s.m_value;
+  m_isnan = false;
+  m_isinf = false;
+  m_unit = s.m_unit;
+  if (!IsNumber(m_value))
+  {
+    m_isnan = (std::isnan(m_value)) ? true : false;
+    m_isinf = (std::isinf(m_value)) ? true : false;
+  }
+  return true;
 }
 
 template<typename Unit>

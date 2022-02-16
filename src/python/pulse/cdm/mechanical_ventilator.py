@@ -62,6 +62,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
                  "_inspiration_waveform",
                  "_inspiration_waveform_period",
 
+                 "_relief_valve_threshold",
                  "_y_piece_volume",
 
                  "_fraction_inspired_gasses",
@@ -112,6 +113,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
         self._inspiration_waveform_period = None
 
+        self._relief_valve_threshold = None
         self._y_piece_volume = None
 
         self._fraction_inspired_gasses = []
@@ -161,6 +163,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
         if self._inspiration_waveform_period is not None: self._inspiration_waveform_period.invalidate()
 
+        if self._relief_valve_threshold is not None: self._relief_valve_threshold.invalidate()
         if self._y_piece_volume is not None: self._y_piece_volume.invalidate()
 
         self._fraction_inspired_gasses = []
@@ -213,6 +216,7 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         self._inspiration_waveform = src._inspiration_waveform
         if src.has_inspiration_waveform_period(): self.get_inspiration_waveform_period().set(src._inspiration_waveform_period)
 
+        if src.has_relief_valve_threshold(): self.get_relief_valve_threshold().set(src._relief_valve_threshold)
         if src.has_y_piece_volume(): self.get_y_piece_volume().set(src._y_piece_volume)
 
         if src.has_fraction_inspired_gasses:
@@ -434,7 +438,14 @@ class SEMechanicalVentilatorSettings(SEEquipment):
         if self._inspiration_valve_volume is None:
             self._inspiration_valve_volume = SEScalarVolume()
         return self._inspiration_valve_volume
-    
+
+    def has_relief_valve_threshold(self):
+        return False if self._relief_valve_threshold is None else self._relief_valve_threshold.is_valid()
+    def get_relief_valve_threshold(self):
+        if self._relief_valve_threshold is None:
+            self._relief_valve_threshold = SEScalarPressure()
+        return self._relief_valve_threshold
+
     def has_y_piece_volume(self):
         return False if self._y_piece_volume is None else self._y_piece_volume.is_valid()
     def get_y_piece_volume(self):

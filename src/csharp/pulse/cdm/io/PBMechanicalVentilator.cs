@@ -93,6 +93,8 @@ namespace Pulse.CDM
       if (src.InspirationWaveformPeriod != null)
         PBProperty.Load(src.InspirationWaveformPeriod, dst.GetInspirationWaveformPeriod());
 
+      if (src.ReliefValveThreshold != null)
+        PBProperty.Load(src.ReliefValveThreshold, dst.GetReliefValveThreshold());
       if (src.YPieceVolume != null)
         PBProperty.Load(src.YPieceVolume, dst.GetYPieceVolume());
 
@@ -188,6 +190,8 @@ namespace Pulse.CDM
       if (src.HasInspirationWaveformPeriod())
         dst.InspirationWaveformPeriod = PBProperty.Unload(src.GetInspirationWaveformPeriod());
 
+      if (src.HasReliefValveThreshold())
+        dst.ReliefValveThreshold = PBProperty.Unload(src.GetReliefValveThreshold());
       if (src.HasYPieceVolume())
         dst.YPieceVolume = PBProperty.Unload(src.GetYPieceVolume());
 

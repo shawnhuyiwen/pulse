@@ -56,11 +56,6 @@ public:
   virtual bool HasChild(const SEElectricalCompartment& cmpt);
   virtual void AddChild(SEElectricalCompartment& child);
 
-  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
-  virtual SEElectricalBlackBox* GetBlackBox() { return m_BlackBox; }
-  virtual const SEElectricalBlackBox* GetBlackBox() const { return m_BlackBox; }
-  virtual void SetBlackBox(SEElectricalBlackBox* bb) { m_BlackBox = bb; }
-
 protected:
   virtual double CalculateInFlow_A() const;
   virtual double CalculateOutFlow_A() const;
@@ -77,6 +72,4 @@ protected:
   std::vector<SEElectricalCompartment*> m_Children;
   std::vector<SEElectricalCompartment*> m_Leaves;
   SECompartmentNodes<ELECTRICAL_COMPARTMENT_NODE>  m_Nodes;
-
-  SEElectricalBlackBox* m_BlackBox = nullptr;
 };

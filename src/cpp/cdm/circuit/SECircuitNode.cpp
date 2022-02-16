@@ -37,6 +37,23 @@ std::string SECircuitNode<CIRCUIT_NODE_TYPES>::GetName() const
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
+bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsPartOfBlackBox() const
+{
+  return m_IsPartOfBlackBox;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::SetPartOfBlackBox(bool b)
+{
+  m_IsPartOfBlackBox = b;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
+bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsBlackBoxMiddle() const
+{
+  return m_IsBlackBoxMiddle;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
 bool SECircuitNode<CIRCUIT_NODE_TYPES>::HasPotential() const
 {
   return m_Potential == nullptr ? false : m_Potential->IsValid();
@@ -60,6 +77,33 @@ PotentialScalar& SECircuitNode<CIRCUIT_NODE_TYPES>::GetNextPotential()
   if (m_NextPotential == nullptr)
     m_NextPotential = new PotentialScalar();
   return *m_NextPotential;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::RemoveImposedPotential()
+{
+  m_PotentialType = eBlackBox_Property_Type::Calculate;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsPotentialImposed() const
+{
+  return m_PotentialType == eBlackBox_Property_Type::Imposed;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposePotential(double v, const PotentialUnit& unit)
+{
+  m_PotentialType = eBlackBox_Property_Type::Imposed;
+  if (m_NextPotential == nullptr)
+    m_NextPotential = new PotentialScalar();
+  m_NextPotential->ForceValue(v, unit);
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposePotential(const PotentialScalar& s)
+{
+  m_PotentialType = eBlackBox_Property_Type::Imposed;
+  if (m_NextPotential == nullptr)
+    m_NextPotential = new PotentialScalar();
+  m_NextPotential->Force(s);
 }
 
 template<CIRCUIT_NODE_TEMPLATE>
@@ -99,6 +143,29 @@ QuantityScalar& SECircuitNode<CIRCUIT_NODE_TYPES>::GetQuantityBaseline()
   if (m_QuantityBaseline == nullptr)
     m_QuantityBaseline = new QuantityScalar();
   return *m_QuantityBaseline;
+}
+
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::RemoveImposedQuantity()
+{
+  m_QuantityType = eBlackBox_Property_Type::Calculate;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+bool SECircuitNode<CIRCUIT_NODE_TYPES>::IsQuantityImposed() const
+{
+  return m_QuantityType == eBlackBox_Property_Type::Imposed;
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposeQuantity(double v, const QuantityUnit& unit)
+{
+  m_QuantityType = eBlackBox_Property_Type::Imposed;
+  m_NextQuantity->ForceValue(v, unit);
+}
+template<CIRCUIT_NODE_TEMPLATE>
+void SECircuitNode<CIRCUIT_NODE_TYPES>::ImposeQuantity(const QuantityScalar& s)
+{
+  m_QuantityType = eBlackBox_Property_Type::Imposed;
+  m_NextQuantity->Force(s);
 }
 
 template<CIRCUIT_NODE_TEMPLATE>

@@ -81,6 +81,8 @@ def serialize_mechanical_ventilator_to_bind(src: SEMechanicalVentilatorSettings,
     if src.has_inspiration_waveform_period():
         serialize_scalar_time_to_bind(src.get_inspiration_waveform_period(), dst.InspirationWaveformPeriod)
 
+    if src.has_relief_valve_threshold():
+        serialize_scalar_pressure_to_bind(src.get_relief_valve_threshold(), dst.ReliefValveThreshold)
     if src.has_y_piece_volume():
         serialize_scalar_volume_to_bind(src.get_y_piece_volume(), dst.YPieceVolume)
 

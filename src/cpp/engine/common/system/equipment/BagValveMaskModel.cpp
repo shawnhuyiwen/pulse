@@ -79,7 +79,7 @@ namespace pulse
   {
     Model::Initialize();
     SetConnection(eSwitch::Off);
-    m_CurrentBreathState = eBreathState::Exhale;
+    m_BreathState = eBreathState::NoBreath;
     m_CurrentPeriodTime_s = 0.0;
     m_SqueezePressure_cmH2O = SEScalar::dNaN();
     m_SqueezeFlow_L_Per_s = SEScalar::dNaN();
@@ -121,7 +121,7 @@ namespace pulse
     UpdateAirwayMode();
     if (m_data.GetAirwayMode() != eAirwayMode::BagValveMask)
       return;
-    m_CurrentBreathState = eBreathState::Inhale;
+    m_BreathState = eBreathState::EquipmentInhale;
     m_CurrentPeriodTime_s = 0.0;
 
     // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
@@ -320,7 +320,7 @@ namespace pulse
     // BVM is being turned off, remove any bvm actions and stop our preprocess
     if (GetConnection() == eSwitch::Off)
     {
-      m_CurrentBreathState = eBreathState::Exhale;
+      m_BreathState = eBreathState::NoBreath;
       m_CurrentPeriodTime_s = 0.0;
 
       m_data.GetActions().GetEquipmentActions().RemoveBagValveMaskAutomated();
@@ -489,7 +489,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void BagValveMaskModel::CalculateInspiration()
   {
-    if (m_CurrentBreathState != eBreathState::Inhale)
+    if (m_BreathState != eBreathState::EquipmentInhale)
     {
       return;
     }
@@ -550,7 +550,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void BagValveMaskModel::CalculateExpiration()
   {
-    if (m_CurrentBreathState != eBreathState::Exhale)
+    if (m_BreathState != eBreathState::EquipmentExhale)
     {
       return;
     }
@@ -605,13 +605,13 @@ namespace pulse
   {
     m_CurrentPeriodTime_s = 0.0;
 
-    if (m_CurrentBreathState == eBreathState::Inhale)
+    if (m_BreathState == eBreathState::EquipmentInhale)
     {
-      m_CurrentBreathState = eBreathState::Exhale;
+      m_BreathState = eBreathState::EquipmentExhale;
     }
-    else if (m_CurrentBreathState == eBreathState::Exhale)
+    else if (m_BreathState == eBreathState::EquipmentExhale)
     {
-      m_CurrentBreathState = eBreathState::Inhale;
+      m_BreathState = eBreathState::EquipmentInhale;
 
       //End of breath, so remove the squeeze action
       if (m_data.GetActions().GetEquipmentActions().HasBagValveMaskSqueeze())

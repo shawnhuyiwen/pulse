@@ -3,7 +3,6 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/circuit/SECircuitPath.h"
 
-
 template<CIRCUIT_PATH_TEMPLATE>
 SECircuitPath<CIRCUIT_PATH_TYPES>::SECircuitPath(SECircuitNode<CIRCUIT_NODE_TYPES>& src, SECircuitNode<CIRCUIT_NODE_TYPES>& tgt, const std::string& name) : Loggable(src.GetLogger()), m_SourceNode(src), m_TargetNode(tgt), m_Name(name)
 {
@@ -82,6 +81,17 @@ template<CIRCUIT_PATH_TEMPLATE>
 std::string SECircuitPath<CIRCUIT_PATH_TYPES>::GetName() const
 {
   return m_Name;
+}
+
+template<CIRCUIT_PATH_TEMPLATE>
+bool SECircuitPath<CIRCUIT_PATH_TYPES>::IsPartOfBlackBox() const
+{
+  return m_IsPartOfBlackBox;
+}
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::SetPartOfBlackBox(bool b)
+{
+  m_IsPartOfBlackBox = b;
 }
 
 template<CIRCUIT_PATH_TEMPLATE>
@@ -555,6 +565,33 @@ void SECircuitPath<CIRCUIT_PATH_TYPES>::RemoveFluxSource()
     m_NextFluxSource->ForceInvalidate();
   if (m_FluxSourceBaseline != nullptr)
     m_FluxSourceBaseline->ForceInvalidate();
+}
+
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::RemoveImposedFlux()
+{
+  m_FluxType = eBlackBox_Property_Type::Calculate;
+}
+template<CIRCUIT_PATH_TEMPLATE>
+bool SECircuitPath<CIRCUIT_PATH_TYPES>::IsFluxImposed() const
+{
+  return m_FluxType == eBlackBox_Property_Type::Imposed;
+}
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::ImposeFlux(double v, const FluxUnit& unit)
+{
+  m_FluxType = eBlackBox_Property_Type::Imposed;
+  if (m_NextFlux == nullptr)
+    m_NextFlux = new FluxScalar();
+  m_NextFlux->SetValue(v, unit);
+}
+template<CIRCUIT_PATH_TEMPLATE>
+void SECircuitPath<CIRCUIT_PATH_TYPES>::ImposeFlux(const FluxScalar& s)
+{
+  m_FluxType = eBlackBox_Property_Type::Imposed;
+  if (m_NextFlux == nullptr)
+    m_NextFlux = new FluxScalar();
+  m_NextFlux->Set(s);
 }
 
 /////////////////////

@@ -6,7 +6,7 @@
 #include "cdm/circuit/SECircuitCalculator.h"
 #include "cdm/circuit/electrical/SEElectricalCircuit.h"
 
-class CDM_DECL SEElectricalCircuitCalculator : public SECircuitCalculator<SEElectricalCircuit, SEElectricalCircuitNode, SEElectricalCircuitPath, SEElectricalBlackBox, ElectricCapacitanceUnit, ElectricCurrentUnit, ElectricInductanceUnit, ElectricPotentialUnit, ElectricChargeUnit, ElectricResistanceUnit>
+class CDM_DECL SEElectricalCircuitCalculator : public SECircuitCalculator<SEElectricalCircuit, SEElectricalCircuitNode, SEElectricalCircuitPath, ElectricCapacitanceUnit, ElectricCurrentUnit, ElectricInductanceUnit, ElectricPotentialUnit, ElectricChargeUnit, ElectricResistanceUnit>
 {
 public:
 
