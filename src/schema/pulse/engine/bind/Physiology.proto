@@ -19,51 +19,52 @@ message CardiovascularData
   pulse.cdm.bind.CardiovascularSystemData   Common                                              = 1;
   bool                                      HeartFlowDetected                                   = 2;
   bool                                      StartCardiacArrest                                  = 3;
+  double                                    CardiacArrestVitalsUpdateTimer_s                    = 4;
   // Driver Variables
-  bool                                      StartSystole                                        = 4;
-  double                                    CurrentCardiacCycleTime_s                           = 5;
-  double                                    CurrentDriverCycleTime_s                            = 6;
-  double                                    DriverCyclePeriod_s                                 = 7;
-  double                                    LeftHeartElastanceModifier                          = 8;
-  double                                    LeftHeartElastance_mmHg_Per_mL                      = 9;
-  double                                    LeftHeartElastanceMax_mmHg_Per_mL                   = 10;
-  double                                    LeftHeartElastanceMin_mmHg_Per_mL                   = 11;
-  double                                    RightHeartElastance_mmHg_Per_mL                     = 12;
-  double                                    RightHeartElastanceMax_mmHg_Per_mL                  = 13;
-  double                                    RightHeartElastanceMin_mmHg_Per_mL                  = 14;
+  bool                                      StartSystole                                        = 5;
+  double                                    CurrentCardiacCycleTime_s                           = 6;
+  double                                    CurrentDriverCycleTime_s                            = 7;
+  double                                    DriverCyclePeriod_s                                 = 8;
+  double                                    LeftHeartElastanceModifier                          = 9;
+  double                                    LeftHeartElastance_mmHg_Per_mL                      = 10;
+  double                                    LeftHeartElastanceMax_mmHg_Per_mL                   = 11;
+  double                                    LeftHeartElastanceMin_mmHg_Per_mL                   = 12;
+  double                                    RightHeartElastance_mmHg_Per_mL                     = 13;
+  double                                    RightHeartElastanceMax_mmHg_Per_mL                  = 14;
+  double                                    RightHeartElastanceMin_mmHg_Per_mL                  = 15;
   
   // Arrhythmia
-  double                                    ArrhythmiaHeartElastanceModifier                    = 15;
-  double                                    ArrhythmiaVascularToneModifier                      = 16;
-  double                                    StabilizedHeartRateBaseline_Per_min                 = 17;
-  double                                    StabilizedMAPBaseline_mmHg                          = 18;
+  double                                    ArrhythmiaHeartElastanceModifier                    = 16;
+  double                                    ArrhythmiaVascularToneModifier                      = 17;
+  double                                    StabilizedHeartRateBaseline_Per_min                 = 18;
+  double                                    StabilizedMAPBaseline_mmHg                          = 19;
   
   // CPR
-  double                                    CompressionTime_s                                   = 19;
-  double                                    CompressionRatio                                    = 20;
-  double                                    CompressionPeriod_s                                 = 21;
+  double                                    CompressionTime_s                                   = 20;
+  double                                    CompressionRatio                                    = 21;
+  double                                    CompressionPeriod_s                                 = 22;
 
   // Vitals and Averages
-  double                                    CardiacCycleDiastolicVolume_mL                      = 22;
-  double                                    CardiacCycleAortaPressureHigh_mmHg                  = 23;
-  double                                    CardiacCycleAortaPressureLow_mmHg                   = 24;
-  double                                    CardiacCycleLeftHeartPressureHigh_mmHg              = 25;
-  double                                    CardiacCycleLeftHeartPressureLow_mmHg               = 26;
-  double                                    CardiacCyclePulmonaryArteryPressureHigh_mmHg        = 27;
-  double                                    CardiacCyclePulmonaryArteryPressureLow_mmHg         = 28;
-  double                                    CardiacCycleRightHeartPressureHigh_mmHg             = 29;
-  double                                    CardiacCycleRightHeartPressureLow_mmHg              = 30;
-  double                                    LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = 31;
-  double                                    CardiacCycleStrokeVolume_mL                         = 32;
+  double                                    CardiacCycleDiastolicVolume_mL                      = 23;
+  double                                    CardiacCycleAortaPressureHigh_mmHg                  = 24;
+  double                                    CardiacCycleAortaPressureLow_mmHg                   = 25;
+  double                                    CardiacCycleLeftHeartPressureHigh_mmHg              = 26;
+  double                                    CardiacCycleLeftHeartPressureLow_mmHg               = 27;
+  double                                    CardiacCyclePulmonaryArteryPressureHigh_mmHg        = 28;
+  double                                    CardiacCyclePulmonaryArteryPressureLow_mmHg         = 29;
+  double                                    CardiacCycleRightHeartPressureHigh_mmHg             = 30;
+  double                                    CardiacCycleRightHeartPressureLow_mmHg              = 31;
+  double                                    LastCardiacCycleMeanArterialCO2PartialPressure_mmHg = 32;
+  double                                    CardiacCycleStrokeVolume_mL                         = 33;
   
-  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialPressure_mmHg                   = 33;
-  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialCO2PartialPressure_mmHg         = 34;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesWedgePressure_mmHg  = 35;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesFlow_mL_Per_s       = 36;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryShuntFlow_mL_Per_s             = 37;
-  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryArteryPressure_mmHg            = 38;
-  pulse.cdm.bind.RunningAverageData         CardiacCycleCentralVenousPressure_mmHg              = 39;
-  pulse.cdm.bind.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 40;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialPressure_mmHg                   = 34;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleArterialCO2PartialPressure_mmHg         = 35;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesWedgePressure_mmHg  = 36;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryCapillariesFlow_mL_Per_s       = 37;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryShuntFlow_mL_Per_s             = 38;
+  pulse.cdm.bind.RunningAverageData         CardiacCyclePulmonaryArteryPressure_mmHg            = 39;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleCentralVenousPressure_mmHg              = 40;
+  pulse.cdm.bind.RunningAverageData         CardiacCycleSkinFlow_mL_Per_s                       = 41;
 }
 
 message DrugData

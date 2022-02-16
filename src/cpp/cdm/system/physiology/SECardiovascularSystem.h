@@ -10,10 +10,10 @@ enum class eHeartRhythm
   NormalSinus = 0,
   SinusBradycardia,
   SinusTachycardia,
+  SinusPulselessElectricalActivity,
   Asystole,
   CoarseVentricularFibrillation,
   FineVentricularFibrillation,
-  PulselessElectricalActivity,
   PulselessVentricularTachycardia,
   StableVentricularTachycardia,
   UnstableVentricularTachycardia

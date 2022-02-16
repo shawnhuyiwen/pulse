@@ -80,8 +80,9 @@ class eEvent(Enum):
     AnesthesiaMachineOxygenBottleOneExhausted = 1000
     AnesthesiaMachineOxygenBottleTwoExhausted = 1001
     AnesthesiaMachineReliefValveActive = 1002
-    SupplementalOxygenBottleExhausted = 1003
-    NonRebreatherMaskOxygenBagEmpty = 1004
+    MechanicalVentilatorReliefValveActive = 1003
+    SupplementalOxygenBottleExhausted = 1004
+    NonRebreatherMaskOxygenBagEmpty = 1005
 
 class SEEventChange:
     __slots__ = ["event", "active", "sim_time_s"]
