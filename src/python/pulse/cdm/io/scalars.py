@@ -19,7 +19,6 @@ from pulse.cdm.scalars import SEScalar, SEScalar0To1, SEScalarNegative1To1, \
                               SEScalarPressure, PressureUnit, \
                               SEScalarPressurePerVolume, PressurePerVolumeUnit, \
                               SEScalarPressureTimePerVolume, PressureTimePerVolumeUnit, \
-                              SEScalarProperty, \
                               SEScalarTemperature, TemperatureUnit, \
                               SEScalarTime, TimeUnit, \
                               SEScalarVolume, VolumeUnit, \
@@ -34,7 +33,7 @@ from pulse.cdm.bind.Properties_pb2 import ScalarData, Scalar0To1Data, ScalarNega
                                           ScalarMassData, ScalarMassPerAmountData, ScalarMassPerAreaTimeData, \
                                           ScalarMassPerTimeData, ScalarMassPerVolumeData, ScalarPowerData, \
                                           ScalarPressureTimePerVolumeData, ScalarPressureData,\
-                                          ScalarPressurePerVolumeData, ScalarPropertyData, ScalarTemperatureData, \
+                                          ScalarPressurePerVolumeData, ScalarTemperatureData, \
                                           ScalarTimeData, ScalarVolumeData, ScalarVolumePerPressureData, \
                                           ScalarVolumePerTimeData, ScalarVolumePerTimeMassData, \
                                           ScalarVolumePerTimePressureData
@@ -156,15 +155,6 @@ def serialize_scalar_pressure_time_per_volume_to_bind(src: SEScalarPressureTimeP
 def serialize_scalar_pressure_time_per_volume_from_bind(src: ScalarPressureTimePerVolumeData, dst: SEScalarPressureTimePerVolume):
     dst.set_value(src.ScalarPressureTimePerVolume.Value, PressureTimePerVolumeUnit.from_string(src.ScalarPressureTimePerVolume.Unit))
 
-def serialize_scalar_property_to_bind(src:SEScalarProperty, dst:ScalarPropertyData):
-    dst.Value = src.get_value()
-    dst.Name = src.get_name()
-    dst.Unit = src.get_unit()
-
-def serialize_scalar_property_from_bind(src:ScalarPropertyData , dst:SEScalarProperty):
-    dst.set_value(src.Value)
-    dst.set_unit(src.Unit)
-    dst.set_name(src.Name)
 def serialize_scalar_temperature_to_bind(src: SEScalarTemperature, dst: ScalarTemperatureData):
     dst.ScalarTemperature.Value = src.get_value()
     dst.ScalarTemperature.Unit = src.get_unit().get_string()
