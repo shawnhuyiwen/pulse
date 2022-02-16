@@ -33,3 +33,7 @@ install(TARGETS PyPulse
         ARCHIVE DESTINATION lib)
 
 set_target_properties (PyPulse PROPERTIES FOLDER ${PROJECT_NAME})
+
+install(DIRECTORY ${CMAKE_BINARY_DIR}/src/python/pulse DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/src/python/google DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/python/pulse DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
