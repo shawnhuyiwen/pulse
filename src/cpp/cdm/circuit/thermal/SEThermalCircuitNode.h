@@ -4,6 +4,7 @@
 #pragma once
 #include "cdm/circuit/SECircuitNode.h"
 class SEThermalBlackBox;
+class SEThermalCircuitPath;
 
 class CDM_DECL SEThermalCircuitNode : public SECircuitNode<THERMAL_CIRCUIT_NODE>
 {
@@ -36,4 +37,18 @@ public:
   virtual bool HasHeatBaseline() const;
   virtual SEScalarEnergy& GetHeatBaseline();
   virtual double GetHeatBaseline(const EnergyUnit& unit) const;
+
+  SEThermalCircuitNode* GetBlackBoxSourceNode() const;
+  SEThermalCircuitNode* GetBlackBoxTargetNode() const;
+  void SetBlackBoxSourceTargetNodes(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt);
+
+  SEThermalCircuitPath* GetBlackBoxSourcePath() const;
+  SEThermalCircuitPath* GetBlackBoxTargetPath() const;
+  void SetBlackBoxSourceTargetPaths(SEThermalCircuitPath& src, SEThermalCircuitPath& tgt);
+
+protected:
+  SEThermalCircuitNode* m_BlackBoxSourceNode=nullptr;// Only set on middle nodes
+  SEThermalCircuitNode* m_BlackBoxTargetNode=nullptr;// Only set on middle nodes
+  SEThermalCircuitPath* m_BlackBoxSourcePath = nullptr;// Only set on middle nodes
+  SEThermalCircuitPath* m_BlackBoxTargetPath = nullptr;// Only set on middle nodes
 };

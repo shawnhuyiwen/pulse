@@ -28,7 +28,7 @@ protected:
   virtual const std::vector<GraphEdgeType*>* GetTargetEdges(const GraphVertexType& v) const;
 
   std::vector<GraphVertexType*>                                  m_Verticies;
-  std::map<const GraphVertexType*, int>                       m_VertexIndicies;
+  std::map<const GraphVertexType*, int>                          m_VertexIndicies;
   std::map<const GraphVertexType*, std::vector<GraphEdgeType*>*> m_SourceEdgeMap;
   std::map<const GraphVertexType*, std::vector<GraphEdgeType*>*> m_TargetEdgeMap;
 };

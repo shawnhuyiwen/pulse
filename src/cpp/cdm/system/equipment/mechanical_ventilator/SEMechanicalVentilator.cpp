@@ -16,6 +16,7 @@
 SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(logger)
 {
   m_AirwayPressure = nullptr;
+  m_BreathState = eBreathState::NoBreath;
   m_DynamicPulmonaryCompliance = nullptr;
   m_EndTidalCarbonDioxideFraction = nullptr;
   m_EndTidalCarbonDioxidePressure = nullptr;
@@ -45,6 +46,7 @@ SEMechanicalVentilator::SEMechanicalVentilator(Logger* logger) : SEEquipment(log
 SEMechanicalVentilator::~SEMechanicalVentilator()
 {
   SAFE_DELETE(m_AirwayPressure);
+  m_BreathState = eBreathState::NoBreath;
   SAFE_DELETE(m_DynamicPulmonaryCompliance);
   SAFE_DELETE(m_EndTidalCarbonDioxideFraction);
   SAFE_DELETE(m_EndTidalCarbonDioxidePressure);
@@ -76,6 +78,7 @@ void SEMechanicalVentilator::Clear()
   SEEquipment::Clear();
 
   INVALIDATE_PROPERTY(m_AirwayPressure);
+  m_BreathState = eBreathState::NoBreath;
   INVALIDATE_PROPERTY(m_DynamicPulmonaryCompliance);
   INVALIDATE_PROPERTY(m_EndTidalCarbonDioxideFraction);
   INVALIDATE_PROPERTY(m_EndTidalCarbonDioxidePressure);
@@ -107,6 +110,7 @@ void SEMechanicalVentilator::TurnOff()
 {
   // Set anything that has a value, to 0
   ZERO_UNIT_SCALAR(m_AirwayPressure);
+  m_BreathState = eBreathState::NoBreath;
   ZERO_UNIT_SCALAR(m_DynamicPulmonaryCompliance);
   ZERO_SCALAR(m_EndTidalCarbonDioxideFraction);
   ZERO_UNIT_SCALAR(m_EndTidalCarbonDioxidePressure);
@@ -142,6 +146,8 @@ const SEScalar* SEMechanicalVentilator::GetScalar(const std::string& name)
 {
   if (name.compare("AirwayPressure") == 0)
     return &GetAirwayPressure();
+  if (name.compare("BreathState") == 0)
+    return &m_BreathState;
   if (name.compare("DynamicPulmonaryCompliance") == 0)
     return &GetDynamicPulmonaryCompliance();
   if (name.compare("EndTidalCarbonDioxideFraction") == 0)
@@ -205,6 +211,15 @@ double SEMechanicalVentilator::GetAirwayPressure(const PressureUnit& unit) const
   if (m_AirwayPressure == nullptr)
     return SEScalar::dNaN();
   return m_AirwayPressure->GetValue(unit);
+}
+
+void SEMechanicalVentilator::SetBreathState(eBreathState b)
+{
+  m_BreathState = b;
+}
+eBreathState SEMechanicalVentilator::GetBreathState() const
+{
+  return m_BreathState.GetEnum();
 }
 
 bool SEMechanicalVentilator::HasDynamicPulmonaryCompliance() const

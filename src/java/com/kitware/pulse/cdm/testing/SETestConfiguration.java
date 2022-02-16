@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
-import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.cdm.scenario.SEScenarioExec;
 import com.kitware.pulse.engine.bind.Enums.eModelType;
 import com.kitware.pulse.utilities.FileUtils;
@@ -71,6 +70,18 @@ public class SETestConfiguration
       {
         if (line.length() == 0 || line.startsWith("#"))
           continue;
+        if (line.endsWith("\\"))
+        {
+          String extLine;
+          while ((extLine = br.readLine()) != null)
+          {
+            line += extLine.trim();
+            if (extLine.endsWith("\\"))
+              continue;
+            break;
+          }
+          line=line.replaceAll("\\\\", "");
+        }
         if(line.startsWith("@group"))
         {
           currentGroup = line.substring(6).trim();

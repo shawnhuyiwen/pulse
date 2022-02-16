@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
+#include "cdm/properties/SEScalar.h"
 #include "cdm/system/equipment/SEEquipment.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilatorSettings.h"
 
@@ -31,6 +32,9 @@ public:
   virtual bool HasAirwayPressure() const;
   virtual SEScalarPressure& GetAirwayPressure();
   virtual double GetAirwayPressure(const PressureUnit& unit) const;
+
+  virtual eBreathState GetBreathState() const;
+  virtual void SetBreathState(eBreathState c);
 
   virtual bool HasDynamicPulmonaryCompliance() const;
   virtual SEScalarVolumePerPressure& GetDynamicPulmonaryCompliance();
@@ -128,6 +132,7 @@ public:
 protected:
 
   SEScalarPressure*                  m_AirwayPressure;
+  SEScalarEnum<eBreathState>         m_BreathState;
   SEScalarVolumePerPressure*         m_DynamicPulmonaryCompliance;
   SEScalar0To1*                      m_EndTidalCarbonDioxideFraction;
   SEScalarPressure*                  m_EndTidalCarbonDioxidePressure;

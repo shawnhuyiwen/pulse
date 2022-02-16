@@ -4,10 +4,10 @@
 #pragma once
 #include "cdm/utils/SmartEnum.h"
 
-#define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, typename BlackBoxType, \
+#define CIRCUIT_CALCULATOR_TEMPLATE typename CircuitType, typename NodeType, typename PathType, \
                                     typename CapacitanceUnit, typename FluxUnit, typename InductanceUnit, \
                                     typename PotentialUnit, typename QuantityUnit, typename ResistanceUnit
-#define CIRCUIT_CALCULATOR_TYPES CircuitType,NodeType,PathType,BlackBoxType,CapacitanceUnit,FluxUnit,InductanceUnit,PotentialUnit,QuantityUnit,ResistanceUnit
+#define CIRCUIT_CALCULATOR_TYPES CircuitType,NodeType,PathType,CapacitanceUnit,FluxUnit,InductanceUnit,PotentialUnit,QuantityUnit,ResistanceUnit
 
 class eigen; // Encapsulate eigen in pimpl pattern
 
@@ -47,8 +47,6 @@ protected:
   // Valve Support
   virtual bool CheckAndModifyValves();
   virtual bool IsCurrentValveStateUnique();
-  // Black Box Support
-  virtual void ParseInBlackBoxNodes();
   // Eigen Support
   virtual void PopulateAMatrix(NodeType& nKCL, PathType& p, double dMultiplier, bool hasPotentialSource = false);  
   // These are all transient and cleared/set at the start of the process call

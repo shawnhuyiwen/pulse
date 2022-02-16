@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.kitware.pulse.cdm.bind.BagValveMask.BagValveMaskData;
+import com.kitware.pulse.cdm.bind.Enums.eBreathState;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceConcentrationData;
 import com.kitware.pulse.cdm.bind.Substance.SubstanceFractionData;
@@ -18,6 +19,7 @@ import com.kitware.pulse.cdm.system.equipment.SEEquipment;
 
 public class SEBagValveMask implements SEEquipment
 {
+  protected eBreathState                      breathState;
   protected eSwitch                           connection;
   
   protected SEScalarPressureTimePerVolume     bagResistance;
@@ -35,6 +37,7 @@ public class SEBagValveMask implements SEEquipment
 
   public SEBagValveMask()
   {
+    breathState = null;
     connection = null;
     bagResistance = null;
     connectionVolume = null;
@@ -52,6 +55,7 @@ public class SEBagValveMask implements SEEquipment
   @Override
   public void clear()
   {
+    breathState = null;
     connection = null;
     if (bagResistance != null)
       bagResistance.invalidate();
@@ -77,6 +81,8 @@ public class SEBagValveMask implements SEEquipment
   public void copy(SEBagValveMask from)
   {
     clear();
+    if(from.breathState!=null)
+      this.breathState=from.breathState;
     if(from.connection!=null && from.connection != eSwitch.NullSwitch)
     	this.connection=from.connection;
     
@@ -122,6 +128,8 @@ public class SEBagValveMask implements SEEquipment
   public static void load(BagValveMaskData src, SEBagValveMask dst)
   {
     dst.clear();
+    if (src.getBreathState()!=eBreathState.UNRECOGNIZED)
+      dst.setBreathState(src.getBreathState());
     if (src.getConnection()!=eSwitch.UNRECOGNIZED)
       dst.setConnection(src.getConnection());
     
@@ -166,6 +174,8 @@ public class SEBagValveMask implements SEEquipment
   }
   protected static void unload(SEBagValveMask src, BagValveMaskData.Builder dst)
   {
+    if (src.hasBreathState())
+      dst.setBreathState(src.breathState);
     if (src.hasConnection())
       dst.setConnection(src.connection);
     
@@ -191,6 +201,19 @@ public class SEBagValveMask implements SEEquipment
     
     for(SESubstanceConcentration ambSub : src.concentrationInspiredAerosol)
       dst.addConcentrationInspiredAerosol(SESubstanceConcentration.unload(ambSub));
+  }
+  
+  public eBreathState getBreathState()
+  {
+    return breathState;
+  }
+  public void setBreathState(eBreathState b)
+  {
+    breathState = (b == eBreathState.UNRECOGNIZED) ? null : b;
+  }
+  public boolean hasBreathState()
+  {
+    return breathState != null;
   }
   
   public eSwitch getConnection()

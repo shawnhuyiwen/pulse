@@ -95,3 +95,33 @@ double SEFluidCircuitNode::GetVolumeBaseline(const VolumeUnit& unit) const
     return SEScalar::dNaN();
   return m_QuantityBaseline->GetValue(unit);
 }
+
+SEFluidCircuitNode* SEFluidCircuitNode::GetBlackBoxSourceNode() const
+{
+  return m_BlackBoxSourceNode;
+}
+SEFluidCircuitNode* SEFluidCircuitNode::GetBlackBoxTargetNode() const
+{
+  return m_BlackBoxTargetNode;
+}
+void SEFluidCircuitNode::SetBlackBoxSourceTargetNodes(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt)
+{
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourceNode = &src;
+  m_BlackBoxTargetNode = &tgt;
+}
+
+SEFluidCircuitPath* SEFluidCircuitNode::GetBlackBoxSourcePath() const
+{
+  return m_BlackBoxSourcePath;
+}
+SEFluidCircuitPath* SEFluidCircuitNode::GetBlackBoxTargetPath() const
+{
+  return m_BlackBoxTargetPath;
+}
+void SEFluidCircuitNode::SetBlackBoxSourceTargetPaths(SEFluidCircuitPath& src, SEFluidCircuitPath& tgt)
+{
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourcePath = &src;
+  m_BlackBoxTargetPath = &tgt;
+}

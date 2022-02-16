@@ -76,6 +76,8 @@ namespace pulse
     m_ExpiratoryLimbToYPiece = nullptr;
     m_InspiratoryLimbToYPiece = nullptr;
     m_LeakConnectionToEnvironment = nullptr;
+    m_ConnectionToReliefValve = nullptr;
+    m_EnvironmentToReliefValve = nullptr;
     m_ConnectionToAirway = nullptr;
     m_DefaultClosedFlowResistance_cmH2O_s_Per_L = NULL;
 
@@ -93,7 +95,7 @@ namespace pulse
   void MechanicalVentilatorModel::Initialize()
   {
     Model::Initialize();
-    m_CurrentBreathState = eBreathState::Exhale;
+    m_BreathState = eBreathState::NoBreath;
     m_CurrentPeriodTime_s = 0.0;
     m_DriverPressure_cmH2O = SEScalar::dNaN();
     m_DriverFlow_L_Per_s = SEScalar::dNaN();
@@ -172,6 +174,8 @@ namespace pulse
     m_VentilatorToInspiratoryValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::VentilatorToInspiratoryValve);
     m_ExpiratoryLimbToYPiece = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ExpiratoryLimbToYPiece);
     m_InspiratoryLimbToYPiece = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::InspiratoryLimbToYPiece);
+    m_ConnectionToReliefValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::ConnectionToReliefValve);
+    m_EnvironmentToReliefValve = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::EnvironmentToReliefValve);
     m_LeakConnectionToEnvironment = m_data.GetCircuits().GetMechanicalVentilatorCircuit().GetPath(pulse::MechanicalVentilatorPath::LeakConnectionToEnvironment);
 
     m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::CombinedMechanicalVentilatorPath::ConnectionToAirway);
@@ -188,13 +192,17 @@ namespace pulse
       TurnOff();
       return;
     }
-    m_CurrentBreathState = eBreathState::Exhale;
+    m_BreathState = eBreathState::EquipmentExhale;
     m_CurrentPeriodTime_s = 0.0;
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;
     m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
     m_PreviousConnectionPressure_cmH2O = 0.0;
     m_LimitReached = false;
+
+    // Default the relief valuve threshold if not there
+    if (!GetSettings().HasReliefValveThreshold())
+      GetSettings().GetReliefValveThreshold().SetValue(1000, PressureUnit::cmH2O);
 
     // If you have one substance, make sure its Oxygen and add the standard CO2 and N2 to fill the difference
 
@@ -321,7 +329,7 @@ namespace pulse
     //Do nothing if the ventilator is off and not initialized
     if (GetSettings().GetConnection() == eSwitch::Off)
     {
-      m_CurrentBreathState = eBreathState::Exhale;
+      m_BreathState = eBreathState::NoBreath;
       m_CurrentPeriodTime_s = 0.0;
       m_CurrentVentilatorVolume_L = 0.0;
       m_CurrentRespiratoryVolume_L = 0.0;
@@ -341,6 +349,7 @@ namespace pulse
     SetResistances();
     SetCompliance();
     SetVolumes();
+    CheckReliefValve();
 
     if (m_YPieceToConnection->HasNextFlow())
     {
@@ -511,7 +520,8 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CalculateInspiration()
   {
-    if (m_CurrentBreathState != eBreathState::Inhale)
+    if (m_BreathState != eBreathState::EquipmentInhale &&
+      m_BreathState != eBreathState::PatientInhale)
     {
       m_LimitReached = false;
       return;
@@ -525,7 +535,7 @@ namespace pulse
       triggerDefined = true;
       if (m_CurrentPeriodTime_s >= GetSettings().GetExpirationCycleTime(TimeUnit::s))
       {
-        CycleMode();
+        CycleMode(false);
         return;
       }
     }
@@ -535,7 +545,7 @@ namespace pulse
       triggerDefined = true;
       if (m_data.GetEvents().IsEventActive(eEvent::StartOfExhale))
       {
-        CycleMode();
+        CycleMode(true);
         return;
       }
     }
@@ -547,7 +557,7 @@ namespace pulse
       double airwayPressure_cmH2O = m_ConnectionNode->GetPressure(PressureUnit::cmH2O);
       if (airwayPressure_cmH2O - ambientPressure_cmH2O >= GetSettings().GetExpirationCyclePressure(PressureUnit::cmH2O))
       {
-        CycleMode();
+        CycleMode(true);
         return;
       }
     }
@@ -557,7 +567,7 @@ namespace pulse
       triggerDefined = true;
       if (m_CurrentRespiratoryVolume_L >= GetSettings().GetExpirationCycleVolume(VolumeUnit::L))
       {
-        CycleMode();
+        CycleMode(true);
         return;
       }
     }
@@ -568,7 +578,7 @@ namespace pulse
       if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) <= GetSettings().GetExpirationCycleFlow(VolumePerTimeUnit::L_Per_s) &&
         m_CurrentPeriodTime_s > 0.0) //Check if we just cycled the mode
       {
-        CycleMode();
+        CycleMode(true);
         return;
       }
     }
@@ -682,7 +692,8 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CalculatePause()
   {
-    if (m_CurrentBreathState != eBreathState::Pause)
+    if (m_BreathState != eBreathState::EquipmentPause &&
+      m_BreathState != eBreathState::PatientPause)
     {
       return;
     }
@@ -697,12 +708,12 @@ namespace pulse
       }
       else
       {
-        CycleMode();
+        CycleMode(false);
       }
     }
     else
     {
-      CycleMode();
+      CycleMode(false);
     }
   }
 
@@ -712,7 +723,8 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::CalculateExpiration()
   {
-    if (m_CurrentBreathState != eBreathState::Exhale)
+    if (m_BreathState != eBreathState::EquipmentExhale &&
+      m_BreathState != eBreathState::PatientExhale)
     {
       return;
     }
@@ -726,7 +738,7 @@ namespace pulse
       triggerDefined = true;
       if (m_data.GetEvents().IsEventActive(eEvent::StartOfInhale))
       {
-        CycleMode();
+        CycleMode(true);
         return;
       }
     }
@@ -736,7 +748,7 @@ namespace pulse
       triggerDefined = true;
       if (m_CurrentPeriodTime_s >= GetSettings().GetInspirationMachineTriggerTime(TimeUnit::s))
       {
-        CycleMode();
+        CycleMode(false);
         return;
       }
     }
@@ -754,7 +766,7 @@ namespace pulse
         m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
         relativePressure_cmH2O < previousRelativePressure_cmH2O) //Check if it's moving the right direction to prevent premature cycling
       {
-        CycleMode();
+        CycleMode(true);
         return;
       }
     }
@@ -766,7 +778,7 @@ namespace pulse
         m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
         m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) > m_PreviousYPieceToConnectionFlow_L_Per_s) //Check if it's moving the right direction to prevent premature cycling
       {
-        CycleMode();
+        CycleMode(true);
         return;
       }
     }
@@ -810,51 +822,54 @@ namespace pulse
   /// \details
   /// Inhale to pause, pause to exhale, or exhale to inhale.
   //--------------------------------------------------------------------------------------------------
-  void MechanicalVentilatorModel::CycleMode()
+  void MechanicalVentilatorModel::CycleMode(bool patientTriggered)
   {
-    if (m_CurrentBreathState == eBreathState::Inhale)
+    if (m_BreathState == eBreathState::EquipmentInhale ||
+      m_BreathState == eBreathState::PatientInhale)
     {
       CalculateInspiratoryRespiratoryParameters();
 
       if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
         m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorHold().GetAppliedRespiratoryCycle() == eAppliedRespiratoryCycle::Inspiratory)
       {
-        m_CurrentBreathState = eBreathState::InspiratoryHold;
+        m_BreathState = eBreathState::InspiratoryHold;
         return;
       }
 
       m_InspirationTime_s += m_CurrentPeriodTime_s;
-      m_CurrentBreathState = eBreathState::Pause;
+      m_BreathState = patientTriggered ? eBreathState::PatientPause : eBreathState::EquipmentPause;
     }
-    else if (m_CurrentBreathState == eBreathState::InspiratoryHold)
+    else if (m_BreathState == eBreathState::InspiratoryHold)
     {
       m_InspirationTime_s += m_CurrentPeriodTime_s;
-      m_CurrentBreathState = eBreathState::Pause;
+      m_BreathState = patientTriggered ? eBreathState::PatientPause : eBreathState::EquipmentPause;
     }
-    else if (m_CurrentBreathState == eBreathState::Pause)
+    else if (m_BreathState == eBreathState::EquipmentPause ||
+      m_BreathState == eBreathState::PatientPause)
     {
       m_InspirationTime_s += m_CurrentPeriodTime_s;
       CalculatePauseRespiratoryParameters();
-      m_CurrentBreathState = eBreathState::Exhale;
+      m_BreathState = patientTriggered ? eBreathState::PatientExhale : eBreathState::EquipmentExhale;
     }
-    else if (m_CurrentBreathState == eBreathState::Exhale)
+    else if (m_BreathState == eBreathState::EquipmentExhale ||
+      m_BreathState == eBreathState::PatientExhale)
     {
       if (m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold() &&
         m_data.GetActions().GetEquipmentActions().GetMechanicalVentilatorHold().GetAppliedRespiratoryCycle() == eAppliedRespiratoryCycle::Expiratory)
       {
-        m_CurrentBreathState = eBreathState::ExpiratoryHold;
+        m_BreathState = eBreathState::ExpiratoryHold;
         return;
       }
 
       CalculateExpiratoryRespiratoryParameters();
       m_InspirationTime_s = 0.0;
-      m_CurrentBreathState = eBreathState::Inhale;
+      m_BreathState = patientTriggered ? eBreathState::PatientInhale : eBreathState::EquipmentInhale;
     }
-    else if (m_CurrentBreathState == eBreathState::ExpiratoryHold)
+    else if (m_BreathState == eBreathState::ExpiratoryHold)
     {
       CalculateExpiratoryRespiratoryParameters();
       m_InspirationTime_s = 0.0;
-      m_CurrentBreathState = eBreathState::Inhale;
+      m_BreathState = patientTriggered ? eBreathState::PatientInhale : eBreathState::EquipmentInhale;
     }
 
     m_CurrentPeriodTime_s = 0.0;
@@ -909,13 +924,13 @@ namespace pulse
       m_DriverPressure_cmH2O = SEScalar::dNaN();
       return;
     }
-    else if (m_CurrentBreathState == eBreathState::ExpiratoryHold ||
-      m_CurrentBreathState == eBreathState::InspiratoryHold)
+    else if (m_BreathState == eBreathState::ExpiratoryHold ||
+      m_BreathState == eBreathState::InspiratoryHold)
     {
       if (!m_data.GetActions().GetEquipmentActions().HasMechanicalVentilatorHold())
       {
         //Hold turned off
-        CycleMode();
+        CycleMode(false);
         return;
       }
 
@@ -1174,5 +1189,34 @@ namespace pulse
 
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;
+  }
+
+  //--------------------------------------------------------------------------------------------------
+/// \brief
+/// Checks Relief Valve Pressure
+///
+/// \details
+/// Assigns relief valve pressure as a pressure source based on the pressure setting and checks if the status 
+/// of the relief valve is open or closed.
+//--------------------------------------------------------------------------------------------------
+  void MechanicalVentilatorModel::CheckReliefValve()
+  {
+    //Set the Pressure Source based on the setting
+    double valvePressure_cmH2O = GetSettings().GetReliefValveThreshold(PressureUnit::cmH2O);
+    m_EnvironmentToReliefValve->GetNextPressureSource().SetValue(valvePressure_cmH2O, PressureUnit::cmH2O);
+
+    //Check to see if it reached the pressure threshold
+    if (!m_data.GetEvents().IsEventActive(eEvent::MechanicalVentilatorReliefValveActive) && m_ConnectionToReliefValve->GetNextValve() == eGate::Closed)
+    {
+      /// \event %MechanicalVentilator: Relief Valve is active. The pressure setting has been exceeded.
+      m_data.GetEvents().SetEvent(eEvent::MechanicalVentilatorReliefValveActive, true, m_data.GetSimulationTime());
+    }
+    else if (m_data.GetEvents().IsEventActive(eEvent::MechanicalVentilatorReliefValveActive) && m_ConnectionToReliefValve->GetNextValve() == eGate::Open)
+    {
+      m_data.GetEvents().SetEvent(eEvent::MechanicalVentilatorReliefValveActive, false, m_data.GetSimulationTime());
+    }
+
+    //Always try to let it run without the relief valve open (i.e. not allowing flow), otherwise it will always stay shorted
+    m_ConnectionToReliefValve->SetNextValve(eGate::Open);
   }
 END_NAMESPACE

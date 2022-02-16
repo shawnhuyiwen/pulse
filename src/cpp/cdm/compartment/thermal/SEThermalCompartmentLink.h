@@ -32,18 +32,11 @@ public:
   virtual void RemovePath() { m_Path = nullptr; }
   virtual void MapPath(SEThermalCircuitPath& path) { Clear();  m_Path = &path; }
 
-  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
-  virtual SEThermalBlackBox* GetBlackBox() { return m_BlackBox; }
-  virtual const SEThermalBlackBox* GetBlackBox() const { return m_BlackBox; }
-  virtual void SetBlackBox(SEThermalBlackBox* bb) { m_BlackBox = bb; }
-
 protected:
   SEScalarPower*         m_HeatTransferRate;
   SEThermalCompartment&  m_SourceCmpt;
   SEThermalCompartment&  m_TargetCmpt;
   SEThermalCircuitPath*  m_Path;
-
-  SEThermalBlackBox* m_BlackBox = nullptr;
 };
 
 #include "cdm/compartment/SECompartmentGraph.h"

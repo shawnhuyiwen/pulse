@@ -7,18 +7,18 @@
 
 SEAnesthesiaMachineOxygenTankPressureLoss::SEAnesthesiaMachineOxygenTankPressureLoss(Logger* logger) : SEAnesthesiaMachineAction(logger)
 {
-  m_State.SetEnum(eSwitch::Off);
+  m_State = eSwitch::Off;
 }
 
 SEAnesthesiaMachineOxygenTankPressureLoss::~SEAnesthesiaMachineOxygenTankPressureLoss()
 {
-  m_State.SetEnum(eSwitch::Off);
+  m_State = eSwitch::Off;
 }
 
 void SEAnesthesiaMachineOxygenTankPressureLoss::Clear()
 {
   SEAnesthesiaMachineAction::Clear();
-  m_State.SetEnum(eSwitch::Off);
+  m_State = eSwitch::Off;
 }
 
 void SEAnesthesiaMachineOxygenTankPressureLoss::Copy(const SEAnesthesiaMachineOxygenTankPressureLoss& src, bool /*preserveState*/)
@@ -55,7 +55,7 @@ eSwitch SEAnesthesiaMachineOxygenTankPressureLoss::GetState() const
 }
 void SEAnesthesiaMachineOxygenTankPressureLoss::SetState(eSwitch state)
 {
-  m_State.SetEnum(state);
+  m_State = state;
 }
 
 void SEAnesthesiaMachineOxygenTankPressureLoss::ToString(std::ostream &str) const

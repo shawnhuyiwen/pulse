@@ -153,10 +153,13 @@ public:
   virtual SEScalarVolume& GetInspirationValveVolume();
   virtual double GetInspirationValveVolume(const VolumeUnit& unit) const;
 
+  virtual bool HasReliefValveThreshold() const;
+  virtual SEScalarPressure& GetReliefValveThreshold();
+  virtual double GetReliefValveThreshold(const PressureUnit& unit) const;
+
   virtual bool HasYPieceVolume() const;
   virtual SEScalarVolume& GetYPieceVolume();
   virtual double GetYPieceVolume(const VolumeUnit& unit) const;
-
 
   virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
   virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
@@ -235,6 +238,7 @@ protected:
   SEScalarTime*                                m_InspirationWaveformPeriod;
 
   SEScalarVolume*                              m_YPieceVolume;
+  SEScalarPressure*                            m_ReliefValveThreshold;
 
   std::vector<SESubstanceFraction*>            m_FractionInspiredGases;
   std::vector<const SESubstanceFraction*>      m_cFractionInspiredGases;

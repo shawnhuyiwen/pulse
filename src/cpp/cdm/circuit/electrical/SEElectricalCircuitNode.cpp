@@ -95,3 +95,33 @@ double SEElectricalCircuitNode::GetChargeBaseline(const ElectricChargeUnit& unit
     return SEScalar::dNaN();
   return m_QuantityBaseline->GetValue(unit);
 }
+
+SEElectricalCircuitNode* SEElectricalCircuitNode::GetBlackBoxSourceNode() const
+{
+  return m_BlackBoxSourceNode;
+}
+SEElectricalCircuitNode* SEElectricalCircuitNode::GetBlackBoxTargetNode() const
+{
+  return m_BlackBoxTargetNode;
+}
+void SEElectricalCircuitNode::SetBlackBoxSourceTargetNodes(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt)
+{
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourceNode = &src;
+  m_BlackBoxTargetNode = &tgt;
+}
+
+SEElectricalCircuitPath* SEElectricalCircuitNode::GetBlackBoxSourcePath() const
+{
+  return m_BlackBoxSourcePath;
+}
+SEElectricalCircuitPath* SEElectricalCircuitNode::GetBlackBoxTargetPath() const
+{
+  return m_BlackBoxTargetPath;
+}
+void SEElectricalCircuitNode::SetBlackBoxSourceTargetPaths(SEElectricalCircuitPath& src, SEElectricalCircuitPath& tgt)
+{
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourcePath = &src;
+  m_BlackBoxTargetPath = &tgt;
+}

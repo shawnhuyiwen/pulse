@@ -10,7 +10,6 @@ import "pulse/cdm/bind/ElectroCardioGram.proto";
 import "pulse/cdm/bind/Inhaler.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
 import "pulse/cdm/bind/Properties.proto";
-import "pulse/cdm/bind/Physiology.proto";
 
 message AnesthesiaMachineData
 {
@@ -25,10 +24,9 @@ message AnesthesiaMachineData
 message BagValveMaskData
 {
   pulse.cdm.bind.BagValveMaskData                  Common                         = 1;
-  pulse.cdm.bind.eBreathState                      CurrentBreathState             = 2;
-  double                                           CurrentPeriodTime_s            = 3;
-  double                                           SqueezeFlow_L_Per_s            = 4;
-  double                                           SqueezePressure_cmH2O          = 5;
+  double                                           CurrentPeriodTime_s            = 2;
+  double                                           SqueezeFlow_L_Per_s            = 3;
+  double                                           SqueezePressure_cmH2O          = 4;
 }
 
 message ElectroCardioGramData
@@ -45,20 +43,19 @@ message InhalerData
 message MechanicalVentilatorData
 {
   pulse.cdm.bind.MechanicalVentilatorData          Common                                 = 1;
-  pulse.cdm.bind.eBreathState                      CurrentBreathState                     = 2;
-  double                                           CurrentInspiratoryVolume_L             = 3;
-  double                                           CurrentPeriodTime_s                    = 4;
-  double                                           CurrentRespiratoryVolume_L             = 5;
-  double                                           CurrentVentilatorVolume_L              = 6;
-  double                                           DriverPressure_cmH2O                   = 7;
-  double                                           DriverFlow_L_Per_s                     = 8;
-  double                                           InspirationTime_s                      = 9;
-  double                                           InspiratoryFlow_L_Per_s                = 10;
-  bool                                             LimitReached                           = 11;
-  pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O               = 12;
-  double                                           PreviousDriverFlow_L_Per_s             = 13;
-  double                                           PreviousConnectionPressure_cmH2O       = 14;
-  double                                           PreviousDriverPressure_cmH2O           = 15;
-  double                                           PreviousYPieceToConnectionFlow_L_Per_s = 16;
+  double                                           CurrentInspiratoryVolume_L             = 2;
+  double                                           CurrentPeriodTime_s                    = 3;
+  double                                           CurrentRespiratoryVolume_L             = 4;
+  double                                           CurrentVentilatorVolume_L              = 5;
+  double                                           DriverPressure_cmH2O                   = 6;
+  double                                           DriverFlow_L_Per_s                     = 7;
+  double                                           InspirationTime_s                      = 8;
+  double                                           InspiratoryFlow_L_Per_s                = 9;
+  bool                                             LimitReached                           = 10;
+  pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O               = 11;
+  double                                           PreviousDriverFlow_L_Per_s             = 12;
+  double                                           PreviousConnectionPressure_cmH2O       = 13;
+  double                                           PreviousDriverPressure_cmH2O           = 14;
+  double                                           PreviousYPieceToConnectionFlow_L_Per_s = 15;
   
 }

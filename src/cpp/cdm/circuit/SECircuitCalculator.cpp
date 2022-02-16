@@ -17,7 +17,7 @@
 #include "Eigen/Dense"
 #include "Eigen/SparseLU"
 #include "Eigen/SparseCore"
-   //#include "cdm/Eigen/SparseCholesky"
+//#include "Eigen/SparseCholesky"
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/SparseQR"
 #ifdef _MSC_VER
@@ -49,7 +49,6 @@ char const* EigenCircuitSolver::Value(size_t idx)
 
 
 //#define VERBOSE
-#define TIMING
 #define OPEN_RESISTANCE 1e100
 #define CLOSED_RESISTANCE 1e-100
 
@@ -107,7 +106,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
   //We'll solve circuits with switches using Assumed Valve (i.e. Diode) States model by thinking of them as switches
   //and checking the resulting Flow and Pressure difference.
   //We'll keep looping until we've either found a solution or determined that it cannot be solved in the current configuration.
-#ifdef VERBOSE  
+#ifdef VERBOSE
   int i = 0;
 #endif
   do
@@ -154,7 +153,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   }
 
   // Assign calculator index to the nodes in the circuit
-  int jIdx = 0;
+  int numVars = 0;
   for (NodeType* n : m_circuit->GetNodes())
   {
     //There should never be a next pressure value set on a node
@@ -164,11 +163,11 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
     //  {
     //    m_ss << "You cannot set a pressure value without using a path pressure source.  The NextPressure value will be ignored and overwritten for Node " << n->GetName();
     //    Warning(m_ss);
-    //  }    
+    //  }
     if (!n->IsReferenceNode())
     {
-      n->SetCalculatorIndex(jIdx);
-      jIdx++;
+      n->SetCalculatorIndex(numVars);
+      numVars++;
     }
     else
     {
@@ -208,32 +207,27 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
     }
   }
 
-  size_t numVars = m_circuit->GetNodes().size() - numRefNodes;
   m_potentialSources.clear();
-  m_blackBoxPotentialSources.clear();
   for (PathType* p : m_circuit->GetPaths())
   { 
     //Set aside the pressure sources, since the Flow through them will be directly solved by adding them to the bottom of the matrix.
     //We have to do this outside of the KCL loop below because we only want to account for each one once.
     if (p->HasNextPotentialSource() ||
-      (p->NumberOfNextElements() < 1 && !p->HasBlackBox()) ||
+      (p->NumberOfNextElements() < 1 && !p->IsPartOfBlackBox()) ||
       (p->HasNextValve() && p->GetNextValve() == eGate::Closed) ||
       (p->HasNextSwitch() && p->GetNextSwitch() == eGate::Closed))
     {
       m_potentialSources[p] = numVars++;
     }
   }
-
+  
   //Black boxes with imposed potentials are like potential sources to ground, but without a path defined
+  m_blackBoxPotentialSources.clear();
   for (NodeType* n : m_circuit->GetNodes())
   {
-    if (!n->IsReferenceNode() && n->HasBlackBox())
+    if (n->IsPartOfBlackBox())
     {
-      BlackBoxType* bb = n->GetBlackBox();
-      //Needs to be imposed
-      if ((n == bb->GetNode() && bb->IsPotentialImposed()) ||
-          (n == bb->GetSourceNode() && bb->IsSourcePotentialImposed()) ||
-          (n == bb->GetTargetNode() && bb->IsTargetPotentialImposed()))
+      if (n->IsPotentialImposed())
       {
         m_blackBoxPotentialSources[n] = numVars++;
       }
@@ -257,44 +251,82 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   for (NodeType* n : m_circuit->GetNodes())
   {
     //Sum of the flows at each node is 0
-    //Skip known reference node (see comment above)
+
+    //Skip known reference node
     if (n->IsReferenceNode())
     {
       continue;
-    }      
-
-    if (n->HasBlackBox())
-    {
-      if (n->GetBlackBox()->GetNode() == n)
-      {
-        //We'll handle this later... it could potentially remain an empty row
-        continue;
-      }
-      
-      BlackBoxType* bb = n->GetBlackBox();
-
-      if ((n == bb->GetNode() && bb->IsPotentialImposed()) ||
-          (n == bb->GetSourceNode() && bb->IsSourcePotentialImposed()) ||
-          (n == bb->GetTargetNode() && bb->IsTargetPotentialImposed()))
-      {
-        //Phantom path to ground needed to determine flow into/out of the black box
-        //Out of node is positive
-        double sign = 0.0;
-        if (n == &bb->GetSourcePath()->GetSourceNode() ||
-            n == &bb->GetTargetPath()->GetSourceNode())
-        {
-          sign = 1.0;
-        }
-        else if (n == &bb->GetSourcePath()->GetTargetNode() ||
-                 n == &bb->GetTargetPath()->GetTargetNode())
-        {
-          sign = -1.0;
-        }
-
-        _eigen->AMatrix(n->GetCalculatorIndex(), m_blackBoxPotentialSources[n]) += sign;
-      }
     }
-      
+
+    if (n->IsBlackBoxMiddle())
+    {
+      //Handle the black box middle node
+      //We'll either explicitly set the potential value or just make it the average of the source and target
+      //If we don't do this, it creates a singular matrix (zero columns) and will take longer to solve
+      _eigen->AMatrix(n->GetCalculatorIndex(), n->GetCalculatorIndex()) = 1.0;
+      if (n->IsPotentialImposed())
+      {
+        _eigen->bVector(n->GetCalculatorIndex()) = n->GetNextPotential().GetValue(m_PotentialUnit);
+      }
+      else
+      {
+        //Not Ref: BB - Source/2 - Target/2 = 0
+        //Source Ref: BB - Target/2 = 0
+        //Target Ref: BB - Source/2 = 0
+        if (!n->GetBlackBoxSourceNode()->IsReferenceNode())
+        {
+          _eigen->AMatrix(n->GetCalculatorIndex(), n->GetBlackBoxSourceNode()->GetCalculatorIndex()) = -0.5;
+        }
+
+        if (!n->GetBlackBoxTargetNode()->IsReferenceNode())
+        {
+          _eigen->AMatrix(n->GetCalculatorIndex(), n->GetBlackBoxTargetNode()->GetCalculatorIndex()) = -0.5;
+        }
+      }
+
+      //Phantom path to ground needed to determine flow into/out of the black box
+      //Out of node is positive
+      NodeType* sourceNode = n->GetBlackBoxSourceNode();
+      NodeType* targetNode = n->GetBlackBoxTargetNode();
+      PathType* sourcePath = n->GetBlackBoxSourcePath();
+      PathType* targetPath = n->GetBlackBoxTargetPath();
+
+      if (sourceNode->IsPotentialImposed())
+      {
+        if (sourceNode->IsReferenceNode())
+        {
+          /// \error Fatal: Black boxes cannot set the reference node potential
+          Fatal("Black boxes cannot set the reference node potential", sourceNode->GetName());
+        }
+        else
+        {
+          //Potential to be set and flux to be directly solved, like potential sources
+          double sign = (sourceNode == &sourcePath->GetSourceNode()) ? -1 : 1;
+          _eigen->AMatrix(sourceNode->GetCalculatorIndex(), m_blackBoxPotentialSources[sourceNode]) += sign;
+          _eigen->AMatrix(m_blackBoxPotentialSources[sourceNode], sourceNode->GetCalculatorIndex()) += 1.0;
+          _eigen->bVector(m_blackBoxPotentialSources[sourceNode]) = sourceNode->GetNextPotential().GetValue(m_PotentialUnit);
+        }
+      }
+
+      if (targetNode->IsPotentialImposed())
+      {
+        if (targetNode->IsReferenceNode())
+        {
+          /// \error Fatal: Black boxes cannot set the reference node potential
+          Fatal("Black boxes cannot set the reference node potential", targetNode->GetName());
+        }
+        else
+        {
+          //Potential to be set and flux to be directly solved, like potential sources
+          double sign = (targetNode == &targetPath->GetSourceNode()) ? -1 : 1;
+          _eigen->AMatrix(targetNode->GetCalculatorIndex(), m_blackBoxPotentialSources[targetNode]) += sign;
+          _eigen->AMatrix(m_blackBoxPotentialSources[targetNode], targetNode->GetCalculatorIndex()) += 1.0;
+          _eigen->bVector(m_blackBoxPotentialSources[targetNode]) = targetNode->GetNextPotential().GetValue(m_PotentialUnit);
+        }
+      }
+
+      continue;
+    }
 
     for (PathType* p : *m_circuit->GetConnectedPaths(*n))
     {
@@ -313,28 +345,14 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
       }
 
       //Each Path has only one Element (or none at all) and each type is handled differently.
-      //The variables in the x vector are the unknown Node Pressures and Flows for Pressure Sources. 
-      if (p->HasBlackBox())
+      //The variables in the x vector are the unknown Node Pressures and Flows for Pressure Sources.
+      if (p->IsPartOfBlackBox())
       {
-        bool imposed = false;
-        double flux = 0;
-        BlackBoxType* bb = p->GetBlackBox();
-
         //Currents out of the node are assumed positive and the sign is switched when moving from the left side of the equation to the right.
         //Therefore, out of the Node we're current analyzing (i.e. Source) reverses the sign when it goes into the right side vector.
-        if (p == bb->GetSourcePath() && bb->IsSourceFluxImposed())
-        {          
-          flux = bb->GetSourceFlux(m_FluxUnit);
-          imposed = true;
-        }
-        else if (p == bb->GetTargetPath() && bb->IsTargetFluxImposed())
+        if (p->IsFluxImposed())
         {
-          flux = bb->GetTargetFlux(m_FluxUnit);
-          imposed = true;
-        }
-
-        if (imposed)
-        {
+          double flux = p->GetNextFlux().GetValue(m_FluxUnit);
           int sign = (n == nSrc) ? -1 : 1;
           _eigen->bVector(n->GetCalculatorIndex()) += (sign * flux);
         }
@@ -511,8 +529,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
   Verbose("PostPotentialSources");
 #endif
 
-  ParseInBlackBoxNodes(); //Handle potentials
-
 #ifdef VERBOSE
   Verbose("PostBlackBoxNodes");
 #endif
@@ -666,6 +682,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
   {
     if (n->IsReferenceNode())
     {
+      //jbw - Shouldn't this be NextPotential? Make sure that works with Environment ambient pressure changes.
       m_refPotential = n->GetPotential().GetValue(m_PotentialUnit);
       refNodeExists = true;
       break;
@@ -692,44 +709,37 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseOut()
   for (auto itr : m_potentialSources)
   {
     //The potential source fluxes are all in order after the Node Pressures.
-    double dFlow = _eigen->xVector(itr.second);
+    double flux = _eigen->xVector(itr.second);
     //We define pressure sources as the difference in pressure from source to target.
     //Therefore, a positive value means the target pressure is greater than the source (and reverse for negative values).
     //This means flow would go Target to Source (high to low pressure), and we need to reverse the sign.
-    ValueOverride<FluxUnit>(itr.first->GetNextFlux(), -dFlow, m_FluxUnit);
+    ValueOverride<FluxUnit>(itr.first->GetNextFlux(), -flux, m_FluxUnit);
   }
-  
+
   for (auto itr : m_blackBoxPotentialSources)
   {
     //The potential source fluxes are all in order after the Node Pressures.
-    double dFlow = _eigen->xVector(itr.second);
+    double flux = _eigen->xVector(itr.second);
     NodeType* n = itr.first;
-    BlackBoxType* bb = n->GetBlackBox();
 
-    if (n == &bb->GetSourcePath()->GetSourceNode() ||
-        n == &bb->GetSourcePath()->GetTargetNode())
+    if (n->IsBlackBoxMiddle())
     {
-      ValueOverride<FluxUnit>(bb->GetSourcePath()->GetNextFlux(), dFlow, m_FluxUnit);
+      continue;
     }
-    else if (n == &bb->GetTargetPath()->GetSourceNode() ||
-             n == &bb->GetTargetPath()->GetTargetNode())
-    {
-      ValueOverride<FluxUnit>(bb->GetTargetPath()->GetNextFlux(), dFlow, m_FluxUnit);
-    }
-  }
 
-  //Black box nodes
-  for (NodeType* n : m_circuit->GetNodes())
-  {
-    if (n->HasBlackBox())
+    for (PathType* p : m_circuit->GetPaths())
     {
-      BlackBoxType* bb = n->GetBlackBox();
-      NodeType* BBn = bb->GetNode();
-      if (n == BBn && !bb->IsPotentialImposed())
+      if (!p->IsPartOfBlackBox() || p->IsFluxImposed())
       {
-        //Just take the average of the source and target
-        double potential = bb->GetSourceNode()->GetNextPotential().GetValue(m_PotentialUnit) / 2.0 + bb->GetTargetNode()->GetNextPotential().GetValue(m_PotentialUnit) / 2.0;
-        ValueOverride<PotentialUnit>(n->GetNextPotential(), potential, m_PotentialUnit);
+        continue;
+      }
+
+      NodeType* sourceNode = &p->GetSourceNode();
+      NodeType* targetNode = &p->GetTargetNode();
+
+      if (n == sourceNode || n == targetNode)
+      {
+        ValueOverride<FluxUnit>(p->GetNextFlux(), -flux, m_FluxUnit);
       }
     }
   }
@@ -751,18 +761,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateFluxes()
   //Note: flows use source->target convention for positive flow, so the source pressure needs to be larger than the target pressure for positive flow
   for (PathType* p : m_circuit->GetPaths())
   {
-    if (p->HasBlackBox())
-    {
-      BlackBoxType* bb = p->GetBlackBox();
-      if (p == bb->GetSourcePath() && bb->IsSourceFluxImposed())
-      {
-        Override<FluxUnit>(bb->GetSourcePath()->GetFlux(), p->GetNextFlux());
-      }
-      else if(p == bb->GetTargetPath() && bb->IsTargetFluxImposed())
-      {
-        Override<FluxUnit>(bb->GetTargetPath()->GetFlux(), p->GetNextFlux());
-      }
-    }
     if (p->HasNextFluxSource())
     {
       Override<FluxUnit>(p->GetNextFluxSource(), p->GetNextFlux());
@@ -784,7 +782,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateFluxes()
     }
     else if (p->HasNextCapacitance())
     {
-      //Positive flow is from source to target (i.e. SourcePressure > TargetPressure = Positive Flow)      
+      //Positive flow is from source to target (i.e. SourcePressure > TargetPressure = Positive Flow)
       //dStartingCompliance is at time = T
       double dStartingCompliance = 0.0;
       if (p->HasCapacitance())
@@ -987,7 +985,7 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::IsCurrentValveStateUnique()
 /// \brief
 /// Add a value to the appropriate location in the Jacobian matrix.
 ///
-/// \param  nKCL              The Node that is currently being analyzed.
+/// \param  n                 The Node that is currently being analyzed.
 /// \param  p                 The Path that is currently being analyzed.
 /// \param  dMultiplier       The value to insert in the Jacobian matrix.
 /// \param  hasPressureSource True if the path has a Pressure Source.
@@ -1139,32 +1137,6 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseInPotentialSources()
 }
 
 template<CIRCUIT_CALCULATOR_TEMPLATE>
-void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseInBlackBoxNodes()
-{  
-  //Treat like a potential sources from ground
-  for (auto itr : m_blackBoxPotentialSources)
-  {
-    NodeType* n = itr.first;
-
-    _eigen->AMatrix(itr.second, n->GetCalculatorIndex()) = 1;
-
-    BlackBoxType* bb = n->GetBlackBox();
-    if (n == bb->GetNode())
-    {
-      _eigen->bVector(itr.second) += bb->GetPotential(m_PotentialUnit);
-    }
-    else if (n == bb->GetSourceNode())
-    {
-      _eigen->bVector(itr.second) += bb->GetSourcePotential(m_PotentialUnit);
-    }
-    else if (n == bb->GetTargetNode())
-    {
-      _eigen->bVector(itr.second) += bb->GetTargetPotential(m_PotentialUnit);
-    }
-  }
-}
-
-template<CIRCUIT_CALCULATOR_TEMPLATE>
 void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Verbose(std::string location)
 {
   std::cout << "Circuit Calculator Location: " << location << std::endl;
@@ -1190,10 +1162,10 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Verbose(std::string location
 
 #include "cdm/blackbox/fluid/SEFluidBlackBox.h"
 #include "cdm/circuit/fluid/SEFluidCircuit.h"
-template class SECircuitCalculator<SEFluidCircuit, SEFluidCircuitNode, SEFluidCircuitPath, SEFluidBlackBox, VolumePerPressureUnit, VolumePerTimeUnit, PressureTimeSquaredPerVolumeUnit, PressureUnit, VolumeUnit, PressureTimePerVolumeUnit>;
+template class SECircuitCalculator<SEFluidCircuit, SEFluidCircuitNode, SEFluidCircuitPath, VolumePerPressureUnit, VolumePerTimeUnit, PressureTimeSquaredPerVolumeUnit, PressureUnit, VolumeUnit, PressureTimePerVolumeUnit>;
 #include "cdm/blackbox/electrical/SEElectricalBlackBox.h"
 #include "cdm/circuit/electrical/SEElectricalCircuit.h"
-template class SECircuitCalculator<SEElectricalCircuit, SEElectricalCircuitNode, SEElectricalCircuitPath, SEElectricalBlackBox, ElectricCapacitanceUnit, ElectricCurrentUnit, ElectricInductanceUnit, ElectricPotentialUnit, ElectricChargeUnit, ElectricResistanceUnit>;
+template class SECircuitCalculator<SEElectricalCircuit, SEElectricalCircuitNode, SEElectricalCircuitPath, ElectricCapacitanceUnit, ElectricCurrentUnit, ElectricInductanceUnit, ElectricPotentialUnit, ElectricChargeUnit, ElectricResistanceUnit>;
 #include "cdm/blackbox/thermal/SEThermalBlackBox.h"
 #include "cdm/circuit/thermal/SEThermalCircuit.h"
-template class SECircuitCalculator<SEThermalCircuit, SEThermalCircuitNode, SEThermalCircuitPath, SEThermalBlackBox, HeatCapacitanceUnit, PowerUnit, HeatInductanceUnit, TemperatureUnit, EnergyUnit, HeatResistanceUnit>;
+template class SECircuitCalculator<SEThermalCircuit, SEThermalCircuitNode, SEThermalCircuitPath, HeatCapacitanceUnit, PowerUnit, HeatInductanceUnit, TemperatureUnit, EnergyUnit, HeatResistanceUnit>;
