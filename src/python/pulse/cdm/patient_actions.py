@@ -129,10 +129,10 @@ class eHeartRhythm(Enum):
     NormalSinus = 0
     SinusBradycardia = 1
     SinusTachycardia = 2
-    Asystole = 3
-    CoarseVentricularFibrillation = 4
-    FineVentricularFibrillation = 5
-    PulselessElectricalActivity = 6
+    SinusPulselessElectricalActivity = 3
+    Asystole = 4
+    CoarseVentricularFibrillation = 5
+    FineVentricularFibrillation = 6
     PulselessVentricularTachycardia = 7
     StableVentricularTachycardia = 8
     UnstableVentricularTachycardia = 9

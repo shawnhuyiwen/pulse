@@ -214,6 +214,7 @@ namespace pulse
     m_CompressionTime_s = 0.0;
     m_CompressionRatio = 0.0;
     m_CompressionPeriod_s = 0.0;
+    m_CardiacArrestVitalsUpdateTimer_s = 0;
 
     //Initialize system data based on patient file inputs
     GetHeartRate().Set(m_data.GetCurrentPatient().GetHeartRateBaseline());
@@ -624,8 +625,6 @@ namespace pulse
     HeartDriver();
     ProcessActions();
     CalculatePleuralCavityVenousEffects();
-
-    m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, m_CurrentCardiacCycleTime_s==0, m_data.GetSimulationTime());
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -717,47 +716,48 @@ namespace pulse
       m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
       m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
-    // Test to see if the cardiac cycle is starting, compressing blood out of the heart
-    // If so, push data into the CDM
-    if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
-    {
-      // Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
-      m_HeartFlowDetected = true;
-      double HeartRate_Per_s = 1.0 / m_CurrentCardiacCycleTime_s;
-      GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
-#ifdef LOG_TIMING
-      Info("Heart flow starting");
-      Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-      Info("  -Setting CDM Heart Rate to: " + std::to_string(HeartRate_Per_s * 60.0));
-      Info("  -Setting Current Cardiac Cycle Time to 0");
-#endif
-      m_CurrentCardiacCycleTime_s = 0;
-      RecordAndResetCardiacCycle();
-    }
-    else
-      m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
-
-    // Check to see if the cardiac cycle has completed, fully compressed the blood from the heart
-    if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
-    {
-      m_HeartFlowDetected = false;
-#ifdef LOG_TIMING
-      Info("Heart flow stopped");
-      Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-#endif
-    }
-
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      // Push the arrest values to the CDM, once, when we are 5.02s into the arrest
-      double ArrestTime_s = m_data.GetEvents().GetEventDuration(eEvent::CardiacArrest, TimeUnit::s);
-      if (ArrestTime_s > 5.0 && (ArrestTime_s < (5.0 + m_data.GetTimeStep_s())))
+      m_CardiacArrestVitalsUpdateTimer_s += m_data.GetTimeStep_s();
+      if (m_CardiacArrestVitalsUpdateTimer_s > 1)
+      {
         RecordAndResetCardiacCycle();
+        m_CardiacArrestVitalsUpdateTimer_s = 0;
+      }
     }
     else
     {
+      // Test to see if the cardiac cycle is starting, compressing blood out of the heart
+      // If so, push data into the CDM
+      if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
+      {
+        // Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
+        m_HeartFlowDetected = true;
+        double HeartRate_Per_s = 1.0 / m_CurrentCardiacCycleTime_s;
+        GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
+#ifdef LOG_TIMING
+        Info("Heart flow starting");
+        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+        Info("  -Setting CDM Heart Rate to: " + std::to_string(HeartRate_Per_s * 60.0));
+        Info("  -Setting Current Cardiac Cycle Time to 0");
+#endif
+        m_CurrentCardiacCycleTime_s = 0;
+        RecordAndResetCardiacCycle();
+      }
+      else
+        m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
+
+      // Check to see if the cardiac cycle has completed, fully compressed the blood from the heart
+      if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
+      {
+        m_HeartFlowDetected = false;
+#ifdef LOG_TIMING
+        Info("Heart flow stopped");
+        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+#endif
+      }
     }
 
     // Record high and low values to compute for systolic and diastolic pressures:
@@ -1666,7 +1666,7 @@ namespace pulse
       case eHeartRhythm::Asystole:
       case eHeartRhythm::CoarseVentricularFibrillation:
       case eHeartRhythm::FineVentricularFibrillation:
-      case eHeartRhythm::PulselessElectricalActivity:
+      case eHeartRhythm::SinusPulselessElectricalActivity:
       case eHeartRhythm::PulselessVentricularTachycardia:
       {
         // Flip the cardiac arrest switch
@@ -1692,6 +1692,7 @@ namespace pulse
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        m_CardiacArrestVitalsUpdateTimer_s = 0;
         break;
       }
       case eHeartRhythm::SinusTachycardia:
@@ -1704,6 +1705,7 @@ namespace pulse
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        m_CardiacArrestVitalsUpdateTimer_s = 0;
         break;
       }
       case eHeartRhythm::SinusBradycardia:
@@ -1716,6 +1718,7 @@ namespace pulse
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        m_CardiacArrestVitalsUpdateTimer_s = 0;
         break;
       }
       case eHeartRhythm::StableVentricularTachycardia:
@@ -1728,6 +1731,7 @@ namespace pulse
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        m_CardiacArrestVitalsUpdateTimer_s = 0;
         break;
       }
       case eHeartRhythm::UnstableVentricularTachycardia:
@@ -1740,6 +1744,7 @@ namespace pulse
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
         m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
         m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+        m_CardiacArrestVitalsUpdateTimer_s = 0;
         break;
       }
       default:// Any other rhythms take us out of cardiac arrest
@@ -1824,7 +1829,10 @@ namespace pulse
       Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
       Info("  -Reseting Driver Cycle Time to 0");
 #endif
+      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle,true, m_data.GetSimulationTime());
     }
+    else
+      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
 
     if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
@@ -1895,11 +1903,11 @@ namespace pulse
     // Now set the cardiac cycle period and the cardiac arrest event if applicable
     if (m_StartCardiacArrest)
     {
-      m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
       m_StartCardiacArrest = false;
       m_DriverCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years) 
       RecordAndResetCardiacCycle();
       GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);
+      m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
     }
     else
     {

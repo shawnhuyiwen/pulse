@@ -1,6 +1,6 @@
 {
   "Name": "ArrhythmiaPulselessRhythms",
-  "Description": "A patient moves into cardiac arrest via the arrhythmia action set with Asystole, then back to NormalSinus, then PulselessElectricalActivity, then back to NormalSinus, then PulselessVentricularTachycardia.",
+  "Description": "A patient moves into cardiac arrest via the arrhythmia action set with Asystole, then back to NormalSinus, then SinusPulselessElectricalActivity, then back to NormalSinus, then PulselessVentricularTachycardia.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
@@ -399,7 +399,7 @@
 }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "PulselessElectricalActivity"
+        "Rhythm": "SinusPulselessElectricalActivity"
       }
     }
   }, {

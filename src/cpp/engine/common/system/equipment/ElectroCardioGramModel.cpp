@@ -97,27 +97,16 @@ namespace pulse
       case eHeartRhythm::NormalSinus:
       case eHeartRhythm::SinusBradycardia:
       case eHeartRhythm::SinusTachycardia:
-      case eHeartRhythm::PulselessElectricalActivity:
-      case eHeartRhythm::PulselessVentricularTachycardia:
+      case eHeartRhythm::SinusPulselessElectricalActivity:
       {
         // If zero, set our hr to our minimum
         // Sync back up with the CV after this
 
-        if (rhythm == eHeartRhythm::PulselessElectricalActivity)
+        if (rhythm == eHeartRhythm::SinusPulselessElectricalActivity)
         {
           amplitudeModifier = 0.75;
           StartNewCycle(eElectroCardioGram_WaveformType::Sinus,
             m_data.GetCurrentPatient().GetHeartRateBaseline(),
-            m_data.GetTimeStep(),
-            amplitudeModifier);
-        }
-        else if (rhythm == eHeartRhythm::PulselessVentricularTachycardia)
-        {
-          amplitudeModifier = 0.5;
-          SEScalarFrequency pvtHR;
-          pvtHR.SetValue(120, FrequencyUnit::Per_min);
-          StartNewCycle(eElectroCardioGram_WaveformType::Sinus,
-            pvtHR,
             m_data.GetTimeStep(),
             amplitudeModifier);
         }
@@ -148,11 +137,25 @@ namespace pulse
       }
       case eHeartRhythm::StableVentricularTachycardia:
       case eHeartRhythm::UnstableVentricularTachycardia:
+      case eHeartRhythm::PulselessVentricularTachycardia:
       {
-        StartNewCycle(eElectroCardioGram_WaveformType::VentricularTachycardia,
-          m_data.GetCardiovascular().GetHeartRate(),
-          m_data.GetTimeStep(),
-          amplitudeModifier);
+        if (rhythm == eHeartRhythm::PulselessVentricularTachycardia)
+        {
+          amplitudeModifier = 0.5;
+          SEScalarFrequency pvtHR;
+          pvtHR.SetValue(120, FrequencyUnit::Per_min);
+          StartNewCycle(eElectroCardioGram_WaveformType::VentricularTachycardia,
+            pvtHR,
+            m_data.GetTimeStep(),
+            amplitudeModifier);
+        }
+        else
+        {
+          StartNewCycle(eElectroCardioGram_WaveformType::VentricularTachycardia,
+            m_data.GetCardiovascular().GetHeartRate(),
+            m_data.GetTimeStep(),
+            amplitudeModifier);
+        }
         break;
       }
       default:
