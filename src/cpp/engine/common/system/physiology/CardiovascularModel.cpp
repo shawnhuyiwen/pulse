@@ -716,38 +716,6 @@ namespace pulse
       m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
       m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
-    // Test to see if the cardiac cycle is starting, compressing blood out of the heart
-    // If so, push data into the CDM
-    if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
-    {
-      // Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
-      m_HeartFlowDetected = true;
-      double HeartRate_Per_s = 1.0 / m_CurrentCardiacCycleTime_s;
-      GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
-#ifdef LOG_TIMING
-      Info("Heart flow starting");
-      Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-      Info("  -Setting CDM Heart Rate to: " + std::to_string(HeartRate_Per_s * 60.0));
-      Info("  -Setting Current Cardiac Cycle Time to 0");
-#endif
-      m_CurrentCardiacCycleTime_s = 0;
-      RecordAndResetCardiacCycle();
-    }
-    else
-      m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
-
-    // Check to see if the cardiac cycle has completed, fully compressed the blood from the heart
-    if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
-    {
-      m_HeartFlowDetected = false;
-#ifdef LOG_TIMING
-      Info("Heart flow stopped");
-      Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-#endif
-    }
-
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       m_CardiacArrestVitalsUpdateTimer_s += m_data.GetTimeStep_s();
@@ -755,6 +723,40 @@ namespace pulse
       {
         RecordAndResetCardiacCycle();
         m_CardiacArrestVitalsUpdateTimer_s = 0;
+      }
+    }
+    else
+    {
+      // Test to see if the cardiac cycle is starting, compressing blood out of the heart
+      // If so, push data into the CDM
+      if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
+      {
+        // Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
+        m_HeartFlowDetected = true;
+        double HeartRate_Per_s = 1.0 / m_CurrentCardiacCycleTime_s;
+        GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
+#ifdef LOG_TIMING
+        Info("Heart flow starting");
+        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+        Info("  -Setting CDM Heart Rate to: " + std::to_string(HeartRate_Per_s * 60.0));
+        Info("  -Setting Current Cardiac Cycle Time to 0");
+#endif
+        m_CurrentCardiacCycleTime_s = 0;
+        RecordAndResetCardiacCycle();
+      }
+      else
+        m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
+
+      // Check to see if the cardiac cycle has completed, fully compressed the blood from the heart
+      if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
+      {
+        m_HeartFlowDetected = false;
+#ifdef LOG_TIMING
+        Info("Heart flow stopped");
+        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+#endif
       }
     }
 
