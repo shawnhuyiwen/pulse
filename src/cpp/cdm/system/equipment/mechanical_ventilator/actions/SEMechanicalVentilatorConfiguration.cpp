@@ -143,6 +143,7 @@ void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
     str << "\n\tExpirationValveVolume: "; m_Settings->HasExpirationValveVolume() ? str << m_Settings->GetExpirationValveVolume() : str << "NaN";
     str << "\n\tInspirationLimbVolume: "; m_Settings->HasInspirationLimbVolume() ? str << m_Settings->GetInspirationLimbVolume() : str << "NaN";
     str << "\n\tInspirationValveVolume: "; m_Settings->HasInspirationValveVolume() ? str << m_Settings->GetInspirationValveVolume() : str << "NaN";
+    str << "\n\tReliefValveThreshold: "; m_Settings->HasReliefValveThreshold() ? str << m_Settings->GetReliefValveThreshold() : str << "NaN";
     str << "\n\tYPieceVolume: "; m_Settings->HasYPieceVolume() ? str << m_Settings->GetYPieceVolume() : str << "NaN";
     str << "\n\tConnectionVolume: "; m_Settings->HasConnectionVolume() ? str << m_Settings->GetConnectionVolume() : str << "NaN";
     str << "\n\tCompliance: "; m_Settings->HasCompliance() ? str << m_Settings->GetCompliance() : str << "NaN";

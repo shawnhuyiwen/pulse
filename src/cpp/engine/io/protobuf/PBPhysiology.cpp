@@ -54,6 +54,7 @@ namespace pulse
   {
     ::PBPhysiology::Serialize(src.common(), dst);
     dst.m_StartCardiacArrest = src.startcardiacarrest();
+    dst.m_CardiacArrestVitalsUpdateTimer_s = src.cardiacarrestvitalsupdatetimer_s();
     dst.m_StartSystole = src.startsystole();
     dst.m_HeartFlowDetected = src.heartflowdetected();
     dst.m_CurrentCardiacCycleTime_s = src.currentcardiaccycletime_s();
@@ -107,6 +108,7 @@ namespace pulse
   {
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
     dst.set_startcardiacarrest(src.m_StartCardiacArrest);
+    dst.set_cardiacarrestvitalsupdatetimer_s(src.m_CardiacArrestVitalsUpdateTimer_s);
     dst.set_startsystole(src.m_StartSystole);
     dst.set_heartflowdetected(src.m_HeartFlowDetected);
     dst.set_currentcardiaccycletime_s(src.m_CurrentCardiacCycleTime_s);

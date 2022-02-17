@@ -356,6 +356,7 @@ namespace pulse
     DEFINE_STATIC_STRING_EX(ExpiratoryLimb, MechanicalVentilatorExpiratoryLimb);
     DEFINE_STATIC_STRING_EX(InspiratoryLimb, MechanicalVentilatorInspiratoryLimb);
     DEFINE_STATIC_STRING_EX(YPiece, MechanicalVentilatorYPiece);
+    DEFINE_STATIC_STRING_EX(ReliefValve, MechanicalVentilatorReliefValve);
     DEFINE_STATIC_STRING_EX(Connection, MechanicalVentilatorConnection);
   };
 
@@ -372,6 +373,8 @@ namespace pulse
     DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, MechanicalVentilatorInspiratoryLimbToYPiece);
     DEFINE_STATIC_STRING_EX(YPieceToConnection, MechanicalVentilatorYPieceToConnection);
     DEFINE_STATIC_STRING_EX(LeakConnectionToEnvironment, MechanicalVentilatorLeakConnectionToEnvironment);
+    DEFINE_STATIC_STRING_EX(ConnectionToReliefValve, MechanicalVentilatorConnectionToReliefValve);
+    DEFINE_STATIC_STRING_EX(EnvironmentToReliefValve, MechanicalVentilatorEnvironmentToReliefVlave);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, MechanicalVentilatorConnectionToEnvironment);
   };
 

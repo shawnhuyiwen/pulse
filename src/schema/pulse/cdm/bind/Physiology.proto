@@ -11,16 +11,16 @@ import "pulse/cdm/bind/PatientNutrition.proto";
 
 enum eHeartRhythm
 {
-  NormalSinus                     = 0; /**<< @brief Normal electical signal and mechanical function. */ 
-  SinusBradycardia                = 1; /**<< @brief Normal electical signal with reduced heart rate.   */
-  SinusTachycardia                = 2; /**<< @brief Normal electical signal and increased heart rate.  */
-  Asystole                        = 3; /**<< @brief No electrical signal or mechanical function. */
-  CoarseVentricularFibrillation   = 4; /**<< @brief No organized electrical signal, no mechanical function. */
-  FineVentricularFibrillation     = 5; /**<< @brief No organized electrical signal, reduced amplitude compared to coarse VF, no mechanical function. */
-  PulselessElectricalActivity     = 6; /**<< @brief Electical signal, but no mechanical function. */
-  PulselessVentricularTachycardia = 7; /**<< @brief Normal electical signal with reduced amplitude, but no mechanical function. */
-  StableVentricularTachycardia    = 8; /**<< @brief Ventricular tachycardia electrical signal with increased heart rate.  */
-  UnstableVentricularTachycardia  = 9; /**<< @brief Ventricular tachycardia electrical signal with increased heart rate, reduced heart elastance. */
+  NormalSinus                      = 0; /**<< @brief Normal electical signal and mechanical function. */ 
+  SinusBradycardia                 = 1; /**<< @brief Normal electical signal with reduced heart rate.   */
+  SinusTachycardia                 = 2; /**<< @brief Normal electical signal and increased heart rate.  */
+  SinusPulselessElectricalActivity = 3; /**<< @brief Electical signal, but no mechanical function. */
+  Asystole                         = 4; /**<< @brief No electrical signal or mechanical function. */
+  CoarseVentricularFibrillation    = 5; /**<< @brief No organized electrical signal, no mechanical function. */
+  FineVentricularFibrillation      = 6; /**<< @brief No organized electrical signal, reduced amplitude compared to coarse VF, no mechanical function. */
+  PulselessVentricularTachycardia  = 7; /**<< @brief Normal electical signal with reduced amplitude, but no mechanical function. */
+  StableVentricularTachycardia     = 8; /**<< @brief Ventricular tachycardia electrical signal with increased heart rate.  */
+  UnstableVentricularTachycardia   = 9; /**<< @brief Ventricular tachycardia electrical signal with increased heart rate, reduced heart elastance. */
 }
 
 
@@ -283,14 +283,7 @@ message RespiratoryMechanicsData
   ScalarTimeData                      ExpiratoryReleaseTime                          = 18;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
   ScalarTimeData                      ResidueTime                                    = 19;/**<< @brief Spontaneous breathing remaining time at 0 pressure after completed waveform.*/
 }
-enum eBreathState
-{
-  Inhale = 0;
-  Pause  = 1;
-  Exhale = 2;
-  ExpiratoryHold = 3;
-  InspiratoryHold = 4;
-}
+
 /**@brief Provides ventilation and gas exchange of the human respiratory system.
    @details Supports changes in the lungs volume and pressure data during the flow
    and transfer of gases between the lungs, the blood and the outside environment.*/

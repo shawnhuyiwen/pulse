@@ -128,10 +128,23 @@ public:
   }
 
   Enum GetEnum() const { return m_enum; }
-  void SetEnum(Enum e)
+  //void SetEnum(Enum e)
+  //{
+  //  m_enum = e;
+  //  SetValue((double)e);
+  //}
+  void operator=(const Enum& e)
   {
     m_enum = e;
     SetValue((double)e);
+  }
+  bool operator==(const Enum& e)
+  {
+    return m_enum == e;
+  }
+  bool operator!=(const Enum& e)
+  {
+    return m_enum != e;
   }
 
 private:

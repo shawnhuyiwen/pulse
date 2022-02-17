@@ -53,7 +53,7 @@ namespace pulse
     void CalculatePause();
     void CalculateExpiration();
     void SetVentilatorDriver();
-    void CycleMode();
+    void CycleMode(bool patientTriggered);
     void SetLeak();
     void SetHold();
     void CalculateRespiratoryParameters();
@@ -63,6 +63,7 @@ namespace pulse
     void SetResistances();
     void SetCompliance();
     void SetVolumes();
+    void CheckReliefValve();
 
     // Serializable member variables (Set in Initialize and in schema)
     double                m_CurrentPeriodTime_s;
@@ -102,6 +103,8 @@ namespace pulse
     SEFluidCircuitPath*  m_ExpiratoryLimbToYPiece;
     SEFluidCircuitPath*  m_InspiratoryLimbToYPiece;
     SEFluidCircuitPath*  m_LeakConnectionToEnvironment;
+    SEFluidCircuitPath*  m_ConnectionToReliefValve;
+    SEFluidCircuitPath*  m_EnvironmentToReliefValve;
     SEFluidCircuitPath*  m_ConnectionToAirway;
     double               m_DefaultClosedFlowResistance_cmH2O_s_Per_L;
   };

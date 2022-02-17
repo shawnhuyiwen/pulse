@@ -55,15 +55,7 @@ RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto && \
     make -j4 && \
     cd /
 
-# Copy out all needed python files
-RUN mkdir pypulse && \
-    cp /build/Innerbuild/src/python/[PyPulse]* /pypulse && \
-    cp -R /build/Innerbuild/src/python/pulse /pypulse && \
-    cp -R /source/src/python/pulse /pypulse && \
-    rm -rf /source && \
-    rm -rf /build
-
-ENV PYTHONPATH /pypulse
+ENV PYTHONPATH /pulse/bin:/pulse/python
     
 RUN if [ "$BASE" = "debian:bullseye" ]; then \
  rm java-1.8.0-amazon-corretto-jdk_8.232.09-1_amd64.deb ;fi

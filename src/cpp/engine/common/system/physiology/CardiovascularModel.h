@@ -120,6 +120,7 @@ namespace pulse
     double m_CompressionRatio;
     double m_CompressionPeriod_s;
     // Vitals and Averages
+    double m_CardiacArrestVitalsUpdateTimer_s;
     double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
     double m_CardiacCycleAortaPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
     double m_CardiacCycleAortaPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole

@@ -70,6 +70,7 @@ public class SEMechanicalVentilatorSettings
   protected eDriverWaveform                   inspirationWaveform;
   protected SEScalarTime                      inspirationWaveformPeriod;
 
+  protected SEScalarPressure                  reliefValveThreshold;
   protected SEScalarVolume                    yPieceVolume;
   
   protected List<SESubstanceFraction>         fractionInspiredGases;
@@ -121,6 +122,7 @@ public class SEMechanicalVentilatorSettings
     inspirationWaveform = null;
     inspirationWaveformPeriod = null;
 
+    reliefValveThreshold = null;
     yPieceVolume = null;
 
     this.fractionInspiredGases=new ArrayList<SESubstanceFraction>();
@@ -200,6 +202,9 @@ public class SEMechanicalVentilatorSettings
     if (inspirationWaveformPeriod != null)
       inspirationWaveformPeriod.invalidate();
     
+
+    if (reliefValveThreshold != null)
+      reliefValveThreshold.invalidate();
     if (yPieceVolume != null)
       yPieceVolume.invalidate();
     
@@ -285,7 +290,9 @@ public class SEMechanicalVentilatorSettings
       this.inspirationWaveform=from.inspirationWaveform;
     if(from.hasInspirationWaveformPeriod())
       this.getInspirationWaveformPeriod().set(from.getInspirationWaveformPeriod());
-    
+
+    if(from.hasReliefValveThreshold())
+      this.getReliefValveThreshold().set(from.getReliefValveThreshold());
     if(from.hasYPieceVolume())
       this.getYPieceVolume().set(from.getYPieceVolume());
     
@@ -389,7 +396,9 @@ public class SEMechanicalVentilatorSettings
       dst.setInspirationWaveform(src.getInspirationWaveform());
     if (src.hasInspirationWaveformPeriod())
       SEScalarTime.load(src.getInspirationWaveformPeriod(), dst.getInspirationWaveformPeriod());
-    
+
+    if (src.hasReliefValveThreshold())
+      SEScalarPressure.load(src.getReliefValveThreshold(), dst.getReliefValveThreshold());
     if (src.hasYPieceVolume())
       SEScalarVolume.load(src.getYPieceVolume(), dst.getYPieceVolume());
     
@@ -492,7 +501,9 @@ public class SEMechanicalVentilatorSettings
       dst.setInspirationWaveform(src.inspirationWaveform);
     if(src.hasInspirationWaveformPeriod())
       dst.setInspirationWaveformPeriod(SEScalarTime.unload(src.getInspirationWaveformPeriod()));
-    
+
+    if(src.hasReliefValveThreshold())
+      dst.setReliefValveThreshold(SEScalarPressure.unload(src.getReliefValveThreshold()));
     if(src.hasYPieceVolume())
       dst.setYPieceVolume(SEScalarVolume.unload(src.getYPieceVolume()));
     
@@ -873,6 +884,17 @@ public class SEMechanicalVentilatorSettings
   public boolean hasInspirationWaveformPeriod()
   {
     return inspirationWaveformPeriod == null ? false : inspirationWaveformPeriod.isValid();
+  }
+  
+  public SEScalarPressure getReliefValveThreshold()
+  {
+    if (reliefValveThreshold == null)
+      reliefValveThreshold = new SEScalarPressure();
+    return reliefValveThreshold;
+  }
+  public boolean hasReliefValveThreshold()
+  {
+    return reliefValveThreshold == null ? false : reliefValveThreshold.isValid();
   }
   
   public SEScalarVolume getYPieceVolume()

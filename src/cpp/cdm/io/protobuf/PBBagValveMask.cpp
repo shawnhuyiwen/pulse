@@ -23,6 +23,7 @@ void PBBagValveMask::Load(const CDM_BIND::BagValveMaskData& src, SEBagValveMask&
 }
 void PBBagValveMask::Serialize(const CDM_BIND::BagValveMaskData& src, SEBagValveMask& dst, const SESubstanceManager& subMgr)
 {
+  dst.m_BreathState = (eBreathState)src.breathstate();
   dst.m_Connection = (eSwitch)src.connection();
 
   if (src.has_bagresistance())
@@ -86,7 +87,8 @@ CDM_BIND::BagValveMaskData* PBBagValveMask::Unload(const SEBagValveMask& src)
 }
 void PBBagValveMask::Serialize(const SEBagValveMask& src, CDM_BIND::BagValveMaskData& dst)
 {
-  dst.set_connection((CDM_BIND::eSwitch)src.m_Connection);
+  dst.set_breathstate((CDM_BIND::eBreathState)src.m_BreathState.GetEnum());
+  dst.set_connection((CDM_BIND::eSwitch)src.m_Connection.GetEnum());
 
   if (src.HasBagResistance())
     dst.set_allocated_bagresistance(PBProperty::Unload(*src.m_BagResistance));
