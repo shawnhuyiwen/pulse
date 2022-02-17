@@ -32,6 +32,9 @@ POP_PROTO_WARNINGS
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
+#include "cdm/io/protobuf/PBECMO.h"
+#include "cdm/system/equipment/ecmo/actions/SEECMOAction.h"
+#include "cdm/system/equipment/ecmo/actions/SEECMOConfiguration.h"
 #include "cdm/io/protobuf/PBInhaler.h"
 #include "cdm/system/equipment/inhaler/actions/SEInhalerAction.h"
 #include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
@@ -638,6 +641,56 @@ void PBEquipmentAction::Copy(const SEBagValveMaskAutomated& src, SEBagValveMaskA
   CDM_BIND::BagValveMaskAutomatedData data;
   PBEquipmentAction::Serialize(src, data);
   PBEquipmentAction::Serialize(data, dst);
+}
+
+/////////////
+// ECMO //
+/////////////
+
+void PBEquipmentAction::Serialize(const CDM_BIND::ECMOActionData& src, SEECMOAction& dst)
+{
+  PBEquipmentAction::Serialize(src.equipmentaction(), dst);
+}
+void PBEquipmentAction::Serialize(const SEECMOAction& src, CDM_BIND::ECMOActionData& dst)
+{
+  PBEquipmentAction::Serialize(src, *dst.mutable_equipmentaction());
+}
+
+void PBEquipmentAction::Load(const CDM_BIND::ECMOConfigurationData& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr)
+{
+  dst.Clear();
+  PBEquipmentAction::Serialize(src, dst, subMgr);
+}
+CDM_BIND::ECMOConfigurationData* PBEquipmentAction::Unload(const SEECMOConfiguration& src)
+{
+  CDM_BIND::ECMOConfigurationData* dst = new CDM_BIND::ECMOConfigurationData();
+  PBEquipmentAction::Serialize(src, *dst);
+  return dst;
+}
+void PBEquipmentAction::Serialize(const CDM_BIND::ECMOConfigurationData& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr)
+{
+  PBEquipmentAction::Serialize(src.ecmoaction(), dst);
+  if (!src.configurationfile().empty())
+    dst.SetConfigurationFile(src.configurationfile());
+  else if (src.has_configuration())
+    PBECMO::Load(src.configuration(), dst.GetConfiguration(), subMgr);
+  dst.SetMergeType((eMergeType)src.mergetype());
+}
+void PBEquipmentAction::Serialize(const SEECMOConfiguration& src, CDM_BIND::ECMOConfigurationData& dst)
+{
+  PBEquipmentAction::Serialize(src, *dst.mutable_ecmoaction());
+  if (src.HasSettingsFile())
+    dst.set_settingsfile(src.m_SettingsFile);
+  else if (src.HasSettings())
+    dst.set_allocated_settings(PBECMO::Unload(*src.m_Settings));
+  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
+}
+void PBEquipmentAction::Copy(const SEECMOConfiguration& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr)
+{
+  dst.Clear();
+  CDM_BIND::ECMOConfigurationData data;
+  PBEquipmentAction::Serialize(src, data);
+  PBEquipmentAction::Serialize(data, dst, subMgr);
 }
 
 /////////////

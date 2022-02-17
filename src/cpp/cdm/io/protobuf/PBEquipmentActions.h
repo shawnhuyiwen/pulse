@@ -23,6 +23,8 @@ CDM_BIND_DECL2(BagValveMaskConfiguration)
 CDM_BIND_DECL2(BagValveMaskAutomated)
 CDM_BIND_DECL2(BagValveMaskSqueeze)
 CDM_BIND_DECL2(BagValveMaskInstantaneous)
+CDM_BIND_DECL2(ECMOAction)
+CDM_BIND_DECL2(ECMOConfiguration)
 CDM_BIND_DECL2(InhalerAction)
 CDM_BIND_DECL2(InhalerConfiguration)
 CDM_BIND_DECL2(MechanicalVentilatorAction)
@@ -175,6 +177,19 @@ public:
   static void Serialize(const CDM_BIND::InhalerConfigurationData& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr);
   static void Serialize(const SEInhalerConfiguration& src, CDM_BIND::InhalerConfigurationData& dst);
   static void Copy(const SEInhalerConfiguration& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr);
+
+  ///////////////////////////
+  // ECMO //
+  ///////////////////////////
+
+  static void Serialize(const CDM_BIND::ECMOActionData& src, SEECMOAction& dst);
+  static void Serialize(const SEECMOAction& src, CDM_BIND::ECMOActionData& dst);
+
+  static void Load(const CDM_BIND::ECMOConfigurationData& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr);
+  static CDM_BIND::ECMOConfigurationData* Unload(const SEECMOConfiguration& src);
+  static void Serialize(const CDM_BIND::ECMOConfigurationData& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr);
+  static void Serialize(const SEECMOConfiguration& src, CDM_BIND::ECMOConfigurationData& dst);
+  static void Copy(const SEECMOConfiguration& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr);
 
   ///////////////////////////
   // Mechanical Ventilator //

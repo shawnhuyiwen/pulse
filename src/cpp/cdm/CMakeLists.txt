@@ -300,6 +300,10 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h
+    system/equipment/ecmo/SEECMO.h
+    system/equipment/ecmo/SEECMOSettings.h
+    system/equipment/ecmo/actions/SEECMOAction.h
+    system/equipment/ecmo/actions/SEECMOConfiguration.h
     system/equipment/electrocardiogram/SEElectroCardioGram.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h
     system/equipment/inhaler/SEInhaler.h

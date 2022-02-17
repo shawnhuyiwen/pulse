@@ -25,6 +25,8 @@
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
+#include "cdm/system/equipment/ecmo/SEECMO.h"
+#include "cdm/system/equipment/ecmo/actions/SEECMOConfiguration.h"
 #include "cdm/system/equipment/inhaler/SEInhaler.h"
 #include "cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
@@ -44,6 +46,7 @@ SEEquipmentActionCollection::SEEquipmentActionCollection(SESubstanceManager& sub
 {
   m_AnesthesiaMachineConfiguration = nullptr;
   m_BagValveMaskConfiguration = nullptr;
+  m_ECMOConfiguration = nullptr;
   m_InhalerConfiguration = nullptr;
   m_MechanicalVentilatorConfiguration = nullptr;
 
@@ -80,6 +83,7 @@ void SEEquipmentActionCollection::Clear()
 {
   // State
   RemoveAnesthesiaMachineConfiguration();
+  RemoveECMOConfiguration();
   RemoveInhalerConfiguration();
   RemoveMechanicalVentilatorConfiguration();
   RemoveBagValveMaskConfiguration();
@@ -413,6 +417,20 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
       m_InhalerConfiguration->Activate();
       if (!m_InhalerConfiguration->IsActive())
         RemoveInhalerConfiguration();
+      return true;
+    }
+  }
+
+  const SEECMOAction* ea = dynamic_cast<const SEECMOAction*>(&action);
+  if (ea != nullptr)
+  {
+    const SEECMOConfiguration* config = dynamic_cast<const SEECMOConfiguration*>(&action);
+    if (config != nullptr)
+    {
+      GetECMOConfiguration().Copy(*config, m_SubMgr, true);
+      m_ECMOConfiguration->Activate();
+      if (!m_ECMOConfiguration->IsActive())
+        RemoveECMOConfiguration();
       return true;
     }
   }
@@ -760,6 +778,26 @@ void SEEquipmentActionCollection::RemoveBagValveMaskSqueeze()
 {
   if (m_BagValveMaskSqueeze)
     m_BagValveMaskSqueeze->Deactivate();
+}
+
+bool SEEquipmentActionCollection::HasECMOConfiguration() const
+{
+  return m_ECMOConfiguration == nullptr ? false : m_ECMOConfiguration->IsActive();
+}
+SEECMOConfiguration& SEEquipmentActionCollection::GetECMOConfiguration()
+{
+  if (m_ECMOConfiguration == nullptr)
+    m_ECMOConfiguration = new SEECMOConfiguration();
+  return *m_ECMOConfiguration;
+}
+const SEECMOConfiguration* SEEquipmentActionCollection::GetECMOConfiguration() const
+{
+  return m_ECMOConfiguration;
+}
+void SEEquipmentActionCollection::RemoveECMOConfiguration()
+{
+  if (m_ECMOConfiguration)
+    m_ECMOConfiguration->Deactivate();
 }
 
 bool SEEquipmentActionCollection::HasInhalerConfiguration() const
