@@ -214,7 +214,7 @@ protected:
   SEBagValveMaskInstantaneous*                                 m_BagValveMaskInstantaneous;
   SEBagValveMaskSqueeze*                                       m_BagValveMaskSqueeze;
 
-  SEECMOConfiguration*                                        m_ECMOConfiguration;
+  SEECMOConfiguration*                                         m_ECMOConfiguration;
 
   SEInhalerConfiguration*                                      m_InhalerConfiguration;
 
