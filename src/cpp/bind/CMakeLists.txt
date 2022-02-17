@@ -22,6 +22,8 @@ add_library_ex(DataModelBindings
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/EnvironmentConditions.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/EquipmentActions.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Events.pb.h"
+    "${DST_ROOT}/cpp/${CDM_PACKAGE}/ECMO.pb.h"
+    "${DST_ROOT}/cpp/${CDM_PACKAGE}/ECMO.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/Inhaler.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/InhalerActions.pb.h"
     "${DST_ROOT}/cpp/${CDM_PACKAGE}/MechanicalVentilator.pb.h"
