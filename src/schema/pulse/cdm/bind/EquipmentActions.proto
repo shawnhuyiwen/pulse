@@ -44,5 +44,7 @@ message AnyEquipmentActionData
     MechanicalVentilatorContinuousPositiveAirwayPressureData MechanicalVentilatorContinuousPositiveAirwayPressure = 204;
     MechanicalVentilatorPressureControlData                  MechanicalVentilatorPressureControl                  = 205;
     MechanicalVentilatorVolumeControlData                    MechanicalVentilatorVolumeControl                    = 206;
+
+    ECMOConfigurationData                                    ECMOConfiguration                                    = 1001;
   }
 }
