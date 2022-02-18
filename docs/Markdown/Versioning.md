@@ -1,4 +1,4 @@
-Version 4.0.0 {#version}
+Version 4.1.0 {#version}
 =============
 
 Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
