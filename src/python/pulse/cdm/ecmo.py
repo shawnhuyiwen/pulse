@@ -81,7 +81,6 @@ class SEECMOSettings(SEEquipment):
         self._expiration_tube_resistance = None
         self._expiration_valve_resistance = None
         self._expiration_valve_volume = None
-        self._expiration_waveform = eDriverWaveform.NullDriverWaveform
         self._expiration_waveform_period = None
 
         self._inspiration_limit_flow = None
@@ -103,7 +102,6 @@ class SEECMOSettings(SEEquipment):
         self._inspiration_tube_resistance = None
         self._inspiration_valve_resistance = None
         self._inspiration_valve_volume = None
-        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
         self._inspiration_waveform_period = None
 
         self._relief_valve_threshold = None
@@ -131,7 +129,6 @@ class SEECMOSettings(SEEquipment):
         if self._expiration_tube_resistance is not None: self._expiration_tube_resistance.invalidate()
         if self._expiration_valve_resistance is not None: self._expiration_valve_resistance.invalidate()
         if self._expiration_valve_volume is not None: self._expiration_valve_volume.invalidate()
-        self._expiration_waveform = eDriverWaveform.NullDriverWaveform
         if self._expiration_waveform_period is not None: self._expiration_waveform_period.invalidate()
 
         if self._inspiration_limit_flow is not None: self._inspiration_limit_flow.invalidate()
@@ -153,7 +150,6 @@ class SEECMOSettings(SEEquipment):
         if self._inspiration_tube_resistance is not None: self._inspiration_tube_resistance.invalidate()
         if self._inspiration_valve_resistance is not None: self._inspiration_valve_resistance.invalidate()
         if self._inspiration_valve_volume is not None: self._inspiration_valve_volume.invalidate()
-        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
         if self._inspiration_waveform_period is not None: self._inspiration_waveform_period.invalidate()
 
         if self._relief_valve_threshold is not None: self._relief_valve_threshold.invalidate()
@@ -322,11 +318,6 @@ class SEECMOSettings(SEEquipment):
             self._expiration_valve_volume = SEScalarVolume()
         return self._expiration_valve_volume
 
-    def get_expiration_waveform(self):
-        return self._expiration_waveform
-    def set_expiration_waveform(self, t: eDriverWaveform):
-        self._expiration_waveform = t
-
     def has_expiration_waveform_period(self):
         return False if self._expiration_waveform_period is None else self._expiration_waveform_period.is_valid()
     def get_expiration_waveform_period(self):
@@ -445,11 +436,6 @@ class SEECMOSettings(SEEquipment):
         if self._y_piece_volume is None:
             self._y_piece_volume = SEScalarVolume()
         return self._y_piece_volume
-
-    def get_inspiration_waveform(self):
-        return self._inspiration_waveform
-    def set_inspiration_waveform(self, t: eDriverWaveform):
-        self._inspiration_waveform = t
 
     def has_inspiration_waveform_period(self):
         return False if self._inspiration_waveform_period is None else self._inspiration_waveform_period.is_valid()

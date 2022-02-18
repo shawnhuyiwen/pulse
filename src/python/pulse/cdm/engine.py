@@ -368,6 +368,7 @@ class eDataRequest_category(Enum):
     ECG = 11
     Inhaler = 12
     MechanicalVentilator = 13
+    ECMO = 1001
 
 class SEDataRequest:
     __slots__ = ['_category', '_compartment_name', '_substance_name', '_property_name', '_unit']
@@ -448,6 +449,9 @@ class SEDataRequest:
     @classmethod
     def create_anesthesia_machine_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.AnesthesiaMachine, property=property,  unit=unit)
+    @classmethod
+    def create_ecmo_request(cls, property:str, unit:SEScalarUnit=None):
+        return cls(eDataRequest_category.ECMO, property=property,  unit=unit)
     @classmethod
     def create_inhaler_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.Inhaler, property=property,  unit=unit)
