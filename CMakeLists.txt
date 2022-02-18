@@ -33,7 +33,7 @@ set(CMAKE_DEBUG_POSTFIX "d")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-project(Pulse VERSION 4.0.0 LANGUAGES C CXX)
+project(Pulse VERSION 4.1.0 LANGUAGES C CXX)
 string(TOLOWER ${PROJECT_NAME} project_name)
 
 #-----------------------------------------------------------------------------
