@@ -54,4 +54,6 @@ message StateData
   repeated pulse.cdm.bind.SubstanceCompoundData Compound             = 32;
   ConfigurationData                             Configuration        = 33;
   pulse.cdm.bind.DataRequestManagerData         DataRequestManager   = 34;
+
+  ECMOData                                      ECMO                 = 1001;
 }

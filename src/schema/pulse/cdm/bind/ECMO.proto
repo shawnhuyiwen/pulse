@@ -10,16 +10,6 @@ import "pulse/cdm/bind/Substance.proto";
 
 message ECMOSettingsData
 {
-  enum eDriverWaveform
-  {
-    NullDriverWaveform = 0;/**<< Signals not provided, or no change */
-    Square             = 1;/**<<  */
-    Exponential        = 2;/**<<  */
-    Ramp               = 3;/**<<  */
-    Sinusoidal         = 4;/**<<  */
-    Sigmoidal          = 5;/**<<  */
-  }
-  
   eSwitch                             Connection                                = 1;/**<< @brief @ref eSwitchTable */
   ScalarVolumeData                    ConnectionVolume                          = 2;/**<< @brief Dead space volume of the connection (i.e., mask/tube). */
   ScalarVolumePerPressureData         Compliance                                = 3;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
@@ -43,7 +33,6 @@ message ECMOSettingsData
   ScalarPressureTimePerVolumeData     ExpirationTubeResistance                  = 13;/**<< @brief Total resistance of expiratory limb tubing. */  
   ScalarPressureTimePerVolumeData     ExpirationValveResistance                 = 14;/**<< @brief Total resistance of expiratory valves. */
   ScalarVolumeData                    ExpirationValveVolume                     = 15;/**<< @brief Dead space volume of the expiratory valve. */
-  eDriverWaveform                     ExpirationWaveform                        = 16;/**<< @brief @ref ECMOData_eDriverWaveformTable */
   ScalarTimeData                      ExpirationWaveformPeriod                  = 17;/**<< @brief Time to reach minimum value */
   
   oneof InspirationLimit
@@ -77,7 +66,6 @@ message ECMOSettingsData
   ScalarPressureTimePerVolumeData     InspirationTubeResistance                 = 29;/**<< @brief Total resistance of inspiratory limb tubing. */  
   ScalarPressureTimePerVolumeData     InspirationValveResistance                = 30;/**<< @brief Total resistance of inspiratory valves. */
   ScalarVolumeData                    InspirationValveVolume                    = 31;/**<< @brief Dead space volume of the inspiratory valve. */
-  eDriverWaveform                     InspirationWaveform                       = 32;/**<< @brief @ref ECMOData_eDriverWaveformTable */
   ScalarTimeData                      InspirationWaveformPeriod                 = 33;/**<< @brief Time to reach maximum value */
   
   ScalarPressureData                  ReliefValveThreshold                      = 34;/**<< @brief Pressure at which the relief valve opens. */

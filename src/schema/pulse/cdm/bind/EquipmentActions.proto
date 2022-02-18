@@ -6,6 +6,7 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/AnesthesiaMachineActions.proto";
 import "pulse/cdm/bind/BagValveMaskActions.proto";
+import "pulse/cdm/bind/ECMOActions.proto";
 import "pulse/cdm/bind/InhalerActions.proto";
 import "pulse/cdm/bind/MechanicalVentilatorActions.proto";
 
@@ -41,5 +42,7 @@ message AnyEquipmentActionData
     MechanicalVentilatorContinuousPositiveAirwayPressureData MechanicalVentilatorContinuousPositiveAirwayPressure = 204;
     MechanicalVentilatorPressureControlData                  MechanicalVentilatorPressureControl                  = 205;
     MechanicalVentilatorVolumeControlData                    MechanicalVentilatorVolumeControl                    = 206;
+
+    ECMOConfigurationData                                    ECMOConfiguration                                    = 1001;
   }
 }

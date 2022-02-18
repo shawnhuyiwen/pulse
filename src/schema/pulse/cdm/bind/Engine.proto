@@ -47,6 +47,8 @@ message DataRequestData
     ECG                  = 11;
     Inhaler              = 12;
     MechanicalVentilator = 13;
+
+    ECMO                 = 1001;
   }
   
   DecimalFormatData                                    DecimalFormat                   = 1;/**<<@brief If writing to a file, specify the decimal formatting */
