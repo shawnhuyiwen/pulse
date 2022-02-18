@@ -33,6 +33,8 @@ message AnyEquipmentActionData
     BagValveMaskAutomatedData                                BagValveMaskAutomated                                = 302;
     BagValveMaskInstantaneousData                            BagValveMaskInstantaneous                            = 303;
     BagValveMaskSqueezeData                                  BagValveMaskSqueeze                                  = 304;
+
+    ECMOConfigurationData                                    ECMOConfiguration                                    = 401;
     
     InhalerConfigurationData                                 InhalerConfiguration                                 = 101;
     
@@ -42,7 +44,5 @@ message AnyEquipmentActionData
     MechanicalVentilatorContinuousPositiveAirwayPressureData MechanicalVentilatorContinuousPositiveAirwayPressure = 204;
     MechanicalVentilatorPressureControlData                  MechanicalVentilatorPressureControl                  = 205;
     MechanicalVentilatorVolumeControlData                    MechanicalVentilatorVolumeControl                    = 206;
-
-    ECMOConfigurationData                                    ECMOConfiguration                                    = 1001;
   }
 }

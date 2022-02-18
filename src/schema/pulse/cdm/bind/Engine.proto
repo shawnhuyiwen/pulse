@@ -45,10 +45,9 @@ message DataRequestData
     AnesthesiaMachine    = 9;
     BagValveMask         = 10;
     ECG                  = 11;
-    Inhaler              = 12;
-    MechanicalVentilator = 13;
-
-    ECMO                 = 1001;
+    ECMO                 = 12;
+    Inhaler              = 13;
+    MechanicalVentilator = 14;
   }
   
   DecimalFormatData                                    DecimalFormat                   = 1;/**<<@brief If writing to a file, specify the decimal formatting */
