@@ -12,6 +12,42 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ---
 
+## Pulse v4.1.0 (Mar 2022)
+
+- Software Architecture Improvements
+  - Including build information
+    - Added to all client facing API's (C++, Java, Python, C#) for external applications to get Pulse version
+    - Added to state files to help identify compatibility with engine builds
+  - New Hemodyamics Engine
+    - Provides the ability to exectute and optimize our cardiovascular circuit
+    - Compares optimization iterations to validation data to converve on an optimal and valid circuit configuration
+  - Update to Eigen 3.4.0 and Protobuf 3.18.0
+- Physiology Model Improvements
+  - Added Lorazepam with supporting over sedation model
+  - New Advanced Cardiac Life Support (ACLS) Arrhythimias with ECG waveforms
+    - NormalSinus : Normal electical signal and mechanical function
+    - Sinus Bradycardia : Normal electical signal with reduced heart rate
+    - Sinus Tachycardia : Normal electical signal and increased heart rate
+    - Sinus Pulseless Electrical Activity : Electical signal, but no mechanical function
+    - Asystole : No electrical signal or mechanical function
+    - Coarse Ventricular Fibrillation : Unorganized electrical signal, no mechanical function
+    - Fine Ventricular Fibrillation : Unorganized electrical signal, reduced amplitude compared to coarse VF, no mechanical function
+    - Pulseless Ventricular Tachycardia : Ventricular tachycardia electrical signal with reduced amplitude, but no mechanical function
+    - Stable Ventricular Tachycardia : Ventricular tachycardia electrical signal with increased heart rate
+    - Unstable Ventricular Tachycardia Ventricular tachycardia electrical signal with increased heart rate, reduced heart elastance
+  - ECG Waveforms now interpolate to the time of current the cardiac cycle
+  - Ventilation equipment provides breath information to differentiate patient or equipment initiated breaths
+  - Added configurable relief valve to mechanical ventilator
+  - Added a suite of Blackbox unit tests to test all possible data exchange combinations
+  - Bug Fixes
+    - Correct flow calculations for compartments
+    - Increaded data updated to cardiovascular data during cardiac arrest
+    - Replace Irreversable states with more relavent clinical events
+    - Improve calculations of patient lung volumes due to diseases better
+
+
+---
+
 ## Pulse v4.0.0 (Sept 2021)
 
 - Software Architecture Improvements
@@ -22,7 +58,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - All engines are driven using the same API
   - New Ventilation Mechanics Engine
     - Encapsulates only our respiratory and mechanical ventilation models
-    - *NOT* a whole body physiology engine, only the math models of ventilation
+    - *NOT* a whole body physiology engine, only the math models for respiration and ventilation
   - Upgrade code base to C++17
   - Added namespaces
   - Improved header organization

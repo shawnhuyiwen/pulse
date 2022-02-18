@@ -16,9 +16,9 @@ enum eHeartRhythm
   SinusTachycardia                 = 2; /**<< @brief Normal electical signal and increased heart rate.  */
   SinusPulselessElectricalActivity = 3; /**<< @brief Electical signal, but no mechanical function. */
   Asystole                         = 4; /**<< @brief No electrical signal or mechanical function. */
-  CoarseVentricularFibrillation    = 5; /**<< @brief No organized electrical signal, no mechanical function. */
-  FineVentricularFibrillation      = 6; /**<< @brief No organized electrical signal, reduced amplitude compared to coarse VF, no mechanical function. */
-  PulselessVentricularTachycardia  = 7; /**<< @brief Normal electical signal with reduced amplitude, but no mechanical function. */
+  CoarseVentricularFibrillation    = 5; /**<< @brief Unorganized electrical signal, no mechanical function. */
+  FineVentricularFibrillation      = 6; /**<< @brief Unorganized electrical signal, reduced amplitude compared to coarse VF, no mechanical function. */
+  PulselessVentricularTachycardia  = 7; /**<< @brief Ventricular tachycardia electrical signal with reduced amplitude, but no mechanical function. */
   StableVentricularTachycardia     = 8; /**<< @brief Ventricular tachycardia electrical signal with increased heart rate.  */
   UnstableVentricularTachycardia   = 9; /**<< @brief Ventricular tachycardia electrical signal with increased heart rate, reduced heart elastance. */
 }
