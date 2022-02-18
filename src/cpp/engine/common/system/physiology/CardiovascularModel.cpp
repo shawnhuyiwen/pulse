@@ -1675,7 +1675,6 @@ namespace pulse
         m_StartCardiacArrest = true;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
         m_ArrhythmiaVascularToneModifier = 1.0;
-        m_CurrentDriverCycleTime_s = m_DriverCyclePeriod_s;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
         m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
@@ -1750,9 +1749,11 @@ namespace pulse
       default:// Any other rhythms take us out of cardiac arrest
         Error("Unsupported heart arrhythmia.");
       }
-      Info("Setting Heart Rate Baseline to :" + m_data.GetCurrentPatient().GetHeartRateBaseline().ToString());
+      Info("Arrhythmia is setting Heart Rate Baseline to :" + m_data.GetCurrentPatient().GetHeartRateBaseline().ToString());
+      Info("Arrhythmia is setting MAP Baseline to :" + m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().ToString());
+
       //Force a new cardiac cycle to start when cardiac arrest is removed
-      m_CurrentDriverCycleTime_s = m_DriverCyclePeriod_s;
+      m_StartSystole = true;
     }
   }
 
