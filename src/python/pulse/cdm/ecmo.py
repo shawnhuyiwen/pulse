@@ -150,6 +150,10 @@ class SEECMOSettings(SEEquipment):
         if self._inspiration_tube_resistance is not None: self._inspiration_tube_resistance.invalidate()
         if self._inspiration_valve_resistance is not None: self._inspiration_valve_resistance.invalidate()
         if self._inspiration_valve_volume is not None: self._inspiration_valve_volume.invalidate()
+<<<<<<< HEAD
+=======
+        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
+>>>>>>> fix CMakeLists and add python files
         if self._inspiration_waveform_period is not None: self._inspiration_waveform_period.invalidate()
 
         if self._relief_valve_threshold is not None: self._relief_valve_threshold.invalidate()
@@ -318,6 +322,14 @@ class SEECMOSettings(SEEquipment):
             self._expiration_valve_volume = SEScalarVolume()
         return self._expiration_valve_volume
 
+<<<<<<< HEAD
+=======
+    def get_expiration_waveform(self):
+        return self._expiration_waveform
+    def set_expiration_waveform(self, t: eDriverWaveform):
+        self._expiration_waveform = t
+
+>>>>>>> fix CMakeLists and add python files
     def has_expiration_waveform_period(self):
         return False if self._expiration_waveform_period is None else self._expiration_waveform_period.is_valid()
     def get_expiration_waveform_period(self):
@@ -437,6 +449,14 @@ class SEECMOSettings(SEEquipment):
             self._y_piece_volume = SEScalarVolume()
         return self._y_piece_volume
 
+<<<<<<< HEAD
+=======
+    def get_inspiration_waveform(self):
+        return self._inspiration_waveform
+    def set_inspiration_waveform(self, t: eDriverWaveform):
+        self._inspiration_waveform = t
+
+>>>>>>> fix CMakeLists and add python files
     def has_inspiration_waveform_period(self):
         return False if self._inspiration_waveform_period is None else self._inspiration_waveform_period.is_valid()
     def get_inspiration_waveform_period(self):
