@@ -6,6 +6,7 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/AnesthesiaMachine.proto";
 import "pulse/cdm/bind/BagValveMask.proto";
+import "pulse/cdm/bind/ECMO.proto";
 import "pulse/cdm/bind/ElectroCardioGram.proto";
 import "pulse/cdm/bind/Inhaler.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
@@ -27,6 +28,26 @@ message BagValveMaskData
   double                                           CurrentPeriodTime_s            = 2;
   double                                           SqueezeFlow_L_Per_s            = 3;
   double                                           SqueezePressure_cmH2O          = 4;
+}
+
+message ECMOData
+{
+  pulse.cdm.bind.ECMOData                          Common                                 = 1;
+  double                                           CurrentInspiratoryVolume_L             = 2;
+  double                                           CurrentPeriodTime_s                    = 3;
+  double                                           CurrentRespiratoryVolume_L             = 4;
+  double                                           CurrentVentilatorVolume_L              = 5;
+  double                                           DriverPressure_cmH2O                   = 6;
+  double                                           DriverFlow_L_Per_s                     = 7;
+  double                                           InspirationTime_s                      = 8;
+  double                                           InspiratoryFlow_L_Per_s                = 9;
+  bool                                             LimitReached                           = 10;
+  pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O               = 11;
+  double                                           PreviousDriverFlow_L_Per_s             = 12;
+  double                                           PreviousConnectionPressure_cmH2O       = 13;
+  double                                           PreviousDriverPressure_cmH2O           = 14;
+  double                                           PreviousYPieceToConnectionFlow_L_Per_s = 15;
+  
 }
 
 message ElectroCardioGramData
