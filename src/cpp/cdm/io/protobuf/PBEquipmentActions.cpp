@@ -720,10 +720,10 @@ CDM_BIND::ECMOConfigurationData* PBEquipmentAction::Unload(const SEECMOConfigura
 void PBEquipmentAction::Serialize(const CDM_BIND::ECMOConfigurationData& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr)
 {
   PBEquipmentAction::Serialize(src.ecmoaction(), dst);
-  if (!src.configurationfile().empty())
-    dst.SetConfigurationFile(src.configurationfile());
-  else if (src.has_configuration())
-    PBECMO::Load(src.configuration(), dst.GetConfiguration(), subMgr);
+  if (!src.settingsfile().empty())
+    dst.SetSettingsFile(src.settingsfile());
+  else if (src.has_settings())
+    PBECMO::Load(src.settings(), dst.GetSettings(), subMgr);
   dst.SetMergeType((eMergeType)src.mergetype());
 }
 void PBEquipmentAction::Serialize(const SEECMOConfiguration& src, CDM_BIND::ECMOConfigurationData& dst)
