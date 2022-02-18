@@ -71,6 +71,7 @@ public class HowTo_Hemorrhage
     pe.setLogListener(listener);
     Log.output2Console = true;
     pe.setEventHandler(new MyEventHandler());
+    pe.setLogFilename("./test_results/howto/HowTo_Hemorrhage.java.log");
 
     // Here is how to specify the data to get back from the engine
     SEDataRequestManager dataRequests = new SEDataRequestManager();

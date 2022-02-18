@@ -23,39 +23,22 @@ namespace HowTo_UseStates
 {
   class Example
   {
-    public static void Run(string dir = "")
+    public static void Run()
     {
-      dir = "./death/scenarios/";
-      string out_dir = "./death/scenarios/results/";
+      // This assumes we have run the HowTo_PatientStates
+      string state_dir = "./test_results/howto/HowTo_PatientStates/";
 
-      Logger log = new Logger("./death/UseStates.log");
+      Logger log = new Logger("./test_results/howto/HowTo_UseStates.cs.log");
       RunConfiguration cfg = new RunConfiguration();
       SEScenarioExec opts = new SEScenarioExec();
       opts.SetDataRootDirectory("./");
       opts.SetDataRequestCSVFilename("");
 
-      DirectoryInfo d = new DirectoryInfo(dir);
-      FileInfo[] Files = d.GetFiles("*.json");
-      foreach (FileInfo file in Files)
-      {
-        log.WriteLine("\n------------------------------------------------------------\n");
-        log.WriteLine("Executing Scenario " + file.FullName);
-        string base_name = System.IO.Path.GetFileNameWithoutExtension(file.Name);
-        opts.SetLogFilename(out_dir + base_name + ".log");
-        opts.SetScenarioFilename(file.FullName);
-        opts.SetSerializationDirectory(out_dir);
-
-        PulseEngine pulse = new PulseEngine();
-        pulse.LogToConsole(true);
-        if (!pulse.ExecuteScenario(opts))
-          System.Console.Out.WriteLine("Error running scenario");
-      }
 
       // Now lets run all the states that these scenarios generated
       // for 20m each and see if any of them die and how
-      d = new DirectoryInfo(out_dir);
-      Files = d.GetFiles("*.json", SearchOption.AllDirectories);
-      out_dir = "./death/state_results/";
+      DirectoryInfo d = new DirectoryInfo(state_dir);
+      FileInfo[] Files = d.GetFiles("*.json", SearchOption.AllDirectories);
 
       foreach (FileInfo file in Files)
       {
@@ -66,7 +49,7 @@ namespace HowTo_UseStates
 
         PulseEngine pulse = new PulseEngine();
         pulse.LogToConsole(true);
-        pulse.SetLogFilename(out_dir + base_name + ".log");
+        pulse.SetLogFilename(state_dir + base_name + ".ext.log");
 
         List<SEDataRequest> data_requests = new List<SEDataRequest>
         {

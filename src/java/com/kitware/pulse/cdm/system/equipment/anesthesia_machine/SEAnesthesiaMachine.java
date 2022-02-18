@@ -111,7 +111,7 @@ public class SEAnesthesiaMachine implements SEEquipment
     if(from.hasPeakInspiratoryPressure())
       this.getPeakInspiratoryPressure().set(from.getPeakInspiratoryPressure());
 
-    if(from.hasLeftChamber())    
+    if(from.hasLeftChamber())
       getLeftChamber().copy(from.getLeftChamber());
     if(from.hasRightChamber())
       getRightChamber().copy(from.getRightChamber());

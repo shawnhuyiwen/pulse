@@ -61,7 +61,7 @@ public class HowTo_VentilationMechanics
     JNIBridge.initialize();
     PulseEngine pulse = new PulseEngine(eModelType.HumanAdultVentilationMechanics);
     pulse.setLogListener(new MyListener());
-    pulse.setLogFilename("./test_results/howto/HowTo_MechanicalVentilator.java.log");
+    pulse.setLogFilename("./test_results/howto/HowTo_VentilationMechanics.java.log");
     
     // Create data requests for each value that should be written to the output log as the engine is executing
     // Physiology System Names are defined on the System Objects

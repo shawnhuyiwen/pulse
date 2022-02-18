@@ -59,7 +59,7 @@ public class HowTo_RespiratoryMechanics
     JNIBridge.initialize();
     PulseEngine pulse = new PulseEngine();
     pulse.setLogListener(new MyListener());
-    pulse.setLogFilename("./test_results/howto/HowTo_MechanicalVentilator.java.log");
+    pulse.setLogFilename("./test_results/howto/HowTo_RespiratoryMechanics.java.log");
     
     // setup data requests to write to a csv file so we can plot data
     SEDataRequestManager dataRequests = new SEDataRequestManager();

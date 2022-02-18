@@ -89,7 +89,7 @@ namespace HowTo_PatientStates
             Console.WriteLine("Error Advancing Time!");
           else
           {
-            string state_filename = "./states/Soldier_w"+ injury_set_names[i]+"@"+current_time_min+"min.json";
+            string state_filename = "./test_results/howto/HowTo_PatientStates/Soldier_w" + injury_set_names[i]+"@"+current_time_min+"min.json";
             // Pull data from pulse
             data_values = pulse.PullData();
             // And write it out to the console
