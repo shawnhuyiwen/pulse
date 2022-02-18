@@ -13,12 +13,11 @@ to ask or share anything and everything about building, using, or understanding 
 
 ## Build Environment
 
-The code provided utilizes C++11. Here is a list of popular compilers and their initial version to implement all of C++11 :
-- GCC 4.8.1 and later
-- Clang 3.3 and later
-- MSVC 2015 and later
+The code provided utilizes C++17, here is a list of popular compilers and their initial version to implement all of C++17 :
 
-If you have any questions\comments, don't hesitate to email kitware@kitware.com.
+- GCC 7 and later
+- Clang 5 and later
+- MSVC 2017 and later
 
 While the provided cmake superbuild automatically pulls many libraries it needs to compile, 
 you will still need to have the following tools installed (along with your choice of C++ compiler) :
@@ -32,51 +31,38 @@ Ensure that cmake bin is on your PATH and available in your cmd/bash shell.
 
 If you are on a Debian/Ubuntu system, please install the latest cmake on your system by <a href="https://apt.kitware.com/">following thes instructions</a>.
 
-##### Building CMake
-
-If you need to build CMake for the latest version, the <a href="https://cmake.org/download/">CMake Download page</a> provides source releases.  
-The following should get you through the build process for CMake:
-
-~~~bash
-# Set up some dependent libraries you will need
-$ sudo apt-get install zlib1g-dev
-$ sudo apt-get install libcurl4-openssl-dev
-# If you want to build the CMake GUI, you will need
-$ sudo apt-get install libqt4-dev qt4-dev-tools libncurses5-dev
-# Get the code link for the cmake download
-# I used 'Copy Link Address' from my browser on the tar.gz source download link...
-# Run the following commands from the directory you wish to build CMake
-$ wget https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz
-# Extract the source
-$ tar -zxvf cmake-3.17.3-Linux-x86_64.tar.gz
-$ cd cmake-3.17.3-Linux-x86_64.tar.gz
-# Run the bootstrap, build and install the code
-$ ./bootstrap --system-curl --qt-gui
-# Remove the --qt-gui if you do not want to build the CMake GUI
-$ make
-$ sudo make install
-~~~
-
 ### Java JDK
 
 The test suite and data generate tools used are written in Java.
 While there is no dependency on Java when integrating with your application, it is currently required to build/develop/contribute to the code base.
 
 A JAVA_HOME environment variable needs to exist pointing to the Java installation.<br>
-There are many ways to do this, here is a simple walk through to get you going with a JDK:
+There are many ways to do this.
+We recomend using the Amazon Corretto JDK 8
+
+Follow the installation instructions for your operating system <a href="https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/what-is-corretto-8.html">here.</a>
 
 #### Windows
-The JAVA_HOME environment variable pointing to the Java installation needs to be added to the system PATH.<br>
+
+To set a global JAVA_HOME environment variable pointing to the Java installation:
 
 - Download the Windows x64 JDK <a href="https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/downloads-list.html">here.</a>
-- Run the installer.
+- Run the installer for Win.
 - Goto your Control Panel->System and click Advanced system settings on the left. <br>
 - Click the 'Environment Variables' button and add JAVA_HOME as a new 'System variables'.<br>
 - Set the Value to something like: N:/Programming/Tools/jdk1.8.0_212<br>
     - It's a good idea to add the JDK to the system PATH by adding this to the beginning: %JAVA_HOME%/bin;
 - Make sure to start a new cmd window.<br>
 
+#### Mac
+
+Use the <a href="https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/macos-install.html"> instructions provided by amazon. </a> 
+
 #### Linux
+
+Use the <a href="https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/generic-linux-install.html"> instructions provided by amazon. </a> 
+
+If you would like to use the open jdk, follow these instructions:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~bash
 # Check to see if you have the JDK
