@@ -15,7 +15,8 @@ to ask or share anything and everything about building, using, or understanding 
 
 The code provided utilizes C++17, here is a list of popular compilers and their initial version to implement all of C++17 :
 
-- GCC 7 and later
+- GCC 9 and later
+  - While GCC 7/8 have C++17 support, it was still experimental and requires different includes/linkages
 - Clang 5 and later
 - MSVC 2017 and later
 
