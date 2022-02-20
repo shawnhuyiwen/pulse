@@ -1814,9 +1814,7 @@ namespace pulse
   {
     if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      // Note the m_CurrentDriverCycleTime_s is locked to the time step
-      // but m_DriverCyclePeriod_s is not, so take away a timestep to ensure we completed the cycle
-      if (m_CurrentDriverCycleTime_s >= m_DriverCyclePeriod_s - m_data.GetTimeStep_s())
+      if (m_CurrentDriverCycleTime_s >= m_DriverCyclePeriod_s)
       {
   #ifdef LOG_TIMING
           Info("Completing Driver Cycle");
