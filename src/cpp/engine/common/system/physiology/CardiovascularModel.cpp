@@ -620,10 +620,9 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::PreProcess()
   {
+    HeartDriver();
     ProcessActions();
     CalculatePleuralCavityVenousEffects();
-
-    HeartDriver();
   }
 
   //--------------------------------------------------------------------------------------------------
