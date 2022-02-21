@@ -192,19 +192,6 @@ public:
   static void Copy(const SEECMOConfiguration& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr);
 
   ///////////////////////////
-  // ECMO //
-  ///////////////////////////
-
-  static void Serialize(const CDM_BIND::ECMOActionData& src, SEECMOAction& dst);
-  static void Serialize(const SEECMOAction& src, CDM_BIND::ECMOActionData& dst);
-
-  static void Load(const CDM_BIND::ECMOConfigurationData& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr);
-  static CDM_BIND::ECMOConfigurationData* Unload(const SEECMOConfiguration& src);
-  static void Serialize(const CDM_BIND::ECMOConfigurationData& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr);
-  static void Serialize(const SEECMOConfiguration& src, CDM_BIND::ECMOConfigurationData& dst);
-  static void Copy(const SEECMOConfiguration& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr);
-
-  ///////////////////////////
   // Mechanical Ventilator //
   ///////////////////////////
 
