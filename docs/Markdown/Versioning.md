@@ -12,7 +12,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ---
 
-## Pulse v4.1.0 (Mar 2022)
+## Pulse v4.1.0 (March 2022)
 
 - Software Architecture Improvements
   - Including build information
@@ -21,7 +21,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - New Hemodyamics Engine
     - Provides the ability to execute and optimize our cardiovascular circuit
     - Compares optimization iterations to validation data to converve on an optimal and valid circuit configuration
-  - Update to Eigen 3.4.0 and Protobuf 3.18.0
+  - Updated to Eigen 3.4.0 and Protobuf 3.18.0
 - Physiology Model Improvements
   - Added Lorazepam 
   - Added an oversedation drug as a test case
@@ -35,21 +35,21 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - Fine Ventricular Fibrillation : Unorganized electrical signal, reduced amplitude compared to coarse VF, no mechanical function
     - Pulseless Ventricular Tachycardia : Ventricular tachycardia electrical signal with reduced amplitude, but no mechanical function
     - Stable Ventricular Tachycardia : Ventricular tachycardia electrical signal with increased heart rate
-    - Unstable Ventricular Tachycardia Ventricular tachycardia electrical signal with increased heart rate, reduced heart elastance
+    - Unstable Ventricular Tachycardia : Ventricular tachycardia electrical signal with increased heart rate, reduced heart elastance
   - ECG Waveforms use an interpolation algorithm to fit the waveform to the cardiac cycle
   - Ventilation equipment provides breath information to differentiate patient or equipment initiated breaths
   - Added configurable relief valve to mechanical ventilator
-  - Added a suite of black box unit tests to verify all possible data exchange combinations
+  - Added a suite of black box unit tests to verify data exchange combinations
   - Bug Fixes
-    - Correct flow calculations for compartments
+    - Corrected flow calculations for compartments
     - Increased the frequency data is updated in the cardiovascular system during cardiac arrest
-    - Replaced Irreversible states with more relavent clinical events: Pulse continues running unlike during Irreversible states
-    - Improved calculations of patient lung volumes during disease
+    - Replaced Irreversible states with more relavent clinical events: Pulse continues running, unlike during Irreversible states
+    - Improved calculations of patient lung volumes due to disease
 
 
 ---
 
-## Pulse v4.0.0 (Sept 2021)
+## Pulse v4.0.0 (September 2021)
 
 - Software Architecture Improvements
   - Multiple Engine Support
