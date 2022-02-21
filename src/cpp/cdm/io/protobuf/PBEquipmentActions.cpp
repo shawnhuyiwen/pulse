@@ -694,56 +694,6 @@ void PBEquipmentAction::Copy(const SEECMOConfiguration& src, SEECMOConfiguration
 }
 
 /////////////
-// ECMO //
-/////////////
-
-void PBEquipmentAction::Serialize(const CDM_BIND::ECMOActionData& src, SEECMOAction& dst)
-{
-  PBEquipmentAction::Serialize(src.equipmentaction(), dst);
-}
-void PBEquipmentAction::Serialize(const SEECMOAction& src, CDM_BIND::ECMOActionData& dst)
-{
-  PBEquipmentAction::Serialize(src, *dst.mutable_equipmentaction());
-}
-
-void PBEquipmentAction::Load(const CDM_BIND::ECMOConfigurationData& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr)
-{
-  dst.Clear();
-  PBEquipmentAction::Serialize(src, dst, subMgr);
-}
-CDM_BIND::ECMOConfigurationData* PBEquipmentAction::Unload(const SEECMOConfiguration& src)
-{
-  CDM_BIND::ECMOConfigurationData* dst = new CDM_BIND::ECMOConfigurationData();
-  PBEquipmentAction::Serialize(src, *dst);
-  return dst;
-}
-void PBEquipmentAction::Serialize(const CDM_BIND::ECMOConfigurationData& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr)
-{
-  PBEquipmentAction::Serialize(src.ecmoaction(), dst);
-  if (!src.settingsfile().empty())
-    dst.SetSettingsFile(src.settingsfile());
-  else if (src.has_settings())
-    PBECMO::Load(src.settings(), dst.GetSettings(), subMgr);
-  dst.SetMergeType((eMergeType)src.mergetype());
-}
-void PBEquipmentAction::Serialize(const SEECMOConfiguration& src, CDM_BIND::ECMOConfigurationData& dst)
-{
-  PBEquipmentAction::Serialize(src, *dst.mutable_ecmoaction());
-  if (src.HasSettingsFile())
-    dst.set_settingsfile(src.m_SettingsFile);
-  else if (src.HasSettings())
-    dst.set_allocated_settings(PBECMO::Unload(*src.m_Settings));
-  dst.set_mergetype((CDM_BIND::eMergeType)src.m_MergeType);
-}
-void PBEquipmentAction::Copy(const SEECMOConfiguration& src, SEECMOConfiguration& dst, const SESubstanceManager& subMgr)
-{
-  dst.Clear();
-  CDM_BIND::ECMOConfigurationData data;
-  PBEquipmentAction::Serialize(src, data);
-  PBEquipmentAction::Serialize(data, dst, subMgr);
-}
-
-/////////////
 // Inhaler //
 /////////////
 
