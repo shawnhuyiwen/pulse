@@ -265,6 +265,7 @@ namespace pulse
     virtual void SetupRenal();
     virtual void SetupTissue();
     virtual void SetupCerebrospinalFluid();
+    virtual void SetupECMO();
     virtual void SetupGastrointestinal();
     virtual void SetupRespiratory();
     virtual void SetupAnesthesiaMachine();

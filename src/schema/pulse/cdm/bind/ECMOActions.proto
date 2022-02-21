@@ -6,7 +6,6 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Actions.proto";
 import "pulse/cdm/bind/ECMO.proto";
-import "pulse/cdm/bind/Properties.proto";
 
 message ECMOActionData
 {
@@ -16,7 +15,7 @@ message ECMOActionData
 /** @brief The configuration of the ECMO to use. */
 message ECMOConfigurationData
 {
- ECMOActionData                                ECMOAction  = 1;
+ ECMOActionData                                ECMOAction                  = 1;
   oneof Option
   {
     ECMOSettingsData                           Settings                    = 2;/**<< @brief A settings object with properties to set in the system object. */

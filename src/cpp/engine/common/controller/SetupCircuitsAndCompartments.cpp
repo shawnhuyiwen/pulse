@@ -49,6 +49,7 @@ namespace pulse
     if (m_Config->IsCerebrospinalFluidEnabled())
       SetupCerebrospinalFluid();
     SetupGastrointestinal();
+    SetupECMO();
 
     ///////////////////////////////////////////////////////////////////
     // Create abd Combine External and Internal Temperature Circuits //
@@ -2916,6 +2917,17 @@ namespace pulse
     gCombinedCardiovascular.AddCompartment(cIntracranialSpace);
     gCombinedCardiovascular.StateChange();
   }
+
+
+  void Controller::SetupECMO()
+  {
+    Info("Setting Up ECMO");
+
+    /////////////////////////
+    // LIQUID COMPARTMENTS //
+    SELiquidCompartment& gOxygenator = m_Compartments->CreateLiquidCompartment(pulse::ECMOCompartment::Oxygenator);
+  }
+
 
   void Controller::SetupRespiratory()
   {

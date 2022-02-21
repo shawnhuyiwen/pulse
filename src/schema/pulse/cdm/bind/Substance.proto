@@ -137,12 +137,21 @@ message SubstanceFractionData
   string                                       Name                           = 1; /**<< @brief Name of a substance*/
   Scalar0To1Data                               Amount                         = 2; /**<< @brief The fractional amount of the substance. */
 }
+message SubstanceFractionListData
+{
+  repeated SubstanceFractionData              SubstanceFraction               = 1;/**<< @brief List of substance fractions. */
+}
 
 /** @brief A concentration amount associated with a substance. */
 message SubstanceConcentrationData
 {
   string                                       Name                           = 1; /**<< @brief Name of a substance*/
   ScalarMassPerVolumeData                      Concentration                  = 2; /**<< @brief The concentration of the substance. */
+}
+
+message SubstanceConcentrationListData
+{
+  repeated SubstanceConcentrationData          SubstanceConcentration         = 1;/**<< @brief List of substance concentrations. */
 }
 
 message SubstanceData

@@ -1277,6 +1277,68 @@ namespace pulse
     static std::vector<std::string> _values;
   };
 
+  class ECMOCompartment
+  {
+  public:
+    DEFINE_STATIC_STRING_EX(Oxygenator, ECMOOxygenator);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(Oxygenator);
+      }
+      return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
+  class ECMOLink
+  {
+  public:
+    DEFINE_STATIC_STRING(CardiovascularToECMO);
+    DEFINE_STATIC_STRING(ECMOToCardiovascular);
+
+    static const std::vector<std::string>& GetValues()
+    {
+      ScopedMutex lock;
+      if (_values.empty())
+      {
+        _values.push_back(CardiovascularToECMO);
+        _values.push_back(ECMOToCardiovascular);
+      }
+      return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
+  protected:
+    static std::vector<std::string> _values;
+  };
+
   class InhalerCompartment
   {
   public:

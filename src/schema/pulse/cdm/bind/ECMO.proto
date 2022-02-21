@@ -10,97 +10,18 @@ import "pulse/cdm/bind/Substance.proto";
 
 message ECMOSettingsData
 {
-  eSwitch                             Connection                                = 1;/**<< @brief @ref eSwitchTable */
-  ScalarVolumeData                    ConnectionVolume                          = 2;/**<< @brief Dead space volume of the connection (i.e., mask/tube). */
-  ScalarVolumePerPressureData         Compliance                                = 3;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
-  ScalarFrequencyData                 DriverDampingParameter                    = 4;/**<< @brief Fractional change parameter to prevent abrupt changes to the driver. */
+  eSwitch                               Connection                                = 1;/**<< @brief @ref eSwitchTable */
+  ScalarVolumeData                      PrimingVolume                             = 2;/**<< @brief Includes the volume in the device and tubing. */
+  ScalarVolumePerTimeData               TransfustionFlow                          = 3;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
   
-  oneof ExpiratoryBaseline
+  oneof Primer
   {
-    ScalarPressureData                PositiveEndExpiredPressure                = 5; /**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
-    ScalarPressureData                FunctionalResidualCapacity                = 6; /**<< @brief Total lung volume at the end of exhalation. */
+    string                              SubstanceCompound                         = 4;/**<< @brief Set volume to a specific substance compound. */
+    SubstanceConcentrationListData      SubstanceConcentrationList                = 5;/**<< @brief Set the volume with several substance concentrations. */
   }
-  oneof ExpirationCycle
-  {
-    ScalarVolumePerTimeData           ExpirationCycleFlow                       = 7; /**<< @brief Ventilator sensor flow value to trigger expiration phase. */
-    ScalarPressureData                ExpirationCyclePressure                   = 8; /**<< @brief Ventilator sensor pressure value to trigger expiration phase. */
-    ScalarTimeData                    ExpirationCycleTime                       = 9; /**<< @brief Total length of inspiration phase to trigger expiration phase. */
-    ScalarVolumeData                  ExpirationCycleVolume                     = 10;/**<< @brief Ventilator sensor volume change (i.e., tidal volume) to trigger expiration phase. */
-    eSwitch                           ExpirationCycleRespiratoryModel           = 11;/**<< @brief Trigger expiration phase from respiratory model event. */
-  }
-  
-  ScalarVolumeData                    ExpirationLimbVolume                      = 12;/**<< @brief Dead space volume of the expiratory limb. */
-  ScalarPressureTimePerVolumeData     ExpirationTubeResistance                  = 13;/**<< @brief Total resistance of expiratory limb tubing. */  
-  ScalarPressureTimePerVolumeData     ExpirationValveResistance                 = 14;/**<< @brief Total resistance of expiratory valves. */
-  ScalarVolumeData                    ExpirationValveVolume                     = 15;/**<< @brief Dead space volume of the expiratory valve. */
-  ScalarTimeData                      ExpirationWaveformPeriod                  = 17;/**<< @brief Time to reach minimum value */
-  
-  oneof InspirationLimit
-  {
-    ScalarVolumePerTimeData           InspirationLimitFlow                      = 18;/**<< @brief Ventilator sensor flow cutoff/maximum. */
-    ScalarPressureData                InspirationLimitPressure                  = 19;/**<< @brief Ventilator sensor pressure cutoff/maximum. */
-    ScalarVolumeData                  InspirationLimitVolume                    = 20;/**<< @brief Total lung volume cutoff/maximum. */
-  }
-  
-  ScalarTimeData                      InspirationPauseTime                      = 21;/**<< @brief Time of plateau (i.e., constant driver pressure) between inspiration and expiration. */
-  
-  oneof InspiratoryTarget
-  {
-    ScalarVolumePerTimeData           InspirationTargetFlow                     = 22;/**<< @brief Air flow at end of inhalation. */
-    ScalarPressureData                PeakInspiratoryPressure                   = 23;/**<< @brief Extrinsic pressure above atmosphere at the end of inhalation. */
-  }
-  
-  oneof InspirationMachineTrigger
-  {
-    ScalarTimeData                    InspirationMachineTriggerTime             = 24;/**<< @brief Total length of expiration phase to trigger inspiration phase. */
-  }
-  
-  oneof InspirationPatientTrigger
-  {
-    ScalarVolumePerTimeData           InspirationPatientTriggerFlow             = 25;/**<< @brief Ventilator sensor volume change value to trigger inspiration phase. */
-    ScalarPressureData                InspirationPatientTriggerPressure         = 26;/**<< @brief Ventilator sensor pressure value to trigger inspiration phase. */
-    eSwitch                           InspirationPatientTriggerRespiratoryModel = 27;/**<< @brief Trigger inspiration phase from respiratory model event. */
-  }
-  
-  ScalarVolumeData                    InspirationLimbVolume                     = 28;/**<< @brief Dead space volume of the inspiratory limb. */
-  ScalarPressureTimePerVolumeData     InspirationTubeResistance                 = 29;/**<< @brief Total resistance of inspiratory limb tubing. */  
-  ScalarPressureTimePerVolumeData     InspirationValveResistance                = 30;/**<< @brief Total resistance of inspiratory valves. */
-  ScalarVolumeData                    InspirationValveVolume                    = 31;/**<< @brief Dead space volume of the inspiratory valve. */
-  ScalarTimeData                      InspirationWaveformPeriod                 = 33;/**<< @brief Time to reach maximum value */
-  
-  ScalarPressureData                  ReliefValveThreshold                      = 34;/**<< @brief Pressure at which the relief valve opens. */
-  ScalarVolumeData                    YPieceVolume                              = 35;/**<< @brief Dead space volume of the y-piece. */
-  
-  repeated SubstanceFractionData      FractionInspiredGas                       = 36;/**<< @brief Break down of the gases, such as FiO2. */
-  repeated SubstanceConcentrationData ConcentrationInspiredAerosol              = 37;/**<< @brief Concentration of added aerosolized substances. */
 }
 
 message ECMOData
 {
-  ScalarPressureData                  AirwayPressure                            = 1; /**<< @brief Instantaneous pressure applied during positive-pressure mechanical ventilation. */
-  eBreathState                        BreathState                               = 2; /**<< @brief @ref eBreathStateTable */
-  ScalarVolumePerPressureData         DynamicPulmonaryCompliance                = 3; /**<< @brief The pulmonary compliance during periods of gas flow.*/
-  Scalar0To1Data                      EndTidalCarbonDioxideFraction             = 4; /**<< @brief The fraction of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
-  ScalarPressureData                  EndTidalCarbonDioxidePressure             = 5; /**<< @brief The pressure of gas in the mouth/nose that is carbon dioxide at the end of each respiratory cycle.*/
-  Scalar0To1Data                      EndTidalOxygenFraction                    = 6; /**<< @brief The fraction of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
-  ScalarPressureData                  EndTidalOxygenPressure                    = 7; /**<< @brief The pressure of gas in the mouth/nose that is oxygen at the end of each respiratory cycle.*/
-  ScalarVolumePerTimeData             ExpiratoryFlow                            = 8; /**<< @brief Instantaneous airflow out of the lungs (negative value when inhaling).*/
-  ScalarVolumeData                    ExpiratoryTidalVolume                     = 9; /**<< @brief The volume of air moved into or out of the lungs during normal expiration.*/
-  ScalarData                          InspiratoryExpiratoryRatio                = 10;/**<< @brief The ratio of the length of time of inspiration to the length of time of expiration.*/
-  ScalarVolumePerTimeData             InspiratoryFlow                           = 11;/**<< @brief The instantaneous airflow into the lungs (negative value when exhaling).*/
-  ScalarVolumeData                    InspiratoryTidalVolume                    = 12;/**<< @brief The volume of air moved into or out of the lungs during normal inspiration.*/
-  ScalarPressureData                  IntrinsicPositiveEndExpiredPressure       = 13;/**<< @brief The alveolar pressure at the end of expiration - also known as auto-PEEP, air trapping, or dynamic hyperinflation.*/
-  Scalar0To1Data                      LeakFraction                              = 14;/**<< @brief The fraction of gas volume lost during the ventilation cycle determined from the air volume in and out difference.*/
-  ScalarPressureData                  MeanAirwayPressure                        = 15;/**<< @brief Mean pressure applied during positive-pressure mechanical ventilation. */
-  ScalarPressureData                  PeakInspiratoryPressure                   = 16;/**<< @brief The highest pressure applied to the lungs (alveolar pressure) above atmospheric pressure during inhalation.*/
-  ScalarPressureData                  PlateauPressure                           = 17;/**<< @brief The pressure applied by the ventilator measured at end-inspiration with an inspiratory hold maneuver.*/
-  ScalarPressureData                  PositiveEndExpiratoryPressure             = 18;/**<< @brief Extrinsic pressure above atmosphere at the end of exhalation. */
-  ScalarPressureTimePerVolumeData     PulmonaryResistance                       = 19;/**<< @brief The total resistance to airflow through the lungs.*/
-  ScalarFrequencyData                 RespirationRate                           = 20;/**<< @brief The frequency of the respiratory cycle.*/
-  ScalarVolumePerPressureData         StaticPulmonaryCompliance                 = 21;/**<< @brief The pulmonary compliance during periods without gas flow.*/
-  ScalarVolumeData                    TidalVolume                               = 22;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
-  ScalarVolumeData                    TotalLungVolume                           = 23;/**<< @brief The total volume of air within the lungs at any given time.*/
-  ScalarVolumePerTimeData             TotalPulmonaryVentilation                 = 24;/**<< @brief The flow rate representing the exchange of air between the lungs and ambient air.*/
-
-  ECMOSettingsData    Settings                                  = 25;
+  ECMOSettingsData                      Settings                                  = 1;
 }
