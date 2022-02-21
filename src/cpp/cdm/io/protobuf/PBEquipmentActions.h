@@ -178,9 +178,9 @@ public:
   static void Serialize(const SEInhalerConfiguration& src, CDM_BIND::InhalerConfigurationData& dst);
   static void Copy(const SEInhalerConfiguration& src, SEInhalerConfiguration& dst, const SESubstanceManager& subMgr);
 
-  ///////////////////////////
+  //////////
   // ECMO //
-  ///////////////////////////
+  //////////
 
   static void Serialize(const CDM_BIND::ECMOActionData& src, SEECMOAction& dst);
   static void Serialize(const SEECMOAction& src, CDM_BIND::ECMOActionData& dst);

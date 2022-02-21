@@ -643,9 +643,9 @@ void PBEquipmentAction::Copy(const SEBagValveMaskAutomated& src, SEBagValveMaskA
   PBEquipmentAction::Serialize(data, dst);
 }
 
-/////////////
+//////////
 // ECMO //
-/////////////
+//////////
 
 void PBEquipmentAction::Serialize(const CDM_BIND::ECMOActionData& src, SEECMOAction& dst)
 {
