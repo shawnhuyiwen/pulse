@@ -675,6 +675,8 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cpp
     system/equipment/ecmo/SEECMO.cpp
     system/equipment/ecmo/SEECMOSettings.cpp
+    system/equipment/ecmo/actions/SEECMOAction.cpp
+    system/equipment/ecmo/actions/SEECMOConfiguration.cpp
     system/equipment/electrocardiogram/SEElectroCardioGram.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.cpp
     system/equipment/inhaler/SEInhaler.cpp
