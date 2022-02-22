@@ -4,8 +4,8 @@
 #pragma once
 
 #include "cdm/properties/SEScalar.h"
-#include "circuit/SECircuitNode.h"
-#include "circuit/SECircuitPath.h"
+#include "cdm/circuit/SECircuitNode.h"
+#include "cdm/circuit/SECircuitPath.h"
 
 #define BLACK_BOX_TEMPLATE typename NodeType, typename PathType, \
                            typename PotentialScalar, typename QuantityScalar, typename FluxScalar, \
