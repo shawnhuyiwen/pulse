@@ -53,7 +53,9 @@ RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto && \
           /source && \
     cd /build && \
     make -j4 && \
-    cd /
+    cd /  && \
+    rm -rf /build
+
 
 ENV PYTHONPATH /pulse/bin:/pulse/python
     
