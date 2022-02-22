@@ -2,10 +2,7 @@ ARG BASE=debian:bullseye
 FROM $BASE
 ARG BASE
 
-ARG JUPYTER=OFF
-
 RUN echo $BASE
-RUN echo $JUPYTER
 
 ENV TERM linux
 
@@ -24,19 +21,6 @@ RUN if [ "$BASE" = "fedora:32" ]; then \
   curl -L -o /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.repo && \
   yum install -y java-1.8.0-amazon-corretto-devel \
   ;fi
-
-# Replace with pip install -r requirements.txt
-# Or a setup.py
-RUN if [ "$JUPYTER" = "ON" ]; then \
-    pip3 install six \
-    && pip3 install numpy \
-    && pip3 install pandas \
-    && pip3 install matplotlib \
-    && pip3 install bqplot \
-    && pip3 install jupyter \
-    && pip3 install ipywidgets \
-    && jupyter nbextension enable --py bqplot \
-    ;fi
  
 # Pull in local source and build
 COPY . /source
