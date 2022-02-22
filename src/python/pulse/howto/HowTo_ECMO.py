@@ -3,12 +3,10 @@
 
 from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.ecmo_actions import SEECMOConfiguration
-from pulse.cdm.scalars import FrequencyUnit, PressureUnit, PressureTimePerVolumeUnit, \
-                              TimeUnit, VolumeUnit, VolumePerPressureUnit, VolumePerTimeUnit
-from pulse.cdm.ecmo import eSwitch
+from pulse.cdm.scalars import FrequencyUnit, MassPerTimeUnit, MassPerVolumeUnit, \
+                              PressureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
 from pulse.cdm.engine import SEDataRequest, SEDataRequestManager
-from pulse.cdm.patient_actions import SEDyspnea
-
+from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 
 def HowTo_ECMO():
     pulse = PulseEngine()
@@ -16,53 +14,60 @@ def HowTo_ECMO():
     pulse.log_to_console(True)
 
     data_requests = [
+        SEDataRequest.create_physiology_request("BloodPH"),
+        SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL),
+        SEDataRequest.create_physiology_request("CarbonDioxideSaturation", unit=VolumeUnit.mL),
+        SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
+        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("Hematocrit"),
+        SEDataRequest.create_physiology_request("OxygenSaturation"),
         SEDataRequest.create_physiology_request("RespirationRate", unit=FrequencyUnit.Per_min),
+        SEDataRequest.create_physiology_request("SystolicArterialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("TidalVolume", unit=VolumeUnit.mL),
-        SEDataRequest.create_physiology_request("TotalLungVolume", unit=VolumeUnit.mL),
-        SEDataRequest.create_physiology_request("ExpiratoryPulmonaryResistance", unit=PressureTimePerVolumeUnit.cmH2O_s_Per_L),
-        SEDataRequest.create_physiology_request("InspiratoryPulmonaryResistance", unit=PressureTimePerVolumeUnit.cmH2O_s_Per_L),
-        SEDataRequest.create_physiology_request("PulmonaryCompliance", unit=VolumePerPressureUnit.L_Per_cmH2O),
         SEDataRequest.create_physiology_request("TotalPulmonaryVentilation", unit=VolumePerTimeUnit.L_Per_min),
-        # Ventilator Monitor Data
-        SEDataRequest.create_ecmo_request("AirwayPressure", unit=PressureUnit.cmH2O),
-        SEDataRequest.create_ecmo_request("EndTidalCarbonDioxideFraction"),
-        SEDataRequest.create_ecmo_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.cmH2O),
-        SEDataRequest.create_ecmo_request("EndTidalOxygenFraction"),
-        SEDataRequest.create_ecmo_request("EndTidalOxygenPressure", unit=PressureUnit.cmH2O),
-        SEDataRequest.create_ecmo_request("ExpiratoryFlow", unit=VolumePerTimeUnit.L_Per_s),
-        SEDataRequest.create_ecmo_request("ExpiratoryTidalVolume", unit=VolumeUnit.L),
-        SEDataRequest.create_ecmo_request("InspiratoryExpiratoryRatio"),
-        SEDataRequest.create_ecmo_request("InspiratoryFlow", unit=VolumePerTimeUnit.L_Per_s),
-        SEDataRequest.create_ecmo_request("InspiratoryTidalVolume", unit=VolumeUnit.L),
-        SEDataRequest.create_ecmo_request("IntrinsicPositiveEndExpiredPressure", unit=PressureUnit.cmH2O),
-        SEDataRequest.create_ecmo_request("LeakFraction"),
-        SEDataRequest.create_ecmo_request("MeanAirwayPressure", unit=PressureUnit.cmH2O),
-        SEDataRequest.create_ecmo_request("PeakInspiratoryPressure", unit=PressureUnit.cmH2O),
-        SEDataRequest.create_ecmo_request("PlateauPressure", unit=PressureUnit.cmH2O),
-        SEDataRequest.create_ecmo_request("PositiveEndExpiratoryPressure", unit=PressureUnit.cmH2O),
-        SEDataRequest.create_ecmo_request("RespirationRate", unit=FrequencyUnit.Per_min),
-        SEDataRequest.create_ecmo_request("TidalVolume", unit=VolumeUnit.L),
-        SEDataRequest.create_ecmo_request("TotalLungVolume", unit=VolumeUnit.L),
-        SEDataRequest.create_ecmo_request("TotalPulmonaryVentilation", unit=VolumePerTimeUnit.L_Per_s)
+        SEDataRequest.create_substance_request("Bicarbonate", "BloodConcentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_substance_request("CarbonDioxide", "AlveolarTransfer", unit=VolumePerTimeUnit.mL_Per_s),
+        SEDataRequest.create_substance_request("Oxygen", "AlveolarTransfer", unit=VolumePerTimeUnit.mL_Per_s),
+        SEDataRequest.create_substance_request("Sodium", "BloodConcentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("Aorta", "CarbonDioxide", "PartialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_liquid_compartment_substance_request("Aorta", "Oxygen", "PartialPressure", unit=PressureUnit.mmHg),
+        # ECMO Oxygenator Data
+        SEDataRequest.create_liquid_compartment_request("ECMOOxygenator", "PH"),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Albumin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Bicarbonate", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Calcium", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "CarbonDioxide", "PartialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Chloride", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Creatinine", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Glucose", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Lactate", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Oxygen", "PartialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Potassium", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Sodium", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Urea", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        # Various Hb concentrations
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Hemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Carbaminohemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Carboxyhemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "OxyCarbaminohemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Oxyhemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
     ]
 
     data_mgr = SEDataRequestManager(data_requests)
     data_mgr.set_results_filename("./test_results/howto/HowTo_ECMO.py.csv")
 
+    pc = SEPatientConfiguration()
+    patient = pc.get_patient()
+    patient.set_name("ECMO")
+    patient.set_sex(eSex.Female)
     # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.serialize_from_file("./states/StandardMale@0s.pbb", data_mgr):
-        print("Unable to load initial state file")
+    if not pulse.initialize_engine(pc, data_mgr):
+        print("Unable to create/load patient, check the error")
         return
 
-    # Get default data at time 0s from the engine
-    results = pulse.pull_data()
-    data_mgr.to_console(results)
-
-    # Give the patient Dyspnea
-    dsypnea = SEDyspnea()
-    dsypnea.set_comment("Patient's dsypnea occurs")
-    dsypnea.get_severity().set_value(1.0)
-    pulse.process_action(dsypnea)
     pulse.advance_time_s(10)
     # Get the values of the data you requested at this time
     results = pulse.pull_data()
