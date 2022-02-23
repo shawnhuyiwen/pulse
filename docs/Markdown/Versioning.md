@@ -18,7 +18,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Including build information
     - Added to all client facing API's (C++, Java, Python, C#) for external applications to get Pulse version
     - Added to state files to help identify compatibility with engine builds
-  - New Hemodyamics Engine
+  - New Hemodynamics Engine
     - Provides the ability to execute and optimize our cardiovascular circuit
     - Compares optimization iterations to validation data to converve on an optimal and valid circuit configuration
   - Updated to Eigen 3.4.0 and Protobuf 3.18.0
@@ -26,10 +26,10 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
   - Added Lorazepam 
   - Added an oversedation drug as a test case
   - New Advanced Cardiac Life Support (ACLS) Arrhythimias with ECG waveforms
-    - NormalSinus : Normal electical signal and mechanical function
-    - Sinus Bradycardia : Normal electical signal with reduced heart rate
-    - Sinus Tachycardia : Normal electical signal and increased heart rate
-    - Sinus Pulseless Electrical Activity : Electical signal, but no mechanical function
+    - NormalSinus : Normal electrical signal and mechanical function
+    - Sinus Bradycardia : Normal electrical signal with reduced heart rate
+    - Sinus Tachycardia : Normal electrical signal and increased heart rate
+    - Sinus Pulseless Electrical Activity : Organized electrical signal, but no mechanical function
     - Asystole : No electrical signal or mechanical function
     - Coarse Ventricular Fibrillation : Unorganized electrical signal, no mechanical function
     - Fine Ventricular Fibrillation : Unorganized electrical signal, reduced amplitude compared to coarse VF, no mechanical function
