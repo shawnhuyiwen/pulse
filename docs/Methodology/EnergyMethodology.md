@@ -408,7 +408,7 @@ Appendices
 
 Acronyms
 --------
-RQ - %Respiratory Quotient
+RQ - Respiratory Quotient
 BMR - Basal Metabolic Rate
 
 Data Model Implementation

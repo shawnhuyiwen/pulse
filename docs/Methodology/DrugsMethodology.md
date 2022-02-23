@@ -324,77 +324,77 @@ Validation of intravenous administration of a hypotonic solution and blood produ
 Validation - Pharmacokinetic
 --------------------
 
-The PK model was validated by comparing the plasma concentration calculated by the engine to plasma concentration curves found in the literature. The comparisons are shown in Figures 4-14. No available data was found for Epinephrine, so this drug was only validated from a PD perspective.
+The PK model was validated by comparing the plasma concentration calculated by the engine to plasma concentration curves found in the literature. The comparisons are shown in Figures 2-14. No available data was found for Epinephrine, so this drug was only validated from a PD perspective.
 
 <img src="./plots/Drugs/Albuterol.jpg" width="1100">
 <center>
-<i>Figure 4. Albuterol is an aerosol. Alveolar exchange takes place bidirectionally as long as the "gas" (aerosol) is in the blood or in the environment. For that reason, the concentration of Albuterol in the plasma diminishes much faster in the engine than demonstrated in literature @cite anderson1998pharmacokinetics. This is a known issue and an area of future work.</i>
+<i>Figure 2. Albuterol is an aerosol. Alveolar exchange takes place bidirectionally as long as the "gas" (aerosol) is in the blood or in the environment. For that reason, the concentration of Albuterol in the plasma diminishes much faster in the engine than demonstrated in literature @cite anderson1998pharmacokinetics. This is a known issue and an area of future work.</i>
 </center><br>
 
 <img src="./plots/Drugs/Etomidate.jpg" width="1100">
 <center>
-<i>Figure 5. The physical chemical properties of etomidate found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite Hebron1983pharmacokinetics, @cite Valk2021etomidate, and @cite VanHamme1978pharmacokinetics.</i>
+<i>Figure 3. The physical chemical properties of etomidate found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite Hebron1983pharmacokinetics, @cite Valk2021etomidate, and @cite VanHamme1978pharmacokinetics.</i>
 </center><br>
 
 
 <img src="./plots/Drugs/Fentanyl.jpg" width="1100">
 <center>
-<i>Figure 5. The physical chemical properties of fentanyl found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite shankaran2013physiologically.</i>
+<i>Figure 4. The physical chemical properties of fentanyl found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite shankaran2013physiologically.</i>
 </center><br>
 
 <img src="./plots/Drugs/Furosemide.jpg" width="1100">
 <center>
-<i>Figure 6. The physical chemical properties of furosemide found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite hammarlund1985acute.</i>
+<i>Figure 4. The physical chemical properties of furosemide found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite hammarlund1985acute.</i>
 </center><br>
 
 <img src="./plots/Drugs/Ketamine.jpg" width="1100">
 <center>
-<i>Figure 7. The partition coefficients were calculated from initial physical chemical properties found for Ketamine. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite xie2003analgesic.</i>
+<i>Figure 5. The partition coefficients were calculated from initial physical chemical properties found for Ketamine. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite xie2003analgesic.</i>
 </center><br>
 
 <img src="./plots/Drugs/Lorazepam.jpg" width="1100">
 <center>
-<i>Figure 8. The engine curve for lorazepam plasma concentration shows a good overall fit with the experimental data found in @cite Swart2003comparitive, @cite Kyriakopoulos1978Clinical, and @cite Greenblatt1981Clinical.</i>
+<i>Figure 6. The engine curve for lorazepam plasma concentration shows a good overall fit with the experimental data found in @cite Swart2003comparitive, @cite Kyriakopoulos1978Clinical, and @cite Greenblatt1981Clinical.</i>
 </center><br>
 
 <img src="./plots/Drugs/Midazolam.jpg" width="1100">
 <center>
-<i>Figure 9. The engine curve for midazolam plasma concentration shows a good overall fit with the experimental data found in @cite schwagmeier1998midazolam. However, the clearance dominant (end) portion of the curve shows that the engine should be clearing more quickly, while midazolam appears to move into the tissues too quickly during the diffusion dominant portion of the curve (beginning).</i>
+<i>Figure 7. The engine curve for midazolam plasma concentration shows a good overall fit with the experimental data found in @cite schwagmeier1998midazolam. However, the clearance dominant (end) portion of the curve shows that the engine should be clearing more quickly, while midazolam appears to move into the tissues too quickly during the diffusion dominant portion of the curve (beginning).</i>
 </center><br>
 
 <img src="./plots/Drugs/Morphine.jpg" width="1100">
 <center>
-<i>Figure 10. The physical chemical properties of morphine found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite lotsch2002pharmacokinetic.</i>
+<i>Figure 8. The physical chemical properties of morphine found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite lotsch2002pharmacokinetic.</i>
 </center><br>
 
 <img src="./plots/Drugs/Naloxone.jpg" width="1100">
 <center>
-<i>Figure 11.  The partition coefficients were calculated from initial physical chemical properties found for Naloxone. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite aitkenhead1984pharmacokinetics.</i>
+<i>Figure 9.  The partition coefficients were calculated from initial physical chemical properties found for Naloxone. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite aitkenhead1984pharmacokinetics.</i>
 </center><br>
 
 <img src="./plots/Drugs/Pralidoxime.jpg" width="1100">
 <center>
-<i>Figure 12. The pralidoxime experimental data found in @cite abbara2010pharmacokinetic was collected after an intramuscular injection. This administration method is available in the engine, so was used to validate the drug. The overall fit between the engine data and the experimental data was good. A slightly higher concentration throughout was evident and may be attributed to the amount of drug that never exits the muscle when this type of injection occurs. In the future, a loss factor could be added to represent this drug amount.</i>
+<i>Figure 10. The pralidoxime experimental data found in @cite abbara2010pharmacokinetic was collected after an intramuscular injection. This administration method is available in the engine, so was used to validate the drug. The overall fit between the engine data and the experimental data was good. A slightly higher concentration throughout was evident and may be attributed to the amount of drug that never exits the muscle when this type of injection occurs. In the future, a loss factor could be added to represent this drug amount.</i>
 </center><br>
 
 <img src="./plots/Drugs/Prednisone.jpg" width="1100">
 <center>
-<i>Figure 13.  The physical chemical properties of prednisone found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite rose1981dose.</i>
+<i>Figure 11.  The physical chemical properties of prednisone found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite rose1981dose.</i>
 </center><br>
 
 <img src="./plots/Drugs/Propofol.jpg" width="1100">
 <center>
-<i>Figure 14. The propofol experimental data was collected during and after an infusion of propofol. The engine is able to support a rate and concentration input for an infusion; therefore, the infusion methodology was used to adminster propofol in the engine. The infusion explains the initial curve evident in the plasma concentration. The initial diffusion dominant portion of the curve shows a reduced diffusion into the tissues compared to the experimental data; however, the clearance dominant portion of the curve shows good agreement with the data found in @cite ward2002pharmacodynamics.</i>
+<i>Figure 12. The propofol experimental data was collected during and after an infusion of propofol. The engine is able to support a rate and concentration input for an infusion; therefore, the infusion methodology was used to adminster propofol in the engine. The infusion explains the initial curve evident in the plasma concentration. The initial diffusion dominant portion of the curve shows a reduced diffusion into the tissues compared to the experimental data; however, the clearance dominant portion of the curve shows good agreement with the data found in @cite ward2002pharmacodynamics.</i>
 </center><br>
 
 <img src="./plots/Drugs/Rocuronium.jpg" width="1100">
 <center>
-<i>Figure 15. The calculated plasma concentration curve for Rocuronium shows good agreement with the experimental data found in @cite de2014analysis. This is particularly true for the diffusion dominant portion of the curve, while the engine clearance is less than that shown in the experimental data.</i>
+<i>Figure 13. The calculated plasma concentration curve for Rocuronium shows good agreement with the experimental data found in @cite de2014analysis. This is particularly true for the diffusion dominant portion of the curve, while the engine clearance is less than that shown in the experimental data.</i>
 </center><br>
 
 <img src="./plots/Drugs/Succinylcholine.jpg" width="1100">
 <center>
-<i>Figure 16. The succinycholine pharmacokinetics were initially calculated from the values found in literature for the physical chemical properties. However, this were significantly adjusted to attempt to match the calculated plasma concentration to the experimental data found in @cite roy2002concentration.</i>
+<i>Figure 14. The succinycholine pharmacokinetics were initially calculated from the values found in literature for the physical chemical properties. However, this were significantly adjusted to attempt to match the calculated plasma concentration to the experimental data found in @cite roy2002concentration.</i>
 </center><br>
 
 The above results show that, in general, the model chosen for the engine produces good agreement between experimental and calculated data. However, it also reveals that for some drugs, this model does not appear to be valid. Future work will investigate the incorporation of vaporized substance methodologies, and additional partition coefficient calculations that may prove more accurate for specific drug types. Further statistical analysis will also be undertaken to assess the model performance rather than solely relying on a qualitative analysis.
@@ -469,7 +469,7 @@ The pharmacodynamic effects of the drugs were validated by comparing the effects
 
 @anchor drugs-furosemide
 ### Diuretic-Furosemide 
-PD effects for the diuretic Furosemide are handled differently than other drugs in the engine. Localized effects are implemented via a tubular permeability modifier. This effectively simulates Furosemide's effect on the tubular luminal Na-K-Cl co-transporter, inhibiting reabsorption of fluid and ions into the vasculature, as shown in figure 15. The permeability modifier is a function of the PK effects of the drug concentration in the blood plasma. These concentrations are then mapped to a Hill-type sigmoid to determine appropriate tubular reabsorption inhibition via reducing the permeability of the tubular lumen, see @ref RenalMethodology. This effectively increases the urine production rate and ion excretion, and reduces the patient's total blood volume. To see the effects of the drug on the cardiovascular system during ventricular systolic dysfunction, see @ref cardiovascular-validation-conditions "Cardiovascular System".
+PD effects for the diuretic Furosemide are handled differently than other drugs in the engine. Localized effects are implemented via a tubular permeability modifier. This effectively simulates Furosemide's effect on the tubular luminal Na-K-Cl co-transporter, inhibiting reabsorption of fluid and ions into the vasculature, as shown in Figure 15. The permeability modifier is a function of the PK effects of the drug concentration in the blood plasma. These concentrations are then mapped to a Hill-type sigmoid to determine appropriate tubular reabsorption inhibition via reducing the permeability of the tubular lumen, see @ref RenalMethodology. This effectively increases the urine production rate and ion excretion, and reduces the patient's total blood volume. To see the effects of the drug on the cardiovascular system during ventricular systolic dysfunction, see @ref cardiovascular-validation-conditions "Cardiovascular System".
 
 <center>
 <table border="0">
@@ -487,7 +487,7 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
 </table>
 </center>
 <center>
-<i>Figure 16. The diuretic furosemide causes an inhibition of reabsorption due to its effect on the tubular lumen co-transporter. Total blood volume decreases as urine production and ion excretion increase. Eventually, as the body clears the drug, urine production and ion excretion both begin to return to normal.</i>
+<i>Figure 15. The diuretic furosemide causes an inhibition of reabsorption due to its effect on the tubular lumen co-transporter. Total blood volume decreases as urine production and ion excretion increase. Eventually, as the body clears the drug, urine production and ion excretion both begin to return to normal.</i>
 </center><br>
 
 Norepinephrine occurs naturally in the body and its basal metabolic value is validated as part of the @ref BloodChemistryMethodology. The infusion of norepinephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for five different infusion rates. They are shown in Table 9.
