@@ -58,7 +58,7 @@ namespace HowTo_UseEngine
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);
       // In addition to getting this data back via this API
       // You can have Pulse write the data you have requested to a CSV file
-      data_mgr.SetResultsFilename("./test_results/HowTo_EngineUse.cs.csv");
+      data_mgr.SetResultsFilename("./test_results/howto/HowTo_EngineUse.cs.csv");
       // Create a reference to a double[] that will contain the data returned from Pulse
       double[] data_values;
       // data_values[0] is ALWAYS the simulation time in seconds
@@ -72,7 +72,7 @@ namespace HowTo_UseEngine
 
       // You can ask Pulse to write out a log file if you want
       // By default, no log file is written
-      pulse.SetLogFilename("./test_results/HowTo_EngineUse.cs.log");
+      pulse.SetLogFilename("./test_results/howto/HowTo_EngineUse.cs.log");
       // You can also have pulse log to the console (std::cout)
       // By default, console logging is turned off
       pulse.LogToConsole(false);// We have a logger writing to the console in this example

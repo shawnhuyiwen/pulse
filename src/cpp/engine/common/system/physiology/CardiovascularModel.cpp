@@ -620,8 +620,6 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::PreProcess()
   {
-    // Locate the cardiac cycle in time (systole, diastole)
-    // and do the appropriate calculations based on the time location.
     HeartDriver();
     ProcessActions();
     CalculatePleuralCavityVenousEffects();
@@ -1675,7 +1673,6 @@ namespace pulse
         m_StartCardiacArrest = true;
         m_ArrhythmiaHeartElastanceModifier = 1.0;
         m_ArrhythmiaVascularToneModifier = 1.0;
-        m_CurrentDriverCycleTime_s = m_DriverCyclePeriod_s;
         m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
         m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
         m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
@@ -1750,8 +1747,11 @@ namespace pulse
       default:// Any other rhythms take us out of cardiac arrest
         Error("Unsupported heart arrhythmia.");
       }
-      Info("Setting Heart Rate Baseline to :" + m_data.GetCurrentPatient().GetHeartRateBaseline().ToString());
+      Info("Arrhythmia is setting Heart Rate Baseline to :" + m_data.GetCurrentPatient().GetHeartRateBaseline().ToString());
+      Info("Arrhythmia is setting MAP Baseline to :" + m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().ToString());
+
       //Force a new cardiac cycle to start when cardiac arrest is removed
+      m_StartSystole = true;
       m_CurrentDriverCycleTime_s = m_DriverCyclePeriod_s;
     }
   }
@@ -1812,8 +1812,21 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::HeartDriver()
   {
-    // m_StartSystole is set to true at the end of a cardiac cycle in order to setup the next cardiac cycle.
-    // After the next cycle is prepared in BeginCardiacCycle, m_StartSystole is seet back to false.
+    if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+    {
+      if (m_CurrentDriverCycleTime_s >= m_DriverCyclePeriod_s)
+      {
+  #ifdef LOG_TIMING
+          Info("Completing Driver Cycle");
+          Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+          Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+  #endif
+        m_StartSystole = true; // A new cardiac cycle will begin next time step
+      }
+      AdjustVascularTone();
+      CalculateHeartElastance();
+    }
+
     if (m_StartSystole)
     {
 #ifdef LOG_TIMING
@@ -1833,24 +1846,6 @@ namespace pulse
     }
     else
       m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
-
-    if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
-    {
-      // Note the m_CurrentDriverCycleTime_s is locked to the time step
-      // but m_DriverCyclePeriod_s is not, so take away a timestep to ensure we completed the cycle
-      if (m_CurrentDriverCycleTime_s >= m_DriverCyclePeriod_s - m_data.GetTimeStep_s())
-      {
-#ifdef LOG_TIMING
-        Info("Completing Driver Cycle");
-        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-#endif
-        m_StartSystole = true; // A new cardiac cycle will begin next time step
-      }
-
-      AdjustVascularTone();
-      CalculateHeartElastance();
-    }
 
     m_pRightHeart->GetNextCompliance().SetValue(1.0 / m_RightHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
     m_pLeftHeart->GetNextCompliance().SetValue(1.0 / m_LeftHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);

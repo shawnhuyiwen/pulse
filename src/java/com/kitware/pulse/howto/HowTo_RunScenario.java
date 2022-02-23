@@ -58,15 +58,15 @@ public class HowTo_RunScenario
     JNIBridge.initialize();
     example();
   }
-  
+
   public static void example()
   {
     RunConfiguration cfg = new RunConfiguration();
     SEScenarioExec execOpts = new SEScenarioExec();
     // Load and run a scenario
     PulseScenarioExec pse = new PulseScenarioExec();
-    execOpts.setDataRequestCSVFilename("./test_results/howto/scenarios/patient/BasicStandardResults.csv");
-    execOpts.setLogFilename("./test_results/howto/scenarios/patient/BasicStandardResults.log");
+    execOpts.setDataRequestCSVFilename("./test_results/howto/HowTo_RunSenario.java.csv");
+    execOpts.setLogFilename("./test_results/howto/HowTo_RunSenario.java.log");
     execOpts.setScenarioFilename(cfg.getScenarioDirectory()+"/patient/BasicStandard.json");
     pse.runScenario(execOpts);
     
@@ -87,8 +87,8 @@ public class HowTo_RunScenario
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);
     sce.getActions().add(adv);
-    execOpts.setDataRequestCSVFilename("./test_results/HowToStaticEngineResults.csv");
-    execOpts.setLogFilename("./test_results/HowToStaticEngineResults.log");
+    execOpts.setDataRequestCSVFilename("./test_results/howto/HowTo_RunSenario.new.java.csv");
+    execOpts.setLogFilename("./test_results/howto/HowTo_RunSenario.new.java.log");
     execOpts.setScenarioContent(sce.toJSON());
     pse.runScenario(execOpts);
   }

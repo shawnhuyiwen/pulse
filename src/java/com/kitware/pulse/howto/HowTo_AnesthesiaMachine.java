@@ -2,17 +2,13 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.pulse.howto;
 
-import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
-import com.kitware.pulse.cdm.bind.Enums;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
-import com.kitware.pulse.cdm.datarequests.SEDataRequest;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.engine.SEPatientConfiguration;
 import com.kitware.pulse.cdm.patient.SEPatient;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.LengthUnit;
-import com.kitware.pulse.cdm.properties.CommonUnits.MassPerVolumeUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.MassUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.PressureUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
@@ -90,14 +86,11 @@ public class HowTo_AnesthesiaMachine
     
     //Test
     List<Double> data;
-    SEScalarTime time = new SEScalarTime(1, TimeUnit.s);
+    SEScalarTime time = new SEScalarTime(1, TimeUnit.min);
 
     // Configure the Anesthesia Machine
     SEAnesthesiaMachineConfiguration anesthesiaMachineConfigAction = new SEAnesthesiaMachineConfiguration();
     anesthesiaMachineConfigAction.getConfiguration().setConnection(eSwitch.On);
-
-    //The following line will cause a SIGSEGV no matter what eSwitch value you use.
-    anesthesiaMachineConfigAction.getConfiguration().getLeftChamber().setState(Enums.eSwitch.On);
 
     pe.processAction(anesthesiaMachineConfigAction);
 
