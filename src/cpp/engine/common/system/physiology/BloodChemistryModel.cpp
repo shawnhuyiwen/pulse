@@ -374,7 +374,7 @@ namespace pulse
         /// \event Patient: Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a dangerously low level.
         m_data.GetEvents().SetEvent(eEvent::BrainOxygenDeficit, true, m_data.GetSimulationTime());
 
-        // If the O2 tension is below a critical threshold, the irreversible damage occurs more quickly
+        // If the O2 tension is below a critical threshold, the damage occurs more quickly
         if (m_brainO2->GetPartialPressure(PressureUnit::mmHg) < 10.0)
         {
           /// \event Patient: Critical Brain Oxygen Deficit Event. The oxygen partial pressure in the brain has dropped to a critically low level.
