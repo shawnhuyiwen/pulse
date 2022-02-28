@@ -207,8 +207,9 @@ public class Proto2Doxygen
 
     String[] path = fName.split("[\\\\/]");
     String proto_file = path[path.length-1];
+    String type       = path[path.length-3];
     String new_file_name = proto_file.substring(0, proto_file.lastIndexOf('.'));
-    new_file_name = dDir.getAbsolutePath()+"/"+new_file_name+".ixx";
+    new_file_name = dDir.getAbsolutePath()+"/"+new_file_name+"."+type+".ixx";
     File dstFile = new File(new_file_name);
     if(dstFile.exists())
       dstFile.delete();

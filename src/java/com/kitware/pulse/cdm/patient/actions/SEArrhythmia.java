@@ -66,6 +66,10 @@ public class SEArrhythmia extends SEPatientAction
   {
   	this.rhythm = t;
   }
+  public boolean hasRhythm()
+  {
+    return rhythm != null;
+  }
   
   @Override
   public String toString()
