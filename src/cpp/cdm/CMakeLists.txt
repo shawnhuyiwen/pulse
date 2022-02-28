@@ -1,3 +1,7 @@
+set(filesystem)# Support for std::filesystem::experimental
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)
+  set(filesystem stdc++fs)
+endif()
 
 add_library_ex(CommonDataModel
   H_FILES
@@ -724,6 +728,7 @@ add_library_ex(CommonDataModel
     DataModelBindings
   PRIVATE_DEPENDS
     protobuf::libprotobuf
+    ${filesystem}
   INSTALL_HEADER_DIR
     cdm
 )

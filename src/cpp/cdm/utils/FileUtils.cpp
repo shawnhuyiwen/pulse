@@ -161,7 +161,7 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
   {
     for (const auto& entry : std::filesystem::recursive_directory_iterator(dir))
     {
-      if (entry.exists() && entry.is_regular_file())
+      if (std::filesystem::exists(entry.status()) && std::filesystem::is_regular_file(entry.status()))
       {
         filename = entry.path().string();
         if (filename.find(mask) != std::string::npos)
@@ -174,7 +174,7 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
   {
     for (const auto& entry : std::filesystem::directory_iterator(dir))
     {
-      if (entry.exists() && entry.is_regular_file())
+      if (std::filesystem::exists(entry.status()) && std::filesystem::is_regular_file(entry.status()))
       {
         filename = entry.path().string();
         if (filename.find(mask) != std::string::npos)
