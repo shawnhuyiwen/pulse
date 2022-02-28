@@ -168,16 +168,21 @@ A pressure-volume curve is used to represent the evolution of the cardiac cycle 
 </center><br>
 
 ### Drug Effects
-As drugs circulate through the system, they affect the %Cardiovascular System. The drug effects on heart rate, mean arterial pressure, and pulse pressure are calculated in the %Drugs System. These effects are applied to the heart driver by incrementing the frequency of the heart based on the system parameter calculated in the %Drugs System. Additionally, the mean arterial pressure is modified by incrementing the resistance of the blood vessels. At each timestep, the resistors are incremented on each cardiovascular path. In the future, the pulse pressure will be modified by changing the heart elastance. However, no drugs had pulse pressure changes; therefore, this step has not been necessary. The strength of these effects are calculated based on the plasma concentration and the drug parameters in the substance files.  For more information on this calculation see @ref DrugsMethodology.
+As drugs circulate through the system, they affect the %Cardiovascular System. The drug effects on heart rate, mean arterial pressure, and pulse pressure are calculated in the %Drugs System. These effects are applied to the heart driver by incrementing the frequency of the heart based on the system parameter calculated in the %Drugs System. Additionally, the mean arterial pressure is modified by incrementing the resistance of the blood vessels. At each timestep, the resistors are incremented on each cardiovascular path. In the future, the pulse pressure will be modified by changing the heart elastance. However, no drugs had pulse pressure changes; therefore, this step has not been necessary. The strength of these effects are calculated based on the plasma concentration and the drug parameters in the substance files.  For more information on this calculation, see @ref DrugsMethodology.
 
 ### Electrocardiogram
-The engine electrocardiogram (%ECG) machine outputs an %ECG waveform to represent the currently supported heart rhythms. The waveform is not a calculated value; the current %ECG system does not model the electrical activity of the heart. This data is stored in a text file and interpolated to match the engine timestep. Currently, we support sinus tachycardia, sinus bradycardia, asystole, normal sinus, coarse and fine ventricular fibrillation, stable and unstable ventricular tachycardia, pulse electrical activity, and pulseless ventricular tachycardia. Figure 6 shows examples of the different ECG waveforms available in Pulse. These waveforms have been visualized in the Pulse Explorer for this image. 
-
-To account for the variable heart rate, the sinus and ventricular tachycardia rhythms are representative of a single cardiac cycle. The points are then interpolated based on the length of the cardiac cycle.
+The engine electrocardiogram (%ECG) machine outputs an %ECG waveform to represent the currently supported heart rhythms. The waveform is not a calculated value; the current %ECG system does not model the electrical activity of the heart. This data is stored in a text file. To account for the variable heart rate, the sinus and ventricular tachycardia rhythms are representative of a single cardiac cycle. The points are then interpolated based on the length of the cardiac cycle. Currently, we support sinus tachycardia, sinus bradycardia, asystole, normal sinus, coarse and fine ventricular fibrillation, stable and unstable ventricular tachycardia, pulse electrical activity, and pulseless ventricular tachycardia. Figure 6 shows the sinus waveform in Pulse compared to an example sinus waveform with the key features highlighted.
 
 @htmlonly
 <center>
-<a href="./Images/Cardiovascular/BasicECGWaveform.png"><img src="./Images/Cardiovascular/BasicECGWaveform.png" width="300"></a>
+<table>
+<tr>
+<td><a href"./Images/Cardiovascular/BasicECGWaveform.png"><img src="./Images/Cardiovascular/BasicECGWaveform.png" width="550"></a>
+</td>
+<td><a href="./plots/Cardiovascular/SinusECG.jpg"><img src="./plots/Cardiovascular/SinusECG.jpg" width="600"></a>
+</td>
+</tr>
+</table>
 <br>
 </center>
 @endhtmlonly
@@ -226,15 +231,19 @@ Actions
 ### Insults
 
 #### Arrhythmia
-An arrhythmia is a deviation from normal cardiac heart rate and function. We have an arrhythmia action with the type of arrhythmia as the input. We have implemented types for sinus bradycardia, sinus tachycardia, stable and unstable ventricular tachycardia, coarse and fine ventricular fibrillation, pulseless electrical actitivity, pulseless ventricular tachycardia, and asystole. All of the arrhythmias were implemented as types that can be specified as part of the arrhythmia action. For sinus bradycardia and sinus tachycardia, the heart rate is modified to 50 and 110, respectively. In accordance with validation data @cite LearningNetwork2021stable, no other changes are made to the effect the hemodynamics of the patient. The normal sinus ECG rhythm is associated with both sinus bradycardia and sinus tachycardia. The shape of the normal sinus rhythm is preserved, but output at the heart rate frequency. Pulse electrical activity and pulseless ventricular tachycardia are characterized by some electrical activity of the heart, but no mechanical function @cite ACLS2021asystole @cite ACLS2021Pulseless. For this, we set the heart rate to 0 to reflect a lack of cardiac function. The ECG is set to a sinus rhythm; however, the amplitude of the waveform is reduced to reflect the weaker electrical activity @cite ACLS2021Pulseless @cite ACLS2021asystole. The ECG rhythm is output at the patient's baseline heart rate for pulseless electrical activity and at a tachycardic (110) heart rate for pulseless ventricular tachycardia. Asystole is characterized by a lack of mechanical and electrical activity @cite ACLS2021asystole. Therefore, similar to the pulseless rhythms the heart rate is set to 0. In contrast to the pulseless rhythms, the ECG is set to 0 volts to represent a lack of electrical activity. Ventricular fibrillation is characterized by a lack of mechanical function of the heart and disorganized electrical activity @cite ACLS2021Pulseless. Coarse ventricular fibrillation is represented by more electrical activity than fine ventricular fibrillation. As no cardiac cycle is associated with ventricular fibrillation, a representative period of disorganization (several seconds) was extracted from an arrhythmia database @cite PhysioNetDatabaseCUVentricular. The representative dataset is then repeated and displayed as the coarse ventricular fibrillation rhythm. The magnitude is reduced to half and used as the fine ventricular fibrillation rhythm. Ventricular tachycardia is defined as either stable or unstable. Stable ventricular tachycardia is characterized by increased heart rate (between 100 and 150) with little change in blood pressure (hemodynamic stability) and an irregular ECG @cite ACLS2021Tachy @cite LearningNetwork2021stable.  The heart rate was set to scale the patient's baseline heart rate using a modifier to ensure it is within the validated range. No other changes were made to the hemodynamics. A single cardiac cycle was extracted from a ventricular tachycardic ECG @cite PhysioNetDatabaseCUVentricular. This ECG waveform was used for stable ventricular tachycardia. Unstable ventricular tachycardia is characterized by a heart rate of over 150 @cite ACLS2021Tachy with a significant drop in blood pressure (hemodynamic instability) @cite Wegria1958effect and an ventricular tachycardic ECG waveform. The heart rate modifier for stable ventricular tachycardia was increased to achieve a heart rate greater than 150. An additional modifier was added to scale the heart elastance to reduce the heart ejection fraction to reduce the cardiac output. The blood pressure was reduced through this and by adding a systemic resistance modifier. The heart rate and blood pressure for stable and unstable ventricular tachycardia are shown in Figure 7.
+An arrhythmia is a deviation from normal cardiac heart rate and function. We have an arrhythmia action with the type of arrhythmia as the input. We have implemented types for normal sinus, sinus bradycardia, sinus tachycardia, stable and unstable ventricular tachycardia, coarse and fine ventricular fibrillation, sinus pulseless electrical actitivity, pulseless ventricular tachycardia, and asystole. All of the arrhythmias were implemented as types that can be specified as part of the arrhythmia action. For sinus bradycardia and sinus tachycardia, the heart rate is modified to 50 and 110, respectively. In accordance with validation data @cite LearningNetwork2021stable, no other changes are made to the effect the hemodynamics of the patient. The normal sinus ECG rhythm is associated with both sinus bradycardia and sinus tachycardia. The shape of the normal sinus rhythm is preserved, but output at the heart rate frequency. Sinus pulseless electrical activity (PEA) and pulseless ventricular tachycardia are characterized by organized electrical activity of the heart, but no mechanical function @cite ACLS2021asystole @cite ACLS2021Pulseless. For this, we set the heart rate to 0 to reflect a lack of cardiac function. The ECG is set to a normal sinus or a ventricular tachycardia rhythm for sinus PEA or pulseless ventricular tachycardia, respectively; however, the amplitude of the waveform is reduced to reflect the weaker electrical activity @cite ACLS2021Pulseless @cite ACLS2021asystole. The ECG rhythm is output at the patient's baseline heart rate for sinus PEA and at a tachycardic (110) heart rate for pulseless ventricular tachycardia. Asystole is characterized by a lack of mechanical and electrical activity @cite ACLS2021asystole. Therefore, similar to the pulseless rhythms the heart rate is set to 0. In contrast to the pulseless rhythms, the ECG is set to 0 volts to represent a lack of electrical activity. Ventricular fibrillation is characterized by a lack of mechanical function of the heart and disorganized electrical activity @cite ACLS2021Pulseless. Coarse ventricular fibrillation is represented by more electrical activity than fine ventricular fibrillation. As no cardiac cycle is associated with ventricular fibrillation, a representative period of disorganization (several seconds) was extracted from an arrhythmia database @cite PhysioNetDatabaseCUVentricular. The representative dataset is then repeated and displayed as the coarse ventricular fibrillation rhythm. The amplitude is reduced to half and used as the fine ventricular fibrillation rhythm. Ventricular tachycardia is defined as either stable or unstable. Stable ventricular tachycardia is characterized by increased heart rate (between 100 and 150) with little change in blood pressure (hemodynamic stability) and an irregular ECG @cite ACLS2021Tachy @cite LearningNetwork2021stable.  The heart rate was set to scale the patient's baseline heart rate using a modifier to ensure it is within the validated range. No other changes were made to the hemodynamics. A single cardiac cycle was extracted from a ventricular tachycardic ECG strip. This ECG waveform was used for stable ventricular tachycardia. Unstable ventricular tachycardia is characterized by a heart rate of over 150 @cite ACLS2021Tachy with a significant drop in blood pressure (hemodynamic instability) @cite Wegria1958effect and the ventricular tachycardic ECG waveform. The heart rate modifier for stable ventricular tachycardia was increased to achieve a heart rate greater than 150. An additional modifier was added to scale the heart elastance to reduce the heart ejection fraction to reduce the cardiac output. The blood pressure was reduced through this and by adding a systemic resistance modifier. The heart rate and blood pressure for stable and unstable ventricular tachycardia are shown in Figure 7.
 
 @htmlonly
 <center>
 <table>
 <tr>
-<td><a href="./Images/Cardiovascular/HeartRateVentricularTachycardia.png"><img src="./Images/Cardiovascular/HeartRateVentricularTachycardia.png" width="550"></a>
+<td><a href="./plots/Cardiovascular/HeartRateStableVentricularTachycardia.jpg"><img src="./plots/Cardiovascular/HeartRateStableVentricularTachycardia.jpg" width="550"></a>
 </td>
-<td><a href="./Images/Cardiovascular/BloodPressureVentricularTachycardia.png"><img src="./Images/Cardiovascular/BloodPressureVentricularTachycardia.png" width="550"></a>
+<td><a href="./plots/Cardiovascular/HeartRateUnstableVentricularTachycardia.jpg"><img src="./plots/Cardiovascular/HeartRateUnstableVentricularTachycardia.jpg" width="550"></a>
+</td>
+<td><a href="./plots/Cardiovascular/BloodPressureStableVentricularTachycardia.jpg"><img src="./plots/Cardiovascular/BloodPressureStableVentricularTachycardia.jpg" width="550"></a>
+</td>
+<td><a href="./plots/Cardiovascular/BloodPressureUnstableVentricularTachycardia.jpg"><img src="./plots/Cardiovascular/BloodPressureUnstableVentricularTachycardia.jpg" width="550"></a>
 </td>
 </tr>
 </table>
@@ -264,7 +273,6 @@ Where R<sub>min</sub> is the minimum resistance, P is the blood pressure at the 
 </center><br>
 
 Figure 8 demonstrates the different severity specifications and the impact on the hemorrhage flow rate as the severity is changed or the body responds to the hemorrhage. The results show that the hemorrhage severity changes the flow rate for the hemorrhage as expected, i.e., a 0.5 severity corresponds to 50% of the flow associated with a severity of 1.0. The results also show that as time passes the flow rate will naturally decrease without changing the severity to correspond to the reduction in blood pressure that occurs with hemorrhage. These results also demonstrate the ability to transition from a severity to a flow implementation and back to severity, if required. 
-
 
 @htmlonly
 <center>
@@ -396,12 +404,9 @@ The pulmonary shunt condition has an exacerbation actions defined to allow for i
 @anchor cardiovascular-events
 ##Events
 
-### Asystole
-Asystole is defined as a cessation of the heart beat. Asystole is currently triggered by an oxygen deficit in the myocardium (a partial pressure for oxygen less than 25 mmHg) or by a heart rate of less than 26 beats per minute @cite guinness2005lowest. The engine continues to process during Asystole, which allows for resuscitation efforts, such as CPR, to be attempted. If the Asystole is not addressed, the engine will reach an irreversible state due to a lack of oxygen in the brain. More detail on oxygen deficits can be found in @ref BloodChemistryMethodology.
-
 @anchor cardiovascular-arrest
 ### Cardiac Arrest
-Cardiac Arrest is a condition in which the pumping of the heart is no longer effective @cite nhlbi2011sca. The Cardiac Arrest event can be triggered in the engine either by the Cardiac Arrest action or by the evolution of engine physiology. For instance, an oxygen deficit in the heart muscle will trigger both an asystole event (see below) and a cardiac arrest event. In the current version of the engine, the only rhythm associated with cardiac arrest is asystole, but the cardiac arrest event is included to facilitate control and to allow the future inclusion of other ineffective rhythms such as ventricular fibrillation. In the current engine, it is not possible to recover from cardiac arrest. It is, however, possible to maintain some perfusion by performing chest compressions (see CPR).
+Cardiac Arrest is a condition in which the pumping of the heart is no longer effective @cite nhlbi2011sca. The Cardiac Arrest event can be triggered by different arrhythmias in the engine. In the current version of the engine, any rhythm associated with a cessation of mechanical function of the heart will trigger a cardiac arrest event. We do not have a defibrillate action at this time. To recover from a cardiac arrest event, the user can change the arrhythmia back to a sinus rhythm. It is also possible to maintain some perfusion by performing chest compressions (see CPR).
 
 ### %Cardiovascular Collapse
 %Cardiovascular collapse occurs when the blood pressure is no longer sufficient to maintain "open" blood vessels. They "collapse" meaning blood can no longer flow through the vessels. This is generally associated with shock, the vascular tone and blood pressure are no longer sufficient to maintain blood flow @cite guyton2006medical. This occurs at at mean arterial pressure of 20 mmHg or lower in the engine. At this time, we do not enforce an irreversible state (stop engine calculation); however, the patient generally does not recover from this, particularly in the presence of shock.
@@ -495,19 +500,6 @@ All actions in the CV System were validated. A summary of this validation is sho
 ### Arrhythmia
 There are nine arrhythmia scenarios for validation. Sinus bradycardia Condition was validated by setting the baseline heart rate to 50 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. The cardiac output remains relatively unchanged due to compensatory increases in the stroke volume, which is expected in asymptomatic sinus bradycardia @cite mangrum2000evaluation. The validation data that was found for  systolic and diastolic pressures was vague, only mentioning that the condition was often asymptomatic, indicating relatively normal pressure values. The systolic and diastolic pressures in the engine do change slightly as the heart driver accommodates the increased stroke volume; however, the values remain within normal bounds at 50 beats per minute. The %ECG waveform in bradycardia is similar to a normal sinus waveform, with the exception of an extended R-R interval due to a slower heart rate (see Figure 15), which is also seen in the engine output. Other systemic data is not significantly changed.
 
-
-@htmlonly
-<center>
-<a href="./Images/Cardiovascular/SinusBradycardia_ECGPedia.png"><img src="./Images/Cardiovascular/SinusBradycardia_ECGPedia.png"></a>
-<br>
-<a href="./Images/Cardiovascular/SinusBradycardia_Engine.PNG"><img src="./Images/Cardiovascular/SinusBradycardia_Engine.PNG"></a>
-<br>
-</center>
-@endhtmlonly
-<center>
-<i>Figure 15. The increased R-R interval is evident in both waveforms. This is the primary indication of the low heart rate. Validation image courtesy of @cite vanderBilt2010sinus .</i>
-</center><br>
-
 <br><center>
 *Table 4. Validation matrix for sinus bradycardia arrythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
@@ -515,19 +507,20 @@ There are nine arrhythmia scenarios for validation. Sinus bradycardia Condition 
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
 |	Sinus Bradycardia Condition	|	Heart Rate set to 50 beats per minute (<60 considered bradycardia)	|	0	|	120	|<span class="success">	50 @cite mangrum2000evaluation	</span>|<span class="warning">	Decrease @cite klabunde2012cvconcepts	</span>|<span class="success">	No Relevant changes @cite mangrum2000evaluation	</span>|<span class="success">	Decrease @cite klabunde2012cvconcepts	</span>|<span class="warning">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Sinus @cite mangrum2000evaluation	</span>|
 
-Sinus Tachycardia Condition was validated by setting the baseline heart rate to 110 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. Validation data predicted a decrease in stroke volume with the increase in heart rate @cite aroesty1985simultaneous, which was also found in the engine. Because of the decrease in stroke volume, the cardiac  output remains relatively unchanged. This is due to the model not currently affecting compression force, only compression rate. The %ECG output in tachycardia is generally similar to normal sinus; however, in some cases, the T wave can experience constructive  interference from the following heart beat&apos;s P wave. This is shown in the %ECG output seen in Figure 16.
-
 @htmlonly
 <center>
-<a href="./Images/Cardiovascular/SinusTachycardia_Physionet.png"><img src="./Images/Cardiovascular/SinusTachycardia_Physionet.png"></a>
+<a href="./Images/Cardiovascular/SinusBradycardia_ACLS.jpg"><img src="./Images/Cardiovascular/SinusBradycardia_ACLS.jpg"></a>
 <br>
-<a href="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"><img src="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"></a>
+<a href="./plots/Cardiovascular/SinusBradycardia_Engine.jpg"><img src="./plots/Cardiovascular/SinusBradycardia_Engine.jpg"></a>
 <br>
 </center>
 @endhtmlonly
 <center>
-<i>Figure 16. Due to the high heart rate, the engine output is summing together the P and T waves. In the image from PhysioNet, the output is not summed together as dramatically, due to the slight physiological compression of the waveform that the current %ECG system and heart model do not support. @cite healey2005detecting @cite goldberger2000physiobank</i>
+<i>Figure 15. The increased R-R interval is evident in both waveforms. This is the primary indication of the low heart rate. Validation image courtesy of @cite vanderBilt2010sinus .</i>
 </center><br>
+
+
+Sinus Tachycardia Condition was validated by setting the baseline heart rate to 110 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. Validation data predicted a decrease in stroke volume with the increase in heart rate @cite aroesty1985simultaneous, which was also found in the engine. Because of the decrease in stroke volume, the cardiac  output remains relatively unchanged. This is due to the model not currently affecting compression force, only compression rate. The %ECG output in tachycardia is generally similar to normal sinus; however, in some cases, the T wave can experience constructive  interference from the following heart beat&apos;s P wave. This is shown in the %ECG output seen in Figure 16.
 
 <br><center>
 *Table 5. Validation matrix for sinus tachycardia arrythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
@@ -536,19 +529,19 @@ Sinus Tachycardia Condition was validated by setting the baseline heart rate to 
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
 |	Sinus Tachycardia Condition	|	Variable. Set Heart Rate = 110 beats per minute; in Aroestyl, patients were not ideal, a number had previous heart conditions or coronary artery disease. Tachycardia was achieved via atrial pacemakers	|	0	|	120	|<span class="success">	110 @cite yusuf2005deciphering	</span>|<span class="warning">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	NC @cite yusuf2005deciphering	</span>|<span class="success">	Dependent on SV and HR @cite sohn2007hemodynamic	</span>|<span class="warning">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Normal sinus/Tachycardia Waveform 	</span>|
 
-Asystole, Pulseless Electrical Activity (PEA), and Pulseless Ventricular Tachycardia were validated by setting the heart rate to 0, which triggers a cessation of cardiac and respiratory function. Validation predicts that the heart rate and cardiac output will go to zero immediately @cite ACLS2021asystole. The blood pressure will drop significantly as the blood stops circulating @cite Babbs1983relationship. The oxygen saturation will begin to drop as the heart and lungs are not functioning. The ECG waveform is set to 0 volts to represent the lack of electrical activity @cite ACLS2021asystole in asystole. PEA and Pulseless Ventricular Tachycardia are characterized by organized electrical activity in a normal shape with a reduced amplitude @cite ACLS2021asystole @cite ACLS2021Pulseless. While the mechanical function is the same for all three arrhythmias, the ECG waveforms vary, as shown in Figure 17.
-
- @htmlonly
+@htmlonly
 <center>
-<a href="./Images/Cardiovascular/SinusTachycardia_Physionet.png"><img src="./Images/Cardiovascular/SinusTachycardia_Physionet.png"></a>
+<a href="./Images/Cardiovascular/SinusTachycardia_ACLS.jpg"><img src="./Images/Cardiovascular/SinusTachycardia_ACLS.jpg"></a>
 <br>
-<a href="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"><img src="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"></a>
+<a href="./plots/Cardiovascular/SinusTachycardia_Engine.jpg"><img src="./plots/Cardiovascular/SinusTachycardia_Engine.jpg"></a>
 <br>
 </center>
 @endhtmlonly
 <center>
-<i>Figure 17. The ECG waveform is set to 0 volts to represent the lack of electrical activity @cite ACLS2021asystole in asystole. PEA and Pulseless Ventricular Tachycardia are characterized by organized electrical activity in a normal shape with a reduced amplitude @cite ACLS2021asystole @cite ACLS2021Pulseless.</i>
+<i>Figure 16. Due to the high heart rate, the engine output is summing together the P and T waves. In the image from PhysioNet, the output is not summed together as dramatically, due to the slight physiological compression of the waveform that the current %ECG system and heart model do not support. @cite healey2005detecting @cite goldberger2000physiobank</i>
 </center><br>
+
+Asystole, Sinus Pulseless Electrical Activity (PEA), and Pulseless Ventricular Tachycardia were validated by setting the heart rate to 0, which triggers a cessation of cardiac and respiratory function. Validation predicts that the heart rate and cardiac output will go to zero immediately @cite ACLS2021asystole. The blood pressure will drop significantly as the blood stops circulating @cite Babbs1983relationship. The oxygen saturation will begin to drop as the heart and lungs are not functioning. The ECG waveform is set to 0 volts to represent the lack of electrical activity @cite ACLS2021asystole in asystole. PEA is any organized electrical activity, we represent the PEA- Sinus rhythm and Pulseless Ventricular Tachycardia @cite ACLS2021asystole @cite ACLS2021Pulseless. While the mechanical function is the same for all three arrhythmias, the ECG waveforms vary, as shown in Figure 17.
 
 <br><center>
 *Table 6. Validation matrix for asystole arrhythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
@@ -559,28 +552,30 @@ Asystole, Pulseless Electrical Activity (PEA), and Pulseless Ventricular Tachyca
 |	Sinus	|		|	270	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
 <br><center>
-*Table 7. Validation matrix for Pulseless Electrical Activity and Pulseless Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*Table 7. Validation matrix for Sinus Pulseless Electrical Activity and Pulseless Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Pulseless Electrical Activity	|		|	30	|	210	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Sinus w/ Reduced Amplitude @cite ACLS2021asystole	</span>|
+|	Sinus Pulseless Electrical Activity	|		|	30	|	210	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Sinus w/ Reduced Amplitude @cite ACLS2021asystole	</span>|
 |	Sinus	|		|	270	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 |	PulselessVentricular Tachycardia	|		|	510	|	630	|<span class="success">	undetectable @cite ACLS2021Pulseless	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Ventricular Tachycardia w/ Reduced Amplitude @cite ACLS2021Pulseless	</span>|
 |	Sinus	|		|	750	|	840	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
-Coarse and Fine Ventricular Fibrillation were validated similiar to asystole and the pulseless rhythms. The heart rate was set to zero to represent the lack of mechanical function. This leads to a cessation of all cardiac and respiratory function. Validation  data predicts that the heart rate and cardiac output will go to zero immediately @cite ACLS2021Pulseless. The blood pressure will drop significantly as the blood stops circulating @cite Babbs1983relationship. The oxygen saturation will begin to drop as the heart and lungs are not functioning. The ECG is characterized by disorganized electrical activity @cite ClevelandClinic2021vfib. Fine ventricular fibrillation has less electrical activity than coarse @cite ClevelandClinic2021vfib. The segment of data extracted from an example ventricular fibrillation dataset was used for coarse ventricular fibrillation. The amplitude of this data was reduced to represent ventricular fibrillation. The ECG for both coarse and fine ventricular fibrillation are shown with the PhysioNet data @cite PhysioNetDatabaseCUVentricular in Figure 18. 
-
  @htmlonly
 <center>
-<a href="./Images/Cardiovascular/SinusTachycardia_Physionet.png"><img src="./Images/Cardiovascular/SinusTachycardia_Physionet.png"></a>
+<a href="./plots/Cardiovascular/Asystole_Engine.jpg"><img src="./plots/Cardiovascular/Asystole_Engine.jpg"></a>
 <br>
-<a href="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"><img src="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"></a>
+<a href="./plots/Cardiovascular/SinusPEA_Engine.jpg"><img src="./plots/Cardiovascular/SinusPEA_Engine.jpg"></a>
+<br>
+<a href="./plots/Cardiovascular/PulselessVT_Engine.jpg"><img src="./plots/Cardiovascular/PulselessVT_Engine.jpg"></a>
 <br>
 </center>
 @endhtmlonly
 <center>
-<i>Figure 18. Ventricular fibrillation is characterized by disorganized electrical activity. Coarse has  higher electrical signal than fine ventricular fibrillation @cite ClevelandClinic2021vfib. </i>
+<i>Figure 17. The ECG waveform is set to 0 volts to represent the lack of electrical activity @cite ACLS2021asystole in asystole. PEA and Pulseless Ventricular Tachycardia are characterized by organized electrical activity in a normal shape with a reduced amplitude @cite ACLS2021asystole @cite ACLS2021Pulseless.</i>
 </center><br>
+
+Coarse and Fine Ventricular Fibrillation were validated similiar to asystole and the pulseless rhythms. The heart rate was set to zero to represent the lack of mechanical function. This leads to a cessation of all cardiac and respiratory function. Validation  data predicts that the heart rate and cardiac output will go to zero immediately @cite ACLS2021Pulseless. The blood pressure will drop significantly as the blood stops circulating @cite Babbs1983relationship. The oxygen saturation will begin to drop as the heart and lungs are not functioning. The ECG is characterized by disorganized electrical activity @cite ClevelandClinic2021vfib. Fine ventricular fibrillation has less electrical activity than coarse @cite ClevelandClinic2021vfib. The segment of data extracted from an example ventricular fibrillation dataset was used for coarse ventricular fibrillation. The amplitude of this data was reduced to represent ventricular fibrillation. The ECG for both coarse and fine ventricular fibrillation are shown with the PhysioNet data @cite PhysioNetDatabaseCUVentricular in Figure 18. 
 
 <br><center>
 *Table 8. Validation matrix for Coarse Ventricular Fibrillation arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
@@ -590,7 +585,6 @@ Coarse and Fine Ventricular Fibrillation were validated similiar to asystole and
 |	Coarse Ventricular Fibrillation	|		|	30	|	210	|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Coarse Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
 |	Sinus	|		|	270	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
-
 <br><center>
 *Table 9. Validation matrix for Fine Ventricular Fibrillation arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
@@ -599,19 +593,21 @@ Coarse and Fine Ventricular Fibrillation were validated similiar to asystole and
 |	Fine Ventricular Fibrillation	|		|	30	|	210	|<span class="success">	undetectable @cite ACLS2021Pulseless	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Fine Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
 |	Sinus	|		|	270	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
-Stable and unstable ventricular tachycardia were validated with two scenarios. Stable ventricular tachycardia is characterized by a heart rate between 100 and 150 @cite ACLS2021Tachy and otherwise stable hemodynamics @cite LearningNetwork2021stable. Unstable ventricular tachycardia is characterized by a heart rate greater than 150 @cite ACLS2021Tachy and unstable hemodynamics (significantly reduced blood pressure) @cite Wegria1958effect. A representative cardiac cycle was extracted from a ventricular tachycardia ECG dataset @cite PhysioNetDatabaseCUVentricular. This dataset is used for both the stable and unstable ventricular tachycardia. The extracted waveform is repeated at the heart rate. This is shown with the PhysioNet data  @cite PhysioNetDatabaseCUVentricular in Figure 19.
-
  @htmlonly
 <center>
-<a href="./Images/Cardiovascular/SinusTachycardia_Physionet.png"><img src="./Images/Cardiovascular/SinusTachycardia_Physionet.png"></a>
+<a href="./Images/Cardiovascular/VentricularFibrillation_ACLS.jpg"><img src="./Images/Cardiovascular/VentricularFibrillation_ACLS.jpg"></a>
 <br>
-<a href="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"><img src="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"></a>
+<a href="./plots/Cardiovascular/ECGCoarseVF_Engine.jpg"><img src="./plots/Cardiovascular/ECGCoarseVF_Engine.jpg"></a>
+<br>
+<a href="./plots/Cardiovascular/ECGFineVF_Engine.jpg"><img src="./plots/Cardiovascular/ECGFineVF_Engine.jpg"></a>
 <br>
 </center>
 @endhtmlonly
 <center>
-<i>Figure 19. This ventricular tachycardia ECG waveform is used for both stable and unstable types and is scaled to the heart rate. </i>
-</center><br> 
+<i>Figure 18. Ventricular fibrillation is characterized by disorganized electrical activity. Coarse has  higher electrical signal than fine ventricular fibrillation @cite ClevelandClinic2021vfib. </i>
+</center><br>
+
+Stable and unstable ventricular tachycardia were validated with two scenarios. Stable ventricular tachycardia is characterized by a heart rate between 100 and 150 @cite ACLS2021Tachy and otherwise stable hemodynamics @cite LearningNetwork2021stable. Unstable ventricular tachycardia is characterized by a heart rate greater than 150 @cite ACLS2021Tachy and unstable hemodynamics (significantly reduced blood pressure) @cite Wegria1958effect. A representative cardiac cycle was extracted from a ventricular tachycardia ECG dataset shown in Figure 19. This dataset is used for both the stable and unstable ventricular tachycardia. The extracted waveform is repeated at the heart rate calculated by the engine, as shown in Figure 19.
 
 <br><center>
 *Table 10. Validation matrix for Stable Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
@@ -621,15 +617,26 @@ Stable and unstable ventricular tachycardia were validated with two scenarios. S
 |	Stable Ventricular Tachycardia	|		|	30	|	210	|<span class="success">	100-150 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="warning">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Ventricular Tachycardia@cite ACLS2021Tachy	</span>|
 |	Sinus	|		|	240	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
 
-
 <br><center>
 *Table 11. Validation matrix for Unstable Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-																				
-|	Untable Ventricular Tachycardia	|		|	30	|	210	|<span class="success">	>  150 @cite ACLS2021Tachy	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease with reduced hemodynamic stability	</span>|<span class="danger">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Ventricular Tachycardia w/ reduced amplitude @cite ACLS2021Tachy	</span>|
+|	Untable Ventricular Tachycardia	|		|	30	|	210	</span>|<span class="success">	>  150 @cite ACLS2021Tachy	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease with reduced hemodynamic stability	</span>|<span class="danger">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Ventricular Tachycardia w/ reduced amplitude @cite ACLS2021Tachy	</span>|
 |	Sinus	|		|	240	|	420	</span>|<span class="warning">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
+@htmlonly
+<center>
+<a href="./Images/Cardiovascular/VentricularTachycardia_Exp.png"><img src="./Images/Cardiovascular/VentricularTachycardia_Exp.png"></a>
+<br>
+<a href="./plots/Cardiovascular/ECGVT_Engine.jpg"><img src="./plots/Cardiovascular/ECGVT_Engine.jpg"></a>
+<br>
+</center>
+@endhtmlonly
+<center>
+<i>Figure 19. This ventricular tachycardia ECG waveform is used for both stable and unstable types and is scaled to the heart rate. </i>
+</center><br> 
+
 
 The sinus rhythms were validated in a single scenario. Sinus Bradycardia and Sinus Tachycardia are characterized by a heart rate between 40 and 60 @ACLS2021Bradycardia or a heart rate greater than 100 @cite ACLS2021Tachy, respectively. Little change is expected in the other hemodynamic parameters @ACLS2021Bradycardia @cite LearningNetwork2021stable. These were implemented as actions; therefore the system is not allowed to stabilize. The changes are dynamically implented during run time. These can be useful when moving from a shockable arrhythmia to return of spontaneous circulation.
 
@@ -797,7 +804,9 @@ An area of potential future advancement lies in the inertance of the %Cardiovasc
 
 Another potential area for improvement is simulation of a tourniquet. An intervention could be added to simulate the increased resistance to flow and external pressure application that would be present with the application of a tourniquet.
 
-The cardiac arrest functionality also needs improvement. Like in the human body, most of the systems require a beating heart to function properly. Also like in the human body, the engine systems tend to go haywire when the heart stops. However, the ways in which the systems go haywire deviate from the human physiological systems' response during cardiac arrest. Improvements to the engine functionality during cardiac arrest would allow for many desirable scenarios, including Advanced Cardiac Life Support (ACLS) scenarios where some recovery of the patient is actually possible. As described in the CPR section, recovery from cardiac arrest is currently impossible in the engine. Rescue breathing would also be a valuable improvement.
+We will continue to add arrhythmias and the effects of defibrillation to the system.
+
+We are exploring further discretization of the circuit; however, this must always be balanced with the speed of the computation.
 
 The ventricular systolic function and anemia are now unvalidated conditions in the engine. We will improve the model and validate this condition in the future.
 

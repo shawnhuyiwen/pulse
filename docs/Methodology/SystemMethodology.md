@@ -34,7 +34,7 @@ integrated with all other types of physiologic software. Models at
 any anatomical level can be implemented within the existing
 infrastructure.
 
-<img src="./Images/System/SystemFidelity.png" width="650">
+<img src="./Images/System/SystemFidelity.png" width="550">
 <center>
 *Figure 1. The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
 </center><br>
@@ -159,7 +159,7 @@ maintains three time steps for elements and parameters. These times are:
 
 The engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in Figure 3.
 
-<center><img src="./Images/System/Stabilization.png" width="550"></center>
+<img src="./Images/System/Stabilization.png" width="550">
 <center> 
 <i>Figure 3. Overall the engine stabilization protocol. This highlights the multi-step process required to initialize either a healthy or chronically ill patient prior to executing a scenario.</i>
 </center><br>
