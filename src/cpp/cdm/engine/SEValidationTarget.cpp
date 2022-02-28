@@ -79,7 +79,7 @@ bool SEValidationTarget::ComputeError()
   }
   case eValidationTargetType::Mean:
   {
-    m_TypeValue = std::reduce(m_Data.begin(), m_Data.end()) / m_Data.size();
+    m_TypeValue = std::accumulate(m_Data.begin(), m_Data.end(),0) / m_Data.size();
     break;
   }
   default:
