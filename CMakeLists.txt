@@ -35,6 +35,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 project(Pulse VERSION 4.1.0 LANGUAGES C CXX)
 string(TOLOWER ${PROJECT_NAME} project_name)
+include(GNUInstallDirs)
 
 #-----------------------------------------------------------------------------
 # Project install directories
