@@ -64,6 +64,7 @@ message DataRequestManagerData
   DecimalFormatData                                    DefaultDecimalFormatting        = 3;
   DecimalFormatData                                    OverrideDecimalFormatting       = 4;
   repeated DataRequestData                             DataRequest                     = 5;
+  repeated ValidationTargetData                        ValidationTarget                = 6;
 }
 
 message DataRequestedData
@@ -73,6 +74,20 @@ message DataRequestedData
   repeated double                                      Value                           = 3;
   repeated EventChangeData                             EventChange                     = 4;
   LogMessagesData                                      LogMessages                     = 5;
+}
+
+message ValidationTargetData
+{
+  enum eType
+  {
+    Mean          = 0;
+    Min           = 1;
+    Max           = 2;
+  }
+  eType                                                 Type                            = 1;
+  DataRequestData                                       DataRequest                     = 2;
+  double                                                RangeMin                        = 3;
+  double                                                RangeMax                        = 4;
 }
 
 message DataRequestedListData
@@ -127,7 +142,6 @@ message PatientConfigurationData
     string                                              PatientFile                    = 3;
   }
   ConditionListData                                     Conditions                     = 4;
-  repeated ScalarPropertyData                           ScalarOverride                 = 5;
 }
 
 message EngineInitializationData

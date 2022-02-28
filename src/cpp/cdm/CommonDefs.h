@@ -145,7 +145,10 @@ extern const std::string& eSwitch_Name(eSwitch m);
 enum class eCharge { NullCharge = 0, Negative, Neutral, Positive };
 extern const std::string& eCharge_Name(eCharge m);
 
-enum class eBreathState { Inhale = 0, Pause, Exhale, ExpiratoryHold, InspiratoryHold };
+enum class eBreathState { NoBreath=0,
+                          PatientInhale, PatientPause, PatientExhale,
+                          EquipmentInhale, EquipmentPause, EquipmentExhale,
+                          ExpiratoryHold, InspiratoryHold };
 extern const std::string& eBreathState_Name(eBreathState m);
 
 //
@@ -156,6 +159,23 @@ extern const std::string& eBreathState_Name(eBreathState m);
 // ALSO DECLARE A TEMPLATE CLASS AT THE BOTTOM OF SESCALAR.CPP
 
 class CCompoundUnit;
+
+// Used for overrides and modifiers, a super generic way of enumerating a list of properties
+// properties are an actual scalar member variable on an object
+// map<variable_name,SEScalarPair(value,unit)>
+class SEScalarPair
+{
+public:
+  SEScalarPair();
+  SEScalarPair(double v);
+  SEScalarPair(double v, const std::string& u);
+  SEScalarPair(double v, const CCompoundUnit& cc);
+  ~SEScalarPair() = default;
+  double value;
+  std::string unit;
+};
+using SEScalarProperties = std::map<std::string, SEScalarPair>;
+
 
 class SECurve;
 class SERunningAverage;
@@ -219,6 +239,9 @@ class SEScalarVolumePerTimeArea; class VolumePerTimeAreaUnit;
 class SEScalarVolumePerTimePressureArea; class VolumePerTimePressureAreaUnit;
 class SEScalarVolumePerTimeMass; class VolumePerTimeMassUnit;
 class SEScalarVolumePerTimePressure; class VolumePerTimePressureUnit;
+
+class SEArray;
+class SEArrayElectricPotential;
 
 class SEFunction;
 class SEFunctionVolumeVsTime;

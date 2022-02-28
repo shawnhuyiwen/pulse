@@ -20,6 +20,7 @@
 
 SEBagValveMask::SEBagValveMask(Logger* logger) : SEEquipment(logger)
 {
+  m_BreathState = eBreathState::NoBreath;
   m_Connection = eSwitch::Off;
 
   m_BagResistance = nullptr;
@@ -34,6 +35,7 @@ SEBagValveMask::SEBagValveMask(Logger* logger) : SEEquipment(logger)
 
 SEBagValveMask::~SEBagValveMask()
 {
+  m_BreathState = eBreathState::NoBreath;
   m_Connection = eSwitch::Off;
 
   SAFE_DELETE(m_BagResistance);
@@ -58,6 +60,7 @@ void SEBagValveMask::Clear()
 {
   SEEquipment::Clear();
 
+  m_BreathState = eBreathState::NoBreath;
   m_Connection = eSwitch::Off;
 
   INVALIDATE_PROPERTY(m_ValvePositiveEndExpiredPressure);
@@ -92,8 +95,9 @@ void SEBagValveMask::ProcessConfiguration(SEBagValveMaskConfiguration& config, S
 }
 void SEBagValveMask::Merge(const SEBagValveMask& from, SESubstanceManager& subMgr)
 {
-  if(from.m_Connection!=eSwitch::NullSwitch)
-    SetConnection(from.m_Connection);
+  SetBreathState(from.m_BreathState.GetEnum());
+  if(from.m_Connection.GetEnum()!=eSwitch::NullSwitch)
+    SetConnection(from.m_Connection.GetEnum());
   COPY_PROPERTY(BagResistance);
   COPY_PROPERTY(FilterResistance);
   COPY_PROPERTY(SealResistance);
@@ -179,6 +183,11 @@ bool SEBagValveMask::SerializeFromFile(const std::string& filename, const SESubs
 
 const SEScalar* SEBagValveMask::GetScalar(const std::string& name)
 {
+  if (name.compare("BreathState") == 0)
+    return &m_BreathState;
+  if (name.compare("Connection") == 0)
+    return &m_Connection;
+
   if (name == "BagResistance")
     return &GetBagResistance();
   if (name == "FilterResistance")
@@ -200,13 +209,22 @@ const SEScalar* SEBagValveMask::GetScalar(const std::string& name)
   return nullptr;
 }
 
+void SEBagValveMask::SetBreathState(eBreathState b)
+{
+  m_BreathState = b;
+}
+eBreathState SEBagValveMask::GetBreathState() const
+{
+  return m_BreathState.GetEnum();
+}
+
 void SEBagValveMask::SetConnection(eSwitch c)
 {
   m_Connection = c;
 }
 eSwitch SEBagValveMask::GetConnection() const
 {
-  return m_Connection;
+  return m_Connection.GetEnum();
 }
 
 bool SEBagValveMask::HasValvePositiveEndExpiredPressure() const

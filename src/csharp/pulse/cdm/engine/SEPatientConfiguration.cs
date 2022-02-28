@@ -9,7 +9,6 @@ namespace Pulse.CDM
     protected string patient_file = "";
     protected SEConditionManager condition_manager=null;
     protected string data_root_dir = "./";
-
     public SEPatientConfiguration()
     {
       Clear();

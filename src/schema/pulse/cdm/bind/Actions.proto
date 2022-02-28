@@ -24,18 +24,18 @@ enum eAppliedRespiratoryCycle
 
 message ActionData
 {
-  string                Comment  = 1;
+  string                 Comment  = 1;
 }
 
 message EquipmentActionData
 {
-  ActionData            Action   = 1;
+  ActionData             Action   = 1;
 }
 
 message AdvanceTimeData
 {
-  ActionData            Action   = 1;
-  ScalarTimeData        Time     = 2;
+  ActionData             Action   = 1;
+  ScalarTimeData         Time     = 2;
 }
 
 message SerializeStateData
@@ -46,13 +46,13 @@ message SerializeStateData
     Load = 1;
   }
   
-  ActionData            Action   = 1;
-  eType                 Type     = 2;
-  string                Filename = 3;
+  ActionData             Action   = 1;
+  eType                  Type     = 2;
+  string                 Filename = 3;
 }
 
 message OverridesData
 {
-  ActionData                  Action         = 1;
-  repeated ScalarPropertyData ScalarOverride = 2;
+  ActionData             Action           = 1;
+  map<string,ScalarData> ScalarProperties = 2;
 }

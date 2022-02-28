@@ -60,6 +60,10 @@ add_library_ex(PulseEngine
     human_adult/whole_body/system/physiology/RespiratoryModel.h
     human_adult/whole_body/system/physiology/Saturation.h
     human_adult/whole_body/system/physiology/TissueModel.h
+    #  Hemodynamics
+    human_adult/hemodynamics/Engine.h
+    human_adult/hemodynamics/controller/CompartmentManager.h
+    human_adult/hemodynamics/controller/Controller.h
     #  Ventilation Mechanics
     human_adult/ventilation_mechanics/Engine.h
     human_adult/ventilation_mechanics/controller/CompartmentManager.h
@@ -108,6 +112,11 @@ add_library_ex(PulseEngine
     human_adult/whole_body/Engine.cpp
     human_adult/whole_body/controller/Controller.cpp
     human_adult/whole_body/controller/SetupPatient.cpp
+    #  Hemodynamics
+    human_adult/hemodynamics/Engine.cpp
+    human_adult/hemodynamics/controller/CompartmentManager.cpp
+    human_adult/hemodynamics/controller/Controller.cpp
+    human_adult/hemodynamics/controller/SetupCircuitsAndCompartments.cpp
     #  Ventilation Mechanics
     human_adult/ventilation_mechanics/Engine.cpp
     human_adult/ventilation_mechanics/controller/CompartmentManager.cpp
@@ -145,6 +154,7 @@ add_library_ex(PulseEngineTests
     human_adult/whole_body/test/AcidBaseTests.cpp
     human_adult/whole_body/test/AerosolTest.cpp
     human_adult/whole_body/test/AnesthesiaCircuit.cpp
+    human_adult/whole_body/test/BlackBoxTests.cpp
     human_adult/whole_body/test/CardiovascularCircuit.cpp
     human_adult/whole_body/test/ConditionsTest.cpp
     human_adult/whole_body/test/EngineTest.cpp

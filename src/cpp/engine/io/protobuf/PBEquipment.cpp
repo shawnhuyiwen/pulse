@@ -15,7 +15,6 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBProperties.h"
 #include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 #include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
-#include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h"
 #include "cdm/system/equipment/inhaler/SEInhaler.h"
 
 namespace pulse
@@ -62,7 +61,6 @@ namespace pulse
   void PBEquipment::Serialize(const PULSE_BIND::BagValveMaskData& src, BagValveMaskModel& dst)
   {
     PBBagValveMask::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
-    dst.m_CurrentBreathState = (eBreathState)src.currentbreathstate();
     dst.m_CurrentPeriodTime_s = src.currentperiodtime_s();
     dst.m_SqueezeFlow_L_Per_s = src.squeezeflow_l_per_s();
     dst.m_SqueezePressure_cmH2O = src.squeezepressure_cmh2o();
@@ -76,7 +74,6 @@ namespace pulse
   void PBEquipment::Serialize(const BagValveMaskModel& src, PULSE_BIND::BagValveMaskData& dst)
   {
     PBBagValveMask::Serialize(src, *dst.mutable_common());
-    dst.set_currentbreathstate((CDM_BIND::eBreathState)src.m_CurrentBreathState);
     dst.set_currentperiodtime_s(src.m_CurrentPeriodTime_s);
     dst.set_squeezeflow_l_per_s(src.m_SqueezeFlow_L_Per_s);
     dst.set_squeezepressure_cmh2o(src.m_SqueezePressure_cmH2O);
@@ -91,10 +88,6 @@ namespace pulse
   void PBEquipment::Serialize(const PULSE_BIND::ElectroCardioGramData& src, ElectroCardioGramModel& dst)
   {
     PBElectroCardioGram::Serialize(src.common(), dst);
-    dst.m_heartRhythmTime_s = src.heartrythmtime_s();
-    dst.m_heartRhythmPeriod_s = src.heartrythmperiod_s();
-    PBElectroCardioGram::Load(src.waveforms(), *dst.m_interpolator);
-    dst.m_interpolator->SetLeadElectricPotential(eElectroCardioGram_WaveformLead::Lead3, dst.GetLead3ElectricPotential());
   }
   PULSE_BIND::ElectroCardioGramData* PBEquipment::Unload(const ElectroCardioGramModel& src)
   {
@@ -105,9 +98,6 @@ namespace pulse
   void PBEquipment::Serialize(const ElectroCardioGramModel& src, PULSE_BIND::ElectroCardioGramData& dst)
   {
     PBElectroCardioGram::Serialize(src, *dst.mutable_common());
-    dst.set_heartrythmtime_s(src.m_heartRhythmTime_s);
-    dst.set_heartrythmperiod_s(src.m_heartRhythmPeriod_s);
-    dst.set_allocated_waveforms(PBElectroCardioGram::Unload(*src.m_interpolator));
   }
 
   void PBEquipment::Load(const PULSE_BIND::InhalerData& src, InhalerModel& dst)
@@ -154,7 +144,6 @@ namespace pulse
     dst.m_LimitReached = src.limitreached();
     dst.m_PreviousYPieceToConnectionFlow_L_Per_s = src.previousypiecetoconnectionflow_l_per_s();
     dst.m_PreviousConnectionPressure_cmH2O = src.previousconnectionpressure_cmh2o();
-    dst.m_CurrentBreathState = (eBreathState)src.currentbreathstate();
     PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
   }
   PULSE_BIND::MechanicalVentilatorData* PBEquipment::Unload(const MechanicalVentilatorModel& src)
@@ -178,7 +167,6 @@ namespace pulse
     dst.set_limitreached(src.m_LimitReached);
     dst.set_previousypiecetoconnectionflow_l_per_s(src.m_PreviousYPieceToConnectionFlow_L_Per_s);
     dst.set_previousconnectionpressure_cmh2o(src.m_PreviousConnectionPressure_cmH2O);
-    dst.set_currentbreathstate((CDM_BIND::eBreathState)src.m_CurrentBreathState);
     dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
   }
 }

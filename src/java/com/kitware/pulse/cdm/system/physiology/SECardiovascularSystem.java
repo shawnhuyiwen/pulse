@@ -24,6 +24,8 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   protected SEScalarVolumePerTime             cerebralBloodFlow;
   protected SEScalarPressure                  cerebralPerfusionPressure;
   protected SEScalarPressure                  diastolicArterialPressure;
+  protected SEScalarPressure                  diastolicLeftHeartPressure;
+  protected SEScalarPressure                  diastolicRightHeartPressure;
   protected SEScalar0To1                      heartEjectionFraction;
   protected SEScalarFrequency                 heartRate;
   protected eHeartRhythm                      heartRhythm;
@@ -46,6 +48,8 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
   protected SEScalarPressure                  pulsePressure;
   protected SEScalarPressureTimePerVolume     systemicVascularResistance;
   protected SEScalarPressure                  systolicArterialPressure;
+  protected SEScalarPressure                  systolicLeftHeartPressure;
+  protected SEScalarPressure                  systolicRightHeartPressure;
   protected SEScalarVolumePerTime             totalHemorrhageRate;
   protected SEScalarVolume                    totalHemorrhagedVolume;
 
@@ -60,7 +64,9 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     cerebralBloodFlow = null;
     cerebralPerfusionPressure = null;
     meanCentralVenousPressure = null;
-    diastolicArterialPressure = null;  
+    diastolicArterialPressure = null;
+    diastolicLeftHeartPressure = null;
+    diastolicRightHeartPressure = null;
     heartEjectionFraction = null;
     heartRate = null;
     heartRhythm = null;
@@ -78,6 +84,8 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     pulsePressure = null;
     systemicVascularResistance = null;
     systolicArterialPressure = null;
+    systolicLeftHeartPressure = null;
+    systolicRightHeartPressure = null;
     totalHemorrhageRate = null;
     totalHemorrhagedVolume = null;
   }
@@ -105,6 +113,10 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       meanCentralVenousPressure.invalidate();
     if (diastolicArterialPressure != null)
       diastolicArterialPressure.invalidate();
+    if (diastolicLeftHeartPressure != null)
+      diastolicLeftHeartPressure.invalidate();
+    if (diastolicRightHeartPressure != null)
+      diastolicRightHeartPressure.invalidate();
     if (heartEjectionFraction != null)
       heartEjectionFraction.invalidate();
     this.heartRhythm = null;
@@ -142,6 +154,10 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       systemicVascularResistance.invalidate();
     if (systolicArterialPressure != null)
       systolicArterialPressure.invalidate();
+    if (systolicLeftHeartPressure != null)
+      systolicLeftHeartPressure.invalidate();
+    if (systolicRightHeartPressure != null)
+      systolicRightHeartPressure.invalidate();
     if (totalHemorrhageRate != null)
       totalHemorrhageRate.invalidate();
     if (totalHemorrhagedVolume != null)
@@ -169,7 +185,11 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     if (src.hasMeanCentralVenousPressure())
       SEScalarPressure.load(src.getMeanCentralVenousPressure(),dst.getMeanCentralVenousPressure());
     if (src.hasDiastolicArterialPressure())
-      SEScalarPressure.load(src.getDiastolicArterialPressure(),dst.getDiastolicArterialPressure());  
+      SEScalarPressure.load(src.getDiastolicArterialPressure(),dst.getDiastolicArterialPressure());
+    if (src.hasDiastolicLeftHeartPressure())
+      SEScalarPressure.load(src.getDiastolicLeftHeartPressure(),dst.getDiastolicLeftHeartPressure());
+    if (src.hasDiastolicRightHeartPressure())
+      SEScalarPressure.load(src.getDiastolicRightHeartPressure(),dst.getDiastolicRightHeartPressure());
     if (src.hasHeartEjectionFraction())
       SEScalar0To1.load(src.getHeartEjectionFraction(),dst.getHeartEjectionFraction());
     if (src.hasHeartRate())
@@ -210,6 +230,10 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       SEScalarPressureTimePerVolume.load(src.getSystemicVascularResistance(),dst.getSystemicVascularResistance());
     if (src.hasSystolicArterialPressure())
       SEScalarPressure.load(src.getSystolicArterialPressure(),dst.getSystolicArterialPressure());
+    if (src.hasSystolicLeftHeartPressure())
+      SEScalarPressure.load(src.getSystolicLeftHeartPressure(),dst.getSystolicLeftHeartPressure());
+    if (src.hasSystolicRightHeartPressure())
+      SEScalarPressure.load(src.getSystolicRightHeartPressure(),dst.getSystolicRightHeartPressure());
     if (src.hasTotalHemorrhageRate())
       SEScalarVolumePerTime.load(src.getTotalHemorrhageRate(),dst.getTotalHemorrhageRate());
     if (src.hasTotalHemorrhagedVolume())
@@ -241,11 +265,15 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     if (src.hasCerebralBloodFlow())
       dst.setCerebralBloodFlow(SEScalarVolumePerTime.unload(src.getCerebralBloodFlow())); 
     if (src.hasCerebralPerfusionPressure())
-      dst.setCerebralPerfusionPressure(SEScalarPressure.unload(src.getCerebralPerfusionPressure())); 
+      dst.setCerebralPerfusionPressure(SEScalarPressure.unload(src.getCerebralPerfusionPressure()));
     if (src.hasMeanCentralVenousPressure())
-      dst.setMeanCentralVenousPressure(SEScalarPressure.unload(src.getMeanCentralVenousPressure())); 
+      dst.setMeanCentralVenousPressure(SEScalarPressure.unload(src.getMeanCentralVenousPressure()));
     if (src.hasDiastolicArterialPressure())
-      dst.setDiastolicArterialPressure(SEScalarPressure.unload(src.getDiastolicArterialPressure())); 
+      dst.setDiastolicArterialPressure(SEScalarPressure.unload(src.getDiastolicArterialPressure()));
+    if (src.hasDiastolicLeftHeartPressure())
+      dst.setDiastolicLeftHeartPressure(SEScalarPressure.unload(src.getDiastolicLeftHeartPressure()));
+    if (src.hasDiastolicRightHeartPressure())
+      dst.setDiastolicRightHeartPressure(SEScalarPressure.unload(src.getDiastolicRightHeartPressure()));
     if (src.hasHeartEjectionFraction())
       dst.setHeartEjectionFraction(SEScalar0To1.unload(src.getHeartEjectionFraction())); 
     if (src.hasHeartRate())
@@ -286,6 +314,10 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       dst.setSystemicVascularResistance(SEScalarPressureTimePerVolume.unload(src.getSystemicVascularResistance()));
     if (src.hasSystolicArterialPressure())
       dst.setSystolicArterialPressure(SEScalarPressure.unload(src.getSystolicArterialPressure()));
+    if (src.hasSystolicLeftHeartPressure())
+      dst.setSystolicLeftHeartPressure(SEScalarPressure.unload(src.getSystolicLeftHeartPressure()));
+    if (src.hasSystolicRightHeartPressure())
+      dst.setSystolicRightHeartPressure(SEScalarPressure.unload(src.getSystolicRightHeartPressure()));
     if (src.hasTotalHemorrhageRate())
       dst.setTotalHemorrhageRate(SEScalarVolumePerTime.unload(src.getTotalHemorrhageRate()));
     if (src.hasTotalHemorrhagedVolume())
@@ -401,6 +433,30 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
       diastolicArterialPressure = new SEScalarPressure();
     return diastolicArterialPressure;
   }
+  
+  public boolean hasDiastolicLeftHeartPressure()
+  {
+    return diastolicLeftHeartPressure == null ? false : diastolicLeftHeartPressure.isValid();
+  }
+  public SEScalarPressure getDiastolicLeftHeartPressure()
+  {
+    if (diastolicLeftHeartPressure == null)
+      diastolicLeftHeartPressure = new SEScalarPressure();
+    return diastolicLeftHeartPressure;
+  }
+
+  
+  public boolean hasDiastolicRightHeartPressure()
+  {
+    return diastolicRightHeartPressure == null ? false : diastolicRightHeartPressure.isValid();
+  }
+  public SEScalarPressure getDiastolicRightHeartPressure()
+  {
+    if (diastolicRightHeartPressure == null)
+      diastolicRightHeartPressure = new SEScalarPressure();
+    return diastolicRightHeartPressure;
+  }
+
 
   public boolean hasHeartEjectionFraction()
   {
@@ -614,6 +670,28 @@ public class SECardiovascularSystem extends SEPhysiologySystem implements SESyst
     if (systolicArterialPressure == null)
       systolicArterialPressure = new SEScalarPressure();
     return systolicArterialPressure;
+  }
+  
+  public boolean hasSystolicLeftHeartPressure()
+  {
+    return systolicLeftHeartPressure == null ? false : systolicLeftHeartPressure.isValid();
+  }
+  public SEScalarPressure getSystolicLeftHeartPressure()
+  {
+    if (systolicLeftHeartPressure == null)
+      systolicLeftHeartPressure = new SEScalarPressure();
+    return systolicLeftHeartPressure;
+  }
+  
+  public boolean hasSystolicRightHeartPressure()
+  {
+    return systolicRightHeartPressure == null ? false : systolicRightHeartPressure.isValid();
+  }
+  public SEScalarPressure getSystolicRightHeartPressure()
+  {
+    if (systolicRightHeartPressure == null)
+      systolicRightHeartPressure = new SEScalarPressure();
+    return systolicRightHeartPressure;
   }
   
   public boolean hasTotalHemorrhageRate()

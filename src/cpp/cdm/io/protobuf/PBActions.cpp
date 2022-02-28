@@ -182,11 +182,8 @@ void PBAction::Load(const CDM_BIND::OverridesData& src, SEOverrides& dst)
 void PBAction::Serialize(const CDM_BIND::OverridesData& src, SEOverrides& dst)
 {
   PBAction::Serialize(src.action(), dst);
-  for (auto i=0; i<src.scalaroverride_size(); i++)
-  {
-    const CDM_BIND::ScalarPropertyData& sp = src.scalaroverride()[i];
-    dst.AddScalarProperty(sp.name(), sp.value(), sp.unit());
-  }
+  for (auto const& [name, o] : src.scalarproperties())
+    dst.GetScalarProperties()[name] = SEScalarPair(o.value(), o.unit());
 }
 CDM_BIND::OverridesData* PBAction::Unload(const SEOverrides& src)
 {
@@ -197,12 +194,12 @@ CDM_BIND::OverridesData* PBAction::Unload(const SEOverrides& src)
 void PBAction::Serialize(const SEOverrides& src, CDM_BIND::OverridesData& dst)
 {
   PBAction::Serialize(src, *dst.mutable_action());
-  for (auto& sp : src.GetScalarProperties())
+  for (auto& [name, o] : src.GetScalarProperties())
   {
-    CDM_BIND::ScalarPropertyData* so = dst.add_scalaroverride();
-    so->set_name(sp.name);
-    so->set_value(sp.value);
-    so->set_unit(sp.unit);
+    CDM_BIND::ScalarData& scalar = 
+      (*dst.mutable_scalarproperties())[name];
+    scalar.set_value(o.value);
+    scalar.set_unit(o.unit);
   }
 }
 void PBAction::Copy(const SEOverrides& src, SEOverrides& dst)

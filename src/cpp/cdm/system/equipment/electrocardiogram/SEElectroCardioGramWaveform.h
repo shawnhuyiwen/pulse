@@ -2,10 +2,15 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "cdm/system/physiology/SECardiovascularSystem.h"
+
+// Keep enums in sync with appropriate schema/cdm/ElectroCardioGram.proto file !!
+enum class eElectroCardioGram_WaveformType { Sinus = 0, 
+                                             VentricularFibrillation,
+                                             VentricularTachycardia };
+extern const std::string& eElectroCardioGram_WaveformType_Name(eElectroCardioGram_WaveformType m);
 
 // Keep enums in sync with appropriate schema/cdm/CompartmentEnums.proto file !!
-enum class eElectroCardioGram_WaveformLead { NullLead = 0, 
+enum class eElectroCardioGram_WaveformLead { NullLead = 0,
                                              Lead1, 
                                              Lead2,
                                              Lead3,
@@ -36,24 +41,29 @@ public:
   virtual void SetLeadNumber(eElectroCardioGram_WaveformLead n);
   virtual void InvalidateLeadNumber();
 
-  virtual eHeartRhythm GetRhythm() const;
-  virtual void SetRhythm(eHeartRhythm name);
+  virtual eElectroCardioGram_WaveformType GetType() const;
+  virtual void SetType(eElectroCardioGram_WaveformType t);
 
-  virtual bool HasData() const;
-  virtual SEFunctionElectricPotentialVsTime& GetData();
-  virtual const SEFunctionElectricPotentialVsTime* GetData() const;
+  virtual bool HasOriginalData() const;
+  virtual SEArrayElectricPotential& GetOriginalData();
+  virtual const SEArrayElectricPotential* GetOriginalData() const;
 
-  virtual bool HasTimeStep() const;
-  virtual SEScalarTime& GetTimeStep();
-  virtual double GetTimeStep(const TimeUnit& unit) const;
+  virtual bool HasActiveCycle() const;
+  virtual SEArrayElectricPotential& GetActiveCycle();
+  virtual const SEArrayElectricPotential* GetActiveCycle() const;
+  virtual void GenerateActiveCycle(const SEScalarFrequency& hr, const SEScalarTime& step, double amplitudeModifier);
 
-  virtual std::vector<unsigned int>& GetActiveIndicies() { return m_ActiveIndicies; }
+  virtual size_t GetActiveIndex() { return m_ActiveIndex; }
+  virtual void SetActiveIndex(size_t idx) { m_ActiveIndex = idx; }
+
+  virtual void GetCycleValue(SEScalarElectricPotential& v, bool advance);
 
 protected:
 
   eElectroCardioGram_WaveformLead          m_LeadNumber;
-  eHeartRhythm                             m_Rhythm;
-  SEScalarTime*                            m_TimeStep;
-  SEFunctionElectricPotentialVsTime*       m_Data;
-  std::vector<unsigned int>                m_ActiveIndicies;
+  eElectroCardioGram_WaveformType          m_Type;
+  SEArrayElectricPotential*                m_OriginalData;
+  SEArrayElectricPotential*                m_ActiveCycle;
+  size_t                                   m_ActiveIndex;
+  bool                                     m_Recycling;
 };

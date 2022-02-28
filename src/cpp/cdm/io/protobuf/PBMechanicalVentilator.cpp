@@ -25,6 +25,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorData&
 {
   if (src.has_airwaypressure())
     PBProperty::Load(src.airwaypressure(), dst.GetAirwayPressure());
+  dst.m_BreathState = (eBreathState)src.breathstate();
   if (src.has_dynamicpulmonarycompliance())
     PBProperty::Load(src.dynamicpulmonarycompliance(), dst.GetDynamicPulmonaryCompliance());
   if (src.has_endtidalcarbondioxidefraction())
@@ -83,6 +84,7 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilator& src, CDM_BI
 {
   if (src.HasAirwayPressure())
     dst.set_allocated_airwaypressure(PBProperty::Unload(*src.m_AirwayPressure));
+  dst.set_breathstate((CDM_BIND::eBreathState)src.m_BreathState.GetEnum());
   if (src.HasDynamicPulmonaryCompliance())
     dst.set_allocated_dynamicpulmonarycompliance(PBProperty::Unload(*src.m_DynamicPulmonaryCompliance));
   if (src.HasEndTidalCarbonDioxideFraction())
@@ -212,6 +214,8 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
   if (src.has_inspirationwaveformperiod())
     PBProperty::Load(src.inspirationwaveformperiod(), dst.GetInspirationWaveformPeriod());
 
+  if (src.has_reliefvalvethreshold())
+    PBProperty::Load(src.reliefvalvethreshold(), dst.GetReliefValveThreshold());
   if (src.has_ypiecevolume())
     PBProperty::Load(src.ypiecevolume(), dst.GetYPieceVolume());
 
@@ -332,6 +336,8 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
   if (src.HasInspirationWaveformPeriod())
     dst.set_allocated_inspirationwaveformperiod(PBProperty::Unload(*src.m_InspirationWaveformPeriod));
 
+  if (src.HasReliefValveThreshold())
+    dst.set_allocated_reliefvalvethreshold(PBProperty::Unload(*src.m_ReliefValveThreshold));
   if (src.HasYPieceVolume())
     dst.set_allocated_ypiecevolume(PBProperty::Unload(*src.m_YPieceVolume));
 

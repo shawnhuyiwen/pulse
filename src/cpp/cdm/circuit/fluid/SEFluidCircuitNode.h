@@ -4,6 +4,7 @@
 #pragma once
 #include "cdm/circuit/SECircuitNode.h"
 class SEFluidBlackBox;
+class SEFluidCircuitPath;
 
 class CDM_DECL SEFluidCircuitNode : public SECircuitNode<FLUID_CIRCUIT_NODE>
 {
@@ -35,4 +36,18 @@ public:
   virtual bool HasVolumeBaseline() const;
   virtual SEScalarVolume& GetVolumeBaseline();
   virtual double GetVolumeBaseline(const VolumeUnit& unit) const;
+
+  SEFluidCircuitNode* GetBlackBoxSourceNode() const;
+  SEFluidCircuitNode* GetBlackBoxTargetNode() const;
+  void SetBlackBoxSourceTargetNodes(SEFluidCircuitNode& src, SEFluidCircuitNode& tgt);
+
+  SEFluidCircuitPath* GetBlackBoxSourcePath() const;
+  SEFluidCircuitPath* GetBlackBoxTargetPath() const;
+  void SetBlackBoxSourceTargetPaths(SEFluidCircuitPath& src, SEFluidCircuitPath& tgt);
+
+protected:
+  SEFluidCircuitNode* m_BlackBoxSourceNode=nullptr;  // Only set on middle nodes
+  SEFluidCircuitNode* m_BlackBoxTargetNode=nullptr;  // Only set on middle nodes
+  SEFluidCircuitPath* m_BlackBoxSourcePath = nullptr;// Only set on middle nodes
+  SEFluidCircuitPath* m_BlackBoxTargetPath = nullptr;// Only set on middle nodes
 };

@@ -37,3 +37,16 @@ enum eCharge
   Positive   = 3;/**<< @brief Charge is positive. */
 }
 
+/** @brief Enumeration for equipment to inform about what and how the current breath is. */
+enum eBreathState
+{
+  NoBreath                 = 0;
+  PatientInitiatedInhale   = 1;
+  PatientInitiatedPause    = 2;
+  PatientInitiatedExhale   = 3;
+  EquipmentInitiatedInhale = 4;
+  EquipmentInitiatedPause  = 5;
+  EquipmentInitiatedExhale = 6;
+  ExpiratoryHold           = 7;
+  InspiratoryHold          = 8;
+}

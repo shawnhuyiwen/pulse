@@ -28,6 +28,7 @@ namespace HowTo_MechanicalVentilator
         SEDataRequest.CreatePhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_min),
         // Ventilator Monitor Data
         SEDataRequest.CreateMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit.cmH2O),
+        SEDataRequest.CreateMechanicalVentilatorDataRequest("BreathState"),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction"),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit.cmH2O),
         SEDataRequest.CreateMechanicalVentilatorDataRequest("EndTidalOxygenFraction"),
@@ -64,6 +65,8 @@ namespace HowTo_MechanicalVentilator
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
+      // Note BreathState is an enum, so we can cast that
+      Console.WriteLine("Breath State "+ Enum.GetName(typeof(eBreathState), (eBreathState)data_values[9]));
 
       // Give the patient Dyspnea
       SEDyspnea dyspnea = new SEDyspnea();
@@ -95,6 +98,7 @@ namespace HowTo_MechanicalVentilator
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
+      Console.WriteLine("Breath State " + Enum.GetName(typeof(eBreathState), (eBreathState)data_values[9]));
 
       SEMechanicalVentilatorPressureControl pc_ac = new SEMechanicalVentilatorPressureControl();
       pc_ac.SetConnection(eSwitch.On);
@@ -111,6 +115,7 @@ namespace HowTo_MechanicalVentilator
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
+      Console.WriteLine("Breath State " + Enum.GetName(typeof(eBreathState), (eBreathState)data_values[9]));
 
       SEMechanicalVentilatorVolumeControl vc_ac = new SEMechanicalVentilatorVolumeControl();
       vc_ac.SetConnection(eSwitch.On);
@@ -127,6 +132,7 @@ namespace HowTo_MechanicalVentilator
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
+      Console.WriteLine("Breath State " + Enum.GetName(typeof(eBreathState), (eBreathState)data_values[9]));
 
       // Here is an example of programming a custom ventilator mode
       SEMechanicalVentilatorConfiguration mv_config = new SEMechanicalVentilatorConfiguration();
@@ -153,6 +159,7 @@ namespace HowTo_MechanicalVentilator
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
+      Console.WriteLine("Breath State " + Enum.GetName(typeof(eBreathState), (eBreathState)data_values[9]));
 
       // You can also perform a hold
       SEMechanicalVentilatorHold hold = new SEMechanicalVentilatorHold();
@@ -172,6 +179,7 @@ namespace HowTo_MechanicalVentilator
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
+      Console.WriteLine("Breath State " + Enum.GetName(typeof(eBreathState), (eBreathState)data_values[9]));
 
       // A leak can be specified
       SEMechanicalVentilatorLeak leak = new SEMechanicalVentilatorLeak();
@@ -191,6 +199,7 @@ namespace HowTo_MechanicalVentilator
       data_values = pulse.PullData();
       // And write it out to the console
       data_mgr.WriteData(data_values);
+      Console.WriteLine("Breath State " + Enum.GetName(typeof(eBreathState), (eBreathState)data_values[9]));
     }
   }
 }

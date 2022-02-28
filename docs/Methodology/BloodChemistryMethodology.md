@@ -164,14 +164,10 @@ Hypercapnia occurs when the partial pressure of carbon dioxide in the blood rise
 
 The engine triggers the hypercapnia event when the partial pressure of carbon dioxide in the aorta rises above 60&nbsp;mmHg. This is a reversible condition and is considered resolved when the partial pressure falls below 57&nbsp;mmHg. This 3&nbsp;mmHg window provides a buffer to account for normal fluctuations in the model.
 
-If the partial pressure of carbon dioxide in the blood rises to greater than 80&nbsp;mmHg an irreversible state is triggered and it will be impossible to regain homeostasis.
-
 ### Hypoxia
 Hypoxia occurs when the partial pressure of oxygen in the blood falls below 65&nbsp;mmHg @cite Pierson2000Pathophysiology. This can be due to a number of conditions that range from heart failure to poor respiratory function. This condition manifests as a decrease in oxygen saturation, increased heart rate, increased respiratory rate, decreased tidal volume, and pulmonary hypertension.
 
 The engine triggers the hypoxia event when the partial pressure of oxygen in the aorta falls below 65&nbsp;mmHg. This is a reversible condition and is considered resolved when the partial pressure rises above 68&nbsp;mmHg. This 3&nbsp;mmHg window provides a buffer to account for normal fluctuations in the model.
-
-If the partial pressure of oxygen in the blood falls below 15&nbsp; an irreversible state is triggered and it will be impossible to regain homeostasis.
 
 ### Hyperoxemia
 Hyperoxemia occurs when the partial pressure of oxygen in the blood rises above 120 mmHg, usually due to excessive supplemental oxygen delivery. Hyperoxemia can induce cerebral vasoconstriction, neuronal cell death, and seizures. In addition, hyperoxemia reduces the cardiac index and heart rate while increasing peripheral vascular resistance @cite gershengorn2014hyperoxemia.
@@ -180,32 +176,39 @@ The engine triggers the moderate hyperoxemia event when the partial pressure of 
 
 If the partial pressure of oxygen in the blood rises to greater than 200 mmHg, the severe hyperoxemia event is triggered to flag the oxygen toxicity.
 
+### Hypocapnia
+Hypocapnia occurs when the partial pressure of carbon dioxide in the bloos falls below 30 mmHg and is most commonly associated with rapid breathing or hyperventilation. 
+
+The engine triggers the moderate hypocapnia event when the partial pressure of carbon dioxide in the aorta falls below 30 mmHg. This is a reversible condition and is considered resolved when the partial pressure rises above 33 mmHg. This 3 mmHg window provides a buffer to account for normal fluctuations in the model.
+
+FI the partial pressure of carbon dioxide in the blood falls below 15 mmHg, the severe hypocapnia event is triggered.
+
 ### Brain Oxygen Deficit
 The brain is unable to complete any significant anaerobic metabolism. Therefore, without oxygen in the brain, unconsciousness results within five to ten seconds, and permanent damage can occur within five to ten minutes @cite guyton2006medical. Additionally, irreversible damage can occur if the oxygen tension in the brain is too low for a prolonged period of time @cite dhawan2011neurointensive. 
 
-There are two events in the engine related to an oxygen deficit in the brain: Brain Oxygen Deficit and Critical Brain Oxygen Deficit. The engine triggers the brain oxygen deficit event when the partial pressure of oxygen in the brain drops below 19 mmHg. If the brain remains in this deficit state for 30 minutes, an irreversible state is triggered, and it will be impossible to regain homeostasis (akin to death). If the partial pressure of oxygen in the brain drops below 10 mmHg, the patient enters a critical brain oxygen deficit state, which causes an irreversible state after 10 minutes. If the critical deficit event is active, it is removed when the oxygen partial pressure increases above 12 mmHg, and only the less-critical deficit event will be active. Both deficit events are removed when the oxygen partial pressure returns above 25 mmHg, assuming the irreversible state was never reached. The threshold values are chosen based on empirical data reviewed in summary in @cite dhawan2011neurointensive, and from data presented in @cite purins2012brain and @cite doppenberg1998determination.
+There are two events in the engine related to an oxygen deficit in the brain: Brain Oxygen Deficit and Critical Brain Oxygen Deficit. The engine triggers the brain oxygen deficit event when the partial pressure of oxygen in the brain drops below 19 mmHg. If the partial pressure of oxygen in the brain drops below 10 mmHg, the patient enters a critical brain oxygen deficit state. If the critical deficit event is active, it is removed when the oxygen partial pressure increases above 12 mmHg, and only the less-critical deficit event will be active. Both deficit events are removed when the oxygen partial pressure returns above 25 mmHg. The threshold values are chosen based on empirical data reviewed in summary in @cite dhawan2011neurointensive, and from data presented in @cite purins2012brain and @cite doppenberg1998determination.
 
 ### Myocardium Oxygen Deficit
 Blood flow through the coronary arteries provides required oxygen to the heart muscle. If the oxygen supply to the heart is limited through respiratory distress or some other condition, the demand for oxygen will cause dilation of the coronary arteries. By increasing the flow of blood to the heart muscle, the oxygen supply increases @cite guyton2006medical. This effect is not currently modeled in the engine, but the myocardium oxygen level is observed and an event is triggered when it becomes too low. In the future, the resistance to flow in the coronary arteries will be increased to represent blood vessel dilation, and the asystole rhythm change will be tied to the arterial partial pressure of oxygen.
 
-The engine triggers the myocardium oxygen deficit event when the partial pressure of oxygen is less than 5&nbsp;mmHg. If the oxygen level in the heart muscle remains low for more than 40 minutes an irreversible state is triggered and it will be impossible to regain homeostasis. 
+The engine triggers the myocardium oxygen deficit event when the partial pressure of oxygen is less than 5&nbsp;mmHg. 
 
 ### Acid-Base Disturbance Events
 Acid-base disturbances can be respiratory or metabolic in origin. When an acid-base disturbance is caused by a change in the total amount of carbon dioxide in the blood, it is considered to be a respiratory disturbance because that system regulates carbon dioxide. If the origin is a change in the strong ion difference, then the disturbance is said to be metabolic in origin. Because the respiratory system responds to a metabolic disturbance and the renal and other systems respond to a respiratory disturbance with compensatory mechanisms, it is difficult to observe a purely metabolic or respiratory disturbance. For that reason, disturbances are sometimes further classified as acute, compensated, and mixed @cite hall2011guyton. There are four acid-base disturbance events observed in the engine.
 
 #### Metabolic Acidosis
-The metabolic acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is less than 22.0&nbsp;mM. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions. If the blood becomes so acidic that the pH drops below 6.5, an irreversible state is triggered, and it will be impossible to regain homeostasis.
+The metabolic acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is less than 22.0&nbsp;mM. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions.
 
 #### Metabolic Alkalosis
-The metabolic alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is greater than 26.0&nbsp;mM. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions. An irreversible state is triggered when the pH increases above 8.5.
+The metabolic alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is greater than 26.0&nbsp;mM. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions.
 
 #### %Respiratory Acidosis
-The respiratory acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries is greater than 47.0&nbsp;mmHg. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions. If the blood becomes so acidic that the pH drops below 6.5, an irreversible state is triggered, and it will be impossible to regain homeostasis.
+The respiratory acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries is greater than 47.0&nbsp;mmHg. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions.
 
 #### %Respiratory Alkalosis
-The respiratory alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries less than 44.0&nbsp;mmHg. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions. An irreversible state is triggered when the pH increases above 8.5.
+The respiratory alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries less than 44.0&nbsp;mmHg. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions. 
 
-<img src="./Images/BloodChemistry/AcidBaseEvents.png">
+<img src="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png">
 <center>
 *Figure 2. The acidosis and alkalosis events are broken down into either metabolic or respiratory induced. Metabolic induced acidosis/alkalosis is driven from a shift in bicarbonate
 while respiratory induced acidosis/alkalosis is due to a chance in arterial carbon dioxide. The shift between either acidosis or alkalosis occurs at a blood pH of 7.4.*
@@ -287,7 +290,7 @@ Four Compartment Test
 ------------------------
 As mentioned above, the Blood Chemistry system serves the primary purpose of storing and relaying information between the other systems. This heavy reliance on other systems can make it difficult to test the funcitonality of blood gas balance. To this end, the scalability of the engine was leveraged to create a simpler system comprised of only four compartments: Pulmonary, to represent the capillaries in the lungs where oxygen and carbon dioxide exchange occurs; Arteries, representing all of the oxygen-rich vasculature running to the tissues; Capillaries, representing the location of oxygen removal from the vasculature; and Veins, representing the section of the vasulature containing oxygen-poor blood. A diagram of this simplified system can be seen in Figure 4 below.
 
-<img src="./Images/BloodChemistry/FourCompartment.png" width="600">
+<img src="./Images/BloodChemistry/BloodChemistryFourCompartment.png" width="600">
 <center>
 *Figure 4. The simplified Four Compartment test uses only Pulmonary, Arteries, Capillaries, and Veins to hone in on the functionality in the Blood Chemistry system.*
 </center><br>

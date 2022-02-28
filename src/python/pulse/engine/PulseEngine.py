@@ -20,6 +20,13 @@ from pulse.cdm.scalars import ElectricPotentialUnit, FrequencyUnit, \
 class eModelType(Enum):
     HumanAdultWholeBody = 0
     HumanAdultVentilationMechanics = 1
+    HumanAdultHemodynamics = 2
+
+def version():
+    return PyPulse.__version__;
+
+def hash():
+    return PyPulse.__hash__;
 
 class PulseEngine:
     __slots__ = ['__pulse', "_is_ready", "_dt_s",
@@ -38,8 +45,7 @@ class PulseEngine:
         self._results = {}
         self._results_template = {}
         self._spare_time_s = 0
-        self._dt_s = 0.02 # self.__pulse.get_timestep("s")
-        # Timestep only gets set after on load/initialize
+        self._dt_s = self.__pulse.get_timestep("s")
 
     def serialize_from_file(self, state_file: str,
                                   data_request_mgr: SEDataRequestManager):

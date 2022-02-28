@@ -41,9 +41,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       case eEvent::Antidiuresis:
         m_ss << " Patient has Antidiuresis";
         break;
-      case eEvent::Asystole:
-        m_ss << " Patient has Asystole";
-        break;
       case eEvent::Bradycardia:
         m_ss << " Patient has Bradycardia";
         break;
@@ -144,7 +141,7 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         m_ss << " The patient is in a state of moderate hyperoxemia";
         break;
       case eEvent::SevereHypocapnia:
-        m_ss << " The patient is in a state of moderate hypocapnia";
+        m_ss << " The patient is in a state of severe hypocapnia";
         break;
       case eEvent::Tachycardia:
         m_ss << " Patient has Tachycardia";
@@ -168,7 +165,10 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         m_ss << "Anesthesia Machine Oxygen Bottle 2 has been exhausted";
         break;
       case eEvent::AnesthesiaMachineReliefValveActive:
-        m_ss << "Anesthesi aMachine Relief valve active - pressure exceeded";
+        m_ss << "Anesthesia Machine Relief valve active - pressure exceeded";
+        break;
+      case eEvent::MechanicalVentilatorReliefValveActive:
+        m_ss << "Mechanical Ventilator Relief valve active - pressure exceeded";
         break;
       default:
         m_ss << " Engine has entered state : " << eEvent_Name(type);
@@ -180,9 +180,6 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
       {
       case eEvent::Antidiuresis:
         m_ss << " Patient no longer is in Antidiuresis";
-        break;
-      case eEvent::Asystole:
-        m_ss << " Patient no longer is in Asystole";
         break;
       case eEvent::Bradycardia:
         m_ss << " Patient no longer has Bradycardia";
@@ -309,6 +306,9 @@ void SEEventManager::SetEvent(eEvent type, bool active, const SEScalarTime& time
         break;
       case eEvent::AnesthesiaMachineReliefValveActive:
         m_ss << "Anesthesia Machine Relief valve inactive - pressure below setting";
+        break;
+      case eEvent::MechanicalVentilatorReliefValveActive:
+        m_ss << "Mechanical Ventilator Relief valve inactive - pressure below setting";
         break;
       default:
         m_ss << " Engine has exited state : " << eEvent_Name(type);

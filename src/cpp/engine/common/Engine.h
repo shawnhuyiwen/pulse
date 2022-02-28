@@ -21,6 +21,8 @@ namespace pulse
     Engine(Logger* logger=nullptr);
     virtual ~Engine();
 
+    virtual std::string GetTypeName() const override;
+
     virtual bool SerializeFromFile(const std::string& file) override;
     virtual bool SerializeToFile(const std::string& file) const override;
 

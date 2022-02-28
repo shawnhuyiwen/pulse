@@ -24,6 +24,8 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_CerebralBloodFlow = nullptr;
   m_CerebralPerfusionPressure = nullptr;
   m_DiastolicArterialPressure = nullptr;
+  m_DiastolicLeftHeartPressure = nullptr;
+  m_DiastolicRightHeartPressure = nullptr;
   m_HeartEjectionFraction = nullptr;
   m_HeartRate = nullptr;
   m_HeartRhythm = eHeartRhythm::NormalSinus;
@@ -46,6 +48,8 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_PulsePressure = nullptr;
   m_SystemicVascularResistance = nullptr;
   m_SystolicArterialPressure = nullptr;
+  m_SystolicLeftHeartPressure = nullptr;
+  m_SystolicRightHeartPressure = nullptr;
   m_TotalHemorrhageRate = nullptr;
   m_TotalHemorrhagedVolume = nullptr;
 }
@@ -62,6 +66,8 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_CerebralBloodFlow);
   SAFE_DELETE(m_CerebralPerfusionPressure);
   SAFE_DELETE(m_DiastolicArterialPressure);
+  SAFE_DELETE(m_DiastolicLeftHeartPressure);
+  SAFE_DELETE(m_DiastolicRightHeartPressure);
   SAFE_DELETE(m_HeartEjectionFraction);
   SAFE_DELETE(m_HeartRate);
   m_HeartRhythm = eHeartRhythm::NormalSinus;
@@ -84,6 +90,8 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_PulsePressure);
   SAFE_DELETE(m_SystemicVascularResistance);
   SAFE_DELETE(m_SystolicArterialPressure);
+  SAFE_DELETE(m_SystolicLeftHeartPressure);
+  SAFE_DELETE(m_SystolicRightHeartPressure);
   SAFE_DELETE(m_TotalHemorrhageRate);
   SAFE_DELETE(m_TotalHemorrhagedVolume);
 }
@@ -98,6 +106,8 @@ void SECardiovascularSystem::Clear()
   INVALIDATE_PROPERTY(m_CerebralBloodFlow);
   INVALIDATE_PROPERTY(m_CerebralPerfusionPressure);
   INVALIDATE_PROPERTY(m_DiastolicArterialPressure);
+  INVALIDATE_PROPERTY(m_DiastolicLeftHeartPressure);
+  INVALIDATE_PROPERTY(m_DiastolicRightHeartPressure);
   INVALIDATE_PROPERTY(m_HeartEjectionFraction);
   INVALIDATE_PROPERTY(m_HeartRate);
   m_HeartRhythm = eHeartRhythm::NormalSinus;
@@ -120,7 +130,9 @@ void SECardiovascularSystem::Clear()
   INVALIDATE_PROPERTY(m_PulsePressure);
   INVALIDATE_PROPERTY(m_SystemicVascularResistance);
   INVALIDATE_PROPERTY(m_SystolicArterialPressure);
-    INVALIDATE_PROPERTY(m_TotalHemorrhageRate);
+  INVALIDATE_PROPERTY(m_SystolicLeftHeartPressure);
+  INVALIDATE_PROPERTY(m_SystolicRightHeartPressure);
+  INVALIDATE_PROPERTY(m_TotalHemorrhageRate);
   INVALIDATE_PROPERTY(m_TotalHemorrhagedVolume);
 }
 
@@ -142,6 +154,10 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetCerebralPerfusionPressure();
   if (name.compare("DiastolicArterialPressure") == 0)
     return &GetDiastolicArterialPressure();
+  if (name.compare("DiastolicLeftHeartPressure") == 0)
+    return &GetDiastolicLeftHeartPressure();
+  if (name.compare("DiastolicRightHeartPressure") == 0)
+    return &GetDiastolicRightHeartPressure();
   if (name.compare("HeartEjectionFraction") == 0)
     return &GetHeartEjectionFraction();
   if (name.compare("HeartRate") == 0)
@@ -184,6 +200,10 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetSystemicVascularResistance();
   if (name.compare("SystolicArterialPressure") == 0)
     return &GetSystolicArterialPressure();
+  if (name.compare("SystolicLeftHeartPressure") == 0)
+    return &GetSystolicLeftHeartPressure();
+  if (name.compare("SystolicRightHeartPressure") == 0)
+    return &GetSystolicRightHeartPressure();
   if (name.compare("TotalHemorrhageRate") == 0)
     return &GetTotalHemorrhageRate();
   if (name.compare("TotalHemorrhagedVolume") == 0)
@@ -325,6 +345,40 @@ double SECardiovascularSystem::GetDiastolicArterialPressure(const PressureUnit& 
   if (m_DiastolicArterialPressure == nullptr)
     return SEScalar::dNaN();
   return m_DiastolicArterialPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasDiastolicLeftHeartPressure() const
+{
+  return m_DiastolicLeftHeartPressure == nullptr ? false : m_DiastolicLeftHeartPressure->IsValid();
+}
+SEScalarPressure& SECardiovascularSystem::GetDiastolicLeftHeartPressure()
+{
+  if (m_DiastolicLeftHeartPressure == nullptr)
+    m_DiastolicLeftHeartPressure = new SEScalarPressure();
+  return *m_DiastolicLeftHeartPressure;
+}
+double SECardiovascularSystem::GetDiastolicLeftHeartPressure(const PressureUnit& unit) const
+{
+  if (m_DiastolicLeftHeartPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_DiastolicLeftHeartPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasDiastolicRightHeartPressure() const
+{
+  return m_DiastolicRightHeartPressure == nullptr ? false : m_DiastolicRightHeartPressure->IsValid();
+}
+SEScalarPressure& SECardiovascularSystem::GetDiastolicRightHeartPressure()
+{
+  if (m_DiastolicRightHeartPressure == nullptr)
+    m_DiastolicRightHeartPressure = new SEScalarPressure();
+  return *m_DiastolicRightHeartPressure;
+}
+double SECardiovascularSystem::GetDiastolicRightHeartPressure(const PressureUnit& unit) const
+{
+  if (m_DiastolicRightHeartPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_DiastolicRightHeartPressure->GetValue(unit);
 }
 
 bool SECardiovascularSystem::HasHeartEjectionFraction() const
@@ -691,6 +745,40 @@ double SECardiovascularSystem::GetSystolicArterialPressure(const PressureUnit& u
   if (m_SystolicArterialPressure == nullptr)
     return SEScalar::dNaN();
   return m_SystolicArterialPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasSystolicLeftHeartPressure() const
+{
+  return m_SystolicLeftHeartPressure == nullptr ? false : m_SystolicLeftHeartPressure->IsValid();
+}
+SEScalarPressure& SECardiovascularSystem::GetSystolicLeftHeartPressure()
+{
+  if (m_SystolicLeftHeartPressure == nullptr)
+    m_SystolicLeftHeartPressure = new SEScalarPressure();
+  return *m_SystolicLeftHeartPressure;
+}
+double SECardiovascularSystem::GetSystolicLeftHeartPressure(const PressureUnit& unit) const
+{
+  if (m_SystolicLeftHeartPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_SystolicLeftHeartPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasSystolicRightHeartPressure() const
+{
+  return m_SystolicRightHeartPressure == nullptr ? false : m_SystolicRightHeartPressure->IsValid();
+}
+SEScalarPressure& SECardiovascularSystem::GetSystolicRightHeartPressure()
+{
+  if (m_SystolicRightHeartPressure == nullptr)
+    m_SystolicRightHeartPressure = new SEScalarPressure();
+  return *m_SystolicRightHeartPressure;
+}
+double SECardiovascularSystem::GetSystolicRightHeartPressure(const PressureUnit& unit) const
+{
+  if (m_SystolicRightHeartPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_SystolicRightHeartPressure->GetValue(unit);
 }
 
 bool SECardiovascularSystem::HasTotalHemorrhageRate() const

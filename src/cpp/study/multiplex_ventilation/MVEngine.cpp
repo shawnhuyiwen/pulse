@@ -185,8 +185,8 @@ namespace pulse::study::multiplex_ventilation
           pc->ProcessAction(intubation);
 
           SEOverrides overrides;
-          overrides.AddScalarProperty("RespiratoryCompliance", multiVentilation->compliance_ml_per_cmh2o(), VolumePerPressureUnit::mL_Per_cmH2O);
-          overrides.AddScalarProperty("RespiratoryResistance", multiVentilation->resistance_cmh2o_s_per_l(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+          overrides.GetScalarProperties()["RespiratoryCompliance"] = SEScalarPair(multiVentilation->compliance_ml_per_cmh2o(), VolumePerPressureUnit::mL_Per_cmH2O);
+          overrides.GetScalarProperties()["RespiratoryResistance"] = SEScalarPair(multiVentilation->resistance_cmh2o_s_per_l(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
           pc->ProcessAction(overrides);
 
           SEImpairedAlveolarExchangeExacerbation impairedAlveolarExchange;

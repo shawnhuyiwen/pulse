@@ -3,6 +3,15 @@
 
 namespace Pulse.CDM
 {
+
+  public enum eBreathState : int
+  {
+    NoBreath = 0,
+    PatientInhale, PatientPause, PatientExhale,
+    EquipmentInhale, EquipmentPause, EquipmentExhale,
+    ExpiratoryHold, InspiratoryHold
+  }
+
   public abstract class SEEquipment : SESystem
   {
     public SEEquipment()

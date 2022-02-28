@@ -1,3 +1,7 @@
+set(filesystem)# Support for std::filesystem::experimental
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)
+  set(filesystem stdc++fs)
+endif()
 
 add_library_ex(CommonDataModel
   H_FILES
@@ -79,6 +83,7 @@ add_library_ex(CommonDataModel
     engine/SEPatientConfiguration.h
     engine/SESerializeState.h
     engine/SETimedStabilization.h
+    engine/SEValidationTarget.h
     io/protobuf/PBActions.h
     io/protobuf/PBAnesthesiaMachine.h
     io/protobuf/PBBagValveMask.h
@@ -113,10 +118,10 @@ add_library_ex(CommonDataModel
     patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h
     patient/actions/SEAcuteStress.h
     patient/actions/SEAirwayObstruction.h
+    patient/actions/SEArrhythmia.h
     patient/actions/SEAsthmaAttack.h
     patient/actions/SEBrainInjury.h
     patient/actions/SEBronchoconstriction.h
-    patient/actions/SECardiacArrest.h
     patient/actions/SEChestCompressionForce.h
     patient/actions/SEChestCompressionForceScale.h
     patient/actions/SEChestOcclusiveDressing.h
@@ -169,7 +174,8 @@ add_library_ex(CommonDataModel
     patient/conditions/SEPulmonaryFibrosis.h
     patient/conditions/SEPulmonaryShunt.h
     patient/conditions/SESepsis.h
-    #properties/SEArray.h
+    properties/SEArray.h
+    properties/SEArrayElectricPotential.h
     #properties/SEArrayPressure.h
     #properties/SEArrayVolume.h
     #properties/SEArrayVolumePerTime.h
@@ -296,7 +302,6 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h
     system/equipment/electrocardiogram/SEElectroCardioGram.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h
-    system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.h
     system/equipment/inhaler/SEInhaler.h
     system/equipment/inhaler/actions/SEInhalerAction.h
     system/equipment/inhaler/actions/SEInhalerConfiguration.h
@@ -431,6 +436,7 @@ add_library_ex(CommonDataModel
     engine/SEPatientConfiguration.cpp
     engine/SESerializeState.cpp
     engine/SETimedStabilization.cpp
+    engine/SEValidationTarget.cpp
     io/protobuf/PBActionEnums.cpp
     io/protobuf/PBActions.cpp
     io/protobuf/PBAnesthesiaMachine.cpp
@@ -479,10 +485,10 @@ add_library_ex(CommonDataModel
     patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.cpp
     patient/actions/SEAcuteStress.cpp
     patient/actions/SEAirwayObstruction.cpp
+    patient/actions/SEArrhythmia.cpp
     patient/actions/SEAsthmaAttack.cpp
     patient/actions/SEBrainInjury.cpp
     patient/actions/SEBronchoconstriction.cpp
-    patient/actions/SECardiacArrest.cpp
     patient/actions/SEChestCompressionForce.cpp
     patient/actions/SEChestCompressionForceScale.cpp
     patient/actions/SEChestOcclusiveDressing.cpp
@@ -535,7 +541,8 @@ add_library_ex(CommonDataModel
     patient/conditions/SEPulmonaryFibrosis.cpp
     patient/conditions/SEPulmonaryShunt.cpp
     patient/conditions/SESepsis.cpp
-    #properties/SEArray.cpp
+    properties/SEArray.cpp
+    properties/SEArrayElectricPotential.cpp
     #properties/SEArrayPressure.cpp
     #properties/SEArrayVolume.cpp
     #properties/SEArrayVolumePerTime.cppcpp
@@ -662,7 +669,6 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cpp
     system/equipment/electrocardiogram/SEElectroCardioGram.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.cpp
-    system/equipment/electrocardiogram/SEElectroCardioGramWaveformInterpolator.cpp
     system/equipment/inhaler/SEInhaler.cpp
     system/equipment/inhaler/actions/SEInhalerAction.cpp
     system/equipment/inhaler/actions/SEInhalerConfiguration.cpp
@@ -722,6 +728,7 @@ add_library_ex(CommonDataModel
     DataModelBindings
   PRIVATE_DEPENDS
     protobuf::libprotobuf
+    ${filesystem}
   INSTALL_HEADER_DIR
     cdm
 )

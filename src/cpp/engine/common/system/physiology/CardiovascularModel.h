@@ -50,6 +50,9 @@ namespace pulse
     // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
     void SetUp();
 
+    void SetHeartRhythm(eHeartRhythm Rhythm) override;
+    void SetHeartRhythm(eHeartRhythm Rhythm, bool force);
+
     void AtSteadyState();
     void PreProcess();
     void Process(bool solve_and_transport=true);
@@ -73,34 +76,33 @@ namespace pulse
     void HeartDriver();
     /**/void AdjustVascularTone();
     /****/void MetabolicToneResponse();
-    /**/void BeginCardiacCycle();
+    /**/void BeginDriverCycle();
+    /****/void RecordAndResetCardiacCycle();//Could be called out of order by arrythma
     /**/void CalculateHeartElastance();
-    /**/void UpdateHeartRhythm();
     void ProcessActions();
     //Action methods
     /**/void CPR();
     /****/void CalculateAndSetCPRcompressionForce();
+    /**/void Arrhythmia();
     /**/void Hemorrhage();
     /**/void InternalHemorrhagePressureApplication();
     /**/void PericardialEffusion();
     /**/void PericardialEffusionPressureApplication();
-    /**/void CardiacArrest();
     /**/void TraumaticBrainInjury();
     //Respiratory effects
     void CalculatePleuralCavityVenousEffects();
 
     // Process:
     void CalculateVitalSigns();
-    /**/void CalculateHeartRate();
-    /**/void RecordAndResetCardiacCycle();
 
     // Serializable member variables (Set in Initialize and in schema)
     //Driver
     bool   m_StartSystole;
+    bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
     bool   m_HeartFlowDetected;
-    bool   m_EnterCardiacArrest;// Can't go into cardiac arrest during the middle of a cycle
-    double m_CardiacCyclePeriod_s;
-    double m_CurrentCardiacCycleDuration_s; // How long have we been in this heart beat
+    double m_CurrentDriverCycleTime_s;
+    double m_CurrentCardiacCycleTime_s;
+    double m_DriverCyclePeriod_s;
     double m_LeftHeartElastanceModifier;// from Heart Failure and such
     double m_LeftHeartElastance_mmHg_Per_mL;
     double m_LeftHeartElastanceMax_mmHg_Per_mL;
@@ -108,17 +110,26 @@ namespace pulse
     double m_RightHeartElastance_mmHg_Per_mL;
     double m_RightHeartElastanceMax_mmHg_Per_mL;
     double m_RightHeartElastanceMin_mmHg_Per_mL;
+    // Arrhythmia
+    double m_ArrhythmiaHeartElastanceModifier; //need to apply a modifier for to the elastance for some arrhythmias
+    double m_ArrhythmiaVascularToneModifier;  //need to modify the vascular tone to represent some of the pressure drop
+    double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmias
+    double m_StabilizedMAPBaseline_mmHg; //store for moving between arrhythmias
     //CPR
     double m_CompressionTime_s;
     double m_CompressionRatio;
     double m_CompressionPeriod_s;
     // Vitals and Averages
-    double m_CurrentCardiacCycleTime_s;
+    double m_CardiacArrestVitalsUpdateTimer_s;
     double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
     double m_CardiacCycleAortaPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
     double m_CardiacCycleAortaPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
+    double m_CardiacCycleLeftHeartPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
+    double m_CardiacCycleLeftHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_CardiacCyclePulmonaryArteryPressureLow_mmHg;
     double m_CardiacCyclePulmonaryArteryPressureHigh_mmHg;
+    double m_CardiacCycleRightHeartPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
+    double m_CardiacCycleRightHeartPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
     double m_LastCardiacCycleMeanArterialCO2PartialPressure_mmHg;
     double m_CardiacCycleStrokeVolume_mL; // Total volume of the left heart flow for the current cardiac cycle
     SERunningAverage* m_CardiacCycleArterialPressure_mmHg;
@@ -129,10 +140,8 @@ namespace pulse
     SERunningAverage* m_CardiacCyclePulmonaryArteryPressure_mmHg;
     SERunningAverage* m_CardiacCycleCentralVenousPressure_mmHg;
     SERunningAverage* m_CardiacCycleSkinFlow_mL_Per_s;
-  
+
     // Stateless member variable (Set in SetUp())
-    bool                             m_TuneCircuit = true;
-    std::string                      m_TuningFile;
 
     // Hemorrhage
     struct HemorrhageTrack

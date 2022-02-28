@@ -3,16 +3,18 @@
 package com.kitware.pulse.cdm.system.equipment.electrocardiogram;
 
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformLead;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformType;
 import com.kitware.pulse.cdm.bind.Physiology.eHeartRhythm;
+import com.kitware.pulse.cdm.properties.SEArrayElectricPotential;
 import com.kitware.pulse.cdm.properties.SEFunctionElectricPotentialVsTime;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 
 public class SEElectroCardioGramWaveform
 {
-  protected ElectroCardioGramWaveformData.eWaveformLead   lead;
-  protected eHeartRhythm                      rhythm;
-  protected SEFunctionElectricPotentialVsTime data;
-  protected SEScalarTime                      timeStep;
+  protected eWaveformLead                     lead;
+  protected eWaveformType                     type;
+  protected SEArrayElectricPotential          originalData;
   
   public SEElectroCardioGramWaveform()
   {
@@ -21,23 +23,20 @@ public class SEElectroCardioGramWaveform
   
   public void clear()
   {
-    lead = ElectroCardioGramWaveformData.eWaveformLead.NullLead;
-    rhythm = null;
-    data = null;
-    timeStep = null;
+    lead = null;
+    type = null;
+    originalData = null;
   }
   
   public static void load(ElectroCardioGramWaveformData src, SEElectroCardioGramWaveform dst)
   {
     dst.clear();
-    if(src.getRhythm()!=eHeartRhythm.UNRECOGNIZED)
-      dst.setRhythm(src.getRhythm());
+    if(src.getType()!=eWaveformType.UNRECOGNIZED)
+      dst.setType(src.getType());
     if(src.getLead()!=ElectroCardioGramWaveformData.eWaveformLead.UNRECOGNIZED)
      dst.setLead(src.getLead());
-    if(src.hasData())
-      SEFunctionElectricPotentialVsTime.load(src.getData(),dst.getData());
-    if(src.hasTimeStep())
-      SEScalarTime.load(src.getTimeStep(),dst.getTimeStep()); 
+    if(src.hasOriginalData())
+      SEArrayElectricPotential.load(src.getOriginalData(),dst.getOriginalData());
   }
   public static ElectroCardioGramWaveformData unload(SEElectroCardioGramWaveform src)
   {
@@ -49,12 +48,10 @@ public class SEElectroCardioGramWaveform
   {
     if(src.hasLead())
       dst.setLead(src.lead);
-    if(src.hasRhythm())
-      dst.setRhythm(src.rhythm);
-    if(src.hasData())
-      dst.setData(SEFunctionElectricPotentialVsTime.unload(src.data));
-    if(src.hasTimeStep())
-      dst.setTimeStep(SEScalarTime.unload(src.timeStep));
+    if(src.hasType())
+      dst.setType(src.type);
+    if(src.hasOriginalData())
+      dst.setOriginalData(SEArrayElectricPotential.unload(src.originalData));
   }
   
   public ElectroCardioGramWaveformData.eWaveformLead getLead()
@@ -74,38 +71,27 @@ public class SEElectroCardioGramWaveform
     this.lead = null;
   }
   
-  public eHeartRhythm getRhythm()
+  public eWaveformType getType()
   {
-    return rhythm;
+    return type;
   }
-  public void setRhythm(eHeartRhythm r)
+  public void setType(eWaveformType t)
   {
-    this.rhythm = r;
+    this.type = t;
   }
-  public boolean hasRhythm()
+  public boolean hasType()
   {
-    return rhythm == null ? false : true;
+    return type == null ? false : true;
   }
   
-  public boolean hasData()
+  public boolean hasOriginalData()
   {
-    return data == null ? false : data.isValid();
+    return originalData == null ? false : originalData.isValid();
   }
-  public SEFunctionElectricPotentialVsTime getData()
+  public SEArrayElectricPotential getOriginalData()
   {
-    if (data == null)
-      data = new SEFunctionElectricPotentialVsTime();
-    return data;
-  }
-
-  public boolean hasTimeStep()
-  {
-    return timeStep == null ? false : timeStep.isValid();
-  }
-  public SEScalarTime getTimeStep()
-  {
-    if (timeStep == null)
-      timeStep = new SEScalarTime();
-    return timeStep;
+    if (originalData == null)
+      originalData = new SEArrayElectricPotential();
+    return originalData;
   }
 }

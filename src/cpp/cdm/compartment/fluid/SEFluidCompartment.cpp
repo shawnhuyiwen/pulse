@@ -363,11 +363,24 @@ void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::AddLink(LinkType& link)
   if (!Contains(m_Links, link))
   {
     m_Links.push_back(&link);
-    // Is it incoming or out going?
-    if (this == &link.GetSourceCompartment())
-      m_OutgoingLinks.push_back(&link);
-    else if (this == &link.GetTargetCompartment())
-      m_IncomingLinks.push_back(&link);
+    if (HasChildren())
+    {
+      SEFluidCompartment& src = link.GetSourceCompartment();
+      SEFluidCompartment& tgt = link.GetTargetCompartment();
+
+      if(this!= &src && !HasChild(src))
+        m_IncomingLinks.push_back(&link);
+      else if (this!=&tgt && !HasChild(tgt))
+        m_OutgoingLinks.push_back(&link);
+    }
+    else
+    {
+      // Is it incoming or out going?
+      if (this == &link.GetSourceCompartment())
+        m_OutgoingLinks.push_back(&link);
+      else if (this == &link.GetTargetCompartment())
+        m_IncomingLinks.push_back(&link);
+    }
   }
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
@@ -387,16 +400,17 @@ const std::vector<LinkType*>& SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::GetLi
 }
 
 template<FLUID_COMPARTMENT_TEMPLATE>
-bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasChild(const std::string& name)
+bool SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::HasChild(const SEFluidCompartment& cmpt)
 {
-  for (SEFluidCompartment* cmpt : m_FluidChildren)
+  for (SEFluidCompartment* child : m_FluidChildren)
   {
-    if (name == cmpt->GetName())
+    if (&cmpt == child)
+      return true;
+    if (child->HasChild(cmpt))
       return true;
   }
   return false;
 }
-
 
 #include "cdm/compartment/fluid/SEGasCompartment.h"
 #include "cdm/compartment/substances/SEGasSubstanceQuantity.h"

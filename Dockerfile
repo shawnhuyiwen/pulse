@@ -2,10 +2,7 @@ ARG BASE=debian:bullseye
 FROM $BASE
 ARG BASE
 
-ARG JUPYTER=OFF
-
 RUN echo $BASE
-RUN echo $JUPYTER
 
 ENV TERM linux
 
@@ -24,25 +21,12 @@ RUN if [ "$BASE" = "fedora:32" ]; then \
   curl -L -o /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.repo && \
   yum install -y java-1.8.0-amazon-corretto-devel \
   ;fi
-
-# Replace with pip install -r requirements.txt
-# Or a setup.py
-RUN if [ "$JUPYTER" = "ON" ]; then \
-    pip3 install six \
-    && pip3 install numpy \
-    && pip3 install pandas \
-    && pip3 install matplotlib \
-    && pip3 install bqplot \
-    && pip3 install jupyter \
-    && pip3 install ipywidgets \
-    && jupyter nbextension enable --py bqplot \
-    ;fi
  
 # Pull in local source and build
 COPY . /source
 RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto && \
     mkdir build && \
-    mkdir pulse  && \
+    mkdir pulse && \
     cd /build  && \
     cmake -DPulse_PYTHON_API=ON \
           -DCMAKE_INSTALL_PREFIX=/pulse \
@@ -55,11 +39,12 @@ RUN export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto && \
     make -j4 && \
     cd /  && \
     rm -rf /build
+
+
+ENV PYTHONPATH /pulse/bin:/pulse/python
     
 RUN if [ "$BASE" = "debian:bullseye" ]; then \
  rm java-1.8.0-amazon-corretto-jdk_8.232.09-1_amd64.deb ;fi
-
-ENV PYTHONPATH /source/src/python:/pulse/bin
 
 # Build-time metadata as defined at http://label-schema.org
 ARG BUILD_DATE

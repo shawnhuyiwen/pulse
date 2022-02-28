@@ -136,5 +136,9 @@ namespace pulse { namespace human_adult_whole_body
     testMap.insert(std::make_pair("AcidBaseFourCompartmentTestWithProductionConsumption", &EngineTest::AcidBaseFourCompartmentTestWithProductionConsumption));
     testMap.insert(std::make_pair("AcidBaseFiveCompartmentTestWithDiffusion", &EngineTest::AcidBaseFiveCompartmentTestWithDiffusion));
     testMap.insert(std::make_pair("AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion", &EngineTest::AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion));
+
+    testMap.insert(std::make_pair("EmptyBlackBoxTest", &EngineTest::EmptyBlackBoxTest));
+    testMap.insert(std::make_pair("ImposeFlowBlackBoxTest", &EngineTest::ImposeFlowBlackBoxTest));
+    testMap.insert(std::make_pair("ImposePressureAndFlowBlackBoxTest", &EngineTest::ImposePressureAndFlowBlackBoxTest));
   }
 END_NAMESPACE_EX

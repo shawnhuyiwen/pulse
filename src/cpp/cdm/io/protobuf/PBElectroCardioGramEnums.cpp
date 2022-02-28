@@ -7,7 +7,12 @@ PUSH_PROTO_WARNINGS
 POP_PROTO_WARNINGS
 #include "cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h"
 
-const std::string& eElectroCardioGram_WaveformLead_Name(eElectroCardioGram_WaveformLead m)
+const std::string& eElectroCardioGram_WaveformLead_Name(eElectroCardioGram_WaveformLead n)
 {
-  return CDM_BIND::ElectroCardioGramWaveformData::eWaveformLead_Name((CDM_BIND::ElectroCardioGramWaveformData::eWaveformLead)m);
+  return CDM_BIND::ElectroCardioGramWaveformData::eWaveformLead_Name((CDM_BIND::ElectroCardioGramWaveformData::eWaveformLead)n);
+}
+
+const std::string& eElectroCardioGram_WaveformType_Name(eElectroCardioGram_WaveformType t)
+{
+  return CDM_BIND::ElectroCardioGramWaveformData::eWaveformType_Name((CDM_BIND::ElectroCardioGramWaveformData::eWaveformType)t);
 }

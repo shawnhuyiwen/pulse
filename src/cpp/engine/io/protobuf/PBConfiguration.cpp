@@ -57,8 +57,10 @@ namespace pulse
     if (src.writepatientbaselinefile() != CDM_BIND::eSwitch::NullSwitch)
       dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
 
-    if (src.has_initialoverrides())
-      PBAction::Load(src.initialoverrides(), dst.GetInitialOverrides());
+    for (auto& [name, m] : src.modifiers())
+      dst.GetModifiers()[name] = SEScalarPair(m.value(), m.unit());
+    for (auto& [name, o] : src.overrides())
+      dst.GetOverrides()[name] = SEScalarPair(o.value(), o.unit());
 
     // Blood Chemistry
     if (src.has_bloodchemistryconfiguration())
@@ -90,6 +92,9 @@ namespace pulse
         PBProperty::Load(config.rightheartelastanceminimum(), dst.GetRightHeartElastanceMinimum());
       if (config.has_standardpulmonarycapillarycoverage())
         PBProperty::Load(config.standardpulmonarycapillarycoverage(), dst.GetStandardPulmonaryCapillaryCoverage());
+      if (config.tunecardiovascularcircuit() != CDM_BIND::eSwitch::NullSwitch)
+        dst.TuneCardiovascularCircuit((eSwitch)config.tunecardiovascularcircuit());
+      dst.CardiovascularTuningFile(config.cardiovasculartuningfile());
     }
 
     // Circuit
@@ -367,8 +372,21 @@ namespace pulse
       dst.set_allocated_timestep(PBProperty::Unload(*src.m_TimeStep));
     dst.set_allowdynamictimestep((CDM_BIND::eSwitch)src.m_AllowDynamicTimeStep);
     dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);
-    if (src.HasInitialOverrides())
-      dst.set_allocated_initialoverrides(PBAction::Unload(*src.m_InitialOverrides));
+
+    for (auto const& [name, m] : src.GetModifiers())
+    {
+      CDM_BIND::ScalarData& scalar =
+        (*dst.mutable_modifiers())[name];
+      scalar.set_value(m.value);
+      scalar.set_unit(m.unit);
+    }
+    for (auto const& [name, o] : src.GetOverrides())
+    {
+      CDM_BIND::ScalarData& scalar =
+        (*dst.mutable_overrides())[name];
+      scalar.set_value(o.value);
+      scalar.set_unit(o.unit);
+    }
 
     // Blood Chemistry
     PULSE_BIND::ConfigurationData_BloodChemistryConfigurationData* bc = dst.mutable_bloodchemistryconfiguration();
@@ -395,6 +413,9 @@ namespace pulse
       cv->set_allocated_rightheartelastanceminimum(PBProperty::Unload(*src.m_RightHeartElastanceMinimum));
     if (src.HasStandardPulmonaryCapillaryCoverage())
       cv->set_allocated_standardpulmonarycapillarycoverage(PBProperty::Unload(*src.m_StandardPulmonaryCapillaryCoverage));
+    cv->set_tunecardiovascularcircuit((CDM_BIND::eSwitch)src.m_TuneCardiovascularCircuit);
+    cv->set_cardiovasculartuningfile(src.m_CardiovascularTuningFile);
+
 
     // Circuits
     PULSE_BIND::ConfigurationData_CircuitConfigurationData* circuit = dst.mutable_circuitconfiguration();

@@ -168,14 +168,21 @@ A pressure-volume curve is used to represent the evolution of the cardiac cycle 
 </center><br>
 
 ### Drug Effects
-As drugs circulate through the system, they affect the %Cardiovascular System. The drug effects on heart rate, mean arterial pressure, and pulse pressure are calculated in the %Drugs System. These effects are applied to the heart driver by incrementing the frequency of the heart based on the system parameter calculated in the %Drugs System. Additionally, the mean arterial pressure is modified by incrementing the resistance of the blood vessels. At each timestep, the resistors are incremented on each cardiovascular path. In the future, the pulse pressure will be modified by changing the heart elastance. However, no drugs had pulse pressure changes; therefore, this step has not been necessary. The strength of these effects are calculated based on the plasma concentration and the drug parameters in the substance files.  For more information on this calculation see @ref DrugsMethodology.
+As drugs circulate through the system, they affect the %Cardiovascular System. The drug effects on heart rate, mean arterial pressure, and pulse pressure are calculated in the %Drugs System. These effects are applied to the heart driver by incrementing the frequency of the heart based on the system parameter calculated in the %Drugs System. Additionally, the mean arterial pressure is modified by incrementing the resistance of the blood vessels. At each timestep, the resistors are incremented on each cardiovascular path. In the future, the pulse pressure will be modified by changing the heart elastance. However, no drugs had pulse pressure changes; therefore, this step has not been necessary. The strength of these effects are calculated based on the plasma concentration and the drug parameters in the substance files.  For more information on this calculation, see @ref DrugsMethodology.
 
 ### Electrocardiogram
-The engine electrocardiogram (%ECG) machine outputs an %ECG waveform to represent the currently supported heart rhythms. The waveform is not a calculated value; the current %ECG system does not model the electrical activity of the heart. This data is stored in a text file and interpolated to match the engine timestep. Currently, we support tachycardia, bradycardia, asystole, and normal sinus. Figure 6 shows an example of the %ECG normal sinus output. By allowing the points on the waveform to sum together based on the length of the heart beat compared to the length of the %ECG waveform, a tachycardic waveform will have a compressed P and T wave as expected in the validation data. For asystole, the engine outputs 0 mV.
+The engine electrocardiogram (%ECG) machine outputs an %ECG waveform to represent the currently supported heart rhythms. The waveform is not a calculated value; the current %ECG system does not model the electrical activity of the heart. This data is stored in a text file. To account for the variable heart rate, the sinus and ventricular tachycardia rhythms are representative of a single cardiac cycle. The points are then interpolated based on the length of the cardiac cycle. Currently, we support sinus tachycardia, sinus bradycardia, asystole, normal sinus, coarse and fine ventricular fibrillation, stable and unstable ventricular tachycardia, pulse electrical activity, and pulseless ventricular tachycardia. Figure 6 shows the sinus waveform in Pulse compared to an example sinus waveform with the key features highlighted.
 
 @htmlonly
 <center>
-<a href="./Images/Cardiovascular/BasicECGWaveform.png"><img src="./Images/Cardiovascular/BasicECGWaveform.png" width="300"></a>
+<table>
+<tr>
+<td><a href"./Images/Cardiovascular/BasicECGWaveform.png"><img src="./Images/Cardiovascular/BasicECGWaveform.png" width="550"></a>
+</td>
+<td><a href="./plots/Cardiovascular/SinusECG.jpg"><img src="./plots/Cardiovascular/SinusECG.jpg" width="600"></a>
+</td>
+</tr>
+</table>
 <br>
 </center>
 @endhtmlonly
@@ -206,7 +213,7 @@ Conditions
 Anemia conditions reduce the oxygen-carrying capacity of the blood. The engine models iron deficiency anemia as a chronic condition, which is characterized by a decrease in hemoglobin concentration and subsequent decreases in hematocrit and blood viscosity @cite Duke1969Hemodynamic. These factors lead to a decrease in systemic vascular resistance @cite guyton2006medical. The engine currently supports up to a 30% decrease in hemoglobin. After engine stabilization, the chronic condition reduces the hemoglobin throughout the circuit and reduces the systemic vascular resistance to represent the change in viscosity. The engine then re-stabilizes based on the chronic condition criteria. For more information, see @ref SystemMethodology. There is an observable increase in venous return due to the decreased systemic vascular resistance. As validation data supports, there are no observable effects from the decreased oxygen-carrying capacity at rest. These effects will be evident in the future with incorporation of exercise. This condition is currently not validated.
 
 #### Arrhythmias
-A heart arrhythmia is a deviation from the normal sinus rhythm seen in a healthy heart beat. In the engine, we have implemented two chronic arrhythmias, sinus bradycardia and sinus tachycardia. Bradycardia is a low resting heart rate (less than 60 beats per minute) @cite mangrum2000evaluation, which is generally considered benign when cardiac output is stable. Tachycardia is a high resting heart rate (greater than 100 beats per minute) @cite yusuf2005deciphering. After engine stabilization, the heart rate baseline is modified. After the engine re-stabilizes based on the chronic condition criteria (see @ref SystemMethodology for details), the heart rate value, and corresponding changes in the %ECG waveform, are the only clear sign of the condition. This matches the validation data. A limitation of the current chronic tachycardia model is a lack of changes to the compression force. Currently, only the rate is affected.
+A heart arrhythmia is a deviation from the normal sinus rhythm seen in a healthy heart beat. Bradycardia is a low resting heart rate (less than 60 beats per minute) @cite mangrum2000evaluation, which is generally considered benign when cardiac output is stable. Tachycardia is a high resting heart rate (greater than 100 beats per minute) @cite yusuf2005deciphering. After engine stabilization, the heart rate baseline is modified. After the engine re-stabilizes based on the chronic condition criteria (see @ref SystemMethodology for details), the heart rate value, and corresponding changes in the %ECG waveform, are the only clear sign of the condition.
 
 #### Heart Failure
 Heart failure refers to a malfunctioning of the heart, resulting in inadequate cardiac output. The current mode of heart failure being modeled in the engine is chronic left ventricular systolic dysfunction. After engine stabilization, the chronic heart failure is modeled with a 45% reduction in the contractility of the left heart. After the engine has re-stabilized using the chronic condition criteria (@ref SystemMethodology), the heart ejection fraction of 60% is reduced to 31% as noted in the validation data @cite chatterjee2007systolic. The reduced contractility leads to a decrease in heart stroke volume, which causes an immediate drop in the cardiac output and arterial pressures. The baroreceptor reflex responds with an increase in heart rate in an attempt to return mean arterial pressure to its normal value. This model is currently not validated.
@@ -223,8 +230,30 @@ Actions
 -------
 ### Insults
 
-#### Cardiac Arrest
-The cardiac arrest action is used to externally initiate a cardiac arrest event (see @ref cardiovascular-arrest "Cardiac Arrest" event below). The cardiac arrest event is a cessation of all cardiac and respiratory function. The cardiac arrest event can be triggered by systems of the engine when physiological thresholds are reached (physiological cardiac arrest), or it can be triggered by the cardiac arrest action (interface-initiated cardiac arrest). The cardiac arrest insult can be thought of as an idiopathic sudden cardiac arrest.
+#### Arrhythmia
+An arrhythmia is a deviation from normal cardiac heart rate and function. We have an arrhythmia action with the type of arrhythmia as the input. We have implemented types for normal sinus, sinus bradycardia, sinus tachycardia, stable and unstable ventricular tachycardia, coarse and fine ventricular fibrillation, sinus pulseless electrical actitivity, pulseless ventricular tachycardia, and asystole. All of the arrhythmias were implemented as types that can be specified as part of the arrhythmia action. For sinus bradycardia and sinus tachycardia, the heart rate is modified to 50 and 110, respectively. In accordance with validation data @cite LearningNetwork2021stable, no other changes are made to the effect the hemodynamics of the patient. The normal sinus ECG rhythm is associated with both sinus bradycardia and sinus tachycardia. The shape of the normal sinus rhythm is preserved, but output at the heart rate frequency. Sinus pulseless electrical activity (PEA) and pulseless ventricular tachycardia are characterized by organized electrical activity of the heart, but no mechanical function @cite ACLS2021asystole @cite ACLS2021Pulseless. For this, we set the heart rate to 0 to reflect a lack of cardiac function. The ECG is set to a normal sinus or a ventricular tachycardia rhythm for sinus PEA or pulseless ventricular tachycardia, respectively; however, the amplitude of the waveform is reduced to reflect the weaker electrical activity @cite ACLS2021Pulseless @cite ACLS2021asystole. The ECG rhythm is output at the patient's baseline heart rate for sinus PEA and at a tachycardic (110) heart rate for pulseless ventricular tachycardia. Asystole is characterized by a lack of mechanical and electrical activity @cite ACLS2021asystole. Therefore, similar to the pulseless rhythms the heart rate is set to 0. In contrast to the pulseless rhythms, the ECG is set to 0 volts to represent a lack of electrical activity. Ventricular fibrillation is characterized by a lack of mechanical function of the heart and disorganized electrical activity @cite ACLS2021Pulseless. Coarse ventricular fibrillation is represented by more electrical activity than fine ventricular fibrillation. As no cardiac cycle is associated with ventricular fibrillation, a representative period of disorganization (several seconds) was extracted from an arrhythmia database @cite PhysioNetDatabaseCUVentricular. The representative dataset is then repeated and displayed as the coarse ventricular fibrillation rhythm. The amplitude is reduced to half and used as the fine ventricular fibrillation rhythm. Ventricular tachycardia is defined as either stable or unstable. Stable ventricular tachycardia is characterized by increased heart rate (between 100 and 150) with little change in blood pressure (hemodynamic stability) and an irregular ECG @cite ACLS2021Tachy @cite LearningNetwork2021stable.  The heart rate was set to scale the patient's baseline heart rate using a modifier to ensure it is within the validated range. No other changes were made to the hemodynamics. A single cardiac cycle was extracted from a ventricular tachycardic ECG strip. This ECG waveform was used for stable ventricular tachycardia. Unstable ventricular tachycardia is characterized by a heart rate of over 150 @cite ACLS2021Tachy with a significant drop in blood pressure (hemodynamic instability) @cite Wegria1958effect and the ventricular tachycardic ECG waveform. The heart rate modifier for stable ventricular tachycardia was increased to achieve a heart rate greater than 150. An additional modifier was added to scale the heart elastance to reduce the heart ejection fraction to reduce the cardiac output. The blood pressure was reduced through this and by adding a systemic resistance modifier. The heart rate and blood pressure for stable and unstable ventricular tachycardia are shown in Figure 7.
+
+@htmlonly
+<center>
+<table>
+<tr>
+<td><a href="./plots/Cardiovascular/HeartRateStableVentricularTachycardia.jpg"><img src="./plots/Cardiovascular/HeartRateStableVentricularTachycardia.jpg" width="550"></a>
+</td>
+<td><a href="./plots/Cardiovascular/HeartRateUnstableVentricularTachycardia.jpg"><img src="./plots/Cardiovascular/HeartRateUnstableVentricularTachycardia.jpg" width="550"></a>
+</td>
+<td><a href="./plots/Cardiovascular/BloodPressureStableVentricularTachycardia.jpg"><img src="./plots/Cardiovascular/BloodPressureStableVentricularTachycardia.jpg" width="550"></a>
+</td>
+<td><a href="./plots/Cardiovascular/BloodPressureUnstableVentricularTachycardia.jpg"><img src="./plots/Cardiovascular/BloodPressureUnstableVentricularTachycardia.jpg" width="550"></a>
+</td>
+</tr>
+</table>
+<br>
+</center>
+@endhtmlonly
+<center>
+<i>Figure 7. Heart rate for stable and unstable ventricular tachycardia meets the validation of 100-150 and greater than 150, respectively @cite ACLS2021Tachy. Stable ventricular tachycardia shows hemodynamic stability, while hemodynamic instability is present in unstable ventricular tachycardia @cite LearningNetwork2021stable @cite Wegria1958effect.</i>
+</center><br>
+
 
 #### Hemorrhage
 A hemorrhage is a significant reduction in blood volume, which triggers a physiologic response to stabilize cardiovascular function. Hypovolemia is any loss in blood volume, where a loss of more than 35% is considered hypovolemic shock. Hemorrhage causes a reduction in filling pressure for the circulation, leading to a decrease in venous return. This is evidenced by the decrease in mean arterial pressure and cardiac output. If these physiologic values continue to drop, hemorrhagic or hypovolemic shock will occur. There are three stages of shock: a nonprogressive stage, which the normal circulatory responses will lead to a recovery; a progressive stage, which leads to progressively worsening condition and eventual death without intervention; and an irreversible stage, which leads to death regardless of intervention. The sympathetic response is triggered by the decrease in mean arterial blood pressure, specifically by causing the stretch receptors (baroreceptors) to activate. This response triggers an increase in systemic vascular resistance, heart rate, and a decrease in venous compliance. This is discussed in detail in the @ref NervousMethodology. 
@@ -243,8 +272,7 @@ Where R<sub>min</sub> is the minimum resistance, P is the blood pressure at the 
 <i>Equation 4.</i>
 </center><br>
 
-Figure 7 demonstrates the different severity specifications and the impact on the hemorrhage flow rate as the severity is changed or the body responds to the hemorrhage. The results show that the hemorrhage severity changes the flow rate for the hemorrhage as expected, i.e., a 0.5 severity corresponds to 50% of the flow associated with a severity of 1.0. The results also show that as time passes the flow rate will naturally decrease without changing the severity to correspond to the reduction in blood pressure that occurs with hemorrhage. These results also demonstrate the ability to transition from a severity to a flow implementation and back to severity, if required. 
-
+Figure 8 demonstrates the different severity specifications and the impact on the hemorrhage flow rate as the severity is changed or the body responds to the hemorrhage. The results show that the hemorrhage severity changes the flow rate for the hemorrhage as expected, i.e., a 0.5 severity corresponds to 50% of the flow associated with a severity of 1.0. The results also show that as time passes the flow rate will naturally decrease without changing the severity to correspond to the reduction in blood pressure that occurs with hemorrhage. These results also demonstrate the ability to transition from a severity to a flow implementation and back to severity, if required. 
 
 @htmlonly
 <center>
@@ -260,12 +288,12 @@ Figure 7 demonstrates the different severity specifications and the impact on th
 </center>
 @endhtmlonly
 <center>
-<i>Figure 7. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).</i>
+<i>Figure 8. Normalized mean arterial pressure and cardiac output as blood loss increases for the Pulse model (left) and the validation data @cite guyton2006medical (right).</i>
 </center><br>
 
 An internal hemorrhage can also be specified for abdominal cardiovascular compartments, including the aorta, vena cava, stomach, splanchnic, spleen, right and left kidneys, large and small intestines, and liver. The internal hemorrhage allows blood to flow into the abdominal cavity, increasing the pressure in the cavity. For the severity implementation, the hemorrhage outlet compartment is specified as the abdominal cavity for Equation 3. This pressure is applied to the aorta, increasing the localized blood pressure as a result of internal blood accumulation. At this time, the internal hemorrhage is only associated with the abdominal region. In the future, we will add functionality for the brain and lungs (hemothorax).
 
-The hemorrhage response was validated with a comparison to the literature. The mean arterial pressure and cardiac output were computed as a function of their baseline value and plotted with the percent blood loss, as shown in Figure 8. The computed results are shown on the left and the validation data @cite guyton2006medical is shown on the right.
+The hemorrhage response was validated with a comparison to the literature. The mean arterial pressure and cardiac output were computed as a function of their baseline value and plotted with the percent blood loss, as shown in Figure 9. The computed results are shown on the left and the validation data @cite guyton2006medical is shown on the right.
 
 @htmlonly
 <center>
@@ -281,12 +309,12 @@ The hemorrhage response was validated with a comparison to the literature. The m
 </center>
 @endhtmlonly
 <center>
-<i>Figure 8. Normalized mean arterial pressure (left) and cardiac output (right) as blood loss increases for the Pulse model and the validation data @cite guyton2006medical.</i>
+<i>Figure 9. Normalized mean arterial pressure (left) and cardiac output (right) as blood loss increases for the Pulse model and the validation data @cite guyton2006medical.</i>
 </center><br>
 
 For the hemorrhage to shock scenario, our results maintain MAP through a 20% blood loss and CO begins to slowly decrease as expected. At 20%, we see an approximately linear drop in MAP from a as expected compared to experimental data from @cite guyton2006medical. The cardiac output shows the correct trend but a larger error for this region. The "last ditch" plateau is then exhibited from a blood loss of just under 35% to just under 45%. The MAP and CO then drop precipitously as expected. 
 
-The different types of shock are evident in the data collected for groups of dogs and published in @cite guyton2006medical. Groups I, II, and III show cases of nonprogressive shock, Groups IV, and V show cases of progressive shock, and Group VI is an irreversible shock case. The first three groups recover without intervention, the final case leads quickly to death, and the Group IV and V cases show a short rebound before the physiologic decline that occurs without treatment. These cases were duplicated in the Pulse engine. The results and comparison to validation data are shown in Figure 9.
+The different types of shock are evident in the data collected for groups of dogs and published in @cite guyton2006medical. Groups I, II, and III show cases of nonprogressive shock, Groups IV, and V show cases of progressive shock, and Group VI is an irreversible shock case. The first three groups recover without intervention, the final case leads quickly to death, and the Group IV and V cases show a short rebound before the physiologic decline that occurs without treatment. These cases were duplicated in the Pulse engine. The results and comparison to validation data are shown in Figure 10.
 
 @htmlonly
 <center>
@@ -303,12 +331,12 @@ The different types of shock are evident in the data collected for groups of dog
 </center>
 @endhtmlonly
 <center>
-<i>Figure 9. Normalized mean arterial pressure for different hemorrhage severities to demonstrate the different shock types. The computed Pulse results are on the left and the validation data @cite guyton2006medical is on the right.</i>
+<i>Figure 10. Normalized mean arterial pressure for different hemorrhage severities to demonstrate the different shock types. The computed Pulse results are on the left and the validation data @cite guyton2006medical is on the right.</i>
 </center><br>
 
 For the first three group hemorrhage scenarios (90%, 65%, and 50% blood loss), if the hemorrhage is arrested the MAP begins to rise and reaches a stable value. However, for the remaining three scenarios, the hemorrhage is unrecoverable for the patient. This is expected compared to the experimental data and for the degree of shock. However, one limitation of the model is that at the turning point between progressive and irreversible shock, the expected behavior is a temporary recovery lasting minutes to hours followed by deterioration and death. The current model has no ability to reverse the curve once the final deterioration toward deaths occurs. This is triggered at a blood pressure of approximately 40-45 mmHg. While the outcome is the same, the short recovery is not captured. Future work will incorporate this improvement.
 
-We also saw the expected blood volume, pressure, heart rate, and substance concentration values follow expected trends for the fluid resuscitation scenarios. Figures 11 and 12 show the appropriate substance behavior coupled with the blood volume changes. Like blood volume, the decrease in the substance will be linearly proportional to the bleed rate. For more specific information regarding these substances and their loss due to bleeding, see @ref BloodChemistryMethodology and @ref SubstanceTransportMethodology. Figure 10 shows the blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no intervention other than the cessation of hemorrhage. Figure 11 shows a hemorrhage event with subsequent saline administration. Note that the hemoglobin content remains diminished as the blood volume recovers with IV saline. By comparison, [Figure 14](@ref cardiovascular-blood-administration) shows a blood-product intervention following a hemorrhage event. In that figure, the hemoglobin increases with the blood infusion.
+We also saw the expected blood volume, pressure, heart rate, and substance concentration values follow expected trends for the fluid resuscitation scenarios. Figures 11 and 12 show the appropriate substance behavior coupled with the blood volume changes. Like blood volume, the decrease in the substance will be linearly proportional to the bleed rate. For more specific information regarding these substances and their loss due to bleeding, see @ref BloodChemistryMethodology and @ref SubstanceTransportMethodology. Figure 11 shows the blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no intervention other than the cessation of hemorrhage. Figure 12 shows a hemorrhage event with subsequent saline administration. Note that the hemoglobin content remains diminished as the blood volume recovers with IV saline. By comparison, [Figure 14](@ref cardiovascular-blood-administration) shows a blood-product intervention following a hemorrhage event. In that figure, the hemoglobin increases with the blood infusion.
 
 @htmlonly
 <center>
@@ -325,7 +353,7 @@ We also saw the expected blood volume, pressure, heart rate, and substance conce
 </center><br>
 @endhtmlonly
 <center>
-<i>Figure 10. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no subsequent intervention.</i>
+<i>Figure 11. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with no subsequent intervention.</i>
 </center>
 <br>
 
@@ -344,7 +372,7 @@ We also saw the expected blood volume, pressure, heart rate, and substance conce
 </center>
 @endhtmlonly
 <center>
-<i>Figure 11. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with a subsequent infusion of saline.</i>
+<i>Figure 12. Blood volume and hemoglobin content before, during, and after a massive hemorrhage event with a subsequent infusion of saline.</i>
 </center><br>
 
 #### Pericardial Effusion
@@ -376,12 +404,9 @@ The pulmonary shunt condition has an exacerbation actions defined to allow for i
 @anchor cardiovascular-events
 ##Events
 
-### Asystole
-Asystole is defined as a cessation of the heart beat. Asystole is currently triggered by an oxygen deficit in the myocardium (a partial pressure for oxygen less than 25 mmHg) or by a heart rate of less than 26 beats per minute @cite guinness2005lowest. The engine continues to process during Asystole, which allows for resuscitation efforts, such as CPR, to be attempted. If the Asystole is not addressed, the engine will reach an irreversible state due to a lack of oxygen in the brain. More detail on oxygen deficits can be found in @ref BloodChemistryMethodology.
-
 @anchor cardiovascular-arrest
 ### Cardiac Arrest
-Cardiac Arrest is a condition in which the pumping of the heart is no longer effective @cite nhlbi2011sca. The Cardiac Arrest event can be triggered in the engine either by the Cardiac Arrest action or by the evolution of engine physiology. For instance, an oxygen deficit in the heart muscle will trigger both an asystole event (see below) and a cardiac arrest event. In the current version of the engine, the only rhythm associated with cardiac arrest is asystole, but the cardiac arrest event is included to facilitate control and to allow the future inclusion of other ineffective rhythms such as ventricular fibrillation. In the current engine, it is not possible to recover from cardiac arrest. It is, however, possible to maintain some perfusion by performing chest compressions (see CPR).
+Cardiac Arrest is a condition in which the pumping of the heart is no longer effective @cite nhlbi2011sca. The Cardiac Arrest event can be triggered by different arrhythmias in the engine. In the current version of the engine, any rhythm associated with a cessation of mechanical function of the heart will trigger a cardiac arrest event. We do not have a defibrillate action at this time. To recover from a cardiac arrest event, the user can change the arrhythmia back to a sinus rhythm. It is also possible to maintain some perfusion by performing chest compressions (see CPR).
 
 ### %Cardiovascular Collapse
 %Cardiovascular collapse occurs when the blood pressure is no longer sufficient to maintain "open" blood vessels. They "collapse" meaning blood can no longer flow through the vessels. This is generally associated with shock, the vascular tone and blood pressure are no longer sufficient to maintain blood flow @cite guyton2006medical. This occurs at at mean arterial pressure of 20 mmHg or lower in the engine. At this time, we do not enforce an irreversible state (stop engine calculation); however, the patient generally does not recover from this, particularly in the presence of shock.
@@ -414,7 +439,7 @@ Validation results for system and compartment quantities are listed in Tables 1 
 
 Compartment-level quantities show reasonable agreement with the validation values. All of the flows match the reference values within ~10 percent. The volumes show some moderate differences for a few specific compartments. The aorta compartment volume is much smaller than the validated value. The compliance on this compartment needed to remain low in order to preserve the arterial pressure waveform, which led to less volume than expected. Similarly, the vena cava compliance was set in order to maintain the correct cardiac output and arterial pressures; therefore, its expected volume was limited. The right heart pressures and volumes show some disagreement with the validation data. The minimum values for right heart pressure and volume are much lower than valid ranges. This is due to restriction of unstressed volume in the right heart, which currently has an unstressed volume of zero. An increase in unstressed volume would shift the pressure volume minimums up, while also preserving the maximum values within their respective ranges. The %Cardiovascular System is tuned to vitals output validation (Table 1), as well as good agreement with insults' and interventions&rsquo; expected trends and values (see the following section).  In addition, compartment validation was achieved on a reasonable level.
 
-The arterial pressure waveform was validated according to the plot shown in Figure 12. It displays the engine arterial pressure against measured arterial pressure. The diastolic and systolic pressures were validated using data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, we used a waveform from PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. In the future, we may create a patient more representative of the one used for the PhysioNet waveform. This would show both the ability of the engine to model different patients and the pressure waveform feature matching.  The shapes of both waveforms match well, showing rapid pressure increases as the heart contraction begins to occur. The main difference in the shape of each plot is the small pressure oscillations that occur after the initial pressure drop in the validation data. This is the dicrotic notch,  which occurs from slight flow reversal from the aorta back into the left ventricle before the valves close @cite korakianitis2005notch . This is not currently being modeled in the engine, but improvements in the circuit model, including the addition of inertance and diodes that allow retrograde flow, will likely enable the engine waveform to capture more detail.
+The arterial pressure waveform was validated according to the plot shown in Figure 13. It displays the engine arterial pressure against measured arterial pressure. The diastolic and systolic pressures were validated using data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, we used a waveform from PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. In the future, we may create a patient more representative of the one used for the PhysioNet waveform. This would show both the ability of the engine to model different patients and the pressure waveform feature matching.  The shapes of both waveforms match well, showing rapid pressure increases as the heart contraction begins to occur. The main difference in the shape of each plot is the small pressure oscillations that occur after the initial pressure drop in the validation data. This is the dicrotic notch,  which occurs from slight flow reversal from the aorta back into the left ventricle before the valves close @cite korakianitis2005notch . This is not currently being modeled in the engine, but improvements in the circuit model, including the addition of inertance and diodes that allow retrograde flow, will likely enable the engine waveform to capture more detail.
 
 @htmlonly
 <center>
@@ -428,7 +453,7 @@ The arterial pressure waveform was validated according to the plot shown in Figu
 </center>
 @endhtmlonly
 <center>
-<i>Figure 12. Arterial pressure waveform comparisons. The diastolic and systolic pressures were validated using the data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, a waveform was found on PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. Both the validation waveform and the engine waveform show sharp increases in pressure during the systolic period. After the contraction occurs, the pressure begins decreasing and that is where the main difference in the engine and the validation data occur. There is a dip and subsequent rise in the arterial pressure that occurs due to the dicrotic notch, which the engine does not capture.</i>
+<i>Figure 13. Arterial pressure waveform comparisons. The diastolic and systolic pressures were validated using the data shown in Table 1. To validate the waveform shape and demonstrate the overall feature match of the engine pressure waveform with the  validation data, a waveform was found on PhysioNet @cite goldberger2000physiobank . However, the patient heart rate and parameters are slightly different than the engine patient. This led to timing discrepancies and differences in the diastolic and systolic pressures. To demonstrate the waveform feature matching, a separate axis is used for each data set. Both the validation waveform and the engine waveform show sharp increases in pressure during the systolic period. After the contraction occurs, the pressure begins decreasing and that is where the main difference in the engine and the validation data occur. There is a dip and subsequent rise in the arterial pressure that occurs due to the dicrotic notch, which the engine does not capture.</i>
 </center><br>
 
 @anchor cardiovascular-validation-conditions
@@ -449,8 +474,15 @@ All actions in the CV System were validated. A summary of this validation is sho
 |	Scenario 	|	Description	|	Good	|	Decent	|	Bad	|
 |	---	|	---	|	---	|	---	|	---	|
 |	Anemia - 30%	|	Hemoglobin content reduced by 30  percent. - NOT VALIDATED	|<span class="success">	0	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|	Arrythmia - Sinus Bradycardia	|	Heart rate set to 50 beats per minute.	|<span class="success">	5	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
-|	Arrythmia - Sinus Tachycardia	|	Heart rate set to 110 beats per minute	|<span class="success">	4	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia  - Sinus Bradycardia Condition	|	Heart rate set to 50 beats per minute.	|<span class="success">	4	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Sinus Tachycardia Condition	|	Heart rate set to 110 beats per minute	|<span class="success">	5	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Asystole	|	No cardiac activity	|<span class="success">	12	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Pulseless Rhythms	|	No cardiac mechanical function, some electrical activity	|<span class="success">	24	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Coarse Ventricular Fibrillation	|	No cardiac mechanical function, disorganized electrical activity	|<span class="success">	12	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Fine Ventricular Fibrillation	|	No cardiac mechanical function, disorganized electrical activity	|<span class="success">	12	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Stable Ventricular Tachycardia	|	Tachycardic with hemodynamic stability, abnormal ECG	|<span class="success">	11	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
+|	Arrhythmia - Unstable Ventricular Tachycardia	|	Tachycardic with hemodynamic instability, abnormal ECG	|<span class="success">	10	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
+|	Arrhythmia - Sinus Rhythms	|	Sinus Bradycardia, Normal Sinus, Sinus Tachycardia	|<span class="success">	22	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
 |	CPR 	|	Cardiac arrest is initiated, and CPR is performed.	|<span class="success">	22	</span>|<span class="warning">	2	</span>|<span class="danger">	0	</span>|
 |	Hemorrhage Class I - Femoral	|	15% hemorrhage from femoral artery	|<span class="success">	13	</span>|<span class="warning">	1	</span>|<span class="danger">	0	</span>|
 |	Hemorrhage Class 2 - Brachial	|	25% hemorrhage from right arm	|<span class="success">	12	</span>|<span class="warning">	1	</span>|<span class="danger">	1	</span>|
@@ -463,13 +495,167 @@ All actions in the CV System were validated. A summary of this validation is sho
 |	Pericardial Effusion - Chronic	|	Patient has an effused pericardium with an accumulated volume of 500 ml.	|<span class="success">	9	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Pericardial Effusion - Acute	|	Pericardium volume starts at 500mL and increases at 6 mL/min.	|<span class="success">	16	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
 |	Ventricular Systolic Failure	|	Chronic heart failure is initiated. - NOT VALIDATED	|<span class="success">	0	</span>|<span class="warning">	0	</span>|<span class="danger">	0	</span>|
-|		|	Total	|<span class="success">	175	</span>|<span class="warning">	8	</span>|<span class="danger">	4	</span>|
+|		|	Total	|<span class="success">	278	</span>|<span class="warning">	11	</span>|<span class="danger">	6	</span>|
+
+### Arrhythmia
+There are nine arrhythmia scenarios for validation. Sinus bradycardia Condition was validated by setting the baseline heart rate to 50 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. The cardiac output remains relatively unchanged due to compensatory increases in the stroke volume, which is expected in asymptomatic sinus bradycardia @cite mangrum2000evaluation. The validation data that was found for  systolic and diastolic pressures was vague, only mentioning that the condition was often asymptomatic, indicating relatively normal pressure values. The systolic and diastolic pressures in the engine do change slightly as the heart driver accommodates the increased stroke volume; however, the values remain within normal bounds at 50 beats per minute. The %ECG waveform in bradycardia is similar to a normal sinus waveform, with the exception of an extended R-R interval due to a slower heart rate (see Figure 15), which is also seen in the engine output. Other systemic data is not significantly changed.
+
+<br><center>
+*Table 4. Validation matrix for sinus bradycardia arrythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+</center>
+|	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Sinus Bradycardia Condition	|	Heart Rate set to 50 beats per minute (<60 considered bradycardia)	|	0	|	120	|<span class="success">	50 @cite mangrum2000evaluation	</span>|<span class="warning">	Decrease @cite klabunde2012cvconcepts	</span>|<span class="success">	No Relevant changes @cite mangrum2000evaluation	</span>|<span class="success">	Decrease @cite klabunde2012cvconcepts	</span>|<span class="warning">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Sinus @cite mangrum2000evaluation	</span>|
+
+@htmlonly
+<center>
+<a href="./Images/Cardiovascular/SinusBradycardia_ACLS.jpg"><img src="./Images/Cardiovascular/SinusBradycardia_ACLS.jpg"></a>
+<br>
+<a href="./plots/Cardiovascular/SinusBradycardia_Engine.jpg"><img src="./plots/Cardiovascular/SinusBradycardia_Engine.jpg"></a>
+<br>
+</center>
+@endhtmlonly
+<center>
+<i>Figure 15. The increased R-R interval is evident in both waveforms. This is the primary indication of the low heart rate. Validation image courtesy of @cite vanderBilt2010sinus .</i>
+</center><br>
+
+
+Sinus Tachycardia Condition was validated by setting the baseline heart rate to 110 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. Validation data predicted a decrease in stroke volume with the increase in heart rate @cite aroesty1985simultaneous, which was also found in the engine. Because of the decrease in stroke volume, the cardiac  output remains relatively unchanged. This is due to the model not currently affecting compression force, only compression rate. The %ECG output in tachycardia is generally similar to normal sinus; however, in some cases, the T wave can experience constructive  interference from the following heart beat&apos;s P wave. This is shown in the %ECG output seen in Figure 16.
+
+<br><center>
+*Table 5. Validation matrix for sinus tachycardia arrythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+</center>
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate(beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Sinus Tachycardia Condition	|	Variable. Set Heart Rate = 110 beats per minute; in Aroestyl, patients were not ideal, a number had previous heart conditions or coronary artery disease. Tachycardia was achieved via atrial pacemakers	|	0	|	120	|<span class="success">	110 @cite yusuf2005deciphering	</span>|<span class="warning">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	NC @cite yusuf2005deciphering	</span>|<span class="success">	Dependent on SV and HR @cite sohn2007hemodynamic	</span>|<span class="warning">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Normal sinus/Tachycardia Waveform 	</span>|
+
+@htmlonly
+<center>
+<a href="./Images/Cardiovascular/SinusTachycardia_ACLS.jpg"><img src="./Images/Cardiovascular/SinusTachycardia_ACLS.jpg"></a>
+<br>
+<a href="./plots/Cardiovascular/SinusTachycardia_Engine.jpg"><img src="./plots/Cardiovascular/SinusTachycardia_Engine.jpg"></a>
+<br>
+</center>
+@endhtmlonly
+<center>
+<i>Figure 16. Due to the high heart rate, the engine output is summing together the P and T waves. In the image from PhysioNet, the output is not summed together as dramatically, due to the slight physiological compression of the waveform that the current %ECG system and heart model do not support. @cite healey2005detecting @cite goldberger2000physiobank</i>
+</center><br>
+
+Asystole, Sinus Pulseless Electrical Activity (PEA), and Pulseless Ventricular Tachycardia were validated by setting the heart rate to 0, which triggers a cessation of cardiac and respiratory function. Validation predicts that the heart rate and cardiac output will go to zero immediately @cite ACLS2021asystole. The blood pressure will drop significantly as the blood stops circulating @cite Babbs1983relationship. The oxygen saturation will begin to drop as the heart and lungs are not functioning. The ECG waveform is set to 0 volts to represent the lack of electrical activity @cite ACLS2021asystole in asystole. PEA is any organized electrical activity, we represent the PEA- Sinus rhythm and Pulseless Ventricular Tachycardia @cite ACLS2021asystole @cite ACLS2021Pulseless. While the mechanical function is the same for all three arrhythmias, the ECG waveforms vary, as shown in Figure 17.
+
+<br><center>
+*Table 6. Validation matrix for asystole arrhythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+</center>
+|	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Asystole	|		|	30	|	210	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Flatline/Asystole @cite ACLS2021asystole	</span>|
+|	Sinus	|		|	270	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
+<br><center>
+*Table 7. Validation matrix for Sinus Pulseless Electrical Activity and Pulseless Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+</center>
+|	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Sinus Pulseless Electrical Activity	|		|	30	|	210	|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	0 @cite ACLS2021asystole	</span>|<span class="success">	Sinus w/ Reduced Amplitude @cite ACLS2021asystole	</span>|
+|	Sinus	|		|	270	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+|	PulselessVentricular Tachycardia	|		|	510	|	630	|<span class="success">	undetectable @cite ACLS2021Pulseless	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Ventricular Tachycardia w/ Reduced Amplitude @cite ACLS2021Pulseless	</span>|
+|	Sinus	|		|	750	|	840	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
+ @htmlonly
+<center>
+<a href="./plots/Cardiovascular/Asystole_Engine.jpg"><img src="./plots/Cardiovascular/Asystole_Engine.jpg"></a>
+<br>
+<a href="./plots/Cardiovascular/SinusPEA_Engine.jpg"><img src="./plots/Cardiovascular/SinusPEA_Engine.jpg"></a>
+<br>
+<a href="./plots/Cardiovascular/PulselessVT_Engine.jpg"><img src="./plots/Cardiovascular/PulselessVT_Engine.jpg"></a>
+<br>
+</center>
+@endhtmlonly
+<center>
+<i>Figure 17. The ECG waveform is set to 0 volts to represent the lack of electrical activity @cite ACLS2021asystole in asystole. PEA and Pulseless Ventricular Tachycardia are characterized by organized electrical activity in a normal shape with a reduced amplitude @cite ACLS2021asystole @cite ACLS2021Pulseless.</i>
+</center><br>
+
+Coarse and Fine Ventricular Fibrillation were validated similiar to asystole and the pulseless rhythms. The heart rate was set to zero to represent the lack of mechanical function. This leads to a cessation of all cardiac and respiratory function. Validation  data predicts that the heart rate and cardiac output will go to zero immediately @cite ACLS2021Pulseless. The blood pressure will drop significantly as the blood stops circulating @cite Babbs1983relationship. The oxygen saturation will begin to drop as the heart and lungs are not functioning. The ECG is characterized by disorganized electrical activity @cite ClevelandClinic2021vfib. Fine ventricular fibrillation has less electrical activity than coarse @cite ClevelandClinic2021vfib. The segment of data extracted from an example ventricular fibrillation dataset was used for coarse ventricular fibrillation. The amplitude of this data was reduced to represent ventricular fibrillation. The ECG for both coarse and fine ventricular fibrillation are shown with the PhysioNet data @cite PhysioNetDatabaseCUVentricular in Figure 18. 
+
+<br><center>
+*Table 8. Validation matrix for Coarse Ventricular Fibrillation arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+</center>
+|	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Coarse Ventricular Fibrillation	|		|	30	|	210	|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Coarse Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
+|	Sinus	|		|	270	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
+<br><center>
+*Table 9. Validation matrix for Fine Ventricular Fibrillation arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+</center>
+|	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Fine Ventricular Fibrillation	|		|	30	|	210	|<span class="success">	undetectable @cite ACLS2021Pulseless	</span>|<span class="success">	Significant drop @cite Babbs1983relationship  33 +/- 10 @cite kim2008direction 	</span>|<span class="success">	Will decrease as HR and RR stay at 0	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	0 @cite ACLS2021Pulseless	</span>|<span class="success">	Fine Ventricular Fibrillation @cite ClevelandClinic2021vfib	</span>|
+|	Sinus	|		|	270	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
+ @htmlonly
+<center>
+<a href="./Images/Cardiovascular/VentricularFibrillation_ACLS.jpg"><img src="./Images/Cardiovascular/VentricularFibrillation_ACLS.jpg"></a>
+<br>
+<a href="./plots/Cardiovascular/ECGCoarseVF_Engine.jpg"><img src="./plots/Cardiovascular/ECGCoarseVF_Engine.jpg"></a>
+<br>
+<a href="./plots/Cardiovascular/ECGFineVF_Engine.jpg"><img src="./plots/Cardiovascular/ECGFineVF_Engine.jpg"></a>
+<br>
+</center>
+@endhtmlonly
+<center>
+<i>Figure 18. Ventricular fibrillation is characterized by disorganized electrical activity. Coarse has  higher electrical signal than fine ventricular fibrillation @cite ClevelandClinic2021vfib. </i>
+</center><br>
+
+Stable and unstable ventricular tachycardia were validated with two scenarios. Stable ventricular tachycardia is characterized by a heart rate between 100 and 150 @cite ACLS2021Tachy and otherwise stable hemodynamics @cite LearningNetwork2021stable. Unstable ventricular tachycardia is characterized by a heart rate greater than 150 @cite ACLS2021Tachy and unstable hemodynamics (significantly reduced blood pressure) @cite Wegria1958effect. A representative cardiac cycle was extracted from a ventricular tachycardia ECG dataset shown in Figure 19. This dataset is used for both the stable and unstable ventricular tachycardia. The extracted waveform is repeated at the heart rate calculated by the engine, as shown in Figure 19.
+
+<br><center>
+*Table 10. Validation matrix for Stable Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+</center>
+|	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Stable Ventricular Tachycardia	|		|	30	|	210	|<span class="success">	100-150 @cite ACLS2021Tachy	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="warning">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Ventricular Tachycardia@cite ACLS2021Tachy	</span>|
+|	Sinus	|		|	240	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
+<br><center>
+*Table 11. Validation matrix for Unstable Ventricular Tachycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+</center>
+|	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Untable Ventricular Tachycardia	|		|	30	|	210	</span>|<span class="success">	>  150 @cite ACLS2021Tachy	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease with reduced hemodynamic stability	</span>|<span class="danger">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Decrease @cite Wegria1958effect	</span>|<span class="success">	Ventricular Tachycardia w/ reduced amplitude @cite ACLS2021Tachy	</span>|
+|	Sinus	|		|	240	|	420	</span>|<span class="warning">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
+@htmlonly
+<center>
+<a href="./Images/Cardiovascular/VentricularTachycardia_Exp.png"><img src="./Images/Cardiovascular/VentricularTachycardia_Exp.png"></a>
+<br>
+<a href="./plots/Cardiovascular/ECGVT_Engine.jpg"><img src="./plots/Cardiovascular/ECGVT_Engine.jpg"></a>
+<br>
+</center>
+@endhtmlonly
+<center>
+<i>Figure 19. This ventricular tachycardia ECG waveform is used for both stable and unstable types and is scaled to the heart rate. </i>
+</center><br> 
+
+
+The sinus rhythms were validated in a single scenario. Sinus Bradycardia and Sinus Tachycardia are characterized by a heart rate between 40 and 60 @ACLS2021Bradycardia or a heart rate greater than 100 @cite ACLS2021Tachy, respectively. Little change is expected in the other hemodynamic parameters @ACLS2021Bradycardia @cite LearningNetwork2021stable. These were implemented as actions; therefore the system is not allowed to stabilize. The changes are dynamically implented during run time. These can be useful when moving from a shockable arrhythmia to return of spontaneous circulation.
+
+<br><center>
+*Table 12. Validation matrix for Sinus Tachycardia and Sinus Bradycardia arrhythmias. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+</center>
+|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate(beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
+|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
+|	Sinus Tachycardia	|		|	30	|	210	|<span class="success">	>100 @cite ACLS2021Tachy	|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Little to no change @cite LearningNetwork2021stable	</span>|<span class="success">	Normal Sinus@cite ACLS2021Tachy	</span>|
+|	Sinus	|		|	240	|	420	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="warning">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+|	Sinus Bradycardia	|		|	450	|	630	|<span class="success">	Between 40 and 60 @ACLS2021Bradycardia	</span>|<span class="warning">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Little to no change	</span>|<span class="success">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="danger">	Decrease @cite ACLS2021Bradycardia	</span>|<span class="success">	Normal Sinus@cite ACLS2021Bradycardia	</span>|
+|	Sinus	|		|	660	|	840	|<span class="success">	Return to normal after period of recovery 	</span>|<span class="warning">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Return to normal after period of recovery 	</span>|<span class="success">	Normal Sinus @cite ACLS2021asystole	</span>|
+
 
 ### Cardiopulmonary Resuscitation (CPR)
 There are two CPR scenarios for validation. The first scenario validates the CPR methodology using the explicit force setting functionality, and the second scenario uses the force scale methodology (see CPR intervention documentation above). In both scenarios, cardiac arrest is initiated externally. Ten seconds later, compressions begin. In both scenarios, the compression rate is set to 80 per minute, and the force is set to 70 pounds to match the conditions in @cite redberg1993physiology. Supplemental literature sources were used to validate outputs not available in @cite redberg1993physiology. All of the physiological variables were within validation ranges in both scenarios with the exception of mean arterial pressure and ejection fraction. The mean arterial pressure in the engine is slightly higher than expected. This is most likely due to the fact that the intravascular pressures are higher than those reported in @cite redberg1993physiology. However, the engine pressures are within ranges reported in other references @cite kim2008direction , @cite gruben1990system. The ejection fraction is considerably lower in the engine during CPR than the value reported in @cite kim2008direction. The engine ejection fraction is lower because blood tends to pool in the engine right heart during cardiac arrest. The validation failures that occur right at cardiac arrest are mostly due residual dynamics following asystole in the engine. Errors associated with the cessation of heart function in the engine are a known issue, and resolving this issue is a part of the cardiac arrest recommended improvements discussed [below](@ref cardiovascular-future).  
 
 <br><center>
-*Table 4. Validation matrix for cardiopulmonary resuscitation (CPR) validation results. The table shows the engine output compared to validation data for key hemodynamic values.*
+*Table 13. Validation matrix for cardiopulmonary resuscitation (CPR) validation results. The table shows the engine output compared to validation data for key hemodynamic values.*
 </center>
 |	Notes	|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate(beats/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Mean Arterial Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Stroke Volume (mL)	|	Carotid Artery (Brain) Flow (mL/min)	|	Ejection Fraction (%)	|	
 |	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	
@@ -479,14 +665,13 @@ There are two CPR scenarios for validation. The first scenario validates the CPR
 
 
 ### Hemorrhage
-The hemorrhage action is tested using several scenarios. The class 2 hemorrhage scenario with blood intravenous (IV) administration begins with a healthy patient. After a few seconds, a hemorrhage action is initiated at a rate of 250 milliliters (mL) per minute. The hemorrhage continues for four minutes before the bleeding rate is reduced to 0 mL per minute. After two minutes, 500 mL of IV blood is administered intravenously over five minutes. The other hemorrhage scenarios are similar but with different subsequent interventions. There are also two multi-compartment hemorrhage scenarios. Figure 13 demonstrates the time-evolution of select data, and the validation results are displayed in Tables 6a-f.
+The hemorrhage action is tested using several scenarios. The class 2 hemorrhage scenario with blood intravenous (IV) administration begins with a healthy patient. After a few seconds, a hemorrhage action is initiated at a rate of 250 milliliters (mL) per minute. The hemorrhage continues for four minutes before the bleeding rate is reduced to 0 mL per minute. After two minutes, 500 mL of IV blood is administered intravenously over five minutes. The other hemorrhage scenarios are similar but with different subsequent interventions. There are also two multi-compartment hemorrhage scenarios. Figure 14 demonstrates the time-evolution of select data, and the validation results are displayed in Tables 6a-f.
 
 The results show decreases in the systolic pressure and minor increases in the diastolic pressure during the course of the hemorrhage. In response to the decreasing arterial pressures, the baroreceptor response raises the heart rate. The blood volume and hemoglobin content were validated through direct calculation by decreasing blood volume by the bleeding rate multiplied by the time. There is a difference between the computed and simulated blood volume post-hemorrhage due to fluid shift between the intravascular and extravascular space. This shift is evident in the period between cessation of hemorrhage and the start of the infusion (top-left panel of Figure 12).
 
 Following the completion of the hemorrhage, intravenous blood is administered. The validation of this action can be found in the IV Fluid Administration section, with the exception of hemoglobin content. There will be an increase in hemoglobin content directly proportional to the amount of blood added from the IV. This value was calculated directly from the known blood volume in the IV bag and hemoglobin concentration of the blood. The engine matched this calculated value exactly. 
 
 @anchor cardiovascular-blood-administration
-
 
 @htmlonly
 <center>
@@ -510,11 +695,11 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 </center>
 @endhtmlonly
 <center>
-<i>Figure 13. The class 2 hemorrhage scenario shows the blood volume decreasing linearly with the constant 250 milliliter per minute bleeding rate. The blood hemoglobin content follows this exact trend. At the conclusion of the bleed, the blood volume and hemoglobin are at a lower value. Five hundred (500) milliliters of blood is then administered intravenously over the course of 5 minutes. Both the blood volume and hemoglobin content increase linearly with this administration.</i>
+<i>Figure 20. The class 2 hemorrhage scenario shows the blood volume decreasing linearly with the constant 250 milliliter per minute bleeding rate. The blood hemoglobin content follows this exact trend. At the conclusion of the bleed, the blood volume and hemoglobin are at a lower value. Five hundred (500) milliliters of blood is then administered intravenously over the course of 5 minutes. Both the blood volume and hemoglobin content increase linearly with this administration.</i>
 </center>
 
 <br><center>
-*Table 5. Validation matrix for a class I hemorrhage from the femoral artery. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*Table 14. Validation matrix for a class I hemorrhage from the femoral artery. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
@@ -523,7 +708,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 
 
 <br><center>
-*Table 6. Validation matrix for a class II hemorrhage from the brachial artery. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*Table 15. Validation matrix for a class II hemorrhage from the brachial artery. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
@@ -532,7 +717,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 
 
 <br><center>
-*Table 7. Validation matrix for a class II hemorrhage followed by an intravenous administration of whole blood. The table engine shows the engine output compared to key hemodynamic and respiratory parameters.*
+*Table 16. Validation matrix for a class II hemorrhage followed by an intravenous administration of whole blood. The table engine shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
@@ -541,7 +726,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 
 
 <br><center>
-*Table 8. Validation matrix for a class II hemorrhage followed by an intravenous administration of saline. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*Table 17. Validation matrix for a class II hemorrhage followed by an intravenous administration of saline. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
@@ -551,7 +736,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 
 
 <br><center>
-*Table 8. Validation matrix for an internal class II hemorrhage from the spleen. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*Table 18. Validation matrix for an internal class II hemorrhage from the spleen. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
@@ -560,14 +745,14 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 
 
 <br><center>
-*Table 9. Validation matrix for a class III hemorrhage. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*Table 19. Validation matrix for a class III hemorrhage. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
 |	Initiate 200 ml/min Hemorrhage from leg and vena cava	|				|	30	|	575	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	~50% normal @cite guyton2006medical	</span>|<span class="success">	3600	</span>|<span class="success">	Decrease ~50% normal @cite guyton2006medical	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|<span class="success">	575	</span>|<span class="danger">	Increase @cite guyton2006medical	</span>|
 |	Stop Hemorrhage	|				|	605	|	1000	|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="danger">	NC	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	NC	</span>|<span class="success">	NC	</span>|
 
-*Table 10. Validation matrix for a class III hemorrhage followed by intravenous administration of packed red blood cells. The table engine shows the engine output compared to key hemodynamic and respiratory parameters.*
+*Table 20. Validation matrix for a class III hemorrhage followed by intravenous administration of packed red blood cells. The table engine shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
@@ -576,7 +761,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 |	Start IV Fluids: Packed RBCs at 5 mL/min with a 250 mL bag	|				|	550	|	2000	|<span class="success">	NC	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="danger">	NC	</span>|<span class="success">	Increase  @cite guyton2006medical	</span>|<span class="success">	Increase @cite guyton2006medical	</span>|<span class="success">	Increase 	</span>|<span class="success">	Decrease @cite guyton2006medical	</span>|
 
 
-*Table 11. Validation matrix for a class IV hemorrhage. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
+*Table 21. Validation matrix for a class IV hemorrhage. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
 </center>
 |	Segment	|	Notes			|	Action Occurrence Time (s)	|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Mean Arterial Pressure (mmHg)	|	Blood Volume (mL)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Hemoglobin Content (g)	|	Respiration Rate (/min)	|
 |	------------------------	|	------------------------	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
@@ -588,7 +773,7 @@ Following the completion of the hemorrhage, intravenous blood is administered. T
 The pericardial effusion scenario has a chronic effusion applied to the patient with a volume accumulation on the pericardium of 500 milliliters. There is a decrease in stroke volume, arterial pressures, and cardiac output. This is due to increasing intrapericardial pressure leading to a reduction in end diastolic volume. The validation trends somewhat follow this same behavior. Pericardial effusion can also be applied as an action and the action and condition can be applied to show a worsening of the chronic condition.
 
 <br><center>
-*Table 12. Validation matrix for a chronic case of pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
+*Table 22. Validation matrix for a chronic case of pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
 </center>
 |	Segment	|	Notes		|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Pericardium Pressure (mmHg)	|	Pericardium Volume (mL)	|	Pulmonary Capillaries Wedge Pressure (mmHg)	|	Oxygen Saturation	|	
 |	------------------------	|	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	
@@ -596,58 +781,12 @@ The pericardial effusion scenario has a chronic effusion applied to the patient 
 
 
 <br><center>
-*Table 13. Validation matrix for a chronic case of pericardial effusion combined with an acute worsening of the pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
+*Table 23. Validation matrix for a chronic case of pericardial effusion combined with an acute worsening of the pericardial effusion. The table shows the engine output compared to key hemodynamic parameters.*
 </center>
 |	Segment	|	Notes		|	Sampled Scenario Time (s)	|	Heart Rate (/min)	|	Systolic Pressure (mmHg)	|	Diastolic Pressure (mmHg)	|	Cardiac Output (mL/min)	|	Heart Stroke Volume (mL)	|	Pericardium Pressure (mmHg)	|	Pericardium Volume (mL)	|	Pulmonary Capillaries Wedge Pressure (mmHg)	|	Oxygen Saturation	|	
 |	------------------------	|	------------------------	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	
 |	Pericardial Effusion Condition	|	Volume accumulation on pericardium is set at 500 ml.		|	30	|<span class="warning">	Slight increase or no change @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="danger">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Slight increase @cite spodick1998tamp	</span>|<span class="success">	NC 	</span>|	
 |	Pericardial Effusion Acute	|	Flow into pericardium set to 6 mL/min.		|	150	|<span class="warning">	Slight increase or no change @cite spodick1998tamp	</span>|<span class="success">	Slight decrease @cite spodick1998tamp	</span>|<span class="danger">	Slight decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="success">	Decrease @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Increase @cite spodick1998tamp	</span>|<span class="danger">	Slight increase @cite spodick1998tamp	</span>|<span class="success">	NC 	</span>|	
-
-### Sinus Bradycardia
-Sinus bradycardia was validated by setting the baseline heart rate to 50 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. The cardiac output remains relatively unchanged due to compensatory increases in the stroke volume, which is expected in asymptomatic sinus bradycardia @cite mangrum2000evaluation. The validation data that was found for  systolic and diastolic pressures was vague, only mentioning that the condition was often asymptomatic, indicating relatively normal pressure values. The systolic and diastolic pressures in the engine do change slightly as the heart driver accommodates the increased stroke volume; however, the values remain within normal bounds at 50 beats per minute. The %ECG waveform in bradycardia is similar to a normal sinus waveform, with the exception of an extended R-R interval due to a slower heart rate (see Figure 14), which is also seen in the engine output. Other systemic data is not significantly changed.
-
-
-@htmlonly
-<center>
-<a href="./Images/Cardiovascular/SinusBradycardia_ECGPedia.png"><img src="./Images/Cardiovascular/SinusBradycardia_ECGPedia.png"></a>
-<br>
-<a href="./Images/Cardiovascular/SinusBradycardia_Engine.PNG"><img src="./Images/Cardiovascular/SinusBradycardia_Engine.PNG"></a>
-<br>
-</center>
-@endhtmlonly
-<center>
-<i>Figure 14. The increased R-R interval is evident in both waveforms. This is the primary indication of the low heart rate. Validation image courtesy of @cite vanderBilt2010sinus .</i>
-</center><br>
-
-<br><center>
-*Table 14. Validation matrix for sinus bradycardia arrythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes	|	Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate (beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Sinus Bradycardia	|	Heart Rate set to 50 beats per minute (<60 considered bradycardia)	|	0	|	120	|<span class="success">	50 @cite mangrum2000evaluation	</span>|<span class="warning">	Decrease @cite klabunde2012cvconcepts	</span>|<span class="success">	No Relevant changes @cite mangrum2000evaluation	</span>|<span class="success">	Decrease @cite klabunde2012cvconcepts	</span>|<span class="success">	Increase @cite mangrum2000evaluation	</span>|<span class="success">	Sinus @cite mangrum2000evaluation	</span>|
-
-
-### Sinus Tachycardia
-Sinus Tachycardia was validated by setting the baseline heart rate to 110 beats per minute. The condition was allowed to stabilize in keeping with chronic condition  methodology; for more information, see @ref SystemMethodology. Validation data predicted a decrease in stroke volume with the increase in heart rate @cite aroesty1985simultaneous, which was also found in the engine. Because of the decrease in stroke volume, the cardiac  output remains relatively unchanged. This is due to the model not currently affecting compression force, only compression rate. The %ECG output in tachycardia is generally similar to normal sinus; however, in some cases, the T wave can experience constructive  interference from the following heart beat&apos;s P wave. This is shown in the %ECG output seen in Figure 15.
-
-@htmlonly
-<center>
-<a href="./Images/Cardiovascular/SinusTachycardia_Physionet.png"><img src="./Images/Cardiovascular/SinusTachycardia_Physionet.png"></a>
-<br>
-<a href="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"><img src="./Images/Cardiovascular/SinusTachycardia_Engine.PNG"></a>
-<br>
-</center>
-@endhtmlonly
-<center>
-<i>Figure 15. Due to the high heart rate, the engine output is summing together the P and T waves. In the image from PhysioNet, the output is not summed together as dramatically, due to the slight physiological compression of the waveform that the current %ECG system and heart model do not support. @cite healey2005detecting @cite goldberger2000physiobank</i>
-</center><br>
-
-<br><center>
-*Table 15. Validation matrix for sinus tachycardia arrythmia. The table shows the engine output compared to key hemodynamic and respiratory parameters.*
-</center>
-|	Segment	|	Notes	|	Action Occurrence Time (s)	|	Sample Scenario Time (s)	|	Heart Rate(beats/min)	|	Mean Arterial Pressure (mmHg)	|	Oxygen Saturation (mmHg)	|	Cardiac Output(mL/min)	|	Stroke Volume (mL)	|	ECG Output (mV)	|
-|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|	------------------------	|
-|	Sinus Tachycardia	|	Variable. Set Heart Rate = 110 beats per minute; in Aroestyl, patients were not ideal, a number had previous heart conditions or coronary artery disease. Tachycardia was achieved via atrial pacemakers	|	0	|	120	|<span class="success">	110 @cite yusuf2005deciphering	</span>|<span class="warning">	13% increase @cite still2005prevalence	</span>|<span class="success">	NC @cite yusuf2005deciphering	</span>|<span class="success">	Dependent on SV and HR @cite sohn2007hemodynamic	</span>|<span class="warning">	Decreases as Heart Rate increases @cite aroesty1985simultaneous	</span>|<span class="success">	Normal sinus/Tachycardia Waveform 	</span>|
 
 @anchor cardiovascular-conclusions
 Conclusions
@@ -665,7 +804,9 @@ An area of potential future advancement lies in the inertance of the %Cardiovasc
 
 Another potential area for improvement is simulation of a tourniquet. An intervention could be added to simulate the increased resistance to flow and external pressure application that would be present with the application of a tourniquet.
 
-The cardiac arrest functionality also needs improvement. Like in the human body, most of the systems require a beating heart to function properly. Also like in the human body, the engine systems tend to go haywire when the heart stops. However, the ways in which the systems go haywire deviate from the human physiological systems' response during cardiac arrest. Improvements to the engine functionality during cardiac arrest would allow for many desirable scenarios, including Advanced Cardiac Life Support (ACLS) scenarios where some recovery of the patient is actually possible. As described in the CPR section, recovery from cardiac arrest is currently impossible in the engine. Rescue breathing would also be a valuable improvement.
+We will continue to add arrhythmias and the effects of defibrillation to the system.
+
+We are exploring further discretization of the circuit; however, this must always be balanced with the speed of the computation.
 
 The ventricular systolic function and anemia are now unvalidated conditions in the engine. We will improve the model and validate this condition in the future.
 

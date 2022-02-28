@@ -125,6 +125,37 @@ class SEAirwayObstruction(SEPatientAction):
         return ("Airway Obstruction\n"
                 "  Severity: {}").format(self._severity)
 
+class eHeartRhythm(Enum):
+    NormalSinus = 0
+    SinusBradycardia = 1
+    SinusTachycardia = 2
+    SinusPulselessElectricalActivity = 3
+    Asystole = 4
+    CoarseVentricularFibrillation = 5
+    FineVentricularFibrillation = 6
+    PulselessVentricularTachycardia = 7
+    StableVentricularTachycardia = 8
+    UnstableVentricularTachycardia = 9
+
+class SEArrhythmia(SEPatientAction):
+    __slots__ = ["_rhythm"]
+
+    def __init__(self):
+        super().__init__()
+        self._rhythm = eHeartRhythm.NormalSinus
+    def clear(self):
+        super().clear()
+        self._rhythm = eHeartRhythm.NormalSinus
+    def is_valid(self):
+        return True
+    def set_rhythm(self, state: eHeartRhythm):
+        self._rhythm = state
+    def get_rhythm(self):
+        return self._rhythm
+    def __repr__(self):
+        return ("Arrythmia\n"
+         "  Rhythm: {}").format(self._rhythm)
+
 class SEAsthmaAttack(SEPatientAction):
     __slots__ = ["_severity"]
 
@@ -219,25 +250,6 @@ class SEBronchoconstriction(SEPatientAction):
     def __repr__(self):
         return ("Bronchoconstriction\n"
                 "  Severity: {}").format(self._severity)
-
-class SECardiacArrest(SEPatientAction):
-    __slots__ = ["_state"]
-
-    def __init__(self):
-        super().__init__()
-        self._state = eSwitch.Off
-    def clear(self):
-        super().clear()
-        self._state = eSwitch.Off
-    def is_valid(self):
-        return True
-    def set_state(self, state: eSwitch):
-        self._state = state
-    def get_state(self):
-        return self._state
-    def __repr__(self):
-        return ("Cardiac Arrest\n"
-         "  State: {}").format(self._state)
 
 class SEChestCompressionForce(SEPatientAction):
     __slots__ = ["_force"]

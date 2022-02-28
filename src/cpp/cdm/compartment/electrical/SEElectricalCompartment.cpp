@@ -298,11 +298,24 @@ void SEElectricalCompartment::AddLink(SEElectricalCompartmentLink& link)
   if (!Contains(m_Links, link))
   {
     m_Links.push_back(&link);
-    // Is it incoming or out going?
-    if (this == &link.GetSourceCompartment())
-      m_OutgoingLinks.push_back(&link);
-    else if(this == &link.GetTargetCompartment())
-      m_IncomingLinks.push_back(&link);
+    if (HasChildren())
+    {
+      SEElectricalCompartment& src = link.GetSourceCompartment();
+      SEElectricalCompartment& tgt = link.GetTargetCompartment();
+
+      if (this != &src && !HasChild(src))
+        m_IncomingLinks.push_back(&link);
+      else if (this != &tgt && !HasChild(tgt))
+        m_OutgoingLinks.push_back(&link);
+    }
+    else
+    {
+      // Is it incoming or out going?
+      if (this == &link.GetSourceCompartment())
+        m_OutgoingLinks.push_back(&link);
+      else if (this == &link.GetTargetCompartment())
+        m_IncomingLinks.push_back(&link);
+    }
   }
 }
 void SEElectricalCompartment::RemoveLink(SEElectricalCompartmentLink& link)
@@ -318,15 +331,18 @@ const std::vector<SEElectricalCompartmentLink*>& SEElectricalCompartment::GetLin
   return m_Links;
 }
 
-bool SEElectricalCompartment::HasChild(const std::string& name)
+bool SEElectricalCompartment::HasChild(const SEElectricalCompartment& cmpt)
 {
-  for (SEElectricalCompartment* cmpt : m_Children)
+  for (SEElectricalCompartment* child : m_Children)
   {
-    if (name == cmpt->GetName())
+    if (&cmpt == child)
+      return true;
+    if (child->HasChild(cmpt))
       return true;
   }
   return false;
 }
+
 void SEElectricalCompartment::AddChild(SEElectricalCompartment& child)
 {
   if (HasNodeMapping())
@@ -334,7 +350,7 @@ void SEElectricalCompartment::AddChild(SEElectricalCompartment& child)
     Fatal("You cannont add a child compartment to a compartment mapped to nodes");
     return;
   }
-  if (HasChild(child.GetName()))
+  if (HasChild(child))
     return;
   m_Children.push_back(&child);
 }

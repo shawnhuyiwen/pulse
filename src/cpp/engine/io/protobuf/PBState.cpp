@@ -313,6 +313,7 @@ namespace pulse
   }
   bool PBState::Serialize(const Controller& src, PULSE_BIND::StateData& dst)
   {
+    dst.set_version(PulseBuildInformation::Version() + "-" + PulseBuildInformation::Hash());
     dst.set_airwaymode((PULSE_BIND::eAirwayMode)src.m_AirwayMode);
     dst.set_intubation((CDM_BIND::eSwitch)src.m_Intubation);
     dst.set_allocated_simulationtime(PBProperty::Unload(src.m_SimulationTime));

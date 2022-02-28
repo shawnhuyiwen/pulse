@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.kitware.pulse.cdm.bind.AnesthesiaMachine.AnesthesiaMachineData;
+import com.kitware.pulse.cdm.bind.Enums.eBreathState;
 import com.kitware.pulse.cdm.bind.Enums.eCharge;
 import com.kitware.pulse.cdm.bind.Enums.eGate;
 import com.kitware.pulse.cdm.bind.Enums.eSide;
@@ -157,6 +158,8 @@ public class CDM2MD
       for(Class<?> c : eConditions)
         WriteDoxyTable(c, "", writer, skipProperties);
       WriteDoxyTable(EnvironmentalConditionsData.eSurroundingType.class, "EnvironmentalConditionsData_", writer, skipProperties);
+
+      WriteDoxyTable(eBreathState.class, "", writer, skipProperties);
 
       // ANESTHESIA MACHINE
       writer.append("#### The following tables describe the anesthesia machine\n<hr>\n");

@@ -70,15 +70,6 @@ message RunningAverageData
 
 ////////////////
 // Scalar Data //
-////////////////
-
-/** @brief A scalar and its property name. */
-message ScalarPropertyData
-{
-  string Name        = 1;
-  double Value       = 2;
-  string Unit        = 3;
-}
 
 /** @brief A unitless scalar. */
 message ScalarData 
@@ -451,6 +442,11 @@ message ArrayData
 {
   DoubleArrayData Value = 1;
   string          Unit  = 2;
+}
+
+message ArrayElectricPotentialData
+{
+  ArrayData       ArrayElectricPotential = 1;
 }
 
 message ArrayTimeData

@@ -96,3 +96,33 @@ double SEThermalCircuitNode::GetHeatBaseline(const EnergyUnit& unit) const
     return SEScalar::dNaN();
   return m_QuantityBaseline->GetValue(unit);
 }
+
+SEThermalCircuitNode* SEThermalCircuitNode::GetBlackBoxSourceNode() const
+{
+  return m_BlackBoxSourceNode;
+}
+SEThermalCircuitNode* SEThermalCircuitNode::GetBlackBoxTargetNode() const
+{
+  return m_BlackBoxTargetNode;
+}
+void SEThermalCircuitNode::SetBlackBoxSourceTargetNodes(SEThermalCircuitNode& src, SEThermalCircuitNode& tgt)
+{
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourceNode = &src;
+  m_BlackBoxTargetNode = &tgt;
+}
+
+SEThermalCircuitPath* SEThermalCircuitNode::GetBlackBoxSourcePath() const
+{
+  return m_BlackBoxSourcePath;
+}
+SEThermalCircuitPath* SEThermalCircuitNode::GetBlackBoxTargetPath() const
+{
+  return m_BlackBoxTargetPath;
+}
+void SEThermalCircuitNode::SetBlackBoxSourceTargetPaths(SEThermalCircuitPath& src, SEThermalCircuitPath& tgt)
+{
+  m_IsBlackBoxMiddle = true;
+  m_BlackBoxSourcePath = &src;
+  m_BlackBoxTargetPath = &tgt;
+}

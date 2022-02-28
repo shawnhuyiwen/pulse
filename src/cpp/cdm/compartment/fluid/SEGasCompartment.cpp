@@ -17,7 +17,6 @@ SEGasCompartment::~SEGasCompartment()
   
 }
 
-
 void SEGasCompartment::StateChange()
 {
   m_Leaves.clear();
@@ -109,7 +108,7 @@ void SEGasCompartment::AddChild(SEGasCompartment& child)
     Fatal("You cannont add a child compartment to a compartment mapped to nodes");
     return;
   }
-  if (HasChild(child.GetName()))
+  if (HasChild(child))
     return;
   m_FluidChildren.push_back(&child);
   m_Children.push_back(&child);

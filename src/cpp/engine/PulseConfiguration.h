@@ -10,8 +10,7 @@ class SEEngineStabilization;
 class SEDynamicStabilization;
 class SETimedStabilization;
 class SEEnvironmentalConditions;
-class SEElectroCardioGramWaveformInterpolator;
-class SEOverrides;
+class SEElectroCardioGram;
 
 namespace pulse { class PBConfiguration; }
 /**
@@ -60,20 +59,23 @@ public:
   virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == eSwitch::On; }
   virtual void EnableWritePatientBaselineFile(eSwitch s) { m_WritePatientBaselineFile = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }
 
-  // add method here for overrrides
-  virtual bool HasInitialOverrides() const;
-  virtual SEOverrides& GetInitialOverrides();
-  virtual const SEOverrides* GetInitialOverrides() const;
-  virtual void RemoveInitialOverrides();
+  virtual bool HasOverrides() const;
+  virtual SEScalarProperties& GetOverrides();
+  virtual const SEScalarProperties& GetOverrides() const;
+
+  virtual bool HasModifiers() const;
+  virtual SEScalarProperties& GetModifiers();
+  virtual const SEScalarProperties& GetModifiers() const;
 protected:
 
-  SEScalarTime* m_TimeStep;
-  eSwitch                    m_AllowDynamicTimeStep;
-  SETimedStabilization* m_TimedStabilization;
-  SEDynamicStabilization* m_DynamicStabilization;
-  eSwitch                    m_WritePatientBaselineFile;
+  SEScalarTime*                 m_TimeStep;
+  eSwitch                       m_AllowDynamicTimeStep;
+  SETimedStabilization*         m_TimedStabilization;
+  SEDynamicStabilization*       m_DynamicStabilization;
+  eSwitch                       m_WritePatientBaselineFile;
 
-  SEOverrides* m_InitialOverrides;
+  SEScalarProperties            m_Overrides;
+  SEScalarProperties            m_Modifiers;
 
   //////////////////////
   /** Blood Chemistry */
@@ -95,9 +97,9 @@ public:
   virtual SEScalarAreaPerTimePressure& GetStandardOxygenDiffusionCoefficient();
   virtual double GetStandardOxygenDiffusionCoefficient(const AreaPerTimePressureUnit& unit) const;
 protected:
-  SEScalarMassPerAmount* m_MeanCorpuscularHemoglobin;
-  SEScalarVolume* m_MeanCorpuscularVolume;
-  SEScalarLength* m_StandardDiffusionDistance;
+  SEScalarMassPerAmount*       m_MeanCorpuscularHemoglobin;
+  SEScalarVolume*              m_MeanCorpuscularVolume;
+  SEScalarLength*              m_StandardDiffusionDistance;
   SEScalarAreaPerTimePressure* m_StandardOxygenDiffusionCoefficient;
 
   /////////////////////
@@ -127,13 +129,22 @@ public:
   virtual bool HasStandardPulmonaryCapillaryCoverage() const;
   virtual SEScalar& GetStandardPulmonaryCapillaryCoverage();
   virtual double GetStandardPulmonaryCapillaryCoverage() const;
+
+  virtual eSwitch TuneCardiovascularCircuit() const { return m_TuneCardiovascularCircuit; }
+  virtual void TuneCardiovascularCircuit(eSwitch s) { m_TuneCardiovascularCircuit = s; }
+
+  virtual std::string CardiovascularTuningFile() const { return m_CardiovascularTuningFile; }
+  virtual void CardiovascularTuningFile(const std::string& s) { m_CardiovascularTuningFile = s; }
+
 protected:
   SEScalarPressurePerVolume* m_LeftHeartElastanceMaximum;
   SEScalarPressurePerVolume* m_LeftHeartElastanceMinimum;
-  SEScalar0To1* m_MinimumBloodVolumeFraction;
+  SEScalar0To1*              m_MinimumBloodVolumeFraction;
   SEScalarPressurePerVolume* m_RightHeartElastanceMaximum;
   SEScalarPressurePerVolume* m_RightHeartElastanceMinimum;
-  SEScalar* m_StandardPulmonaryCapillaryCoverage;
+  SEScalar*                  m_StandardPulmonaryCapillaryCoverage;
+  eSwitch                    m_TuneCardiovascularCircuit;
+  std::string                m_CardiovascularTuningFile;
 
   //////////////
   /** Circuit */
@@ -230,12 +241,12 @@ protected:
   /** ECG */
   //////////
 public:
-  virtual bool HasECGInterpolator() const;
-  virtual SEElectroCardioGramWaveformInterpolator& GetECGInterpolator();
-  virtual const SEElectroCardioGramWaveformInterpolator* GetECGInterpolator() const;
-  virtual void RemoveECGInterpolator();
+  virtual bool HasECG() const;
+  virtual SEElectroCardioGram& GetECG();
+  virtual const SEElectroCardioGram* GetECG() const;
+  virtual void RemoveECG();
   //protected:
-  SEElectroCardioGramWaveformInterpolator* m_ECGInterpolator;
+  SEElectroCardioGram* m_ECG;
 
   /////////////
   /** Energy */

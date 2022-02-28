@@ -27,6 +27,12 @@ namespace Pulse.CDM
         Serialize(any.AirwayObstruction, ao);
         return ao;
       }
+      if(any.Arrhythmia != null)
+      {
+        SEArrhythmia a = new SEArrhythmia();
+        Serialize(any.Arrhythmia, a);
+        return a;
+      }
       if (any.AsthmaAttack != null)
       {
         SEAsthmaAttack aa = new SEAsthmaAttack();
@@ -44,12 +50,6 @@ namespace Pulse.CDM
         SEBronchoconstriction b = new SEBronchoconstriction();
         Serialize(any.Bronchoconstriction, b);
         return b;
-      }
-      if (any.CardiacArrest != null)
-      {
-        SECardiacArrest ca = new SECardiacArrest();
-        Serialize(any.CardiacArrest, ca);
-        return ca;
       }
       if (any.ChestCompressionForce != null)
       {
@@ -217,6 +217,11 @@ namespace Pulse.CDM
         any.AirwayObstruction = Unload((SEAirwayObstruction)action);
         return any;
       }
+      if (action.GetType().IsAssignableFrom(typeof(SEArrhythmia)))
+      {
+        any.Arrhythmia = Unload((SEArrhythmia)action);
+        return any;
+      }
       if (action.GetType().IsAssignableFrom(typeof(SEAsthmaAttack)))
       {
         any.AsthmaAttack = Unload((SEAsthmaAttack)action);
@@ -230,11 +235,6 @@ namespace Pulse.CDM
       if (action.GetType().IsAssignableFrom(typeof(SEBronchoconstriction)))
       {
         any.Bronchoconstriction = Unload((SEBronchoconstriction)action);
-        return any;
-      }
-      if (action.GetType().IsAssignableFrom(typeof(SECardiacArrest)))
-      {
-        any.CardiacArrest = Unload((SECardiacArrest)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SEChestCompressionForce)))
@@ -460,6 +460,30 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEArrhythmia
+    public static void Load(pulse.cdm.bind.ArrhythmiaData src, SEArrhythmia dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ArrhythmiaData src, SEArrhythmia dst)
+    {
+      Serialize(src.PatientAction, dst);
+      dst.SetRhythm((eHeartRhythm)(int)src.Rhythm);
+    }
+    public static pulse.cdm.bind.ArrhythmiaData Unload(SEArrhythmia src)
+    {
+      pulse.cdm.bind.ArrhythmiaData dst = new pulse.cdm.bind.ArrhythmiaData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEArrhythmia src, pulse.cdm.bind.ArrhythmiaData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      dst.Rhythm = (pulse.cdm.bind.eHeartRhythm)(int)src.GetRhythm();
+    }
+    #endregion
+
     #region SEAsthmaAttack
     public static void Load(pulse.cdm.bind.AsthmaAttackData src, SEAsthmaAttack dst)
     {
@@ -537,30 +561,6 @@ namespace Pulse.CDM
       Serialize(src, dst.PatientAction);
       if (src.HasSeverity())
         dst.Severity = PBProperty.Unload(src.GetSeverity());
-    }
-    #endregion
-
-    #region SECardiacArrest
-    public static void Load(pulse.cdm.bind.CardiacArrestData src, SECardiacArrest dst)
-    {
-      Serialize(src, dst);
-    }
-    public static void Serialize(pulse.cdm.bind.CardiacArrestData src, SECardiacArrest dst)
-    {
-      Serialize(src.PatientAction, dst);
-      dst.SetState((eSwitch)(int)src.State);
-    }
-    public static pulse.cdm.bind.CardiacArrestData Unload(SECardiacArrest src)
-    {
-      pulse.cdm.bind.CardiacArrestData dst = new pulse.cdm.bind.CardiacArrestData();
-      Serialize(src, dst);
-      return dst;
-    }
-    public static void Serialize(SECardiacArrest src, pulse.cdm.bind.CardiacArrestData dst)
-    {
-      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
-      Serialize(src, dst.PatientAction);
-      dst.State = (pulse.cdm.bind.eSwitch)(int)src.GetState();
     }
     #endregion
 

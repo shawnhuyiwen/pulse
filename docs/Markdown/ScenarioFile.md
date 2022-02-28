@@ -586,6 +586,18 @@ A severity of 0 removes the action completely.
 
 - - -
 
+#### Arrhythmia
+@copybrief ArrhythmiaData
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "Arrhythmia": { "Type":"Asystole" }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+
 #### Asthma Attack
 @copybrief AsthmaAttackData <br>
 Severity value must be >=0.0 and <=1.0 <br>
@@ -630,18 +642,6 @@ A severity of 0 removes the action completely.
     "Bronchoconstriction": {
       "Severity": { "Scalar0To1": { "Value":0.3 } }
     }
-  }
-}]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- - -
-
-#### Cardiac Arrest 
-@copybrief CardiacArrestData
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"AnyAction": [{
-  "PatientAction": {
-    "CardiacArrest": { "State":"On" }
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

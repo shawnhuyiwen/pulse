@@ -30,6 +30,7 @@ namespace pulse { namespace human_adult_whole_body
     virtual bool GetPatientAssessment(SEPatientAssessment& assessment) const override;
 
   protected:
+    virtual std::string GetTypeName() const override { return "Human Adult Whole Body"; }
     virtual void Allocate() override;
     virtual bool SetupPatient(const SEPatient& patient) override;
 

@@ -8,23 +8,23 @@
 class SESubstance;
 class SETestSuite;
 class HowToTracker;
-class PulseController;
 
 namespace pulse { namespace human_adult_whole_body
 {
   class ENGINE_TEST_DECL EngineTest : public SETestManager
   {
-  public:
-    EngineTest(Logger* logger = nullptr);
-    virtual ~EngineTest();
+    public:
+      EngineTest(Logger* logger = nullptr);
+      virtual ~EngineTest();
 
-    virtual bool RunTest(const std::string& testName, const std::string& sOutputDirectory) override;
+      virtual bool RunTest(const std::string& testName, const std::string& sOutputDirectory) override;
 
-  protected:
-    virtual void FillFunctionMap() override;
-    typedef void(EngineTest::* testFunction)(const std::string&);
-    std::map<std::string, testFunction> testMap;
-    std::stringstream m_ss;
+    protected:
+      virtual void FillFunctionMap() override;
+      typedef void(EngineTest::* testFunction)(const std::string&);
+      std::map<std::string, testFunction> testMap;
+      std::stringstream m_ss;
+
 
     //////////////////////////////////////////////////////////
     // Circuit Hemodynamics and Compartment Transport Tests //
@@ -33,6 +33,7 @@ namespace pulse { namespace human_adult_whole_body
   public:
     ////////////////////
     // Cardiovascular //
+    ////////////////////
     void CardiovascularCircuitAndTransportTest(const std::string& sTestDirectory);
     void CardiovascularAndRenalCircuitAndTransportTest(const std::string& sTestDirectory);
     void CardiovascularAndTissueCircuitAndTransportTest(const std::string& sTestDirectory);
@@ -47,7 +48,7 @@ namespace pulse { namespace human_adult_whole_body
     void SinusoidHeartDriver(double time_s, double heartRate_s, double& lHeartElastance, double& rHeartElastance);
     void CardiovascularCircuitAndTransportTest(CardiovascularDriver driverType, double complianceScale, double resistanceScale, double volumeScale, double heartRate_bpm,
       double sysRes, double sysComp, double aortaRes, double aortaComp, double rightHeartRes, double venaCavaComp, bool connectTissue, bool connectRenal, bool connectCSF,
-      bool balanceBloodgases, const std::string& sTestDirectory, const std::string& sTestName, bool breakOutResults);
+    bool balanceBloodgases, const std::string& sTestDirectory, const std::string& sTestName, bool breakOutResults);
     void TuneCardiovascularCircuitTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient& patient);
 
     double m_MeanAortaPressure;
@@ -60,31 +61,33 @@ namespace pulse { namespace human_adult_whole_body
   public:
     ///////////
     // Renal //
+    ///////////
     void RenalCircuitAndTransportTest(const std::string& sTestDirectory);
     void RenalTGFFeedbackTest(const std::string& sTestDirectory);
-    void RenalTGFandUPRFeedbackTest(const std::string& sTestDirectory);
+    void RenalTGFandUPRFeedbackTest(const std::string& sTestDirectory); 
     void RenalSecretionTest(const std::string& sTestDirectory);
     void RenalUrinateTest(const std::string& sTestDirectory);
   protected:
     enum RenalFeedback { TGF, TGFandUPR };
     void RenalFeedbackTest(RenalFeedback feedback, const std::string& sTestDirectory, const std::string& sTestName);
-    enum RenalSystems { Secretion, Urinating };
+    enum RenalSystems { Secretion, Urinating};
     void RenalSystemTest(RenalSystems systemtest, const std::string& sTestDirectory, const std::string& sTestName);
 
   public:
     /////////////////
     // Respiratory //
+    /////////////////
     void RespiratoryCircuitAndTransportTest(const std::string& sTestDirectory);
     void RespiratoryDriverTest(const std::string& sTestDirectory);
   protected:
-    enum RespiratoryConfiguration {
-      RespiratorySolo, AnesthesiaMachineSolo, RespiratoryWithAnesthesiaMachine, RespiratoryWithInhaler, RespiratoryWithMechanicalVentilation, MechanicalVentilatorSolo, RespiratoryWithMechanicalVentilator
+    enum RespiratoryConfiguration { RespiratorySolo, AnesthesiaMachineSolo, RespiratoryWithAnesthesiaMachine, RespiratoryWithInhaler, RespiratoryWithMechanicalVentilation, MechanicalVentilatorSolo, RespiratoryWithMechanicalVentilator
     };
     void RespiratoryCircuitAndTransportTest(RespiratoryConfiguration config, const std::string& sTestDirectory);
 
   public:
     ////////////////////////
     // Anesthesia Machine //
+    ////////////////////////
     void AnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
     void RespiratoryWithAnesthesiaMachineCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
@@ -93,6 +96,7 @@ namespace pulse { namespace human_adult_whole_body
   public:
     ///////////////////////////
     // Mechanical Ventilator //
+    ///////////////////////////
     void MechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
     void RespiratoryWithMechanicalVentilatorCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
@@ -101,12 +105,14 @@ namespace pulse { namespace human_adult_whole_body
   public:
     /////////////
     // Inhaler //
+    /////////////
     void RespiratoryWithInhalerCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
 
   public:
     ////////////////////////////
     // Mechanical Ventilation //
+    ////////////////////////////
     void RespiratoryWithMechanicalVentilationCircuitAndTransportTest(const std::string& sTestDirectory);
   protected:
 
@@ -125,6 +131,7 @@ namespace pulse { namespace human_adult_whole_body
   public:
     //////////////////
     // Tissue Tests //
+    //////////////////
     void DiffusionClearanceExcretionTests(const std::string& rptDirectory);
     void AlveolarCarbonDioxideDiffusionTest(const std::string& rptDirectory);
     void AlveolarOxygenDiffusionTest(const std::string& rptDirectory);
@@ -142,56 +149,58 @@ namespace pulse { namespace human_adult_whole_body
     void GenericExcretionTest(SETestSuite& testSuite);
 
   public:
-    ///////////////////
-    // Nervous Tests //
-    void BrainInjuryTest(const std::string& rptDirectory);
+      ///////////////////
+      // Nervous Tests //
+      ///////////////////
+      void BrainInjuryTest(const std::string& rptDirectory);
   protected:
-
 
   public:
     ////////////////////////////
     // Acid Base Engine Tests //
+    ////////////////////////////
     void FourCompartmentTestSimple(const std::string& sOutputDirectory);
     void AcidBaseFourCompartmentTest(const std::string& sOutputDirectory);
     void FiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory);
     void AcidBaseFourCompartmentTestWithProductionConsumption(const std::string& sOutputDirectory);
     void AcidBaseFiveCompartmentTestWithDiffusion(const std::string& sOutputDirectory);
     void AcidBaseFiveCompartmentTestWithProductionConsumptionAndDiffusion(const std::string& sOutputDirectory);
-  protected:
-    void FourCompartmentTest(bool usingAcidBase, bool usingProductionConsumption, bool usingDiffusion, const std::string& sOutputDirectory);
-    bool usingAcidBase;
-    bool usingProductionConsumption;
-    bool usingDiffusion;
+   protected:
+     void FourCompartmentTest(bool usingAcidBase, bool usingProductionConsumption, bool usingDiffusion, const std::string& sOutputDirectory);
+     bool usingAcidBase;
+     bool usingProductionConsumption;
+     bool usingDiffusion;
 
-    /////////////////////
-    // Acid Base Tests //
-    /////////////////////
   public:
+     /////////////////////
+     // Acid Base Tests //
+     /////////////////////
     void AcidBaseMathTest(const std::string& sOutputDirectory);
     void AcidBaseFeedbackTest(const std::string& sOutputDirectory);
     void AcidBaseLimitsTest(const std::string& sOutputDirectory);
-    void AcidBaseExtremeTest(const std::string& rptDirectory);
+    void AcidBaseExtremeTest(const std::string & rptDirectory);
     void AcidBaseBloodGasTests(const std::string& sOutputDirectory);
   protected:
     enum bloodType { ARTERIAL, VENOUS, CAPILLARY, RESPIRATORY_ACIDOSIS, METABOLIC_ALKALOSIS, METABOLIC_ACIDOSIS, RESPIRATORY_ALKALOSIS, CUSTOM };
     void AcidBaseBloodGasTest(Controller& bg, bloodType compartment, SETestSuite& testSuite);
 
-    /////////////////////
-    // Aerosol Tests //
-    /////////////////////
   public:
+    ///////////////////
+    // Aerosol Tests //
+    ///////////////////
     void AerosolTest(const std::string& sOutputDirectory);
   protected:
     void SizeIndependentDepositionEfficencyCoefficientsTest(SETestSuite& suite, SESubstance& substance, double expectedMouthCoeff, double expectedCarinaCoeff, double expectedDeadSpaceCoeff, double expectedAlveoliCoeff);
     void DepositionFractionTest(SETestSuite& suite, SESubstance& substance, double expectedMouthDepFrac, double expectedCarinaDepFrac,
-    double expectedLeftDeadSpaceDepFrac, double expectedLeftAlveoliDepFrac, double expectedRightDeadSpaceDepFrac, double expectedRightAlveoliDepFrac);
+      double expectedLeftDeadSpaceDepFrac, double expectedLeftAlveoliDepFrac, double expectedRightDeadSpaceDepFrac, double expectedRightAlveoliDepFrac);
 
   public:
     //////////////////////////
     // General Engine Tests //
+    //////////////////////////
     void ReadScenarios(const std::string& sOutputDirectory);
     void ReuseEngine(const std::string& sOutputDirectory);
-
+  
     void ConditionCombinations(const std::string& rptDirectory);
     void MultiEngineTest(const std::string& sTestDirectory);
     void SerializationTest(const std::string& sTestDirectory);
@@ -199,5 +208,15 @@ namespace pulse { namespace human_adult_whole_body
   protected:
     void InhalerState(PhysiologyEngine* bg, HowToTracker& tracker);
     void InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tracker, const SESubstance& succs);
+  
+  public:
+    //////////////////////
+    // Black Box Tests //
+    /////////////////////
+    void EmptyBlackBoxTest(const std::string& sOutputDirectory);
+    void ImposeFlowBlackBoxTest(const std::string& sOutputDirectory);
+    void ImposePressureAndFlowBlackBoxTest(const std::string& sOutputDirectory);
+  protected:
+
   };
 END_NAMESPACE_EX

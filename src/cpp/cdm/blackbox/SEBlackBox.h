@@ -4,41 +4,36 @@
 #pragma once
 
 #include "cdm/properties/SEScalar.h"
-
-enum class eBlackBox_Property_Type {
-  Provided = 0, Imposed
-};
-extern const std::string& eBlackBox_Property_Type_Name(eBlackBox_Property_Type m);
-
-// Template types are all based on circuits (not compartments)
+#include "cdm/circuit/SECircuitNode.h"
+#include "cdm/circuit/SECircuitPath.h"
 
 #define BLACK_BOX_TEMPLATE typename NodeType, typename PathType, \
-                           typename FluxScalar, typename PotentialScalar, typename QuantityScalar, \
-                           typename FluxUnit, typename PotentialUnit, typename QuantityUnit
+                           typename PotentialScalar, typename QuantityScalar, typename FluxScalar, \
+                           typename PotentialUnit, typename QuantityUnit, typename FluxUnit
 
 #define BLACK_BOX_TYPES NodeType, PathType, \
-                        FluxScalar, PotentialScalar, QuantityScalar, \
-                        FluxUnit,PotentialUnit,QuantityUnit
+                        PotentialScalar, QuantityScalar, FluxScalar, \
+                        PotentialUnit,QuantityUnit, FluxUnit
 
 #define ELECTRICAL_BLACK_BOX SEElectricalCircuitNode, SEElectricalCircuitPath, \
-                             SEScalarElectricCurrent, SEScalarElectricPotential, SEScalarElectricCharge, \
-                             ElectricCurrentUnit, ElectricPotentialUnit, ElectricChargeUnit
+                             SEScalarElectricPotential, SEScalarElectricCharge, SEScalarElectricCurrent, \
+                             ElectricPotentialUnit, ElectricChargeUnit, ElectricCurrentUnit
 
 #define MAP_ELECTRICAL_BLACK_BOX SEElectricalBlackBox,SEElectricalCircuitNode, SEElectricalCircuitPath
 
 #define FLUID_BLACK_BOX SEFluidCircuitNode, SEFluidCircuitPath, \
-                        SEScalarVolumePerTime, SEScalarPressure, SEScalarVolume, \
-                        VolumePerTimeUnit, PressureUnit, VolumeUnit
+                        SEScalarPressure, SEScalarVolume, SEScalarVolumePerTime, \
+                        PressureUnit, VolumeUnit, VolumePerTimeUnit
 
 #define MAP_FLUID_BLACK_BOX SEFluidBlackBox,SEFluidCircuitNode, SEFluidCircuitPath
 
 #define THERMAL_BLACK_BOX SEThermalCircuitNode, SEThermalCircuitPath, \
-                          SEScalarPower, SEScalarTemperature, SEScalarEnergy, \
-                          PowerUnit, TemperatureUnit, EnergyUnit
+                          SEScalarTemperature, SEScalarEnergy, SEScalarPower, \
+                          TemperatureUnit, EnergyUnit, PowerUnit
 
 #define MAP_THERMAL_BLACK_BOX SEThermalBlackBox,SEThermalCircuitNode, SEThermalCircuitPath
 
-#define CCT typename CT, typename NT, typename PT, typename BBT, \
+#define CCT typename CT, typename NT, typename PT, \
             typename CU, typename FU, typename IU, \
             typename PU, typename QU, typename RU
 
@@ -57,95 +52,47 @@ public:
 
   virtual std::string GetName() const { return m_Name; }
 
-  virtual void ProvideSourceFlux() { m_SourceFlux = eBlackBox_Property_Type::Provided; }
-  virtual bool IsSourceFluxImposed() const { return m_SourceFlux == eBlackBox_Property_Type::Imposed; }
-  virtual void ImposeSourceFlux(double v, const FluxUnit& unit)
-  {
-    m_SourceFlux = eBlackBox_Property_Type::Imposed;
-    ValueOverride(m_SourcePath->GetNextFlux(), v, unit);
-  }
-  virtual void ImposeSourceFlux(const FluxScalar& s)
-  {
-    m_SourceFlux = eBlackBox_Property_Type::Imposed;
-    Override<FluxUnit>(s,m_SourcePath->GetNextFlux());
-  }
-  virtual double GetSourceFlux(const FluxUnit& unit) const { return m_SourcePath->GetNextFlux().GetValue(unit); }
+  virtual void RemoveImposedPotential() { m_MiddleNode->RemoveImposedPotential(); }
+  virtual bool IsPotentialImposed() const { return m_MiddleNode->IsPotentialImposed(); }
+  virtual void ImposePotential(double v, const PotentialUnit& unit) { m_MiddleNode->ImposePotential(v, unit); }
+  virtual void ImposePotential(const PotentialScalar& s) { return m_MiddleNode->ImposePotential(s); }
+  virtual double GetPotential(const PotentialUnit& unit) const { return m_MiddleNode->GetNextPotential().GetValue(unit); }
 
-  virtual void ProvideTargetFlux() { m_TargetFlux = eBlackBox_Property_Type::Provided; }
-  virtual bool IsTargetFluxImposed() const { return m_TargetFlux == eBlackBox_Property_Type::Imposed; }
-  virtual void ImposeTargetFlux(double v, const FluxUnit& unit)
-  {
-    m_TargetFlux = eBlackBox_Property_Type::Imposed;
-    ValueOverride(m_TargetPath->GetNextFlux(), v, unit);
-  }
-  virtual void ImposeTargetFlux(const FluxScalar& s)
-  {
-    m_TargetFlux = eBlackBox_Property_Type::Imposed;
-    Override<FluxUnit>(s, m_SourcePath->GetNextFlux());
-  }
-  virtual double GetTargetFlux(const FluxUnit& unit) const { return m_TargetPath->GetNextFlux().GetValue(unit); }
-
-  virtual void ProvidePotential() { m_Potential = eBlackBox_Property_Type::Provided; }
-  virtual bool IsPotentialImposed() const { return m_Potential == eBlackBox_Property_Type::Imposed; }
-  virtual void ImposePotential(double v, const PotentialUnit& unit)
-  {
-    m_Potential = eBlackBox_Property_Type::Imposed;
-    ValueOverride(m_Node->GetNextPotential(), v, unit);
-  }
-  virtual void ImposePotential(const PotentialScalar& s)
-  {
-    m_Potential = eBlackBox_Property_Type::Imposed;
-    Override<PotentialUnit>(s, m_Node->GetNextPotential());
-  }
-  virtual double GetPotential(const PotentialUnit& unit) const { return m_Node->GetNextPotential().GetValue(unit); }
-
-  virtual void ProvideSourcePotential() { m_SourcePotential = eBlackBox_Property_Type::Provided; }
-  virtual bool IsSourcePotentialImposed() const { return m_SourcePotential == eBlackBox_Property_Type::Imposed; }
-  virtual void ImposeSourcePotential(double v, const PotentialUnit& unit)
-  {
-    m_SourcePotential = eBlackBox_Property_Type::Imposed;
-    ValueOverride(m_SourceNode->GetNextPotential(), v, unit);
-  }
-  virtual void ImposeSourcePotential(const PotentialScalar& s)
-  {
-    m_SourcePotential = eBlackBox_Property_Type::Imposed;
-    Override<PotentialUnit>(s, m_SourceNode->GetNextPotential());
-  }
+  virtual void RemoveImposedSourcePotential() { m_SourceNode->RemoveImposedPotential(); }
+  virtual bool IsSourcePotentialImposed() const { return m_SourceNode->IsPotentialImposed(); }
+  virtual void ImposeSourcePotential(double v, const PotentialUnit& unit) { m_SourceNode->ImposePotential(v, unit); }
+  virtual void ImposeSourcePotential(const PotentialScalar& s) { return m_SourceNode->ImposePotential(s); }
   virtual double GetSourcePotential(const PotentialUnit& unit) const { return m_SourceNode->GetNextPotential().GetValue(unit); }
 
-  virtual void ProvideTargetPotential() { m_TargetPotential = eBlackBox_Property_Type::Provided; }
-  virtual bool IsTargetPotentialImposed() const { return m_TargetPotential == eBlackBox_Property_Type::Imposed; }
-  virtual void ImposeTargetPotential(double v, const PotentialUnit& unit)
-  {
-    m_TargetPotential = eBlackBox_Property_Type::Imposed;
-    ValueOverride(m_TargetNode->GetNextPotential(), v, unit);
-  }
-  virtual void ImposeTargetPotential(const PotentialScalar& s)
-  {
-    m_TargetPotential = eBlackBox_Property_Type::Imposed;
-    Override<PotentialUnit>(s, m_TargetNode->GetNextPotential());
-  }
+  virtual void RemoveImposedTargetPotential() { m_TargetNode->RemoveImposedPotential(); }
+  virtual bool IsTargetPotentialImposed() const { return m_TargetNode->IsPotentialImposed(); }
+  virtual void ImposeTargetPotential(double v, const PotentialUnit& unit) { m_TargetNode->ImposePotential(v, unit); }
+  virtual void ImposeTargetPotential(const PotentialScalar& s) { return m_TargetNode->ImposePotential(s); }
   virtual double GetTargetPotential(const PotentialUnit& unit) const { return m_TargetNode->GetNextPotential().GetValue(unit); }
 
-  virtual void ProvideQuantity() { m_Quantity = eBlackBox_Property_Type::Provided; }
-  virtual bool IsQuantityImposed() const { return m_Quantity == eBlackBox_Property_Type::Imposed; }
-  virtual void ImposeQuantity(double v, const QuantityUnit& unit)
-  {
-    m_Quantity = eBlackBox_Property_Type::Imposed;
-    ValueOverride(m_SourceNode->GetNextQuantity(), v, unit);
-  }
-  virtual void ImposeQuantity(const QuantityScalar& s)
-  {
-    m_Quantity = eBlackBox_Property_Type::Imposed;
-    Override<QuantityUnit>(s, m_SourceNode->GetNextQuantity());
-  }
-  virtual double GetQuantity(const QuantityUnit& unit) const { return m_Node->GetNextQuantity().GetValue(unit); }
+  virtual void RemoveImposedSourceFlux() { m_SourcePath->RemoveImposedFlux(); }
+  virtual bool IsSourceFluxImposed() const { return m_SourcePath->IsFluxImposed(); }
+  virtual void ImposeSourceFlux(double v, const FluxUnit& unit) { m_SourcePath->ImposeFlux(v, unit); }
+  virtual void ImposeSourceFlux(const FluxScalar& s) { m_SourcePath->ImposeFlux(s); }
+  virtual double GetSourceFlux(const FluxUnit& unit) const { return m_SourcePath->GetNextFlux().GetValue(unit); }
+
+  virtual void RemoveImposedTargetFlux() { m_TargetPath->RemoveImposedFlux(); }
+  virtual bool IsTargetFluxImposed() const { return m_TargetPath->IsFluxImposed(); }
+  virtual void ImposeTargetFlux(double v, const FluxUnit& unit) { m_TargetPath->ImposeFlux(v, unit); }
+  virtual void ImposeTargetFlux(const FluxScalar& s) { m_TargetPath->ImposeFlux(s); }
+  virtual double GetTargetFlux(const FluxUnit& unit) const { return m_TargetPath->GetNextFlux().GetValue(unit); }
+
+  virtual void RemoveImposedQuantity() { m_MiddleNode->RemoveImposedQuantity(); }
+  virtual bool IsQuantityImposed() const { return m_MiddleNode->IsQuantityImposed(); }
+  virtual void ImposeQuantity(double v, const QuantityUnit& unit) { m_MiddleNode->ImposeQuantity(v, unit); }
+  virtual void ImposeQuantity(const QuantityScalar& s) { m_MiddleNode->ImposeQuantity(s); }
+  virtual double GetQuantity(const QuantityUnit& unit) const { return m_MiddleNode->GetNextQuantity().GetValue(unit); }
 
 protected:
   // Circuit Elements
-  virtual bool HasNode() const { return m_Node != nullptr; }
-  virtual NodeType* GetNode() const { return m_Node; }
-  virtual void SetNode(NodeType* n) { m_Node = n; }
+  virtual bool HasMiddleNode() const { return m_MiddleNode != nullptr; }
+  virtual NodeType* GetMiddleNode() const { return m_MiddleNode; }
+  virtual void SetMiddleNode(NodeType* n) { m_MiddleNode = n; }
 
   virtual bool HasSourceNode() const { return m_SourceNode != nullptr; }
   virtual NodeType* GetSourceNode() const { return m_SourceNode; }
@@ -165,16 +112,9 @@ protected:
 
   std::string      m_Name;
   // Circuit Elements
-  NodeType*        m_Node = nullptr;
-  NodeType*        m_SourceNode = nullptr;
-  NodeType*        m_TargetNode = nullptr;
-  PathType*        m_SourcePath = nullptr;
-  PathType*        m_TargetPath = nullptr;
-  // Flags
-  eBlackBox_Property_Type m_SourceFlux = eBlackBox_Property_Type::Provided;
-  eBlackBox_Property_Type m_TargetFlux = eBlackBox_Property_Type::Provided;
-  eBlackBox_Property_Type m_SourcePotential = eBlackBox_Property_Type::Provided;
-  eBlackBox_Property_Type m_TargetPotential = eBlackBox_Property_Type::Provided;
-  eBlackBox_Property_Type m_Potential = eBlackBox_Property_Type::Provided;
-  eBlackBox_Property_Type m_Quantity = eBlackBox_Property_Type::Provided;
+  NodeType* m_MiddleNode = nullptr;
+  NodeType* m_SourceNode = nullptr;
+  NodeType* m_TargetNode = nullptr;
+  PathType* m_SourcePath = nullptr;
+  PathType* m_TargetPath = nullptr;
 };

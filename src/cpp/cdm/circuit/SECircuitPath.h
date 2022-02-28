@@ -16,11 +16,21 @@
 #include "cdm/properties/SEScalarHeatInductance.h"
 #include "cdm/properties/SEScalarHeatResistance.h"
 
-#define CIRCUIT_PATH_TEMPLATE typename BlackBoxType, typename FluxScalar, typename ResistanceScalar, typename CapacitanceScalar, typename InductanceScalar, typename PotentialScalar, typename QuantityScalar
-#define CIRCUIT_PATH_TYPES BlackBoxType, FluxScalar,ResistanceScalar,CapacitanceScalar,InductanceScalar,PotentialScalar,QuantityScalar
-#define ELECTRICAL_CIRCUIT_PATH SEElectricalBlackBox, SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge
-#define FLUID_CIRCUIT_PATH SEFluidBlackBox, SEScalarVolumePerTime, SEScalarPressureTimePerVolume, SEScalarVolumePerPressure, SEScalarPressureTimeSquaredPerVolume, SEScalarPressure, SEScalarVolume
-#define THERMAL_CIRCUIT_PATH SEThermalBlackBox, SEScalarPower, SEScalarHeatResistance, SEScalarHeatCapacitance, SEScalarHeatInductance, SEScalarTemperature, SEScalarEnergy
+#define CIRCUIT_PATH_TEMPLATE typename FluxScalar, typename ResistanceScalar, typename CapacitanceScalar, typename InductanceScalar, typename PotentialScalar, typename QuantityScalar, \
+                              typename FluxUnit, typename ResistanceUnit, typename CapacitanceUnit, typename InductanceUnit, typename PotentialUnit, typename QuantityUnit
+
+#define CIRCUIT_PATH_TYPES FluxScalar, ResistanceScalar, CapacitanceScalar, InductanceScalar, PotentialScalar, QuantityScalar, \
+                           FluxUnit, ResistanceUnit, CapacitanceUnit, InductanceUnit, PotentialUnit, QuantityUnit
+
+#define ELECTRICAL_CIRCUIT_PATH SEScalarElectricCurrent, SEScalarElectricResistance, SEScalarElectricCapacitance, SEScalarElectricInductance, SEScalarElectricPotential, SEScalarElectricCharge, \
+                                ElectricCurrentUnit, ElectricResistanceUnit, ElectricCapacitanceUnit, ElectricInductanceUnit, ElectricPotentialUnit, ElectricChargeUnit 
+
+#define FLUID_CIRCUIT_PATH SEScalarVolumePerTime, SEScalarPressureTimePerVolume, SEScalarVolumePerPressure, SEScalarPressureTimeSquaredPerVolume, SEScalarPressure, SEScalarVolume, \
+                           VolumePerTimeUnit, PressureTimePerVolumeUnit, VolumePerPressureUnit, PressureTimeSquaredPerVolumeUnit, PressureUnit, VolumeUnit
+
+#define THERMAL_CIRCUIT_PATH SEScalarPower, SEScalarHeatResistance, SEScalarHeatCapacitance, SEScalarHeatInductance, SEScalarTemperature, SEScalarEnergy, \
+                             PowerUnit, HeatResistanceUnit, HeatCapacitanceUnit, HeatInductanceUnit, TemperatureUnit, EnergyUnit
+
 
 template<CIRCUIT_PATH_TEMPLATE>
 class SECircuitPath : public Loggable
@@ -35,6 +45,9 @@ public:
   virtual void Clear();
 
   virtual std::string GetName() const;
+
+  virtual bool IsPartOfBlackBox() const;
+  virtual void SetPartOfBlackBox(bool b);
 
   virtual SECircuitNode<CIRCUIT_NODE_TYPES>& GetSourceNode() const;
   virtual SECircuitNode<CIRCUIT_NODE_TYPES>& GetTargetNode() const;
@@ -51,6 +64,11 @@ public:
   virtual bool HasFluxSourceBaseline() const;
   virtual FluxScalar& GetFluxSourceBaseline();
   virtual void RemoveFluxSource();
+
+  virtual void RemoveImposedFlux();
+  virtual bool IsFluxImposed() const;
+  virtual void ImposeFlux(const FluxScalar& s);
+  virtual void ImposeFlux(double v, const FluxUnit& unit);
 
   virtual bool HasResistance() const;
   virtual ResistanceScalar& GetResistance();
@@ -126,19 +144,16 @@ public:
   virtual unsigned short NumberOfElements() const { return m_NumElements; }
   virtual unsigned short NumberOfNextElements() const { return m_NumNextElements; }
 
-  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
-  virtual BlackBoxType* GetBlackBox() const { return m_BlackBox; }
-  virtual void SetBlackBox(BlackBoxType* bb) { m_BlackBox = bb; }
-
 protected:
   std::string                         m_Name;
   SECircuitNode<CIRCUIT_NODE_TYPES>&  m_SourceNode;
   SECircuitNode<CIRCUIT_NODE_TYPES>&  m_TargetNode;
   mutable unsigned short              m_NumElements;
   mutable unsigned short              m_NumNextElements;
-  /////////////////////////    
-  // Valves and Switches //    
-  /////////////////////////    
+  bool                                m_IsPartOfBlackBox = false;
+  /////////////////////////
+  // Valves and Switches //
+  /////////////////////////
   eGate                        m_Switch;
   eGate                        m_NextSwitch;
   eGate                        m_Valve;
@@ -163,11 +178,10 @@ protected:
   FluxScalar*                  m_FluxSource;
   FluxScalar*                  m_NextFluxSource;
   FluxScalar*                  m_FluxSourceBaseline;
+  eBlackBox_Property_Type      m_FluxType = eBlackBox_Property_Type::Calculate;
                    
   PotentialScalar*             m_PotentialSource;
   PotentialScalar*             m_NextPotentialSource;
   PotentialScalar*             m_PotentialSourceBaseline;
   PotentialScalar*             m_ValveBreakdownPotential;
-
-  BlackBoxType*                m_BlackBox = nullptr;
 };

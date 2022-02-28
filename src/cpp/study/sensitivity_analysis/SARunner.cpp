@@ -186,9 +186,6 @@ namespace pulse::study::sensitivity_analysis
     //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     //pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + cdm::to_string(sim.id()) + " - " + sim.name() + ".csv");
 
-    // Serialize Overrides
-    SEOverrides overrides;
-    PBAction::Load(sim.overrides(), overrides);
     // Apply Overrides (Note using Force, as these values are locked (for good reason)
     // But we know what we are doing, right?
     Controller& pc =
@@ -197,40 +194,40 @@ namespace pulse::study::sensitivity_analysis
     SEFluidCircuit& resp = pc.GetCircuits().GetActiveRespiratoryCircuit();
     bool hasRespOverride = false;
 
-    for (auto& sp : overrides.GetScalarProperties())
+    for (auto const& [name, o] : sim.overrides())
     {
       SEFluidCircuitPath* path = nullptr;
-      if (resp.HasPath(sp.name))
+      if (resp.HasPath(name))
       {
-        path = resp.GetPath(sp.name);
+        path = resp.GetPath(name);
         hasRespOverride = true;
       }
-      else if (cv.HasPath(sp.name))
+      else if (cv.HasPath(name))
       {
-        path = cv.GetPath(sp.name);
+        path = cv.GetPath(name);
       }
       if (path == nullptr)
       {
-        Error("No path found for override " + sp.name + ", for " + std::to_string(sim.id()) + " - " + sim.name());
+        Error("No path found for override " + name + ", for " + std::to_string(sim.id()) + " - " + sim.name());
         return false;
       }
-      if (PressureTimePerVolumeUnit::IsValidUnit(sp.unit))
+      if (PressureTimePerVolumeUnit::IsValidUnit(o.unit()))
       {// Assume its a resistor
-        const PressureTimePerVolumeUnit& u = PressureTimePerVolumeUnit::GetCompoundUnit(sp.unit);
-        path->GetResistance().ForceValue(sp.value, u);
-        path->GetNextResistance().ForceValue(sp.value, u);
-        path->GetResistanceBaseline().ForceValue(sp.value, u);
+        const PressureTimePerVolumeUnit& u = PressureTimePerVolumeUnit::GetCompoundUnit(o.unit());
+        path->GetResistance().ForceValue(o.value(), u);
+        path->GetNextResistance().ForceValue(o.value(), u);
+        path->GetResistanceBaseline().ForceValue(o.value(), u);
       }
-      else if (VolumePerPressureUnit::IsValidUnit(sp.unit))
+      else if (VolumePerPressureUnit::IsValidUnit(o.unit()))
       {
-        const VolumePerPressureUnit& u = VolumePerPressureUnit::GetCompoundUnit(sp.unit);
-        path->GetCompliance().ForceValue(sp.value, u);
-        path->GetNextCompliance().ForceValue(sp.value, u);
-        path->GetComplianceBaseline().ForceValue(sp.value, u);
+        const VolumePerPressureUnit& u = VolumePerPressureUnit::GetCompoundUnit(o.unit());
+        path->GetCompliance().ForceValue(o.value(), u);
+        path->GetNextCompliance().ForceValue(o.value(), u);
+        path->GetComplianceBaseline().ForceValue(o.value(), u);
       }
       else
       {
-        Error("Could not process override " + sp.name + ", for " + std::to_string(sim.id()) + " - " + sim.name());
+        Error("Could not process override " + name + ", for " + std::to_string(sim.id()) + " - " + sim.name());
         return false;
       }
     }
@@ -460,7 +457,8 @@ namespace pulse::study::sensitivity_analysis
     // TODO amb Clean this up (cfg should have a default ctor that makes its own Sub Mgr)
     PulseConfiguration cfg(pulse->GetLogger());
     // Serialize Overrides
-    PBAction::Load(sim.overrides(), cfg.GetInitialOverrides());
+    for (auto& [name, m] : sim.overrides())
+      cfg.GetOverrides()[name] = SEScalarPair(m.value(), m.unit());
     //cfg.SetBaroreceptorFeedback(eSwitch::Off);
     //cfg.SetChemoreceptorFeedback(eSwitch::Off);
     pulse->SetConfigurationOverride(&cfg);
@@ -493,12 +491,12 @@ namespace pulse::study::sensitivity_analysis
       ((pulse::Engine*)pulse.get())->GetController();
     SEFluidCircuit& resp = pctrl.GetCircuits().GetRespiratoryCircuit();
     bool hasRespOverride = false;
-    for (auto& sp : cfg.GetInitialOverrides().GetScalarProperties())
+    for (auto const& [name, o] : cfg.GetOverrides())
     {
       SEFluidCircuitPath* path = nullptr;
-      if (resp.HasPath(sp.name))
+      if (resp.HasPath(name))
       {
-        path = resp.GetPath(sp.name);
+        path = resp.GetPath(name);
         hasRespOverride = true;
         break;
       }

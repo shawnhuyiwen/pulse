@@ -410,8 +410,9 @@ public:
 public:
   void BasicBlackBoxComparisonTest(const std::string& sOutputDirectory);
   void BasicBlackBoxTest(const std::string& sOutputDirectory);
-  void SimpleBlackBoxTest(const std::string& sOutputDirectory);
   void WindkesselBlackBoxTest(const std::string& sOutputDirectory);
+  void BlackBoxComplianceTest(const std::string& sOutputDirectory);
+  void BlackBoxSourcesTest(const std::string& sOutputDirectory);
 
   ///////////////
   // I/O Tests //
@@ -426,6 +427,7 @@ public:
 public:
   void ScalarTest(const std::string& sOutputDirectory);
   void UnitsTest(const std::string& sOutputDirectory);
+  void WaveformInterpolatorTest(const std::string& sOutputDirectory);
 protected:
   void ConvertList(std::vector<std::string> stringList);
   // These property tests are not outputting any reports or anything, kind of just a sandbox at this point

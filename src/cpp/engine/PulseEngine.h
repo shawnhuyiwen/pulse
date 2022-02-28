@@ -7,14 +7,14 @@
 #include "cdm/PhysiologyEngine.h"
 #include "cdm/utils/ScopedMutex.h"
 
-class PULSE_DECL PulseBuildInformation
+struct PULSE_DECL PulseBuildInformation
 {
   static std::string Time();
   static std::string Hash();
   static std::string Version();
 };
 
-enum class eModelType { HumanAdultWholeBody=0, HumanAdultVentilationMechanics };
+enum class eModelType { HumanAdultWholeBody=0, HumanAdultVentilationMechanics, HumanAdultHemodynamics };
 bool eModelType_ValueOf(const std::string s, eModelType& t);
 
 std::unique_ptr<PhysiologyEngine> CreatePulseEngine(eModelType type = eModelType::HumanAdultWholeBody, Logger* logger = nullptr);
@@ -77,6 +77,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -96,6 +108,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -114,6 +138,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -131,6 +167,18 @@ namespace pulse
         _values.push_back(SmallIntestineChymeToVasculature);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -187,6 +235,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -241,6 +301,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v)!=_values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -282,6 +354,18 @@ namespace pulse
         _values.push_back(Spleen);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -352,6 +436,18 @@ namespace pulse
         _values.push_back(SpleenIntracellular);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -489,6 +585,18 @@ namespace pulse
         //_values.push_back(Ground);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -693,6 +801,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -716,6 +836,18 @@ namespace pulse
         _values.push_back(Bladder);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -747,6 +879,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -764,6 +908,18 @@ namespace pulse
         _values.push_back(Lymph);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -810,6 +966,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -845,6 +1013,18 @@ namespace pulse
         _values.push_back(InternalGround);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -895,6 +1075,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -912,6 +1104,18 @@ namespace pulse
         _values.push_back(Ambient);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -948,6 +1152,18 @@ namespace pulse
         _values.push_back(YPiece);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -990,6 +1206,18 @@ namespace pulse
         _values.push_back(ConnectionToAirway);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -1063,6 +1291,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -1083,6 +1323,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -1100,6 +1352,18 @@ namespace pulse
         _values.push_back(Connection);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -1119,6 +1383,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -1132,6 +1408,7 @@ namespace pulse
     DEFINE_STATIC_STRING_EX(ExpiratoryLimb, MechanicalVentilatorExpiratoryLimb);
     DEFINE_STATIC_STRING_EX(InspiratoryLimb, MechanicalVentilatorInspiratoryLimb);
     DEFINE_STATIC_STRING_EX(YPiece, MechanicalVentilatorYPiece);
+    DEFINE_STATIC_STRING_EX(ReliefValve, MechanicalVentilatorReliefValve);
     DEFINE_STATIC_STRING_EX(Connection, MechanicalVentilatorConnection);
 
     static const std::vector<std::string>& GetValues()
@@ -1145,9 +1422,22 @@ namespace pulse
         _values.push_back(ExpiratoryLimb);
         _values.push_back(InspiratoryLimb);
         _values.push_back(YPiece);
+        _values.push_back(ReliefValve);
         _values.push_back(Connection);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -1164,6 +1454,8 @@ namespace pulse
     DEFINE_STATIC_STRING_EX(InspiratoryLimbToYPiece, MechanicalVentilatorInspiratoryLimbToYPiece);
     DEFINE_STATIC_STRING_EX(YPieceToConnection, MechanicalVentilatorYPieceToConnection);
     DEFINE_STATIC_STRING_EX(LeakConnectionToEnvironment, MechanicalVentilatorLeakConnectionToEnvironment);
+    DEFINE_STATIC_STRING_EX(ConnectionToReliefValve, MechanicalVentilatorConnectionToReliefValve);
+    DEFINE_STATIC_STRING_EX(EnvironmentToReliefValve, MechanicalVentilatorEnvironmentToReliefValve);
     DEFINE_STATIC_STRING_EX(ConnectionToEnvironment, MechanicalVentilatorConnectionToEnvironment);
     DEFINE_STATIC_STRING_EX(ConnectionToAirway, MechanicalVentilatorConnectionToAirway);
 
@@ -1180,10 +1472,24 @@ namespace pulse
         _values.push_back(InspiratoryLimbToYPiece);
         _values.push_back(YPieceToConnection);
         _values.push_back(LeakConnectionToEnvironment);
+        _values.push_back(ConnectionToReliefValve);
+        _values.push_back(EnvironmentToReliefValve);
         _values.push_back(ConnectionToEnvironment);
         _values.push_back(ConnectionToAirway);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -1204,6 +1510,18 @@ namespace pulse
         _values.push_back(NasalCannula);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -1226,6 +1544,18 @@ namespace pulse
         _values.push_back(NasalCannulaToAirway);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -1250,6 +1580,18 @@ namespace pulse
         _values.push_back(NonRebreatherMask);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -1279,6 +1621,18 @@ namespace pulse
       }
       return _values;
     }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
+    }
   protected:
     static std::vector<std::string> _values;
   };
@@ -1298,6 +1652,18 @@ namespace pulse
         _values.push_back(SimpleMask);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;
@@ -1322,6 +1688,18 @@ namespace pulse
         _values.push_back(SimpleMaskToAirway);
       }
       return _values;
+    }
+    static bool HasValue(const std::string& v)
+    {
+      return std::find(_values.begin(), _values.end(), v) != _values.end();
+    }
+    static void AddValue(const std::string& v)
+    {
+      if (!HasValue(v))
+      {
+        ScopedMutex lock;
+        _values.push_back(v);
+      }
     }
   protected:
     static std::vector<std::string> _values;

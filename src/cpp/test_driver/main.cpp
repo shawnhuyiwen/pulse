@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
       // Respiratory Engine Tests //
       //////////////////////////////
       //havmTest.SmokeTest(havmDir);
-      havmTest.GenerateScenarios();
+      //havmTest.GenerateScenarios();
 
       ////////////////////
       // Pulse Tests //
@@ -97,7 +97,11 @@ int main(int argc, char* argv[])
       //hawbTest.AcidBaseBloodGasTests(hawbDir);
 
       //Aerosol Tests
-      //hawbTest.AerosolTest(hawbDir);
+
+      //Black Box Tests
+      //hawbTest.EmptyBlackBoxTest(hawbDir);
+      hawbTest.ImposeFlowBlackBoxTest(hawbDir);
+      //hawbTest.ImposePressureAndFlowBlackBoxTest(hawbDir);
 
       //hawbTest.FourCompartmentTestSimple(hawbDir);
       //hawbTest.AcidBaseFourCompartmentTest(hawbDir);
@@ -125,12 +129,13 @@ int main(int argc, char* argv[])
       //cdmTest.LargeFlowTransportTest(cdmDir);
       //cdmTest.LiquidTransportTest(cdmDir);
       //cdmTest.GasTransportTest(cdmDir);
-      
+
       // BlackBox Tests
       //cdmTest.BasicBlackBoxComparisonTest(cdmDir);
       //cdmTest.BasicBlackBoxTest(cdmDir);
-      //cdmTest.SimpleBlackBoxTest(cdmDir);
       //cdmTest.WindkesselBlackBoxTest(cdmDir);
+      //cdmTest.BlackBoxComplianceTest(cdmDir);
+      //cdmTest.BlackBoxSourcesTest(cdmDir);
 
       // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);
@@ -139,6 +144,7 @@ int main(int argc, char* argv[])
       // Property Tests
       //cdmTest.ScalarTest(cdmDir);
       //cdmTest.UnitsTest(cdmDir);
+      cdmTest.WaveformInterpolatorTest(cdmDir);
 
       // Advanced Circuit Tests
       //cdmTest.ElectricalCircuitTest(cdmDir);

@@ -6,22 +6,6 @@ See accompanying NOTICE file for details.*/
 
 #define ZERO_APPROX 1e-10
 
-class CDM_DECL SEScalarProperty
-{
-public:
-  SEScalarProperty(std::string n, double v, std::string u)
-  {
-    name  = n;
-    value = v;
-    unit  = u;
-  }
-  ~SEScalarProperty() = default;
-
-  std::string name;
-  double      value;
-  std::string unit;
-};
-
 class CDM_DECL NoUnit
 {
 public:
@@ -57,6 +41,7 @@ public:
   * ONLY if the provided scalar is valid.
   */
   bool Set(const SEScalar& s);
+  bool Force(const SEScalar& s);
 
   /**
   * Copies the entire contents
@@ -143,10 +128,23 @@ public:
   }
 
   Enum GetEnum() const { return m_enum; }
-  void SetEnum(Enum e)
+  //void SetEnum(Enum e)
+  //{
+  //  m_enum = e;
+  //  SetValue((double)e);
+  //}
+  void operator=(const Enum& e)
   {
     m_enum = e;
     SetValue((double)e);
+  }
+  bool operator==(const Enum& e)
+  {
+    return m_enum == e;
+  }
+  bool operator!=(const Enum& e)
+  {
+    return m_enum != e;
   }
 
 private:
@@ -192,6 +190,7 @@ public:
   virtual const CCompoundUnit* GetUnit() const = 0;
 
   virtual bool Set(const SEScalar& s) = 0;
+  virtual bool Force(const SEScalar& s) = 0;
   virtual void Copy(const SEScalar& s) = 0;
   virtual double GetValue(const CCompoundUnit& unit) const = 0;
   virtual void   SetValue(double d, const CCompoundUnit& unit) = 0;
@@ -221,6 +220,7 @@ protected:
   // If you want access in a generic unit way, us an SEGenericScalar wrapper
   bool Set(const SEScalar& s) override;
   void Copy(const SEScalar& s) override;
+  bool Force(const SEScalar& s) override;
 
   virtual double GetValue(const CCompoundUnit& unit) const override;
   virtual void   SetValue(double d, const CCompoundUnit& unit) override;
@@ -234,6 +234,7 @@ public:
 
   virtual bool Set(const SEScalarQuantity<Unit>& s);
   virtual void Copy(const SEScalarQuantity<Unit>& s);
+  virtual bool Force(const SEScalarQuantity<Unit>& s);
 
   virtual bool HasUnit() const;
   virtual const Unit* GetUnit() const;

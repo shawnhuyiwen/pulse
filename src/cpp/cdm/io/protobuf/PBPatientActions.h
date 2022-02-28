@@ -6,10 +6,10 @@ CDM_BIND_DECL2(PatientAction)
 CDM_BIND_DECL2(AcuteRespiratoryDistressSyndromeExacerbation)
 CDM_BIND_DECL2(AcuteStress)
 CDM_BIND_DECL2(AirwayObstruction)
+CDM_BIND_DECL2(Arrhythmia)
 CDM_BIND_DECL2(AsthmaAttack)
 CDM_BIND_DECL2(BrainInjury)
 CDM_BIND_DECL2(Bronchoconstriction)
-CDM_BIND_DECL2(CardiacArrest)
 CDM_BIND_DECL2(ChestCompressionForce)
 CDM_BIND_DECL2(ChestCompressionForceScale)
 CDM_BIND_DECL2(ChestOcclusiveDressing)
@@ -71,6 +71,12 @@ public:
   static void Serialize(const SEAirwayObstruction& src, CDM_BIND::AirwayObstructionData& dst);
   static void Copy(const SEAirwayObstruction& src, SEAirwayObstruction& dst);
 
+  static void Load(const CDM_BIND::ArrhythmiaData& src, SEArrhythmia& dst);
+  static CDM_BIND::ArrhythmiaData* Unload(const SEArrhythmia& src);
+  static void Serialize(const CDM_BIND::ArrhythmiaData& src, SEArrhythmia& dst);
+  static void Serialize(const SEArrhythmia& src, CDM_BIND::ArrhythmiaData& dst);
+  static void Copy(const SEArrhythmia& src, SEArrhythmia& dst);
+
   static void Load(const CDM_BIND::AsthmaAttackData& src, SEAsthmaAttack& dst);
   static CDM_BIND::AsthmaAttackData* Unload(const SEAsthmaAttack& src);
   static void Serialize(const CDM_BIND::AsthmaAttackData& src, SEAsthmaAttack& dst);
@@ -88,12 +94,6 @@ public:
   static void Serialize(const CDM_BIND::BronchoconstrictionData& src, SEBronchoconstriction& dst);
   static void Serialize(const SEBronchoconstriction& src, CDM_BIND::BronchoconstrictionData& dst);
   static void Copy(const SEBronchoconstriction& src, SEBronchoconstriction& dst);
-
-  static void Load(const CDM_BIND::CardiacArrestData& src, SECardiacArrest& dst);
-  static CDM_BIND::CardiacArrestData* Unload(const SECardiacArrest& src);
-  static void Serialize(const CDM_BIND::CardiacArrestData& src, SECardiacArrest& dst);
-  static void Serialize(const SECardiacArrest& src, CDM_BIND::CardiacArrestData& dst);
-  static void Copy(const SECardiacArrest& src, SECardiacArrest& dst);
 
   static void Load(const CDM_BIND::ChestCompressionForceData& src, SEChestCompressionForce& dst);
   static CDM_BIND::ChestCompressionForceData* Unload(const SEChestCompressionForce& src);

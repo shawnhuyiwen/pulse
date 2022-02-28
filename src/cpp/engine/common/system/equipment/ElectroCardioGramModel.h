@@ -6,7 +6,7 @@
 #include "engine/common/system/Model.h"
 #include "engine/common/system/Systems.h"
 
-class SEElectroCardioGramWaveformInterpolator;
+class SEElectroCardioGramWaveform;
 
 namespace pulse
 {
@@ -41,9 +41,6 @@ namespace pulse
     void ComputeExposedModelParameters() override;
 
     // Serializable member variables (Set in Initialize and in schema)
-    double m_heartRhythmTime_s;
-    double m_heartRhythmPeriod_s;
-    SEElectroCardioGramWaveformInterpolator* m_interpolator;
 
     // Stateless member variable (Set in SetUp())
   };

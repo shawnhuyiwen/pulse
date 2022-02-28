@@ -53,13 +53,8 @@ public:
   virtual void RemoveLinks();
   virtual const std::vector<SEThermalCompartmentLink*>& GetLinks();
 
-  virtual bool HasChild(const std::string& name);
+  virtual bool HasChild(const SEThermalCompartment& cmpt);
   virtual void AddChild(SEThermalCompartment& child);
-
-  virtual bool HasBlackBox() const { return m_BlackBox != nullptr; }
-  virtual SEThermalBlackBox* GetBlackBox() { return m_BlackBox; }
-  virtual const SEThermalBlackBox* GetBlackBox() const { return m_BlackBox; }
-  virtual void SetBlackBox(SEThermalBlackBox* bb) { m_BlackBox = bb; }
 
 protected:
   virtual double CalculateInFlow_W() const;
@@ -77,6 +72,4 @@ protected:
   std::vector<SEThermalCompartment*> m_Children;
   std::vector<SEThermalCompartment*> m_Leaves;
   SECompartmentNodes<THERMAL_COMPARTMENT_NODE>  m_Nodes;
-
-  SEThermalBlackBox* m_BlackBox = nullptr;
 };

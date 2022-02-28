@@ -112,10 +112,12 @@
     }
   }, {
     "AdvanceTime": {
+      "Action": {
+        "Comment": "Death Events: Exceeded the maximum target pulmonary ventilation" },
       "Time": {
         "ScalarTime": {
-          "Value": 1.0,
-          "Unit": "hr"
+          "Value": 500,
+          "Unit": "s"
         }
       }
     }

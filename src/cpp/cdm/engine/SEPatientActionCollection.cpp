@@ -7,10 +7,10 @@
 #include "cdm/patient/actions/SEAcuteRespiratoryDistressSyndromeExacerbation.h"
 #include "cdm/patient/actions/SEAcuteStress.h"
 #include "cdm/patient/actions/SEAirwayObstruction.h"
+#include "cdm/patient/actions/SEArrhythmia.h"
+#include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
-#include "cdm/patient/actions/SECardiacArrest.h"
-#include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEChestCompressionForce.h"
 #include "cdm/patient/actions/SEChestCompressionForceScale.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
@@ -49,10 +49,10 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_ARDSExacerbation = nullptr;
   m_AcuteStress = nullptr;
   m_AirwayObstruction = nullptr;
+  m_Arrhythmia = nullptr;
   m_AsthmaAttack = nullptr;
   m_BrainInjury = nullptr;
   m_Bronchoconstriction = nullptr;
-  m_CardiacArrest = nullptr;
   m_ChestCompressionForce = nullptr;
   m_ChestCompressionForceScale = nullptr;
   m_ConsciousRespiration = nullptr;
@@ -85,10 +85,10 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_ARDSExacerbation);
   SAFE_DELETE(m_AcuteStress);
   SAFE_DELETE(m_AirwayObstruction);
+  SAFE_DELETE(m_Arrhythmia);
   SAFE_DELETE(m_AsthmaAttack);
   SAFE_DELETE(m_BrainInjury);
   SAFE_DELETE(m_Bronchoconstriction);
-  SAFE_DELETE(m_CardiacArrest);
   SAFE_DELETE(m_ChestCompressionForce);
   SAFE_DELETE(m_ChestCompressionForceScale);
   SAFE_DELETE(m_LeftChestOcclusiveDressing);
@@ -126,12 +126,12 @@ void SEPatientActionCollection::Clear()
   RemoveAcuteRespiratoryDistressSyndromeExacerbation();
   RemoveAcuteStress();
   RemoveAirwayObstruction();
+  RemoveArrhythmia();
   RemoveAsthmaAttack();
   RemoveBrainInjury();
   RemoveBronchoconstriction();
   RemoveChestCompressionForce();
   RemoveChestCompressionForceScale();
-  RemoveCardiacArrest();
   RemoveChronicObstructivePulmonaryDiseaseExacerbation();
   RemoveConsciousRespiration();
   RemoveConsumeNutrients();
@@ -219,6 +219,16 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     return true;
   }
 
+  const SEArrhythmia* Arrhythmia = dynamic_cast<const SEArrhythmia*>(&action);
+  if (Arrhythmia != nullptr)
+  {
+    GetArrhythmia().Copy(*Arrhythmia, true);
+    m_Arrhythmia->Activate();
+    if (!m_Arrhythmia->IsActive())
+      RemoveArrhythmia();
+    return true;
+  }
+
   const SEAsthmaAttack* asthmaattack = dynamic_cast<const SEAsthmaAttack*>(&action);
   if (asthmaattack != nullptr)
   {
@@ -246,16 +256,6 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     m_Bronchoconstriction->Activate();
     if (!m_Bronchoconstriction->IsActive())
       RemoveBronchoconstriction();
-    return true;
-  }
-
-  const SECardiacArrest* cardiacarrest = dynamic_cast<const SECardiacArrest*>(&action);
-  if (cardiacarrest != nullptr)
-  {
-    GetCardiacArrest().Copy(*cardiacarrest, true);
-    m_CardiacArrest->Activate();
-    if (!m_CardiacArrest->IsActive())
-      RemoveCardiacArrest();
     return true;
   }
 
@@ -486,6 +486,8 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     mine.Activate();
     if (!mine.IsActive())
       RemoveSubstanceBolus(*sub);
+    else
+      m_SubMgr.AddActiveSubstance(*sub);
     return true;
   }
 
@@ -503,6 +505,8 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     mine.Activate();
     if (!mine.IsActive())
       RemoveSubstanceInfusion(*sub);
+    else
+      m_SubMgr.AddActiveSubstance(*sub);
     return true;
   }
 
@@ -520,6 +524,14 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     mine.Activate();
     if (!mine.IsActive())
       RemoveSubstanceCompoundInfusion(*cmpd);
+    else
+    {
+      m_SubMgr.AddActiveCompound(*cmpd);
+      for (const SESubstanceConcentration* scc : cmpd->GetComponents())
+      {
+        m_SubMgr.AddActiveSubstance(scc->GetSubstance());
+      }
+    }
     return true;
   }
 
@@ -647,6 +659,26 @@ void SEPatientActionCollection::RemoveAirwayObstruction()
     m_AirwayObstruction->Deactivate();
 }
 
+bool SEPatientActionCollection::HasArrhythmia() const
+{
+  return m_Arrhythmia == nullptr ? false : m_Arrhythmia->IsActive();
+}
+SEArrhythmia& SEPatientActionCollection::GetArrhythmia()
+{
+  if (m_Arrhythmia == nullptr)
+    m_Arrhythmia = new SEArrhythmia();
+  return *m_Arrhythmia;
+}
+const SEArrhythmia* SEPatientActionCollection::GetArrhythmia() const
+{
+  return m_Arrhythmia;
+}
+void SEPatientActionCollection::RemoveArrhythmia()
+{
+  if (m_Arrhythmia)
+    m_Arrhythmia->Deactivate();
+}
+
 bool SEPatientActionCollection::HasAsthmaAttack() const
 {
   return m_AsthmaAttack == nullptr ? false : m_AsthmaAttack->IsActive();
@@ -705,26 +737,6 @@ void SEPatientActionCollection::RemoveBronchoconstriction()
 {
   if (m_Bronchoconstriction)
     m_Bronchoconstriction->Deactivate();
-}
-
-bool SEPatientActionCollection::HasCardiacArrest() const
-{
-  return m_CardiacArrest == nullptr ? false : m_CardiacArrest->IsActive();
-}
-SECardiacArrest& SEPatientActionCollection::GetCardiacArrest()
-{
-  if (m_CardiacArrest == nullptr)
-    m_CardiacArrest = new SECardiacArrest();
-  return *m_CardiacArrest;
-}
-const SECardiacArrest* SEPatientActionCollection::GetCardiacArrest() const
-{
-  return m_CardiacArrest;
-}
-void SEPatientActionCollection::RemoveCardiacArrest()
-{
-  if (m_CardiacArrest)
-    m_CardiacArrest->Deactivate();
 }
 
 bool SEPatientActionCollection::HasChestCompression() const
@@ -1195,7 +1207,6 @@ SESubstanceBolus& SEPatientActionCollection::GetSubstanceBolus(const SESubstance
       return *b;
   SESubstanceBolus* b = new SESubstanceBolus(sub);
   m_SubstanceBoluses.push_back(b);
-  m_SubMgr.AddActiveSubstance(sub);
   return *b;
 }
 const SESubstanceBolus* SEPatientActionCollection::GetSubstanceBolus(const SESubstance& sub) const
@@ -1236,7 +1247,6 @@ SESubstanceInfusion& SEPatientActionCollection::GetSubstanceInfusion(const SESub
       return *si;
   SESubstanceInfusion* si = new SESubstanceInfusion(sub);
   m_SubstanceInfusions.push_back(si);
-  m_SubMgr.AddActiveSubstance(sub);
   return *si;
 }
 const SESubstanceInfusion* SEPatientActionCollection::GetSubstanceInfusion(const SESubstance& sub) const
@@ -1277,12 +1287,6 @@ SESubstanceCompoundInfusion& SEPatientActionCollection::GetSubstanceCompoundInfu
       return *sci;
   SESubstanceCompoundInfusion* sci = new SESubstanceCompoundInfusion(cmpd);
   m_SubstanceCompoundInfusions.push_back(sci);
-
-  m_SubMgr.AddActiveCompound(cmpd);
-  for (const SESubstanceConcentration* scc : cmpd.GetComponents())
-  {
-    m_SubMgr.AddActiveSubstance(scc->GetSubstance());
-  }
   return *sci;
 }
 const SESubstanceCompoundInfusion* SEPatientActionCollection::GetSubstanceCompoundInfusion(const SESubstanceCompound& cmpd) const
@@ -1430,14 +1434,14 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetAcuteStress());
   if (HasAirwayObstruction())
     actions.push_back(GetAirwayObstruction());
+  if (HasArrhythmia())
+    actions.push_back(GetArrhythmia());
   if (HasAsthmaAttack())
     actions.push_back(GetAsthmaAttack());
   if (HasBrainInjury())
     actions.push_back(GetBrainInjury());
   if (HasBronchoconstriction())
     actions.push_back(GetBronchoconstriction());
-  if (HasCardiacArrest())
-    actions.push_back(GetCardiacArrest());
   if (HasChestCompressionForce())
     actions.push_back(GetChestCompressionForce());
   if (HasChestCompressionForceScale())
@@ -1518,14 +1522,14 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetAcuteStress().GetScalar(property);
   if (actionName == "AirwayObstruction")
     return GetAirwayObstruction().GetScalar(property);
+  if (actionName == "Arrhythmia")
+    return GetArrhythmia().GetScalar(property);
   if (actionName == "AsthmaAttack")
     return GetAsthmaAttack().GetScalar(property);
   if (actionName == "BrainInjury")
     return GetBrainInjury().GetScalar(property);
   if (actionName == "Bronchoconstriction")
     return GetBronchoconstriction().GetScalar(property);
-  if (actionName == "CardiacArrest")
-    return GetCardiacArrest().GetScalar(property);
   if (actionName == "ChestCompressionForce")
     return GetChestCompressionForce().GetScalar(property);
   if (actionName == "ChestCompressionForceScale")

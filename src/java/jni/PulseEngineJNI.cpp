@@ -7,6 +7,20 @@
 #include "engine/human_adult/whole_body/test/EngineTest.h"
 #include "engine/human_adult/ventilation_mechanics/test/EngineTest.h"
 
+extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetVersion(JNIEnv * env)
+{
+  jstring v = env->NewStringUTF(PulseBuildInformation::Version().c_str());
+  return v;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeGetHash(JNIEnv * env)
+{
+  jstring h = env->NewStringUTF(PulseBuildInformation::Hash().c_str());
+  return h;
+}
+
   /////////////////////
   // TESTING SUPPORT //
   /////////////////////

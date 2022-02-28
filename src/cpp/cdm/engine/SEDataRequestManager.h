@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "cdm/engine/SEDataRequest.h"
+#include "cdm/engine/SEValidationTarget.h"
 class SESubstance;
 class SESubstanceManager;
 
@@ -29,7 +29,12 @@ public:
   void SetSamplesPerSecond(double num) { m_SamplesPerSecond = num; }
 
   bool HasDataRequests() const { return !m_Requests.empty(); }
+  std::vector<SEDataRequest*>& GetDataRequests() { return m_Requests; }
   const std::vector<SEDataRequest*>& GetDataRequests() const { return m_Requests; }
+
+  bool HasValidationTargets() const { return !m_Targets.empty(); }
+  std::vector<SEValidationTarget*>& GetValidationTargets() { return m_Targets; }
+  const std::vector<SEValidationTarget*>& GetValidationTargets() const { return m_Targets; }
 
   virtual bool HasDefaultDecimalFormatting() const;
   virtual SEDecimalFormat& GetDefaultDecimalFormatting();
@@ -89,6 +94,15 @@ public:
   SEDataRequest& CreateMechanicalVentilatorDataRequest(const std::string& property, const SEDecimalFormat* dfault = nullptr);
   SEDataRequest& CreateMechanicalVentilatorDataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
 
+  // Validation Targets
+
+  SEValidationTarget& CopyValidationTarget(const SEValidationTarget& dr);
+
+  SEValidationTarget& CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEValidationTarget& CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+  SEValidationTarget& CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& substance, const std::string& property, const SEDecimalFormat* dfault = nullptr);
+  SEValidationTarget& CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& substance, const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault = nullptr);
+
 protected:
   // Methods to find data requests so we don't keep making the same one
   SEDataRequest* FindDataRequest(const SEDataRequest& dr);
@@ -108,9 +122,16 @@ protected:
   SEDataRequest* FindInhalerDataRequest(const std::string& property);
   SEDataRequest* FindMechanicalVentilatorDataRequest(const std::string& property);
 
-  std::string                  m_ResultsFilename;
-  double                       m_SamplesPerSecond;
-  std::vector<SEDataRequest*>  m_Requests;
+  void Remove(const SEDataRequest& dr);
+  // Methods to find data requests so we don't keep making the same one
+  SEValidationTarget* FindValidationTarget(const SEValidationTarget& dr);
+  SEValidationTarget* FindLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property);
+  SEValidationTarget* FindLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& substance, const std::string& property);
+
+  std::string                      m_ResultsFilename;
+  double                           m_SamplesPerSecond;
+  std::vector<SEDataRequest*>      m_Requests;
+  std::vector<SEValidationTarget*> m_Targets;
 
   SEDecimalFormat*             m_DefaultDecimalFormatting;
   SEDecimalFormat*             m_OverrideDecimalFormatting;

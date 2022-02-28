@@ -160,8 +160,8 @@ namespace pulse::study::multiplex_ventilation
     intubation.SetType(eIntubation_Type::Tracheal);
 
     SEOverrides overrides;
-    overrides.AddScalarProperty("RespiratoryResistance", pData.resistance_cmh2o_s_per_l(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    overrides.AddScalarProperty("RespiratoryCompliance", pData.compliance_ml_per_cmh2o(), VolumePerPressureUnit::mL_Per_cmH2O);
+    overrides.GetScalarProperties()["RespiratoryResistance"] = SEScalarPair(pData.resistance_cmh2o_s_per_l(), PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    overrides.GetScalarProperties()["RespiratoryCompliance"] = SEScalarPair(pData.compliance_ml_per_cmh2o(), VolumePerPressureUnit::mL_Per_cmH2O);
 
     SEImpairedAlveolarExchangeExacerbation impairedAlveolarExchange;
     impairedAlveolarExchange.GetSeverity().SetValue(pData.impairmentfraction());

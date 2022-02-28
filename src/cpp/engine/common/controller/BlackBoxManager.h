@@ -2,8 +2,6 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-
-#include "engine/CommonDefs.h"
 #include "cdm/blackbox/SEBlackBoxManager.h"
 
 #define COMPATIBLE_BLACK_BOX_TEMPLATE typename CompartmentType
@@ -29,15 +27,15 @@ namespace pulse
   protected:
     template<COMPATIBLE_BLACK_BOX_TEMPLATE> bool IsValidBlackBoxRequest(CompartmentType* srcCmpt, CompartmentType* tgtCmpt);
 
-    SEGasBlackBox* CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) override;
-    SELiquidBlackBox* CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) override;
-    SEThermalBlackBox* CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName) override;
+    SEGasBlackBox* CreateGasBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name) override;
+    SELiquidBlackBox* CreateLiquidBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name) override;
+    SEThermalBlackBox* CreateThermalBlackBox(const std::string& srcCmptName, const std::string& tgtCmptName, const std::string& name) override;
 
     template<CREATE_BLACK_BOX_COMPONENTS_TEMPLATE> bool CreateComponents(BlackBoxType& bb,
-      NodeType& srcNode, NodeType& tgtNode,
-      CompartmentType& srcCmpt, CompartmentType& tgtCmpt, LinkType& replaceLink,
-      CircuitType& circuit, GraphType& graph,
-      const PotentialUnit& pUnit, const QuantityUnit& qUnit, const FluxUnit& fUnit);
+                                                                         NodeType& srcNode, NodeType& tgtNode,
+                                                                         CompartmentType& srcCmpt, CompartmentType& tgtCmpt, LinkType& replaceLink,
+                                                                         CircuitType& circuit, GraphType& graph,
+                                                                         const PotentialUnit& pUnit, const QuantityUnit& qUnit, const FluxUnit& fUnit);
 
     Controller& m_data;
   };

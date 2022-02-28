@@ -1,4 +1,4 @@
-Version 4.0.0 {#version}
+Version 4.1.0 {#version}
 =============
 
 Our versioning follows the <a href="http://semver.org">Semantic Versioning 2.0.0</a> format.
@@ -12,7 +12,44 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
 
 ---
 
-## Pulse v4.0.0 (Sept 2021)
+## Pulse v4.1.0 (March 2022)
+
+- Software Architecture Improvements
+  - Including build information
+    - Added to all client facing API's (C++, Java, Python, C#) for external applications to get Pulse version
+    - Added to state files to help identify compatibility with engine builds
+  - New Hemodynamics Engine
+    - Provides the ability to execute and optimize our cardiovascular circuit
+    - Compares optimization iterations to validation data to converve on an optimal and valid circuit configuration
+  - Updated to Eigen 3.4.0 and Protobuf 3.18.0
+- Physiology Model Improvements
+  - Added Lorazepam 
+  - Added an oversedation drug as a test case
+  - New Advanced Cardiac Life Support (ACLS) Arrhythimias with ECG waveforms
+    - NormalSinus : Normal electrical signal and mechanical function
+    - Sinus Bradycardia : Normal electrical signal with reduced heart rate
+    - Sinus Tachycardia : Normal electrical signal and increased heart rate
+    - Sinus Pulseless Electrical Activity : Organized electrical signal, but no mechanical function
+    - Asystole : No electrical signal or mechanical function
+    - Coarse Ventricular Fibrillation : Unorganized electrical signal, no mechanical function
+    - Fine Ventricular Fibrillation : Unorganized electrical signal, reduced amplitude compared to coarse VF, no mechanical function
+    - Pulseless Ventricular Tachycardia : Ventricular tachycardia electrical signal with reduced amplitude, but no mechanical function
+    - Stable Ventricular Tachycardia : Ventricular tachycardia electrical signal with increased heart rate
+    - Unstable Ventricular Tachycardia : Ventricular tachycardia electrical signal with increased heart rate, reduced heart elastance
+  - ECG Waveforms use an interpolation algorithm to fit the waveform to the cardiac cycle
+  - Ventilation equipment provides breath information to differentiate patient or equipment initiated breaths
+  - Added configurable relief valve to mechanical ventilator
+  - Added a suite of black box unit tests to verify data exchange combinations
+  - Bug Fixes
+    - Corrected flow calculations for compartments
+    - Increased the frequency data is updated in the cardiovascular system during cardiac arrest
+    - Replaced Irreversible states with more relavent clinical events: Pulse continues running, unlike during Irreversible states
+    - Improved calculations of patient lung volumes due to disease
+
+
+---
+
+## Pulse v4.0.0 (September 2021)
 
 - Software Architecture Improvements
   - Multiple Engine Support
@@ -22,7 +59,7 @@ Our version number sematic is Major.Minor.Patch-ReleaseStage, where :
     - All engines are driven using the same API
   - New Ventilation Mechanics Engine
     - Encapsulates only our respiratory and mechanical ventilation models
-    - *NOT* a whole body physiology engine, only the math models of ventilation
+    - *NOT* a whole body physiology engine, only the math models for respiration and ventilation
   - Upgrade code base to C++17
   - Added namespaces
   - Improved header organization

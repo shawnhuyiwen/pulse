@@ -47,10 +47,33 @@ import com.kitware.pulse.utilities.JNIBridge;
 public class PulseEngine
 {
   protected boolean        alive  = false;
-  protected double         timeStep_s = 0.02;
+  protected double         timeStep_s = 0;
   protected double         timeRemainder = 0;
   protected LogListener    logListener = null;
   protected SEEventHandler eventHandler = null;
+  
+  static protected String  version="";
+  static protected String  hash="";
+  
+  static public String version()
+  {
+    if(version.isEmpty())
+    {
+      JNIBridge.initialize();
+      version = nativeGetVersion();
+    }
+    return version;
+  }
+  
+  static public String hash()
+  {
+    if(hash.isEmpty())
+    {
+      JNIBridge.initialize();
+      hash = nativeGetHash();
+    }
+    return hash;
+  }
 
   public PulseEngine()
   {
@@ -501,6 +524,8 @@ public class PulseEngine
   protected native void nativeDelete(long nativeObj);
 
   protected native double nativeGetTimeStep(long nativeObj, String unit);
+  static protected native String nativeGetVersion();
+  static protected native String nativeGetHash();
   
   protected native boolean nativeSerializeFromFile(long nativeObj, String stateFile, String dataRequests, int dataRequestsFormat);
   protected native boolean nativeSerializeToFile(long nativeObj, String stateFile);

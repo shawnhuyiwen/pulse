@@ -8,6 +8,7 @@ CDM_BIND_DECL(ActionMapData)
 CDM_BIND_DECL(ConditionListData)
 CDM_BIND_DECL(DataRequestedListData)
 CDM_BIND_DECL2(DataRequest)
+CDM_BIND_DECL2(ValidationTarget)
 CDM_BIND_DECL2(DataRequested)
 CDM_BIND_DECL2(DataRequestManager)
 CDM_BIND_DECL2(DecimalFormat)
@@ -81,6 +82,12 @@ public:
   static void Serialize(const CDM_BIND::DataRequestData& src, SEDataRequest& dst);
   static void Serialize(const SEDataRequest& src, CDM_BIND::DataRequestData& dst);
   static void Copy(const SEDataRequest& src, SEDataRequest& dst);
+
+  static void Load(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst);
+  static CDM_BIND::ValidationTargetData* Unload(const SEValidationTarget& src);
+  static void Serialize(const CDM_BIND::ValidationTargetData& src, SEValidationTarget& dst);
+  static void Serialize(const SEValidationTarget& src, CDM_BIND::ValidationTargetData& dst);
+  static void Copy(const SEValidationTarget& src, SEValidationTarget& dst);
 
   CDM_BIND::DataRequestedData* Unload(const SEDataRequested& src);
   static void Serialize(const SEDataRequested& src, CDM_BIND::DataRequestedData& dst);

@@ -11,7 +11,8 @@ namespace Pulse
   public enum eModelType : int
   {
     HumanAdultWholeBody = 0,
-    HumanAdultVentilationMechanics
+    HumanAdultVentilationMechanics,
+    HumanAdultHemodynamics
   }
   // C# class that wraps the PulseC API
   public class PulseEngine
@@ -20,8 +21,10 @@ namespace Pulse
     private const string PulseLib = "PulseC";   // Name of our Pulse library (PulseC or PulseCd)
     readonly IntPtr pulse_cptr;                 // Pointer to the pulse engine in C
     private double[] data_values;               // Data coming back from the engine
-    private double time_step_s = 0.02;          // Time step (TODO Get this from engine)
+    private double time_step_s = 0;             // Time step (Updates in ctor)
     private double extra_time_s = 0;            // Time remainder from spliting requested time into time steps
+    private static string version = "";         // Pulse Version
+    private static string hash = "";            // Git Hash of the pulse repository of this build
     private ILogListener log_listener = null;   // Forward log messages to this object
     private SELogMessages log_messages = new SELogMessages();
     private IEventHandler event_handler = null; // Forware events to this object
@@ -49,6 +52,7 @@ namespace Pulse
     public PulseEngine(eModelType m=eModelType.HumanAdultWholeBody, string data_dir = "./")
     {
       pulse_cptr = Allocate((int)m, data_dir);
+      time_step_s = GetTimeStep(pulse_cptr, "s");
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -56,6 +60,39 @@ namespace Pulse
     ~PulseEngine()
     {
       Deallocate(pulse_cptr);
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern double GetTimeStep(IntPtr pulse,string unit);
+    public double GetTimeStep_s()
+    {
+      return time_step_s;
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern double PulseVersion(out IntPtr version_str);
+    public static string Version()
+    {
+      if(version.Length == 0)
+      {
+        IntPtr str_addr;
+        PulseVersion(out str_addr);
+        version = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+      }
+      return version;
+    }
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    static extern double PulseHash(out IntPtr version_str);
+    public static string Hash()
+    {
+      if(hash.Length == 0)
+      {
+        IntPtr str_addr;
+        PulseHash(out str_addr);
+        hash = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+      }
+      return hash;
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]

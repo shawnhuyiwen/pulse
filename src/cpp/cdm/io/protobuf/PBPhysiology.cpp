@@ -175,6 +175,10 @@ void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECa
     PBProperty::Load(src.cerebralperfusionpressure(), dst.GetCerebralPerfusionPressure());
   if (src.has_diastolicarterialpressure())
     PBProperty::Load(src.diastolicarterialpressure(), dst.GetDiastolicArterialPressure());
+  if (src.has_diastolicleftheartpressure())
+    PBProperty::Load(src.diastolicleftheartpressure(), dst.GetDiastolicLeftHeartPressure());
+  if (src.has_diastolicrightheartpressure())
+    PBProperty::Load(src.diastolicrightheartpressure(), dst.GetDiastolicRightHeartPressure());
   if (src.has_heartejectionfraction())
     PBProperty::Load(src.heartejectionfraction(), dst.GetHeartEjectionFraction());
   if (src.has_heartrate())
@@ -218,6 +222,10 @@ void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECa
     PBProperty::Load(src.systemicvascularresistance(), dst.GetSystemicVascularResistance());
   if (src.has_systolicarterialpressure())
     PBProperty::Load(src.systolicarterialpressure(), dst.GetSystolicArterialPressure());
+  if (src.has_systolicleftheartpressure())
+    PBProperty::Load(src.systolicleftheartpressure(), dst.GetSystolicLeftHeartPressure());
+  if (src.has_systolicrightheartpressure())
+    PBProperty::Load(src.systolicrightheartpressure(), dst.GetSystolicRightHeartPressure());
   if (src.has_totalhemorrhagerate())
     PBProperty::Load(src.totalhemorrhagerate(), dst.GetTotalHemorrhageRate());
   if (src.has_totalhemorrhagedvolume())
@@ -248,6 +256,10 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::Cardio
     dst.set_allocated_cerebralperfusionpressure(PBProperty::Unload(*src.m_CerebralPerfusionPressure));
   if (src.HasDiastolicArterialPressure())
     dst.set_allocated_diastolicarterialpressure(PBProperty::Unload(*src.m_DiastolicArterialPressure));
+  if (src.HasDiastolicLeftHeartPressure())
+    dst.set_allocated_diastolicleftheartpressure(PBProperty::Unload(*src.m_DiastolicLeftHeartPressure));
+  if (src.HasDiastolicRightHeartPressure())
+    dst.set_allocated_diastolicrightheartpressure(PBProperty::Unload(*src.m_DiastolicRightHeartPressure));
   if (src.HasHeartEjectionFraction())
     dst.set_allocated_heartejectionfraction(PBProperty::Unload(*src.m_HeartEjectionFraction));
   if (src.HasHeartRate())

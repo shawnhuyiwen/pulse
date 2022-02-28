@@ -4,6 +4,7 @@
 #pragma once
 #include "cdm/circuit/SECircuitNode.h"
 class SEElectricalBlackBox;
+class SEElectricalCircuitPath;
 
 class CDM_DECL SEElectricalCircuitNode : public SECircuitNode<ELECTRICAL_CIRCUIT_NODE>
 {
@@ -37,4 +38,18 @@ public:
   virtual bool HasChargeBaseline() const;
   virtual SEScalarElectricCharge& GetChargeBaseline();
   virtual double GetChargeBaseline(const ElectricChargeUnit& unit) const;
+
+  SEElectricalCircuitNode* GetBlackBoxSourceNode() const;
+  SEElectricalCircuitNode* GetBlackBoxTargetNode() const;
+  void SetBlackBoxSourceTargetNodes(SEElectricalCircuitNode& src, SEElectricalCircuitNode& tgt);
+
+  SEElectricalCircuitPath* GetBlackBoxSourcePath() const;
+  SEElectricalCircuitPath* GetBlackBoxTargetPath() const;
+  void SetBlackBoxSourceTargetPaths(SEElectricalCircuitPath& src, SEElectricalCircuitPath& tgt);
+
+protected:
+  SEElectricalCircuitNode* m_BlackBoxSourceNode=nullptr;// Only set on middle nodes
+  SEElectricalCircuitNode* m_BlackBoxTargetNode=nullptr;// Only set on middle nodes
+  SEElectricalCircuitPath* m_BlackBoxSourcePath = nullptr;// Only set on middle nodes
+  SEElectricalCircuitPath* m_BlackBoxTargetPath = nullptr;// Only set on middle nodes
 };

@@ -14,13 +14,14 @@ int main()
 
   //HowToSandbox();
 
-  HowToEngineUse();
-  //HowToCreateAPatient();
+  //HowToEngineUse();
+  HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
   
   //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
+  //HowToArrythmia();
   //HowToAsthmaAttack();
   //HowToBagValveMask();
   //HowToBolusDrug();
@@ -29,7 +30,7 @@ int main()
   //HowToConsumeNutrients();
   //HowToCOPD();
   //HowToCOVID19Ventilated();
-  //HowToCPR(); 
+  //HowToCPR();
   //HowToEnvironmentChange();
   //HowToExercise();
   //HowToHemorrhage();
