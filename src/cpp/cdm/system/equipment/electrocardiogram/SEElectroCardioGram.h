@@ -100,7 +100,6 @@ protected:
   SEScalarElectricPotential* m_Lead11ElectricPotential;
   SEScalarElectricPotential* m_Lead12ElectricPotential;
 
-  bool                                      m_RefreshCycle;
   eElectroCardioGram_WaveformType           m_ActiveType;
   std::vector<SEElectroCardioGramWaveform*> m_Waveforms;
 };

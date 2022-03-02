@@ -6,35 +6,39 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Properties.proto";
 
+/** @brief A waveform type can be used for 1 or more eHeartRhythms */
+enum eElectroCardioGramWaveformType
+{
+  Sinus                                                        = 0;
+  VentricularFibrillation                                      = 1;
+  VentricularTachycardia                                       = 2;
+}
+
+
+enum eElectroCardioGramWaveformLead
+{
+  NullLead                                                     = 0;
+  Lead1                                                        = 1;
+  Lead2                                                        = 2;
+  Lead3                                                        = 3;
+  Lead4                                                        = 4;
+  Lead5                                                        = 5;
+  Lead6                                                        = 6;
+  Lead7                                                        = 7;
+  Lead8                                                        = 8;
+  Lead9                                                        = 9;
+  Lead10                                                       = 10;
+  Lead11                                                       = 11;
+  Lead12                                                       = 12;
+}
+
 message ElectroCardioGramWaveformData
 {
-  /** @brief A type can be used for 1 or more eHeartRhythms */
-  enum eWaveformType
-  {
-    Sinus                                                        = 0;
-    VentricularFibrillation                                      = 1;
-    VentricularTachycardia                                       = 2;
-  }
 
-  enum eWaveformLead
-  {
-    NullLead                                                     = 0;
-    Lead1                                                        = 1;
-    Lead2                                                        = 2;
-    Lead3                                                        = 3;
-    Lead4                                                        = 4;
-    Lead5                                                        = 5;
-    Lead6                                                        = 6;
-    Lead7                                                        = 7;
-    Lead8                                                        = 8;
-    Lead9                                                        = 9;
-    Lead10                                                       = 10;
-    Lead11                                                       = 11;
-    Lead12                                                       = 12;
-  }
   
-  eWaveformLead                          Lead                    = 1;/**<< @brief Lead number of the waveform provided. */
-  eWaveformType                          Type                    = 2;/**<< @brief Waveform type for an associated rhythm. */
+  
+  eElectroCardioGramWaveformLead         Lead                    = 1;/**<< @brief Lead number of the waveform provided. */
+  eElectroCardioGramWaveformType         Type                    = 2;/**<< @brief Waveform type for an associated rhythm. */
   ArrayElectricPotentialData             OriginalData            = 3;/**<< @brief The original digitized waveform of one cardiac cycle. */
   ArrayElectricPotentialData             ActiveCycle             = 4;/**<< @brief Active cardiac cycles we are using to calculate the lead value. */
   int32                                  ActiveCycleIndex        = 5;/**<< @brief The current index in the ActiveCycle array for the current time step. */
@@ -57,5 +61,6 @@ message ElectroCardioGramData
   ScalarElectricPotentialData            Lead11ElectricPotential = 11;/**<< @brief The amount of electric potential given off by lead 11 of the ECG. */
   ScalarElectricPotentialData            Lead12ElectricPotential = 12;/**<< @brief The amount of electric potential given off by lead 12 of the ECG. */
   
-  repeated ElectroCardioGramWaveformData Waveforms               = 13;/**<< @brief All waveform infomration available for ECG values. */
+  eElectroCardioGramWaveformType         ActiveType              = 13;/**<< @brief The current active waveform type. */
+  repeated ElectroCardioGramWaveformData Waveforms               = 14;/**<< @brief All waveform infomration available for ECG values. */
 }

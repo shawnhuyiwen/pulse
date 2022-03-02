@@ -3,8 +3,8 @@
 package com.kitware.pulse.cdm.system.equipment.electrocardiogram;
 
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData;
-import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformLead;
-import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformType;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.eElectroCardioGramWaveformLead;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.eElectroCardioGramWaveformType;
 import com.kitware.pulse.cdm.bind.Physiology.eHeartRhythm;
 import com.kitware.pulse.cdm.properties.SEArrayElectricPotential;
 import com.kitware.pulse.cdm.properties.SEFunctionElectricPotentialVsTime;
@@ -12,8 +12,8 @@ import com.kitware.pulse.cdm.properties.SEScalarTime;
 
 public class SEElectroCardioGramWaveform
 {
-  protected eWaveformLead                     lead;
-  protected eWaveformType                     type;
+  protected eElectroCardioGramWaveformLead    lead;
+  protected eElectroCardioGramWaveformType    type;
   protected SEArrayElectricPotential          originalData;
   
   public SEElectroCardioGramWaveform()
@@ -31,9 +31,9 @@ public class SEElectroCardioGramWaveform
   public static void load(ElectroCardioGramWaveformData src, SEElectroCardioGramWaveform dst)
   {
     dst.clear();
-    if(src.getType()!=eWaveformType.UNRECOGNIZED)
+    if(src.getType()!=eElectroCardioGramWaveformType.UNRECOGNIZED)
       dst.setType(src.getType());
-    if(src.getLead()!=ElectroCardioGramWaveformData.eWaveformLead.UNRECOGNIZED)
+    if(src.getLead()!=eElectroCardioGramWaveformLead.UNRECOGNIZED)
      dst.setLead(src.getLead());
     if(src.hasOriginalData())
       SEArrayElectricPotential.load(src.getOriginalData(),dst.getOriginalData());
@@ -54,28 +54,28 @@ public class SEElectroCardioGramWaveform
       dst.setOriginalData(SEArrayElectricPotential.unload(src.originalData));
   }
   
-  public ElectroCardioGramWaveformData.eWaveformLead getLead()
+  public eElectroCardioGramWaveformLead getLead()
   {
     return lead;
   }
-  public void setLead(ElectroCardioGramWaveformData.eWaveformLead l)
+  public void setLead(eElectroCardioGramWaveformLead l)
   {
     this.lead = l;
   }
   public boolean hasLead()
   {
-    return lead==null ? false : lead != ElectroCardioGramWaveformData.eWaveformLead.NullLead;
+    return lead==null ? false : lead != eElectroCardioGramWaveformLead.NullLead;
   }
   public void removeLead()
   {
     this.lead = null;
   }
   
-  public eWaveformType getType()
+  public eElectroCardioGramWaveformType getType()
   {
     return type;
   }
-  public void setType(eWaveformType t)
+  public void setType(eElectroCardioGramWaveformType t)
   {
     this.type = t;
   }

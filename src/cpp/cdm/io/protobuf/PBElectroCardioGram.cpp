@@ -45,6 +45,7 @@ void PBElectroCardioGram::Serialize(const CDM_BIND::ElectroCardioGramData& src, 
   if (src.has_lead12electricpotential())
     PBProperty::Load(src.lead12electricpotential(), dst.GetLead12ElectricPotential());
 
+  dst.m_ActiveType = (eElectroCardioGram_WaveformType)src.activetype();
 
   for (int i = 0; i < src.waveforms_size(); i++)
   {
@@ -85,6 +86,8 @@ void PBElectroCardioGram::Serialize(const SEElectroCardioGram& src, CDM_BIND::El
     dst.set_allocated_lead11electricpotential(PBProperty::Unload(*src.m_Lead11ElectricPotential));
   if (src.HasLead12ElectricPotential())
     dst.set_allocated_lead12electricpotential(PBProperty::Unload(*src.m_Lead12ElectricPotential));
+
+  dst.set_activetype((CDM_BIND::eElectroCardioGramWaveformType)src.m_ActiveType);
 
   for (SEElectroCardioGramWaveform* waveform : src.m_Waveforms)
     dst.mutable_waveforms()->AddAllocated(PBElectroCardioGram::Unload(*waveform));
@@ -151,8 +154,8 @@ CDM_BIND::ElectroCardioGramWaveformData* PBElectroCardioGram::Unload(const SEEle
 }
 void PBElectroCardioGram::Serialize(const SEElectroCardioGramWaveform& src, CDM_BIND::ElectroCardioGramWaveformData& dst)
 {
-  dst.set_type((CDM_BIND::ElectroCardioGramWaveformData::eWaveformType)src.m_Type);
-  dst.set_lead((CDM_BIND::ElectroCardioGramWaveformData::eWaveformLead)src.m_LeadNumber);
+  dst.set_type((CDM_BIND::eElectroCardioGramWaveformType)src.m_Type);
+  dst.set_lead((CDM_BIND::eElectroCardioGramWaveformLead)src.m_LeadNumber);
   if (src.HasOriginalData())
     dst.set_allocated_originaldata(PBProperty::Unload(*src.m_OriginalData));
   if (src.HasActiveCycle())

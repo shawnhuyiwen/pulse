@@ -17,8 +17,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformLead;
-import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData.eWaveformType;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.eElectroCardioGramWaveformLead;
+import com.kitware.pulse.cdm.bind.ElectroCardioGram.eElectroCardioGramWaveformType;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Enums.eCharge;
 import com.kitware.pulse.cdm.bind.Environment.EnvironmentalConditionsData.eSurroundingType;
@@ -1435,8 +1435,8 @@ public class DataSetReader
     fields.add("ElectricPotential");
     fields.add("Time");
     String property,value,unit,cellValue;
-    eWaveformLead lead=eWaveformLead.NullLead;
-    eWaveformType type=null;
+    eElectroCardioGramWaveformLead lead=eElectroCardioGramWaveformLead.NullLead;
+    eElectroCardioGramWaveformType type=null;
        
     SEElectroCardioGram ecg=null;
     Map<String,SEElectroCardioGram> map = new HashMap<String,SEElectroCardioGram>();
@@ -1459,11 +1459,11 @@ public class DataSetReader
         }         
         else if(property.equals("Lead"))
         {          
-          lead = eWaveformLead.values()[((int)(row.getCell(1).getNumericCellValue()))];
+          lead = eElectroCardioGramWaveformLead.values()[((int)(row.getCell(1).getNumericCellValue()))];
         }
         else if(property.equals("Type"))
         {
-          type = eWaveformType.valueOf((row.getCell(1).getStringCellValue()));
+          type = eElectroCardioGramWaveformType.valueOf((row.getCell(1).getStringCellValue()));
         }
         else if(property.equals("ElectricPotential"))
         {

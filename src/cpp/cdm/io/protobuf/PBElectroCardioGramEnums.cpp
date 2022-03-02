@@ -9,10 +9,10 @@ POP_PROTO_WARNINGS
 
 const std::string& eElectroCardioGram_WaveformLead_Name(eElectroCardioGram_WaveformLead n)
 {
-  return CDM_BIND::ElectroCardioGramWaveformData::eWaveformLead_Name((CDM_BIND::ElectroCardioGramWaveformData::eWaveformLead)n);
+  return CDM_BIND::eElectroCardioGramWaveformLead_Name((CDM_BIND::eElectroCardioGramWaveformLead)n);
 }
 
 const std::string& eElectroCardioGram_WaveformType_Name(eElectroCardioGram_WaveformType t)
 {
-  return CDM_BIND::ElectroCardioGramWaveformData::eWaveformType_Name((CDM_BIND::ElectroCardioGramWaveformData::eWaveformType)t);
+  return CDM_BIND::eElectroCardioGramWaveformType_Name((CDM_BIND::eElectroCardioGramWaveformType)t);
 }
