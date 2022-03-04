@@ -28,16 +28,11 @@ add_jar(PulseJava ${PULSE_JAVA_FILES}
     INCLUDE_JARS 
       "jar/commons-collections4-4.4.jar"
       "jar/commons-compress-1.21.jar"
-      "jar/commons-math3-3.6.1.jar"
-      "jar/error_prone_annotations-2.11.0.jar"
-      "jar/failureaccess-1.0.1.jar"
-      "jar/gson-2.9.0.jar"
-      "jar/guava-31.1-jre.jar"
+      "jar/error_prone_annotations-2.11.0.jar" # needed for protobufs
+      "jar/gson-2.9.0.jar" # needed for protobufs
+      "jar/guava-31.1-jre.jar" # needed for protobufs
       "jar/java-ordered-properties-1.0.4.jar"
-      "jar/javassist-3.28.0-GA.jar"
       "jar/jfreechart-1.5.3.jar"
-      "jar/logback-classic-1.2.10.jar"
-      "jar/logback-core-1.2.10.jar"
       "jar/poi-5.2.0.jar"
       "jar/poi-ooxml-5.2.0.jar"
       "jar/poi-ooxml-lite-5.2.0.jar"
