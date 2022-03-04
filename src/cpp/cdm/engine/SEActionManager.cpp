@@ -13,7 +13,7 @@
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/io/protobuf/PBEngine.h"
 
-SEActionManager::SEActionManager(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
+SEActionManager::SEActionManager(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
   m_PatientActions = new SEPatientActionCollection(m_SubMgr);
   m_EnvironmentActions = new SEEnvironmentActionCollection(m_SubMgr);

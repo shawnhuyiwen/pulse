@@ -115,6 +115,10 @@ SEEnvironmentAction* PBEnvironmentAction::Load(const CDM_BIND::AnyEnvironmentAct
     SEThermalApplication* a = new SEThermalApplication();
     PBEnvironmentAction::Load(any.thermalapplication(), *a);
     return a;
+  }case CDM_BIND::AnyEnvironmentActionData::ACTION_NOT_SET:
+  {
+    subMgr.Warning("AnyEnvironmentActionData is empty...was that intended?");
+    return nullptr;
   }
   }
   subMgr.Error("Unknown action type : " + any.Action_case());

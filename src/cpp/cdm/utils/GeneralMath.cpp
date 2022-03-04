@@ -265,7 +265,7 @@ void GeneralMath::Combinations(std::vector<int> maxValues, std::vector<std::vect
   size_t Olength = maxValues.size();
   std::vector<int> *current, *next;
 
-  for (int i = 0; i < Olength; i++)
+  for (size_t i = 0; i < Olength; i++)
     numVals *= maxValues[Oidx] + 1;
   permutations.clear();
   permutations.resize(numVals);
@@ -279,7 +279,7 @@ void GeneralMath::Combinations(std::vector<int> maxValues, std::vector<std::vect
     next = &permutations[perm++];
     Copy(*current, *next);
     current = next;
-    for (int i = 0; i <= Olength; i++)
+    for (size_t i = 0; i <= Olength; i++)
     {
       if (++(*current)[i] > maxValues[i])
       {
@@ -619,7 +619,7 @@ void GeneralMath::SplineInterpolater(std::vector<double>& v, size_t newSize)
 
   v.clear();
   v.reserve(newSize);
-  for (int i = 0; i < newSize; ++i)
+  for (size_t i = 0; i < newSize; ++i)
   {
     auto point = spline((double)i / (newSize - 1));
     v.push_back(point.coeffRef(0));

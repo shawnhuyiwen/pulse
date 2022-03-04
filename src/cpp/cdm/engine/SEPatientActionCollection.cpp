@@ -44,7 +44,7 @@
 
 #include "cdm/properties/SEScalarVolumePerTime.h"
 
-SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
+SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
   m_ARDSExacerbation = nullptr;
   m_AcuteStress = nullptr;

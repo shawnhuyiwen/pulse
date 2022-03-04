@@ -30,6 +30,11 @@ SEEnvironmentCondition* PBEnvironmentCondition::Load(const CDM_BIND::AnyEnvironm
       PBEnvironmentCondition::Load(any.initialenvironmentalconditions(), *a, subMgr);
       return a;
     }
+    case CDM_BIND::AnyEnvironmentConditionData::ConditionCase::CONDITION_NOT_SET:
+    {
+      subMgr.Warning("AnyEnvironmentConditionData Condition is empty...was that intended?");
+      return nullptr;
+    }
   }
   subMgr.Error("Unknown action type : " + any.Condition_case());
   return nullptr;

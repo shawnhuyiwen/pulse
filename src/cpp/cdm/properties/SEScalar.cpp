@@ -20,7 +20,7 @@ unsigned long long int SEScalar::NaN =
 double SEScalar::dNaN()
 {
   double d;
-  *(reinterpret_cast<unsigned long long int *>(&d)) = NaN;
+  *(reinterpret_cast<unsigned long long int*>(&d)) = NaN;
   return d;
 }
 
@@ -100,14 +100,14 @@ void SEScalar::Invalidate()
     throw CommonDataModelException("Scalar is marked read-only");
   m_isnan = true;
   m_isinf = false;
-  *(reinterpret_cast<unsigned long long int *>(&m_value)) = NaN;
+  m_value = SEScalar::dNaN();
 }
 
 void SEScalar::ForceInvalidate()
 {
   m_isnan = true;
   m_isinf = false;
-  *(reinterpret_cast<unsigned long long int*>(&m_value)) = NaN;
+  m_value = SEScalar::dNaN();
 }
 
 bool SEScalar::IsValid() const 

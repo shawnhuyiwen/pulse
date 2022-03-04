@@ -22,6 +22,9 @@ SECondition* PBCondition::Load(const CDM_BIND::AnyConditionData& condition, cons
     return PBPatientCondition::Load(condition.patientcondition(), subMgr);
   case CDM_BIND::AnyConditionData::kEnvironmentCondition:
     return PBEnvironmentCondition::Load(condition.environmentcondition(), subMgr);
+  case CDM_BIND::AnyConditionData::CONDITION_NOT_SET:
+    subMgr.Warning("AnyConditionData is empty...was that intended?");
+    return nullptr;
   }
   subMgr.Error("Unknown Condition");
   return nullptr;

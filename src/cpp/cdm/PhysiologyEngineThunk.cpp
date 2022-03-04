@@ -376,7 +376,7 @@ void PhysiologyEngineThunk::PullData(std::vector<double>& d)
     d.reserve(m_length);
     std::cout << "Ok" << std::endl;
   }
-  for (int i = 0; i < m_length; i++)
+  for (size_t i = 0; i < m_length; i++)
   {
 
     std::cout << "Beep " << d[i] << std::endl;

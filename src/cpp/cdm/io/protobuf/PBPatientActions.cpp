@@ -1602,6 +1602,11 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.urinate(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::ACTION_NOT_SET:
+  {
+    subMgr.Warning("AnyPatienActionData Action is empty...was that intended?");
+    return nullptr;
+  }
   }
   subMgr.Error("Unknown action type : " + any.Action_case());
   return nullptr;

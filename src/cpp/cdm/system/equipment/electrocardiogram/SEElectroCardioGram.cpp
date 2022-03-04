@@ -430,6 +430,11 @@ void SEElectroCardioGram::PullCycleValues()
         w->GetCycleValue(GetLead12ElectricPotential(), true);
         break;
       }
+      case eElectroCardioGram_WaveformLead::NullLead:
+      {
+        Warning("Cannot get cycle value of null lead");
+        break;
+      }
       }
     }
   }

@@ -31,7 +31,7 @@ SEPhysiologyEnginePoolEngine::~SEPhysiologyEnginePoolEngine()
 }
 
 SEPhysiologyEnginePool::SEPhysiologyEnginePool(size_t poolSize, const std::string& dataDir, Logger* logger) : Loggable(logger),
-                                                                                            m_Pool(poolSize), m_SubMgr(logger)
+                                                                                            m_SubMgr(logger), m_Pool(poolSize)
 {
   m_IsActive = false;
   m_SubMgr.LoadSubstanceDirectory(dataDir);
