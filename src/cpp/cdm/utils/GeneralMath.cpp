@@ -598,7 +598,7 @@ bool GeneralMath::LinearInterpolator(std::vector<double>& v, size_t newSize)
       return true; // Done
   }
   // Recurse until equal sizes
-  LinearInterpolator(v, newSize);
+  return LinearInterpolator(v, newSize);
 }
 
 void GeneralMath::SplineInterpolater(std::vector<double>& v, size_t newSize)

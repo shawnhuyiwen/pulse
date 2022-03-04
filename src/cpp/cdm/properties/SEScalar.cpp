@@ -20,7 +20,7 @@ unsigned long long int SEScalar::NaN =
 double SEScalar::dNaN()
 {
   double d;
-  *(reinterpret_cast<unsigned long long int*>(&d)) = NaN;
+  *(reinterpret_cast<unsigned long long int *>(&d)) = NaN;
   return d;
 }
 
