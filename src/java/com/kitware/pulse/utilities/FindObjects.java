@@ -55,7 +55,7 @@ public class FindObjects
     Reflections reflections = new Reflections(new ConfigurationBuilder()
         .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
         .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-        .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix(packageName))));
+        .filterInputsBy(new FilterBuilder().includePackage(packageName)));
     
     Set<Class<? extends Object>> allClasses = reflections.getSubTypesOf(Object.class);
     return allClasses;
