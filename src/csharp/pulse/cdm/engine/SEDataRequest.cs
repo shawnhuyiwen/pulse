@@ -12,12 +12,18 @@ namespace Pulse.CDM
 
   public class SEDataRequest
   {
+    public class DecimalFormat
+    {
+      public eDecimalFormatType type = eDecimalFormatType.SystemFormatting;
+      public uint                precision = 1;
+    }
     protected eDataRequest_Category Category;
     protected string ActionName = null;
     protected string CompartmentName = null;
     protected string SubstanceName = null;
     protected string PropertyName = null;
     protected Unit Unit = null;
+    protected DecimalFormat decimal_format = null;
 
     protected SEDataRequest(eDataRequest_Category category)
     {
@@ -35,6 +41,14 @@ namespace Pulse.CDM
     public string GetPropertyName() { return PropertyName; }
     public bool HasUnit() { return Unit != null; }
     public Unit GetUnit() { return Unit; }
+    public bool HasDecimalFormat() { return decimal_format != null; }
+    public DecimalFormat GetDecimalFormat()
+    {
+      if (decimal_format == null)
+        decimal_format = new DecimalFormat();
+      return decimal_format;
+    }
+    public void InvalidateDecimalFormat() { decimal_format = null; }
 
     public new string ToString()
     {

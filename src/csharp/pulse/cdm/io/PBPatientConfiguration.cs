@@ -70,7 +70,7 @@ namespace Pulse.CDM
       foreach (var condition in src.AnyCondition)
       {
         if (!dst.Add(PBCondition.Load(condition)))
-          System.Console.WriteLine("Failed to serialize an unsupported condition " + condition.GetType());
+          System.Console.WriteLine("Failed to serialize an unsupported condition " + condition.ToString());
       }
     }
     public static pulse.cdm.bind.ConditionListData Unload(SEConditionManager src)

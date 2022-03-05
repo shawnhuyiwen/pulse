@@ -10,7 +10,7 @@ namespace Pulse.CDM
   {
     protected string results_filename = null;
     protected double samples_per_second = 0;// Sample every time step
-    protected List<SEDataRequest> data_requests = null;
+    protected List<SEDataRequest> data_requests = new List<SEDataRequest>();
 
     public SEDataRequestManager()
     {
@@ -20,6 +20,13 @@ namespace Pulse.CDM
     public SEDataRequestManager(List<SEDataRequest> data_requests)
     {
       SetDataRequests(data_requests);
+    }
+
+    public void Clear()
+    {
+      results_filename = null;
+      samples_per_second = 0;
+      data_requests.Clear();
     }
 
     public bool HasResultsFilename() { return results_filename != null; }

@@ -49,7 +49,8 @@ namespace Pulse.CDM
 
     public static void Serialize(pulse.cdm.bind.EnvironmentActionData src, SEEnvironmentAction dst)
     {
-      PBAction.Serialize(src.Action, dst);
+      if (src.Action != null)
+        PBAction.Serialize(src.Action, dst);
     }
     public static void Serialize(SEEnvironmentAction src, pulse.cdm.bind.EnvironmentActionData dst)
     {
@@ -68,7 +69,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChangeEnvironmentalConditionsData src, SEChangeEnvironmentalConditions dst)
     {
-      Serialize(src.EnvironmentAction, dst);
+      if (src.EnvironmentAction != null)
+        Serialize(src.EnvironmentAction, dst);
       if (src.EnvironmentalConditionsFile != null)
         dst.SetEnvironmentalConditionsFile(src.EnvironmentalConditionsFile);
       else if (src.EnvironmentalConditions != null)
@@ -102,7 +104,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ThermalApplicationData src, SEThermalApplication dst)
     {
-      Serialize(src.EnvironmentAction, dst);
+      if (src.EnvironmentAction != null)
+        Serialize(src.EnvironmentAction, dst);
       if (src.ActiveHeating != null)
         PBEnvironment.Load(src.ActiveHeating, dst.GetActiveHeating());
       if (src.ActiveCooling != null)

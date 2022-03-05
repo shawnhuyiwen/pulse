@@ -53,6 +53,7 @@ namespace HowTo_UseEngine
         SEDataRequest.CreatePhysiologyDataRequest("SkinTemperature", TemperatureUnit.C),
         SEDataRequest.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit.mmHg),
         SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL),
+        //SEDataRequest.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit.mL), ENGINE WILL NOT INITIALIZE WITH DUPLICATE REQUESTS
         SEDataRequest.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit.mV),
       };
       SEDataRequestManager data_mgr = new SEDataRequestManager(data_requests);

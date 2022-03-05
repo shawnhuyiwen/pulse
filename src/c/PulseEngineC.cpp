@@ -220,3 +220,14 @@ C_EXPORT double* C_CALL PullData(PhysiologyEngineThunk* thunk)
 {
   return thunk->PullDataPtr();
 }
+
+extern "C"
+C_EXPORT bool C_CALL AreCompatibleUnits(const char* fromUnit, const char* toUnit)
+{
+  return CompatibleUnits(CCompoundUnit(fromUnit), CCompoundUnit(toUnit));
+}
+extern "C"
+C_EXPORT double C_CALL ConvertValue(double value, const char* fromUnit, const char* toUnit)
+{
+  return Convert(value, CCompoundUnit(fromUnit), CCompoundUnit(toUnit));
+}

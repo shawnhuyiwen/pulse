@@ -102,6 +102,7 @@ namespace Pulse
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, eSerializationFormat.JSON);
       alive = SerializeFromFile(pulse_cptr, filename, data_mgr_str, (int)eSerializationFormat.JSON);
+      if (!alive) PullLogMessages();
       return alive;
     }
 
@@ -121,6 +122,7 @@ namespace Pulse
       data_values = new double[data_mgr.GetDataRequests().Count + 1];
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, format);
       alive = SerializeFromString(pulse_cptr, state, data_mgr_str, (int)format);
+      if (!alive) PullLogMessages();
       return alive;
     }
 
@@ -144,6 +146,7 @@ namespace Pulse
       string patient_configuration_str = PBPatientConfiguration.SerializeToString(patient_configuration);
       string data_mgr_str = PBDataRequest.SerializeToString(data_mgr, thunk_as);
       alive = InitializeEngine(pulse_cptr, patient_configuration_str, data_mgr_str, (int)thunk_as);
+      if (!alive) PullLogMessages();
       return alive;
     }
 
@@ -228,6 +231,23 @@ namespace Pulse
     {
       log_listener = listener;
       KeepLogMessages(pulse_cptr, log_listener != null);
+    }
+    protected void PullLogMessages()
+    {
+      // Grab log messages and pass them to handler
+      if (log_listener != null)
+      {
+        log_messages.Clear();
+        if (PullLogMessages(pulse_cptr, (int)thunk_as, out str_addr))
+        {
+          string log_messages_str = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
+          if (log_messages_str != null)
+          {
+            PBLogMessages.SerializeFromString(log_messages_str, log_messages);
+            log_messages.Forward(log_listener);
+          }
+        }
+      }
     }
 
     [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
@@ -314,20 +334,7 @@ namespace Pulse
           }
         }
       }
-      // Grab log messages and pass them to handler
-      if (log_listener != null)
-      {
-        log_messages.Clear();
-        if (PullLogMessages(pulse_cptr, (int)thunk_as, out str_addr))
-        {
-          string log_messages_str = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(str_addr);
-          if (log_messages_str != null)
-          {
-            PBLogMessages.SerializeFromString(log_messages_str, log_messages);
-            log_messages.Forward(log_listener);
-          }
-        }
-      }
+      PullLogMessages();
 
       return b;
     }
@@ -356,5 +363,12 @@ namespace Pulse
       Marshal.Copy(data, data_values, 0, data_values.Length);
       return data_values;
     }
+
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    public static extern bool AreCompatibleUnits(string fromUnit, string toUnit);
+
+    [DllImport(PulseLib, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall)]
+    public static extern double ConvertValue(double value, string fromUnit, string toUnit);
   }
 }

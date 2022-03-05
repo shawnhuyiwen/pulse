@@ -64,6 +64,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/CommonDataModel.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEAction.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEActionManager.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEAdvanceTime.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SECondition.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEConditionManager.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEDataRequest.cs
@@ -74,6 +75,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SELogger.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEPatientActionCollection.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SEPatientConfiguration.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/engine/SESerializeState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBActions.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBAnesthesiaMachine.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBBagValveMask.cs
@@ -189,6 +191,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SESegmentLinear.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SESegmentParabolic.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/properties/SESegmentSigmoidal.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/scenario/SEScenario.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/scenario/SEScenarioExec.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/substance/SESubstanceConcentration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/substance/SESubstanceFraction.cs

@@ -12,6 +12,24 @@ namespace HowTo_RunScenarios
   {
     public static void Run(string dir = "")
     {
+
+      //{// Test code to ensure we can read everything
+      //  DirectoryInfo d = new DirectoryInfo(@"C:\Programming\Pulse\engine\data\human\adult\scenarios\");
+      //  FileInfo[] Files = d.GetFiles("*.json", SearchOption.AllDirectories);
+      //
+      //  foreach (FileInfo file in Files)
+      //  {
+      //    if (file.Name.Contains("@"))
+      //      continue;// This is an assessment
+      //    SEScenario sce = new SEScenario();
+      //    System.Console.Write("Reading " + file.FullName + "...");
+      //    if (!sce.SerializeFromFile(file.FullName))
+      //      System.Console.Error.WriteLine("Unable to read scenario file " + file.FullName);
+      //    else
+      //      System.Console.WriteLine("OK!");
+      //  }
+      //}
+
       if (dir.Length == 0)// Run a single hard coded scenario
       {
         // Note, you don't need a RunConfiguration, if you know where your files all are

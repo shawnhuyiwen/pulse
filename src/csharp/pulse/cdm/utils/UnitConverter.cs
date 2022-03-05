@@ -15,8 +15,9 @@ namespace Pulse.CDM
         return d;
       if (fromUnit.ToString() == toUnit.ToString())
         return d;
-      // Unit converter not implemented yet...
-      throw new System.NotImplementedException();
+      if (!PulseEngine.AreCompatibleUnits(fromUnit.ToString(), toUnit.ToString()))
+        throw new System.InvalidOperationException("Cannot convert between incompatible units");
+      return PulseEngine.ConvertValue(d, fromUnit.ToString(), toUnit.ToString());
     }
   }
 }

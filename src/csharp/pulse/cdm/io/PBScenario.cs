@@ -7,6 +7,7 @@ namespace Pulse.CDM
 {
   public class PBScenario
   {
+    #region SEScenarioExec
     public static void Load(pulse.cdm.bind.ScenarioExecData src, SEScenarioExec dst)
     {
       Serialize(src, dst);
@@ -95,6 +96,78 @@ namespace Pulse.CDM
       var pb = PBScenario.Unload(src);
       return pb.ToString();
     }
+    #endregion
+
+    #region SEScenario
+    public static void Load(pulse.cdm.bind.ScenarioData src, SEScenario dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ScenarioData src, SEScenario dst)
+    {
+      dst.Clear();
+      dst.SetName(src.Name);
+      dst.SetDescription(src.Description);
+      if (!string.IsNullOrEmpty(src.EngineStateFile))
+        dst.SetEngineState(src.EngineStateFile);
+      else if (src.PatientConfiguration != null)
+        PBPatientConfiguration.Load(src.PatientConfiguration, dst.GetPatientConfiguration());
+      if (src.DataRequestManager != null)
+        PBDataRequest.Load(src.DataRequestManager, dst.GetDataRequestManager());
+      foreach (var action in src.AnyAction)
+        dst.GetActions().Add(PBAction.Load(action));
+    }
+
+    public static bool SerializeFromString(string src, SEScenario dst)
+    {
+      try
+      {
+        pulse.cdm.bind.ScenarioData data = JsonParser.Default.Parse<pulse.cdm.bind.ScenarioData>(src);
+        PBScenario.Load(data, dst);
+      }
+      catch (Google.Protobuf.InvalidProtocolBufferException)
+      {
+        try
+        {
+          pulse.engine.bind.ScenarioData data = JsonParser.Default.Parse<pulse.engine.bind.ScenarioData>(src);
+          PBScenario.Load(data.Scenario, dst);
+        }
+        catch (Google.Protobuf.InvalidProtocolBufferException)
+        {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    public static pulse.cdm.bind.ScenarioData Unload(SEScenario src)
+    {
+      pulse.cdm.bind.ScenarioData dst = new pulse.cdm.bind.ScenarioData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEScenario src, pulse.cdm.bind.ScenarioData dst)
+    {
+      dst.Name = src.GetName();
+      dst.Description = src.GetDescription();
+      if (src.HasEngineState())
+        dst.EngineStateFile = src.GetEngineState();
+      else if (src.HasPatientConfiguration())
+        dst.PatientConfiguration = PBPatientConfiguration.Unload(src.GetPatientConfiguration());
+      dst.DataRequestManager = PBDataRequest.Unload(src.GetDataRequestManager());
+      if (src.GetActions().Count > 0)
+      {
+        //dst.AnyAction = new Google.Protobuf.Collections.RepeatedField<pulse.cdm.bind.AnyActionData>();
+        foreach (var action in src.GetActions())
+          dst.AnyAction.Add(PBAction.Unload(action));
+      }
+    }
+    public static string SerializeToString(SEScenario src)
+    {
+      var pb = PBScenario.Unload(src);
+      return pb.ToString();
+    }
+    #endregion
   }
 }
 

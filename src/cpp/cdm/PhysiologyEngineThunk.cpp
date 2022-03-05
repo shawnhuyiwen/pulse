@@ -57,9 +57,7 @@ bool PhysiologyEngineThunk::SerializeFromFile(std::string const& filename, std::
     SetupDefaultDataRequests();
     m_engine->GetLogger()->Info("No data requested, will return default vitals");
   }
-  m_engine->GetEngineTracker()->SetupRequests();
-
-  return true;
+  return SetupRequests();
 }
 
 bool PhysiologyEngineThunk::SerializeToFile(std::string const& filename)
@@ -85,9 +83,7 @@ bool PhysiologyEngineThunk::SerializeFromString(std::string const& state, std::s
   }
   else
     SetupDefaultDataRequests();
-  m_engine->GetEngineTracker()->SetupRequests();
-
-  return true;
+  return SetupRequests();
 }
 
 
@@ -137,9 +133,30 @@ bool PhysiologyEngineThunk::InitializeEngine(std::string const& patient_configur
   }
   else
     SetupDefaultDataRequests();
-  m_engine->GetEngineTracker()->SetupRequests();
+  if (!SetupRequests())
+    return false;
 
   m_engine->GetEventManager().ForwardEvents(this);
+  return true;
+}
+
+bool PhysiologyEngineThunk::SetupRequests()
+{
+  m_engine->GetEngineTracker()->SetupRequests();
+  if (m_engine->GetEngineTracker()->GetDataTrack().NumTracks() !=
+    m_engine->GetEngineTracker()->GetDataRequestManager().GetDataRequests().size())
+  {
+    m_engine->Error("Number of data requests does not match the number of tracked properties!");
+    m_engine->Error("--Check to see if you have duplicates in your data request list");
+    m_engine->Error("--Here is the order of the data items I am traking:");
+    for (size_t i = 0; i < m_engine->GetEngineTracker()->GetDataTrack().NumTracks(); i++)
+      m_engine->Error("--  " + m_engine->GetEngineTracker()->GetDataTrack().GetProbeName(i));
+    m_engine->Error("--Here is what you requested:");
+    for (SEDataRequest const* dr : m_engine->GetEngineTracker()->GetDataRequestManager().GetDataRequests())
+      m_engine->Error("--  " + m_engine->GetEngineTracker()->GetHeader(*dr));
+    m_engine->Error("I don't have the logic to figure out which tracked items are duplicated and where they go in the pulled data array");
+    return false;
+  }
   return true;
 }
 

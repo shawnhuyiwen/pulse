@@ -95,6 +95,7 @@ public:
 
 
   double GetValue(const SEDataRequest& dr) const;
+  std::string GetHeader(const SEDataRequest& dr) const;
 
 
 protected:

@@ -211,4 +211,18 @@ void SEDataRequest::InvalidateUnit()
   m_Unit = nullptr;
 }
 
-
+std::string SEDataRequest::ToString() const
+{
+  std::stringstream str;
+  str << eDataRequest_Category_Name(m_Category) << " Data Request";
+  if (m_Category == eDataRequest_Category::Action)
+    str << "\n\tAction : " << m_ActionName;
+  if(HasCompartmentName())
+    str << "\n\tCompartment : " << m_CompartmentName;
+  if (HasSubstanceName())
+    str << "\n\tSubstance : " << m_SubstanceName;
+  str << "\n\tProperty: " << m_PropertyName;
+  if (HasRequestedUnit())
+    str << "\n\tRequested Unit : " << m_RequestedUnit;
+  return str.str();
+}

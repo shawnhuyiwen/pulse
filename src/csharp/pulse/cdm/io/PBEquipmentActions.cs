@@ -322,7 +322,8 @@ namespace Pulse.CDM
     #region SEAnesthesiaMachineAction
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineActionData src, SEAnesthesiaMachineAction dst)
     {
-      PBEquipmentAction.Serialize(src.EquipmentAction, dst);
+      if(src.EquipmentAction != null)
+        PBEquipmentAction.Serialize(src.EquipmentAction, dst);
     }
     protected static void Serialize(SEAnesthesiaMachineAction src, pulse.cdm.bind.AnesthesiaMachineActionData dst)
     {
@@ -338,7 +339,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineConfigurationData src, SEAnesthesiaMachineConfiguration dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.ConfigurationFile != null)
         dst.SetConfigurationFile(src.ConfigurationFile);
       else if (src.Configuration != null)
@@ -368,7 +370,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineExpiratoryValveLeakData src, SEAnesthesiaMachineExpiratoryValveLeak dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -395,7 +398,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineExpiratoryValveObstructionData src, SEAnesthesiaMachineExpiratoryValveObstruction dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -422,7 +426,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineInspiratoryValveLeakData src, SEAnesthesiaMachineInspiratoryValveLeak dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -449,7 +454,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineInspiratoryValveObstructionData src, SEAnesthesiaMachineInspiratoryValveObstruction dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -476,7 +482,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineMaskLeakData src, SEAnesthesiaMachineMaskLeak dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -503,7 +510,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineOxygenTankPressureLossData src, SEAnesthesiaMachineOxygenTankPressureLoss dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       dst.SetState((eSwitch)(int)src.State);
     }
 
@@ -528,7 +536,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineOxygenWallPortPressureLossData src, SEAnesthesiaMachineOxygenWallPortPressureLoss dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       dst.SetState((eSwitch)(int)src.State);
     }
 
@@ -553,7 +562,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineSodaLimeFailureData src, SEAnesthesiaMachineSodaLimeFailure dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -580,7 +590,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineTubeCuffLeakData src, SEAnesthesiaMachineTubeCuffLeak dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -607,7 +618,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineVaporizerFailureData src, SEAnesthesiaMachineVaporizerFailure dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -634,7 +646,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineVentilatorPressureLossData src, SEAnesthesiaMachineVentilatorPressureLoss dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -661,7 +674,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AnesthesiaMachineYPieceDisconnectData src, SEAnesthesiaMachineYPieceDisconnect dst)
     {
-      Serialize(src.AnesthesiaMachineAction, dst);
+      if (src.AnesthesiaMachineAction != null)
+        Serialize(src.AnesthesiaMachineAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -684,7 +698,8 @@ namespace Pulse.CDM
     #region SEBagValveMaskAction
     public static void Serialize(pulse.cdm.bind.BagValveMaskActionData src, SEBagValveMaskAction dst)
     {
-      PBEquipmentAction.Serialize(src.EquipmentAction, dst);
+      if (src.EquipmentAction != null)
+        PBEquipmentAction.Serialize(src.EquipmentAction, dst);
     }
     protected static void Serialize(SEBagValveMaskAction src, pulse.cdm.bind.BagValveMaskActionData dst)
     {
@@ -835,7 +850,8 @@ namespace Pulse.CDM
     #region SEInhalerAction
     public static void Serialize(pulse.cdm.bind.InhalerActionData src, SEInhalerAction dst)
     {
-      PBEquipmentAction.Serialize(src.EquipmentAction, dst);
+      if (src.EquipmentAction != null)
+        PBEquipmentAction.Serialize(src.EquipmentAction, dst);
     }
     protected static void Serialize(SEInhalerAction src, pulse.cdm.bind.InhalerActionData dst)
     {
@@ -851,7 +867,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.InhalerConfigurationData src, SEInhalerConfiguration dst)
     {
-      Serialize(src.InhalerAction, dst);
+      if (src.InhalerAction != null)
+        Serialize(src.InhalerAction, dst);
       if (src.ConfigurationFile != null)
         dst.SetConfigurationFile(src.ConfigurationFile);
       else if (src.Configuration != null)
@@ -877,7 +894,8 @@ namespace Pulse.CDM
     #region SEMechanicalVentilatorAction
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorActionData src, SEMechanicalVentilatorAction dst)
     {
-      PBEquipmentAction.Serialize(src.EquipmentAction, dst);
+      if (src.EquipmentAction != null)
+        PBEquipmentAction.Serialize(src.EquipmentAction, dst);
     }
     protected static void Serialize(SEMechanicalVentilatorAction src, pulse.cdm.bind.MechanicalVentilatorActionData dst)
     {
@@ -893,7 +911,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorConfigurationData src, SEMechanicalVentilatorConfiguration dst)
     {
-      Serialize(src.MechanicalVentilatorAction, dst);
+      if (src.MechanicalVentilatorAction != null)
+        Serialize(src.MechanicalVentilatorAction, dst);
       if (src.SettingsFile != null)
         dst.SetConfigurationFile(src.SettingsFile);
       else if (src.Settings != null)
@@ -925,7 +944,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorHoldData src, SEMechanicalVentilatorHold dst)
     {
-      Serialize(src.MechanicalVentilatorAction, dst);
+      if (src.MechanicalVentilatorAction != null)
+        Serialize(src.MechanicalVentilatorAction, dst);
       dst.SetState((eSwitch)src.State);
       dst.SetAppliedRespiratoryCycle((eAppliedRespiratoryCycle)src.AppliedRespiratoryCycle);
     }
@@ -951,7 +971,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorLeakData src, SEMechanicalVentilatorLeak dst)
     {
-      Serialize(src.MechanicalVentilatorAction, dst);
+      if (src.MechanicalVentilatorAction != null)
+        Serialize(src.MechanicalVentilatorAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -977,7 +998,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorModeData src, SEMechanicalVentilatorMode dst)
     {
-      Serialize(src.MechanicalVentilatorAction, dst);
+      if (src.MechanicalVentilatorAction != null)
+        Serialize(src.MechanicalVentilatorAction, dst);
       dst.SetConnection((eSwitch)src.Connection);
     }
     public static pulse.cdm.bind.MechanicalVentilatorModeData Unload(SEMechanicalVentilatorMode src)
@@ -1001,7 +1023,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorContinuousPositiveAirwayPressureData src, SEMechanicalVentilatorContinuousPositiveAirwayPressure dst)
     {
-      Serialize(src.MechanicalVentilatorMode, dst);
+      if (src.MechanicalVentilatorMode != null)
+        Serialize(src.MechanicalVentilatorMode, dst);
       if (src.DeltaPressureSupport != null)
         PBProperty.Load(src.DeltaPressureSupport, dst.GetDeltaPressureSupport());
       if (src.FractionInspiredOxygen != null)
@@ -1039,7 +1062,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorPressureControlData src, SEMechanicalVentilatorPressureControl dst)
     {
-      Serialize(src.MechanicalVentilatorMode, dst);
+      if (src.MechanicalVentilatorMode != null)
+        Serialize(src.MechanicalVentilatorMode, dst);
       if (src.FractionInspiredOxygen != null)
         PBProperty.Load(src.FractionInspiredOxygen, dst.GetFractionInspiredOxygen());
       if (src.InspiratoryPeriod != null)
@@ -1085,7 +1109,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.MechanicalVentilatorVolumeControlData src, SEMechanicalVentilatorVolumeControl dst)
     {
-      Serialize(src.MechanicalVentilatorMode, dst);
+      if (src.MechanicalVentilatorMode != null)
+        Serialize(src.MechanicalVentilatorMode, dst);
       if (src.Flow != null)
         PBProperty.Load(src.Flow, dst.GetFlow());
       if (src.FractionInspiredOxygen != null)
