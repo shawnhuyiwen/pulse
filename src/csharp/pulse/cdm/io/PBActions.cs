@@ -61,8 +61,20 @@ namespace Pulse.CDM
           return PBEquipmentAction.Load(action.EquipmentAction);
         case pulse.cdm.bind.AnyActionData.ActionOneofCase.EnvironmentAction:
             return PBEnvironmentAction.Load(action.EnvironmentAction);
-    }
-      return null;
+        case pulse.cdm.bind.AnyActionData.ActionOneofCase.AdvanceTime:
+          {
+            SEAdvanceTime adv = new SEAdvanceTime();
+            PBAction.Load(action.AdvanceTime, adv);
+            return adv;
+          }
+        case pulse.cdm.bind.AnyActionData.ActionOneofCase.Serialize:
+          {
+            SESerializeState ss = new SESerializeState();
+            PBAction.Load(action.Serialize, ss);
+            return ss;
+          }
+      }
+      throw new System.InvalidOperationException("Cannot load action " + action.ToString());
     }
     /** Create a new bind object, unload the action,
      *  put that in the bind object, and return said bind object */
@@ -71,10 +83,16 @@ namespace Pulse.CDM
       pulse.cdm.bind.AnyActionData any = new pulse.cdm.bind.AnyActionData();
       if (action.GetType().IsSubclassOf(typeof(SEPatientAction)))
         any.PatientAction = PBPatientAction.Unload((SEPatientAction)action);
-      if (action.GetType().IsSubclassOf(typeof(SEEquipmentAction)))
+      else if (action.GetType().IsSubclassOf(typeof(SEEquipmentAction)))
         any.EquipmentAction = PBEquipmentAction.Unload((SEEquipmentAction)action);
-      if (action.GetType().IsSubclassOf(typeof(SEEnvironmentAction)))
+      else if (action.GetType().IsSubclassOf(typeof(SEEnvironmentAction)))
         any.EnvironmentAction = PBEnvironmentAction.Unload((SEEnvironmentAction)action);
+      else if (action is SEAdvanceTime)
+        any.AdvanceTime = PBAction.Unload((SEAdvanceTime)action);
+      else if (action is SESerializeState)
+        any.Serialize = PBAction.Unload((SESerializeState)action);
+      else
+        throw new System.InvalidOperationException("Cannot unload action " + action.ToString());
       return any;
     }
     #endregion
@@ -83,13 +101,70 @@ namespace Pulse.CDM
     public static void Serialize(pulse.cdm.bind.ActionData src, SEAction dst)
     {
       dst.Clear();
-      if (src.Comment != null)
-        dst.SetComment(src.Comment);
+      if (src != null)
+      {
+        if (src.Comment != null)
+          dst.SetComment(src.Comment);
+      }
     }
     public static void Serialize(SEAction src, pulse.cdm.bind.ActionData dst)
     {
       if (src.HasComment())
         dst.Comment = src.GetComment();
+    }
+    #endregion
+
+    #region SEAdvanceTime
+    public static void Load(pulse.cdm.bind.AdvanceTimeData src, SEAdvanceTime dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.AdvanceTimeData src, SEAdvanceTime dst)
+    {
+      Serialize(src.Action, dst);
+      if (src.Time != null)
+        PBProperty.Load(src.Time, dst.GetTime());
+    }
+    public static pulse.cdm.bind.AdvanceTimeData Unload(SEAdvanceTime src)
+    {
+      pulse.cdm.bind.AdvanceTimeData dst = new pulse.cdm.bind.AdvanceTimeData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEAdvanceTime src, pulse.cdm.bind.AdvanceTimeData dst)
+    {
+      dst.Action = new pulse.cdm.bind.ActionData();
+      Serialize(src, dst.Action);
+      if (src.HasTime())
+        dst.Time = PBProperty.Unload(src.GetTime());
+    }
+    #endregion
+
+    #region SESerializeState
+    public static void Load(pulse.cdm.bind.SerializeStateData src, SESerializeState dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.SerializeStateData src, SESerializeState dst)
+    {
+      Serialize(src.Action, dst);
+      if (!string.IsNullOrEmpty(src.Filename))
+        dst.SetFilename(src.Filename);
+      dst.SetType((eSerialization_Type)src.Type);
+    }
+    public static pulse.cdm.bind.SerializeStateData Unload(SESerializeState src)
+    {
+      pulse.cdm.bind.SerializeStateData dst = new pulse.cdm.bind.SerializeStateData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SESerializeState src, pulse.cdm.bind.SerializeStateData dst)
+    {
+      dst.Action = new pulse.cdm.bind.ActionData();
+      Serialize(src, dst.Action);
+      if (src.HasFilename())
+        dst.Filename = src.GetFilename();
+      dst.Type = (pulse.cdm.bind.SerializeStateData.Types.eType)src.GetType();
     }
     #endregion
   }

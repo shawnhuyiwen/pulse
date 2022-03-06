@@ -14,6 +14,7 @@ namespace Pulse.CDM
     protected SEChronicPericardialEffusion pericardial_effusion;
     protected SELobarPneumonia lobar_pneumonia;
     protected SEPulmonaryFibrosis pulmonary_fibrosis;
+    protected SEPulmonaryShunt pulmonary_shunt;
     protected SEChronicRenalStenosis renal_stenosis;
     protected SESepsis sepsis;
 
@@ -35,6 +36,7 @@ namespace Pulse.CDM
       pericardial_effusion = null;
       lobar_pneumonia = null;
       pulmonary_fibrosis = null;
+      pulmonary_shunt = null;
       renal_stenosis = null;
       sepsis = null;
       initial_environmental_conditions = null;
@@ -61,6 +63,8 @@ namespace Pulse.CDM
       if (HasLobarPneumonia())
         return false;
       if (HasPulmonaryFibrosis())
+        return false;
+      if (HasPulmonaryShunt())
         return false;
       if (HasSepsis())
         return false;
@@ -120,6 +124,11 @@ namespace Pulse.CDM
       if (c.GetType().IsAssignableFrom(typeof(SEPulmonaryFibrosis)))
       {
         pulmonary_fibrosis = (SEPulmonaryFibrosis)c;
+        return true;
+      }
+      if (c.GetType().IsAssignableFrom(typeof(SEPulmonaryShunt)))
+      {
+        pulmonary_shunt = (SEPulmonaryShunt)c;
         return true;
       }
       if (c.GetType().IsAssignableFrom(typeof(SESepsis)))
@@ -277,6 +286,21 @@ namespace Pulse.CDM
     public void RemovePulmonaryFibrosis()
     {
       pulmonary_fibrosis = null;
+    }
+
+    public bool HasPulmonaryShunt()
+    {
+      return pulmonary_shunt == null ? false : pulmonary_shunt.IsValid();
+    }
+    public SEPulmonaryShunt GetPulmonaryShunt()
+    {
+      if (pulmonary_shunt == null)
+        pulmonary_shunt = new SEPulmonaryShunt();
+      return pulmonary_shunt;
+    }
+    public void RemovePulmonaryShunt()
+    {
+      pulmonary_shunt = null;
     }
 
     public bool HasSepsis()

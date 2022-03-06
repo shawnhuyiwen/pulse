@@ -147,6 +147,13 @@ double SEEngineTracker::GetValue(const SEDataRequest& dr) const
     return drs->GetValue(*dr.GetUnit());
   return drs->GetValue();
 }
+std::string SEEngineTracker::GetHeader(const SEDataRequest& dr) const
+{
+  auto drs = GetScalar(dr);
+  if (drs == nullptr)
+    return "Not Tracked";
+  return drs->Heading;
+}
 
 const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
 {
@@ -263,7 +270,10 @@ void SEEngineTracker::PullData()
 bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 {
   if (m_Request2Scalar.find(&dr) != m_Request2Scalar.end())
+  {
+    Warning("Ignoring duplicate data request provided : " + dr.ToString());
     return true; // We have this connected already
+  }
 
   SEDataRequestScalar* ds=new SEDataRequestScalar(GetLogger());
   m_Request2Scalar[&dr]=ds;

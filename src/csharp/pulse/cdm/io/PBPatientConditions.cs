@@ -145,7 +145,8 @@ namespace Pulse.CDM
     #region SEPatientCondition
     public static void Serialize(pulse.cdm.bind.PatientConditionData src, SEPatientCondition dst)
     {
-      PBCondition.Serialize(src.Condition, dst);
+      if (src.Condition != null)
+        PBCondition.Serialize(src.Condition, dst);
     }
     static void Serialize(SEPatientCondition src, pulse.cdm.bind.PatientConditionData dst)
     {
@@ -161,7 +162,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AcuteRespiratoryDistressSyndromeData src, SEAcuteRespiratoryDistressSyndrome dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
       if (src.LeftLungAffected != null)
@@ -195,7 +197,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChronicAnemiaData src, SEChronicAnemia dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.ReductionFactor != null)
         PBProperty.Load(src.ReductionFactor, dst.GetReductionFactor());
     }
@@ -221,7 +224,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChronicObstructivePulmonaryDiseaseData src, SEChronicObstructivePulmonaryDisease dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.BronchitisSeverity != null)
         PBProperty.Load(src.BronchitisSeverity, dst.GetBronchitisSeverity());
       if (src.EmphysemaSeverity != null)
@@ -251,7 +255,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChronicPericardialEffusionData src, SEChronicPericardialEffusion dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.AccumulatedVolume != null)
         PBProperty.Load(src.AccumulatedVolume, dst.GetAccumulatedVolume());
     }
@@ -277,7 +282,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChronicRenalStenosisData src, SEChronicRenalStenosis dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.LeftKidneySeverity != null)
         PBProperty.Load(src.LeftKidneySeverity, dst.GetLeftKidneySeverity());
       if (src.RightKidneySeverity != null)
@@ -307,7 +313,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChronicVentricularSystolicDysfunctionData src, SEChronicVentricularSystolicDysfunction dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
     }
     public static pulse.cdm.bind.ChronicVentricularSystolicDysfunctionData Unload(SEChronicVentricularSystolicDysfunction src)
     {
@@ -329,7 +336,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ImpairedAlveolarExchangeData src, SEImpairedAlveolarExchange dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.ImpairedSurfaceArea != null)
         PBProperty.Load(src.ImpairedSurfaceArea, dst.GetImpairedSurfaceArea());
       else if (src.ImpairedFraction != null)
@@ -363,7 +371,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.LobarPneumoniaData src, SELobarPneumonia dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
       if (src.LeftLungAffected != null)
@@ -397,7 +406,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.PulmonaryFibrosisData src, SEPulmonaryFibrosis dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -423,7 +433,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.PulmonaryShuntData src, SEPulmonaryShunt dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -449,7 +460,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.SepsisData src, SESepsis dst)
     {
-      Serialize(src.PatientCondition, dst);
+      if (src.PatientCondition != null)
+        Serialize(src.PatientCondition, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }

@@ -37,4 +37,12 @@ namespace Pulse.CDM
     Neutral,
     Positive
   }
+
+  public enum eDecimalFormatType : int
+  {
+    SystemFormatting = 0,
+    DefaultFloat,
+    FixedMantissa,
+    SignificantDigits
+  }
 }

@@ -347,6 +347,11 @@ double DataTrack::GetProbe(const std::string& name)
   Element& e = GetElement(name);
   return e.probe;
 }
+std::string DataTrack::GetProbeName(size_t idx)
+{
+  Element& e = GetElement(idx);
+  return e.name;
+}
 
 size_t DataTrack::Track(const std::string& name, double time, double value)
 {

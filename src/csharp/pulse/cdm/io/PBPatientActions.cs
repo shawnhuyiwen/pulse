@@ -365,7 +365,8 @@ namespace Pulse.CDM
     #region SEPatientAction
     public static void Serialize(pulse.cdm.bind.PatientActionData src, SEPatientAction dst)
     {
-      PBAction.Serialize(src.Action, dst);
+      if (src.Action != null)
+        PBAction.Serialize(src.Action, dst);
     }
     static void Serialize(SEPatientAction src, pulse.cdm.bind.PatientActionData dst)
     {
@@ -381,7 +382,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AcuteRespiratoryDistressSyndromeExacerbationData src, SEAcuteRespiratoryDistressSyndromeExacerbation dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
       if (src.LeftLungAffected != null)
@@ -415,7 +417,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AcuteStressData src, SEAcuteStress dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -441,7 +444,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AirwayObstructionData src, SEAirwayObstruction dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -467,7 +471,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ArrhythmiaData src, SEArrhythmia dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       dst.SetRhythm((eHeartRhythm)(int)src.Rhythm);
     }
     public static pulse.cdm.bind.ArrhythmiaData Unload(SEArrhythmia src)
@@ -491,7 +496,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.AsthmaAttackData src, SEAsthmaAttack dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -517,7 +523,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.BrainInjuryData src, SEBrainInjury dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
       dst.SetInjuryType((eBrainInjury_Type)(int)src.Type);
@@ -545,7 +552,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.BronchoconstrictionData src, SEBronchoconstriction dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -571,7 +579,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChestCompressionForceData src, SEChestCompressionForce dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Force != null)
         PBProperty.Load(src.Force, dst.GetForce());
     }
@@ -597,7 +606,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChestCompressionForceScaleData src, SEChestCompressionForceScale dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.ForcePeriod != null)
         PBProperty.Load(src.ForcePeriod, dst.GetForcePeriod());
       if (src.ForceScale != null)
@@ -627,7 +637,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChestOcclusiveDressingData src, SEChestOcclusiveDressing dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       dst.SetSide((eSide)(int)src.Side);
       dst.SetState((eSwitch)(int)src.State);
     }
@@ -653,7 +664,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ChronicObstructivePulmonaryDiseaseExacerbationData src, SEChronicObstructivePulmonaryDiseaseExacerbation dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.BronchitisSeverity != null)
         PBProperty.Load(src.BronchitisSeverity, dst.GetBronchitisSeverity());
       if (src.EmphysemaSeverity != null)
@@ -683,7 +695,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ConsciousRespirationData src, SEConsciousRespiration dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       dst.SetStartImmediately(src.StartImmediately);
       foreach (pulse.cdm.bind.AnyConsciousRespirationCommandData any in src.Command)
       {
@@ -866,7 +879,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ConsumeNutrientsData src, SEConsumeNutrients dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.NutritionFile != null)
         dst.SetNutritionFile(src.NutritionFile);
       if (src.Nutrition != null)
@@ -897,7 +911,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.DyspneaData src, SEDyspnea dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -923,7 +938,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ExerciseData src, SEExercise dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Intensity != null)
         PBProperty.Load(src.Intensity, dst.GetIntensity());
     }
@@ -949,7 +965,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.HemorrhageData src, SEHemorrhage dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       dst.SetType((eHemorrhage_Type)(int)src.Type);
       if (src.Compartment != null)
         dst.SetCompartment(src.Compartment);
@@ -985,7 +1002,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.ImpairedAlveolarExchangeExacerbationData src, SEImpairedAlveolarExchangeExacerbation dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.ImpairedSurfaceArea != null)
         PBProperty.Load(src.ImpairedSurfaceArea, dst.GetImpairedSurfaceArea());
       else if (src.ImpairedFraction != null)
@@ -1019,7 +1037,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.IntubationData src, SEIntubation dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       dst.SetType((eIntubation_Type)(int)src.Type);
     }
     public static pulse.cdm.bind.IntubationData Unload(SEIntubation src)
@@ -1043,7 +1062,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.LobarPneumoniaExacerbationData src, SELobarPneumoniaExacerbation dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
       if (src.LeftLungAffected != null)
@@ -1077,7 +1097,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.MechanicalVentilationData src, SEMechanicalVentilation dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       dst.SetState((eSwitch)(int)src.State);
       if (src.Flow != null)
         PBProperty.Load(src.Flow, dst.GetFlow());
@@ -1131,7 +1152,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.NeedleDecompressionData src, SENeedleDecompression dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       dst.SetSide((eSide)(int)src.Side);
       dst.SetState((eSwitch)(int)src.State);
     }
@@ -1158,7 +1180,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.PericardialEffusionData src, SEPericardialEffusion dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.EffusionRate != null)
         PBProperty.Load(src.EffusionRate, dst.GetEffusionRate());
     }
@@ -1184,7 +1207,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.PulmonaryShuntExacerbationData src, SEPulmonaryShuntExacerbation dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -1210,7 +1234,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.RespiratoryFatigueData src, SERespiratoryFatigue dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Severity != null)
         PBProperty.Load(src.Severity, dst.GetSeverity());
     }
@@ -1236,7 +1261,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.RespiratoryMechanicsConfigurationData src, SERespiratoryMechanicsConfiguration dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.SettingsFile != null)
         dst.SetConfigurationFile(src.SettingsFile);
       else if (src.Settings != null)
@@ -1268,7 +1294,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.SubstanceBolusData src, SESubstanceBolus dst)
     {
-      Serialize(src.PatientAction, dst);
+      if(src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Substance != null)
         dst.SetSubstance(src.Substance);
       dst.SetAdminRoute((eSubstanceAdministration_Route)(int)src.AdministrationRoute);
@@ -1306,7 +1333,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.SubstanceCompoundInfusionData src, SESubstanceCompoundInfusion dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.SubstanceCompound != null)
         dst.SetSubstanceCompound(src.SubstanceCompound);
       if (src.Rate != null)
@@ -1340,7 +1368,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.SubstanceInfusionData src, SESubstanceInfusion dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       if (src.Substance != null)
         dst.SetSubstance(src.Substance);
       if (src.Concentration != null)
@@ -1377,7 +1406,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.SupplementalOxygenData src, SESupplementalOxygen dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       dst.SetDevice((eSupplementalOxygen_Device)(int)src.Device);
       if (src.Flow != null)
         PBProperty.Load(src.Flow, dst.GetFlow());
@@ -1409,7 +1439,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.TensionPneumothoraxData src, SETensionPneumothorax dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
       dst.SetType((eGate)(int)src.Type);
       dst.SetSide((eSide)(int)src.Side);
       if (src.Severity != null)
@@ -1439,7 +1470,8 @@ namespace Pulse.CDM
     }
     public static void Serialize(pulse.cdm.bind.UrinateData src, SEUrinate dst)
     {
-      Serialize(src.PatientAction, dst);
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
     }
     public static pulse.cdm.bind.UrinateData Unload(SEUrinate src)
     {

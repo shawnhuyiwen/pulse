@@ -73,6 +73,8 @@ public:
   virtual bool HasUnit() const;
   virtual void InvalidateUnit();
 
+  virtual std::string ToString()const;
+
 protected:
 
   eDataRequest_Category          m_Category;

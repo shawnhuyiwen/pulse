@@ -76,8 +76,10 @@ double Convert(double d, const CCompoundUnit& from, const CCompoundUnit& to)
 {
   if (&from == &to)
     return d;
-  // I am assuming we are not going to do Quantity A to Quantity B Conversions
+  // For speed sake, I am assuming we are not going to do Quantity A to Quantity B Conversions
   return CUnitConversionEngine::GetEngine().QuickConvertValue(d, from, to);
+  // If we need to convert quantites, compatibility checking each time slows things down
+  //return CUnitConversionEngine::GetEngine().ConvertValue(d, from, to);
 }
 
 bool   CompatibleUnits(const CCompoundUnit& from, const CCompoundUnit& to)
@@ -85,6 +87,8 @@ bool   CompatibleUnits(const CCompoundUnit& from, const CCompoundUnit& to)
   if (from == to)
     return true;
   if (from.GetDimension() == to.GetDimension())
+    return true;
+  if (*from.GetDimension() == *to.GetDimension())
     return true;
   // See if the quantity types (Dimensions) are convertable
   double fromExp;
