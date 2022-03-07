@@ -957,9 +957,9 @@ const std::vector<SEHemorrhage*>& SEPatientActionCollection::GetHemorrhages()
 {
   return m_Hemorrhages;
 }
-const std::vector<SEHemorrhage const*>& SEPatientActionCollection::GetHemorrhages() const
+const std::vector<const SEHemorrhage*> SEPatientActionCollection::GetHemorrhages() const
 {
-  return *((std::vector<const SEHemorrhage*>*) &m_Hemorrhages);
+  return std::vector<const SEHemorrhage*>(m_Hemorrhages.begin(), m_Hemorrhages.end());
 }
 void SEPatientActionCollection::RemoveHemorrhage(const std::string& cmptName)
 {
@@ -1220,9 +1220,9 @@ const std::vector<SESubstanceBolus*>& SEPatientActionCollection::GetSubstanceBol
 {
   return m_SubstanceBoluses;
 }
-const std::vector<SESubstanceBolus const*>& SEPatientActionCollection::GetSubstanceBoluses() const
+const std::vector<const SESubstanceBolus*> SEPatientActionCollection::GetSubstanceBoluses() const
 {
-  return *((std::vector<const SESubstanceBolus*>*) & m_SubstanceBoluses);
+  return std::vector<const SESubstanceBolus*>(m_SubstanceBoluses.begin(), m_SubstanceBoluses.end());
 }
 void SEPatientActionCollection::RemoveSubstanceBolus(const SESubstance& sub)
 {
@@ -1260,9 +1260,9 @@ const std::vector<SESubstanceInfusion*>& SEPatientActionCollection::GetSubstance
 {
   return m_SubstanceInfusions;
 }
-const std::vector<SESubstanceInfusion const*>& SEPatientActionCollection::GetSubstanceInfusions() const
+const std::vector<const SESubstanceInfusion*> SEPatientActionCollection::GetSubstanceInfusions() const
 {
-  return *((std::vector<const SESubstanceInfusion*>*)&m_SubstanceInfusions);
+  return std::vector<const SESubstanceInfusion*>(m_SubstanceInfusions.begin(), m_SubstanceInfusions.end());
 }
 void SEPatientActionCollection::RemoveSubstanceInfusion(const SESubstance& sub)
 {
@@ -1300,9 +1300,10 @@ const std::vector<SESubstanceCompoundInfusion*>& SEPatientActionCollection::GetS
 {
   return m_SubstanceCompoundInfusions;
 }
-const std::vector<SESubstanceCompoundInfusion const*>& SEPatientActionCollection::GetSubstanceCompoundInfusions() const
+const std::vector<const SESubstanceCompoundInfusion*> SEPatientActionCollection::GetSubstanceCompoundInfusions() const
 {
-  return *((std::vector<const SESubstanceCompoundInfusion*>*) & m_SubstanceCompoundInfusions);
+  
+  return std::vector<const SESubstanceCompoundInfusion*>(m_SubstanceCompoundInfusions.begin(), m_SubstanceCompoundInfusions.end());
 }
 void SEPatientActionCollection::RemoveSubstanceCompoundInfusion(const SESubstanceCompound& sub)
 {

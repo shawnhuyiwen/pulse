@@ -69,9 +69,9 @@ const std::vector<SESegment*>& SECurve::GetSegments()
 {
   return m_Segments;
 }
-const std::vector<const SESegment*>& SECurve::GetSegments() const
+const std::vector<const SESegment*> SECurve::GetSegments() const
 {
-  return *((std::vector<const SESegment*>*) & m_Segments);
+  return std::vector<const SESegment*>(m_Segments.begin(), m_Segments.end());
 }
 
 std::string SECurve::ToString() const

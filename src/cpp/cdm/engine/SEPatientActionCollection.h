@@ -135,7 +135,7 @@ public:
   SEHemorrhage& GetHemorrhage(const std::string& cmptName);
   const SEHemorrhage* GetHemorrhage(const std::string& cmptName) const;
   const std::vector<SEHemorrhage*>& GetHemorrhages();
-  const std::vector<SEHemorrhage const*>& GetHemorrhages() const;
+  const std::vector<const SEHemorrhage*> GetHemorrhages() const;
   void RemoveHemorrhage(const std::string& cmptName);
 
   bool HasImpairedAlveolarExchangeExacerbation() const;
@@ -194,7 +194,7 @@ public:
   SESubstanceBolus& GetSubstanceBolus(const SESubstance& sub);
   const SESubstanceBolus* GetSubstanceBolus(const SESubstance& sub) const;
   const std::vector<SESubstanceBolus*>& GetSubstanceBoluses();
-  const std::vector<SESubstanceBolus const*>& GetSubstanceBoluses() const;
+  const std::vector<const SESubstanceBolus*> GetSubstanceBoluses() const;
   void RemoveSubstanceBolus(const SESubstance& sub);
 
   bool HasSubstanceInfusion() const;
@@ -202,7 +202,7 @@ public:
   SESubstanceInfusion& GetSubstanceInfusion(const SESubstance& sub);
   const SESubstanceInfusion* GetSubstanceInfusion(const SESubstance& sub) const;
   const std::vector<SESubstanceInfusion*>& GetSubstanceInfusions();
-  const std::vector<SESubstanceInfusion const*>& GetSubstanceInfusions() const;
+  const std::vector<const SESubstanceInfusion*> GetSubstanceInfusions() const;
   void RemoveSubstanceInfusion(const SESubstance& sub);
 
   bool HasSubstanceCompoundInfusion() const;
@@ -210,7 +210,7 @@ public:
   SESubstanceCompoundInfusion& GetSubstanceCompoundInfusion(const SESubstanceCompound& sub);
   const SESubstanceCompoundInfusion* GetSubstanceCompoundInfusion(const SESubstanceCompound& sub) const;
   const std::vector<SESubstanceCompoundInfusion*>& GetSubstanceCompoundInfusions();
-  const std::vector<SESubstanceCompoundInfusion const*>&  GetSubstanceCompoundInfusions() const;
+  const std::vector<const SESubstanceCompoundInfusion*>  GetSubstanceCompoundInfusions() const;
   void RemoveSubstanceCompoundInfusion(const SESubstanceCompound& sub);
 
   bool HasSupplementalOxygen() const;

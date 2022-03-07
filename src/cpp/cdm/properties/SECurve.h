@@ -27,7 +27,7 @@ public:
   SESegmentSigmoidal& AddSigmoidalSegment();
 
   virtual const std::vector<SESegment*>& GetSegments();
-  virtual const std::vector<const SESegment*>& GetSegments() const;
+  virtual const std::vector<const SESegment*> GetSegments() const;
 
   virtual std::string ToString() const;
   virtual void ToString(std::ostream& str) const;
