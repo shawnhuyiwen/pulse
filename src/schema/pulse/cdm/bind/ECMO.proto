@@ -12,7 +12,7 @@ message ECMOSettingsData
 {
   eSwitch                               Connection                                = 1;/**<< @brief @ref eSwitchTable */
   ScalarVolumeData                      PrimingVolume                             = 2;/**<< @brief Includes the volume in the device and tubing. */
-  ScalarVolumePerTimeData               TransfustionFlow                          = 3;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
+  ScalarVolumePerTimeData               TransfusionFlow                           = 3;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
   
   oneof Primer
   {
