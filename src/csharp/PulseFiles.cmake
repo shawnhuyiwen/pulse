@@ -11,6 +11,8 @@ set(PULSE_CSHARP_BIND_FILES
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Circuit.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Compartment.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Conditions.cs
+  ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/ECMO.cs
+  ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/ECMOActions.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/ElectroCardioGram.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Engine.cs
   ${PULSE_CSHARP_BIND_DIR}/pulse/cdm/bind/Enums.cs

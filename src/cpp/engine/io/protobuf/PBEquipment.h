@@ -5,11 +5,13 @@
 
 PULSE_BIND_DECL(AnesthesiaMachine)
 PULSE_BIND_DECL(BagValveMask)
+PULSE_BIND_DECL(ECMO)
 PULSE_BIND_DECL(ElectroCardioGram)
 PULSE_BIND_DECL(Inhaler)
 PULSE_BIND_DECL(MechanicalVentilator)
 #include "engine/common/system/equipment/AnesthesiaMachineModel.h"
 #include "engine/common/system/equipment/BagValveMaskModel.h"
+#include "engine/common/system/equipment/ECMOModel.h"
 #include "engine/common/system/equipment/ElectroCardioGramModel.h"
 #include "engine/common/system/equipment/InhalerModel.h"
 #include "engine/common/system/equipment/MechanicalVentilatorModel.h"
@@ -29,6 +31,11 @@ namespace pulse
     static PULSE_BIND::BagValveMaskData* Unload(const BagValveMaskModel& src);
     static void Serialize(const PULSE_BIND::BagValveMaskData& src, BagValveMaskModel& dst);
     static void Serialize(const BagValveMaskModel& src, PULSE_BIND::BagValveMaskData& dst);
+
+    static void Load(const PULSE_BIND::ECMOData& src, ECMOModel& dst);
+    static PULSE_BIND::ECMOData* Unload(const ECMOModel& src);
+    static void Serialize(const PULSE_BIND::ECMOData& src, ECMOModel& dst);
+    static void Serialize(const ECMOModel& src, PULSE_BIND::ECMOData& dst);
 
     static void Load(const PULSE_BIND::ElectroCardioGramData& src, ElectroCardioGramModel& dst);
     static PULSE_BIND::ElectroCardioGramData* Unload(const ElectroCardioGramModel& src);

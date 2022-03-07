@@ -1,20 +1,7 @@
 {
   "Name": "ECMO",
   "Description": "Connect the ECMO machine to a patient.",
-  "PatientConfiguration": {
-      "PatientFile": "StandardMale.json",
-      "Conditions": { "AnyCondition": [{
-        "PatientCondition": {
-          "ImpairedAlveolarExchange": {
-            "ImpairedFraction": {
-              "Scalar0To1": {
-                "Value": 0.6
-              }
-            }
-          }
-        }
-      }]}
-  },
+  "EngineStateFile":"./states/StandardMale@0s.pbb",
   "DataRequestManager": {
     "DataRequest": 
     [
@@ -90,7 +77,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 30.0,
+          "Value": 3.0,
           "Unit": "s"
         }
       }

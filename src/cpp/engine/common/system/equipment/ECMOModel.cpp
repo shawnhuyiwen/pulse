@@ -121,4 +121,8 @@ namespace pulse
   {
   }
 
+  void ECMOModel::ComputeExposedModelParameters()
+  {
+  }
+
 END_NAMESPACE

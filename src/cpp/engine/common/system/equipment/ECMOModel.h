@@ -44,5 +44,10 @@ namespace pulse
     void PostProcess(bool solve_and_transport = true);
 
   protected:
+    void ComputeExposedModelParameters() override;
+
+    // Serializable member variables (Set in Initialize and in schema)
+
+    // Stateless member variable (Set in SetUp())
   };
 END_NAMESPACE

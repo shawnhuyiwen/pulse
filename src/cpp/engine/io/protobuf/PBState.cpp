@@ -266,6 +266,11 @@ namespace pulse
     else
       PBEquipment::Load(src.bagvalvemask(), *dst.m_BagValveMaskModel);
 
+    if (!src.has_ecmo())
+      ss << "Missing ECMO State" << std::endl;
+    else
+      PBEquipment::Load(src.ecmo(), *dst.m_ECMOModel);
+
     if (!src.has_electrocardiogram())
       ss << "Missing ECG State" << std::endl;
     else
@@ -363,6 +368,7 @@ namespace pulse
     dst.set_allocated_environment(PBEnvironment::Unload(*src.m_EnvironmentModel));
     dst.set_allocated_anesthesiamachine(PBEquipment::Unload(*src.m_AnesthesiaMachineModel));
     dst.set_allocated_bagvalvemask(PBEquipment::Unload(*src.m_BagValveMaskModel));
+    dst.set_allocated_ecmo(PBEquipment::Unload(*src.m_ECMOModel));
     dst.set_allocated_electrocardiogram(PBEquipment::Unload(*src.m_ElectroCardioGramModel));
     dst.set_allocated_inhaler(PBEquipment::Unload(*src.m_InhalerModel));
     dst.set_allocated_mechanicalventilator(PBEquipment::Unload(*src.m_MechanicalVentilatorModel));

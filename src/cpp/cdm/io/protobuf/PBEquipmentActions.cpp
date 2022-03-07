@@ -1136,6 +1136,12 @@ SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionDat
     PBEquipmentAction::Load(any.bagvalvemasksqueeze(), *a);
     return a;
   }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::kECMOConfiguration:
+  {
+    SEECMOConfiguration* a = new SEECMOConfiguration(subMgr.GetLogger());
+    PBEquipmentAction::Load(any.ecmoconfiguration(), *a, subMgr);
+    return a;
+  }
   case CDM_BIND::AnyEquipmentActionData::ActionCase::kInhalerConfiguration:
   {
     SEInhalerConfiguration* a = new SEInhalerConfiguration(subMgr.GetLogger());
@@ -1218,6 +1224,13 @@ CDM_BIND::AnyEquipmentActionData* PBEquipmentAction::Unload(const SEEquipmentAct
   if (bvms != nullptr)
   {
     any->set_allocated_bagvalvemasksqueeze(PBEquipmentAction::Unload(*bvms));
+    return any;
+  }
+
+  const SEECMOConfiguration* ec = dynamic_cast<const SEECMOConfiguration*>(&action);
+  if (ec != nullptr)
+  {
+    any->set_allocated_ecmoconfiguration(PBEquipmentAction::Unload(*ec));
     return any;
   }
 
