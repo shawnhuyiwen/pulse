@@ -74,11 +74,11 @@ then
   echo "Copying pregenerated protobuf files from $4 to $buildDir"
   if [ ! -d "$buildDir/Innerbuild/src/cpp/pulse" ] 
   then
-    mkdir "$buildDir/Innerbuild/src/cpp/pulse"
+    mkdir -p "$buildDir/Innerbuild/src/cpp/pulse"
   fi
-  cp -r "$4/Innerbuild/src/cpp/pulse" "$buildDir/Innerbuild/src/cpp/pulse"
+  cp -r "$4/Innerbuild/src/cpp/pulse" "$buildDir/Innerbuild/src/cpp"
   # Get touch file so we don't run protoc
-  cp "$4/Innerbuild/src/schema/schema_last_built" "$4/Innerbuild/src/"
+  cp "$4/Innerbuild/src/schema_last_built" "$buildDir/Innerbuild/src/"
 fi
 
 # Run this command from a directory that contains both your source and build directories
