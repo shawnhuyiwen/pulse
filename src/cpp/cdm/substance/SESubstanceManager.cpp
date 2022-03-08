@@ -259,7 +259,6 @@ void SESubstanceManager::RemoveActiveCompound(const SESubstanceCompound& compoun
       m_cActiveCompounds.erase(m_cActiveCompounds.begin()+i);
       break;
     }
-    i++;
   }
 }
 

@@ -519,7 +519,7 @@ SEPatientCondition* PBPatientCondition::Load(const CDM_BIND::AnyPatientCondition
     return nullptr;
   }
   }
-  subMgr.Error("Unknown condition type : " + any.Condition_case());
+  subMgr.Error("Unknown condition type : " + std::to_string(any.Condition_case()));
   return nullptr;
 }
 CDM_BIND::AnyPatientConditionData* PBPatientCondition::Unload(const SEPatientCondition& condition)

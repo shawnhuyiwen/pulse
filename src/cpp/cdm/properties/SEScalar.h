@@ -235,8 +235,8 @@ public:
   virtual void Copy(const SEScalarQuantity<Unit>& s);
   virtual bool Force(const SEScalarQuantity<Unit>& s);
 
-  virtual bool HasUnit() const;
-  virtual const Unit* GetUnit() const;
+  bool HasUnit() const override;
+  const Unit* GetUnit() const override;
 
   double GetValue() const = delete;// Must provide a unit
   virtual double GetValue(const Unit& unit) const;
@@ -262,8 +262,8 @@ public:
   bool Equals(const SEScalar& to) const = delete;// Must provide a unit
   virtual bool Equals(const SEScalarQuantity<Unit>& to) const;
 
-  virtual std::string ToString() const;
-  virtual void ToString(std::ostream &str) const;
+  std::string ToString() const override;
+  void ToString(std::ostream &str) const override;
 
 protected:
   const Unit* m_unit=nullptr;

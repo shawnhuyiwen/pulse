@@ -12,7 +12,7 @@ public:
   SEFunctionElectricPotentialVsTime();
   virtual ~SEFunctionElectricPotentialVsTime();
 
-  void Clear();
+  void Clear() override;
   void Copy(const SEFunction& src) = delete;
   void Copy(const SEFunctionElectricPotentialVsTime& src);
 

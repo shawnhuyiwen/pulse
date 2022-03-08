@@ -448,7 +448,7 @@ void PBPatientAction::Serialize(const CDM_BIND::ConsciousRespirationData& src, S
       PBPatientAction::Load(command.useinhaler(), dst.AddUseInhaler());
       break;
     default:
-      dst.Warning("Ignoring unknown Conscious Respiration Command : " + command.Command_case());
+      dst.Warning("Ignoring unknown Conscious Respiration Command : " + std::to_string(command.Command_case()));
       continue;
     }
     dst.m_Commands.back()->SetComment(command.comment());
@@ -1608,7 +1608,7 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     return nullptr;
   }
   }
-  subMgr.Error("Unknown action type : " + any.Action_case());
+  subMgr.Error("Unknown action type : " + std::to_string(any.Action_case()));
   return nullptr;
 }
 CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& action)

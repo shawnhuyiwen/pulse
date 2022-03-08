@@ -13,13 +13,13 @@ public:
   SEMechanicalVentilatorContinuousPositiveAirwayPressure(Logger* logger = nullptr);
   virtual ~SEMechanicalVentilatorContinuousPositiveAirwayPressure();
 
-  virtual void Clear();
+  void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, bool /*preserveState*/ = false);
   virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr) override;
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual bool HasDeltaPressureSupport() const;
   virtual SEScalarPressure& GetDeltaPressureSupport();
@@ -37,9 +37,9 @@ public:
   virtual SEScalarTime& GetSlope();
   virtual double GetSlope(const TimeUnit& unit) const;
 
-  virtual void ToString(std::ostream& str) const;
+  void ToString(std::ostream& str) const override;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 

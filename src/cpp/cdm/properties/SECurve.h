@@ -15,7 +15,7 @@ public:
   SECurve();
   virtual ~SECurve();
 
-  virtual void Invalidate();
+  void Invalidate() override;
   virtual bool IsValid() const override;
   virtual void Copy(const SECurve& src);
 

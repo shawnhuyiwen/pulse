@@ -14,10 +14,10 @@ protected:
 public:  
   virtual ~SEThermalCircuitPath();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
-  virtual SEThermalCircuitNode& GetSourceNode() const;
-  virtual SEThermalCircuitNode& GetTargetNode() const;
+  SEThermalCircuitNode& GetSourceNode() const override;
+  SEThermalCircuitNode& GetTargetNode() const override;
 
   virtual bool HasHeatTransferRate() const;
   virtual SEScalarPower& GetHeatTransferRate();
@@ -26,36 +26,36 @@ public:
   virtual SEScalarPower& GetNextHeatTransferRate();
   virtual double GetNextHeatTransferRate(const PowerUnit& unit) const;
 
-  virtual bool HasResistance() const;
-  virtual SEScalarHeatResistance& GetResistance();
+  bool HasResistance() const override;
+  SEScalarHeatResistance& GetResistance() override;
   virtual double GetResistance(const HeatResistanceUnit& unit) const;
-  virtual bool HasNextResistance() const;
-  virtual SEScalarHeatResistance& GetNextResistance();
+  bool HasNextResistance() const override;
+  SEScalarHeatResistance& GetNextResistance() override;
   virtual double GetNextResistance(const HeatResistanceUnit& unit) const;
-  virtual bool HasResistanceBaseline() const;
-  virtual SEScalarHeatResistance& GetResistanceBaseline();
+  bool HasResistanceBaseline() const override;
+  SEScalarHeatResistance& GetResistanceBaseline() override;
   virtual double GetResistanceBaseline(const HeatResistanceUnit& unit) const;
   virtual void RemoveResistance() override;
 
-  virtual bool HasCapacitance() const;
-  virtual SEScalarHeatCapacitance& GetCapacitance();
+  bool HasCapacitance() const override;
+  SEScalarHeatCapacitance& GetCapacitance() override;
   virtual double GetCapacitance(const HeatCapacitanceUnit& unit) const;
-  virtual bool HasNextCapacitance() const;
-  virtual SEScalarHeatCapacitance& GetNextCapacitance();
+  bool HasNextCapacitance() const override;
+  SEScalarHeatCapacitance& GetNextCapacitance() override;
   virtual double GetNextCapacitance(const HeatCapacitanceUnit& unit) const;
-  virtual bool HasCapacitanceBaseline() const;
-  virtual SEScalarHeatCapacitance& GetCapacitanceBaseline();
+  bool HasCapacitanceBaseline() const override;
+  SEScalarHeatCapacitance& GetCapacitanceBaseline() override;
   virtual double GetCapacitanceBaseline(const HeatCapacitanceUnit& unit) const;
   virtual void RemoveCapacitance() override;
 
-  virtual bool HasInductance() const;
-  virtual SEScalarHeatInductance& GetInductance();
+  bool HasInductance() const override;
+  SEScalarHeatInductance& GetInductance() override;
   virtual double GetInductance(const HeatInductanceUnit& unit) const;
-  virtual bool HasNextInductance() const;
-  virtual SEScalarHeatInductance& GetNextInductance();
+  bool HasNextInductance() const override;
+  SEScalarHeatInductance& GetNextInductance() override;
   virtual double GetNextInductance(const HeatInductanceUnit& unit) const;
-  virtual bool HasInductanceBaseline() const;
-  virtual SEScalarHeatInductance& GetInductanceBaseline();
+  bool HasInductanceBaseline() const override;
+  SEScalarHeatInductance& GetInductanceBaseline() override;
   virtual double GetInductanceBaseline(const HeatInductanceUnit& unit) const;
   virtual void RemoveInductance() override;
 

@@ -121,7 +121,7 @@ SEEnvironmentAction* PBEnvironmentAction::Load(const CDM_BIND::AnyEnvironmentAct
     return nullptr;
   }
   }
-  subMgr.Error("Unknown action type : " + any.Action_case());
+  subMgr.Error("Unknown action type : " + std::to_string(any.Action_case()));
   return nullptr;
 }
 CDM_BIND::AnyEnvironmentActionData* PBEnvironmentAction::Unload(const SEEnvironmentAction& action)

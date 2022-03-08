@@ -14,10 +14,10 @@ protected:
 public:
   virtual ~SEElectricalCircuitPath();
 
-  virtual void Clear(); //clear memory
+  void Clear() override; //clear memory
 
-  virtual SEElectricalCircuitNode& GetSourceNode() const { return m_ElectricalSourceNode; }
-  virtual SEElectricalCircuitNode& GetTargetNode() const { return m_ElectricalTargetNode; }
+  SEElectricalCircuitNode& GetSourceNode() const override { return m_ElectricalSourceNode; }
+  SEElectricalCircuitNode& GetTargetNode() const override { return m_ElectricalTargetNode; }
 
   virtual bool HasCurrent() const;
   virtual SEScalarElectricCurrent& GetCurrent();
@@ -26,36 +26,36 @@ public:
   virtual SEScalarElectricCurrent& GetNextCurrent();
   virtual double GetNextCurrent(const ElectricCurrentUnit& unit) const;
 
-  virtual bool HasResistance() const;
-  virtual SEScalarElectricResistance& GetResistance();
+  bool HasResistance() const override;
+  SEScalarElectricResistance& GetResistance() override;
   virtual double GetResistance(const ElectricResistanceUnit& unit) const;
-  virtual bool HasNextResistance() const;
-  virtual SEScalarElectricResistance& GetNextResistance();
+  bool HasNextResistance() const override;
+  SEScalarElectricResistance& GetNextResistance() override;
   virtual double GetNextResistance(const ElectricResistanceUnit& unit) const;
-  virtual bool HasResistanceBaseline() const;
-  virtual SEScalarElectricResistance& GetResistanceBaseline();
+  bool HasResistanceBaseline() const override;
+  SEScalarElectricResistance& GetResistanceBaseline() override;
   virtual double GetResistanceBaseline(const ElectricResistanceUnit& unit) const;
   virtual void RemoveResistance() override;
 
-  virtual bool HasCapacitance() const;
-  virtual SEScalarElectricCapacitance& GetCapacitance();
+  bool HasCapacitance() const override;
+  SEScalarElectricCapacitance& GetCapacitance() override;
   virtual double GetCapacitance(const ElectricCapacitanceUnit& unit) const;
-  virtual bool HasNextCapacitance() const;
-  virtual SEScalarElectricCapacitance& GetNextCapacitance();
+  bool HasNextCapacitance() const override;
+  SEScalarElectricCapacitance& GetNextCapacitance() override;
   virtual double GetNextCapacitance(const ElectricCapacitanceUnit& unit) const;
-  virtual bool HasCapacitanceBaseline() const;
-  virtual SEScalarElectricCapacitance& GetCapacitanceBaseline();
+  bool HasCapacitanceBaseline() const override;
+  SEScalarElectricCapacitance& GetCapacitanceBaseline() override;
   virtual double GetCapacitanceBaseline(const ElectricCapacitanceUnit& unit) const;
   virtual void RemoveCapacitance() override;
 
-  virtual bool HasInductance() const;
-  virtual SEScalarElectricInductance& GetInductance();
+  bool HasInductance() const override;
+  SEScalarElectricInductance& GetInductance() override;
   virtual double GetInductance(const ElectricInductanceUnit& unit) const;
-  virtual bool HasNextInductance() const;
-  virtual SEScalarElectricInductance& GetNextInductance();
+  bool HasNextInductance() const override;
+  SEScalarElectricInductance& GetNextInductance() override; 
   virtual double GetNextInductance(const ElectricInductanceUnit& unit) const;
-  virtual bool HasInductanceBaseline() const;
-  virtual SEScalarElectricInductance& GetInductanceBaseline();
+  bool HasInductanceBaseline() const override;
+  SEScalarElectricInductance& GetInductanceBaseline() override;
   virtual double GetInductanceBaseline(const ElectricInductanceUnit& unit) const;
   virtual void RemoveInductance() override;
 

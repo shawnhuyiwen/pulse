@@ -36,7 +36,7 @@ SEEnvironmentCondition* PBEnvironmentCondition::Load(const CDM_BIND::AnyEnvironm
       return nullptr;
     }
   }
-  subMgr.Error("Unknown action type : " + any.Condition_case());
+  subMgr.Error("Unknown action type : " + std::to_string(any.Condition_case()));
   return nullptr;
 }
 CDM_BIND::AnyEnvironmentConditionData* PBEnvironmentCondition::Unload(const SEEnvironmentCondition& action)
