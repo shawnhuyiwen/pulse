@@ -90,7 +90,6 @@ void CUnitConversionEngine::LoadDefinitions()
   GetUCEdefs();
   DEBUGOUT(cerr << "Loading definitions...\n";)
   std::string curLine;
-  CQuantityTypeDescriptor *qtd = nullptr;
 
   while (!m_UCEdefs.eof())
   {
@@ -154,11 +153,17 @@ void CUnitConversionEngine::LoadDefinitions()
         // we need to do for Unit definitions.
         getline(curLineStream,ExpansionStr);
         DEBUGOUT(std::cerr << "Expansion is " << ExpansionStr << "\n";)
-        qtd = NewQuantityType(QuantName,ExpansionStr,twentyLog);
+        if(NewQuantityType(QuantName,ExpansionStr,twentyLog) == nullptr)
+        {
+          DEBUGOUT(std::cerr << "Unable to make quantity type for " << QuantName << "\n";)
+        }
       }
       else if (fundFlag)
       {
-        qtd = NewQuantityType(QuantName,"",twentyLog);
+        if(NewQuantityType(QuantName,"",twentyLog) == nullptr)
+        {
+          DEBUGOUT(std::cerr << "Unable to make quantity type for " << QuantName << "\n";)
+        }
       }
       else
       {

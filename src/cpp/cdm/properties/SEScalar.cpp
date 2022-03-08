@@ -19,9 +19,7 @@ unsigned long long int SEScalar::NaN =
 
 double SEScalar::dNaN()
 {
-  double d;
-  *(reinterpret_cast<unsigned long long int *>(&d)) = NaN;
-  return d;
+  return std::nan("");
 }
 
 // Opposite of isnan which can be slow

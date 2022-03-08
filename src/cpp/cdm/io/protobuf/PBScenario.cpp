@@ -129,6 +129,10 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioExecData& src, SEScenarioExec
     dst.SetEngineConfigurationFilename(src.engineconfigurationfilename());
     break;
   }
+  case CDM_BIND::ScenarioExecData::EngineConfigurationCase::ENGINECONFIGURATION_NOT_SET:
+  {
+    break;
+  }
   }
 
   switch (src.Scenario_case())
@@ -141,6 +145,10 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioExecData& src, SEScenarioExec
   case CDM_BIND::ScenarioExecData::ScenarioCase::kScenarioFilename:
   {
     dst.SetScenarioFilename(src.scenariofilename());
+    break;
+  }
+  case CDM_BIND::ScenarioExecData::ScenarioCase::SCENARIO_NOT_SET:
+  {
     break;
   }
   }
