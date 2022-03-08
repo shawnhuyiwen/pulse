@@ -7,16 +7,6 @@
 
 // Declare template classes all Scalar types at the bottom
 
-unsigned long long int SEScalar::NaN = 
-  ((unsigned long long int)255 << (8*7)) + 
-  ((unsigned long long int)(255-8) << (8*6)) + 
-  ((unsigned long long int)255 << (8*5)) + 
-  ((unsigned long long int)255 << (8*4)) +
-  ((unsigned long long int)255 << (8*3)) + 
-  (255 << (8*2)) + 
-  (255 << (8*1)) + 
-   255;
-
 double SEScalar::dNaN()
 {
   return std::nan("");

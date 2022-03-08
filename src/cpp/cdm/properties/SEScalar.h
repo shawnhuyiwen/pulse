@@ -78,7 +78,6 @@ public:
   virtual void ToString(std::ostream &str) const;
 
   static double dNaN();
-  static unsigned long long int NaN;
   static bool IsNumber(double d);
   static bool IsZero(double value, double limit);
   static bool IsValue(double target, double value);
@@ -87,7 +86,7 @@ public:
 inline std::ostream& operator<< (std::ostream& out, const SEScalar* s)
 {
   if (s == nullptr)
-    out << SEScalar::NaN << std::flush;
+    out << SEScalar::dNaN() << std::flush;
   else
     (*s).ToString(out);
   return out;
