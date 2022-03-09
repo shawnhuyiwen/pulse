@@ -2,11 +2,11 @@
 # See accompanying NOTICE file for details.
 
 from pulse.engine.PulseEngine import PulseEngine
+from pulse.cdm.ecmo import eECMO_CannulationLocation
 from pulse.cdm.ecmo_actions import SEECMOConfiguration
-from pulse.cdm.scalars import FrequencyUnit, MassPerTimeUnit, MassPerVolumeUnit, \
-                              PressureUnit, TimeUnit, VolumeUnit, VolumePerTimeUnit
+from pulse.cdm.scalars import FrequencyUnit, MassPerVolumeUnit, \
+                              PressureUnit, VolumeUnit, VolumePerTimeUnit
 from pulse.cdm.engine import SEDataRequest, SEDataRequestManager
-from pulse.cdm.patient import eSex, SEPatient, SEPatientConfiguration
 
 def HowTo_ECMO():
     pulse = PulseEngine()
@@ -18,7 +18,6 @@ def HowTo_ECMO():
         SEDataRequest.create_physiology_request("BloodVolume", unit=VolumeUnit.mL),
         SEDataRequest.create_physiology_request("CarbonDioxideSaturation", unit=VolumeUnit.mL),
         SEDataRequest.create_physiology_request("CardiacOutput", unit=VolumePerTimeUnit.L_Per_min),
-        SEDataRequest.create_physiology_request("DiastolicArterialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("EndTidalCarbonDioxidePressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_physiology_request("HeartRate", unit=FrequencyUnit.Per_min),
         SEDataRequest.create_physiology_request("Hematocrit"),
@@ -35,40 +34,57 @@ def HowTo_ECMO():
         SEDataRequest.create_liquid_compartment_substance_request("Aorta", "CarbonDioxide", "PartialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_liquid_compartment_substance_request("Aorta", "Oxygen", "PartialPressure", unit=PressureUnit.mmHg),
         # ECMO Oxygenator Data
-        SEDataRequest.create_liquid_compartment_request("ECMOOxygenator", "PH"),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Albumin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Bicarbonate", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Calcium", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "CarbonDioxide", "PartialPressure", unit=PressureUnit.mmHg),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Chloride", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Creatinine", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Glucose", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Lactate", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Oxygen", "PartialPressure", unit=PressureUnit.mmHg),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Potassium", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Sodium", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Urea", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_request("ECMOBloodSamplingPort", "PH"),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Albumin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Bicarbonate", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Calcium", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "CarbonDioxide", "PartialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Chloride", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Creatinine", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Glucose", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Lactate", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Oxygen", "PartialPressure", unit=PressureUnit.mmHg),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Potassium", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Sodium", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Urea", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
         # Various Hb concentrations
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Hemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Carbaminohemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Carboxyhemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "OxyCarbaminohemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
-        SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Oxyhemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Hemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Carbaminohemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Carboxyhemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "OxyCarbaminohemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_liquid_compartment_substance_request("ECMOBloodSamplingPort", "Oxyhemoglobin", "Concentration", unit=MassPerVolumeUnit.g_Per_L),
     ]
 
     data_mgr = SEDataRequestManager(data_requests)
     data_mgr.set_results_filename("./test_results/howto/HowTo_ECMO.py.csv")
 
-    pc = SEPatientConfiguration()
-    patient = pc.get_patient()
-    patient.set_name("ECMO")
-    patient.set_sex(eSex.Female)
-    # NOTE: No data requests are being provided, so Pulse will return the default vitals data
-    if not pulse.initialize_engine(pc, data_mgr):
-        print("Unable to create/load patient, check the error")
+    if not pulse.serialize_from_file("./states/StandardMale@0s.json", data_mgr):
+        print("Unable to load initial state file")
         return
 
-    pulse.advance_time_s(10)
+    cfg = SEECMOConfiguration()
+    settings = cfg.get_settings()
+    settings.set_inflow_location(eECMO_CannulationLocation.InternalJugular)
+    settings.set_outflow_location(eECMO_CannulationLocation.InternalJugular)
+    settings.get_oxygenator_volume().set_value(500, VolumeUnit.mL)
+    settings.get_transfusion_flow().set_value(5, VolumePerTimeUnit.mL_Per_s)
+    settings.set_substance_compound("Saline")
+    pulse.process_action(cfg)
+
+    pulse.advance_time_s(30)
+    # Get the values of the data you requested at this time
+    results = pulse.pull_data()
+    # And write it out to the console
+    data_mgr.to_console(results)
+
+    settings.clear()
+    oxyhemoglobin = results.get(data_requests[36].to_string())[-1];
+    bicarb = results.get("Bicarbonate - BloodConcentration (g/L)")[-1];
+    settings.get_substance_concentration("Oxyhemoglobin").get_concentration().set_value(oxyhemoglobin+2, MassPerVolumeUnit.g_Per_L)
+    settings.get_substance_concentration("Bicarbonate").get_concentration().set_value(bicarb+5, MassPerVolumeUnit.g_Per_L)
+    pulse.process_action(cfg)
+
+    pulse.advance_time_s(30)
     # Get the values of the data you requested at this time
     results = pulse.pull_data()
     # And write it out to the console

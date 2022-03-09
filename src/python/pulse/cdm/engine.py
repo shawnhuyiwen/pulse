@@ -511,8 +511,10 @@ class SEDataRequestManager:
     def set_samples_per_second(self, sample): self._samples_per_second = sample
 
     def to_console(self, data_values):
+        idx=0;
         for key in data_values:
-            print("{}={}".format(key, data_values[key]))
+            print("{}={} ({})".format(key, data_values[key], idx))
+            idx = idx + 1
 
 class SEEngineInitialization():
     __slots__ = ["id", "patient_configuration", "state_filename",

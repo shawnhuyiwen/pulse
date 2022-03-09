@@ -71,22 +71,19 @@ void PBECMO::Serialize(const CDM_BIND::ECMOSettingsData& src, SEECMOSettings& ds
       dst.Error("Unknown compound requsted for ECMO " + src.substancecompound());
   }
 
-  if (src.has_substanceconcentrationlist())
+  const SESubstance* substance;
+  for (int i = 0; i < src.substanceconcentrations_size(); i++)
   {
-    const SESubstance* substance;
-    for (int i = 0; i < src.substanceconcentrationlist().substanceconcentration_size(); i++)
+    const CDM_BIND::SubstanceConcentrationData& cData = src.substanceconcentrations(i);
+    substance = subMgr.GetSubstance(cData.name());
+    if (substance == nullptr)
     {
-      const CDM_BIND::SubstanceConcentrationData& cData = src.substanceconcentrationlist().substanceconcentration(i);
-      substance = subMgr.GetSubstance(cData.name());
-      if (substance == nullptr)
-      {
-        /// \fatal Could not load find substance compound component for specified substance
-        dst.Fatal("Could not load find substance component : " + cData.name(), "PBECMO::Load");
-        continue;
-      }
-      SESubstanceConcentration& sc = dst.GetSubstanceConcentration(*substance);
-      PBSubstance::Load(cData, sc);
+      /// \fatal Could not load find substance compound component for specified substance
+      dst.Fatal("Could not load find substance component : " + cData.name(), "PBECMO::Load");
+      continue;
     }
+    SESubstanceConcentration& sc = dst.GetSubstanceConcentration(*substance);
+    PBSubstance::Load(cData, sc);
   }
 }
 
@@ -109,7 +106,7 @@ void PBECMO::Serialize(const SEECMOSettings& src, CDM_BIND::ECMOSettingsData& ds
   for (SESubstanceConcentration* sc : src.m_SubstanceConcentrations)
   {
     CDM_BIND::SubstanceConcentrationData* scData =
-      dst.mutable_substanceconcentrationlist()->add_substanceconcentration();
+      dst.add_substanceconcentrations();
     PBSubstance::Serialize(*sc, *scData);
   }
 }

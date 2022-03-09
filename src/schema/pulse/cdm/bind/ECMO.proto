@@ -25,7 +25,7 @@ message ECMOSettingsData
   ScalarVolumePerTimeData               TransfusionFlow                           = 4;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
   
   string                                SubstanceCompound                         = 5;/**<< @brief Add the compound substance concentrations to the oxygenator. */
-  SubstanceConcentrationListData        SubstanceConcentrationList                = 6;/**<< @brief Set specific substance concentrations in the oxygenator. */
+  repeated SubstanceConcentrationData   SubstanceConcentrations                   = 6;/**<< @brief Set specific substance concentrations in the oxygenator. */
 }
 
 message ECMOData

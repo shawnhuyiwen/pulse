@@ -10,6 +10,8 @@ set(PULSE_BIND_JAVA_FILES
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Circuit.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Compartment.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Conditions.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/ECMO.java
+  ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/ECMOActions.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/ElectroCardioGram.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Engine.java
   ${DST_ROOT}/java/com/kitware/pulse/cdm/bind/Enums.java
