@@ -14,9 +14,11 @@ cd ..
 mkdir dockcross-builds
 
 
-call %cwd%\dockcross.bat manylinux2010-x64 .\%srcDir%\ .\dockcross-builds\
-call %cwd%\dockcross.bat android-arm .\%srcDir%\ .\dockcross-builds\ .\dockcross-builds\pulse-engine-manylinux2010-x64
-call %cwd%\dockcross.bat android-arm64 .\%srcDir%\ .\dockcross-builds\ .\dockcross-builds\pulse-engine-manylinux2010-x64
-call %cwd%\dockcross.bat linux-x64-clang .\%srcDir%\ .\dockcross-builds\
+call %cwd%\dockcross.bat manylinux2014-x64 .\%srcDir%\ .\dockcross-builds\
+call %cwd%\dockcross.bat android-arm .\%srcDir%\ .\dockcross-builds\ .\dockcross-builds\pulse-engine-manylinux2014-x64
+./android-arm cp /usr/arm-linux-androideabi/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so /work/dockcross-builds/pulse-engine-android-arm/install/bin
+call %cwd%\dockcross.bat android-arm64 .\%srcDir%\ .\dockcross-builds\ .\dockcross-builds\pulse-engine-manylinux2014-x64
+./android-arm64 cp /usr/aarch64-linux-android/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so /work/dockcross-builds/pulse-engine-android-arm64/install/bin
+::call %cwd%\dockcross.bat linux-x64-clang .\%srcDir%\ .\dockcross-builds\
 
 cd %cwd%
