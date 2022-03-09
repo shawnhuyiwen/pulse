@@ -3,6 +3,7 @@
 
 #include "cdm/CommonDefs.h"
 #include "cdm/system/equipment/ecmo/SEECMO.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 
 SEECMO::SEECMO(Logger* logger) : SEEquipment(logger)
 {
@@ -27,9 +28,7 @@ void SEECMO::TurnOff()
   if (m_Settings)
     m_Settings->Clear();
 
-  GetSettings().SetConnection(eSwitch::Off);
-  GetSettings().SetExpirationCycleRespiratoryModel(eSwitch::Off);
-  GetSettings().SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
+  GetSettings().GetTransfusionFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
 }
 
 const SEScalar* SEECMO::GetScalar(const std::string& name)

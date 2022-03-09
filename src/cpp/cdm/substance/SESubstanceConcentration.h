@@ -20,6 +20,7 @@ public:
 
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();
+  virtual const SEScalarMassPerVolume* GetConcentration() const;
   virtual double GetConcentration(const MassPerVolumeUnit& unit) const;
 
   virtual const SESubstance& GetSubstance() const;

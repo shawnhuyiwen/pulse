@@ -11,9 +11,16 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBUtils.h"
 #include "cdm/system/equipment/ecmo/SEECMO.h"
 #include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceCompound.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/utils/FileUtils.h"
+
+const std::string& eECMO_CannulationLocation_Name(eECMO_CannulationLocation m)
+{
+  return CDM_BIND::eEMCOCannulationLocation_Name((CDM_BIND::eEMCOCannulationLocation)m);
+}
+
 
 void PBECMO::Load(const CDM_BIND::ECMOData& src, SEECMO& dst, const SESubstanceManager& subMgr)
 {
@@ -45,6 +52,42 @@ void PBECMO::Load(const CDM_BIND::ECMOSettingsData& src, SEECMOSettings& dst, co
 }
 void PBECMO::Serialize(const CDM_BIND::ECMOSettingsData& src, SEECMOSettings& dst, const SESubstanceManager& subMgr)
 {
+  if (src.inflowlocation() != CDM_BIND::eEMCOCannulationLocation::NullCannulationLocation)
+    dst.SetInflowLocation((eECMO_CannulationLocation)src.inflowlocation());
+  if (src.outflowlocation() != CDM_BIND::eEMCOCannulationLocation::NullCannulationLocation)
+    dst.SetOutflowLocation((eECMO_CannulationLocation)src.outflowlocation());
+
+  if (src.has_oxygenatorvolume())
+    PBProperty::Load(src.oxygenatorvolume(), dst.GetOxygenatorVolume());
+  if (src.has_transfusionflow())
+    PBProperty::Load(src.transfusionflow(), dst.GetTransfusionFlow());
+
+  if (!src.substancecompound().empty())
+  {
+    const SESubstanceCompound* c = subMgr.GetCompound(src.substancecompound());
+    if (c != nullptr)
+      dst.ApplyCompoundConcentrations(*c);
+    else
+      dst.Error("Unknown compound requsted for ECMO " + src.substancecompound());
+  }
+
+  if (src.has_substanceconcentrationlist())
+  {
+    const SESubstance* substance;
+    for (int i = 0; i < src.substanceconcentrationlist().substanceconcentration_size(); i++)
+    {
+      const CDM_BIND::SubstanceConcentrationData& cData = src.substanceconcentrationlist().substanceconcentration(i);
+      substance = subMgr.GetSubstance(cData.name());
+      if (substance == nullptr)
+      {
+        /// \fatal Could not load find substance compound component for specified substance
+        dst.Fatal("Could not load find substance component : " + cData.name(), "PBECMO::Load");
+        continue;
+      }
+      SESubstanceConcentration& sc = dst.GetSubstanceConcentration(*substance);
+      PBSubstance::Load(cData, sc);
+    }
+  }
 }
 
 CDM_BIND::ECMOSettingsData* PBECMO::Unload(const SEECMOSettings& src)
@@ -55,6 +98,20 @@ CDM_BIND::ECMOSettingsData* PBECMO::Unload(const SEECMOSettings& src)
 }
 void PBECMO::Serialize(const SEECMOSettings& src, CDM_BIND::ECMOSettingsData& dst)
 {
+  dst.set_inflowlocation((CDM_BIND::eEMCOCannulationLocation)src.GetInflowLocation());
+  dst.set_outflowlocation((CDM_BIND::eEMCOCannulationLocation)src.GetOutflowLocation());
+
+  if (src.HasOxygenatorVolume())
+    dst.set_allocated_oxygenatorvolume(PBProperty::Unload(*src.m_OxygenatorVolume));
+  if (src.HasTransfusionFlow())
+    dst.set_allocated_transfusionflow(PBProperty::Unload(*src.m_TransfusionFlow));
+
+  for (SESubstanceConcentration* sc : src.m_SubstanceConcentrations)
+  {
+    CDM_BIND::SubstanceConcentrationData* scData =
+      dst.mutable_substanceconcentrationlist()->add_substanceconcentration();
+    PBSubstance::Serialize(*sc, *scData);
+  }
 }
 
 bool PBECMO::SerializeToString(const SEECMOSettings& src, std::string& output, eSerializationFormat m)

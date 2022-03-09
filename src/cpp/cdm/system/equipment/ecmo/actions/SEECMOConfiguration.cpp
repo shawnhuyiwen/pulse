@@ -113,48 +113,13 @@ void SEECMOConfiguration::ToString(std::ostream &str) const
   }
   else if (HasSettings())
   {
-    str << "\n\tConnection: " << eSwitch_Name(m_Settings->GetConnection());
-    str << "\n\tPositiveEndExpiredPressure: "; m_Settings->HasPositiveEndExpiredPressure() ? str << m_Settings->GetPositiveEndExpiredPressure() : str << "NaN";
-    str << "\n\tFunctionalResidualCapacity: "; m_Settings->HasFunctionalResidualCapacity() ? str << m_Settings->GetFunctionalResidualCapacity() : str << "NaN";
-    str << "\n\tExpirationCycleFlow: "; m_Settings->HasExpirationCycleFlow() ? str << m_Settings->GetExpirationCycleFlow() : str << "NaN";
-    str << "\n\tExpirationCyclePressure: "; m_Settings->HasExpirationCyclePressure() ? str << m_Settings->GetExpirationCyclePressure() : str << "NaN";
-    str << "\n\tExpirationCycleVolume: "; m_Settings->HasExpirationCycleVolume() ? str << m_Settings->GetExpirationCycleVolume() : str << "NaN";
-    str << "\n\tExpirationCycleTime: "; m_Settings->HasExpirationCycleTime() ? str << m_Settings->GetExpirationCycleTime() : str << "NaN";
-    str << "\n\tExpirationCycleRespiratoryModel: " << eSwitch_Name(m_Settings->GetExpirationCycleRespiratoryModel());
-    str << "\n\tExpirationTubeResistance: "; m_Settings->HasExpirationTubeResistance() ? str << m_Settings->GetExpirationTubeResistance() : str << "NaN";
-    str << "\n\tExpirationValveResistance: "; m_Settings->HasExpirationValveResistance() ? str << m_Settings->GetExpirationValveResistance() : str << "NaN";
-    str << "\n\tExpirationWaveformPeriod: "; m_Settings->HasExpirationWaveformPeriod() ? str << m_Settings->GetExpirationWaveformPeriod() : str << "NaN";
-    str << "\n\tInspirationLimitFlow: "; m_Settings->HasInspirationLimitFlow() ? str << m_Settings->GetInspirationLimitFlow() : str << "NaN";
-    str << "\n\tInspirationLimitPressure: "; m_Settings->HasInspirationLimitPressure() ? str << m_Settings->GetInspirationLimitPressure() : str << "NaN";
-    str << "\n\tInspirationLimitVolume: "; m_Settings->HasInspirationLimitVolume() ? str << m_Settings->GetInspirationLimitVolume() : str << "NaN";
-    str << "\n\tInspirationPauseTime: "; m_Settings->HasInspirationPauseTime() ? str << m_Settings->GetInspirationPauseTime() : str << "NaN";
-    str << "\n\tPeakInspiratoryPressure: "; m_Settings->HasPeakInspiratoryPressure() ? str << m_Settings->GetPeakInspiratoryPressure() : str << "NaN";
-    str << "\n\tInspirationTargetFlow: "; m_Settings->HasInspirationTargetFlow() ? str << m_Settings->GetInspirationTargetFlow() : str << "NaN";
-    str << "\n\tInspirationMachineTriggerTime: "; m_Settings->HasInspirationMachineTriggerTime() ? str << m_Settings->GetInspirationMachineTriggerTime() : str << "NaN";
-    str << "\n\tInspirationPatientTriggerFlow: "; m_Settings->HasInspirationPatientTriggerFlow() ? str << m_Settings->GetInspirationPatientTriggerFlow() : str << "NaN";
-    str << "\n\tInspirationPatientTriggerPressure: "; m_Settings->HasInspirationPatientTriggerPressure() ? str << m_Settings->GetInspirationPatientTriggerPressure() : str << "NaN";
-    str << "\n\tInspirationPatientTriggerRespiratoryModel: " << eSwitch_Name(m_Settings->GetInspirationPatientTriggerRespiratoryModel());
-    str << "\n\tInspirationTubeResistance: "; m_Settings->HasInspirationTubeResistance() ? str << m_Settings->GetInspirationTubeResistance() : str << "NaN";
-    str << "\n\tInspirationValveResistance: "; m_Settings->HasInspirationValveResistance() ? str << m_Settings->GetInspirationValveResistance() : str << "NaN";
-    str << "\n\tInspirationWaveformPeriod: "; m_Settings->HasInspirationWaveformPeriod() ? str << m_Settings->GetInspirationWaveformPeriod() : str << "NaN";
-    str << "\n\tExpirationLimbVolume: "; m_Settings->HasExpirationLimbVolume() ? str << m_Settings->GetExpirationLimbVolume() : str << "NaN";
-    str << "\n\tExpirationValveVolume: "; m_Settings->HasExpirationValveVolume() ? str << m_Settings->GetExpirationValveVolume() : str << "NaN";
-    str << "\n\tInspirationLimbVolume: "; m_Settings->HasInspirationLimbVolume() ? str << m_Settings->GetInspirationLimbVolume() : str << "NaN";
-    str << "\n\tInspirationValveVolume: "; m_Settings->HasInspirationValveVolume() ? str << m_Settings->GetInspirationValveVolume() : str << "NaN";
-    str << "\n\tReliefValveThreshold: "; m_Settings->HasReliefValveThreshold() ? str << m_Settings->GetReliefValveThreshold() : str << "NaN";
-    str << "\n\tYPieceVolume: "; m_Settings->HasYPieceVolume() ? str << m_Settings->GetYPieceVolume() : str << "NaN";
-    str << "\n\tConnectionVolume: "; m_Settings->HasConnectionVolume() ? str << m_Settings->GetConnectionVolume() : str << "NaN";
-    str << "\n\tCompliance: "; m_Settings->HasCompliance() ? str << m_Settings->GetCompliance() : str << "NaN";
-    if (m_Settings->HasFractionInspiredGas())
+    str << "\n\tInflowLocation: " << eECMO_CannulationLocation_Name(m_Settings->GetInflowLocation());
+    str << "\n\tOutflowLocation: " << eECMO_CannulationLocation_Name(m_Settings->GetOutflowLocation());
+    str << "\n\tOxygenatorVolume: "; m_Settings->HasOxygenatorVolume() ? str << m_Settings->GetOxygenatorVolume() : str << "NaN";
+    str << "\n\tTransfusionFlow: "; m_Settings->HasTransfusionFlow() ? str << m_Settings->GetTransfusionFlow() : str << "NaN";
+    if (m_Settings->HasSubstanceConcentrations())
     {
-      for (SESubstanceFraction* sf : m_Settings->GetFractionInspiredGases())
-      {
-        str << "\n\tSubstance : " << sf->GetSubstance().GetName() << " Fraction Amount " << sf->GetFractionAmount();
-      }
-    }
-    if (m_Settings->HasConcentrationInspiredAerosol())
-    {
-      for (SESubstanceConcentration* sc : m_Settings->GetConcentrationInspiredAerosols())
+      for (SESubstanceConcentration* sc : m_Settings->GetSubstanceConcentrations())
       {
         str << "\n\tSubstance : " << sc->GetSubstance().GetName() << " Concentration " << sc->GetConcentration();
       }

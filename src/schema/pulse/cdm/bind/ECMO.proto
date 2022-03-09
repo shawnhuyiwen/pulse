@@ -4,21 +4,28 @@ option java_package = "com.kitware.pulse.cdm.bind";
 option csharp_namespace = "pulse.cdm.bind";
 option optimize_for = SPEED;
 
-import "pulse/cdm/bind/Enums.proto";
 import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/Substance.proto";
 
+
+enum eEMCOCannulationLocation
+{
+  NullCannulationLocation        = 0;
+  InternalJugular                = 1;
+  RightFemoralVein               = 2;
+  LeftFemoralVein                = 3;
+  RightSubclavianVein            = 4;
+  LeftSubclavianVein             = 5;
+}
 message ECMOSettingsData
 {
-  eSwitch                               Connection                                = 1;/**<< @brief @ref eSwitchTable */
-  ScalarVolumeData                      PrimingVolume                             = 2;/**<< @brief Includes the volume in the device and tubing. */
-  ScalarVolumePerTimeData               TransfusionFlow                           = 3;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
+  eEMCOCannulationLocation              InflowLocation                            = 1;/**<< @brief @ref eEMCOCannulationLocation */
+  eEMCOCannulationLocation              OutflowLocation                           = 2;/**<< @brief @ref eEMCOCannulationLocation */
+  ScalarVolumeData                      OxygenatorVolume                          = 3;/**<< @brief Includes the volume in the device and tubing. */
+  ScalarVolumePerTimeData               TransfusionFlow                           = 4;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
   
-  oneof Primer
-  {
-    string                              SubstanceCompound                         = 4;/**<< @brief Set volume to a specific substance compound. */
-    SubstanceConcentrationListData      SubstanceConcentrationList                = 5;/**<< @brief Set the volume with several substance concentrations. */
-  }
+  string                                SubstanceCompound                         = 5;/**<< @brief Add the compound substance concentrations to the oxygenator. */
+  SubstanceConcentrationListData        SubstanceConcentrationList                = 6;/**<< @brief Set specific substance concentrations in the oxygenator. */
 }
 
 message ECMOData

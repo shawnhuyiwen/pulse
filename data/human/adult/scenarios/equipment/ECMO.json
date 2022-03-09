@@ -89,8 +89,9 @@
               "Comment": "Attach the ECMO machine" }}},
         "Settings":
         {
-          "Connection": "On",
-          "PrimingVolume": { "ScalarVolume": { "Value": 500.0, "Unit": "mL" } },
+          "InflowLocation": "InternalJugular",
+          "OutflowLocation": "InternalJugular",
+          "OxygenatorVolume": { "ScalarVolume": { "Value": 500.0, "Unit": "mL" } },
           "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 5.0, "Unit": "mL/s" } },
           "SubstanceCompound": "Saline"
         }

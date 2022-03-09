@@ -1281,6 +1281,7 @@ namespace pulse
   {
   public:
     DEFINE_STATIC_STRING_EX(Oxygenator, ECMOOxygenator);
+    DEFINE_STATIC_STRING_EX(BloodSamplingPort, ECMOBloodSamplingPort);
 
     static const std::vector<std::string>& GetValues()
     {
@@ -1288,6 +1289,7 @@ namespace pulse
       if (_values.empty())
       {
         _values.push_back(Oxygenator);
+        _values.push_back(BloodSamplingPort);
       }
       return _values;
     }
@@ -1310,16 +1312,18 @@ namespace pulse
   class ECMOLink
   {
   public:
-    DEFINE_STATIC_STRING(CardiovascularToECMO);
-    DEFINE_STATIC_STRING(ECMOToCardiovascular);
+    DEFINE_STATIC_STRING(VascularToBloodSamplingPort);
+    DEFINE_STATIC_STRING(BloodSamplingPortToOxygenator);
+    DEFINE_STATIC_STRING(OxygenatorToVascular);
 
     static const std::vector<std::string>& GetValues()
     {
       ScopedMutex lock;
       if (_values.empty())
       {
-        _values.push_back(CardiovascularToECMO);
-        _values.push_back(ECMOToCardiovascular);
+        _values.push_back(VascularToBloodSamplingPort);
+        _values.push_back(BloodSamplingPortToOxygenator);
+        _values.push_back(OxygenatorToVascular);
       }
       return _values;
     }

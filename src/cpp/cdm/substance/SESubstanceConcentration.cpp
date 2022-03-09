@@ -32,6 +32,10 @@ SEScalarMassPerVolume& SESubstanceConcentration::GetConcentration()
     m_Concentration=new SEScalarMassPerVolume();
   return *m_Concentration;
 }
+const SEScalarMassPerVolume* SESubstanceConcentration::GetConcentration() const
+{
+  return m_Concentration;
+}
 double SESubstanceConcentration::GetConcentration(const MassPerVolumeUnit& unit) const
 {
   if (m_Concentration == nullptr)
