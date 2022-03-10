@@ -45,9 +45,28 @@ namespace pulse
 
   protected:
     void ComputeExposedModelParameters() override;
+    void DisconnectECMO();
 
     // Serializable member variables (Set in Initialize and in schema)
 
     // Stateless member variable (Set in SetUp())
+    eECMO_CannulationLocation m_CurrentInflowLocation;
+    eECMO_CannulationLocation m_CurrentOutflowLocation;
+
+    SELiquidCompartment*     m_InflowCmpt;
+    SELiquidCompartmentLink* m_lVascularToBloodSamplingPort;
+    SELiquidCompartment*     m_cBloodSamplingPort;
+    SELiquidCompartment*     m_cOxygenator;
+    SELiquidCompartmentLink* m_lOxygenatorToVascular;
+    SELiquidCompartment*     m_OutflowCmpt;
+
+
+    SEFluidCircuitNode*      m_InflowNode;
+    SEFluidCircuitPath*      m_pVascularToBloodSamplingPort;
+    SEFluidCircuitNode*      m_nBloodSamplingPort;
+    SEFluidCircuitPath*      m_pBloodSamplingPortToOxygenator;
+    SEFluidCircuitNode*      m_nOxygenator;
+    SEFluidCircuitPath*      m_pOxygenatorToVascular;
+    SEFluidCircuitNode*      m_OutflowNode;
   };
 END_NAMESPACE

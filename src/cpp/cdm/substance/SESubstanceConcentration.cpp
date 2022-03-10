@@ -47,3 +47,8 @@ const SESubstance& SESubstanceConcentration::GetSubstance() const
 {
   return m_Substance;
 }
+
+std::string SESubstanceConcentration::ToString() const
+{
+  return m_Substance.GetName() + " Concentration: " + (HasConcentration() ? m_Concentration->ToString() : "NaN");
+}

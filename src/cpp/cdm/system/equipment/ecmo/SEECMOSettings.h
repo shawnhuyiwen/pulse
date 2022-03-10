@@ -34,7 +34,7 @@ public:
   bool SerializeFromString(const std::string& src, eSerializationFormat m, const SESubstanceManager& subMgr);
   bool SerializeFromFile(const std::string& filename, const SESubstanceManager& subMgr);
 
-  virtual void Merge(const SEECMOSettings& from, SESubstanceManager& subMgr);
+  virtual void Merge(const SEECMOSettings& from);
   virtual void ProcessConfiguration(SEECMOConfiguration& config, SESubstanceManager& subMgr);
 
   virtual const SEScalar* GetScalar(const std::string& name);
@@ -56,15 +56,16 @@ public:
   bool HasSubstanceConcentrations() const;
   bool HasSubstanceConcentration(const SESubstance& substance) const;
   const std::vector<SESubstanceConcentration*>& GetSubstanceConcentrations();
-  const std::vector<const SESubstanceConcentration*>& GetSubstanceConcentrations() const;
+  const std::vector<const SESubstanceConcentration*> GetSubstanceConcentrations() const;
   SESubstanceConcentration& GetSubstanceConcentration(const SESubstance& substance);
   const SESubstanceConcentration* GetSubstanceConcentration(const SESubstance& substance) const;
   void RemoveSubstanceConcentration(const SESubstance& substance);
   void RemoveSubstanceConcentrations();
 
-  // This will add/replace the concentrations
-  // Substances not in the compound will not change
-  void ApplyCompoundConcentrations(const SESubstanceCompound& compound);
+  virtual bool HasSubstanceCompound() const;
+  virtual void SetSubstanceCompound(const SESubstanceCompound& c);
+  virtual const SESubstanceCompound* GetSubstanceCompound() const;
+  virtual void RemoveSubstanceCompound();
 
 protected:
 
@@ -72,6 +73,7 @@ protected:
   eECMO_CannulationLocation                    m_OutflowLocation;
   SEScalarVolume*                              m_OxygenatorVolume;
   SEScalarVolumePerTime*                       m_TransfusionFlow;
+  const SESubstanceCompound*                   m_SubstanceCompound;
 
   std::vector<SESubstanceConcentration*>       m_SubstanceConcentrations;
 };

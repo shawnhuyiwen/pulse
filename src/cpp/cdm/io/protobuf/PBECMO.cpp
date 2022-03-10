@@ -66,7 +66,7 @@ void PBECMO::Serialize(const CDM_BIND::ECMOSettingsData& src, SEECMOSettings& ds
   {
     const SESubstanceCompound* c = subMgr.GetCompound(src.substancecompound());
     if (c != nullptr)
-      dst.ApplyCompoundConcentrations(*c);
+      dst.SetSubstanceCompound(*c);
     else
       dst.Error("Unknown compound requsted for ECMO " + src.substancecompound());
   }
@@ -102,6 +102,9 @@ void PBECMO::Serialize(const SEECMOSettings& src, CDM_BIND::ECMOSettingsData& ds
     dst.set_allocated_oxygenatorvolume(PBProperty::Unload(*src.m_OxygenatorVolume));
   if (src.HasTransfusionFlow())
     dst.set_allocated_transfusionflow(PBProperty::Unload(*src.m_TransfusionFlow));
+
+  if(src.HasSubstanceCompound())
+    dst.set_substancecompound(src.GetSubstanceCompound()->GetName());
 
   for (SESubstanceConcentration* sc : src.m_SubstanceConcentrations)
   {

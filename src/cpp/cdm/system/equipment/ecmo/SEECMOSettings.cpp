@@ -17,6 +17,7 @@ SEECMOSettings::SEECMOSettings(Logger* logger) : Loggable(logger)
   m_OutflowLocation = eECMO_CannulationLocation::NullCannulationLocation;
   m_OxygenatorVolume = nullptr;
   m_TransfusionFlow = nullptr;
+  m_SubstanceCompound = nullptr;
 }
 
 SEECMOSettings::~SEECMOSettings()
@@ -25,6 +26,7 @@ SEECMOSettings::~SEECMOSettings()
   m_OutflowLocation = eECMO_CannulationLocation::NullCannulationLocation;
   SAFE_DELETE(m_OxygenatorVolume);
   SAFE_DELETE(m_TransfusionFlow);
+  m_SubstanceCompound = nullptr;
 
   DELETE_VECTOR(m_SubstanceConcentrations);
   m_SubstanceConcentrations.clear();
@@ -36,6 +38,7 @@ void SEECMOSettings::Clear()
   m_OutflowLocation = eECMO_CannulationLocation::NullCannulationLocation;
   INVALIDATE_PROPERTY(m_OxygenatorVolume);
   INVALIDATE_PROPERTY(m_TransfusionFlow);
+  m_SubstanceCompound = nullptr;
 
   RemoveSubstanceConcentrations();
 }
@@ -45,17 +48,17 @@ void SEECMOSettings::ProcessConfiguration(SEECMOConfiguration& config, SESubstan
   if (config.GetMergeType() == eMergeType::Replace)
     Clear();
   if (config.HasSettings())
-    Merge(config.GetSettings(), subMgr);
+    Merge(config.GetSettings());
   else if (config.HasSettingsFile())
   {
     // Update the action with the file contents
     std::string cfg_file = config.GetSettingsFile();
     if (!config.GetSettings().SerializeFromFile(cfg_file, subMgr))
       Error("Unable to load settings file", "SEECMOSettings::ProcessConfiguration");
-    Merge(config.GetSettings(), subMgr);
+    Merge(config.GetSettings());
   }
 }
-void SEECMOSettings::Merge(const SEECMOSettings& from, SESubstanceManager& subMgr)
+void SEECMOSettings::Merge(const SEECMOSettings& from)
 {
   if(from.m_InflowLocation != eECMO_CannulationLocation::NullCannulationLocation)
     SetInflowLocation(from.m_InflowLocation);
@@ -63,6 +66,12 @@ void SEECMOSettings::Merge(const SEECMOSettings& from, SESubstanceManager& subMg
     SetOutflowLocation(from.m_OutflowLocation);
   COPY_PROPERTY(OxygenatorVolume);
   COPY_PROPERTY(TransfusionFlow);
+
+  // I am assuming the from object is coming from within the engine
+  // And hence has the same substance manager as this object
+  // So no need to localize the substances
+  // i.e SetMySubstance(mySubMgr.GetSubstance(from.GetSubstance().GetName()))
+  m_SubstanceCompound = from.m_SubstanceCompound;
 
   for (SESubstanceConcentration* sc : from.m_SubstanceConcentrations)
   {
@@ -174,7 +183,7 @@ const std::vector<SESubstanceConcentration*>& SEECMOSettings::GetSubstanceConcen
 {
   return m_SubstanceConcentrations;
 }
-const std::vector<const SESubstanceConcentration*>& SEECMOSettings::GetSubstanceConcentrations() const
+const std::vector<const SESubstanceConcentration*> SEECMOSettings::GetSubstanceConcentrations() const
 {
   return std::vector<const SESubstanceConcentration*>(m_SubstanceConcentrations.begin(), m_SubstanceConcentrations.end());
 }
@@ -216,11 +225,19 @@ void SEECMOSettings::RemoveSubstanceConcentrations()
   }
 }
 
-void SEECMOSettings::ApplyCompoundConcentrations(const SESubstanceCompound& compound)
+bool SEECMOSettings::HasSubstanceCompound() const
 {
-  for (const SESubstanceConcentration* sc : compound.GetComponents())
-  {
-    SESubstanceConcentration& mine = GetSubstanceConcentration(sc->GetSubstance());
-    mine.GetConcentration().Set(*sc->GetConcentration());
-  }
+  return m_SubstanceCompound != nullptr;
+}
+void SEECMOSettings::SetSubstanceCompound(const SESubstanceCompound& c)
+{
+  m_SubstanceCompound = &c;
+}
+const SESubstanceCompound* SEECMOSettings::GetSubstanceCompound() const
+{
+  return m_SubstanceCompound;
+}
+void SEECMOSettings::RemoveSubstanceCompound()
+{
+  m_SubstanceCompound = nullptr;
 }

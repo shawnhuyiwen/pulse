@@ -407,20 +407,6 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     }
   }
 
-  const SEInhalerAction* ia = dynamic_cast<const SEInhalerAction*>(&action);
-  if (ia != nullptr)
-  {
-    const SEInhalerConfiguration* config = dynamic_cast<const SEInhalerConfiguration*>(&action);
-    if (config != nullptr)
-    {
-      GetInhalerConfiguration().Copy(*config, m_SubMgr, true);
-      m_InhalerConfiguration->Activate();
-      if (!m_InhalerConfiguration->IsActive())
-        RemoveInhalerConfiguration();
-      return true;
-    }
-  }
-
   const SEECMOAction* ea = dynamic_cast<const SEECMOAction*>(&action);
   if (ea != nullptr)
   {
@@ -431,6 +417,20 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
       m_ECMOConfiguration->Activate();
       if (!m_ECMOConfiguration->IsActive())
         RemoveECMOConfiguration();
+      return true;
+    }
+  }
+
+  const SEInhalerAction* ia = dynamic_cast<const SEInhalerAction*>(&action);
+  if (ia != nullptr)
+  {
+    const SEInhalerConfiguration* config = dynamic_cast<const SEInhalerConfiguration*>(&action);
+    if (config != nullptr)
+    {
+      GetInhalerConfiguration().Copy(*config, m_SubMgr, true);
+      m_InhalerConfiguration->Activate();
+      if (!m_InhalerConfiguration->IsActive())
+        RemoveInhalerConfiguration();
       return true;
     }
   }
@@ -978,6 +978,9 @@ void SEEquipmentActionCollection::GetAllActions(std::vector<const SEAction*>& ac
   if (HasBagValveMaskSqueeze())
     actions.push_back(GetBagValveMaskSqueeze());
 
+  if (HasECMOConfiguration())
+    actions.push_back(GetECMOConfiguration());
+
   if(HasInhalerConfiguration())
     actions.push_back(GetInhalerConfiguration());
 
@@ -1032,6 +1035,9 @@ const SEScalar* SEEquipmentActionCollection::GetScalar(const std::string& action
     return GetBagValveMaskInstantaneous().GetScalar(property);
   if (actionName == "BagValveMaskSqueeze")
     return GetBagValveMaskSqueeze().GetScalar(property);
+
+  if (actionName == "ECMOConfiguration")
+    return GetECMOConfiguration().GetScalar(property);
 
   if (actionName == "InhalerConfiguration")
     return GetInhalerConfiguration().GetScalar(property);

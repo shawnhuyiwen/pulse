@@ -4,6 +4,7 @@
 #include "cdm/system/equipment/ecmo/actions/SEECMOConfiguration.h"
 #include "cdm/system/equipment/ecmo/SEECMOSettings.h"
 #include "cdm/substance/SESubstance.h"
+#include "cdm/substance/SESubstanceCompound.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/substance/SESubstanceConcentration.h"
 #include "cdm/substance/SESubstanceFraction.h"
@@ -117,6 +118,7 @@ void SEECMOConfiguration::ToString(std::ostream &str) const
     str << "\n\tOutflowLocation: " << eECMO_CannulationLocation_Name(m_Settings->GetOutflowLocation());
     str << "\n\tOxygenatorVolume: "; m_Settings->HasOxygenatorVolume() ? str << m_Settings->GetOxygenatorVolume() : str << "NaN";
     str << "\n\tTransfusionFlow: "; m_Settings->HasTransfusionFlow() ? str << m_Settings->GetTransfusionFlow() : str << "NaN";
+    str << "\n\tSubstanceCompound: "; m_Settings->HasSubstanceCompound() ? str << m_Settings->GetSubstanceCompound()->GetName() : str << "Not Provided";
     if (m_Settings->HasSubstanceConcentrations())
     {
       for (SESubstanceConcentration* sc : m_Settings->GetSubstanceConcentrations())
