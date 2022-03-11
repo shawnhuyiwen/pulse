@@ -546,8 +546,8 @@ namespace pulse
     // The terms "metabolic" and "respiratory" refer to the origin of the acid-base disturbance
     // The hydrogen ion concentration is a property of the blood
     // The events related to blood concentrations should be detected and set in blood chemistry.
-    double highPh = 8.5;
-    double lowPh = 6.5;   // \cite Edge2006AcidosisConscious
+    //double highPh = 8.5;
+    //double lowPh = 6.5;   //\cite Edge2006AcidosisConscious
     m_BloodpH->Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
     m_BicarbonateMolarity_mmol_Per_L->Sample(m_AortaHCO3->GetMolarity(AmountPerVolumeUnit::mmol_Per_L));
     //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 

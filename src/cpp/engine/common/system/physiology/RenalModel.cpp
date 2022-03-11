@@ -517,8 +517,8 @@ namespace pulse
   void RenalModel::CalculateUltrafiltrationFeedback()
   {
     //Tuning parameters unused
-    const double glomerularOsmoticSensitivity = 1.0;
-    const double bowmansOsmoticSensitivity = 1.0;
+    //const double glomerularOsmoticSensitivity = 1.0;
+    //const double bowmansOsmoticSensitivity = 1.0;
 
     //Get substances
     SEFluidCircuitPath* glomerularOsmoticSourcePath = nullptr;
@@ -585,8 +585,8 @@ namespace pulse
   void RenalModel::CalculateReabsorptionFeedback()
   {
     //Tuning parameters, unused
-    const double peritubularOsmoticSensitivity = 1.0;
-    const double tubulesOsmoticSensitivity = 1.0;
+    //const double peritubularOsmoticSensitivity = 1.0;
+    //const double tubulesOsmoticSensitivity = 1.0;
 
     //Determine the permeability
     //Only allow water to be reabsorbed more easily

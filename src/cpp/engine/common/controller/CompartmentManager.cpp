@@ -180,7 +180,9 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
       }
     }
     if (m_data.GetConfiguration().IsRenalEnabled())
+    {
       SORT_CMPTS(Urine, Liquid);
+    }
     SORT_CMPTS(Vascular, Liquid);
     // Equipment
     SORT_CMPTS(AnesthesiaMachine, Gas);

@@ -200,7 +200,7 @@ namespace pulse
     }
 
     // Get dose properties we need
-    double dDoseDensity_ug_Per_L = 0.0;
+    double dDoseDensity_ug_Per_L;
     if (m_Substance->HasDensity())
     {
       dDoseDensity_ug_Per_L = m_Substance->GetDensity(MassPerVolumeUnit::ug_Per_L);  // Density of dose in micrograms per liter

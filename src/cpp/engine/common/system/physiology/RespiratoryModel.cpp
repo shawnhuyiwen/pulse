@@ -2197,8 +2197,8 @@ namespace pulse
       if (m_data.GetState() > EngineState::InitialStabilization)
       {// Don't throw events if we are initializing
 
-        double highPh = 8.5;
-        double lowPh = 6.5;   // \cite Edge2006AcidosisConscious
+        //double highPh = 8.5;
+        //double lowPh = 6.5;   //\cite Edge2006AcidosisConscious
         //// Respiratory Acidosis
         if (m_LastCardiacCycleBloodPH < 7.35 && m_ArterialCO2PartialPressure_mmHg > 47.0)
         {
@@ -2910,6 +2910,8 @@ namespace pulse
           tracheaResistance_cmH2O_s_Per_L *= 15.0;
           break;
         }
+        default:
+          break;
         }
       }
       else
@@ -3049,12 +3051,12 @@ namespace pulse
       m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
     {
       if (!HasActiveRespiratoryMechanics() ||
-        HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasRightComplianceCurve())
+        (HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasRightComplianceCurve()))
       {
           rightAlveoliCompliance_L_Per_cmH2O *= 0.38;
       }
       if (!HasActiveRespiratoryMechanics() ||
-        HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasLeftComplianceCurve())
+        (HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasLeftComplianceCurve()))
       {
         leftAlveoliCompliance_L_Per_cmH2O *= 0.38;
       }
