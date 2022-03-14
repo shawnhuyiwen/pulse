@@ -85,6 +85,7 @@ namespace pulse
     dst.Clear();
     dst.SetUp();
     PBEquipment::Serialize(src, dst);
+    dst.StateChange();
   }
   void PBEquipment::Serialize(const PULSE_BIND::ECMOData& src, ECMOModel& dst)
   {
