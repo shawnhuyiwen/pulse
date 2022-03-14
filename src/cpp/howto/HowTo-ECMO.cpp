@@ -11,30 +11,13 @@
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEEventManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
 #include "cdm/patient/SEPatient.h"
-=======
->>>>>>> HowTo-ECMO cpp and enum renumbering
-=======
-#include "cdm/patient/SEPatient.h"
->>>>>>> Initial ECMO data model
 #include "cdm/substance/SESubstance.h"
 #include "cdm/substance/SESubstanceFraction.h"
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/system/equipment/ecmo/SEECMO.h"
 #include "cdm/system/equipment/ecmo/actions/SEECMOConfiguration.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
 #include "cdm/properties/SEScalar0To1.h"
-=======
-#include "cdm/patient/actions/SEDyspnea.h"
-#include "cdm/properties/SEScalar0To1.h"
-#include "cdm/properties/SEScalarElectricPotential.h"
->>>>>>> HowTo-ECMO cpp and enum renumbering
-=======
-#include "cdm/properties/SEScalar0To1.h"
->>>>>>> Initial ECMO data model
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarMassPerVolume.h"
 #include "cdm/properties/SEScalarPressure.h"
