@@ -81,7 +81,7 @@ namespace pulse
   {
     Model::Initialize();
 
-    StateChange();
+    //StateChange(); // TODO should not need, even when serializing a state with ECMO on
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -158,9 +158,6 @@ namespace pulse
 
       s.SetInflowLocation(eECMO_CannulationLocation::NullCannulationLocation);
       s.SetOutflowLocation(eECMO_CannulationLocation::NullCannulationLocation);
-
-      m_pVascularToBloodSamplingPort->GetNextFlowSource().SetValue(0, VolumePerTimeUnit::mL_Per_s);
-      m_pVascularToBloodSamplingPort->GetFlowSourceBaseline().SetValue(0, VolumePerTimeUnit::mL_Per_s);
 
       DisconnectECMO();
       m_data.GetCircuits().GetActiveCardiovascularCircuit().StateChange();
