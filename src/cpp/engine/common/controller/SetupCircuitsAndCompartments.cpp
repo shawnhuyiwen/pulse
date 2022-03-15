@@ -2926,18 +2926,12 @@ namespace pulse
     /////////////
     // Circuit //
     // Nodes
-    SEFluidCircuitNode* nGround = m_Circuits->GetFluidNode(pulse::CardiovascularNode::Ground);
-
     SEFluidCircuitNode& nBloodSamplingPort = m_Circuits->CreateFluidNode(pulse::ECMONode::BloodSamplingPort);
     nBloodSamplingPort.GetVolumeBaseline().SetValue(5, VolumeUnit::mL); // User cannot change
     SEFluidCircuitNode& nOxygenator = m_Circuits->CreateFluidNode(pulse::ECMONode::Oxygenator);
     nOxygenator.GetVolumeBaseline().SetValue(5, VolumeUnit::mL); // User can change
-
-
     //Paths
     SEFluidCircuitPath& pBloodSamplingPortToOxygenator = m_Circuits->CreateFluidPath(nBloodSamplingPort, nOxygenator, pulse::ECMOPath::BloodSamplingPortToOxygenator);
-    SEFluidCircuitPath& pBloodSamplingPortToGround = m_Circuits->CreateFluidPath(nBloodSamplingPort, *nGround, pulse::ECMOPath::BloodSamplingPortToGround);
-    SEFluidCircuitPath& pOxygenatorToGround = m_Circuits->CreateFluidPath(nOxygenator, *nGround, pulse::ECMOPath::OxygenatorToGround);
 
     /////////////////////////
     // LIQUID COMPARTMENTS //
@@ -2945,7 +2939,6 @@ namespace pulse
     cBloodSamplingPort.MapNode(nBloodSamplingPort);
     SELiquidCompartment& cOxygenator = m_Compartments->CreateLiquidCompartment(pulse::ECMOCompartment::Oxygenator);
     cOxygenator.MapNode(nOxygenator);
-
     // Setup Links //
     SELiquidCompartmentLink& lBloodSamplingPortToOxygenator = m_Compartments->CreateLiquidLink(cBloodSamplingPort, cOxygenator, pulse::ECMOLink::BloodSamplingPortToOxygenator);
     lBloodSamplingPortToOxygenator.MapPath(pBloodSamplingPortToOxygenator); // No transport

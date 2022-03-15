@@ -992,8 +992,6 @@ namespace pulse
   public:
     DEFINE_STATIC_STRING(VascularToBloodSamplingPort);
     DEFINE_STATIC_STRING(BloodSamplingPortToOxygenator);
-    DEFINE_STATIC_STRING(BloodSamplingPortToGround);
-    DEFINE_STATIC_STRING(OxygenatorToGround);
     DEFINE_STATIC_STRING(OxygenatorToVasculature);
   };
 END_NAMESPACE

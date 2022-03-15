@@ -109,6 +109,7 @@ namespace pulse
     if (m_pVascularToBloodSamplingPort != nullptr)
       m_InflowNode = &m_pVascularToBloodSamplingPort->GetSourceNode();
     m_nBloodSamplingPort = m_data.GetCircuits().GetFluidNode(pulse::ECMONode::BloodSamplingPort);
+    m_nBloodSamplingPort->GetNextVolume().Set(m_nBloodSamplingPort->GetVolumeBaseline());
     m_pBloodSamplingPortToOxygenator = m_data.GetCircuits().GetFluidPath(pulse::ECMOPath::BloodSamplingPortToOxygenator);
     m_nOxygenator = m_data.GetCircuits().GetFluidNode(pulse::ECMONode::Oxygenator);
     m_pOxygenatorToVascular = m_data.GetCircuits().GetFluidPath(pulse::ECMOPath::OxygenatorToVasculature);
@@ -230,6 +231,12 @@ namespace pulse
       default:
         Error("Unknown InflowLocation not specified");
         return;
+      }
+
+      if (!m_nOxygenator->HasNextVolume())
+      {
+        m_nOxygenator->GetNextVolume().Set(m_nOxygenator->GetVolumeBaseline());
+        Warning("Oxygenator not provided an initial volume, defaulting to " + m_nOxygenator->GetVolumeBaseline().ToString());
       }
 
       m_pVascularToBloodSamplingPort = &m_data.GetCircuits().CreateFluidPath(*m_InflowNode, *m_nBloodSamplingPort, pulse::ECMOPath::VascularToBloodSamplingPort);
