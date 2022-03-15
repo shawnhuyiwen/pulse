@@ -112,7 +112,6 @@ void HowToECMO()
   pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "Oxygen", "Concentration", MassPerVolumeUnit::g_Per_L);
   pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::ECMOCompartment::Oxygenator, "CarbonDioxide", "Concentration", MassPerVolumeUnit::g_Per_L);
 
-  
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowTo/HowTo_ECMO.cpp.csv");
 
   SEECMOConfiguration cfg(pe->GetLogger());
