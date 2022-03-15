@@ -77,7 +77,6 @@ def HowTo_ECMO():
     # And write it out to the console
     data_mgr.to_console(results)
 
-    settings.clear()
     oxyhemoglobin = results.get(data_requests[36].to_string())[-1];
     bicarb = results.get("Bicarbonate - BloodConcentration (g/L)")[-1];
     settings.get_substance_concentration("Oxyhemoglobin").get_concentration().set_value(oxyhemoglobin+2, MassPerVolumeUnit.g_Per_L)

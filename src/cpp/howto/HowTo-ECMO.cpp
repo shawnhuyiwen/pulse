@@ -51,14 +51,9 @@ void HowToECMO()
   
   pe->GetLogger()->Info("HowTo_ECMO");
 
-  SEPatientConfiguration pc;
-  SEPatient& patient = pc.GetPatient();
-  patient.SetName("ECMO");
-  patient.SetSex(ePatient_Sex::Female);
-  if (!pe->InitializeEngine(pc))
-  //if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
-    pe->GetLogger()->Error("Could not create/load patient, check the error");
+    pe->GetLogger()->Error("Unable to load initial state file");
     return;
   }
 
@@ -105,7 +100,28 @@ void HowToECMO()
   
   pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("./test_results/HowTo/HowTo_ECMO.cpp.csv");
 
-  AdvanceAndTrackTime_s(10.0, *pe);
+  SEECMOConfiguration cfg(pe->GetLogger());
+  SEECMOSettings& settings = cfg.GetSettings();
+  settings.SetInflowLocation(eECMO_CannulationLocation::InternalJugular);
+  settings.SetOutflowLocation(eECMO_CannulationLocation::InternalJugular);
+  settings.GetOxygenatorVolume().SetValue(500, VolumeUnit::mL);
+  settings.GetTransfusionFlow().SetValue(5, VolumePerTimeUnit::mL_Per_s);
+  const SESubstanceCompound* saline = pe->GetSubstanceManager().GetCompound("Saline");
+  settings.SetSubstanceCompound(*saline);
+  pe->ProcessAction(cfg);
+
+  AdvanceAndTrackTime_s(30.0, *pe);
+  pe->GetEngineTracker()->LogRequestedValues(true);
+
+  double oxyhemoglobin_val = pe->GetEngineTracker()->GetValue(*(pe->GetEngineTracker()->GetDataRequestManager().GetDataRequests()[36]));
+  double bicarb_val = pe->GetEngineTracker()->GetValue(*(pe->GetEngineTracker()->GetDataRequestManager().GetDataRequests()[21]));
+  const SESubstance* oxyhemoglobin = pe->GetSubstanceManager().GetSubstance("Oxyhemoglobin");
+  const SESubstance* bicarb = pe->GetSubstanceManager().GetSubstance("Bicarbonate");
+  settings.GetSubstanceConcentration(*oxyhemoglobin).GetConcentration().SetValue(oxyhemoglobin_val+2, MassPerVolumeUnit::g_Per_L);
+  settings.GetSubstanceConcentration(*bicarb).GetConcentration().SetValue(bicarb_val+5, MassPerVolumeUnit::g_Per_L);
+  pe->ProcessAction(cfg);
+
+  AdvanceAndTrackTime_s(30.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
 
   pe->GetLogger()->Info("Finished");

@@ -99,7 +99,7 @@
       
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "InFlow", "Unit": "mL/s" },
       { "DecimalFormat": { "Precision": 3 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "PropertyName": "OutFlow", "Unit": "mL/s" },
-      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "VenaCava", "SubstanceName": "Sodium", "PropertyName": "Concentration",   "Unit": "g/dL" }
     ]
   },
   "AnyAction": [{
@@ -146,7 +146,7 @@
         "Settings":
         {
           "InflowLocation": "InternalJugular",
-          "OutflowLocation": "LeftFemoralVein",
+          "OutflowLocation": "LeftFemoralVein"
         }
       }
     }
@@ -167,7 +167,7 @@
         "Settings":
         {
           "InflowLocation": "InternalJugular",
-          "OutflowLocation": "RightSubclavianVein",
+          "OutflowLocation": "RightSubclavianVein"
         }
       }
     }
@@ -188,7 +188,7 @@
         "Settings":
         {
           "InflowLocation": "InternalJugular",
-          "OutflowLocation": "LeftSubclavianVein",
+          "OutflowLocation": "LeftSubclavianVein"
         }
       }
     }
@@ -210,7 +210,7 @@
         {
           "InflowLocation": "InternalJugular",
           "OutflowLocation": "RightFemoralVein",
-          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 1.5, "Unit": "mL/s" } },
+          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 1.5, "Unit": "mL/s" } }
         }
       }
     }
@@ -232,7 +232,7 @@
         {
           "InflowLocation": "RightFemoralVein",
           "OutflowLocation": "InternalJugular",
-          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 1.0, "Unit": "mL/s" } },
+          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 1.0, "Unit": "mL/s" } }
         }
       }
     }
@@ -254,7 +254,7 @@
         {
           "InflowLocation": "LeftFemoralVein",
           "OutflowLocation": "LeftFemoralVein",
-          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 1.0, "Unit": "mL/s" } },
+          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 1.0, "Unit": "mL/s" } }
         }
       }
     }
@@ -274,7 +274,7 @@
               "Comment": "Detach the ECMO machine" }}},
         "Settings":
         {
-          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 0, "Unit": "mL/s" } },
+          "TransfusionFlow": { "ScalarVolumePerTime": { "Value": 0, "Unit": "mL/s" } }
         }
       }
     }
