@@ -4,8 +4,8 @@
 from pulse.engine.PulseEngine import PulseEngine
 from pulse.cdm.ecmo import eECMO_CannulationLocation
 from pulse.cdm.ecmo_actions import SEECMOConfiguration
-from pulse.cdm.scalars import FrequencyUnit, MassPerVolumeUnit, \
-                              PressureUnit, VolumeUnit, VolumePerTimeUnit
+from pulse.cdm.scalars import FrequencyUnit, MassUnit, MassPerVolumeUnit, \
+                              PressureUnit, VolumeUnit, VolumePerTimeMassUnit, VolumePerTimeUnit
 from pulse.cdm.engine import SEDataRequest, SEDataRequestManager
 
 def HowTo_ECMO():
@@ -30,6 +30,8 @@ def HowTo_ECMO():
         SEDataRequest.create_substance_request("CarbonDioxide", "AlveolarTransfer", unit=VolumePerTimeUnit.mL_Per_s),
         SEDataRequest.create_substance_request("Oxygen", "AlveolarTransfer", unit=VolumePerTimeUnit.mL_Per_s),
         SEDataRequest.create_substance_request("Sodium", "BloodConcentration", unit=MassPerVolumeUnit.g_Per_L),
+        SEDataRequest.create_substance_request("Sodium", "Clearance-RenalClearance", unit=VolumePerTimeMassUnit.mL_Per_min_kg),
+        SEDataRequest.create_substance_request("Sodium", "MassInBody", unit=MassUnit.g),
         SEDataRequest.create_liquid_compartment_substance_request("Aorta", "CarbonDioxide", "PartialPressure", unit=PressureUnit.mmHg),
         SEDataRequest.create_liquid_compartment_substance_request("Aorta", "Oxygen", "PartialPressure", unit=PressureUnit.mmHg),
         # ECMO Compartments
@@ -38,6 +40,8 @@ def HowTo_ECMO():
         SEDataRequest.create_liquid_compartment_request("ECMOOxygenator", "InFlow", unit=VolumePerTimeUnit.mL_Per_s),
         SEDataRequest.create_liquid_compartment_request("ECMOOxygenator", "OutFlow", unit=VolumePerTimeUnit.mL_Per_s),
         SEDataRequest.create_liquid_compartment_substance_request("ECMOOxygenator", "Sodium", "Concentration", unit=MassPerVolumeUnit.g_Per_dL),
+        SEDataRequest.create_liquid_compartment_substance_request("VenaCava", "Sodium", "Concentration", unit=MassPerVolumeUnit.g_Per_dL),
+        SEDataRequest.create_liquid_compartment_substance_request("Aorta", "Sodium", "Concentration", unit=MassPerVolumeUnit.g_Per_dL),
     ]
 
     data_mgr = SEDataRequestManager(data_requests)
@@ -57,12 +61,14 @@ def HowTo_ECMO():
     cfg = SEECMOConfiguration()
     settings = cfg.get_settings()
     settings.set_inflow_location(eECMO_CannulationLocation.InternalJugular)
-    settings.set_outflow_location(eECMO_CannulationLocation.LeftFemoralVein)
+    settings.set_outflow_location(eECMO_CannulationLocation.InternalJugular)
     settings.get_oxygenator_volume().set_value(500, VolumeUnit.mL)
-    settings.get_transfusion_flow().set_value(0.8, VolumePerTimeUnit.mL_Per_s)
-    settings.set_substance_compound("Saline")
+    settings.get_transfusion_flow().set_value(5, VolumePerTimeUnit.mL_Per_s)
     settings.get_substance_concentration("Sodium").get_concentration().set_value(0.7, MassPerVolumeUnit.g_Per_dL)
+    #settings.set_substance_compound("Sailine")
+    # If you provide both, the compound will be added first, then any substance concentrations will be overwritten
     pulse.process_action(cfg)
+    settings.clear() # Clear the settings so we only change the flow
 
     pulse.advance_time_s(30)
     results = pulse.pull_data()
@@ -77,7 +83,7 @@ def HowTo_ECMO():
     data_mgr.to_console(results)
 
     # Further increase flow
-    settings.get_transfusion_flow().set_value(5, VolumePerTimeUnit.mL_Per_s)
+    settings.get_transfusion_flow().set_value(0.8, VolumePerTimeUnit.mL_Per_s)
     pulse.process_action(cfg)
 
     pulse.advance_time_s(30)
