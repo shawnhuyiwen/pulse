@@ -15,7 +15,7 @@ namespace pulse
   /**
    * @brief @copydoc Physiology_EndocrineSystemData
    * @details
-   * The Pulse® endocrine system is a rudimentary system with only one stimulus (increased carbon dioxide partial pressure in the blood stream)
+   * The Pulseï¿½ endocrine system is a rudimentary system with only one stimulus (increased carbon dioxide partial pressure in the blood stream)
    * and two hormones (epinephrine and norepinephrine). The release of the hormones in response to the stimuli to represent the response of the sympathetic nervous system.
    * In the future, additional stimuli and additional hormones will be added.
    */
@@ -27,17 +27,17 @@ namespace pulse
     EndocrineModel(Data& data);
     virtual ~EndocrineModel();
 
-    void Clear();
+    void Clear() override;
 
     // Set members to a stable homeostatic state
-    void Initialize();
+    void Initialize() override;
     // Set pointers and other member variables common to both homeostatic initialization and loading a state
-    void SetUp();
+    void SetUp() override;
 
-    void AtSteadyState();
-    void PreProcess() {}
-    void Process(bool solve_and_transport = true);
-    void PostProcess(bool solve_and_transport = true);
+    void AtSteadyState() override;
+    void PreProcess() override {}
+    void Process(bool solve_and_transport = true) override;
+    void PostProcess(bool solve_and_transport = true) override;
 
   protected:
     void ComputeExposedModelParameters() override;

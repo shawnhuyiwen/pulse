@@ -37,11 +37,11 @@ std::unique_ptr<PhysiologyEngine> CreatePulseEngine(eModelType type, Logger* log
   switch (type)
   {
   case eModelType::HumanAdultWholeBody:
-    return std::move(std::make_unique<pulse::human_adult_whole_body::Engine>(logger));
+    return std::make_unique<pulse::human_adult_whole_body::Engine>(logger);
   case eModelType::HumanAdultHemodynamics:
-    return std::move(std::make_unique<pulse::human_adult_hemodynamics::Engine>(logger));
+    return std::make_unique<pulse::human_adult_hemodynamics::Engine>(logger);
   case eModelType::HumanAdultVentilationMechanics:
-    return std::move(std::make_unique<pulse::human_adult_ventilation_mechanics::Engine>(logger));
+    return std::make_unique<pulse::human_adult_ventilation_mechanics::Engine>(logger);
   default:
     throw CommonDataModelException("Unsupported Physiology Engine Type");
   }

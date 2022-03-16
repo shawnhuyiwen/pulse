@@ -28,19 +28,19 @@ namespace pulse
     BagValveMaskModel(Data& pc);
     virtual ~BagValveMaskModel();
 
-    void Clear();
+    void Clear() override;
 
     // Set members to a stable homeostatic state
-    void Initialize();
+    void Initialize() override;
     // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
-    void SetUp();
+    void SetUp() override;
 
-    void StateChange();
+    void StateChange() override;
 
-    void AtSteadyState() {}
-    void PreProcess();
-    void Process(bool solve_and_transport = true);
-    void PostProcess(bool solve_and_transport = true);
+    void AtSteadyState() override {}
+    void PreProcess() override;
+    void Process(bool solve_and_transport = true) override;
+    void PostProcess(bool solve_and_transport = true) override;
 
   protected:
 

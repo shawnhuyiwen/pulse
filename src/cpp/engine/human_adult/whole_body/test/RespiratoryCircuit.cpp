@@ -292,7 +292,7 @@ namespace pulse { namespace human_adult_whole_body
         {
           bool polarityReversed = RightAlveoliToRightPleuralConnection->GetPolarizedState() == eGate::Open &&
             LeftAlveoliToLeftPleuralConnection->GetPolarizedState() == eGate::Open;
-          if (!bRVReached && TotalVolume_L <= pc.GetCurrentPatient().GetResidualVolume(VolumeUnit::L) || polarityReversed)
+          if ((!bRVReached && TotalVolume_L <= pc.GetCurrentPatient().GetResidualVolume(VolumeUnit::L)) || polarityReversed)
           {
             bRVReached = true;
           }
