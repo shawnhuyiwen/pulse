@@ -90,6 +90,8 @@ namespace pulse
   void PBEquipment::Serialize(const PULSE_BIND::ECMOData& src, ECMOModel& dst)
   {
     PBECMO::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
+    dst.m_CurrentInflowLocation = dst.GetSettings().GetInflowLocation();
+    dst.m_CurrentOutflowLocation = dst.GetSettings().GetOutflowLocation();
   }
   PULSE_BIND::ECMOData* PBEquipment::Unload(const ECMOModel& src)
   {
