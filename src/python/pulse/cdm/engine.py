@@ -366,8 +366,9 @@ class eDataRequest_category(Enum):
     AnesthesiaMachine = 9
     BagValveMask = 10
     ECG = 11
-    Inhaler = 12
-    MechanicalVentilator = 13
+    ECMO = 12
+    Inhaler = 13
+    MechanicalVentilator = 14
 
 class SEDataRequest:
     __slots__ = ['_category', '_compartment_name', '_substance_name', '_property_name', '_unit']
@@ -449,6 +450,9 @@ class SEDataRequest:
     def create_anesthesia_machine_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.AnesthesiaMachine, property=property,  unit=unit)
     @classmethod
+    def create_ecmo_request(cls, property:str, unit:SEScalarUnit=None):
+        return cls(eDataRequest_category.ECMO, property=property,  unit=unit)
+    @classmethod
     def create_inhaler_request(cls, property:str, unit:SEScalarUnit=None):
         return cls(eDataRequest_category.Inhaler, property=property,  unit=unit)
     @classmethod
@@ -507,8 +511,10 @@ class SEDataRequestManager:
     def set_samples_per_second(self, sample): self._samples_per_second = sample
 
     def to_console(self, data_values):
+        idx=0;
         for key in data_values:
-            print("{}={}".format(key, data_values[key]))
+            print("{}={} ({})".format(key, data_values[key], idx))
+            idx = idx + 1
 
 class SEEngineInitialization():
     __slots__ = ["id", "patient_configuration", "state_filename",

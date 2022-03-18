@@ -49,6 +49,7 @@ namespace pulse
     if (m_Config->IsCerebrospinalFluidEnabled())
       SetupCerebrospinalFluid();
     SetupGastrointestinal();
+    SetupECMO();
 
     ///////////////////////////////////////////////////////////////////
     // Create abd Combine External and Internal Temperature Circuits //
@@ -2916,6 +2917,36 @@ namespace pulse
     gCombinedCardiovascular.AddCompartment(cIntracranialSpace);
     gCombinedCardiovascular.StateChange();
   }
+
+
+  void Controller::SetupECMO()
+  {
+    Info("Setting Up ECMO");
+
+    /////////////
+    // Circuit //
+    // Nodes
+    SEFluidCircuitNode& nBloodSamplingPort = m_Circuits->CreateFluidNode(pulse::ECMONode::BloodSamplingPort);
+    nBloodSamplingPort.GetVolumeBaseline().SetValue(5, VolumeUnit::mL); // User cannot change
+    SEFluidCircuitNode& nOxygenator = m_Circuits->CreateFluidNode(pulse::ECMONode::Oxygenator);
+    nOxygenator.GetVolumeBaseline().SetValue(5, VolumeUnit::mL); // User can change
+    //Paths
+    SEFluidCircuitPath& pBloodSamplingPortToOxygenator = m_Circuits->CreateFluidPath(nBloodSamplingPort, nOxygenator, pulse::ECMOPath::BloodSamplingPortToOxygenator);
+
+    /////////////////////////
+    // LIQUID COMPARTMENTS //
+    SELiquidCompartment& cBloodSamplingPort = m_Compartments->CreateLiquidCompartment(pulse::ECMOCompartment::BloodSamplingPort);
+    cBloodSamplingPort.MapNode(nBloodSamplingPort);
+    SELiquidCompartment& cOxygenator = m_Compartments->CreateLiquidCompartment(pulse::ECMOCompartment::Oxygenator);
+    cOxygenator.MapNode(nOxygenator);
+    // Setup Links //
+    SELiquidCompartmentLink& lBloodSamplingPortToOxygenator = m_Compartments->CreateLiquidLink(cBloodSamplingPort, cOxygenator, pulse::ECMOLink::BloodSamplingPortToOxygenator);
+    lBloodSamplingPortToOxygenator.MapPath(pBloodSamplingPortToOxygenator); // No transport
+
+    // Will dynamically add/remove nodes/paths and compartments/links to ciruict/graph on ECMOModel::StateChange
+    // This will also include creating/deleting paths from vasculature to/from the ECMO machine
+  }
+
 
   void Controller::SetupRespiratory()
   {

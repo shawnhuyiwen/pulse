@@ -216,6 +216,11 @@ namespace pulse
     return &GetController().GetData().GetBagValveMask();
   }
 
+  const SEECMO* Engine::GetECMO() const
+  {
+    return &GetController().GetData().GetECMO();
+  }
+
   const SEElectroCardioGram* Engine::GetElectroCardioGram() const
   {
     return &GetController().GetData().GetECG();

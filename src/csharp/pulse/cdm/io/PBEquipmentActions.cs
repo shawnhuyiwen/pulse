@@ -113,6 +113,13 @@ namespace Pulse.CDM
         return dst;
       }
 
+      if (any.ECMOConfiguration != null)
+      {
+        SEECMOConfiguration dst = new SEECMOConfiguration();
+        PBEquipmentAction.Load(any.ECMOConfiguration, dst/*, subMgr*/);
+        return dst;
+      }
+
       if (any.MechanicalVentilatorConfiguration != null)
       {
         SEMechanicalVentilatorConfiguration dst = new SEMechanicalVentilatorConfiguration();
@@ -258,6 +265,24 @@ namespace Pulse.CDM
         }
       }
 
+      if (action is SEECMOAction)
+      {
+        if (action.GetType().IsAssignableFrom(typeof(SEECMOConfiguration)))
+        {
+          any.ECMOConfiguration = Unload((SEECMOConfiguration)action);
+          return any;
+        }
+      }
+
+      if (action is SEInhalerAction)
+      {
+        if (action.GetType().IsAssignableFrom(typeof(SEInhalerConfiguration)))
+        {
+          any.InhalerConfiguration = Unload((SEInhalerConfiguration)action);
+          return any;
+        }
+      }
+
       if (action is SEMechanicalVentilatorAction)
       {
         if (action.GetType().IsAssignableFrom(typeof(SEMechanicalVentilatorConfiguration)))
@@ -293,14 +318,6 @@ namespace Pulse.CDM
         }
       }
 
-      if (action is SEInhalerAction)
-      {
-        if (action.GetType().IsAssignableFrom(typeof(SEInhalerConfiguration)))
-        {
-          any.InhalerConfiguration = Unload((SEInhalerConfiguration)action);
-          return any;
-        }
-      }
       //Log.error("Unsupported Equipment Action type " + c);
       return null;
     }
@@ -847,6 +864,50 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEECMOAction
+    public static void Serialize(pulse.cdm.bind.ECMOActionData src, SEECMOAction dst)
+    {
+      if (src.EquipmentAction != null)
+        PBEquipmentAction.Serialize(src.EquipmentAction, dst);
+    }
+    protected static void Serialize(SEECMOAction src, pulse.cdm.bind.ECMOActionData dst)
+    {
+      dst.EquipmentAction = new pulse.cdm.bind.EquipmentActionData();
+      PBEquipmentAction.Serialize(src, dst.EquipmentAction);
+    }
+    #endregion
+
+    #region SEECMOConfiguration
+    public static void Load(pulse.cdm.bind.ECMOConfigurationData src, SEECMOConfiguration dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ECMOConfigurationData src, SEECMOConfiguration dst)
+    {
+      if (src.ECMOAction != null)
+        Serialize(src.ECMOAction, dst);
+      if (src.SettingsFile != null)
+        dst.SetSettingsFile(src.SettingsFile);
+      else if (src.Settings != null)
+        PBECMO.Load(src.Settings, dst.GetSettings());
+    }
+    public static pulse.cdm.bind.ECMOConfigurationData Unload(SEECMOConfiguration src)
+    {
+      pulse.cdm.bind.ECMOConfigurationData dst = new pulse.cdm.bind.ECMOConfigurationData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEECMOConfiguration src, pulse.cdm.bind.ECMOConfigurationData dst)
+    {
+      dst.ECMOAction = new pulse.cdm.bind.ECMOActionData();
+      Serialize(src, dst.ECMOAction);
+      if (src.HasSettingsFile())
+        dst.SettingsFile = src.GetSettingsFile();
+      else if (src.HasSettings())
+        dst.Settings = PBECMO.Unload(src.GetSettings());
+    }
+    #endregion
+
     #region SEInhalerAction
     public static void Serialize(pulse.cdm.bind.InhalerActionData src, SEInhalerAction dst)
     {
@@ -914,7 +975,7 @@ namespace Pulse.CDM
       if (src.MechanicalVentilatorAction != null)
         Serialize(src.MechanicalVentilatorAction, dst);
       if (src.SettingsFile != null)
-        dst.SetConfigurationFile(src.SettingsFile);
+        dst.SetSettingsFile(src.SettingsFile);
       else if (src.Settings != null)
         PBMechanicalVentilator.Load(src.Settings, dst.GetSettings());
       dst.SetMergeType((eMergeType)src.MergeType);

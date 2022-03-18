@@ -91,9 +91,9 @@ namespace pulse
   };
 }
 
-///////////////////////////////
-// Respiratory Circuit Enums //
-///////////////////////////////
+///////////////////
+// Circuit Enums //
+///////////////////
 
 namespace pulse
 {
@@ -120,29 +120,6 @@ namespace pulse
     DEFINE_STATIC_STRING(Temperature);
     DEFINE_STATIC_STRING(InternalTemperature);
     DEFINE_STATIC_STRING(ExternalTemperature);
-  };
-
-  ///////////////////////////////////////
-  // Cerebrospinal Fluid Circuit Enums //
-  ///////////////////////////////////////
-
-  class CerebrospinalFluidNode
-  {
-  public:
-    DEFINE_STATIC_STRING(VascularCSFBarrier);
-    DEFINE_STATIC_STRING(IntracranialSpace1);
-    DEFINE_STATIC_STRING(IntracranialSpace2);
-  };
-
-  class CerebrospinalFluidPath
-  {
-  public:
- 
-    DEFINE_STATIC_STRING(IntracranialSpace2ToGround);
-    DEFINE_STATIC_STRING(GroundToIntracranialSpace1);
-    DEFINE_STATIC_STRING(Brain1ToVascularCSFBarrier);
-    DEFINE_STATIC_STRING(VascularCSFBarrierToIntracranialSpace1);
-    DEFINE_STATIC_STRING(IntracranialSpace1ToIntracranialSpace2);
   };
 
   ///////////////////////////
@@ -743,6 +720,29 @@ namespace pulse
     DEFINE_STATIC_STRING(IVToVenaCava);
   };
 
+  ///////////////////////////////////////
+  // Cerebrospinal Fluid Circuit Enums //
+  ///////////////////////////////////////
+
+  class CerebrospinalFluidNode
+  {
+  public:
+    DEFINE_STATIC_STRING(VascularCSFBarrier);
+    DEFINE_STATIC_STRING(IntracranialSpace1);
+    DEFINE_STATIC_STRING(IntracranialSpace2);
+  };
+
+  class CerebrospinalFluidPath
+  {
+  public:
+
+    DEFINE_STATIC_STRING(IntracranialSpace2ToGround);
+    DEFINE_STATIC_STRING(GroundToIntracranialSpace1);
+    DEFINE_STATIC_STRING(Brain1ToVascularCSFBarrier);
+    DEFINE_STATIC_STRING(VascularCSFBarrierToIntracranialSpace1);
+    DEFINE_STATIC_STRING(IntracranialSpace1ToIntracranialSpace2);
+  };
+
   class TissueNode
   {
   public:
@@ -978,5 +978,20 @@ namespace pulse
   {
   public:
     DEFINE_STATIC_STRING(GutChymeToSmallIntestineVascular);
+  };
+
+  class ECMONode
+  {
+  public:
+    DEFINE_STATIC_STRING(BloodSamplingPort);
+    DEFINE_STATIC_STRING(Oxygenator);
+  };
+
+  class ECMOPath
+  {
+  public:
+    DEFINE_STATIC_STRING(VascularToBloodSamplingPort);
+    DEFINE_STATIC_STRING(BloodSamplingPortToOxygenator);
+    DEFINE_STATIC_STRING(OxygenatorToVasculature);
   };
 END_NAMESPACE

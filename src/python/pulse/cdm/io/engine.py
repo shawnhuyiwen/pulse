@@ -22,6 +22,7 @@ from pulse.cdm.io.patient_actions import *
 from pulse.cdm.io.patient_conditions import *
 from pulse.cdm.io.environment_actions import *
 from pulse.cdm.io.environment_conditions import *
+from pulse.cdm.io.ecmo_actions import *
 from pulse.cdm.io.mechanical_ventilator_actions import *
 
 def serialize_event_change_list_to_bind(src: [], dst: EventChangeListData):
@@ -291,6 +292,7 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_urinate_to_bind(action, any_action.PatientAction.Urinate)
                 dst.AnyAction.append(any_action)
                 continue
+            print("Uknown Patient Action")
         if isinstance(action, SEEnvironmentAction):
             if isinstance(action, SEChangeEnvironmentalConditions):
                 serialize_change_environmental_conditions_to_bind(action, any_action.EnvironmentAction.ChangeEnvironmentalConditions)
@@ -329,6 +331,11 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_mechanical_ventilator_leak_to_bind(action, any_action.EquipmentAction.MechanicalVentilatorLeak)
                 dst.AnyAction.append(any_action)
                 continue
+            if isinstance(action, SEECMOConfiguration):
+                serialize_ecmo_configuration_to_bind(action, any_action.EquipmentAction.ECMOConfiguration)
+                dst.AnyAction.append(any_action)
+                continue
+            print("Unknown Equipment Action")
 
 def serialize_actions_to_string(actions: [], fmt: eSerializationFormat):
     action_list = ActionListData()

@@ -9,6 +9,7 @@ POP_PROTO_WARNINGS
 
 #include "cdm/io/protobuf/PBAnesthesiaMachine.h"
 #include "cdm/io/protobuf/PBBagValveMask.h"
+#include "cdm/io/protobuf/PBECMO.h"
 #include "cdm/io/protobuf/PBElectroCardioGram.h"
 #include "cdm/io/protobuf/PBInhaler.h"
 #include "cdm/io/protobuf/PBMechanicalVentilator.h"
@@ -77,6 +78,30 @@ namespace pulse
     dst.set_currentperiodtime_s(src.m_CurrentPeriodTime_s);
     dst.set_squeezeflow_l_per_s(src.m_SqueezeFlow_L_Per_s);
     dst.set_squeezepressure_cmh2o(src.m_SqueezePressure_cmH2O);
+  }
+
+  void PBEquipment::Load(const PULSE_BIND::ECMOData& src, ECMOModel& dst)
+  {
+    dst.Clear();
+    dst.SetUp();
+    PBEquipment::Serialize(src, dst);
+    dst.StateChange();
+  }
+  void PBEquipment::Serialize(const PULSE_BIND::ECMOData& src, ECMOModel& dst)
+  {
+    PBECMO::Serialize(src.common(), dst, (SESubstanceManager&)dst.m_data.GetSubstances());
+    dst.m_CurrentInflowLocation = dst.GetSettings().GetInflowLocation();
+    dst.m_CurrentOutflowLocation = dst.GetSettings().GetOutflowLocation();
+  }
+  PULSE_BIND::ECMOData* PBEquipment::Unload(const ECMOModel& src)
+  {
+    PULSE_BIND::ECMOData* dst = new PULSE_BIND::ECMOData();
+    PBEquipment::Serialize(src, *dst);
+    return dst;
+  }
+  void PBEquipment::Serialize(const ECMOModel& src, PULSE_BIND::ECMOData& dst)
+  {
+    PBECMO::Serialize(src, *dst.mutable_common());
   }
 
   void PBEquipment::Load(const PULSE_BIND::ElectroCardioGramData& src, ElectroCardioGramModel& dst)

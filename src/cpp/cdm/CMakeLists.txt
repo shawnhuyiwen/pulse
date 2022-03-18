@@ -91,6 +91,7 @@ add_library_ex(CommonDataModel
     io/protobuf/PBCircuit.h
     io/protobuf/PBCompartment.h
     io/protobuf/PBConditions.h
+    io/protobuf/PBECMO.h
     io/protobuf/PBElectroCardioGram.h
     io/protobuf/PBEngine.h
     io/protobuf/PBEnvironment.h
@@ -300,6 +301,10 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.h
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h
+    system/equipment/ecmo/SEECMO.h
+    system/equipment/ecmo/SEECMOSettings.h
+    system/equipment/ecmo/actions/SEECMOAction.h
+    system/equipment/ecmo/actions/SEECMOConfiguration.h
     system/equipment/electrocardiogram/SEElectroCardioGram.h
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.h
     system/equipment/inhaler/SEInhaler.h
@@ -448,6 +453,7 @@ add_library_ex(CommonDataModel
     io/protobuf/PBCompartment.cpp
     io/protobuf/PBCompartmentEnums.cpp
     io/protobuf/PBConditions.cpp
+    io/protobuf/PBECMO.cpp
     io/protobuf/PBElectroCardioGram.cpp
     io/protobuf/PBElectroCardioGramEnums.cpp
     io/protobuf/PBEngine.cpp
@@ -667,6 +673,10 @@ add_library_ex(CommonDataModel
     system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.cpp
     system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.cpp
     system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cpp
+    system/equipment/ecmo/SEECMO.cpp
+    system/equipment/ecmo/SEECMOSettings.cpp
+    system/equipment/ecmo/actions/SEECMOAction.cpp
+    system/equipment/ecmo/actions/SEECMOConfiguration.cpp
     system/equipment/electrocardiogram/SEElectroCardioGram.cpp
     system/equipment/electrocardiogram/SEElectroCardioGramWaveform.cpp
     system/equipment/inhaler/SEInhaler.cpp

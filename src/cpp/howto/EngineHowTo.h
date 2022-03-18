@@ -24,6 +24,7 @@ void HowToConsumeNutrients();
 void HowToCOPD();
 void HowToCOVID19Ventilated();
 void HowToCPR();
+void HowToECMO();
 void HowToEnvironmentChange();
 void HowToExercise();
 void HowToHemorrhage();

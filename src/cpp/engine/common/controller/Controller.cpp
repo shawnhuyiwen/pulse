@@ -5,6 +5,7 @@
 #include "engine/common/system/environment/EnvironmentModel.h"
 #include "engine/common/system/equipment/AnesthesiaMachineModel.h"
 #include "engine/common/system/equipment/BagValveMaskModel.h"
+#include "engine/common/system/equipment/ECMOModel.h"
 #include "engine/common/system/equipment/ElectroCardioGramModel.h"
 #include "engine/common/system/equipment/InhalerModel.h"
 #include "engine/common/system/equipment/MechanicalVentilatorModel.h"
@@ -125,6 +126,8 @@ namespace pulse
       m_EngineTrack->AddSystem(*m_AnesthesiaMachineModel);
     if (m_BagValveMaskModel)
       m_EngineTrack->AddSystem(*m_BagValveMaskModel);
+    if (m_ECMOModel)
+      m_EngineTrack->AddSystem(*m_ECMOModel);
     if (m_ElectroCardioGramModel)
       m_EngineTrack->AddSystem(*m_ElectroCardioGramModel);
     if (m_InhalerModel)
@@ -173,6 +176,8 @@ namespace pulse
   SEBagValveMask& Data::GetBagValveMask() const { return *m_BagValveMaskModel; }
   bool Data::HasECG() const { return m_ElectroCardioGramModel != nullptr; }
   SEElectroCardioGram& Data::GetECG() const { return *m_ElectroCardioGramModel; }
+  bool Data::HasECMO() const { return m_ECMOModel != nullptr; }
+  SEECMO& Data::GetECMO() const { return *m_ECMOModel; }
   bool Data::HasInhaler() const { return m_InhalerModel != nullptr; }
   SEInhaler& Data::GetInhaler() const { return *m_InhalerModel; }
   bool Data::HasMechanicalVentilator() const { return m_MechanicalVentilatorModel != nullptr; }
@@ -239,6 +244,7 @@ namespace pulse
 
     SAFE_DELETE(m_AnesthesiaMachineModel);
     SAFE_DELETE(m_BagValveMaskModel);
+    SAFE_DELETE(m_ECMOModel);
     SAFE_DELETE(m_ElectroCardioGramModel);
     SAFE_DELETE(m_InhalerModel);
     SAFE_DELETE(m_MechanicalVentilatorModel);

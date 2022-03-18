@@ -387,6 +387,8 @@ template<FLUID_COMPARTMENT_TEMPLATE>
 void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::RemoveLink(LinkType& link)
 {
   Remove(m_Links, &link);
+  Remove(m_IncomingLinks, &link);
+  Remove(m_OutgoingLinks, &link);
 }
 template<FLUID_COMPARTMENT_TEMPLATE>
 void SEFluidCompartment<FLUID_COMPARTMENT_TYPES>::RemoveLinks()

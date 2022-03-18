@@ -28,6 +28,7 @@ class SETissueSystem;
 class SEEnvironment;
 class SEAnesthesiaMachine;
 class SEBagValveMask;
+class SEECMO;
 class SEElectroCardioGram;
 class SEInhaler;
 class SEMechanicalVentilator;
@@ -352,6 +353,13 @@ public:
   ///
   //--------------------------------------------------------------------------------------------------
   virtual const SEBagValveMask* GetBagValveMask() const = 0;
+
+  //--------------------------------------------------------------------------------------------------
+ /// \brief
+ /// Returns the current state of the ECMO machine
+ ///
+ //--------------------------------------------------------------------------------------------------
+  virtual const SEECMO* GetECMO() const = 0;
 
   //--------------------------------------------------------------------------------------------------
   /// \brief

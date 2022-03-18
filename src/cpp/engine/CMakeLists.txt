@@ -19,6 +19,7 @@ add_library_ex(PulseEngine
     common/system/environment/EnvironmentModel.h
     common/system/equipment/AnesthesiaMachineModel.h
     common/system/equipment/BagValveMaskModel.h
+    common/system/equipment/ECMOModel.h
     common/system/equipment/ElectroCardioGramModel.h
     common/system/equipment/InhalerModel.h
     common/system/equipment/MechanicalVentilatorModel.h
@@ -45,6 +46,7 @@ add_library_ex(PulseEngine
     human_adult/whole_body/system/environment/EnvironmentModel.h
     human_adult/whole_body/system/equipment/AnesthesiaMachineModel.h
     human_adult/whole_body/system/equipment/BagValveMaskModel.h
+    human_adult/whole_body/system/equipment/ECMOModel.h
     human_adult/whole_body/system/equipment/ElectroCardioGramModel.h
     human_adult/whole_body/system/equipment/InhalerModel.h
     human_adult/whole_body/system/equipment/MechanicalVentilatorModel.h
@@ -92,6 +94,7 @@ add_library_ex(PulseEngine
     common/system/environment/EnvironmentModel.cpp
     common/system/equipment/AnesthesiaMachineModel.cpp
     common/system/equipment/BagValveMaskModel.cpp
+    common/system/equipment/ECMOModel.cpp
     common/system/equipment/ElectroCardioGramModel.cpp
     common/system/equipment/InhalerModel.cpp
     common/system/equipment/MechanicalVentilatorModel.cpp

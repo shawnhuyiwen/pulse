@@ -19,6 +19,7 @@ See accompanying NOTICE file for details.*/
 #include "cdm/system/environment/SEEnvironment.h"
 #include "cdm/system/equipment/anesthesia_machine/SEAnesthesiaMachine.h"
 #include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
+#include "cdm/system/equipment/ecmo/SEECMO.h"
 #include "cdm/system/equipment/electrocardiogram/SEElectroCardioGram.h"
 #include "cdm/system/equipment/inhaler/SEInhaler.h"
 #include "cdm/system/equipment/mechanical_ventilator/SEMechanicalVentilator.h"
@@ -391,6 +392,32 @@ namespace pulse
     virtual const SEScalar* GetScalar(const std::string& name) override
     {
       const SEScalar* s = SEBagValveMask::GetScalar(name);
+      if (s != nullptr)
+        return s;
+      // Check to see if this a model specific request
+      //if (name.compare("ModelParameter") == 0)
+      //  return m_ModelParameter;
+      return nullptr;
+    }
+    virtual void ComputeExposedModelParameters() = 0;
+  protected:
+    //SEScalar m_ModelParameter;
+  };
+
+  class PULSE_DECL ECMOSystem : public SEECMO
+  {
+  public:
+    ECMOSystem(Logger* logger=nullptr) : SEECMO(logger) {}
+    virtual ~ECMOSystem() = default;
+
+    void Clear() override
+    {
+      SEECMO::Clear();
+    }
+
+    virtual const SEScalar* GetScalar(const std::string & name) override
+    {
+      const SEScalar* s = SEECMO::GetScalar(name);
       if (s != nullptr)
         return s;
       // Check to see if this a model specific request

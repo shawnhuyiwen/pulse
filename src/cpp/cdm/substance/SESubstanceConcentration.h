@@ -20,11 +20,14 @@ public:
 
   virtual bool HasConcentration() const;
   virtual SEScalarMassPerVolume& GetConcentration();
+  virtual const SEScalarMassPerVolume* GetConcentration() const;
   virtual double GetConcentration(const MassPerVolumeUnit& unit) const;
 
   virtual const SESubstance& GetSubstance() const;
-  
-protected: 
+
+  virtual std::string ToString() const;
+
+protected:
 
   const SESubstance&     m_Substance;
   SEScalarMassPerVolume* m_Concentration;

@@ -39,6 +39,7 @@ namespace pulse
 
   class AnesthesiaMachineModel;
   class BagValveMaskModel;
+  class ECMOModel;
   class ElectroCardioGramModel;
   class InhalerModel;
   class MechanicalVentilatorModel;
@@ -127,6 +128,8 @@ namespace pulse
     virtual SEBagValveMask&               GetBagValveMask() const;
     virtual bool                          HasECG() const;
     virtual SEElectroCardioGram&          GetECG() const;
+    virtual bool                          HasECMO() const;
+    virtual SEECMO&                       GetECMO() const;
     virtual bool                          HasInhaler() const;
     virtual SEInhaler&                    GetInhaler() const;
     virtual bool                          HasMechanicalVentilator() const;
@@ -201,6 +204,7 @@ namespace pulse
 
     AnesthesiaMachineModel*               m_AnesthesiaMachineModel = nullptr;
     BagValveMaskModel*                    m_BagValveMaskModel = nullptr;
+    ECMOModel*                            m_ECMOModel = nullptr;
     ElectroCardioGramModel*               m_ElectroCardioGramModel = nullptr;
     InhalerModel*                         m_InhalerModel = nullptr;
     MechanicalVentilatorModel*            m_MechanicalVentilatorModel = nullptr;
@@ -265,6 +269,7 @@ namespace pulse
     virtual void SetupRenal();
     virtual void SetupTissue();
     virtual void SetupCerebrospinalFluid();
+    virtual void SetupECMO();
     virtual void SetupGastrointestinal();
     virtual void SetupRespiratory();
     virtual void SetupAnesthesiaMachine();

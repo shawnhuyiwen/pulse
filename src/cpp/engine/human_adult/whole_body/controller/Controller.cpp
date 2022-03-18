@@ -10,6 +10,7 @@
 #include "engine/human_adult/whole_body/system/environment/EnvironmentModel.h"
 #include "engine/human_adult/whole_body/system/equipment/AnesthesiaMachineModel.h"
 #include "engine/human_adult/whole_body/system/equipment/BagValveMaskModel.h"
+#include "engine/human_adult/whole_body/system/equipment/ECMOModel.h"
 #include "engine/human_adult/whole_body/system/equipment/ElectroCardioGramModel.h"
 #include "engine/human_adult/whole_body/system/equipment/InhalerModel.h"
 #include "engine/human_adult/whole_body/system/equipment/MechanicalVentilatorModel.h"
@@ -94,6 +95,7 @@ namespace pulse { namespace human_adult_whole_body
 
     m_AnesthesiaMachineModel = new AnesthesiaMachineModel(*this);
     m_BagValveMaskModel = new BagValveMaskModel(*this);
+    m_ECMOModel = new ECMOModel(*this);
     m_ElectroCardioGramModel = new ElectroCardioGramModel(*this);
     m_InhalerModel = new InhalerModel(*this);
     m_MechanicalVentilatorModel = new MechanicalVentilatorModel(*this);
@@ -131,6 +133,7 @@ namespace pulse { namespace human_adult_whole_body
     m_BloodChemistryModel->Clear();
     m_TissueModel->Clear();
     m_ElectroCardioGramModel->Clear();
+    m_ECMOModel->Clear();
     m_InhalerModel->Clear();
 
     Info("Initializing Models");
@@ -149,6 +152,7 @@ namespace pulse { namespace human_adult_whole_body
     m_BloodChemistryModel->Initialize();
     m_TissueModel->Initialize(); // Depends on some parameters that Blood Chemistry initializes,needs to be after
     m_ElectroCardioGramModel->Initialize();
+    m_ECMOModel->Initialize();
     m_InhalerModel->Initialize();
   }
 
@@ -172,6 +176,7 @@ namespace pulse { namespace human_adult_whole_body
     m_TissueModel->AtSteadyState();
     m_BloodChemistryModel->AtSteadyState();
     m_ElectroCardioGramModel->AtSteadyState();
+    m_ECMOModel->AtSteadyState();
   }
 
   void Controller::PreProcess()
@@ -193,6 +198,7 @@ namespace pulse { namespace human_adult_whole_body
     m_TissueModel->PreProcess();
     m_BloodChemistryModel->PreProcess();
     m_ElectroCardioGramModel->PreProcess();
+    m_ECMOModel->PreProcess();
   }
   void Controller::Process()
   {
@@ -213,6 +219,7 @@ namespace pulse { namespace human_adult_whole_body
     m_TissueModel->Process();
     m_BloodChemistryModel->Process();
     m_ElectroCardioGramModel->Process();
+    m_ECMOModel->Process();
   }
   void Controller::PostProcess()
   {
@@ -233,6 +240,7 @@ namespace pulse { namespace human_adult_whole_body
     m_TissueModel->PostProcess();
     m_BloodChemistryModel->PostProcess();
     m_ElectroCardioGramModel->PostProcess();
+    m_ECMOModel->PostProcess();
   }
 
   bool Controller::GetPatientAssessment(SEPatientAssessment& assessment) const

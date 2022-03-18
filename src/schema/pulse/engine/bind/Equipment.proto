@@ -6,6 +6,7 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/AnesthesiaMachine.proto";
 import "pulse/cdm/bind/BagValveMask.proto";
+import "pulse/cdm/bind/ECMO.proto";
 import "pulse/cdm/bind/ElectroCardioGram.proto";
 import "pulse/cdm/bind/Inhaler.proto";
 import "pulse/cdm/bind/MechanicalVentilator.proto";
@@ -27,6 +28,11 @@ message BagValveMaskData
   double                                           CurrentPeriodTime_s            = 2;
   double                                           SqueezeFlow_L_Per_s            = 3;
   double                                           SqueezePressure_cmH2O          = 4;
+}
+
+message ECMOData
+{
+  pulse.cdm.bind.ECMOData                          Common                                 = 1;
 }
 
 message ElectroCardioGramData

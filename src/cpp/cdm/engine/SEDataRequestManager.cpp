@@ -142,6 +142,9 @@ SEDataRequest* SEDataRequestManager::FindDataRequest(const SEDataRequest& dr)
   case eDataRequest_Category::ECG:
     my_dr = FindECGDataRequest(dr.GetPropertyName());
     return my_dr;
+  case eDataRequest_Category::ECMO:
+    my_dr = FindECMODataRequest(dr.GetPropertyName());
+    return my_dr;
   case eDataRequest_Category::Inhaler:
     my_dr = FindInhalerDataRequest(dr.GetPropertyName());
     return my_dr;
@@ -648,6 +651,38 @@ SEDataRequest* SEDataRequestManager::FindECGDataRequest(const std::string& prope
   for (SEDataRequest* dr : m_Requests)
   {
     if (dr->GetCategory() == eDataRequest_Category::ECG && dr->GetPropertyName() == property)
+      return dr;
+  }
+  return nullptr;
+}
+
+SEDataRequest& SEDataRequestManager::CreateECMODataRequest(const std::string& property, const SEDecimalFormat* dfault)
+{
+  SEDataRequest* dr = FindECMODataRequest(property);
+  if (dr != nullptr)
+    return *dr;
+  dr = new SEDataRequest(eDataRequest_Category::ECMO, dfault);
+  m_Requests.push_back(dr);
+  dr->SetPropertyName(property);
+  return *dr;
+}
+SEDataRequest& SEDataRequestManager::CreateECMODataRequest(const std::string& property, const CCompoundUnit& unit, const SEDecimalFormat* dfault)
+{
+  SEDataRequest* dr = FindECMODataRequest(property);
+  if (dr != nullptr)
+    return *dr;
+  dr = new SEDataRequest(eDataRequest_Category::ECMO, dfault);
+  m_Requests.push_back(dr);
+  dr->SetPropertyName(property);
+  dr->SetUnit(unit);
+  return *dr;
+}
+SEDataRequest* SEDataRequestManager::FindECMODataRequest(const std::string& property)
+{
+  for (SEDataRequest* dr : m_Requests)
+  {
+    if (dr->GetCategory() == eDataRequest_Category::ECMO &&
+      dr->GetPropertyName() == property)
       return dr;
   }
   return nullptr;
