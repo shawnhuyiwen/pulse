@@ -1,31 +1,31 @@
 /* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
-package com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions;
+package com.kitware.pulse.cdm.system.equipment.ecmo.actions;
 
-import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.MechanicalVentilatorConfigurationData;
-import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.SEMechanicalVentilatorSettings;
+import com.kitware.pulse.cdm.bind.ECMOActions.ECMOConfigurationData;
+import com.kitware.pulse.cdm.system.equipment.ecmo.SEECMOSettings;
 import com.kitware.pulse.utilities.Log;
 
-public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorAction
+public class SEECMOConfiguration extends SEECMOAction
 {
 
   private static final long serialVersionUID = -1487014080271791164L;
-  protected SEMechanicalVentilatorSettings settings=null;
+  protected SEECMOSettings settings=null;
   protected String                         settingsFile="";
   
-  public SEMechanicalVentilatorConfiguration()
+  public SEECMOConfiguration()
   {
     
   }
   
-  public SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorConfiguration other)
+  public SEECMOConfiguration(SEECMOConfiguration other)
   {
     this();
     copy(other);
   }
   
-  public void copy(SEMechanicalVentilatorConfiguration other)
+  public void copy(SEECMOConfiguration other)
   {
     if(this==other)
       return;
@@ -51,44 +51,44 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
     return hasSettings() || hasSettingsFile();
   }
   
-  public static void load(MechanicalVentilatorConfigurationData src, SEMechanicalVentilatorConfiguration dst)
+  public static void load(ECMOConfigurationData src, SEECMOConfiguration dst)
   {
-    SEMechanicalVentilatorAction.load(src.getMechanicalVentilatorAction(),dst);
+    SEECMOAction.load(src.getECMOAction(),dst);
     switch(src.getOptionCase())
     {
     case SETTINGSFILE:
       dst.settingsFile = src.getSettingsFile();
       break;
     case SETTINGS:
-      SEMechanicalVentilatorSettings.load(src.getSettings(),dst.getSettings());
+      SEECMOSettings.load(src.getSettings(),dst.getSettings());
       break;
     default:
-    	Log.error("Unknown MechanicalVentilatorConfigurationData Option");
+    	Log.error("Unknown ECMOConfigurationData Option");
     }
   }
-  public static MechanicalVentilatorConfigurationData unload(SEMechanicalVentilatorConfiguration src)
+  public static ECMOConfigurationData unload(SEECMOConfiguration src)
   {
-    MechanicalVentilatorConfigurationData.Builder dst = MechanicalVentilatorConfigurationData.newBuilder();
+    ECMOConfigurationData.Builder dst = ECMOConfigurationData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
-  protected static void unload(SEMechanicalVentilatorConfiguration src, MechanicalVentilatorConfigurationData.Builder dst)
+  protected static void unload(SEECMOConfiguration src, ECMOConfigurationData.Builder dst)
   {
-    SEMechanicalVentilatorAction.unload(src, dst.getMechanicalVentilatorActionBuilder());
+    SEECMOAction.unload(src, dst.getECMOActionBuilder());
     if(src.hasSettingsFile())
       dst.setSettingsFile(src.settingsFile);
     else if(src.hasSettings())
-      dst.setSettings(SEMechanicalVentilatorSettings.unload(src.settings));
+      dst.setSettings(SEECMOSettings.unload(src.settings));
   }
   
   public boolean hasSettings()
   {
     return this.settings!=null;
   }
-  public SEMechanicalVentilatorSettings getSettings()
+  public SEECMOSettings getSettings()
   {
     if(this.settings==null)
-      this.settings=new SEMechanicalVentilatorSettings();
+      this.settings=new SEECMOSettings();
     return this.settings;
   }
   
@@ -108,7 +108,7 @@ public class SEMechanicalVentilatorConfiguration extends SEMechanicalVentilatorA
   @Override
   public String toString()
   {
-    String str = "Mechanical Ventilator Configuration";
+    String str = "ECMO Configuration";
     if(this.hasSettingsFile())
       str +="\n\tSettings File: "+this.settingsFile;
     else if(hasSettings())

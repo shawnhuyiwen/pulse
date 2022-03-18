@@ -8,6 +8,7 @@ import com.kitware.pulse.cdm.bind.Actions.EquipmentActionData;
 import com.kitware.pulse.cdm.bind.EquipmentActions.AnyEquipmentActionData;
 import com.kitware.pulse.cdm.system.equipment.anesthesia_machine.actions.*;
 import com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions.*;
+import com.kitware.pulse.cdm.system.equipment.ecmo.actions.*;
 import com.kitware.pulse.cdm.system.equipment.inhaler.actions.*;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions.*;
 import com.kitware.pulse.utilities.Log;
@@ -148,6 +149,12 @@ public abstract class SEEquipmentAction extends SEAction
     {
       SEBagValveMaskSqueeze dst = new SEBagValveMaskSqueeze();
       SEBagValveMaskSqueeze.load(c.getBagValveMaskSqueeze(), dst);
+      return dst;
+    }
+    case ECMOCONFIGURATION:
+    {
+      SEECMOConfiguration dst = new SEECMOConfiguration();
+      SEECMOConfiguration.load(c.getECMOConfiguration(), dst);
       return dst;
     }
     case INHALERCONFIGURATION:
@@ -292,6 +299,17 @@ public abstract class SEEquipmentAction extends SEAction
         return dst.build();
       }
       Log.error("Unsupported Bag Valve Mask Action type " + c);
+      return null;
+    }
+    
+    if (c instanceof SEECMOAction)
+    {
+      if (c instanceof SEECMOConfiguration)
+      {
+        dst.setECMOConfiguration(SEECMOConfiguration.unload((SEECMOConfiguration) c));
+        return dst.build();
+      }
+      Log.error("Unsupported Inhaler Action type " + c);
       return null;
     }
 

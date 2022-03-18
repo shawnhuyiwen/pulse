@@ -46,6 +46,7 @@ import com.kitware.pulse.cdm.system.environment.actions.SEEnvironmentAction;
 import com.kitware.pulse.cdm.system.environment.conditions.SEEnvironmentCondition;
 import com.kitware.pulse.cdm.system.equipment.anesthesia_machine.actions.SEAnesthesiaMachineAction;
 import com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions.SEBagValveMaskAction;
+import com.kitware.pulse.cdm.system.equipment.ecmo.actions.SEECMOAction;
 import com.kitware.pulse.cdm.system.equipment.inhaler.actions.SEInhalerAction;
 import com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions.SEMechanicalVentilatorAction;
 import com.kitware.pulse.utilities.FileUtils;
@@ -179,6 +180,15 @@ public class CDM2MD
         WriteDoxyTable(c, "", writer, skipProperties);
       Set<Class<? extends SEBagValveMaskAction>> bvmActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.bag_valve_mask.actions", SEBagValveMaskAction.class);
       for(Class<?> c : bvmActions)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      
+      // ECMO
+      writer.append("#### The following tables describe the ECMO machine\n<hr>\n");
+      Set<Class<? extends Object>> ecmo = FindObjects.findAllClasses("com.kitware.pulse.cdm.system.equipment.ecmo");
+      for(Class<?> c : ecmo)
+        WriteDoxyTable(c, "", writer, skipProperties);
+      Set<Class<? extends SEECMOAction>> ecmoActions = FindObjects.findClassSubTypes("com.kitware.pulse.cdm.system.equipment.ecmo.actions", SEECMOAction.class);
+      for(Class<?> c : ecmoActions)
         WriteDoxyTable(c, "", writer, skipProperties);
       
       // ECG

@@ -39,9 +39,11 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
+  virtual bool HasInflowLocation() const;
   virtual eECMO_CannulationLocation GetInflowLocation() const;
   virtual void SetInflowLocation(eECMO_CannulationLocation c);
 
+  virtual bool HasOutflowLocation() const;
   virtual eECMO_CannulationLocation GetOutflowLocation() const;
   virtual void SetOutflowLocation(eECMO_CannulationLocation c);
 

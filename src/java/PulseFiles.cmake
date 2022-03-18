@@ -243,6 +243,9 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/ecmo/SEECMO.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/ecmo/actions/SEECMOAction.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/ecmo/actions/SEECMOConfiguration.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/electrocardiogram/SEElectroCardioGram.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/electrocardiogram/SEElectroCardioGramWaveform.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/system/equipment/inhaler/SEInhaler.java
@@ -299,6 +302,7 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/engine/testing/ScenarioTestDriver.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_AnesthesiaMachine.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_EngineUse.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_ECMO.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_Envionment.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_Hemorrhage.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/howto/HowTo_MechanicalVentilator.java

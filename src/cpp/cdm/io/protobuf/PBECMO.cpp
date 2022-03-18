@@ -18,7 +18,7 @@ POP_PROTO_WARNINGS
 
 const std::string& eECMO_CannulationLocation_Name(eECMO_CannulationLocation m)
 {
-  return CDM_BIND::eEMCOCannulationLocation_Name((CDM_BIND::eEMCOCannulationLocation)m);
+  return CDM_BIND::eECMOCannulationLocation_Name((CDM_BIND::eECMOCannulationLocation)m);
 }
 
 
@@ -52,9 +52,9 @@ void PBECMO::Load(const CDM_BIND::ECMOSettingsData& src, SEECMOSettings& dst, co
 }
 void PBECMO::Serialize(const CDM_BIND::ECMOSettingsData& src, SEECMOSettings& dst, const SESubstanceManager& subMgr)
 {
-  if (src.inflowlocation() != CDM_BIND::eEMCOCannulationLocation::NullCannulationLocation)
+  if (src.inflowlocation() != CDM_BIND::eECMOCannulationLocation::NullCannulationLocation)
     dst.SetInflowLocation((eECMO_CannulationLocation)src.inflowlocation());
-  if (src.outflowlocation() != CDM_BIND::eEMCOCannulationLocation::NullCannulationLocation)
+  if (src.outflowlocation() != CDM_BIND::eECMOCannulationLocation::NullCannulationLocation)
     dst.SetOutflowLocation((eECMO_CannulationLocation)src.outflowlocation());
 
   if (src.has_oxygenatorvolume())
@@ -95,8 +95,8 @@ CDM_BIND::ECMOSettingsData* PBECMO::Unload(const SEECMOSettings& src)
 }
 void PBECMO::Serialize(const SEECMOSettings& src, CDM_BIND::ECMOSettingsData& dst)
 {
-  dst.set_inflowlocation((CDM_BIND::eEMCOCannulationLocation)src.GetInflowLocation());
-  dst.set_outflowlocation((CDM_BIND::eEMCOCannulationLocation)src.GetOutflowLocation());
+  dst.set_inflowlocation((CDM_BIND::eECMOCannulationLocation)src.GetInflowLocation());
+  dst.set_outflowlocation((CDM_BIND::eECMOCannulationLocation)src.GetOutflowLocation());
 
   if (src.HasOxygenatorVolume())
     dst.set_allocated_oxygenatorvolume(PBProperty::Unload(*src.m_OxygenatorVolume));

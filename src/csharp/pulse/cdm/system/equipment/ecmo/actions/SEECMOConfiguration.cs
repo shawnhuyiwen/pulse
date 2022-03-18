@@ -3,23 +3,23 @@
 
 namespace Pulse.CDM
 {
-  public class SEMechanicalVentilatorConfiguration : SEMechanicalVentilatorAction
+  public class SEECMOConfiguration : SEECMOAction
   {
-    protected SEMechanicalVentilatorSettings settings = null;
+    protected SEECMOSettings settings = null;
     protected string settingsFile = "";
     protected eMergeType mergeType = eMergeType.Append;
 
-    public SEMechanicalVentilatorConfiguration()
+    public SEECMOConfiguration()
     {
 
     }
 
-    public SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorConfiguration other)
+    public SEECMOConfiguration(SEECMOConfiguration other)
     {
       Copy(other);
     }
 
-    public void Copy(SEMechanicalVentilatorConfiguration other)
+    public void Copy(SEECMOConfiguration other)
     {
       base.Copy(other);
       if(other.settings != null)
@@ -46,10 +46,10 @@ namespace Pulse.CDM
     {
       return this.settings != null;
     }
-    public SEMechanicalVentilatorSettings GetSettings()
+    public SEECMOSettings GetSettings()
     {
       if (this.settings == null)
-        this.settings = new SEMechanicalVentilatorSettings();
+        this.settings = new SEECMOSettings();
       return this.settings;
     }
 
@@ -76,7 +76,7 @@ namespace Pulse.CDM
 
     public override string ToString()
     {
-      string str = "Mechanical Ventilator Configuration";
+      string str = "ECMO Configuration";
       if (this.HasSettingsFile())
         str += "\n\tSettings File: " + this.settingsFile;
       else if (HasSettings())

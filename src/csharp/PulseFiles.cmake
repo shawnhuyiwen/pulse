@@ -52,6 +52,7 @@ set(PULSE_CSHARP_HOWTO_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_DeathState.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_EngineUse.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_Environment.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_ECMO.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_MechanicalVentilator.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_PatientStates.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/howto/HowTo_RespiratoryMechanics.cs
@@ -83,6 +84,7 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBBagValveMask.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBConditions.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBDataRequest.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBECMO.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnums.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnvironment.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/io/PBEnvironmentActions.cs
@@ -231,6 +233,9 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskInstantaneous.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/ecmo/SEECMOSettings.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/ecmo/actions/SEECMOAction.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/ecmo/actions/SEECMOConfiguration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/inhaler/SEInhaler.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/inhaler/actions/SEInhalerAction.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/system/equipment/inhaler/actions/SEInhalerConfiguration.cs

@@ -109,6 +109,10 @@ const SEScalar* SEECMOSettings::GetScalar(const std::string& name)
   return nullptr;
 }
 
+bool SEECMOSettings::HasInflowLocation() const
+{
+  return m_InflowLocation != eECMO_CannulationLocation::NullCannulationLocation;
+}
 void SEECMOSettings::SetInflowLocation(eECMO_CannulationLocation c)
 {
   m_InflowLocation = c;
@@ -118,6 +122,10 @@ eECMO_CannulationLocation SEECMOSettings::GetInflowLocation() const
   return m_InflowLocation;
 }
 
+bool SEECMOSettings::HasOutflowLocation() const
+{
+  return m_OutflowLocation != eECMO_CannulationLocation::NullCannulationLocation;
+}
 void SEECMOSettings::SetOutflowLocation(eECMO_CannulationLocation c)
 {
   m_OutflowLocation = c;

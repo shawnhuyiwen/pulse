@@ -8,7 +8,7 @@ import "pulse/cdm/bind/Properties.proto";
 import "pulse/cdm/bind/Substance.proto";
 
 
-enum eEMCOCannulationLocation
+enum eECMOCannulationLocation
 {
   NullCannulationLocation        = 0;
   InternalJugular                = 1;
@@ -19,8 +19,8 @@ enum eEMCOCannulationLocation
 }
 message ECMOSettingsData
 {
-  eEMCOCannulationLocation              InflowLocation                            = 1;/**<< @brief @ref eEMCOCannulationLocation */
-  eEMCOCannulationLocation              OutflowLocation                           = 2;/**<< @brief @ref eEMCOCannulationLocation */
+  eECMOCannulationLocation              InflowLocation                            = 1;/**<< @brief @ref eECMOCannulationLocation */
+  eECMOCannulationLocation              OutflowLocation                           = 2;/**<< @brief @ref eECMOCannulationLocation */
   ScalarVolumeData                      OxygenatorVolume                          = 3;/**<< @brief Includes the volume in the device and tubing. */
   ScalarVolumePerTimeData               TransfusionFlow                           = 4;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
   
