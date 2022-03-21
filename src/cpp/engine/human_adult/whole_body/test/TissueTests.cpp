@@ -41,11 +41,11 @@ namespace pulse { namespace human_adult_whole_body
     testCase.SetName("DistributeMassToHierarchy");
     timer.Start("Test");
 
-    //                L0C0
-    //               /    \
-    //           L1C0      L1C1
-    //           /  \      /  \
-    //        L2C0  L2C1 L2C2 L2C3 <-- Only these cmpts have data
+    //          L0C0         //
+    //         /    \        //
+    //     L1C0      L1C1    //
+    //     /  \      /  \    //
+    //  L2C0  L2C1 L2C2 L2C3 <-- Only these cmpts have data
 
     pc.GetSubstances().LoadSubstanceDirectory();
 
@@ -319,8 +319,7 @@ namespace pulse { namespace human_adult_whole_body
 
     double l_O2_ug = lcmpt.GetSubstanceQuantity(*O2)->GetMass().GetValue(MassUnit::ug);
     double lconc = lcmpt.GetSubstanceQuantity(*O2)->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_L);
-    double lppO2_mmHg = lcmpt.GetSubstanceQuantity(*O2)->GetPartialPressure(PressureUnit::mmHg);
-    double gppO2_mmHg = gcmpt.GetSubstanceQuantity(*O2)->GetPartialPressure(PressureUnit::mmHg);
+
 
     trk1.Track("LiquidCompartmentOxygenMass_ug", time, l_O2_ug);
     trk1.Track("LiquidCompartmentOxygenConc_ug_Per_L", time, lconc);
@@ -334,8 +333,6 @@ namespace pulse { namespace human_adult_whole_body
       time += timestep_s;
       l_O2_ug = lcmpt.GetSubstanceQuantity(*O2)->GetMass().GetValue(MassUnit::ug);
       lconc = lcmpt.GetSubstanceQuantity(*O2)->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_L);
-      lppO2_mmHg = lcmpt.GetSubstanceQuantity(*O2)->GetPartialPressure(PressureUnit::mmHg);
-      gppO2_mmHg = gcmpt.GetSubstanceQuantity(*O2)->GetPartialPressure(PressureUnit::mmHg);
       trk1.Track("LiquidCompartmentOxygenMass_ug", time, l_O2_ug);
       trk1.Track("LiquidCompartmentOxygenConc_ug_Per_L", time, lconc);
       trk1.Track("LiquidCompartmentPO2_mmHg", time, lcmpt.GetSubstanceQuantity(*O2)->GetPartialPressure(PressureUnit::mmHg));
@@ -386,8 +383,6 @@ namespace pulse { namespace human_adult_whole_body
 
     double l_CO2_ug = lcmpt2.GetSubstanceQuantity(*CO2)->GetMass().GetValue(MassUnit::ug);
     double lconc = lcmpt2.GetSubstanceQuantity(*CO2)->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_L);
-    double lppO2_mmHg = lcmpt2.GetSubstanceQuantity(*CO2)->GetPartialPressure(PressureUnit::mmHg);
-    double gppO2_mmHg = gcmpt2.GetSubstanceQuantity(*CO2)->GetPartialPressure(PressureUnit::mmHg);
     double diffusingCapacityO2_mL_Per_s_mmHg = .33;
 
     trk2.Track("LiquidCompartmentCO2Mass_ug", time, l_CO2_ug);
@@ -402,8 +397,6 @@ namespace pulse { namespace human_adult_whole_body
       time += timestep_s;
       l_CO2_ug = lcmpt2.GetSubstanceQuantity(*CO2)->GetMass().GetValue(MassUnit::ug);
       lconc = lcmpt2.GetSubstanceQuantity(*CO2)->GetConcentration().GetValue(MassPerVolumeUnit::ug_Per_L);
-      lppO2_mmHg = lcmpt2.GetSubstanceQuantity(*CO2)->GetPartialPressure(PressureUnit::mmHg);
-      gppO2_mmHg = gcmpt2.GetSubstanceQuantity(*CO2)->GetPartialPressure(PressureUnit::mmHg);
       trk2.Track("LiquidCompartmentCO2Mass_ug", time, l_CO2_ug);
       trk2.Track("LiquidCompartmentCO2Conc_ug_Per_L", time, lconc);
       trk2.Track("LiquidCompartmentPCO2_mmHg", time, lcmpt2.GetSubstanceQuantity(*CO2)->GetPartialPressure(PressureUnit::mmHg));
@@ -702,13 +695,13 @@ namespace pulse { namespace human_adult_whole_body
 
   void EngineTest::SimpleDiffusionHierarchyTest(const std::string& rptDirectory)
   {
-    // Tests diffusion with distribution for hierarchical compartments
-    //                                       L0C0        <---->        M0C0
-    //                                      /    \                    /  |  \
-    //                                  L1C0      L1C1            M1C0  M1C1 M1C2  <--Only these cmpts have data
-    //                                  /  \      /  \
-    // Only these cmpts have data--> L2C0  L2C1 L2C2 L2C3
-    // Artificial permeability coefficient
+    // Tests diffusion with distribution for hierarchical compartments                                           //
+    //                                       L0C0        <---->        M0C0                                      //
+    //                                      /    \                    /  |  \                                    //
+    //                                  L1C0      L1C1            M1C0  M1C1 M1C2  <--Only these cmpts have data //
+    //                                  /  \      /  \                                                           //
+    // Only these cmpts have data--> L2C0  L2C1 L2C2 L2C3                                                        //
+
     Engine pe;
     Controller& pc = (Controller&)pe.GetController();
     TissueModel& tsu = (TissueModel&)pc.GetTissue();

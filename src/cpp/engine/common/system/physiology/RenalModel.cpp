@@ -521,8 +521,6 @@ namespace pulse
     //const double bowmansOsmoticSensitivity = 1.0;
 
     //Get substances
-    SEFluidCircuitPath* glomerularOsmoticSourcePath = nullptr;
-    SEFluidCircuitPath* bowmansOsmoticSourcePath = nullptr;
     SEFluidCircuitPath* filterResistancePath = nullptr;
     double permeability_mL_Per_s_Per_mmHg_Per_m2 = 0.0;
     double surfaceArea_m2 = 0.0;
@@ -537,8 +535,6 @@ namespace pulse
         permeability_mL_Per_s_Per_mmHg_Per_m2 = GetLeftGlomerularFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
         surfaceArea_m2 = GetLeftGlomerularFiltrationSurfaceArea().GetValue(AreaUnit::m2);
 
-        glomerularOsmoticSourcePath = m_leftGlomerularOsmoticSourcePath;
-        bowmansOsmoticSourcePath = m_leftBowmansOsmoticSourcePath;
       }
       else
       {
@@ -547,8 +543,6 @@ namespace pulse
         permeability_mL_Per_s_Per_mmHg_Per_m2 = GetRightGlomerularFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
         surfaceArea_m2 = GetRightGlomerularFiltrationSurfaceArea().GetValue(AreaUnit::m2);
 
-        glomerularOsmoticSourcePath = m_rightGlomerularOsmoticSourcePath;
-        bowmansOsmoticSourcePath = m_rightBowmansOsmoticSourcePath;
       }
 
       //Set the filter resistance based on its physical properties
@@ -597,7 +591,6 @@ namespace pulse
     CalculateOsmoreceptorFeedback();
 
     //Get substances
-    SEFluidCircuitPath* peritubularOsmoticSourcePath = nullptr;
     SEFluidCircuitPath* tubulesOsmoticSourcePath = nullptr;
     SEFluidCircuitPath* filterResistancePath = nullptr;
     double filterResistance_mmHg_s_Per_mL = 0.0;
@@ -614,7 +607,6 @@ namespace pulse
         permeability_mL_Per_s_Per_mmHg_Per_m2 = GetLeftTubularReabsorptionFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
         surfaceArea_m2 = GetLeftTubularReabsorptionFiltrationSurfaceArea().GetValue(AreaUnit::m2);
 
-        peritubularOsmoticSourcePath = m_leftPeritubularOsmoticSourcePath;
         tubulesOsmoticSourcePath = m_leftTubulesOsmoticSourcePath;
       }
       else
@@ -624,7 +616,6 @@ namespace pulse
         permeability_mL_Per_s_Per_mmHg_Per_m2 = GetRightTubularReabsorptionFluidPermeability().GetValue(VolumePerTimePressureAreaUnit::mL_Per_s_mmHg_m2);
         surfaceArea_m2 = GetRightTubularReabsorptionFiltrationSurfaceArea().GetValue(AreaUnit::m2);
 
-        peritubularOsmoticSourcePath = m_rightPeritubularOsmoticSourcePath;
         tubulesOsmoticSourcePath = m_rightTubulesOsmoticSourcePath;
       }
 
@@ -665,7 +656,6 @@ namespace pulse
     SELiquidSubstanceQuantity* peritubularGlucose = nullptr;
     SELiquidSubstanceQuantity* ureterLactate = nullptr;
 
-    double totalReabsorptionRate_mg_Per_s = 0.0;
     double totalLactateExcretionRate_mg_Per_s = 0.0;
     double lactateExcreted_mg = 0;
 
@@ -721,7 +711,6 @@ namespace pulse
       peritubularGlucose->Balance(BalanceLiquidBy::Mass);
 
       //Set the substance output values
-      totalReabsorptionRate_mg_Per_s += reabsorptionRate_mg_Per_s;
       totalLactateExcretionRate_mg_Per_s += lactateExcreted_mg / m_data.GetTimeStep_s();
     }
 

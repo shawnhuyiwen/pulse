@@ -210,7 +210,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         // Create a mechanics profile
         double resistance_cmH2O_s_Per_L = 13.0;
         double compliance_mL_Per_cmH2O = 50.0;
-        double musclePressure_cmH2O = 13.0;
+        //double musclePressure_cmH2O = 13.0;
         double respirationRate_bpm = 15.0;
         double inspiratoryTime_s = 0.9;
 
@@ -218,7 +218,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         {
           resistance_cmH2O_s_Per_L = 20.0;
           compliance_mL_Per_cmH2O = 30.0;
-          musclePressure_cmH2O = 8.0;
+          //musclePressure_cmH2O = 8.0;
           respirationRate_bpm = 25.0;
           inspiratoryTime_s = 0.6;
         }
@@ -226,13 +226,13 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         {
           resistance_cmH2O_s_Per_L = 21.0;
           compliance_mL_Per_cmH2O = 53.0;
-          musclePressure_cmH2O = 14.0;
+          //musclePressure_cmH2O = 14.0;
           respirationRate_bpm = 18.0;
           inspiratoryTime_s = 1.0;
         }
 
         // These need to add to 1.0 (100%)
-        const double UpperResistanceFraction = 0.5;
+        //const double UpperResistanceFraction = 0.5;
         const double BronchiResistanceFraction = 0.3;
         const double AlveoliDuctResistanceFraction = 0.2;
 
@@ -242,12 +242,12 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         double sideResistance = bronchiResistance + alveoliDuctResistance;
 
         double RespiratorySideCompliance_L_Per_cmH2O = compliance_mL_Per_cmH2O / 2.0;
-        double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O;
-        double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O;
+        //double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O;
+        //double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O;
 
         double totalBreathTime_s = 1.0 / (respirationRate_bpm / 60.0);
         double inspiratoryFraction = inspiratoryTime_s / totalBreathTime_s;
-        double expiratoryFraction = 1.0 - inspiratoryFraction;
+        //double expiratoryFraction = 1.0 - inspiratoryFraction;
 
         double InspiratoryRiseFraction = inspiratoryFraction;
         double InspiratoryHoldFraction = 0.0;

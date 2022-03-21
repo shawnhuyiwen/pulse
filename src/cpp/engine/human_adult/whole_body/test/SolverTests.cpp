@@ -102,7 +102,7 @@ namespace pulse { namespace human_adult_whole_body
     //Direct, PartialPivLu, FullPivLu, JacobiSvd, HouseholderQr, Ldlt, Llt, SparseLU, SparseQR, BiCGSTAB, ConjugateGradient
     //Test each circuit and record solving times
     EigenCircuitSolver solver;
-    for (int i = 0; i < EigenCircuitSolver::_size; i++, solver++)
+    for (size_t i = 0; i < EigenCircuitSolver::_size; i++, solver++)
     {
       bool failed = false;
 
@@ -793,7 +793,7 @@ namespace pulse { namespace human_adult_whole_body
     int minAnesthesiaMachineIndex, minAMWithRespIndex, minRespiratoryIndex, minRespWithInhalerIndex, minCVIndex, minRenalIndex, minInternalIndex, minExternalIndex, minTempIndex;
     minAnesthesiaMachineIndex = minAMWithRespIndex = minRespiratoryIndex = minRespWithInhalerIndex = minCVIndex = minRenalIndex = minInternalIndex = minExternalIndex = minTempIndex = 0;
 
-    for (int i = 0; i < EigenCircuitSolver::_size; i++)
+    for (size_t i = 0; i < EigenCircuitSolver::_size; i++)
     {
       minAnesthesiaMachineIndex = anesthesiaMachineTimes.at(i) < anesthesiaMachineTimes.at(minAnesthesiaMachineIndex) ? i : minAnesthesiaMachineIndex;
       minAMWithRespIndex = anesthesiaMachineWithRespTimes.at(i) < anesthesiaMachineWithRespTimes.at(minAMWithRespIndex) ? i : minAMWithRespIndex;

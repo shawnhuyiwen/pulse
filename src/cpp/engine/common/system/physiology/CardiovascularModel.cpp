@@ -706,13 +706,12 @@ namespace pulse
     const double LHeartVolume_mL = m_LeftHeart->GetVolume(VolumeUnit::mL);
     const double LHeartPressure_mmHg = m_LeftHeart->GetPressure(PressureUnit::mmHg);
     const double RHeartPressure_mmHg = m_RightHeart->GetPressure(PressureUnit::mmHg);
-   
 
-    const double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    //const double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
-    const double gutFlow_mL_Per_s = m_pAortaToLargeIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
-      m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
-      m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    //const double gutFlow_mL_Per_s = m_pAortaToLargeIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
+    //  m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
+    //  m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {

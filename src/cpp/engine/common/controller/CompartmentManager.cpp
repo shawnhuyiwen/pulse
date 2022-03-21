@@ -418,7 +418,7 @@ for (const std::string& name : pulse::bin##Compartment::GetValues()) \
     SECompartmentManager::AddLiquidCompartmentSubstance(sub);
   }
 
-  bool CompartmentManager::AllowGasSubstance(SESubstance& s, SEGasCompartment& cmpt) const
+  bool CompartmentManager::AllowGasSubstance(SESubstance& /*s*/, SEGasCompartment& /*cmpt*/) const
   {
     return true;
   }

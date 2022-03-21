@@ -86,7 +86,7 @@ namespace pulse::study::sensitivity_analysis
         m_SimulationsToRun.erase(m_SimulationResultsList->simulation()[i].id());
     }
 
-    int numSimsToRun = m_SimulationList->simulation_size() - m_SimulationResultsList->simulation_size();
+    size_t numSimsToRun = (size_t)m_SimulationList->simulation_size() - (size_t)m_SimulationResultsList->simulation_size();
     if (numSimsToRun == 0)
     {
       Info("All simulations are run in the results file");
@@ -137,7 +137,7 @@ namespace pulse::study::sensitivity_analysis
         GetLogger()->Fatal(cdm_ex.what());
         std::cerr << cdm_ex.what() << std::endl;
       }
-      catch (std::exception ex)
+      catch (std::exception& ex)
       {
         GetLogger()->Fatal("Exception caught runnning simulation " + sim->name());
         GetLogger()->Fatal(ex.what());
@@ -333,40 +333,35 @@ namespace pulse::study::sensitivity_analysis
 
       time_s += timeStep_s;
       stableTime_s += timeStep_s;
-      bool stableMAP = true;
       if (GeneralMath::PercentDifference(previousMap_mmHg, currentMap_mmHg) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousMap_mmHg = currentMap_mmHg; stableMAP = false;
+        stableTime_s = 0; previousMap_mmHg = currentMap_mmHg;
       }
-      bool stableSystolic = true;
       if (GeneralMath::PercentDifference(previousSystolic_mmHg, currentSystolic_mmHg) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousSystolic_mmHg = currentSystolic_mmHg; stableSystolic = false;
+        stableTime_s = 0; previousSystolic_mmHg = currentSystolic_mmHg;
       }
-      bool stableDiastolic = true;
       if (GeneralMath::PercentDifference(previousDiastolic_mmHg, currentDiastolic_mmHg) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousDiastolic_mmHg = currentDiastolic_mmHg; stableDiastolic = false;
+        stableTime_s = 0; previousDiastolic_mmHg = currentDiastolic_mmHg;
       }
-      bool stableCO = true;
       if (GeneralMath::PercentDifference(previousCardiacOutput_mL_Per_min, currentCardiacOutput_mL_Per_min) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousCardiacOutput_mL_Per_min = currentCardiacOutput_mL_Per_min; stableCO = false;
+        stableTime_s = 0; previousCardiacOutput_mL_Per_min = currentCardiacOutput_mL_Per_min;
       }
       //bool stableMeanCVP = true;
       //if (GeneralMath::PercentDifference(tgt_meanCVP_mmHg, meanCVP_mmHg) > 0.25)
       //  { stableTime_s = 0; tgt_meanCVP_mmHg = meanCVP_mmHg; stableMeanCVP = false; }
-      bool stableBloodVol = true;
       if (GeneralMath::PercentDifference(previousBlood_mL, currentBlood_mL) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousBlood_mL = currentBlood_mL; stableBloodVol = false;
+        stableTime_s = 0; previousBlood_mL = currentBlood_mL;
       }
       if (hasRespOverride)
       {
-        bool stable02 = true;
         if (GeneralMath::PercentDifference(previousArterialO2P_mmHg, currentArterialO2P_mmHg) > stabPercentToleranceO2)
         {
-          stableTime_s = 0; previousArterialO2P_mmHg = currentArterialO2P_mmHg; stable02 = false;
+          stableTime_s = 0;
+          previousArterialO2P_mmHg = currentArterialO2P_mmHg;
         }
       }
 
@@ -493,10 +488,8 @@ namespace pulse::study::sensitivity_analysis
     bool hasRespOverride = false;
     for (auto const& [name, o] : cfg.GetOverrides())
     {
-      SEFluidCircuitPath* path = nullptr;
       if (resp.HasPath(name))
       {
-        path = resp.GetPath(name);
         hasRespOverride = true;
         break;
       }
@@ -603,40 +596,34 @@ namespace pulse::study::sensitivity_analysis
 
       time_s += timeStep_s;
       stableTime_s += timeStep_s;
-      bool stableMAP = true;
       if (GeneralMath::PercentDifference(previousMap_mmHg, currentMap_mmHg) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousMap_mmHg = currentMap_mmHg; stableMAP = false;
+        stableTime_s = 0; previousMap_mmHg = currentMap_mmHg;
       }
-      bool stableSystolic = true;
       if (GeneralMath::PercentDifference(previousSystolic_mmHg, currentSystolic_mmHg) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousSystolic_mmHg = currentSystolic_mmHg; stableSystolic = false;
+        stableTime_s = 0; previousSystolic_mmHg = currentSystolic_mmHg;
       }
-      bool stableDiastolic = true;
       if (GeneralMath::PercentDifference(previousDiastolic_mmHg, currentDiastolic_mmHg) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousDiastolic_mmHg = currentDiastolic_mmHg; stableDiastolic = false;
+        stableTime_s = 0; previousDiastolic_mmHg = currentDiastolic_mmHg;
       }
-      bool stableCO = true;
       if (GeneralMath::PercentDifference(previousCardiacOutput_mL_Per_min, currentCardiacOutput_mL_Per_min) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousCardiacOutput_mL_Per_min = currentCardiacOutput_mL_Per_min; stableCO = false;
+        stableTime_s = 0; previousCardiacOutput_mL_Per_min = currentCardiacOutput_mL_Per_min;
       }
       //bool stableMeanCVP = true;
       //if (GeneralMath::PercentDifference(tgt_meanCVP_mmHg, meanCVP_mmHg) > 0.25)
       //  { stableTime_s = 0; tgt_meanCVP_mmHg = meanCVP_mmHg; stableMeanCVP = false; }
-      bool stableBloodVol = true;
       if (GeneralMath::PercentDifference(previousBlood_mL, currentBlood_mL) > stabPercentTolerance)
       {
-        stableTime_s = 0; previousBlood_mL = currentBlood_mL; stableBloodVol = false;
+        stableTime_s = 0; previousBlood_mL = currentBlood_mL;
       }
       if (hasRespOverride)
       {
-        bool stable02 = true;
         if (GeneralMath::PercentDifference(previousArterialO2P_mmHg, currentArterialO2P_mmHg) > stabPercentToleranceO2)
         {
-          stableTime_s = 0; previousArterialO2P_mmHg = currentArterialO2P_mmHg; stable02 = false;
+          stableTime_s = 0; previousArterialO2P_mmHg = currentArterialO2P_mmHg;
         }
       }
 

@@ -86,7 +86,7 @@ namespace pulse::study::multiplex_ventilation
       }
     }
 
-    int numPatientsToRun = m_PatientList->patients_size() - m_CompletedPatientList->patients_size();
+    size_t numPatientsToRun = m_PatientList->patients_size() - m_CompletedPatientList->patients_size();
     if (numPatientsToRun == 0)
     {
       Info("All Patients are run in the results file");

@@ -622,7 +622,7 @@ namespace pulse
     const double FractionOfGlucoseToATP = 0.026315789;        // Ratio of glucose required to ATP produced. = 1.0 / 38.0;
     const double FractionOfLactateToGlucose = 0.5;            // Ratio of glucose required to lactate produced during anaerobic metabolism. = 1.0 / 2.0;
     //const double FractionOfAcetoacetateToATP = 0.041666667; // Ratio of acetoacetate required to ATP produced. = 1.0 / 24.0; (unused)
-    const double FractionOfLactateToATP = 0.027777778;        // Ratio of lactate required to ATP produced. = 1.0 / 36.0;
+    //const double FractionOfLactateToATP = 0.027777778;        // Ratio of lactate required to ATP produced. = 1.0 / 36.0;
     const double FractionOfLipidToATP = 0.002604167;          // Ratio of of lipid required to ATP produced. = 2.0 / 768.0;
     const double FractionLipidsAsTristearin = 0.256;          // This is an empirically determined value specific to the Pulse implementation
 
@@ -695,7 +695,6 @@ namespace pulse
     double lactateConsumptionTuningParameter = 0.000075;
 
     double tissueO2_mM;
-    double tissueCO2_mM;
 
     SELiquidCompartment* vascular;
     SELiquidSubstanceQuantity* TissueO2;
@@ -720,7 +719,6 @@ namespace pulse
         totalFlowRate_mL_Per_min += vascular->GetInFlow(VolumePerTimeUnit::mL_Per_min);
     }
 
-    double glucoseConsumed_mg = 0;
     double oxygenConsumptionRate_g_Per_s = 0.0;
     double carbonDioxideProductionRate_g_Per_s = 0.0;
     double bloodGlucose_mg_Per_dL = m_data.GetSubstances().GetGlucose().GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL);
@@ -739,7 +737,6 @@ namespace pulse
       TissueCreatinine = intracellular.GetSubstanceQuantity(*m_Creatinine);
 
       tissueO2_mM = TissueO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
-      tissueCO2_mM = TissueCO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
 
       BloodFlowFraction = 0;
       if (vascular->HasInFlow() && totalFlowRate_mL_Per_min > 0)
@@ -833,9 +830,6 @@ namespace pulse
         else
           DistributeMassbyVolumeWeighted(*vascular, *m_Glucose, glucoseIncrement_mg, MassUnit::mg);
         vascular->GetSubstanceQuantity(*m_Glucose)->Balance(BalanceLiquidBy::Mass);
-        glucoseConsumed_mg += -glucoseIncrement_mg;
-        //m_data.GetDataTrack().Probe("GlucoseConsumedBy_"+vascular->GetName()+"_mg", -glucoseIncrement_mg);
-        // End temporary blood increment
 
         if (std::abs(TissueGlucose->GetMass(MassUnit::ug)) < ZERO_APPROX)
         {

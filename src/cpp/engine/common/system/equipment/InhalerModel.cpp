@@ -199,18 +199,6 @@ namespace pulse
       m_Mouthpiece->GetVolume().SetValue(dVolume_L, VolumeUnit::L);
     }
 
-    // Get dose properties we need
-    double dDoseDensity_ug_Per_L;
-    if (m_Substance->HasDensity())
-    {
-      dDoseDensity_ug_Per_L = m_Substance->GetDensity(MassPerVolumeUnit::ug_Per_L);  // Density of dose in micrograms per liter
-    }
-    else
-    {
-      /// \error Fatal: Inhaled substance does not have a density value.
-      Fatal("Inhaled substance does not have a density value.");
-    }
-
     // Dosage amount in micrograms
     double dDoseMass_ug = m_MeteredDose->GetValue(MassUnit::ug);
 

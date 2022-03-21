@@ -692,7 +692,7 @@ namespace pulse
     //The opposite occurs for skin blood flow decrease.
     double coreToSkinResistance_K_Per_W = 1.0 / (alphaScale * bloodDensity_kg_Per_m3 * bloodSpecificHeat_J_Per_K_kg * skinBloodFlow_m3_Per_s);
 
-    coreToSkinResistance_K_Per_W = BLIM(coreToSkinResistance_K_Per_W, 0.0001, 20.0);
+    BLIM(coreToSkinResistance_K_Per_W, 0.0001, 20.0);
     m_coreToSkinPath->GetNextResistance().SetValue(coreToSkinResistance_K_Per_W, HeatResistanceUnit::K_Per_W);
   }
 
