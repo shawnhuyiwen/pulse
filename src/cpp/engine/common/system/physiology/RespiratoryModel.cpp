@@ -683,7 +683,6 @@ namespace pulse
     double rightAlveoliTotalDepositied_ug = 0;
 
     // Resistance Modifier Sum
-    //double airwayResistanceModifier=1;
     double carinaResistanceModifier=1;
     double leftDeadSpaceResistanceModifier=1;
     double leftAlveoliResistanceModifier=1;
@@ -716,7 +715,7 @@ namespace pulse
       else
         subQ->GetMass().IncrementValue(-airwayDepositied_ug, MassUnit::ug);
       subQ->Balance(BalanceLiquidBy::Mass);
-      //airwayResistanceModifier += airwayTotalDepositied_ug*inflammationCoefficient;
+      subQ->GetMassDeposited().IncrementValue(airwayDepositied_ug, MassUnit::ug);
       //Carina
       subQ = m_AerosolCarina->GetSubstanceQuantities()[i];
       carinaDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolCarina->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetCarina();
