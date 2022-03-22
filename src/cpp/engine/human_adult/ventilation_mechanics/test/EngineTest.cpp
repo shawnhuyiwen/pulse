@@ -175,9 +175,9 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         drMgr.CreateMechanicalVentilatorDataRequest("AirwayPressure", PressureUnit::cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("DynamicPulmonaryCompliance", VolumePerPressureUnit::L_Per_cmH2O);
         drMgr.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxideFraction");
-        drMgr.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::cmH2O);
+        drMgr.CreateMechanicalVentilatorDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
         drMgr.CreateMechanicalVentilatorDataRequest("EndTidalOxygenFraction");
-        drMgr.CreateMechanicalVentilatorDataRequest("EndTidalOxygenPressure", PressureUnit::cmH2O);
+        drMgr.CreateMechanicalVentilatorDataRequest("EndTidalOxygenPressure", PressureUnit::mmHg);
         drMgr.CreateMechanicalVentilatorDataRequest("ExpiratoryFlow", VolumePerTimeUnit::L_Per_s);
         drMgr.CreateMechanicalVentilatorDataRequest("ExpiratoryTidalVolume", VolumeUnit::mL);
         drMgr.CreateMechanicalVentilatorDataRequest("InspiratoryExpiratoryRatio");
@@ -231,23 +231,19 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           inspiratoryTime_s = 1.0;
         }
 
-        // These need to add to 1.0 (100%)
-        const double UpperResistanceFraction = 0.5;
+        //Fraction of total respiratory resistance - remaining will go to upper resistance
         const double BronchiResistanceFraction = 0.3;
         const double AlveoliDuctResistanceFraction = 0.2;
 
-        double upperResistance = resistance_cmH2O_s_Per_L - (BronchiResistanceFraction * resistance_cmH2O_s_Per_L + AlveoliDuctResistanceFraction * resistance_cmH2O_s_Per_L) / 2;
+        double upperResistance = resistance_cmH2O_s_Per_L - (BronchiResistanceFraction * resistance_cmH2O_s_Per_L + AlveoliDuctResistanceFraction * resistance_cmH2O_s_Per_L) / 2.0;
         double bronchiResistance = 2 * (resistance_cmH2O_s_Per_L - upperResistance) - AlveoliDuctResistanceFraction * resistance_cmH2O_s_Per_L;
         double alveoliDuctResistance = 2 * (resistance_cmH2O_s_Per_L - upperResistance) - bronchiResistance;
         double sideResistance = bronchiResistance + alveoliDuctResistance;
 
-        double RespiratorySideCompliance_L_Per_cmH2O = compliance_mL_Per_cmH2O / 2.0;
-        double LungCompliance_L_Per_cmH2O = 2.0 * RespiratorySideCompliance_L_Per_cmH2O;
-        double ChestWallCompliance_L_Per_cmH2O = LungCompliance_L_Per_cmH2O;
+        double respiratorySideCompliance_mL_Per_cmH2O = compliance_mL_Per_cmH2O / 2.0;
 
         double totalBreathTime_s = 1.0 / (respirationRate_bpm / 60.0);
         double inspiratoryFraction = inspiratoryTime_s / totalBreathTime_s;
-        double expiratoryFraction = 1.0 - inspiratoryFraction;
 
         double InspiratoryRiseFraction = inspiratoryFraction;
         double InspiratoryHoldFraction = 0.0;
@@ -268,12 +264,12 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         SESegmentConstant& lc = lcc.AddConstantSegment();
         lc.GetBeginVolume().SetValue(-std::numeric_limits<double>::infinity(), VolumeUnit::mL);
         lc.GetEndVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
-        lc.GetCompliance().SetValue(RespiratorySideCompliance_L_Per_cmH2O, VolumePerPressureUnit::mL_Per_cmH2O);
+        lc.GetCompliance().SetValue(respiratorySideCompliance_mL_Per_cmH2O, VolumePerPressureUnit::mL_Per_cmH2O);
         SECurve& rcc = mechanics.GetRightComplianceCurve();
         SESegmentConstant& rc = rcc.AddConstantSegment();
         rc.GetBeginVolume().SetValue(-std::numeric_limits<double>::infinity(), VolumeUnit::mL);
         rc.GetEndVolume().SetValue(std::numeric_limits<double>::infinity(), VolumeUnit::mL);
-        rc.GetCompliance().SetValue(RespiratorySideCompliance_L_Per_cmH2O, VolumePerPressureUnit::mL_Per_cmH2O);
+        rc.GetCompliance().SetValue(respiratorySideCompliance_mL_Per_cmH2O, VolumePerPressureUnit::mL_Per_cmH2O);
 
         mechanics.GetInspiratoryRiseTime().SetValue(InspiratoryRiseFraction * totalBreathTime_s, TimeUnit::s);
         mechanics.GetInspiratoryHoldTime().SetValue(InspiratoryHoldFraction * totalBreathTime_s, TimeUnit::s);
@@ -283,7 +279,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         mechanics.GetExpiratoryHoldTime().SetValue(ExpiratoryHoldFraction * totalBreathTime_s, TimeUnit::s);
         mechanics.GetExpiratoryReleaseTime().SetValue(ExpiratoryReleaseFraction * totalBreathTime_s, TimeUnit::s);
 
-        mechanics.GetInspiratoryPeakPressure().SetValue(-13.0, PressureUnit::cmH2O);
+        mechanics.GetInspiratoryPeakPressure().SetValue(-musclePressure_cmH2O, PressureUnit::cmH2O);
         mechanics.GetExpiratoryPeakPressure().SetValue(0.0, PressureUnit::cmH2O);
 
 #ifdef RUN_PULSE
@@ -316,7 +312,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
 
           SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.49);
+          leak.GetSeverity().SetValue(0.47);
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
           e->ProcessAction(leak);
@@ -337,7 +333,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
 
           SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.47);
+          leak.GetSeverity().SetValue(0.45);
 #ifdef RUN_PULSE
           e->ProcessAction(pc_ac);
           e->ProcessAction(leak);
@@ -356,7 +352,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
 
           SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.42);
+          leak.GetSeverity().SetValue(0.40);
 #ifdef RUN_PULSE
           e->ProcessAction(cpap);
           e->ProcessAction(leak);
@@ -378,7 +374,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetTidalVolume().SetValue(550.0, VolumeUnit::mL);
 
           SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.38);
+          leak.GetSeverity().SetValue(0.29);
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
           e->ProcessAction(leak);
@@ -399,7 +395,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
 
           SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.32);
+          leak.GetSeverity().SetValue(0.31);
 #ifdef RUN_PULSE
           e->ProcessAction(pc_ac);
           e->ProcessAction(leak);
@@ -418,7 +414,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
 
           SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.26);
+          leak.GetSeverity().SetValue(0.18);
 #ifdef RUN_PULSE
           e->ProcessAction(cpap);
           e->ProcessAction(leak);
@@ -440,7 +436,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetTidalVolume().SetValue(500.0, VolumeUnit::mL);
 
           SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.37);
+          leak.GetSeverity().SetValue(0.35);
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
           e->ProcessAction(leak);
@@ -480,7 +476,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
 
           SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.45);
+          leak.GetSeverity().SetValue(0.44);
 #ifdef RUN_PULSE
           e->ProcessAction(cpap);
           e->ProcessAction(leak);
