@@ -23,7 +23,6 @@
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorContinuousPositiveAirwayPressure.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
-#include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorLeak.h"
 #include "cdm/system/physiology/SERespiratorySystem.h"
 #include "cdm/system/physiology/SERespiratoryMechanics.h"
 #include "cdm/properties/SEScalar0To1.h"
@@ -320,14 +319,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
 
-          SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.48);
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
-          e->ProcessAction(leak);
 #else
           s.AddAction(vc_ac);
-          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::Normal && currentVentilatorMode == VentilatorMode::PC_AC)
@@ -352,14 +347,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
           mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
-          SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.46);
 #ifdef RUN_PULSE
           e->ProcessAction(mv_config);
-          e->ProcessAction(leak);
 #else
           s.AddAction(mv_config);
-          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::Normal && currentVentilatorMode == VentilatorMode::CPAP)
@@ -384,14 +375,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
           mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
-          SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.42);
 #ifdef RUN_PULSE
           e->ProcessAction(mv_config);
-          e->ProcessAction(leak);
 #else
           s.AddAction(mv_config);
-          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::VC_AC)
@@ -406,14 +393,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(550.0, VolumeUnit::mL);
 
-          SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.30);
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
-          e->ProcessAction(leak);
 #else
           s.AddAction(vc_ac);
-          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::PC_AC)
@@ -438,14 +421,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
           mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
-          SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.30);
 #ifdef RUN_PULSE
           e->ProcessAction(mv_config);
-          e->ProcessAction(leak);
 #else
           s.AddAction(mv_config);
-          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::CPAP)
@@ -470,14 +449,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
           mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
-          SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.20);
 #ifdef RUN_PULSE
           e->ProcessAction(mv_config);
-          e->ProcessAction(leak);
 #else
           s.AddAction(mv_config);
-          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::VC_AC)
@@ -492,14 +467,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(500.0, VolumeUnit::mL);
 
-          SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.35);
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
-          e->ProcessAction(leak);
 #else
           s.AddAction(vc_ac);
-          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::PC_AC)
@@ -524,14 +495,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
           mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
-          SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.36);
 #ifdef RUN_PULSE
           e->ProcessAction(mv_config);
-          e->ProcessAction(leak);
 #else
           s.AddAction(mv_config);
-          s.AddAction(leak);
 #endif
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::CPAP)
@@ -556,14 +523,10 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
           mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
-          SEMechanicalVentilatorLeak leak;
-          leak.GetSeverity().SetValue(0.46);
 #ifdef RUN_PULSE
           e->ProcessAction(mv_config);
-          e->ProcessAction(leak);
 #else
           s.AddAction(mv_config);
-          s.AddAction(leak);
 #endif
         }
 

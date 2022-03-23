@@ -453,22 +453,6 @@
    }
   },
   {
-   "EquipmentAction": {
-    "MechanicalVentilatorLeak": {
-     "MechanicalVentilatorAction": {
-      "EquipmentAction": {
-       "Action": {}
-      }
-     },
-     "Severity": {
-      "Scalar0To1": {
-       "Value": 0.48
-      }
-     }
-    }
-   }
-  },
-  {
    "AdvanceTime": {
     "Action": {},
     "Time": {
