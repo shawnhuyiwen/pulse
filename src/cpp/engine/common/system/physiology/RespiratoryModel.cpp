@@ -676,7 +676,6 @@ namespace pulse
     double rightAlveoliDepositied_ug = 0;
 
     // Total amount deposited (including this time step)
-    double airwayTotalDepositied_ug = 0;
     double carinaTotalDepositied_ug = 0;
     double leftDeadSpaceTotalDepositied_ug = 0;
     double leftAlveoliTotalDepositied_ug = 0;
@@ -684,7 +683,6 @@ namespace pulse
     double rightAlveoliTotalDepositied_ug = 0;
 
     // Resistance Modifier Sum
-    double airwayResistanceModifier=1;
     double carinaResistanceModifier=1;
     double leftDeadSpaceResistanceModifier=1;
     double leftAlveoliResistanceModifier=1;
@@ -717,8 +715,7 @@ namespace pulse
       else
         subQ->GetMass().IncrementValue(-airwayDepositied_ug, MassUnit::ug);
       subQ->Balance(BalanceLiquidBy::Mass);
-      airwayTotalDepositied_ug = subQ->GetMassDeposited().IncrementValue(airwayDepositied_ug, MassUnit::ug);
-      airwayResistanceModifier += airwayTotalDepositied_ug*inflammationCoefficient;
+      subQ->GetMassDeposited().IncrementValue(airwayDepositied_ug, MassUnit::ug);
       //Carina
       subQ = m_AerosolCarina->GetSubstanceQuantities()[i];
       carinaDepositied_ug = subQ->GetConcentration(MassPerVolumeUnit::ug_Per_mL)*m_AerosolCarina->GetInFlow(VolumePerTimeUnit::mL_Per_s)*m_data.GetTimeStep_s()*SIDECoeff->GetCarina();
@@ -2197,8 +2194,8 @@ namespace pulse
       if (m_data.GetState() > EngineState::InitialStabilization)
       {// Don't throw events if we are initializing
 
-        double highPh = 8.5;
-        double lowPh = 6.5;   // \cite Edge2006AcidosisConscious
+        //double highPh = 8.5;
+        //double lowPh = 6.5;   //\cite Edge2006AcidosisConscious
         //// Respiratory Acidosis
         if (m_LastCardiacCycleBloodPH < 7.35 && m_ArterialCO2PartialPressure_mmHg > 47.0)
         {
@@ -2910,6 +2907,8 @@ namespace pulse
           tracheaResistance_cmH2O_s_Per_L *= 15.0;
           break;
         }
+        default:
+          break;
         }
       }
       else
@@ -2972,8 +2971,8 @@ namespace pulse
           leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
           rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
         }
-        leftBronchiResistance_cmH2O_s_Per_L = BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-        rightBronchiResistance_cmH2O_s_Per_L = BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+        BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+        BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
       }
     }
 
@@ -3010,8 +3009,8 @@ namespace pulse
 
     leftBronchiResistance_cmH2O_s_Per_L *= obstructiveResistanceScalingFactor;
     rightBronchiResistance_cmH2O_s_Per_L *= obstructiveResistanceScalingFactor;
-    leftBronchiResistance_cmH2O_s_Per_L = BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-    rightBronchiResistance_cmH2O_s_Per_L = BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
 
     //------------------------------------------------------------------------------------------------------
     //Restrictive - No change
@@ -3049,12 +3048,12 @@ namespace pulse
       m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
     {
       if (!HasActiveRespiratoryMechanics() ||
-        HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasRightComplianceCurve())
+        (HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasRightComplianceCurve()))
       {
           rightAlveoliCompliance_L_Per_cmH2O *= 0.38;
       }
       if (!HasActiveRespiratoryMechanics() ||
-        HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasLeftComplianceCurve())
+        (HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasLeftComplianceCurve()))
       {
         leftAlveoliCompliance_L_Per_cmH2O *= 0.38;
       }

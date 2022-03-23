@@ -58,6 +58,11 @@ SEAction* PBAction::Load(const CDM_BIND::AnyActionData& action, const SESubstanc
     PBAction::Load(action.overrides(), *a);
     return a;
   }
+  case CDM_BIND::AnyActionData::ACTION_NOT_SET:
+  {
+    subMgr.Warning("AnyActionData is empty...was that intended?");
+    return nullptr;
+  }
   }
   subMgr.Error("Unknown Action");
   return nullptr;

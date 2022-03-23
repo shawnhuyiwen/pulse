@@ -70,9 +70,9 @@ void CommonDataModelTest::ScalarTest(const std::string& /*sOutputDirectory*/)
 
   SEScalarVolume v;
   v.SetValue(1,VolumeUnit::L);
-  double m3 = v.GetValue(VolumeUnit::m3);//0.0010000000000000000
-  v.IncrementValue(-2*6,VolumeUnit::m3);
-  m3 = v.GetValue(VolumeUnit::m3);//m3 = -1.9990000000000001
+  v.GetValue(VolumeUnit::m3);//0.0010000000000000000
+  v.IncrementValue(-2*6.,VolumeUnit::m3);
+  v.GetValue(VolumeUnit::m3);//m3 = -1.9990000000000001
 
   SEScalarPressure p;
   p.SetValue(1,PressureUnit::Pa);

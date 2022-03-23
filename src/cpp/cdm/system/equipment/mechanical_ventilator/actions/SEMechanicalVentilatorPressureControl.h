@@ -15,13 +15,13 @@ public:
   SEMechanicalVentilatorPressureControl(Logger* logger = nullptr);
   virtual ~SEMechanicalVentilatorPressureControl();
 
-  virtual void Clear();
+  void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorPressureControl& src, bool /*preserveState*/ = false);
   virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr) override;
 
-  virtual bool IsValid() const;
-  virtual bool IsActive() const;
-  virtual void Deactivate();
+  bool IsValid() const override;
+  bool IsActive() const override;
+  void Deactivate() override;
 
   virtual eMechanicalVentilator_PressureControlMode GetMode() const;
   virtual void SetMode(eMechanicalVentilator_PressureControlMode c);
@@ -50,9 +50,9 @@ public:
   virtual SEScalarTime& GetSlope();
   virtual double GetSlope(const TimeUnit& unit) const;
 
-  virtual void ToString(std::ostream& str) const;
+  void ToString(std::ostream& str) const override;
 
-  virtual const SEScalar* GetScalar(const std::string& name);
+  const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 

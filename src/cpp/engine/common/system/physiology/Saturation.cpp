@@ -959,7 +959,7 @@ namespace pulse
   /// \details
   /// This code is adapted directly from the model described in @cite dash2010erratum.
   //--------------------------------------------------------------------------------------------------
-  void SaturationCalculator::CalculateHemoglobinSaturations(double O2PartialPressureGuess_mmHg, double CO2PartialPressureGuess_mmHg, double pH, double temperature_C, double  hematocrit, double& OxygenSaturation, double& CarbonDioxideSaturation, double CO2_scaling_factor)
+  void SaturationCalculator::CalculateHemoglobinSaturations(double O2PartialPressureGuess_mmHg, double CO2PartialPressureGuess_mmHg, double pH, double temperature_C, double /*hematocrit*/, double& OxygenSaturation, double& CarbonDioxideSaturation, double CO2_scaling_factor)
   {
     double CO_sat = 0;
 
@@ -975,9 +975,9 @@ namespace pulse
 
                                             // Fixed parameters
     const double Wpl = 0.94;                      // fractional water space in plasma; unitless
-    const double Wrbc = 0.65;                     // fractional water space in RBCs; unitless
-    const double Rrbc = 0.69;                     // Gibbs - Donnan ratio across RBC membrane; unitless
-    const double Hbrbc = 5.18e-3;                 // hemoglobin concentration in RBCs; M
+    //const double Wrbc = 0.65;                     // fractional water space in RBCs; unitless
+    //const double Rrbc = 0.69;                     // Gibbs - Donnan ratio across RBC membrane; unitless
+    //const double Hbrbc = 5.18e-3;                 // hemoglobin concentration in RBCs; M
     const double K2 = 2.95e-5;                    // CO2 + HbNH2 equilibrium constant; unitless
     const double K2dp = 1.0e-6;                   // HbNHCOOH dissociation constant; M
     const double K2p = K2 / K2dp;                 // kf2p / kb2p; 1 / M
@@ -1000,25 +1000,25 @@ namespace pulse
     const double O20 = alphaO20 * pO20;              // standard O2 concentration in RBCs; M
     const double CO20 = alphaCO20 * pCO20;          // standard CO2 concentration in RBCs; M
     const double Hp0 = pow(10, (-pH0));           // standard H + concentration in RBCs; M
-    const double pHpl0 = pH0 - log10(Rrbc);        // standard pH in plasma; unitless
+    //const double pHpl0 = pH0 - log10(Rrbc);        // standard pH in plasma; unitless
     const double P500 = 26.8 - 20 * CO_sat;         // standard pO2 at 50% SHbO2; mmHg
     const double C500 = alphaO20 * P500;            // standard O2 concentration at 50 % SHbO2; M
 
-    const double Wbl = (1 - hematocrit) * Wpl + hematocrit * Wrbc;
-    const double pHpl = pH - log10(Rrbc);
-    const double pHpldiff = pHpl - pHpl0;
+    //const double Wbl = (1 - hematocrit) * Wpl + hematocrit * Wrbc;
+    //const double pHpl = pH - log10(Rrbc);
+    //const double pHpldiff = pHpl - pHpl0;
     const double pHdiff = pH - pH0;
     const double pCO2diff = CO2PartialPressureGuess_mmHg - pCO20;
     const double DPGdiff = DPG - DPG0;
     const double Tempdiff = temperature_C - Temp0;
     const double alphaO2 = fact * (1.37 - 0.0137 * Tempdiff + 0.00058 * Tempdiff * Tempdiff);
     const double alphaCO2 = fact * (30.7 - 0.57 * Tempdiff + 0.02 * Tempdiff * Tempdiff);
-    const double pK1 = 6.091 - 0.0434 * pHpldiff + 0.0014 * Tempdiff * pHpldiff;
-    const double K1 = pow(10, -pK1);
+    //const double pK1 = 6.091 - 0.0434 * pHpldiff + 0.0014 * Tempdiff * pHpldiff;
+    //const double K1 = pow(10, -pK1);
     const double O2 = alphaO2 * O2PartialPressureGuess_mmHg;
     const double CO2 = alphaCO2 * CO2PartialPressureGuess_mmHg;
     const double Hp = pow(10, -pH);
-    const double Hppl = pow(10, -pHpl);
+    //const double Hppl = pow(10, -pHpl);
 
     const double Term1 = K2p * (1 + K2dp / Hp);
     const double Term2 = K3p * (1 + K3dp / Hp);

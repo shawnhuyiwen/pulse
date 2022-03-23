@@ -42,7 +42,7 @@
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarVolumePerTime.h"
 
-SEEquipmentActionCollection::SEEquipmentActionCollection(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
+SEEquipmentActionCollection::SEEquipmentActionCollection(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
   m_AnesthesiaMachineConfiguration = nullptr;
   m_BagValveMaskConfiguration = nullptr;

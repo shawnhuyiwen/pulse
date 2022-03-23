@@ -100,8 +100,9 @@ bool SECompartmentManager::HasCompartment(eCompartment_Type type, const std::str
     return HasThermalCompartment(name);
   case eCompartment_Type::Tissue:
     return HasTissueCompartment(name);
+  default:
+    return false;
   }
-  return false;
 }
 SECompartment* SECompartmentManager::GetCompartment(eCompartment_Type type, const std::string& name)
 {
@@ -115,8 +116,9 @@ SECompartment* SECompartmentManager::GetCompartment(eCompartment_Type type, cons
     return GetThermalCompartment(name);
   case eCompartment_Type::Tissue:
     return GetTissueCompartment(name);
+  default:
+    return nullptr;
   }
-  return nullptr;
 }
 const SECompartment* SECompartmentManager::GetCompartment(eCompartment_Type type, const std::string& name) const
 {
@@ -130,8 +132,9 @@ const SECompartment* SECompartmentManager::GetCompartment(eCompartment_Type type
     return GetThermalCompartment(name);
   case eCompartment_Type::Tissue:
     return GetTissueCompartment(name);
+  default:
+    return nullptr;
   }
-  return nullptr;
 }
 
 //////////////////////

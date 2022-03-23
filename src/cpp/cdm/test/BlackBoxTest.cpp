@@ -380,7 +380,7 @@ void CommonDataModelTest::WindkesselBlackBoxTest(const std::string& sOutputDirec
           fluidCalculator.Process(*circuitWindkessel, timeStep_s);
           fluidCalculator.Process(*circuitDriver, timeStep_s);
         }
-        catch (std::exception ex)
+        catch (std::exception& ex)
         {
           hasError = true;
           break;
@@ -522,7 +522,7 @@ void CommonDataModelTest::BlackBoxComplianceTest(const std::string& sOutputDirec
     SEFluidCircuitPath& Path1 = fluidCircuit->CreatePath(Node4, Node1, "Path1");
     Path1.GetNextPressureSource().SetValue(20, PressureUnit::Pa);
     //Paths
-    SEFluidCircuitPath& Path2 = fluidCircuit->CreatePath(Node1, Node2, "Path2");
+    /*SEFluidCircuitPath& Path2 = */fluidCircuit->CreatePath(Node1, Node2, "Path2");
     SEFluidCircuitPath& Path3 = fluidCircuit->CreatePath(Node2, BBNode, "Path3");
     SEFluidCircuitPath& Path4 = fluidCircuit->CreatePath(BBNode, Node3, "Path4");
     SEFluidCircuitPath& Path5 = fluidCircuit->CreatePath(Node3, Node4, "Path5");
@@ -710,13 +710,13 @@ void CommonDataModelTest::BlackBoxSourcesTest(const std::string& sOutputDirector
             SEFluidCircuitPath& Windkessel2CompliancePath = fluidCircuit->CreatePath(Windkessel2Node2, Ground, "Windkessel2CompliancePath");
             Windkessel2CompliancePath.GetNextCompliance().SetValue(10.0, VolumePerPressureUnit::m3_Per_Pa);
 
-            SEFluidCircuitPath* Windkessel1SourcePath;
-            SEFluidCircuitPath* Windkessel2SourcePath;
-            SEFluidCircuitPath* Windkessel1SourcePath2;
-            SEFluidCircuitPath* Windkessel2SourcePath2;
-            SEFluidCircuitPath* BlackBoxSourcePath;
-            SEFluidCircuitPath* BlackBoxTargetPath;
-            SEFluidBlackBox* BlackBox;
+            SEFluidCircuitPath* Windkessel1SourcePath = nullptr;
+            SEFluidCircuitPath* Windkessel2SourcePath = nullptr;
+            SEFluidCircuitPath* Windkessel1SourcePath2 = nullptr;
+            SEFluidCircuitPath* Windkessel2SourcePath2 = nullptr;
+            SEFluidCircuitPath* BlackBoxSourcePath = nullptr;
+            SEFluidCircuitPath* BlackBoxTargetPath = nullptr;
+            SEFluidBlackBox* BlackBox = nullptr;
             SEBlackBoxManager BBmgr(m_Logger);
             if (iterType == 0)
             {

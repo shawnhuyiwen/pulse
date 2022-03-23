@@ -15,7 +15,7 @@
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarTemperature.h"
 
-SEEnvironmentActionCollection::SEEnvironmentActionCollection(SESubstanceManager& subMgr) : m_SubMgr(subMgr), Loggable(subMgr.GetLogger())
+SEEnvironmentActionCollection::SEEnvironmentActionCollection(SESubstanceManager& subMgr) : Loggable(subMgr.GetLogger()), m_SubMgr(subMgr)
 {
   m_ChangeEnvironmentalConditions = nullptr;
   m_ThermalApplication = nullptr;

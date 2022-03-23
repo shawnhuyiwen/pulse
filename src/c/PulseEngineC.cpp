@@ -10,7 +10,7 @@
 
 #if defined (__clang__)
 #define C_EXPORT
-#define C_CALL __attribute__((stdcall))
+#define C_CALL
 #elif defined(__gnu_linux__)
 #define C_EXPORT __attribute__ ((visibility ("default")))
 #define C_CALL __attribute__((stdcall))

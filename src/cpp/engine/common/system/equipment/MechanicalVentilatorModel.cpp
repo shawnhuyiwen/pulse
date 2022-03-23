@@ -79,7 +79,7 @@ namespace pulse
     m_ConnectionToReliefValve = nullptr;
     m_EnvironmentToReliefValve = nullptr;
     m_ConnectionToAirway = nullptr;
-    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = NULL;
+    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = 0;
 
     m_MeanAirwayPressure_cmH2O->Clear();
 

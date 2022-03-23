@@ -17,12 +17,12 @@ protected:
 public:
   virtual ~SELiquidSubstanceQuantity();
 
-  virtual void Clear();
+  void Clear() override;
 
   virtual std::string GetCompartmentName() override;
 
-  virtual void SetToZero();
-  virtual const SEScalar* GetScalar(const std::string& name);
+  void SetToZero() override;
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual void Balance(BalanceLiquidBy e);// Balance Substance based on a specific property
 
@@ -62,11 +62,11 @@ public:
 protected:
   virtual void AddChild(SELiquidSubstanceQuantity& subQ);
 
-  virtual bool HasExtensive() const { return HasMass(); }
-  virtual SEScalarMass& GetExtensive() { return GetMass(); }
+  bool HasExtensive() const override { return HasMass(); }
+  SEScalarMass& GetExtensive() override { return GetMass(); }
 
-  virtual bool HasIntensive() const { return HasConcentration(); }
-  virtual SEScalarMassPerVolume& GetIntensive() { return GetConcentration(); }
+  bool HasIntensive() const override { return HasConcentration(); }
+  SEScalarMassPerVolume& GetIntensive() override { return GetConcentration(); }
 
   SEScalarMassPerVolume*   m_Concentration;
   SEScalarMass*            m_Mass;

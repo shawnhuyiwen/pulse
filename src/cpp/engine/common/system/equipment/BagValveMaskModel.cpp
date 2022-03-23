@@ -68,7 +68,7 @@ namespace pulse
     m_ValveToFilter = nullptr;
     m_FilterToConnection = nullptr;
     m_ConnectionToEnvironment = nullptr;
-    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = NULL;
+    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = 0;
   }
 
   //--------------------------------------------------------------------------------------------------

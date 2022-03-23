@@ -44,7 +44,7 @@ public:
 
   virtual void AddAction(const SEAction& action);
   virtual const std::vector<SEAction*>& GetActions();
-  virtual const std::vector<const SEAction*>& GetActions() const;
+  virtual const std::vector<const SEAction*> GetActions() const;
 
   virtual SEDataRequestManager& GetDataRequestManager() { return *m_DataRequestMgr; }
   virtual const SEDataRequestManager& GetDataRequestManager() const { return *m_DataRequestMgr; }

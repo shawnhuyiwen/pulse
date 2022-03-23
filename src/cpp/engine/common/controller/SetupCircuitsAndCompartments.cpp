@@ -3615,7 +3615,7 @@ namespace pulse
     Connection.GetVolumeBaseline().SetValue(connectionVolume_L, VolumeUnit::L);
 
     //Paths
-    SEFluidCircuitPath& EnvironmentToReservoir = cBagValveMask.CreatePath(Ambient, Reservoir, pulse::BagValveMaskPath::EnvironmentToReservoir);
+    cBagValveMask.CreatePath(Ambient, Reservoir, pulse::BagValveMaskPath::EnvironmentToReservoir);
 
     SEFluidCircuitPath& ReservoirToBag = cBagValveMask.CreatePath(Reservoir, Bag, pulse::BagValveMaskPath::ReservoirToBag);
     ReservoirToBag.GetPressureSourceBaseline().SetValue(0.0, PressureUnit::cmH2O);

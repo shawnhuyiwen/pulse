@@ -56,6 +56,7 @@ protected:
 class CDM_DECL LoggerForward
 {
 public:
+  virtual ~LoggerForward() = default;
   virtual void ForwardDebug(std::string const& /*msg*/, std::string const& /*origin*/) {};
   virtual void ForwardInfo(std::string const& /*msg*/, std::string const& /*origin*/){};
   virtual void ForwardWarning(std::string const& /*msg*/, std::string const& /*origin*/){};

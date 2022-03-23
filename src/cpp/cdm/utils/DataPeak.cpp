@@ -39,18 +39,19 @@ bool DataPeak::Peaked(double value)
     double p = m_SamplePeak-m_Epsilon;
     if(value<p)
     {
-      // We may want to move the window to extend
-      // over the down trending point-epsilon to enforce
-      // the data is actually trending down.
-      // Make sure the data is moving below a moving window
-      // Currently the window stays at the peak
-      // But you could get a plateau below the window
-      // then another peak
-      //                  .--.   
-      //        peak     /    \
-      //       .--      .
-      // ----./---\..../-------window
-      //   ./
+      /* We may want to move the window to extend
+      * over the down trending point-epsilon to enforce
+      * the data is actually trending down.
+      * Make sure the data is moving below a moving window
+      * Currently the window stays at the peak
+      * But you could get a plateau below the window
+      * then another peak
+      *                  .--.   
+      *        peak     /    \
+      *       .--      .
+      * ----./---\..../-------window
+      *   ./
+      */
       m_PeakCount++;
       if(m_PeakCount==m_Samples)
       {

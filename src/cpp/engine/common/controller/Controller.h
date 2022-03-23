@@ -308,7 +308,7 @@ namespace pulse
   {
   public:
     StabilizationController(pulse::Controller& pc) : _pc(pc) {}
-    ~StabilizationController() = default;
+    virtual ~StabilizationController() = default;
 
     virtual bool AdvanceTime() override { return _pc.AdvanceModelTime(); }
     virtual SEEngineTracker* GetEngineTracker() override

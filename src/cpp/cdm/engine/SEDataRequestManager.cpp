@@ -151,8 +151,9 @@ SEDataRequest* SEDataRequestManager::FindDataRequest(const SEDataRequest& dr)
   case eDataRequest_Category::MechanicalVentilator:
     my_dr = FindMechanicalVentilatorDataRequest(dr.GetPropertyName());
     return my_dr;
+  default:
+    return nullptr;
   }
-  return nullptr;
 }
 
 SEDataRequest& SEDataRequestManager::CreateDataRequest(eDataRequest_Category category, const SEDecimalFormat* dfault)
@@ -780,8 +781,9 @@ SEValidationTarget* SEDataRequestManager::FindValidationTarget(const SEValidatio
     else
       my_vt = FindLiquidCompartmentValidationTarget(vt.GetType(), vt.GetCompartmentName(), vt.GetPropertyName());
     return my_vt;
+  default:
+    return nullptr;
   }
-  return nullptr;
 }
 
 SEValidationTarget& SEDataRequestManager::CreateLiquidCompartmentValidationTarget(eValidationTargetType t, const std::string& cmptName, const std::string& property, const SEDecimalFormat* dfault)

@@ -268,10 +268,6 @@ namespace pulse { namespace human_adult_whole_body
     double venaCavaPressure_mmHg = 4.0;
     double maxSteadyCycles = 1.0 / deltaT_s * 30.0; // must be steady for 30 second
     double convergencePercentage = 0.01; // within 1%
-    //fit parameters for upr curve: 
-    const double a = 2.9e-4;
-    const double b = -0.017;
-    const double c = 0.219;
     SEScalarTime eventTime;
     eventTime.SetValue(0, TimeUnit::s);
 

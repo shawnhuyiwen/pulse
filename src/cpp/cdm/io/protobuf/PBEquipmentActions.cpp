@@ -1184,6 +1184,11 @@ SEEquipmentAction* PBEquipmentAction::Load(const CDM_BIND::AnyEquipmentActionDat
     PBEquipmentAction::Load(any.mechanicalventilatorvolumecontrol(), *a);
     return a;
   }
+  case CDM_BIND::AnyEquipmentActionData::ActionCase::ACTION_NOT_SET:
+  {
+    subMgr.Warning("AnyEquipmentActionData Action is empty...was that intended?");
+    return nullptr;
+  }
   }
   subMgr.Error("Unknown Equipment action enum :" + std::to_string((int)any.Action_case()));
   return nullptr;

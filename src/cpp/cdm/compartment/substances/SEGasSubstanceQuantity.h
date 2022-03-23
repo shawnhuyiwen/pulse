@@ -15,12 +15,12 @@ protected:
 public:
   virtual ~SEGasSubstanceQuantity();
 
-  virtual void Clear();
+  void Clear() override;
 
   virtual std::string GetCompartmentName() override;
 
-  virtual void SetToZero();
-  virtual const SEScalar* GetScalar(const std::string& name);
+  void SetToZero() override;
+  const SEScalar* GetScalar(const std::string& name) override;
 
   virtual bool HasPartialPressure() const;
   virtual SEScalarPressure& GetPartialPressure();
@@ -37,11 +37,11 @@ public:
 protected:
   virtual void AddChild(SEGasSubstanceQuantity& subQ);
 
-  virtual bool HasExtensive() const { return HasVolume(); }
-  virtual SEScalarVolume& GetExtensive() { return GetVolume(); }
+  bool HasExtensive() const override { return HasVolume(); }
+  SEScalarVolume& GetExtensive() override { return GetVolume(); }
 
-  virtual bool HasIntensive() const { return HasVolumeFraction(); }
-  virtual SEScalar0To1& GetIntensive() { return GetVolumeFraction(); }
+  bool HasIntensive() const override { return HasVolumeFraction(); }
+  SEScalar0To1& GetIntensive() override { return GetVolumeFraction(); }
 
   SEScalarPressure* m_PartialPressure;
   SEScalarVolume*   m_Volume;

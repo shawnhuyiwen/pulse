@@ -66,7 +66,9 @@ namespace pulse { namespace human_adult_hemodynamics
       }
     }
     if (m_data.GetConfiguration().IsRenalEnabled())
+    {
       SORT_CMPTS(Urine, Liquid);
+    }
     SORT_CMPTS(Vascular, Liquid);
 
     m_CombinedCardiovascularGraph = GetLiquidGraph(pulse::Graph::ActiveCardiovascular);

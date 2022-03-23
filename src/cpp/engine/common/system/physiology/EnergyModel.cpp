@@ -546,8 +546,8 @@ namespace pulse
     // The terms "metabolic" and "respiratory" refer to the origin of the acid-base disturbance
     // The hydrogen ion concentration is a property of the blood
     // The events related to blood concentrations should be detected and set in blood chemistry.
-    double highPh = 8.5;
-    double lowPh = 6.5;   // \cite Edge2006AcidosisConscious
+    //double highPh = 8.5;
+    //double lowPh = 6.5;   //\cite Edge2006AcidosisConscious
     m_BloodpH->Sample(m_data.GetBloodChemistry().GetBloodPH().GetValue());
     m_BicarbonateMolarity_mmol_Per_L->Sample(m_AortaHCO3->GetMolarity(AmountPerVolumeUnit::mmol_Per_L));
     //Only check these at the end of a cardiac cycle and reset at start of cardiac cycle 
@@ -692,7 +692,7 @@ namespace pulse
     //The opposite occurs for skin blood flow decrease.
     double coreToSkinResistance_K_Per_W = 1.0 / (alphaScale * bloodDensity_kg_Per_m3 * bloodSpecificHeat_J_Per_K_kg * skinBloodFlow_m3_Per_s);
 
-    coreToSkinResistance_K_Per_W = BLIM(coreToSkinResistance_K_Per_W, 0.0001, 20.0);
+    BLIM(coreToSkinResistance_K_Per_W, 0.0001, 20.0);
     m_coreToSkinPath->GetNextResistance().SetValue(coreToSkinResistance_K_Per_W, HeatResistanceUnit::K_Per_W);
   }
 

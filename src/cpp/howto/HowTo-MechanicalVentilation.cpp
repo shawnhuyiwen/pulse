@@ -66,6 +66,8 @@ public:
           m_Logger->Info("Stop doing something for CardiogenicShock");
         break;
       }
+      default:
+        break;// Nothing
     }
   }
 };

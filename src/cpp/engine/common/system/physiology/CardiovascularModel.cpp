@@ -706,13 +706,12 @@ namespace pulse
     const double LHeartVolume_mL = m_LeftHeart->GetVolume(VolumeUnit::mL);
     const double LHeartPressure_mmHg = m_LeftHeart->GetPressure(PressureUnit::mmHg);
     const double RHeartPressure_mmHg = m_RightHeart->GetPressure(PressureUnit::mmHg);
-   
 
-    const double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    //const double muscleFlow_mL_Per_s = m_pAortaToMuscle->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
-    const double gutFlow_mL_Per_s = m_pAortaToLargeIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
-      m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
-      m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
+    //const double gutFlow_mL_Per_s = m_pAortaToLargeIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
+    //  m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
+    //  m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
@@ -2244,33 +2243,33 @@ namespace pulse
 
         stableTime_s += m_data.GetTimeStep_s();
         currentStableTime_s += m_data.GetTimeStep_s();
-        bool stableMAP = true;
+        // Check MAP stability
         if (GeneralMath::PercentDifference(tgt_map_mmHg, map_mmHg) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_map_mmHg = map_mmHg; stableMAP = false;
+          stableTime_s = 0; tgt_map_mmHg = map_mmHg;
         }
-        bool stableSystolic = true;
+        // Check Systolic stability
         if (GeneralMath::PercentDifference(tgt_systolic_mmHg, systolic_mmHg) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_systolic_mmHg = systolic_mmHg; stableSystolic = false;
+          stableTime_s = 0; tgt_systolic_mmHg = systolic_mmHg;
         }
-        bool stableDiastolic = true;
+        // Check Diastolic stability
         if (GeneralMath::PercentDifference(tgt_diastolic_mmHg, diastolic_mmHg) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_diastolic_mmHg = diastolic_mmHg; stableDiastolic = false;
+          stableTime_s = 0; tgt_diastolic_mmHg = diastolic_mmHg;
         }
-        bool stableCO = true;
+        // Check CO stability
         if (GeneralMath::PercentDifference(tgt_cardiacOutput_mL_Per_min, cardiacOutput_mL_Per_min) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_cardiacOutput_mL_Per_min = cardiacOutput_mL_Per_min; stableCO = false;
+          stableTime_s = 0; tgt_cardiacOutput_mL_Per_min = cardiacOutput_mL_Per_min;
         }
         //bool stableMeanCVP = true;
         //if (GeneralMath::PercentDifference(tgt_meanCVP_mmHg, meanCVP_mmHg) > 0.25)
         //  { stableTime_s = 0; tgt_meanCVP_mmHg = meanCVP_mmHg; stableMeanCVP = false; }
-        bool stableBloodVol = true;
+        // Check Blood Vol stability
         if (GeneralMath::PercentDifference(tgt_blood_mL, blood_mL) > stabPercentTolerance)
         {
-          stableTime_s = 0; tgt_blood_mL = blood_mL; stableBloodVol = false;
+          stableTime_s = 0; tgt_blood_mL = blood_mL;
         }
 
         if (stableTime_s > stabCheckTime_s)
@@ -2545,10 +2544,10 @@ namespace pulse
       Info("  Initial " + path->GetName() + " Resistance : " + path->GetResistance().ToString());
     }
 
-    // Tuning variables
-    const double pressuretolerance = 0.01;
-    const double stabPercentTolerance = 0.25;
-    const double stabCheckTime_s = 15.0;
+    // Tuning variables unused
+    //const double pressuretolerance = 0.01;
+    //const double stabPercentTolerance = 0.25;
+    //const double stabCheckTime_s = 15.0;
 
     double currentStableTime_s;
     double maxStableTime_s = 20;

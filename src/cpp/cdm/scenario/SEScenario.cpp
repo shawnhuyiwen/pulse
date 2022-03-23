@@ -134,7 +134,7 @@ const std::vector<SEAction*>& SEScenario::GetActions()
 {
   return m_Actions;
 }
-const std::vector<const SEAction*>& SEScenario::GetActions() const
+const std::vector<const SEAction*> SEScenario::GetActions() const
 {
-  return *((std::vector<const SEAction*>*) & m_Actions);
+  return std::vector<const SEAction*>(m_Actions.begin(), m_Actions.end());
 }

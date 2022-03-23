@@ -43,17 +43,17 @@ namespace pulse
     RespiratoryModel(Data& data);
     virtual ~RespiratoryModel();
 
-    virtual void Clear();
+    virtual void Clear() override;
 
     // Set members to a stable homeostatic state
-    virtual void Initialize();
+    virtual void Initialize() override;
     // Set pointers and other member varialbes common to both homeostatic initialization and loading a state
-    virtual void SetUp();
+    virtual void SetUp() override;
 
-    virtual void AtSteadyState();
-    virtual void PreProcess();
-    virtual void Process(bool solve_and_transport=true);
-    virtual void PostProcess(bool solve_and_transport=true);
+    virtual void AtSteadyState() override;
+    virtual void PreProcess() override;
+    virtual void Process(bool solve_and_transport=true) override;
+    virtual void PostProcess(bool solve_and_transport=true) override;
     bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const;
 
   protected:

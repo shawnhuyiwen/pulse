@@ -7,21 +7,9 @@
 
 // Declare template classes all Scalar types at the bottom
 
-unsigned long long int SEScalar::NaN = 
-  ((unsigned long long int)255 << (8*7)) + 
-  ((unsigned long long int)(255-8) << (8*6)) + 
-  ((unsigned long long int)255 << (8*5)) + 
-  ((unsigned long long int)255 << (8*4)) +
-  ((unsigned long long int)255 << (8*3)) + 
-  (255 << (8*2)) + 
-  (255 << (8*1)) + 
-   255;
-
 double SEScalar::dNaN()
 {
-  double d;
-  *(reinterpret_cast<unsigned long long int *>(&d)) = NaN;
-  return d;
+  return std::nan("");
 }
 
 // Opposite of isnan which can be slow
@@ -100,14 +88,14 @@ void SEScalar::Invalidate()
     throw CommonDataModelException("Scalar is marked read-only");
   m_isnan = true;
   m_isinf = false;
-  *(reinterpret_cast<unsigned long long int *>(&m_value)) = NaN;
+  m_value = SEScalar::dNaN();
 }
 
 void SEScalar::ForceInvalidate()
 {
   m_isnan = true;
   m_isinf = false;
-  *(reinterpret_cast<unsigned long long int*>(&m_value)) = NaN;
+  m_value = SEScalar::dNaN();
 }
 
 bool SEScalar::IsValid() const 
