@@ -3919,7 +3919,7 @@ namespace pulse
                                //22mm ID * 36" length = pi * (0.022m / 2)^2 * 0.91m = 3.46e-4 m^3 = 0.346 L... so decent ballpark
     double yPieceVolume_L = 0.01;
     double connectionVolume_L = 0.05;
-    double totalResistance_cmH2O_s_Per_L = 2.0;
+    double totalResistance_cmH2O_s_Per_L = 0.1;
     double tubeResistance_cmH2O_s_Per_L = totalResistance_cmH2O_s_Per_L / 2.0; //2 tubes in series for inhale and 2 tubes in series for exhale
     double compliance_L_Per_cmH2O = 1e-20; //~0
 
