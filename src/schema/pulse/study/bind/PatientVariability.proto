@@ -1,0 +1,57 @@
+syntax = "proto3";
+package pulse.study.bind.patient_variability;
+option java_package = "com.kitware.pulse.study.bind.patient_variability";
+option csharp_namespace = "pulse.study.bind.patient_variability";
+option optimize_for = SPEED;
+
+message SimulationData
+{
+  // Inputs
+  // A filename without an extension (can/should have path also)
+  // The engine will use this to create multiple output files (*.log and *.csv)
+  uint32                       ID                                            = 1;
+  string                       Name                                          = 2;
+  double                       IntracranialSpaceVolumeBaseline_mL            = 3;
+  double                       IntracranialSpaceCompliance_mL_Per_mmHg       = 4;
+  double                       CerebrospinalFluidAbsorptionRate_mL_Per_min   = 5;
+  double                       CerebrospinalFluidProductionRate_mL_Per_min   = 6;
+  
+  // Outputs
+  double                       BrainVolume_mL                                = 7;
+  double                       IntracranialSpaceVolume_mL                    = 8;
+  double                       MeanBrainPressure_mmHg                        = 9;
+  double                       MeanBrainVasculatureInFlow_mL_Per_s           = 10;
+  double                       MeanBrainVasculatureOutFlow_mL_Per_s          = 11;
+  double                       MeanBrainCarbonDioxidePartialPressure_mmHg    = 12;
+  double                       MeanBrainOxygenPartialPressure_mmHg           = 13;
+  double                       MeanIntracranialSpacePressure_mmHg            = 14;
+  // Some other system variable
+  double                       CardiacOutput_mL_Per_min                      = 15;
+  double                       CerebralBloodFlow_mL_Per_min                  = 16;
+  double                       CerebralPerfusionPressure_mmHg                = 17;
+  double                       DiastolicArterialPressure_mmHg                = 18;
+  double                       HeartEjectionFraction                         = 19;
+  double                       HeartRate_bpm                                 = 20;
+  double                       HeartStrokeVolume_mL                          = 21;
+  double                       IntracranialPressure_mmHg                     = 22;
+  double                       MeanArterialPressure_mmHg                     = 23;
+  double                       MeanCentralVenousPressure_mmHg                = 24;
+  double                       PulmonaryDiastolicArterialPressure_mmHg       = 25;
+  double                       PulmonaryMeanArterialPressure_mmHg            = 26;
+  double                       PulmonaryMeanCapillaryFlow_mL_Per_s           = 27;
+  double                       PulmonarySystolicArterialPressure_mmHg        = 28;
+  double                       SystolicArterialPressure_mmHg                 = 29;
+  double                       SystemicVascularResistance_mmHg_s_Per_L       = 30;
+
+  // Stabilization Information
+  bool                         AchievedStabilization                         = 31;
+  double                       StabilizationTime_s                           = 32;
+  double                       TotalSimulationTime_s                         = 33;
+  
+}
+
+message SimulationListData
+{
+  string                       OutputRootDir                                 = 1;
+  repeated SimulationData      Simulation                                    = 2;
+}
