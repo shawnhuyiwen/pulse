@@ -230,6 +230,8 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEBagValveMaskAutomated* automated = dynamic_cast<const SEBagValveMaskAutomated*>(&action);
     if (automated != nullptr)
     {
+      if (HasActiveBagValveMaskAction())
+        Warning("A previous BVM action has not completed yet");
       GetBagValveMaskAutomated().Copy(*automated);
       m_BagValveMaskAutomated->Activate();
       if (!m_BagValveMaskAutomated->IsActive())
@@ -245,6 +247,8 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEBagValveMaskInstantaneous* inst = dynamic_cast<const SEBagValveMaskInstantaneous*>(&action);
     if (inst != nullptr)
     {
+      if (HasActiveBagValveMaskAction())
+        Warning("A previous BVM action has not completed yet");
       GetBagValveMaskInstantaneous().Copy(*inst);
       m_BagValveMaskInstantaneous->Activate();
       if (!m_BagValveMaskInstantaneous->IsActive())
@@ -260,6 +264,8 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEBagValveMaskSqueeze* squeeze = dynamic_cast<const SEBagValveMaskSqueeze*>(&action);
     if (squeeze != nullptr)
     {
+      if (HasActiveBagValveMaskAction())
+        Warning("A previous BVM action has not completed yet");
       GetBagValveMaskSqueeze().Copy(*squeeze);
       m_BagValveMaskSqueeze->Activate();
       if (!m_BagValveMaskSqueeze->IsActive())
@@ -718,6 +724,11 @@ void SEEquipmentActionCollection::RemoveBagValveMaskConfiguration()
 {
   if (m_BagValveMaskConfiguration)
     m_BagValveMaskConfiguration->Deactivate();
+}
+
+bool SEEquipmentActionCollection::HasActiveBagValveMaskAction() const
+{
+  return HasBagValveMaskAutomated() || HasBagValveMaskInstantaneous() || HasBagValveMaskSqueeze();
 }
 
 bool SEEquipmentActionCollection::HasBagValveMaskAutomated() const

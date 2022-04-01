@@ -143,6 +143,7 @@ public:
   void RemoveAnesthesiaMachineYPieceDisconnect();
 
   // ACTIONS
+  bool HasActiveBagValveMaskAction() const;
 
   bool HasBagValveMaskAutomated() const;
   SEBagValveMaskAutomated& GetBagValveMaskAutomated();
