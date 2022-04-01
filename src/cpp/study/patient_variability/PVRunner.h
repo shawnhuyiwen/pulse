@@ -2,20 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-
-#include <thread>
-#include "PulseEngine.h"
-
-#include "cdm/engine/SEPatientConfiguration.h"
-#include "cdm/utils/FileUtils.h"
-#include "cdm/utils/TimingProfile.h"
-
-#include "cdm/io/protobuf/PBActions.h"
-PUSH_PROTO_WARNINGS
-#include "pulse/study/bind/PatientVariability.pb.h"
-#include <google/protobuf/text_format.h>
-#include <google/protobuf/util/json_util.h>
-POP_PROTO_WARNINGS
+#include "PVEngine.h"
 
 namespace pulse::study::patient_variability
 {
@@ -26,9 +13,9 @@ namespace pulse::study::patient_variability
     virtual ~PVRunner();
 
     bool Run(const std::string& filename, eSerializationFormat f);
-    bool Run(pulse::study::bind::patient_variability::SimulationListData& simList);
+    bool Run(pulse::study::bind::patient_variability::SimulationListData& simList, const std::string& resultsFilename);
 
-    bool RunSimulationUntilStable(std::string const& outDir, pulse::study::bind::patient_variability::SimulationData& sim, const std::string& dataDir = "./");
+    bool RunSimulationUntilStable(pulse::study::bind::patient_variability::SimulationData& sim, const std::string& dataDir = "./");
 
   protected:
     bool Run();
@@ -44,7 +31,6 @@ namespace pulse::study::patient_variability
     std::mutex  m_mutex;
     bool m_Running;
 
-    std::string m_OutDir;
     std::string m_DataDir;
     std::string m_SimulationResultsListFile;
     std::set<unsigned int> m_SimulationsToRun;
