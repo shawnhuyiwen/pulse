@@ -48,6 +48,7 @@ add_library_ex(DataModelBindings
 # study bindings
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/Hydrocephalus.pb.h"
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/MultiplexVentilation.pb.h"
+    "${DST_ROOT}/cpp/${STUDY_PACKAGE}/PatientVariability.pb.h"
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/SensitivityAnalysis.pb.h"
   CPP_FILES
 # cdm bindings
@@ -96,6 +97,7 @@ add_library_ex(DataModelBindings
 # study bindings
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/Hydrocephalus.pb.cc"
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/MultiplexVentilation.pb.cc"
+    "${DST_ROOT}/cpp/${STUDY_PACKAGE}/PatientVariability.pb.cc"
     "${DST_ROOT}/cpp/${STUDY_PACKAGE}/SensitivityAnalysis.pb.cc"
   PRIVATE_DEPENDS
     protobuf::libprotobuf
