@@ -163,8 +163,9 @@ const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) c
   return found->second;
 }
 
-void SEEngineTracker::SetupRequests()
+bool SEEngineTracker::SetupRequests()
 {
+  bool success = true;
   if (m_Mode == TrackMode::CSV)
   {
     bool isOpen = m_ResultsStream.is_open();
@@ -177,6 +178,7 @@ void SEEngineTracker::SetupRequests()
         {// Could not hook this up, get rid of it
           m_ss << "Unable to find data for " << m_Request2Scalar[dr]->Heading;
           Error(m_ss);
+          success = false;
         }
       }
       m_ForceConnection = false;
@@ -194,9 +196,11 @@ void SEEngineTracker::SetupRequests()
       {// Could not hook this up, get rid of it
         m_ss << "Unable to find data for " << m_Request2Scalar[dr]->Heading;
         Error(m_ss);
+        success = false;
       }
     }
   }
+  return success;
 }
 
 void SEEngineTracker::LogRequestedValues(bool pullData)

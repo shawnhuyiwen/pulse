@@ -82,7 +82,7 @@ public:
 
   bool ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds);
 
-  virtual void SetupRequests();
+  virtual bool SetupRequests();
   // Set to false if you have already pulled the latest values
   virtual void LogRequestedValues(bool pullData=true);
   virtual void TrackData(double currentTime_s=0);
