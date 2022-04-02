@@ -4,38 +4,30 @@ option java_package = "com.kitware.pulse.study.bind.patient_variability";
 option csharp_namespace = "pulse.study.bind.patient_variability";
 option optimize_for = SPEED;
 
+import "pulse/cdm/bind/Patient.proto";
+
 message PatientStateData
 {
-  /** @brief Enumeration for patient sex */
-  enum eSex
-  {
-    Male=0;   /**<< @brief Male patient. */
-    Female=1; /**<< @brief Female patient. */
-  }
 
-  uint32          ID                                        = 1;
-  string          StateFile                                 = 2;
+  uint32                          ID                              = 1;
+  string                          OutputBaseFilename              = 2;
   // Initial Conditions
-  uint32          Age                                       = 3;
-  double          BMI                                       = 4;
-  double          DiastolicArterialPressure_mmHg            = 5;
-  double          HeartRate_bpm                             = 6;
-  double          Height_cm                                 = 7;
-  double          MeanArterialPressure_mmHg                 = 8;
-  eSex            Sex                                       = 9;
-  double          SystolicArterialPressure_mmHg             = 10;
-  double          Weight_kg                                 = 11;
+  pulse.cdm.bind.PatientData.eSex Sex                             = 3;
+  uint32                          Age_yr                          = 4;
+  double                          Height_cm                       = 5;
+  double                          Weight_kg                       = 6;
+  double                          BMI                             = 7;
+  double                          HeartRate_bpm                   = 8;
+  double                          DiastolicArterialPressure_mmHg  = 9;
+  double                          SystolicArterialPressure_mmHg   = 10;
+  // Results
+  bool                            AchievedStabilization           = 11;
+  double                          StabilizationTime_s             = 12;
 }
 
 message PatientStateListData
 {
-  repeated PatientStateData      Patients                   = 1;
-}
-
-message PatientComparisonData
-{
-  PatientStateData               SoloVentilation            = 1;
-  PatientStateData               MultiplexVentilation       = 2;
+  repeated PatientStateData      Patient                    = 1;
 }
 
 message LogData
@@ -44,28 +36,4 @@ message LogData
   repeated string                Warning                    = 2;
   repeated string                Error                      = 3;
   repeated string                Fatal                      = 4;
-}
-
-message SimulationData
-{
-  // A filename without an extension (can/should have path also)
-  // The engine will use this to create multiple output files (*.log and *.csv)
-  uint32                         ID                         = 1;
-  uint32                         GroupID                    = 2;
-  string                         OutputBaseFilename         = 3;
-  bool                           AchievedStabilization      = 4;
-  double                         StabilizationTime_s        = 5;
-  double                         RespirationRate_Per_min    = 6;
-  double                         IERatio                    = 7;
-  double                         PIP_cmH2O                  = 8;
-  double                         PEEP_cmH2O                 = 9;
-  double                         FiO2                       = 10;
-  LogData                        Log                        = 11;
-  repeated PatientComparisonData PatientComparisons         = 12;
-}
-
-message SimulationListData
-{
-  string                         OutputRootDir              = 1;
-  repeated SimulationData        Simulations                = 2;
 }

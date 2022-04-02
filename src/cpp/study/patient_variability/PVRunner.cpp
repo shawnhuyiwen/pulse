@@ -3,56 +3,72 @@
 
 #include "PVRunner.h"
 
+#include "engine/PulseConfiguration.h"
+
+#include "cdm/patient/SEPatient.h"
+#include "cdm/engine/SEEngineTracker.h"
+#include "cdm/engine/SEDataRequestManager.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/utils/DataTrack.h"
+#include "cdm/utils/FileUtils.h"
+#include "cdm/utils/GeneralMath.h"
+#include "cdm/utils/TimingProfile.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarPressure.h"
+
 using namespace pulse;
 
 namespace pulse::study::patient_variability
 {
-  PVRunner::PVRunner(const std::string& logfileName, const std::string& dataDir) : Loggable(logfileName)
+  PVRunner::PVRunner(Logger* logger) : Loggable(logger)
   {
-    m_DataDir = dataDir;
-    m_SimulationList = nullptr;
-    m_SimulationResultsList = nullptr;
+    m_PatientList = nullptr;
+    m_PatientResultsList = nullptr;
   }
   PVRunner::~PVRunner()
   {
-    SAFE_DELETE(m_SimulationList);
-    SAFE_DELETE(m_SimulationResultsList);
+    SAFE_DELETE(m_PatientList);
+    SAFE_DELETE(m_PatientResultsList);
   }
 
-  bool PVRunner::Run(pulse::study::bind::patient_variability::SimulationListData& simList, const std::string& resultsFilename)
+  bool PVRunner::Run(pulse::study::bind::patient_variability::PatientStateListData& simList, const std::string& rootDir)
   {
-    m_SimulationResultsListFile = simList.outputrootdir() + "/" + resultsFilename;
-    SAFE_DELETE(m_SimulationList);
-    SAFE_DELETE(m_SimulationResultsList);
-    m_SimulationList = &simList;
-    m_SimulationResultsList = new pulse::study::bind::patient_variability::SimulationListData();
-    if (FileExists(m_SimulationResultsListFile))
+    m_RootDir = rootDir;
+    m_PatientResultsListFile = rootDir + "/patient_results.json";
+    SAFE_DELETE(m_PatientList);
+    SAFE_DELETE(m_PatientResultsList);
+    m_PatientList = &simList;
+    m_PatientResultsList = new pulse::study::bind::patient_variability::PatientStateListData();
+    if (FileExists(m_PatientResultsListFile))
     {
-      if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList, eSerializationFormat::JSON))
+      if (!SerializeFromFile(m_PatientResultsListFile, *m_PatientResultsList))
       {
         GetLogger()->Warning("Unable to read found results file");
       }
     }
     bool b = Run();
-    m_SimulationList = nullptr;
-    SAFE_DELETE(m_SimulationResultsList);
+    m_PatientList = nullptr;
+    SAFE_DELETE(m_PatientResultsList);
     return b;
   }
 
-  bool PVRunner::Run(const std::string& filename, eSerializationFormat f)
+  bool PVRunner::Run(const std::string& filename, const std::string& rootDir)
   {
-    SAFE_DELETE(m_SimulationList);
-    SAFE_DELETE(m_SimulationResultsList);
-    m_SimulationList = new pulse::study::bind::patient_variability::SimulationListData();
-    m_SimulationResultsList = new pulse::study::bind::patient_variability::SimulationListData();
+    m_RootDir = rootDir;
+    SAFE_DELETE(m_PatientList);
+    SAFE_DELETE(m_PatientResultsList);
+    m_PatientList = new pulse::study::bind::patient_variability::PatientStateListData();
+    m_PatientResultsList = new pulse::study::bind::patient_variability::PatientStateListData();
 
-    if (!SerializeFromFile(filename, *m_SimulationList, eSerializationFormat::JSON))
+    if (!SerializeFromFile(filename, *m_PatientList))
       return false;
     // Let's try to read in a results file
-    m_SimulationResultsListFile = filename.substr(0, filename.length() - 5) + "_results.json";
-    if (FileExists(m_SimulationResultsListFile))
+    m_PatientResultsListFile = rootDir + "/patient_results.json";
+    if (FileExists(m_PatientResultsListFile))
     {
-      if (!SerializeFromFile(m_SimulationResultsListFile, *m_SimulationResultsList, eSerializationFormat::JSON))
+      if (!SerializeFromFile(m_PatientResultsListFile, *m_PatientResultsList))
       {
         GetLogger()->Warning("Unable to read found results file");
       }
@@ -64,25 +80,25 @@ namespace pulse::study::patient_variability
     TimingProfile profiler;
     profiler.Start("Total");
 
-    // Get the ID's of simulations we need to run
-    m_SimulationsToRun.clear();
-    for (int i = 0; i < m_SimulationList->simulations_size(); i++)
-      m_SimulationsToRun.insert(m_SimulationList->simulations()[i].id());
+    // Get the ID's of Patients we need to run
+    m_PatientsToRun.clear();
+    for (int i = 0; i < m_PatientList->patient_size(); i++)
+      m_PatientsToRun.insert(m_PatientList->patient()[i].id());
     // Remove any id's we have in the results
-    if (m_SimulationResultsList->simulations_size() > 0)
+    if (m_PatientResultsList->patient_size() > 0)
     {
-      Info("Found " + std::to_string(m_SimulationResultsList->simulations_size()) + " previously run simulations");
-      for (int i = 0; i < m_SimulationResultsList->simulations_size(); i++)
-        m_SimulationsToRun.erase(m_SimulationResultsList->simulations()[i].id());
+      Info("Found " + std::to_string(m_PatientResultsList->patient_size()) + " previously run Patients");
+      for (int i = 0; i < m_PatientResultsList->patient_size(); i++)
+        m_PatientsToRun.erase(m_PatientResultsList->patient()[i].id());
     }
 
-    size_t numSimsToRun = m_SimulationList->simulations_size() - m_SimulationResultsList->simulations_size();
+    size_t numSimsToRun = m_PatientList->patient_size() - m_PatientResultsList->patient_size();
     if (numSimsToRun == 0)
     {
-      Info("All simulations are run in the results file");
+      Info("All Patients are run in the results file");
       return true;
     }
-    size_t processor_count = std::thread::hardware_concurrency();
+    size_t processor_count = 1;// std::thread::hardware_concurrency();
     if (processor_count == 0)
     {
       Fatal("Unable to detect number of processors");
@@ -94,7 +110,7 @@ namespace pulse::study::patient_variability
     // Let's not kick off more threads than we need
     if (processor_count > numSimsToRun)
       processor_count = numSimsToRun;
-    Info("Starting " + std::to_string(processor_count) + " Threads to run " + std::to_string(m_SimulationsToRun.size()) + " simulations");
+    Info("Starting " + std::to_string(processor_count) + " Threads to run " + std::to_string(m_PatientsToRun.size()) + " Patients");
     // Crank up our threads
     for (size_t p = 0; p < processor_count; p++)
       m_Threads.push_back(std::thread(&PVRunner::ControllerLoop, this));
@@ -102,124 +118,134 @@ namespace pulse::study::patient_variability
     for (size_t p = 0; p < processor_count; p++)
       m_Threads[p].join();
 
-    Info("It took " + std::to_string(profiler.GetElapsedTime_s("Total")) + "s to run this simulation list");
+    Info("It took " + std::to_string(profiler.GetElapsedTime_s("Total")) + "s to run this Patient list");
     profiler.Clear();
     return true;
   }
 
   void PVRunner::ControllerLoop()
   {
-    pulse::study::bind::patient_variability::SimulationData* sim = nullptr;
+    CreatePath(m_RootDir);
+
+    pulse::study::bind::patient_variability::PatientStateData* patient = nullptr;
     while (true)
     {
       try
       {
-        sim = GetNextSimulation();
-        if (sim == nullptr)
+        patient = GetNextPatient();
+        if (patient == nullptr)
           break;
-        RunSimulationUntilStable(*sim);
-        FinalizeSimulation(*sim);
+        if(!RunPatient(*patient))
+          GetLogger()->Error("Unable to run patient " + patient->outputbasefilename());
       }
       catch (CommonDataModelException& cdm_ex)
       {
-        GetLogger()->Fatal("Exception caught runnning simulation " + sim->outputbasefilename());
+        GetLogger()->Fatal("Exception caught runnning Patient " + patient->outputbasefilename());
         GetLogger()->Fatal(cdm_ex.what());
         std::cerr << cdm_ex.what() << std::endl;
       }
       catch (std::exception& ex)
       {
-        GetLogger()->Fatal("Exception caught runnning simulation " + sim->outputbasefilename());
+        GetLogger()->Fatal("Exception caught runnning Patient " + patient->outputbasefilename());
         GetLogger()->Fatal(ex.what());
         std::cerr << ex.what() << std::endl;
       }
       catch (...)
       {
-        std::cerr << "Unable to run simulation " << sim->outputbasefilename() << std::endl;
+        std::cerr << "Unable to run Patient " << patient->outputbasefilename() << std::endl;
       }
     }
   }
 
-  bool PVRunner::RunSimulationUntilStable(pulse::study::bind::patient_variability::SimulationData& sim, const std::string& dataDir)
+  bool PVRunner::RunPatient(pulse::study::bind::patient_variability::PatientStateData& patient)
   {
     TimingProfile profiler;
     profiler.Start("Total");
     profiler.Start("Status");
 
     auto pulse = CreatePulseEngine();
-    pulse->GetLogger()->SetLogFile(sim.outputbasefilename() + ".log");
-
     // No logging to console (when threaded)
     pulse->GetLogger()->LogToConsole(false);
-    // Setup data requests
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("IntracranialPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CerebralPerfusionPressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Pressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Volume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "Oxygen", "PartialPressure");
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Volume", VolumeUnit::mL);
-    //pulse->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::CerebrospinalFluidCompartment::IntracranialSpace, "Pressure", PressureUnit::mmHg);
-    //pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(outDir + "/" + std::to_string(sim.id()) + " - " + sim.name() + ".csv");
+    // But, do write a log file
+    pulse->GetLogger()->SetLogFile(m_RootDir + patient.outputbasefilename() + "/patient.log");
+    // Write out the computed patient basline values so we can see how well we met them
+    PulseConfiguration cfg;
+    cfg.EnableWritePatientBaselineFile(eSwitch::On);
+    cfg.SetInitialPatientBaselineFilepath(m_RootDir + patient.outputbasefilename() + "/patient.init.json");
+    pulse->SetConfigurationOverride(&cfg);
 
-    // Stabilize the engine
+    // Setup data requests
+    // TODO Read in all System and the one Patient validation scenarios
+    //      Add in all the data requests from all of those files
+    //      Create 1 big massive CSV file
+    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+    pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_RootDir + patient.outputbasefilename() + "/patient.csv");
+
+    // Create our patient
     SEPatientConfiguration pc;
-    pc.SetPatientFile("./patients/StandardMale.json");
+    SEPatient& p = pc.GetPatient();
+    p.SetName("Patient"+patient.id());
+    p.SetSex((ePatient_Sex)patient.sex());
+    p.GetAge().SetValue(patient.age_yr(), TimeUnit::yr);
+    p.GetHeight().SetValue(patient.height_cm(), LengthUnit::cm);
+    p.GetWeight().SetValue(patient.weight_kg(), MassUnit::kg);
+    p.GetHeartRateBaseline().SetValue(patient.heartrate_bpm(), FrequencyUnit::Per_min);
+    //p.GetSystolicArterialPressureBaseline().SetValue(patient.systolicarterialpressure_mmhg(), PressureUnit::mmHg);
+    //p.GetDiastolicArterialPressureBaseline().SetValue(patient.diastolicarterialpressure_mmhg(), PressureUnit::mmHg);
+    p.SerializeToFile(m_RootDir + patient.outputbasefilename() + "/patient.json");
+
     if (!pulse->InitializeEngine(pc))
     {
-      sim.set_achievedstabilization(false);
-      sim.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
+      patient.set_achievedstabilization(false);
+      patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
       return false;
     }
+    patient.set_achievedstabilization(true);
+    patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
+    pulse->GetLogger()->Info("It took " + cdm::to_string(patient.stabilizationtime_s()) + "s to run this Patient");
 
-    pulse->GetLogger()->Info("It took " + cdm::to_string(sim.stabilizationtime_s()) + "s to run this simulation");
+    // TODO Run the Java System and Patient validation scripts
+    // This will probably be a new java class that calls existing validation classes
+    // And we will need to provide the patient.json file to it so it can push data to the xlsx
+    // That java class should write out a report or something to our patient.outputbasefilename
+
+    // Add our results to our results file
+    m_mutex.lock();
+    auto pResult = m_PatientResultsList->add_patient();
+    pResult->CopyFrom(patient);
+    SerializeToFile(*m_PatientResultsList, m_PatientResultsListFile);
+    Info("Completed Simulation " + std::to_string(m_PatientResultsList->patient_size()) + " of " + std::to_string(m_PatientList->patient_size()));
+    if (patient.achievedstabilization())
+      Info("  Stabilized : " + patient.outputbasefilename());
+    else
+      Info("  FAILED STABILIZATION : " + patient.outputbasefilename());
+    m_mutex.unlock();
 
     profiler.Clear();
     return true;
   }
 
-  pulse::study::bind::patient_variability::SimulationData* PVRunner::GetNextSimulation()
+  pulse::study::bind::patient_variability::PatientStateData* PVRunner::GetNextPatient()
   {
     m_mutex.lock();
-    pulse::study::bind::patient_variability::SimulationData* sim = nullptr;
-    if (!m_SimulationsToRun.empty())
+    pulse::study::bind::patient_variability::PatientStateData* patient = nullptr;
+    if (!m_PatientsToRun.empty())
     {
-      auto id = *m_SimulationsToRun.begin();
-      for (int i = 0; i < m_SimulationList->simulations_size(); i++)
+      auto id = *m_PatientsToRun.begin();
+      for (int i = 0; i < m_PatientList->patient_size(); i++)
       {
-        sim = &(*m_SimulationList->mutable_simulations())[i];
-        if (sim->id() == id)
+        patient = &(*m_PatientList->mutable_patient())[i];
+        if (patient->id() == id)
           break;
       }
-      Info("Simulating Run " + std::to_string(id));
-      m_SimulationsToRun.erase(id);
+      Info("Running Patient " + std::to_string(id));
+      m_PatientsToRun.erase(id);
     }
     m_mutex.unlock();
-    return sim;
+    return patient;
   }
 
-  void PVRunner::FinalizeSimulation(pulse::study::bind::patient_variability::SimulationData& sim)
-  {
-    m_mutex.lock();
-    auto rSim = m_SimulationResultsList->mutable_simulations()->Add();
-    rSim->CopyFrom(sim);
-    SerializeToFile(*m_SimulationResultsList, m_SimulationResultsListFile, eSerializationFormat::JSON);
-    Info("Completed Simulation " + std::to_string(m_SimulationResultsList->simulations_size()) + " of " + std::to_string(m_SimulationList->simulations_size()));
-    if (sim.achievedstabilization())
-      Info("  Stabilized Run " + std::to_string(sim.id()));
-    else
-      Info("  FAILED STABILIZATION FOR RUN " + std::to_string(sim.id()));
-    std::ofstream plots;
-    plots.open(m_SimulationList->outputrootdir() + "/plot_pairs.config", std::fstream::in | std::fstream::out | std::fstream::app);
-    plots << sim.outputbasefilename() << "multiplex_patient_0_results.csv, " << sim.outputbasefilename() << "multiplex_patient_1_results.csv\n";
-    plots.close();
-    m_mutex.unlock();
-  }
-
-  bool PVRunner::SerializeToString(pulse::study::bind::patient_variability::SimulationListData& src, std::string& output, eSerializationFormat f) const
+  bool PVRunner::SerializeToString(pulse::study::bind::patient_variability::PatientStateListData& src, std::string& output) const
   {
     google::protobuf::util::JsonPrintOptions printOpts;
     printOpts.add_whitespace = true;
@@ -227,16 +253,16 @@ namespace pulse::study::patient_variability
     printOpts.always_print_primitive_fields = true;
     if (!google::protobuf::util::MessageToJsonString(src, &output, printOpts).ok())
     {
-      Error("Unable to serialize simulation list");
+      Error("Unable to serialize Patient list");
       return false;
     }
     return true;
   }
-  bool PVRunner::SerializeToFile(pulse::study::bind::patient_variability::SimulationListData& src, const std::string& filename, eSerializationFormat f) const
+  bool PVRunner::SerializeToFile(pulse::study::bind::patient_variability::PatientStateListData& src, const std::string& filename) const
   {
     return PBUtils::SerializeToFile(src, filename, GetLogger());
   }
-  bool PVRunner::SerializeFromString(const std::string& src, pulse::study::bind::patient_variability::SimulationListData& dst, eSerializationFormat f)
+  bool PVRunner::SerializeFromString(const std::string& src, pulse::study::bind::patient_variability::PatientStateListData& dst)
   {
     google::protobuf::util::JsonParseOptions parseOpts;
     google::protobuf::SetLogHandler([](google::protobuf::LogLevel level, const char* filename, int line, const std::string& message)
@@ -251,7 +277,7 @@ namespace pulse::study::patient_variability
     }
     return true;
   }
-  bool PVRunner::SerializeFromFile(const std::string& filename, pulse::study::bind::patient_variability::SimulationListData& dst, eSerializationFormat f)
+  bool PVRunner::SerializeFromFile(const std::string& filename, pulse::study::bind::patient_variability::PatientStateListData& dst)
   {
     return PBUtils::SerializeFromFile(filename, dst, GetLogger());
   }

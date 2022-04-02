@@ -187,21 +187,22 @@ message ConfigurationData
     pulse.cdm.bind.TimedStabilizationData              TimedStabilization                                   = 4;/**<< @brief */
     pulse.cdm.bind.DynamicStabilizationData            DynamicStabilization                                 = 5;/**<< @brief */
   }
-  pulse.cdm.bind.eSwitch                               WritePatientBaselineFile                             = 6;/**<< @brief Inform execution to write out patient object after stabilization completes. */
-  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 7;
-  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 8;
-  CircuitConfigurationData                             CircuitConfiguration                                 = 9;
-  ConstantsConfigurationData                           ConstantsConfiguration                               = 10;
-  DrugsConfigurationData                               DrugsConfiguration                                   = 11;
-  ECGConfigurationData                                 ECGConfiguration                                     = 12;
-  EnergyConfigurationData                              EnergyConfiguration                                  = 13;
-  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 14;
-  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 15;
-  NervousConfigurationData                             NervousConfiguration                                 = 16;
-  RenalConfigurationData                               RenalConfiguration                                   = 17;
-  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 18;
-  TissueConfigurationData                              TissueConfiguration                                  = 19;
-  map<string,pulse.cdm.bind.ScalarData>                Modifiers                                            = 20;
-  map<string,pulse.cdm.bind.ScalarData>                Overrides                                            = 21;
+  pulse.cdm.bind.eSwitch                               WritePatientBaselineFile                             = 6;/**<< @brief Inform execution to write out patient object after all patient values are computed. */
+  string                                               PatientBaselineFilePath                              = 7;/**<< @brief Optional filepath of the original patient file to write, if not it will be written to ./stable */
+  BloodChemistryConfigurationData                      BloodChemistryConfiguration                          = 8;
+  CardiovascularConfigurationData                      CardiovascularConfiguration                          = 9;
+  CircuitConfigurationData                             CircuitConfiguration                                 = 10;
+  ConstantsConfigurationData                           ConstantsConfiguration                               = 11;
+  DrugsConfigurationData                               DrugsConfiguration                                   = 12;
+  ECGConfigurationData                                 ECGConfiguration                                     = 13;
+  EnergyConfigurationData                              EnergyConfiguration                                  = 14;
+  EnvironmentConfigurationData                         EnvironmentConfiguration                             = 15;
+  GastrointestinalConfigurationData                    GastrointestinalConfiguration                        = 16;
+  NervousConfigurationData                             NervousConfiguration                                 = 17;
+  RenalConfigurationData                               RenalConfiguration                                   = 18;
+  RespiratoryConfigurationData                         RespiratoryConfiguration                             = 19;
+  TissueConfigurationData                              TissueConfiguration                                  = 20;
+  map<string,pulse.cdm.bind.ScalarData>                Modifiers                                            = 21;
+  map<string,pulse.cdm.bind.ScalarData>                Overrides                                            = 22;
 }
  

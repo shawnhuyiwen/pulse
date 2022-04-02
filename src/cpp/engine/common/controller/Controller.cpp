@@ -422,9 +422,17 @@ namespace pulse
     // Now we can check the config
     if (m_Config->IsWritingPatientBaselineFile())
     {
-      std::string stableDir = m_DataDir + "/stable/";
-      MakeDirectory(stableDir.c_str());
-      m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json");
+      std::string out = m_Config->GetInitialPatientBaselineFilepath();
+      if (out.empty())
+      {
+        out = m_DataDir + "/stable/";
+        MakeDirectory(out.c_str());
+        m_CurrentPatient->SerializeToFile(out + m_CurrentPatient->GetName() + ".json");
+      }
+      else
+      {
+        m_CurrentPatient->SerializeToFile(out);
+      }
     }
 
     m_Actions->Clear();

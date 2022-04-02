@@ -56,6 +56,8 @@ namespace pulse
     }
     if (src.writepatientbaselinefile() != CDM_BIND::eSwitch::NullSwitch)
       dst.EnableWritePatientBaselineFile((eSwitch)src.writepatientbaselinefile());
+    if (!src.patientbaselinefilepath().empty())
+      dst.SetInitialPatientBaselineFilepath(src.patientbaselinefilepath());
 
     for (auto& [name, m] : src.modifiers())
       dst.GetModifiers()[name] = SEScalarPair(m.value(), m.unit());
@@ -372,6 +374,7 @@ namespace pulse
       dst.set_allocated_timestep(PBProperty::Unload(*src.m_TimeStep));
     dst.set_allowdynamictimestep((CDM_BIND::eSwitch)src.m_AllowDynamicTimeStep);
     dst.set_writepatientbaselinefile((CDM_BIND::eSwitch)src.m_WritePatientBaselineFile);
+    dst.set_patientbaselinefilepath(src.m_InitialPatientBaselineFilepath);
 
     for (auto const& [name, m] : src.GetModifiers())
     {

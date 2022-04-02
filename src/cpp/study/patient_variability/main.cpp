@@ -10,31 +10,90 @@ using namespace pulse::study::patient_variability;
 
 int main(int argc, char* argv[])
 {
+  bool clear = true;
   std::string mode = ""; // Default is to run the manual else below
   if (argc <= 1)
   {
-    // Adjust comments to run the mode you want
-    //mode = "clear";
-    mode = "genPatients";
+    mode = "test";
   }
   else
   {
     mode = argv[1];
   }
-  
-  if(mode == "genPatients")
+  std::string rootDir = "./test_results/patient_variability/";
+
+  if(clear)
+    DeleteDirectory(rootDir);
+
+  pulse::study::bind::patient_variability::PatientStateListData patients;
+
+  Logger log;
+  log.LogToConsole(true);
+  log.SetLogFile(rootDir +"PatientVariability.log");
+
+  if(mode == "full")
   {
-    PVGenerator pvg("./test_results/patient_variability/PatientVariabilityGen.log");
-    pulse::study::bind::patient_variability::SimulationListData simList;
-    simList.set_outputrootdir("./test_results/patient_variability");
+    PVGenerator pvg(&log);
+    pvg.ageMin_yr = 18;
+    pvg.ageMax_yr = 65;
+    pvg.ageStep_yr = 10;
 
-    return !pvg.Run("./test_results/patient_variability", "./test_results/patient_variability/states_list.json");
+    pvg.heightMaleMin_cm = 165;
+    pvg.heightMaleMax_cm = 186;
+    pvg.heightFemaleMin_cm = 153;
+    pvg.heightFemaleMax_cm = 170;
+    pvg.heightStep_cm = 7;
+
+    pvg.bmiMin = 18.5;
+    pvg.bmiMax = 29;
+    pvg.bmiStep = 3;
+
+    pvg.hrMin_bpm = 60;
+    pvg.hrMax_bpm = 100;
+    pvg.hrStep_bpm = 15;
+
+    pvg.mapMin_mmHg = 70;
+    pvg.mapMax_mmHg = 100;
+    pvg.mapStep_mmHg = 10;
+
+    pvg.pulsePressureMin_mmHg = 30;
+    pvg.pulsePressureMax_mmHg = 50;
+    pvg.pulsePressureStep_mmHg = 10;
+
+    pvg.GeneratePatientList(patients);
   }
-  else if(mode == "clear")
+  else if (mode == "test")
   {
-    DeleteDirectory("./test_results/patient_variability");
+    PVGenerator pvg(&log);
+    pvg.ageMin_yr = 18;
+    pvg.ageMax_yr = 65;
+    pvg.ageStep_yr = 50;
+
+    pvg.heightMaleMin_cm = 165;
+    pvg.heightMaleMax_cm = 186;
+    pvg.heightFemaleMin_cm = 153;
+    pvg.heightFemaleMax_cm = 170;
+    pvg.heightStep_cm = 22;
+
+    pvg.bmiMin = 18.5;
+    pvg.bmiMax = 29;
+    pvg.bmiStep = 30;
+
+    pvg.hrMin_bpm = 60;
+    pvg.hrMax_bpm = 100;
+    pvg.hrStep_bpm = 150;
+
+    pvg.mapMin_mmHg = 70;
+    pvg.mapMax_mmHg = 100;
+    pvg.mapStep_mmHg = 100;
+
+    pvg.pulsePressureMin_mmHg = 30;
+    pvg.pulsePressureMax_mmHg = 50;
+    pvg.pulsePressureStep_mmHg = 100;
+
+    pvg.GeneratePatientList(patients);
   }
 
-
-  return 0;
+  PVRunner pvr(&log);
+  return !pvr.Run(patients, rootDir);
 }

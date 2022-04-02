@@ -1,10 +1,8 @@
 add_library_ex(PatientVariabilityEngine
   H_FILES
-    PVEngine.h
     PVGenerator.h
     PVRunner.h
   CPP_FILES
-    PVEngine.cpp
     PVGenerator.cpp
     PVRunner.cpp
   PUBLIC_DEPENDS

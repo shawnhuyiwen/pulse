@@ -2,39 +2,53 @@
    See accompanying NOTICE file for details.*/
 
 #pragma once
-#include "PVEngine.h"
+
+#pragma once
+#include "PulseEngine.h"
+#include "cdm/patient/SEPatient.h"
+
+PUSH_PROTO_WARNINGS
+#include "pulse/cdm/bind/Patient.pb.h"
+#include "pulse/study/bind/PatientVariability.pb.h"
+#include <google/protobuf/text_format.h>
+#include <google/protobuf/util/json_util.h>
+POP_PROTO_WARNINGS
+#include "io/protobuf/PBUtils.h"
 
 namespace pulse::study::patient_variability
 {
   class PVGenerator : public Loggable
   {
   public:
-    PVGenerator(const std::string& logfileName, const std::string& dataDir = ".");
+    PVGenerator(Logger* logger=nullptr);
     virtual ~PVGenerator();
 
-    bool Run(const std::string& stateDir, const std::string listFilename);
+    unsigned int ageMin_yr = 18;
+    unsigned int ageMax_yr = 65;
+    unsigned int ageStep_yr = 10;
 
-    static bool GenerateStabilizedPatient(pulse::study::bind::patient_variability::PatientStateData& pData, bool logToConsole);
+    unsigned int heightMaleMin_cm = 165;
+    unsigned int heightMaleMax_cm = 186;
+    unsigned int heightFemaleMin_cm = 153;
+    unsigned int heightFemaleMax_cm = 170;
+    unsigned int heightStep_cm = 7;
 
-  protected:
-    bool SerializeToString(pulse::study::bind::patient_variability::PatientStateListData& src, std::string& dst, eSerializationFormat f) const;
-    bool SerializeToFile(pulse::study::bind::patient_variability::PatientStateListData& src, const std::string& filename) const;
-    bool SerializeFromString(const std::string& src, pulse::study::bind::patient_variability::PatientStateListData& dst, eSerializationFormat f);
-    bool SerializeFromFile(const std::string& filename);
+    double bmiMin = 18.5;
+    double bmiMax = 29;
+    double bmiStep = 3;
 
-    void GeneratePatientList(const std::string& stateDir);
-    void ControllerLoop();
-    void FinalizePatient(pulse::study::bind::patient_variability::PatientStateData& sim);
-    pulse::study::bind::patient_variability::PatientStateData* GetNextPatient();
+    unsigned int hrMin_bpm = 60;
+    unsigned int hrMax_bpm = 100;
+    unsigned int hrStep_bpm = 15;
 
-    std::string m_DataDir;
-    std::mutex  m_mutex;
-    bool m_Running;
+    unsigned int mapMin_mmHg = 70;
+    unsigned int mapMax_mmHg = 100;
+    unsigned int mapStep_mmHg = 10;
 
-    std::string m_PatientStateListFile;
-    std::set<unsigned int> m_PatientsToRun;
-    std::vector<std::thread>   m_Threads;
-    pulse::study::bind::patient_variability::PatientStateListData* m_PatientList;
-    pulse::study::bind::patient_variability::PatientStateListData* m_CompletedPatientList;
+    unsigned int pulsePressureMin_mmHg = 30;
+    unsigned int pulsePressureMax_mmHg = 50;
+    unsigned int pulsePressureStep_mmHg = 10;
+
+    void GeneratePatientList(pulse::study::bind::patient_variability::PatientStateListData& pData);
   };
 }
