@@ -81,7 +81,7 @@ def HowTo_ECMO():
 
     # Increase flow
     settings.get_transfusion_flow().set_value(4, VolumePerTimeUnit.mL_Per_s)
-    #settings.get_substance_concentration("Sodium").get_concentration().set_value(newNa, MassPerVolumeUnit.g_Per_dL)
+    settings.get_substance_concentration("Sodium").get_concentration().set_value(newNa, MassPerVolumeUnit.g_Per_dL)
     pulse.process_action(cfg)
 
     pulse.advance_time_s(30)
