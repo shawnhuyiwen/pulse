@@ -73,10 +73,10 @@ namespace pulse::study::patient_variability
                   std::string full_dir_path = map_path + "/pp_mmHg" + std::to_string(pp_mmHg);
 
                   // systolic - diastolic = pulse pressure
-                  // MAP = (systolic - 2 * diastolic) / 3
+                  // MAP = (systolic + 2 * diastolic) / 3
+                  double diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3;
+                  double systolic_mmHg  = pp_mmHg + diastolic_mmHg;
 
-                  //double diastolic_mmHg = pp_mmHg - 3 * map_mmHg;
-                  //double systolic_mmHg  = pp_mmHg - diastolic_mmHg;
                   auto patientData = pData.add_patient();
                   patientData->set_id(id);
                   patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex);
@@ -85,8 +85,8 @@ namespace pulse::study::patient_variability
                   patientData->set_weight_kg(weight_kg);
                   patientData->set_bmi(bmi);
                   patientData->set_heartrate_bpm(hr_bpm);
-                  //patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
-                  //patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
+                  patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
+                  patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
                   patientData->set_outputbasefilename(full_dir_path);
                 }
               }

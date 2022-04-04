@@ -190,8 +190,8 @@ namespace pulse::study::patient_variability
     p.GetHeight().SetValue(patient.height_cm(), LengthUnit::cm);
     p.GetWeight().SetValue(patient.weight_kg(), MassUnit::kg);
     p.GetHeartRateBaseline().SetValue(patient.heartrate_bpm(), FrequencyUnit::Per_min);
-    //p.GetSystolicArterialPressureBaseline().SetValue(patient.systolicarterialpressure_mmhg(), PressureUnit::mmHg);
-    //p.GetDiastolicArterialPressureBaseline().SetValue(patient.diastolicarterialpressure_mmhg(), PressureUnit::mmHg);
+    p.GetSystolicArterialPressureBaseline().SetValue(patient.systolicarterialpressure_mmhg(), PressureUnit::mmHg);
+    p.GetDiastolicArterialPressureBaseline().SetValue(patient.diastolicarterialpressure_mmhg(), PressureUnit::mmHg);
     p.SerializeToFile(m_RootDir + patient.outputbasefilename() + "/patient.json");
 
     if (!pulse->InitializeEngine(pc))
