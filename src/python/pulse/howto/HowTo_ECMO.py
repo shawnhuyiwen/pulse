@@ -64,8 +64,7 @@ def HowTo_ECMO():
     settings.set_outflow_location(eECMO_CannulationLocation.InternalJugular)
     settings.get_oxygenator_volume().set_value(500, VolumeUnit.mL)
     settings.get_transfusion_flow().set_value(5, VolumePerTimeUnit.mL_Per_s)
-    settings.get_substance_concentration("Sodium").get_concentration().set_value(0.7, MassPerVolumeUnit.g_Per_dL)
-    #settings.set_substance_compound("Sailine")
+    settings.set_substance_compound("Sailine")
     # If you provide both, the compound will be added first, then any substance concentrations will be overwritten
     pulse.process_action(cfg)
     settings.clear() # Clear the settings so we only change the flow
@@ -74,8 +73,15 @@ def HowTo_ECMO():
     results = pulse.pull_data()
     data_mgr.to_console(results)
 
+    # What is the current (last value in array) sodium concentration at the vena cava?
+    vcNa = results[list(results)[26]][-1]
+    newNa = vcNa * 0.95
+    print("Vena Cava Na concentration is " + str(vcNa) + ", reducing to " + str(newNa))
+
+
     # Increase flow
     settings.get_transfusion_flow().set_value(4, VolumePerTimeUnit.mL_Per_s)
+    #settings.get_substance_concentration("Sodium").get_concentration().set_value(newNa, MassPerVolumeUnit.g_Per_dL)
     pulse.process_action(cfg)
 
     pulse.advance_time_s(30)
