@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,23 +16,27 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-
+import com.google.protobuf.util.JsonFormat;
+import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
 import com.kitware.pulse.cdm.bind.Properties.ScalarData;
+import com.kitware.pulse.cdm.bind.TestReport.PropertyValidationData;
+import com.kitware.pulse.cdm.bind.TestReport.PropertyValidationListData;
 import com.kitware.pulse.cdm.patient.SEPatient;
 import com.kitware.pulse.cdm.patient.assessments.SEPatientAssessment;
 import com.kitware.pulse.cdm.properties.SEScalar;
 import com.kitware.pulse.utilities.DoubleUtils;
+import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.RunConfiguration;
 import com.kitware.pulse.utilities.StringUtils;
@@ -46,12 +51,13 @@ public abstract class ValidationTool
     SystemValidation.main(args);
     //PatientValidation.main(args);
   }
+  protected enum RunType { DOC, DATA };
   protected String DEST_DIRECTORY;
   protected String DEFAULT_DIRECTORY;
   protected String DEFAULT_FILE;
   protected String TABLE_TYPE;
-  protected String HEADER_PREPEND="";
   protected String VALIDATION_FOLDER;
+  protected RunType RUN_TYPE=RunType.DOC;
   protected RunConfiguration cfg;
   
   public ValidationTool()
@@ -76,6 +82,7 @@ public abstract class ValidationTool
   // Patient2System variables take the value from the patient file and compare it to a system property
   // PerWeight calculates the expected value based on the patient weight
   
+  protected boolean                         patientValidation=false;// Are we validating a patient or a system (with or without a patient)
   protected SEPatient                       patient;
   protected Map<String,List<Double>>        resultData = new HashMap<>();
   protected Map<String,SEPatientAssessment> assessments;
@@ -129,33 +136,62 @@ public abstract class ValidationTool
 
   public void loadData(String csv_root)
   {
+    FilenameFilter fileFilter = new FilenameFilter()
+    {
+         @Override
+         public boolean accept(File f, String name)
+         {
+           if (name.endsWith(".csv"))
+             return true;
+           if(name.endsWith(".json") && name.contains("@"))
+             return true;
+           return false;
+         }
+     };
+     
     String directoryName = DEFAULT_DIRECTORY;
     String fileName = DEFAULT_FILE;
     String destinationDirectory = DEST_DIRECTORY;
     if (csv_root.equals("TEST"))
-      csv_root = "test_results";
+      csv_root = "./test_results/scenarios/validation/"+VALIDATION_FOLDER+"/";
     else if(csv_root.equals("BASELINE"))
-      csv_root = "verification";
+      csv_root = "./verification/scenarios/validation/"+VALIDATION_FOLDER+"/";
     else
     {
-      Log.warn("CSV source directory not specified, using baseline files for validation");
-      csv_root = "verification";
+      Log.info("Looking for csv files in "+csv_root+"...");
+      File f = new File(csv_root);
+      if(f.list(fileFilter).length > 0)
+      {
+        if(!csv_root.endsWith("/"))
+          csv_root = csv_root+"/";
+        destinationDirectory = csv_root;
+        RUN_TYPE = RunType.DATA;
+      }
+      else
+      {
+        Log.warn("No CSV files found, using baseline files for validation");
+        csv_root = "./verification/scenarios/validation/"+VALIDATION_FOLDER+"/";
+      }
     }
 
     try
     {
-      File dest = new File(DEST_DIRECTORY);
-      dest.mkdir();
-      // Delete current dir contents
-      // FileUtils.delete(destinationDirectory);
-      // Ok, let's make them again
-      // FileUtils.createDirectory(destinationDirectory);
+      if(!destinationDirectory.equals(csv_root))
+      {
+        File dest = new File(destinationDirectory);
+        dest.mkdir();
+        // Delete current dir contents
+        // FileUtils.delete(destinationDirectory);
+        // Ok, let's make them again
+        // FileUtils.createDirectory(destinationDirectory);
+      }
     }
     catch(Exception ex)
     {
       Log.error("Unable to clean directories");
       return;
     }
+    
     try
     {   
       File xls = new File(directoryName+"/"+fileName);
@@ -164,29 +200,21 @@ public abstract class ValidationTool
         Log.error("Could not find xls file "+directoryName+"/"+fileName);
         return;
       }
-      // Read in props file
-      File file = new File(cfg.getTestConfigDirectory()+"/ValidationTables.config");
-      FileInputStream fileInput = new FileInputStream(file);
-      Properties config = new Properties();
-      config.load(fileInput);
-      fileInput.close();
-      
       
       html.append("<html>");
       html.append("<body>");
       html.append("<h1>"+TABLE_TYPE+"Validation</h1><br>");
       
       // Get a list of all the results files we have to work with
-      
-      File vdir = new File("./"+csv_root+"/scenarios/validation/"+VALIDATION_FOLDER+"/");
-      String[] vFiles = vdir.list();
+      File vdir = new File(csv_root);
+      String[] vFiles = vdir.list(fileFilter);
       if(vFiles==null || vFiles.length==0)
       {
-        Log.error("No validation files were found, run the validation scenarios please");
+        Log.error("No csv files were found, generate those please");
         return;
       }
       
-      // Now read in the spreadsheet      
+      // Now read in the spreadsheet
       FileInputStream xlFile = new FileInputStream(directoryName+"/"+fileName);
       XSSFWorkbook xlWBook =  new XSSFWorkbook (xlFile);
       
@@ -196,6 +224,7 @@ public abstract class ValidationTool
       Map<String,List<ValidationRow>> tableErrors = new HashMap<>();
       List<ValidationRow> allRows = new ArrayList<>();
       Map<String,SummaryRow> summary = new TreeMap<>();
+      
       for(int i=0; i<xlWBook.getNumberOfSheets(); i++)
       {
         XSSFSheet xlSheet = xlWBook.getSheetAt(i);
@@ -219,9 +248,9 @@ public abstract class ValidationTool
         {
           Log.info("Processing "+resultsName);
           try
-          {          
+          {
             // Look for a results file
-            CSVContents results = new CSVContents("./"+csv_root+"/scenarios/validation/"+VALIDATION_FOLDER+"/"+resultsName);
+            CSVContents results = new CSVContents(csv_root+resultsName);
             results.readAll(resultData);
             // Find any assessments
             assessments = new HashMap<>();
@@ -231,7 +260,7 @@ public abstract class ValidationTool
               {
                 try
                 {
-                  SEPatientAssessment ass = SEPatientAssessment.readAssessment("./"+csv_root+"/scenarios/validation/"+VALIDATION_FOLDER+"/"+vFile);
+                  SEPatientAssessment ass = SEPatientAssessment.readAssessment(csv_root+vFile);
                   assessments.put(vFile,ass);
                 }
                 catch(InvalidProtocolBufferException ex)
@@ -251,12 +280,17 @@ public abstract class ValidationTool
           }
           // Is this patient validation?
           patient = null;
-          if(TABLE_TYPE.equals("Patient"))
+          if(TABLE_TYPE.equals("Patient") || RUN_TYPE == RunType.DATA)
           {
             // Patient Name is encoded in the naming convention (or else it needs to be)
             String patientName = resultsName.substring(resultsName.lastIndexOf("-")+1,resultsName.indexOf("Results"));
             patient = new SEPatient();
-            patient.readFile("./stable/"+patientName+".json");
+            // Check to see if we have a patient file in our csv_root dir first
+            File f = new File(csv_root+"patient.init.json");
+            if(f.exists())
+              patient.readFile(csv_root+"patient.init.json");
+            else
+              patient.readFile("./stable/"+patientName+".json");
           }
 
           allRows.clear();
@@ -265,14 +299,13 @@ public abstract class ValidationTool
           // Read the sheet and process all the validation data rows
           try
           {
-
             int rows = xlSheet.getPhysicalNumberOfRows();
             for (int r = 0; r < rows; r++) 
             {
               Row row = xlSheet.getRow(r);
               if (row == null) 
                 continue;
-              int cells = 11;//row.getPhysicalNumberOfCells();
+              int cells = 13;//row.getPhysicalNumberOfCells();
               Cell cell = row.getCell(0);
               if(cell==null)
                 continue;
@@ -280,13 +313,62 @@ public abstract class ValidationTool
               String cellValue = cell.getStringCellValue();
               if(cellValue==null||cellValue.isEmpty())
                 continue;// No property, skip it
-              //if(cellValue.compareTo("Color")==0)
-              //  System.out.println("Here!");
+              // Check to see if this has a patient table
+              // We can push patient values to for dynamic validation
+              if(cellValue.equals("Patient Inputs"))
+              {
+                for (r++; r < rows; r++)
+                {
+                  row = xlSheet.getRow(r);
+                  Cell cName = row.getCell(0);
+                  Cell cUnits = row.getCell(1);
+                  Cell cValue = row.getCell(2);
+                  String name = cName.getStringCellValue();
+                  if(name == null||name.isEmpty())
+                    break;
+                  if(name.equals("Gender"))
+                  {
+                    if(patient == null)
+                    {
+                      Log.info("Using default gender of "+cValue.getStringCellValue());
+                      continue;// Just step through these to the end
+                    }
+                    String gender = patient.getSex()==eSex.Male?"Male":"Female";
+                    cValue.setCellValue(gender);
+                    Log.info("Setting patient gender to "+gender);
+                    continue;
+                  }
+                  if(cValue.getCellType() != CellType.NUMERIC)
+                  {
+                    //evaluator.evaluateFormulaCell(cValue);
+                    Log.info("Using equation for "+name+ ", which computed value of "+cValue.getNumericCellValue()+cUnits.getStringCellValue());
+                    continue;// Skip equations
+                  }
+                  String units = "";
+                  if(cUnits != null)
+                    units = cUnits.getStringCellValue();
+                  if(patient == null)
+                  {
+                    Log.info("Using the default "+name+" of "+cValue.getNumericCellValue()+cUnits.getStringCellValue());
+                    continue;// Just step through these to the end
+                  }
+                  Method m = SEPatient.class.getMethod("get"+name);
+                  SEScalar s = ((SEScalar)m.invoke(patient));
+                  if(s.isValid())
+                  {
+                    double value = s.getValue(units);
+                    Log.info("Setting patient "+name+" to "+value+units);
+                    cValue.setCellValue(value);
+                  }
+                  else
+                    Log.error("Patient does not have a value for "+name+", using default in spreadsheet");
+                }
+                continue;
+              }
               if (row.getCell(1) != null)
                 cellValue = row.getCell(1).getStringCellValue();
               if(cellValue!=null&&cellValue.equals("Units"))
                 continue;// Header
-
 
               ValidationRow vRow = new ValidationRow();
               allRows.add(vRow);
@@ -365,9 +447,12 @@ public abstract class ValidationTool
                       }
                     }
                     break;
-                  case 3://D
+                  case 3://D Male Multiplier
+                    break;
+                  case 4://E Femaile Multiplier
+                  case 5://F
                     // Replace any return characters with empty
-                    if(patient!=null && vRow.name.indexOf('*')==-1)
+                    if(patientValidation && vRow.name.indexOf('*')==-1)
                     {
                       try
                       {
@@ -396,37 +481,37 @@ public abstract class ValidationTool
                       vRow.refValues = cellValue.replace("\n","");
                     
                     break;
-                  case 4://E
+                  case 6://G
                     // Replace any return characters with empty
                     if(cellValue!=null)
                       cellValue = cellValue.replace("\n","");
                     vRow.refCites = cellValue;
                     break;
-                  case 5://F Reference Page (Internal only)
+                  case 7://H Reference Page (Internal only)
                     break;
-                  case 6://G Notes
+                  case 8://I Notes
                     if(cellValue!=null)
                       vRow.notes = cellValue;
                     break;// Skipping for now
-                  case 7://H Internal Notes (Internal only)
+                  case 9://J Internal Notes (Internal only)
                     break;
-                  case 8://I Reading (Internal only)
+                  case 10://K Reading (Internal only)
                     break;
-                  case 9://J Table (Internal only)
+                  case 11://L Table (Internal only)
                     if(cellValue==null)
                       cellValue = "";
                     vRow.table = cellValue;
-                    if(patient!=null)
-                      vRow.table = patient.getName() +"Patient"+cellValue;
+                    if(patientValidation)
+                      vRow.table = patient.getName()+cellValue;
                     break;
-                  case 10://K ResultFile (Internal only)
+                  case 12://M ResultFile (Internal only)
                     if(cellValue!=null)
                       vRow.resultFile = cellValue;
                     break;
-                  case 11://L Mantissa Digits
+                  case 13://N Mantissa Digits
                     if(cellValue!=null)
                       vRow.doubleFormat = cellValue;
-                    if(patient != null && vRow.dType != DataType.Patient2SystemMean)
+                    if(patientValidation && vRow.dType != DataType.Patient2SystemMean)
                       vRow.refValues = String.format("%."+vRow.doubleFormat, vRow.refValue);
                     break;
                 }
@@ -471,38 +556,49 @@ public abstract class ValidationTool
             if(name.contains("All"))
               continue;
             List<ValidationRow> t = tables.get(name);
-            AddToSummary(summary, name, t);
-            WriteHTML(t,name);
-            WriteDoxyTable(t,name,destinationDirectory);
-            if(name.equalsIgnoreCase(sheetName))
+            if(RUN_TYPE == RunType.DOC)
             {
-              List<String> properties = new ArrayList<>();
-              for(ValidationRow vRow : t)  
-                properties.add(vRow.name);
-              for(ValidationRow vRow : tableErrors.get(name))  
-                properties.add(vRow.name);
-              CrossCheckValidationWithSchema(properties, tableErrors.get(name), name);
+              AddToSummary(summary, name, t);
+              WriteHTML(t,name);
+              WriteDoxyTable(t,name,destinationDirectory);
+              if(name.equalsIgnoreCase(sheetName))
+              {
+                List<String> properties = new ArrayList<>();
+                for(ValidationRow vRow : t)  
+                  properties.add(vRow.name);
+                for(ValidationRow vRow : tableErrors.get(name))  
+                  properties.add(vRow.name);
+                CrossCheckValidationWithSchema(properties, tableErrors.get(name), name);
+              }
+              WriteHTML(tableErrors.get(name),name+"Errors");
+              if(patientValidation)
+                CustomMarkdown(patient.getName(),destinationDirectory);
             }
-            WriteHTML(tableErrors.get(name),name+"Errors");
-            if(patient!=null)
-              CustomMarkdown(patient.getName(),destinationDirectory);
+            else
+            {
+              if(!t.isEmpty())
+                WriteValidationJson(t, csv_root+name+"ValidationResults.json");
+            }
           }
         }
       }
-      WriteSummary(summary, destinationDirectory);
       xlWBook.close();
-      WriteHTML(badSheets,fileName+" Errors");
-      html.append("</body>");
-      html.append("</html>");
-      try
+      if(RUN_TYPE == RunType.DOC)
       {
-        BufferedWriter out = new BufferedWriter(new FileWriter(".//test_results/"+TABLE_TYPE+"Validation.html"));
-        out.write(html.toString());
-        out.close();
-      }
-      catch(Exception ex)
-      {
-        Log.error("Unable to write "+TABLE_TYPE+" HTML validation report",ex);
+        WriteSummary(summary, destinationDirectory);
+        WriteHTML(badSheets,fileName+" Errors");
+        html.append("</body>");
+        html.append("</html>");
+        try
+        {
+          BufferedWriter out = new BufferedWriter(new FileWriter("./test_results/"+TABLE_TYPE+"Validation.html"));
+          out.write(html.toString());
+          out.close();
+        }
+        catch(Exception ex)
+        {
+          Log.error("Unable to write "+TABLE_TYPE+" HTML validation report",ex);
+        }
       }
     }
     catch(Exception ex)
@@ -510,37 +606,39 @@ public abstract class ValidationTool
       Log.error("Error processing spreadsheet "+fileName,ex);
     }
     // Just for fun, I am going to create a single md file with ALL the tables in it
-    
-    try
+    if(RUN_TYPE == RunType.DOC)
     {
-      String line;
-      File vDir = new File(destinationDirectory);
-      vDir.mkdir();
-      String AllTableName = VALIDATION_FOLDER+"ValidationTables.md";
-      PrintWriter writer = new PrintWriter(destinationDirectory+"/"+AllTableName, "UTF-8");
-      
-      for (String fName : vDir.list())
+      try
       {
-        if(fName.equals(AllTableName))
-          continue;
-        if(new File(fName).isDirectory())
-          continue;
-        FileReader in = new FileReader(destinationDirectory+"/"+fName);
-        BufferedReader inFile = new BufferedReader(in);
-        writer.println(fName);
-        while ((line = inFile.readLine()) != null)
-          writer.println(line);
-        inFile.close();
-        inFile = null;
-        writer.println("<br>");
+        String line;
+        File vDir = new File(destinationDirectory);
+        vDir.mkdir();
+        String AllTableName = VALIDATION_FOLDER+"ValidationTables.md";
+        PrintWriter writer = new PrintWriter(destinationDirectory+"/"+AllTableName, "UTF-8");
+        
+        for (String fName : vDir.list())
+        {
+          if(fName.equals(AllTableName))
+            continue;
+          if(new File(fName).isDirectory())
+            continue;
+          FileReader in = new FileReader(destinationDirectory+"/"+fName);
+          BufferedReader inFile = new BufferedReader(in);
+          writer.println(fName);
+          while ((line = inFile.readLine()) != null)
+            writer.println(line);
+          inFile.close();
+          inFile = null;
+          writer.println("<br>");
+        }
+        writer.close();
+        writer = null;
+        System.gc();
       }
-      writer.close();
-      writer = null;
-      System.gc();
-    }
-    catch (Exception ex)
-    {
-      Log.error("Unable to create single validation table file.",ex);
+      catch (Exception ex)
+      {
+        Log.error("Unable to create single validation table file.",ex);
+      }
     }
   }
   
@@ -1095,7 +1193,7 @@ public abstract class ValidationTool
     }
     
     vRow.results = getResults(vRow.name,vRow.unit);
-    if(vRow.results==null && patient !=null)
+    if(vRow.results==null && patientValidation)
       vRow.results = getResults("Patient"+vRow.name,vRow.unit);// See if this a patient output
     if(vRow.results==null)// Nope, I don't think the result is there
     {
@@ -1140,7 +1238,7 @@ public abstract class ValidationTool
           resultData.put(result,results);
           break;
         }
-      }            
+      }
     } 
     return results;
   }
@@ -1439,5 +1537,19 @@ public abstract class ValidationTool
       html.append("<td>"+vRow.notes+"</td>");
     }
     html.append("</table>");
+  }
+  protected void WriteValidationJson(List<ValidationRow> vData, String filepath) throws InvalidProtocolBufferException
+  {
+    PropertyValidationListData.Builder pvList = PropertyValidationListData.newBuilder();
+    for(ValidationRow vRow : vData)
+    {
+      PropertyValidationData.Builder pvd = pvList.addPropertyBuilder();
+      pvd.setName(vRow.header);
+      pvd.setExpectedValue(vRow.refValue);
+      pvd.setComputedValue(vRow.result);
+      pvd.setError(vRow.resultError);
+    }
+    pvList.build();
+    FileUtils.writeFile(filepath, JsonFormat.printer().print(pvList));
   }
 }

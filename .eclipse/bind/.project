@@ -16,6 +16,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>PULSE_BIND</name>
+			<type>2</type>
+			<locationURI>PULSE_BIND</locationURI>
+		</link>
+		<link>
 			<name>java</name>
 			<type>2</type>
 			<locationURI>PULSE_BUILD/Innerbuild/src/java</locationURI>
