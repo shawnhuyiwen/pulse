@@ -186,6 +186,7 @@ namespace pulse::study::patient_variability
     pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(results);
     std::string scenario_dir;
     ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
+    std::map<std::string,std::vector<std::string>> scenarioRequests;
     if (config->HasKey("scenario_dir"))
     {
       scenario_dir = config->GetValue("scenario_dir");
@@ -206,12 +207,12 @@ namespace pulse::study::patient_variability
         std::string scenario_filename;
         SplitFilenamePath(scenario_filepath,scenario_filename);
         std::string output_csv_file = Replace(scenario_filename, ".json", "Results.csv");
-        m_ScenarioRequests.insert(std::pair<std::string, std::vector<std::string>>(output_csv_file, std::vector<std::string>()));
+        scenarioRequests.insert(std::pair<std::string, std::vector<std::string>>(output_csv_file, std::vector<std::string>()));
 
         for(auto dr: s.GetDataRequestManager().GetDataRequests())
         {
           SEDataRequest& new_dr = pulse->GetEngineTracker()->GetDataRequestManager().CopyDataRequest(*dr);
-          m_ScenarioRequests[output_csv_file].push_back(new_dr.GetHeaderName());
+          scenarioRequests[output_csv_file].push_back(new_dr.GetHeaderName());
         }
       }
     }
@@ -239,7 +240,7 @@ namespace pulse::study::patient_variability
     patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
     pulse->GetLogger()->Info("It took " + cdm::to_string(patient.stabilizationtime_s()) + "s to run this Patient");
 
-    CSV::SplitCSV(results, m_ScenarioRequests);
+    CSV::SplitCSV(results, scenarioRequests);
     remove(results.c_str());
 
     // TODO Run the Java System and Patient validation scripts

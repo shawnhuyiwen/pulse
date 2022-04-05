@@ -45,6 +45,5 @@ namespace pulse::study::patient_variability
     std::vector<std::thread>   m_Threads;
     pulse::study::bind::patient_variability::PatientStateListData* m_PatientList;
     pulse::study::bind::patient_variability::PatientStateListData* m_PatientResultsList;
-    std::map<std::string,std::vector<std::string>> m_ScenarioRequests;
   };
 }
