@@ -73,7 +73,8 @@ public:
   virtual bool HasUnit() const;
   virtual void InvalidateUnit();
 
-  virtual std::string ToString()const;
+  virtual std::string ToString() const;
+  virtual std::string GetHeaderName() const;
 
 protected:
 

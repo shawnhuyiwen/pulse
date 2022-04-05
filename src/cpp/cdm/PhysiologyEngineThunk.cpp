@@ -153,7 +153,7 @@ bool PhysiologyEngineThunk::SetupRequests()
       m_engine->Error("--  " + m_engine->GetEngineTracker()->GetDataTrack().GetProbeName(i));
     m_engine->Error("--Here is what you requested:");
     for (SEDataRequest const* dr : m_engine->GetEngineTracker()->GetDataRequestManager().GetDataRequests())
-      m_engine->Error("--  " + m_engine->GetEngineTracker()->GetHeader(*dr));
+      m_engine->Error("--  " + dr->GetHeaderName());
     m_engine->Error("I don't have the logic to figure out which tracked items are duplicated and where they go in the pulled data array");
     return false;
   }

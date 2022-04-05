@@ -3,12 +3,17 @@
 
 #include "PVRunner.h"
 
+#include "PulseEngine.h"
 #include "engine/PulseConfiguration.h"
+#include "engine/PulseScenario.h"
 
 #include "cdm/patient/SEPatient.h"
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/scenario/SEScenario.h"
+#include "cdm/utils/ConfigParser.h"
+#include "cdm/utils/CSV.h"
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/FileUtils.h"
 #include "cdm/utils/GeneralMath.h"
@@ -174,12 +179,42 @@ namespace pulse::study::patient_variability
     cfg.SetInitialPatientBaselineFilepath(m_RootDir + patient.outputbasefilename() + "/patient.init.json");
     pulse->SetConfigurationOverride(&cfg);
 
-    // Setup data requests
-    // TODO Read in all System and the one Patient validation scenarios
-    //      Add in all the data requests from all of those files
-    //      Create 1 big massive CSV file
+    // Read in all System and Patient validation scenarios
+    // Add in all the data requests from all of those files
     pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(m_RootDir + patient.outputbasefilename() + "/patient.csv");
+    std::string results = m_RootDir + patient.outputbasefilename() + "/patient.csv";
+    pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(results);
+    std::string scenario_dir;
+    ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
+    if (config->HasKey("scenario_dir"))
+    {
+      scenario_dir = config->GetValue("scenario_dir");
+
+      //Retrieve all patients validation scenarios
+      std::vector<std::string> scenario_files;
+      ListFiles(scenario_dir + "/validation/patients", scenario_files, true, "Validation.json");
+
+      //Retrieve all systems validation scenarios
+      ListFiles(scenario_dir + "/validation/systems", scenario_files, true, "Validation.json");
+
+      //Copy all data requests from each scenario
+      for(auto scenario_filepath: scenario_files)
+      {
+        PulseScenario s(pulse->GetLogger());
+        s.SerializeFromFile(scenario_filepath);
+
+        std::string scenario_filename;
+        SplitFilenamePath(scenario_filepath,scenario_filename);
+        std::string output_csv_file = Replace(scenario_filename, ".json", "Results.csv");
+        m_ScenarioRequests.insert(std::pair<std::string, std::vector<std::string>>(output_csv_file, std::vector<std::string>()));
+
+        for(auto dr: s.GetDataRequestManager().GetDataRequests())
+        {
+          SEDataRequest& new_dr = pulse->GetEngineTracker()->GetDataRequestManager().CopyDataRequest(*dr);
+          m_ScenarioRequests[output_csv_file].push_back(new_dr.GetHeaderName());
+        }
+      }
+    }
 
     // Create our patient
     SEPatientConfiguration pc;
@@ -203,6 +238,9 @@ namespace pulse::study::patient_variability
     patient.set_achievedstabilization(true);
     patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
     pulse->GetLogger()->Info("It took " + cdm::to_string(patient.stabilizationtime_s()) + "s to run this Patient");
+
+    CSV::SplitCSV(results, m_ScenarioRequests);
+    remove(results.c_str());
 
     // TODO Run the Java System and Patient validation scripts
     // This will probably be a new java class that calls existing validation classes
