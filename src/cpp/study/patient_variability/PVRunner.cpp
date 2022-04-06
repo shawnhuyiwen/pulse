@@ -181,12 +181,13 @@ namespace pulse::study::patient_variability
 
     // Read in all System and Patient validation scenarios
     // Add in all the data requests from all of those files
-    pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-    std::string results = m_RootDir + patient.outputbasefilename() + "/patient.csv";
+    std::string results = m_RootDir + patient.outputbasefilename() + "/AllValidationResults.csv";
     pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(results);
+
     std::string scenario_dir;
+
+    std::map<std::string, std::vector<std::string>> allScenarioRequests;
     ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
-    std::map<std::string,std::vector<std::string>> scenarioRequests;
     if (config->HasKey("scenario_dir"))
     {
       scenario_dir = config->GetValue("scenario_dir");
@@ -207,14 +208,19 @@ namespace pulse::study::patient_variability
         std::string scenario_filename;
         SplitFilenamePath(scenario_filepath,scenario_filename);
         std::string output_csv_file = Replace(scenario_filename, ".json", "Results.csv");
-        scenarioRequests.insert(std::pair<std::string, std::vector<std::string>>(output_csv_file, std::vector<std::string>()));
+        allScenarioRequests.insert(std::pair<std::string, std::vector<std::string>>(output_csv_file, std::vector<std::string>()));
 
         for(auto dr: s.GetDataRequestManager().GetDataRequests())
         {
           SEDataRequest& new_dr = pulse->GetEngineTracker()->GetDataRequestManager().CopyDataRequest(*dr);
-          scenarioRequests[output_csv_file].push_back(new_dr.GetHeaderName());
+          allScenarioRequests[output_csv_file].push_back(new_dr.GetHeaderName());
         }
       }
+    }
+    else
+    {
+      Error("Cannot find scenario root... cannot add any data requests...");
+      return false;
     }
 
     // Create our patient
@@ -238,15 +244,27 @@ namespace pulse::study::patient_variability
     }
     patient.set_achievedstabilization(true);
     patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
-    pulse->GetLogger()->Info("It took " + cdm::to_string(patient.stabilizationtime_s()) + "s to run this Patient");
+    pulse->GetLogger()->Info("It took " + cdm::to_string(patient.stabilizationtime_s()) + "s to stabilize this Patient");
 
-    CSV::SplitCSV(results, scenarioRequests);
-    remove(results.c_str());
+    double dT_s = pulse->GetTimeStep(TimeUnit::s);
+    int count = static_cast<int>(120 / dT_s);
 
-    // TODO Run the Java System and Patient validation scripts
-    // This will probably be a new java class that calls existing validation classes
-    // And we will need to provide the patient.json file to it so it can push data to the xlsx
-    // That java class should write out a report or something to our patient.outputbasefilename
+    pulse->GetEngineTracker()->TrackData(0);
+    for (int i = 0; i < count; i++)
+    {
+      if (!pulse->AdvanceModelTime()) // Compute 1 time step
+        return false;
+      // Pull Track will pull data from the engine and append it to the file
+      pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
+    }
+    pulse->GetEngineTracker()->ResetFile();// So we can close it
+
+    CSV::SplitCSV(results, allScenarioRequests);
+    if (std::remove(results.c_str()) != 0)
+      Error("Unable to remove file " + results);
+
+    std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING="+m_RootDir+patient.outputbasefilename()+" -DARG2:STRING=false -P run.cmake";
+    std::system(command.c_str());
 
     // Add our results to our results file
     m_mutex.lock();
