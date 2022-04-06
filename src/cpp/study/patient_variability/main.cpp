@@ -14,7 +14,9 @@ int main(int argc, char* argv[])
   std::string mode = ""; // Default is to run the manual else below
   if (argc <= 1)
   {
-    mode = "test";
+    //mode = "full";
+    mode = "solo";
+    //mode = "test";
   }
   else
   {
@@ -62,7 +64,7 @@ int main(int argc, char* argv[])
 
     pvg.GeneratePatientList(patients);
   }
-  else if (mode == "test")
+  else if (mode == "solo")
   {
     PVGenerator pvg(&log);
     pvg.ageMin_yr = 18;
@@ -90,6 +92,37 @@ int main(int argc, char* argv[])
     pvg.pulsePressureMin_mmHg = 30;
     pvg.pulsePressureMax_mmHg = 50;
     pvg.pulsePressureStep_mmHg = 100;
+
+    pvg.GeneratePatientList(patients);
+  }
+  else if (mode == "test")
+  {
+    PVGenerator pvg(&log);
+    pvg.ageMin_yr = 18;
+    pvg.ageMax_yr = 65;
+    pvg.ageStep_yr = 25;
+
+    pvg.heightMaleMin_cm = 165;
+    pvg.heightMaleMax_cm = 186;
+    pvg.heightFemaleMin_cm = 153;
+    pvg.heightFemaleMax_cm = 170;
+    pvg.heightStep_cm = 8;
+
+    pvg.bmiMin = 18.5;
+    pvg.bmiMax = 29;
+    pvg.bmiStep = 10;
+
+    pvg.hrMin_bpm = 60;
+    pvg.hrMax_bpm = 100;
+    pvg.hrStep_bpm = 30;
+
+    pvg.mapMin_mmHg = 70;
+    pvg.mapMax_mmHg = 100;
+    pvg.mapStep_mmHg = 40;
+
+    pvg.pulsePressureMin_mmHg = 30;
+    pvg.pulsePressureMax_mmHg = 50;
+    pvg.pulsePressureStep_mmHg = 40;
 
     pvg.GeneratePatientList(patients);
   }

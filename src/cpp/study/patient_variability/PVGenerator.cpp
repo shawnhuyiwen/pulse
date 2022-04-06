@@ -31,27 +31,25 @@ namespace pulse::study::patient_variability
       // Adjust height range based on sex
       unsigned int heightMin_cm = heightMaleMin_cm;
       unsigned int heightMax_cm = heightMaleMax_cm;
-      std::string sex_dir = "male";
+      std::string sex_dir = "/male";
       if( sex == Female )
       {
         heightMin_cm = heightFemaleMin_cm;
         heightMax_cm = heightFemaleMax_cm;
-        sex_dir = "female";
+        sex_dir = "/female";
       }
-
-      std::string sex_path = "/" + sex_dir;
 
       for( unsigned int age_yr = ageMin_yr; age_yr <= ageMax_yr; age_yr += ageStep_yr )
       {
-        std::string age_path = sex_path + "/age_yr" + std::to_string(age_yr);
+        std::string age_dir = "/age_yr" + std::to_string(age_yr);
 
         for( unsigned int height_cm = heightMin_cm; height_cm <= heightMax_cm; height_cm += heightStep_cm )
         {
-          std::string height_path = age_path + "/height_cm" + std::to_string(height_cm);
+          std::string height_dir = "/height_cm" + std::to_string(height_cm);
 
           for( double bmi = bmiMin; bmi <= bmiMax; bmi += bmiStep )
           {
-            std::string bmi_path = height_path + "/bmi" + pulse::cdm::to_string(bmi);
+            std::string bmi_dir = "/bmi" + pulse::cdm::to_string(bmi);
 
             // BMI = kg/m2
             // kg = BMI * m2
@@ -62,15 +60,16 @@ namespace pulse::study::patient_variability
 
             for( unsigned int hr_bpm = hrMin_bpm; hr_bpm <= hrMax_bpm; hr_bpm += hrStep_bpm )
             {
-              std::string hr_path = bmi_path + "/hr_bpm" + std::to_string(hr_bpm);
+              std::string hr_dir = "/hr_bpm" + std::to_string(hr_bpm);
 
               for( unsigned int map_mmHg = mapMin_mmHg; map_mmHg <= mapMax_mmHg; map_mmHg += mapStep_mmHg )
               {
-                std::string map_path = hr_path + "/map_mmHg" + std::to_string(map_mmHg);
+                std::string map_dir = "/map_mmHg" + std::to_string(map_mmHg);
 
                 for( unsigned int pp_mmHg = pulsePressureMin_mmHg; pp_mmHg <= pulsePressureMax_mmHg; pp_mmHg += pulsePressureStep_mmHg )
                 {
-                  std::string full_dir_path = map_path + "/pp_mmHg" + std::to_string(pp_mmHg);
+                  std::string pp_dir = "/pp_mmHg" + std::to_string(pp_mmHg);
+                  std::string full_dir_path = age_dir + bmi_dir + hr_dir + map_dir + pp_dir + sex_dir + height_dir;
 
                   // systolic - diastolic = pulse pressure
                   // MAP = (systolic + 2 * diastolic) / 3
@@ -78,7 +77,7 @@ namespace pulse::study::patient_variability
                   double systolic_mmHg  = pp_mmHg + diastolic_mmHg;
 
                   auto patientData = pData.add_patient();
-                  patientData->set_id(id);
+                  patientData->set_id(id++);
                   patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex);
                   patientData->set_age_yr(age_yr);
                   patientData->set_height_cm(height_cm);
