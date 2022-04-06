@@ -226,7 +226,7 @@ namespace pulse::study::patient_variability
     // Create our patient
     SEPatientConfiguration pc;
     SEPatient& p = pc.GetPatient();
-    p.SetName("Patient"+patient.id());
+    p.SetName("Patient"+std::to_string(patient.id()));
     p.SetSex((ePatient_Sex)patient.sex());
     p.GetAge().SetValue(patient.age_yr(), TimeUnit::yr);
     p.GetHeight().SetValue(patient.height_cm(), LengthUnit::cm);
