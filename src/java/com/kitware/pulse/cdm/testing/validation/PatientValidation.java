@@ -22,14 +22,16 @@ public class PatientValidation extends ValidationTool
   public static void main(String[] args)
   {
     JNIBridge.initialize();
-    Log.info("Running with agrs : "+Arrays.toString(args));
     PatientValidation me = new PatientValidation();
     if(args.length==0)
     {
       me.loadData("TEST");
     }
     else
-    {      
+    {
+      if(args.length>=2 && args[1].equals("false"))
+        Log.output2Console = false;
+      Log.info("Running with agrs : "+Arrays.toString(args));
       me.loadData(args[0]);
     }
   }

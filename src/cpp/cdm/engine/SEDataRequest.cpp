@@ -195,7 +195,7 @@ void SEDataRequest::SetRequestedUnit(const std::string& unit)
 }
 bool SEDataRequest::HasRequestedUnit() const
 {
-  return m_RequestedUnit.empty()?false:true;
+  return m_RequestedUnit.empty()||m_RequestedUnit=="unitless" ? false : true;
 }
 void SEDataRequest::InvalidateRequestedUnit()
 {
@@ -259,7 +259,7 @@ std::string SEDataRequest::GetHeaderName() const
         ss << GetPropertyName();
       else if(HasUnit())
         ss << GetPropertyName() << "(" << *GetUnit() << ")";
-      else //Requested unit
+      else // Requested Unit
         ss << GetPropertyName() << "(" << GetRequestedUnit() << ")";
 
       return Space2Underscore(ss.str());

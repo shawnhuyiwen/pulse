@@ -37,7 +37,6 @@ namespace pulse::study::patient_variability
     pulse::study::bind::patient_variability::PatientStateData* GetNextPatient();
 
     std::mutex  m_mutex;
-    bool m_Running;
 
     std::string m_RootDir;
     std::string m_PatientResultsListFile;

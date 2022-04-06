@@ -164,6 +164,7 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
       if (std::filesystem::exists(entry.status()) && std::filesystem::is_regular_file(entry.status()))
       {
         filename = entry.path().string();
+        std::replace(filename.begin(), filename.end(), '\\', '/');
         if (filename.find(mask) != std::string::npos)
           files.push_back(filename);
       }
@@ -177,6 +178,7 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
       if (std::filesystem::exists(entry.status()) && std::filesystem::is_regular_file(entry.status()))
       {
         filename = entry.path().string();
+        std::replace(filename.begin(), filename.end(), '\\', '/');
         if (filename.find(mask) != std::string::npos)
           files.push_back(filename);
       }
@@ -213,7 +215,7 @@ bool IsJSONFile(const std::string& filename)
 
 bool SplitFilenamePath(const std::string& filepath, std::string& filename)
 {
-  auto slash = filepath.find_last_of("/");
+  auto slash = filepath.find_last_of("\\/");
   (slash == std::string::npos) ?
     slash = 0 : slash++;
   filename = filepath.substr(slash);
