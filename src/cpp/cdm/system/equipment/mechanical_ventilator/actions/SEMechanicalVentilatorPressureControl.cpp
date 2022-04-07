@@ -56,14 +56,31 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
   {
     // Translate ventilator settings
     double totalPeriod_s = 60.0 / GetRespirationRate(FrequencyUnit::Per_min);
-    double expiratoryPeriod_s = totalPeriod_s - GetInspiratoryPeriod(TimeUnit::s);
+    double inspiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
+    double inspirationWaveformPeriod_s = GetSlope(TimeUnit::s);
+    if (inspiratoryPeriod_s > totalPeriod_s)
+    {
+        Fatal("Inspiratory Period cannot be longer than the total period applied using Respiration Rate.");
+    }
+    if (inspirationWaveformPeriod_s > inspiratoryPeriod_s)
+    {
+        Fatal("Inspiration Waveform Period (i.e., Slope) cannot be longer than the Inspiratory Period.");
+    }
+    double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
+
+    double peakInspiratoryPressure_cmH2O = GetInspiratoryPressure(PressureUnit::cmH2O);
+    double positiveEndExpiredPressure_cmH2O = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+    if (positiveEndExpiredPressure_cmH2O > peakInspiratoryPressure_cmH2O)
+    {
+        Fatal("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
+    }
 
     s.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Ramp);
     s.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-    s.GetInspirationWaveformPeriod().Set(GetSlope());
+    s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
     s.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
-    s.GetPeakInspiratoryPressure().Set(GetInspiratoryPressure());
-    s.GetPositiveEndExpiredPressure().Set(GetPositiveEndExpiredPressure());
+    s.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
+    s.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
     s.GetExpirationCycleTime().Set(GetInspiratoryPeriod());
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
     if(GetMode() == eMechanicalVentilator_PressureControlMode::AssistedControl)
