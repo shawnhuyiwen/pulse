@@ -403,7 +403,7 @@
       "CompartmentName": "BrainVasculature",
       "SubstanceName": "Oxygen",
       "PropertyName": "Saturation",
-      "Unit": "Unitless"
+      "Unit": "unitless"
     }, {
       "DecimalFormat": {
         "Precision": 2
@@ -421,7 +421,7 @@
       "CompartmentName": "BrainVasculature",
       "SubstanceName": "CarbonDioxide",
       "PropertyName": "Saturation",
-      "Unit": "Unitless"
+      "Unit": "unitless"
     }, {
       "DecimalFormat": {
         "Precision": 3
