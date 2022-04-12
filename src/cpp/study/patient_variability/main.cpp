@@ -11,7 +11,8 @@ using namespace pulse::study::patient_variability;
 int main(int argc, char* argv[])
 {
   bool clear = true;
-  std::string mode = ""; // Default is to run the manual else below
+  bool binary = false;
+  std::string mode = "";
   if (argc <= 1)
   {
     //mode = "full";
@@ -21,6 +22,14 @@ int main(int argc, char* argv[])
   else
   {
     mode = argv[1];
+  }
+
+  if( argc > 1)
+  {
+    if(!strcmp(argv[2], "-b") || !strcmp(argv[2], "--binary"))
+    {
+      binary = true;
+    }
   }
   std::string rootDir = "./test_results/patient_variability/";
 
@@ -128,5 +137,5 @@ int main(int argc, char* argv[])
   }
 
   PVRunner pvr(&log);
-  return !pvr.Run(patients, rootDir);
+  return !pvr.Run(patients, rootDir, binary);
 }

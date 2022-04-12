@@ -5,24 +5,25 @@ option csharp_namespace = "pulse.study.bind.patient_variability";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Patient.proto";
+import "pulse/cdm/bind/TestReport.proto";
 
 message PatientStateData
 {
-
-  uint32                          ID                              = 1;
-  string                          OutputBaseFilename              = 2;
+  uint32                                                  ID                              = 1;
+  string                                                  OutputBaseFilename              = 2;
   // Initial Conditions
-  pulse.cdm.bind.PatientData.eSex Sex                             = 3;
-  uint32                          Age_yr                          = 4;
-  double                          Height_cm                       = 5;
-  double                          Weight_kg                       = 6;
-  double                          BMI                             = 7;
-  double                          HeartRate_bpm                   = 8;
-  double                          DiastolicArterialPressure_mmHg  = 9;
-  double                          SystolicArterialPressure_mmHg   = 10;
+  pulse.cdm.bind.PatientData.eSex                         Sex                             = 3;
+  uint32                                                  Age_yr                          = 4;
+  double                                                  Height_cm                       = 5;
+  double                                                  Weight_kg                       = 6;
+  double                                                  BMI                             = 7;
+  double                                                  HeartRate_bpm                   = 8;
+  double                                                  DiastolicArterialPressure_mmHg  = 9;
+  double                                                  SystolicArterialPressure_mmHg   = 10;
   // Results
-  bool                            AchievedStabilization           = 11;
-  double                          StabilizationTime_s             = 12;
+  bool                                                    AchievedStabilization           = 11;
+  double                                                  StabilizationTime_s             = 12;
+  map<string,pulse.cdm.bind.PropertyValidationListData>   ValidationMap                   = 13;
 }
 
 message PatientStateListData

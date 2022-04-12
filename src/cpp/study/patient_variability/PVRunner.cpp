@@ -38,10 +38,13 @@ namespace pulse::study::patient_variability
     SAFE_DELETE(m_PatientResultsList);
   }
 
-  bool PVRunner::Run(pulse::study::bind::patient_variability::PatientStateListData& simList, const std::string& rootDir)
+  bool PVRunner::Run(pulse::study::bind::patient_variability::PatientStateListData& simList, const std::string& rootDir, bool binaryResultsFile)
   {
     m_RootDir = rootDir;
-    m_PatientResultsListFile = rootDir + "/patient_results.json";
+    if(!binaryResultsFile)
+      m_PatientResultsListFile = rootDir + "/patient_results.json";
+    else
+      m_PatientResultsListFile = rootDir + "/patient_results.pbb";
     SAFE_DELETE(m_PatientList);
     SAFE_DELETE(m_PatientResultsList);
     m_PatientList = &simList;
@@ -59,7 +62,7 @@ namespace pulse::study::patient_variability
     return b;
   }
 
-  bool PVRunner::Run(const std::string& filename, const std::string& rootDir)
+  bool PVRunner::Run(const std::string& filename, const std::string& rootDir, bool binaryResultsFile)
   {
     m_RootDir = rootDir;
     SAFE_DELETE(m_PatientList);
@@ -70,7 +73,10 @@ namespace pulse::study::patient_variability
     if (!SerializeFromFile(filename, *m_PatientList))
       return false;
     // Let's try to read in a results file
-    m_PatientResultsListFile = rootDir + "/patient_results.json";
+    if(!binaryResultsFile)
+      m_PatientResultsListFile = rootDir + "/patient_results.json";
+    else
+      m_PatientResultsListFile = rootDir + "/patient_results.pbb";
     if (FileExists(m_PatientResultsListFile))
     {
       if (!SerializeFromFile(m_PatientResultsListFile, *m_PatientResultsList))
@@ -103,7 +109,7 @@ namespace pulse::study::patient_variability
       Info("All Patients are run in the results file");
       return true;
     }
-    size_t processor_count = 1;// std::thread::hardware_concurrency();
+    size_t processor_count = 1;//std::thread::hardware_concurrency();
     if (processor_count == 0)
     {
       Fatal("Unable to detect number of processors");
@@ -173,7 +179,7 @@ namespace pulse::study::patient_variability
     pulse->GetLogger()->LogToConsole(false);
     // But, do write a log file
     pulse->GetLogger()->SetLogFile(m_RootDir + patient.outputbasefilename() + "/patient.log");
-    // Write out the computed patient basline values so we can see how well we met them
+    // Write out the computed patient baseline values so we can see how well we met them
     PulseConfiguration cfg;
     cfg.EnableWritePatientBaselineFile(eSwitch::On);
     cfg.SetInitialPatientBaselineFilepath(m_RootDir + patient.outputbasefilename() + "/patient.init.json");
@@ -265,6 +271,23 @@ namespace pulse::study::patient_variability
 
     std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING="+m_RootDir+patient.outputbasefilename()+" -DARG2:STRING=false -P run.cmake";
     std::system(command.c_str());
+
+    //Retrieve all validation json files for patient and serialize data from those files
+    std::vector<std::string> validation_files;
+    ListFiles(m_RootDir + patient.outputbasefilename(), validation_files, true, "ValidationResults.json");
+    const auto& vMap = patient.mutable_validationmap();
+    for(auto validation_filepath: validation_files)
+    {
+      std::string validation_filename;
+      SplitFilenamePath(validation_filepath, validation_filename);
+
+      //Serialize the file contents
+      pulse::cdm::bind::PropertyValidationListData vList;
+      if(!PBUtils::SerializeFromFile(validation_filepath, vList, pulse->GetLogger()))
+        return false;
+
+      (*vMap)[validation_filename] = vList;
+    }
 
     // Add our results to our results file
     m_mutex.lock();

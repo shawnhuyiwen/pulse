@@ -22,8 +22,8 @@ namespace pulse::study::patient_variability
     PVRunner(Logger* logger=nullptr);
     virtual ~PVRunner();
 
-    bool Run(const std::string& filename, const std::string& rootDir);
-    bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients, const std::string& rootDir);
+    bool Run(const std::string& filename, const std::string& rootDir, bool binaryResultsFile = false);
+    bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients, const std::string& rootDir, bool binaryResultsFile = false);
 
   protected:
     bool Run();
