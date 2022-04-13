@@ -24,15 +24,16 @@ namespace pulse::study::patient_variability
   {
     int id = 0;
 
-    enum Sex { Male=0, Female=1 };
-
-    for( int sex = Male; sex <= Female; ++sex )
+    ePatient_Sex sex_arr[2] = {ePatient_Sex::Male, ePatient_Sex::Female};
+    for( int s = 0; s < 2; ++s )
     {
+      ePatient_Sex sex = sex_arr[s];
+
       // Adjust height range based on sex
       unsigned int heightMin_cm = heightMaleMin_cm;
       unsigned int heightMax_cm = heightMaleMax_cm;
       std::string sex_dir = "/male";
-      if( sex == Female )
+      if( sex == ePatient_Sex::Female )
       {
         heightMin_cm = heightFemaleMin_cm;
         heightMax_cm = heightFemaleMax_cm;
