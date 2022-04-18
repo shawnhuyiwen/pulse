@@ -545,10 +545,13 @@ namespace pulse
     if (!IsReady())
       return false;
 
-    CheckIntubation();
-    PreProcess();
-    Process();
-    PostProcess();
+    try
+    {
+      CheckIntubation();
+      PreProcess();
+      Process();
+      PostProcess();
+    }catch (IrreversibleStateException&) { }
 
     if (m_EventManager->IsEventActive(eEvent::IrreversibleState))
     {

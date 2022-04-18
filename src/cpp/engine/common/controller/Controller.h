@@ -324,6 +324,15 @@ namespace pulse
     pulse::Controller& _pc;
   };
 
+  struct IrreversibleStateException : public std::runtime_error
+  {
+    IrreversibleStateException()
+      : std::runtime_error("Engine Has Entered An Irreversible State") {}
+
+    IrreversibleStateException(const std::string& _Message)
+      : std::runtime_error(_Message) {}
+  };
+
   class FatalListner : public LoggerForward
   {
   public:
@@ -337,6 +346,7 @@ namespace pulse
     virtual void ForwardFatal(const std::string& /*msg*/, const std::string& /*origin*/) override
     {
       m_Events.SetEvent(eEvent::IrreversibleState, true, m_CurrentTime);
+      throw IrreversibleStateException(); // Caught in Common::AdvanceModelTime, so we do not do anything more in the engine
     }
 
   protected:
