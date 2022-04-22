@@ -1,0 +1,12 @@
+einops==0.4.1
+matplotlib==3.5.1
+numpy==1.22.3
+pandas==1.4.1
+pulse==0.1.2
+pulse.egg==info
+PyPulse==0.1.1
+torch==1.11.0
+torchcde==0.2.5
+torchdiffeq==0.2.2
+torchvision==0.12.0
+tqdm==4.63.0
