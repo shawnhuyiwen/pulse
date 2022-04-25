@@ -1194,7 +1194,7 @@ public abstract class ValidationTool
     
     vRow.results = getResults(vRow.name,vRow.unit);
     if(vRow.results==null && patientValidation)
-      vRow.results = getResults("Patient"+vRow.name,vRow.unit);// See if this a patient output
+      vRow.results = getResults("Patient-"+vRow.name,vRow.unit);// See if this a patient output
     if(vRow.results==null)// Nope, I don't think the result is there
     {
       vRow.error = danger+"Not In Results!"+endSpan;
