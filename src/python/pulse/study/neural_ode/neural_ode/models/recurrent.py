@@ -3,6 +3,7 @@ import torch.nn as nn
 import models.utils as utils
 from torchcde import CubicSpline
 from models.evaluation import get_log_likelihood, get_mse
+import einops
 
 
 class GRU_with_std(nn.Module):
@@ -208,12 +209,16 @@ class Recurrent(nn.Module):
                 x = x_data * x_mask  # [batch_size, x_time_points, x_dims]
             else:
                 x = x_data
-            batch_size, x_dims = x.shape[0], x.shape[2]
-            #TRANS: To expand the x
-            x_merged = torch.zeros((batch_size, len(x_time), x_dims), dtype=x.dtype, device=utils.get_device(x))
-            for i, index in zip(range(len(x_time_index)), x_time_index):
-                x_merged[:, index, :] = x[:, i, :]
-            x = x_merged
+            if 0:
+                # TODO
+                pass
+            else:
+                batch_size, x_dims = x.shape[0], x.shape[2]
+                #TRANS: To expand the x
+                x_merged = torch.zeros((batch_size, len(x_time), x_dims), dtype=x.dtype, device=utils.get_device(x))
+                for i, index in zip(range(len(x_time_index)), x_time_index):
+                    x_merged[:, index, :] = x[:, i, :]
+                x = x_merged
             y_pred = self.run_ODE_RNN(y_time_index, x, x_time)
 
         else:

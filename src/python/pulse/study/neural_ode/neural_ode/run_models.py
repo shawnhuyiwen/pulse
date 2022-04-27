@@ -8,8 +8,7 @@ import models.utils as utils
 from models.recurrent import Recurrent
 from models.seq2seq import Seq2Seq
 from models.vae import VAE
-from models.diff_func import ODEFunc, CDEFunc
-from models.diffeq_solver import DiffeqSolver
+from models.diff_func import ODEFunc, CDEFunc, DiffeqSolver
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -22,15 +21,15 @@ import ubelt as ub
 import numpy as np
 
 
-def get_model(arch: Literal['Recurrent', 'Seq2Seq',
-                            'VAE'], n_gru_units: int, n_out_units: int,
+def get_model(arch: Literal['Recurrent', 'Seq2Seq', 'VAE'],
+              n_gru_units: int, n_out_units: int,
               gaussian_likelihood_std: float, x_dims: int, y_dims: int):
     common = dict(x_dims=x_dims,
                   y_dims=y_dims,
                   n_gru_units=n_gru_units,
                   n_out_units=n_out_units,
                   gaussian_likelihood_std=gaussian_likelihood_std)
-    diffeq_solver = get_diffeq_solver(x_dims, cf.get())
+    diffeq_solver = get_diffeq_solver(x_dims, **cf.get())
     if arch == "Recurrent":
         model = Recurrent(diffeq_solver=diffeq_solver, **common)
     elif arch == "Seq2Seq":
@@ -58,13 +57,13 @@ def get_diffeq_solver(using: Literal['ODE_RNN', 'CDE'],
     h_dims = h_dims if h_dims is not None else x_dims * 2
     if using == "ODE_RNN":
         return DiffeqSolver(ODEFunc(h_dims, h_trans_layers=h_trans_layers),
-                            cf.get())
+                            **cf.get())
     elif using == "CDE":
         return DiffeqSolver(
             CDEFunc(x_dims,
                     h_dims,
                     h_trans_dims=h_dims,
-                    h_trans_layers=h_trans_layers), cf.get())
+                    h_trans_layers=h_trans_layers), **cf.get())
     else:
         raise NotImplementedError
 
@@ -88,7 +87,7 @@ def prepare_to_train(dsetter: utils.ProcessDataset,
         model.to(device)
     else:
         #TRANS: The value of the model, the optimizer, LR changes
-        model = get_model(cf.get(), x_dims=x_dims, y_dims=y_dims).to(device)
+        model = get_model(**cf.get(), x_dims=x_dims, y_dims=y_dims).to(device)
         optimizer = torch.optim.Adamax(model.parameters(), lr=lr)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                                patience=10)
@@ -119,7 +118,7 @@ def test_and_plot(model,
         #TRANS: Save the best results
         test_res, res_dict = utils.store_best_results(model, test_dataloader,
                                                       kl_coef, experimentID,
-                                                      res_files, cf.get())
+                                                      res_files, **cf.get())
         #TRANS: visualization
         if not produce_intercoeffs and fig_saveat is not None:
 
@@ -170,14 +169,14 @@ def main(test_for_epochs: int,
          patience_for_no_better_epochs: int,
          save_res_for_epochs=np.inf,
          device=None):
-    dset = utils.ProcessDataset(cf.get())
+    dsetter = utils.ProcessDataset(**cf.get())
     (model, optimizer, scheduler, pre_points, experimentID, train_dict,
-     val_dict, test_dict) = prepare_to_train(cf.get())
+     val_dict, test_dict) = prepare_to_train(dsetter, **cf.get())
     (logger, res_files, train_res_csv, val_res_csv, fig_saveat,
      ckpt_saveat) = utils.get_logger_and_save(
          model,
          experimentID,
-         cf.get(),
+         **cf.get(),
          save_res_for_epochs=save_res_for_epochs)
 
     if device is None:
@@ -185,11 +184,11 @@ def main(test_for_epochs: int,
             "cpu") if not torch.cuda.is_available() else torch.device("cuda:0")
     #TRANS: Start training
     #TRANS: Sampling part of the point, progress_training forecast more gradually
-    train_dataloader = dset.masked_dataloader(train_dict,
+    train_dataloader = dsetter.masked_dataloader(train_dict,
                                               'train',
                                               pre_points=pre_points)
-    val_dataloader = dset.masked_dataloader(val_dict, 'val', missing_rate=None)
-    test_dataloader = dset.masked_dataloader(test_dict,
+    val_dataloader = dsetter.masked_dataloader(val_dict, 'val', missing_rate=None)
+    test_dataloader = dsetter.masked_dataloader(test_dict,
                                              'test',
                                              missing_rate=None)
 
@@ -263,8 +262,8 @@ def main(test_for_epochs: int,
         # curriculum learning
         if pre_points is not None:
             pre_points += 10
-            train_dataloader = utils.masked_dataloader(train_dict, pre_points,
-                                                       "train", cf.get())
+            train_dataloader = dsetter.masked_dataloader(train_dict, pre_points,
+                                                       "train")
         #TRANS: Beyond the corresponding epoch, stop training
         if patience_for_no_better_epochs is not None:
             if epoch > best_metric_epoch + patience_for_no_better_epochs:
@@ -274,7 +273,7 @@ def main(test_for_epochs: int,
                     (best_metric.item(), patience_for_no_better_epochs))
                 output_str = test_and_plot(model, test_dataloader, kl_coef,
                                            experimentID, res_files, fig_saveat,
-                                           logger, epoch, cf.get())  #TRANS: At this time for a test
+                                           logger, epoch, **cf.get())  #TRANS: At this time for a test
                 tqdm.write(output_str)
                 stop_training = True
 
@@ -282,7 +281,7 @@ def main(test_for_epochs: int,
         if epoch % test_for_epochs == 0 or epoch == max_epochs:
             output_str = test_and_plot(model, test_dataloader, kl_coef,
                                        experimentID, res_files, fig_saveat,
-                                       logger, epoch, cf.get())
+                                       logger, epoch, **cf.get())
             pbar.close()
             if epoch != max_epochs:  #TRANS: Open new progress bar
                 pbar = tqdm(total=test_for_epochs)
@@ -290,4 +289,6 @@ def main(test_for_epochs: int,
 
 
 if __name__ == "__main__":
-    main()
+    from .args import default
+    default()
+    main(**cf.get())

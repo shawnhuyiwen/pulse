@@ -39,16 +39,20 @@ def set_seed(seed: int = 47):
 @dataclass
 class ProcessDataset():
 
+    # dataloader
+    batch_size: int
+    missing_rate: Optional[float]
+
     # common
+    dataset: str
     load_data: bool = True
     ode_time: Literal['Concat', 'Mean', 'No'] = 'No'
     produce_intercoeffs: bool = False
     x_data_with_time: bool = False
-    x_y_points = None
-    x_points = None
-    y_delay = 0
-    y_dim_list = None
-    dataset: str
+    x_y_points: Optional[int] = None
+    x_points: Optional[int] = None
+    y_delay: int = 0
+    y_dim_list: Optional[List[int]] = None
 
     # split_train_val_test
     csv_list: Optional[List[str]] = None
@@ -63,12 +67,8 @@ class ProcessDataset():
     shuffle: bool = True
     n_start: int = 0
 
-    # dataloader
-    batch_size: int
-    missing_rate: Optional[float]
-
     # ENTRYPOINT
-    def get_data(self):
+    def get_data(self, arch: str):
         data_pkl_file = ub.Path('data') / dataset / 'All_Data.pkl'
         #TRANS: Not the interpolation and Concat, only can be read directly
         if self.load_data and os.path.isfile(
@@ -76,10 +76,11 @@ class ProcessDataset():
         ) and self.ode_time != 'Concat' and not self.produce_intercoeffs:
             return load_pickle(data_pkl_file)
         else:
-            data_dict = self.split_train_val_test(dataset)
-            train_dict, x_dims, y_dims = self.split_x_y(data_dict, 'train')
-            val_dict, _, _ = self.split_x_y(data_dict, 'val')
-            test_dict, _, _ = self.plit_x_y(data_dict, 'test')
+            data_dict = self._split_train_val_test(self.dataset)
+            train_dict, x_dims, y_dims = self._split_x_y(
+                data_dict, 'train', arch)
+            val_dict, _, _ = self._split_x_y(data_dict, 'val', arch)
+            test_dict, _, _ = self._split_x_y(data_dict, 'test', arch)
 
             #TRANS: Not the interpolation and Concat, can be stored here
             if self.ode_time != 'Concat' and not self.produce_intercoeffs:
@@ -90,7 +91,7 @@ class ProcessDataset():
 
     def _split_train_val_test(self, dataset):
         #TRANS: To extract data from the original file and is divided into training set and test set (verification), pay attention to the new tensor. The device
-        if 'csv_list' is None:  #TRANS: From the train. The pt and test. Pt in batch data extracted directly, not reorder
+        if self.csv_list is None:  #TRANS: From the train. The pt and test. Pt in batch data extracted directly, not reorder
             train = torch.load('data/' + dataset + '/train.pt')
             test = torch.load('data/' + dataset + '/test.pt')
             train_time = train[:, :, :1]
@@ -103,7 +104,9 @@ class ProcessDataset():
                 'train_time': train_time,
                 'test_time': test_time
             }
-            if os.path.isfile('data/' + dataset + '/val.pt'):  #TRANS: Validation set, used to adjust the lr and other parameters
+            if os.path.isfile(
+                    'data/' + dataset + '/val.pt'
+            ):  #TRANS: Validation set, used to adjust the lr and other parameters
                 val = torch.load('data/' + dataset + '/val.pt')
                 val_time = val[:, :, :1]
                 val_data = val[:, :, 1:]
@@ -128,42 +131,47 @@ class ProcessDataset():
             train_glob_list = []
             val_glob_list = []
             test_glob_list = []
-            for csv_file in csv_list:
+            for csv_file in self.csv_list:
                 csv_path = 'data/' + dataset + '/' + csv_file + '.csv'
                 #TRANS: Replace the missing value: https://blog.csdn.net/qq_18351157/article/details/104993254, here to get rid of the missing value corresponding to the point
                 origin_pd_data = pd.read_csv(csv_path,
                                              header=0).dropna(how='any')
 
-                if continue_params is not None:
-                    pd_continue_data = origin_pd_data[continue_params]
+                if self.continue_params is not None:
+                    pd_continue_data = origin_pd_data[self.continue_params]
                 else:
                     pd_continue_data = origin_pd_data  #TRANS: Read all labels, all, applicable to CSV file all variables are needed
 
-                if parse_dates is not None:  #TRANS: Converts time variable to a floating point number
-                    pd_timestamp = pd.to_datetime(origin_pd_data[parse_dates],
+                if self.parse_dates is not None:  #TRANS: Converts time variable to a floating point number
+                    pd_timestamp = pd.to_datetime(origin_pd_data[self.parse_dates],
                                                   infer_datetime_format=True)
-                    pd_timestamp = ((pd_timestamp - pd_timestamp.iloc[0]) /
-                                    pd.Timedelta(1, 'd')).fillna(0).astype(
-                                        float)  #TRANS: Each file time starting from 0, 1 day as unit 1
+                    pd_timestamp = (
+                        (pd_timestamp - pd_timestamp.iloc[0]) /
+                        pd.Timedelta(1, 'd')
+                    ).fillna(0).astype(
+                        float
+                    )  #TRANS: Each file time starting from 0, 1 day as unit 1
                     pd_timestamp = pd_timestamp.rename('time')
                     pd_continue_data = pd.concat(
-                        [pd_timestamp, pd_continue_data],
-                        axis=1)  #TRANS: Continue_data to guarantee on time as the first column
+                        [pd_timestamp, pd_continue_data], axis=1
+                    )  #TRANS: Continue_data to guarantee on time as the first column
 
                 #TRANS: TODO: data processing tag, add it to the scalar?
                 # https://blog.csdn.net/qq_32863549/article/details/106972347
                 # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html?highlight=labelencoder#sklearn.preprocessing.LabelEncoder
                 # TODO label_dict?
-                if 'discrete_params' is not None:  #TRANS: To deal with tags inside the CSV data, such as wind, finally to merge into the tensor_data, in addition to save a label map?
-                    pd_discrete_data = origin_pd_data[discrete_params]
+                if self.discrete_params is not None:  #TRANS: To deal with tags inside the CSV data, such as wind, finally to merge into the tensor_data, in addition to save a label map?
+                    pd_discrete_data = origin_pd_data[self.discrete_params]
 
                 tensor_data = torch.tensor(data=pd_continue_data.values)
 
                 #TRANS: Validation sets empty cases, the returned data and time are None
-                (sw_train_data, sw_val_data, sw_test_data, sw_train_time,
-                 sw_val_time, sw_test_time,
-                 csv_data_min, csv_data_max) = cut_and_split_data(
-                     tensor_data, cf.get())  #TRANS: In the training set and validation set according to shuffle
+                (
+                    sw_train_data, sw_val_data, sw_test_data, sw_train_time,
+                    sw_val_time, sw_test_time, csv_data_min, csv_data_max
+                ) = self._cut_and_split_data(
+                    tensor_data
+                )  #TRANS: In the training set and validation set according to shuffle
                 train_data.append(sw_train_data)
                 test_data.append(sw_test_data)
                 train_time.append(sw_train_time)
@@ -173,9 +181,10 @@ class ProcessDataset():
                 data_min.append(csv_data_min)
                 data_max.append(csv_data_max)
 
-                if 'glob_params' is not None:  #TRANS: Used to handle the whole time series (including training and test sets) are the same data, such as sampling sites
-                    glob_item = origin_pd_data[glob_params].iloc[
-                        0].values.tolist()  #TRANS: This batch of the values are the same
+                if self.glob_params is not None:  #TRANS: Used to handle the whole time series (including training and test sets) are the same data, such as sampling sites
+                    glob_item = origin_pd_data[self.glob_params].iloc[
+                        0].values.tolist(
+                        )  #TRANS: This batch of the values are the same
                     train_glob_list.extend([glob_item] *
                                            sw_train_time.shape[0])
                     if sw_val_time is not None:
@@ -196,7 +205,7 @@ class ProcessDataset():
                 'test_time': test_time
             }
 
-            if 'discrete_params' is not None:  #TRANS: Additional label data
+            if self.discrete_params is not None:  #TRANS: Additional label data
                 raise NotImplementedError
 
             if val_data[0] is not None:  #TRANS: Additional validation set
@@ -208,35 +217,27 @@ class ProcessDataset():
                 data_dict['val_data'] = val_data
                 data_dict['val_time'] = val_time
 
-            if 'glob_params' is not None:  #TRANS: Additional global data
+            if self.glob_params is not None:  #TRANS: Additional global data
                 data_dict['train_glob_list'] = train_glob_list
                 data_dict['val_glob_list'] = val_glob_list
                 data_dict['test_glob_list'] = test_glob_list
 
             pickle_data = (
-                x_data_with_time, pd_continue_data.columns.tolist()
-                if x_data_with_time else pd_continue_data.columns.tolist()[1:],
+                self.x_data_with_time, pd_continue_data.columns.tolist()
+                if self.x_data_with_time else pd_continue_data.columns.tolist()[1:],
                 data_min, data_max)  #TRANS: TODO: save the mapping information
             save_items_to_pickle(pickle_data,
                                  'data/' + dataset + '/DataInfo.pkl')
 
             return data_dict
 
-    def _cut_and_split_data(self,
-                            data,
-                            x_y_points=None,
-                            stride=1,
-                            train_fraq=0.8,
-                            val_fraq=None,
-                            shuffle=True,
-                            n_start=0,
-                            x_data_with_time=False):
+    def _cut_and_split_data(self, data):
         #TRANS: Dividing a sliding window
-        if x_y_points is None:
-            x_y_points = data.shape[0] // 100
+        if self.x_y_points is None:
+            self.x_y_points = data.shape[0] // 100
         device = get_device(data)
 
-        if x_data_with_time:
+        if self.x_data_with_time:
             data, data_min, data_max = normalize_data_minmax(data)
         else:
             data[:, 1:], data_min, data_max = normalize_data_minmax(
@@ -245,44 +246,42 @@ class ProcessDataset():
         assert not torch.isnan(data_min).any()
         assert not torch.isnan(data_max).any()
 
-        data_new = data[n_start:].clone().detach().unsqueeze(0)
-        assert x_y_points < data_new.shape[1] - 1
-        for i in range(1, x_y_points):
+        data_new = data[self.n_start:].clone().detach().unsqueeze(0)
+        assert self.x_y_points < data_new.shape[1] - 1
+        for i in range(1, self.x_y_points):
             zero_tensor = torch.zeros((i, data.shape[1]), device=device)
             tmp_tensor = torch.vstack(
-                (data[i + n_start:], zero_tensor)).unsqueeze(0)
+                (data[i + self.n_start:], zero_tensor)).unsqueeze(0)
             data_new = torch.cat((data_new, tmp_tensor))
         data_new = data_new.permute(1, 0, 2)
-        data_new = data_new[:-(x_y_points - 1)]  #TRANS: Cut off the end of a few slices with zero component
-        if stride > 1 and data_new.shape[0] > stride:
+        data_new = data_new[:-(
+            self.x_y_points -
+            1)]  #TRANS: Cut off the end of a few slices with zero component
+        if self.stride > 1 and data_new.shape[0] > self.stride:
             data_select = data_new[0].unsqueeze(0)
-            for j in range(stride, data_new.shape[0], stride):
+            for j in range(self.stride, data_new.shape[0], self.stride):
                 data_select = torch.cat(
                     (data_select, data_new[j].unsqueeze(0)))
             data_new = data_select
-        if shuffle:  #TRANS: Reordering of sliding window
+        if self.shuffle:  #TRANS: Reordering of sliding window
             idx = torch.randperm(data_new.shape[0])
             data_new = data_new[idx]
 
         time = data_new[:, :, :1]
         data = data_new[:, :, 1:]
 
-        train_data, val_data, test_data, train_time, val_time, test_time = split_train_test_data_and_time(
-            data, time, train_fraq, val_fraq)
+        train_data, val_data, test_data, train_time, val_time, test_time = self._split_train_test_data_and_time(
+            data, time, self.train_fraq, self.val_fraq)
         return train_data, val_data, test_data, train_time, val_time, test_time, data_min, data_max
 
-    def _split_train_test_data_and_time(self,
-                                        data,
-                                        time,
-                                        train_fraq=0.8,
-                                        val_fraq=None):
+    def _split_train_test_data_and_time(self, data, time):
         #TRANS: Divided into training set and test set, 1 d to divided the time period
         #TRANS: Regression test suite should overall is unknown, the first step from the training last time as input, and then gradually replace data_test and test_time segmentation
         data_size = data.shape[0]
         assert len(time.shape) == 3
 
-        if val_fraq is None:
-            train_point = int(data_size * train_fraq)
+        if self.val_fraq is None:
+            train_point = int(data_size * self.train_fraq)
             train_data = data[:train_point]
             train_time = time[:train_point]
             test_data = data[train_point:]
@@ -290,8 +289,8 @@ class ProcessDataset():
             val_data = None
             val_time = None
         else:
-            train_point = int(data_size * train_fraq)
-            val_point = int(data_size * (val_fraq + train_fraq))
+            train_point = int(data_size * self.train_fraq)
+            val_point = int(data_size * (self.val_fraq + self.train_fraq))
             train_data = data[:train_point]
             train_time = time[:train_point]
             val_data = data[train_point:val_point]
@@ -300,37 +299,36 @@ class ProcessDataset():
             test_time = time[val_point:]
         return train_data, val_data, test_data, train_time, val_time, test_time
 
-    def _split_x_y(self,
-                   data_dict,
-                   data_type: Literal['train', 'val', 'test'],
-                   x_data_with_time: bool,
-                   x_y_points,
-                   x_points=None,
-                   y_delay=0,
-                   y_dim_list=None,
-                   arch):  # TODO
-        if data_type + '_time' not in data_dict or data_dict[data_type +
-                                                             '_time'] is None:
+    def _split_x_y(self, data_dict, data_type: Literal['train', 'val', 'test'],
+                   arch: str):
+        if (data_type + '_time' not in data_dict
+                or data_dict[data_type + '_time'] is None):
             return None
-        if x_points is not None:
-            x_points = min(x_points, x_y_points - 1)
+        if self.x_points is not None:
+            x_points = min(self.x_points, self.x_y_points - 1)
+        else:
+            x_points = self.x_points
         #TRANS: The autoregressive prediction, Autoencoder reverse solution to h0 first, then forward solution to the last point
-        if y_dim_list is not None:
-            y_dims = len(y_dim_list)
-            all_dim_list = [
-                i for i in range(data_dict[data_type + '_data'].shape[-1])
-            ]
-            x_dim_list = list(set(all_dim_list).difference(set(y_dim_list)))
+        if self.y_dim_list is not None:
+            y_dims = len(self.y_dim_list)
+            all_dim_list = list(range(data_dict[data_type +
+                                                '_data'].shape[-1]))
+            x_dim_list = list(
+                set(all_dim_list).difference(set(self.y_dim_list)))
             x_dims = len(x_dim_list)
             split_dict = {
-                'x_data': data_dict[data_type + '_data'][:, :,
-                                                         x_dim_list].clone(),
-                'x_time': data_dict[data_type + '_time'].clone(),
-                'y_data': data_dict[data_type + '_data'][:, :,
-                                                         y_dim_list].clone(),
-                'y_time': data_dict[data_type + '_time'].clone()
+                'x_data':
+                data_dict[data_type + '_data'][:, :, x_dim_list].clone(),
+                'x_time':
+                data_dict[data_type + '_time'].clone(),
+                'y_data':
+                data_dict[data_type + '_data'][:, :, self.y_dim_list].clone(),
+                'y_time':
+                data_dict[data_type + '_time'].clone()
             }
-            if arch in {'Seq2Seq', 'VAE'}:  #TRANS: Two kinds of architecture, using AutoEncoder need a small amount of x reverse solving until t0
+            if arch in {
+                    'Seq2Seq', 'VAE'
+            }:  #TRANS: Two kinds of architecture, using AutoEncoder need a small amount of x reverse solving until t0
                 #TRANS: The linear small
                 x_data_until = split_dict['x_data'][:, :1, :] - 1 / 10 * (
                     split_dict['x_data'][:, 1:2, :] -
@@ -353,16 +351,16 @@ class ProcessDataset():
                 'x_time':
                 data_dict[data_type + '_time'][:, :x_points, :].clone(),
                 'y_data':
-                data_dict[data_type + '_data'][:,
-                                               x_points + y_delay:, :].clone(),
+                data_dict[data_type + '_data'][:, x_points +
+                                               self.y_delay:, :].clone(),
                 'y_time':
-                data_dict[data_type + '_time'][:,
-                                               x_points + y_delay:, :].clone()
+                data_dict[data_type + '_time'][:, x_points +
+                                               self.y_delay:, :].clone()
             }
             x_dims = split_dict['x_data'].shape[-1]
             y_dims = split_dict['y_data'].shape[-1]
 
-        if x_data_with_time:  #TRANS: Add the time sequence x
+        if self.x_data_with_time:  #TRANS: Add the time sequence x
             split_dict['x_data'] = torch.cat(
                 (split_dict['x_time'], split_dict['x_data']), dim=2)
             x_dims += 1
@@ -375,7 +373,7 @@ class ProcessDataset():
                           data_dict,
                           data_name='train',
                           missing_rate=None,
-                          pre_points=None):
+                          pre_points=None) -> torch.utils.data.DataLoader:
         if missing_rate is None:
             missing_rate = self.missing_rate
         if data_dict is None:
@@ -384,16 +382,18 @@ class ProcessDataset():
             file_detail = data_name + '_' + str(int(missing_rate * 100) if missing_rate is not None else 0) + '_' + \
                 str(pre_points if pre_points is not None else 0) + '_' + \
                 (ode_time if ode_time is not None else 'Default') + '_' + \
-                ('with_time' if x_data_with_time else 'without_time')
-            coeffs_save_file = ub.Path('data') / dataset / 'coeffs_' + file_detail + '.pkl'
+                ('with_time' if self.x_data_with_time else 'without_time')
+            coeffs_save_file = ub.Path(
+                'data') / dataset / 'coeffs_' + file_detail + '.pkl'
             if coeffs_save_file.exists and load_data:
                 return load_pickle(coeffs_save_file)
         # TODO: curriculum learning for train data
         #TRANS: 1. From the partition of the input for the sampling, and will join the new dict mask, 50 points by default
         data = data_dict['x_data'].clone()
         device = get_device(data)
-        mask = torch.ones_like(data, dtype=torch.bool,
-                               device=device)  #TRANS: With bool type, the first to generate batch change again when the float value
+        mask = torch.ones_like(
+            data, dtype=torch.bool, device=device
+        )  #TRANS: With bool type, the first to generate batch change again when the float value
 
         if missing_rate is not None:
             time_points = len(data_dict['x_time'][0, :, 0])
@@ -415,8 +415,9 @@ class ProcessDataset():
 
         #TRANS: 2. Use pre_points truncate the output
         data = data_dict['y_data'].clone()
-        mask = torch.ones_like(data, dtype=torch.bool,
-                               device=device)  #TRANS: Switch to a bool type, direct judgment
+        mask = torch.ones_like(
+            data, dtype=torch.bool,
+            device=device)  #TRANS: Switch to a bool type, direct judgment
 
         if pre_points is not None:
             pre_points = min(pre_points, len(data_dict['y_time'][0, :, 0]))
@@ -427,18 +428,21 @@ class ProcessDataset():
         new_data_dict['y_mask'] = mask.clone()
 
         if produce_intercoeffs:
-            produce_and_save_intercoeffs(new_data_dict, coeffs_save_file)
+            self._produce_and_save_intercoeffs(new_data_dict, coeffs_save_file)
 
-        return _wrap_dataloader(new_data_dict, min(batch_size, new_data_dict['x_data'].shape[0]))
+        return self._wrap_dataloader(
+            new_data_dict, min(batch_size, new_data_dict['x_data'].shape[0]))
 
     def _produce_and_save_intercoeffs(self, data_dict, coeffs_save_file):
         #TRANS: Calculation and save the interpolation, the use of DataLoader save DataLoader
         data_dict['x_data'][~data_dict['x_mask']] = torch.nan
         data_dict['x_data'] = torchcde.natural_cubic_coeffs(
             data_dict['x_data'])
-        dataloader = _wrap_dataloader(data_dict,
-                                     batch_size=min(self.batch_size, data_dict['x_data'].shape[0]),
-                                     shuffle=self.shuffle)
+        dataloader = self._wrap_dataloader(data_dict,
+                                      batch_size=min(
+                                          self.batch_size,
+                                          data_dict['x_data'].shape[0]),
+                                      shuffle=self.shuffle)
         save_items_to_pickle(dataloader, coeffs_save_file)
 
     def _wrap_dataloader(self, data_dict, **kwargs):
@@ -524,7 +528,8 @@ def linspace_vector(start, end, n_points, device=torch.device('cpu')):
     assert start.shape == end.shape
     if size == 1:
         # start and end are 1d-tensors
-        res = torch.linspace(start, end, n_points, device=device)  #TRANS: Including end endpoint
+        res = torch.linspace(start, end, n_points,
+                             device=device)  #TRANS: Including end endpoint
     else:  #TRANS: Support the multi-dimensional linspace, for each dimension separately as a vector space
         # start and end are vectors
         res = torch.Tensor(device=device)
@@ -604,8 +609,9 @@ def concat_batch(batch_dict):
     y_sync_time_points = y_sync_time.shape[0]
     y_sync_data = torch.zeros((batch_size, y_sync_time_points, y_dims),
                               device=device)
-    y_sync_mask = torch.zeros_like(y_sync_data,
-                                   dtype=torch.bool)  #TRANS: The y value, its mask is a Boolean value
+    y_sync_mask = torch.zeros_like(
+        y_sync_data,
+        dtype=torch.bool)  #TRANS: The y value, its mask is a Boolean value
     for i in range(batch_size):
         cur = 0
         for j in range(y_sync_time_points):
@@ -696,7 +702,8 @@ def compute_loss_all_batches(model,
 
 def update_metric_if_larger(results_file_name, model_name, metric_name, value):
     if not os.path.isfile(results_file_name) or os.path.getsize(
-            results_file_name) == 0:  #TRANS: Does not exist or the file is empty
+            results_file_name
+    ) == 0:  #TRANS: Does not exist or the file is empty
         with open(results_file_name, 'w') as f:
             f.write('model,' + metric_name)
 
@@ -717,8 +724,8 @@ def update_metric_if_larger(results_file_name, model_name, metric_name, value):
             larger_than_prev = float(prev_value.item()) < value
         if (prev_value.item() is
                 None) or math.isnan(prev_value) or larger_than_prev:
-            res_dict.loc[res_dict['model'] == model_name,
-                         metric_name] = float(value)  #TRANS: Update the corresponding form
+            res_dict.loc[res_dict['model'] == model_name, metric_name] = float(
+                value)  #TRANS: Update the corresponding form
             value_updated = True
     else:  #TRANS: Add the corresponding model results
         res_dict = pd.concat([
@@ -731,7 +738,8 @@ def update_metric_if_larger(results_file_name, model_name, metric_name, value):
                              ignore_index=True)
         value_updated = True
 
-    with open(results_file_name, 'w', newline='') as csvfile:  #TRANS: Rewrite the corresponding file
+    with open(results_file_name, 'w',
+              newline='') as csvfile:  #TRANS: Rewrite the corresponding file
         res_dict.to_csv(csvfile, index=False)
     return res_dict, value_updated
 
@@ -746,7 +754,8 @@ def update_value(results_file_name, model_name, metric_name, value):
     if metric_name not in res_dict.columns:
         res_dict[metric_name] = None
 
-    if (res_dict['model'] == model_name).any():  #TRANS: Is updated directly, do not need to size
+    if (res_dict['model'] == model_name
+        ).any():  #TRANS: Is updated directly, do not need to size
         res_dict.loc[res_dict['model'] == model_name, metric_name] = value
     else:
         res_dict = pd.concat([
@@ -769,7 +778,8 @@ def normalize_data_minmax(data):
     data_max = torch.max(data, 0).values
     numerator = data - data_min
     denominator = data_max - data_min
-    norm_data = numerator / (denominator + 1e-7)  #TRANS: Join the decimal avoid divided by zero
+    norm_data = numerator / (denominator + 1e-7
+                             )  #TRANS: Join the decimal avoid divided by zero
     return norm_data, data_min, data_max
 
 
@@ -802,90 +812,84 @@ def get_logger_and_save(model,
     else:
         ckpt_saveat = None
 
-    print('ExperimentID: ' + experimentID)  #TRANS: See this print experiment has produced results file
+    print('ExperimentID: ' + experimentID
+          )  #TRANS: See this print experiment has produced results file
     #TRANS: Message, warning will be output to the console and record to a file, info not output to the console
     logger = get_logger(log_file)
-    note = ub.paragraph('''TRANS: 
+    note = ub.paragraph('''
 
-拱门,解算器,dset、x_pts y_pts missing_pct,时间
-{experiment_str}
+                        arch, solver, dset, x_pts, y_pts, missing_pct, time
+                        {experiment_str}
 
-“”)
-logger.warning(注意)
-记录器。
-警告(“所有的参数都是:' + cf.log ())
-#训练结果记录器
-如果save_res_for_epochs不是没有和save_log:
-train_res_csv = save_csv (log_saveat,“火车”)
-val_res_csv = save_csv (log_saveat“val”)
-其他:
-train_res_csv =没有
-val_res_csv =没有
-返回日志记录器,res_files train_res_csv val_res_csv, fig_saveat ckpt_saveat
-
-
-def get_logger (log_file = None):
-记录器= logging.getLogger ()
-logger.setLevel (logging.INFO)
-如果log_file不是没有:
-info_file_handler = logging.FileHandler (log_file)
-info_file_handler.setLevel (logging.INFO)
-logger.addHandler (info_file_handler)
-console_handler = logging.StreamHandler ()
-console_handler.setLevel (logging.WARNING)
-logger.addHandler (console_handler)
-
-返回日志记录器
+        ''')
+    logger.warning(note)
+    logger.warning('All args are: ' + cf.log())
+    #TRANS: training result recorder
+    if save_res_for_epochs is not None and save_log:
+        train_res_csv = save_csv(log_saveat, 'train')
+        val_res_csv = save_csv(log_saveat, 'val')
+    else:
+        train_res_csv = None
+        val_res_csv = None
+    return logger, res_files, train_res_csv, val_res_csv, fig_saveat, ckpt_saveat
 
 
-def save_checkpoint (ckpt_saveat、州* * kwargs):
-如果没有或不os.path.isdir ckpt_saveat (ckpt_saveat):
-返回
-如果kwargs“时代”:
-文件名= os.path.join (ckpt_saveat,
-“检查点——% 04 d.pth ' % kwargs['时代'])
-elif kwargs:“名字”
-文件名= os.path。
-加入(ckpt_saveat ' % s.pth ' % kwargs['名字'])
-其他:
-提高ValueError
-火炬。
-文件名保存(状态)
+def get_logger(log_file=None):
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    if log_file is not None:
+        info_file_handler = logging.FileHandler(log_file)
+        info_file_handler.setLevel(logging.INFO)
+        logger.addHandler(info_file_handler)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.WARNING)
+    logger.addHandler(console_handler)
+
+    return logger
 
 
-def load_checkpoint (ckpt_saveat模型= None):
-如果不是os.path.exists (ckpt_saveat):
-提高异常(“检查点”+ ckpt_saveat +“不存在。”)
-如果os.path.isdir (ckpt_saveat):
-ckpt_saveat = os.path。
-加入(ckpt_saveat SaveAll.pth)
-检查点= torch.load (ckpt_saveat)
-如果没有没有一个模型:#只获取模型对应状态
-state_dict =检查点
-model_dict = model.state_dict ()
-# 1。
-过滤掉不必要的钥匙
-state_dict = {k: k v, v在state_dict.items()如果k model_dict}
-# 2。
-dict覆盖现有条目的状态
-model_dict.update (state_dict)
-# 3。
-加载新的状态dict类型
-model.load_state_dict (state_dict)
-# model.to(设备)
-回归模型
-其他:
-#模型=检查点(“模型”),(设备)
-#优化器=检查点(“优化”)
-#调度器=检查点(“调度”)
-# pre_points =检查点(“pre_points”)
-# experimentID =检查点(“ID”)
-返回检查点
+def save_checkpoint(ckpt_saveat, state, **kwargs):
+    if ckpt_saveat is None or not os.path.isdir(ckpt_saveat):
+        return
+    if 'epoch' in kwargs:
+        filename = os.path.join(ckpt_saveat,
+                                'CheckPoint-%04d.pth' % kwargs['epoch'])
+    elif 'name' in kwargs:
+        filename = os.path.join(ckpt_saveat, '%s.pth' % kwargs['name'])
+    else:
+        raise ValueError
+    torch.save(state, filename)
 
 
-类save_csv(对象):
-“结果写入csv
-'''
+def load_checkpoint(ckpt_saveat, model=None):
+    if not os.path.exists(ckpt_saveat):
+        raise Exception('Checkpoint ' + ckpt_saveat + ' does not exist.')
+    if os.path.isdir(ckpt_saveat):
+        ckpt_saveat = os.path.join(ckpt_saveat, 'SaveAll.pth')
+    checkpoint = torch.load(ckpt_saveat)
+    #TRANS: Only get the corresponding state of the model
+    if model is not None:
+        state_dict = checkpoint
+        model_dict = model.state_dict()
+        # 1. filter out unnecessary keys
+        state_dict = {k: v for k, v in state_dict.items() if k in model_dict}
+        # 2. overwrite entries in the existing state dict
+        model_dict.update(state_dict)
+        # 3. load the new state dict
+        model.load_state_dict(state_dict)
+        # model.to(device)
+        return model
+    else:
+        # model = checkpoint['model'].to(device)
+        # optimizer = checkpoint['optimizer']
+        # scheduler = checkpoint['scheduler']
+        # pre_points = checkpoint['pre_points']
+        # experimentID = checkpoint['ID']
+        return checkpoint
+
+
+class save_csv(object):
+    '''write results into csv'''
 
     def __init__(self, csv_saveat, data_type='train'):
         super(save_csv, self).__init__()
