@@ -21,8 +21,8 @@ import ubelt as ub
 import numpy as np
 
 
-def get_model(arch: Literal['Recurrent', 'Seq2Seq', 'VAE'],
-              n_gru_units: int, n_out_units: int,
+def get_model(arch: Literal['Recurrent', 'Seq2Seq',
+                            'VAE'], n_gru_units: int, n_out_units: int,
               gaussian_likelihood_std: float, x_dims: int, y_dims: int):
     common = dict(x_dims=x_dims,
                   y_dims=y_dims,
@@ -115,9 +115,14 @@ def test_and_plot(model,
     model.eval()
     with torch.no_grad():
         #TRANS: Save the best results
-        test_res, res_dict = utils.store_best_results(model, test_dataloader,
-                                                      kl_coef, experimentID,
-                                                      res_files, **cf.get())
+        ode_time = cf.get('ode_time', utils.ProcessDataset)
+        test_res, res_dict = utils.store_best_results(model,
+                                                      test_dataloader,
+                                                      kl_coef,
+                                                      experimentID,
+                                                      res_files,
+                                                      ode_time=ode_time,
+                                                      model_name=cf.get())
         #TRANS: visualization
         if not produce_intercoeffs and fig_saveat is not None:
 
@@ -125,9 +130,11 @@ def test_and_plot(model,
                 return x.detach().cpu().numpy() if x.is_cuda else x.detach(
                 ).numpy()  #TRANS: equipment
 
-            batch_list = next(iter(test_dataloader))  #TRANS: Draw the largest number of not more than batch_size
+            batch_list = next(
+                iter(test_dataloader)
+            )  #TRANS: Draw the largest number of not more than batch_size
             batch_dict = utils.time_sync_batch_dict(batch_list,
-                                                    ode_time=cf.get())
+                                                    ode_time=ode_time)
             if arch == "Recurrent" or arch == "Seq2Seq":
                 y_pred = model(batch_dict["y_time"], batch_dict["x_data"],
                                batch_dict["x_time"], batch_dict["x_mask"])
@@ -177,6 +184,7 @@ def main(test_for_epochs: int,
          experimentID,
          **cf.get(),
          save_res_for_epochs=save_res_for_epochs)
+    ode_time = cf.get('ode_time', utils.ProcessDataset)
 
     if device is None:
         device = torch.device(
@@ -184,12 +192,14 @@ def main(test_for_epochs: int,
     #TRANS: Start training
     #TRANS: Sampling part of the point, progress_training forecast more gradually
     train_dataloader = dsetter.masked_dataloader(train_dict,
-                                              'train',
-                                              pre_points=pre_points)
-    val_dataloader = dsetter.masked_dataloader(val_dict, 'val', missing_rate=None)
+                                                 'train',
+                                                 pre_points=pre_points)
+    val_dataloader = dsetter.masked_dataloader(val_dict,
+                                               'val',
+                                               missing_rate=None)
     test_dataloader = dsetter.masked_dataloader(test_dict,
-                                             'test',
-                                             missing_rate=None)
+                                                'test',
+                                                missing_rate=None)
 
     test_for_epochs = max(1, test_for_epochs)
     pbar = tqdm(total=test_for_epochs)
@@ -202,7 +212,8 @@ def main(test_for_epochs: int,
     for epoch in range(1, max_epochs + 1):
         if stop_training:
             break
-        model.train()  #TRANS: Prepared using BatchNorm1d (for time series, temporarily don't need)
+        model.train(
+        )  #TRANS: Prepared using BatchNorm1d (for time series, temporarily don't need)
         kl_coef = utils.update_kl_coef(kl_coef, epoch)
         pbar.set_description("Epoch [%4d / %4d]" % (epoch, max_epochs))
 
@@ -210,9 +221,7 @@ def main(test_for_epochs: int,
         for train_batch_list in train_dataloader:
             optimizer.zero_grad()
             batch_dict = utils.time_sync_batch_dict(train_batch_list,
-                                                    ode_time=cf.get(
-                                                        'ode_time',
-                                                        utils.ProcessDataset))
+                                                    ode_time=ode_time)
             train_res = model.compute_loss_one_batch(batch_dict, kl_coef)
             gc.collect()
             #TRANS: Back propagation
@@ -242,9 +251,7 @@ def main(test_for_epochs: int,
             val_res = utils.compute_loss_all_batches(model,
                                                      val_dataloader,
                                                      kl_coef,
-                                                     ode_time=cf.get(
-                                                         'ode_time',
-                                                         utils.ProcessDataset))
+                                                     ode_time=ode_time)
             scheduler.step(val_res["loss"].item())
             if val_res_csv is not None and epoch % save_res_for_epochs == 0:
                 val_res_csv.write(val_res, epoch)
@@ -261,8 +268,8 @@ def main(test_for_epochs: int,
         # curriculum learning
         if pre_points is not None:
             pre_points += 10
-            train_dataloader = dsetter.masked_dataloader(train_dict, pre_points,
-                                                       "train")
+            train_dataloader = dsetter.masked_dataloader(
+                train_dict, pre_points, "train")
         #TRANS: Beyond the corresponding epoch, stop training
         if patience_for_no_better_epochs is not None:
             if epoch > best_metric_epoch + patience_for_no_better_epochs:
@@ -270,17 +277,33 @@ def main(test_for_epochs: int,
                 tqdm.write(
                     "No better metrics than %f for %d epochs. Stop training." %
                     (best_metric.item(), patience_for_no_better_epochs))
-                output_str = test_and_plot(model, test_dataloader, kl_coef,
-                                           experimentID, res_files, fig_saveat,
-                                           logger, epoch, **cf.get())  #TRANS: At this time for a test
+                output_str = test_and_plot(
+                    model,
+                    test_dataloader,
+                    kl_coef,
+                    experimentID,
+                    res_files,
+                    fig_saveat,
+                    logger,
+                    epoch,
+                    **cf.get(),
+                    arch=cf.get('arch',
+                                get_model))  #TRANS: At this time for a test
                 tqdm.write(output_str)
                 stop_training = True
 
         #TRANS: The test set
         if epoch % test_for_epochs == 0 or epoch == max_epochs:
-            output_str = test_and_plot(model, test_dataloader, kl_coef,
-                                       experimentID, res_files, fig_saveat,
-                                       logger, epoch, **cf.get())
+            output_str = test_and_plot(model,
+                                       test_dataloader,
+                                       kl_coef,
+                                       experimentID,
+                                       res_files,
+                                       fig_saveat,
+                                       logger,
+                                       epoch,
+                                       **cf.get(),
+                                       arch=cf.get('arch', get_model))
             pbar.close()
             if epoch != max_epochs:  #TRANS: Open new progress bar
                 pbar = tqdm(total=test_for_epochs)

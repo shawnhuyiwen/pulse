@@ -797,6 +797,7 @@ def get_logger_and_save(model,
                         save_ckpt=False,
                         save_res_for_epochs=None):
 
+    experiment_str += f'_{int(experimentID):06}'
     if save_log:
         log_saveat = (ub.Path('log') / experiment_str).ensuredir()
         log_file = (log_saveat / (experiment_str + '.log')).touch()
