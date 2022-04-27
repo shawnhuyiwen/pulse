@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-import models.utils as utils
-from models.recurrent import GRU_with_std
+import neural_ode.models.utils as utils
+from neural_ode.models.recurrent import GRU_with_std
 
 
 class ODE_GRU_Encoder(nn.Module):

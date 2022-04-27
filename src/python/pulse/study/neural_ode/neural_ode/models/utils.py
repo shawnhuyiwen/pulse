@@ -57,6 +57,7 @@ class ProcessDataset():
     # split_train_val_test
     csv_list: Optional[List[str]] = None
     continue_params: Optional[List[str]] = None
+    discrete_params: Optional[List[str]] = None
     parse_dates: Optional[List[str]] = None
     glob_params: Optional[List[str]] = None
 
@@ -69,7 +70,7 @@ class ProcessDataset():
 
     # ENTRYPOINT
     def get_data(self, arch: str):
-        data_pkl_file = ub.Path('data') / dataset / 'All_Data.pkl'
+        data_pkl_file = ub.Path('data') / self.dataset / 'All_Data.pkl'
         #TRANS: Not the interpolation and Concat, only can be read directly
         if self.load_data and os.path.isfile(
                 data_pkl_file
@@ -143,8 +144,9 @@ class ProcessDataset():
                     pd_continue_data = origin_pd_data  #TRANS: Read all labels, all, applicable to CSV file all variables are needed
 
                 if self.parse_dates is not None:  #TRANS: Converts time variable to a floating point number
-                    pd_timestamp = pd.to_datetime(origin_pd_data[self.parse_dates],
-                                                  infer_datetime_format=True)
+                    pd_timestamp = pd.to_datetime(
+                        origin_pd_data[self.parse_dates],
+                        infer_datetime_format=True)
                     pd_timestamp = (
                         (pd_timestamp - pd_timestamp.iloc[0]) /
                         pd.Timedelta(1, 'd')
@@ -182,8 +184,8 @@ class ProcessDataset():
                 data_max.append(csv_data_max)
 
                 if self.glob_params is not None:  #TRANS: Used to handle the whole time series (including training and test sets) are the same data, such as sampling sites
-                    glob_item = origin_pd_data[self.glob_params].iloc[
-                        0].values.tolist(
+                    glob_item = origin_pd_data[
+                        self.glob_params].iloc[0].values.tolist(
                         )  #TRANS: This batch of the values are the same
                     train_glob_list.extend([glob_item] *
                                            sw_train_time.shape[0])
@@ -223,9 +225,10 @@ class ProcessDataset():
                 data_dict['test_glob_list'] = test_glob_list
 
             pickle_data = (
-                self.x_data_with_time, pd_continue_data.columns.tolist()
-                if self.x_data_with_time else pd_continue_data.columns.tolist()[1:],
-                data_min, data_max)  #TRANS: TODO: save the mapping information
+                self.x_data_with_time,
+                pd_continue_data.columns.tolist() if self.x_data_with_time else
+                pd_continue_data.columns.tolist()[1:], data_min, data_max
+            )  #TRANS: TODO: save the mapping information
             save_items_to_pickle(pickle_data,
                                  'data/' + dataset + '/DataInfo.pkl')
 
@@ -270,9 +273,10 @@ class ProcessDataset():
         time = data_new[:, :, :1]
         data = data_new[:, :, 1:]
 
-        train_data, val_data, test_data, train_time, val_time, test_time = self._split_train_test_data_and_time(
-            data, time, self.train_fraq, self.val_fraq)
-        return train_data, val_data, test_data, train_time, val_time, test_time, data_min, data_max
+        (train_data, val_data, test_data, train_time, val_time,
+         test_time) = self._split_train_test_data_and_time(data, time)
+        return (train_data, val_data, test_data, train_time, val_time,
+                test_time, data_min, data_max)
 
     def _split_train_test_data_and_time(self, data, time):
         #TRANS: Divided into training set and test set, 1 d to divided the time period
@@ -378,7 +382,7 @@ class ProcessDataset():
             missing_rate = self.missing_rate
         if data_dict is None:
             return None
-        if produce_intercoeffs:
+        if self.produce_intercoeffs:
             file_detail = data_name + '_' + str(int(missing_rate * 100) if missing_rate is not None else 0) + '_' + \
                 str(pre_points if pre_points is not None else 0) + '_' + \
                 (ode_time if ode_time is not None else 'Default') + '_' + \
@@ -427,11 +431,11 @@ class ProcessDataset():
         new_data_dict['y_time'] = data_dict['y_time'].clone()
         new_data_dict['y_mask'] = mask.clone()
 
-        if produce_intercoeffs:
+        if self.produce_intercoeffs:
             self._produce_and_save_intercoeffs(new_data_dict, coeffs_save_file)
 
         return self._wrap_dataloader(
-            new_data_dict, min(batch_size, new_data_dict['x_data'].shape[0]))
+            new_data_dict, batch_size=min(self.batch_size, new_data_dict['x_data'].shape[0]))
 
     def _produce_and_save_intercoeffs(self, data_dict, coeffs_save_file):
         #TRANS: Calculation and save the interpolation, the use of DataLoader save DataLoader
@@ -439,10 +443,10 @@ class ProcessDataset():
         data_dict['x_data'] = torchcde.natural_cubic_coeffs(
             data_dict['x_data'])
         dataloader = self._wrap_dataloader(data_dict,
-                                      batch_size=min(
-                                          self.batch_size,
-                                          data_dict['x_data'].shape[0]),
-                                      shuffle=self.shuffle)
+                                           batch_size=min(
+                                               self.batch_size,
+                                               data_dict['x_data'].shape[0]),
+                                           shuffle=self.shuffle)
         save_items_to_pickle(dataloader, coeffs_save_file)
 
     def _wrap_dataloader(self, data_dict, **kwargs):
@@ -794,7 +798,8 @@ def get_logger_and_save(model,
                         save_res_for_epochs=None):
 
     if save_log:
-        log_file = ub.Path('log').ensuredir() / experiment_str + '.log'
+        log_saveat = (ub.Path('log') / experiment_str).ensuredir()
+        log_file = (log_saveat / (experiment_str + '.log')).touch()
     else:
         log_file = None
     res_files = {
@@ -823,11 +828,11 @@ def get_logger_and_save(model,
 
         ''')
     logger.warning(note)
-    logger.warning('All args are: ' + cf.log())
+    logger.warning('All args are: ' + ub.repr2(cf.log()))
     #TRANS: training result recorder
     if save_res_for_epochs is not None and save_log:
-        train_res_csv = save_csv(log_saveat, 'train')
-        val_res_csv = save_csv(log_saveat, 'val')
+        train_res_csv = save_csv(str(log_saveat), 'train')
+        val_res_csv = save_csv(str(log_saveat), 'val')
     else:
         train_res_csv = None
         val_res_csv = None

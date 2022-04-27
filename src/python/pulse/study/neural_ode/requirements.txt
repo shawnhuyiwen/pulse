@@ -5,8 +5,12 @@ pandas==1.4.1
 pulse==0.1.2
 pulse.egg==info
 PyPulse==0.1.1
+pythonic_config==0.6.13
+pytorch_forecasting==0.10.1
+setuptools==58.0.4
 torch==1.11.0
 torchcde==0.2.5
 torchdiffeq==0.2.2
 torchvision==0.12.0
 tqdm==4.63.0
+ubelt==1.0.1

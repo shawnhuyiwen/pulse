@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from torch.distributions.normal import Normal
 from torch.distributions import Independent
-import models.utils as utils
+import neural_ode.models.utils as utils
 
 
 def get_log_likelihood(y_pred, y_truth, gaussian_likelihood_std, y_mask=None):

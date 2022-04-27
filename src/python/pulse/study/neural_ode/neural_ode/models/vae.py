@@ -3,9 +3,9 @@ import torch
 import torch.nn as nn
 from torch.distributions import kl_divergence
 from torch.distributions.normal import Normal
-import models.utils as utils
-from models.encoder_decoder import ODE_GRU_Encoder, ODE_Decoder
-from models.evaluation import get_log_likelihood, get_mse
+import neural_ode.models.utils as utils
+from neural_ode.models.encoder_decoder import ODE_GRU_Encoder, ODE_Decoder
+from neural_ode.models.evaluation import get_log_likelihood, get_mse
 
 
 class VAE(nn.Module):

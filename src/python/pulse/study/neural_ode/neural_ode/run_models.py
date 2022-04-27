@@ -4,11 +4,11 @@ from random import SystemRandom
 import torch
 from torch.distributions.normal import Normal
 from tqdm import tqdm
-import models.utils as utils
-from models.recurrent import Recurrent
-from models.seq2seq import Seq2Seq
-from models.vae import VAE
-from models.diff_func import ODEFunc, CDEFunc, DiffeqSolver
+import neural_ode.models.utils as utils
+from neural_ode.models.recurrent import Recurrent
+from neural_ode.models.seq2seq import Seq2Seq
+from neural_ode.models.vae import VAE
+from neural_ode.models.diff_func import ODEFunc, CDEFunc, DiffeqSolver
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -29,7 +29,7 @@ def get_model(arch: Literal['Recurrent', 'Seq2Seq', 'VAE'],
                   n_gru_units=n_gru_units,
                   n_out_units=n_out_units,
                   gaussian_likelihood_std=gaussian_likelihood_std)
-    diffeq_solver = get_diffeq_solver(x_dims, **cf.get())
+    diffeq_solver = get_diffeq_solver(x_dims=x_dims, **cf.get())
     if arch == "Recurrent":
         model = Recurrent(diffeq_solver=diffeq_solver, **common)
     elif arch == "Seq2Seq":
@@ -39,7 +39,7 @@ def get_model(arch: Literal['Recurrent', 'Seq2Seq', 'VAE'],
     elif arch == "VAE":
         kwargs = cf.get(None, get_diffeq_solver)
         kwargs['method'] = 'euler'
-        enc_diffeq_solver = get_diffeq_solver(x_dims, h_dims=20, **kwargs)
+        enc_diffeq_solver = get_diffeq_solver(x_dims=x_dims, h_dims=20, **kwargs)
         model = VAE(h_prior=Normal(torch.Tensor([0.0]), torch.Tensor([1.])),
                     enc_diffeq_solver=enc_diffeq_solver,
                     dec_diffeq_solver=diffeq_solver,
@@ -69,7 +69,6 @@ def get_diffeq_solver(using: Literal['ODE_RNN', 'CDE'],
 
 
 def prepare_to_train(dsetter: utils.ProcessDataset,
-                     dataset: str,
                      load_ckpt: Optional[ub.Path],
                      device: Optional[str],
                      lr: float,
@@ -79,7 +78,7 @@ def prepare_to_train(dsetter: utils.ProcessDataset,
             "cpu") if not torch.cuda.is_available() else torch.device("cuda:0")
     #TRANS: The data set
     train_dict, val_dict, test_dict, x_dims, y_dims = dsetter.get_data(
-        dataset=cf.get())
+        arch=cf.get('arch', get_model))
     #TRANS: State is read
     if load_ckpt:
         model, optimizer, scheduler, pre_points, experimentID = utils.load_checkpoint(
@@ -171,7 +170,7 @@ def main(test_for_epochs: int,
          device=None):
     dsetter = utils.ProcessDataset(**cf.get())
     (model, optimizer, scheduler, pre_points, experimentID, train_dict,
-     val_dict, test_dict) = prepare_to_train(dsetter, **cf.get())
+     val_dict, test_dict) = prepare_to_train(dsetter, device=device, **cf.get())
     (logger, res_files, train_res_csv, val_res_csv, fig_saveat,
      ckpt_saveat) = utils.get_logger_and_save(
          model,
@@ -289,6 +288,7 @@ def main(test_for_epochs: int,
 
 
 if __name__ == "__main__":
-    from .args import default
+    from neural_ode.args import default
+    from neural_ode.run_models import main
     default()
     main(**cf.get())

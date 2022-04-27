@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from models.encoder_decoder import ODE_GRU_Encoder, ODE_Decoder
-from models.evaluation import get_log_likelihood, get_mse
+from neural_ode.models.encoder_decoder import ODE_GRU_Encoder, ODE_Decoder
+from neural_ode.models.evaluation import get_log_likelihood, get_mse
 
 
 class Seq2Seq(nn.Module):

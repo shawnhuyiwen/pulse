@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import models.utils as utils
+import neural_ode.models.utils as utils
 
 from torchdiffeq import odeint
 from torchcde import cdeint
@@ -16,6 +16,7 @@ class ODEFunc(nn.Module, ub.NiceRepr):
         self.h_dims = h_dims
         self.h_trans_dims = h_trans_dims
         self.h_trans_layers = h_trans_layers
+        self.device = 'cpu'
 
         layers = [nn.Linear(h_dims, h_trans_dims)]
         for _ in range(h_trans_layers):
@@ -58,6 +59,7 @@ class CDEFunc(nn.Module, ub.NiceRepr):
             self.final_nonlinear = final_nonlinear()
         else:
             self.final_nonlinear = None
+        self.device = 'cpu'
 
     def __nice__(self):
         return f"CDEFunc {self.x_dims=}, {self.h_dims=}, {self.h_trans_dims=}, {self.h_trans_layers=}"
