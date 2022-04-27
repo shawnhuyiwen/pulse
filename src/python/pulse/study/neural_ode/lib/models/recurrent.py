@@ -91,17 +91,17 @@ class Recurrent(nn.Module):
             raise NotImplementedError
 
     def compute_loss_one_batch(self, batch_dict, kl_coef=1.):
-        # 预测整个y序列，包括观测到的与未观测到的
+        #TRANS: Predict the y series, including the observed and was not observed
         y_pred = self.forward(batch_dict["y_time"], batch_dict["x_data"], batch_dict["x_time"], batch_dict["x_mask"])
 
-        # 计算指标，batch_dict["y_mask"]如果都是True，那就应该输入None
+        #TRANS: To calculate indicators, batch_dict "y_mask" if is True, it should enter None
         likelihood = get_log_likelihood(y_pred, batch_dict["y_data"], self.gaussian_likelihood_std, None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
         mse_loss = get_mse(y_pred, batch_dict["y_data"], None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
-        loss = - torch.mean(likelihood)  # 最大化平均log_likelihood反向传播
+        loss = - torch.mean(likelihood)  #TRANS: To maximize the average log_likelihood back propagation
 
-        # 取出对应的值
+        #TRANS: Take out the corresponding value
         results = {}
-        results["loss"] = loss  # 不能detach，否则不能backward
+        results["loss"] = loss  #TRANS: Can't detach, otherwise can not backward
         results["likelihood"] = likelihood.detach()
         results["mse"] = mse_loss.detach()
         results["kl_coef"] = kl_coef
@@ -123,7 +123,7 @@ class Recurrent(nn.Module):
         prev_hi_std = torch.zeros((batch_size, self.h_dims), device=self.device)
 
         prev_ti, ti = x_time[-1] + 0.01, x_time[-1]
-        # 内部网格大小
+        #TRANS: Internal grid size
         interval_length = x_time[-1] - x_time[0]
         minimum_step = interval_length / 50
 
@@ -134,10 +134,10 @@ class Recurrent(nn.Module):
         outputs = []
 
         for i in time_points_iter:
-            if (prev_ti - ti) < minimum_step:  # 如果达不到最小步长，则直接线性增加
+            if (prev_ti - ti) < minimum_step:  #TRANS: If it can not meet the minimum step direct linear increase
                 time_points = torch.stack((prev_ti, ti))
                 inc = self.diffeq_solver.diff_func(
-                    prev_ti, prev_hi) * (ti - prev_ti)  # 线性增量
+                    prev_ti, prev_hi) * (ti - prev_ti)  #TRANS: The linear increment
 
                 if torch.isnan(inc).any():
                     print("inc is None!!")
@@ -160,7 +160,7 @@ class Recurrent(nn.Module):
                 assert not torch.isnan(time_points).any()
                 assert not torch.isnan(prev_hi).any()
 
-                hi_ode = self.diffeq_solver(prev_hi, time_points)[:, -1, :]  # 计算ODE，解出对应的latent值来（最后1个）即可
+                hi_ode = self.diffeq_solver(prev_hi, time_points)[:, -1, :]  #TRANS: Calculate the ODE, work out corresponding latent value to (1) finally can
 
                 assert not torch.isnan(hi_ode).any()
 
@@ -170,7 +170,7 @@ class Recurrent(nn.Module):
             assert not torch.isnan(hi_ode).any()
             assert not torch.isnan(prev_hi_std).any()
 
-            hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, xi)  # 计算GRU
+            hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, xi)  #TRANS: Calculate the GRU helped
 
             assert not torch.isnan(hi).any()
             assert not torch.isnan(hi_std).any()
@@ -185,10 +185,10 @@ class Recurrent(nn.Module):
         return outputs.index_select(1, y_time_index)
 
     def forward(self, y_time, x_data, x_time, x_mask=None):
-        # 完成序列预测
+        #TRANS: Complete sequence prediction
         if len(y_time.shape) < 1:
             y_time = y_time.unsqueeze(0)
-        # 拼接x_time和y_time
+        #TRANS: Stitching x_time and y_time
         origin_time_points = len(x_time)
         x_time, time_index = torch.unique(torch.cat((x_time, y_time)), return_inverse=True)
         x_time_index = time_index[:origin_time_points]
@@ -209,7 +209,7 @@ class Recurrent(nn.Module):
             else:
                 x = x_data
             batch_size, x_dims = x.shape[0], x.shape[2]
-            # 将x扩充
+            #TRANS: To expand the x
             x_merged = torch.zeros((batch_size, len(x_time), x_dims), dtype=x.dtype, device=utils.get_device(x))
             for i, index in zip(range(len(x_time_index)), x_time_index):
                 x_merged[:, index, :] = x[:, i, :]

@@ -28,15 +28,15 @@ class Seq2Seq(nn.Module):
         self.decoder = ODE_Decoder(y_dims, dec_h_dims, n_out_units, dec_diffeq_solver, device=self.device)
 
     def compute_loss_one_batch(self, batch_dict, kl_coef=1.):
-        # 预测整个y序列，包括观测到的与未观测到的
+        #TRANS: Predict the y series, including the observed and was not observed
         y_pred = self.forward(batch_dict["y_time"], batch_dict["x_data"], batch_dict["x_time"], batch_dict["x_mask"])
 
-        # 计算指标，batch_dict["y_mask"]如果都是True，那就应该输入None
+        #TRANS: To calculate indicators, batch_dict "y_mask" if is True, it should enter None
         log_likelihood = get_log_likelihood(y_pred, batch_dict["y_data"], self.gaussian_likelihood_std, None if batch_dict["y_mask"].all() else batch_dict["y_mask"]).squeeze()
         mse = get_mse(y_pred, batch_dict["y_data"], None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
-        loss = - log_likelihood.squeeze()  # -log_likelihood反向传播
+        loss = - log_likelihood.squeeze()  #TRANS: - log_likelihood back propagation
 
-        # batch内取平均
+        #TRANS: Take the average in batch
         results = {}
         results["loss"] = loss
         results["likelihood"] = log_likelihood.detach()
@@ -48,7 +48,7 @@ class Seq2Seq(nn.Module):
         return results
 
     def forward(self, y_time, x_data, x_time, x_mask=None):
-        # 完成序列预测
+        #TRANS: Complete sequence prediction
         if x_mask is not None:
             x = x_data * x_mask
         else:
@@ -60,10 +60,10 @@ class Seq2Seq(nn.Module):
         # encoder
         hs = self.encoder.run_to_last_point(x, x_time, return_latents=True)
 
-        decoder_begin_hi = hs[:, -1, :]  # 将decoder初始点设为x_time最后一点
+        decoder_begin_hi = hs[:, -1, :]  #TRANS: The decoder initial point set as x_time finally
         y_time = torch.cat((x_time[-1:], y_time))
 
         # decoder
-        y_pred = self.decoder(decoder_begin_hi, y_time)[:, 1:, :]  # 继续向下解ode，利用decoder解出预测值
+        y_pred = self.decoder(decoder_begin_hi, y_time)[:, 1:, :]  #TRANS: Continue to solve the ode down, using the decoder work out prediction
 
         return y_pred

@@ -40,7 +40,7 @@ def get_log_likelihood(y_pred, y_truth, gaussian_likelihood_std, y_mask=None):
         log_likelihood = compute_masked_eval(mu_2d, data_2d, mask_2d, func)
 
     log_likelihood = log_likelihood.reshape(sample_hs, batch_size)
-    log_likelihood = torch.mean(log_likelihood, 1)  # batch内各sample内取平均
+    log_likelihood = torch.mean(log_likelihood, 1)  #TRANS: Take the average in each sample in the batch
     # shape: [sample_hs] or [1]
     return log_likelihood
 
@@ -92,9 +92,9 @@ def compute_masked_eval(mu_2d, data_2d, mask_2d, eval_func):
 
 
 def compute_log_likelihood(mu, data, gaussian_likelihood_std):
-    # gaussian_likelihood_std 全部用在这
+    #TRANS: Gaussian_likelihood_std all on this
     n_data_points = mu.shape[-1]
-    # Normal以预测值为均值的正态分布，Independent使batch中各条曲线相互独立，从而算出sample_h * batch_size个维度的likelihood
+    #TRANS: Normal average forecast for Normal distribution, Independent every curve in the batch are Independent of each other, so as to calculate the likelihood of sample_h * batch_size dimensions
     if n_data_points > 0:
         gaussian = Independent(Normal(loc=mu, scale=gaussian_likelihood_std.repeat(n_data_points)), 1)
         log_prob = gaussian.log_prob(data)

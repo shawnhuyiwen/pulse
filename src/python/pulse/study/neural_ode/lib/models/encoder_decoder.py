@@ -49,14 +49,14 @@ class ODE_GRU_Encoder(nn.Module):
         hi_last_mu = hi_last_mu.reshape(1, batch_size, self.h_dims)
         hi_last_sigma = hi_last_sigma.reshape(1, batch_size, self.h_dims)
 
-        # VAE2：通过encoder(x,hi_last_mu,hi_last_sigma)产生对应的mu和sigma
+        #TRANS: VAE2: through the encoder (x, hi_last_mu, hi_last_sigma) to produce the corresponding mu and the sigma
         hi_last_mu, hi_last_sigma = utils.split_last_dim(self.transform_h_last(torch.cat((hi_last_mu, hi_last_sigma), -1)))
         hi_last_sigma = hi_last_sigma.abs()
 
         return hi_last_mu, hi_last_sigma
 
     def run_to_last_point(self, x_data, x_time, return_latents=False):
-        # VAE1：同时生成最后一个观测点的平均值hi和标准差hi_std
+        #TRANS: VAE1: at the same time to generate the final hi average and standard deviation of the observation point hi_std
         batch_size = x_data.shape[0]
         if self.device != utils.get_device(x_data):
             x_data.to(self.device)
@@ -69,7 +69,7 @@ class ODE_GRU_Encoder(nn.Module):
         assert not torch.isnan(x_time).any()
 
         prev_ti, ti = x_time[-1] + 0.01, x_time[-1]
-        # 内部网格大小
+        #TRANS: Internal grid size
         interval_length = x_time[-1] - x_time[0]
         minimum_step = interval_length / 50
 
@@ -77,9 +77,9 @@ class ODE_GRU_Encoder(nn.Module):
         time_points_iter = range(0, x_time.numel())
 
         for i in time_points_iter:
-            if (prev_ti - ti) < minimum_step:  # 如果达不到最小步长，则直接线性增加
+            if (prev_ti - ti) < minimum_step:  #TRANS: If it can not meet the minimum step direct linear increase
                 time_points = torch.stack((prev_ti, ti))
-                inc = self.enc_diffeq_solver.diff_func(prev_ti, prev_hi) * (ti - prev_ti)  # 线性增量
+                inc = self.enc_diffeq_solver.diff_func(prev_ti, prev_hi) * (ti - prev_ti)  #TRANS: The linear increment
 
                 if torch.isnan(inc).any():
                     print("inc is None!!")
@@ -103,7 +103,7 @@ class ODE_GRU_Encoder(nn.Module):
                 assert not torch.isnan(time_points).any()
                 assert not torch.isnan(prev_hi).any()
 
-                hi_ode = self.enc_diffeq_solver(prev_hi, time_points)[:, -1, :]  # 计算ODE，解出对应的latent值来（最后1个）即可
+                hi_ode = self.enc_diffeq_solver(prev_hi, time_points)[:, -1, :]  #TRANS: Calculate the ODE, work out corresponding latent value to (1) finally can
 
                 assert not torch.isnan(hi_ode).any()
 
@@ -115,7 +115,7 @@ class ODE_GRU_Encoder(nn.Module):
             if torch.isnan(xi).any():
                 hi, hi_std = hi_ode, prev_hi_std
             else:
-                hi, hi_std = self.GRU_update(hi_ode, prev_hi_std, xi)  # 计算GRU
+                hi, hi_std = self.GRU_update(hi_ode, prev_hi_std, xi)  #TRANS: Calculate the GRU helped
 
             assert not torch.isnan(hi).any()
             assert not torch.isnan(hi_std).any()
@@ -138,7 +138,7 @@ class ODE_GRU_Encoder(nn.Module):
 
 
 class ODE_Decoder(nn.Module):
-    # ODE作为decoder
+    #TRANS: The ODE as decoder
     def __init__(self, y_dims, h_dims, n_out_units, dec_diffeq_solver, device=torch.device("cpu")):
         super(ODE_Decoder, self).__init__()
         self.output_net = utils.create_net(h_dims, y_dims, n_out_units, device=device)
@@ -147,6 +147,6 @@ class ODE_Decoder(nn.Module):
         self.dec_diffeq_solver = dec_diffeq_solver
 
     def forward(self, h0, t_span):
-        ode_sol = self.dec_diffeq_solver(h0, t_span)  # 继续向下解ode
+        ode_sol = self.dec_diffeq_solver(h0, t_span)  #TRANS: Continue down the ode
         outputs = self.output_net(ode_sol)
         return outputs

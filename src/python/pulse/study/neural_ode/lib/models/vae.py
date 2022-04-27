@@ -24,7 +24,7 @@ class VAE(nn.Module):
 
 
         self.encoder = ODE_GRU_Encoder(
-            x_dims=x_dims,  # mask直接作用于data
+            x_dims=x_dims,  #TRANS: Mask directly ACTS on the data
             h_dims=enc_h_dims,
             n_gru_units=n_gru_units,
             h_last_dim=dec_h_dims,
@@ -34,7 +34,7 @@ class VAE(nn.Module):
         self.decoder = ODE_Decoder(y_dims, dec_h_dims, n_out_units, dec_diffeq_solver, device=self.device)
 
     def compute_loss_one_batch(self, batch_dict, kl_coef=1., sample_hs=3):
-        # 预测整个y序列，包括观测到的与未观测到的
+        #TRANS: Predict the y series, including the observed and was not observed
         y_pred, info = self.forward(batch_dict["y_time"], batch_dict["x_data"], batch_dict["x_time"], batch_dict["x_mask"], sample_hs=sample_hs)
 
         C_mu, C_std, _ = info["C"]
@@ -53,13 +53,13 @@ class VAE(nn.Module):
         # C_kldiv shape: [sample_hs, batch_size, h_dims] if prior is a mixture of gaussians (KL is estimated)
         # C_kldiv shape: [1, batch_size, h_dims] if prior is a standard gaussian (KL is computed exactly)
         # shape after: [sample_hs]
-        # 与IWAE有关：https://zhuanlan.zhihu.com/p/74556487，进行sample_h次采样以获得更好的重构能力
+        #TRANS: Associated with IWAE: https://zhuanlan.zhihu.com/p/74556487, sample_h time sampling in order to obtain better refactoring capability
 
         C_kl = torch.mean(C_kl, (1, 2)).squeeze()
 
-        # 计算指标
-        if not batch_dict["y_mask"].all():  # 如果不全是True，说明起作用
-            y_mask = batch_dict["y_mask"].repeat(sample_hs, 1, 1, 1)  # 复制mask
+        #TRANS: Calculate indicators
+        if not batch_dict["y_mask"].all():  #TRANS: All are not True, if that work
+            y_mask = batch_dict["y_mask"].repeat(sample_hs, 1, 1, 1)  #TRANS: Copy the mask
         else:
             y_mask = None
         log_likelihood = get_log_likelihood(y_pred, batch_dict["y_data"], self.gaussian_likelihood_std, y_mask)
@@ -69,7 +69,7 @@ class VAE(nn.Module):
         if torch.isnan(loss):
             loss = - torch.mean(log_likelihood - kl_coef * C_kl, 0)
 
-        # batch内取平均
+        #TRANS: Take the average in batch
         results = {}
         results["loss"] = loss
         results["likelihood"] = torch.mean(log_likelihood).detach()
@@ -81,7 +81,7 @@ class VAE(nn.Module):
         return results
 
     def forward(self, y_time, x_data, x_time, x_mask=None, sample_hs=1):
-        # 完成序列预测
+        #TRANS: Complete sequence prediction
         if x_mask is not None:
             x = x_data * x_mask
         else:
@@ -92,7 +92,7 @@ class VAE(nn.Module):
         # encoder
         enc_h_last_mu, enc_h_last_sigma = self.encoder.run_to_prior(x, x_time)
 
-        # VAE3：通过正态分布生成decoder的h（这里进行了sample_hs次采样）
+        #TRANS: VAE3: through normal distribution generated decoder of h (here with the first sampling sample_hs)
         enc_h_last_mean = enc_h_last_mu.repeat(sample_hs, 1, 1)
         enc_h_last_std = enc_h_last_sigma.repeat(sample_hs, 1, 1)
         dec_h_first = utils.sample_standard_gaussian(enc_h_last_mean, enc_h_last_std)
@@ -101,12 +101,12 @@ class VAE(nn.Module):
         gc.collect()
         assert not torch.isnan(y_time).any()
         assert not torch.isnan(dec_h_first).any()
-        # 将decoder初始点设为x_time最后一点
+        #TRANS: The decoder initial point set as x_time finally
         y_time = torch.cat((x_time[-1:], y_time))
 
         # decoder
-        y_pred = self.decoder(dec_h_first, y_time)[:, :, 1:, :]  # 利用decoder解出预测值，用于训练和测试
-        y_pred_mean = self.decoder(enc_h_last_mean, y_time)[:, :, 1:, :]  # 利用采样前的值再解出1组取平均，用于画图
+        y_pred = self.decoder(dec_h_first, y_time)[:, :, 1:, :]  #TRANS: Using the decoder work out forecast for training and testing
+        y_pred_mean = self.decoder(enc_h_last_mean, y_time)[:, :, 1:, :]  #TRANS: Before using sampling average value to work out 1 group, used for drawing
         assert not torch.isnan(y_pred).any()
         assert not torch.isnan(y_pred_mean).any()
 

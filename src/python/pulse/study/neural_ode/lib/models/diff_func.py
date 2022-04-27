@@ -37,7 +37,7 @@ class ODEFunc(nn.Module, ub.NiceRepr):
         func = self.ode_func(h)
         if self.final_nonlinear is not None:
             func = self.final_nonlinear(func)
-        if backwards:  # 同一方程，反向求解的时候需要backwards
+        if backwards:  #TRANS: It needs to be the same equation, the reverse solving backwards
             func = -func
         return func
 
@@ -65,7 +65,7 @@ class CDEFunc(nn.Module, ub.NiceRepr):
         hs = self.cde_func(h)
         hs = hs.view(*h.shape[:-1], self.h_dims, self.x_dims)
         if self.final_nonlinear is not None:
-            hs = self.final_nonlinear(hs)  # 最终采用tanh说明输出在(0, 1)中
+            hs = self.final_nonlinear(hs)  #TRANS: Finally using tanh explain output in (0, 1)
         return hs
 
 class DiffeqSolver(nn.Module):
@@ -87,11 +87,11 @@ class DiffeqSolver(nn.Module):
                     batch_size, h_dims = h0.shape[0], h0.shape[1]
                     hs_pred = odeint(self.diff_func, h0, t,
                                      rtol=self.odeint_rtol, atol=self.odeint_atol, method=self.ode_method)
-                    hs_pred = hs_pred.permute(1, 0, 2)  # 将time_points对应维度移到倒数第二位
+                    hs_pred = hs_pred.permute(1, 0, 2)  #TRANS: Second time_points corresponding dimensions will be moved to the bottom
                 else:
                     sample_hs, batch_size, h_dims = h0.shape[0], h0.shape[1], h0.shape[2]
                     hs_pred = odeint(self.diff_func, h0, t, rtol=self.odeint_rtol, atol=self.odeint_atol, method=self.ode_method)
-                    hs_pred = hs_pred.permute(1, 2, 0, 3)  # 将time_points对应维度移到倒数第二位
+                    hs_pred = hs_pred.permute(1, 2, 0, 3)  #TRANS: Second time_points corresponding dimensions will be moved to the bottom
                     assert hs_pred.shape[0] == sample_hs
             assert hs_pred.shape[-3] == batch_size
             assert hs_pred.shape[-1] == h_dims
@@ -108,9 +108,9 @@ class DiffeqSolver(nn.Module):
                 }
             }
             hs_pred = cdeint(X, self.diff_func, h0, t, adjoint=True, backend="torchdiffeq", **kwargs)
-            # 不需要转置，输出[batch_size, time_points, h_dims]或[sample_hs, batch_size, time_points, h_dims]
+            #TRANS: Do not need to transpose, output [batch_size, time_points, h_dims] or [sample_hs batch_size, time_points, h_dims]
 
         else:
             raise NotImplementedError
 
-        return hs_pred  # 输出[batch_size, time_points, h_dims]或[sample_hs, batch_size, time_points, h_dims]
+        return hs_pred  #TRANS: 输出[batch_size time_points h_dims]或[sample_hs、batch_size time_points, h_dims]
