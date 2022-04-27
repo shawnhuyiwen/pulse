@@ -271,7 +271,7 @@ namespace pulse
 
     double systolicPressureTarget_mmHg = m_InitialPatient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
     double heartRate_bpm = m_InitialPatient->GetHeartRateBaseline(FrequencyUnit::Per_min);
-    const double strokeVolumeTarget_mL = 81.0;
+    const double strokeVolumeTarget_mL = male ? 78.0 : 68.0;
     double cardiacOutputTarget_mL_Per_s = heartRate_bpm / 60.0 * strokeVolumeTarget_mL;
     Info("Targeting Cardiac Output of "+pulse::cdm::to_string(cardiacOutputTarget_mL_Per_s)+" mL/s");
     const double pulmonaryShuntFractionFactor = 0.009; // Used to set the pulmonary shunt fraction. Actual shunt will be roughly double this value (two lungs).

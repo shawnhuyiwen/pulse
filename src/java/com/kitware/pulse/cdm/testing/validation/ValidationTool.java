@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,6 +134,99 @@ public abstract class ValidationTool
     public static final int successTolerance = 10;
     public static final int warningTolerance = 30;
   }
+  
+  public void populatePatientTab(XSSFWorkbook xlWBook, FormulaEvaluator evaluator, String resultsName, String csv_root) throws InvalidProtocolBufferException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+  {
+	  XSSFSheet xlSheet = xlWBook.getSheetAt(0);
+	  evaluator.clearAllCachedResultValues();
+	  
+	  // Is this patient validation?
+	  patient = null;
+	  if(TABLE_TYPE.equals("Patient") || RUN_TYPE == RunType.DATA || resultsName.contains("-"))
+	  {
+		  // Patient Name is encoded in the naming convention (or else it needs to be)
+		  String patientName = resultsName.substring(resultsName.lastIndexOf("-")+1,resultsName.indexOf("Results"));
+		  patient = new SEPatient();
+		  // Check to see if we have a patient file in our csv_root dir first
+		  File f = new File(csv_root+"patient.init.json");
+		  if(f.exists())
+			  patient.readFile(csv_root+"patient.init.json");
+		  else
+			  patient.readFile("./stable/"+patientName+".json");
+	  }
+	  else
+	  {
+		  return;
+	  }
+
+	  int rows = xlSheet.getPhysicalNumberOfRows();
+	  for (int r = 0; r < rows; r++) 
+	  {
+		  Row row = xlSheet.getRow(r);
+		  if (row == null) 
+			  continue;
+		  Cell cell = row.getCell(0);
+		  if(cell==null)
+			  continue;
+		  // Check to see if this row is a header
+		  String cellValue = cell.getStringCellValue();
+		  if(cellValue==null||cellValue.isEmpty())
+			  continue;// No property, skip it
+
+		  // Check to see if this has a patient table
+		  // We can push patient values to for dynamic validation
+		  if(cellValue.equals("Patient Inputs"))
+		  {
+			  for (r++; r < rows; r++)
+			  {
+				  row = xlSheet.getRow(r);
+				  Cell cName = row.getCell(0);
+				  Cell cUnits = row.getCell(1);
+				  Cell cValue = row.getCell(2);
+				  String name = cName.getStringCellValue();
+				  if(name == null||name.isEmpty())
+					  break;
+				  if(name.equals("Gender"))
+				  {
+					  if(patient == null)
+					  {
+						  Log.info("Using default gender of "+cValue.getStringCellValue());
+						  continue;// Just step through these to the end
+					  }
+					  String gender = patient.getSex()==eSex.Male?"Male":"Female";
+					  cValue.setCellValue(gender);
+					  Log.info("Setting patient gender to "+gender);
+					  continue;
+				  }
+				  if(cValue.getCellType() != CellType.NUMERIC)
+				  {
+					  evaluator.evaluateFormulaCell(cValue);
+					  Log.info("Using equation for "+name+ ", which computed value of "+cValue.getNumericCellValue()+cUnits.getStringCellValue());
+					  continue;// Skip equations
+				  }
+				  String units = "";
+				  if(cUnits != null)
+					  units = cUnits.getStringCellValue();
+				  if(patient == null)
+				  {
+					  Log.info("Using the default "+name+" of "+cValue.getNumericCellValue()+cUnits.getStringCellValue());
+					  continue;// Just step through these to the end
+				  }
+				  Method m = SEPatient.class.getMethod("get"+name);
+				  SEScalar s = ((SEScalar)m.invoke(patient));
+				  if(s.isValid())
+				  {
+					  double value = s.getValue(units);
+					  Log.info("Setting patient "+name+" to "+value+units);
+					  cValue.setCellValue(value);
+				  }
+				  else
+					  Log.error("Patient does not have a value for "+name+", using default in spreadsheet");
+			  }
+			  continue;
+		  }
+	  }
+  }
 
   public void loadData(String csv_root)
   {
@@ -225,7 +319,7 @@ public abstract class ValidationTool
       List<ValidationRow> allRows = new ArrayList<>();
       Map<String,SummaryRow> summary = new TreeMap<>();
       
-      for(int i=0; i<xlWBook.getNumberOfSheets(); i++)
+      for(int i=1; i<xlWBook.getNumberOfSheets(); i++) //i=0 is expected to be the Patient sheet
       {
         XSSFSheet xlSheet = xlWBook.getSheetAt(i);
         Log.info("Processing Sheet : " + xlSheet.getSheetName());
@@ -247,6 +341,7 @@ public abstract class ValidationTool
         for(String resultsName : sheetFiles)
         {
           Log.info("Processing "+resultsName);
+          populatePatientTab(xlWBook, evaluator, resultsName, csv_root);
           try
           {
             // Look for a results file
@@ -278,20 +373,6 @@ public abstract class ValidationTool
             badSheets.add(vRow);
             continue;
           }
-          // Is this patient validation?
-          patient = null;
-          if(TABLE_TYPE.equals("Patient") || RUN_TYPE == RunType.DATA)
-          {
-            // Patient Name is encoded in the naming convention (or else it needs to be)
-            String patientName = resultsName.substring(resultsName.lastIndexOf("-")+1,resultsName.indexOf("Results"));
-            patient = new SEPatient();
-            // Check to see if we have a patient file in our csv_root dir first
-            File f = new File(csv_root+"patient.init.json");
-            if(f.exists())
-              patient.readFile(csv_root+"patient.init.json");
-            else
-              patient.readFile("./stable/"+patientName+".json");
-          }
 
           allRows.clear();
           tables.clear();
@@ -313,58 +394,7 @@ public abstract class ValidationTool
               String cellValue = cell.getStringCellValue();
               if(cellValue==null||cellValue.isEmpty())
                 continue;// No property, skip it
-              // Check to see if this has a patient table
-              // We can push patient values to for dynamic validation
-              if(cellValue.equals("Patient Inputs"))
-              {
-                for (r++; r < rows; r++)
-                {
-                  row = xlSheet.getRow(r);
-                  Cell cName = row.getCell(0);
-                  Cell cUnits = row.getCell(1);
-                  Cell cValue = row.getCell(2);
-                  String name = cName.getStringCellValue();
-                  if(name == null||name.isEmpty())
-                    break;
-                  if(name.equals("Gender"))
-                  {
-                    if(patient == null)
-                    {
-                      Log.info("Using default gender of "+cValue.getStringCellValue());
-                      continue;// Just step through these to the end
-                    }
-                    String gender = patient.getSex()==eSex.Male?"Male":"Female";
-                    cValue.setCellValue(gender);
-                    Log.info("Setting patient gender to "+gender);
-                    continue;
-                  }
-                  if(cValue.getCellType() != CellType.NUMERIC)
-                  {
-                    //evaluator.evaluateFormulaCell(cValue);
-                    Log.info("Using equation for "+name+ ", which computed value of "+cValue.getNumericCellValue()+cUnits.getStringCellValue());
-                    continue;// Skip equations
-                  }
-                  String units = "";
-                  if(cUnits != null)
-                    units = cUnits.getStringCellValue();
-                  if(patient == null)
-                  {
-                    Log.info("Using the default "+name+" of "+cValue.getNumericCellValue()+cUnits.getStringCellValue());
-                    continue;// Just step through these to the end
-                  }
-                  Method m = SEPatient.class.getMethod("get"+name);
-                  SEScalar s = ((SEScalar)m.invoke(patient));
-                  if(s.isValid())
-                  {
-                    double value = s.getValue(units);
-                    Log.info("Setting patient "+name+" to "+value+units);
-                    cValue.setCellValue(value);
-                  }
-                  else
-                    Log.error("Patient does not have a value for "+name+", using default in spreadsheet");
-                }
-                continue;
-              }
+              
               if (row.getCell(1) != null)
                 cellValue = row.getCell(1).getStringCellValue();
               if(cellValue!=null&&cellValue.equals("Units"))
@@ -448,8 +478,8 @@ public abstract class ValidationTool
                     }
                     break;
                   case 3://D Male Multiplier
-                    break;
-                  case 4://E Femaile Multiplier
+                  case 4://E Female Multiplier
+                	  break;
                   case 5://F
                     // Replace any return characters with empty
                     if(patientValidation && vRow.name.indexOf('*')==-1)
@@ -533,6 +563,8 @@ public abstract class ValidationTool
           {
             if(vRow.table.isEmpty())
               vRow.table = sheetName;//Default table is the sheet name
+            if(patient != null)
+            	vRow.table += "-" + patient.getName();
             if(!tables.containsKey(vRow.table))
               tables.put(vRow.table, new ArrayList<ValidationRow>());
             if(!tableErrors.containsKey(vRow.table))
