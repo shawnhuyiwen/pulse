@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     mode = argv[1];
   }
 
-  if( argc > 1)
+  if( argc > 2 )
   {
     if(!strcmp(argv[2], "-b") || !strcmp(argv[2], "--binary"))
     {
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
 
     pvg.GeneratePatientList(patients);
   }
-
+  
   PVRunner pvr(rootDir, &log);
   return !pvr.Run(patients, binary);
 }

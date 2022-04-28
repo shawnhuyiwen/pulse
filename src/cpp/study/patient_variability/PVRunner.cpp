@@ -133,7 +133,7 @@ namespace pulse::study::patient_variability
       Info("All Patients are run in the results file");
       return true;
     }
-    size_t processor_count = 1;//std::thread::hardware_concurrency();
+    size_t processor_count = std::thread::hardware_concurrency();
     if (processor_count == 0)
     {
       Fatal("Unable to detect number of processors");
