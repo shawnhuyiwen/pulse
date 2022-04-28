@@ -9,6 +9,7 @@ from os.path import exists
 
 # Possible result types
 class ResultType(Enum):
+    # Note this order matters for comparison
     Pass = 0
     Marginal = 1
     Fail = 2
@@ -118,7 +119,7 @@ def systemValidation(patients, passThreshold = 10, failThreshold = 30 ):
                 # Did this result get worse compared to the standard patient?
                 standardResult = getStandardResult(standard[patient.Sex], system, propertyName, passThreshold, failThreshold)
                 result = determineResultType(error, passThreshold, failThreshold)
-                if result != standardResult and (result == ResultType.Marginal or result == ResultType.Fail):
+                if result.value > standardResult.value:
                     byPatient[patient.Sex][patient.ID][result] += 1
                     bySystem[patient.Sex][system][propertyName][result] += 1
                     systemTotals[patient.Sex][system][result] += 1
