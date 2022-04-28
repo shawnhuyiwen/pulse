@@ -2870,7 +2870,7 @@ namespace pulse
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
           else
             //Tuned based on mechanical ventilator validation data
-            tracheaResistance_cmH2O_s_Per_L *= 11.0;
+            tracheaResistance_cmH2O_s_Per_L *= 12.5;
           break;
         }
         case eIntubation_Type::Esophageal:
