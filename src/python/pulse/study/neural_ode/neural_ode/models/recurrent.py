@@ -12,8 +12,8 @@ class GRU_with_std(nn.Module):
                  update_gate=None,
                  reset_gate=None,
                  new_state_net=None,
-                 n_units=100,
-                 device=torch.device("cpu")):
+                 n_units=100):
+
         super(GRU_with_std, self).__init__()
 
         if update_gate is None:
@@ -21,7 +21,7 @@ class GRU_with_std(nn.Module):
                 nn.Linear(h_dims * 2 + x_dims, n_units),
                 nn.Tanh(),
                 nn.Linear(n_units, h_dims),
-                nn.Sigmoid()).to(device)
+                nn.Sigmoid())
             utils.init_network_weights(self.update_gate)
         else:
             self.update_gate = update_gate
@@ -31,7 +31,7 @@ class GRU_with_std(nn.Module):
                 nn.Linear(h_dims * 2 + x_dims, n_units),
                 nn.Tanh(),
                 nn.Linear(n_units, h_dims),
-                nn.Sigmoid()).to(device)
+                nn.Sigmoid())
             utils.init_network_weights(self.reset_gate)
         else:
             self.reset_gate = reset_gate
@@ -40,7 +40,7 @@ class GRU_with_std(nn.Module):
             self.new_state_net = nn.Sequential(
                 nn.Linear(h_dims * 2 + x_dims, n_units),
                 nn.Tanh(),
-                nn.Linear(n_units, h_dims * 2)).to(device)
+                nn.Linear(n_units, h_dims * 2))
             utils.init_network_weights(self.new_state_net)
         else:
             self.new_state_net = new_state_net
@@ -69,25 +69,23 @@ class Recurrent(nn.Module):
 
         super(Recurrent, self).__init__()
         self.h_dims = diffeq_solver.diff_func.h_dims
-        self.device = diffeq_solver.diff_func.device
-        self.using = diffeq_solver.diff_func.using
+        from neural_ode.models.diff_func import CDEFunc
+        self.using = ('CDE' if isinstance(diffeq_solver.diff_func, CDEFunc) else 'ODE_RNN')
         self.diffeq_solver = diffeq_solver
-        self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std], device=self.device)
+        self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std])
 
         if self.using == "CDE":
             self.x_dims = x_dims
-            self.initial_net = nn.Linear(x_dims, self.h_dims, device=self.device)
+            self.initial_net = nn.Linear(x_dims, self.h_dims)
             utils.init_network_weights(self.initial_net)
-            self.output_net = nn.Linear(self.h_dims, y_dims, device=self.device)
-            utils.init_network_weights(self.output_net)
+            self.output_net = nn.Linear(self.h_dims, y_dims)
 
         elif self.using == "ODE_RNN":
             if RNN_net is None:
-                self.RNN_net = GRU_with_std(self.h_dims, x_dims, n_units=n_gru_units, device=self.device)
+                self.RNN_net = GRU_with_std(self.h_dims, x_dims, n_units=n_gru_units)
             else:
-                self.RNN_net = RNN_net.to(self.device)
-            self.output_net = utils.create_net(self.h_dims, y_dims, n_out_units, device=self.device)
-            utils.init_network_weights(self.output_net)
+                self.RNN_net = RNN_net
+            self.output_net = utils.create_net(self.h_dims, y_dims, n_out_units)
 
         else:
             raise NotImplementedError
@@ -114,23 +112,14 @@ class Recurrent(nn.Module):
 
     def run_ODE_RNN(self, y_time_index, x, x_time):
         batch_size = x.shape[0]
-        if self.device != utils.get_device(x):
-            x.to(self.device)
-        if self.device != utils.get_device(x_time):
-            x_time.to(self.device)
-        if self.device != utils.get_device(y_time_index):
-            y_time_index.to(self.device)
 
-        prev_hi = torch.zeros((batch_size, self.h_dims), device=self.device)
-        prev_hi_std = torch.zeros((batch_size, self.h_dims), device=self.device)
+        prev_hi = torch.zeros((batch_size, self.h_dims))
+        prev_hi_std = torch.zeros((batch_size, self.h_dims))
 
         prev_ti, ti = x_time[-1] + 0.01, x_time[-1]
         #TRANS: Internal grid size
         interval_length = x_time[-1] - x_time[0]
         minimum_step = interval_length / 50
-
-        assert not torch.isnan(x).any()
-        assert not torch.isnan(x_time).any()
 
         time_points_iter = range(0, x_time.numel())
         outputs = []
@@ -141,41 +130,18 @@ class Recurrent(nn.Module):
                 inc = self.diffeq_solver.diff_func(
                     prev_ti, prev_hi) * (ti - prev_ti)  #TRANS: The linear increment
 
-                if torch.isnan(inc).any():
-                    print("inc is None!!")
-                    print(i)
-                    print(self.diffeq_solver.diff_func(prev_ti, prev_hi))
-                    print(torch.isnan(prev_hi).any())
-
-                assert not torch.isnan(ti - prev_ti).any()
-                assert not torch.isnan(prev_ti).any()
-                assert not torch.isnan(prev_hi).any()
 
                 hi_ode = prev_hi + inc
 
-                assert not torch.isnan(hi_ode).any()
-
             else:
                 n_intermediate_tp = max(2, ((prev_ti - ti) / minimum_step).int())
-                time_points = utils.linspace_vector(prev_ti, ti, n_intermediate_tp, device=self.device)
-
-                assert not torch.isnan(time_points).any()
-                assert not torch.isnan(prev_hi).any()
+                time_points = utils.linspace_vector(prev_ti, ti, n_intermediate_tp)
 
                 hi_ode = self.diffeq_solver(prev_hi, time_points)[:, -1, :]  #TRANS: Calculate the ODE, work out corresponding latent value to (1) finally can
 
-                assert not torch.isnan(hi_ode).any()
-
             xi = x[:, i, :]
 
-            assert not torch.isnan(xi).any()
-            assert not torch.isnan(hi_ode).any()
-            assert not torch.isnan(prev_hi_std).any()
-
             hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, xi)  #TRANS: Calculate the GRU helped
-
-            assert not torch.isnan(hi).any()
-            assert not torch.isnan(hi_std).any()
 
             outputs.append(self.output_net(hi))
             # prev_hi-(odesolver)->hi_ode-(GRU)->hi->prev_hi
@@ -183,18 +149,18 @@ class Recurrent(nn.Module):
             prev_ti, ti = x_time[i], x_time[i - 1]
 
         outputs = torch.stack(outputs, dim=1)
-        assert not torch.isnan(outputs).any()
         return outputs.index_select(1, y_time_index)
 
     def forward(self, y_time, x_data, x_time, x_mask=None):
+        # import xdev; xdev.embed()
         #TRANS: Complete sequence prediction
         if len(y_time.shape) < 1:
             y_time = y_time.unsqueeze(0)
         #TRANS: Stitching x_time and y_time
-        origin_time_points = len(x_time)
+        # TODO replace this with something less funky
+        x_len_orig = len(x_time)
         x_time, time_index = torch.unique(torch.cat((x_time, y_time)), return_inverse=True)
-        x_time_index = time_index[:origin_time_points]
-        y_time_index = time_index[origin_time_points:]
+        x_time_idx, y_time_idx = time_index[:x_len_orig], time_index[x_len_orig:]
 
         if self.using == "CDE":
             X = CubicSpline(x_data, x_time)
@@ -202,25 +168,18 @@ class Recurrent(nn.Module):
             h0 = self.initial_net(X0)
             hs = self.diffeq_solver(h0, x_time, X)
             outputs = self.output_net(hs)
-            assert not torch.isnan(outputs).any()
-            y_pred = outputs.index_select(1, y_time_index)
+            y_pred = outputs.index_select(1, y_time_idx)
 
         elif self.using == "ODE_RNN":
             if x_mask is not None:
                 x = x_data * x_mask  # [batch_size, x_time_points, x_dims]
             else:
                 x = x_data
-            if 0:
-                # TODO
-                pass
-            else:
-                batch_size, x_dims = x.shape[0], x.shape[2]
-                #TRANS: To expand the x
-                x_merged = torch.zeros((batch_size, len(x_time), x_dims), dtype=x.dtype, device=utils.get_device(x))
-                for i, index in zip(range(len(x_time_index)), x_time_index):
-                    x_merged[:, index, :] = x[:, i, :]
-                x = x_merged
-            y_pred = self.run_ODE_RNN(y_time_index, x, x_time)
+            batch_size, x_dims = x.shape[0], x.shape[2]
+            #TRANS: To expand the x
+            x_merged = torch.zeros((batch_size, len(x_time), x_dims), dtype=x.dtype, device=utils.get_device(x))
+            x_merged[:, x_time_idx, :] = x
+            y_pred = self.run_ODE_RNN(y_time_idx, x_merged, x_time)
 
         else:
             raise NotImplementedError

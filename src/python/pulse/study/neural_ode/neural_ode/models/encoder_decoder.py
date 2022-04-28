@@ -25,8 +25,7 @@ class ODE_GRU_Encoder(nn.Module):
         self.x_dims = x_dims
         self.device = device
 
-        self.transform_h_last = utils.create_net(self.h_dims * 2, self.h_last_dim * 2, device=device)
-        utils.init_network_weights(self.transform_h_last)
+        self.transform_h_last = utils.create_net(self.h_dims * 2, self.h_last_dim * 2)
 
     def run_to_prior(self, x_data, x_time):
         assert not torch.isnan(x_time).any()
@@ -66,8 +65,6 @@ class ODE_GRU_Encoder(nn.Module):
         prev_hi = torch.zeros((batch_size, self.h_dims), device=self.device)
         prev_hi_std = torch.zeros((batch_size, self.h_dims), device=self.device)
 
-        assert not torch.isnan(x_time).any()
-
         prev_ti, ti = x_time[-1] + 0.01, x_time[-1]
         #TRANS: Internal grid size
         interval_length = x_time[-1] - x_time[0]
@@ -81,44 +78,21 @@ class ODE_GRU_Encoder(nn.Module):
                 time_points = torch.stack((prev_ti, ti))
                 inc = self.enc_diffeq_solver.diff_func(prev_ti, prev_hi) * (ti - prev_ti)  #TRANS: The linear increment
 
-                if torch.isnan(inc).any():
-                    print("inc is None!!")
-                    print(i)
-                    print(self.enc_diffeq_solver.diff_func(prev_ti, prev_hi))
-                    print(torch.isnan(prev_hi).any())
-
-                assert not torch.isnan(ti - prev_ti).any()
-                assert not torch.isnan(prev_ti).any()
-                assert not torch.isnan(prev_hi).any()
-
                 hi_ode = prev_hi + inc
-
-                assert not torch.isnan(hi_ode).any()
 
             else:
                 n_intermediate_tp = max(
                     2, ((prev_ti - ti) / minimum_step).int())
                 time_points = utils.linspace_vector(prev_ti, ti, n_intermediate_tp, device=self.device)
 
-                assert not torch.isnan(time_points).any()
-                assert not torch.isnan(prev_hi).any()
-
                 hi_ode = self.enc_diffeq_solver(prev_hi, time_points)[:, -1, :]  #TRANS: Calculate the ODE, work out corresponding latent value to (1) finally can
 
-                assert not torch.isnan(hi_ode).any()
-
             xi = x_data[:, i, :]
-
-            assert not torch.isnan(hi_ode).any()
-            assert not torch.isnan(prev_hi_std).any()
 
             if torch.isnan(xi).any():
                 hi, hi_std = hi_ode, prev_hi_std
             else:
                 hi, hi_std = self.GRU_update(hi_ode, prev_hi_std, xi)  #TRANS: Calculate the GRU helped
-
-            assert not torch.isnan(hi).any()
-            assert not torch.isnan(hi_std).any()
 
             # prev_hi-(odesolver)->hi_ode-(GRU)->hi->prev_hi
             prev_hi, prev_hi_std = hi, hi_std
@@ -129,20 +103,16 @@ class ODE_GRU_Encoder(nn.Module):
 
         if return_latents:
             hs = torch.stack(hs, 1)
-            assert not torch.isnan(hs).any()
             return hs
         else:
-            assert not torch.isnan(hi).any()
-            assert not torch.isnan(hi_std).any()
             return hi, hi_std
 
 
 class ODE_Decoder(nn.Module):
     #TRANS: The ODE as decoder
-    def __init__(self, y_dims, h_dims, n_out_units, dec_diffeq_solver, device=torch.device("cpu")):
+    def __init__(self, y_dims, h_dims, n_out_units, dec_diffeq_solver):
         super(ODE_Decoder, self).__init__()
-        self.output_net = utils.create_net(h_dims, y_dims, n_out_units, device=device)
-        utils.init_network_weights(self.output_net)
+        self.output_net = utils.create_net(h_dims, y_dims, n_out_units)
 
         self.dec_diffeq_solver = dec_diffeq_solver
 

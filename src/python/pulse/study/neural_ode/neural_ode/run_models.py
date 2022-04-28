@@ -70,12 +70,8 @@ def get_diffeq_solver(using: Literal['ODE_RNN', 'CDE'],
 
 def prepare_to_train(dsetter: utils.ProcessDataset,
                      load_ckpt: Optional[ub.Path],
-                     device: Optional[str],
                      lr: float,
                      progress_train: bool = False):
-    if device is None:
-        device = torch.device(
-            "cpu") if not torch.cuda.is_available() else torch.device("cuda:0")
     #TRANS: The data set
     train_dict, val_dict, test_dict, x_dims, y_dims = dsetter.get_data(
         arch=cf.get('arch', get_model))
@@ -83,10 +79,9 @@ def prepare_to_train(dsetter: utils.ProcessDataset,
     if load_ckpt:
         model, optimizer, scheduler, pre_points, experimentID = utils.load_checkpoint(
             load_ckpt)
-        model.to(device)
     else:
         #TRANS: The value of the model, the optimizer, LR changes
-        model = get_model(**cf.get(), x_dims=x_dims, y_dims=y_dims).to(device)
+        model = get_model(**cf.get(), x_dims=x_dims, y_dims=y_dims)
         optimizer = torch.optim.Adamax(model.parameters(), lr=lr)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                                patience=10)
@@ -173,11 +168,10 @@ def main(test_for_epochs: int,
          max_epochs: int,
          kl_coef: float,
          patience_for_no_better_epochs: int,
-         save_res_for_epochs=np.inf,
-         device=None):
+         save_res_for_epochs=np.inf):
     dsetter = utils.ProcessDataset(**cf.get())
     (model, optimizer, scheduler, pre_points, experimentID, train_dict,
-     val_dict, test_dict) = prepare_to_train(dsetter, device=device, **cf.get())
+     val_dict, test_dict) = prepare_to_train(dsetter, **cf.get())
     (logger, res_files, train_res_csv, val_res_csv, fig_saveat,
      ckpt_saveat) = utils.get_logger_and_save(
          model,
@@ -186,9 +180,6 @@ def main(test_for_epochs: int,
          save_res_for_epochs=save_res_for_epochs)
     ode_time = cf.get('ode_time', utils.ProcessDataset)
 
-    if device is None:
-        device = torch.device(
-            "cpu") if not torch.cuda.is_available() else torch.device("cuda:0")
     #TRANS: Start training
     #TRANS: Sampling part of the point, progress_training forecast more gradually
     train_dataloader = dsetter.masked_dataloader(train_dict,
@@ -205,7 +196,7 @@ def main(test_for_epochs: int,
     pbar = tqdm(total=test_for_epochs)
 
     #TRANS: Used to hold the best model and decide whether to quit the training
-    best_metric = torch.tensor([torch.inf], device=device)
+    best_metric = torch.tensor([torch.inf])
     best_metric_epoch = 0
     stop_training = False
 
@@ -312,6 +303,7 @@ def main(test_for_epochs: int,
 
 if __name__ == "__main__":
     from neural_ode.args import default
-    from neural_ode.run_models import main
+    from neural_ode.run_models import main, get_model
     default()
+    cf.add({get_model: cf.Args(arch='Recurrent')}, overwrite=True)
     main(**cf.get())

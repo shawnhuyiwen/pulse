@@ -480,23 +480,23 @@ def create_net(input_dims,
                n_units=100,
                hidden_layers=0,
                nonlinear=nn.Tanh,
-               device=torch.device('cpu'),
                return_dim=False):
     if output_dims is None:
         output_dims = input_dims
-    layers = [nn.Linear(input_dims, n_units)]
 
-    for _ in range(hidden_layers):
-        layers.append(nonlinear())
-        layers.append(nn.Linear(n_units, n_units))
-
-    layers.append(nonlinear())
-    layers.append(nn.Linear(n_units, output_dims))
+    net = nn.Sequential(
+        nn.Linear(input_dims, n_units),
+        *([
+            nonlinear(),
+            nn.Linear(n_units, n_units)
+        ] * hidden_layers),
+        nonlinear(),
+        nn.Linear(n_units, output_dims))
     #TRANS: In the function of passing, * trying to object to a tuple (variable parameter), * * trying to object to a dictionary (keyword arguments), both can be introduced to zero or any parameters
     if return_dim:
-        return nn.Sequential(*layers).to(device), input_dims, output_dims
+        return net, input_dims, output_dims
     else:
-        return nn.Sequential(*layers).to(device)
+        return net
 
 
 def split_last_dim(data):
