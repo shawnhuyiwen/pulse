@@ -219,7 +219,7 @@ def writeAnalysis(patientAnalysis, systemsAnalysis):
         spacer = "---------------------------------------------------------------------------------------------------------------------------\n"
         with open(basePath + "SystemValidationByPatient-" + sexLabels[sex] + ".txt", "w") as f:
             f.write("****Only stabilized patients are included in results below.****\n".format(numStabilizedPatients))
-            f.write("Values indicate change from standard patient baseline.\n")
+            f.write("Values indicate degradation from standard patient baseline.\n")
             f.write("\nSystem Validation Results (by patient) -- " + sexLabels[sex] + "\n" + spacer)
             format_row = "{:>12}" * 4 + "{:>75}" + "\n"
             f.write(format_row.format("ID", "Green", "Yellow", "Red", "Base Filename"))
@@ -232,7 +232,7 @@ def writeAnalysis(patientAnalysis, systemsAnalysis):
         total = initResultsDict()
         with open(basePath + "SystemValidationSummary-" + sexLabels[sex] + ".txt", "w") as f:
             f.write("****Following results based on the {} stabilized patients****\n".format(numStabilizedPatients))
-            f.write("Values indicate change from standard patient baseline.\n")
+            f.write("Values indicate degradation from standard patient baseline.\n")
             
             # System validation summaries
             f.write("\nSystem Validation Results (by System) -- " + sexLabels[sex] + "\n" + spacer)
