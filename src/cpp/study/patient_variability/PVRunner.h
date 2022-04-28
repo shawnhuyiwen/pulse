@@ -19,11 +19,11 @@ namespace pulse::study::patient_variability
   class PVRunner : public Loggable
   {
   public:
-    PVRunner(Logger* logger=nullptr);
+    PVRunner(const std::string& rootDir, Logger* logger=nullptr);
     virtual ~PVRunner();
 
-    bool Run(const std::string& filename, const std::string& rootDir, bool binaryResultsFile = false);
-    bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients, const std::string& rootDir, bool binaryResultsFile = false);
+    bool Run(const std::string& filename, bool binaryResultsFile = false);
+    bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients, bool binaryResultsFile = false);
 
   protected:
     bool Run();
@@ -35,6 +35,8 @@ namespace pulse::study::patient_variability
     void ControllerLoop();
     bool RunPatient(pulse::study::bind::patient_variability::PatientStateData& patient);
     pulse::study::bind::patient_variability::PatientStateData* GetNextPatient();
+
+    bool AggregateResults(pulse::study::bind::patient_variability::PatientStateData& patient, const std::vector<std::string>& validation_files, Logger* logger);
 
     std::mutex  m_mutex;
 

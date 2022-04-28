@@ -136,6 +136,6 @@ int main(int argc, char* argv[])
     pvg.GeneratePatientList(patients);
   }
 
-  PVRunner pvr(&log);
-  return !pvr.Run(patients, rootDir, binary);
+  PVRunner pvr(rootDir, &log);
+  return !pvr.Run(patients, binary);
 }

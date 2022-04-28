@@ -27,10 +27,35 @@ using namespace pulse;
 
 namespace pulse::study::patient_variability
 {
-  PVRunner::PVRunner(Logger* logger) : Loggable(logger)
+  PVRunner::PVRunner(const std::string& rootDir, Logger* logger) : Loggable(logger)
   {
+    m_RootDir = rootDir;
     m_PatientList = nullptr;
     m_PatientResultsList = nullptr;
+
+    // Generate json files for standard male and female validation data from baselines
+    // If json files already exist don't redo that work
+    if (!FileExists(m_RootDir + "/standard_results.json"))
+    {
+      std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING=./verification/scenarios/validation/systems -DARG2:STRING=false -P run.cmake";
+      std::system(command.c_str());
+
+      // Standard male
+      pulse::study::bind::patient_variability::PatientStateListData standardResults;
+      std::vector<std::string> standardPatients{"StandardMale", "StandardFemale"};
+      for( auto& standard: standardPatients )
+      {
+        auto patient= standardResults.add_patient();
+        patient->set_outputbasefilename(standard);
+        std::vector<std::string> validation_files;
+        ListFiles("./verification/scenarios/validation/systems", validation_files, true, "-" + standard + "ValidationResults.json");
+        if(!AggregateResults(*patient, validation_files, GetLogger()))
+        {
+          GetLogger()->Warning("Unable to aggregate results for " + standard);
+        }
+      }
+      SerializeToFile(standardResults, m_RootDir + "/standard_results.json");
+    }
   }
   PVRunner::~PVRunner()
   {
@@ -38,13 +63,12 @@ namespace pulse::study::patient_variability
     SAFE_DELETE(m_PatientResultsList);
   }
 
-  bool PVRunner::Run(pulse::study::bind::patient_variability::PatientStateListData& simList, const std::string& rootDir, bool binaryResultsFile)
+  bool PVRunner::Run(pulse::study::bind::patient_variability::PatientStateListData& simList, bool binaryResultsFile)
   {
-    m_RootDir = rootDir;
     if(!binaryResultsFile)
-      m_PatientResultsListFile = rootDir + "/patient_results.json";
+      m_PatientResultsListFile = m_RootDir + "/patient_results.json";
     else
-      m_PatientResultsListFile = rootDir + "/patient_results.pbb";
+      m_PatientResultsListFile = m_RootDir + "/patient_results.pbb";
     SAFE_DELETE(m_PatientList);
     SAFE_DELETE(m_PatientResultsList);
     m_PatientList = &simList;
@@ -62,9 +86,9 @@ namespace pulse::study::patient_variability
     return b;
   }
 
-  bool PVRunner::Run(const std::string& filename, const std::string& rootDir, bool binaryResultsFile)
+  bool PVRunner::Run(const std::string& filename, bool binaryResultsFile)
   {
-    m_RootDir = rootDir;
+    
     SAFE_DELETE(m_PatientList);
     SAFE_DELETE(m_PatientResultsList);
     m_PatientList = new pulse::study::bind::patient_variability::PatientStateListData();
@@ -74,9 +98,9 @@ namespace pulse::study::patient_variability
       return false;
     // Let's try to read in a results file
     if(!binaryResultsFile)
-      m_PatientResultsListFile = rootDir + "/patient_results.json";
+      m_PatientResultsListFile = m_RootDir + "/patient_results.json";
     else
-      m_PatientResultsListFile = rootDir + "/patient_results.pbb";
+      m_PatientResultsListFile = m_RootDir + "/patient_results.pbb";
     if (FileExists(m_PatientResultsListFile))
     {
       if (!SerializeFromFile(m_PatientResultsListFile, *m_PatientResultsList))
@@ -275,19 +299,8 @@ namespace pulse::study::patient_variability
     //Retrieve all validation json files for patient and serialize data from those files
     std::vector<std::string> validation_files;
     ListFiles(m_RootDir + patient.outputbasefilename(), validation_files, true, "ValidationResults.json");
-    const auto& vMap = patient.mutable_validationmap();
-    for(auto validation_filepath: validation_files)
-    {
-      std::string validation_filename;
-      SplitFilenamePath(validation_filepath, validation_filename);
-
-      //Serialize the file contents
-      pulse::cdm::bind::PropertyValidationListData vList;
-      if(!PBUtils::SerializeFromFile(validation_filepath, vList, pulse->GetLogger()))
-        return false;
-
-      (*vMap)[validation_filename] = vList;
-    }
+    if(!AggregateResults(patient, validation_files, pulse->GetLogger()))
+      return false;
 
     // Add our results to our results file
     m_mutex.lock();
@@ -360,5 +373,23 @@ namespace pulse::study::patient_variability
   bool PVRunner::SerializeFromFile(const std::string& filename, pulse::study::bind::patient_variability::PatientStateListData& dst)
   {
     return PBUtils::SerializeFromFile(filename, dst, GetLogger());
+  }
+
+  bool PVRunner::AggregateResults(pulse::study::bind::patient_variability::PatientStateData& patient, const std::vector<std::string>& validation_files, Logger* logger)
+  {
+    const auto& vMap = patient.mutable_validationmap();
+    for(auto validation_filepath: validation_files)
+    {
+      std::string validation_filename;
+      SplitFilenamePath(validation_filepath, validation_filename);
+
+      //Serialize the file contents
+      pulse::cdm::bind::PropertyValidationListData vList;
+      if(!PBUtils::SerializeFromFile(validation_filepath, vList, logger))
+        return false;
+
+      (*vMap)[validation_filename] = vList;
+    }
+    return true;
   }
 }

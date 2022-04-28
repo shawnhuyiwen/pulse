@@ -1,76 +1,253 @@
 from pulse.study.bind.PatientVariability_pb2 import *
 from pulse.cdm.bind.TestReport_pb2 import PropertyValidationListData, PropertyValidationData
+from pulse.cdm.bind.Patient_pb2 import PatientData
 from google.protobuf import json_format
 
 from enum import Enum
 from typing import NamedTuple
 from os.path import exists
 
+# Possible result types
 class ResultType(Enum):
-    PASS = 0
-    FAIL = 1
-    MARGINAL = 2
+    Pass = 0
+    Marginal = 1
+    Fail = 2
 
+
+# Results for Patient Validation, not compared to standard patients
 class PatientValidationAnalysis(NamedTuple):
+    # sex -> id -> ResultType
     byPatient: dict
+
+    # sex -> property name -> ResultType
     byProperty: dict
-    stabilizationFailures: list
 
+    # sex -> list of id's of patients that failed to stabilize
+    stabilizationFailures: dict
+
+
+# Results for System Validation, compared to standard baselines
 class SystemsAnalysis(NamedTuple):
-    pass
+    # sex -> id -> ResultType
+    byPatient: dict
+
+    # sex -> system name -> property name -> ResultType
+    bySystem: dict
+
+    # sex -> system name -> ResultType
+    systemTotals: dict
 
 
-def systemsValidation(patients, passThreshold = 10, failThreshold = 30 ):
-    byPatient = {}
-    byProperty = {}
+# Determine pass/fail/in-between from error
+def determineResultType(error, passThreshold = 10, failThreshold = 30):
+    if abs(error) < passThreshold:
+        return ResultType.Pass
+    elif abs(error) < failThreshold:
+        return ResultType.Marginal
+    else:
+        return ResultType.Fail
+
+
+# Zero-initialized dictionary of ResultTypes
+def initResultsDict():
+    return {ResultType.Pass: 0, ResultType.Fail: 0, ResultType.Marginal: 0}
+
+
+# Dictonary of empty dictionaries for each sex
+def initSexDict():
+    return {PatientData.eSex.Male: {}, PatientData.eSex.Female: {}}
+
+
+# Determine result of standard paitent for given criteria
+def getStandardResult(standardPatient, system, propertyName, passThreshold = 10, failThreshold = 30):
+    filename = system + "-" + standardPatient.OutputBaseFilename + "ValidationResults.json"
+    propertyList = standardPatient.ValidationMap[filename]
+    for p in propertyList.Property:
+        if p.Name == propertyName:
+            return determineResultType(p.Error, passThreshold, failThreshold)
+
+
+# Process system validation data
+def systemValidation(patients, passThreshold = 10, failThreshold = 30 ):
+
+    # Load standard patient results for comparison
+    standardResults = PatientStateListData()
+    with open("./test_results/patient_variability/standard_results.json") as f:
+        json = f.read()
+    json_format.Parse(json, standardResults)
+    standard = {}
+    for patient in standardResults.Patient:
+        if patient.OutputBaseFilename == "StandardMale":
+            standard[PatientData.eSex.Male] = patient
+        elif patient.OutputBaseFilename == "StandardFemale":
+            standard[PatientData.eSex.Female] = patient
+
+    byPatient = initSexDict()
+    bySystem = initSexDict()
+    systemTotals = initSexDict()
     for patient in patients:
         # Only look at stabilized patients
         if not patient.AchievedStabilization:
             continue
 
-        # Loop through all systems results
+        # Loop through all system results
+        byPatient[patient.Sex][patient.ID] = initResultsDict()
         for file in patient.ValidationMap:
+            # Patient validation taken care of separately
             if file == "Patient" + str(patient.ID) + "ValidationResults.json":
                 continue
+            
+            # Extract system from file name
+            system = file[:(file.find("-Patient" + str(patient.ID) + "ValidationResults.json"))]
+            if system not in bySystem[patient.Sex]:
+                bySystem[patient.Sex][system] = {}
+                systemTotals[patient.Sex][system] = initResultsDict()
 
+            # Iterate over every property in each system
+            propertyList = patient.ValidationMap[file]
+            for p in propertyList.Property:
+                propertyName = p.Name
+                error = p.Error
 
+                if propertyName not in bySystem[patient.Sex][system]:
+                    bySystem[patient.Sex][system][propertyName] = initResultsDict()
+
+                # Did this result get worse compared to the standard patient?
+                standardResult = getStandardResult(standard[patient.Sex], system, propertyName, passThreshold, failThreshold)
+                result = determineResultType(error, passThreshold, failThreshold)
+                if result != standardResult and (result == ResultType.Marginal or result == ResultType.Fail):
+                    byPatient[patient.Sex][patient.ID][result] += 1
+                    bySystem[patient.Sex][system][propertyName][result] += 1
+                    systemTotals[patient.Sex][system][result] += 1
+                    byPatient[patient.Sex][patient.ID][standardResult] -= 1
+                    bySystem[patient.Sex][system][propertyName][standardResult] -= 1
+                    systemTotals[patient.Sex][system][standardResult] -= 1
+
+    return SystemsAnalysis(byPatient, bySystem, systemTotals)
+
+# Process patient validation data
 def patientValidation(patients, passThreshold = 10, failThreshold = 30):
-    stabilizationFailures = []
-    byPatient = {}
-    byProperty = {}
+    stabilizationFailures = {PatientData.eSex.Male: [], PatientData.eSex.Female: []}
+    byPatient = initSexDict()
+    byProperty = initSexDict()
     for patient in patients:
         # Did the patient fail to stabilize
         if not patient.AchievedStabilization:
-            stabilizationFailure.append(patient.ID)
+            stabilizationFailures[patient.Sex].append(patient.ID)
 
         # Get patient validation results for this patient
         propertyList = patient.ValidationMap["Patient" + str(patient.ID) + "ValidationResults.json"]
 
         # Determine pass/fail for each property
-        byPatient[patient.ID] = {ResultType.PASS: 0, ResultType.FAIL: 0, ResultType.MARGINAL: 0}
+        byPatient[patient.Sex][patient.ID] = initResultsDict()
         for p in propertyList.Property:
             propertyName = p.Name
             error = p.Error
-            if propertyName not in byProperty:
-                byProperty[propertyName] = {ResultType.PASS: 0, ResultType.FAIL: 0, ResultType.MARGINAL: 0}
 
-            # TODO: Only report change from standard patients instead of totals
-            if abs(error) < passThreshold:
-                byPatient[patient.ID][ResultType.PASS] += 1
-                byProperty[propertyName][ResultType.PASS] += 1
-            elif abs(error) < failThreshold:
-                byPatient[patient.ID][ResultType.MARGINAL] += 1
-                byProperty[propertyName][ResultType.MARGINAL] += 1
-            else:
-                byPatient[patient.ID][ResultType.FAIL] += 1
-                byProperty[propertyName][ResultType.FAIL] += 1
+            if propertyName not in byProperty[patient.Sex]:
+                byProperty[patient.Sex][propertyName] = initResultsDict()
+
+            result = determineResultType(error, passThreshold, failThreshold)
+            byPatient[patient.Sex][patient.ID][result] += 1
+            byProperty[patient.Sex][propertyName][result] += 1
     
     return PatientValidationAnalysis(byPatient, byProperty, stabilizationFailures)
 
-def parseResults(patients):
-    patientValidation(patients, 10, 30)
-            
+# Analysis driver
+def analyze(patients, passThreshold = 10, failThreshold = 30):
+    patientAnalysis = patientValidation(patients, passThreshold, failThreshold)
+    systemsAnalysis = systemValidation(patients, passThreshold, failThreshold)
+    writeAnalysis(patientAnalysis, systemsAnalysis)
 
+
+def writeAnalysis(patientAnalysis, systemsAnalysis):
+    # Separate everything by sex
+    sexLabels = {PatientData.eSex.Male: "Male", PatientData.eSex.Female: "Female"}
+    for sex in sexLabels.keys():
+        PAbyPatient = patientAnalysis.byPatient[sex]
+        PAbyProperty = patientAnalysis.byProperty[sex]
+        SAbyPatient = systemsAnalysis.byPatient[sex]
+        SAbySystem = systemsAnalysis.bySystem[sex]
+        SAtotals = systemsAnalysis.systemTotals[sex]
+
+        # Determine stabilized and unstabilized counts
+        totalPatientsRun = len(PAbyPatient)
+        numStabilizationFailures = len(patientAnalysis.stabilizationFailures[sex])
+        numStabilizedPatients = totalPatientsRun - numStabilizationFailures
+
+        spacer = "--------------------------------------------------------------------------\n"
+        basePath = "./test_results/patient_variability/"
+
+        # Patient validation by patient
+        with open(basePath + "PatientValidationByPatient-" + sexLabels[sex] + ".txt", "w") as f:
+            f.write("Stabilized {} of {} patients (failed to stabilize {} patients).\n".format(numStabilizedPatients, totalPatientsRun, numStabilizationFailures))
+            f.write("\nPatient Validation Results (by patient) -- " + sexLabels[sex] + " [" + str(len(PAbyProperty)) + " expected]\n" + spacer)
+            format_row = "{:>12}" * 4 + "\n"
+            f.write(format_row.format("ID", "Green", "Yellow", "Red"))
+            for p in sorted(PAbyPatient.keys(), key=lambda x: (PAbyPatient[x][ResultType.Pass], -PAbyPatient[x][ResultType.Fail], -PAbyPatient[x][ResultType.Marginal])):
+                patient = PAbyPatient[p]
+                stabilizedStr = ""
+                if p in patientAnalysis.stabilizationFailures[sex]:
+                    stabilizedStr = "*"
+                f.write(format_row.format(stabilizedStr+str(p), patient[ResultType.Pass], patient[ResultType.Marginal], patient[ResultType.Fail]))
+
+        # Patient validation summary by property
+        spacer = "----------------------------------------------------------------------------\n"
+        total = initResultsDict()
+        with open(basePath + "PatientValidationSummary-" + sexLabels[sex] + ".txt", "w") as f:
+            f.write("Stabilized {} of {} patients (failed to stabilize {} patients).\n".format(numStabilizedPatients, totalPatientsRun, numStabilizationFailures))
+            f.write("\nPatient Validation Results (by property) -- " + sexLabels[sex] + "\n" + spacer)
+            format_row = "{:>40}" + ("{:>12}" * 3) + "\n"
+            f.write(format_row.format("Property", "Green", "Yellow", "Red"))
+            for p in sorted(PAbyProperty.keys(), key=lambda x: (PAbyProperty[x][ResultType.Pass], -PAbyProperty[x][ResultType.Fail], -PAbyProperty[x][ResultType.Marginal])):
+                prop = PAbyProperty[p]
+                total[ResultType.Pass] += prop[ResultType.Pass]
+                total[ResultType.Marginal] += prop[ResultType.Marginal]
+                total[ResultType.Fail] += prop[ResultType.Fail]
+                f.write(format_row.format(p, prop[ResultType.Pass], prop[ResultType.Marginal], prop[ResultType.Fail]))
+            f.write("\n" + format_row.format("Total", total[ResultType.Pass], total[ResultType.Marginal], total[ResultType.Fail]) + "\n")
+
+        # System validation by patient
+        with open(basePath + "SystemValidationByPatient-" + sexLabels[sex] + ".txt", "w") as f:
+            f.write("****Only stabilized patients are included in results below.****\n".format(numStabilizedPatients))
+            f.write("Values indicate change from standard patient baseline.\n")
+            f.write("\nSystem Validation Results (by patient) -- " + sexLabels[sex] + "\n" + spacer)
+            format_row = "{:>12}" * 4 + "\n"
+            f.write(format_row.format("ID", "Green", "Yellow", "Red"))
+            for p in sorted(SAbyPatient.keys(), key=lambda x: (SAbyPatient[x][ResultType.Pass], -SAbyPatient[x][ResultType.Fail], -SAbyPatient[x][ResultType.Marginal])):
+                patient = SAbyPatient[p]
+                f.write(format_row.format(p, patient[ResultType.Pass], patient[ResultType.Marginal], patient[ResultType.Fail]))
+
+        # System validation summary by systems/properties
+        spacer = "---------------------------------------------------------------------------------------------------------\n"
+        total = initResultsDict()
+        with open(basePath + "SystemValidationSummary-" + sexLabels[sex] + ".txt", "w") as f:
+            f.write("****Following results based on the {} stabilized patients****\n".format(numStabilizedPatients))
+            f.write("Values indicate change from standard patient baseline.\n")
+            
+            # System validation summaries
+            f.write("\nSystem Validation Results (by System) -- " + sexLabels[sex] + "\n" + spacer)
+            format_row = "{:>40}" + ("{:>15}" * 3) + "\n"
+            f.write(format_row.format("System", "Green", "Yellow", "Red"))
+            for s in sorted(SAtotals.keys(), key=lambda x: (SAtotals[x][ResultType.Pass], -SAtotals[x][ResultType.Fail], -SAtotals[x][ResultType.Marginal])):
+                total[ResultType.Pass] += SAtotals[s][ResultType.Pass]
+                total[ResultType.Marginal] += SAtotals[s][ResultType.Marginal]
+                total[ResultType.Fail] += SAtotals[s][ResultType.Fail]
+                f.write(format_row.format(s + " (overall)", SAtotals[s][ResultType.Pass], SAtotals[s][ResultType.Marginal], SAtotals[s][ResultType.Fail]))
+            f.write("\n" + format_row.format("Total", total[ResultType.Pass], total[ResultType.Marginal], total[ResultType.Fail]) + "\n")
+
+            # System-specific validation by properties
+            format_row = "{:>60}" + ("{:>15}" * 3) + "\n"
+            for s in sorted(SAbySystem.keys()):
+                sys = SAbySystem[s]
+                f.write("\n" + s + " -- " + sexLabels[sex] + "\n" + spacer)
+                f.write(format_row.format("Property", "Green", "Yellow", "Red"))
+                for prop in sorted(sys.keys(), key=lambda x: (sys[x][ResultType.Pass], -sys[x][ResultType.Fail], -sys[x][ResultType.Marginal])):
+                    f.write(format_row.format(prop, sys[prop][ResultType.Pass], sys[prop][ResultType.Marginal], sys[prop][ResultType.Fail]))
+                f.write("\n" + format_row.format("Total", SAtotals[s][ResultType.Pass], SAtotals[s][ResultType.Marginal], SAtotals[s][ResultType.Fail]) + "\n")
+
+
+       
 if __name__ == '__main__':
     # Load up result set
     results = PatientStateListData()
@@ -85,6 +262,6 @@ if __name__ == '__main__':
             json = f.read()
         json_format.Parse(json, results)
 
-    patientAnalysis = patientValidation(results.Patient)
-    print(patientAnalysis.byPatient)
-    print(patientAnalysis.byProperty)
+    # Process results
+    analyze(results.Patient, 10, 30)
+    
