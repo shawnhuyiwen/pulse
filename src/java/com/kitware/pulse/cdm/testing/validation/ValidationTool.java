@@ -227,12 +227,14 @@ public abstract class ValidationTool
 		String directoryName = DEFAULT_DIRECTORY;
 		String fileName = DEFAULT_FILE;
 		String destinationDirectory = DEST_DIRECTORY;
+		String html_root = "./test_results/";
 		if (csv_root.equals("TEST"))
 			csv_root = "./test_results/scenarios/validation/"+VALIDATION_FOLDER+"/";
 		else if(csv_root.equals("BASELINE"))
 			csv_root = "./verification/scenarios/validation/"+VALIDATION_FOLDER+"/";
 		else
 		{
+			html_root = csv_root + "/";
 			Log.info("Looking for csv files in "+csv_root+"...");
 			File f = new File(csv_root);
 			if(f.list(fileFilter).length > 0)
@@ -593,25 +595,25 @@ public abstract class ValidationTool
 						if(name.contains("All"))
 							continue;
 						List<ValidationRow> t = tables.get(name);
+						AddToSummary(summary, name, t);
+						WriteHTML(t,name);
+						if(name.equalsIgnoreCase(sheetName))
+						{
+							List<String> properties = new ArrayList<>();
+							for(ValidationRow vRow : t)  
+								properties.add(vRow.name);
+							for(ValidationRow vRow : tableErrors.get(name))  
+								properties.add(vRow.name);
+							CrossCheckValidationWithSchema(properties, tableErrors.get(name), name);
+						}
+						WriteHTML(tableErrors.get(name),name+"Errors");
 						if(RUN_TYPE == RunType.DOC)
 						{
-							AddToSummary(summary, name, t);
-							WriteHTML(t,name);
 							WriteDoxyTable(t,name,destinationDirectory);
-							if(name.equalsIgnoreCase(sheetName))
-							{
-								List<String> properties = new ArrayList<>();
-								for(ValidationRow vRow : t)  
-									properties.add(vRow.name);
-								for(ValidationRow vRow : tableErrors.get(name))  
-									properties.add(vRow.name);
-								CrossCheckValidationWithSchema(properties, tableErrors.get(name), name);
-							}
-							WriteHTML(tableErrors.get(name),name+"Errors");
 							if(patientValidation)
 								CustomMarkdown(patient.getName(),destinationDirectory);
 						}
-						else
+						if(RUN_TYPE == RunType.DATA)
 						{
 							if(!t.isEmpty())
 								WriteValidationJson(t, csv_root+name+"ValidationResults.json");
@@ -621,21 +623,19 @@ public abstract class ValidationTool
 			}
 			xlWBook.close();
 			if(RUN_TYPE == RunType.DOC)
-			{
 				WriteSummary(summary, destinationDirectory);
-				WriteHTML(badSheets,fileName+" Errors");
-				html.append("</body>");
-				html.append("</html>");
-				try
-				{
-					BufferedWriter out = new BufferedWriter(new FileWriter("./test_results/"+TABLE_TYPE+"Validation.html"));
-					out.write(html.toString());
-					out.close();
-				}
-				catch(Exception ex)
-				{
-					Log.error("Unable to write "+TABLE_TYPE+" HTML validation report",ex);
-				}
+			WriteHTML(badSheets,fileName+" Errors");
+			html.append("</body>");
+			html.append("</html>");
+			try
+			{
+				BufferedWriter out = new BufferedWriter(new FileWriter(html_root+TABLE_TYPE+"Validation.html"));
+				out.write(html.toString());
+				out.close();
+			}
+			catch(Exception ex)
+			{
+				Log.error("Unable to write "+TABLE_TYPE+" HTML validation report",ex);
 			}
 		}
 		catch(Exception ex)

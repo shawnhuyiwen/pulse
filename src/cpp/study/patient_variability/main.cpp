@@ -10,25 +10,37 @@ using namespace pulse::study::patient_variability;
 
 int main(int argc, char* argv[])
 {
-  bool clear = true;
+  bool clear = false;
   bool binary = false;
-  std::string mode = "";
-  if (argc <= 1)
-  {
-    //mode = "full";
-    mode = "solo";
-    //mode = "test";
-  }
-  else
-  {
-    mode = argv[1];
-  }
+  bool postProcessOnly = false;
+  std::string mode = "solo";
 
-  if( argc > 2 )
+  // Process arguments
+  for(int i = 1; i < argc; ++i)
   {
-    if(!strcmp(argv[2], "-b") || !strcmp(argv[2], "--binary"))
+    // Mode?
+    if(!strcmp(argv[i], "full") || !strcmp(argv[i], "solo") || !strcmp(argv[i], "test"))
+    {
+      mode = argv[i];
+    }
+
+    // Binary output?
+    if(!strcmp(argv[i], "-b") || !strcmp(argv[i], "--binary"))
     {
       binary = true;
+    }
+
+    // Clear?
+    if(!strcmp(argv[i], "-c") || !strcmp(argv[i], "--clear"))
+    {
+      clear = true;
+    }
+
+    // Only post-processing?
+    if(!strcmp(argv[i], "-p") || !strcmp(argv[i], "--post-process"))
+    {
+      postProcessOnly = true;
+      clear = false;
     }
   }
   std::string rootDir = "./test_results/patient_variability/";
@@ -137,5 +149,5 @@ int main(int argc, char* argv[])
   }
   
   PVRunner pvr(rootDir, &log);
-  return !pvr.Run(patients, binary);
+  return !pvr.Run(patients, binary, postProcessOnly);
 }

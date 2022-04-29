@@ -32,6 +32,7 @@ namespace pulse::study::patient_variability
     m_RootDir = rootDir;
     m_PatientList = nullptr;
     m_PatientResultsList = nullptr;
+    m_PostProcessOnly = false;
 
     // Generate json files for standard male and female validation data from baselines
     // If json files already exist don't redo that work
@@ -63,19 +64,27 @@ namespace pulse::study::patient_variability
     SAFE_DELETE(m_PatientResultsList);
   }
 
-  bool PVRunner::Run(pulse::study::bind::patient_variability::PatientStateListData& simList, bool binaryResultsFile)
+  bool PVRunner::Run(pulse::study::bind::patient_variability::PatientStateListData& simList, bool binaryResultsFile, bool postProcessOnly)
   {
     if(!binaryResultsFile)
       m_PatientResultsListFile = m_RootDir + "/patient_results.json";
     else
       m_PatientResultsListFile = m_RootDir + "/patient_results.pbb";
+
+    m_PostProcessOnly = postProcessOnly;
+
     SAFE_DELETE(m_PatientList);
     SAFE_DELETE(m_PatientResultsList);
     m_PatientList = &simList;
     m_PatientResultsList = new pulse::study::bind::patient_variability::PatientStateListData();
     if (FileExists(m_PatientResultsListFile))
     {
-      if (!SerializeFromFile(m_PatientResultsListFile, *m_PatientResultsList))
+      if(m_PostProcessOnly)
+      {
+        if (std::remove(m_PatientResultsListFile.c_str()) != 0)
+          Error("Unable to remove file " + m_PatientResultsListFile);
+      }
+      else if (!SerializeFromFile(m_PatientResultsListFile, *m_PatientResultsList))
       {
         GetLogger()->Warning("Unable to read found results file");
       }
@@ -86,13 +95,14 @@ namespace pulse::study::patient_variability
     return b;
   }
 
-  bool PVRunner::Run(const std::string& filename, bool binaryResultsFile)
-  {
-    
+  bool PVRunner::Run(const std::string& filename, bool binaryResultsFile, bool postProcessOnly)
+  { 
     SAFE_DELETE(m_PatientList);
     SAFE_DELETE(m_PatientResultsList);
     m_PatientList = new pulse::study::bind::patient_variability::PatientStateListData();
     m_PatientResultsList = new pulse::study::bind::patient_variability::PatientStateListData();
+
+    m_PostProcessOnly = postProcessOnly;
 
     if (!SerializeFromFile(filename, *m_PatientList))
       return false;
@@ -103,7 +113,12 @@ namespace pulse::study::patient_variability
       m_PatientResultsListFile = m_RootDir + "/patient_results.pbb";
     if (FileExists(m_PatientResultsListFile))
     {
-      if (!SerializeFromFile(m_PatientResultsListFile, *m_PatientResultsList))
+      if(m_PostProcessOnly)
+      {
+        if (std::remove(m_PatientResultsListFile.c_str()) != 0)
+          Error("Unable to remove file " + m_PatientResultsListFile);
+      }
+      else if (!SerializeFromFile(m_PatientResultsListFile, *m_PatientResultsList))
       {
         GetLogger()->Warning("Unable to read found results file");
       }
@@ -198,100 +213,103 @@ namespace pulse::study::patient_variability
     profiler.Start("Total");
     profiler.Start("Status");
 
-    auto pulse = CreatePulseEngine();
-    // No logging to console (when threaded)
-    pulse->GetLogger()->LogToConsole(false);
-    // But, do write a log file
-    pulse->GetLogger()->SetLogFile(m_RootDir + patient.outputbasefilename() + "/patient.log");
-    // Write out the computed patient baseline values so we can see how well we met them
-    PulseConfiguration cfg;
-    cfg.EnableWritePatientBaselineFile(eSwitch::On);
-    cfg.SetInitialPatientBaselineFilepath(m_RootDir + patient.outputbasefilename() + "/patient.init.json");
-    pulse->SetConfigurationOverride(&cfg);
-
-    // Read in all System and Patient validation scenarios
-    // Add in all the data requests from all of those files
-    std::string results = m_RootDir + patient.outputbasefilename() + "/AllValidationResults.csv";
-    pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(results);
-
-    std::string scenario_dir;
-
-    std::map<std::string, std::vector<std::string>> allScenarioRequests;
-    ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
-    if (config->HasKey("scenario_dir"))
+    if(!m_PostProcessOnly)
     {
-      scenario_dir = config->GetValue("scenario_dir");
+      auto pulse = CreatePulseEngine();
+      // No logging to console (when threaded)
+      pulse->GetLogger()->LogToConsole(false);
+      // But, do write a log file
+      pulse->GetLogger()->SetLogFile(m_RootDir + patient.outputbasefilename() + "/patient.log");
+      // Write out the computed patient baseline values so we can see how well we met them
+      PulseConfiguration cfg;
+      cfg.EnableWritePatientBaselineFile(eSwitch::On);
+      cfg.SetInitialPatientBaselineFilepath(m_RootDir + patient.outputbasefilename() + "/patient.init.json");
+      pulse->SetConfigurationOverride(&cfg);
 
-      //Retrieve all patients validation scenarios
-      std::vector<std::string> scenario_files;
-      ListFiles(scenario_dir + "/validation/patients", scenario_files, true, "Validation.json");
+      // Read in all System and Patient validation scenarios
+      // Add in all the data requests from all of those files
+      std::string results = m_RootDir + patient.outputbasefilename() + "/AllValidationResults.csv";
+      pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(results);
 
-      //Retrieve all systems validation scenarios
-      ListFiles(scenario_dir + "/validation/systems", scenario_files, true, "Validation.json");
+      std::string scenario_dir;
 
-      //Copy all data requests from each scenario
-      for(auto scenario_filepath: scenario_files)
+      std::map<std::string, std::vector<std::string>> allScenarioRequests;
+      ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
+      if (config->HasKey("scenario_dir"))
       {
-        PulseScenario s(pulse->GetLogger());
-        s.SerializeFromFile(scenario_filepath);
+        scenario_dir = config->GetValue("scenario_dir");
 
-        std::string scenario_filename;
-        SplitFilenamePath(scenario_filepath,scenario_filename);
-        std::string output_csv_file = Replace(scenario_filename, ".json", "Results.csv");
-        allScenarioRequests.insert(std::pair<std::string, std::vector<std::string>>(output_csv_file, std::vector<std::string>()));
+        //Retrieve all patients validation scenarios
+        std::vector<std::string> scenario_files;
+        ListFiles(scenario_dir + "/validation/patients", scenario_files, true, "Validation.json");
 
-        for(auto dr: s.GetDataRequestManager().GetDataRequests())
+        //Retrieve all systems validation scenarios
+        ListFiles(scenario_dir + "/validation/systems", scenario_files, true, "Validation.json");
+
+        //Copy all data requests from each scenario
+        for(auto scenario_filepath: scenario_files)
         {
-          SEDataRequest& new_dr = pulse->GetEngineTracker()->GetDataRequestManager().CopyDataRequest(*dr);
-          allScenarioRequests[output_csv_file].push_back(new_dr.GetHeaderName());
+          PulseScenario s(pulse->GetLogger());
+          s.SerializeFromFile(scenario_filepath);
+
+          std::string scenario_filename;
+          SplitFilenamePath(scenario_filepath,scenario_filename);
+          std::string output_csv_file = Replace(scenario_filename, ".json", "Results.csv");
+          allScenarioRequests.insert(std::pair<std::string, std::vector<std::string>>(output_csv_file, std::vector<std::string>()));
+
+          for(auto dr: s.GetDataRequestManager().GetDataRequests())
+          {
+            SEDataRequest& new_dr = pulse->GetEngineTracker()->GetDataRequestManager().CopyDataRequest(*dr);
+            allScenarioRequests[output_csv_file].push_back(new_dr.GetHeaderName());
+          }
         }
       }
-    }
-    else
-    {
-      Error("Cannot find scenario root... cannot add any data requests...");
-      return false;
-    }
-
-    // Create our patient
-    SEPatientConfiguration pc;
-    SEPatient& p = pc.GetPatient();
-    p.SetName("Patient"+std::to_string(patient.id()));
-    p.SetSex((ePatient_Sex)patient.sex());
-    p.GetAge().SetValue(patient.age_yr(), TimeUnit::yr);
-    p.GetHeight().SetValue(patient.height_cm(), LengthUnit::cm);
-    p.GetWeight().SetValue(patient.weight_kg(), MassUnit::kg);
-    p.GetHeartRateBaseline().SetValue(patient.heartrate_bpm(), FrequencyUnit::Per_min);
-    p.GetSystolicArterialPressureBaseline().SetValue(patient.systolicarterialpressure_mmhg(), PressureUnit::mmHg);
-    p.GetDiastolicArterialPressureBaseline().SetValue(patient.diastolicarterialpressure_mmhg(), PressureUnit::mmHg);
-    p.SerializeToFile(m_RootDir + patient.outputbasefilename() + "/patient.json");
-
-    if (!pulse->InitializeEngine(pc))
-    {
-      patient.set_achievedstabilization(false);
-      patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
-      return false;
-    }
-    patient.set_achievedstabilization(true);
-    patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
-    pulse->GetLogger()->Info("It took " + cdm::to_string(patient.stabilizationtime_s()) + "s to stabilize this Patient");
-
-    double dT_s = pulse->GetTimeStep(TimeUnit::s);
-    int count = static_cast<int>(120 / dT_s);
-
-    pulse->GetEngineTracker()->TrackData(0);
-    for (int i = 0; i < count; i++)
-    {
-      if (!pulse->AdvanceModelTime()) // Compute 1 time step
+      else
+      {
+        Error("Cannot find scenario root... cannot add any data requests...");
         return false;
-      // Pull Track will pull data from the engine and append it to the file
-      pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
-    }
-    pulse->GetEngineTracker()->ResetFile();// So we can close it
+      }
 
-    CSV::SplitCSV(results, allScenarioRequests);
-    if (std::remove(results.c_str()) != 0)
-      Error("Unable to remove file " + results);
+      // Create our patient
+      SEPatientConfiguration pc;
+      SEPatient& p = pc.GetPatient();
+      p.SetName("Patient"+std::to_string(patient.id()));
+      p.SetSex((ePatient_Sex)patient.sex());
+      p.GetAge().SetValue(patient.age_yr(), TimeUnit::yr);
+      p.GetHeight().SetValue(patient.height_cm(), LengthUnit::cm);
+      p.GetWeight().SetValue(patient.weight_kg(), MassUnit::kg);
+      p.GetHeartRateBaseline().SetValue(patient.heartrate_bpm(), FrequencyUnit::Per_min);
+      p.GetSystolicArterialPressureBaseline().SetValue(patient.systolicarterialpressure_mmhg(), PressureUnit::mmHg);
+      p.GetDiastolicArterialPressureBaseline().SetValue(patient.diastolicarterialpressure_mmhg(), PressureUnit::mmHg);
+      p.SerializeToFile(m_RootDir + patient.outputbasefilename() + "/patient.json");
+
+      if (!pulse->InitializeEngine(pc))
+      {
+        patient.set_achievedstabilization(false);
+        patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
+        return false;
+      }
+      patient.set_achievedstabilization(true);
+      patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
+      pulse->GetLogger()->Info("It took " + cdm::to_string(patient.stabilizationtime_s()) + "s to stabilize this Patient");
+
+      double dT_s = pulse->GetTimeStep(TimeUnit::s);
+      int count = static_cast<int>(120 / dT_s);
+
+      pulse->GetEngineTracker()->TrackData(0);
+      for (int i = 0; i < count; i++)
+      {
+        if (!pulse->AdvanceModelTime()) // Compute 1 time step
+          return false;
+        // Pull Track will pull data from the engine and append it to the file
+        pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
+      }
+      pulse->GetEngineTracker()->ResetFile();// So we can close it
+
+      CSV::SplitCSV(results, allScenarioRequests);
+      if (std::remove(results.c_str()) != 0)
+        Error("Unable to remove file " + results);
+  }
 
     std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING="+m_RootDir+patient.outputbasefilename()+" -DARG2:STRING=false -P run.cmake";
     std::system(command.c_str());
@@ -299,7 +317,7 @@ namespace pulse::study::patient_variability
     //Retrieve all validation json files for patient and serialize data from those files
     std::vector<std::string> validation_files;
     ListFiles(m_RootDir + patient.outputbasefilename(), validation_files, true, "ValidationResults.json");
-    if(!AggregateResults(patient, validation_files, pulse->GetLogger()))
+    if(!AggregateResults(patient, validation_files, GetLogger()))
       return false;
 
     // Add our results to our results file
@@ -308,10 +326,13 @@ namespace pulse::study::patient_variability
     pResult->CopyFrom(patient);
     SerializeToFile(*m_PatientResultsList, m_PatientResultsListFile);
     Info("Completed Simulation " + std::to_string(m_PatientResultsList->patient_size()) + " of " + std::to_string(m_PatientList->patient_size()));
-    if (patient.achievedstabilization())
-      Info("  Stabilized : " + patient.outputbasefilename());
-    else
-      Info("  FAILED STABILIZATION : " + patient.outputbasefilename());
+    if(!m_PostProcessOnly)
+    {
+      if (patient.achievedstabilization())
+        Info("  Stabilized : " + patient.outputbasefilename());
+      else
+        Info("  FAILED STABILIZATION : " + patient.outputbasefilename());
+    }
     m_mutex.unlock();
 
     profiler.Clear();

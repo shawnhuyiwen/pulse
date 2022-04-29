@@ -22,8 +22,8 @@ namespace pulse::study::patient_variability
     PVRunner(const std::string& rootDir, Logger* logger=nullptr);
     virtual ~PVRunner();
 
-    bool Run(const std::string& filename, bool binaryResultsFile = false);
-    bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients, bool binaryResultsFile = false);
+    bool Run(const std::string& filename, bool binaryResultsFile = false, bool postProcessOnly = false);
+    bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients, bool binaryResultsFile = false, bool postProcessOnly = false);
 
   protected:
     bool Run();
@@ -46,5 +46,7 @@ namespace pulse::study::patient_variability
     std::vector<std::thread>   m_Threads;
     pulse::study::bind::patient_variability::PatientStateListData* m_PatientList;
     pulse::study::bind::patient_variability::PatientStateListData* m_PatientResultsList;
+
+    bool m_PostProcessOnly;
   };
 }
