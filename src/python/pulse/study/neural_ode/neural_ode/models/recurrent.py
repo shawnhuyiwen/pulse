@@ -1,14 +1,18 @@
 import torch
 import torch.nn as nn
-from torchcde import CubicSpline
+from torchcde import CubicSpline, hermite_cubic_coefficients_with_backward_differences
 import neural_ode.models.utils as utils
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
 import einops
 import pytorch_forecasting as pf
+import pytorch_lightning as pl
 
 
 class GRU_with_std(nn.Module):
-    def __init__(self, h_dims, x_dims,
+
+    def __init__(self,
+                 h_dims,
+                 x_dims,
                  update_gate=None,
                  reset_gate=None,
                  new_state_net=None,
@@ -18,28 +22,23 @@ class GRU_with_std(nn.Module):
 
         if update_gate is None:
             self.update_gate = nn.Sequential(
-                nn.Linear(h_dims * 2 + x_dims, n_units),
-                nn.Tanh(),
-                nn.Linear(n_units, h_dims),
-                nn.Sigmoid())
+                nn.Linear(h_dims * 2 + x_dims, n_units), nn.Tanh(),
+                nn.Linear(n_units, h_dims), nn.Sigmoid())
             utils.init_network_weights(self.update_gate)
         else:
             self.update_gate = update_gate
 
         if reset_gate is None:
             self.reset_gate = nn.Sequential(
-                nn.Linear(h_dims * 2 + x_dims, n_units),
-                nn.Tanh(),
-                nn.Linear(n_units, h_dims),
-                nn.Sigmoid())
+                nn.Linear(h_dims * 2 + x_dims, n_units), nn.Tanh(),
+                nn.Linear(n_units, h_dims), nn.Sigmoid())
             utils.init_network_weights(self.reset_gate)
         else:
             self.reset_gate = reset_gate
 
         if new_state_net is None:
             self.new_state_net = nn.Sequential(
-                nn.Linear(h_dims * 2 + x_dims, n_units),
-                nn.Tanh(),
+                nn.Linear(h_dims * 2 + x_dims, n_units), nn.Tanh(),
                 nn.Linear(n_units, h_dims * 2))
             utils.init_network_weights(self.new_state_net)
         else:
@@ -52,7 +51,8 @@ class GRU_with_std(nn.Module):
         reset_gate = self.reset_gate(y_concat)
         concat = torch.cat((y_mean * reset_gate, y_std * reset_gate, x), -1)
 
-        new_state, new_state_std = utils.split_last_dim(self.new_state_net(concat))
+        new_state, new_state_std = utils.split_last_dim(
+            self.new_state_net(concat))
         new_state_std = new_state_std.abs()
 
         new_y = (1 - update_gate) * new_state + update_gate * y_mean
@@ -62,94 +62,132 @@ class GRU_with_std(nn.Module):
         return new_y, new_y_std
 
 
-class Recurrent(nn.Module):
-    def __init__(self, x_dims, y_dims,
-                 n_gru_units=100, n_out_units=100,
-                 diffeq_solver=None, RNN_net=None, gaussian_likelihood_std=0.02):
+# another implementation:
+# https://github.com/ashysheya/ODE-RNN/blob/master/lib/ode_rnn.py
+class ODE_RNN(nn.Module):
 
-        super(Recurrent, self).__init__()
+    def __init__(self, diffeq_solver, RNN_net):
+
+        super(ODE_RNN, self).__init__()
         self.h_dims = diffeq_solver.diff_func.h_dims
-        from neural_ode.models.diff_func import CDEFunc
-        self.using = ('CDE' if isinstance(diffeq_solver.diff_func, CDEFunc) else 'ODE_RNN')
-        self.diffeq_solver = diffeq_solver
-        self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std])
+        self.diffeq_solver = diffeq_solver  # TODO could use CDE?
+        self.RNN_net = RNN_net  # a GRU, probably
 
-        if self.using == "CDE":
-            self.x_dims = x_dims
-            self.initial_net = nn.Linear(x_dims, self.h_dims)
-            utils.init_network_weights(self.initial_net)
-            self.output_net = nn.Linear(self.h_dims, y_dims)
-
-        elif self.using == "ODE_RNN":
-            if RNN_net is None:
-                self.RNN_net = GRU_with_std(self.h_dims, x_dims, n_units=n_gru_units)
-            else:
-                self.RNN_net = RNN_net
-            self.output_net = utils.create_net(self.h_dims, y_dims, n_out_units)
-
-        else:
-            raise NotImplementedError
-
-    def compute_loss_one_batch(self, batch_dict, kl_coef=1.):
-        #TRANS: Predict the y series, including the observed and was not observed
-        y_pred = self.forward(batch_dict["y_time"], batch_dict["x_data"], batch_dict["x_time"], batch_dict["x_mask"])
-
-        #TRANS: To calculate indicators, batch_dict "y_mask" if is True, it should enter None
-        likelihood = get_log_likelihood(y_pred, batch_dict["y_data"], self.gaussian_likelihood_std, None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
-        mse_loss = get_mse(y_pred, batch_dict["y_data"], None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
-        loss = - torch.mean(likelihood)  #TRANS: To maximize the average log_likelihood back propagation
-
-        #TRANS: Take out the corresponding value
-        results = {}
-        results["loss"] = loss  #TRANS: Can't detach, otherwise can not backward
-        results["likelihood"] = likelihood.detach()
-        results["mse"] = mse_loss.detach()
-        results["kl_coef"] = kl_coef
-        results["C_kl"] = 0.
-        results["C_std"] = 0.
-
-        return results
-
-    def run_ODE_RNN(self, y_time_index, x, x_time):
+    # labeled x->h instead of x->y bc it'll usually be the hidden layer inside
+    # another model
+    def forward(self,
+                x,
+                x_time,
+                return_latents=False,
+                initial_dt=0.01,
+                min_step_frac=50):
         batch_size = x.shape[0]
 
         prev_hi = torch.zeros((batch_size, self.h_dims))
         prev_hi_std = torch.zeros((batch_size, self.h_dims))
 
+        # TODO why going backwards?
         prev_ti, ti = x_time[-1] + 0.01, x_time[-1]
         #TRANS: Internal grid size
         interval_length = x_time[-1] - x_time[0]
-        minimum_step = interval_length / 50
+        minimum_step = interval_length / min_step_frac
 
-        time_points_iter = range(0, x_time.numel())
-        outputs = []
+        hs = []
 
-        for i in time_points_iter:
-            if (prev_ti - ti) < minimum_step:  #TRANS: If it can not meet the minimum step direct linear increase
+        for i in range(x_time.numel()):
+            #TRANS: If it can not meet the minimum step direct linear increase
+            if (prev_ti - ti) < minimum_step:
+
                 time_points = torch.stack((prev_ti, ti))
-                inc = self.diffeq_solver.diff_func(
-                    prev_ti, prev_hi) * (ti - prev_ti)  #TRANS: The linear increment
-
-
+                #TRANS: The linear increment
+                inc = self.diffeq_solver.diff_func(prev_ti,
+                                                   prev_hi) * (ti - prev_ti)
                 hi_ode = prev_hi + inc
 
             else:
-                n_intermediate_tp = max(2, ((prev_ti - ti) / minimum_step).int())
-                time_points = utils.linspace_vector(prev_ti, ti, n_intermediate_tp)
+                n_intermediate_tp = max(2,
+                                        ((prev_ti - ti) / minimum_step).int())
+                time_points = utils.linspace_vector(prev_ti, ti,
+                                                    n_intermediate_tp)
+                #TRANS: Calculate the ODE, work out corresponding latent value
+                # to (1) finally can
+                hi_ode = self.diffeq_solver(prev_hi, time_points)[:, -1, :]
 
-                hi_ode = self.diffeq_solver(prev_hi, time_points)[:, -1, :]  #TRANS: Calculate the ODE, work out corresponding latent value to (1) finally can
+            #TRANS: Calculate the GRU helped
+            hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, x[:, i, :])
 
-            xi = x[:, i, :]
+            if return_latents:
+                hs.append(hi)
 
-            hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, xi)  #TRANS: Calculate the GRU helped
-
-            outputs.append(self.output_net(hi))
             # prev_hi-(odesolver)->hi_ode-(GRU)->hi->prev_hi
             prev_hi, prev_hi_std = hi, hi_std
             prev_ti, ti = x_time[i], x_time[i - 1]
 
-        outputs = torch.stack(outputs, dim=1)
-        return outputs.index_select(1, y_time_index)
+        if return_latents:
+            return torch.stack(hs, dim=1)
+        else:
+            return hi, hi_std
+
+def compute_loss_one_batch(y_pred, batch_dict, gaussian_likelihood_std, kl_coef=1.):
+
+    #TRANS: To calculate indicators, batch_dict "y_mask" if is True, it should enter None
+    likelihood = get_log_likelihood(
+        y_pred, batch_dict["y_data"], gaussian_likelihood_std,
+        None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
+    mse_loss = get_mse(
+        y_pred, batch_dict["y_data"],
+        None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
+    loss = -torch.mean(
+        likelihood
+    )  #TRANS: To maximize the average log_likelihood back propagation
+
+    #TRANS: Take out the corresponding value
+    results = {}
+    results[
+        "loss"] = loss  #TRANS: Can't detach, otherwise can not backward
+    results["likelihood"] = likelihood.detach()
+    results["mse"] = mse_loss.detach()
+    results["kl_coef"] = kl_coef
+    results["C_kl"] = 0.
+    results["C_std"] = 0.
+
+    return results
+
+class RecurrentODE(nn.Module):
+
+    def __init__(self,
+                 x_dims,
+                 y_dims,
+                 diffeq_solver,
+                 n_gru_units=100,
+                 n_out_units=100,
+                 RNN_net=None,
+                 gaussian_likelihood_std=0.02):
+
+        super(RecurrentODE, self).__init__()
+        self.h_dims = diffeq_solver.diff_func.h_dims
+        self.diffeq_solver = diffeq_solver
+        self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std])
+
+        self.using = 'ODE_RNN'
+
+        if RNN_net is None:
+            RNN_net = GRU_with_std(self.h_dims,
+                                   x_dims,
+                                   n_units=n_gru_units)
+        self.ODE_RNN = ODE_RNN(diffeq_solver, RNN_net)
+        self.output_net = utils.create_net(self.h_dims, y_dims,
+                                           n_out_units)
+
+    def compute_loss_one_batch(self, batch_dict, kl_coef=1.):
+        #TRANS: Predict the y series, including the observed and was not observed
+        y_pred = self.forward(batch_dict["y_time"], batch_dict["x_data"],
+                              batch_dict["x_time"], batch_dict["x_mask"])
+        return compute_loss_one_batch(
+            y_pred,
+            batch_dict,
+            gaussian_likelihood_std=self.gaussian_likelihood_std,
+            kl_coef=kl_coef)
 
     def forward(self, y_time, x_data, x_time, x_mask=None):
         # import xdev; xdev.embed()
@@ -158,29 +196,134 @@ class Recurrent(nn.Module):
             y_time = y_time.unsqueeze(0)
         #TRANS: Stitching x_time and y_time
         # TODO replace this with something less funky
-        x_len_orig = len(x_time)
-        x_time, time_index = torch.unique(torch.cat((x_time, y_time)), return_inverse=True)
-        x_time_idx, y_time_idx = time_index[:x_len_orig], time_index[x_len_orig:]
+        x_len_orig = len(x_time)  # x_time becomes union(x_time, y_time)
+        x_time, time_index = torch.unique(torch.cat((x_time, y_time)),
+                                          return_inverse=True)
+        x_time_idx, y_time_idx = time_index[:x_len_orig], time_index[
+            x_len_orig:]
 
-        if self.using == "CDE":
-            X = CubicSpline(x_data, x_time)
-            X0 = X.evaluate(x_time[0])
+        if x_mask is not None:
+            x = x_data * x_mask  # [batch_size, x_time_points, x_dims]
+        else:
+            x = x_data
+        batch_size, x_dims = x.shape[0], x.shape[2]
+        #TRANS: To expand the x
+        x_merged = torch.zeros((batch_size, len(x_time), x_dims),
+                               dtype=x.dtype,
+                               device=utils.get_device(x))
+        x_merged[:, x_time_idx, :] = x
+        hs = self.ODE_RNN(x_merged, x_time, return_latents=True)
+        # this is like having t as an extra batch dim for output_net
+        y_pred = self.output_net(hs)
+
+        # y_pred shape [batch_size, y_time_points, y_dims]
+        return y_pred.index_select(1, y_time_idx)
+
+
+class RecurrentCDE(nn.Module):
+
+    def __init__(self,
+                 x_dims,
+                 y_dims,
+                 diffeq_solver,
+                 gaussian_likelihood_std=0.02):
+
+        super(RecurrentCDE, self).__init__()
+        self.h_dims = diffeq_solver.diff_func.h_dims
+        self.diffeq_solver = diffeq_solver
+        self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std])
+
+        self.using = 'CDE'
+
+        self.x_dims = x_dims
+        self.initial_net = nn.Linear(x_dims, self.h_dims)
+        utils.init_network_weights(self.initial_net)
+        self.output_net = nn.Linear(self.h_dims, y_dims)
+        utils.init_network_weights(self.output_net)
+
+
+    def compute_loss_one_batch(self, batch_dict, kl_coef=1.):
+        #TRANS: Predict the y series, including the observed and was not observed
+        y_pred = self.forward(batch_dict["y_time"], batch_dict["x_data"],
+                              batch_dict["x_time"], batch_dict["x_mask"])
+        return compute_loss_one_batch(
+            y_pred,
+            batch_dict,
+            gaussian_likelihood_std=self.gaussian_likelihood_std,
+            kl_coef=kl_coef)
+
+    def forward(self, y_time, x_data, x_time, x_mask=None):
+        # import xdev; xdev.embed()
+        #TRANS: Complete sequence prediction
+        if len(y_time.shape) < 1:
+            y_time = y_time.unsqueeze(0)
+
+        # TODO is this ok for CDE?
+        if x_mask is not None and 0:
+            x = x_data * x_mask  # [batch_size, x_time_points, x_dims]
+        else:
+            x = x_data
+
+        # TODO do this in dataloader
+        x_time, x_ix = x_time.sort()
+        x_data = x_data[..., x_ix, :]
+        y_time, y_ix = y_time.sort()
+
+        # need rectilinear interpolation instead if doing online prediction
+        # https://github.com/patrick-kidger/torchcde#different-interpolation-methods
+
+        # TODO https://github.com/patrick-kidger/torchcde#the-log-ode-method
+
+        # standard preprocessing step for cdes: include time as a channel,
+        # since they're invariant to time. have to make sure seqs are
+        # temporally aligned from start? eg seconds since hemorrhage onset
+        TIME_INV = 0
+        if TIME_INV:
+            # combine x and t - do this in dataloader
+            # https://github.com/arogozhnikov/einops/issues/56#issuecomment-962584525
+            common_dims = ' '.join(map(str, x_data.shape[:-2]))
+            x = torch.cat(
+                (x_data, einops.repeat(x_time, f't -> {common_dims} t 1')),
+                dim=-1)
+
+            coeffs = hermite_cubic_coefficients_with_backward_differences(
+                x)
+            X = CubicSpline(coeffs)
+            X0 = X.evaluate(0)
             h0 = self.initial_net(X0)
-            hs = self.diffeq_solver(h0, x_time, X)
-            outputs = self.output_net(hs)
-            y_pred = outputs.index_select(1, y_time_idx)
 
-        elif self.using == "ODE_RNN":
-            if x_mask is not None:
-                x = x_data * x_mask  # [batch_size, x_time_points, x_dims]
+            # TODO need to do this for yt instead of xt
+            # or both, using predicted xs for another loss
+            GET_ALL_TIME_POINTS = 1
+            if GET_ALL_TIME_POINTS:
+                ts = torch.linspace(*X.interval, len(x_time))
             else:
-                x = x_data
-            batch_size, x_dims = x.shape[0], x.shape[2]
-            #TRANS: To expand the x
-            x_merged = torch.zeros((batch_size, len(x_time), x_dims), dtype=x.dtype, device=utils.get_device(x))
-            x_merged[:, x_time_idx, :] = x
-            y_pred = self.run_ODE_RNN(y_time_idx, x_merged, x_time)
+                # interval is (start, end)
+                ts = X.interval
+
+            hs = self.diffeq_solver(h0, ts, x)
 
         else:
-            raise NotImplementedError
-        return y_pred  # y_pred shape [batch_size, y_time_points, y_dims]
+            # import xdev; xdev.embed()
+            coeffs = hermite_cubic_coefficients_with_backward_differences(
+                x_data, x_time)
+            X = CubicSpline(coeffs, x_time)
+
+            # need at least 2 points to take a solver step, so augment with
+            # closest x point to start of y
+            # assumes xt, yt sorted
+            assert y_time[0] > x_time[0]
+            x_time_last = x_time[torch.argwhere(x_time < y_time)[-1]]
+
+            X0 = X.evaluate(x_time[-1])
+            h0 = self.initial_net(X0)  # TODO should parameterize this by time
+            hs = self.diffeq_solver(h0, torch.cat((x_time_last, y_time)), X)[:, 1:, :]
+
+        y_pred = self.output_net(hs)
+
+        # put in the orig time order
+        # https://stackoverflow.com/a/64455575
+        # y_pred = y_pred.gather(-2, y_ix.argsort())
+
+        # y_pred shape [batch_size, y_time_points, y_dims]
+        return y_pred

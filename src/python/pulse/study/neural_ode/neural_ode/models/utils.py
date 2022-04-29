@@ -434,8 +434,10 @@ class ProcessDataset():
         if self.produce_intercoeffs:
             self._produce_and_save_intercoeffs(new_data_dict, coeffs_save_file)
 
-        return self._wrap_dataloader(
-            new_data_dict, batch_size=min(self.batch_size, new_data_dict['x_data'].shape[0]))
+        return self._wrap_dataloader(new_data_dict,
+                                     batch_size=min(
+                                         self.batch_size,
+                                         new_data_dict['x_data'].shape[0]))
 
     def _produce_and_save_intercoeffs(self, data_dict, coeffs_save_file):
         #TRANS: Calculation and save the interpolation, the use of DataLoader save DataLoader
@@ -467,7 +469,6 @@ class ProcessDataset():
 
 #TRANS: The definition and measurement model
 def get_params_num(model):
-    #TRANS: Filter receives two parameters, the first function, the second for the sequence, the sequence of each element passed as a parameter to a function for judgment, then return True or False, the final returns True, calculation and the number of elements in the new list
     model_parameters = filter(lambda p: p.requires_grad, model.parameters())
     n_params = sum([np.prod(p.shape) for p in model_parameters])
     kilo_params = n_params // 1000
@@ -480,19 +481,19 @@ def create_net(input_dims,
                n_units=100,
                hidden_layers=0,
                nonlinear=nn.Tanh,
-               return_dim=False):
+               return_dim=False,
+               init=True):
     if output_dims is None:
         output_dims = input_dims
 
     net = nn.Sequential(
         nn.Linear(input_dims, n_units),
-        *([
-            nonlinear(),
-            nn.Linear(n_units, n_units)
-        ] * hidden_layers),
-        nonlinear(),
-        nn.Linear(n_units, output_dims))
-    #TRANS: In the function of passing, * trying to object to a tuple (variable parameter), * * trying to object to a dictionary (keyword arguments), both can be introduced to zero or any parameters
+        *([nonlinear(), nn.Linear(n_units, n_units)] * hidden_layers),
+        nonlinear(), nn.Linear(n_units, output_dims))
+
+    if init:
+        init_network_weights(net)
+
     if return_dim:
         return net, input_dims, output_dims
     else:
@@ -500,7 +501,8 @@ def create_net(input_dims,
 
 
 def split_last_dim(data):
-    #TRANS: Bisect tensor last dimension, in order to distinguish between the mean and STD
+    # TRANS: Bisect tensor last dimension, in order to distinguish between the
+    # mean and STD
     last_dim = data.shape[-1]
     last_dim = last_dim // 2
     return data[..., :last_dim], data[..., last_dim:]
@@ -526,22 +528,19 @@ def sample_standard_gaussian(mu, sigma):
 
 
 def linspace_vector(start, end, n_points, device=torch.device('cpu')):
-    # start is either one value or a vector
-    size = np.prod(start.shape)
-
     assert start.shape == end.shape
-    if size == 1:
-        # start and end are 1d-tensors
-        res = torch.linspace(start, end, n_points,
-                             device=device)  #TRANS: Including end endpoint
-    else:  #TRANS: Support the multi-dimensional linspace, for each dimension separately as a vector space
+
+    if len(start.shape) == 0:
+        # start and end are scalars
+        return torch.linspace(start, end, n_points, device=device)
+    if len(start.shape) == 1:
         # start and end are vectors
-        res = torch.Tensor(device=device)
-        for i in range(0, start.shape[0]):
-            res = torch.cat((res, torch.linspace(start[i], end[i], n_points)),
-                            0)
-        res = torch.t(res.reshape(start.shape[0], n_points))
-    return res
+        return torch.stack([
+            torch.linspace(s, e, n_points, device=device)
+            for s, e in zip(start, end)
+        ],
+                           dim=0).T
+    raise NotImplementedError
 
 
 def time_sync_batch_dict(batch_list, ode_time=None):

@@ -5,7 +5,7 @@ import torch
 from torch.distributions.normal import Normal
 from tqdm import tqdm
 import neural_ode.models.utils as utils
-from neural_ode.models.recurrent import Recurrent
+from neural_ode.models.recurrent import RecurrentODE, RecurrentCDE
 from neural_ode.models.seq2seq import Seq2Seq
 from neural_ode.models.vae import VAE
 from neural_ode.models.diff_func import ODEFunc, CDEFunc, DiffeqSolver
@@ -30,8 +30,12 @@ def get_model(arch: Literal['Recurrent', 'Seq2Seq',
                   n_out_units=n_out_units,
                   gaussian_likelihood_std=gaussian_likelihood_std)
     diffeq_solver = get_diffeq_solver(x_dims=x_dims, **cf.get())
+    using = cf.get('using', get_diffeq_solver)
     if arch == "Recurrent":
-        model = Recurrent(diffeq_solver=diffeq_solver, **common)
+        if using == 'ODE_RNN':
+            model = RecurrentODE(diffeq_solver=diffeq_solver, **common)
+        if using == 'CDE':
+            model = RecurrentCDE(diffeq_solver=diffeq_solver, **ub.dict_subset(common, ['x_dims', 'y_dims', 'gaussian_likelihood_std']))
     elif arch == "Seq2Seq":
         model = Seq2Seq(enc_diffeq_solver=diffeq_solver,
                         dec_diffeq_solver=diffeq_solver,
@@ -303,7 +307,9 @@ def main(test_for_epochs: int,
 
 if __name__ == "__main__":
     from neural_ode.args import default
-    from neural_ode.run_models import main, get_model
+    from neural_ode.run_models import main, get_model, get_diffeq_solver
     default()
-    cf.add({get_model: cf.Args(arch='Recurrent')}, overwrite=True)
+    # cf.add({get_model: cf.Args(arch='Recurrent')}, overwrite=True)
+    cf.add({get_diffeq_solver: cf.Args(using='CDE')}, overwrite=True)
+    # cf.add({get_diffeq_solver: cf.Args(using='ODE_RNN')}, overwrite=True)
     main(**cf.get())
