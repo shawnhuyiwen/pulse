@@ -13,6 +13,7 @@ int main(int argc, char* argv[])
   bool clear = false;
   bool binary = false;
   bool postProcessOnly = false;
+  bool hemorrhageOption = false;
   std::string mode = "solo";
 
   // Process arguments
@@ -41,6 +42,12 @@ int main(int argc, char* argv[])
     {
       postProcessOnly = true;
       clear = false;
+    }
+
+    // Hemorrhage option?
+    if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--hemorrhage"))
+    {
+      hemorrhageOption = true;
     }
   }
   std::string rootDir = "./test_results/patient_variability/";
@@ -83,11 +90,22 @@ int main(int argc, char* argv[])
     pvg.pulsePressureMax_mmHg = 50;
     pvg.pulsePressureStep_mmHg = 10;
 
+    pvg.hemorrhageOptionEnabled = hemorrhageOption;
+
+    pvg.hemorrhageSeverityMin = 0.25;
+    pvg.hemorrhageSeverityMax = 1.0;
+    pvg.hemorrhageSeverityStep = 0.25;
+
+    pvg.hemorrhageTriageTimeMin_min = 1.0;
+    pvg.hemorrhageTriageTimeMax_min = 5.0;
+    pvg.hemorrhageTriageTimeStep_min = 1.0;
+
     pvg.GeneratePatientList(patients);
   }
   else if (mode == "solo")
   {
     PVGenerator pvg(&log);
+
     pvg.ageMin_yr = 18;
     pvg.ageMax_yr = 65;
     pvg.ageStep_yr = 50;
@@ -113,6 +131,16 @@ int main(int argc, char* argv[])
     pvg.pulsePressureMin_mmHg = 30;
     pvg.pulsePressureMax_mmHg = 50;
     pvg.pulsePressureStep_mmHg = 100;
+
+    pvg.hemorrhageOptionEnabled = hemorrhageOption;
+
+    pvg.hemorrhageSeverityMin = 0.25;
+    pvg.hemorrhageSeverityMax = 1.0;
+    pvg.hemorrhageSeverityStep = 1.0;
+
+    pvg.hemorrhageTriageTimeMin_min = 1.0;
+    pvg.hemorrhageTriageTimeMax_min = 5.0;
+    pvg.hemorrhageTriageTimeStep_min = 5.0;
 
     pvg.GeneratePatientList(patients);
   }
@@ -144,6 +172,16 @@ int main(int argc, char* argv[])
     pvg.pulsePressureMin_mmHg = 30;
     pvg.pulsePressureMax_mmHg = 50;
     pvg.pulsePressureStep_mmHg = 40;
+
+    pvg.hemorrhageOptionEnabled = hemorrhageOption;
+
+    pvg.hemorrhageSeverityMin = 0.25;
+    pvg.hemorrhageSeverityMax = 1.0;
+    pvg.hemorrhageSeverityStep = 1.0;
+
+    pvg.hemorrhageTriageTimeMin_min = 1.0;
+    pvg.hemorrhageTriageTimeMax_min = 5.0;
+    pvg.hemorrhageTriageTimeStep_min = 5.0;
 
     pvg.GeneratePatientList(patients);
   }

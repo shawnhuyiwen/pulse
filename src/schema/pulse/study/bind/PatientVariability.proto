@@ -9,21 +9,46 @@ import "pulse/cdm/bind/TestReport.proto";
 
 message PatientStateData
 {
-  uint32                                                  ID                              = 1;
-  string                                                  OutputBaseFilename              = 2;
+  uint32                                                  ID                                = 1;
+  string                                                  OutputBaseFilename                = 2;
   // Initial Conditions
-  pulse.cdm.bind.PatientData.eSex                         Sex                             = 3;
-  uint32                                                  Age_yr                          = 4;
-  double                                                  Height_cm                       = 5;
-  double                                                  Weight_kg                       = 6;
-  double                                                  BMI                             = 7;
-  double                                                  HeartRate_bpm                   = 8;
-  double                                                  DiastolicArterialPressure_mmHg  = 9;
-  double                                                  SystolicArterialPressure_mmHg   = 10;
+  pulse.cdm.bind.PatientData.eSex                         Sex                               = 3;
+  uint32                                                  Age_yr                            = 4;
+  double                                                  Height_cm                         = 5;
+  double                                                  Weight_kg                         = 6;
+  double                                                  BMI                               = 7;
+  double                                                  HeartRate_bpm                     = 8;
+  double                                                  DiastolicArterialPressure_mmHg    = 9;
+  double                                                  SystolicArterialPressure_mmHg     = 10;
   // Results
-  bool                                                    AchievedStabilization           = 11;
-  double                                                  StabilizationTime_s             = 12;
-  map<string,pulse.cdm.bind.PropertyValidationListData>   ValidationMap                   = 13;
+  bool                                                    AchievedStabilization             = 11;
+  double                                                  StabilizationTime_s               = 12;
+  map<string,pulse.cdm.bind.PropertyValidationListData>   ValidationMap                     = 13;
+
+  message HemorrhageOption
+  {
+    // Initial Conditions
+    bool                                                  Enabled                           = 1;
+    string                                                Compartment                       = 2;
+    double                                                Severity                          = 3;
+    double                                                StartTime_s                       = 4;
+    double                                                TriageTime_s                      = 5;
+
+    // Results
+    double                                                BloodLoss_mL                      = 6;
+    bool                                                  PatientDeath                      = 7;
+    double                                                PatientDeathTime_s                = 8;
+    double                                                InitialHeartRate_bpm              = 9;
+    double                                                InitialCardiacOutput_L_Per_min    = 10;
+    double                                                InitialMeanArterialPressure_mmHg  = 11;
+    double                                                TriageHeartRate_bpm               = 12;
+    double                                                TriageCardiacOutput_L_Per_min     = 13;
+    double                                                TriageMeanArteralPressure_mmHg    = 14;
+    double                                                FinalHeartRate_bpm                = 15;
+    double                                                FinalCardiacOutput_L_Per_min      = 16;
+    double                                                FinalMeanArterialPressure_mmHg    = 17;
+  }
+  HemorrhageOption                                        Hemorrhage                        = 14;
 }
 
 message PatientStateListData

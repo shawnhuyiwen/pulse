@@ -24,20 +24,16 @@ namespace pulse::study::patient_variability
   {
     int id = 0;
 
-    ePatient_Sex sex_arr[2] = {ePatient_Sex::Male, ePatient_Sex::Female};
-    for( int s = 0; s < 2; ++s )
+    for( auto sex: sexes)
     {
-      ePatient_Sex sex = sex_arr[s];
-
       // Adjust height range based on sex
       unsigned int heightMin_cm = heightMaleMin_cm;
       unsigned int heightMax_cm = heightMaleMax_cm;
-      std::string sex_dir = "/male";
-      if( sex == ePatient_Sex::Female )
+      std::string sex_dir = "/" + sex.second;
+      if( sex.first == ePatient_Sex::Female )
       {
         heightMin_cm = heightFemaleMin_cm;
         heightMax_cm = heightFemaleMax_cm;
-        sex_dir = "/female";
       }
 
       for( unsigned int age_yr = ageMin_yr; age_yr <= ageMax_yr; age_yr += ageStep_yr )
@@ -79,7 +75,7 @@ namespace pulse::study::patient_variability
 
                   auto patientData = pData.add_patient();
                   patientData->set_id(id++);
-                  patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex);
+                  patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex.first);
                   patientData->set_age_yr(age_yr);
                   patientData->set_height_cm(height_cm);
                   patientData->set_weight_kg(weight_kg);
@@ -95,6 +91,56 @@ namespace pulse::study::patient_variability
         }
       }
     }
+
+    // Add hemorrhage option variables to all patients if enabled
+    if(hemorrhageOptionEnabled)
+    {
+      id = 0;
+      pData = AddHemorrhageOption(pData, id);
+    }
   }
 
+  // Creates a new list of patients, adding all hemorrhage variables to each patient in originalPatients
+  pulse::study::bind::patient_variability::PatientStateListData PVGenerator::AddHemorrhageOption(pulse::study::bind::patient_variability::PatientStateListData& originalPatients, int& id)
+  {
+    pulse::study::bind::patient_variability::PatientStateListData patients;
+
+    for (int i = 0; i < originalPatients.patient_size(); i++)
+    {
+      auto originalPatient = &(*originalPatients.mutable_patient())[i];
+      std::string base_dir = originalPatient->outputbasefilename();
+
+      for( auto hemorrhageCompartment: hemorrhageCompartments)
+      {
+        std::string compartment_dir = "/hemorrhageCompartment" + hemorrhageCompartment;
+
+        for( double severity = hemorrhageSeverityMin; severity <= hemorrhageSeverityMax; severity += hemorrhageSeverityStep )
+        {
+          std::string severity_dir = "/severity" + pulse::cdm::to_string(severity);
+
+          for( double triageTime_min = hemorrhageTriageTimeMin_min; triageTime_min <= hemorrhageTriageTimeMax_min; triageTime_min += hemorrhageTriageTimeStep_min)
+          {
+            std::string triageTime_dir = "/triageTime_min" + pulse::cdm::to_string(triageTime_min);
+            std::string hemorrhage_dir_path = base_dir + compartment_dir + severity_dir + triageTime_dir;
+
+            auto patient = patients.add_patient();
+            patient->CopyFrom(*originalPatient);
+
+            auto hemorrhage = patient->mutable_hemorrhage();
+            hemorrhage->set_enabled(true);
+            hemorrhage->set_starttime_s(hemorrhageOption_startTime_s);
+            hemorrhage->set_compartment(hemorrhageCompartment);
+            hemorrhage->set_severity(severity);
+            hemorrhage->set_starttime_s(hemorrhageOption_startTime_s);
+            hemorrhage->set_triagetime_s(triageTime_min);
+
+            patient->set_id(id++);
+            patient->set_outputbasefilename(hemorrhage_dir_path);
+          }
+        }
+      }
+    }
+
+    return patients;
+  }
 }
