@@ -57,7 +57,12 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
   {
     // Translate ventilator settings
     double totalPeriod_s = 60.0 / GetRespirationRate(FrequencyUnit::Per_min);
-    double expiratoryPeriod_s = totalPeriod_s - GetInspiratoryPeriod(TimeUnit::s);
+    double inspiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
+    if (inspiratoryPeriod_s > totalPeriod_s)
+    {
+        Fatal("Inspiratory Period is longer than the total period applied using Respiration Rate.");
+    }
+    double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
 
     s.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
     s.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);

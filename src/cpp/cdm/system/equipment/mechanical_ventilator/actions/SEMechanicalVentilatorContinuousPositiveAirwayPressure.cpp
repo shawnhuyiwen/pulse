@@ -45,14 +45,19 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
   if (SEMechanicalVentilatorMode::IsActive())
   {
     // Translate ventilator settings
+    double positiveEndExpiredPressure_cmH2O = GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
     double peakInspiratoryPressure_cmH2O =
-      GetPositiveEndExpiredPressure(PressureUnit::cmH2O) + GetDeltaPressureSupport(PressureUnit::cmH2O);
+        positiveEndExpiredPressure_cmH2O + GetDeltaPressureSupport(PressureUnit::cmH2O);
+    if (positiveEndExpiredPressure_cmH2O > peakInspiratoryPressure_cmH2O)
+    {
+        Fatal("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
+    }
 
     s.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Ramp);
     s.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
     s.GetInspirationWaveformPeriod().Set(GetSlope());
     s.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
-    s.GetPositiveEndExpiredPressure().Set(GetPositiveEndExpiredPressure());
+    s.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
     s.SetExpirationCycleRespiratoryModel(eSwitch::On);
     s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
