@@ -17,7 +17,7 @@ POP_PROTO_WARNINGS
 #include "io/protobuf/PBUtils.h"
 
 namespace pulse::study::patient_variability
-{   
+{
   class PVGenerator : public Loggable
   {
   public:
@@ -59,9 +59,8 @@ namespace pulse::study::patient_variability
     //--------------------//
     //run for two hours then death check and record vitals
     bool hemorrhageOptionEnabled = false;
-
     double hemorrhageOption_startTime_s = 10;
-    //Loop over following vars
+    
     std::vector<std::string> hemorrhageCompartments = { "RightArm", "RightLeg" };
 
     double hemorrhageSeverityMin = 0.25;

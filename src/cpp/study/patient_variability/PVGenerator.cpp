@@ -44,8 +44,11 @@ namespace pulse::study::patient_variability
         {
           std::string height_dir = "/height_cm" + std::to_string(height_cm);
 
-          for( double bmi = bmiMin; bmi <= bmiMax; bmi += bmiStep )
+          int bmiIdx, bmiN = (int)((bmiMax-bmiMin) / bmiStep);
+          for( bmiIdx = 0; bmiIdx <= bmiN; bmiIdx++ )
           {
+            double bmi = bmiMin + bmiStep * bmiIdx;
+            
             std::string bmi_dir = "/bmi" + pulse::cdm::to_string(bmi);
 
             // BMI = kg/m2
@@ -114,12 +117,18 @@ namespace pulse::study::patient_variability
       {
         std::string compartment_dir = "/hemorrhageCompartment" + hemorrhageCompartment;
 
-        for( double severity = hemorrhageSeverityMin; severity <= hemorrhageSeverityMax; severity += hemorrhageSeverityStep )
+        int severityIdx, severityN = (int)((hemorrhageSeverityMax-hemorrhageSeverityMin) / hemorrhageSeverityStep);
+        for( severityIdx = 0; severityIdx <= severityN; severityIdx++ )
         {
+          double severity = hemorrhageSeverityMin + hemorrhageSeverityStep * severityIdx;
+
           std::string severity_dir = "/severity" + pulse::cdm::to_string(severity);
 
-          for( double triageTime_min = hemorrhageTriageTimeMin_min; triageTime_min <= hemorrhageTriageTimeMax_min; triageTime_min += hemorrhageTriageTimeStep_min)
+          int triageTimeIdx, triageTimeN = (int)((hemorrhageTriageTimeMax_min-hemorrhageTriageTimeMin_min) / hemorrhageTriageTimeStep_min);
+          for( triageTimeIdx = 0; triageTimeIdx <= triageTimeN; triageTimeIdx++ )
           {
+            double triageTime_min = hemorrhageTriageTimeMin_min + hemorrhageTriageTimeStep_min * triageTimeIdx;
+
             std::string triageTime_dir = "/triageTime_min" + pulse::cdm::to_string(triageTime_min);
             std::string hemorrhage_dir_path = base_dir + compartment_dir + severity_dir + triageTime_dir;
 

@@ -105,7 +105,6 @@ int main(int argc, char* argv[])
   else if (mode == "solo")
   {
     PVGenerator pvg(&log);
-
     pvg.ageMin_yr = 18;
     pvg.ageMax_yr = 65;
     pvg.ageStep_yr = 50;
