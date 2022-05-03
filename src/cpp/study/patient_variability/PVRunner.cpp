@@ -7,21 +7,26 @@
 #include "engine/PulseConfiguration.h"
 #include "engine/PulseScenario.h"
 
-#include "cdm/patient/SEPatient.h"
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/patient/SEPatient.h"
+#include "cdm/patient/actions/SEHemorrhage.h"
+#include "cdm/properties/SEScalar0To1.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarVolume.h"
+#include "cdm/properties/SEScalarVolumePerTime.h"
 #include "cdm/scenario/SEScenario.h"
+#include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/utils/ConfigParser.h"
 #include "cdm/utils/CSV.h"
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/FileUtils.h"
 #include "cdm/utils/GeneralMath.h"
 #include "cdm/utils/TimingProfile.h"
-#include "cdm/properties/SEScalarFrequency.h"
-#include "cdm/properties/SEScalarLength.h"
-#include "cdm/properties/SEScalarMass.h"
-#include "cdm/properties/SEScalarPressure.h"
 
 using namespace pulse;
 
@@ -294,15 +299,71 @@ namespace pulse::study::patient_variability
       pulse->GetLogger()->Info("It took " + cdm::to_string(patient.stabilizationtime_s()) + "s to stabilize this Patient");
 
       double dT_s = pulse->GetTimeStep(TimeUnit::s);
-      int count = static_cast<int>(120 / dT_s);
-
+      int count = 0;
       pulse->GetEngineTracker()->TrackData(0);
+
+      SEHemorrhage hemorrhage;
+      auto hemorrhageData = patient.mutable_hemorrhage();
+      if(hemorrhageData->enabled())
+      {
+        // Hemorrhage settings
+        hemorrhage.SetExternal(hemorrhageData->compartment());
+        hemorrhage.GetSeverity().SetValue(hemorrhageData->severity());
+
+        // Advance to hemorrhage start time
+        count = static_cast<int>( hemorrhageData->starttime_s() / dT_s);
+        for (int i = 0; i < count; i++)
+        {
+          if (!pulse->AdvanceModelTime()) // Compute 1 time step
+            return false;
+          // Pull Track will pull data from the engine and append it to the file
+          pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
+        }
+
+        // Record information and begin hemorrhage
+        hemorrhageData->set_initialheartrate_bpm(pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min));
+        hemorrhageData->set_initialcardiacoutput_l_per_min(pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::L_Per_min));
+        hemorrhageData->set_initialmeanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
+        pulse->ProcessAction(hemorrhage);
+
+        // Advance to triage time, stop hemorrhage, and record information
+        count = static_cast<int>((hemorrhageData->triagetime_s() - hemorrhageData->starttime_s()) / dT_s);
+        for (int i = 0; i < count; i++)
+        {
+          if (!pulse->AdvanceModelTime()) // Compute 1 time step
+            return false;
+          // Pull Track will pull data from the engine and append it to the file
+          pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
+        }
+        hemorrhage.GetSeverity().SetValue(0.0);
+        pulse->ProcessAction(hemorrhage);
+        hemorrhageData->set_triageheartrate_bpm(pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min));
+        hemorrhageData->set_triagecardiacoutput_l_per_min(pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::L_Per_min));
+        hemorrhageData->set_triagemeanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
+      
+        // Run hemorrhage for 2 hours
+        count = static_cast<int>( (7200 - hemorrhageData->triagetime_s()) / dT_s);
+      }
+      else
+      {
+        count = static_cast<int>(120 / dT_s);
+      }
       for (int i = 0; i < count; i++)
       {
         if (!pulse->AdvanceModelTime()) // Compute 1 time step
           return false;
         // Pull Track will pull data from the engine and append it to the file
         pulse->GetEngineTracker()->TrackData(pulse->GetSimulationTime(TimeUnit::s));
+
+        // TODO: Death Check
+      }
+      // TODO: Death Check
+      if(hemorrhageData->enabled()/* && alive*/)
+      {
+        hemorrhageData->set_finalheartrate_bpm(pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min));
+        hemorrhageData->set_finalcardiacoutput_l_per_min(pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::L_Per_min));
+        hemorrhageData->set_finalmeanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
+        hemorrhageData->set_bloodloss_ml(pulse->GetCardiovascularSystem()->GetTotalHemorrhagedVolume(VolumeUnit::mL));
       }
       pulse->GetEngineTracker()->ResetFile();// So we can close it
 

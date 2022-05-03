@@ -141,7 +141,7 @@ namespace pulse::study::patient_variability
             hemorrhage->set_compartment(hemorrhageCompartment);
             hemorrhage->set_severity(severity);
             hemorrhage->set_starttime_s(hemorrhageOption_startTime_s);
-            hemorrhage->set_triagetime_s(triageTime_min);
+            hemorrhage->set_triagetime_s(triageTime_min * 60);
 
             patient->set_id(id++);
             patient->set_outputbasefilename(hemorrhage_dir_path);

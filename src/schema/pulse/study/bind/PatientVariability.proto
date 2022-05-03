@@ -43,7 +43,7 @@ message PatientStateData
     double                                                InitialMeanArterialPressure_mmHg  = 11;
     double                                                TriageHeartRate_bpm               = 12;
     double                                                TriageCardiacOutput_L_Per_min     = 13;
-    double                                                TriageMeanArteralPressure_mmHg    = 14;
+    double                                                TriageMeanArterialPressure_mmHg   = 14;
     double                                                FinalHeartRate_bpm                = 15;
     double                                                FinalCardiacOutput_L_Per_min      = 16;
     double                                                FinalMeanArterialPressure_mmHg    = 17;
