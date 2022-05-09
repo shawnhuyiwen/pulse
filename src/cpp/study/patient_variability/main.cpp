@@ -12,58 +12,91 @@ int main(int argc, char* argv[])
 {
   bool clear = false;
   bool binary = false;
+  bool generateOnly    = false;
   bool postProcessOnly = false;
-  bool hemorrhageOption = false;
-  std::string mode = "solo";
+  bool validationMode  = false;
+  bool hemorrhageMode  = false;
+  std::string data = "solo";
+  PVGenerator::Mode mode = PVGenerator::Mode::Validation;
+  std::string rootDir = "./test_results/patient_variability/";
 
   // Process arguments
   for(int i = 1; i < argc; ++i)
   {
-    // Mode?
+    // data
     if(!strcmp(argv[i], "full") || !strcmp(argv[i], "solo") || !strcmp(argv[i], "test"))
     {
-      mode = argv[i];
+      data = argv[i];
     }
 
-    // Binary output?
+    // Binary output
     if(!strcmp(argv[i], "-b") || !strcmp(argv[i], "--binary"))
     {
       binary = true;
     }
 
-    // Clear?
+    // Clear
     if(!strcmp(argv[i], "-c") || !strcmp(argv[i], "--clear"))
     {
       clear = true;
     }
 
-    // Only post-processing?
+    // Only generate
+    if (!strcmp(argv[i], "-g") || !strcmp(argv[i], "--generate"))
+    {
+      generateOnly = true;
+    }
+
+    // Only post-processing
     if(!strcmp(argv[i], "-p") || !strcmp(argv[i], "--post-process"))
     {
       postProcessOnly = true;
       clear = false;
     }
 
-    // Hemorrhage option?
+    // Validation RunMode
+    if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--validation"))
+    {
+      validationMode = true;
+      mode = PVGenerator::Mode::Validation;
+    }
+    // Hemorrhage RunMode
     if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--hemorrhage"))
     {
-      hemorrhageOption = true;
+      hemorrhageMode = true;
+      mode = PVGenerator::Mode::Hemorrhage;
     }
+    
   }
-  std::string rootDir = "./test_results/patient_variability/";
+  if (validationMode && hemorrhageMode)
+  {
+    std::cerr << "Can only select one run mode\n";
+    return 1;
+  }
+
+  switch (mode)
+  {
+  case PVGenerator::Mode::Validation:
+    rootDir += "validation/";
+    break;
+  case PVGenerator::Mode::Hemorrhage:
+    rootDir += "hemorrhage/";
+    break;
+  }
 
   if(clear)
     DeleteDirectory(rootDir);
 
-  pulse::study::bind::patient_variability::PatientStateListData patients;
-
   Logger log;
   log.LogToConsole(true);
-  log.SetLogFile(rootDir +"PatientVariability.log");
+  log.SetLogFile(rootDir + "PatientVariability.log");
 
-  if(mode == "full")
+  pulse::study::bind::patient_variability::PatientStateListData patients;
+  PVGenerator pvg(&log);
+  pvg.mode = mode;
+
+  if(data == "full")
   {
-    PVGenerator pvg(&log);
     pvg.ageMin_yr = 18;
     pvg.ageMax_yr = 65;
     pvg.ageStep_yr = 10;
@@ -90,7 +123,9 @@ int main(int argc, char* argv[])
     pvg.pulsePressureMax_mmHg = 50;
     pvg.pulsePressureStep_mmHg = 10;
 
-    pvg.hemorrhageOptionEnabled = hemorrhageOption;
+    ////////////////////////
+    // Hemorrhage Options //
+    ////////////////////////
 
     pvg.hemorrhageSeverityMin = 0.25;
     pvg.hemorrhageSeverityMax = 1.0;
@@ -99,12 +134,9 @@ int main(int argc, char* argv[])
     pvg.hemorrhageTriageTimeMin_min = 1.0;
     pvg.hemorrhageTriageTimeMax_min = 5.0;
     pvg.hemorrhageTriageTimeStep_min = 1.0;
-
-    pvg.GeneratePatientList(patients);
   }
-  else if (mode == "solo")
+  else if (data == "solo")
   {
-    PVGenerator pvg(&log);
     pvg.ageMin_yr = 18;
     pvg.ageMax_yr = 65;
     pvg.ageStep_yr = 50;
@@ -131,7 +163,9 @@ int main(int argc, char* argv[])
     pvg.pulsePressureMax_mmHg = 50;
     pvg.pulsePressureStep_mmHg = 100;
 
-    pvg.hemorrhageOptionEnabled = hemorrhageOption;
+    ////////////////////////
+    // Hemorrhage Options //
+    ////////////////////////
 
     pvg.hemorrhageSeverityMin = 0.25;
     pvg.hemorrhageSeverityMax = 1.0;
@@ -140,12 +174,9 @@ int main(int argc, char* argv[])
     pvg.hemorrhageTriageTimeMin_min = 1.0;
     pvg.hemorrhageTriageTimeMax_min = 5.0;
     pvg.hemorrhageTriageTimeStep_min = 5.0;
-
-    pvg.GeneratePatientList(patients);
   }
-  else if (mode == "test")
+  else if (data == "test")
   {
-    PVGenerator pvg(&log);
     pvg.ageMin_yr = 18;
     pvg.ageMax_yr = 65;
     pvg.ageStep_yr = 25;
@@ -172,7 +203,9 @@ int main(int argc, char* argv[])
     pvg.pulsePressureMax_mmHg = 50;
     pvg.pulsePressureStep_mmHg = 40;
 
-    pvg.hemorrhageOptionEnabled = hemorrhageOption;
+    ////////////////////////
+    // Hemorrhage Options //
+    ////////////////////////
 
     pvg.hemorrhageSeverityMin = 0.25;
     pvg.hemorrhageSeverityMax = 1.0;
@@ -181,10 +214,14 @@ int main(int argc, char* argv[])
     pvg.hemorrhageTriageTimeMin_min = 1.0;
     pvg.hemorrhageTriageTimeMax_min = 5.0;
     pvg.hemorrhageTriageTimeStep_min = 5.0;
-
-    pvg.GeneratePatientList(patients);
   }
-  
+
+  pvg.GeneratePatientList(patients);
+  if (generateOnly)
+    return 0;
+
   PVRunner pvr(rootDir, &log);
-  return !pvr.Run(patients, binary, postProcessOnly);
+  pvr.PostProcessOnly = postProcessOnly;
+  pvr.SerializationFormat = binary ? eSerializationFormat::BINARY : eSerializationFormat::JSON;
+  return !pvr.Run(patients);
 }

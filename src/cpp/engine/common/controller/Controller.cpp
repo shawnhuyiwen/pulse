@@ -207,7 +207,6 @@ namespace pulse
   Controller::Controller(Logger* logger) : Data(logger)
   {
     m_ConfigOverride = nullptr;
-    m_Logger->LogToConsole(true);
   }
   Controller::~Controller()
   {
