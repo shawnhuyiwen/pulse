@@ -20,11 +20,20 @@ namespace pulse::study::patient_variability
 {
   class PVGenerator : public Loggable
   {
+    using PatientStateListData = pulse::study::bind::patient_variability::PatientStateListData;
   public:
     PVGenerator(Logger* logger=nullptr);
     virtual ~PVGenerator();
 
-    void GeneratePatientList(pulse::study::bind::patient_variability::PatientStateListData& pData);
+    enum class Mode
+    {
+      Hemorrhage = 0,
+      Validation
+    };
+
+    void GeneratePatientList(PatientStateListData& pData);
+
+    Mode mode = Mode::Validation;
 
     unsigned int ageMin_yr = 18;
     unsigned int ageMax_yr = 65;
@@ -57,9 +66,6 @@ namespace pulse::study::patient_variability
     //--------------------//
     // Hemorrhage options //
     //--------------------//
-    //run for two hours then death check and record vitals
-    bool hemorrhageOptionEnabled = false;
-    double hemorrhageOption_startTime_s = 10;
     
     std::vector<std::string> hemorrhageCompartments = { "RightArm", "RightLeg" };
 
@@ -67,11 +73,13 @@ namespace pulse::study::patient_variability
     double hemorrhageSeverityMax = 1.0;
     double hemorrhageSeverityStep = 0.25;
 
-    double hemorrhageTriageTimeMin_min = 1.0;
-    double hemorrhageTriageTimeMax_min = 5.0;
-    double hemorrhageTriageTimeStep_min = 1.0;
+    double hemorrhageTriageTimeMin_min  = 1.0;
+    double hemorrhageTriageTimeMax_min  = 20.0;
+    double hemorrhageTriageTimeStep_min = 5.0;
 
   protected:
-    pulse::study::bind::patient_variability::PatientStateListData AddHemorrhageOption(pulse::study::bind::patient_variability::PatientStateListData& originalPatient, int& id);
+    void GenerateHemorrhageOptions(PatientStateListData& pList, int& id,
+      const ePatient_Sex sex, unsigned int age_yr, unsigned int height_cm, double weight_kg, double bmi,
+      unsigned int hr_bpm, double diastolic_mmHg, double systolic_mmHg, const std::string& full_dir_path);
   };
 }

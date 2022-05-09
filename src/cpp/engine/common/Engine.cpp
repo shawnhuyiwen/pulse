@@ -12,7 +12,7 @@ namespace pulse
 {
   Engine::Engine(Logger* logger) : PhysiologyEngine(logger)
   {
-
+    m_Logger->LogToConsole(true);
   }
 
   Engine::~Engine()

@@ -22,8 +22,11 @@ namespace pulse::study::patient_variability
     PVRunner(const std::string& rootDir, Logger* logger=nullptr);
     virtual ~PVRunner();
 
-    bool Run(const std::string& filename, bool binaryResultsFile = false, bool postProcessOnly = false);
-    bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients, bool binaryResultsFile = false, bool postProcessOnly = false);
+    bool PostProcessOnly = false;
+    eSerializationFormat SerializationFormat = eSerializationFormat::JSON;
+
+    bool Run(const std::string& filename);
+    bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients);
 
   protected:
     bool Run();
@@ -47,6 +50,5 @@ namespace pulse::study::patient_variability
     pulse::study::bind::patient_variability::PatientStateListData* m_PatientList;
     pulse::study::bind::patient_variability::PatientStateListData* m_PatientResultsList;
 
-    bool m_PostProcessOnly;
   };
 }

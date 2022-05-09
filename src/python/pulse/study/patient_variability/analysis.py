@@ -261,9 +261,9 @@ def writeAnalysis(patientAnalysis, systemsAnalysis):
 if __name__ == '__main__':
     # Load up result set
     results = PatientStateListData()
-    results_file = "./test_results/patient_variability/patient_results.json"
+    results_file = "./test_results/patient_variability/validation/patient_results.json"
     if not exists(results_file):
-        results_file = "./test_results/patient_variability/patient_results.pbb"
+        results_file = "./test_results/patient_variability/validation/patient_results.pbb"
         with open(results_file, "rb") as f:
             binary = f.read()
         results.ParseFromString(binary)
