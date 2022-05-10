@@ -400,7 +400,7 @@ namespace pulse
         m_BaroreceptorSaturationStatus = true;
         Info("Baroreceptors Saturated ");
       }
-      if (normalizedMAP <= 0.985 && normalizedMAP >= 0.48)
+      if (normalizedMAP <= 0.985 && meanArterialPressure_mmHg >= 47)
       {
         //new baroreceptor effect curves
         if (m_PreviousBloodVolume_mL - m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL) > 0)
@@ -413,13 +413,13 @@ namespace pulse
         }
 
       }
-      else if (normalizedMAP <= 0.44 && normalizedMAP >= 0.42)
+      else if (meanArterialPressure_mmHg <= 43 && meanArterialPressure_mmHg >= 41)
       {
         //last ditch effort
         //m_BaroreceptorEffectivenessParameter += 0.0001;
         m_BaroreceptorEffectivenessParameter = 0.0007;
       }
-      else if (normalizedMAP < 0.42)
+      else if (meanArterialPressure_mmHg < 41)
       {
         m_BaroreceptorEffectivenessParameter -= 0.00004;
       }
