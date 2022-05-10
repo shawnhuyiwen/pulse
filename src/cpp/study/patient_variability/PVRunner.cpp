@@ -396,11 +396,15 @@ namespace pulse::study::patient_variability
 
       }
       patient.set_finalsimulationtime_s(pulse->GetSimulationTime(TimeUnit::s));
-      hemorrhageData->set_finalheartrate_bpm(pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min));
-      hemorrhageData->set_finalcardiacoutput_l_per_min(pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::L_Per_min));
-      hemorrhageData->set_finalmeanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
-      hemorrhageData->set_finalbloodloss_ml(pulse->GetCardiovascularSystem()->GetTotalHemorrhagedVolume(VolumeUnit::mL));
-      hemorrhageData->set_finalhemorrhageflow_ml_per_s(pulse->GetCardiovascularSystem()->GetTotalHemorrhageRate(VolumePerTimeUnit::mL_Per_s));
+      // Hemorrhage Mode //
+      if (hemorrhageData)
+      {
+        hemorrhageData->set_finalheartrate_bpm(pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min));
+        hemorrhageData->set_finalcardiacoutput_l_per_min(pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::L_Per_min));
+        hemorrhageData->set_finalmeanarterialpressure_mmhg(pulse->GetCardiovascularSystem()->GetMeanArterialPressure(PressureUnit::mmHg));
+        hemorrhageData->set_finalbloodloss_ml(pulse->GetCardiovascularSystem()->GetTotalHemorrhagedVolume(VolumeUnit::mL));
+        hemorrhageData->set_finalhemorrhageflow_ml_per_s(pulse->GetCardiovascularSystem()->GetTotalHemorrhageRate(VolumePerTimeUnit::mL_Per_s));
+      }
 
       pulse->GetEngineTracker()->ResetFile();// So we can close it
 

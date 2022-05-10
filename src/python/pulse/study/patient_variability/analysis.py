@@ -7,6 +7,8 @@ from enum import Enum
 from typing import NamedTuple
 from os.path import exists
 
+basePath = "./test_results/patient_variability/validation/"
+
 # Possible result types
 class ResultType(Enum):
     # Note this order matters for comparison
@@ -65,7 +67,7 @@ def initSexDict():
 # Determine result of standard paitent for given criteria
 def getStandardResult(standardPatient, system, propertyName, passThreshold = 10, failThreshold = 30):
     filename = system + "-" + standardPatient.OutputBaseFilename + "ValidationResults.json"
-    propertyList = standardPatient.ValidationMap[filename]
+    propertyList = standardPatient.Validation.ValidationMap[filename]
     for p in propertyList.Property:
         if p.Name == propertyName:
             return determineResultType(p.Error, passThreshold, failThreshold)
@@ -76,7 +78,7 @@ def systemValidation(patients, passThreshold = 10, failThreshold = 30 ):
 
     # Load standard patient results for comparison
     standardResults = PatientStateListData()
-    with open("./test_results/patient_variability/standard_results.json") as f:
+    with open(basePath + "standard_results.json") as f:
         json = f.read()
     json_format.Parse(json, standardResults)
     standard = {}
@@ -96,7 +98,7 @@ def systemValidation(patients, passThreshold = 10, failThreshold = 30 ):
 
         # Loop through all system results
         byPatient[patient.Sex][patient.ID] = initResultsDict()
-        for file in patient.ValidationMap:
+        for file in patient.Validation.ValidationMap:
             # Patient validation taken care of separately
             if file == "Patient" + str(patient.ID) + "ValidationResults.json":
                 continue
@@ -108,7 +110,7 @@ def systemValidation(patients, passThreshold = 10, failThreshold = 30 ):
                 systemTotals[patient.Sex][system] = initResultsDict()
 
             # Iterate over every property in each system
-            propertyList = patient.ValidationMap[file]
+            propertyList = patient.Validation.ValidationMap[file]
             for p in propertyList.Property:
                 propertyName = p.Name
                 error = p.Error
@@ -144,7 +146,7 @@ def patientValidation(patients, passThreshold = 10, failThreshold = 30):
         outputBaseFilenames[patient.Sex][patient.ID] = patient.OutputBaseFilename
 
         # Get patient validation results for this patient
-        propertyList = patient.ValidationMap["Patient" + str(patient.ID) + "ValidationResults.json"]
+        propertyList = patient.Validation.ValidationMap["Patient" + str(patient.ID) + "ValidationResults.json"]
 
         # Determine pass/fail for each property
         byPatient[patient.Sex][patient.ID] = initResultsDict()
@@ -183,8 +185,6 @@ def writeAnalysis(patientAnalysis, systemsAnalysis):
         totalPatientsRun = len(PAbyPatient)
         numStabilizationFailures = len(patientAnalysis.stabilizationFailures[sex])
         numStabilizedPatients = totalPatientsRun - numStabilizationFailures
-
-        basePath = "./test_results/patient_variability/"
 
         # Patient validation by patient
         spacer = "---------------------------------------------------------------------------------------------------------------------------\n"
@@ -261,14 +261,14 @@ def writeAnalysis(patientAnalysis, systemsAnalysis):
 if __name__ == '__main__':
     # Load up result set
     results = PatientStateListData()
-    results_file = "./test_results/patient_variability/validation/patient_results.json"
-    if not exists(results_file):
-        results_file = "./test_results/patient_variability/validation/patient_results.pbb"
-        with open(results_file, "rb") as f:
+    resultsFile = basePath + "patient_results.json"
+    if not exists(resultsFile):
+        resultsFile = basePath + "patient_results.pbb"
+        with open(resultsFile, "rb") as f:
             binary = f.read()
         results.ParseFromString(binary)
     else:
-        with open(results_file) as f:
+        with open(resultsFile) as f:
             json = f.read()
         json_format.Parse(json, results)
 
