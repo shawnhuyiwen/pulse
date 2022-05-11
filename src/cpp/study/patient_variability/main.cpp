@@ -209,7 +209,7 @@ int main(int argc, char* argv[])
 
     pvg.hemorrhageSeverityMin = 0.25;
     pvg.hemorrhageSeverityMax = 1.0;
-    pvg.hemorrhageSeverityStep = 1.0;
+    pvg.hemorrhageSeverityStep = 0.25;
 
     pvg.hemorrhageTriageTimeMin_min = 1.0;
     pvg.hemorrhageTriageTimeMax_min = 5.0;
