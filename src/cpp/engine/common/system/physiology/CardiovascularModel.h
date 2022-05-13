@@ -75,6 +75,7 @@ namespace pulse
     // PreProcess:
     void HeartDriver();
     /**/void AdjustVascularTone();
+    /**/void AdjustVascularCompliance();
     /****/void MetabolicToneResponse();
     /**/void BeginDriverCycle();
     /****/void RecordAndResetCardiacCycle();//Could be called out of order by arrythma
@@ -89,6 +90,7 @@ namespace pulse
     /**/void PericardialEffusion();
     /**/void PericardialEffusionPressureApplication();
     /**/void TraumaticBrainInjury();
+    void UpdatePulmonaryCapillaries();
     //Respiratory effects
     void CalculatePleuralCavityVenousEffects();
 
@@ -97,9 +99,8 @@ namespace pulse
 
     // Serializable member variables (Set in Initialize and in schema)
     //Driver
-    bool   m_StartSystole;
-    bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
     bool   m_HeartFlowDetected;
+    bool   m_FullyCompressedHeart;
     double m_CurrentDriverCycleTime_s;
     double m_CurrentCardiacCycleTime_s;
     double m_DriverCyclePeriod_s;
@@ -111,16 +112,34 @@ namespace pulse
     double m_RightHeartElastanceMax_mmHg_Per_mL;
     double m_RightHeartElastanceMin_mmHg_Per_mL;
     // Arrhythmia
-    double m_ArrhythmiaHeartElastanceModifier; //need to apply a modifier for to the elastance for some arrhythmias
-    double m_ArrhythmiaVascularToneModifier;  //need to modify the vascular tone to represent some of the pressure drop
+    bool   m_StartCardiacArrest; // Can't go into cardiac arrest during the middle of a cycle
+    double m_CardiacArrestVitalsUpdateTimer_s;
+    // Transition modifiers associated with changing heart rhythms
+    eSwitch m_EnableFeedbackAfterArrhythmiaTrasition;
+    double m_TotalArrhythmiaTransitionTime_s;
+    double m_CurrentArrhythmiaTransitionTime_s;
+    // Heart Rate Transition
+    double m_ArrhythmiaHeartRateBaseline_Per_min;
+    double m_InitialArrhythmiaHeartRateBaseline_Per_min;
+    double m_TargetArrhythmiaHeartRateBaseline_Per_min;
     double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmias
-    double m_StabilizedMAPBaseline_mmHg; //store for moving between arrhythmias
+    // Heart Compliance Transition
+    double m_ArrhythmiaHeartComplianceModifier;
+    double m_InitialArrhythmiaHeartComplianceModifier;
+    double m_TargetArrhythmiaHeartComplianceModifier;
+    // Systemic Vascular Resistance Transition
+    double m_ArrhythmiaSystemicVascularResistanceModifier;
+    double m_InitialArrhythmiaSystemicVascularResistanceModifier;
+    double m_TargetArrhythmiaSystemicVascularResistanceModifier;
+    // Vascular Compliance Transition
+    double m_ArrhythmiaVascularComplianceModifier;
+    double m_InitialArrhythmiaVascularComplianceModifier;
+    double m_TargetArrhythmiaVascularComplianceModifier;
     //CPR
     double m_CompressionTime_s;
     double m_CompressionRatio;
     double m_CompressionPeriod_s;
     // Vitals and Averages
-    double m_CardiacArrestVitalsUpdateTimer_s;
     double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
     double m_CardiacCycleAortaPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole
     double m_CardiacCycleAortaPressureHigh_mmHg; // The current high for this cycle - Reset at the start of systole
@@ -153,6 +172,8 @@ namespace pulse
     };
     std::map<SEHemorrhage*, HemorrhageTrack*>m_HemorrhageTrack;
 
+    bool                             m_StartSystole;
+    double                           m_MAPCollapse_mmHg;
     double                           m_minIndividialSystemicResistance_mmHg_s_Per_mL;
   
     SEFluidCircuitCalculator*        m_circuitCalculator;
@@ -169,6 +190,13 @@ namespace pulse
     SEFluidCircuitPath*              m_AortaResistance;
     SEFluidCircuitPath*              m_VenaCavaCompliance;
     SEFluidCircuitPath*              m_RightHeartResistance;
+
+    SEFluidCircuitPath*              m_LeftPulmonaryArteriesCompliance;
+    SEFluidCircuitPath*              m_RightPulmonaryArteriesCompliance;
+    SEFluidCircuitPath*              m_LeftPulmonaryCapillariesCompliance;
+    SEFluidCircuitPath*              m_RightPulmonaryCapillariesCompliance;
+    SEFluidCircuitPath*              m_LeftPulmonaryVeinsCompliance;
+    SEFluidCircuitPath*              m_RightPulmonaryVeinsCompliance;
 
     SEFluidCircuitPath*              m_LeftPulmonaryArteriesToVeins;
     SEFluidCircuitPath*              m_LeftPulmonaryArteriesToCapillaries;

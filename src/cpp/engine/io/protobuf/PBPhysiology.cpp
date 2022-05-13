@@ -68,10 +68,22 @@ namespace pulse
     dst.m_RightHeartElastanceMax_mmHg_Per_mL = src.rightheartelastancemax_mmhg_per_ml();
     dst.m_RightHeartElastanceMin_mmHg_Per_mL = src.rightheartelastancemin_mmhg_per_ml();
 
-    dst.m_ArrhythmiaHeartElastanceModifier = src.arrhythmiaheartelastancemodifier();
-    dst.m_ArrhythmiaVascularToneModifier = src.arrhythmiavasculartonemodifier();
+    dst.m_EnableFeedbackAfterArrhythmiaTrasition = (eSwitch)src.enablefeedbackafterarrhythmiatrasition();
+    dst.m_TotalArrhythmiaTransitionTime_s = src.totalarrhythmiatransitiontime_s();
+    dst.m_CurrentArrhythmiaTransitionTime_s = src.currentarrhythmiatransitiontime_s();
+    dst.m_ArrhythmiaHeartRateBaseline_Per_min = src.arrhythmiaheartratebaseline_per_min();
+    dst.m_InitialArrhythmiaHeartRateBaseline_Per_min = src.initialarrhythmiaheartratebaseline_per_min();
+    dst.m_TargetArrhythmiaHeartRateBaseline_Per_min = src.targetarrhythmiaheartratebaseline_per_min();
     dst.m_StabilizedHeartRateBaseline_Per_min = src.stabilizedheartratebaseline_per_min();
-    dst.m_StabilizedMAPBaseline_mmHg = src.stabilizedmapbaseline_mmhg();
+    dst.m_ArrhythmiaHeartComplianceModifier = src.arrhythmiaheartcompliancemodifier();
+    dst.m_InitialArrhythmiaHeartComplianceModifier = src.initialarrhythmiaheartcompliancemodifier();
+    dst.m_TargetArrhythmiaHeartComplianceModifier = src.targetarrhythmiaheartcompliancemodifier();
+    dst.m_ArrhythmiaSystemicVascularResistanceModifier = src.arrhythmiasystemicvascularresistancemodifier();
+    dst.m_InitialArrhythmiaSystemicVascularResistanceModifier = src.initialarrhythmiasystemicvascularresistancemodifier();
+    dst.m_TargetArrhythmiaSystemicVascularResistanceModifier = src.targetarrhythmiasystemicvascularresistancemodifier();
+    dst.m_ArrhythmiaVascularComplianceModifier = src.arrhythmiavascularcompliancemodifier();
+    dst.m_InitialArrhythmiaVascularComplianceModifier = src.initialarrhythmiavascularcompliancemodifier();
+    dst.m_TargetArrhythmiaVascularComplianceModifier = src.targetarrhythmiavascularcompliancemodifier();
 
     dst.m_CompressionTime_s = src.compressiontime_s();
     dst.m_CompressionRatio = src.compressionratio();
@@ -122,10 +134,22 @@ namespace pulse
     dst.set_rightheartelastancemax_mmhg_per_ml(src.m_RightHeartElastanceMax_mmHg_Per_mL);
     dst.set_rightheartelastancemin_mmhg_per_ml(src.m_RightHeartElastanceMin_mmHg_Per_mL);
 
-    dst.set_arrhythmiaheartelastancemodifier(src.m_ArrhythmiaHeartElastanceModifier);
-    dst.set_arrhythmiavasculartonemodifier(src.m_ArrhythmiaVascularToneModifier);
+    dst.set_enablefeedbackafterarrhythmiatrasition((CDM_BIND::eSwitch)src.m_EnableFeedbackAfterArrhythmiaTrasition);
+    dst.set_totalarrhythmiatransitiontime_s(src.m_TotalArrhythmiaTransitionTime_s);
+    dst.set_currentarrhythmiatransitiontime_s(src.m_CurrentArrhythmiaTransitionTime_s);
+    dst.set_arrhythmiaheartratebaseline_per_min(src.m_ArrhythmiaHeartRateBaseline_Per_min);
+    dst.set_initialarrhythmiaheartratebaseline_per_min(src.m_InitialArrhythmiaHeartRateBaseline_Per_min);
+    dst.set_targetarrhythmiaheartratebaseline_per_min(src.m_TargetArrhythmiaHeartRateBaseline_Per_min);
     dst.set_stabilizedheartratebaseline_per_min(src.m_StabilizedHeartRateBaseline_Per_min);
-    dst.set_stabilizedmapbaseline_mmhg(src.m_StabilizedMAPBaseline_mmHg);
+    dst.set_arrhythmiaheartcompliancemodifier(src.m_ArrhythmiaHeartComplianceModifier);
+    dst.set_initialarrhythmiaheartcompliancemodifier(src.m_InitialArrhythmiaHeartComplianceModifier);
+    dst.set_targetarrhythmiaheartcompliancemodifier(src.m_TargetArrhythmiaHeartComplianceModifier);
+    dst.set_arrhythmiasystemicvascularresistancemodifier(src.m_ArrhythmiaSystemicVascularResistanceModifier);
+    dst.set_initialarrhythmiasystemicvascularresistancemodifier(src.m_InitialArrhythmiaSystemicVascularResistanceModifier);
+    dst.set_targetarrhythmiasystemicvascularresistancemodifier(src.m_TargetArrhythmiaSystemicVascularResistanceModifier);
+    dst.set_arrhythmiavascularcompliancemodifier(src.m_ArrhythmiaVascularComplianceModifier);
+    dst.set_initialarrhythmiavascularcompliancemodifier(src.m_InitialArrhythmiaVascularComplianceModifier);
+    dst.set_targetarrhythmiavascularcompliancemodifier(src.m_TargetArrhythmiaVascularComplianceModifier);
 
     dst.set_compressiontime_s(src.m_CompressionTime_s);
     dst.set_compressionratio(src.m_CompressionRatio);

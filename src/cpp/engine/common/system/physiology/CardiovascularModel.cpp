@@ -247,6 +247,7 @@ namespace pulse
     GetPulmonaryArterialPressure().SetValue(90, PressureUnit::mmHg);
     GetPulmonaryMeanCapillaryFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
     GetPulmonaryMeanShuntFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
+    GetPulmonaryCapillariesCoverageFraction().SetValue(m_data.GetConfiguration().GetStandardPulmonaryCapillaryCoverage());
 
     GetMeanSkinFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
     GetCardiacOutput().SetValue(5600, VolumePerTimeUnit::mL_Per_min);
@@ -384,8 +385,6 @@ namespace pulse
     m_AortaResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
     m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
     m_RightHeartResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
-    m_ArrhythmiaHeartElastanceModifier = 1.0;
-    m_ArrhythmiaVascularToneModifier = 1.0;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -415,7 +414,6 @@ namespace pulse
       m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
       // Keep this for moving between arrhythmia's, note InitialPatient is pre conditions
       m_StabilizedHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
-      m_StabilizedMAPBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
 
       if (m_data.GetState() == EngineState::AtInitialStableState)
       {// At Resting State, apply conditions if we have them
@@ -1652,107 +1650,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::Arrhythmia()
   {
-    if (m_data.GetActions().GetPatientActions().HasArrhythmia())
-    {
-      auto r = m_data.GetActions().GetPatientActions().GetArrhythmia().GetRhythm();
-      m_data.GetActions().GetPatientActions().RemoveArrhythmia();// Done with the action
-
-      SetHeartRhythm(r, true);
-      switch (r)
-      {
-      case eHeartRhythm::Asystole:
-      case eHeartRhythm::CoarseVentricularFibrillation:
-      case eHeartRhythm::FineVentricularFibrillation:
-      case eHeartRhythm::SinusPulselessElectricalActivity:
-      case eHeartRhythm::PulselessVentricularTachycardia:
-      {
-        // Flip the cardiac arrest switch
-        // This tells the CV system that a cardiac arrest has been initiated.
-        // The cardiac arrest event will be triggered by CardiacCycleCalculations() at the end of the cardiac cycle.
-        m_StartCardiacArrest = true;
-        m_ArrhythmiaHeartElastanceModifier = 1.0;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
-        break;
-      }
-      case eHeartRhythm::NormalSinus:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 1.0;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      case eHeartRhythm::SinusTachycardia:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 1.0;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 1.5, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      case eHeartRhythm::SinusBradycardia:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 1.0;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 0.7, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      case eHeartRhythm::StableVentricularTachycardia:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 1.1;
-        m_ArrhythmiaVascularToneModifier = 1.0;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 2.2, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      case eHeartRhythm::UnstableVentricularTachycardia:
-      {
-        m_StartCardiacArrest = false;
-        m_ArrhythmiaHeartElastanceModifier = 0.3;
-        m_ArrhythmiaVascularToneModifier = 0.5;
-        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_StabilizedHeartRateBaseline_Per_min * 3.3, FrequencyUnit::Per_min);
-        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMAPBaseline_mmHg * 0.7, PressureUnit::mmHg);
-        m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::On);
-        m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::On);
-        m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-        m_CardiacArrestVitalsUpdateTimer_s = 0;
-        break;
-      }
-      default:// Any other rhythms take us out of cardiac arrest
-        Error("Unsupported heart arrhythmia.");
-      }
-      Info("Arrhythmia is setting Heart Rate Baseline to :" + m_data.GetCurrentPatient().GetHeartRateBaseline().ToString());
-      Info("Arrhythmia is setting MAP Baseline to :" + m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().ToString());
-
-      //Force a new cardiac cycle to start when cardiac arrest is removed
-      m_StartSystole = true;
-      m_CurrentDriverCycleTime_s = m_DriverCyclePeriod_s;
-    }
+    
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1937,8 +1835,8 @@ namespace pulse
     double normalizedCardiacTime = m_CurrentDriverCycleTime_s / m_DriverCyclePeriod_s;
     double elastanceShapeFunction = (pow(normalizedCardiacTime / alpha1, n1) / (1.0 + pow(normalizedCardiacTime / alpha1, n1))) * (1.0 / (1.0 + pow(normalizedCardiacTime / alpha2, n2))) / maxShape;
 
-    m_LeftHeartElastance_mmHg_Per_mL = m_ArrhythmiaHeartElastanceModifier * oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
-    m_RightHeartElastance_mmHg_Per_mL = m_ArrhythmiaHeartElastanceModifier * oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
+    m_LeftHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_LeftHeartElastanceMax_mmHg_Per_mL - m_LeftHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_LeftHeartElastanceMin_mmHg_Per_mL);
+    m_RightHeartElastance_mmHg_Per_mL = oxygenDeficitEffect * ((m_RightHeartElastanceMax_mmHg_Per_mL - m_RightHeartElastanceMin_mmHg_Per_mL) * elastanceShapeFunction + m_RightHeartElastanceMin_mmHg_Per_mL);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -2035,7 +1933,7 @@ namespace pulse
       for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
       {
         /// \todo We are treating all systemic resistance paths equally, including the brain.
-        UpdatedResistance_mmHg_s_Per_mL = m_ArrhythmiaVascularToneModifier * m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        UpdatedResistance_mmHg_s_Per_mL = m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
         if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance_mmHg_s_Per_mL)
         {
           UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance_mmHg_s_Per_mL;
