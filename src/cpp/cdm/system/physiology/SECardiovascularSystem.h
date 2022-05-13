@@ -115,6 +115,10 @@ public:
   virtual SEScalarPressure& GetPulmonaryArterialPressure();
   virtual double GetPulmonaryArterialPressure(const PressureUnit& unit) const;
 
+  virtual bool HasPulmonaryCapillariesCoverageFraction() const;
+  virtual SEScalar0To1& GetPulmonaryCapillariesCoverageFraction();
+  virtual double GetPulmonaryCapillariesCoverageFraction() const;
+
   virtual bool HasPulmonaryCapillariesWedgePressure() const;
   virtual SEScalarPressure& GetPulmonaryCapillariesWedgePressure();
   virtual double GetPulmonaryCapillariesWedgePressure(const PressureUnit& unit) const;
@@ -198,6 +202,7 @@ protected:
   SEScalarPressure*                      m_MeanCentralVenousPressure;
   SEScalarVolumePerTime*                 m_MeanSkinFlow;
   SEScalarPressure*                      m_PulmonaryArterialPressure;
+  SEScalar0To1*                          m_PulmonaryCapillariesCoverageFraction;
   SEScalarPressure*                      m_PulmonaryCapillariesWedgePressure;
   SEScalarPressure*                      m_PulmonaryDiastolicArterialPressure;
   SEScalarPressure*                      m_PulmonaryMeanArterialPressure;
