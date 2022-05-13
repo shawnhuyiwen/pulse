@@ -84,6 +84,7 @@ namespace pulse
   CardiovascularModel::~CardiovascularModel()
   {
     Clear();
+    
     delete m_transporter;
     delete m_circuitCalculator;
     delete m_CardiacCycleArterialPressure_mmHg;
@@ -167,6 +168,10 @@ namespace pulse
     m_PleuralCavity = nullptr;
     m_Ambient = nullptr;
 
+    m_StartSystole = false;
+    m_MAPCollapse_mmHg = 20;
+    m_minIndividialSystemicResistance_mmHg_s_Per_mL = 0.1;
+
     m_CardiacCycleArterialPressure_mmHg->Clear();
     m_CardiacCycleArterialCO2PartialPressure_mmHg->Clear();
     m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Clear();
@@ -195,6 +200,7 @@ namespace pulse
 
     m_StartSystole = true;
     m_HeartFlowDetected = false;
+    m_FullyCompressedHeart = false;
 
     m_DriverCyclePeriod_s = 60 / m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
     m_CurrentCardiacCycleTime_s = m_DriverCyclePeriod_s;
@@ -209,12 +215,24 @@ namespace pulse
     m_LeftHeartElastanceMax_mmHg_Per_mL  = m_data.GetConfiguration().GetLeftHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
     m_RightHeartElastanceMax_mmHg_Per_mL = m_data.GetConfiguration().GetRightHeartElastanceMaximum(PressurePerVolumeUnit::mmHg_Per_mL);
 
-    // CPR and Cardiac Arrest control
+    // Arrhythmia Parameters
     m_StartCardiacArrest = false;
+    m_CardiacArrestVitalsUpdateTimer_s = 0;
+    m_TotalArrhythmiaTransitionTime_s = 0;
+    m_CurrentArrhythmiaTransitionTime_s = 0;
+    m_ArrhythmiaHeartComplianceModifier =
+      m_InitialArrhythmiaHeartComplianceModifier = 1.0;
+    m_ArrhythmiaVascularComplianceModifier =
+      m_InitialArrhythmiaVascularComplianceModifier = 1.0;
+    m_ArrhythmiaSystemicVascularResistanceModifier =
+      m_InitialArrhythmiaSystemicVascularResistanceModifier = 1.0;
+    m_ArrhythmiaHeartRateBaseline_Per_min =
+      m_InitialArrhythmiaHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+
+    // CPR
     m_CompressionTime_s = 0.0;
     m_CompressionRatio = 0.0;
     m_CompressionPeriod_s = 0.0;
-    m_CardiacArrestVitalsUpdateTimer_s = 0;
 
     //Initialize system data based on patient file inputs
     GetHeartRate().Set(m_data.GetCurrentPatient().GetHeartRateBaseline());
@@ -280,7 +298,6 @@ namespace pulse
   void CardiovascularModel::SetUp()
   {
     m_HemorrhageTrack.clear();
-    m_minIndividialSystemicResistance_mmHg_s_Per_mL = 0.1;
 
     //Circuits
     m_CirculatoryCircuit = &m_data.GetCircuits().GetActiveCardiovascularCircuit();
@@ -385,6 +402,12 @@ namespace pulse
     m_AortaResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::Aorta3ToAorta1);
     m_VenaCavaCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToGround);
     m_RightHeartResistance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::VenaCavaToRightHeart2);
+    m_LeftPulmonaryArteriesCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryArteriesToGround);
+    m_RightPulmonaryArteriesCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryArteriesToGround);
+    m_LeftPulmonaryCapillariesCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryCapillariesToGround);
+    m_RightPulmonaryCapillariesCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryCapillariesToGround);
+    m_LeftPulmonaryVeinsCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::LeftPulmonaryVeinsToGround);
+    m_RightPulmonaryVeinsCompliance = m_CirculatoryCircuit->GetPath(pulse::CardiovascularPath::RightPulmonaryVeinsToGround);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -412,8 +435,10 @@ namespace pulse
       m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
       m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
       m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
-      // Keep this for moving between arrhythmia's, note InitialPatient is pre conditions
+      // Keep these for moving between arrhythmia's, note InitialPatient is pre conditions
       m_StabilizedHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+       m_ArrhythmiaHeartRateBaseline_Per_min =
+        m_InitialArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min;
 
       if (m_data.GetState() == EngineState::AtInitialStableState)
       {// At Resting State, apply conditions if we have them
@@ -620,7 +645,21 @@ namespace pulse
   {
     HeartDriver();
     ProcessActions();
+    UpdatePulmonaryCapillaries();
     CalculatePleuralCavityVenousEffects();
+
+    m_data.GetDataTrack().Probe("ArrhythmiaHeartComplianceModifier", m_ArrhythmiaHeartComplianceModifier);
+    m_data.GetDataTrack().Probe("ArrhythmiaHeartRateBaseline_Per_min", m_ArrhythmiaHeartRateBaseline_Per_min);
+    m_data.GetDataTrack().Probe("ArrhythmiaVascularComplianceModifier", m_ArrhythmiaVascularComplianceModifier);
+    m_data.GetDataTrack().Probe("ArrhythmiaSystemicVascularResistanceModifier", m_ArrhythmiaSystemicVascularResistanceModifier);
+
+    m_data.GetDataTrack().Probe("LeftHeartCompliance_mL_Per_mmHg", m_pLeftHeart->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg));
+    m_data.GetDataTrack().Probe("RightHeartCompliance_mL_Per_mmHg", m_pRightHeart->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg));
+
+    m_data.GetDataTrack().Probe("LeftPulmonaryArteriesToVeinsFlow_mL_Per_s", m_LeftPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s));
+    m_data.GetDataTrack().Probe("LeftPulmonaryArteriesToCapillariesFlow_mL_Per_s", m_LeftPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s));
+    m_data.GetDataTrack().Probe("RightPulmonaryArteriesToVeinsFlow_mL_Per_s", m_RightPulmonaryArteriesToVeins->GetNextFlow(VolumePerTimeUnit::mL_Per_s));
+    m_data.GetDataTrack().Probe("RightPulmonaryArteriesToCapillariesFlow_mL_Per_s", m_RightPulmonaryArteriesToCapillaries->GetNextFlow(VolumePerTimeUnit::mL_Per_s));
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -711,6 +750,7 @@ namespace pulse
     //  m_pAortaToSmallIntestine->GetNextFlow(VolumePerTimeUnit::mL_Per_s) +
     //  m_pAortaToSplanchnic->GetNextFlow(VolumePerTimeUnit::mL_Per_s);
 
+    m_FullyCompressedHeart = false;
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       m_CardiacArrestVitalsUpdateTimer_s += m_data.GetTimeStep_s();
@@ -747,6 +787,7 @@ namespace pulse
       if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
       {
         m_HeartFlowDetected = false;
+        m_FullyCompressedHeart = true;
 #ifdef LOG_TIMING
         Info("Heart flow stopped");
         Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
@@ -821,7 +862,7 @@ namespace pulse
         m_data.GetEvents().SetEvent(eEvent::HypovolemicShock, false, m_data.GetSimulationTime());
       }
 
-      if (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) <= 20)
+      if (GetMeanArterialPressure().GetValue(PressureUnit::mmHg) <= m_MAPCollapse_mmHg)
       {
         m_data.GetEvents().SetEvent(eEvent::CardiovascularCollapse, true, m_data.GetSimulationTime());
       }
@@ -1650,7 +1691,216 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::Arrhythmia()
   {
-    
+    // Only process/transition arrhythmia actions when the heart is fully compressed
+    if(m_data.GetActions().GetPatientActions().HasArrhythmia())
+    {
+      if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+        if(!m_FullyCompressedHeart)
+          return;
+
+      auto newRhythm = m_data.GetActions().GetPatientActions().GetArrhythmia().GetRhythm();
+      m_data.GetActions().GetPatientActions().RemoveArrhythmia();// Done with the action
+
+      Info("Switching heart rhythm to " + eHeartRhythm_Name(newRhythm));
+
+      if (GetHeartRhythm() != newRhythm)
+      {
+        SetHeartRhythm(newRhythm, true);
+        switch (newRhythm)
+        {
+        case eHeartRhythm::Asystole:
+        case eHeartRhythm::CoarseVentricularFibrillation:
+        case eHeartRhythm::FineVentricularFibrillation:
+        case eHeartRhythm::SinusPulselessElectricalActivity:
+        case eHeartRhythm::PulselessVentricularTachycardia:
+        {
+          // Flip the cardiac arrest switch
+          // This tells the CV system that a cardiac arrest has been initiated.
+          m_StartCardiacArrest   = true;
+          m_CardiacArrestVitalsUpdateTimer_s = 0;
+
+          m_CurrentArrhythmiaTransitionTime_s = 0;
+          m_TotalArrhythmiaTransitionTime_s = 20;
+
+          m_InitialArrhythmiaHeartComplianceModifier = m_ArrhythmiaHeartComplianceModifier = 0.75;
+          m_InitialArrhythmiaHeartRateBaseline_Per_min = m_ArrhythmiaHeartRateBaseline_Per_min = GetHeartRate(FrequencyUnit::Per_min);
+          m_InitialArrhythmiaVascularComplianceModifier = m_ArrhythmiaVascularComplianceModifier = 1.0;
+          m_InitialArrhythmiaSystemicVascularResistanceModifier = m_ArrhythmiaSystemicVascularResistanceModifier;
+
+          m_TargetArrhythmiaHeartComplianceModifier = 0.1;
+          m_TargetArrhythmiaHeartRateBaseline_Per_min = 35;
+          m_TargetArrhythmiaVascularComplianceModifier = 5.0;
+          m_TargetArrhythmiaSystemicVascularResistanceModifier = 0.5;
+
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::Off;
+          break;
+        }
+        case eHeartRhythm::NormalSinus:
+        {
+          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+          {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 150;
+
+            m_InitialArrhythmiaHeartComplianceModifier = m_ArrhythmiaHeartComplianceModifier;
+            m_InitialArrhythmiaHeartRateBaseline_Per_min = m_ArrhythmiaHeartRateBaseline_Per_min;
+            m_InitialArrhythmiaVascularComplianceModifier = m_ArrhythmiaVascularComplianceModifier;
+            m_InitialArrhythmiaSystemicVascularResistanceModifier = m_ArrhythmiaSystemicVascularResistanceModifier;
+
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
+
+            m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+
+            // Force a new cardiac cycle
+            m_HeartFlowDetected = false;
+            m_CurrentDriverCycleTime_s = 0;
+            m_DriverCyclePeriod_s = m_CurrentCardiacCycleTime_s = 60 / m_InitialArrhythmiaHeartRateBaseline_Per_min;
+          }
+          else
+          {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 150;
+
+            m_ArrhythmiaHeartRateBaseline_Per_min =
+              m_InitialArrhythmiaHeartRateBaseline_Per_min = GetHeartRate(FrequencyUnit::Per_min);
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+          }
+          break;
+        }
+        case eHeartRhythm::SinusTachycardia:
+        {
+          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+          {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 150;
+
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min * 1.5;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+
+            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+          }
+          else
+          {
+
+          }
+          break;
+        }
+        case eHeartRhythm::SinusBradycardia:
+        {
+          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+          {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 150;
+
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min * 0.7;
+            m_TargetArrhythmiaVascularComplianceModifier = 5.0;
+
+            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+          }
+          else
+          {
+
+          }
+          break;
+        }
+        case eHeartRhythm::StableVentricularTachycardia:
+        {
+          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+          {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 150;
+
+            m_ArrhythmiaHeartComplianceModifier =
+              m_InitialArrhythmiaHeartComplianceModifier = 0.3;
+            m_TargetArrhythmiaHeartComplianceModifier = 1.1;
+
+            m_ArrhythmiaHeartRateBaseline_Per_min =
+              m_InitialArrhythmiaHeartRateBaseline_Per_min = 45;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min * 2.2;
+
+            m_ArrhythmiaVascularComplianceModifier =
+              m_InitialArrhythmiaVascularComplianceModifier = 1.0;
+            m_TargetArrhythmiaVascularComplianceModifier = 5.0;
+
+            m_CardiacArrestVitalsUpdateTimer_s = 0;
+            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+          }
+          else
+          {
+
+          }
+          break;
+        }
+        case eHeartRhythm::UnstableVentricularTachycardia:
+        {
+          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+          {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 150;
+
+            m_ArrhythmiaHeartComplianceModifier =
+              m_InitialArrhythmiaHeartComplianceModifier = 0.3;
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+
+            m_ArrhythmiaHeartRateBaseline_Per_min =
+              m_InitialArrhythmiaHeartRateBaseline_Per_min = 45;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min * 3.3;
+
+            m_ArrhythmiaVascularComplianceModifier =
+              m_InitialArrhythmiaVascularComplianceModifier = 1.0;
+            m_TargetArrhythmiaVascularComplianceModifier = 5.0;
+
+            m_CardiacArrestVitalsUpdateTimer_s = 0;
+            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+          }
+          else
+          {
+
+          }
+          break;
+        }
+        default:// Any other rhythms take us out of cardiac arrest
+          Error("Unsupported heart arrhythmia.");
+        }
+      }
+      else
+        Warning("Requesting an arrhytmia that is the current arrhytmia, ignoring this action");
+    }
+    else
+    {
+      if (m_CurrentArrhythmiaTransitionTime_s < m_TotalArrhythmiaTransitionTime_s)
+      {
+        m_CurrentArrhythmiaTransitionTime_s += m_data.GetTimeStep_s();
+        if (m_CurrentArrhythmiaTransitionTime_s >= m_TotalArrhythmiaTransitionTime_s)
+        {
+          Info("Completed Arrhythmia Transition");
+
+          m_data.GetNervous().SetBaroreceptorFeedback(m_EnableFeedbackAfterArrhythmiaTrasition);
+          m_data.GetNervous().SetChemoreceptorFeedback(m_EnableFeedbackAfterArrhythmiaTrasition);
+
+          m_ArrhythmiaHeartComplianceModifier = m_TargetArrhythmiaHeartComplianceModifier;
+          m_ArrhythmiaHeartRateBaseline_Per_min = m_TargetArrhythmiaHeartRateBaseline_Per_min;
+          m_ArrhythmiaVascularComplianceModifier = m_TargetArrhythmiaVascularComplianceModifier;
+        }
+        else
+        {
+
+          double transitionPercent = m_CurrentArrhythmiaTransitionTime_s / m_TotalArrhythmiaTransitionTime_s;
+          m_ArrhythmiaHeartComplianceModifier = GeneralMath::LinearInterpolator(m_InitialArrhythmiaHeartComplianceModifier, m_TargetArrhythmiaHeartComplianceModifier, transitionPercent);
+          m_ArrhythmiaHeartRateBaseline_Per_min = GeneralMath::LinearInterpolator(m_InitialArrhythmiaHeartRateBaseline_Per_min, m_TargetArrhythmiaHeartRateBaseline_Per_min, transitionPercent);
+          m_ArrhythmiaVascularComplianceModifier = GeneralMath::LinearInterpolator(m_InitialArrhythmiaVascularComplianceModifier, m_TargetArrhythmiaVascularComplianceModifier, transitionPercent);
+        }
+        m_data.GetCurrentPatient().GetHeartRateBaseline().SetValue(m_ArrhythmiaHeartRateBaseline_Per_min, FrequencyUnit::Per_min);
+      }
+    }
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1720,8 +1970,32 @@ namespace pulse
   #endif
         m_StartSystole = true; // A new cardiac cycle will begin next time step
       }
-      AdjustVascularTone();
       CalculateHeartElastance();
+    }
+    
+    if (m_StartCardiacArrest)
+    {
+      Info("Starting Cardiac Arrest");
+      m_StartSystole = false;
+      m_StartCardiacArrest = false;
+
+      m_DriverCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years)
+      m_CurrentCardiacCycleTime_s = 0;
+
+      m_CardiacCycleArterialPressure_mmHg->Clear();
+      m_CardiacCycleArterialCO2PartialPressure_mmHg->Clear();
+      m_CardiacCyclePulmonaryCapillariesWedgePressure_mmHg->Clear();
+      m_CardiacCyclePulmonaryCapillariesFlow_mL_Per_s->Clear();
+      m_CardiacCyclePulmonaryShuntFlow_mL_Per_s->Clear();
+      m_CardiacCyclePulmonaryArteryPressure_mmHg->Clear();
+      m_CardiacCycleCentralVenousPressure_mmHg->Clear();
+      m_CardiacCycleSkinFlow_mL_Per_s->Clear();
+
+      GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);
+      m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
+
+      m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
+      m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
     }
 
     if (m_StartSystole)
@@ -1744,8 +2018,10 @@ namespace pulse
     else
       m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
 
-    m_pRightHeart->GetNextCompliance().SetValue(1.0 / m_RightHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+    AdjustVascularTone();
+    AdjustVascularCompliance();
     m_pLeftHeart->GetNextCompliance().SetValue(1.0 / m_LeftHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
+    m_pRightHeart->GetNextCompliance().SetValue(1.0 / m_RightHeartElastance_mmHg_Per_mL, VolumePerPressureUnit::mL_Per_mmHg);
 
     m_CurrentDriverCycleTime_s += m_data.GetTimeStep_s();
   }
@@ -1792,19 +2068,7 @@ namespace pulse
     //Apply heart failure effects
     m_LeftHeartElastanceMax_mmHg_Per_mL *= m_LeftHeartElastanceModifier;
 
-    // Now set the cardiac cycle period and the cardiac arrest event if applicable
-    if (m_StartCardiacArrest)
-    {
-      m_StartCardiacArrest = false;
-      m_DriverCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years) 
-      RecordAndResetCardiacCycle();
-      GetHeartRate().SetValue(0.0, FrequencyUnit::Per_min);
-      m_data.GetEvents().SetEvent(eEvent::CardiacArrest, true, m_data.GetSimulationTime());
-    }
-    else
-    {
-      m_DriverCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
-    }
+    m_DriverCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1911,7 +2175,49 @@ namespace pulse
         Path->GetNextResistance().SetValue(resistanceNew__mmHg_s_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
       }
     }
+   }
 
+  void CardiovascularModel::AdjustVascularCompliance()
+  {
+    // Adjust Vascularture Compliance
+    double UpdatedCompliance_mL_Per_mmHg;
+    for (SEFluidCircuitPath* Path : m_systemicCompliancePaths)
+    {
+      if (!Path->HasNextCompliance() || Path == m_pLeftHeart || Path == m_pRightHeart)
+        continue;
+      UpdatedCompliance_mL_Per_mmHg = Path->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+      UpdatedCompliance_mL_Per_mmHg *= m_ArrhythmiaVascularComplianceModifier;
+      Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    }
+    // Aorta Compliance
+    UpdatedCompliance_mL_Per_mmHg = m_AortaCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg *= m_ArrhythmiaVascularComplianceModifier;
+    m_AortaCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    // Vena Cava Compliance
+    UpdatedCompliance_mL_Per_mmHg = m_VenaCavaCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg *= m_ArrhythmiaVascularComplianceModifier;
+    m_VenaCavaCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    // Pulmonary Arteries
+    UpdatedCompliance_mL_Per_mmHg = m_LeftPulmonaryArteriesCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg *= m_ArrhythmiaVascularComplianceModifier;
+    m_LeftPulmonaryArteriesCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg = m_RightPulmonaryArteriesCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg *= m_ArrhythmiaVascularComplianceModifier;
+    m_RightPulmonaryArteriesCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    // Pulmonary Capillaries
+    UpdatedCompliance_mL_Per_mmHg = m_LeftPulmonaryCapillariesCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg *= m_ArrhythmiaVascularComplianceModifier;
+    m_LeftPulmonaryCapillariesCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg = m_RightPulmonaryCapillariesCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg *= m_ArrhythmiaVascularComplianceModifier;
+    m_RightPulmonaryCapillariesCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    // Pulmonary Veins
+    UpdatedCompliance_mL_Per_mmHg = m_LeftPulmonaryVeinsCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg *= m_ArrhythmiaVascularComplianceModifier;
+    m_LeftPulmonaryVeinsCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg = m_RightPulmonaryVeinsCompliance->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
+    UpdatedCompliance_mL_Per_mmHg *= m_ArrhythmiaVascularComplianceModifier;
+    m_RightPulmonaryVeinsCompliance->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
   }
   //--------------------------------------------------------------------------------------------------
   /// \brief
@@ -1933,7 +2239,7 @@ namespace pulse
       for (SEFluidCircuitPath* Path : m_systemicResistancePaths)
       {
         /// \todo We are treating all systemic resistance paths equally, including the brain.
-        UpdatedResistance_mmHg_s_Per_mL = m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetResistanceBaseline(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+        UpdatedResistance_mmHg_s_Per_mL = m_data.GetNervous().GetBaroreceptorResistanceScale().GetValue() * Path->GetNextResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
         if (UpdatedResistance_mmHg_s_Per_mL < m_minIndividialSystemicResistance_mmHg_s_Per_mL)
         {
           UpdatedResistance_mmHg_s_Per_mL = m_minIndividialSystemicResistance_mmHg_s_Per_mL;
@@ -1943,7 +2249,7 @@ namespace pulse
 
       for (SEFluidCircuitPath* Path : m_systemicCompliancePaths)
       {
-        UpdatedCompliance_mL_Per_mmHg = m_data.GetNervous().GetBaroreceptorComplianceScale().GetValue() * Path->GetComplianceBaseline(VolumePerPressureUnit::mL_Per_mmHg);
+        UpdatedCompliance_mL_Per_mmHg = m_data.GetNervous().GetBaroreceptorComplianceScale().GetValue() * Path->GetNextCompliance(VolumePerPressureUnit::mL_Per_mmHg);
         Path->GetNextCompliance().SetValue(UpdatedCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
       }
     }
@@ -1979,6 +2285,50 @@ namespace pulse
       }
     }
     MetabolicToneResponse();
+  }
+
+  //--------------------------------------------------------------------------------------------------
+  /// \brief
+  /// Update Pulmonary Shunt Resistance 
+  ///
+  /// \details
+  /// This decreases the pulmonary shunt resistance in the cardiovascular system.  The resistance is 
+  /// inversely proportional to the severity.  The shunt allows deoxgenated blood to pass without
+  /// participating in gas exchange.  This often occurs as blood pressure falls.
+  //--------------------------------------------------------------------------------------------------
+  void CardiovascularModel::UpdatePulmonaryCapillaries()
+  {
+    double meanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
+    double meanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+    double standardPulmonaryCapillaryCoverage = m_data.GetConfiguration().GetStandardPulmonaryCapillaryCoverage();
+
+    // Set a range between 10% below MAP baseline and Cardiovascular Collapse MAP
+    double shuntEffect_mmHg = meanArterialPressureBaseline_mmHg - (meanArterialPressureBaseline_mmHg * 0.1);
+    if (meanArterialPressure_mmHg < m_MAPCollapse_mmHg)
+      meanArterialPressure_mmHg = m_MAPCollapse_mmHg;
+    if (meanArterialPressure_mmHg > shuntEffect_mmHg)
+    {
+      GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage);
+      return;
+    }
+
+    double modifier = (meanArterialPressure_mmHg - m_MAPCollapse_mmHg) /
+                      (shuntEffect_mmHg - m_MAPCollapse_mmHg);
+    //modifier = MAX(0.02, modifier);
+    //modifier = MIN(modifier, 1.0);
+    //modifier = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
+
+    // Update the capillary coverage for tissue diffusion
+    GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage * modifier);
+    // Update the pulmonary shunt
+    //double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    //double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    //
+    //leftPulmonaryShuntResistance  *= (1-modifier);
+    //rightPulmonaryShuntResistance *= (1-modifier);
+    //
+    //m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    //m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   }
 
   //--------------------------------------------------------------------------------------------------
