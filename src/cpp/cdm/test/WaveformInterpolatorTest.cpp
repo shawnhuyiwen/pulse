@@ -50,7 +50,7 @@ void CommonDataModelTest::WaveformInterpolatorTest(const std::string& sOutputDir
   for (size_t i = 60; i < 220; i++)
   {
     logger.Info("Generating Sinus rhythm for HR: " + std::to_string(i));
-    hr.SetValue(i, FrequencyUnit::Per_min);
+    hr.SetValue((double)i, FrequencyUnit::Per_min);
     ecg.StartNewCycle(eElectroCardioGram_WaveformType::Sinus, hr, dt, 1.0);
     SEArrayElectricPotential& signal = ecg.GetWaveform(eElectroCardioGram_WaveformLead::Lead3, eElectroCardioGram_WaveformType::Sinus).GetActiveCycle();
 
