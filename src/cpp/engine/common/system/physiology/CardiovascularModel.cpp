@@ -1727,10 +1727,10 @@ namespace pulse
           m_InitialArrhythmiaVascularComplianceModifier = m_ArrhythmiaVascularComplianceModifier = 1.0;
           m_InitialArrhythmiaSystemicVascularResistanceModifier = m_ArrhythmiaSystemicVascularResistanceModifier;
 
-          m_TargetArrhythmiaHeartComplianceModifier = 0.1;
+          m_TargetArrhythmiaHeartComplianceModifier = 0.25;
           m_TargetArrhythmiaHeartRateBaseline_Per_min = 35;
-          m_TargetArrhythmiaVascularComplianceModifier = 5.0;
-          m_TargetArrhythmiaSystemicVascularResistanceModifier = 0.5;
+          m_TargetArrhythmiaVascularComplianceModifier = 2.0;
+          m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
 
           m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::Off;
           break;
@@ -2316,17 +2316,17 @@ namespace pulse
                       (shuntEffect_mmHg - m_MAPCollapse_mmHg);
     //modifier = MAX(0.02, modifier);
     //modifier = MIN(modifier, 1.0);
-    //modifier = GeneralMath::ExponentialDecayFunction(10, 0.1, 1.0, severity);
+    modifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, modifier);
 
     // Update the capillary coverage for tissue diffusion
     GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage * modifier);
+
     // Update the pulmonary shunt
     //double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     //double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    //
-    //leftPulmonaryShuntResistance  *= (1-modifier);
-    //rightPulmonaryShuntResistance *= (1-modifier);
-    //
+    //modifier = GeneralMath::ExponentialDecayFunction(10, 0.75, 1.0, modifier);
+    //leftPulmonaryShuntResistance  *= modifier;
+    //rightPulmonaryShuntResistance *= modifier;
     //m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     //m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
   }
