@@ -1961,7 +1961,7 @@ namespace pulse
   {
     if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      if (m_CurrentDriverCycleTime_s >= m_DriverCyclePeriod_s)
+      if (m_CurrentDriverCycleTime_s >= m_DriverCyclePeriod_s && !m_StartCardiacArrest)
       {
   #ifdef LOG_TIMING
           Info("Completing Driver Cycle");
@@ -1972,7 +1972,27 @@ namespace pulse
       }
       CalculateHeartElastance();
     }
-    
+
+    if (m_StartSystole)
+    {
+#ifdef LOG_TIMING
+      Info("Starting Driver Cycle");
+      Info("  -Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
+      Info("  -Old CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
+#endif
+      BeginDriverCycle();
+      m_StartSystole = false;
+      m_CurrentDriverCycleTime_s = 0.0;
+#ifdef LOG_TIMING
+      Info("  -New CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
+      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
+      Info("  -Reseting Driver Cycle Time to 0");
+#endif
+      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle,true, m_data.GetSimulationTime());
+    }
+    else
+      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
+
     if (m_StartCardiacArrest)
     {
       Info("Starting Cardiac Arrest");
@@ -1996,27 +2016,8 @@ namespace pulse
 
       m_data.GetNervous().SetBaroreceptorFeedback(eSwitch::Off);
       m_data.GetNervous().SetChemoreceptorFeedback(eSwitch::Off);
+      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
     }
-
-    if (m_StartSystole)
-    {
-#ifdef LOG_TIMING
-      Info("Starting Driver Cycle");
-      Info("  -Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-      Info("  -Old CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
-#endif
-      BeginDriverCycle();
-      m_StartSystole = false;
-      m_CurrentDriverCycleTime_s = 0.0;
-#ifdef LOG_TIMING
-      Info("  -New CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
-      Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-      Info("  -Reseting Driver Cycle Time to 0");
-#endif
-      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle,true, m_data.GetSimulationTime());
-    }
-    else
-      m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
 
     AdjustVascularTone();
     AdjustVascularCompliance();
