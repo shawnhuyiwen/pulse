@@ -270,12 +270,10 @@ void SEEngineTracker::PullData()
   }
 }
 
-
 bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 {
   if (m_Request2Scalar.find(&dr) != m_Request2Scalar.end())
   {
-    Warning("Ignoring duplicate data request provided : " + dr.ToString());
     return true; // We have this connected already
   }
 
