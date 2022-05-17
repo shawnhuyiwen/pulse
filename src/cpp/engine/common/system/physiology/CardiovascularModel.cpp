@@ -249,8 +249,8 @@ namespace pulse
     GetPulmonaryMeanShuntFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
 
     GetMeanSkinFlow().SetValue(0, VolumePerTimeUnit::mL_Per_s);
-    GetCardiacOutput().SetValue(5600, VolumePerTimeUnit::mL_Per_min);
-    GetHeartStrokeVolume().SetValue(78, VolumeUnit::mL);
+    GetCardiacOutput().SetValue(m_data.GetCurrentPatient().GetSex() == ePatient_Sex::Male ? 5600 : 4900, VolumePerTimeUnit::mL_Per_min);
+    GetHeartStrokeVolume().SetValue(GetCardiacOutput(VolumePerTimeUnit::mL_Per_min)/GetHeartRate(FrequencyUnit::Per_min), VolumeUnit::mL);
     GetHeartEjectionFraction().SetValue(0.55);
     GetCardiacIndex().SetValue(3.0, VolumePerTimeAreaUnit::mL_Per_min_m2);
     GetPulmonaryVascularResistance().SetValue(0.14, PressureTimePerVolumeUnit::mmHg_min_Per_mL);
