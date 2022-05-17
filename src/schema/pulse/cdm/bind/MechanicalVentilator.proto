@@ -112,7 +112,7 @@ message MechanicalVentilatorData
   ScalarVolumePerPressureData         StaticPulmonaryCompliance                 = 21;/**<< @brief The pulmonary compliance during periods without gas flow.*/
   ScalarVolumeData                    TidalVolume                               = 22;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
   ScalarVolumeData                    TotalLungVolume                           = 23;/**<< @brief The total volume of air within the lungs at any given time.*/
-  ScalarVolumePerTimeData             TotalPulmonaryVentilation                 = 24;/**<< @brief The flow rate representing the exchange of air between the lungs and ambient air.*/
+  ScalarVolumePerTimeData             TotalPulmonaryVentilation                 = 24;/**<< @brief The amount of air that enters the lungs as a function of time - can be used for minute ventilation.*/
 
   MechanicalVentilatorSettingsData    Settings                                  = 25;
 }

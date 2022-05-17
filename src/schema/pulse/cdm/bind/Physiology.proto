@@ -338,7 +338,7 @@ message RespiratorySystemData
   ScalarVolumePerTimeData             TotalDeadSpaceVentilation                      = 47;/**<< @brief The air flow to the dead space.*/
   ScalarVolumeData                    TotalLungVolume                                = 48;/**<< @brief The total volume of air within the lungs at any given time.*/
   ScalarPowerData                     TotalPowerOfBreathing                          = 49;/**<< @brief The sum of the imposed and patient power of breathing.*/
-  ScalarVolumePerTimeData             TotalPulmonaryVentilation                      = 50;/**<< @brief The flow rate representing the exchange of air between the lungs and ambient air.*/
+  ScalarVolumePerTimeData             TotalPulmonaryVentilation                      = 50;/**<< @brief The amount of air that enters the lungs as a function of time - can be used for minute ventilation.*/
   ScalarEnergyData                    TotalWorkOfBreathing                           = 51;/**<< @brief The sum of the imposed and patient work of breathing.*/
   ScalarPressureData                  TransairwayPressure                            = 52;/**<< @brief The pressure difference between the airway opening and alveoli.*/
   ScalarPressureData                  TransalveolarPressure                          = 53;/**<< @brief The pressure difference between the alveoli and pleural space.*/
