@@ -345,6 +345,7 @@ namespace pulse
     m_PatientActions = &m_data.GetActions().GetPatientActions();
     //Driver
     m_MaxDriverPressure_cmH2O = -50.0;
+    m_CardiacArrestEffect = 1.0;
     //Configuration parameters
     m_DefaultOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_DefaultClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -562,6 +563,8 @@ namespace pulse
     //Do the overrides
     SetRespiratoryResistance();
     SetRespiratoryCompliance();
+
+    m_data.GetDataTrack().Probe("CardiacArrestEffect", m_CardiacArrestEffect);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1164,6 +1167,21 @@ namespace pulse
   #endif
     }
 
+    // Modify breathing during and coming out of cardiac arrest
+    double cardiacArrestDampingPeriod_s = 150.0;
+    // If the cv system parameter is true, then make the cardicArrestEffect = 0
+    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+    {
+      m_CardiacArrestEffect = 0.0;
+    }
+    else if (m_CardiacArrestEffect < 1.0)
+    {
+      // Do a linear increment this timestep to eventually reach 1.0 at the end of the damping period
+      m_CardiacArrestEffect += m_data.GetTimeStep_s() / cardiacArrestDampingPeriod_s;
+      // Make sure it never goes over 1.0
+      m_CardiacArrestEffect = MIN(m_CardiacArrestEffect, 1.0);
+    }
+
     //Prepare for the next cycle -------------------------------------------------------------------------------
     if ((m_BreathingCycleTime_s > GetBreathCycleTime()) ||                              //End of the cycle or currently not breathing
       (m_PatientActions->HasConsciousRespiration() && !m_ActiveConsciousRespirationCommand)) //Or new consious respiration command to start immediately
@@ -1190,14 +1208,6 @@ namespace pulse
         else
         {
           m_ActiveConsciousRespirationCommand = false;
-
-          // Make a cardicArrestEffect that is 1.0 unless cardiac arrest is true
-          double cardiacArrestEffect = 1.0;
-          // If the cv system parameter is true, then make the cardicArrestEffect = 0
-          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
-          {
-            cardiacArrestEffect = 0.0;
-          }
 
           //Ventilatory Negative Feedback Control *************************************************************************
           double PeripheralCO2PartialPressureSetPoint = m_data.GetConfiguration().GetPeripheralControllerCO2PressureSetPoint(PressureUnit::mmHg);
@@ -1306,7 +1316,7 @@ namespace pulse
           double dTargetTidalVolume_L = dTargetPulmonaryVentilation_L_Per_min / m_VentilationToTidalVolumeSlope + m_VentilationTidalVolumeIntercept;
 
           //Modify the target tidal volume due to other external effects - probably eventually replaced by the Nervous system
-          dTargetTidalVolume_L *= cardiacArrestEffect * NMBModifier;
+          dTargetTidalVolume_L *= m_CardiacArrestEffect * NMBModifier;
 
           //Apply Drug Effects to the target tidal volume
           dTargetTidalVolume_L += DrugsTVChange_L;
@@ -2018,7 +2028,7 @@ namespace pulse
       GetEndTidalCarbonDioxidePressure().SetValue(0, PressureUnit::cmH2O);
       GetEndTidalOxygenFraction().SetValue(0);
       GetEndTidalOxygenPressure().SetValue(0, PressureUnit::cmH2O);
-
+    
       for (SESubstance* sub : m_data.GetSubstances().GetActiveGases())
       {
         sub->GetEndTidalFraction().SetValue(0);
