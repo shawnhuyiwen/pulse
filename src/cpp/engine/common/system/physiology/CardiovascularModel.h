@@ -123,6 +123,7 @@ namespace pulse
     double m_InitialArrhythmiaHeartRateBaseline_Per_min;
     double m_TargetArrhythmiaHeartRateBaseline_Per_min;
     double m_StabilizedHeartRateBaseline_Per_min; // store for moving between arrhytmias
+    double m_StabilizedMeanArterialPressureBaseline_Per_min; // store for moving between arrhytmias
     // Heart Compliance Transition
     double m_ArrhythmiaHeartComplianceModifier;
     double m_InitialArrhythmiaHeartComplianceModifier;

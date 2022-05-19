@@ -439,6 +439,7 @@ namespace pulse
       m_StabilizedHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
        m_ArrhythmiaHeartRateBaseline_Per_min =
         m_InitialArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min;
+      m_StabilizedMeanArterialPressureBaseline_Per_min = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
 
       if (m_data.GetState() == EngineState::AtInitialStableState)
       {// At Resting State, apply conditions if we have them
@@ -1780,11 +1781,23 @@ namespace pulse
             m_CurrentArrhythmiaTransitionTime_s = 0;
             m_TotalArrhythmiaTransitionTime_s = 150;
 
-            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
-            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min * 1.5;
-            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+            m_InitialArrhythmiaHeartComplianceModifier = m_ArrhythmiaHeartComplianceModifier;
+            m_InitialArrhythmiaHeartRateBaseline_Per_min = m_ArrhythmiaHeartRateBaseline_Per_min;
+            m_InitialArrhythmiaVascularComplianceModifier = m_ArrhythmiaVascularComplianceModifier;
+            m_InitialArrhythmiaSystemicVascularResistanceModifier = m_ArrhythmiaSystemicVascularResistanceModifier;
 
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = 130;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
+
+            m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
             m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+
+            // Force a new cardiac cycle
+            m_HeartFlowDetected = false;
+            m_CurrentDriverCycleTime_s = 0;
+            m_DriverCyclePeriod_s = m_CurrentCardiacCycleTime_s = 60 / m_InitialArrhythmiaHeartRateBaseline_Per_min;
           }
           else
           {
@@ -1889,6 +1902,7 @@ namespace pulse
           m_ArrhythmiaHeartComplianceModifier = m_TargetArrhythmiaHeartComplianceModifier;
           m_ArrhythmiaHeartRateBaseline_Per_min = m_TargetArrhythmiaHeartRateBaseline_Per_min;
           m_ArrhythmiaVascularComplianceModifier = m_TargetArrhythmiaVascularComplianceModifier;
+          m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
         }
         else
         {
@@ -2300,16 +2314,27 @@ namespace pulse
   void CardiovascularModel::UpdatePulmonaryCapillaries()
   {
     double meanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
-    double meanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
     double standardPulmonaryCapillaryCoverage = m_data.GetConfiguration().GetStandardPulmonaryCapillaryCoverage();
 
     // Set a range between 10% below MAP baseline and Cardiovascular Collapse MAP
-    double shuntEffect_mmHg = meanArterialPressureBaseline_mmHg - (meanArterialPressureBaseline_mmHg * 0.1);
+    double shuntEffect_mmHg = m_StabilizedMeanArterialPressureBaseline_Per_min - (m_StabilizedMeanArterialPressureBaseline_Per_min * 0.1);
     if (meanArterialPressure_mmHg < m_MAPCollapse_mmHg)
       meanArterialPressure_mmHg = m_MAPCollapse_mmHg;
     if (meanArterialPressure_mmHg > shuntEffect_mmHg)
     {
       GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage);
+      m_data.GetDataTrack().Probe("PulmonaryShuntResistanceModifier", 0);
+
+      double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      m_data.GetDataTrack().Probe("LeftPulmonaryShuntResistance", leftPulmonaryShuntResistance);
+      m_data.GetDataTrack().Probe("RightPulmonaryShuntResistance", rightPulmonaryShuntResistance);
+      m_data.GetDataTrack().Probe("PulmonaryCapillariesResistanceModifier", 0);
+
+      double leftPulmonaryCapillariesResistance = m_LeftPulmonaryArteriesToCapillaries->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      double rightPulmonaryCapillariesResistance = m_RightPulmonaryArteriesToCapillaries->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+      m_data.GetDataTrack().Probe("LeftPulmonaryCapillariesResistance", leftPulmonaryCapillariesResistance);
+      m_data.GetDataTrack().Probe("RightPulmonaryCapillariesResistance", rightPulmonaryCapillariesResistance);
       return;
     }
 
@@ -2317,19 +2342,34 @@ namespace pulse
                       (shuntEffect_mmHg - m_MAPCollapse_mmHg);
     //modifier = MAX(0.02, modifier);
     //modifier = MIN(modifier, 1.0);
-    modifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, modifier);
+    double coverageModifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, modifier);
 
     // Update the capillary coverage for tissue diffusion
-    GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage * modifier);
+    GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage * coverageModifier);
 
     // Update the pulmonary shunt
-    //double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    //double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    //modifier = GeneralMath::ExponentialDecayFunction(10, 0.75, 1.0, modifier);
-    //leftPulmonaryShuntResistance  *= modifier;
-    //rightPulmonaryShuntResistance *= modifier;
-    //m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-    //m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double leftPulmonaryShuntResistance = m_LeftPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double shuntModifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, modifier);
+    leftPulmonaryShuntResistance  *= shuntModifier;
+    rightPulmonaryShuntResistance *= shuntModifier;
+    m_LeftPulmonaryArteriesToVeins->GetNextResistance().SetValue(leftPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_RightPulmonaryArteriesToVeins->GetNextResistance().SetValue(rightPulmonaryShuntResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+
+    double leftPulmonaryCapillariesResistance = m_LeftPulmonaryArteriesToCapillaries->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double rightPulmonaryCapillariesResistance = m_RightPulmonaryArteriesToCapillaries->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    leftPulmonaryCapillariesResistance *= 1/shuntModifier;
+    rightPulmonaryCapillariesResistance *= 1/shuntModifier;
+    m_LeftPulmonaryArteriesToCapillaries->GetNextResistance().SetValue(leftPulmonaryCapillariesResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    m_RightPulmonaryArteriesToCapillaries->GetNextResistance().SetValue(rightPulmonaryCapillariesResistance, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+
+
+    m_data.GetDataTrack().Probe("PulmonaryShuntResistanceModifier", shuntModifier);
+    m_data.GetDataTrack().Probe("LeftPulmonaryShuntResistance", leftPulmonaryShuntResistance);
+    m_data.GetDataTrack().Probe("RightPulmonaryShuntResistance", rightPulmonaryShuntResistance);
+    m_data.GetDataTrack().Probe("PulmonaryCapillariesResistanceModifier", 1/ shuntModifier);
+    m_data.GetDataTrack().Probe("LeftPulmonaryCapillariesResistance", leftPulmonaryCapillariesResistance);
+    m_data.GetDataTrack().Probe("RightPulmonaryCapillariesResistance", rightPulmonaryCapillariesResistance);
   }
 
   //--------------------------------------------------------------------------------------------------
