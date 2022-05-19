@@ -12,6 +12,7 @@ void HowToCreateAPatient();
 void HowToSerialize();
 void HowToPulseEnginePool();
 
+void HowToACLS();
 void HowToAirwayObstruction();
 void HowToAnesthesiaMachine();
 void HowToArrythmia();
