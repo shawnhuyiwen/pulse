@@ -345,6 +345,7 @@ namespace pulse
     m_PatientActions = &m_data.GetActions().GetPatientActions();
     //Driver
     m_MaxDriverPressure_cmH2O = -50.0;
+    m_CardiacArrestEffect = 1.0;
     //Configuration parameters
     m_DefaultOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_DefaultClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -1164,6 +1165,19 @@ namespace pulse
   #endif
     }
 
+    if (m_CardiacArrestEffect < 1.0)
+    {
+      // Modify breathing coming out of cardiac arrest
+      double cardiacArrestDampingInitialValue = 0.2;
+      double cardiacArrestDampingPeriod_s = 200.0;
+
+      // Do a linear increment this timestep to eventually reach 1.0 at the end of the damping period
+      m_CardiacArrestEffect += m_data.GetTimeStep_s() / cardiacArrestDampingPeriod_s * (1.0 - cardiacArrestDampingInitialValue);
+      m_CardiacArrestEffect = LIMIT(m_CardiacArrestEffect, cardiacArrestDampingInitialValue, 1.0);
+    }
+
+    m_data.GetDataTrack().Probe("m_CardiacArrestEffect", m_CardiacArrestEffect);
+
     //Prepare for the next cycle -------------------------------------------------------------------------------
     if ((m_BreathingCycleTime_s > GetBreathCycleTime()) ||                              //End of the cycle or currently not breathing
       (m_PatientActions->HasConsciousRespiration() && !m_ActiveConsciousRespirationCommand)) //Or new consious respiration command to start immediately
@@ -1280,6 +1294,8 @@ namespace pulse
           //Target Tidal Volume (i.e. Driver amplitude) *************************************************************************
           //Calculate the target Tidal Volume based on the Alveolar Ventilation
           double dTargetPulmonaryVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
+
+          dTargetPulmonaryVentilation_L_Per_min *= m_CardiacArrestEffect;
 
           double dMaximumPulmonaryVentilationRate = m_data.GetConfiguration().GetPulmonaryVentilationRateMaximum(VolumePerTimeUnit::L_Per_min);
           /// \event Patient: Maximum Pulmonary Ventilation Rate : Pulmonary ventilation exceeds maximum value
@@ -2018,7 +2034,8 @@ namespace pulse
       }
 
       //Reset the cycle to make sure we don't get stuck in the vitals calculation when we start breathing again
-      m_BreathingCycle = false;
+      m_BreathingCycle = true;
+      m_BottomBreathTotalVolume_L = 0.0;
     }
     else
     {
@@ -3750,6 +3767,7 @@ namespace pulse
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       dyspneaSeverity = 1.0;
+      m_CardiacArrestEffect = 0.0;
     }
 
     //------------------------------------------------------------------------------------------------------
