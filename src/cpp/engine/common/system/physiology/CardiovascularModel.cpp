@@ -670,7 +670,8 @@ namespace pulse
     m_data.GetDataTrack().Probe("LeftPulmonaryVeinsPressure_mmHg", m_LeftPulmonaryVeinsCompliance->GetSourceNode().GetNextPressure(PressureUnit::mmHg));
     m_data.GetDataTrack().Probe("RighPulmonaryVeinsPressure_mmHg", m_RightPulmonaryVeinsCompliance->GetSourceNode().GetNextPressure(PressureUnit::mmHg));
 
-    ;
+    m_data.GetDataTrack().Probe("LeftHeartPressureSource_mmHg", m_pLeftHeartToGnd->GetNextPressureSource().GetValue(PressureUnit::mmHg));
+    m_data.GetDataTrack().Probe("RightHeartPressureSource_mmHg", m_pRightHeartToGnd->GetNextPressureSource().GetValue(PressureUnit::mmHg));
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1665,8 +1666,8 @@ namespace pulse
       Warning("The compression force was less than the required minimum. Compression force limited to 0N.");
     }
 
-    double leftHeartForceToPressureFactor = 0.1; // Tuning parameter to translate compression force in N to left heart pressure in mmHg
-    double rightHeartForceToPressureFactor = 0.1; // Tuning parameter to translate compression force in N to right heart pressure in mmHg
+    double leftHeartForceToPressureFactor = 0.125; // Tuning parameter to translate compression force in N to left heart pressure in mmHg
+    double rightHeartForceToPressureFactor = 0.125; // Tuning parameter to translate compression force in N to right heart pressure in mmHg
     double nextLeftPressure_mmHg = leftHeartForceToPressureFactor * compressionForce_N;
     double nextRightPressure_mmHg = rightHeartForceToPressureFactor * compressionForce_N;
 
@@ -1738,7 +1739,7 @@ namespace pulse
           m_InitialArrhythmiaVascularComplianceModifier = m_ArrhythmiaVascularComplianceModifier;
           m_InitialArrhythmiaSystemicVascularResistanceModifier = m_ArrhythmiaSystemicVascularResistanceModifier;
 
-          m_TargetArrhythmiaHeartComplianceModifier = 0.25;
+          m_TargetArrhythmiaHeartComplianceModifier = 20;
           m_TargetArrhythmiaHeartRateBaseline_Per_min = 35;
           m_TargetArrhythmiaVascularComplianceModifier = 2.;
           m_TargetArrhythmiaSystemicVascularResistanceModifier = 0.5;
@@ -1996,6 +1997,11 @@ namespace pulse
         m_StartSystole = true; // A new cardiac cycle will begin next time step
       }
       CalculateHeartElastance();
+    }
+    else
+    {
+      m_LeftHeartElastance_mmHg_Per_mL = 1.0;
+      m_RightHeartElastance_mmHg_Per_mL = 1.0;
     }
 
     if (m_StartSystole)
