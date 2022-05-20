@@ -75,7 +75,6 @@ namespace pulse
     // PreProcess:
     void HeartDriver();
     /**/void AdjustVascularTone();
-    /**/void AdjustVascularCompliance();
     /****/void MetabolicToneResponse();
     /**/void BeginDriverCycle();
     /****/void RecordAndResetCardiacCycle();//Could be called out of order by arrythma
