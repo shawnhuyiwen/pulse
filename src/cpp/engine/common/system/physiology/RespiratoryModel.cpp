@@ -2016,6 +2016,9 @@ namespace pulse
         sub->GetEndTidalFraction().SetValue(0);
         sub->GetEndTidalPressure().SetValue(0, PressureUnit::cmH2O);
       }
+
+      //Reset the cycle to make sure we don't get stuck in the vitals calculation when we start breathing again
+      m_BreathingCycle = false;
     }
     else
     {
