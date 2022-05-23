@@ -563,6 +563,9 @@ namespace pulse
     //Do the overrides
     SetRespiratoryResistance();
     SetRespiratoryCompliance();
+
+
+    m_data.GetDataTrack().Probe("m_CardiacArrestEffect", m_CardiacArrestEffect);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1169,14 +1172,13 @@ namespace pulse
     {
       // Modify breathing coming out of cardiac arrest
       double cardiacArrestDampingInitialValue = 0.2;
-      double cardiacArrestDampingPeriod_s = 200.0;
+      double cardiacArrestDampingPeriod_s = 90.0;
 
       // Do a linear increment this timestep to eventually reach 1.0 at the end of the damping period
       m_CardiacArrestEffect += m_data.GetTimeStep_s() / cardiacArrestDampingPeriod_s * (1.0 - cardiacArrestDampingInitialValue);
       m_CardiacArrestEffect = LIMIT(m_CardiacArrestEffect, cardiacArrestDampingInitialValue, 1.0);
     }
 
-    m_data.GetDataTrack().Probe("m_CardiacArrestEffect", m_CardiacArrestEffect);
 
     //Prepare for the next cycle -------------------------------------------------------------------------------
     if ((m_BreathingCycleTime_s > GetBreathCycleTime()) ||                              //End of the cycle or currently not breathing
@@ -2003,7 +2005,7 @@ namespace pulse
       GetPulmonaryElastance().SetValue(1.0 / pulmonaryCompiance_L_Per_cmH2O, PressurePerVolumeUnit::cmH2O_Per_L);
     }
 
-    if (m_NotBreathing)
+    if (m_NotBreathing && m_data.GetAirwayMode()==eAirwayMode::Free)
     {
       GetRespirationRate().SetValue(0.0, FrequencyUnit::Per_min);
       GetTidalVolume().SetValue(0.0, VolumeUnit::L);
@@ -3763,7 +3765,7 @@ namespace pulse
     }
 
     //------------------------------------------------------------------------------------------------------
-    //Cardiac Arrest    
+    //Cardiac Arrest
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       dyspneaSeverity = 1.0;

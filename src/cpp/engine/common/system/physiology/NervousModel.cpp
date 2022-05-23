@@ -72,7 +72,8 @@ namespace pulse
     GetBaroreceptorHeartElastanceScale().SetValue(1.0);
     GetBaroreceptorResistanceScale().SetValue(1.0);
     GetBaroreceptorComplianceScale().SetValue(1.0);
-    GetChemoreceptorHeartRateScale().SetValue(1.0);
+    GetChemoreceptorHeartRateScale().SetValue(0.0);
+    GetChemoreceptorHeartElastanceScale().SetValue(0.0);
     GetLeftEyePupillaryResponse().GetSizeModifier().SetValue(0);
     GetLeftEyePupillaryResponse().GetShapeModifier().SetValue(0);
     GetLeftEyePupillaryResponse().GetReactivityModifier().SetValue(0);
@@ -226,10 +227,10 @@ namespace pulse
       m_data.GetDataTrack().Probe("normalizedMAP", 0);
     }
 #endif
-    if (m_ChemoreceptorFeedback == eSwitch::On)
-      ChemoreceptorFeedback();
-    else
-      GetChemoreceptorHeartRateScale().SetValue(1.0);
+    //if (m_ChemoreceptorFeedback == eSwitch::On)
+    //  ChemoreceptorFeedback();
+    //else
+    //  GetChemoreceptorHeartRateScale().SetValue(1.0);
     CerebralSpinalFluidUpdates();
 
   }

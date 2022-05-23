@@ -53,8 +53,6 @@ namespace pulse
   void PBPhysiology::Serialize(const PULSE_BIND::CardiovascularData& src, CardiovascularModel& dst)
   {
     ::PBPhysiology::Serialize(src.common(), dst);
-    dst.m_StartCardiacArrest = src.startcardiacarrest();
-    dst.m_CardiacArrestVitalsUpdateTimer_s = src.cardiacarrestvitalsupdatetimer_s();
     dst.m_StartSystole = src.startsystole();
     dst.m_HeartFlowDetected = src.heartflowdetected();
     dst.m_CurrentCardiacCycleTime_s = src.currentcardiaccycletime_s();
@@ -69,6 +67,8 @@ namespace pulse
     dst.m_RightHeartElastanceMin_mmHg_Per_mL = src.rightheartelastancemin_mmhg_per_ml();
 
     dst.m_EnableFeedbackAfterArrhythmiaTrasition = (eSwitch)src.enablefeedbackafterarrhythmiatrasition();
+    dst.m_StartCardiacArrest = src.startcardiacarrest();
+    dst.m_CardiacArrestVitalsUpdateTimer_s = src.cardiacarrestvitalsupdatetimer_s();
     dst.m_TotalArrhythmiaTransitionTime_s = src.totalarrhythmiatransitiontime_s();
     dst.m_CurrentArrhythmiaTransitionTime_s = src.currentarrhythmiatransitiontime_s();
     dst.m_ArrhythmiaHeartRateBaseline_Per_min = src.arrhythmiaheartratebaseline_per_min();
@@ -119,8 +119,6 @@ namespace pulse
   void PBPhysiology::Serialize(const CardiovascularModel& src, PULSE_BIND::CardiovascularData& dst)
   {
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
-    dst.set_startcardiacarrest(src.m_StartCardiacArrest);
-    dst.set_cardiacarrestvitalsupdatetimer_s(src.m_CardiacArrestVitalsUpdateTimer_s);
     dst.set_startsystole(src.m_StartSystole);
     dst.set_heartflowdetected(src.m_HeartFlowDetected);
     dst.set_currentcardiaccycletime_s(src.m_CurrentCardiacCycleTime_s);
@@ -135,6 +133,8 @@ namespace pulse
     dst.set_rightheartelastancemin_mmhg_per_ml(src.m_RightHeartElastanceMin_mmHg_Per_mL);
 
     dst.set_enablefeedbackafterarrhythmiatrasition((CDM_BIND::eSwitch)src.m_EnableFeedbackAfterArrhythmiaTrasition);
+    dst.set_startcardiacarrest(src.m_StartCardiacArrest);
+    dst.set_cardiacarrestvitalsupdatetimer_s(src.m_CardiacArrestVitalsUpdateTimer_s);
     dst.set_totalarrhythmiatransitiontime_s(src.m_TotalArrhythmiaTransitionTime_s);
     dst.set_currentarrhythmiatransitiontime_s(src.m_CurrentArrhythmiaTransitionTime_s);
     dst.set_arrhythmiaheartratebaseline_per_min(src.m_ArrhythmiaHeartRateBaseline_Per_min);
@@ -401,6 +401,8 @@ namespace pulse
 
     dst.m_BreathingCycle = src.breathingcycle();
     dst.m_NotBreathing = src.notbreathing();
+    dst.m_CardiacArrestEffect = src.cardiacarresteffect();
+
     dst.m_TopBreathTotalVolume_L = src.topbreathtotalvolume_l();
     dst.m_TopBreathAlveoliVolume_L = src.topbreathalveolivolume_l();
     dst.m_TopBreathPleuralVolume_L = src.topbreathpleuralvolume_l();
@@ -465,6 +467,8 @@ namespace pulse
 
     dst.set_breathingcycle(src.m_BreathingCycle);
     dst.set_notbreathing(src.m_NotBreathing);
+    dst.set_cardiacarresteffect(src.m_CardiacArrestEffect);
+
     dst.set_topbreathtotalvolume_l(src.m_TopBreathTotalVolume_L);
     dst.set_topbreathalveolivolume_l(src.m_TopBreathAlveoliVolume_L);
     dst.set_topbreathpleuralvolume_l(src.m_TopBreathPleuralVolume_L);
