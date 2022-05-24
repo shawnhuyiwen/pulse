@@ -55,6 +55,10 @@ namespace pulse
     ::PBPhysiology::Serialize(src.common(), dst);
     dst.m_StartSystole = src.startsystole();
     dst.m_HeartFlowDetected = src.heartflowdetected();
+    dst.m_FullyCompressedHeart = src.fullycompressedheart();
+    dst.m_StabilizedHeartRateBaseline_Per_min = src.stabilizedheartratebaseline_per_min();
+    dst.m_StabilizedMeanArterialPressureBaseline_mmHg = src.stabilizedmeanarterialpressurebaseline_mmhg();
+
     dst.m_CurrentCardiacCycleTime_s = src.currentcardiaccycletime_s();
     dst.m_CurrentDriverCycleTime_s = src.currentdrivercycletime_s();
     dst.m_DriverCyclePeriod_s = src.drivercycleperiod_s();
@@ -74,7 +78,6 @@ namespace pulse
     dst.m_ArrhythmiaHeartRateBaseline_Per_min = src.arrhythmiaheartratebaseline_per_min();
     dst.m_InitialArrhythmiaHeartRateBaseline_Per_min = src.initialarrhythmiaheartratebaseline_per_min();
     dst.m_TargetArrhythmiaHeartRateBaseline_Per_min = src.targetarrhythmiaheartratebaseline_per_min();
-    dst.m_StabilizedHeartRateBaseline_Per_min = src.stabilizedheartratebaseline_per_min();
     dst.m_ArrhythmiaHeartComplianceModifier = src.arrhythmiaheartcompliancemodifier();
     dst.m_InitialArrhythmiaHeartComplianceModifier = src.initialarrhythmiaheartcompliancemodifier();
     dst.m_TargetArrhythmiaHeartComplianceModifier = src.targetarrhythmiaheartcompliancemodifier();
@@ -121,6 +124,10 @@ namespace pulse
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
     dst.set_startsystole(src.m_StartSystole);
     dst.set_heartflowdetected(src.m_HeartFlowDetected);
+    dst.set_fullycompressedheart(src.m_FullyCompressedHeart);
+    dst.set_stabilizedheartratebaseline_per_min(src.m_StabilizedHeartRateBaseline_Per_min);
+    dst.set_stabilizedmeanarterialpressurebaseline_mmhg(src.m_StabilizedMeanArterialPressureBaseline_mmHg);
+
     dst.set_currentcardiaccycletime_s(src.m_CurrentCardiacCycleTime_s);
     dst.set_currentdrivercycletime_s(src.m_CurrentDriverCycleTime_s);
     dst.set_drivercycleperiod_s(src.m_DriverCyclePeriod_s);
@@ -140,7 +147,6 @@ namespace pulse
     dst.set_arrhythmiaheartratebaseline_per_min(src.m_ArrhythmiaHeartRateBaseline_Per_min);
     dst.set_initialarrhythmiaheartratebaseline_per_min(src.m_InitialArrhythmiaHeartRateBaseline_Per_min);
     dst.set_targetarrhythmiaheartratebaseline_per_min(src.m_TargetArrhythmiaHeartRateBaseline_Per_min);
-    dst.set_stabilizedheartratebaseline_per_min(src.m_StabilizedHeartRateBaseline_Per_min);
     dst.set_arrhythmiaheartcompliancemodifier(src.m_ArrhythmiaHeartComplianceModifier);
     dst.set_initialarrhythmiaheartcompliancemodifier(src.m_InitialArrhythmiaHeartComplianceModifier);
     dst.set_targetarrhythmiaheartcompliancemodifier(src.m_TargetArrhythmiaHeartComplianceModifier);

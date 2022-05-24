@@ -47,19 +47,16 @@ void HowToACLS()
   std::map<eHeartRhythm, std::string> endArrhythmias =
   {
     {eHeartRhythm::NormalSinus, "sinus"},
-    //{eHeartRhythm::SinusTachycardia, "tachycardia"},
+    {eHeartRhythm::SinusTachycardia, "tachycardia"},
     //{eHeartRhythm::SinusBradycardia, "bradycardia"},
     //{eHeartRhythm::SinusPulselessElectricalActivity, "pea"}
   };
   std::vector<std::string> interventions =
   {
     "no",
-    "good_cpr",
-    //"bad_cpr",
-    "good_cpr_bvm",
-    //"bad_cpr_bvm"
+    "cpr",
+    "cpr_and_bvm"
   };
-  size_t interventionTime_s = 5*60;
   size_t extraBVMTime = 60; // BVM time after the heart starts back up
 
   SEAdvanceTime adv;
@@ -82,15 +79,17 @@ void HowToACLS()
         for (auto ivn : interventions)
         {
           bool performBVM = false;
-          bool performBadCPR = false;
-          bool performGoodCPR = false;
+          bool performCPR = false;
+
+          size_t interventionTime_s = 5*60;
+          if (ivn == "cpr")
+            interventionTime_s = 2*60;
 
           std::string name;
           if (ivn == "no")
             name = start.second + "_for_" + std::to_string(arrestLength_min) + "m_to_" + end.second + "_with_" + ivn + "_intervention";
           else
             name = start.second + "_for_" + std::to_string(arrestLength_min) + "m_then_" + std::to_string(interventionTime_s / 60) + "m_of_" + ivn + "_to_" + end.second;
-
           logger.Info("Creating scenario " + name);
 
           SEScenario sce(&logger);
@@ -117,12 +116,12 @@ void HowToACLS()
           dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure");
           dMgr.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
 
-          dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartRateScale");
-          dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartElastanceScale");
-          dMgr.CreatePhysiologyDataRequest("BaroreceptorResistanceScale");
-          dMgr.CreatePhysiologyDataRequest("BaroreceptorComplianceScale");
-          dMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-          dMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+          //dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartRateScale");
+          //dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartElastanceScale");
+          //dMgr.CreatePhysiologyDataRequest("BaroreceptorResistanceScale");
+          //dMgr.CreatePhysiologyDataRequest("BaroreceptorComplianceScale");
+          //dMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+          //dMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
 
           double simTime_s = 0;
 
@@ -142,14 +141,11 @@ void HowToACLS()
 
           if (ivn != "no")
           {
-            if (ivn.find("good_cpr") != std::string::npos)
+            if (ivn.find("cpr") != std::string::npos)
             {
-              performGoodCPR = true;
+              performCPR = true;
             }
-            else if (ivn.find("bad_cpr") != std::string::npos)
-            {
-              performBadCPR = true;
-            }
+            
 
             if (ivn.find("bvm") != std::string::npos)
             {
@@ -187,17 +183,10 @@ void HowToACLS()
                 sce.AddAction(bvmSqueeze);
               }
 
-              if (performGoodCPR)
+              if (performCPR)
               {
-                logger.Info("  -Adding Good CPR Compression @ " + PULSE_CDM::to_string(simTime_s));
+                logger.Info("  -Adding CPR Compression @ " + PULSE_CDM::to_string(simTime_s));
                 cpr.GetForceScale().SetValue(0.6228);
-                sce.AddAction(cpr);
-              }
-
-              if (performBadCPR)
-              {
-                logger.Info("  -Adding Bad CPR Compression @ " + PULSE_CDM::to_string(simTime_s));
-                cpr.GetForceScale().SetValue(0.2228);
                 sce.AddAction(cpr);
               }
 
@@ -212,7 +201,7 @@ void HowToACLS()
           logger.Info("  -Setting heart rhythm to " + eHeartRhythm_Name(end.first));
 
           // Extra BVM Time
-          if (extraBVMTime>0)
+          if (performBVM && extraBVMTime>0)
           {
             size_t bvmSqueezeCnt = 10;
             size_t doSqueeze = bvmSqueezeCnt;

@@ -563,9 +563,6 @@ namespace pulse
     //Do the overrides
     SetRespiratoryResistance();
     SetRespiratoryCompliance();
-
-
-    m_data.GetDataTrack().Probe("m_CardiacArrestEffect", m_CardiacArrestEffect);
   }
 
   //--------------------------------------------------------------------------------------------------
