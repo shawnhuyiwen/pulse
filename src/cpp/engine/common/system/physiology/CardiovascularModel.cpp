@@ -1986,6 +1986,8 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::HeartDriver()
   {
+    m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
+
     if (m_StartCardiacArrest)
     {
       Info("Starting Cardiac Arrest");
@@ -2043,8 +2045,6 @@ namespace pulse
 #endif
         m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
       }
-      else
-        m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, false, m_data.GetSimulationTime());
 
       CalculateHeartElastance();
       LeftHeartCompliance_mL_Per_mmHg = (1.0 / m_LeftHeartElastance_mmHg_Per_mL) * m_ArrhythmiaHeartComplianceModifier;
@@ -2052,7 +2052,6 @@ namespace pulse
     }
 
     AdjustVascularTone();
-    //AdjustVascularCompliance();
     m_pLeftHeart->GetNextCompliance().SetValue(LeftHeartCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
     m_pRightHeart->GetNextCompliance().SetValue(RightHeartCompliance_mL_Per_mmHg, VolumePerPressureUnit::mL_Per_mmHg);
 
