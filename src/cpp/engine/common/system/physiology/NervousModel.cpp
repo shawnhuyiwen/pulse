@@ -227,10 +227,10 @@ namespace pulse
       m_data.GetDataTrack().Probe("normalizedMAP", 0);
     }
 #endif
-    //if (m_ChemoreceptorFeedback == eSwitch::On)
-    //  ChemoreceptorFeedback();
-    //else
-    //  GetChemoreceptorHeartRateScale().SetValue(1.0);
+    if (m_ChemoreceptorFeedback == eSwitch::On)
+      ChemoreceptorFeedback();
+    else
+      GetChemoreceptorHeartRateScale().SetValue(0.0);
     CerebralSpinalFluidUpdates();
 
   }

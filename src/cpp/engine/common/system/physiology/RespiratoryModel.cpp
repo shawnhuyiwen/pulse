@@ -2002,7 +2002,7 @@ namespace pulse
       GetPulmonaryElastance().SetValue(1.0 / pulmonaryCompiance_L_Per_cmH2O, PressurePerVolumeUnit::cmH2O_Per_L);
     }
 
-    if (m_NotBreathing && m_data.GetAirwayMode()==eAirwayMode::Free)
+    if ((m_NotBreathing && m_data.GetAirwayMode()==eAirwayMode::Free) || m_ElapsedBreathingCycleTime_min > 0.25)
     {
       GetRespirationRate().SetValue(0.0, FrequencyUnit::Per_min);
       GetTidalVolume().SetValue(0.0, VolumeUnit::L);
