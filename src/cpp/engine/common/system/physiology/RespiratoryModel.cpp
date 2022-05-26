@@ -2002,7 +2002,146 @@ namespace pulse
       GetPulmonaryElastance().SetValue(1.0 / pulmonaryCompiance_L_Per_cmH2O, PressurePerVolumeUnit::cmH2O_Per_L);
     }
 
-    if ((m_NotBreathing && m_data.GetAirwayMode()==eAirwayMode::Free) || m_ElapsedBreathingCycleTime_min > 0.25)
+    //It's a pain to figure out how to hold onto this data, so let's just set it at a sensitive transition point
+    if (GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s) > 0.0 //We're inhaling
+      && previousInspiratoryFlow_L_Per_s <= 0.0) //We were exhaling
+    {
+      //Transition from exhale to inhale
+      // Set the End Tidal Concentration for our gases at the end of a respiration cycle
+      for (SEGasSubstanceQuantity* subQ : m_Carina->GetSubstanceQuantities())
+      {
+        subQ->GetSubstance().GetEndTidalFraction().Set(subQ->GetVolumeFraction());
+        subQ->GetSubstance().GetEndTidalPressure().Set(subQ->GetPartialPressure());
+      }
+      GetEndTidalCarbonDioxideFraction().Set(m_data.GetSubstances().GetCO2().GetEndTidalFraction());
+      GetEndTidalCarbonDioxidePressure().Set(m_data.GetSubstances().GetCO2().GetEndTidalPressure());
+      GetEndTidalOxygenFraction().Set(m_data.GetSubstances().GetO2().GetEndTidalFraction());
+      GetEndTidalOxygenPressure().Set(m_data.GetSubstances().GetO2().GetEndTidalPressure());
+    }
+
+    //Record values at the breathing inflection points (i.e. switch between inhale and exhale)  
+    // Temporal tolerance to avoid accidental entry in the the inhalation and exhalation code blocks 
+    m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s() / 60;
+
+    if (m_BreathingCycle) //Exhaling
+    {
+      if (totalLungVolume_L <= m_BottomBreathTotalVolume_L)
+      {
+        m_BottomBreathTotalVolume_L = totalLungVolume_L;
+        m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
+        m_BottomBreathAlveoliVolume_L = leftAlveoliVolume_L + rightAlveoliVolume_L;
+        m_BottomBreathPleuralVolume_L = leftPleuralVolume_L + rightPleuralVolume_L;
+        m_BottomBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
+        m_BottomBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
+        m_BottomBreathDriverPressure_cmH2O = musclePressure_cmH2O;
+      }
+
+      if (totalLungVolume_L - m_BottomBreathTotalVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
+        && m_BottomBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0 / 10.0) //We've waited a sufficient amount of time to transition
+      {
+        //Transition to inhale
+
+        // Calculate Respiration Rate and track time and update cycle flag
+        double expirationTime_min = m_BottomBreathElapsedTime_min;
+        double inspirationTime_min = m_TopBreathElapsedTime_min;
+        double RespirationRate_Per_min = 1.0 / (expirationTime_min + inspirationTime_min);
+        GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
+        GetInspiratoryExpiratoryRatio().SetValue(inspirationTime_min / expirationTime_min);
+
+        m_ElapsedBreathingCycleTime_min -= (expirationTime_min + inspirationTime_min);
+        m_BreathingCycle = false;
+
+        // Calculate the Tidal Volume from the last peak
+        double TidalVolume_L = std::abs(m_TopBreathTotalVolume_L - m_BottomBreathTotalVolume_L);
+        GetTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
+        GetExpiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
+
+        GetPeakInspiratoryPressure().SetValue(m_PeakAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
+        GetPositiveEndExpiratoryPressure().SetValue(m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
+        GetIntrinsicPositiveEndExpiredPressure().SetValue(m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
+        GetMaximalInspiratoryPressure().SetValue(m_MaximalAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
+
+        // Calculate Ventilations
+        GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
+        GetSpecificVentilation().SetValue(TidalVolume_L / m_BottomBreathTotalVolume_L);
+        GetTotalAlveolarVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
+        GetTotalDeadSpaceVentilation().SetValue((AnatomicDeadSpace_L + AlveolarDeadSpace_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
+
+        m_TopBreathTotalVolume_L = totalLungVolume_L;
+        m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
+        m_PeakAlveolarPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O;
+        m_MaximalAlveolarPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O;
+
+        //We can approximate the mean here, since we got a full waveform
+        //It will be off a little when each breath isn't the same
+        //It's too hard to keep a runnning average otherwise
+        GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
+        m_MeanAirwayPressure_cmH2O->Clear();
+      }
+    }
+    else //Inhaling
+    {
+      if (totalLungVolume_L >= m_TopBreathTotalVolume_L)
+      {
+        m_TopBreathTotalVolume_L = totalLungVolume_L;
+        m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
+        m_TopBreathTotalVolume_L = totalLungVolume_L;
+        m_TopBreathAlveoliVolume_L = leftAlveoliVolume_L + rightAlveoliVolume_L;
+        m_TopBreathPleuralVolume_L = leftPleuralVolume_L + rightPleuralVolume_L;
+        m_TopBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
+        m_TopBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
+        m_TopBreathDriverPressure_cmH2O = musclePressure_cmH2O;
+        m_TopCarinaO2 = m_CarinaO2->GetVolumeFraction().GetValue();
+      }
+
+      m_PeakAlveolarPressure_cmH2O = MAX(m_PeakAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
+      m_MaximalAlveolarPressure_cmH2O = MIN(m_MaximalAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
+
+      if (m_TopBreathTotalVolume_L - totalLungVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
+        && m_TopBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0 / 2.0) //We've waited a sufficient amount of time to transition
+      {
+        //Transition to exhaling
+        m_BreathingCycle = true;
+
+        // Calculate the Tidal Volume from the last trough
+        double TidalVolume_L = std::abs(m_TopBreathTotalVolume_L - m_BottomBreathTotalVolume_L);
+        GetInspiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
+
+        //We want the peak Carina O2 value - this should be the inspired value
+        double FiO2 = m_TopCarinaO2;
+        GetFractionOfInsipredOxygen().SetValue(FiO2);
+        double meanAirwayPressure_mmHg = Convert(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O, PressureUnit::mmHg);
+
+        if (m_data.HasCardiovascular())
+        {
+          GetHorowitzIndex().SetValue(m_ArterialO2PartialPressure_mmHg / FiO2, PressureUnit::mmHg);
+          GetOxygenationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg * 100.0 / m_ArterialO2PartialPressure_mmHg);
+        }
+        else
+        {
+          GetHorowitzIndex().Invalidate();
+          GetOxygenationIndex().Invalidate();
+        }
+
+        if (m_data.HasBloodChemistry())
+        {
+          GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(m_data.GetBloodChemistry().GetOxygenSaturation().GetValue() / FiO2);
+          GetOxygenSaturationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg / m_data.GetBloodChemistry().GetOxygenSaturation().GetValue(), PressureUnit::cmH2O);
+        }
+        else
+        {
+          GetSaturationAndFractionOfInspiredOxygenRatio().Invalidate();
+          GetOxygenSaturationIndex().Invalidate();
+        }
+
+        m_BottomBreathTotalVolume_L = totalLungVolume_L;
+        m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
+      }
+    }
+
+    // Zero out if not breathing with out any assistance
+    if (m_ElapsedBreathingCycleTime_min > 0.25)
+    //if (m_data.GetAirwayMode() == eAirwayMode::Free && (m_NotBreathing || m_ElapsedBreathingCycleTime_min > 0.25))
     {
       GetRespirationRate().SetValue(0.0, FrequencyUnit::Per_min);
       GetTidalVolume().SetValue(0.0, VolumeUnit::L);
@@ -2025,7 +2164,7 @@ namespace pulse
       GetEndTidalCarbonDioxidePressure().SetValue(0, PressureUnit::cmH2O);
       GetEndTidalOxygenFraction().SetValue(0);
       GetEndTidalOxygenPressure().SetValue(0, PressureUnit::cmH2O);
-    
+
       for (SESubstance* sub : m_data.GetSubstances().GetActiveGases())
       {
         sub->GetEndTidalFraction().SetValue(0);
@@ -2035,145 +2174,6 @@ namespace pulse
       //Reset the cycle to make sure we don't get stuck in the vitals calculation when we start breathing again
       m_BreathingCycle = true;
       m_BottomBreathTotalVolume_L = 0.0;
-    }
-    else
-    {
-      //It's a pain to figure out how to hold onto this data, so let's just set it at a sensitive transition point
-      if (GetInspiratoryFlow(VolumePerTimeUnit::L_Per_s) > 0.0 //We're inhaling
-        && previousInspiratoryFlow_L_Per_s <= 0.0) //We were exhaling
-      {
-        //Transition from exhale to inhale
-        // Set the End Tidal Concentration for our gases at the end of a respiration cycle
-        for (SEGasSubstanceQuantity* subQ : m_Carina->GetSubstanceQuantities())
-        {
-          subQ->GetSubstance().GetEndTidalFraction().Set(subQ->GetVolumeFraction());
-          subQ->GetSubstance().GetEndTidalPressure().Set(subQ->GetPartialPressure());
-        }
-        GetEndTidalCarbonDioxideFraction().Set(m_data.GetSubstances().GetCO2().GetEndTidalFraction());
-        GetEndTidalCarbonDioxidePressure().Set(m_data.GetSubstances().GetCO2().GetEndTidalPressure());
-        GetEndTidalOxygenFraction().Set(m_data.GetSubstances().GetO2().GetEndTidalFraction());
-        GetEndTidalOxygenPressure().Set(m_data.GetSubstances().GetO2().GetEndTidalPressure());
-      }
-
-      //Record values at the breathing inflection points (i.e. switch between inhale and exhale)  
-      // Temporal tolerance to avoid accidental entry in the the inhalation and exhalation code blocks 
-      m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s() / 60;
-
-      if (m_BreathingCycle) //Exhaling
-      {
-        if (totalLungVolume_L <= m_BottomBreathTotalVolume_L)
-        {
-          m_BottomBreathTotalVolume_L = totalLungVolume_L;
-          m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
-          m_BottomBreathAlveoliVolume_L = leftAlveoliVolume_L + rightAlveoliVolume_L;
-          m_BottomBreathPleuralVolume_L = leftPleuralVolume_L + rightPleuralVolume_L;
-          m_BottomBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
-          m_BottomBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
-          m_BottomBreathDriverPressure_cmH2O = musclePressure_cmH2O;
-        }
-
-        if (totalLungVolume_L - m_BottomBreathTotalVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
-          && m_BottomBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0 / 10.0) //We've waited a sufficient amount of time to transition
-        {
-          //Transition to inhale
-
-          // Calculate Respiration Rate and track time and update cycle flag
-          double expirationTime_min = m_BottomBreathElapsedTime_min;
-          double inspirationTime_min = m_TopBreathElapsedTime_min;
-          double RespirationRate_Per_min = 1.0 / (expirationTime_min + inspirationTime_min);
-          GetRespirationRate().SetValue(RespirationRate_Per_min, FrequencyUnit::Per_min);
-          GetInspiratoryExpiratoryRatio().SetValue(inspirationTime_min / expirationTime_min);
-
-          m_ElapsedBreathingCycleTime_min -= (expirationTime_min + inspirationTime_min);
-          m_BreathingCycle = false;
-
-          // Calculate the Tidal Volume from the last peak
-          double TidalVolume_L = std::abs(m_TopBreathTotalVolume_L - m_BottomBreathTotalVolume_L);
-          GetTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
-          GetExpiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
-
-          GetPeakInspiratoryPressure().SetValue(m_PeakAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
-          GetPositiveEndExpiratoryPressure().SetValue(m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
-          GetIntrinsicPositiveEndExpiredPressure().SetValue(m_BottomBreathAlveoliPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
-          GetMaximalInspiratoryPressure().SetValue(m_MaximalAlveolarPressure_cmH2O - bodySurfacePressure_cmH2O, PressureUnit::cmH2O);
-
-          // Calculate Ventilations
-          GetTotalPulmonaryVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
-          GetSpecificVentilation().SetValue(TidalVolume_L / m_BottomBreathTotalVolume_L);
-          GetTotalAlveolarVentilation().SetValue(TidalVolume_L * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
-          GetTotalDeadSpaceVentilation().SetValue((AnatomicDeadSpace_L + AlveolarDeadSpace_L) * RespirationRate_Per_min, VolumePerTimeUnit::L_Per_min);
-
-          m_TopBreathTotalVolume_L = totalLungVolume_L;
-          m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
-          m_PeakAlveolarPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O;
-          m_MaximalAlveolarPressure_cmH2O = m_BottomBreathAlveoliPressure_cmH2O;
-
-          //We can approximate the mean here, since we got a full waveform
-          //It will be off a little when each breath isn't the same
-          //It's too hard to keep a runnning average otherwise
-          GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
-          m_MeanAirwayPressure_cmH2O->Clear();
-        }
-      }
-      else //Inhaling
-      {
-        if (totalLungVolume_L >= m_TopBreathTotalVolume_L)
-        {
-          m_TopBreathTotalVolume_L = totalLungVolume_L;
-          m_TopBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min;
-          m_TopBreathTotalVolume_L = totalLungVolume_L;
-          m_TopBreathAlveoliVolume_L = leftAlveoliVolume_L + rightAlveoliVolume_L;
-          m_TopBreathPleuralVolume_L = leftPleuralVolume_L + rightPleuralVolume_L;
-          m_TopBreathPleuralPressure_cmH2O = pleuralPressure_cmH2O;
-          m_TopBreathAlveoliPressure_cmH2O = alveolarPressure_cmH2O;
-          m_TopBreathDriverPressure_cmH2O = musclePressure_cmH2O;
-          m_TopCarinaO2 = m_CarinaO2->GetVolumeFraction().GetValue();
-        }
-
-        m_PeakAlveolarPressure_cmH2O = MAX(m_PeakAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
-        m_MaximalAlveolarPressure_cmH2O = MIN(m_MaximalAlveolarPressure_cmH2O, alveolarPressure_cmH2O);
-
-        if (m_TopBreathTotalVolume_L - totalLungVolume_L > m_MinimumAllowableTidalVolume_L //Volume has transitioned sufficiently
-          && m_TopBreathElapsedTime_min > m_MinimumAllowableInpiratoryAndExpiratoryPeriod_s / 60.0 / 2.0) //We've waited a sufficient amount of time to transition
-        {
-          //Transition to exhaling
-          m_BreathingCycle = true;
-
-          // Calculate the Tidal Volume from the last trough
-          double TidalVolume_L = std::abs(m_TopBreathTotalVolume_L - m_BottomBreathTotalVolume_L);
-          GetInspiratoryTidalVolume().SetValue(TidalVolume_L, VolumeUnit::L);
-
-          //We want the peak Carina O2 value - this should be the inspired value
-          double FiO2 = m_TopCarinaO2;
-          GetFractionOfInsipredOxygen().SetValue(FiO2);
-          double meanAirwayPressure_mmHg = Convert(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O, PressureUnit::mmHg);
-
-          if (m_data.HasCardiovascular())
-          {
-            GetHorowitzIndex().SetValue(m_ArterialO2PartialPressure_mmHg / FiO2, PressureUnit::mmHg);
-            GetOxygenationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg * 100.0 / m_ArterialO2PartialPressure_mmHg);
-          }
-          else
-          {
-            GetHorowitzIndex().Invalidate();
-            GetOxygenationIndex().Invalidate();
-          }
-
-          if (m_data.HasBloodChemistry())
-          {
-            GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(m_data.GetBloodChemistry().GetOxygenSaturation().GetValue() / FiO2);
-            GetOxygenSaturationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg / m_data.GetBloodChemistry().GetOxygenSaturation().GetValue(), PressureUnit::cmH2O);
-          }
-          else
-          {
-            GetSaturationAndFractionOfInspiredOxygenRatio().Invalidate();
-            GetOxygenSaturationIndex().Invalidate();
-          }
-
-          m_BottomBreathTotalVolume_L = totalLungVolume_L;
-          m_BottomBreathElapsedTime_min = m_ElapsedBreathingCycleTime_min - m_TopBreathElapsedTime_min;
-        }
-      }
     }
 
     if (m_data.GetState() > EngineState::InitialStabilization)
