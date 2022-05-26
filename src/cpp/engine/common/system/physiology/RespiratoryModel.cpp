@@ -2140,7 +2140,7 @@ namespace pulse
     }
 
     // Zero out if not breathing with out any assistance
-    if (m_ElapsedBreathingCycleTime_min > 0.25)
+    if ((m_data.GetAirwayMode() == eAirwayMode::Free && m_NotBreathing) || m_ElapsedBreathingCycleTime_min > 0.25)
     //if (m_data.GetAirwayMode() == eAirwayMode::Free && (m_NotBreathing || m_ElapsedBreathingCycleTime_min > 0.25))
     {
       GetRespirationRate().SetValue(0.0, FrequencyUnit::Per_min);
@@ -2170,10 +2170,6 @@ namespace pulse
         sub->GetEndTidalFraction().SetValue(0);
         sub->GetEndTidalPressure().SetValue(0, PressureUnit::cmH2O);
       }
-
-      //Reset the cycle to make sure we don't get stuck in the vitals calculation when we start breathing again
-      m_BreathingCycle = true;
-      m_BottomBreathTotalVolume_L = 0.0;
     }
 
     if (m_data.GetState() > EngineState::InitialStabilization)
