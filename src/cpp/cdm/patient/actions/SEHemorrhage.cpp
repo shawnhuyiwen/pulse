@@ -38,8 +38,8 @@ void SEHemorrhage::Clear()
 
 void SEHemorrhage::Copy(const SEHemorrhage& src, bool preserveState)
 {
-  static double v;
-  static const VolumeUnit* vu;
+  double v;
+  const VolumeUnit* vu;
   if (preserveState)
   {
     vu = nullptr;
