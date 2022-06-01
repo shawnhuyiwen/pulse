@@ -232,7 +232,6 @@ namespace pulse
     else
       GetChemoreceptorHeartRateScale().SetValue(0.0);
     CerebralSpinalFluidUpdates();
-
   }
 
   //--------------------------------------------------------------------------------------------------

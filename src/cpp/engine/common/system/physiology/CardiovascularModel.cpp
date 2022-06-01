@@ -60,10 +60,6 @@
 #include "cdm/utils/DataTrack.h"
 #include "cdm/utils/GeneralMath.h"
 
-//Flag for printing the driver/cycle timing
-//Should be commented out, unless debugging/tuning
-//#define LOG_TIMING
-
 namespace pulse
 {
   CardiovascularModel::CardiovascularModel(Data& data) : CardiovascularSystem(data.GetLogger()), Model(data)
@@ -198,12 +194,11 @@ namespace pulse
 
     m_HeartRhythm = eHeartRhythm::NormalSinus;
 
-    m_StartSystole = true;
+    m_StartSystole = false;
     m_HeartFlowDetected = false;
     m_FullyCompressedHeart = false;
 
     m_DriverCyclePeriod_s = 60 / m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
-    m_CurrentCardiacCycleTime_s = m_DriverCyclePeriod_s;
     m_CurrentDriverCycleTime_s = 0.0;
 
     //Heart Elastance Parameters
@@ -752,36 +747,16 @@ namespace pulse
     else
     {
       // Test to see if the cardiac cycle is starting, compressing blood out of the heart
-      // If so, push data into the CDM
       if (LHeartFlow_mL_Per_s > 0.1 && !m_HeartFlowDetected)
       {
         // Threshold of 0.1 is empirically determined. Approximate zero makes it too noisy.
         m_HeartFlowDetected = true;
-        double HeartRate_Per_s = 1.0 / m_CurrentCardiacCycleTime_s;
-        GetHeartRate().SetValue(HeartRate_Per_s * 60.0, FrequencyUnit::Per_min);
-#ifdef LOG_TIMING
-        Info("Heart flow starting");
-        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-        Info("  -Setting CDM Heart Rate to: " + std::to_string(HeartRate_Per_s * 60.0));
-        Info("  -Setting Current Cardiac Cycle Time to 0");
-#endif
-        m_CurrentCardiacCycleTime_s = 0;
-        RecordAndResetCardiacCycle();
       }
-      else
-        m_CurrentCardiacCycleTime_s += m_data.GetTimeStep_s();
-
       // Check to see if the cardiac cycle has completed, fully compressed the blood from the heart
       if (LHeartFlow_mL_Per_s < 0.1 && m_HeartFlowDetected)
       {
         m_HeartFlowDetected = false;
         m_FullyCompressedHeart = true;
-#ifdef LOG_TIMING
-        Info("Heart flow stopped");
-        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-#endif
       }
     }
 
@@ -1713,7 +1688,7 @@ namespace pulse
 
           m_InitialArrhythmiaHeartComplianceModifier =
             m_ArrhythmiaHeartComplianceModifier =
-            m_TargetArrhythmiaHeartComplianceModifier = 1;// Does not matter, we hard code the heart compliance during cardiac arrest
+          m_TargetArrhythmiaHeartComplianceModifier = 1;// Does not matter, we hard code the heart compliance during cardiac arrest
 
           m_TargetArrhythmiaHeartRateBaseline_Per_min = 35;
           m_InitialArrhythmiaHeartRateBaseline_Per_min = m_ArrhythmiaHeartRateBaseline_Per_min = GetHeartRate(FrequencyUnit::Per_min);
@@ -1751,27 +1726,33 @@ namespace pulse
             m_InitialArrhythmiaSystemicVascularResistanceModifier =
               m_ArrhythmiaSystemicVascularResistanceModifier;
             m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
-
-            m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
-            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-
-            // Force a new cardiac cycle
-            m_StartSystole = true;
-            m_HeartFlowDetected = true;
-            m_CurrentDriverCycleTime_s = 0;
-            m_DriverCyclePeriod_s = m_CurrentCardiacCycleTime_s = 60 / m_InitialArrhythmiaHeartRateBaseline_Per_min;
           }
           else
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 30;
 
-            m_ArrhythmiaHeartRateBaseline_Per_min =
-              m_InitialArrhythmiaHeartRateBaseline_Per_min = GetHeartRate(FrequencyUnit::Per_min);
+            m_ArrhythmiaHeartComplianceModifier =
+              m_InitialArrhythmiaHeartComplianceModifier;
             m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaHeartRateBaseline_Per_min =
+              m_ArrhythmiaHeartRateBaseline_Per_min;
             m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min;
+
+            m_InitialArrhythmiaVascularComplianceModifier =
+              m_ArrhythmiaVascularComplianceModifier;
             m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaSystemicVascularResistanceModifier =
+              m_ArrhythmiaSystemicVascularResistanceModifier;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
           }
+          // Force a new cardiac cycle
+          m_StartSystole = true;
+          m_HeartFlowDetected = true;
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
           break;
         }
         case eHeartRhythm::SinusTachycardia:
@@ -1796,20 +1777,33 @@ namespace pulse
             m_InitialArrhythmiaSystemicVascularResistanceModifier =
               m_ArrhythmiaSystemicVascularResistanceModifier;
             m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
-
-            m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
-            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
-
-            // Force a new cardiac cycle
-            m_StartSystole = true;
-            m_HeartFlowDetected = true;
-            m_CurrentDriverCycleTime_s = 0;
-            m_DriverCyclePeriod_s = m_CurrentCardiacCycleTime_s = 60 / m_InitialArrhythmiaHeartRateBaseline_Per_min;
           }
           else
           {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 30;
 
+            m_ArrhythmiaHeartComplianceModifier =
+              m_InitialArrhythmiaHeartComplianceModifier;
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaHeartRateBaseline_Per_min =
+              m_ArrhythmiaHeartRateBaseline_Per_min;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = 130;
+
+            m_InitialArrhythmiaVascularComplianceModifier =
+              m_ArrhythmiaVascularComplianceModifier;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaSystemicVascularResistanceModifier =
+              m_ArrhythmiaSystemicVascularResistanceModifier;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
           }
+          // Force a new cardiac cycle
+          m_StartSystole = true;
+          m_HeartFlowDetected = true;
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
           break;
         }
         case eHeartRhythm::SinusBradycardia:
@@ -1819,16 +1813,48 @@ namespace pulse
             m_CurrentArrhythmiaTransitionTime_s = 0;
             m_TotalArrhythmiaTransitionTime_s = 150;
 
+            m_ArrhythmiaHeartComplianceModifier =
+              m_InitialArrhythmiaHeartComplianceModifier = 2.0;
             m_TargetArrhythmiaHeartComplianceModifier = 1.0;
-            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min * 0.7;
-            m_TargetArrhythmiaVascularComplianceModifier = 5.0;
 
-            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+            m_InitialArrhythmiaHeartRateBaseline_Per_min =
+              m_ArrhythmiaHeartRateBaseline_Per_min;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = 50;
+
+            m_InitialArrhythmiaVascularComplianceModifier =
+              m_ArrhythmiaVascularComplianceModifier;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaSystemicVascularResistanceModifier =
+              m_ArrhythmiaSystemicVascularResistanceModifier;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
           }
           else
           {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 30;
 
+            m_ArrhythmiaHeartComplianceModifier =
+              m_InitialArrhythmiaHeartComplianceModifier;
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaHeartRateBaseline_Per_min =
+              m_ArrhythmiaHeartRateBaseline_Per_min;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = 50;
+
+            m_InitialArrhythmiaVascularComplianceModifier =
+              m_ArrhythmiaVascularComplianceModifier;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaSystemicVascularResistanceModifier =
+              m_ArrhythmiaSystemicVascularResistanceModifier;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
           }
+          // Force a new cardiac cycle
+          m_StartSystole = true;
+          m_HeartFlowDetected = true;
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
           break;
         }
         case eHeartRhythm::StableVentricularTachycardia:
@@ -1839,24 +1865,47 @@ namespace pulse
             m_TotalArrhythmiaTransitionTime_s = 150;
 
             m_ArrhythmiaHeartComplianceModifier =
-              m_InitialArrhythmiaHeartComplianceModifier = 0.3;
-            m_TargetArrhythmiaHeartComplianceModifier = 1.1;
+              m_InitialArrhythmiaHeartComplianceModifier = 2.0;
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
 
-            m_ArrhythmiaHeartRateBaseline_Per_min =
-              m_InitialArrhythmiaHeartRateBaseline_Per_min = 45;
-            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min * 2.2;
+            m_InitialArrhythmiaHeartRateBaseline_Per_min =
+              m_ArrhythmiaHeartRateBaseline_Per_min;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = 130;
 
-            m_ArrhythmiaVascularComplianceModifier =
-              m_InitialArrhythmiaVascularComplianceModifier = 1.0;
-            m_TargetArrhythmiaVascularComplianceModifier = 5.0;
+            m_InitialArrhythmiaVascularComplianceModifier =
+              m_ArrhythmiaVascularComplianceModifier;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
 
-            m_CardiacArrestVitalsUpdateTimer_s = 0;
-            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+            m_InitialArrhythmiaSystemicVascularResistanceModifier =
+              m_ArrhythmiaSystemicVascularResistanceModifier;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
           }
           else
           {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 30;
 
+            m_ArrhythmiaHeartComplianceModifier =
+              m_InitialArrhythmiaHeartComplianceModifier;
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaHeartRateBaseline_Per_min =
+              m_ArrhythmiaHeartRateBaseline_Per_min;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = 130;
+
+            m_InitialArrhythmiaVascularComplianceModifier =
+              m_ArrhythmiaVascularComplianceModifier;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaSystemicVascularResistanceModifier =
+              m_ArrhythmiaSystemicVascularResistanceModifier;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.0;
           }
+          // Force a new cardiac cycle
+          m_StartSystole = true;
+          m_HeartFlowDetected = true;
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
           break;
         }
         case eHeartRhythm::UnstableVentricularTachycardia:
@@ -1867,24 +1916,47 @@ namespace pulse
             m_TotalArrhythmiaTransitionTime_s = 150;
 
             m_ArrhythmiaHeartComplianceModifier =
-              m_InitialArrhythmiaHeartComplianceModifier = 0.3;
+              m_InitialArrhythmiaHeartComplianceModifier = 2.0;
             m_TargetArrhythmiaHeartComplianceModifier = 1.0;
 
-            m_ArrhythmiaHeartRateBaseline_Per_min =
-              m_InitialArrhythmiaHeartRateBaseline_Per_min = 45;
-            m_TargetArrhythmiaHeartRateBaseline_Per_min = m_StabilizedHeartRateBaseline_Per_min * 3.3;
+            m_InitialArrhythmiaHeartRateBaseline_Per_min =
+              m_ArrhythmiaHeartRateBaseline_Per_min;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = 160;
 
-            m_ArrhythmiaVascularComplianceModifier =
-              m_InitialArrhythmiaVascularComplianceModifier = 1.0;
-            m_TargetArrhythmiaVascularComplianceModifier = 5.0;
+            m_InitialArrhythmiaVascularComplianceModifier =
+              m_ArrhythmiaVascularComplianceModifier;
+            m_TargetArrhythmiaVascularComplianceModifier = 0.75;
 
-            m_CardiacArrestVitalsUpdateTimer_s = 0;
-            m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
+            m_InitialArrhythmiaSystemicVascularResistanceModifier =
+              m_ArrhythmiaSystemicVascularResistanceModifier;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.25;
           }
           else
           {
+            m_CurrentArrhythmiaTransitionTime_s = 0;
+            m_TotalArrhythmiaTransitionTime_s = 30;
 
+            m_ArrhythmiaHeartComplianceModifier =
+              m_InitialArrhythmiaHeartComplianceModifier;
+            m_TargetArrhythmiaHeartComplianceModifier = 1.0;
+
+            m_InitialArrhythmiaHeartRateBaseline_Per_min =
+              m_ArrhythmiaHeartRateBaseline_Per_min;
+            m_TargetArrhythmiaHeartRateBaseline_Per_min = 160;
+
+            m_InitialArrhythmiaVascularComplianceModifier =
+              m_ArrhythmiaVascularComplianceModifier;
+            m_TargetArrhythmiaVascularComplianceModifier = 0.75;
+
+            m_InitialArrhythmiaSystemicVascularResistanceModifier =
+              m_ArrhythmiaSystemicVascularResistanceModifier;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.25;
           }
+          // Force a new cardiac cycle
+          m_StartSystole = true;
+          m_HeartFlowDetected = true;
+          m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
+          m_data.GetEvents().SetEvent(eEvent::CardiacArrest, false, m_data.GetSimulationTime());
           break;
         }
         default:// Any other rhythms take us out of cardiac arrest
@@ -1995,7 +2067,6 @@ namespace pulse
       m_StartCardiacArrest = false;
 
       m_DriverCyclePeriod_s = 1.0e9; // Not beating, so set the period to a large number (1.0e9 sec = 31.7 years)
-      m_CurrentCardiacCycleTime_s = 0;
 
       m_CardiacCycleArterialPressure_mmHg->Clear();
       m_CardiacCycleArterialCO2PartialPressure_mmHg->Clear();
@@ -2019,30 +2090,14 @@ namespace pulse
 
     if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      if (m_CurrentDriverCycleTime_s >= m_DriverCyclePeriod_s && !m_StartCardiacArrest)
-      {
-#ifdef LOG_TIMING
-        Info("Completing Driver Cycle");
-        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-        Info("  -Current Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-#endif
+      if (m_CurrentDriverCycleTime_s > m_DriverCyclePeriod_s && !m_StartCardiacArrest)
         m_StartSystole = true;
-      }
+
       if (m_StartSystole)
       {
-#ifdef LOG_TIMING
-        Info("Starting Driver Cycle");
-        Info("  -Driver Cycle Time " + std::to_string(m_CurrentDriverCycleTime_s));
-        Info("  -Old CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
-#endif
         BeginDriverCycle();
         m_StartSystole = false;
         m_CurrentDriverCycleTime_s = 0.0;
-#ifdef LOG_TIMING
-        Info("  -New CardiacCyclePeriod / HR " + std::to_string(m_CardiacCyclePeriod_s) + " / " + std::to_string(60 / m_CardiacCyclePeriod_s));
-        Info("  -Current Cardiac Cycle Time: " + std::to_string(m_CurrentCardiacCycleTime_s));
-        Info("  -Reseting Driver Cycle Time to 0");
-#endif
         m_data.GetEvents().SetEvent(eEvent::StartOfCardiacCycle, true, m_data.GetSimulationTime());
       }
 
@@ -2101,6 +2156,11 @@ namespace pulse
     m_LeftHeartElastanceMax_mmHg_Per_mL *= m_LeftHeartElastanceModifier;
 
     m_DriverCyclePeriod_s = 60.0 / HeartDriverFrequency_Per_Min;
+    // Snap the cycle period to the nearest time step
+    m_DriverCyclePeriod_s = std::floor((m_DriverCyclePeriod_s / m_data.GetTimeStep_s()) + 0.5) * m_data.GetTimeStep_s();
+
+    GetHeartRate().SetValue(HeartDriverFrequency_Per_Min, FrequencyUnit::Per_min);
+    RecordAndResetCardiacCycle();
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -2527,10 +2587,6 @@ namespace pulse
         m_circuitCalculator->Process(*m_CirculatoryCircuit, m_data.GetTimeStep_s());
         CalculateVitalSigns();
         m_circuitCalculator->PostProcess(*m_CirculatoryCircuit);
-#ifdef LOG_TIMING
-        SEScalarTime& st = (SEScalarTime&)m_data.GetSimulationTime();
-        st.IncrementValue(m_data.GetTimeStep_s(), TimeUnit::s);
-#endif
         //return; //Skip stabelization for debugging
 
         map_mmHg = GetMeanArterialPressure(PressureUnit::mmHg);
@@ -2657,6 +2713,10 @@ namespace pulse
         " BloodVolume(mL): " << blood_mL;
       Info(m_ss);
       TunePaths(systemicResistanceScale, systemicComplianceScale, aortaResistanceScale, aortaComplianceScale, rightHeartResistanceScale, venaCavaComplianceScale);
+      m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());
+      m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+      m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+      m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
     }
     // Set the Tissue Pressure to the CV Pressures
     // Loop to decrement the Tissue Resistance, check that the flow is under 5mL/min
@@ -2682,6 +2742,11 @@ namespace pulse
         " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
         " BloodVolume(mL): " << GetBloodVolume(VolumeUnit::mL);
       Info(m_ss);
+      m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());
+      m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
+      m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
+      m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
+
       // Now tune the tissue nodes
       if (m_data.GetConfiguration().IsTissueEnabled())
       {
@@ -2694,6 +2759,10 @@ namespace pulse
           " MAP(mmHg):" << GetMeanArterialPressure(PressureUnit::mmHg) <<
           " BloodVolume(mL): " << GetBloodVolume(VolumeUnit::mL);
         Info(m_ss);
+        m_data.GetCurrentPatient().GetHeartRateBaseline().Set(GetHeartRate());
+        m_data.GetCurrentPatient().GetDiastolicArterialPressureBaseline().Set(GetDiastolicArterialPressure());
+        m_data.GetCurrentPatient().GetSystolicArterialPressureBaseline().Set(GetSystolicArterialPressure());
+        m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
       }
       // Reset our substance masses to the new volumes
       for (SELiquidCompartment* c : m_data.GetCompartments().GetVascularLeafCompartments())

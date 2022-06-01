@@ -101,7 +101,6 @@ namespace pulse
     bool   m_HeartFlowDetected;
     bool   m_FullyCompressedHeart;
     double m_CurrentDriverCycleTime_s;
-    double m_CurrentCardiacCycleTime_s;
     double m_DriverCyclePeriod_s;
     double m_LeftHeartElastanceModifier;// from Heart Failure and such
     double m_LeftHeartElastance_mmHg_Per_mL;

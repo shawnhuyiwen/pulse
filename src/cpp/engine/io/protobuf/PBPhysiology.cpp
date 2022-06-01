@@ -59,7 +59,6 @@ namespace pulse
     dst.m_StabilizedHeartRateBaseline_Per_min = src.stabilizedheartratebaseline_per_min();
     dst.m_StabilizedMeanArterialPressureBaseline_mmHg = src.stabilizedmeanarterialpressurebaseline_mmhg();
 
-    dst.m_CurrentCardiacCycleTime_s = src.currentcardiaccycletime_s();
     dst.m_CurrentDriverCycleTime_s = src.currentdrivercycletime_s();
     dst.m_DriverCyclePeriod_s = src.drivercycleperiod_s();
     dst.m_LeftHeartElastanceModifier = src.leftheartelastancemodifier();
@@ -128,7 +127,6 @@ namespace pulse
     dst.set_stabilizedheartratebaseline_per_min(src.m_StabilizedHeartRateBaseline_Per_min);
     dst.set_stabilizedmeanarterialpressurebaseline_mmhg(src.m_StabilizedMeanArterialPressureBaseline_mmHg);
 
-    dst.set_currentcardiaccycletime_s(src.m_CurrentCardiacCycleTime_s);
     dst.set_currentdrivercycletime_s(src.m_CurrentDriverCycleTime_s);
     dst.set_drivercycleperiod_s(src.m_DriverCyclePeriod_s);
     dst.set_leftheartelastance_mmhg_per_ml(src.m_LeftHeartElastance_mmHg_Per_mL);
