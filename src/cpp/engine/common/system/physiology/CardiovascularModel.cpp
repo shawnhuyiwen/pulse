@@ -1925,11 +1925,11 @@ namespace pulse
 
             m_InitialArrhythmiaVascularComplianceModifier =
               m_ArrhythmiaVascularComplianceModifier;
-            m_TargetArrhythmiaVascularComplianceModifier = 0.75;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.35;
 
             m_InitialArrhythmiaSystemicVascularResistanceModifier =
               m_ArrhythmiaSystemicVascularResistanceModifier;
-            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.25;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 0.4;
           }
           else
           {
@@ -1946,11 +1946,11 @@ namespace pulse
 
             m_InitialArrhythmiaVascularComplianceModifier =
               m_ArrhythmiaVascularComplianceModifier;
-            m_TargetArrhythmiaVascularComplianceModifier = 0.75;
+            m_TargetArrhythmiaVascularComplianceModifier = 1.35;
 
             m_InitialArrhythmiaSystemicVascularResistanceModifier =
               m_ArrhythmiaSystemicVascularResistanceModifier;
-            m_TargetArrhythmiaSystemicVascularResistanceModifier = 1.25;
+            m_TargetArrhythmiaSystemicVascularResistanceModifier = 0.4;
           }
           // Force a new cardiac cycle
           m_StartSystole = true;
@@ -1978,6 +1978,10 @@ namespace pulse
           m_TotalArrhythmiaTransitionTime_s = 0;
           m_CurrentArrhythmiaTransitionTime_s = 0;
 
+          // Set a new baseline if we did not have any feedback on(comeing out of cardiac arrest)
+          if(m_data.GetNervous().GetBaroreceptorFeedback()==eSwitch::Off && m_EnableFeedbackAfterArrhythmiaTrasition==eSwitch::On)
+            m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
+
           m_data.GetNervous().SetBaroreceptorFeedback(m_EnableFeedbackAfterArrhythmiaTrasition);
           m_data.GetNervous().SetChemoreceptorFeedback(m_EnableFeedbackAfterArrhythmiaTrasition);
 
@@ -1985,12 +1989,9 @@ namespace pulse
           m_ArrhythmiaHeartRateBaseline_Per_min = m_TargetArrhythmiaHeartRateBaseline_Per_min;
           m_ArrhythmiaVascularComplianceModifier = m_TargetArrhythmiaVascularComplianceModifier;
           m_ArrhythmiaSystemicVascularResistanceModifier = m_TargetArrhythmiaSystemicVascularResistanceModifier;
-          m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure()); // 
-          //m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().SetValue(m_StabilizedMeanArterialPressureBaseline_mmHg, PressureUnit::mmHg);
         }
         else
         {
-
           double transitionPercent = m_CurrentArrhythmiaTransitionTime_s / m_TotalArrhythmiaTransitionTime_s;
           m_ArrhythmiaHeartComplianceModifier = GeneralMath::LinearInterpolator(m_InitialArrhythmiaHeartComplianceModifier, m_TargetArrhythmiaHeartComplianceModifier, transitionPercent);
           m_ArrhythmiaHeartRateBaseline_Per_min = GeneralMath::LinearInterpolator(m_InitialArrhythmiaHeartRateBaseline_Per_min, m_TargetArrhythmiaHeartRateBaseline_Per_min, transitionPercent);
