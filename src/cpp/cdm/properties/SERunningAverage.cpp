@@ -39,6 +39,8 @@ double SERunningAverage::Sample(double d)
 
 double SERunningAverage::Value()
 {
+  if (m_Sum==0)
+    return 0;
   if(!IsValid())
     throw CommonDataModelException("Running Average is Empty");
   return m_Sum / double(m_NumSamples);
