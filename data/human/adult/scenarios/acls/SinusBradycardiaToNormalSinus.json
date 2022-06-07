@@ -1,10 +1,10 @@
 {
-  "Name": "ArrhythmiaStableVentricularTachycardiaRhythm",
-  "Description": "A patient experiences Ventricular Tachycardia via the arrhythmia action set with StableVentricularTachycardia, then back to NormalSinus.",
+  "Name": "ArrhythmiaVentricularTachycardiaRhythms",
+  "Description": "A patient experiences different sinus rhythms via the arrhythmia action set with StableVentricularTachycardia, then back to NormalSinus, then Unstable Ventricular Tachycardia, then back to NormalSinus.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
-		"DecimalFormat": {
+    "DecimalFormat": {
         "Precision": 3
       },
       "Category": "ECG",
@@ -399,14 +399,14 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "StableVentricularTachycardia"
+        "Rhythm": "SinusBradycardia"
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
+          "Value": 120.0,
           "Unit": "s"
         }
       }
@@ -421,7 +421,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 180.0,
+          "Value": 240.0,
           "Unit": "s"
         }
       }

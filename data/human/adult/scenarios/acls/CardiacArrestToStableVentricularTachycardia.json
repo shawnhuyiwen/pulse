@@ -4,7 +4,7 @@
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
-		"DecimalFormat": {
+    "DecimalFormat": {
         "Precision": 3
       },
       "Category": "ECG",
@@ -399,14 +399,14 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "FineVentricularFibrillation"
+        "Rhythm": "PulselessVentricularTachycardia"
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
+          "Value": 120.0,
           "Unit": "s"
         }
       }
@@ -414,14 +414,14 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "NormalSinus"
+        "Rhythm": "StableVentricularTachycardia"
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 360.0,
+          "Value": 240.0,
           "Unit": "s"
         }
       }

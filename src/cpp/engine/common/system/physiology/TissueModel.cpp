@@ -410,7 +410,7 @@ namespace pulse
             // Sodium is special. We need to diffuse for renal function.
             // We will not treat sodium any differently once diffusion functionality is fully implemented.
             if (sub == m_Sodium)
-              MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_data.GetTimeStep_s());
+              MoveMassByInstantDiffusion(*vascular, extracellular, *sub);
 
             continue;
           }
@@ -420,7 +420,7 @@ namespace pulse
           /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
           // --- First, instant diffusion ---
-          MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_data.GetTimeStep_s());
+          MoveMassByInstantDiffusion(*vascular, extracellular, *sub);
 
           // --- Second, simple diffusion ---
             // Compute the vascular to extracellular permeability coefficient
@@ -469,7 +469,7 @@ namespace pulse
           /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
           // --- First, instant diffusion ---
-          MoveMassByInstantDiffusion(extracellular, intracellular, *sub, m_data.GetTimeStep_s());
+          MoveMassByInstantDiffusion(extracellular, intracellular, *sub);
 
           // --- Second, simple diffusion ---
             // Assuming that the capillary permeability coefficient is proportional to the cellular membrane permeability coefficient for a given tissue and substance
@@ -528,10 +528,9 @@ namespace pulse
   {
     const PulseConfiguration& Configuration = m_data.GetConfiguration();
 
-
     double AlveoliSurfaceArea_cm2 = m_data.GetCurrentPatient().GetAlveoliSurfaceArea(AreaUnit::cm2);
-    double PulmonaryCapillaryCoverage = Configuration.GetStandardPulmonaryCapillaryCoverage();
-    double DiffusionSurfaceArea_cm2 = AlveoliSurfaceArea_cm2 * PulmonaryCapillaryCoverage;
+    double PulmonaryCapillaryCoverageFraction = m_data.GetCardiovascular().GetPulmonaryCapillariesCoverageFraction().GetValue();
+    double DiffusionSurfaceArea_cm2 = AlveoliSurfaceArea_cm2 * PulmonaryCapillaryCoverageFraction;
     double RightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
 
     double StandardDiffusingCapacityOfOxygen_mLPersPermmHg = (DiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
@@ -1446,7 +1445,7 @@ namespace pulse
     /// \details
     /// Instantaneous diffusion assumes that the entire diffusion process happens within the bounds of a time step.
     //--------------------------------------------------------------------------------------------------
-  double TissueModel::MoveMassByInstantDiffusion(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub, double timestep_s)
+  double TissueModel::MoveMassByInstantDiffusion(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub)
   {
     const SELiquidSubstanceQuantity* srcQ = source.GetSubstanceQuantity(sub);
     const SELiquidSubstanceQuantity* tgtQ = target.GetSubstanceQuantity(sub);

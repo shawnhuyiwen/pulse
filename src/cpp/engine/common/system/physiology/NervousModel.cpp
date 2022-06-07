@@ -227,17 +227,11 @@ namespace pulse
       m_data.GetDataTrack().Probe("normalizedMAP", 0);
     }
 #endif
-    // Need to reinvestigate the Chemoreceptor implemenation, currently they only add, at most 1bpm
-    // CV is adding this to the next cycle period, so off should actually be 0, not 1
-    // The current implementation is only generating a scale of 0-1bpm... the small numbers are also
-    // causing issue with the math that calculates the actual driver cycle to be inconsistent and cause instability
-    // Nothing was using the ChemoreceptorHeartElastanceScale either...
-    //if (m_ChemoreceptorFeedback == eSwitch::On)
-    //  ChemoreceptorFeedback();
-    //else
-    //  GetChemoreceptorHeartRateScale().SetValue(1.0);
+    if (m_ChemoreceptorFeedback == eSwitch::On)
+      ChemoreceptorFeedback();
+    else
+      GetChemoreceptorHeartRateScale().SetValue(0.0);
     CerebralSpinalFluidUpdates();
-
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -406,7 +400,7 @@ namespace pulse
         m_BaroreceptorSaturationStatus = true;
         Info("Baroreceptors Saturated ");
       }
-      if (normalizedMAP <= 0.985 && normalizedMAP >= 0.48)
+      if (normalizedMAP <= 0.985 && meanArterialPressure_mmHg >= 47)
       {
         //new baroreceptor effect curves
         if (m_PreviousBloodVolume_mL - m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL) > 0)
@@ -419,13 +413,13 @@ namespace pulse
         }
 
       }
-      else if (normalizedMAP <= 0.44 && normalizedMAP >= 0.42)
+      else if (meanArterialPressure_mmHg <= 43 && meanArterialPressure_mmHg >= 41)
       {
         //last ditch effort
         //m_BaroreceptorEffectivenessParameter += 0.0001;
         m_BaroreceptorEffectivenessParameter = 0.0007;
       }
-      else if (normalizedMAP < 0.42)
+      else if (meanArterialPressure_mmHg < 41)
       {
         m_BaroreceptorEffectivenessParameter -= 0.00004;
       }

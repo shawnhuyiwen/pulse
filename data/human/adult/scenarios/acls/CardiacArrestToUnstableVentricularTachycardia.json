@@ -1,10 +1,10 @@
 {
-  "Name": "ArrhythmiaVentricularTachycardiaRhythms",
-  "Description": "A patient experiences different sinus rhythms via the arrhythmia action set with StableVentricularTachycardia, then back to NormalSinus, then Unstable Ventricular Tachycardia, then back to NormalSinus.",
+  "Name": "ArrhythmiaVentricularFibrillation",
+  "Description": "A patient moves into cardiac arrest via the arrhythmia action set with CoarseVentricularFibrillation, then FineVentricularFibrillation, then NormalSinus.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
-		"DecimalFormat": {
+    "DecimalFormat": {
         "Precision": 3
       },
       "Category": "ECG",
@@ -399,14 +399,14 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "SinusTachycardia"
+        "Rhythm": "CoarseVentricularFibrillation"
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 210.0,
+          "Value": 120.0,
           "Unit": "s"
         }
       }
@@ -414,44 +414,14 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "NormalSinus"
+        "Rhythm": "UnstableVentricularTachycardia"
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 210.0,
-          "Unit": "s"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "SinusBradycardia"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 210.0,
-          "Unit": "s"
-        }
-      }
-    }
-		  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "NormalSinus"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 180.0,
+          "Value": 240.0,
           "Unit": "s"
         }
       }

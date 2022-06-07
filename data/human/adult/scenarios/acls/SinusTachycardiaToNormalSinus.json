@@ -1,17 +1,17 @@
 {
-  "Name": "ArrhythmiaPulselessRhythms",
-  "Description": "A patient moves into cardiac arrest via the arrhythmia action set with Asystole, then return to Normal Sinus rhythm.",
+  "Name": "ArrhythmiaVentricularTachycardiaRhythms",
+  "Description": "A patient experiences different sinus rhythms via the arrhythmia action set with StableVentricularTachycardia, then back to NormalSinus, then Unstable Ventricular Tachycardia, then back to NormalSinus.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
-        "DecimalFormat": {
+    "DecimalFormat": {
         "Precision": 3
       },
       "Category": "ECG",
       "PropertyName": "Lead3ElectricPotential",
       "Unit": "mV"
     }, {
-		"DecimalFormat": {
+      "DecimalFormat": {
         "Precision": 1
       },
       "PropertyName": "Weight",
@@ -399,14 +399,14 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "Asystole"
+        "Rhythm": "SinusTachycardia"
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
+          "Value": 120.0,
           "Unit": "s"
         }
       }

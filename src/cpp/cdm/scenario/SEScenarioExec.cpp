@@ -146,8 +146,6 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   profiler.Start("Total");
   profiler.Start("Status");
 
-  pe.GetEngineTracker()->SetupRequests();
-
   bool err=false;
   const SEAdvanceTime* adv;
   double expectedFinalSimTime_s = 0;

@@ -6,8 +6,6 @@
 #include "cdm/properties/SEScalar.h"
 #include "cdm/utils/FileUtils.h"
 
-static std::stringstream err;
-
 SEFunction::SEFunction() : SEProperty()
 {
   Clear();

@@ -365,8 +365,8 @@ namespace pulse { namespace human_adult_whole_body
       //Diffuse if necessary
       if (localUsingDiffusion)
       {
-        tsu.MoveMassByInstantDiffusion(cCapillaries, cTissue, O2, deltaT_s);
-        tsu.MoveMassByInstantDiffusion(cCapillaries, cTissue, CO2, deltaT_s);
+        tsu.MoveMassByInstantDiffusion(cCapillaries, cTissue, O2);
+        tsu.MoveMassByInstantDiffusion(cCapillaries, cTissue, CO2);
       }
 
       //convert 'Next' values to current

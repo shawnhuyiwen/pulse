@@ -298,6 +298,21 @@ void GeneralMath::Combinations(std::vector<int> maxValues, std::vector<std::vect
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
+/// Performs a 1D linear interpolation between two points given the percent between start/finish
+///
+/// \param  start      initial value
+/// \param  finish     target value
+/// \param  percent    percent to interpolate between initial and target
+///
+/// \return the value between initial and target at the given percent
+//--------------------------------------------------------------------------------------------------
+double GeneralMath::LinearInterpolator(double initial, double target, double percent)
+{
+  return initial + ((target - initial) * percent);
+}
+
+//--------------------------------------------------------------------------------------------------
+/// \brief
 /// Performs linear interpolation between two points
 ///
 /// \param  x1      value 1 on the x axis, must be smaller than x2
@@ -557,8 +572,8 @@ bool GeneralMath::LinearInterpolator(std::vector<double>& v, size_t newSize)
     return true; // Done
   if (newSize > v.size())// Expand
   {
-    size_t half = std::floor(v.size() / 2);
-    size_t quarter = std::floor(half / 2);
+    size_t half = (size_t)std::floor(v.size() / 2);
+    size_t quarter = (size_t)std::floor(half / 2);
     // Insert middle
     InsertInterpolation(v, half);
     if (newSize == v.size())
@@ -579,8 +594,8 @@ bool GeneralMath::LinearInterpolator(std::vector<double>& v, size_t newSize)
     if (newSize <= 2)
       return false;// Nothing we can do with this...
 
-    size_t half = std::floor(v.size() / 2);
-    size_t quarter = std::floor(half / 2);
+    size_t half = (size_t)std::floor(v.size() / 2);
+    size_t quarter = (size_t)std::floor(half / 2);
     // Insert middle
 
     RemoveInterpolation(v, half);
