@@ -151,7 +151,14 @@
     "Category": "ECG",
     "PropertyName": "Lead3ElectricPotential",
     "Unit": "mV"
-   }
+   }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "PulseOximetry",
+      "Unit": "unitless"
+    }
   ]
  },
  "AnyAction": [

@@ -53,24 +53,26 @@ namespace pulse
 
     void CheckBloodGasLevels();
     // Serializable member variables (Set in Initialize and in schema)
-    SERunningAverage* m_ArterialOxygen_mmHg;
-    SERunningAverage* m_ArterialCarbonDioxide_mmHg;
+    SERunningAverage*          m_ArterialOxygen_mmHg;
+    SERunningAverage*          m_ArterialCarbonDioxide_mmHg;
 
     // Stateless member variable (Set in SetUp())
-    double m_redBloodCellVolume_mL;
-    double m_HbPerRedBloodCell_ug_Per_ct;
-    SELiquidCompartment* m_aorta;
-    SELiquidSubstanceQuantity* m_aortaO2;
-    SELiquidSubstanceQuantity* m_aortaCO2;
-    SELiquidSubstanceQuantity* m_aortaCO;
-    SELiquidSubstanceQuantity* m_brainO2;
-    SELiquidSubstanceQuantity* m_myocardiumO2;
-    SELiquidSubstanceQuantity* m_pulmonaryArteriesO2;
-    SELiquidSubstanceQuantity* m_pulmonaryArteriesCO2;
-    SELiquidSubstanceQuantity* m_pulmonaryVeinsO2;
-    SELiquidSubstanceQuantity* m_pulmonaryVeinsCO2;
-    SELiquidCompartment* m_venaCava;
-    SELiquidSubstanceQuantity* m_venaCavaO2;
-    SELiquidSubstanceQuantity* m_venaCavaCO2;
+    double                     m_RedBloodCellVolume_mL;
+    double                     m_HbPerRedBloodCell_ug_Per_ct;
+    SELiquidCompartment*       m_Aorta;
+    SELiquidSubstanceQuantity* m_AortaO2;
+    SELiquidSubstanceQuantity* m_AortaCO2;
+    SELiquidSubstanceQuantity* m_BrainO2;
+    SELiquidSubstanceQuantity* m_MyocardiumO2;
+    SELiquidSubstanceQuantity* m_PulmonaryArteriesO2;
+    SELiquidSubstanceQuantity* m_PulmonaryArteriesCO2;
+    SELiquidSubstanceQuantity* m_PulmonaryVeinsO2;
+    SELiquidSubstanceQuantity* m_PulmonaryVeinsCO2;
+    SELiquidCompartment*       m_RightArm;
+    SELiquidSubstanceQuantity* m_RightArmO2;
+    SELiquidSubstanceQuantity* m_RightArmCO;
+    SELiquidCompartment*       m_VenaCava;
+    SELiquidSubstanceQuantity* m_VenaCavaO2;
+    SELiquidSubstanceQuantity* m_VenaCavaCO2;
   };
 END_NAMESPACE
