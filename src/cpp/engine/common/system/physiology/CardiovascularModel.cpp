@@ -1709,7 +1709,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
@@ -1760,7 +1760,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
@@ -1811,7 +1811,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
@@ -1862,7 +1862,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
@@ -1913,7 +1913,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
