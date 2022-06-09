@@ -563,6 +563,8 @@ namespace pulse
     //Do the overrides
     SetRespiratoryResistance();
     SetRespiratoryCompliance();
+
+    m_data.GetDataTrack().Probe("m_CardiacArrestEffect", m_CardiacArrestEffect);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1168,8 +1170,8 @@ namespace pulse
     if (m_CardiacArrestEffect < 1.0)
     {
       // Modify breathing coming out of cardiac arrest
-      double cardiacArrestDampingInitialValue = 0.2;
-      double cardiacArrestDampingPeriod_s = 90.0;
+      double cardiacArrestDampingInitialValue = 0.5;
+      double cardiacArrestDampingPeriod_s = 400.0;
 
       // Do a linear increment this timestep to eventually reach 1.0 at the end of the damping period
       m_CardiacArrestEffect += m_data.GetTimeStep_s() / cardiacArrestDampingPeriod_s * (1.0 - cardiacArrestDampingInitialValue);
@@ -1294,7 +1296,7 @@ namespace pulse
           //Calculate the target Tidal Volume based on the Alveolar Ventilation
           double dTargetPulmonaryVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
 
-          dTargetPulmonaryVentilation_L_Per_min *= m_CardiacArrestEffect;
+          //dTargetPulmonaryVentilation_L_Per_min *= m_CardiacArrestEffect;
 
           double dMaximumPulmonaryVentilationRate = m_data.GetConfiguration().GetPulmonaryVentilationRateMaximum(VolumePerTimeUnit::L_Per_min);
           /// \event Patient: Maximum Pulmonary Ventilation Rate : Pulmonary ventilation exceeds maximum value
@@ -3763,6 +3765,10 @@ namespace pulse
     {
       dyspneaSeverity = 1.0;
       m_CardiacArrestEffect = 0.0;
+    }
+    else if (m_CardiacArrestEffect < 1.0)
+    {
+      dyspneaSeverity = MAX(dyspneaSeverity, 1.0 - m_CardiacArrestEffect);
     }
 
     //------------------------------------------------------------------------------------------------------
