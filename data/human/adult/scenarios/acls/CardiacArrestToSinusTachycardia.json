@@ -138,8 +138,8 @@
         "Precision": 4
       },
       "Category": "Physiology",
-      "PropertyName": "EndTidalCarbonDioxideFraction",
-      "Unit": "unitless"
+      "PropertyName": "EndTidalCarbonDioxidePressure",
+      "Unit": "mmHg"
     }, {
       "DecimalFormat": {
         "Precision": 2
