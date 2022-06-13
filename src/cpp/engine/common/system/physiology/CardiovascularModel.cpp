@@ -698,6 +698,8 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CalculateVitalSigns()
   {
+    // Tell the cmpt mgr to sample any cmpts by cardiac cycle
+    m_data.GetCompartments().SampleByCardiacCyle(m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle));
     // Grab data from the circuit in order to calculate a running mean
     const double AortaNodePressure_mmHg = m_Aorta->GetPressure(PressureUnit::mmHg);
     const double AortaNodeCO2PartialPressure_mmHg = m_AortaCO2 == nullptr ? 0 : m_AortaCO2->GetPartialPressure(PressureUnit::mmHg); // This is here so we can Tune circuit w/o substances

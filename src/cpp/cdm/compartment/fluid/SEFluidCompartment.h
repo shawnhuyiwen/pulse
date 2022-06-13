@@ -8,6 +8,7 @@
 #include "cdm/substance/SESubstanceTransport.h"
 
 class SESubstance;
+class SERunningAverage;
 template<typename EdgeType, typename VertexType, typename CompartmentType> class SEFluidCompartmentLink;
 
 #define FLUID_COMPARTMENT_TEMPLATE typename LinkType, typename VertexType, typename TransportSubstanceType, typename SubstanceQuantityType
@@ -35,13 +36,24 @@ public:
   virtual  SECompartmentNodes<FLUID_COMPARTMENT_NODE>& GetNodeMapping() { return m_Nodes; }
   virtual void MapNode(SEFluidCircuitNode& node);
 
+  virtual void Sample(bool CycleStart);
+  virtual void SampleFlow(); // We can add other sampling support as needed, just follow the pattern
+
   virtual bool HasInFlow() const;
   virtual const SEScalarVolumePerTime& GetInFlow() const;
   virtual double GetInFlow(const VolumePerTimeUnit& unit) const;
 
+  virtual bool HasAverageInFlow() const;
+  virtual const SEScalarVolumePerTime& GetAverageInFlow() const;
+  virtual double GetAverageInFlow(const VolumePerTimeUnit& unit) const;
+
   virtual bool HasOutFlow() const;
   virtual const SEScalarVolumePerTime& GetOutFlow() const;
   virtual double GetOutFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasAverageOutFlow() const;
+  virtual const SEScalarVolumePerTime& GetAverageOutFlow() const;
+  virtual double GetAverageOutFlow(const VolumePerTimeUnit& unit) const;
 
   virtual bool HasPressure() const;
   virtual SEScalarPressure& GetPressure();
@@ -77,6 +89,12 @@ protected:
 
   mutable SEScalarVolumePerTime* m_InFlow;
   mutable SEScalarVolumePerTime* m_OutFlow;
+  bool                           m_SampleFlow;
+  mutable SEScalarVolumePerTime* m_AverageInFlow;
+  mutable SEScalarVolumePerTime* m_AverageOutFlow;
+  mutable SERunningAverage*      m_AverageInFlow_mL_Per_s;
+  mutable SERunningAverage*      m_AverageOutFlow_mL_Per_s;
+
   SEScalarPressure*              m_Pressure;
   SEScalarVolume*                m_Volume;
 
