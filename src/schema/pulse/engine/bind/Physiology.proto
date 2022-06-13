@@ -213,9 +213,10 @@ message RespiratoryData
 message TissueData
 {
   pulse.cdm.bind.TissueSystemData          Common                                              = 1;
-  double                                   RestingTissueGlucose_g                              = 2;
-  double                                   RestingBloodGlucose_mg_Per_mL                       = 3;
-  double                                   RestingBloodLipid_mg_Per_mL                         = 4;
-  double                                   RestingBloodInsulin_mg_Per_mL                       = 5;
-  double                                   RestingFluidMass_kg                                 = 6;
+  double                                   CardiacArrestCarbonDioxideProductionFactor          = 2;
+  double                                   RestingTissueGlucose_g                              = 3;
+  double                                   RestingBloodGlucose_mg_Per_mL                       = 4;
+  double                                   RestingBloodLipid_mg_Per_mL                         = 5;
+  double                                   RestingBloodInsulin_mg_Per_mL                       = 6;
+  double                                   RestingFluidMass_kg                                 = 7;
 }

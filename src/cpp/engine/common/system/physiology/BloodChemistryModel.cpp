@@ -118,7 +118,7 @@ namespace pulse
     m_MyocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_RightArm = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightArm);
     m_RightArmO2 = m_RightArm->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-    m_VenaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
+    m_VenaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
     m_VenaCavaO2 = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_VenaCavaCO2 = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 
@@ -161,13 +161,20 @@ namespace pulse
     //Push the compartment values of O2 and CO2 partial pressures on the corresponding system data.
     GetOxygenSaturation().Set(m_AortaO2->GetSaturation());
     GetCarbonDioxideSaturation().Set(m_AortaCO2->GetSaturation());
-
-    if (m_RightArmCO == nullptr && m_data.GetSubstances().IsActive(m_data.GetSubstances().GetCO()))
-      m_RightArmCO = m_RightArm->GetSubstanceQuantity(m_data.GetSubstances().GetCO());
-    if (m_RightArmCO != nullptr)
-      GetPulseOximetry().SetValue(m_RightArmO2->GetSaturation().GetValue() + m_RightArmCO->GetSaturation().GetValue());
+    
+    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+    {
+      GetPulseOximetry().SetValue(0);
+    }
     else
-      GetPulseOximetry().Set(m_RightArmO2->GetSaturation());
+    {
+      if (m_RightArmCO == nullptr && m_data.GetSubstances().IsActive(m_data.GetSubstances().GetCO()))
+        m_RightArmCO = m_RightArm->GetSubstanceQuantity(m_data.GetSubstances().GetCO());
+      if (m_RightArmCO != nullptr)
+        GetPulseOximetry().SetValue(m_RightArmO2->GetSaturation().GetValue() + m_RightArmCO->GetSaturation().GetValue());
+      else
+        GetPulseOximetry().Set(m_RightArmO2->GetSaturation());
+    }
 
     // This Hemoglobin Content is the mass of the hemoglobin only, not the hemoglobin and bound gas.
     // So we have to take our 4 Hb species masses and remove the mass of the gas.

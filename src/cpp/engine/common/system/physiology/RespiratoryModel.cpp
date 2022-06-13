@@ -563,8 +563,6 @@ namespace pulse
     //Do the overrides
     SetRespiratoryResistance();
     SetRespiratoryCompliance();
-
-    m_data.GetDataTrack().Probe("m_CardiacArrestEffect", m_CardiacArrestEffect);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1170,14 +1168,13 @@ namespace pulse
     if (m_CardiacArrestEffect < 1.0)
     {
       // Modify breathing coming out of cardiac arrest
-      double cardiacArrestDampingInitialValue = 0.5;
-      double cardiacArrestDampingPeriod_s = 400.0;
+      double cardiacArrestDampingInitialValue = 0.4;
+      double cardiacArrestDampingPeriod_s = 500.0;
 
       // Do a linear increment this timestep to eventually reach 1.0 at the end of the damping period
       m_CardiacArrestEffect += m_data.GetTimeStep_s() / cardiacArrestDampingPeriod_s * (1.0 - cardiacArrestDampingInitialValue);
       m_CardiacArrestEffect = LIMIT(m_CardiacArrestEffect, cardiacArrestDampingInitialValue, 1.0);
     }
-
 
     //Prepare for the next cycle -------------------------------------------------------------------------------
     if ((m_BreathingCycleTime_s > GetBreathCycleTime()) ||                              //End of the cycle or currently not breathing
@@ -1278,6 +1275,11 @@ namespace pulse
             //This gets it nice and stable
             changeFraction = 0.1;
           }
+          else if (m_CardiacArrestEffect < 1.0)
+          {
+            //Limit the change significantly
+            changeFraction = 0.02;
+          }
           else
           {
             //This keeps it from going crazy with modifiers applied
@@ -1295,8 +1297,6 @@ namespace pulse
           //Target Tidal Volume (i.e. Driver amplitude) *************************************************************************
           //Calculate the target Tidal Volume based on the Alveolar Ventilation
           double dTargetPulmonaryVentilation_L_Per_min = dTargetAlveolarVentilation_L_Per_min;
-
-          //dTargetPulmonaryVentilation_L_Per_min *= m_CardiacArrestEffect;
 
           double dMaximumPulmonaryVentilationRate = m_data.GetConfiguration().GetPulmonaryVentilationRateMaximum(VolumePerTimeUnit::L_Per_min);
           /// \event Patient: Maximum Pulmonary Ventilation Rate : Pulmonary ventilation exceeds maximum value

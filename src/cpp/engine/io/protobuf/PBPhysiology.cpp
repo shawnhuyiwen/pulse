@@ -535,6 +535,7 @@ namespace pulse
   void PBPhysiology::Serialize(const PULSE_BIND::TissueData& src, TissueModel& dst)
   {
     ::PBPhysiology::Serialize(src.common(), dst);
+    dst.m_CardiacArrestCarbonDioxideProductionFactor = src.cardiacarrestcarbondioxideproductionfactor();
     dst.m_RestingTissueGlucose_g = src.restingtissueglucose_g();
     dst.m_RestingBloodGlucose_mg_Per_mL = src.restingbloodglucose_mg_per_ml();
     dst.m_RestingBloodLipid_mg_Per_mL = src.restingbloodlipid_mg_per_ml();
@@ -550,6 +551,7 @@ namespace pulse
   void PBPhysiology::Serialize(const TissueModel& src, PULSE_BIND::TissueData& dst)
   {
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
+    dst.set_cardiacarrestcarbondioxideproductionfactor(src.m_CardiacArrestCarbonDioxideProductionFactor);
     dst.set_restingtissueglucose_g(src.m_RestingTissueGlucose_g);
     dst.set_restingbloodglucose_mg_per_ml(src.m_RestingBloodGlucose_mg_Per_mL);
     dst.set_restingbloodlipid_mg_per_ml(src.m_RestingBloodLipid_mg_Per_mL);
