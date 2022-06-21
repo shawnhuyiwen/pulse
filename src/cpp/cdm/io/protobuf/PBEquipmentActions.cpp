@@ -893,6 +893,22 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorContinuous
     PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
   if (src.has_slope())
     PBProperty::Load(src.slope(), dst.GetSlope());
+
+  dst.SetInspirationWaveform((CDM_BIND::eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+
+  if (src.has_inspirationpatienttriggerflow())
+    PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
+  if (src.has_inspirationpatienttriggerpressure())
+    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());
+  dst.m_InspirationPatientTriggerRespiratoryModel = (eSwitch)src.inspirationpatienttriggerrespiratorymodel();
+
+  dst.SetExpirationWaveform((eMechanicalVentilator_DriverWaveform)src.expirationwaveform());
+
+  if (src.has_expirationcycleflow())
+    PBProperty::Load(src.expirationcycleflow(), dst.GetExpirationCycleFlow());
+  if (src.has_expirationcyclepressure())
+    PBProperty::Load(src.expirationcyclepressure(), dst.GetExpirationCyclePressure());
+  dst.m_ExpirationCycleRespiratoryModel = (eSwitch)src.expirationcyclerespiratorymodel();
 }
 CDM_BIND::MechanicalVentilatorContinuousPositiveAirwayPressureData* PBEquipmentAction::Unload(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src)
 {
@@ -911,6 +927,22 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorContinuousPositive
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
   if (src.HasSlope())
     dst.set_allocated_slope(PBProperty::Unload(*src.m_Slope));
+
+  dst.set_inspirationwaveform((CDM_BIND::eDriverWaveform)src.m_InspirationWaveform);
+
+  if (src.HasInspirationPatientTriggerFlow())
+    dst.set_allocated_inspirationpatienttriggerflow(PBProperty::Unload(*src.m_InspirationPatientTriggerFlow));
+  if (src.HasInspirationPatientTriggerPressure())
+    dst.set_allocated_inspirationpatienttriggerpressure(PBProperty::Unload(*src.m_InspirationPatientTriggerPressure));
+  dst.set_inspirationpatienttriggerrespiratorymodel((CDM_BIND::eSwitch)src.m_InspirationPatientTriggerRespiratoryModel);
+
+  dst.set_expirationwaveform((CDM_BIND::eDriverWaveform)src.m_ExpirationWaveform);
+
+  if (src.HasExpirationCycleFlow())
+    dst.set_allocated_expirationcycleflow(PBProperty::Unload(*src.m_ExpirationCycleFlow));
+  if (src.HasExpirationCyclePressure())
+    dst.set_allocated_expirationcyclepressure(PBProperty::Unload(*src.m_ExpirationCyclePressure));
+  dst.set_expirationcyclerespiratorymodel((CDM_BIND::eSwitch)src.m_ExpirationCycleRespiratoryModel);
 }
 void PBEquipmentAction::Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, SEMechanicalVentilatorContinuousPositiveAirwayPressure& dst)
 {
@@ -941,6 +973,14 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorPressureCo
     PBProperty::Load(src.respirationrate(), dst.GetRespirationRate());
   if (src.has_slope())
     PBProperty::Load(src.slope(), dst.GetSlope());
+
+  dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+
+  if (src.has_inspirationpatienttriggerflow())
+    PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
+  if (src.has_inspirationpatienttriggerpressure())
+    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());
+  dst.m_InspirationPatientTriggerRespiratoryModel = (eSwitch)src.inspirationpatienttriggerrespiratorymodel();
 }
 CDM_BIND::MechanicalVentilatorPressureControlData* PBEquipmentAction::Unload(const SEMechanicalVentilatorPressureControl& src)
 {
@@ -964,6 +1004,15 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorPressureControl& s
     dst.set_allocated_respirationrate(PBProperty::Unload(*src.m_RespirationRate));
   if (src.HasSlope())
     dst.set_allocated_slope(PBProperty::Unload(*src.m_Slope));
+
+  dst.set_inspirationwaveform((CDM_BIND::eDriverWaveform)src.m_InspirationWaveform);
+
+  if (src.HasInspirationPatientTriggerFlow())
+    dst.set_allocated_inspirationpatienttriggerflow(PBProperty::Unload(*src.m_InspirationPatientTriggerFlow));
+  else if (src.HasInspirationPatientTriggerPressure())
+    dst.set_allocated_inspirationpatienttriggerpressure(PBProperty::Unload(*src.m_InspirationPatientTriggerPressure));
+  else
+    dst.set_inspirationpatienttriggerrespiratorymodel((CDM_BIND::eSwitch)src.m_InspirationPatientTriggerRespiratoryModel);
 }
 void PBEquipmentAction::Copy(const SEMechanicalVentilatorPressureControl& src, SEMechanicalVentilatorPressureControl& dst)
 {
@@ -994,6 +1043,17 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorVolumeCont
     PBProperty::Load(src.respirationrate(), dst.GetRespirationRate());
   if (src.has_tidalvolume())
     PBProperty::Load(src.tidalvolume(), dst.GetTidalVolume());
+  if (src.has_slope())
+    PBProperty::Load(src.slope(), dst.GetSlope());
+
+  dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+
+  if (src.has_inspirationpatienttriggerflow())
+    PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
+  else if (src.has_inspirationpatienttriggerpressure())
+    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());
+  else
+    dst.m_InspirationPatientTriggerRespiratoryModel = (eSwitch)src.inspirationpatienttriggerrespiratorymodel();
 }
 CDM_BIND::MechanicalVentilatorVolumeControlData* PBEquipmentAction::Unload(const SEMechanicalVentilatorVolumeControl& src)
 {
@@ -1017,6 +1077,17 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorVolumeControl& src
     dst.set_allocated_respirationrate(PBProperty::Unload(*src.m_RespirationRate));
   if (src.HasTidalVolume())
     dst.set_allocated_tidalvolume(PBProperty::Unload(*src.m_TidalVolume));
+  if (src.HasSlope())
+    dst.set_allocated_slope(PBProperty::Unload(*src.m_Slope));
+
+  dst.set_inspirationwaveform((CDM_BIND::eDriverWaveform)src.m_InspirationWaveform);
+
+  if (src.HasInspirationPatientTriggerFlow())
+    dst.set_allocated_inspirationpatienttriggerflow(PBProperty::Unload(*src.m_InspirationPatientTriggerFlow));
+  else if (src.HasInspirationPatientTriggerPressure())
+    dst.set_allocated_inspirationpatienttriggerpressure(PBProperty::Unload(*src.m_InspirationPatientTriggerPressure));
+  else
+    dst.set_inspirationpatienttriggerrespiratorymodel((CDM_BIND::eSwitch)src.m_InspirationPatientTriggerRespiratoryModel);
 }
 void PBEquipmentAction::Copy(const SEMechanicalVentilatorVolumeControl& src, SEMechanicalVentilatorVolumeControl& dst)
 {

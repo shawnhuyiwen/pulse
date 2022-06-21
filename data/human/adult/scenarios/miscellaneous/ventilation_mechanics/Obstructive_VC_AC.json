@@ -425,6 +425,7 @@
        "Value": 0.21
       }
      },
+     "InspirationPatientTriggerRespiratoryModel": "On",
      "InspiratoryPeriod": {
       "ScalarTime": {
        "Value": 1.1,
@@ -457,7 +458,7 @@
     "Action": {},
     "Time": {
      "ScalarTime": {
-      "Value": 31.66,
+      "Value": 31.666666666666668,
       "Unit": "s"
      }
     }

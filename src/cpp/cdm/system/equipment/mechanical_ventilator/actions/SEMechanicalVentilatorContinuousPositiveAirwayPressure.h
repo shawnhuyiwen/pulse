@@ -37,14 +37,50 @@ public:
   virtual SEScalarTime& GetSlope();
   virtual double GetSlope(const TimeUnit& unit) const;
 
+  virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
+  virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
+
+  virtual bool HasInspirationPatientTriggerFlow() const;
+  virtual SEScalarVolumePerTime& GetInspirationPatientTriggerFlow();
+  virtual double GetInspirationPatientTriggerFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasInspirationPatientTriggerPressure() const;
+  virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
+  virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
+
+  virtual eSwitch GetInspirationPatientTriggerRespiratoryModel() const;
+  virtual void SetInspirationPatientTriggerRespiratoryModel(eSwitch c);
+
+  virtual eMechanicalVentilator_DriverWaveform GetExpirationWaveform() const;
+  virtual void SetExpirationWaveform(eMechanicalVentilator_DriverWaveform w);
+
+  virtual bool HasExpirationCycleFlow() const;
+  virtual SEScalarVolumePerTime& GetExpirationCycleFlow();
+  virtual double GetExpirationCycleFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasExpirationCyclePressure() const;
+  virtual SEScalarPressure& GetExpirationCyclePressure();
+  virtual double GetExpirationCyclePressure(const PressureUnit& unit) const;
+
+  virtual eSwitch GetExpirationCycleRespiratoryModel() const;
+  virtual void SetExpirationCycleRespiratoryModel(eSwitch c);
+
   void ToString(std::ostream& str) const override;
 
   const SEScalar* GetScalar(const std::string& name) override;
 
 protected:
 
-  SEScalarPressure* m_DeltaPressureSupport;
-  SEScalar0To1*     m_FractionInspiredOxygen;
-  SEScalarPressure* m_PositiveEndExpiredPressure;
-  SEScalarTime*     m_Slope;
+  SEScalarPressure*                    m_DeltaPressureSupport;
+  SEScalar0To1*                        m_FractionInspiredOxygen;
+  SEScalarPressure*                    m_PositiveEndExpiredPressure;
+  SEScalarTime*                        m_Slope;
+  eMechanicalVentilator_DriverWaveform m_InspirationWaveform;
+  SEScalarVolumePerTime*               m_InspirationPatientTriggerFlow;
+  SEScalarPressure*                    m_InspirationPatientTriggerPressure;
+  eSwitch                              m_InspirationPatientTriggerRespiratoryModel;
+  eMechanicalVentilator_DriverWaveform m_ExpirationWaveform;
+  SEScalarVolumePerTime*               m_ExpirationCycleFlow;
+  SEScalarPressure*                    m_ExpirationCyclePressure;
+  eSwitch                              m_ExpirationCycleRespiratoryModel;
 };

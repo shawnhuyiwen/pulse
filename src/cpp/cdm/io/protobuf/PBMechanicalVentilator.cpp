@@ -295,7 +295,7 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
     dst.set_allocated_expirationvalvevolume(PBProperty::Unload(*src.m_ExpirationValveVolume));
   if (src.HasExpirationValveResistance())
     dst.set_allocated_expirationvalveresistance(PBProperty::Unload(*src.m_ExpirationValveResistance));
-  dst.set_expirationwaveform((CDM_BIND::MechanicalVentilatorSettingsData::eDriverWaveform)src.m_ExpirationWaveform);
+  dst.set_expirationwaveform((CDM_BIND::eDriverWaveform)src.m_ExpirationWaveform);
   if (src.HasExpirationWaveformPeriod())
     dst.set_allocated_expirationwaveformperiod(PBProperty::Unload(*src.m_ExpirationWaveformPeriod));
 
@@ -332,7 +332,7 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
     dst.set_allocated_inspirationlimbvolume(PBProperty::Unload(*src.m_InspirationLimbVolume));
   if (src.HasInspirationValveVolume())
     dst.set_allocated_inspirationvalvevolume(PBProperty::Unload(*src.m_InspirationValveVolume));
-  dst.set_inspirationwaveform((CDM_BIND::MechanicalVentilatorSettingsData::eDriverWaveform)src.m_InspirationWaveform);
+  dst.set_inspirationwaveform((CDM_BIND::eDriverWaveform)src.m_InspirationWaveform);
   if (src.HasInspirationWaveformPeriod())
     dst.set_allocated_inspirationwaveformperiod(PBProperty::Unload(*src.m_InspirationWaveformPeriod));
 

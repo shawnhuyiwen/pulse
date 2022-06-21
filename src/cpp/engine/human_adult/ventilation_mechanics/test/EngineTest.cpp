@@ -322,6 +322,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
+          vc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
@@ -333,56 +334,40 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         {
           SEMechanicalVentilatorPressureControl pc_ac;
           pc_ac.SetConnection(eSwitch::On);
+          pc_ac.SetMode(eMechanicalVentilator_PressureControlMode::AssistedControl);
+          pc_ac.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
           pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
           pc_ac.GetInspiratoryPressure().SetValue(19.0, PressureUnit::cmH2O);
           pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
-
-          //Use a different trigger to make it look more realistic
-          SEMechanicalVentilatorConfiguration mv_config;
-          SEMechanicalVentilatorSettings& mv = mv_config.GetSettings();
-#ifdef RUN_PULSE
-          pc_ac.ToSettings(mv, e->GetSubstanceManager());
-#else
-          pc_ac.ToSettings(mv, s.GetSubstanceManager());
-#endif
-          mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
-          mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+          //Use a flow trigger to make it look more realistic
+          pc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
 #ifdef RUN_PULSE
-          e->ProcessAction(mv_config);
+          e->ProcessAction(pc_ac);
 #else
-          s.AddAction(mv_config);
+          s.AddAction(pc_ac);
 #endif
         }
         else if (currentPatientType == PatientType::Normal && currentVentilatorMode == VentilatorMode::CPAP)
         {
           SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
           cpap.SetConnection(eSwitch::On);
+          cpap.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::AscendingRamp);
           cpap.GetFractionInspiredOxygen().SetValue(0.21);
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
           cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
-
-          //Use a different trigger to make it look more realistic
-          SEMechanicalVentilatorConfiguration mv_config;
-          SEMechanicalVentilatorSettings& mv = mv_config.GetSettings();
-#ifdef RUN_PULSE
-          cpap.ToSettings(mv, e->GetSubstanceManager());
-#else
-          cpap.ToSettings(mv, s.GetSubstanceManager());
-#endif
-          mv.SetExpirationCycleRespiratoryModel(eSwitch::Off);
-          mv.GetExpirationCycleFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
-          mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
-          mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+          //Use a flow trigger to make it look more realistic
+          cpap.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+          cpap.GetExpirationCycleFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
 #ifdef RUN_PULSE
-          e->ProcessAction(mv_config);
+          e->ProcessAction(cpap);
 #else
-          s.AddAction(mv_config);
+          s.AddAction(cpap);
 #endif
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::VC_AC)
@@ -396,6 +381,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(550.0, VolumeUnit::mL);
+          vc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
@@ -407,56 +393,40 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         {
           SEMechanicalVentilatorPressureControl pc_ac;
           pc_ac.SetConnection(eSwitch::On);
+          pc_ac.SetMode(eMechanicalVentilator_PressureControlMode::AssistedControl);
+          pc_ac.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
           pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           pc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
           pc_ac.GetInspiratoryPressure().SetValue(23.0, PressureUnit::cmH2O);
           pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
-
-          //Use a different trigger to make it look more realistic
-          SEMechanicalVentilatorConfiguration mv_config;
-          SEMechanicalVentilatorSettings& mv = mv_config.GetSettings();
-#ifdef RUN_PULSE
-          pc_ac.ToSettings(mv, e->GetSubstanceManager());
-#else
-          pc_ac.ToSettings(mv, s.GetSubstanceManager());
-#endif
-          mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
-          mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+          //Use a flow trigger to make it look more realistic
+          pc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
 #ifdef RUN_PULSE
-          e->ProcessAction(mv_config);
+          e->ProcessAction(pc_ac);
 #else
-          s.AddAction(mv_config);
+          s.AddAction(pc_ac);
 #endif
         }
         else if (currentPatientType == PatientType::ARDS && currentVentilatorMode == VentilatorMode::CPAP)
         {
           SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
           cpap.SetConnection(eSwitch::On);
+          cpap.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::AscendingRamp);
           cpap.GetFractionInspiredOxygen().SetValue(0.21);
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
           cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
-
-          //Use a different trigger to make it look more realistic
-          SEMechanicalVentilatorConfiguration mv_config;
-          SEMechanicalVentilatorSettings& mv = mv_config.GetSettings();
-#ifdef RUN_PULSE
-          cpap.ToSettings(mv, e->GetSubstanceManager());
-#else
-          cpap.ToSettings(mv, s.GetSubstanceManager());
-#endif
-          mv.SetExpirationCycleRespiratoryModel(eSwitch::Off);
-          mv.GetExpirationCycleFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
-          mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
-          mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+          //Use a flow trigger to make it look more realistic
+          cpap.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+          cpap.GetExpirationCycleFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
 #ifdef RUN_PULSE
-          e->ProcessAction(mv_config);
+          e->ProcessAction(cpap);
 #else
-          s.AddAction(mv_config);
+          s.AddAction(cpap);
 #endif
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::VC_AC)
@@ -470,6 +440,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(500.0, VolumeUnit::mL);
+          vc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
@@ -481,56 +452,40 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         {
           SEMechanicalVentilatorPressureControl pc_ac;
           pc_ac.SetConnection(eSwitch::On);
+          pc_ac.SetMode(eMechanicalVentilator_PressureControlMode::AssistedControl);
+          pc_ac.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
           pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           pc_ac.GetInspiratoryPeriod().SetValue(1.2, TimeUnit::s);
           pc_ac.GetInspiratoryPressure().SetValue(12.0, PressureUnit::cmH2O);
           pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           pc_ac.GetSlope().SetValue(0.0, TimeUnit::s);
-
-          //Use a different trigger to make it look more realistic
-          SEMechanicalVentilatorConfiguration mv_config;
-          SEMechanicalVentilatorSettings& mv = mv_config.GetSettings();
-#ifdef RUN_PULSE
-          pc_ac.ToSettings(mv, e->GetSubstanceManager());
-#else
-          pc_ac.ToSettings(mv, s.GetSubstanceManager());
-#endif
-          mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
-          mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+          //Use a flow trigger to make it look more realistic
+          pc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
 #ifdef RUN_PULSE
-          e->ProcessAction(mv_config);
+          e->ProcessAction(pc_ac);
 #else
-          s.AddAction(mv_config);
+          s.AddAction(pc_ac);
 #endif
         }
         else if (currentPatientType == PatientType::COPD && currentVentilatorMode == VentilatorMode::CPAP)
         {
           SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
           cpap.SetConnection(eSwitch::On);
+          cpap.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::AscendingRamp);
           cpap.GetFractionInspiredOxygen().SetValue(0.21);
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
           cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           cpap.GetSlope().SetValue(0.2, TimeUnit::s);
-
-          //Use a different trigger to make it look more realistic
-          SEMechanicalVentilatorConfiguration mv_config;
-          SEMechanicalVentilatorSettings& mv = mv_config.GetSettings();
-#ifdef RUN_PULSE
-          cpap.ToSettings(mv, e->GetSubstanceManager());
-#else
-          cpap.ToSettings(mv, s.GetSubstanceManager());
-#endif
-          mv.SetExpirationCycleRespiratoryModel(eSwitch::Off);
-          mv.GetExpirationCycleFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
-          mv.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
-          mv.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+          //Use a flow trigger to make it look more realistic
+          cpap.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+          cpap.GetExpirationCycleFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
 
 #ifdef RUN_PULSE
-          e->ProcessAction(mv_config);
+          e->ProcessAction(cpap);
 #else
-          s.AddAction(mv_config);
+          s.AddAction(cpap);
 #endif
         }
 

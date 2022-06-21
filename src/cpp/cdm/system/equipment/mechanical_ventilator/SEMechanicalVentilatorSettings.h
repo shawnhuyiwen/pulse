@@ -9,10 +9,6 @@
 
 class SEMechanicalVentilatorConfiguration;
 
-// Keep enums in sync with appropriate schema/cdm/MechanicalVentilator.proto file !!
-enum class eMechanicalVentilator_DriverWaveform { NullDriverWaveform = 0, Square, Exponential, Ramp, Sinusoidal, Sigmoidal };
-extern const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform m);
-
 class CDM_DECL SEMechanicalVentilatorSettings : public Loggable
 {
   friend class PBMechanicalVentilator;//friend the serialization class

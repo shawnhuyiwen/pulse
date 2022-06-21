@@ -12,7 +12,7 @@ POP_PROTO_WARNINGS
 
 const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform w)
 {
-  return CDM_BIND::MechanicalVentilatorSettingsData::eDriverWaveform_Name((CDM_BIND::MechanicalVentilatorSettingsData::eDriverWaveform)w);
+  return CDM_BIND::eDriverWaveform_Name((CDM_BIND::eDriverWaveform)w);
 }
 
 const std::string& eMechanicalVentilator_PressureControlMode_Name(eMechanicalVentilator_PressureControlMode m)

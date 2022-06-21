@@ -50,6 +50,24 @@ public:
   virtual SEScalarVolume& GetTidalVolume();
   virtual double GetTidalVolume(const VolumeUnit& unit) const;
 
+  virtual bool HasSlope() const;
+  virtual SEScalarTime& GetSlope();
+  virtual double GetSlope(const TimeUnit& unit) const;
+
+  virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
+  virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
+
+  virtual bool HasInspirationPatientTriggerFlow() const;
+  virtual SEScalarVolumePerTime& GetInspirationPatientTriggerFlow();
+  virtual double GetInspirationPatientTriggerFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasInspirationPatientTriggerPressure() const;
+  virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
+  virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
+
+  virtual eSwitch GetInspirationPatientTriggerRespiratoryModel() const;
+  virtual void SetInspirationPatientTriggerRespiratoryModel(eSwitch c);
+
   void ToString(std::ostream& str) const override;
 
   const SEScalar* GetScalar(const std::string& name) override;
@@ -63,4 +81,9 @@ protected:
   SEScalarPressure*                       m_PositiveEndExpiredPressure;
   SEScalarFrequency*                      m_RespirationRate;
   SEScalarVolume*                         m_TidalVolume;
+  SEScalarTime*                           m_Slope;
+  eMechanicalVentilator_DriverWaveform    m_InspirationWaveform;
+  SEScalarVolumePerTime*                  m_InspirationPatientTriggerFlow;
+  SEScalarPressure*                       m_InspirationPatientTriggerPressure;
+  eSwitch                                 m_InspirationPatientTriggerRespiratoryModel;
 };
