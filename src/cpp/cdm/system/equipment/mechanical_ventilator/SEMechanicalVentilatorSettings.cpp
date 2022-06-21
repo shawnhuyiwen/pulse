@@ -34,7 +34,7 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
 
   m_ExpirationTubeResistance = nullptr;
   m_ExpirationValveResistance = nullptr;
-  m_ExpirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_ExpirationWaveform = eDriverWaveform::NullDriverWaveform;
   m_ExpirationWaveformPeriod = nullptr;
 
   m_InspirationLimitFlow = nullptr;
@@ -54,7 +54,7 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
 
   m_InspirationTubeResistance = nullptr;
   m_InspirationValveResistance = nullptr;
-  m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   m_InspirationWaveformPeriod = nullptr;
 
   m_ExpirationLimbVolume = nullptr;
@@ -84,7 +84,7 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 
   SAFE_DELETE(m_ExpirationTubeResistance);
   SAFE_DELETE(m_ExpirationValveResistance);
-  m_ExpirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_ExpirationWaveform = eDriverWaveform::NullDriverWaveform;
   SAFE_DELETE(m_ExpirationWaveformPeriod);
 
   SAFE_DELETE(m_InspirationLimitFlow);
@@ -104,7 +104,7 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
 
   SAFE_DELETE(m_InspirationTubeResistance);
   SAFE_DELETE(m_InspirationValveResistance);
-  m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   SAFE_DELETE(m_InspirationWaveformPeriod);
 
   SAFE_DELETE(m_ExpirationLimbVolume);
@@ -142,7 +142,7 @@ void SEMechanicalVentilatorSettings::Clear()
 
   INVALIDATE_PROPERTY(m_ExpirationTubeResistance);
   INVALIDATE_PROPERTY(m_ExpirationValveResistance);
-  m_ExpirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_ExpirationWaveform = eDriverWaveform::NullDriverWaveform;
   INVALIDATE_PROPERTY(m_ExpirationWaveformPeriod);
 
   INVALIDATE_PROPERTY(m_InspirationLimitFlow);
@@ -162,7 +162,7 @@ void SEMechanicalVentilatorSettings::Clear()
 
   INVALIDATE_PROPERTY(m_InspirationTubeResistance);
   INVALIDATE_PROPERTY(m_InspirationValveResistance);
-  m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   INVALIDATE_PROPERTY(m_InspirationWaveformPeriod);
 
   INVALIDATE_PROPERTY(m_ExpirationLimbVolume);
@@ -212,7 +212,7 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
 
   COPY_PROPERTY(ExpirationTubeResistance);
   COPY_PROPERTY(ExpirationValveResistance);
-  if (from.m_ExpirationWaveform != eMechanicalVentilator_DriverWaveform::NullDriverWaveform)
+  if (from.m_ExpirationWaveform != eDriverWaveform::NullDriverWaveform)
     SetExpirationWaveform(from.m_ExpirationWaveform);
   COPY_PROPERTY(ExpirationWaveformPeriod);
 
@@ -234,7 +234,7 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
 
   COPY_PROPERTY(InspirationTubeResistance);
   COPY_PROPERTY(InspirationValveResistance);
-  if (from.m_InspirationWaveform != eMechanicalVentilator_DriverWaveform::NullDriverWaveform)
+  if (from.m_InspirationWaveform != eDriverWaveform::NullDriverWaveform)
     SetInspirationWaveform(from.m_InspirationWaveform);
   COPY_PROPERTY(InspirationWaveformPeriod);
 
@@ -556,11 +556,11 @@ double SEMechanicalVentilatorSettings::GetExpirationValveResistance(const Pressu
   return m_ExpirationValveResistance->GetValue(unit);
 }
 
-void SEMechanicalVentilatorSettings::SetExpirationWaveform(eMechanicalVentilator_DriverWaveform w)
+void SEMechanicalVentilatorSettings::SetExpirationWaveform(eDriverWaveform w)
 {
   m_ExpirationWaveform = w;
 }
-eMechanicalVentilator_DriverWaveform SEMechanicalVentilatorSettings::GetExpirationWaveform() const
+eDriverWaveform SEMechanicalVentilatorSettings::GetExpirationWaveform() const
 {
   return m_ExpirationWaveform;
 }
@@ -931,11 +931,11 @@ double SEMechanicalVentilatorSettings::GetDriverDampingParameter(const Frequency
   return m_DriverDampingParameter->GetValue(unit);
 }
 
-void SEMechanicalVentilatorSettings::SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w)
+void SEMechanicalVentilatorSettings::SetInspirationWaveform(eDriverWaveform w)
 {
   m_InspirationWaveform = w;
 }
-eMechanicalVentilator_DriverWaveform SEMechanicalVentilatorSettings::GetInspirationWaveform() const
+eDriverWaveform SEMechanicalVentilatorSettings::GetInspirationWaveform() const
 {
   return m_InspirationWaveform;
 }

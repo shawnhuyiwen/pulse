@@ -625,7 +625,7 @@ namespace pulse
     }
 
     // Check waveform
-    if (GetSettings().GetInspirationWaveform() != eMechanicalVentilator_DriverWaveform::Square &&
+    if (GetSettings().GetInspirationWaveform() != eDriverWaveform::Square &&
       !GetSettings().HasInspirationWaveformPeriod())
     {
       /// \error Fatal: Non-square waveforms require a period.
@@ -633,7 +633,7 @@ namespace pulse
     }
 
     // Apply waveform
-    if (GetSettings().GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::Square ||
+    if (GetSettings().GetInspirationWaveform() == eDriverWaveform::Square ||
       (GetSettings().HasInspirationWaveformPeriod() && m_CurrentPeriodTime_s > GetSettings().GetInspirationWaveformPeriod(TimeUnit::s)))
     {
       if (GetSettings().HasPeakInspiratoryPressure())
@@ -652,7 +652,7 @@ namespace pulse
         Fatal("Inspiration mode not yet supported.");
       }
     }
-    else if (GetSettings().GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::AscendingRamp)
+    else if (GetSettings().GetInspirationWaveform() == eDriverWaveform::AscendingRamp)
     {
       if (GetSettings().HasPeakInspiratoryPressure())
       {
@@ -679,7 +679,7 @@ namespace pulse
         Fatal("Inspiration mode not yet supported.");
       }
     }
-    else if (GetSettings().GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::DecendingRamp)
+    else if (GetSettings().GetInspirationWaveform() == eDriverWaveform::DecendingRamp)
     {
       if (GetSettings().HasPeakInspiratoryPressure())
       {
@@ -817,7 +817,7 @@ namespace pulse
     }
 
     // Apply waveform
-    if (GetSettings().GetExpirationWaveform() == eMechanicalVentilator_DriverWaveform::Square)
+    if (GetSettings().GetExpirationWaveform() == eDriverWaveform::Square)
     {
       if (GetSettings().HasPositiveEndExpiredPressure())
       {

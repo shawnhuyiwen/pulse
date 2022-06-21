@@ -335,7 +335,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           SEMechanicalVentilatorPressureControl pc_ac;
           pc_ac.SetConnection(eSwitch::On);
           pc_ac.SetMode(eMechanicalVentilator_PressureControlMode::AssistedControl);
-          pc_ac.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+          pc_ac.SetInspirationWaveform(eDriverWaveform::Square);
           pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
           pc_ac.GetInspiratoryPressure().SetValue(19.0, PressureUnit::cmH2O);
@@ -355,7 +355,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         {
           SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
           cpap.SetConnection(eSwitch::On);
-          cpap.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::AscendingRamp);
+          cpap.SetInspirationWaveform(eDriverWaveform::AscendingRamp);
           cpap.GetFractionInspiredOxygen().SetValue(0.21);
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
           cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
@@ -394,7 +394,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           SEMechanicalVentilatorPressureControl pc_ac;
           pc_ac.SetConnection(eSwitch::On);
           pc_ac.SetMode(eMechanicalVentilator_PressureControlMode::AssistedControl);
-          pc_ac.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+          pc_ac.SetInspirationWaveform(eDriverWaveform::Square);
           pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           pc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
           pc_ac.GetInspiratoryPressure().SetValue(23.0, PressureUnit::cmH2O);
@@ -414,7 +414,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         {
           SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
           cpap.SetConnection(eSwitch::On);
-          cpap.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::AscendingRamp);
+          cpap.SetInspirationWaveform(eDriverWaveform::AscendingRamp);
           cpap.GetFractionInspiredOxygen().SetValue(0.21);
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
           cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
@@ -453,7 +453,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           SEMechanicalVentilatorPressureControl pc_ac;
           pc_ac.SetConnection(eSwitch::On);
           pc_ac.SetMode(eMechanicalVentilator_PressureControlMode::AssistedControl);
-          pc_ac.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+          pc_ac.SetInspirationWaveform(eDriverWaveform::Square);
           pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           pc_ac.GetInspiratoryPeriod().SetValue(1.2, TimeUnit::s);
           pc_ac.GetInspiratoryPressure().SetValue(12.0, PressureUnit::cmH2O);
@@ -473,7 +473,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
         {
           SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
           cpap.SetConnection(eSwitch::On);
-          cpap.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::AscendingRamp);
+          cpap.SetInspirationWaveform(eDriverWaveform::AscendingRamp);
           cpap.GetFractionInspiredOxygen().SetValue(0.21);
           cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
           cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);

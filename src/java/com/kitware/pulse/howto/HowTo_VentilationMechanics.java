@@ -7,7 +7,6 @@ import java.util.List;
 import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorData.*;
-import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.MechanicalVentilatorPressureControlData.eMode;
 import com.kitware.pulse.cdm.bind.Patient.PatientData.eSex;
 import com.kitware.pulse.cdm.bind.PatientActions.IntubationData.eType;

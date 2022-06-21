@@ -20,7 +20,7 @@ SEMechanicalVentilatorVolumeControl::SEMechanicalVentilatorVolumeControl(Logger*
   m_RespirationRate = nullptr;
   m_TidalVolume = nullptr;
   m_Slope = nullptr;
-  m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   m_InspirationPatientTriggerFlow = nullptr;
   m_InspirationPatientTriggerPressure = nullptr;
   m_InspirationPatientTriggerRespiratoryModel = eSwitch::Off;
@@ -36,7 +36,7 @@ SEMechanicalVentilatorVolumeControl::~SEMechanicalVentilatorVolumeControl()
   SAFE_DELETE(m_RespirationRate);
   SAFE_DELETE(m_TidalVolume);
   SAFE_DELETE(m_Slope);
-  m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   SAFE_DELETE(m_InspirationPatientTriggerFlow);
   SAFE_DELETE(m_InspirationPatientTriggerPressure);
   m_InspirationPatientTriggerRespiratoryModel = eSwitch::Off;
@@ -53,7 +53,7 @@ void SEMechanicalVentilatorVolumeControl::Clear()
   INVALIDATE_PROPERTY(m_RespirationRate);
   INVALIDATE_PROPERTY(m_TidalVolume);
   INVALIDATE_PROPERTY(m_Slope);
-  m_InspirationWaveform = eMechanicalVentilator_DriverWaveform::NullDriverWaveform;
+  m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   INVALIDATE_PROPERTY(m_InspirationPatientTriggerFlow);
   INVALIDATE_PROPERTY(m_InspirationPatientTriggerPressure);
   m_InspirationPatientTriggerRespiratoryModel = eSwitch::Off;
@@ -96,7 +96,7 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
     double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
 
     s.SetInspirationWaveform(GetInspirationWaveform());
-    s.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+    s.SetExpirationWaveform(eDriverWaveform::Square);
     s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
     s.GetInspirationTargetFlow().Set(GetFlow());
     s.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
@@ -136,7 +136,7 @@ bool SEMechanicalVentilatorVolumeControl::IsValid() const
     HasPositiveEndExpiredPressure() &&
     HasRespirationRate() &&
     HasTidalVolume() &&
-    GetInspirationWaveform() != eMechanicalVentilator_DriverWaveform::NullDriverWaveform &&
+    GetInspirationWaveform() != eDriverWaveform::NullDriverWaveform &&
     (GetMode() == eMechanicalVentilator_VolumeControlMode::ContinuousMandatoryVentilation ||
     (HasInspirationPatientTriggerPressure() ||
       HasInspirationPatientTriggerFlow() ||
@@ -300,11 +300,11 @@ double SEMechanicalVentilatorVolumeControl::GetSlope(const TimeUnit& unit) const
   return m_Slope->GetValue(unit);
 }
 
-void SEMechanicalVentilatorVolumeControl::SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w)
+void SEMechanicalVentilatorVolumeControl::SetInspirationWaveform(eDriverWaveform w)
 {
   m_InspirationWaveform = w;
 }
-eMechanicalVentilator_DriverWaveform SEMechanicalVentilatorVolumeControl::GetInspirationWaveform() const
+eDriverWaveform SEMechanicalVentilatorVolumeControl::GetInspirationWaveform() const
 {
   return m_InspirationWaveform;
 }
@@ -366,7 +366,7 @@ void SEMechanicalVentilatorVolumeControl::ToString(std::ostream& str) const
   str << "\n\tRespirationRate :"; HasRespirationRate() ? str << *m_RespirationRate : str << "NaN";
   str << "\n\tTidalVolume :"; HasTidalVolume() ? str << *m_TidalVolume : str << "NaN";
   str << "\n\tSlope :"; HasSlope() ? str << *m_Slope : str << "NaN";
-  str << "\n\tInspirationWaveform: " << eMechanicalVentilator_DriverWaveform_Name(GetInspirationWaveform());
+  str << "\n\tInspirationWaveform: " << eDriverWaveform_Name(GetInspirationWaveform());
   str << "\n\tInspirationPatientTriggerFlow: "; HasInspirationPatientTriggerFlow() ? str << m_InspirationPatientTriggerFlow : str << "NaN";
   str << "\n\tInspirationPatientTriggerPressure: "; HasInspirationPatientTriggerPressure() ? str << m_InspirationPatientTriggerPressure : str << "NaN";
   str << "\n\tInspirationPatientTriggerRespiratoryModel: " << eSwitch_Name(m_InspirationPatientTriggerRespiratoryModel);

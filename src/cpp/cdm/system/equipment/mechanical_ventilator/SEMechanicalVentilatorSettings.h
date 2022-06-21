@@ -79,8 +79,8 @@ public:
   virtual SEScalarPressureTimePerVolume& GetExpirationValveResistance();
   virtual double GetExpirationValveResistance(const PressureTimePerVolumeUnit& unit) const;
 
-  virtual eMechanicalVentilator_DriverWaveform GetExpirationWaveform() const;
-  virtual void SetExpirationWaveform(eMechanicalVentilator_DriverWaveform w);
+  virtual eDriverWaveform GetExpirationWaveform() const;
+  virtual void SetExpirationWaveform(eDriverWaveform w);
 
   virtual bool HasExpirationWaveformPeriod() const;
   virtual SEScalarTime& GetExpirationWaveformPeriod();
@@ -157,8 +157,8 @@ public:
   virtual SEScalarVolume& GetYPieceVolume();
   virtual double GetYPieceVolume(const VolumeUnit& unit) const;
 
-  virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
-  virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
+  virtual eDriverWaveform GetInspirationWaveform() const;
+  virtual void SetInspirationWaveform(eDriverWaveform w);
 
   virtual bool HasInspirationWaveformPeriod() const;
   virtual SEScalarTime& GetInspirationWaveformPeriod();
@@ -204,7 +204,7 @@ protected:
   SEScalarPressureTimePerVolume*               m_ExpirationValveResistance;
   SEScalarVolume*                              m_ExpirationLimbVolume;
   SEScalarVolume*                              m_ExpirationValveVolume;
-  eMechanicalVentilator_DriverWaveform         m_ExpirationWaveform;
+  eDriverWaveform                              m_ExpirationWaveform;
   SEScalarTime*                                m_ExpirationWaveformPeriod;
 
   // Inspiratory Limit Properties (Only set 1)
@@ -230,7 +230,7 @@ protected:
   SEScalarPressureTimePerVolume*               m_InspirationValveResistance;
   SEScalarVolume*                              m_InspirationLimbVolume;
   SEScalarVolume*                              m_InspirationValveVolume;
-  eMechanicalVentilator_DriverWaveform         m_InspirationWaveform;
+  eDriverWaveform                              m_InspirationWaveform;
   SEScalarTime*                                m_InspirationWaveformPeriod;
 
   SEScalarVolume*                              m_YPieceVolume;

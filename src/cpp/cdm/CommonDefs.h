@@ -151,12 +151,12 @@ enum class eBreathState { NoBreath=0,
                           ExpiratoryHold, InspiratoryHold };
 extern const std::string& eBreathState_Name(eBreathState m);
 
-enum class eMechanicalVentilator_DriverWaveform { NullDriverWaveform = 0, Square,
+enum class eDriverWaveform { NullDriverWaveform = 0, Square,
                                                   AscendingRamp, DecendingRamp,
                                                   ExponentialGrowth, ExponentialDecay,
                                                   SinusoidalRise, SinusoidalFall,
                                                   SigmoidalRise, SigmoidalFall };
-extern const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform m);
+extern const std::string& eDriverWaveform_Name(eDriverWaveform m);
 
 //
 // End General Enum

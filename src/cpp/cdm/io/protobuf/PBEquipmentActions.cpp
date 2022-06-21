@@ -894,7 +894,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorContinuous
   if (src.has_slope())
     PBProperty::Load(src.slope(), dst.GetSlope());
 
-  dst.SetInspirationWaveform((CDM_BIND::eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+  dst.SetInspirationWaveform((eDriverWaveform)src.inspirationwaveform());
 
   if (src.has_inspirationpatienttriggerflow())
     PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
@@ -902,7 +902,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorContinuous
     PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());
   dst.m_InspirationPatientTriggerRespiratoryModel = (eSwitch)src.inspirationpatienttriggerrespiratorymodel();
 
-  dst.SetExpirationWaveform((eMechanicalVentilator_DriverWaveform)src.expirationwaveform());
+  dst.SetExpirationWaveform((eDriverWaveform)src.expirationwaveform());
 
   if (src.has_expirationcycleflow())
     PBProperty::Load(src.expirationcycleflow(), dst.GetExpirationCycleFlow());
@@ -974,7 +974,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorPressureCo
   if (src.has_slope())
     PBProperty::Load(src.slope(), dst.GetSlope());
 
-  dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+  dst.SetInspirationWaveform((eDriverWaveform)src.inspirationwaveform());
 
   if (src.has_inspirationpatienttriggerflow())
     PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
@@ -1046,7 +1046,7 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorVolumeCont
   if (src.has_slope())
     PBProperty::Load(src.slope(), dst.GetSlope());
 
-  dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+  dst.SetInspirationWaveform((eDriverWaveform)src.inspirationwaveform());
 
   if (src.has_inspirationpatienttriggerflow())
     PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());

@@ -50,8 +50,8 @@ public:
   virtual SEScalarTime& GetSlope();
   virtual double GetSlope(const TimeUnit& unit) const;
 
-  virtual eMechanicalVentilator_DriverWaveform GetInspirationWaveform() const;
-  virtual void SetInspirationWaveform(eMechanicalVentilator_DriverWaveform w);
+  virtual eDriverWaveform GetInspirationWaveform() const;
+  virtual void SetInspirationWaveform(eDriverWaveform w);
 
   virtual bool HasInspirationPatientTriggerFlow() const;
   virtual SEScalarVolumePerTime& GetInspirationPatientTriggerFlow();
@@ -77,7 +77,7 @@ protected:
   SEScalarPressure*                         m_PositiveEndExpiredPressure;
   SEScalarFrequency*                        m_RespirationRate;
   SEScalarTime*                             m_Slope;
-  eMechanicalVentilator_DriverWaveform      m_InspirationWaveform;
+  eDriverWaveform      m_InspirationWaveform;
   SEScalarVolumePerTime*                    m_InspirationPatientTriggerFlow;
   SEScalarPressure*                         m_InspirationPatientTriggerPressure;
   eSwitch                                   m_InspirationPatientTriggerRespiratoryModel;

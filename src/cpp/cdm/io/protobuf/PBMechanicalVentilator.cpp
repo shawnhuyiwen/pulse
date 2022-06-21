@@ -173,7 +173,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
     PBProperty::Load(src.expirationvalveresistance(), dst.GetExpirationValveResistance());
   if (src.has_expirationvalvevolume())
     PBProperty::Load(src.expirationvalvevolume(), dst.GetExpirationValveVolume());
-  dst.SetExpirationWaveform((eMechanicalVentilator_DriverWaveform)src.expirationwaveform());
+  dst.SetExpirationWaveform((eDriverWaveform)src.expirationwaveform());
   if (src.has_expirationwaveformperiod())
     PBProperty::Load(src.expirationwaveformperiod(), dst.GetExpirationWaveformPeriod());
 
@@ -210,7 +210,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
     PBProperty::Load(src.inspirationvalveresistance(), dst.GetInspirationValveResistance());
   if (src.has_inspirationvalvevolume())
     PBProperty::Load(src.inspirationvalvevolume(), dst.GetInspirationValveVolume());
-  dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.inspirationwaveform());
+  dst.SetInspirationWaveform((eDriverWaveform)src.inspirationwaveform());
   if (src.has_inspirationwaveformperiod())
     PBProperty::Load(src.inspirationwaveformperiod(), dst.GetInspirationWaveformPeriod());
 

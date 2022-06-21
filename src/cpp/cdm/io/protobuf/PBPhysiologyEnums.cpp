@@ -17,3 +17,8 @@ const std::string& eBreathState_Name(eBreathState m)
 {
   return CDM_BIND::eBreathState_Name((CDM_BIND::eBreathState)m);
 }
+
+const std::string& eDriverWaveform_Name(eDriverWaveform w)
+{
+  return CDM_BIND::eDriverWaveform_Name((CDM_BIND::eDriverWaveform)w);
+}
