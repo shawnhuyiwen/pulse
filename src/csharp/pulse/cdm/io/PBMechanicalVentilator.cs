@@ -3,13 +3,6 @@
 
 namespace Pulse.CDM
 {
-  static class eMechanicalVentilator
-  {
-    public static string DriverWaveform_Name(this eMechanicalVentilator_DriverWaveform w)
-    {
-      return ((pulse.cdm.bind.eDriverWaveform)(int)w).ToString();
-    }
-  }
   public class PBMechanicalVentilator
   {
     #region SEMechanicalVentilator
@@ -52,7 +45,7 @@ namespace Pulse.CDM
         PBProperty.Load(src.ExpirationValveResistance, dst.GetExpirationValveResistance());
       if (src.ExpirationValveVolume != null)
         PBProperty.Load(src.ExpirationValveVolume, dst.GetExpirationValveVolume());
-      dst.SetExpirationWaveform((eMechanicalVentilator_DriverWaveform)src.ExpirationWaveform);
+      dst.SetExpirationWaveform((eDriverWaveform)src.ExpirationWaveform);
       if (src.ExpirationWaveformPeriod != null)
         PBProperty.Load(src.ExpirationWaveformPeriod, dst.GetExpirationWaveformPeriod());
 
@@ -89,7 +82,7 @@ namespace Pulse.CDM
         PBProperty.Load(src.InspirationValveResistance, dst.GetInspirationValveResistance());
       if (src.InspirationValveVolume != null)
         PBProperty.Load(src.InspirationValveVolume, dst.GetInspirationValveVolume());
-      dst.SetInspirationWaveform((eMechanicalVentilator_DriverWaveform)src.InspirationWaveform);
+      dst.SetInspirationWaveform((eDriverWaveform)src.InspirationWaveform);
       if (src.InspirationWaveformPeriod != null)
         PBProperty.Load(src.InspirationWaveformPeriod, dst.GetInspirationWaveformPeriod());
 

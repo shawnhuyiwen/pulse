@@ -1,6 +1,7 @@
 ﻿/* Distributed under the Apache License, Version 2.0.
    See accompanying NOTICE file for details.*/
 
+// Keep enums in sync with appropriate schema/cdm/Enums.proto file !!
 namespace Pulse.CDM
 {
   public enum eSerializationFormat : int   // State file serialization format
@@ -44,5 +45,32 @@ namespace Pulse.CDM
     DefaultFloat,
     FixedMantissa,
     SignificantDigits
+  }
+
+  public enum eBreathState : int
+  {
+    NoBreath = 0,
+    PatientInitiatedInhale,
+    PatientInitiatedPause,
+    PatientInitiatedExhale,
+    EquipmentInitiatedInhale,
+    EquipmentInitiatedPause,
+    EquipmentInitiatedExhale,
+    ExpiratoryHold,
+    InspiratoryHold
+  }
+
+  public enum eDriverWaveform : int
+  {
+    NullDriverWaveform = 0,/** Signals not provided, or no change */
+    Square,
+    AscendingRamp,
+    DecendingRamp,
+    ExponentialGrowth,
+    ExponentialDecay,
+    SinusoidalRise,
+    SinusoidalFall,
+    SigmoidalRise,
+    SigmoidalFall
   }
 }

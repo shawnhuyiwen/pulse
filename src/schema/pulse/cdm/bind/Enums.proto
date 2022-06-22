@@ -51,7 +51,7 @@ enum eBreathState
   InspiratoryHold          = 8;
 }
 
-/** @brief Enumeration for mechanical ventilator driver shape. */
+/** @brief Enumeration for driver shapes. */
 enum eDriverWaveform
 {
   NullDriverWaveform = 0;/**<< Signals not provided, or no change */
