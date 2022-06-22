@@ -426,6 +426,7 @@
       }
      },
      "InspirationPatientTriggerRespiratoryModel": "On",
+     "InspirationWaveform": "Square",
      "InspiratoryPeriod": {
       "ScalarTime": {
        "Value": 1.1,

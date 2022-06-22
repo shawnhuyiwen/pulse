@@ -316,6 +316,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           SEMechanicalVentilatorVolumeControl vc_ac;
           vc_ac.SetConnection(eSwitch::On);
           vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
+          vc_ac.SetInspirationWaveform(eDriverWaveform::Square);
           vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
           vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
@@ -375,6 +376,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           SEMechanicalVentilatorVolumeControl vc_ac;
           vc_ac.SetConnection(eSwitch::On);
           vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
+          vc_ac.SetInspirationWaveform(eDriverWaveform::Square);
           vc_ac.GetFlow().SetValue(40.0, VolumePerTimeUnit::L_Per_min);
           vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           vc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
@@ -434,6 +436,7 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           SEMechanicalVentilatorVolumeControl vc_ac;
           vc_ac.SetConnection(eSwitch::On);
           vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
+          vc_ac.SetInspirationWaveform(eDriverWaveform::Square);
           vc_ac.GetFlow().SetValue(40.0, VolumePerTimeUnit::L_Per_min);
           vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
           vc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s);
