@@ -113,40 +113,69 @@ void HowToMechanicalVentilator()
 
   SEMechanicalVentilatorContinuousPositiveAirwayPressure cpap;
   cpap.SetConnection(eSwitch::On);
-  cpap.GetDeltaPressureSupport().SetValue(8.0, PressureUnit::cmH2O);
+  cpap.SetInspirationWaveform(eDriverWaveform::AscendingRamp);
   cpap.GetFractionInspiredOxygen().SetValue(0.21);
+  cpap.GetDeltaPressureSupport().SetValue(10.0, PressureUnit::cmH2O);
   cpap.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   cpap.GetSlope().SetValue(0.2, TimeUnit::s);
+
+  cpap.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+  //Other trigger options (choose one):
+  //  cpap.GetInspirationPatientTriggerPressure().SetValue(-0.000001, PressureUnit::cmH2O);
+  //  cpap.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
+  
+  cpap.GetExpirationCycleFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+  //Other cycle options (choose one):
+  //  cpap.GetExpirationCyclePressure().SetValue(0.000001, PressureUnit::cmH2O);
+  //  cpap.SetExpirationCycleRespiratoryModel(eSwitch::On);
+  
   pe->ProcessAction(cpap);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
 
+
   SEMechanicalVentilatorPressureControl pc_ac;
   pc_ac.SetConnection(eSwitch::On);
-  // There are several different modes to choose from
+  pc_ac.SetMode(eMechanicalVentilator_PressureControlMode::AssistedControl);
+  pc_ac.SetInspirationWaveform(eDriverWaveform::Square);
   pc_ac.GetFractionInspiredOxygen().SetValue(0.21);
-  pc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
-  pc_ac.GetInspiratoryPressure().SetValue(13.0, PressureUnit::cmH2O);
+  pc_ac.GetInspiratoryPeriod().SetValue(1.1, TimeUnit::s); //This is optional
+  pc_ac.GetInspiratoryPressure().SetValue(23.0, PressureUnit::cmH2O);
   pc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   pc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
-  pc_ac.GetSlope().SetValue(0.1, TimeUnit::s);
+  //pc_ac.GetSlope().SetValue(0.0, TimeUnit::s); //No slope for square waveform
+
+  pc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+  //Other trigger options (choose one):
+  //  pc_ac.GetInspirationPatientTriggerPressure().SetValue(-0.000001, PressureUnit::cmH2O);
+  //  pc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
+
   pe->ProcessAction(pc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
 
+
   SEMechanicalVentilatorVolumeControl vc_ac;
   vc_ac.SetConnection(eSwitch::On);
-  // There are several different modes to choose from
   vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
-  vc_ac.GetFlow().SetValue(50.0, VolumePerTimeUnit::L_Per_min);
+  vc_ac.SetInspirationWaveform(eDriverWaveform::Square);
+  vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
   vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
-  vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
+  vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s); //This is optional
   vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
-  vc_ac.GetTidalVolume().SetValue(600.0, VolumeUnit::mL);
+  vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
+  //vc_ac.GetSlope().SetValue(0.0, TimeUnit::s); //No slope for square waveform
+
+  vc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
+  //Other trigger options (choose one):
+  //  vc_ac.GetInspirationPatientTriggerPressure().SetValue(-0.000001, PressureUnit::cmH2O);
+  //  vc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+
   pe->ProcessAction(vc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);
   pe->GetEngineTracker()->LogRequestedValues(false);
+
 
   // Here is an example of programming a custom ventilator mode
   SEMechanicalVentilatorConfiguration mv_config;
