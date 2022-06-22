@@ -158,14 +158,14 @@ void HowToMechanicalVentilator()
   SEMechanicalVentilatorVolumeControl vc_ac;
   vc_ac.SetConnection(eSwitch::On);
   vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
-  vc_ac.SetInspirationWaveform(eDriverWaveform::Square);
+  vc_ac.SetInspirationWaveform(eDriverWaveform::DecendingRamp);
   vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
   vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
   vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s); //This is optional
   vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
   vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
-  //vc_ac.GetSlope().SetValue(0.0, TimeUnit::s); //No slope for square waveform
+  vc_ac.GetSlope().SetValue(0.2, TimeUnit::s); //This is optional and would be left out for square waveforms
 
   vc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
   //Other trigger options (choose one):
