@@ -14,7 +14,6 @@ namespace Pulse.CDM
     protected SEScalar0To1                              fractionInspiredOxygen;
     SEScalarVolumePerTime                               inspirationPatientTriggerFlow;
     SEScalarPressure                                    inspirationPatientTriggerPressure;
-    eSwitch                                             inspirationPatientTriggerRespiratoryModel;
     eDriverWaveform                                     inspirationWaveform;
     protected SEScalarTime                              inspiratoryPeriod;
     protected SEScalarPressure                          inspiratoryPressure;
@@ -28,7 +27,6 @@ namespace Pulse.CDM
       fractionInspiredOxygen = null;
       inspirationPatientTriggerFlow = null;
       inspirationPatientTriggerPressure = null;
-      inspirationPatientTriggerRespiratoryModel = eSwitch.Off;
       inspirationWaveform = eDriverWaveform.NullDriverWaveform;
       inspiratoryPeriod = null;
       inspiratoryPressure = null;
@@ -51,8 +49,6 @@ namespace Pulse.CDM
         GetInspirationPatientTriggerFlow().Set(other.GetInspirationPatientTriggerFlow());
       if (other.HasInspirationPatientTriggerPressure())
         GetInspirationPatientTriggerPressure().Set(other.GetInspirationPatientTriggerPressure());
-      if (other.HasInspirationPatientTriggerRespiratoryModel())
-        SetInspirationPatientTriggerRespiratoryModel(other.GetInspirationPatientTriggerRespiratoryModel());
       if (other.HasInspirationWaveform())
         SetInspirationWaveform(other.GetInspirationWaveform()); 
       if (other.HasInspiratoryPeriod())
@@ -77,10 +73,7 @@ namespace Pulse.CDM
         inspirationPatientTriggerFlow.Invalidate();
       if (inspirationPatientTriggerPressure != null)
         inspirationPatientTriggerPressure.Invalidate();
-      if (inspirationPatientTriggerRespiratoryModel != null)
-        inspirationPatientTriggerRespiratoryModel = eSwitch.NullSwitch;
-      if (inspirationWaveform != null)
-        inspirationWaveform = eDriverWaveform.NullDriverWaveform;
+      inspirationWaveform = eDriverWaveform.NullDriverWaveform;
       if (inspiratoryPeriod != null)
         inspiratoryPeriod.Invalidate();
       if (inspiratoryPressure != null)
@@ -96,18 +89,10 @@ namespace Pulse.CDM
     public override bool IsValid()
     {
       return HasFractionInspiredOxygen() &&
-    HasInspiratoryPressure() &&
-    HasPositiveEndExpiredPressure() &&
-    HasRespirationRate() &&
-    HasInspirationWaveform() &&
-    (GetMode() == eMechanicalVentilator_PressureControlMode.ContinuousMandatoryVentilation ||
-      (HasInspirationPatientTriggerPressure() ||
-        HasInspirationPatientTriggerFlow() ||
-        GetInspirationPatientTriggerRespiratoryModel() == eSwitch.On
-      )
-    );
-      //InspiratoryPeriod is optional
-      //Slope is optional
+             HasInspiratoryPressure() &&
+             HasPositiveEndExpiredPressure() &&
+             HasRespirationRate();
+      // Everything else is optional
     }
 
     public eMechanicalVentilator_PressureControlMode GetMode()
@@ -164,19 +149,6 @@ namespace Pulse.CDM
       if (inspirationPatientTriggerPressure == null)
         inspirationPatientTriggerPressure = new SEScalarPressure();
       return inspirationPatientTriggerPressure;
-    }
-
-    public bool HasInspirationPatientTriggerRespiratoryModel()
-    {
-      return inspirationPatientTriggerRespiratoryModel != eSwitch.NullSwitch;
-    }
-    public eSwitch GetInspirationPatientTriggerRespiratoryModel()
-    {
-      return inspirationPatientTriggerRespiratoryModel;
-    }
-    public void SetInspirationPatientTriggerRespiratoryModel(eSwitch s)
-    {
-      inspirationPatientTriggerRespiratoryModel = s;
     }
 
     public bool HasInspiratoryPeriod()
@@ -239,7 +211,6 @@ namespace Pulse.CDM
       str += "\n\tFractionInspiredOxygen: " + (HasFractionInspiredOxygen() ? GetFractionInspiredOxygen().ToString() : "Not Provided");
       str += "\n\tInspirationPatientTriggerFlow: " + (HasInspirationPatientTriggerFlow() ? GetInspirationPatientTriggerFlow().ToString() : "Not Provided");
       str += "\n\tInspirationPatientTriggerPressure: " + (HasInspirationPatientTriggerPressure() ? GetInspirationPatientTriggerPressure().ToString() : "Not Provided");
-      str += "\n\tInspirationPatientTriggerRespiratoryModel: " + (HasInspirationPatientTriggerRespiratoryModel() ? GetInspirationPatientTriggerRespiratoryModel().ToString() : "Not Provided");
       str += "\n\tInspirationWaveform: " + (HasInspirationWaveform() ? GetInspirationWaveform().ToString() : "Not Provided");
       str += "\n\tInspiratoryPeriod: " + (HasInspiratoryPeriod() ? GetInspiratoryPeriod().ToString() : "Not Provided");
       str += "\n\tInspiratoryPressure: " + (HasInspiratoryPressure() ? GetInspiratoryPressure().ToString() : "Not Provided");

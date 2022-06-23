@@ -323,7 +323,6 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
-          vc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
@@ -383,7 +382,6 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(550.0, VolumeUnit::mL);
-          vc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);
@@ -443,7 +441,6 @@ namespace pulse { namespace human_adult_ventilation_mechanics
           vc_ac.GetPositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
           vc_ac.GetRespirationRate().SetValue(12.0, FrequencyUnit::Per_min);
           vc_ac.GetTidalVolume().SetValue(500.0, VolumeUnit::mL);
-          vc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
 #ifdef RUN_PULSE
           e->ProcessAction(vc_ac);

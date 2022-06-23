@@ -52,17 +52,23 @@ message MechanicalVentilatorContinuousPositiveAirwayPressureData
   MechanicalVentilatorModeData                 MechanicalVentilatorMode                  = 1;
   
   ScalarPressureData                           DeltaPressureSupport                      = 2; /**<< @brief Defines the driver pressure as the difference between PIP and PEEP */
-  ScalarVolumePerTimeData                      ExpirationCycleFlow                       = 3; /**<< @brief OPTIONAL Ventilator sensor flow value to trigger expiration phase. */
-  ScalarPressureData                           ExpirationCyclePressure                   = 4; /**<< @brief OPTIONAL Ventilator sensor pressure value to trigger expiration phase. */
-  eSwitch                                      ExpirationCycleRespiratoryModel           = 5; /**<< @brief OPTIONAL Trigger expiration phase from respiratory model event. */
-  eDriverWaveform                              ExpirationWaveform                        = 6; /**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
-  Scalar0To1Data                               FractionInspiredOxygen                    = 7; /**<< @brief FiO2 */
-  ScalarVolumePerTimeData                      InspirationPatientTriggerFlow             = 8; /**<< @brief OPTIONAL Ventilator sensor flow value to trigger inspiration phase. */
-  ScalarPressureData                           InspirationPatientTriggerPressure         = 9; /**<< @brief OPTIONAL Ventilator sensor pressure value to trigger inspiration phase. */
-  eSwitch                                      InspirationPatientTriggerRespiratoryModel = 10;/**<< @brief OPTIONAL Trigger inspiration phase from respiratory model event. */
-  eDriverWaveform                              InspirationWaveform                       = 11;/**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
-  ScalarPressureData                           PositiveEndExpiredPressure                = 12;/**<< @brief Driver pressure during exhale */
-  ScalarTimeData                               Slope                                     = 13;/**<< @brief OPTIONAL Time to reach PIP */
+  oneof ExpirationCycle
+  {
+    ScalarVolumePerTimeData                    ExpirationCycleFlow                       = 3; /**<< @brief OPTIONAL Ventilator sensor flow value to trigger expiration phase. */
+    ScalarPressureData                         ExpirationCyclePressure                   = 4; /**<< @brief OPTIONAL Ventilator sensor pressure value to trigger expiration phase. */
+    /** If neither are provided we will trigger this phase from respiratory model event. */
+  }
+  eDriverWaveform                              ExpirationWaveform                        = 5; /**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
+  Scalar0To1Data                               FractionInspiredOxygen                    = 6; /**<< @brief FiO2 */
+  oneof InspirationPatientTrigger
+  {
+    ScalarVolumePerTimeData                    InspirationPatientTriggerFlow             = 7; /**<< @brief OPTIONAL Ventilator sensor flow value to trigger inspiration phase. */
+    ScalarPressureData                         InspirationPatientTriggerPressure         = 8; /**<< @brief OPTIONAL Ventilator sensor pressure value to trigger inspiration phase. */
+    /** If neither are provided we will trigger this phase from respiratory model event. */
+  }
+  eDriverWaveform                              InspirationWaveform                       = 9;/**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
+  ScalarPressureData                           PositiveEndExpiredPressure                = 10;/**<< @brief Driver pressure during exhale */
+  ScalarTimeData                               Slope                                     = 11;/**<< @brief OPTIONAL Time to reach PIP */
 }
 
 message MechanicalVentilatorPressureControlData
@@ -77,15 +83,18 @@ message MechanicalVentilatorPressureControlData
 
   eMode                                        Mode                                      = 2;
   Scalar0To1Data                               FractionInspiredOxygen                    = 3; /**<< @brief FiO2 */
-  ScalarVolumePerTimeData                      InspirationPatientTriggerFlow             = 4; /**<< @brief OPTIONAL Ventilator sensor flow value to trigger inspiration phase. */
-  ScalarPressureData                           InspirationPatientTriggerPressure         = 5; /**<< @brief OPTIONAL Ventilator sensor pressure value to trigger inspiration phase. */
-  eSwitch                                      InspirationPatientTriggerRespiratoryModel = 6; /**<< @brief OPTIONAL Trigger inspiration phase from respiratory model event. */
-  eDriverWaveform                              InspirationWaveform                       = 7; /**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
-  ScalarTimeData                               InspiratoryPeriod                         = 8; /**<< @brief OPTIONAL Time for inspiration part of the breathing cycle */
-  ScalarPressureData                           InspiratoryPressure                       = 9; /**<< @brief Driver pressure during inspiration */
-  ScalarPressureData                           PositiveEndExpiredPressure                = 10;/**<< @brief Driver pressure during exhale */
-  ScalarFrequencyData                          RespirationRate                           = 11;/**<< @brief Driver minimum frequency */
-  ScalarTimeData                               Slope                                     = 12;/**<< @brief OPTIONAL Time to reach PIP */
+  oneof InspirationPatientTrigger
+  {
+    ScalarVolumePerTimeData                    InspirationPatientTriggerFlow             = 4; /**<< @brief OPTIONAL Ventilator sensor flow value to trigger inspiration phase. */
+    ScalarPressureData                         InspirationPatientTriggerPressure         = 5; /**<< @brief OPTIONAL Ventilator sensor pressure value to trigger inspiration phase. */
+    /** If neither are provided we will trigger this phase from respiratory model event. */
+  }
+  eDriverWaveform                              InspirationWaveform                       = 6; /**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
+  ScalarTimeData                               InspiratoryPeriod                         = 7; /**<< @brief OPTIONAL Time for inspiration part of the breathing cycle */
+  ScalarPressureData                           InspiratoryPressure                       = 8; /**<< @brief Driver pressure during inspiration */
+  ScalarPressureData                           PositiveEndExpiredPressure                = 9;/**<< @brief Driver pressure during exhale */
+  ScalarFrequencyData                          RespirationRate                           = 10;/**<< @brief Driver minimum frequency */
+  ScalarTimeData                               Slope                                     = 11;/**<< @brief OPTIONAL Time to reach PIP */
 }
 
 message MechanicalVentilatorVolumeControlData
@@ -101,14 +110,17 @@ message MechanicalVentilatorVolumeControlData
   eMode                                        Mode                                      = 2;
   ScalarVolumePerTimeData                      Flow                                      = 3; /**<< @brief Driver flow during inspiration */
   Scalar0To1Data                               FractionInspiredOxygen                    = 4; /**<< @brief FiO2 */
-  ScalarVolumePerTimeData                      InspirationPatientTriggerFlow             = 5; /**<< @brief OPTIONAL Ventilator sensor flow value to trigger inspiration phase. */
-  ScalarPressureData                           InspirationPatientTriggerPressure         = 6; /**<< @brief OPTIONAL Ventilator sensor pressure value to trigger inspiration phase. */
-  eSwitch                                      InspirationPatientTriggerRespiratoryModel = 7; /**<< @brief OPTIONAL Trigger inspiration phase from respiratory model event. */
-  eDriverWaveform                              InspirationWaveform                       = 8; /**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
-  ScalarTimeData                               InspiratoryPeriod                         = 9; /**<< @brief OPTIONAL Time for inspiration part of the breathing cycle */
-  ScalarPressureData                           PositiveEndExpiredPressure                = 10;/**<< @brief Driver pressure during exhale */
-  ScalarFrequencyData                          RespirationRate                           = 11;/**<< @brief Driver minimum frequency */
-  ScalarTimeData                               Slope                                     = 12;/**<< @brief OPTIONAL Time to reach tidal volume */
-  ScalarVolumeData                             TidalVolume                               = 13;/**<< @brief Volume target/limit */
+  oneof InspirationPatientTrigger
+  {
+    ScalarVolumePerTimeData                    InspirationPatientTriggerFlow             = 5; /**<< @brief OPTIONAL Ventilator sensor flow value to trigger inspiration phase. */
+    ScalarPressureData                         InspirationPatientTriggerPressure         = 6; /**<< @brief OPTIONAL Ventilator sensor pressure value to trigger inspiration phase. */
+    /** If neither are provided we will trigger this phase from respiratory model event. */
+  }
+  eDriverWaveform                              InspirationWaveform                       = 7; /**<< @brief OPTIONAL @ref MechanicalVentilatorData_eDriverWaveformTable */
+  ScalarTimeData                               InspiratoryPeriod                         = 8; /**<< @brief OPTIONAL Time for inspiration part of the breathing cycle */
+  ScalarPressureData                           PositiveEndExpiredPressure                = 9;/**<< @brief Driver pressure during exhale */
+  ScalarFrequencyData                          RespirationRate                           = 10;/**<< @brief Driver minimum frequency */
+  ScalarTimeData                               Slope                                     = 11;/**<< @brief OPTIONAL Time to reach tidal volume */
+  ScalarVolumeData                             TidalVolume                               = 12;/**<< @brief Volume target/limit */
 }
 

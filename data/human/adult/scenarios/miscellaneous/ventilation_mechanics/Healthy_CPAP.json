@@ -426,7 +426,6 @@
        "Unit": "L/min"
       }
      },
-     "ExpirationCycleRespiratoryModel": "Off",
      "FractionInspiredOxygen": {
       "Scalar0To1": {
        "Value": 0.21
@@ -438,7 +437,6 @@
        "Unit": "L/min"
       }
      },
-     "InspirationPatientTriggerRespiratoryModel": "Off",
      "InspirationWaveform": "AscendingRamp",
      "PositiveEndExpiredPressure": {
       "ScalarPressure": {

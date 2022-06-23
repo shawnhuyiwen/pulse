@@ -29,6 +29,7 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
+  virtual bool HasConnection() const;
   virtual eSwitch GetConnection() const;
   virtual void SetConnection(eSwitch c);
 
@@ -68,6 +69,7 @@ public:
   virtual SEScalarTime& GetExpirationCycleTime();
   virtual double GetExpirationCycleTime(const TimeUnit& unit) const;
 
+  virtual bool HasExpirationCycleRespiratoryModel() const;
   virtual eSwitch GetExpirationCycleRespiratoryModel() const;
   virtual void SetExpirationCycleRespiratoryModel(eSwitch c);
 
@@ -79,6 +81,7 @@ public:
   virtual SEScalarPressureTimePerVolume& GetExpirationValveResistance();
   virtual double GetExpirationValveResistance(const PressureTimePerVolumeUnit& unit) const;
 
+  virtual bool HasExpirationWaveform() const;
   virtual eDriverWaveform GetExpirationWaveform() const;
   virtual void SetExpirationWaveform(eDriverWaveform w);
 
@@ -122,6 +125,7 @@ public:
   virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
   virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
 
+  virtual bool HasInspirationPatientTriggerRespiratoryModel() const;
   virtual eSwitch GetInspirationPatientTriggerRespiratoryModel() const;
   virtual void SetInspirationPatientTriggerRespiratoryModel(eSwitch c);
 
@@ -157,6 +161,7 @@ public:
   virtual SEScalarVolume& GetYPieceVolume();
   virtual double GetYPieceVolume(const VolumeUnit& unit) const;
 
+  virtual bool HasInspirationWaveform() const;
   virtual eDriverWaveform GetInspirationWaveform() const;
   virtual void SetInspirationWaveform(eDriverWaveform w);
 

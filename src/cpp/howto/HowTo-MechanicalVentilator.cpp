@@ -167,10 +167,10 @@ void HowToMechanicalVentilator()
   vc_ac.GetTidalVolume().SetValue(900.0, VolumeUnit::mL);
   vc_ac.GetSlope().SetValue(0.2, TimeUnit::s); //This is optional and would be left out for square waveforms
 
-  vc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
-  //Other trigger options (choose one):
+  // Trigger options (choose one):
   //  vc_ac.GetInspirationPatientTriggerPressure().SetValue(-0.000001, PressureUnit::cmH2O);
   //  vc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
+  // If neither are provided, we will use the respiratory model trigger
 
   pe->ProcessAction(vc_ac);
   AdvanceAndTrackTime_s(10.0, *pe);

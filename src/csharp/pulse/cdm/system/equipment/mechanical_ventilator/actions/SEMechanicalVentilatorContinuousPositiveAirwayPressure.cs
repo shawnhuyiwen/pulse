@@ -8,12 +8,10 @@ namespace Pulse.CDM
     protected SEScalarPressure deltaPressureSupport;
     SEScalarVolumePerTime      expirationCycleFlow;
     SEScalarPressure           expirationCyclePressure;
-    eSwitch                    expirationCycleRespiratoryModel;
     eDriverWaveform            expirationWaveform;
     protected SEScalar0To1     fractionInspiredOxygen;
     SEScalarVolumePerTime      inspirationPatientTriggerFlow;
     SEScalarPressure           inspirationPatientTriggerPressure;
-    eSwitch                    inspirationPatientTriggerRespiratoryModel;
     eDriverWaveform            inspirationWaveform;
     protected SEScalarPressure positiveEndExpiredPressure;
     protected SEScalarTime     slope;
@@ -23,12 +21,10 @@ namespace Pulse.CDM
       deltaPressureSupport = null;
       expirationCycleFlow = null;
       expirationCyclePressure = null;
-      expirationCycleRespiratoryModel = eSwitch.Off;
       expirationWaveform = eDriverWaveform.NullDriverWaveform;
       fractionInspiredOxygen = null;
       inspirationPatientTriggerFlow = null;
       inspirationPatientTriggerPressure = null;
-      inspirationPatientTriggerRespiratoryModel = eSwitch.Off;
       inspirationWaveform = eDriverWaveform.NullDriverWaveform;
       positiveEndExpiredPressure = null;
       slope = null;
@@ -48,8 +44,6 @@ namespace Pulse.CDM
         GetExpirationCycleFlow().Set(other.GetExpirationCycleFlow());
       if (other.HasExpirationCyclePressure())
         GetExpirationCyclePressure().Set(other.GetExpirationCyclePressure());
-      if (other.HasExpirationCycleRespiratoryModel())
-        SetExpirationCycleRespiratoryModel(other.GetExpirationCycleRespiratoryModel());
       if (other.HasExpirationWaveform())
         SetExpirationWaveform(other.GetExpirationWaveform());
       if (other.HasFractionInspiredOxygen())
@@ -58,8 +52,6 @@ namespace Pulse.CDM
         GetInspirationPatientTriggerFlow().Set(other.GetInspirationPatientTriggerFlow());
       if (other.HasInspirationPatientTriggerPressure())
         GetInspirationPatientTriggerPressure().Set(other.GetInspirationPatientTriggerPressure());
-      if (other.HasInspirationPatientTriggerRespiratoryModel())
-        SetInspirationPatientTriggerRespiratoryModel(other.GetInspirationPatientTriggerRespiratoryModel());
       if (other.HasInspirationWaveform())
         SetInspirationWaveform(other.GetInspirationWaveform());
       if (other.HasPositiveEndExpiredPressure())
@@ -77,20 +69,14 @@ namespace Pulse.CDM
         expirationCycleFlow.Invalidate();
       if (expirationCyclePressure != null)
         expirationCyclePressure.Invalidate();
-      if (expirationCycleRespiratoryModel != null)
-        expirationCycleRespiratoryModel = eSwitch.NullSwitch;
-      if (expirationWaveform != null)
-        expirationWaveform = eDriverWaveform.NullDriverWaveform;
+      expirationWaveform = eDriverWaveform.NullDriverWaveform;
       if (fractionInspiredOxygen != null)
         fractionInspiredOxygen.Invalidate();
       if (inspirationPatientTriggerFlow != null)
         inspirationPatientTriggerFlow.Invalidate();
       if (inspirationPatientTriggerPressure != null)
         inspirationPatientTriggerPressure.Invalidate();
-      if (inspirationPatientTriggerRespiratoryModel != null)
-        inspirationPatientTriggerRespiratoryModel = eSwitch.NullSwitch;
-      if (inspirationWaveform != null)
-        inspirationWaveform = eDriverWaveform.NullDriverWaveform;
+      inspirationWaveform = eDriverWaveform.NullDriverWaveform;
       if (positiveEndExpiredPressure != null)
         positiveEndExpiredPressure.Invalidate();
       if (slope != null)
@@ -101,16 +87,8 @@ namespace Pulse.CDM
     {
       return HasDeltaPressureSupport() &&
              HasFractionInspiredOxygen() &&
-             HasPositiveEndExpiredPressure() &&
-             HasExpirationWaveform() &&
-             ( HasExpirationCyclePressure() ||
-               HasExpirationCycleFlow() ||
-               GetExpirationCycleRespiratoryModel() == eSwitch.On) &&
-             HasInspirationWaveform() &&
-             ( HasInspirationPatientTriggerPressure() ||
-               HasInspirationPatientTriggerFlow() ||
-               GetInspirationPatientTriggerRespiratoryModel() == eSwitch.On);
-      //Slope is optional
+             HasPositiveEndExpiredPressure();
+      //Everything else is optional
     }
 
     public bool HasDeltaPressureSupport()
@@ -170,19 +148,6 @@ namespace Pulse.CDM
       return expirationCyclePressure;
     }
 
-    public bool HasExpirationCycleRespiratoryModel()
-    {
-      return expirationCycleRespiratoryModel != eSwitch.NullSwitch;
-    }
-    public eSwitch GetExpirationCycleRespiratoryModel()
-    {
-      return expirationCycleRespiratoryModel;
-    }
-    public void SetExpirationCycleRespiratoryModel(eSwitch s)
-    {
-      expirationCycleRespiratoryModel = s;
-    }
-
     public bool HasPositiveEndExpiredPressure()
     {
       return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.IsValid();
@@ -229,19 +194,6 @@ namespace Pulse.CDM
       return inspirationPatientTriggerPressure;
     }
 
-    public bool HasInspirationPatientTriggerRespiratoryModel()
-    {
-      return inspirationPatientTriggerRespiratoryModel != eSwitch.NullSwitch;
-    }
-    public eSwitch GetInspirationPatientTriggerRespiratoryModel()
-    {
-      return inspirationPatientTriggerRespiratoryModel;
-    }
-    public void SetInspirationPatientTriggerRespiratoryModel(eSwitch s)
-    {
-      inspirationPatientTriggerRespiratoryModel = s;
-    }
-
     public bool HasSlope()
     {
       return slope == null ? false : slope.IsValid();
@@ -259,12 +211,10 @@ namespace Pulse.CDM
       str += "\n\tDeltaPressureSupport: " + (HasDeltaPressureSupport() ? GetDeltaPressureSupport().ToString() : "Not Provided");
       str += "\n\tExpirationCycleFlow: " + (HasExpirationCycleFlow() ? GetExpirationCycleFlow().ToString() : "Not Provided");
       str += "\n\tExpirationCyclePressure: " + (HasExpirationCyclePressure() ? GetExpirationCyclePressure().ToString() : "Not Provided");
-      str += "\n\tExpirationCycleRespiratoryModel: " + (HasExpirationCycleRespiratoryModel() ? GetExpirationCycleRespiratoryModel().ToString() : "Not Provided");
       str += "\n\tExpirationWaveform: " + (HasExpirationWaveform() ? GetExpirationWaveform().ToString() : "Not Provided");
       str += "\n\tFractionInspiredOxygen: " + (HasFractionInspiredOxygen() ? GetFractionInspiredOxygen().ToString() : "Not Provided");
       str += "\n\tInspirationPatientTriggerFlow: " + (HasInspirationPatientTriggerFlow() ? GetInspirationPatientTriggerFlow().ToString() : "Not Provided");
       str += "\n\tInspirationPatientTriggerPressure: " + (HasInspirationPatientTriggerPressure() ? GetInspirationPatientTriggerPressure().ToString() : "Not Provided");
-      str += "\n\tInspirationPatientTriggerRespiratoryModel: " + (HasInspirationPatientTriggerRespiratoryModel() ? GetInspirationPatientTriggerRespiratoryModel().ToString() : "Not Provided");
       str += "\n\tInspirationWaveform: " + (HasInspirationWaveform() ? GetInspirationWaveform().ToString() : "Not Provided");
       str += "\n\tPositiveEndExpiredPressure: " + (HasPositiveEndExpiredPressure() ? GetPositiveEndExpiredPressure().ToString() : "Not Provided");
       str += "\n\tSlope: " + (HasSlope() ? GetSlope().ToString() : "Not Provided");

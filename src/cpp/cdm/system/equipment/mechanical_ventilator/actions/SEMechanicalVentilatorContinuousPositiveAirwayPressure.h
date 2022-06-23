@@ -37,10 +37,6 @@ public:
   virtual SEScalarPressure& GetExpirationCyclePressure();
   virtual double GetExpirationCyclePressure(const PressureUnit& unit) const;
 
-  virtual bool HasExpirationCycleRespiratoryModel() const;
-  virtual eSwitch GetExpirationCycleRespiratoryModel() const;
-  virtual void SetExpirationCycleRespiratoryModel(eSwitch c);
-
   virtual bool HasFractionInspiredOxygen() const;
   virtual SEScalar0To1& GetFractionInspiredOxygen();
   virtual double GetFractionInspiredOxygen() const;
@@ -56,10 +52,6 @@ public:
   virtual bool HasInspirationPatientTriggerPressure() const;
   virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
   virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
-
-  virtual bool HasInspirationPatientTriggerRespiratoryModel() const;
-  virtual eSwitch GetInspirationPatientTriggerRespiratoryModel() const;
-  virtual void SetInspirationPatientTriggerRespiratoryModel(eSwitch c);
 
   virtual bool HasPositiveEndExpiredPressure() const;
   virtual SEScalarPressure& GetPositiveEndExpiredPressure();
@@ -79,12 +71,10 @@ protected:
   eDriverWaveform                      m_ExpirationWaveform;
   SEScalarVolumePerTime*               m_ExpirationCycleFlow;
   SEScalarPressure*                    m_ExpirationCyclePressure;
-  eSwitch                              m_ExpirationCycleRespiratoryModel;
   SEScalar0To1*                        m_FractionInspiredOxygen;
   eDriverWaveform                      m_InspirationWaveform;
   SEScalarVolumePerTime*               m_InspirationPatientTriggerFlow;
   SEScalarPressure*                    m_InspirationPatientTriggerPressure;
-  eSwitch                              m_InspirationPatientTriggerRespiratoryModel;
   SEScalarPressure*                    m_PositiveEndExpiredPressure;
   SEScalarTime*                        m_Slope;
 };
