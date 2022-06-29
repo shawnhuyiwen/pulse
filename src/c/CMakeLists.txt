@@ -1,5 +1,9 @@
+set(_lib_type SHARED)
+if(${PROJECT_NAME}_LIBS_ONLY)
+set(_lib_type STATIC)
+endif()
 
-add_library_ex(PulseC SHARED
+add_library_ex(PulseC ${_lib_type}
   CPP_FILES
     PulseEngineC.cpp
   PUBLIC_DEPENDS
