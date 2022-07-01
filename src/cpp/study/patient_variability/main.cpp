@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
   bool postProcessOnly = false;
   bool validationMode  = false;
   bool hemorrhageMode  = false;
+  bool useBaseline     = false;
   std::string data = "solo";
   PVGenerator::Mode mode = PVGenerator::Mode::Validation;
   std::string rootDir = "./test_results/patient_variability/";
@@ -65,6 +66,12 @@ int main(int argc, char* argv[])
     {
       hemorrhageMode = true;
       mode = PVGenerator::Mode::Hemorrhage;
+    }
+
+    // Use existing baseline results for comparison
+    if(!strcmp(argv[i], "-u") || !strcmp(argv[i], "--use-baseline"))
+    {
+      useBaseline = true;
     }
     
   }
@@ -220,7 +227,7 @@ int main(int argc, char* argv[])
   if (generateOnly)
     return 0;
 
-  PVRunner pvr(rootDir, &log);
+  PVRunner pvr(rootDir, useBaseline, &log);
   pvr.PostProcessOnly = postProcessOnly;
   pvr.SerializationFormat = binary ? eSerializationFormat::BINARY : eSerializationFormat::JSON;
   return !pvr.Run(patients);

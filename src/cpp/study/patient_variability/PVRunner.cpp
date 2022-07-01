@@ -32,11 +32,12 @@ using namespace pulse;
 
 namespace pulse::study::patient_variability
 {
-  PVRunner::PVRunner(const std::string& rootDir, Logger* logger) : Loggable(logger)
+  PVRunner::PVRunner(const std::string& rootDir, bool useBaseline, Logger* logger) : Loggable(logger)
   {
     m_RootDir = rootDir;
     m_PatientList = nullptr;
     m_PatientResultsList = nullptr;
+    m_useBaseline = useBaseline;
   }
   PVRunner::~PVRunner()
   {
@@ -83,7 +84,24 @@ namespace pulse::study::patient_variability
       // If json files already exist don't redo that work
       if (!FileExists(m_RootDir + "/standard_results.json"))
       {
-        std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING=./verification/scenarios/validation/systems -DARG2:STRING=false -P run.cmake";
+        // Run standard patients if we aren't using baseline
+        std::string dir = "./verification/scenarios/validation/systems";
+        if(!m_useBaseline)
+        {
+          std::string runCommand = "cmake -DTYPE:STRING=SystemValidation -P run.cmake";
+          dir = "./test_results/scenarios/validation/systems";
+          std::system(runCommand.c_str());
+
+          std::string content;
+          ReadFile("./test_results/SystemVerificationReport.json", content);
+          WriteFile(content, m_RootDir + "/SystemVerificationReport-StandardPatients.json");
+          ReadFile("./test_results/SystemVerification.html", content);
+          WriteFile(content, m_RootDir + "/SystemVerification-StandardPatients.html");
+          ReadFile("./test_results/SystemValidation.html", content);
+          WriteFile(content,m_RootDir + "/SystemValidation-StandardPatients.html");
+        }
+
+        std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING=" + dir + " -DARG2:STRING=false -P run.cmake";
         std::system(command.c_str());
 
         // Standard male

@@ -19,7 +19,7 @@ namespace pulse::study::patient_variability
   class PVRunner : public Loggable
   {
   public:
-    PVRunner(const std::string& rootDir, Logger* logger=nullptr);
+    PVRunner(const std::string& rootDir, bool useBaseline, Logger* logger=nullptr);
     virtual ~PVRunner();
 
     bool PostProcessOnly = false;
@@ -43,6 +43,7 @@ namespace pulse::study::patient_variability
 
     std::mutex  m_mutex;
 
+    bool m_useBaseline;
     std::string m_RootDir;
     std::string m_PatientResultsListFile;
     std::set<unsigned int> m_PatientsToRun;
