@@ -2141,13 +2141,11 @@ namespace pulse
       m_RightHeartElastanceMax_mmHg_Per_mL *= m_data.GetNervous().GetBaroreceptorHeartElastanceScale().GetValue();
       HeartDriverFrequency_Per_Min *= m_data.GetNervous().GetBaroreceptorHeartRateScale().GetValue();
     }
-    // Need to reinvestigate the Chemoreceptor implemenation, currently they only add, at most 1bpm
-    // The current computed scale is also very small generally disrupts the cycle period which introduces instability
-    //if (m_data.GetNervous().GetChemoreceptorFeedback() == eSwitch::On)
-    //{
+    if (m_data.GetNervous().GetChemoreceptorFeedback() == eSwitch::On)
+    {
       // Chemoreceptor and drug effects are deltas rather than multipliers, so they are added.
-    //  HeartDriverFrequency_Per_Min += m_data.GetNervous().GetChemoreceptorHeartRateScale().GetValue();
-    //}
+      HeartDriverFrequency_Per_Min += m_data.GetNervous().GetChemoreceptorHeartRateScale().GetValue();
+    }
 
     // Apply drug effects
     if (m_data.GetDrugs().HasHeartRateChange())
