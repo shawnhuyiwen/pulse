@@ -227,15 +227,10 @@ namespace pulse
       m_data.GetDataTrack().Probe("normalizedMAP", 0);
     }
 #endif
-    // Need to reinvestigate the Chemoreceptor implemenation, currently they only add, at most 1bpm
-    // CV is adding this to the next cycle period, so off should actually be 0, not 1
-    // The current implementation is only generating a scale of 0-1bpm... the small numbers are also
-    // causing issue with the math that calculates the actual driver cycle to be inconsistent and cause instability
-    // Nothing was using the ChemoreceptorHeartElastanceScale either...
-    //if (m_ChemoreceptorFeedback == eSwitch::On)
-    //  ChemoreceptorFeedback();
-    //else
-    //  GetChemoreceptorHeartRateScale().SetValue(1.0);
+    if (m_ChemoreceptorFeedback == eSwitch::On)
+      ChemoreceptorFeedback();
+    else
+      GetChemoreceptorHeartRateScale().SetValue(0.0);
     CerebralSpinalFluidUpdates();
 
   }
