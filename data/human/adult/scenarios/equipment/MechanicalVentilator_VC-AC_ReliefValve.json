@@ -291,6 +291,7 @@
           "InspirationTargetFlow": { "ScalarVolumePerTime": { "Value": 0.351, "Unit": "L/s" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 10.0, "Unit": "s" } },
+          "InspirationPatientTriggerRespiratoryModel": "On",
           "ExpirationCycleVolume": { "ScalarVolume": { "Value": 0.527, "Unit": "L" } },
           "ReliefValveThreshold": { "ScalarPressure": { "Value": 12.0, "Unit": "cmH2O" } },
           "FractionInspiredGas": [

@@ -123,8 +123,8 @@ namespace pulse
       fvec(2) = f2 - negativePenaltyO2 * 100.0;
       fvec(3) = f3;
 
-      m_SatCalc.m_subO2Q->GetSaturation().SetValue(OxygenSaturation);
-      m_SatCalc.m_subCO2Q->GetSaturation().SetValue(CarbonDioxideSaturation);
+      m_SatCalc.m_subO2Q->GetSaturation().SetValue(std::isnan(OxygenSaturation) ? 0.0 : OxygenSaturation);
+      m_SatCalc.m_subCO2Q->GetSaturation().SetValue(std::isnan(CarbonDioxideSaturation) ? 0.0 : CarbonDioxideSaturation);
       return 0;
     }
   };

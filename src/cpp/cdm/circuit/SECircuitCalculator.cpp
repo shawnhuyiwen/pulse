@@ -109,6 +109,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
 #ifdef VERBOSE
   int i = 0;
 #endif
+  bool success = false;
   do
   {
 #ifdef VERBOSE
@@ -119,13 +120,27 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
     //We'll solve for all of the circuit's node pressures and Pressure Source Flows simultaneously using an error minimization numerical solver.
     //Then we calculate the flows and voltages based on those Pressures and Element values.    
     ParseIn();
-    Solve();
+    success = Solve();
     ParseOut();
     CalculateFluxes();
-  } while (!CheckAndModifyValves());
+  } while (!CheckAndModifyValves(success));
 #ifdef VERBOSE
   std::cout << "Number of Valve Loops = " << i << std::endl;
 #endif
+
+  if (!success)
+  {
+    double absolute_error = (_eigen->AMatrix * _eigen->xVector - _eigen->bVector).norm();
+    double relative_error = absolute_error / _eigen->bVector.norm();
+
+    std::stringstream ss;
+    ss << "The solver was unable to determine a solution for the circuit with the attempted combination of valves and/or polarized elements. "
+      << "Relative error = " << relative_error
+      << ". Absolute error = " << absolute_error;
+    ///\error Fatal: The solver was unable to determine a solution for the circuit with the attempted combination of valves and/or polarized elements.
+    Fatal(ss);
+  }
+
   CalculateQuantities();
 }
 
@@ -543,7 +558,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::ParseIn()
 /// Make sure the solution is correct.
 //--------------------------------------------------------------------------------------------------
 template<CIRCUIT_CALCULATOR_TEMPLATE>
-void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
+bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
 {
 #ifdef VERBOSE
   Verbose("PreSolve");
@@ -632,37 +647,52 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
   }
   };
 
-  if (sparseFailed /*|| !(_eigen->AMatrix*_eigen->xVector).isApprox(_eigen->bVector, 1.0e-10)*/)
+  if (_eigen->AMatrix.rows() != _eigen->AMatrix.cols() ||
+    _eigen->AMatrix.rows() != _eigen->xVector.rows() || 
+    _eigen->AMatrix.rows() != _eigen->bVector.rows())
+  {
+    ///\error Fatal: The solver was unable to determine a solution for the circuit due to a matrix size mismatch.
+    Fatal("The solver was unable to determine a solution for the circuitdue to a matrix size mismatch.");
+  }
+
+  double errorThreshold = 1e-6;
+  if (sparseFailed || !(_eigen->AMatrix*_eigen->xVector).isApprox(_eigen->bVector, errorThreshold))
   {
     //The faster sparse solver should almost always work
     //If it didn't, do it dense and make sure we get an answer (if possible)
+
     _eigen->xVector = _eigen->AMatrix.fullPivLu().solve(_eigen->bVector);
 
-    if (!(_eigen->AMatrix * _eigen->xVector).isApprox(_eigen->bVector, 1.0e-11))
+    if (!(_eigen->AMatrix * _eigen->xVector).isApprox(_eigen->bVector, errorThreshold))
     {
-      double absolute_error = (_eigen->AMatrix * _eigen->xVector - _eigen->bVector).norm();
-      double relative_error = absolute_error / _eigen->bVector.norm();
-      std::stringstream ss;
+      //If that didn't work, solve it directly
 
-      if (!(_eigen->AMatrix * _eigen->xVector).isApprox(_eigen->bVector, 1.0e-8))
+      _eigen->xVector = _eigen->AMatrix.inverse() * _eigen->bVector;
+
+      if (!(_eigen->AMatrix * _eigen->xVector).isApprox(_eigen->bVector, errorThreshold))
       {
-        ss << "The solver was unable to determine a solution for the circuit. Relative error = " << relative_error
+        //That still didn't work, so we'll just try the next combination of valves and/or polarized elements by returning false
+
+#ifdef VERBOSE
+        double absolute_error = (_eigen->AMatrix * _eigen->xVector - _eigen->bVector).norm();
+        double relative_error = absolute_error / _eigen->bVector.norm();
+
+        std::stringstream ss;
+        ss << "The solver was unable to determine a solution for the circuit with the attempted combination of valves and/or polarized elements. "
+          << "Relative error = " << relative_error
           << ". Absolute error = " << absolute_error;
-        ///\error Fatal: The solver was unable to determine a solution for the circuit.
-        Fatal(ss);
-      }
-      else
-      {
-        ss << "Circuit solution from secondary solver with maximum relative error greater than 1.0e-12 but less than 1.0e-8. Relative error = "
-          << relative_error << ". Absolute error = " << absolute_error;
-        ///\warning Warning: Circuit solution from secondary solver with maximum relative error greater than 1.0e-12 but less than 1.0e-8
+        ///\error Warning: The solver was unable to determine a solution for the circuit with the attempted combination of valves and/or polarized elements.
         Warning(ss);
+#endif
+        return false;
       }
     }
   }
 #ifdef VERBOSE
   Verbose("PostSolve");
 #endif
+
+  return true;
 }
 
 
@@ -896,7 +926,7 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CalculateQuantities()
 /// The circuit will be re-solved with the new Valve state, and will iterate until a solution is found.
 //--------------------------------------------------------------------------------------------------
 template<CIRCUIT_CALCULATOR_TEMPLATE>
-bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CheckAndModifyValves()
+bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CheckAndModifyValves(bool solverPassed)
 {
   if (m_circuit->GetPolarizedElementPaths().empty() && m_circuit->GetValvePaths().empty())
     return true;//There aren't any valves to worry about
@@ -909,7 +939,9 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CheckAndModifyValves()
 
   for (PathType* p : m_circuit->GetValvePaths())
   {
-    if ((p->GetNextValve() == eGate::Closed &&
+    if (!solverPassed
+      ||
+      (p->GetNextValve() == eGate::Closed &&
       p->GetNextFlux().GetValue(m_FluxUnit) < -ZERO_APPROX)
       ||
       (p->GetNextValve() == eGate::Open &&
@@ -927,9 +959,11 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::CheckAndModifyValves()
 
   for (PathType* p : m_circuit->GetPolarizedElementPaths())
   {
-    if (p->GetNextPolarizedState() == eGate::Closed &&
+    if (!solverPassed
+      || 
+      (p->GetNextPolarizedState() == eGate::Closed &&
       (p->GetSourceNode().GetNextPotential().GetValue(m_PotentialUnit) -
-        p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit)) < -ZERO_APPROX)
+        p->GetTargetNode().GetNextPotential().GetValue(m_PotentialUnit)) < -ZERO_APPROX))
     {
       p->FlipNextPolarizedState();
       if (IsCurrentValveStateUnique())

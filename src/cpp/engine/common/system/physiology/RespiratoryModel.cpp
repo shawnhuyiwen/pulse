@@ -2555,7 +2555,11 @@ namespace pulse
       double dampenFraction_perSec = 0.5 * 50.0; //Default timestep = 20ms = 50Hz, ensuring any timestep will work the same here
 
       double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-      double complianceChange_L_Per_cmH2O = (chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O) * dampenFraction_perSec * m_data.GetTimeStep_s();
+      double complianceChange_L_Per_cmH2O = chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O;
+      if (!hasRespiratoryMechanicsCompliance)
+      {
+        complianceChange_L_Per_cmH2O *= dampenFraction_perSec * m_data.GetTimeStep_s();
+      }
 
       chestWallCompliance_L_Per_cmH2O = previousChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
       chestWallPath->GetNextCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
