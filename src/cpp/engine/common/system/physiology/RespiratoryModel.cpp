@@ -1369,6 +1369,8 @@ namespace pulse
 
     if (HasActiveRespiratoryMechanics())
     {
+      m_PeakInspiratoryPressure_cmH2O = 0.0;
+      m_PeakExpiratoryPressure_cmH2O = 0.0;
       if (m_RespiratoryMechanics->HasInspiratoryPeakPressure())
         m_PeakInspiratoryPressure_cmH2O = m_RespiratoryMechanics->GetInspiratoryPeakPressure(PressureUnit::cmH2O);
       if (m_RespiratoryMechanics->HasExpiratoryPeakPressure())
@@ -1506,6 +1508,15 @@ namespace pulse
 
     if (HasActiveRespiratoryMechanics())
     {
+      m_InspiratoryRiseFraction = 0.0;
+      m_InspiratoryHoldFraction = 0.0;
+      m_InspiratoryReleaseFraction = 0.0;
+      m_InspiratoryToExpiratoryPauseFraction = 0.0;
+      m_ExpiratoryRiseFraction = 0.0;
+      m_ExpiratoryHoldFraction = 0.0;
+      m_ExpiratoryReleaseFraction = 0.0;
+      m_ResidueFraction = 0.0;
+
       double totalBreathCycleTime_s = GetBreathCycleTime();
 
       if(m_RespiratoryMechanics->HasInspiratoryRiseTime())
@@ -2820,6 +2831,12 @@ namespace pulse
     //Resistances in series sum
     if (HasActiveRespiratoryMechanics())
     {
+      tracheaResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+      rightBronchiResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+      leftBronchiResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+      rightAlveoliResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+      leftAlveoliResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+
       //Should sum to 1.0
       double bronchiResistanceFraction = 0.6;
       double alveoliDuctResistanceFraction = 0.4;
@@ -3022,6 +3039,14 @@ namespace pulse
     //LobarPneumonia
 
     //------------------------------------------------------------------------------------------------------
+    // Make sure things don't go crazy
+    
+    tracheaResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    rightBronchiResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    leftBronchiResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    rightAlveoliResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, rightAlveoliResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    leftAlveoliResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, leftAlveoliResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+
     //Set new values
     m_AirwayToCarina->GetNextResistance().SetValue(tracheaResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(rightBronchiResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);

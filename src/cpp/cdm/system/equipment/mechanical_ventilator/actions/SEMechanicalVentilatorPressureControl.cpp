@@ -71,16 +71,26 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
     {
       inspiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
     }
+    else if (HasSlope())
+    {
+      inspiratoryPeriod_s = GetSlope(TimeUnit::s);
+    }
+    else
+    {
+      Fatal("No expiration cycle time defined. The Inspiratory Period and/or the Slope must be set.");
+    }
+
     if (inspiratoryPeriod_s > totalPeriod_s)
     {
       Fatal("Inspiratory Period is longer than the total period applied using Respiration Rate.");
     }
 
-    double inspirationWaveformPeriod_s = 0.0;
+    double inspirationWaveformPeriod_s = inspiratoryPeriod_s;
     if (HasSlope())
     {
       inspirationWaveformPeriod_s = GetSlope(TimeUnit::s);
     }
+
     if (inspirationWaveformPeriod_s > inspiratoryPeriod_s)
     {
         Fatal("Inspiration Waveform Period (i.e., Slope) cannot be longer than the Inspiratory Period.");
@@ -94,6 +104,7 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
     {
         Fatal("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
     }
+    s.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
     s.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
     s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
     s.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
@@ -101,8 +112,6 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
 
     // Optional Values (Transfer data, let the SEMechanicalVentilatorSettings class handle precedence)
-    if(HasInspiratoryPeriod())
-      s.GetExpirationCycleTime().Set(GetInspiratoryPeriod());
 
     s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
     if (GetMode() == eMechanicalVentilator_PressureControlMode::AssistedControl)

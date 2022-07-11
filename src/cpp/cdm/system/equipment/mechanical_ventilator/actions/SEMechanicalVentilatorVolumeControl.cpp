@@ -75,12 +75,17 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
     {
       inspiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
     }
-    if (inspiratoryPeriod_s > totalPeriod_s)
+    else if (HasSlope())
     {
-        Fatal("Inspiratory Period is longer than the total period applied using Respiration Rate.");
+      inspiratoryPeriod_s = GetSlope(TimeUnit::s);
     }
 
-    double inspirationWaveformPeriod_s = 0.0;
+    if (inspiratoryPeriod_s > totalPeriod_s)
+    {
+      Fatal("Inspiratory Period is longer than the total period applied using Respiration Rate.");
+    }
+
+    double inspirationWaveformPeriod_s = inspiratoryPeriod_s;
     if (HasSlope())
     {
       inspirationWaveformPeriod_s = GetSlope(TimeUnit::s);
@@ -92,13 +97,23 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
 
     double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
 
+    s.GetInspirationLimitVolume().Set(GetTidalVolume());
     s.GetInspirationTargetFlow().Set(GetFlow());
-    s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
     s.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+    s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
     s.GetPositiveEndExpiredPressure().Set(GetPositiveEndExpiredPressure());
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
 
     // Optional Values (Transfer data, let the SEMechanicalVentilatorSettings class handle precedence)
+
+    if (inspiratoryPeriod_s > 0.0)
+    {
+      s.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
+    }
+    else
+    {
+      s.GetExpirationCycleVolume().Set(GetTidalVolume());
+    }
 
     s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
     if (GetMode() == eMechanicalVentilator_VolumeControlMode::AssistedControl)
@@ -116,16 +131,6 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
       s.SetInspirationWaveform(GetInspirationWaveform());
     else
       s.SetInspirationWaveform(eDriverWaveform::Square);
-
-    if (HasInspiratoryPeriod())
-    {
-      s.GetInspirationLimitVolume().Set(GetTidalVolume());
-      s.GetExpirationCycleTime().Set(GetInspiratoryPeriod());
-    }
-    else
-    {
-      s.GetExpirationCycleVolume().Set(GetTidalVolume());
-    }
   }
   return true;
 }

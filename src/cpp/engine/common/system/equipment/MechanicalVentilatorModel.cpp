@@ -789,7 +789,7 @@ namespace pulse
       {
         relativePressure_cmH2O -= GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
       }
-      if (relativePressure_cmH2O <= GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O) &&
+      if (relativePressure_cmH2O <= -abs(GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O)) && //Allow it to be set as either positive or negative
         m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
         relativePressure_cmH2O < previousRelativePressure_cmH2O) //Check if it's moving the right direction to prevent premature cycling
       {
@@ -801,7 +801,7 @@ namespace pulse
     if (GetSettings().HasInspirationPatientTriggerFlow())
     {
       triggerDefined = true;
-      if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetSettings().GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s) &&
+      if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= abs(GetSettings().GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s)) && //Allow it to be set as either positive or negative
         m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
         m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) > m_PreviousYPieceToConnectionFlow_L_Per_s) //Check if it's moving the right direction to prevent premature cycling
       {
