@@ -1369,8 +1369,11 @@ namespace pulse
 
     if (HasActiveRespiratoryMechanics())
     {
-      m_PeakInspiratoryPressure_cmH2O = 0.0;
-      m_PeakExpiratoryPressure_cmH2O = 0.0;
+      if (m_RespiratoryMechanics->GetDefaultType() == eDefaultType::Zero)
+      {
+        m_PeakInspiratoryPressure_cmH2O = 0.0;
+        m_PeakExpiratoryPressure_cmH2O = 0.0;
+      }
       if (m_RespiratoryMechanics->HasInspiratoryPeakPressure())
         m_PeakInspiratoryPressure_cmH2O = m_RespiratoryMechanics->GetInspiratoryPeakPressure(PressureUnit::cmH2O);
       if (m_RespiratoryMechanics->HasExpiratoryPeakPressure())
@@ -1508,14 +1511,17 @@ namespace pulse
 
     if (HasActiveRespiratoryMechanics())
     {
-      m_InspiratoryRiseFraction = 0.0;
-      m_InspiratoryHoldFraction = 0.0;
-      m_InspiratoryReleaseFraction = 0.0;
-      m_InspiratoryToExpiratoryPauseFraction = 0.0;
-      m_ExpiratoryRiseFraction = 0.0;
-      m_ExpiratoryHoldFraction = 0.0;
-      m_ExpiratoryReleaseFraction = 0.0;
-      m_ResidueFraction = 0.0;
+      if (m_RespiratoryMechanics->GetDefaultType() == eDefaultType::Zero)
+      {
+        m_InspiratoryRiseFraction = 0.0;
+        m_InspiratoryHoldFraction = 0.0;
+        m_InspiratoryReleaseFraction = 0.0;
+        m_InspiratoryToExpiratoryPauseFraction = 0.0;
+        m_ExpiratoryRiseFraction = 0.0;
+        m_ExpiratoryHoldFraction = 0.0;
+        m_ExpiratoryReleaseFraction = 0.0;
+        m_ResidueFraction = 0.0;
+      }
 
       double totalBreathCycleTime_s = GetBreathCycleTime();
 
@@ -2483,7 +2489,18 @@ namespace pulse
       const SESegmentLinear* linear = dynamic_cast<const SESegmentLinear*>(segment);
       const SESegmentParabolic* parabolic = dynamic_cast<const SESegmentParabolic*>(segment);
 
-      if (segment == nullptr || //default
+      double chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O;
+
+      if (segment == nullptr &&
+        HasActiveRespiratoryMechanics() &&
+        m_RespiratoryMechanics->GetDefaultType() == eDefaultType::Zero)
+      {
+        //Left blank, so set to zero
+        chestWallPath->GetNextCompliance().SetValue(0.0, VolumePerPressureUnit::L_Per_cmH2O);
+        lungPath->GetNextCompliance().SetValue(0.0, VolumePerPressureUnit::L_Per_cmH2O);
+        continue;
+      }
+      else if (segment == nullptr || //default
         sigmoidal != nullptr)
       {
         if (segment != nullptr)
@@ -2554,7 +2571,6 @@ namespace pulse
       //Break up between healthy lung compliance and chest wall compliance
       //Set chest wall compliance only to allow for conditions/actions changing lung compliance
 
-      double chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O;
       //Can't divide by zero
       if (sideCompliance_L_Per_cmH2O != 0.0 && sideCompliance_L_Per_cmH2O != healthyLungCompliance_L_Per_cmH2O)
       {
@@ -2831,11 +2847,14 @@ namespace pulse
     //Resistances in series sum
     if (HasActiveRespiratoryMechanics())
     {
-      tracheaResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
-      rightBronchiResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
-      leftBronchiResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
-      rightAlveoliResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
-      leftAlveoliResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+      if (m_RespiratoryMechanics->GetDefaultType() == eDefaultType::Zero)
+      {
+        tracheaResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+        rightBronchiResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+        leftBronchiResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+        rightAlveoliResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+        leftAlveoliResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+      }
 
       //Should sum to 1.0
       double bronchiResistanceFraction = 0.6;
