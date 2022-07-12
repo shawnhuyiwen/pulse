@@ -121,7 +121,7 @@ void HowToMechanicalVentilator()
 
   cpap.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
   //Other trigger options (choose one):
-  //  cpap.GetInspirationPatientTriggerPressure().SetValue(-0.000001, PressureUnit::cmH2O);
+  //  cpap.GetInspirationPatientTriggerPressure().SetValue(-1.0, PressureUnit::cmH2O);
   //  cpap.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
   
   cpap.GetExpirationCycleFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
@@ -147,7 +147,7 @@ void HowToMechanicalVentilator()
 
   pc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
   //Other trigger options (choose one):
-  //  pc_ac.GetInspirationPatientTriggerPressure().SetValue(-0.000001, PressureUnit::cmH2O);
+  //  pc_ac.GetInspirationPatientTriggerPressure().SetValue(-1.0, PressureUnit::cmH2O);
   //  pc_ac.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
   pe->ProcessAction(pc_ac);
@@ -168,7 +168,7 @@ void HowToMechanicalVentilator()
   vc_ac.GetSlope().SetValue(0.2, TimeUnit::s); //This is optional and would be left out for square waveforms
 
   // Trigger options (choose one):
-  //  vc_ac.GetInspirationPatientTriggerPressure().SetValue(-0.000001, PressureUnit::cmH2O);
+  //  vc_ac.GetInspirationPatientTriggerPressure().SetValue(-1.0, PressureUnit::cmH2O);
   //  vc_ac.GetInspirationPatientTriggerFlow().SetValue(5.0, VolumePerTimeUnit::L_Per_min);
   // If neither are provided, we will use the respiratory model trigger
 
