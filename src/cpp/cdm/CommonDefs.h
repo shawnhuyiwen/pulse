@@ -151,6 +151,9 @@ enum class eBreathState { NoBreath=0,
                           ExpiratoryHold, InspiratoryHold };
 extern const std::string& eBreathState_Name(eBreathState m);
 
+enum class eDefaultType { Model = 0, Zero };
+extern const std::string& eDefaultType_Name(eDefaultType m);
+
 enum class eDriverWaveform { NullDriverWaveform = 0, Square,
                                                   AscendingRamp, DecendingRamp,
                                                   ExponentialGrowth, ExponentialDecay,

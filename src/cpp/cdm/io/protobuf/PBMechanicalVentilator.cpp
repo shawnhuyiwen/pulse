@@ -146,6 +146,7 @@ void PBMechanicalVentilator::Serialize(const CDM_BIND::MechanicalVentilatorSetti
     PBProperty::Load(src.connectionvolume(), dst.GetConnectionVolume());
   if (src.has_compliance())
     PBProperty::Load(src.compliance(), dst.GetCompliance());
+  dst.m_DefaultType = (eDefaultType)src.defaulttype();
   if (src.has_driverdampingparameter())
     PBProperty::Load(src.driverdampingparameter(), dst.GetDriverDampingParameter());
 
@@ -268,6 +269,7 @@ void PBMechanicalVentilator::Serialize(const SEMechanicalVentilatorSettings& src
     dst.set_allocated_connectionvolume(PBProperty::Unload(*src.m_ConnectionVolume));
   if (src.HasCompliance())
     dst.set_allocated_compliance(PBProperty::Unload(*src.m_Compliance));
+  dst.set_defaulttype((CDM_BIND::eDefaultType)src.m_DefaultType);
   if (src.HasDriverDampingParameter())
     dst.set_allocated_driverdampingparameter(PBProperty::Unload(*src.m_DriverDampingParameter));
 

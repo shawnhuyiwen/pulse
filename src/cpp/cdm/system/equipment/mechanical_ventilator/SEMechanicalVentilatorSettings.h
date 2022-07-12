@@ -41,6 +41,9 @@ public:
   virtual SEScalarVolumePerPressure& GetCompliance();
   virtual double GetCompliance(const VolumePerPressureUnit& unit) const;
 
+  virtual eDefaultType GetDefaultType() const;
+  virtual void SetDefaultType(eDefaultType m);
+
   virtual bool HasDriverDampingParameter() const;
   virtual SEScalarFrequency& GetDriverDampingParameter();
   virtual double GetDriverDampingParameter(const FrequencyUnit& unit) const;
@@ -192,6 +195,7 @@ protected:
   eSwitch                                      m_Connection;
   SEScalarVolume*                              m_ConnectionVolume;
   SEScalarVolumePerPressure*                   m_Compliance;
+  eDefaultType                                 m_DefaultType;
   SEScalarFrequency*                           m_DriverDampingParameter;
 
   // Expiratory Baseline Properties (Only set 1)

@@ -11,6 +11,7 @@ namespace Pulse.CDM
     protected eSwitch connection;
     protected SEScalarVolume connection_volume;
     protected SEScalarVolumePerPressure compliance;
+    protected eDefaultType default_type;
     protected SEScalarFrequency driver_damping_parameter;
 
     // Expiratory Baseline (Only set one)
@@ -68,6 +69,7 @@ namespace Pulse.CDM
       connection = eSwitch.NullSwitch;
       connection_volume = null;
       compliance = null;
+      default_type = eDefaultType.Model;
       driver_damping_parameter = null;
 
       functional_residual_capacity = null;
@@ -117,6 +119,7 @@ namespace Pulse.CDM
         connection_volume.Invalidate();
       if (compliance != null)
         compliance.Invalidate();
+      default_type = eDefaultType.Model;
       if (driver_damping_parameter != null)
         driver_damping_parameter.Invalidate();
 
@@ -196,6 +199,7 @@ namespace Pulse.CDM
         this.GetConnectionVolume().Set(from.GetConnectionVolume());
       if (from.HasCompliance())
         this.GetCompliance().Set(from.GetCompliance());
+      default_type = from.default_type;
       if (from.HasDriverDampingParameter())
         this.GetDriverDampingParameter().Set(from.GetDriverDampingParameter());
 
@@ -321,6 +325,16 @@ namespace Pulse.CDM
     {
       return compliance == null ? false : compliance.IsValid();
     }
+
+    public eDefaultType GetDefaultType()
+    {
+      return default_type;
+    }
+    public void SetDefaultType(eDefaultType t)
+    {
+      default_type = t;
+    }
+
     public SEScalarFrequency GetDriverDampingParameter()
     {
       if (driver_damping_parameter == null)
@@ -789,6 +803,7 @@ namespace Pulse.CDM
     {
       string str = "Mechanical Ventilator Settings"
       + "\n\tConnection: " + (HasConnection() ? eEnum.Name(GetConnection()) : "NotProvided")
+      + "\n\tDefaultType: " + eEnum.Name(GetDefaultType())
       + "\n\tPositiveEndExpiredPressure: " + (HasPositiveEndExpiredPressure() ? GetPositiveEndExpiredPressure().ToString() : "Not Provided")
       + "\n\tFunctionalResidualCapacity: " + (HasFunctionalResidualCapacity() ? GetFunctionalResidualCapacity().ToString() : "Not Provided")
       + "\n\tExpirationCycleFlow: " + (HasExpirationCycleFlow() ? GetExpirationCycleFlow().ToString() : "Not Provided")

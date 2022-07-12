@@ -51,6 +51,13 @@ enum eBreathState
   InspiratoryHold          = 8;
 }
 
+/** @brief Enumeration for how to set optional data. */
+enum eDefaultType
+{
+  Model = 0;/**<< @brief Allow the model to set values of any optional properties not provided. */
+  Zero  = 1;/**<< @brief Tell the model to use Zero values of any optional properties not provided. */
+}
+
 /** @brief Enumeration for driver shapes. */
 enum eDriverWaveform
 {

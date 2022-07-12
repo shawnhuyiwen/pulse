@@ -18,6 +18,7 @@ namespace Pulse.CDM
         PBProperty.Load(src.ConnectionVolume, dst.GetConnectionVolume());
       if (src.Compliance != null)
         PBProperty.Load(src.Compliance, dst.GetCompliance());
+      dst.SetDefaultType((eDefaultType)src.DefaultType);
       if (src.DriverDampingParameter != null)
         PBProperty.Load(src.DriverDampingParameter, dst.GetDriverDampingParameter());
 
@@ -115,6 +116,7 @@ namespace Pulse.CDM
         dst.ConnectionVolume = PBProperty.Unload(src.GetConnectionVolume());
       if (src.HasCompliance())
         dst.Compliance = PBProperty.Unload(src.GetCompliance());
+      dst.DefaultType = (pulse.cdm.bind.eDefaultType)(int)src.GetDefaultType();
       if (src.HasDriverDampingParameter())
         dst.DriverDampingParameter = PBProperty.Unload(src.GetDriverDampingParameter());
 

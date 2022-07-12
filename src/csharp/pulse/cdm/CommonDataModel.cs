@@ -60,6 +60,12 @@ namespace Pulse.CDM
     InspiratoryHold
   }
 
+  public enum eDefaultType : int
+  {
+    Model = 0,
+    Zero
+  }
+
   public enum eDriverWaveform : int
   {
     NullDriverWaveform = 0,/** Signals not provided, or no change */
