@@ -21,7 +21,6 @@ SEMechanicalVentilatorSettings::SEMechanicalVentilatorSettings(Logger* logger) :
   m_Connection = eSwitch::NullSwitch;
   m_ConnectionVolume = nullptr;
   m_Compliance = nullptr;
-  m_DefaultType = eDefaultType::Model;
   m_DriverDampingParameter = nullptr;
 
   m_PositiveEndExpiredPressure = nullptr;
@@ -72,7 +71,6 @@ SEMechanicalVentilatorSettings::~SEMechanicalVentilatorSettings()
   m_Connection = eSwitch::NullSwitch;
   SAFE_DELETE(m_ConnectionVolume);
   SAFE_DELETE(m_Compliance);
-  m_DefaultType = eDefaultType::Model;
   SAFE_DELETE(m_DriverDampingParameter);
 
   SAFE_DELETE(m_PositiveEndExpiredPressure);
@@ -131,7 +129,6 @@ void SEMechanicalVentilatorSettings::Clear()
   m_Connection = eSwitch::NullSwitch;
   INVALIDATE_PROPERTY(m_ConnectionVolume);
   INVALIDATE_PROPERTY(m_Compliance);
-  m_DefaultType = eDefaultType::Model;
   INVALIDATE_PROPERTY(m_DriverDampingParameter);
 
   INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
@@ -201,7 +198,6 @@ void SEMechanicalVentilatorSettings::Merge(const SEMechanicalVentilatorSettings&
     SetConnection(from.m_Connection);
   COPY_PROPERTY(ConnectionVolume);
   COPY_PROPERTY(Compliance);
-  m_DefaultType = from.m_DefaultType;
   COPY_PROPERTY(DriverDampingParameter);
 
   // Oneof
@@ -423,15 +419,6 @@ eSwitch SEMechanicalVentilatorSettings::GetConnection() const
 void SEMechanicalVentilatorSettings::SetConnection(eSwitch c)
 {
   m_Connection = c;
-}
-
-void SEMechanicalVentilatorSettings::SetDefaultType(eDefaultType m)
-{
-  m_DefaultType = m;
-}
-eDefaultType SEMechanicalVentilatorSettings::GetDefaultType() const
-{
-  return m_DefaultType;
 }
 
 bool SEMechanicalVentilatorSettings::HasPositiveEndExpiredPressure() const
