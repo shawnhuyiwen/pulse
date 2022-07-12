@@ -56,6 +56,7 @@ namespace pulse
     void CycleMode(bool patientTriggered);
     void SetLeak();
     void SetHold();
+    void SetValves();
     void CalculateRespiratoryParameters();
     void CalculateInspiratoryRespiratoryParameters();
     void CalculatePauseRespiratoryParameters();
@@ -106,6 +107,7 @@ namespace pulse
     SEFluidCircuitPath*  m_ConnectionToReliefValve;
     SEFluidCircuitPath*  m_EnvironmentToReliefValve;
     SEFluidCircuitPath*  m_ConnectionToAirway;
-    double               m_DefaultClosedFlowResistance_cmH2O_s_Per_L;
+    double               m_MachineClosedResistance_cmH2O_s_Per_L;
+    double               m_MachineOpenResistance_cmH2O_s_Per_L;
   };
 END_NAMESPACE

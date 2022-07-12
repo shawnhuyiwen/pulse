@@ -79,7 +79,7 @@ namespace pulse
     m_ConnectionToReliefValve = nullptr;
     m_EnvironmentToReliefValve = nullptr;
     m_ConnectionToAirway = nullptr;
-    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = 0;
+    m_MachineClosedResistance_cmH2O_s_Per_L = 0;
 
     m_MeanAirwayPressure_cmH2O->Clear();
 
@@ -181,7 +181,8 @@ namespace pulse
     m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::CombinedMechanicalVentilatorPath::ConnectionToAirway);
 
     // Configuration
-    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_MachineClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineClosedResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_MachineOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
 
   void MechanicalVentilatorModel::StateChange()
@@ -345,6 +346,7 @@ namespace pulse
     CalculateExpiration();
     SetHold();
     SetLeak();
+    SetValves();
     SetVentilatorDriver();
     SetResistances();
     SetCompliance();
@@ -940,6 +942,21 @@ namespace pulse
 
   //--------------------------------------------------------------------------------------------------
 /// \brief
+/// Close the inspiratory valve during exhale when using a pressure trigger.
+//--------------------------------------------------------------------------------------------------
+  void MechanicalVentilatorModel::SetValves()
+  {
+    if (GetSettings().HasInspirationPatientTriggerPressure() &&
+      (m_BreathState == eBreathState::EquipmentExhale ||
+        m_BreathState == eBreathState::PatientExhale ||
+        m_BreathState == eBreathState::ExpiratoryHold))
+    {
+      m_VentilatorToInspiratoryValve->GetNextResistance().SetValue(m_MachineOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------
+/// \brief
 /// Set the resistance to ground that causes air to leak out of the ventilator-respiratory system.
 //--------------------------------------------------------------------------------------------------
   void MechanicalVentilatorModel::SetHold()
@@ -978,28 +995,28 @@ namespace pulse
     if (GetSettings().HasExpirationTubeResistance())
     {
       double resistance_cmH2O_s_Per_L = GetSettings().GetExpirationTubeResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_MachineClosedResistance_cmH2O_s_Per_L);
       m_VentilatorToExpiratoryValve->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasInspirationTubeResistance())
     {
       double resistance_cmH2O_s_Per_L = GetSettings().GetInspirationTubeResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_MachineClosedResistance_cmH2O_s_Per_L);
       m_VentilatorToInspiratoryValve->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasExpirationValveResistance())
     {
       double resistance_cmH2O_s_Per_L = GetSettings().GetExpirationValveResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_MachineClosedResistance_cmH2O_s_Per_L);
       m_ExpiratoryLimbToYPiece->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasInspirationValveResistance())
     {
       double resistance_cmH2O_s_Per_L = GetSettings().GetInspirationValveResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_MachineClosedResistance_cmH2O_s_Per_L);
       m_InspiratoryLimbToYPiece->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
   }
