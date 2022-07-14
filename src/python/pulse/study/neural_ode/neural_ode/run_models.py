@@ -8,103 +8,93 @@ import neural_ode.models.utils as utils
 from neural_ode.models.recurrent import RecurrentODE, RecurrentCDE
 from neural_ode.models.seq2seq import Seq2Seq
 from neural_ode.models.vae import VAE
-from neural_ode.models.diff_func import ODEFunc, CDEFunc, DiffeqSolver
 import matplotlib
 import matplotlib.pyplot as plt
 
 torch.set_default_tensor_type(torch.DoubleTensor)
-matplotlib.use("Agg")
+# for headless use (write to files, don't show())
+# matplotlib.use("Agg")
 
 from typing import Literal, Optional
-import config as cf
 import ubelt as ub
 import numpy as np
+from dataclasses import asdict
+from simple_parsing import ArgumentParser
+
+import pytorch_lightning as pl
 
 
-def get_model(arch: Literal['Recurrent', 'Seq2Seq',
-                            'VAE'], n_gru_units: int, n_out_units: int,
-              gaussian_likelihood_std: float, x_dims: int, y_dims: int):
-    common = dict(x_dims=x_dims,
-                  y_dims=y_dims,
-                  n_gru_units=n_gru_units,
-                  n_out_units=n_out_units,
-                  gaussian_likelihood_std=gaussian_likelihood_std)
-    diffeq_solver = get_diffeq_solver(x_dims=x_dims, **cf.get())
-    using = cf.get('using', get_diffeq_solver)
-    if arch == "Recurrent":
-        if using == 'ODE_RNN':
-            model = RecurrentODE(diffeq_solver=diffeq_solver, **common)
-        if using == 'CDE':
-            model = RecurrentCDE(diffeq_solver=diffeq_solver, **ub.dict_subset(common, ['x_dims', 'y_dims', 'gaussian_likelihood_std']))
-    elif arch == "Seq2Seq":
-        model = Seq2Seq(enc_diffeq_solver=diffeq_solver,
-                        dec_diffeq_solver=diffeq_solver,
-                        **common)
-    elif arch == "VAE":
-        kwargs = cf.get(None, get_diffeq_solver)
-        kwargs['method'] = 'euler'
-        enc_diffeq_solver = get_diffeq_solver(x_dims=x_dims, h_dims=20, **kwargs)
-        model = VAE(h_prior=Normal(torch.Tensor([0.0]), torch.Tensor([1.])),
-                    enc_diffeq_solver=enc_diffeq_solver,
-                    dec_diffeq_solver=diffeq_solver,
-                    **common)
+def add_model_args_to_parser(parser: ArgumentParser) -> ArgumentParser:
+    from neural_ode.models.diff_func import ODEFuncParams, CDEFuncParams
+    from neural_ode.models.recurrent import RecurrentODEParams, RecurrentCDEParams
+    from neural_ode.models.seq2seq import Seq2SeqParams
+
+    tmp_args, _ = parser.parse_known_args()
+
+    if tmp_args.using == 'ODE':
+        SolverParams = ODEFuncParams
+    elif tmp_args.using == 'CDE':
+        SolverParams = CDEFuncParams
+    else:
+        raise NotImplementedError
+
+    if tmp_args.arch == 'Recurrent':
+        parser.add_arguments(SolverParams, dest='solver')
+        if tmp_args.using == 'ODE':
+            parser.add_arguments(RecurrentODEParams, dest='recurrent')
+        else:
+            parser.add_arguments(RecurrentCDEParams, dest='recurrent')
+    elif tmp_args.arch == 'Seq2Seq':
+        parser.add_arguments(SolverParams, dest='enc_solver')
+        parser.add_arguments(SolverParams, dest='dec_solver')
+        parser.add_arguments(Seq2SeqParams, dest='seq2seq')
+    elif tmp_args.arch == 'VAE':
+        if tmp_args.using == 'ODE':
+            parser.add_arguments(SolverParams(h_dims=20, method='euler'),
+                                 dest='enc_solver')
+        else:
+            parser.add_arguments(SolverParams(h_dims=20), dest='enc_solver')
+        parser.add_arguments(SolverParams, dest='dec_solver')
+        parser.add_arguments(VAEParams, dest='VAE')
+    else:
+        raise NotImplementedError
+
+    return parser
+
+
+def get_model(args, x_dims, y_dims):
+
+    if args.using == 'ODE':
+        de_func = ODEFunc(x_dims=x_dims, **asdict(args.ode))
+    elif args.using == 'CDE':
+        de_func = CDEFunc(x_dims=x_dims, **asdict(args.cde))
+
+    if args.arch == 'Recurrent':
+        if args.using == 'ODE':
+            model = RecurrentODE(x_dims=x_dims,
+                                 y_dims=y_dims,
+                                 **asdict(args.recurrent))
+        elif args.using == 'CDE':
+            model = RecurrentCDE(x_dims=x_dims,
+                                 y_dims=y_dims,
+                                 **asdict(args.recurrent))
+
+    elif args.arch == 'Seq2Seq':
+        model = Seq2Seq(x_dims=x_dims, y_dims=y_dims, **asdict(args.seq2seq))
+
+    elif args.arch == 'VAE':
+        # uses two DEs with different settings
+        pass
+
     else:
         raise NotImplementedError
 
     return model
 
 
-def get_diffeq_solver(using: Literal['ODE_RNN', 'CDE'],
-                      x_dims,
-                      h_dims: Optional[int] = None,
-                      h_trans_layers: int = 1):
-    h_dims = h_dims if h_dims is not None else x_dims * 2
-    if using == "ODE_RNN":
-        return DiffeqSolver(ODEFunc(h_dims, h_trans_layers=h_trans_layers),
-                            **cf.get())
-    elif using == "CDE":
-        return DiffeqSolver(
-            CDEFunc(x_dims,
-                    h_dims,
-                    h_trans_dims=h_dims,
-                    h_trans_layers=h_trans_layers), **cf.get())
-    else:
-        raise NotImplementedError
-
-
-def prepare_to_train(dsetter: utils.ProcessDataset,
-                     load_ckpt: Optional[ub.Path],
-                     lr: float,
-                     progress_train: bool = False):
-    #TRANS: The data set
-    train_dict, val_dict, test_dict, x_dims, y_dims = dsetter.get_data(
-        arch=cf.get('arch', get_model))
-    #TRANS: State is read
-    if load_ckpt:
-        model, optimizer, scheduler, pre_points, experimentID = utils.load_checkpoint(
-            load_ckpt)
-    else:
-        #TRANS: The value of the model, the optimizer, LR changes
-        model = get_model(**cf.get(), x_dims=x_dims, y_dims=y_dims)
-        optimizer = torch.optim.Adamax(model.parameters(), lr=lr)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
-                                                               patience=10)
-        if progress_train:  # TODO: curriculum learning for encoder-decoder
-            pre_points = 10
-        else:
-            pre_points = None
-        experimentID = str(int(SystemRandom().random() * 1000000))
-    return model, optimizer, scheduler, pre_points, experimentID, train_dict, val_dict, test_dict
-
-
 def test_and_plot(model,
                   test_dataloader,
-                  kl_coef,
-                  experimentID,
-                  res_files,
                   fig_saveat,
-                  logger,
-                  epoch,
                   produce_intercoeffs: bool,
                   arch: Literal['Recurrent', 'Seq2Seq', 'VAE'],
                   save_fig_per_test: int = 0,
@@ -113,27 +103,15 @@ def test_and_plot(model,
                   y_pred_color='orange'):
     model.eval()
     with torch.no_grad():
-        #TRANS: Save the best results
-        ode_time = cf.get('ode_time', utils.ProcessDataset)
-        test_res, res_dict = utils.store_best_results(model,
-                                                      test_dataloader,
-                                                      kl_coef,
-                                                      experimentID,
-                                                      res_files,
-                                                      ode_time=ode_time,
-                                                      model_name=cf.get())
         #TRANS: visualization
         if not produce_intercoeffs and fig_saveat is not None:
 
             def to_np(x):
                 return x.detach().cpu().numpy() if x.is_cuda else x.detach(
-                ).numpy()  #TRANS: equipment
+                ).numpy()
 
-            batch_list = next(
-                iter(test_dataloader)
-            )  #TRANS: Draw the largest number of not more than batch_size
-            batch_dict = utils.time_sync_batch_dict(batch_list,
-                                                    ode_time=ode_time)
+            batch = next(iter(test_dataloader))
+            batch_dict = utils.time_sync_batch_dict(batch, ode_time=ode_time)
             if arch == "Recurrent" or arch == "Seq2Seq":
                 y_pred = model(batch_dict["y_time"], batch_dict["x_data"],
                                batch_dict["x_time"], batch_dict["x_mask"])
@@ -143,7 +121,7 @@ def test_and_plot(model,
                 y_pred = info["y_pred_mean"]
             # y_pred shape: [batch_size, time_points, data_dims]
             #TRANS: TODO: one-dimensional, regression, and cannot be used for interpolation
-            for k in range(save_fig_per_test):
+            for k in range(min(save_fig_per_test, len(batch))):
                 plt.clf()
                 plt.plot(to_np(batch_dict["y_time"]),
                          to_np(batch_dict["y_data"][k, :, 0]),
@@ -168,148 +146,217 @@ def test_and_plot(model,
     return output_str
 
 
-def main(test_for_epochs: int,
-         max_epochs: int,
-         kl_coef: float,
-         patience_for_no_better_epochs: int,
-         save_res_for_epochs=np.inf):
-    dsetter = utils.ProcessDataset(**cf.get())
-    (model, optimizer, scheduler, pre_points, experimentID, train_dict,
-     val_dict, test_dict) = prepare_to_train(dsetter, **cf.get())
-    (logger, res_files, train_res_csv, val_res_csv, fig_saveat,
-     ckpt_saveat) = utils.get_logger_and_save(
-         model,
-         experimentID,
-         **cf.get(),
-         save_res_for_epochs=save_res_for_epochs)
-    ode_time = cf.get('ode_time', utils.ProcessDataset)
+class UpdateKLCoef(pl.Callback):
+
+    def __init__(self, kl_first, wait_until_kl=10):
+        self.kl_first = kl_first
+        self.wait_until_kl = wait_until_kl
+        self.kl_coef = 0.
+
+    def on_train_epoch_end(self, trainer: "pl.Trainer",
+                           pl_module: "pl.LightningModule") -> None:
+        epoch = pl_module.current_epoch
+        if epoch < self.wait_until_kl:
+            self.kl_coef = 0.
+        else:
+            self.kl_coef = self.kl_first * (1 - 0.99**(epoch - self.wait_until_kl))
+
+
+def train_one_epoch(model):
+    #TRANS: Prepared using BatchNorm1d (for time series, temporarily don't need)
+    model.train()
+
+    #TRANS: For each batch
+    for train_batch_list in train_dataloader:
+        optimizer.zero_grad()
+        batch_dict = utils.time_sync_batch_dict(train_batch_list,
+                                                ode_time=ode_time)
+        train_res = model.compute_loss_one_batch(batch_dict, kl_coef)
+        #TRANS: Back propagation
+        train_res["loss"].backward()
+
+    #TRANS: Update the superparametric
+    if val_dataloader is None:  #TRANS: Updated using the training set
+        scheduler.step(train_res["loss"].item())
+    else:  #TRANS: Using a validation set to update
+        val_res = utils.compute_loss_all_batches(model,
+                                                 val_dataloader,
+                                                 kl_coef,
+                                                 ode_time=ode_time)
+
+
+parser = ArgumentParser()
+
+# main
+parser.add_argument("--test_for_epochs", type=int, default=1)
+parser.add_argument("--max_epochs", type=int, default=300)
+parser.add_argument("--kl_coef", type=float, default=1)
+parser.add_argument("--patience_for_no_better_epochs", type=int, default=30)
+parser.add_argument("--load_ckpt", default=None, type=Optional[str])
+# parser.add_argument("--lr", type=float, default=1e-2)
+
+import pytorch_forecasting as pf
+pf.models.BaseModel
+pf.models.baseline.Baseline
+# TODO curriculum learning https://arxiv.org/abs/2101.10382
+# train on easy examples before hard examples
+# with missingness, this amounted to removing missingness from 10 more points
+# per batch every epoch 
+# this was done only for enc-dec arch, related to GoogleStock(start_reverse)?
+# https://gitlab.kitware.com/physiology/engine/-/blob/study/ode/src/python/pulse/study/neural_ode/neural_ode/run_models.py#L263
+def trainer_kwargs(kl_coef=1, max_epochs=300, test_for_epochs=1, load_ckpt=None,
+                   patience_for_no_better_epochs=30):
+    kl_getter = UpdateKLCoef(kl_coef)
+    top_va_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
+                                                   save_top_k=1,
+                                                   monitor='va_loss')
+    top_tr_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
+                                                   save_top_k=1,
+                                                   monitor='tr_loss')
+    return dict(max_epochs=max_epochs,
+                check_val_every_n_epoch=test_for_epochs,
+                resume_from_checkpoint=load_ckpt,
+                callbacks=[
+                    pl.callbacks.EarlyStopping(
+                        monitor='tr_mse',
+                        # monitor='va_mse',
+                        mode='min',
+                        patience=patience_for_no_better_epochs),
+                    kl_getter,
+                    top_va_callback,
+                    top_tr_callback,
+                ],
+               gradient_clip_val=0.01,)
+
+
+# model
+parser.add_argument('--arch',
+                    choices=['Recurrent', 'Seq2Seq', 'VAE'],
+                    default='Recurrent')
+parser.add_argument('--using', choices=['ODE', 'CDE'], default='ODE')
+
+
+# https://pytorch-lightning.readthedocs.io/en/stable/common/debugging.html
+def main(args):
+
+    pl.seed_everything(47)
+    dm = args.datamodule
+    model = get_model(x_dims=dm.x_dims, y_dims=dm.y_dims)
+    kl_getter = UpdateKLCoef(args.kl_coef)
+    top_va_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
+                                                   save_top_k=1,
+                                                   monitor='va loss')
+    top_tr_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
+                                                   save_top_k=1,
+                                                   monitor='tr loss')
+    trainer = pl.Trainer(max_epochs=args.max_epochs,
+                         check_val_every_n_epoch=test_for_epochs,
+                         resume_from_checkpoint=args.load_ckpt,
+                         callbacks=[
+                             pl.callbacks.EarlyStopping(
+                                 monitor='va mse',
+                                 mode='min',
+                                 patience=args.patience_for_no_better_epochs),
+                             kl_getter,
+                             top_va_callback,
+                             top_tr_callback,
+                         ])
 
     #TRANS: Start training
     #TRANS: Sampling part of the point, progress_training forecast more gradually
-    train_dataloader = dsetter.masked_dataloader(train_dict,
-                                                 'train',
-                                                 pre_points=pre_points)
-    val_dataloader = dsetter.masked_dataloader(val_dict,
-                                               'val',
-                                               missing_rate=None)
-    test_dataloader = dsetter.masked_dataloader(test_dict,
-                                                'test',
-                                                missing_rate=None)
+    # TODO masking
+    # train_dict, val_dict, test_dict, x_dims, y_dims = dsetter.get_data(
+    # arch=cf.get('arch', get_model))
+    # train_dataloader = dsetter.masked_dataloader(train_dict,
+    # 'train',
+    # pre_points=pre_points)
+    # val_dataloader = dsetter.masked_dataloader(val_dict,
+    # 'val',
+    # missing_rate=None)
+    # test_dataloader = dsetter.masked_dataloader(test_dict,
+    # 'test',
+    # missing_rate=None)
+    if 1:
+        trainer.fit(model, datamodule=dm)
+    else:
+        train_dataloader = dm.train_dataloader()
+        val_dataloader = dm.val_dataloader()
+        test_dataloader = dm.test_dataloader()
 
-    test_for_epochs = max(1, test_for_epochs)
-    pbar = tqdm(total=test_for_epochs)
+        stop_training = False
+        for epoch in range(1, max_epochs + 1):
 
-    #TRANS: Used to hold the best model and decide whether to quit the training
-    best_metric = torch.tensor([torch.inf])
-    best_metric_epoch = 0
-    stop_training = False
+            train_one_epoch(model, kl_coef=kl_getter.kl_coef)
 
-    for epoch in range(1, max_epochs + 1):
-        if stop_training:
-            break
-        model.train(
-        )  #TRANS: Prepared using BatchNorm1d (for time series, temporarily don't need)
-        kl_coef = utils.update_kl_coef(kl_coef, epoch)
-        pbar.set_description("Epoch [%4d / %4d]" % (epoch, max_epochs))
+            #TRANS: The test set
+            if epoch % test_for_epochs == 0 or epoch == max_epochs or stop_training:
+                output_str = test_and_plot(model,
+                                           test_dataloader,
+                                           kl_coef,
+                                           fig_saveat,
+                                           arch=args.arch)
 
-        #TRANS: For each batch
-        for train_batch_list in train_dataloader:
-            optimizer.zero_grad()
-            batch_dict = utils.time_sync_batch_dict(train_batch_list,
-                                                    ode_time=ode_time)
-            train_res = model.compute_loss_one_batch(batch_dict, kl_coef)
-            gc.collect()
-            #TRANS: Back propagation
-            train_res["loss"].backward()
-            optimizer.step()
-            gc.collect()
-            pbar.set_postfix(Loss=train_res["loss"].item(),
-                             MSE=train_res["mse"].item())
 
-        #TRANS: To reach an epoch
-        pbar.update(1)
-        if train_res_csv is not None and epoch % save_res_for_epochs == 0:
-            train_res_csv.write(train_res, epoch)
-        #TRANS: Update the superparametric
-        if val_dataloader is None:  #TRANS: Updated using the training set
-            scheduler.step(train_res["loss"].item())
-            if train_res["mse"] * 1.0001 < best_metric:
-                best_metric = train_res["mse"]
-                best_metric_epoch = epoch
-                #TRANS: checkpoint
-                checkpoint = (model, optimizer, scheduler, pre_points,
-                              experimentID)
-                utils.save_checkpoint(ckpt_saveat,
-                                      checkpoint,
-                                      name="best_for_train")
-        else:  #TRANS: Using a validation set to update
-            val_res = utils.compute_loss_all_batches(model,
-                                                     val_dataloader,
-                                                     kl_coef,
-                                                     ode_time=ode_time)
-            scheduler.step(val_res["loss"].item())
-            if val_res_csv is not None and epoch % save_res_for_epochs == 0:
-                val_res_csv.write(val_res, epoch)
-            if val_res["mse"] * 1.0001 < best_metric:
-                best_metric = val_res["mse"]
-                best_metric_epoch = epoch
-                #TRANS: checkpoint
-                checkpoint = (model, optimizer, scheduler, pre_points,
-                              experimentID)
-                utils.save_checkpoint(ckpt_saveat,
-                                      checkpoint,
-                                      name="best_for_val")
+from pytorch_lightning.utilities.cli import LightningCLI
+class MyLightningCLI(LightningCLI):
 
-        # curriculum learning
-        if pre_points is not None:
-            pre_points += 10
-            train_dataloader = dsetter.masked_dataloader(
-                train_dict, pre_points, "train")
-        #TRANS: Beyond the corresponding epoch, stop training
-        if patience_for_no_better_epochs is not None:
-            if epoch > best_metric_epoch + patience_for_no_better_epochs:
-                pbar.close()
-                tqdm.write(
-                    "No better metrics than %f for %d epochs. Stop training." %
-                    (best_metric.item(), patience_for_no_better_epochs))
-                output_str = test_and_plot(
-                    model,
-                    test_dataloader,
-                    kl_coef,
-                    experimentID,
-                    res_files,
-                    fig_saveat,
-                    logger,
-                    epoch,
-                    **cf.get(),
-                    arch=cf.get('arch',
-                                get_model))  #TRANS: At this time for a test
-                tqdm.write(output_str)
-                stop_training = True
+    # subclass this fn to couple model to dm and delay its instantiation until
+    # after dm is setup.
+    def instantiate_classes(self) -> None:
+        """Instantiates the classes and sets their attributes."""
+        # import xdev; xdev.embed()
+        self.config_init = self.parser.instantiate_classes(self.config)
+        self.datamodule = self._get(self.config_init, "data")
+        self.model = self._get(self.config_init, "model")
+        self._add_configure_optimizers_method_to_model(self.subcommand)
+        self.trainer = self.instantiate_trainer()
 
-        #TRANS: The test set
-        if epoch % test_for_epochs == 0 or epoch == max_epochs:
-            output_str = test_and_plot(model,
-                                       test_dataloader,
-                                       kl_coef,
-                                       experimentID,
-                                       res_files,
-                                       fig_saveat,
-                                       logger,
-                                       epoch,
-                                       **cf.get(),
-                                       arch=cf.get('arch', get_model))
-            pbar.close()
-            if epoch != max_epochs:  #TRANS: Open new progress bar
-                pbar = tqdm(total=test_for_epochs)
-            tqdm.write(output_str)  #TRANS: Show the last test results
 
+    def before_fit(self):
+        pass
+
+    def before_validate(self):
+        pass
+
+    def before_test(self):
+        pass
+
+    def before_predict(self):
+        pass
+
+    def before_tune(self):
+        pass
 
 if __name__ == "__main__":
-    from neural_ode.args import default
-    from neural_ode.run_models import main, get_model, get_diffeq_solver
-    default()
-    # cf.add({get_model: cf.Args(arch='Recurrent')}, overwrite=True)
-    cf.add({get_diffeq_solver: cf.Args(using='CDE')}, overwrite=True)
-    # cf.add({get_diffeq_solver: cf.Args(using='ODE_RNN')}, overwrite=True)
-    main(**cf.get())
+
+    if 1:
+
+        torch.set_default_dtype(torch.float32)
+
+        # cli = MyLightningCLI(model_class=utils.BaseModel,
+        cli = LightningCLI(model_class=utils.BaseModel,
+                           datamodule_class=utils.BaseData,
+                           trainer_defaults=trainer_kwargs(),
+                           seed_everything_default=47,
+                           run=True,
+                           # run=False,
+                           subclass_mode_model=True,
+                           subclass_mode_data=True,
+                           auto_registry=False)
+        # # cli.model.init_from_datamodule(cli.datamodule)
+        # cli.model = cli.model.from_datamodule(cli.datamodule)
+        # # fit == train + validate
+        # cli.trainer.fit(cli.model, datamodule=cli.datamodule)
+    else:
+
+        parser = add_model_args_to_parser(parser)
+
+        # dataset logic
+        tmp_args, _ = parser.parse_known_args()
+        if tmp_args.dset == 'google_stock':
+            parser.add_arguments(utils.GoogleStock, dest='datamodule')
+        elif tmp_args.dset == 'default':
+            parser.add_arguments(utils.ProcessDataset2, dest='datamodule')
+
+        args = parser.parse_args()
+        main(args)

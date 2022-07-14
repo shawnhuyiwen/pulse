@@ -3,9 +3,14 @@ import torch.nn as nn
 from torchcde import CubicSpline, hermite_cubic_coefficients_with_backward_differences
 import neural_ode.models.utils as utils
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
+from neural_ode.models.diff_func import ODEFunc, CDEFunc, ODEFuncParams, CDEFuncParams
+from neural_ode.models.utils import MISSING, BaseModel
 import einops
 import pytorch_forecasting as pf
 import pytorch_lightning as pl
+from dataclasses import dataclass, InitVar, fields, asdict
+from typing import Optional, Union, Literal
+import ubelt as ub
 
 
 class GRU_with_std(nn.Module):
@@ -69,7 +74,7 @@ class ODE_RNN(nn.Module):
     def __init__(self, diffeq_solver, RNN_net):
 
         super(ODE_RNN, self).__init__()
-        self.h_dims = diffeq_solver.diff_func.h_dims
+        self.h_dims = diffeq_solver.h_dims
         self.diffeq_solver = diffeq_solver  # TODO could use CDE?
         self.RNN_net = RNN_net  # a GRU, probably
 
@@ -100,8 +105,7 @@ class ODE_RNN(nn.Module):
 
                 time_points = torch.stack((prev_ti, ti))
                 #TRANS: The linear increment
-                inc = self.diffeq_solver.diff_func(prev_ti,
-                                                   prev_hi) * (ti - prev_ti)
+                inc = self.diffeq_solver(prev_ti, prev_hi) * (ti - prev_ti)
                 hi_ode = prev_hi + inc
 
             else:
@@ -111,7 +115,7 @@ class ODE_RNN(nn.Module):
                                                     n_intermediate_tp)
                 #TRANS: Calculate the ODE, work out corresponding latent value
                 # to (1) finally can
-                hi_ode = self.diffeq_solver(prev_hi, time_points)[:, -1, :]
+                hi_ode = self.diffeq_solver.solve(prev_hi, time_points)[:, -1, :]
 
             #TRANS: Calculate the GRU helped
             hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, x[:, i, :])
@@ -128,89 +132,87 @@ class ODE_RNN(nn.Module):
         else:
             return hi, hi_std
 
-def compute_loss_one_batch(y_pred, batch_dict, gaussian_likelihood_std, kl_coef=1.):
 
-    #TRANS: To calculate indicators, batch_dict "y_mask" if is True, it should enter None
-    likelihood = get_log_likelihood(
-        y_pred, batch_dict["y_data"], gaussian_likelihood_std,
-        None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
-    mse_loss = get_mse(
-        y_pred, batch_dict["y_data"],
-        None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
-    loss = -torch.mean(
-        likelihood
-    )  #TRANS: To maximize the average log_likelihood back propagation
+@dataclass
+class RecurrentODEParams:
+    encoder_out_dims: Union[int, Literal['y']] = 'y'
+    h_dims: Optional[int] = None
+    n_gru_units: int = 100
+    n_out_units: int = 100
+    # gaussian_likelihood_std: float = 0.01
 
-    #TRANS: Take out the corresponding value
-    results = {}
-    results[
-        "loss"] = loss  #TRANS: Can't detach, otherwise can not backward
-    results["likelihood"] = likelihood.detach()
-    results["mse"] = mse_loss.detach()
-    results["kl_coef"] = kl_coef
-    results["C_kl"] = 0.
-    results["C_std"] = 0.
 
-    return results
-
-class RecurrentODE(nn.Module):
+# @pl.utilities.cli.MODEL_REGISTRY
+class RecurrentODE(BaseModel):
 
     def __init__(self,
-                 x_dims,
-                 y_dims,
-                 diffeq_solver,
-                 n_gru_units=100,
-                 n_out_units=100,
-                 RNN_net=None,
-                 gaussian_likelihood_std=0.02):
+                 recurrentodeparams: RecurrentODEParams,
+                 odefuncparams: ODEFuncParams,
+                 RNN_net: Optional[nn.Module] = None,
+                 **kwargs
+                ):
+        super().__init__(**kwargs)
 
-        super(RecurrentODE, self).__init__()
-        self.h_dims = diffeq_solver.diff_func.h_dims
-        self.diffeq_solver = diffeq_solver
-        self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std])
+        vars(self).update(asdict(recurrentodeparams))  # hack?
+        self.odefuncparams = odefuncparams
+        self.RNN_net = RNN_net
 
-        self.using = 'ODE_RNN'
+        # self.save_hyperparameters(ignore=list(kwargs.keys()))
+        # self.save_hyperparameters()
 
-        if RNN_net is None:
-            RNN_net = GRU_with_std(self.h_dims,
-                                   x_dims,
-                                   n_units=n_gru_units)
-        self.ODE_RNN = ODE_RNN(diffeq_solver, RNN_net)
-        self.output_net = utils.create_net(self.h_dims, y_dims,
-                                           n_out_units)
+        if self.x_dims is not MISSING:
+            self.init_xy()
 
-    def compute_loss_one_batch(self, batch_dict, kl_coef=1.):
-        #TRANS: Predict the y series, including the observed and was not observed
-        y_pred = self.forward(batch_dict["y_time"], batch_dict["x_data"],
-                              batch_dict["x_time"], batch_dict["x_mask"])
-        return compute_loss_one_batch(
-            y_pred,
-            batch_dict,
-            gaussian_likelihood_std=self.gaussian_likelihood_std,
-            kl_coef=kl_coef)
+    def init_xy(self):
 
-    def forward(self, y_time, x_data, x_time, x_mask=None):
-        # import xdev; xdev.embed()
+        # self.gaussian_likelihood_std = torch.tensor([self.gaussian_likelihood_std])
+
+        diffeq_solver = ODEFunc(self.x_dims, self.odefuncparams)
+
+        if self.h_dims is None:
+            self.h_dims = diffeq_solver.h_dims
+
+        if self.RNN_net is None:
+            # TODO must h_dims == solver.h_dims?
+            self.RNN_net = GRU_with_std(self.h_dims,
+                                        self.x_dims,
+                                        n_units=self.n_gru_units)
+
+        self.ODE_RNN = ODE_RNN(diffeq_solver, self.RNN_net)
+
+        self.RNN_net = None  # so it doesn't show up in self.parameters()
+
+        # RecurrentODE
+        if self.encoder_out_dims == 'y':
+            self.encoder_out_dims = self.y_dims
+            self.output_net = utils.create_net(self.h_dims, self.y_dims,
+                                               self.n_out_units)
+        # ODE_GRU_Encoder
+        else:
+            self.output_net = utils.create_net(self.h_dims * 2,
+                                               self.encoder_out_dims * 2,
+                                               self.n_out_units)
+
+
+    # RecurrentODE
+    def old_forward(self, y_time, x, x_time):
         #TRANS: Complete sequence prediction
         if len(y_time.shape) < 1:
             y_time = y_time.unsqueeze(0)
         #TRANS: Stitching x_time and y_time
         # TODO replace this with something less funky
+        # TODO enforce min(y_time) > max(x_time) in dm and remove t := tx & ty
         x_len_orig = len(x_time)  # x_time becomes union(x_time, y_time)
         x_time, time_index = torch.unique(torch.cat((x_time, y_time)),
                                           return_inverse=True)
         x_time_idx, y_time_idx = time_index[:x_len_orig], time_index[
             x_len_orig:]
 
-        if x_mask is not None:
-            x = x_data * x_mask  # [batch_size, x_time_points, x_dims]
-        else:
-            x = x_data
         batch_size, x_dims = x.shape[0], x.shape[2]
         #TRANS: To expand the x
         x_merged = torch.zeros((batch_size, len(x_time), x_dims),
-                               dtype=x.dtype,
-                               device=utils.get_device(x))
+                               dtype=x.dtype,)
+                               # device=utils.get_device(x))
         x_merged[:, x_time_idx, :] = x
         hs = self.ODE_RNN(x_merged, x_time, return_latents=True)
         # this is like having t as an extra batch dim for output_net
@@ -219,50 +221,68 @@ class RecurrentODE(nn.Module):
         # y_pred shape [batch_size, y_time_points, y_dims]
         return y_pred.index_select(1, y_time_idx)
 
+    # ODE_GRU_Encoder
+    def run_to_prior(self, x_data, x_time):
+        batch_size = x_data.shape[0]
 
-class RecurrentCDE(nn.Module):
+        if x_time.numel() == 1:
+            prev_hi = torch.zeros((batch_size, self.h_dims))
+            prev_hi_std = torch.zeros((batch_size, self.h_dims))
+            hi_last_mu, hi_last_sigma = self.GRU_update(
+                prev_hi, prev_hi_std, x_data[:, 0, :])
+        else:
+            hi_last_mu, hi_last_sigma = self.run_to_last_point(
+                x_data, x_time, return_latents=False)
 
-    def __init__(self,
-                 x_dims,
-                 y_dims,
-                 diffeq_solver,
-                 gaussian_likelihood_std=0.02):
+        hi_last_mu = hi_last_mu.reshape(1, batch_size, self.h_dims)
+        hi_last_sigma = hi_last_sigma.reshape(1, batch_size, self.h_dims)
+
+        # TRANS: VAE2: through the encoder (x, hi_last_mu, hi_last_sigma) to
+        # produce the corresponding mu and the sigma
+        hi_last_mu, hi_last_sigma = utils.split_last_dim(
+            self.output_net(torch.cat((hi_last_mu, hi_last_sigma), -1)))
+        hi_last_sigma = hi_last_sigma.abs()
+
+        return hi_last_mu, hi_last_sigma
+
+    # ODE_GRU_Encoder
+    # TRANS: VAE1: at the same time to generate the final hi average and
+    # standard deviation of the observation point hi_std
+    def run_to_last_point(self, x_data, x_time, return_latents=False):
+        return self.ODE_RNN(x_data, x_time, return_latents=return_latents)
+
+
+@dataclass
+class RecurrentCDEParams:
+    gaussian_likelihood_std: float = 0.01
+
+
+@dataclass
+class RecurrentCDE(nn.Module, RecurrentCDEParams):
+
+    x_dims: int = MISSING
+    y_dims: int = MISSING
+    diffeq_solver: CDEFunc = MISSING
+
+    def __post_init__(self):
 
         super(RecurrentCDE, self).__init__()
-        self.h_dims = diffeq_solver.diff_func.h_dims
-        self.diffeq_solver = diffeq_solver
+        self.h_dims = diffeq_solver.h_dims
         self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std])
 
         self.using = 'CDE'
 
-        self.x_dims = x_dims
-        self.initial_net = nn.Linear(x_dims, self.h_dims)
+        self.initial_net = nn.Linear(self.x_dims, self.h_dims)
         utils.init_network_weights(self.initial_net)
-        self.output_net = nn.Linear(self.h_dims, y_dims)
+        self.output_net = nn.Linear(self.h_dims, self.y_dims)
         utils.init_network_weights(self.output_net)
 
 
-    def compute_loss_one_batch(self, batch_dict, kl_coef=1.):
-        #TRANS: Predict the y series, including the observed and was not observed
-        y_pred = self.forward(batch_dict["y_time"], batch_dict["x_data"],
-                              batch_dict["x_time"], batch_dict["x_mask"])
-        return compute_loss_one_batch(
-            y_pred,
-            batch_dict,
-            gaussian_likelihood_std=self.gaussian_likelihood_std,
-            kl_coef=kl_coef)
-
-    def forward(self, y_time, x_data, x_time, x_mask=None):
+    def forward(self, y_time, x, x_time):
         # import xdev; xdev.embed()
         #TRANS: Complete sequence prediction
         if len(y_time.shape) < 1:
             y_time = y_time.unsqueeze(0)
-
-        # TODO is this ok for CDE?
-        if x_mask is not None and 0:
-            x = x_data * x_mask  # [batch_size, x_time_points, x_dims]
-        else:
-            x = x_data
 
         # TODO do this in dataloader
         x_time, x_ix = x_time.sort()
@@ -301,7 +321,7 @@ class RecurrentCDE(nn.Module):
                 # interval is (start, end)
                 ts = X.interval
 
-            hs = self.diffeq_solver(h0, ts, x)
+            hs = self.diffeq_solver.solve(h0, ts, x)
 
         else:
             # import xdev; xdev.embed()
@@ -317,7 +337,7 @@ class RecurrentCDE(nn.Module):
 
             X0 = X.evaluate(x_time[-1])
             h0 = self.initial_net(X0)  # TODO should parameterize this by time
-            hs = self.diffeq_solver(h0, torch.cat((x_time_last, y_time)), X)[:, 1:, :]
+            hs = self.diffeq_solver.solve(h0, torch.cat((x_time_last, y_time)), X)[:, 1:, :]
 
         y_pred = self.output_net(hs)
 

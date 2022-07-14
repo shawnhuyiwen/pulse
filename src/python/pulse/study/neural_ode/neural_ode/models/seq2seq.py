@@ -1,61 +1,76 @@
 import torch
 import torch.nn as nn
-from neural_ode.models.encoder_decoder import ODE_GRU_Encoder, ODE_Decoder
+from neural_ode.models.diff_func import ODEFunc, CDEFunc, ODEFuncParams
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
+from neural_ode.models.recurrent import RecurrentODE, RecurrentODEParams
+from neural_ode.models.utils import MISSING, BaseModel
+from dataclasses import dataclass, InitVar
+from typing import Union, Optional
 
 
-class Seq2Seq(nn.Module):
+class ODEDecoder(nn.Module):
+    #TRANS: The ODE as decoder
+    def __init__(self, y_dims, h_dims, n_out_units, dec_diffeq_solver):
+        super(ODEDecoder, self).__init__()
+        if h_dims is None:
+            h_dims = dec_diffeq_solver.h_dims
 
-    # TODO make CDE work her
-    def __init__(self,
-                 x_dims,
-                 y_dims,
-                 n_gru_units=100,
-                 n_out_units=100,
-                 enc_diffeq_solver=None,
-                 dec_diffeq_solver=None,
-                 gaussian_likelihood_std=0.02):
+        self.output_net = utils.create_net(h_dims, y_dims, n_out_units)
+
+        self.dec_diffeq_solver = dec_diffeq_solver
+
+    def forward(self, h0, t_span):
+        ode_sol = self.dec_diffeq_solver(h0, t_span)
+        outputs = self.output_net(ode_sol)
+        return outputs
+
+
+@dataclass
+class Seq2SeqParams:
+    h_dims: int
+    enc_n_gru_units: int = 100
+    enc_n_out_units: int = 100
+    enc_h_dims: Optional[int] = None
+    dec_n_out_units: int = 100
+    dec_h_dims: Optional[int] = None
+    # gaussian_likelihood_std: float = 0.01
+
+
+# TODO tie enc-dec weights? https://stackoverflow.com/q/36889732
+# @pl.utilities.cli.MODEL_REGISTRY
+class Seq2Seq(BaseModel):
+
+    # TODO make CDE work here, replace ode_gru_encoder
+    # ode_rnn:ode_gru_encoder::cde:?
+    def __init__(self, seq2seqparams: Seq2SeqParams,
+                 enc_diffeq_params: ODEFuncParams,
+                 dec_diffeq_params: ODEFuncParams):
 
         super(Seq2Seq, self).__init__()
-        enc_h_dims = enc_diffeq_solver.diff_func.h_dims
-        dec_h_dims = dec_diffeq_solver.diff_func.h_dims
-        self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std])
 
-        self.encoder = ODE_GRU_Encoder(x_dims=x_dims,
-                                       h_dims=enc_h_dims,
-                                       n_gru_units=n_gru_units,
-                                       h_last_dim=dec_h_dims,
-                                       enc_diffeq_solver=enc_diffeq_solver)
+        vars(self).update(asdict(seq2seqparams))  # hack?
+        self.enc_diffeq_params = enc_diffeq_params
+        self.dec_diffeq_params = dec_diffeq_params
 
-        self.decoder = ODE_Decoder(y_dims, dec_h_dims, n_out_units,
-                                   dec_diffeq_solver)
+        self.save_hyperparameters()
 
-    def compute_loss_one_batch(self, batch_dict, kl_coef=1.):
-        #TRANS: Predict the y series, including the observed and was not observed
-        y_pred = self.forward(batch_dict["y_time"], batch_dict["x_data"],
-                              batch_dict["x_time"], batch_dict["x_mask"])
+        if self.x_dims is not MISSING:
+            self.init_xy()
 
-        # TRANS: To calculate indicators, batch_dict "y_mask" if is True, it
-        # should enter None
-        log_likelihood = get_log_likelihood(
-            y_pred, batch_dict["y_data"], self.gaussian_likelihood_std, None
-            if batch_dict["y_mask"].all() else batch_dict["y_mask"]).squeeze()
-        mse = get_mse(
-            y_pred, batch_dict["y_data"],
-            None if batch_dict["y_mask"].all() else batch_dict["y_mask"])
-        loss = -log_likelihood.squeeze(
-        )  #TRANS: - log_likelihood back propagation
+    def init_xy(self):
 
-        #TRANS: Take the average in batch
-        results = {}
-        results["loss"] = loss
-        results["likelihood"] = log_likelihood.detach()
-        results["mse"] = mse.detach()
-        results["kl_coef"] = kl_coef
-        results["C_kl"] = 0.
-        results["C_std"] = 0.
+        # self.gaussian_likelihood_std = torch.tensor([self.gaussian_likelihood_std])
 
-        return results
+        self.encoder = RecurrentODE(
+            RecurrentODEParams(encoder_out_dims=self.h_dims,
+                               h_dims=self.enc_h_dims,
+                               n_gru_units=self.enc_n_gru_units,
+                               n_out_units=self.enc_n_out_units),
+            self.enc_diffeq_params)
+
+        self.decoder = ODEDecoder(self.y_dims, self.dec_h_dims,
+                                  self.dec_n_out_units,
+                                  ODEFunc(self.h_dims, self.dec_diffeq_params))
 
     def forward(self, y_time, x_data, x_time, x_mask=None):
         #TRANS: Complete sequence prediction

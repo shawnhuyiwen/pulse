@@ -1,37 +1,66 @@
 import torch
 import torch.nn as nn
 import neural_ode.models.utils as utils
+from neural_ode.models.utils import MISSING
 
 from torchdiffeq import odeint
 from torchcde import cdeint
 
 import einops
 import ubelt as ub
-import config as cf
+from typing import Optional, Union
+from dataclasses import dataclass, asdict
+
+
+# for argparse compatibility
+Layer = Optional[Union[str, nn.Module]]
+
+def _coerce_layer_type(layer: Layer, default=nn.Identity) -> nn.Module:
+    if layer is None:
+        return default
+    elif isinstance(layer, str):
+        return vars(nn)[layer]()  # HACK
+    elif isinstance(layer, nn.Module):
+        return layer
+    else:
+        raise TypeError(layer)
+
+
+# fixed parameters
+# TODO integrate with pl hparams
+@dataclass
+class ODEFuncParams:
+    # network
+    h_dims: Optional[int] = None
+    h_trans_dims: int = 100
+    h_trans_layers: int = 2
+    nonlinear: Layer = nn.Tanh()  # TODO fix create_net for ()
+    final_nonlinear: Layer = nn.Tanh()
+    # solver
+    odeint_rtol: float = 1e-3
+    odeint_atol: float = 1e-4
+    ode_method: str = 'dopri15'
 
 
 class ODEFunc(nn.Module):
 
-    def __init__(self,
-                 h_dims,
-                 h_trans_dims=100,
-                 h_trans_layers=1,
-                 nonlinear=nn.Tanh,
-                 final_nonlinear=None):
+    def __init__(self, x_dims: int, odefuncparams: ODEFuncParams):
         super(ODEFunc, self).__init__()
-        self.h_dims = h_dims
-        self.h_trans_dims = h_trans_dims
-        self.h_trans_layers = h_trans_layers
 
-        self.ode_func = utils.create_net(input_dims=h_dims,
-                                         output_dims=h_dims,
-                                         n_units=h_trans_dims,
-                                         hidden_layers=h_trans_layers,
-                                         nonlinear=nonlinear)
+        self.x_dims = x_dims
+        vars(self).update(asdict(odefuncparams))  # hack?
 
-        if final_nonlinear is None:
-            final_nonlinear = nn.Identity
-        self.final_nonlinear = final_nonlinear()
+        if self.h_dims is None:
+            self.h_dims = 2 * self.x_dims
+
+        self.nonlinear = _coerce_layer_type(self.nonlinear)
+        self.final_nonlinear = _coerce_layer_type(self.final_nonlinear)
+
+        self.ode_func = utils.create_net(input_dims=self.h_dims,
+                                         output_dims=self.h_dims,
+                                         n_units=self.h_trans_dims,
+                                         hidden_layers=self.h_trans_layers,
+                                         nonlinear=type(self.nonlinear))
 
     def forward(self, t, h, backwards=False):
         hs = self.ode_func(h)
@@ -41,31 +70,53 @@ class ODEFunc(nn.Module):
             hs = -hs
         return hs
 
+    def solve(self, h0, t):
+        hs_pred = odeint(self, h0, t,
+                         rtol=self.odeint_rtol,
+                         atol=self.odeint_atol,
+                         method=self.ode_method)
+        #TRANS: Second time_points corresponding dimensions will be
+        # moved to the bottom
+        hs_pred = einops.rearrange(hs_pred, 't ... c -> ... t c')
+        # hs_pred.shape is ([sample_hs] batch_size time_points h_dims)
+        return hs_pred
+
+import pytorch_lightning as pl
+pl.core.saving.save_hparams_to_yaml
+
+# fixed parameters
+# TODO integrate with pl hparams
+@dataclass
+class CDEFuncParams:
+    # network
+    h_dims: Optional[int] = None
+    h_trans_dims: int = 100
+    h_trans_layers: int = 2
+    nonlinear: Layer = nn.ReLU()  # TODO awk
+    final_nonlinear: Layer = nn.Tanh()
 
 class CDEFunc(nn.Module):
 
-    def __init__(self,
-                 x_dims,
-                 h_dims,
-                 h_trans_dims=100,
-                 h_trans_layers=1,
-                 nonlinear=nn.ReLU,
-                 final_nonlinear=nn.Tanh):
+    def __init__(self, x_dims: int, cdefuncparams: CDEFuncParams):
         super(CDEFunc, self).__init__()
+
         self.x_dims = x_dims
-        self.h_dims = h_dims
-        self.h_trans_dims = h_trans_dims
-        self.h_trans_layers = h_trans_layers
+        vars(self).update(asdict(cdefuncparams))  # hack?
 
-        self.cde_func = utils.create_net(input_dims=h_dims,
-                                         output_dims=(h_dims * x_dims),
-                                         n_units=h_trans_dims,
-                                         hidden_layers=h_trans_layers,
-                                         nonlinear=nonlinear)
+        if self.h_dims is None:
+            self.h_dims = 2 * self.x_dims
 
-        if final_nonlinear is None:
-            final_nonlinear = nn.Identity
-        self.final_nonlinear = final_nonlinear()
+        self.nonlinear = _coerce_layer_type(self.nonlinear)
+        self.final_nonlinear = _coerce_layer_type(self.final_nonlinear)
+
+        self.cde_func = utils.create_net(input_dims=self.h_dims,
+                                         output_dims=(self.h_dims * self.x_dims),
+                                         n_units=self.h_trans_dims,
+                                         hidden_layers=self.h_trans_layers,
+                                         nonlinear=type(self.nonlinear))
+
+        if self.final_nonlinear is None:
+            self.final_nonlinear = nn.Identity()
 
     def forward(self, t, h):
         hs = self.cde_func(h)
@@ -77,54 +128,23 @@ class CDEFunc(nn.Module):
         hs = self.final_nonlinear(hs)
         return hs
 
-
-class DiffeqSolver(nn.Module):
-
-    def __init__(self, diff_func, method, odeint_rtol, odeint_atol):
-        super(DiffeqSolver, self).__init__()
-
-        self.diff_func = diff_func
-        self.odeint_rtol = odeint_rtol
-        self.odeint_atol = odeint_atol
-        self.ode_method = method
-
-    def forward(self, h0, t, X=None):
-        if isinstance(self.diff_func, ODEFunc):
-            hs_pred = odeint(self.diff_func,
-                             h0,
-                             t,
-                             rtol=self.odeint_rtol,
-                             atol=self.odeint_atol,
-                             method=self.ode_method)
-            #TRANS: Second time_points corresponding dimensions will be
-            # moved to the bottom
-            hs_pred = einops.rearrange(hs_pred, 't ... c -> ... t c')
-            # hs_pred.shape is ([sample_hs] batch_size time_points h_dims)
-
-        elif isinstance(self.diff_func, CDEFunc):
-            # kwargs["rtol"] = self.odeint_rtol
-            # kwargs['atol'] = self.odeint_atol
-            # kwargs["method"] = self.ode_method
-            # this overwrites kwargs from ODE
-            steps = (t[1:] - t[:-1])
-            assert len(steps) > 0
-            step_size = steps.min().item()
-            kwargs = {
-                "method": "rk4",
-                "options": {
-                    "step_size": step_size
-                }
+    def solve(self, h0, t, X):
+        # kwargs["rtol"] = self.odeint_rtol
+        # kwargs['atol'] = self.odeint_atol
+        # kwargs["method"] = self.ode_method
+        # this overwrites kwargs from ODE
+        steps = (t[1:] - t[:-1])
+        assert len(steps) > 0
+        step_size = steps.min().item()
+        kwargs = {
+            "method": "rk4",
+            "options": {
+                "step_size": step_size
             }
-            hs_pred = cdeint(X,
-                             self.diff_func,
-                             h0,
-                             t,
-                             adjoint=True,
-                             backend="torchdiffeq",
-                             **kwargs)
-            # hs_pred.shape is ([sample_hs] batch_size time_points h_dims)
-
-        else:
-            raise NotImplementedError
-
+        }
+        hs_pred = cdeint(X, self, h0, t,
+                         adjoint=True,
+                         backend="torchdiffeq",
+                         **kwargs)
+        # hs_pred.shape is ([sample_hs] batch_size time_points h_dims)
         return hs_pred

@@ -4,21 +4,35 @@ import torch.nn as nn
 from torch.distributions import kl_divergence
 from torch.distributions.normal import Normal
 import neural_ode.models.utils as utils
-from neural_ode.models.encoder_decoder import ODE_GRU_Encoder, ODE_Decoder
+# TODO move param classes here to share among seq2seq and vae
+# from neural_ode.models.encoder_decoder import ODE_GRU_Encoder, ODE_Decoder
+from neural_ode.models.diff_func import ODEFunc, CDEFunc
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
+from neural_ode.models.utils import MISSING
+from dataclasses import dataclass
+from typing import Union
 
 
-class VAE(nn.Module):
-    def __init__(self, x_dims, y_dims, h_prior,
-                 n_gru_units=100, n_out_units=100,
-                 enc_diffeq_solver=None, dec_diffeq_solver=None,
-                 gaussian_likelihood_std=0.02):
+@dataclass
+class VAEParams:
+    h_prior: torch.distributions.Distribution = Normal(torch.tensor([0.]), torch.tensor([1.]))
+    n_gru_units: int = 100
+    n_out_units: int = 100
+    gaussian_likelihood_std: float = 0.01
+
+@dataclass
+class VAE(nn.Module, VAEParams):
+    x_dims: int = MISSING
+    y_dims: int = MISSING
+    enc_diffeq_solver: Union[ODEFunc, CDEFunc] = MISSING
+    dec_diffeq_solver: Union[ODEFunc, CDEFunc] = MISSING
+
+    def __post_init__(self):
 
         super(VAE, self).__init__()
-        enc_h_dims = enc_diffeq_solver.diff_func.h_dims
-        dec_h_dims = dec_diffeq_solver.diff_func.h_dims
-        assert enc_diffeq_solver.diff_func.device == dec_diffeq_solver.diff_func.device
-        self.device = enc_diffeq_solver.diff_func.device
+        enc_h_dims = enc_diffeq_solver.h_dims
+        dec_h_dims = dec_diffeq_solver.h_dims
+
         self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std], device=self.device)
         self.h_prior = h_prior
 

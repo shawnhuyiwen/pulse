@@ -13,27 +13,1000 @@ import torch.nn as nn
 import torchcde
 import numpy as np
 import pandas as pd
+import json
+import einops
 import ubelt as ub
-import config as cf
-from dataclasses import dataclass
-from typing import Optional, List, Literal
+from copy import deepcopy
+from dataclasses import dataclass, field
+from typing import Optional, List, Literal, Any, Dict, Tuple
+from simple_parsing import ArgumentParser
+
+import pytorch_lightning as pl
+import pytorch_forecasting as pf
+from pytorch_forecasting.data.timeseries import (TimeSeriesDataSet,
+                                                 GroupNormalizer)
+import torchmetrics
+
+from neural_ode.models.evaluation import get_log_likelihood, get_mse
 
 
-def get_device(tensor):
-    device = torch.device('cpu')
-    if tensor.is_cuda:
-        device = tensor.get_device()
-    return device
+# https://mail.python.org/archives/list/python-dev@python.org/message/JBYXQH3NV3YBF7P2HLHB5CD6V3GVTY55/
+# for dataset-dependent model params, to get around lack of dataclass(kw_only=True)
+class Sentinel:
+
+    def __new__(cls, *args, **kwargs):
+        raise TypeError(f'{cls.__qualname__} cannot be instantiated')
 
 
-def set_seed(seed: int = 47):
-    np.random.seed(seed)
-    # random.seed(seed)
-    torch.manual_seed(seed)
-    # GPU
-    # torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.random.manual_seed(seed)
+class MISSING(Sentinel):
+    pass
+
+
+# TODO death prediction
+# https://pytorch-forecasting.readthedocs.io/en/stable/tutorials/building.html#Classification
+
+
+class BaseModel(pf.BaseModelWithCovariates):
+    '''
+
+    Model with additional methods using covariates.
+
+    Assumes the following hyperparameters:
+
+    Args:
+        static_categoricals (List[str]): names of static categorical variables
+        static_reals (List[str]): names of static continuous variables
+        time_varying_categoricals_encoder (List[str]): names of categorical variables for encoder
+        time_varying_categoricals_decoder (List[str]): names of categorical variables for decoder
+        time_varying_reals_encoder (List[str]): names of continuous variables for encoder
+        time_varying_reals_decoder (List[str]): names of continuous variables for decoder
+        x_reals (List[str]): order of continuous variables in tensor passed to forward function
+        x_categoricals (List[str]): order of categorical variables in tensor passed to forward function
+        embedding_sizes (Dict[str, Tuple[int, int]]): dictionary mapping categorical variables to tuple of integers
+            where the first integer denotes the number of categorical classes and the second the embedding size
+        embedding_labels (Dict[str, List[str]]): dictionary mapping (string) indices to list of categorical labels
+        embedding_paddings (List[str]): names of categorical variables for which label 0 is always mapped to an
+             embedding vector filled with zeros
+        categorical_groups (Dict[str, List[str]]): dictionary of categorical variables that are grouped together and
+            can also take multiple values simultaneously (e.g. holiday during octoberfest). They should be implemented
+            as bag of embeddings
+    '''
+
+    #lr: float = 1e-2
+    @staticmethod
+    # TODO un-hardcode
+    def _coerce_loss(loss, n_targets=11):
+        if isinstance(loss, str):
+            _loss =getattr(pf.metrics, loss)()
+        elif isinstance(loss, (pf.metrics.Metric, pf.metrics.MultiLoss)):
+            _loss = loss
+        else:
+            raise TypeError(loss)
+
+        if n_targets > 1 and not isinstance(_loss, pf.metrics.MultiLoss):
+            _loss = pf.metrics.MultiLoss([_loss] * n_targets)
+
+        return _loss
+
+
+    # def __post_init__(self):
+    def __init__(
+        self,
+        learning_rate=1e-2,
+        # loss=pf.metrics.RMSE(),
+        loss='RMSE',  # coerce later to avoid yaml bug in LightningCLI(run=True)
+        # loss=pf.metrics.SMAPE(),
+        # logging_metrics=[pf.metrics.RMSE()],
+        logging_metrics=['RMSE'],
+        # logging_metrics=torch.nn.ModuleList([pf.metrics.RMSE()]),
+        optimizer='Adamax',  # 'ranger'
+        reduce_on_plateau_patience=10,
+        reduce_on_plateau_reduction=10,
+        reduce_on_plateau_min_lr=1e-6,
+        weight_decay=0.,
+        optimizer_params={},
+        monotone_constaints={},  # sp
+        **kwargs
+    ):
+        loss = self._coerce_loss(loss)
+
+        logging_metrics = [self._coerce_loss(l) for l in logging_metrics]
+        self.save_hyperparameters()
+        self.save_hyperparameters(dict(loss=loss, logging_metrics=logging_metrics), logger=False)
+        super().__init__(loss=loss, logging_metrics=logging_metrics)
+        self.gaussian_likelihood_std = torch.tensor([0.01])
+
+        self.x_dims: int = MISSING
+        self.y_dims: int = MISSING
+        # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
+        self.example_input_array: Any = MISSING
+        self.t_param: str = MISSING
+
+        # need a param with requires_grad=True before configure_optimizers()
+        # TODO ensure params in setup() are added to optimizer and training
+        self.dummy_param = torch.nn.Parameter(torch.ones(1))
+
+        # TODO self.input_embeddings for categorical
+        # # create embedder - can be fed with x["encoder_cat"] or x["decoder_cat"] and will return
+        # # dictionary of category names mapped to embeddings
+        # self.input_embeddings = MultiEmbedding(
+            # embedding_sizes=self.hparams.embedding_sizes,
+            # categorical_groups=self.hparams.categorical_groups,
+            # embedding_paddings=self.hparams.embedding_paddings,
+            # x_categoricals=self.hparams.x_categoricals,
+            # max_embedding_size=self.hparams.hidden_size,
+        # )
+
+
+    def forward(self, x: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
+        '''
+        # x is a batch generated based on the TimeSeriesDataset
+        batch_size = x["encoder_lengths"].size(0)
+        embeddings = self.input_embeddings(x["encoder_cat"])  # returns dictionary with embedding tensors
+        network_input = torch.cat(
+            [x["encoder_cont"]]
+            + [
+                emb
+                for name, emb in embeddings.items()
+                if name in self.encoder_variables or name in self.static_variables
+            ],
+            dim=-1,
+        )
+        prediction = self.network(network_input.view(batch_size, -1))
+
+        # rescale predictions into target space
+        prediction = self.transform_output(prediction, target_scale=x["target_scale"])
+
+        # We need to return a dictionary that at least contains the prediction.
+        # The parameter can be directly forwarded from the input.
+        # The conversion to a named tuple can be directly achieved with the `to_network_output` function.
+        return self.to_network_output(prediction=prediction)
+        '''
+        # TODO x_time and y_time as known covariate (encoder_cont, decoder_cont)
+        import xdev; xdev.embed()
+        x_data = einops.rearrange(x['encoder_cont'], 'f b t -> b t f')
+        assert torch.unique(x['encoder_lengths']).shape == (1, )
+        enc_len = x['encoder_lengths'][0]
+        assert torch.unique(x['decoder_time_idx'][:, 0]).shape == (1, )
+        dec_idx = x['decoder_time_idx'][0, 0]
+        dec_len = min(x['decoder_lengths'])
+        x_time = torch.arange(dec_idx - enc_len, dec_idx)
+        y_time = torch.arange(dec_idx, dec_idx + dec_len)
+
+        y_pred = self.old_forward(y_time, x_data, x_time)
+
+        y_pred = self.transform_output(y_pred, target_scale=x["target_scale"])
+        return self.to_network_output(prediction=y_pred)
+
+    def old_forward(self, y_time, x, x_time):
+        raise NotImplementedError
+
+    def init_xy(self):
+        pass
+
+    @classmethod
+    def from_datamodule(cls, dm, **kwargs):
+        dm.prepare_data()
+        dm.setup(stage='train')
+        # TODO keep track of deduce_default_output_parameters output_size
+        # output_size (Union[int, List[int]], optional): number of outputs
+        # (e.g. number of quantiles for QuantileLoss and one target or list of
+        # output sizes).
+        # [n_features, min(dec_lens)??]
+        self = cls.from_dataset(dm.dset_tr, **kwargs)
+        batch = next(iter(dm.train_dataloader()))
+        self.x_dims = len(self.encoder_variables)  # + len(self.static_variables)
+        self.y_dims = len(self.decoder_variables)
+        self.batch_size = -1
+        self.t_param = dm.t_param
+        self.init_xy()
+        return self
+
+    def setup(self, stage):
+        # TODO parameterize dset_tr and train_dataloader by stage
+        dm = self.trainer.datamodule
+        # import xdev; xdev.embed()
+        self = self.from_dataset(dm.dset_tr, **self.hparams)
+        batch = next(iter(dm.train_dataloader()))
+        self.example_input_array = batch
+        self.x_dims = len(self.encoder_variables)  # + len(self.static_variables)
+        self.y_dims = len(self.decoder_variables) + len(self.target_names)
+        # self.batch_size = len(batch[0]['encoder_lengths'])
+        self.t_param = dm.t_param
+        self.init_xy()
+        super().setup(stage)
+        # import xdev; xdev.embed()
+
+# no dice due to https://github.com/Lightning-AI/lightning/issues/12506
+# datamodule is still ok though
+# @dataclass(eq=False)
+class BaseModelOld(pl.LightningModule):
+
+    # lr: float = 1e-2
+
+    # def __post_init__(self):
+    def __init__(self, lr: float = 1e-2):
+        super().__init__()
+        self.lr = lr
+        self.gaussian_likelihood_std = torch.tensor([0.01])
+
+        self.x_dims: int = MISSING
+        self.y_dims: int = MISSING
+        # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
+        self.example_input_array: Any = MISSING
+
+        # TODO try SMAPE too
+        # self.mse_loss = torchmetrics.MeanSquaredError()
+        # self.val_mse_loss = torchmetrics.MeanSquaredError()
+        # https://becominghuman.ai/pytorch-lightning-tutorial-2-using-torchmetrics-and-lightning-flash-901a979534e2
+        # probably should use pf metrics instead of these
+
+    # TODO add to cli
+    # https://pytorch-lightning.readthedocs.io/en/stable/common/lightning_cli.html#optimizers-and-learning-rate-schedulers
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adamax(self.parameters(), lr=self.lr)
+        # this has no effect if patience_for_no_better_epochs <= 10 (default 30)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
+                                                               patience=10)
+        return {
+            'optimizer': optimizer,
+            'lr_scheduler': scheduler,
+            'monitor': 'tr_mse',
+            # 'monitor': 'va_mse',
+        }
+
+    def forward(self, y_time, x, x_time):
+        raise NotImplementedError
+
+    def compute_loss_one_batch(self, batch, batch_idx):
+        #TRANS: Predict the y series, including the observed and was not observed
+        y_pred = self.forward(batch["y_time"], batch["x_data"],
+                              batch["x_time"])
+
+        # TRANS: To calculate indicators, batch_dict "y_mask" if is True, it should
+        # enter None
+        likelihood = get_log_likelihood(y_pred, batch["y_data"],
+                                        self.gaussian_likelihood_std)
+        mse_loss = get_mse(y_pred, batch["y_data"])
+        # self.mse_loss(y_pred, batch['y_data'])
+        loss = -torch.mean(
+            likelihood
+        )  #TRANS: To maximize the average log_likelihood back propagation
+
+        return loss, mse_loss
+
+    '''
+    def training_step(self, batch, batch_idx):
+        self.log("my_metric", x)
+
+    The log() method has a few options:
+
+        on_step (logs the metric at that step in training)
+
+        on_epoch (automatically accumulates and logs at the end of the epoch)
+
+        prog_bar (logs to the progress bar)
+
+        logger (logs to the logger like Tensorboard)
+
+    Depending on where the log is called from, Lightning auto-determines the correct mode for you. But of course you can override the default behavior by manually setting the flags.
+    '''
+
+    def training_step(self, batch, batch_idx):
+        loss, mse_loss = self.compute_loss_one_batch(batch, batch_idx)
+        # mse_loss = torchmetrics.functional.mean_squared_error(
+        # self.forward(batch[...]),
+        # batch['y_data'])
+        self.log('tr_loss', loss, batch_size=self.batch_size)
+        self.log('tr_mse', mse_loss, batch_size=self.batch_size)
+        # self.log('tr_mse', self.mse_loss, batch_size=self.batch_size)
+        # loss is calculated in a strange way, can't verify that it's
+        # equivalent to log-likelihood, and not needed for seq2seq anyway.
+        # Switch to MSE for now.
+        # return loss
+        return mse_loss
+
+    def validation_step(self, batch, batch_idx):
+        loss, mse_loss = self.compute_loss_one_batch(batch, batch_idx)
+        self.log('va_loss', loss, batch_size=self.batch_size)
+        self.log('va_mse', mse_loss, batch_size=self.batch_size)
+        # return loss
+        return mse_loss
+
+    # By default, the predict_step() method runs the forward() method.
+    # TODO so dm.predict_dataloader should be different from the others
+
+    def init_xy(self):
+        pass
+
+    def init_from_datamodule(self, dm):
+        # def init_from_datamodule(self):
+        # assume this is a pytorch_forecasting.TimeSeriesDataset under the hood
+        # https://pytorch-forecasting.readthedocs.io/en/stable/api/pytorch_forecasting.data.timeseries.TimeSeriesDataSet.html
+        # dm = self.trainer.datamodule
+
+        # When using forward, you are responsible to call eval() and use the
+        # no_grad() context manager.
+
+        # > use prepare_data() to download and process the dataset.
+        #   > Lightning ensures this method is called only within a single process,
+        #   > so you can safely add your downloading logic within.
+        # > use setup() to do splits, and build your model internals
+        #   > set model/dm state here, it's called on every device
+        # lightningmodule also has a setup(), move this there so it's autoinvoked
+
+        # def setup(self, stage: Optional[str] = None):
+        # # stage is either 'fit', 'validate', 'test', or 'predict'. 90% of the
+        # # time not relevant
+        # data = load_data()
+        # num_classes = data.classes
+        # self.l1 = nn.Linear(..., num_classes)
+
+        dm.prepare_data()
+        dm.setup(stage='train')
+        batch = next(iter(dm.train_dataloader()))
+
+        # x, y = batch
+        # self.example_input_array = x
+        # _, _, self.x_dims = x['encoder_target'].shape
+        # _, _, self.y_dims = x['decoder_target'].shape
+        self.example_input_array = (batch['y_time'], batch['x_data'],
+                                    batch['x_time'])
+        _, _, self.x_dims = batch['x_data'].shape
+        _, _, self.y_dims = batch['y_data'].shape
+        # import xdev; xdev.embed()
+
+        # UserWarning: Trying to infer the `batch_size` from an ambiguous
+        # collection. The batch size we found is 2. To avoid any
+        # miscalculations, use `self.log(..., batch_size=batch_size)`.
+        self.batch_size = dm.batch_size
+
+        self.init_xy()
+
+
+class DummyModel(BaseModel):
+
+    def init_xy(self):
+        self.net = create_net(self.x_dims, self.y_dims,
+                              nonlinear=nn.ReLU).float()
+
+    def forward(self, y_time, x, x_time):
+        # import xdev; xdev.embed()
+        y0 = self.net(x[:, -1, :])
+        y = einops.repeat(y0, 'b f -> b t f', t=len(y_time))
+        return y
+
+
+class BaseData(pl.LightningDataModule):
+    pass
+
+
+def wrap_pf_dataloader(dl):
+    '''
+    Turn pytorch_forecasting's convoluted dataloader output into something more
+    reasonable by overloading its collate_fn.
+    '''
+
+    # default_collate for comparison; TODO worker handling
+
+    # elem = batch[0]
+    # elem_type = type(elem)
+    # if isinstance(elem, torch.Tensor):
+    # out = None
+    # if torch.utils.data.get_worker_info() is not None:
+    # # If we're in a background process, concatenate directly into a
+    # # shared memory tensor to avoid an extra copy
+    # numel = sum(x.numel() for x in batch)
+    # storage = elem.storage()._new_shared(numel, device=elem.device)
+    # out = elem.new(storage).resize_(len(batch), *list(elem.size()))
+    # return torch.stack(batch, 0, out=out)
+    # # etc...
+
+    def _wrap_collate(x, y):
+
+        x_data = einops.rearrange(x['encoder_target'], 'f b t -> b t f')
+        y_data = einops.rearrange(x['decoder_target'], 'f b t -> b t f')
+
+        assert torch.unique(x['encoder_lengths']).shape == (1, )
+        enc_len = x['encoder_lengths'][0]
+        assert torch.unique(x['decoder_time_idx'][:, 0]).shape == (1, )
+        dec_idx = x['decoder_time_idx'][0, 0]
+        dec_len = min(x['decoder_lengths'])
+        y_data = y_data[:, :dec_len, :]
+
+        # 'decoder_lengths': tensor([10,  7]),
+        # 'decoder_time_idx': tensor([[ 6,  7,  8,  9, 10, 11, 12, 13, 14, 15],
+        # [ 6,  7,  8,  9, 10, 11, 12, 13, 14, 15]]),
+        # These are irregular. Should they be truncated to the shortest in the
+        # batch or is padding with zeros ok?
+        # Now I see why orig codebase had a custom sampler to try and pick
+        # batch entries with similar durations...
+        # Going to truncate for now and try to learn static time_remaining
+        # separately. TODO survival...
+
+        # these are regular ints from pf, though nets could take irregular floats
+        x_time = torch.arange(dec_idx - enc_len, dec_idx)
+        y_time = torch.arange(dec_idx, dec_idx + dec_len)
+
+        # (enc|dec)oder_target
+        # float tensor with unscaled continous target or encoded
+        # categorical target,
+        # target_scale
+        # (batch_size x scale_size or list thereof with each entry for a
+        # different target):
+        # scale_size == 2 regardless of enc/dec len, why? one for enc & dec?
+        # docs say center & scale
+
+        # normalize data
+        # TODO check if this is correct and if BaseModel does it
+        # TODO softplus?
+        center, scale = einops.rearrange(x['target_scale'],
+                                         'f b cs -> cs b 1 f',
+                                         cs=2)
+        x_data = (x_data - center) / scale
+        y_data = (y_data - center) / scale
+
+        return {
+            'x_data': x_data,
+            'y_data': y_data,
+            'x_time': x_time,
+            'y_time': y_time,
+        }
+
+    orig_collate = deepcopy(dl.collate_fn)
+
+    def _collate(*args, **kwargs):
+        return _wrap_collate(*orig_collate(*args, **kwargs))
+
+    dl.collate_fn = _collate
+
+    return dl
+
+
+@dataclass
+class HemorrhageVitals(BaseData):
+
+    use_cache: bool = True
+
+    # dataloader
+    batch_size: int = 2  #200
+    missing_rate: Optional[float] = None  # 0.7
+
+    # common
+    root_path: str = '/data/pulse/hemorrhage/hemorrhage'
+    x_time_minutes: int = 20
+    total_time_minutes_max: int = 120
+
+    # split_train_val_test
+    continue_params: List[str] = field(default_factory=lambda: [
+        'HeartRate(1/min)', 'BloodVolume(mL)', 'CardiacOutput(mL/min)',
+        'RespirationRate(1/min)', 'OxygenSaturation',
+        'MeanArterialPressure(mmHg)', 'SystolicArterialPressure(mmHg)',
+        'DiastolicArterialPressure(mmHg)', 'HemoglobinContent(g)',
+        'TotalHemorrhageRate(mL/s)', 'TotalHemorrhagedVolume(mL)'
+    ])
+    # another meaningful difference from google stock: t_param is
+    # per-timeseries (per group/pt), so don't have to avoid peeking ahead for val
+    t_param: str = 'Time(s)'  # assume seconds
+
+    # cut_and_split_data
+    stride: int = 1
+    train_fraq: float = 0.7
+    val_fraq: Optional[float] = 0.15
+    n_start: int = 0
+    max_pts: Optional[int] = None
+
+    # TRANS: Two kinds of architecture, using AutoEncoder need a small amount
+    # of x reverse solving until t0
+    # if arch in { 'Seq2Seq', 'VAE' }
+    start_reverse: bool = False
+
+    static_behavior: Literal['ignore', 'propagate', 'augment'] = 'ignore'
+    use_pf_format: bool = True
+    time_augmentation: bool = False
+    num_workers: int = 4
+
+    def __post_init__(self):
+        super().__init__()
+
+    def _cache_dir(self):
+        if not self.hparams:
+            self.save_hyperparameters()
+        hparam_str = ub.hash_data(dict(self.hparams))
+        return (ub.Path(self.root_path) / 'cache' / hparam_str)
+
+    def prepare_data(self):
+        cache_dir = self._cache_dir()
+        if not cache_dir.exists():
+
+            df, (dset_tr, dset_va, dset_te) = self._build_dsets()
+
+            # save
+            cache_dir.ensuredir()
+            with open(cache_dir / 'hparams.json', 'w') as f:
+                json.dump(self.hparams, f)
+            dset_tr.save(cache_dir / 'dset_tr.pt')
+            dset_va.save(cache_dir / 'dset_va.pt')
+            dset_te.save(cache_dir / 'dset_te.pt')
+            df.to_pickle(cache_dir / 'df.pkl')
+
+    def setup(self, stage: Optional[str] = None):
+        cache_dir = self._cache_dir()
+        assert cache_dir.exists()
+
+        # load
+        dset_tr = pf.TimeSeriesDataSet.load(cache_dir / f'dset_tr.pt')
+        dset_va = pf.TimeSeriesDataSet.load(cache_dir / f'dset_va.pt')
+        dset_te = pf.TimeSeriesDataSet.load(cache_dir / f'dset_te.pt')
+
+        if stage == 'predict':
+            self.dset_pr = pf.TimeSeriesDataSet.from_dataset(
+                dset_te,
+                # stop_randomization=True,
+                # predict=True,
+            )
+        else:
+            self.dset_tr = dset_tr
+            self.dset_va = dset_va
+            self.dset_te = dset_te
+
+    def _build_dsets(
+        self
+    ) -> Tuple[pd.DataFrame, Tuple[pf.TimeSeriesDataSet, pf.TimeSeriesDataSet,
+                                   pf.TimeSeriesDataSet]]:
+        # does not assign to self.
+
+        #
+        # get patient entries
+        #
+
+        # TODO use patient_results.json manifest for id and init params
+        csvs = sorted(ub.Path(self.root_path).glob('**/HemorrhageResults.csv'))
+        if self.max_pts is not None:
+            csvs = np.random.choice(csvs, (self.max_pts, ), replace=False)
+        # multithread this
+        print('loading patients...')
+        exc = ub.Executor('thread', max_workers=32)
+
+        def _job(csv):
+            _id = json.load(csv.with_name('patient.json').open())['Name']
+            _df = pd.read_csv(csv).assign(id=_id)[self.n_start::self.stride]
+            return _df
+
+        jobs = [exc.submit(_job, csv) for csv in csvs]
+        dfs = [j.result() for j in jobs]
+        df = pd.concat(dfs, ignore_index=True)
+        print(f'found {len(dfs)} patients with {len(df)} timesteps')
+
+        if self.static_behavior != 'ignore':
+            raise NotImplementedError
+
+        #
+        # narrow down to long enough ones
+        #
+
+        # TODO variable x_time, survival analysis approach (right-censoring)
+        # TODO see if pf can do this filtering https://stackoverflow.com/a/71874176
+        df = df.groupby('id').filter(lambda x: (x[self.t_param].max() - x[
+            self.t_param].min()) / 60 > self.x_time_minutes)
+        n_pts = len(df.groupby('id'))
+        print(
+            f'filtered to tmax > {self.x_time_minutes}; {n_pts} patients remaining'
+        )
+
+        # TODO if not builtin to pf, use
+        # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html
+        # for static_unknown (end time w/o survival analysis)
+
+        # TRANS: The autoregressive prediction, Autoencoder reverse
+        # solution to h0 first, then forward solution to the last point
+        if self.start_reverse:
+            raise NotImplementedError
+
+        #
+        # handle sampling
+        #
+
+        # TODO add ASSUMED_FREQ_S as a static feature to enable training across
+        # resolutions, or return it from the DL and fudge it some other way
+        # don't know why dropna() is necessary here...
+        periods = df.groupby(
+            ['id'])[self.t_param].diff()[1:-1].dropna().round(6).unique()
+        assert len(periods) == 1, periods
+        ASSUMED_FREQ_S = periods[0]  # 0.05s
+        x_points = int(60 * self.x_time_minutes / ASSUMED_FREQ_S)
+        y_points = int(60 *
+                       (self.total_time_minutes_max - self.x_time_minutes) /
+                       ASSUMED_FREQ_S)
+        print(f'{x_points} in timesteps, [1, {y_points}] out timesteps')
+        # make t_param integer
+        df[self.t_param] = (df[self.t_param] / ASSUMED_FREQ_S).astype(int)
+        # make continue_params float
+        df[self.continue_params] = df[self.continue_params].astype(float)
+
+        #
+        # train-test split
+        #
+
+        uids = df['id'].unique()
+        idx = np.random.randn(len(uids))
+        tr_idx = idx < self.train_fraq
+        if self.val_fraq:
+            va_idx = ((self.train_fraq <= idx) &
+                      (idx < (self.train_fraq + self.val_fraq)))
+            te_idx = idx >= (self.train_fraq + self.val_fraq)
+        else:
+            va_idx = idx >= self.train_fraq
+            te_idx = va_idx
+        # ensure each contains at least a full batch
+        assert sum(tr_idx) >= self.batch_size
+        if not sum(va_idx) >= self.batch_size:
+            entries = np.where(tr_idx)[0][:(self.batch_size - sum(va_idx))]
+            tr_idx[entries] = False
+            va_idx[entries] = True
+        if not sum(te_idx) >= self.batch_size:
+            entries = np.where(tr_idx)[0][:(self.batch_size - sum(te_idx))]
+            tr_idx[entries] = False
+            te_idx[entries] = True
+
+        df_tr = df[df['id'].isin(uids[tr_idx])]
+        df_va = df[df['id'].isin(uids[va_idx])]
+        df_te = df[df['id'].isin(uids[te_idx])]
+        print('train, val, test timesteps: ', df_tr.shape, df_va.shape,
+              df_te.shape)
+
+        #
+        # build datasets
+        #
+
+        # TODO add lag if it's not already here - is onset or measurement t=0?
+
+        # change this to GroupNormalizer (on encoder values only?) when
+        # adding sliding-time-window data augmentation ie multiple
+        # samples per group
+        # what does: (on which overfitting tests will fail) mean?
+
+        # have to fit normalizers outside of dset
+        # https://github.com/jdb78/pytorch-forecasting/issues/605
+        # categorical_encoders={
+                # 'product_id': NaNLabelEncoder().fit(df.product_id),
+                # 'shop_id': NaNLabelEncoder().fit(df.shop_id),
+                # 'product_type': NaNLabelEncoder().fit(df.product_type)
+            # },
+
+        target_normalizer = pf.MultiNormalizer(
+            [pf.EncoderNormalizer(transformation='softmax')] *
+            len(self.continue_params))
+        kwargs = dict(
+            time_idx=self.t_param,
+            # mutitarget returns a list because the targets may have different dtypes. How to get around this besides fixing in dataloader? Multiindex? pd.Series of vectors?
+            target=self.continue_params,
+            group_ids=['id'],
+            min_encoder_length=x_points,
+            min_prediction_length=1,
+            max_prediction_length=
+            y_points,  # does this have to be masked or truncated?
+            # this is duped w/ different normalizer between target and cont
+            # worth doing because target doesn't come normalized in dataloader
+            time_varying_unknown_reals=self.continue_params,
+            time_varying_known_reals=[],
+            time_varying_unknown_categoricals=[],
+            time_varying_known_categoricals=[],
+            static_categoricals=[],
+            static_reals=[],
+            add_relative_time_idx=False,
+            # this means add to static features; already an entry in x
+            # add_target_scales=True,  # TODO figure out how to add static feats
+            add_target_scales=False,
+            add_encoder_length=False,
+        )
+        if not self.time_augmentation:
+            kwargs.update(
+                max_encoder_length=x_points,  # increase w/ min_prediction_idx
+                # how to predict_mode but only 1st sample instead of last?
+                # should be ok as is because max_prediction_length is greedy
+                # turn this off for sliding-time-window
+                predict_mode=True,
+                # turn this off for sliding-time-window?
+                min_prediction_idx=x_points,
+                # target_normalizer=target_normalizer,
+                target_normalizer='auto',
+                # if not randomized, this happens; dec_len = minimax over batch samples
+                # decoder_length = self.calculate_decoder_length(time[-1], sequence_length)
+                # encoder_length = sequence_length - decoder_length
+                # turn this on for sliding-time-window
+                randomize_length=False,
+            )
+        else:
+            raise NotImplementedError
+
+        dset_tr = TimeSeriesDataSet(df_tr, **kwargs)
+        dset_va = TimeSeriesDataSet(
+            df_va,
+            **kwargs,
+        )
+        # predict=True,
+        # stop_randomization=True)
+        dset_te = TimeSeriesDataSet(
+            df_te,
+            **kwargs,
+        )
+        # predict=True,
+        # stop_randomization=True)
+
+        # this would be the approach if there were new entries from the
+        # existing groups (patients) at val/test time. But since group id is
+        # used for normalization, can't extend existing dset to new groups
+        # without treating them as NaN.
+        # Instead, create va/te independently.
+
+        # dset_va = TimeSeriesDataSet.from_dataset(
+        # dset_tr,
+        # data=df_va,
+        # predict=True,
+        # stop_randomization=True)
+
+        # dset_te = TimeSeriesDataSet.from_dataset(
+        # dset_tr,
+        # data=df_te,
+        # predict=True,
+        # stop_randomization=True)
+
+        # TODO missingness
+
+        # TODO y_delay (per batch), y_dim_list (?)
+
+        return df, (dset_tr, dset_va, dset_te)
+
+    def train_dataloader(self):
+        # can remove batch_sampler='synchronized' with irregular/masking support
+        # (and should write a custom sampler - "TimeBounded"? - to ensure there
+        # is some temporal overlap between batch entries)
+        # (and that lengths are similar so that not too much is cut off)
+        dl = self.dset_tr.to_dataloader(train=True,
+                                        batch_size=self.batch_size,
+                                        batch_sampler='synchronized',
+                                        num_workers=self.num_workers)
+        if self.use_pf_format:
+            return dl
+        else:
+            return wrap_pf_dataloader(dl)
+
+    def val_dataloader(self):
+        dl = self.dset_va.to_dataloader(train=False,
+                                        batch_size=self.batch_size * 10,
+                                        batch_sampler='synchronized',
+                                        num_workers=self.num_workers)
+        if self.use_pf_format:
+            return dl
+        else:
+            return wrap_pf_dataloader(dl)
+
+    def test_dataloader(self):
+        dl = self.dset_te.to_dataloader(train=False,
+                                        batch_size=self.batch_size * 10,
+                                        batch_sampler='synchronized',
+                                        num_workers=self.num_workers)
+        if self.use_pf_format:
+            return dl
+        else:
+            return wrap_pf_dataloader(dl)
+
+
+    def predict_dataloader(self):
+
+        def wrap_predict_dl(dl):
+
+            def _wrap_collate(x, y):
+                return x
+
+            orig_collate = deepcopy(dl.collate_fn)
+
+            def _collate(*args, **kwargs):
+                return _wrap_collate(*orig_collate(*args, **kwargs))
+
+            dl.collate_fn = _collate
+
+            return dl
+
+        dl = self.dset_te.to_dataloader(train=False,
+                                        batch_size=self.batch_size * 10,
+                                        batch_sampler='synchronized',
+                                        num_workers=self.num_workers)
+        if self.use_pf_format:
+            return wrap_predict_dataloader(dl)
+        else:
+            return wrap_pf_dataloader(dl)
+
+
+@dataclass
+class GoogleStock(BaseData):
+    '''
+    pytorch-forecasting version.
+    '''
+
+    # dataloader
+    batch_size: int = 2  #200
+    missing_rate: Optional[float] = 0.7
+
+    # common
+    csv_path: str = 'data/google_stock/data.csv'
+    x_y_points: Optional[int] = 4  #25
+    x_points: Optional[int] = 3  #24
+
+    # split_train_val_test
+    continue_params: List[str] = field(
+        default_factory=lambda:
+        ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
+    parse_dates: List[str] = field(default_factory=lambda: ['Date'])
+    t_param: Optional[str] = 'Date'
+
+    # cut_and_split_data
+    csv_rel_fpath: Optional[str] = 'data.csv'
+    stride: int = 1
+    train_fraq: float = 0.7
+    val_fraq: Optional[float] = 0.15
+    shuffle: bool = True
+    n_start: int = 0
+
+    # TRANS: Two kinds of architecture, using AutoEncoder need a small amount
+    # of x reverse solving until t0
+    # if arch in { 'Seq2Seq', 'VAE' }
+    start_reverse: bool = False
+
+    def __post_init__(self):
+        self.csv_path = ub.Path(self.csv_path)
+
+    # ENTRYPOINT
+    def setup(self, stage: Optional[str] = None):
+
+        # TRANS: Replace the missing value:
+        # https://blog.csdn.net/qq_18351157/article/details/104993254,
+        # here to get rid of the missing value corresponding to the point
+        df = pd.read_csv(self.csv_path, header=0).dropna(how='any')
+
+        # TRANS: Converts time variable to a floating point number
+        if self.parse_dates:
+
+            pd_timestamp = df[self.parse_dates].apply(
+                lambda x: pd.to_datetime(x, infer_datetime_format=True))
+            pd_timestamp = ((pd_timestamp - pd_timestamp.iloc[0]) //
+                            pd.Timedelta(1, 'd')).fillna(0).astype(int)
+            df[self.parse_dates] = pd_timestamp
+
+        #TRANS: Add the time sequence x
+        # for col in self.parse_dates:
+        # df[col + '2'] = df[col]
+        # time_varying_unknown_reals.append(col + '2')
+
+        #TRANS: TODO: data processing tag, add it to the scalar?
+        # https://blog.csdn.net/qq_32863549/article/details/106972347
+        # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html?highlight=labelencoder#sklearn.preprocessing.LabelEncoder
+        # TODO label_dict?
+        # if self.discrete_params is not None:  #TRANS: To deal with tags inside the CSV data, such as wind, finally to merge into the tensor_data, in addition to save a label map?
+        # pd_discrete_data = origin_pd_data[self.discrete_params]
+
+        if self.x_y_points is None:
+            self.x_y_points = len(df) // 100
+        # df['group'] = np.repeat(range(np.ceil(len(df) / x_y_points)), x_y_points)
+        df['group'] = 1
+
+        df = df[self.n_start::self.stride]
+
+        # we don't want to impute missing timesteps, so ignore pf's time_idx
+        # support and just pretend it's a feature
+        df['time_idx'] = df.index
+
+        # TRANS: The autoregressive prediction, Autoencoder reverse
+        # solution to h0 first, then forward solution to the last point
+        if self.start_reverse:
+            raise NotImplementedError
+            #TRANS: The linear small
+            # x_data_until = split_dict['x_data'][:, :1, :] - 1 / 10 * (
+            # split_dict['x_data'][:, 1:2, :] -
+            # split_dict['x_data'][:, :1, :])
+            # x_time_until = split_dict['x_time'][:, :1, :] - 1 / 10 * (
+            # split_dict['x_time'][:, 1:2, :] -
+            # split_dict['x_time'][:, :1, :])
+            # split_dict['x_data'] = torch.cat(
+            # (split_dict['x_data'].flip(dims=[1]), x_data_until), dim=1)
+            # split_dict['x_time'] = torch.cat(
+            # (split_dict['x_time'].flip(dims=[1]), x_time_until), dim=1)
+
+        # unused
+        # train_point = int(len(df) * self.train_fraq)
+        # val_point = int(len(df) * (self.val_fraq + self.train_fraq))
+
+        tr_cutoff = int((df[self.t_param].max() - df[self.t_param].min()) *
+                        self.train_fraq)
+        va_cutoff = int((df[self.t_param].max() - df[self.t_param].min()) *
+                        (self.train_fraq + self.val_fraq))
+        df_tr = df[lambda x: x[self.t_param] <= tr_cutoff]
+        df_va = df[lambda x: x[self.t_param] <= va_cutoff]
+
+        if self.x_points is not None:
+            x_points = min(self.x_points, self.x_y_points - 1)
+            x_points_tr, x_points_va, x_points_te = [x_points] * 3
+        else:
+            # TRANS: Regression: 1/2 relationship of default in accordance
+            # with the observation point (input) and the observation point
+            # (output)
+            x_points_tr = len(df_tr) // 2
+            x_points_va = len(df_va) // 2
+            x_points_te = len(df) // 2
+
+        y_points = self.x_y_points - x_points
+
+        self.dset_tr = TimeSeriesDataSet(
+            df_tr,
+            # time_idx=self.t_param,
+            time_idx='time_idx',
+            target=self.continue_params,
+            group_ids=['group'],
+            min_encoder_length=x_points_tr,
+            max_encoder_length=x_points_tr,
+            min_prediction_length=y_points,
+            max_prediction_length=y_points,
+            time_varying_unknown_reals=self.continue_params,
+            time_varying_known_reals=self.parse_dates,
+            time_varying_unknown_categoricals=[],
+            time_varying_known_categoricals=[],
+            static_categoricals=[],
+            static_reals=[],
+            add_relative_time_idx=True,
+            # add_target_scales=True,  # TODO figure out how to add static feats
+            add_target_scales=False,
+            add_encoder_length=False,
+            target_normalizer=pf.data.MultiNormalizer(
+                [pf.data.EncoderNormalizer(transformation=None)] *
+                len(self.continue_params)))
+
+        self.dset_va = TimeSeriesDataSet.from_dataset(
+            self.dset_tr,
+            data=df_va,
+            predict=True,
+            stop_randomization=True,
+            min_encoder_length=x_points_va,
+            max_encoder_length=x_points_va)
+
+        self.dset_te = TimeSeriesDataSet.from_dataset(
+            self.dset_tr,
+            data=df,
+            predict=True,
+            stop_randomization=True,
+            min_encoder_length=x_points_te,
+            max_encoder_length=x_points_te)
+
+        # TODO missingness
+
+        # TODO y_delay (per batch), y_dim_list (?)
+
+    def train_dataloader(self):
+        return self.dset_tr.to_dataloader(
+            train=True,
+            batch_size=self.batch_size,
+            # batch_sampler='synchronized',
+            num_workers=4)
+
+    def val_dataloader(self):
+        return self.dset_va.to_dataloader(
+            train=False,
+            batch_size=self.batch_size * 10,
+            # batch_sampler='synchronized',
+            num_workers=4)
+
+    def test_dataloader(self):
+        return self.dset_te.to_dataloader(
+            train=False,
+            batch_size=self.batch_size * 10,
+            # batch_sampler='synchronized',
+            num_workers=4)
+
+    def predict_dataloader(self):
+        return self.dset_te.to_dataloader(train=False,
+                                          batch_size=self.batch_size * 10,
+                                          batch_sampler='synchronized',
+                                          num_workers=4)
 
 
 @dataclass
@@ -543,41 +1516,51 @@ def linspace_vector(start, end, n_points, device=torch.device('cpu')):
     raise NotImplementedError
 
 
-def time_sync_batch_dict(batch_list, ode_time=None):
+def time_sync_batch_dict(batch_list, ode_time=None, from_pf_format=False):
     batch_dict = {}
-    (batch_dict['x_time'], batch_dict['x_data'], batch_dict['x_mask'],
-     batch_dict['y_time'], batch_dict['y_data'],
-     batch_dict['y_mask']) = batch_list
-
-    #TRANS: Time synchronization in the batch
-    if ode_time is not None:
-        if ode_time == 'Concat':
-            concat_batch(batch_dict)
-        elif ode_time == 'Mean':
-            #TRANS: The average directly, reduced to 1 d form
-            batch_dict['x_time'] = torch.mean(batch_dict['x_time'],
-                                              dim=0).squeeze()
-            batch_dict['y_time'] = torch.mean(batch_dict['y_time'],
-                                              dim=0).squeeze()
-        elif ode_time == 'No':
-            #TRANS: Take points, starting from 0
-            device = get_device(batch_dict['x_time'])
-            dtype = batch_dict['x_time'].dtype
-            batch_dict['x_time'] = torch.arange(
-                start=0,
-                end=batch_dict['x_time'].shape[1],
-                dtype=dtype,
-                device=device)
-            batch_dict['y_time'] = torch.arange(
-                start=0,
-                end=batch_dict['y_time'].shape[1],
-                dtype=dtype,
-                device=device)
-        else:
-            raise NotImplementedError
+    if from_pf_format:
+        x, (y, _) = batch_list
+        batch_dict['x_time'] = x['encoder_cont'][..., -1]
+        batch_dict['x_data'] = x['encoder_cont'][..., :-1]
+        batch_dict['x_mask'] = torch.ones_like(batch_dict['x_data'],
+                                               dtype=torch.bool)
+        batch_dict['y_time'] = x['decoder_time_idx']
+        batch_dict['y_data'] = y
+        batch_dict['y_mask'] = torch.ones_like(y, dtype=torch.bool)
     else:
-        batch_dict['x_time'] = batch_dict['x_time'][0].squeeze()
-        batch_dict['y_time'] = batch_dict['y_time'][0].squeeze()
+        (batch_dict['x_time'], batch_dict['x_data'], batch_dict['x_mask'],
+         batch_dict['y_time'], batch_dict['y_data'],
+         batch_dict['y_mask']) = batch_list
+
+        #TRANS: Time synchronization in the batch
+        if ode_time is not None:
+            if ode_time == 'Concat':
+                concat_batch(batch_dict)
+            elif ode_time == 'Mean':
+                #TRANS: The average directly, reduced to 1 d form
+                batch_dict['x_time'] = torch.mean(batch_dict['x_time'],
+                                                  dim=0).squeeze()
+                batch_dict['y_time'] = torch.mean(batch_dict['y_time'],
+                                                  dim=0).squeeze()
+            elif ode_time == 'No':
+                #TRANS: Take points, starting from 0
+                device = get_device(batch_dict['x_time'])
+                dtype = batch_dict['x_time'].dtype
+                batch_dict['x_time'] = torch.arange(
+                    start=0,
+                    end=batch_dict['x_time'].shape[1],
+                    dtype=dtype,
+                    device=device)
+                batch_dict['y_time'] = torch.arange(
+                    start=0,
+                    end=batch_dict['y_time'].shape[1],
+                    dtype=dtype,
+                    device=device)
+            else:
+                raise NotImplementedError
+        else:
+            batch_dict['x_time'] = batch_dict['x_time'][0].squeeze()
+            batch_dict['y_time'] = batch_dict['y_time'][0].squeeze()
     return batch_dict
 
 
@@ -637,14 +1620,6 @@ def update_learning_rate(optimizer, decay_rate=0.999, lowest=1e-3):
         lr = param_group['lr']
         lr = max(lr * decay_rate, lowest)
         param_group['lr'] = lr
-
-
-def update_kl_coef(kl_first, epoch, wait_until_kl=10):
-    if epoch < wait_until_kl:
-        kl_coef = 0.
-    else:
-        kl_coef = kl_first * (1 - 0.99**(epoch - wait_until_kl))
-    return kl_coef
 
 
 #TRANS: Used for testing
