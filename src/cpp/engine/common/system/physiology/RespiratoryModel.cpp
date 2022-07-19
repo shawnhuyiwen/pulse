@@ -345,7 +345,6 @@ namespace pulse
     m_PatientActions = &m_data.GetActions().GetPatientActions();
     //Driver
     m_MaxDriverPressure_cmH2O = -50.0;
-    m_CardiacArrestEffect = 1.0;
     //Configuration parameters
     m_DefaultOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_DefaultClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -1165,17 +1164,6 @@ namespace pulse
   #endif
     }
 
-    if (m_CardiacArrestEffect < 1.0)
-    {
-      // Modify breathing coming out of cardiac arrest
-      double cardiacArrestDampingInitialValue = 0.4;
-      double cardiacArrestDampingPeriod_s = 500.0;
-
-      // Do a linear increment this timestep to eventually reach 1.0 at the end of the damping period
-      m_CardiacArrestEffect += m_data.GetTimeStep_s() / cardiacArrestDampingPeriod_s * (1.0 - cardiacArrestDampingInitialValue);
-      m_CardiacArrestEffect = LIMIT(m_CardiacArrestEffect, cardiacArrestDampingInitialValue, 1.0);
-    }
-
     //Prepare for the next cycle -------------------------------------------------------------------------------
     if ((m_BreathingCycleTime_s > GetBreathCycleTime()) ||                              //End of the cycle or currently not breathing
       (m_PatientActions->HasConsciousRespiration() && !m_ActiveConsciousRespirationCommand)) //Or new consious respiration command to start immediately
@@ -1274,11 +1262,6 @@ namespace pulse
           {
             //This gets it nice and stable
             changeFraction = 0.1;
-          }
-          else if (m_CardiacArrestEffect < 1.0)
-          {
-            //Limit the change significantly
-            changeFraction = 0.02;
           }
           else
           {
@@ -3764,11 +3747,6 @@ namespace pulse
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       dyspneaSeverity = 1.0;
-      m_CardiacArrestEffect = 0.0;
-    }
-    else if (m_CardiacArrestEffect < 1.0)
-    {
-      dyspneaSeverity = MAX(dyspneaSeverity, 1.0 - m_CardiacArrestEffect);
     }
 
     //------------------------------------------------------------------------------------------------------

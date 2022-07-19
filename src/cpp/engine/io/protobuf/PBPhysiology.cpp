@@ -405,7 +405,6 @@ namespace pulse
 
     dst.m_BreathingCycle = src.breathingcycle();
     dst.m_NotBreathing = src.notbreathing();
-    dst.m_CardiacArrestEffect = src.cardiacarresteffect();
 
     dst.m_TopBreathTotalVolume_L = src.topbreathtotalvolume_l();
     dst.m_TopBreathAlveoliVolume_L = src.topbreathalveolivolume_l();
@@ -471,7 +470,6 @@ namespace pulse
 
     dst.set_breathingcycle(src.m_BreathingCycle);
     dst.set_notbreathing(src.m_NotBreathing);
-    dst.set_cardiacarresteffect(src.m_CardiacArrestEffect);
 
     dst.set_topbreathtotalvolume_l(src.m_TopBreathTotalVolume_L);
     dst.set_topbreathalveolivolume_l(src.m_TopBreathAlveoliVolume_L);

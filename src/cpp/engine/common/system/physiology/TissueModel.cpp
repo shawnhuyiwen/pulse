@@ -732,7 +732,7 @@ namespace pulse
     // So we will make a minimum threshold for this,
     // and increase that min if we are in cardiac arrest
     double minCO2Production_mL_Per_s = 3.333; /*200 mL/min*/
-    double CardiacArrestCarbonDioxideProductionFactor = 0.85;
+    double CardiacArrestCarbonDioxideProductionFactor = 0.15;
     if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       m_CardiacArrestCarbonDioxideProductionFactor = CardiacArrestCarbonDioxideProductionFactor;
@@ -748,7 +748,7 @@ namespace pulse
     }
     // We can be a little conservative and still hit validation
     // We want to let the model do what it does for the most part
-    minCO2Production_mL_Per_s *= (0.7 + m_CardiacArrestCarbonDioxideProductionFactor);
+    minCO2Production_mL_Per_s *= (0.4 + m_CardiacArrestCarbonDioxideProductionFactor);
 
     for (auto& itr : m_ConsumptionProdutionTissues)
     {

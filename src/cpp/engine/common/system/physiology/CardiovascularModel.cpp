@@ -1690,7 +1690,7 @@ namespace pulse
 
           m_InitialArrhythmiaHeartComplianceModifier =
             m_ArrhythmiaHeartComplianceModifier =
-          m_TargetArrhythmiaHeartComplianceModifier = 1;// Does not matter, we hard code the heart compliance during cardiac arrest
+            m_TargetArrhythmiaHeartComplianceModifier = 1;// Does not matter, we hard code the heart compliance during cardiac arrest
 
           m_TargetArrhythmiaHeartRateBaseline_Per_min = 35;
           m_InitialArrhythmiaHeartRateBaseline_Per_min = m_ArrhythmiaHeartRateBaseline_Per_min = GetHeartRate(FrequencyUnit::Per_min);
@@ -1980,7 +1980,7 @@ namespace pulse
           m_TotalArrhythmiaTransitionTime_s = 0;
           m_CurrentArrhythmiaTransitionTime_s = 0;
 
-          // Set a new baseline if we did not have any feedback on(comeing out of cardiac arrest)
+          // Set a new baseline if we did not have any feedback on(coming out of cardiac arrest)
           if(m_data.GetNervous().GetBaroreceptorFeedback()==eSwitch::Off && m_EnableFeedbackAfterArrhythmiaTrasition==eSwitch::On)
             m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
 
@@ -2424,7 +2424,7 @@ namespace pulse
                       (shuntEffect_mmHg - m_MAPCollapse_mmHg);
     //modifier = MAX(0.02, modifier);
     //modifier = MIN(modifier, 1.0);
-    double coverageModifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, modifier);
+    double coverageModifier = GeneralMath::ExponentialGrowthFunction(10, 0.75, 1.0, modifier);
 
     // Update the capillary coverage for tissue diffusion
     GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage * coverageModifier);

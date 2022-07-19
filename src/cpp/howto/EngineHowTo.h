@@ -50,4 +50,5 @@ void HowToVentilationMechanics();
 class SEDataRequest;
 
 /// This mehod will advance time and write each data request value to the specified engine csv
+bool AdvanceAndTrackTime(PhysiologyEngine& engine);
 bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine);

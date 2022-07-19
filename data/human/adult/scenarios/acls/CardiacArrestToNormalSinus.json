@@ -413,7 +413,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 120.0,
+          "Value": 420.0,
           "Unit": "s"
         }
       }
@@ -428,7 +428,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
+          "Value": 300.0,
           "Unit": "s"
         }
       }

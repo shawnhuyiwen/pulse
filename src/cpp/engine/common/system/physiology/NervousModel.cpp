@@ -134,19 +134,37 @@ namespace pulse
   {
     if (m_data.GetState() == EngineState::AtInitialStableState)
     {
-      SetChemoreceptorFeedback(m_data.GetConfiguration().GetChemoreceptorFeedback()); // The set-points (Baselines) get reset at the end of each stabilization period.
+      m_ChemoreceptorFeedback = m_data.GetConfiguration().GetChemoreceptorFeedback(); // The set-points (Baselines) get reset at the end of each stabilization period.
     }
     else if (m_data.GetState() == EngineState::AtSecondaryStableState)
     {
-      SetBaroreceptorFeedback(m_data.GetConfiguration().GetBaroreceptorFeedback());
+      m_BaroreceptorFeedback = m_data.GetConfiguration().GetBaroreceptorFeedback();
     }
-    // The set-points (Baselines) get reset at the end of each stabilization period.
+    // Set-baselines at the end of each stabilization period.
+    SetBaselines();
+  }
+
+  void NervousModel::SetBaselines()
+  {
     m_ArterialOxygenBaseline_mmHg = m_data.GetBloodChemistry().GetArterialOxygenPressure(PressureUnit::mmHg);
     m_ArterialCarbonDioxideBaseline_mmHg = m_data.GetBloodChemistry().GetArterialCarbonDioxidePressure(PressureUnit::mmHg);
     m_LastMeanArterialPressure_mmHg = m_data.GetCardiovascular().GetMeanArterialPressure(PressureUnit::mmHg);
     double meanArterialPressureBaseline_mmHg = m_data.GetCurrentPatient().GetMeanArterialPressureBaseline(PressureUnit::mmHg);
     m_TotalSympatheticFraction = 1.0 / (1.0 + pow(m_LastMeanArterialPressure_mmHg / meanArterialPressureBaseline_mmHg, m_data.GetConfiguration().GetResponseSlope()));
     m_PreviousBloodVolume_mL = m_data.GetCardiovascular().GetBloodVolume(VolumeUnit::mL);
+  }
+
+  void NervousModel::SetBaroreceptorFeedback(eSwitch s)
+  {
+    if (s == eSwitch::On && m_BaroreceptorFeedback == eSwitch::Off)
+      SetBaselines();
+    SENervousSystem::SetBaroreceptorFeedback(s);
+  }
+  void NervousModel::SetChemoreceptorFeedback(eSwitch s)
+  {
+    if (s == eSwitch::On && m_ChemoreceptorFeedback == eSwitch::Off)
+      SetBaselines();
+    SENervousSystem::SetChemoreceptorFeedback(s);
   }
 
   //--------------------------------------------------------------------------------------------------
