@@ -11,7 +11,8 @@
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEIntubation.h"
-#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestCompressionAutomated.h"
+#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
@@ -39,13 +40,15 @@ void HowToACLS()
   SEArrhythmia  arrhythmia;
   SEBagValveMaskConfiguration bvm;
   SEBagValveMaskSqueeze bvmSqueeze;
-  SEChestCompressionForceScale cpr;
+  SEChestCompressionAutomated cprA;
+  SEChestCompressionInstantaneous cprI;
   std::stringstream ss;
 
   double unassisted_min = 7;
   bool intubatedAssistance = false;
   double assisted_min = 7;
   // We will do cpr_block_s of CPR compressions every cpr_interval_s
+  bool automatedCPR = true;
   double cpr_block_s = 30;
   double cpr_interval_s = 1/Convert(120, FrequencyUnit::Per_min, FrequencyUnit::Per_s);
   // Then we will do 2 bvm squeezes every bvm_interval_s
@@ -162,53 +165,85 @@ void HowToACLS()
   double timeStep_s = pe->GetTimeStep(TimeUnit::s);
 
   double assisted_s = assisted_min*60;
-  while(assisted_s > 0)
+  if (!automatedCPR)
   {
-    AdvanceAndTrackTime(*pe);
-
-    block_s -= timeStep_s;
-    if (block_s <= 0)
+    while(assisted_s > 0)
     {
-      cpr_block = !cpr_block;
+      AdvanceAndTrackTime(*pe);
+
+      block_s -= timeStep_s;
+      if (block_s <= 0)
+      {
+        cpr_block = !cpr_block;
+        if (cpr_block)
+        {
+          compressIn_s = 0;
+          block_s = cpr_block_s;
+          pe->Info("Starting CPR Block");
+        }
+        else
+        {
+          squeezeIn_s = 0;
+          block_s = bvm_interval_s * bvmSqueezes;
+          pe->Info("Starting BVM Block");
+        }
+      }
+
       if (cpr_block)
       {
-        compressIn_s = 0;
-        block_s = cpr_block_s;
-        pe->Info("Starting CPR Block");
+        compressIn_s -= timeStep_s;
+        if (compressIn_s <= 0)
+        {
+          cprI.GetForceScale().SetValue(0.6228);
+          pe->ProcessAction(cprI);
+          compressIn_s = cpr_interval_s;
+        }
+        
       }
       else
       {
-        squeezeIn_s = 0;
-        block_s = bvm_interval_s * bvmSqueezes;
-        pe->Info("Starting BVM Block");
-      }
-    }
-
-    if (cpr_block)
-    {
-      compressIn_s -= timeStep_s;
-      if (compressIn_s <= 0)
-      {
-        cpr.GetForceScale().SetValue(0.6228);
-        pe->ProcessAction(cpr);
-        compressIn_s = cpr_interval_s;
+        squeezeIn_s -= timeStep_s;
+        if (squeezeIn_s <= 0)
+        {
+          bvmSqueeze.GetExpiratoryPeriod().SetValue(1.0, TimeUnit::s);
+          bvmSqueeze.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
+          pe->ProcessAction(bvmSqueeze);
+          squeezeIn_s = bvm_interval_s;
+        }
       }
       
+      assisted_s -= timeStep_s;
     }
-    else
+  }
+  else
+  {
+    while(assisted_s > 0)
     {
-      squeezeIn_s -= timeStep_s;
-      if (squeezeIn_s <= 0)
+      // Start automated CPR
+      pe->Info("Starting CPR Block");
+      cprA.GetForceScale().SetValue(0.6228);
+      cprA.GetCompressionFrequency().SetValue(1.0/(cpr_interval_s*2), FrequencyUnit::Per_s);
+      pe->ProcessAction(cprA);
+
+      assisted_s -= cpr_block_s;
+      AdvanceAndTrackTime_s(cpr_block_s, *pe);
+
+      // Stop automated CPR
+      cprA.GetCompressionFrequency().SetValue(0, FrequencyUnit::Per_s);
+      pe->ProcessAction(cprA);
+
+      //BVM squeezes
+      pe->Info("Starting BVM Block");
+      for(size_t s = 0; s < bvmSqueezes; ++s)
       {
         bvmSqueeze.GetExpiratoryPeriod().SetValue(1.0, TimeUnit::s);
         bvmSqueeze.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
         pe->ProcessAction(bvmSqueeze);
-        squeezeIn_s = bvm_interval_s;
+
+        assisted_s -= bvm_interval_s;
+        AdvanceAndTrackTime_s(bvm_interval_s, *pe);
       }
     }
-
-    
-    assisted_s -= timeStep_s;
   }
 
   arrhythmia.SetRhythm(eHeartRhythm::NormalSinus);

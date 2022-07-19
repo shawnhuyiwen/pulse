@@ -125,7 +125,7 @@ double SEChestCompressionAutomated::GetForceScale() const
 
 void SEChestCompressionAutomated::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Chest Compression";
+  str << "Patient Action : Automated Chest Compressions";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   str << "\n\tCompressionFrequency: "; HasCompressionFrequency() ? str << *m_CompressionFrequency : str << "NaN";
