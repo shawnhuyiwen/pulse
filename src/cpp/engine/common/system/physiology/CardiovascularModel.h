@@ -135,9 +135,11 @@ namespace pulse
     double m_InitialArrhythmiaVascularComplianceModifier;
     double m_TargetArrhythmiaVascularComplianceModifier;
     //CPR
+    double m_CompressionFrequency_Per_s;
     double m_CompressionTime_s;
     double m_CompressionRatio;
     double m_CompressionPeriod_s;
+    double m_CompressionCycleTime_s;
     // Vitals and Averages
     double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
     double m_CardiacCycleAortaPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole

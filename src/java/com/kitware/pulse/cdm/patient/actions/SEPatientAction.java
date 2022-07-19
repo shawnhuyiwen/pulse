@@ -89,16 +89,16 @@ public abstract class SEPatientAction extends SEAction
       SEBronchoconstriction.load(c.getBronchoconstriction(), dst);
       return dst;
     }
-    case CHESTCOMPRESSIONFORCE:
+    case CHESTCOMPRESSIONAUTOMATED:
     {
-      SEChestCompressionForce dst = new SEChestCompressionForce();
-      SEChestCompressionForce.load(c.getChestCompressionForce(), dst);
+      SEChestCompressionAutomated dst = new SEChestCompressionAutomated();
+      SEChestCompressionAutomated.load(c.getChestCompressionAutomated(), dst);
       return dst;
     }
-    case CHESTCOMPRESSIONFORCESCALE:
+    case CHESTCOMPRESSIONINSTANTANEOUS:
     {
-      SEChestCompressionForceScale dst = new SEChestCompressionForceScale();
-      SEChestCompressionForceScale.load(c.getChestCompressionForceScale(), dst);
+      SEChestCompressionInstantaneous dst = new SEChestCompressionInstantaneous();
+      SEChestCompressionInstantaneous.load(c.getChestCompressionInstantaneous(), dst);
       return dst;
     }
     case CHESTOCCLUSIVEDRESSING:
@@ -284,14 +284,14 @@ public abstract class SEPatientAction extends SEAction
       dst.setBronchoconstriction(SEBronchoconstriction.unload((SEBronchoconstriction)c));
       return dst.build();
     }
-    if(c instanceof SEChestCompressionForce)
+    if(c instanceof SEChestCompressionAutomated)
     {
-      dst.setChestCompressionForce(SEChestCompressionForce.unload((SEChestCompressionForce)c));
+      dst.setChestCompressionAutomated(SEChestCompressionAutomated.unload((SEChestCompressionAutomated)c));
       return dst.build();
     }
-    if(c instanceof SEChestCompressionForceScale)
+    if(c instanceof SEChestCompressionInstantaneous)
     {
-      dst.setChestCompressionForceScale(SEChestCompressionForceScale.unload((SEChestCompressionForceScale)c));
+      dst.setChestCompressionInstantaneous(SEChestCompressionInstantaneous.unload((SEChestCompressionInstantaneous)c));
       return dst.build();
     }
     if(c instanceof SEChestOcclusiveDressing)

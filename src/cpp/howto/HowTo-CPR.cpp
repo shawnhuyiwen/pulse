@@ -9,7 +9,7 @@
 #include "engine/SEEngineTracker.h"
 #include "compartment/SECompartmentManager.h"
 #include "patient/actions/SEArrhythmia.h"
-#include "patient/actions/SEChestCompressionForce.h"
+#include "patient/actions/SEChestCompressionInstantaneous.h"
 #include "patient/SEPatient.h"
 #include "patient/actions/SEHemorrhage.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -88,7 +88,7 @@ void HowToCPR()
   // This is the frequency at which CPR is administered
   double compressionRate_BeatsPerMinute = 100;
 
-  // This is where you specify how much force to apply to the chest. We have capped the applicable force at 600 N.
+  // This is where you specify how much force to apply to the chest. We have capped the applicable force at 500 N.
   double compressionForce_Newtons = 400;
 
   // This is the percent of time per period that the chest will be compressed e.g. if I have a 1 second period
@@ -130,7 +130,7 @@ void HowToCPR()
 
 
   // After patient's heart is not beating, start doing CPR
-  SEChestCompressionForce chestCompression;
+  SEChestCompressionInstantaneous chestCompression;
 
   // The period is calculated via 1 / compressionRate.  Because the compression rate is given
   // in beats per minute it is divided by 60 to give a period in seconds.

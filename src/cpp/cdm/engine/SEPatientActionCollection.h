@@ -11,9 +11,8 @@ class SEAsthmaAttack;
 class SEArrhythmia;
 class SEBrainInjury;
 class SEBronchoconstriction;
-class SEChestCompression;
-class SEChestCompressionForce;
-class SEChestCompressionForceScale;
+class SEChestCompressionInstantaneous;
+class SEChestCompressionAutomated;
 class SEChestOcclusiveDressing;
 class SEConsciousRespiration;
 class SEConsumeNutrients;
@@ -86,14 +85,14 @@ public:
   void RemoveBronchoconstriction();
 
   bool HasChestCompression() const;
-  bool HasChestCompressionForce() const;
-  SEChestCompressionForce& GetChestCompressionForce();
-  const SEChestCompressionForce* GetChestCompressionForce() const;
-  void RemoveChestCompressionForce();
-  bool HasChestCompressionForceScale() const;
-  SEChestCompressionForceScale& GetChestCompressionForceScale();
-  const SEChestCompressionForceScale* GetChestCompressionForceScale() const;
-  void RemoveChestCompressionForceScale();
+  bool HasChestCompressionInstantaneous() const;
+  SEChestCompressionInstantaneous& GetChestCompressionInstantaneous();
+  const SEChestCompressionInstantaneous* GetChestCompressionInstantaneous() const;
+  void RemoveChestCompressionInstantaneous();
+  bool HasChestCompressionAutomated() const;
+  SEChestCompressionAutomated& GetChestCompressionAutomated();
+  const SEChestCompressionAutomated* GetChestCompressionAutomated() const;
+  void RemoveChestCompressionAutomated();
 
   bool HasChestOcclusiveDressing() const;
   bool HasLeftChestOcclusiveDressing() const;
@@ -261,8 +260,8 @@ protected:
   SEAsthmaAttack*                                   m_AsthmaAttack;
   SEBrainInjury*                                    m_BrainInjury;
   SEBronchoconstriction*                            m_Bronchoconstriction;
-  SEChestCompressionForce*                          m_ChestCompressionForce;
-  SEChestCompressionForceScale*                     m_ChestCompressionForceScale;
+  SEChestCompressionAutomated*                      m_ChestCompressionAutomated;
+  SEChestCompressionInstantaneous*                  m_ChestCompressionInstantaneous;
   SEChestOcclusiveDressing*                         m_LeftChestOcclusiveDressing;
   SEChestOcclusiveDressing*                         m_RightChestOcclusiveDressing;
   SEConsciousRespiration*                           m_ConsciousRespiration;

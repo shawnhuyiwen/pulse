@@ -119,8 +119,8 @@
     <Compile Include="cdm\patient\actions\SEMechanicalVentilation.cs" />
     <Compile Include="cdm\patient\actions\SEImpairedAlveolarExchangeExacerbation.cs" />
     <Compile Include="cdm\patient\actions\SEConsumeNutrients.cs" />
-    <Compile Include="cdm\patient\actions\SEChestCompressionForceScale.cs" />
-    <Compile Include="cdm\patient\actions\SEChestCompressionForce.cs" />
+    <Compile Include="cdm\patient\actions\SEChestCompressionAutomated.cs" />
+    <Compile Include="cdm\patient\actions\SEChestCompressionInstantaneous.cs" />
     <Compile Include="cdm\patient\actions\SEAcuteStress.cs" />
     <Compile Include="cdm\patient\actions\SEAirwayObstruction.cs" />
     <Compile Include="cdm\patient\actions\SEAsthmaAttack.cs" />

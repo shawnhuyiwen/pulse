@@ -101,27 +101,33 @@ def serialize_bronchoconstriction_from_bind(src: BronchoconstrictionData, dst: S
 
 #################################################################
 
-def serialize_chest_compression_force_to_bind(src: SEChestCompressionForce, dst: ChestCompressionForceData):
+def serialize_chest_compression_instantaneous_to_bind(src: SEChestCompressionInstantaneous, dst: ChestCompressionInstantaneousData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_force():
         serialize_scalar_force_to_bind(src.get_force(), dst.Force)
+    if src.has_force_scale():
+        serialize_scalar_0to1_to_bind(src.get_force_scale(), dst.ForceScale)
+    if src.has_force_period():
+        serialize_scalar_time_to_bind(src.get_force_period(), dst.ForcePeriod)
 
-def serialize_chest_compression_force_from_bind(src: ChestCompressionForceData, dst: SEChestCompressionForce):
+def serialize_chest_compression_instantaneous_from_bind(src: ChestCompressionInstantaneousData, dst: SEChestCompressionInstantaneous):
     serialize_patient_action_from_bind(src.PatientAction, dst)
-    raise Exception("serialize_chest_compression_force_from_bind not implemented")
+    raise Exception("serialize_chest_compression_instantaneous_from_bind not implemented")
 
 #################################################################
 
-def serialize_chest_compression_force_scale_to_bind(src: SEChestCompressionForceScale, dst: ChestCompressionForceScaleData):
+def serialize_chest_compression_automated_to_bind(src: SEChestCompressionAutomated, dst: ChestCompressionAutomatedData):
     serialize_patient_action_to_bind(src, dst.PatientAction)
-    if src.has_force_period():
-        serialize_scalar_time_to_bind(src.get_force_period(), dst.ForcePeriod)
+    if src.has_force():
+        serialize_scalar_force_to_bind(src.get_force(), dst.Force)
     if src.has_force_scale():
         serialize_scalar_0to1_to_bind(src.get_force_scale(), dst.ForceScale)
+    if src.has_compression_frequency():
+        serialize_scalar_frequency_to_bind(src.get_compression_frequency(), dst.CompressionFrequency)
 
-def serialize_chest_compression_force_scale_from_bind(src: ChestCompressionForceScaleData, dst: SEChestCompressionForceScale):
+def serialize_chest_compression_automated_from_bind(src: ChestCompressionAutomatedData, dst: SEChestCompressionAutomated):
     serialize_patient_action_from_bind(src.PatientAction, dst)
-    raise Exception("serialize_chest_compression_force_scale_from_bind not implemented")
+    raise Exception("serialize_chest_compression_automated_from_bind not implemented")
 
 #################################################################
 

@@ -17,8 +17,8 @@
 #include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
-#include "cdm/patient/actions/SEChestCompressionForce.h"
-#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestCompressionAutomated.h"
+#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
 #include "cdm/patient/actions/SEPericardialEffusion.h"
 // Dependent Systems
@@ -225,9 +225,11 @@ namespace pulse
       m_InitialArrhythmiaHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
 
     // CPR
+    m_CompressionFrequency_Per_s = 0.0;
     m_CompressionTime_s = 0.0;
     m_CompressionRatio = 0.0;
     m_CompressionPeriod_s = 0.0;
+    m_CompressionCycleTime_s = 0.0;
 
     //Initialize system data based on patient file inputs
     GetHeartRate().Set(m_data.GetCurrentPatient().GetHeartRateBaseline());
@@ -1506,20 +1508,55 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CPR()
   {
-    // If a compression has started, finish it.
-    if (m_CompressionRatio > 0.0)
+    // Already processing automated compressions
+    if (m_CompressionFrequency_Per_s > 0.0)
     {
-      if (m_data.GetActions().GetPatientActions().HasChestCompressionForceScale())
+      if (m_data.GetActions().GetPatientActions().HasChestCompressionInstantaneous())
       {
-        Warning("Attempt to start a new compression during a previous compression. Allow more time between compressions or shorten the compression period.");
-        m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
+        Warning("Attempt to switch to instantaneous compression during automated compression. CPR actions will be ignored until current compression ends.");
+        m_data.GetActions().GetPatientActions().RemoveChestCompressionInstantaneous();
         return;
       }
 
-      if (m_data.GetActions().GetPatientActions().HasChestCompressionForce())
+      m_CompressionCycleTime_s += m_data.GetTimeStep_s();
+      double totalCompressionCycleTime = 1.0 / m_CompressionFrequency_Per_s;
+      if (m_CompressionCycleTime_s > totalCompressionCycleTime)
       {
-        Warning("Attempt to switch to explicit force from force scale during CPR compression. CPR actions will be ignored until current compression ends.");
-        m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
+        // Time to begin a new compression
+        m_CompressionCycleTime_s = 0.0;
+
+        // Check for frequency changes
+        if (m_data.GetActions().GetPatientActions().GetChestCompressionAutomated().HasCompressionFrequency())
+        {
+          m_CompressionFrequency_Per_s = m_data.GetActions().GetPatientActions().GetChestCompressionAutomated().GetCompressionFrequency().GetValue(FrequencyUnit::Per_s);
+          m_CompressionPeriod_s = (1.0 / m_CompressionFrequency_Per_s) / 2.0;
+        }
+
+        // Terminate automated CPR based on zero frequency
+        if (m_CompressionFrequency_Per_s == 0)
+        {
+          m_data.GetActions().GetPatientActions().RemoveChestCompressionAutomated();
+          m_CompressionRatio = 0.0;
+          return;
+        }
+      }
+      else if (m_CompressionCycleTime_s > m_CompressionPeriod_s)
+      {
+        // Inactive portion of cycle
+        return;
+      }
+
+      CalculateAndSetCPRcompressionForce();
+      return;
+    }
+
+    // If a compression has started, finish it.
+    if (m_CompressionRatio > 0.0)
+    {
+      if (m_data.GetActions().GetPatientActions().HasChestCompressionInstantaneous())
+      {
+        Warning("Attempt to start a new compression during a previous compression. Allow more time between compressions or shorten the compression period.");
+        m_data.GetActions().GetPatientActions().RemoveChestCompressionInstantaneous();
         return;
       }
 
@@ -1536,15 +1573,16 @@ namespace pulse
     if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
       Warning("CPR attempted on beating heart. Action ignored.");
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
+      m_data.GetActions().GetPatientActions().RemoveChestCompressionInstantaneous();
+      m_data.GetActions().GetPatientActions().RemoveChestCompressionAutomated();
       return;
     }
 
-    // Have a new call for a chest compression
-    if (m_data.GetActions().GetPatientActions().HasChestCompressionForceScale())
+    // Have a new call for an instantaneous force scale chest compression
+    if (m_data.GetActions().GetPatientActions().HasChestCompressionInstantaneous() &&
+        m_data.GetActions().GetPatientActions().GetChestCompressionInstantaneous().HasForceScale())
     {
-      m_CompressionRatio = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().GetForceScale().GetValue();
+      m_CompressionRatio = m_data.GetActions().GetPatientActions().GetChestCompressionInstantaneous().GetForceScale().GetValue();
       /// \error Warning: CPR compression ratio must be a positive value between 0 and 1 inclusive.
       if (m_CompressionRatio < 0.0)
         Warning("CPR compression ratio must be a positive value between 0 and 1 inclusive.");
@@ -1553,16 +1591,46 @@ namespace pulse
 
       BLIM(m_CompressionRatio, 0., 1.);
       // If no period was assigned by the user, then use the default - 0.4s
-      if (m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().HasForcePeriod())
+      if (m_data.GetActions().GetPatientActions().GetChestCompressionInstantaneous().HasForcePeriod())
       {
-        m_CompressionPeriod_s = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().GetForcePeriod().GetValue(TimeUnit::s);
+        m_CompressionPeriod_s = m_data.GetActions().GetPatientActions().GetChestCompressionInstantaneous().GetForcePeriod().GetValue(TimeUnit::s);
       }
       else
       {
         m_CompressionPeriod_s = 0.4;
       }
 
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
+      m_data.GetActions().GetPatientActions().RemoveChestCompressionInstantaneous();
+    }
+
+    // Have a new call for automated compressions
+    if (m_data.GetActions().GetPatientActions().HasChestCompressionAutomated())
+    {
+      // Get force scale setting if it exists
+      if (m_data.GetActions().GetPatientActions().GetChestCompressionAutomated().HasForceScale())
+      {
+        m_CompressionRatio = m_data.GetActions().GetPatientActions().GetChestCompressionInstantaneous().GetForceScale().GetValue();
+        /// \error Warning: CPR compression ratio must be a positive value between 0 and 1 inclusive.
+        if (m_CompressionRatio < 0.0)
+          Warning("CPR compression ratio must be a positive value between 0 and 1 inclusive.");
+        if (m_CompressionRatio > 1.0)
+          Warning("CPR compression ratio must be a positive value between 0 and 1 inclusive.");
+
+        BLIM(m_CompressionRatio, 0., 1.);
+      }
+
+      // Determine compression frequency
+      if (m_data.GetActions().GetPatientActions().GetChestCompressionAutomated().HasCompressionFrequency())
+      {
+        m_CompressionFrequency_Per_s = m_data.GetActions().GetPatientActions().GetChestCompressionAutomated().GetCompressionFrequency().GetValue(FrequencyUnit::Per_s);
+      }
+      else
+      {
+        m_CompressionFrequency_Per_s = 1.25; // Corresponds to BPM of 75
+      }
+
+      // Compression is half of full cycle period
+      m_CompressionPeriod_s = (1.0 / m_CompressionFrequency_Per_s) / 2.0;
     }
 
     CalculateAndSetCPRcompressionForce();
@@ -1598,12 +1666,14 @@ namespace pulse
         compressionForce_N = 0.0;
         m_CompressionTime_s = 0.0;
         m_CompressionRatio = 0.0;
-        m_CompressionPeriod_s = 0.0;
       }
     }
     else //Explicit force
     {
-      compressionForce_N = m_data.GetActions().GetPatientActions().GetChestCompressionForce().GetForce().GetValue(ForceUnit::N);
+      if (m_data.GetActions().GetPatientActions().HasChestCompressionInstantaneous())
+        compressionForce_N = m_data.GetActions().GetPatientActions().GetChestCompressionInstantaneous().GetForce().GetValue(ForceUnit::N);
+      else
+        compressionForce_N = m_data.GetActions().GetPatientActions().GetChestCompressionAutomated().GetForce().GetValue(ForceUnit::N);
     }
 
     m_CompressionTime_s += m_data.GetTimeStep_s();
@@ -1630,9 +1700,8 @@ namespace pulse
 
     // The action is removed when the force is set to 0.
     if (compressionForce_N == 0)
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
+      m_data.GetActions().GetPatientActions().RemoveChestCompressionInstantaneous();
   }
-
 
   void CardiovascularModel::SetHeartRhythm(eHeartRhythm r)
   {

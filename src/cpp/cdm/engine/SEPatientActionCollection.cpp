@@ -11,8 +11,8 @@
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
-#include "cdm/patient/actions/SEChestCompressionForce.h"
-#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestCompressionAutomated.h"
+#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
 #include "cdm/patient/actions/SEConsciousRespiration.h"
 #include "cdm/patient/actions/SEConsumeNutrients.h"
@@ -53,8 +53,8 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_AsthmaAttack = nullptr;
   m_BrainInjury = nullptr;
   m_Bronchoconstriction = nullptr;
-  m_ChestCompressionForce = nullptr;
-  m_ChestCompressionForceScale = nullptr;
+  m_ChestCompressionAutomated = nullptr;
+  m_ChestCompressionInstantaneous = nullptr;
   m_ConsciousRespiration = nullptr;
   m_ConsumeNutrients = nullptr;
   m_COPDExacerbation = nullptr;
@@ -89,8 +89,8 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_AsthmaAttack);
   SAFE_DELETE(m_BrainInjury);
   SAFE_DELETE(m_Bronchoconstriction);
-  SAFE_DELETE(m_ChestCompressionForce);
-  SAFE_DELETE(m_ChestCompressionForceScale);
+  SAFE_DELETE(m_ChestCompressionAutomated);
+  SAFE_DELETE(m_ChestCompressionInstantaneous);
   SAFE_DELETE(m_LeftChestOcclusiveDressing);
   SAFE_DELETE(m_RightChestOcclusiveDressing);
   SAFE_DELETE(m_ConsciousRespiration);
@@ -130,8 +130,8 @@ void SEPatientActionCollection::Clear()
   RemoveAsthmaAttack();
   RemoveBrainInjury();
   RemoveBronchoconstriction();
-  RemoveChestCompressionForce();
-  RemoveChestCompressionForceScale();
+  RemoveChestCompressionAutomated();
+  RemoveChestCompressionInstantaneous();
   RemoveChronicObstructivePulmonaryDiseaseExacerbation();
   RemoveConsciousRespiration();
   RemoveConsumeNutrients();
@@ -259,26 +259,26 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     return true;
   }
 
-  const SEChestCompressionForce* cprForce = dynamic_cast<const SEChestCompressionForce*>(&action);
-  if (cprForce != nullptr)
+  const SEChestCompressionInstantaneous* cprInstantaneous = dynamic_cast<const SEChestCompressionInstantaneous*>(&action);
+  if (cprInstantaneous != nullptr)
   {
-    if (HasChestCompressionForceScale())
-      RemoveChestCompressionForceScale();
-    GetChestCompressionForce().Copy(*cprForce, true);
-    m_ChestCompressionForce->Activate();
-    if (!m_ChestCompressionForce->IsActive())
-      RemoveChestCompressionForce();
+    if (HasChestCompressionAutomated())
+      RemoveChestCompressionAutomated();
+    GetChestCompressionInstantaneous().Copy(*cprInstantaneous, true);
+    m_ChestCompressionInstantaneous->Activate();
+    if (!m_ChestCompressionInstantaneous->IsActive())
+      RemoveChestCompressionInstantaneous();
     return true;
   }
-  const SEChestCompressionForceScale* cprScale = dynamic_cast<const SEChestCompressionForceScale*>(&action);
-  if (cprScale != nullptr)
+  const SEChestCompressionAutomated* cprAutomated = dynamic_cast<const SEChestCompressionAutomated*>(&action);
+  if (cprAutomated != nullptr)
   {
-    if (HasChestCompressionForce())
-      RemoveChestCompressionForce();
-    GetChestCompressionForceScale().Copy(*cprScale, true);
-    m_ChestCompressionForceScale->Activate();
-    if (!m_ChestCompressionForceScale->IsActive())
-      RemoveChestCompressionForceScale();
+    if (HasChestCompressionInstantaneous())
+      RemoveChestCompressionInstantaneous();
+    GetChestCompressionAutomated().Copy(*cprAutomated, true);
+    m_ChestCompressionAutomated->Activate();
+    if (!m_ChestCompressionAutomated->IsActive())
+      RemoveChestCompressionAutomated();
     return true;
   }
 
@@ -741,45 +741,45 @@ void SEPatientActionCollection::RemoveBronchoconstriction()
 
 bool SEPatientActionCollection::HasChestCompression() const
 {
-  return HasChestCompressionForce() || HasChestCompressionForceScale();
+  return HasChestCompressionInstantaneous() || HasChestCompressionAutomated();
 }
-bool SEPatientActionCollection::HasChestCompressionForce() const
+bool SEPatientActionCollection::HasChestCompressionInstantaneous() const
 {
-  return m_ChestCompressionForce == nullptr ? false : m_ChestCompressionForce->IsActive();
+  return m_ChestCompressionInstantaneous == nullptr ? false : m_ChestCompressionInstantaneous->IsActive();
 }
-SEChestCompressionForce& SEPatientActionCollection::GetChestCompressionForce()
+SEChestCompressionInstantaneous& SEPatientActionCollection::GetChestCompressionInstantaneous()
 {
-  if (m_ChestCompressionForce == nullptr)
-    m_ChestCompressionForce = new SEChestCompressionForce();
-  return *m_ChestCompressionForce;
+  if (m_ChestCompressionInstantaneous == nullptr)
+    m_ChestCompressionInstantaneous = new SEChestCompressionInstantaneous();
+  return *m_ChestCompressionInstantaneous;
 }
-const SEChestCompressionForce* SEPatientActionCollection::GetChestCompressionForce() const
+const SEChestCompressionInstantaneous* SEPatientActionCollection::GetChestCompressionInstantaneous() const
 {
-  return m_ChestCompressionForce;
+  return m_ChestCompressionInstantaneous;
 }
-void SEPatientActionCollection::RemoveChestCompressionForce()
+void SEPatientActionCollection::RemoveChestCompressionInstantaneous()
 {
-  if (m_ChestCompressionForce)
-    m_ChestCompressionForce->Deactivate();
+  if (m_ChestCompressionInstantaneous)
+    m_ChestCompressionInstantaneous->Deactivate();
 }
-bool SEPatientActionCollection::HasChestCompressionForceScale() const
+bool SEPatientActionCollection::HasChestCompressionAutomated() const
 {
-  return m_ChestCompressionForceScale == nullptr ? false : m_ChestCompressionForceScale->IsActive();
+  return m_ChestCompressionAutomated == nullptr ? false : m_ChestCompressionAutomated->IsActive();
 }
-SEChestCompressionForceScale& SEPatientActionCollection::GetChestCompressionForceScale()
+SEChestCompressionAutomated& SEPatientActionCollection::GetChestCompressionAutomated()
 {
-  if (m_ChestCompressionForceScale == nullptr)
-    m_ChestCompressionForceScale = new SEChestCompressionForceScale();
-  return *m_ChestCompressionForceScale;
+  if (m_ChestCompressionAutomated == nullptr)
+    m_ChestCompressionAutomated = new SEChestCompressionAutomated();
+  return *m_ChestCompressionAutomated;
 }
-const SEChestCompressionForceScale* SEPatientActionCollection::GetChestCompressionForceScale() const
+const SEChestCompressionAutomated* SEPatientActionCollection::GetChestCompressionAutomated() const
 {
-  return m_ChestCompressionForceScale;
+  return m_ChestCompressionAutomated;
 }
-void SEPatientActionCollection::RemoveChestCompressionForceScale()
+void SEPatientActionCollection::RemoveChestCompressionAutomated()
 {
-  if (m_ChestCompressionForceScale)
-    m_ChestCompressionForceScale->Deactivate();
+  if (m_ChestCompressionAutomated)
+    m_ChestCompressionAutomated->Deactivate();
 }
 
 bool SEPatientActionCollection::HasChestOcclusiveDressing() const
@@ -1443,10 +1443,10 @@ void SEPatientActionCollection::GetAllActions(std::vector<const SEAction*>& acti
     actions.push_back(GetBrainInjury());
   if (HasBronchoconstriction())
     actions.push_back(GetBronchoconstriction());
-  if (HasChestCompressionForce())
-    actions.push_back(GetChestCompressionForce());
-  if (HasChestCompressionForceScale())
-    actions.push_back(GetChestCompressionForceScale());
+  if (HasChestCompressionAutomated())
+    actions.push_back(GetChestCompressionAutomated());
+  if (HasChestCompressionInstantaneous())
+    actions.push_back(GetChestCompressionInstantaneous());
   if (HasLeftChestOcclusiveDressing())
     actions.push_back(GetLeftChestOcclusiveDressing());
   if (HasRightChestOcclusiveDressing())
@@ -1531,10 +1531,10 @@ const SEScalar* SEPatientActionCollection::GetScalar(const std::string& actionNa
     return GetBrainInjury().GetScalar(property);
   if (actionName == "Bronchoconstriction")
     return GetBronchoconstriction().GetScalar(property);
-  if (actionName == "ChestCompressionForce")
-    return GetChestCompressionForce().GetScalar(property);
-  if (actionName == "ChestCompressionForceScale")
-    return GetChestCompressionForceScale().GetScalar(property);
+  if (actionName == "ChestCompressionAutomated")
+    return GetChestCompressionAutomated().GetScalar(property);
+  if (actionName == "ChestCompressionInstantaneous")
+    return GetChestCompressionInstantaneous().GetScalar(property);
   if (actionName == "LeftChestOcclusiveDressing")
     return GetLeftChestOcclusiveDressing().GetScalar(property);
   if (actionName == "RightChestOcclusiveDressing")

@@ -196,12 +196,12 @@ def serialize_actions_to_bind(src: [], dst: ActionListData):
                 serialize_bronchoconstriction_to_bind(action, any_action.PatientAction.Bronchoconstriction)
                 dst.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SEChestCompressionForce):
-                serialize_chest_compression_force_to_bind(action, any_action.PatientAction.ChestCompressionForce)
+            if isinstance(action, SEChestCompressionInstantaneous):
+                serialize_chest_compression_instantaneous_to_bind(action, any_action.PatientAction.ChestCompressionInstantaneous)
                 dst.AnyAction.append(any_action)
                 continue
-            if isinstance(action, SEChestCompressionForceScale):
-                serialize_chest_compression_force_scale_to_bind(action, any_action.PatientAction.ChestCompressionForceScale)
+            if isinstance(action, SEChestCompressionAutomated):
+                serialize_chest_compression_automated_to_bind(action, any_action.PatientAction.ChestCompressionAutomated)
                 dst.AnyAction.append(any_action)
                 continue
             if isinstance(action, SEChestOcclusiveDressing):

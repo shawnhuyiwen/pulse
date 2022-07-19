@@ -24,8 +24,8 @@ message AnyPatientActionData
     AsthmaAttackData                                   AsthmaAttack                                   = 6;
     BrainInjuryData                                    BrainInjury                                    = 7;
     BronchoconstrictionData                            Bronchoconstriction                            = 8;
-    ChestCompressionForceData                          ChestCompressionForce                          = 9;
-    ChestCompressionForceScaleData                     ChestCompressionForceScale                     = 10;
+    ChestCompressionAutomatedData                      ChestCompressionAutomated                      = 9;
+    ChestCompressionInstantaneousData                  ChestCompressionInstantaneous                  = 10;
     ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 11;
     ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 12;
     ConsciousRespirationData                           ConsciousRespiration                           = 13;
@@ -125,19 +125,35 @@ message BronchoconstrictionData
 }
 
 /** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
-message ChestCompressionForceData
+message ChestCompressionAutomatedData
 {
   PatientActionData                         PatientAction                   = 1;
-  ScalarForceData                           Force                           = 2;/**<<@brief Amount of force applied to the chest*/
+
+  // Chest Compression Modes
+  oneof ForceMode
+  {
+    ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
+    Scalar0To1Data                          ForceScale                      = 3;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
+  }
+
+  ScalarFrequencyData                       CompressionFrequency            = 4;/**<< @brief Compression rate, translates to heart rate. */
 }
 
 /** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
-message ChestCompressionForceScaleData
+message ChestCompressionInstantaneousData
 {
   PatientActionData                         PatientAction                   = 1;
-  Scalar0To1Data                            ForceScale                      = 2;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
-  ScalarTimeData                            ForcePeriod                     = 3;/**<<@brief The specified length of time the force is applied */
+
+  // Chest Compression Modes
+  oneof ForceMode
+  {
+    ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
+    Scalar0To1Data                          ForceScale                      = 3;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
+  }
+
+  ScalarTimeData                            ForcePeriod                     = 4;/**<<@brief The specified length of time the force scale is applied */
 }
+
 /** @brief Applies an occlusive dressing to either the left or right side of the chest. An occlusive dressing is an air and water-tight trauma dressing that provides immediate control of pressure and bleeding that occurs with an open pneumothorax. */
 message ChestOcclusiveDressingData
 {
