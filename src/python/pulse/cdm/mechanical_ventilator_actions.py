@@ -25,7 +25,7 @@ class SEMechanicalVentilatorConfiguration(SEMechanicalVentilatorAction):
 
     def clear(self):
         self._settings_file = None
-        self._settings = None
+        if self._settings is not None: self._settings.invalidate()
 
     def copy(self, src):
         if not isinstance(SEMechanicalVentilatorConfiguration, src):
@@ -90,43 +90,66 @@ class SEMechanicalVentilatorMode(SEMechanicalVentilatorAction):
 
 class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentilatorMode):
     __slots__ = ["_delta_pressure_support",
+                 "_expiration_cycle_flow",
+                 "_expiration_cycle_pressure",
+                 "_expiration_waveform",
                  "_fraction_inspired_oxygen",
+                 "_inspiration_patient_trigger_flow",
+                 "_inspiration_patient_trigger_pressure",
+                 "_inspiration_waveform",
                  "_positive_end_expired_pressure",
                  "_slope"]
 
     def __init__(self):
         super().__init__()
         self._delta_pressure_support = None
+        self._expiration_cycle_flow = None
+        self._expiration_cycle_pressure = None
+        self._expiration_waveform = eDriverWaveform.NullDriverWaveform
         self._fraction_inspired_oxygen = None
+        self._inspiration_patient_trigger_flow = None
+        self._inspiration_patient_trigger_pressure = None
+        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
         self._positive_end_expired_pressure = None
         self._slope = None
 
     def clear(self):
         super().clear()
-        self._delta_pressure_support = None
-        self._fraction_inspired_oxygen = None
-        self._positive_end_expired_pressure = None
-        self._slope = None
+        if self._delta_pressure_support is not None: self._delta_pressure_support.invalidate()
+        if self._expiration_cycle_flow is not None: self._expiration_cycle_flow.invalidate()
+        if self._expiration_cycle_pressure is not None: self._expiration_cycle_pressure.invalidate()
+        self._expiration_waveform = eDriverWaveform.NullDriverWaveform
+        if self._fraction_inspired_oxygen is not None: self._fraction_inspired_oxygen.invalidate()
+        if self._inspiration_patient_trigger_flow is not None: self._inspiration_patient_trigger_flow.invalidate()
+        if self._inspiration_patient_trigger_pressure is not None: self._inspiration_patient_trigger_pressure.invalidate()
+        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
+        if self._positive_end_expired_pressure is not None: self._positive_end_expired_pressure.invalidate()
+        if self._slope is not None: self._slope.invalidate()
 
     def copy(self, src):
         if not isinstance(SEMechanicalVentilatorContinuousPositiveAirwayPressure, src):
             raise Exception("Provided argument must be a SEMechanicalVentilatorContinuousPositiveAirwayPressure")
         self.clear()
         super().copy(src)
-        self._delta_pressure_support = src._delta_pressure_support
-        self._fraction_inspired_oxygen = src._fraction_inspired_oxygen
-        self._positive_end_expired_pressure = src._positive_end_expired_pressure
-        self._slope = src._slope
+        if src.has_delta_pressure_support(): self.get_delta_pressure_support().set(src._delta_pressure_support)
+        if src.has_expiration_cycle_flow(): self.get_expiration_cycle_flow().set(src._expiration_cycle_flow)
+        if src.has_expiration_cycle_pressure(): self.get_expiration_cycle_pressure().set(src._expiration_cycle_pressure)
+        self._expiration_waveform = src._expiration_waveform
+        if src.has_fraction_inspired_oxygen(): self.get_fraction_inspired_oxygen().set(src._fraction_inspired_oxygen)
+        if src.has_inspiration_cycle_flow(): self.get_inspiration_cycle_flow().set(src._inspiration_cycle_flow)
+        if src.has_inspiration_cycle_pressure(): self.get_inspiration_cycle_pressure().set(src._inspiration_cycle_pressure)
+        self._inspiration_waveform = src._inspiration_waveform
+        if src.has_positive_end_expired_pressure(): self.get_positive_end_expired_pressure().set(src._positive_end_expired_pressure)
+        if src.has_slope(): self.get_slope().set(src._slope)
 
     def is_valid(self):
         return super().is_valid() \
                and self.has_delta_pressure_support() \
                and self.has_fraction_inspired_oxygen() \
-               and self.has_positive_end_expired_pressure() \
-               and self.has_slope()
+               and self.has_positive_end_expired_pressure()
 
     def is_active(self):
-        return True
+        return super().is_active()
 
     def has_delta_pressure_support(self):
         return self._delta_pressure_support is not None
@@ -135,12 +158,50 @@ class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentila
             self._delta_pressure_support = SEScalarPressure()
         return self._delta_pressure_support
 
+    def has_expiration_cycle_flow(self):
+        return self._expiration_cycle_flow is not None
+    def get_expiration_cycle_flow(self):
+        if self._expiration_cycle_flow is None:
+            self._expiration_cycle_flow = SEScalarVolumePerTimeData()
+        return self._expiration_cycle_flow
+
+    def has_expiration_cycle_pressure(self):
+        return self._expiration_cycle_pressure is not None
+    def get_expiration_cycle_pressure(self):
+        if self._expiration_cycle_pressure is None:
+            self._expiration_cycle_pressure = SEScalarPressure()
+        return self._expiration_cycle_pressure
+
+    def get_expiration_waveform(self):
+        return self._expiration_waveform
+    def set_expiration_waveform(self, t: eDriverWaveform):
+        self._expiration_waveform = t
+
     def has_fraction_inspired_oxygen(self):
         return self._fraction_inspired_oxygen is not None
     def get_fraction_inspired_oxygen(self):
         if self._fraction_inspired_oxygen is None:
             self._fraction_inspired_oxygen = SEScalar0To1()
         return self._fraction_inspired_oxygen
+
+    def has_inspiration_patient_trigger_flow(self):
+        return self._inspiration_patient_trigger_flow is not None
+    def get_inspiration_patient_trigger_flow(self):
+        if self._inspiration_patient_trigger_flow is None:
+            self._inspiration_patient_trigger_flow = SEScalarVolumePerTimeData()
+        return self._inspiration_patient_trigger_flow
+
+    def has_inspiration_patient_trigger_pressure(self):
+        return self._inspiration_patient_trigger_pressure is not None
+    def get_inspiration_patient_trigger_pressure(self):
+        if self._inspiration_patient_trigger_pressure is None:
+            self._inspiration_patient_trigger_pressure = SEScalarPressure()
+        return self._inspiration_patient_trigger_pressure
+
+    def get_inspiration_waveform(self):
+        return self._inspiration_waveform
+    def set_inspiration_waveform(self, t: eDriverWaveform):
+        self._inspiration_waveform = t
 
     def has_positive_end_expired_pressure(self):
         return self._positive_end_expired_pressure is not None
@@ -161,8 +222,14 @@ class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentila
                "\n\tDeltaPressureSupport: " + str(self._delta_pressure_support) if self.has_delta_pressure_support() else "Not Provided" + \
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
                "\n\tPositiveEndExpiredPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
-               "\n\tSlope: " + str(self._slope) if self.has_slope() else "Not Provided"
-
+               "\n\tSlope: " + str(self._slope) if self.has_slope() else "Not Provided" \
+               "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name \
+               "\n\InspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" \
+               "\n\InspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" \
+               "\n\tExpirationWaveform: " + self.get_expiration_waveform().name \
+               "\n\ExpirationPatientTriggerFlow: " + str(self._expiration_patient_trigger_flow) if self.has_expiration_patient_trigger_flow() else "Not Provided" \
+               "\n\ExpirationPatientTriggerPressure: " + str(self._expiration_patient_trigger_pressure) if self.has_expiration_patient_trigger_pressure() else "Not Provided"
+               
 
 class eMechanicalVentilator_PressureControlMode(Enum):
     AssistedControl = 0
@@ -172,6 +239,9 @@ class eMechanicalVentilator_PressureControlMode(Enum):
 class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
     __slots__ = ["_mode",
                  "_fraction_inspired_oxygen",
+                 "_inspiration_patient_trigger_flow",
+                 "_inspiration_patient_trigger_pressure",
+                 "_inspiration_waveform",
                  "_inspiratory_period",
                  "_inspiratory_pressure",
                  "_positive_end_expired_pressure",
@@ -182,6 +252,9 @@ class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
         super().__init__()
         self._mode = eMechanicalVentilator_PressureControlMode.AssistedControl
         self._fraction_inspired_oxygen = None
+        self._inspiration_patient_trigger_flow = None
+        self._inspiration_patient_trigger_pressure = None
+        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
         self._inspiratory_period = None
         self._inspiratory_pressure = None
         self._positive_end_expired_pressure = None
@@ -191,12 +264,15 @@ class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
     def clear(self):
         super().clear()
         self._mode = eMechanicalVentilator_PressureControlMode.AssistedControl
-        self._fraction_inspired_oxygen = None
-        self._inspiratory_period = None
-        self._inspiratory_pressure = None
-        self._positive_end_expired_pressure = None
-        self._respiration_rate = None
-        self._slope = None
+        if self._fraction_inspired_oxygen is not None: self._fraction_inspired_oxygen.invalidate()
+        if self._inspiration_patient_trigger_flow is not None: self._inspiration_patient_trigger_flow.invalidate()
+        if self._inspiration_patient_trigger_pressure is not None: self._inspiration_patient_trigger_pressure.invalidate()
+        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
+        if self._inspiratory_period is not None: self._inspiratory_period.invalidate()
+        if self._inspiratory_pressure is not None: self._inspiratory_pressure.invalidate()
+        if self._positive_end_expired_pressure is not None: self._positive_end_expired_pressure.invalidate()
+        if self._respiration_rate is not None: self._respiration_rate.invalidate()
+        if self._slope is not None: self._slope.invalidate()
 
     def copy(self, src):
         if not isinstance(SEMechanicalVentilatorPressureControl, src):
@@ -204,24 +280,25 @@ class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
         self.clear()
         super().copy(src)
         self._mode = src._mode
-        self._fraction_inspired_oxygen = src._fraction_inspired_oxygen
-        self._inspiratory_period = src._inspiratory_period
-        self._inspiratory_pressure = src._inspiratory_pressure
-        self._positive_end_expired_pressure = src._positive_end_expired_pressure
-        self._respiration_rate = src._respiration_rate
-        self._slope = src._slope
+        if src.has_fraction_inspired_oxygen(): self.get_fraction_inspired_oxygen().set(src._fraction_inspired_oxygen)
+        if src.has_inspiration_patient_trigger_flow(): self.ge_inspiration_patient_trigger_flow().set(src._inspiration_patient_trigger_flow)
+        if src.has_inspiration_patient_trigger_pressure(): self.get_inspiration_patient_trigger_pressure().set(src._inspiration_patient_trigger_pressure)
+        self._inspiration_waveform = src._inspiration_waveform
+        if src.has_inspiratory_period(): self.get_inspiratory_period().set(src._inspiratory_period)
+        if src.has_inspiratory_pressure(): self.get_inspiratory_pressure().set(src._inspiratory_pressure)
+        if src.has_positive_end_expired_pressure(): self.get_positive_end_expired_pressure().set(src._positive_end_expired_pressure)
+        if src.has_respiration_rate(): self.get_respiration_rate().set(src._respiration_rate)
+        if src.has_slope(): self.get_slope().set(src._slope)
 
     def is_valid(self):
         return super().is_valid() \
                and self.has_fraction_inspired_oxygen() \
-               and self.has_inspiratory_period() \
                and self.has_inspiratory_pressure() \
                and self.has_positive_end_expired_pressure() \
-               and self.has_respiration_rate() \
-               and self.has_slope()
+               and self.has_respiration_rate()
 
     def is_active(self):
-        return True
+        return super().is_active()
 
     def get_mode(self):
         return self._mode
@@ -234,6 +311,25 @@ class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
         if self._fraction_inspired_oxygen is None:
             self._fraction_inspired_oxygen = SEScalar0To1()
         return self._fraction_inspired_oxygen
+
+    def has_inspiration_patient_trigger_flow(self):
+        return self._inspiration_patient_trigger_flow is not None
+    def get_inspiration_patient_trigger_flow(self):
+        if self._inspiration_patient_trigger_flow is None:
+            self._inspiration_patient_trigger_flow = SEScalarVolumePerTimeData()
+        return self._inspiration_patient_trigger_flow
+
+    def has_inspiration_patient_trigger_pressure(self):
+        return self._inspiration_patient_trigger_pressure is not None
+    def get_inspiration_patient_trigger_pressure(self):
+        if self._inspiration_patient_trigger_pressure is None:
+            self._inspiration_patient_trigger_pressure = SEScalarPressure()
+        return self._inspiration_patient_trigger_pressure
+
+    def get_inspiration_waveform(self):
+        return self._inspiration_waveform
+    def set_inspiration_waveform(self, t: eDriverWaveform):
+        self._inspiration_waveform = t
 
     def has_inspiratory_period(self):
         return self._inspiratory_period is not None
@@ -272,7 +368,11 @@ class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
 
     def __repr__(self):
         return "Mechanical Ventilator Pressure Control" + \
+               "\n\tMode: " + self.get_mode().name + \
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
+               "\n\InspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" \
+               "\n\InspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" \
+               "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name \
                "\n\tInspiratoryPeriod: " + str(self._inspiratory_period) if self.has_inspiratory_period() else "Not Provided" + \
                "\n\tInspiratoryPressure: " + str(self._inspiratory_pressure) if self.has_inspiratory_pressure() else "Not Provided" + \
                "\n\tPositiveEndExpiredPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
@@ -289,9 +389,13 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
     __slots__ = ["_mode",
                  "_flow",
                  "_fraction_inspired_oxygen",
+                 "_inspiration_patient_trigger_flow",
+                 "_inspiration_patient_trigger_pressure",
+                 "_inspiration_waveform",
                  "_inspiratory_period",
                  "_positive_end_expired_pressure",
                  "_respiration_rate",
+                 "_slope",
                  "_tidal_volume"]
 
     def __init__(self):
@@ -299,20 +403,28 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
         self._mode = eMechanicalVentilator_PressureControlMode.AssistedControl
         self._flow = None
         self._fraction_inspired_oxygen = None
+        self._inspiration_patient_trigger_flow = None
+        self._inspiration_patient_trigger_pressure = None
+        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
         self._inspiratory_period = None
         self._positive_end_expired_pressure = None
         self._respiration_rate = None
+        self._slope = None
         self._tidal_volume = None
 
     def clear(self):
         super().clear()
         self._mode = eMechanicalVentilator_PressureControlMode.AssistedControl
-        self._flow = None
-        self._fraction_inspired_oxygen = None
-        self._inspiratory_period = None
-        self._positive_end_expired_pressure = None
-        self._respiration_rate = None
-        self._tidal_volume = None
+        if self._flow is not None: self._flow.invalidate()
+        if self._fraction_inspired_oxygen is not None: self._fraction_inspired_oxygen.invalidate()
+        if self._inspiration_patient_trigger_flow is not None: self._inspiration_patient_trigger_flow.invalidate()
+        if self._inspiration_patient_trigger_pressure is not None: self._inspiration_patient_trigger_pressure.invalidate()
+        self._inspiration_waveform = eDriverWaveform.NullDriverWaveform
+        if self._inspiratory_period is not None: self._inspiratory_period.invalidate()
+        if self._positive_end_expired_pressure is not None: self._positive_end_expired_pressure.invalidate()
+        if self._respiration_rate is not None: self._respiration_rate.invalidate()
+        if self._slope is not None: self._slope.invalidate()
+        if self._tidal_volume is not None: self._tidal_volume.invalidate()
 
     def copy(self, src):
         if not isinstance(SEMechanicalVentilatorVolumeControl, src):
@@ -320,24 +432,27 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
         self.clear()
         super().copy(src)
         self._mode = src._mode
-        self._flow = src._flow
-        self._fraction_inspired_oxygen = src._fraction_inspired_oxygen
-        self._inspiratory_period = src._inspiratory_period
-        self._positive_end_expired_pressure = src._positive_end_expired_pressure
-        self._respiration_rate = src._respiration_rate
-        self._tidal_volume = src._tidal_volume
+        if src.has_flow(): self.get_flow().set(src._flow)
+        if src.has_fraction_inspired_oxygen(): self.get_fraction_inspired_oxygen().set(src._fraction_inspired_oxygen)
+        if src.has_inspiration_patient_trigger_flow(): self.ge_inspiration_patient_trigger_flow().set(src._inspiration_patient_trigger_flow)
+        if src.has_inspiration_patient_trigger_pressure(): self.get_inspiration_patient_trigger_pressure().set(src._inspiration_patient_trigger_pressure)
+        self._inspiration_waveform = src._inspiration_waveform
+        if src.has_inspiratory_period(): self.get_inspiratory_period().set(src._inspiratory_period)
+        if src.has_positive_end_expired_pressure(): self.get_positive_end_expired_pressure().set(src._positive_end_expired_pressure)
+        if src.has_respiration_rate(): self.get_respiration_rate().set(src._respiration_rate)
+        if src.has_slope(): self.get_slope().set(src._slope)
+        if src.has_tidal_volume(): self.get_tidal_volume().set(src._tidal_volume)
 
     def is_valid(self):
         return super().is_valid() \
                and self.has_flow() \
                and self.has_fraction_inspired_oxygen() \
-               and self.has_inspiratory_period() \
                and self.has_positive_end_expired_pressure() \
                and self.has_respiration_rate() \
                and self.has_tidal_volume()
 
     def is_active(self):
-        return True
+        return super().is_valid()
 
     def get_mode(self):
         return self._mode
@@ -357,6 +472,25 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
         if self._fraction_inspired_oxygen is None:
             self._fraction_inspired_oxygen = SEScalar0To1()
         return self._fraction_inspired_oxygen
+
+    def has_inspiration_patient_trigger_flow(self):
+        return self._inspiration_patient_trigger_flow is not None
+    def get_inspiration_patient_trigger_flow(self):
+        if self._inspiration_patient_trigger_flow is None:
+            self._inspiration_patient_trigger_flow = SEScalarVolumePerTimeData()
+        return self._inspiration_patient_trigger_flow
+
+    def has_inspiration_patient_trigger_pressure(self):
+        return self._inspiration_patient_trigger_pressure is not None
+    def get_inspiration_patient_trigger_pressure(self):
+        if self._inspiration_patient_trigger_pressure is None:
+            self._inspiration_patient_trigger_pressure = SEScalarPressure()
+        return self._inspiration_patient_trigger_pressure
+
+    def get_inspiration_waveform(self):
+        return self._inspiration_waveform
+    def set_inspiration_waveform(self, t: eDriverWaveform):
+        self._inspiration_waveform = t
 
     def has_inspiratory_period(self):
         return self._inspiratory_period is not None
@@ -379,6 +513,13 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
             self._respiration_rate = SEScalarFrequency()
         return self._respiration_rate
 
+    def has_slope(self):
+        return self._slope is not None
+    def get_slope(self):
+        if self._slope is None:
+            self._slope = SEScalarTime()
+        return self._slope
+
     def has_tidal_volume(self):
         return self._tidal_volume is not None
     def get_tidal_volume(self):
@@ -388,12 +529,17 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
 
     def __repr__(self):
         return "Mechanical Ventilator Volume Control" + \
+               "\n\tMode: " + self.get_mode().name + \
                "\n\tFlow: " + str(self._flow) if self.has_flow() else "Not Provided" + \
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
+               "\n\InspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" \
+               "\n\InspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" \
+               "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name \
                "\n\tInspiratoryPeriod: " + str(self._inspiratory_period) if self.has_inspiratory_period() else "Not Provided" + \
                "\n\tPositiveEndExpiredPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
                "\n\tRespirationRate: " + str(self._respiration_rate) if self.has_respiration_rate() else "Not Provided" + \
-               "\n\tTidalVolume: " + str(self._tidal_volume) if self.has_tidal_volume() else "Not Provided"
+               "\n\tTidalVolume: " + str(self._tidal_volume) if self.has_tidal_volume() else "Not Provided" \
+               "\n\tSlope: " + str(self._slope) if self.has_slope() else "Not Provided"
 
 
 class SEMechanicalVentilatorHold(SEMechanicalVentilatorAction):
@@ -446,11 +592,11 @@ class SEMechanicalVentilatorLeak(SEMechanicalVentilatorAction):
 
     def clear(self):
         super().clear()
-        self._severity = None
+        if self._severity is not None: self._severity.invalidate()
 
     def copy(self, src):
         super().copy(src)
-        self._severity = src._severity
+        if src.has_severity(): self.get_severity().set(src._severity)
 
     def is_valid(self):
         return self.has_severity()

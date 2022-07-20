@@ -5,6 +5,10 @@ from pulse.cdm.curve import SECurve
 from pulse.cdm.engine import eSwitch
 from pulse.cdm.scalars import SEScalarPressureTimePerVolume, SEScalarPressure, SEScalarTime
 
+class eDefaultType(Enum):
+    Model = 0
+    Zero = 1
+
 class SERespiratoryMechanics():
     __slots__ = ["_active",
                  "_left_compliance_curve",
@@ -28,6 +32,7 @@ class SERespiratoryMechanics():
 
     def __init__(self):
         self._active = eSwitch.NullSwitch
+        self._default_type = eDefaultType.Model
         self._left_compliance_curve = None
         self._right_compliance_curve = None
         self._left_expiratory_resistance = None
@@ -49,6 +54,7 @@ class SERespiratoryMechanics():
 
     def clear(self):
         self._active = eSwitch.NullSwitch
+        self._default_type = eDefaultType.Model
         if self._left_compliance_curve is not None: self._left_compliance_curve.invalidate()
         if self._right_compliance_curve is not None: self._right_compliance_curve.invalidate()
         if self._left_expiratory_resistance is not None: self._left_expiratory_resistance.invalidate()
@@ -73,6 +79,7 @@ class SERespiratoryMechanics():
             raise Exception("Provided argument must be a SERespiratoryMechanics")
         self.clear()
         self._active = src._active
+        self._default_type = src._default_type
         if src.has_left_compliance_curve() is not None: self.get_left_compliance_curve().set(src._left_compliance_curve)
         if src.has_right_compliance_curve() is not None: self.get_right_compliance_curve().set(src._right_compliance_curve)
         if src.has_left_expiratory_resistance() is not None: self.get_left_expiratory_resistance.set(src._left_expiratory_resistance)
@@ -95,6 +102,11 @@ class SERespiratoryMechanics():
     def get_active(self):
         return self._active
     def set_active(self, src : eSwitch):
+        self._active = src
+
+    def get_default_type(self):
+        return self._active
+    def set_default_type(self, src : eSwitch):
         self._active = src
 
     def has_left_compliance_curve(self):
