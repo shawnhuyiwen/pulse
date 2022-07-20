@@ -106,7 +106,7 @@ class SERespiratoryMechanics():
 
     def get_default_type(self):
         return self._active
-    def set_default_type(self, src : eSwitch):
+    def set_default_type(self, src : eDefaultType):
         self._active = src
 
     def has_left_compliance_curve(self):
