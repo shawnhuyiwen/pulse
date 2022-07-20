@@ -351,14 +351,13 @@ namespace pulse
     SEScalarAmountPerVolume phosphate;
 
     albuminConcentration.SetValue(45.0, MassPerVolumeUnit::g_Per_L);
-    hematocrit.SetValue(m_data.GetCurrentPatient().GetSex() == ePatient_Sex::Male ? 0.45 : 0.40);
+    double Hb_total_g_Per_dL = m_data.GetCurrentPatient().GetSex() == ePatient_Sex::Male ? 15.0 : 14.0;
+    hematocrit.SetValue(Hb_total_g_Per_dL / 34.0);
     bodyTemp.SetValue(37.0, TemperatureUnit::C);
     strongIonDifference.SetValue(40.5, AmountPerVolumeUnit::mmol_Per_L);
     phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
 
     m_data.GetSaturationCalculator().SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
-
-    double Hb_total_g_Per_dL = hematocrit.GetValue() * 34.0;
 
     // Convert to mmol/L
     // Note that we would need to use 1/4 of the molecular weight of the hemoglobin tetramer

@@ -1336,7 +1336,7 @@ namespace pulse
     double totalCompliance = (0.5 * (0.91 * 1.7560) * 0.02);
     //The fractions here should add to 1.0;
     double renalArteryCompliance_mL_Per_mmHg = totalCompliance;// *0.11;
-    double renalVeinCompliance_mL_Per_mmHg = totalCompliance; //* 0.78;
+    double renalVeinCompliance_mL_Per_mmHg = totalCompliance * 0.78;
     double glomerularCompliance_mL_Per_mmHg = totalCompliance * 0.11;
     ///\todo The bladder is currently not being modeled as a compliance
     //double bladderCompliance_mL_Per_mmHg = Convert(38.3, VolumePerPressureUnit::mL_Per_cmH2O, VolumePerPressureUnit::mL_Per_mmHg);
