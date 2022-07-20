@@ -17,7 +17,7 @@ import json
 import einops
 import ubelt as ub
 from copy import deepcopy
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import Optional, List, Literal, Any, Dict, Tuple
 from simple_parsing import ArgumentParser
 
@@ -44,6 +44,21 @@ class MISSING(Sentinel):
 
 # TODO death prediction
 # https://pytorch-forecasting.readthedocs.io/en/stable/tutorials/building.html#Classification
+
+@dataclass
+class BaseModelWithCovariatesKwargs:
+    static_categoricals: List[str] = field(default_factory=list)
+    static_reals: List[str] = field(default_factory=list)
+    time_varying_categoricals_encoder: List[str] = field(default_factory=list)
+    time_varying_categoricals_decoder: List[str] = field(default_factory=list)
+    categorical_groups: Dict[str, List[str]] = field(default_factory=dict)
+    time_varying_reals_encoder: List[str] = field(default_factory=list)
+    time_varying_reals_decoder: List[str] = field(default_factory=list)
+    embedding_sizes: Dict[str, Tuple[int, int]] = field(default_factory=dict)
+    embedding_paddings: List[str] = field(default_factory=list)
+    embedding_labels: Dict[str, np.ndarray] = field(default_factory=dict)
+    x_reals: List[str] = field(default_factory=list)
+    x_categoricals: List[str] = field(default_factory=list)
 
 
 class BaseModel(pf.BaseModelWithCovariates):
@@ -110,16 +125,19 @@ class BaseModel(pf.BaseModelWithCovariates):
     ):
         loss = self._coerce_loss(loss)
 
-        logging_metrics = [self._coerce_loss(l) for l in logging_metrics]
+        logging_metrics = nn.ModuleList(
+            [self._coerce_loss(l) for l in logging_metrics])
         self.save_hyperparameters()
         self.save_hyperparameters(dict(loss=loss, logging_metrics=logging_metrics), logger=False)
-        super().__init__(loss=loss, logging_metrics=logging_metrics)
+        # TODO ensure the cov kwargs are saved in hparams
+        super().__init__(loss=loss, logging_metrics=logging_metrics, **ub.dict_diff(kwargs, asdict(BaseModelWithCovariatesKwargs())))
         self.gaussian_likelihood_std = torch.tensor([0.01])
 
         self.x_dims: int = MISSING
         self.y_dims: int = MISSING
         # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
-        self.example_input_array: Any = MISSING
+        # shouldn't declare this before it can be assigned to
+        # self.example_input_array: Any = MISSING
         self.t_param: str = MISSING
 
         # need a param with requires_grad=True before configure_optimizers()
@@ -163,8 +181,8 @@ class BaseModel(pf.BaseModelWithCovariates):
         return self.to_network_output(prediction=prediction)
         '''
         # TODO x_time and y_time as known covariate (encoder_cont, decoder_cont)
-        import xdev; xdev.embed()
-        x_data = einops.rearrange(x['encoder_cont'], 'f b t -> b t f')
+        # 'b t f'
+        x_data = x['encoder_cont']
         assert torch.unique(x['encoder_lengths']).shape == (1, )
         enc_len = x['encoder_lengths'][0]
         assert torch.unique(x['decoder_time_idx'][:, 0]).shape == (1, )
@@ -174,8 +192,12 @@ class BaseModel(pf.BaseModelWithCovariates):
         y_time = torch.arange(dec_idx, dec_idx + dec_len)
 
         y_pred = self.old_forward(y_time, x_data, x_time)
+        # TODO update if any target is multichannel (categorical)
+        # has to be a list of tensors...
+        y_pred = [*einops.rearrange(y_pred, 'b t f -> f b t 1')]
 
         y_pred = self.transform_output(y_pred, target_scale=x["target_scale"])
+        # import xdev; xdev.embed()
         return self.to_network_output(prediction=y_pred)
 
     def old_forward(self, y_time, x, x_time):
@@ -184,6 +206,8 @@ class BaseModel(pf.BaseModelWithCovariates):
     def init_xy(self):
         pass
 
+    # TODO check this when implementing categorical target in from_dataset
+    # https://pytorch-forecasting.readthedocs.io/en/stable/tutorials/building.html#Predicting-multiple-targets-at-the-same-time
     @classmethod
     def from_datamodule(cls, dm, **kwargs):
         dm.prepare_data()
@@ -193,16 +217,16 @@ class BaseModel(pf.BaseModelWithCovariates):
         # (e.g. number of quantiles for QuantileLoss and one target or list of
         # output sizes).
         # [n_features, min(dec_lens)??]
-        self = cls.from_dataset(dm.dset_tr, **kwargs)
+        self = cls.from_dataset(dm.dset_tr, **kwargs, output_transformer=dm.dset_tr.target_normalizer)
         batch = next(iter(dm.train_dataloader()))
         self.x_dims = len(self.encoder_variables)  # + len(self.static_variables)
-        self.y_dims = len(self.decoder_variables)
+        self.y_dims = len(self.decoder_variables) + len(self.target_names)
         self.batch_size = -1
         self.t_param = dm.t_param
         self.init_xy()
         return self
 
-    def setup(self, stage):
+    def _setup(self, stage=None):
         # TODO parameterize dset_tr and train_dataloader by stage
         dm = self.trainer.datamodule
         # import xdev; xdev.embed()
@@ -216,6 +240,7 @@ class BaseModel(pf.BaseModelWithCovariates):
         self.init_xy()
         super().setup(stage)
         # import xdev; xdev.embed()
+
 
 # no dice due to https://github.com/Lightning-AI/lightning/issues/12506
 # datamodule is still ok though

@@ -218,13 +218,14 @@ def trainer_kwargs(kl_coef=1, max_epochs=300, test_for_epochs=1, load_ckpt=None,
                 resume_from_checkpoint=load_ckpt,
                 callbacks=[
                     pl.callbacks.EarlyStopping(
-                        monitor='tr_mse',
+                        monitor='train_loss_epoch',
+                        # monitor='tr_mse',
                         # monitor='va_mse',
                         mode='min',
                         patience=patience_for_no_better_epochs),
                     kl_getter,
-                    top_va_callback,
-                    top_tr_callback,
+                    # top_va_callback,
+                    # top_tr_callback,
                 ],
                gradient_clip_val=0.01,)
 
@@ -329,9 +330,26 @@ class MyLightningCLI(LightningCLI):
 
 if __name__ == "__main__":
 
+    torch.set_default_dtype(torch.float32)
     if 1:
 
-        torch.set_default_dtype(torch.float32)
+        from neural_ode.models.recurrent import RecurrentODEParams
+        from neural_ode.models.diff_func import ODEFuncParams
+        dm = utils.HemorrhageVitals(stride=1000, max_pts=10, batch_size=1)
+        model = RecurrentODE.from_datamodule(dm, recurrentodeparams=RecurrentODEParams(), odefuncparams=ODEFuncParams(), learning_rate=1e-4)
+        trainer = pl.Trainer(**trainer_kwargs(), overfit_batches=1)
+
+        # dm.prepare_data()
+        # dm.setup()
+        # batch = next(iter(dm.train_dataloader()))
+        # x,y = batch
+        # y_pred = model(x)
+        # import xdev; xdev.embed()
+
+        trainer.fit(model, datamodule=dm)
+
+    elif 0:
+
 
         # cli = MyLightningCLI(model_class=utils.BaseModel,
         cli = LightningCLI(model_class=utils.BaseModel,
@@ -347,6 +365,7 @@ if __name__ == "__main__":
         # cli.model = cli.model.from_datamodule(cli.datamodule)
         # # fit == train + validate
         # cli.trainer.fit(cli.model, datamodule=cli.datamodule)
+
     else:
 
         parser = add_model_args_to_parser(parser)

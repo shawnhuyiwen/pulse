@@ -193,6 +193,8 @@ class RecurrentODE(BaseModel):
                                                self.encoder_out_dims * 2,
                                                self.n_out_units)
 
+    def setup(self, stage=None):
+        super().setup(stage)
 
     # RecurrentODE
     def old_forward(self, y_time, x, x_time):
@@ -213,6 +215,7 @@ class RecurrentODE(BaseModel):
         x_merged = torch.zeros((batch_size, len(x_time), x_dims),
                                dtype=x.dtype,)
                                # device=utils.get_device(x))
+        # import xdev; xdev.embed()
         x_merged[:, x_time_idx, :] = x
         hs = self.ODE_RNN(x_merged, x_time, return_latents=True)
         # this is like having t as an extra batch dim for output_net
