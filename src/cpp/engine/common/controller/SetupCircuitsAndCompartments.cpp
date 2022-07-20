@@ -286,19 +286,18 @@ namespace pulse
     // Our configuration can apply a modifier to adjust any of these targets to get closer to the target systolic and diastolic pressures from the patient file
     // The tuning method in cardiovascular will do the fine tuning, but modifiers can speed up the process.
     /// \todo Make these a function of the systolic and diastolic pressure by fitting a curve to the data from the variations test
-    const double systemicResistanceModifier = 0.849;
-    const double largeArteriesComplianceModifier = 0.4333;
+    const double systemicResistanceModifier = 1.0; // 0.849;
+    const double largeArteriesComplianceModifier = 1.0;//0.4333;
 
-    //Flow rates from \cite valtin1995renal
+    //Flow rates from \cite valentin2002icrp
     double VascularFlowTargetAorta = 1.0 * cardiacOutputTarget_mL_Per_s;
-    double VascularFlowTargetArm = male ? 0.01448 * cardiacOutputTarget_mL_Per_s : 0.01664 * cardiacOutputTarget_mL_Per_s;
+    double VascularFlowTargetArm = 0.015 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetBone = 0.05 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetBrain = 0.12 * cardiacOutputTarget_mL_Per_s;
-    double VascularFlowTargetFat = male ? 0.05 * cardiacOutputTarget_mL_Per_s : 0.0085 * cardiacOutputTarget_mL_Per_s;
-    double VascularFlowTargetKidney = male ? 0.098 * cardiacOutputTarget_mL_Per_s : 0.088 * cardiacOutputTarget_mL_Per_s;
+    double VascularFlowTargetFat = male ? 0.05 * cardiacOutputTarget_mL_Per_s : 0.085 * cardiacOutputTarget_mL_Per_s;
+    double VascularFlowTargetKidney = male ? 0.085 * cardiacOutputTarget_mL_Per_s : 0.075 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetLargeIntestine = male ? 0.04 * cardiacOutputTarget_mL_Per_s : 0.05 * cardiacOutputTarget_mL_Per_s;
-    double VascularFlowTargetLeg = male ? 0.02872 * cardiacOutputTarget_mL_Per_s : 0.0330 * cardiacOutputTarget_mL_Per_s;
-    double VascularFlowTargetLiver = 0.075 * cardiacOutputTarget_mL_Per_s;
+    double VascularFlowTargetLeg = 0.0525 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetMuscle = male ? 0.17 * cardiacOutputTarget_mL_Per_s : 0.12 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetMyocardium = male ? 0.04 * cardiacOutputTarget_mL_Per_s : 0.05 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetPulmCapRight = RightLungRatio * cardiacOutputTarget_mL_Per_s * (1 - pulmonaryShuntFractionFactor);
@@ -306,11 +305,12 @@ namespace pulse
     double VascularFlowTargetPulmArtLeft = LeftLungRatio * cardiacOutputTarget_mL_Per_s * (1 - pulmonaryShuntFractionFactor);
     double VascularFlowTargetPulmCapLeft = LeftLungRatio * cardiacOutputTarget_mL_Per_s * (1 - pulmonaryShuntFractionFactor);
     double VascularFlowTargetPulmVeinsLeft = LeftLungRatio * cardiacOutputTarget_mL_Per_s * (1 - pulmonaryShuntFractionFactor);
-    double VascularFlowTargetSkin = 0.067 * cardiacOutputTarget_mL_Per_s;
+    double VascularFlowTargetSkin = 0.05 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetSmallIntestine = male ? 0.1 * cardiacOutputTarget_mL_Per_s : 0.11 * cardiacOutputTarget_mL_Per_s;
-    double VascularFlowTargetSplanchnic = male ? 0.0258 * cardiacOutputTarget_mL_Per_s : 0.0255 * cardiacOutputTarget_mL_Per_s;
+    double VascularFlowTargetSplanchnic = 0.01 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetSpleen = 0.03 * cardiacOutputTarget_mL_Per_s;
     double VascularFlowTargetPortalVein = VascularFlowTargetLargeIntestine + VascularFlowTargetSmallIntestine + VascularFlowTargetSplanchnic + VascularFlowTargetSpleen;
+    double VascularFlowTargetLiver = (male ? 0.255 * cardiacOutputTarget_mL_Per_s : 0.27 * cardiacOutputTarget_mL_Per_s) -VascularFlowTargetPortalVein;
 
     // Pressure targets derived from information available in \cite guyton2006medical and \cite van2013davis
     double VascularPressureTargetAorta = 1.0 * systolicPressureTarget_mmHg;
@@ -338,31 +338,31 @@ namespace pulse
     double VascularPressureTargetSpleen = 0.33 * systolicPressureTarget_mmHg;
     double VascularPressureTargetVenaCava = 0.0333 * systolicPressureTarget_mmHg;
 
-    // Volume fractions from \cite valtin1995renal
+    // Volume fractions from \cite valentin2002icrp
     double VolumeFractionAorta = 0.05;
-    double VolumeFractionArm = 0.01;
+    double VolumeFractionArm = 0.02;
     double VolumeFractionBone = 0.07;
     double VolumeFractionBrain = 0.012;
     double VolumeFractionFat = male ? 0.05 : 0.085;
     double VolumeFractionHeartLeft = 0.0025;
     double VolumeFractionHeartRight = 0.0025;
-    double VolumeFractionKidney = 0.0202;
-    double VolumeFractionLargeIntestine = 0.019;
-    double VolumeFractionLeg = 0.0151;
-    double VolumeFractionLiver = 0.106;
+    double VolumeFractionKidney = 0.02;
+    double VolumeFractionLargeIntestine = 0.022;
+    double VolumeFractionLeg = 0.04;
+    double VolumeFractionLiver = 0.1;
     double VolumeFractionMuscle = male ? 0.14 : 0.105;
-    double VolumeFractionMyocardium = 0.007;
-    double VolumeFractionPulmArtRight = 0.034 * RightLungRatio;
-    double VolumeFractionPulmCapRight = 0.023 * RightLungRatio;
-    double VolumeFractionPulmVeinsRight = 0.068 * RightLungRatio;
-    double VolumeFractionPulmArtLeft = 0.034 * LeftLungRatio;
-    double VolumeFractionPulmCapLeft = 0.023 * LeftLungRatio;
-    double VolumeFractionPulmVeinsLeft = 0.068 * LeftLungRatio;
-    double VolumeFractionSkin = 0.032;
+    double VolumeFractionMyocardium = 0.01;
+    double VolumeFractionPulmArtRight = 0.03 * RightLungRatio;
+    double VolumeFractionPulmCapRight = 0.02 * RightLungRatio;
+    double VolumeFractionPulmVeinsRight = 0.055 * RightLungRatio;
+    double VolumeFractionPulmArtLeft = 0.03 * LeftLungRatio;
+    double VolumeFractionPulmCapLeft = 0.02 * LeftLungRatio;
+    double VolumeFractionPulmVeinsLeft = 0.055 * LeftLungRatio;
+    double VolumeFractionSkin = 0.03;
     double VolumeFractionSmallIntestine = 0.038;
-    double VolumeFractionSplanchnic = 0.0116;
+    double VolumeFractionSplanchnic = 0.01;
     double VolumeFractionSpleen = 0.014;
-    double VolumeFractionVenaCava = 0.247;
+    double VolumeFractionVenaCava = 0.175;
 
     // Compute resistances from mean flow rates and pressure targets
     double ResistanceAorta = (VascularPressureTargetHeartLeft - systolicPressureTarget_mmHg) / VascularFlowTargetAorta;
@@ -1302,6 +1302,8 @@ namespace pulse
     // Circuit Interdependence
     SEFluidCircuit& cCardiovascular = m_Circuits->GetCardiovascularCircuit();
 
+    bool male = m_InitialPatient->GetSex() == ePatient_Sex::Male ? true : false;
+
     //assuming there is a left and right kidney node in cardiovascular AND that a baseline volume is set (as a function of patient mass):
     double leftKidneyFluidVolume_mL = cCardiovascular.GetNode(pulse::CardiovascularNode::LeftKidney1)->GetVolumeBaseline(VolumeUnit::mL);
     double singleKidneyLargeVasculatureFluidVolume_mL = leftKidneyFluidVolume_mL / 2;    //Total large vasculature fluid volume
@@ -1312,9 +1314,11 @@ namespace pulse
     double openSwitch_mmHg_s_Per_mL = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     //Resistances with some tuning multipliers
     double urineTuningMultiplier = 0.80; //0.85;
-    double arteryTuningMultiplier = 0.35;
+    double arteryTuningMultiplier = 1.0;//0.35;
 
-    double renalArteryResistance_mmHg_s_Per_mL = Convert(0.0250 * arteryTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+    double renalArteryResistanceFactor = male ? 0.025 : 0.055;
+
+    double renalArteryResistance_mmHg_s_Per_mL = Convert(renalArteryResistanceFactor * arteryTuningMultiplier, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     double afferentResistance_mmHg_s_Per_mL = Convert(0.0417, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     double efferentResistance_mmHg_s_Per_mL = Convert(0.0763, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
     double glomerularResistance_mmHg_s_Per_mL = Convert(0.0019, PressureTimePerVolumeUnit::mmHg_min_Per_mL, PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -1331,8 +1335,8 @@ namespace pulse
     //0.5 * CapacitanceKidney is the per-kidney value from 3 element Windkessel
     double totalCompliance = (0.5 * (0.91 * 1.7560) * 0.02);
     //The fractions here should add to 1.0;
-    double renalArteryCompliance_mL_Per_mmHg = totalCompliance * 0.11;
-    double renalVeinCompliance_mL_Per_mmHg = totalCompliance * 0.78;
+    double renalArteryCompliance_mL_Per_mmHg = totalCompliance;// *0.11;
+    double renalVeinCompliance_mL_Per_mmHg = totalCompliance; //* 0.78;
     double glomerularCompliance_mL_Per_mmHg = totalCompliance * 0.11;
     ///\todo The bladder is currently not being modeled as a compliance
     //double bladderCompliance_mL_Per_mmHg = Convert(38.3, VolumePerPressureUnit::mL_Per_cmH2O, VolumePerPressureUnit::mL_Per_mmHg);
