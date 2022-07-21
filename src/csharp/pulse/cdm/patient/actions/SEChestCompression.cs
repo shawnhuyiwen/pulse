@@ -3,15 +3,17 @@
 
 namespace Pulse.CDM
 {
-  public class SEChestCompressionInstantaneous : SEPatientAction
+  public class SEChestCompression : SEPatientAction
   {
     protected SEScalarForce    force;
     protected SEScalar0To1     force_scale;
+    protected SEScalarTime     compression_period;
 
-    public SEChestCompressionInstantaneous()
+    public SEChestCompression()
     {
       force = null;
       force_scale = null;
+      compression_period = null;
     }
 
     public override void Clear()
@@ -21,11 +23,13 @@ namespace Pulse.CDM
         force.Invalidate();
       if (force_scale != null)
         force_scale.Invalidate();
+      if (compression_period != null)
+        compression_period.Invalidate();
     }
 
     public override bool IsValid()
     {
-      return (HasForce() || HasForceScale());
+      return (HasForce() || HasForceScale()) && HasCompressionPeriod();
     }
 
     public bool HasForce()
@@ -50,5 +54,15 @@ namespace Pulse.CDM
       return force_scale;
     }
 
+    public bool HasCompressionPeriod()
+    {
+      return compression_period == null ? false : compression_period.IsValid();
+    }
+    public SEScalarTime GetCompressionPeriod()
+    {
+      if (compression_period == null)
+        compression_period = new SEScalarTime();
+      return compression_period;
+    }
   }
 }

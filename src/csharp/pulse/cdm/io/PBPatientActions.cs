@@ -51,6 +51,12 @@ namespace Pulse.CDM
         Serialize(any.Bronchoconstriction, b);
         return b;
       }
+      if (any.ChestCompression != null)
+      {
+        SEChestCompression cpr = new SEChestCompression();
+        Serialize(any.ChestCompression, cpr);
+        return cpr;
+      }
       if (any.ChestCompressionAutomated != null)
       {
         SEChestCompressionAutomated cprA = new SEChestCompressionAutomated();
@@ -235,6 +241,11 @@ namespace Pulse.CDM
       if (action.GetType().IsAssignableFrom(typeof(SEBronchoconstriction)))
       {
         any.Bronchoconstriction = Unload((SEBronchoconstriction)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SEChestCompression)))
+      {
+        any.ChestCompression = Unload((SEChestCompression)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SEChestCompressionAutomated)))
@@ -572,6 +583,41 @@ namespace Pulse.CDM
     }
     #endregion
 
+    #region SEChestCompression
+    public static void Load(pulse.cdm.bind.ChestCompressionData src, SEChestCompression dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ChestCompressionData src, SEChestCompression dst)
+    {
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
+      if (src.CompressionPeriod != null)
+        PBProperty.Load(src.CompressionPeriod, dst.GetCompressionPeriod());
+      if (src.Force != null)
+        PBProperty.Load(src.Force, dst.GetForce());
+      if (src.ForceScale != null)
+        PBProperty.Load(src.ForceScale, dst.GetForceScale());
+    }
+    public static pulse.cdm.bind.ChestCompressionData Unload(SEChestCompression src)
+    {
+      pulse.cdm.bind.ChestCompressionData dst = new pulse.cdm.bind.ChestCompressionData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEChestCompression src, pulse.cdm.bind.ChestCompressionData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasCompressionPeriod())
+        dst.CompressionPeriod = PBProperty.Unload(src.GetCompressionPeriod());
+      if (src.HasForce())
+        dst.Force = PBProperty.Unload(src.GetForce());
+      if (src.HasForceScale())
+        dst.ForceScale = PBProperty.Unload(src.GetForceScale());
+    }
+    #endregion
+
     #region SEChestCompressionAutomated
     public static void Load(pulse.cdm.bind.ChestCompressionAutomatedData src, SEChestCompressionAutomated dst)
     {
@@ -581,6 +627,8 @@ namespace Pulse.CDM
     {
       if (src.PatientAction != null)
         Serialize(src.PatientAction, dst);
+      if (src.AppliedForceFraction != null)
+        PBProperty.Load(src.AppliedForceFraction, dst.GetAppliedForceFraction());
       if (src.CompressionFrequency != null)
         PBProperty.Load(src.CompressionFrequency, dst.GetCompressionFrequency());
       if (src.Force != null)
@@ -598,6 +646,8 @@ namespace Pulse.CDM
     {
       dst.PatientAction = new pulse.cdm.bind.PatientActionData();
       Serialize(src, dst.PatientAction);
+      if (src.HasAppliedForceFraction())
+        dst.AppliedForceFraction = PBProperty.Unload(src.GetAppliedForceFraction());
       if (src.HasCompressionFrequency())
         dst.CompressionFrequency = PBProperty.Unload(src.GetCompressionFrequency());
       if (src.HasForce())
@@ -620,8 +670,6 @@ namespace Pulse.CDM
         PBProperty.Load(src.Force, dst.GetForce());
       if (src.ForceScale != null)
         PBProperty.Load(src.ForceScale, dst.GetForceScale());
-      if (src.ForcePeriod != null)
-        PBProperty.Load(src.ForcePeriod, dst.GetForcePeriod());
     }
     public static pulse.cdm.bind.ChestCompressionInstantaneousData Unload(SEChestCompressionInstantaneous src)
     {
@@ -637,8 +685,6 @@ namespace Pulse.CDM
         dst.Force = PBProperty.Unload(src.GetForce());
       if (src.HasForceScale())
         dst.ForceScale = PBProperty.Unload(src.GetForceScale());
-      if (src.HasForcePeriod())
-        dst.ForcePeriod = PBProperty.Unload(src.GetForcePeriod());
     }
     #endregion
 

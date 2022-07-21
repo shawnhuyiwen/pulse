@@ -5,12 +5,14 @@ namespace Pulse.CDM
 {
   public class SEChestCompressionAutomated : SEPatientAction
   {
+    protected SEScalar0To1          applied_force_fraction;
     protected SEScalarFrequency     compression_frequency;
     protected SEScalarForce         force;
     protected SEScalar0To1          force_scale;
 
     public SEChestCompressionAutomated()
     {
+      applied_force_fraction = null;
       compression_frequency = null;
       force = null;
       force_scale = null;
@@ -23,13 +25,15 @@ namespace Pulse.CDM
         force.Invalidate();
       if (force_scale != null)
         force_scale.Invalidate();
+      if (applied_force_fraction != null)
+        applied_force_fraction.Invalidate();
       if (compression_frequency != null)
         compression_frequency.Invalidate();
     }
 
     public override bool IsValid()
     {
-      return HasForce() != HasForceScale();
+      return (HasForce() || HasForceScale()) && HasCompressionFrequency();
     }
 
     public bool HasForce()
@@ -52,6 +56,17 @@ namespace Pulse.CDM
       if (force_scale == null)
         force_scale = new SEScalar0To1();
       return force_scale;
+    }
+
+    public bool HasAppliedForceFraction()
+    {
+      return applied_force_fraction == null ? false : applied_force_fraction.IsValid();
+    }
+    public SEScalar0To1 GetAppliedForceFraction()
+    {
+      if (applied_force_fraction == null)
+        applied_force_fraction = new SEScalar0To1();
+      return applied_force_fraction;
     }
 
     public bool HasCompressionFrequency()

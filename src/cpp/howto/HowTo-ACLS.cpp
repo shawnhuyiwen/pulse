@@ -44,6 +44,9 @@ void HowToACLS()
   SEChestCompression cpr;
   std::stringstream ss;
 
+  SEScenario sce;
+
+  bool devRequests = false;
   bool automatedCPR = true;
 
   double unassisted_min = 7;
@@ -63,14 +66,15 @@ void HowToACLS()
   pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.log");
   pe->GetLogger()->Info("HowTo_ALCS");
 
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+  std::string stateFile = "./states/StandardMale@0s.json";
+  if (!pe->SerializeFromFile(stateFile))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
+  sce.SetEngineStateFile(stateFile);
 
   SEDataRequestManager& dMgr = pe->GetEngineTracker()->GetDataRequestManager();
-  dMgr.SetResultsFilename("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.csv");
 
   dMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
   dMgr.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
@@ -92,73 +96,84 @@ void HowToACLS()
   dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
   dMgr.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
 
-
-  dMgr.CreatePatientDataRequest("HeartRateBaseline", FrequencyUnit::Per_min);
-  dMgr.CreatePatientDataRequest("MeanArterialPressureBaseline", PressureUnit::mmHg);
-  dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartRateScale");
-  dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartElastanceScale");
-  dMgr.CreatePhysiologyDataRequest("BaroreceptorResistanceScale");
-  dMgr.CreatePhysiologyDataRequest("BaroreceptorComplianceScale");
-  dMgr.CreatePhysiologyDataRequest("ChemoreceptorHeartRateScale");
-  dMgr.CreatePhysiologyDataRequest("ChemoreceptorHeartElastanceScale");
-  dMgr.CreatePhysiologyDataRequest("PulmonaryCapillariesCoverageFraction");
-  dMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-  dMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-
-  dMgr.CreateSubstanceDataRequest("CarbonDioxide", "MassInBlood", MassUnit::g);
-  dMgr.CreateSubstanceDataRequest("CarbonDioxide", "MassInTissue", MassUnit::g);
-  dMgr.CreateSubstanceDataRequest("Oxygen", "MassInBlood", MassUnit::g);
-  dMgr.CreateSubstanceDataRequest("Oxygen", "MassInTissue", MassUnit::g);
-
-  std::vector<std::pair<std::string, std::string>> tissues =
+  if (devRequests)
   {
-    std::pair<std::string, std::string>(pulse::VascularCompartment::Fat,pulse::ExtravascularCompartment::FatExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::Bone,pulse::ExtravascularCompartment::BoneExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::Brain,pulse::ExtravascularCompartment::BrainExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::Gut,pulse::ExtravascularCompartment::GutExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::LeftKidney,pulse::ExtravascularCompartment::LeftKidneyExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::RightKidney,pulse::ExtravascularCompartment::RightKidneyExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::LeftLung,pulse::ExtravascularCompartment::LeftLungExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::RightLung,pulse::ExtravascularCompartment::RightLungExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::Liver,pulse::ExtravascularCompartment::LiverExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::Muscle,pulse::ExtravascularCompartment::MuscleExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::Myocardium,pulse::ExtravascularCompartment::MyocardiumExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::Skin,pulse::ExtravascularCompartment::SkinExtracellular),
-    std::pair<std::string, std::string>(pulse::VascularCompartment::Spleen,pulse::ExtravascularCompartment::SpleenExtracellular)
-  };
-  for (auto& itr : tissues)
-  {
-    // Vascular Properties
-    dMgr.CreateLiquidCompartmentDataRequest(itr.first, "Oxygen", "Mass", MassUnit::g);
-    dMgr.CreateLiquidCompartmentDataRequest(itr.first, "CarbonDioxide", "Mass", MassUnit::g);
-    dMgr.CreateLiquidCompartmentDataRequest(itr.first, "Oxygen", "PartialPressure", PressureUnit::mmHg);
-    dMgr.CreateLiquidCompartmentDataRequest(itr.first, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-    // Tissue Properties
-    dMgr.CreateLiquidCompartmentDataRequest(itr.second, "Oxygen", "Mass", MassUnit::g);
-    dMgr.CreateLiquidCompartmentDataRequest(itr.second, "CarbonDioxide", "Mass", MassUnit::g);
-    dMgr.CreateLiquidCompartmentDataRequest(itr.second, "Oxygen", "PartialPressure", PressureUnit::mmHg);
-    dMgr.CreateLiquidCompartmentDataRequest(itr.second, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-    dMgr.CreateLiquidCompartmentDataRequest(itr.second, "InFlow", VolumePerTimeUnit::mL_Per_s);
-    dMgr.CreateLiquidCompartmentDataRequest(itr.second, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    dMgr.CreatePatientDataRequest("HeartRateBaseline", FrequencyUnit::Per_min);
+    dMgr.CreatePatientDataRequest("MeanArterialPressureBaseline", PressureUnit::mmHg);
+    dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartRateScale");
+    dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartElastanceScale");
+    dMgr.CreatePhysiologyDataRequest("BaroreceptorResistanceScale");
+    dMgr.CreatePhysiologyDataRequest("BaroreceptorComplianceScale");
+    dMgr.CreatePhysiologyDataRequest("ChemoreceptorHeartRateScale");
+    dMgr.CreatePhysiologyDataRequest("ChemoreceptorHeartElastanceScale");
+    dMgr.CreatePhysiologyDataRequest("PulmonaryCapillariesCoverageFraction");
+    dMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+    dMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+
+    dMgr.CreateSubstanceDataRequest("CarbonDioxide", "MassInBlood", MassUnit::g);
+    dMgr.CreateSubstanceDataRequest("CarbonDioxide", "MassInTissue", MassUnit::g);
+    dMgr.CreateSubstanceDataRequest("Oxygen", "MassInBlood", MassUnit::g);
+    dMgr.CreateSubstanceDataRequest("Oxygen", "MassInTissue", MassUnit::g);
+
+    std::vector<std::pair<std::string, std::string>> tissues =
+    {
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Fat,pulse::ExtravascularCompartment::FatExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Bone,pulse::ExtravascularCompartment::BoneExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Brain,pulse::ExtravascularCompartment::BrainExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Gut,pulse::ExtravascularCompartment::GutExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::LeftKidney,pulse::ExtravascularCompartment::LeftKidneyExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::RightKidney,pulse::ExtravascularCompartment::RightKidneyExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::LeftLung,pulse::ExtravascularCompartment::LeftLungExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::RightLung,pulse::ExtravascularCompartment::RightLungExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Liver,pulse::ExtravascularCompartment::LiverExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Muscle,pulse::ExtravascularCompartment::MuscleExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Myocardium,pulse::ExtravascularCompartment::MyocardiumExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Skin,pulse::ExtravascularCompartment::SkinExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Spleen,pulse::ExtravascularCompartment::SpleenExtracellular)
+    };
+    for (auto& itr : tissues)
+    {
+      // Vascular Properties
+      dMgr.CreateLiquidCompartmentDataRequest(itr.first, "Oxygen", "Mass", MassUnit::g);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.first, "CarbonDioxide", "Mass", MassUnit::g);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.first, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.first, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+      // Tissue Properties
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "Oxygen", "Mass", MassUnit::g);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "CarbonDioxide", "Mass", MassUnit::g);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "InFlow", VolumePerTimeUnit::mL_Per_s);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    }
   }
+  sce.GetDataRequestManager().Copy(dMgr);
+  dMgr.SetResultsFilename("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.csv");
 
-  AdvanceAndTrackTime_s(30, *pe);
+  adv.GetTime().SetValue(30, TimeUnit::s);
+  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  sce.AddAction(adv);
 
   arrhythmia.SetRhythm(eHeartRhythm::CoarseVentricularFibrillation);
   pe->ProcessAction(arrhythmia);
+  sce.AddAction(arrhythmia);
 
-  AdvanceAndTrackTime_s(unassisted_min*60, *pe);
+  adv.GetTime().SetValue(unassisted_min*60, TimeUnit::s);
+  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  sce.AddAction(adv);
 
   if (intubatedAssistance)
   {
     SEIntubation intubate;
     intubate.SetType(eIntubation_Type::Tracheal);
     pe->ProcessAction(intubate);
+    sce.AddAction(intubate);
   }
 
   bvm.GetConfiguration().SetConnection(eSwitch::On);
   bvm.GetConfiguration().GetValvePositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
   pe->ProcessAction(bvm);
+  sce.AddAction(bvm);
 
   bool cpr_block = true;
   double block_s = cpr_block_s;
@@ -228,13 +243,19 @@ void HowToACLS()
       cprA.GetCompressionFrequency().SetValue(cpr_bpm, FrequencyUnit::Per_min);
       cprA.GetAppliedForceFraction().SetValue(0.8);
       pe->ProcessAction(cprA);
+      sce.AddAction(cprA);
 
+      if (cpr_block_s > assisted_s)
+        cpr_block_s = assisted_s;
       assisted_s -= cpr_block_s;
-      AdvanceAndTrackTime_s(cpr_block_s, *pe);
+      adv.GetTime().SetValue(cpr_block_s, TimeUnit::s);
+      AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+      sce.AddAction(adv);
 
       // Stop automated CPR
       cprA.GetCompressionFrequency().SetValue(0, FrequencyUnit::Per_min);
       pe->ProcessAction(cprA);
+      sce.AddAction(cprA);
 
       //BVM squeezes
       pe->Info("Starting BVM Block");
@@ -243,15 +264,23 @@ void HowToACLS()
         bvmSqueeze.GetExpiratoryPeriod().SetValue(1.0, TimeUnit::s);
         bvmSqueeze.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
         pe->ProcessAction(bvmSqueeze);
+        sce.AddAction(bvmSqueeze);
 
         assisted_s -= bvm_interval_s;
-        AdvanceAndTrackTime_s(bvm_interval_s, *pe);
+        adv.GetTime().SetValue(bvm_interval_s, TimeUnit::s);
+        AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+        sce.AddAction(adv);
       }
     }
   }
 
   arrhythmia.SetRhythm(eHeartRhythm::NormalSinus);
   pe->ProcessAction(arrhythmia);
+  sce.AddAction(arrhythmia);
 
-  AdvanceAndTrackTime_s(recovery_min*60, *pe);
+  adv.GetTime().SetValue(recovery_min*60, TimeUnit::s);
+  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  sce.AddAction(adv);
+
+  sce.SerializeToFile("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.json");
 }

@@ -3,30 +3,33 @@
 
 package com.kitware.pulse.cdm.patient.actions;
 
-import com.kitware.pulse.cdm.bind.PatientActions.ChestCompressionInstantaneousData;
 import com.kitware.pulse.cdm.properties.SEScalarForce;
+import com.kitware.pulse.cdm.bind.PatientActions.ChestCompressionData;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
+import com.kitware.pulse.cdm.properties.SEScalarTime;
 
-public class SEChestCompressionInstantaneous extends SEPatientAction
+public class SEChestCompression extends SEPatientAction
 {
   private static final long serialVersionUID = 4548017190134330946L;
   
   protected SEScalarForce    force;
   protected SEScalar0To1     forceScale;
+  protected SEScalarTime     compressionPeriod;
   
-  public SEChestCompressionInstantaneous()
+  public SEChestCompression()
   {
     force = null;
     forceScale = null;
+    compressionPeriod = null;
   }
   
-  public SEChestCompressionInstantaneous(SEChestCompressionInstantaneous other)
+  public SEChestCompression(SEChestCompression other)
   {
     this();
     copy(other);
   }
   
-  public void copy(SEChestCompressionInstantaneous other)
+  public void copy(SEChestCompression other)
   {
     if (other.force != null)
       getForce().set(other.force);
@@ -37,6 +40,11 @@ public class SEChestCompressionInstantaneous extends SEPatientAction
       getForceScale().set(other.forceScale);
     else if (forceScale != null)
       forceScale.invalidate();
+    
+    if (other.compressionPeriod != null)
+      getCompressionPeriod().set(other.compressionPeriod);
+    else if (compressionPeriod != null)
+      compressionPeriod.invalidate();
   }
   
   @Override
@@ -47,37 +55,43 @@ public class SEChestCompressionInstantaneous extends SEPatientAction
       force.invalidate();
     if (forceScale != null)
       forceScale.invalidate();
+    if (compressionPeriod != null)
+      compressionPeriod.invalidate();
   }
   
   @Override
   public boolean isValid()
   {
-    return (hasForce() || hasForceScale());
+    return (hasForce() || hasForceScale()) && hasCompressionPeriod();
   }
   
-  public static void load(ChestCompressionInstantaneousData src, SEChestCompressionInstantaneous dst)
+  public static void load(ChestCompressionData src, SEChestCompression dst)
   {
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasForce())
       SEScalarForce.load(src.getForce(),dst.getForce());
     if(src.hasForceScale())
       SEScalar0To1.load(src.getForceScale(),dst.getForceScale());
+    if(src.hasCompressionPeriod())
+      SEScalarTime.load(src.getCompressionPeriod(),dst.getCompressionPeriod());
   }
   
-  public static ChestCompressionInstantaneousData unload(SEChestCompressionInstantaneous src)
+  public static ChestCompressionData unload(SEChestCompression src)
   {
-    ChestCompressionInstantaneousData.Builder dst = ChestCompressionInstantaneousData.newBuilder();
+    ChestCompressionData.Builder dst = ChestCompressionData.newBuilder();
     unload(src,dst);
     return dst.build();
   }
   
-  protected static void unload(SEChestCompressionInstantaneous src, ChestCompressionInstantaneousData.Builder dst)
+  protected static void unload(SEChestCompression src, ChestCompressionData.Builder dst)
   {
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
     if (src.hasForce())
       dst.setForce(SEScalarForce.unload(src.force));
     if (src.hasForceScale())
       dst.setForceScale(SEScalar0To1.unload(src.forceScale));
+    if (src.hasCompressionPeriod())
+      dst.setCompressionPeriod(SEScalarTime.unload(src.compressionPeriod));
   }
   
   public boolean hasForce()
@@ -102,13 +116,25 @@ public class SEChestCompressionInstantaneous extends SEPatientAction
     return forceScale;
   }
   
+  public boolean hasCompressionPeriod()
+  {
+    return compressionPeriod == null ? false : compressionPeriod.isValid();
+  }
+  public SEScalarTime getCompressionPeriod()
+  {
+    if (compressionPeriod == null)
+      compressionPeriod = new SEScalarTime();
+    return compressionPeriod;
+  }
+  
   @Override
   public String toString()
   {
     if (force != null)
       return "Chest Compression" 
           + "\n\tForce: " +(hasForce() ? getForce() : "Not Provided")
-          + "\n\tForceScale: " + (hasForceScale() ? getForceScale() : "Not Provided");
+          + "\n\tForceScale: " + (hasForceScale() ? getForceScale() : "Not Provided")
+          + "\n\tCompressionPeriod: " + (hasCompressionPeriod() ? getCompressionPeriod() : "Not Provided");
     else
       return "Action not specified properly";
   }

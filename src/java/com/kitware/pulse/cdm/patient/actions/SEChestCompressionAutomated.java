@@ -12,12 +12,14 @@ public class SEChestCompressionAutomated extends SEPatientAction
 {
   private static final long serialVersionUID = 4548017190134330946L;
   
-  protected SEScalarFrequency    compressionFrequency;  
+  protected SEScalar0To1         appliedForceFraction;
+  protected SEScalarFrequency    compressionFrequency;
   protected SEScalarForce        force;
   protected SEScalar0To1         forceScale;
 
   public SEChestCompressionAutomated()
   {
+    appliedForceFraction = null;
     compressionFrequency = null;
     force = null;
     forceScale = null;
@@ -41,6 +43,11 @@ public class SEChestCompressionAutomated extends SEPatientAction
     else if (forceScale != null)
       forceScale.invalidate();
     
+    if (other.appliedForceFraction != null)
+      getAppliedForceFraction().set(other.appliedForceFraction);
+    else if (appliedForceFraction != null)
+      appliedForceFraction.invalidate();
+    
     if (other.compressionFrequency != null)
       getCompressionFrequency().set(other.compressionFrequency);
     else if (compressionFrequency != null)
@@ -55,6 +62,8 @@ public class SEChestCompressionAutomated extends SEPatientAction
       force.invalidate();
     if (forceScale != null)
       forceScale.invalidate();
+    if (appliedForceFraction != null)
+      appliedForceFraction.invalidate();
     if (compressionFrequency != null)
       compressionFrequency.invalidate();
   }
@@ -62,7 +71,7 @@ public class SEChestCompressionAutomated extends SEPatientAction
   @Override
   public boolean isValid()
   {
-    return hasForce() != hasForceScale();
+    return (hasForce() || hasForceScale()) && hasCompressionFrequency();
   }
   
   public static void load(ChestCompressionAutomatedData src, SEChestCompressionAutomated dst)
@@ -72,6 +81,8 @@ public class SEChestCompressionAutomated extends SEPatientAction
       SEScalarForce.load(src.getForce(),dst.getForce());
     if(src.hasForceScale())
       SEScalar0To1.load(src.getForceScale(),dst.getForceScale());
+    if(src.hasAppliedForceFraction())
+      SEScalar0To1.load(src.getAppliedForceFraction(),dst.getAppliedForceFraction());
     if(src.hasCompressionFrequency())
       SEScalarFrequency.load(src.getCompressionFrequency(),dst.getCompressionFrequency());
   }
@@ -90,6 +101,8 @@ public class SEChestCompressionAutomated extends SEPatientAction
       dst.setForce(SEScalarForce.unload(src.force));
     if (src.hasForceScale())
       dst.setForceScale(SEScalar0To1.unload(src.forceScale));
+    if (src.hasAppliedForceFraction())
+      dst.setAppliedForceFraction(SEScalar0To1.unload(src.appliedForceFraction));
     if (src.hasCompressionFrequency())
       dst.setCompressionFrequency(SEScalarFrequency.unload(src.compressionFrequency));
   }
@@ -116,6 +129,17 @@ public class SEChestCompressionAutomated extends SEPatientAction
     return forceScale;
   }
   
+  public boolean hasAppliedForceFraction()
+  {
+    return appliedForceFraction == null ? false : appliedForceFraction.isValid();
+  }
+  public SEScalar0To1 getAppliedForceFraction()
+  {
+    if (appliedForceFraction == null)
+      appliedForceFraction = new SEScalar0To1();
+    return appliedForceFraction;
+  }
+  
   public boolean hasCompressionFrequency()
   {
     return compressionFrequency == null ? false : compressionFrequency.isValid();
@@ -134,6 +158,7 @@ public class SEChestCompressionAutomated extends SEPatientAction
       return "Chest Compression" 
           + "\n\tForce: " +(hasForce() ? getForce() : "Not Provided")
           + "\n\tForceScale: " + (hasForceScale() ? getForceScale() : "Not Provided")
+          + "\n\tAppliedForceFraction: " + (hasAppliedForceFraction() ? getAppliedForceFraction() : "Not Provided")
           + "\n\tCompressionFrequency: " + (hasCompressionFrequency() ? getCompressionFrequency() : "Not Provided");
     else
       return "Action not specified properly";

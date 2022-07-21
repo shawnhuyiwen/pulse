@@ -1496,6 +1496,12 @@ SEPatientAction* PBPatientAction::Load(const CDM_BIND::AnyPatientActionData& any
     PBPatientAction::Load(any.bronchoconstriction(), *a);
     return a;
   }
+  case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompression:
+  {
+    SEChestCompression* a = new SEChestCompression();
+    PBPatientAction::Load(any.chestcompression(), *a);
+    return a;
+  }
   case CDM_BIND::AnyPatientActionData::ActionCase::kChestCompressionInstantaneous:
   {
     SEChestCompressionInstantaneous* a = new SEChestCompressionInstantaneous();
@@ -1718,16 +1724,22 @@ CDM_BIND::AnyPatientActionData* PBPatientAction::Unload(const SEPatientAction& a
     any->set_allocated_bronchoconstriction(PBPatientAction::Unload(*b));
     return any;
   }
-  const SEChestCompressionInstantaneous* cci = dynamic_cast<const SEChestCompressionInstantaneous*>(&action);
-  if (cci != nullptr)
+  const SEChestCompression* cc = dynamic_cast<const SEChestCompression*>(&action);
+  if (cc != nullptr)
   {
-    any->set_allocated_chestcompressioninstantaneous(PBPatientAction::Unload(*cci));
+    any->set_allocated_chestcompression(PBPatientAction::Unload(*cc));
     return any;
   }
   const SEChestCompressionAutomated* cca = dynamic_cast<const SEChestCompressionAutomated*>(&action);
   if (cca != nullptr)
   {
     any->set_allocated_chestcompressionautomated(PBPatientAction::Unload(*cca));
+    return any;
+  }
+  const SEChestCompressionInstantaneous* cci = dynamic_cast<const SEChestCompressionInstantaneous*>(&action);
+  if (cci != nullptr)
+  {
+    any->set_allocated_chestcompressioninstantaneous(PBPatientAction::Unload(*cci));
     return any;
   }
   const SEChestOcclusiveDressing* chd = dynamic_cast<const SEChestOcclusiveDressing*>(&action);

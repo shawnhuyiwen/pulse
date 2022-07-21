@@ -67,7 +67,7 @@ void SEChestCompressionAutomated::Deactivate()
 
 bool SEChestCompressionAutomated::HasAppliedForceFraction() const
 {
-  return m_AppliedForceFraction == nullptr ? false : m_AppliedForceFraction->IsValid();
+  return m_AppliedForceFraction == nullptr ? false : m_AppliedForceFraction->IsPositive();
 }
 SEScalar0To1& SEChestCompressionAutomated::GetAppliedForceFraction()
 {

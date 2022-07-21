@@ -89,6 +89,12 @@ public abstract class SEPatientAction extends SEAction
       SEBronchoconstriction.load(c.getBronchoconstriction(), dst);
       return dst;
     }
+    case CHESTCOMPRESSION:
+    {
+      SEChestCompression dst = new SEChestCompression();
+      SEChestCompression.load(c.getChestCompression(), dst);
+      return dst;
+    }
     case CHESTCOMPRESSIONAUTOMATED:
     {
       SEChestCompressionAutomated dst = new SEChestCompressionAutomated();
@@ -282,6 +288,11 @@ public abstract class SEPatientAction extends SEAction
     if(c instanceof SEBronchoconstriction)
     {
       dst.setBronchoconstriction(SEBronchoconstriction.unload((SEBronchoconstriction)c));
+      return dst.build();
+    }
+    if(c instanceof SEChestCompression)
+    {
+      dst.setChestCompression(SEChestCompression.unload((SEChestCompression)c));
       return dst.build();
     }
     if(c instanceof SEChestCompressionAutomated)
