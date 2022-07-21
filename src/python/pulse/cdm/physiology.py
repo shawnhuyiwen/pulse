@@ -5,12 +5,15 @@ from pulse.cdm.curve import SECurve
 from pulse.cdm.engine import eSwitch
 from pulse.cdm.scalars import SEScalarPressureTimePerVolume, SEScalarPressure, SEScalarTime
 
+from enum import Enum
+
 class eDefaultType(Enum):
     Model = 0
     Zero = 1
 
 class SERespiratoryMechanics():
     __slots__ = ["_active",
+                 "_default_type",
                  "_left_compliance_curve",
                  "_right_compliance_curve",
                  "_left_expiratory_resistance",

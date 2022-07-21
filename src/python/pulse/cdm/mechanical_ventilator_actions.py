@@ -2,7 +2,8 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.equipment_actions import SEEquipmentAction
-from pulse.cdm.mechanical_ventilator import SEMechanicalVentilatorSettings, eSwitch
+from pulse.cdm.mechanical_ventilator import SEMechanicalVentilatorSettings, \
+                                            eSwitch, eDriverWaveform
 from pulse.cdm.scalars import SEScalarPressure, SEScalar0To1, SEScalarTime, \
                               SEScalarFrequency, SEScalarVolumePerTime, SEScalarVolume
 from pulse.cdm.bind.Actions_pb2 import eAppliedRespiratoryCycle
@@ -136,8 +137,8 @@ class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentila
         if src.has_expiration_cycle_pressure(): self.get_expiration_cycle_pressure().set(src._expiration_cycle_pressure)
         self._expiration_waveform = src._expiration_waveform
         if src.has_fraction_inspired_oxygen(): self.get_fraction_inspired_oxygen().set(src._fraction_inspired_oxygen)
-        if src.has_inspiration_cycle_flow(): self.get_inspiration_cycle_flow().set(src._inspiration_cycle_flow)
-        if src.has_inspiration_cycle_pressure(): self.get_inspiration_cycle_pressure().set(src._inspiration_cycle_pressure)
+        if src.has_inspiration_patient_trigger_flow(): self.get_inspiration_patient_trigger_flow().set(src._inspiration_patient_trigger_flow)
+        if src.has_inspiration_patient_trigger_pressure(): self.get_inspiration_patient_trigger_pressure().set(src._inspiration_patient_trigger_pressure)
         self._inspiration_waveform = src._inspiration_waveform
         if src.has_positive_end_expired_pressure(): self.get_positive_end_expired_pressure().set(src._positive_end_expired_pressure)
         if src.has_slope(): self.get_slope().set(src._slope)
@@ -223,12 +224,12 @@ class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentila
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
                "\n\tPositiveEndExpiredPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
                "\n\tSlope: " + str(self._slope) if self.has_slope() else "Not Provided" \
-               "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name \
-               "\n\InspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" \
-               "\n\InspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" \
-               "\n\tExpirationWaveform: " + self.get_expiration_waveform().name \
-               "\n\ExpirationPatientTriggerFlow: " + str(self._expiration_patient_trigger_flow) if self.has_expiration_patient_trigger_flow() else "Not Provided" \
-               "\n\ExpirationPatientTriggerPressure: " + str(self._expiration_patient_trigger_pressure) if self.has_expiration_patient_trigger_pressure() else "Not Provided"
+               "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name + \
+               "\n\tInspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" + \
+               "\n\tInspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" + \
+               "\n\tExpirationWaveform: " + self.get_expiration_waveform().name + \
+               "\n\tExpirationPatientTriggerFlow: " + str(self._expiration_patient_trigger_flow) if self.has_expiration_patient_trigger_flow() else "Not Provided" + \
+               "\n\tExpirationPatientTriggerPressure: " + str(self._expiration_patient_trigger_pressure) if self.has_expiration_patient_trigger_pressure() else "Not Provided"
                
 
 class eMechanicalVentilator_PressureControlMode(Enum):
@@ -370,9 +371,9 @@ class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
         return "Mechanical Ventilator Pressure Control" + \
                "\n\tMode: " + self.get_mode().name + \
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
-               "\n\InspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" \
-               "\n\InspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" \
-               "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name \
+               "\n\tInspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" + \
+               "\n\tInspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" + \
+               "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name + \
                "\n\tInspiratoryPeriod: " + str(self._inspiratory_period) if self.has_inspiratory_period() else "Not Provided" + \
                "\n\tInspiratoryPressure: " + str(self._inspiratory_pressure) if self.has_inspiratory_pressure() else "Not Provided" + \
                "\n\tPositiveEndExpiredPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
@@ -532,13 +533,13 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
                "\n\tMode: " + self.get_mode().name + \
                "\n\tFlow: " + str(self._flow) if self.has_flow() else "Not Provided" + \
                "\n\tFractionInspiredOxygen: " + str(self._fraction_inspired_oxygen) if self.has_fraction_inspired_oxygen() else "Not Provided" + \
-               "\n\InspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" \
-               "\n\InspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" \
-               "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name \
+               "\n\tInspirationPatientTriggerFlow: " + str(self._inspiration_patient_trigger_flow) if self.has_inspiration_patient_trigger_flow() else "Not Provided" + \
+               "\n\tInspirationPatientTriggerPressure: " + str(self._inspiration_patient_trigger_pressure) if self.has_inspiration_patient_trigger_pressure() else "Not Provided" + \
+               "\n\tInspirationWaveform: " + self.get_inspiration_waveform().name + \
                "\n\tInspiratoryPeriod: " + str(self._inspiratory_period) if self.has_inspiratory_period() else "Not Provided" + \
                "\n\tPositiveEndExpiredPressure: " + str(self._positive_end_expired_pressure) if self.has_positive_end_expired_pressure() else "Not Provided" + \
                "\n\tRespirationRate: " + str(self._respiration_rate) if self.has_respiration_rate() else "Not Provided" + \
-               "\n\tTidalVolume: " + str(self._tidal_volume) if self.has_tidal_volume() else "Not Provided" \
+               "\n\tTidalVolume: " + str(self._tidal_volume) if self.has_tidal_volume() else "Not Provided" + \
                "\n\tSlope: " + str(self._slope) if self.has_slope() else "Not Provided"
 
 

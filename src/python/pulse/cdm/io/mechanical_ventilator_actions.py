@@ -64,10 +64,10 @@ def serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(
     dst.ExpirationWaveform = src.get_expiration_waveform().value
     if src.has_fraction_inspired_oxygen():
         serialize_scalar_0to1_to_bind(src.get_fraction_inspired_oxygen(), dst.FractionInspiredOxygen)
-    if src.has_inspiration_cycle_flow():
-        serialize_scalar_volume_per_time_to_bind(src.get_inspiration_cycle_flow(), dst.InspirationCycleFlow)
-    elif src.has_inspiration_cycle_pressure():
-        serialize_scalar_pressure_to_bind(src.get_inspiration_cycle_pressure(), dst.InspirationCyclePressure)
+    if src.has_inspiration_patient_trigger_flow():
+        serialize_scalar_volume_per_time_to_bind(src.get_inspiration_patient_trigger_flow(), dst.InspirationCycleFlow)
+    elif src.has_inspiration_patient_trigger_pressure():
+        serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationCyclePressure)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
     if src.has_positive_end_expired_pressure():
         serialize_scalar_pressure_to_bind(src.get_positive_end_expired_pressure(), dst.PositiveEndExpiredPressure)
@@ -82,10 +82,10 @@ def serialize_mechanical_ventilator_pressure_control_to_bind(src: SEMechanicalVe
     dst.Mode = src.get_mode().value
     if src.has_fraction_inspired_oxygen():
         serialize_scalar_0to1_to_bind(src.get_fraction_inspired_oxygen(), dst.FractionInspiredOxygen)
-    if src.has_inspiration_cycle_flow():
-        serialize_scalar_volume_per_time_to_bind(src.get_inspiration_cycle_flow(), dst.InspirationCycleFlow)
-    elif src.has_inspiration_cycle_pressure():
-        serialize_scalar_pressure_to_bind(src.get_inspiration_cycle_pressure(), dst.InspirationCyclePressure)
+    if src.has_inspiration_patient_trigger_flow():
+        serialize_scalar_volume_per_time_to_bind(src.get_inspiration_patient_trigger_flow(), dst.InspirationCycleFlow)
+    elif src.has_inspiration_patient_trigger_pressure():
+        serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationCyclePressure)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
     if src.has_inspiratory_period():
         serialize_scalar_time_to_bind(src.get_inspiratory_period(), dst.InspiratoryPeriod)
@@ -108,10 +108,10 @@ def serialize_mechanical_ventilator_volume_control_to_bind(src: SEMechanicalVent
         serialize_scalar_volume_per_time_to_bind(src.get_flow(), dst.Flow)
     if src.has_fraction_inspired_oxygen():
         serialize_scalar_0to1_to_bind(src.get_fraction_inspired_oxygen(), dst.FractionInspiredOxygen)
-    if src.has_inspiration_cycle_flow():
-        serialize_scalar_volume_per_time_to_bind(src.get_inspiration_cycle_flow(), dst.InspirationCycleFlow)
-    elif src.has_inspiration_cycle_pressure():
-        serialize_scalar_pressure_to_bind(src.get_inspiration_cycle_pressure(), dst.InspirationCyclePressure)
+    if src.has_inspiration_patient_trigger_flow():
+        serialize_scalar_volume_per_time_to_bind(src.get_inspiration_patient_trigger_flow(), dst.InspirationCycleFlow)
+    elif src.has_inspiration_patient_trigger_pressure():
+        serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationCyclePressure)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
     if src.has_inspiratory_period():
         serialize_scalar_time_to_bind(src.get_inspiratory_period(), dst.InspiratoryPeriod)
@@ -130,7 +130,7 @@ def serialize_mechanical_ventilator_volume_control_from_bind(src: MechanicalVent
 def serialize_mechanical_ventilator_hold_to_bind(src: SEMechanicalVentilatorHold, dst: MechanicalVentilatorHoldData):
     serialize_mechanical_ventilator_action_to_bind(src, dst.MechanicalVentilatorAction)
     dst.State = src.get_state().value
-    dst.AppliedRespiratoryCycle = src.get_applied_respiratory_cycle().value
+    dst.AppliedRespiratoryCycle = src.get_applied_respiratory_cycle()
 
 def serialize_mechanical_ventilator_hold_from_bind(src: MechanicalVentilatorHoldData, dst: SEMechanicalVentilatorHold):
     serialize_mechanical_ventilator_action_from_bind(src.MechanicalVentilatorAction, dst)
