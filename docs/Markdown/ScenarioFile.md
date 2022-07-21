@@ -648,32 +648,156 @@ A severity of 0 removes the action completely.
 
 - - -
 
-#### Chest Compression Force 
-@copybrief ChestCompressionForceData <br>
-Force is the specific magnitude to perform a compression with.<br>
+#### Chest Compression 
+@copybrief ChestCompressionData <br>
+Must provide one of Force or ForceScale<br>
 Note, that patient should be in Cardiac Arrest before performing CPR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "PatientAction": {
-    "ChestCompressionForce": {
-      "Force": { "ScalarForce": { "Value":100.0, "Unit":"N" } }
+    "ChestCompressionInstantaneous": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Force": {
+      "ScalarForce": {
+       "Value": 233.55,
+       "Unit": "N"
+      }
+     },
+     "CompressionPeriod": {
+      "ScalarTime": {
+       "Value": 0.4,
+       "Unit": "s"
+      }
+     }
+    }
+  }
+}]
+
+or
+
+"AnyAction": [{
+  "PatientAction": {
+    "ChestCompressionInstantaneous": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "ForceScale": {
+      "Scalar0To1": {
+       "Value": 0.31
+      }
+     },
+     "CompressionPeriod": {
+      "ScalarTime": {
+       "Value": 0.4,
+       "Unit": "s"
+      }
+     }
     }
   }
 }]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - - -
-		
-#### Chest Compression Force Scale 
-@copybrief ChestCompressionForceScaleData <br>
-ForceScale value must be >=0.0 and <=1.0<br>
+#### Chest Compression Automated 
+@copybrief ChestCompressionAutomatedData <br>
+Must provide one of Force or ForceScale<br>
+AppliedForceFraction is OPTIONAL<br>
 Note, that patient should be in Cardiac Arrest before performing CPR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "AnyAction": [{
   "PatientAction": {
-    "ChestCompressionForceScale": {
-      "ForceScale": { "Scalar0To1": { "Value":0.73 } },
-      "ForcePeriod": { "ScalarTime": { "Value":0.2, "Unit":"s" } }
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "ForceScale": {
+      "Scalar0To1": {
+       "Value": 0.6228
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 120,
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+  }
+}]
+
+or
+
+"AnyAction": [{
+  "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Force": {
+      "ScalarForce": {
+       "Value": 233.55,
+       "Unit": "N"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 120,
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+  }
+}]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- - -
+  
+#### Chest Compression Instantaneous 
+@copybrief ChestCompressionInstantaneousData <br>
+Must provide one of Force or ForceScale<br>
+Note, that patient should be in Cardiac Arrest before performing CPR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"AnyAction": [{
+  "PatientAction": {
+    "ChestCompressionInstantaneous": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Force": {
+      "ScalarForce": {
+       "Value": 233.55,
+       "Unit": "N"
+      }
+     }
+    }
+  }
+}]
+
+or
+
+"AnyAction": [{
+  "PatientAction": {
+    "ChestCompressionInstantaneous": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "ForceScale": {
+      "Scalar0To1": {
+       "Value": 0.31
+      }
+     }
     }
   }
 }]
