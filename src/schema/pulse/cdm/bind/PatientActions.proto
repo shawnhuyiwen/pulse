@@ -24,30 +24,31 @@ message AnyPatientActionData
     AsthmaAttackData                                   AsthmaAttack                                   = 6;
     BrainInjuryData                                    BrainInjury                                    = 7;
     BronchoconstrictionData                            Bronchoconstriction                            = 8;
-    ChestCompressionAutomatedData                      ChestCompressionAutomated                      = 9;
-    ChestCompressionInstantaneousData                  ChestCompressionInstantaneous                  = 10;
-    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 11;
-    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 12;
-    ConsciousRespirationData                           ConsciousRespiration                           = 13;
-    ConsumeNutrientsData                               ConsumeNutrients                               = 14;
-    DyspneaData                                        Dyspnea                                        = 15;
-    ExerciseData                                       Exercise                                       = 16;
-    HemorrhageData                                     Hemorrhage                                     = 17;
-    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 18;
-    IntubationData                                     Intubation                                     = 19;
-    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 20;
-    MechanicalVentilationData                          MechanicalVentilation                          = 21;
-    NeedleDecompressionData                            NeedleDecompression                            = 22;
-    PericardialEffusionData                            PericardialEffusion                            = 23;
-    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 24;
-    RespiratoryFatigueData                             RespiratoryFatigue                             = 25;
-    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 26;
-    SubstanceBolusData                                 SubstanceBolus                                 = 27;
-    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 28;
-    SubstanceInfusionData                              SubstanceInfusion                              = 29;
-    SupplementalOxygenData                             SupplementalOxygen                             = 30;
-    TensionPneumothoraxData                            TensionPneumothorax                            = 31;
-    UrinateData                                        Urinate                                        = 32;
+    ChestCompressionAutomatedData                      ChestCompression                               = 9;
+    ChestCompressionAutomatedData                      ChestCompressionAutomated                      = 10;
+    ChestCompressionInstantaneousData                  ChestCompressionInstantaneous                  = 11;
+    ChestOcclusiveDressingData                         ChestOcclusiveDressing                         = 12;
+    ChronicObstructivePulmonaryDiseaseExacerbationData ChronicObstructivePulmonaryDiseaseExacerbation = 13;
+    ConsciousRespirationData                           ConsciousRespiration                           = 14;
+    ConsumeNutrientsData                               ConsumeNutrients                               = 15;
+    DyspneaData                                        Dyspnea                                        = 16;
+    ExerciseData                                       Exercise                                       = 17;
+    HemorrhageData                                     Hemorrhage                                     = 18;
+    ImpairedAlveolarExchangeExacerbationData           ImpairedAlveolarExchangeExacerbation           = 19;
+    IntubationData                                     Intubation                                     = 20;
+    LobarPneumoniaExacerbationData                     LobarPneumoniaExacerbation                     = 21;
+    MechanicalVentilationData                          MechanicalVentilation                          = 22;
+    NeedleDecompressionData                            NeedleDecompression                            = 23;
+    PericardialEffusionData                            PericardialEffusion                            = 24;
+    PulmonaryShuntExacerbationData                     PulmonaryShuntExacerbation                     = 25;
+    RespiratoryFatigueData                             RespiratoryFatigue                             = 26;
+    RespiratoryMechanicsConfigurationData              RespiratoryMechanicsConfiguration              = 27;
+    SubstanceBolusData                                 SubstanceBolus                                 = 28;
+    SubstanceCompoundInfusionData                      SubstanceCompoundInfusion                      = 29;
+    SubstanceInfusionData                              SubstanceInfusion                              = 30;
+    SupplementalOxygenData                             SupplementalOxygen                             = 31;
+    TensionPneumothoraxData                            TensionPneumothorax                            = 32;
+    UrinateData                                        Urinate                                        = 33;
   }
 }
 
@@ -124,7 +125,22 @@ message BronchoconstrictionData
   Scalar0To1Data                            Severity                        = 2;/**<<@brief Scale of affect, 0 being none, 1 being the highest possible. */
 }
 
-/** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
+/** @brief A single CPR compression to the chest cavity in order to pump blood through the heart. */
+message ChestCompressionData
+{
+  PatientActionData                         PatientAction                   = 1;
+
+  // Chest Compression Modes
+  oneof ForceMode
+  {
+    ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
+    Scalar0To1Data                          ForceScale                      = 3;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
+  }
+
+  ScalarTimeData                            CompressionPeriod               = 4;/**<<@brief The length of time the compression force is to be applied */
+}
+
+/** @brief Reoccuring CPR chest compressions to pump blood through the heart. */
 message ChestCompressionAutomatedData
 {
   PatientActionData                         PatientAction                   = 1;
@@ -136,10 +152,11 @@ message ChestCompressionAutomatedData
     Scalar0To1Data                          ForceScale                      = 3;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
   }
 
-  ScalarFrequencyData                       CompressionFrequency            = 4;/**<< @brief Compression rate, translates to heart rate. */
+  ScalarFrequencyData                       CompressionFrequency            = 4;/**<<@brief Compression rate, translates to heart rate. */
+  Scalar0To1Data                            AppliedForceFraction            = 5;/**<<@brief OPTIONAL The fraction of the derived compression period to apply the given force for each compression. */
 }
 
-/** @brief Technique used when performing cardiopulmonary resuscitation. Application of external force to the chest cavity in order to pump blood through the heart. */
+/** @brief CPR action to be used when connecting to hardware sensors or specifying your own waveform. Force will remain constant until explicitly changed */
 message ChestCompressionInstantaneousData
 {
   PatientActionData                         PatientAction                   = 1;
@@ -150,8 +167,6 @@ message ChestCompressionInstantaneousData
     ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
     Scalar0To1Data                          ForceScale                      = 3;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
   }
-
-  ScalarTimeData                            ForcePeriod                     = 4;/**<<@brief The specified length of time the force scale is applied */
 }
 
 /** @brief Applies an occlusive dressing to either the left or right side of the chest. An occlusive dressing is an air and water-tight trauma dressing that provides immediate control of pressure and bleeding that occurs with an open pneumothorax. */

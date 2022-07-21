@@ -19,6 +19,10 @@ public:
   virtual bool IsActive() const;
   virtual void Deactivate();
 
+  virtual bool HasAppliedForceFraction() const;
+  virtual SEScalar0To1& GetAppliedForceFraction();
+  virtual double GetAppliedForceFraction() const;
+
   virtual bool HasCompressionFrequency() const;
   virtual SEScalarFrequency& GetCompressionFrequency();
   virtual double GetCompressionFrequency(const FrequencyUnit& unit) const;
@@ -36,6 +40,7 @@ public:
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:
+  SEScalar0To1*            m_AppliedForceFraction;
   SEScalarFrequency*       m_CompressionFrequency;
   SEScalarForce*           m_Force;
   SEScalar0To1*            m_ForceScale;

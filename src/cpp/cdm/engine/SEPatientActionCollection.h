@@ -11,8 +11,9 @@ class SEAsthmaAttack;
 class SEArrhythmia;
 class SEBrainInjury;
 class SEBronchoconstriction;
-class SEChestCompressionInstantaneous;
+class SEChestCompression;
 class SEChestCompressionAutomated;
+class SEChestCompressionInstantaneous;
 class SEChestOcclusiveDressing;
 class SEConsciousRespiration;
 class SEConsumeNutrients;
@@ -84,15 +85,22 @@ public:
   const SEBronchoconstriction* GetBronchoconstriction() const;
   void RemoveBronchoconstriction();
 
+  bool HasActiveCPRAction() const;
+
   bool HasChestCompression() const;
-  bool HasChestCompressionInstantaneous() const;
-  SEChestCompressionInstantaneous& GetChestCompressionInstantaneous();
-  const SEChestCompressionInstantaneous* GetChestCompressionInstantaneous() const;
-  void RemoveChestCompressionInstantaneous();
+  SEChestCompression& GetChestCompression();
+  const SEChestCompression* GetChestCompression() const;
+  void RemoveChestCompression();
+
   bool HasChestCompressionAutomated() const;
   SEChestCompressionAutomated& GetChestCompressionAutomated();
   const SEChestCompressionAutomated* GetChestCompressionAutomated() const;
   void RemoveChestCompressionAutomated();
+
+  bool HasChestCompressionInstantaneous() const;
+  SEChestCompressionInstantaneous& GetChestCompressionInstantaneous();
+  const SEChestCompressionInstantaneous* GetChestCompressionInstantaneous() const;
+  void RemoveChestCompressionInstantaneous();
 
   bool HasChestOcclusiveDressing() const;
   bool HasLeftChestOcclusiveDressing() const;
@@ -260,6 +268,7 @@ protected:
   SEAsthmaAttack*                                   m_AsthmaAttack;
   SEBrainInjury*                                    m_BrainInjury;
   SEBronchoconstriction*                            m_Bronchoconstriction;
+  SEChestCompression*                               m_ChestCompression;
   SEChestCompressionAutomated*                      m_ChestCompressionAutomated;
   SEChestCompressionInstantaneous*                  m_ChestCompressionInstantaneous;
   SEChestOcclusiveDressing*                         m_LeftChestOcclusiveDressing;

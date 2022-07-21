@@ -11,8 +11,8 @@
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEIntubation.h"
+#include "cdm/patient/actions/SEChestCompression.h"
 #include "cdm/patient/actions/SEChestCompressionAutomated.h"
-#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
@@ -41,16 +41,18 @@ void HowToACLS()
   SEBagValveMaskConfiguration bvm;
   SEBagValveMaskSqueeze bvmSqueeze;
   SEChestCompressionAutomated cprA;
-  SEChestCompressionInstantaneous cprI;
+  SEChestCompression cpr;
   std::stringstream ss;
+
+  bool automatedCPR = true;
 
   double unassisted_min = 7;
   bool intubatedAssistance = false;
   double assisted_min = 7;
   // We will do cpr_block_s of CPR compressions every cpr_interval_s
-  bool automatedCPR = true;
   double cpr_block_s = 30;
-  double cpr_interval_s = 1/Convert(120, FrequencyUnit::Per_min, FrequencyUnit::Per_s);
+  double cpr_bpm = 120;
+  double cpr_interval_s = 1/Convert(cpr_bpm, FrequencyUnit::Per_min, FrequencyUnit::Per_s);
   // Then we will do 2 bvm squeezes every bvm_interval_s
   size_t bvmSqueezes = 2;
   double bvm_interval_s = 1/Convert(12, FrequencyUnit::Per_min, FrequencyUnit::Per_s);
@@ -194,8 +196,9 @@ void HowToACLS()
         compressIn_s -= timeStep_s;
         if (compressIn_s <= 0)
         {
-          cprI.GetForceScale().SetValue(0.6228);
-          pe->ProcessAction(cprI);
+          cpr.GetForceScale().SetValue(0.6228);
+          cpr.GetCompressionPeriod().SetValue(0.4,TimeUnit::s);
+          pe->ProcessAction(cpr);
           compressIn_s = cpr_interval_s;
         }
         
@@ -222,14 +225,15 @@ void HowToACLS()
       // Start automated CPR
       pe->Info("Starting CPR Block");
       cprA.GetForceScale().SetValue(0.6228);
-      cprA.GetCompressionFrequency().SetValue(1.0/(cpr_interval_s*2), FrequencyUnit::Per_s);
+      cprA.GetCompressionFrequency().SetValue(cpr_bpm, FrequencyUnit::Per_min);
+      cprA.GetAppliedForceFraction().SetValue(0.8);
       pe->ProcessAction(cprA);
 
       assisted_s -= cpr_block_s;
       AdvanceAndTrackTime_s(cpr_block_s, *pe);
 
       // Stop automated CPR
-      cprA.GetCompressionFrequency().SetValue(0, FrequencyUnit::Per_s);
+      cprA.GetCompressionFrequency().SetValue(0, FrequencyUnit::Per_min);
       pe->ProcessAction(cprA);
 
       //BVM squeezes

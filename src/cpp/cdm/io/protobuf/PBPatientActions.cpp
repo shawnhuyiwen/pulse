@@ -20,6 +20,7 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
+#include "cdm/patient/actions/SEChestCompression.h"
 #include "cdm/patient/actions/SEChestCompressionAutomated.h"
 #include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
@@ -286,12 +287,12 @@ void PBPatientAction::Copy(const SEBronchoconstriction& src, SEBronchoconstricti
   PBPatientAction::Serialize(data, dst);
 }
 
-void PBPatientAction::Load(const CDM_BIND::ChestCompressionInstantaneousData& src, SEChestCompressionInstantaneous& dst)
+void PBPatientAction::Load(const CDM_BIND::ChestCompressionData& src, SEChestCompression& dst)
 {
   dst.Clear();
   PBPatientAction::Serialize(src, dst);
 }
-void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionInstantaneousData& src, SEChestCompressionInstantaneous& dst)
+void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionData& src, SEChestCompression& dst)
 {
   PBPatientAction::Serialize(src.patientaction(), dst);
   if (src.has_force())
@@ -299,16 +300,16 @@ void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionInstantaneousDat
   else if (src.has_forcescale())
     PBProperty::Load(src.forcescale(), dst.GetForceScale());
 
-  if (src.has_forceperiod())
-    PBProperty::Load(src.forceperiod(), dst.GetForcePeriod());
+  if (src.has_compressionperiod())
+    PBProperty::Load(src.compressionperiod(), dst.GetCompressionPeriod());
 }
-CDM_BIND::ChestCompressionInstantaneousData* PBPatientAction::Unload(const SEChestCompressionInstantaneous& src)
+CDM_BIND::ChestCompressionData* PBPatientAction::Unload(const SEChestCompression& src)
 {
-  CDM_BIND::ChestCompressionInstantaneousData* dst = new CDM_BIND::ChestCompressionInstantaneousData();
+  CDM_BIND::ChestCompressionData* dst = new CDM_BIND::ChestCompressionData();
   PBPatientAction::Serialize(src, *dst);
   return dst;
 }
-void PBPatientAction::Serialize(const SEChestCompressionInstantaneous& src, CDM_BIND::ChestCompressionInstantaneousData& dst)
+void PBPatientAction::Serialize(const SEChestCompression& src, CDM_BIND::ChestCompressionData& dst)
 {
   PBPatientAction::Serialize(src, *dst.mutable_patientaction());
   if (src.HasForce())
@@ -316,13 +317,13 @@ void PBPatientAction::Serialize(const SEChestCompressionInstantaneous& src, CDM_
   else if (src.HasForceScale())
     dst.set_allocated_forcescale(PBProperty::Unload(*src.m_ForceScale));
 
-  if (src.HasForcePeriod())
-    dst.set_allocated_forceperiod(PBProperty::Unload(*src.m_ForcePeriod));    
+  if (src.HasCompressionPeriod())
+    dst.set_allocated_compressionperiod(PBProperty::Unload(*src.m_CompressionPeriod));
 }
-void PBPatientAction::Copy(const SEChestCompressionInstantaneous& src, SEChestCompressionInstantaneous& dst)
+void PBPatientAction::Copy(const SEChestCompression& src, SEChestCompression& dst)
 {
   dst.Clear();
-  CDM_BIND::ChestCompressionInstantaneousData data;
+  CDM_BIND::ChestCompressionData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }
@@ -340,6 +341,8 @@ void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionAutomatedData& s
   else if (src.has_forcescale())
     PBProperty::Load(src.forcescale(), dst.GetForceScale());
 
+  if (src.has_appliedforcefraction())
+    PBProperty::Load(src.appliedforcefraction(), dst.GetAppliedForceFraction());
   if (src.has_compressionfrequency())
     PBProperty::Load(src.compressionfrequency(), dst.GetCompressionFrequency());
 }
@@ -357,13 +360,50 @@ void PBPatientAction::Serialize(const SEChestCompressionAutomated& src, CDM_BIND
   else if (src.HasForceScale())
     dst.set_allocated_forcescale(PBProperty::Unload(*src.m_ForceScale));
 
+  if (src.HasAppliedForceFraction())
+    dst.set_allocated_appliedforcefraction(PBProperty::Unload(*src.m_AppliedForceFraction));
   if (src.HasCompressionFrequency())
-    dst.set_allocated_compressionfrequency(PBProperty::Unload(*src.m_CompressionFrequency));   
+    dst.set_allocated_compressionfrequency(PBProperty::Unload(*src.m_CompressionFrequency));
 }
 void PBPatientAction::Copy(const SEChestCompressionAutomated& src, SEChestCompressionAutomated& dst)
 {
   dst.Clear();
   CDM_BIND::ChestCompressionAutomatedData data;
+  PBPatientAction::Serialize(src, data);
+  PBPatientAction::Serialize(data, dst);
+}
+
+void PBPatientAction::Load(const CDM_BIND::ChestCompressionInstantaneousData& src, SEChestCompressionInstantaneous& dst)
+{
+  dst.Clear();
+  PBPatientAction::Serialize(src, dst);
+}
+void PBPatientAction::Serialize(const CDM_BIND::ChestCompressionInstantaneousData& src, SEChestCompressionInstantaneous& dst)
+{
+  PBPatientAction::Serialize(src.patientaction(), dst);
+  if (src.has_force())
+    PBProperty::Load(src.force(), dst.GetForce());
+  else if (src.has_forcescale())
+    PBProperty::Load(src.forcescale(), dst.GetForceScale());
+}
+CDM_BIND::ChestCompressionInstantaneousData* PBPatientAction::Unload(const SEChestCompressionInstantaneous& src)
+{
+  CDM_BIND::ChestCompressionInstantaneousData* dst = new CDM_BIND::ChestCompressionInstantaneousData();
+  PBPatientAction::Serialize(src, *dst);
+  return dst;
+}
+void PBPatientAction::Serialize(const SEChestCompressionInstantaneous& src, CDM_BIND::ChestCompressionInstantaneousData& dst)
+{
+  PBPatientAction::Serialize(src, *dst.mutable_patientaction());
+  if (src.HasForce())
+    dst.set_allocated_force(PBProperty::Unload(*src.m_Force));
+  else if (src.HasForceScale())
+    dst.set_allocated_forcescale(PBProperty::Unload(*src.m_ForceScale));
+}
+void PBPatientAction::Copy(const SEChestCompressionInstantaneous& src, SEChestCompressionInstantaneous& dst)
+{
+  dst.Clear();
+  CDM_BIND::ChestCompressionInstantaneousData data;
   PBPatientAction::Serialize(src, data);
   PBPatientAction::Serialize(data, dst);
 }

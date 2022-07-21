@@ -11,6 +11,7 @@
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
+#include "cdm/patient/actions/SEChestCompression.h"
 #include "cdm/patient/actions/SEChestCompressionAutomated.h"
 #include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
@@ -53,6 +54,7 @@ SEPatientActionCollection::SEPatientActionCollection(SESubstanceManager& subMgr)
   m_AsthmaAttack = nullptr;
   m_BrainInjury = nullptr;
   m_Bronchoconstriction = nullptr;
+  m_ChestCompression = nullptr;
   m_ChestCompressionAutomated = nullptr;
   m_ChestCompressionInstantaneous = nullptr;
   m_ConsciousRespiration = nullptr;
@@ -89,6 +91,7 @@ SEPatientActionCollection::~SEPatientActionCollection()
   SAFE_DELETE(m_AsthmaAttack);
   SAFE_DELETE(m_BrainInjury);
   SAFE_DELETE(m_Bronchoconstriction);
+  SAFE_DELETE(m_ChestCompression);
   SAFE_DELETE(m_ChestCompressionAutomated);
   SAFE_DELETE(m_ChestCompressionInstantaneous);
   SAFE_DELETE(m_LeftChestOcclusiveDressing);
@@ -259,26 +262,54 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
     return true;
   }
 
-  const SEChestCompressionInstantaneous* cprInstantaneous = dynamic_cast<const SEChestCompressionInstantaneous*>(&action);
-  if (cprInstantaneous != nullptr)
+  const SEChestCompression* cprCompression = dynamic_cast<const SEChestCompression*>(&action);
+  if (cprCompression != nullptr)
   {
+    if (HasChestCompression())
+    {
+      Warning("A previous ChestCompression action has not completed yet, ignoring new ChestCompression");
+      return false;
+    }
     if (HasChestCompressionAutomated())
-      RemoveChestCompressionAutomated();
-    GetChestCompressionInstantaneous().Copy(*cprInstantaneous, true);
-    m_ChestCompressionInstantaneous->Activate();
-    if (!m_ChestCompressionInstantaneous->IsActive())
+    {
+      Warning("A previous ChestCompressionAutomated action has not completed yet, ignoring new ChestCompression");
+      return false;
+    }
+    if (HasChestCompressionInstantaneous())
       RemoveChestCompressionInstantaneous();
+    GetChestCompression().Copy(*cprCompression, true);
+    m_ChestCompression->Activate();
+    if (!m_ChestCompression->IsActive())
+      RemoveChestCompression();
     return true;
   }
+
   const SEChestCompressionAutomated* cprAutomated = dynamic_cast<const SEChestCompressionAutomated*>(&action);
   if (cprAutomated != nullptr)
   {
+    if (HasChestCompression())
+    {
+      Warning("A previous ChestCompression action has not completed yet, ignoring new ChestCompression");
+      return false;
+    }
     if (HasChestCompressionInstantaneous())
       RemoveChestCompressionInstantaneous();
     GetChestCompressionAutomated().Copy(*cprAutomated, true);
     m_ChestCompressionAutomated->Activate();
     if (!m_ChestCompressionAutomated->IsActive())
       RemoveChestCompressionAutomated();
+    return true;
+  }
+
+  const SEChestCompressionInstantaneous* cprInstantaneous = dynamic_cast<const SEChestCompressionInstantaneous*>(&action);
+  if (cprInstantaneous != nullptr)
+  {
+    RemoveChestCompression();
+    RemoveChestCompressionAutomated();
+    GetChestCompressionInstantaneous().Copy(*cprInstantaneous, true);
+    m_ChestCompressionInstantaneous->Activate();
+    if (!m_ChestCompressionInstantaneous->IsActive())
+      RemoveChestCompressionInstantaneous();
     return true;
   }
 
@@ -739,29 +770,31 @@ void SEPatientActionCollection::RemoveBronchoconstriction()
     m_Bronchoconstriction->Deactivate();
 }
 
+bool SEPatientActionCollection::HasActiveCPRAction() const
+{
+  return HasChestCompression() || HasChestCompressionAutomated() || HasChestCompressionInstantaneous();
+}
+
 bool SEPatientActionCollection::HasChestCompression() const
 {
-  return HasChestCompressionInstantaneous() || HasChestCompressionAutomated();
+  return m_ChestCompression == nullptr ? false : m_ChestCompression->IsActive();
 }
-bool SEPatientActionCollection::HasChestCompressionInstantaneous() const
+SEChestCompression& SEPatientActionCollection::GetChestCompression()
 {
-  return m_ChestCompressionInstantaneous == nullptr ? false : m_ChestCompressionInstantaneous->IsActive();
+  if (m_ChestCompression == nullptr)
+    m_ChestCompression = new SEChestCompression();
+  return *m_ChestCompression;
 }
-SEChestCompressionInstantaneous& SEPatientActionCollection::GetChestCompressionInstantaneous()
+const SEChestCompression* SEPatientActionCollection::GetChestCompression() const
 {
-  if (m_ChestCompressionInstantaneous == nullptr)
-    m_ChestCompressionInstantaneous = new SEChestCompressionInstantaneous();
-  return *m_ChestCompressionInstantaneous;
+  return m_ChestCompression;
 }
-const SEChestCompressionInstantaneous* SEPatientActionCollection::GetChestCompressionInstantaneous() const
+void SEPatientActionCollection::RemoveChestCompression()
 {
-  return m_ChestCompressionInstantaneous;
+  if (m_ChestCompression)
+    m_ChestCompression->Deactivate();
 }
-void SEPatientActionCollection::RemoveChestCompressionInstantaneous()
-{
-  if (m_ChestCompressionInstantaneous)
-    m_ChestCompressionInstantaneous->Deactivate();
-}
+
 bool SEPatientActionCollection::HasChestCompressionAutomated() const
 {
   return m_ChestCompressionAutomated == nullptr ? false : m_ChestCompressionAutomated->IsActive();
@@ -780,6 +813,26 @@ void SEPatientActionCollection::RemoveChestCompressionAutomated()
 {
   if (m_ChestCompressionAutomated)
     m_ChestCompressionAutomated->Deactivate();
+}
+
+bool SEPatientActionCollection::HasChestCompressionInstantaneous() const
+{
+  return m_ChestCompressionInstantaneous == nullptr ? false : m_ChestCompressionInstantaneous->IsActive();
+}
+SEChestCompressionInstantaneous& SEPatientActionCollection::GetChestCompressionInstantaneous()
+{
+  if (m_ChestCompressionInstantaneous == nullptr)
+    m_ChestCompressionInstantaneous = new SEChestCompressionInstantaneous();
+  return *m_ChestCompressionInstantaneous;
+}
+const SEChestCompressionInstantaneous* SEPatientActionCollection::GetChestCompressionInstantaneous() const
+{
+  return m_ChestCompressionInstantaneous;
+}
+void SEPatientActionCollection::RemoveChestCompressionInstantaneous()
+{
+  if (m_ChestCompressionInstantaneous)
+    m_ChestCompressionInstantaneous->Deactivate();
 }
 
 bool SEPatientActionCollection::HasChestOcclusiveDressing() const

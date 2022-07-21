@@ -87,9 +87,10 @@ namespace pulse
     dst.m_InitialArrhythmiaVascularComplianceModifier = src.initialarrhythmiavascularcompliancemodifier();
     dst.m_TargetArrhythmiaVascularComplianceModifier = src.targetarrhythmiavascularcompliancemodifier();
 
-    dst.m_CompressionTime_s = src.compressiontime_s();
-    dst.m_CompressionRatio = src.compressionratio();
+    dst.m_CompressionFrequencyCurrentTime_s = src.compressionfrequencycurrenttime_s();
+    dst.m_CompressionFrequencyDuration_s = src.compressionfrequencyduration_s();
     dst.m_CompressionPeriod_s = src.compressionperiod_s();
+    dst.m_CompressionPeriodCurrentTime_s = src.compressionperiodcurrenttime_s();
 
     dst.m_CardiacCycleDiastolicVolume_mL = src.cardiaccyclediastolicvolume_ml();
     dst.m_CardiacCycleAortaPressureLow_mmHg = src.cardiaccycleaortapressurelow_mmhg();
@@ -155,9 +156,10 @@ namespace pulse
     dst.set_initialarrhythmiavascularcompliancemodifier(src.m_InitialArrhythmiaVascularComplianceModifier);
     dst.set_targetarrhythmiavascularcompliancemodifier(src.m_TargetArrhythmiaVascularComplianceModifier);
 
-    dst.set_compressiontime_s(src.m_CompressionTime_s);
-    dst.set_compressionratio(src.m_CompressionRatio);
+    dst.set_compressionfrequencycurrenttime_s(src.m_CompressionFrequencyCurrentTime_s);
+    dst.set_compressionfrequencyduration_s(src.m_CompressionFrequencyDuration_s);
     dst.set_compressionperiod_s(src.m_CompressionPeriod_s);
+    dst.set_compressionperiodcurrenttime_s(src.m_CompressionPeriodCurrentTime_s);
 
     dst.set_cardiaccyclediastolicvolume_ml(src.m_CardiacCycleDiastolicVolume_mL);
     dst.set_cardiaccycleaortapressurelow_mmhg(src.m_CardiacCycleAortaPressureLow_mmHg);

@@ -2,45 +2,48 @@
    See accompanying NOTICE file for details.*/
 
 #include "cdm/CommonDefs.h"
-#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
+#include "cdm/patient/actions/SEChestCompression.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarForce.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/io/protobuf/PBPatientActions.h"
 
-SEChestCompressionInstantaneous::SEChestCompressionInstantaneous(Logger* logger) : SEPatientAction(logger)
+SEChestCompression::SEChestCompression(Logger* logger) : SEPatientAction(logger)
 {
   m_Force = nullptr;
   m_ForceScale = nullptr;
+  m_CompressionPeriod = nullptr;
 }
 
-SEChestCompressionInstantaneous::~SEChestCompressionInstantaneous()
+SEChestCompression::~SEChestCompression()
 {
   SAFE_DELETE(m_Force);
   SAFE_DELETE(m_ForceScale);
+  SAFE_DELETE(m_CompressionPeriod);
 }
 
-void SEChestCompressionInstantaneous::Clear()
+void SEChestCompression::Clear()
 {
   SEPatientAction::Clear();
   INVALIDATE_PROPERTY(m_Force);
   INVALIDATE_PROPERTY(m_ForceScale);
+  INVALIDATE_PROPERTY(m_CompressionPeriod);
 }
 
-void SEChestCompressionInstantaneous::Copy(const SEChestCompressionInstantaneous& src, bool /*preserveState*/)
+void SEChestCompression::Copy(const SEChestCompression& src, bool /*preserveState*/)
 {
   //if(preserveState) // Cache any state before copy,
   PBPatientAction::Copy(src, *this);
   //if(preserveState) // Put back any state
 }
 
-bool SEChestCompressionInstantaneous::IsValid() const
+bool SEChestCompression::IsValid() const
 {
   //Need exactly one of force or force scale
-  return SEPatientAction::IsValid() && (HasForce() || HasForceScale());
+  return SEPatientAction::IsValid() && (HasForce() || HasForceScale()) && HasCompressionPeriod();
 }
 
-bool SEChestCompressionInstantaneous::IsActive() const
+bool SEChestCompression::IsActive() const
 {
   if (!SEPatientAction::IsActive())
     return false;
@@ -49,63 +52,85 @@ bool SEChestCompressionInstantaneous::IsActive() const
     hasForceMode = true;
   if (HasForceScale() && m_ForceScale->IsPositive())
     hasForceMode = true;
-  return hasForceMode;
+  if (!hasForceMode)
+    return false;
+  return m_CompressionPeriod->IsPositive();
 }
-void SEChestCompressionInstantaneous::Deactivate()
+void SEChestCompression::Deactivate()
 {
   SEPatientAction::Deactivate();
   Clear();//No stateful properties
 }
 
-const SEScalar* SEChestCompressionInstantaneous::GetScalar(const std::string& name)
+const SEScalar* SEChestCompression::GetScalar(const std::string& name)
 {
   if (name.compare("Force") == 0)
     return &GetForce();
   if (name.compare("ForceScale") == 0)
     return &GetForceScale();
+  if (name.compare("CompressionPeriod") == 0)
+    return &GetCompressionPeriod();
   return nullptr;
 }
 
-bool SEChestCompressionInstantaneous::HasForce() const
+bool SEChestCompression::HasForce() const
 {
   return m_Force == nullptr ? false : m_Force->IsValid();
 }
-SEScalarForce& SEChestCompressionInstantaneous::GetForce()
+SEScalarForce& SEChestCompression::GetForce()
 {
   if (m_Force == nullptr)
     m_Force = new SEScalarForce();
   return *m_Force;
 }
-double SEChestCompressionInstantaneous::GetForce(const ForceUnit& unit) const
+double SEChestCompression::GetForce(const ForceUnit& unit) const
 {
   if (m_Force == nullptr)
     return SEScalar::dNaN();
   return m_Force->GetValue(unit);
 }
 
-bool SEChestCompressionInstantaneous::HasForceScale() const
+bool SEChestCompression::HasForceScale() const
 {
   return m_ForceScale == nullptr ? false : m_ForceScale->IsValid();
 }
-SEScalar0To1& SEChestCompressionInstantaneous::GetForceScale()
+SEScalar0To1& SEChestCompression::GetForceScale()
 {
   if (m_ForceScale == nullptr)
     m_ForceScale = new SEScalar0To1();
   return *m_ForceScale;
 }
-double SEChestCompressionInstantaneous::GetForceScale() const
+double SEChestCompression::GetForceScale() const
 {
   if (m_ForceScale == nullptr)
     return SEScalar::dNaN();
   return m_ForceScale->GetValue();
 }
 
-void SEChestCompressionInstantaneous::ToString(std::ostream &str) const
+bool SEChestCompression::HasCompressionPeriod() const
+{
+  return m_CompressionPeriod == nullptr ? false : m_CompressionPeriod->IsValid();
+}
+SEScalarTime& SEChestCompression::GetCompressionPeriod()
+{
+  if (m_CompressionPeriod == nullptr)
+    m_CompressionPeriod = new SEScalarTime();
+  return *m_CompressionPeriod;
+}
+double SEChestCompression::GetCompressionPeriod(const TimeUnit& unit) const
+{
+  if (m_CompressionPeriod == nullptr)
+    return SEScalar::dNaN();
+  return m_CompressionPeriod->GetValue(unit);
+}
+
+void SEChestCompression::ToString(std::ostream &str) const
 {
   str << "Patient Action : Chest Compression";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   str << "\n\tForce: "; HasForce() ? str << *m_Force : str << "NaN";
   str << "\n\tForceScale: "; HasForceScale() ? str << *m_ForceScale : str << "NaN";
+  str << "\n\tCompressionPeriod: "; HasCompressionPeriod() ? str << *m_CompressionPeriod : str << "NaN";
   str << std::flush;
 }

@@ -11,6 +11,7 @@
 
 SEChestCompressionAutomated::SEChestCompressionAutomated(Logger* logger) : SEPatientAction(logger)
 {
+  m_AppliedForceFraction = nullptr;
   m_CompressionFrequency = nullptr;
   m_Force = nullptr;
   m_ForceScale = nullptr;
@@ -18,6 +19,7 @@ SEChestCompressionAutomated::SEChestCompressionAutomated(Logger* logger) : SEPat
 
 SEChestCompressionAutomated::~SEChestCompressionAutomated()
 {
+  SAFE_DELETE(m_AppliedForceFraction);
   SAFE_DELETE(m_CompressionFrequency);
   SAFE_DELETE(m_Force);
   SAFE_DELETE(m_ForceScale);
@@ -26,6 +28,7 @@ SEChestCompressionAutomated::~SEChestCompressionAutomated()
 void SEChestCompressionAutomated::Clear()
 {
   SEPatientAction::Clear();
+  INVALIDATE_PROPERTY(m_AppliedForceFraction);
   INVALIDATE_PROPERTY(m_CompressionFrequency);
   INVALIDATE_PROPERTY(m_Force);
   INVALIDATE_PROPERTY(m_ForceScale);
@@ -40,24 +43,44 @@ void SEChestCompressionAutomated::Copy(const SEChestCompressionAutomated& src, b
 
 bool SEChestCompressionAutomated::IsValid() const
 {
-  return SEPatientAction::IsValid() && (HasForce() != HasForceScale()) && HasCompressionFrequency();
+  return SEPatientAction::IsValid() && (HasForce() || HasForceScale()) && HasCompressionFrequency();
 }
 
 bool SEChestCompressionAutomated::IsActive() const
 {
   if (!SEPatientAction::IsActive())
     return false;
-  if (HasForce())
-    return !m_Force->IsZero();
-  else if(HasForceScale())
-    return !m_ForceScale->IsZero();
-
-  return false;
+  bool hasForceMode = false;
+  if (HasForce() && m_Force->IsPositive())
+    hasForceMode = true;
+  if (HasForceScale() && m_ForceScale->IsPositive())
+    hasForceMode = true;
+  if (!hasForceMode)
+    return false;
+  return m_CompressionFrequency->IsPositive();
 }
 void SEChestCompressionAutomated::Deactivate()
 {
   SEPatientAction::Deactivate();
   Clear();//No stateful properties
+}
+
+bool SEChestCompressionAutomated::HasAppliedForceFraction() const
+{
+  return m_AppliedForceFraction == nullptr ? false : m_AppliedForceFraction->IsValid();
+}
+SEScalar0To1& SEChestCompressionAutomated::GetAppliedForceFraction()
+{
+  if (m_AppliedForceFraction == nullptr)
+    m_AppliedForceFraction = new SEScalar0To1();
+  return *m_AppliedForceFraction;
+}
+double SEChestCompressionAutomated::GetAppliedForceFraction() const
+{
+  if (m_AppliedForceFraction == nullptr)
+    return SEScalar::dNaN();
+
+  return m_AppliedForceFraction->GetValue();
 }
 
 bool SEChestCompressionAutomated::HasCompressionFrequency() const
@@ -79,6 +102,8 @@ double SEChestCompressionAutomated::GetCompressionFrequency(const FrequencyUnit&
 
 const SEScalar* SEChestCompressionAutomated::GetScalar(const std::string& name)
 {
+  if (name.compare("AppliedForceFraction") == 0)
+    return &GetAppliedForceFraction();
   if (name.compare("CompressionFrequency") == 0)
     return &GetCompressionFrequency();
   if (name.compare("Force") == 0)
@@ -128,6 +153,7 @@ void SEChestCompressionAutomated::ToString(std::ostream &str) const
   str << "Patient Action : Automated Chest Compressions";
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
+  str << "\n\tAppliedForceFraction: "; HasAppliedForceFraction() ? str << *m_AppliedForceFraction : str << "NaN";
   str << "\n\tCompressionFrequency: "; HasCompressionFrequency() ? str << *m_CompressionFrequency : str << "NaN";
   str << "\n\tForce: "; HasForce() ? str << *m_Force : str << "NaN";
   str << "\n\tForceScale: "; HasForceScale() ? str << *m_ForceScale : str << "NaN";
