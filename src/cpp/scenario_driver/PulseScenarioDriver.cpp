@@ -7,11 +7,13 @@
 #include "engine/human_adult/whole_body/Engine.h"
 #include "cdm/utils/ConfigParser.h"
 #include "cdm/utils/FileUtils.h"
+#include "cdm/utils/ThreadPool.h"
 
 #define test_serialization false
 
-bool ExecuteScenario(const std::string& filename, eModelType t, const std::string& statesDir="./states")
+bool ExecuteScenario(const std::string& filename, eModelType t, bool logToConsole=true, const std::string& statesDir="./states")
 {
+  bool bRet = false;
   try
   {
     if (t == (eModelType)-1)
@@ -38,13 +40,13 @@ bool ExecuteScenario(const std::string& filename, eModelType t, const std::strin
     logFile = Replace(logFile, ".json", ".log");
     csvFile = Replace(csvFile, ".json", "Results.csv");
     // What are we creating?
-    std::cout << "Log File : " << logFile << std::endl;
-    std::cout << "Results File : " << csvFile << std::endl;
+    std::cout << "Creating Log File : " << logFile << "\n";
+    std::cout << "Creating Results File : " << csvFile << "\n";
     // Delete any results file that may be there
     remove(csvFile.c_str());
 
     SEScenarioExec opts;
-    opts.SetLogToConsole(eSwitch::On);
+    opts.SetLogToConsole(logToConsole?eSwitch::On:eSwitch::Off);
     opts.SetLogFilename(logFile);
     opts.SetDataRequestCSVFilename(csvFile);
     opts.SetScenarioFilename(filename);
@@ -52,6 +54,8 @@ bool ExecuteScenario(const std::string& filename, eModelType t, const std::strin
 
     if (test_serialization)
     {
+      std::cout << "Tesing Serialization" << "\n";
+
       // This block will help debug any serialization issues.
       // A serialization issue is where get different results from running the same scenario where we
       // 1. run we run the scenario as is
@@ -80,7 +84,15 @@ bool ExecuteScenario(const std::string& filename, eModelType t, const std::strin
       opts.SetReloadSerializedState(eSwitch::On);
 
       auto PulseReloadOn = CreatePulseEngine(t);
-      return PulseScenarioExec::Execute(*PulseReloadOn, opts) ? 0 : 1;
+      std::cout << "Starting scenario " << opts.GetScenarioFilename() << "\n";
+      bRet = PulseScenarioExec::Execute(*PulseReloadOn, opts);
+      if (bRet)
+        std::cout << "Successfully completed scenario " << opts.GetScenarioFilename() << "\n";
+      else
+      {
+        std::cout << "Failed to run scenario " << opts.GetScenarioFilename() << "\n";
+        return bRet;
+      }
 
       sDir = "./states/reload_off/" + output;
       sDir = Replace(sDir, ".json", "/");
@@ -88,12 +100,21 @@ bool ExecuteScenario(const std::string& filename, eModelType t, const std::strin
       opts.SetReloadSerializedState(eSwitch::Off);
 
       auto PulseReloadOff = CreatePulseEngine(t);
-      return PulseScenarioExec::Execute(*PulseReloadOff, opts) ? 0 : 1;
+      std::cout << "Starting reloaded scenario " << opts.GetScenarioFilename() << "\n";
+      bRet = PulseScenarioExec::Execute(*PulseReloadOff, opts); if (bRet)
+        std::cout << "Successfully completed reloaded scenario " << opts.GetScenarioFilename() << "\n";
+      else
+        std::cout << "Failed to run reloaded scenario " << opts.GetScenarioFilename() << "\n";
     }
     else
     {
       auto e = CreatePulseEngine(t);
-      return PulseScenarioExec::Execute(*e, opts) ? 0 : 1;
+      std::cout << "Starting scenario " << opts.GetScenarioFilename() << "\n";
+      bRet = PulseScenarioExec::Execute(*e, opts);
+      if(bRet)
+        std::cout << "Successfully completed scenario " << opts.GetScenarioFilename() << "\n";
+      else
+        std::cout << "Failed to run scenario " << opts.GetScenarioFilename() << "\n";
     }
   }
   catch (std::exception ex)
@@ -101,7 +122,7 @@ bool ExecuteScenario(const std::string& filename, eModelType t, const std::strin
     std::cerr << ex.what() << std::endl;
     return false;
   }
-  return false;
+  return bRet;
 }
 
 bool ExecuteDirectory(const std::string& dir, eModelType t)
@@ -109,10 +130,30 @@ bool ExecuteDirectory(const std::string& dir, eModelType t)
   std::vector<std::string> scenarios;
   ListFiles(dir, scenarios, true, ".json");
 
+  size_t processorCount = std::thread::hardware_concurrency();
+  if (processorCount == 0)
+  {
+    std::cerr << "Unable to detect number of processors\n";
+    return false;
+  }
+  if (processorCount > 1)
+    processorCount -= 1;
+  // Let's not kick off more threads than we need
+  if (processorCount > scenarios.size())
+    processorCount = scenarios.size();
+
+  ThreadPool pool(processorCount);
   for (auto filename : scenarios)
   {
-    ExecuteScenario(filename, t, dir);
+    pool.enqueue(ExecuteScenario, filename, t, false, dir);
   }
+
+  /* ThreadPool waits for threads to complete in its
+  *  destructor which happens implicitly as we leave
+  *  function scope. If we need return values from
+  *  ExecuteScenario calls, enqueue returns a std::future
+  */
+
   return true;
 }
 
