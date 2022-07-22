@@ -115,16 +115,19 @@ bool SEScenarioExec::Execute(PhysiologyEngine& pe, SEScenario& sce)
   catch (CommonDataModelException& ex)
   {
     pe.GetLogger()->Error(ex.what());
+    return false;
   }
   catch (std::exception& ex)
   {
     pe.GetLogger()->Error(ex.what());
+    return false;
   }
   catch (...)
   {
     pe.GetLogger()->Error("Caught unknown exception, ending simulation");
+    return false;
   }
-  return false;
+  return true;
 }
 
 bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
@@ -218,7 +221,7 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     pe.GetLogger()->Error("!!!! Simulation time does not equal expected end time !!!!");
   }
 
-  return err;
+  return !err;
 }
 
 bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
