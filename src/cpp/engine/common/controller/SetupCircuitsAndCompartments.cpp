@@ -3349,10 +3349,9 @@ namespace pulse
 
     double ventilatorVolume_L = 1.0;
     double ventilatorCompliance_L_Per_cmH2O = 0.1;
-    double dValveOpenResistance = m_Config->GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double dSwitchOpenResistance = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double dSwitchClosedResistance = m_Config->GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-    double dLowResistance = 0.01;
+    double valveOpenResistance_cmH2O_s_Per_L = m_Config->GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    double switchOpenResistance_cmH2O_s_Per_L = m_Config->GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    double lowResistance_cmH2O_s_Per_L = 0.01;
 
     SEFluidCircuit& cAnesthesia = m_Circuits->GetAnesthesiaMachineCircuit();
     SEFluidCircuitNode& Ambient = *cRespiratory.GetNode(pulse::EnvironmentNode::Ambient);
@@ -3422,7 +3421,6 @@ namespace pulse
     ////////////////////////////////////
     // VentilatorToSelector //
     SEFluidCircuitPath& VentilatorConnectionToSelector = cAnesthesia.CreatePath(Ventilator, Selector, pulse::AnesthesiaMachinePath::VentilatorToSelector);
-    VentilatorConnectionToSelector.GetResistanceBaseline().SetValue(dSwitchClosedResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     ///////////////////////////
     // SelectorToReliefValve //
     SEFluidCircuitPath& SelectorToReliefValve = cAnesthesia.CreatePath(Selector, ReliefValve, pulse::AnesthesiaMachinePath::SelectorToReliefValve);
@@ -3430,11 +3428,11 @@ namespace pulse
     ////////////////////////
     // SelectorToScrubber //
     SEFluidCircuitPath& SelectorToScrubber = cAnesthesia.CreatePath(Selector, Scrubber, pulse::AnesthesiaMachinePath::SelectorToScrubber);
-    SelectorToScrubber.GetResistanceBaseline().SetValue(dLowResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    SelectorToScrubber.GetResistanceBaseline().SetValue(lowResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     ////////////////////////
     // ScrubberToGasInlet //
     SEFluidCircuitPath& ScrubberToGasInlet = cAnesthesia.CreatePath(Scrubber, GasInlet, pulse::AnesthesiaMachinePath::ScrubberToGasInlet);
-    ScrubberToGasInlet.GetResistanceBaseline().SetValue(dLowResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    ScrubberToGasInlet.GetResistanceBaseline().SetValue(lowResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     ////////////////////////////
     // EnvironmentToGasSource //
     SEFluidCircuitPath& EnvironmentToGasSource = cAnesthesia.CreatePath(Ambient, GasSource, pulse::AnesthesiaMachinePath::EnvironmentToGasSource);
@@ -3442,30 +3440,30 @@ namespace pulse
     /////////////////////////
     // GasSourceToGasInlet //
     SEFluidCircuitPath& GasSourceToGasInlet = cAnesthesia.CreatePath(GasSource, GasInlet, pulse::AnesthesiaMachinePath::GasSourceToGasInlet);
-    GasSourceToGasInlet.GetResistanceBaseline().SetValue(dValveOpenResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    GasSourceToGasInlet.GetResistanceBaseline().SetValue(valveOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     ///////////////////////////////
     // GasInletToInspiratoryLimb //
     SEFluidCircuitPath& GasInletToInspiratoryLimb = cAnesthesia.CreatePath(GasInlet, InspiratoryLimb, pulse::AnesthesiaMachinePath::GasInletToInspiratoryLimb);
-    GasInletToInspiratoryLimb.GetResistanceBaseline().SetValue(dLowResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    GasInletToInspiratoryLimb.GetResistanceBaseline().SetValue(lowResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     /////////////////////////////
     // InspiratoryLimbToYPiece //
     SEFluidCircuitPath& InspiratoryLimbToYPiece = cAnesthesia.CreatePath(InspiratoryLimb, Ypiece, pulse::AnesthesiaMachinePath::InspiratoryLimbToYPiece);
-    InspiratoryLimbToYPiece.GetResistanceBaseline().SetValue(dLowResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    InspiratoryLimbToYPiece.GetResistanceBaseline().SetValue(lowResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     ////////////////////////////
     // YPieceToExpiratoryLimb //
     SEFluidCircuitPath& YPieceToExpiratoryLimb = cAnesthesia.CreatePath(Ypiece, ExpiratoryLimb, pulse::AnesthesiaMachinePath::YPieceToExpiratoryLimb);
-    YPieceToExpiratoryLimb.GetResistanceBaseline().SetValue(dLowResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    YPieceToExpiratoryLimb.GetResistanceBaseline().SetValue(lowResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     //////////////////////////////
     // ExpiratoryLimbToSelector //
     SEFluidCircuitPath& ExpiratoryLimbToSelector = cAnesthesia.CreatePath(ExpiratoryLimb, Selector, pulse::AnesthesiaMachinePath::ExpiratoryLimbToSelector);
-    ExpiratoryLimbToSelector.GetResistanceBaseline().SetValue(dLowResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    ExpiratoryLimbToSelector.GetResistanceBaseline().SetValue(lowResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     //////////////////////////////////
     // YPieceToAnesthesiaConnection //
     SEFluidCircuitPath& YPieceToAnesthesiaConnection = cAnesthesia.CreatePath(Ypiece, AnesthesiaConnection, pulse::AnesthesiaMachinePath::YPieceToConnection);
     ///////////////////////////////////////
     // AnesthesiaConnectionToEnvironment //
     SEFluidCircuitPath& AnesthesiaConnectionToEnvironment = cAnesthesia.CreatePath(AnesthesiaConnection, Ambient, pulse::AnesthesiaMachinePath::ConnectionToEnvironment);
-    AnesthesiaConnectionToEnvironment.GetResistanceBaseline().SetValue(dSwitchOpenResistance, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    AnesthesiaConnectionToEnvironment.GetResistanceBaseline().SetValue(switchOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
     cAnesthesia.SetNextAndCurrentFromBaselines();
     cAnesthesia.StateChange();
