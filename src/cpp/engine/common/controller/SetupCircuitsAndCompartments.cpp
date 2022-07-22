@@ -2087,14 +2087,19 @@ namespace pulse
     SELiquidCompartmentLink& lLymphToVenaCava = m_Compartments->CreateLiquidLink(cLymph, *cVenaCava, pulse::LymphLink::LymphToVenaCava);
     lLymphToVenaCava.MapPath(LymphToVenaCava);
 
+    //Gender
+    bool male = m_InitialPatient->GetSex() == ePatient_Sex::Male ? true : false;
+    double RightLungRatio = m_InitialPatient->GetRightLungRatio().GetValue();
+    double LeftLungRatio = 1 - RightLungRatio;
+
     // The assumption for the vascular-tissue convection drag is that the resistance is inversely proportional to the tissue mass.
     // This is the proportionality constant
     double resistanceConstant = 20000.0; // Large resistance to prevent fluid from freely moving into the vascular space
 
     /// \todo Put Initial Circuit/Compartment data values into the configuration file.
 
-    //Density (kg/L)
-    double AdiposeTissueDensity = 1.03;
+    //Density (kg/L) cite huisinga2012modeling supplement
+    double AdiposeTissueDensity = 1.03;  //this should be 0.92 per huisinga2012modeling Supplement
     double BoneTissueDensity = 1.3;
     double BrainTissueDensity = 1.0;
     double GutTissueDensity = 1.0;
@@ -2108,6 +2113,7 @@ namespace pulse
     double SkinTissueDensity = 1.0;
     double SpleenTissueDensity = 1.0;
 
+    //cite rodgers2005physiologically
     // ExtracellcularWaterFraction        IntracellularWaterFraction    NeutralLipid                   NeutralPhospolipid             AlbuminRatio              AlphaAcidGlycoprotein       PlasmaLipoprotein        AcidicPhospohlipidConcentration
     double  AdiposeEWFraction = 0.135, AdiposeIWFraction = 0.017, AdiposeNLFraction = 0.79, AdiposeNPFraction = 0.002, AdiposeARatio = 0.049, AdiposeAAGRatio = 0.049, AdiposeLRatio = 0.068, AdiposeAPL = 0.4;
     double  BoneEWFraction = 0.1, BoneIWFraction = 0.346, BoneNLFraction = 0.074, BoneNPFraction = 0.0011, BoneARatio = 0.1, BoneAAGRatio = 0.1, BoneLRatio = 0.05, BoneAPL = 0.67;
@@ -2123,40 +2129,21 @@ namespace pulse
     double  SkinEWFraction = 0.382, SkinIWFraction = 0.291, SkinNLFraction = 0.0284, SkinNPFraction = 0.0111, SkinARatio = 0.277, SkinAAGRatio = 0.277, SkinLRatio = 0.096, SkinAPL = 1.32;
     double  SpleenEWFraction = 0.207, SpleenIWFraction = 0.579, SpleenNLFraction = 0.0201, SpleenNPFraction = 0.0198, SpleenARatio = 0.277, SpleenAAGRatio = 0.277, SpleenLRatio = 0.096, SpleenAPL = 3.18;
 
-    //Typical ICRP Male
+    //Typical ICRP Male/Female - cite valentin2002icrp Table 2.8
     //Total Mass (kg)              
-    double AdiposeTissueMass = 14.5;
-    double BoneTissueMass = 10.5;
-    double BrainTissueMass = 1.45;
-    double GutTissueMass = 1.02;
-    double RKidneyTissueMass = 0.155;
-    double LKidneyTissueMass = 0.155;
-    double LiverTissueMass = 1.8;
-    double RLungTissueMass = 0.25;
-    double LLungTissueMass = 0.25;
-    double MuscleTissueMass = 29.0;
-    double MyocardiumTissueMass = 0.33;
-    double SkinTissueMass = 3.3;
-    double SpleenTissueMass = 0.15;
-
-    //Typical ICRP Female - From ICRP
-    //Total Mass (kg)
-    if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
-    {
-      AdiposeTissueMass = 19.0;
-      BoneTissueMass = 7.8;
-      BrainTissueMass = 1.3;
-      GutTissueMass = 0.96;
-      RKidneyTissueMass = 0.1375;
-      LKidneyTissueMass = 0.1375;
-      LiverTissueMass = 1.4;
-      RLungTissueMass = 0.21;
-      LLungTissueMass = 0.21;
-      MuscleTissueMass = 17.5;
-      MyocardiumTissueMass = 0.25;
-      SkinTissueMass = 2.3;
-      SpleenTissueMass = 0.13;
-    }
+    double AdiposeTissueMass = male ? 14.5 : 19.0;
+    double BoneTissueMass = male ? 10.5 : 7.8;
+    double BrainTissueMass = male ? 1.45 : 1.3;
+    double GutTissueMass = male ? 1.02 : 0.96;
+    double RKidneyTissueMass = male ? 0.155 : 0.1375;
+    double LKidneyTissueMass = male ? 0.155 : 0.1375;
+    double LiverTissueMass = male ? 1.8 : 1.4;
+    double RLungTissueMass = male ? 0.5 * RightLungRatio : 0.42 * RightLungRatio;
+    double LLungTissueMass = male ? 0.5 * LeftLungRatio : 0.42 * LeftLungRatio;;
+    double MuscleTissueMass = male ? 29.0 : 17.5;
+    double MyocardiumTissueMass = male ? 0.33 : 0.25;
+    double SkinTissueMass = male ? 3.3 : 2.3;
+    double SpleenTissueMass = male ? 0.15 : 0.13;
 
     //Scale things based on patient parameters -------------------------------
 
@@ -2165,33 +2152,16 @@ namespace pulse
 
     //Modify skin based on total surface area
     //Male
-    double standardPatientWeight_lb = 170.0;
-    double standardPatientHeight_in = 71.0;
-    if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
-    {
-      //Female
-      standardPatientWeight_lb = 130.0;
-      standardPatientHeight_in = 64.0;
-    }
+    double standardPatientWeight_lb = male ? 170.0 : 130;
+    double standardPatientHeight_in = male ? 71.0 : 64;
+
     double typicalSkinSurfaceArea_m2 = 0.20247 * pow(Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg), 0.425) * pow(Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::m), 0.725);
     double patientSkinArea_m2 = m_InitialPatient->GetSkinSurfaceArea(AreaUnit::m2);
     SkinTissueMass = SkinTissueMass * patientSkinArea_m2 / typicalSkinSurfaceArea_m2;
 
-    //Modify most based on lean body mass
-    //Hume, R (Jul 1966). "Prediction of lean body mass from height and weight." Journal of clinical pathology. 19 (4): 389�91. doi:10.1136/jcp.19.4.389. PMC 473290. PMID 5929341.
-    //double typicalLeanBodyMass_kg = 0.32810 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.33929 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 29.5336; //Male
-    //if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
-    //{
-     // typicalLeanBodyMass_kg = 0.29569 * Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) + 0.41813 * Convert(standardPatientHeight_in, LengthUnit::in, LengthUnit::cm) - 43.2933; //Female
-    //}
-
     //Male
-    double standardFatFraction = 0.21;
-    if (m_InitialPatient->GetSex() == ePatient_Sex::Female)
-    {
-      //Female
-      standardFatFraction = 0.28;
-    }
+    double standardFatFraction = male ? 0.21 : 0.28;
+
     double standardLeanBodyMass_kg = Convert(standardPatientWeight_lb, MassUnit::lb, MassUnit::kg) * (1.0 - standardFatFraction);
     double patientLeanBodyMass_kg = m_InitialPatient->GetLeanBodyMass(MassUnit::kg);
     double leanBodyMassFractionOfTypical = patientLeanBodyMass_kg / standardLeanBodyMass_kg;
