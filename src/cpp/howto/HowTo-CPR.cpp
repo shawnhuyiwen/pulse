@@ -80,9 +80,9 @@ void HowToCPR()
   }
 
   // 3 possible modes of performing CPR
-  std::string mode = "single";
+  //std::string mode = "single";
   //std::string mode = "instantaneous";
-  //std::string mode = "automated";
+  std::string mode = "automated";
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
@@ -106,7 +106,7 @@ void HowToCPR()
   double compressionForce_N = 400;
 
   // Force can also be specified as a scale factor.
-  double compressionForceScale = 0.6228;
+  double compressionForceScale = 0.8;
 
   // This is the percent of time per period that the chest will be compressed e.g. if I have a 1 second period
   // (60 beats per minute) the chest will be compressed for 0.3 seconds
@@ -149,6 +149,8 @@ void HowToCPR()
   // After patient's heart is not beating, start doing CPR
   pe->GetLogger()->Info("Patient is in asystole. Begin performing CPR");
 
+  double timeStep_s = pe->GetTimeStep(TimeUnit::s);
+
   // This mode performs CPR via single chest compression actions.
   // You specify the timing and force of a single chest compression.
   if (mode == "single")
@@ -160,11 +162,9 @@ void HowToCPR()
     // The amount of time the chest will be compressed, calculated from the period and percentOn
     double timeOn = percentOn * pulsePeriod_s;
   
-    // The rest of the time there will be no force on the chest, this is calculated from the
-    double timeOff = pulsePeriod_s - timeOn;
-  
     // This timer is used to keep track of how long CPR has been administered
     double timer1 = 0;
+    double compressionTimer = 0;
 
     // Boolean to determine which way to specify force for demonstration purposes.
     bool useExplicitForce = true;
@@ -176,6 +176,13 @@ void HowToCPR()
     {
       if (pulseState) // check if the chest is supposed to be compressed. If yes...
       {
+        // Switch to a scaled force halfway through for demo purposes
+        if (useExplicitForce && (timer1 >= durationOfCPR_s / 2.0))
+        {
+          cpr.GetForce().Invalidate();
+          useExplicitForce = false;
+        }
+
         // This calls the CPR function in the Cardiovascular system.  It sets the chest compression at the specified force.
         if(useExplicitForce)
           cpr.GetForce().SetValue(compressionForce_N, ForceUnit::N);
@@ -184,36 +191,22 @@ void HowToCPR()
         cpr.GetCompressionPeriod().SetValue(timeOn, TimeUnit::s);
         pe->ProcessAction(cpr);
   
-        // Time is advanced until it is time to remove the compression
-        adv.GetTime().SetValue(timeOn, TimeUnit::s);
-        AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
-  
-        // Increment timer1 by the time the chest was compressed
-        timer1 += timeOn;
-  
-        // Specify that the compression is to now be removed.
+        // Specify that the compression has been started
         pulseState = false;
       }
-      else
-      {  
-        // Time is advanced until it is time to compress the chest again
-        pe->GetLogger()->Info("Advancing: " + std::to_string(timeOff));
-        adv.GetTime().SetValue(timeOff, TimeUnit::s);
-        AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
-  
-        // Increment timer1 by the time the chest was no compressed
-        timer1 += timeOff;
-  
-        // Set pulse state back to true.
-        pulseState = true;
 
-        // Switch to a scaled force halfway through for demo purposes
-        if (useExplicitForce && (timer1 > durationOfCPR_s / 2.0))
-        {
-          cpr.GetForce().Invalidate();
-          useExplicitForce = false;
-        }
+      // Increment timers and advance time
+      timer1 += timeStep_s;
+      compressionTimer += timeStep_s;
+      AdvanceAndTrackTime(*pe);
+
+      // Time for a new compression
+      if (compressionTimer >= pulsePeriod_s)
+      {
+        pulseState = true;
+        compressionTimer = 0;
       }
+        
     }
   }
   // This mode performs CPR by providing the instantaneous value of the current time
@@ -227,11 +220,9 @@ void HowToCPR()
     // The amount of time the chest will be compressed, calculated from the period and percentOn
     double timeOn = percentOn * pulsePeriod_s;
   
-    // The rest of the time there will be no force on the chest, this is calculated from the
-    double timeOff = pulsePeriod_s - timeOn;
-  
     // This timer is used to keep track of how long CPR has been administered
     double timer1 = 0;
+    double compressionTimer = 0;
 
     // Boolean to determine which way to specify force for demonstration purposes.
     bool useExplicitForce = true;
@@ -244,6 +235,13 @@ void HowToCPR()
     {
       if (pulseState) // check if the chest is supposed to be compressed. If yes...
       {
+        // Switch to a scaled force halfway through for demo purposes
+        if (useExplicitForce && timer1 >= (durationOfCPR_s / 2.0))
+        {
+          cprI.GetForce().Invalidate();
+          useExplicitForce = false;
+        }
+
         // This calls the CPR function in the Cardiovascular system.  It sets the chest compression at the specified force.
         if(useExplicitForce)
           cprI.GetForce().SetValue(compressionForce_N, ForceUnit::N);
@@ -251,17 +249,21 @@ void HowToCPR()
           cprI.GetForceScale().SetValue(compressionForceScale);
         pe->ProcessAction(cprI);
   
-        // Time is advanced until it is time to remove the compression
-        adv.GetTime().SetValue(timeOn, TimeUnit::s);
-        AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
-  
-        // Increment timer1 by the time the chest was compressed
-        timer1 += timeOn;
-  
-        // Specify that the compression is to now be removed.
+        // Specify that the compression has been started
         pulseState = false;
       }
-      else
+
+      // Increment timers and advance time
+      timer1 += timeStep_s;
+      compressionTimer += timeStep_s;
+      AdvanceAndTrackTime(*pe);
+
+      if (compressionTimer >= pulsePeriod_s) // New compression
+      {
+        compressionTimer = 0;
+        pulseState = true;
+      }
+      else if (compressionTimer >= timeOn) // Stop compressing
       {
         // This removes the chest compression by specifying the applied force as 0 N
         if(useExplicitForce)
@@ -269,32 +271,17 @@ void HowToCPR()
         else
           cprI.GetForceScale().SetValue(0);
         pe->ProcessAction(cprI);
-  
-        // Time is advanced until it is time to compress the chest again
-        adv.GetTime().SetValue(timeOff, TimeUnit::s);
-        AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
-  
-        // Increment timer1 by the time the chest was no compressed
-        timer1 += timeOff;
-  
-        // Set pulse state back to true.
-        pulseState = true;
-
-        // Switch to a scaled force halfway through for demo purposes
-        if (useExplicitForce && timer1 > (durationOfCPR_s / 2.0))
-        {
-          cprI.GetForce().Invalidate();
-          useExplicitForce = false;
-        }
-      }
+      }  
     }    
   
     // Make sure that the chest is no longer being compressed
-    if (cprI.GetForceScale().GetValue() != 0)
+    if((cprI.HasForceScale() && cprI.GetForceScale().GetValue() != 0) || (cprI.HasForce() && cprI.GetForce().GetValue(ForceUnit::N) != 0))
     {
       // If it is compressed, set force to 0 to turn off
-      //cprI.GetForce().SetValue(0, ForceUnit::N);
-      cprI.GetForceScale().SetValue(0);
+      if (cprI.HasForce())
+        cprI.GetForce().SetValue(0, ForceUnit::N);
+      else
+        cprI.GetForceScale().SetValue(0);
       pe->ProcessAction(cprI);
     }
   }
