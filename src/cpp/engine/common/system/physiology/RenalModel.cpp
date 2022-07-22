@@ -32,6 +32,7 @@
 #include "cdm/circuit/fluid/SEFluidCircuitNode.h"
 #include "cdm/circuit/fluid/SEFluidCircuitPath.h"
 #include "cdm/compartment/fluid/SELiquidCompartmentGraph.h"
+#include "cdm/compartment/tissue/SETissueCompartment.h"
 #include "cdm/properties/SEScalar.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarArea.h"
@@ -410,8 +411,8 @@ namespace pulse
     m_leftTubulesSodium = m_leftTubules->GetSubstanceQuantity(*m_sodium);
     m_rightTubulesSodium = m_rightTubules->GetSubstanceQuantity(*m_sodium);
 
-    m_leftKidneyIntracellularLactate = m_data.GetCompartments().GetIntracellularFluid(*m_leftKidneyTissue).GetSubstanceQuantity(*m_lactate);
-    m_rightKidneyIntracellularLactate = m_data.GetCompartments().GetIntracellularFluid(*m_rightKidneyTissue).GetSubstanceQuantity(*m_lactate);
+    m_leftKidneyIntracellularLactate = m_leftKidneyTissue->GetIntracellular().GetSubstanceQuantity(*m_lactate);
+    m_rightKidneyIntracellularLactate = m_rightKidneyTissue->GetIntracellular().GetSubstanceQuantity(*m_lactate);
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1193,8 +1194,8 @@ namespace pulse
     //Gluconeogenesis calculates it for Lactate later
     if (&sub != m_lactate)
     {
-      SELiquidSubstanceQuantity* leftKidneySubQ = m_data.GetCompartments().GetIntracellularFluid(*m_leftKidneyTissue).GetSubstanceQuantity(sub);
-      SELiquidSubstanceQuantity* rightKidneySubQ = m_data.GetCompartments().GetIntracellularFluid(*m_rightKidneyTissue).GetSubstanceQuantity(sub);
+      SELiquidSubstanceQuantity* leftKidneySubQ = m_leftKidneyTissue->GetIntracellular().GetSubstanceQuantity(sub);
+      SELiquidSubstanceQuantity* rightKidneySubQ = m_rightKidneyTissue->GetIntracellular().GetSubstanceQuantity(sub);
 
       double singleExcreted_mg = totalExcretionRate_mg_Per_s * m_data.GetTimeStep_s() * 0.5;// We are assuming the kindneys are doing the same amount of work
       leftKidneySubQ->GetMassExcreted().IncrementValue(singleExcreted_mg, MassUnit::mg);

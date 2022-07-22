@@ -127,8 +127,8 @@ namespace pulse
     {
       tissue = tissueVascular.first;
       vascular = tissueVascular.second;
-      SELiquidCompartment& extracellular = m_data.GetCompartments().GetExtracellularFluid(*tissue);
-      SELiquidCompartment& intracellular = m_data.GetCompartments().GetIntracellularFluid(*tissue);
+      SELiquidCompartment& extracellular = tissue->GetExtracellular();
+      SELiquidCompartment& intracellular = tissue->GetIntracellular();
 
       m_RestingTissueGlucose_g += extracellular.GetSubstanceQuantity(*m_Glucose)->GetMass(MassUnit::g);
       m_RestingFluidMass_kg += vascular->GetVolume(VolumeUnit::mL) * m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
@@ -379,8 +379,8 @@ namespace pulse
     {
       tissue = tissueVascular.first;
       vascular = tissueVascular.second;
-      SELiquidCompartment& extracellular = m_data.GetCompartments().GetExtracellularFluid(*tissue);
-      SELiquidCompartment& intracellular = m_data.GetCompartments().GetIntracellularFluid(*tissue);
+      SELiquidCompartment& extracellular = tissue->GetExtracellular();
+      SELiquidCompartment& intracellular = tissue->GetIntracellular();
       for (const SESubstance* sub : m_data.GetCompartments().GetLiquidCompartmentSubstances())
       {
         tissueKinetics = nullptr;
@@ -637,10 +637,10 @@ namespace pulse
     /// method of computing the fraction of carbohydrates consumed assumes that the RQ is upper bounded at 1.0.
     double currentTotalGlucoseStored_g = 0.0;
     double RespiratoryQuotient;
-    for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
+    for (auto t2v : m_TissueToVascular)
     {
       // We use extracellular glucose to quantify stored glucose with the assumption that intracellular glucose is instantly used for energy.
-      currentTotalGlucoseStored_g += itr.second->GetSubstanceQuantity(*m_Glucose)->GetMass(MassUnit::g);
+      currentTotalGlucoseStored_g += t2v.first->GetExtracellular().GetSubstanceQuantity(*m_Glucose)->GetMass(MassUnit::g);
     }
     RespiratoryQuotient = currentTotalGlucoseStored_g / m_RestingTissueGlucose_g * 0.15 + 0.7;
     // If the patient is exercising, an emphasis is placed on glucose consumption (higher RQ) as long as plenty of glucose is available.
@@ -726,7 +726,7 @@ namespace pulse
     {
       double acidDissociationFraction = 0.5;
       vascular = m_TissueToVascular[tissue];
-      SELiquidCompartment& intracellular = m_data.GetCompartments().GetIntracellularFluid(*tissue);
+      SELiquidCompartment& intracellular = tissue->GetIntracellular();
       TissueO2 = intracellular.GetSubstanceQuantity(*m_O2);
       TissueCO2 = intracellular.GetSubstanceQuantity(*m_CO2);
       TissueGlucose = intracellular.GetSubstanceQuantity(*m_Glucose);
@@ -1081,6 +1081,8 @@ namespace pulse
   void TissueModel::CalculateVitals()
   {
     // Hydration Status
+    double ecVol_mL = 0.;
+    double icvol_mL = 0.;
     double currentFluidMass_kg = 0.0;
     SETissueCompartment* tissue;
     SELiquidCompartment* vascular;
@@ -1089,8 +1091,10 @@ namespace pulse
       tissue = tissueVascular.first;
       vascular = tissueVascular.second;
       currentFluidMass_kg += vascular->GetVolume(VolumeUnit::mL) * m_data.GetBloodChemistry().GetBloodDensity(MassPerVolumeUnit::kg_Per_mL);
-      currentFluidMass_kg += m_data.GetCompartments().GetIntracellularFluid(*tissue).GetVolume(VolumeUnit::mL) * m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
-      currentFluidMass_kg += m_data.GetCompartments().GetExtracellularFluid(*tissue).GetVolume(VolumeUnit::mL) * m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
+      currentFluidMass_kg += tissue->GetIntracellular().GetVolume(VolumeUnit::mL) * m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
+      currentFluidMass_kg += tissue->GetExtracellular().GetVolume(VolumeUnit::mL) * m_data.GetConfiguration().GetWaterDensity(MassPerVolumeUnit::kg_Per_mL);
+      ecVol_mL += tissue->GetExtracellular().GetVolume(VolumeUnit::mL);
+      icvol_mL += tissue->GetIntracellular().GetVolume(VolumeUnit::mL);
     }
     if ((m_RestingFluidMass_kg - currentFluidMass_kg) / m_RestingPatientMass_kg > 0.03)
     {
@@ -1101,18 +1105,8 @@ namespace pulse
     {
       m_data.GetEvents().SetEvent(eEvent::Dehydration, false, m_data.GetSimulationTime());
     }
-
-    // Total tissue volume
-    double ecVol_mL = 0.;
-    double icvol_mL = 0.;
-    for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
-    {
-      ecVol_mL += itr.second->GetVolume(VolumeUnit::mL);
-    }
-    for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
-    {
-      icvol_mL += itr.second->GetVolume(VolumeUnit::mL);
-    }
+    
+    // Total Volumes
     GetExtracellularFluidVolume().SetValue(ecVol_mL, VolumeUnit::mL);
     GetIntracellularFluidVolume().SetValue(icvol_mL, VolumeUnit::mL);
     GetExtravascularFluidVolume().SetValue(ecVol_mL + icvol_mL, VolumeUnit::mL);
@@ -1250,7 +1244,7 @@ namespace pulse
   {
     //Put an if statement here to check if tissue volume is nullptr, if so continue.
 
-    SELiquidCompartment& intracellular = m_data.GetCompartments().GetIntracellularFluid(tissue);
+    SELiquidCompartment& intracellular = tissue.GetIntracellular();
 
     //Calculate Diffusion
     SELiquidSubstanceQuantity* vSubQ = vascular.GetSubstanceQuantity(sub);

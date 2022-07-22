@@ -13,7 +13,12 @@
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarVolume.h"
 
-SETissueCompartment::SETissueCompartment(const std::string& name, Logger* logger) : SECompartment(name, logger)
+SETissueCompartment::SETissueCompartment(const std::string& name,
+                                         SELiquidCompartment& extracellular,
+                                         SELiquidCompartment& intracellular, Logger* logger) :
+                                         SECompartment(name, logger),
+                                         m_Extracellular(extracellular),
+                                         m_Intracellular(intracellular)
 {
   m_AcidicPhospohlipidConcentration = nullptr;
   m_MatrixVolume = nullptr;
@@ -23,6 +28,7 @@ SETissueCompartment::SETissueCompartment(const std::string& name, Logger* logger
   m_TissueToPlasmaAlphaAcidGlycoproteinRatio = nullptr;
   m_TissueToPlasmaLipoproteinRatio = nullptr;
   m_TotalMass = nullptr;
+  m_TotalVolume = nullptr;
 }
 
 SETissueCompartment::~SETissueCompartment()
@@ -41,6 +47,7 @@ void SETissueCompartment::Clear()
   SAFE_DELETE(m_TissueToPlasmaAlphaAcidGlycoproteinRatio);
   SAFE_DELETE(m_TissueToPlasmaLipoproteinRatio);
   SAFE_DELETE(m_TotalMass);
+  SAFE_DELETE(m_TotalVolume);
 }
 
 const SEScalar* SETissueCompartment::GetScalar(const std::string& name)
@@ -61,6 +68,8 @@ const SEScalar* SETissueCompartment::GetScalar(const std::string& name)
     return &GetTissueToPlasmaLipoproteinRatio();
   if (name.compare("TotalMass") == 0)
     return &GetTotalMass();
+  if (name.compare("TotalVolume") == 0)
+    return &GetTotalVolume();
   return nullptr;
 }
 
@@ -203,4 +212,18 @@ double SETissueCompartment::GetTotalMass(const MassUnit& unit) const
   if (m_TotalMass == nullptr)
     return SEScalar::dNaN();
   return m_TotalMass->GetValue(unit);
+}
+
+const SEScalarVolume& SETissueCompartment::GetTotalVolume()
+{
+  if (m_TotalVolume == nullptr)
+    m_TotalVolume = new SEScalarVolume();
+  m_TotalVolume->SetValue(GetTotalVolume(VolumeUnit::mL), VolumeUnit::mL);
+  return *m_TotalVolume;
+}
+double SETissueCompartment::GetTotalVolume(const VolumeUnit& unit) const
+{
+  return GetMatrixVolume(unit) +
+         m_Extracellular.GetVolume(unit) +
+         m_Intracellular.GetVolume(unit);
 }

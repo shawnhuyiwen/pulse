@@ -498,7 +498,10 @@ SETissueCompartment& SECompartmentManager::CreateTissueCompartment(const std::st
   if (HasTissueCompartment(name))
       throw CommonDataModelException("Compartment already exists for name(" + name + ")");
 
-  SETissueCompartment* tissue = new SETissueCompartment(name, GetLogger());
+  SELiquidCompartment& extracellular = CreateLiquidCompartment(name + "Extracellular");
+  SELiquidCompartment& intracellular = CreateLiquidCompartment(name + "Intracellular");
+
+  SETissueCompartment* tissue = new SETissueCompartment(name, extracellular, intracellular, GetLogger());
   m_TissueName2Compartments[name] = tissue;
   return *tissue;
 }

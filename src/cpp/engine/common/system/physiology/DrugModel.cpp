@@ -426,8 +426,8 @@ namespace pulse
       {
         continue;
       }
-      SELiquidCompartment& ExtracellularFluid = m_data.GetCompartments().GetExtracellularFluid(*tissue);
-      SELiquidCompartment& IntracellularFluid = m_data.GetCompartments().GetIntracellularFluid(*tissue);
+      SELiquidCompartment& ExtracellularFluid = tissue->GetExtracellular();
+      SELiquidCompartment& IntracellularFluid = tissue->GetIntracellular();
 
       //Loop over substances
       for (SESubstance* sub : m_data.GetCompartments().GetLiquidCompartmentSubstances())

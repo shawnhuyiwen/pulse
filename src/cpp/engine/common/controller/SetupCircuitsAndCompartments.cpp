@@ -2254,8 +2254,8 @@ namespace pulse
     FatT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& FatTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::Fat);
-    SELiquidCompartment& FatExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::FatExtracellular);
-    SELiquidCompartment& FatIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::FatIntracellular);
+    SELiquidCompartment& FatExtracellular = FatTissue.GetExtracellular();
+    SELiquidCompartment& FatIntracellular = FatTissue.GetIntracellular();
     FatTissue.GetMatrixVolume().SetValue((1 - AdiposeEWFraction - AdiposeIWFraction) * AdiposeTissueVolume * 1000.0, VolumeUnit::mL);
     FatExtracellular.MapNode(FatT1);
     FatExtracellular.MapNode(FatT2);
@@ -2301,8 +2301,8 @@ namespace pulse
     BoneT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& BoneTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::Bone);
-    SELiquidCompartment& BoneExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::BoneExtracellular);
-    SELiquidCompartment& BoneIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::BoneIntracellular);
+    SELiquidCompartment& BoneExtracellular = BoneTissue.GetExtracellular();
+    SELiquidCompartment& BoneIntracellular = BoneTissue.GetIntracellular();
     BoneTissue.GetMatrixVolume().SetValue((1 - BoneEWFraction - BoneIWFraction) * BoneTissueVolume * 1000.0, VolumeUnit::mL);
     BoneExtracellular.MapNode(BoneT1);
     BoneExtracellular.MapNode(BoneT2);
@@ -2348,8 +2348,8 @@ namespace pulse
     BrainT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& BrainTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::Brain);
-    SELiquidCompartment& BrainExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::BrainExtracellular);
-    SELiquidCompartment& BrainIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::BrainIntracellular);
+    SELiquidCompartment& BrainExtracellular = BrainTissue.GetExtracellular();
+    SELiquidCompartment& BrainIntracellular = BrainTissue.GetIntracellular();
     BrainTissue.GetMatrixVolume().SetValue((1 - BrainEWFraction - BrainIWFraction) * BrainTissueVolume * 1000.0, VolumeUnit::mL);
     BrainExtracellular.MapNode(BrainT1);
     BrainExtracellular.MapNode(BrainT2);
@@ -2401,8 +2401,8 @@ namespace pulse
     GutT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& GutTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::Gut);
-    SELiquidCompartment& GutExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::GutExtracellular);
-    SELiquidCompartment& GutIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::GutIntracellular);
+    SELiquidCompartment& GutExtracellular = GutTissue.GetExtracellular();
+    SELiquidCompartment& GutIntracellular = GutTissue.GetIntracellular();
     GutTissue.GetMatrixVolume().SetValue((1 - GutEWFraction - GutIWFraction) * GutTissueVolume * 1000.0, VolumeUnit::mL);
     GutExtracellular.MapNode(GutT1);
     GutExtracellular.MapNode(GutT2);
@@ -2461,8 +2461,8 @@ namespace pulse
     LeftKidneyT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& LeftKidneyTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::LeftKidney);
-    SELiquidCompartment& LeftKidneyExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyExtracellular);
-    SELiquidCompartment& LeftKidneyIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftKidneyIntracellular);
+    SELiquidCompartment& LeftKidneyExtracellular = LeftKidneyTissue.GetExtracellular();
+    SELiquidCompartment& LeftKidneyIntracellular = LeftKidneyTissue.GetIntracellular();
     LeftKidneyTissue.GetMatrixVolume().SetValue((1 - LKidneyEWFraction - LKidneyIWFraction) * LKidneyTissueVolume * 1000.0, VolumeUnit::mL);
     LeftKidneyExtracellular.MapNode(LeftKidneyT1);
     LeftKidneyExtracellular.MapNode(LeftKidneyT2);
@@ -2508,8 +2508,8 @@ namespace pulse
     LeftLungT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& LeftLungTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::LeftLung);
-    SELiquidCompartment& LeftLungExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftLungExtracellular);
-    SELiquidCompartment& LeftLungIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::LeftLungIntracellular);
+    SELiquidCompartment& LeftLungExtracellular = LeftLungTissue.GetExtracellular();
+    SELiquidCompartment& LeftLungIntracellular = LeftLungTissue.GetIntracellular();
     LeftLungTissue.GetMatrixVolume().SetValue((1 - LLungEWFraction - LLungIWFraction) * LLungTissueVolume * 1000.0, VolumeUnit::mL);
     LeftLungExtracellular.MapNode(LeftLungT1);
     LeftLungExtracellular.MapNode(LeftLungT2);
@@ -2555,8 +2555,8 @@ namespace pulse
     LiverT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& LiverTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::Liver);
-    SELiquidCompartment& LiverExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::LiverExtracellular);
-    SELiquidCompartment& LiverIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::LiverIntracellular);
+    SELiquidCompartment& LiverExtracellular = LiverTissue.GetExtracellular();
+    SELiquidCompartment& LiverIntracellular = LiverTissue.GetIntracellular();
     LiverTissue.GetMatrixVolume().SetValue((1 - LiverEWFraction - LiverIWFraction) * LiverTissueVolume * 1000.0, VolumeUnit::mL);
     LiverExtracellular.MapNode(LiverT1);
     LiverExtracellular.MapNode(LiverT2);
@@ -2602,8 +2602,8 @@ namespace pulse
     MuscleT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& MuscleTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::Muscle);
-    SELiquidCompartment& MuscleExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::MuscleExtracellular);
-    SELiquidCompartment& MuscleIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::MuscleIntracellular);
+    SELiquidCompartment& MuscleExtracellular = MuscleTissue.GetExtracellular();
+    SELiquidCompartment& MuscleIntracellular = MuscleTissue.GetIntracellular();
     MuscleTissue.GetMatrixVolume().SetValue((1 - MuscleEWFraction - MuscleIWFraction) * MuscleTissueVolume * 1000.0, VolumeUnit::mL);
     MuscleExtracellular.MapNode(MuscleT1);
     MuscleExtracellular.MapNode(MuscleT2);
@@ -2649,8 +2649,8 @@ namespace pulse
     MyocardiumT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& MyocardiumTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::Myocardium);
-    SELiquidCompartment& MyocardiumExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::MyocardiumExtracellular);
-    SELiquidCompartment& MyocardiumIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::MyocardiumIntracellular);
+    SELiquidCompartment& MyocardiumExtracellular = MyocardiumTissue.GetExtracellular();
+    SELiquidCompartment& MyocardiumIntracellular = MyocardiumTissue.GetIntracellular();
     MyocardiumTissue.GetMatrixVolume().SetValue((1 - MyocardiumEWFraction - MyocardiumIWFraction) * MyocardiumTissueVolume * 1000.0, VolumeUnit::mL);
     MyocardiumExtracellular.MapNode(MyocardiumT1);
     MyocardiumExtracellular.MapNode(MyocardiumT2);
@@ -2701,8 +2701,8 @@ namespace pulse
     RightKidneyT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& RightKidneyTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::RightKidney);
-    SELiquidCompartment& RightKidneyExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyExtracellular);
-    SELiquidCompartment& RightKidneyIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::RightKidneyIntracellular);
+    SELiquidCompartment& RightKidneyExtracellular = RightKidneyTissue.GetExtracellular();
+    SELiquidCompartment& RightKidneyIntracellular = RightKidneyTissue.GetIntracellular();
     RightKidneyTissue.GetMatrixVolume().SetValue((1 - RKidneyEWFraction - RKidneyIWFraction) * RKidneyTissueVolume * 1000.0, VolumeUnit::mL);
     RightKidneyExtracellular.MapNode(RightKidneyT1);
     RightKidneyExtracellular.MapNode(RightKidneyT2);
@@ -2748,8 +2748,8 @@ namespace pulse
     RightLungT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& RightLungTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::RightLung);
-    SELiquidCompartment& RightLungExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::RightLungExtracellular);
-    SELiquidCompartment& RightLungIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::RightLungIntracellular);
+    SELiquidCompartment& RightLungExtracellular = RightLungTissue.GetExtracellular();
+    SELiquidCompartment& RightLungIntracellular = RightLungTissue.GetIntracellular();
     RightLungTissue.GetMatrixVolume().SetValue((1 - RLungEWFraction - RLungIWFraction) * RLungTissueVolume * 1000.0, VolumeUnit::mL);
     RightLungExtracellular.MapNode(RightLungT1);
     RightLungExtracellular.MapNode(RightLungT2);
@@ -2798,8 +2798,8 @@ namespace pulse
     SkinT1ToGround.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& SkinTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::Skin);
-    SELiquidCompartment& SkinExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::SkinExtracellular);
-    SELiquidCompartment& SkinIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::SkinIntracellular);
+    SELiquidCompartment& SkinExtracellular = SkinTissue.GetExtracellular();
+    SELiquidCompartment& SkinIntracellular = SkinTissue.GetIntracellular();
     SkinTissue.GetMatrixVolume().SetValue((1 - SkinEWFraction - SkinIWFraction) * SkinTissueVolume * 1000.0, VolumeUnit::mL);
     SkinExtracellular.MapNode(SkinT1);
     SkinExtracellular.MapNode(SkinT2);
@@ -2845,8 +2845,8 @@ namespace pulse
     SpleenT1ToLymph.GetFlowSourceBaseline().SetValue(0.0, VolumePerTimeUnit::mL_Per_s);
 
     SETissueCompartment& SpleenTissue = m_Compartments->CreateTissueCompartment(pulse::TissueCompartment::Spleen);
-    SELiquidCompartment& SpleenExtracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::SpleenExtracellular);
-    SELiquidCompartment& SpleenIntracellular = m_Compartments->CreateLiquidCompartment(pulse::ExtravascularCompartment::SpleenIntracellular);
+    SELiquidCompartment& SpleenExtracellular = SpleenTissue.GetExtracellular();
+    SELiquidCompartment& SpleenIntracellular = SpleenTissue.GetIntracellular();
     SpleenTissue.GetMatrixVolume().SetValue((1 - SpleenEWFraction - SpleenIWFraction) * SpleenTissueVolume * 1000.0, VolumeUnit::mL);
     SpleenExtracellular.MapNode(SpleenT1);
     SpleenExtracellular.MapNode(SpleenT2);
