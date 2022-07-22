@@ -1,0 +1,224 @@
+{
+ "Name": "CPRAutomated",
+ "Description": "This scenario tests the automated chest compression action. Cardiac function is terminated and then successive chest compressions are performed.",
+ "EngineStateFile": "./states/StandardMale@0s.json",
+ "DataRequestManager": {
+  "DataRequest": [
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "Physiology",
+    "PropertyName": "HeartRate",
+    "Unit": "1/min"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "Physiology",
+    "PropertyName": "SystolicArterialPressure",
+    "Unit": "mmHg"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "Physiology",
+    "PropertyName": "DiastolicArterialPressure",
+    "Unit": "mmHg"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "Physiology",
+    "PropertyName": "MeanArterialPressure",
+    "Unit": "mmHg"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "Physiology",
+    "PropertyName": "HeartStrokeVolume",
+    "Unit": "mL"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "Physiology",
+    "PropertyName": "HeartEjectionFraction"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "Physiology",
+    "PropertyName": "CardiacOutput",
+    "Unit": "mL/min"
+   },
+   {
+    "DecimalFormat": {
+     "Precision": 6
+    },
+    "Category": "LiquidCompartment",
+    "CompartmentName": "BrainVasculature",
+    "PropertyName": "InFlow",
+    "Unit": "mL/min"
+   }
+  ]
+ },
+ "AnyAction": [
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "Arrhythmia": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Rhythm": "Asystole"
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Force": {
+      "ScalarForce": {
+       "Value": 400,
+       "Unit": "N"
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 120,
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "ForceScale": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 120,
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "ForceScale": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "Arrhythmia": {
+     "PatientAction": {
+      "Action": {}
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 60,
+      "Unit": "s"
+     }
+    }
+   }
+  }
+ ]
+}
