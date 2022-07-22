@@ -194,6 +194,22 @@ $ ./armv8a ninja -C./Builds/pulse-engine-armv8a
 # The PulseC.so for the target platform will be in the pulse-engine-armv8a/install/bin directory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+#### iOS
+
+iOS can only link to static iOS arm64 C++ Pulse libraries. 
+We have not yet added support to our build system to build these via the terminal.
+We build these manually on a MacOS machine using XCode.
+The following steps are used to generate these static libraries for our Unity Asset.
+
+1. Since we are cross compiling, non of our executables are able to run on our MacOS machine. This include the protoc compiler.
+Inorder to generate the necessary files during the build process, you will need to build Pulse for the native MacOS platform.
+Simply follow the above build instructions. We will refer to its build directory as `macos/install` in subsequent steps.
+2. Open CMake and <b>configure</b> an XCode project with a <B>toolchain file for cross compiling</b>. Use the toolchain file `/cmake/ios.toolchain.cmake`
+3. Set Pulse_NATIVE_BUILD_DIR to your `macos` root build directory 
+4. Set Pulse_LIBS_ONLY to `ON` so we only build the necessary static libraries
+5. Configure and Generate CMake for it to create the XCode project
+
+
 #### Magic Leap
 
 Magic Leap provides a Lumin SDK for use in compiling native C++ code for use on the Magic Leap platform.
