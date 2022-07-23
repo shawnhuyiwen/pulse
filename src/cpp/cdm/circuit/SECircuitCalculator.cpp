@@ -121,8 +121,11 @@ void SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Process(CircuitType& circuit
     //Then we calculate the flows and voltages based on those Pressures and Element values.    
     ParseIn();
     success = Solve();
-    ParseOut();
-    CalculateFluxes();
+    if (success)
+    {
+      ParseOut();
+      CalculateFluxes();
+    }
   } while (!CheckAndModifyValves(success));
 #ifdef VERBOSE
   std::cout << "Number of Valve Loops = " << i << std::endl;
@@ -647,14 +650,6 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
   }
   };
 
-  if (_eigen->AMatrix.rows() != _eigen->AMatrix.cols() ||
-    _eigen->AMatrix.rows() != _eigen->xVector.rows() || 
-    _eigen->AMatrix.rows() != _eigen->bVector.rows())
-  {
-    ///\error Fatal: The solver was unable to determine a solution for the circuit due to a matrix size mismatch.
-    Fatal("The solver was unable to determine a solution for the circuitdue to a matrix size mismatch.");
-  }
-
   double errorThreshold = 1e-6;
   if (sparseFailed || !(_eigen->AMatrix*_eigen->xVector).isApprox(_eigen->bVector, errorThreshold))
   {
@@ -691,6 +686,14 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
 #ifdef VERBOSE
   Verbose("PostSolve");
 #endif
+
+  if (_eigen->AMatrix.rows() != _eigen->AMatrix.cols() ||
+    _eigen->AMatrix.rows() != _eigen->xVector.rows() ||
+    _eigen->AMatrix.rows() != _eigen->bVector.rows())
+  {
+    ///\error Fatal: The solver was unable to determine a solution for the circuit due to a matrix size mismatch.
+    Fatal("The solver was unable to determine a solution for the circuit due to a matrix size mismatch.");
+  }
 
   return true;
 }
