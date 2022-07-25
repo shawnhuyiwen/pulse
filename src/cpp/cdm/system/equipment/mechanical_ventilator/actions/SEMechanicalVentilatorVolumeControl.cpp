@@ -120,9 +120,9 @@ bool SEMechanicalVentilatorVolumeControl::ToSettings(SEMechanicalVentilatorSetti
     {
       if (HasInspirationPatientTriggerFlow())
         s.GetInspirationPatientTriggerFlow().Set(GetInspirationPatientTriggerFlow());
-      else if (HasInspirationPatientTriggerPressure())
+      if (HasInspirationPatientTriggerPressure())
         s.GetInspirationPatientTriggerPressure().Set(GetInspirationPatientTriggerPressure());
-      else
+      if(!HasInspirationPatientTriggerFlow() && !HasInspirationPatientTriggerPressure())
         s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
     }
 

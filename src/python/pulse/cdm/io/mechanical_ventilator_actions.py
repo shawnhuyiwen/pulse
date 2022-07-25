@@ -59,14 +59,14 @@ def serialize_mechanical_ventilator_continuous_positive_airway_pressure_to_bind(
         serialize_scalar_pressure_to_bind(src.get_delta_pressure_support(), dst.DeltaPressureSupport)
     if src.has_expiration_cycle_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_expiration_cycle_flow(), dst.ExpirationCycleFlow)
-    elif src.has_expiration_cycle_pressure():
+    if src.has_expiration_cycle_pressure():
         serialize_scalar_pressure_to_bind(src.get_expiration_cycle_pressure(), dst.ExpirationCyclePressure)
     dst.ExpirationWaveform = src.get_expiration_waveform().value
     if src.has_fraction_inspired_oxygen():
         serialize_scalar_0to1_to_bind(src.get_fraction_inspired_oxygen(), dst.FractionInspiredOxygen)
     if src.has_inspiration_patient_trigger_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_inspiration_patient_trigger_flow(), dst.InspirationCycleFlow)
-    elif src.has_inspiration_patient_trigger_pressure():
+    if src.has_inspiration_patient_trigger_pressure():
         serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationCyclePressure)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
     if src.has_positive_end_expired_pressure():
@@ -84,7 +84,7 @@ def serialize_mechanical_ventilator_pressure_control_to_bind(src: SEMechanicalVe
         serialize_scalar_0to1_to_bind(src.get_fraction_inspired_oxygen(), dst.FractionInspiredOxygen)
     if src.has_inspiration_patient_trigger_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_inspiration_patient_trigger_flow(), dst.InspirationCycleFlow)
-    elif src.has_inspiration_patient_trigger_pressure():
+    if src.has_inspiration_patient_trigger_pressure():
         serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationCyclePressure)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
     if src.has_inspiratory_period():
@@ -110,7 +110,7 @@ def serialize_mechanical_ventilator_volume_control_to_bind(src: SEMechanicalVent
         serialize_scalar_0to1_to_bind(src.get_fraction_inspired_oxygen(), dst.FractionInspiredOxygen)
     if src.has_inspiration_patient_trigger_flow():
         serialize_scalar_volume_per_time_to_bind(src.get_inspiration_patient_trigger_flow(), dst.InspirationCycleFlow)
-    elif src.has_inspiration_patient_trigger_pressure():
+    if src.has_inspiration_patient_trigger_pressure():
         serialize_scalar_pressure_to_bind(src.get_inspiration_patient_trigger_pressure(), dst.InspirationCyclePressure)
     dst.InspirationWaveform = src.get_inspiration_waveform().value
     if src.has_inspiratory_period():

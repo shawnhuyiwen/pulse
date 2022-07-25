@@ -163,7 +163,7 @@ class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentila
         return self._expiration_cycle_flow is not None
     def get_expiration_cycle_flow(self):
         if self._expiration_cycle_flow is None:
-            self._expiration_cycle_flow = SEScalarVolumePerTimeData()
+            self._expiration_cycle_flow = SEScalarVolumePerTime()
         return self._expiration_cycle_flow
 
     def has_expiration_cycle_pressure(self):
@@ -189,7 +189,7 @@ class SEMechanicalVentilatorContinuousPositiveAirwayPressure(SEMechanicalVentila
         return self._inspiration_patient_trigger_flow is not None
     def get_inspiration_patient_trigger_flow(self):
         if self._inspiration_patient_trigger_flow is None:
-            self._inspiration_patient_trigger_flow = SEScalarVolumePerTimeData()
+            self._inspiration_patient_trigger_flow = SEScalarVolumePerTime()
         return self._inspiration_patient_trigger_flow
 
     def has_inspiration_patient_trigger_pressure(self):
@@ -317,7 +317,7 @@ class SEMechanicalVentilatorPressureControl(SEMechanicalVentilatorMode):
         return self._inspiration_patient_trigger_flow is not None
     def get_inspiration_patient_trigger_flow(self):
         if self._inspiration_patient_trigger_flow is None:
-            self._inspiration_patient_trigger_flow = SEScalarVolumePerTimeData()
+            self._inspiration_patient_trigger_flow = SEScalarVolumePerTime()
         return self._inspiration_patient_trigger_flow
 
     def has_inspiration_patient_trigger_pressure(self):
@@ -478,7 +478,7 @@ class SEMechanicalVentilatorVolumeControl(SEMechanicalVentilatorMode):
         return self._inspiration_patient_trigger_flow is not None
     def get_inspiration_patient_trigger_flow(self):
         if self._inspiration_patient_trigger_flow is None:
-            self._inspiration_patient_trigger_flow = SEScalarVolumePerTimeData()
+            self._inspiration_patient_trigger_flow = SEScalarVolumePerTime()
         return self._inspiration_patient_trigger_flow
 
     def has_inspiration_patient_trigger_pressure(self):

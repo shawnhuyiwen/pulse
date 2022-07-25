@@ -86,9 +86,9 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
     s.SetExpirationCycleRespiratoryModel(eSwitch::Off);
     if (HasInspirationPatientTriggerFlow())
       s.GetInspirationPatientTriggerFlow().Set(GetInspirationPatientTriggerFlow());
-    else if (HasInspirationPatientTriggerPressure())
+    if (HasInspirationPatientTriggerPressure())
       s.GetInspirationPatientTriggerPressure().Set(GetInspirationPatientTriggerPressure());
-    else
+    if(!HasInspirationPatientTriggerFlow() && !HasInspirationPatientTriggerPressure())
       s.SetExpirationCycleRespiratoryModel(eSwitch::On);
 
     if (HasExpirationWaveform())
@@ -99,9 +99,9 @@ bool SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToSettings(SEMechan
     s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
     if (HasExpirationCycleFlow())
       s.GetExpirationCycleFlow().Set(GetExpirationCycleFlow());
-    else if (HasExpirationCyclePressure())
+    if (HasExpirationCyclePressure())
       s.GetExpirationCyclePressure().Set(GetExpirationCyclePressure());
-    else
+    if (!HasExpirationCycleFlow() && !HasExpirationCyclePressure())
       s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
 
     if (HasInspirationWaveform())
