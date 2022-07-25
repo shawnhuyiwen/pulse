@@ -508,7 +508,6 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::PreProcess()
   {
-
     // Look for any known overrides
     for (auto const& [name, modifier] : m_data.GetOverrides())
     {
@@ -1165,7 +1164,7 @@ namespace pulse
     }
 
     //Prepare for the next cycle -------------------------------------------------------------------------------
-    if ((m_BreathingCycleTime_s > GetBreathCycleTime()) ||                              //End of the cycle or currently not breathing
+    if ((m_BreathingCycleTime_s > GetBreathCycleTime() - m_data.GetTimeStep_s()) ||                              //End of the cycle or currently not breathing
       (m_PatientActions->HasConsciousRespiration() && !m_ActiveConsciousRespirationCommand)) //Or new consious respiration command to start immediately
     {
       m_BreathingCycleTime_s = 0.0;
@@ -1467,7 +1466,7 @@ namespace pulse
 
     //We need to do this here to allow for the inhaler to get called before the next go-around
     m_BreathingCycleTime_s += m_data.GetTimeStep_s();
-    if (m_BreathingCycleTime_s > TotalBreathingCycleTime_s) //End of the cycle or currently not breathing
+    if (m_BreathingCycleTime_s > TotalBreathingCycleTime_s - m_data.GetTimeStep_s()) //End of the cycle or currently not breathing
     {
       if (m_ActiveConsciousRespirationCommand)
       {
@@ -2031,7 +2030,7 @@ namespace pulse
 
     //Record values at the breathing inflection points (i.e. switch between inhale and exhale)  
     // Temporal tolerance to avoid accidental entry in the the inhalation and exhalation code blocks 
-    m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s()/60;
+    m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s() / 60.0;
 
     if (m_BreathingCycle) //Exhaling
     {

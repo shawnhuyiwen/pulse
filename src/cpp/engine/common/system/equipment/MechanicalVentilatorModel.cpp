@@ -108,6 +108,7 @@ namespace pulse
     m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
     m_PreviousConnectionPressure_cmH2O = 0.0;
     m_LimitReached = false;
+    m_Initializing = false;
 
     //System data
     GetAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
@@ -200,8 +201,9 @@ namespace pulse
     m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
     m_PreviousConnectionPressure_cmH2O = 0.0;
     m_LimitReached = false;
+    m_Initializing = true;
 
-    // Default the relief valuve threshold if not there
+    // Default the relief valve threshold if not there
     if (!GetSettings().HasReliefValveThreshold())
       GetSettings().GetReliefValveThreshold().SetValue(1000, PressureUnit::cmH2O);
 
@@ -337,6 +339,7 @@ namespace pulse
       m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
       m_PreviousConnectionPressure_cmH2O = 0.0;
       m_LimitReached = false;
+      m_Initializing = false;
       return;
     }
 
@@ -532,15 +535,6 @@ namespace pulse
     // Check trigger
     // Any combination of triggers can be used, but there must be at least one
     bool triggerDefined = false;
-    if (GetSettings().HasExpirationCycleTime())
-    {
-      triggerDefined = true;
-      if (m_CurrentPeriodTime_s >= GetSettings().GetExpirationCycleTime(TimeUnit::s))
-      {
-        CycleMode(false);
-        return;
-      }
-    }
 
     if (GetSettings().GetExpirationCycleRespiratoryModel() == eSwitch::On)
     {
@@ -581,6 +575,16 @@ namespace pulse
         m_CurrentPeriodTime_s > 0.0) //Check if we just cycled the mode
       {
         CycleMode(true);
+        return;
+      }
+    }
+
+    if (GetSettings().HasExpirationCycleTime())
+    {
+      triggerDefined = true;
+      if (m_CurrentPeriodTime_s >= GetSettings().GetExpirationCycleTime(TimeUnit::s))
+      {
+        CycleMode(false);
         return;
       }
     }
@@ -772,16 +776,6 @@ namespace pulse
       }
     }
 
-    if (GetSettings().HasInspirationMachineTriggerTime())
-    {
-      triggerDefined = true;
-      if (m_CurrentPeriodTime_s >= GetSettings().GetInspirationMachineTriggerTime(TimeUnit::s))
-      {
-        CycleMode(false);
-        return;
-      }
-    }
-    
     if (GetSettings().HasInspirationPatientTriggerPressure())
     {
       triggerDefined = true;
@@ -811,7 +805,24 @@ namespace pulse
         return;
       }
     }
-    
+
+    if (GetSettings().HasInspirationMachineTriggerTime())
+    {
+      triggerDefined = true;
+
+      double inspirationMachineTriggerTime_s = GetSettings().GetInspirationMachineTriggerTime(TimeUnit::s);
+      if (triggerDefined && m_Initializing)
+      {
+        //Give extra time to hit other types of triggers the first time through to help prevent dyssynchrony
+        inspirationMachineTriggerTime_s *= 2.0;
+      }
+      if (m_CurrentPeriodTime_s >= inspirationMachineTriggerTime_s)
+      {
+        CycleMode(false);
+        return;
+      }
+    }
+
     if(!triggerDefined)
     {
       /// \error Fatal: No inspiration trigger defined.
@@ -902,6 +913,7 @@ namespace pulse
     }
 
     m_CurrentPeriodTime_s = 0.0;
+    m_Initializing = false;
   }
 
   //--------------------------------------------------------------------------------------------------

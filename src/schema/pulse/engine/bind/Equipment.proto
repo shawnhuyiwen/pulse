@@ -55,13 +55,14 @@ message MechanicalVentilatorData
   double                                           CurrentVentilatorVolume_L              = 5;
   double                                           DriverPressure_cmH2O                   = 6;
   double                                           DriverFlow_L_Per_s                     = 7;
-  double                                           InspirationTime_s                      = 8;
-  double                                           InspiratoryFlow_L_Per_s                = 9;
-  bool                                             LimitReached                           = 10;
-  pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O               = 11;
-  double                                           PreviousDriverFlow_L_Per_s             = 12;
-  double                                           PreviousConnectionPressure_cmH2O       = 13;
-  double                                           PreviousDriverPressure_cmH2O           = 14;
-  double                                           PreviousYPieceToConnectionFlow_L_Per_s = 15;
+  bool                                             Initializing                           = 8;
+  double                                           InspirationTime_s                      = 9;
+  double                                           InspiratoryFlow_L_Per_s                = 10;
+  bool                                             LimitReached                           = 11;
+  pulse.cdm.bind.RunningAverageData                MeanAirwayPressure_cmH2O               = 12;
+  double                                           PreviousDriverFlow_L_Per_s             = 13;
+  double                                           PreviousConnectionPressure_cmH2O       = 14;
+  double                                           PreviousDriverPressure_cmH2O           = 15;
+  double                                           PreviousYPieceToConnectionFlow_L_Per_s = 16;
   
 }
