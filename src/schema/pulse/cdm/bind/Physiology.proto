@@ -260,28 +260,29 @@ message RenalSystemData
 message RespiratoryMechanicsData
 {
   eSwitch                             Active                                         = 1; /**<< @brief Turn on or off the use of this structure in the physiology implementation. */
-  CurveData                           LeftComplianceCurve                            = 2; /**<< @brief Left static compliance definition as a pressure vs. volume piecewise function.*/
-  CurveData                           RightComplianceCurve                           = 3; /**<< @brief Right static compliance definition as a pressure vs. volume piecewise function.*/
+  eDefaultType                        DefaultType                                    = 2; /**<< @brief What values to use if optional properties are not set. */
+  CurveData                           LeftComplianceCurve                            = 3; /**<< @brief Left static compliance definition as a pressure vs. volume piecewise function.*/
+  CurveData                           RightComplianceCurve                           = 4; /**<< @brief Right static compliance definition as a pressure vs. volume piecewise function.*/
   
-  ScalarPressureTimePerVolumeData     LeftExpiratoryResistance                       = 4; /**<< @brief Left lung airway resistance during expiration.*/
-  ScalarPressureTimePerVolumeData     LeftInspiratoryResistance                      = 5; /**<< @brief Left lung airway resistance during inspiration.*/
-  ScalarPressureTimePerVolumeData     RightExpiratoryResistance                      = 6; /**<< @brief Right lung airway resistance during expiration.*/
-  ScalarPressureTimePerVolumeData     RightInspiratoryResistance                     = 7; /**<< @brief Right lung airway resistance during inspiration.*/
-  ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 8; /**<< @brief Upper airway respiratory resistance during expiration.*/
-  ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 9; /**<< @brief Upper airway respiratory resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData     LeftExpiratoryResistance                       = 5; /**<< @brief Left lung airway resistance during expiration.*/
+  ScalarPressureTimePerVolumeData     LeftInspiratoryResistance                      = 6; /**<< @brief Left lung airway resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData     RightExpiratoryResistance                      = 7; /**<< @brief Right lung airway resistance during expiration.*/
+  ScalarPressureTimePerVolumeData     RightInspiratoryResistance                     = 8; /**<< @brief Right lung airway resistance during inspiration.*/
+  ScalarPressureTimePerVolumeData     UpperExpiratoryResistance                      = 9; /**<< @brief Upper airway respiratory resistance during expiration.*/
+  ScalarPressureTimePerVolumeData     UpperInspiratoryResistance                     = 10; /**<< @brief Upper airway respiratory resistance during inspiration.*/
   
   // Muscle Pressure Driver
-  ScalarPressureData                  InspiratoryPeakPressure                        = 10;/**<< @brief The maximum negative pressure during spontaneous inspiration.*/
-  ScalarPressureData                  ExpiratoryPeakPressure                         = 11;/**<< @brief The maximum positive pressure during spontaneous expiration (usually 0).*/
+  ScalarPressureData                  InspiratoryPeakPressure                        = 11;/**<< @brief The maximum negative pressure during spontaneous inspiration.*/
+  ScalarPressureData                  ExpiratoryPeakPressure                         = 12;/**<< @brief The maximum positive pressure during spontaneous expiration (usually 0).*/
   
-  ScalarTimeData                      InspiratoryRiseTime                            = 12;/**<< @brief Spontaneous inspiration rise period length.*/
-  ScalarTimeData                      InspiratoryHoldTime                            = 13;/**<< @brief Spontaneous hold period length at top of breath.*/
-  ScalarTimeData                      InspiratoryReleaseTime                         = 14;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
-  ScalarTimeData                      InspiratoryToExpiratoryPauseTime               = 15;/**<< @brief Spontaneous hold period length between inspiration and expiration.*/
-  ScalarTimeData                      ExpiratoryRiseTime                             = 16;/**<< @brief Spontaneous expiration rise period length.*/
-  ScalarTimeData                      ExpiratoryHoldTime                             = 17;/**<< @brief Spontaneous hold period length at bottom of breath.*/
-  ScalarTimeData                      ExpiratoryReleaseTime                          = 18;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
-  ScalarTimeData                      ResidueTime                                    = 19;/**<< @brief Spontaneous breathing remaining time at 0 pressure after completed waveform.*/
+  ScalarTimeData                      InspiratoryRiseTime                            = 13;/**<< @brief Spontaneous inspiration rise period length.*/
+  ScalarTimeData                      InspiratoryHoldTime                            = 14;/**<< @brief Spontaneous hold period length at top of breath.*/
+  ScalarTimeData                      InspiratoryReleaseTime                         = 15;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
+  ScalarTimeData                      InspiratoryToExpiratoryPauseTime               = 16;/**<< @brief Spontaneous hold period length between inspiration and expiration.*/
+  ScalarTimeData                      ExpiratoryRiseTime                             = 17;/**<< @brief Spontaneous expiration rise period length.*/
+  ScalarTimeData                      ExpiratoryHoldTime                             = 18;/**<< @brief Spontaneous hold period length at bottom of breath.*/
+  ScalarTimeData                      ExpiratoryReleaseTime                          = 19;/**<< @brief Spontaneous inspiration release period length back to 0 pressure.*/
+  ScalarTimeData                      ResidueTime                                    = 20;/**<< @brief Spontaneous breathing remaining time at 0 pressure after completed waveform.*/
 }
 
 /**@brief Provides ventilation and gas exchange of the human respiratory system.
@@ -338,7 +339,7 @@ message RespiratorySystemData
   ScalarVolumePerTimeData             TotalDeadSpaceVentilation                      = 47;/**<< @brief The air flow to the dead space.*/
   ScalarVolumeData                    TotalLungVolume                                = 48;/**<< @brief The total volume of air within the lungs at any given time.*/
   ScalarPowerData                     TotalPowerOfBreathing                          = 49;/**<< @brief The sum of the imposed and patient power of breathing.*/
-  ScalarVolumePerTimeData             TotalPulmonaryVentilation                      = 50;/**<< @brief The flow rate representing the exchange of air between the lungs and ambient air.*/
+  ScalarVolumePerTimeData             TotalPulmonaryVentilation                      = 50;/**<< @brief The amount of air that enters the lungs as a function of time - can be used for minute ventilation.*/
   ScalarEnergyData                    TotalWorkOfBreathing                           = 51;/**<< @brief The sum of the imposed and patient work of breathing.*/
   ScalarPressureData                  TransairwayPressure                            = 52;/**<< @brief The pressure difference between the airway opening and alveoli.*/
   ScalarPressureData                  TransalveolarPressure                          = 53;/**<< @brief The pressure difference between the alveoli and pleural space.*/

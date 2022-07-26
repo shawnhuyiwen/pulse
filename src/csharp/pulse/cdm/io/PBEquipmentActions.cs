@@ -1088,8 +1088,18 @@ namespace Pulse.CDM
         Serialize(src.MechanicalVentilatorMode, dst);
       if (src.DeltaPressureSupport != null)
         PBProperty.Load(src.DeltaPressureSupport, dst.GetDeltaPressureSupport());
+      if (src.ExpirationCycleFlow != null)
+        PBProperty.Load(src.ExpirationCycleFlow, dst.GetExpirationCycleFlow());
+      if (src.ExpirationCyclePressure != null)
+        PBProperty.Load(src.ExpirationCyclePressure, dst.GetExpirationCyclePressure());
+      dst.SetExpirationWaveform((eDriverWaveform)src.ExpirationWaveform);
       if (src.FractionInspiredOxygen != null)
         PBProperty.Load(src.FractionInspiredOxygen, dst.GetFractionInspiredOxygen());
+      if (src.InspirationPatientTriggerFlow != null)
+        PBProperty.Load(src.InspirationPatientTriggerFlow, dst.GetInspirationPatientTriggerFlow());
+      if (src.InspirationPatientTriggerPressure != null)
+        PBProperty.Load(src.InspirationPatientTriggerPressure, dst.GetInspirationPatientTriggerPressure());
+      dst.SetInspirationWaveform((eDriverWaveform)src.InspirationWaveform);
       if (src.PositiveEndExpiredPressure != null)
         PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
       if (src.Slope != null)
@@ -1107,8 +1117,18 @@ namespace Pulse.CDM
       Serialize(src, dst.MechanicalVentilatorMode);
       if (src.HasDeltaPressureSupport())
         dst.DeltaPressureSupport = PBProperty.Unload(src.GetDeltaPressureSupport());
+      if (src.HasExpirationCycleFlow())
+        dst.ExpirationCycleFlow = PBProperty.Unload(src.GetExpirationCycleFlow());
+      if (src.HasExpirationCyclePressure())
+        dst.ExpirationCyclePressure = PBProperty.Unload(src.GetExpirationCyclePressure());
+      dst.ExpirationWaveform = (pulse.cdm.bind.eDriverWaveform)(int)src.GetExpirationWaveform();
       if (src.HasFractionInspiredOxygen())
         dst.FractionInspiredOxygen = PBProperty.Unload(src.GetFractionInspiredOxygen());
+      if (src.HasInspirationPatientTriggerFlow())
+        dst.InspirationPatientTriggerFlow = PBProperty.Unload(src.GetInspirationPatientTriggerFlow());
+      if (src.HasInspirationPatientTriggerPressure())
+        dst.InspirationPatientTriggerPressure = PBProperty.Unload(src.GetInspirationPatientTriggerPressure());
+      dst.InspirationWaveform = (pulse.cdm.bind.eDriverWaveform)(int)src.GetInspirationWaveform();
       if (src.HasPositiveEndExpiredPressure())
         dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
       if (src.HasSlope())
@@ -1127,6 +1147,11 @@ namespace Pulse.CDM
         Serialize(src.MechanicalVentilatorMode, dst);
       if (src.FractionInspiredOxygen != null)
         PBProperty.Load(src.FractionInspiredOxygen, dst.GetFractionInspiredOxygen());
+      if (src.InspirationPatientTriggerFlow != null)
+        PBProperty.Load(src.InspirationPatientTriggerFlow, dst.GetInspirationPatientTriggerFlow());
+      if (src.InspirationPatientTriggerPressure != null)
+        PBProperty.Load(src.InspirationPatientTriggerPressure, dst.GetInspirationPatientTriggerPressure());
+      dst.SetInspirationWaveform((eDriverWaveform)src.InspirationWaveform);
       if (src.InspiratoryPeriod != null)
         PBProperty.Load(src.InspiratoryPeriod, dst.GetInspiratoryPeriod());
       if (src.InspiratoryPressure != null)
@@ -1150,6 +1175,11 @@ namespace Pulse.CDM
       Serialize(src, dst.MechanicalVentilatorMode);
       if (src.HasFractionInspiredOxygen())
         dst.FractionInspiredOxygen = PBProperty.Unload(src.GetFractionInspiredOxygen());
+      if (src.HasInspirationPatientTriggerFlow())
+        dst.InspirationPatientTriggerFlow = PBProperty.Unload(src.GetInspirationPatientTriggerFlow());
+      if (src.HasInspirationPatientTriggerPressure())
+        dst.InspirationPatientTriggerPressure = PBProperty.Unload(src.GetInspirationPatientTriggerPressure());
+      dst.InspirationWaveform = (pulse.cdm.bind.eDriverWaveform)(int)src.GetInspirationWaveform();
       if (src.HasInspiratoryPeriod())
         dst.InspiratoryPeriod = PBProperty.Unload(src.GetInspiratoryPeriod());
       if (src.HasInspiratoryPressure())
@@ -1176,12 +1206,19 @@ namespace Pulse.CDM
         PBProperty.Load(src.Flow, dst.GetFlow());
       if (src.FractionInspiredOxygen != null)
         PBProperty.Load(src.FractionInspiredOxygen, dst.GetFractionInspiredOxygen());
+      if (src.InspirationPatientTriggerFlow != null)
+        PBProperty.Load(src.InspirationPatientTriggerFlow, dst.GetInspirationPatientTriggerFlow());
+      if (src.InspirationPatientTriggerPressure != null)
+        PBProperty.Load(src.InspirationPatientTriggerPressure, dst.GetInspirationPatientTriggerPressure());
+      dst.SetInspirationWaveform((eDriverWaveform)src.InspirationWaveform);
       if (src.InspiratoryPeriod != null)
         PBProperty.Load(src.InspiratoryPeriod, dst.GetInspiratoryPeriod());
       if (src.PositiveEndExpiredPressure != null)
         PBProperty.Load(src.PositiveEndExpiredPressure, dst.GetPositiveEndExpiredPressure());
       if (src.RespirationRate != null)
         PBProperty.Load(src.RespirationRate, dst.GetRespirationRate());
+      if (src.Slope != null)
+        PBProperty.Load(src.Slope, dst.GetSlope());
       if (src.TidalVolume != null)
         PBProperty.Load(src.TidalVolume, dst.GetTidalVolume());
     }
@@ -1199,12 +1236,19 @@ namespace Pulse.CDM
         dst.Flow = PBProperty.Unload(src.GetFlow());
       if (src.HasFractionInspiredOxygen())
         dst.FractionInspiredOxygen = PBProperty.Unload(src.GetFractionInspiredOxygen());
+      if (src.HasInspirationPatientTriggerFlow())
+        dst.InspirationPatientTriggerFlow = PBProperty.Unload(src.GetInspirationPatientTriggerFlow());
+      if (src.HasInspirationPatientTriggerPressure())
+        dst.InspirationPatientTriggerPressure = PBProperty.Unload(src.GetInspirationPatientTriggerPressure());
+      dst.InspirationWaveform = (pulse.cdm.bind.eDriverWaveform)(int)src.GetInspirationWaveform();
       if (src.HasInspiratoryPeriod())
         dst.InspiratoryPeriod = PBProperty.Unload(src.GetInspiratoryPeriod());
       if (src.HasPositiveEndExpiredPressure())
         dst.PositiveEndExpiredPressure = PBProperty.Unload(src.GetPositiveEndExpiredPressure());
       if (src.HasRespirationRate())
         dst.RespirationRate = PBProperty.Unload(src.GetRespirationRate());
+      if (src.HasSlope())
+        dst.Slope = PBProperty.Unload(src.GetSlope());
       if (src.HasTidalVolume())
         dst.TidalVolume = PBProperty.Unload(src.GetTidalVolume());
     }

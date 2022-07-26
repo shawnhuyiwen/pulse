@@ -3,6 +3,7 @@
 
 package com.kitware.pulse.cdm.system.physiology;
 
+import com.kitware.pulse.cdm.bind.Enums.eDefaultType;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.Physiology.RespiratoryMechanicsData;
 import com.kitware.pulse.cdm.properties.*;
@@ -10,6 +11,7 @@ import com.kitware.pulse.cdm.properties.*;
 public class SERespiratoryMechanics
   {
     protected eSwitch                       active;
+    protected eDefaultType                  defaultType;
     protected SECurve                       leftComplianceCurve;
     protected SECurve                       rightComplianceCurve;
     protected SEScalarPressureTimePerVolume leftExpiratoryResistance;
@@ -32,6 +34,7 @@ public class SERespiratoryMechanics
     public SERespiratoryMechanics()
     {
       active = eSwitch.NullSwitch;
+      defaultType = eDefaultType.Model;
       leftComplianceCurve = null;
       rightComplianceCurve = null;
       leftExpiratoryResistance = null;
@@ -55,6 +58,7 @@ public class SERespiratoryMechanics
     public void clear()
     {
       active = eSwitch.NullSwitch;
+      defaultType = eDefaultType.Model;
       if (leftComplianceCurve != null)
         leftComplianceCurve.invalidate();
       if (rightComplianceCurve != null)
@@ -98,6 +102,7 @@ public class SERespiratoryMechanics
       clear();
       if(hasActive())
         setActive(from.getActive());
+      setDefaultType(from.getDefaultType());
       if (from.hasLeftComplianceCurve())
         getLeftComplianceCurve().copy(from.getLeftComplianceCurve());
       if (from.hasRightComplianceCurve())
@@ -139,6 +144,7 @@ public class SERespiratoryMechanics
     public static void load(RespiratoryMechanicsData src, SERespiratoryMechanics dst)
     {
       dst.setActive(src.getActive());
+      dst.setDefaultType(src.getDefaultType());
       if (src.hasLeftComplianceCurve())
         SECurve.load(src.getLeftComplianceCurve(),dst.getLeftComplianceCurve());
       if (src.hasRightComplianceCurve())
@@ -188,6 +194,7 @@ public class SERespiratoryMechanics
     protected static void unload(SERespiratoryMechanics src, RespiratoryMechanicsData.Builder dst)
     {
       dst.setActive(src.getActive());
+      dst.setDefaultType(src.getDefaultType());
       if (src.hasLeftComplianceCurve())
         dst.setLeftComplianceCurve(SECurve.unload(src.getLeftComplianceCurve()));
       if (src.hasRightComplianceCurve())
@@ -240,6 +247,15 @@ public class SERespiratoryMechanics
     public void setActive(eSwitch s)
     {
       active = s;
+    }
+
+    public eDefaultType getDefaultType()
+    {
+      return defaultType;
+    }
+    public void setDefaultType(eDefaultType d)
+    {
+      defaultType = d;
     }
 
     public boolean hasLeftComplianceCurve()
@@ -480,6 +496,7 @@ public class SERespiratoryMechanics
     {
       String str = "Respiratory Mechanics";
       str += "\n\tActive: "; if (hasActive()) str += active; else str += "Not Set";
+      str += "\n\tDefaultType: "; str += defaultType;
       str += "\n\tLeftComplianceCurve: "; if (hasLeftComplianceCurve()) str += leftComplianceCurve.toString(); else str += "Not Set";
       str += "\n\tRightComplianceCurve: "; if (hasRightComplianceCurve()) str += rightComplianceCurve.toString(); else str += "Not Set";
       str += "\n\tLeftExpiratoryResistance: "; if (hasLeftExpiratoryResistance()) str += leftExpiratoryResistance.toString(); else str += "Not Set";

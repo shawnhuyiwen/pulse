@@ -508,7 +508,6 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::PreProcess()
   {
-
     // Look for any known overrides
     for (auto const& [name, modifier] : m_data.GetOverrides())
     {
@@ -1165,7 +1164,7 @@ namespace pulse
     }
 
     //Prepare for the next cycle -------------------------------------------------------------------------------
-    if ((m_BreathingCycleTime_s > GetBreathCycleTime()) ||                              //End of the cycle or currently not breathing
+    if ((m_BreathingCycleTime_s > GetBreathCycleTime() - m_data.GetTimeStep_s()) ||                              //End of the cycle or currently not breathing
       (m_PatientActions->HasConsciousRespiration() && !m_ActiveConsciousRespirationCommand)) //Or new consious respiration command to start immediately
     {
       m_BreathingCycleTime_s = 0.0;
@@ -1369,6 +1368,11 @@ namespace pulse
 
     if (HasActiveRespiratoryMechanics())
     {
+      if (m_RespiratoryMechanics->GetDefaultType() == eDefaultType::Zero)
+      {
+        m_PeakInspiratoryPressure_cmH2O = 0.0;
+        m_PeakExpiratoryPressure_cmH2O = 0.0;
+      }
       if (m_RespiratoryMechanics->HasInspiratoryPeakPressure())
         m_PeakInspiratoryPressure_cmH2O = m_RespiratoryMechanics->GetInspiratoryPeakPressure(PressureUnit::cmH2O);
       if (m_RespiratoryMechanics->HasExpiratoryPeakPressure())
@@ -1462,7 +1466,7 @@ namespace pulse
 
     //We need to do this here to allow for the inhaler to get called before the next go-around
     m_BreathingCycleTime_s += m_data.GetTimeStep_s();
-    if (m_BreathingCycleTime_s > TotalBreathingCycleTime_s) //End of the cycle or currently not breathing
+    if (m_BreathingCycleTime_s > TotalBreathingCycleTime_s - m_data.GetTimeStep_s()) //End of the cycle or currently not breathing
     {
       if (m_ActiveConsciousRespirationCommand)
       {
@@ -1506,6 +1510,18 @@ namespace pulse
 
     if (HasActiveRespiratoryMechanics())
     {
+      if (m_RespiratoryMechanics->GetDefaultType() == eDefaultType::Zero)
+      {
+        m_InspiratoryRiseFraction = 0.0;
+        m_InspiratoryHoldFraction = 0.0;
+        m_InspiratoryReleaseFraction = 0.0;
+        m_InspiratoryToExpiratoryPauseFraction = 0.0;
+        m_ExpiratoryRiseFraction = 0.0;
+        m_ExpiratoryHoldFraction = 0.0;
+        m_ExpiratoryReleaseFraction = 0.0;
+        m_ResidueFraction = 0.0;
+      }
+
       double totalBreathCycleTime_s = GetBreathCycleTime();
 
       if(m_RespiratoryMechanics->HasInspiratoryRiseTime())
@@ -2014,7 +2030,7 @@ namespace pulse
 
     //Record values at the breathing inflection points (i.e. switch between inhale and exhale)  
     // Temporal tolerance to avoid accidental entry in the the inhalation and exhalation code blocks 
-    m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s()/60;
+    m_ElapsedBreathingCycleTime_min += m_data.GetTimeStep_s() / 60.0;
 
     if (m_BreathingCycle) //Exhaling
     {
@@ -2472,7 +2488,18 @@ namespace pulse
       const SESegmentLinear* linear = dynamic_cast<const SESegmentLinear*>(segment);
       const SESegmentParabolic* parabolic = dynamic_cast<const SESegmentParabolic*>(segment);
 
-      if (segment == nullptr || //default
+      double chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O;
+
+      if (segment == nullptr &&
+        HasActiveRespiratoryMechanics() &&
+        m_RespiratoryMechanics->GetDefaultType() == eDefaultType::Zero)
+      {
+        //Left blank, so set to zero
+        chestWallPath->GetNextCompliance().SetValue(0.0, VolumePerPressureUnit::L_Per_cmH2O);
+        lungPath->GetNextCompliance().SetValue(0.0, VolumePerPressureUnit::L_Per_cmH2O);
+        continue;
+      }
+      else if (segment == nullptr || //default
         sigmoidal != nullptr)
       {
         if (segment != nullptr)
@@ -2543,7 +2570,6 @@ namespace pulse
       //Break up between healthy lung compliance and chest wall compliance
       //Set chest wall compliance only to allow for conditions/actions changing lung compliance
 
-      double chestWallCompliance_L_Per_cmH2O = healthyChestWallCompliance_L_Per_cmH2O;
       //Can't divide by zero
       if (sideCompliance_L_Per_cmH2O != 0.0 && sideCompliance_L_Per_cmH2O != healthyLungCompliance_L_Per_cmH2O)
       {
@@ -2555,7 +2581,11 @@ namespace pulse
       double dampenFraction_perSec = 0.5 * 50.0; //Default timestep = 20ms = 50Hz, ensuring any timestep will work the same here
 
       double previousChestWallCompliance_L_Per_cmH2O = chestWallPath->GetCompliance(VolumePerPressureUnit::L_Per_cmH2O);
-      double complianceChange_L_Per_cmH2O = (chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O) * dampenFraction_perSec * m_data.GetTimeStep_s();
+      double complianceChange_L_Per_cmH2O = chestWallCompliance_L_Per_cmH2O - previousChestWallCompliance_L_Per_cmH2O;
+      if (!hasRespiratoryMechanicsCompliance)
+      {
+        complianceChange_L_Per_cmH2O *= dampenFraction_perSec * m_data.GetTimeStep_s();
+      }
 
       chestWallCompliance_L_Per_cmH2O = previousChestWallCompliance_L_Per_cmH2O + complianceChange_L_Per_cmH2O;
       chestWallPath->GetNextCompliance().SetValue(chestWallCompliance_L_Per_cmH2O, VolumePerPressureUnit::L_Per_cmH2O);
@@ -2816,6 +2846,15 @@ namespace pulse
     //Resistances in series sum
     if (HasActiveRespiratoryMechanics())
     {
+      if (m_RespiratoryMechanics->GetDefaultType() == eDefaultType::Zero)
+      {
+        tracheaResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+        rightBronchiResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+        leftBronchiResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+        rightAlveoliResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+        leftAlveoliResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+      }
+
       //Should sum to 1.0
       double bronchiResistanceFraction = 0.6;
       double alveoliDuctResistanceFraction = 0.4;
@@ -3018,6 +3057,14 @@ namespace pulse
     //LobarPneumonia
 
     //------------------------------------------------------------------------------------------------------
+    // Make sure things don't go crazy
+    
+    tracheaResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    rightBronchiResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    leftBronchiResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    rightAlveoliResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, rightAlveoliResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    leftAlveoliResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, leftAlveoliResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+
     //Set new values
     m_AirwayToCarina->GetNextResistance().SetValue(tracheaResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_CarinaToRightAnatomicDeadSpace->GetNextResistance().SetValue(rightBronchiResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);

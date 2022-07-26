@@ -10,16 +10,6 @@ import "pulse/cdm/bind/Substance.proto";
 
 message MechanicalVentilatorSettingsData
 {
-  enum eDriverWaveform
-  {
-    NullDriverWaveform = 0;/**<< Signals not provided, or no change */
-    Square             = 1;/**<<  */
-    Exponential        = 2;/**<<  */
-    Ramp               = 3;/**<<  */
-    Sinusoidal         = 4;/**<<  */
-    Sigmoidal          = 5;/**<<  */
-  }
-  
   eSwitch                             Connection                                = 1;/**<< @brief @ref eSwitchTable */
   ScalarVolumeData                    ConnectionVolume                          = 2;/**<< @brief Dead space volume of the connection (i.e., mask/tube). */
   ScalarVolumePerPressureData         Compliance                                = 3;/**<< @brief Total compliance of the entire mechanical ventilator circuit. */
@@ -112,7 +102,7 @@ message MechanicalVentilatorData
   ScalarVolumePerPressureData         StaticPulmonaryCompliance                 = 21;/**<< @brief The pulmonary compliance during periods without gas flow.*/
   ScalarVolumeData                    TidalVolume                               = 22;/**<< @brief The volume of air moved into or out of the lungs during normal respiration.*/
   ScalarVolumeData                    TotalLungVolume                           = 23;/**<< @brief The total volume of air within the lungs at any given time.*/
-  ScalarVolumePerTimeData             TotalPulmonaryVentilation                 = 24;/**<< @brief The flow rate representing the exchange of air between the lungs and ambient air.*/
+  ScalarVolumePerTimeData             TotalPulmonaryVentilation                 = 24;/**<< @brief The amount of air that enters the lungs as a function of time - can be used for minute ventilation.*/
 
   MechanicalVentilatorSettingsData    Settings                                  = 25;
 }

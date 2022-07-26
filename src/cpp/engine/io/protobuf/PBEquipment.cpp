@@ -169,6 +169,7 @@ namespace pulse
     dst.m_LimitReached = src.limitreached();
     dst.m_PreviousYPieceToConnectionFlow_L_Per_s = src.previousypiecetoconnectionflow_l_per_s();
     dst.m_PreviousConnectionPressure_cmH2O = src.previousconnectionpressure_cmh2o();
+    dst.m_Initializing = src.initializing();
     PBProperty::Load(src.meanairwaypressure_cmh2o(), *dst.m_MeanAirwayPressure_cmH2O);
   }
   PULSE_BIND::MechanicalVentilatorData* PBEquipment::Unload(const MechanicalVentilatorModel& src)
@@ -192,6 +193,7 @@ namespace pulse
     dst.set_limitreached(src.m_LimitReached);
     dst.set_previousypiecetoconnectionflow_l_per_s(src.m_PreviousYPieceToConnectionFlow_L_Per_s);
     dst.set_previousconnectionpressure_cmh2o(src.m_PreviousConnectionPressure_cmH2O);
+    dst.set_initializing(src.m_Initializing);
     dst.set_allocated_meanairwaypressure_cmh2o(PBProperty::Unload(*src.m_MeanAirwayPressure_cmH2O));
   }
 }

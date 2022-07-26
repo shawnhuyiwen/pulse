@@ -79,7 +79,7 @@ namespace pulse
     m_ConnectionToReliefValve = nullptr;
     m_EnvironmentToReliefValve = nullptr;
     m_ConnectionToAirway = nullptr;
-    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = 0;
+    m_MachineClosedResistance_cmH2O_s_Per_L = 0;
 
     m_MeanAirwayPressure_cmH2O->Clear();
 
@@ -108,6 +108,7 @@ namespace pulse
     m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
     m_PreviousConnectionPressure_cmH2O = 0.0;
     m_LimitReached = false;
+    m_Initializing = false;
 
     //System data
     GetAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
@@ -181,7 +182,8 @@ namespace pulse
     m_ConnectionToAirway = m_data.GetCircuits().GetRespiratoryAndMechanicalVentilatorCircuit().GetPath(pulse::CombinedMechanicalVentilatorPath::ConnectionToAirway);
 
     // Configuration
-    m_DefaultClosedFlowResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_MachineClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineClosedResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    m_MachineOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetMachineOpenResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
   }
 
   void MechanicalVentilatorModel::StateChange()
@@ -199,8 +201,9 @@ namespace pulse
     m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
     m_PreviousConnectionPressure_cmH2O = 0.0;
     m_LimitReached = false;
+    m_Initializing = true;
 
-    // Default the relief valuve threshold if not there
+    // Default the relief valve threshold if not there
     if (!GetSettings().HasReliefValveThreshold())
       GetSettings().GetReliefValveThreshold().SetValue(1000, PressureUnit::cmH2O);
 
@@ -336,6 +339,7 @@ namespace pulse
       m_PreviousYPieceToConnectionFlow_L_Per_s = 0.0;
       m_PreviousConnectionPressure_cmH2O = 0.0;
       m_LimitReached = false;
+      m_Initializing = false;
       return;
     }
 
@@ -345,6 +349,7 @@ namespace pulse
     CalculateExpiration();
     SetHold();
     SetLeak();
+    SetValves();
     SetVentilatorDriver();
     SetResistances();
     SetCompliance();
@@ -530,15 +535,6 @@ namespace pulse
     // Check trigger
     // Any combination of triggers can be used, but there must be at least one
     bool triggerDefined = false;
-    if (GetSettings().HasExpirationCycleTime())
-    {
-      triggerDefined = true;
-      if (m_CurrentPeriodTime_s >= GetSettings().GetExpirationCycleTime(TimeUnit::s))
-      {
-        CycleMode(false);
-        return;
-      }
-    }
 
     if (GetSettings().GetExpirationCycleRespiratoryModel() == eSwitch::On)
     {
@@ -579,6 +575,16 @@ namespace pulse
         m_CurrentPeriodTime_s > 0.0) //Check if we just cycled the mode
       {
         CycleMode(true);
+        return;
+      }
+    }
+
+    if (GetSettings().HasExpirationCycleTime())
+    {
+      triggerDefined = true;
+      if (m_CurrentPeriodTime_s >= GetSettings().GetExpirationCycleTime(TimeUnit::s))
+      {
+        CycleMode(false);
         return;
       }
     }
@@ -625,7 +631,7 @@ namespace pulse
     }
 
     // Check waveform
-    if (GetSettings().GetInspirationWaveform() != eMechanicalVentilator_DriverWaveform::Square &&
+    if (GetSettings().GetInspirationWaveform() != eDriverWaveform::Square &&
       !GetSettings().HasInspirationWaveformPeriod())
     {
       /// \error Fatal: Non-square waveforms require a period.
@@ -633,7 +639,7 @@ namespace pulse
     }
 
     // Apply waveform
-    if (GetSettings().GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::Square ||
+    if (GetSettings().GetInspirationWaveform() == eDriverWaveform::Square ||
       (GetSettings().HasInspirationWaveformPeriod() && m_CurrentPeriodTime_s > GetSettings().GetInspirationWaveformPeriod(TimeUnit::s)))
     {
       if (GetSettings().HasPeakInspiratoryPressure())
@@ -652,17 +658,17 @@ namespace pulse
         Fatal("Inspiration mode not yet supported.");
       }
     }
-    else if (GetSettings().GetInspirationWaveform() == eMechanicalVentilator_DriverWaveform::Ramp)
+    else if (GetSettings().GetInspirationWaveform() == eDriverWaveform::AscendingRamp)
     {
       if (GetSettings().HasPeakInspiratoryPressure())
       {
+        double finalPressure_cmH2O = GetSettings().GetPeakInspiratoryPressure(PressureUnit::cmH2O);
         double initialPressure_cmH2O = 0.0;
         if (GetSettings().HasPositiveEndExpiredPressure())
         {
           initialPressure_cmH2O = GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
         }
 
-        double finalPressure_cmH2O = GetSettings().GetPeakInspiratoryPressure(PressureUnit::cmH2O);
         m_DriverPressure_cmH2O = initialPressure_cmH2O + (finalPressure_cmH2O - initialPressure_cmH2O) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
         m_DriverFlow_L_Per_s = SEScalar::dNaN();
       }
@@ -670,6 +676,33 @@ namespace pulse
       {
         double initialFlow_L_Per_s = 0.0;
         double finalFlow_L_Per_s = GetSettings().GetInspirationTargetFlow(VolumePerTimeUnit::L_Per_s);
+        m_DriverFlow_L_Per_s = initialFlow_L_Per_s + (finalFlow_L_Per_s - initialFlow_L_Per_s) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
+        m_DriverPressure_cmH2O = SEScalar::dNaN();
+      }
+      else
+      {
+        /// \error Fatal: Inspiration mode not yet supported.
+        Fatal("Inspiration mode not yet supported.");
+      }
+    }
+    else if (GetSettings().GetInspirationWaveform() == eDriverWaveform::DecendingRamp)
+    {
+      if (GetSettings().HasPeakInspiratoryPressure())
+      {
+        double initialPressure_cmH2O = GetSettings().GetPeakInspiratoryPressure(PressureUnit::cmH2O);
+        double finalPressure_cmH2O = 0.0;
+        if (GetSettings().HasPositiveEndExpiredPressure())
+        {
+          finalPressure_cmH2O = GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
+        }
+
+        m_DriverPressure_cmH2O = initialPressure_cmH2O + (finalPressure_cmH2O - initialPressure_cmH2O) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
+        m_DriverFlow_L_Per_s = SEScalar::dNaN();
+      }
+      else if (GetSettings().HasInspirationTargetFlow())
+      {
+        double initialFlow_L_Per_s = GetSettings().GetInspirationTargetFlow(VolumePerTimeUnit::L_Per_s);
+        double finalFlow_L_Per_s = 0.0;
         m_DriverFlow_L_Per_s = initialFlow_L_Per_s + (finalFlow_L_Per_s - initialFlow_L_Per_s) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
         m_DriverPressure_cmH2O = SEScalar::dNaN();
       }
@@ -743,16 +776,6 @@ namespace pulse
       }
     }
 
-    if (GetSettings().HasInspirationMachineTriggerTime())
-    {
-      triggerDefined = true;
-      if (m_CurrentPeriodTime_s >= GetSettings().GetInspirationMachineTriggerTime(TimeUnit::s))
-      {
-        CycleMode(false);
-        return;
-      }
-    }
-    
     if (GetSettings().HasInspirationPatientTriggerPressure())
     {
       triggerDefined = true;
@@ -762,7 +785,7 @@ namespace pulse
       {
         relativePressure_cmH2O -= GetSettings().GetPositiveEndExpiredPressure(PressureUnit::cmH2O);
       }
-      if (relativePressure_cmH2O <= GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O) &&
+      if (relativePressure_cmH2O <= -abs(GetSettings().GetInspirationPatientTriggerPressure(PressureUnit::cmH2O)) && //Allow it to be set as either positive or negative
         m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
         relativePressure_cmH2O < previousRelativePressure_cmH2O) //Check if it's moving the right direction to prevent premature cycling
       {
@@ -774,7 +797,7 @@ namespace pulse
     if (GetSettings().HasInspirationPatientTriggerFlow())
     {
       triggerDefined = true;
-      if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= GetSettings().GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s) &&
+      if (m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) >= abs(GetSettings().GetInspirationPatientTriggerFlow(VolumePerTimeUnit::L_Per_s)) && //Allow it to be set as either positive or negative
         m_CurrentPeriodTime_s > 0.0 && //Check if we just cycled the mode
         m_YPieceToConnection->GetNextFlow(VolumePerTimeUnit::L_Per_s) > m_PreviousYPieceToConnectionFlow_L_Per_s) //Check if it's moving the right direction to prevent premature cycling
       {
@@ -782,7 +805,24 @@ namespace pulse
         return;
       }
     }
-    
+
+    if (GetSettings().HasInspirationMachineTriggerTime())
+    {
+      triggerDefined = true;
+
+      double inspirationMachineTriggerTime_s = GetSettings().GetInspirationMachineTriggerTime(TimeUnit::s);
+      if (triggerDefined && m_Initializing)
+      {
+        //Give extra time to hit other types of triggers the first time through to help prevent dyssynchrony
+        inspirationMachineTriggerTime_s *= 2.0;
+      }
+      if (m_CurrentPeriodTime_s >= inspirationMachineTriggerTime_s)
+      {
+        CycleMode(false);
+        return;
+      }
+    }
+
     if(!triggerDefined)
     {
       /// \error Fatal: No inspiration trigger defined.
@@ -790,7 +830,7 @@ namespace pulse
     }
 
     // Apply waveform
-    if (GetSettings().GetExpirationWaveform() == eMechanicalVentilator_DriverWaveform::Square)
+    if (GetSettings().GetExpirationWaveform() == eDriverWaveform::Square)
     {
       if (GetSettings().HasPositiveEndExpiredPressure())
       {
@@ -873,6 +913,7 @@ namespace pulse
     }
 
     m_CurrentPeriodTime_s = 0.0;
+    m_Initializing = false;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -908,6 +949,21 @@ namespace pulse
       }
 
       m_LeakConnectionToEnvironment->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+  }
+
+  //--------------------------------------------------------------------------------------------------
+/// \brief
+/// Close the inspiratory valve during exhale when using a pressure trigger.
+//--------------------------------------------------------------------------------------------------
+  void MechanicalVentilatorModel::SetValves()
+  {
+    if (GetSettings().HasInspirationPatientTriggerPressure() &&
+      (m_BreathState == eBreathState::EquipmentExhale ||
+        m_BreathState == eBreathState::PatientExhale ||
+        m_BreathState == eBreathState::ExpiratoryHold))
+    {
+      m_VentilatorToInspiratoryValve->GetNextResistance().SetValue(m_MachineOpenResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
   }
 
@@ -951,28 +1007,28 @@ namespace pulse
     if (GetSettings().HasExpirationTubeResistance())
     {
       double resistance_cmH2O_s_Per_L = GetSettings().GetExpirationTubeResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_MachineClosedResistance_cmH2O_s_Per_L);
       m_VentilatorToExpiratoryValve->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasInspirationTubeResistance())
     {
       double resistance_cmH2O_s_Per_L = GetSettings().GetInspirationTubeResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_MachineClosedResistance_cmH2O_s_Per_L);
       m_VentilatorToInspiratoryValve->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasExpirationValveResistance())
     {
       double resistance_cmH2O_s_Per_L = GetSettings().GetExpirationValveResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_MachineClosedResistance_cmH2O_s_Per_L);
       m_ExpiratoryLimbToYPiece->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
 
     if (GetSettings().HasInspirationValveResistance())
     {
       double resistance_cmH2O_s_Per_L = GetSettings().GetInspirationValveResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
-      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_DefaultClosedFlowResistance_cmH2O_s_Per_L);
+      resistance_cmH2O_s_Per_L = MIN(resistance_cmH2O_s_Per_L, m_MachineClosedResistance_cmH2O_s_Per_L);
       m_InspiratoryLimbToYPiece->GetNextResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     }
   }

@@ -6,6 +6,7 @@ namespace Pulse.CDM
   public class SERespiratoryMechanics
   {
     protected eSwitch                       active;
+    protected eDefaultType                  default_type;
     protected SECurve                       left_compliance_curve;
     protected SECurve                       right_compliance_curve;
     protected SEScalarPressureTimePerVolume left_expiratory_resistance;
@@ -28,6 +29,7 @@ namespace Pulse.CDM
     public SERespiratoryMechanics()
     {
       active = eSwitch.NullSwitch;
+      default_type = eDefaultType.Model;
       left_compliance_curve = null;
       right_compliance_curve = null;
       left_expiratory_resistance = null;
@@ -51,6 +53,7 @@ namespace Pulse.CDM
     public void Clear()
     {
       active = eSwitch.NullSwitch;
+      default_type = eDefaultType.Model;
       if (left_compliance_curve != null)
         left_compliance_curve.Invalidate();
       if (right_compliance_curve != null)
@@ -94,6 +97,7 @@ namespace Pulse.CDM
       Clear();
       if(HasActive())
         SetActive(from.GetActive());
+      default_type = from.default_type;
       if (from.HasLeftComplianceCurve())
         GetLeftComplianceCurve().Copy(from.GetLeftComplianceCurve());
       if (from.HasRightComplianceCurve())
@@ -145,6 +149,15 @@ namespace Pulse.CDM
     public void SetActive(eSwitch s)
     {
       active = s;
+    }
+
+    public eDefaultType GetDefaultType()
+    {
+      return default_type;
+    }
+    public void SetDefaultType(eDefaultType t)
+    {
+      default_type = t;
     }
 
     public bool HasLeftComplianceCurve()
@@ -385,6 +398,7 @@ namespace Pulse.CDM
     {
       string str = "Respiratory Mechanics";
       str += "\n\tActive: "; if (HasActive()) str += active; else str += "Not Set";
+      str += "\n\tDefaultType: " + eEnum.Name(GetDefaultType());
       str += "\n\tLeftComplianceCurve: "; if (HasLeftComplianceCurve()) str += left_compliance_curve.ToString(); else str += "Not Set";
       str += "\n\tRightComplianceCurve: "; if (HasRightComplianceCurve()) str += right_compliance_curve.ToString(); else str += "Not Set";
       str += "\n\tLeftExpiratoryResistance: "; if (HasLeftExpiratoryResistance()) str += left_expiratory_resistance.ToString(); else str += "Not Set";

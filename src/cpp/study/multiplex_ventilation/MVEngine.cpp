@@ -287,8 +287,8 @@ namespace pulse::study::multiplex_ventilation
       m_MVC = new SEMechanicalVentilatorConfiguration(GetLogger());
       auto& mv = m_MVC->GetSettings();
       mv.SetConnection(eSwitch::On);
-      mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-      mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+      mv.SetInspirationWaveform(eDriverWaveform::Square);
+      mv.SetExpirationWaveform(eDriverWaveform::Square);
       mv.GetPeakInspiratoryPressure().SetValue(sim.pip_cmh2o(), PressureUnit::cmH2O);
       mv.GetPositiveEndExpiredPressure().SetValue(sim.peep_cmh2o(), PressureUnit::cmH2O);
       double respirationRate_per_min = sim.respirationrate_per_min();

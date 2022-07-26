@@ -841,6 +841,7 @@ void PBPhysiology::Load(const CDM_BIND::RespiratoryMechanicsData& src, SERespira
 void PBPhysiology::Serialize(const CDM_BIND::RespiratoryMechanicsData& src, SERespiratoryMechanics& dst)
 {
   dst.m_Active = (eSwitch)src.active();
+  dst.m_DefaultType = (eDefaultType)src.defaulttype();
 
   if (src.has_leftcompliancecurve())
     PBProperty::Load(src.leftcompliancecurve(), dst.GetLeftComplianceCurve());
@@ -890,6 +891,7 @@ CDM_BIND::RespiratoryMechanicsData* PBPhysiology::Unload(const SERespiratoryMech
 void PBPhysiology::Serialize(const SERespiratoryMechanics& src, CDM_BIND::RespiratoryMechanicsData& dst)
 {
   dst.set_active((CDM_BIND::eSwitch)src.m_Active);
+  dst.set_defaulttype((CDM_BIND::eDefaultType)src.m_DefaultType);
 
   if (src.HasLeftComplianceCurve())
     dst.set_allocated_leftcompliancecurve(PBProperty::Unload(*src.m_LeftComplianceCurve));

@@ -13,10 +13,15 @@ from pulse.cdm.scalars import SEScalarFrequency, SEScalarPressureTimePerVolume, 
 class eDriverWaveform(Enum):
     NullDriverWaveform = 0
     Square = 1
-    Exponential = 2
-    Ramp = 3
-    Sinusoidal = 4
-    Sigmoidal = 5
+    AscendingRamp = 2
+    DecendingRamp = 3
+    ExponentialGrowth = 4
+    ExponentialDecay = 5
+    SinusoidalRise = 6
+    SinusoidalFall = 7
+    SigmoidalRise = 8
+    SigmoidalFall = 9
+
 
 class SEMechanicalVentilatorSettings(SEEquipment):
     __slots__ = ["_connection",

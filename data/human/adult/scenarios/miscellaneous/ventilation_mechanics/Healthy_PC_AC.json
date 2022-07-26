@@ -405,61 +405,55 @@
   },
   {
    "EquipmentAction": {
-    "MechanicalVentilatorConfiguration": {
-     "MechanicalVentilatorAction": {
-      "EquipmentAction": {
-       "Action": {}
+    "MechanicalVentilatorPressureControl": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": {
+        "Action": {}
+       }
+      },
+      "Connection": "On"
+     },
+     "FractionInspiredOxygen": {
+      "Scalar0To1": {
+       "Value": 0.21
       }
      },
-     "Settings": {
-      "Connection": "On",
-      "PositiveEndExpiredPressure": {
-       "ScalarPressure": {
-        "Value": 5,
-        "Unit": "cmH2O"
-       }
-      },
-      "ExpirationCycleTime": {
-       "ScalarTime": {
-        "Value": 1,
-        "Unit": "s"
-       }
-      },
-      "ExpirationWaveform": "Square",
-      "PeakInspiratoryPressure": {
-       "ScalarPressure": {
-        "Value": 19,
-        "Unit": "cmH2O"
-       }
-      },
-      "InspirationMachineTriggerTime": {
-       "ScalarTime": {
-        "Value": 4,
-        "Unit": "s"
-       }
-      },
-      "InspirationPatientTriggerFlow": {
-       "ScalarVolumePerTime": {
-        "Value": 5,
-        "Unit": "L/min"
-       }
-      },
-      "InspirationWaveform": "Ramp",
-      "InspirationWaveformPeriod": {
-       "ScalarTime": {
-        "Unit": "s"
-       }
-      },
-      "FractionInspiredGas": [
-       {
-        "Name": "Oxygen",
-        "Amount": {
-         "Scalar0To1": {
-          "Value": 0.21
-         }
-        }
-       }
-      ]
+     "InspirationPatientTriggerFlow": {
+      "ScalarVolumePerTime": {
+       "Value": 5,
+       "Unit": "L/min"
+      }
+     },
+     "InspirationWaveform": "Square",
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "InspiratoryPressure": {
+      "ScalarPressure": {
+       "Value": 19,
+       "Unit": "cmH2O"
+      }
+     },
+     "PositiveEndExpiredPressure": {
+      "ScalarPressure": {
+       "Value": 5,
+       "Unit": "cmH2O"
+      }
+     },
+     "RespirationRate": {
+      "ScalarFrequency": {
+       "Value": 12,
+       "Unit": "1/min"
+      }
+     },
+     "Slope": {
+      "ScalarTime": {
+       "Unit": "s"
+      }
      }
     }
    }

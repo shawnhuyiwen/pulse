@@ -113,8 +113,8 @@ void HowToCOVID19Ventilated()
   SEMechanicalVentilatorConfiguration MVConfig(pe->GetLogger());
   SEMechanicalVentilatorSettings& mv = MVConfig.GetSettings();
   mv.SetConnection(eSwitch::On);
-  mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-  mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
+  mv.SetInspirationWaveform(eDriverWaveform::Square);
+  mv.SetExpirationWaveform(eDriverWaveform::Square);
   mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit::cmH2O);
   mv.GetPositiveEndExpiredPressure().SetValue(10.0, PressureUnit::cmH2O);
   const SESubstance* oxygen = pe->GetSubstanceManager().GetSubstance("Oxygen");

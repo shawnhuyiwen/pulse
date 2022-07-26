@@ -56,7 +56,7 @@ void CommonDataModelTest::UnitsTest(const std::string& /*sOutputDirectory*/)
     {
       ((SEUnitScalar&)amount).SetValue(5.0, AmountPerVolumeUnit::GetCompoundUnit("mol/L"));
     }
-    catch (CommonDataModelException& ex)
+    catch (CommonDataModelException&)
     {
       // i am expexting this
     }
