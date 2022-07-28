@@ -131,7 +131,7 @@ void HowToEngineUse()
   // The first order of business is to initialize the engine by loading a patient state.
   // Patient states provided in the SDK are the state of the engine at the time they stabilize
   // More details on creating a patient and stabilizing the engine can be found in HowTo-CreateAPatient.cpp
-  if (!pe->SerializeFromFile("./states/Soldier@0s.json"))
+  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
