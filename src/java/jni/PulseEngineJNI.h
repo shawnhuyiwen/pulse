@@ -6,13 +6,11 @@
 #include <iostream>
 #include "PulseEngineThunk.h"
 
-class PulseEngineJNI : public PulseEngineThunk
+class LoggerForwardJNI : public LoggerForward
 {
 public:
-  PulseEngineJNI(eModelType t, const std::string& dataDir);
-  ~PulseEngineJNI();
-
-  void Reset();
+  LoggerForwardJNI() { Reset(); }
+  virtual void Reset();
 
   void ForwardDebug(const std::string& msg, const std::string& origin) override;
   void ForwardInfo(const std::string& msg, const std::string& origin) override;
@@ -20,7 +18,7 @@ public:
   void ForwardError(const std::string& msg, const std::string& origin) override;
   void ForwardFatal(const std::string& msg, const std::string& origin) override;
 
-  JNIEnv* jniEnv;
+  JNIEnv*   jniEnv;
   jobject   jniObj;
   jmethodID jniDebugMethodID;
   jmethodID jniInfoMethodID;
@@ -29,3 +27,9 @@ public:
   jmethodID jniFatalMethodID;
 };
 
+class PulseEngineJNI : public PulseEngineThunk, public LoggerForwardJNI
+{
+public:
+  PulseEngineJNI(eModelType t, const std::string& dataDir);
+  ~PulseEngineJNI();
+};

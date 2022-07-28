@@ -16,21 +16,15 @@ namespace Pulse.CDM
     {
       dst.Clear();
       dst.SetLogToConsole((eSwitch)(int)src.LogToConsole);
-      if (src.LogFilename.Length > 0)
-        dst.SetLogFilename(src.LogFilename);
-      if (src.DataRequestCSVFilename.Length > 0)
-        dst.SetDataRequestCSVFilename(src.DataRequestCSVFilename);
       if (src.DataRootDirectory.Length > 0)
         dst.SetDataRootDirectory(src.DataRootDirectory);
+      if (src.OutputRootDirectory.Length > 0)
+        dst.SetOutputRootDirectory(src.OutputRootDirectory);
+      dst.SetOrganizeOutputDirectory((eSwitch)(int)src.OrganizeOutputDirectory);
 
-      if (src.SerializationDirectory.Length > 0)
-        dst.SetSerializationDirectory(src.SerializationDirectory);
-      if (src.AutoSerializeFilename.Length > 0)
-        dst.SetAutoSerializeFilename(src.AutoSerializeFilename);
       dst.SetAutoSerializeAfterActions((eSwitch)(int)src.AutoSerializeAfterActions);
       dst.SetAutoSerializePeriod_s(src.AutoSerializePeriodS);
       dst.SetTimeStampSerializedStates((eSwitch)(int)src.TimeStampSerializedStates);
-      dst.SetReloadSerializedState((eSwitch)(int)src.ReloadSerializedState);
 
       if (src.EngineConfigurationContent.Length > 0)
         dst.SetEngineConfigurationContent(src.EngineConfigurationContent);
@@ -41,8 +35,11 @@ namespace Pulse.CDM
         dst.SetScenarioContent(src.ScenarioContent);
       else if (src.ScenarioFilename.Length > 0)
         dst.SetScenarioFilename(src.ScenarioFilename);
+      else if (src.ScenarioDirectory.Length > 0)
+        dst.SetScenarioDirectory(src.ScenarioDirectory);
 
       dst.SetContentFormat((eSerializationFormat)(int)src.ContentFormat);
+      dst.SetThreadCount(src.ThreadCount);
     }
     public static bool SerializeFromString(string src, SEScenarioExec dst)
     {
@@ -67,16 +64,13 @@ namespace Pulse.CDM
     public static void Serialize(SEScenarioExec src, pulse.cdm.bind.ScenarioExecData dst)
     {
       dst.LogToConsole = (pulse.cdm.bind.eSwitch)(int)src.GetLogToConsole();
-      dst.LogFilename = src.GetLogFilename();
-      dst.DataRequestCSVFilename = src.GetDataRequestCSVFilename();
       dst.DataRootDirectory = src.GetDataRootDirectory();
+      dst.OutputRootDirectory = src.GetOutputRootDirectory();
+      dst.OrganizeOutputDirectory = (pulse.cdm.bind.eSwitch)(int)src.GetOrganizeOutputDirectory();
 
-      dst.SerializationDirectory = src.GetSerializationDirectory();
-      dst.AutoSerializeFilename = src.GetAutoSerializeFilename();
       dst.AutoSerializeAfterActions = (pulse.cdm.bind.eSwitch)(int)src.GetAutoSerializeAfterActions();
       dst.AutoSerializePeriodS = src.GetAutoSerializePeriod_s();
       dst.TimeStampSerializedStates = (pulse.cdm.bind.eSwitch)(int)src.GetTimeStampSerializedStates();
-      dst.ReloadSerializedState = (pulse.cdm.bind.eSwitch)(int)src.GetReloadSerializedState();
 
       if(src.GetEngineConfigurationContent().Length>0)
         dst.EngineConfigurationContent = src.GetEngineConfigurationContent();
@@ -87,8 +81,11 @@ namespace Pulse.CDM
         dst.ScenarioContent = src.GetScenarioContent();
       else if (src.GetScenarioFilename().Length > 0)
         dst.ScenarioFilename = src.GetScenarioFilename();
+      else if (src.GetScenarioDirectory().Length > 0)
+        dst.ScenarioDirectory = src.GetScenarioDirectory();
 
       dst.ContentFormat = (pulse.cdm.bind.eSerializationFormat)(int)src.GetContentFormat();
+      dst.ThreadCount = src.GetThreadCount();
 
     }
     public static string SerializeToString(SEScenarioExec src)

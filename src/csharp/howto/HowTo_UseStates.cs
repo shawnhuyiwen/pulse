@@ -30,10 +30,6 @@ namespace HowTo_UseStates
 
       Logger log = new Logger("./test_results/howto/HowTo_UseStates.cs.log");
       RunConfiguration cfg = new RunConfiguration();
-      SEScenarioExec opts = new SEScenarioExec();
-      opts.SetDataRootDirectory("./");
-      opts.SetDataRequestCSVFilename("");
-
 
       // Now lets run all the states that these scenarios generated
       // for 20m each and see if any of them die and how

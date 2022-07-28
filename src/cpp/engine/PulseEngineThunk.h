@@ -12,7 +12,7 @@ public:
   PulseEngineThunk(eModelType t, const std::string& dataDir = "./");
   virtual ~PulseEngineThunk();
 
-  virtual bool ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format) override;
+  static bool ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format, LoggerForward* lf=nullptr);
 
 protected:
   virtual void AllocateEngine() override;

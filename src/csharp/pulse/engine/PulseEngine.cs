@@ -48,13 +48,6 @@ namespace Pulse
       BaseDeallocate();
     }
 
-    protected abstract bool BaseExecuteScenario(string exeOpts, int format);
-    public bool ExecuteScenario(SEScenarioExec opts)
-    {
-      string opts_str = PBScenario.SerializeToString(opts);
-      return BaseExecuteScenario(opts_str, (int)eSerializationFormat.JSON);
-    }
-
     protected abstract IntPtr BaseAllocate(int model, string data_dir);
 
     protected abstract void BaseDeallocate();
@@ -360,13 +353,6 @@ namespace Pulse
     }
 
     [DllImport(Attribute)]
-    private static extern bool ExecuteScenario(IntPtr pulse, string exeOpts, int format);
-    protected override bool BaseExecuteScenario(string exeOpts, int format)
-    {
-      return ExecuteScenario(pulse_cptr, exeOpts, format);
-    }
-
-    [DllImport(Attribute)]
     private static extern IntPtr Allocate(int model, string data_dir);
     protected override IntPtr BaseAllocate(int model, string data_dir)
     {
@@ -521,9 +507,9 @@ namespace Pulse
     }
 
     [DllImport(Attribute)]
-    public static extern bool AreCompatibleUnits(string fromUnit, string toUnit);
+    public static new extern bool AreCompatibleUnits(string fromUnit, string toUnit);
 
     [DllImport(Attribute)]
-    public static extern double ConvertValue(double value, string fromUnit, string toUnit);
+    public static new extern double ConvertValue(double value, string fromUnit, string toUnit);
   }
 }

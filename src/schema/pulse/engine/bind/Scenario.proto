@@ -5,10 +5,17 @@ option csharp_namespace = "pulse.engine.bind";
 option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Scenario.proto";
+import "pulse/engine/bind/Enums.proto";
 import "pulse/engine/bind/Configuration.proto";
 
 message ScenarioData
 {
   pulse.cdm.bind.ScenarioData             Scenario           = 1;
   ConfigurationData                       Configuration      = 2;
+}
+
+message ScenarioExecData
+{
+  pulse.cdm.bind.ScenarioExecData         ScenarioExec       = 1;
+  eModelType                              ModelType          = 2;
 }
