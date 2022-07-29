@@ -45,9 +45,17 @@ public class ScenarioTestDriver implements SETestDriver.Executor
 	    	return false;
 	    }
     }
-    builder.setName("./test_results/scenarios/"+job.name.substring(0,job.name.length()-5));
+    // Since we are passing the scenario inline via the ScenarioContent string,
+    // The runner is going to the scenario name in naming output artifacts (logs, csv, etc)
+    String scenarioName = "./test_results/scenarios/"+job.name.substring(0,job.name.length()-5);
+    
     if(job.patientFile!=null)
     {
+      String patientName = job.patientFile.substring(0,job.patientFile.length()-5);
+      // Any config that is running scenarios with `Patients=all`,
+      // we need to add the patient name to the scenarioName
+      scenarioName = scenarioName+"-"+patientName;
+      
       if(builder.hasPatientConfiguration())
       {
       	  builder.getPatientConfigurationBuilder().clearPatient();
@@ -57,7 +65,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       {
       		builder.clearEngineStateFile();
           builder.getPatientConfigurationBuilder().setPatientFile(job.patientFile);
-      }      
+      }
     }
     if(job.useState && builder.hasPatientConfiguration())
     {
@@ -67,7 +75,7 @@ public class ScenarioTestDriver implements SETestDriver.Executor
       	builder.clearPatientConfiguration();
       	builder.setEngineStateFile(pFile);
     }
-    
+    builder.setName(scenarioName);
     pBuilder.getConfigurationBuilder();
     try 
     {
