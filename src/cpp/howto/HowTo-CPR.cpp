@@ -48,7 +48,8 @@ public:
   MyListener(Logger* logger) : Loggable(logger) {};
   virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time) override
   {
-    GetLogger()->Info(std::stringstream() <<"Recieved Event : " << eEvent_Name(type));
+    if(type != eEvent::StartOfCardiacCycle && type != eEvent::StartOfExhale && type != eEvent::StartOfInhale)
+      GetLogger()->Info(std::stringstream() <<"Recieved Event : " << eEvent_Name(type));
   }
 };
 
@@ -85,9 +86,9 @@ void HowToCPR()
   sce.SetEngineStateFile(stateFile);
 
   // 3 possible modes of performing CPR
-  std::string mode = "single";
+  //std::string mode = "single";
   //std::string mode = "instantaneous";
-  //std::string mode = "automated";
+  std::string mode = "automated";
 
   // Create data requests for each value that should be written to the output log as the engine is executing
   SEDataRequestManager& dMgr = pe->GetEngineTracker()->GetDataRequestManager();
@@ -106,13 +107,13 @@ void HowToCPR()
   double durationOfCPR_s = 60;
 
   // This is the frequency at which CPR is administered
-  double compressionRate_bpm = 120;
+  double compressionRate_bpm = 80;
 
   // This is where you specify how much force to apply to the chest. We have capped the applicable force at 500 N.
-  double compressionForce_N = 400;
+  double compressionForce_N = 311;
 
   // Force can also be specified as a scale factor.
-  double compressionForceScale = 0.8;
+  double compressionForceScale = 0.63;
 
   // This is the percent of time per period that the chest will be compressed e.g. if I have a 1 second period
   // (60 beats per minute) the chest will be compressed for 0.3 seconds
@@ -173,52 +174,32 @@ void HowToCPR()
   
     // This timer is used to keep track of how long CPR has been administered
     double timer1 = 0;
-    double compressionTimer = 0;
-
     // Boolean to determine which way to specify force for demonstration purposes.
     bool useExplicitForce = true;
-  
-    // This boolean is used to determine if the chest is compressed or not. It starts as true
-    // so the chest will be compressed on the next calculation from the engine.
-    bool pulseState = true;
     while (timer1 < durationOfCPR_s) // CPR is administered in this loop. It is time based, so after timer1 has exceeded the specified duration of CPR it will stop. set pulseState to true so that it will only exit AFTER a compression has been removed
     {
-      if (pulseState) // check if the chest is supposed to be compressed. If yes...
+      // This calls the CPR function in the Cardiovascular system.  It sets the chest compression at the specified force.
+      if (useExplicitForce)
       {
-        // Switch to a scaled force halfway through for demo purposes
-        if (useExplicitForce && (timer1 >= durationOfCPR_s / 2.0))
-        {
-          cpr.GetForce().Invalidate();
-          useExplicitForce = false;
-        }
-
-        // This calls the CPR function in the Cardiovascular system.  It sets the chest compression at the specified force.
-        if(useExplicitForce)
-          cpr.GetForce().SetValue(compressionForce_N, ForceUnit::N);
-        else
-          cpr.GetForceScale().SetValue(compressionForceScale);
-        cpr.GetCompressionPeriod().SetValue(timeOn, TimeUnit::s);
-        pe->ProcessAction(cpr);
-        sce.AddAction(cpr);
-  
-        // Specify that the compression has been started
-        pulseState = false;
+        cpr.GetForce().SetValue(compressionForce_N, ForceUnit::N);
+        cpr.GetForceScale().Invalidate();
       }
+      else
+      {
+        cpr.GetForce().Invalidate();
+        cpr.GetForceScale().SetValue(compressionForceScale);
+      }
+      useExplicitForce = !useExplicitForce;
+      cpr.GetCompressionPeriod().SetValue(timeOn, TimeUnit::s);
+      pe->ProcessAction(cpr);
+      sce.AddAction(cpr);
 
       // Increment timers and advance time
-      timer1 += timeStep_s;
-      compressionTimer += timeStep_s;
-      adv.GetTime().SetValue(timeStep_s, TimeUnit::s);
+      adv.GetTime().SetValue(pulsePeriod_s, TimeUnit::s);
       AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
       sce.AddAction(adv);
 
-      // Time for a new compression
-      if (compressionTimer >= pulsePeriod_s)
-      {
-        pulseState = true;
-        compressionTimer = 0;
-      }
-        
+      timer1 += pulsePeriod_s;
     }
   }
   // This mode performs CPR by providing the instantaneous value of the current time
