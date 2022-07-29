@@ -34,16 +34,16 @@ public class ScenarioTestDriver implements SETestDriver.Executor
     }
     catch(InvalidProtocolBufferException ex)
     {
-	    try
-	    {
-	    	builder = pBuilder.getScenarioBuilder();
-	    	JsonFormat.parser().merge(json, builder);
-	    }
-	    catch(InvalidProtocolBufferException ex2)
-	    {
-	    	Log.error("Unable to read scenario"+job.scenarioDirectory+"/"+job.name,ex2);
-	    	return false;
-	    }
+      try
+      {
+      	builder = pBuilder.getScenarioBuilder();
+      	JsonFormat.parser().merge(json, builder);
+      }
+      catch(InvalidProtocolBufferException ex2)
+      {
+        Log.error("Unable to read scenario"+job.scenarioDirectory+"/"+job.name,ex2);
+        return false;
+      }
     }
     // Since we are passing the scenario inline via the ScenarioContent string,
     // The runner is going to the scenario name in naming output artifacts (logs, csv, etc)
