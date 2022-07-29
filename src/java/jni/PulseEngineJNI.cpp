@@ -80,15 +80,14 @@ JNIEXPORT void JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeDelete(JN
 //////////////////////
 
 extern "C"
-JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseEngine_nativeExecuteScenario(JNIEnv * env, jobject obj, jlong ptr, jstring sceOpts, jint scenario_format)
+JNIEXPORT jboolean JNICALL Java_com_kitware_pulse_engine_PulseScenarioExec_nativeExecuteScenario(JNIEnv * env, jobject obj, jstring sceOpts, jint scenario_format)
 {
-  PulseEngineJNI* engineJNI = reinterpret_cast<PulseEngineJNI*>(ptr);
-  engineJNI->jniEnv = env;
-  engineJNI->jniObj = obj;
-
   jboolean bRet;
   const char* sceOptsStr = env->GetStringUTFChars(sceOpts, JNI_FALSE);
-  bRet = engineJNI->ExecuteScenario(sceOptsStr, (eSerializationFormat)scenario_format);
+  LoggerForwardJNI jniForward;
+  jniForward.jniEnv = env;
+  jniForward.jniObj = obj;
+  bRet = PulseEngineThunk::ExecuteScenario(sceOptsStr, (eSerializationFormat)scenario_format, &jniForward);
   env->ReleaseStringUTFChars(sceOpts, sceOptsStr);
   return bRet;
 }
@@ -349,7 +348,7 @@ PulseEngineJNI::~PulseEngineJNI()
   Reset();
 }
 
-void PulseEngineJNI::Reset()
+void LoggerForwardJNI::Reset()
 {
   jniEnv=nullptr;
   jniObj=nullptr;
@@ -360,7 +359,7 @@ void PulseEngineJNI::Reset()
   jniFatalMethodID=nullptr;
 }
 
-void PulseEngineJNI::ForwardDebug(const std::string& msg, const std::string& origin)
+void LoggerForwardJNI::ForwardDebug(const std::string& msg, const std::string& origin)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
@@ -372,7 +371,7 @@ void PulseEngineJNI::ForwardDebug(const std::string& msg, const std::string& ori
   }
 }
 
-void PulseEngineJNI::ForwardInfo(const std::string& msg, const std::string& origin)
+void LoggerForwardJNI::ForwardInfo(const std::string& msg, const std::string& origin)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
@@ -384,7 +383,7 @@ void PulseEngineJNI::ForwardInfo(const std::string& msg, const std::string& orig
   }
 }
 
-void PulseEngineJNI::ForwardWarning(const std::string& msg, const std::string& origin)
+void LoggerForwardJNI::ForwardWarning(const std::string& msg, const std::string& origin)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
@@ -396,7 +395,7 @@ void PulseEngineJNI::ForwardWarning(const std::string& msg, const std::string& o
   }
 }
 
-void PulseEngineJNI::ForwardError(const std::string& msg, const std::string& origin)
+void LoggerForwardJNI::ForwardError(const std::string& msg, const std::string& origin)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {
@@ -408,7 +407,7 @@ void PulseEngineJNI::ForwardError(const std::string& msg, const std::string& ori
   }
 }
 
-void PulseEngineJNI::ForwardFatal(const std::string& msg, const std::string& origin)
+void LoggerForwardJNI::ForwardFatal(const std::string& msg, const std::string& origin)
 {
   if (jniEnv != nullptr && jniObj != nullptr)
   {

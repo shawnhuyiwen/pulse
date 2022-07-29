@@ -60,18 +60,60 @@ set(CMAKE_MODULE_PATH
     )
 set(${PROJECT_NAME}_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-#-----------------------------------------------------------------------------
-# SUPERBUILD
-#-----------------------------------------------------------------------------
-option(${PROJECT_NAME}_SUPERBUILD "Initial pull and build of all dependent libraries/executables" ON)
+option(${PROJECT_NAME}_LIBS_ONLY "Only build libraries" OFF)
 option(${PROJECT_NAME}_DOWNLOAD_BASELINES "Download all V&V Scenarios and their baseline result files" OFF)
 option(${PROJECT_NAME}_CSHARP_API "Build C# API" OFF)
 option(${PROJECT_NAME}_JAVA_API "Build Java utils for data generation and testing" ON)
 option(${PROJECT_NAME}_PYTHON_API "Build Python API" OFF)
 option(${PROJECT_NAME}_SLAVE_BUILD "Pulse is being built as part of a different superbuild" OFF)
+# This dir inteded for use during cross compiling, provide the directory to the generated bindings from a native pulse build
+# This will be in a <build>/Innerbuild/src/schema
+set(${PROJECT_NAME}_NATIVE_BUILD_DIR "" CACHE PATH "For crosscompiling, provide the root folder of a native build with protobuf bindings")
+set(NATIVE_BIND_DIR "")
+if(EXISTS ${${PROJECT_NAME}_NATIVE_BUILD_DIR})
+  message(STATUS "Checking native bind directory...")
+  set(NATIVE_BIND_DIR ${${PROJECT_NAME}_NATIVE_BUILD_DIR}/Innerbuild/src/cpp/pulse)
+  if(NOT EXISTS ${NATIVE_BIND_DIR})
+    message(FATAL_ERROR "Could not find expected binding directory in provided NATIVE_BUILD_DIR, expecting:  ${NATIVE_BIND_DIR}")
+  endif()
+endif()
 
+#-----------------------------------------------------------------------------
+# iOS Support
+#-----------------------------------------------------------------------------
+if(iOS_TOOLCHAIN)
+  message(STATUS "Setting up build for iOS")
+
+  #set(APPLE_IOS ON)
+  #set(TARGET_OS_IPHONE ON)
+
+  set(${PROJECT_NAME}_LIBS_ONLY ON)
+  if(${PROJECT_NAME}_CSHARP_API)
+    set(${PROJECT_NAME}_CSHARP_API OFF)
+    message(STATUS "Disabling C# API for iOS build")
+  endif()
+  if(${PROJECT_NAME}_JAVA_API)
+    set(${PROJECT_NAME}_JAVA_API OFF)
+    message(STATUS "Disabling Java API for iOS build")
+  endif()
+  if(${PROJECT_NAME}_PYTHON_API)
+    set(${PROJECT_NAME}_PYTHON_API OFF)
+    message(STATUS "Disabling Python API for iOS build")
+  endif()
+
+  if(NOT EXISTS ${NATIVE_BIND_DIR})
+    message(FATAL_ERROR "Crosscompiling for iOS, you must provide ${PROJECT_NAME}_NATIVE_BUILD_DIR")
+  endif()
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fembed-bitcode")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fembed-bitcode")
+endif()
+
+#-----------------------------------------------------------------------------
+# SUPERBUILD
+#-----------------------------------------------------------------------------
+option(${PROJECT_NAME}_SUPERBUILD "Initial pull and build of all dependent libraries/executables" ON)
 if(${PROJECT_NAME}_SUPERBUILD)
-
   #-----------------------------------------------------------------------------
   # Define External dependencies
   #-----------------------------------------------------------------------------
@@ -151,8 +193,11 @@ find_package(Eigen3 REQUIRED)
 
 # Tell protobuf-config.cmake to try to be compatible with FindProtobuf.cmake;
 # this makes it easier for us to work with either one
-set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "CMake built-in FindProtobuf.cmake module compatible" FORCE)
+set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "CMake built-in FindProtobuf.cmake module compatible")
 mark_as_advanced(protobuf_MODULE_COMPATIBLE)
+if(iOS_TOOLCHAIN)
+  set(protobuf_MODULE_COMPATIBLE OFF)
+endif()
 
 if(protobuf_DIR AND NOT EXISTS ${protobuf_DIR})
   # Linux systems can build libs to a variety of directories...

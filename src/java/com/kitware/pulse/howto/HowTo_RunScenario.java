@@ -3,8 +3,6 @@
 package com.kitware.pulse.howto;
 
 import com.kitware.pulse.cdm.actions.SEAdvanceTime;
-import com.kitware.pulse.cdm.bind.Engine.DataRequestData.eCategory;
-import com.kitware.pulse.cdm.datarequests.SEDataRequest;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.properties.CommonUnits.FrequencyUnit;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
@@ -61,21 +59,18 @@ public class HowTo_RunScenario
 
   public static void example()
   {
-    RunConfiguration cfg = new RunConfiguration();
-    SEScenarioExec execOpts = new SEScenarioExec();
+    PulseScenarioExec execOpts = new PulseScenarioExec();
     // Load and run a scenario
     PulseScenarioExec pse = new PulseScenarioExec();
-    execOpts.setDataRequestCSVFilename("./test_results/howto/HowTo_RunSenario.java.csv");
-    execOpts.setLogFilename("./test_results/howto/HowTo_RunSenario.java.log");
-    execOpts.setScenarioFilename(cfg.getScenarioDirectory()+"/patient/BasicStandard.json");
-    pse.runScenario(execOpts);
+    execOpts.setScenarioFilename("InitialPatientState.json");
+    execOpts.execute();
     
     // Create and run a scenario
     execOpts.clear();
     SEScenario sce = new SEScenario();
     sce.setName("HowTo_StaticEngine");
     sce.setDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
-    sce.getPatientConfiguration().setPatientFile("./patients/StandardMale.json");
+    sce.setEngineState("./states/StandardMale@0s.json");
     // When filling out a data request, units are optional
     // The units will be set to whatever units the engine uses.
     SEDataRequestManager dataRequests = sce.getDataRequestManager();
@@ -87,9 +82,7 @@ public class HowTo_RunScenario
     SEAdvanceTime adv = new SEAdvanceTime();
     adv.getTime().setValue(2,TimeUnit.min);
     sce.getActions().add(adv);
-    execOpts.setDataRequestCSVFilename("./test_results/howto/HowTo_RunSenario.new.java.csv");
-    execOpts.setLogFilename("./test_results/howto/HowTo_RunSenario.new.java.log");
     execOpts.setScenarioContent(sce.toJSON());
-    pse.runScenario(execOpts);
+    execOpts.execute();
   }
 }

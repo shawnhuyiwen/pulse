@@ -62,8 +62,8 @@ add_executable(PulseCSharpHowTo
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${PULSE_CSHARP_HOWTO_FILES})
 set_target_properties (PulseCSharpHowTo PROPERTIES FOLDER ${PROJECT_NAME})
 set_property(TARGET PulseCSharpHowTo PROPERTY DOTNET_TARGET_FRAMEWORK_VERSION "v4.5")
-set_property(TARGET PulseCSharpHowTo PROPERTY VS_DOTNET_REFERENCES
-  "System")
+set_property(TARGET PulseCSharpHowTo PROPERTY VS_DOTNET_REFERENCES "System")
+set_property(TARGET PulseCSharpHowTo PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
 add_dependencies(PulseCSharpHowTo PulseCSharp)
 add_custom_command(TARGET PulseCSharpHowTo POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy $(TargetPath) ${CMAKE_INSTALL_PREFIX}/bin)

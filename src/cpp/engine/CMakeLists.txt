@@ -163,7 +163,6 @@ add_library_ex(PulseEngineTests
     human_adult/whole_body/test/EngineTest.cpp
     human_adult/whole_body/test/FourCompartmentTest.cpp
     human_adult/whole_body/test/MechanicalVentilatorCircuit.cpp
-    human_adult/whole_body/test/MultiEngineTest.cpp
     human_adult/whole_body/test/NervousTests.cpp
     human_adult/whole_body/test/ReadScenarios.cpp
     human_adult/whole_body/test/RenalCircuit.cpp

@@ -15,7 +15,13 @@ void CDM_DECL MakeDirectory(std::string const& dir);
 bool CDM_DECL DeleteDirectory(const std::string &dir);
 bool CDM_DECL FileExists(const std::string& filename);
 bool CDM_DECL IsJSONFile(const std::string& filename);
+std::string CDM_DECL RelativePathFrom(const std::string& dir, const std::string& filepath);
+
+void CDM_DECL SplitPath(const std::string& filepath, std::string& path);
+void CDM_DECL SplitPathFilename(const std::string& filepath, std::string& path, std::string& filename);
 // Get the filename (with extension) from a filepath
-bool CDM_DECL SplitFilenamePath(const std::string& filepath, std::string& filename);
+void CDM_DECL SplitFilename(const std::string& filepath, std::string& filename);
 // Get the base filename and extension of a filepath
-bool CDM_DECL SplitFilenameExt(const std::string& filepath, std::string& filename, std::string& ext);
+void CDM_DECL SplitFilenameExt(const std::string& filepath, std::string& filename, std::string& ext);
+// Get the path from the filename
+void CDM_DECL SplitPathFilenameExt(const std::string& filepath, std::string& path, std::string& filename, std::string& ext);

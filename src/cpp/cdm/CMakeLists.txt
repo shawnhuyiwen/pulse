@@ -346,10 +346,6 @@ add_library_ex(CommonDataModel
     utils/TimingProfile.h
     utils/ThreadPool.h
     utils/base64.h
-    utils/taskrunner/Task.h
-    utils/taskrunner/TaskProcessor.h
-    utils/taskrunner/TaskQueue.h
-    utils/taskrunner/TaskRunner.h
     utils/testing/SETestCase.h
     utils/testing/SETestErrorStatistics.h
     utils/testing/SETestManager.h
@@ -716,8 +712,6 @@ add_library_ex(CommonDataModel
     utils/SimpleLogger.cpp
     utils/TimingProfile.cpp
     utils/base64.cpp
-    utils/taskrunner/TaskProcessor.cpp
-    utils/taskrunner/TaskRunner.cpp
     utils/testing/SETestCase.cpp
     utils/testing/SETestErrorStatistics.cpp
     utils/testing/SETestReport.cpp

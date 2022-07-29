@@ -47,6 +47,7 @@ namespace pulse
   }
   bool PBState::Serialize(const PULSE_BIND::StateData& src, Controller& dst, const SEEngineConfiguration* config)
   {
+    dst.Info("Loading state generated from Pulse-"+src.version());
     std::stringstream ss;
     dst.m_State = EngineState::NotReady;
     // First Get the substances reset and ready

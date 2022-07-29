@@ -253,4 +253,6 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/utils/RunConfiguration.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/utils/UnitConverter.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/engine/PulseEngine.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/engine/PulseScenarioExec.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/engine/io/PBScenario.cs
   )
