@@ -13,6 +13,9 @@ SEMechanicalVentilatorPressureControl::SEMechanicalVentilatorPressureControl(Log
 {
   m_Mode = eMechanicalVentilator_PressureControlMode::AssistedControl;
   m_FractionInspiredOxygen = nullptr;
+  m_InspirationPatientTriggerFlow = nullptr;
+  m_InspirationPatientTriggerPressure = nullptr;
+  m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   m_InspiratoryPeriod = nullptr;
   m_InspiratoryPressure = nullptr;
   m_PositiveEndExpiredPressure = nullptr;
@@ -24,6 +27,9 @@ SEMechanicalVentilatorPressureControl::~SEMechanicalVentilatorPressureControl()
 {
   m_Mode = eMechanicalVentilator_PressureControlMode::AssistedControl;
   SAFE_DELETE(m_FractionInspiredOxygen);
+  SAFE_DELETE(m_InspirationPatientTriggerFlow);
+  SAFE_DELETE(m_InspirationPatientTriggerPressure);
+  m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   SAFE_DELETE(m_InspiratoryPeriod);
   SAFE_DELETE(m_InspiratoryPressure);
   SAFE_DELETE(m_PositiveEndExpiredPressure);
@@ -36,6 +42,9 @@ void SEMechanicalVentilatorPressureControl::Clear()
   SEMechanicalVentilatorMode::Clear();
   m_Mode = eMechanicalVentilator_PressureControlMode::AssistedControl;
   INVALIDATE_PROPERTY(m_FractionInspiredOxygen);
+  INVALIDATE_PROPERTY(m_InspirationPatientTriggerFlow);
+  INVALIDATE_PROPERTY(m_InspirationPatientTriggerPressure);
+  m_InspirationWaveform = eDriverWaveform::NullDriverWaveform;
   INVALIDATE_PROPERTY(m_InspiratoryPeriod);
   INVALIDATE_PROPERTY(m_InspiratoryPressure);
   INVALIDATE_PROPERTY(m_PositiveEndExpiredPressure);
@@ -56,16 +65,37 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
   {
     // Translate ventilator settings
     double totalPeriod_s = 60.0 / GetRespirationRate(FrequencyUnit::Per_min);
-    double inspiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
-    double inspirationWaveformPeriod_s = GetSlope(TimeUnit::s);
+
+    double inspiratoryPeriod_s = 0.0;
+    if (HasInspiratoryPeriod())
+    {
+      inspiratoryPeriod_s = GetInspiratoryPeriod(TimeUnit::s);
+    }
+    else if (HasSlope())
+    {
+      inspiratoryPeriod_s = GetSlope(TimeUnit::s);
+    }
+    else
+    {
+      Fatal("No expiration cycle time defined. The Inspiratory Period and/or the Slope must be set.");
+    }
+
     if (inspiratoryPeriod_s > totalPeriod_s)
     {
-        Fatal("Inspiratory Period cannot be longer than the total period applied using Respiration Rate.");
+      Fatal("Inspiratory Period is longer than the total period applied using Respiration Rate.");
     }
+
+    double inspirationWaveformPeriod_s = inspiratoryPeriod_s;
+    if (HasSlope())
+    {
+      inspirationWaveformPeriod_s = GetSlope(TimeUnit::s);
+    }
+
     if (inspirationWaveformPeriod_s > inspiratoryPeriod_s)
     {
         Fatal("Inspiration Waveform Period (i.e., Slope) cannot be longer than the Inspiratory Period.");
     }
+
     double expiratoryPeriod_s = totalPeriod_s - inspiratoryPeriod_s;
 
     double peakInspiratoryPressure_cmH2O = GetInspiratoryPressure(PressureUnit::cmH2O);
@@ -74,17 +104,31 @@ bool SEMechanicalVentilatorPressureControl::ToSettings(SEMechanicalVentilatorSet
     {
         Fatal("Positive End Expired Pressure cannot be higher than the Peak Inspiratory Pressure.");
     }
-
-    s.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform::Ramp);
-    s.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform::Square);
-    s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
+    s.GetExpirationCycleTime().SetValue(inspiratoryPeriod_s, TimeUnit::s);
     s.GetInspirationMachineTriggerTime().SetValue(expiratoryPeriod_s, TimeUnit::s);
+    s.GetInspirationWaveformPeriod().SetValue(inspirationWaveformPeriod_s, TimeUnit::s);
     s.GetPeakInspiratoryPressure().SetValue(peakInspiratoryPressure_cmH2O, PressureUnit::cmH2O);
     s.GetPositiveEndExpiredPressure().SetValue(positiveEndExpiredPressure_cmH2O, PressureUnit::cmH2O);
-    s.GetExpirationCycleTime().Set(GetInspiratoryPeriod());
     s.GetFractionInspiredGas(*subMgr.GetSubstance("Oxygen")).GetFractionAmount().Set(GetFractionInspiredOxygen());
-    if(GetMode() == eMechanicalVentilator_PressureControlMode::AssistedControl)
-      s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
+
+    // Optional Values (Transfer data, let the SEMechanicalVentilatorSettings class handle precedence)
+
+    s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::Off);
+    if (GetMode() == eMechanicalVentilator_PressureControlMode::AssistedControl)
+    {
+      if (HasInspirationPatientTriggerFlow())
+        s.GetInspirationPatientTriggerFlow().Set(GetInspirationPatientTriggerFlow());
+      if (HasInspirationPatientTriggerPressure())
+        s.GetInspirationPatientTriggerPressure().Set(GetInspirationPatientTriggerPressure());
+      if(!HasInspirationPatientTriggerFlow() && !HasInspirationPatientTriggerPressure())
+        s.SetInspirationPatientTriggerRespiratoryModel(eSwitch::On);
+    }
+
+    s.SetExpirationWaveform(eDriverWaveform::Square);
+    if (HasInspirationWaveform())
+      s.SetInspirationWaveform(GetInspirationWaveform());
+    else
+      s.SetInspirationWaveform(eDriverWaveform::Square);
   }
   return true;
 }
@@ -93,11 +137,10 @@ bool SEMechanicalVentilatorPressureControl::IsValid() const
 {
   return SEMechanicalVentilatorMode::IsValid() &&
     HasFractionInspiredOxygen() &&
-    HasInspiratoryPeriod() &&
     HasInspiratoryPressure() &&
     HasPositiveEndExpiredPressure() &&
-    HasRespirationRate() &&
-    HasSlope();
+    HasRespirationRate();
+    // Everything else is optional
 }
 
 bool SEMechanicalVentilatorPressureControl::IsActive() const
@@ -114,6 +157,12 @@ const SEScalar* SEMechanicalVentilatorPressureControl::GetScalar(const std::stri
 {
   if (name.compare("FractionInspiredOxygen") == 0)
     return &GetFractionInspiredOxygen();
+  if (name.compare("InspirationPatientTriggerFlow") == 0)
+    return &GetInspirationPatientTriggerFlow();
+  if (name.compare("InspirationPatientTriggerPressure") == 0)
+    return &GetInspirationPatientTriggerPressure();
+  //if (name.compare("InspirationWaveform") == 0)
+  //  return &GetInspirationWaveform();
   if (name.compare("InspiratoryPeriod") == 0)
     return &GetInspiratoryPeriod();
   if (name.compare("InspiratoryPressure") == 0)
@@ -151,6 +200,53 @@ double SEMechanicalVentilatorPressureControl::GetFractionInspiredOxygen() const
   if (m_FractionInspiredOxygen == nullptr)
     return SEScalar::dNaN();
   return m_FractionInspiredOxygen->GetValue();
+}
+
+bool SEMechanicalVentilatorPressureControl::HasInspirationPatientTriggerFlow() const
+{
+  return m_InspirationPatientTriggerFlow == nullptr ? false : m_InspirationPatientTriggerFlow->IsValid();
+}
+SEScalarVolumePerTime& SEMechanicalVentilatorPressureControl::GetInspirationPatientTriggerFlow()
+{
+  if (m_InspirationPatientTriggerFlow == nullptr)
+    m_InspirationPatientTriggerFlow = new SEScalarVolumePerTime();
+  return *m_InspirationPatientTriggerFlow;
+}
+double SEMechanicalVentilatorPressureControl::GetInspirationPatientTriggerFlow(const VolumePerTimeUnit& unit) const
+{
+  if (m_InspirationPatientTriggerFlow == nullptr)
+    return SEScalar::dNaN();
+  return m_InspirationPatientTriggerFlow->GetValue(unit);
+}
+
+bool SEMechanicalVentilatorPressureControl::HasInspirationPatientTriggerPressure() const
+{
+  return m_InspirationPatientTriggerPressure == nullptr ? false : m_InspirationPatientTriggerPressure->IsValid();
+}
+SEScalarPressure& SEMechanicalVentilatorPressureControl::GetInspirationPatientTriggerPressure()
+{
+  if (m_InspirationPatientTriggerPressure == nullptr)
+    m_InspirationPatientTriggerPressure = new SEScalarPressure();
+  return *m_InspirationPatientTriggerPressure;
+}
+double SEMechanicalVentilatorPressureControl::GetInspirationPatientTriggerPressure(const PressureUnit& unit) const
+{
+  if (m_InspirationPatientTriggerPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_InspirationPatientTriggerPressure->GetValue(unit);
+}
+
+bool SEMechanicalVentilatorPressureControl::HasInspirationWaveform() const
+{
+  return m_InspirationWaveform != eDriverWaveform::NullDriverWaveform;
+}
+void SEMechanicalVentilatorPressureControl::SetInspirationWaveform(eDriverWaveform w)
+{
+  m_InspirationWaveform = w;
+}
+eDriverWaveform SEMechanicalVentilatorPressureControl::GetInspirationWaveform() const
+{
+  return m_InspirationWaveform;
 }
 
 bool SEMechanicalVentilatorPressureControl::HasInspiratoryPeriod() const
@@ -246,6 +342,9 @@ void SEMechanicalVentilatorPressureControl::ToString(std::ostream& str) const
   str << "\n\tConnection: " << eSwitch_Name(m_Connection);
   str << "\n\tMode: " << eMechanicalVentilator_PressureControlMode_Name(m_Mode);
   str << "\n\tFractionInspiredOxygen :"; HasFractionInspiredOxygen() ? str << *m_FractionInspiredOxygen : str << "NaN";
+  str << "\n\tInspirationPatientTriggerFlow: "; HasInspirationPatientTriggerFlow() ? str << m_InspirationPatientTriggerFlow : str << "NaN";
+  str << "\n\tInspirationPatientTriggerPressure: "; HasInspirationPatientTriggerPressure() ? str << m_InspirationPatientTriggerPressure : str << "NaN";
+  str << "\n\tInspirationWaveform: " << eDriverWaveform_Name(GetInspirationWaveform());
   str << "\n\tInspiratoryPeriod :"; HasInspiratoryPeriod() ? str << *m_InspiratoryPeriod : str << "NaN";
   str << "\n\tInspiratoryPressure :"; HasInspiratoryPressure() ? str << *m_InspiratoryPressure : str << "NaN";
   str << "\n\tPositiveEndExpiredPressure :"; HasPositiveEndExpiredPressure() ? str << *m_PositiveEndExpiredPressure : str << "NaN";

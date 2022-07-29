@@ -28,6 +28,12 @@ namespace pulse
     return *m_Controller;
   }
 
+  Logger* Engine::GetLogger() const
+  {
+    GetController();
+    return Loggable::GetLogger();
+  }
+
   std::string Engine::GetTypeName() const
   {
     return GetController().GetTypeName();

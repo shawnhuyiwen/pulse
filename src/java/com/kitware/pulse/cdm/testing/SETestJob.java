@@ -3,8 +3,7 @@ package com.kitware.pulse.cdm.testing;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kitware.pulse.cdm.scenario.SEScenarioExec;
-import com.kitware.pulse.engine.bind.Enums.eModelType;
+import com.kitware.pulse.engine.PulseScenarioExec;
 import com.kitware.pulse.utilities.Log;
 import com.kitware.pulse.utilities.LogListener;
 import com.kitware.pulse.utilities.csv.plots.CSVComparePlotter.PlotType;
@@ -14,28 +13,27 @@ public class SETestJob extends LogListener
   public enum State {Provisioned, Executing, Executed, Comparing, Complete}
   
   public SETestJob(){ listen(false); }
-  public boolean      useState=false;
-  public SEScenarioExec execOpts=new SEScenarioExec();
-  public String       patientFile = null;
-  public State        state=State.Provisioned;
-  public String       name;
-  public boolean      skipExecution = false;
-  public boolean      skipPlot = false;
-  public boolean      knownFailure = false;
+  public boolean               useState=false;
+  public PulseScenarioExec     execOpts=new PulseScenarioExec();
+  public String                patientFile = null;
+  public State                 state=State.Provisioned;
+  public String                name;
+  public boolean               skipExecution = false;
+  public boolean               skipPlot = false;
+  public boolean               knownFailure = false;
   public SETestDriver.Executor executor = null;
-  public boolean      isAssessment = false;
-  public boolean      PlottableResults = false;
-  public PlotType     plotType = PlotType.FastPlot;//Only plot every nth data point
-  public double       percentDifference;
-  public List<String> scenarioFiles = new ArrayList<>();
-  public String       scenarioDirectory = null;
-  public List<String> baselineFiles = new ArrayList<>();
-  public String       baselineDirectory = null;
-  public List<String> computedFiles = new ArrayList<>();
-  public String       computedDirectory = null;
-  public List<String> reportFiles = new ArrayList<>();
-  public String       resultsFiles = null;
-  public eModelType   modelType = eModelType.UNRECOGNIZED;
+  public boolean               isAssessment = false;
+  public boolean               PlottableResults = false;
+  public PlotType              plotType = PlotType.FastPlot;//Only plot every nth data point
+  public double                percentDifference;
+  public List<String>          scenarioFiles = new ArrayList<>();
+  public String                scenarioDirectory = null;
+  public List<String>          baselineFiles = new ArrayList<>();
+  public String                baselineDirectory = null;
+  public List<String>          computedFiles = new ArrayList<>();
+  public String                computedDirectory = null;
+  public List<String>          reportFiles = new ArrayList<>();
+  public String                resultsFiles = null;
 
   @Override
   public SETestJob clone()

@@ -1,7 +1,7 @@
 {
   "Name": "ECMO",
   "Description": "Connect the ECMO machine to a patient.",
-  "EngineStateFile":"./states/StandardMale@0s.pbb",
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": 
     [

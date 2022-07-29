@@ -1,3 +1,6 @@
+if(${PROJECT_NAME}_LIBS_ONLY)
+  return()
+endif()
 
 add_executable_ex(PulseScenarioDriver PulseScenarioDriver.cpp
                                       PulseScenarioDriver.h)

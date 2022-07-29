@@ -1,4 +1,3 @@
-
 add_library_ex(CircuitOptimizationEngine
   H_FILES
     CircuitOptimizer.h
@@ -15,6 +14,9 @@ add_library_ex(CircuitOptimizationEngine
 set_target_properties(CircuitOptimizationEngine PROPERTIES FOLDER "Studies//Circuit Optimization")
 target_include_directories(CircuitOptimizationEngine PRIVATE ${EIGEN3_INCLUDE_DIR})
 
+if(${PROJECT_NAME}_LIBS_ONLY)
+  return()
+endif()
 add_executable_ex(CircuitOptimizationDriver main.cpp)
 set_target_properties(CircuitOptimizationDriver PROPERTIES FOLDER "Studies//Circuit Optimization")
 target_link_libraries(CircuitOptimizationDriver CircuitOptimizationEngine protobuf::libprotobuf)

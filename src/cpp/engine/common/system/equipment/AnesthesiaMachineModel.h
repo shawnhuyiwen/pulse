@@ -93,6 +93,5 @@ namespace pulse
     SEFluidCircuitPath* m_pExpiratoryLimbToSelector;
     SEFluidCircuitPath* m_pSelectorToScrubber;
     SEFluidCircuitPath* m_pEnvironmentToGasSource;
-    SEFluidCircuitPath* m_pVentilatorToSelector;
   };
 END_NAMESPACE

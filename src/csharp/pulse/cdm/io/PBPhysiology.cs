@@ -14,6 +14,7 @@ namespace Pulse.CDM
     {
       dst.Clear();
       dst.SetActive((eSwitch)src.Active);
+      dst.SetDefaultType((eDefaultType)src.DefaultType);
 
       if (src.LeftComplianceCurve != null)
         PBProperty.Load(src.LeftComplianceCurve, dst.GetLeftComplianceCurve());
@@ -63,6 +64,7 @@ namespace Pulse.CDM
     protected static void Unload(SERespiratoryMechanics src, pulse.cdm.bind.RespiratoryMechanicsData dst)
     {
       dst.Active = (pulse.cdm.bind.eSwitch)(int)src.GetActive();
+      dst.DefaultType = (pulse.cdm.bind.eDefaultType)(int)src.GetDefaultType();
 
       if (src.HasLeftComplianceCurve())
         dst.LeftComplianceCurve = PBProperty.Unload(src.GetLeftComplianceCurve());

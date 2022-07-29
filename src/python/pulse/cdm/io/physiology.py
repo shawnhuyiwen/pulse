@@ -9,6 +9,8 @@ from pulse.cdm.io.scalars import serialize_scalar_pressure_time_per_volume_to_bi
 def serialize_respiratory_mechanics_to_bind(src: SERespiratoryMechanics, dst: RespiratoryMechanicsData):
     dst.Active = src.get_active().value
 
+    dst.DefaultType = src.get_default_type().value
+
     if src.has_left_compliance_curve():
         serialize_curve_to_bind(src.get_left_compliance_curve(), dst.LeftComplianceCurve)
     if src.has_left_compliance_curve():

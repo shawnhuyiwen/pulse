@@ -21,8 +21,6 @@ public:
 
   //virtual void SetConfigurationOverride(std::string const& config)=0; // Not Implemented
 
-  virtual bool ExecuteScenario(std::string const& sceExecOpts, eSerializationFormat format) = 0;
-
   bool SerializeFromFile(std::string const& filename, std::string const& data_requests, eSerializationFormat data_requests_format);
   bool SerializeToFile(std::string const& filename);
 
@@ -63,7 +61,6 @@ public:
   virtual void ForwardFatal(const std::string& msg, const std::string& origin);
 
   virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time = nullptr);
-
 
 protected:
   virtual void AllocateEngine() = 0;

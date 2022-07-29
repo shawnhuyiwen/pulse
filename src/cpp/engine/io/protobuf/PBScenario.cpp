@@ -88,4 +88,50 @@ namespace pulse
     }
     return ::PBScenario::SerializeFromFile(filename, dst);
   }
+
+
+  void PBScenario::Copy(const PulseScenarioExec& src, PulseScenarioExec& dst)
+  {
+    dst.Clear();
+    PULSE_BIND::ScenarioExecData data;
+    PBScenario::Serialize(src, data);
+    PBScenario::Serialize(data, dst);
+  }
+  void PBScenario::Load(const PULSE_BIND::ScenarioExecData& src, PulseScenarioExec& dst)
+  {
+    dst.Clear();
+    PBScenario::Serialize(src, dst);
+  }
+  void PBScenario::Serialize(const PULSE_BIND::ScenarioExecData& src, PulseScenarioExec& dst)
+  {
+    CDM_DECL::PBScenario::Serialize(src.scenarioexec(), dst);
+    dst.SetModelType((eModelType)src.modeltype());
+  }
+
+  PULSE_BIND::ScenarioExecData* PBScenario::Unload(const PulseScenarioExec& src)
+  {
+    PULSE_BIND::ScenarioExecData* dst = new PULSE_BIND::ScenarioExecData();
+    PBScenario::Serialize(src, *dst);
+    return dst;
+  }
+  void PBScenario::Serialize(const PulseScenarioExec& src, PULSE_BIND::ScenarioExecData& dst)
+  {
+    CDM_DECL::PBScenario::Serialize(src, *dst.mutable_scenarioexec());
+    dst.set_modeltype((PULSE_BIND::eModelType)src.GetModelType());
+  }
+
+  bool PBScenario::SerializeToString(const PulseScenarioExec& src, std::string& output, eSerializationFormat m, Logger* logger)
+  {
+    PULSE_BIND::ScenarioExecData data;
+    PBScenario::Serialize(src, data);
+    return PBUtils::SerializeToString(data, output, m, logger);
+  }
+  bool PBScenario::SerializeFromString(const std::string& src, PulseScenarioExec& dst, eSerializationFormat m, Logger* logger)
+  {
+    PULSE_BIND::ScenarioExecData data;
+    if (!PBUtils::SerializeFromString(src, data, m, logger))
+      return false;
+    PBScenario::Load(data, dst);
+    return true;
+  }
 }

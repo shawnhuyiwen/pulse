@@ -10,11 +10,6 @@ POP_PROTO_WARNINGS
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorPressureControl.h"
 #include "cdm/system/equipment/mechanical_ventilator/actions/SEMechanicalVentilatorVolumeControl.h"
 
-const std::string& eMechanicalVentilator_DriverWaveform_Name(eMechanicalVentilator_DriverWaveform w)
-{
-  return CDM_BIND::MechanicalVentilatorSettingsData::eDriverWaveform_Name((CDM_BIND::MechanicalVentilatorSettingsData::eDriverWaveform)w);
-}
-
 const std::string& eMechanicalVentilator_PressureControlMode_Name(eMechanicalVentilator_PressureControlMode m)
 {
   return CDM_BIND::MechanicalVentilatorPressureControlData::eMode_Name((CDM_BIND::MechanicalVentilatorPressureControlData::eMode)m);

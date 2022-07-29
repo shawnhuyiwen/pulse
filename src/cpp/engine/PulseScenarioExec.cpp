@@ -5,54 +5,131 @@
 #include "PulseScenario.h"
 #include "PulseScenarioExec.h"
 #include "engine/common/Engine.h"
+#include "engine/io/protobuf/PBScenario.h"
 
 #include "cdm/engine/SEAction.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/utils/FileUtils.h"
 #include "cdm/utils/ConfigParser.h"
+#include "cdm/utils/ThreadPool.h"
 
-bool PulseScenarioExec::Execute(PhysiologyEngine& pe, SEScenarioExec& opts)
+
+void PulseScenarioExec::Clear()
 {
-  pe.GetLogger()->SetLogFile(opts.GetLogFilename());
-  pe.GetLogger()->LogToConsole(opts.GetLogToConsole() == eSwitch::On);
+  SEScenarioExec::Clear();
+  m_ModelType = eModelType::HumanAdultWholeBody;
+}
 
-  PulseScenario sce(pe.GetLogger(), opts.GetDataRootDirectory());
+void PulseScenarioExec::Copy(const PulseScenarioExec& src)
+{
+  pulse::PBScenario::Copy(src, *this);
+}
 
-  if (!opts.GetScenarioContent().empty())
-  {
-    if (!sce.SerializeFromString(opts.GetScenarioContent(), opts.GetContentFormat()))
-      return false;
-  }
-  else if (!opts.GetScenarioFilename().empty())
-  {
-    if (!sce.SerializeFromFile(opts.GetScenarioFilename()))
-      return false;
-  }
+bool PulseScenarioExec::SerializeToString(std::string& output, eSerializationFormat m, Logger* logger) const
+{
+  return pulse::PBScenario::SerializeToString(*this, output, m, logger);
+}
+bool PulseScenarioExec::SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger)
+{
+  return pulse::PBScenario::SerializeFromString(src, *this, m, logger);
+}
+
+bool ExecuteOpts(PulseScenarioExec* opts, PulseScenario* sce)
+{
+  opts->Info("Executing Scenario: " + opts->GetScenarioFilename());
+  bool b = opts->Execute(*sce);
+  if(b)
+    opts->Info("Completed Scenario: " + opts->GetScenarioFilename());
   else
+    opts->Error("Error Executing Scenario: " + opts->GetScenarioFilename());
+  return b;
+}
+bool PulseScenarioExec::Execute()
+{
+  if (!GetScenarioContent().empty())
   {
-    pe.GetLogger()->Error("No scenario file or content provided");
-    return false;
+    PulseScenario sce(GetLogger(), GetDataRootDirectory());
+    if (!sce.SerializeFromString(GetScenarioContent(), GetContentFormat()))
+      return false;
+    return Execute(sce);
+  }
+  else if (!GetScenarioFilename().empty())
+  {
+    PulseScenario sce(GetLogger(), GetDataRootDirectory());
+    if (!sce.SerializeFromFile(GetScenarioFilename()))
+      return false;
+    return Execute(sce);
+  }
+  else if (!GetScenarioDirectory().empty())
+  {
+    // Let's get all the scenarios and create a thread pool
+    std::vector<std::string> scenarios;
+    ListFiles(GetScenarioDirectory(), scenarios, true, ".json");
+
+    size_t numThreadsSupported = std::thread::hardware_concurrency();
+    if (numThreadsSupported == 0)
+    {
+      Fatal("Unable to detect number of processors");
+      return false;
+    }
+
+    size_t numThreadsToUse;
+    if (m_ThreadCount > 0)
+      numThreadsToUse = m_ThreadCount>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
+    else if (m_ThreadCount == 0)
+      numThreadsToUse = numThreadsSupported;
+    else
+      numThreadsToUse = numThreadsSupported + m_ThreadCount;
+
+    // Let's not kick off more threads than we need
+    if (numThreadsToUse > scenarios.size())
+      numThreadsToUse = scenarios.size();
+
+    ThreadPool pool(numThreadsToUse);
+    for (auto filename : scenarios)
+    {
+      PulseScenarioExec* opts = new PulseScenarioExec(GetLogger());
+      opts->Copy(*this);
+      opts->m_ScenarioFilename = filename;
+      PulseScenario* sce = new PulseScenario(GetLogger(), GetDataRootDirectory());
+      sce->SerializeFromFile(filename);
+      pool.enqueue(ExecuteOpts, opts, sce);
+    }
+
+    /* ThreadPool waits for threads to complete in its
+    *  destructor which happens implicitly as we leave
+    *  function scope. If we need return values from
+    *  ExecuteScenario calls, enqueue returns a std::future
+    */
+
+    return true;
   }
 
-  if (!opts.GetEngineConfigurationFilename().empty())
+  Error("No scenario content provided");
+  return false;
+}
+
+bool PulseScenarioExec::Execute(PulseScenario& sce)
+{
+  auto pe = CreatePulseEngine(m_ModelType);
+
+  if (!GetEngineConfigurationFilename().empty())
   {
-    PulseConfiguration pc(pe.GetLogger());
-    if (!pc.SerializeFromFile(opts.GetEngineConfigurationFilename(), sce.GetSubstanceManager()))
+    PulseConfiguration pc(pe->GetLogger());
+    if (!pc.SerializeFromFile(GetEngineConfigurationFilename(), sce.GetSubstanceManager()))
       return false;
     sce.GetConfiguration().Merge(pc, sce.GetSubstanceManager());
   }
-  else if (!opts.GetEngineConfigurationContent().empty())
+  else if (!GetEngineConfigurationContent().empty())
   {
-    PulseConfiguration pc(pe.GetLogger());
-    if (!pc.SerializeFromString(opts.GetEngineConfigurationFilename(), opts.GetContentFormat(), sce.GetSubstanceManager()))
+    PulseConfiguration pc(pe->GetLogger());
+    if (!pc.SerializeFromString(GetEngineConfigurationFilename(), GetContentFormat(), sce.GetSubstanceManager()))
       return false;
     sce.GetConfiguration().Merge(pc, sce.GetSubstanceManager());
   }
   if (sce.HasConfiguration())
-    pe.SetConfigurationOverride(&sce.GetConfiguration());
+    pe->SetConfigurationOverride(&sce.GetConfiguration());
 
-  bool b = opts.Execute(pe, sce);
-  pe.SetConfigurationOverride(nullptr);
-  return b;
+  return SEScenarioExec::Execute(*pe, sce);
 }

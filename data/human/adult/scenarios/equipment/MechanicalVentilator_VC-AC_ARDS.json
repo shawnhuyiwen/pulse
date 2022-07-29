@@ -112,7 +112,7 @@
           "InspirationWaveform": "Square",
           "ExpirationWaveform": "Square",
           "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 5.0, "Unit": "s" } },
-          "InspirationPatientTriggerPressure": { "ScalarPressure": { "Value": -0.000001, "Unit": "cmH2O" } },
+          "InspirationPatientTriggerPressure": { "ScalarPressure": { "Value": -1, "Unit": "cmH2O" } },
           "InspirationTargetFlow": { "ScalarVolumePerTime": { "Value": 0.5, "Unit": "L/s" } },
           "ExpirationCycleVolume": { "ScalarVolume": { "Value": 0.540, "Unit": "L" } },
           "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 8.0, "Unit": "cmH2O" } },

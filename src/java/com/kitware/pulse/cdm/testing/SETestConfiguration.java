@@ -22,7 +22,6 @@ public class SETestConfiguration
 {
   public static final String ext=".csv";
   public static String sce_ext=".json";
-  public static String state_ext=".json";
   protected String testName;
   protected String reportName;
   protected int    numThreads=0;
@@ -115,12 +114,11 @@ public class SETestConfiguration
         {
           // Parse the value
           String[] values = value.split(",");
-          this.sceExec.setSerializationDirectory(values[0]);
+          this.sceExec.setLogToConsole(eSwitch.On);
+          this.sceExec.setOutputRootDirectory(values[0]);
           this.sceExec.setAutoSerializePeriod_s(Double.parseDouble(values[1]));
           this.sceExec.setTimeStampSerializedStates(eSwitch.valueOf(values[2]));
           this.sceExec.setAutoSerializeAfterActions(eSwitch.valueOf(values[3]));
-          this.sceExec.setReloadSerializedState(eSwitch.valueOf(values[4]));
-          this.state_ext=values[5];
           continue; 
         }
         if(key.equalsIgnoreCase("ExecuteTests"))
@@ -164,11 +162,6 @@ public class SETestConfiguration
         job.useState = this.useStates;
         // Copy shared exec options
         job.execOpts.copy(this.sceExec);
-        String sceDir = key.trim().substring(0, key.trim().length()-sce_ext.length());
-        String stateDir = this.sceExec.getSerializationDirectory()+sceDir+"/";
-        String stateFilename = sceDir.substring(sceDir.lastIndexOf("/")+1);
-        job.execOpts.setSerializationDirectory(stateDir);
-        job.execOpts.setAutoSerializeFilename(stateFilename+"."+state_ext);
         // More exec options
         if(!executeJobs)
           job.skipExecution = true;
@@ -221,10 +214,10 @@ public class SETestConfiguration
             if(directive.equalsIgnoreCase("MemoryFastPlot"))
             { job.PlottableResults = true; job.plotType=PlotType.MemoryFastPlot; continue; }
             try {
-              job.modelType = eModelType.valueOf(directive);
+              job.execOpts.setModelType(eModelType.valueOf(directive));
               continue;
             }catch(IllegalArgumentException e)
-            { job.modelType = eModelType.UNRECOGNIZED; }
+            { job.execOpts.setModelType(eModelType.UNRECOGNIZED); }
             
             Log.warn("Unknown directive : " + directive);
           }

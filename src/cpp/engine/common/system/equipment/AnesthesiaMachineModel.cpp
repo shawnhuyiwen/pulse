@@ -81,7 +81,6 @@ namespace pulse
     m_pEnvironmentToReliefValve = nullptr;
     m_pEnvironmentToVentilator = nullptr;
     m_pEnvironmentToGasSource = nullptr;
-    m_pVentilatorToSelector = nullptr;
   }
 
   //--------------------------------------------------------------------------------------------------

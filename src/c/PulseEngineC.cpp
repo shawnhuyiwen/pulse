@@ -72,9 +72,9 @@ C_EXPORT void C_CALL Deallocate(PhysiologyEngineThunk* thunk)
 }
 
 extern "C"
-C_EXPORT bool C_CALL ExecuteScenario(PhysiologyEngineThunk* thunk, const char* sceOpts, int format)
+C_EXPORT bool C_CALL ExecuteScenario(const char* sceOpts, int format)
 {
-  return thunk->ExecuteScenario(sceOpts, (eSerializationFormat)format);
+  return PulseEngineThunk::ExecuteScenario(sceOpts, (eSerializationFormat)format);
 }
 
 extern "C"

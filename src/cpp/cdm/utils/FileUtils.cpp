@@ -208,20 +208,63 @@ bool FileExists(const std::string& filename)
 bool IsJSONFile(const std::string& filename)
 {
   size_t ext = filename.find_last_of(".");
+  if (ext == std::string::npos)
+    return false;
   return filename.substr(ext) == ".json";
 }
 
-bool SplitFilenamePath(const std::string& filepath, std::string& filename)
+std::string CDM_DECL RelativePathFrom(const std::string& dir, const std::string& filepath)
 {
-  auto slash = filepath.find_last_of("/");
+  std::string dirf = dir;
+  std::replace(dirf.begin(), dirf.end(), '\\', '/');
+
+  std::string filepathf = filepath;
+  std::replace(filepathf.begin(), filepathf.end(), '\\', '/');
+
+  if (filepathf.rfind(dirf,0) != std::string::npos)
+  {
+    auto slash = filepathf.find_last_of("/");
+    return filepathf.substr(dir.length(),slash-dir.length());
+  }
+  return "";
+}
+
+void SplitPath(const std::string& filepath, std::string& path)
+{
+  std::string filename;
+  std::string ext;
+  SplitPathFilenameExt(filepath, path, filename, ext);
+}
+void SplitFilename(const std::string& filepath, std::string& filename)
+{
+  std::string path;
+  std::string ext;
+  SplitPathFilenameExt(filepath, path, filename, ext);
+  filename = filename + ext;
+}
+void SplitPathFilename(const std::string& filepath, std::string& path, std::string& filename)
+{
+  std::string ext;
+  SplitPathFilenameExt(filepath, path, filename, ext);
+  filename = filename + ext;
+}
+void SplitFilenameExt(const std::string& filepath, std::string& filename, std::string& ext)
+{
+  std::string path;
+  SplitPathFilenameExt(filepath, path, filename, ext);
+}
+void SplitPathFilenameExt(const std::string& filepath, std::string& path, std::string& filename, std::string& ext)
+{
+  std::string filepathf = filepath;
+  std::replace(filepathf.begin(), filepathf.end(), '\\', '/');
+
+  // Get the filename
+  auto slash = filepathf.find_last_of("/");
   (slash == std::string::npos) ?
     slash = 0 : slash++;
-  filename = filepath.substr(slash);
-  return true;
-}
-bool SplitFilenameExt(const std::string& filepath, std::string& filename, std::string& ext)
-{
-  SplitFilenamePath(filepath, filename);
+  filename = filepathf.substr(slash);
+
+  // Split off the ext from the filename
   auto ePos = filename.find_last_of(".");
   if (ePos != std::string::npos)
   {
@@ -233,5 +276,10 @@ bool SplitFilenameExt(const std::string& filepath, std::string& filename, std::s
     // No extension...
     ext = "";
   }
-  return true;
+
+  // Get the path
+  if (slash == 0)
+    path = "";
+  else
+    path = filepathf.substr(0, slash);
 }

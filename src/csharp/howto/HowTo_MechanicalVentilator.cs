@@ -138,8 +138,8 @@ namespace HowTo_MechanicalVentilator
       SEMechanicalVentilatorConfiguration mv_config = new SEMechanicalVentilatorConfiguration();
       SEMechanicalVentilatorSettings mv = mv_config.GetSettings();
       mv.SetConnection(eSwitch.On);
-      mv.SetInspirationWaveform(eMechanicalVentilator_DriverWaveform.Square);
-      mv.SetExpirationWaveform(eMechanicalVentilator_DriverWaveform.Square);
+      mv.SetInspirationWaveform(eDriverWaveform.Square);
+      mv.SetExpirationWaveform(eDriverWaveform.Square);
       mv.GetPeakInspiratoryPressure().SetValue(21.0, PressureUnit.cmH2O);
       mv.GetPositiveEndExpiredPressure().SetValue(10.0, PressureUnit.cmH2O);
       SESubstanceFraction fractionFiO2 = mv.GetFractionInspiredGas("Oxygen");
