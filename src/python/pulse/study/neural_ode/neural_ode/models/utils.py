@@ -87,7 +87,6 @@ class BaseModel(pf.BaseModelWithCovariates):
             as bag of embeddings
     '''
 
-    #lr: float = 1e-2
     @staticmethod
     # TODO un-hardcode
     def _coerce_loss(loss, n_targets=11):
@@ -104,7 +103,6 @@ class BaseModel(pf.BaseModelWithCovariates):
         return _loss
 
 
-    # def __post_init__(self):
     def __init__(
         self,
         learning_rate=1e-2,
@@ -128,7 +126,7 @@ class BaseModel(pf.BaseModelWithCovariates):
         logging_metrics = nn.ModuleList(
             [self._coerce_loss(l) for l in logging_metrics])
         self.save_hyperparameters()
-        self.save_hyperparameters(dict(loss=loss, logging_metrics=logging_metrics), logger=False)
+        # self.save_hyperparameters(dict(loss=loss, logging_metrics=logging_metrics), logger=False)
         # TODO ensure the cov kwargs are saved in hparams
         super().__init__(loss=loss, logging_metrics=logging_metrics, **ub.dict_diff(kwargs, asdict(BaseModelWithCovariatesKwargs())))
         self.gaussian_likelihood_std = torch.tensor([0.01])
@@ -181,13 +179,14 @@ class BaseModel(pf.BaseModelWithCovariates):
         return self.to_network_output(prediction=prediction)
         '''
         # TODO x_time and y_time as known covariate (encoder_cont, decoder_cont)
+        # TODO use packed_sequence
         # 'b t f'
         x_data = x['encoder_cont']
         assert torch.unique(x['encoder_lengths']).shape == (1, )
         enc_len = x['encoder_lengths'][0]
         assert torch.unique(x['decoder_time_idx'][:, 0]).shape == (1, )
         dec_idx = x['decoder_time_idx'][0, 0]
-        dec_len = min(x['decoder_lengths'])
+        dec_len = torch.max(x['decoder_lengths'])
         x_time = torch.arange(dec_idx - enc_len, dec_idx)
         y_time = torch.arange(dec_idx, dec_idx + dec_len)
 
@@ -197,7 +196,6 @@ class BaseModel(pf.BaseModelWithCovariates):
         y_pred = [*einops.rearrange(y_pred, 'b t f -> f b t 1')]
 
         y_pred = self.transform_output(y_pred, target_scale=x["target_scale"])
-        # import xdev; xdev.embed()
         return self.to_network_output(prediction=y_pred)
 
     def old_forward(self, y_time, x, x_time):
@@ -217,8 +215,10 @@ class BaseModel(pf.BaseModelWithCovariates):
         # (e.g. number of quantiles for QuantileLoss and one target or list of
         # output sizes).
         # [n_features, min(dec_lens)??]
-        self = cls.from_dataset(dm.dset_tr, **kwargs, output_transformer=dm.dset_tr.target_normalizer)
+        self = cls.from_dataset(dm.dset_tr, **ub.dict_diff(kwargs, ['output_transformer']))#, output_transformer=dm.dset_tr.target_normalizer)
         batch = next(iter(dm.train_dataloader()))
+        x, y = batch
+        self.example_input_array = (x,)
         self.x_dims = len(self.encoder_variables)  # + len(self.static_variables)
         self.y_dims = len(self.decoder_variables) + len(self.target_names)
         self.batch_size = -1
@@ -239,7 +239,6 @@ class BaseModel(pf.BaseModelWithCovariates):
         self.t_param = dm.t_param
         self.init_xy()
         super().setup(stage)
-        # import xdev; xdev.embed()
 
 
 # no dice due to https://github.com/Lightning-AI/lightning/issues/12506
@@ -395,7 +394,7 @@ class DummyModel(BaseModel):
         self.net = create_net(self.x_dims, self.y_dims,
                               nonlinear=nn.ReLU).float()
 
-    def forward(self, y_time, x, x_time):
+    def old_forward(self, y_time, x, x_time):
         # import xdev; xdev.embed()
         y0 = self.net(x[:, -1, :])
         y = einops.repeat(y0, 'b f -> b t f', t=len(y_time))
@@ -533,6 +532,8 @@ class HemorrhageVitals(BaseData):
 
     def __post_init__(self):
         super().__init__()
+        self._prepare_data()
+        self._setup()
 
     def _cache_dir(self):
         if not self.hparams:
@@ -540,7 +541,7 @@ class HemorrhageVitals(BaseData):
         hparam_str = ub.hash_data(dict(self.hparams))
         return (ub.Path(self.root_path) / 'cache' / hparam_str)
 
-    def prepare_data(self):
+    def _prepare_data(self):
         cache_dir = self._cache_dir()
         if not cache_dir.exists():
 
@@ -555,7 +556,7 @@ class HemorrhageVitals(BaseData):
             dset_te.save(cache_dir / 'dset_te.pt')
             df.to_pickle(cache_dir / 'df.pkl')
 
-    def setup(self, stage: Optional[str] = None):
+    def _setup(self, stage: Optional[str] = None):
         cache_dir = self._cache_dir()
         assert cache_dir.exists()
 

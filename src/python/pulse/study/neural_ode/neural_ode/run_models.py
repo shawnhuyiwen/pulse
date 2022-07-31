@@ -196,8 +196,6 @@ parser.add_argument("--load_ckpt", default=None, type=Optional[str])
 # parser.add_argument("--lr", type=float, default=1e-2)
 
 import pytorch_forecasting as pf
-pf.models.BaseModel
-pf.models.baseline.Baseline
 # TODO curriculum learning https://arxiv.org/abs/2101.10382
 # train on easy examples before hard examples
 # with missingness, this amounted to removing missingness from 10 more points
@@ -301,6 +299,10 @@ def main(args):
 from pytorch_lightning.utilities.cli import LightningCLI
 class MyLightningCLI(LightningCLI):
 
+    # def _get(self, config: Dict[str, Any], key: str, default: Optional[Any] = None) -> Any:
+        # """Utility to get a config value which might be inside a subcommand."""
+        # return config.get(str(self.subcommand), config).get(key, default)
+
     # subclass this fn to couple model to dm and delay its instantiation until
     # after dm is setup.
     def instantiate_classes(self) -> None:
@@ -309,9 +311,12 @@ class MyLightningCLI(LightningCLI):
         self.config_init = self.parser.instantiate_classes(self.config)
         self.datamodule = self._get(self.config_init, "data")
         self.model = self._get(self.config_init, "model")
+
+        # self.model = self.model.from_datamodule(self.datamodule, **self.model.hparams)
+        # import xdev; xdev.embed()
+
         self._add_configure_optimizers_method_to_model(self.subcommand)
         self.trainer = self.instantiate_trainer()
-
 
     def before_fit(self):
         pass
@@ -331,40 +336,52 @@ class MyLightningCLI(LightningCLI):
 if __name__ == "__main__":
 
     torch.set_default_dtype(torch.float32)
-    if 1:
+    if 0:
 
         from neural_ode.models.recurrent import RecurrentODEParams
         from neural_ode.models.diff_func import ODEFuncParams
-        dm = utils.HemorrhageVitals(stride=1000, max_pts=10, batch_size=1)
-        model = RecurrentODE.from_datamodule(dm, recurrentodeparams=RecurrentODEParams(), odefuncparams=ODEFuncParams(), learning_rate=1e-4)
-        trainer = pl.Trainer(**trainer_kwargs(), overfit_batches=1)
+        dm = utils.HemorrhageVitals(stride=1000, max_pts=10, batch_size=2)
+        trainer = pl.Trainer(**trainer_kwargs(), overfit_batches=1, log_every_n_steps=1)
 
-        # dm.prepare_data()
-        # dm.setup()
-        # batch = next(iter(dm.train_dataloader()))
-        # x,y = batch
-        # y_pred = model(x)
+        dm.prepare_data()
+        dm.setup()
+
+        # model = RecurrentODE.from_datamodule(dm, recurrentodeparams=RecurrentODEParams(), odefuncparams=ODEFuncParams(), learning_rate=1e-4)
+        # model = pf.RecurrentNetwork.from_dataset(dm.dset_tr, learning_rate=1e-4)
+        model = pf.DeepAR.from_dataset(dm.dset_tr, learning_rate=1e-4)
+
+        batch = next(iter(dm.train_dataloader()))
+        x,y = batch
+        y_pred = model(x)
         # import xdev; xdev.embed()
 
         trainer.fit(model, datamodule=dm)
 
-    elif 0:
+    elif 1:
 
+        '''
+        alternate invocation:
+            model_class=RecurrentODE.from_dataset or
+            --model RecurrentODE.from_dataset
+        combine with https://jsonargparse.readthedocs.io/en/stable/index.html#argument-linking for model.dset == dm.dset_tr
+        https://github.com/omni-us/jsonargparse/issues/146
+        '''
 
-        # cli = MyLightningCLI(model_class=utils.BaseModel,
-        cli = LightningCLI(model_class=utils.BaseModel,
+        cli = MyLightningCLI(model_class=utils.BaseModel,
+        # cli = LightningCLI(model_class=utils.BaseModel,
                            datamodule_class=utils.BaseData,
                            trainer_defaults=trainer_kwargs(),
                            seed_everything_default=47,
-                           run=True,
-                           # run=False,
+                           # run=True,
+                           run=False,
                            subclass_mode_model=True,
                            subclass_mode_data=True,
                            auto_registry=False)
-        # # cli.model.init_from_datamodule(cli.datamodule)
-        # cli.model = cli.model.from_datamodule(cli.datamodule)
+        cli.model = cli.model.from_datamodule(cli.datamodule, **cli.model.hparams)
         # # fit == train + validate
-        # cli.trainer.fit(cli.model, datamodule=cli.datamodule)
+        import xdev
+        with xdev.embed_on_exception_context():
+            cli.trainer.fit(cli.model, datamodule=cli.datamodule)
 
     else:
 
