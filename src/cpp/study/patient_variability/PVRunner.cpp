@@ -284,7 +284,7 @@ namespace pulse::study::patient_variability
             s.SerializeFromFile(scenario_filepath);
 
             std::string scenario_filename;
-            SplitFilenamePath(scenario_filepath, scenario_filename);
+            SplitFilename(scenario_filepath, scenario_filename);
             std::string output_csv_file = Replace(scenario_filename, ".json", "Results.csv");
             allScenarioRequests.insert(std::pair<std::string, std::vector<std::string>>(output_csv_file, std::vector<std::string>()));
 
@@ -529,7 +529,7 @@ namespace pulse::study::patient_variability
     for(auto validation_filepath: validation_files)
     {
       std::string validation_filename;
-      SplitFilenamePath(validation_filepath, validation_filename);
+      SplitFilename(validation_filepath, validation_filename);
 
       //Serialize the file contents
       pulse::cdm::bind::PropertyValidationListData vList;
