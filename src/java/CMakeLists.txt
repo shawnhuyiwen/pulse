@@ -31,8 +31,10 @@ add_jar(PulseJava ${PULSE_JAVA_FILES}
       "jar/error_prone_annotations-2.11.0.jar" # needed for protobufs
       "jar/gson-2.9.0.jar" # needed for protobufs
       "jar/guava-31.1-jre.jar" # needed for protobufs
+      "jar/j2objc-annotations-1.3.jar" # needed for protobufs
       "jar/java-ordered-properties-1.0.4.jar"
       "jar/jfreechart-1.5.3.jar"
+      "jar/jsr305-3.0.2.jar" # needed for protobufs
       "jar/poi-5.2.0.jar"
       "jar/poi-ooxml-5.2.0.jar"
       "jar/poi-ooxml-lite-5.2.0.jar"
