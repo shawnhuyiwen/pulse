@@ -74,6 +74,7 @@ void SECompartmentManager::Clear()
   m_LiquidSubstances.clear(); 
   DELETE_VECTOR(m_LiquidGraphs);
   m_LiquidName2Graphs.clear();
+  m_CardiacCycleSampledCompartments.clear();
 
   DELETE_VECTOR(m_ThermalCompartments);
   m_ThermalName2Compartments.clear();
@@ -417,6 +418,17 @@ void SECompartmentManager::AddLiquidCompartmentSubstance(SESubstance& s)
 const std::vector<SESubstance*>& SECompartmentManager::GetLiquidCompartmentSubstances() const
 {
   return m_LiquidSubstances;
+}
+
+void SECompartmentManager::SampleByCardiacCyle(bool CycleStart)
+{
+  for (SELiquidCompartment* cmpt : m_CardiacCycleSampledCompartments)
+    cmpt->Sample(CycleStart);
+}
+void SECompartmentManager::SampleByCardiacCyle(SELiquidCompartment& cmpt)
+{
+  if (!Contains(m_CardiacCycleSampledCompartments, cmpt))
+    m_CardiacCycleSampledCompartments.push_back(&cmpt);
 }
 
 //////////////////////////

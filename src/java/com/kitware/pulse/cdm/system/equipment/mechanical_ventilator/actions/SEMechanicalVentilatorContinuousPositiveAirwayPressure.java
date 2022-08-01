@@ -3,20 +3,33 @@
 
 package com.kitware.pulse.cdm.system.equipment.mechanical_ventilator.actions;
 
+import com.kitware.pulse.cdm.bind.Enums.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.MechanicalVentilatorContinuousPositiveAirwayPressureData;
 import com.kitware.pulse.cdm.properties.*;
 
 public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMechanicalVentilatorMode
 {
-  protected SEScalarPressure deltaPressureSupport;
-  protected SEScalar0To1     fractionInspiredOxygen;
-  protected SEScalarPressure positiveEndExpiredPressure;
-  protected SEScalarTime     slope;
+  protected SEScalarPressure      deltaPressureSupport;
+  protected SEScalarVolumePerTime expirationCycleFlow;
+  protected SEScalarPressure      expirationCyclePressure;
+  protected eDriverWaveform       expirationWaveform;
+  protected SEScalar0To1          fractionInspiredOxygen;
+  protected SEScalarVolumePerTime inspirationPatientTriggerFlow;
+  protected SEScalarPressure      inspirationPatientTriggerPressure;
+  protected eDriverWaveform       inspirationWaveform;
+  protected SEScalarPressure      positiveEndExpiredPressure;
+  protected SEScalarTime          slope;
 
   public SEMechanicalVentilatorContinuousPositiveAirwayPressure()
   {
     deltaPressureSupport = null;
+    expirationCycleFlow = null;
+    expirationCyclePressure = null;
+    expirationWaveform = eDriverWaveform.NullDriverWaveform;
     fractionInspiredOxygen = null;
+    inspirationPatientTriggerFlow = null;
+    inspirationPatientTriggerPressure = null;
+    inspirationWaveform = eDriverWaveform.NullDriverWaveform;
     positiveEndExpiredPressure = null;
     slope = null;
   }
@@ -32,8 +45,18 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
     super.copy(other);
     if (other.hasDeltaPressureSupport())
       getDeltaPressureSupport().set(other.getDeltaPressureSupport());
+    if (other.hasExpirationCycleFlow())
+      getExpirationCycleFlow().set(other.getExpirationCycleFlow());
+    if (other.hasExpirationCyclePressure())
+      getExpirationCyclePressure().set(other.getExpirationCyclePressure());
+    setExpirationWaveform(other.getExpirationWaveform());
     if (other.hasFractionInspiredOxygen())
       getFractionInspiredOxygen().set(other.getFractionInspiredOxygen());
+    if (other.hasInspirationPatientTriggerFlow())
+      getInspirationPatientTriggerFlow().set(other.getInspirationPatientTriggerFlow());
+    if (other.hasInspirationPatientTriggerPressure())
+      getInspirationPatientTriggerPressure().set(other.getInspirationPatientTriggerPressure());
+    setInspirationWaveform(other.getInspirationWaveform());
     if (other.hasPositiveEndExpiredPressure())
       getPositiveEndExpiredPressure().set(other.getPositiveEndExpiredPressure());
     if (other.hasSlope())
@@ -45,8 +68,18 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
     super.clear();
     if (deltaPressureSupport != null)
       deltaPressureSupport.invalidate();
+    if (expirationCycleFlow != null)
+      expirationCycleFlow.invalidate();
+    if (expirationCyclePressure != null)
+      expirationCyclePressure.invalidate();
+    expirationWaveform = eDriverWaveform.NullDriverWaveform;
     if (fractionInspiredOxygen != null)
       fractionInspiredOxygen.invalidate();
+    if (inspirationPatientTriggerFlow != null)
+      inspirationPatientTriggerFlow.invalidate();
+    if (inspirationPatientTriggerPressure != null)
+      inspirationPatientTriggerPressure.invalidate();
+    inspirationWaveform = eDriverWaveform.NullDriverWaveform;
     if (positiveEndExpiredPressure != null)
       positiveEndExpiredPressure.invalidate();
     if (slope != null)
@@ -59,8 +92,18 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
     SEMechanicalVentilatorMode.load(src.getMechanicalVentilatorMode(),dst);
     if (src.hasDeltaPressureSupport())
       SEScalarPressure.load(src.getDeltaPressureSupport(), dst.getDeltaPressureSupport());
+    if (src.hasExpirationCycleFlow())
+      SEScalarVolumePerTime.load(src.getExpirationCycleFlow(), dst.getExpirationCycleFlow());
+    if (src.hasExpirationCyclePressure())
+      SEScalarPressure.load(src.getExpirationCyclePressure(), dst.getExpirationCyclePressure());
+    dst.setExpirationWaveform(src.getExpirationWaveform());
     if (src.hasFractionInspiredOxygen())
       SEScalar0To1.load(src.getFractionInspiredOxygen(), dst.getFractionInspiredOxygen());
+    if (src.hasInspirationPatientTriggerFlow())
+      SEScalarVolumePerTime.load(src.getInspirationPatientTriggerFlow(), dst.getInspirationPatientTriggerFlow());
+    if (src.hasInspirationPatientTriggerPressure())
+      SEScalarPressure.load(src.getInspirationPatientTriggerPressure(), dst.getInspirationPatientTriggerPressure());
+    dst.setInspirationWaveform(src.getInspirationWaveform());
     if (src.hasPositiveEndExpiredPressure())
       SEScalarPressure.load(src.getPositiveEndExpiredPressure(), dst.getPositiveEndExpiredPressure());
     if (src.hasSlope())
@@ -75,10 +118,20 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
   protected static void unload(SEMechanicalVentilatorContinuousPositiveAirwayPressure src, MechanicalVentilatorContinuousPositiveAirwayPressureData.Builder dst)
   {
     SEMechanicalVentilatorMode.unload(src, dst.getMechanicalVentilatorModeBuilder());
-    if(src.hasDeltaPressureSupport())
+    if (src.hasDeltaPressureSupport())
       dst.setDeltaPressureSupport(SEScalarPressure.unload(src.getDeltaPressureSupport()));
+    if (src.hasExpirationCycleFlow())
+      dst.setExpirationCycleFlow(SEScalarVolumePerTime.unload(src.getExpirationCycleFlow()));
+    if (src.hasExpirationCyclePressure())
+      dst.setExpirationCyclePressure(SEScalarPressure.unload(src.getExpirationCyclePressure()));
+    dst.setExpirationWaveform(src.getExpirationWaveform());
     if (src.hasFractionInspiredOxygen())
       dst.setFractionInspiredOxygen(SEScalar0To1.unload(src.getFractionInspiredOxygen()));
+    if (src.hasInspirationPatientTriggerFlow())
+      dst.setInspirationPatientTriggerFlow(SEScalarVolumePerTime.unload(src.getInspirationPatientTriggerFlow()));
+    if (src.hasInspirationPatientTriggerPressure())
+      dst.setInspirationPatientTriggerPressure(SEScalarPressure.unload(src.getInspirationPatientTriggerPressure()));
+    dst.setInspirationWaveform(src.getInspirationWaveform());
     if (src.hasPositiveEndExpiredPressure())
       dst.setPositiveEndExpiredPressure(SEScalarPressure.unload(src.getPositiveEndExpiredPressure()));
     if (src.hasSlope())
@@ -87,14 +140,16 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
 
   public boolean isValid()
   {
-    return hasDeltaPressureSupport() && hasFractionInspiredOxygen() && hasPositiveEndExpiredPressure() && hasSlope();
+    return super.isValid() &&
+      hasDeltaPressureSupport() &&
+      hasFractionInspiredOxygen() &&
+      hasPositiveEndExpiredPressure();
   }
 
   public boolean hasDeltaPressureSupport()
   {
     return deltaPressureSupport == null ? false : deltaPressureSupport.isValid();
   }
-
   public SEScalarPressure getDeltaPressureSupport()
   {
     if (deltaPressureSupport == null)
@@ -102,11 +157,41 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
     return deltaPressureSupport;
   }
 
+  public boolean hasExpirationCycleFlow()
+  {
+    return expirationCycleFlow == null ? false : expirationCycleFlow.isValid();
+  }
+  public SEScalarVolumePerTime getExpirationCycleFlow()
+  {
+    if (expirationCycleFlow == null)
+      expirationCycleFlow = new SEScalarVolumePerTime();
+    return expirationCycleFlow;
+  }
+
+  public boolean hasExpirationCyclePressure()
+  {
+    return expirationCyclePressure == null ? false : expirationCyclePressure.isValid();
+  }
+  public SEScalarPressure getExpirationCyclePressure()
+  {
+    if (expirationCyclePressure == null)
+      expirationCyclePressure = new SEScalarPressure();
+    return expirationCyclePressure;
+  }
+
+  public eDriverWaveform getExpirationWaveform()
+  {
+    return expirationWaveform;
+  }
+  public void setExpirationWaveform(eDriverWaveform w)
+  {
+    expirationWaveform = w;
+  }
+
   public boolean hasFractionInspiredOxygen()
   {
     return fractionInspiredOxygen == null ? false : fractionInspiredOxygen.isValid();
   }
-
   public SEScalar0To1 getFractionInspiredOxygen()
   {
     if (fractionInspiredOxygen == null)
@@ -114,11 +199,41 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
     return fractionInspiredOxygen;
   }
 
+  public boolean hasInspirationPatientTriggerFlow()
+  {
+    return inspirationPatientTriggerFlow == null ? false : inspirationPatientTriggerFlow.isValid();
+  }
+  public SEScalarVolumePerTime getInspirationPatientTriggerFlow()
+  {
+    if (inspirationPatientTriggerFlow == null)
+    inspirationPatientTriggerFlow = new SEScalarVolumePerTime();
+    return inspirationPatientTriggerFlow;
+  }
+
+  public boolean hasInspirationPatientTriggerPressure()
+  {
+    return inspirationPatientTriggerPressure == null ? false : inspirationPatientTriggerPressure.isValid();
+  }
+  public SEScalarPressure getInspirationPatientTriggerPressure()
+  {
+    if (inspirationPatientTriggerPressure == null)
+      inspirationPatientTriggerPressure = new SEScalarPressure();
+    return inspirationPatientTriggerPressure;
+  }
+
+  public eDriverWaveform getInspirationWaveform()
+  {
+    return inspirationWaveform;
+  }
+  public void setInspirationWaveform(eDriverWaveform w)
+  {
+    inspirationWaveform = w;
+  }
+
   public boolean hasPositiveEndExpiredPressure()
   {
     return positiveEndExpiredPressure == null ? false : positiveEndExpiredPressure.isValid();
   }
-
   public SEScalarPressure getPositiveEndExpiredPressure()
   {
     if (positiveEndExpiredPressure == null)
@@ -130,7 +245,6 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
   {
     return slope == null ? false : slope.isValid();
   }
-
   public SEScalarTime getSlope()
   {
     if (slope == null)
@@ -143,8 +257,18 @@ public class SEMechanicalVentilatorContinuousPositiveAirwayPressure extends SEMe
     String str = "Mechanical Ventilator Volume Control";
     str += "\n\tDeltaPressureSupport: "
         + (hasDeltaPressureSupport() ? getDeltaPressureSupport().toString() : "Not Provided");
+    str += "\n\tExpirationCycleFlow: "
+        + (hasExpirationCycleFlow() ? getExpirationCycleFlow().toString() : "Not Provided");
+    str += "\n\tExpirationCyclePressure: "
+        + (hasExpirationCyclePressure() ? getExpirationCyclePressure().toString() : "Not Provided");
+    str += "\n\tExpirationWaveform: " + getExpirationWaveform();
     str += "\n\tFractionInspiredOxygen: "
         + (hasFractionInspiredOxygen() ? getFractionInspiredOxygen().toString() : "Not Provided");
+    str += "\n\tInspirationPatientTriggerFlow: "
+        + (hasInspirationPatientTriggerFlow() ? getInspirationPatientTriggerFlow().toString() : "Not Provided");
+    str += "\n\tInspirationPatientTriggerPressure: "
+        + (hasInspirationPatientTriggerPressure() ? getInspirationPatientTriggerPressure().toString() : "Not Provided");
+    str += "\n\tInspirationWaveform: " + getInspirationWaveform();
     str += "\n\tPositiveEndExpiredPressure: "
         + (hasPositiveEndExpiredPressure() ? getPositiveEndExpiredPressure().toString() : "Not Provided");
     str += "\n\tSlope: " + (hasSlope() ? getSlope().toString() : "Not Provided");

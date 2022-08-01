@@ -138,8 +138,8 @@
         "Precision": 4
       },
       "Category": "Physiology",
-      "PropertyName": "EndTidalCarbonDioxideFraction",
-      "Unit": "unitless"
+      "PropertyName": "EndTidalCarbonDioxidePressure",
+      "Unit": "mmHg"
     }, {
       "DecimalFormat": {
         "Precision": 2
@@ -385,6 +385,13 @@
       "CompartmentName": "BrainVasculature",
       "PropertyName": "OutFlow",
       "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "PulseOximetry",
+      "Unit": "unitless"
     }]
   },
  "AnyAction": [{
@@ -406,7 +413,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 120.0,
+          "Value": 420.0,
           "Unit": "s"
         }
       }
@@ -421,7 +428,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
+          "Value": 300.0,
           "Unit": "s"
         }
       }

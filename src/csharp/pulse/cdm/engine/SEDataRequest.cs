@@ -5,9 +5,9 @@ namespace Pulse.CDM
 {
   public enum eDataRequest_Category : int
   {
-    Patient = 0, Physiology, Environment, Action, GasCompartment,
-    LiquidCompartment, ThermalCompartment, TissueCompartment, Substance,
-    AnesthesiaMachine, BagValveMask, ECG, Inhaler, MechanicalVentilator
+    Patient = 0, Physiology, Environment, Action,
+    GasCompartment, LiquidCompartment, ThermalCompartment, TissueCompartment,
+    Substance, AnesthesiaMachine, BagValveMask, ECG, ECMO, Inhaler, MechanicalVentilator
   };
 
   public class SEDataRequest

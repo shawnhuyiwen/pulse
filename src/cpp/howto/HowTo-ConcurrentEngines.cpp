@@ -38,33 +38,10 @@ std::mutex RunScenarioTask::ms_constructionMutex;
 //--------------------------------------------------------------------------------------------------
 void RunScenarioTask::Run()
 {
-  // Set up the log file
-  std::string logFile = m_scenarioFile;
-  logFile = Replace(logFile, "verification", "");
-  logFile = Replace(logFile, ".json", ".log");
-
-  // Set up the verification output file
-  std::string dataFile = m_scenarioFile;
-  dataFile = Replace(dataFile, "verification", "");
-  dataFile = Replace(dataFile, ".json", "Results.csv");
-
-  // Delete any results file that may be there
-  remove(dataFile.c_str());
-
-  // Aquire the constrution mutex before we create the PulseEngine.  Due to some third-party library
-  // initialization constructs not being thread safe, we must not construct PulseEngine simultaneously
-  // from multiple threads.
-  ms_constructionMutex.lock();
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile(logFile);
-  ms_constructionMutex.unlock();
-
   // Run the scenario
-  SEScenarioExec execOpts;
-  execOpts.SetLogFilename(logFile);
-  execOpts.SetDataRequestCSVFilename(dataFile);
+  PulseScenarioExec execOpts;
   execOpts.SetScenarioFilename(m_scenarioFile);
-  PulseScenarioExec::Execute(*pe, execOpts);
+  execOpts.Execute();
 }
 
 //--------------------------------------------------------------------------------------------------

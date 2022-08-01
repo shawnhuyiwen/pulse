@@ -165,7 +165,6 @@ namespace pulse
     // Respiratory Driver
     double m_MaxDriverPressure_cmH2O;
     // Configuration parameters
-    double m_CardiacArrestEffect;
     double m_CentralControlGainConstant;
     double m_DefaultOpenResistance_cmH2O_s_Per_L;
     double m_DefaultClosedResistance_cmH2O_s_Per_L;

@@ -82,7 +82,8 @@ namespace pulse
     void ProcessActions();
     //Action methods
     /**/void CPR();
-    /****/void CalculateAndSetCPRcompressionForce();
+    /****/double ShapeCPRForce(double compressionForce_N);
+    /****/void   ApplyCPRForce(double compressionForce_N);
     /**/void Arrhythmia();
     /**/void Hemorrhage();
     /**/void InternalHemorrhagePressureApplication();
@@ -135,9 +136,10 @@ namespace pulse
     double m_InitialArrhythmiaVascularComplianceModifier;
     double m_TargetArrhythmiaVascularComplianceModifier;
     //CPR
-    double m_CompressionTime_s;
-    double m_CompressionRatio;
+    double m_CompressionFrequencyCurrentTime_s;
+    double m_CompressionFrequencyDuration_s;
     double m_CompressionPeriod_s;
+    double m_CompressionPeriodCurrentTime_s;
     // Vitals and Averages
     double m_CardiacCycleDiastolicVolume_mL; // Maximum left heart volume for the current cardiac cycle
     double m_CardiacCycleAortaPressureLow_mmHg; // The current low for this cycle - Reset at the start of systole

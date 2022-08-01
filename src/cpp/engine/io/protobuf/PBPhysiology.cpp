@@ -87,9 +87,10 @@ namespace pulse
     dst.m_InitialArrhythmiaVascularComplianceModifier = src.initialarrhythmiavascularcompliancemodifier();
     dst.m_TargetArrhythmiaVascularComplianceModifier = src.targetarrhythmiavascularcompliancemodifier();
 
-    dst.m_CompressionTime_s = src.compressiontime_s();
-    dst.m_CompressionRatio = src.compressionratio();
+    dst.m_CompressionFrequencyCurrentTime_s = src.compressionfrequencycurrenttime_s();
+    dst.m_CompressionFrequencyDuration_s = src.compressionfrequencyduration_s();
     dst.m_CompressionPeriod_s = src.compressionperiod_s();
+    dst.m_CompressionPeriodCurrentTime_s = src.compressionperiodcurrenttime_s();
 
     dst.m_CardiacCycleDiastolicVolume_mL = src.cardiaccyclediastolicvolume_ml();
     dst.m_CardiacCycleAortaPressureLow_mmHg = src.cardiaccycleaortapressurelow_mmhg();
@@ -155,9 +156,10 @@ namespace pulse
     dst.set_initialarrhythmiavascularcompliancemodifier(src.m_InitialArrhythmiaVascularComplianceModifier);
     dst.set_targetarrhythmiavascularcompliancemodifier(src.m_TargetArrhythmiaVascularComplianceModifier);
 
-    dst.set_compressiontime_s(src.m_CompressionTime_s);
-    dst.set_compressionratio(src.m_CompressionRatio);
+    dst.set_compressionfrequencycurrenttime_s(src.m_CompressionFrequencyCurrentTime_s);
+    dst.set_compressionfrequencyduration_s(src.m_CompressionFrequencyDuration_s);
     dst.set_compressionperiod_s(src.m_CompressionPeriod_s);
+    dst.set_compressionperiodcurrenttime_s(src.m_CompressionPeriodCurrentTime_s);
 
     dst.set_cardiaccyclediastolicvolume_ml(src.m_CardiacCycleDiastolicVolume_mL);
     dst.set_cardiaccycleaortapressurelow_mmhg(src.m_CardiacCycleAortaPressureLow_mmHg);
@@ -405,7 +407,6 @@ namespace pulse
 
     dst.m_BreathingCycle = src.breathingcycle();
     dst.m_NotBreathing = src.notbreathing();
-    dst.m_CardiacArrestEffect = src.cardiacarresteffect();
 
     dst.m_TopBreathTotalVolume_L = src.topbreathtotalvolume_l();
     dst.m_TopBreathAlveoliVolume_L = src.topbreathalveolivolume_l();
@@ -471,7 +472,6 @@ namespace pulse
 
     dst.set_breathingcycle(src.m_BreathingCycle);
     dst.set_notbreathing(src.m_NotBreathing);
-    dst.set_cardiacarresteffect(src.m_CardiacArrestEffect);
 
     dst.set_topbreathtotalvolume_l(src.m_TopBreathTotalVolume_L);
     dst.set_topbreathalveolivolume_l(src.m_TopBreathAlveoliVolume_L);
@@ -535,6 +535,7 @@ namespace pulse
   void PBPhysiology::Serialize(const PULSE_BIND::TissueData& src, TissueModel& dst)
   {
     ::PBPhysiology::Serialize(src.common(), dst);
+    dst.m_CardiacArrestCarbonDioxideProductionFactor = src.cardiacarrestcarbondioxideproductionfactor();
     dst.m_RestingTissueGlucose_g = src.restingtissueglucose_g();
     dst.m_RestingBloodGlucose_mg_Per_mL = src.restingbloodglucose_mg_per_ml();
     dst.m_RestingBloodLipid_mg_Per_mL = src.restingbloodlipid_mg_per_ml();
@@ -550,6 +551,7 @@ namespace pulse
   void PBPhysiology::Serialize(const TissueModel& src, PULSE_BIND::TissueData& dst)
   {
     ::PBPhysiology::Serialize(src, *dst.mutable_common());
+    dst.set_cardiacarrestcarbondioxideproductionfactor(src.m_CardiacArrestCarbonDioxideProductionFactor);
     dst.set_restingtissueglucose_g(src.m_RestingTissueGlucose_g);
     dst.set_restingbloodglucose_mg_per_ml(src.m_RestingBloodGlucose_mg_Per_mL);
     dst.set_restingbloodlipid_mg_per_ml(src.m_RestingBloodLipid_mg_Per_mL);

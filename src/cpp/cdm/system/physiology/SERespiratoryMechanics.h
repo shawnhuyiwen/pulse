@@ -14,27 +14,6 @@ public:
 
   virtual void Clear();// Deletes all members
 
-  bool SerializeToString(std::string& output, eSerializationFormat m) const;
-  bool SerializeToFile(const std::string& filename) const;
-  bool SerializeFromString(const std::string& src, eSerializationFormat m);
-  bool SerializeFromFile(const std::string& filename);
-
-  virtual void Merge(const SERespiratoryMechanics& from);
-  virtual void ProcessConfiguration(SERespiratoryMechanicsConfiguration& config);
-
-
-  virtual bool HasActive() const;
-  virtual eSwitch GetActive() const;
-  virtual void SetActive(eSwitch s);
-
-  bool HasLeftComplianceCurve() const;
-  SECurve& GetLeftComplianceCurve();
-  const SECurve* GetLeftComplianceCurve() const;
-
-  bool HasRightComplianceCurve() const;
-  SECurve& GetRightComplianceCurve();
-  const SECurve* GetRightComplianceCurve() const;
-
   /** @name GetScalar
   *   @brief - A reflextion type call that will return the Scalar associated
   *            with the string. ex. GetScalar("Hematocrit") will return the
@@ -44,6 +23,29 @@ public:
   *              a mapping data structure that will help access what you need
   */
   virtual const SEScalar* GetScalar(const std::string& name);
+
+  bool SerializeToString(std::string& output, eSerializationFormat m) const;
+  bool SerializeToFile(const std::string& filename) const;
+  bool SerializeFromString(const std::string& src, eSerializationFormat m);
+  bool SerializeFromFile(const std::string& filename);
+
+  virtual void Merge(const SERespiratoryMechanics& from);
+  virtual void ProcessConfiguration(SERespiratoryMechanicsConfiguration& config);
+
+  virtual bool HasActive() const;
+  virtual eSwitch GetActive() const;
+  virtual void SetActive(eSwitch s);
+
+  virtual eDefaultType GetDefaultType() const;
+  virtual void SetDefaultType(eDefaultType m);
+
+  bool HasLeftComplianceCurve() const;
+  SECurve& GetLeftComplianceCurve();
+  const SECurve* GetLeftComplianceCurve() const;
+
+  bool HasRightComplianceCurve() const;
+  SECurve& GetRightComplianceCurve();
+  const SECurve* GetRightComplianceCurve() const;
 
   virtual bool HasLeftExpiratoryResistance() const;
   virtual SEScalarPressureTimePerVolume& GetLeftExpiratoryResistance();
@@ -114,6 +116,7 @@ public:
 
 protected:
   eSwitch                        m_Active;
+  eDefaultType                   m_DefaultType;
 
   SECurve*                       m_LeftComplianceCurve;
   SECurve*                       m_RightComplianceCurve;

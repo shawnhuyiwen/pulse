@@ -36,6 +36,11 @@ else()
   #set(Protobuf_md5 "5cda6b2a21148df72ca1832005e89b13" ) - 3.17.1
 endif()
 
+set(BUILD_PROTOC_BINARIES ON)
+if(${PROJECT_NAME}_LIBS_ONLY)
+  set(BUILD_PROTOC_BINARIES OFF)
+endif()
+
 include(AddExternalProject)
 define_external_dirs_ex(protobuf)
 add_external_project_ex( protobuf
@@ -50,6 +55,7 @@ add_external_project_ex( protobuf
     -Dprotobuf_BUILD_SHARED_LIBS:BOOL=OFF
     -Dprotobuf_MSVC_STATIC_RUNTIME:BOOL=OFF#Don't change MSVC runtime settings (/MD or /MT)
     -Dprotobuf_WITH_ZLIB:BOOL=OFF
+    -Dprotobuf_BUILD_PROTOC_BINARIES:BOOL=${BUILD_PROTOC_BINARIES}
   ${PROTOBUF_MULTI_BUILD}
   ${PROTOBUF_MULTI_INSTALL}
   RELATIVE_INCLUDE_PATH "include"

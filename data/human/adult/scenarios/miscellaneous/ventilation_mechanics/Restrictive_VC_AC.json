@@ -425,6 +425,7 @@
        "Value": 0.21
       }
      },
+     "InspirationWaveform": "Square",
      "InspiratoryPeriod": {
       "ScalarTime": {
        "Value": 1.1,

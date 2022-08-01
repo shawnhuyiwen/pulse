@@ -1,3 +1,6 @@
+if(${PROJECT_NAME}_LIBS_ONLY)
+  return()
+endif()
 
 add_executable_ex(HowToDriver
   EngineHowTo.cpp
@@ -11,7 +14,6 @@ add_executable_ex(HowToDriver
   HowTo-BolusDrug.cpp
   HowTo-BrainInjury.cpp
   HowTo-CombatMultitrauma.cpp
-  HowTo-ConcurrentEngines.cpp
   HowTo-ConsumeNutrients.cpp
   HowTo-COPD.cpp
   HowTo-COVID19Ventilated.cpp

@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.patient_actions import SEArrhythmia, eHeartRhythm, \
-                                      SEChestCompressionForceScale, SEChestCompressionForce
+                                      SEChestCompressionAutomated, SEChestCompressionInstantaneous
 from pulse.cdm.scalars import ForceUnit, TimeUnit
 from pulse.engine.PulseEngine import PulseEngine
 
@@ -32,7 +32,7 @@ def HowTo_Arrhythmia():
 
     # If you are using a sensor, you can directly pass over a force
     # You should pass the sensor readings over at a decent rate continuously
-    cpr_force = SEChestCompressionForce()
+    cpr_force = SEChestCompressionInstantaneous()
     cpr_force.set_comment("Press and hold the chest")
     cpr_force.get_force().set_value(400, ForceUnit.N)
     pulse.process_action(cpr_force)
@@ -46,7 +46,7 @@ def HowTo_Arrhythmia():
     pulse.process_action(cpr_force)
 
     # If you are in software, you can pass in a scaled force value for a time period
-    cpr_scale= SEChestCompressionForceScale()
+    cpr_scale= SEChestCompressionInstantaneous()
     cpr_scale.set_comment("Press and hold the chest")
     cpr_scale.get_force_scale().set_value(0.8)# Pretty hard!
     cpr_scale.get_force_period().set_value(1, TimeUnit.s)

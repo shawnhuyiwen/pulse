@@ -89,16 +89,22 @@ public abstract class SEPatientAction extends SEAction
       SEBronchoconstriction.load(c.getBronchoconstriction(), dst);
       return dst;
     }
-    case CHESTCOMPRESSIONFORCE:
+    case CHESTCOMPRESSION:
     {
-      SEChestCompressionForce dst = new SEChestCompressionForce();
-      SEChestCompressionForce.load(c.getChestCompressionForce(), dst);
+      SEChestCompression dst = new SEChestCompression();
+      SEChestCompression.load(c.getChestCompression(), dst);
       return dst;
     }
-    case CHESTCOMPRESSIONFORCESCALE:
+    case CHESTCOMPRESSIONAUTOMATED:
     {
-      SEChestCompressionForceScale dst = new SEChestCompressionForceScale();
-      SEChestCompressionForceScale.load(c.getChestCompressionForceScale(), dst);
+      SEChestCompressionAutomated dst = new SEChestCompressionAutomated();
+      SEChestCompressionAutomated.load(c.getChestCompressionAutomated(), dst);
+      return dst;
+    }
+    case CHESTCOMPRESSIONINSTANTANEOUS:
+    {
+      SEChestCompressionInstantaneous dst = new SEChestCompressionInstantaneous();
+      SEChestCompressionInstantaneous.load(c.getChestCompressionInstantaneous(), dst);
       return dst;
     }
     case CHESTOCCLUSIVEDRESSING:
@@ -284,14 +290,19 @@ public abstract class SEPatientAction extends SEAction
       dst.setBronchoconstriction(SEBronchoconstriction.unload((SEBronchoconstriction)c));
       return dst.build();
     }
-    if(c instanceof SEChestCompressionForce)
+    if(c instanceof SEChestCompression)
     {
-      dst.setChestCompressionForce(SEChestCompressionForce.unload((SEChestCompressionForce)c));
+      dst.setChestCompression(SEChestCompression.unload((SEChestCompression)c));
       return dst.build();
     }
-    if(c instanceof SEChestCompressionForceScale)
+    if(c instanceof SEChestCompressionAutomated)
     {
-      dst.setChestCompressionForceScale(SEChestCompressionForceScale.unload((SEChestCompressionForceScale)c));
+      dst.setChestCompressionAutomated(SEChestCompressionAutomated.unload((SEChestCompressionAutomated)c));
+      return dst.build();
+    }
+    if(c instanceof SEChestCompressionInstantaneous)
+    {
+      dst.setChestCompressionInstantaneous(SEChestCompressionInstantaneous.unload((SEChestCompressionInstantaneous)c));
       return dst.build();
     }
     if(c instanceof SEChestOcclusiveDressing)

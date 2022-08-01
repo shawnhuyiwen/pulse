@@ -45,25 +45,10 @@ public:
 //--------------------------------------------------------------------------------------------------
 void HowToRunScenario()
 {
-  // Create an engine object
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-
-  // Let's do something everytime the engine advances
-  pe->SetAdvanceHandler(new MyCustomExec());
-  
-  // This PulseEngine logger is based on log4cpp (which is based on log4j)
-  // PulseEngine logs to several distinct, ordered
-  // category levels: DEBUG, INFO, WARN, ERROR, FATAL
-  // These categories are orders, if your level is set to DEBUG you will recieve ALL messages.
-  // If set to INFO, you will not recieve DEBUG, but everything else
-  // If set to WARN, you will not recieve DEBUG and INFO, but everything else
-  // You can specify which level you would like the engine to log
-  pe->GetLogger()->SetLogLevel(Logger::Level::Info);
-
-  // You can forward logs as demonstrated in HowTo-EngineUse
+  Logger logger("./test_results/howto/HowTo-RunScenario.cpp/HowToRunScenario.log");
 
   // Let's make a scenario (you could just point the executor to a scenario json file on disk as well)
-  SEScenario sce(pe->GetLogger());
+  SEScenario sce(&logger);
   sce.SetName("HowToRunScenario");
   sce.SetDescription("Simple Scenario to demonstraight building a scenario by the CDM API");
   sce.GetPatientConfiguration().SetPatientFile("StandardMale.json");
@@ -84,11 +69,9 @@ void HowToRunScenario()
   sce.AddAction(adv);
 
   std::string json;
-  SEScenarioExec execOpts;
+  PulseScenarioExec execOpts(&logger);
   sce.SerializeToString(json, eSerializationFormat::JSON);
   std::cout << json << std::endl;
-  execOpts.SetLogFilename("./test_results/HowTo-RunScenarioResults.log");
-  execOpts.SetDataRequestCSVFilename("./test_results/HowTo-RunScenarioResults.csv");
   execOpts.SetScenarioContent(json);
-  PulseScenarioExec::Execute(*pe, execOpts);
+  execOpts.Execute();
 }

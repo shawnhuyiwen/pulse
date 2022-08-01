@@ -70,7 +70,7 @@ public class HowTo_RespiratoryMechanics
     dataRequests.createPhysiologyDataRequest("InspiratoryPulmonaryResistance", PressureTimePerVolumeUnit.cmH2O_s_Per_L);
     dataRequests.createPhysiologyDataRequest("PulmonaryCompliance", VolumePerPressureUnit.L_Per_cmH2O);
     dataRequests.createPhysiologyDataRequest("TotalPulmonaryVentilation", VolumePerTimeUnit.L_Per_min);
-    dataRequests.setResultsFilename("./test_results/howto/HowTo_RespiratoryMechanics.cpp.csv");
+    dataRequests.setResultsFilename("./test_results/howto/HowTo_RespiratoryMechanics.java.csv");
     
     pulse.serializeFromFile("./states/StandardMale@0s.json", dataRequests);
 
@@ -97,7 +97,7 @@ public class HowTo_RespiratoryMechanics
     double BronchiResistanceFraction = 0.3;
     double AlveoliDuctResistanceFraction = 0.2;
 
-    double upperResistance = resistance_cmH2O_s_Per_L - (BronchiResistanceFraction * resistance_cmH2O_s_Per_L + AlveoliDuctResistanceFraction * resistance_cmH2O_s_Per_L) / 2;
+    double upperResistance = resistance_cmH2O_s_Per_L - (BronchiResistanceFraction * resistance_cmH2O_s_Per_L + AlveoliDuctResistanceFraction * resistance_cmH2O_s_Per_L) / 2.0;
     double bronchiResistance = 2 * (resistance_cmH2O_s_Per_L - upperResistance) - AlveoliDuctResistanceFraction * resistance_cmH2O_s_Per_L;
     double alveoliDuctResistance = 2 * (resistance_cmH2O_s_Per_L - upperResistance) - bronchiResistance;
     double sideResistance = bronchiResistance + alveoliDuctResistance;

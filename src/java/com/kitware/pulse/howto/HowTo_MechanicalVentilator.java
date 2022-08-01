@@ -4,9 +4,9 @@ package com.kitware.pulse.howto;
 
 import java.util.List;
 
+import com.kitware.pulse.cdm.bind.Enums.eDriverWaveform;
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.MechanicalVentilatorActions.*;
-import com.kitware.pulse.cdm.bind.MechanicalVentilator.MechanicalVentilatorSettingsData.eDriverWaveform;
 import com.kitware.pulse.cdm.datarequests.SEDataRequestManager;
 import com.kitware.pulse.cdm.patient.actions.SEDyspnea;
 import com.kitware.pulse.cdm.properties.CommonUnits.*;

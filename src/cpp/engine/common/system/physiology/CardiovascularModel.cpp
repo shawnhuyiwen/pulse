@@ -17,8 +17,9 @@
 #include "cdm/engine/SEPatientActionCollection.h"
 #include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
-#include "cdm/patient/actions/SEChestCompressionForce.h"
-#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestCompression.h"
+#include "cdm/patient/actions/SEChestCompressionAutomated.h"
+#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
 #include "cdm/patient/actions/SEPericardialEffusion.h"
 // Dependent Systems
@@ -225,9 +226,10 @@ namespace pulse
       m_InitialArrhythmiaHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
 
     // CPR
-    m_CompressionTime_s = 0.0;
-    m_CompressionRatio = 0.0;
-    m_CompressionPeriod_s = 0.0;
+    m_CompressionFrequencyCurrentTime_s = 0;
+    m_CompressionFrequencyDuration_s = 0;
+    m_CompressionPeriod_s = 0;
+    m_CompressionPeriodCurrentTime_s = 0;
 
     //Initialize system data based on patient file inputs
     GetHeartRate().Set(m_data.GetCurrentPatient().GetHeartRateBaseline());
@@ -698,6 +700,8 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CalculateVitalSigns()
   {
+    // Tell the cmpt mgr to sample any cmpts by cardiac cycle
+    m_data.GetCompartments().SampleByCardiacCyle(m_data.GetEvents().IsEventActive(eEvent::StartOfCardiacCycle));
     // Grab data from the circuit in order to calculate a running mean
     const double AortaNodePressure_mmHg = m_Aorta->GetPressure(PressureUnit::mmHg);
     const double AortaNodeCO2PartialPressure_mmHg = m_AortaCO2 == nullptr ? 0 : m_AortaCO2->GetPartialPressure(PressureUnit::mmHg); // This is here so we can Tune circuit w/o substances
@@ -1504,119 +1508,160 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void CardiovascularModel::CPR()
   {
-    // If a compression has started, finish it.
-    if (m_CompressionRatio > 0.0)
+    auto& actions = m_data.GetActions().GetPatientActions();
+    if (!actions.HasActiveCPRAction())
+      return;// Nothing to do
+
+    double compressionForce_N = 0;
+#define compressionForceMax_N 500.0 // The maximum allowed compression force (corresponds to 1.0 when force scale is used)
+
+    if (actions.HasChestCompressionInstantaneous())
     {
-      if (m_data.GetActions().GetPatientActions().HasChestCompressionForceScale())
+      m_CompressionFrequencyCurrentTime_s = 0;
+      m_CompressionFrequencyDuration_s = 0;
+      m_CompressionPeriod_s = 0;
+      m_CompressionPeriodCurrentTime_s = 0;
+
+      compressionForce_N = 0;
+      if (actions.GetChestCompressionInstantaneous().HasForce())
+        compressionForce_N = actions.GetChestCompressionInstantaneous().GetForce(ForceUnit::N);
+      else if (actions.GetChestCompressionInstantaneous().HasForceScale())
+        compressionForce_N = actions.GetChestCompressionInstantaneous().GetForceScale().GetValue() * compressionForceMax_N;
+      if (compressionForce_N == 0)
       {
-        Warning("Attempt to start a new compression during a previous compression. Allow more time between compressions or shorten the compression period.");
-        m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
+        actions.RemoveChestCompressionInstantaneous();
         return;
       }
 
-      if (m_data.GetActions().GetPatientActions().HasChestCompressionForce())
+      ApplyCPRForce(compressionForce_N);
+      return;
+    }
+
+    if (actions.HasChestCompression())
+    {
+      m_CompressionFrequencyCurrentTime_s = 0;
+      m_CompressionFrequencyDuration_s = 0;
+
+      m_CompressionPeriod_s = actions.GetChestCompression().GetCompressionPeriod(TimeUnit::s);
+
+      if (m_CompressionPeriodCurrentTime_s >= m_CompressionPeriod_s)
       {
-        Warning("Attempt to switch to explicit force from force scale during CPR compression. CPR actions will be ignored until current compression ends.");
-        m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionPeriod_s = 0;
+        actions.RemoveChestCompression();
         return;
       }
 
-      CalculateAndSetCPRcompressionForce();
-      return;
-    }
-    // If there is no chest compression action and we are not currently compressing, return to ProcessActions
-    if (!m_data.GetActions().GetPatientActions().HasChestCompression())
-      return;
-
-    // Call for chest compression with an effective heart rhythm
-    // In the future we may allow compressions on a beating heart, but that will require extensive testing
-    // to evaluate the hemodynamic stability.
-    if (!m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
-    {
-      Warning("CPR attempted on beating heart. Action ignored.");
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
-      return;
-    }
-
-    // Have a new call for a chest compression
-    if (m_data.GetActions().GetPatientActions().HasChestCompressionForceScale())
-    {
-      m_CompressionRatio = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().GetForceScale().GetValue();
-      /// \error Warning: CPR compression ratio must be a positive value between 0 and 1 inclusive.
-      if (m_CompressionRatio < 0.0)
-        Warning("CPR compression ratio must be a positive value between 0 and 1 inclusive.");
-      if (m_CompressionRatio > 1.0)
-        Warning("CPR compression ratio must be a positive value between 0 and 1 inclusive.");
-
-      BLIM(m_CompressionRatio, 0., 1.);
-      // If no period was assigned by the user, then use the default - 0.4s
-      if (m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().HasForcePeriod())
+      compressionForce_N = 0;
+      if (actions.GetChestCompression().HasForce())
+        compressionForce_N = actions.GetChestCompression().GetForce(ForceUnit::N);
+      else if (actions.GetChestCompression().HasForceScale())
+        compressionForce_N = actions.GetChestCompression().GetForceScale().GetValue() * compressionForceMax_N;
+      if (compressionForce_N == 0)
       {
-        m_CompressionPeriod_s = m_data.GetActions().GetPatientActions().GetChestCompressionForceScale().GetForcePeriod().GetValue(TimeUnit::s);
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionPeriod_s = 0;
+        actions.RemoveChestCompression();
+        return;
+      }
+
+      compressionForce_N = ShapeCPRForce(compressionForce_N);
+
+      ApplyCPRForce(compressionForce_N);
+
+      m_CompressionPeriodCurrentTime_s += m_data.GetTimeStep_s();
+
+      return;
+    }
+
+    if (actions.HasChestCompressionAutomated())
+    {
+      double compressionFrequency_Per_s = 0;
+      if(actions.GetChestCompressionAutomated().HasCompressionFrequency())
+        compressionFrequency_Per_s = actions.GetChestCompressionAutomated().GetCompressionFrequency(FrequencyUnit::Per_s);
+      if (compressionFrequency_Per_s == 0)
+      {
+        m_CompressionFrequencyCurrentTime_s = 0;
+        m_CompressionFrequencyDuration_s = 0;
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionPeriod_s = 0;
+        actions.RemoveChestCompressionAutomated();
+        return;
+      }
+      m_CompressionFrequencyDuration_s = 1 / compressionFrequency_Per_s;
+
+      m_CompressionPeriod_s = m_CompressionFrequencyDuration_s;
+      if (actions.GetChestCompressionAutomated().HasAppliedForceFraction())
+        m_CompressionPeriod_s *= actions.GetChestCompressionAutomated().GetAppliedForceFraction().GetValue();
+      else
+        m_CompressionPeriod_s *= 0.5; // Half the period should apply the pressure by default
+
+      compressionForce_N = 0.0;
+      if (actions.GetChestCompressionAutomated().HasForce())
+        compressionForce_N = actions.GetChestCompressionAutomated().GetForce(ForceUnit::N);
+      else if (actions.GetChestCompressionAutomated().HasForceScale())
+        compressionForce_N = actions.GetChestCompressionAutomated().GetForceScale().GetValue() * compressionForceMax_N;
+      else
+      {
+        m_CompressionFrequencyCurrentTime_s = 0;
+        m_CompressionFrequencyDuration_s = 0;
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionPeriod_s = 0;
+        actions.RemoveChestCompressionAutomated();
+        return;
+      }
+
+      if (compressionForce_N == 0)
+      {
+        m_CompressionPeriodCurrentTime_s = m_CompressionPeriod_s;
       }
       else
       {
-        m_CompressionPeriod_s = 0.4;
+        compressionForce_N = ShapeCPRForce(compressionForce_N);
+
+        ApplyCPRForce(compressionForce_N);
+
+        m_CompressionPeriodCurrentTime_s += m_data.GetTimeStep_s();
       }
 
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForceScale();
-    }
-
-    CalculateAndSetCPRcompressionForce();
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Calculates and sets the pressure on the heart pressure sources when a CPR compression is applied.
-  ///
-  /// \details
-  /// Calculates and sets the pressure on the heart pressure sources when a CPR compression is applied.
-  //--------------------------------------------------------------------------------------------------
-  void CardiovascularModel::CalculateAndSetCPRcompressionForce()
-  {
-    double compressionForce_N = 0.0;
-    double compressionForceMax_N = 500.0;   // The maximum allowed compression force (corresponds to 1.0 when force scale is used)
-    double compressionForceMin_N = 0.0;     // The minimum allowed compression force
-
-    if (m_CompressionRatio > 0.0) //Force scale
-    {
-      // Bell curve shaping parameters
-      double c = -10; // Defines the start and stop of the force bell curve given the period
-      double a = 4 * c / (m_CompressionPeriod_s * m_CompressionPeriod_s);
-      double b = -a * m_CompressionPeriod_s;
-
-      compressionForce_N = pow(2, a * m_CompressionTime_s * m_CompressionTime_s + b * m_CompressionTime_s + c) * m_CompressionRatio * compressionForceMax_N;
-
-      // 2 second max compression time is arbitrary. I just put it in to make sure it doesn't get stuck if
-      // we accidentally make a really wide bell curve. Note that the bell curve parameters are currently hardcoded above.
-      // If compression force has decayed to less than some amount or the time is above some amount, end the compression 
-      if (m_CompressionTime_s > m_CompressionPeriod_s)
+      m_CompressionFrequencyCurrentTime_s += m_data.GetTimeStep_s();
+      if (m_CompressionFrequencyCurrentTime_s >= m_CompressionFrequencyDuration_s)
       {
-        compressionForce_N = 0.0;
-        m_CompressionTime_s = 0.0;
-        m_CompressionRatio = 0.0;
-        m_CompressionPeriod_s = 0.0;
+        // Start a new cycle
+        m_CompressionPeriodCurrentTime_s = 0;
+        m_CompressionFrequencyCurrentTime_s = 0;
+        Info("Starting new automated CPR compression");
       }
     }
-    else //Explicit force
-    {
-      compressionForce_N = m_data.GetActions().GetPatientActions().GetChestCompressionForce().GetForce().GetValue(ForceUnit::N);
-    }
 
-    m_CompressionTime_s += m_data.GetTimeStep_s();
+  }
+  double CardiovascularModel::ShapeCPRForce(double compressionForce_N)
+  {
+    // Bell curve shaping parameters
+    double c = -10; // Defines the start and stop of the force bell curve given the period
+    double a = 4 * c / (m_CompressionPeriod_s * m_CompressionPeriod_s);
+    double b = -a * m_CompressionPeriod_s;
 
+    double shapedCompressionForce_N = pow(2, a * m_CompressionPeriodCurrentTime_s * m_CompressionPeriodCurrentTime_s + b * m_CompressionPeriodCurrentTime_s + c);
+
+    return shapedCompressionForce_N * compressionForce_N;
+  }
+  void CardiovascularModel::ApplyCPRForce(double compressionForce_N)
+  {
     if (compressionForce_N > compressionForceMax_N)
     {
       compressionForce_N = compressionForceMax_N;
-      Warning("The compression force exceeded the maximum compression force. Compression force limited to 500N.");
+      Warning("The compression force exceeded the maximum compression force. Compression force limited to "+std::to_string(compressionForceMax_N)+"N.");
     }
 
-    if (compressionForce_N < compressionForceMin_N)
+    if (compressionForce_N < 0)
     {
-      compressionForce_N = compressionForceMin_N;
+      compressionForce_N = 0;
       Warning("The compression force was less than the required minimum. Compression force limited to 0N.");
     }
+
+    if (compressionForce_N == 0)
+      return;
 
     double leftHeartForceToPressureFactor = 0.125; // Tuning parameter to translate compression force in N to left heart pressure in mmHg
     double rightHeartForceToPressureFactor = 0.125; // Tuning parameter to translate compression force in N to right heart pressure in mmHg
@@ -1625,12 +1670,7 @@ namespace pulse
 
     m_pRightHeartToGnd->GetNextPressureSource().SetValue(nextRightPressure_mmHg, PressureUnit::mmHg);
     m_pLeftHeartToGnd->GetNextPressureSource().SetValue(nextLeftPressure_mmHg, PressureUnit::mmHg);
-
-    // The action is removed when the force is set to 0.
-    if (compressionForce_N == 0)
-      m_data.GetActions().GetPatientActions().RemoveChestCompressionForce();
   }
-
 
   void CardiovascularModel::SetHeartRhythm(eHeartRhythm r)
   {
@@ -1688,7 +1728,7 @@ namespace pulse
 
           m_InitialArrhythmiaHeartComplianceModifier =
             m_ArrhythmiaHeartComplianceModifier =
-          m_TargetArrhythmiaHeartComplianceModifier = 1;// Does not matter, we hard code the heart compliance during cardiac arrest
+            m_TargetArrhythmiaHeartComplianceModifier = 1;// Does not matter, we hard code the heart compliance during cardiac arrest
 
           m_TargetArrhythmiaHeartRateBaseline_Per_min = 35;
           m_InitialArrhythmiaHeartRateBaseline_Per_min = m_ArrhythmiaHeartRateBaseline_Per_min = GetHeartRate(FrequencyUnit::Per_min);
@@ -1709,7 +1749,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
@@ -1760,7 +1800,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
@@ -1811,7 +1851,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
@@ -1862,7 +1902,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
@@ -1913,7 +1953,7 @@ namespace pulse
           if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
           {
             m_CurrentArrhythmiaTransitionTime_s = 0;
-            m_TotalArrhythmiaTransitionTime_s = 150;
+            m_TotalArrhythmiaTransitionTime_s = 60;
 
             m_ArrhythmiaHeartComplianceModifier =
               m_InitialArrhythmiaHeartComplianceModifier = 2.0;
@@ -1978,7 +2018,7 @@ namespace pulse
           m_TotalArrhythmiaTransitionTime_s = 0;
           m_CurrentArrhythmiaTransitionTime_s = 0;
 
-          // Set a new baseline if we did not have any feedback on(comeing out of cardiac arrest)
+          // Set a new baseline if we did not have any feedback on(coming out of cardiac arrest)
           if(m_data.GetNervous().GetBaroreceptorFeedback()==eSwitch::Off && m_EnableFeedbackAfterArrhythmiaTrasition==eSwitch::On)
             m_data.GetCurrentPatient().GetMeanArterialPressureBaseline().Set(GetMeanArterialPressure());
 
@@ -2422,7 +2462,7 @@ namespace pulse
                       (shuntEffect_mmHg - m_MAPCollapse_mmHg);
     //modifier = MAX(0.02, modifier);
     //modifier = MIN(modifier, 1.0);
-    double coverageModifier = GeneralMath::ExponentialGrowthFunction(10, 0.5, 1.0, modifier);
+    double coverageModifier = GeneralMath::ExponentialGrowthFunction(10, 0.75, 1.0, modifier);
 
     // Update the capillary coverage for tissue diffusion
     GetPulmonaryCapillariesCoverageFraction().SetValue(standardPulmonaryCapillaryCoverage * coverageModifier);

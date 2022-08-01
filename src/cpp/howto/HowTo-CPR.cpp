@@ -5,11 +5,15 @@
 #include "PulseEngine.h"
 
 // Include the various types you will be using in your code
+#include "cdm/scenario/SEScenario.h"
+#include "cdm/engine/SEAdvanceTime.h"
 #include "engine/SEDataRequestManager.h"
 #include "engine/SEEngineTracker.h"
 #include "compartment/SECompartmentManager.h"
 #include "patient/actions/SEArrhythmia.h"
-#include "patient/actions/SEChestCompressionForce.h"
+#include "patient/actions/SEChestCompression.h"
+#include "patient/actions/SEChestCompressionAutomated.h"
+#include "patient/actions/SEChestCompressionInstantaneous.h"
 #include "patient/SEPatient.h"
 #include "patient/actions/SEHemorrhage.h"
 #include "system/physiology/SEBloodChemistrySystem.h"
@@ -44,7 +48,8 @@ public:
   MyListener(Logger* logger) : Loggable(logger) {};
   virtual void HandleEvent(eEvent type, bool active, const SEScalarTime* time) override
   {
-    GetLogger()->Info(std::stringstream() <<"Recieved Event : " << eEvent_Name(type));
+    if(type != eEvent::StartOfCardiacCycle && type != eEvent::StartOfExhale && type != eEvent::StartOfInhale)
+      GetLogger()->Info(std::stringstream() <<"Recieved Event : " << eEvent_Name(type));
   }
 };
 
@@ -60,40 +65,59 @@ public:
 //--------------------------------------------------------------------------------------------------
 void HowToCPR()
 {
+  SEAdvanceTime                   adv;
+  SEArrhythmia                    arrhythmia;
+  SEChestCompression              cpr;
+  SEChestCompressionAutomated     cprA;
+  SEChestCompressionInstantaneous cprI;
+
+  SEScenario sce;
+
   // Create the engine and load the patient
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_CPR.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_CPR.cpp/HowTo_CPR.log");
   pe->GetLogger()->Info("HowTo_CPR");
-  if (!pe->SerializeFromFile("./states/StandardMale@0s.json"))
+  std::string stateFile = "./states/StandardMale@0s.json";
+  if (!pe->SerializeFromFile(stateFile))
   {
     pe->GetLogger()->Error("Could not load state, check the error");
     return;
   }
+  sce.SetEngineStateFile(stateFile);
+
+  // 3 possible modes of performing CPR
+  //std::string mode = "single";
+  //std::string mode = "instantaneous";
+  std::string mode = "automated";
 
   // Create data requests for each value that should be written to the output log as the engine is executing
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartEjectionFraction");
-  pe->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput",VolumePerTimeUnit::mL_Per_min);
-  pe->GetEngineTracker()->GetDataRequestManager().CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
-
-  pe->GetEngineTracker()->GetDataRequestManager().SetResultsFilename("HowToCPR.csv");
+  SEDataRequestManager& dMgr = pe->GetEngineTracker()->GetDataRequestManager();
+  dMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  dMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("HeartStrokeVolume", VolumeUnit::mL);
+  dMgr.CreatePhysiologyDataRequest("HeartEjectionFraction");
+  dMgr.CreatePhysiologyDataRequest("CardiacOutput",VolumePerTimeUnit::mL_Per_min);
+  dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Brain, "InFlow", VolumePerTimeUnit::mL_Per_min);
+  sce.GetDataRequestManager().Copy(dMgr);
+  dMgr.SetResultsFilename("./test_results/howto/HowTo_CPR.cpp/HowTo_CPR.csv");
 
   // This is the total amount of time that CPR will be administered in seconds
-  double durationOfCPR_Seconds = 120;
-  
-  // This is the frequency at which CPR is administered
-  double compressionRate_BeatsPerMinute = 100;
+  double durationOfCPR_s = 60;
 
-  // This is where you specify how much force to apply to the chest. We have capped the applicable force at 600 N.
-  double compressionForce_Newtons = 400;
+  // This is the frequency at which CPR is administered
+  double compressionRate_bpm = 80;
+
+  // This is where you specify how much force to apply to the chest. We have capped the applicable force at 500 N.
+  double compressionForce_N = 311;
+
+  // Force can also be specified as a scale factor.
+  double compressionForceScale = 0.63;
 
   // This is the percent of time per period that the chest will be compressed e.g. if I have a 1 second period
   // (60 beats per minute) the chest will be compressed for 0.3 seconds
-  double percentOn = .3;
+  double percentOn = 0.8;
 
   pe->GetLogger()->Info("The patient is nice and healthy");
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
@@ -102,95 +126,204 @@ void HowToCPR()
   pe->GetLogger()->Info(std::stringstream() <<"Stroke Volume : " << pe->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL) << VolumeUnit::mL);
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << pe->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());;
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());
 
-  AdvanceAndTrackTime_s(50, *pe);
+  adv.GetTime().SetValue(30, TimeUnit::s);
+  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  sce.AddAction(adv);
 
   // Put the patient into cardiac arrest
-  SEArrhythmia a;
-  a.SetRhythm(eHeartRhythm::Asystole);
-  pe->ProcessAction(a);
-  
+  arrhythmia.SetRhythm(eHeartRhythm::Asystole);
+  pe->ProcessAction(arrhythmia);
+  sce.AddAction(arrhythmia);
+
   pe->GetLogger()->Info("Giving the patient Cardiac Arrest.");
 
   // Let's add a listener which will print any state changes that patient undergoes
   MyListener l(pe->GetLogger());
   pe->GetEventManager().ForwardEvents(&l);
-  
-  AdvanceAndTrackTime_s(10, *pe);
 
-  pe->GetLogger()->Info("It has been 10s since the administration, not doing well...");
+  adv.GetTime().SetValue(30, TimeUnit::s);
+  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  sce.AddAction(adv);
+
+  pe->GetLogger()->Info("It has been 30s since cardiac arrest onset, not doing well...");
   pe->GetLogger()->Info(std::stringstream() <<"Systolic Pressure : " << pe->GetCardiovascularSystem()->GetSystolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Diastolic Pressure : " << pe->GetCardiovascularSystem()->GetDiastolicArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Rate : " << pe->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min) << "bpm");
   pe->GetLogger()->Info(std::stringstream() <<"Stroke Volume : " << pe->GetCardiovascularSystem()->GetHeartStrokeVolume(VolumeUnit::mL) << VolumeUnit::mL);
   pe->GetLogger()->Info(std::stringstream() <<"Cardiac Output : " << pe->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::mL_Per_min) << VolumePerTimeUnit::mL_Per_min);
   pe->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << pe->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
-  pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());;
-
+  pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());
 
   // After patient's heart is not beating, start doing CPR
-  SEChestCompressionForce chestCompression;
-
-  // The period is calculated via 1 / compressionRate.  Because the compression rate is given
-  // in beats per minute it is divided by 60 to give a period in seconds.
-  double pulsePeriod_s = 1.0 / (compressionRate_BeatsPerMinute / 60.0);
-
-  // The amount of time the chest will be compressed, calculated from the period and percentOn
-  double timeOn = percentOn * pulsePeriod_s;
-
-  // The rest of the time there will be no force on the chest, this is calculated from the
-  double timeOff = pulsePeriod_s - timeOn;
-
-  // This timer is used to keep track of how long CPR has been administered
-  double timer1 = 0;
-
-  // This boolean is used to determine if the chest is compressed or not. It starts as true
-  // so the chest will be compressed on the next calculation from the engine.
-  bool pulseState = true;
-  
   pe->GetLogger()->Info("Patient is in asystole. Begin performing CPR");
-  while (timer1 < durationOfCPR_Seconds) // CPR is administered in this loop. It is time based, so after timer1 has exceeded the specified duration of CPR it will stop. set pulseState to true so that it will only exit AFTER a compression has been removed
-  {
-    if (pulseState) // check if the chest is supposed to be compressed. If yes...
+
+  double timeStep_s = pe->GetTimeStep(TimeUnit::s);
+
+  // This mode performs CPR via single chest compression actions.
+  // You specify the timing and force of a single chest compression.
+  if (mode == "single")
+  {  
+    // The period is calculated via 1 / compressionRate.  Because the compression rate is given
+    // in beats per minute it is divided by 60 to give a period in seconds.
+    double pulsePeriod_s = 1.0 / (compressionRate_bpm / 60.0);
+  
+    // The amount of time the chest will be compressed, calculated from the period and percentOn
+    double timeOn = percentOn * pulsePeriod_s;
+  
+    // This timer is used to keep track of how long CPR has been administered
+    double timer1 = 0;
+    // Boolean to determine which way to specify force for demonstration purposes.
+    bool useExplicitForce = true;
+    while (timer1 < durationOfCPR_s) // CPR is administered in this loop. It is time based, so after timer1 has exceeded the specified duration of CPR it will stop. set pulseState to true so that it will only exit AFTER a compression has been removed
     {
-            // This calls the CPR function in the Cardiovascular system.  It sets the chest compression at the specified force.
-      chestCompression.GetForce().SetValue(compressionForce_Newtons, ForceUnit::N);
-      pe->ProcessAction(chestCompression);
+      // This calls the CPR function in the Cardiovascular system.  It sets the chest compression at the specified force.
+      if (useExplicitForce)
+      {
+        cpr.GetForce().SetValue(compressionForce_N, ForceUnit::N);
+        cpr.GetForceScale().Invalidate();
+      }
+      else
+      {
+        cpr.GetForce().Invalidate();
+        cpr.GetForceScale().SetValue(compressionForceScale);
+      }
+      useExplicitForce = !useExplicitForce;
+      cpr.GetCompressionPeriod().SetValue(timeOn, TimeUnit::s);
+      pe->ProcessAction(cpr);
+      sce.AddAction(cpr);
 
-            // Time is advanced until it is time to remove the compression
-      AdvanceAndTrackTime_s(timeOn, *pe);
-            
-            // Increment timer1 by the time the chest was compressed
-      timer1 += timeOn;
+      // Increment timers and advance time
+      adv.GetTime().SetValue(pulsePeriod_s, TimeUnit::s);
+      AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+      sce.AddAction(adv);
 
-            // Specify that the compression is to now be removed.
-      pulseState = false;
-    }
-    else
-    {
-            // This removes the chest compression by specifying the applied force as 0 N
-      chestCompression.GetForce().SetValue(0, ForceUnit::N);
-      pe->ProcessAction(chestCompression);
-            
-            // Time is advanced until it is time to compress the chest again
-      AdvanceAndTrackTime_s(timeOff, *pe);
-            
-            // Increment timer1 by the time the chest was no compressed
-      timer1 += timeOff;
-
-            // Set pulse state back to true.
-      pulseState = true;
+      timer1 += pulsePeriod_s;
     }
   }
-
-  // Make sure that the chest is no longer being compressed
-  if (chestCompression.GetForce().GetValue(ForceUnit::N) != 0)
+  // This mode performs CPR by providing the instantaneous value of the current time
+  // step of a compression. Generally this is for connecting to a hardware sensor.
+  else if (mode == "instantaneous")
   {
-        // If it is compressed, set force to 0 to turn off
-    chestCompression.GetForce().SetValue(0, ForceUnit::N);
-    pe->ProcessAction(chestCompression);
+    // The period is calculated via 1 / compressionRate.  Because the compression rate is given
+    // in beats per minute it is divided by 60 to give a period in seconds.
+    double pulsePeriod_s = 1.0 / (compressionRate_bpm / 60.0);
+  
+    // The amount of time the chest will be compressed, calculated from the period and percentOn
+    double timeOn = percentOn * pulsePeriod_s;
+  
+    // This timer is used to keep track of how long CPR has been administered
+    double timer1 = 0;
+    double compressionTimer = 0;
+
+    // Boolean to determine which way to specify force for demonstration purposes.
+    bool useExplicitForce = true;
+  
+    // This boolean is used to determine if the chest is compressed or not. It starts as true
+    // so the chest will be compressed on the next calculation from the engine.
+    bool pulseState = true;
+  
+    while (timer1 < durationOfCPR_s) // CPR is administered in this loop. It is time based, so after timer1 has exceeded the specified duration of CPR it will stop. set pulseState to true so that it will only exit AFTER a compression has been removed
+    {
+      if (pulseState) // check if the chest is supposed to be compressed. If yes...
+      {
+        // Switch to a scaled force halfway through for demo purposes
+        if (useExplicitForce && timer1 >= (durationOfCPR_s / 2.0))
+        {
+          cprI.GetForce().Invalidate();
+          useExplicitForce = false;
+        }
+
+        // This calls the CPR function in the Cardiovascular system.  It sets the chest compression at the specified force.
+        if(useExplicitForce)
+          cprI.GetForce().SetValue(compressionForce_N, ForceUnit::N);
+        else
+          cprI.GetForceScale().SetValue(compressionForceScale);
+        pe->ProcessAction(cprI);
+        sce.AddAction(cprI);
+  
+        // Specify that the compression has been started
+        pulseState = false;
+      }
+
+      // Increment timers and advance time
+      timer1 += timeStep_s;
+      compressionTimer += timeStep_s;
+      adv.GetTime().SetValue(timeStep_s, TimeUnit::s);
+      AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+      sce.AddAction(adv);
+
+      if (compressionTimer >= pulsePeriod_s) // New compression
+      {
+        compressionTimer = 0;
+        pulseState = true;
+      }
+      else if (compressionTimer >= timeOn) // Stop compressing
+      {
+        // This removes the chest compression by specifying the applied force as 0 N
+        if(useExplicitForce)
+          cprI.GetForce().SetValue(0, ForceUnit::N);
+        else
+          cprI.GetForceScale().SetValue(0);
+        pe->ProcessAction(cprI);
+        sce.AddAction(cprI);
+      }  
+    }    
+  
+    // Make sure that the chest is no longer being compressed
+    if((cprI.HasForceScale() && cprI.GetForceScale().GetValue() != 0) || (cprI.HasForce() && cprI.GetForce().GetValue(ForceUnit::N) != 0))
+    {
+      // If it is compressed, set force to 0 to turn off
+      if (cprI.HasForce())
+        cprI.GetForce().SetValue(0, ForceUnit::N);
+      else
+        cprI.GetForceScale().SetValue(0);
+      pe->ProcessAction(cprI);
+      sce.AddAction(cprI);
+    }
   }
+  // This mode uses the automated chest compression action to perform CPR.
+  // You specify the timing and force, then Pulse will continuously perform chest compressions.
+  else if (mode == "automated")
+  {
+    // Start automated CPR using explicit force value
+    cprA.GetForce().SetValue(compressionForce_N, ForceUnit::N);
+    cprA.GetCompressionFrequency().SetValue(compressionRate_bpm, FrequencyUnit::Per_min);
+    cprA.GetAppliedForceFraction().SetValue(percentOn);
+    pe->ProcessAction(cprA);
+    sce.AddAction(cprA);
+
+    // Advance time for desired duration of CPR
+    adv.GetTime().SetValue(durationOfCPR_s/2.0, TimeUnit::s);
+    AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+    sce.AddAction(adv);
+
+    // Can also do automated CPR using a scaled force value
+    cprA.GetForce().Invalidate();
+    cprA.GetForceScale().SetValue(compressionForceScale);
+    pe->ProcessAction(cprA);
+    sce.AddAction(cprA);
+
+    // Advance time for desired duration of CPR
+    adv.GetTime().SetValue(durationOfCPR_s/2.0, TimeUnit::s);
+    AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+    sce.AddAction(adv);
+
+    // Stop automated CPR
+    cprA.GetCompressionFrequency().SetValue(0, FrequencyUnit::Per_min);
+    pe->ProcessAction(cprA);
+    sce.AddAction(cprA);
+  }
+
+  // Restore normal sinus rhythm
+  arrhythmia.SetRhythm(eHeartRhythm::NormalSinus);
+  pe->ProcessAction(arrhythmia);
+  sce.AddAction(arrhythmia);
+
+  adv.GetTime().SetValue(60, TimeUnit::s);
+  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  sce.AddAction(adv);
 
   // Do one last output to show status after CPR.
   pe->GetLogger()->Info("Check on the patient's status after CPR has been performed");
@@ -202,4 +335,6 @@ void HowToCPR()
   pe->GetLogger()->Info(std::stringstream() <<"Arterial Pressure : " << pe->GetCardiovascularSystem()->GetArterialPressure(PressureUnit::mmHg) << PressureUnit::mmHg);
   pe->GetLogger()->Info(std::stringstream() <<"Heart Ejection Fraction : " << pe->GetCardiovascularSystem()->GetHeartEjectionFraction());
   pe->GetLogger()->Info("Finished");
+
+  sce.SerializeToFile("./test_results/howto/HowTo_CPR.cpp/HowTo_CPR.json");
 }

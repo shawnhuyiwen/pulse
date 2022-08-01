@@ -18,7 +18,7 @@ public:
   virtual ~SEPatient();
 
   virtual void Clear();
-  virtual void Copy(const SEPatient& src);
+  void Copy(const SEPatient& src);
 
   bool SerializeToString(std::string& output, eSerializationFormat m) const;
   bool SerializeToFile(const std::string& filename) const;

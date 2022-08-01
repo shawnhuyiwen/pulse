@@ -552,6 +552,4 @@ public class PulseEngine
   protected native String nativeGetInitialPatient(long nativeObj, int format);
   protected native String nativeGetConditions(long nativeObj, int format);
   protected native String nativeGetAssessment(long nativeObj, int type, int format);
-  
-  protected native boolean nativeExecuteScenario(long nativeObj, String sceOpts, int format);
 }

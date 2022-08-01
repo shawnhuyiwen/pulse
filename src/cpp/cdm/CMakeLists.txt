@@ -123,8 +123,9 @@ add_library_ex(CommonDataModel
     patient/actions/SEAsthmaAttack.h
     patient/actions/SEBrainInjury.h
     patient/actions/SEBronchoconstriction.h
-    patient/actions/SEChestCompressionForce.h
-    patient/actions/SEChestCompressionForceScale.h
+    patient/actions/SEChestCompression.h
+    patient/actions/SEChestCompressionAutomated.h
+    patient/actions/SEChestCompressionInstantaneous.h
     patient/actions/SEChestOcclusiveDressing.h
     patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h
     patient/actions/SEConsciousRespiration.h
@@ -346,10 +347,6 @@ add_library_ex(CommonDataModel
     utils/TimingProfile.h
     utils/ThreadPool.h
     utils/base64.h
-    utils/taskrunner/Task.h
-    utils/taskrunner/TaskProcessor.h
-    utils/taskrunner/TaskQueue.h
-    utils/taskrunner/TaskRunner.h
     utils/testing/SETestCase.h
     utils/testing/SETestErrorStatistics.h
     utils/testing/SETestManager.h
@@ -495,8 +492,9 @@ add_library_ex(CommonDataModel
     patient/actions/SEAsthmaAttack.cpp
     patient/actions/SEBrainInjury.cpp
     patient/actions/SEBronchoconstriction.cpp
-    patient/actions/SEChestCompressionForce.cpp
-    patient/actions/SEChestCompressionForceScale.cpp
+    patient/actions/SEChestCompression.cpp
+    patient/actions/SEChestCompressionAutomated.cpp
+    patient/actions/SEChestCompressionInstantaneous.cpp
     patient/actions/SEChestOcclusiveDressing.cpp
     patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.cpp
     patient/actions/SEConsciousRespiration.cpp
@@ -716,8 +714,6 @@ add_library_ex(CommonDataModel
     utils/SimpleLogger.cpp
     utils/TimingProfile.cpp
     utils/base64.cpp
-    utils/taskrunner/TaskProcessor.cpp
-    utils/taskrunner/TaskRunner.cpp
     utils/testing/SETestCase.cpp
     utils/testing/SETestErrorStatistics.cpp
     utils/testing/SETestReport.cpp

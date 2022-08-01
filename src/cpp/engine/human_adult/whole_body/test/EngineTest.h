@@ -202,7 +202,6 @@ namespace pulse { namespace human_adult_whole_body
     void ReuseEngine(const std::string& sOutputDirectory);
   
     void ConditionCombinations(const std::string& rptDirectory);
-    void MultiEngineTest(const std::string& sTestDirectory);
     void SerializationTest(const std::string& sTestDirectory);
     void SolverSpeedTest(const std::string& sTestDirectory);
   protected:

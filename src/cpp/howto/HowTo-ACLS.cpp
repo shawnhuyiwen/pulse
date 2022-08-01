@@ -6,11 +6,13 @@
 
 #include "cdm/scenario/SEScenario.h"
 #include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SEEngineTracker.h"
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEIntubation.h"
-#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestCompression.h"
+#include "cdm/patient/actions/SEChestCompressionAutomated.h"
 #include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskAutomated.h"
@@ -30,207 +32,255 @@
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
-/// Usage for going into cardiac arrest
-/// and optionally using CPR and or a Bag,Valve,Mask equipment on the patient
-///
-/// \details
-/// Refer to the SEArrhythmia, SEBagValveMask class
+/// Example of going into cardiac arrest and performing CPR and a Bag,Valve,Mask on the patient
 //--------------------------------------------------------------------------------------------------
 void HowToACLS()
 {
-  std::map<eHeartRhythm, std::string> startArrhythmias =
-  {
-    {eHeartRhythm::FineVentricularFibrillation, "fine_vfib"},
-    //{eHeartRhythm::CoarseVentricularFibrillation, "coarse_vfib"}
-  };
-  std::vector<size_t> arrestLengths_min = { 2,4 };
-  std::map<eHeartRhythm, std::string> endArrhythmias =
-  {
-    {eHeartRhythm::NormalSinus, "sinus"},
-    {eHeartRhythm::SinusTachycardia, "tachycardia"},
-    //{eHeartRhythm::SinusBradycardia, "bradycardia"},
-    //{eHeartRhythm::SinusPulselessElectricalActivity, "pea"}
-  };
-  std::vector<std::string> interventions =
-  {
-    "no",
-    "cpr",
-    "cpr_and_bvm"
-  };
-  size_t extraBVMTime = 60; // BVM time after the heart starts back up
-
   SEAdvanceTime adv;
   SEArrhythmia  arrhythmia;
   SEBagValveMaskConfiguration bvm;
   SEBagValveMaskSqueeze bvmSqueeze;
-  SEChestCompressionForceScale cpr;
+  SEChestCompressionAutomated cprA;
+  SEChestCompression cpr;
+  std::stringstream ss;
 
-  Logger logger("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.log");
-  logger.LogToConsole(true);
+  SEScenario sce;
 
-  double simStep_s = 0.5;
+  bool devRequests = false;
+  bool automatedCPR = true;
 
-  for (auto start : startArrhythmias)
+  double unassisted_min = 7;
+  bool intubatedAssistance = false;
+  double assisted_min = 7;
+  // We will do cpr_block_s of CPR compressions every cpr_interval_s
+  double cpr_block_s = 30;
+  double cpr_bpm = 120;
+  double cpr_interval_s = 1/Convert(cpr_bpm, FrequencyUnit::Per_min, FrequencyUnit::Per_s);
+  // Then we will do 2 bvm squeezes every bvm_interval_s
+  size_t bvmSqueezes = 2;
+  double bvm_interval_s = 1/Convert(12, FrequencyUnit::Per_min, FrequencyUnit::Per_s);
+  // We will keep doing CPR blocks, BVM blocks for the duration of the assisted_min
+  double recovery_min = 10;
+
+  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.log");
+  pe->GetLogger()->Info("HowTo_ALCS");
+
+  std::string stateFile = "./states/StandardMale@0s.json";
+  if (!pe->SerializeFromFile(stateFile))
   {
-    for (size_t arrestLength_min : arrestLengths_min)
+    pe->GetLogger()->Error("Could not load state, check the error");
+    return;
+  }
+  sce.SetEngineStateFile(stateFile);
+
+  SEDataRequestManager& dMgr = pe->GetEngineTracker()->GetDataRequestManager();
+
+  dMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
+  dMgr.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
+  dMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
+  dMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
+  dMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
+  dMgr.CreatePhysiologyDataRequest("CarbonDioxideProductionRate", VolumePerTimeUnit::mL_Per_min);
+  dMgr.CreatePhysiologyDataRequest("OxygenConsumptionRate", VolumePerTimeUnit::mL_Per_min);
+  dMgr.CreatePhysiologyDataRequest("OxygenSaturation");
+  dMgr.CreatePhysiologyDataRequest("PulseOximetry");
+  dMgr.CreateSubstanceDataRequest("Oxygen", "AlveolarTransfer", VolumePerTimeUnit::mL_Per_s);
+  dMgr.CreateSubstanceDataRequest("CarbonDioxide", "AlveolarTransfer", VolumePerTimeUnit::mL_Per_s);
+  dMgr.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+  dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+  dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+  dMgr.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
+
+  if (devRequests)
+  {
+    dMgr.CreatePatientDataRequest("HeartRateBaseline", FrequencyUnit::Per_min);
+    dMgr.CreatePatientDataRequest("MeanArterialPressureBaseline", PressureUnit::mmHg);
+    dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartRateScale");
+    dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartElastanceScale");
+    dMgr.CreatePhysiologyDataRequest("BaroreceptorResistanceScale");
+    dMgr.CreatePhysiologyDataRequest("BaroreceptorComplianceScale");
+    dMgr.CreatePhysiologyDataRequest("ChemoreceptorHeartRateScale");
+    dMgr.CreatePhysiologyDataRequest("ChemoreceptorHeartElastanceScale");
+    dMgr.CreatePhysiologyDataRequest("PulmonaryCapillariesCoverageFraction");
+    dMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
+    dMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
+
+    dMgr.CreateSubstanceDataRequest("CarbonDioxide", "MassInBlood", MassUnit::g);
+    dMgr.CreateSubstanceDataRequest("CarbonDioxide", "MassInTissue", MassUnit::g);
+    dMgr.CreateSubstanceDataRequest("Oxygen", "MassInBlood", MassUnit::g);
+    dMgr.CreateSubstanceDataRequest("Oxygen", "MassInTissue", MassUnit::g);
+
+    std::vector<std::pair<std::string, std::string>> tissues =
     {
-      for (auto end : endArrhythmias)
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Fat,pulse::ExtravascularCompartment::FatExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Bone,pulse::ExtravascularCompartment::BoneExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Brain,pulse::ExtravascularCompartment::BrainExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Gut,pulse::ExtravascularCompartment::GutExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::LeftKidney,pulse::ExtravascularCompartment::LeftKidneyExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::RightKidney,pulse::ExtravascularCompartment::RightKidneyExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::LeftLung,pulse::ExtravascularCompartment::LeftLungExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::RightLung,pulse::ExtravascularCompartment::RightLungExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Liver,pulse::ExtravascularCompartment::LiverExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Muscle,pulse::ExtravascularCompartment::MuscleExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Myocardium,pulse::ExtravascularCompartment::MyocardiumExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Skin,pulse::ExtravascularCompartment::SkinExtracellular),
+      std::pair<std::string, std::string>(pulse::VascularCompartment::Spleen,pulse::ExtravascularCompartment::SpleenExtracellular)
+    };
+    for (auto& itr : tissues)
+    {
+      // Vascular Properties
+      dMgr.CreateLiquidCompartmentDataRequest(itr.first, "Oxygen", "Mass", MassUnit::g);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.first, "CarbonDioxide", "Mass", MassUnit::g);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.first, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.first, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+      // Tissue Properties
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "Oxygen", "Mass", MassUnit::g);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "CarbonDioxide", "Mass", MassUnit::g);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "Oxygen", "PartialPressure", PressureUnit::mmHg);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "InFlow", VolumePerTimeUnit::mL_Per_s);
+      dMgr.CreateLiquidCompartmentDataRequest(itr.second, "OutFlow", VolumePerTimeUnit::mL_Per_s);
+    }
+  }
+  sce.GetDataRequestManager().Copy(dMgr);
+  dMgr.SetResultsFilename("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.csv");
+
+  adv.GetTime().SetValue(30, TimeUnit::s);
+  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  sce.AddAction(adv);
+
+  arrhythmia.SetRhythm(eHeartRhythm::CoarseVentricularFibrillation);
+  pe->ProcessAction(arrhythmia);
+  sce.AddAction(arrhythmia);
+
+  adv.GetTime().SetValue(unassisted_min*60, TimeUnit::s);
+  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  sce.AddAction(adv);
+
+  if (intubatedAssistance)
+  {
+    SEIntubation intubate;
+    intubate.SetType(eIntubation_Type::Tracheal);
+    pe->ProcessAction(intubate);
+    sce.AddAction(intubate);
+  }
+
+  bvm.GetConfiguration().SetConnection(eSwitch::On);
+  bvm.GetConfiguration().GetValvePositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
+  pe->ProcessAction(bvm);
+  sce.AddAction(bvm);
+
+  bool cpr_block = true;
+  double block_s = cpr_block_s;
+  double squeezeIn_s = 0;
+  double compressIn_s = 0;
+  double timeStep_s = pe->GetTimeStep(TimeUnit::s);
+
+  double assisted_s = assisted_min*60;
+  if (!automatedCPR)
+  {
+    while(assisted_s > 0)
+    {
+      AdvanceAndTrackTime(*pe);
+
+      block_s -= timeStep_s;
+      if (block_s <= 0)
       {
-        for (auto ivn : interventions)
+        cpr_block = !cpr_block;
+        if (cpr_block)
         {
-          bool performBVM = false;
-          bool performCPR = false;
-
-          size_t interventionTime_s = 5*60;
-          if (ivn == "cpr")
-            interventionTime_s = 2*60;
-
-          std::string name;
-          if (ivn == "no")
-            name = start.second + "_for_" + std::to_string(arrestLength_min) + "m_to_" + end.second + "_with_" + ivn + "_intervention";
-          else
-            name = start.second + "_for_" + std::to_string(arrestLength_min) + "m_then_" + std::to_string(interventionTime_s / 60) + "m_of_" + ivn + "_to_" + end.second;
-          logger.Info("Creating scenario " + name);
-
-          SEScenario sce(&logger);
-          sce.SetName(name);
-          sce.SetEngineStateFile("./states/StandardMale@0s.json");
-          //sce.GetPatientConfiguration().SetPatientFile("./patients/StandardMale.json");
-          SEDataRequestManager& dMgr = sce.GetDataRequestManager();
-          dMgr.CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
-          dMgr.CreatePhysiologyDataRequest("ArterialPressure", PressureUnit::mmHg);
-          dMgr.CreatePhysiologyDataRequest("EndTidalCarbonDioxidePressure", PressureUnit::mmHg);
-          dMgr.CreatePhysiologyDataRequest("MeanArterialPressure", PressureUnit::mmHg);
-          dMgr.CreatePhysiologyDataRequest("SystolicArterialPressure", PressureUnit::mmHg);
-          dMgr.CreatePhysiologyDataRequest("DiastolicArterialPressure", PressureUnit::mmHg);
-          dMgr.CreatePhysiologyDataRequest("RespirationRate", FrequencyUnit::Per_min);
-          dMgr.CreatePhysiologyDataRequest("TidalVolume", VolumeUnit::mL);
-          dMgr.CreatePhysiologyDataRequest("TotalLungVolume", VolumeUnit::mL);
-          dMgr.CreatePhysiologyDataRequest("CarbonDioxideProductionRate", VolumePerTimeUnit::mL_Per_min);
-          dMgr.CreatePhysiologyDataRequest("OxygenConsumptionRate", VolumePerTimeUnit::mL_Per_min);
-          dMgr.CreatePhysiologyDataRequest("OxygenSaturation");
-          dMgr.CreateSubstanceDataRequest("Oxygen", "AlveolarTransfer", VolumePerTimeUnit::mL_Per_s);
-          dMgr.CreateSubstanceDataRequest("CarbonDioxide", "AlveolarTransfer", VolumePerTimeUnit::mL_Per_s);
-          dMgr.CreateGasCompartmentDataRequest("Carina", "CarbonDioxide", "PartialPressure", PressureUnit::mmHg);
-          dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "Oxygen", "PartialPressure");
-          dMgr.CreateLiquidCompartmentDataRequest(pulse::VascularCompartment::Aorta, "CarbonDioxide", "PartialPressure");
-          dMgr.CreateECGDataRequest("Lead3ElectricPotential", ElectricPotentialUnit::mV);
-
-          //dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartRateScale");
-          //dMgr.CreatePhysiologyDataRequest("BaroreceptorHeartElastanceScale");
-          //dMgr.CreatePhysiologyDataRequest("BaroreceptorResistanceScale");
-          //dMgr.CreatePhysiologyDataRequest("BaroreceptorComplianceScale");
-          //dMgr.CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
-          //dMgr.CreatePhysiologyDataRequest("SystemicVascularResistance", PressureTimePerVolumeUnit::mmHg_s_Per_mL);
-
-          double simTime_s = 0;
-
-          adv.GetTime().SetValue(5, TimeUnit::s);
-          sce.AddAction(adv);
-          simTime_s += adv.GetTime(TimeUnit::s);
-          logger.Info("  -Advancing to " + PULSE_CDM::to_string(simTime_s) + "s");
-
-          arrhythmia.SetRhythm(start.first);
-          sce.AddAction(arrhythmia);
-          logger.Info("  -Setting heart rhythm to " + eHeartRhythm_Name(start.first));
-
-          adv.GetTime().SetValue(arrestLength_min, TimeUnit::min);
-          sce.AddAction(adv);
-          simTime_s += adv.GetTime(TimeUnit::s);
-          logger.Info("  -Advancing to " + PULSE_CDM::to_string(simTime_s) + "s");
-
-          if (ivn != "no")
-          {
-            if (ivn.find("cpr") != std::string::npos)
-            {
-              performCPR = true;
-            }
-            
-
-            if (ivn.find("bvm") != std::string::npos)
-            {
-              performBVM = true;
-              SEIntubation intubate;
-              intubate.SetType(eIntubation_Type::Tracheal);
-              sce.AddAction(intubate);
-
-              adv.GetTime().SetValue(1, TimeUnit::s);
-              sce.AddAction(adv);
-              simTime_s += adv.GetTime(TimeUnit::s);
-              logger.Info("  -Advancing to " + PULSE_CDM::to_string(simTime_s) + "s");
-
-              bvm.GetConfiguration().SetConnection(eSwitch::On);
-              bvm.GetConfiguration().GetValvePositiveEndExpiredPressure().SetValue(5.0, PressureUnit::cmH2O);
-              sce.AddAction(bvm);
-
-              adv.GetTime().SetValue(1, TimeUnit::s);
-              sce.AddAction(adv);
-              simTime_s += adv.GetTime(TimeUnit::s);
-              logger.Info("  -Advancing to " + PULSE_CDM::to_string(simTime_s) + "s");
-            }
-
-            size_t bvmSqueezeCnt = 10;
-            size_t doSqueeze = bvmSqueezeCnt;
-            // Advance for a set amount of time in Increments of a half second
-            for (double t = 0; t < interventionTime_s; t += simStep_s)
-            {
-              if (performBVM && doSqueeze == bvmSqueezeCnt++)
-              {
-                bvmSqueezeCnt = 1;
-                logger.Info("  -Adding BVM Squeeze @ " + PULSE_CDM::to_string(simTime_s));
-                bvmSqueeze.GetExpiratoryPeriod().SetValue(1.0, TimeUnit::s);
-                bvmSqueeze.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
-                sce.AddAction(bvmSqueeze);
-              }
-
-              if (performCPR)
-              {
-                logger.Info("  -Adding CPR Compression @ " + PULSE_CDM::to_string(simTime_s));
-                cpr.GetForceScale().SetValue(0.6228);
-                sce.AddAction(cpr);
-              }
-
-              adv.GetTime().SetValue(simStep_s, TimeUnit::s);
-              sce.AddAction(adv);
-              simTime_s += adv.GetTime(TimeUnit::s);
-            }
-          }
-
-          arrhythmia.SetRhythm(end.first);
-          sce.AddAction(arrhythmia);
-          logger.Info("  -Setting heart rhythm to " + eHeartRhythm_Name(end.first));
-
-          // Extra BVM Time
-          if (performBVM && extraBVMTime>0)
-          {
-            size_t bvmSqueezeCnt = 10;
-            size_t doSqueeze = bvmSqueezeCnt;
-            // Advance for a set amount of time in Increments of a half second
-            for (double t = 0; t < extraBVMTime; t += simStep_s)
-            {
-              if (doSqueeze == bvmSqueezeCnt++)
-              {
-                bvmSqueezeCnt = 1;
-                logger.Info("  -Adding BVM Squeeze @ " + PULSE_CDM::to_string(simTime_s));
-                bvmSqueeze.GetExpiratoryPeriod().SetValue(1.0, TimeUnit::s);
-                bvmSqueeze.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
-                sce.AddAction(bvmSqueeze);
-              }
-
-              adv.GetTime().SetValue(simStep_s, TimeUnit::s);
-              sce.AddAction(adv);
-              simTime_s += adv.GetTime(TimeUnit::s);
-            }
-          }
-
-          adv.GetTime().SetValue(5, TimeUnit::min);
-          sce.AddAction(adv);
-          simTime_s += adv.GetTime(TimeUnit::s);
-          logger.Info("  -Advancing to " + PULSE_CDM::to_string(simTime_s) + "s");
-
-          sce.SerializeToFile("./test_results/howto/HowTo_ACLS.cpp/" + name + ".json");
+          compressIn_s = 0;
+          block_s = cpr_block_s;
+          pe->Info("Starting CPR Block");
         }
+        else
+        {
+          squeezeIn_s = 0;
+          block_s = bvm_interval_s * bvmSqueezes;
+          pe->Info("Starting BVM Block");
+        }
+      }
+
+      if (cpr_block)
+      {
+        compressIn_s -= timeStep_s;
+        if (compressIn_s <= 0)
+        {
+          cpr.GetForceScale().SetValue(0.6228);
+          cpr.GetCompressionPeriod().SetValue(0.4,TimeUnit::s);
+          pe->ProcessAction(cpr);
+          compressIn_s = cpr_interval_s;
+        }
+        
+      }
+      else
+      {
+        squeezeIn_s -= timeStep_s;
+        if (squeezeIn_s <= 0)
+        {
+          bvmSqueeze.GetExpiratoryPeriod().SetValue(1.0, TimeUnit::s);
+          bvmSqueeze.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
+          pe->ProcessAction(bvmSqueeze);
+          squeezeIn_s = bvm_interval_s;
+        }
+      }
+      
+      assisted_s -= timeStep_s;
+    }
+  }
+  else
+  {
+    while(assisted_s > 0)
+    {
+      // Start automated CPR
+      pe->Info("Starting CPR Block");
+      cprA.GetForceScale().SetValue(0.6228);
+      cprA.GetCompressionFrequency().SetValue(cpr_bpm, FrequencyUnit::Per_min);
+      cprA.GetAppliedForceFraction().SetValue(0.8);
+      pe->ProcessAction(cprA);
+      sce.AddAction(cprA);
+
+      if (cpr_block_s > assisted_s)
+        cpr_block_s = assisted_s;
+      assisted_s -= cpr_block_s;
+      adv.GetTime().SetValue(cpr_block_s, TimeUnit::s);
+      AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+      sce.AddAction(adv);
+
+      // Stop automated CPR
+      cprA.GetCompressionFrequency().SetValue(0, FrequencyUnit::Per_min);
+      pe->ProcessAction(cprA);
+      sce.AddAction(cprA);
+
+      //BVM squeezes
+      pe->Info("Starting BVM Block");
+      for(size_t s = 0; s < bvmSqueezes; ++s)
+      {
+        bvmSqueeze.GetExpiratoryPeriod().SetValue(1.0, TimeUnit::s);
+        bvmSqueeze.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s);
+        pe->ProcessAction(bvmSqueeze);
+        sce.AddAction(bvmSqueeze);
+
+        assisted_s -= bvm_interval_s;
+        adv.GetTime().SetValue(bvm_interval_s, TimeUnit::s);
+        AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+        sce.AddAction(adv);
       }
     }
   }
+
+  arrhythmia.SetRhythm(eHeartRhythm::NormalSinus);
+  pe->ProcessAction(arrhythmia);
+  sce.AddAction(arrhythmia);
+
+  adv.GetTime().SetValue(recovery_min*60, TimeUnit::s);
+  AdvanceAndTrackTime_s(adv.GetTime(TimeUnit::s), *pe);
+  sce.AddAction(adv);
+
+  sce.SerializeToFile("./test_results/howto/HowTo_ACLS.cpp/HowTo_ACLS.json");
 }

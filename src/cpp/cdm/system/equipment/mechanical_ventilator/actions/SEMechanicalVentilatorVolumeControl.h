@@ -34,6 +34,18 @@ public:
   virtual SEScalar0To1& GetFractionInspiredOxygen();
   virtual double GetFractionInspiredOxygen() const;
 
+  virtual bool HasInspirationPatientTriggerFlow() const;
+  virtual SEScalarVolumePerTime& GetInspirationPatientTriggerFlow();
+  virtual double GetInspirationPatientTriggerFlow(const VolumePerTimeUnit& unit) const;
+
+  virtual bool HasInspirationPatientTriggerPressure() const;
+  virtual SEScalarPressure& GetInspirationPatientTriggerPressure();
+  virtual double GetInspirationPatientTriggerPressure(const PressureUnit& unit) const;
+
+  virtual bool HasInspirationWaveform() const;
+  virtual eDriverWaveform GetInspirationWaveform() const;
+  virtual void SetInspirationWaveform(eDriverWaveform w);
+
   virtual bool HasInspiratoryPeriod() const;
   virtual SEScalarTime& GetInspiratoryPeriod();
   virtual double GetInspiratoryPeriod(const TimeUnit& unit) const;
@@ -50,6 +62,10 @@ public:
   virtual SEScalarVolume& GetTidalVolume();
   virtual double GetTidalVolume(const VolumeUnit& unit) const;
 
+  virtual bool HasSlope() const;
+  virtual SEScalarTime& GetSlope();
+  virtual double GetSlope(const TimeUnit& unit) const;
+
   void ToString(std::ostream& str) const override;
 
   const SEScalar* GetScalar(const std::string& name) override;
@@ -59,8 +75,12 @@ protected:
   eMechanicalVentilator_VolumeControlMode m_Mode;
   SEScalarVolumePerTime*                  m_Flow;
   SEScalar0To1*                           m_FractionInspiredOxygen;
+  SEScalarVolumePerTime*                  m_InspirationPatientTriggerFlow;
+  SEScalarPressure*                       m_InspirationPatientTriggerPressure;
+  eDriverWaveform                         m_InspirationWaveform;
   SEScalarTime*                           m_InspiratoryPeriod;
   SEScalarPressure*                       m_PositiveEndExpiredPressure;
   SEScalarFrequency*                      m_RespirationRate;
   SEScalarVolume*                         m_TidalVolume;
+  SEScalarTime*                           m_Slope;
 };

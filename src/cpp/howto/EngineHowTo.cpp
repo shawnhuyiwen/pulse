@@ -57,6 +57,16 @@ int main()
   //HowToVentilationMechanics();
 }
 
+bool AdvanceAndTrackTime(PhysiologyEngine& engine)
+{
+  if (!engine.AdvanceModelTime())  // Compute 1 time step
+    return false;
+
+  // Pull Track will pull data from the engine and append it to the file
+  engine.GetEngineTracker()->TrackData(engine.GetSimulationTime(TimeUnit::s));
+
+  return true;
+}
 bool AdvanceAndTrackTime_s(double time_s, PhysiologyEngine& engine)
 {
   double dT_s = engine.GetTimeStep(TimeUnit::s);

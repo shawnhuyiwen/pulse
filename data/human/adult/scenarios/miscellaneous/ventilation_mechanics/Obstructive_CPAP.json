@@ -405,56 +405,50 @@
   },
   {
    "EquipmentAction": {
-    "MechanicalVentilatorConfiguration": {
-     "MechanicalVentilatorAction": {
-      "EquipmentAction": {
-       "Action": {}
+    "MechanicalVentilatorContinuousPositiveAirwayPressure": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": {
+        "Action": {}
+       }
+      },
+      "Connection": "On"
+     },
+     "DeltaPressureSupport": {
+      "ScalarPressure": {
+       "Value": 10,
+       "Unit": "cmH2O"
       }
      },
-     "Settings": {
-      "Connection": "On",
-      "PositiveEndExpiredPressure": {
-       "ScalarPressure": {
-        "Value": 5,
-        "Unit": "cmH2O"
-       }
-      },
-      "ExpirationCycleFlow": {
-       "ScalarVolumePerTime": {
-        "Value": 5,
-        "Unit": "L/min"
-       }
-      },
-      "ExpirationWaveform": "Square",
-      "PeakInspiratoryPressure": {
-       "ScalarPressure": {
-        "Value": 15,
-        "Unit": "cmH2O"
-       }
-      },
-      "InspirationPatientTriggerFlow": {
-       "ScalarVolumePerTime": {
-        "Value": 5,
-        "Unit": "L/min"
-       }
-      },
-      "InspirationWaveform": "Ramp",
-      "InspirationWaveformPeriod": {
-       "ScalarTime": {
-        "Value": 0.2,
-        "Unit": "s"
-       }
-      },
-      "FractionInspiredGas": [
-       {
-        "Name": "Oxygen",
-        "Amount": {
-         "Scalar0To1": {
-          "Value": 0.21
-         }
-        }
-       }
-      ]
+     "ExpirationCycleFlow": {
+      "ScalarVolumePerTime": {
+       "Value": 5,
+       "Unit": "L/min"
+      }
+     },
+     "FractionInspiredOxygen": {
+      "Scalar0To1": {
+       "Value": 0.21
+      }
+     },
+     "InspirationPatientTriggerFlow": {
+      "ScalarVolumePerTime": {
+       "Value": 5,
+       "Unit": "L/min"
+      }
+     },
+     "InspirationWaveform": "AscendingRamp",
+     "PositiveEndExpiredPressure": {
+      "ScalarPressure": {
+       "Value": 5,
+       "Unit": "cmH2O"
+      }
+     },
+     "Slope": {
+      "ScalarTime": {
+       "Value": 0.2,
+       "Unit": "s"
+      }
      }
     }
    }
@@ -464,7 +458,7 @@
     "Action": {},
     "Time": {
      "ScalarTime": {
-      "Value": 31.66,
+      "Value": 31.666666666666668,
       "Unit": "s"
      }
     }

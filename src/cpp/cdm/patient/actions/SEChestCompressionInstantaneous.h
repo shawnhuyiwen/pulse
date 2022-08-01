@@ -4,16 +4,16 @@
 #pragma once
 #include "cdm/patient/actions/SEPatientAction.h"
 
-class CDM_DECL SEChestCompressionForce : public SEPatientAction
+class CDM_DECL SEChestCompressionInstantaneous : public SEPatientAction
 {
   friend class PBPatientAction;//friend the serialization class
 public:
 
-  SEChestCompressionForce(Logger* logger=nullptr);
-  virtual ~SEChestCompressionForce();
+  SEChestCompressionInstantaneous(Logger* logger=nullptr);
+  virtual ~SEChestCompressionInstantaneous();
 
   virtual void Clear(); //clear memory
-  virtual void Copy(const SEChestCompressionForce& src, bool /*preserveState*/=false);
+  virtual void Copy(const SEChestCompressionInstantaneous& src, bool /*preserveState*/=false);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
@@ -22,6 +22,10 @@ public:
   virtual bool HasForce() const;
   virtual SEScalarForce& GetForce();
   virtual double GetForce(const ForceUnit& unit) const;
+  
+  virtual bool HasForceScale() const;
+  virtual SEScalar0To1& GetForceScale();
+  virtual double GetForceScale() const;
 
   virtual void ToString(std::ostream &str) const;
 
@@ -29,4 +33,5 @@ public:
 
 protected:
   SEScalarForce*           m_Force;
+  SEScalar0To1*            m_ForceScale;
 };

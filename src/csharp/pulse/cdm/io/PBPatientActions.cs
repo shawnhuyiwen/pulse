@@ -51,17 +51,23 @@ namespace Pulse.CDM
         Serialize(any.Bronchoconstriction, b);
         return b;
       }
-      if (any.ChestCompressionForce != null)
+      if (any.ChestCompression != null)
       {
-        SEChestCompressionForce cprF = new SEChestCompressionForce();
-        Serialize(any.ChestCompressionForce, cprF);
-        return cprF;
+        SEChestCompression cpr = new SEChestCompression();
+        Serialize(any.ChestCompression, cpr);
+        return cpr;
       }
-      if (any.ChestCompressionForceScale != null)
+      if (any.ChestCompressionAutomated != null)
       {
-        SEChestCompressionForceScale cprFS = new SEChestCompressionForceScale();
-        Serialize(any.ChestCompressionForceScale, cprFS);
-        return cprFS;
+        SEChestCompressionAutomated cprA = new SEChestCompressionAutomated();
+        Serialize(any.ChestCompressionAutomated, cprA);
+        return cprA;
+      }
+      if (any.ChestCompressionInstantaneous != null)
+      {
+        SEChestCompressionInstantaneous cprI = new SEChestCompressionInstantaneous();
+        Serialize(any.ChestCompressionInstantaneous, cprI);
+        return cprI;
       }
       if (any.ChestOcclusiveDressing != null)
       {
@@ -237,14 +243,19 @@ namespace Pulse.CDM
         any.Bronchoconstriction = Unload((SEBronchoconstriction)action);
         return any;
       }
-      if (action.GetType().IsAssignableFrom(typeof(SEChestCompressionForce)))
+      if (action.GetType().IsAssignableFrom(typeof(SEChestCompression)))
       {
-        any.ChestCompressionForce = Unload((SEChestCompressionForce)action);
+        any.ChestCompression = Unload((SEChestCompression)action);
         return any;
       }
-      if (action.GetType().IsAssignableFrom(typeof(SEChestCompressionForceScale)))
+      if (action.GetType().IsAssignableFrom(typeof(SEChestCompressionAutomated)))
       {
-        any.ChestCompressionForceScale = Unload((SEChestCompressionForceScale)action);
+        any.ChestCompressionAutomated = Unload((SEChestCompressionAutomated)action);
+        return any;
+      }
+      if (action.GetType().IsAssignableFrom(typeof(SEChestCompressionInstantaneous)))
+      {
+        any.ChestCompressionInstantaneous = Unload((SEChestCompressionInstantaneous)action);
         return any;
       }
       if (action.GetType().IsAssignableFrom(typeof(SEChestOcclusiveDressing)))
@@ -572,59 +583,106 @@ namespace Pulse.CDM
     }
     #endregion
 
-    #region SEChestCompressionForce
-    public static void Load(pulse.cdm.bind.ChestCompressionForceData src, SEChestCompressionForce dst)
+    #region SEChestCompression
+    public static void Load(pulse.cdm.bind.ChestCompressionData src, SEChestCompression dst)
     {
       Serialize(src, dst);
     }
-    public static void Serialize(pulse.cdm.bind.ChestCompressionForceData src, SEChestCompressionForce dst)
+    public static void Serialize(pulse.cdm.bind.ChestCompressionData src, SEChestCompression dst)
+    {
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
+      if (src.CompressionPeriod != null)
+        PBProperty.Load(src.CompressionPeriod, dst.GetCompressionPeriod());
+      if (src.Force != null)
+        PBProperty.Load(src.Force, dst.GetForce());
+      if (src.ForceScale != null)
+        PBProperty.Load(src.ForceScale, dst.GetForceScale());
+    }
+    public static pulse.cdm.bind.ChestCompressionData Unload(SEChestCompression src)
+    {
+      pulse.cdm.bind.ChestCompressionData dst = new pulse.cdm.bind.ChestCompressionData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEChestCompression src, pulse.cdm.bind.ChestCompressionData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasCompressionPeriod())
+        dst.CompressionPeriod = PBProperty.Unload(src.GetCompressionPeriod());
+      if (src.HasForce())
+        dst.Force = PBProperty.Unload(src.GetForce());
+      if (src.HasForceScale())
+        dst.ForceScale = PBProperty.Unload(src.GetForceScale());
+    }
+    #endregion
+
+    #region SEChestCompressionAutomated
+    public static void Load(pulse.cdm.bind.ChestCompressionAutomatedData src, SEChestCompressionAutomated dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ChestCompressionAutomatedData src, SEChestCompressionAutomated dst)
+    {
+      if (src.PatientAction != null)
+        Serialize(src.PatientAction, dst);
+      if (src.AppliedForceFraction != null)
+        PBProperty.Load(src.AppliedForceFraction, dst.GetAppliedForceFraction());
+      if (src.CompressionFrequency != null)
+        PBProperty.Load(src.CompressionFrequency, dst.GetCompressionFrequency());
+      if (src.Force != null)
+        PBProperty.Load(src.Force, dst.GetForce());
+      if (src.ForceScale != null)
+        PBProperty.Load(src.ForceScale, dst.GetForceScale());
+    }
+    public static pulse.cdm.bind.ChestCompressionAutomatedData Unload(SEChestCompressionAutomated src)
+    {
+      pulse.cdm.bind.ChestCompressionAutomatedData dst = new pulse.cdm.bind.ChestCompressionAutomatedData();
+      Serialize(src, dst);
+      return dst;
+    }
+    public static void Serialize(SEChestCompressionAutomated src, pulse.cdm.bind.ChestCompressionAutomatedData dst)
+    {
+      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
+      Serialize(src, dst.PatientAction);
+      if (src.HasAppliedForceFraction())
+        dst.AppliedForceFraction = PBProperty.Unload(src.GetAppliedForceFraction());
+      if (src.HasCompressionFrequency())
+        dst.CompressionFrequency = PBProperty.Unload(src.GetCompressionFrequency());
+      if (src.HasForce())
+        dst.Force = PBProperty.Unload(src.GetForce());
+      if (src.HasForceScale())
+        dst.ForceScale = PBProperty.Unload(src.GetForceScale());
+    }
+    #endregion
+
+    #region SEChestCompressionInstantaneous
+    public static void Load(pulse.cdm.bind.ChestCompressionInstantaneousData src, SEChestCompressionInstantaneous dst)
+    {
+      Serialize(src, dst);
+    }
+    public static void Serialize(pulse.cdm.bind.ChestCompressionInstantaneousData src, SEChestCompressionInstantaneous dst)
     {
       if (src.PatientAction != null)
         Serialize(src.PatientAction, dst);
       if (src.Force != null)
         PBProperty.Load(src.Force, dst.GetForce());
+      if (src.ForceScale != null)
+        PBProperty.Load(src.ForceScale, dst.GetForceScale());
     }
-    public static pulse.cdm.bind.ChestCompressionForceData Unload(SEChestCompressionForce src)
+    public static pulse.cdm.bind.ChestCompressionInstantaneousData Unload(SEChestCompressionInstantaneous src)
     {
-      pulse.cdm.bind.ChestCompressionForceData dst = new pulse.cdm.bind.ChestCompressionForceData();
+      pulse.cdm.bind.ChestCompressionInstantaneousData dst = new pulse.cdm.bind.ChestCompressionInstantaneousData();
       Serialize(src, dst);
       return dst;
     }
-    public static void Serialize(SEChestCompressionForce src, pulse.cdm.bind.ChestCompressionForceData dst)
+    public static void Serialize(SEChestCompressionInstantaneous src, pulse.cdm.bind.ChestCompressionInstantaneousData dst)
     {
       dst.PatientAction = new pulse.cdm.bind.PatientActionData();
       Serialize(src, dst.PatientAction);
       if (src.HasForce())
         dst.Force = PBProperty.Unload(src.GetForce());
-    }
-    #endregion
-
-    #region SEChestCompressionForceScale
-    public static void Load(pulse.cdm.bind.ChestCompressionForceScaleData src, SEChestCompressionForceScale dst)
-    {
-      Serialize(src, dst);
-    }
-    public static void Serialize(pulse.cdm.bind.ChestCompressionForceScaleData src, SEChestCompressionForceScale dst)
-    {
-      if (src.PatientAction != null)
-        Serialize(src.PatientAction, dst);
-      if (src.ForcePeriod != null)
-        PBProperty.Load(src.ForcePeriod, dst.GetForcePeriod());
-      if (src.ForceScale != null)
-        PBProperty.Load(src.ForceScale, dst.GetForceScale());
-    }
-    public static pulse.cdm.bind.ChestCompressionForceScaleData Unload(SEChestCompressionForceScale src)
-    {
-      pulse.cdm.bind.ChestCompressionForceScaleData dst = new pulse.cdm.bind.ChestCompressionForceScaleData();
-      Serialize(src, dst);
-      return dst;
-    }
-    public static void Serialize(SEChestCompressionForceScale src, pulse.cdm.bind.ChestCompressionForceScaleData dst)
-    {
-      dst.PatientAction = new pulse.cdm.bind.PatientActionData();
-      Serialize(src, dst.PatientAction);
-      if (src.HasForcePeriod())
-        dst.ForcePeriod = PBProperty.Unload(src.GetForcePeriod());
       if (src.HasForceScale())
         dst.ForceScale = PBProperty.Unload(src.GetForceScale());
     }

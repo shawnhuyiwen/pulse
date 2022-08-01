@@ -887,8 +887,18 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorContinuous
   PBEquipmentAction::Serialize(src.mechanicalventilatormode(), dst);
   if (src.has_deltapressuresupport())
     PBProperty::Load(src.deltapressuresupport(), dst.GetDeltaPressureSupport());
+  if (src.has_expirationcycleflow())
+    PBProperty::Load(src.expirationcycleflow(), dst.GetExpirationCycleFlow());
+  if (src.has_expirationcyclepressure())
+    PBProperty::Load(src.expirationcyclepressure(), dst.GetExpirationCyclePressure());
+  dst.SetExpirationWaveform((eDriverWaveform)src.expirationwaveform());
   if (src.has_fractioninspiredoxygen())
     PBProperty::Load(src.fractioninspiredoxygen(), dst.GetFractionInspiredOxygen());
+  if (src.has_inspirationpatienttriggerflow())
+    PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
+  if (src.has_inspirationpatienttriggerpressure())
+    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());
+  dst.SetInspirationWaveform((eDriverWaveform)src.inspirationwaveform());
   if (src.has_positiveendexpiredpressure())
     PBProperty::Load(src.positiveendexpiredpressure(), dst.GetPositiveEndExpiredPressure());
   if (src.has_slope())
@@ -905,8 +915,18 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorContinuousPositive
   PBEquipmentAction::Serialize(src, *dst.mutable_mechanicalventilatormode());
   if (src.HasDeltaPressureSupport())
     dst.set_allocated_deltapressuresupport(PBProperty::Unload(*src.m_DeltaPressureSupport));
+  if (src.HasExpirationCycleFlow())
+    dst.set_allocated_expirationcycleflow(PBProperty::Unload(*src.m_ExpirationCycleFlow));
+  if (src.HasExpirationCyclePressure())
+    dst.set_allocated_expirationcyclepressure(PBProperty::Unload(*src.m_ExpirationCyclePressure));
+  dst.set_expirationwaveform((CDM_BIND::eDriverWaveform)src.m_ExpirationWaveform);
   if (src.HasFractionInspiredOxygen())
     dst.set_allocated_fractioninspiredoxygen(PBProperty::Unload(*src.m_FractionInspiredOxygen));
+  if (src.HasInspirationPatientTriggerFlow())
+    dst.set_allocated_inspirationpatienttriggerflow(PBProperty::Unload(*src.m_InspirationPatientTriggerFlow));
+  if (src.HasInspirationPatientTriggerPressure())
+    dst.set_allocated_inspirationpatienttriggerpressure(PBProperty::Unload(*src.m_InspirationPatientTriggerPressure));
+  dst.set_inspirationwaveform((CDM_BIND::eDriverWaveform)src.m_InspirationWaveform);
   if (src.HasPositiveEndExpiredPressure())
     dst.set_allocated_positiveendexpiredpressure(PBProperty::Unload(*src.m_PositiveEndExpiredPressure));
   if (src.HasSlope())
@@ -931,6 +951,11 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorPressureCo
   dst.m_Mode = (eMechanicalVentilator_PressureControlMode)src.mode();
   if (src.has_fractioninspiredoxygen())
     PBProperty::Load(src.fractioninspiredoxygen(), dst.GetFractionInspiredOxygen());
+  if (src.has_inspirationpatienttriggerflow())
+    PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
+  if (src.has_inspirationpatienttriggerpressure())
+    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());
+  dst.SetInspirationWaveform((eDriverWaveform)src.inspirationwaveform());
   if (src.has_inspiratoryperiod())
     PBProperty::Load(src.inspiratoryperiod(), dst.GetInspiratoryPeriod());
   if (src.has_inspiratorypressure())
@@ -954,6 +979,11 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorPressureControl& s
   dst.set_mode((CDM_BIND::MechanicalVentilatorPressureControlData::eMode)src.m_Mode);
   if (src.HasFractionInspiredOxygen())
     dst.set_allocated_fractioninspiredoxygen(PBProperty::Unload(*src.m_FractionInspiredOxygen));
+  if (src.HasInspirationPatientTriggerFlow())
+    dst.set_allocated_inspirationpatienttriggerflow(PBProperty::Unload(*src.m_InspirationPatientTriggerFlow));
+  if (src.HasInspirationPatientTriggerPressure())
+    dst.set_allocated_inspirationpatienttriggerpressure(PBProperty::Unload(*src.m_InspirationPatientTriggerPressure));
+  dst.set_inspirationwaveform((CDM_BIND::eDriverWaveform)src.m_InspirationWaveform);
   if (src.HasInspiratoryPeriod())
     dst.set_allocated_inspiratoryperiod(PBProperty::Unload(*src.m_InspiratoryPeriod));
   if (src.HasInspiratoryPressure())
@@ -986,6 +1016,11 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorVolumeCont
     PBProperty::Load(src.flow(), dst.GetFlow());
   if (src.has_fractioninspiredoxygen())
     PBProperty::Load(src.fractioninspiredoxygen(), dst.GetFractionInspiredOxygen());
+  if (src.has_inspirationpatienttriggerflow())
+    PBProperty::Load(src.inspirationpatienttriggerflow(), dst.GetInspirationPatientTriggerFlow());
+  if (src.has_inspirationpatienttriggerpressure())
+    PBProperty::Load(src.inspirationpatienttriggerpressure(), dst.GetInspirationPatientTriggerPressure());
+  dst.SetInspirationWaveform((eDriverWaveform)src.inspirationwaveform());
   if (src.has_inspiratoryperiod())
     PBProperty::Load(src.inspiratoryperiod(), dst.GetInspiratoryPeriod());
   if (src.has_positiveendexpiredpressure())
@@ -994,6 +1029,8 @@ void PBEquipmentAction::Serialize(const CDM_BIND::MechanicalVentilatorVolumeCont
     PBProperty::Load(src.respirationrate(), dst.GetRespirationRate());
   if (src.has_tidalvolume())
     PBProperty::Load(src.tidalvolume(), dst.GetTidalVolume());
+  if (src.has_slope())
+    PBProperty::Load(src.slope(), dst.GetSlope());
 }
 CDM_BIND::MechanicalVentilatorVolumeControlData* PBEquipmentAction::Unload(const SEMechanicalVentilatorVolumeControl& src)
 {
@@ -1009,6 +1046,11 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorVolumeControl& src
     dst.set_allocated_flow(PBProperty::Unload(*src.m_Flow));
   if (src.HasFractionInspiredOxygen())
     dst.set_allocated_fractioninspiredoxygen(PBProperty::Unload(*src.m_FractionInspiredOxygen));
+  if (src.HasInspirationPatientTriggerFlow())
+    dst.set_allocated_inspirationpatienttriggerflow(PBProperty::Unload(*src.m_InspirationPatientTriggerFlow));
+  if (src.HasInspirationPatientTriggerPressure())
+    dst.set_allocated_inspirationpatienttriggerpressure(PBProperty::Unload(*src.m_InspirationPatientTriggerPressure));
+  dst.set_inspirationwaveform((CDM_BIND::eDriverWaveform)src.m_InspirationWaveform);
   if (src.HasInspiratoryPeriod())
     dst.set_allocated_inspiratoryperiod(PBProperty::Unload(*src.m_InspiratoryPeriod));
   if (src.HasPositiveEndExpiredPressure())
@@ -1017,6 +1059,8 @@ void PBEquipmentAction::Serialize(const SEMechanicalVentilatorVolumeControl& src
     dst.set_allocated_respirationrate(PBProperty::Unload(*src.m_RespirationRate));
   if (src.HasTidalVolume())
     dst.set_allocated_tidalvolume(PBProperty::Unload(*src.m_TidalVolume));
+  if (src.HasSlope())
+    dst.set_allocated_slope(PBProperty::Unload(*src.m_Slope));
 }
 void PBEquipmentAction::Copy(const SEMechanicalVentilatorVolumeControl& src, SEMechanicalVentilatorVolumeControl& dst)
 {
