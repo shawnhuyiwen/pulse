@@ -173,6 +173,8 @@ void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECa
     PBProperty::Load(src.cerebralbloodflow(), dst.GetCerebralBloodFlow());
   if (src.has_cerebralperfusionpressure())
     PBProperty::Load(src.cerebralperfusionpressure(), dst.GetCerebralPerfusionPressure());
+  if (src.has_coronaryperfusionpressure())
+    PBProperty::Load(src.coronaryperfusionpressure(), dst.GetCoronaryPerfusionPressure());
   if (src.has_diastolicarterialpressure())
     PBProperty::Load(src.diastolicarterialpressure(), dst.GetDiastolicArterialPressure());
   if (src.has_diastolicleftheartpressure())
@@ -256,6 +258,8 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::Cardio
     dst.set_allocated_cerebralbloodflow(PBProperty::Unload(*src.m_CerebralBloodFlow));
   if (src.HasCerebralPerfusionPressure())
     dst.set_allocated_cerebralperfusionpressure(PBProperty::Unload(*src.m_CerebralPerfusionPressure));
+  if (src.HasCoronaryPerfusionPressure())
+    dst.set_allocated_coronaryperfusionpressure(PBProperty::Unload(*src.m_CoronaryPerfusionPressure));
   if (src.HasDiastolicArterialPressure())
     dst.set_allocated_diastolicarterialpressure(PBProperty::Unload(*src.m_DiastolicArterialPressure));
   if (src.HasDiastolicLeftHeartPressure())

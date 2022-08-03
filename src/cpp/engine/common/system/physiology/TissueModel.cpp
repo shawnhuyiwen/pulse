@@ -737,7 +737,7 @@ namespace pulse
     {
       m_CardiacArrestCarbonDioxideProductionFactor = CardiacArrestCarbonDioxideProductionFactor;
     }
-    else if (CardiacArrestCarbonDioxideProductionFactor > 0.)
+    else if (m_CardiacArrestCarbonDioxideProductionFactor > 0.)
     {
       double additionalCardiacArrestPeriod_s = 90;
 

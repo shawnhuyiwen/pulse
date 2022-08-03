@@ -1091,7 +1091,7 @@
     }
   }, {
     "PatientAction": {
-      "ChestCompressionForce": {
+      "ChestCompression": {
         "Force": {
           "ScalarForce": {
             "Value": 10.0,

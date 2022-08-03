@@ -1,7 +1,7 @@
 {
- "Name": "SinusBradycardiaToNormalSinus",
- "Description": "Transition from NormalSinus to Bradycardia back to NormalSinus",
- "PatientConfiguration": { "PatientFile": "StandardMale.json" },
+  "Name": "ChestCompressionAutomated",
+  "Description": "This scenario tests the automated chest compression action. Cardiac function is terminated and then successive chest compressions are performed.",
+  "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager":
   {
     "DataRequest":
@@ -67,6 +67,11 @@
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Epinephrine",   "PropertyName": "SystemicMassCleared", "Unit": "ug" },
       { "DecimalFormat": { "Precision": 6 }, "Category": "Substance", "SubstanceName": "Norepinephrine","PropertyName": "BloodConcentration",  "Unit": "ug/L" },
       { "DecimalFormat": { "Precision": 8 }, "Category": "Substance", "SubstanceName": "Norepinephrine","PropertyName": "SystemicMassCleared", "Unit": "ug" },
+      
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "HeartEjectionFraction" },
+      { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "SystemicVascularResistance", "Unit": "mmHg s/mL" },
+      { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Volume", "Unit": "mL" },
+      { "DecimalFormat": { "Precision": 2 }, "Category": "LiquidCompartment", "CompartmentName": "Pericardium", "PropertyName": "Pressure", "Unit": "mmHg" },
      
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "BaroreceptorHeartRateScale",           "Unit": "unitless" },
       { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology",                                               "PropertyName": "BaroreceptorHeartElastanceScale",      "Unit": "unitless" },
@@ -85,44 +90,155 @@
       { "DecimalFormat": {                }, "Category": "LiquidCompartment", "CompartmentName": "BrainVasculature", "PropertyName": "InFlow",                               "Unit": "mL/min" }
     ]
   },
- "AnyAction": [{
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 30.0,
-          "Unit": "s"
-        }
-      }
+ "AnyAction": [
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
     }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "SinusBradycardia"
-      }
+   }
+  },
+  {
+   "PatientAction": {
+    "Arrhythmia": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Rhythm": "Asystole"
     }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 120.0,
-          "Unit": "s"
-        }
-      }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
     }
-  }, {
-    "PatientAction": {
-      "Arrhythmia": {
-        "Rhythm": "NormalSinus"
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "Force": {
+      "ScalarForce": {
+       "Value": 311,
+       "Unit": "N"
       }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 240.0,
-          "Unit": "s"
-        }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 80,
+       "Unit": "1/min"
       }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
     }
-  }]
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "ForceScale": {
+      "Scalar0To1": {
+       "Value": 0.63
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Value": 80,
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 30,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "ChestCompressionAutomated": {
+     "PatientAction": {
+      "Action": {}
+     },
+     "ForceScale": {
+      "Scalar0To1": {
+       "Value": 0.63
+      }
+     },
+     "CompressionFrequency": {
+      "ScalarFrequency": {
+       "Unit": "1/min"
+      }
+     },
+     "AppliedForceFraction": {
+      "Scalar0To1": {
+       "Value": 0.8
+      }
+     }
+    }
+   }
+  },
+  {
+   "PatientAction": {
+    "Arrhythmia": {
+     "PatientAction": {
+      "Action": {}
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 200,
+      "Unit": "s"
+     }
+    }
+   }
+  }
+ ]
 }

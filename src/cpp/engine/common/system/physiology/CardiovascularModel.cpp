@@ -912,6 +912,7 @@ namespace pulse
     GetPulsePressure().SetValue(m_CardiacCycleAortaPressureHigh_mmHg - m_CardiacCycleAortaPressureLow_mmHg, PressureUnit::mmHg);
     GetSystolicRightHeartPressure().SetValue(m_CardiacCycleRightHeartPressureHigh_mmHg, PressureUnit::mmHg);
     GetDiastolicRightHeartPressure().SetValue(m_CardiacCycleRightHeartPressureLow_mmHg, PressureUnit::mmHg);
+    GetCoronaryPerfusionPressure().SetValue(m_CardiacCycleAortaPressureLow_mmHg-m_CardiacCycleLeftHeartPressureLow_mmHg, PressureUnit::mmHg);
 
     m_data.GetCardiovascular().GetHeartStrokeVolume().SetValue(m_CardiacCycleStrokeVolume_mL, VolumeUnit::mL);
     double ejectionFraction = 0.;
