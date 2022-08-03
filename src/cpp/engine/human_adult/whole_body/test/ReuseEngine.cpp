@@ -28,6 +28,7 @@ namespace pulse { namespace human_adult_whole_body
   {
     std::string testName = "ReuseEngine";
     m_Logger->SetLogFile(rptDirectory + "/" + testName + ".log");
+    m_Logger->LogToConsole(true);
 
     SETestReport testReport(m_Logger);
     SETestSuite& testSuite = testReport.CreateTestSuite();
@@ -91,16 +92,38 @@ namespace pulse { namespace human_adult_whole_body
     double tvp2 = pe.GetRespiratorySystem()->GetTidalVolume(VolumeUnit::mL);
     double rrp2 = pe.GetRespiratorySystem()->GetRespirationRate(FrequencyUnit::Per_min);
 
-    m_Logger->Info("These valuse should be the exact same!");
-    m_Logger->Info("dbp1=" + std::to_string(dbp1) + " dbp2=" + std::to_string(dbp2));
-    m_Logger->Info("sbp1=" + std::to_string(sbp1) + " sbp2=" + std::to_string(sbp2));
-    m_Logger->Info("hrp1=" + std::to_string(hrp1) + " hrp2=" + std::to_string(hrp2));
-    m_Logger->Info("tvp1=" + std::to_string(tvp1) + " tvp2=" + std::to_string(tvp2));
-    m_Logger->Info("rrp1=" + std::to_string(rrp1) + " rrp2=" + std::to_string(rrp2));
+    double d1 = GeneralMath::PercentDifference(dbp1, dbp2);
+    double d2 = GeneralMath::PercentDifference(sbp1, sbp2);
+    double d3 = GeneralMath::PercentDifference(hrp1, hrp2);
+    double d4 = GeneralMath::PercentDifference(tvp1, tvp2);
+    double d5 = GeneralMath::PercentDifference(rrp1, rrp2);
 
-    if (dbp1 != dbp2 || sbp1 != sbp2 || hrp1 != hrp2 || tvp1 != tvp2 || rrp1 != rrp2)
+    m_Logger->Info("These valuse should be the exact same!");
+    m_Logger->Info("dbp1=" + std::to_string(dbp1) + " dbp2=" + std::to_string(dbp2) + "->" + std::to_string(d1));
+    m_Logger->Info("sbp1=" + std::to_string(sbp1) + " sbp2=" + std::to_string(sbp2) + "->" + std::to_string(d2));
+    m_Logger->Info("hrp1=" + std::to_string(hrp1) + " hrp2=" + std::to_string(hrp2) + "->" + std::to_string(d3));
+    m_Logger->Info("tvp1=" + std::to_string(tvp1) + " tvp2=" + std::to_string(tvp2) + "->" + std::to_string(d4));
+    m_Logger->Info("rrp1=" + std::to_string(rrp1) + " rrp2=" + std::to_string(rrp2) + "->" + std::to_string(d5));
+
+    if (d1 > 1e-8)
     {
-      testCase.AddFailure("Second stabilization not equal to first stabilization");
+      testCase.AddFailure("Second stabilization not equal to first stabilization :d1");
+    }
+    if (d2 > 1e-8)
+    {
+      testCase.AddFailure("Second stabilization not equal to first stabilization :d2");
+    }
+    if (d3 > 1e-8)
+    {
+      testCase.AddFailure("Second stabilization not equal to first stabilization :d3");
+    }
+    if (d4 > 1e-8)
+    {
+      testCase.AddFailure("Second stabilization not equal to first stabilization :d4");
+    }
+    if (d5 > 1e-8)
+    {
+      testCase.AddFailure("Second stabilization not equal to first stabilization :d5");
     }
     testReport.SerializeToFile(rptDirectory + "/" + testName + "Report.json");
   }
