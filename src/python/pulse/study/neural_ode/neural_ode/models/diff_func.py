@@ -8,22 +8,13 @@ from torchcde import cdeint
 
 import einops
 import ubelt as ub
-from typing import Optional, Union
+from typing import Optional, Union, Any
 from dataclasses import dataclass, asdict
 
 
-# for argparse compatibility
-Layer = Optional[Union[str, nn.Module]]
-
-def _coerce_layer_type(layer: Layer, default=nn.Identity) -> nn.Module:
-    if layer is None:
-        return default
-    elif isinstance(layer, str):
-        return vars(nn)[layer]()  # HACK
-    elif isinstance(layer, nn.Module):
-        return layer
-    else:
-        raise TypeError(layer)
+# for cli yaml problems, check:
+# import pytorch_lightning as pl
+# pl.core.saving.save_hparams_to_yaml
 
 
 # fixed parameters
@@ -34,8 +25,8 @@ class ODEFuncParams:
     h_dims: Optional[int] = None
     h_trans_dims: int = 100
     h_trans_layers: int = 2
-    nonlinear: Layer = nn.Tanh()  # TODO fix create_net for ()
-    final_nonlinear: Layer = nn.Tanh()
+    nonlinear: type = nn.Tanh  # call as torch.nn.Tanh from CLI
+    final_nonlinear: type = nn.Tanh
     # solver
     odeint_rtol: float = 1e-3
     odeint_atol: float = 1e-4
@@ -53,14 +44,13 @@ class ODEFunc(nn.Module):
         if self.h_dims is None:
             self.h_dims = 2 * self.x_dims
 
-        self.nonlinear = _coerce_layer_type(self.nonlinear)
-        self.final_nonlinear = _coerce_layer_type(self.final_nonlinear)
+        self.final_nonlinear = self.final_nonlinear()
 
         self.ode_func = utils.create_net(input_dims=self.h_dims,
                                          output_dims=self.h_dims,
                                          n_units=self.h_trans_dims,
                                          hidden_layers=self.h_trans_layers,
-                                         nonlinear=type(self.nonlinear))
+                                         nonlinear=self.nonlinear)
 
     def forward(self, t, h, backwards=False):
         hs = self.ode_func(h)
@@ -81,8 +71,6 @@ class ODEFunc(nn.Module):
         # hs_pred.shape is ([sample_hs] batch_size time_points h_dims)
         return hs_pred
 
-import pytorch_lightning as pl
-pl.core.saving.save_hparams_to_yaml
 
 # fixed parameters
 # TODO integrate with pl hparams
@@ -92,8 +80,8 @@ class CDEFuncParams:
     h_dims: Optional[int] = None
     h_trans_dims: int = 100
     h_trans_layers: int = 2
-    nonlinear: Layer = nn.ReLU()  # TODO awk
-    final_nonlinear: Layer = nn.Tanh()
+    nonlinear: type = nn.ReLU
+    final_nonlinear: type = nn.Tanh
 
 class CDEFunc(nn.Module):
 
@@ -106,8 +94,7 @@ class CDEFunc(nn.Module):
         if self.h_dims is None:
             self.h_dims = 2 * self.x_dims
 
-        self.nonlinear = _coerce_layer_type(self.nonlinear)
-        self.final_nonlinear = _coerce_layer_type(self.final_nonlinear)
+        self.final_nonlinear = self.final_nonlinear()
 
         self.cde_func = utils.create_net(input_dims=self.h_dims,
                                          output_dims=(self.h_dims * self.x_dims),
