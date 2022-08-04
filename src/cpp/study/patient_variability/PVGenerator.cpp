@@ -7,9 +7,11 @@
 #include "cdm/properties/SEScalarLength.h"
 #include "cdm/properties/SEScalarMass.h"
 #include "cdm/properties/SEScalarMassPerVolume.h"
+#include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerPressure.h"
+
 
 namespace pulse::study::patient_variability
 {
@@ -24,31 +26,46 @@ namespace pulse::study::patient_variability
   {
     int id = 0;
 
-    for (auto sex : sexes)
+    for (auto sex : parameters.sexes)
     {
-      // Adjust height range based on sex
-      unsigned int heightMin_cm = heightMaleMin_cm;
-      unsigned int heightMax_cm = heightMaleMax_cm;
-      std::string sex_dir = "/" + sex.second;
-      if (sex.first == ePatient_Sex::Female)
+      // Adjust parameter space if necessary
+      ParameterSpace p = parameters;
+      if (includeStandardPatients)
       {
-        heightMin_cm = heightFemaleMin_cm;
-        heightMax_cm = heightFemaleMax_cm;
+        SEPatientConfiguration pc;
+        SEPatient& patient = pc.GetPatient();
+        if (sex.first == ePatient_Sex::Male)
+        {
+          patient.SerializeFromFile("./patients/StandardMale.json");
+        }
+        else if (sex.first == ePatient_Sex::Female)
+        {
+          patient.SerializeFromFile("./patients/StandardFemale.json");
+        }
+        p = AdjustParametersToPatient(patient);
       }
 
-      for (unsigned int age_yr = ageMin_yr; age_yr <= ageMax_yr; age_yr += ageStep_yr)
+      // Adjust height range based on sex
+      double heightMin_cm = p.heightMin_cm[sex.first];
+      double heightMax_cm = p.heightMax_cm[sex.first];
+      std::string sex_dir = "/" + sex.second;
+
+      int ageIdx, ageN = (int)((p.ageMax_yr - p.ageMin_yr) / p.ageStep_yr);
+      for (ageIdx = 0; ageIdx <= ageN; ageIdx++)
       {
+        double age_yr = p.ageMin_yr + p.ageStep_yr * ageIdx;
         std::string age_dir = "/age_yr" + std::to_string(age_yr);
 
-        for (unsigned int height_cm = heightMin_cm; height_cm <= heightMax_cm; height_cm += heightStep_cm)
+        int heightIdx, heightN = (int)((heightMax_cm - heightMin_cm) / p.heightStep_cm);
+        for (heightIdx = 0; heightIdx <= heightN; heightIdx++)
         {
+          double height_cm = heightMin_cm + p.heightStep_cm * heightIdx;
           std::string height_dir = "/height_cm" + std::to_string(height_cm);
 
-          int bmiIdx, bmiN = (int)((bmiMax - bmiMin) / bmiStep);
+          int bmiIdx, bmiN = (int)((p.bmiMax - p.bmiMin) / p.bmiStep);
           for (bmiIdx = 0; bmiIdx <= bmiN; bmiIdx++)
           {
-            double bmi = bmiMin + bmiStep * bmiIdx;
-
+            double bmi = p.bmiMin + p.bmiStep * bmiIdx;
             std::string bmi_dir = "/bmi" + pulse::cdm::to_string(bmi);
 
             // BMI = kg/m2
@@ -58,22 +75,28 @@ namespace pulse::study::patient_variability
             // Caclulate weight (kg) from height (m) and BMI
             double weight_kg = bmi * height_m * height_m;
 
-            for (unsigned int hr_bpm = hrMin_bpm; hr_bpm <= hrMax_bpm; hr_bpm += hrStep_bpm)
+            int hrIdx, hrN = (int)((p.hrMax_bpm - p.hrMin_bpm) / p.hrStep_bpm);
+            for (hrIdx = 0; hrIdx <= hrN; hrIdx++)
             {
+              double hr_bpm = p.hrMin_bpm + p.hrStep_bpm * hrIdx;
               std::string hr_dir = "/hr_bpm" + std::to_string(hr_bpm);
 
-              for (unsigned int map_mmHg = mapMin_mmHg; map_mmHg <= mapMax_mmHg; map_mmHg += mapStep_mmHg)
+              int mapIdx, mapN = (int)((p.mapMax_mmHg - p.mapMin_mmHg) / p.mapStep_mmHg);
+              for (mapIdx = 0; mapIdx <= mapN; mapIdx++)
               {
+                double map_mmHg = p.mapMin_mmHg + p.mapStep_mmHg * mapIdx;
                 std::string map_dir = "/map_mmHg" + std::to_string(map_mmHg);
 
-                for (unsigned int pp_mmHg = pulsePressureMin_mmHg; pp_mmHg <= pulsePressureMax_mmHg; pp_mmHg += pulsePressureStep_mmHg)
+                int ppIdx, ppN = (int)((p.pulsePressureMax_mmHg - p.pulsePressureMin_mmHg) / p.pulsePressureStep_mmHg);
+                for (ppIdx = 0; ppIdx <= ppN; ppIdx++)
                 {
+                  double pp_mmHg = p.pulsePressureMin_mmHg + p.pulsePressureStep_mmHg * ppIdx;
                   std::string pp_dir = "/pp_mmHg" + std::to_string(pp_mmHg);
                   std::string full_dir_path = age_dir + bmi_dir + hr_dir + map_dir + pp_dir + sex_dir + height_dir;
 
                   // systolic - diastolic = pulse pressure
                   // MAP = (systolic + 2 * diastolic) / 3
-                  double diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3;
+                  double diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3.0;
                   double systolic_mmHg = pp_mmHg + diastolic_mmHg;
 
                   switch (mode)
@@ -98,7 +121,7 @@ namespace pulse::study::patient_variability
 
                   case Mode::Hemorrhage:
                   {
-                    GenerateHemorrhageOptions(pData, id, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, diastolic_mmHg, systolic_mmHg, full_dir_path);
+                    GenerateHemorrhageOptions(pData, id, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, diastolic_mmHg, systolic_mmHg, p, full_dir_path);
                     break;
                   }
                   }
@@ -113,24 +136,25 @@ namespace pulse::study::patient_variability
 
   // Creates a new list of patients, adding all hemorrhage variables to each patient in originalPatients
   void PVGenerator::GenerateHemorrhageOptions(PatientStateListData& pList, int& id,
-    const ePatient_Sex sex, unsigned int age_yr, unsigned int height_cm, double weight_kg, double bmi,
-    unsigned int hr_bpm, double diastolic_mmHg, double systolic_mmHg, const std::string& full_dir_path)
+    const ePatient_Sex sex, double age_yr, double height_cm, double weight_kg, double bmi,
+    double hr_bpm, double diastolic_mmHg, double systolic_mmHg, const ParameterSpace& p, 
+    const std::string& full_dir_path)
   {
-    for (auto hemorrhageCompartment : hemorrhageCompartments)
+    for (auto hemorrhageCompartment : p.hemorrhageCompartments)
     {
       std::string compartment_dir = + "/"+hemorrhageCompartment;
 
-      int severityIdx, severityN = (int)((hemorrhageSeverityMax - hemorrhageSeverityMin) / hemorrhageSeverityStep);
+      int severityIdx, severityN = (int)((p.hemorrhageSeverityMax - p.hemorrhageSeverityMin) / p.hemorrhageSeverityStep);
       for (severityIdx = 0; severityIdx <= severityN; severityIdx++)
       {
-        double severity = hemorrhageSeverityMin + hemorrhageSeverityStep * severityIdx;
+        double severity = p.hemorrhageSeverityMin + p.hemorrhageSeverityStep * severityIdx;
 
         std::string severity_dir = "/severity" + pulse::cdm::to_string(severity);
 
-        int triageTimeIdx, triageTimeN = (int)((hemorrhageTriageTimeMax_min - hemorrhageTriageTimeMin_min) / hemorrhageTriageTimeStep_min);
+        int triageTimeIdx, triageTimeN = (int)((p.hemorrhageTriageTimeMax_min - p.hemorrhageTriageTimeMin_min) / p.hemorrhageTriageTimeStep_min);
         for (triageTimeIdx = 0; triageTimeIdx <= triageTimeN; triageTimeIdx++)
         {
-          double triageTime_min = hemorrhageTriageTimeMin_min + hemorrhageTriageTimeStep_min * triageTimeIdx;
+          double triageTime_min = p.hemorrhageTriageTimeMin_min + p.hemorrhageTriageTimeStep_min * triageTimeIdx;
 
           std::string triageTime_dir = "/triage_min" + pulse::cdm::to_string(triageTime_min);
           std::string hemorrhage_dir_path = full_dir_path + compartment_dir + severity_dir + triageTime_dir;
@@ -156,5 +180,84 @@ namespace pulse::study::patient_variability
         }
       }
     }
+  }
+
+  // Adjusts parameter space, within Pulse's limits, so that patient is included in parameter space.
+  // Bounds from: https://pulse.kitware.com/_patient_methodology.html
+  PVGenerator::ParameterSpace PVGenerator::AdjustParametersToPatient(const SEPatient& patient)
+  {
+    ParameterSpace p = parameters;
+
+    if (patient.HasAge())
+    {
+      double age = patient.GetAge(TimeUnit::yr);
+      AdjustParameter(p.ageMin_yr, p.ageMax_yr, p.ageStep_yr, age, 18, 65);
+    }
+      
+    if (patient.HasHeight())
+    {
+      double height = patient.GetHeight(LengthUnit::cm);
+      double heightLB = (patient.GetSex() == ePatient_Sex::Male) ? 163 : 151;
+      double heightUB = (patient.GetSex() == ePatient_Sex::Male) ? 190 : 175.5;
+      AdjustParameter(p.heightMin_cm[patient.GetSex()], p.heightMax_cm[patient.GetSex()], p.heightStep_cm, height, heightLB, heightUB);
+
+      if (patient.HasWeight())
+      {
+        // BMI = kg/m2
+        double bmi = patient.GetWeight(MassUnit::kg) / (patient.GetHeight(LengthUnit::m) * patient.GetHeight(LengthUnit::m));
+        AdjustParameter(p.bmiMin, p.bmiMax, p.bmiStep, bmi, 16, 30);
+      }
+    }
+
+    if (patient.HasHeartRateBaseline())
+    {
+      double hr = patient.GetHeartRateBaseline(FrequencyUnit::Per_min);
+      AdjustParameter(p.hrMin_bpm, p.hrMax_bpm, p.hrStep_bpm, hr, 60, 100);
+    }
+    
+    if (patient.HasSystolicArterialPressureBaseline() && patient.HasDiastolicArterialPressureBaseline())
+    {
+      double systolic_mmHg = patient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+      double diastolic_mmHg = patient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+      double map = (systolic_mmHg + 2 * diastolic_mmHg) / 3.0;
+      double pp = systolic_mmHg - diastolic_mmHg;
+
+      AdjustParameter(p.mapMin_mmHg, p.mapMax_mmHg, p.mapStep_mmHg, map, 70, 93.333);
+      AdjustParameter(p.pulsePressureMin_mmHg, p.pulsePressureMax_mmHg, p.pulsePressureStep_mmHg, pp, 10, 60);
+    }
+
+    return p;
+  }
+
+  // Adjust a single parameters range so that provided key value is included. Limited to [lowerBound, upperBound]
+  void PVGenerator::AdjustParameter(double& min, double& max, double step, double keyValue, double lowerBound, double upperBound)
+  {
+    double _min = keyValue;
+    double _max = keyValue;
+
+    // Increase until we are within a half-step of previous max value or past it
+    while (max - _max >= step/2.0)
+    {
+      _max += step;
+    }
+    // Ensure remain within Pulse's limits
+    while(_max > upperBound)
+    {
+      _max -= step;
+    }
+
+    // Decrease until we are within a half-step of previous min value or past it
+    while (_min - min >= step/2.0)
+    {
+      _min -= step;
+    }
+    // Ensure remain within Pulse's limits
+    while(_min < lowerBound)
+    {
+      _min += step;
+    }
+
+    min = _min;
+    max = _max;
   }
 }

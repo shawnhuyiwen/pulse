@@ -4,6 +4,7 @@
 #include "PVRunner.h"
 
 #include "PulseEngine.h"
+#include "engine/human_adult/whole_body/Engine.h"
 #include "engine/PulseConfiguration.h"
 #include "engine/PulseScenario.h"
 
@@ -112,7 +113,7 @@ namespace pulse::study::patient_variability
           auto patient = standardResults.add_patient();
           patient->set_outputbasefilename(standard);
           std::vector<std::string> validation_files;
-          ListFiles("./verification/scenarios/validation/systems", validation_files, true, "-" + standard + "ValidationResults.json");
+          ListFiles(dir, validation_files, true, "-" + standard + "ValidationResults.json");
           if (!AggregateResults(*patient, validation_files, GetLogger()))
           {
             GetLogger()->Warning("Unable to aggregate results for " + standard);
@@ -334,6 +335,16 @@ namespace pulse::study::patient_variability
       p.GetHeartRateBaseline().SetValue(patient.heartrate_bpm(), FrequencyUnit::Per_min);
       p.GetSystolicArterialPressureBaseline().SetValue(patient.systolicarterialpressure_mmhg(), PressureUnit::mmHg);
       p.GetDiastolicArterialPressureBaseline().SetValue(patient.diastolicarterialpressure_mmhg(), PressureUnit::mmHg);
+
+      // Ensure patient is valid
+      SEPatient test(pulse->GetLogger());
+      test.Copy(p);
+      if(!pulse::human_adult_whole_body::SetupPatient(test))
+      {
+        pulse->GetLogger()->Info("Invalid patient. Combination: " + patient.outputbasefilename());
+        return false;
+      }
+
       p.SerializeToFile(m_RootDir + patient.outputbasefilename() + "/patient.json");
 
       if (!pulse->InitializeEngine(pc))

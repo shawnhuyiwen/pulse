@@ -23,5 +23,5 @@ namespace pulse { namespace human_adult_whole_body
     virtual void AllocateController() const override;
   };
 
-  static bool SetupPatient(SEPatient& p);
+  bool SetupPatient(SEPatient& p);
 END_NAMESPACE_EX

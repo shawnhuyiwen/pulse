@@ -4,8 +4,10 @@
 #pragma once
 
 #include <map>
+#include <limits>
 
 #include "PulseEngine.h"
+#include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
 
 PUSH_PROTO_WARNINGS
@@ -31,55 +33,62 @@ namespace pulse::study::patient_variability
       Validation
     };
 
+    struct ParameterSpace
+    {
+      double ageMin_yr = 18;
+      double ageMax_yr = 65;
+      double ageStep_yr = 10;
+
+      std::map<ePatient_Sex, double> heightMin_cm = { {ePatient_Sex::Male, 165}, {ePatient_Sex::Female, 153} };
+      std::map<ePatient_Sex, double> heightMax_cm = { {ePatient_Sex::Male, 186}, {ePatient_Sex::Female, 170} };
+      double heightStep_cm = 7;
+
+      double bmiMin = 18.5;
+      double bmiMax = 29;
+      double bmiStep = 3;
+
+      double hrMin_bpm = 60;
+      double hrMax_bpm = 100;
+      double hrStep_bpm = 15;
+
+      double mapMin_mmHg = 70;
+      double mapMax_mmHg = 100;
+      double mapStep_mmHg = 10;
+
+      double pulsePressureMin_mmHg = 30;
+      double pulsePressureMax_mmHg = 50;
+      double pulsePressureStep_mmHg = 10;
+
+      std::map<ePatient_Sex, std::string> sexes = { {ePatient_Sex::Male, "male"}, {ePatient_Sex::Female, "female"} };
+
+      //--------------------//
+      // Hemorrhage options //
+      //--------------------//
+      
+      std::vector<std::string> hemorrhageCompartments = { "RightArm", "RightLeg" };
+
+      double hemorrhageSeverityMin = 0.25;
+      double hemorrhageSeverityMax = 1.0;
+      double hemorrhageSeverityStep = 0.25;
+
+      double hemorrhageTriageTimeMin_min  = 1.0;
+      double hemorrhageTriageTimeMax_min  = 20.0;
+      double hemorrhageTriageTimeStep_min = 5.0;
+    };
+
     void GeneratePatientList(PatientStateListData& pData);
 
     Mode mode = Mode::Validation;
-
-    unsigned int ageMin_yr = 18;
-    unsigned int ageMax_yr = 65;
-    unsigned int ageStep_yr = 10;
-
-    unsigned int heightMaleMin_cm = 165;
-    unsigned int heightMaleMax_cm = 186;
-    unsigned int heightFemaleMin_cm = 153;
-    unsigned int heightFemaleMax_cm = 170;
-    unsigned int heightStep_cm = 7;
-
-    double bmiMin = 18.5;
-    double bmiMax = 29;
-    double bmiStep = 3;
-
-    unsigned int hrMin_bpm = 60;
-    unsigned int hrMax_bpm = 100;
-    unsigned int hrStep_bpm = 15;
-
-    unsigned int mapMin_mmHg = 70;
-    unsigned int mapMax_mmHg = 100;
-    unsigned int mapStep_mmHg = 10;
-
-    unsigned int pulsePressureMin_mmHg = 30;
-    unsigned int pulsePressureMax_mmHg = 50;
-    unsigned int pulsePressureStep_mmHg = 10;
-
-    std::map<ePatient_Sex, std::string> sexes = { {ePatient_Sex::Male, "male"}, {ePatient_Sex::Female, "female"} };
-
-    //--------------------//
-    // Hemorrhage options //
-    //--------------------//
-    
-    std::vector<std::string> hemorrhageCompartments = { "RightArm", "RightLeg" };
-
-    double hemorrhageSeverityMin = 0.25;
-    double hemorrhageSeverityMax = 1.0;
-    double hemorrhageSeverityStep = 0.25;
-
-    double hemorrhageTriageTimeMin_min  = 1.0;
-    double hemorrhageTriageTimeMax_min  = 20.0;
-    double hemorrhageTriageTimeStep_min = 5.0;
+    ParameterSpace parameters;
+    bool includeStandardPatients = false;
 
   protected:
     void GenerateHemorrhageOptions(PatientStateListData& pList, int& id,
-      const ePatient_Sex sex, unsigned int age_yr, unsigned int height_cm, double weight_kg, double bmi,
-      unsigned int hr_bpm, double diastolic_mmHg, double systolic_mmHg, const std::string& full_dir_path);
+      const ePatient_Sex sex, double age_yr, double height_cm, double weight_kg, double bmi,
+      double hr_bpm, double diastolic_mmHg, double systolic_mmHg, const ParameterSpace& p,
+      const std::string& full_dir_path);
+
+    ParameterSpace AdjustParametersToPatient(const SEPatient& patient);
+    void AdjustParameter(double& min, double& max, double step, double keyValue, double lowerBound=0, double upperBound=std::numeric_limits<double>::max());
   };
 }

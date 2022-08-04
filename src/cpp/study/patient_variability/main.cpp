@@ -5,18 +5,20 @@
 #include "PVGenerator.h"
 
 #include "cdm/utils/FileUtils.h"
+#include "io/protobuf/PBUtils.h"
 
 using namespace pulse::study::patient_variability;
 
 int main(int argc, char* argv[])
 {
-  bool clear = false;
-  bool binary = false;
-  bool generateOnly    = false;
-  bool postProcessOnly = false;
-  bool validationMode  = false;
-  bool hemorrhageMode  = false;
-  bool useBaseline     = false;
+  bool clear                   = false;
+  bool binary                  = false;
+  bool generateOnly            = false;
+  bool postProcessOnly         = false;
+  bool validationMode          = false;
+  bool hemorrhageMode          = false;
+  bool useBaseline             = false;
+  bool includeStandardPatients = false;
   std::string data = "solo";
   PVGenerator::Mode mode = PVGenerator::Mode::Validation;
   std::string rootDir = "./test_results/patient_variability/";
@@ -73,6 +75,12 @@ int main(int argc, char* argv[])
     {
       useBaseline = true;
     }
+
+    // Adjust parameters to include standard patients
+    if(!strcmp(argv[i], "-i") || !strcmp(argv[i], "--include-standard-patients"))
+    {
+      includeStandardPatients = true;
+    }
     
   }
   if (validationMode && hemorrhageMode)
@@ -101,131 +109,139 @@ int main(int argc, char* argv[])
   pulse::study::bind::patient_variability::PatientStateListData patients;
   PVGenerator pvg(&log);
   pvg.mode = mode;
+  pvg.includeStandardPatients = includeStandardPatients;
 
   if(data == "full")
   {
-    pvg.ageMin_yr = 18;
-    pvg.ageMax_yr = 65;
-    pvg.ageStep_yr = 10;
+    pvg.parameters.ageMin_yr = 18;
+    pvg.parameters.ageMax_yr = 65;
+    pvg.parameters.ageStep_yr = 10;
 
-    pvg.heightMaleMin_cm = 165;
-    pvg.heightMaleMax_cm = 186;
-    pvg.heightFemaleMin_cm = 153;
-    pvg.heightFemaleMax_cm = 170;
-    pvg.heightStep_cm = 7;
+    pvg.parameters.heightMin_cm[ePatient_Sex::Male] = 165;
+    pvg.parameters.heightMax_cm[ePatient_Sex::Male] = 186;
+    pvg.parameters.heightMin_cm[ePatient_Sex::Female] = 153;
+    pvg.parameters.heightMax_cm[ePatient_Sex::Female] = 170;
+    pvg.parameters.heightStep_cm = 7;
 
-    pvg.bmiMin = 18.5;
-    pvg.bmiMax = 29;
-    pvg.bmiStep = 3;
+    pvg.parameters.bmiMin = 18.5;
+    pvg.parameters.bmiMax = 29;
+    pvg.parameters.bmiStep = 3;
 
-    pvg.hrMin_bpm = 60;
-    pvg.hrMax_bpm = 100;
-    pvg.hrStep_bpm = 15;
+    pvg.parameters.hrMin_bpm = 60;
+    pvg.parameters.hrMax_bpm = 100;
+    pvg.parameters.hrStep_bpm = 15;
 
-    pvg.mapMin_mmHg = 70;
-    pvg.mapMax_mmHg = 100;
-    pvg.mapStep_mmHg = 10;
+    pvg.parameters.mapMin_mmHg = 70;
+    pvg.parameters.mapMax_mmHg = 100;
+    pvg.parameters.mapStep_mmHg = 10;
 
-    pvg.pulsePressureMin_mmHg = 30;
-    pvg.pulsePressureMax_mmHg = 50;
-    pvg.pulsePressureStep_mmHg = 10;
+    pvg.parameters.pulsePressureMin_mmHg = 30;
+    pvg.parameters.pulsePressureMax_mmHg = 50;
+    pvg.parameters.pulsePressureStep_mmHg = 10;
 
     ////////////////////////
     // Hemorrhage Options //
     ////////////////////////
 
-    pvg.hemorrhageSeverityMin = 0.25;
-    pvg.hemorrhageSeverityMax = 1.0;
-    pvg.hemorrhageSeverityStep = 0.25;
+    pvg.parameters.hemorrhageSeverityMin = 0.25;
+    pvg.parameters.hemorrhageSeverityMax = 1.0;
+    pvg.parameters.hemorrhageSeverityStep = 0.25;
 
-    pvg.hemorrhageTriageTimeMin_min = 1.0;
-    pvg.hemorrhageTriageTimeMax_min = 5.0;
-    pvg.hemorrhageTriageTimeStep_min = 1.0;
+    pvg.parameters.hemorrhageTriageTimeMin_min = 1.0;
+    pvg.parameters.hemorrhageTriageTimeMax_min = 5.0;
+    pvg.parameters.hemorrhageTriageTimeStep_min = 1.0;
   }
   else if (data == "solo")
   {
-    pvg.ageMin_yr = 18;
-    pvg.ageMax_yr = 65;
-    pvg.ageStep_yr = 50;
+    pvg.parameters.ageMin_yr = 18;
+    pvg.parameters.ageMax_yr = 65;
+    pvg.parameters.ageStep_yr = 50;
 
-    pvg.heightMaleMin_cm = 165;
-    pvg.heightMaleMax_cm = 186;
-    pvg.heightFemaleMin_cm = 153;
-    pvg.heightFemaleMax_cm = 170;
-    pvg.heightStep_cm = 22;
+    pvg.parameters.heightMin_cm[ePatient_Sex::Male] = 165;
+    pvg.parameters.heightMax_cm[ePatient_Sex::Male] = 186;
+    pvg.parameters.heightMin_cm[ePatient_Sex::Female] = 153;
+    pvg.parameters.heightMax_cm[ePatient_Sex::Female] = 170;
+    pvg.parameters.heightStep_cm = 22;
 
-    pvg.bmiMin = 18.5;
-    pvg.bmiMax = 29;
-    pvg.bmiStep = 30;
+    pvg.parameters.bmiMin = 18.5;
+    pvg.parameters.bmiMax = 29;
+    pvg.parameters.bmiStep = 30;
 
-    pvg.hrMin_bpm = 60;
-    pvg.hrMax_bpm = 100;
-    pvg.hrStep_bpm = 150;
+    pvg.parameters.hrMin_bpm = 60;
+    pvg.parameters.hrMax_bpm = 100;
+    pvg.parameters.hrStep_bpm = 150;
 
-    pvg.mapMin_mmHg = 70;
-    pvg.mapMax_mmHg = 100;
-    pvg.mapStep_mmHg = 100;
+    pvg.parameters.mapMin_mmHg = 70;
+    pvg.parameters.mapMax_mmHg = 100;
+    pvg.parameters.mapStep_mmHg = 100;
 
-    pvg.pulsePressureMin_mmHg = 30;
-    pvg.pulsePressureMax_mmHg = 50;
-    pvg.pulsePressureStep_mmHg = 100;
+    pvg.parameters.pulsePressureMin_mmHg = 30;
+    pvg.parameters.pulsePressureMax_mmHg = 50;
+    pvg.parameters.pulsePressureStep_mmHg = 100;
 
     ////////////////////////
     // Hemorrhage Options //
     ////////////////////////
 
-    pvg.hemorrhageSeverityMin = 0.25;
-    pvg.hemorrhageSeverityMax = 1.0;
-    pvg.hemorrhageSeverityStep = 1.0;
+    pvg.parameters.hemorrhageSeverityMin = 0.25;
+    pvg.parameters.hemorrhageSeverityMax = 1.0;
+    pvg.parameters.hemorrhageSeverityStep = 1.0;
 
-    pvg.hemorrhageTriageTimeMin_min = 1.0;
-    pvg.hemorrhageTriageTimeMax_min = 5.0;
-    pvg.hemorrhageTriageTimeStep_min = 5.0;
+    pvg.parameters.hemorrhageTriageTimeMin_min = 1.0;
+    pvg.parameters.hemorrhageTriageTimeMax_min = 5.0;
+    pvg.parameters.hemorrhageTriageTimeStep_min = 5.0;
   }
   else if (data == "test")
   {
-    pvg.ageMin_yr = 18;
-    pvg.ageMax_yr = 65;
-    pvg.ageStep_yr = 25;
+    pvg.parameters.ageMin_yr = 18;
+    pvg.parameters.ageMax_yr = 65;
+    pvg.parameters.ageStep_yr = 25;
 
-    pvg.heightMaleMin_cm = 165;
-    pvg.heightMaleMax_cm = 186;
-    pvg.heightFemaleMin_cm = 153;
-    pvg.heightFemaleMax_cm = 170;
-    pvg.heightStep_cm = 8;
+    pvg.parameters.heightMin_cm[ePatient_Sex::Male] = 165;
+    pvg.parameters.heightMax_cm[ePatient_Sex::Male] = 186;
+    pvg.parameters.heightMin_cm[ePatient_Sex::Female] = 153;
+    pvg.parameters.heightMax_cm[ePatient_Sex::Female] = 170;
+    pvg.parameters.heightStep_cm = 8;
 
-    pvg.bmiMin = 18.5;
-    pvg.bmiMax = 29;
-    pvg.bmiStep = 10;
+    pvg.parameters.bmiMin = 18.5;
+    pvg.parameters.bmiMax = 29;
+    pvg.parameters.bmiStep = 10;
 
-    pvg.hrMin_bpm = 60;
-    pvg.hrMax_bpm = 100;
-    pvg.hrStep_bpm = 30;
+    pvg.parameters.hrMin_bpm = 60;
+    pvg.parameters.hrMax_bpm = 100;
+    pvg.parameters.hrStep_bpm = 30;
 
-    pvg.mapMin_mmHg = 70;
-    pvg.mapMax_mmHg = 100;
-    pvg.mapStep_mmHg = 40;
+    pvg.parameters.mapMin_mmHg = 70;
+    pvg.parameters.mapMax_mmHg = 100;
+    pvg.parameters.mapStep_mmHg = 40;
 
-    pvg.pulsePressureMin_mmHg = 30;
-    pvg.pulsePressureMax_mmHg = 50;
-    pvg.pulsePressureStep_mmHg = 40;
+    pvg.parameters.pulsePressureMin_mmHg = 30;
+    pvg.parameters.pulsePressureMax_mmHg = 50;
+    pvg.parameters.pulsePressureStep_mmHg = 40;
 
     ////////////////////////
     // Hemorrhage Options //
     ////////////////////////
 
-    pvg.hemorrhageSeverityMin = 0.25;
-    pvg.hemorrhageSeverityMax = 1.0;
-    pvg.hemorrhageSeverityStep = 0.25;
+    pvg.parameters.hemorrhageSeverityMin = 0.25;
+    pvg.parameters.hemorrhageSeverityMax = 1.0;
+    pvg.parameters.hemorrhageSeverityStep = 0.25;
 
-    pvg.hemorrhageTriageTimeMin_min = 1.0;
-    pvg.hemorrhageTriageTimeMax_min = 5.0;
-    pvg.hemorrhageTriageTimeStep_min = 5.0;
+    pvg.parameters.hemorrhageTriageTimeMin_min = 1.0;
+    pvg.parameters.hemorrhageTriageTimeMax_min = 5.0;
+    pvg.parameters.hemorrhageTriageTimeStep_min = 5.0;
   }
 
   pvg.GeneratePatientList(patients);
   if (generateOnly)
+  {
+    std::string patientFile = rootDir + "/patients.json";
+    if (binary)
+      patientFile = rootDir + "/patients.pbb";
+    PBUtils::SerializeToFile(patients, patientFile, &log);
     return 0;
+  }
+    
 
   PVRunner pvr(rootDir, useBaseline, &log);
   pvr.PostProcessOnly = postProcessOnly;
