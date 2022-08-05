@@ -158,6 +158,8 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetCerebralBloodFlow();
   if (name.compare("CerebralPerfusionPressure") == 0)
     return &GetCerebralPerfusionPressure();
+  if (name.compare("CoronaryPerfusionPressure") == 0)
+    return &GetCoronaryPerfusionPressure();
   if (name.compare("DiastolicArterialPressure") == 0)
     return &GetDiastolicArterialPressure();
   if (name.compare("DiastolicLeftHeartPressure") == 0)
