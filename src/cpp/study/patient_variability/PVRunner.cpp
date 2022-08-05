@@ -110,8 +110,23 @@ namespace pulse::study::patient_variability
         std::vector<std::string> standardPatients{ "StandardMale", "StandardFemale" };
         for (auto& standard : standardPatients)
         {
+          // Load patient info to save for later analysis
+          SEPatientConfiguration pc;
+          SEPatient& p = pc.GetPatient();
+          p.SerializeFromFile("./patients/" + standard + ".json");
           auto patient = standardResults.add_patient();
+          patient->set_sex((pulse::cdm::bind::PatientData_eSex)p.GetSex());
+          patient->set_age_yr(p.GetAge(TimeUnit::yr));
+          patient->set_height_cm(p.GetHeight(LengthUnit::cm));
+          patient->set_weight_kg(p.GetWeight(MassUnit::kg));
+          double bmi = p.GetWeight(MassUnit::kg) / (p.GetHeight(LengthUnit::m) * p.GetHeight(LengthUnit::m));
+          patient->set_bmi(bmi);
+          patient->set_heartrate_bpm(p.GetHeartRateBaseline(FrequencyUnit::Per_min));
+          patient->set_diastolicarterialpressure_mmhg(p.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg));
+          patient->set_systolicarterialpressure_mmhg(p.GetSystolicArterialPressureBaseline(PressureUnit::mmHg));
           patient->set_outputbasefilename(standard);
+
+          // Save validation results
           std::vector<std::string> validation_files;
           ListFiles(dir, validation_files, true, "-" + standard + "ValidationResults.json");
           if (!AggregateResults(*patient, validation_files, GetLogger()))

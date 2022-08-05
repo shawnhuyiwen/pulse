@@ -23,6 +23,7 @@ def identifyBounds(patients, parameter):
     
     return min, max
 
+
 # Generates list of patients that match any of the provided filters
 def filterPatients(patients, filters):
     filteredPatients = PatientStateListData()
@@ -69,6 +70,29 @@ def filterPatients(patients, filters):
     return filteredPatients
 
 
+# Create a filter from patient.
+# Provide patient name (e.g "StandardMale") for standard results
+# OR locate patient in given patients with ID
+def createFilter(name = None, patients = None, id = None):
+    # If name given, looking for a patient in standard results
+    if name:
+        standardResults = PatientStateListData()
+        with open(dir + "standard_results.json") as f:
+            json = f.read()
+        json_format.Parse(json, standardResults)
+        for patient in standardResults.Patient:
+            if patient.OutputBaseFilename == name:
+                return patient
+    # Otherwise looking for an ID in given patients data         
+    elif patients and id is not None: 
+        for patient in patients:
+            if patient.ID == id:
+                return patient
+
+    # Could not locate patient with given arguments
+    return None
+
+
 def parse_command_line_args():
     parser = argparse.ArgumentParser(
         description="Analyze patient variability results",
@@ -98,6 +122,7 @@ def parse_command_line_args():
     args = parser.parse_args()
 
     return args
+
 
 if __name__ == '__main__':
     # Determine working directory based on command line args
@@ -140,21 +165,32 @@ if __name__ == '__main__':
     # Example: Get all patients that match: BMI 23.7099, HR of 60bpm, MAP of 70mmHg,
     # pulse pressure of 30mmHg, male, 173cm (vary age only)
     filters = PatientStateListData()
-    filterM = filters.Patient.add()
-    filterM.BMI = 23.7099
-    filterM.Height_cm = 172.34
-    filterM.HeartRate_bpm = 72
+    filter = filters.Patient.add()
+    filter.BMI = 23.7099
+    filter.Height_cm = 172.34
+    filter.HeartRate_bpm = 72
     pp_mmHg =  40.5
     map_mmHg = 87
     diastolic_mmHg = (3.0 * map_mmHg - pp_mmHg) / 3.0
     systolic_mmHg = pp_mmHg + diastolic_mmHg
-    filterM.DiastolicArterialPressure_mmHg = diastolic_mmHg
-    filterM.SystolicArterialPressure_mmHg = systolic_mmHg
+    filter.DiastolicArterialPressure_mmHg = diastolic_mmHg
+    filter.SystolicArterialPressure_mmHg = systolic_mmHg
     filteredPatients_age = filterPatients(results.Patient, filters.Patient)
     print("\n\n\nVary age only (23.7099 BMI, 72bpm HR, 87mmHg MAP, 40.5mmHg PP, male, 172.34cm):\n" + lineSep)
     for p in filteredPatients_age.Patient:
         print(p.OutputBaseFilename)
 
-    # Identify bounds of age parameter
+    # Example: Identify bounds of age parameter
     minAge_yr, maxAge_yr = identifyBounds(filteredPatients_age.Patient, 'Age_yr')
-    print("Min age(yr): {} Max age(yr): {}".format(minAge_yr, maxAge_yr))
+    print("\nMin age(yr): {} Max age(yr): {}".format(minAge_yr, maxAge_yr))
+
+    # Example: Use create filter to avoid specifying every field explicitly
+    filters = PatientStateListData()
+    standardMaleFilter = createFilter(name="StandardMale")
+    filter = filters.Patient.add()
+    filter.CopyFrom(standardMaleFilter)
+    filter.Age_yr = 0 # Reset any fields you want to vary
+    filteredPatients_age2 = filterPatients(results.Patient, filters.Patient)
+    print("\n\n\nVary age from 'Standard Male' patient:\n" + lineSep)
+    for p in filteredPatients_age2.Patient:
+        print(p.OutputBaseFilename)
