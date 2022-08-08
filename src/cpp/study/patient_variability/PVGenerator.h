@@ -78,14 +78,14 @@ namespace pulse::study::patient_variability
 
     void GeneratePatientList(PatientStateListData& pData);
 
-    Mode mode = Mode::Validation;
-    ParameterSpace parameters;
-    bool includeStandardPatients = false;
+    bool           m_IncludeStandardPatients = true;
+    Mode           m_Mode = Mode::Validation;
+    ParameterSpace m_Parameters;
 
   protected:
     void GenerateHemorrhageOptions(PatientStateListData& pList, int& id,
       const ePatient_Sex sex, double age_yr, double height_cm, double weight_kg, double bmi,
-      double hr_bpm, double diastolic_mmHg, double systolic_mmHg, const ParameterSpace& p,
+      double hr_bpm, double map_mmHg, double pp_mmHg, double diastolic_mmHg, double systolic_mmHg, const ParameterSpace& p,
       const std::string& full_dir_path);
 
     ParameterSpace AdjustParametersToPatient(const SEPatient& patient);

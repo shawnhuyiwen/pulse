@@ -1,7 +1,5 @@
-from pulse.study.bind.PatientVariability_pb2 import *
-from pulse.cdm.bind.TestReport_pb2 import PropertyValidationListData, PropertyValidationData
-from pulse.cdm.bind.Patient_pb2 import PatientData
-from google.protobuf import json_format
+# Distributed under the Apache License, Version 2.0.
+# See accompanying NOTICE file for details.
 
 from enum import Enum
 from typing import NamedTuple

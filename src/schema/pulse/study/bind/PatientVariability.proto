@@ -16,21 +16,25 @@ message PatientStateData
   // Initial Conditions
   pulse.cdm.bind.PatientData.eSex                         Sex                               = 5;
   uint32                                                  Age_yr                            = 6;
-  double                                                  Height_cm                         = 7;
-  double                                                  Weight_kg                         = 8;
-  double                                                  BMI                               = 9;
-  double                                                  HeartRate_bpm                     = 10;
-  double                                                  DiastolicArterialPressure_mmHg    = 11;
-  double                                                  SystolicArterialPressure_mmHg     = 12;
+  double                                                  BMI                               = 7;
+  double                                                  HeartRate_bpm                     = 8;
+  double                                                  Height_cm                         = 9;
+  double                                                  MeanArterialPressure_mmHg         = 10;
+  double                                                  PulsePressure_mmHg                = 11;
+  
+  // Initial patient data of interest for completeness, but not used in the generator (i.e. these are calculated from the above)
+  double                                                  DiastolicArterialPressure_mmHg    = 12;
+  double                                                  SystolicArterialPressure_mmHg     = 13;
+  double                                                  Weight_kg                         = 14;
   // Stabilization Info
-  bool                                                    AchievedStabilization             = 13;
-  double                                                  StabilizationTime_s               = 14;
+  bool                                                    AchievedStabilization             = 15;
+  double                                                  StabilizationTime_s               = 16;
   
   // Run Modes
   oneof RunMode
   {
-    HemorrhageData                                        Hemorrhage                        = 15;
-    ValidationData                                        Validation                        = 16;
+    HemorrhageData                                        Hemorrhage                        = 17;
+    ValidationData                                        Validation                        = 18;
   }
 
   message ValidationData

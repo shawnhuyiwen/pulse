@@ -26,11 +26,11 @@ namespace pulse::study::patient_variability
   {
     int id = 0;
 
-    for (auto sex : parameters.sexes)
+    for (auto sex : m_Parameters.sexes)
     {
       // Adjust parameter space if necessary
-      ParameterSpace p = parameters;
-      if (includeStandardPatients)
+      ParameterSpace p = m_Parameters;
+      if (m_IncludeStandardPatients)
       {
         SEPatientConfiguration pc;
         SEPatient& patient = pc.GetPatient();
@@ -92,14 +92,16 @@ namespace pulse::study::patient_variability
                 {
                   double pp_mmHg = p.pulsePressureMin_mmHg + p.pulsePressureStep_mmHg * ppIdx;
                   std::string pp_dir = "/pp_mmHg" + std::to_string(pp_mmHg);
-                  std::string full_dir_path = age_dir + bmi_dir + hr_dir + map_dir + pp_dir + sex_dir + height_dir;
+                  std::string full_dir_path = sex_dir + age_dir + height_dir + bmi_dir + hr_dir + map_dir + pp_dir;
 
                   // systolic - diastolic = pulse pressure
                   // MAP = (systolic + 2 * diastolic) / 3
                   double diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3.0;
                   double systolic_mmHg = pp_mmHg + diastolic_mmHg;
 
-                  switch (mode)
+                  Info("Creating patient: " + full_dir_path);
+
+                  switch (m_Mode)
                   {
                   case Mode::Validation:
                   {
@@ -107,10 +109,13 @@ namespace pulse::study::patient_variability
                     patientData->set_id(id++);
                     patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex.first);
                     patientData->set_age_yr(age_yr);
-                    patientData->set_height_cm(height_cm);
-                    patientData->set_weight_kg(weight_kg);
                     patientData->set_bmi(bmi);
                     patientData->set_heartrate_bpm(hr_bpm);
+                    patientData->set_height_cm(height_cm);
+                    patientData->set_meanarterialpressure_mmhg(map_mmHg);
+                    patientData->set_pulsepressure_mmhg(pp_mmHg);
+
+                    patientData->set_weight_kg(weight_kg);
                     patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
                     patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
                     patientData->set_outputbasefilename(full_dir_path);
@@ -121,7 +126,7 @@ namespace pulse::study::patient_variability
 
                   case Mode::Hemorrhage:
                   {
-                    GenerateHemorrhageOptions(pData, id, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, diastolic_mmHg, systolic_mmHg, p, full_dir_path);
+                    GenerateHemorrhageOptions(pData, id, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, diastolic_mmHg, systolic_mmHg, p, full_dir_path);
                     break;
                   }
                   }
@@ -137,8 +142,8 @@ namespace pulse::study::patient_variability
   // Creates a new list of patients, adding all hemorrhage variables to each patient in originalPatients
   void PVGenerator::GenerateHemorrhageOptions(PatientStateListData& pList, int& id,
     const ePatient_Sex sex, double age_yr, double height_cm, double weight_kg, double bmi,
-    double hr_bpm, double diastolic_mmHg, double systolic_mmHg, const ParameterSpace& p, 
-    const std::string& full_dir_path)
+    double hr_bpm, double map_mmHg, double pp_mmHg, double diastolic_mmHg, double systolic_mmHg,
+    const ParameterSpace& p, const std::string& full_dir_path)
   {
     for (auto hemorrhageCompartment : p.hemorrhageCompartments)
     {
@@ -163,10 +168,13 @@ namespace pulse::study::patient_variability
           patientData->set_id(id++);
           patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex);
           patientData->set_age_yr(age_yr);
-          patientData->set_height_cm(height_cm);
-          patientData->set_weight_kg(weight_kg);
           patientData->set_bmi(bmi);
           patientData->set_heartrate_bpm(hr_bpm);
+          patientData->set_height_cm(height_cm);
+          patientData->set_meanarterialpressure_mmhg(map_mmHg);
+          patientData->set_pulsepressure_mmhg(pp_mmHg);
+
+          patientData->set_weight_kg(weight_kg);
           patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
           patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
           patientData->set_outputbasefilename(hemorrhage_dir_path);
@@ -186,7 +194,7 @@ namespace pulse::study::patient_variability
   // Bounds from: https://pulse.kitware.com/_patient_methodology.html
   PVGenerator::ParameterSpace PVGenerator::AdjustParametersToPatient(const SEPatient& patient)
   {
-    ParameterSpace p = parameters;
+    ParameterSpace p = m_Parameters;
 
     if (patient.HasAge())
     {

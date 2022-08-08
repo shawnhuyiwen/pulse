@@ -1,196 +1,35 @@
-from pulse.study.bind.PatientVariability_pb2 import *
-from pulse.cdm.bind.TestReport_pb2 import PropertyValidationListData, PropertyValidationData
-from pulse.cdm.bind.Patient_pb2 import PatientData
+# Distributed under the Apache License, Version 2.0.
+# See accompanying NOTICE file for details.
 
-from google.protobuf import json_format
-from os.path import exists
-import argparse
-import math
+from pulse.study.patient_variability.analysis_utils import PatientVariabilityResults, Field
 
 lineSep = "-------------------------------------------------------------------"
 
-# Identify parameter bounds of the given parameter in the given list of patients
-def identifyBounds(patients, parameter):
-    min = float('inf')
-    max = float('-inf')
+class PatientVariabilityAnalysis(PatientVariabilityResults):
+    __slots__ = ["_standardMale", "_standardFemale"]
 
-    for patient in patients:
-        param = getattr(patient, parameter)
-        if param > max:
-            max = param
-        if param < min:
-            min = param
-    
-    return min, max
+    def __init__(self, dir: str):
+        super().__init__(dir)
+        self._standardMale = self.createFilter(name="StandardMale")
+        self._standardFemale = self.createFilter(name="StandardFemale")
 
+    def process_fields_individually(self):
 
-# Generates list of patients that match any of the provided filters
-def filterPatients(patients, filters):
-    filteredPatients = PatientStateListData()
+        for field in Field:
+            print("Analyzing Standard Male's with any " + str(field))
+            print(lineSep)
+            self.analyzeSlice(self.sliceResults(field, self._standardMale))
+            print("\n\n")
 
-    for patient in patients:
-        for filter in filters:
-            if filter.Sex != patient.Sex:
-                # Note: default value of sex is Male
-                continue
-            if filter.Age_yr and not math.isclose(filter.Age_yr, patient.Age_yr, abs_tol = 0.0001):
-                continue
-            if filter.Height_cm and not math.isclose(filter.Height_cm, patient.Height_cm, abs_tol = 0.0001):
-                continue
-            if filter.Weight_kg and not math.isclose(filter.Weight_kg, patient.Weight_kg, abs_tol = 0.0001):
-                continue
-            if filter.BMI and not math.isclose(filter.BMI, patient.BMI, abs_tol = 0.0001):
-                continue
-            if filter.HeartRate_bpm and not math.isclose(filter.HeartRate_bpm, patient.HeartRate_bpm, abs_tol = 0.0001):
-                continue
-            if filter.DiastolicArterialPressure_mmHg and not math.isclose(filter.DiastolicArterialPressure_mmHg, patient.DiastolicArterialPressure_mmHg, abs_tol = 0.0001):
-                continue
-            if filter.SystolicArterialPressure_mmHg and not math.isclose(filter.SystolicArterialPressure_mmHg, patient.SystolicArterialPressure_mmHg, abs_tol = 0.0001):
-                continue
-            if filter.HasField('Hemorrhage'):
-                if not patient.HasField('Hemorrhage'):
-                    continue
-                filterHData = getattr(filter, 'Hemorrhage').value
-                patientHData = getattr(patient, 'Hemorrhage').value
-                if filterHData.Compartment and filterHData.Compartment != patientHData.Compartment:
-                    continue
-                if filterHData.Severity and not math.isclose(filterHData.Severity, patientHData.Severity, abs_tol = 0.0001):
-                    continue
-                if filterHData.StartTime_s and not math.isclose(filterHData.StartTime_s, patientHData.StartTime_s, abs_tol = 0.0001):
-                    continue
-                if filterHData.TriageTime_s and not math.isclose(filterHData.TriageTime_s, patientHData.TriageTime_s, abs_tol = 0.0001):
-                    continue
-
-            # Patient matched all set values of this filter.
-            # Add it to the list and move on to the next patient.
-            p = filteredPatients.Patient.add()
-            p.CopyFrom(patient)
-            break
-
-    return filteredPatients
-
-
-# Create a filter from patient.
-# Provide patient name (e.g "StandardMale") for standard results
-# OR locate patient in given patients with ID
-def createFilter(name = None, patients = None, id = None):
-    # If name given, looking for a patient in standard results
-    if name:
-        standardResults = PatientStateListData()
-        with open(dir + "standard_results.json") as f:
-            json = f.read()
-        json_format.Parse(json, standardResults)
-        for patient in standardResults.Patient:
-            if patient.OutputBaseFilename == name:
-                return patient
-    # Otherwise looking for an ID in given patients data         
-    elif patients and id is not None: 
-        for patient in patients:
-            if patient.ID == id:
-                return patient
-
-    # Could not locate patient with given arguments
-    return None
-
-
-def parse_command_line_args():
-    parser = argparse.ArgumentParser(
-        description="Analyze patient variability results",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    parser.add_argument(
-        "-d",
-        "--directory",
-        dest="directory",
-        default="./test_results/patient_variability/validation/",
-        help="The base filepath to the directory of results generated by the runner.",
-    )
-    parser.add_argument(
-        "-he",
-        "--hemorrhage",
-        dest="use_hemorrhage_dir",
-        action="store_true",
-        help="Use default 'hemorrhage' directory, overrides --directory argument.",
-    )
-    parser.add_argument(
-        "-v",
-        "--validation",
-        dest="use_validation_dir",
-        action="store_true",
-        help="Use default 'validation' directory, overrides --directory argument.",
-    )
-    args = parser.parse_args()
-
-    return args
-
+            print("Analyzing Standard Female's with any " + str(field))
+            print(lineSep)
+            self.analyzeSlice(self.sliceResults(field, self._standardFemale))
+            print("\n\n")
+    def analyzeSlice(self, s):
+        # Just going to print out the base filename for each entry in the slice
+        for d in s:
+            print(d.OutputBaseFilename)
 
 if __name__ == '__main__':
-    # Determine working directory based on command line args
-    args = parse_command_line_args()
-    if args.use_validation_dir:
-        dir = "./test_results/patient_variability/validation/"
-    elif args.use_hemorrhage_dir:
-        dir = "./test_results/patient_variability/hemorrhage/"
-    else:
-        dir = args.directory
-
-    # Load up result set
-    results = PatientStateListData()
-    resultsFile = dir + "patient_results.json"
-    if not exists(resultsFile):
-        resultsFile = dir + "patient_results.pbb"
-        with open(resultsFile, "rb") as f:
-            binary = f.read()
-        results.ParseFromString(binary)
-    else:
-        with open(resultsFile) as f:
-            json = f.read()
-        json_format.Parse(json, results)
-
-    # Note that if sex isn't specified, female patients will be filtered out.
-    # Protobuf can't tell the difference between an unset value and a default value (male, 0, "", false)
-
-    # Example: Get all patients that have a baseline HR of 72bpm
-    filters = PatientStateListData()
-    filterM = filters.Patient.add()
-    filterM.HeartRate_bpm = 72
-    filterF = filters.Patient.add()
-    filterF.CopyFrom(filterM)
-    filterF.Sex = PatientData.eSex.Female
-    filteredPatients_HR_bpm72 = filterPatients(results.Patient, filters.Patient)
-    print("72bpm patients:\n" + lineSep)
-    for p in filteredPatients_HR_bpm72.Patient:
-        print(p.OutputBaseFilename)
-
-    # Example: Get all patients that match: BMI 23.7099, HR of 60bpm, MAP of 70mmHg,
-    # pulse pressure of 30mmHg, male, 173cm (vary age only)
-    filters = PatientStateListData()
-    filter = filters.Patient.add()
-    filter.BMI = 23.7099
-    filter.Height_cm = 172.34
-    filter.HeartRate_bpm = 72
-    pp_mmHg =  40.5
-    map_mmHg = 87
-    diastolic_mmHg = (3.0 * map_mmHg - pp_mmHg) / 3.0
-    systolic_mmHg = pp_mmHg + diastolic_mmHg
-    filter.DiastolicArterialPressure_mmHg = diastolic_mmHg
-    filter.SystolicArterialPressure_mmHg = systolic_mmHg
-    filteredPatients_age = filterPatients(results.Patient, filters.Patient)
-    print("\n\n\nVary age only (23.7099 BMI, 72bpm HR, 87mmHg MAP, 40.5mmHg PP, male, 172.34cm):\n" + lineSep)
-    for p in filteredPatients_age.Patient:
-        print(p.OutputBaseFilename)
-
-    # Example: Identify bounds of age parameter
-    minAge_yr, maxAge_yr = identifyBounds(filteredPatients_age.Patient, 'Age_yr')
-    print("\nMin age(yr): {} Max age(yr): {}".format(minAge_yr, maxAge_yr))
-
-    # Example: Use create filter to avoid specifying every field explicitly
-    filters = PatientStateListData()
-    standardMaleFilter = createFilter(name="StandardMale")
-    filter = filters.Patient.add()
-    filter.CopyFrom(standardMaleFilter)
-    filter.Age_yr = 0 # Reset any fields you want to vary
-    filteredPatients_age2 = filterPatients(results.Patient, filters.Patient)
-    print("\n\n\nVary age from 'Standard Male' patient:\n" + lineSep)
-    for p in filteredPatients_age2.Patient:
-        print(p.OutputBaseFilename)
+    analysis = PatientVariabilityAnalysis("./test_results/patient_variability/validation/")
+    analysis.process_fields_individually()

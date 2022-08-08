@@ -121,6 +121,12 @@ namespace pulse::study::patient_variability
           patient->set_weight_kg(p.GetWeight(MassUnit::kg));
           double bmi = p.GetWeight(MassUnit::kg) / (p.GetHeight(LengthUnit::m) * p.GetHeight(LengthUnit::m));
           patient->set_bmi(bmi);
+          // MAP = (systolic + 2 * diastolic) / 3
+          double map_mmHg = (p.GetSystolicArterialPressureBaseline(PressureUnit::mmHg) + (2 * p.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg))) / 3;
+          patient->set_meanarterialpressure_mmhg(map_mmHg);
+          // systolic - diastolic = pulse pressure
+          double pp_mmHg = p.GetSystolicArterialPressureBaseline(PressureUnit::mmHg) - p.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+          patient->set_pulsepressure_mmhg(pp_mmHg);
           patient->set_heartrate_bpm(p.GetHeartRateBaseline(FrequencyUnit::Per_min));
           patient->set_diastolicarterialpressure_mmhg(p.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg));
           patient->set_systolicarterialpressure_mmhg(p.GetSystolicArterialPressureBaseline(PressureUnit::mmHg));
