@@ -11,6 +11,7 @@
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/properties/SEScalarVolume.h"
 #include "cdm/properties/SEScalarVolumePerPressure.h"
+#include "engine/human_adult/whole_body/Engine.h"
 
 
 namespace pulse::study::patient_variability
@@ -22,9 +23,32 @@ namespace pulse::study::patient_variability
   {
   }
 
+  bool PVGenerator::TestPatientCombo(Logger* logger, ePatient_Sex sex,
+                                     double age_yr, double height_cm, double weight_kg,
+                                     double hr_bpm, double diastolic_mmHg, double systolic_mmHg)
+  {
+    auto lvl = logger->GetLogLevel();
+    logger->SetLogLevel(Logger::Level::Error);
+    // Ensure patient is valid
+    SEPatient test(logger);
+    test.SetSex(sex);
+    test.GetAge().SetValue(age_yr, TimeUnit::yr);
+    test.GetHeight().SetValue(height_cm, LengthUnit::cm);
+    test.GetWeight().SetValue(weight_kg, MassUnit::kg);
+    test.GetHeartRateBaseline().SetValue(hr_bpm, FrequencyUnit::Per_min);
+    test.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+    test.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+    bool b = pulse::human_adult_whole_body::SetupPatient(test);
+    logger->SetLogLevel(lvl);
+    return b;
+  }
+
   void PVGenerator::GeneratePatientList(PatientStateListData& pData)
   {
     int id = 0;
+    m_MaxNumPatients = 0;
+    m_TotalPatients = 0;
+    m_TotalRuns = 0;
 
     for (auto sex : m_Parameters.sexes)
     {
@@ -50,10 +74,10 @@ namespace pulse::study::patient_variability
       double heightMax_cm = p.heightMax_cm[sex.first];
       std::string sex_dir = "/" + sex.second;
 
-      int ageIdx, ageN = (int)((p.ageMax_yr - p.ageMin_yr) / p.ageStep_yr);
+      unsigned int ageIdx, ageN = (unsigned int)((p.ageMax_yr - p.ageMin_yr) / p.ageStep_yr);
       for (ageIdx = 0; ageIdx <= ageN; ageIdx++)
       {
-        double age_yr = p.ageMin_yr + p.ageStep_yr * ageIdx;
+        unsigned int age_yr = (unsigned int)(p.ageMin_yr + p.ageStep_yr * ageIdx);
         std::string age_dir = "/age_yr" + std::to_string(age_yr);
 
         int heightIdx, heightN = (int)((heightMax_cm - heightMin_cm) / p.heightStep_cm);
@@ -99,12 +123,21 @@ namespace pulse::study::patient_variability
                   double diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3.0;
                   double systolic_mmHg = pp_mmHg + diastolic_mmHg;
 
+                  m_MaxNumPatients++;
+                  // Test the patient combination
+                  if (!TestPatientCombo(GetLogger(), sex.first, age_yr, height_cm, weight_kg, hr_bpm, diastolic_mmHg, systolic_mmHg))
+                  {
+                    Error("The invalid patient was: " + full_dir_path);
+                    continue;
+                  }
+                  m_TotalPatients++;
                   Info("Creating patient: " + full_dir_path);
 
                   switch (m_Mode)
                   {
                   case Mode::Validation:
                   {
+                    m_TotalRuns++;
                     auto patientData = pData.add_patient();
                     patientData->set_id(id++);
                     patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex.first);
@@ -137,11 +170,14 @@ namespace pulse::study::patient_variability
         }
       }
     }
+
+    Info("Created " + std::to_string(m_TotalPatients) + " out a total of " + std::to_string(m_MaxNumPatients) + " possible patients");
+    Info("Created " + std::to_string(m_TotalRuns) + " total runs");
   }
 
   // Creates a new list of patients, adding all hemorrhage variables to each patient in originalPatients
   void PVGenerator::GenerateHemorrhageOptions(PatientStateListData& pList, int& id,
-    const ePatient_Sex sex, double age_yr, double height_cm, double weight_kg, double bmi,
+    const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
     double hr_bpm, double map_mmHg, double pp_mmHg, double diastolic_mmHg, double systolic_mmHg,
     const ParameterSpace& p, const std::string& full_dir_path)
   {
@@ -159,6 +195,7 @@ namespace pulse::study::patient_variability
         int triageTimeIdx, triageTimeN = (int)((p.hemorrhageTriageTimeMax_min - p.hemorrhageTriageTimeMin_min) / p.hemorrhageTriageTimeStep_min);
         for (triageTimeIdx = 0; triageTimeIdx <= triageTimeN; triageTimeIdx++)
         {
+          m_TotalRuns++;
           double triageTime_min = p.hemorrhageTriageTimeMin_min + p.hemorrhageTriageTimeStep_min * triageTimeIdx;
 
           std::string triageTime_dir = "/triage_min" + pulse::cdm::to_string(triageTime_min);

@@ -181,7 +181,7 @@ namespace pulse { namespace human_adult_whole_body
     double fatFractionMaxMale = 0.25; //Obese
     double fatFractionMaxFemale = 0.32; //Obese
     double fatFractionMinMale = 0.02; //Essential fat
-    double fatFractionMinFemale = 0.10; //Essential fat  
+    double fatFractionMinFemale = 0.10; //Essential fat
     //Male
     double fatFractionMin = fatFractionMinMale;
     double fatFractionMax = fatFractionMaxMale;
@@ -653,8 +653,6 @@ namespace pulse { namespace human_adult_whole_body
       patient.Warning(ss);
     }
 
-    if (err)
-      return false;
-    return true;
+    return !err;
   }
 END_NAMESPACE_EX

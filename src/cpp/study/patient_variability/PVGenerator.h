@@ -76,6 +76,9 @@ namespace pulse::study::patient_variability
       double hemorrhageTriageTimeStep_min = 5.0;
     };
 
+    static bool TestPatientCombo(Logger*, ePatient_Sex sex,
+                                 double age_yr, double height_cm, double weight_kg,
+                                 double hr_bpm, double diastolic_mmHg, double systolic_mmHg);
     void GeneratePatientList(PatientStateListData& pData);
 
     bool           m_IncludeStandardPatients = true;
@@ -83,8 +86,12 @@ namespace pulse::study::patient_variability
     ParameterSpace m_Parameters;
 
   protected:
+    unsigned int m_MaxNumPatients; // This is the maximum number of patients for the set, not all combination may be valid, so the actual number of patients for a set could be less that this.
+    unsigned int m_TotalPatients; // The actual number of patients for this data set, (NOT the number of runs, i.e. hemorrhage options can create more runs for each patient)
+    unsigned int m_TotalRuns; // This is the actual number of runs to perform
+
     void GenerateHemorrhageOptions(PatientStateListData& pList, int& id,
-      const ePatient_Sex sex, double age_yr, double height_cm, double weight_kg, double bmi,
+      const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
       double hr_bpm, double map_mmHg, double pp_mmHg, double diastolic_mmHg, double systolic_mmHg, const ParameterSpace& p,
       const std::string& full_dir_path);
 
