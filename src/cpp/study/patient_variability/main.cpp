@@ -18,8 +18,8 @@ int main(int argc, char* argv[])
   bool postProcessOnly         = false;
   bool validationMode          = false;
   bool hemorrhageMode          = false;
-  bool useBaseline             = false;
-  bool includeStandardPatients = false;
+  bool useBaseline             = true;
+  bool includeStandardPatients = true;
   std::string data = "test";
   PVGenerator::Mode mode = PVGenerator::Mode::Validation;
   std::string rootDir = "./test_results/patient_variability/";

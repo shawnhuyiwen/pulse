@@ -4,7 +4,7 @@
 #pragma once
 
 #include <map>
-#include <limits>
+#include <list>
 
 #include "PulseEngine.h"
 #include "cdm/engine/SEPatientConfiguration.h"
@@ -90,12 +90,25 @@ namespace pulse::study::patient_variability
     unsigned int m_TotalPatients; // The actual number of patients for this data set, (NOT the number of runs, i.e. hemorrhage options can create more runs for each patient)
     unsigned int m_TotalRuns; // This is the actual number of runs to perform
 
+    struct ParameterSpaceValues
+    {
+      std::list<double> ageRange_yr;
+      std::map<ePatient_Sex, std::list<double>> heightRange_cm;
+      std::list<double> bmiRange;
+      std::list<double> hrRange_bpm;
+      std::list<double> mapRange_mmHg;
+      std::list<double> pulsePressureRange_mmHg;
+    };
+    ParameterSpaceValues m_ParameterValues;
+
     void GenerateHemorrhageOptions(PatientStateListData& pList, int& id,
       const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
-      double hr_bpm, double map_mmHg, double pp_mmHg, double diastolic_mmHg, double systolic_mmHg, const ParameterSpace& p,
+      double hr_bpm, double map_mmHg, double pp_mmHg, double diastolic_mmHg, double systolic_mmHg,
       const std::string& full_dir_path);
 
-    ParameterSpace AdjustParametersToPatient(const SEPatient& patient);
-    void AdjustParameter(double& min, double& max, double step, double keyValue, double lowerBound=0, double upperBound=std::numeric_limits<double>::max());
+    void AdjustParameterSpaceBounds();
+    void GenerateParameterSpaceValues(const SEPatient* patient = nullptr);
+    bool AdjustParameterBounds(double& min, double& max, double step, double keyValue);
+    std::list<double> GenerateParameterValues(double min, double max, double step);
   };
 }
