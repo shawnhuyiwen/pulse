@@ -191,31 +191,34 @@ int main(int argc, char* argv[])
   }
   else if (data == "test")
   {
+    // Making the steps sizes waaay big
+    // This should generate 3 values for each parameter
+    // min, standard, max
     pvg.m_Parameters.ageMin_yr = 18;
     pvg.m_Parameters.ageMax_yr = 65;
-    pvg.m_Parameters.ageStep_yr = 20;
+    pvg.m_Parameters.ageStep_yr = 100;
 
     pvg.m_Parameters.heightMin_cm[ePatient_Sex::Male] = 165;
     pvg.m_Parameters.heightMax_cm[ePatient_Sex::Male] = 186;
     pvg.m_Parameters.heightMin_cm[ePatient_Sex::Female] = 153;
     pvg.m_Parameters.heightMax_cm[ePatient_Sex::Female] = 170;
-    pvg.m_Parameters.heightStep_cm = 8;
+    pvg.m_Parameters.heightStep_cm = 100;
 
     pvg.m_Parameters.bmiMin = 18.5;
     pvg.m_Parameters.bmiMax = 29;
-    pvg.m_Parameters.bmiStep = 5;
+    pvg.m_Parameters.bmiStep = 100;
 
     pvg.m_Parameters.hrMin_bpm = 60;
     pvg.m_Parameters.hrMax_bpm = 100;
-    pvg.m_Parameters.hrStep_bpm = 20;
+    pvg.m_Parameters.hrStep_bpm = 100;
 
     pvg.m_Parameters.mapMin_mmHg = 70;
     pvg.m_Parameters.mapMax_mmHg = 100;
-    pvg.m_Parameters.mapStep_mmHg = 10;
+    pvg.m_Parameters.mapStep_mmHg = 100;
 
     pvg.m_Parameters.pulsePressureMin_mmHg = 30;
     pvg.m_Parameters.pulsePressureMax_mmHg = 50;
-    pvg.m_Parameters.pulsePressureStep_mmHg = 10;
+    pvg.m_Parameters.pulsePressureStep_mmHg = 100;
 
     ////////////////////////
     // Hemorrhage Options //
