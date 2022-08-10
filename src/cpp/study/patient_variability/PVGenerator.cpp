@@ -312,7 +312,7 @@ namespace pulse::study::patient_variability
     upperBoundDiastolic_mmHg = MIN(upperBoundDiastolic_mmHg, maxDiastolic_mmHg);
     if (lowerBoundSystolic_mmHg > maxSystolic_mmHg || upperBoundDiastolic_mmHg < minDiastolic_mmHg)
     {
-      Warning(pulse::cdm::to_string(map_mmHg) + " mmHg MAP produces no valid BPs.");
+      Warning(pulse::cdm::to_string(map_mmHg) + "mmHg MAP produces no valid BPs.");
       return bpPairs;
     }
 
@@ -351,7 +351,7 @@ namespace pulse::study::patient_variability
     // No valid BPs found
     if (bpPairs.empty())
     {
-      Warning(pulse::cdm::to_string(map_mmHg) + " mmHg MAP/" + pulse::cdm::to_string(pp_mmHg) + "mmHg Pulse Pressure combination produces no valid BPs.");
+      Warning(pulse::cdm::to_string(map_mmHg) + "mmHg MAP/" + pulse::cdm::to_string(pp_mmHg) + "mmHg Pulse Pressure combination produces no valid BPs.");
     }
 
     return bpPairs;
