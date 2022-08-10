@@ -51,17 +51,17 @@ namespace pulse::study::patient_variability
       if (min < m_LowerLimit)
       {
         min = m_LowerLimit;
-        std::cerr << "Corrected invalid minimum to be the lowerLimit\n";
+        std::cerr << "Autocorrected invalid minimum to be the lowerLimit\n";
       }
       if (max > m_UpperLimit || max < 0)
       {
         max = m_UpperLimit;
-        std::cerr << "Corrected invalid maximum to be the upperLimit\n";
+        std::cerr << "Autocorrected invalid maximum to be the upperLimit\n";
       }
       if (stepSize > (m_UpperLimit - m_LowerLimit) || stepSize < 0)
       {
         stepSize = m_UpperLimit - m_LowerLimit;
-        std::cerr << "Corrected invalid stepSize to be the upperLimit-lowerLimit\n";
+        std::cerr << "Autocorrected invalid stepSize to be the upperLimit-lowerLimit\n";
       }
 
       m_Min = min;

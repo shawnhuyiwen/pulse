@@ -94,7 +94,7 @@ namespace pulse::study::patient_variability
 
         for (auto height_cm: Height_cm.Values())
         {
-          std::string height_dir = "/height_cm" + std::to_string(height_cm);
+          std::string height_dir = "/height_cm" + pulse::cdm::to_string(height_cm);
 
           for (auto bmi: BMI.Values())
           {
@@ -109,16 +109,15 @@ namespace pulse::study::patient_variability
 
             for (auto hr_bpm: HR_bpm.Values())
             {
-              std::string hr_dir = "/hr_bpm" + std::to_string(hr_bpm);
+              std::string hr_dir = "/hr_bpm" + pulse::cdm::to_string(hr_bpm);
 
               for (auto map_mmHg: MAP_mmHg.Values())
               {
-                std::string map_dir = "/map_mmHg" + std::to_string(map_mmHg);
+                std::string map_dir = "/map_mmHg" + pulse::cdm::to_string(map_mmHg);
 
                 for (auto pp_mmHg: PP_mmHg.Values())
                 {
-                  std::string pp_dir = "/pp_mmHg" + std::to_string(pp_mmHg);
-                  std::string full_dir_path = sex_dir + age_dir + height_dir + bmi_dir + hr_dir + map_dir + pp_dir;
+                  std::string pp_dir = "/pp_mmHg" + pulse::cdm::to_string(pp_mmHg);
 
                   std::vector<std::pair<double, double>> bpPairs = GenerateBloodPressurePairs(map_mmHg, pp_mmHg);
                   if (IncludeStandardPatients)
@@ -138,7 +137,7 @@ namespace pulse::study::patient_variability
                     double systolic_mmHg = bp_mmHg.first;
                     double diastolic_mmHg = bp_mmHg.second;
 
-                    std::string bp_dir = "/bp_mmHg" + std::to_string(systolic_mmHg) + "-" + std::to_string(diastolic_mmHg);
+                    std::string bp_dir = "/bp_mmHg" + pulse::cdm::to_string(systolic_mmHg) + "-" + pulse::cdm::to_string(diastolic_mmHg);
                     std::string full_dir_path = sex_dir + age_dir + height_dir + bmi_dir + hr_dir + map_dir + pp_dir + bp_dir;
 
                     m_MaxNumPatients++;
