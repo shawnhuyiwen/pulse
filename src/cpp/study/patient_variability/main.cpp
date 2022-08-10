@@ -115,6 +115,7 @@ int main(int argc, char* argv[])
   if (data == "solo")
   {
     rootDir = "./test_results/PVRunner/";
+    log.SetLogFile(rootDir + "PatientVariability.log");
 
     /// male / age_yr18 / height_cm163 / bmi29.9 / hr_bpm100 / map_mmHg70 / pp_mmHg30 / bp_mmHg93 - 63
     clear = true;
