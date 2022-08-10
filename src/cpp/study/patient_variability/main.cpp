@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
   bool useBaseline             = true;
   bool includeStandardPatients = true;
   std::string data = "test";
-  PVGenerator::Mode mode = PVGenerator::Mode::Validation;
+  Mode mode = Mode::Validation;
   std::string rootDir = "./test_results/patient_variability/";
 
   // Process arguments
@@ -62,13 +62,13 @@ int main(int argc, char* argv[])
     if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--validation"))
     {
       validationMode = true;
-      mode = PVGenerator::Mode::Validation;
+      mode = Mode::Validation;
     }
     // Hemorrhage RunMode
     if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--hemorrhage"))
     {
       hemorrhageMode = true;
-      mode = PVGenerator::Mode::Hemorrhage;
+      mode = Mode::Hemorrhage;
     }
 
     // Use existing baseline results for comparison
@@ -92,10 +92,10 @@ int main(int argc, char* argv[])
 
   switch (mode)
   {
-  case PVGenerator::Mode::Validation:
+  case Mode::Validation:
     rootDir += "validation/";
     break;
-  case PVGenerator::Mode::Hemorrhage:
+  case Mode::Hemorrhage:
     rootDir += "hemorrhage/";
     break;
   }
@@ -109,8 +109,8 @@ int main(int argc, char* argv[])
 
   pulse::study::bind::patient_variability::PatientStateListData patients;
   PVGenerator pvg(&log);
-  pvg.m_Mode = mode;
-  pvg.m_IncludeStandardPatients = includeStandardPatients;
+  pvg.Mode = mode;
+  pvg.IncludeStandardPatients = includeStandardPatients;
 
   if (data == "solo")
   {
@@ -149,88 +149,45 @@ int main(int argc, char* argv[])
   }
   else if(data == "full")
   {
-    pvg.m_Parameters.ageMin_yr = 18;
-    pvg.m_Parameters.ageMax_yr = 65;
-    pvg.m_Parameters.ageStep_yr = 10;
-
-    pvg.m_Parameters.heightMin_cm[ePatient_Sex::Male] = 165;
-    pvg.m_Parameters.heightMax_cm[ePatient_Sex::Male] = 186;
-    pvg.m_Parameters.heightMin_cm[ePatient_Sex::Female] = 153;
-    pvg.m_Parameters.heightMax_cm[ePatient_Sex::Female] = 170;
-    pvg.m_Parameters.heightStep_cm = 7;
-
-    pvg.m_Parameters.bmiMin = 18.5;
-    pvg.m_Parameters.bmiMax = 29;
-    pvg.m_Parameters.bmiStep = 3;
-
-    pvg.m_Parameters.hrMin_bpm = 60;
-    pvg.m_Parameters.hrMax_bpm = 100;
-    pvg.m_Parameters.hrStep_bpm = 15;
-
-    pvg.m_Parameters.mapMin_mmHg = 70;
-    pvg.m_Parameters.mapMax_mmHg = 100;
-    pvg.m_Parameters.mapStep_mmHg = 10;
-
-    pvg.m_Parameters.pulsePressureMin_mmHg = 30;
-    pvg.m_Parameters.pulsePressureMax_mmHg = 50;
-    pvg.m_Parameters.pulsePressureStep_mmHg = 10;
+    // The default min/max are the model bounds
+    // So just increase the fidelity via step size
+    pvg.Age_yr.AdjustStepSize(10);
+    pvg.HeightMale_cm.AdjustStepSize(7);
+    pvg.HeightFemale_cm.AdjustStepSize(7);
+    pvg.BMI.AdjustStepSize(3);
+    pvg.HR_bpm.AdjustStepSize(15);
+    pvg.MAP_mmHg.AdjustStepSize(10);
+    pvg.PP_mmHg.AdjustStepSize(10);
 
     ////////////////////////
     // Hemorrhage Options //
     ////////////////////////
 
-    pvg.m_Parameters.hemorrhageSeverityMin = 0.25;
-    pvg.m_Parameters.hemorrhageSeverityMax = 1.0;
-    pvg.m_Parameters.hemorrhageSeverityStep = 0.25;
+    pvg.hemorrhageSeverityMin = 0.25;
+    pvg.hemorrhageSeverityMax = 1.0;
+    pvg.hemorrhageSeverityStep = 0.25;
 
-    pvg.m_Parameters.hemorrhageTriageTimeMin_min = 1.0;
-    pvg.m_Parameters.hemorrhageTriageTimeMax_min = 5.0;
-    pvg.m_Parameters.hemorrhageTriageTimeStep_min = 1.0;
+    pvg.hemorrhageTriageTimeMin_min = 1.0;
+    pvg.hemorrhageTriageTimeMax_min = 5.0;
+    pvg.hemorrhageTriageTimeStep_min = 1.0;
 
     pvg.GeneratePatientList(patients);
   }
   else if (data == "test")
   {
-    // Making the steps sizes waaay big
-    // This should generate 3 values for each parameter
-    // min, standard, max
-    pvg.m_Parameters.ageMin_yr = 18;
-    pvg.m_Parameters.ageMax_yr = 65;
-    pvg.m_Parameters.ageStep_yr = 100;
-
-    pvg.m_Parameters.heightMin_cm[ePatient_Sex::Male] = 165;
-    pvg.m_Parameters.heightMax_cm[ePatient_Sex::Male] = 186;
-    pvg.m_Parameters.heightMin_cm[ePatient_Sex::Female] = 153;
-    pvg.m_Parameters.heightMax_cm[ePatient_Sex::Female] = 170;
-    pvg.m_Parameters.heightStep_cm = 100;
-
-    pvg.m_Parameters.bmiMin = 18.5;
-    pvg.m_Parameters.bmiMax = 29;
-    pvg.m_Parameters.bmiStep = 100;
-
-    pvg.m_Parameters.hrMin_bpm = 60;
-    pvg.m_Parameters.hrMax_bpm = 100;
-    pvg.m_Parameters.hrStep_bpm = 100;
-
-    pvg.m_Parameters.mapMin_mmHg = 70;
-    pvg.m_Parameters.mapMax_mmHg = 100;
-    pvg.m_Parameters.mapStep_mmHg = 100;
-
-    pvg.m_Parameters.pulsePressureMin_mmHg = 30;
-    pvg.m_Parameters.pulsePressureMax_mmHg = 50;
-    pvg.m_Parameters.pulsePressureStep_mmHg = 100;
+    // This will use the defaults
 
     ////////////////////////
     // Hemorrhage Options //
     ////////////////////////
 
-    pvg.m_Parameters.hemorrhageSeverityMin = 0.25;
-    pvg.m_Parameters.hemorrhageSeverityMax = 1.0;
-    pvg.m_Parameters.hemorrhageSeverityStep = 0.25;
+    pvg.hemorrhageSeverityMin = 0.25;
+    pvg.hemorrhageSeverityMax = 1.0;
+    pvg.hemorrhageSeverityStep = 0.25;
 
-    pvg.m_Parameters.hemorrhageTriageTimeMin_min = 1.0;
-    pvg.m_Parameters.hemorrhageTriageTimeMax_min = 5.0;
-    pvg.m_Parameters.hemorrhageTriageTimeStep_min = 5.0;
+    pvg.hemorrhageTriageTimeMin_min = 1.0;
+    pvg.hemorrhageTriageTimeMax_min = 5.0;
+    pvg.hemorrhageTriageTimeStep_min = 5.0;
 
     pvg.GeneratePatientList(patients);
   }
@@ -243,7 +200,6 @@ int main(int argc, char* argv[])
     PBUtils::SerializeToFile(patients, patientFile, &log);
     return 0;
   }
-    
 
   PVRunner pvr(rootDir, useBaseline, &log);
   pvr.PostProcessOnly = postProcessOnly;

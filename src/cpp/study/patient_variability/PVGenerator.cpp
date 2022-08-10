@@ -16,7 +16,15 @@
 
 namespace pulse::study::patient_variability
 {
-  PVGenerator::PVGenerator(Logger* logger) : Loggable(logger)
+  // Bounds from: https://pulse.kitware.com/_patient_methodology.html
+  PVGenerator::PVGenerator(Logger* logger) : Loggable(logger),
+                                             Age_yr(18, 65),
+                                             HeightMale_cm(163, 190),
+                                             HeightFemale_cm(151, 175.5),
+                                             BMI(16, 30),
+                                             HR_bpm(60, 100),
+                                             MAP_mmHg(70, 105),
+                                             PP_mmHg(30, 60)
   {
   }
   PVGenerator::~PVGenerator()
@@ -50,15 +58,13 @@ namespace pulse::study::patient_variability
     m_TotalPatients = 0;
     m_TotalRuns = 0;
 
-    // Ensure all parameter bounds are within Pulse limits
-    AdjustParameterSpaceBounds();
-
-    for (auto sex : m_Parameters.sexes)
+    std::map<ePatient_Sex, std::string> sexes = { {ePatient_Sex::Male, "male"}, {ePatient_Sex::Female, "female"} };
+    for (auto sex : sexes)
     {
       // Adjust parameter space to standard patient based on settings
       SEPatient* patient = nullptr;
       SEPatientConfiguration pc;
-      if (m_IncludeStandardPatients)
+      if (IncludeStandardPatients)
       {
         patient = &(pc.GetPatient());
         if (sex.first == ePatient_Sex::Male)
@@ -69,23 +75,22 @@ namespace pulse::study::patient_variability
         {
           patient->SerializeFromFile("./patients/StandardFemale.json");
         }
+        AddPatientParameters(*patient);
       }
 
-      // Generate the values we will iterate over
-      GenerateParameterSpaceValues(patient);
-
       std::string sex_dir = "/" + sex.second;
+      Parameter& Height_cm = sex.first == ePatient_Sex::Male ? HeightMale_cm : HeightFemale_cm;
 
-      for (auto age: m_ParameterValues.ageRange_yr)
+      for (auto age: Age_yr.Values())
       {
         unsigned int age_yr = (unsigned int) age;
         std::string age_dir = "/age_yr" + std::to_string(age_yr);
 
-        for (auto height_cm: m_ParameterValues.heightRange_cm[sex.first])
+        for (auto height_cm: Height_cm.Values())
         {
           std::string height_dir = "/height_cm" + std::to_string(height_cm);
 
-          for (auto bmi: m_ParameterValues.bmiRange)
+          for (auto bmi: BMI.Values())
           {
             std::string bmi_dir = "/bmi" + pulse::cdm::to_string(bmi);
 
@@ -96,15 +101,15 @@ namespace pulse::study::patient_variability
             // Caclulate weight (kg) from height (m) and BMI
             double weight_kg = bmi * height_m * height_m;
 
-            for (auto hr_bpm: m_ParameterValues.hrRange_bpm)
+            for (auto hr_bpm: HR_bpm.Values())
             {
               std::string hr_dir = "/hr_bpm" + std::to_string(hr_bpm);
 
-              for (auto map_mmHg: m_ParameterValues.mapRange_mmHg)
+              for (auto map_mmHg: MAP_mmHg.Values())
               {
                 std::string map_dir = "/map_mmHg" + std::to_string(map_mmHg);
 
-                for (auto pp_mmHg: m_ParameterValues.pulsePressureRange_mmHg)
+                for (auto pp_mmHg: PP_mmHg.Values())
                 {
                   std::string pp_dir = "/pp_mmHg" + std::to_string(pp_mmHg);
                   std::string full_dir_path = sex_dir + age_dir + height_dir + bmi_dir + hr_dir + map_dir + pp_dir;
@@ -124,7 +129,7 @@ namespace pulse::study::patient_variability
                   m_TotalPatients++;
                   Info("Creating patient: " + full_dir_path);
 
-                  switch (m_Mode)
+                  switch (Mode)
                   {
                   case Mode::Validation:
                   {
@@ -172,22 +177,24 @@ namespace pulse::study::patient_variability
     double hr_bpm, double map_mmHg, double pp_mmHg, double diastolic_mmHg, double systolic_mmHg,
     const std::string& full_dir_path)
   {
-    for (auto hemorrhageCompartment : m_Parameters.hemorrhageCompartments)
+
+    std::vector<std::string> hemorrhageCompartments = { "RightArm", "RightLeg" };
+    for (auto hemorrhageCompartment : hemorrhageCompartments)
     {
       std::string compartment_dir = + "/"+hemorrhageCompartment;
 
-      int severityIdx, severityN = (int)((m_Parameters.hemorrhageSeverityMax - m_Parameters.hemorrhageSeverityMin) / m_Parameters.hemorrhageSeverityStep);
+      int severityIdx, severityN = (int)((hemorrhageSeverityMax - hemorrhageSeverityMin) / hemorrhageSeverityStep);
       for (severityIdx = 0; severityIdx <= severityN; severityIdx++)
       {
-        double severity = m_Parameters.hemorrhageSeverityMin + m_Parameters.hemorrhageSeverityStep * severityIdx;
+        double severity = hemorrhageSeverityMin + hemorrhageSeverityStep * severityIdx;
 
         std::string severity_dir = "/severity" + pulse::cdm::to_string(severity);
 
-        int triageTimeIdx, triageTimeN = (int)((m_Parameters.hemorrhageTriageTimeMax_min - m_Parameters.hemorrhageTriageTimeMin_min) / m_Parameters.hemorrhageTriageTimeStep_min);
+        int triageTimeIdx, triageTimeN = (int)((hemorrhageTriageTimeMax_min - hemorrhageTriageTimeMin_min) / hemorrhageTriageTimeStep_min);
         for (triageTimeIdx = 0; triageTimeIdx <= triageTimeN; triageTimeIdx++)
         {
           m_TotalRuns++;
-          double triageTime_min = m_Parameters.hemorrhageTriageTimeMin_min + m_Parameters.hemorrhageTriageTimeStep_min * triageTimeIdx;
+          double triageTime_min = hemorrhageTriageTimeMin_min + hemorrhageTriageTimeStep_min * triageTimeIdx;
 
           std::string triageTime_dir = "/triage_min" + pulse::cdm::to_string(triageTime_min);
           std::string hemorrhage_dir_path = full_dir_path + compartment_dir + severity_dir + triageTime_dir;
@@ -218,242 +225,12 @@ namespace pulse::study::patient_variability
     }
   }
 
-  // Adjusts parameter space to be within Pulse's limits.
-  // Bounds from: https://pulse.kitware.com/_patient_methodology.html
-  void PVGenerator::AdjustParameterSpaceBounds()
+
+  // Add values to our ParameterSpace
+  void PVGenerator::AddPatientParameters(const SEPatient& patient)
   {
-    ParameterSpace p = m_Parameters;
-
-    // Pulse defined limits
-    // TODO: MAP and PP don't take into account `dia > 0.75sys` requirement
-    const double ageMin_yr = 18;
-    const double ageMax_yr = 65;
-    const double bmiMin = 16;
-    const double bmiMax = 30;
-    const double hrMin_bpm = 60;
-    const double hrMax_bpm = 100;
-    const double heightMin_cm_male = 163;
-    const double heightMin_cm_female = 151;
-    const double heightMax_cm_male = 190;
-    const double heightMax_cm_female = 175.5;
-    const double mapMin_mmHg = 70;
-    const double mapMax_mmHg = 93.333333;
-    const double pulsePressureMin_mmHg = 10;
-    const double pulsePressureMax_mmHg = 60;
-
-    //AGE ---------------------------------------------------------------
-    if (m_Parameters.ageMin_yr < ageMin_yr)
-    {
-      GetLogger()->Warning("Adjusting age (yr) minimum from " + std::to_string(m_Parameters.ageMin_yr) + " to: " + std::to_string(ageMin_yr));
-      m_Parameters.ageMin_yr = ageMin_yr;
-    }
-    if (m_Parameters.ageMax_yr > ageMax_yr)
-    {
-      GetLogger()->Warning("Adjusting age (yr) maximum from " + std::to_string(m_Parameters.ageMax_yr) + " to: " + std::to_string(ageMax_yr));
-      m_Parameters.ageMax_yr = ageMax_yr;
-    }
-
-    //BMI ---------------------------------------------------------------
-    if (m_Parameters.bmiMin < bmiMin)
-    {
-      GetLogger()->Warning("Adjusting BMI minimum from " + std::to_string(m_Parameters.bmiMin) + " to: " + std::to_string(bmiMin));
-      m_Parameters.bmiMin = bmiMin;
-    }
-    if (m_Parameters.bmiMax > bmiMax)
-    {
-      GetLogger()->Warning("Adjusting BMI maximum from " + std::to_string(m_Parameters.bmiMax) + " to: " + std::to_string(bmiMax));
-      m_Parameters.bmiMax = bmiMax;
-    }
-    
-    //HR ---------------------------------------------------------------
-    if (m_Parameters.hrMin_bpm < hrMin_bpm)
-    {
-      GetLogger()->Warning("Adjusting HR (bpm) minimum from " + std::to_string(m_Parameters.hrMin_bpm) + " to: " + std::to_string(hrMin_bpm));
-      m_Parameters.hrMin_bpm = hrMin_bpm;
-    }
-    if (m_Parameters.hrMax_bpm > hrMax_bpm)
-    {
-      GetLogger()->Warning("Adjusting HR (bpm) maximum from " + std::to_string(m_Parameters.hrMax_bpm) + " to: " + std::to_string(hrMax_bpm));
-      m_Parameters.hrMax_bpm = hrMax_bpm;
-    }
-
-    //HEIGHT (MALE) ---------------------------------------------------------------
-    if (m_Parameters.heightMin_cm[ePatient_Sex::Male] < heightMin_cm_male)
-    {
-      GetLogger()->Warning("Adjusting male height (cm) minimum from " + std::to_string(m_Parameters.heightMin_cm[ePatient_Sex::Male]) + " to: " + std::to_string(heightMin_cm_male));
-      m_Parameters.heightMin_cm[ePatient_Sex::Male] = heightMin_cm_male;
-    }
-    if (m_Parameters.heightMax_cm[ePatient_Sex::Male] > heightMax_cm_male)
-    {
-      GetLogger()->Warning("Adjusting male height (cm) maximum from " + std::to_string(m_Parameters.heightMax_cm[ePatient_Sex::Male]) + " to: " + std::to_string(heightMax_cm_male));
-      m_Parameters.heightMax_cm[ePatient_Sex::Male] = heightMax_cm_male;
-    }
-    //HEIGHT (FEMALE) ---------------------------------------------------------------
-    if (m_Parameters.heightMin_cm[ePatient_Sex::Female] < heightMin_cm_female)
-    {
-      GetLogger()->Warning("Adjusting female height (cm) minimum from " + std::to_string(m_Parameters.heightMin_cm[ePatient_Sex::Female]) + " to: " + std::to_string(heightMin_cm_female));
-      m_Parameters.heightMin_cm[ePatient_Sex::Female] = heightMin_cm_female;
-    }
-    if (m_Parameters.heightMax_cm[ePatient_Sex::Female] > heightMax_cm_female)
-    {
-      GetLogger()->Warning("Adjusting female height (cm) maximum from " + std::to_string(m_Parameters.heightMax_cm[ePatient_Sex::Female]) + " to: " + std::to_string(heightMax_cm_female));
-      m_Parameters.heightMax_cm[ePatient_Sex::Female] = heightMax_cm_female;
-    }
-
-    //MAP ---------------------------------------------------------------
-    if (m_Parameters.mapMin_mmHg < mapMin_mmHg)
-    {
-      GetLogger()->Warning("Adjusting MAP (mmHg) minimum from " + std::to_string(m_Parameters.mapMin_mmHg) + " to: " + std::to_string(mapMin_mmHg));
-      m_Parameters.mapMin_mmHg = mapMin_mmHg;
-    }
-    if (m_Parameters.mapMax_mmHg > mapMax_mmHg)
-    {
-      GetLogger()->Warning("Adjusting MAP (mmHg) maximum from " + std::to_string(m_Parameters.mapMax_mmHg) + " to: " + std::to_string(mapMax_mmHg));
-      m_Parameters.mapMax_mmHg = mapMax_mmHg;
-    }
-
-    //PULSE PRESSURE ---------------------------------------------------------------
-    if (m_Parameters.pulsePressureMin_mmHg < pulsePressureMin_mmHg)
-    {
-      GetLogger()->Warning("Adjusting Pulse Pressure (mmHg) minimum from " + std::to_string(m_Parameters.pulsePressureMin_mmHg) + " to: " + std::to_string(pulsePressureMin_mmHg));
-      m_Parameters.pulsePressureMin_mmHg = pulsePressureMin_mmHg;
-    }
-    if (m_Parameters.pulsePressureMax_mmHg > pulsePressureMax_mmHg)
-    {
-      GetLogger()->Warning("Adjusting Pulse Pressure (mmHg) maximum from " + std::to_string(m_Parameters.pulsePressureMax_mmHg) + " to: " + std::to_string(pulsePressureMax_mmHg));
-      m_Parameters.pulsePressureMax_mmHg = pulsePressureMax_mmHg;
-    }
+   
   }
 
-  // Generates parameter values to iterate over. Adjusts these values to inclue patient, if provided.
-  void PVGenerator::GenerateParameterSpaceValues(const SEPatient* patient)
-  {
-    ParameterSpace p = m_Parameters;
-    if (patient != nullptr)
-    {
-      if (patient->HasAge())
-      {
-        double age = patient->GetAge(TimeUnit::yr);
-        if (!AdjustParameterBounds(p.ageMin_yr, p.ageMax_yr, p.ageStep_yr, age))
-          GetLogger()->Error("Given patient age is not within given bounds, please adjust bounds to include this patient.");
-      }
-        
-      if (patient->HasHeight())
-      {
-        double height = patient->GetHeight(LengthUnit::cm);
-        if (!AdjustParameterBounds(p.heightMin_cm[patient->GetSex()], p.heightMax_cm[patient->GetSex()], p.heightStep_cm, height))
-          GetLogger()->Error("Given patient height is not within given bounds, please adjust bounds to include this patient.");
 
-        if (patient->HasWeight())
-        {
-          // BMI = kg/m2
-          double bmi = patient->GetWeight(MassUnit::kg) / (patient->GetHeight(LengthUnit::m) * patient->GetHeight(LengthUnit::m));
-          if (!AdjustParameterBounds(p.bmiMin, p.bmiMax, p.bmiStep, bmi))
-            GetLogger()->Error("Given patient BMI is not within given bounds, please adjust bounds to include this patient.");
-        }
-      }
-
-      if (patient->HasHeartRateBaseline())
-      {
-        double hr = patient->GetHeartRateBaseline(FrequencyUnit::Per_min);
-        if (!AdjustParameterBounds(p.hrMin_bpm, p.hrMax_bpm, p.hrStep_bpm, hr))
-            GetLogger()->Error("Given patient HR is not within given bounds, please adjust bounds to include this patient.");
-      }
-      
-      if (patient->HasSystolicArterialPressureBaseline() && patient->HasDiastolicArterialPressureBaseline())
-      {
-        double systolic_mmHg = patient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
-        double diastolic_mmHg = patient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
-        double map = (systolic_mmHg + 2 * diastolic_mmHg) / 3.0;
-        double pp = systolic_mmHg - diastolic_mmHg;
-
-        if (!AdjustParameterBounds(p.mapMin_mmHg, p.mapMax_mmHg, p.mapStep_mmHg, map))
-          GetLogger()->Error("Given patient MAP is not within given bounds, please adjust bounds to include this patient.");
-
-        if (!AdjustParameterBounds(p.pulsePressureMin_mmHg, p.pulsePressureMax_mmHg, p.pulsePressureStep_mmHg, pp))
-          GetLogger()->Error("Given patient pulse pressure is not within given bounds, please adjust bounds to include this patient.");
-      }
-    }
-
-    // Ensure given bounds are included for each parameter
-    m_ParameterValues.ageRange_yr = GenerateParameterValues(p.ageMin_yr, p.ageMax_yr, p.ageStep_yr);
-    if(p.ageMin_yr > m_Parameters.ageMin_yr)
-      m_ParameterValues.ageRange_yr.push_front(m_Parameters.ageMin_yr);
-    if(p.ageMax_yr < m_Parameters.ageMax_yr)
-      m_ParameterValues.ageRange_yr.push_back(m_Parameters.ageMax_yr);
-
-    m_ParameterValues.heightRange_cm[ePatient_Sex::Male] = GenerateParameterValues(p.heightMin_cm[ePatient_Sex::Male], p.heightMax_cm[ePatient_Sex::Male], p.heightStep_cm);
-    if(p.heightMin_cm[ePatient_Sex::Male] > m_Parameters.heightMin_cm[ePatient_Sex::Male])
-      m_ParameterValues.heightRange_cm[ePatient_Sex::Male].push_front(m_Parameters.heightMin_cm[ePatient_Sex::Male]);
-    if(p.heightMax_cm[ePatient_Sex::Male] < m_Parameters.heightMax_cm[ePatient_Sex::Male])
-      m_ParameterValues.heightRange_cm[ePatient_Sex::Male].push_back(m_Parameters.heightMax_cm[ePatient_Sex::Male]);
-    m_ParameterValues.heightRange_cm[ePatient_Sex::Female] = GenerateParameterValues(p.heightMin_cm[ePatient_Sex::Female], p.heightMax_cm[ePatient_Sex::Female], p.heightStep_cm);
-    if(p.heightMin_cm[ePatient_Sex::Female] > m_Parameters.heightMin_cm[ePatient_Sex::Female])
-      m_ParameterValues.heightRange_cm[ePatient_Sex::Female].push_front(m_Parameters.heightMin_cm[ePatient_Sex::Female]);
-    if(p.heightMax_cm[ePatient_Sex::Female] < m_Parameters.heightMax_cm[ePatient_Sex::Female])
-      m_ParameterValues.heightRange_cm[ePatient_Sex::Female].push_back(m_Parameters.heightMax_cm[ePatient_Sex::Female]);
-
-    m_ParameterValues.bmiRange = GenerateParameterValues(p.bmiMin, p.bmiMax, p.bmiStep);
-    if(p.bmiMin > m_Parameters.bmiMin)
-      m_ParameterValues.bmiRange.push_front(m_Parameters.bmiMin);
-    if(p.bmiMax < m_Parameters.bmiMax)
-      m_ParameterValues.bmiRange.push_back(m_Parameters.bmiMax);
-
-    m_ParameterValues.hrRange_bpm = GenerateParameterValues(p.hrMin_bpm, p.hrMax_bpm, p.hrStep_bpm);
-    if(p.hrMin_bpm > m_Parameters.hrMin_bpm)
-      m_ParameterValues.hrRange_bpm.push_front(m_Parameters.hrMin_bpm);
-    if(p.hrMax_bpm < m_Parameters.hrMax_bpm)
-      m_ParameterValues.hrRange_bpm.push_back(m_Parameters.hrMax_bpm);
-
-    m_ParameterValues.mapRange_mmHg = GenerateParameterValues(p.mapMin_mmHg, p.mapMax_mmHg, p.mapStep_mmHg);
-    if(p.mapMin_mmHg > m_Parameters.mapMin_mmHg)
-      m_ParameterValues.mapRange_mmHg.push_front(m_Parameters.mapMin_mmHg);
-    if(p.mapMax_mmHg < m_Parameters.mapMax_mmHg)
-      m_ParameterValues.mapRange_mmHg.push_back(m_Parameters.mapMax_mmHg);
-
-    m_ParameterValues.pulsePressureRange_mmHg = GenerateParameterValues(p.pulsePressureMin_mmHg, p.pulsePressureMax_mmHg, p.pulsePressureStep_mmHg);
-    if(p.pulsePressureMin_mmHg > m_Parameters.pulsePressureMin_mmHg)
-      m_ParameterValues.pulsePressureRange_mmHg.push_front(m_Parameters.pulsePressureMin_mmHg);
-    if(p.pulsePressureMax_mmHg < m_Parameters.pulsePressureMax_mmHg)
-      m_ParameterValues.pulsePressureRange_mmHg.push_back(m_Parameters.pulsePressureMax_mmHg);
-  }
-
-  // Adjust parameter bounds to include given key value
-  bool PVGenerator::AdjustParameterBounds(double& min, double& max, double step, double keyValue)
-  {
-    if (keyValue > max || keyValue < min)
-      return false;
-  
-    double _min = keyValue;
-    double _max = keyValue;
-
-    // Increase until we are within a step of max value
-    while (max - _max >= step)
-    {
-      _max += step;
-    }
-
-    // Decrease until we are within a step of min value
-    while (_min - min >= step)
-    {
-      _min -= step;
-    }
-
-    min = _min;
-    max = _max; 
-
-    return true; 
-  }
-
-  // Generate list of values
-  std::list<double> PVGenerator::GenerateParameterValues(double min, double max, double step)
-  {
-    std::list<double> values;
-
-    int idx, n = (int)((max - min) / step);
-    for (idx = 0; idx <= n; ++idx)
-      values.push_back(min + step * idx);
-  
-    return values;
-  }
 }
