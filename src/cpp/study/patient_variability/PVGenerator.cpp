@@ -13,6 +13,7 @@
 #include "cdm/properties/SEScalarVolumePerPressure.h"
 #include "engine/human_adult/whole_body/Engine.h"
 
+#include <map>
 
 namespace pulse::study::patient_variability
 {
@@ -21,7 +22,7 @@ namespace pulse::study::patient_variability
                                              Age_yr(18, 65),
                                              HeightMale_cm(163, 190),
                                              HeightFemale_cm(151, 175.5),
-                                             BMI(16, 30),
+                                             BMI(16, 29.9),
                                              HR_bpm(60, 100),
                                              MAP_mmHg(70, 105),
                                              PP_mmHg(30, 60)
@@ -61,9 +62,12 @@ namespace pulse::study::patient_variability
     std::map<ePatient_Sex, std::string> sexes = { {ePatient_Sex::Male, "male"}, {ePatient_Sex::Female, "female"} };
     for (auto sex : sexes)
     {
+      ResetParameters();
+
       // Adjust parameter space to standard patient based on settings
       SEPatient* patient = nullptr;
       SEPatientConfiguration pc;
+      std::pair<double, double> standardBP_mmHg;
       if (IncludeStandardPatients)
       {
         patient = &(pc.GetPatient());
@@ -76,6 +80,8 @@ namespace pulse::study::patient_variability
           patient->SerializeFromFile("./patients/StandardFemale.json");
         }
         AddPatientParameters(*patient);
+        standardBP_mmHg = std::make_pair(patient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg), 
+                                         patient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg));
       }
 
       std::string sex_dir = "/" + sex.second;
@@ -114,50 +120,67 @@ namespace pulse::study::patient_variability
                   std::string pp_dir = "/pp_mmHg" + std::to_string(pp_mmHg);
                   std::string full_dir_path = sex_dir + age_dir + height_dir + bmi_dir + hr_dir + map_dir + pp_dir;
 
-                  // systolic - diastolic = pulse pressure
-                  // MAP = (systolic + 2 * diastolic) / 3
-                  double diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3.0;
-                  double systolic_mmHg = pp_mmHg + diastolic_mmHg;
-
-                  m_MaxNumPatients++;
-                  // Test the patient combination
-                  if (!TestPatientCombo(GetLogger(), sex.first, age_yr, height_cm, weight_kg, hr_bpm, diastolic_mmHg, systolic_mmHg))
+                  std::vector<std::pair<double, double>> bpPairs = GenerateBloodPressurePairs(map_mmHg, pp_mmHg);
+                  if (IncludeStandardPatients)
                   {
-                    Error("The invalid patient was: " + full_dir_path);
-                    continue;
-                  }
-                  m_TotalPatients++;
-                  Info("Creating patient: " + full_dir_path);
-
-                  switch (Mode)
-                  {
-                  case Mode::Validation:
-                  {
-                    m_TotalRuns++;
-                    auto patientData = pData.add_patient();
-                    patientData->set_id(id++);
-                    patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex.first);
-                    patientData->set_age_yr(age_yr);
-                    patientData->set_bmi(bmi);
-                    patientData->set_heartrate_bpm(hr_bpm);
-                    patientData->set_height_cm(height_cm);
-                    patientData->set_meanarterialpressure_mmhg(map_mmHg);
-                    patientData->set_pulsepressure_mmhg(pp_mmHg);
-
-                    patientData->set_weight_kg(weight_kg);
-                    patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
-                    patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
-                    patientData->set_outputbasefilename(full_dir_path);
-                    patientData->set_maxsimulationtime_s(120); // Generate 2 mins of data
-                    patientData->mutable_validation();// Create a validation object to fill
-                    break;
+                    // Check if BP pair already included
+                    if (std::find_if(bpPairs.begin(), bpPairs.end(), 
+                                    [standardBP_mmHg] (const std::pair<double, double>& p) 
+                                    {
+                                      return Parameter::Equals(p.first, standardBP_mmHg.first) &&
+                                             Parameter::Equals(p.second, standardBP_mmHg.second);
+                                    }) == bpPairs.end())
+                      bpPairs.push_back(standardBP_mmHg);
                   }
 
-                  case Mode::Hemorrhage:
+                  for (auto bp_mmHg: bpPairs)
                   {
-                    GenerateHemorrhageOptions(pData, id, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, diastolic_mmHg, systolic_mmHg, full_dir_path);
-                    break;
-                  }
+                    double systolic_mmHg = bp_mmHg.first;
+                    double diastolic_mmHg = bp_mmHg.second;
+
+                    std::string bp_dir = "/bp_mmHg" + std::to_string(systolic_mmHg) + "-" + std::to_string(diastolic_mmHg);
+                    std::string full_dir_path = sex_dir + age_dir + height_dir + bmi_dir + hr_dir + map_dir + pp_dir + bp_dir;
+
+                    m_MaxNumPatients++;
+                    // Test the patient combination
+                    if (!TestPatientCombo(GetLogger(), sex.first, age_yr, height_cm, weight_kg, hr_bpm, diastolic_mmHg, systolic_mmHg))
+                    {
+                      Error("The invalid patient was: " + full_dir_path);
+                      continue;
+                    }
+                    m_TotalPatients++;
+                    Info("Creating patient: " + full_dir_path);
+
+                    switch (GenerateMode)
+                    {
+                    case Mode::Validation:
+                    {
+                      m_TotalRuns++;
+                      auto patientData = pData.add_patient();
+                      patientData->set_id(id++);
+                      patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex.first);
+                      patientData->set_age_yr(age_yr);
+                      patientData->set_bmi(bmi);
+                      patientData->set_heartrate_bpm(hr_bpm);
+                      patientData->set_height_cm(height_cm);
+                      patientData->set_meanarterialpressure_mmhg(map_mmHg);
+                      patientData->set_pulsepressure_mmhg(pp_mmHg);
+
+                      patientData->set_weight_kg(weight_kg);
+                      patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
+                      patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
+                      patientData->set_outputbasefilename(full_dir_path);
+                      patientData->set_maxsimulationtime_s(120); // Generate 2 mins of data
+                      patientData->mutable_validation();// Create a validation object to fill
+                      break;
+                    }
+
+                    case Mode::Hemorrhage:
+                    {
+                      GenerateHemorrhageOptions(pData, id, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, diastolic_mmHg, systolic_mmHg, full_dir_path);
+                      break;
+                    }
+                    }
                   }
                 }
               }
@@ -178,23 +201,23 @@ namespace pulse::study::patient_variability
     const std::string& full_dir_path)
   {
 
-    std::vector<std::string> hemorrhageCompartments = { "RightArm", "RightLeg" };
-    for (auto hemorrhageCompartment : hemorrhageCompartments)
+    std::vector<std::string> HemorrhageCompartments = { "RightArm", "RightLeg" };
+    for (auto hemorrhageCompartment : HemorrhageCompartments)
     {
-      std::string compartment_dir = + "/"+hemorrhageCompartment;
+      std::string compartment_dir = + "/" + hemorrhageCompartment;
 
-      int severityIdx, severityN = (int)((hemorrhageSeverityMax - hemorrhageSeverityMin) / hemorrhageSeverityStep);
+      int severityIdx, severityN = (int)((HemorrhageSeverityMax - HemorrhageSeverityMin) / HemorrhageSeverityStep);
       for (severityIdx = 0; severityIdx <= severityN; severityIdx++)
       {
-        double severity = hemorrhageSeverityMin + hemorrhageSeverityStep * severityIdx;
+        double severity = HemorrhageSeverityMin + HemorrhageSeverityStep * severityIdx;
 
         std::string severity_dir = "/severity" + pulse::cdm::to_string(severity);
 
-        int triageTimeIdx, triageTimeN = (int)((hemorrhageTriageTimeMax_min - hemorrhageTriageTimeMin_min) / hemorrhageTriageTimeStep_min);
+        int triageTimeIdx, triageTimeN = (int)((HemorrhageTriageTimeMax_min - HemorrhageTriageTimeMin_min) / HemorrhageTriageTimeStep_min);
         for (triageTimeIdx = 0; triageTimeIdx <= triageTimeN; triageTimeIdx++)
         {
           m_TotalRuns++;
-          double triageTime_min = hemorrhageTriageTimeMin_min + hemorrhageTriageTimeStep_min * triageTimeIdx;
+          double triageTime_min = HemorrhageTriageTimeMin_min + HemorrhageTriageTimeStep_min * triageTimeIdx;
 
           std::string triageTime_dir = "/triage_min" + pulse::cdm::to_string(triageTime_min);
           std::string hemorrhage_dir_path = full_dir_path + compartment_dir + severity_dir + triageTime_dir;
@@ -225,12 +248,77 @@ namespace pulse::study::patient_variability
     }
   }
 
+  // Reset ParameterSpace
+  void PVGenerator::ResetParameters()
+  {
+    Age_yr.Reset();
+    HeightMale_cm.Reset();
+    HeightFemale_cm.Reset();
+    BMI.Reset();
+    HR_bpm.Reset();
+    MAP_mmHg.Reset();
+    PP_mmHg.Reset();
+  }
 
   // Add values to our ParameterSpace
   void PVGenerator::AddPatientParameters(const SEPatient& patient)
   {
-   
+    Age_yr.Insert(patient.GetAge(TimeUnit::yr));
+
+    double height_cm = patient.GetHeight(LengthUnit::cm);
+    if (patient.GetSex() == ePatient_Sex::Male)
+      HeightMale_cm.Insert(height_cm);
+    else if (patient.GetSex() == ePatient_Sex::Female)
+      HeightFemale_cm.Insert(height_cm);
+
+    double height_m = patient.GetHeight(LengthUnit::m);
+    double weight_kg = patient.GetWeight(MassUnit::kg);
+    double bmi = weight_kg / (height_m * height_m);
+    BMI.Insert(bmi);
+
+    HR_bpm.Insert(patient.GetHeartRateBaseline(FrequencyUnit::Per_min));
+
+    double systolic_mmHg = patient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+    double diastolic_mmHg = patient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+    double map_mmHg = (systolic_mmHg + 2 * diastolic_mmHg) / 3.0;
+    double pp_mmHg = systolic_mmHg - diastolic_mmHg;
+    MAP_mmHg.Insert(map_mmHg);
+    PP_mmHg.Insert(pp_mmHg);
   }
 
+  std::vector<std::pair<double, double>> PVGenerator::GenerateBloodPressurePairs(double map_mmHg, double pp_mmHg)
+  {
+    std::vector<std::pair<double, double>> bpPairs;
 
+    // Derived from:
+    // diastolic <= .75 * systolic
+    // MAP = (systolic + 2 * diastolic) / 3
+    // Pulse Pressure = systolic - diastolic
+    double lowerBoundSystolic_mmHg = 6.0 / 5.0 * map_mmHg;
+    double upperBoundDiastolic_mmHg = 9.0 / 10.0 * map_mmHg;
+
+    // Based on model limits
+    double minSystolic_mmHg = 90;
+    double maxSystolic_mmHg = 120;
+    double minDiastolic_mmHg = 60;
+    double maxDiastolic_mmHg = 80;
+
+    // Ensure our bounds remain within model limits
+    lowerBoundSystolic_mmHg = MIN(MAX(lowerBoundSystolic_mmHg, minSystolic_mmHg), maxSystolic_mmHg);
+    upperBoundDiastolic_mmHg = MAX(MIN(upperBoundDiastolic_mmHg, maxDiastolic_mmHg), minDiastolic_mmHg);
+
+    // Compute lower-bound-systolic-based pair
+    double s_mmHg = lowerBoundSystolic_mmHg;
+    double d_mmHg = s_mmHg - pp_mmHg;
+    if (d_mmHg >= minDiastolic_mmHg && d_mmHg <= upperBoundDiastolic_mmHg)
+      bpPairs.push_back(std::make_pair(s_mmHg, d_mmHg));
+
+    // Compute upper-bound-diastolic-based pair
+    d_mmHg = upperBoundDiastolic_mmHg;
+    s_mmHg = d_mmHg + pp_mmHg;
+    if (s_mmHg >= lowerBoundSystolic_mmHg && s_mmHg <= maxSystolic_mmHg)
+      bpPairs.push_back(std::make_pair(s_mmHg, d_mmHg));
+
+    return bpPairs;
+  }
 }

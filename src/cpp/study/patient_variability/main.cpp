@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 
   pulse::study::bind::patient_variability::PatientStateListData patients;
   PVGenerator pvg(&log);
-  pvg.Mode = mode;
+  pvg.GenerateMode = mode;
   pvg.IncludeStandardPatients = includeStandardPatients;
 
   if (data == "solo")
@@ -163,13 +163,13 @@ int main(int argc, char* argv[])
     // Hemorrhage Options //
     ////////////////////////
 
-    pvg.hemorrhageSeverityMin = 0.25;
-    pvg.hemorrhageSeverityMax = 1.0;
-    pvg.hemorrhageSeverityStep = 0.25;
+    pvg.HemorrhageSeverityMin = 0.25;
+    pvg.HemorrhageSeverityMax = 1.0;
+    pvg.HemorrhageSeverityStep = 0.25;
 
-    pvg.hemorrhageTriageTimeMin_min = 1.0;
-    pvg.hemorrhageTriageTimeMax_min = 5.0;
-    pvg.hemorrhageTriageTimeStep_min = 1.0;
+    pvg.HemorrhageTriageTimeMin_min = 1.0;
+    pvg.HemorrhageTriageTimeMax_min = 5.0;
+    pvg.HemorrhageTriageTimeStep_min = 1.0;
 
     pvg.GeneratePatientList(patients);
   }
@@ -181,13 +181,13 @@ int main(int argc, char* argv[])
     // Hemorrhage Options //
     ////////////////////////
 
-    pvg.hemorrhageSeverityMin = 0.25;
-    pvg.hemorrhageSeverityMax = 1.0;
-    pvg.hemorrhageSeverityStep = 0.25;
+    pvg.HemorrhageSeverityMin = 0.25;
+    pvg.HemorrhageSeverityMax = 1.0;
+    pvg.HemorrhageSeverityStep = 0.25;
 
-    pvg.hemorrhageTriageTimeMin_min = 1.0;
-    pvg.hemorrhageTriageTimeMax_min = 5.0;
-    pvg.hemorrhageTriageTimeStep_min = 5.0;
+    pvg.HemorrhageTriageTimeMin_min = 1.0;
+    pvg.HemorrhageTriageTimeMax_min = 5.0;
+    pvg.HemorrhageTriageTimeStep_min = 5.0;
 
     pvg.GeneratePatientList(patients);
   }

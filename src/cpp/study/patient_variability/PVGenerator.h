@@ -3,12 +3,14 @@
 
 #pragma once
 
-#include <map>
-#include <list>
+#include <algorithm>
+#include <utility>
 
 #include "PulseEngine.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
+#include "cdm/utils/GeneralMath.h"
+#include "cdm/properties/SEScalar.h"
 
 PUSH_PROTO_WARNINGS
 #include "pulse/cdm/bind/Patient.pb.h"
@@ -26,9 +28,13 @@ namespace pulse::study::patient_variability
     Validation
   };
 
+  class PVGenerator;
+  class Parameter;
+
   class Parameter
   {
   public:
+    friend class PVGenerator;
     Parameter(double lowerLimit, double upperLimit)
     {
       m_LowerLimit = lowerLimit;
@@ -79,7 +85,12 @@ namespace pulse::study::patient_variability
     void Insert(double v)
     {
       // Make sure v is not in our list and add it
+      if (std::find_if(m_Values.begin(), m_Values.end(),  [v] (const double& val) { return Equals(v, val); }) != m_Values.end())
+        return;
+      m_Values.push_back(v);
+
       // Sort the list
+      std::sort(m_Values.begin(), m_Values.end());
     }
 
     double Min() const { return m_Min; }
@@ -88,6 +99,7 @@ namespace pulse::study::patient_variability
     double LowerLimit() const { return m_LowerLimit; }
     double UpperLimit() const { return m_UpperLimit; }
     const std::vector<double>& Values() const { return m_Values; }
+    static bool Equals(const double& v1, const double& v2) { return std::abs(GeneralMath::PercentDifference(v1, v2)) <= ZERO_APPROX; }
 
   protected:
     double m_Min, m_Max, m_StepSize;
@@ -108,7 +120,7 @@ namespace pulse::study::patient_variability
     void GeneratePatientList(PatientStateListData& pData);
 
     bool            IncludeStandardPatients = true;
-    Mode            Mode = Mode::Validation;
+    Mode            GenerateMode = Mode::Validation;
     
     Parameter       Age_yr;
     Parameter       HeightMale_cm;
@@ -118,13 +130,13 @@ namespace pulse::study::patient_variability
     Parameter       MAP_mmHg;
     Parameter       PP_mmHg;
 
-    double hemorrhageSeverityMin = 0.25;
-    double hemorrhageSeverityMax = 1.0;
-    double hemorrhageSeverityStep = 0.25;
+    double HemorrhageSeverityMin = 0.25;
+    double HemorrhageSeverityMax = 1.0;
+    double HemorrhageSeverityStep = 0.25;
 
-    double hemorrhageTriageTimeMin_min = 1.0;
-    double hemorrhageTriageTimeMax_min = 20.0;
-    double hemorrhageTriageTimeStep_min = 5.0;
+    double HemorrhageTriageTimeMin_min = 1.0;
+    double HemorrhageTriageTimeMax_min = 20.0;
+    double HemorrhageTriageTimeStep_min = 5.0;
 
   protected:
     unsigned int m_MaxNumPatients=0; // This is the maximum number of patients for the set, not all combination may be valid, so the actual number of patients for a set could be less that this.
@@ -136,6 +148,9 @@ namespace pulse::study::patient_variability
       double hr_bpm, double map_mmHg, double pp_mmHg, double diastolic_mmHg, double systolic_mmHg,
       const std::string& full_dir_path);
 
+    void ResetParameters();
     void AddPatientParameters(const SEPatient& patient);
+
+    std::vector<std::pair<double, double>> GenerateBloodPressurePairs(double map_mmHg, double pp_mmHg);
   };
 }
