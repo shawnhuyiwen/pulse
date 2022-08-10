@@ -31,5 +31,5 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
             print(d.OutputBaseFilename)
 
 if __name__ == '__main__':
-    analysis = PatientVariabilityAnalysis("./test_results/patient_variability/validation/")
+    analysis = PatientVariabilityAnalysis("./test_results/patient_variability/test/validation/")
     analysis.process_fields_individually()

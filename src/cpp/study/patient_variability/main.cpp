@@ -90,22 +90,20 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+  std::string modeDir = "";
   switch (mode)
   {
   case Mode::Validation:
-    rootDir += "validation/";
+    modeDir = "validation/";
     break;
   case Mode::Hemorrhage:
-    rootDir += "hemorrhage/";
+    modeDir = "hemorrhage/";
     break;
   }
 
-  if(clear)
-    DeleteDirectory(rootDir);
-
   Logger log;
   log.LogToConsole(true);
-  log.SetLogFile(rootDir + "PatientVariability.log");
+  std::string logName = "PatientVariability.log";
 
   pulse::study::bind::patient_variability::PatientStateListData patients;
   PVGenerator pvg(&log);
@@ -114,8 +112,10 @@ int main(int argc, char* argv[])
 
   if (data == "solo")
   {
-    rootDir = "./test_results/PVRunner/";
-    log.SetLogFile(rootDir + "PatientVariability.log");
+    rootDir += "solo/" + modeDir;
+    if(clear)
+      DeleteDirectory(rootDir);
+    log.SetLogFile(rootDir + logName);
 
     /// male / age_yr18 / height_cm163 / bmi29.9 / hr_bpm100 / map_mmHg70 / pp_mmHg30 / bp_mmHg93 - 63
     clear = true;
@@ -156,6 +156,11 @@ int main(int argc, char* argv[])
   }
   else if(data == "full")
   {
+    rootDir += "full/" + modeDir;
+    if(clear)
+      DeleteDirectory(rootDir);
+    log.SetLogFile(rootDir + logName);
+
     // The default min/max are the model bounds
     // So just increase the fidelity via step size
     pvg.Age_yr.AdjustStepSize(10);
@@ -182,6 +187,11 @@ int main(int argc, char* argv[])
   }
   else if (data == "test")
   {
+    rootDir += "test/" + modeDir;
+    if(clear)
+      DeleteDirectory(rootDir);
+    log.SetLogFile(rootDir + logName);
+
     // This will use the defaults
 
     ////////////////////////
