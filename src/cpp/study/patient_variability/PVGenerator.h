@@ -28,13 +28,9 @@ namespace pulse::study::patient_variability
     Validation
   };
 
-  class PVGenerator;
-  class Parameter;
-
   class Parameter
   {
   public:
-    friend class PVGenerator;
     Parameter(double lowerLimit, double upperLimit)
     {
       m_LowerLimit = lowerLimit;
