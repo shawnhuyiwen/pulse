@@ -115,13 +115,17 @@ int main(int argc, char* argv[])
   if (data == "solo")
   {
     rootDir = "./test_results/PVRunner/";
+
+    /// male / age_yr18 / height_cm163 / bmi29.9 / hr_bpm100 / map_mmHg70 / pp_mmHg30 / bp_mmHg93 - 63
     clear = true;
-    uint32_t age_yr = 44;
-    double   bmi    = 18.7099;
-    double   hr_bpm = 92;
-    double   height_cm = 180.34;
-    double   map_mmHg = 87;
-    double   pp_mmHg = 30.5;
+    uint32_t age_yr = 18;
+    double   bmi    = 29.9;
+    double   hr_bpm = 100;
+    double   height_cm = 163;
+    double   map_mmHg = 70;
+    double   pp_mmHg = 30;
+    double systolic_mmHg = 93;// Set to -1 if you want it computed
+    double diastolic_mmHg = 63;// Set to -1 if you want it computed
 
     auto p = patients.add_patient();
     p->set_id(0);
@@ -138,8 +142,10 @@ int main(int argc, char* argv[])
     p->set_weight_kg(weight_kg);
     // systolic - diastolic = pulse pressure
     // MAP = (systolic + 2 * diastolic) / 3
-    double diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3.0;
-    double systolic_mmHg = pp_mmHg + diastolic_mmHg;
+    if(diastolic_mmHg<0)
+      diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3.0;
+    if(systolic_mmHg<0)
+      systolic_mmHg = pp_mmHg + diastolic_mmHg;
     p->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
     p->set_systolicarterialpressure_mmhg(systolic_mmHg);
 
