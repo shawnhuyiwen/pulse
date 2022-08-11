@@ -90,22 +90,20 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+  std::string modeDir = "";
   switch (mode)
   {
   case Mode::Validation:
-    rootDir += "validation/";
+    modeDir = "validation/";
     break;
   case Mode::Hemorrhage:
-    rootDir += "hemorrhage/";
+    modeDir = "hemorrhage/";
     break;
   }
 
-  if(clear)
-    DeleteDirectory(rootDir);
-
   Logger log;
   log.LogToConsole(true);
-  log.SetLogFile(rootDir + "PatientVariability.log");
+  std::string logName = "PatientVariability.log";
 
   pulse::study::bind::patient_variability::PatientStateListData patients;
   PVGenerator pvg(&log);
@@ -114,8 +112,12 @@ int main(int argc, char* argv[])
 
   if (data == "solo")
   {
-    rootDir = "./test_results/PVRunner/";
-    DeleteFile(rootDir+"patient_results.json");
+    rootDir += "solo/" + modeDir;
+    // I always want to run, so remove our "compiled" results of 1
+    DeleteFile(rootDir+"patient_results.json");// If we are solo, always rerun
+    if(clear)// Then we can delete the specific solo run results
+      DeleteDirectory(rootDir);
+    log.SetLogFile(rootDir + logName);
 
     /// male/age_yr18/height_cm163.000000/bmi16/hr_bpm100.000000/map_mmHg70.000000/pp_mmHg40.500000/bp_mmHg114.000000-73.500000
     uint32_t age_yr = 18;
@@ -155,6 +157,11 @@ int main(int argc, char* argv[])
   }
   else if(data == "full")
   {
+    rootDir += "full/" + modeDir;
+    if(clear)
+      DeleteDirectory(rootDir);
+    log.SetLogFile(rootDir + logName);
+
     // The default min/max are the model bounds
     // So just increase the fidelity via step size
     pvg.Age_yr.AdjustStepSize(10);
@@ -181,6 +188,11 @@ int main(int argc, char* argv[])
   }
   else if (data == "test")
   {
+    rootDir += "test/" + modeDir;
+    if(clear)
+      DeleteDirectory(rootDir);
+    log.SetLogFile(rootDir + logName);
+
     // This will use the defaults
 
     ////////////////////////

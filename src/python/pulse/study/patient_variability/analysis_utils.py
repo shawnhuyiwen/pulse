@@ -142,7 +142,7 @@ class PatientVariabilityResults():
 
 if __name__ == '__main__':
     lineSep = "-------------------------------------------------------------------"
-    results = PatientVariabilityResults("./test_results/patient_variability/validation/")
+    results = PatientVariabilityResults("./test_results/patient_variability/test/validation/")
 
     # List all the ranges of our result set for males
     ages_yr = results.getFieldValues(Field.Age_yr, PatientData.eSex.Male)

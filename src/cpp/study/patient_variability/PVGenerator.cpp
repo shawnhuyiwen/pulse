@@ -24,7 +24,7 @@ namespace pulse::study::patient_variability
                                              HeightFemale_cm(151, 175.5),
                                              BMI(16, 29.9),
                                              HR_bpm(60, 100),
-                                             MAP_mmHg(70, 105),
+                                             MAP_mmHg(70, 100),
                                              PP_mmHg(30, 60)
   {
   }
@@ -67,7 +67,9 @@ namespace pulse::study::patient_variability
       // Adjust parameter space to standard patient based on settings
       SEPatient* patient = nullptr;
       SEPatientConfiguration pc;
-      std::pair<double, double> standardBP_mmHg;
+      std::pair<double, double> standardBP_mmHg(0,0);
+      double standardMAP_mmHg = 0;
+      double standardPP_mmHg = 0;
       if (IncludeStandardPatients)
       {
         patient = &(pc.GetPatient());
@@ -80,8 +82,11 @@ namespace pulse::study::patient_variability
           patient->SerializeFromFile("./patients/StandardFemale.json");
         }
         AddPatientParameters(*patient);
-        standardBP_mmHg = std::make_pair(patient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg), 
-                                         patient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg));
+        double stdSystolic_mmHg = patient->GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+        double stdDiastolic_mmHg = patient->GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+        standardBP_mmHg = std::make_pair(stdSystolic_mmHg, stdDiastolic_mmHg);
+        standardMAP_mmHg = (stdSystolic_mmHg + 2.0 * stdDiastolic_mmHg) / 3.0;
+        standardPP_mmHg = stdSystolic_mmHg - stdDiastolic_mmHg;
       }
 
       std::string sex_dir = "/" + sex.second;
@@ -120,7 +125,7 @@ namespace pulse::study::patient_variability
                   std::string pp_dir = "/pp_mmHg" + pulse::cdm::to_string(pp_mmHg);
 
                   std::vector<std::pair<double, double>> bpPairs = GenerateBloodPressurePairs(map_mmHg, pp_mmHg);
-                  if (IncludeStandardPatients)
+                  if (IncludeStandardPatients && Parameter::Equals(map_mmHg, standardMAP_mmHg) && Parameter::Equals(pp_mmHg, standardPP_mmHg))
                   {
                     // Check if BP pair already included
                     if (std::find_if(bpPairs.begin(), bpPairs.end(), 
@@ -303,20 +308,51 @@ namespace pulse::study::patient_variability
     double maxDiastolic_mmHg = 80;
 
     // Ensure our bounds remain within model limits
-    lowerBoundSystolic_mmHg = MIN(MAX(lowerBoundSystolic_mmHg, minSystolic_mmHg), maxSystolic_mmHg);
-    upperBoundDiastolic_mmHg = MAX(MIN(upperBoundDiastolic_mmHg, maxDiastolic_mmHg), minDiastolic_mmHg);
+    lowerBoundSystolic_mmHg = MAX(lowerBoundSystolic_mmHg, minSystolic_mmHg);
+    upperBoundDiastolic_mmHg = MIN(upperBoundDiastolic_mmHg, maxDiastolic_mmHg);
+    if (lowerBoundSystolic_mmHg > maxSystolic_mmHg || upperBoundDiastolic_mmHg < minDiastolic_mmHg)
+    {
+      Warning(pulse::cdm::to_string(map_mmHg) + "mmHg MAP produces no valid BPs.");
+      return bpPairs;
+    }
 
-    // Compute lower-bound-systolic-based pair
-    double s_mmHg = lowerBoundSystolic_mmHg;
-    double d_mmHg = s_mmHg - pp_mmHg;
-    if (d_mmHg >= minDiastolic_mmHg && d_mmHg <= upperBoundDiastolic_mmHg)
-      bpPairs.push_back(std::make_pair(s_mmHg, d_mmHg));
+    // Compute min diastolic BP pair
+    double d_mmHg = minDiastolic_mmHg;
+    double s_mmHg = d_mmHg + pp_mmHg;
+    if (s_mmHg < lowerBoundSystolic_mmHg || s_mmHg > maxSystolic_mmHg)
+    {
+      s_mmHg = lowerBoundSystolic_mmHg;
+      d_mmHg = s_mmHg - pp_mmHg;
+    }
+    std::pair<double, double> bp1(0,0);
+    if (d_mmHg <= upperBoundDiastolic_mmHg && d_mmHg >= minDiastolic_mmHg)
+    {
+      bp1 = std::make_pair(s_mmHg, d_mmHg);
+      bpPairs.push_back(bp1);
+    }
 
-    // Compute upper-bound-diastolic-based pair
-    d_mmHg = upperBoundDiastolic_mmHg;
-    s_mmHg = d_mmHg + pp_mmHg;
+    // Compute max systolic BP pair
+    s_mmHg = maxSystolic_mmHg;
+    d_mmHg = s_mmHg - pp_mmHg;
+    if (d_mmHg < minDiastolic_mmHg || d_mmHg > upperBoundDiastolic_mmHg)
+    {
+      d_mmHg = upperBoundDiastolic_mmHg;
+      s_mmHg = d_mmHg + pp_mmHg;
+    }
     if (s_mmHg >= lowerBoundSystolic_mmHg && s_mmHg <= maxSystolic_mmHg)
-      bpPairs.push_back(std::make_pair(s_mmHg, d_mmHg));
+    {
+      // Make sure we don't add the same pair twice
+      if (!Parameter::Equals(bp1.first, s_mmHg) || !Parameter::Equals(bp1.second, d_mmHg))
+      {
+        bpPairs.push_back(std::make_pair(s_mmHg, d_mmHg));
+      }
+    }
+
+    // No valid BPs found
+    if (bpPairs.empty())
+    {
+      Warning(pulse::cdm::to_string(map_mmHg) + "mmHg MAP/" + pulse::cdm::to_string(pp_mmHg) + "mmHg Pulse Pressure combination produces no valid BPs.");
+    }
 
     return bpPairs;
   }

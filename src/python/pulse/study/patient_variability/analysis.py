@@ -1,11 +1,15 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
+from pulse.cdm.bind.Patient_pb2 import PatientData
+from pulse.study.bind.PatientVariability_pb2 import PatientStateListData
+
+from google.protobuf import json_format
 from enum import Enum
 from typing import NamedTuple
 from os.path import exists
 
-basePath = "./test_results/patient_variability/validation/"
+basePath = "./test_results/patient_variability/test/validation/"
 
 # Possible result types
 class ResultType(Enum):
@@ -119,7 +123,7 @@ def systemValidation(patients, passThreshold = 10, failThreshold = 30 ):
                 # Did this result get worse compared to the standard patient?
                 standardResult = getStandardResult(standard[patient.Sex], system, propertyName, passThreshold, failThreshold)
                 result = determineResultType(error, passThreshold, failThreshold)
-                if result.value > standardResult.value:
+                if standardResult is not None and result.value > standardResult.value:
                     byPatient[patient.Sex][patient.ID][result] += 1
                     bySystem[patient.Sex][system][propertyName][result] += 1
                     systemTotals[patient.Sex][system][result] += 1
