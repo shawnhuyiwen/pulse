@@ -192,7 +192,11 @@ void MakeDirectory(std::string const& dir)
   std::filesystem::create_directory(dir);
 }
 
-bool DeleteDirectory(const std::string &dir)
+bool DeleteFile(const std::string &dir)
+{
+  return remove(dir.c_str())==0;
+}
+bool DeleteDirectory(const std::string& dir)
 {
   return std::filesystem::remove_all(dir);
 }

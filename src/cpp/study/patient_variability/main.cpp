@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   bool hemorrhageMode          = false;
   bool useBaseline             = true;
   bool includeStandardPatients = true;
-  std::string data = "test";
+  std::string data = "solo";
   Mode mode = Mode::Validation;
   std::string rootDir = "./test_results/patient_variability/";
 
@@ -115,17 +115,17 @@ int main(int argc, char* argv[])
   if (data == "solo")
   {
     rootDir = "./test_results/PVRunner/";
+    DeleteFile(rootDir+"patient_results.json");
 
-    /// male / age_yr18 / height_cm163 / bmi29.9 / hr_bpm100 / map_mmHg70 / pp_mmHg30 / bp_mmHg93 - 63
-    clear = true;
+    /// male/age_yr18/height_cm163.000000/bmi16/hr_bpm100.000000/map_mmHg70.000000/pp_mmHg40.500000/bp_mmHg114.000000-73.500000
     uint32_t age_yr = 18;
-    double   bmi    = 29.9;
-    double   hr_bpm = 100;
     double   height_cm = 163;
+    double   bmi    = 16;
+    double   hr_bpm = 100;
     double   map_mmHg = 70;
-    double   pp_mmHg = 30;
-    double systolic_mmHg = 93;// Set to -1 if you want it computed
-    double diastolic_mmHg = 63;// Set to -1 if you want it computed
+    double   pp_mmHg = 40.5;
+    double systolic_mmHg = 114;// Set to -1 if you want it computed
+    double diastolic_mmHg = 73.5;// Set to -1 if you want it computed
 
     auto p = patients.add_patient();
     p->set_id(0);
