@@ -160,41 +160,34 @@ class RecurrentODE(BaseModel):
         # self.save_hyperparameters(ignore=list(kwargs.keys()))
         # self.save_hyperparameters()
 
-        if self.x_dims is not MISSING:
-            self.init_xy()
+        if self.x_dims is not None:
 
-    def init_xy(self):
+            diffeq_solver = ODEFunc(self.x_dims, self.odefuncparams)
 
-        # self.gaussian_likelihood_std = torch.tensor([self.gaussian_likelihood_std])
+            if self.h_dims is None:
+                self.h_dims = diffeq_solver.h_dims
 
-        diffeq_solver = ODEFunc(self.x_dims, self.odefuncparams)
+            if self.RNN_net is None:
+                # TODO must h_dims == solver.h_dims?
+                self.RNN_net = GRU_with_std(self.h_dims,
+                                            self.x_dims,
+                                            n_units=self.n_gru_units)
 
-        if self.h_dims is None:
-            self.h_dims = diffeq_solver.h_dims
+            self.ODE_RNN = ODE_RNN(diffeq_solver, self.RNN_net)
 
-        if self.RNN_net is None:
-            # TODO must h_dims == solver.h_dims?
-            self.RNN_net = GRU_with_std(self.h_dims,
-                                        self.x_dims,
-                                        n_units=self.n_gru_units)
+            self.RNN_net = None  # so it doesn't show up in self.parameters()
 
-        self.ODE_RNN = ODE_RNN(diffeq_solver, self.RNN_net)
+            # RecurrentODE
+            if self.encoder_out_dims == 'y':
+                self.encoder_out_dims = self.y_dims
+                self.output_net = utils.create_net(self.h_dims, self.y_dims,
+                                                   self.n_out_units)
+            # ODE_GRU_Encoder
+            else:
+                self.output_net = utils.create_net(self.h_dims * 2,
+                                                   self.encoder_out_dims * 2,
+                                                   self.n_out_units)
 
-        self.RNN_net = None  # so it doesn't show up in self.parameters()
-
-        # RecurrentODE
-        if self.encoder_out_dims == 'y':
-            self.encoder_out_dims = self.y_dims
-            self.output_net = utils.create_net(self.h_dims, self.y_dims,
-                                               self.n_out_units)
-        # ODE_GRU_Encoder
-        else:
-            self.output_net = utils.create_net(self.h_dims * 2,
-                                               self.encoder_out_dims * 2,
-                                               self.n_out_units)
-
-    def setup(self, stage=None):
-        super().setup(stage)
 
     # RecurrentODE
     def old_forward(self, y_time, x, x_time):
