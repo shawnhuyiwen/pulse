@@ -4,6 +4,8 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/utils/FileUtils.h"
 #include <iterator>
+#include <chrono>
+#include <thread>
 
    // We haven't checked which filesystem to include yet
 #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
@@ -192,9 +194,19 @@ void MakeDirectory(std::string const& dir)
   std::filesystem::create_directory(dir);
 }
 
-bool DeleteFile(const std::string &dir)
+bool DeleteFile(const std::string &dir, short retry)
 {
-  return remove(dir.c_str())==0;
+  if (std::remove(dir.c_str()) != 0)
+  {
+    for (int r=0; r<retry; r++)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      if (std::remove(dir.c_str()) == 0)
+        return true;
+    }
+    return false;
+  }
+  return true;
 }
 bool DeleteDirectory(const std::string& dir)
 {

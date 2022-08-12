@@ -12,7 +12,7 @@ std::string CDM_DECL Replace(const std::string& original, const std::string& rep
 void CDM_DECL ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask = "");
 std::string CDM_DECL GetCurrentWorkingDirectory();
 void CDM_DECL MakeDirectory(std::string const& dir);
-bool CDM_DECL DeleteFile(const std::string &dir);
+bool CDM_DECL DeleteFile(const std::string &dir, short retry=1);
 bool CDM_DECL DeleteDirectory(const std::string& dir);
 bool CDM_DECL FileExists(const std::string& filename);
 bool CDM_DECL IsJSONFile(const std::string& filename);
