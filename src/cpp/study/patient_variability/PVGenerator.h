@@ -35,7 +35,13 @@ namespace pulse::study::patient_variability
     {
       m_LowerLimit = lowerLimit;
       m_UpperLimit = upperLimit;
-      Set(lowerLimit, upperLimit);
+      Set(lowerLimit, upperLimit, upperLimit-lowerLimit);
+    }
+    Parameter(double lowerLimit, double upperLimit, double stepSize)
+    {
+      m_LowerLimit = lowerLimit;
+      m_UpperLimit = upperLimit;
+      Set(lowerLimit, upperLimit, stepSize);
     }
 
     void AdjustBounds(double lowerLimit, double upperLimit)
@@ -141,13 +147,8 @@ namespace pulse::study::patient_variability
     Parameter       MAP_mmHg;
     Parameter       PP_mmHg;
 
-    double HemorrhageSeverityMin = 0.25;
-    double HemorrhageSeverityMax = 1.0;
-    double HemorrhageSeverityStep = 0.25;
-
-    double HemorrhageTriageTimeMin_min = 1.0;
-    double HemorrhageTriageTimeMax_min = 20.0;
-    double HemorrhageTriageTimeStep_min = 5.0;
+    Parameter       HemorrhageSeverity;
+    Parameter       HemorrhageTriageTime;
 
   protected:
     unsigned int m_MaxNumPatients=0; // This is the maximum number of patients for the set, not all combination may be valid, so the actual number of patients for a set could be less that this.
@@ -156,10 +157,14 @@ namespace pulse::study::patient_variability
 
     void ResetParameters();
 
+    void CreatePatient(PatientStateListData& pList,
+      const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
+      double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg, const std::string& full_dir_path);
+
     void GenerateHemorrhageOptions(PatientStateListData& pList,
       const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
       double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
-      double runDuration_s, const std::string& full_dir_path);
+      const std::string& full_dir_path);
 
     pulse::study::bind::patient_variability::PatientStateData* AddPatientToList(PatientStateListData& pList,
       const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,

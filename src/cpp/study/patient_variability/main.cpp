@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 
   if (data == "solo")
   {
-    rootDir += "solo/" + modeDir;
+    rootDir += modeDir+"solo/";
     // I always want to run, so remove our "compiled" results of 1
     DeleteFile(rootDir+"patient_results.json");// If we are solo, always rerun
     if(clear)// Then we can delete the specific solo run results
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
   }
   else if(data == "full")
   {
-    rootDir += "full/" + modeDir;
+    rootDir += modeDir+"full/";
     if(clear)
       DeleteDirectory(rootDir);
     log.SetLogFile(rootDir + logName);
@@ -176,19 +176,15 @@ int main(int argc, char* argv[])
     // Hemorrhage Options //
     ////////////////////////
 
-    pvg.HemorrhageSeverityMin = 0.25;
-    pvg.HemorrhageSeverityMax = 1.0;
-    pvg.HemorrhageSeverityStep = 0.25;
-
-    pvg.HemorrhageTriageTimeMin_min = 1.0;
-    pvg.HemorrhageTriageTimeMax_min = 5.0;
-    pvg.HemorrhageTriageTimeStep_min = 1.0;
+    // Defaults are
+    // HemorrhageSeverity(0.25,1.00,0.25)
+    // HemorrhageTriageTime(1.0,5.0,1.0)
 
     pvg.GenerateIndividualParamaterVariabilityPatientList(patients);
   }
   else if (data == "test")
   {
-    rootDir += "test/" + modeDir;
+    rootDir += modeDir+"test/";
     if(clear)
       DeleteDirectory(rootDir);
     log.SetLogFile(rootDir + logName);
@@ -199,13 +195,9 @@ int main(int argc, char* argv[])
     // Hemorrhage Options //
     ////////////////////////
 
-    pvg.HemorrhageSeverityMin = 0.25;
-    pvg.HemorrhageSeverityMax = 1.0;
-    pvg.HemorrhageSeverityStep = 0.25;
-
-    pvg.HemorrhageTriageTimeMin_min = 1.0;
-    pvg.HemorrhageTriageTimeMax_min = 5.0;
-    pvg.HemorrhageTriageTimeStep_min = 5.0;
+    // Defaults are
+    // HemorrhageSeverity(0.25,1.00,0.25)
+    // HemorrhageTriageTime(1.0,5.0,1.0)
 
     pvg.GenerateIndividualParamaterVariabilityPatientList(patients);
   }

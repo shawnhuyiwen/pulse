@@ -47,7 +47,9 @@ namespace pulse::study::patient_variability
     BMI(minBMI, maxBMI),
     HR_bpm(minHR_bpm, maxHR_bpm),
     MAP_mmHg(minMAP_mmHg, maxMAP_mmHg),
-    PP_mmHg(minPulsePressure_mmHg, maxPulsePressure_mmHg)
+    PP_mmHg(minPulsePressure_mmHg, maxPulsePressure_mmHg),
+    HemorrhageSeverity(0.25,1.00,0.25),
+    HemorrhageTriageTime(1.0, 20.0, 5.0)
   {
     ResetParameters();
   }
@@ -189,48 +191,6 @@ namespace pulse::study::patient_variability
     return b;
   }
 
-  pulse::study::bind::patient_variability::PatientStateData* PVGenerator::AddPatientToList(PatientStateListData& pList,
-    const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
-    double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
-    double runDuration_s, const std::string& full_dir_path)
-  {
-    m_MaxNumPatients++;
-    Info("Creating patient: " + full_dir_path);
-
-    if (!IsValidBloodPressure_mmHg(map_mmHg, systolic_mmHg, diastolic_mmHg))
-    {
-      Error("Invalid blood pressure for " + full_dir_path + " : " + pulse::cdm::to_string(systolic_mmHg) + "/" + pulse::cdm::to_string(diastolic_mmHg));
-      return nullptr;
-    }
-
-    if (!TestPatientCombo(GetLogger(), sex, age_yr, height_cm, weight_kg, hr_bpm, systolic_mmHg, diastolic_mmHg))
-    {
-      Error("The invalid patient was: " + full_dir_path);
-      return nullptr;
-    }
-
-    m_TotalRuns++;
-    m_TotalPatients++;
-    pulse::study::bind::patient_variability::PatientStateData* patientData = pList.add_patient();
-    patientData->set_id(m_TotalRuns);
-    patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex);
-    patientData->set_age_yr(age_yr);
-    patientData->set_bmi(bmi);
-    patientData->set_heartrate_bpm(hr_bpm);
-    patientData->set_height_cm(height_cm);
-    patientData->set_meanarterialpressure_mmhg(map_mmHg);
-    patientData->set_pulsepressure_mmhg(pp_mmHg);
-
-    patientData->set_weight_kg(weight_kg);
-    patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
-    patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
-    patientData->set_outputbasefilename(full_dir_path);
-    patientData->set_maxsimulationtime_s(runDuration_s); // Generate 2 mins of data
-    patientData->mutable_validation();// Create a validation object to fill
-    
-    return patientData;
-  }
-
   void PVGenerator::GenerateIndividualParamaterVariabilityPatientList(PatientStateListData& pList)
   {
     m_MaxNumPatients = 0;
@@ -268,22 +228,22 @@ namespace pulse::study::patient_variability
       if (IncludeStandardPatients)
       {
         std::string dir = sex_dir+"/standard";
-        AddPatientToList(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
-          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 120, dir);
+        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
+          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
       }
 
       for (auto v : Age_yr.Values())
       {
         std::string dir = sex_dir+"/age_yr" + pulse::cdm::to_string(v);
-        AddPatientToList(pList, sex.first, (unsigned int)v, height_cm, weight_kg, bmi,
-          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 120, dir);
+        CreatePatient(pList, sex.first, (unsigned int)v, height_cm, weight_kg, bmi,
+          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
       }
 
       for (auto v : Height_cm.Values())
       {
         std::string dir = sex_dir+"/height_cm" + pulse::cdm::to_string(v);
-        AddPatientToList(pList, sex.first, (unsigned int)age_yr, v, weight_kg, bmi,
-          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 120, dir);
+        CreatePatient(pList, sex.first, (unsigned int)age_yr, v, weight_kg, bmi,
+          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
       }
 
       for (auto v : BMI.Values())
@@ -291,15 +251,15 @@ namespace pulse::study::patient_variability
         std::string dir = sex_dir+"/bmi" + pulse::cdm::to_string(v);
         // Caclulate weight (kg) = BMI * m2
         double w = bmi * height_m * height_m;
-        AddPatientToList(pList, sex.first, (unsigned int)age_yr, height_cm, w, v,
-          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 120, dir);
+        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, w, v,
+          hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
       }
 
       for (auto v : HR_bpm.Values())
       {
         std::string dir = sex_dir+"/hr_bpm" + pulse::cdm::to_string(v);
-        AddPatientToList(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
-          v, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 120, dir);
+        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
+          v, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, dir);
       }
 
       AdjustMeanArterialPressureBounds(pp_mmHg);
@@ -308,8 +268,8 @@ namespace pulse::study::patient_variability
         std::string dir = sex_dir+"/map_mmHg" + pulse::cdm::to_string(v);
         double s = pp_mmHg + (((3.0 * v) - pp_mmHg) / 3.0);
         double d = s - pp_mmHg;
-        AddPatientToList(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
-          hr_bpm, v, pp_mmHg, s, d, 120, dir);
+        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
+          hr_bpm, v, pp_mmHg, s, d, dir);
       }
 
       AdjustPulsePressureBounds(map_mmHg);
@@ -318,8 +278,8 @@ namespace pulse::study::patient_variability
         std::string dir = sex_dir+"/pp_mmHg" + pulse::cdm::to_string(v);
         double s = v + (((3.0 * map_mmHg) - v) / 3.0);
         double d = s - v;
-        AddPatientToList(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
-          hr_bpm, map_mmHg, v, s, d, 120, dir);
+        CreatePatient(pList, sex.first, (unsigned int)age_yr, height_cm, weight_kg, bmi,
+          hr_bpm, map_mmHg, v, s, d, dir);
       }
     }
     Info("Created " + std::to_string(m_TotalPatients) + " out a total of " + std::to_string(m_MaxNumPatients) + " possible patients");
@@ -403,20 +363,7 @@ namespace pulse::study::patient_variability
                   double systolic_mmHg = pp_mmHg + (((3. * map_mmHg) - pp_mmHg) / 3.);
                   double diastolic_mmHg = systolic_mmHg - pp_mmHg;
 
-                  switch (GenerateMode)
-                  {
-                  case Mode::Validation:
-                  {
-                    AddPatientToList(pList, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 120, full_dir_path);
-                    break;
-                  }
-
-                  case Mode::Hemorrhage:
-                  {
-                    GenerateHemorrhageOptions(pList, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 2*60*60, full_dir_path);
-                    break;
-                  }
-                  }
+                  CreatePatient(pList, sex.first, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, full_dir_path);
                 }
               }
             }
@@ -429,36 +376,49 @@ namespace pulse::study::patient_variability
     Info("Created " + std::to_string(m_TotalRuns) + " total runs");
   }
 
+  void PVGenerator::CreatePatient(PatientStateListData& pList,
+    const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
+    double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg, const std::string& full_dir_path)
+  {
+    switch (GenerateMode)
+    {
+    case Mode::Validation:
+    {
+      AddPatientToList(pList, sex, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 120, full_dir_path);
+      break;
+    }
+
+    case Mode::Hemorrhage:
+    {
+      GenerateHemorrhageOptions(pList, sex, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, full_dir_path);
+      break;
+    }
+    }
+  }
+
   // Creates a new list of patients, adding all hemorrhage variables to each patient in originalPatients
   void PVGenerator::GenerateHemorrhageOptions(PatientStateListData& pList,
     const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
     double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
-    double runDuration_s, const std::string& full_dir_path)
+    const std::string& full_dir_path)
   {
-
     std::vector<std::string> HemorrhageCompartments = { "RightArm", "RightLeg" };
     for (auto hemorrhageCompartment : HemorrhageCompartments)
     {
       std::string compartment_dir = +"/" + hemorrhageCompartment;
 
-      int severityIdx, severityN = (int)((HemorrhageSeverityMax - HemorrhageSeverityMin) / HemorrhageSeverityStep);
-      for (severityIdx = 0; severityIdx <= severityN; severityIdx++)
+      for (auto severity : HemorrhageSeverity.Values())
       {
-        double severity = HemorrhageSeverityMin + HemorrhageSeverityStep * severityIdx;
-
         std::string severity_dir = "/severity" + pulse::cdm::to_string(severity);
 
-        int triageTimeIdx, triageTimeN = (int)((HemorrhageTriageTimeMax_min - HemorrhageTriageTimeMin_min) / HemorrhageTriageTimeStep_min);
-        for (triageTimeIdx = 0; triageTimeIdx <= triageTimeN; triageTimeIdx++)
+        for (auto triageTime_min : HemorrhageSeverity.Values())
         {
-          m_TotalRuns++;
-          double triageTime_min = HemorrhageTriageTimeMin_min + HemorrhageTriageTimeStep_min * triageTimeIdx;
 
           std::string triageTime_dir = "/triage_min" + pulse::cdm::to_string(triageTime_min);
           std::string hemorrhage_dir_path = full_dir_path + compartment_dir + severity_dir + triageTime_dir;
 
           auto patientData =
-            AddPatientToList(pList, sex, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, runDuration_s, hemorrhage_dir_path);
+            AddPatientToList(pList, sex, age_yr, height_cm, weight_kg, bmi, hr_bpm, map_mmHg, pp_mmHg, systolic_mmHg, diastolic_mmHg, 2*60*60, hemorrhage_dir_path);
 
           auto hemorrhage = patientData->mutable_hemorrhage();
           hemorrhage->set_starttime_s(10);
@@ -468,6 +428,48 @@ namespace pulse::study::patient_variability
         }
       }
     }
+  }
+
+  pulse::study::bind::patient_variability::PatientStateData* PVGenerator::AddPatientToList(PatientStateListData& pList,
+    const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
+    double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
+    double runDuration_s, const std::string& full_dir_path)
+  {
+    m_MaxNumPatients++;
+    Info("Creating patient: " + full_dir_path);
+
+    if (!IsValidBloodPressure_mmHg(map_mmHg, systolic_mmHg, diastolic_mmHg))
+    {
+      Error("Invalid blood pressure for " + full_dir_path + " : " + pulse::cdm::to_string(systolic_mmHg) + "/" + pulse::cdm::to_string(diastolic_mmHg));
+      return nullptr;
+    }
+
+    if (!TestPatientCombo(GetLogger(), sex, age_yr, height_cm, weight_kg, hr_bpm, systolic_mmHg, diastolic_mmHg))
+    {
+      Error("The invalid patient was: " + full_dir_path);
+      return nullptr;
+    }
+
+    m_TotalRuns++;
+    m_TotalPatients++;
+    pulse::study::bind::patient_variability::PatientStateData* patientData = pList.add_patient();
+    patientData->set_id(m_TotalRuns);
+    patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex);
+    patientData->set_age_yr(age_yr);
+    patientData->set_bmi(bmi);
+    patientData->set_heartrate_bpm(hr_bpm);
+    patientData->set_height_cm(height_cm);
+    patientData->set_meanarterialpressure_mmhg(map_mmHg);
+    patientData->set_pulsepressure_mmhg(pp_mmHg);
+
+    patientData->set_weight_kg(weight_kg);
+    patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
+    patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
+    patientData->set_outputbasefilename(full_dir_path);
+    patientData->set_maxsimulationtime_s(runDuration_s); // Generate 2 mins of data
+    patientData->mutable_validation();// Create a validation object to fill
+
+    return patientData;
   }
 
   // Add values to our ParameterSpace
