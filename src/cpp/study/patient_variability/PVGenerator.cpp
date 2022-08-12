@@ -94,6 +94,8 @@ namespace pulse::study::patient_variability
       }
     }
     if (!found) return false;
+    if (MAP_mmHg.LowerLimit() > minMAP)
+      minMAP = MAP_mmHg.LowerLimit(); // Keep it!
 
     double maxSystolic = maxSystolic_mmHg;
     double maxDiastolic;
@@ -110,8 +112,14 @@ namespace pulse::study::patient_variability
       }
     }
     if (!found) return false;
+    if (MAP_mmHg.UpperLimit() < maxMAP)
+      maxMAP = MAP_mmHg.UpperLimit(); // Keep it!
 
-    MAP_mmHg.AdjustBounds(minMAP, maxMAP);
+    double step = maxMAP - minMAP;
+    if (MAP_mmHg.StepSize() < (maxMAP - minMAP))
+      step = MAP_mmHg.StepSize(); // Keep it!
+
+    MAP_mmHg.AdjustBounds(minMAP, maxMAP, step);
     return true;
   }
   bool PVGenerator::AdjustPulsePressureBounds(double targetMAP_mmHg)
@@ -129,6 +137,8 @@ namespace pulse::study::patient_variability
       }
     }
     if (!found) return false;
+    if (PP_mmHg.UpperLimit() < maxPulsePressure)
+      maxPulsePressure = PP_mmHg.UpperLimit(); // Keep it!
 
     found = true;
     double minPulsePressure = minPulsePressure_mmHg;
@@ -143,8 +153,14 @@ namespace pulse::study::patient_variability
       }
     }
     if (!found) return false;
+    if (PP_mmHg.LowerLimit() > minPulsePressure)
+      minPulsePressure = PP_mmHg.LowerLimit(); // Keep it!
 
-    PP_mmHg.AdjustBounds(minPulsePressure, maxPulsePressure);
+    double step = maxPulsePressure - minPulsePressure;
+    if (PP_mmHg.StepSize() < (maxPulsePressure - minPulsePressure))
+      step = PP_mmHg.StepSize(); // Keep it!
+
+    PP_mmHg.AdjustBounds(minPulsePressure, maxPulsePressure, step);
     return true;
   }
   bool PVGenerator::IsValidBloodPressure_mmHg(double map, double systolic, double diastolic)

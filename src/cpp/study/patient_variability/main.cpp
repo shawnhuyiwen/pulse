@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   bool hemorrhageMode          = false;
   bool useBaseline             = true;
   bool includeStandardPatients = true;
-  std::string data = "test";
+  std::string data = "full";
   Mode mode = Mode::Validation;
   std::string rootDir = "./test_results/patient_variability/";
 
@@ -164,13 +164,13 @@ int main(int argc, char* argv[])
 
     // The default min/max are the model bounds
     // So just increase the fidelity via step size
-    pvg.Age_yr.AdjustStepSize(10);
-    pvg.HeightMale_cm.AdjustStepSize(7);
-    pvg.HeightFemale_cm.AdjustStepSize(7);
-    pvg.BMI.AdjustStepSize(3);
-    pvg.HR_bpm.AdjustStepSize(15);
-    pvg.MAP_mmHg.AdjustStepSize(10);
-    pvg.PP_mmHg.AdjustStepSize(10);
+    pvg.Age_yr.AdjustStepSize(1);
+    pvg.HeightMale_cm.AdjustStepSize(1);
+    pvg.HeightFemale_cm.AdjustStepSize(1);
+    pvg.BMI.AdjustStepSize(1);
+    pvg.HR_bpm.AdjustStepSize(1);
+    pvg.MAP_mmHg.AdjustStepSize(1);
+    pvg.PP_mmHg.AdjustStepSize(1);
 
     ////////////////////////
     // Hemorrhage Options //
@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
     pvg.HemorrhageTriageTimeMax_min = 5.0;
     pvg.HemorrhageTriageTimeStep_min = 1.0;
 
-    pvg.GenerateMultiVariableCombinationPatientList(patients);
+    pvg.GenerateIndividualParamaterVariabilityPatientList(patients);
   }
   else if (data == "test")
   {
@@ -193,7 +193,7 @@ int main(int argc, char* argv[])
       DeleteDirectory(rootDir);
     log.SetLogFile(rootDir + logName);
 
-    // This will use the defaults
+    // This will use the defaults, 2 patients for each parameter
 
     ////////////////////////
     // Hemorrhage Options //

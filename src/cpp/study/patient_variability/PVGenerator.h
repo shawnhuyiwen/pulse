@@ -37,11 +37,16 @@ namespace pulse::study::patient_variability
       m_UpperLimit = upperLimit;
       Set(lowerLimit, upperLimit);
     }
+
     void AdjustBounds(double lowerLimit, double upperLimit)
+    {
+      AdjustBounds(lowerLimit, upperLimit,m_StepSize);
+    }
+    void AdjustBounds(double lowerLimit, double upperLimit, double stepSize)
     {
       m_LowerLimit = lowerLimit;
       m_UpperLimit = upperLimit;
-      Set(lowerLimit, upperLimit, m_StepSize);
+      Set(lowerLimit, upperLimit, stepSize);
     }
 
     void Reset()
@@ -52,7 +57,7 @@ namespace pulse::study::patient_variability
     {
       Set(min, max, max - min);
     }
-    void Set(double min, double max, double stepSize)
+    void Set(double min, double max, double stepSize, bool includeUpper=true)
     {
       if (min < m_LowerLimit)
       {
@@ -74,11 +79,14 @@ namespace pulse::study::patient_variability
       m_Max = max;
       m_StepSize = stepSize;
       m_Values.clear();
-      int idx, n = (int)((m_Max - m_Min) / m_StepSize);
+      int idx;
+      int n = (int)((m_Max - m_Min) / m_StepSize);
       for (idx = 0; idx <= n; ++idx)
       {
         m_Values.push_back(m_Min + m_StepSize * idx);
       }
+      if (includeUpper && m_Values[n] != m_UpperLimit)
+        m_Values.push_back(m_UpperLimit);
     }
     void AdjustStepSize(double stepSize)
     {
