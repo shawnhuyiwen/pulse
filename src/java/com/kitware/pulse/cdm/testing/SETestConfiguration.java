@@ -295,18 +295,23 @@ public class SETestConfiguration
           String[] split = pFileName.split("[/\\\\]");
           pFileName = split[split.length-1];
 
+          // Look for scenario jobs and make copies for each of the different patient files to use
           for(SETestJob job : oldJobs)
           {
-            if(job.executor.getClass().getName().indexOf("Scenario")==-1)
-            {
-              jobs.add(job);
+            if(job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1)
               continue;
-            }
+
             copy = job.clone();
             copy.patientFile = pFileName;
             deriveScenarioResultNames(copy, copy.name.replaceAll(sce_ext, "-"+pFileName));
             jobs.add(copy);
           }
+        }
+        // Now look for the non scenario jobs, so just add those back as is
+        for(SETestJob job : oldJobs)
+        {
+          if(job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1)
+            jobs.add(job);
         }
 
       }
