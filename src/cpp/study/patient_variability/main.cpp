@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   bool hemorrhageMode          = false;
   bool useBaseline             = true;
   bool includeStandardPatients = true;
-  std::string data = "solo";
+  std::string data = "test";
   Mode mode = Mode::Validation;
   std::string rootDir = "./test_results/patient_variability/";
 
@@ -184,7 +184,7 @@ int main(int argc, char* argv[])
     pvg.HemorrhageTriageTimeMax_min = 5.0;
     pvg.HemorrhageTriageTimeStep_min = 1.0;
 
-    pvg.GeneratePatientList(patients);
+    pvg.GenerateMultiVariableCombinationPatientList(patients);
   }
   else if (data == "test")
   {
@@ -207,7 +207,7 @@ int main(int argc, char* argv[])
     pvg.HemorrhageTriageTimeMax_min = 5.0;
     pvg.HemorrhageTriageTimeStep_min = 5.0;
 
-    pvg.GeneratePatientList(patients);
+    pvg.GenerateIndividualParamaterVariabilityPatientList(patients);
   }
 
   if (generateOnly)
