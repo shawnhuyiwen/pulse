@@ -52,7 +52,7 @@ bool PBUtils::SerializeFromFile(const std::string& filename, google::protobuf::M
   std::ifstream input(filename, std::ios::binary);
   if (!input.is_open())
     return false;
-  std::lock_guard<std::mutex> guard(log_mutex);
+  std::scoped_lock<std::mutex> guard(log_mutex);
   g_logger = logger;
   google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
   bool b = dst.ParseFromIstream(&input);
@@ -72,7 +72,7 @@ bool PBUtils::SerializeToFile(const google::protobuf::Message& src, const std::s
   }
   if (!CreateFilePath(filename))
     return false;
-  std::lock_guard<std::mutex> guard(log_mutex);
+  std::scoped_lock<std::mutex> guard(log_mutex);
   g_logger = logger;
   google::protobuf::SetLogHandler(static_cast<google::protobuf::LogHandler*>(PBUtils::ProtobufLogHandler));
   std::ofstream output(filename, std::ios::binary);
@@ -85,7 +85,7 @@ bool PBUtils::SerializeToFile(const google::protobuf::Message& src, const std::s
 
 bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Message& dst, eSerializationFormat m, Logger* logger)
 {
-  std::lock_guard<std::mutex> guard(log_mutex);
+  std::scoped_lock<std::mutex> guard(log_mutex);
   bool ret = true;
   if (m == eSerializationFormat::JSON)
   {
@@ -117,7 +117,7 @@ bool PBUtils::SerializeFromString(const std::string& src, google::protobuf::Mess
 
 bool PBUtils::SerializeToString(const google::protobuf::Message& src, std::string& output, eSerializationFormat m, Logger* logger)
 {
-  std::lock_guard<std::mutex> guard(log_mutex);
+  std::scoped_lock<std::mutex> guard(log_mutex);
   bool ret = true;
   if (m == eSerializationFormat::JSON)
   {
