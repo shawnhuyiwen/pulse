@@ -51,8 +51,8 @@ bool SEScalar::Set(const SEScalar& s)
   m_isinf = false;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   return true;
 }
@@ -67,8 +67,8 @@ bool SEScalar::Force(const SEScalar& s)
   m_isinf = false;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   return true;
 }
@@ -151,8 +151,8 @@ void SEScalar::SetValue(double d)
   m_isinf = false;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
 }
 void SEScalar::ForceValue(double d)
@@ -162,8 +162,8 @@ void SEScalar::ForceValue(double d)
   m_isinf = false;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
 }
 
@@ -306,8 +306,8 @@ bool SEScalarQuantity<Unit>::Set(const SEScalarQuantity<Unit>& s)
   m_unit = s.m_unit;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   return true;
 }
@@ -346,8 +346,8 @@ bool SEScalarQuantity<Unit>::Force(const SEScalarQuantity<Unit>& s)
   m_unit = s.m_unit;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   return true;
 }
@@ -397,8 +397,8 @@ void SEScalarQuantity<Unit>::SetValue(double d, const Unit& unit)
   m_unit = &unit;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
 }
 template<typename Unit>
@@ -410,8 +410,8 @@ void SEScalarQuantity<Unit>::ForceValue(double d, const Unit& unit)
   m_unit = &unit;
   if (!IsNumber(m_value))
   {
-    m_isnan = (std::isnan(m_value)) ? true : false;
-    m_isinf = (std::isinf(m_value)) ? true : false;
+    m_isnan = std::isnan(m_value);
+    m_isinf = std::isinf(m_value);
   }
   m_unit = &unit;
 }

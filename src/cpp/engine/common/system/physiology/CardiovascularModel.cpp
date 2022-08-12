@@ -214,16 +214,29 @@ namespace pulse
     // Arrhythmia Parameters
     m_StartCardiacArrest = false;
     m_CardiacArrestVitalsUpdateTimer_s = 0;
+
+    m_EnableFeedbackAfterArrhythmiaTrasition = eSwitch::On;
     m_TotalArrhythmiaTransitionTime_s = 0;
     m_CurrentArrhythmiaTransitionTime_s = 0;
-    m_ArrhythmiaHeartComplianceModifier =
-      m_InitialArrhythmiaHeartComplianceModifier = 1.0;
-    m_ArrhythmiaVascularComplianceModifier =
-      m_InitialArrhythmiaVascularComplianceModifier = 1.0;
-    m_ArrhythmiaSystemicVascularResistanceModifier =
-      m_InitialArrhythmiaSystemicVascularResistanceModifier = 1.0;
+
     m_ArrhythmiaHeartRateBaseline_Per_min =
       m_InitialArrhythmiaHeartRateBaseline_Per_min = m_data.GetCurrentPatient().GetHeartRateBaseline(FrequencyUnit::Per_min);
+    m_TargetArrhythmiaHeartRateBaseline_Per_min = 0;
+    m_StabilizedHeartRateBaseline_Per_min = 0;
+    m_StabilizedMeanArterialPressureBaseline_mmHg = 0;
+
+    m_ArrhythmiaHeartComplianceModifier =
+      m_InitialArrhythmiaHeartComplianceModifier = 1.0;
+    m_TargetArrhythmiaHeartComplianceModifier = 0;
+
+    m_ArrhythmiaSystemicVascularResistanceModifier =
+      m_InitialArrhythmiaSystemicVascularResistanceModifier = 1.0;
+    m_TargetArrhythmiaSystemicVascularResistanceModifier = 0;
+
+    m_ArrhythmiaVascularComplianceModifier =
+      m_InitialArrhythmiaVascularComplianceModifier = 1.0;
+    m_TargetArrhythmiaVascularComplianceModifier = 0;
+
 
     // CPR
     m_CompressionFrequencyCurrentTime_s = 0;
