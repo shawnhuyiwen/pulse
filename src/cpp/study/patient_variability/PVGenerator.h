@@ -86,13 +86,18 @@ namespace pulse::study::patient_variability
       m_StepSize = stepSize;
       m_Values.clear();
       int idx;
-      int n = (int)((m_Max - m_Min) / m_StepSize);
-      for (idx = 0; idx <= n; ++idx)
+      if (m_Max == m_Min)
+        m_Values.push_back(m_Max);
+      else
       {
-        m_Values.push_back(m_Min + m_StepSize * idx);
+        int n = (int)((m_Max - m_Min) / m_StepSize);
+        for (idx = 0; idx <= n; ++idx)
+        {
+          m_Values.push_back(m_Min + m_StepSize * idx);
+        }
+        if (includeUpper && m_Values[n] != m_UpperLimit)
+          m_Values.push_back(m_UpperLimit);
       }
-      if (includeUpper && m_Values[n] != m_UpperLimit)
-        m_Values.push_back(m_UpperLimit);
     }
     void AdjustStepSize(double stepSize)
     {
@@ -148,7 +153,7 @@ namespace pulse::study::patient_variability
     Parameter       PP_mmHg;
 
     Parameter       HemorrhageSeverity;
-    Parameter       HemorrhageTriageTime;
+    Parameter       HemorrhageTriageTime_min;
 
   protected:
     unsigned int m_MaxNumPatients=0; // This is the maximum number of patients for the set, not all combination may be valid, so the actual number of patients for a set could be less that this.

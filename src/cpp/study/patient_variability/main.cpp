@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
   bool hemorrhageMode          = false;
   bool useBaseline             = true;
   bool includeStandardPatients = true;
-  std::string data = "full";
-  Mode mode = Mode::Validation;
+  std::string data = "test";
+  Mode mode = Mode::Hemorrhage;
   std::string rootDir = "./test_results/patient_variability/";
 
   // Process arguments

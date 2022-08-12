@@ -48,8 +48,8 @@ namespace pulse::study::patient_variability
     HR_bpm(minHR_bpm, maxHR_bpm),
     MAP_mmHg(minMAP_mmHg, maxMAP_mmHg),
     PP_mmHg(minPulsePressure_mmHg, maxPulsePressure_mmHg),
-    HemorrhageSeverity(0.25,1.00,0.25),
-    HemorrhageTriageTime(1.0, 20.0, 5.0)
+    HemorrhageSeverity(0.1,0.3,0.1),
+    HemorrhageTriageTime_min(1.0, 1.0)
   {
     ResetParameters();
   }
@@ -411,7 +411,7 @@ namespace pulse::study::patient_variability
       {
         std::string severity_dir = "/severity" + pulse::cdm::to_string(severity);
 
-        for (auto triageTime_min : HemorrhageSeverity.Values())
+        for (auto triageTime_min : HemorrhageTriageTime_min.Values())
         {
 
           std::string triageTime_dir = "/triage_min" + pulse::cdm::to_string(triageTime_min);
