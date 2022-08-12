@@ -37,7 +37,7 @@ namespace pulse::study::patient_variability
     m_RootDir = rootDir;
     m_PatientList = nullptr;
     m_PatientResultsList = nullptr;
-    m_useBaseline = useBaseline;
+    m_UseBaseline = useBaseline;
   }
   PVRunner::~PVRunner()
   {
@@ -86,11 +86,13 @@ namespace pulse::study::patient_variability
       {
         // Run standard patients if we aren't using baseline
         std::string dir = "./verification/scenarios/validation/systems";
-        if(!m_useBaseline)
+        if(!m_UseBaseline)
         {
+          Info("Executing System Validation...");
           std::string runCommand = "cmake -DTYPE:STRING=SystemValidation -P run.cmake";
           dir = "./test_results/scenarios/validation/systems";
           std::system(runCommand.c_str());
+          Info("Finished System Validation!");
 
           std::string content;
           ReadFile("./test_results/SystemVerificationReport.json", content);
@@ -101,8 +103,10 @@ namespace pulse::study::patient_variability
           WriteFile(content,m_RootDir + "/SystemValidation-StandardPatients.html");
         }
 
+        Info("Validating Results in: " + dir);
         std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING=" + dir + " -DARG2:STRING=false -P run.cmake";
         std::system(command.c_str());
+        Info("Finished Validating");
 
         // Standard male
         pulse::study::bind::patient_variability::PatientStateListData standardResults;
@@ -151,7 +155,7 @@ namespace pulse::study::patient_variability
     {
       if (PostProcessOnly)
       {
-        if (std::remove(m_PatientResultsListFile.c_str()) != 0)
+        if(!DeleteFile(m_PatientResultsListFile,5))
           Error("Unable to remove file " + m_PatientResultsListFile);
       }
       else if (!SerializeFromFile(m_PatientResultsListFile, *m_PatientResultsList))
@@ -453,7 +457,7 @@ namespace pulse::study::patient_variability
       if (patient.has_validation())
       {
         CSV::SplitCSV(csvFilename, allScenarioRequests);
-        if (std::remove(csvFilename.c_str()) != 0)
+        if (!DeleteFile(csvFilename,5))
           Error("Unable to remove file " + csvFilename);
       }
     }// end if(!m_PostProcessOnly)
@@ -461,7 +465,7 @@ namespace pulse::study::patient_variability
     if (patient.has_validation())
     {
       std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING=" + m_RootDir + patient.outputbasefilename() + " -DARG2:STRING=false -P run.cmake";
-      std::system(command.c_str());
+      BlockSystemCall(command);// Results analysis need to be single threaded or it will thrash memory
 
       //Retrieve all validation json files for patient and serialize data from those files
       std::vector<std::string> validation_files;
@@ -471,7 +475,7 @@ namespace pulse::study::patient_variability
     }
 
     // Add our results to our results file
-    m_mutex.lock();
+    m_VectorMutex.lock();
     auto pResult = m_PatientResultsList->add_patient();
     pResult->CopyFrom(patient);
     SerializeToFile(*m_PatientResultsList, m_PatientResultsListFile);
@@ -483,7 +487,7 @@ namespace pulse::study::patient_variability
       else
         Info("  FAILED STABILIZATION : " + patient.outputbasefilename());
     }
-    m_mutex.unlock();
+    m_VectorMutex.unlock();
 
     profiler.Clear();
     return true;
@@ -491,7 +495,7 @@ namespace pulse::study::patient_variability
 
   pulse::study::bind::patient_variability::PatientStateData* PVRunner::GetNextPatient()
   {
-    m_mutex.lock();
+    m_VectorMutex.lock();
     pulse::study::bind::patient_variability::PatientStateData* patient = nullptr;
     if (!m_PatientsToRun.empty())
     {
@@ -504,7 +508,7 @@ namespace pulse::study::patient_variability
       }
       m_PatientsToRun.erase(id);
     }
-    m_mutex.unlock();
+    m_VectorMutex.unlock();
     return patient;
   }
 
@@ -561,5 +565,12 @@ namespace pulse::study::patient_variability
       (*vMap)[validation_filename] = vList;
     }
     return true;
+  }
+
+  void PVRunner::BlockSystemCall(const std::string& cmd)
+  {
+    std::scoped_lock<std::mutex>  m(m_SystemMutex);
+    Info("Processing: " + cmd);
+    std::system(cmd.c_str());
   }
 }

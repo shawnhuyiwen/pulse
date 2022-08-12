@@ -35,15 +35,18 @@ namespace pulse::study::patient_variability
     bool SerializeFromString(const std::string& src, pulse::study::bind::patient_variability::PatientStateListData& dst);
     bool SerializeFromFile(const std::string& filename, pulse::study::bind::patient_variability::PatientStateListData& dst);
 
+    void BlockSystemCall(const std::string& cmd);
+
     void ControllerLoop();
     bool RunPatient(pulse::study::bind::patient_variability::PatientStateData& patient);
     pulse::study::bind::patient_variability::PatientStateData* GetNextPatient();
 
     bool AggregateResults(pulse::study::bind::patient_variability::PatientStateData& patient, const std::vector<std::string>& validation_files, Logger* logger);
 
-    std::mutex  m_mutex;
+    std::mutex  m_VectorMutex;
+    std::mutex  m_SystemMutex;
 
-    bool m_useBaseline;
+    bool m_UseBaseline;
     std::string m_RootDir;
     std::string m_PatientResultsListFile;
     std::set<unsigned int> m_PatientsToRun;

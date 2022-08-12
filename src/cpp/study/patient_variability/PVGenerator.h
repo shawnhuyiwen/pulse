@@ -37,6 +37,12 @@ namespace pulse::study::patient_variability
       m_UpperLimit = upperLimit;
       Set(lowerLimit, upperLimit);
     }
+    void AdjustBounds(double lowerLimit, double upperLimit)
+    {
+      m_LowerLimit = lowerLimit;
+      m_UpperLimit = upperLimit;
+      Set(lowerLimit, upperLimit, m_StepSize);
+    }
 
     void Reset()
     {
@@ -112,8 +118,9 @@ namespace pulse::study::patient_variability
 
     static bool TestPatientCombo(Logger*, ePatient_Sex sex,
                                  double age_yr, double height_cm, double weight_kg,
-                                 double hr_bpm, double diastolic_mmHg, double systolic_mmHg);
-    void GeneratePatientList(PatientStateListData& pData);
+                                 double hr_bpm, double systolic_mmHg, double diastolic_mmHg);
+    void GenerateMultiVariableCombinationPatientList(PatientStateListData& pList);
+    void GenerateIndividualParamaterVariabilityPatientList(PatientStateListData& pList);
 
     bool            IncludeStandardPatients = true;
     Mode            GenerateMode = Mode::Validation;
@@ -139,14 +146,22 @@ namespace pulse::study::patient_variability
     unsigned int m_TotalPatients=0; // The actual number of patients for this data set, (NOT the number of runs, i.e. hemorrhage options can create more runs for each patient)
     unsigned int m_TotalRuns=0; // This is the actual number of runs to perform
 
-    void GenerateHemorrhageOptions(PatientStateListData& pList, int& id,
-      const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
-      double hr_bpm, double map_mmHg, double pp_mmHg, double diastolic_mmHg, double systolic_mmHg,
-      const std::string& full_dir_path);
-
     void ResetParameters();
-    void AddPatientParameters(const SEPatient& patient);
 
-    std::vector<std::pair<double, double>> GenerateBloodPressurePairs(double map_mmHg, double pp_mmHg);
+    void GenerateHemorrhageOptions(PatientStateListData& pList,
+      const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
+      double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
+      double runDuration_s, const std::string& full_dir_path);
+
+    pulse::study::bind::patient_variability::PatientStateData* AddPatientToList(PatientStateListData& pList,
+      const ePatient_Sex sex, unsigned int age_yr, double height_cm, double weight_kg, double bmi,
+      double hr_bpm, double map_mmHg, double pp_mmHg, double systolic_mmHg, double diastolic_mmHg,
+      double runDuration_s, const std::string& full_dir_path);
+
+    bool AddPatientParameters(const SEPatient& patient);
+
+    bool AdjustMeanArterialPressureBounds(double targetPulsePressure_mmHg);
+    bool AdjustPulsePressureBounds(double targetMAP_mmHg);
+    bool IsValidBloodPressure_mmHg(double map, double systolic, double diastolic);
   };
 }
