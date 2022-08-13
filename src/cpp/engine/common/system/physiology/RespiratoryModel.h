@@ -18,7 +18,6 @@ class SEFluidCircuitNode;
 class SEFluidCircuitPath;
 class SEFluidCircuitCalculator;
 class SEConsciousRespirationCommand;
-class SEPulmonaryFunctionTest;
 
 namespace pulse
 {
@@ -54,7 +53,6 @@ namespace pulse
     virtual void PreProcess() override;
     virtual void Process(bool solve_and_transport=true) override;
     virtual void PostProcess(bool solve_and_transport=true) override;
-    bool CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const;
 
   protected:
     void ComputeExposedModelParameters() override;

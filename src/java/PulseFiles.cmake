@@ -118,7 +118,6 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SECompleteBloodCount.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEComprehensiveMetabolicPanel.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEPatientAssessment.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEPulmonaryFunctionTest.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEUrinalysis.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/assessments/SEUrinalysisMicroscopic.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.java
@@ -343,5 +342,4 @@ set(PULSE_JAVA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/csv/plots/PairPlotter.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/csv/plots/PlotDriver.java
   ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/csv/plots/Plotter.java
-  ${CMAKE_CURRENT_SOURCE_DIR}/com/kitware/pulse/utilities/csv/plots/RespiratoryPFTPlotter.java
 )

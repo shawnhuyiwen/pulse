@@ -63,21 +63,6 @@ namespace Pulse.CDM
         return true;
       }
 
-      if (dst is SEPulmonaryFunctionTest)
-      {
-        SEPulmonaryFunctionTest pft = (SEPulmonaryFunctionTest)dst;
-        try
-        {
-          pulse.cdm.bind.PulmonaryFunctionTestData data = JsonParser.Default.Parse<pulse.cdm.bind.PulmonaryFunctionTestData>(src);
-          PBPatientAssessmets.Load(data, pft);
-        }
-        catch (Google.Protobuf.InvalidJsonException)
-        {
-          return false;
-        }
-        return true;
-      }
-
       if (dst is SEUrinalysis)
       {
         SEUrinalysis u = (SEUrinalysis)dst;
@@ -334,103 +319,6 @@ namespace Pulse.CDM
         dst.TotalProtein = (PBProperty.Unload(src.GetTotalProtein()));
     }
     public static string SerializeToString(SEComprehensiveMetabolicPanel src)
-    {
-      var pb = PBPatientAssessmets.Unload(src);
-      return pb.ToString();
-    }
-    #endregion
-
-    #region SEPulmonaryFunctionTest
-    public static void Load(pulse.cdm.bind.PulmonaryFunctionTestData src, SEPulmonaryFunctionTest dst)
-    {
-      Serialize(src, dst);
-    }
-    public static void Serialize(pulse.cdm.bind.PulmonaryFunctionTestData src, SEPulmonaryFunctionTest dst)
-    {
-      Serialize(src.PatientAssessment, dst);
-      if (src.ExpiratoryReserveVolume != null)
-        PBProperty.Load(src.ExpiratoryReserveVolume, dst.GetExpiratoryReserveVolume());
-      if (src.ForcedVitalCapacity != null)
-        PBProperty.Load(src.ForcedVitalCapacity, dst.GetForcedVitalCapacity());
-      if (src.ForcedExpiratoryVolume != null)
-        PBProperty.Load(src.ForcedExpiratoryVolume, dst.GetForcedExpiratoryVolume());
-      if (src.ForcedExpiratoryFlow != null)
-        PBProperty.Load(src.ForcedExpiratoryFlow, dst.GetForcedExpiratoryFlow());
-      if (src.FunctionalResidualCapacity != null)
-        PBProperty.Load(src.FunctionalResidualCapacity, dst.GetFunctionalResidualCapacity());
-      if (src.InspiratoryCapacity != null)
-        PBProperty.Load(src.InspiratoryCapacity, dst.GetInspiratoryCapacity());
-      if (src.InspiratoryReserveVolume != null)
-        PBProperty.Load(src.InspiratoryReserveVolume, dst.GetInspiratoryReserveVolume());
-      if (src.MaximumVoluntaryVentilation != null)
-        PBProperty.Load(src.MaximumVoluntaryVentilation, dst.GetMaximumVoluntaryVentilation());
-      if (src.PeakExpiratoryFlow != null)
-        PBProperty.Load(src.PeakExpiratoryFlow, dst.GetPeakExpiratoryFlow());
-      if (src.ResidualVolume != null)
-        PBProperty.Load(src.ResidualVolume, dst.GetResidualVolume());
-      if (src.SlowVitalCapacity != null)
-        PBProperty.Load(src.SlowVitalCapacity, dst.GetSlowVitalCapacity());
-      if (src.TotalLungCapacity != null)
-        PBProperty.Load(src.TotalLungCapacity, dst.GetTotalLungCapacity());
-      if (src.VitalCapacity != null)
-        PBProperty.Load(src.VitalCapacity, dst.GetVitalCapacity());
-      //if (src.LungVolumePlot != null)
-      //  PBProperty.Load(src.LungVolumePlot, dst.GetLungVolumePlot());
-    }
-    public static bool SerializeFromString(string src, SEPulmonaryFunctionTest dst)
-    {
-      try
-      {
-        pulse.cdm.bind.PulmonaryFunctionTestData data = JsonParser.Default.Parse<pulse.cdm.bind.PulmonaryFunctionTestData>(src);
-        PBPatientAssessmets.Load(data, dst);
-      }
-      catch (Google.Protobuf.InvalidJsonException)
-      {
-        return false;
-      }
-      return true;
-    }
-
-    public static pulse.cdm.bind.PulmonaryFunctionTestData Unload(SEPulmonaryFunctionTest src)
-    {
-      pulse.cdm.bind.PulmonaryFunctionTestData dst = new pulse.cdm.bind.PulmonaryFunctionTestData();
-      Serialize(src, dst);
-      return dst;
-    }
-    public static void Serialize(SEPulmonaryFunctionTest src, pulse.cdm.bind.PulmonaryFunctionTestData dst)
-    {
-      dst.PatientAssessment = new pulse.cdm.bind.PatientAssessmentData();
-      Serialize(src, dst.PatientAssessment);
-      if (src.HasExpiratoryReserveVolume())
-        dst.ExpiratoryReserveVolume = (PBProperty.Unload(src.GetExpiratoryReserveVolume()));
-      if (src.HasForcedVitalCapacity())
-        dst.ForcedVitalCapacity = (PBProperty.Unload(src.GetForcedVitalCapacity()));
-      if (src.HasForcedExpiratoryVolume())
-        dst.ForcedExpiratoryVolume = (PBProperty.Unload(src.GetForcedExpiratoryVolume()));
-      if (src.HasForcedExpiratoryFlow())
-        dst.ForcedExpiratoryFlow = (PBProperty.Unload(src.GetForcedExpiratoryFlow()));
-      if (src.HasFunctionalResidualCapacity())
-        dst.FunctionalResidualCapacity = (PBProperty.Unload(src.GetFunctionalResidualCapacity()));
-      if (src.HasInspiratoryCapacity())
-        dst.InspiratoryCapacity = (PBProperty.Unload(src.GetInspiratoryCapacity()));
-      if (src.HasInspiratoryReserveVolume())
-        dst.InspiratoryReserveVolume = (PBProperty.Unload(src.GetInspiratoryReserveVolume()));
-      if (src.HasMaximumVoluntaryVentilation())
-        dst.MaximumVoluntaryVentilation = (PBProperty.Unload(src.GetMaximumVoluntaryVentilation()));
-      if (src.HasPeakExpiratoryFlow())
-        dst.PeakExpiratoryFlow = (PBProperty.Unload(src.GetPeakExpiratoryFlow()));
-      if (src.HasResidualVolume())
-        dst.ResidualVolume = (PBProperty.Unload(src.GetResidualVolume()));
-      if (src.HasSlowVitalCapacity())
-        dst.SlowVitalCapacity = (PBProperty.Unload(src.GetSlowVitalCapacity()));
-      if (src.HasTotalLungCapacity())
-        dst.TotalLungCapacity = (PBProperty.Unload(src.GetTotalLungCapacity()));
-      if (src.HasVitalCapacity())
-        dst.VitalCapacity = (PBProperty.Unload(src.GetVitalCapacity()));
-      //if (src.HasLungVolumePlot())
-      //  dst.LungVolumePlot = (PBProperty.Unload(src.GetLungVolumePlot()));
-    }
-    public static string SerializeToString(SEPulmonaryFunctionTest src)
     {
       var pb = PBPatientAssessmets.Unload(src);
       return pb.ToString();

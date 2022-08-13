@@ -23,7 +23,6 @@ import com.kitware.pulse.cdm.bind.Patient.PatientData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ArterialBloodGasTestData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.CompleteBloodCountData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ComprehensiveMetabolicPanelData;
-import com.kitware.pulse.cdm.bind.PatientAssessments.PulmonaryFunctionTestData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.UrinalysisData;
 import com.kitware.pulse.cdm.bind.PatientAssessments.ePatientAssessmentType;
 import com.kitware.pulse.cdm.conditions.SECondition;
@@ -35,7 +34,6 @@ import com.kitware.pulse.cdm.patient.assessments.SEArterialBloodGasTest;
 import com.kitware.pulse.cdm.patient.assessments.SECompleteBloodCount;
 import com.kitware.pulse.cdm.patient.assessments.SEComprehensiveMetabolicPanel;
 import com.kitware.pulse.cdm.patient.assessments.SEPatientAssessment;
-import com.kitware.pulse.cdm.patient.assessments.SEPulmonaryFunctionTest;
 import com.kitware.pulse.cdm.patient.assessments.SEUrinalysis;
 import com.kitware.pulse.cdm.properties.SEScalarTime;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
@@ -273,15 +271,6 @@ public class PulseEngine
         String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.ComprehensiveMetabolicPanel.ordinal(), thunkType.value());
         JsonFormat.parser().merge(str, b);
         SEComprehensiveMetabolicPanel.load(b.build(),((SEComprehensiveMetabolicPanel)assessment));
-        return true;
-      }
-      
-      if(assessment instanceof SEPulmonaryFunctionTest)
-      {
-        PulmonaryFunctionTestData.Builder b = PulmonaryFunctionTestData.newBuilder();
-        String str = nativeGetAssessment(nativeObj, ePatientAssessmentType.PulmonaryFunctionTest.ordinal(), thunkType.value());
-        JsonFormat.parser().merge(str, b);
-        SEPulmonaryFunctionTest.load(b.build(),((SEPulmonaryFunctionTest)assessment));
         return true;
       }
       

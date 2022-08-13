@@ -41,7 +41,6 @@
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/patient/assessments/SEUrinalysis.h"
 #include "cdm/utils/FileUtils.h"
 
@@ -704,23 +703,6 @@ namespace pulse
         break;
       }
 
-      case ePatientAssessment_Type::PulmonaryFunctionTest:
-      {
-        SEPulmonaryFunctionTest pft(m_Logger);
-        if (GetPatientAssessment(pft))
-        {
-          // Write out the Assessement
-          std::string pftFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
-          if (pftFile.empty())
-            pftFile = "PulmonaryFunctionTest";
-          m_ss << "PFT@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
-          pftFile = Replace(pftFile, "Results", m_ss.str());
-          pftFile = Replace(pftFile, ".csv", ".json");
-          m_ss << "PulmonaryFunctionTest@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
-          pft.SerializeToFile(pftFile);
-        }
-        break;
-      }
       case ePatientAssessment_Type::Urinalysis:
       {
         SEUrinalysis upan(m_Logger);

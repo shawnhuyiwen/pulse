@@ -472,7 +472,6 @@ The following assessments are available  :
   @refitem CompleteBloodCountTable "Complete Blood Count"
   @refitem ComprehensiveMetabolicPanelTable "Comprehensive Metabolic Panel"
   @refitem UrinalysisTable "Urinalysis"
-  @refitem PulmonaryFunctionTestTable "Pulmonary Function Test"
 @endsecreflist 
 
 You must create and provide an assessment object to the physiology engine via this method:<br>

@@ -8,7 +8,6 @@
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/patient/assessments/SEUrinalysis.h"
 #include "cdm/engine/SEAction.h"
 #include "cdm/engine/SEDataRequest.h"
@@ -246,14 +245,7 @@ std::string PhysiologyEngineThunk::GetPatientAssessment(int type, eSerialization
     cmp.SerializeToString(stream, format);
     break;
   }
-  case 3:// PFT
-  {
-    SEPulmonaryFunctionTest pft(m_engine->GetLogger());
-    m_engine->GetPatientAssessment(pft);
-    pft.SerializeToString(stream, format);
-    break;
-  }
-  case 4: // U
+  case 3:// U
   {
     SEUrinalysis u(m_engine->GetLogger());
     m_engine->GetPatientAssessment(u);

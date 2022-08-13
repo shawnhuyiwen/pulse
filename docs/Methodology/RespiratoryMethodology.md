@@ -177,10 +177,6 @@ time step calculation to the current time step calculation. This allows all
 other systems access to the information when completing their Preprocess
 analysis during the next time step.
 
-### Assessments
-
-Assessments are called outside of the system to allow compiling of information from multiple systems. The respiratory system includes a pulmonary function test assessment.
-
 @anchor respiratory-features
 Features and Capabilities
 -------------------------
@@ -252,8 +248,6 @@ Several patient parameters are set/calculated outside of the %Respiratory System
 - Right Lung Ratio: used in the scaling equation for inspiratory-expiratory ratio for conditions
 - Basal Metabolic Rate: used for metabolic effects
 - Vital Capacity: used to determine the tidal volume plateau in the driver piecewise target alveolar ventilation function
-
-The Pulmonary Function Test also pulls all lung volumes and capacities, and conscious respiration uses several of the initial capacity values to calculate the driver pressure needed.
 
 Several patient parameters are updated at the end of each stabilization segment (Resting, Conditions, and Feedback).  This allows the simulation to reach new homeostatic points that take into account the whole-body state based on both internal and external factors.  The patient parameters that are reset by the %Respiratory System are:
 - Respiration Rate Baseline: from Respiration Rate system data value
@@ -1472,14 +1466,6 @@ Tachypnea is defined as high breathing rate. Normal respiration rate in an adult
 
 %Respiratory alkalosis is triggered when the blood pH rises above 7.45.  An irreversible state (similar to a death state) is reached when the blood pH rises above 8.5.  See @ref EnergyMethodology for more details about alkalosis.
 
-@anchor respiratory-assessments
-Assessments
------------
-
-### Pulmonary Function Test
-
-The pulmonary function test allows the user to request a collection of respiratory data at a specified time step. This data is then used to produce a waveform representing normal inspiration and expiration. The waveform period is dictated by the respiration rate at the time of the pulmonary function test. The waveform magnitude is calculated from the tidal volume at the specified time and the functional residual capacity. The waveform is calculated for an artificial time of 60 seconds. This time is neither engine time nor real time, but instead is an assumed time, and the complete 60 second duration is calculated at the current engine time step. This does not indicate the duration of an actual pulmonary function test, but it does allow visualization of many breathing cycles. Within two periods of the 60 second duration, the waveform magnitude is modified to produce the inspiratory and expiratory reserve volume. The inspiratory and expiratory reserve volumes are presented as a forced inspiration and expiration. To model this effect, the period of the breathing cycle is dilated during the magnitude increase. At the conclusion of the imposed 60 second duration, a lung volume plot is produced  (see the figure in @ref respiratory-assessmentvalidation "Validation - Assessments") that displays the generated lung volume waveform.
-
 @anchor respiratory-results
 Results and Conclusions
 =======================
@@ -1998,21 +1984,6 @@ Conscious respiration is validated as part of inhaler usage described in the %In
 @anchor respiratory-assessmentvalidation
 Validation - Assessments
 ------------------------
-
-### Pulmonary Function Test
-
-Validation of the pulmonary function test may be concluded from the validation of the resting physiologic quantities. The collection of values produced from the pulmonary function test were validated above. Additional validation comes by comparing the general shape of the produced waveform to an expected waveform. The plot shown in Figure 31 presents a way of representing the engine pulmonary function test visually. There is excellent agreement with the plot produced from the engine and the plot found in the literature @cite Kapwatt2014Lungvolumes.
-
-@htmlonly
-<center>
-<a href="./plots/Respiratory/Pulmonary_Function_Test_Results.jpg">
-<img src="./plots/Respiratory/Pulmonary_Function_Test_Results.jpg" width="1000"></a>
-<br>
-</center>
-@endhtmlonly
-<center>
-<i>Figure 31. The lung volume plot from the pulmonary function test displays the lung volume waveform. The waveform has a frequency associated with the respiration rate of the patient at the time of the pulmonary function test. The inspiratory and expiratory reserve volumes are shown with a dilated period to represent a forced component of the inspiration and expiration. The lung volume plot shown is presented with 100 data points.</i>
-</center><br>
 
 @anchor respiratory-conclusion
 Conclusion

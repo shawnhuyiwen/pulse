@@ -40,7 +40,6 @@ int main()
   //HowToMechanicalVentilation();
   //HowToMechanicalVentilator();
   //HowToPulmonaryFibrosis();
-  //HowToPulmonaryFunctionTest();
   //HowToRespiratoryMechanics();
   //HowToSmoke();
   //HowToTensionPneumothorax();

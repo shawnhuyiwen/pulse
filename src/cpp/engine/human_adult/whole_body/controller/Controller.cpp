@@ -33,7 +33,6 @@
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/patient/assessments/SEUrinalysis.h"
 
 namespace pulse { namespace human_adult_whole_body
@@ -259,10 +258,6 @@ namespace pulse { namespace human_adult_whole_body
     SEComprehensiveMetabolicPanel* cmp = dynamic_cast<SEComprehensiveMetabolicPanel*>(&assessment);
     if (cmp != nullptr)
       return m_BloodChemistryModel->CalculateComprehensiveMetabolicPanel(*cmp);
-
-    SEPulmonaryFunctionTest* pft = dynamic_cast<SEPulmonaryFunctionTest*>(&assessment);
-    if (pft != nullptr)
-      return m_RespiratoryModel->CalculatePulmonaryFunctionTest(*pft);
 
     SEUrinalysis* u = dynamic_cast<SEUrinalysis*>(&assessment);
     if (u != nullptr)

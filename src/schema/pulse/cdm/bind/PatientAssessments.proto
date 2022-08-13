@@ -11,8 +11,7 @@ enum ePatientAssessmentType
   ArterialBloodGasTest                                                       = 0;/**<< @brief @ref ArterialBloodGasTestTable */
   CompleteBloodCount                                                         = 1;/**<< @brief @ref CompleteBloodCountTable */
   ComprehensiveMetabolicPanel                                                = 2;/**<< @brief @ref ComprehensiveMetabolicPanelTable */
-  PulmonaryFunctionTest                                                      = 3;/**<< @brief @ref PulmonaryFunctionTestTable */
-  Urinalysis                                                                 = 4;/**<< @brief @ref UrinalysisTable */
+  Urinalysis                                                                 = 3;/**<< @brief @ref UrinalysisTable */
 }
 
 message PatientAssessmentData
@@ -71,30 +70,9 @@ message ComprehensiveMetabolicPanelData
   ScalarMassPerVolumeData             TotalProtein                           = 15;/**<< @brief Measures the total amount of two classes of proteins found in the fluid portion of your blood. These are albumin and globulin. */
 }
 
-/** @brief A group of tests that measure how well the lungs take in and release air, and how well they move gases from the atmosphere into the body's circulation. */
-message PulmonaryFunctionTestData
-{
-  PatientAssessmentData               PatientAssessment                      = 1;
-  ScalarVolumeData                    ExpiratoryReserveVolume                = 2; /**<< @brief Difference between the amount of air in the lungs after a normal exhale and the amount after an exhale with force. */
-  ScalarVolumeData                    ForcedVitalCapacity                    = 3; /**<< @brief The amount of air which can be forcibly exhaled from the lungs after taking the deepest possible breath. */
-  ScalarVolumeData                    ForcedExpiratoryVolume                 = 4; /**<< @brief The amount of air which can be exhaled with force in one breath. */
-  ScalarVolumePerTimeData             ForcedExpiratoryFlow                   = 5; /**<< @brief Measures air flow halfway through an exhale. */
-  ScalarVolumeData                    FunctionalResidualCapacity             = 6; /**<< @brief The volume of air in the lungs at the end of a normal exhaled breath. */
-  ScalarVolumeData                    InspiratoryCapacity                    = 7; /**<< @brief The difference between the maximum lung capacity and the volume at the end of a normal tidal volume exhalation. */
-  ScalarVolumeData                    InspiratoryReserveVolume               = 8; /**<< @brief The difference between the maximum lung volume and the volume at the end of a normal inhalation. */
-  ScalarVolumeData                    MaximumVoluntaryVentilation            = 9; /**<< @brief The amount of air that can be breathed in and out during 1 minute. */
-  ScalarVolumePerTimeData             PeakExpiratoryFlow                     = 10;/**<< @brief Air flow during forced exhale of the deepest possible breath. */
-  ScalarVolumeData                    ResidualVolume                         = 11;/**<< @brief The amount of air in the lungs after the patient has exhaled completely. */                 
-  ScalarVolumeData                    SlowVitalCapacity                      = 12;/**<< @brief The amount of air that can be exhaled slowly after the deepest possible inhalation. */
-  ScalarVolumeData                    TotalLungCapacity                      = 13;/**<< @brief The volume of air in the lungs after the deepest possible inhalation. */
-  ScalarVolumeData                    VitalCapacity                          = 14;/**<< @brief The volume of air that can be exhaled from the lungs after the deepest possible inhalation. */
-  FunctionVolumeVsTimeData            LungVolumePlot                         = 15;/**<< @brief The lung volume as a function of time from the pulmonary function test. */
-}
-
 /** @brief Urinalysis is the physical, chemical, and microscopic examination of urine. It involves a number of tests to detect and measure various compounds that pass through the urine.
     @details References<br>
     https://labtestsonline.org/understanding/analytes/urinalysis/ui-exams/start/1/ */
-
 message UrinalysisMicroscopicData
 {
   /** @brief Enumeration for the observation type */

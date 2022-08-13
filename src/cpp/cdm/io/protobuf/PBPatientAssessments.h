@@ -6,7 +6,6 @@ CDM_BIND_DECL2(PatientAssessment)
 CDM_BIND_DECL2(ArterialBloodGasTest)
 CDM_BIND_DECL2(CompleteBloodCount)
 CDM_BIND_DECL2(ComprehensiveMetabolicPanel)
-CDM_BIND_DECL2(PulmonaryFunctionTest)
 CDM_BIND_DECL2(Urinalysis)
 CDM_BIND_DECL2(UrinalysisMicroscopic)
 
@@ -37,13 +36,6 @@ public:
   static CDM_BIND::ComprehensiveMetabolicPanelData* Unload(const SEComprehensiveMetabolicPanel& src);
   static void Serialize(const CDM_BIND::ComprehensiveMetabolicPanelData& src, SEComprehensiveMetabolicPanel& dst);
   static void Serialize(const SEComprehensiveMetabolicPanel& src, CDM_BIND::ComprehensiveMetabolicPanelData& dst);
-
-  static bool SerializeToString(const SEPulmonaryFunctionTest& src, std::string& output, eSerializationFormat m);
-  static bool SerializeToFile(const SEPulmonaryFunctionTest& src, const std::string& filename);
-  static void Load(const CDM_BIND::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst);
-  static CDM_BIND::PulmonaryFunctionTestData* Unload(const SEPulmonaryFunctionTest& src);
-  static void Serialize(const CDM_BIND::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst);
-  static void Serialize(const SEPulmonaryFunctionTest& src, CDM_BIND::PulmonaryFunctionTestData& dst);
 
   static bool SerializeToString(const SEUrinalysis& src, std::string& output, eSerializationFormat m);
   static bool SerializeToFile(const SEUrinalysis& src, const std::string& filename);

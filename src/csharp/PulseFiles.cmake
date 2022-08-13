@@ -142,7 +142,6 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SECompleteBloodCount.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEComprehensiveMetabolicPanel.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEPatientAssessment.cs
-  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEPulmonaryFunctionTest.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEUrinalysis.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/assessments/SEUrinalysisMicroscopic.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/conditions/SEAcuteRespiratoryDistressSyndrome.cs

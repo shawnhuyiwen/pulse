@@ -160,7 +160,6 @@ add_library_ex(CommonDataModel
     patient/assessments/SECompleteBloodCount.h
     patient/assessments/SEComprehensiveMetabolicPanel.h
     patient/assessments/SEPatientAssessment.h
-    patient/assessments/SEPulmonaryFunctionTest.h
     patient/assessments/SEUrinalysis.h
     patient/assessments/SEUrinalysisMicroscopic.h
     patient/conditions/SEAcuteRespiratoryDistressSyndrome.h
@@ -529,7 +528,6 @@ add_library_ex(CommonDataModel
     patient/assessments/SECompleteBloodCount.cpp
     patient/assessments/SEComprehensiveMetabolicPanel.cpp
     patient/assessments/SEPatientAssessment.cpp
-    patient/assessments/SEPulmonaryFunctionTest.cpp
     patient/assessments/SEUrinalysis.cpp
     patient/assessments/SEUrinalysisMicroscopic.cpp
     patient/conditions/SEAcuteRespiratoryDistressSyndrome.cpp

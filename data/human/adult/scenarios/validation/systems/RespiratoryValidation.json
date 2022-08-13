@@ -96,8 +96,7 @@
     },
     "AnyAction":
     [
-      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}},
-      { "PatientAction": { "Assessment": { "Type": "PulmonaryFunctionTest" }}}
+      { "AdvanceTime": { "Time": { "ScalarTime": { "Value": 2.0, "Unit": "min" }}}}
     ]
   },
   "Configuration": { "GastrointestinalConfiguration": { "InitialStomachContents": { }}}

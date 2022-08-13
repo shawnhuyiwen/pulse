@@ -173,9 +173,6 @@ public class PlotDriver
     public String         X2Label = null;
     public String         Y2Label = null;
     
-    public String         PFTFile = null;
-
-    
     //Null all allocated data so it can be cleaned up
     public void Reset()
     {
@@ -415,8 +412,6 @@ public class PlotDriver
             {job.dataPath = cfg.getValidationDirectory()+"/"+value; continue;}
             else if(key.equalsIgnoreCase("DataPathVerificationOverride"))
             {job.dataPath = cfg.getVerificationDirectory()+"/"+value; continue;}
-            else if(key.equalsIgnoreCase("PFTFile"))
-            {job.PFTFile = value; continue;}
             else if(key.equalsIgnoreCase("OutputOverride"))
             {job.outputDir = value; continue;}
             else if(key.equalsIgnoreCase("FontSize"))
