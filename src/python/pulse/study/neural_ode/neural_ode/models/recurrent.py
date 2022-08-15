@@ -4,7 +4,7 @@ from torchcde import CubicSpline, hermite_cubic_coefficients_with_backward_diffe
 import neural_ode.models.utils as utils
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
 from neural_ode.models.diff_func import ODEFunc, CDEFunc, ODEFuncParams, CDEFuncParams
-from neural_ode.models.utils import MISSING, BaseModel
+from neural_ode.models.utils import BaseModel
 import einops
 import pytorch_forecasting as pf
 import pytorch_lightning as pl
@@ -88,8 +88,8 @@ class ODE_RNN(nn.Module):
                 min_step_frac=50):
         batch_size = x.shape[0]
 
-        prev_hi = torch.zeros((batch_size, self.h_dims))
-        prev_hi_std = torch.zeros((batch_size, self.h_dims))
+        prev_hi = torch.zeros((batch_size, self.h_dims), device=x.device)
+        prev_hi_std = torch.zeros((batch_size, self.h_dims), device=x.device)
 
         # TODO why going backwards?
         prev_ti, ti = x_time[-1] + 0.01, x_time[-1]
@@ -153,6 +153,11 @@ class RecurrentODE(BaseModel):
                 ):
         super().__init__(**kwargs)
 
+        # # bad
+        # self.t = torch.rand(2, 2, device=self.device)
+        # # good
+        # self.register_buffer("t", torch.rand(2, 2))
+
         vars(self).update(asdict(recurrentodeparams))  # hack?
         self.odefuncparams = odefuncparams
         self.RNN_net = RNN_net
@@ -206,9 +211,7 @@ class RecurrentODE(BaseModel):
         batch_size, x_dims = x.shape[0], x.shape[2]
         #TRANS: To expand the x
         x_merged = torch.zeros((batch_size, len(x_time), x_dims),
-                               dtype=x.dtype,)
-                               # device=utils.get_device(x))
-        # import xdev; xdev.embed()
+                               dtype=x.dtype, device=self.device)
         x_merged[:, x_time_idx, :] = x
         hs = self.ODE_RNN(x_merged, x_time, return_latents=True)
         # this is like having t as an extra batch dim for output_net
@@ -256,9 +259,9 @@ class RecurrentCDEParams:
 @dataclass
 class RecurrentCDE(nn.Module, RecurrentCDEParams):
 
-    x_dims: int = MISSING
-    y_dims: int = MISSING
-    diffeq_solver: CDEFunc = MISSING
+    x_dims: int = None
+    y_dims: int = None
+    diffeq_solver: CDEFunc = None
 
     def __post_init__(self):
 

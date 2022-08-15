@@ -8,7 +8,6 @@ import neural_ode.models.utils as utils
 # from neural_ode.models.encoder_decoder import ODE_GRU_Encoder, ODE_Decoder
 from neural_ode.models.diff_func import ODEFunc, CDEFunc
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
-from neural_ode.models.utils import MISSING
 from dataclasses import dataclass
 from typing import Union
 
@@ -22,10 +21,10 @@ class VAEParams:
 
 @dataclass
 class VAE(nn.Module, VAEParams):
-    x_dims: int = MISSING
-    y_dims: int = MISSING
-    enc_diffeq_solver: Union[ODEFunc, CDEFunc] = MISSING
-    dec_diffeq_solver: Union[ODEFunc, CDEFunc] = MISSING
+    x_dims: int = None
+    y_dims: int = None
+    enc_diffeq_solver: Union[ODEFunc, CDEFunc] = None
+    dec_diffeq_solver: Union[ODEFunc, CDEFunc] = None
 
     def __post_init__(self):
 

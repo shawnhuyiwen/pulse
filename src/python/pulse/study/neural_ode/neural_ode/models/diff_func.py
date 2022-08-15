@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import neural_ode.models.utils as utils
-from neural_ode.models.utils import MISSING
 
 from torchdiffeq import odeint
 from torchcde import cdeint

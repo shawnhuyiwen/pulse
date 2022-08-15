@@ -3,7 +3,7 @@ import torch.nn as nn
 from neural_ode.models.diff_func import ODEFunc, CDEFunc, ODEFuncParams
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
 from neural_ode.models.recurrent import RecurrentODE, RecurrentODEParams
-from neural_ode.models.utils import MISSING, BaseModel
+from neural_ode.models.utils import BaseModel
 from dataclasses import dataclass, InitVar
 from typing import Union, Optional
 
@@ -54,7 +54,7 @@ class Seq2Seq(BaseModel):
 
         self.save_hyperparameters()
 
-        if self.x_dims is not MISSING:
+        if self.x_dims is not None:
             self.init_xy()
 
     def init_xy(self):

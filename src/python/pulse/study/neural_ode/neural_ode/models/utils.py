@@ -30,18 +30,6 @@ import torchmetrics
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
 
 
-# https://mail.python.org/archives/list/python-dev@python.org/message/JBYXQH3NV3YBF7P2HLHB5CD6V3GVTY55/
-# for dataset-dependent model params, to get around lack of dataclass(kw_only=True)
-class Sentinel:
-
-    def __new__(cls, *args, **kwargs):
-        raise TypeError(f'{cls.__qualname__} cannot be instantiated')
-
-
-class MISSING(Sentinel):
-    pass
-
-
 # TODO death prediction
 # https://pytorch-forecasting.readthedocs.io/en/stable/tutorials/building.html#Classification
 
@@ -111,8 +99,6 @@ class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
             raise TypeError(loss)
 
         if n_targets is not None and n_targets > 1:
-            # if weights is MISSING:
-                # weights = None
             if not isinstance(_loss, pf.metrics.MultiLoss):
                 _loss = pf.metrics.MultiLoss([_loss] * n_targets, weights)
 
@@ -277,8 +263,8 @@ class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
         assert torch.unique(x['decoder_time_idx'][:, 0]).shape == (1, )
         dec_idx = x['decoder_time_idx'][0, 0]
         dec_len = torch.max(x['decoder_lengths'])
-        x_time = torch.arange(dec_idx - enc_len, dec_idx)
-        y_time = torch.arange(dec_idx, dec_idx + dec_len)
+        x_time = torch.arange(dec_idx - enc_len, dec_idx, device=self.device)
+        y_time = torch.arange(dec_idx, dec_idx + dec_len, device=self.device)
 
         y_pred = self.old_forward(y_time, x_data, x_time)
         # TODO update if any target is multichannel (categorical)
@@ -767,6 +753,10 @@ class HemorrhageVitals(BaseData):
         # (and should write a custom sampler - "TimeBounded"? - to ensure there
         # is some temporal overlap between batch entries)
         # (and that lengths are similar so that not too much is cut off)
+
+        # for speedup, try:
+        # dataloader = AsynchronousLoader(DataLoader(ds, batch_size=16), device=device)
+        # pl_bolts.datamodules.async_dataloader.AsynchronousLoader
         dl = self.dset_tr.to_dataloader(train=True,
                                         batch_size=self.batch_size,
                                         batch_sampler='synchronized',

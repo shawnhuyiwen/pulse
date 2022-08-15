@@ -16,7 +16,7 @@ torch.set_default_tensor_type(torch.DoubleTensor)
 # for headless use (write to files, don't show())
 # matplotlib.use("Agg")
 
-from typing import Literal, Optional, List
+from typing import Literal, Optional, List, Tuple, Dict
 import ubelt as ub
 import numpy as np
 import pandas as pd
@@ -24,63 +24,11 @@ from dataclasses import asdict
 from simple_parsing import ArgumentParser
 
 import pytorch_lightning as pl
-
-
-def test_and_plot(model,
-                  test_dataloader,
-                  fig_saveat,
-                  produce_intercoeffs: bool,
-                  arch: Literal['Recurrent', 'Seq2Seq', 'VAE'],
-                  save_fig_per_test: int = 0,
-                  y_data_color='gray',
-                  x_data_color='dodgerblue',
-                  y_pred_color='orange'):
-    model.eval()
-    with torch.no_grad():
-        #TRANS: visualization
-        if not produce_intercoeffs and fig_saveat is not None:
-
-            def to_np(x):
-                return x.detach().cpu().numpy() if x.is_cuda else x.detach(
-                ).numpy()
-
-            batch = next(iter(test_dataloader))
-            batch_dict = utils.time_sync_batch_dict(batch, ode_time=ode_time)
-            if arch == "Recurrent" or arch == "Seq2Seq":
-                y_pred = model(batch_dict["y_time"], batch_dict["x_data"],
-                               batch_dict["x_time"], batch_dict["x_mask"])
-            else:
-                _, info = model(batch_dict["y_time"], batch_dict["x_data"],
-                                batch_dict["x_time"], batch_dict["x_mask"])
-                y_pred = info["y_pred_mean"]
-            # y_pred shape: [batch_size, time_points, data_dims]
-            #TRANS: TODO: one-dimensional, regression, and cannot be used for interpolation
-            for k in range(min(save_fig_per_test, len(batch))):
-                plt.clf()
-                plt.plot(to_np(batch_dict["y_time"]),
-                         to_np(batch_dict["y_data"][k, :, 0]),
-                         color=y_data_color,
-                         linestyle="--")
-                plt.scatter(to_np(batch_dict["x_time"]),
-                            to_np(batch_dict["x_data"][k, :, 0]),
-                            color=x_data_color,
-                            marker="s")
-                plt.plot(to_np(batch_dict["y_time"]),
-                         to_np(y_pred[k, :, 0]),
-                         color=y_pred_color)
-                plt.savefig(fig_saveat + "/" + str(epoch) + "_" + str(k) +
-                            ".jpg")
-
-        #TRANS: Save the output fields
-        output_str = "Test at Epoch: %4d | Loss: %f | MSE: %f" % (
-            epoch, test_res["loss"].item(), test_res["mse"].item())
-        logger.info(output_str)
-        logger.info(res_dict)
-
-    return output_str
+import pytorch_forecasting as pf
 
 
 class UpdateKLCoef(pl.Callback):
+    # for VAE, currently unused
 
     def __init__(self, kl_first, wait_until_kl=10):
         self.kl_first = kl_first
@@ -97,9 +45,6 @@ class UpdateKLCoef(pl.Callback):
                                             0.99**(epoch - self.wait_until_kl))
 
 
-import pytorch_forecasting as pf
-
-
 # TODO curriculum learning https://arxiv.org/abs/2101.10382
 # train on easy examples before hard examples
 # with missingness, this amounted to removing missingness from 10 more points
@@ -107,18 +52,23 @@ import pytorch_forecasting as pf
 # this was done only for enc-dec arch, related to GoogleStock(start_reverse)?
 # https://gitlab.kitware.com/physiology/engine/-/blob/study/ode/src/python/pulse/study/neural_ode/neural_ode/run_models.py#L263
 def trainer_kwargs(kl_coef=1,
-                   max_epochs=300,
+                   max_epochs=301,
                    test_for_epochs=1,
                    load_ckpt=None,
                    patience_for_no_better_epochs=30):
     kl_getter = UpdateKLCoef(kl_coef)
     top_va_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
                                                    save_top_k=1,
-                                                   monitor='va_loss')
+                                                   monitor='val_loss')
     top_tr_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
                                                    save_top_k=1,
-                                                   monitor='tr_loss')
-    plot_callback = PlotCallback(every_n_batches=50)
+                                                   monitor='train_loss_epoch')
+    plot_callback = PlotCallback()
+    logger = pl.loggers.TensorBoardLogger(
+        save_dir='lightning_logs/',
+        name=None,  # can set this in cli
+        default_hp_metric=False,
+    )
     return dict(
         max_epochs=max_epochs,
         check_val_every_n_epoch=test_for_epochs,
@@ -136,7 +86,8 @@ def trainer_kwargs(kl_coef=1,
             # top_tr_callback,
         ],
         gradient_clip_val=0.01,
-    )
+        logger=logger,
+        gpus=1)
 
 
 # https://pytorch-lightning.readthedocs.io/en/stable/common/debugging.html
@@ -148,10 +99,6 @@ class PlotCallback(pl.Callback):
         self.every_n_batches = every_n_batches
         self.every_n_epochs = every_n_epochs
         self.ready = True
-        self.tr_preds = []
-        self.tr_targets = []
-        self.va_preds = []
-        self.va_targets = []
 
     def on_sanity_check_start(self, trainer, pl_module) -> None:
         self.ready = False
@@ -159,19 +106,14 @@ class PlotCallback(pl.Callback):
     def on_sanity_check_end(self, trainer, pl_module) -> None:
         self.ready = True
 
-    def on_train_batch_end(self, trainer, pl_module, outputs, batch,
-                           batch_idx):
-        if self.ready and (batch_idx % self.every_n_batches == 0):
-            pass
-            # self.tr_preds.append(outputs['pred'])
-            # self.tr_targets.append(outputs['true'])
-
     @staticmethod
-    def make_plot(y_pred: List[torch.Tensor],
-                  y_true: List[torch.Tensor],
-                  yt: Optional[torch.Tensor] = None,
-                  xs: Optional[torch.Tensor] = None,
-                  xt: Optional[torch.Tensor] = None) -> np.ndarray:
+    def make_plot(
+        y_pred: List[torch.Tensor],
+        y_true: List[torch.Tensor],
+        yt: Optional[torch.Tensor] = None,
+        xs: Optional[torch.Tensor] = None,
+        xt: Optional[torch.Tensor] = None
+    ) -> Tuple[np.ndarray, Dict[str, float]]:
 
         target_labels_to_facets = {
             'HeartRate(1/min)': 0,
@@ -284,7 +226,7 @@ class PlotCallback(pl.Callback):
                             facet_kws=dict(sharey='col'),
                             units='pt',
                             style='is_y',
-                            linewidth=3)
+                            linewidth=1)
         width, height = grid1.figure.get_size_inches()
         arr1 = to_array(grid1)
 
@@ -301,107 +243,85 @@ class PlotCallback(pl.Callback):
                             sort=False,
                             units='pt')
         # add info to subtitles
+        errs = []
         for ax in grid2.axes.flat:
             title = ax.get_title()
             err = np.concatenate([line.get_ydata()
                                   for line in ax.lines]).mean()
+            errs.append(err)
             ax.set_title(f'{title}\nmean relative error = {err:.2f}')
         # resize for stackability
         cur_w, cur_h = grid2.figure.get_size_inches()
         grid2.figure.set_size_inches(width, width * cur_h / cur_w)
         arr2 = to_array(grid2)
 
-        return np.vstack((arr1, arr2))
+        return np.vstack(
+            (arr1, arr2)), dict(zip(target_labels_to_facets.keys(), errs))
 
-    def __old_plot__(self, trainer):
-        arrs = []
-        for idx in range(trainer.datamodule.batch_size):
-            fig = trainer.model.plot_prediction(batch[0],
-                                                y_pred,
-                                                idx=idx,
-                                                add_loss_to_title=True)
-            fig.canvas.draw()
-            buf = grid.fig.canvas.buffer_rgba()
-            arr = np.array(buf)[:, :, :3]
-            arrs.append(arr)
-        str_title = f"{pl_module.__class__.__name__}_tr"
-        trainer.logger.experiment.add_image(str.title,
-                                            np.concatenate(arrs, axis=1),
+    def make_log(self, trainer, dataloader, prefix_str):
+
+        with torch.no_grad():
+            _b = trainer.datamodule.batch_size
+            trainer.datamodule.batch_size = 10 * _b
+            n_targets = len(trainer.datamodule.continue_params)
+
+            # this is a huge pain with ragged arrays...
+            # TODO strip right-padding using decoder_target, {de|en}coder_lengths
+            # TODO handle t
+
+            def _process(batch):
+                batch = trainer.datamodule.transfer_batch_to_device(
+                    batch, trainer.model.device, 0)
+                x, y = batch
+                y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
+                                      x['encoder_target'])
+                detach_fn = lambda t: t.detach().cpu()
+                return (
+                    list(map(detach_fn, y_pred)),
+                    list(map(detach_fn, y_true)),
+                    list(map(detach_fn, xs)),
+                )
+
+            # n_batches f b t 1
+            filtered_dl = (batch for idx, batch in enumerate(dataloader)
+                           if idx % self.every_n_batches == 0)
+            y_pred, y_true, xs = zip(*map(_process, filtered_dl))
+
+        # f (n_batches * b) t 1
+        y_pred = [[item for items in batch for item in items]
+                  for batch in zip(*y_pred)]
+        y_true = [[item for items in batch for item in items]
+                  for batch in zip(*y_true)]
+        xs = [[item for items in batch for item in items]
+              for batch in zip(*xs)]
+        arr, errs = self.make_plot(y_pred, y_true, xs=xs)
+
+        # predictions = trainer.predict(trainer.model, dataloaders=trainer.datamodule.train_dataloader())
+
+        trainer.logger.experiment.add_image(prefix_str,
+                                            arr,
                                             global_step=trainer.global_step,
                                             dataformats='HWC')
-
-    def on_validation_batch_end(self, trainer, pl_module, outputs, batch,
-                                batch_idx, dataloader_idx):
-        if self.ready and (batch_idx % self.every_n_batches == 0):
-            pass
-            # self.va_preds.append(outputs['pred'])
-            # self.va_targets.append(outputs['true'])
+        for k, v in errs.items():
+            escaped_key = k  # .replace('/', '//')
+            trainer.logger.experiment.add_scalar(
+                f'mpe/{prefix_str}/{escaped_key}', v, trainer.global_step)
 
     # @rank_zero_only
     def on_train_epoch_end(self, trainer: pl.Trainer,
                            pl_module: pl.LightningModule) -> None:
-        if trainer.current_epoch % self.every_n_epochs == 0:
-
-            with torch.no_grad():
-                _b = trainer.datamodule.batch_size
-                trainer.datamodule.batch_size = 10 * _b
-                n_targets = len(trainer.datamodule.continue_params)
-
-                # this is a huge pain with ragged arrays...
-                # TODO strip right-padding using decoder_target, {de|en}coder_lengths
-                # TODO handle t
-
-                def _process(batch):
-                    batch = trainer.datamodule.transfer_batch_to_device(
-                        batch, trainer.model.device, 0)
-                    x, y = batch
-                    y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
-                                          x['encoder_target'])
-                    detach_fn = lambda t: t.detach().cpu()
-                    return (
-                        list(map(detach_fn, y_pred)),
-                        list(map(detach_fn, y_true)),
-                        list(map(detach_fn, xs)),
-                    )
-
-                # n_batches f b t 1
-                y_pred, y_true, xs = zip(
-                    *map(_process, trainer.datamodule.train_dataloader()))
-
-            # f (n_batches * b) t 1
-            y_pred = [[item for items in batch for item in items]
-                      for batch in zip(*y_pred)]
-            y_true = [[item for items in batch for item in items]
-                      for batch in zip(*y_true)]
-            xs = [[item for items in batch for item in items]
-                  for batch in zip(*xs)]
-            arr = self.make_plot(y_pred, y_true, xs=xs)
-
-            # predictions = trainer.predict(trainer.model, dataloaders=trainer.datamodule.train_dataloader())
-
-            str_title = f"{pl_module.__class__.__name__}_tr"
-            trainer.logger.experiment.add_image(
-                str_title,
-                arr,
-                global_step=trainer.global_step,
-                dataformats='HWC')
-
-            self.tr_preds = []
-            self.tr_targets = []
+        if self.ready and trainer.current_epoch % self.every_n_epochs == 0:
+            self.make_log(trainer, trainer.datamodule.train_dataloader(),
+                          'train')
+                          # f'train/{pl_module.__class__.__name__}')
 
     # @rank_zero_only
     def on_validation_epoch_end(self, trainer: pl.Trainer,
                                 pl_module: pl.LightningModule) -> None:
-
-        if self.va_preds:
-            str_title = f"{pl_module.__class__.__name__}_va"
-            trainer.logger.experiment.add_image(
-                str_title,
-                self.make_plot(self.va_preds, self.va_targets),
-                global_step=trainer.global_step,
-                dataformats='HWC')
-        self.va_preds = []
-        self.va_targets = []
+        if self.ready and trainer.current_epoch % self.every_n_epochs == 0:
+            self.make_log(trainer, trainer.datamodule.val_dataloader(),
+                          'val')
+                          # f'val/{pl_module.__class__.__name__}')
 
 
 from pytorch_lightning.utilities.cli import LightningCLI
@@ -457,7 +377,7 @@ class MyLightningCLI(LightningCLI):
 if __name__ == "__main__":
 
     torch.set_default_dtype(torch.float32)
-    if 1:
+    if 0:
 
         from neural_ode.models.recurrent import RecurrentODEParams
         from neural_ode.models.diff_func import ODEFuncParams
