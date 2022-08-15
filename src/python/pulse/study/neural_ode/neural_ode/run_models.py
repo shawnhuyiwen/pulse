@@ -303,7 +303,8 @@ class PlotCallback(pl.Callback):
         # add info to subtitles
         for ax in grid2.axes.flat:
             title = ax.get_title()
-            err = np.concatenate([line.get_ydata() for line in ax.lines]).mean()
+            err = np.concatenate([line.get_ydata()
+                                  for line in ax.lines]).mean()
             ax.set_title(f'{title}\nmean relative error = {err:.2f}')
         # resize for stackability
         cur_w, cur_h = grid2.figure.get_size_inches()
@@ -341,28 +342,33 @@ class PlotCallback(pl.Callback):
                            pl_module: pl.LightningModule) -> None:
         if trainer.current_epoch % self.every_n_epochs == 0:
 
-            torch.set_grad_enabled(False)
-            _b = trainer.datamodule.batch_size
-            trainer.datamodule.batch_size = 10 * _b
-            n_targets = len(trainer.datamodule.continue_params)
-            # y_pred = [[] * n_targets]
-            # y_true = [[] * n_targets]
-            # this is a huge pain with ragged arrays...
-            # TODO strip right-padding using decoder_target, {de|en}coder_lengths
-            # TODO handle t
-            # n_batches f b t 1
-            y_pred, y_true, xs = zip(
-                *[(trainer.model(x)['prediction'], y, x['encoder_target'])
-                  for x, y in trainer.datamodule.train_dataloader()])
-            # import xdev; xdev.embed()
+            with torch.no_grad():
+                _b = trainer.datamodule.batch_size
+                trainer.datamodule.batch_size = 10 * _b
+                n_targets = len(trainer.datamodule.continue_params)
+
+                # this is a huge pain with ragged arrays...
+                # TODO strip right-padding using decoder_target, {de|en}coder_lengths
+                # TODO handle t
+
+                def _process(batch):
+                    batch = trainer.datamodule.transfer_batch_to_device(
+                        batch, trainer.model.device, 0)
+                    x, y = batch
+                    y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
+                                          x['encoder_target'])
+                    detach_fn = lambda t: t.detach().cpu()
+                    return (
+                        list(map(detach_fn, y_pred)),
+                        list(map(detach_fn, y_true)),
+                        list(map(detach_fn, xs)),
+                    )
+
+                # n_batches f b t 1
+                y_pred, y_true, xs = zip(
+                    *map(_process, trainer.datamodule.train_dataloader()))
+
             # f (n_batches * b) t 1
-            # y_pred = [[item for items in map(lambda t: t.detach().cpu(), batch) for item in items] for batch in zip(*y_pred)]
-            # y_true = [[item for items in map(lambda t: t.detach().cpu(), batch) for item in items] for batch in zip(*y_true)]
-            y_pred = [list(map(lambda t: t.detach().cpu(), y)) for y in y_pred]
-            y_true = [
-                list(map(lambda t: t.detach().cpu(), y[0])) for y in y_true
-            ]
-            xs = [list(map(lambda t: t.detach().cpu(), x)) for x in xs]
             y_pred = [[item for items in batch for item in items]
                       for batch in zip(*y_pred)]
             y_true = [[item for items in batch for item in items]
@@ -370,8 +376,6 @@ class PlotCallback(pl.Callback):
             xs = [[item for items in batch for item in items]
                   for batch in zip(*xs)]
             arr = self.make_plot(y_pred, y_true, xs=xs)
-            trainer.datamodule.batch_size = _b
-            torch.set_grad_enabled(True)
 
             # predictions = trainer.predict(trainer.model, dataloaders=trainer.datamodule.train_dataloader())
 
@@ -401,6 +405,13 @@ class PlotCallback(pl.Callback):
 
 
 from pytorch_lightning.utilities.cli import LightningCLI
+'''
+could try this if problems with loading ckpts
+https://github.com/Lightning-AI/lightning/issues/12302#issuecomment-1110425635
+class NBCLI(LightningCLI):
+    def fit(self, *args, **kwargs):
+        pass
+'''
 
 
 class MyLightningCLI(LightningCLI):
@@ -446,7 +457,7 @@ class MyLightningCLI(LightningCLI):
 if __name__ == "__main__":
 
     torch.set_default_dtype(torch.float32)
-    if 0:
+    if 1:
 
         from neural_ode.models.recurrent import RecurrentODEParams
         from neural_ode.models.diff_func import ODEFuncParams
@@ -458,7 +469,8 @@ if __name__ == "__main__":
         )
         trainer = pl.Trainer(**trainer_kwargs(),
                              overfit_batches=False,
-                             log_every_n_steps=1)
+                             log_every_n_steps=1,
+                             gpus=1)
 
         dm.prepare_data()
         dm.setup()
@@ -489,7 +501,7 @@ if __name__ == "__main__":
         '''
 
         cli = MyLightningCLI(
-            model_class=utils.BaseModel,
+            model_class=utils.StubBaseModel,
             # cli = LightningCLI(model_class=utils.BaseModel,
             datamodule_class=utils.BaseData,
             trainer_defaults=trainer_kwargs(),

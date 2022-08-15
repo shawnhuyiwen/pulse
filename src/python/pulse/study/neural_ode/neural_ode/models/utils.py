@@ -62,7 +62,11 @@ class BaseModelWithCovariatesKwargs:
     x_categoricals: List[str] = field(default_factory=list)
 
 
-class BaseModel(pf.BaseModelWithCovariates):
+class StubBaseModel(pl.LightningModule):
+    pass
+
+
+class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
     '''
 
     Model with additional methods using covariates.
@@ -330,6 +334,37 @@ class BaseModel(pf.BaseModelWithCovariates):
     # > use setup() to do splits, and build your model internals
     #   > set model/dm state here, it's called on every device
     # lightningmodule also has a setup(), move this there so it's autoinvoked
+
+
+class PFAdapter(StubBaseModel):
+
+    def __init__(self, pf_class: type, hidden_size=100, **kwargs):
+        self.pf_class = pf_class
+        self.save_hyperparameters('hidden_size')
+        super().__init__(**kwargs)
+
+    def from_datamodule(self, dm, **kwargs):
+        dm.prepare_data()
+        dm.setup(stage='train')
+        # TODO keep track of deduce_default_output_parameters output_size
+        # output_size (Union[int, List[int]], optional): number of outputs
+        # (e.g. number of quantiles for QuantileLoss and one target or list of
+        # output sizes).
+        # for TFT:
+        # output_size=[7, 7, 7, 7], # 4 target variables
+        new_self = self.pf_class.from_dataset(
+            dm.dset_tr, **ub.dict_diff(
+                kwargs,
+                ['output_transformer'
+                 ]))  #, output_transformer=dm.dset_tr.target_normalizer)
+        batch = next(iter(dm.train_dataloader()))
+        x, y = batch
+        # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
+        new_self.example_input_array = (x, )
+        # new_self.batch_size = len(x['encoder_lengths'])
+        new_self.batch_size = dm.batch_size
+        new_self.t_param = dm.t_param  # for time as time_varying_known_real?
+        return new_self
 
 
 class DummyModel(BaseModel):
@@ -735,7 +770,8 @@ class HemorrhageVitals(BaseData):
         dl = self.dset_tr.to_dataloader(train=True,
                                         batch_size=self.batch_size,
                                         batch_sampler='synchronized',
-                                        num_workers=self.num_workers)
+                                        num_workers=self.num_workers,
+                                        pin_memory=True)
         if self.use_pf_format:
             return dl
         else:
@@ -745,7 +781,8 @@ class HemorrhageVitals(BaseData):
         dl = self.dset_va.to_dataloader(train=False,
                                         batch_size=self.batch_size * 10,
                                         batch_sampler='synchronized',
-                                        num_workers=self.num_workers)
+                                        num_workers=self.num_workers,
+                                        pin_memory=True)
         if self.use_pf_format:
             return dl
         else:
@@ -755,7 +792,8 @@ class HemorrhageVitals(BaseData):
         dl = self.dset_te.to_dataloader(train=False,
                                         batch_size=self.batch_size * 10,
                                         batch_sampler='synchronized',
-                                        num_workers=self.num_workers)
+                                        num_workers=self.num_workers,
+                                        pin_memory=True)
         if self.use_pf_format:
             return dl
         else:
@@ -780,7 +818,8 @@ class HemorrhageVitals(BaseData):
         dl = self.dset_te.to_dataloader(train=False,
                                         batch_size=self.batch_size * 10,
                                         batch_sampler='synchronized',
-                                        num_workers=self.num_workers)
+                                        num_workers=self.num_workers,
+                                        pin_memory=True)
         if self.use_pf_format:
             return wrap_predict_dataloader(dl)
         else:
