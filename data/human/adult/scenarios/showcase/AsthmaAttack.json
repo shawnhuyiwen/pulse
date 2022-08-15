@@ -1,7 +1,7 @@
 {
   "Name": "AsthmaAttack",
   "Description": "Showcase scenario: Patient is afflicted with an severe acute asthma attack. Albuterol is administered.",
-    "PatientConfiguration": { "PatientFile": "Carol.json" },
+  "PatientConfiguration": { "PatientFile": "Carol.json" },
   "DataRequestManager": {
     "DataRequest": [{
       "DecimalFormat": {
@@ -211,17 +211,6 @@
           "Value": 5.0,
           "Unit": "min"
         }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Assessment": {
-        "PatientAction": {
-          "Action": {
-            "Comment": "Assessment: Pulmonary function test"
-          }
-        },
-        "Type": "PulmonaryFunctionTest"
       }
     }
   }, {

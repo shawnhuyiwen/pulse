@@ -259,12 +259,12 @@ The tissue system volumes are validated using data from @cite valentin2002icrp.
 <br><center>
 *Table 4. Validation of the resting physiologic state comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data.*
 </center>
-@insert ./test_results/tables/TissueValidationTable.md
+@insert ./test_results/tables/Tissue-StandardMaleValidationTable.md
 
 <br><center>
 *Table 5. Validation of the resting physiologic state comparison of compartment-level outputs from the engine to referenced values. The compartments are currently validated on a flow/volume basis. Flows and most of the volumes show good agreement with validation values.*
 </center>
-@insert ./test_results/tables/TissueCompartmentsValidationTable.md
+@insert ./test_results/tables/TissueCompartments-StandardMaleValidationTable.md
 
 More validation of this system can be found in the system outputs of all other systems, e.g., the oxygen and carbon dioxide saturation, the blood pH, and the bicarbonate concentration values are found in the @ref BloodChemistryMethodology and the alveoli oxygen and carbon dioxide partial pressures are found in the @ref RespiratoryMethodology.
 

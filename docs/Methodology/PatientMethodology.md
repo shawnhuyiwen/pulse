@@ -148,115 +148,115 @@ Values that are colored green are within 10% of the original set or calculated/e
 *Table 4. StandardMale patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/StandardMalePatientValidationTable.md
+@insert ./test_results/tables/StandardMaleValidationTable.md
 
 <center>
 *Table 5. StandardFemale patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/StandardFemalePatientValidationTable.md
+@insert ./test_results/tables/StandardFemaleValidationTable.md
 
 <center>
 *Table 6. DefaultMale patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/DefaultMalePatientValidationTable.md
+@insert ./test_results/tables/DefaultMaleValidationTable.md
 
 <center>
 *Table 7. DefaultFemale patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/DefaultFemalePatientValidationTable.md
+@insert ./test_results/tables/DefaultFemaleValidationTable.md
 
 <center>
 *Table 8. Overweight patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/OverweightPatientValidationTable.md
+@insert ./test_results/tables/OverweightValidationTable.md
 
 <center>
 *Table 9. Underweight patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/UnderweightPatientValidationTable.md
+@insert ./test_results/tables/UnderweightValidationTable.md
 
 <center>
 *Table 10. Tachycardic patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/TachycardicPatientValidationTable.md
+@insert ./test_results/tables/TachycardicValidationTable.md
 
 <center>
 *Table 11. Bradycardic patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/BradycardicPatientValidationTable.md
+@insert ./test_results/tables/BradycardicValidationTable.md
 
 <center>
 *Table 12. Cynthia patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/CynthiaPatientValidationTable.md
+@insert ./test_results/tables/CynthiaValidationTable.md
 
 <center>
 *Table 13. Gus patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/GusPatientValidationTable.md
+@insert ./test_results/tables/GusValidationTable.md
 
 <center>
 *Table 14. Joel patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/JoelPatientValidationTable.md
+@insert ./test_results/tables/JoelValidationTable.md
 
 <center>
 *Table 15. Nathan patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/NathanPatientValidationTable.md
+@insert ./test_results/tables/NathanValidationTable.md
 
 <center>
 *Table 16. Hassan patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/HassanPatientValidationTable.md
+@insert ./test_results/tables/HassanValidationTable.md
 
 <center>
 *Table 17. Soldier patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/SoldierPatientValidationTable.md
+@insert ./test_results/tables/SoldierValidationTable.md
 
 <center>
 *Table 18. Jeff patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/JeffPatientValidationTable.md
+@insert ./test_results/tables/JeffValidationTable.md
 
 <center>
 *Table 19. Carol patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/CarolPatientValidationTable.md
+@insert ./test_results/tables/CarolValidationTable.md
 
 <center>
 *Table 20. Jane patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/JanePatientValidationTable.md
+@insert ./test_results/tables/JaneValidationTable.md
 
 <center>
 *Table 21. ExtremeFemale patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/ExtremeFemalePatientValidationTable.md
+@insert ./test_results/tables/ExtremeFemaleValidationTable.md
 
 <center>
 *Table 22. ExtremeMale patient values with expected and engine output.*
 </center><br>
 
-@insert ./test_results/tables/ExtremeMalePatientValidationTable.md
+@insert ./test_results/tables/ExtremeMaleValidationTable.md
 
 Conclusions
 -----------

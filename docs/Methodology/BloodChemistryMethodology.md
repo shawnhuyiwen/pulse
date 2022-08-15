@@ -242,7 +242,7 @@ Published values from the literature were compared to the engine output to perfo
 *Table 1. Results of the resting physiology validation of the Blood Chemistry System.*
 </center>
 
-@insert ./test_results/tables/BloodChemistryValidationTable.md
+@insert ./test_results/tables/BloodChemistry-StandardMaleValidationTable.md
 
 Overall, the engine meets validation, with all but two of the validation parameters having less than a 10% error when compared to published values.  Only one parameter has an error greater than than 30%. 
 
@@ -269,19 +269,19 @@ There are three asessments in the Blood Chemistry system. Each assessment provid
 *Table 2. Results of the arterial blood gas test as compiled during the healthy resting physiology.*
 </center>
 
-@insert ./test_results/tables/ArterialBloodGasTestValidationTable.md
+@insert ./test_results/tables/ArterialBloodGasTest-StandardMaleValidationTable.md
 
 <center>
 *Table 3. Results of the metabolic panel as compiled during the healthy resting physiology.*
 </center>
 
-@insert ./test_results/tables/CompleteMetabolicPanelValidationTable.md
+@insert ./test_results/tables/CompleteMetabolicPanel-StandardMaleValidationTable.md
 
 <center>
 *Table 4. Results of the complete blood count as compiled during the healthy resting physiology.*
 </center>
 
-@insert ./test_results/tables/CompleteBloodCountValidationTable.md
+@insert ./test_results/tables/CompleteBloodCount-StandardMaleValidationTable.md
 
 All of the measures in the two Blood Chemistry assessments meet validation. 
 

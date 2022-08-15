@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 package com.kitware.pulse.cdm.patient.actions;
 
-import java.util.List;
+import java.util.*;
 
 import com.kitware.pulse.cdm.bind.Enums.eSwitch;
 import com.kitware.pulse.cdm.bind.PatientActions.MechanicalVentilationData;
@@ -26,8 +26,8 @@ public class SEMechanicalVentilation extends SEPatientAction
   protected SEScalarPressure      pressure;
   protected eSwitch               state;
 
-  protected List<SESubstanceFraction>  gasFractions;
-  protected List<SESubstanceConcentration>   aerosols;
+  protected List<SESubstanceFraction>        gasFractions=new ArrayList<SESubstanceFraction>();
+  protected List<SESubstanceConcentration>   aerosols=new ArrayList<SESubstanceConcentration>();
 
   public SEMechanicalVentilation()
   {

@@ -542,12 +542,6 @@
       }
     }
   }, {
-    "PatientAction": {
-      "Assessment": {
-        "Type": "PulmonaryFunctionTest"
-      }
-    }
-  }, {
     "EnvironmentAction": {
       "ChangeEnvironmentalConditions": {
         "EnvironmentalConditionsFile": "./environments/CheyenneMountainFireFighter.json"
@@ -602,12 +596,6 @@
           "Value": 30.0,
           "Unit": "s"
         }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Assessment": {
-        "Type": "PulmonaryFunctionTest"
       }
     }
   }]

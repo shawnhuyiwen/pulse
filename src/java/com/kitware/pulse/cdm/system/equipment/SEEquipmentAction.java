@@ -173,26 +173,31 @@ public abstract class SEEquipmentAction extends SEAction
     {
       SEMechanicalVentilatorContinuousPositiveAirwayPressure dst = new SEMechanicalVentilatorContinuousPositiveAirwayPressure();
       SEMechanicalVentilatorContinuousPositiveAirwayPressure.load(c.getMechanicalVentilatorContinuousPositiveAirwayPressure(), dst);
+      return dst;
     }
     case MECHANICALVENTILATORHOLD:
     {
       SEMechanicalVentilatorHold dst = new SEMechanicalVentilatorHold();
       SEMechanicalVentilatorHold.load(c.getMechanicalVentilatorHold(), dst);
+      return dst;
     }
     case MECHANICALVENTILATORLEAK:
     {
       SEMechanicalVentilatorLeak dst = new SEMechanicalVentilatorLeak();
       SEMechanicalVentilatorLeak.load(c.getMechanicalVentilatorLeak(), dst);
+      return dst;
     }
     case MECHANICALVENTILATORPRESSURECONTROL:
     {
       SEMechanicalVentilatorPressureControl dst = new SEMechanicalVentilatorPressureControl();
       SEMechanicalVentilatorPressureControl.load(c.getMechanicalVentilatorPressureControl(), dst);
+      return dst;
     }
     case MECHANICALVENTILATORVOLUMECONTROL:
     {
       SEMechanicalVentilatorVolumeControl dst = new SEMechanicalVentilatorVolumeControl();
       SEMechanicalVentilatorVolumeControl.load(c.getMechanicalVentilatorVolumeControl(), dst);
+      return dst;
     }
     case ACTION_NOT_SET:
       Log.warn("AnyEquipmentActionData was empty...was that intended?");

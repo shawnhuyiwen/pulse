@@ -988,7 +988,7 @@
   }, {
     "PatientAction": {
       "Assessment": {
-        "Type": "PulmonaryFunctionTest"
+        "Type": "ComprehensiveMetabolicPanel"
       }
     }
   }, {

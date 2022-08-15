@@ -536,7 +536,7 @@ Validation of the urine panel is done by analyzing at the resting physiologic qu
 proteins are expected in the urine in significant quantities, which is confirmed below. Specific gravity and color are each dependent on the osmolarity of the urine and are within
 expected values for a healthy individual at rest.</i>
 </center>
-@insert ./test_results/tables/UrinalysisValidationTable.md
+@insert ./test_results/tables/Urinalysis-StandardMaleValidationTable.md
 
 Results and Conclusions
 =======================
@@ -552,14 +552,14 @@ Validation results for system and compartment quantities for a resting standard 
 to referenced values.*
 </center>
 
-@insert ./test_results/tables/RenalValidationTable.md
+@insert ./test_results/tables/Renal-StandardMaleValidationTable.md
 
 <br><center>
 *Table 6. Validation of the resting physiologic state comparison of compartment-level outputs from the engine
 to referenced values.*
 </center>
 
-@insert ./test_results/tables/RenalCompartmentsValidationTable.md
+@insert ./test_results/tables/RenalCompartments-StandardMaleValidationTable.md
 
 Validation results for substance parameters that are determined and/or applied by the %Renal system are shown in Table 7.  These values are highly dependent on substance parameters and show favorable overall agreement for the resting standard patient. Sodium is especially critical for the osmoreceptor and tubuloglomerular feedback mechanisms.
 
@@ -568,7 +568,7 @@ Validation results for substance parameters that are determined and/or applied b
 to referenced values.*
 </center>
 
-@insert ./test_results/tables/RenalSubstancesValidationTable.md
+@insert ./test_results/tables/RenalSubstances-StandardMaleValidationTable.md
 
 @anchor renal-actionconditionvalidation
 Validation - Actions and Conditions

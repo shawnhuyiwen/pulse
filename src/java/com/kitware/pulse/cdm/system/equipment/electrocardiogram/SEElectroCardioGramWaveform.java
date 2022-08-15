@@ -5,10 +5,7 @@ package com.kitware.pulse.cdm.system.equipment.electrocardiogram;
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.ElectroCardioGramWaveformData;
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.eElectroCardioGramWaveformLead;
 import com.kitware.pulse.cdm.bind.ElectroCardioGram.eElectroCardioGramWaveformType;
-import com.kitware.pulse.cdm.bind.Physiology.eHeartRhythm;
 import com.kitware.pulse.cdm.properties.SEArrayElectricPotential;
-import com.kitware.pulse.cdm.properties.SEFunctionElectricPotentialVsTime;
-import com.kitware.pulse.cdm.properties.SEScalarTime;
 
 public class SEElectroCardioGramWaveform
 {

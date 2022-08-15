@@ -1482,13 +1482,13 @@ The %Respiratory Model outputs a number of system-level and compartment-level re
 <i>Table 3. Validation of the resting physiologic state of the %Respiratory System. The table shows comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data. The deviations in end tidal carbon dioxide fraction and transpulmonary pressure can be attributed to the tuned parameters used in the model that are selected to meet the major system level physiological parameters.</i>
 </center><br>
 
-@insert ./test_results/tables/RespiratoryValidationTable.md
+@insert ./test_results/tables/Respiratory-StandardMaleValidationTable.md
 
 <center>
 <i>Table 4. Validation table for the resting physiologic states. The table shows comparison of compartment-level outputs from the engine to referenced values. The majority of the variables show good match with the validation data. There are significant deviations in the carina flow and the dead space volumes. Future versions will address these issues.</i>
 </center><br>
 
-@insert ./test_results/tables/RespiratoryCompartmentsValidationTable.md
+@insert ./test_results/tables/RespiratoryCompartments-StandardMaleValidationTable.md
 
 @anchor respiratory-scenario
 Scenario Validation
