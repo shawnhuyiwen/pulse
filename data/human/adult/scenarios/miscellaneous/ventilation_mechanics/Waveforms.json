@@ -419,12 +419,6 @@
        "Value": 0.21
       }
      },
-     "InspirationPatientTriggerFlow": {
-      "ScalarVolumePerTime": {
-       "Value": 5,
-       "Unit": "L/min"
-      }
-     },
      "InspirationWaveform": "Square",
      "InspiratoryPeriod": {
       "ScalarTime": {
@@ -485,12 +479,6 @@
        "Value": 0.21
       }
      },
-     "InspirationPatientTriggerFlow": {
-      "ScalarVolumePerTime": {
-       "Value": 5,
-       "Unit": "L/min"
-      }
-     },
      "InspirationWaveform": "AscendingRamp",
      "InspiratoryPeriod": {
       "ScalarTime": {
@@ -550,12 +538,6 @@
      "FractionInspiredOxygen": {
       "Scalar0To1": {
        "Value": 0.21
-      }
-     },
-     "InspirationPatientTriggerFlow": {
-      "ScalarVolumePerTime": {
-       "Value": 5,
-       "Unit": "L/min"
       }
      },
      "InspirationWaveform": "AscendingRamp",
@@ -619,12 +601,6 @@
        "Value": 0.21
       }
      },
-     "InspirationPatientTriggerFlow": {
-      "ScalarVolumePerTime": {
-       "Value": 5,
-       "Unit": "L/min"
-      }
-     },
      "InspirationWaveform": "DecendingRamp",
      "InspiratoryPeriod": {
       "ScalarTime": {
@@ -686,12 +662,6 @@
        "Value": 0.21
       }
      },
-     "InspirationPatientTriggerFlow": {
-      "ScalarVolumePerTime": {
-       "Value": 5,
-       "Unit": "L/min"
-      }
-     },
      "InspirationWaveform": "DecendingRamp",
      "InspiratoryPeriod": {
       "ScalarTime": {
@@ -721,6 +691,341 @@
       "ScalarTime": {
        "Value": 0.0,
        "Unit": "s"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 15,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  
+  {
+   "EquipmentAction": {
+    "MechanicalVentilatorVolumeControl": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": {
+        "Action": {}
+       }
+      },
+      "Connection": "On"
+     },
+     "Flow": {
+      "ScalarVolumePerTime": {
+       "Value": 60,
+       "Unit": "L/min"
+      }
+     },
+     "FractionInspiredOxygen": {
+      "Scalar0To1": {
+       "Value": 0.21
+      }
+     },
+     "InspirationWaveform": "Square",
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "PositiveEndExpiredPressure": {
+      "ScalarPressure": {
+       "Value": 5,
+       "Unit": "cmH2O"
+      }
+     },
+     "RespirationRate": {
+      "ScalarFrequency": {
+       "Value": 12,
+       "Unit": "1/min"
+      }
+     },
+     "Slope": {
+      "ScalarTime": {
+       "Unit": "s"
+      }
+     },
+     "TidalVolume": {
+      "ScalarVolume": {
+       "Value": 900,
+       "Unit": "mL"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 15,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "MechanicalVentilatorVolumeControl": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": {
+        "Action": {}
+       }
+      },
+      "Connection": "On"
+     },
+     "Flow": {
+      "ScalarVolumePerTime": {
+       "Value": 60,
+       "Unit": "L/min"
+      }
+     },
+     "FractionInspiredOxygen": {
+      "Scalar0To1": {
+       "Value": 0.21
+      }
+     },
+     "InspirationWaveform": "AscendingRamp",
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "PositiveEndExpiredPressure": {
+      "ScalarPressure": {
+       "Value": 5,
+       "Unit": "cmH2O"
+      }
+     },
+     "RespirationRate": {
+      "ScalarFrequency": {
+       "Value": 12,
+       "Unit": "1/min"
+      }
+     },
+     "Slope": {
+      "ScalarTime": {
+       "Value": 0.0,
+       "Unit": "s"
+      }
+     },
+     "TidalVolume": {
+      "ScalarVolume": {
+       "Value": 900,
+       "Unit": "mL"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 15,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "MechanicalVentilatorVolumeControl": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": {
+        "Action": {}
+       }
+      },
+      "Connection": "On"
+     },
+     "Flow": {
+      "ScalarVolumePerTime": {
+       "Value": 60,
+       "Unit": "L/min"
+      }
+     },
+     "FractionInspiredOxygen": {
+      "Scalar0To1": {
+       "Value": 0.21
+      }
+     },
+     "InspirationWaveform": "AscendingRamp",
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "PositiveEndExpiredPressure": {
+      "ScalarPressure": {
+       "Value": 5,
+       "Unit": "cmH2O"
+      }
+     },
+     "RespirationRate": {
+      "ScalarFrequency": {
+       "Value": 12,
+       "Unit": "1/min"
+      }
+     },
+     "Slope": {
+      "ScalarTime": {
+       "Value": 0.5,
+       "Unit": "s"
+      }
+     },
+     "TidalVolume": {
+      "ScalarVolume": {
+       "Value": 900,
+       "Unit": "mL"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 15,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "MechanicalVentilatorVolumeControl": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": {
+        "Action": {}
+       }
+      },
+      "Connection": "On"
+     },
+     "Flow": {
+      "ScalarVolumePerTime": {
+       "Value": 60,
+       "Unit": "L/min"
+      }
+     },
+     "FractionInspiredOxygen": {
+      "Scalar0To1": {
+       "Value": 0.21
+      }
+     },
+     "InspirationWaveform": "DecendingRamp",
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "PositiveEndExpiredPressure": {
+      "ScalarPressure": {
+       "Value": 5,
+       "Unit": "cmH2O"
+      }
+     },
+     "RespirationRate": {
+      "ScalarFrequency": {
+       "Value": 12,
+       "Unit": "1/min"
+      }
+     },
+     "Slope": {
+      "ScalarTime": {
+       "Value": 0.5,
+       "Unit": "s"
+      }
+     },
+     "TidalVolume": {
+      "ScalarVolume": {
+       "Value": 900,
+       "Unit": "mL"
+      }
+     }
+    }
+   }
+  },
+  {
+   "AdvanceTime": {
+    "Action": {},
+    "Time": {
+     "ScalarTime": {
+      "Value": 15,
+      "Unit": "s"
+     }
+    }
+   }
+  },
+  {
+   "EquipmentAction": {
+    "MechanicalVentilatorVolumeControl": {
+     "MechanicalVentilatorMode": {
+      "MechanicalVentilatorAction": {
+       "EquipmentAction": {
+        "Action": {}
+       }
+      },
+      "Connection": "On"
+     },
+     "Flow": {
+      "ScalarVolumePerTime": {
+       "Value": 60,
+       "Unit": "L/min"
+      }
+     },
+     "FractionInspiredOxygen": {
+      "Scalar0To1": {
+       "Value": 0.21
+      }
+     },
+     "InspirationWaveform": "DecendingRamp",
+     "InspiratoryPeriod": {
+      "ScalarTime": {
+       "Value": 1,
+       "Unit": "s"
+      }
+     },
+     "PositiveEndExpiredPressure": {
+      "ScalarPressure": {
+       "Value": 5,
+       "Unit": "cmH2O"
+      }
+     },
+     "RespirationRate": {
+      "ScalarFrequency": {
+       "Value": 12,
+       "Unit": "1/min"
+      }
+     },
+     "Slope": {
+      "ScalarTime": {
+       "Value": 0.0,
+       "Unit": "s"
+      }
+     },
+     "TidalVolume": {
+      "ScalarVolume": {
+       "Value": 900,
+       "Unit": "mL"
       }
      }
     }
