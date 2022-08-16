@@ -96,7 +96,7 @@ def trainer_kwargs(kl_coef=1,
 
 class PlotCallback(pl.Callback):
 
-    def __init__(self, every_n_batches=1, every_n_epochs=50):
+    def __init__(self, every_n_batches=1, every_n_epochs=10):
         self.every_n_batches = every_n_batches
         self.every_n_epochs = every_n_epochs
         self.ready = True
@@ -117,11 +117,16 @@ class PlotCallback(pl.Callback):
             x, y = batch
             y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
                                   x['encoder_target'])
-            detach_fn = lambda t: t.detach().cpu()
+            def _detach_fn(tensor, lens=None):
+                tensor = tensor.detach().cpu()
+                if lens is not None:
+                    tensor = [t[:l] for t, l in zip(tensor, lens)]
+                return tensor
+
             return (
-                list(map(detach_fn, y_pred)),
-                list(map(detach_fn, y_true)),
-                list(map(detach_fn, xs)),
+                [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
+                [_detach_fn(y, x['decoder_lengths']) for y in y_true],
+                [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
             )
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch,
@@ -212,7 +217,7 @@ class PlotCallback(pl.Callback):
                                    df_error['true']) / df_error['true']
 
         # add x timesteps and reshape long
-        df['is_y'] = True
+        df['is_y'] = '1_y_predeath'
         if len(xt) > 0:
             pts_x = np.concatenate(
                 [np.repeat(i, len(x)) for i, x in enumerate(xs[0])])
@@ -224,7 +229,7 @@ class PlotCallback(pl.Callback):
             df_x['pred'] = df_x['value']
             df_x['true'] = df_x['value']
             df_x.drop('value', axis=1, inplace=True)
-            df_x['is_y'] = False
+            df_x['is_y'] = '0_x'
             df = pd.concat((df, df_x), ignore_index=True, copy=False)
         df = df.melt(id_vars=['t', 'pt', 'vital', 'is_y'])
         df['facet'] = df['vital'].replace(target_labels_to_facets)
@@ -253,7 +258,21 @@ class PlotCallback(pl.Callback):
                             facet_kws=dict(sharey='col'),
                             units='pt',
                             style='is_y',
-                            linewidth=1)
+                            markers=['o', '.', '.'],
+                            style_order=['0_x', '1_y_predeath', '1_y_postdeath'],
+                            linewidth=1,
+                            ms=1)
+        # add green and yellow points
+        for ax, targets in zip(grid1.axes[1, :], facets_to_target_labels.values()):
+            batch_size = len(ax.lines) // (2 * len(targets))
+            for line in np.take(ax.lines, [i for i in range(len(ax.lines)) if (i // batch_size) % 2 == 0]):
+                ax.plot(line.get_xdata()[0], line.get_ydata()[0], 'go', ms=2)
+                ax.plot(line.get_xdata()[-1], line.get_ydata()[-1], 'yo', ms=2)
+        for ax, targets in zip(grid1.axes[0, :], facets_to_target_labels.values()):
+            batch_size = len(ax.lines) // (2 * len(targets))
+            for line in np.take(ax.lines, [i for i in range(len(ax.lines)) if (i // batch_size) % 2 == 0]):
+                ax.plot(line.get_xdata()[0], line.get_ydata()[0], 'go', ms=2)
+                ax.plot(line.get_xdata()[-1], line.get_ydata()[-1], 'yo', ms=2)
         width, height = grid1.figure.get_size_inches()
         arr1 = to_array(grid1)
 
