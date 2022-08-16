@@ -199,26 +199,19 @@ class RecurrentODE(BaseModel):
         #TRANS: Complete sequence prediction
         if len(y_time.shape) < 1:
             y_time = y_time.unsqueeze(0)
-        #TRANS: Stitching x_time and y_time
-        # TODO replace this with something less funky
-        # TODO enforce min(y_time) > max(x_time) in dm and remove t := tx & ty
-        x_len_orig = len(x_time)  # x_time becomes union(x_time, y_time)
-        x_time, time_index = torch.unique(torch.cat((x_time, y_time)),
-                                          return_inverse=True)
-        x_time_idx, y_time_idx = time_index[:x_len_orig], time_index[
-            x_len_orig:]
-
-        batch_size, x_dims = x.shape[0], x.shape[2]
-        #TRANS: To expand the x
-        x_merged = torch.zeros((batch_size, len(x_time), x_dims),
-                               dtype=x.dtype, device=self.device)
-        x_merged[:, x_time_idx, :] = x
-        hs = self.ODE_RNN(x_merged, x_time, return_latents=True)
+        xy_time = torch.cat((x_time, y_time))
+        batch_size, x_extent, x_dims = x.shape
+        y_extent = len(y_time)
+        xy = torch.cat((x,
+                        torch.zeros((batch_size, y_extent, x_dims),
+                               dtype=x.dtype, device=self.device)),
+                       dim=1)
+        hs = self.ODE_RNN(xy, xy_time, return_latents=True)
         # this is like having t as an extra batch dim for output_net
         y_pred = self.output_net(hs)
 
         # y_pred shape [batch_size, y_time_points, y_dims]
-        return y_pred.index_select(1, y_time_idx)
+        return y_pred[:, -y_extent:, :]
 
     # ODE_GRU_Encoder
     def run_to_prior(self, x_data, x_time):
