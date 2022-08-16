@@ -108,10 +108,10 @@ class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
             self,
             learning_rate=1e-2,
             # loss=pf.metrics.RMSE(),
-            loss='RMSE',  # coerce later to avoid yaml bug in LightningCLI(run=True)
+            loss='MAE',  # coerce later to avoid yaml bug in LightningCLI(run=True)
             # loss=pf.metrics.SMAPE(),
             # logging_metrics=[pf.metrics.RMSE()],
-        logging_metrics=['RMSE'],
+            logging_metrics=['MAE'],
             # logging_metrics=torch.nn.ModuleList([pf.metrics.RMSE()]),
             optimizer='Adamax',  # 'ranger'
             reduce_on_plateau_patience=10,
@@ -488,6 +488,7 @@ class HemorrhageVitals(BaseData):
     # of x reverse solving until t0
     # if arch in { 'Seq2Seq', 'VAE' }
     start_reverse: bool = False
+    shuffle: bool = True
 
     static_behavior: Literal['ignore', 'propagate', 'augment'] = 'ignore'
     use_pf_format: bool = True
@@ -761,6 +762,7 @@ class HemorrhageVitals(BaseData):
                                         batch_size=self.batch_size,
                                         batch_sampler='synchronized',
                                         num_workers=self.num_workers,
+                                        shuffle=self.shuffle,
                                         pin_memory=True)
         if self.use_pf_format:
             return dl
@@ -772,6 +774,7 @@ class HemorrhageVitals(BaseData):
                                         batch_size=self.batch_size * 10,
                                         batch_sampler='synchronized',
                                         num_workers=self.num_workers,
+                                        shuffle=self.shuffle,
                                         pin_memory=True)
         if self.use_pf_format:
             return dl
@@ -783,6 +786,7 @@ class HemorrhageVitals(BaseData):
                                         batch_size=self.batch_size * 10,
                                         batch_sampler='synchronized',
                                         num_workers=self.num_workers,
+                                        shuffle=self.shuffle,
                                         pin_memory=True)
         if self.use_pf_format:
             return dl

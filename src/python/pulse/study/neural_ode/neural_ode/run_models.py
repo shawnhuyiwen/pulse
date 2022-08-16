@@ -64,6 +64,12 @@ def trainer_kwargs(kl_coef=1,
                                                    save_top_k=1,
                                                    monitor='train_loss_epoch')
     plot_callback = PlotCallback()
+    early_stopping_callback = pl.callbacks.EarlyStopping(
+                monitor='train_loss_epoch',
+                # monitor='tr_mse',
+                # monitor='va_mse',
+                mode='min',
+                patience=patience_for_no_better_epochs)
     logger = pl.loggers.TensorBoardLogger(
         save_dir='lightning_logs/',
         name=None,  # can set this in cli
@@ -74,14 +80,9 @@ def trainer_kwargs(kl_coef=1,
         check_val_every_n_epoch=test_for_epochs,
         resume_from_checkpoint=load_ckpt,
         callbacks=[
-            pl.callbacks.EarlyStopping(
-                monitor='train_loss_epoch',
-                # monitor='tr_mse',
-                # monitor='va_mse',
-                mode='min',
-                patience=patience_for_no_better_epochs),
             kl_getter,
             plot_callback,
+            # early_stopping_callback,
             # top_va_callback,
             # top_tr_callback,
         ],
@@ -99,12 +100,41 @@ class PlotCallback(pl.Callback):
         self.every_n_batches = every_n_batches
         self.every_n_epochs = every_n_epochs
         self.ready = True
+        self.tr_data = []
+        self.va_data = []
 
     def on_sanity_check_start(self, trainer, pl_module) -> None:
         self.ready = False
 
     def on_sanity_check_end(self, trainer, pl_module) -> None:
         self.ready = True
+
+    @staticmethod
+    def _process(trainer, batch):
+        with torch.no_grad():
+            # batch = trainer.datamodule.transfer_batch_to_device(
+            # batch, trainer.model.device, 0)
+            x, y = batch
+            y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
+                                  x['encoder_target'])
+            detach_fn = lambda t: t.detach().cpu()
+            return (
+                list(map(detach_fn, y_pred)),
+                list(map(detach_fn, y_true)),
+                list(map(detach_fn, xs)),
+            )
+
+    def on_train_batch_end(self, trainer, pl_module, outputs, batch,
+                           batch_idx):
+        if (self.ready and (batch_idx % self.every_n_batches == 0)
+                and (trainer.current_epoch % self.every_n_epochs == 0)):
+            self.tr_data.append(self._process(trainer, batch))
+
+    def on_validation_batch_end(self, trainer, pl_module, outputs, batch,
+                                batch_idx, dataloader_idx):
+        if (self.ready and (batch_idx % self.every_n_batches == 0)
+                and (trainer.current_epoch % self.every_n_epochs == 0)):
+            self.va_data.append(self._process(trainer, batch))
 
     @staticmethod
     def make_plot(
@@ -199,9 +229,6 @@ class PlotCallback(pl.Callback):
         df = df.melt(id_vars=['t', 'pt', 'vital', 'is_y'])
         df['facet'] = df['vital'].replace(target_labels_to_facets)
 
-        # have to put each facetgrid in a separate figure
-        # https://stackoverflow.com/a/44159496
-        # fig, axs = plt.subplots(2, 1, figsize=(9, 5), gridspec_kw=dict(height_ratios=[2, 1]))
         # units= for groupid (patient splits by death time etc) w/ estimator
 
         def to_array(grid):
@@ -252,76 +279,71 @@ class PlotCallback(pl.Callback):
             ax.set_title(f'{title}\nmean relative error = {err:.2f}')
         # resize for stackability
         cur_w, cur_h = grid2.figure.get_size_inches()
-        grid2.figure.set_size_inches(width, width * cur_h / cur_w)
+        grid2.figure.set_size_inches(width, (width * cur_h / cur_w) * 1.1)
         arr2 = to_array(grid2)
 
-        return np.vstack(
-            (arr1, arr2)), dict(zip(target_labels_to_facets.keys(), errs))
-
-    def make_log(self, trainer, dataloader, prefix_str):
-
-        with torch.no_grad():
-            _b = trainer.datamodule.batch_size
-            trainer.datamodule.batch_size = 10 * _b
-            n_targets = len(trainer.datamodule.continue_params)
-
-            # this is a huge pain with ragged arrays...
-            # TODO strip right-padding using decoder_target, {de|en}coder_lengths
-            # TODO handle t
-
-            def _process(batch):
-                batch = trainer.datamodule.transfer_batch_to_device(
-                    batch, trainer.model.device, 0)
-                x, y = batch
-                y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
-                                      x['encoder_target'])
-                detach_fn = lambda t: t.detach().cpu()
-                return (
-                    list(map(detach_fn, y_pred)),
-                    list(map(detach_fn, y_true)),
-                    list(map(detach_fn, xs)),
-                )
-
-            # n_batches f b t 1
-            filtered_dl = (batch for idx, batch in enumerate(dataloader)
-                           if idx % self.every_n_batches == 0)
-            y_pred, y_true, xs = zip(*map(_process, filtered_dl))
-
-        # f (n_batches * b) t 1
-        y_pred = [[item for items in batch for item in items]
-                  for batch in zip(*y_pred)]
-        y_true = [[item for items in batch for item in items]
-                  for batch in zip(*y_true)]
-        xs = [[item for items in batch for item in items]
-              for batch in zip(*xs)]
-        arr, errs = self.make_plot(y_pred, y_true, xs=xs)
-
-        # predictions = trainer.predict(trainer.model, dataloaders=trainer.datamodule.train_dataloader())
-
-        trainer.logger.experiment.add_image(prefix_str,
-                                            arr,
-                                            global_step=trainer.global_step,
-                                            dataformats='HWC')
-        for k, v in errs.items():
-            escaped_key = k  # .replace('/', '//')
-            trainer.logger.experiment.add_scalar(
-                f'mpe/{prefix_str}/{escaped_key}', v, trainer.global_step)
+        return (
+            np.vstack((arr1, arr2)),
+            dict(zip(target_labels_to_facets.keys(), errs))
+        )
 
     # @rank_zero_only
     def on_train_epoch_end(self, trainer: pl.Trainer,
                            pl_module: pl.LightningModule) -> None:
-        if self.ready and trainer.current_epoch % self.every_n_epochs == 0:
-            self.make_log(trainer, trainer.datamodule.train_dataloader(),
-                          'train')
-                          # f'train/{pl_module.__class__.__name__}')
+        if self.ready and self.tr_data:
+            # predictions = trainer.predict(trainer.model, dataloaders=trainer.datamodule.train_dataloader())
+            # this is a huge pain with ragged arrays...
+            # TODO strip right-padding using decoder_target, {de|en}coder_lengths
+            # TODO handle t
+
+            # n_batches f b t 1
+            y_pred, y_true, xs = zip(*self.tr_data)
+
+            # f (n_batches * b) t 1
+            y_pred = [[item for items in batch for item in items]
+                      for batch in zip(*y_pred)]
+            y_true = [[item for items in batch for item in items]
+                      for batch in zip(*y_true)]
+            xs = [[item for items in batch for item in items]
+                  for batch in zip(*xs)]
+            arr, errs = self.make_plot(y_pred, y_true, xs=xs)
+
+            trainer.logger.experiment.add_image(
+                'train',
+                arr,
+                global_step=trainer.global_step,
+                dataformats='HWC')
+            for k, v in errs.items():
+                escaped_key = k  # .replace('/', '//')
+                trainer.logger.experiment.add_scalar(
+                    f'mpe/train/{escaped_key}', v, trainer.global_step)
+
+            self.tr_data = []
 
     # @rank_zero_only
     def on_validation_epoch_end(self, trainer: pl.Trainer,
                                 pl_module: pl.LightningModule) -> None:
-        if self.ready and trainer.current_epoch % self.every_n_epochs == 0:
-            self.make_log(trainer, trainer.datamodule.val_dataloader(),
-                          'val')
-                          # f'val/{pl_module.__class__.__name__}')
+        if self.ready and self.va_data:
+            # n_batches f b t 1
+            y_pred, y_true, xs = zip(*self.va_data)
+
+            # f (n_batches * b) t 1
+            y_pred = [[item for items in batch for item in items]
+                      for batch in zip(*y_pred)]
+            y_true = [[item for items in batch for item in items]
+                      for batch in zip(*y_true)]
+            xs = [[item for items in batch for item in items]
+                  for batch in zip(*xs)]
+            arr, errs = self.make_plot(y_pred, y_true, xs=xs)
+
+            trainer.logger.experiment.add_image(
+                'val', arr, global_step=trainer.global_step, dataformats='HWC')
+            for k, v in errs.items():
+                escaped_key = k  # .replace('/', '//')
+                trainer.logger.experiment.add_scalar(f'mpe/val/{escaped_key}',
+                                                     v, trainer.global_step)
+
+            self.va_data = []
 
 
 from pytorch_lightning.utilities.cli import LightningCLI
@@ -433,6 +455,8 @@ if __name__ == "__main__":
             auto_registry=False)
         cli.model = cli.model.from_datamodule(cli.datamodule,
                                               **cli.model.hparams)
+        if cli.trainer.overfit_batches:
+            cli.datamodule.shuffle = False   # HACK
         # # fit == train + validate
         # import xdev
         # with xdev.embed_on_exception_context():
