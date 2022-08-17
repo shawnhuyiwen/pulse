@@ -601,7 +601,7 @@
        "Value": 0.21
       }
      },
-     "InspirationWaveform": "DecendingRamp",
+     "InspirationWaveform": "DescendingRamp",
      "InspiratoryPeriod": {
       "ScalarTime": {
        "Value": 1,
@@ -662,7 +662,7 @@
        "Value": 0.21
       }
      },
-     "InspirationWaveform": "DecendingRamp",
+     "InspirationWaveform": "DescendingRamp",
      "InspiratoryPeriod": {
       "ScalarTime": {
        "Value": 1,
@@ -930,7 +930,7 @@
        "Value": 0.21
       }
      },
-     "InspirationWaveform": "DecendingRamp",
+     "InspirationWaveform": "DescendingRamp",
      "InspiratoryPeriod": {
       "ScalarTime": {
        "Value": 1,
@@ -997,7 +997,7 @@
        "Value": 0.21
       }
      },
-     "InspirationWaveform": "DecendingRamp",
+     "InspirationWaveform": "DescendingRamp",
      "InspiratoryPeriod": {
       "ScalarTime": {
        "Value": 1,

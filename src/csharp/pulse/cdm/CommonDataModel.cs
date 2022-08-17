@@ -71,7 +71,7 @@ namespace Pulse.CDM
     NullDriverWaveform = 0,/** Signals not provided, or no change */
     Square,
     AscendingRamp,
-    DecendingRamp,
+    DescendingRamp,
     ExponentialGrowth,
     ExponentialDecay,
     SinusoidalRise,

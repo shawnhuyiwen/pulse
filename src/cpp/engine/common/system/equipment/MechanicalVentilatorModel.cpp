@@ -686,7 +686,7 @@ namespace pulse
         Fatal("Inspiration mode not yet supported.");
       }
     }
-    else if (GetSettings().GetInspirationWaveform() == eDriverWaveform::DecendingRamp)
+    else if (GetSettings().GetInspirationWaveform() == eDriverWaveform::DescendingRamp)
     {
       if (GetSettings().HasPeakInspiratoryPressure())
       {
