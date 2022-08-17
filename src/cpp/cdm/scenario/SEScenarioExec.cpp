@@ -21,8 +21,6 @@
 #include "cdm/utils/ConfigParser.h"
 #include "cdm/utils/FileUtils.h"
 
-#include <filesystem>
-
 SEScenarioExec::SEScenarioExec(Logger* logger) : Loggable(logger)
 {
   Clear();
@@ -347,11 +345,9 @@ bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
     }
     else
     {
-      std::string fn = ss->GetFilename();
       // If its relative, we add the serialization directory
-      std::filesystem::path path(fn);
-      if (path.is_relative())
-        ss->SetFilename(m_OutputRootDirectory + "/" + fn);
+      if(IsRelativePath(ss->GetFilename()))
+        ss->SetFilename(m_OutputRootDirectory + "/" + ss->GetFilename());
     }
   }
   return pe.ProcessAction(action);

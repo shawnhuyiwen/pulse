@@ -156,6 +156,12 @@ bool IsDirectory(const std::string& dir)
   return std::filesystem::is_directory(dir);
 }
 
+bool IsRelativePath(const std::string& path)
+{
+  std::filesystem::path p(path);
+  return p.is_relative();
+}
+
 void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask)
 {
   std::string filename;

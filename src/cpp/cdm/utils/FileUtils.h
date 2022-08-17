@@ -6,6 +6,7 @@
 bool CDM_DECL WriteFile(const std::string& content, const std::string& filename);// ASCII Support only
 bool CDM_DECL ReadFile(const std::string& filename, std::string& content);// ASCII Support only
 bool CDM_DECL IsDirectory(std::string const& dir);
+bool CDM_DECL IsRelativePath(std::string const& path);
 bool CDM_DECL CreatePath(const std::string&);
 bool CDM_DECL CreateFilePath(const std::string&);
 std::string CDM_DECL Replace(const std::string& original, const std::string& replace, const std::string& withThis);
