@@ -20,7 +20,7 @@ from typing import Literal, Optional, List, Tuple, Dict
 import ubelt as ub
 import numpy as np
 import pandas as pd
-from dataclasses import asdict
+from dataclasses import asdict, astuple, dataclass
 from simple_parsing import ArgumentParser
 
 import pytorch_lightning as pl
@@ -45,52 +45,6 @@ class UpdateKLCoef(pl.Callback):
                                             0.99**(epoch - self.wait_until_kl))
 
 
-# TODO curriculum learning https://arxiv.org/abs/2101.10382
-# train on easy examples before hard examples
-# with missingness, this amounted to removing missingness from 10 more points
-# per batch every epoch
-# this was done only for enc-dec arch, related to GoogleStock(start_reverse)?
-# https://gitlab.kitware.com/physiology/engine/-/blob/study/ode/src/python/pulse/study/neural_ode/neural_ode/run_models.py#L263
-def trainer_kwargs(kl_coef=1,
-                   max_epochs=301,
-                   test_for_epochs=1,
-                   load_ckpt=None,
-                   patience_for_no_better_epochs=30):
-    kl_getter = UpdateKLCoef(kl_coef)
-    top_va_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
-                                                   save_top_k=1,
-                                                   monitor='val_loss')
-    top_tr_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
-                                                   save_top_k=1,
-                                                   monitor='train_loss_epoch')
-    plot_callback = PlotCallback()
-    early_stopping_callback = pl.callbacks.EarlyStopping(
-                monitor='train_loss_epoch',
-                # monitor='tr_mse',
-                # monitor='va_mse',
-                mode='min',
-                patience=patience_for_no_better_epochs)
-    logger = pl.loggers.TensorBoardLogger(
-        save_dir='lightning_logs/',
-        name=None,  # can set this in cli
-        default_hp_metric=False,
-    )
-    return dict(
-        max_epochs=max_epochs,
-        check_val_every_n_epoch=test_for_epochs,
-        resume_from_checkpoint=load_ckpt,
-        callbacks=[
-            kl_getter,
-            plot_callback,
-            # early_stopping_callback,
-            # top_va_callback,
-            # top_tr_callback,
-        ],
-        gradient_clip_val=0.01,
-        logger=logger,
-        gpus=1)
-
-
 # https://pytorch-lightning.readthedocs.io/en/stable/common/debugging.html
 
 
@@ -100,8 +54,8 @@ class PlotCallback(pl.Callback):
         self.every_n_batches = every_n_batches
         self.every_n_epochs = every_n_epochs
         self.ready = True
-        self.tr_data = []
-        self.va_data = []
+        self.tr_data: List[Batch]  = []
+        self.va_data: List[Batch]  = []
 
     def on_sanity_check_start(self, trainer, pl_module) -> None:
         self.ready = False
@@ -109,45 +63,82 @@ class PlotCallback(pl.Callback):
     def on_sanity_check_end(self, trainer, pl_module) -> None:
         self.ready = True
 
-    @staticmethod
-    def _process(trainer, batch):
-        with torch.no_grad():
-            # batch = trainer.datamodule.transfer_batch_to_device(
-            # batch, trainer.model.device, 0)
-            x, y = batch
-            y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
-                                  x['encoder_target'])
+    @dataclass
+    class Batch:  # TODO make x optional?
+        y_pred: List[torch.Tensor]
+        y_true: List[torch.Tensor]
+        xs: List[torch.Tensor]
+        yt: Optional[List[torch.Tensor]] = None
+        xt: Optional[List[torch.Tensor]] = None
+
+        def __post_init__(self):
+            # stub out t if needed
+            assert (self.yt is None) == (self.xt is None)
+            if self.yt is None:
+                # self.use_t_mins = False
+                self.xt = [torch.arange(0, len(x)) for x in self.xs[0]]
+                self.yt = [torch.arange(0 + len(x), len(y) + len(x))
+                    for x, y in zip(self.xs[0], self.y_pred[0])]
+            else:
+                # self.use_t_mins = True
+                pass
+
+        @classmethod
+        def from_net_out(cls, trainer, batch):
+            with torch.no_grad():
+                # batch = trainer.datamodule.transfer_batch_to_device(
+                # batch, trainer.model.device, 0)
+                x, y = batch
+                y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
+                                      x['encoder_target'])
+
             def _detach_fn(tensor, lens=None):
                 tensor = tensor.detach().cpu()
                 if lens is not None:
                     tensor = [t[:l] for t, l in zip(tensor, lens)]
                 return tensor
 
-            return (
-                [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
-                [_detach_fn(y, x['decoder_lengths']) for y in y_true],
-                [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
-            )
+            try:
+                # TODO where to put this for recurrent?
+                xt, yt = (x['encoder_cont'][:, :, trainer.model.t_idx],
+                          x['decoder_cont'][:, :, trainer.model.t_idx])
+
+                return cls(
+                    [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
+                    [_detach_fn(y, x['decoder_lengths']) for y in y_true],
+                    [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
+                    [_detach_fn(yt, x['decoder_lengths'])],
+                    [_detach_fn(xt, x['encoder_lengths'])],
+                )
+
+            except AttributeError:
+
+                return cls(
+                    [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
+                    [_detach_fn(y, x['decoder_lengths']) for y in y_true],
+                    [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
+                )
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch,
                            batch_idx):
         if (self.ready and (batch_idx % self.every_n_batches == 0)
                 and (trainer.current_epoch % self.every_n_epochs == 0)):
-            self.tr_data.append(self._process(trainer, batch))
+            self.tr_data.append(self.Batch.from_net_out(trainer, batch))
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch,
                                 batch_idx, dataloader_idx):
         if (self.ready and (batch_idx % self.every_n_batches == 0)
                 and (trainer.current_epoch % self.every_n_epochs == 0)):
-            self.va_data.append(self._process(trainer, batch))
+            self.va_data.append(self.Batch.from_net_out(trainer, batch))
 
     @staticmethod
     def make_plot(
         y_pred: List[torch.Tensor],
         y_true: List[torch.Tensor],
-        yt: Optional[torch.Tensor] = None,
+        yt: List[torch.Tensor],
+        xt: List[torch.Tensor],
+        use_t_mins: bool,  # TODO awk
         xs: Optional[torch.Tensor] = None,
-        xt: Optional[torch.Tensor] = None
     ) -> Tuple[np.ndarray, Dict[str, float]]:
 
         target_labels_to_facets = {
@@ -176,19 +167,15 @@ class PlotCallback(pl.Callback):
         # (target pt t 1)
         # (11 3 27 1)
         if xs is None:
-            xs = [[torch.zeros((0, 1)) for y in y_pred[0]]] * 11
+            xs = [[torch.zeros((0, 1)) for y in y_pred[0]]] * len(y_pred)
 
-        if xt is None:
-            xt = [torch.arange(0, len(x)) for x in xs[0]]
-        xt = np.concatenate(xt)
+        # 1 (b * n_batches) t -> t
+        xt = np.concatenate(xt[0])
+        yt = np.concatenate(yt[0])
 
-        if yt is None:
-            yt = [
-                torch.arange(0 + len(x),
-                             len(y) + len(x))
-                for x, y in zip(xs[0], y_pred[0])
-            ]
-        yt = np.concatenate(yt)
+        if use_t_mins:
+            xt = xt / 60
+            yt = yt / 60
 
         # TODO use group_id for this after adding data aug
         pts = np.concatenate(
@@ -244,6 +231,7 @@ class PlotCallback(pl.Callback):
             plt.close()
             return arr
 
+        # pred and true timeseries
         grid1 = sns.relplot(kind='line',
                             estimator=None,
                             x='t',
@@ -252,16 +240,17 @@ class PlotCallback(pl.Callback):
                             col='facet',
                             hue='vital',
                             data=df,
-                            alpha=0.4,
+                            alpha=0.5,
                             sort=False,
                             legend=False,
                             facet_kws=dict(sharey='col'),
                             units='pt',
                             style='is_y',
-                            markers=['o', '.', '.'],
+                            markers=False,  # ['o', '.', '.'],
                             style_order=['0_x', '1_y_predeath', '1_y_postdeath'],
                             linewidth=1,
-                            ms=1)
+                            # ms=1,
+        )
         # add green and yellow points
         for ax, targets in zip(grid1.axes[1, :], facets_to_target_labels.values()):
             batch_size = len(ax.lines) // (2 * len(targets))
@@ -273,9 +262,12 @@ class PlotCallback(pl.Callback):
             for line in np.take(ax.lines, [i for i in range(len(ax.lines)) if (i // batch_size) % 2 == 0]):
                 ax.plot(line.get_xdata()[0], line.get_ydata()[0], 'go', ms=2)
                 ax.plot(line.get_xdata()[-1], line.get_ydata()[-1], 'yo', ms=2)
+        if use_t_mins:
+            grid1.set_xlabels('t (min)')
         width, height = grid1.figure.get_size_inches()
         arr1 = to_array(grid1)
 
+        # relative error
         grid2 = sns.relplot(kind='line',
                             estimator=None,
                             x='t',
@@ -296,6 +288,8 @@ class PlotCallback(pl.Callback):
                                   for line in ax.lines]).mean()
             errs.append(err)
             ax.set_title(f'{title}\nmean relative error = {err:.2f}')
+        if use_t_mins:
+            grid2.set_xlabels('t (min)')
         # resize for stackability
         cur_w, cur_h = grid2.figure.get_size_inches()
         grid2.figure.set_size_inches(width, (width * cur_h / cur_w) * 1.1)
@@ -306,26 +300,26 @@ class PlotCallback(pl.Callback):
             dict(zip(target_labels_to_facets.keys(), errs))
         )
 
+    @staticmethod
+    def _flatten(tups: List[Tuple]):
+            # n_batches f b t 1 -> f (n_batches * b) t 1
+            # this is a huge pain with ragged arrays, and unreadable...
+            lsts = zip(*tups)
+            return [
+                [[item for items in batch for item in items]
+                      for batch in zip(*lst)]
+                for lst in lsts
+            ]
+
     # @rank_zero_only
     def on_train_epoch_end(self, trainer: pl.Trainer,
                            pl_module: pl.LightningModule) -> None:
         if self.ready and self.tr_data:
             # predictions = trainer.predict(trainer.model, dataloaders=trainer.datamodule.train_dataloader())
-            # this is a huge pain with ragged arrays...
-            # TODO strip right-padding using decoder_target, {de|en}coder_lengths
-            # TODO handle t
 
-            # n_batches f b t 1
-            y_pred, y_true, xs = zip(*self.tr_data)
-
-            # f (n_batches * b) t 1
-            y_pred = [[item for items in batch for item in items]
-                      for batch in zip(*y_pred)]
-            y_true = [[item for items in batch for item in items]
-                      for batch in zip(*y_true)]
-            xs = [[item for items in batch for item in items]
-                  for batch in zip(*xs)]
-            arr, errs = self.make_plot(y_pred, y_true, xs=xs)
+            kwargs = dict(zip(asdict(self.tr_data[0]).keys(),
+                              self._flatten(map(astuple, self.tr_data))))
+            arr, errs = self.make_plot(**kwargs, use_t_mins=True)
 
             trainer.logger.experiment.add_image(
                 'train',
@@ -343,17 +337,9 @@ class PlotCallback(pl.Callback):
     def on_validation_epoch_end(self, trainer: pl.Trainer,
                                 pl_module: pl.LightningModule) -> None:
         if self.ready and self.va_data:
-            # n_batches f b t 1
-            y_pred, y_true, xs = zip(*self.va_data)
-
-            # f (n_batches * b) t 1
-            y_pred = [[item for items in batch for item in items]
-                      for batch in zip(*y_pred)]
-            y_true = [[item for items in batch for item in items]
-                      for batch in zip(*y_true)]
-            xs = [[item for items in batch for item in items]
-                  for batch in zip(*xs)]
-            arr, errs = self.make_plot(y_pred, y_true, xs=xs)
+            kwargs = dict(zip(asdict(self.va_data[0]).keys(),
+                              self._flatten(map(astuple, self.va_data))))
+            arr, errs = self.make_plot(**kwargs, use_t_mins=True)
 
             trainer.logger.experiment.add_image(
                 'val', arr, global_step=trainer.global_step, dataformats='HWC')
@@ -415,6 +401,52 @@ class MyLightningCLI(LightningCLI):
         pass
 
 
+# TODO curriculum learning https://arxiv.org/abs/2101.10382
+# train on easy examples before hard examples
+# with missingness, this amounted to removing missingness from 10 more points
+# per batch every epoch
+# this was done only for enc-dec arch, related to GoogleStock(start_reverse)?
+# https://gitlab.kitware.com/physiology/engine/-/blob/study/ode/src/python/pulse/study/neural_ode/neural_ode/run_models.py#L263
+def trainer_kwargs(kl_coef=1,
+                   max_epochs=301,
+                   test_for_epochs=1,
+                   load_ckpt=None,
+                   patience_for_no_better_epochs=30):
+    kl_getter = UpdateKLCoef(kl_coef)
+    top_va_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
+                                                   save_top_k=1,
+                                                   monitor='val_loss')
+    top_tr_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
+                                                   save_top_k=1,
+                                                   monitor='train_loss_epoch')
+    plot_callback = PlotCallback(every_n_epochs=50)
+    early_stopping_callback = pl.callbacks.EarlyStopping(
+                monitor='train_loss_epoch',
+                # monitor='tr_mse',
+                # monitor='va_mse',
+                mode='min',
+                patience=patience_for_no_better_epochs)
+    logger = pl.loggers.TensorBoardLogger(
+        save_dir='lightning_logs/',
+        name=None,  # can set this in cli
+        default_hp_metric=False,
+    )
+    return dict(
+        max_epochs=max_epochs,
+        check_val_every_n_epoch=test_for_epochs,
+        resume_from_checkpoint=load_ckpt,
+        callbacks=[
+            kl_getter,
+            plot_callback,
+            early_stopping_callback,
+            # top_va_callback,
+            # top_tr_callback,
+        ],
+        gradient_clip_val=0.01,
+        logger=logger,
+        gpus=1)
+
+
 if __name__ == "__main__":
 
     torch.set_default_dtype(torch.float32)
@@ -424,14 +456,15 @@ if __name__ == "__main__":
         from neural_ode.models.diff_func import ODEFuncParams
         from neural_ode.models.utils import BaseModel
         dm = utils.HemorrhageVitals(
+            root_path='/data/pulse/hemorrhage/patient_variability/hemorrhage/test',
+            # max_pts=200,
             stride=100,
-            max_pts=200,
-            batch_size=2,
+            batch_size=8,
         )
         trainer = pl.Trainer(**trainer_kwargs(),
                              overfit_batches=False,
                              log_every_n_steps=1,
-                             gpus=1)
+        )
 
         dm.prepare_data()
         dm.setup()
@@ -448,7 +481,6 @@ if __name__ == "__main__":
         batch = next(iter(dm.train_dataloader()))
         x, y = batch
         y_pred = model(x)
-        # import xdev; xdev.embed()
 
         trainer.fit(model, datamodule=dm)
 

@@ -227,7 +227,8 @@ class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
         self.example_input_array = (x, )
         # self.batch_size = len(x['encoder_lengths'])
         self.batch_size = dm.batch_size
-        self.t_param = dm.t_param  # for time as time_varying_known_real?
+        # import xdev; xdev.embed()
+        self.t_idx = dm.dset_tr.reals.index(dm.t_param)
         return self
 
     def forward(self, x: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
@@ -254,17 +255,15 @@ class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
         # The conversion to a named tuple can be directly achieved with the `to_network_output` function.
         return self.to_network_output(prediction=prediction)
         '''
-        # TODO x_time and y_time as known covariate (encoder_cont, decoder_cont)
         # TODO use packed_sequence
         # 'b t f'
-        x_data = x['encoder_cont']
-        assert torch.unique(x['encoder_lengths']).shape == (1, )
-        enc_len = x['encoder_lengths'][0]
-        assert torch.unique(x['decoder_time_idx'][:, 0]).shape == (1, )
-        dec_idx = x['decoder_time_idx'][0, 0]
-        dec_len = torch.max(x['decoder_lengths'])
-        x_time = torch.arange(dec_idx - enc_len, dec_idx, device=self.device)
-        y_time = torch.arange(dec_idx, dec_idx + dec_len, device=self.device)
+        x_data = x['encoder_cont']  # TODO try removing time (and add flag for plot)
+        x_time = x['encoder_cont'][:, :, self.t_idx]
+        assert torch.allclose(*x_time[:, :2])
+        x_time = x_time[x['encoder_lengths'].argmax()]
+        y_time = x['decoder_cont'][:, :, self.t_idx]
+        assert torch.allclose(*y_time[:, :2])
+        y_time = y_time[x['decoder_lengths'].argmax()]
 
         y_pred = self.old_forward(y_time, x_data, x_time)
         # TODO update if any target is multichannel (categorical)
@@ -454,7 +453,7 @@ def wrap_pf_dataloader(dl):
 @dataclass
 class HemorrhageVitals(BaseData):
 
-    use_cache: bool = True
+    read_cache: bool = True
 
     # dataloader
     batch_size: int = 2  #200
@@ -508,7 +507,7 @@ class HemorrhageVitals(BaseData):
 
     def _prepare_data(self):
         cache_dir = self._cache_dir()
-        if not cache_dir.exists():
+        if not (cache_dir.exists() and self.read_cache):
 
             df, (dset_tr, dset_va, dset_te) = self._build_dsets()
 
@@ -611,7 +610,7 @@ class HemorrhageVitals(BaseData):
                        ASSUMED_FREQ_S)
         print(f'{x_points} in timesteps, [1, {y_points}] out timesteps')
         # make t_param integer
-        df[self.t_param] = (df[self.t_param] / ASSUMED_FREQ_S).astype(int)
+        df['time_idx'] = (df[self.t_param] / ASSUMED_FREQ_S).astype(int)
         # make continue_params float
         df[self.continue_params] = df[self.continue_params].astype(float)
 
@@ -669,7 +668,7 @@ class HemorrhageVitals(BaseData):
             [pf.EncoderNormalizer(transformation='softmax')] *
             len(self.continue_params))
         kwargs = dict(
-            time_idx=self.t_param,
+            time_idx='time_idx',
             # mutitarget returns a list because the targets may have different dtypes. How to get around this besides fixing in dataloader? Multiindex? pd.Series of vectors?
             target=self.continue_params,
             group_ids=['id'],
@@ -680,7 +679,7 @@ class HemorrhageVitals(BaseData):
             # this is duped w/ different normalizer between target and cont
             # worth doing because target doesn't come normalized in dataloader
             time_varying_unknown_reals=self.continue_params,
-            time_varying_known_reals=[],
+            time_varying_known_reals=[self.t_param],
             time_varying_unknown_categoricals=[],
             time_varying_known_categoricals=[],
             static_categoricals=[],
@@ -690,6 +689,7 @@ class HemorrhageVitals(BaseData):
             # add_target_scales=True,  # TODO figure out how to add static feats
             add_target_scales=False,
             add_encoder_length=False,
+            scalers={self.t_param: None},
         )
         if not self.time_augmentation:
             kwargs.update(
