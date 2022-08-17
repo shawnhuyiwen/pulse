@@ -84,35 +84,37 @@ class ODE_RNN(nn.Module):
                 x,
                 x_time,
                 return_latents=False,
-                initial_dt=0.01,
-                min_step_frac=50):
+                initial_dt=0.01,    # TODO adjust this
+                min_step_frac=50):  # TODO adjust this
         batch_size = x.shape[0]
 
         prev_hi = torch.zeros((batch_size, self.h_dims), device=x.device)
         prev_hi_std = torch.zeros((batch_size, self.h_dims), device=x.device)
 
-        # TODO why going backwards?
-        prev_ti, ti = x_time[-1] + 0.01, x_time[-1]
+        prev_ti, ti = x_time[0] - initial_dt, x_time[0]
         #TRANS: Internal grid size
         interval_length = x_time[-1] - x_time[0]
+        # ODE is never solved unless a timestep is >1/50 of the total time
         minimum_step = interval_length / min_step_frac
 
         hs = []
 
-        for i in range(x_time.numel()):
+        for i in range(len(x_time)):
             #TRANS: If it can not meet the minimum step direct linear increase
-            if (prev_ti - ti) < minimum_step:
+            dt = ti - prev_ti
+            if dt < minimum_step:
 
                 time_points = torch.stack((prev_ti, ti))
                 #TRANS: The linear increment
-                inc = self.diffeq_solver(prev_ti, prev_hi) * (ti - prev_ti)
+                inc = self.diffeq_solver(prev_ti, prev_hi) * dt
                 hi_ode = prev_hi + inc
 
             else:
                 n_intermediate_tp = max(2,
-                                        ((prev_ti - ti) / minimum_step).int())
+                                        (dt / minimum_step).int())
                 time_points = utils.linspace_vector(prev_ti, ti,
-                                                    n_intermediate_tp)
+                                                    n_intermediate_tp,
+                                                    device=x.device)
                 #TRANS: Calculate the ODE, work out corresponding latent value
                 # to (1) finally can
                 hi_ode = self.diffeq_solver.solve(prev_hi, time_points)[:, -1, :]

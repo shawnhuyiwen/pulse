@@ -29,7 +29,7 @@ class ODEFuncParams:
     # solver
     odeint_rtol: float = 1e-3
     odeint_atol: float = 1e-4
-    ode_method: str = 'dopri15'
+    ode_method: str = 'dopri5'
 
 
 class ODEFunc(nn.Module):
@@ -51,12 +51,9 @@ class ODEFunc(nn.Module):
                                          hidden_layers=self.h_trans_layers,
                                          nonlinear=self.nonlinear)
 
-    def forward(self, t, h, backwards=False):
+    def forward(self, t, h):
         hs = self.ode_func(h)
         hs = self.final_nonlinear(hs)
-        # TRANS: It needs to be the same equation, the reverse solving backwards
-        if backwards:
-            hs = -hs
         return hs
 
     def solve(self, h0, t):
