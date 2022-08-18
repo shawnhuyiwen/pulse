@@ -481,6 +481,36 @@ if __name__ == "__main__":
         cli.datamodule.shuffle = False   # HACK
         # TODO change lr scheduler from val_loss to train_loss_epoch here
 
+    # pretty log name for tensorboard
+    # to set manually:
+        # --trainer.logger TensorBoardLogger
+        # --trainer.logger.save_dir lightning_logs
+        # --trainer.logger.name xxxx
+    if ((cli.trainer.logger.name == '') or
+        (cli.trainer.logger.save_dir == cli.trainer.logger.name)):
+        dset_names = {
+            '/data/pulse/hemorrhage/hemorrhage': 'orig',
+            '/data/pulse/hemorrhage/patient_variability/hemorrhage/test': 'mild'
+        }
+        new_name = '_'.join((
+            type(cli.model).__name__,
+            dset_names[cli.datamodule.root_path],
+            f'b{cli.datamodule.batch_size}'    # batches
+            f'p{len(cli.datamodule.dset_tr)}'  # patients
+            f's{cli.datamodule.stride}'        # stride
+        ))
+        try:  # logger was set manually but without a name
+            kwargs = dict(cli.config.trainer.logger.init_args)
+            kwargs.update(name=new_name)
+            cli.trainer.logger = type(cli.trainer.logger)(**kwargs)
+        except AttributeError:  # default logger was used
+            cli.trainer.logger = pl.loggers.TensorBoardLogger(
+                save_dir='lightning_logs/',
+                name=new_name,
+                default_hp_metric=False,
+            )
+        import xdev; xdev.embed()
+
     # batch = next(iter(cli.datamodule.train_dataloader()))
     # x, y = batch
     # y_pred = cli.model(x)
