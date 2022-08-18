@@ -50,11 +50,127 @@ class BaseModelWithCovariatesKwargs:
     x_categoricals: List[str] = field(default_factory=list)
 
 
-class StubBaseModel(pl.LightningModule):
-    pass
+class PFMixin(pl.LightningModule):
+
+    @staticmethod
+    def _coerce_loss(loss, n_targets, weights):
+        if isinstance(loss, str):
+            _loss = getattr(pf.metrics, loss)()
+        elif isinstance(loss, (pf.metrics.Metric, pf.metrics.MultiLoss)):
+            _loss = loss
+        else:
+            raise TypeError(loss)
+
+        if n_targets is not None and n_targets > 1:
+            if not isinstance(_loss, pf.metrics.MultiLoss):
+                _loss = pf.metrics.MultiLoss([_loss] * n_targets, weights)
+
+        return _loss
+
+    @staticmethod
+    def target_weights(dset: pf.TimeSeriesDataSet) -> List[float]:
+        '''
+        calculate target weights
+        (pass this to MultiLoss in model)
+        '''
+        # df.melt(id_vars=['X', 'Y']).query('value == 1')
+        # TODO use this for normalizer as well
+        first_entries = torch.stack([
+            dset.data['target'][i][dset.index['index_start'].values]
+            for i in range(len(dset.target))
+        ])
+        initial_target_values = first_entries.mean(axis=1)
+        mean_target_values = torch.tensor(
+            [dset.data['target'][i].mean() for i in range(len(dset.target))])
+        # targets 'TotalHemorrhageRate(mL/s)', 'TotalHemorrhagedVolume(mL)'
+        # start at 0, so use their mean values instead of initial values
+        return 1. / torch.where(initial_target_values > 0,
+                                initial_target_values, mean_target_values)
+
+    def __init__(
+            self,
+            learning_rate=1e-3,
+            # loss=pf.metrics.RMSE(),
+            loss='MAE',  # coerce later to avoid yaml bug in LightningCLI(run=True)
+            # loss=pf.metrics.SMAPE(),
+            # logging_metrics=[pf.metrics.RMSE()],
+            logging_metrics=['MAE'],
+            # logging_metrics=torch.nn.ModuleList([pf.metrics.RMSE()]),
+            optimizer='Adamax',  # 'ranger'
+            reduce_on_plateau_patience=10,
+            reduce_on_plateau_reduction=10,
+            reduce_on_plateau_min_lr=1e-6,
+            weight_decay=0.,
+            optimizer_params={},
+            monotone_constaints={},  # sp
+            x_dims=None,
+            y_dims=None,
+            # loss_weights=None,
+            STUB=True,
+            **kwargs):
+        '''
+        MAE is equal to:
+        (torch.stack([(y_pred['prediction'][i].squeeze() - y[0][i]).abs().mean() for i in range(11)])).sum(0)
+        model.loss(y_pred['prediction'], y)
+        '''
+        self.save_hyperparameters(ignore=['x_dims', 'y_dims', 'STUB'])
+        # self.save_hyperparameters(dict(loss=loss, logging_metrics=logging_metrics), logger=False)
+        # TODO ensure the cov kwargs are saved in hparams
+        self.STUB = STUB
+        if not STUB:
+            super().__init__(loss=loss,
+                             logging_metrics=logging_metrics,
+                             **kwargs)
+
+    # TODO check this when implementing categorical target in from_dataset
+    # https://pytorch-forecasting.readthedocs.io/en/stable/tutorials/building.html#Predicting-multiple-targets-at-the-same-time
+    @classmethod
+    def from_datamodule(cls, dm, **kwargs):
+        dm.prepare_data()
+        dm.setup(stage='train')
+        # TODO keep track of deduce_default_output_parameters output_size
+        # output_size (Union[int, List[int]], optional): number of outputs
+        # (e.g. number of quantiles for QuantileLoss and one target or list of
+        # output sizes).
+        # for TFT:
+        # output_size=[7, 7, 7, 7], # 4 target variables
+        dataset = dm.dset_tr
+        loss_weights = cls.target_weights(dataset)
+        x_dims= len(dataset.reals) + len(dataset.flat_categoricals)
+        y_dims = (# len(dataset.time_varying_known_reals) +
+                 # len(dataset.time_varying_known_categoricals) +
+                 len(dataset.target))
+        loss = cls._coerce_loss(kwargs['loss'], y_dims, loss_weights)
+        logging_metrics = nn.ModuleList([
+            cls._coerce_loss(l, y_dims, loss_weights) for l in kwargs['logging_metrics']
+        ])
+        kwargs.update(
+            x_dims=x_dims,
+            y_dims=y_dims,
+            loss=loss,
+            logging_metrics=logging_metrics,
+        )
+        self = cls.from_dataset(
+            dm.dset_tr, **ub.dict_diff(
+                kwargs,
+                list(asdict(BaseModelWithCovariatesKwargs())) + ['output_transformer', 'target', 'output_size']
+            ),
+            STUB=False,
+            # output_size=([1] * len(dm.continue_params)),  # TODO change for categorical
+        )  #, output_transformer=dm.dset_tr.target_normalizer)
+        batch = next(iter(dm.train_dataloader()))
+        x, y = batch
+        # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
+        self.example_input_array = (x, )
+        # self.batch_size = len(x['encoder_lengths'])
+        self.batch_size = dm.batch_size
+        self.t_idx = dm.dset_tr.reals.index(dm.t_param)
+        # self.x_dims = x_dims  # TODO make properties based on pf?
+        # self.y_dims = y_dims
+        return self
 
 
-class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
+class BaseModel(PFMixin, pf.BaseModelWithCovariates):
     '''
 
     Model with additional methods using covariates.
@@ -88,69 +204,13 @@ class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
         https://forums.pytorchlightning.ai/t/loading-checkpoints-when-models-built-using-a-setup-block/530/2
     '''
 
-    @staticmethod
-    # TODO un-hardcode
-    def _coerce_loss(loss, n_targets, weights):
-        if isinstance(loss, str):
-            _loss = getattr(pf.metrics, loss)()
-        elif isinstance(loss, (pf.metrics.Metric, pf.metrics.MultiLoss)):
-            _loss = loss
-        else:
-            raise TypeError(loss)
-
-        if n_targets is not None and n_targets > 1:
-            if not isinstance(_loss, pf.metrics.MultiLoss):
-                _loss = pf.metrics.MultiLoss([_loss] * n_targets, weights)
-
-        return _loss
-
-    def __init__(
-            self,
-            learning_rate=1e-2,
-            # loss=pf.metrics.RMSE(),
-            loss='MAE',  # coerce later to avoid yaml bug in LightningCLI(run=True)
-            # loss=pf.metrics.SMAPE(),
-            # logging_metrics=[pf.metrics.RMSE()],
-            logging_metrics=['MAE'],
-            # logging_metrics=torch.nn.ModuleList([pf.metrics.RMSE()]),
-            optimizer='Adamax',  # 'ranger'
-            reduce_on_plateau_patience=10,
-            reduce_on_plateau_reduction=10,
-            reduce_on_plateau_min_lr=1e-6,
-            weight_decay=0.,
-            optimizer_params={},
-            monotone_constaints={},  # sp
-            x_dims=None,
-            y_dims=None,
-            batch_size=None,
-            t_param=None,
-            loss_weights=None,
-            **kwargs):
-        loss = self._coerce_loss(loss, y_dims, loss_weights)
-        '''
-        MAE is equal to:
-        (torch.stack([(y_pred['prediction'][i].squeeze() - y[0][i]).abs().mean() for i in range(11)])).sum(0)
-        model.loss(y_pred['prediction'], y)
-        '''
-
-        logging_metrics = nn.ModuleList([
-            self._coerce_loss(l, y_dims, loss_weights) for l in logging_metrics
-        ])
-        self.save_hyperparameters(ignore=[
-            'x_dims', 'y_dims', 'batch_size', 't_param', 'loss_weights'
-        ])
-        # self.save_hyperparameters(dict(loss=loss, logging_metrics=logging_metrics), logger=False)
-        # TODO ensure the cov kwargs are saved in hparams
-        super().__init__(loss=loss,
-                         logging_metrics=logging_metrics,
-                         **ub.dict_diff(
-                             kwargs, asdict(BaseModelWithCovariatesKwargs())))
+    def __init__(self, STUB=True, **kwargs):
         self.gaussian_likelihood_std = torch.tensor([0.01])
-
-        self.x_dims: int = x_dims
-        self.y_dims: int = y_dims
-        self.batch_size: int = batch_size
-        self.t_param: str = t_param
+        if not STUB:
+            kwargs = ub.dict_diff(
+                    kwargs,
+                    list(asdict(BaseModelWithCovariatesKwargs())))# + ['output_transformer', 'target', 'output_size'])
+        super().__init__(STUB=STUB, **kwargs)
 
         # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
         # shouldn't declare this before it can be assigned to
@@ -170,66 +230,6 @@ class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
         # x_categoricals=self.hparams.x_categoricals,
         # max_embedding_size=self.hparams.hidden_size,
         # )
-
-    @staticmethod
-    def target_weights(dset: pf.TimeSeriesDataSet) -> List[float]:
-        '''
-        calculate target weights
-        (pass this to MultiLoss in model)
-        '''
-        # df.melt(id_vars=['X', 'Y']).query('value == 1')
-        # TODO use this for normalizer as well
-        first_entries = torch.stack([
-            dset.data['target'][i][dset.index['index_start'].values]
-            for i in range(len(dset.target))
-        ])
-        initial_target_values = first_entries.mean(axis=1)
-        mean_target_values = torch.tensor(
-            [dset.data['target'][i].mean() for i in range(len(dset.target))])
-        # targets 'TotalHemorrhageRate(mL/s)', 'TotalHemorrhagedVolume(mL)'
-        # start at 0, so use their mean values instead of initial values
-        return 1. / torch.where(initial_target_values > 0,
-                                initial_target_values, mean_target_values)
-
-    @classmethod
-    def from_dataset(cls, dataset, **kwargs):
-        # self.x_dims = len(self.encoder_variables)  # + len(self.static_variables)
-        # self.y_dims = len(self.decoder_variables) + len(self.target_names)
-        kwargs.update(
-            x_dims=(len(dataset.reals) + len(dataset.flat_categoricals)),
-            y_dims=(# len(dataset.time_varying_known_reals) +
-                    # len(dataset.time_varying_known_categoricals) +
-                    len(dataset.target)),
-            loss_weights=cls.target_weights(dataset),
-        )
-        return super().from_dataset(dataset, **kwargs)
-
-    # TODO check this when implementing categorical target in from_dataset
-    # https://pytorch-forecasting.readthedocs.io/en/stable/tutorials/building.html#Predicting-multiple-targets-at-the-same-time
-    @classmethod
-    def from_datamodule(cls, dm, **kwargs):
-        dm.prepare_data()
-        dm.setup(stage='train')
-        # TODO keep track of deduce_default_output_parameters output_size
-        # output_size (Union[int, List[int]], optional): number of outputs
-        # (e.g. number of quantiles for QuantileLoss and one target or list of
-        # output sizes).
-        # for TFT:
-        # output_size=[7, 7, 7, 7], # 4 target variables
-        self = cls.from_dataset(
-            dm.dset_tr, **ub.dict_diff(
-                kwargs,
-                ['output_transformer'
-                 ]))  #, output_transformer=dm.dset_tr.target_normalizer)
-        batch = next(iter(dm.train_dataloader()))
-        x, y = batch
-        # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
-        self.example_input_array = (x, )
-        # self.batch_size = len(x['encoder_lengths'])
-        self.batch_size = dm.batch_size
-        # import xdev; xdev.embed()
-        self.t_idx = dm.dset_tr.reals.index(dm.t_param)
-        return self
 
     def forward(self, x: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
         '''
@@ -276,23 +276,6 @@ class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
     def old_forward(self, y_time, x, x_time):
         raise NotImplementedError
 
-    def compute_loss_one_batch(self, batch, batch_idx):
-        #TRANS: Predict the y series, including the observed and was not observed
-        y_pred = self.forward(batch["y_time"], batch["x_data"],
-                              batch["x_time"])
-
-        # TRANS: To calculate indicators, batch_dict "y_mask" if is True, it should
-        # enter None
-        likelihood = get_log_likelihood(y_pred, batch["y_data"],
-                                        self.gaussian_likelihood_std)
-        mse_loss = get_mse(y_pred, batch["y_data"])
-        # self.mse_loss(y_pred, batch['y_data'])
-        loss = -torch.mean(
-            likelihood
-        )  #TRANS: To maximize the average log_likelihood back propagation
-
-        return loss, mse_loss
-
     '''
     def training_step(self, batch, batch_idx):
         self.log("my_metric", x)
@@ -321,35 +304,16 @@ class BaseModel(pf.BaseModelWithCovariates, StubBaseModel):
     # lightningmodule also has a setup(), move this there so it's autoinvoked
 
 
-class PFAdapter(StubBaseModel):
+class RNNAdapter(PFMixin, pf.RecurrentNetwork):
 
-    def __init__(self, pf_class: type, hidden_size=100, **kwargs):
-        self.pf_class = pf_class
-        self.save_hyperparameters('hidden_size')
-        super().__init__(**kwargs)
+    def __init__(
+            self,
+            hidden_size=100,
+            **kwargs):
 
-    def from_datamodule(self, dm, **kwargs):
-        dm.prepare_data()
-        dm.setup(stage='train')
-        # TODO keep track of deduce_default_output_parameters output_size
-        # output_size (Union[int, List[int]], optional): number of outputs
-        # (e.g. number of quantiles for QuantileLoss and one target or list of
-        # output sizes).
-        # for TFT:
-        # output_size=[7, 7, 7, 7], # 4 target variables
-        new_self = self.pf_class.from_dataset(
-            dm.dset_tr, **ub.dict_diff(
-                kwargs,
-                ['output_transformer'
-                 ]))  #, output_transformer=dm.dset_tr.target_normalizer)
-        batch = next(iter(dm.train_dataloader()))
-        x, y = batch
-        # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
-        new_self.example_input_array = (x, )
-        # new_self.batch_size = len(x['encoder_lengths'])
-        new_self.batch_size = dm.batch_size
-        new_self.t_param = dm.t_param  # for time as time_varying_known_real?
-        return new_self
+        super().__init__(hidden_size=hidden_size,
+                         **kwargs)
+
 
 
 class DummyModel(BaseModel):

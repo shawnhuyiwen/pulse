@@ -1,6 +1,5 @@
 import os
 import gc
-from random import SystemRandom
 import torch
 from torch.distributions.normal import Normal
 from tqdm import tqdm
@@ -426,6 +425,7 @@ def trainer_kwargs(kl_coef=1,
                 # monitor='va_mse',
                 mode='min',
                 patience=patience_for_no_better_epochs)
+    lr_monitor_callback = pl.callbacks.LearningRateMonitor()
     logger = pl.loggers.TensorBoardLogger(
         save_dir='lightning_logs/',
         name=None,  # can set this in cli
@@ -439,6 +439,7 @@ def trainer_kwargs(kl_coef=1,
             kl_getter,
             plot_callback,
             early_stopping_callback,
+            lr_monitor_callback,
             # top_va_callback,
             # top_tr_callback,
         ],
@@ -450,65 +451,46 @@ def trainer_kwargs(kl_coef=1,
 if __name__ == "__main__":
 
     torch.set_default_dtype(torch.float32)
-    if 0:
+    '''
+    alternate invocation:
+        model_class=RecurrentODE.from_dataset or
+        --model RecurrentODE.from_dataset
+    combine with https://jsonargparse.readthedocs.io/en/stable/index.html#argument-linking for model.dset == dm.dset_tr
+    https://github.com/omni-us/jsonargparse/issues/146
+    '''
 
-        from neural_ode.models.recurrent import RecurrentODEParams
-        from neural_ode.models.diff_func import ODEFuncParams
-        from neural_ode.models.utils import BaseModel
-        dm = utils.HemorrhageVitals(
-            root_path='/data/pulse/hemorrhage/patient_variability/hemorrhage/test',
-            # max_pts=200,
-            stride=100,
-            batch_size=8,
-        )
-        trainer = pl.Trainer(**trainer_kwargs(),
-                             overfit_batches=False,
-                             log_every_n_steps=1,
-        )
+    # for mild dset
+    # --data.root_path=/data/pulse/hemorrhage/patient_variability/hemorrhage/test
 
-        dm.prepare_data()
-        dm.setup()
-        # model = RecurrentODE.from_datamodule(dm, recurrentodeparams=RecurrentODEParams(), odefuncparams=ODEFuncParams(), learning_rate=1e-4)
-        loss = pf.MultiLoss([pf.MAE()] * 11,
-                            weights=BaseModel.target_weights(dm.dset_tr))
+    # model = pf.DeepAR.from_dataset(dm.dset_tr, learning_rate=1e-4)
 
-        model = pf.RecurrentNetwork.from_dataset(dm.dset_tr,
-                                                 hidden_size=100,
-                                                 learning_rate=1e-3,
-                                                 loss=loss)
-        # model = pf.DeepAR.from_dataset(dm.dset_tr, learning_rate=1e-4)
+    cli = MyLightningCLI(
+        model_class=utils.PFMixin,
+        datamodule_class=utils.BaseData,
+        trainer_defaults=trainer_kwargs(),
+        seed_everything_default=47,
+        run=False,
+        subclass_mode_model=True,
+        subclass_mode_data=True,
+        auto_registry=False)
 
-        batch = next(iter(dm.train_dataloader()))
-        x, y = batch
-        y_pred = model(x)
+    print('reloading model')
+    cli.model = cli.model.from_datamodule(cli.datamodule,
+                                          **cli.model.hparams)
+    if cli.trainer.overfit_batches:
+        cli.datamodule.shuffle = False   # HACK
+        # TODO change lr scheduler from val_loss to train_loss_epoch here
 
-        trainer.fit(model, datamodule=dm)
+    # batch = next(iter(cli.datamodule.train_dataloader()))
+    # x, y = batch
+    # y_pred = cli.model(x)
 
-    else:
-        '''
-        alternate invocation:
-            model_class=RecurrentODE.from_dataset or
-            --model RecurrentODE.from_dataset
-        combine with https://jsonargparse.readthedocs.io/en/stable/index.html#argument-linking for model.dset == dm.dset_tr
-        https://github.com/omni-us/jsonargparse/issues/146
-        '''
+    # DUMP HPARAMS
+    # from pytorch_lightning.core.saving import save_hparams_to_yaml
+    # save_hparams_to_yaml('cli_model.yaml', cli.model.hparams)
+    # save_hparams_to_yaml('cli_dm.yaml', cli.datamodule.hparams)
 
-        cli = MyLightningCLI(
-            model_class=utils.StubBaseModel,
-            # cli = LightningCLI(model_class=utils.BaseModel,
-            datamodule_class=utils.BaseData,
-            trainer_defaults=trainer_kwargs(),
-            seed_everything_default=47,
-            # run=True,
-            run=False,
-            subclass_mode_model=True,
-            subclass_mode_data=True,
-            auto_registry=False)
-        cli.model = cli.model.from_datamodule(cli.datamodule,
-                                              **cli.model.hparams)
-        if cli.trainer.overfit_batches:
-            cli.datamodule.shuffle = False   # HACK
-        # # fit == train + validate
-        # import xdev
-        # with xdev.embed_on_exception_context():
-        cli.trainer.fit(cli.model, datamodule=cli.datamodule)
+    # # fit == train + validate
+    # import xdev
+    # with xdev.embed_on_exception_context():
+    cli.trainer.fit(cli.model, datamodule=cli.datamodule)

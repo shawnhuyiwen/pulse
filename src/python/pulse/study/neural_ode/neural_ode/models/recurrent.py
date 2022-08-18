@@ -167,7 +167,9 @@ class RecurrentODE(BaseModel):
         # self.save_hyperparameters(ignore=list(kwargs.keys()))
         # self.save_hyperparameters()
 
-        if self.x_dims is not None:
+        if not self.STUB:
+            self.x_dims = kwargs['x_dims']
+            self.y_dims = kwargs['y_dims']
 
             diffeq_solver = ODEFunc(self.x_dims, self.odefuncparams)
 
