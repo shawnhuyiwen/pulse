@@ -64,7 +64,7 @@ enum eDriverWaveform
   NullDriverWaveform = 0;/**<< Signals not provided, or no change */
   Square             = 1;/**<<  */
   AscendingRamp      = 2;/**<<  */
-  DecendingRamp      = 3;/**<<  */
+  DescendingRamp     = 3;/**<<  */
   ExponentialGrowth  = 4;/**<<  */
   ExponentialDecay   = 5;/**<<  */
   SinusoidalRise     = 6;/**<<  */

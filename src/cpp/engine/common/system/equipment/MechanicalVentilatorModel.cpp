@@ -639,8 +639,7 @@ namespace pulse
     }
 
     // Apply waveform
-    if (GetSettings().GetInspirationWaveform() == eDriverWaveform::Square ||
-      (GetSettings().HasInspirationWaveformPeriod() && m_CurrentPeriodTime_s > GetSettings().GetInspirationWaveformPeriod(TimeUnit::s)))
+    if (GetSettings().GetInspirationWaveform() == eDriverWaveform::Square)
     {
       if (GetSettings().HasPeakInspiratoryPressure())
       {
@@ -670,6 +669,7 @@ namespace pulse
         }
 
         m_DriverPressure_cmH2O = initialPressure_cmH2O + (finalPressure_cmH2O - initialPressure_cmH2O) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
+        m_DriverPressure_cmH2O = LIMIT(m_DriverPressure_cmH2O, initialPressure_cmH2O, finalPressure_cmH2O);
         m_DriverFlow_L_Per_s = SEScalar::dNaN();
       }
       else if (GetSettings().HasInspirationTargetFlow())
@@ -677,6 +677,7 @@ namespace pulse
         double initialFlow_L_Per_s = 0.0;
         double finalFlow_L_Per_s = GetSettings().GetInspirationTargetFlow(VolumePerTimeUnit::L_Per_s);
         m_DriverFlow_L_Per_s = initialFlow_L_Per_s + (finalFlow_L_Per_s - initialFlow_L_Per_s) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
+        m_DriverFlow_L_Per_s = LIMIT(m_DriverFlow_L_Per_s, initialFlow_L_Per_s, finalFlow_L_Per_s);
         m_DriverPressure_cmH2O = SEScalar::dNaN();
       }
       else
@@ -685,7 +686,7 @@ namespace pulse
         Fatal("Inspiration mode not yet supported.");
       }
     }
-    else if (GetSettings().GetInspirationWaveform() == eDriverWaveform::DecendingRamp)
+    else if (GetSettings().GetInspirationWaveform() == eDriverWaveform::DescendingRamp)
     {
       if (GetSettings().HasPeakInspiratoryPressure())
       {
@@ -697,6 +698,7 @@ namespace pulse
         }
 
         m_DriverPressure_cmH2O = initialPressure_cmH2O + (finalPressure_cmH2O - initialPressure_cmH2O) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
+        m_DriverPressure_cmH2O = LIMIT(m_DriverPressure_cmH2O, finalPressure_cmH2O, initialPressure_cmH2O);
         m_DriverFlow_L_Per_s = SEScalar::dNaN();
       }
       else if (GetSettings().HasInspirationTargetFlow())
@@ -704,6 +706,7 @@ namespace pulse
         double initialFlow_L_Per_s = GetSettings().GetInspirationTargetFlow(VolumePerTimeUnit::L_Per_s);
         double finalFlow_L_Per_s = 0.0;
         m_DriverFlow_L_Per_s = initialFlow_L_Per_s + (finalFlow_L_Per_s - initialFlow_L_Per_s) * m_CurrentPeriodTime_s / GetSettings().GetInspirationWaveformPeriod(TimeUnit::s);
+        m_DriverFlow_L_Per_s = LIMIT(m_DriverFlow_L_Per_s, finalFlow_L_Per_s, initialFlow_L_Per_s);
         m_DriverPressure_cmH2O = SEScalar::dNaN();
       }
       else
