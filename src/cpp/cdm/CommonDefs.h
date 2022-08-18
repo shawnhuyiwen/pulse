@@ -155,7 +155,7 @@ enum class eDefaultType { Model = 0, Zero };
 extern const std::string& eDefaultType_Name(eDefaultType m);
 
 enum class eDriverWaveform { NullDriverWaveform = 0, Square,
-                                                  AscendingRamp, DecendingRamp,
+                                                  AscendingRamp, DescendingRamp,
                                                   ExponentialGrowth, ExponentialDecay,
                                                   SinusoidalRise, SinusoidalFall,
                                                   SigmoidalRise, SigmoidalFall };

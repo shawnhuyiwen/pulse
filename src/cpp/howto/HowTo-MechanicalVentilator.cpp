@@ -158,7 +158,7 @@ void HowToMechanicalVentilator()
   SEMechanicalVentilatorVolumeControl vc_ac;
   vc_ac.SetConnection(eSwitch::On);
   vc_ac.SetMode(eMechanicalVentilator_VolumeControlMode::AssistedControl);
-  vc_ac.SetInspirationWaveform(eDriverWaveform::DecendingRamp);
+  vc_ac.SetInspirationWaveform(eDriverWaveform::DescendingRamp);
   vc_ac.GetFlow().SetValue(60.0, VolumePerTimeUnit::L_Per_min);
   vc_ac.GetFractionInspiredOxygen().SetValue(0.21);
   vc_ac.GetInspiratoryPeriod().SetValue(1.0, TimeUnit::s); //This is optional
