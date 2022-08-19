@@ -53,7 +53,7 @@ class BaseModelWithCovariatesKwargs:
 class PFMixin(pl.LightningModule):
 
     @staticmethod
-    def _coerce_loss(loss, n_targets, weights):
+    def _coerce_loss(loss, n_targets=1, weights=None):
         if isinstance(loss, str):
             _loss = getattr(pf.metrics, loss)()
         elif isinstance(loss, (pf.metrics.Metric, pf.metrics.MultiLoss)):
@@ -61,7 +61,7 @@ class PFMixin(pl.LightningModule):
         else:
             raise TypeError(loss)
 
-        if n_targets is not None and n_targets > 1:
+        if  n_targets > 1:
             if not isinstance(_loss, pf.metrics.MultiLoss):
                 _loss = pf.metrics.MultiLoss([_loss] * n_targets, weights)
 
@@ -98,14 +98,13 @@ class PFMixin(pl.LightningModule):
             # logging_metrics=torch.nn.ModuleList([pf.metrics.RMSE()]),
             optimizer='Adamax',  # 'ranger'
             reduce_on_plateau_patience=10,
-            reduce_on_plateau_reduction=10,
+            reduce_on_plateau_reduction=2,
             reduce_on_plateau_min_lr=1e-6,
             weight_decay=0.,
             optimizer_params={},
             monotone_constaints={},  # sp
             x_dims=None,
             y_dims=None,
-            # loss_weights=None,
             STUB=True,
             **kwargs):
         '''
@@ -141,8 +140,9 @@ class PFMixin(pl.LightningModule):
                  # len(dataset.time_varying_known_categoricals) +
                  len(dataset.target))
         loss = cls._coerce_loss(kwargs['loss'], y_dims, loss_weights)
+        # These are PER-TARGET, no need to dup+weight them
         logging_metrics = nn.ModuleList([
-            cls._coerce_loss(l, y_dims, loss_weights) for l in kwargs['logging_metrics']
+            cls._coerce_loss(l) for l in kwargs['logging_metrics']
         ])
         kwargs.update(
             x_dims=x_dims,

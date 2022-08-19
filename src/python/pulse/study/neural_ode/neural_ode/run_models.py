@@ -74,6 +74,7 @@ class PlotCallback(pl.Callback):
             # stub out t if needed
             assert (self.yt is None) == (self.xt is None)
             if self.yt is None:
+                print('TODO this is probably broken')
                 # self.use_t_mins = False
                 self.xt = [torch.arange(0, len(x)) for x in self.xs[0]]
                 self.yt = [torch.arange(0 + len(x), len(y) + len(x))
@@ -87,6 +88,7 @@ class PlotCallback(pl.Callback):
             with torch.no_grad():
                 # batch = trainer.datamodule.transfer_batch_to_device(
                 # batch, trainer.model.device, 0)
+                # or pf.utils.move_to_device
                 x, y = batch
                 y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
                                       x['encoder_target'])
@@ -169,8 +171,12 @@ class PlotCallback(pl.Callback):
             xs = [[torch.zeros((0, 1)) for y in y_pred[0]]] * len(y_pred)
 
         # 1 (b * n_batches) t -> t
-        xt = np.concatenate(xt[0])
-        yt = np.concatenate(yt[0])
+        if len(xt) == 1:
+            xt = xt[0]
+        if len(yt) == 1:
+            yt = yt[0]
+        xt = np.concatenate(xt)
+        yt = np.concatenate(yt)
 
         if use_t_mins:
             xt = xt / 60
@@ -291,7 +297,7 @@ class PlotCallback(pl.Callback):
             grid2.set_xlabels('t (min)')
         # resize for stackability
         cur_w, cur_h = grid2.figure.get_size_inches()
-        grid2.figure.set_size_inches(width, (width * cur_h / cur_w) * 1.1)
+        grid2.figure.set_size_inches(width, (width * cur_h / cur_w) * 1.2)
         arr2 = to_array(grid2)
 
         return (
@@ -477,6 +483,9 @@ if __name__ == "__main__":
     print('reloading model')
     cli.model = cli.model.from_datamodule(cli.datamodule,
                                           **cli.model.hparams)
+    # would need this if optimizer or lr scheduler is set through cli
+    # cli._add_configure_optimizers_method_to_model(None)
+
     if cli.trainer.overfit_batches:
         cli.datamodule.shuffle = False   # HACK
         # TODO change lr scheduler from val_loss to train_loss_epoch here
@@ -486,6 +495,7 @@ if __name__ == "__main__":
         # --trainer.logger TensorBoardLogger
         # --trainer.logger.save_dir lightning_logs
         # --trainer.logger.name xxxx
+    # https://jsonargparse.readthedocs.io/en/stable/index.html#default-values
     if ((cli.trainer.logger.name == '') or
         (cli.trainer.logger.save_dir == cli.trainer.logger.name)):
         dset_names = {
@@ -509,7 +519,6 @@ if __name__ == "__main__":
                 name=new_name,
                 default_hp_metric=False,
             )
-        import xdev; xdev.embed()
 
     # batch = next(iter(cli.datamodule.train_dataloader()))
     # x, y = batch
@@ -521,6 +530,4 @@ if __name__ == "__main__":
     # save_hparams_to_yaml('cli_dm.yaml', cli.datamodule.hparams)
 
     # # fit == train + validate
-    # import xdev
-    # with xdev.embed_on_exception_context():
     cli.trainer.fit(cli.model, datamodule=cli.datamodule)
