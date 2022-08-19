@@ -72,9 +72,9 @@ public class MultiSourcePlotter implements Plotter
         List<Double> yData = new ArrayList<Double>();
         csv.readHeader(csv.unitUnderscoreToSpace(job.Y1headers.get(0)), yData);
         // Optionally, Scale the data
-        if(job.percentOfBaseline)
+        if(job.yPercentOfBaseline)
         {
-          double xBaseline = xData.get(0);
+          //double xBaseline = xData.get(0);
           double yBaseline = yData.get(0);
           for(int i=0; i < xData.size(); i++)
           {
