@@ -95,9 +95,8 @@ class PFMixin(pl.LightningModule):
             # loss=pf.metrics.SMAPE(),
             # logging_metrics=[pf.metrics.RMSE()],
             logging_metrics=['MAE'],
-            # logging_metrics=torch.nn.ModuleList([pf.metrics.RMSE()]),
             optimizer='Adamax',  # 'ranger'
-            reduce_on_plateau_patience=10,
+            reduce_on_plateau_patience=6,
             reduce_on_plateau_reduction=2,
             reduce_on_plateau_min_lr=1e-6,
             weight_decay=0.,
@@ -111,6 +110,24 @@ class PFMixin(pl.LightningModule):
         MAE is equal to:
         (torch.stack([(y_pred['prediction'][i].squeeze() - y[0][i]).abs().mean() for i in range(11)])).sum(0)
         model.loss(y_pred['prediction'], y)
+
+        # specifically, it DOES respect decoder_lengths through PackedSequence
+        result = []
+        for i in range(11):
+            b, t, f = prediction[i].shape
+            assert f == 1
+            subresult = []
+           for j in range(b):
+                yy = rnn.unpack_sequence(y[0][i])[j]
+                subresult.append(
+                    (prediction[i][j][:len(yy)].squeeze() - yy).abs()
+                )
+           result.append(torch.concat(subresult).mean())
+
+        assert torch.allclose(
+            (torch.stack(result).cpu() * self.loss.weights).sum(),
+            self.loss(prediction, y).cpu()
+        )
         '''
         self.save_hyperparameters(ignore=['x_dims', 'y_dims', 'STUB'])
         # self.save_hyperparameters(dict(loss=loss, logging_metrics=logging_metrics), logger=False)
@@ -332,88 +349,6 @@ class BaseData(pl.LightningDataModule):
     pass
 
 
-def wrap_pf_dataloader(dl):
-    '''
-    Turn pytorch_forecasting's convoluted dataloader output into something more
-    reasonable by overloading its collate_fn.
-    '''
-
-    # default_collate for comparison; TODO worker handling
-
-    # elem = batch[0]
-    # elem_type = type(elem)
-    # if isinstance(elem, torch.Tensor):
-    # out = None
-    # if torch.utils.data.get_worker_info() is not None:
-    # # If we're in a background process, concatenate directly into a
-    # # shared memory tensor to avoid an extra copy
-    # numel = sum(x.numel() for x in batch)
-    # storage = elem.storage()._new_shared(numel, device=elem.device)
-    # out = elem.new(storage).resize_(len(batch), *list(elem.size()))
-    # return torch.stack(batch, 0, out=out)
-    # # etc...
-
-    def _wrap_collate(x, y):
-
-        x_data = einops.rearrange(x['encoder_target'], 'f b t -> b t f')
-        y_data = einops.rearrange(x['decoder_target'], 'f b t -> b t f')
-
-        assert torch.unique(x['encoder_lengths']).shape == (1, )
-        enc_len = x['encoder_lengths'][0]
-        assert torch.unique(x['decoder_time_idx'][:, 0]).shape == (1, )
-        dec_idx = x['decoder_time_idx'][0, 0]
-        dec_len = min(x['decoder_lengths'])
-        y_data = y_data[:, :dec_len, :]
-
-        # 'decoder_lengths': tensor([10,  7]),
-        # 'decoder_time_idx': tensor([[ 6,  7,  8,  9, 10, 11, 12, 13, 14, 15],
-        # [ 6,  7,  8,  9, 10, 11, 12, 13, 14, 15]]),
-        # These are irregular. Should they be truncated to the shortest in the
-        # batch or is padding with zeros ok?
-        # Now I see why orig codebase had a custom sampler to try and pick
-        # batch entries with similar durations...
-        # Going to truncate for now and try to learn static time_remaining
-        # separately. TODO survival...
-
-        # these are regular ints from pf, though nets could take irregular floats
-        x_time = torch.arange(dec_idx - enc_len, dec_idx)
-        y_time = torch.arange(dec_idx, dec_idx + dec_len)
-
-        # (enc|dec)oder_target
-        # float tensor with unscaled continous target or encoded
-        # categorical target,
-        # target_scale
-        # (batch_size x scale_size or list thereof with each entry for a
-        # different target):
-        # scale_size == 2 regardless of enc/dec len, why? one for enc & dec?
-        # docs say center & scale
-
-        # normalize data
-        # TODO check if this is correct and if BaseModel does it
-        # TODO softplus?
-        center, scale = einops.rearrange(x['target_scale'],
-                                         'f b cs -> cs b 1 f',
-                                         cs=2)
-        x_data = (x_data - center) / scale
-        y_data = (y_data - center) / scale
-
-        return {
-            'x_data': x_data,
-            'y_data': y_data,
-            'x_time': x_time,
-            'y_time': y_time,
-        }
-
-    orig_collate = deepcopy(dl.collate_fn)
-
-    def _collate(*args, **kwargs):
-        return _wrap_collate(*orig_collate(*args, **kwargs))
-
-    dl.collate_fn = _collate
-
-    return dl
-
-
 @dataclass
 class HemorrhageVitals(BaseData):
 
@@ -454,7 +389,6 @@ class HemorrhageVitals(BaseData):
     shuffle: bool = True
 
     static_behavior: Literal['ignore', 'propagate', 'augment'] = 'ignore'
-    use_pf_format: bool = True
     time_augmentation: bool = False
     num_workers: int = 4
 
@@ -728,10 +662,7 @@ class HemorrhageVitals(BaseData):
                                         num_workers=self.num_workers,
                                         shuffle=self.shuffle,
                                         pin_memory=True)
-        if self.use_pf_format:
-            return dl
-        else:
-            return wrap_pf_dataloader(dl)
+        return dl
 
     def val_dataloader(self):
         dl = self.dset_va.to_dataloader(train=False,
@@ -740,10 +671,7 @@ class HemorrhageVitals(BaseData):
                                         num_workers=self.num_workers,
                                         shuffle=self.shuffle,
                                         pin_memory=True)
-        if self.use_pf_format:
-            return dl
-        else:
-            return wrap_pf_dataloader(dl)
+        return dl
 
     def test_dataloader(self):
         dl = self.dset_te.to_dataloader(train=False,
@@ -752,10 +680,7 @@ class HemorrhageVitals(BaseData):
                                         num_workers=self.num_workers,
                                         shuffle=self.shuffle,
                                         pin_memory=True)
-        if self.use_pf_format:
-            return dl
-        else:
-            return wrap_pf_dataloader(dl)
+        return dl
 
     def predict_dataloader(self):
 
@@ -778,10 +703,7 @@ class HemorrhageVitals(BaseData):
                                         batch_sampler='synchronized',
                                         num_workers=self.num_workers,
                                         pin_memory=True)
-        if self.use_pf_format:
-            return wrap_predict_dataloader(dl)
-        else:
-            return wrap_pf_dataloader(dl)
+        return wrap_predict_dataloader(dl)
 
 
 @dataclass
