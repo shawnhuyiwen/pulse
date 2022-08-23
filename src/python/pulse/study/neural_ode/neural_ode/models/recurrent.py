@@ -80,34 +80,44 @@ class ODE_RNN(nn.Module):
 
     # labeled x->h instead of x->y bc it'll usually be the hidden layer inside
     # another model
+    # this is setup for irregular time steps, though not needed
     def forward(self,
                 x,
                 x_time,
                 return_latents=False,
                 initial_dt=0.01,    # TODO adjust this
-                min_step_frac=50):  # TODO adjust this
+                min_step_frac=None):  # 50
         batch_size = x.shape[0]
 
-        prev_hi = torch.zeros((batch_size, self.h_dims), device=x.device)
-        prev_hi_std = torch.zeros((batch_size, self.h_dims), device=x.device)
+        hi = torch.zeros((batch_size, self.h_dims), device=x.device)
+        hi_std = torch.zeros((batch_size, self.h_dims), device=x.device)
 
-        prev_ti, ti = x_time[0] - initial_dt, x_time[0]
-        #TRANS: Internal grid size
-        interval_length = x_time[-1] - x_time[0]
-        # ODE is never solved unless a timestep is >1/50 of the total time
-        minimum_step = interval_length / min_step_frac
+        ti = x_time[0] - initial_dt
+        if min_step_frac:
+            #TRANS: Internal grid size
+            interval_length = x_time[-1] - x_time[0]
+            # ODE is never solved unless a timestep is >1/50 of the total time
+            minimum_step = interval_length / min_step_frac
+        else:
+            minimum_step = x_time.diff().min()
 
         hs = []
+        # print(f'ODE_RNN solving {x_time[0]} -> {x_time[-1]}')
 
         for i in range(len(x_time)):
-            #TRANS: If it can not meet the minimum step direct linear increase
+            # prev_hi-(odesolver)->hi_ode-(GRU)->hi->prev_hi
+            prev_hi, prev_hi_std = hi, hi_std
+            prev_ti, ti = ti, x_time[i]
             dt = ti - prev_ti
+
+            #TRANS: If it can not meet the minimum step direct linear increase
             if dt < minimum_step:
 
                 time_points = torch.stack((prev_ti, ti))
                 #TRANS: The linear increment
                 inc = self.diffeq_solver(prev_ti, prev_hi) * dt
                 hi_ode = prev_hi + inc
+                # print(f'{dt=} < {minimum_step=}, linear')
 
             else:
                 n_intermediate_tp = max(2,
@@ -117,17 +127,17 @@ class ODE_RNN(nn.Module):
                                                     device=x.device)
                 #TRANS: Calculate the ODE, work out corresponding latent value
                 # to (1) finally can
+                # import xdev
+                # with xdev.embed_on_exception_context():
                 hi_ode = self.diffeq_solver.solve(prev_hi, time_points)[:, -1, :]
+                # print(f'{dt=} >= {minimum_step=}, solving {time_points=}')
 
             #TRANS: Calculate the GRU helped
             hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, x[:, i, :])
+            # print(f'x(t)={x[:, i, 0]}')
 
             if return_latents:
                 hs.append(hi)
-
-            # prev_hi-(odesolver)->hi_ode-(GRU)->hi->prev_hi
-            prev_hi, prev_hi_std = hi, hi_std
-            prev_ti, ti = x_time[i], x_time[i - 1]
 
         if return_latents:
             return torch.stack(hs, dim=1)
@@ -210,6 +220,9 @@ class RecurrentODE(BaseModel):
                         torch.zeros((batch_size, y_extent, x_dims),
                                dtype=x.dtype, device=self.device)),
                        dim=1)
+        # print(f'xt={x_time.shape} {x_time[0]}..{x_time[-1]}')
+        # print(f'yt={y_time.shape} {y_time[0]}..{y_time[-1]}')
+        # print(f'feeding x={x.shape} + y to ODE_RNN')
         hs = self.ODE_RNN(xy, xy_time, return_latents=True)
         # this is like having t as an extra batch dim for output_net
         y_pred = self.output_net(hs)
