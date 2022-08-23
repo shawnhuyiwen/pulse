@@ -87,7 +87,7 @@ in the Features section below. Future releases will provide a more rigorously te
 
 The ventilator and valves operate via time-based cycles based on the settings. There are four phases to each complete cycle, as shown in Figure 1.
 
-<center><img src="./Images/AnesthesiaMachine/Cycles.png" width="550"></center>
+<center><a href="./Images/AnesthesiaMachine/Cycles.png"><img src="./Images/AnesthesiaMachine/Cycles.png" width="550"></a></center>
 <center><i>Figure 1. Flow diagram showing the ventilatory cycles as implemented in the Anesthesia Machine.</i></center> 
 
 #### Process Actions
@@ -199,7 +199,7 @@ breathing circle of the Anesthesia System that reduces the amount of
 inhaled CO2 in re-breathed gas. The diagram in Figure 3 presents the
 compartmental view of the Anesthesia Delivery System.
 
-<center><img src="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png" width="650"></center>
+<center><a href="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png"><img src="./Images/AnesthesiaMachine/AnesthesiaMachineGasFlowDiagram.png" width="650"></a></center>
 <center>
 *Figure 3. Compartmental view of the Anesthesia System. The Anesthesia 
 Machine consists of seven major compartments, as shown in the breathing circuit. 
@@ -245,7 +245,7 @@ the exhaust is connected to a breathing bag reservoir; however, the current vers
 lacks such a reservoir, and the exhaust in the circuit diagram serves as a current 
 source that facilitates appropriate pressure maintenance. 
 
-<img src="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png">
+<a href="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png"><img src="./Images/AnesthesiaMachine/AnesthesiaMachineCircuitDiagram.png"></a>
 <center>
 *Figure 4. Circuit diagram of the Anesthesia Machine. The circuit 
 employs the ventilator as a driver pressure source. 
@@ -259,7 +259,7 @@ the Anesthesia Machine are handled by assigning very high resistance on the
 inspiratory or expiratory limbs depending on the breathing phase.*
 </center><br>
 
-### Connecting to the %Respiratory Circuit
+### Connecting to the Respiratory Circuit
 
 When an anesthesia machine is used on a patient, there is a direct
 connection that allows air to flow freely between both. In the same
@@ -380,7 +380,7 @@ extents. Several insults modify the same resistance that leads to ground
 (atmosphere) because the change in flow produced by the ventilator
 reaches the patient in the same way.
 
-<img src="./Images/AnesthesiaMachine/AMSeverityMap.png">
+<a href="./Images/AnesthesiaMachine/AMSeverityMap.png"><img src="./Images/AnesthesiaMachine/AMSeverityMap.png"></a>
 <center>
 *Figure 5. This plot shows the resistance value that is set based on the
 leak severity modifier. The severity is mapped logarithmically in a
@@ -490,15 +490,15 @@ The Anesthesia Machine Settings are fully dynamic and do not have any bounds enf
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_VentilatorVolume.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_TotalLungVolume.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_VentilatorVolume.jpg"><img src="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_VentilatorVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_TotalLungVolume.jpg"><img src="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_TotalLungVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_RR.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_TidalVolume.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_RR.jpg"><img src="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_RR.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_TidalVolume.jpg"><img src="./plots/AnesthesiaMachine/AnesthesiaMachineVariedConfiguration_TidalVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/AMVariedLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/AMVariedLegend.jpg"><img src="./plots/AnesthesiaMachine/AMVariedLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -548,15 +548,15 @@ with increasing severity.
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/MaskLeakVaried_Inflow.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/MaskLeakVaried_TotalLungVolume.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/MaskLeakVaried_Inflow.jpg"><img src="./plots/AnesthesiaMachine/MaskLeakVaried_Inflow.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/MaskLeakVaried_TotalLungVolume.jpg"><img src="./plots/AnesthesiaMachine/MaskLeakVaried_TotalLungVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/MaskLeakVaried_O2Sat.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/MaskLeakVaried_CO2PP.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/MaskLeakVaried_O2Sat.jpg"><img src="./plots/AnesthesiaMachine/MaskLeakVaried_O2Sat.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/MaskLeakVaried_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/MaskLeakVaried_CO2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/MaskLeakLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/MaskLeakLegend.jpg"><img src="./plots/AnesthesiaMachine/MaskLeakLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -586,15 +586,15 @@ mask to supply the gas. The severity of the leak was varied.
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_Inflow.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_EndTidalCO2.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_Inflow.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_Inflow.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_EndTidalCO2.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_EndTidalCO2.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_CO2PP.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_O2PP.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_CO2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/ExpiratoryValveLeakLegend.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveLeakLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -619,15 +619,15 @@ mask to supply the gas. The severity of the leak was varied.
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_Inflow.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_EndTidalCO2.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_Inflow.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_Inflow.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_EndTidalCO2.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_EndTidalCO2.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_CO2PP.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_O2PP.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_CO2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/InspiratoryValveLeakLegend.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveLeakLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -661,15 +661,15 @@ cessation of respiration or tidal volume due to flow obstruction. Since the neur
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_Inflow.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_EndTidalCO2.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_Inflow.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_Inflow.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_EndTidalCO2.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_EndTidalCO2.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_CO2PP.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_O2PP.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_CO2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/ExpiratoryValveObstructionLegend.jpg"><img src="./plots/AnesthesiaMachine/ExpiratoryValveObstructionLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -693,15 +693,15 @@ cessation of respiration or tidal volume due to flow obstruction. Since the neur
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_Inflow.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_EndTidalCO2.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_Inflow.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_Inflow.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_EndTidalCO2.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_EndTidalCO2.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_CO2PP.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_O2PP.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_CO2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/InspiratoryValveObstructionLegend.jpg"><img src="./plots/AnesthesiaMachine/InspiratoryValveObstructionLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -729,15 +729,15 @@ The severity of the failure was varied. At the full failure, a cessation of resp
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_VentilatorVolume.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_TotalLungVolume.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_VentilatorVolume.jpg"><img src="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_VentilatorVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_TotalLungVolume.jpg"><img src="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_TotalLungVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_CO2PP.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_O2PP.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_CO2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/VentilatorPressureLossVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/VentilatorPressureLossLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/VentilatorPressureLossLegend.jpg"><img src="./plots/AnesthesiaMachine/VentilatorPressureLossLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -766,15 +766,15 @@ remain stable. Carbon dioxide in the blood increases.
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/SodaLimeFailureVaried_InletCO2.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/SodaLimeFailureVaried_EndTidalCO2.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/SodaLimeFailureVaried_InletCO2.jpg"><img src="./plots/AnesthesiaMachine/SodaLimeFailureVaried_InletCO2.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/SodaLimeFailureVaried_EndTidalCO2.jpg"><img src="./plots/AnesthesiaMachine/SodaLimeFailureVaried_EndTidalCO2.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/SodaLimeFailureVaried_CO2PP.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/SodaLimeFailureVaried_O2PP.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/SodaLimeFailureVaried_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/SodaLimeFailureVaried_CO2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/SodaLimeFailureVaried_O2PP.jpg"><img src="./plots/AnesthesiaMachine/SodaLimeFailureVaried_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/SodaLimeFailureLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/SodaLimeFailureLegend.jpg"><img src="./plots/AnesthesiaMachine/SodaLimeFailureLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -808,10 +808,10 @@ observed for all other severity levels.
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/VaporizerFailureVaried_DesfluraneConcentration.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/VaporizerFailureVaried_DesfluraneConcentration.jpg"><img src="./plots/AnesthesiaMachine/VaporizerFailureVaried_DesfluraneConcentration.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/VaporizerFailureLegend.jpg" width="800"></td>
+    <td><a href="./plots/AnesthesiaMachine/VaporizerFailureLegend.jpg"><img src="./plots/AnesthesiaMachine/VaporizerFailureLegend.jpg" width="800"></a></td>
 </tr>
 </table>
 </center>
@@ -844,15 +844,15 @@ oxygen by turning off the failure brings the oxygen level to normal.
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/OxygenWallPressureLoss_InletO2.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/OxygenWallPressureLoss_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/OxygenWallPressureLoss_InletO2.jpg"><img src="./plots/AnesthesiaMachine/OxygenWallPressureLoss_InletO2.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/OxygenWallPressureLoss_O2Sat.jpg"><img src="./plots/AnesthesiaMachine/OxygenWallPressureLoss_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/OxygenWallPressureLoss_CO2PP.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/OxygenWallPressureLoss_O2PP.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/OxygenWallPressureLoss_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/OxygenWallPressureLoss_CO2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/OxygenWallPressureLoss_O2PP.jpg"><img src="./plots/AnesthesiaMachine/OxygenWallPressureLoss_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/OxygenWallPressureLossLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/OxygenWallPressureLossLegend.jpg"><img src="./plots/AnesthesiaMachine/OxygenWallPressureLossLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -888,15 +888,15 @@ a decline in oxygen saturation and arterial oxygen partial pressure due to a fai
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/OxygenTankPressureLoss_InletO2.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/OxygenTankPressureLoss_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/OxygenTankPressureLoss_InletO2.jpg"><img src="./plots/AnesthesiaMachine/OxygenTankPressureLoss_InletO2.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/OxygenTankPressureLoss_O2Sat.jpg"><img src="./plots/AnesthesiaMachine/OxygenTankPressureLoss_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/AnesthesiaMachine/OxygenTankPressureLoss_CO2PP.jpg" width="550"></td>
-    <td><img src="./plots/AnesthesiaMachine/OxygenTankPressureLoss_O2PP.jpg" width="550"></td>
+    <td><a href="./plots/AnesthesiaMachine/OxygenTankPressureLoss_CO2PP.jpg"><img src="./plots/AnesthesiaMachine/OxygenTankPressureLoss_CO2PP.jpg" width="550"></a></td>
+    <td><a href="./plots/AnesthesiaMachine/OxygenTankPressureLoss_O2PP.jpg"><img src="./plots/AnesthesiaMachine/OxygenTankPressureLoss_O2PP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/AnesthesiaMachine/OxygenTankPressureLossLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/AnesthesiaMachine/OxygenTankPressureLossLegend.jpg"><img src="./plots/AnesthesiaMachine/OxygenTankPressureLossLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>

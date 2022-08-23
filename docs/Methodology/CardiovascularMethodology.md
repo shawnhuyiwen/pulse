@@ -11,7 +11,7 @@ The cardiovascular system is a closed-loop system of compartments that represent
 
 Introduction
 ------------
-### %Cardiovascular Physiology
+### Cardiovascular Physiology
 The cardiovascular system is a large organ system comprised of the heart and the blood vessels. It serves as the body's primary transport and distribution system. The cardiovascular system is sometimes described as two separate circulations: the systemic circulation and the pulmonary circulation. In the systemic circulation, oxygenated blood leaves the left side of the heart, travels  through arteries and into the capillaries, and then returns as deoxygenated blood through the veins to the right side of the heart. From the right side of the heart, the deoxygenated blood travels in the pulmonary circulation through the pulmonary arteries, is re-oxygenated in the pulmonary capillaries, and then returns to the left side of the heart through the pulmonary veins (Figure 1). Whether the cardiovascular circulation is thought of as one closed circuit with a single dual-purpose pump or two interconnected circuits with separate synchronous pumps, the key combination of systemic and pulmonary vasculature serves as a distribution and exchange network, providing vital oxygen to the tissues and removing toxic carbon dioxide while distributing nutrients and other substances necessary for healthy physiologic function.
 
 \htmlonly
@@ -30,8 +30,8 @@ Both the pulmonary and systemic circulation originate in the heart, which acts a
 
 The cardiovascular system is one of two systems that comprise the circulatory system, the other being the lymphatic system. The cardiovascular system includes a low-resolution lymphatic circulation. Because the resolution of the lymph circulation in the engine is considerably lower than the resolution of the cardiovascular circulation, we refer to the comprehensive circuit as the circulatory circuit, but we maintain the term *cardiovascular* as system nomenclature to highlight the modeling focus. In other words, the lymph circulation is not a physiological model of the human lymphatic system. It only serves as an accessory return for interstitial fluid. More information about the lymph model and the other accessory advection models is available in the @ref TissueMethodology report.
 
-### %Cardiovascular Modeling
-#### Brief Introduction to %Cardiovascular Modeling
+### Cardiovascular Modeling
+#### Brief Introduction to Cardiovascular Modeling
 %Cardiovascular (CV) models range from high-resolution, small-region-of-interest models @cite taylor1999predictive @cite wan2002one @cite formaggia2003one to low-resolution, whole-body simulations @cite heldt2004computational. Increased resolution may provide a more accurate solution in a localized region at the expense of decreasing the modeling region. However, the level of accuracy achieved with this model is not always required to answer the question posed. Three-dimensional (3D) computational fluid dynamics (CFD) models are generally limited to short segments of the arterial or venous tree due to high computational requirements. These high-resolution models are well-suited for investigating complex geometries following surgical intervention, such as the Fontan Circulation @cite whitehead2007nonlinear @cite de1996use. However, they are not suitable for modeling long-term or systemic effects in the CV System @cite timmons1995cardiovascular because it is only feasible to simulate a few cardiac cycles.
 
 One-dimensional (1D) models can also predict the pressure and flow wave dynamics within a region of interest @cite womersley1955xxiv @cite womersley1957oscillatory and have the advantage of a lower computational cost than full CFD models. Like CFD models, 1D models begin with the Navier-Stokes equations, but they are reduced to a hyperbolic partial differential equation by including an axisymmetric assumption. The resultant equation dictates a constant pressure in the radial direction if the radius of the vessel is small relative to a characteristic wave length @cite vcanic2003mathematical. These models are well-suited for investigating specific CV problems @cite spilker2007morphometry @cite clipp2009impedance and have been coupled with dynamic downstream effects to investigate problems over numerous cardiac cycles @cite clipp2012evaluation. However, the computational cost associated with 1D models still renders them unsuitable for modeling the complete closed-circuit dynamics of the circulation over the entire range of vessel diameter and lengths in the human body.
@@ -49,7 +49,7 @@ System Design
 =============
 Background and Scope
 --------------------
-### History of the %Cardiovascular Model
+### History of the Cardiovascular Model
 The CV Model has its origins in Guyton&apos;s four-compartment (three vascular, plus one heart) model of the CV System designed to analyze the effect of varying circulatory factors on cardiac output @cite guyton1955effect. Rideout, et al. used Guyton&rsquo;s foundation and an electric-hydraulic analogy to streamline the generation of difference-differential equations for modeling fluid flow in distensible vessels @cite rideout1967difference. Yasuhiro Fukui leveraged the previous work to model the CV and respiratory systems and their interactions @cite fukui1972study. The development of a mass and momentum transport model of the CV System allowed for the simulation of interactions between the CV System and angiotensin @cite masuzawa1992cardiovascular. Following the success of the angiotensin-cardiovascular simulator, development of the drug-interaction model continued and eventually led to an anesthesiology simulator that incorporated CV, respiratory, and drug models @cite smith1995pc. This simulator, released by Advanced Simulation Corporation as Body Simulation for Anesthesia&tm;, formed the backbone of the HumanSim&tm; physiology engine, which continues to provide realistic physiology for several serious training games in the HumanSim product line, including HumanSim: Sedation and Airway @cite Clipp2012Humansim. The HumanSim physiology engine is the starting-point for the engine. The basic building blocks of the CV System remain as described in Masuzawa et al. @cite masuzawa1992cardiovascular; however, the CV circuit has been further developed to provide a more accurate CV simulation and drive other systems through intersystem dependencies.
 
 Data Flow
@@ -88,7 +88,7 @@ Assessments are data collected and packaged to resemble a report or analysis tha
 @anchor cardiovascular-features
 Features, Capabilities, and Dependencies
 ----------------------------------------
-### The %Cardiovascular Circuit
+### The Cardiovascular Circuit
 The CV circuit (Figure 2) estimates blood pressure, flow, and volume for organs that are represented by several compartments. These compartments are comprised of lumped parameter models that use resistors and capacitors. Inductors may also be used to model inertial effects. The system is discretized into nodes that are connected by paths (see @ref CircuitMethodology). The circuit used to represent the CV System was designed to provide a level of resolution and fidelity that meets the [requirements](@ref MainPageFAQ) of the overall project.
 
 For example, to provide a means for clearing drugs and substances from the bloodstream, the liver and kidneys must have blood flow, pressure, and volume calculations. Another example is the four extremities (right and left arms and legs) that provide extremity hemorrhage capabilities, having been implemented in a previous project (HumanSim: Combat Medic). In this way, the lumped parameter model provides a mechanism for increasing fidelity as required by the anatomic region or physiologic condition being modeled. The large thoracic arteries are lumped together into one &ldquo;Aorta&rdquo; compartment, which is represented by four nodes and three paths. The fidelity of any compartment could be easily improved by increasing the level of discretization. By adding nodes and paths, the engine &ldquo;Aorta&rdquo; could become the &ldquo;Ascending Aorta&rdquo; and &ldquo;Descending Aorta&rdquo; to accommodate the fidelity demands of the other systems. This could provide an opportunity to model more complex geometries and pathologies, such as stenosis. Figure 2 shows the cardiovascular circuit. For clarity, the more discretized [renal circuit](@ref renal-circuit) is not shown in this diagram. 
@@ -139,7 +139,7 @@ The relationship between the elastance and compliance in the engine is shown in 
 @endhtmlonly
 <center>
 <i>Figure 3. The left heart compliance and elastance are shown to be inversely related to each other. The elastance represents the change in pressure per change in volume, while the compliance is the change in volume per change in pressure. These quantities define the contraction of the heart, which drives the pressure and flow of the cardiovascular circuit.</i>
-</center><br
+</center><br>
 
 #### Heart Pressure, Volume, and Flow
 The variable compliance, which is used to model heart contraction and relaxation, yields pressure and volume changes that drive the flow through the CV circuit. This variable compliance driver allows the pressures and volumes to be calculated within the heart, as shown in Figure 4.
@@ -412,7 +412,7 @@ The pulmonary shunt condition has an exacerbation actions defined to allow for i
 ### Cardiac Arrest
 Cardiac Arrest is a condition in which the pumping of the heart is no longer effective @cite nhlbi2011sca. The Cardiac Arrest event can be triggered by different arrhythmias in the engine. In the current version of the engine, any rhythm associated with a cessation of mechanical function of the heart will trigger a cardiac arrest event. We do not have a defibrillate action at this time. To recover from a cardiac arrest event, the user can change the arrhythmia back to a sinus rhythm. It is also possible to maintain some perfusion by performing chest compressions (see CPR).
 
-### %Cardiovascular Collapse
+### Cardiovascular Collapse
 %Cardiovascular collapse occurs when the blood pressure is no longer sufficient to maintain "open" blood vessels. They "collapse" meaning blood can no longer flow through the vessels. This is generally associated with shock, the vascular tone and blood pressure are no longer sufficient to maintain blood flow @cite guyton2006medical. This occurs at at mean arterial pressure of 20 mmHg or lower in the engine. At this time, we do not enforce an irreversible state (stop engine calculation); however, the patient generally does not recover from this, particularly in the presence of shock.
 
 ### Cardiogenic Shock

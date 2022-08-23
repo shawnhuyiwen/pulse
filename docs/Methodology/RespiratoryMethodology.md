@@ -15,7 +15,7 @@ The %Respiratory System supplies oxygen and removes waste carbon dioxide from th
 ## Introduction
 
 @anchor respiratory-physiology
-### %Respiratory Physiology
+### Respiratory Physiology
 
 The human %Respiratory System consists of the upper airways (region above the cricoid cartilage), the lower airways, the lungs, and the respiratory muscles. The lower airways begin at the trachea and extend to the bronchi, bronchioles, and the alveoli. At the carina, the trachea divides into two mainstem bronchi, the right and left. The bronchi bifurcate into smaller bronchioles that continue branching for up to 23 generations, forming the tracheobronchial tree that terminates with the alveoli. Alveolar ducts and alveolar sacs are the operating units of the lungs where gas exchange occurs with the pulmonary capillaries. The first several generations of airways, where no gas exchange occurs, constitute the anatomic dead space and are referred to as the conducting zone. In contrast, alveolar ducts and sacs that terminate the tracheobronchial tree are referred to as the respiration zone.
 
@@ -155,7 +155,7 @@ The chest wall compliances of the left and right pleural space are modified as a
 
 There are several methods that modify respiratory parameters based on insults and interventions. This includes combined effects that change deadspace volumes, airway and bronchi resistances, alveolar compliances, inspiratory-espiratory ratios, diffusion surface area, pulmonary capillary resistance, aerosol deposition, and air leaks.
 
-#### %Respiratory Driver
+#### Respiratory Driver
 
 The respiratory muscle pressure source that drives spontaneous ventilation is
 calculated based on chemical stimuli feedback control mechanism.
@@ -181,7 +181,7 @@ analysis during the next time step.
 Features and Capabilities
 -------------------------
 
-### %Respiratory Circuit
+### Respiratory Circuit
 
 The %Respiratory System designates a set of functional elements, or
 compartments, to model mechanical ventilation. The functional elements are
@@ -404,7 +404,7 @@ Up to about half of the vital capacity <i>V<sub>C</sub></i>, the minute ventilat
 
 where <i>m</i> is the slope and <i>c</i> is the x-intercept of the minute ventilation versus tidal volume plot. The data 
 shows that the minute ventilation is constant above half of the vital capacity. Based on this observation, the 
-%%Respiratory Model employs the linear relation given below to predict the target tidal 
+%Respiratory Model employs the linear relation given below to predict the target tidal 
 volume from the minute ventilation.
 
 \f[V_{T} =\left\{\begin{array}{l} {c+\dot{V}_{E} /m,V_{T} \le V_{C} } \\ {0.5*V_{C} ,V_{T} >V_{C} } \end{array}\right. \f] 
@@ -848,7 +848,7 @@ literature @cite guyton2006medical . The plot from the model shows the expected 
 diagram observed in a healthy person.</i>
 </center><br>
 
-#### Partial Pressures of %Respiratory Gases
+#### Partial Pressures of Respiratory Gases
 
 For any gas mixture, the partial pressure P<sub>gas</sub> of a particular gas in the
 mixture can be calculated based on the total pressure P<sub>total</sub> of all gases in the
@@ -1009,7 +1009,7 @@ in transport @cite donald2006end. The %Respiratory Model provides the
 end-tidal gas concentration based on the expired gas volume fractions at the
 airway node.
 
-#### %Environment
+#### Environment
 
 The %Respiratory System interacts with the %Environment System for
 the atmospheric pressure values assigned to the mouth node. Changes to the 
@@ -1240,7 +1240,7 @@ The destruction of the alveolar membranes also destroys the pulmonary capillarie
 
 Decreased Inspiration-Expiration (IE) ratio is another pathophysiologic feature of COPD.  As with asthma, the normal IE ratio is scaled using a multiplier based on severity. Either chronic bronchitis severity or emphysema severity (whichever is higher) is used to determine the IE ratio scaling multiplier. 
 
-#### Acute %Respiratory Distress Syndrome
+#### Acute Respiratory Distress Syndrome
 
 Acute %Respiratory Distress Syndrome (ARDS) is modeled in the engine as a generic impairment of the alveoli's ability to exchange oxygen and carbon dioxide.  The specific cause (i.e., sepsis, pneumonia, etc.) is not specified.  The model is implemented to meet the PaO2/FiO2 Berlin Criteria combined with accepted pulmonary shunt fractions when mechanically ventilated.  A severity value is mapped to various model parameters to achieve mild, moderate, and severe symptoms at severities of 0.3, 0.6, and 0.9 respectively.  Direct modifiers are implemented as shown in Table 2.
 
@@ -1458,11 +1458,11 @@ Bradypnea is defined as an abnormally low breathing rate. Normal breathing rates
 
 Tachypnea is defined as high breathing rate. Normal respiration rate in an adult ranges 12 - 20 breaths per minute. Tachypnea occurs when breathing rate rises above 20 breaths per minute. The engine outputs a tachypnea event when the patient's respiration rate is above 20 breaths per minute. 
 
-### %Respiratory Acidosis
+### Respiratory Acidosis
 
 %Respiratory acidosis is triggered when the blood pH drops below 7.37.  An irreversible state (similar to a death state) is reached when the blood pH drops below 6.5.  See @ref EnergyMethodology for more details about acidosis.
 
-### %Respiratory Alkalosis
+### Respiratory Alkalosis
 
 %Respiratory alkalosis is triggered when the blood pH rises above 7.45.  An irreversible state (similar to a death state) is reached when the blood pH rises above 8.5.  See @ref EnergyMethodology for more details about alkalosis.
 
@@ -1552,7 +1552,7 @@ The COPD condition was validated against two scenarios. The severe emphysema sce
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
 |	Severe Chronic Bronchitis: Bronchitis Severity = 0.65 Emphysema Severity = 0.5 Both Lungs 100%	|		|	120	|<span class="success">	Decrease @cite bergeronSME	</span>|<span class="success">	> 20 @cite bergeronSME	</span>|<span class="success">	< 60% of normal @cite bergeronSME	</span>|<span class="success">	Increase,  Tachycardia @cite bergeronSME	</span>|<span class="danger">	Increase,  Pulmonary Hypertension,  > 140 mm Hg @cite bergeronSME	</span>|<span class="success">	< 90% @cite bergeronSME	</span>|<span class="success">	Decrease,  Hypoxemia,  < 55 mm Hg  @cite bergeronSME	</span>|<span class="warning">	Increase,   Hypercapnia > 55 mmHg   @cite bergeronSME	</span>|<span class="success">	Decrease @cite van1991physical, @cite bergeronSME	</span>|
 
-### Acute %Respiratory Distress Syndrome
+### Acute Respiratory Distress Syndrome
 
 The ARDS condition was validated against a moderate severity scenario.  Further validation of ARDS while ventilated can be found in the @ref MechanicalVentilatorMethodology validation.
 

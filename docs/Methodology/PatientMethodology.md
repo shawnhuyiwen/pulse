@@ -104,7 +104,7 @@ Patient parameters are not dependent on any systems, but many systems are depend
 Results and Conclusions
 =======================
 
-%Verification and Validation
+Verification and Validation
 ---------------------------
 
 <center><br>

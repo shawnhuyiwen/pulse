@@ -13,7 +13,7 @@ The %Renal system's purpose in the body is to filter blood. Each kidney is model
 @anchor renal-introduction
 Introduction
 ------------
-### %Renal Physiology
+### Renal Physiology
 
 The renal (or urinary) system's primary job is filtering the blood to remove waste and manage
 fluid volume, which helps the body maintain homeostasis.  
@@ -35,7 +35,7 @@ Figure 1 shows the entire system and is labeled with the following:
 13. Large intestine
 14. Pelvis
 
-<img src="./Images/Renal/RenalSystem.png">
+<a href="./Images/Renal/RenalSystem.png"><img src="./Images/Renal/RenalSystem.png"></a>
 <center>
 <i>
 Figure 1. This is an illustration of the human renal system.  The bounds of the system are generally accepted to be the combination of everything encompassing #1-6 (urinary system) and #8 renal artery and vein. @cite Jmarchn2010Urinary
@@ -54,11 +54,11 @@ Any water or substance that is not reabsorbed is moved to the bladder as urine t
 By regulating the substance content of the blood, the kidneys are responsible for maintaining blood pH and 
 nitrogen content over long periods of time. Nitrogen waste from the liver is excreted from the kidneys as urea, one of the primary constituents of urine. Bicarbonate is used by the blood as a buffer against much of the acidic content of the body. The kidneys are able to reabsorb virtually all of the filtered bicarbonate and even reclaim bicarbonate that has been used to buffer acids that are filtered into the renal tubules @cite valtin1995renal. 
 
-### %Renal Modeling
+### Renal Modeling
 
 The %Renal model lumps each kidney into a single nephron (Figure 2). The  fluid flow through the kidney is modeled with an electrical circuit analogue, and the substance transport is a combination of the generic transporter and active filtration/reabsorption/secretion based on feedback and substance parameters. Alternatively, excretion can be directly applied and is governed via clearance equations - as with the drug model (@ref DrugsMethodology). This is consistent with other system models, which also employ lumped parameter modeling.
 
-<img src="./Images/Renal/LumpedNephron.png">
+<a href="./Images/Renal/LumpedNephron.png"><img src="./Images/Renal/LumpedNephron.png"></a>
 <center>
 <i>
 Figure 2. The basic anatomical structure of the nephron. The blood is filtered into the Bowman's capsule from the Glomerular Capillaries. Most of the fluid is then reabsorbed into Peritubluar Capillaries.  The remaining fluid and substances continue through the tubules and are exreted into the bladder. @cite Madhero882010Nephron
@@ -176,7 +176,7 @@ The %Renal circuit (Figure 4) determines blood and urine pressure, flow, and vol
 
 @anchor renal-circuit
 
-<img src="./Images/Renal/RenalCircuit.png">
+<a href="./Images/Renal/RenalCircuit.png"><img src="./Images/Renal/RenalCircuit.png"></a>
 <center>
 <i>
 Figure 4. The %Renal circuit is made up of nodes and paths with elements.  The fluid mechanics of the system are calculated assuming no transition between blood and urine.  The substance quantities are what distinguish the two fluid types.  Everything above the dashed line can be considered blood.  Fluid below the dashed line transitions to urine as substance filtration and reabsorption change its make-up. The "T" labeled paths are location where transport of each substance is calculated by the %Renal system directly.  All others are done generically.
@@ -225,7 +225,7 @@ The volume distribution of the %Renal system is as follows:
 
 The %Renal circuit contains 11 resistances for each kidney, and a shared urethra resistance - see Figure 5.  The urethra (number 12) is typically set as an open switch (approximately infinite resistance), unless the patient is urinating, when it becomes closed to allow flow out of the bladder.
 
-<img src="./Images/Renal/RenalResistances.png">
+<a href="./Images/Renal/RenalResistances.png"><img src="./Images/Renal/RenalResistances.png"></a>
 <center>
 <i>
 Figure 5. The resistances in the left kidney are numbered for further description.
@@ -283,7 +283,7 @@ The net filtration and reabsorption pressures are determined by the sum of the h
 
 The Landis-Pappenheimer equation is applied at the pressure sources numbered in Figure 6.
 
-<img src="./Images/Renal/RenalPressureSources.png">
+<a href="./Images/Renal/RenalPressureSources.png"><img src="./Images/Renal/RenalPressureSources.png"></a>
 <center>
 <i>
 Figure 6. The four pressure sources that represent the colloid osmotic pressure are determined via the local albumin concentration.
@@ -323,7 +323,7 @@ These values are applied in the model as the resistances circled in Figure 7 and
 *Equation 6*
 </center><br>
 
-<img src="./Images/Renal/Filtration.png">
+<a href="./Images/Renal/Filtration.png"><img src="./Images/Renal/Filtration.png"></a>
 <center>
 <i>
 Figure 7. The membrane fluid filtration for both glomerular filtration and peritubular reabsorption locations are modeled as the resistances circled in red.
@@ -336,7 +336,7 @@ Individual substance transport from the glomerular capillaries to the bowmans ca
 
 Empirical data was used to determine a generic relationship between molecular weight and molecular radius.  Values for water, glucose, inulin, myoglobin, hemoglobin, and albumin were used to determine the best fit shown in Figure 8 @cite rhoades2003medical.
 
-<center><img src="./Images/Renal/MolecularRadius.png" width="600"></center>
+<center><a href="./Images/Renal/MolecularRadius.png"><img src="./Images/Renal/MolecularRadius.png" width="600"></a></center>
 <center>
 <i>
 Figure 8. This is the best fit of molecules present in the blood molecular weight to molecular radius.  The resulting equation shows very good fit.
@@ -345,7 +345,7 @@ Figure 8. This is the best fit of molecules present in the blood molecular weigh
 
 Electrical charge of each molecule has an effect on the total filterability.  A negative charge restricts filtration, where as a positive charge filters more readily.  Figure 9 shows the relative filterability best fit for positively charged, neutral, and negatively charged molecules as a function of molecular radius (determined using the relationship in Figure 8).
 
-<center><img src="./Images/Renal/RelativeFilterability.png" width="600"></center>
+<center><a href="./Images/Renal/RelativeFilterability.png"><img src="./Images/Renal/RelativeFilterability.png" width="600"></a></center>
 <center>
 <i>
 Figure 9. Effect of size and electrical charge of dextran on its filterability by the glomerular capillaries @cite bohrer1978permselectivity.  A value of 1.0 indicates that the substance is filtered as freely as water.  This relationship can be extrapollated to all substances.  The resulting equations show very good fit.
@@ -360,7 +360,7 @@ Reabsorption works in much the same way as glomerular filtration, with additiona
 
 Pressure natriuresis and diuresis are simulated in the %Renal model through reabsorption premeability modifiers. In the kidneys, as arterial pressure increases, shear stresses are developed along the cell walls. These stresses induce the release of nitric oxide, which is diffused downstream to the tubules of the nephron. This serves to decrease the sodium reabsorption rate through select entry pathways @cite navar1999kidney. This decrease in sodium resabsorptioin decreases the osmotic gradient along this fluid path, consequently leading to a coupled decrease in fluid reabsorption. The engine does not currently support nitric oxide, so we model this mechanism by coupling the fluid permeability characteristics of the tubules as function of arterial pressure. This allows for the connection to downstream pressure changes and sodium/water reabsorption. A second order polynomial (See Equation 7) is fit to the data taken from @cite guyton2006medical that scales the tubules' fluid permeability as a function of arterial pressure. This permeability then directly affects the resistance along the reabsorption pathway, leading to a decrease or increase in water/sodium transport. Diruetic administration can also inhibit the reabsorption by modifying the tubular lumen permeabilty as a function of plasma concentration of Furosemide, @ref DrugsMethodology.
 
-<center><img src="./plots/Renal/MAP_vs_UPR.jpg" width="600"></center>
+<center><a href="./plots/Renal/MAP_vs_UPR.jpg"><img src="./plots/Renal/MAP_vs_UPR.jpg" width="600"></a></center>
 <center> 
 <i>Figure 10 shows the urine production rate as a function of the mean arterial pressure. Blue is experimental data and red is simulated data. Diuresis takes place in response to increased blood pressure, in agreement with renal functionality.</i>
 </center><br>
@@ -394,7 +394,7 @@ One of the main mechanisms for kidney regulation of renal blood flow due to chan
 
 Within an autoregulatory range of 80 to 180 mmHg for the MAP, the renal blood flow is is maintained by either constricting (increased resistance) or dilating (decreased resistance) the afferent areteriole @cite rhoades2003medical. A higher sodium mass flow rate in the tubules leads to a higher resistance, and a lower mass flow rate leads to a lower resistance (see Figure 11). The minimum and maximum resistances for the afferent arteriole were determined through a unit test to be 1.7 mmHg/mL-s (at MAP of 80 mmHg) and 12.382 mmHg/mL-s (at MAP of 180 mmHg).
 
-<img src="./Images/Renal/TubuloglomerularFeedbackFlow.png">
+<a href="./Images/Renal/TubuloglomerularFeedbackFlow.png"><img src="./Images/Renal/TubuloglomerularFeedbackFlow.png"></a>
 <center>
 <i>
 Figure 11. A flow diagram showing the tubuloglomerular response to increased and decreased MAP.  @cite rhoades2003medical
@@ -408,7 +408,7 @@ High frequency oscillations of the tubuloglomerular feedback are damped using th
 *Equation 9*
 </center><br>
 
-<img src="./Images/Renal/TubuloglomerularFeedback.png">
+<a href="./Images/Renal/TubuloglomerularFeedback.png"><img src="./Images/Renal/TubuloglomerularFeedback.png"></a>
 <center>
 <i>
 Figure 12. The circle shows the location used to determine the sodium value, and the resistance where the feedback is applied is denoted with an oval.
@@ -418,8 +418,8 @@ Figure 12. The circle shows the location used to determine the sodium value, and
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Renal/MAP_vs_GFR.jpg" width="550"></td>
-    <td><img src="./plots/Renal/MAP_vs_RBF.jpg" width="550"></td>
+    <td><a href="./plots/Renal/MAP_vs_GFR.jpg"><img src="./plots/Renal/MAP_vs_GFR.jpg" width="550"></a></td>
+    <td><a href="./plots/Renal/MAP_vs_RBF.jpg"><img src="./plots/Renal/MAP_vs_RBF.jpg" width="550"></a></td>
 </tr>
 </table>
 </center>
@@ -434,7 +434,7 @@ Figure 13. The plots show the flow response to variations in mean arterial press
 
 When osmolarity (plasma sodium concentration) increases/decreases above/below normal the osmoreceptor feedback system compensates in the way shown in Figure 14. Increased water permeability in the distal nephron segments causes increased water reabsorption and excretion of a small volume of concentrated urine @cite guyton2006medical. This mechanism tends to keep the plasma sodium concentration stable and was calibrated with extended multi-hour simulations.
 
-<img src="./Images/Renal/OsmoreceptorFeedbackFlow.png">
+<a href="./Images/Renal/OsmoreceptorFeedbackFlow.png"><img src="./Images/Renal/OsmoreceptorFeedbackFlow.png"></a>
 <center>
 <i>
 Figure 14. A flow diagram showing the osmoreceptor response to increased and decreased plasma sodium concentration.  @cite guyton2006medical
@@ -452,7 +452,7 @@ The sensitivity of the osmoreceptor feedback is calibrated using the tuning cons
 
 Gluconeogenesis is a metabolic pathway that results in the generation of glucose from non-carbohydrate carbon substrates, such as lactate.  Within the %Renal system, this process is applied by converting excreted lactate at a one-to-one mass ratio into reabsorbed glucose. This effectively removes all lactate from the urine until the transport maximum is achieved. If the converted mass exceeds the transport maximum, it is capped and the remainder continues to the urine.
 
-#### %Renal Clearance
+#### Renal Clearance
 
 Some substance in the engine specify a single renal clearance parameter (e.g. drugs) instead of inputs required for the previously described active transport mechanisms.  If so, that value is directly applied and is only dependent on blood flow and plasma concentration changes.  Details on this behavior are in @ref DrugsMethodology.
 
@@ -489,7 +489,7 @@ Actions
 
 Urination empties the bladder. This can be called as an action or will automatically occur with the functional incontinence event. This action decreases the urethra resistance to allow the bladder to empty to 1 mL.  The fluid mechanics and transport are done generically by the circuit solver and transporter respectively.
 
-<center><img src="./plots/Renal/4hr_Urination.jpg" width="800"></center>
+<center><a href="./plots/Renal/4hr_Urination.jpg"><img src="./plots/Renal/4hr_Urination.jpg" width="800"></a></center>
 <center> 
 <i>Figure 15. Bladder volume over time is shown during a 4 hour simulation. Once the bladder reaches the maximum allowable volume, 400mL, the patient will experience functional incontinence.</i>
 </center><br>
@@ -625,15 +625,15 @@ Quantification of the renal system during and after the bleed ends are displayed
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Renal/HemorrhageGFR.jpg" width="550"></td>
-    <td><img src="./plots/Renal/HemorrhageMAP.jpg" width="550"></td>
+    <td><a href="./plots/Renal/HemorrhageGFR.jpg"><img src="./plots/Renal/HemorrhageGFR.jpg" width="550"></a></td>
+    <td><a href="./plots/Renal/HemorrhageMAP.jpg"><img src="./plots/Renal/HemorrhageMAP.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Renal/HemorrhageRBF.jpg" width="550"></td>
-    <td><img src="./plots/Renal/HemorrhageArterioleResistance.jpg" width="550"></td>
+    <td><a href="./plots/Renal/HemorrhageRBF.jpg"><img src="./plots/Renal/HemorrhageRBF.jpg" width="550"></a></td>
+    <td><a href="./plots/Renal/HemorrhageArterioleResistance.jpg"><img src="./plots/Renal/HemorrhageArterioleResistance.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Renal/HemorrhageClass4NoFluidLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Renal/HemorrhageClass4NoFluidLegend.jpg"><img src="./plots/Renal/HemorrhageClass4NoFluidLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -667,15 +667,15 @@ are attenuated as the afferent arteriole resistance increases.
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Renal/AltitudeMAP.jpg" width="550"></td>
-    <td><img src="./plots/Renal/AltitudeGFR.jpg" width="550"></td>
+    <td><a href="./plots/Renal/AltitudeMAP.jpg"><img src="./plots/Renal/AltitudeMAP.jpg" width="550"></a></td>
+    <td><a href="./plots/Renal/AltitudeGFR.jpg"><img src="./plots/Renal/AltitudeGFR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Renal/AltitudeRBF.jpg" width="550"></td>
-    <td><img src="./plots/Renal/AltitudeArterioleResistance.jpg" width="550"></td>
+    <td><a href="./plots/Renal/AltitudeRBF.jpg"><img src="./plots/Renal/AltitudeRBF.jpg" width="550"></a></td>
+    <td><a href="./plots/Renal/AltitudeArterioleResistance.jpg"><img src="./plots/Renal/AltitudeArterioleResistance.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Renal/HighAltitudeEnvironmentChangeLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Renal/HighAltitudeEnvironmentChangeLegend.jpg"><img src="./plots/Renal/HighAltitudeEnvironmentChangeLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -762,7 +762,7 @@ calcium, and creatinine are due to an unvalidated drop in urine production rate,
 
 -->
 
-### %Renal Stenosis - Condition
+### Renal Stenosis - Condition
 
 The %Renal Stenosis condition is validated against two different scenarios, testing severity and location of the condition. The moderate unilateral stenosis places a 60 percent severity on the left kidney and none on the right. The direct effect of a stenosis is a seen through a decrease in renal blood flow and glomerular filtration rate. Total vascular resistance and mean arterial pressure is increased because of the increased resistance on the renal artery. This causes a drop in cardiac output via the baroreceptor feedback response to the increased vascular resistance. The blood volume is steady in the engine due to a lack of angiotensin 2 and aldesterone hormonal responses.
 

@@ -26,7 +26,7 @@ Pulse has recently been incorporated into a number of commercial, research, and 
 
 ---------
 
-#### Validation Methodology
+##### Validation Methodology
 
 Models are validated using a combination of peer-reviewed publications and subject matter expertise. The validation process includes:
 
