@@ -96,7 +96,7 @@ class PFMixin(pl.LightningModule):
             # logging_metrics=[pf.metrics.RMSE()],
             logging_metrics=['MAE'],
             optimizer='Adamax',  # 'ranger'
-            reduce_on_plateau_patience=6,
+            reduce_on_plateau_patience=16,
             reduce_on_plateau_reduction=2,
             reduce_on_plateau_min_lr=1e-6,
             weight_decay=0.,
@@ -276,10 +276,12 @@ class BaseModel(PFMixin, pf.BaseModelWithCovariates):
         # 'b t f'
         x_data = x['encoder_cont']  # TODO try removing time (and add flag for plot)
         x_time = x['encoder_cont'][:, :, self.t_idx]
-        assert torch.allclose(*x_time[:, :2])
+        for i in range(1, len(x_time)):
+            assert torch.allclose(x_time[0, :2], x_time[i, :2])
         x_time = x_time[x['encoder_lengths'].argmax()]
         y_time = x['decoder_cont'][:, :, self.t_idx]
-        assert torch.allclose(*y_time[:, :2])
+        for i in range(1, len(y_time)):
+            assert torch.allclose(y_time[0, :2], y_time[i, :2])
         y_time = y_time[x['decoder_lengths'].argmax()]
 
         y_pred = self.old_forward(y_time, x_data, x_time)

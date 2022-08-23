@@ -13,7 +13,7 @@ import seaborn as sns
 
 torch.set_default_tensor_type(torch.DoubleTensor)
 # for headless use (write to files, don't show())
-# matplotlib.use("Agg")
+matplotlib.use("Agg")
 
 from typing import Literal, Optional, List, Tuple, Dict
 import ubelt as ub
@@ -457,13 +457,6 @@ def trainer_kwargs(kl_coef=1,
 if __name__ == "__main__":
 
     torch.set_default_dtype(torch.float32)
-    '''
-    alternate invocation:
-        model_class=RecurrentODE.from_dataset or
-        --model RecurrentODE.from_dataset
-    combine with https://jsonargparse.readthedocs.io/en/stable/index.html#argument-linking for model.dset == dm.dset_tr
-    https://github.com/omni-us/jsonargparse/issues/146
-    '''
 
     # for mild dset
     # --data.root_path=/data/pulse/hemorrhage/patient_variability/hemorrhage/test
@@ -523,6 +516,7 @@ if __name__ == "__main__":
     # batch = next(iter(cli.datamodule.train_dataloader()))
     # x, y = batch
     # y_pred = cli.model(x)
+    # import xdev; xdev.embed()
 
     # DUMP HPARAMS
     # from pytorch_lightning.core.saving import save_hparams_to_yaml
