@@ -44,6 +44,8 @@ bool SEScenarioUtils::GenerateScenarioFromLog(const std::string& filename, SESce
     if (actionEnd != std::string::npos)
     {
       std::string action = content.substr(actionBegin, actionEnd - actionBegin + 1);
+
+      // TODO: Create actions from action strings instead of just printing them
       std::cout << "found action: " << ++count << "\n" << action;
     }
 

@@ -44,7 +44,7 @@ int main()
   //HowToSmoke();
   //HowToTensionPneumothorax();
 
-  // These ones do not really run, is a pure example
+  // These ones do not really run, pure examples
   //HowToRunScenario();
   //HowToScenarioFromLog();
 
