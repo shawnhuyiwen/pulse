@@ -121,6 +121,8 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
     std::cout << "\t\tvalue:\t" << p.second << std::endl;
   }*/
 
+  actions.push_back(a);
+
   return true;
 }
 
