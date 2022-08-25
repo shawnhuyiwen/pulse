@@ -14,6 +14,7 @@ std::string tab = "    ";
 struct ScenarioAction
 {
   std::string ActionName;
+  std::string ActionType = "";
   double ScenarioTime_s;
   SEScalarProperties Properties;
   std::map<std::string, std::string> Enumerations;
@@ -24,7 +25,7 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
   ScenarioAction a;
 
   // Get scenario time
-  size_t beginIdx = 0;
+  size_t beginIdx = actionToken.length();
   size_t endIdx = allLines.find("(", actionToken.length());
   if (endIdx == std::string::npos)
   {
@@ -47,7 +48,14 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
     logger->Error("Unable to parse action name");
     return false;
   }
-  a.ActionName = allLines.substr(beginIdx, endIdx - beginIdx);
+  std::string line = allLines.substr(beginIdx, endIdx - beginIdx);
+  size_t colonIdx;
+  if ((colonIdx = line.find(":", 0)) != std::string::npos)
+  {
+    a.ActionType = line.substr(0, colonIdx - 1);
+    line = line.substr(colonIdx + 2);
+  }
+  a.ActionName = line;
 
   // Extract properties from remaining lines
   while (true)
@@ -75,7 +83,7 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
       logger->Error("Unable to parse property value");
       return false;
     }
-    std::string line = allLines.substr(beginIdx, endIdx - beginIdx);
+    line = allLines.substr(beginIdx, endIdx - beginIdx);
 
     // Check for paren for potential number(unit) format
     size_t unitBeginIdx = line.find("(", 0), unitEndIdx;
@@ -109,6 +117,7 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
   }
 
   /*std::cout << "Action: " << a.ActionName << std::endl;
+  std::cout << "\tType: " << a.ActionType << std::endl;
   std::cout << "\tTime: " << a.ScenarioTime_s << std::endl;
   for (auto p: a.Properties)
   {
