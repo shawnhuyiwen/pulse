@@ -17,8 +17,9 @@
 #include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarTime.h"
 
-std::string actionToken = "[Action]";
-std::string tab = "    ";
+#include <regex>
+
+std::string actionBeginPattern = R"(\[((\d*\.?\d*)\((\w)\))\][ \t]*\[Action\][ \t]*(?:\1,[ \t]*)*([\w \t]*\w)(?:(?:[ \t]*(:)[ \t]*([\w \t]*\w)*)*)[ \t]*(\{)?)";
 struct ScenarioAction
 {
   std::string Name;
@@ -28,104 +29,92 @@ struct ScenarioAction
   std::map<std::string, std::string> Enumerations;
 };
 
-bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& actions, Logger* logger)
+bool ParseLegacyLogAction(const std::string& allLines, std::vector<ScenarioAction>& actions, Logger* logger)
 {
   ScenarioAction a;
 
-  // Get scenario time
-  size_t beginIdx = actionToken.length();
-  size_t endIdx = allLines.find("(", actionToken.length());
-  if (endIdx == std::string::npos)
-  {
-    logger->Error("Unable to parse scenario time");
-    return false;
-  }
-  a.ScenarioTime_s = std::stod(allLines.substr(actionToken.length(), endIdx - beginIdx));
+  std::smatch mAction; 
+  std::regex rAction(actionBeginPattern);
 
-  // Get action name
-  beginIdx = allLines.find(",", endIdx);
-  if (beginIdx == std::string::npos)
+  // Capture groups:
+  //  0: Whole match
+  //  1: Time(Time unit) 
+  //  2: Time
+  //  3: Time unit
+  //  4: Action Type/Action Name for type-less legacy actions
+  //  5: Colon indicating legacy action
+  //  6: Action name for legacy actions with type
+  //  7: Bracket indicating non-legacy action
+  if (!std::regex_search(allLines, mAction, rAction))
   {
-    logger->Error("Unable to parse action name");
+    logger->Error("Unable to parse action");
     return false;
   }
-  beginIdx += 2;
-  endIdx = allLines.find("\n", beginIdx+1);
-  if (endIdx == std::string::npos)
+  
+  // Get scenario time
+  double time = std::stod(mAction[2]);
+  if (mAction[3].compare("s") != 0)
   {
-    logger->Error("Unable to parse action name");
-    return false;
+    // TODO: Handle other time units
   }
-  std::string line = allLines.substr(beginIdx, endIdx - beginIdx);
-  size_t colonIdx;
-  if ((colonIdx = line.find(":", 0)) != std::string::npos)
+  a.ScenarioTime_s = time;
+
+  // Get action name and type if it exists
+  if (mAction[5].compare(":") == 0)
   {
-    a.Type = line.substr(0, colonIdx - 1);
-    line = line.substr(colonIdx + 2);
+    a.Type = mAction[4];
+    a.Name = mAction[6];
   }
-  a.Name = line;
+  else
+  {
+    a.Name = mAction[4];
+  }
 
   // Extract properties from remaining lines
-  while (true)
+  std::string properties = mAction.suffix().str();
+  std::string propertyPattern = R"(    (\w+):\s*([a-zA-Z]*)?([\d*\.?\d]*)?(?:\((.*)\))?)";
+  std::smatch mProperty; 
+  std::regex rProperty(propertyPattern);
+  // Capture groups:
+  //  0: Whole match
+  //  1: Property name
+  //  2: NaN or Enumeration Value (note this will currently not get whole enum value if it has non a-zA-Z characters)
+  //  3: Numeric value
+  //  4: Unit
+  while (std::regex_search(properties, mProperty, rProperty))
   {
-    beginIdx = endIdx + 1 + tab.length();
-    if (beginIdx >= allLines.length())
-    {
-      break;
-    }
+    std::string propName = mProperty[1];
 
-    // Get property name from before colon
-    endIdx = allLines.find(":", beginIdx+1);
-    if (endIdx == std::string::npos)
+    double value;
+    std::string valueStr;
+    if (mProperty[2].compare("NaN") == 0)
     {
-      logger->Error("Unable to parse property name");
-      return false;
+      value = std::stod(mProperty[2]);
+      a.Properties[propName] = SEScalarPair(value);
     }
-    std::string propName = allLines.substr(beginIdx, endIdx - beginIdx);
-
-    // Get property value after colon
-    beginIdx = endIdx + 2;
-    endIdx = allLines.find("\n", beginIdx);
-    if (endIdx == std::string::npos)
+    else if (mProperty[3].compare("") != 0) // value(unit) or value
     {
-      logger->Error("Unable to parse property value");
-      return false;
-    }
-    line = allLines.substr(beginIdx, endIdx - beginIdx);
-
-    // Check for paren for potential number(unit) format
-    size_t unitBeginIdx = line.find("(", 0), unitEndIdx;
-    size_t valueEndIdx = line.length() - 1;
-    if (unitBeginIdx != std::string::npos)
-    {
-      valueEndIdx = unitBeginIdx - 1;
-    }
-    try
-    {
-      double value = std::stod(line.substr(0, valueEndIdx + 1));
-      if (unitBeginIdx != std::string::npos && (unitEndIdx = line.find(")", unitBeginIdx+1)) != std::string::npos)
+      value = std::stod(mProperty[3]);
+      if (mProperty[4].compare("") != 0)
       {
-        std::string unit = line.substr(unitBeginIdx+1, unitEndIdx-(unitBeginIdx+1));
-        a.Properties[propName] = SEScalarPair(value, unit);
-      }
-      else if (unitBeginIdx != std::string::npos && unitEndIdx == std::string::npos)
-      {
-        logger->Error("Unable to parse unit");
-        return false;
+        a.Properties[propName] = SEScalarPair(value, mProperty[4]);
       }
       else
       {
         a.Properties[propName] = SEScalarPair(value);
       }
     }
-    catch (std::invalid_argument&) // No number found
+    else //Enumeration
     {
-      a.Enumerations[propName] = line;
+      a.Enumerations[propName] = mProperty[2];
     }
+    // TODO: Account for properties that result in further indentation
+
+    properties = mProperty.suffix().str();
   }
 
-  /*std::cout << "Action: " << a.ActionName << std::endl;
-  std::cout << "\tType: " << a.ActionType << std::endl;
+  /*std::cout << "Action: " << a.Name << std::endl;
+  std::cout << "\tType: " << a.Type << std::endl;
   std::cout << "\tTime: " << a.ScenarioTime_s << std::endl;
   for (auto p: a.Properties)
   {
@@ -229,38 +218,66 @@ bool SEScenarioUtils::GenerateScenarioFromLog(const std::string& filename, SESce
   }
 
   sce.Clear();
-  size_t idx = 0;
   std::vector<ScenarioAction> actions;
 
-  // Identify beginning of an action with token
-  while ((idx = content.find(actionToken, idx)) != std::string::npos)
+  // Identify action strings
+  std::smatch mActionBegin; 
+  std::regex rActionBegin(actionBeginPattern);
+  std::string text = content;
+  while (std::regex_search(text, mActionBegin, rActionBegin))
   {
-    size_t actionBegin = idx;
-    size_t actionEnd = idx + 1;
-
-    // Identify end of an action based on indentation
-    while ((actionEnd = content.find("\n", actionEnd)) != std::string::npos)
+    // Capture groups:
+    //  0: Whole match
+    //  1: Time(Time unit) 
+    //  2: Time
+    //  3: Time unit
+    //  4: Action Type/Action Name for type-less legacy actions
+    //  5: Colon indicating legacy action
+    //  6: Action name for legacy actions with type
+    //  7: Bracket indicating non-legacy action
+    std::string remainingText = mActionBegin.suffix().str();
+    std::string actionStr = "";
+    if (mActionBegin[7].compare("{") == 0)
     {
-      if (actionEnd + 1 >= content.length() || tab.compare(content.substr(actionEnd + 1, tab.length())) != 0)
+      // Find end of action
+      std::smatch mActionEnd;
+      std::regex rActionEnd(R"(\}\n+.*:)");
+      if (std::regex_search(remainingText, mActionEnd, rActionEnd))
       {
-        break;
+        actionStr = text.substr(mActionBegin.position(0), mActionBegin.length(0) + mActionEnd.position(0));
       }
-      actionEnd++;
-    }
-
-    // Action identified
-    if (actionEnd != std::string::npos)
-    {
-      std::string action = content.substr(actionBegin, actionEnd - actionBegin + 1);
-
-      if (!ParseLogAction(action, actions, sce.GetLogger()))
+      else
       {
-        sce.Error("Unable to parse action: " + action);
+        sce.Error("Unable to identify action terminator: " + std::string(mActionBegin[0]));
+        return false;
+      }
+
+      // TODO: Parse action string
+
+    }
+    else // Legacy log
+    {
+      actionStr += mActionBegin[0];
+
+      // Collect action properties
+      std::smatch mActionProperties;
+      std::regex rActionProperties(R"(\n    .*)");
+      while (std::regex_search(remainingText, mActionProperties, rActionProperties))
+      {
+        if (mActionProperties.position(0) != 1) // Needs to immediately follow previous match
+          break;
+        actionStr += mActionProperties[0];
+        remainingText = mActionProperties.suffix().str();
+      }
+
+      if (!ParseLegacyLogAction(actionStr, actions, sce.GetLogger()))
+      {
+        sce.Error("Unable to parse action: " + actionStr);
         return false;
       }
     }
 
-    idx = actionEnd + 1;
+    text = mActionBegin.suffix().str();
   }
 
   //Create SEActions from actions
@@ -276,7 +293,6 @@ bool SEScenarioUtils::GenerateScenarioFromLog(const std::string& filename, SESce
     }
     AddSEAction(sa,sce);
   }
-
 
   return true;
 }
