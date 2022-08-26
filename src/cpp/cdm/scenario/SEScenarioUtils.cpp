@@ -5,9 +5,12 @@
 #include "cdm/scenario/SEScenarioUtils.h"
 #include "cdm/scenario/SEScenario.h"
 #include "cdm/utils/FileUtils.h"
+// Supported Actions
+#include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
 
-#include <vector>
-#include <stdexcept>
+#include "cdm/properties/SEScalarTime.h"
 
 std::string actionToken = "[Action]";
 std::string tab = "    ";
@@ -102,7 +105,7 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
         a.Properties[propName] = SEScalarPair(value);
       }
     }
-    catch (std::invalid_argument& e) // No number found
+    catch (std::invalid_argument&) // No number found
     {
       a.Enumerations[propName] = line;
     }
@@ -126,19 +129,26 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
   return true;
 }
 
+SEAction* NewSEAction(const std::string& name)
+{
+
+  return nullptr;
+}
+
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Generates previously executed scenario based on log file messages.
 //--------------------------------------------------------------------------------------------------
-bool SEScenarioUtils::GenerateScenarioFromLog(const std::string& filename, SEScenario& sce, Logger* logger)
+bool SEScenarioUtils::GenerateScenarioFromLog(const std::string& filename, SEScenario& sce)
 {
   std::string content;
   if (!ReadFile(filename, content))
   {
-    logger->Error("Unable to read file " + filename);
+    sce.Error("Unable to read file " + filename);
     return false;
   }
 
+  sce.Clear();
   size_t idx = 0;
   std::vector<ScenarioAction> actions;
 
@@ -163,16 +173,46 @@ bool SEScenarioUtils::GenerateScenarioFromLog(const std::string& filename, SESce
     {
       std::string action = content.substr(actionBegin, actionEnd - actionBegin + 1);
 
-      // TODO: Create actions from action strings
-      if (!ParseLogAction(action, actions, logger))
+      if (!ParseLogAction(action, actions, sce.GetLogger()))
       {
-        logger->Error("Unable to parse action: " + action);
+        sce.Error("Unable to parse action: " + action);
         return false;
       }
     }
 
     idx = actionEnd + 1;
   }
+  //Create SEActions from actions
+  double time_s = 0;
+  for (ScenarioAction& a : actions)
+  {
+    if (a.ScenarioTime_s > time_s)
+    {
+      SEAdvanceTime adv;
+      adv.GetTime().SetValue(a.ScenarioTime_s - time_s, TimeUnit::s);
+      time_s += a.ScenarioTime_s;
+    }
+
+    SEAction* action = NewSEAction(a.ActionName);
+    if (action == nullptr)
+    {
+      sce.Error("Unsupportd Action: " + a.ActionName);
+      continue;
+    }
+    for (auto itr : a.Properties)
+    {
+      SEScalar* scalar = const_cast<SEScalar*>(action->GetScalar(itr.first));
+      if (scalar == nullptr)
+      {
+        sce.Error("Uknown property: " + itr.first + " on action " + a.ActionName);
+        continue;
+      }
+      scalar->SetValue(0);
+    }
+    sce.AddAction(*action);
+    delete action;
+  }
+
 
   return true;
 }

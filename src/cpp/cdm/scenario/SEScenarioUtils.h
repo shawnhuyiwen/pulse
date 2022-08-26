@@ -9,5 +9,5 @@ class SEScenario;
 class CDM_DECL SEScenarioUtils
 {
 public:
-  static bool GenerateScenarioFromLog(const std::string& logFilename, SEScenario& sce, Logger* logger = nullptr);
+  static bool GenerateScenarioFromLog(const std::string& logFilename, SEScenario& sce);
 };

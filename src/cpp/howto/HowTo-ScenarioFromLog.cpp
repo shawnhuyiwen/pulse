@@ -20,13 +20,13 @@ void HowToScenarioFromLog()
 {
   // Create our engine
   std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/HowTo_ScenarioFromLog.log");
+  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ScenarioFromLog.log");
   pe->GetLogger()->Info("HowTo_ScenarioFromLog");
   
   // Create scenario from log file
   SEScenario sce(pe->GetLogger());
-  std::string logFile = "./test_results/pulse-cpr-bvm.log";
-  if (!SEScenarioUtils::GenerateScenarioFromLog(logFile, sce, pe->GetLogger()))
+  std::string logFile = "./scenarios/pulse-cpr-bvm-2mins.log";
+  if (!SEScenarioUtils::GenerateScenarioFromLog(logFile, sce))
   {
     pe->GetLogger()->Error("Could not generate scenario from file, check the error");
     return;
