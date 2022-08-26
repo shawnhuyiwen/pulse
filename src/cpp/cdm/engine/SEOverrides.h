@@ -24,8 +24,6 @@ public:
   virtual SEScalarProperties& GetScalarProperties();
   virtual const SEScalarProperties& GetScalarProperties() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

@@ -33,9 +33,3 @@ bool SEChronicVentricularSystolicDysfunction::IsActive() const
 {
   return IsValid();
 }
-
-void SEChronicVentricularSystolicDysfunction::ToString(std::ostream &str) const
-{
-  SEPatientCondition::ToString(str);
-  str << std::flush;
-}

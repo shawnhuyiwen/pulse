@@ -102,29 +102,3 @@ eMergeType SEECMOConfiguration::GetMergeType() const
 {
   return m_MergeType;
 }
-
-void SEECMOConfiguration::ToString(std::ostream &str) const
-{
-  SEECMOAction::ToString(str);
-  if (HasSettingsFile())
-  {
-    str << "\n\tSettings File: "; str << m_SettingsFile;
-  }
-  else if (HasSettings())
-  {
-    str << "\n\tInflowLocation: " << eECMO_CannulationLocation_Name(m_Settings->GetInflowLocation());
-    str << "\n\tOutflowLocation: " << eECMO_CannulationLocation_Name(m_Settings->GetOutflowLocation());
-    str << "\n\tOxygenatorVolume: "; m_Settings->HasOxygenatorVolume() ? str << m_Settings->GetOxygenatorVolume() : str << "NaN";
-    str << "\n\tTransfusionFlow: "; m_Settings->HasTransfusionFlow() ? str << m_Settings->GetTransfusionFlow() : str << "NaN";
-    str << "\n\tSubstanceCompound: "; m_Settings->HasSubstanceCompound() ? str << m_Settings->GetSubstanceCompound()->GetName() : str << "Not Provided";
-    if (m_Settings->HasSubstanceConcentrations())
-    {
-      for (SESubstanceConcentration* sc : m_Settings->GetSubstanceConcentrations())
-      {
-        str << "\n\tSubstance : " << sc->GetSubstance().GetName() << " Concentration " << sc->GetConcentration();
-      }
-    }
-  }
-  str << "\n\tMergeType: " << eMergeType_Name(m_MergeType);
-  str << std::flush;
-}

@@ -37,11 +37,3 @@ bool SEUseInhaler::IsActive() const
 {
   return SEConsciousRespirationCommand::IsActive();
 }
-
-void SEUseInhaler::ToString(std::ostream &str) const
-{
-  str << GetName();
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;  
-  str << std::flush;
-}

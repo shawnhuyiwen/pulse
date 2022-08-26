@@ -131,13 +131,3 @@ const SESubstance& SESubstanceInfusion::GetSubstance() const
 {
   return m_Substance;
 }
-
-void SESubstanceInfusion::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tRate: "; HasRate() ? str << *m_Rate : str << "NaN";
-  str << "\n\tConcentration: "; HasConcentration() ? str << *m_Concentration : str << "NaN";
-  str << "\n\tVolume: "; HasVolume() ? str << *m_Volume : str << "NaN";
-  str << "\n\tSubstance: " << m_Substance.GetName();
-  str  <<std::flush;
-}

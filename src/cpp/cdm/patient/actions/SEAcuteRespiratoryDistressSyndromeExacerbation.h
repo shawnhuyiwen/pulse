@@ -34,8 +34,6 @@ public:
   virtual SEScalar0To1& GetRightLungAffected();
   virtual double GetRightLungAffected() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

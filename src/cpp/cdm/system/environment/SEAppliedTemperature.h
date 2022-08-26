@@ -29,8 +29,6 @@ public:
   virtual eSwitch GetState() const;
   virtual void SetState(eSwitch onOff);
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
   
   SEScalarTemperature*   m_Temperature;

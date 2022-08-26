@@ -38,8 +38,6 @@ public:
   virtual SEScalar0To1& GetForceScale();
   virtual double GetForceScale() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

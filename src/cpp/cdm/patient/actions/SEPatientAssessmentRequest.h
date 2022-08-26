@@ -26,8 +26,6 @@ public:
   virtual ePatientAssessment_Type GetType() const;
   virtual void SetType(ePatientAssessment_Type type);
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
   
 protected:

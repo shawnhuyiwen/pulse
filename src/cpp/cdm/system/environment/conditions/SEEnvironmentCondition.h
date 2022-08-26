@@ -19,6 +19,4 @@ public:
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;
 
-public:
-  virtual void ToString(std::ostream &str) const { SECondition::ToString(str); }
-};  
+};

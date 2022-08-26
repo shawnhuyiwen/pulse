@@ -69,10 +69,3 @@ double SEAcuteStress::GetSeverity() const
     return SEScalar::dNaN();
   return m_Severity->GetValue();
 }
-
-void SEAcuteStress::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << std::flush;
-}

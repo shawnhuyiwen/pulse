@@ -24,8 +24,6 @@ public:
   virtual eSwitch GetState() const;
   virtual void SetState(eSwitch state);
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

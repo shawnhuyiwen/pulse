@@ -30,8 +30,6 @@ public:
   virtual void SetMealFile(const std::string& fileName);
   virtual bool HasMealFile() const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
   SEMeal*      m_Meal;
   std::string  m_MealFile;

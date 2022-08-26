@@ -90,8 +90,6 @@ public:
   virtual SEScalarVolume& GetTotalBloodLost();
   virtual double GetTotalBloodLost(const VolumeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

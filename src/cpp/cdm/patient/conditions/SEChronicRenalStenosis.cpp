@@ -79,11 +79,3 @@ double SEChronicRenalStenosis::GetRightKidneySeverity() const
     return SEScalar::dNaN();
   return m_RightKidneySeverity->GetValue();
 }
-
-void SEChronicRenalStenosis::ToString(std::ostream &str) const
-{
-  SEPatientCondition::ToString(str);
-  str << "\n\tLeft Kidney Occlusion 0To1: "; HasLeftKidneySeverity() ? str << *m_LeftKidneySeverity : str << "NaN";
-  str << "\n\tRight Kidney Occlusion 0To1: "; HasRightKidneySeverity() ? str << *m_RightKidneySeverity : str << "NaN";
-  str << std::flush;
-}

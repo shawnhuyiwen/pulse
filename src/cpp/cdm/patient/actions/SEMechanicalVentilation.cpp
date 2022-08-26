@@ -275,26 +275,3 @@ void SEMechanicalVentilation::RemoveAerosols()
   DELETE_VECTOR(m_Aerosols);
   m_cAerosols.clear();
 }
-
-void SEMechanicalVentilation::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tState: " << eSwitch_Name(GetState());
-  str << "\n\tFlow: ";  HasFlow() ? str << *m_Flow : str << "Not Set";
-  str << "\n\tPressure: "; HasPressure() ? str << *m_Pressure : str << "Not Set";
-  if (HasGasFraction())
-  {
-    for (const SESubstanceFraction* sf : GetGasFractions())
-    {
-      str << "\n\tSubstance : " << sf->GetSubstance().GetName() << " Fraction Amount " << sf->GetFractionAmount();
-    }
-  }
-  if (HasAerosol())
-  {
-    for (const SESubstanceConcentration* sc : GetAerosols())
-    {
-      str << "\n\tSubstance : " << sc->GetSubstance().GetName() << " Concentration (mg_Per_L) " << sc->GetConcentration(MassPerVolumeUnit::mg_Per_L);
-    }
-  }
-  str << std::flush;
-}

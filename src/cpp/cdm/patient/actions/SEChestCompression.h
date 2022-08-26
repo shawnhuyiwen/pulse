@@ -34,8 +34,6 @@ public:
   virtual SEScalarTime& GetCompressionPeriod();
   virtual double GetCompressionPeriod(const TimeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

@@ -22,8 +22,6 @@ public:
   virtual bool IsActive() const;
   virtual void Deactivate();
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

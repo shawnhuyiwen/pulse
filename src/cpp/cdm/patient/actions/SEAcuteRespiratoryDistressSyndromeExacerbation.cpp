@@ -119,12 +119,3 @@ double SEAcuteRespiratoryDistressSyndromeExacerbation::GetRightLungAffected() co
     return SEScalar::dNaN();
   return m_RightLungAffected->GetValue();
 }
-
-void SEAcuteRespiratoryDistressSyndromeExacerbation::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tSeverity: "; HasSeverity() ? str << m_Severity : str << "NaN";
-  str << "\n\tLeftLungAffected: "; HasLeftLungAffected() ? str << *m_LeftLungAffected : str << "NaN";
-  str << "\n\tRightLungAffected: "; HasRightLungAffected() ? str << *m_RightLungAffected : str << "NaN";
-  str << std::flush;
-}

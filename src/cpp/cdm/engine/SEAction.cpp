@@ -46,3 +46,8 @@ SEAction* SEAction::Copy(const SEAction& action, const SESubstanceManager& subMg
 {
   return PBAction::Copy(action, subMgr);
 }
+
+std::string SEAction::ToString(eSerializationFormat fmt) const
+{
+  return PBAction::ToString(*this, fmt);
+}

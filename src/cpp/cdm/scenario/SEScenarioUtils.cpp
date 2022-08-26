@@ -7,17 +7,22 @@
 #include "cdm/utils/FileUtils.h"
 // Supported Actions
 #include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/patient/actions/SEArrhythmia.h"
 #include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
+#include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
 #include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
+#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
 
+#include "cdm/properties/SEScalarForce.h"
+#include "cdm/properties/SEScalarPressure.h"
 #include "cdm/properties/SEScalarTime.h"
 
 std::string actionToken = "[Action]";
 std::string tab = "    ";
 struct ScenarioAction
 {
-  std::string ActionName;
-  std::string ActionType = "";
+  std::string Name;
+  std::string Type = "";
   double ScenarioTime_s;
   SEScalarProperties Properties;
   std::map<std::string, std::string> Enumerations;
@@ -55,10 +60,10 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
   size_t colonIdx;
   if ((colonIdx = line.find(":", 0)) != std::string::npos)
   {
-    a.ActionType = line.substr(0, colonIdx - 1);
+    a.Type = line.substr(0, colonIdx - 1);
     line = line.substr(colonIdx + 2);
   }
-  a.ActionName = line;
+  a.Name = line;
 
   // Extract properties from remaining lines
   while (true)
@@ -138,10 +143,76 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
   return true;
 }
 
-SEAction* NewSEAction(const std::string& name)
+void TestAction(SEAction& a)
 {
+  std::string s = a.ToString();
 
-  return nullptr;
+  std::cout << "Adding action: " << a << std::endl;
+  //SEAction* copy = SEAction::Serialize(s);
+}
+
+bool AddSEAction(ScenarioAction& sa, SEScenario& sce)
+{
+  if (sa.Type == SEPatientAction::ActionType)
+  {
+    if (sa.Name == SEArrhythmia::Name)
+    {
+      SEArrhythmia a;
+      if (sa.Enumerations.find("Rhythm") != sa.Enumerations.end())
+        a.SetRhythm(eHeartRhythm::NormalSinus);
+
+      sce.AddAction(a);
+      TestAction(a);
+      return true;
+    }
+    if (sa.Name == SEChestCompressionInstantaneous::Name)
+    {
+      SEChestCompressionInstantaneous a;
+      if (sa.Properties.find("Force") != sa.Properties.end())
+        a.GetForce().SetValue(sa.Properties["Force"].value, ForceUnit::N);
+
+      sce.AddAction(a);
+      TestAction(a);
+      return true;
+    }
+  }
+
+  if (sa.Type == SEBagValveMaskAction::ActionType)
+  {
+    if (sa.Name == SEBagValveMaskConfiguration::Name)
+    {
+      SEBagValveMaskConfiguration a;
+      if (sa.Properties.find("ValvePositiveEndExpiredPressure") != sa.Properties.end())
+        a.GetConfiguration().GetValvePositiveEndExpiredPressure().SetValue(sa.Properties["ValvePositiveEndExpiredPressure"].value, PressureUnit::cmH2O);
+      if (sa.Enumerations.find("Connection") != sa.Enumerations.end())
+      {
+        std::string c = sa.Enumerations["Connection"];
+        if (c == "On")
+          a.GetConfiguration().SetConnection(eSwitch::On);
+        else if (c == "Off")
+          a.GetConfiguration().SetConnection(eSwitch::Off);
+      }
+
+      sce.AddAction(a);
+      TestAction(a);
+      return true;
+    }
+    if (sa.Name == SEBagValveMaskSqueeze::Name)
+    {
+      SEBagValveMaskSqueeze a;
+      if (sa.Properties.find("ExpiratoryPeriod") != sa.Properties.end())
+        a.GetExpiratoryPeriod().SetValue(sa.Properties["ExpiratoryPeriod"].value, TimeUnit::s);
+      if (sa.Properties.find("InspiratoryPeriod") != sa.Properties.end())
+        a.GetInspiratoryPeriod().SetValue(sa.Properties["InspiratoryPeriod"].value, TimeUnit::s);
+
+      sce.AddAction(a);
+      TestAction(a);
+      return true;
+    }
+  }
+
+  std::cerr << "Unknown action : " << sa.Type << " " << sa.Name << std::endl;
+  return false;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -191,35 +262,19 @@ bool SEScenarioUtils::GenerateScenarioFromLog(const std::string& filename, SESce
 
     idx = actionEnd + 1;
   }
+
   //Create SEActions from actions
   double time_s = 0;
-  for (ScenarioAction& a : actions)
+  for (ScenarioAction& sa : actions)
   {
-    if (a.ScenarioTime_s > time_s)
+    if (sa.ScenarioTime_s > time_s)
     {
       SEAdvanceTime adv;
-      adv.GetTime().SetValue(a.ScenarioTime_s - time_s, TimeUnit::s);
-      time_s += a.ScenarioTime_s;
+      adv.GetTime().SetValue(sa.ScenarioTime_s - time_s, TimeUnit::s);
+      time_s += sa.ScenarioTime_s;
+      std::cout << adv;
     }
-
-    SEAction* action = NewSEAction(a.ActionName);
-    if (action == nullptr)
-    {
-      sce.Error("Unsupportd Action: " + a.ActionName);
-      continue;
-    }
-    for (auto itr : a.Properties)
-    {
-      SEScalar* scalar = const_cast<SEScalar*>(action->GetScalar(itr.first));
-      if (scalar == nullptr)
-      {
-        sce.Error("Uknown property: " + itr.first + " on action " + a.ActionName);
-        continue;
-      }
-      scalar->SetValue(0);
-    }
-    sce.AddAction(*action);
-    delete action;
+    AddSEAction(sa,sce);
   }
 
 

@@ -32,8 +32,6 @@ public:
   virtual void SetNutritionFile(const std::string& fileName);
   virtual bool HasNutritionFile() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

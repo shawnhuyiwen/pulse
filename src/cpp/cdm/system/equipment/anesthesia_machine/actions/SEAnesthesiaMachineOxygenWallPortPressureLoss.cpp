@@ -58,10 +58,3 @@ void SEAnesthesiaMachineOxygenWallPortPressureLoss::SetState(eSwitch state)
 {
   m_State = state;
 }
-
-void SEAnesthesiaMachineOxygenWallPortPressureLoss::ToString(std::ostream &str) const
-{
-  SEAnesthesiaMachineAction::ToString(str);
-  str << "\n\tState: " << eSwitch_Name(m_State.GetEnum());
-  str << std::flush;
-}

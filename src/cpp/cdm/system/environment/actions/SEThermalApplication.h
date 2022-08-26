@@ -38,8 +38,6 @@ public:
   virtual const SEAppliedTemperature* GetAppliedTemperature() const;
   virtual void RemoveAppliedTemperature();
 
-  virtual void ToString(std::ostream& str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

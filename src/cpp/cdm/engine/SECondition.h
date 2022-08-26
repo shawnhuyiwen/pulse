@@ -26,10 +26,7 @@ public:
   virtual bool HasComment()const;
   virtual void InvalidateComment();
 
-  virtual void ToString(std::ostream &str) const
-  {
-    str << GetConditionType() + " : " + GetName();
-  }
+  virtual std::string ToString(eSerializationFormat fmt = eSerializationFormat::TEXT) const;
 
 protected:
 
@@ -38,13 +35,6 @@ protected:
 
 inline std::ostream& operator<< (std::ostream& out, const SECondition& a) 
 {
-    a.ToString(out);
+    out << a.ToString(eSerializationFormat::TEXT);
     return out;
 }
-
-struct CDM_DECL SEConditionDictionary
-{
-  std::string                        Name = "";
-  SEScalarProperties                 Properties;
-  std::map<std::string, std::string> Enumerations;
-};

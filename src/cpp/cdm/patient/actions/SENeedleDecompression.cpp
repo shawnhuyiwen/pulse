@@ -78,11 +78,3 @@ void SENeedleDecompression::InvalidateSide()
 {
   m_Side = eSide::NullSide;
 }
-
-void SENeedleDecompression::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tState: " << eSwitch_Name(m_State);
-  str  << "\n\tSide: "; HasSide()? str << eSide_Name(GetSide()) : str << "No Side Set";
-  str << std::flush;
-}

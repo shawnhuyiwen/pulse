@@ -22,8 +22,6 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual bool HasExpiratoryReserveVolumeFraction() const;
   virtual SEScalar0To1& GetExpiratoryReserveVolumeFraction();
   virtual double GetExpiratoryReserveVolumeFraction() const;

@@ -25,8 +25,6 @@ public:
   virtual bool HasIntensity() const;
   virtual SEScalar0To1& GetIntensity();
   virtual double GetIntensity() const;
-  
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

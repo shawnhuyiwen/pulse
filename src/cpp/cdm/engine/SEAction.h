@@ -42,12 +42,9 @@ public:
   virtual bool HasComment() const;
   virtual void InvalidateComment();
 
-  virtual void ToString(std::ostream& str) const
-  {
-    str << GetActionType() + " : " + GetName();
-  }
-
   virtual const SEScalar* GetScalar(const std::string& name)=0;
+
+  virtual std::string ToString(eSerializationFormat fmt=eSerializationFormat::TEXT) const;
 
 protected:
   bool                  m_Active = true;
@@ -56,14 +53,6 @@ protected:
 
 inline std::ostream& operator<< (std::ostream& out, const SEAction& a) 
 {
-    a.ToString(out);
-    return out;
+  out << a.ToString(eSerializationFormat::TEXT);
+  return out;
 }
-
-struct CDM_DECL SEActionDictionary
-{
-  double                             Time_s = 0;
-  std::string                        Name = "";
-  SEScalarProperties                 Properties;
-  std::map<std::string, std::string> Enumerations;
-};

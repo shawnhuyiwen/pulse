@@ -102,12 +102,3 @@ double SESupplementalOxygen::GetVolume(const VolumeUnit& unit) const
     return SEScalar::dNaN();
   return m_Volume->GetValue(unit);
 }
-
-void SESupplementalOxygen::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tDevice: " << eSupplementalOxygen_Device_Name(GetDevice());
-  str << "\n\tFlow: "; HasFlow() ? str << *m_Flow : str << "NaN";
-  str << "\n\tVolume: "; HasVolume() ? str << *m_Volume : str << "NaN";
-  str  <<std::flush;
-}

@@ -25,8 +25,6 @@ public:
   virtual bool HasEffusionRate() const;
   virtual SEScalarVolumePerTime& GetEffusionRate();
   virtual double GetEffusionRate(const VolumePerTimeUnit& unit) const;
-  
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

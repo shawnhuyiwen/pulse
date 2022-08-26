@@ -123,12 +123,3 @@ double SEChestCompression::GetCompressionPeriod(const TimeUnit& unit) const
     return SEScalar::dNaN();
   return m_CompressionPeriod->GetValue(unit);
 }
-
-void SEChestCompression::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tForce: "; HasForce() ? str << *m_Force : str << "NaN";
-  str << "\n\tForceScale: "; HasForceScale() ? str << *m_ForceScale : str << "NaN";
-  str << "\n\tCompressionPeriod: "; HasCompressionPeriod() ? str << *m_CompressionPeriod : str << "NaN";
-  str << std::flush;
-}

@@ -25,15 +25,7 @@ public:
   virtual bool HasComment() const;
   virtual void InvalidateComment();
 
-  virtual void ToString(std::ostream &str) const = 0;
-
 protected:
 
-  std::string                               m_Comment;
-};  
-
-inline std::ostream& operator<< (std::ostream& out, const SEConsciousRespirationCommand& c)
-{
-  c.ToString(out);
-  return out;
-}
+  std::string  m_Comment;
+};

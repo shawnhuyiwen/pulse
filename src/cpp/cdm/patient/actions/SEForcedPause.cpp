@@ -53,12 +53,3 @@ double SEForcedPause::GetPeriod(const TimeUnit& unit) const
     return SEScalar::dNaN();
   return m_Period->GetValue(unit);
 }
-
-void SEForcedPause::ToString(std::ostream &str) const
-{
-  str << GetName();
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tPeriod: "; HasPeriod() ? str << *m_Period : str << "NaN";
-  str << std::flush;
-}

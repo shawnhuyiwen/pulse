@@ -26,8 +26,6 @@ public:
   virtual eHeartRhythm GetRhythm() const;
   virtual void SetRhythm(eHeartRhythm t);
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

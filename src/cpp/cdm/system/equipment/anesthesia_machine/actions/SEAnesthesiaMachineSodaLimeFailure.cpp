@@ -66,10 +66,3 @@ double SEAnesthesiaMachineSodaLimeFailure::GetSeverity() const
     return SEScalar::dNaN();
   return m_Severity->GetValue();
 }
-
-void SEAnesthesiaMachineSodaLimeFailure::ToString(std::ostream &str) const
-{
-  SEAnesthesiaMachineAction::ToString(str);
-  str << "\n\tSeverity :"; HasSeverity() ? str << *m_Severity : str << "NaN";
-  str << std::flush;
-}

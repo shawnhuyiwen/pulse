@@ -82,25 +82,3 @@ bool SEConsumeNutrients::HasNutritionFile() const
 {
   return !m_NutritionFile.empty();
 }
-
-void SEConsumeNutrients::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  if (HasNutritionFile())
-  {
-    str << "\n\tNutrition File: "; str << m_NutritionFile;
-  }
-  else if (HasNutrition())
-  {
-    str << "\n\tCharbohydrates: "; m_Nutrition->HasCarbohydrate() ? str << m_Nutrition->GetCarbohydrate() : str << "None";
-    str << "\n\tCharbohydrates Digestion Rate: "; m_Nutrition->HasCarbohydrateDigestionRate() ? str << m_Nutrition->GetCarbohydrateDigestionRate() : str << "None";
-    str << "\n\tFat: "; m_Nutrition->HasFat() ? str << m_Nutrition->GetFat() : str << "None";
-    str << "\n\tFat Digestion Rate: "; m_Nutrition->HasFatDigestionRate() ? str << m_Nutrition->GetFatDigestionRate() : str << "None";
-    str << "\n\tProtein: "; m_Nutrition->HasProtein() ? str << m_Nutrition->GetProtein() : str << "None";
-    str << "\n\tProtein Digestion Rate: "; m_Nutrition->HasProteinDigestionRate() ? str << m_Nutrition->GetProteinDigestionRate() : str << "None";
-    str << "\n\tCalcium: "; m_Nutrition->HasCalcium() ? str << m_Nutrition->GetCalcium() : str << "None";
-    str << "\n\tSodium: "; m_Nutrition->HasSodium() ? str << m_Nutrition->GetSodium() : str << "None";
-    str << "\n\tWater: "; m_Nutrition->HasWater() ? str << m_Nutrition->GetWater() : str << "None";
-  }
-  str << std::flush;
-}

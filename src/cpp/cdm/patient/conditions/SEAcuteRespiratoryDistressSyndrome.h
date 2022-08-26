@@ -33,8 +33,6 @@ public:
   virtual SEScalar0To1& GetRightLungAffected();
   virtual double GetRightLungAffected() const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
   SEScalar0To1* m_Severity;
   SEScalar0To1* m_LeftLungAffected;

@@ -69,10 +69,3 @@ double SEAsthmaAttack::GetSeverity() const
     return SEScalar::dNaN();
   return m_Severity->GetValue();
 }
-
-void SEAsthmaAttack::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
-  str <<std::flush;
-}

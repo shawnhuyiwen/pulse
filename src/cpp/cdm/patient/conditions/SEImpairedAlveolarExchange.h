@@ -32,8 +32,6 @@ public:
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
   
   SEScalarArea*      m_ImpairedSurfaceArea;

@@ -39,8 +39,6 @@ public:
   virtual SEScalarTime& GetInspiratoryPeriod();
   virtual double GetInspiratoryPeriod(const TimeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

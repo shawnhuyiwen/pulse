@@ -18,6 +18,8 @@ public:
   /** Create a new bind object, unload the action, put that in the bind object, and return said bind object */
   static CDM_BIND::AnyActionData* Unload(const SEAction& action);
   static SEAction* Copy(const SEAction& a, const SESubstanceManager& subMgr);
+  static std::string ToString(const SEAction& a, eSerializationFormat fmt=eSerializationFormat::JSON);
+  static SEAction* FromString(const std::string& src, Logger& logger, eSerializationFormat fmt=eSerializationFormat::JSON);
 
   static void Serialize(const CDM_BIND::ActionData& src, SEAction& dst);
   static void Serialize(const SEAction& src, CDM_BIND::ActionData& dst);

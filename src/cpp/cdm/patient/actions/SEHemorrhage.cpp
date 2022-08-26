@@ -180,17 +180,6 @@ double SEHemorrhage::GetTotalBloodLost(const VolumeUnit& unit) const
   return m_TotalBloodLost->GetValue(unit);
 }
 
-void SEHemorrhage::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tType: " << eHemorrhage_Type_Name(GetType());
-  str << "\n\tFor Compartment: "; HasCompartment()? str << GetCompartment() : str << "No Compartment Set";
-  str << "\n\tFlowRate: "; HasFlowRate() ? str << *m_FlowRate : str << "Not Set";
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << "\n\tTotalBloodLost: "; HasTotalBloodLost() ? str << *m_TotalBloodLost : str << "Not Set";
-  str << std::flush;
-}
-
 const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::RightLeg("RightLeg");
 const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::LeftLeg("LeftLeg");
 const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::RightArm("RightArm");

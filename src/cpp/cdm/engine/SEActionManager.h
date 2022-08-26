@@ -23,6 +23,7 @@ public:
   bool SerializeFromString(const std::string& src, eSerializationFormat m);
   bool SerializeFromFile(const std::string& filename);
 
+  static SEAction* SerializeFromString(const std::string, eSerializationFormat fmt, const SESubstanceManager&);
   static bool SerializeFromString(const std::string& src, std::vector<SEAction*>& dst, eSerializationFormat m, const SESubstanceManager& subMgr);
   static bool SerializeFromString(const std::string& src, std::map<int,std::vector<const SEAction*>>& dst, eSerializationFormat m, const SESubstanceManager& subMgr);
 

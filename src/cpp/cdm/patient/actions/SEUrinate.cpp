@@ -46,9 +46,3 @@ const SEScalar* SEUrinate::GetScalar(const std::string& /*name*/)
 {
   return nullptr;
 }
-
-void SEUrinate::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << std::flush;
-}

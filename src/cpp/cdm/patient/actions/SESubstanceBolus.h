@@ -42,8 +42,6 @@ public:
   virtual SESubstance& GetSubstance();
   virtual const SESubstance& GetSubstance() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
   virtual bool HasTotalInfusedDose() const;

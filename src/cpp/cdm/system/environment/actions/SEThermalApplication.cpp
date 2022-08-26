@@ -155,33 +155,3 @@ void SEThermalApplication::RemoveAppliedTemperature()
 {
   SAFE_DELETE(m_AppliedTemperature);
 }
-
-void SEThermalApplication::ToString(std::ostream &str) const
-{
-  SEEnvironmentAction::ToString(str);
-  if (HasActiveHeating())
-  {
-    str << "\n\t Active Heating : ";
-    m_ActiveHeating->ToString(str);
-  }
-  else
-    str << "\n\tNo Active Heating";
-
-  if (HasActiveCooling())
-  {
-    str << "\n\t Active Cooling : ";
-    m_ActiveCooling->ToString(str);
-  }
-  else
-    str << "\n\tNo Active Cooling";
-
-  if (HasAppliedTemperature())
-  {
-    str << "\n\t";
-    m_AppliedTemperature->ToString(str);
-  }
-  else
-    str << "\n\tNo Applied Temperature";
-  
-  str << std::flush;
-}

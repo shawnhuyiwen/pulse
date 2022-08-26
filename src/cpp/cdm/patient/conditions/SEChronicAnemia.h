@@ -25,8 +25,6 @@ public:
   virtual SEScalar0To1& GetReductionFactor();
   virtual double GetReductionFactor() const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
   SEScalar0To1*           m_ReductionFactor;
 };

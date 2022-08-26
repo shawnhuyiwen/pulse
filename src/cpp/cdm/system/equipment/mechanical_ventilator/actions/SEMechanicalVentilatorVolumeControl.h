@@ -69,8 +69,6 @@ public:
   virtual SEScalarTime& GetSlope();
   virtual double GetSlope(const TimeUnit& unit) const;
 
-  void ToString(std::ostream& str) const override;
-
   const SEScalar* GetScalar(const std::string& name) override;
 
 protected:

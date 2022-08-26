@@ -29,8 +29,6 @@ public:
   virtual SEScalar0To1& GetEmphysemaSeverity();
   virtual double GetEmphysemaSeverity() const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
   SEScalar0To1*     m_BronchitisSeverity;
   SEScalar0To1*     m_EmphysemaSeverity;

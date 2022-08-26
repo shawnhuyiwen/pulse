@@ -29,8 +29,6 @@ public:
   virtual void SetEnvironmentalConditionsFile(const std::string& fileName);
   virtual bool HasEnvironmentalConditionsFile() const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
   std::string                m_EnvironmentalConditionsFile;
   SEEnvironmentalConditions* m_EnvironmentalConditions;

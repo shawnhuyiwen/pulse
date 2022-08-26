@@ -25,8 +25,6 @@ public:
   virtual SEScalarVolume& GetAccumulatedVolume();
   virtual double GetAccumulatedVolume(const VolumeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
 
   SEScalarVolume* m_AccumulatedVolume;

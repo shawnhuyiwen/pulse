@@ -31,8 +31,6 @@ public:
   virtual void SetFilename(const std::string& filename);
   virtual void InvalidateFilename();
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

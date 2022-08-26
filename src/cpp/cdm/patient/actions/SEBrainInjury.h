@@ -33,8 +33,6 @@ public:
   virtual eBrainInjury_Type GetType() const;
   virtual void SetType(eBrainInjury_Type t);
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

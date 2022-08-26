@@ -33,8 +33,6 @@ public:
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

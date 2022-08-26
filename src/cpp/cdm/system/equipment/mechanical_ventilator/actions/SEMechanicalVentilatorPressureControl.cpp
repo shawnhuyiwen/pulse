@@ -333,20 +333,3 @@ double SEMechanicalVentilatorPressureControl::GetSlope(const TimeUnit& unit) con
     return SEScalar::dNaN();
   return m_Slope->GetValue(unit);
 }
-
-void SEMechanicalVentilatorPressureControl::ToString(std::ostream& str) const
-{
-  SEMechanicalVentilatorAction::ToString(str);
-  str << "\n\tConnection: " << eSwitch_Name(m_Connection);
-  str << "\n\tMode: " << eMechanicalVentilator_PressureControlMode_Name(m_Mode);
-  str << "\n\tFractionInspiredOxygen :"; HasFractionInspiredOxygen() ? str << *m_FractionInspiredOxygen : str << "NaN";
-  str << "\n\tInspirationPatientTriggerFlow: "; HasInspirationPatientTriggerFlow() ? str << m_InspirationPatientTriggerFlow : str << "NaN";
-  str << "\n\tInspirationPatientTriggerPressure: "; HasInspirationPatientTriggerPressure() ? str << m_InspirationPatientTriggerPressure : str << "NaN";
-  str << "\n\tInspirationWaveform: " << eDriverWaveform_Name(GetInspirationWaveform());
-  str << "\n\tInspiratoryPeriod :"; HasInspiratoryPeriod() ? str << *m_InspiratoryPeriod : str << "NaN";
-  str << "\n\tInspiratoryPressure :"; HasInspiratoryPressure() ? str << *m_InspiratoryPressure : str << "NaN";
-  str << "\n\tPositiveEndExpiredPressure :"; HasPositiveEndExpiredPressure() ? str << *m_PositiveEndExpiredPressure : str << "NaN";
-  str << "\n\tRespirationRate :"; HasRespirationRate() ? str << *m_RespirationRate : str << "NaN";
-  str << "\n\tSlope :"; HasSlope() ? str << *m_Slope : str << "NaN";
-  str << std::flush;
-}

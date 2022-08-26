@@ -29,8 +29,6 @@ public:
   virtual eAppliedRespiratoryCycle GetAppliedRespiratoryCycle() const;
   virtual void SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle c);
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

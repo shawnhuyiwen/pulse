@@ -26,8 +26,6 @@ public:
   virtual SEScalar0To1& GetSurfaceAreaFraction();
   virtual double GetSurfaceAreaFraction() const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
   SEScalarPower*     m_Power;
   SEScalarArea*      m_SurfaceArea;

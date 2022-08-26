@@ -55,10 +55,3 @@ double SEPulmonaryShunt::GetSeverity() const
     return SEScalar::dNaN();
   return m_Severity->GetValue();
 }
-
-void SEPulmonaryShunt::ToString(std::ostream &str) const
-{
-  SEPatientCondition::ToString(str);
-  str << "\n\tSeverity: "; HasSeverity() ? str << m_Severity : str << "NaN";
-  str << std::flush;
-}

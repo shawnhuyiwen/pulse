@@ -114,15 +114,3 @@ double SEForcedInhale::GetReleasePeriod(const TimeUnit& unit) const
     return SEScalar::dNaN();
   return m_ReleasePeriod->GetValue(unit);
 }
-
-void SEForcedInhale::ToString(std::ostream &str) const
-{
-  str << GetName();
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tInspiratoryCapacityFraction: "; HasInspiratoryCapacityFraction() ? str << *m_InspiratoryCapacityFraction : str << "NaN";
-  str << "\n\tInhalePeriod: "; HasInhalePeriod() ? str << *m_InhalePeriod : str << "NaN";
-  str << "\n\tHoldPeriod: "; HasHoldPeriod() ? str << *m_HoldPeriod : str << "NaN";
-  str << "\n\tReleasePeriod: "; HasReleasePeriod() ? str << *m_ReleasePeriod : str << "NaN";
-  str << std::flush;
-}

@@ -23,8 +23,6 @@ public:
   virtual SEScalarTime& GetTime();
   virtual double GetTime(const TimeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

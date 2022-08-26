@@ -55,11 +55,3 @@ double SEChronicPericardialEffusion::GetAccumulatedVolume(const VolumeUnit& unit
     return SEScalar::dNaN();
   return m_AccumulatedVolume->GetValue(unit);
 }
-
-
-void SEChronicPericardialEffusion::ToString(std::ostream &str) const
-{
-  SEPatientCondition::ToString(str);
-  str << "\n\tAccumulatedVolume: "; HasAccumulatedVolume() ? str << *m_AccumulatedVolume : str << "NaN";
-  str << std::flush;
-}

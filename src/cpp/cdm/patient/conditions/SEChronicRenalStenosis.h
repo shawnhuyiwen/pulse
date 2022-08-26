@@ -29,8 +29,6 @@ public:
   virtual SEScalar0To1& GetRightKidneySeverity();
   virtual double GetRightKidneySeverity() const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
 
   SEScalar0To1*           m_LeftKidneySeverity;

@@ -29,8 +29,6 @@ public:
   virtual void SetSide(eSide LeftOrRight);
   virtual bool HasSide() const;
   virtual void InvalidateSide();
-  
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

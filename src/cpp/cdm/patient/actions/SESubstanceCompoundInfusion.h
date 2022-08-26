@@ -34,8 +34,6 @@ public:
   virtual SESubstanceCompound& GetSubstanceCompound();
   virtual const SESubstanceCompound& GetSubstanceCompound() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

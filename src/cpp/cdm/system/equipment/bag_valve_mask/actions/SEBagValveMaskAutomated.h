@@ -39,8 +39,6 @@ public:
   virtual SEScalarVolume& GetSqueezeVolume();
   virtual double GetSqueezeVolume(const VolumeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

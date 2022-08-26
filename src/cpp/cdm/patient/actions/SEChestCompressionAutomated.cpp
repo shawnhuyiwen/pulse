@@ -147,13 +147,3 @@ double SEChestCompressionAutomated::GetForceScale() const
   
   return m_ForceScale->GetValue();
 }
-
-void SEChestCompressionAutomated::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tAppliedForceFraction: "; HasAppliedForceFraction() ? str << *m_AppliedForceFraction : str << "NaN";
-  str << "\n\tCompressionFrequency: "; HasCompressionFrequency() ? str << *m_CompressionFrequency : str << "NaN";
-  str << "\n\tForce: "; HasForce() ? str << *m_Force : str << "NaN";
-  str << "\n\tForceScale: "; HasForceScale() ? str << *m_ForceScale : str << "NaN";
-  str << std::flush;
-}

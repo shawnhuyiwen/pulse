@@ -18,6 +18,4 @@ public:
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;
-
-  virtual void ToString(std::ostream& str) const { SEAction::ToString(str); }
 };  

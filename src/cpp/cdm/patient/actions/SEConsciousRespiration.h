@@ -41,8 +41,6 @@ public:
   virtual SEForcedPause&  AddForcedPause();
   virtual SEUseInhaler&   AddUseInhaler();
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

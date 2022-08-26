@@ -66,10 +66,3 @@ double SEMechanicalVentilatorLeak::GetSeverity() const
     return SEScalar::dNaN();
   return m_Severity->GetValue();
 }
-
-void SEMechanicalVentilatorLeak::ToString(std::ostream& str) const
-{
-  SEMechanicalVentilatorAction::ToString(str);
-  str << "\n\tSeverity :"; HasSeverity() ? str << *m_Severity : str << "NaN";
-  str << std::flush;
-}

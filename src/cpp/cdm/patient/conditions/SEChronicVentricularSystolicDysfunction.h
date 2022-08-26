@@ -21,7 +21,5 @@ public:
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual void ToString(std::ostream &str) const;
-
 protected:
-};    
+};

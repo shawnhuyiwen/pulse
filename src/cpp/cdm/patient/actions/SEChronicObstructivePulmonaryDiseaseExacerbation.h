@@ -30,8 +30,6 @@ public:
   virtual SEScalar0To1& GetEmphysemaSeverity();
   virtual double GetEmphysemaSeverity() const;
 
-  virtual void ToString(std::ostream &str) const;
-
   virtual const SEScalar* GetScalar(const std::string& name);
 
 protected:

@@ -59,10 +59,3 @@ void SEArrhythmia::SetRhythm(eHeartRhythm r)
 {
   m_Rhythm = r;
 }
-
-void SEArrhythmia::ToString(std::ostream &str) const
-{
-  SEPatientAction::ToString(str);
-  str << "\n\tRhythm: "<< eHeartRhythm_Name(GetRhythm());
-  str << std::flush;
-}

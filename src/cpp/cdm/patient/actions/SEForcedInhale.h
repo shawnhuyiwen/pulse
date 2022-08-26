@@ -38,7 +38,6 @@ public:
   virtual SEScalarTime& GetReleasePeriod();
   virtual double GetReleasePeriod(const TimeUnit& unit) const;
 
-  virtual void ToString(std::ostream &str) const;
 protected:
   SEScalar0To1* m_InspiratoryCapacityFraction;
   SEScalarTime* m_InhalePeriod;

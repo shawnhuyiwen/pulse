@@ -94,22 +94,3 @@ eMergeType SEInhalerConfiguration::GetMergeType() const
 {
   return m_MergeType;
 }
-
-void SEInhalerConfiguration::ToString(std::ostream &str) const
-{
-  SEInhalerAction::ToString(str);
-  if (HasConfigurationFile())
-  {
-    str << "\n\tConfiguration File: "; str << m_ConfigurationFile;
-  }
-  else if (HasConfiguration())
-  {
-    str << "\n\tState: " << eSwitch_Name(m_Configuration->GetState());
-    str << "\n\tMetered Dose: "; m_Configuration->HasMeteredDose() ? str << m_Configuration->GetMeteredDose() : str << "NaN";
-    str << "\n\tNozzle Loss: "; m_Configuration->HasNozzleLoss() ? str << m_Configuration->GetNozzleLoss() : str << "NaN";
-    str << "\n\tSpacerVolume: "; m_Configuration->HasSpacerVolume() ? str << m_Configuration->GetSpacerVolume() : str << "NaN";
-    str << "\n\tSubstance: "; m_Configuration->HasSubstance() ? str << m_Configuration->GetSubstance()->GetName() : str << "Not Set";
-  }
-  str << "\n\tMergeType: " << eMergeType_Name(m_MergeType);
-  str << std::flush;
-}
