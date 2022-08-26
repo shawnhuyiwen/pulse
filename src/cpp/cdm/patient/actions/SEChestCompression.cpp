@@ -126,9 +126,7 @@ double SEChestCompression::GetCompressionPeriod(const TimeUnit& unit) const
 
 void SEChestCompression::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Chest Compression";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tForce: "; HasForce() ? str << *m_Force : str << "NaN";
   str << "\n\tForceScale: "; HasForceScale() ? str << *m_ForceScale : str << "NaN";
   str << "\n\tCompressionPeriod: "; HasCompressionPeriod() ? str << *m_CompressionPeriod : str << "NaN";

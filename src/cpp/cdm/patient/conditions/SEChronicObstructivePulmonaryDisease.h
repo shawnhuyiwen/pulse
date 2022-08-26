@@ -12,13 +12,14 @@ public:
   SEChronicObstructivePulmonaryDisease(Logger* logger=nullptr);
   virtual ~SEChronicObstructivePulmonaryDisease();
 
+  static constexpr char const* Name = "COPD";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChronicObstructivePulmonaryDisease& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual std::string GetName() const { return "ChronicObstructivePulmonaryDisease"; }
 
   virtual bool HasBronchitisSeverity() const;
   virtual SEScalar0To1& GetBronchitisSeverity();

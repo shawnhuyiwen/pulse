@@ -11,9 +11,12 @@ public:
   SEAnesthesiaMachineAction(Logger* logger);
   virtual ~SEAnesthesiaMachineAction();
 
+  static constexpr char const* ActionType = "Anesthesia Machine";
+  virtual std::string GetActionType() const { return ActionType; }
+
   virtual void Clear();
 
   virtual bool IsValid() const;
 
-  virtual void ToString(std::ostream &str) const = 0;
-};  
+  virtual void ToString(std::ostream &str) const { SEAction::ToString(str); }
+};

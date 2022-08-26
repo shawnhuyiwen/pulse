@@ -82,9 +82,7 @@ double SEChronicRenalStenosis::GetRightKidneySeverity() const
 
 void SEChronicRenalStenosis::ToString(std::ostream &str) const
 {
-  str << "Patient Condition : Chronic Renal Stenosis";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEPatientCondition::ToString(str);
   str << "\n\tLeft Kidney Occlusion 0To1: "; HasLeftKidneySeverity() ? str << *m_LeftKidneySeverity : str << "NaN";
   str << "\n\tRight Kidney Occlusion 0To1: "; HasRightKidneySeverity() ? str << *m_RightKidneySeverity : str << "NaN";
   str << std::flush;

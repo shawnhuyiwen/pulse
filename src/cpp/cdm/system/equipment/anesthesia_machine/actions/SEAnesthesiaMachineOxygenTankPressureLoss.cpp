@@ -60,9 +60,7 @@ void SEAnesthesiaMachineOxygenTankPressureLoss::SetState(eSwitch state)
 
 void SEAnesthesiaMachineOxygenTankPressureLoss::ToString(std::ostream &str) const
 {
-  str << "Anesthesia Machine Action : Oxygen Tank Pressure Loss"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEAnesthesiaMachineAction::ToString(str);
   str  << "\n\tState: " << eSwitch_Name(m_State.GetEnum());
   str << std::flush;
 }

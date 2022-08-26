@@ -12,6 +12,9 @@ public:
   SEAcuteRespiratoryDistressSyndromeExacerbation(Logger* logger=nullptr);
   virtual ~SEAcuteRespiratoryDistressSyndromeExacerbation();
 
+  static constexpr char const* Name = "ARDS Exacerbation";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEAcuteRespiratoryDistressSyndromeExacerbation& src, bool preserveState=false);
 

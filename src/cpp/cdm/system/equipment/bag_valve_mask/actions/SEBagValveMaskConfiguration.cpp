@@ -104,9 +104,7 @@ eMergeType SEBagValveMaskConfiguration::GetMergeType() const
 
 void SEBagValveMaskConfiguration::ToString(std::ostream &str) const
 {
-  str << "Bag Valve Mask Configuration";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEBagValveMaskAction::ToString(str);
   if (HasConfigurationFile())
   {
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;

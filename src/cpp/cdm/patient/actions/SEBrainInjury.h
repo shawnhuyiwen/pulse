@@ -16,6 +16,9 @@ public:
   SEBrainInjury(Logger* logger=nullptr);
   virtual ~SEBrainInjury();
 
+  static constexpr char const* Name = "Brain Injury";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEBrainInjury& src, bool /*preserveState*/=false);
 

@@ -69,9 +69,7 @@ double SEAnesthesiaMachineVaporizerFailure::GetSeverity() const
 
 void SEAnesthesiaMachineVaporizerFailure::ToString(std::ostream &str) const
 {
-  str << "Anesthesia Machine Action : Vaporizer Failure";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEAnesthesiaMachineAction::ToString(str);
   str << "\n\tSeverity :"; HasSeverity() ? str << *m_Severity : str << "NaN";
   str << std::flush;
 }

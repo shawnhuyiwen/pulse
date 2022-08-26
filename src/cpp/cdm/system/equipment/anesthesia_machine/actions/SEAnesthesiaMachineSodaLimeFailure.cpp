@@ -69,9 +69,7 @@ double SEAnesthesiaMachineSodaLimeFailure::GetSeverity() const
 
 void SEAnesthesiaMachineSodaLimeFailure::ToString(std::ostream &str) const
 {
-  str << "Anesthesia Machine Action : Soda Lime Failure";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEAnesthesiaMachineAction::ToString(str);
   str << "\n\tSeverity :"; HasSeverity() ? str << *m_Severity : str << "NaN";
   str << std::flush;
 }

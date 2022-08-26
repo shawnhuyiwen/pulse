@@ -12,6 +12,9 @@ public:
   SEChestCompression(Logger* logger=nullptr);
   virtual ~SEChestCompression();
 
+  static constexpr char const* Name = "Chest Compression";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChestCompression& src, bool /*preserveState*/=false);
 

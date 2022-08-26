@@ -13,6 +13,9 @@ public:
   SEBagValveMaskInstantaneous(Logger* logger=nullptr);
   virtual ~SEBagValveMaskInstantaneous();
 
+  static constexpr char const* Name = "Instantaneous";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEBagValveMaskInstantaneous& src);
 

@@ -47,8 +47,7 @@ const SEScalarProperties& SEOverrides::GetScalarProperties() const
 
 void SEOverrides::ToString(std::ostream& str) const
 {
-  if (HasComment())
-    str << "\n\tComment : " << m_Comment;
+  SEAction::ToString(str);
   if (HasScalarProperties())
   {
     for (auto const& [name, o] : m_ScalarProperties)

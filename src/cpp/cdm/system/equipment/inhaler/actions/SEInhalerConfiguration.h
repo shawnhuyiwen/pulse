@@ -13,6 +13,9 @@ public:
   SEInhalerConfiguration(Logger* logger=nullptr);
   virtual ~SEInhalerConfiguration();
 
+  static constexpr char const* Name = "Configuration";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEInhalerConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/ = false);
 

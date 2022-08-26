@@ -105,9 +105,7 @@ eMergeType SEECMOConfiguration::GetMergeType() const
 
 void SEECMOConfiguration::ToString(std::ostream &str) const
 {
-  str << "ECMO Configuration";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEECMOAction::ToString(str);
   if (HasSettingsFile())
   {
     str << "\n\tSettings File: "; str << m_SettingsFile;

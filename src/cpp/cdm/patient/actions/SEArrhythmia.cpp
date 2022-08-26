@@ -62,9 +62,7 @@ void SEArrhythmia::SetRhythm(eHeartRhythm r)
 
 void SEArrhythmia::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Arrhythmia";
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tRhythm: "<< eHeartRhythm_Name(GetRhythm());
   str << std::flush;
 }

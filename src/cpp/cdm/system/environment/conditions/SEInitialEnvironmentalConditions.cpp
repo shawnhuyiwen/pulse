@@ -82,9 +82,7 @@ bool SEInitialEnvironmentalConditions::HasEnvironmentalConditionsFile() const
 
 void SEInitialEnvironmentalConditions::ToString(std::ostream &str) const
 {
-  str << "Initial Environmental Conditions";
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEEnvironmentCondition::ToString(str);
   if (HasEnvironmentalConditionsFile())
   {
     str << "\n\tEnvironmental Conditions File: "; str << m_EnvironmentalConditionsFile;

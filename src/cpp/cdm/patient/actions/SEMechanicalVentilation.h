@@ -19,6 +19,9 @@ public:
   SEMechanicalVentilation(Logger* logger=nullptr);
   virtual ~SEMechanicalVentilation();
 
+  static constexpr char const* Name = "Mechanical Ventilation";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool /*preserveState*/=false);
 

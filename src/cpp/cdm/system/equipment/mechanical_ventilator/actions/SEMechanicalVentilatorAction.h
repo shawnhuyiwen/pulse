@@ -11,9 +11,12 @@ public:
   SEMechanicalVentilatorAction(Logger* logger);
   virtual ~SEMechanicalVentilatorAction();
 
+  static constexpr char const* ActionType = "Mechanical Ventilator";
+  virtual std::string GetActionType() const { return ActionType; }
+
   virtual void Clear();
 
   virtual bool IsValid() const;
 
-  virtual void ToString(std::ostream &str) const = 0;
+  virtual void ToString(std::ostream &str) const { SEAction::ToString(str); }
 };  

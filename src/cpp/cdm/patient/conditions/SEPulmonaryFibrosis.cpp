@@ -58,9 +58,7 @@ double SEPulmonaryFibrosis::GetSeverity() const
 
 void SEPulmonaryFibrosis::ToString(std::ostream &str) const
 {
-  str << "Patient Condition : PulmonaryFibrosis";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEPatientCondition::ToString(str);
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
   str << std::flush;
 }

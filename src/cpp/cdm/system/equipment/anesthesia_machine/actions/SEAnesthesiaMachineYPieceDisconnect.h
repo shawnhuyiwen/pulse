@@ -11,6 +11,9 @@ public:
   SEAnesthesiaMachineYPieceDisconnect(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineYPieceDisconnect();
 
+  static constexpr char const* Name = "Y Piece Disconnect";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineYPieceDisconnect& src, bool /*preserveState*/=false);
 

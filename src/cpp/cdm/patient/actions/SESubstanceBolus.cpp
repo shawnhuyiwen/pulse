@@ -168,9 +168,7 @@ const SESubstance& SESubstanceBolus::GetSubstance() const
 
 void SESubstanceBolus::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Substance Bolus"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tSubstance: " << m_Substance.GetName();
   str << "\n\tAdministration Route: " << eSubstanceAdministration_Route_Name(GetAdminRoute());
   str << "\n\tAdministration Duration: "; HasAdminDuration() ? str << *m_AdminDuration : str << "No Administration Duration Set";

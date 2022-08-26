@@ -13,6 +13,9 @@ public:
 
   virtual ~SEForcedExhale();
 
+  static constexpr char const* Name = "Forced Exhale";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEForcedExhale& src);
 

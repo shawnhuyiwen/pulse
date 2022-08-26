@@ -72,9 +72,7 @@ double SEAsthmaAttack::GetSeverity() const
 
 void SEAsthmaAttack::ToString(std::ostream &str) const
 {
-  str << "Patient Action : AsthmaAttack"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
   str <<std::flush;
 }

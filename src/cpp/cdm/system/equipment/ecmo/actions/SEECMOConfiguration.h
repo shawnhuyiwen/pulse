@@ -13,6 +13,9 @@ public:
   SEECMOConfiguration(Logger* logger=nullptr);
   virtual ~SEECMOConfiguration();
 
+  static constexpr char const* Name = "Configuration";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEECMOConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/ = false);
 

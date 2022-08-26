@@ -13,6 +13,9 @@ public:
   SEChangeEnvironmentalConditions(Logger* logger=nullptr);
   virtual ~SEChangeEnvironmentalConditions();
 
+  static constexpr char const* Name = "Change Environmental Conditions";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEChangeEnvironmentalConditions& src, const SESubstanceManager& subMgr, bool /*preserveState*/=false);
 

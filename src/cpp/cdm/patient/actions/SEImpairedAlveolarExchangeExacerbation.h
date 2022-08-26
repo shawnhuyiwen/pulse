@@ -10,6 +10,9 @@ public:
 
   SEImpairedAlveolarExchangeExacerbation(Logger* logger=nullptr);
   virtual ~SEImpairedAlveolarExchangeExacerbation();
+
+  static constexpr char const* Name = "Impaired Alveolar Exchange Exacerbation";
+  virtual std::string GetName() const { return Name; }
   
   virtual void Clear();
   virtual void Copy(const SEImpairedAlveolarExchangeExacerbation& src, bool /*preserveState*/=false);

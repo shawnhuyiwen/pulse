@@ -17,6 +17,9 @@ public:
   SEConsciousRespiration(Logger* logger=nullptr);
   virtual ~SEConsciousRespiration();
 
+  static constexpr char const* Name = "Conscious Respiration";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEConsciousRespiration& src, bool /*preserveState*/=false);
 

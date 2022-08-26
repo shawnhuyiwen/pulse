@@ -72,9 +72,7 @@ double SEAcuteStress::GetSeverity() const
 
 void SEAcuteStress::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Acute Stress"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
   str << std::flush;
 }

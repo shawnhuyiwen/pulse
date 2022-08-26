@@ -102,9 +102,7 @@ double SEChestCompressionInstantaneous::GetForceScale() const
 
 void SEChestCompressionInstantaneous::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Chest Compression Instantaneous";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tForce: "; HasForce() ? str << *m_Force : str << "NaN";
   str << "\n\tForceScale: "; HasForceScale() ? str << *m_ForceScale : str << "NaN";
   str << std::flush;

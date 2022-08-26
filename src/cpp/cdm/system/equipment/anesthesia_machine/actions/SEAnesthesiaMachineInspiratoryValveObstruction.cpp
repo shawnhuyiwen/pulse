@@ -69,9 +69,7 @@ double SEAnesthesiaMachineInspiratoryValveObstruction::GetSeverity() const
 
 void SEAnesthesiaMachineInspiratoryValveObstruction::ToString(std::ostream &str) const
 {
-  str << "Anesthesia Machine Action : Inspiratory Valve Obstruction";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEAnesthesiaMachineAction::ToString(str);
   str << "\n\tSeverity :"; HasSeverity() ? str << *m_Severity : str << "NaN";
   str << std::flush;
 }

@@ -16,6 +16,9 @@ public:
   SESerializeState(Logger* logger=nullptr);
   virtual ~SESerializeState();
 
+  static constexpr char const* Name = "Serialize State";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;

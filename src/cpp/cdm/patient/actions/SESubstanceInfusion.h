@@ -13,6 +13,9 @@ public:
   SESubstanceInfusion(const SESubstance& substance, Logger* logger=nullptr);
   virtual ~SESubstanceInfusion();
 
+  static constexpr char const* Name = "Substance Infusion";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SESubstanceInfusion& src, bool /*preserveState*/=false);
 

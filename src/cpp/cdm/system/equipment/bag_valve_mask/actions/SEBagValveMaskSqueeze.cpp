@@ -144,9 +144,7 @@ double SEBagValveMaskSqueeze::GetInspiratoryPeriod(const TimeUnit& unit) const
 
 void SEBagValveMaskSqueeze::ToString(std::ostream &str) const
 {
-  str << "Bag Valve Mask Squeeze";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEBagValveMaskAction::ToString(str);
   str << "\n\tSqueezePressure: ";HasSqueezePressure() ? str << *m_SqueezePressure : str << "NaN";
   str << "\n\tSqueezeVolume: "; HasSqueezeVolume() ? str << *m_SqueezeVolume : str << "NaN";
   str << "\n\tExpiratoryPeriod: "; HasExpiratoryPeriod() ? str << *m_ExpiratoryPeriod : str << "NaN";

@@ -13,6 +13,9 @@ public:
   SEAnesthesiaMachineConfiguration(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineConfiguration();
 
+  static constexpr char const* Name = "Configuration";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/=false);
 

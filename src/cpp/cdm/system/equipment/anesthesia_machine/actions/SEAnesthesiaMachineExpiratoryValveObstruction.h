@@ -11,6 +11,9 @@ public:
   SEAnesthesiaMachineExpiratoryValveObstruction(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineExpiratoryValveObstruction();
 
+  static constexpr char const* Name = "Expiratory Valve Obstruction";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineExpiratoryValveObstruction& src, bool /*preserveState*/=false);
 

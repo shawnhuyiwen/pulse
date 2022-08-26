@@ -13,6 +13,9 @@ public:
   SEBagValveMaskAutomated(Logger* logger=nullptr);
   virtual ~SEBagValveMaskAutomated();
 
+  static constexpr char const* Name = "Automated";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEBagValveMaskAutomated& src);
 

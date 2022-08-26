@@ -12,6 +12,9 @@ public:
   SEBronchoconstriction(Logger* logger=nullptr);
   virtual ~SEBronchoconstriction();
 
+  static constexpr char const* Name = "Bronchoconstriction";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEBronchoconstriction& src, bool /*preserveState*/=false);
 

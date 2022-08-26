@@ -97,9 +97,7 @@ eMergeType SEInhalerConfiguration::GetMergeType() const
 
 void SEInhalerConfiguration::ToString(std::ostream &str) const
 {
-  str << "Inhaler Configuration";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEInhalerAction::ToString(str);
   if (HasConfigurationFile())
   {
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;

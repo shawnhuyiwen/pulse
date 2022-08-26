@@ -101,9 +101,7 @@ eMergeType SEAnesthesiaMachineConfiguration::GetMergeType() const
 
 void SEAnesthesiaMachineConfiguration::ToString(std::ostream &str) const
 {
-  str << "Anesthesia Machine Configuration";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEAnesthesiaMachineAction::ToString(str);
   if (HasConfigurationFile())
   {
     str << "\n\tConfiguration File: "; str << m_ConfigurationFile;

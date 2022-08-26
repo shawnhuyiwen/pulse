@@ -278,10 +278,7 @@ void SEMechanicalVentilation::RemoveAerosols()
 
 void SEMechanicalVentilation::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Mechanical Ventilation";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-
+  SEPatientAction::ToString(str);
   str << "\n\tState: " << eSwitch_Name(GetState());
   str << "\n\tFlow: ";  HasFlow() ? str << *m_Flow : str << "Not Set";
   str << "\n\tPressure: "; HasPressure() ? str << *m_Pressure : str << "Not Set";

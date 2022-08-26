@@ -121,10 +121,9 @@ double SEImpairedAlveolarExchangeExacerbation::GetSeverity() const
 
 void SEImpairedAlveolarExchangeExacerbation::ToString(std::ostream &str) const
 {
-  str << "Impaired Alveoli Exchange Exacerbation:";
+  SEPatientAction::ToString(str);
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Provided";
   str << "\n\tImpairedFraction :"; HasImpairedFraction() ? str << *m_ImpairedFraction : str << "Not Provided";
   str << "\n\tImpairedSurfaceArea :";HasImpairedSurfaceArea() ? str << *m_ImpairedSurfaceArea : str << "Not Provided";
-
   str << std::flush;
 }

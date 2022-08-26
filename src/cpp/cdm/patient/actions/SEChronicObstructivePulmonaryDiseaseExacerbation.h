@@ -12,6 +12,9 @@ public:
   SEChronicObstructivePulmonaryDiseaseExacerbation(Logger* logger=nullptr);
   virtual ~SEChronicObstructivePulmonaryDiseaseExacerbation();
 
+  static constexpr char const* Name = "COPD Exacerbation";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChronicObstructivePulmonaryDiseaseExacerbation& src, bool /*preserveState*/=false);
 

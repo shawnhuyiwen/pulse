@@ -336,9 +336,7 @@ double SEMechanicalVentilatorPressureControl::GetSlope(const TimeUnit& unit) con
 
 void SEMechanicalVentilatorPressureControl::ToString(std::ostream& str) const
 {
-  str << "Mechanical Ventilator Action : Pressure Control";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEMechanicalVentilatorAction::ToString(str);
   str << "\n\tConnection: " << eSwitch_Name(m_Connection);
   str << "\n\tMode: " << eMechanicalVentilator_PressureControlMode_Name(m_Mode);
   str << "\n\tFractionInspiredOxygen :"; HasFractionInspiredOxygen() ? str << *m_FractionInspiredOxygen : str << "NaN";

@@ -11,6 +11,9 @@ public:
   SEAnesthesiaMachineTubeCuffLeak(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineTubeCuffLeak();
 
+  static constexpr char const* Name = "Tube Cuff Leak";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineTubeCuffLeak& src, bool /*preserveState*/=false);
 

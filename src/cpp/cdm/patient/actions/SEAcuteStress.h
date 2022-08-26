@@ -12,6 +12,9 @@ public:
   SEAcuteStress(Logger* logger=nullptr);
   virtual ~SEAcuteStress();
 
+  static constexpr char const* Name = "Acute Stress";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAcuteStress& src, bool /*preserveState*/=false);
 

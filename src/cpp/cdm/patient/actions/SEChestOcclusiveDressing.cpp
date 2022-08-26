@@ -72,9 +72,7 @@ void SEChestOcclusiveDressing::InvalidateSide()
 
 void SEChestOcclusiveDressing::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Chest Occlusive Dressing"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tState: " << eSwitch_Name(m_State);
   str << "\n\tSide: "; HasSide()? str << eSide_Name(GetSide()) : str << "Not Set"; 
   str<<std::flush;

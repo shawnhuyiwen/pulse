@@ -72,9 +72,7 @@ double SERespiratoryFatigue::GetSeverity() const
 
 void SERespiratoryFatigue::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Respiratory Fatigue"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
   str << std::flush;
 }

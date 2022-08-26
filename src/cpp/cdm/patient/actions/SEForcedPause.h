@@ -13,6 +13,9 @@ public:
 
   virtual ~SEForcedPause();
 
+  static constexpr char const* Name = "Forced Pause";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEForcedPause& src);
 

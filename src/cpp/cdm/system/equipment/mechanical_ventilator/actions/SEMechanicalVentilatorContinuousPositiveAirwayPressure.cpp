@@ -320,9 +320,7 @@ double SEMechanicalVentilatorContinuousPositiveAirwayPressure::GetExpirationCycl
 
 void SEMechanicalVentilatorContinuousPositiveAirwayPressure::ToString(std::ostream& str) const
 {
-  str << "Mechanical Ventilator Action : Continuous Positive Airway Pressure";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEMechanicalVentilatorAction::ToString(str);
   str << "\n\tConnection: " << eSwitch_Name(m_Connection);
   str << "\n\tDeltaPressureSupport :"; HasDeltaPressureSupport() ? str << *m_DeltaPressureSupport : str << "NaN";
   str << "\n\tFractionInspiredOxygen :"; HasFractionInspiredOxygen() ? str << *m_FractionInspiredOxygen : str << "NaN";

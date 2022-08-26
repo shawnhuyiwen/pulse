@@ -69,9 +69,7 @@ double SEMechanicalVentilatorLeak::GetSeverity() const
 
 void SEMechanicalVentilatorLeak::ToString(std::ostream& str) const
 {
-  str << "Mechanical Ventilator Action : Leak";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEMechanicalVentilatorAction::ToString(str);
   str << "\n\tSeverity :"; HasSeverity() ? str << *m_Severity : str << "NaN";
   str << std::flush;
 }

@@ -15,6 +15,9 @@ public:
   SEMechanicalVentilatorPressureControl(Logger* logger = nullptr);
   virtual ~SEMechanicalVentilatorPressureControl();
 
+  static constexpr char const* Name = "Pressure Control";
+  virtual std::string GetName() const { return Name; }
+
   void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorPressureControl& src, bool /*preserveState*/ = false);
   virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr) override;

@@ -12,13 +12,14 @@ public:
   SEAcuteRespiratoryDistressSyndrome(Logger* logger=nullptr);
   virtual ~SEAcuteRespiratoryDistressSyndrome();
 
+  static constexpr char const* Name = "ARDS";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEAcuteRespiratoryDistressSyndrome& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual std::string GetName() const{ return "AcuteRespiratoryDistressSyndrome"; }
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();

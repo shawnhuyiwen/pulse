@@ -81,9 +81,7 @@ void SENeedleDecompression::InvalidateSide()
 
 void SENeedleDecompression::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Needle Decompression"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tState: " << eSwitch_Name(m_State);
   str  << "\n\tSide: "; HasSide()? str << eSide_Name(GetSide()) : str << "No Side Set";
   str << std::flush;

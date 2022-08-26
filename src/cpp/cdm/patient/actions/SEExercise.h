@@ -12,6 +12,9 @@ public:
   SEExercise(Logger* logger=nullptr);
   virtual ~SEExercise();
 
+  static constexpr char const* Name = "Exercise";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEExercise& src, bool /*preserveState*/=false);
 

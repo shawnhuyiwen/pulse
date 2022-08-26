@@ -102,9 +102,7 @@ double SELobarPneumonia::GetRightLungAffected() const
 
 void SELobarPneumonia::ToString(std::ostream &str) const
 {
-  str << "Patient Condition : Lobar Pneumonia"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientCondition::ToString(str);
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
   str << "\n\tLeftLungAffected: "; HasLeftLungAffected() ? str << *m_LeftLungAffected : str << "NaN";
   str << "\n\tRightLungAffected: "; HasRightLungAffected() ? str << *m_RightLungAffected : str << "NaN";

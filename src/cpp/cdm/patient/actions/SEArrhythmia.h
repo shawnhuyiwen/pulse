@@ -13,6 +13,9 @@ public:
   SEArrhythmia(Logger* logger=nullptr);
   virtual ~SEArrhythmia();
 
+  static constexpr char const* Name = "Arrhythmia";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEArrhythmia& src, bool /*preserveState*/=false);
 

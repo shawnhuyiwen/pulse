@@ -12,6 +12,9 @@ public:
   SEPulmonaryShuntExacerbation(Logger* logger=nullptr);
   virtual ~SEPulmonaryShuntExacerbation();
 
+  static constexpr char const* Name = "Pulmonary Shunt Exacerbation";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEPulmonaryShuntExacerbation& src, bool /*preserveState*/=false);
 

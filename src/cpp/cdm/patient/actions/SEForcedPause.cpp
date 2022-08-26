@@ -56,7 +56,7 @@ double SEForcedPause::GetPeriod(const TimeUnit& unit) const
 
 void SEForcedPause::ToString(std::ostream &str) const
 {
-  str << "Breath Hold";
+  str << GetName();
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   str << "\n\tPeriod: "; HasPeriod() ? str << *m_Period : str << "NaN";

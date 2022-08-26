@@ -73,9 +73,7 @@ bool SEConsumeMeal::HasMealFile() const
 
 void SEConsumeMeal::ToString(std::ostream &str) const
 {
-  str << "Patient Condition :  Consume Meal";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEPatientCondition::ToString(str);
   if (HasMealFile())
   {
     str << "\n\tMeal File: "; str << m_MealFile;

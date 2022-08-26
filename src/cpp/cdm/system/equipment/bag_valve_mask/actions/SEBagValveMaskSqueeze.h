@@ -13,6 +13,9 @@ public:
   SEBagValveMaskSqueeze(Logger* logger=nullptr);
   virtual ~SEBagValveMaskSqueeze();
 
+  static constexpr char const* Name = "Squeeze";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEBagValveMaskSqueeze& src);
 

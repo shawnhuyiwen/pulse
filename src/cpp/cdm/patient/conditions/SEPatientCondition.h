@@ -12,13 +12,14 @@ public:
   SEPatientCondition(Logger* logger);
   virtual ~SEPatientCondition();
 
+  static constexpr char const* ConditionType = "Patient";
+  virtual std::string GetConditionType() const { return ConditionType; }
+
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;
 
-
 public:
-  virtual void ToString(std::ostream &str) const = 0;
-  
-};  
+  virtual void ToString(std::ostream &str) const { SECondition::ToString(str); }
+};

@@ -134,9 +134,7 @@ const SESubstance& SESubstanceInfusion::GetSubstance() const
 
 void SESubstanceInfusion::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Substance Infusion"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tRate: "; HasRate() ? str << *m_Rate : str << "NaN";
   str << "\n\tConcentration: "; HasConcentration() ? str << *m_Concentration : str << "NaN";
   str << "\n\tVolume: "; HasVolume() ? str << *m_Volume : str << "NaN";

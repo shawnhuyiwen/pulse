@@ -104,9 +104,7 @@ eMergeType SEMechanicalVentilatorConfiguration::GetMergeType() const
 
 void SEMechanicalVentilatorConfiguration::ToString(std::ostream &str) const
 {
-  str << "Mechanical Ventilator Configuration";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEMechanicalVentilatorAction::ToString(str);
   if (HasSettingsFile())
   {
     str << "\n\tSettings File: "; str << m_SettingsFile;

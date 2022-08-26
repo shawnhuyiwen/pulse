@@ -85,9 +85,7 @@ bool SEConsumeNutrients::HasNutritionFile() const
 
 void SEConsumeNutrients::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Consume Nutrients"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   if (HasNutritionFile())
   {
     str << "\n\tNutrition File: "; str << m_NutritionFile;

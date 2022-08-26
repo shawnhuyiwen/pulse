@@ -54,9 +54,8 @@ void SESerializeState::InvalidateFilename()
 }
 
 void SESerializeState::ToString(std::ostream &str) const
-{  
-  if(HasComment())
-    str<<"\n\tComment : "<<m_Comment;
+{
+  SEAction::ToString(str);
   str << "\n\tType : " << eSerialization_Type_Name(m_Type);
   str << "\n\tFilename : " << m_Filename;
 }

@@ -11,20 +11,25 @@ public:
 
   SECondition(Logger* logger);
   virtual ~SECondition();
+
+  virtual std::string GetName() const = 0;
+  static constexpr char const* ConditionType = "Condition";
+  virtual std::string GetConditionType() const { return ConditionType; }
   
   virtual void Clear();
 
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;
 
-  virtual std::string GetName() const = 0;
-
   virtual std::string GetComment() const;
   virtual void SetComment(const std::string& comment);
   virtual bool HasComment()const;
   virtual void InvalidateComment();
 
-  virtual void ToString(std::ostream &str) const=0;
+  virtual void ToString(std::ostream &str) const
+  {
+    str << GetConditionType() + " : " + GetName();
+  }
 
 protected:
 
@@ -36,3 +41,10 @@ inline std::ostream& operator<< (std::ostream& out, const SECondition& a)
     a.ToString(out);
     return out;
 }
+
+struct CDM_DECL SEConditionDictionary
+{
+  std::string                        Name = "";
+  SEScalarProperties                 Properties;
+  std::map<std::string, std::string> Enumerations;
+};

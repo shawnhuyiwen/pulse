@@ -158,9 +158,7 @@ void SEThermalApplication::RemoveAppliedTemperature()
 
 void SEThermalApplication::ToString(std::ostream &str) const
 {
-  str << "Environment Action : Thermal Application";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEEnvironmentAction::ToString(str);
   if (HasActiveHeating())
   {
     str << "\n\t Active Heating : ";

@@ -106,9 +106,7 @@ eMergeType SEChangeEnvironmentalConditions::GetMergeType() const
 
 void SEChangeEnvironmentalConditions::ToString(std::ostream &str) const
 {
-  str << "Environment Action : Change Environmental Conditions"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEEnvironmentAction::ToString(str);
   if (HasEnvironmentalConditionsFile())
   {
     str << "\n\tEnvironmental Conditions File: "; str << m_EnvironmentalConditionsFile;

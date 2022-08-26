@@ -58,9 +58,7 @@ double SEPulmonaryShunt::GetSeverity() const
 
 void SEPulmonaryShunt::ToString(std::ostream &str) const
 {
-  str << "Patient Condition : Pulmonary Shunt"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientCondition::ToString(str);
   str << "\n\tSeverity: "; HasSeverity() ? str << m_Severity : str << "NaN";
   str << std::flush;
 }

@@ -84,7 +84,7 @@ void SEBrainInjury::SetType(eBrainInjury_Type Type)
 
 void SEBrainInjury::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Brain Injury";
+  SEPatientAction::ToString(str);
   if(HasComment())
     str<<"\n\tComment: "<<m_Comment;
   str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";

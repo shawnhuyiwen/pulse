@@ -17,6 +17,9 @@ public:
   SEIntubation(Logger* logger=nullptr);
   virtual ~SEIntubation();
 
+  static constexpr char const* Name = "Intubation";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEIntubation& src, bool /*preserveState*/=false);
 

@@ -12,6 +12,9 @@ public:
   SEPericardialEffusion(Logger* logger=nullptr);
   virtual ~SEPericardialEffusion();
 
+  static constexpr char const* Name = "Pericardial Effusion";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEPericardialEffusion& src, bool /*preserveState*/=false);
 

@@ -21,6 +21,10 @@ public:
   SEAction(const SEAction&) = delete;
   SEAction& operator= (const SEAction&) = delete;
 
+  virtual std::string GetName() const = 0;
+  static constexpr char const* ActionType = "Action";
+  virtual std::string GetActionType() const { return ActionType; }
+
   virtual void Clear();
   static SEAction* Copy(const SEAction&, const SESubstanceManager&);
   
@@ -38,7 +42,10 @@ public:
   virtual bool HasComment() const;
   virtual void InvalidateComment();
 
-  virtual void ToString(std::ostream &str)const=0;
+  virtual void ToString(std::ostream& str) const
+  {
+    str << GetActionType() + " : " + GetName();
+  }
 
   virtual const SEScalar* GetScalar(const std::string& name)=0;
 
@@ -52,3 +59,11 @@ inline std::ostream& operator<< (std::ostream& out, const SEAction& a)
     a.ToString(out);
     return out;
 }
+
+struct CDM_DECL SEActionDictionary
+{
+  double                             Time_s = 0;
+  std::string                        Name = "";
+  SEScalarProperties                 Properties;
+  std::map<std::string, std::string> Enumerations;
+};

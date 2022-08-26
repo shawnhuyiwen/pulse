@@ -13,6 +13,9 @@ public:
   SEPatientAssessmentRequest(Logger* logger=nullptr);
   virtual ~SEPatientAssessmentRequest();
 
+  static constexpr char const* Name = "Patient Assessment Request";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEPatientAssessmentRequest& src, bool /*preserveState*/=false);
 

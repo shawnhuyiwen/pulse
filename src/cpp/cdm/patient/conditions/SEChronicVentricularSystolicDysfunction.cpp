@@ -36,8 +36,6 @@ bool SEChronicVentricularSystolicDysfunction::IsActive() const
 
 void SEChronicVentricularSystolicDysfunction::ToString(std::ostream &str) const
 {
-  str << "Patient Condition : Ventricular Systolic Dysfunction Heart Failure"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientCondition::ToString(str);
   str << std::flush;
 }

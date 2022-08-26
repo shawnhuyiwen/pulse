@@ -70,9 +70,7 @@ double SEAnesthesiaMachineExpiratoryValveLeak::GetSeverity() const
 
 void SEAnesthesiaMachineExpiratoryValveLeak::ToString(std::ostream &str) const
 {
-  str << "Anesthesia Machine Action : Expiratory Valve Leak";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEAnesthesiaMachineAction::ToString(str);
   str << "\n\tSeverity :"; HasSeverity() ? str << *m_Severity : str << "NaN";
   str << std::flush;
 }

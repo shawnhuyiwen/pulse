@@ -105,9 +105,7 @@ eMergeType SERespiratoryMechanicsConfiguration::GetMergeType() const
 
 void SERespiratoryMechanicsConfiguration::ToString(std::ostream& str) const
 {
-  str << "Respiratory Mechanics Configuration";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEPatientAction::ToString(str);
   if (HasSettingsFile())
   {
     str << "\n\tConfiguration File: "; str << m_SettingsFile;

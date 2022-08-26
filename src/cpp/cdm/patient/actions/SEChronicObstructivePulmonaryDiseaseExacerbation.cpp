@@ -94,9 +94,7 @@ double SEChronicObstructivePulmonaryDiseaseExacerbation::GetEmphysemaSeverity() 
 
 void SEChronicObstructivePulmonaryDiseaseExacerbation::ToString(std::ostream &str) const
 {
-  str << "Patient Action : COPD Exacerbation";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tBronchitisSeverity: "; HasBronchitisSeverity() ? str << *m_BronchitisSeverity : str << "NaN";
   str << "\n\tEmphysemaSeverity: "; HasEmphysemaSeverity() ? str << *m_EmphysemaSeverity : str << "NaN";
   str << std::flush;

@@ -85,9 +85,7 @@ double SEIntubation::GetAirwayResistance(const PressureTimePerVolumeUnit& unit) 
 
 void SEIntubation::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Intubation";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tType: " << eIntubation_Type_Name(GetType());
   str << "\n\tAirwayResistance: "; HasAirwayResistance() ? str << *m_AirwayResistance : str << "NaN";
 

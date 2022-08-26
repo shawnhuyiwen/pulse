@@ -12,6 +12,9 @@ public:
   SELobarPneumoniaExacerbation(Logger* logger=nullptr);
   virtual ~SELobarPneumoniaExacerbation();
 
+  static constexpr char const* Name = "Lobar Pneumonia Exacerbation";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SELobarPneumoniaExacerbation& src, bool /*preserveState*/=false);
 

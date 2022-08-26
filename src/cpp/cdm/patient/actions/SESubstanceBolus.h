@@ -13,6 +13,9 @@ public:
   SESubstanceBolus(const SESubstance& substance, Logger* logger=nullptr);
   virtual ~SESubstanceBolus();
 
+  static constexpr char const* Name = "Substance Bolus";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SESubstanceBolus& src, bool /*preserveState*/=false);
 

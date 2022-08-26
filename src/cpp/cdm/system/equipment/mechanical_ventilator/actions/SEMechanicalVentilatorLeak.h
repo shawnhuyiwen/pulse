@@ -13,6 +13,9 @@ public:
   SEMechanicalVentilatorLeak(Logger* logger = nullptr);
   virtual ~SEMechanicalVentilatorLeak();
 
+  static constexpr char const* Name = "Leak";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEMechanicalVentilatorLeak& src, bool /*preserveState*/ = false);
 

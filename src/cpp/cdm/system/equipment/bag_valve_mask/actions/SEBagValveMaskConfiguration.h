@@ -13,6 +13,9 @@ public:
   SEBagValveMaskConfiguration(Logger* logger=nullptr);
   virtual ~SEBagValveMaskConfiguration();
 
+  static constexpr char const* Name = "Configuration";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEBagValveMaskConfiguration& src, const SESubstanceManager& subMgr, bool /*preserveState*/ = false);
 

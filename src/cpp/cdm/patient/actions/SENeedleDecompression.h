@@ -12,6 +12,9 @@ public:
   SENeedleDecompression(Logger* logger=nullptr);
   virtual ~SENeedleDecompression();
 
+  static constexpr char const* Name = "Needle Decompression";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SENeedleDecompression& src, bool /*preserveState*/=false);
 

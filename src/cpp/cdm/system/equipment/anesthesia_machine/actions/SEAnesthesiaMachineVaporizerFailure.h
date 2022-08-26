@@ -11,6 +11,9 @@ public:
   SEAnesthesiaMachineVaporizerFailure(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineVaporizerFailure();
 
+  static constexpr char const* Name = "Vaporizer Failure";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineVaporizerFailure& src, bool /*preserveState*/=false);
 

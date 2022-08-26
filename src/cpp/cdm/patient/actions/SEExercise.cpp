@@ -74,9 +74,7 @@ double SEExercise::GetIntensity() const
 
 void SEExercise::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Exercise";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEPatientAction::ToString(str);
   str << "\n\tIntensity: "; HasIntensity() ? str << *m_Intensity : str << "NaN";
   str << std::flush;
 }

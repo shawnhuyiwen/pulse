@@ -12,6 +12,9 @@ public:
   SEChestOcclusiveDressing(Logger* logger=nullptr);
   virtual ~SEChestOcclusiveDressing();
 
+  static constexpr char const* Name = "Chest Occlusive Dressing";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChestOcclusiveDressing& src, bool /*preserveState*/=false);
 

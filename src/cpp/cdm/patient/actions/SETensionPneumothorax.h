@@ -12,6 +12,9 @@ public:
   SETensionPneumothorax(Logger* logger=nullptr);
   virtual ~SETensionPneumothorax();
 
+  static constexpr char const* Name = "Tension Pneumothorax";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SETensionPneumothorax& src, bool /*preserveState*/=false);
 

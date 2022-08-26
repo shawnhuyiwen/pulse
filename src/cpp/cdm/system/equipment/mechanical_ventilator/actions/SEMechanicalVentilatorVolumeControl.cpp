@@ -356,9 +356,7 @@ double SEMechanicalVentilatorVolumeControl::GetInspirationPatientTriggerPressure
 
 void SEMechanicalVentilatorVolumeControl::ToString(std::ostream& str) const
 {
-  str << "Mechanical Ventilator Action : Volume Control";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEMechanicalVentilatorAction::ToString(str);
   str << "\n\tConnection: " << eSwitch_Name(m_Connection);
   str << "\n\tMode: " << eMechanicalVentilator_VolumeControlMode_Name(m_Mode);
   str << "\n\tFlow :"; HasFlow() ? str << *m_Flow : str << "NaN";

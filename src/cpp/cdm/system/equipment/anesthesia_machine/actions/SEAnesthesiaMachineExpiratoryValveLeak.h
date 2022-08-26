@@ -11,6 +11,9 @@ public:
   SEAnesthesiaMachineExpiratoryValveLeak(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineExpiratoryValveLeak();
 
+  static constexpr char const* Name = "Expiratory Valve Leak";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineExpiratoryValveLeak& src, bool /*preserveState*/=false);
 

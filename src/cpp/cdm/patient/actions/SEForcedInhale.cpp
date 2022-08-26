@@ -117,7 +117,7 @@ double SEForcedInhale::GetReleasePeriod(const TimeUnit& unit) const
 
 void SEForcedInhale::ToString(std::ostream &str) const
 {
-  str << "Forced Inhale";
+  str << GetName();
   if (HasComment())
     str << "\n\tComment: " << m_Comment;
   str << "\n\tInspiratoryCapacityFraction: "; HasInspiratoryCapacityFraction() ? str << *m_InspiratoryCapacityFraction : str << "NaN";

@@ -11,6 +11,9 @@ public:
   SEAnesthesiaMachineSodaLimeFailure(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineSodaLimeFailure();
 
+  static constexpr char const* Name = "Soda Lime Failure";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineSodaLimeFailure& src, bool /*preserveState*/=false);
 

@@ -12,6 +12,9 @@ public:
   SEOverrides(Logger* logger=nullptr);
   virtual ~SEOverrides();
 
+  static constexpr char const* Name = "Overrides";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEOverrides& src);
 

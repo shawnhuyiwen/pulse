@@ -12,6 +12,9 @@ public:
   SEAdvanceTime(Logger* logger=nullptr);
   virtual ~SEAdvanceTime();
 
+  static constexpr char const* Name = "Advance Time";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;

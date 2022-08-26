@@ -13,6 +13,9 @@ public:
   SERespiratoryMechanicsConfiguration(Logger* logger=nullptr);
   virtual ~SERespiratoryMechanicsConfiguration();
 
+  static constexpr char const* Name = "Respiratory Mechanics Configuration";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SERespiratoryMechanicsConfiguration& src, bool /*preserveState*/=false);
 

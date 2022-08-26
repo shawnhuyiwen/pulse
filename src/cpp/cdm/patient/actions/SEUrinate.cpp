@@ -49,8 +49,6 @@ const SEScalar* SEUrinate::GetScalar(const std::string& /*name*/)
 
 void SEUrinate::ToString(std::ostream &str) const
 {
-  str << "Patient Action : Urinate"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
+  SEPatientAction::ToString(str);
   str << std::flush;
 }

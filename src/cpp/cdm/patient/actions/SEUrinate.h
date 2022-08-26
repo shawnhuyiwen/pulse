@@ -12,6 +12,9 @@ public:
   SEUrinate(Logger* logger=nullptr);
   virtual ~SEUrinate();
 
+  static constexpr char const* Name = "Urinate";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEUrinate& src, bool /*preserveState*/=false);
 

@@ -12,13 +12,14 @@ public:
   SEChronicRenalStenosis(Logger* logger=nullptr);
   virtual ~SEChronicRenalStenosis();
 
+  static constexpr char const* Name = "Chronic Renal Stenosis";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChronicRenalStenosis& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual std::string GetName() const { return "ChronicRenalStenosis"; }
 
   virtual bool HasLeftKidneySeverity() const;
   virtual SEScalar0To1& GetLeftKidneySeverity();

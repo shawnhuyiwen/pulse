@@ -14,6 +14,9 @@ public:
   SEConsumeNutrients(Logger* logger=nullptr);
   virtual ~SEConsumeNutrients();
 
+  static constexpr char const* Name = "Consume Nutrients";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEConsumeNutrients& src, bool /*preserveState*/=false);
 

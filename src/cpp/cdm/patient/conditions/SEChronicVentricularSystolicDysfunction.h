@@ -12,13 +12,14 @@ public:
   SEChronicVentricularSystolicDysfunction(Logger* logger=nullptr);
   virtual ~SEChronicVentricularSystolicDysfunction();
 
+  static constexpr char const* Name = "Chronic Ventricular Systolic Dysfunction";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChronicVentricularSystolicDysfunction& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual std::string GetName() const { return "ChronicVentricularSystolicDysfunction"; }
 
   virtual void ToString(std::ostream &str) const;
 

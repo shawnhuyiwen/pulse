@@ -69,9 +69,7 @@ double SEAnesthesiaMachineVentilatorPressureLoss::GetSeverity() const
 
 void SEAnesthesiaMachineVentilatorPressureLoss::ToString(std::ostream &str) const
 {
-  str << "Anesthesia Machine Action : Ventilator Pressure Loss";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
+  SEAnesthesiaMachineAction::ToString(str);
   str << "\n\tSeverity :"; HasSeverity() ? str << *m_Severity : str << "NaN";
   str << std::flush;
 }

@@ -10,14 +10,15 @@ public:
 
   SEImpairedAlveolarExchange(Logger* logger=nullptr);
   virtual ~SEImpairedAlveolarExchange();
+
+  static constexpr char const* Name = "Impaired Alveolar Exchange";
+  virtual std::string GetName() const { return Name; }
   
   virtual void Clear();
   virtual void Copy(const SEImpairedAlveolarExchange& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual std::string GetName() const { return "ImpairedAlveolarExchange"; }
 
   virtual bool HasImpairedSurfaceArea() const;
   virtual SEScalarArea& GetImpairedSurfaceArea();
