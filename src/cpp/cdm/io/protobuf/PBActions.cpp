@@ -121,14 +121,12 @@ SEAction* PBAction::Copy(const SEAction& a, const SESubstanceManager& subMgr)
   return copy;
 }
 
-std::string PBAction::ToString(const SEAction& a, eSerializationFormat fmt)
+bool PBAction::SerializeToString(const SEAction& a, std::string& dst, eSerializationFormat fmt)
 {
-  std::string s;
   auto* bind = Unload(a);
-  PBUtils::SerializeToString(*bind, s, fmt, nullptr);
-  return s;
+  return PBUtils::SerializeToString(*bind, dst, fmt, nullptr);
 }
-SEAction* PBAction::FromString(const std::string& src, Logger& logger, eSerializationFormat fmt)
+SEAction* PBAction::SerializeFromString(const std::string& src, Logger& logger, eSerializationFormat fmt)
 {
   return nullptr;
 }

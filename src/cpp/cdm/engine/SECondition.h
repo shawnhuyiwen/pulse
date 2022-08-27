@@ -18,6 +18,8 @@ public:
   
   virtual void Clear();
 
+  virtual bool SerializeToString(std::string& dst, eSerializationFormat fmt) const;
+
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;
 
@@ -26,15 +28,17 @@ public:
   virtual bool HasComment()const;
   virtual void InvalidateComment();
 
-  virtual std::string ToString(eSerializationFormat fmt = eSerializationFormat::TEXT) const;
-
 protected:
 
   std::string  m_Comment;
-};  
+};
 
-inline std::ostream& operator<< (std::ostream& out, const SECondition& a) 
+inline std::ostream& operator<< (std::ostream& out, const SECondition& c)
 {
-    out << a.ToString(eSerializationFormat::TEXT);
-    return out;
+  std::string s;
+  if (!c.SerializeToString(s, eSerializationFormat::TEXT))
+    out << "[Error] Unable to serialize condition";
+  else
+    out << s;
+  return out;
 }

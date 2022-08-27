@@ -315,11 +315,9 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   profiler.Clear();
   pe.GetLogger()->Info(ss);
 
-  expectedFinalSimTime_s = std::round(expectedFinalSimTime_s * 100.0) / 100.0;
-  double simTime_s = std::round(pe.GetSimulationTime(TimeUnit::s) * 100.0) / 100.0;
-
-  pe.GetLogger()->Info("Final SimTime(s) " + pulse::cdm::to_string(simTime_s));
-  pe.GetLogger()->Info("Expected Final SimTime(s) " + pulse::cdm::to_string(expectedFinalSimTime_s));
+  double simTime_s = pe.GetSimulationTime(TimeUnit::s);
+  pe.GetLogger()->Info("[Final SimTime] " + pulse::cdm::to_string(simTime_s)+"(s)");
+  pe.GetLogger()->Info("[Expected Final SimTime] " + pulse::cdm::to_string(expectedFinalSimTime_s)+"(s)");
   if (expectedFinalSimTime_s != simTime_s)
   {
     err = true;

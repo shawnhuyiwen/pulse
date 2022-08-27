@@ -25,6 +25,11 @@ void SEAction::Clear()
   m_Active = false;
 }
 
+bool SEAction::SerializeToString(std::string& dst, eSerializationFormat fmt) const
+{
+  return PBAction::SerializeToString(*this, dst, fmt);
+}
+
 std::string SEAction::GetComment() const
 {
   return m_Comment;
@@ -45,9 +50,4 @@ void SEAction::InvalidateComment()
 SEAction* SEAction::Copy(const SEAction& action, const SESubstanceManager& subMgr)
 {
   return PBAction::Copy(action, subMgr);
-}
-
-std::string SEAction::ToString(eSerializationFormat fmt) const
-{
-  return PBAction::ToString(*this, fmt);
 }

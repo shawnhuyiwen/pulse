@@ -27,6 +27,8 @@ public:
 
   virtual void Clear();
   static SEAction* Copy(const SEAction&, const SESubstanceManager&);
+
+  virtual bool SerializeToString(std::string& dst, eSerializationFormat fmt) const;
   
   /** Test if the action has all data it needs */
   virtual bool IsValid() const { return true; }
@@ -44,8 +46,6 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name)=0;
 
-  virtual std::string ToString(eSerializationFormat fmt=eSerializationFormat::TEXT) const;
-
 protected:
   bool                  m_Active = true;
   std::string           m_Comment;
@@ -53,6 +53,10 @@ protected:
 
 inline std::ostream& operator<< (std::ostream& out, const SEAction& a) 
 {
-  out << a.ToString(eSerializationFormat::TEXT);
+  std::string s;
+  if (!a.SerializeToString(s, eSerializationFormat::TEXT))
+    out << "[Error] Unable to serialize action";
+  else
+    out << s;
   return out;
 }

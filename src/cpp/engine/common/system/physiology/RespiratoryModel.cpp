@@ -1462,7 +1462,7 @@ namespace pulse
       {
         SEConsciousRespiration& cr = m_PatientActions->GetConsciousRespiration();
         SEConsciousRespirationCommand* cmd = cr.GetActiveCommand();
-//        m_ss << "Completed Conscious Respiration Command : " << *cmd;
+        m_ss << "Completed Conscious Respiration Command : " << cmd->GetName();
         Info(m_ss);
         cr.RemoveActiveCommand();
       }

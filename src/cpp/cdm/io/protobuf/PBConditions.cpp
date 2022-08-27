@@ -59,14 +59,12 @@ void PBCondition::Serialize(const SECondition& src, CDM_BIND::ConditionData& dst
   dst.set_comment(src.m_Comment);
 }
 
-std::string PBCondition::ToString(const SECondition& a, eSerializationFormat fmt)
+bool PBCondition::SerializeToString(const SECondition& a, std::string& dst, eSerializationFormat fmt)
 {
-  std::string s;
   auto* bind = Unload(a);
-  PBUtils::SerializeToString(*bind, s, fmt, nullptr);
-  return s;
+  return PBUtils::SerializeToString(*bind, dst, fmt, nullptr);
 }
-SECondition* PBCondition::FromString(const std::string& src, Logger& logger, eSerializationFormat fmt)
+SECondition* PBCondition::SerializeFromString(const std::string& src, Logger& logger, eSerializationFormat fmt)
 {
   return nullptr;
 }

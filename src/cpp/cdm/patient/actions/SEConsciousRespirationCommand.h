@@ -12,8 +12,11 @@ public:
   SEConsciousRespirationCommand(Logger* logger);
   virtual ~SEConsciousRespirationCommand();
 
-  static constexpr char const* Name = "AdvanceTime";
-  virtual std::string GetName() const { return Name; }
+
+  static constexpr char const* ActionType = "Conscious Respiration Command";
+  virtual std::string GetActionType() const { return ActionType; }
+
+  virtual std::string GetName() const = 0;
 
   virtual void Clear(); //clear memory
 

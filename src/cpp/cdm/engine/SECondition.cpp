@@ -23,6 +23,11 @@ void SECondition::Clear()
   m_Comment = "";
 }
 
+bool SECondition::SerializeToString(std::string& dst, eSerializationFormat fmt) const
+{
+  return PBCondition::SerializeToString(*this, dst, fmt);
+}
+
 std::string SECondition::GetComment() const
 {
   return m_Comment;
@@ -40,7 +45,3 @@ void SECondition::InvalidateComment()
   m_Comment = "";
 }
 
-std::string SECondition::ToString(eSerializationFormat fmt) const
-{
-  return PBCondition::ToString(*this, fmt);
-}
