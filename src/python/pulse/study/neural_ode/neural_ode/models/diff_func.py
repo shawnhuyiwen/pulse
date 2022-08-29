@@ -16,8 +16,6 @@ from dataclasses import dataclass, asdict
 # pl.core.saving.save_hparams_to_yaml
 
 
-# fixed parameters
-# TODO integrate with pl hparams
 @dataclass
 class ODEFuncParams:
     # network
@@ -34,14 +32,13 @@ class ODEFuncParams:
 
 class ODEFunc(nn.Module):
 
-    def __init__(self, x_dims: int, odefuncparams: ODEFuncParams):
+    def __init__(self, odefuncparams: ODEFuncParams):
         super(ODEFunc, self).__init__()
 
-        self.x_dims = x_dims
         vars(self).update(asdict(odefuncparams))  # hack?
 
         if self.h_dims is None:
-            self.h_dims = 2 * self.x_dims
+            raise ValueError(f'manually set h_dims to 2 * x_dims')
 
         self.final_nonlinear = self.final_nonlinear()
 
@@ -112,10 +109,6 @@ class CDEFunc(nn.Module):
         return hs
 
     def solve(self, h0, t, X):
-        # kwargs["rtol"] = self.odeint_rtol
-        # kwargs['atol'] = self.odeint_atol
-        # kwargs["method"] = self.ode_method
-        # this overwrites kwargs from ODE
         steps = (t[1:] - t[:-1])
         assert len(steps) > 0
         step_size = steps.min().item()

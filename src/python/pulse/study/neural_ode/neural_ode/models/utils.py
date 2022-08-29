@@ -19,7 +19,6 @@ import ubelt as ub
 from copy import deepcopy
 from dataclasses import dataclass, field, asdict
 from typing import Optional, List, Literal, Any, Dict, Tuple
-from simple_parsing import ArgumentParser
 
 import pytorch_lightning as pl
 import pytorch_forecasting as pf
@@ -331,6 +330,23 @@ class RNNAdapter(PFMixin, pf.RecurrentNetwork):
             **kwargs):
 
         super().__init__(hidden_size=hidden_size,
+                         **kwargs)
+
+
+class TFTAdapter(PFMixin, pf.TemporalFusionTransformer):
+
+    def __init__(
+            self,
+            hidden_size=100,
+            attention_head_size=4,
+            max_encoder_length=100,
+            dropout=0.1,
+            **kwargs):
+
+        super().__init__(hidden_size=hidden_size,
+                         attention_head_size=attention_head_size,
+                         max_encoder_length=max_encoder_length,
+                         dropout=dropout,
                          **kwargs)
 
 

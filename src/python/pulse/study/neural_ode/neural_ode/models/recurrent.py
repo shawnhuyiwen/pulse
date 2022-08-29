@@ -81,12 +81,15 @@ class ODE_RNN(nn.Module):
     # labeled x->h instead of x->y bc it'll usually be the hidden layer inside
     # another model
     # this is setup for irregular time steps, though not needed
-    def forward(self,
-                x,
-                x_time,
-                return_latents=False,
-                initial_dt=0.01,    # TODO adjust this
-                min_step_frac=None):  # 50
+    # TRANS: VAE1: at the same time to generate the final hi average and
+    # standard deviation of the observation point hi_std
+    def forward(
+            self,
+            x,
+            x_time,
+            return_latents=False,
+            initial_dt=0.01,  # TODO adjust this
+            min_step_frac=None):  # 50
         batch_size = x.shape[0]
 
         hi = torch.zeros((batch_size, self.h_dims), device=x.device)
@@ -110,31 +113,9 @@ class ODE_RNN(nn.Module):
             prev_ti, ti = ti, x_time[i]
             dt = ti - prev_ti
 
-            #TRANS: If it can not meet the minimum step direct linear increase
-            if dt < minimum_step:
-
-                time_points = torch.stack((prev_ti, ti))
-                #TRANS: The linear increment
-                inc = self.diffeq_solver(prev_ti, prev_hi) * dt
-                hi_ode = prev_hi + inc
-                # print(f'{dt=} < {minimum_step=}, linear')
-
-            else:
-                n_intermediate_tp = max(2,
-                                        (dt / minimum_step).int())
-                time_points = utils.linspace_vector(prev_ti, ti,
-                                                    n_intermediate_tp,
-                                                    device=x.device)
-                #TRANS: Calculate the ODE, work out corresponding latent value
-                # to (1) finally can
-                # import xdev
-                # with xdev.embed_on_exception_context():
-                hi_ode = self.diffeq_solver.solve(prev_hi, time_points)[:, -1, :]
-                # print(f'{dt=} >= {minimum_step=}, solving {time_points=}')
-
-            #TRANS: Calculate the GRU helped
-            hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, x[:, i, :])
-            # print(f'x(t)={x[:, i, 0]}')
+            n_tp = (dt / minimum_step).int()
+            hi, hi_std = self.step(x[:, i, :], prev_hi, prev_hi_std, ti,
+                                   prev_ti, n_tp)
 
             if return_latents:
                 hs.append(hi)
@@ -143,6 +124,56 @@ class ODE_RNN(nn.Module):
             return torch.stack(hs, dim=1)
         else:
             return hi, hi_std
+
+    def step(self, xi, prev_hi, prev_hi_std, ti, prev_ti, n_tp):
+        #TRANS: If it can not meet the minimum step direct linear increase
+        if n_tp < 1:
+            time_points = torch.stack((prev_ti, ti))
+            #TRANS: The linear increment
+            inc = self.diffeq_solver(prev_ti, prev_hi) * (ti - prev_ti)
+            hi_ode = prev_hi + inc
+            # print(f'{dt=} < {minimum_step=}, linear')
+
+        else:
+            time_points = utils.linspace_vector(prev_ti,
+                                                ti,
+                                                max(2, n_tp),
+                                                device=xi.device)
+            #TRANS: Calculate the ODE, work out corresponding latent value
+            # to (1) finally can
+            hi_ode = self.diffeq_solver.solve(prev_hi, time_points)[:, -1, :]
+            # print(f'{dt=} >= {minimum_step=}, solving {time_points=}')
+
+        #TRANS: Calculate the GRU helped
+        import xdev
+        with xdev.embed_on_exception_context():
+            hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, xi)
+        # print(f'x(t)={x[:, i, 0]}')
+        return hi, hi_std
+
+    # ODE_GRU_Encoder
+    def run_to_prior(self, x_data, x_time):
+        batch_size = x_data.shape[0]
+
+        if x_time.numel() == 1:
+            prev_hi = torch.zeros((batch_size, self.h_dims))
+            prev_hi_std = torch.zeros((batch_size, self.h_dims))
+            hi_last_mu, hi_last_sigma = self.RNN_net(prev_hi, prev_hi_std,
+                                                     x_data[:, 0, :])
+        else:
+            hi_last_mu, hi_last_sigma = self.run_to_last_point(
+                x_data, x_time, return_latents=False)
+
+        hi_last_mu = hi_last_mu.reshape(1, batch_size, self.h_dims)
+        hi_last_sigma = hi_last_sigma.reshape(1, batch_size, self.h_dims)
+
+        # TRANS: VAE2: through the encoder (x, hi_last_mu, hi_last_sigma) to
+        # produce the corresponding mu and the sigma
+        hi_last_mu, hi_last_sigma = utils.split_last_dim(
+            self.output_net(torch.cat((hi_last_mu, hi_last_sigma), -1)))
+        hi_last_sigma = hi_last_sigma.abs()
+
+        return hi_last_mu, hi_last_sigma
 
 
 @dataclass
@@ -154,15 +185,13 @@ class RecurrentODEParams:
     # gaussian_likelihood_std: float = 0.01
 
 
-# @pl.utilities.cli.MODEL_REGISTRY
 class RecurrentODE(BaseModel):
 
     def __init__(self,
                  recurrentodeparams: RecurrentODEParams,
                  odefuncparams: ODEFuncParams,
                  RNN_net: Optional[nn.Module] = None,
-                 **kwargs
-                ):
+                 **kwargs):
         super().__init__(**kwargs)
 
         # # bad
@@ -181,7 +210,10 @@ class RecurrentODE(BaseModel):
             self.x_dims = kwargs['x_dims']
             self.y_dims = kwargs['y_dims']
 
-            diffeq_solver = ODEFunc(self.x_dims, self.odefuncparams)
+            if self.odefuncparams.h_dims is None:
+                self.odefuncparams.h_dims = 2 * self.x_dims
+
+            diffeq_solver = ODEFunc(self.odefuncparams)
 
             if self.h_dims is None:
                 self.h_dims = diffeq_solver.h_dims
@@ -207,7 +239,6 @@ class RecurrentODE(BaseModel):
                                                    self.encoder_out_dims * 2,
                                                    self.n_out_units)
 
-
     # RecurrentODE
     def old_forward(self, y_time, x, x_time):
         #TRANS: Complete sequence prediction
@@ -216,143 +247,132 @@ class RecurrentODE(BaseModel):
         xy_time = torch.cat((x_time, y_time))
         batch_size, x_extent, x_dims = x.shape
         y_extent = len(y_time)
-        xy = torch.cat((x,
-                        torch.zeros((batch_size, y_extent, x_dims),
-                               dtype=x.dtype, device=self.device)),
-                       dim=1)
-        # print(f'xt={x_time.shape} {x_time[0]}..{x_time[-1]}')
-        # print(f'yt={y_time.shape} {y_time[0]}..{y_time[-1]}')
-        # print(f'feeding x={x.shape} + y to ODE_RNN')
-        hs = self.ODE_RNN(xy, xy_time, return_latents=True)
-        # this is like having t as an extra batch dim for output_net
-        y_pred = self.output_net(hs)
+        if 0:
+            xy = torch.cat((x,
+                            torch.zeros((batch_size, y_extent, x_dims),
+                                        dtype=x.dtype,
+                                        device=self.device)),
+                           dim=1)
+            # print(f'xt={x_time.shape} {x_time[0]}..{x_time[-1]}')
+            # print(f'yt={y_time.shape} {y_time[0]}..{y_time[-1]}')
+            # print(f'feeding x={x.shape} + y to ODE_RNN')
+            hs = self.ODE_RNN(xy, xy_time, return_latents=True)
+            # this is like having t as an extra batch dim for output_net
+            y_pred = self.output_net(hs)
 
-        # y_pred shape [batch_size, y_time_points, y_dims]
-        return y_pred[:, -y_extent:, :]
-
-    # ODE_GRU_Encoder
-    def run_to_prior(self, x_data, x_time):
-        batch_size = x_data.shape[0]
-
-        if x_time.numel() == 1:
-            prev_hi = torch.zeros((batch_size, self.h_dims))
-            prev_hi_std = torch.zeros((batch_size, self.h_dims))
-            hi_last_mu, hi_last_sigma = self.GRU_update(
-                prev_hi, prev_hi_std, x_data[:, 0, :])
+            # y_pred shape [batch_size, y_time_points, y_dims]
+            return y_pred[:, -y_extent:, :]
         else:
-            hi_last_mu, hi_last_sigma = self.run_to_last_point(
-                x_data, x_time, return_latents=False)
-
-        hi_last_mu = hi_last_mu.reshape(1, batch_size, self.h_dims)
-        hi_last_sigma = hi_last_sigma.reshape(1, batch_size, self.h_dims)
-
-        # TRANS: VAE2: through the encoder (x, hi_last_mu, hi_last_sigma) to
-        # produce the corresponding mu and the sigma
-        hi_last_mu, hi_last_sigma = utils.split_last_dim(
-            self.output_net(torch.cat((hi_last_mu, hi_last_sigma), -1)))
-        hi_last_sigma = hi_last_sigma.abs()
-
-        return hi_last_mu, hi_last_sigma
-
-    # ODE_GRU_Encoder
-    # TRANS: VAE1: at the same time to generate the final hi average and
-    # standard deviation of the observation point hi_std
-    def run_to_last_point(self, x_data, x_time, return_latents=False):
-        return self.ODE_RNN(x_data, x_time, return_latents=return_latents)
-
-
-@dataclass
-class RecurrentCDEParams:
-    gaussian_likelihood_std: float = 0.01
+            hi, hi_std = self.ODE_RNN(x, x_time, return_latents=False)
+            yi = x[:, -1, 1:]  # HACK to augment w/ time TODO generalize
+            ti = x_time[-1]
+            y = []
+            for i in range(len(y_time)):
+                prev_hi, prev_hi_std = hi, hi_std
+                prev_ti, ti = ti, y_time[i]
+                yi_aug = torch.cat(
+                    (ti.unsqueeze(0).repeat(len(yi)).unsqueeze(1), yi), -1)
+                hi, hi_std = self.ODE_RNN.step(yi_aug,
+                                               prev_hi,
+                                               prev_hi_std,
+                                               ti,
+                                               prev_ti,
+                                               n_tp=2)
+                yi = self.output_net(hi)
+                y.append(yi)
+            return torch.stack(y, dim=1)
 
 
 @dataclass
-class RecurrentCDE(nn.Module, RecurrentCDEParams):
-
-    x_dims: int = None
-    y_dims: int = None
-    diffeq_solver: CDEFunc = None
-
-    def __post_init__(self):
-
-        super(RecurrentCDE, self).__init__()
-        self.h_dims = diffeq_solver.h_dims
-        self.gaussian_likelihood_std = torch.tensor([gaussian_likelihood_std])
-
-        self.using = 'CDE'
-
-        self.initial_net = nn.Linear(self.x_dims, self.h_dims)
-        utils.init_network_weights(self.initial_net)
-        self.output_net = nn.Linear(self.h_dims, self.y_dims)
-        utils.init_network_weights(self.output_net)
+class MLPParams:
+    n_units: int = 100
+    hidden_layers: int = 0
+    nonlinear: type = nn.Tanh
 
 
-    def forward(self, y_time, x, x_time):
-        # import xdev; xdev.embed()
-        #TRANS: Complete sequence prediction
-        if len(y_time.shape) < 1:
-            y_time = y_time.unsqueeze(0)
+@dataclass
+class CDEEncoderParams:
+    cdefuncparams: CDEFuncParams
+    in_dims: Union[int, Literal['x']] = 'x'
+    out_dims: Union[int, Literal['y'], Literal['h']] = 'h'
+    in_net_params: Optional[MLPParams] = None
+    out_net_params: Optional[MLPParams] = None
 
-        # TODO do this in dataloader
-        x_time, x_ix = x_time.sort()
-        x_data = x_data[..., x_ix, :]
-        y_time, y_ix = y_time.sort()
+
+class CDEEncoder(nn.Module):
+
+    def __init__(self, x_dims: int, y_dims: int,
+                 cdeencoderparams: CDEEncoderParams):
+        super().__init__()
+
+        vars(self).update(asdict(cdeencoderparams))  # hack?
+        self.cdefuncparams = cdefuncparams
+
+        if not self.STUB:
+            self.h_dims = self.cdefuncparams.h_dims
+
+            if in_dims == 'x':
+                self.in_dims = x_dims
+            else:
+                self.in_dims = in_dims
+
+            if out_dims == 'y':
+                self.out_dims = y_dims
+            elif out_dims == 'h':
+                self.out_dims = self.h_dims
+            else:
+                self.out_dims = out_dims
+
+            if in_net_params is not None:
+                self.in_net = utils.create_net(self.x_dims,
+                                               self.h_dims,
+                                               **asdict(in_net_params),
+                                               init=True)
+                self.diffeq_solver = CDEFunc(self.h_dims, self.cdefuncparams)
+            else:
+                self.in_net = nn.Identity()
+                self.diffeq_solver = CDEFunc(self.x_dims, self.cdefuncparams)
+
+            if out_net_params is not None:
+                self.out_net = utils.create_net(self.h_dims,
+                                                self.y_dims,
+                                                **asdict(out_net_params),
+                                                init=True)
+                self.diffeq_solver = CDEFunc(self.h_dims, self.cdefuncparams)
+            else:
+                self.out_net = nn.Identity()
+                assert self.out_dims == self.h_dims
+
+    def forward(self, x, x_time):
+        x = self.in_net(x)
 
         # need rectilinear interpolation instead if doing online prediction
         # https://github.com/patrick-kidger/torchcde#different-interpolation-methods
 
         # TODO https://github.com/patrick-kidger/torchcde#the-log-ode-method
 
-        # standard preprocessing step for cdes: include time as a channel,
-        # since they're invariant to time. have to make sure seqs are
-        # temporally aligned from start? eg seconds since hemorrhage onset
-        TIME_INV = 0
-        if TIME_INV:
-            # combine x and t - do this in dataloader
-            # https://github.com/arogozhnikov/einops/issues/56#issuecomment-962584525
-            common_dims = ' '.join(map(str, x_data.shape[:-2]))
-            x = torch.cat(
-                (x_data, einops.repeat(x_time, f't -> {common_dims} t 1')),
-                dim=-1)
+        # assumes seqs are temporally aligned, t is included as an x feature,
+        # and y_time does not overlap x_time
 
-            coeffs = hermite_cubic_coefficients_with_backward_differences(
-                x)
-            X = CubicSpline(coeffs)
-            X0 = X.evaluate(0)
-            h0 = self.initial_net(X0)
+        # can move this to dataloader if using fixed normalization
+        coeffs = hermite_cubic_coefficients_with_backward_differences(x)
+        X = CubicSpline(coeffs)
 
-            # TODO need to do this for yt instead of xt
-            # or both, using predicted xs for another loss
-            GET_ALL_TIME_POINTS = 1
-            if GET_ALL_TIME_POINTS:
-                ts = torch.linspace(*X.interval, len(x_time))
-            else:
-                # interval is (start, end)
-                ts = X.interval
+        X0 = X.evaluate(0)
+        h0 = self.initial_net(X0)
 
-            hs = self.diffeq_solver.solve(h0, ts, x)
-
+        # TODO need to do this for yt instead of xt
+        # or both, using predicted xs for another loss
+        GET_ALL_TIME_POINTS = 0
+        if GET_ALL_TIME_POINTS:
+            ts = torch.linspace(*X.interval, len(x_time))
         else:
-            # import xdev; xdev.embed()
-            coeffs = hermite_cubic_coefficients_with_backward_differences(
-                x_data, x_time)
-            X = CubicSpline(coeffs, x_time)
+            # interval is (start, end)
+            ts = X.interval
 
-            # need at least 2 points to take a solver step, so augment with
-            # closest x point to start of y
-            # assumes xt, yt sorted
-            assert y_time[0] > x_time[0]
-            x_time_last = x_time[torch.argwhere(x_time < y_time)[-1]]
+        hs = self.diffeq_solver.solve(h0, ts, x)
 
-            X0 = X.evaluate(x_time[-1])
-            h0 = self.initial_net(X0)  # TODO should parameterize this by time
-            hs = self.diffeq_solver.solve(h0, torch.cat((x_time_last, y_time)), X)[:, 1:, :]
-
-        y_pred = self.output_net(hs)
-
-        # put in the orig time order
-        # https://stackoverflow.com/a/64455575
-        # y_pred = y_pred.gather(-2, y_ix.argsort())
+        y_pred = self.out_net(hs)
 
         # y_pred shape [batch_size, y_time_points, y_dims]
         return y_pred

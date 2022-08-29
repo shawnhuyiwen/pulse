@@ -1,12 +1,5 @@
-import os
-import gc
 import torch
-from torch.distributions.normal import Normal
-from tqdm import tqdm
 import neural_ode.models.utils as utils
-from neural_ode.models.recurrent import RecurrentODE, RecurrentCDE
-from neural_ode.models.seq2seq import Seq2Seq
-from neural_ode.models.vae import VAE
 import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -20,10 +13,14 @@ import ubelt as ub
 import numpy as np
 import pandas as pd
 from dataclasses import asdict, astuple, dataclass
-from simple_parsing import ArgumentParser
 
 import pytorch_lightning as pl
 import pytorch_forecasting as pf
+
+# for cli to pick up
+from neural_ode.models.recurrent import RecurrentODE
+from neural_ode.models.seq2seq import Seq2Seq
+from neural_ode.models.vae import VAE
 
 
 class UpdateKLCoef(pl.Callback):
@@ -424,7 +421,7 @@ def trainer_kwargs(kl_coef=1,
     top_tr_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
                                                    save_top_k=1,
                                                    monitor='train_loss_epoch')
-    plot_callback = PlotCallback(every_n_epochs=50)
+    plot_callback = PlotCallback(every_n_epochs=20)
     early_stopping_callback = pl.callbacks.EarlyStopping(
                 monitor='train_loss_epoch',
                 # monitor='tr_mse',
@@ -435,7 +432,7 @@ def trainer_kwargs(kl_coef=1,
     logger = pl.loggers.TensorBoardLogger(
         save_dir='lightning_logs/',
         name=None,  # can set this in cli
-        default_hp_metric=False,
+        default_hp_metric=True,
     )
     return dict(
         max_epochs=max_epochs,
@@ -495,12 +492,18 @@ if __name__ == "__main__":
             '/data/pulse/hemorrhage/hemorrhage': 'orig',
             '/data/pulse/hemorrhage/patient_variability/hemorrhage/test': 'mild'
         }
+        b = cli.datamodule.batch_size
+        s = cli.datamodule.stride
+        if cli.trainer.overfit_batches:
+            p = cli.trainer.overfit_batches * b
+        else:
+            p = len(cli.datamodule.dset_tr)
         new_name = '_'.join((
             type(cli.model).__name__,
             dset_names[cli.datamodule.root_path],
-            f'b{cli.datamodule.batch_size}'    # batches
-            f'p{len(cli.datamodule.dset_tr)}'  # patients
-            f's{cli.datamodule.stride}'        # stride
+            f'b{b}'  # batches
+            f'p{p}'  # patients
+            f's{s}'  # stride
         ))
         try:  # logger was set manually but without a name
             kwargs = dict(cli.config.trainer.logger.init_args)

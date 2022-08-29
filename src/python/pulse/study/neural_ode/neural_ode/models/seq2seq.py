@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
-from neural_ode.models.diff_func import ODEFunc, CDEFunc, ODEFuncParams
+from neural_ode.models.diff_func import ODEFunc, CDEFunc, ODEFuncParams, CDEFuncParams
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
-from neural_ode.models.recurrent import RecurrentODE, RecurrentODEParams
+from neural_ode.models.recurrent import ODE_RNN, GRU_with_std
 from neural_ode.models.utils import BaseModel
-from dataclasses import dataclass, InitVar
+from dataclasses import dataclass
 from typing import Union, Optional
 
 
@@ -27,26 +27,20 @@ class ODEDecoder(nn.Module):
 
 @dataclass
 class Seq2SeqParams:
-    h_dims: int
+    h_dims: int = 100
     enc_n_gru_units: int = 100
     enc_n_out_units: int = 100
     enc_h_dims: Optional[int] = None
     dec_n_out_units: int = 100
     dec_h_dims: Optional[int] = None
-    # gaussian_likelihood_std: float = 0.01
 
 
 # TODO tie enc-dec weights? https://stackoverflow.com/q/36889732
-# @pl.utilities.cli.MODEL_REGISTRY
 class Seq2Seq(BaseModel):
 
-    # TODO make CDE work here, replace ode_gru_encoder
-    # ode_rnn:ode_gru_encoder::cde:?
-    def __init__(self, seq2seqparams: Seq2SeqParams,
-                 enc_diffeq_params: ODEFuncParams,
-                 dec_diffeq_params: ODEFuncParams):
+    def __init__(self, h_dims: int = 100, **kwargs):
 
-        super(Seq2Seq, self).__init__()
+        super().__init__(**kwargs)
 
         vars(self).update(asdict(seq2seqparams))  # hack?
         self.enc_diffeq_params = enc_diffeq_params
@@ -54,36 +48,17 @@ class Seq2Seq(BaseModel):
 
         self.save_hyperparameters()
 
-        if self.x_dims is not None:
-            self.init_xy()
+        if not self.STUB:
+            pass
 
-    def init_xy(self):
 
-        # self.gaussian_likelihood_std = torch.tensor([self.gaussian_likelihood_std])
-
-        self.encoder = RecurrentODE(
-            RecurrentODEParams(encoder_out_dims=self.h_dims,
-                               h_dims=self.enc_h_dims,
-                               n_gru_units=self.enc_n_gru_units,
-                               n_out_units=self.enc_n_out_units),
-            self.enc_diffeq_params)
-
-        self.decoder = ODEDecoder(self.y_dims, self.dec_h_dims,
-                                  self.dec_n_out_units,
-                                  ODEFunc(self.h_dims, self.dec_diffeq_params))
-
-    def forward(self, y_time, x_data, x_time, x_mask=None):
-        #TRANS: Complete sequence prediction
-        if x_mask is not None:
-            x = x_data * x_mask
-        else:
-            x = x_data
+    def forward(self, y_time, x_data, x_time):
 
         if len(y_time.shape) < 1:
             y_time = y_time.unsqueeze(0)
 
         # encoder
-        hs = self.encoder.run_to_last_point(x, x_time, return_latents=True)
+        hs = self.encoder(x, x_time, return_latents=True)
         # TRANS: The decoder initial point set as x_time finally
         decoder_begin_hi = hs[:, -1, :]
         y_time = torch.cat((x_time[-1:], y_time))
@@ -94,3 +69,14 @@ class Seq2Seq(BaseModel):
         y_pred = self.decoder(decoder_begin_hi, y_time)[:, 1:, :]
 
         return y_pred
+
+
+def odernn2ode(h_dims: int = 100, n_gru_units: int = 100, odefuncparams: ODEFuncParams = None):
+    diffeq_solver = ODEFunc(odefuncparams)
+    encoder = ODE_RNN(diffeq_solver, GRU_with_std(h_dims, x_dims, n_units=n_gru_units))
+    decoder = diffeq_solver
+
+    decoder = ODEDecoder(self.y_dims, self.dec_h_dims,
+                              self.dec_n_out_units,
+                         diffeq_solver)
+
