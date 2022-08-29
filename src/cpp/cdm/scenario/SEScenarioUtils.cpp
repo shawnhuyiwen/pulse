@@ -134,10 +134,7 @@ bool ParseLegacyLogAction(const std::string& allLines, std::vector<ScenarioActio
 
 void TestAction(SEAction& a)
 {
-  std::string s = a.ToString();
-
   std::cout << "Adding action: " << a << std::endl;
-  //SEAction* copy = SEAction::Serialize(s);
 }
 
 bool AddSEAction(ScenarioAction& sa, SEScenario& sce)
