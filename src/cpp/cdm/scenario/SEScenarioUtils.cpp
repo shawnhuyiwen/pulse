@@ -19,7 +19,6 @@
 
 #include <regex>
 
-std::string actionBeginPattern = R"(\[((\d*\.?\d*)\((\w)\))\][ \t]*\[Action\][ \t]*(?:\1,[ \t]*)*([\w \t]*\w)(?:(?:[ \t]*(:)[ \t]*([\w \t]*\w)*)*)[ \t]*(\{)?)";
 struct ScenarioAction
 {
   std::string Name;
@@ -29,22 +28,60 @@ struct ScenarioAction
   std::map<std::string, std::string> Enumerations;
 };
 
+const std::string WHITESPACE = " \n\r\t\f\v";
+ 
+std::string ltrim(const std::string &s)
+{
+  size_t start = s.find_first_not_of(WHITESPACE);
+  return (start == std::string::npos) ? "" : s.substr(start);
+}
+ 
+std::string rtrim(const std::string &s)
+{
+  size_t end = s.find_last_not_of(WHITESPACE);
+  return (end == std::string::npos) ? "" : s.substr(0, end + 1);
+}
+ 
+std::string trim(const std::string &s) {
+  return rtrim(ltrim(s));
+}
+
+bool ParseTime(const std::string& timeStr, double& time_s)
+{
+  std::smatch mTime;
+  std::string timePattern = R"((\d*\.?\d*)\((.*)\))";
+  std::regex rTime(timePattern);
+
+  if (!std::regex_search(timeStr, mTime, rTime))
+    return false;
+
+  // Capture groups:
+  //  0: Whole match
+  //  1: Time
+  //  2: Time unit
+  double rawTime = std::stod(mTime[1]);
+  std::string rawUnit = mTime[2];
+
+  // Convert to seconds
+  SEScalarTime time;
+  time.SetValue(rawTime, TimeUnit(rawUnit));
+  time_s = time.GetValue(TimeUnit::s);
+
+  return true;
+}
+
 bool ParseLegacyLogAction(const std::string& allLines, std::vector<ScenarioAction>& actions, Logger* logger)
 {
   ScenarioAction a;
 
-  std::smatch mAction; 
+  std::smatch mAction;
+  std::string actionBeginPattern = R"(\[(\d*\.?\d*\(.*\))\][ \t]*\[Action\][ \t]*(?:\1,[ \t]*)(\S.*\S))";
   std::regex rAction(actionBeginPattern);
 
   // Capture groups:
   //  0: Whole match
   //  1: Time(Time unit) 
-  //  2: Time
-  //  3: Time unit
-  //  4: Action Type/Action Name for type-less legacy actions
-  //  5: Colon indicating legacy action
-  //  6: Action name for legacy actions with type
-  //  7: Bracket indicating non-legacy action
+  //  2: Action Type/Action Name
   if (!std::regex_search(allLines, mAction, rAction))
   {
     logger->Error("Unable to parse action");
@@ -52,52 +89,53 @@ bool ParseLegacyLogAction(const std::string& allLines, std::vector<ScenarioActio
   }
   
   // Get scenario time
-  double time = std::stod(mAction[2]);
-  if (mAction[3].compare("s") != 0)
+  if (!ParseTime(mAction[1], a.ScenarioTime_s))
   {
-    // TODO: Handle other time units
+    logger->Error("Unable to parse action time");
   }
-  a.ScenarioTime_s = time;
 
   // Get action name and type if it exists
-  if (mAction[5].compare(":") == 0)
+  size_t colonIdx;
+  std::string actionIdentifier(mAction[2]);
+  if ((colonIdx = actionIdentifier.find(":")) != std::string::npos)
   {
-    a.Type = mAction[4];
-    a.Name = mAction[6];
+    a.Type = trim(actionIdentifier.substr(0, colonIdx));
+    a.Name = trim(actionIdentifier.substr(colonIdx + 1));
   }
   else
   {
-    a.Name = mAction[4];
+    a.Name = mAction[2];
   }
 
   // Extract properties from remaining lines
   std::string properties = mAction.suffix().str();
-  std::string propertyPattern = R"(    (\w+):\s*([a-zA-Z]*)?([\d*\.?\d]*)?(?:\((.*)\))?)";
+  std::string propertyPattern = R"(    (\w+):\s*([\d*\.?\d]*)?(?:\((.*)\))?(\S*)?)";
   std::smatch mProperty; 
   std::regex rProperty(propertyPattern);
-  // Capture groups:
-  //  0: Whole match
-  //  1: Property name
-  //  2: NaN or Enumeration Value (note this will currently not get whole enum value if it has non a-zA-Z characters)
-  //  3: Numeric value
-  //  4: Unit
   while (std::regex_search(properties, mProperty, rProperty))
   {
+    // Capture groups:
+    //  0: Whole match
+    //  1: Property name
+    //  2: Numeric value
+    //  3: Unit
+    //  4: NaN or Enumeration Value
+
     std::string propName = mProperty[1];
 
     double value;
     std::string valueStr;
-    if (mProperty[2].compare("NaN") == 0)
+    if (mProperty[4].compare("NaN") == 0)
     {
-      value = std::stod(mProperty[2]);
+      value = std::stod(mProperty[4]);
       a.Properties[propName] = SEScalarPair(value);
     }
-    else if (mProperty[3].compare("") != 0) // value(unit) or value
+    else if (mProperty[2].compare("") != 0) // value(unit) or value
     {
-      value = std::stod(mProperty[3]);
-      if (mProperty[4].compare("") != 0)
+      value = std::stod(mProperty[2]);
+      if (mProperty[3].compare("") != 0) // unit
       {
-        a.Properties[propName] = SEScalarPair(value, mProperty[4]);
+        a.Properties[propName] = SEScalarPair(value, mProperty[3]);
       }
       else
       {
@@ -106,7 +144,7 @@ bool ParseLegacyLogAction(const std::string& allLines, std::vector<ScenarioActio
     }
     else //Enumeration
     {
-      a.Enumerations[propName] = mProperty[2];
+      a.Enumerations[propName] = mProperty[4];
     }
     // TODO: Account for properties that result in further indentation
 
@@ -128,6 +166,90 @@ bool ParseLegacyLogAction(const std::string& allLines, std::vector<ScenarioActio
   }*/
 
   actions.push_back(a);
+
+  return true;
+}
+
+bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& actions, Logger* logger)
+{
+  std::smatch mAction;
+  std::string actionBeginPattern = R"(\[(\d*\.?\d*\(.*\))\][ \t]*\[Action\]\s*([^\n\{]*)\s+(\{?))";
+  std::regex rAction(actionBeginPattern);
+
+  // Capture groups:
+  //  0: Whole match
+  //  1: Time(Time unit) 
+  //  2: Action Type (non-legacy)
+  //  3: Bracket indicating non-legacy action
+  if (!std::regex_search(allLines, mAction, rAction))
+  {
+    logger->Error("Unable to parse action");
+    return false;
+  }
+
+  if (mAction[3].compare("{") != 0)
+  {
+    return ParseLegacyLogAction(allLines, actions, logger);
+  }
+
+  // TODO: Parse new log actions
+
+  return true;
+}
+
+bool IdentifyTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs, Logger* logger)
+{
+  tagStrs.clear();
+
+  std::string tagPattern = R"(\[(\d*\.?\d*\(.*\))\][ \t]*\[)" + tag + R"(\][^\{\n]*(\{?))";
+
+  std::string text = content;
+
+  std::smatch mTagBegin; 
+  std::regex rTagBegin(tagPattern);
+  while (std::regex_search(text, mTagBegin, rTagBegin))
+  {
+    // Capture groups:
+    //  0: Whole match
+    //  1: Time(Time unit) 
+    //  2: Open bracket indicating non-legacy action
+    std::string remainingText = mTagBegin.suffix().str();
+    std::string tagStr = "";
+    if (mTagBegin[2].compare("{") == 0)
+    {
+      // Find end of action
+      std::smatch mTagEnd;
+      std::regex rTagEnd(R"(\}[\r\n]{3,})");
+      if (std::regex_search(remainingText, mTagEnd, rTagEnd))
+      {
+        tagStr = text.substr(mTagBegin.position(0), mTagBegin.length(0) + mTagEnd.position(0) + 1);
+      }
+      else
+      {
+        // Failed to find terminating bracket
+        logger->Error("Unable to identify tag string terminator: " + std::string(mTagBegin[0]));
+        return false;
+      }
+    }
+    else // Legacy log
+    {
+      tagStr += mTagBegin[0];
+
+      // Collect action properties
+      std::smatch mTagProperties;
+      std::regex rTagProperties(R"(\n    [^\n]*)");
+      while (std::regex_search(remainingText, mTagProperties, rTagProperties))
+      {
+        if (mTagProperties.position(0) != 0) // Needs to immediately follow previous match
+          break;
+        tagStr += mTagProperties[0];
+        remainingText = mTagProperties.suffix().str();
+      }
+    }
+
+    tagStrs.push_back(tagStr);
+    text = mTagBegin.suffix().str().substr(tagStr.length() - mTagBegin[0].length());
+  }
 
   return true;
 }
@@ -201,6 +323,166 @@ bool AddSEAction(ScenarioAction& sa, SEScenario& sce)
   return false;
 }
 
+bool GetActions(const std::string& content, SEScenario& sce)
+{
+  // Identify action strings
+  std::vector<std::string> actionStrs;
+  if (!IdentifyTagStrings("Action", content, actionStrs, sce.GetLogger()))
+  {
+    return false;
+  }
+
+  // Parse actions from strings
+  std::vector<ScenarioAction> actions;
+  for( auto& a: actionStrs)
+  {
+    if (!ParseLogAction(a, actions, sce.GetLogger()))
+    {
+      return false;
+    }
+  }
+  
+  // Create SEActions from actions
+  double time_s = 0;
+  for (ScenarioAction& sa : actions)
+  {
+    if (sa.ScenarioTime_s > time_s)
+    {
+      SEAdvanceTime adv;
+      adv.GetTime().SetValue(sa.ScenarioTime_s - time_s, TimeUnit::s);
+      time_s += sa.ScenarioTime_s;
+      std::cout << adv;
+    }
+    if (!AddSEAction(sa,sce))
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool GetConditions(const std::string& content, SEScenario& sce)
+{
+  // Identify action strings
+  std::vector<std::string> conditionStrs;
+  if (!IdentifyTagStrings("Condition", content, conditionStrs, sce.GetLogger()))
+  {
+    sce.Error("Unable to identify condition strings");
+    return false;
+  }
+
+  // TODO: Parse conditions from strings
+
+  return true;
+}
+
+bool GetFinalSimTime(const std::string& content, SEScenario& sce)
+{
+  // Capture groups:
+  //  0: Whole match
+  //  1: Time(Time unit) 
+  std::smatch mFinalSimTime; 
+  std::string finalSimTimePattern = R"(\[Final SimTime\]\s*(\d*\.?\d*\(.*\)))";
+  std::regex rFinalSimTime(finalSimTimePattern);
+  if (!std::regex_search(content, mFinalSimTime, rFinalSimTime))
+  {
+    sce.Warning("Unable to locate Final SimTime");
+    return false;
+  }
+
+  double time_s;
+  if (!ParseTime(mFinalSimTime[1], time_s))
+  {
+    sce.Error("Unable to parse Final SimTime");
+    return false;
+  }
+
+  // TODO: Do something with final sim time
+  std::cout << "Final sim time (s): " << time_s << std::endl;
+
+  return true;
+}
+
+bool GetPatient(const std::string& content, SEScenario& sce)
+{
+  // Capture groups:
+  //  0: Whole match
+  //  1: Remainder of line, left trimmed (name info)
+  std::string patientPattern = R"(\[Patient\]\s*([^\n]*))";
+  std::smatch mPatient; 
+  std::regex rPatient(patientPattern);
+  std::string text = content;
+  if (!std::regex_search(text, mPatient, rPatient))
+  {
+    sce.Warning("Unable to locate patient information");
+    return false;
+  }
+
+  // Locate end of patient info
+  std::string remainingText = mPatient.suffix().str();
+  std::smatch mPatientEnd;
+  std::regex rPatientEnd(R"(\}[\r\n]{3,})");
+  std::string patientStr = "";
+  if (std::regex_search(remainingText, mPatientEnd, rPatientEnd))
+  {
+    patientStr = text.substr(mPatient.position(1), mPatient.length(1) + mPatientEnd.position(0) + 1);
+  }
+  else
+  {
+    // Failed to find terminating bracket
+    sce.Error("Unable to identify tag string terminator: " + std::string(mPatient[0]));
+    return false;
+  }
+
+  // TODO: Do something with patient info
+  std::cout << patientStr << std::endl;
+
+  return true;
+}
+
+void GetSerializeFromFile(const std::string& content, SEScenario& sce)
+{
+  std::vector<std::string> filenames;
+
+  // Capture groups:
+  //  0: Whole match
+  //  1: Time(unit)
+  //  2: Remainder of line, left trimmed (file info) 
+  std::string serializeFromFilePattern = R"(\[(\d*\.?\d*\(.*\))\][ \t]*\[SerializingFromFile\][ \t]*([^\n]*))";
+  std::smatch mSerializeFromFile; 
+  std::regex rSerializeFromFile(serializeFromFilePattern);
+  std::string text = content;
+  while (std::regex_search(text, mSerializeFromFile, rSerializeFromFile))
+  {
+    filenames.push_back(trim(std::string(mSerializeFromFile[2])));
+
+    // TODO: Do something with serialize from file
+    std::cout << "Serialize from file: " << filenames[filenames.size()-1] << std::endl;
+
+    text = mSerializeFromFile.suffix();
+  }
+}
+
+void GetSerializeFromString(const std::string& content, SEScenario& sce)
+{
+  // Capture groups:
+  //  0: Whole match
+  //  1: Time(unit)
+  //  2: Remainder of line, left trimmed (currently empty)
+  std::string serializeFromStringPattern = R"(\[(\d*\.?\d*\(.*\))\][ \t]*\[SerializingFromString\][ \t]*([^\n]*))";
+  std::smatch mSerializeFromString; 
+  std::regex rSerializeFromString(serializeFromStringPattern);
+  std::string text = content;
+  while (std::regex_search(text, mSerializeFromString, rSerializeFromString))
+  {
+    // TODO: Do something with serialize from file
+    std::cout << "Serialize from string" << std::endl;
+
+    text = mSerializeFromString.suffix();
+  }
+}
+
 //--------------------------------------------------------------------------------------------------
 /// \brief
 /// Generates previously executed scenario based on log file messages.
@@ -215,81 +497,31 @@ bool SEScenarioUtils::GenerateScenarioFromLog(const std::string& filename, SESce
   }
 
   sce.Clear();
-  std::vector<ScenarioAction> actions;
 
-  // Identify action strings
-  std::smatch mActionBegin; 
-  std::regex rActionBegin(actionBeginPattern);
-  std::string text = content;
-  while (std::regex_search(text, mActionBegin, rActionBegin))
+  if (!GetActions(content, sce))
   {
-    // Capture groups:
-    //  0: Whole match
-    //  1: Time(Time unit) 
-    //  2: Time
-    //  3: Time unit
-    //  4: Action Type/Action Name for type-less legacy actions
-    //  5: Colon indicating legacy action
-    //  6: Action name for legacy actions with type
-    //  7: Bracket indicating non-legacy action
-    std::string remainingText = mActionBegin.suffix().str();
-    std::string actionStr = "";
-    if (mActionBegin[7].compare("{") == 0)
-    {
-      // Find end of action
-      std::smatch mActionEnd;
-      std::regex rActionEnd(R"(\}\n+.*:)");
-      if (std::regex_search(remainingText, mActionEnd, rActionEnd))
-      {
-        actionStr = text.substr(mActionBegin.position(0), mActionBegin.length(0) + mActionEnd.position(0));
-      }
-      else
-      {
-        sce.Error("Unable to identify action terminator: " + std::string(mActionBegin[0]));
-        return false;
-      }
-
-      // TODO: Parse action string
-
-    }
-    else // Legacy log
-    {
-      actionStr += mActionBegin[0];
-
-      // Collect action properties
-      std::smatch mActionProperties;
-      std::regex rActionProperties(R"(\n    .*)");
-      while (std::regex_search(remainingText, mActionProperties, rActionProperties))
-      {
-        if (mActionProperties.position(0) != 1) // Needs to immediately follow previous match
-          break;
-        actionStr += mActionProperties[0];
-        remainingText = mActionProperties.suffix().str();
-      }
-
-      if (!ParseLegacyLogAction(actionStr, actions, sce.GetLogger()))
-      {
-        sce.Error("Unable to parse action: " + actionStr);
-        return false;
-      }
-    }
-
-    text = mActionBegin.suffix().str();
+    sce.Error("Failed to retrieve scenario actions");
+    return false;
   }
 
-  //Create SEActions from actions
-  double time_s = 0;
-  for (ScenarioAction& sa : actions)
+  if (!GetConditions(content, sce))
   {
-    if (sa.ScenarioTime_s > time_s)
-    {
-      SEAdvanceTime adv;
-      adv.GetTime().SetValue(sa.ScenarioTime_s - time_s, TimeUnit::s);
-      time_s += sa.ScenarioTime_s;
-      std::cout << adv;
-    }
-    AddSEAction(sa,sce);
+    sce.Error("Failed to retrieve scenario conditions");
+    return false;
   }
+
+  if (!GetFinalSimTime(content, sce))
+  {
+    sce.Warning("Failed to retrieve final sim time");
+  }
+
+  if (!GetPatient(content, sce))
+  {
+    sce.Warning("Failed to retrieve patient information");
+  }
+
+  GetSerializeFromFile(content, sce);
+  GetSerializeFromString(content, sce);
 
   return true;
 }
