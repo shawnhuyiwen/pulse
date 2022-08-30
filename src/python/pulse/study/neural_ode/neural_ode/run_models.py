@@ -409,12 +409,8 @@ class MyLightningCLI(LightningCLI):
 # per batch every epoch
 # this was done only for enc-dec arch, related to GoogleStock(start_reverse)?
 # https://gitlab.kitware.com/physiology/engine/-/blob/study/ode/src/python/pulse/study/neural_ode/neural_ode/run_models.py#L263
-def trainer_kwargs(kl_coef=1,
-                   max_epochs=301,
-                   test_for_epochs=1,
-                   load_ckpt=None,
-                   patience_for_no_better_epochs=30):
-    kl_getter = UpdateKLCoef(kl_coef)
+def trainer_kwargs(load_ckpt=None):
+    kl_getter = UpdateKLCoef(1)
     top_va_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
                                                    save_top_k=1,
                                                    monitor='val_loss')
@@ -427,7 +423,7 @@ def trainer_kwargs(kl_coef=1,
                 # monitor='tr_mse',
                 # monitor='va_mse',
                 mode='min',
-                patience=patience_for_no_better_epochs)
+                patience=30)
     lr_monitor_callback = pl.callbacks.LearningRateMonitor()
     logger = pl.loggers.TensorBoardLogger(
         save_dir='lightning_logs/',
@@ -435,8 +431,8 @@ def trainer_kwargs(kl_coef=1,
         default_hp_metric=True,
     )
     return dict(
-        max_epochs=max_epochs,
-        check_val_every_n_epoch=test_for_epochs,
+        max_epochs=301,
+        check_val_every_n_epoch=1,
         resume_from_checkpoint=load_ckpt,
         callbacks=[
             kl_getter,
@@ -446,7 +442,9 @@ def trainer_kwargs(kl_coef=1,
             # top_va_callback,
             # top_tr_callback,
         ],
-        gradient_clip_val=0.01,
+        # gradient_clip_val=0.01,
+        gradient_clip_val=1.,
+        # gradient_clip_val=42.14720820598181,  # TFT optimize_hyperparams
         logger=logger,
         gpus=1)
 
@@ -498,12 +496,15 @@ if __name__ == "__main__":
             p = cli.trainer.overfit_batches * b
         else:
             p = len(cli.datamodule.dset_tr)
+        st = cli.datamodule.static_behavior[0]
+
         new_name = '_'.join((
             type(cli.model).__name__,
             dset_names[cli.datamodule.root_path],
-            f'b{b}'  # batches
-            f'p{p}'  # patients
-            f's{s}'  # stride
+            f'b{b}'    # batches
+            f'p{p}'    # patients
+            f's{s}'    # stride
+            f'st{st}'  # static behavior ignore, propagate, augment
         ))
         try:  # logger was set manually but without a name
             kwargs = dict(cli.config.trainer.logger.init_args)

@@ -8,6 +8,7 @@ import time
 import logging
 import pickle
 import math
+import warnings
 import torch
 import torch.nn as nn
 import torchcde
@@ -27,7 +28,6 @@ from pytorch_forecasting.data.timeseries import (TimeSeriesDataSet,
 import torchmetrics
 
 from neural_ode.models.evaluation import get_log_likelihood, get_mse
-
 
 # TODO death prediction
 # https://pytorch-forecasting.readthedocs.io/en/stable/tutorials/building.html#Classification
@@ -60,7 +60,7 @@ class PFMixin(pl.LightningModule):
         else:
             raise TypeError(loss)
 
-        if  n_targets > 1:
+        if n_targets > 1:
             if not isinstance(_loss, pf.metrics.MultiLoss):
                 _loss = pf.metrics.MultiLoss([_loss] * n_targets, weights)
 
@@ -93,7 +93,7 @@ class PFMixin(pl.LightningModule):
             loss='MAE',  # coerce later to avoid yaml bug in LightningCLI(run=True)
             # loss=pf.metrics.SMAPE(),
             # logging_metrics=[pf.metrics.RMSE()],
-            logging_metrics=['MAE'],
+        logging_metrics=['MAE'],
             optimizer='Adamax',  # 'ranger'
             reduce_on_plateau_patience=16,
             reduce_on_plateau_reduction=2,
@@ -151,15 +151,14 @@ class PFMixin(pl.LightningModule):
         # output_size=[7, 7, 7, 7], # 4 target variables
         dataset = dm.dset_tr
         loss_weights = cls.target_weights(dataset)
-        x_dims= len(dataset.reals) + len(dataset.flat_categoricals)
-        y_dims = (# len(dataset.time_varying_known_reals) +
-                 # len(dataset.time_varying_known_categoricals) +
-                 len(dataset.target))
+        x_dims = len(dataset.reals) + len(dataset.flat_categoricals)
+        y_dims = (  # len(dataset.time_varying_known_reals) +
+            # len(dataset.time_varying_known_categoricals) +
+            len(dataset.target))
         loss = cls._coerce_loss(kwargs['loss'], y_dims, loss_weights)
         # These are PER-TARGET, no need to dup+weight them
-        logging_metrics = nn.ModuleList([
-            cls._coerce_loss(l) for l in kwargs['logging_metrics']
-        ])
+        logging_metrics = nn.ModuleList(
+            [cls._coerce_loss(l) for l in kwargs['logging_metrics']])
         kwargs.update(
             x_dims=x_dims,
             y_dims=y_dims,
@@ -167,10 +166,11 @@ class PFMixin(pl.LightningModule):
             logging_metrics=logging_metrics,
         )
         self = cls.from_dataset(
-            dm.dset_tr, **ub.dict_diff(
+            dm.dset_tr,
+            **ub.dict_diff(
                 kwargs,
-                list(asdict(BaseModelWithCovariatesKwargs())) + ['output_transformer', 'target', 'output_size']
-            ),
+                list(asdict(BaseModelWithCovariatesKwargs())) +
+                ['output_transformer', 'target', 'output_size']),
             STUB=False,
             # output_size=([1] * len(dm.continue_params)),  # TODO change for categorical
         )  #, output_transformer=dm.dset_tr.target_normalizer)
@@ -211,7 +211,6 @@ class BaseModel(PFMixin, pf.BaseModelWithCovariates):
             can also take multiple values simultaneously (e.g. holiday during octoberfest). They should be implemented
             as bag of embeddings
     '''
-
     '''
     problems with using setup() for partial initialization:
         https://github.com/Lightning-AI/lightning/issues/9943
@@ -224,28 +223,25 @@ class BaseModel(PFMixin, pf.BaseModelWithCovariates):
         self.gaussian_likelihood_std = torch.tensor([0.01])
         if not STUB:
             kwargs = ub.dict_diff(
-                    kwargs,
-                    list(asdict(BaseModelWithCovariatesKwargs())))# + ['output_transformer', 'target', 'output_size'])
+                kwargs, list(asdict(BaseModelWithCovariatesKwargs(
+                ))))  # + ['output_transformer', 'target', 'output_size'])
         super().__init__(STUB=STUB, **kwargs)
+
+        if not STUB:
+            # create embedder - can be fed with x["encoder_cat"] or
+            # x["decoder_cat"] and will return dictionary of category names
+            # mapped to embeddings
+            self.input_embeddings = pf.MultiEmbedding(
+                embedding_sizes=self.hparams.embedding_sizes,
+                categorical_groups=self.hparams.categorical_groups,
+                embedding_paddings=self.hparams.embedding_paddings,
+                x_categoricals=self.hparams.x_categoricals,
+                max_embedding_size=self.hparams.hidden_size,
+            )
 
         # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
         # shouldn't declare this before it can be assigned to
         # self.example_input_array: Any = MISSING
-
-        # need a param with requires_grad=True before configure_optimizers()
-        # TODO ensure params in setup() are added to optimizer and training
-        # self.dummy_param = torch.nn.Parameter(torch.ones(1))
-
-        # TODO self.input_embeddings for categorical
-        # # create embedder - can be fed with x["encoder_cat"] or x["decoder_cat"] and will return
-        # # dictionary of category names mapped to embeddings
-        # self.input_embeddings = MultiEmbedding(
-        # embedding_sizes=self.hparams.embedding_sizes,
-        # categorical_groups=self.hparams.categorical_groups,
-        # embedding_paddings=self.hparams.embedding_paddings,
-        # x_categoricals=self.hparams.x_categoricals,
-        # max_embedding_size=self.hparams.hidden_size,
-        # )
 
     def forward(self, x: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
         '''
@@ -271,9 +267,12 @@ class BaseModel(PFMixin, pf.BaseModelWithCovariates):
         # The conversion to a named tuple can be directly achieved with the `to_network_output` function.
         return self.to_network_output(prediction=prediction)
         '''
+        if self.static_variables:
+            warnings.warn(f'{self.__name__} handles static="augment" as "propagate"')
         # TODO use packed_sequence
         # 'b t f'
-        x_data = x['encoder_cont']  # TODO try removing time (and add flag for plot)
+        import xdev; xdev.embed()
+        x_data = x['encoder_cont'] + torch.cat(list(self.input_embeddings(x['encoder_cat']).values()))
         x_time = x['encoder_cont'][:, :, self.t_idx]
         for i in range(1, len(x_time)):
             assert torch.allclose(x_time[0, :2], x_time[i, :2])
@@ -283,6 +282,7 @@ class BaseModel(PFMixin, pf.BaseModelWithCovariates):
             assert torch.allclose(y_time[0, :2], y_time[i, :2])
         y_time = y_time[x['decoder_lengths'].argmax()]
 
+        # TODO y_cov = y_time + decoder_cat + (decoder_cont - target)
         y_pred = self.old_forward(y_time, x_data, x_time)
         # TODO update if any target is multichannel (categorical)
         # has to be a list of tensors...
@@ -314,41 +314,45 @@ class BaseModel(PFMixin, pf.BaseModelWithCovariates):
     # When using forward, you are responsible to call eval() and use the
     # no_grad() context manager.
 
-    # > use prepare_data() to download and process the dataset.
-    #   > Lightning ensures this method is called only within a single process,
-    #   > so you can safely add your downloading logic within.
-    # > use setup() to do splits, and build your model internals
-    #   > set model/dm state here, it's called on every device
-    # lightningmodule also has a setup(), move this there so it's autoinvoked
-
 
 class RNNAdapter(PFMixin, pf.RecurrentNetwork):
 
-    def __init__(
-            self,
-            hidden_size=100,
-            **kwargs):
+    def __init__(self, hidden_size=100, **kwargs):
 
-        super().__init__(hidden_size=hidden_size,
-                         **kwargs)
+        super().__init__(hidden_size=hidden_size, **kwargs)
 
 
 class TFTAdapter(PFMixin, pf.TemporalFusionTransformer):
 
-    def __init__(
-            self,
-            hidden_size=100,
-            attention_head_size=4,
-            max_encoder_length=100,
-            dropout=0.1,
-            **kwargs):
+    optuna_best_params = {
+        # 'gradient_clip_val': 42.14720820598181,  # trainer
+        'hidden_size': 67,
+        'dropout': 0.2900708000632789,
+        'hidden_continuous_size': 34,
+        'attention_head_size': 2,
+        'learning_rate': 0.005011872336272725
+    }
 
-        super().__init__(hidden_size=hidden_size,
-                         attention_head_size=attention_head_size,
-                         max_encoder_length=max_encoder_length,
-                         dropout=dropout,
-                         **kwargs)
+    # kwargs need to be explicitly in the init args because pf uses the inspect
+    # lib to grab them
+    def __init__(self,
+                 max_encoder_length=100,
+                 hidden_size=67,
+                 dropout=0.2,
+                 hidden_continuous_size=34,
+                 attention_head_size=4,
+                 learning_rate=1e-2,
+                 **kwargs):
 
+        super().__init__(
+            max_encoder_length=max_encoder_length,
+            hidden_size=hidden_size,
+            dropout=dropout,
+            hidden_continuous_size=hidden_continuous_size,
+            attention_head_size=attention_head_size,
+            learning_rate=learning_rate,
+            **kwargs
+        )
 
 
 class DummyModel(BaseModel):
@@ -467,25 +471,51 @@ class HemorrhageVitals(BaseData):
         #
 
         # TODO use patient_results.json manifest for id and init params
-        csvs = sorted(ub.Path(self.root_path).glob('**/HemorrhageResults.csv'))
+        self.root_path = ub.Path(self.root_path)
+        # csvs = sorted(self.root_path.glob('**/HemorrhageResults.csv'))
+        manifest = json.load(open(self.root_path / 'patient_results.json'))
+        csvs_statics = []
+
+        pts = []
+        for pt in manifest['Patient']:
+            csv = self.root_path / pt['OutputBaseFilename'].lstrip(
+                '/') / 'HemorrhageResults.csv'
+            js = json.load(csv.with_name('patient.json').open())
+            # all pts have StartTime == 10s and TriageTime == 60s for now
+            static = ub.dict_isect(pt,
+                                   ['Age_yr', 'Height_cm', 'Weight_kg', 'BMI'])
+            static['Compartment'] = pt['Hemorrhage']['Compartment']
+            static['Severity'] = pt['Hemorrhage']['Severity']
+            static['Sex'] = js.get('Sex', 'Male')  # TODO report
+            _id = js['Name']
+
+            pts.append((csv, static, _id))
+        pts = sorted(pts)
+
         if self.max_pts is not None:
-            csvs = np.random.choice(csvs, (self.max_pts, ), replace=False)
+            pts = np.random.choice(pts, (self.max_pts, ), replace=False)
         # multithread this
         print('loading patients...')
         exc = ub.Executor('thread', max_workers=32)
 
-        def _job(csv):
-            _id = json.load(csv.with_name('patient.json').open())['Name']
-            _df = pd.read_csv(csv).assign(id=_id)[self.n_start::self.stride]
-            return _df
+        # categorical dtypes
+        Compartment = pd.api.types.CategoricalDtype(
+            ['RightArm', 'RightLeg', 'LeftArm',
+             'LeftLeg'])  # TODO confirm these
+        Sex = pd.api.types.CategoricalDtype(['Male', 'Female'])
 
-        jobs = [exc.submit(_job, csv) for csv in csvs]
+        def _job(pt):
+            csv, static, _id = pt
+            df = pd.read_csv(csv).assign(id=_id, **static)
+            df['Sex'] = df['Sex'].astype(Sex)
+            df['Compartment'] = df['Compartment'].astype(Compartment)
+            df = df[self.n_start::self.stride]
+            return df
+
+        jobs = [exc.submit(_job, pt) for pt in pts]
         dfs = [j.result() for j in jobs]
         df = pd.concat(dfs, ignore_index=True)
         print(f'found {len(dfs)} patients with {len(df)} timesteps')
-
-        if self.static_behavior != 'ignore':
-            raise NotImplementedError
 
         #
         # narrow down to long enough ones
@@ -565,7 +595,46 @@ class HemorrhageVitals(BaseData):
         # build datasets
         #
 
-        # TODO add lag if it's not already here - is onset or measurement t=0?
+        '''
+        static_cols = [
+            'Age_yr',
+            'Height_cm',
+            'Weight_kg',
+            'BMI',
+            'Severity',
+            'Compartment',
+            'Sex',
+        ]
+        '''
+        if self.static_behavior == 'ignore':
+            time_varying_known_reals = []
+            time_varying_known_categoricals = []
+            static_categoricals = []
+            static_reals = []
+        elif self.static_behavior == 'propagate':
+            time_varying_known_reals = [
+                'Age_yr',
+                'Height_cm',
+                'Weight_kg',
+                'BMI',
+                'Severity',
+            ]
+            time_varying_known_categoricals = ['Compartment', 'Sex']
+            static_categoricals = []
+            static_reals = []
+        elif self.static_behavior == 'augment':
+            time_varying_known_reals = []
+            time_varying_known_categoricals = []
+            static_reals = [
+                'Age_yr',
+                'Height_cm',
+                'Weight_kg',
+                'BMI',
+                'Severity',
+            ]
+            static_categoricals = ['Compartment', 'Sex']
+
+        # TODO add lag if it's not already here
 
         # change this to GroupNormalizer (on encoder values only?) when
         # adding sliding-time-window data augmentation ie multiple
@@ -595,11 +664,11 @@ class HemorrhageVitals(BaseData):
             # this is duped w/ different normalizer between target and cont
             # worth doing because target doesn't come normalized in dataloader
             time_varying_unknown_reals=self.continue_params,
-            time_varying_known_reals=[self.t_param],
+            time_varying_known_reals=([self.t_param] + time_varying_known_reals),
             time_varying_unknown_categoricals=[],
-            time_varying_known_categoricals=[],
-            static_categoricals=[],
-            static_reals=[],
+            time_varying_known_categoricals=time_varying_known_categoricals,
+            static_categoricals=static_categoricals,
+            static_reals=static_reals,
             add_relative_time_idx=False,
             # this means add to static features; already an entry in x
             # add_target_scales=True,  # TODO figure out how to add static feats
