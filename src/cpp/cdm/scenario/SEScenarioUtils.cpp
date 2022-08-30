@@ -231,7 +231,7 @@ bool IdentifyTagStrings(const std::string& tag, const std::string& content, std:
         return false;
       }
     }
-    else // Legacy log
+    else // Legacy log or single line non-bracketed tag
     {
       tagStr += mTagBegin[0];
 
@@ -364,7 +364,7 @@ bool GetActions(const std::string& content, SEScenario& sce)
 
 bool GetConditions(const std::string& content, SEScenario& sce)
 {
-  // Identify action strings
+  // Identify condition strings
   std::vector<std::string> conditionStrs;
   if (!IdentifyTagStrings("Condition", content, conditionStrs, sce.GetLogger()))
   {
@@ -388,7 +388,7 @@ bool GetFinalSimTime(const std::string& content, SEScenario& sce)
   if (!std::regex_search(content, mFinalSimTime, rFinalSimTime))
   {
     sce.Warning("Unable to locate Final SimTime");
-    return false;
+    return true; // Legacy logs do not have this information
   }
 
   double time_s;
@@ -416,7 +416,7 @@ bool GetPatient(const std::string& content, SEScenario& sce)
   if (!std::regex_search(text, mPatient, rPatient))
   {
     sce.Warning("Unable to locate patient information");
-    return false;
+    return true; // Legacy logs do not have this information
   }
 
   // Locate end of patient info
@@ -441,8 +441,15 @@ bool GetPatient(const std::string& content, SEScenario& sce)
   return true;
 }
 
-void GetSerializeFromFile(const std::string& content, SEScenario& sce)
+bool GetSerializeFromFile(const std::string& content, SEScenario& sce)
 {
+  std::vector<std::string> serializeFromFileStrs;
+  if (!IdentifyTagStrings("SerializingFromFile", content, serializeFromFileStrs, sce.GetLogger()))
+  {
+    sce.Error("Unable to identify SerializingFromFile strings");
+    return false;
+  }
+
   std::vector<std::string> filenames;
 
   // Capture groups:
@@ -452,20 +459,31 @@ void GetSerializeFromFile(const std::string& content, SEScenario& sce)
   std::string serializeFromFilePattern = R"(\[(\d*\.?\d*\(.*\))\][ \t]*\[SerializingFromFile\][ \t]*([^\n]*))";
   std::smatch mSerializeFromFile; 
   std::regex rSerializeFromFile(serializeFromFilePattern);
-  std::string text = content;
-  while (std::regex_search(text, mSerializeFromFile, rSerializeFromFile))
+  for (auto& s: serializeFromFileStrs)
   {
-    filenames.push_back(trim(std::string(mSerializeFromFile[2])));
+    if (!std::regex_search(s, mSerializeFromFile, rSerializeFromFile))
+    {
+      sce.Error("Could not retrieve SerializingFromFile data");
+      return false;
+    }
 
     // TODO: Do something with serialize from file
+    filenames.push_back(trim(std::string(mSerializeFromFile[2])));
     std::cout << "Serialize from file: " << filenames[filenames.size()-1] << std::endl;
-
-    text = mSerializeFromFile.suffix();
   }
+
+  return true;
 }
 
-void GetSerializeFromString(const std::string& content, SEScenario& sce)
+bool GetSerializeFromString(const std::string& content, SEScenario& sce)
 {
+  std::vector<std::string> serializeFromStringStrs;
+  if (!IdentifyTagStrings("SerializingFromString", content, serializeFromStringStrs, sce.GetLogger()))
+  {
+    sce.Error("Unable to identify SerializingFromString strings");
+    return false;
+  }
+
   // Capture groups:
   //  0: Whole match
   //  1: Time(unit)
@@ -473,14 +491,18 @@ void GetSerializeFromString(const std::string& content, SEScenario& sce)
   std::string serializeFromStringPattern = R"(\[(\d*\.?\d*\(.*\))\][ \t]*\[SerializingFromString\][ \t]*([^\n]*))";
   std::smatch mSerializeFromString; 
   std::regex rSerializeFromString(serializeFromStringPattern);
-  std::string text = content;
-  while (std::regex_search(text, mSerializeFromString, rSerializeFromString))
+  for (auto& s: serializeFromStringStrs)
   {
+    if (!std::regex_search(s, mSerializeFromString, rSerializeFromString))
+    {
+      sce.Error("Could not retrieve SerializingFromString data");
+      return false;
+    }
     // TODO: Do something with serialize from file
     std::cout << "Serialize from string" << std::endl;
-
-    text = mSerializeFromString.suffix();
   }
+
+  return true;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -512,16 +534,27 @@ bool SEScenarioUtils::GenerateScenarioFromLog(const std::string& filename, SESce
 
   if (!GetFinalSimTime(content, sce))
   {
-    sce.Warning("Failed to retrieve final sim time");
+    sce.Error("Failed to retrieve final sim time");
+    return false;
   }
 
   if (!GetPatient(content, sce))
   {
-    sce.Warning("Failed to retrieve patient information");
+    sce.Error("Failed to retrieve patient information");
+    return false;
   }
 
-  GetSerializeFromFile(content, sce);
-  GetSerializeFromString(content, sce);
+  if (!GetSerializeFromFile(content, sce))
+  {
+    sce.Error("Failed to retrieve serializing from file information");
+    return false;
+  }
+
+  if (!GetSerializeFromString(content, sce))
+  {
+    sce.Error("Failed to retrieve serializing from string information");
+    return false;
+  }
 
   return true;
 }
