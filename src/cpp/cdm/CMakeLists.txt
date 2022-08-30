@@ -254,7 +254,7 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimePressureArea.h
     scenario/SEScenario.h
     scenario/SEScenarioExec.h
-    scenario/SEScenarioUtils.h
+    scenario/SEScenarioLog.h
     substance/SESubstance.h
     substance/SESubstanceAerosolization.h
     substance/SESubstanceClearance.h
@@ -623,7 +623,7 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimePressureArea.cpp
     scenario/SEScenario.cpp
     scenario/SEScenarioExec.cpp
-    scenario/SEScenarioUtils.cpp
+    scenario/SEScenarioLog.cpp
     substance/SESubstance.cpp
     substance/SESubstanceAerosolization.cpp
     substance/SESubstanceClearance.cpp
