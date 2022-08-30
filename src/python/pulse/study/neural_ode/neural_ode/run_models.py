@@ -429,6 +429,7 @@ def trainer_kwargs(load_ckpt=None):
         save_dir='lightning_logs/',
         name=None,  # can set this in cli
         default_hp_metric=True,
+        log_graph=False,
     )
     return dict(
         max_epochs=301,
@@ -500,7 +501,7 @@ if __name__ == "__main__":
 
         new_name = '_'.join((
             type(cli.model).__name__,
-            dset_names[cli.datamodule.root_path],
+            dset_names[str(cli.datamodule.root_path)],
             f'b{b}'    # batches
             f'p{p}'    # patients
             f's{s}'    # stride
@@ -514,7 +515,8 @@ if __name__ == "__main__":
             cli.trainer.logger = pl.loggers.TensorBoardLogger(
                 save_dir='lightning_logs/',
                 name=new_name,
-                default_hp_metric=False,
+                default_hp_metric=True,
+                log_graph=False,
             )
 
     # batch = next(iter(cli.datamodule.train_dataloader()))

@@ -47,6 +47,7 @@ class BaseModelWithCovariatesKwargs:
     embedding_labels: Dict[str, np.ndarray] = field(default_factory=dict)
     x_reals: List[str] = field(default_factory=list)
     x_categoricals: List[str] = field(default_factory=list)
+    hidden_size: Optional[int] = None
 
 
 class PFMixin(pl.LightningModule):
@@ -152,9 +153,7 @@ class PFMixin(pl.LightningModule):
         dataset = dm.dset_tr
         loss_weights = cls.target_weights(dataset)
         x_dims = len(dataset.reals) + len(dataset.flat_categoricals)
-        y_dims = (  # len(dataset.time_varying_known_reals) +
-            # len(dataset.time_varying_known_categoricals) +
-            len(dataset.target))
+        y_dims = len(dataset.target)
         loss = cls._coerce_loss(kwargs['loss'], y_dims, loss_weights)
         # These are PER-TARGET, no need to dup+weight them
         logging_metrics = nn.ModuleList(
@@ -172,7 +171,6 @@ class PFMixin(pl.LightningModule):
                 list(asdict(BaseModelWithCovariatesKwargs())) +
                 ['output_transformer', 'target', 'output_size']),
             STUB=False,
-            # output_size=([1] * len(dm.continue_params)),  # TODO change for categorical
         )  #, output_transformer=dm.dset_tr.target_normalizer)
         batch = next(iter(dm.train_dataloader()))
         x, y = batch
@@ -244,35 +242,30 @@ class BaseModel(PFMixin, pf.BaseModelWithCovariates):
         # self.example_input_array: Any = MISSING
 
     def forward(self, x: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
-        '''
-        # x is a batch generated based on the TimeSeriesDataset
-        batch_size = x["encoder_lengths"].size(0)
-        embeddings = self.input_embeddings(x["encoder_cat"])  # returns dictionary with embedding tensors
-        network_input = torch.cat(
-            [x["encoder_cont"]]
-            + [
-                emb
-                for name, emb in embeddings.items()
-                if name in self.encoder_variables or name in self.static_variables
-            ],
-            dim=-1,
-        )
-        prediction = self.network(network_input.view(batch_size, -1))
-
-        # rescale predictions into target space
-        prediction = self.transform_output(prediction, target_scale=x["target_scale"])
-
-        # We need to return a dictionary that at least contains the prediction.
-        # The parameter can be directly forwarded from the input.
-        # The conversion to a named tuple can be directly achieved with the `to_network_output` function.
-        return self.to_network_output(prediction=prediction)
-        '''
         if self.static_variables:
-            warnings.warn(f'{self.__name__} handles static="augment" as "propagate"')
+            warnings.warn(
+                f'{type(self).__name__} '
+                 'handles static="augment" as "propagate"')
+
         # TODO use packed_sequence
         # 'b t f'
-        import xdev; xdev.embed()
-        x_data = x['encoder_cont'] + torch.cat(list(self.input_embeddings(x['encoder_cat']).values()))
+
+        #
+        # get encoder data
+        #
+
+        x_data = torch.cat(
+                (*(ub.dict_isect(
+                    self.input_embeddings(x['encoder_cat']),
+                    self.encoder_variables + self.static_variables
+                  ).values()),
+                 x['encoder_cont']),
+            dim=-1)
+
+        #
+        # synchronize and get time
+        #
+
         x_time = x['encoder_cont'][:, :, self.t_idx]
         for i in range(1, len(x_time)):
             assert torch.allclose(x_time[0, :2], x_time[i, :2])
@@ -282,16 +275,37 @@ class BaseModel(PFMixin, pf.BaseModelWithCovariates):
             assert torch.allclose(y_time[0, :2], y_time[i, :2])
         y_time = y_time[x['decoder_lengths'].argmax()]
 
-        # TODO y_cov = y_time + decoder_cat + (decoder_cont - target)
-        y_pred = self.old_forward(y_time, x_data, x_time)
-        # TODO update if any target is multichannel (categorical)
+        #
+        # get decoder data minus targets (covariates only)
+        #
+
+        # make sure targets are at the end of reals for stacking to work
+        # categorical targets are not supported
+        assert all(self.target_positions == torch.arange(len(self.reals) - len(self.target_positions), len(self.reals), device=self.device))
+        y_cov = torch.cat(
+                (*(ub.dict_isect(
+                    self.input_embeddings(x['decoder_cat']),
+                    self.decoder_variables + self.static_variables
+                  ).values()),
+                 x['decoder_cont'][:, :, :-len(self.target_positions)]),
+            dim=-1)
+
+        #
+        # feed to network
+        #
+
+        y_pred = self.old_forward(y_time, x_data, x_time, y_cov)
+
+        #
+        # unnormalize back to orig space
+        #
+
         # has to be a list of tensors...
         y_pred = [*einops.rearrange(y_pred, 'b t f -> f b t 1')]
-
         y_pred = self.transform_output(y_pred, target_scale=x["target_scale"])
         return self.to_network_output(prediction=y_pred)
 
-    def old_forward(self, y_time, x, x_time):
+    def old_forward(self, y_time, x, x_time, y_cov):
         raise NotImplementedError
 
     '''
@@ -342,6 +356,7 @@ class TFTAdapter(PFMixin, pf.TemporalFusionTransformer):
                  hidden_continuous_size=34,
                  attention_head_size=4,
                  learning_rate=1e-2,
+                 output_size=7,
                  **kwargs):
 
         super().__init__(

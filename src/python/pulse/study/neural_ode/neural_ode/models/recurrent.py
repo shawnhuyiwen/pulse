@@ -161,7 +161,7 @@ class ODE_RNN(nn.Module):
             hi_last_mu, hi_last_sigma = self.RNN_net(prev_hi, prev_hi_std,
                                                      x_data[:, 0, :])
         else:
-            hi_last_mu, hi_last_sigma = self.run_to_last_point(
+            hi_last_mu, hi_last_sigma = self(
                 x_data, x_time, return_latents=False)
 
         hi_last_mu = hi_last_mu.reshape(1, batch_size, self.h_dims)
@@ -192,6 +192,7 @@ class RecurrentODE(BaseModel):
                  odefuncparams: ODEFuncParams,
                  RNN_net: Optional[nn.Module] = None,
                  **kwargs):
+        kwargs['hidden_size'] = recurrentodeparams.h_dims
         super().__init__(**kwargs)
 
         # # bad
@@ -240,18 +241,21 @@ class RecurrentODE(BaseModel):
                                                    self.n_out_units)
 
     # RecurrentODE
-    def old_forward(self, y_time, x, x_time):
+    def old_forward(self, y_time, x, x_time, y_cov):
         #TRANS: Complete sequence prediction
         if len(y_time.shape) < 1:
             y_time = y_time.unsqueeze(0)
-        xy_time = torch.cat((x_time, y_time))
-        batch_size, x_extent, x_dims = x.shape
-        y_extent = len(y_time)
         if 0:
+            xy_time = torch.cat((x_time, y_time))
+            batch_size, x_extent, x_dims = x.shape
+            y_extent = len(y_time)
             xy = torch.cat((x,
-                            torch.zeros((batch_size, y_extent, x_dims),
-                                        dtype=x.dtype,
-                                        device=self.device)),
+                            torch.cat((
+                                y_cov,
+                                torch.zeros((batch_size, y_extent, x_dims),
+                                            dtype=x.dtype,
+                                            device=self.device)),
+                                dim=-1)),
                            dim=1)
             # print(f'xt={x_time.shape} {x_time[0]}..{x_time[-1]}')
             # print(f'yt={y_time.shape} {y_time[0]}..{y_time[-1]}')
@@ -264,14 +268,14 @@ class RecurrentODE(BaseModel):
             return y_pred[:, -y_extent:, :]
         else:
             hi, hi_std = self.ODE_RNN(x, x_time, return_latents=False)
-            yi = x[:, -1, 1:]  # HACK to augment w/ time TODO generalize
+            yi = x[:, -1, -len(self.target_positions):]
             ti = x_time[-1]
             y = []
             for i in range(len(y_time)):
                 prev_hi, prev_hi_std = hi, hi_std
                 prev_ti, ti = ti, y_time[i]
                 yi_aug = torch.cat(
-                    (ti.unsqueeze(0).repeat(len(yi)).unsqueeze(1), yi), -1)
+                    (y_cov[:, i, :], yi), dim=-1)
                 hi, hi_std = self.ODE_RNN.step(yi_aug,
                                                prev_hi,
                                                prev_hi_std,
