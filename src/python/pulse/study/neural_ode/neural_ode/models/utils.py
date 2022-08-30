@@ -425,7 +425,7 @@ class HemorrhageVitals(BaseData):
     start_reverse: bool = False
     shuffle: bool = True
 
-    static_behavior: Literal['ignore', 'propagate', 'augment'] = 'ignore'
+    static_behavior: Literal['ignore', 'propagate', 'augment'] = 'augment'
     time_augmentation: bool = False
     num_workers: int = 4
 

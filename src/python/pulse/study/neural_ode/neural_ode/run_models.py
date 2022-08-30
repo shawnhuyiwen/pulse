@@ -409,6 +409,7 @@ class MyLightningCLI(LightningCLI):
 # per batch every epoch
 # this was done only for enc-dec arch, related to GoogleStock(start_reverse)?
 # https://gitlab.kitware.com/physiology/engine/-/blob/study/ode/src/python/pulse/study/neural_ode/neural_ode/run_models.py#L263
+from jsonargparse import lazy_instance
 def trainer_kwargs(load_ckpt=None):
     kl_getter = UpdateKLCoef(1)
     top_va_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
@@ -425,7 +426,8 @@ def trainer_kwargs(load_ckpt=None):
                 mode='min',
                 patience=30)
     lr_monitor_callback = pl.callbacks.LearningRateMonitor()
-    logger = pl.loggers.TensorBoardLogger(
+    logger = lazy_instance(
+        pl.loggers.TensorBoardLogger,
         save_dir='lightning_logs/',
         name=None,  # can set this in cli
         default_hp_metric=True,
@@ -485,8 +487,7 @@ if __name__ == "__main__":
         # --trainer.logger.save_dir lightning_logs
         # --trainer.logger.name xxxx
     # https://jsonargparse.readthedocs.io/en/stable/index.html#default-values
-    if ((cli.trainer.logger.name == '') or
-        (cli.trainer.logger.save_dir == cli.trainer.logger.name)):
+    if cli.config.trainer.logger.init_args.name is None:
         dset_names = {
             '/data/pulse/hemorrhage/hemorrhage': 'orig',
             '/data/pulse/hemorrhage/patient_variability/hemorrhage/test': 'mild'
@@ -507,17 +508,9 @@ if __name__ == "__main__":
             f's{s}'    # stride
             f'st{st}'  # static behavior ignore, propagate, augment
         ))
-        try:  # logger was set manually but without a name
-            kwargs = dict(cli.config.trainer.logger.init_args)
-            kwargs.update(name=new_name)
-            cli.trainer.logger = type(cli.trainer.logger)(**kwargs)
-        except AttributeError:  # default logger was used
-            cli.trainer.logger = pl.loggers.TensorBoardLogger(
-                save_dir='lightning_logs/',
-                name=new_name,
-                default_hp_metric=True,
-                log_graph=False,
-            )
+        kwargs = dict(cli.config.trainer.logger.init_args)
+        kwargs.update(name=new_name)
+        cli.trainer.logger = type(cli.trainer.logger)(**kwargs)
 
     # batch = next(iter(cli.datamodule.train_dataloader()))
     # x, y = batch
