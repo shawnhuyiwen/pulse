@@ -37,7 +37,7 @@ inline std::ostream& operator<< (std::ostream& out, const SECondition& c)
 {
   std::string s;
   if (!c.SerializeToString(s, eSerializationFormat::TEXT))
-    out << "[Error] Unable to serialize condition";
+    c.Error("Unable to serialize condition");
   else
     out << s;
   return out;

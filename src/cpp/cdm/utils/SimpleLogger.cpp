@@ -260,8 +260,11 @@ void Logger::Fatal(const std::string& msg, const std::string& origin)
   if (_log_lib->log(Level::Fatal))
   {
     _log_lib->log(Level::Fatal, FormatLogMessage(msg, origin));
-    for (auto fwd : m_Forwards)
-      fwd->ForwardFatal(m_ss.str().c_str(), origin.c_str());
+    // Going through forwards in reverse, as our controller handler will be first
+    // And that will kick out an exception and halt the engine, so let's let
+    // the other forwards process this fatal first, before we halt the engine
+    for (auto fwd = m_Forwards.rbegin(); fwd != m_Forwards.rend(); ++fwd)
+      (*fwd)->ForwardFatal(m_ss.str().c_str(), origin.c_str());
   }
 }
 void Logger::Fatal(std::stringstream& msg, const std::string& origin)

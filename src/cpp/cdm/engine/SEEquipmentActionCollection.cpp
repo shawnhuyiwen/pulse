@@ -453,7 +453,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineConfiguration() const
 SEAnesthesiaMachineConfiguration& SEEquipmentActionCollection::GetAnesthesiaMachineConfiguration()
 {
   if (m_AnesthesiaMachineConfiguration == nullptr)
-    m_AnesthesiaMachineConfiguration = new SEAnesthesiaMachineConfiguration();
+    m_AnesthesiaMachineConfiguration = new SEAnesthesiaMachineConfiguration(GetLogger());
   return *m_AnesthesiaMachineConfiguration;
 }
 const SEAnesthesiaMachineConfiguration* SEEquipmentActionCollection::GetAnesthesiaMachineConfiguration() const
@@ -473,7 +473,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineOxygenTankPressureLoss() c
 SEAnesthesiaMachineOxygenTankPressureLoss& SEEquipmentActionCollection::GetAnesthesiaMachineOxygenTankPressureLoss()
 {
   if (m_AnesthesiaMachineOxygenTankPressureLoss == nullptr)
-    m_AnesthesiaMachineOxygenTankPressureLoss = new SEAnesthesiaMachineOxygenTankPressureLoss();
+    m_AnesthesiaMachineOxygenTankPressureLoss = new SEAnesthesiaMachineOxygenTankPressureLoss(GetLogger());
   return *m_AnesthesiaMachineOxygenTankPressureLoss;
 }
 const SEAnesthesiaMachineOxygenTankPressureLoss* SEEquipmentActionCollection::GetAnesthesiaMachineOxygenTankPressureLoss() const
@@ -493,7 +493,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineOxygenWallPortPressureLoss
 SEAnesthesiaMachineOxygenWallPortPressureLoss& SEEquipmentActionCollection::GetAnesthesiaMachineOxygenWallPortPressureLoss()
 {
   if (m_AnesthesiaMachineOxygenWallPortPressureLoss == nullptr)
-    m_AnesthesiaMachineOxygenWallPortPressureLoss = new SEAnesthesiaMachineOxygenWallPortPressureLoss();
+    m_AnesthesiaMachineOxygenWallPortPressureLoss = new SEAnesthesiaMachineOxygenWallPortPressureLoss(GetLogger());
   return *m_AnesthesiaMachineOxygenWallPortPressureLoss;
 }
 const SEAnesthesiaMachineOxygenWallPortPressureLoss* SEEquipmentActionCollection::GetAnesthesiaMachineOxygenWallPortPressureLoss() const
@@ -513,7 +513,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineExpiratoryValveLeak() cons
 SEAnesthesiaMachineExpiratoryValveLeak& SEEquipmentActionCollection::GetAnesthesiaMachineExpiratoryValveLeak()
 {
   if (m_AnesthesiaMachineExpiratoryValveLeak == nullptr)
-    m_AnesthesiaMachineExpiratoryValveLeak = new SEAnesthesiaMachineExpiratoryValveLeak();
+    m_AnesthesiaMachineExpiratoryValveLeak = new SEAnesthesiaMachineExpiratoryValveLeak(GetLogger());
   return *m_AnesthesiaMachineExpiratoryValveLeak;
 }
 const SEAnesthesiaMachineExpiratoryValveLeak* SEEquipmentActionCollection::GetAnesthesiaMachineExpiratoryValveLeak() const
@@ -533,7 +533,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineExpiratoryValveObstruction
 SEAnesthesiaMachineExpiratoryValveObstruction& SEEquipmentActionCollection::GetAnesthesiaMachineExpiratoryValveObstruction()
 {
   if (m_AnesthesiaMachineExpiratoryValveObstruction == nullptr)
-    m_AnesthesiaMachineExpiratoryValveObstruction = new SEAnesthesiaMachineExpiratoryValveObstruction();
+    m_AnesthesiaMachineExpiratoryValveObstruction = new SEAnesthesiaMachineExpiratoryValveObstruction(GetLogger());
   return *m_AnesthesiaMachineExpiratoryValveObstruction;
 }
 const SEAnesthesiaMachineExpiratoryValveObstruction* SEEquipmentActionCollection::GetAnesthesiaMachineExpiratoryValveObstruction() const
@@ -553,7 +553,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineInspiratoryValveLeak() con
 SEAnesthesiaMachineInspiratoryValveLeak& SEEquipmentActionCollection::GetAnesthesiaMachineInspiratoryValveLeak()
 {
   if (m_AnesthesiaMachineInspiratoryValveLeak == nullptr)
-    m_AnesthesiaMachineInspiratoryValveLeak = new SEAnesthesiaMachineInspiratoryValveLeak();
+    m_AnesthesiaMachineInspiratoryValveLeak = new SEAnesthesiaMachineInspiratoryValveLeak(GetLogger());
   return *m_AnesthesiaMachineInspiratoryValveLeak;
 }
 const SEAnesthesiaMachineInspiratoryValveLeak* SEEquipmentActionCollection::GetAnesthesiaMachineInspiratoryValveLeak() const
@@ -573,7 +573,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineInspiratoryValveObstructio
 SEAnesthesiaMachineInspiratoryValveObstruction& SEEquipmentActionCollection::GetAnesthesiaMachineInspiratoryValveObstruction()
 {
   if (m_AnesthesiaMachineInspiratoryValveObstruction == nullptr)
-    m_AnesthesiaMachineInspiratoryValveObstruction = new SEAnesthesiaMachineInspiratoryValveObstruction();
+    m_AnesthesiaMachineInspiratoryValveObstruction = new SEAnesthesiaMachineInspiratoryValveObstruction(GetLogger());
   return *m_AnesthesiaMachineInspiratoryValveObstruction;
 }
 const SEAnesthesiaMachineInspiratoryValveObstruction* SEEquipmentActionCollection::GetAnesthesiaMachineInspiratoryValveObstruction() const
@@ -593,7 +593,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineMaskLeak() const
 SEAnesthesiaMachineMaskLeak& SEEquipmentActionCollection::GetAnesthesiaMachineMaskLeak()
 {
   if (m_AnesthesiaMachineMaskLeak == nullptr)
-    m_AnesthesiaMachineMaskLeak = new SEAnesthesiaMachineMaskLeak();
+    m_AnesthesiaMachineMaskLeak = new SEAnesthesiaMachineMaskLeak(GetLogger());
   return *m_AnesthesiaMachineMaskLeak;
 }
 const SEAnesthesiaMachineMaskLeak* SEEquipmentActionCollection::GetAnesthesiaMachineMaskLeak() const
@@ -613,7 +613,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineSodaLimeFailure() const
 SEAnesthesiaMachineSodaLimeFailure& SEEquipmentActionCollection::GetAnesthesiaMachineSodaLimeFailure()
 {
   if (m_AnesthesiaMachineSodaLimeFailure == nullptr)
-    m_AnesthesiaMachineSodaLimeFailure = new SEAnesthesiaMachineSodaLimeFailure();
+    m_AnesthesiaMachineSodaLimeFailure = new SEAnesthesiaMachineSodaLimeFailure(GetLogger());
   return *m_AnesthesiaMachineSodaLimeFailure;
 }
 const SEAnesthesiaMachineSodaLimeFailure* SEEquipmentActionCollection::GetAnesthesiaMachineSodaLimeFailure() const
@@ -633,7 +633,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineTubeCuffLeak() const
 SEAnesthesiaMachineTubeCuffLeak& SEEquipmentActionCollection::GetAnesthesiaMachineTubeCuffLeak()
 {
   if (m_AnesthesiaMachineTubeCuffLeak == nullptr)
-    m_AnesthesiaMachineTubeCuffLeak = new SEAnesthesiaMachineTubeCuffLeak();
+    m_AnesthesiaMachineTubeCuffLeak = new SEAnesthesiaMachineTubeCuffLeak(GetLogger());
   return *m_AnesthesiaMachineTubeCuffLeak;
 }
 const SEAnesthesiaMachineTubeCuffLeak* SEEquipmentActionCollection::GetAnesthesiaMachineTubeCuffLeak() const
@@ -653,7 +653,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineVaporizerFailure() const
 SEAnesthesiaMachineVaporizerFailure& SEEquipmentActionCollection::GetAnesthesiaMachineVaporizerFailure()
 {
   if (m_AnesthesiaMachineVaporizerFailure == nullptr)
-    m_AnesthesiaMachineVaporizerFailure = new SEAnesthesiaMachineVaporizerFailure();
+    m_AnesthesiaMachineVaporizerFailure = new SEAnesthesiaMachineVaporizerFailure(GetLogger());
   return *m_AnesthesiaMachineVaporizerFailure;
 }
 const SEAnesthesiaMachineVaporizerFailure* SEEquipmentActionCollection::GetAnesthesiaMachineVaporizerFailure() const
@@ -673,7 +673,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineVentilatorPressureLoss() c
 SEAnesthesiaMachineVentilatorPressureLoss& SEEquipmentActionCollection::GetAnesthesiaMachineVentilatorPressureLoss()
 {
   if (m_AnesthesiaMachineVentilatorPressureLoss == nullptr)
-    m_AnesthesiaMachineVentilatorPressureLoss = new SEAnesthesiaMachineVentilatorPressureLoss();
+    m_AnesthesiaMachineVentilatorPressureLoss = new SEAnesthesiaMachineVentilatorPressureLoss(GetLogger());
   return *m_AnesthesiaMachineVentilatorPressureLoss;
 }
 const SEAnesthesiaMachineVentilatorPressureLoss* SEEquipmentActionCollection::GetAnesthesiaMachineVentilatorPressureLoss() const
@@ -693,7 +693,7 @@ bool SEEquipmentActionCollection::HasAnesthesiaMachineYPieceDisconnect() const
 SEAnesthesiaMachineYPieceDisconnect& SEEquipmentActionCollection::GetAnesthesiaMachineYPieceDisconnect()
 {
   if (m_AnesthesiaMachineYPieceDisconnect == nullptr)
-    m_AnesthesiaMachineYPieceDisconnect = new SEAnesthesiaMachineYPieceDisconnect();
+    m_AnesthesiaMachineYPieceDisconnect = new SEAnesthesiaMachineYPieceDisconnect(GetLogger());
   return *m_AnesthesiaMachineYPieceDisconnect;
 }
 const SEAnesthesiaMachineYPieceDisconnect* SEEquipmentActionCollection::GetAnesthesiaMachineYPieceDisconnect() const
@@ -713,7 +713,7 @@ bool SEEquipmentActionCollection::HasBagValveMaskConfiguration() const
 SEBagValveMaskConfiguration& SEEquipmentActionCollection::GetBagValveMaskConfiguration()
 {
   if (m_BagValveMaskConfiguration == nullptr)
-    m_BagValveMaskConfiguration = new SEBagValveMaskConfiguration();
+    m_BagValveMaskConfiguration = new SEBagValveMaskConfiguration(GetLogger());
   return *m_BagValveMaskConfiguration;
 }
 const SEBagValveMaskConfiguration* SEEquipmentActionCollection::GetBagValveMaskConfiguration() const
@@ -738,7 +738,7 @@ bool SEEquipmentActionCollection::HasBagValveMaskAutomated() const
 SEBagValveMaskAutomated& SEEquipmentActionCollection::GetBagValveMaskAutomated()
 {
   if (m_BagValveMaskAutomated == nullptr)
-    m_BagValveMaskAutomated = new SEBagValveMaskAutomated();
+    m_BagValveMaskAutomated = new SEBagValveMaskAutomated(GetLogger());
   return *m_BagValveMaskAutomated;
 }
 const SEBagValveMaskAutomated* SEEquipmentActionCollection::GetBagValveMaskAutomated() const
@@ -758,7 +758,7 @@ bool SEEquipmentActionCollection::HasBagValveMaskInstantaneous() const
 SEBagValveMaskInstantaneous& SEEquipmentActionCollection::GetBagValveMaskInstantaneous()
 {
   if (m_BagValveMaskInstantaneous == nullptr)
-    m_BagValveMaskInstantaneous = new SEBagValveMaskInstantaneous();
+    m_BagValveMaskInstantaneous = new SEBagValveMaskInstantaneous(GetLogger());
   return *m_BagValveMaskInstantaneous;
 }
 const SEBagValveMaskInstantaneous* SEEquipmentActionCollection::GetBagValveMaskInstantaneous() const
@@ -778,7 +778,7 @@ bool SEEquipmentActionCollection::HasBagValveMaskSqueeze() const
 SEBagValveMaskSqueeze& SEEquipmentActionCollection::GetBagValveMaskSqueeze()
 {
   if (m_BagValveMaskSqueeze == nullptr)
-    m_BagValveMaskSqueeze = new SEBagValveMaskSqueeze();
+    m_BagValveMaskSqueeze = new SEBagValveMaskSqueeze(GetLogger());
   return *m_BagValveMaskSqueeze;
 }
 const SEBagValveMaskSqueeze* SEEquipmentActionCollection::GetBagValveMaskSqueeze() const
@@ -798,7 +798,7 @@ bool SEEquipmentActionCollection::HasECMOConfiguration() const
 SEECMOConfiguration& SEEquipmentActionCollection::GetECMOConfiguration()
 {
   if (m_ECMOConfiguration == nullptr)
-    m_ECMOConfiguration = new SEECMOConfiguration();
+    m_ECMOConfiguration = new SEECMOConfiguration(GetLogger());
   return *m_ECMOConfiguration;
 }
 const SEECMOConfiguration* SEEquipmentActionCollection::GetECMOConfiguration() const
@@ -818,7 +818,7 @@ bool SEEquipmentActionCollection::HasInhalerConfiguration() const
 SEInhalerConfiguration& SEEquipmentActionCollection::GetInhalerConfiguration()
 {
   if (m_InhalerConfiguration == nullptr)
-    m_InhalerConfiguration = new SEInhalerConfiguration();
+    m_InhalerConfiguration = new SEInhalerConfiguration(GetLogger());
   return *m_InhalerConfiguration;
 }
 const SEInhalerConfiguration* SEEquipmentActionCollection::GetInhalerConfiguration() const
@@ -838,7 +838,7 @@ bool SEEquipmentActionCollection::HasMechanicalVentilatorConfiguration() const
 SEMechanicalVentilatorConfiguration& SEEquipmentActionCollection::GetMechanicalVentilatorConfiguration()
 {
   if (m_MechanicalVentilatorConfiguration == nullptr)
-    m_MechanicalVentilatorConfiguration = new SEMechanicalVentilatorConfiguration();
+    m_MechanicalVentilatorConfiguration = new SEMechanicalVentilatorConfiguration(GetLogger());
   return *m_MechanicalVentilatorConfiguration;
 }
 const SEMechanicalVentilatorConfiguration* SEEquipmentActionCollection::GetMechanicalVentilatorConfiguration() const
@@ -858,7 +858,7 @@ bool SEEquipmentActionCollection::HasMechanicalVentilatorHold() const
 SEMechanicalVentilatorHold& SEEquipmentActionCollection::GetMechanicalVentilatorHold()
 {
   if (m_MechanicalVentilatorHold == nullptr)
-    m_MechanicalVentilatorHold = new SEMechanicalVentilatorHold();
+    m_MechanicalVentilatorHold = new SEMechanicalVentilatorHold(GetLogger());
   return *m_MechanicalVentilatorHold;
 }
 const SEMechanicalVentilatorHold* SEEquipmentActionCollection::GetMechanicalVentilatorHold() const
@@ -878,7 +878,7 @@ bool SEEquipmentActionCollection::HasMechanicalVentilatorLeak() const
 SEMechanicalVentilatorLeak& SEEquipmentActionCollection::GetMechanicalVentilatorLeak()
 {
   if (m_MechanicalVentilatorLeak == nullptr)
-    m_MechanicalVentilatorLeak = new SEMechanicalVentilatorLeak();
+    m_MechanicalVentilatorLeak = new SEMechanicalVentilatorLeak(GetLogger());
   return *m_MechanicalVentilatorLeak;
 }
 const SEMechanicalVentilatorLeak* SEEquipmentActionCollection::GetMechanicalVentilatorLeak() const
@@ -898,7 +898,7 @@ bool SEEquipmentActionCollection::HasMechanicalVentilatorContinuousPositiveAirwa
 SEMechanicalVentilatorContinuousPositiveAirwayPressure& SEEquipmentActionCollection::GetMechanicalVentilatorContinuousPositiveAirwayPressure()
 {
   if (m_MechanicalVentilatorContinuousPositiveAirwayPressure == nullptr)
-    m_MechanicalVentilatorContinuousPositiveAirwayPressure = new SEMechanicalVentilatorContinuousPositiveAirwayPressure();
+    m_MechanicalVentilatorContinuousPositiveAirwayPressure = new SEMechanicalVentilatorContinuousPositiveAirwayPressure(GetLogger());
   return *m_MechanicalVentilatorContinuousPositiveAirwayPressure;
 }
 const SEMechanicalVentilatorContinuousPositiveAirwayPressure* SEEquipmentActionCollection::GetMechanicalVentilatorContinuousPositiveAirwayPressure() const
@@ -918,7 +918,7 @@ bool SEEquipmentActionCollection::HasMechanicalVentilatorPressureControl() const
 SEMechanicalVentilatorPressureControl& SEEquipmentActionCollection::GetMechanicalVentilatorPressureControl()
 {
   if (m_MechanicalVentilatorPressureControl == nullptr)
-    m_MechanicalVentilatorPressureControl = new SEMechanicalVentilatorPressureControl();
+    m_MechanicalVentilatorPressureControl = new SEMechanicalVentilatorPressureControl(GetLogger());
   return *m_MechanicalVentilatorPressureControl;
 }
 const SEMechanicalVentilatorPressureControl* SEEquipmentActionCollection::GetMechanicalVentilatorPressureControl() const
@@ -938,7 +938,7 @@ bool SEEquipmentActionCollection::HasMechanicalVentilatorVolumeControl() const
 SEMechanicalVentilatorVolumeControl& SEEquipmentActionCollection::GetMechanicalVentilatorVolumeControl()
 {
   if (m_MechanicalVentilatorVolumeControl == nullptr)
-    m_MechanicalVentilatorVolumeControl = new SEMechanicalVentilatorVolumeControl();
+    m_MechanicalVentilatorVolumeControl = new SEMechanicalVentilatorVolumeControl(GetLogger());
   return *m_MechanicalVentilatorVolumeControl;
 }
 const SEMechanicalVentilatorVolumeControl* SEEquipmentActionCollection::GetMechanicalVentilatorVolumeControl() const

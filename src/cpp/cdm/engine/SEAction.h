@@ -55,7 +55,7 @@ inline std::ostream& operator<< (std::ostream& out, const SEAction& a)
 {
   std::string s;
   if (!a.SerializeToString(s, eSerializationFormat::TEXT))
-    out << "[Error] Unable to serialize action";
+    a.Error("Unable to serialize action");
   else
     out << s;
   return out;

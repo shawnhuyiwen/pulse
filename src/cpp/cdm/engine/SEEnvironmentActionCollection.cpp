@@ -66,7 +66,7 @@ bool SEEnvironmentActionCollection::HasChangeEnvironmentalConditions() const
 SEChangeEnvironmentalConditions& SEEnvironmentActionCollection::GetChangeEnvironmentalConditions()
 {
   if (m_ChangeEnvironmentalConditions == nullptr)
-    m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions();
+    m_ChangeEnvironmentalConditions = new SEChangeEnvironmentalConditions(GetLogger());
   return *m_ChangeEnvironmentalConditions;
 }
 const SEChangeEnvironmentalConditions* SEEnvironmentActionCollection::GetChangeEnvironmentalConditions() const
@@ -86,7 +86,7 @@ bool SEEnvironmentActionCollection::HasThermalApplication() const
 SEThermalApplication& SEEnvironmentActionCollection::GetThermalApplication()
 {
   if (m_ThermalApplication == nullptr)
-    m_ThermalApplication = new SEThermalApplication();
+    m_ThermalApplication = new SEThermalApplication(GetLogger());
   return *m_ThermalApplication;
 }
 const SEThermalApplication* SEEnvironmentActionCollection::GetThermalApplication() const

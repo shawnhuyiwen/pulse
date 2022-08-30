@@ -637,7 +637,7 @@ bool SEPatientActionCollection::HasAcuteRespiratoryDistressSyndromeExacerbation(
 SEAcuteRespiratoryDistressSyndromeExacerbation& SEPatientActionCollection::GetAcuteRespiratoryDistressSyndromeExacerbation()
 {
   if (m_ARDSExacerbation == nullptr)
-    m_ARDSExacerbation = new SEAcuteRespiratoryDistressSyndromeExacerbation();
+    m_ARDSExacerbation = new SEAcuteRespiratoryDistressSyndromeExacerbation(GetLogger());
   return *m_ARDSExacerbation;
 }
 const SEAcuteRespiratoryDistressSyndromeExacerbation* SEPatientActionCollection::GetAcuteRespiratoryDistressSyndromeExacerbation() const
@@ -657,7 +657,7 @@ bool SEPatientActionCollection::HasAcuteStress() const
 SEAcuteStress& SEPatientActionCollection::GetAcuteStress()
 {
   if (m_AcuteStress == nullptr)
-    m_AcuteStress = new SEAcuteStress();
+    m_AcuteStress = new SEAcuteStress(GetLogger());
   return *m_AcuteStress;
 }
 const SEAcuteStress* SEPatientActionCollection::GetAcuteStress() const
@@ -677,7 +677,7 @@ bool SEPatientActionCollection::HasAirwayObstruction() const
 SEAirwayObstruction& SEPatientActionCollection::GetAirwayObstruction()
 {
   if (m_AirwayObstruction == nullptr)
-    m_AirwayObstruction = new SEAirwayObstruction();
+    m_AirwayObstruction = new SEAirwayObstruction(GetLogger());
   return *m_AirwayObstruction;
 }
 const SEAirwayObstruction* SEPatientActionCollection::GetAirwayObstruction() const
@@ -697,7 +697,7 @@ bool SEPatientActionCollection::HasArrhythmia() const
 SEArrhythmia& SEPatientActionCollection::GetArrhythmia()
 {
   if (m_Arrhythmia == nullptr)
-    m_Arrhythmia = new SEArrhythmia();
+    m_Arrhythmia = new SEArrhythmia(GetLogger());
   return *m_Arrhythmia;
 }
 const SEArrhythmia* SEPatientActionCollection::GetArrhythmia() const
@@ -717,7 +717,7 @@ bool SEPatientActionCollection::HasAsthmaAttack() const
 SEAsthmaAttack& SEPatientActionCollection::GetAsthmaAttack()
 {
   if (m_AsthmaAttack == nullptr)
-    m_AsthmaAttack = new SEAsthmaAttack();
+    m_AsthmaAttack = new SEAsthmaAttack(GetLogger());
   return *m_AsthmaAttack;
 }
 const SEAsthmaAttack* SEPatientActionCollection::GetAsthmaAttack() const
@@ -737,7 +737,7 @@ bool SEPatientActionCollection::HasBrainInjury() const
 SEBrainInjury& SEPatientActionCollection::GetBrainInjury()
 {
   if (m_BrainInjury == nullptr)
-    m_BrainInjury = new SEBrainInjury();
+    m_BrainInjury = new SEBrainInjury(GetLogger());
   return *m_BrainInjury;
 }
 const SEBrainInjury* SEPatientActionCollection::GetBrainInjury() const
@@ -757,7 +757,7 @@ bool SEPatientActionCollection::HasBronchoconstriction() const
 SEBronchoconstriction& SEPatientActionCollection::GetBronchoconstriction()
 {
   if (m_Bronchoconstriction == nullptr)
-    m_Bronchoconstriction = new SEBronchoconstriction();
+    m_Bronchoconstriction = new SEBronchoconstriction(GetLogger());
   return *m_Bronchoconstriction;
 }
 const SEBronchoconstriction* SEPatientActionCollection::GetBronchoconstriction() const
@@ -782,7 +782,7 @@ bool SEPatientActionCollection::HasChestCompression() const
 SEChestCompression& SEPatientActionCollection::GetChestCompression()
 {
   if (m_ChestCompression == nullptr)
-    m_ChestCompression = new SEChestCompression();
+    m_ChestCompression = new SEChestCompression(GetLogger());
   return *m_ChestCompression;
 }
 const SEChestCompression* SEPatientActionCollection::GetChestCompression() const
@@ -802,7 +802,7 @@ bool SEPatientActionCollection::HasChestCompressionAutomated() const
 SEChestCompressionAutomated& SEPatientActionCollection::GetChestCompressionAutomated()
 {
   if (m_ChestCompressionAutomated == nullptr)
-    m_ChestCompressionAutomated = new SEChestCompressionAutomated();
+    m_ChestCompressionAutomated = new SEChestCompressionAutomated(GetLogger());
   return *m_ChestCompressionAutomated;
 }
 const SEChestCompressionAutomated* SEPatientActionCollection::GetChestCompressionAutomated() const
@@ -822,7 +822,7 @@ bool SEPatientActionCollection::HasChestCompressionInstantaneous() const
 SEChestCompressionInstantaneous& SEPatientActionCollection::GetChestCompressionInstantaneous()
 {
   if (m_ChestCompressionInstantaneous == nullptr)
-    m_ChestCompressionInstantaneous = new SEChestCompressionInstantaneous();
+    m_ChestCompressionInstantaneous = new SEChestCompressionInstantaneous(GetLogger());
   return *m_ChestCompressionInstantaneous;
 }
 const SEChestCompressionInstantaneous* SEPatientActionCollection::GetChestCompressionInstantaneous() const
@@ -846,7 +846,7 @@ bool SEPatientActionCollection::HasLeftChestOcclusiveDressing() const
 SEChestOcclusiveDressing& SEPatientActionCollection::GetLeftChestOcclusiveDressing()
 {
   if (m_LeftChestOcclusiveDressing == nullptr)
-    m_LeftChestOcclusiveDressing = new SEChestOcclusiveDressing();
+    m_LeftChestOcclusiveDressing = new SEChestOcclusiveDressing(GetLogger());
   return *m_LeftChestOcclusiveDressing;
 }
 const SEChestOcclusiveDressing* SEPatientActionCollection::GetLeftChestOcclusiveDressing() const
@@ -865,7 +865,7 @@ bool SEPatientActionCollection::HasRightChestOcclusiveDressing() const
 SEChestOcclusiveDressing& SEPatientActionCollection::GetRightChestOcclusiveDressing()
 {
   if (m_RightChestOcclusiveDressing == nullptr)
-    m_RightChestOcclusiveDressing = new SEChestOcclusiveDressing();
+    m_RightChestOcclusiveDressing = new SEChestOcclusiveDressing(GetLogger());
   return *m_RightChestOcclusiveDressing;
 }
 const SEChestOcclusiveDressing* SEPatientActionCollection::GetRightChestOcclusiveDressing() const
@@ -885,7 +885,7 @@ bool SEPatientActionCollection::HasChronicObstructivePulmonaryDiseaseExacerbatio
 SEChronicObstructivePulmonaryDiseaseExacerbation& SEPatientActionCollection::GetChronicObstructivePulmonaryDiseaseExacerbation()
 {
   if (m_COPDExacerbation == nullptr)
-    m_COPDExacerbation = new SEChronicObstructivePulmonaryDiseaseExacerbation();
+    m_COPDExacerbation = new SEChronicObstructivePulmonaryDiseaseExacerbation(GetLogger());
   return *m_COPDExacerbation;
 }
 const SEChronicObstructivePulmonaryDiseaseExacerbation* SEPatientActionCollection::GetChronicObstructivePulmonaryDiseaseExacerbation() const
@@ -905,7 +905,7 @@ bool SEPatientActionCollection::HasConsciousRespiration() const
 SEConsciousRespiration& SEPatientActionCollection::GetConsciousRespiration()
 {
   if (m_ConsciousRespiration == nullptr)
-    m_ConsciousRespiration = new SEConsciousRespiration();
+    m_ConsciousRespiration = new SEConsciousRespiration(GetLogger());
   return *m_ConsciousRespiration;
 }
 const SEConsciousRespiration* SEPatientActionCollection::GetConsciousRespiration() const
@@ -925,7 +925,7 @@ bool SEPatientActionCollection::HasConsumeNutrients() const
 SEConsumeNutrients& SEPatientActionCollection::GetConsumeNutrients()
 {
   if (m_ConsumeNutrients == nullptr)
-    m_ConsumeNutrients = new SEConsumeNutrients();
+    m_ConsumeNutrients = new SEConsumeNutrients(GetLogger());
   return *m_ConsumeNutrients;
 }
 const SEConsumeNutrients* SEPatientActionCollection::GetConsumeNutrients() const
@@ -945,7 +945,7 @@ bool SEPatientActionCollection::HasDyspnea() const
 SEDyspnea& SEPatientActionCollection::GetDyspnea()
 {
   if (m_Dyspnea == nullptr)
-    m_Dyspnea = new SEDyspnea();
+    m_Dyspnea = new SEDyspnea(GetLogger());
   return *m_Dyspnea;
 }
 const SEDyspnea* SEPatientActionCollection::GetDyspnea() const
@@ -965,7 +965,7 @@ bool SEPatientActionCollection::HasExercise() const
 SEExercise& SEPatientActionCollection::GetExercise()
 {
   if (m_Exercise == nullptr)
-    m_Exercise = new SEExercise();
+    m_Exercise = new SEExercise(GetLogger());
   return *m_Exercise;
 }
 const SEExercise* SEPatientActionCollection::GetExercise() const
@@ -994,7 +994,7 @@ SEHemorrhage& SEPatientActionCollection::GetHemorrhage(const std::string& cmptNa
   for (auto h : m_Hemorrhages)
     if (h->GetCompartment() == cmptName)
       return *h;
-  SEHemorrhage* h = new SEHemorrhage();
+  SEHemorrhage* h = new SEHemorrhage(GetLogger());
   h->SetCompartment(cmptName);
   m_Hemorrhages.push_back(h);
   return *h;
@@ -1026,7 +1026,7 @@ bool SEPatientActionCollection::HasImpairedAlveolarExchangeExacerbation() const
 SEImpairedAlveolarExchangeExacerbation& SEPatientActionCollection::GetImpairedAlveolarExchangeExacerbation()
 {
   if (m_ImpairedAlveolarExchangeExacerbation == nullptr)
-    m_ImpairedAlveolarExchangeExacerbation = new SEImpairedAlveolarExchangeExacerbation();
+    m_ImpairedAlveolarExchangeExacerbation = new SEImpairedAlveolarExchangeExacerbation(GetLogger());
   return *m_ImpairedAlveolarExchangeExacerbation;
 }
 const SEImpairedAlveolarExchangeExacerbation* SEPatientActionCollection::GetImpairedAlveolarExchangeExacerbation() const
@@ -1046,7 +1046,7 @@ bool SEPatientActionCollection::HasIntubation() const
 SEIntubation& SEPatientActionCollection::GetIntubation()
 {
   if (m_Intubation == nullptr)
-    m_Intubation = new SEIntubation();
+    m_Intubation = new SEIntubation(GetLogger());
   return *m_Intubation;
 }
 const SEIntubation* SEPatientActionCollection::GetIntubation() const
@@ -1066,7 +1066,7 @@ bool SEPatientActionCollection::HasLobarPneumoniaExacerbation() const
 SELobarPneumoniaExacerbation& SEPatientActionCollection::GetLobarPneumoniaExacerbation()
 {
   if (m_LobarPneumoniaExacerbation == nullptr)
-    m_LobarPneumoniaExacerbation = new SELobarPneumoniaExacerbation();
+    m_LobarPneumoniaExacerbation = new SELobarPneumoniaExacerbation(GetLogger());
   return *m_LobarPneumoniaExacerbation;
 }
 const SELobarPneumoniaExacerbation* SEPatientActionCollection::GetLobarPneumoniaExacerbation() const
@@ -1086,7 +1086,7 @@ bool SEPatientActionCollection::HasMechanicalVentilation() const
 SEMechanicalVentilation& SEPatientActionCollection::GetMechanicalVentilation()
 {
   if (m_MechanicalVentilation == nullptr)
-    m_MechanicalVentilation = new SEMechanicalVentilation();
+    m_MechanicalVentilation = new SEMechanicalVentilation(GetLogger());
   return *m_MechanicalVentilation;
 }
 const SEMechanicalVentilation* SEPatientActionCollection::GetMechanicalVentilation() const
@@ -1110,7 +1110,7 @@ bool SEPatientActionCollection::HasLeftNeedleDecompression() const
 SENeedleDecompression& SEPatientActionCollection::GetLeftNeedleDecompression()
 {
   if (m_LeftNeedleDecompression == nullptr)
-    m_LeftNeedleDecompression = new SENeedleDecompression();
+    m_LeftNeedleDecompression = new SENeedleDecompression(GetLogger());
   return *m_LeftNeedleDecompression;
 }
 const SENeedleDecompression* SEPatientActionCollection::GetLeftNeedleDecompression() const
@@ -1129,7 +1129,7 @@ bool SEPatientActionCollection::HasRightNeedleDecompression() const
 SENeedleDecompression& SEPatientActionCollection::GetRightNeedleDecompression()
 {
   if (m_RightNeedleDecompression == nullptr)
-    m_RightNeedleDecompression = new SENeedleDecompression();
+    m_RightNeedleDecompression = new SENeedleDecompression(GetLogger());
   return *m_RightNeedleDecompression;
 }
 const SENeedleDecompression* SEPatientActionCollection::GetRightNeedleDecompression() const
@@ -1149,7 +1149,7 @@ bool SEPatientActionCollection::HasPericardialEffusion() const
 SEPericardialEffusion& SEPatientActionCollection::GetPericardialEffusion()
 {
   if (m_PericardialEffusion == nullptr)
-    m_PericardialEffusion = new SEPericardialEffusion();
+    m_PericardialEffusion = new SEPericardialEffusion(GetLogger());
   return *m_PericardialEffusion;
 }
 const SEPericardialEffusion* SEPatientActionCollection::GetPericardialEffusion() const
@@ -1169,7 +1169,7 @@ bool SEPatientActionCollection::HasPulmonaryShuntExacerbation() const
 SEPulmonaryShuntExacerbation& SEPatientActionCollection::GetPulmonaryShuntExacerbation()
 {
   if (m_PulmonaryShuntExacerbation == nullptr)
-    m_PulmonaryShuntExacerbation = new SEPulmonaryShuntExacerbation();
+    m_PulmonaryShuntExacerbation = new SEPulmonaryShuntExacerbation(GetLogger());
   return *m_PulmonaryShuntExacerbation;
 }
 const SEPulmonaryShuntExacerbation* SEPatientActionCollection::GetPulmonaryShuntExacerbation() const
@@ -1189,7 +1189,7 @@ bool SEPatientActionCollection::HasRespiratoryFatigue() const
 SERespiratoryFatigue& SEPatientActionCollection::GetRespiratoryFatigue()
 {
   if (m_RespiratoryFatigue == nullptr)
-    m_RespiratoryFatigue = new SERespiratoryFatigue();
+    m_RespiratoryFatigue = new SERespiratoryFatigue(GetLogger());
   return *m_RespiratoryFatigue;
 }
 const SERespiratoryFatigue* SEPatientActionCollection::GetRespiratoryFatigue() const
@@ -1209,7 +1209,7 @@ bool SEPatientActionCollection::HasRespiratoryMechanicsConfiguration() const
 SERespiratoryMechanicsConfiguration& SEPatientActionCollection::GetRespiratoryMechanicsConfiguration()
 {
   if (m_RespiratoryMechanicsConfiguration == nullptr)
-    m_RespiratoryMechanicsConfiguration = new SERespiratoryMechanicsConfiguration();
+    m_RespiratoryMechanicsConfiguration = new SERespiratoryMechanicsConfiguration(GetLogger());
   return *m_RespiratoryMechanicsConfiguration;
 }
 const SERespiratoryMechanicsConfiguration* SEPatientActionCollection::GetRespiratoryMechanicsConfiguration() const
@@ -1229,7 +1229,7 @@ bool SEPatientActionCollection::HasSupplementalOxygen() const
 SESupplementalOxygen& SEPatientActionCollection::GetSupplementalOxygen()
 {
   if (m_SupplementalOxygen == nullptr)
-    m_SupplementalOxygen = new SESupplementalOxygen();
+    m_SupplementalOxygen = new SESupplementalOxygen(GetLogger());
   return *m_SupplementalOxygen;
 }
 const SESupplementalOxygen* SEPatientActionCollection::GetSupplementalOxygen() const
@@ -1258,7 +1258,7 @@ SESubstanceBolus& SEPatientActionCollection::GetSubstanceBolus(const SESubstance
   for (auto b : m_SubstanceBoluses)
     if (&b->GetSubstance() == &sub)
       return *b;
-  SESubstanceBolus* b = new SESubstanceBolus(sub);
+  SESubstanceBolus* b = new SESubstanceBolus(sub, GetLogger());
   m_SubstanceBoluses.push_back(b);
   return *b;
 }
@@ -1298,7 +1298,7 @@ SESubstanceInfusion& SEPatientActionCollection::GetSubstanceInfusion(const SESub
   for (auto si : m_SubstanceInfusions)
     if (&si->GetSubstance() == &sub)
       return *si;
-  SESubstanceInfusion* si = new SESubstanceInfusion(sub);
+  SESubstanceInfusion* si = new SESubstanceInfusion(sub, GetLogger());
   m_SubstanceInfusions.push_back(si);
   return *si;
 }
@@ -1338,7 +1338,7 @@ SESubstanceCompoundInfusion& SEPatientActionCollection::GetSubstanceCompoundInfu
   for (auto sci : m_SubstanceCompoundInfusions)
     if (&sci->GetSubstanceCompound() == &cmpd)
       return *sci;
-  SESubstanceCompoundInfusion* sci = new SESubstanceCompoundInfusion(cmpd);
+  SESubstanceCompoundInfusion* sci = new SESubstanceCompoundInfusion(cmpd, GetLogger());
   m_SubstanceCompoundInfusions.push_back(sci);
   return *sci;
 }
@@ -1384,7 +1384,7 @@ bool SEPatientActionCollection::HasLeftOpenTensionPneumothorax() const
 SETensionPneumothorax& SEPatientActionCollection::GetLeftOpenTensionPneumothorax()
 {
   if (m_LeftOpenTensionPneumothorax == nullptr)
-    m_LeftOpenTensionPneumothorax = new SETensionPneumothorax();
+    m_LeftOpenTensionPneumothorax = new SETensionPneumothorax(GetLogger());
   return *m_LeftOpenTensionPneumothorax;
 }
 const SETensionPneumothorax* SEPatientActionCollection::GetLeftOpenTensionPneumothorax() const
@@ -1405,7 +1405,7 @@ bool SEPatientActionCollection::HasLeftClosedTensionPneumothorax() const
 SETensionPneumothorax& SEPatientActionCollection::GetLeftClosedTensionPneumothorax()
 {
   if (m_LeftClosedTensionPneumothorax == nullptr)
-    m_LeftClosedTensionPneumothorax = new SETensionPneumothorax();
+    m_LeftClosedTensionPneumothorax = new SETensionPneumothorax(GetLogger());
   return *m_LeftClosedTensionPneumothorax;
 }
 const SETensionPneumothorax* SEPatientActionCollection::GetLeftClosedTensionPneumothorax() const
@@ -1426,7 +1426,7 @@ bool SEPatientActionCollection::HasRightOpenTensionPneumothorax() const
 SETensionPneumothorax& SEPatientActionCollection::GetRightOpenTensionPneumothorax()
 {
   if (m_RightOpenTensionPneumothorax == nullptr)
-    m_RightOpenTensionPneumothorax = new SETensionPneumothorax();
+    m_RightOpenTensionPneumothorax = new SETensionPneumothorax(GetLogger());
   return *m_RightOpenTensionPneumothorax;
 }
 const SETensionPneumothorax* SEPatientActionCollection::GetRightOpenTensionPneumothorax() const
@@ -1447,7 +1447,7 @@ bool SEPatientActionCollection::HasRightClosedTensionPneumothorax() const
 SETensionPneumothorax& SEPatientActionCollection::GetRightClosedTensionPneumothorax()
 {
   if (m_RightClosedTensionPneumothorax == nullptr)
-    m_RightClosedTensionPneumothorax = new SETensionPneumothorax();
+    m_RightClosedTensionPneumothorax = new SETensionPneumothorax(GetLogger());
   return *m_RightClosedTensionPneumothorax;
 }
 const SETensionPneumothorax* SEPatientActionCollection::GetRightClosedTensionPneumothorax() const
@@ -1467,7 +1467,7 @@ bool SEPatientActionCollection::HasUrinate() const
 SEUrinate& SEPatientActionCollection::GetUrinate()
 {
   if (m_Urinate == nullptr)
-    m_Urinate = new SEUrinate();
+    m_Urinate = new SEUrinate(GetLogger());
   return *m_Urinate;
 }
 const SEUrinate* SEPatientActionCollection::GetUrinate() const
