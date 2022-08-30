@@ -42,7 +42,10 @@ bool SEScenarioLog::Extract(const std::string& filename)
 {
   std::string content;
   if (!ReadFile(filename, content))
+  {
+    Error("Failed to read file: " + filename);
     return false;
+  }
 
   Clear();
 
