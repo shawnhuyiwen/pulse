@@ -7,7 +7,7 @@
 // Include the various types you will be using in your code
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/scenario/SEScenario.h"
-#include "cdm/scenario/SEScenarioUtils.h"
+#include "cdm/scenario/SEScenarioLogLegacy.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -18,17 +18,20 @@
 //--------------------------------------------------------------------------------------------------
 void HowToScenarioFromLog()
 {
-  // Create our engine
-  std::unique_ptr<PhysiologyEngine> pe = CreatePulseEngine();
-  pe->GetLogger()->SetLogFile("./test_results/howto/HowTo_ScenarioFromLog.log");
-  pe->GetLogger()->Info("HowTo_ScenarioFromLog");
-  
-  // Create scenario from log file
-  SEScenario sce(pe->GetLogger());
-  std::string logFile = "./scenarios/pulse-cpr-bvm-2mins.log";
-  if (!SEScenarioUtils::GenerateScenarioFromLog(logFile, sce))
+  bool legacyLog = true;
+
+  if (!legacyLog)
   {
-    pe->GetLogger()->Error("Could not generate scenario from file, check the error");
-    return;
+
+  }
+  else
+  {
+    // Create scenario from a legacy log file
+    // This functionality is not fully functional
+    // If you are using this, you will probably need to extend the SEScenarioLogLegacy::NewAction method
+    // The log format has been updated to to leverage more well formed messages we can easily read back in
+    std::string filename = "./scenarios/pulse-cpr-bvm-2mins";
+    std::string stateFilename = "./states/ECL_2_DeterioratingPatientCPR/CoarseVentricularFibrillation.json";
+    SEScenarioLogLegacy::GenerateScenarioFromLegacyLog(filename + ".log", stateFilename, 300);
   }
 }
