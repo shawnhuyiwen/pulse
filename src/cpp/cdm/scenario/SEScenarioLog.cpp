@@ -26,7 +26,7 @@ SEScenarioLog::~SEScenarioLog()
 void SEScenarioLog::Clear()
 {
   m_Actions.clear();
-  m_AdditionalTime_s = 120;
+  m_AdditionalTime.SetValue(3, TimeUnit::min);;
   m_Conditions.clear();
   m_EOL = "\n";
   m_FinalSimTime_s = 0;
@@ -109,8 +109,9 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
   else
   {
     SEAdvanceTime adv;
-    adv.GetTime().SetValue(m_AdditionalTime_s, TimeUnit::s);
-    time_s += m_AdditionalTime_s;
+    double additionalTime_s = m_AdditionalTime.GetValue(TimeUnit::s);
+    adv.GetTime().SetValue(additionalTime_s, TimeUnit::s);
+    time_s += additionalTime_s;
     dst.AddAction(adv);
   }
   return true;
@@ -118,8 +119,8 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
 
 void SEScenarioLog::AbsentAdditionalTime(const SEScalarTime& time)
 {
-  m_AdditionalTime_s = time.GetValue(TimeUnit::s);
-  Info("Additional time set to " + pulse::cdm::to_string(m_AdditionalTime_s) + "(s)");
+  m_AdditionalTime = time;
+  Info("Additional time set to " + m_AdditionalTime.ToString());
 }
 
 bool SEScenarioLog::Extract(const std::string& filename)

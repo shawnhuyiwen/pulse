@@ -50,5 +50,5 @@ protected:
   std::string                                m_State;
 
   // Specified by user (or default)
-  double                                     m_AdditionalTime_s;
+  SEScalarTime                               m_AdditionalTime;
 };
