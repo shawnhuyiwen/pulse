@@ -3,6 +3,8 @@
 
 #include "PulseScenarioDriver.h"
 #include "PulseScenarioExec.h"
+#include "cdm/scenario/SEScenarioLog.h"
+#include "cdm/utils/FileUtils.h"
 
 #define test_serialization false
 
@@ -28,6 +30,25 @@ int main(int argc, char* argv[])
 
   Logger logger("PulseScenarioDriver.log");
   logger.LogToConsole(true);
+
+  // If provided file is a log, convert it and write out a new scenario file
+  std::string path, filename, ext;
+  SplitPathFilenameExt(input, path, filename, ext);
+  if (ext.compare(".log") == 0)
+  {
+    std::string output = path + filename + ".sce.json";
+
+    SEScenario sce(&logger);
+    SEScenarioLog sceL(&logger);
+
+    if (!sceL.Convert(input, sce))
+    {
+      logger.Error("Unable to convert scenario from log file : " + input);
+    }
+
+    return !sce.SerializeToFile(output);
+  }
+
   PulseScenarioExec opts(&logger);
   opts.SetModelType(t);
 
