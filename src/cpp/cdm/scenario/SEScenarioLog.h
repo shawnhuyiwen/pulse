@@ -37,4 +37,5 @@ protected:
   double                                     m_FinalSimTime_s;
   std::string                                m_Patient;
   std::string                                m_StateFilename;
+  std::string                                m_State;
 };

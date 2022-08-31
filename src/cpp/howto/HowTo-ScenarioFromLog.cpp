@@ -23,6 +23,7 @@ void HowToScenarioFromLog()
   if (!legacyLog)
   {
     Logger log;
+    log.LogToConsole(true);
     log.SetLogFile("./test_results/howto/HowTo_ScenarioFromLog.cpp.log");
     log.Info("HowTo_ScenarioFromLog");
 

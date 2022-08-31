@@ -126,9 +126,11 @@ bool PBAction::SerializeToString(const SEAction& a, std::string& dst, eSerializa
   auto* bind = Unload(a);
   return PBUtils::SerializeToString(*bind, dst, fmt, nullptr);
 }
-SEAction* PBAction::SerializeFromString(const std::string& src, Logger& logger, eSerializationFormat fmt)
+SEAction* PBAction::SerializeFromString(const std::string& src, eSerializationFormat fmt, const SESubstanceManager& subMgr)
 {
-  return nullptr;
+  CDM_BIND::AnyActionData bind;
+  PBUtils::SerializeFromString(src, bind, fmt, subMgr.GetLogger());
+  return PBAction::Load(bind, subMgr);
 }
 
 void PBAction::Serialize(const CDM_BIND::ActionData& src, SEAction& dst)

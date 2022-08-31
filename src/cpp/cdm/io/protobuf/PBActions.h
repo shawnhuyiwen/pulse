@@ -19,7 +19,7 @@ public:
   static CDM_BIND::AnyActionData* Unload(const SEAction& action);
   static SEAction* Copy(const SEAction& a, const SESubstanceManager& subMgr);
   static bool SerializeToString(const SEAction& a, std::string& dst, eSerializationFormat fmt=eSerializationFormat::JSON);
-  static SEAction* SerializeFromString(const std::string& src, Logger& logger, eSerializationFormat fmt=eSerializationFormat::JSON);
+  static SEAction* SerializeFromString(const std::string& src, eSerializationFormat fmt, const SESubstanceManager& subMgr);
 
   static void Serialize(const CDM_BIND::ActionData& src, SEAction& dst);
   static void Serialize(const SEAction& src, CDM_BIND::ActionData& dst);

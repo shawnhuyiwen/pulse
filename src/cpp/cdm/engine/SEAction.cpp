@@ -29,6 +29,10 @@ bool SEAction::SerializeToString(std::string& dst, eSerializationFormat fmt) con
 {
   return PBAction::SerializeToString(*this, dst, fmt);
 }
+SEAction* SEAction::SerializeFromString(const std::string src, eSerializationFormat fmt, const SESubstanceManager& subMgr)
+{
+  return PBAction::SerializeFromString(src, fmt, subMgr);
+}
 
 std::string SEAction::GetComment() const
 {

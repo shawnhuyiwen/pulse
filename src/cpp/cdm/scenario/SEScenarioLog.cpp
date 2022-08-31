@@ -30,6 +30,7 @@ void SEScenarioLog::Clear()
   m_FinalSimTime_s = 0;
   m_Patient = "";
   m_StateFilename = "";
+  m_State = "";
 }
 
 bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
@@ -61,6 +62,11 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
     }
     dst.SetEngineStateFile(m_StateFilename);
   }
+  else if (!m_State.empty())
+  {
+    // TODO
+    Error("Inline state information not yet supported");
+  }
   else
   {
     Warning("Unable to find a starting pateint or state file in log.");
@@ -80,7 +86,23 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
       dst.AddAction(adv);
     }
 
-    Error("TODO: Support Actions");
+    for (std::string s : itr.second)
+    {
+      SEAction* a = SEAction::SerializeFromString(s, eSerializationFormat::TEXT, dst.GetSubstanceManager());
+      if (a == nullptr)
+        dst.Error("Unable to serialize action : " + s);
+      else
+        dst.AddAction(*a);
+      delete a;
+    }
+  }
+
+  if (m_FinalSimTime_s > 0)
+  {
+    SEAdvanceTime adv;
+    adv.GetTime().SetValue(m_FinalSimTime_s - time_s, TimeUnit::s);
+    time_s += m_FinalSimTime_s - time_s;
+    dst.AddAction(adv);
   }
   return true;
 }
@@ -95,24 +117,6 @@ bool SEScenarioLog::Extract(const std::string& filename)
   }
 
   Clear();
-
-  if (!GetActions(content))
-  {
-    Error("Failed to retrieve scenario actions");
-    return false;
-  }
-
-  if (!GetConditions(content))
-  {
-    Error("Failed to retrieve scenario conditions");
-    return false;
-  }
-
-  if (!GetFinalSimTime(content))
-  {
-    Error("Failed to retrieve final sim time");
-    return false;
-  }
 
   if (!GetPatient(content))
   {
@@ -132,28 +136,30 @@ bool SEScenarioLog::Extract(const std::string& filename)
     return false;
   }
 
-  /*std::cout << "Actions: " << std::endl;
-  for (auto& [time, actions]: m_Actions)
+  if (!GetConditions(content))
   {
-    std::cout << "Time: " << time << std::endl;
-    for (auto& a: actions)
-      std::cout << a << std::endl;
+    Error("Failed to retrieve scenario conditions");
+    return false;
   }
 
-  std::cout << "\nConditions: " << std::endl;
-  for (auto& c: m_Conditions)
-      std::cout << c << std::endl;
+  if (!GetActions(content))
+  {
+    Error("Failed to retrieve scenario actions");
+    return false;
+  }
 
-  std::cout << "\nFinal time: " << m_FinalSimTime_s << std::endl;
-  std::cout << "\nPatient: " << m_Patient << std::endl;
-  std::cout << "\nState filename: " << m_StateFilename << std::endl;*/
+  if (!GetFinalSimTime(content))
+  {
+    Error("Failed to retrieve final sim time");
+    return false;
+  }
 
   return true;
 }
 
 bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs)
 {
-  std::string tagPattern = R"(\[)" + tag + R"(\]([^\{\n]*(\{?)))";
+  std::string tagPattern = R"((\[\d*\.?\d*\(.*\)\])\s*\[)" + tag + R"(\][ \t]*(?:\d*\.?\d*\(.*\),)?[ \t]*([^\{\n\r]*(\{?)))";
   std::string text = content;
 
   // Capture groups:
@@ -184,7 +190,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
 
 bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::map<double, std::vector<std::string>>& tagStrs)
 {
-  std::string tagPattern = R"((\[\d*\.?\d*\(.*\)\])\s*\[)" + tag + R"(\]([^\{\n]*(\{?)))";
+  std::string tagPattern = R"((\[\d*\.?\d*\(.*\)\])\s*\[)" + tag + R"(\][ \t]*(?:\d*\.?\d*\(.*\),)?[ \t]*([^\{\n\r]*(\{?)))";
   std::string text = content;
 
   // Capture groups:
@@ -225,7 +231,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
 bool SEScenarioLog::IdentifyTagStringEnd(const std::string& content, size_t& endIdx)
 {
   std::smatch mTagEnd;
-  std::regex rTagEnd(R"(\}[\r\n]{3,})");
+  std::regex rTagEnd(R"(\}[\r\n]{2,})");
   if (std::regex_search(content, mTagEnd, rTagEnd))
   {
     endIdx = mTagEnd.position(0) + 1;
@@ -290,11 +296,19 @@ bool SEScenarioLog::GetFinalSimTime(const std::string& content)
   std::vector<std::string> finalSimTimeStrs;
   if (!ExtractTagStrings("Final SimTime", content, finalSimTimeStrs))
   {
+    m_FinalSimTime_s = 0;
     Error("Unable to identify Final SimTime string");
     return false;
   }
 
-  if (finalSimTimeStrs.size() == 0 || !ParseTime(finalSimTimeStrs[0], m_FinalSimTime_s))
+  if (finalSimTimeStrs.size() == 0)
+  {
+    m_FinalSimTime_s = 0;
+    Info("No Final SimTime string provided in log");
+    return true;
+  }
+
+  if (!ParseTime(finalSimTimeStrs[0], m_FinalSimTime_s))
   {
     Error("Unable to parse Final SimTime string");
     return false;
@@ -314,8 +328,8 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   std::string text = content;
   if (!std::regex_search(text, mPatient, rPatient))
   {
-    Error("Unable to locate patient information");
-    return true; // Legacy logs do not have this information
+    Info("No patient information");
+    return true;
   }
 
   // Locate end of patient info
@@ -349,6 +363,8 @@ bool SEScenarioLog::GetSerializeFromFile(const std::string& content)
   {
     m_StateFilename = serializeFromFileStrs[serializeFromFileStrs.size() - 1];
   }
+  else
+    Info("No State filename found");
 
   return true;
 }
@@ -364,8 +380,10 @@ bool SEScenarioLog::GetSerializeFromString(const std::string& content)
 
   if (serializeFromStringStrs.size() > 0)
   {
-    m_StateFilename = serializeFromStringStrs[serializeFromStringStrs.size() - 1];
+    m_State = serializeFromStringStrs[serializeFromStringStrs.size() - 1];
   }
+  else
+    Info("No State string found");
 
   return true;
 }
