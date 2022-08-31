@@ -1,4 +1,5 @@
 set(filesystem)# Support for std::filesystem::experimental
+set(filesystem)# Support for std::filesystem::experimental
 if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)
   set(filesystem stdc++fs)
 endif()
@@ -624,6 +625,7 @@ add_library_ex(CommonDataModel
     scenario/SEScenario.cpp
     scenario/SEScenarioExec.cpp
     scenario/SEScenarioLog.cpp
+    scenario/SEScenarioLogLegacy.cpp
     substance/SESubstance.cpp
     substance/SESubstanceAerosolization.cpp
     substance/SESubstanceClearance.cpp
