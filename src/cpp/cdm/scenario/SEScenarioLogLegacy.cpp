@@ -2,7 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "cdm/CommonDefs.h"
-#include "cdm/scenario/SEScenarioLogLegacy.h"
+#include "cdm/scenario/SEScenarioLog.h"
 #include "cdm/scenario/SEScenario.h"
 #include "cdm/utils/FileUtils.h"
    // Supported Actions
@@ -226,7 +226,7 @@ bool ParseLogAction(const std::string& allLines, std::vector<ScenarioAction>& ac
 /// \brief
 /// Generates previously executed scenario based on log file messages.
 //--------------------------------------------------------------------------------------------------
-bool SEScenarioLogLegacy::GenerateScenarioFromLegacyLog(const std::string& filename, const std::string& stateFilename, double extraTime_s)
+bool SEScenarioLog::GenerateScenarioFromLegacyLog(const std::string& filename, const std::string& stateFilename, double extraTime_s)
 {
   SEScenario sce;
   sce.GetLogger()->LogToConsole(true);

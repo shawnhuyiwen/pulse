@@ -7,7 +7,7 @@
 // Include the various types you will be using in your code
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/scenario/SEScenario.h"
-#include "cdm/scenario/SEScenarioLogLegacy.h"
+#include "cdm/scenario/SEScenarioLog.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -32,6 +32,6 @@ void HowToScenarioFromLog()
     // The log format has been updated to to leverage more well formed messages we can easily read back in
     std::string filename = "./scenarios/pulse-cpr-bvm-2mins";
     std::string stateFilename = "./states/ECL_2_DeterioratingPatientCPR/CoarseVentricularFibrillation.json";
-    SEScenarioLogLegacy::GenerateScenarioFromLegacyLog(filename + ".log", stateFilename, 300);
+    SEScenarioLog::GenerateScenarioFromLegacyLog(filename + ".log", stateFilename, 300);
   }
 }
