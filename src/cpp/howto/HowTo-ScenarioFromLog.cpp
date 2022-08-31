@@ -8,6 +8,7 @@
 #include "cdm/engine/SEEngineTracker.h"
 #include "cdm/scenario/SEScenario.h"
 #include "cdm/scenario/SEScenarioLog.h"
+#include "cdm/utils/FileUtils.h"
 
 //--------------------------------------------------------------------------------------------------
 /// \brief
@@ -33,6 +34,12 @@ void HowToScenarioFromLog()
     if (!sceL.Convert(logFilename, sce))
     {
       log.Error("Unable to convert scenario from log file : " + logFilename);
+    }
+    // Write out our scenario file
+    std::string sceFilename = Replace(logFilename, ".log", ".sce.json");
+    if (!sce.SerializeToFile(sceFilename))
+    {
+      log.Error("Unable to write scenario file : " + sceFilename);
     }
   }
   else
