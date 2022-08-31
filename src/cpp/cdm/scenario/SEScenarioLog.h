@@ -14,12 +14,13 @@ public:
 
   virtual void Clear();
 
-  bool Extract(const std::string& filename);
-  
+  virtual bool Convert(const std::string& logFilename, SEScenario& dst);
+
   // Highly experimental and probably won't work, but easy to improve if you really need it
   static bool GenerateScenarioFromLegacyLog(const std::string& logFilename, const std::string& stateFilename, double extraTime_s=0);
 
 protected:
+  bool Extract(const std::string& filename);
   bool ExtractTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs);
   bool ExtractTagStrings(const std::string& tag, const std::string& content, std::map<double, std::vector<std::string>>& tagStrs);
   bool GetActions(const std::string& content);

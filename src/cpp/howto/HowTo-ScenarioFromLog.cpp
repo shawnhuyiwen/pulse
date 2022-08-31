@@ -18,11 +18,21 @@
 //--------------------------------------------------------------------------------------------------
 void HowToScenarioFromLog()
 {
-  bool legacyLog = true;
+  bool legacyLog = false;
 
   if (!legacyLog)
   {
+    Logger log;
+    log.SetLogFile("./test_results/howto/HowTo_ScenarioFromLog.cpp.log");
+    log.Info("HowTo_ScenarioFromLog");
 
+    SEScenario sce(&log);
+    SEScenarioLog sceL(&log);
+    std::string logFilename = "./scenarios/ingmar.log";
+    if (!sceL.Convert(logFilename, sce))
+    {
+      log.Error("Unable to convert scenario from log file : " + logFilename);
+    }
   }
   else
   {

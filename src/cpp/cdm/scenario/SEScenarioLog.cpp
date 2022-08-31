@@ -4,18 +4,12 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/scenario/SEScenarioLog.h"
 #include "cdm/scenario/SEScenario.h"
-#include "cdm/utils/FileUtils.h"
-// Supported Actions
 #include "cdm/engine/SEAdvanceTime.h"
-#include "cdm/patient/actions/SEArrhythmia.h"
-#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
-#include "cdm/system/equipment/bag_valve_mask/SEBagValveMask.h"
-#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskConfiguration.h"
-#include "cdm/system/equipment/bag_valve_mask/actions/SEBagValveMaskSqueeze.h"
-
-#include "cdm/properties/SEScalarForce.h"
-#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/engine/SEConditionManager.h"
+#include "cdm/engine/SEPatientConfiguration.h"
+#include "cdm/patient/SEPatient.h"
 #include "cdm/properties/SEScalarTime.h"
+#include "cdm/utils/FileUtils.h"
 
 #include <regex>
 
@@ -36,6 +30,59 @@ void SEScenarioLog::Clear()
   m_FinalSimTime_s = 0;
   m_Patient = "";
   m_StateFilename = "";
+}
+
+bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
+{
+  Clear();
+  if (!Extract(logFilename))
+  {
+    Error("Unable to extract data from log file : " + logFilename);
+    return false;
+  }
+
+  dst.Clear();
+  dst.SetName(logFilename);
+  dst.SetDescription("Converted from log file : " + logFilename);
+  if (!m_Patient.empty())
+  {
+    dst.GetPatientConfiguration().GetPatient().SerializeFromString(m_Patient, eSerializationFormat::TEXT);
+    for (std::string condition : m_Conditions)
+    {
+      Error("TODO: Support Conditions");
+    }
+  }
+  else if (!m_StateFilename.empty())
+  {
+    if (!FileExists(m_StateFilename))
+    {
+      Warning("Could not find the state file from the log : " + m_StateFilename);
+      Warning("Update the scenario or ensure the state file is in the expected location");
+    }
+    dst.SetEngineStateFile(m_StateFilename);
+  }
+  else
+  {
+    Warning("Unable to find a starting pateint or state file in log.");
+    Warning("Setting scenario to use the Standard Male");
+    dst.GetPatientConfiguration().SetPatientFile("./patients/StandardMale.json");
+  }
+
+  double time_s = 0;
+  for (auto itr : m_Actions)
+  {
+    double actionTime_s = itr.first;
+    if (actionTime_s > time_s)
+    {
+      SEAdvanceTime adv;
+      adv.GetTime().SetValue(actionTime_s - time_s, TimeUnit::s);
+      time_s += actionTime_s - time_s;
+      dst.AddAction(adv);
+    }
+
+    Error("TODO: Support Actions");
+  }
+  return true;
 }
 
 bool SEScenarioLog::Extract(const std::string& filename)
