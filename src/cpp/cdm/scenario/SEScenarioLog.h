@@ -35,8 +35,9 @@ protected:
 
   std::map<double, std::vector<std::string>> m_Actions;
   std::vector<std::string>                   m_Conditions;
+  std::string                                m_EOL;
   double                                     m_FinalSimTime_s;
   std::string                                m_Patient;
   std::string                                m_StateFilename;
-  std::string                                m_EOL;
+  std::string                                m_State;
 };

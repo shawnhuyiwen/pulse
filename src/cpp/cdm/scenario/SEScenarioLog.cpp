@@ -30,7 +30,8 @@ void SEScenarioLog::Clear()
   m_FinalSimTime_s = 0;
   m_Patient = "";
   m_StateFilename = "";
-  m_EOL = R"(\n)";
+  m_State = "";
+  m_EOL = "\n";
 }
 
 bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
@@ -62,9 +63,14 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
     }
     dst.SetEngineStateFile(m_StateFilename);
   }
+  else if (!m_State.empty())
+  {
+    // TODO
+    Error("Inline state information not yet supported");
+  }
   else
   {
-    Warning("Unable to find a starting pateint or state file in log.");
+    Warning("Unable to find a starting patient or state file in log.");
     Warning("Setting scenario to use the Standard Male");
     dst.GetPatientConfiguration().SetPatientFile("./patients/StandardMale.json");
   }
@@ -81,7 +87,23 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
       dst.AddAction(adv);
     }
 
-    Error("TODO: Support Actions");
+    for (std::string s : itr.second)
+    {
+      SEAction* a = SEAction::SerializeFromString(s, eSerializationFormat::TEXT, dst.GetSubstanceManager());
+      if (a == nullptr)
+        dst.Error("Unable to serialize action : " + s);
+      else
+        dst.AddAction(*a);
+      delete a;
+    }
+  }
+
+  if (m_FinalSimTime_s > 0)
+  {
+    SEAdvanceTime adv;
+    adv.GetTime().SetValue(m_FinalSimTime_s - time_s, TimeUnit::s);
+    time_s += m_FinalSimTime_s - time_s;
+    dst.AddAction(adv);
   }
   return true;
 }
@@ -97,24 +119,6 @@ bool SEScenarioLog::Extract(const std::string& filename)
 
   Clear();
   DetectEOL(content);
-
-  if (!GetActions(content))
-  {
-    Error("Failed to retrieve scenario actions");
-    return false;
-  }
-
-  if (!GetConditions(content))
-  {
-    Error("Failed to retrieve scenario conditions");
-    return false;
-  }
-
-  if (!GetFinalSimTime(content))
-  {
-    Error("Failed to retrieve final sim time");
-    return false;
-  }
 
   if (!GetPatient(content))
   {
@@ -134,21 +138,23 @@ bool SEScenarioLog::Extract(const std::string& filename)
     return false;
   }
 
-  /*std::cout << "Actions: " << std::endl;
-  for (auto& [time, actions]: m_Actions)
+  if (!GetConditions(content))
   {
-    std::cout << "Time: " << time << std::endl;
-    for (auto& a: actions)
-      std::cout << a << std::endl;
+    Error("Failed to retrieve scenario conditions");
+    return false;
   }
 
-  std::cout << "\nConditions: " << std::endl;
-  for (auto& c: m_Conditions)
-      std::cout << c << std::endl;
+  if (!GetActions(content))
+  {
+    Error("Failed to retrieve scenario actions");
+    return false;
+  }
 
-  std::cout << "\nFinal time: " << m_FinalSimTime_s << std::endl;
-  std::cout << "\nPatient: " << m_Patient << std::endl;
-  std::cout << "\nState filename: " << m_StateFilename << std::endl;*/
+  if (!GetFinalSimTime(content))
+  {
+    Error("Failed to retrieve final sim time");
+    return false;
+  }
 
   return true;
 }
@@ -327,11 +333,19 @@ bool SEScenarioLog::GetFinalSimTime(const std::string& content)
   std::vector<std::string> finalSimTimeStrs;
   if (!ExtractTagStrings("Final SimTime", content, finalSimTimeStrs))
   {
+    m_FinalSimTime_s = 0;
     Error("Unable to identify Final SimTime string");
     return false;
   }
 
-  if (finalSimTimeStrs.size() == 0 || !ParseTime(finalSimTimeStrs[0], m_FinalSimTime_s))
+  if (finalSimTimeStrs.size() == 0)
+  {
+    m_FinalSimTime_s = 0;
+    Info("No Final SimTime string provided in log");
+    return true;
+  }
+
+  if (!ParseTime(finalSimTimeStrs[0], m_FinalSimTime_s))
   {
     Warning("Unable to parse Final SimTime string");
     return true;
@@ -351,7 +365,7 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   std::string text = content;
   if (!std::regex_search(text, mPatient, rPatient))
   {
-    Warning("Unable to locate patient information");
+    Info("No patient information");
     return true;
   }
 
@@ -380,6 +394,8 @@ bool SEScenarioLog::GetSerializeFromFile(const std::string& content)
   {
     m_StateFilename = serializeFromFileStrs[serializeFromFileStrs.size() - 1];
   }
+  else
+    Info("No State filename found");
 
   return true;
 }
@@ -395,8 +411,10 @@ bool SEScenarioLog::GetSerializeFromString(const std::string& content)
 
   if (serializeFromStringStrs.size() > 0)
   {
-    m_StateFilename = serializeFromStringStrs[serializeFromStringStrs.size() - 1];
+    m_State = serializeFromStringStrs[serializeFromStringStrs.size() - 1];
   }
+  else
+    Info("No State string found");
 
   return true;
 }

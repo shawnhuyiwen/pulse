@@ -29,6 +29,7 @@ public:
   static SEAction* Copy(const SEAction&, const SESubstanceManager&);
 
   virtual bool SerializeToString(std::string& dst, eSerializationFormat fmt) const;
+  static SEAction* SerializeFromString(const std::string, eSerializationFormat fmt, const SESubstanceManager&);
   
   /** Test if the action has all data it needs */
   virtual bool IsValid() const { return true; }
