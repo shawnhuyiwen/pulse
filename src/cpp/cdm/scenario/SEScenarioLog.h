@@ -20,6 +20,7 @@ public:
   static bool GenerateScenarioFromLegacyLog(const std::string& logFilename, const std::string& stateFilename, double extraTime_s=0);
 
 protected:
+  void DetectEOL(const std::string& content);
   bool Extract(const std::string& filename);
   bool ExtractTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs);
   bool ExtractTagStrings(const std::string& tag, const std::string& content, std::map<double, std::vector<std::string>>& tagStrs);
@@ -37,4 +38,5 @@ protected:
   double                                     m_FinalSimTime_s;
   std::string                                m_Patient;
   std::string                                m_StateFilename;
+  std::string                                m_EOL;
 };

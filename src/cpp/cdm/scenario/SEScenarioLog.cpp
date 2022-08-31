@@ -30,6 +30,7 @@ void SEScenarioLog::Clear()
   m_FinalSimTime_s = 0;
   m_Patient = "";
   m_StateFilename = "";
+  m_EOL = R"(\n)";
 }
 
 bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
@@ -95,6 +96,7 @@ bool SEScenarioLog::Extract(const std::string& filename)
   }
 
   Clear();
+  DetectEOL(content);
 
   if (!GetActions(content))
   {
@@ -151,9 +153,44 @@ bool SEScenarioLog::Extract(const std::string& filename)
   return true;
 }
 
+void SEScenarioLog::DetectEOL(const std::string& content)
+{
+  std::string EOLchars = "\r\n";
+  size_t foundFirst = content.find_first_of(EOLchars);
+  if (foundFirst != std::string::npos)
+  {
+    if (foundFirst + 1 >= content.length())
+      return;
+
+    // Remove found character from possibilities so we don't end up getting something like \n\n
+    EOLchars.erase(std::remove(EOLchars.begin(), EOLchars.end(), content[foundFirst]), EOLchars.end());
+  
+    size_t foundLast = content.substr(foundFirst+1).find_first_not_of(EOLchars);
+
+    if (foundLast == std::string::npos)
+      foundLast = foundFirst;
+    else
+      foundLast += foundFirst;
+
+    std::string EOL = content.substr(foundFirst, foundLast + 1 - foundFirst);
+
+    // Double escape escape-chars so that regex can understand
+    m_EOL = "";
+    for(char c : EOL)
+    {
+      if (c == '\r')
+        m_EOL += "\\r";
+      else if (c == '\n')
+        m_EOL += "\\n";
+      else
+        m_EOL += c;
+    }
+  }
+}
+
 bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs)
 {
-  std::string tagPattern = R"(\[)" + tag + R"(\]([^\{\n]*(\{?)))";
+  std::string tagPattern = R"(\[)" + tag + R"(\][ \t]*(?:\d*\.?\d*\(.*\),)?[ \t]*([^\{\n\r]*(\{?)))";
   std::string text = content;
 
   // Capture groups:
@@ -184,7 +221,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
 
 bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::map<double, std::vector<std::string>>& tagStrs)
 {
-  std::string tagPattern = R"((\[\d*\.?\d*\(.*\)\])\s*\[)" + tag + R"(\]([^\{\n]*(\{?)))";
+  std::string tagPattern = R"((\[\d*\.?\d*\(.*\)\])\s*\[)" + tag + R"(\][ \t]*(?:\d*\.?\d*\(.*\),)?[ \t]*([^\{\n\r]*(\{?)))";
   std::string text = content;
 
   // Capture groups:
@@ -225,7 +262,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
 bool SEScenarioLog::IdentifyTagStringEnd(const std::string& content, size_t& endIdx)
 {
   std::smatch mTagEnd;
-  std::regex rTagEnd(R"(\}[\r\n]{3,})");
+  std::regex rTagEnd("\\}(" + m_EOL + "){2,}");
   if (std::regex_search(content, mTagEnd, rTagEnd))
   {
     endIdx = mTagEnd.position(0) + 1;
@@ -296,8 +333,8 @@ bool SEScenarioLog::GetFinalSimTime(const std::string& content)
 
   if (finalSimTimeStrs.size() == 0 || !ParseTime(finalSimTimeStrs[0], m_FinalSimTime_s))
   {
-    Error("Unable to parse Final SimTime string");
-    return false;
+    Warning("Unable to parse Final SimTime string");
+    return true;
   }
 
   return true;
@@ -308,30 +345,24 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   // Capture groups:
   //  0: Whole match
   //  1: Remainder of line, left trimmed (name info)
-  std::string patientPattern = R"(\[Patient\]\s*([^\n]*))";
+  std::string patientPattern = R"(\[Patient\]\s*([^\n\r]*))";
   std::smatch mPatient; 
   std::regex rPatient(patientPattern);
   std::string text = content;
   if (!std::regex_search(text, mPatient, rPatient))
   {
-    Error("Unable to locate patient information");
-    return true; // Legacy logs do not have this information
+    Warning("Unable to locate patient information");
+    return true;
   }
 
   // Locate end of patient info
-  std::string remainingText = mPatient.suffix().str();
-  std::smatch mPatientEnd;
-  std::regex rPatientEnd(R"(\}[\r\n]{3,})");
-  if (std::regex_search(remainingText, mPatientEnd, rPatientEnd))
+  size_t endIdx;
+  if(!IdentifyTagStringEnd(mPatient.suffix().str(), endIdx))
   {
-    m_Patient = text.substr(mPatient.position(1), mPatient.length(1) + mPatientEnd.position(0) + 1);
-  }
-  else
-  {
-    // Failed to find terminating bracket
     Error("Unable to identify tag string terminator: " + std::string(mPatient[0]));
     return false;
   }
+  m_Patient = text.substr(mPatient.position(1), mPatient.length(1) + endIdx);
 
   return true;
 }
