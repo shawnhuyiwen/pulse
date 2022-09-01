@@ -30,4 +30,4 @@ public:
 
 protected:
   SEScalar0To1*           m_Severity;
-};      
+};
