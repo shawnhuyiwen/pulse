@@ -26,7 +26,7 @@ public:
 
   bool Execute();
   bool Execute(PulseScenario& sce);
-  bool Execute(const std::string& logFilename);
+  bool ExecuteLog();
 
 protected:
   eModelType m_ModelType = eModelType::HumanAdultWholeBody;

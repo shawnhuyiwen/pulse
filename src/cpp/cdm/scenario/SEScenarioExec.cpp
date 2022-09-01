@@ -4,6 +4,7 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/scenario/SEScenarioExec.h"
 #include "cdm/scenario/SEScenario.h"
+#include "cdm/scenario/SEScenarioLog.h"
 #include "cdm/io/protobuf/PBScenario.h"
 #include "cdm/engine/SEAction.h"
 #include "cdm/engine/SECondition.h"
@@ -404,4 +405,54 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
     }
     m_SerializationActions.str("");
   }
+}
+
+bool SEScenarioExec::Execute()
+{
+  Logger log;
+  if(m_LoggerForward)
+    log.AddForward(m_LoggerForward);
+
+  std::string ext;
+  // Set the output to the same location as the log file
+  if (m_OutputRootDirectory.empty())
+    SplitPathFilenameExt(m_ScenarioLogFilename, m_OutputRootDirectory, m_BaseFilename, ext);
+  else
+    SplitFilenameExt(m_ScenarioLogFilename, m_BaseFilename, ext);
+
+  if (m_OrganizeOutputDirectory==eSwitch::On)
+  {
+    std::string relativePath = "";
+    if (!m_ScenarioLogDirectory.empty())
+    {
+      // Get the relative directory path from to the scenario directory to the scenario file
+      relativePath = RelativePathFrom(m_ScenarioLogDirectory, m_ScenarioLogFilename);
+    }
+    // Append it to our m_OutputRootDirectory
+    m_OutputRootDirectory += "/" + relativePath + "/" + m_BaseFilename;
+  }
+
+  m_LogFilename = m_OutputRootDirectory + m_BaseFilename + ".cnv.log";
+  std::string outScenarioFilename = m_OutputRootDirectory + m_BaseFilename + ".json";
+
+  log.Info("Creating Log File : " + m_LogFilename);
+  log.SetLogFile(m_LogFilename);
+  log.LogToConsole(m_LogToConsole == eSwitch::On);
+
+  SEScenario sce(&log);
+  SEScenarioLog sceL(&log);
+
+  if (!sceL.Convert(m_ScenarioLogFilename, sce))
+  {
+    Error("Unable to convert scenario from log file: " + m_ScenarioLogFilename);
+    return false;
+  }
+
+  if (!sce.SerializeToFile(outScenarioFilename))
+  {
+    Error("Unable to serialize scenario from log file : " + m_ScenarioLogFilename);
+    return false;
+  }
+
+  return true;
 }

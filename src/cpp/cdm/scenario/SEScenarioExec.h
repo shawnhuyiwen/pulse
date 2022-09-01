@@ -7,6 +7,7 @@
 
 class SEAction;
 class SEScenario;
+class SEScenarioLog;
 class PhysiologyEngine;
 class SEEngineConfiguration;
 
@@ -129,7 +130,7 @@ public:
   bool SerializeFromString(const std::string& src, eSerializationFormat m, Logger* logger=nullptr);
 
 protected:
-
+  bool Execute();
   bool Execute(PhysiologyEngine& pe, SEScenario& sce);
   bool Process(PhysiologyEngine& pe, SEScenario& sce);
   bool ProcessActions(PhysiologyEngine& pe, SEScenario& sce);

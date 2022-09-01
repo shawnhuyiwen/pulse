@@ -10,7 +10,6 @@
 #include "cdm/engine/SEAction.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/properties/SEScalarTime.h"
-#include "cdm/scenario/SEScenarioLog.h"
 #include "cdm/utils/FileUtils.h"
 #include "cdm/utils/ConfigParser.h"
 #include "cdm/utils/ThreadPool.h"
@@ -51,7 +50,7 @@ bool ExecuteOpts(PulseScenarioExec* opts, PulseScenario* sce)
   else if (!opts->GetScenarioLogFilename().empty())
   {
     opts->Info("Converting Log: " + opts->GetScenarioLogFilename());
-    bool b = opts->Execute(opts->GetScenarioLogFilename());
+    bool b = opts->ExecuteLog();
     if(b)
       opts->Info("Completed Log Conversion: " + opts->GetScenarioLogFilename());
     else
@@ -123,7 +122,7 @@ bool PulseScenarioExec::Execute()
   }
   else if (!GetScenarioLogFilename().empty())
   {
-    return Execute(GetScenarioLogFilename());
+    return ExecuteLog();
   }
   else if (!GetScenarioLogDirectory().empty())
   {
@@ -196,29 +195,7 @@ bool PulseScenarioExec::Execute(PulseScenario& sce)
   return SEScenarioExec::Execute(*pe, sce);
 }
 
-bool PulseScenarioExec::Execute(const std::string& logFilename)
+bool PulseScenarioExec::ExecuteLog()
 {
-  std::string outScenario = Replace(logFilename, ".log", ".sce.json");
-  std::string outLog = Replace(logFilename, ".log", ".cnv.log");
-
-  Logger log;
-  log.LogToConsole(m_LogToConsole == eSwitch::On);
-  log.SetLogFile(outLog);
-  
-  SEScenario sce(&log);
-  SEScenarioLog sceL(&log);
-
-  if (!sceL.Convert(logFilename, sce))
-  {
-    Error("Unable to convert scenario from log file: " + logFilename);
-    return false;
-  }
-
-  if (!sce.SerializeToFile(outScenario))
-  {
-    Error("Unable to serialize scenario from log file : " + logFilename);
-    return false;
-  }
-
-  return true;
+  return SEScenarioExec::Execute();
 }
