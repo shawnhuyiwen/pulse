@@ -2857,31 +2857,109 @@ namespace pulse
 
           // Allow air flow between Airway and Stomach
           esophagusResistance_cmH2O_s_Per_L = 1.2;
+
           // Stop air flow between the Airway and Carina
-          //This is basically an open switch.  We don't need to worry about anyone else modifying it if this action is on.
-          tracheaResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
+          if (m_PatientActions->GetIntubation().HasAirwayResistance())
+          {
+            tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+          }
+          else if (!m_PatientActions->GetIntubation().HasSeverity())
+          {
+            double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
+            //Severity 0 = Default
+            //Severity 1 = Fully closed
+            tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+          }
+          else
+          {
+            //This is basically an open switch.  We don't need to worry about anyone else modifying it if this action is on.
+            tracheaResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
+          }
+
           break;
         }
         case eIntubation_Type::RightMainstem:
         {
-          leftBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+          if (m_PatientActions->GetIntubation().HasAirwayResistance())
+          {
+            tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+          }
+
+          if (!m_PatientActions->GetIntubation().HasSeverity())
+          {
+            double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
+            //Severity 0 = Default
+            //Severity 1 = Fully closed
+            leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+          }
+          else
+          {
+            leftBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+          }
+
           break;
         }
         case eIntubation_Type::LeftMainstem:
         {
-          rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+          if (m_PatientActions->GetIntubation().HasAirwayResistance())
+          {
+            tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+          }
+
+          if (!m_PatientActions->GetIntubation().HasSeverity())
+          {
+            double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
+            //Severity 0 = Default
+            //Severity 1 = Fully closed
+            rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+          }
+          else
+          {
+            rightBronchiResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
+          }
+
           break;
         }
         case eIntubation_Type::Oropharyngeal:
         {
-          //Airway adjunct
-          tracheaResistance_cmH2O_s_Per_L *= 15.0;
+          if (m_PatientActions->GetIntubation().HasAirwayResistance())
+          {
+            tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+          }
+          else if (!m_PatientActions->GetIntubation().HasSeverity())
+          {
+            double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
+            //Severity 0 = Default
+            //Severity 1 = Fully closed
+            tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+          }
+          else
+          {
+            //Airway adjunct
+            tracheaResistance_cmH2O_s_Per_L *= 15.0;
+          }
+
           break;
         }
         case eIntubation_Type::Nasopharyngeal:
         {
-          //Airway adjunct
-          tracheaResistance_cmH2O_s_Per_L *= 15.0;
+          if (m_PatientActions->GetIntubation().HasAirwayResistance())
+          {
+            tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+          }
+          else if (!m_PatientActions->GetIntubation().HasSeverity())
+          {
+            double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
+            //Severity 0 = Default
+            //Severity 1 = Fully closed
+            tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+          }
+          else
+          {
+            //Airway adjunct
+            tracheaResistance_cmH2O_s_Per_L *= 15.0;
+          }
+
           break;
         }
         default:
@@ -2907,7 +2985,6 @@ namespace pulse
     {
       double Severity = m_PatientActions->GetAirwayObstruction().GetSeverity().GetValue();
       tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, Severity);
-      tracheaResistance_cmH2O_s_Per_L = MIN(tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
     }
 
     //------------------------------------------------------------------------------------------------------
@@ -2948,8 +3025,6 @@ namespace pulse
           leftBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
           rightBronchiResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(10.0, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, bronchoDilationEffect);
         }
-        BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-        BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
       }
     }
 
@@ -2986,8 +3061,6 @@ namespace pulse
 
     leftBronchiResistance_cmH2O_s_Per_L *= obstructiveResistanceScalingFactor;
     rightBronchiResistance_cmH2O_s_Per_L *= obstructiveResistanceScalingFactor;
-    BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-    BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
 
     //------------------------------------------------------------------------------------------------------
     //Restrictive - No change
@@ -2996,12 +3069,12 @@ namespace pulse
 
     //------------------------------------------------------------------------------------------------------
     // Make sure things don't go crazy
-    
-    tracheaResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-    rightBronchiResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, rightBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-    leftBronchiResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, leftBronchiResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-    rightAlveoliResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, rightAlveoliResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
-    leftAlveoliResistance_cmH2O_s_Per_L = LIMIT(m_RespClosedResistance_cmH2O_s_Per_L, leftAlveoliResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+
+    BLIM(tracheaResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    BLIM(rightAlveoliResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
+    BLIM(leftAlveoliResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
 
     //Set new values
     m_AirwayToCarina->GetNextResistance().SetValue(tracheaResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
