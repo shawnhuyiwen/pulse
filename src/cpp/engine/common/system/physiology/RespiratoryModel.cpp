@@ -2829,10 +2829,22 @@ namespace pulse
         case eIntubation_Type::Tracheal:
         {
           if (m_PatientActions->GetIntubation().HasAirwayResistance())
+          {
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+          }
+          else if (!m_PatientActions->GetIntubation().HasSeverity())
+          {
+            double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
+            //Severity 0 = Default
+            //Severity 1 = Fully closed
+            tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+          }
           else
+          {
             //Tuned based on mechanical ventilator validation data
             tracheaResistance_cmH2O_s_Per_L *= 12.5;
+          }
+
           break;
         }
         case eIntubation_Type::Esophageal:
