@@ -306,8 +306,8 @@ message IntubationData
   }
   PatientActionData                         PatientAction                   = 1;
   eType                                     Type                            = 2;/**<<@brief @ref IntubationData_eTypeTable*/
-  
   ScalarPressureTimePerVolumeData           AirwayResistance                = 3;/**<< @brief Resistance introduced to the airway by the equipment. */
+  Scalar0To1Data                            Severity                        = 4;/**<< @brief Scale of affect, 0 has no affect on airflow in the tube or compartments, 1 air only flows through the tube. */
 }
 
 /** @brief Worsen the effects of the Lobar Pneumonia condition. */
