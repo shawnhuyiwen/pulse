@@ -39,6 +39,8 @@ public:
     m_ScenarioContent = sc;
     m_ScenarioFilename = "";
     m_ScenarioDirectory = "";
+    m_ScenarioLogFilename = "";
+    m_ScenarioLogDirectory = "";
   }
   std::string GetScenarioFilename() const { return m_ScenarioFilename; }
   void SetScenarioFilename(const std::string& fn)
@@ -46,6 +48,8 @@ public:
     m_ScenarioContent = "";
     m_ScenarioFilename = fn;
     m_ScenarioDirectory = "";
+    m_ScenarioLogFilename = "";
+    m_ScenarioLogDirectory = "";
   }
   std::string GetScenarioDirectory() const { return m_ScenarioDirectory; }
   void SetScenarioDirectory(const std::string& dir)
@@ -53,6 +57,27 @@ public:
     m_ScenarioContent = "";
     m_ScenarioFilename = "";
     m_ScenarioDirectory = dir;
+    m_ScenarioLogFilename = "";
+    m_ScenarioLogDirectory = "";
+  }
+
+  std::string GetScenarioLogFilename() const { return m_ScenarioLogFilename; }
+  void SetScenarioLogFilename(const std::string& fn)
+  {
+    m_ScenarioLogFilename = fn;
+    m_ScenarioLogDirectory = "";
+    m_ScenarioContent = "";
+    m_ScenarioFilename = "";
+    m_ScenarioDirectory = "";
+  }
+  std::string GetScenarioLogDirectory() const { return m_ScenarioLogDirectory; }
+  void SetScenarioLogDirectory(const std::string& dir)
+  {
+    m_ScenarioLogFilename = "";
+    m_ScenarioLogDirectory = dir;
+    m_ScenarioContent = "";
+    m_ScenarioFilename = "";
+    m_ScenarioDirectory = "";
   }
 
   eSerializationFormat GetContentFormat() const { return m_ContentFormat; }
@@ -134,6 +159,9 @@ protected:
   std::string m_ScenarioContent;
   std::string m_ScenarioFilename;
   std::string m_ScenarioDirectory;
+
+  std::string m_ScenarioLogFilename;
+  std::string m_ScenarioLogDirectory;
 
   // For both the EC and Scenrio Content
   eSerializationFormat m_ContentFormat;

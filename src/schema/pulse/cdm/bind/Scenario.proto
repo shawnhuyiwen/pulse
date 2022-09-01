@@ -50,8 +50,10 @@ message ScenarioExecData
     string                         ScenarioContent               = 10;/**<< @brief Scenario json/binary inline*/
     string                         ScenarioFilename              = 11;/**<< @brief Single Scenario filename*/
     string                         ScenarioDirectory             = 12;/**<< @brief A directory, where each file is assumed to be a scenario.*/
+    string                         ScenarioLogFilename           = 13;/**<< @brief A directory, where each file is assumed to be a scenario.*/
+    string                         ScenarioLogDirectory          = 14;/**<< @brief A directory, where each file is assumed to be a scenario.*/
   }
-  eSerializationFormat             ContentFormat                 = 13;
-  int32                            ThreadCount                   = 14;/**<< @brief Number of threads to use when processing a ScenarioDirectory: >0 NumThreads to use; 0 NumThreads=NumCores; <0 NumThreads=NumCores-ThreadCount */
+  eSerializationFormat             ContentFormat                 = 15;
+  int32                            ThreadCount                   = 16;/**<< @brief Number of threads to use when processing a ScenarioDirectory: >0 NumThreads to use; 0 NumThreads=NumCores; <0 NumThreads=NumCores-ThreadCount */
   
 }

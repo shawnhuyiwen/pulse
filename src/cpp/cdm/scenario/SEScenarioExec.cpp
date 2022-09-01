@@ -51,6 +51,10 @@ void SEScenarioExec::Clear()
   m_ScenarioFilename = "";
   m_ScenarioDirectory = "";
   m_ContentFormat = eSerializationFormat::JSON;
+
+  m_ScenarioLogFilename = "";
+  m_ScenarioLogDirectory = "";
+
   m_ThreadCount = -1;// One less that number of threads the system supports
 
   m_SaveNextStep = false;

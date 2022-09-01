@@ -162,7 +162,7 @@ bool IsRelativePath(const std::string& path)
   return p.is_relative();
 }
 
-void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask)
+void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask, const std::string& exclusion)
 {
   std::string filename;
   if (recursive)
@@ -174,7 +174,10 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
         filename = entry.path().string();
         std::replace(filename.begin(), filename.end(), '\\', '/');
         if (filename.find(mask) != std::string::npos)
-          files.push_back(filename);
+        {
+          if (exclusion.empty() || filename.find(exclusion) == std::string::npos)
+            files.push_back(filename);
+        }
       }
 
     }
@@ -188,9 +191,11 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
         filename = entry.path().string();
         std::replace(filename.begin(), filename.end(), '\\', '/');
         if (filename.find(mask) != std::string::npos)
-          files.push_back(filename);
+        {
+          if (exclusion.empty() || filename.find(exclusion) == std::string::npos)
+            files.push_back(filename);
+        }
       }
-      
     }
   }
 }

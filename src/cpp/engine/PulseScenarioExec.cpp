@@ -10,6 +10,7 @@
 #include "cdm/engine/SEAction.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/properties/SEScalarTime.h"
+#include "cdm/scenario/SEScenarioLog.h"
 #include "cdm/utils/FileUtils.h"
 #include "cdm/utils/ConfigParser.h"
 #include "cdm/utils/ThreadPool.h"
@@ -37,13 +38,28 @@ bool PulseScenarioExec::SerializeFromString(const std::string& src, eSerializati
 
 bool ExecuteOpts(PulseScenarioExec* opts, PulseScenario* sce)
 {
-  opts->Info("Executing Scenario: " + opts->GetScenarioFilename());
-  bool b = opts->Execute(*sce);
-  if(b)
-    opts->Info("Completed Scenario: " + opts->GetScenarioFilename());
-  else
-    opts->Error("Error Executing Scenario: " + opts->GetScenarioFilename());
-  return b;
+  if (!opts->GetScenarioFilename().empty())
+  {
+    opts->Info("Executing Scenario: " + opts->GetScenarioFilename());
+    bool b = opts->Execute(*sce);
+    if(b)
+      opts->Info("Completed Scenario: " + opts->GetScenarioFilename());
+    else
+      opts->Error("Error Executing Scenario: " + opts->GetScenarioFilename());
+    return b;
+  }
+  else if (!opts->GetScenarioLogFilename().empty())
+  {
+    opts->Info("Converting Log: " + opts->GetScenarioLogFilename());
+    bool b = opts->Execute(opts->GetScenarioLogFilename());
+    if(b)
+      opts->Info("Completed Log Conversion: " + opts->GetScenarioLogFilename());
+    else
+      opts->Error("Error Executing Log Conversion: " + opts->GetScenarioLogFilename());
+    return b;
+  }
+  opts->Error("No scenario/scenario log provided.");
+  return false;
 }
 bool PulseScenarioExec::Execute()
 {
@@ -105,8 +121,54 @@ bool PulseScenarioExec::Execute()
 
     return true;
   }
+  else if (!GetScenarioLogFilename().empty())
+  {
+    return Execute(GetScenarioLogFilename());
+  }
+  else if (!GetScenarioLogDirectory().empty())
+  {
+    // Let's get all the scenarios and create a thread pool
+    std::vector<std::string> logs;
+    ListFiles(GetScenarioLogDirectory(), logs, true, ".log", ".cnv.log");
 
-  Error("No scenario content provided");
+    size_t numThreadsSupported = std::thread::hardware_concurrency();
+    if (numThreadsSupported == 0)
+    {
+      Fatal("Unable to detect number of processors");
+      return false;
+    }
+
+    size_t numThreadsToUse;
+    if (m_ThreadCount > 0)
+      numThreadsToUse = m_ThreadCount>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
+    else if (m_ThreadCount == 0)
+      numThreadsToUse = numThreadsSupported;
+    else
+      numThreadsToUse = numThreadsSupported + m_ThreadCount;
+
+    // Let's not kick off more threads than we need
+    if (numThreadsToUse > logs.size())
+      numThreadsToUse = logs.size();
+
+    ThreadPool pool(numThreadsToUse);
+    for (auto filename : logs)
+    {
+      PulseScenarioExec* opts = new PulseScenarioExec(GetLogger());
+      opts->Copy(*this);
+      opts->m_ScenarioLogFilename = filename;
+      pool.enqueue(ExecuteOpts, opts, nullptr);
+    }
+
+    /* ThreadPool waits for threads to complete in its
+    *  destructor which happens implicitly as we leave
+    *  function scope. If we need return values from
+    *  ExecuteScenario calls, enqueue returns a std::future
+    */
+
+    return true;
+  }
+
+  Error("No scenario content/log provided");
   return false;
 }
 
@@ -132,4 +194,31 @@ bool PulseScenarioExec::Execute(PulseScenario& sce)
     pe->SetConfigurationOverride(&sce.GetConfiguration());
 
   return SEScenarioExec::Execute(*pe, sce);
+}
+
+bool PulseScenarioExec::Execute(const std::string& logFilename)
+{
+  std::string outScenario = Replace(logFilename, ".log", ".sce.json");
+  std::string outLog = Replace(logFilename, ".log", ".cnv.log");
+
+  Logger log;
+  log.LogToConsole(m_LogToConsole == eSwitch::On);
+  log.SetLogFile(outLog);
+  
+  SEScenario sce(&log);
+  SEScenarioLog sceL(&log);
+
+  if (!sceL.Convert(logFilename, sce))
+  {
+    Error("Unable to convert scenario from log file: " + logFilename);
+    return false;
+  }
+
+  if (!sce.SerializeToFile(outScenario))
+  {
+    Error("Unable to serialize scenario from log file : " + logFilename);
+    return false;
+  }
+
+  return true;
 }
