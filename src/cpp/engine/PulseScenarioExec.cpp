@@ -150,19 +150,20 @@ bool PulseScenarioExec::Execute()
       numThreadsToUse = logs.size();
 
     ThreadPool pool(numThreadsToUse);
-    for (auto filename : logs)
+    std::vector<std::future<bool>> futures;
+    for (auto& filename : logs)
     {
       PulseScenarioExec* opts = new PulseScenarioExec(GetLogger());
       opts->Copy(*this);
       opts->m_ScenarioLogFilename = filename;
-      pool.enqueue(ExecuteOpts, opts, nullptr);
+      futures.emplace_back(pool.enqueue(ExecuteOpts, opts, nullptr));
     }
 
-    /* ThreadPool waits for threads to complete in its
-    *  destructor which happens implicitly as we leave
-    *  function scope. If we need return values from
-    *  ExecuteScenario calls, enqueue returns a std::future
-    */
+    for (auto& future : futures)
+    {
+      if (!future.get())
+        return false;
+    }
 
     return true;
   }

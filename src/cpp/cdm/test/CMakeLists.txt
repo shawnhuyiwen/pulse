@@ -7,6 +7,7 @@ add_library_ex(CommonDataModelTests
     BasicCircuitTest.cpp
     BlackBoxTest.cpp
     CommonDataModelTest.cpp
+    ConvertScenarioLogs.cpp
     GasCompartmentTest.cpp
     LiquidCompartmentTest.cpp
     ReadPatientDirectory.cpp
