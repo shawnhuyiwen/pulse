@@ -220,6 +220,11 @@ namespace pulse
     Airway->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
     Airway->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
     Airway->Balance(BalanceGasBy::VolumeFraction);
+    SEGasCompartment* Pharynx = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Pharynx);
+    Pharynx->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
+    Pharynx->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
+    Pharynx->GetSubstanceQuantity(*m_O2)->GetVolumeFraction().SetValue(AmbientO2VF);
+    Pharynx->Balance(BalanceGasBy::VolumeFraction);
     SEGasCompartment* Carina = m_data.GetCompartments().GetGasCompartment(pulse::PulmonaryCompartment::Carina);
     Carina->GetSubstanceQuantity(*m_CO2)->GetVolumeFraction().SetValue(AmbientCO2VF);
     Carina->GetSubstanceQuantity(*m_N2)->GetVolumeFraction().SetValue(AmbientN2VF);
