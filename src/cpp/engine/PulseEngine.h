@@ -189,6 +189,7 @@ namespace pulse
   public:
     DEFINE_STATIC_STRING(Airway);
     DEFINE_STATIC_STRING(Stomach);
+    DEFINE_STATIC_STRING(Pharynx);
     DEFINE_STATIC_STRING(Carina);
     DEFINE_STATIC_STRING_EX(Lungs, PulmonaryLungs);
     /**/DEFINE_STATIC_STRING_EX(LeftLung, LeftLungPulmonary);
@@ -215,6 +216,7 @@ namespace pulse
       {
         _values.push_back(Airway);
         _values.push_back(Stomach);
+        _values.push_back(Pharynx);
         _values.push_back(Carina);
         _values.push_back(Lungs);
         _values.push_back(LeftLung);
@@ -255,8 +257,10 @@ namespace pulse
   {
   public:
     DEFINE_STATIC_STRING(EnvironmentToAirway);
-    DEFINE_STATIC_STRING(AirwayToCarina);
+    DEFINE_STATIC_STRING(AirwayToPharynx);
     DEFINE_STATIC_STRING(AirwayToStomach);
+    DEFINE_STATIC_STRING(PharynxToCarina);
+    DEFINE_STATIC_STRING(PharynxToEnvironment);
     DEFINE_STATIC_STRING(CarinaToLeftAnatomicDeadSpace);
     DEFINE_STATIC_STRING(LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
     DEFINE_STATIC_STRING(LeftAlveolarDeadSpaceToLeftAlveoli);
@@ -280,8 +284,10 @@ namespace pulse
       if (_values.empty())
       {
         _values.push_back(EnvironmentToAirway);
-        _values.push_back(AirwayToCarina);
+        _values.push_back(AirwayToPharynx);
         _values.push_back(AirwayToStomach);
+        _values.push_back(PharynxToCarina);
+        _values.push_back(PharynxToEnvironment);
         _values.push_back(CarinaToLeftAnatomicDeadSpace);
         _values.push_back(LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace);
         _values.push_back(LeftAlveolarDeadSpaceToLeftAlveoli);
