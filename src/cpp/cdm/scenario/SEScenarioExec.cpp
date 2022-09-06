@@ -20,6 +20,7 @@
 #include "cdm/utils/TimingProfile.h"
 #include "cdm/utils/ConfigParser.h"
 #include "cdm/utils/FileUtils.h"
+#include "cdm/utils/GeneralMath.h"
 
 SEScenarioExec::SEScenarioExec(Logger* logger) : Loggable(logger)
 {
@@ -303,10 +304,8 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     }
 
     if(!ProcessAction(pe, *a))
-    {
       err=true;
-      break;
-    }
+
     if(pe.GetEventManager().IsEventActive(eEvent::IrreversibleState))
       return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
   }
@@ -318,7 +317,7 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   double simTime_s = pe.GetSimulationTime(TimeUnit::s);
   pe.GetLogger()->Info("[Final SimTime] " + pulse::cdm::to_string(simTime_s)+"(s)");
   pe.GetLogger()->Info("[Expected Final SimTime] " + pulse::cdm::to_string(expectedFinalSimTime_s)+"(s)");
-  if (expectedFinalSimTime_s != simTime_s)
+  if (GeneralMath::PercentDifference(expectedFinalSimTime_s, simTime_s) > 0.01)
   {
     err = true;
     pe.GetLogger()->Error("!!!! Simulation time does not equal expected end time !!!!");
