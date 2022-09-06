@@ -37,13 +37,28 @@ bool PulseScenarioExec::SerializeFromString(const std::string& src, eSerializati
 
 bool ExecuteOpts(PulseScenarioExec* opts, PulseScenario* sce)
 {
-  opts->Info("Executing Scenario: " + opts->GetScenarioFilename());
-  bool b = opts->Execute(*sce);
-  if(b)
-    opts->Info("Completed Scenario: " + opts->GetScenarioFilename());
-  else
-    opts->Error("Error Executing Scenario: " + opts->GetScenarioFilename());
-  return b;
+  if (!opts->GetScenarioFilename().empty())
+  {
+    opts->Info("Executing Scenario: " + opts->GetScenarioFilename());
+    bool b = opts->Execute(*sce);
+    if(b)
+      opts->Info("Completed Scenario: " + opts->GetScenarioFilename());
+    else
+      opts->Error("Error Executing Scenario: " + opts->GetScenarioFilename());
+    return b;
+  }
+  else if (!opts->GetScenarioLogFilename().empty())
+  {
+    opts->Info("Converting Log: " + opts->GetScenarioLogFilename());
+    bool b = opts->ExecuteLog();
+    if(b)
+      opts->Info("Completed Log Conversion: " + opts->GetScenarioLogFilename());
+    else
+      opts->Error("Error Executing Log Conversion: " + opts->GetScenarioLogFilename());
+    return b;
+  }
+  opts->Error("No scenario/scenario log provided.");
+  return false;
 }
 bool PulseScenarioExec::Execute()
 {
@@ -105,8 +120,55 @@ bool PulseScenarioExec::Execute()
 
     return true;
   }
+  else if (!GetScenarioLogFilename().empty())
+  {
+    return ExecuteLog();
+  }
+  else if (!GetScenarioLogDirectory().empty())
+  {
+    // Let's get all the scenarios and create a thread pool
+    std::vector<std::string> logs;
+    ListFiles(GetScenarioLogDirectory(), logs, true, ".log", ".cnv.log");
 
-  Error("No scenario content provided");
+    size_t numThreadsSupported = std::thread::hardware_concurrency();
+    if (numThreadsSupported == 0)
+    {
+      Fatal("Unable to detect number of processors");
+      return false;
+    }
+
+    size_t numThreadsToUse;
+    if (m_ThreadCount > 0)
+      numThreadsToUse = m_ThreadCount>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
+    else if (m_ThreadCount == 0)
+      numThreadsToUse = numThreadsSupported;
+    else
+      numThreadsToUse = numThreadsSupported + m_ThreadCount;
+
+    // Let's not kick off more threads than we need
+    if (numThreadsToUse > logs.size())
+      numThreadsToUse = logs.size();
+
+    ThreadPool pool(numThreadsToUse);
+    std::vector<std::future<bool>> futures;
+    for (auto& filename : logs)
+    {
+      PulseScenarioExec* opts = new PulseScenarioExec(GetLogger());
+      opts->Copy(*this);
+      opts->m_ScenarioLogFilename = filename;
+      futures.emplace_back(pool.enqueue(ExecuteOpts, opts, nullptr));
+    }
+
+    for (auto& future : futures)
+    {
+      if (!future.get())
+        return false;
+    }
+
+    return true;
+  }
+
+  Error("No scenario content/log provided");
   return false;
 }
 
@@ -132,4 +194,9 @@ bool PulseScenarioExec::Execute(PulseScenario& sce)
     pe->SetConfigurationOverride(&sce.GetConfiguration());
 
   return SEScenarioExec::Execute(*pe, sce);
+}
+
+bool PulseScenarioExec::ExecuteLog()
+{
+  return SEScenarioExec::Execute();
 }

@@ -420,6 +420,7 @@ public:
 public:
   void ReadPatientDirectory(const std::string& sOutputDirectory);
   void ReadSubstanceDirectory(const std::string& sOutputDirectory);
+  void ConvertScenarioLogs(const std::string& sOutputDirectory);
 
   //////////////////////
   // Properties Tests //

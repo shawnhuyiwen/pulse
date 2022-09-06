@@ -26,7 +26,7 @@ SEScenarioLog::~SEScenarioLog()
 void SEScenarioLog::Clear()
 {
   m_Actions.clear();
-  m_AdditionalTime.SetValue(3, TimeUnit::min);;
+  m_AdditionalTime.SetValue(2, TimeUnit::min);;
   m_Conditions.clear();
   m_EOL = "\n";
   m_FinalSimTime_s = 0;

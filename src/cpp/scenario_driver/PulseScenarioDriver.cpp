@@ -21,57 +21,21 @@ int main(int argc, char* argv[])
     std::cerr << "File does not exist: "+input+"\n";
     return 1;
   }
-
-  Logger logger("PulseScenarioDriver.log");
-  logger.LogToConsole(true);
-
-  // If provided file is a log, convert it and write out a new scenario file
-  // If input is a directory, convert all log files if -c option provided
-  std::vector<std::string> logFiles;
-  std::string logExt = ".log";
-  if(!IsDirectory(input))
-  {
-    std::string path, filename, ext;
-    SplitPathFilenameExt(input, path, filename, ext);
-    if (ext.compare(logExt) == 0)
-      logFiles.push_back(input);
-  }
-  else if(argc >= 3 && std::string(argv[2]).compare("-c") == 0)
-  {
-    ListFiles(input, logFiles, true, logExt);
-  }
-  bool convertSuccess = true;
-  for (auto& f : logFiles)
-  {
-    std::string output = Replace(f, logExt, ".sce.json");;
-
-    SEScenario sce(&logger);
-    SEScenarioLog sceL(&logger);
-
-    if (!sceL.Convert(f, sce))
-    {
-      convertSuccess = false;
-      logger.Error("Unable to convert scenario from log file : " + f);
-    }
-
-    if (!sce.SerializeToFile(output))
-    {
-      convertSuccess = false;
-      logger.Error("Unable to serialize scenario from log file : " + f);
-    }
-  }
-  if (logFiles.size() > 0)
-  {
-    return !convertSuccess;
-  }
-
   eModelType t = (eModelType)-1;
+  bool convertLogs = false;
   if (argc >= 3)
-    eModelType_ValueOf(argv[2], t);
+  {
+    if (std::string(argv[2]).compare("-c") == 0)
+      convertLogs =  true;
+    else
+      eModelType_ValueOf(argv[2], t);
+  }
 
   if (t == (eModelType)-1)
     t = eModelType::HumanAdultWholeBody;
 
+  Logger logger("PulseScenarioDriver.log");
+  logger.LogToConsole(true);
   PulseScenarioExec opts(&logger);
   opts.SetModelType(t);
 
@@ -85,12 +49,22 @@ int main(int argc, char* argv[])
   if (IsDirectory(input))
   {
     opts.LogToConsole(eSwitch::Off);
-    opts.SetScenarioDirectory(input);
+
+    if (convertLogs)
+      opts.SetScenarioLogDirectory(input);
+    else
+      opts.SetScenarioDirectory(input);
   }
   else
   {
     opts.LogToConsole(eSwitch::On);
-    opts.SetScenarioFilename(input);
+
+    std::string filename, ext;
+    SplitFilenameExt(input, filename, ext);
+    if (ext.compare(".log") == 0)
+      opts.SetScenarioLogFilename(input);
+    else
+      opts.SetScenarioFilename(input);
   }
   return !opts.Execute();
 }
