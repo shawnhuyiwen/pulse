@@ -232,11 +232,14 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     {
       if (HasBagValveMaskSqueeze())
       {
-        Warning("A previous BagValveMaskSqueeze action has not completed yet, ignoring new BagValveMaskAutomated");
-        return false;
+        Warning("Replacing active BagValveMaskSqueeze action with this BagValveMaskAutomated action");
       }
       if (HasBagValveMaskInstantaneous())
-        RemoveBagValveMaskInstantaneous();
+      {
+        Warning("Replacing active BagValveMaskInstantaneous action with this BagValveMaskAutomated action");
+      }
+      RemoveBagValveMaskSqueeze();
+      RemoveBagValveMaskInstantaneous();
       GetBagValveMaskAutomated().Copy(*automated);
       m_BagValveMaskAutomated->Activate();
       if (!m_BagValveMaskAutomated->IsActive())
@@ -247,6 +250,14 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEBagValveMaskInstantaneous* inst = dynamic_cast<const SEBagValveMaskInstantaneous*>(&action);
     if (inst != nullptr)
     {
+      if (HasBagValveMaskSqueeze())
+      {
+        Warning("Replacing active BagValveMaskSqueeze action with this BagValveMaskInstantaneous action");
+      }
+      if (HasBagValveMaskAutomated())
+      {
+        Warning("Replacing active BagValveMaskAutomated action with this BagValveMaskInstantaneous action");
+      }
       RemoveBagValveMaskSqueeze();
       RemoveBagValveMaskAutomated();
       GetBagValveMaskInstantaneous().Copy(*inst);
@@ -259,18 +270,20 @@ bool SEEquipmentActionCollection::ProcessAction(const SEEquipmentAction& action)
     const SEBagValveMaskSqueeze* squeeze = dynamic_cast<const SEBagValveMaskSqueeze*>(&action);
     if (squeeze != nullptr)
     {
+      if (HasBagValveMaskInstantaneous())
+      {
+        Warning("Replacing active BagValveMaskInstantaneous action with this BagValveMaskSqueeze action");
+      }
       if (HasBagValveMaskSqueeze())
       {
-        Warning("A previous BVM squeeze action has not completed yet, ignoring new squeeze");
-        return false;
+        Warning("Current BagValveMaskSqueeze action has not completed, starting a new squeeze");
       }
       if (HasBagValveMaskAutomated())
       {
-        Warning("A previous BagValveMaskAutomated action has not completed yet, ignoring new squeeze");
-        return false;
+        Warning("Replacing active BagValveMaskAutomated action with this BagValveMaskSqueeze action");
       }
-      if (HasBagValveMaskInstantaneous())
-        RemoveBagValveMaskInstantaneous();
+      RemoveBagValveMaskAutomated();
+      RemoveBagValveMaskInstantaneous();
       GetBagValveMaskSqueeze().Copy(*squeeze);
       m_BagValveMaskSqueeze->Activate();
       if (!m_BagValveMaskSqueeze->IsActive())

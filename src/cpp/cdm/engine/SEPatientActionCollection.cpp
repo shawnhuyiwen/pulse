@@ -265,18 +265,20 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   const SEChestCompression* cprCompression = dynamic_cast<const SEChestCompression*>(&action);
   if (cprCompression != nullptr)
   {
+    if (HasChestCompressionInstantaneous())
+    {
+      Warning("Replacing active ChestCompressionInstantaneous action with this ChestCompression action");
+    }
     if (HasChestCompression())
     {
-      Warning("A previous ChestCompression action has not completed yet, ignoring new ChestCompression");
-      return false;
+      Warning("Current ChestCompression action has not completed, starting a new compression");
     }
     if (HasChestCompressionAutomated())
     {
-      Warning("A previous ChestCompressionAutomated action has not completed yet, ignoring new ChestCompression");
-      return false;
+      Warning("Replacing active ChestCompressionAutomated action with this ChestCompression action");
     }
-    if (HasChestCompressionInstantaneous())
-      RemoveChestCompressionInstantaneous();
+    RemoveChestCompressionAutomated();
+    RemoveChestCompressionInstantaneous();
     GetChestCompression().Copy(*cprCompression, true);
     m_ChestCompression->Activate();
     if (!m_ChestCompression->IsActive())
@@ -289,11 +291,14 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   {
     if (HasChestCompression())
     {
-      Warning("A previous ChestCompression action has not completed yet, ignoring new ChestCompression");
-      return false;
+      Warning("Replacing active ChestCompression action with this ChestCompressionAutomated action");
     }
     if (HasChestCompressionInstantaneous())
-      RemoveChestCompressionInstantaneous();
+    {
+      Warning("Replacing active ChestCompressionInstantaneous action with this ChestCompressionAutomated action");
+    }
+    RemoveChestCompression();
+    RemoveChestCompressionInstantaneous();
     GetChestCompressionAutomated().Copy(*cprAutomated, true);
     m_ChestCompressionAutomated->Activate();
     if (!m_ChestCompressionAutomated->IsActive())
@@ -304,6 +309,14 @@ bool SEPatientActionCollection::ProcessAction(const SEPatientAction& action)
   const SEChestCompressionInstantaneous* cprInstantaneous = dynamic_cast<const SEChestCompressionInstantaneous*>(&action);
   if (cprInstantaneous != nullptr)
   {
+    if (HasChestCompression())
+    {
+      Warning("Replacing active ChestCompression action with this ChestCompressionInstantaneous action");
+    }
+    if (HasChestCompressionAutomated())
+    {
+      Warning("Replacing active ChestCompressionAutomated action with this ChestCompressionInstantaneous action");
+    }
     RemoveChestCompression();
     RemoveChestCompressionAutomated();
     GetChestCompressionInstantaneous().Copy(*cprInstantaneous, true);
