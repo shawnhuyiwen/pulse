@@ -2759,6 +2759,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void RespiratoryModel::UpdateResistances()
   {
+    double pharynxResistance_cmH2O_s_Per_L = 0.0;
     double tracheaResistance_cmH2O_s_Per_L = m_PharynxToCarina->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     double rightBronchiResistance_cmH2O_s_Per_L = m_CarinaToRightAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     double leftBronchiResistance_cmH2O_s_Per_L = m_CarinaToLeftAnatomicDeadSpace->GetNextResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
@@ -2836,7 +2837,7 @@ namespace pulse
           {
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
           }
-          else if (!m_PatientActions->GetIntubation().HasSeverity())
+          else if (m_PatientActions->GetIntubation().HasSeverity())
           {
             double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
             //Severity 0 = Default
@@ -2855,24 +2856,23 @@ namespace pulse
         {
           // Allow air flow between Airway and Stomach
           esophagusResistance_cmH2O_s_Per_L = 1.2;
+          pharynxResistance_cmH2O_s_Per_L = m_RespOpenResistance_cmH2O_s_Per_L;
 
-          // Stop air flow between the Airway and Carina
           if (m_PatientActions->GetIntubation().HasAirwayResistance())
           {
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
           }
-          else if (!m_PatientActions->GetIntubation().HasSeverity())
+
+          double leakResistance_cmH2O_s_Per_L = m_RespClosedResistance_cmH2O_s_Per_L;
+          if (m_PatientActions->GetIntubation().HasSeverity())
           {
             double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
             //Severity 0 = Default
             //Severity 1 = Fully closed
-            tracheaResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, tracheaResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
+            leakResistance_cmH2O_s_Per_L = GeneralMath::ExponentialGrowthFunction(20.0, leakResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L, severity);
           }
-          else
-          {
-            //This is basically an open switch.  We don't need to worry about anyone else modifying it if this action is on.
-            tracheaResistance_cmH2O_s_Per_L = m_DefaultOpenResistance_cmH2O_s_Per_L;
-          }
+
+          m_PharynxToEnvironment->GetNextResistance().SetValue(leakResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
           break;
         }
@@ -2883,7 +2883,7 @@ namespace pulse
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
           }
 
-          if (!m_PatientActions->GetIntubation().HasSeverity())
+          if (m_PatientActions->GetIntubation().HasSeverity())
           {
             double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
             //Severity 0 = Default
@@ -2904,7 +2904,7 @@ namespace pulse
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
           }
 
-          if (!m_PatientActions->GetIntubation().HasSeverity())
+          if (m_PatientActions->GetIntubation().HasSeverity())
           {
             double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
             //Severity 0 = Default
@@ -2924,7 +2924,7 @@ namespace pulse
           {
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
           }
-          else if (!m_PatientActions->GetIntubation().HasSeverity())
+          else if (m_PatientActions->GetIntubation().HasSeverity())
           {
             double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
             //Severity 0 = Default
@@ -2945,7 +2945,7 @@ namespace pulse
           {
             tracheaResistance_cmH2O_s_Per_L = m_PatientActions->GetIntubation().GetAirwayResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
           }
-          else if (!m_PatientActions->GetIntubation().HasSeverity())
+          else if (m_PatientActions->GetIntubation().HasSeverity())
           {
             double severity = m_PatientActions->GetIntubation().GetSeverity().GetValue();
             //Severity 0 = Default
@@ -3067,7 +3067,6 @@ namespace pulse
 
     //------------------------------------------------------------------------------------------------------
     // Make sure things don't go crazy
-
     BLIM(tracheaResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
     BLIM(leftBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
     BLIM(rightBronchiResistance_cmH2O_s_Per_L, m_RespClosedResistance_cmH2O_s_Per_L, m_RespOpenResistance_cmH2O_s_Per_L);
@@ -3081,6 +3080,30 @@ namespace pulse
     m_RightAnatomicDeadSpaceToRightAlveolarDeadSpace->GetNextResistance().SetValue(rightAlveoliResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_LeftAnatomicDeadSpaceToLeftAlveolarDeadSpace->GetNextResistance().SetValue(leftAlveoliResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_AirwayToStomach->GetNextResistance().SetValue(esophagusResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+
+    bool stateChange = false;
+    if (pharynxResistance_cmH2O_s_Per_L > 0.0)
+    {
+      if (!m_AirwayToPharynx->HasNextResistance())
+      {
+        // Add a new resitor element, since this path doesn't have an element by default
+        m_AirwayToPharynx->GetResistanceBaseline().SetValue(pharynxResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+        stateChange = true;
+      }
+
+      m_AirwayToPharynx->GetNextResistance().SetValue(pharynxResistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
+    }
+    else if (m_AirwayToPharynx->HasNextResistance())
+    {
+      // Remove the element
+      m_AirwayToPharynx->RemoveResistance();
+      stateChange = true;
+    }
+
+    if (stateChange)
+    {
+      m_data.GetCircuits().GetActiveRespiratoryCircuit().StateChange();
+    }
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -3099,14 +3122,16 @@ namespace pulse
 
     //------------------------------------------------------------------------------------------------------
     //Positive Pressure Ventilation
-    if (m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+    if ((m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
       m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
-      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator)
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator) &&
+      (m_PatientActions->HasIntubation() &&
+        m_PatientActions->GetIntubation().GetType() != eIntubation_Type::Esophageal))
     {
       if (!HasActiveRespiratoryMechanics() ||
         (HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasRightComplianceCurve()))
       {
-          rightAlveoliCompliance_L_Per_cmH2O *= 0.38;
+        rightAlveoliCompliance_L_Per_cmH2O *= 0.38;
       }
       if (!HasActiveRespiratoryMechanics() ||
         (HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasLeftComplianceCurve()))
