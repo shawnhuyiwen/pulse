@@ -150,7 +150,7 @@ bool SEDynamicStabilization::StabilizeConditions(Controller& engine, const SECon
     }
     else
     {
-      m_ss << "Stabilizing Condition : " << *c;
+      m_ss << "[Condition] " << *c;
       Info(m_ss);
       m_ActiveConditions[c->GetName()] = &GetConditionConvergence(c->GetName());
     }

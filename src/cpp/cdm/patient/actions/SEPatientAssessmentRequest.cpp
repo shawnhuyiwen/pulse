@@ -56,11 +56,3 @@ void SEPatientAssessmentRequest::SetType(ePatientAssessment_Type Type)
 {
   m_Type = Type;
 }
-void SEPatientAssessmentRequest::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Assessment Request"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str  << "\n\tType: "<< ePatientAssessment_Type_Name(GetType());
-  str  << std::flush;
-}

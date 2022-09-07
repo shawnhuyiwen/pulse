@@ -245,6 +245,7 @@ void CommonDataModelTest::FillFunctionMap()
 
   cdmMap.insert(std::make_pair("ReadPatientDirectory", &CommonDataModelTest::ReadPatientDirectory));
   cdmMap.insert(std::make_pair("ReadSubstanceDirectory", &CommonDataModelTest::ReadSubstanceDirectory));
+  cdmMap.insert(std::make_pair("ConvertScenarioLogs", &CommonDataModelTest::ConvertScenarioLogs));
 
   cdmMap.insert(std::make_pair("ScalarTest", &CommonDataModelTest::ScalarTest));
   cdmMap.insert(std::make_pair("UnitsTest", &CommonDataModelTest::UnitsTest));

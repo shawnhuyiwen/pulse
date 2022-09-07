@@ -13,13 +13,14 @@ public:
   SEConsumeMeal(Logger* logger=nullptr);
   virtual ~SEConsumeMeal();
 
+  static constexpr char const* Name = "Consume Meal";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEConsumeMeal& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual std::string GetName() const { return "ConsumeMeal"; }
 
   bool HasMeal() const;
   SEMeal& GetMeal();
@@ -28,8 +29,6 @@ public:
   virtual std::string GetMealFile() const;
   virtual void SetMealFile(const std::string& fileName);
   virtual bool HasMealFile() const;
-
-  virtual void ToString(std::ostream &str) const;
 
 protected:
   SEMeal*      m_Meal;

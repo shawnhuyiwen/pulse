@@ -104,14 +104,3 @@ const SESubstanceCompound& SESubstanceCompoundInfusion::GetSubstanceCompound() c
 {
   return m_Compound;
 }
-
-void SESubstanceCompoundInfusion::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Compound Infusion"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str  << "\n\tRate: "; HasRate()? str << *m_Rate : str <<"NaN";
-  str  << "\n\tBag Volume: "; HasBagVolume()? str << *m_BagVolume : str << "NaN";
-  str  << "\n\tSubstance Compound: " << m_Compound.GetName();
-  str  << std::flush;
-}

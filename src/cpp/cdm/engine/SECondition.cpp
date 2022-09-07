@@ -6,6 +6,7 @@
 #include "cdm/substance/SESubstanceManager.h"
 #include "cdm/patient/conditions/SEPatientCondition.h"
 #include "cdm/system/environment/conditions/SEEnvironmentCondition.h"
+#include "cdm/io/protobuf/PBConditions.h"
 
 SECondition::SECondition(Logger* logger) : Loggable(logger)
 {
@@ -20,6 +21,11 @@ SECondition::~SECondition()
 void SECondition::Clear()
 {
   m_Comment = "";
+}
+
+bool SECondition::SerializeToString(std::string& dst, eSerializationFormat fmt) const
+{
+  return PBCondition::SerializeToString(*this, dst, fmt);
 }
 
 std::string SECondition::GetComment() const
@@ -38,3 +44,4 @@ void SECondition::InvalidateComment()
 {
   m_Comment = "";
 }
+

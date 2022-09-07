@@ -10,7 +10,7 @@ bool CDM_DECL IsRelativePath(std::string const& path);
 bool CDM_DECL CreatePath(const std::string&);
 bool CDM_DECL CreateFilePath(const std::string&);
 std::string CDM_DECL Replace(const std::string& original, const std::string& replace, const std::string& withThis);
-void CDM_DECL ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask = "");
+void CDM_DECL ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask = "", const std::string& exclusion = "");
 std::string CDM_DECL GetCurrentWorkingDirectory();
 void CDM_DECL MakeDirectory(std::string const& dir);
 bool CDM_DECL DeleteFile(const std::string &dir, short retry=1);

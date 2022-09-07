@@ -39,6 +39,7 @@ void HowToTensionPneumothorax();
 
 void HowToConcurrentEngines();
 void HowToRunScenario();
+void HowToScenarioFromLog();
 void HowToDynamicHemorrhage();
 
 void HowToSandbox();

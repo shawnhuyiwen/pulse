@@ -99,13 +99,3 @@ double SEChestCompressionInstantaneous::GetForceScale() const
     return SEScalar::dNaN();
   return m_ForceScale->GetValue();
 }
-
-void SEChestCompressionInstantaneous::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Chest Compression Instantaneous";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tForce: "; HasForce() ? str << *m_Force : str << "NaN";
-  str << "\n\tForceScale: "; HasForceScale() ? str << *m_ForceScale : str << "NaN";
-  str << std::flush;
-}

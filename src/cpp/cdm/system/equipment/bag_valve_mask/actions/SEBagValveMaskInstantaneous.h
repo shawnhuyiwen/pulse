@@ -13,6 +13,9 @@ public:
   SEBagValveMaskInstantaneous(Logger* logger=nullptr);
   virtual ~SEBagValveMaskInstantaneous();
 
+  static constexpr char const* Name = "Instantaneous";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEBagValveMaskInstantaneous& src);
 
@@ -27,8 +30,6 @@ public:
   virtual bool HasPressure() const;
   virtual SEScalarPressure& GetPressure();
   virtual double GetPressure(const PressureUnit& unit) const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

@@ -12,6 +12,9 @@ public:
   SEDyspnea(Logger* logger=nullptr);
   virtual ~SEDyspnea();
 
+  static constexpr char const* Name = "Dyspnea";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEDyspnea& src, bool /*preserveState*/=false);
 
@@ -22,8 +25,6 @@ public:
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

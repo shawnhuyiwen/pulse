@@ -11,6 +11,9 @@ public:
   SEAnesthesiaMachineSodaLimeFailure(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineSodaLimeFailure();
 
+  static constexpr char const* Name = "Soda Lime Failure";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineSodaLimeFailure& src, bool /*preserveState*/=false);
 
@@ -21,8 +24,6 @@ public:
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

@@ -16,6 +16,9 @@ public:
   SESerializeState(Logger* logger=nullptr);
   virtual ~SESerializeState();
 
+  static constexpr char const* Name = "Serialize State";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;
@@ -27,8 +30,6 @@ public:
   virtual std::string GetFilename() const;
   virtual void SetFilename(const std::string& filename);
   virtual void InvalidateFilename();
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

@@ -38,11 +38,10 @@ void SEHemorrhage::Clear()
 
 void SEHemorrhage::Copy(const SEHemorrhage& src, bool preserveState)
 {
-  double v;
-  const VolumeUnit* vu;
+  double v = SEScalar::dNaN();
+  const VolumeUnit* vu = nullptr;
   if (preserveState)
   {
-    vu = nullptr;
     if (HasTotalBloodLost())
     {
       vu = GetTotalBloodLost().GetUnit();
@@ -179,19 +178,6 @@ double SEHemorrhage::GetTotalBloodLost(const VolumeUnit& unit) const
   if (m_TotalBloodLost == nullptr)
     return SEScalar::dNaN();
   return m_TotalBloodLost->GetValue(unit);
-}
-
-void SEHemorrhage::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Hemorrhage";
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tType: " << eHemorrhage_Type_Name(GetType());
-  str << "\n\tFor Compartment: "; HasCompartment()? str << GetCompartment() : str << "No Compartment Set";
-  str << "\n\tFlowRate: "; HasFlowRate() ? str << *m_FlowRate : str << "Not Set";
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << "\n\tTotalBloodLost: "; HasTotalBloodLost() ? str << *m_TotalBloodLost : str << "Not Set";
-  str << std::flush;
 }
 
 const SEHemorrhage::ExternalCompartment SEHemorrhage::ExternalCompartment::RightLeg("RightLeg");

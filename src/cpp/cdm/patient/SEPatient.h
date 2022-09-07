@@ -186,3 +186,12 @@ protected:
   SEScalarVolume*            m_TotalLungCapacity;
   SEScalarVolume*            m_VitalCapacity;
 };
+
+inline std::ostream& operator<< (std::ostream& out, const SEPatient& p)
+{
+  std::string s;
+  if (!p.SerializeToString(s, eSerializationFormat::TEXT))
+    p.Error("Unable to serialize patient");
+  out << s;
+  return out;
+}

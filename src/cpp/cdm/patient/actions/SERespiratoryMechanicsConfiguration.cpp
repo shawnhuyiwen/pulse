@@ -102,22 +102,3 @@ eMergeType SERespiratoryMechanicsConfiguration::GetMergeType() const
 {
   return m_MergeType;
 }
-
-void SERespiratoryMechanicsConfiguration::ToString(std::ostream& str) const
-{
-  str << "Respiratory Mechanics Configuration";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  if (HasSettingsFile())
-  {
-    str << "\n\tConfiguration File: "; str << m_SettingsFile;
-  }
-  else if (HasSettings())
-  {
-    str << "\n";
-    m_Settings->ToString(str);
-    str << "\n\tAppliedRespiratoryCycle: " << eAppliedRespiratoryCycle_Name(m_AppliedRespiratoryCycle);
-    str << "\n\tMergeType: " << eMergeType_Name(m_MergeType);
-  }
-  str << std::flush;
-}

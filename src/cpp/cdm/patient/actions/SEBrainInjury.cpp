@@ -81,13 +81,3 @@ void SEBrainInjury::SetType(eBrainInjury_Type Type)
 {
   m_Type = Type;
 }
-
-void SEBrainInjury::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Brain Injury";
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << "\n\tType: "<< eBrainInjury_Type_Name(GetType());
-  str << std::flush;
-}

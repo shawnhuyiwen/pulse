@@ -13,13 +13,14 @@ public:
 
   virtual ~SEForcedExhale();
 
+  static constexpr char const* Name = "Forced Exhale";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEForcedExhale& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual bool HasExpiratoryReserveVolumeFraction() const;
   virtual SEScalar0To1& GetExpiratoryReserveVolumeFraction();

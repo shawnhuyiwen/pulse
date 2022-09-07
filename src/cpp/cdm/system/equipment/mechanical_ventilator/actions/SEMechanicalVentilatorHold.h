@@ -13,6 +13,9 @@ public:
   SEMechanicalVentilatorHold(Logger* logger=nullptr);
   virtual ~SEMechanicalVentilatorHold();
 
+  static constexpr char const* Name = "Hold";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEMechanicalVentilatorHold& src, bool /*preserveState*/ = false);
 
@@ -25,8 +28,6 @@ public:
 
   virtual eAppliedRespiratoryCycle GetAppliedRespiratoryCycle() const;
   virtual void SetAppliedRespiratoryCycle(eAppliedRespiratoryCycle c);
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

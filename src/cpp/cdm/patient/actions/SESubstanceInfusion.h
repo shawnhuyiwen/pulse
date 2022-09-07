@@ -13,6 +13,9 @@ public:
   SESubstanceInfusion(const SESubstance& substance, Logger* logger=nullptr);
   virtual ~SESubstanceInfusion();
 
+  static constexpr char const* Name = "Substance Infusion";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SESubstanceInfusion& src, bool /*preserveState*/=false);
 
@@ -34,8 +37,6 @@ public:
 
   virtual SESubstance& GetSubstance();
   virtual const SESubstance& GetSubstance() const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

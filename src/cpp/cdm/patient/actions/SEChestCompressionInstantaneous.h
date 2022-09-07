@@ -12,6 +12,9 @@ public:
   SEChestCompressionInstantaneous(Logger* logger=nullptr);
   virtual ~SEChestCompressionInstantaneous();
 
+  static constexpr char const* Name = "Chest Compression Instantaneous";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChestCompressionInstantaneous& src, bool /*preserveState*/=false);
 
@@ -26,8 +29,6 @@ public:
   virtual bool HasForceScale() const;
   virtual SEScalar0To1& GetForceScale();
   virtual double GetForceScale() const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

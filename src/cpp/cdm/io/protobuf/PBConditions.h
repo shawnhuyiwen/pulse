@@ -16,4 +16,6 @@ public:
   static CDM_BIND::AnyConditionData* Unload(const SECondition& condition);
   static void Serialize(const CDM_BIND::ConditionData& src, SECondition& dst);
   static void Serialize(const SECondition& src, CDM_BIND::ConditionData& dst);
+  static bool SerializeToString(const SECondition& c, std::string& output, eSerializationFormat fmt = eSerializationFormat::JSON);
+  static SECondition* SerializeFromString(const std::string& src, Logger& logger, eSerializationFormat fmt = eSerializationFormat::JSON);
 };

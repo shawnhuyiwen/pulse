@@ -12,6 +12,9 @@ public:
   SEChestCompression(Logger* logger=nullptr);
   virtual ~SEChestCompression();
 
+  static constexpr char const* Name = "Chest Compression";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChestCompression& src, bool /*preserveState*/=false);
 
@@ -30,8 +33,6 @@ public:
   virtual bool HasCompressionPeriod() const;
   virtual SEScalarTime& GetCompressionPeriod();
   virtual double GetCompressionPeriod(const TimeUnit& unit) const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

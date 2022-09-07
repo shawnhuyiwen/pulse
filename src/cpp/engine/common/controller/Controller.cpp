@@ -281,25 +281,25 @@ namespace pulse
 
   bool Controller::SerializeFromFile(const std::string& filename)
   {
-    Info("Serializing from file " + filename);
+    Info("[SerializingFromFile] " + filename);
     LogBuildInfo();
     return PBState::SerializeFromFile(filename, *this, m_ConfigOverride);
   }
   bool Controller::SerializeToFile(const std::string& filename) const
   {
-    Info("Serializing to file " + filename);
+    Info("[SerializingToFile] " + filename);
     return PBState::SerializeToFile(*this, filename);
   }
 
   bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
-    Info("Serializing from string");
+    Info("[SerializingFromString]");
     LogBuildInfo();
     return PBState::SerializeFromString(src, *this, m);
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
-    Info("Serializing to string");
+    Info("[SerializingToString]");
     return PBState::SerializeToString(*this, output, m);
   }
 
@@ -386,7 +386,8 @@ namespace pulse
 
   bool Controller::Initialize(SEPatient const& patient)
   {
-    Info("Configuring patient");
+    m_ss << "[Patient] " << patient;
+    Info(m_ss);
     if (!SetupPatient(patient))
       return false;
 

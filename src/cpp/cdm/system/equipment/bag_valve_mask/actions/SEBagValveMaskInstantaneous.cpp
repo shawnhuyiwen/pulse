@@ -92,13 +92,3 @@ double SEBagValveMaskInstantaneous::GetPressure(const PressureUnit& unit) const
     return SEScalar::dNaN();
   return m_Pressure->GetValue(unit);
 }
-
-void SEBagValveMaskInstantaneous::ToString(std::ostream &str) const
-{
-  str << "Bag Valve Mask Instantaneous";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tFlow: "; HasFlow() ? str << *m_Flow : str << "NaN";
-  str << "\n\tPressure: "; HasPressure() ? str << *m_Pressure : str << "NaN";
-  str << std::flush;
-}

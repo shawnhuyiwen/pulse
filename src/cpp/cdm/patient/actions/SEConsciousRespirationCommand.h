@@ -12,6 +12,12 @@ public:
   SEConsciousRespirationCommand(Logger* logger);
   virtual ~SEConsciousRespirationCommand();
 
+
+  static constexpr char const* ActionType = "Conscious Respiration Command";
+  virtual std::string GetActionType() const { return ActionType; }
+
+  virtual std::string GetName() const = 0;
+
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;
@@ -22,15 +28,7 @@ public:
   virtual bool HasComment() const;
   virtual void InvalidateComment();
 
-  virtual void ToString(std::ostream &str) const = 0;
-
 protected:
 
-  std::string                               m_Comment;
-};  
-
-inline std::ostream& operator<< (std::ostream& out, const SEConsciousRespirationCommand& c)
-{
-  c.ToString(out);
-  return out;
-}
+  std::string  m_Comment;
+};

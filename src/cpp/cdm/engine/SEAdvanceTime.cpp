@@ -43,13 +43,6 @@ double SEAdvanceTime::GetTime(const TimeUnit& unit) const
   return m_Time->GetValue(unit);
 }
 
-void SEAdvanceTime::ToString(std::ostream& str) const
-{
-  if (HasComment())
-    str << "\n\tComment : " << m_Comment;
-  str << "\n\tAdvance Time : " << m_Time;
-}
-
 const SEScalar* SEAdvanceTime::GetScalar(const std::string& name)
 {
   if (name.compare("Time") == 0)

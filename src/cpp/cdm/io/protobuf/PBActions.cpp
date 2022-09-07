@@ -11,6 +11,7 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBEnvironmentActions.h"
 #include "cdm/io/protobuf/PBEquipmentActions.h"
 #include "cdm/io/protobuf/PBProperties.h"
+#include "cdm/io/protobuf/PBUtils.h"
 #include "cdm/patient/actions/SEPatientAction.h"
 #include "cdm/system/environment/actions/SEEnvironmentAction.h"
 #include "cdm/system/equipment/SEEquipmentAction.h"
@@ -120,13 +121,26 @@ SEAction* PBAction::Copy(const SEAction& a, const SESubstanceManager& subMgr)
   return copy;
 }
 
+bool PBAction::SerializeToString(const SEAction& a, std::string& dst, eSerializationFormat fmt)
+{
+  auto* bind = Unload(a);
+  return PBUtils::SerializeToString(*bind, dst, fmt, nullptr);
+}
+SEAction* PBAction::SerializeFromString(const std::string& src, eSerializationFormat fmt, const SESubstanceManager& subMgr)
+{
+  CDM_BIND::AnyActionData bind;
+  PBUtils::SerializeFromString(src, bind, fmt, subMgr.GetLogger());
+  return PBAction::Load(bind, subMgr);
+}
+
 void PBAction::Serialize(const CDM_BIND::ActionData& src, SEAction& dst)
 {
   dst.SetComment(src.comment());
 }
 void PBAction::Serialize(const SEAction& src, CDM_BIND::ActionData& dst)
 {
-  dst.set_comment(src.m_Comment);
+  if(!src.m_Comment.empty())
+    dst.set_comment(src.m_Comment);
 }
 
 void PBAction::Load(const CDM_BIND::AdvanceTimeData& src, SEAdvanceTime& dst)

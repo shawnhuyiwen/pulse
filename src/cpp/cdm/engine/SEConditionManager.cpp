@@ -223,7 +223,7 @@ bool SEConditionManager::HasAcuteRespiratoryDistressSyndrome() const
 SEAcuteRespiratoryDistressSyndrome& SEConditionManager::GetAcuteRespiratoryDistressSyndrome()
 {
   if (m_ARDS == nullptr)
-    m_ARDS = new SEAcuteRespiratoryDistressSyndrome();
+    m_ARDS = new SEAcuteRespiratoryDistressSyndrome(GetLogger());
   return *m_ARDS;
 }
 const SEAcuteRespiratoryDistressSyndrome* SEConditionManager::GetAcuteRespiratoryDistressSyndrome() const
@@ -238,7 +238,7 @@ bool SEConditionManager::HasChronicAnemia() const
 SEChronicAnemia& SEConditionManager::GetChronicAnemia()
 {
   if (m_Anemia == nullptr)
-    m_Anemia = new SEChronicAnemia();
+    m_Anemia = new SEChronicAnemia(GetLogger());
   return *m_Anemia;
 }
 const SEChronicAnemia* SEConditionManager::GetChronicAnemia() const
@@ -253,7 +253,7 @@ bool SEConditionManager::HasChronicObstructivePulmonaryDisease() const
 SEChronicObstructivePulmonaryDisease& SEConditionManager::GetChronicObstructivePulmonaryDisease()
 {
   if (m_COPD == nullptr)
-    m_COPD = new SEChronicObstructivePulmonaryDisease();
+    m_COPD = new SEChronicObstructivePulmonaryDisease(GetLogger());
   return *m_COPD;
 }
 const SEChronicObstructivePulmonaryDisease* SEConditionManager::GetChronicObstructivePulmonaryDisease() const
@@ -272,7 +272,7 @@ bool SEConditionManager::HasChronicVentricularSystolicDysfunction() const
 SEChronicVentricularSystolicDysfunction& SEConditionManager::GetChronicVentricularSystolicDysfunction()
 {
   if (m_ChronicVentricularSystolicDysfunction == nullptr)
-    m_ChronicVentricularSystolicDysfunction = new SEChronicVentricularSystolicDysfunction();
+    m_ChronicVentricularSystolicDysfunction = new SEChronicVentricularSystolicDysfunction(GetLogger());
   return *m_ChronicVentricularSystolicDysfunction;
 }
 const SEChronicVentricularSystolicDysfunction* SEConditionManager::GetChronicVentricularSystolicDysfunction() const
@@ -287,7 +287,7 @@ bool SEConditionManager::HasChronicPericardialEffusion() const
 SEChronicPericardialEffusion& SEConditionManager::GetChronicPericardialEffusion()
 {
   if (m_PericardialEffusion == nullptr)
-    m_PericardialEffusion = new SEChronicPericardialEffusion();
+    m_PericardialEffusion = new SEChronicPericardialEffusion(GetLogger());
   return *m_PericardialEffusion;
 }
 const SEChronicPericardialEffusion* SEConditionManager::GetChronicPericardialEffusion() const
@@ -302,7 +302,7 @@ bool SEConditionManager::HasChronicRenalStenosis() const
 SEChronicRenalStenosis& SEConditionManager::GetChronicRenalStenosis()
 {
   if (m_RenalStenosis == nullptr)
-    m_RenalStenosis = new SEChronicRenalStenosis();
+    m_RenalStenosis = new SEChronicRenalStenosis(GetLogger());
   return *m_RenalStenosis;
 }
 const SEChronicRenalStenosis* SEConditionManager::GetChronicRenalStenosis() const
@@ -317,7 +317,7 @@ bool SEConditionManager::HasConsumeMeal() const
 SEConsumeMeal& SEConditionManager::GetConsumeMeal()
 {
   if (m_ConsumeMeal == nullptr)
-    m_ConsumeMeal = new SEConsumeMeal();
+    m_ConsumeMeal = new SEConsumeMeal(GetLogger());
   return *m_ConsumeMeal;
 }
 const SEConsumeMeal* SEConditionManager::GetConsumeMeal() const
@@ -332,7 +332,7 @@ bool SEConditionManager::HasImpairedAlveolarExchange() const
 SEImpairedAlveolarExchange& SEConditionManager::GetImpairedAlveolarExchange()
 {
   if (m_ImpairedAlveolarExchange == nullptr)
-    m_ImpairedAlveolarExchange = new SEImpairedAlveolarExchange();
+    m_ImpairedAlveolarExchange = new SEImpairedAlveolarExchange(GetLogger());
   return *m_ImpairedAlveolarExchange;
 }
 const SEImpairedAlveolarExchange* SEConditionManager::GetImpairedAlveolarExchange() const
@@ -347,7 +347,7 @@ bool SEConditionManager::HasLobarPneumonia() const
 SELobarPneumonia& SEConditionManager::GetLobarPneumonia()
 {
   if (m_LobarPneumonia == nullptr)
-    m_LobarPneumonia = new SELobarPneumonia();
+    m_LobarPneumonia = new SELobarPneumonia(GetLogger());
   return *m_LobarPneumonia;
 }
 const SELobarPneumonia* SEConditionManager::GetLobarPneumonia() const
@@ -362,7 +362,7 @@ bool SEConditionManager::HasPulmonaryFibrosis() const
 SEPulmonaryFibrosis& SEConditionManager::GetPulmonaryFibrosis()
 {
   if (m_PulmonaryFibrosis == nullptr)
-    m_PulmonaryFibrosis = new SEPulmonaryFibrosis();
+    m_PulmonaryFibrosis = new SEPulmonaryFibrosis(GetLogger());
   return *m_PulmonaryFibrosis;
 }
 const SEPulmonaryFibrosis* SEConditionManager::GetPulmonaryFibrosis() const
@@ -377,7 +377,7 @@ bool SEConditionManager::HasPulmonaryShunt() const
 SEPulmonaryShunt& SEConditionManager::GetPulmonaryShunt()
 {
   if (m_PulmonaryShunt == nullptr)
-    m_PulmonaryShunt = new SEPulmonaryShunt();
+    m_PulmonaryShunt = new SEPulmonaryShunt(GetLogger());
   return *m_PulmonaryShunt;
 }
 const SEPulmonaryShunt* SEConditionManager::GetPulmonaryShunt() const
@@ -392,7 +392,7 @@ bool SEConditionManager::HasSepsis() const
 SESepsis& SEConditionManager::GetSepsis()
 {
   if (m_Sepsis == nullptr)
-    m_Sepsis = new SESepsis();
+    m_Sepsis = new SESepsis(GetLogger());
   return *m_Sepsis;
 }
 const SESepsis* SEConditionManager::GetSepsis() const
@@ -407,7 +407,7 @@ bool SEConditionManager::HasInitialEnvironmentalConditions() const
 SEInitialEnvironmentalConditions& SEConditionManager::GetInitialEnvironmentalConditions()
 {
   if (m_InitialEnvironmentalConditions == nullptr)
-    m_InitialEnvironmentalConditions = new SEInitialEnvironmentalConditions();
+    m_InitialEnvironmentalConditions = new SEInitialEnvironmentalConditions(GetLogger());
   return *m_InitialEnvironmentalConditions;
 }
 const SEInitialEnvironmentalConditions* SEConditionManager::GetInitialEnvironmentalConditions() const
