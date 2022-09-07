@@ -45,7 +45,7 @@ protected:
 
   SEScalarPressure* m_PartialPressure;
   SEScalarVolume*   m_Volume;
-  SEScalar0To1* m_VolumeFraction;
+  SEScalar0To1*     m_VolumeFraction;
 
   SEGasCompartment&        m_Compartment;
   std::vector<SEGasSubstanceQuantity*> m_Children;

@@ -4,8 +4,6 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/properties/SEHistogram.h"
 
-static std::stringstream err;
-
 SEHistogram::SEHistogram() : SEProperty()
 {
 

@@ -123,8 +123,9 @@ add_library_ex(CommonDataModel
     patient/actions/SEAsthmaAttack.h
     patient/actions/SEBrainInjury.h
     patient/actions/SEBronchoconstriction.h
-    patient/actions/SEChestCompressionForce.h
-    patient/actions/SEChestCompressionForceScale.h
+    patient/actions/SEChestCompression.h
+    patient/actions/SEChestCompressionAutomated.h
+    patient/actions/SEChestCompressionInstantaneous.h
     patient/actions/SEChestOcclusiveDressing.h
     patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h
     patient/actions/SEConsciousRespiration.h
@@ -491,8 +492,9 @@ add_library_ex(CommonDataModel
     patient/actions/SEAsthmaAttack.cpp
     patient/actions/SEBrainInjury.cpp
     patient/actions/SEBronchoconstriction.cpp
-    patient/actions/SEChestCompressionForce.cpp
-    patient/actions/SEChestCompressionForceScale.cpp
+    patient/actions/SEChestCompression.cpp
+    patient/actions/SEChestCompressionAutomated.cpp
+    patient/actions/SEChestCompressionInstantaneous.cpp
     patient/actions/SEChestOcclusiveDressing.cpp
     patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.cpp
     patient/actions/SEConsciousRespiration.cpp

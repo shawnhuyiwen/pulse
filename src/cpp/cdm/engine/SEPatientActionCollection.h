@@ -12,8 +12,8 @@ class SEArrhythmia;
 class SEBrainInjury;
 class SEBronchoconstriction;
 class SEChestCompression;
-class SEChestCompressionForce;
-class SEChestCompressionForceScale;
+class SEChestCompressionAutomated;
+class SEChestCompressionInstantaneous;
 class SEChestOcclusiveDressing;
 class SEConsciousRespiration;
 class SEConsumeNutrients;
@@ -85,15 +85,22 @@ public:
   const SEBronchoconstriction* GetBronchoconstriction() const;
   void RemoveBronchoconstriction();
 
+  bool HasActiveCPRAction() const;
+
   bool HasChestCompression() const;
-  bool HasChestCompressionForce() const;
-  SEChestCompressionForce& GetChestCompressionForce();
-  const SEChestCompressionForce* GetChestCompressionForce() const;
-  void RemoveChestCompressionForce();
-  bool HasChestCompressionForceScale() const;
-  SEChestCompressionForceScale& GetChestCompressionForceScale();
-  const SEChestCompressionForceScale* GetChestCompressionForceScale() const;
-  void RemoveChestCompressionForceScale();
+  SEChestCompression& GetChestCompression();
+  const SEChestCompression* GetChestCompression() const;
+  void RemoveChestCompression();
+
+  bool HasChestCompressionAutomated() const;
+  SEChestCompressionAutomated& GetChestCompressionAutomated();
+  const SEChestCompressionAutomated* GetChestCompressionAutomated() const;
+  void RemoveChestCompressionAutomated();
+
+  bool HasChestCompressionInstantaneous() const;
+  SEChestCompressionInstantaneous& GetChestCompressionInstantaneous();
+  const SEChestCompressionInstantaneous* GetChestCompressionInstantaneous() const;
+  void RemoveChestCompressionInstantaneous();
 
   bool HasChestOcclusiveDressing() const;
   bool HasLeftChestOcclusiveDressing() const;
@@ -261,8 +268,9 @@ protected:
   SEAsthmaAttack*                                   m_AsthmaAttack;
   SEBrainInjury*                                    m_BrainInjury;
   SEBronchoconstriction*                            m_Bronchoconstriction;
-  SEChestCompressionForce*                          m_ChestCompressionForce;
-  SEChestCompressionForceScale*                     m_ChestCompressionForceScale;
+  SEChestCompression*                               m_ChestCompression;
+  SEChestCompressionAutomated*                      m_ChestCompressionAutomated;
+  SEChestCompressionInstantaneous*                  m_ChestCompressionInstantaneous;
   SEChestOcclusiveDressing*                         m_LeftChestOcclusiveDressing;
   SEChestOcclusiveDressing*                         m_RightChestOcclusiveDressing;
   SEConsciousRespiration*                           m_ConsciousRespiration;

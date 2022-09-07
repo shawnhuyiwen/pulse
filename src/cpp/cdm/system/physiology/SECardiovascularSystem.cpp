@@ -37,6 +37,7 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_MeanCentralVenousPressure = nullptr;
   m_MeanSkinFlow = nullptr;
   m_PulmonaryArterialPressure = nullptr;
+  m_PulmonaryCapillariesCoverageFraction = nullptr;
   m_PulmonaryCapillariesWedgePressure = nullptr;
   m_PulmonaryDiastolicArterialPressure = nullptr;
   m_PulmonaryMeanArterialPressure = nullptr;
@@ -79,6 +80,7 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_MeanCentralVenousPressure);
   SAFE_DELETE(m_MeanSkinFlow);
   SAFE_DELETE(m_PulmonaryArterialPressure);
+  SAFE_DELETE(m_PulmonaryCapillariesCoverageFraction);
   SAFE_DELETE(m_PulmonaryCapillariesWedgePressure);
   SAFE_DELETE(m_PulmonaryDiastolicArterialPressure);
   SAFE_DELETE(m_PulmonaryMeanArterialPressure);
@@ -119,6 +121,7 @@ void SECardiovascularSystem::Clear()
   INVALIDATE_PROPERTY(m_MeanCentralVenousPressure);
   INVALIDATE_PROPERTY(m_MeanSkinFlow);
   INVALIDATE_PROPERTY(m_PulmonaryArterialPressure);
+  INVALIDATE_PROPERTY(m_PulmonaryCapillariesCoverageFraction);
   INVALIDATE_PROPERTY(m_PulmonaryCapillariesWedgePressure);
   INVALIDATE_PROPERTY(m_PulmonaryDiastolicArterialPressure);
   INVALIDATE_PROPERTY(m_PulmonaryMeanArterialPressure);
@@ -178,6 +181,8 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetMeanSkinFlow();
   if (name.compare("PulmonaryArterialPressure") == 0)
     return &GetPulmonaryArterialPressure();
+  if (name.compare("PulmonaryCapillariesCoverageFraction") == 0)
+    return &GetPulmonaryCapillariesCoverageFraction();
   if (name.compare("PulmonaryCapillariesWedgePressure") == 0)
     return &GetPulmonaryCapillariesWedgePressure();
   if (name.compare("PulmonaryDiastolicArterialPressure") == 0)
@@ -558,6 +563,23 @@ double SECardiovascularSystem::GetPulmonaryArterialPressure(const PressureUnit& 
   if (m_PulmonaryArterialPressure == nullptr)
     return SEScalar::dNaN();
   return m_PulmonaryArterialPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasPulmonaryCapillariesCoverageFraction() const
+{
+  return m_PulmonaryCapillariesCoverageFraction == nullptr ? false : m_PulmonaryCapillariesCoverageFraction->IsValid();
+}
+SEScalar0To1& SECardiovascularSystem::GetPulmonaryCapillariesCoverageFraction()
+{
+  if (m_PulmonaryCapillariesCoverageFraction == nullptr)
+    m_PulmonaryCapillariesCoverageFraction = new SEScalar0To1();
+  return *m_PulmonaryCapillariesCoverageFraction;
+}
+double SECardiovascularSystem::GetPulmonaryCapillariesCoverageFraction() const
+{
+  if (m_PulmonaryCapillariesCoverageFraction == nullptr)
+    return SEScalar::dNaN();
+  return m_PulmonaryCapillariesCoverageFraction->GetValue();
 }
 
 bool SECardiovascularSystem::HasPulmonaryCapillariesWedgePressure() const

@@ -200,6 +200,8 @@ void PBPhysiology::Serialize(const CDM_BIND::CardiovascularSystemData& src, SECa
     PBProperty::Load(src.meanskinflow(), dst.GetMeanSkinFlow());
   if (src.has_pulmonaryarterialpressure())
     PBProperty::Load(src.pulmonaryarterialpressure(), dst.GetPulmonaryArterialPressure());
+  if (src.has_pulmonarycapillariescoveragefraction())
+    PBProperty::Load(src.pulmonarycapillariescoveragefraction(), dst.GetPulmonaryCapillariesCoverageFraction());
   if (src.has_pulmonarycapillarieswedgepressure())
     PBProperty::Load(src.pulmonarycapillarieswedgepressure(), dst.GetPulmonaryCapillariesWedgePressure());
   if (src.has_pulmonarydiastolicarterialpressure())
@@ -281,6 +283,8 @@ void PBPhysiology::Serialize(const SECardiovascularSystem& src, CDM_BIND::Cardio
     dst.set_allocated_meanskinflow(PBProperty::Unload(*src.m_MeanSkinFlow));
   if (src.HasPulmonaryArterialPressure())
     dst.set_allocated_pulmonaryarterialpressure(PBProperty::Unload(*src.m_PulmonaryArterialPressure));
+  if (src.HasPulmonaryCapillariesCoverageFraction())
+    dst.set_allocated_pulmonarycapillariescoveragefraction(PBProperty::Unload(*src.m_PulmonaryCapillariesCoverageFraction));
   if (src.HasPulmonaryCapillariesWedgePressure())
     dst.set_allocated_pulmonarycapillarieswedgepressure(PBProperty::Unload(*src.m_PulmonaryCapillariesWedgePressure));
   if (src.HasPulmonaryDiastolicArterialPressure())

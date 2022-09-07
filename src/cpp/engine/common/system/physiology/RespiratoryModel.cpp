@@ -1190,14 +1190,6 @@ namespace pulse
         {
           m_ActiveConsciousRespirationCommand = false;
 
-          // Make a cardicArrestEffect that is 1.0 unless cardiac arrest is true
-          double cardiacArrestEffect = 1.0;
-          // If the cv system parameter is true, then make the cardicArrestEffect = 0
-          if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
-          {
-            cardiacArrestEffect = 0.0;
-          }
-
           //Ventilatory Negative Feedback Control *************************************************************************
           double PeripheralCO2PartialPressureSetPoint = m_data.GetConfiguration().GetPeripheralControllerCO2PressureSetPoint(PressureUnit::mmHg);
           double CentralCO2PartialPressureSetPoint = m_data.GetConfiguration().GetCentralControllerCO2PressureSetPoint(PressureUnit::mmHg);
@@ -1305,14 +1297,14 @@ namespace pulse
           double dTargetTidalVolume_L = dTargetPulmonaryVentilation_L_Per_min / m_VentilationToTidalVolumeSlope + m_VentilationTidalVolumeIntercept;
 
           //Modify the target tidal volume due to other external effects - probably eventually replaced by the Nervous system
-          dTargetTidalVolume_L *= cardiacArrestEffect * NMBModifier;
+          dTargetTidalVolume_L *= NMBModifier;
 
           //Apply Drug Effects to the target tidal volume
           dTargetTidalVolume_L += DrugsTVChange_L;
 
           //This is a piecewise function that plateaus at the Tidal Volume equal to 1/2 * Vital Capacity
           //The Respiration Rate will make up for the Alveoli Ventilation difference
-          double dHalfVitalCapacity_L = m_data.GetInitialPatient().GetVitalCapacity(VolumeUnit::L) / 2;
+          double dHalfVitalCapacity_L = m_data.GetInitialPatient().GetVitalCapacity(VolumeUnit::L) / 2.0;
           dTargetTidalVolume_L = MIN(dTargetTidalVolume_L, dHalfVitalCapacity_L);
 
           //Map the Target Tidal Volume to the Driver
@@ -2124,7 +2116,7 @@ namespace pulse
         if (m_data.HasCardiovascular())
         {
           GetHorowitzIndex().SetValue(m_ArterialO2PartialPressure_mmHg / FiO2, PressureUnit::mmHg);
-          GetOxygenationIndex().SetValue(FiO2* meanAirwayPressure_mmHg * 100.0 / m_ArterialO2PartialPressure_mmHg);
+          GetOxygenationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg * 100.0 / m_ArterialO2PartialPressure_mmHg);
         }
         else
         {
@@ -2135,7 +2127,7 @@ namespace pulse
         if (m_data.HasBloodChemistry())
         {
           GetSaturationAndFractionOfInspiredOxygenRatio().SetValue(m_data.GetBloodChemistry().GetOxygenSaturation().GetValue() / FiO2);
-          GetOxygenSaturationIndex().SetValue(FiO2* meanAirwayPressure_mmHg / m_data.GetBloodChemistry().GetOxygenSaturation().GetValue(), PressureUnit::cmH2O);
+          GetOxygenSaturationIndex().SetValue(FiO2 * meanAirwayPressure_mmHg / m_data.GetBloodChemistry().GetOxygenSaturation().GetValue(), PressureUnit::cmH2O);
         }
         else
         {
@@ -2148,15 +2140,37 @@ namespace pulse
       }
     }
 
-    //Zero out if waiting longer than 15 sec
-    if (m_ElapsedBreathingCycleTime_min > 0.25)
+    // Zero out if not breathing with out any assistance
+    if ((m_data.GetAirwayMode() == eAirwayMode::Free && m_NotBreathing) || m_ElapsedBreathingCycleTime_min > 0.25)
+    //if (m_data.GetAirwayMode() == eAirwayMode::Free && (m_NotBreathing || m_ElapsedBreathingCycleTime_min > 0.25))
     {
       GetRespirationRate().SetValue(0.0, FrequencyUnit::Per_min);
       GetTidalVolume().SetValue(0.0, VolumeUnit::L);
+      GetExpiratoryTidalVolume().SetValue(0.0, VolumeUnit::L);
+      GetInspiratoryTidalVolume().SetValue(0.0, VolumeUnit::L);
       GetTotalAlveolarVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
       GetTotalPulmonaryVentilation().SetValue(0.0, VolumePerTimeUnit::L_Per_min);
       GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
       m_MeanAirwayPressure_cmH2O->Clear();
+      GetInspiratoryExpiratoryRatio().SetValue(0);
+      GetPeakInspiratoryPressure().SetValue(0, PressureUnit::cmH2O);
+      GetPositiveEndExpiratoryPressure().SetValue(0, PressureUnit::cmH2O);
+      GetIntrinsicPositiveEndExpiredPressure().SetValue(0, PressureUnit::cmH2O);
+      GetMaximalInspiratoryPressure().SetValue(0, PressureUnit::cmH2O);
+      GetTotalPulmonaryVentilation().SetValue(0, VolumePerTimeUnit::L_Per_min);
+      GetSpecificVentilation().SetValue(0);
+      GetTotalAlveolarVentilation().SetValue(0, VolumePerTimeUnit::L_Per_min);
+      GetTotalDeadSpaceVentilation().SetValue(0, VolumePerTimeUnit::L_Per_min);
+      GetEndTidalCarbonDioxideFraction().SetValue(0);
+      GetEndTidalCarbonDioxidePressure().SetValue(0, PressureUnit::cmH2O);
+      GetEndTidalOxygenFraction().SetValue(0);
+      GetEndTidalOxygenPressure().SetValue(0, PressureUnit::cmH2O);
+
+      for (SESubstance* sub : m_data.GetSubstances().GetActiveGases())
+      {
+        sub->GetEndTidalFraction().SetValue(0);
+        sub->GetEndTidalPressure().SetValue(0, PressureUnit::cmH2O);
+      }
     }
 
     if (m_data.GetState() > EngineState::InitialStabilization)
@@ -3735,7 +3749,6 @@ namespace pulse
 
     //------------------------------------------------------------------------------------------------------
     //COPD - shunting occurs in UpdatePulmonaryCapillary
-
     //------------------------------------------------------------------------------------------------------
 
     double rightPulmonaryShuntResistance = m_RightPulmonaryArteriesToVeins->GetNextResistance().GetValue(PressureTimePerVolumeUnit::mmHg_s_Per_mL);
@@ -3774,6 +3787,13 @@ namespace pulse
     {
       double thisDyspneaSeverity = m_PatientActions->GetRespiratoryFatigue().GetSeverity().GetValue();
       dyspneaSeverity = MAX(dyspneaSeverity, thisDyspneaSeverity);
+    }
+
+    //------------------------------------------------------------------------------------------------------
+    //Cardiac Arrest
+    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+    {
+      dyspneaSeverity = 1.0;
     }
 
     //------------------------------------------------------------------------------------------------------

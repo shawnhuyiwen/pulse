@@ -5,6 +5,7 @@ endif()
 add_executable_ex(HowToDriver
   EngineHowTo.cpp
   EngineHowTo.h
+  HowTo-ACLS.cpp
   HowTo-AirwayObstruction.cpp
   HowTo-AnesthesiaMachine.cpp
   HowTo-Arrhythmia.cpp

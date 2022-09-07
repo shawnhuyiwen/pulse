@@ -458,7 +458,7 @@ namespace pulse { namespace human_adult_whole_body
 
     for (int i = 0; i < 3600; i++)
     {
-      tsu.MoveMassByInstantDiffusion(cmpt2, cmpt4, *o2, timestep_s);
+      tsu.MoveMassByInstantDiffusion(cmpt2, cmpt4, *o2);
       tsu.MoveMassBySimpleDiffusion(cmpt2, cmpt1, *o2, permeabilityCoefficient21_mL_Per_s, timestep_s);
       tsu.MoveMassBySimpleDiffusion(cmpt2, cmpt3, *o2, permeabilityCoefficient23_mL_Per_s, timestep_s);
       cmpt1.Balance(BalanceLiquidBy::Mass);
@@ -505,7 +505,7 @@ namespace pulse { namespace human_adult_whole_body
     cmpt1.Balance(BalanceLiquidBy::Concentration);
     cmpt2.Balance(BalanceLiquidBy::Concentration);
 
-    tsu.MoveMassByInstantDiffusion(cmpt1, cmpt2, *o2, timestep_s);
+    tsu.MoveMassByInstantDiffusion(cmpt1, cmpt2, *o2);
     cmpt1.Balance(BalanceLiquidBy::Mass);
     cmpt2.Balance(BalanceLiquidBy::Mass);
 

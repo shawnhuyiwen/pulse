@@ -71,8 +71,8 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/actions/SEAsthmaAttack.h"
 #include "cdm/patient/actions/SEBrainInjury.h"
 #include "cdm/patient/actions/SEBronchoconstriction.h"
-#include "cdm/patient/actions/SEChestCompressionForce.h"
-#include "cdm/patient/actions/SEChestCompressionForceScale.h"
+#include "cdm/patient/actions/SEChestCompressionAutomated.h"
+#include "cdm/patient/actions/SEChestCompressionInstantaneous.h"
 #include "cdm/patient/actions/SEChestOcclusiveDressing.h"
 #include "cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.h"
 #include "cdm/patient/actions/SEConsciousRespiration.h"
@@ -304,10 +304,10 @@ void PBEngine::Serialize(const SEPatientActionCollection& src, CDM_BIND::ActionL
   if (src.HasBronchoconstriction())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_Bronchoconstriction));
   
-  if (src.HasChestCompressionForce())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionForce));
-  else if (src.HasChestCompressionForceScale())
-    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionForceScale));
+  if (src.HasChestCompressionInstantaneous())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionInstantaneous));
+  else if (src.HasChestCompressionAutomated())
+    dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_ChestCompressionAutomated));
   if (src.HasLeftChestOcclusiveDressing())
     dst.mutable_anyaction()->AddAllocated(PBAction::Unload(*src.m_LeftChestOcclusiveDressing));
   if (src.HasRightChestOcclusiveDressing())

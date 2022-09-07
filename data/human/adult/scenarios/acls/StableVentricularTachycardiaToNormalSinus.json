@@ -1,17 +1,17 @@
 {
-  "Name": "ArrhythmiaPulselessRhythms",
-  "Description": "A patient moves into cardiac arrest via the arrhythmia action set with Asystole, then return to Normal Sinus rhythm.",
+  "Name": "ArrhythmiaStableVentricularTachycardiaRhythm",
+  "Description": "A patient experiences Ventricular Tachycardia via the arrhythmia action set with StableVentricularTachycardia, then back to NormalSinus.",
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
-        "DecimalFormat": {
+    "DecimalFormat": {
         "Precision": 3
       },
       "Category": "ECG",
       "PropertyName": "Lead3ElectricPotential",
       "Unit": "mV"
     }, {
-		"DecimalFormat": {
+      "DecimalFormat": {
         "Precision": 1
       },
       "PropertyName": "Weight",
@@ -138,8 +138,8 @@
         "Precision": 4
       },
       "Category": "Physiology",
-      "PropertyName": "EndTidalCarbonDioxideFraction",
-      "Unit": "unitless"
+      "PropertyName": "EndTidalCarbonDioxidePressure",
+      "Unit": "mmHg"
     }, {
       "DecimalFormat": {
         "Precision": 2
@@ -385,6 +385,13 @@
       "CompartmentName": "BrainVasculature",
       "PropertyName": "OutFlow",
       "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "PulseOximetry",
+      "Unit": "unitless"
     }]
   },
  "AnyAction": [{
@@ -399,14 +406,14 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "Asystole"
+        "Rhythm": "StableVentricularTachycardia"
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
+          "Value": 120.0,
           "Unit": "s"
         }
       }

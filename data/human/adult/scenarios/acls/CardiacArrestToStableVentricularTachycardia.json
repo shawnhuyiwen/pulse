@@ -4,7 +4,7 @@
   "PatientConfiguration": { "PatientFile": "StandardMale.json" },
   "DataRequestManager": {
     "DataRequest": [{
-		"DecimalFormat": {
+    "DecimalFormat": {
         "Precision": 3
       },
       "Category": "ECG",
@@ -138,8 +138,8 @@
         "Precision": 4
       },
       "Category": "Physiology",
-      "PropertyName": "EndTidalCarbonDioxideFraction",
-      "Unit": "unitless"
+      "PropertyName": "EndTidalCarbonDioxidePressure",
+      "Unit": "mmHg"
     }, {
       "DecimalFormat": {
         "Precision": 2
@@ -385,6 +385,13 @@
       "CompartmentName": "BrainVasculature",
       "PropertyName": "OutFlow",
       "Unit": "mL/s"
+    }, {
+      "DecimalFormat": {
+        "Precision": 3
+      },
+      "Category": "Physiology",
+      "PropertyName": "PulseOximetry",
+      "Unit": "unitless"
     }]
   },
  "AnyAction": [{
@@ -399,14 +406,14 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "FineVentricularFibrillation"
+        "Rhythm": "PulselessVentricularTachycardia"
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 240.0,
+          "Value": 120.0,
           "Unit": "s"
         }
       }
@@ -414,14 +421,14 @@
   }, {
     "PatientAction": {
       "Arrhythmia": {
-        "Rhythm": "NormalSinus"
+        "Rhythm": "StableVentricularTachycardia"
       }
     }
   }, {
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 360.0,
+          "Value": 240.0,
           "Unit": "s"
         }
       }

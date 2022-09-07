@@ -144,6 +144,8 @@ namespace pulse
     GetOxygenConsumptionRate().SetValue(250.0, VolumePerTimeUnit::mL_Per_min);
     GetCarbonDioxideProductionRate().SetValue(200.0, VolumePerTimeUnit::mL_Per_min);
     GetRespiratoryExchangeRatio().SetValue(0.8);
+
+    m_CardiacArrestCarbonDioxideProductionFactor = 0;
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -205,32 +207,32 @@ namespace pulse
 
     //Store tissue-blood pairs
     m_TissueToVascular.clear();
-    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat);
+    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat)] = m_FatVascular;
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Bone)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Bone);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Brain)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Gut)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Gut);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightKidney)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney);
-    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftLung)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftLung);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightLung)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightLung);
-    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Muscle)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle);
+    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver);
+    m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Muscle)] = m_MuscleVascular;
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Myocardium)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Skin)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin);
     m_TissueToVascular[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Spleen)] = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Spleen);
 
-    m_ConsumptionProdutionTissues.clear();
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Bone));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Brain));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Gut));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftKidney));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightKidney));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Muscle));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Myocardium));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Skin));
-    m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Spleen));
+    m_ConsumptionProdutionTissues.clear();// Note each of these fraction columns should add to 1
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Fat)] = ConsumptionProductionFraction(0.045, 0.045);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Bone)] = ConsumptionProductionFraction(0.045, 0.045);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Brain)] = ConsumptionProductionFraction(0.105, 0.105);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Gut)] = ConsumptionProductionFraction(0.143, 0.143);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::LeftKidney)] = ConsumptionProductionFraction(0.101, 0.101);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::RightKidney)] = ConsumptionProductionFraction(0.101, 0.101);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Liver)] = ConsumptionProductionFraction(0.195, 0.195);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Muscle)] = ConsumptionProductionFraction(0.140, 0.140);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Myocardium)] = ConsumptionProductionFraction(0.038, 0.038);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Skin)] = ConsumptionProductionFraction(0.058, 0.058);
+    m_ConsumptionProdutionTissues[m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Spleen)] = ConsumptionProductionFraction(0.029, 0.029);
 
     // Here is some code to cross check our maps with what is in the compartment manager
     // If by some chance, some other system added a new tissue compartment we don't know about
@@ -242,7 +244,7 @@ namespace pulse
 
       if (m_LeftLungTissue != tissue && m_RightLungTissue != tissue)
       {// We don't use the lungs in the consuption/production methodology
-        if (!Contains(m_ConsumptionProdutionTissues, (*tissue)))
+        if (m_ConsumptionProdutionTissues.find(tissue)==m_ConsumptionProdutionTissues.end())
           Warning("Tissue found a tissue compartment that it is not using in Consumption/Prodution : " + tissue->GetName());
       }
     }
@@ -410,7 +412,7 @@ namespace pulse
             // Sodium is special. We need to diffuse for renal function.
             // We will not treat sodium any differently once diffusion functionality is fully implemented.
             if (sub == m_Sodium)
-              MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_data.GetTimeStep_s());
+              MoveMassByInstantDiffusion(*vascular, extracellular, *sub);
 
             continue;
           }
@@ -420,7 +422,7 @@ namespace pulse
           /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
           // --- First, instant diffusion ---
-          MoveMassByInstantDiffusion(*vascular, extracellular, *sub, m_data.GetTimeStep_s());
+          MoveMassByInstantDiffusion(*vascular, extracellular, *sub);
 
           // --- Second, simple diffusion ---
             // Compute the vascular to extracellular permeability coefficient
@@ -469,7 +471,7 @@ namespace pulse
           /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
           // --- First, instant diffusion ---
-          MoveMassByInstantDiffusion(extracellular, intracellular, *sub, m_data.GetTimeStep_s());
+          MoveMassByInstantDiffusion(extracellular, intracellular, *sub);
 
           // --- Second, simple diffusion ---
             // Assuming that the capillary permeability coefficient is proportional to the cellular membrane permeability coefficient for a given tissue and substance
@@ -528,10 +530,9 @@ namespace pulse
   {
     const PulseConfiguration& Configuration = m_data.GetConfiguration();
 
-
     double AlveoliSurfaceArea_cm2 = m_data.GetCurrentPatient().GetAlveoliSurfaceArea(AreaUnit::cm2);
-    double PulmonaryCapillaryCoverage = Configuration.GetStandardPulmonaryCapillaryCoverage();
-    double DiffusionSurfaceArea_cm2 = AlveoliSurfaceArea_cm2 * PulmonaryCapillaryCoverage;
+    double PulmonaryCapillaryCoverageFraction = m_data.GetCardiovascular().GetPulmonaryCapillariesCoverageFraction().GetValue();
+    double DiffusionSurfaceArea_cm2 = AlveoliSurfaceArea_cm2 * PulmonaryCapillaryCoverageFraction;
     double RightLungRatio = m_data.GetCurrentPatient().GetRightLungRatio().GetValue();
 
     double StandardDiffusingCapacityOfOxygen_mLPersPermmHg = (DiffusionSurfaceArea_cm2 * Configuration.GetStandardOxygenDiffusionCoefficient(AreaPerTimePressureUnit::cm2_Per_s_mmHg)) / Configuration.GetStandardDiffusionDistance(LengthUnit::cm);
@@ -608,6 +609,7 @@ namespace pulse
     double LocalATPUseRate_mol_Per_s; // Holds the ATP use rate for a tissue compartment
     double anaerobicWeight;           // Determines how much lactate is produced and oxygen consumed with glucose consumption.
     double massConverted_g;
+    double minMassConverted_g;
 
     // The following fractions are used to compute the metabolic conversion of substances.
     // Stoichiometric ratios can be found in any physiology text, such as \cite guyton2006medical
@@ -696,6 +698,7 @@ namespace pulse
 
     double tissueO2_mM;
 
+    SETissueCompartment* tissue;
     SELiquidCompartment* vascular;
     SELiquidSubstanceQuantity* TissueO2;
     SELiquidSubstanceQuantity* TissueCO2;
@@ -712,8 +715,9 @@ namespace pulse
     double totalFlowRate_mL_Per_min = 0.0;
     // First sum the vascular flow into all of the vascular compartments that are associated with the tissue compartments.
     // We do not use the cardiac output as total flow rate because all of the fractions must sum to one at each time slice.
-    for (SETissueCompartment* tissue : m_ConsumptionProdutionTissues)
+    for (auto& itr : m_ConsumptionProdutionTissues)
     {
+      tissue = itr.first;
       vascular = m_TissueToVascular[tissue];
       if (vascular->HasInFlow())
         totalFlowRate_mL_Per_min += vascular->GetInFlow(VolumePerTimeUnit::mL_Per_min);
@@ -723,10 +727,34 @@ namespace pulse
     double carbonDioxideProductionRate_g_Per_s = 0.0;
     double bloodGlucose_mg_Per_dL = m_data.GetSubstances().GetGlucose().GetBloodConcentration(MassPerVolumeUnit::mg_Per_dL);
 
-    for (SETissueCompartment* tissue : m_ConsumptionProdutionTissues)
+    // The way tissue produciton/consumption works is based on flow
+    // If we are in cardiac arrest, there is no flow
+    // So we will make a minimum threshold for this,
+    // and increase that min if we are in cardiac arrest
+    double minCO2Production_mL_Per_s = 3.333; /*200 mL/min*/
+    double CardiacArrestCarbonDioxideProductionFactor = 0.15;
+    if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
     {
-      double acidDissociationFraction = 0.5;
+      m_CardiacArrestCarbonDioxideProductionFactor = CardiacArrestCarbonDioxideProductionFactor;
+    }
+    else if (CardiacArrestCarbonDioxideProductionFactor > 0.)
+    {
+      double additionalCardiacArrestPeriod_s = 90;
+
+      // Do a linear decrement to eventually reach 0.0 additional production/consumption
+      m_CardiacArrestCarbonDioxideProductionFactor -= m_data.GetTimeStep_s() / additionalCardiacArrestPeriod_s * CardiacArrestCarbonDioxideProductionFactor;
+      if (m_CardiacArrestCarbonDioxideProductionFactor < 0.0)
+        m_CardiacArrestCarbonDioxideProductionFactor = 0.0;
+    }
+    // We can be a little conservative and still hit validation
+    // We want to let the model do what it does for the most part
+    minCO2Production_mL_Per_s *= (0.4 + m_CardiacArrestCarbonDioxideProductionFactor);
+
+    for (auto& itr : m_ConsumptionProdutionTissues)
+    {
+      tissue = itr.first;
       vascular = m_TissueToVascular[tissue];
+      double acidDissociationFraction = 0.5;
       SELiquidCompartment& intracellular = m_data.GetCompartments().GetIntracellularFluid(*tissue);
       TissueO2 = intracellular.GetSubstanceQuantity(*m_O2);
       TissueCO2 = intracellular.GetSubstanceQuantity(*m_CO2);
@@ -754,17 +782,13 @@ namespace pulse
       double oxygenConsumption_mol_Per_s = FractionCarbConsumed * anaerobicWeight * FractionOfO2CO2ToGlucose * LocalATPUseRate_mol_Per_s
         + (1.0 - FractionCarbConsumed) * FractionOfO2ToLipid * LocalATPUseRate_mol_Per_s;
       massConverted_g = oxygenConsumption_mol_Per_s * (m_O2->GetMolarMass(MassPerAmountUnit::g_Per_mol)) * time_s;
-
+      double O2TuningParameter = 0.38 + 0.15 * (TMR_kcal_Per_s / BMR_kcal_Per_s - 1.0);
+      ULIM(O2TuningParameter, 1.0);
+      massConverted_g *= O2TuningParameter;
 #ifdef PROBE_BLOOD_GASES
       m_data.GetDataTrack().Probe(tissue->GetName() + "_Converted_O2_ug", massConverted_g * 1e6);
 #endif
 
-      //massConverted_g = MIN(TissueO2->GetMass(MassUnit::g), massConverted_g); //Bound oxygen consumed mass to prevent negative mass in the compartment
-      //massConverted_g = MAX(massConverted_g, 0.0);
-
-      double O2TuningParameter = 0.38 + 0.15 * (TMR_kcal_Per_s / BMR_kcal_Per_s - 1.0);
-      ULIM(O2TuningParameter, 1.0);
-      massConverted_g *= O2TuningParameter;
       BLIM(massConverted_g, 0.0, TissueO2->GetMass(MassUnit::g));
       TissueO2->GetMass().IncrementValue(-massConverted_g, MassUnit::g);
       if (std::abs(TissueO2->GetMass(MassUnit::ug)) < ZERO_APPROX)
@@ -781,14 +805,21 @@ namespace pulse
       double co2Production_mol_Per_s = FractionCarbConsumed * anaerobicWeight * FractionOfO2CO2ToGlucose * LocalATPUseRate_mol_Per_s
         + (1.0 - FractionCarbConsumed) * FractionOfCO2ToLipid * LocalATPUseRate_mol_Per_s;
       massConverted_g = co2Production_mol_Per_s * (m_CO2->GetMolarMass(MassPerAmountUnit::g_Per_mol)) * time_s;
-
       double CO2TuningParameter = 0.36 + m_data.GetEnergy().GetTotalWorkRateLevel().GetValue() * exerciseTuningFactor;
-      TissueCO2->GetMass().IncrementValue(CO2TuningParameter * massConverted_g, MassUnit::g);
+      massConverted_g *= CO2TuningParameter;
+
+      // Minimum production
+      minMassConverted_g = minCO2Production_mL_Per_s *
+        itr.second.ProductionFraction *
+        m_CO2->GetDensity(MassPerVolumeUnit::g_Per_mL) * time_s;
+      massConverted_g = MAX(massConverted_g, minMassConverted_g);
+
+      TissueCO2->GetMass().IncrementValue(massConverted_g, MassUnit::g);
       if (std::abs(TissueCO2->GetMass(MassUnit::ug)) < ZERO_APPROX)
       {
         TissueCO2->GetMass().SetValue(0.0, MassUnit::ug);
       }
-      carbonDioxideProductionRate_g_Per_s += CO2TuningParameter * massConverted_g / time_s;
+      carbonDioxideProductionRate_g_Per_s += massConverted_g / time_s;
 
       if (!gasOnly)
       {
@@ -1446,7 +1477,7 @@ namespace pulse
     /// \details
     /// Instantaneous diffusion assumes that the entire diffusion process happens within the bounds of a time step.
     //--------------------------------------------------------------------------------------------------
-  double TissueModel::MoveMassByInstantDiffusion(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub, double timestep_s)
+  double TissueModel::MoveMassByInstantDiffusion(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub)
   {
     const SELiquidSubstanceQuantity* srcQ = source.GetSubstanceQuantity(sub);
     const SELiquidSubstanceQuantity* tgtQ = target.GetSubstanceQuantity(sub);

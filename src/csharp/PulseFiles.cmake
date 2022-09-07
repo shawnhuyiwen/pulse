@@ -112,8 +112,9 @@ set(PULSE_CSHARP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEAsthmaAttack.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEBrainInjury.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEBronchoconstriction.cs
-  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionForce.cs
-  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionForceScale.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompression.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionAutomated.cs
+  ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestCompressionInstantaneous.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChestOcclusiveDressing.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEChronicObstructivePulmonaryDiseaseExacerbation.cs
   ${CMAKE_CURRENT_SOURCE_DIR}/pulse/cdm/patient/actions/SEConsciousRespiration.cs
