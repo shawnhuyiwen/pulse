@@ -3122,11 +3122,12 @@ namespace pulse
 
     //------------------------------------------------------------------------------------------------------
     //Positive Pressure Ventilation
-    if ((m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
+    bool positivePressureVentilation = m_data.GetAirwayMode() == eAirwayMode::AnesthesiaMachine ||
       m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilation ||
-      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator) &&
-      (m_PatientActions->HasIntubation() &&
-        m_PatientActions->GetIntubation().GetType() != eIntubation_Type::Esophageal))
+      m_data.GetAirwayMode() == eAirwayMode::MechanicalVentilator;
+    bool isEsophagealIntubation = m_PatientActions->HasIntubation() && m_PatientActions->GetIntubation().GetType() == eIntubation_Type::Esophageal;
+
+    if (positivePressureVentilation && !isEsophagealIntubation)
     {
       if (!HasActiveRespiratoryMechanics() ||
         (HasActiveRespiratoryMechanics() && !m_RespiratoryMechanics->HasRightComplianceCurve()))
