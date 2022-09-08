@@ -66,12 +66,3 @@ double SEAnesthesiaMachineInspiratoryValveLeak::GetSeverity() const
     return SEScalar::dNaN();
   return m_Severity->GetValue();
 }
-
-void SEAnesthesiaMachineInspiratoryValveLeak::ToString(std::ostream &str) const
-{
-  str << "Anesthesia Machine Action : Inspiratory Valve Leak";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tSeverity :"; HasSeverity() ? str << *m_Severity : str << "NaN";
-  str << std::flush;
-}

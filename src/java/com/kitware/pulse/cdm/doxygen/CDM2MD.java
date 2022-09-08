@@ -399,6 +399,16 @@ public class CDM2MD
               writer.print("|"+"List of SESubstanceConcentration");
               writer.print("|"+"@ref SubstanceConcentrationTable");
             }
+            else if(bag.propertyName.equals("SubstanceConcentration"))
+            {
+              writer.print("|"+"List of SESubstanceConcentration");
+              writer.print("|"+"@ref SubstanceConcentrationTable");
+            }
+            else if(bag.propertyName.equals("Waveforms"))
+            {
+              writer.print("|"+"List of SEElectroCardioGramWaveform");
+              writer.print("|"+"@ref ElectroCardioGramWaveformTable");
+            }
             else
               Log.error("Unsupported List type for :"+bag.propertyName+" on table "+tableName);
 

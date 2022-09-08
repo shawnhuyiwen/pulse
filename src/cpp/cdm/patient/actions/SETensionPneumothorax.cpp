@@ -109,14 +109,3 @@ double SETensionPneumothorax::GetSeverity() const
     return SEScalar::dNaN();
   return m_Severity->GetValue();
 }
-
-void SETensionPneumothorax::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Tension Pneumothorax"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
-  str  << "\n\tType: "; HasType()? str << eGate_Name(GetType()) : str << "Not Set";
-  str  << "\n\tSide: "; HasSide()? str << eSide_Name(GetSide()) : str << "Not Set";
-  str  << std::flush;
-}

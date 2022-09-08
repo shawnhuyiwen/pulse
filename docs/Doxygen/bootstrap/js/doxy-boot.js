@@ -55,14 +55,33 @@ $( document ).ready(function() {
     $('div.fragment.well div.line:first').css('margin-top', '2px');
     $('div.fragment.well div.line:last').css('margin-bottom', '2px');
 
-	$('table.doxtable').removeClass('doxtable').addClass('table table-striped table-bordered').each(function(){
-		$(this).prepend('<thead></thead>');
-		$(this).find('tbody > tr:first').prependTo($(this).find('thead'));
+    $('table.doxtable').removeClass('doxtable').addClass('table table-striped table-bordered').each(function(){
+      $(this).prepend('<thead></thead>');
+      $(this).find('tbody > tr:first').prependTo($(this).find('thead'));
+  
+      $(this).find('td > span.success').parent().addClass('success');
+      $(this).find('td > span.warning').parent().addClass('warning');
+      $(this).find('td > span.danger').parent().addClass('danger');
+    });
 
-		$(this).find('td > span.success').parent().addClass('success');
-		$(this).find('td > span.warning').parent().addClass('warning');
-		$(this).find('td > span.danger').parent().addClass('danger');
-	});
+    $('table.markdownTable').removeClass('markdownTable').addClass('table table-striped table-bordered').each(function(){
+      $(this).prepend('<thead></thead>');
+      $(this).find('tbody > tr:first').prependTo($(this).find('thead'));
+
+      $(this).find('th').each(function(){
+        $(this).removeAttr('class');
+      })
+      $(this).find('tr').each(function(){
+        $(this).removeAttr('class');
+      })
+      $(this).find('td').each(function(){
+        $(this).removeAttr('class');
+      })
+
+      $(this).find('td > span.success').parent().addClass('success');
+      $(this).find('td > span.warning').parent().addClass('warning');
+      $(this).find('td > span.danger').parent().addClass('danger');
+    });
 
 
 
@@ -91,6 +110,11 @@ $( document ).ready(function() {
 		if(getOriginalWidthOfImg($(this)[0]) > $('#content>div.container').width())
 			$(this).css('width', '100%');
 	});
+
+  $( "div.content" ).find('img').each(function(){
+    $(this).wrap("<div class='image'></div>");
+    $(this).removeAttr('class');
+  });
 
     var nav_container = $('#main-nav').detach();
     nav_container.addClass('nav navbar-nav navbar-right');

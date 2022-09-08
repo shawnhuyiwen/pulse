@@ -34,7 +34,7 @@ integrated with all other types of physiologic software. Models at
 any anatomical level can be implemented within the existing
 infrastructure.
 
-<img src="./Images/System/SystemFidelity.png" width="550">
+<a href="./Images/System/SystemFidelity.png"><img src="./Images/System/SystemFidelity.png" width="550"></a>
 <center>
 *Figure 1. The engine uses a top-down approach to model development with bottom-up hooks for expansion.*
 </center><br>
@@ -125,14 +125,14 @@ bolus injections or the administration of an IV.
 
 Interactions between systems, such as alveoli transfer and diffusion between the extravascular and vascular space are modeled in the System Interactions methodology. This ensures each system is responsible for only its own behavior while capturing the behavior that occurs between systems.
 
-<img src="./Images/System/SystemFlow.png" width="600">
+<a href="./Images/System/SystemFlow.png"><img src="./Images/System/SystemFlow.png" width="600"></a>
 <center>
 *Figure 2. Overall the engine data flow diagram showing all of the
 systems. Dashed lines are only present for certain actions.
 Non-italicized elements are defined as classes in the engine.*
 </center><br>
 
-### %Timing
+### Timing
 
 The entire engine works off of a transient analysis time step
 of 0.02 s (50 Hz). All system states are recalculated every time step.
@@ -159,7 +159,7 @@ maintains three time steps for elements and parameters. These times are:
 
 The engine stabilizes with a multi-step process. The engine must be initialized and reach a stable state prior to modifying the patient condition. This is completed by using a dynamic stabilization protocol to execute the engine until a specified set of criteria are met, then any patient chronic conditions are applied. These conditions modify patient parameters and model values to represent the new patient state. The engine must restabilize using the dynamic protocol to achieve a stable state. This process is outlined in Figure 3.
 
-<img src="./Images/System/Stabilization.png" width="550">
+<a href="./Images/System/Stabilization.png"><img src="./Images/System/Stabilization.png" width="550"></a>
 <center> 
 <i>Figure 3. Overall the engine stabilization protocol. This highlights the multi-step process required to initialize either a healthy or chronically ill patient prior to executing a scenario.</i>
 </center><br>
@@ -236,7 +236,7 @@ Postprocess advances time by moving the next time step values to the
 current time step values. The next values are then set to the baseline values in
 preparation for the upcoming Preprocess call.
 
-<img src="./Images/System/SystemDataFlow.png">
+<a href="./Images/System/SystemDataFlow.png"><img src="./Images/System/SystemDataFlow.png"></a>
 <center>
 *Figure 4. This shows the repetitive three-step process used each time
 step to determine the system states. These three processes are mirrored
@@ -265,7 +265,7 @@ The engine modeling approach takes the human body and conceptually divides it in
 	
 Compartments are implemented as conceptual physical divisions of the body.  Anatomical data can be pulled from each compartment through optional node and path mapping. Compartments can be further discretized into smaller sub-compartments with a hierarchical relationship as you drill into various systems. In engine, compartments can be defined to encapsulate circuit nodes that allow easy organization, access, and synchronization of all system parts. Figure 5 shows an example of how compartments can be defined in the %Cardiovascular System.
 
-<img src="./Images/System/CompartmentExample.png">
+<a href="./Images/System/CompartmentExample.png"><img src="./Images/System/CompartmentExample.png"></a>
 <center>
 <i>Figure 5. This is an example of possible %Cardiovascular System compartments.  This is for explanation purposes only and not necessarily indicative of how things are really defined.  See the @ref CardiovascularMethodology documentation for how they are really defined.</i>
 </center><br>
@@ -321,15 +321,15 @@ The Cynthia scenario begins with the administration of midazolam at 50&nbsp;seco
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/Cynthia_HR.jpg" width="550"></td>
-    <td><img src="./plots/System/Cynthia_ArterialPressure.jpg" width="550"></td>
+    <td><a href="./plots/System/Cynthia_HR.jpg"><img src="./plots/System/Cynthia_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Cynthia_ArterialPressure.jpg"><img src="./plots/System/Cynthia_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/System/Cynthia_RR.jpg" width="550"></td>
-    <td><img src="./plots/System/Cynthia_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/System/Cynthia_RR.jpg"><img src="./plots/System/Cynthia_RR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Cynthia_O2Sat.jpg"><img src="./plots/System/Cynthia_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/System/CynthiaLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/System/CynthiaLegend.jpg"><img src="./plots/System/CynthiaLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -355,15 +355,15 @@ A ventilator mask is applied to Gus at 50&nbsp;seconds, and succinylcholine is i
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/Gus_HR.jpg" width="550"></td>
-    <td><img src="./plots/System/Gus_ArterialPressure.jpg" width="550"></td>
+    <td><a href="./plots/System/Gus_HR.jpg"><img src="./plots/System/Gus_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Gus_ArterialPressure.jpg"><img src="./plots/System/Gus_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/System/Gus_RR.jpg" width="550"></td>
-    <td><img src="./plots/System/Gus_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/System/Gus_RR.jpg"><img src="./plots/System/Gus_RR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Gus_O2Sat.jpg"><img src="./plots/System/Gus_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/System/GusLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/System/GusLegend.jpg"><img src="./plots/System/GusLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -387,15 +387,15 @@ At the beginning of the scenario, a ventilator mask is applied to Hassan. He the
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/Hassan_HR.jpg" width="550"></td>
-    <td><img src="./plots/System/Hassan_ArterialPressure.jpg" width="550"></td>
+    <td><a href="./plots/System/Hassan_HR.jpg"><img src="./plots/System/Hassan_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Hassan_ArterialPressure.jpg"><img src="./plots/System/Hassan_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/System/Hassan_RR.jpg" width="550"></td>
-    <td><img src="./plots/System/Hassan_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/System/Hassan_RR.jpg"><img src="./plots/System/Hassan_RR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Hassan_O2Sat.jpg"><img src="./plots/System/Hassan_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/System/HassanLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/System/HassanLegend.jpg"><img src="./plots/System/HassanLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -419,15 +419,15 @@ The Joel scenario begins with a full severity airway obstruction at 50&nbsp;seco
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/Joel_HR.jpg" width="550"></td>
-    <td><img src="./plots/System/Joel_ArterialPressure.jpg" width="550"></td>
+    <td><a href="./plots/System/Joel_HR.jpg"><img src="./plots/System/Joel_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Joel_ArterialPressure.jpg"><img src="./plots/System/Joel_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/System/Joel_RR.jpg" width="550"></td>
-    <td><img src="./plots/System/Joel_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/System/Joel_RR.jpg"><img src="./plots/System/Joel_RR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Joel_O2Sat.jpg"><img src="./plots/System/Joel_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/System/JoelLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/System/JoelLegend.jpg"><img src="./plots/System/JoelLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -452,15 +452,15 @@ Nathan receives a bolus injection of fentanyl at a dose of 150&nbsp;micrograms a
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/Nathan_HR.jpg" width="550"></td>
-    <td><img src="./plots/System/Nathan_ArterialPressure.jpg" width="550"></td>
+    <td><a href="./plots/System/Nathan_HR.jpg"><img src="./plots/System/Nathan_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Nathan_ArterialPressure.jpg"><img src="./plots/System/Nathan_ArterialPressure.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/System/Nathan_RR.jpg" width="550"></td>
-    <td><img src="./plots/System/Nathan_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/System/Nathan_RR.jpg"><img src="./plots/System/Nathan_RR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/Nathan_O2Sat.jpg"><img src="./plots/System/Nathan_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/System/NathanLegend.jpg" width="800"></td>
+    <td colspan="2"><a href="./plots/System/NathanLegend.jpg"><img src="./plots/System/NathanLegend.jpg" width="800"></a></td>
 </tr>
 </table>
 </center>
@@ -502,15 +502,15 @@ A team of soldiers is conducting a patrol when an explosive device detonates, in
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/CombatMultitrauma_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/System/CombatMultitrauma_BloodVolume.jpg" width="550"></td>
+    <td><a href="./plots/System/CombatMultitrauma_TotalLungVolume.jpg"><img src="./plots/System/CombatMultitrauma_TotalLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/System/CombatMultitrauma_BloodVolume.jpg"><img src="./plots/System/CombatMultitrauma_BloodVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/System/CombatMultitrauma_HR.jpg" width="550"></td>
-    <td><img src="./plots/System/CombatMultitrauma_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/System/CombatMultitrauma_HR.jpg"><img src="./plots/System/CombatMultitrauma_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/CombatMultitrauma_O2Sat.jpg"><img src="./plots/System/CombatMultitrauma_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/System/CombatMultitraumaLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/System/CombatMultitraumaLegend.jpg"><img src="./plots/System/CombatMultitraumaLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -532,7 +532,7 @@ A 40 year old female with a history of asthma is having an asthma attack. She ar
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/AsthmaAttack_PFT.jpg" width="550"></td>
+    <td><a href="./plots/System/AsthmaAttack_PFT.jpg"><img src="./plots/System/AsthmaAttack_PFT.jpg" width="550"></a></td>
 </tr>
 </table>
 </center>
@@ -541,15 +541,15 @@ A 40 year old female with a history of asthma is having an asthma attack. She ar
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/AsthmaAttack_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/System/AsthmaAttack_TidalVolume.jpg" width="550"></td>
+    <td><a href="./plots/System/AsthmaAttack_TotalLungVolume.jpg"><img src="./plots/System/AsthmaAttack_TotalLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/System/AsthmaAttack_TidalVolume.jpg"><img src="./plots/System/AsthmaAttack_TidalVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/System/AsthmaAttack_HR.jpg" width="550"></td>
-    <td><img src="./plots/System/AsthmaAttack_O2Sat.jpg" width="550"></td>
+    <td><a href="./plots/System/AsthmaAttack_HR.jpg"><img src="./plots/System/AsthmaAttack_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/AsthmaAttack_O2Sat.jpg"><img src="./plots/System/AsthmaAttack_O2Sat.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/System/AsthmaAttackLegend.jpg" width="700"></td>
+    <td colspan="2"><a href="./plots/System/AsthmaAttackLegend.jpg"><img src="./plots/System/AsthmaAttackLegend.jpg" width="700"></a></td>
 </tr>
 </table>
 </center>
@@ -575,21 +575,21 @@ A 25 year old male is hiking towards a rock formation to begin a recreational fr
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/HeatStroke_AchievedExerciseLevel.jpg" width="550"></td>
-    <td><img src="./plots/System/HeatStroke_CoreTemp.jpg" width="550"></td>
+    <td><a href="./plots/System/HeatStroke_AchievedExerciseLevel.jpg"><img src="./plots/System/HeatStroke_AchievedExerciseLevel.jpg" width="550"></a></td>
+    <td><a href="./plots/System/HeatStroke_CoreTemp.jpg"><img src="./plots/System/HeatStroke_CoreTemp.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/System/HeatStroke_HR.jpg" width="550"></td>
-    <td><img src="./plots/System/HeatStroke_RR.jpg" width="550"></td>
+    <td><a href="./plots/System/HeatStroke_HR.jpg"><img src="./plots/System/HeatStroke_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/HeatStroke_RR.jpg"><img src="./plots/System/HeatStroke_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/System/HeatStrokeLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/System/HeatStrokeLegend.jpg"><img src="./plots/System/HeatStrokeLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
 <center><i>Figure 14. Select outputs from the Heat Stroke showcase scenario.</i></center>
 
-### %Environment Exposure
+### Environment Exposure
 
 A 17 year old female leaves her Alaskan home in the mid-winter to retrieve a newspaper. The door closes as she exits the house. She is stuck outside for 45 minutes where it is -10<sup>o</sup>C. When the woman's housemates realize that she is outside, they bring her back in and sit her next to a fire.
 
@@ -605,15 +605,15 @@ A 17 year old female leaves her Alaskan home in the mid-winter to retrieve a new
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/System/EnvironmentExposure_TotalMetabolicRate.jpg" width="550"></td>
-    <td><img src="./plots/System/EnvironmentExposure_O2Consumption.jpg" width="550"></td>
+    <td><a href="./plots/System/EnvironmentExposure_TotalMetabolicRate.jpg"><img src="./plots/System/EnvironmentExposure_TotalMetabolicRate.jpg" width="550"></a></td>
+    <td><a href="./plots/System/EnvironmentExposure_O2Consumption.jpg"><img src="./plots/System/EnvironmentExposure_O2Consumption.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/System/EnvironmentExposure_HR.jpg" width="550"></td>
-    <td><img src="./plots/System/EnvironmentExposure_RR.jpg" width="550"></td>
+    <td><a href="./plots/System/EnvironmentExposure_HR.jpg"><img src="./plots/System/EnvironmentExposure_HR.jpg" width="550"></a></td>
+    <td><a href="./plots/System/EnvironmentExposure_RR.jpg"><img src="./plots/System/EnvironmentExposure_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/System/EnvironmentExposureLegend.jpg" width="900"></td>
+    <td colspan="2"><a href="./plots/System/EnvironmentExposureLegend.jpg"><img src="./plots/System/EnvironmentExposureLegend.jpg" width="900"></a></td>
 </tr>
 </table>
 </center>

@@ -9,6 +9,7 @@ POP_PROTO_WARNINGS
 #include "cdm/io/protobuf/PBConditions.h"
 #include "cdm/io/protobuf/PBPatientConditions.h"
 #include "cdm/io/protobuf/PBEnvironmentConditions.h"
+#include "cdm/io/protobuf/PBUtils.h"
 #include "cdm/patient/conditions/SEPatientCondition.h"
 #include "cdm/system/environment/conditions/SEEnvironmentCondition.h"
 #include "cdm/substance/SESubstanceManager.h"
@@ -56,4 +57,14 @@ void PBCondition::Serialize(const CDM_BIND::ConditionData& src, SECondition& dst
 void PBCondition::Serialize(const SECondition& src, CDM_BIND::ConditionData& dst)
 {
   dst.set_comment(src.m_Comment);
+}
+
+bool PBCondition::SerializeToString(const SECondition& a, std::string& dst, eSerializationFormat fmt)
+{
+  auto* bind = Unload(a);
+  return PBUtils::SerializeToString(*bind, dst, fmt, nullptr);
+}
+SECondition* PBCondition::SerializeFromString(const std::string& src, Logger& logger, eSerializationFormat fmt)
+{
+  return nullptr;
 }

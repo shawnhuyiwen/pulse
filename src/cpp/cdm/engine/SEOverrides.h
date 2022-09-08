@@ -12,6 +12,9 @@ public:
   SEOverrides(Logger* logger=nullptr);
   virtual ~SEOverrides();
 
+  static constexpr char const* Name = "Overrides";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEOverrides& src);
 
@@ -20,8 +23,6 @@ public:
   virtual bool HasScalarProperties() const;
   virtual SEScalarProperties& GetScalarProperties();
   virtual const SEScalarProperties& GetScalarProperties() const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

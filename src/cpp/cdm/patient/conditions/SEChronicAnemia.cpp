@@ -55,12 +55,3 @@ double SEChronicAnemia::GetReductionFactor() const
     return SEScalar::dNaN();
   return m_ReductionFactor->GetValue();
 }
-
-void SEChronicAnemia::ToString(std::ostream &str) const
-{
-  str << "Patient Condition : Anemia"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tReduction Factor: "; HasReductionFactor() ? str << m_ReductionFactor : str << "NaN";
-  str << std::flush;
-}

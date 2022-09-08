@@ -12,6 +12,9 @@ public:
   SEChestOcclusiveDressing(Logger* logger=nullptr);
   virtual ~SEChestOcclusiveDressing();
 
+  static constexpr char const* Name = "Chest Occlusive Dressing";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChestOcclusiveDressing& src, bool /*preserveState*/=false);
 
@@ -26,8 +29,6 @@ public:
   virtual void SetSide(eSide LeftOrRight);
   virtual bool HasSide() const;
   virtual void InvalidateSide();
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

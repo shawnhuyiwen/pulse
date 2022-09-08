@@ -11,9 +11,10 @@ public:
   SEECMOAction(Logger* logger);
   virtual ~SEECMOAction();
 
+  static constexpr char const* ActionType = "ECMO";
+  virtual std::string GetActionType() const { return ActionType; }
+
   virtual void Clear();
 
   virtual bool IsValid() const;
-
-  virtual void ToString(std::ostream &str) const = 0;
-};  
+};

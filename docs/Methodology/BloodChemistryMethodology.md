@@ -202,13 +202,13 @@ The metabolic acidosis event is triggered when the blood pH drops below the lowe
 #### Metabolic Alkalosis
 The metabolic alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the bicarbonate concentration is greater than 26.0&nbsp;mM. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions.
 
-#### %Respiratory Acidosis
+#### Respiratory Acidosis
 The respiratory acidosis event is triggered when the blood pH drops below the lower bound of the normal range, which is 7.35 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries is greater than 47.0&nbsp;mmHg. This reversible event is removed when the blood pH increases above 7.38. The small buffer of 0.03 is to allow for numerical fluctuations during transitions.
 
-#### %Respiratory Alkalosis
+#### Respiratory Alkalosis
 The respiratory alkalosis event is triggered when the blood pH increases above the upper bound of the normal range, which is 7.45 for arterial blood (note that the blood pH is sampled from the aorta compartment) @cite Leeuwen2015laboratory, **and** the partial pressure of carbon dioxide in the arteries less than 44.0&nbsp;mmHg. This reversible event is removed when the blood pH decreases below 7.42. The small buffer of 0.04 is to allow for numerical fluctuations during transitions. 
 
-<img src="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png">
+<a href="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png"><img src="./Images/BloodChemistry/BloodChemistryAcidBaseEvents.png"></a>
 <center>
 *Figure 2. The acidosis and alkalosis events are broken down into either metabolic or respiratory induced. Metabolic induced acidosis/alkalosis is driven from a shift in bicarbonate
 while respiratory induced acidosis/alkalosis is due to a chance in arterial carbon dioxide. The shift between either acidosis or alkalosis occurs at a blood pH of 7.4.*
@@ -242,7 +242,7 @@ Published values from the literature were compared to the engine output to perfo
 *Table 1. Results of the resting physiology validation of the Blood Chemistry System.*
 </center>
 
-@insert ./test_results/tables/BloodChemistryValidationTable.md
+@insert ./test_results/tables/BloodChemistry-StandardMaleValidationTable.md
 
 Overall, the engine meets validation, with all but two of the validation parameters having less than a 10% error when compared to published values.  Only one parameter has an error greater than than 30%. 
 
@@ -252,9 +252,9 @@ Validation - Conditions and Actions
 The Blood Chemistry system does not have any conditions or actions directly embedded, but the outputs of Blood Chemistry are dependent on the actions and conditions of other systems. An example is the Hemorrhage insult, an action of the [Cardiovascular](@ref CardiovascularMethodology) System. Figure&nbsp;2 shows the effects of hemorrhage and fluid resuscitation with saline on the total blood volume and the total hemoglobin for the patient.
 
 <center>
-<img src="./plots/BloodChemistry/Volume.jpg" width="1100">
-<img src="./plots/BloodChemistry/Hemoglobin.jpg" width="1100">
-<img src="./plots/BloodChemistry/BloodChemistryLegend.jpg" width="500">
+<a href="./plots/BloodChemistry/Volume.jpg"><img src="./plots/BloodChemistry/Volume.jpg" width="1100"></a>
+<a href="./plots/BloodChemistry/Hemoglobin.jpg"><img src="./plots/BloodChemistry/Hemoglobin.jpg" width="1100"></a>
+<a href="./plots/BloodChemistry/BloodChemistryLegend.jpg"><img src="./plots/BloodChemistry/BloodChemistryLegend.jpg" width="500"></a>
 </center>
 <center>
 *Figure 3. The total blood volume decreases with the hemorrhage, then increases as saline is infused. The total hemoglobin also decreases with the hemorrhage but remains reduced after the hemorrhage is stopped.*
@@ -269,19 +269,19 @@ There are three asessments in the Blood Chemistry system. Each assessment provid
 *Table 2. Results of the arterial blood gas test as compiled during the healthy resting physiology.*
 </center>
 
-@insert ./test_results/tables/ArterialBloodGasTestValidationTable.md
+@insert ./test_results/tables/ArterialBloodGasTest-StandardMaleValidationTable.md
 
 <center>
 *Table 3. Results of the metabolic panel as compiled during the healthy resting physiology.*
 </center>
 
-@insert ./test_results/tables/CompleteMetabolicPanelValidationTable.md
+@insert ./test_results/tables/CompleteMetabolicPanel-StandardMaleValidationTable.md
 
 <center>
 *Table 4. Results of the complete blood count as compiled during the healthy resting physiology.*
 </center>
 
-@insert ./test_results/tables/CompleteBloodCountValidationTable.md
+@insert ./test_results/tables/CompleteBloodCount-StandardMaleValidationTable.md
 
 All of the measures in the two Blood Chemistry assessments meet validation. 
 
@@ -290,7 +290,7 @@ Four Compartment Test
 ------------------------
 As mentioned above, the Blood Chemistry system serves the primary purpose of storing and relaying information between the other systems. This heavy reliance on other systems can make it difficult to test the funcitonality of blood gas balance. To this end, the scalability of the engine was leveraged to create a simpler system comprised of only four compartments: Pulmonary, to represent the capillaries in the lungs where oxygen and carbon dioxide exchange occurs; Arteries, representing all of the oxygen-rich vasculature running to the tissues; Capillaries, representing the location of oxygen removal from the vasculature; and Veins, representing the section of the vasulature containing oxygen-poor blood. A diagram of this simplified system can be seen in Figure 4 below.
 
-<img src="./Images/BloodChemistry/BloodChemistryFourCompartment.png" width="600">
+<a href="./Images/BloodChemistry/BloodChemistryFourCompartment.png"><img src="./Images/BloodChemistry/BloodChemistryFourCompartment.png" width="600"></a>
 <center>
 *Figure 4. The simplified Four Compartment test uses only Pulmonary, Arteries, Capillaries, and Veins to hone in on the functionality in the Blood Chemistry system.*
 </center><br>

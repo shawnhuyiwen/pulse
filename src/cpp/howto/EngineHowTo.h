@@ -33,13 +33,13 @@ void HowToLobarPneumonia();
 void HowToMechanicalVentilation();
 void HowToMechanicalVentilator();
 void HowToPulmonaryFibrosis();
-void HowToPulmonaryFunctionTest();
 void HowToRespiratoryMechanics();
 void HowToSmoke();
 void HowToTensionPneumothorax();
 
 void HowToConcurrentEngines();
 void HowToRunScenario();
+void HowToScenarioFromLog();
 void HowToDynamicHemorrhage();
 
 void HowToSandbox();

@@ -12,13 +12,14 @@ public:
   SELobarPneumonia(Logger* logger=nullptr);
   virtual ~SELobarPneumonia();
 
+  static constexpr char const* Name = "Lobar Pneumonia";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SELobarPneumonia& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual std::string GetName() const { return "LobarPneumonia"; }
 
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
@@ -31,8 +32,6 @@ public:
   virtual bool HasRightLungAffected() const;
   virtual SEScalar0To1& GetRightLungAffected();
   virtual double GetRightLungAffected() const;
-
-  virtual void ToString(std::ostream &str) const;
 
 protected:
 

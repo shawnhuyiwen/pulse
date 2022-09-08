@@ -143,7 +143,7 @@ public class SETestConfiguration
           } 
           catch(Exception e){Log.error("Could not find Executor "+value);}
           continue;
-        }        
+        }
 
         if(key.startsWith("Macro"))
         {
@@ -295,18 +295,32 @@ public class SETestConfiguration
           String[] split = pFileName.split("[/\\\\]");
           pFileName = split[split.length-1];
 
+          // Look for scenario jobs and make copies for each of the different patient files to use
           for(SETestJob job : oldJobs)
           {
-            if(job.executor.getClass().getName().indexOf("Scenario")==-1)
-            {
-              jobs.add(job);
+            if(!job.isAssessment && (job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1))
               continue;
-            }
+
             copy = job.clone();
             copy.patientFile = pFileName;
-            deriveScenarioResultNames(copy, copy.name.replaceAll(sce_ext, "-"+pFileName));
+            
+            String baseName = copy.name;
+            if(job.isAssessment)
+            {
+              baseName = baseName.replaceAll("Validation", "Validation-"+pFileName);
+              deriveScenarioResultNames(copy, baseName.replaceAll(sce_ext, ""));
+            }
+            else
+              deriveScenarioResultNames(copy, baseName.replaceAll(sce_ext, "-"+pFileName));
+            
             jobs.add(copy);
           }
+        }
+        // Now look for the non scenario jobs, so just add those back as is
+        for(SETestJob job : oldJobs)
+        {
+          if(!job.isAssessment && (job.executor==null || job.executor.getClass().getName().indexOf("Scenario")==-1))
+            jobs.add(job);
         }
 
       }
@@ -335,20 +349,35 @@ public class SETestConfiguration
 
   protected void deriveScenarioResultNames(SETestJob job, String baseName)
   {
+
     job.baselineFiles.clear();
     job.computedFiles.clear();
 
-    String[] dirs = baseName.substring(0, baseName.indexOf(sce_ext)).split("[/\\\\]");
-    String baseline = job.baselineDirectory;
-    for(int i=0; i<dirs.length-1; i++)
-      baseline+="/"+dirs[i];
-    baseline+="/"+dirs[dirs.length-1]+"Results"+ext;
+    String baseline;
+    String output;
+    
+    if(job.isAssessment)
+    {
+      baseline=job.baselineDirectory+"/"+baseName+".json";
+      output=job.computedDirectory+"/"+baseName+".json";
+    }
+    else
+    {
+      String[] dirs = baseName.substring(0, baseName.indexOf(sce_ext)).split("[/\\\\]");
+      
+      baseline = job.baselineDirectory;
+      for(int i=0; i<dirs.length-1; i++)
+        baseline+="/"+dirs[i];
+
+      output = job.computedDirectory;
+      for(int i=0; i<dirs.length; i++)
+        output+="/"+dirs[i];
+      
+      baseline+="/"+dirs[dirs.length-1]+"Results"+ext;
+      output+="Results"+ext;
+      //example : ./Scenarios/Validation/Patient-ValidationResults.csv
+    }
     job.baselineFiles.add(baseline);
-    String output = job.computedDirectory;
-    for(int i=0; i<dirs.length; i++)
-      output+="/"+dirs[i];
-    output+="Results"+ext;
-    //example : ./Scenarios/Validation/Patient-ValidationResults.csv
     job.computedFiles.add(output);
   }
 

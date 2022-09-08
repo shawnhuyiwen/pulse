@@ -13,11 +13,12 @@ class CDM_DECL SEUseInhaler : public SEConsciousRespirationCommand
 public:
   virtual ~SEUseInhaler();
 
+  static constexpr char const* Name = "Use Inhaler";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEUseInhaler& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
-
-  virtual void ToString(std::ostream &str) const;
 };

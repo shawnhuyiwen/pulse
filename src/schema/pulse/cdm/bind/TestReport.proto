@@ -6,6 +6,18 @@ option optimize_for = SPEED;
 
 import "pulse/cdm/bind/Properties.proto";
 
+message PropertyValidationData
+{
+  string                            Name                        = 1;
+  double                            ExpectedValue               = 2;
+  double                            ComputedValue               = 3;
+  double                            Error                       = 4;
+}
+message PropertyValidationListData
+{
+  repeated PropertyValidationData  Property                     = 1;
+}
+
 message TestErrorStatisticsData
 {
 

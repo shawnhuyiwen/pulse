@@ -65,7 +65,7 @@ public class MultiPlotter implements Plotter
             continue;
           List<Double> headerData = new ArrayList<Double>();
           csv.readHeader(csv.unitUnderscoreToSpace(job.headers.get(i)), headerData);
-          if(job.percentOfBaseline)
+          if(job.xPercentOfBaseline)
           {
             double baseline = headerData.get(0);
             boolean invertX = job.headers.get(i).contentEquals(job.X1header);
@@ -115,7 +115,7 @@ public class MultiPlotter implements Plotter
         {
           List<Double> headerData = new ArrayList<>();
           dataCsv.readHeader(dataCsv.unitUnderscoreToSpace(job.Y1headers.get(i)), headerData);
-          if(job.percentOfBaseline)
+          if(job.yPercentOfBaseline)
           {
             double baseline = headerData.get(0);
             for(int j=0; j < headerData.size(); j++)
@@ -125,7 +125,7 @@ public class MultiPlotter implements Plotter
         }
         List<Double> headerData = new ArrayList<>();
         dataCsv.readHeader(dataCsv.unitUnderscoreToSpace(job.X1header), headerData);
-        if(job.percentOfBaseline)
+        if(job.xPercentOfBaseline)
         {
           double baseline = headerData.get(0);
           for(int j=0; j < headerData.size(); j++)

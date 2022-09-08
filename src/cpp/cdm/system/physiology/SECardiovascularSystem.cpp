@@ -23,6 +23,7 @@ SECardiovascularSystem::SECardiovascularSystem(Logger* logger) : SESystem(logger
   m_CentralVenousPressure = nullptr;
   m_CerebralBloodFlow = nullptr;
   m_CerebralPerfusionPressure = nullptr;
+  m_CoronaryPerfusionPressure = nullptr;
   m_DiastolicArterialPressure = nullptr;
   m_DiastolicLeftHeartPressure = nullptr;
   m_DiastolicRightHeartPressure = nullptr;
@@ -66,6 +67,7 @@ SECardiovascularSystem::~SECardiovascularSystem()
   SAFE_DELETE(m_CentralVenousPressure);
   SAFE_DELETE(m_CerebralBloodFlow);
   SAFE_DELETE(m_CerebralPerfusionPressure);
+  SAFE_DELETE(m_CoronaryPerfusionPressure);
   SAFE_DELETE(m_DiastolicArterialPressure);
   SAFE_DELETE(m_DiastolicLeftHeartPressure);
   SAFE_DELETE(m_DiastolicRightHeartPressure);
@@ -107,6 +109,7 @@ void SECardiovascularSystem::Clear()
   INVALIDATE_PROPERTY(m_CentralVenousPressure);
   INVALIDATE_PROPERTY(m_CerebralBloodFlow);
   INVALIDATE_PROPERTY(m_CerebralPerfusionPressure);
+  INVALIDATE_PROPERTY(m_CoronaryPerfusionPressure);
   INVALIDATE_PROPERTY(m_DiastolicArterialPressure);
   INVALIDATE_PROPERTY(m_DiastolicLeftHeartPressure);
   INVALIDATE_PROPERTY(m_DiastolicRightHeartPressure);
@@ -155,6 +158,8 @@ const SEScalar* SECardiovascularSystem::GetScalar(const std::string& name)
     return &GetCerebralBloodFlow();
   if (name.compare("CerebralPerfusionPressure") == 0)
     return &GetCerebralPerfusionPressure();
+  if (name.compare("CoronaryPerfusionPressure") == 0)
+    return &GetCoronaryPerfusionPressure();
   if (name.compare("DiastolicArterialPressure") == 0)
     return &GetDiastolicArterialPressure();
   if (name.compare("DiastolicLeftHeartPressure") == 0)
@@ -333,6 +338,23 @@ double SECardiovascularSystem::GetCerebralPerfusionPressure(const PressureUnit& 
   if (m_CerebralPerfusionPressure == nullptr)
     return SEScalar::dNaN();
   return m_CerebralPerfusionPressure->GetValue(unit);
+}
+
+bool SECardiovascularSystem::HasCoronaryPerfusionPressure() const
+{
+  return m_CoronaryPerfusionPressure == nullptr ? false : m_CoronaryPerfusionPressure->IsValid();
+}
+SEScalarPressure& SECardiovascularSystem::GetCoronaryPerfusionPressure()
+{
+  if (m_CoronaryPerfusionPressure == nullptr)
+    m_CoronaryPerfusionPressure = new SEScalarPressure();
+  return *m_CoronaryPerfusionPressure;
+}
+double SECardiovascularSystem::GetCoronaryPerfusionPressure(const PressureUnit& unit) const
+{
+  if (m_CoronaryPerfusionPressure == nullptr)
+    return SEScalar::dNaN();
+  return m_CoronaryPerfusionPressure->GetValue(unit);
 }
 
 bool SECardiovascularSystem::HasDiastolicArterialPressure() const

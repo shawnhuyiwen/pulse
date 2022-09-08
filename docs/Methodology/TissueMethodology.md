@@ -58,7 +58,7 @@ Features, Capabilities, and Dependencies
 The %Tissue system is a low-resolution, mid-fidelity model of the tissues of the body. One of the primary functions of the %Tissue system is to control the transport of substances between the tissues and the blood. There are several transport models which help the %Tissue system perform that function. Figure 2 provides an overview of the extravascular space and the various modes of substance transport between the blood and the tissues. The %Tissue system also handles the conversion of substance (i.e. metabolic consumption and production).
 
 @anchor tissue-fig2
-<img src="./Images/Tissue/tissueTransport.png" width="500">
+<a href="./Images/Tissue/tissueTransport.png"><img src="./Images/Tissue/tissueTransport.png" width="500"></a>
 <center>
 <i>Figure 2. The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
 </center><br>
@@ -66,7 +66,7 @@ The %Tissue system is a low-resolution, mid-fidelity model of the tissues of the
 ### Bulk Flow and Advection
 The movement of fluid between the intravascular and extravascular space is modeled using the @ref CircuitMethodology. Figure 3 shows a representative circuit diagram. In most cases, each tissue circuit node is connected to one and only one cardiovascular circuit node. However, the gut tissue compartment is a lumped representation of the abdominal viscera organ tissues, and thus the large intestine, small intestine, and splanchnic vascular circuit nodes all connect to the gut tissue circuit node.
 
-<img src="./Images/Tissue/TissueCircuitExample.png" width="500">
+<a href="./Images/Tissue/TissueCircuitExample.png"><img src="./Images/Tissue/TissueCircuitExample.png" width="500"></a>
 <center>
 <i>Figure 3. The tissue compartment is partitioned into two distinct fluid spaces, and the non-fluid volume and mass are accounted for. There are several modes of transport between the spaces.</i>
 </center><br>
@@ -94,7 +94,7 @@ Where <i>&Delta;M</i> is the change in mass due to diffusion, *Q<sub>T</sub>* is
 ### Gas Exchange - Alveoli Transfer
 At the alveoli-pulmonary capillary interface, oxygen diffuses from the alveoli into the pulmonary capillaries, while carbon dioxide diffuses from the pulmonary capillaries into the alveoli. In reality, gas exchange at the alveoli is a multi-step process in space, where gases dissolve into liquid according to Henry's law and diffuse through liquid and across membranes according to Fick's law. In the model, alveolar gas exchange is driven by the partial pressure differential between the pulmonary capillaries and the alveoli in a one-step process, as shown in Figure 4. The partial pressures of each gas in the capillaries are calculated using Equation&nbsp;2, while the partial pressures of each gas in the alveoli are calculated using Equation&nbsp;3.
 
-<img src="./Images/Tissue/AlveolarDiffusion.png" width="700">
+<a href="./Images/Tissue/AlveolarDiffusion.png"><img src="./Images/Tissue/AlveolarDiffusion.png" width="700"></a>
 <center>
 <i>Figure 4. Alveolar gas exchange is a single-step, lumped-diffusion process driven by a partial pressure gradient, where the partial pressures are computed using Equations 2 and 3.</i>
 </center><br>
@@ -159,7 +159,7 @@ Facilitated diffusion uses Michaelis-Menten kinetics to model the facilitated tr
 *Equation 9.*
 </center><br>
 
-<img src="./plots/Tissue/FluxVsGradient.jpg" width="900">
+<a href="./plots/Tissue/FluxVsGradient.jpg"><img src="./plots/Tissue/FluxVsGradient.jpg" width="900"></a>
 <center>
 <i>Figure 5. In simple diffusion based on Fick's law, the substance flux is directly proportional to the concentration gradient. There is no upper limit to transport. In contrast, the flux is asymptotic in facilitated diffusion, reflecting a saturation of transporters in the membrane. These two transport processes can work in concert.</i>
 </center><br>
@@ -172,7 +172,7 @@ Active transport is a coarse model of the energy-requiring transport processes (
 ## Metabolic Production and Consumption
 Metabolism is simulated by production and consumption of substances. The basis for the metabolic production and consumption calculations is the  non-protein respiratory quotient (RQ). This value is used to determine the fraction of the metabolic energy that is produced through carbohydrate (glucose) consumption. The curve is determined from data obtained from Gropper and Smith @cite gropper2013nutrition and is displayed in Figure&nbsp;6.
 
-<img src="./plots/Tissue/Macronutrient_Consumption.jpg" width="900">
+<a href="./plots/Tissue/Macronutrient_Consumption.jpg"><img src="./plots/Tissue/Macronutrient_Consumption.jpg" width="900"></a>
 <center>
 <i>Figure 6. The Non-Protein %Respiratory Quotient displays the relationship between the fraction of the metabolism that is generated through carbohydrate metabolism vs. the fraction that is generated via fat metabolism. There is an inverse relationship between the fractions since the metabolic rate is entirely derived from glucose at a RQ of 1.</i>
 </center><br>
@@ -234,7 +234,7 @@ Events
 Results and Conclusions
 =======================
 
-%Verification
+Verification
 -------------
 %Verification of the diffusion methods is achieved through several units tests. One of the simple diffusion unit tests was used to generate data for Figure 7. The figure shows the time-evolution of the concentrations of four different compartments. Table 3 shows the initial conditions. Note that the units are arbitrary, thus not shown. The red, blue, and green compartment all share a boundary with the yellow compartment, but not with each other.
 <br><center>
@@ -247,7 +247,7 @@ Results and Conclusions
 | Green       | 20.0   | 10   | 0.50          |
 | Yellow      | 50.0   | 0.0  | 0.00          |
 
-<img src="./plots/Tissue/ConcentrationEquilibration.jpg" width="900">
+<a href="./plots/Tissue/ConcentrationEquilibration.jpg"><img src="./plots/Tissue/ConcentrationEquilibration.jpg" width="900"></a>
 <center>
 <i>Figure 7. Four compartments start with different concentrations which equilibrate after some time. Initial conditions are shown in Table 3 above.</i>
 </center><br>
@@ -259,12 +259,12 @@ The tissue system volumes are validated using data from @cite valentin2002icrp.
 <br><center>
 *Table 4. Validation of the resting physiologic state comparison of system-level outputs from the engine to referenced values. System-level outputs show favorable agreement with validation data.*
 </center>
-@insert ./test_results/tables/TissueValidationTable.md
+@insert ./test_results/tables/Tissue-StandardMaleValidationTable.md
 
 <br><center>
 *Table 5. Validation of the resting physiologic state comparison of compartment-level outputs from the engine to referenced values. The compartments are currently validated on a flow/volume basis. Flows and most of the volumes show good agreement with validation values.*
 </center>
-@insert ./test_results/tables/TissueCompartmentsValidationTable.md
+@insert ./test_results/tables/TissueCompartments-StandardMaleValidationTable.md
 
 More validation of this system can be found in the system outputs of all other systems, e.g., the oxygen and carbon dioxide saturation, the blood pH, and the bicarbonate concentration values are found in the @ref BloodChemistryMethodology and the alveoli oxygen and carbon dioxide partial pressures are found in the @ref RespiratoryMethodology.
 

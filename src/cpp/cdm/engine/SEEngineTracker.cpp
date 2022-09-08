@@ -62,15 +62,6 @@
 #include "cdm/properties/SEScalarElectricPotential.h"
 #include "cdm/utils/DataTrack.h"
 
-std::string Space2Underscore(const std::string& str)
-{
-  std::string s = str; 
-  std::transform(s.begin(), s.end(), s.begin(), [](char ch) {
-    return ch == ' ' ? '_' : ch;
-  });
-  return s;
-}
-
 SEEngineTracker::SEEngineTracker(SEPatient& p, SEActionManager& a, SESubstanceManager& s, SECompartmentManager& c, Logger* logger) : Loggable(logger),
   m_Patient(p), m_ActionMgr(a), m_SubMgr(s), m_CmptMgr(c)
 {
@@ -146,13 +137,6 @@ double SEEngineTracker::GetValue(const SEDataRequest& dr) const
   if (dr.HasUnit())
     return drs->GetValue(*dr.GetUnit());
   return drs->GetValue();
-}
-std::string SEEngineTracker::GetHeader(const SEDataRequest& dr) const
-{
-  auto drs = GetScalar(dr);
-  if (drs == nullptr)
-    return "Not Tracked";
-  return drs->Heading;
 }
 
 const SEDataRequestScalar* SEEngineTracker::GetScalar(const SEDataRequest& dr) const
@@ -282,129 +266,18 @@ bool SEEngineTracker::TrackRequest(SEDataRequest& dr)
 
   bool success = ConnectRequest(dr, *ds);
 
-  if(dr.GetCategory() == eDataRequest_Category::Patient)
-    m_ss << "Patient-";
-  else if(dr.GetCategory() == eDataRequest_Category::MechanicalVentilator)
-    m_ss << "MechanicalVentilator-";
-  // TODO We probably should prefix all equipment amb
-
-  switch (dr.GetCategory())
+  std::string header = dr.GetHeaderName();
+  if(header.empty())
   {
-    case eDataRequest_Category::Patient:
-    case eDataRequest_Category::Physiology:
-    case eDataRequest_Category::Environment:
-    case eDataRequest_Category::AnesthesiaMachine:
-    case eDataRequest_Category::ECG:
-    case eDataRequest_Category::Inhaler:
-    case eDataRequest_Category::MechanicalVentilator:
-    {
-      if (!dr.GetUnit())
-        m_ss << dr.GetPropertyName();
-      else
-        m_ss << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
-
-      ds->Heading = Space2Underscore(m_ss.str());
-      m_ss.str("");//Reset Buffer
-      ds->idx = m_DataTrack->Probe(ds->Heading, 0);
-      m_DataTrack->SetFormatting(ds->Heading, dr);
-      return success;
-    }
-    case eDataRequest_Category::Action:
-    {
-      if (dr.HasCompartmentName() && dr.HasSubstanceName())
-      {
-        if (!dr.GetUnit())
-          m_ss << dr.GetActionName() << "-" << dr.GetCompartmentName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName();
-        else
-          m_ss << dr.GetActionName() << "-" << dr.GetCompartmentName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
-      }
-      else if (dr.HasCompartmentName())
-      {
-        if (!dr.GetUnit())
-          m_ss << dr.GetActionName() << "-" << dr.GetCompartmentName() << "-" << dr.GetPropertyName();
-        else
-          m_ss << dr.GetActionName() << "-" << dr.GetCompartmentName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
-      }
-      else if (dr.HasSubstanceName())
-      {
-        if (!dr.GetUnit())
-          m_ss << dr.GetActionName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName();
-        else
-          m_ss << dr.GetActionName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
-      }
-      else
-      {
-        if (!dr.GetUnit())
-          m_ss << dr.GetActionName() << "-" << dr.GetPropertyName();
-        else
-          m_ss << dr.GetActionName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
-      }
-      ds->Heading = Space2Underscore(m_ss.str());
-      m_ss.str("");//Reset Buffer
-      ds->idx = m_DataTrack->Probe(ds->Heading, 0);
-      m_DataTrack->SetFormatting(ds->Heading, dr);
-      return success;
-    }
-    case eDataRequest_Category::GasCompartment:
-    case eDataRequest_Category::LiquidCompartment:
-    case eDataRequest_Category::ThermalCompartment:
-    case eDataRequest_Category::TissueCompartment:
-    {
-      if (dr.HasSubstanceName())
-      {
-        if (!dr.GetUnit())
-          m_ss << dr.GetCompartmentName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName();
-        else
-          m_ss << dr.GetCompartmentName() << "-" << dr.GetSubstanceName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
-      }
-      else
-      {
-        if (!dr.GetUnit())
-          m_ss << dr.GetCompartmentName() << "-" << dr.GetPropertyName();
-        else
-          m_ss << dr.GetCompartmentName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
-      }
-      ds->Heading = Space2Underscore(m_ss.str());
-      m_ss.str("");//Reset Buffer
-      ds->idx = m_DataTrack->Probe(ds->Heading, 0);
-      m_DataTrack->SetFormatting(ds->Heading, dr);
-      return success;
-    }
-    case eDataRequest_Category::Substance:
-    {
-      if (dr.HasCompartmentName())
-      {
-        if (!dr.GetUnit())
-          m_ss << dr.GetSubstanceName() << "-" << dr.GetCompartmentName() << "-" << dr.GetPropertyName();
-        else
-          m_ss << dr.GetSubstanceName() << "-" << dr.GetCompartmentName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
-        ds->Heading = Space2Underscore(m_ss.str());
-        m_ss.str("");//Reset Buffer
-        ds->idx = m_DataTrack->Probe(ds->Heading, 0);
-        m_DataTrack->SetFormatting(ds->Heading, dr);
-        return success;
-      }
-      else
-      {
-        if (!dr.GetUnit())
-          m_ss << dr.GetSubstanceName() << "-" << dr.GetPropertyName();
-        else
-          m_ss << dr.GetSubstanceName() << "-" << dr.GetPropertyName() << "(" << *dr.GetUnit() << ")";
-        ds->Heading = Space2Underscore(m_ss.str());
-        m_ss.str("");//Reset Buffer
-        ds->idx = m_DataTrack->Probe(ds->Heading, 0);
-        m_DataTrack->SetFormatting(ds->Heading, dr);
-        return success;
-      }
-    }
-    default:
-      m_ss << "Unhandled data request category: " << eDataRequest_Category_Name(dr.GetCategory()) << std::endl;
-      Error(m_ss);
+    m_ss << "Unhandled data request : " << dr.GetPropertyName() << std::endl;
+    Error(m_ss);
+    return false;
   }
 
-  m_ss << "Unhandled data request : " << dr.GetPropertyName() << std::endl;
-  Error(m_ss);
-  return false;
+  ds->Heading = header;
+  ds->idx = m_DataTrack->Probe(ds->Heading, 0);
+  m_DataTrack->SetFormatting(ds->Heading, dr);
+  return success;
 }
 
 bool SEEngineTracker::ConnectRequest(SEDataRequest& dr, SEDataRequestScalar& ds)

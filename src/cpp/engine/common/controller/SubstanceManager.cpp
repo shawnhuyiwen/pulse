@@ -351,14 +351,13 @@ namespace pulse
     SEScalarAmountPerVolume phosphate;
 
     albuminConcentration.SetValue(45.0, MassPerVolumeUnit::g_Per_L);
-    hematocrit.SetValue(m_data.GetCurrentPatient().GetSex() == ePatient_Sex::Male ? 0.45 : 0.40);
+    double Hb_total_g_Per_dL = m_data.GetCurrentPatient().GetSex() == ePatient_Sex::Male ? 15.0 : 14.0;
+    hematocrit.SetValue(Hb_total_g_Per_dL / 34.0);
     bodyTemp.SetValue(37.0, TemperatureUnit::C);
     strongIonDifference.SetValue(40.5, AmountPerVolumeUnit::mmol_Per_L);
     phosphate.SetValue(1.1, AmountPerVolumeUnit::mmol_Per_L);
 
     m_data.GetSaturationCalculator().SetBodyState(albuminConcentration, hematocrit, bodyTemp, strongIonDifference, phosphate);
-
-    double Hb_total_g_Per_dL = hematocrit.GetValue() * 34.0;
 
     // Convert to mmol/L
     // Note that we would need to use 1/4 of the molecular weight of the hemoglobin tetramer
@@ -524,13 +523,13 @@ namespace pulse
   }
   void SubstanceManager::InitializeBloodGases(SETissueCompartment& tissue, SELiquidCompartment& vascular)
   {
-    SELiquidCompartment& extracellular = m_data.GetCompartments().GetExtracellularFluid(tissue);
+    SELiquidCompartment& extracellular = tissue.GetExtracellular();
     extracellular.GetSubstanceQuantity(*m_N2)->GetMolarity().Set(vascular.GetSubstanceQuantity(*m_N2)->GetMolarity());
     extracellular.GetSubstanceQuantity(*m_O2)->GetMolarity().Set(vascular.GetSubstanceQuantity(*m_O2)->GetMolarity());
     extracellular.GetSubstanceQuantity(*m_CO2)->GetMolarity().Set(vascular.GetSubstanceQuantity(*m_CO2)->GetMolarity());
     extracellular.Balance(BalanceLiquidBy::Molarity);
 
-    SELiquidCompartment& intracellular = m_data.GetCompartments().GetIntracellularFluid(tissue);
+    SELiquidCompartment& intracellular = tissue.GetIntracellular();
     intracellular.GetSubstanceQuantity(*m_N2)->GetMolarity().Set(vascular.GetSubstanceQuantity(*m_N2)->GetMolarity());
     intracellular.GetSubstanceQuantity(*m_O2)->GetMolarity().Set(vascular.GetSubstanceQuantity(*m_O2)->GetMolarity());
     intracellular.GetSubstanceQuantity(*m_CO2)->GetMolarity().Set(vascular.GetSubstanceQuantity(*m_CO2)->GetMolarity());
@@ -956,7 +955,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void SubstanceManager::CalculateGenericClearance(double VolumeCleared_mL, SETissueCompartment& tissue, SESubstance& sub, SEScalarMass* cleared)
   {
-    SELiquidSubstanceQuantity* subQ = m_data.GetCompartments().GetIntracellularFluid(tissue).GetSubstanceQuantity(sub);
+    SELiquidSubstanceQuantity* subQ =tissue.GetIntracellular().GetSubstanceQuantity(sub);
     if (subQ == nullptr)
       throw CommonDataModelException("No Substance Quantity found for substance " + sub.GetName());
     //GetMass and Concentration from the compartment
@@ -1001,7 +1000,7 @@ namespace pulse
   //--------------------------------------------------------------------------------------------------
   void SubstanceManager::CalculateGenericExcretion(double VascularFlow_mL_Per_s, SETissueCompartment& tissue, SESubstance& sub, double FractionExcreted, double timestep_s, SEScalarMass* excreted)
   {
-    SELiquidSubstanceQuantity* subQ = m_data.GetCompartments().GetIntracellularFluid(tissue).GetSubstanceQuantity(sub);
+    SELiquidSubstanceQuantity* subQ = tissue.GetIntracellular().GetSubstanceQuantity(sub);
     if (subQ == nullptr)
       throw CommonDataModelException("No Substance Quantity found for substance " + sub.GetName());
     double concentration_ug_Per_mL;
@@ -1082,14 +1081,12 @@ namespace pulse
   {
     double mass = 0;
     SELiquidSubstanceQuantity* subQ;
-    for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
+    for (auto tissue : m_data.GetCompartments().GetTissueCompartments())
     {
-      subQ = itr.second->GetSubstanceQuantity(sub);;
+      subQ = tissue->GetExtracellular().GetSubstanceQuantity(sub);
       mass += subQ->GetMass(unit);
-    }
-    for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
-    {
-      subQ = itr.second->GetSubstanceQuantity(sub);
+
+      subQ = tissue->GetIntracellular().GetSubstanceQuantity(sub);
       mass += subQ->GetMass(unit);
     }
     return mass;
@@ -1109,15 +1106,13 @@ namespace pulse
   void SubstanceManager::SetSubstanceConcentration(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarMassPerVolume& concentration)
   {
     SELiquidSubstanceQuantity* subQ;
-    for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
+    for (auto tissue : m_data.GetCompartments().GetTissueCompartments())
     {
-      subQ = itr.second->GetSubstanceQuantity(sub);
+      subQ = tissue->GetExtracellular().GetSubstanceQuantity(sub);
       subQ->GetConcentration().Set(concentration);
       subQ->Balance(BalanceLiquidBy::Concentration);
-    }
-    for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
-    {
-      subQ = itr.second->GetSubstanceQuantity(sub);
+
+      subQ = tissue->GetIntracellular().GetSubstanceQuantity(sub);
       subQ->GetConcentration().Set(concentration);
       subQ->Balance(BalanceLiquidBy::Concentration);
     }
@@ -1125,15 +1120,13 @@ namespace pulse
   void SubstanceManager::SetSubstanceConcentration(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarMassPerVolume& extracellular, const SEScalarMassPerVolume& intracellular)
   {
     SELiquidSubstanceQuantity* subQ;
-    for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
+    for (auto tissue : m_data.GetCompartments().GetTissueCompartments())
     {
-      subQ = itr.second->GetSubstanceQuantity(sub);
+      subQ = tissue->GetExtracellular().GetSubstanceQuantity(sub);
       subQ->GetConcentration().Set(extracellular);
       subQ->Balance(BalanceLiquidBy::Concentration);
-    }
-    for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
-    {
-      subQ = itr.second->GetSubstanceQuantity(sub);
+
+      subQ = tissue->GetIntracellular().GetSubstanceQuantity(sub);
       subQ->GetConcentration().Set(intracellular);
       subQ->Balance(BalanceLiquidBy::Concentration);
     }
@@ -1152,16 +1145,14 @@ namespace pulse
   void SubstanceManager::SetSubstanceMolarity(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarAmountPerVolume& molarity)
   {
     SELiquidSubstanceQuantity* subQ;
-    for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
+    for (auto tissue : m_data.GetCompartments().GetTissueCompartments())
     {
-      subQ = itr.second->GetSubstanceQuantity(sub);
+      subQ = tissue->GetExtracellular().GetSubstanceQuantity(sub);
       subQ->GetMolarity().Set(molarity);
       subQ->Balance(BalanceLiquidBy::Molarity);
       //std::cout << sub.GetName() << " " << subQ->GetConcentration(MassPerVolumeUnit::ug_Per_L) <<"\n";
-    }
-    for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
-    {
-      subQ = itr.second->GetSubstanceQuantity(sub);
+
+      subQ = tissue->GetIntracellular().GetSubstanceQuantity(sub);
       subQ->GetMolarity().Set(molarity);
       subQ->Balance(BalanceLiquidBy::Molarity);
     }
@@ -1169,16 +1160,14 @@ namespace pulse
   void SubstanceManager::SetSubstanceMolarity(SESubstance& sub, const std::vector<SETissueCompartment*>& cmpts, const SEScalarAmountPerVolume& extracellular, const SEScalarAmountPerVolume& intracellular)
   {
     SELiquidSubstanceQuantity* subQ;
-    for (auto itr : m_data.GetCompartments().GetExtracellularFluid())
+    for (auto tissue : m_data.GetCompartments().GetTissueCompartments())
     {
-      subQ = itr.second->GetSubstanceQuantity(sub);
+      subQ = tissue->GetExtracellular().GetSubstanceQuantity(sub);
       subQ->GetMolarity().Set(extracellular);
       subQ->Balance(BalanceLiquidBy::Molarity);
       //std::cout << sub.GetName() << subQ->GetConcentration(MassPerVolumeUnit::mg_Per_dL) << " mg/dL \n";
-    }
-    for (auto itr : m_data.GetCompartments().GetIntracellularFluid())
-    {
-      subQ = itr.second->GetSubstanceQuantity(sub);
+
+      subQ = tissue->GetIntracellular().GetSubstanceQuantity(sub);
       subQ->GetMolarity().Set(intracellular);
       subQ->Balance(BalanceLiquidBy::Molarity);
     }

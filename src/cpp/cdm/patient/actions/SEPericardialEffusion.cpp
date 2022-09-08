@@ -69,12 +69,3 @@ double SEPericardialEffusion::GetEffusionRate(const VolumePerTimeUnit& unit) con
     return SEScalar::dNaN();
   return m_EffusionRate->GetValue(unit);
 }
-
-void SEPericardialEffusion::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Pericardial Effusion"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tEffusion Rate: "; HasEffusionRate() ? str << *m_EffusionRate : str << "NaN";
-  str << std::flush;
-}

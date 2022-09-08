@@ -18,6 +18,7 @@ import com.kitware.pulse.cdm.engine.SEPatientConfiguration;
 import com.kitware.pulse.cdm.properties.CommonUnits.TimeUnit;
 import com.kitware.pulse.utilities.FileUtils;
 import com.kitware.pulse.utilities.Log;
+import com.kitware.pulse.utilities.RunConfiguration;
 import com.kitware.pulse.utilities.JNIBridge;
 
 public class SEScenario 
@@ -48,9 +49,22 @@ public class SEScenario
 
   public void readFile(String fileName) throws InvalidProtocolBufferException
   {
-    ScenarioData.Builder builder = ScenarioData.newBuilder();
-    JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
-    SEScenario.load(builder.build(), this);
+    try
+    {
+      ScenarioData.Builder builder = ScenarioData.newBuilder();
+      JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
+      SEScenario.load(builder.build(), this);
+    }
+    catch(InvalidProtocolBufferException ex)
+    {
+      //System.err.println("Not a CDM scenario, checking if engine scenario..."+ex.getMessage());
+      // Try to load it as a Pulse Scenario
+      // Currently, we don't support the engine configuration in Java
+      com.kitware.pulse.engine.bind.Scenario.ScenarioData.Builder builder = 
+          com.kitware.pulse.engine.bind.Scenario.ScenarioData.newBuilder();
+      JsonFormat.parser().merge(FileUtils.readFile(fileName), builder);
+      SEScenario.load(builder.build().getScenario(), this);
+    }
   }
   public void writeFile(String fileName)
   {
@@ -212,6 +226,30 @@ public class SEScenario
       a.getScenarioTime().setValue(time_s, TimeUnit.s);
       if(a instanceof SEAdvanceTime)
         time_s += ((SEAdvanceTime)a).getTime().getValue(TimeUnit.s);
+    }
+  }
+  
+  public static void main(String[] args)
+  {
+    // Simple main to read all our scenarios
+    RunConfiguration cfg = new RunConfiguration();
+    List<String> files = FileUtils.findFiles(cfg.getScenarioDirectory(), ".json", true);
+    
+    for(String file : files)
+    {
+      if(file.contains("@"))
+        continue;// Ignore the assessments
+      
+      System.out.println("Reading scenario: "+file);
+      SEScenario sce = new SEScenario();
+      try
+      {
+        sce.readFile(file);
+      } catch (InvalidProtocolBufferException e)
+      {
+        // TODO Auto-generated catch block
+        System.err.println(" -- UNABLE TO READ SCENARIO " + e.getMessage());
+      }
     }
   }
 }

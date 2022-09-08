@@ -50,12 +50,12 @@ specific post process functionality for the mechanical ventilator. All postproce
 
 The Mechanical Ventilator model consists of a pressure/flow source with tubes and valves for inspiration and expiration.  The unidirectional valves are ideal and do not allow any backflow.  Figure 1 shows the Mechanical Ventilator circuit.  The compartments and transport graph mirrors the circuit.  Substance values are set on the Ventilator node/compartment, assuming infinite volume.
 
-<img src="./Images/MechanicalVentilator/MechanicalVentilatorCircuit.png" width="400">
+<a href="./Images/MechanicalVentilator/MechanicalVentilatorCircuit.png"><img src="./Images/MechanicalVentilator/MechanicalVentilatorCircuit.png" width="400"></a>
 <center>
 <i>Figure 1. Circuit diagram of the Mechanical Ventilator. The circuit employs a driver source (either pressure or flow, depending on the mode and settings), resistances, valves, and a compliance.</i>
 </center><br>
 
-### Connecting to the %Respiratory Circuit
+### Connecting to the Respiratory Circuit
 
 When an mechanical ventilator is used on a patient, there is a direct
 connection that allows air to flow freely between both. In the same
@@ -204,39 +204,43 @@ The Mechanical ventilator settings are fully dynamic and do not have any bounds 
 
 <center>
 <table border="0">
-<tr>    
-    <td><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_TotalLungVolume.jpg" width="550"></td>
-	<td><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_RR.jpg" width="550"></td>
-</tr>
-<tr>    
-    <td><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_TidalVolume.jpg" width="550"></td>
-	<td><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_InspiratoryExpiratoryRatio.jpg" width="550"></td>
+<tr>
+  <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_TotalLungVolume.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_TotalLungVolume.jpg" width="550"></a></td>
+  <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_RR.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVariedLegend.jpg" width="1100"></td>
+  <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_TidalVolume.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_TidalVolume.jpg" width="550"></a></td>
+  <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_InspiratoryExpiratoryRatio.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVaried_InspiratoryExpiratoryRatio.jpg" width="550"></a></td>
+</tr>
+<tr>
+  <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVariedLegend.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorPressureControlledVariedLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
-<center><i>Figure 2. These plots show the successful implementation of varying Mechanical Ventilator settings without patient spontaneous breathing.</i></center><br>
+<center>
+<i>Figure 2. These plots show the successful implementation of varying Mechanical Ventilator settings without patient spontaneous breathing.</i>
+</center><br>
 
 A scenario that varies the VC-AC settings for assisted breathing for a patient with moderate ARDS produces the outputs shown in Figure 3.
 
 <center>
 <table border="0">
-<tr>    
-    <td><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_TotalLungVolume.jpg" width="550"></td>
-	<td><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_RR.jpg" width="550"></td>
-</tr>
-<tr>    
-    <td><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_TidalVolume.jpg" width="550"></td>
-	<td><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_InspiratoryExpiratoryRatio.jpg" width="550"></td>
+<tr>
+  <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_TotalLungVolume.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_TotalLungVolume.jpg" width="550"></a></td>
+  <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_RR.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_RR.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDSLegend.jpg" width="1100"></td>
+  <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_TidalVolume.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_TidalVolume.jpg" width="550"></a></td>
+  <td><a href="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_InspiratoryExpiratoryRatio.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDS_InspiratoryExpiratoryRatio.jpg" width="550"></a></td>
+</tr>
+<tr>
+  <td colspan="2"><a href="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDSLegend.jpg"><img src="./plots/MechanicalVentilator/MechanicalVentilatorVolumeControlledARDSLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
-<center><i>Figure 3. These plots show the successful implementation of varying Mechanical Ventilator settings with patient spontaneous breathing.</i></center><br>
+<center>
+<i>Figure 3. These plots show the successful implementation of varying Mechanical Ventilator settings with patient spontaneous breathing.</i>
+</center><br>
 
 @anchor ventilator-ardsvalidation
 ## Validation - Healthy vs. ARDS vs. COPD

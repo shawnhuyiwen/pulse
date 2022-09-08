@@ -19,6 +19,9 @@ public:
   SEMechanicalVentilation(Logger* logger=nullptr);
   virtual ~SEMechanicalVentilation();
 
+  static constexpr char const* Name = "Mechanical Ventilation";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEMechanicalVentilation& src, const SESubstanceManager& subMgr, bool /*preserveState*/=false);
 
@@ -54,8 +57,6 @@ public:
   const SESubstanceConcentration* GetAerosol(const SESubstance& substance) const;
   void RemoveAerosol(const SESubstance& substance);
   void RemoveAerosols();
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

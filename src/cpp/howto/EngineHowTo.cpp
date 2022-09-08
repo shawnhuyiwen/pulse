@@ -19,7 +19,7 @@ int main()
   //HowToSerialize();
   //HowToPulseEnginePool();
 
-  HowToACLS();
+  //HowToACLS();
   //HowToAirwayObstruction();
   //HowToAnesthesiaMachine();
   //HowToArrythmia();
@@ -40,13 +40,13 @@ int main()
   //HowToMechanicalVentilation();
   //HowToMechanicalVentilator();
   //HowToPulmonaryFibrosis();
-  //HowToPulmonaryFunctionTest();
   //HowToRespiratoryMechanics();
   //HowToSmoke();
   //HowToTensionPneumothorax();
 
-  // This one does not really run, is a pure example
+  // These ones do not really run, pure examples
   //HowToRunScenario();
+  HowToScenarioFromLog();
 
   // More complicated examples that do run
   //HowToConcurrentEngines();

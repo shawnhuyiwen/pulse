@@ -69,12 +69,3 @@ double SEPulmonaryShuntExacerbation::GetSeverity() const
     return SEScalar::dNaN();
   return m_Severity->GetValue();
 }
-
-void SEPulmonaryShuntExacerbation::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Pulmonary Shunt Exacerbation"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "Not Set";
-  str << std::flush;
-}

@@ -11,6 +11,9 @@ public:
   SEAnesthesiaMachineMaskLeak(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineMaskLeak();
 
+  static constexpr char const* Name = "Mask Leak";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineMaskLeak& src, bool /*preserveState*/=false);
 
@@ -21,8 +24,6 @@ public:
   virtual bool HasSeverity() const;
   virtual SEScalar0To1& GetSeverity();
   virtual double GetSeverity() const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

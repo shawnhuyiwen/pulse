@@ -38,7 +38,8 @@ public class SETestJob extends LogListener
   @Override
   public SETestJob clone()
   {
-  	SETestJob copy = new SETestJob();
+    SETestJob copy = new SETestJob();
+    copy.isAssessment = this.isAssessment;
     copy.useState = this.useState;
     copy.patientFile = this.patientFile;
     copy.state = this.state;

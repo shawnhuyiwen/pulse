@@ -20,7 +20,7 @@ The engine modeling approach takes the human body and conceptually divides it in
 
 Links represent connections between compartments with a directional flow component defining a volume change each time-step.  In the engine, links can be assigned a path that provides the instantaneous flow value.  Figure 1 shows the base transport elements definitions in an example graph.
 
-<img src="./Images/SubstanceTransporter/Components.png" width="400">
+<a href="./Images/SubstanceTransporter/Components.png"><img src="./Images/SubstanceTransporter/Components.png" width="400"></a>
 <center>
 <i>Figure 1. This is a conceptual example graph that describes the lowest level elements used to define properties used by the Transporter.  Links provide flow between compartments that store both fluid and substance quantity information.</i>
 </center><br>
@@ -159,7 +159,7 @@ The Post Process step moves everything calculated in Process from the next time-
 Results and Conclusions
 ======================= 
 
-## %Verification
+## Verification
 
 There are three successful unit tests that were created specifically to ensure the transporter is giving results as expected:
 - Liquid Transport Test

@@ -41,7 +41,6 @@
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/patient/assessments/SEUrinalysis.h"
 #include "cdm/utils/FileUtils.h"
 
@@ -207,7 +206,6 @@ namespace pulse
   Controller::Controller(Logger* logger) : Data(logger)
   {
     m_ConfigOverride = nullptr;
-    m_Logger->LogToConsole(true);
   }
   Controller::~Controller()
   {
@@ -283,25 +281,25 @@ namespace pulse
 
   bool Controller::SerializeFromFile(const std::string& filename)
   {
-    Info("Serializing from file " + filename);
+    Info("[SerializingFromFile] " + filename);
     LogBuildInfo();
     return PBState::SerializeFromFile(filename, *this, m_ConfigOverride);
   }
   bool Controller::SerializeToFile(const std::string& filename) const
   {
-    Info("Serializing to file " + filename);
+    Info("[SerializingToFile] " + filename);
     return PBState::SerializeToFile(*this, filename);
   }
 
   bool Controller::SerializeFromString(const std::string& src, eSerializationFormat m)
   {
-    Info("Serializing from string");
+    Info("[SerializingFromString]");
     LogBuildInfo();
     return PBState::SerializeFromString(src, *this, m);
   }
   bool Controller::SerializeToString(std::string& output, eSerializationFormat m) const
   {
-    Info("Serializing to string");
+    Info("[SerializingToString]");
     return PBState::SerializeToString(*this, output, m);
   }
 
@@ -388,7 +386,8 @@ namespace pulse
 
   bool Controller::Initialize(SEPatient const& patient)
   {
-    Info("Configuring patient");
+    m_ss << "[Patient] " << patient;
+    Info(m_ss);
     if (!SetupPatient(patient))
       return false;
 
@@ -422,9 +421,17 @@ namespace pulse
     // Now we can check the config
     if (m_Config->IsWritingPatientBaselineFile())
     {
-      std::string stableDir = m_DataDir + "/stable/";
-      MakeDirectory(stableDir.c_str());
-      m_CurrentPatient->SerializeToFile(stableDir + m_CurrentPatient->GetName() + ".json");
+      std::string out = m_Config->GetInitialPatientBaselineFilepath();
+      if (out.empty())
+      {
+        out = m_DataDir + "/stable/";
+        MakeDirectory(out.c_str());
+        m_CurrentPatient->SerializeToFile(out + m_CurrentPatient->GetName() + ".json");
+      }
+      else
+      {
+        m_CurrentPatient->SerializeToFile(out);
+      }
     }
 
     m_Actions->Clear();
@@ -697,23 +704,6 @@ namespace pulse
         break;
       }
 
-      case ePatientAssessment_Type::PulmonaryFunctionTest:
-      {
-        SEPulmonaryFunctionTest pft(m_Logger);
-        if (GetPatientAssessment(pft))
-        {
-          // Write out the Assessement
-          std::string pftFile = GetEngineTracker().GetDataRequestManager().GetResultFilename();
-          if (pftFile.empty())
-            pftFile = "PulmonaryFunctionTest";
-          m_ss << "PFT@" << GetSimulationTime().GetValue(TimeUnit::s) << "s";
-          pftFile = Replace(pftFile, "Results", m_ss.str());
-          pftFile = Replace(pftFile, ".csv", ".json");
-          m_ss << "PulmonaryFunctionTest@" << GetSimulationTime().GetValue(TimeUnit::s) << "s.json";
-          pft.SerializeToFile(pftFile);
-        }
-        break;
-      }
       case ePatientAssessment_Type::Urinalysis:
       {
         SEUrinalysis upan(m_Logger);

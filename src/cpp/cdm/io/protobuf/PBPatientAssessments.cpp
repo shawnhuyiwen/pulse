@@ -11,7 +11,6 @@ POP_PROTO_WARNINGS
 #include "cdm/patient/assessments/SEArterialBloodGasTest.h"
 #include "cdm/patient/assessments/SECompleteBloodCount.h"
 #include "cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/patient/assessments/SEUrinalysis.h"
 #include "cdm/patient/assessments/SEUrinalysisMicroscopic.h"
 #include "cdm/utils/FileUtils.h"
@@ -237,95 +236,6 @@ void PBPatientAssessment::Serialize(const SEComprehensiveMetabolicPanel& src, CD
     dst.set_allocated_totalprotein(PBProperty::Unload(*src.m_TotalProtein));
 }
 
-
-bool PBPatientAssessment::SerializeToString(const SEPulmonaryFunctionTest& src, std::string& output, eSerializationFormat m)
-{
-  CDM_BIND::PulmonaryFunctionTestData data;
-  PBPatientAssessment::Serialize(src, data);
-  return PBUtils::SerializeToString(data, output, m, src.GetLogger());
-}
-bool PBPatientAssessment::SerializeToFile(const SEPulmonaryFunctionTest& src, const std::string& filename)
-{
-  CDM_BIND::PulmonaryFunctionTestData data;
-  PBPatientAssessment::Serialize(src, data);
-  return PBUtils::SerializeToFile(data, filename, src.GetLogger());
-}
-
-
-void PBPatientAssessment::Load(const CDM_BIND::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst)
-{
-  dst.Clear();
-  PBPatientAssessment::Serialize(src, dst);
-}
-void PBPatientAssessment::Serialize(const CDM_BIND::PulmonaryFunctionTestData& src, SEPulmonaryFunctionTest& dst)
-{
-  PBPatientAssessment::Serialize(src.patientassessment(), dst);
-  if (src.has_expiratoryreservevolume())
-    PBProperty::Load(src.expiratoryreservevolume(), dst.GetExpiratoryReserveVolume());
-  if (src.has_forcedvitalcapacity())
-    PBProperty::Load(src.forcedvitalcapacity(), dst.GetForcedVitalCapacity());
-  if (src.has_forcedexpiratoryvolume())
-    PBProperty::Load(src.forcedexpiratoryvolume(), dst.GetForcedExpiratoryVolume());
-  if (src.has_forcedexpiratoryflow())
-    PBProperty::Load(src.forcedexpiratoryflow(), dst.GetForcedExpiratoryFlow());
-  if (src.has_functionalresidualcapacity())
-    PBProperty::Load(src.functionalresidualcapacity(), dst.GetFunctionalResidualCapacity());
-  if (src.has_inspiratorycapacity())
-    PBProperty::Load(src.inspiratorycapacity(), dst.GetInspiratoryCapacity());
-  if (src.has_maximumvoluntaryventilation())
-    PBProperty::Load(src.maximumvoluntaryventilation(), dst.GetMaximumVoluntaryVentilation());
-  if (src.has_peakexpiratoryflow())
-    PBProperty::Load(src.peakexpiratoryflow(), dst.GetPeakExpiratoryFlow());
-  if (src.has_residualvolume())
-    PBProperty::Load(src.residualvolume(), dst.GetResidualVolume());
-  if (src.has_slowvitalcapacity())
-    PBProperty::Load(src.slowvitalcapacity(), dst.GetSlowVitalCapacity());
-  if (src.has_totallungcapacity())
-    PBProperty::Load(src.totallungcapacity(), dst.GetTotalLungCapacity());
-  if (src.has_vitalcapacity())
-    PBProperty::Load(src.vitalcapacity(), dst.GetVitalCapacity());
-  if (src.has_lungvolumeplot())
-    PBProperty::Load(src.lungvolumeplot(), dst.GetLungVolumePlot());
-}
-
-CDM_BIND::PulmonaryFunctionTestData* PBPatientAssessment::Unload(const SEPulmonaryFunctionTest& src)
-{
-  CDM_BIND::PulmonaryFunctionTestData* dst = new CDM_BIND::PulmonaryFunctionTestData();
-  PBPatientAssessment::Serialize(src, *dst);
-  return dst;
-}
-void PBPatientAssessment::Serialize(const SEPulmonaryFunctionTest& src, CDM_BIND::PulmonaryFunctionTestData& dst)
-{
-  PBPatientAssessment::Serialize(src, *dst.mutable_patientassessment());
-  if (src.HasExpiratoryReserveVolume())
-    dst.set_allocated_expiratoryreservevolume(PBProperty::Unload(*src.m_ExpiratoryReserveVolume));
-  if (src.HasForcedVitalCapacity())
-    dst.set_allocated_forcedvitalcapacity(PBProperty::Unload(*src.m_ForcedVitalCapacity));
-  if (src.HasForcedExpiratoryVolume())
-    dst.set_allocated_forcedexpiratoryvolume(PBProperty::Unload(*src.m_ForcedExpiratoryVolume));
-  if (src.HasForcedExpiratoryFlow())
-    dst.set_allocated_forcedexpiratoryflow(PBProperty::Unload(*src.m_ForcedExpiratoryFlow));
-  if (src.HasFunctionalResidualCapacity())
-    dst.set_allocated_functionalresidualcapacity(PBProperty::Unload(*src.m_FunctionalResidualCapacity));
-  if (src.HasInspiratoryCapacity())
-    dst.set_allocated_inspiratorycapacity(PBProperty::Unload(*src.m_InspiratoryCapacity));
-  if (src.HasInspiratoryReserveVolume())
-    dst.set_allocated_inspiratoryreservevolume(PBProperty::Unload(*src.m_InspiratoryReserveVolume));
-  if (src.HasMaximumVoluntaryVentilation())
-    dst.set_allocated_maximumvoluntaryventilation(PBProperty::Unload(*src.m_MaximumVoluntaryVentilation));
-  if (src.HasPeakExpiratoryFlow())
-    dst.set_allocated_peakexpiratoryflow(PBProperty::Unload(*src.m_PeakExpiratoryFlow));
-  if (src.HasResidualVolume())
-    dst.set_allocated_residualvolume(PBProperty::Unload(*src.m_ResidualVolume));
-  if (src.HasSlowVitalCapacity())
-    dst.set_allocated_slowvitalcapacity(PBProperty::Unload(*src.m_SlowVitalCapacity));
-  if (src.HasTotalLungCapacity())
-    dst.set_allocated_totallungcapacity(PBProperty::Unload(*src.m_TotalLungCapacity));
-  if (src.HasVitalCapacity())
-    dst.set_allocated_vitalcapacity(PBProperty::Unload(*src.m_VitalCapacity));
-  if (src.HasLungVolumePlot())
-    dst.set_allocated_lungvolumeplot(PBProperty::Unload(*src.m_LungVolumePlot));
-}
 
 bool PBPatientAssessment::SerializeToString(const SEUrinalysis& src, std::string& output, eSerializationFormat m)
 {

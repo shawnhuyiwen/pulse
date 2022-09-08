@@ -91,15 +91,3 @@ double SEChronicObstructivePulmonaryDiseaseExacerbation::GetEmphysemaSeverity() 
     return SEScalar::dNaN();
   return m_EmphysemaSeverity->GetValue();
 }
-
-void SEChronicObstructivePulmonaryDiseaseExacerbation::ToString(std::ostream &str) const
-{
-  str << "Patient Action : COPD Exacerbation";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tBronchitisSeverity: "; HasBronchitisSeverity() ? str << *m_BronchitisSeverity : str << "NaN";
-  str << "\n\tEmphysemaSeverity: "; HasEmphysemaSeverity() ? str << *m_EmphysemaSeverity : str << "NaN";
-  str << std::flush;
-}
-
-

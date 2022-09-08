@@ -3,6 +3,8 @@
 
 #include "PulseScenarioDriver.h"
 #include "PulseScenarioExec.h"
+#include "cdm/scenario/SEScenarioLog.h"
+#include "cdm/utils/FileUtils.h"
 
 #define test_serialization false
 
@@ -20,8 +22,14 @@ int main(int argc, char* argv[])
     return 1;
   }
   eModelType t = (eModelType)-1;
+  bool convertLogs = false;
   if (argc >= 3)
-    eModelType_ValueOf(argv[2], t);
+  {
+    if (std::string(argv[2]).compare("-c") == 0)
+      convertLogs =  true;
+    else
+      eModelType_ValueOf(argv[2], t);
+  }
 
   if (t == (eModelType)-1)
     t = eModelType::HumanAdultWholeBody;
@@ -41,12 +49,22 @@ int main(int argc, char* argv[])
   if (IsDirectory(input))
   {
     opts.LogToConsole(eSwitch::Off);
-    opts.SetScenarioDirectory(input);
+
+    if (convertLogs)
+      opts.SetScenarioLogDirectory(input);
+    else
+      opts.SetScenarioDirectory(input);
   }
   else
   {
     opts.LogToConsole(eSwitch::On);
-    opts.SetScenarioFilename(input);
+
+    std::string filename, ext;
+    SplitFilenameExt(input, filename, ext);
+    if (ext.compare(".log") == 0)
+      opts.SetScenarioLogFilename(input);
+    else
+      opts.SetScenarioFilename(input);
   }
   return !opts.Execute();
 }

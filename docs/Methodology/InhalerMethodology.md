@@ -10,7 +10,7 @@ Abstract
 
 The %Inhaler Model is a generic representation of a pressurized metered dose inhaler (pMDI).  The results show an excellent correlation with the expected trends.  Future work will address the current limitations of the system, including incorrect use of the device and re-inhalation of exhaled drug dose.
 
-<center><img src="./Images/Inhaler/Inhaler_Figure01.png" width="400"></center>
+<center><a href="./Images/Inhaler/Inhaler_Figure01.png"><img src="./Images/Inhaler/Inhaler_Figure01.png" width="400"></a></center>
 <center>
 <i>Figure 1. A pressurized metered dose inhaler @cite Wikiphoto2016How.</i>
 </center>
@@ -60,7 +60,7 @@ The inhaler implementation is used to meet the requirement to administer a beta 
 ### Approach
 The pMDI is modeled as a simple circuit (Figure 2) conditionally appended to the existing %Respiratory System circuit model. The inhaler circuit consists of a single inhaler node with a fixed volume connected to the external environment &ldquo;ground.&rdquo; If a spacer is specified in the scenario, the volume of the spacer is added to the inhaler node volume. When the pMDI is actuated during a scenario, the inhaler circuit is connected to the mouth node of the respiratory model, replacing the connection from the mouth to the external environment. Atmospheric air initially fills the inhaler volume and airflow into and out of the respiratory system temporarily passes through the inhaler node. 
 
-<img src="./Images/Inhaler/Inhaler_Figure02.png">
+<a href="./Images/Inhaler/Inhaler_Figure02.png"><img src="./Images/Inhaler/Inhaler_Figure02.png"></a>
 <center>
 <i>Figure 2. %Inhaler circuit (red) connected to the %Respiratory System circuit. The inhaler circuit consists of a single inhaler node that is added the respiratory circuit when the pMDI is actuated.</i>
 </center><br>
@@ -107,10 +107,10 @@ Features and Capabilities
 
 ### Features
 
-#### Connecting to the %Respiratory Circuit
+#### Connecting to the Respiratory Circuit
 When the pMDI is used by a patient, there is a direct connection that allows air to flow freely between the inhaler and respiratory circuits.  Both individually defined circuits are combined into a single circuit that is then used for calculations.
 
-#### pMDI (%Inhaler) Settings
+#### pMDI (Inhaler) Settings
 <center>
 *Table 2. The table shows the basic settings parameters used in the engine as inputs to use the pMDI*
 </center>
@@ -189,8 +189,8 @@ The single actuation scenarios with and without a spacer use the same setup and 
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Inhaler/Inhaler_OneActuation_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Inhaler/Inhaler_OneActuation_AlbuterolConcentration.jpg" width="550"></td>
+    <td><a href="./plots/Inhaler/Inhaler_OneActuation_TotalLungVolume.jpg"><img src="./plots/Inhaler/Inhaler_OneActuation_TotalLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Inhaler/Inhaler_OneActuation_AlbuterolConcentration.jpg"><img src="./plots/Inhaler/Inhaler_OneActuation_AlbuterolConcentration.jpg" width="550"></a></td>
 </tr>
 </table>
 </center>
@@ -218,8 +218,8 @@ The incorrect use, single actuation scenarios with and without a spacer use the 
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Inhaler/Inhaler_OneActuationIncorrectUse_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Inhaler/Inhaler_OneActuationIncorrectUse_AlbuterolMass.jpg" width="550"></td>
+    <td><a href="./plots/Inhaler/Inhaler_OneActuationIncorrectUse_TotalLungVolume.jpg"><img src="./plots/Inhaler/Inhaler_OneActuationIncorrectUse_TotalLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Inhaler/Inhaler_OneActuationIncorrectUse_AlbuterolMass.jpg"><img src="./plots/Inhaler/Inhaler_OneActuationIncorrectUse_AlbuterolMass.jpg" width="550"></a></td>
 </tr>
 </table>
 </center>
@@ -232,8 +232,8 @@ When the spacer is included with the inhaler, a small amount of alburterol still
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Inhaler/Inhaler_OneActuationWithSpacerIncorrectUse_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Inhaler/Inhaler_OneActuationWithSpacerIncorrectUse_AlbuterolMass.jpg" width="550"></td>
+    <td><a href="./plots/Inhaler/Inhaler_OneActuationWithSpacerIncorrectUse_TotalLungVolume.jpg"><img src="./plots/Inhaler/Inhaler_OneActuationWithSpacerIncorrectUse_TotalLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Inhaler/Inhaler_OneActuationWithSpacerIncorrectUse_AlbuterolMass.jpg"><img src="./plots/Inhaler/Inhaler_OneActuationWithSpacerIncorrectUse_AlbuterolMass.jpg" width="550"></a></td>
 </tr>
 </table>
 </center>
@@ -258,8 +258,8 @@ Below are validation results for two non-concurrent pMDI actuations using a mete
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Inhaler/Inhaler_TwoActuations_TotalLungVolume.jpg" width="550"></td>
-    <td><img src="./plots/Inhaler/Inhaler_TwoActuations_AlbuterolConcentration.jpg" width="550"></td>
+    <td><a href="./plots/Inhaler/Inhaler_TwoActuations_TotalLungVolume.jpg"><img src="./plots/Inhaler/Inhaler_TwoActuations_TotalLungVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Inhaler/Inhaler_TwoActuations_AlbuterolConcentration.jpg"><img src="./plots/Inhaler/Inhaler_TwoActuations_AlbuterolConcentration.jpg" width="550"></a></td>
 </tr>
 </table>
 </center>

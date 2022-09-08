@@ -10,7 +10,9 @@ class CDM_DECL SETissueCompartment : public SECompartment
   friend class PBCompartment;//friend the serialization class
   friend class SECompartmentManager;
 protected:
-  SETissueCompartment(const std::string& name, Logger* logger);
+  SETissueCompartment(const std::string& name,
+                      SELiquidCompartment& extracellular,
+                      SELiquidCompartment& intracellular, Logger* logger);
 public:
   virtual ~SETissueCompartment();
 
@@ -18,9 +20,15 @@ public:
 
   virtual const SEScalar* GetScalar(const std::string& name);
 
-  virtual bool HasChildren() const { return !m_Children.empty(); }// Children on tissue is not supported at this time
-  virtual const std::vector<SETissueCompartment*>& GetChildren() { return m_Children; }// Children on tissue is not supported at this time
-  virtual const std::vector<SETissueCompartment*>& GetLeaves() { return m_Leaves; }// Children on tissue is not supported at this time
+  // Children on tissue is not supported at this time
+  virtual bool HasChildren() const { return false; }
+  virtual const std::vector<SETissueCompartment*>& GetChildren() = delete;
+  virtual const std::vector<SETissueCompartment*>& GetLeaves() = delete;
+
+  virtual SELiquidCompartment& GetExtracellular() { return m_Extracellular; }
+  virtual const SELiquidCompartment& GetExtracellular() const { return m_Extracellular; }
+  virtual SELiquidCompartment& GetIntracellular() { return m_Intracellular; }
+  virtual const SELiquidCompartment& GetIntracellular() const { return m_Intracellular; }
 
   virtual void StateChange();
 
@@ -56,8 +64,11 @@ public:
   virtual SEScalarMass& GetTotalMass();
   virtual double GetTotalMass(const MassUnit& unit) const;
 
+  virtual const SEScalarVolume& GetTotalVolume();
+  virtual double GetTotalVolume(const VolumeUnit& unit) const;
+
 protected:
-  
+
   SEScalarMassPerMass*   m_AcidicPhospohlipidConcentration;
   SEScalarVolume*        m_MatrixVolume;
   SEScalar0To1*          m_NeutralLipidsVolumeFraction;
@@ -67,6 +78,7 @@ protected:
   SEScalar*              m_TissueToPlasmaLipoproteinRatio;
   SEScalarMass*          m_TotalMass;
 
-  std::vector<SETissueCompartment*> m_Children;
-  std::vector<SETissueCompartment*> m_Leaves;
+  SEScalarVolume*        m_TotalVolume;
+  SELiquidCompartment&   m_Extracellular;
+  SELiquidCompartment&   m_Intracellular;
 };

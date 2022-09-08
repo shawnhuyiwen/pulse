@@ -11,11 +11,12 @@ public:
   SEEnvironmentCondition(Logger* logger);
   virtual ~SEEnvironmentCondition();
 
+  static constexpr char const* ConditionType = "Environment";
+  virtual std::string GetConditionType() const { return ConditionType; }
+
   virtual void Clear();
 
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;
 
-public:
-  virtual void ToString(std::ostream &str) const = 0;
-};  
+};

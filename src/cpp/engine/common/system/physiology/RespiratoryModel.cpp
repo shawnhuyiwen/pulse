@@ -40,8 +40,6 @@
 #include "cdm/patient/actions/SERespiratoryMechanicsConfiguration.h"
 #include "cdm/patient/actions/SESupplementalOxygen.h"
 #include "cdm/patient/actions/SETensionPneumothorax.h"
-// Assessments
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 // Dependent Systems
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SEDrugSystem.h"
@@ -1464,7 +1462,7 @@ namespace pulse
       {
         SEConsciousRespiration& cr = m_PatientActions->GetConsciousRespiration();
         SEConsciousRespirationCommand* cmd = cr.GetActiveCommand();
-        m_ss << "Completed Conscious Respiration Command : " << *cmd;
+        m_ss << "Completed Conscious Respiration Command : " << cmd->GetName();
         Info(m_ss);
         cr.RemoveActiveCommand();
       }
@@ -2286,92 +2284,6 @@ namespace pulse
 
     double driverPressure_cmH2O = -(TargetVolume_L - m_data.GetInitialPatient().GetFunctionalResidualCapacity(VolumeUnit::L)) / totalCompliance_L_Per_cmH2O;
     return driverPressure_cmH2O;
-  }
-
-  //--------------------------------------------------------------------------------------------------
-  /// \brief
-  /// Populate the Pulmonary Function Test Assessment
-  ///
-  /// \param  pft        pft data
-  ///
-  /// \return success        true, if everything worked out
-  //--------------------------------------------------------------------------------------------------
-  bool RespiratoryModel::CalculatePulmonaryFunctionTest(SEPulmonaryFunctionTest& pft) const
-  {
-    pft.Clear();
-    pft.GetExpiratoryReserveVolume().Set(m_data.GetCurrentPatient().GetExpiratoryReserveVolume());
-    pft.GetFunctionalResidualCapacity().Set(m_data.GetCurrentPatient().GetFunctionalResidualCapacity());
-    pft.GetInspiratoryCapacity().Set(m_data.GetCurrentPatient().GetInspiratoryCapacity());
-    pft.GetInspiratoryReserveVolume().Set(m_data.GetCurrentPatient().GetInspiratoryReserveVolume());
-    pft.GetResidualVolume().Set(m_data.GetCurrentPatient().GetResidualVolume());
-    pft.GetTotalLungCapacity().Set(m_data.GetCurrentPatient().GetTotalLungCapacity());
-    pft.GetVitalCapacity().Set(m_data.GetCurrentPatient().GetVitalCapacity());
-
-    double rr_Hz = GetRespirationRate(FrequencyUnit::Hz);
-    double tv_L = GetTidalVolume(VolumeUnit::L);
-    double waveRespirationRate = rr_Hz;
-    double pi = 3.14159265359;
-    double magnitude = 0.5*tv_L;
-    double superPosition = m_data.GetCurrentPatient().GetFunctionalResidualCapacity(VolumeUnit::L) + magnitude;
-    double waveTime = 0.0;
-    double currentTime = 0.0;
-
-    double numPlotPoint = pft.GetNumberOfPlotPoints();
-    SEFunctionVolumeVsTime& plot = pft.GetLungVolumePlot();
-    plot.Invalidate();
-    std::vector<double>& time = plot.GetTime();
-    std::vector<double>& volume = plot.GetVolume();
-    plot.SetTimeUnit(TimeUnit::s);
-    plot.SetVolumeUnit(VolumeUnit::L);
-    if (numPlotPoint > 0)
-    {
-      double dt = 60.0 / numPlotPoint;
-      for (unsigned int i = 0; i < numPlotPoint; i++)
-      {
-        time.push_back(currentTime);
-        if (waveTime >= 12.0 && waveTime < 13.0)
-        {//Period dilation due to forced inspiration
-          magnitude = 0.5*tv_L + pft.GetInspiratoryReserveVolume().GetValue(VolumeUnit::L);
-          waveRespirationRate = rr_Hz
-            / (1 + pft.GetExpiratoryReserveVolume().GetValue(VolumeUnit::L) / tv_L);
-        }
-        else if (waveTime >= 13.0 && waveTime < 14.0)
-        {//Period dilation due to forced expiration
-          magnitude = 0.5*tv_L + pft.GetExpiratoryReserveVolume().GetValue(VolumeUnit::L);
-          waveRespirationRate = rr_Hz
-            / (1 + pft.GetExpiratoryReserveVolume().GetValue(VolumeUnit::L) / tv_L);
-        }
-        else
-        {
-          magnitude = 0.5*tv_L;
-          waveRespirationRate = rr_Hz;
-        }
-
-        volume.push_back(magnitude*sin(pi*waveTime) + superPosition);
-        waveTime += 2.0*waveRespirationRate*dt;
-        currentTime += dt;
-      }
-    }
-
-    /// \todo Insert more PFT calculations here
-    /*
-    All Known:
-    VitalCapacity=TotaLungCapacity-ResidualVolume
-    InspiratoryCapacity=TotaLungCapacity-FunctionalResidualCapacity
-    InspiratoryReserveVolume=InspiratoryCapacity-TidalVolume
-    ExpiratoryReserveVolume=FunctionalResidualCapacity-ResidualVolume
-
-    Need to define:
-    ForcedVitalCapacity        |  Increase the pressure driver in the lungs
-    ForcedExpiratoryVolume      |  for forced PFT constituents?
-    ForcedExpiratoryFlow      |
-    PeakExpiratoryFlow        |
-    MaximumVoluntaryVentilation    |  The same pressure driver increase should be used here. Calculate as a time integration of lung volume over 1 min.
-
-    SlowVitalCapacity        |
-
-    */
-    return true;
   }
 
   //--------------------------------------------------------------------------------------------------

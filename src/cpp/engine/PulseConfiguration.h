@@ -59,6 +59,9 @@ public:
   virtual bool IsWritingPatientBaselineFile() const { return m_WritePatientBaselineFile == eSwitch::On; }
   virtual void EnableWritePatientBaselineFile(eSwitch s) { m_WritePatientBaselineFile = (s == eSwitch::NullSwitch) ? eSwitch::Off : s; }
 
+  virtual void SetInitialPatientBaselineFilepath(const std::string& filepath) { m_InitialPatientBaselineFilepath = filepath; }
+  virtual std::string GetInitialPatientBaselineFilepath() { return m_InitialPatientBaselineFilepath; }
+
   virtual bool HasOverrides() const;
   virtual SEScalarProperties& GetOverrides();
   virtual const SEScalarProperties& GetOverrides() const;
@@ -73,6 +76,7 @@ protected:
   SETimedStabilization*         m_TimedStabilization;
   SEDynamicStabilization*       m_DynamicStabilization;
   eSwitch                       m_WritePatientBaselineFile;
+  std::string                   m_InitialPatientBaselineFilepath;
 
   SEScalarProperties            m_Overrides;
   SEScalarProperties            m_Modifiers;

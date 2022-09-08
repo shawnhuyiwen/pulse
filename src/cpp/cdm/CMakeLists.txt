@@ -1,4 +1,5 @@
 set(filesystem)# Support for std::filesystem::experimental
+set(filesystem)# Support for std::filesystem::experimental
 if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)
   set(filesystem stdc++fs)
 endif()
@@ -160,7 +161,6 @@ add_library_ex(CommonDataModel
     patient/assessments/SECompleteBloodCount.h
     patient/assessments/SEComprehensiveMetabolicPanel.h
     patient/assessments/SEPatientAssessment.h
-    patient/assessments/SEPulmonaryFunctionTest.h
     patient/assessments/SEUrinalysis.h
     patient/assessments/SEUrinalysisMicroscopic.h
     patient/conditions/SEAcuteRespiratoryDistressSyndrome.h
@@ -255,6 +255,7 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimePressureArea.h
     scenario/SEScenario.h
     scenario/SEScenarioExec.h
+    scenario/SEScenarioLog.h
     substance/SESubstance.h
     substance/SESubstanceAerosolization.h
     substance/SESubstanceClearance.h
@@ -529,7 +530,6 @@ add_library_ex(CommonDataModel
     patient/assessments/SECompleteBloodCount.cpp
     patient/assessments/SEComprehensiveMetabolicPanel.cpp
     patient/assessments/SEPatientAssessment.cpp
-    patient/assessments/SEPulmonaryFunctionTest.cpp
     patient/assessments/SEUrinalysis.cpp
     patient/assessments/SEUrinalysisMicroscopic.cpp
     patient/conditions/SEAcuteRespiratoryDistressSyndrome.cpp
@@ -624,6 +624,8 @@ add_library_ex(CommonDataModel
     properties/SEScalarVolumePerTimePressureArea.cpp
     scenario/SEScenario.cpp
     scenario/SEScenarioExec.cpp
+    scenario/SEScenarioLog.cpp
+    scenario/SEScenarioLogLegacy.cpp
     substance/SESubstance.cpp
     substance/SESubstanceAerosolization.cpp
     substance/SESubstanceClearance.cpp

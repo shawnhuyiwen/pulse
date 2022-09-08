@@ -28,7 +28,6 @@ add_executable_ex(HowToDriver
   HowTo-MechanicalVentilation.cpp
   HowTo-MechanicalVentilator.cpp
   HowTo-PulmonaryFibrosis.cpp
-  HowTo-PulmonaryFunctionTest.cpp
   HowTo-PulseEnginePool.cpp
   HowTo-RespiratoryMechanics.cpp
   HowTo-RunScenario.cpp
@@ -36,6 +35,7 @@ add_executable_ex(HowToDriver
   HowTo-RunThreaded.h
   HowTo-Sandbox.cpp
   HowTo-ScenarioBase.cpp
+  HowTo-ScenarioFromLog.cpp
   HowTo-Serialize.cpp
   HowTo-Smoke.cpp
   HowTo-TensionPneumothorax.cpp

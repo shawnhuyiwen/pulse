@@ -4,6 +4,7 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/scenario/SEScenarioExec.h"
 #include "cdm/scenario/SEScenario.h"
+#include "cdm/scenario/SEScenarioLog.h"
 #include "cdm/io/protobuf/PBScenario.h"
 #include "cdm/engine/SEAction.h"
 #include "cdm/engine/SECondition.h"
@@ -20,8 +21,7 @@
 #include "cdm/utils/TimingProfile.h"
 #include "cdm/utils/ConfigParser.h"
 #include "cdm/utils/FileUtils.h"
-
-#include <filesystem>
+#include "cdm/utils/GeneralMath.h"
 
 SEScenarioExec::SEScenarioExec(Logger* logger) : Loggable(logger)
 {
@@ -53,6 +53,10 @@ void SEScenarioExec::Clear()
   m_ScenarioFilename = "";
   m_ScenarioDirectory = "";
   m_ContentFormat = eSerializationFormat::JSON;
+
+  m_ScenarioLogFilename = "";
+  m_ScenarioLogDirectory = "";
+
   m_ThreadCount = -1;// One less that number of threads the system supports
 
   m_SaveNextStep = false;
@@ -305,10 +309,8 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
     }
 
     if(!ProcessAction(pe, *a))
-    {
       err=true;
-      break;
-    }
+
     if(pe.GetEventManager().IsEventActive(eEvent::IrreversibleState))
       return false;// Patient is for all intents and purposes dead, or out at least out of its methodology bounds, quit running
   }
@@ -317,12 +319,10 @@ bool SEScenarioExec::ProcessActions(PhysiologyEngine& pe, SEScenario& sce)
   profiler.Clear();
   pe.GetLogger()->Info(ss);
 
-  expectedFinalSimTime_s = std::round(expectedFinalSimTime_s * 100.0) / 100.0;
-  double simTime_s = std::round(pe.GetSimulationTime(TimeUnit::s) * 100.0) / 100.0;
-
-  pe.GetLogger()->Info("Final SimTime(s) " + pulse::cdm::to_string(simTime_s));
-  pe.GetLogger()->Info("Expected Final SimTime(s) " + pulse::cdm::to_string(expectedFinalSimTime_s));
-  if (expectedFinalSimTime_s != simTime_s)
+  double simTime_s = pe.GetSimulationTime(TimeUnit::s);
+  pe.GetLogger()->Info("[Final SimTime] " + pulse::cdm::to_string(simTime_s)+"(s)");
+  pe.GetLogger()->Info("[Expected Final SimTime] " + pulse::cdm::to_string(expectedFinalSimTime_s)+"(s)");
+  if (GeneralMath::PercentDifference(expectedFinalSimTime_s, simTime_s) > 0.01)
   {
     err = true;
     pe.GetLogger()->Error("!!!! Simulation time does not equal expected end time !!!!");
@@ -347,11 +347,9 @@ bool SEScenarioExec::ProcessAction(PhysiologyEngine& pe, SEAction& action)
     }
     else
     {
-      std::string fn = ss->GetFilename();
       // If its relative, we add the serialization directory
-      std::filesystem::path path(fn);
-      if (path.is_relative())
-        ss->SetFilename(m_OutputRootDirectory + "/" + fn);
+      if(IsRelativePath(ss->GetFilename()))
+        ss->SetFilename(m_OutputRootDirectory + "/" + ss->GetFilename());
     }
   }
   return pe.ProcessAction(action);
@@ -406,4 +404,54 @@ void SEScenarioExec::AdvanceEngine(PhysiologyEngine& pe)
     }
     m_SerializationActions.str("");
   }
+}
+
+bool SEScenarioExec::Execute()
+{
+  Logger log;
+  if(m_LoggerForward)
+    log.AddForward(m_LoggerForward);
+
+  std::string ext;
+  // Set the output to the same location as the log file
+  if (m_OutputRootDirectory.empty())
+    SplitPathFilenameExt(m_ScenarioLogFilename, m_OutputRootDirectory, m_BaseFilename, ext);
+  else
+    SplitFilenameExt(m_ScenarioLogFilename, m_BaseFilename, ext);
+
+  if (m_OrganizeOutputDirectory==eSwitch::On)
+  {
+    std::string relativePath = "";
+    if (!m_ScenarioLogDirectory.empty())
+    {
+      // Get the relative directory path from to the scenario directory to the scenario file
+      relativePath = RelativePathFrom(m_ScenarioLogDirectory, m_ScenarioLogFilename);
+    }
+    // Append it to our m_OutputRootDirectory
+    m_OutputRootDirectory += "/" + relativePath + "/" + m_BaseFilename;
+  }
+
+  m_LogFilename = m_OutputRootDirectory + m_BaseFilename + ".cnv.log";
+  std::string outScenarioFilename = m_OutputRootDirectory + m_BaseFilename + ".json";
+
+  log.Info("Creating Log File : " + m_LogFilename);
+  log.SetLogFile(m_LogFilename);
+  log.LogToConsole(m_LogToConsole == eSwitch::On);
+
+  SEScenario sce(&log);
+  SEScenarioLog sceL(&log);
+
+  if (!sceL.Convert(m_ScenarioLogFilename, sce))
+  {
+    Error("Unable to convert scenario from log file: " + m_ScenarioLogFilename);
+    return false;
+  }
+
+  if (!sce.SerializeToFile(outScenarioFilename))
+  {
+    Error("Unable to serialize scenario from log file : " + m_ScenarioLogFilename);
+    return false;
+  }
+
+  return true;
 }

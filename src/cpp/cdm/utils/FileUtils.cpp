@@ -4,6 +4,8 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/utils/FileUtils.h"
 #include <iterator>
+#include <chrono>
+#include <thread>
 
    // We haven't checked which filesystem to include yet
 #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
@@ -154,7 +156,13 @@ bool IsDirectory(const std::string& dir)
   return std::filesystem::is_directory(dir);
 }
 
-void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask)
+bool IsRelativePath(const std::string& path)
+{
+  std::filesystem::path p(path);
+  return p.is_relative();
+}
+
+void ListFiles(const std::string& dir, std::vector<std::string>& files, bool recursive, const std::string& mask, const std::string& exclusion)
 {
   std::string filename;
   if (recursive)
@@ -164,8 +172,12 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
       if (std::filesystem::exists(entry.status()) && std::filesystem::is_regular_file(entry.status()))
       {
         filename = entry.path().string();
+        std::replace(filename.begin(), filename.end(), '\\', '/');
         if (filename.find(mask) != std::string::npos)
-          files.push_back(filename);
+        {
+          if (exclusion.empty() || filename.find(exclusion) == std::string::npos)
+            files.push_back(filename);
+        }
       }
 
     }
@@ -177,10 +189,13 @@ void ListFiles(const std::string& dir, std::vector<std::string>& files, bool rec
       if (std::filesystem::exists(entry.status()) && std::filesystem::is_regular_file(entry.status()))
       {
         filename = entry.path().string();
+        std::replace(filename.begin(), filename.end(), '\\', '/');
         if (filename.find(mask) != std::string::npos)
-          files.push_back(filename);
+        {
+          if (exclusion.empty() || filename.find(exclusion) == std::string::npos)
+            files.push_back(filename);
+        }
       }
-      
     }
   }
 }
@@ -190,7 +205,21 @@ void MakeDirectory(std::string const& dir)
   std::filesystem::create_directory(dir);
 }
 
-bool DeleteDirectory(const std::string &dir)
+bool DeleteFile(const std::string &dir, short retry)
+{
+  if (std::remove(dir.c_str()) != 0)
+  {
+    for (int r=0; r<retry; r++)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      if (std::remove(dir.c_str()) == 0)
+        return true;
+    }
+    return false;
+  }
+  return true;
+}
+bool DeleteDirectory(const std::string& dir)
 {
   return std::filesystem::remove_all(dir);
 }

@@ -149,10 +149,8 @@ namespace Pulse
         type = 1;
       else if (assessment is SEComprehensiveMetabolicPanel)
         type = 2;
-      else if (assessment is SEPulmonaryFunctionTest)
-        type = 3;
       else if (assessment is SEUrinalysis)
-        type = 4;
+        type = 3;
       else
         return false;
 

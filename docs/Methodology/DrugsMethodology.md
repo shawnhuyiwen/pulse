@@ -27,7 +27,7 @@ Background and Scope
 Data Flow
 ---------
 ### Preprocess
-#### Administer %Substances and Administer IV %Substances
+#### Administer Substances and Administer IV Substances
 All substances added or removed from the engine body are incremented or decremented from the appropriate compartment during the Preprocess step. For example, if substances are administered via a bolus injection or through intravenous administration, the substance mass is increased in the vena cava compartment.
 
 ### Process
@@ -201,7 +201,7 @@ The *EC<sub>50</sub>* values were unknown for the majority of the drugs, so it w
 Where *C<sub>max</sub>* is the maximum plasma concentration for the standard adult dose and *EC<sub>50</sub>* is the concentration at which 50% of the effect should be present.
 
 @anchor drugs-cardiovascular-effects
-##### %Cardiovascular Effects
+##### Cardiovascular Effects
 Equation 7 provides a straightforward calculation for the heart rate. However, to be applied in the cardiovascular system, the drug effects need to be translated to the effects on the mean arterial pressure and the pulse pressure. This is accomplished using Equations 9 and 10. These equations were developed using the relationship between diastolic and systolic pressure and the mean arterial pressure @cite guyton2006medical.
 
 \f[\Delta MAP = \left(2* \Delta DBP \right) + \frac{\Delta SBP}{3} \f]
@@ -217,13 +217,13 @@ Equation 7 provides a straightforward calculation for the heart rate. However, t
 Where *MAP* is the mean arterial blood pressure, *DBP* is the diastolic blood pressure, and *SBP* is the systolic blood pressure. These changes to the heart rate, mean arterial pressure, and pulse pressure are then system outputs for the drug system. The changes are then applied in the %Cardiovascular System. For more details on the implementation of the effects see the @ref CardiovascularMethodology.
 
 @anchor drugs-respiratory-effects
-##### %Respiratory Effects
+##### Respiratory Effects
 As with the %Cardiovascular System, the respiratory and tidal volume effects are relatively straight forward to apply. The neuromuscular block and sedation levels are calculated to have an effect level between zero and one, where zero is no effect and one is a maximal effect. The detail of how these are implemented can be found in the @ref RespiratoryMethodology.
 
 #### Site-of-Action Model
 There are currently two drugs which utilize a localized PD effects model: Albuterol and Furosemide.
 
-##### %Respiratory Effects
+##### Respiratory Effects
 Aerosolized substances have a direct effect on the respiratory system. There are two direct-effect aerosol substance properties.
 - BronchioleModifier
 	- A parameter which controls the dilation (positive value) or constriction (negative value) of the bronchioles in the presence of the substance
@@ -232,11 +232,11 @@ Aerosolized substances have a direct effect on the respiratory system. There are
 
 For example, Albuterol is an aerosolized drug that typically enters the body via nebulizer or metered-dose inhaler. Accordingly, in the engine Albuterol enters the body through the respiratory tract and diffuses into the respiratory tissues (see the [aerosol section](@ref environment-aerosol) in the @ref EnvironmentMethodology report). The BronchioleModifier for Albuterol is set to 1 in the substance file, meaning that Albuterol has the capability to maximally dilate the bronchioles. The bronchodilatory effects of Albuterol are applied directly at the site of action, and the actual bronchodilation is a function of the concentration of Albuterol in the respiratory tissues.
 
-##### %Renal Effects
+##### Renal Effects
 The pharmacodynamic effects of diuretics locally target the renal system's functionality. Local binding of the Na-K-2Cl symporter by Furosemide (Lasix) in the tubular lumen stimulates an increase in urine production and ion excretion. In the engine we simulate this effect by adjusting the reabsorption permeability as a function of plasma concentration of Furosemide. This enables simulation of the whole-body drug effects, but the model does not use the local concentration of drug in the tubular lumen as the primary determinant of the reabsorption adjustment. A mechanistic model based on traditional receptor theory which combines the tissue properties of receptor concentration and signal transduction with the drug properties of intrinsic efficacy and affinity to form a model of drug response would use the local tissue concentration as the first link in a causal chain leading to permeabilty changes and the appropriate downstream effects. This type of mechanistic model is recommended as future work. For details on the reabsorption and urine production of the renal system, see the @ref RenalMethodology report. The results of the Lasix administration simulation are compared to data found in literature and presented in the [validation section](@ref drugs-furosemide).
 
 @anchor drugs-substances
-### %Substances
+### Substances
 The full list of drugs available in the data library can be found in Table 5 in the Validation section. Additional substances, such as oxygen, carbon dioxide, and hemoglobin that are available in the engine can be found in the @ref BloodChemistryMethodology.
 
 @anchor drugs-variability
@@ -301,15 +301,15 @@ The succinycholine scenario shows a drug impacting the major engine systems. Suc
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Drugs/Succinylcholine_HeartRate.jpg" width="550"></td>
-    <td><img src="./plots/Drugs/Succinylcholine_MeanArterialPressure.jpg" width="550"></td>
+    <td><a href="./plots/Drugs/Succinylcholine_HeartRate.jpg"><img src="./plots/Drugs/Succinylcholine_HeartRate.jpg" width="550"></td></a>
+    <td><a href="./plots/Drugs/Succinylcholine_MeanArterialPressure.jpg"><img src="./plots/Drugs/Succinylcholine_MeanArterialPressure.jpg" width="550"></td></a>
 </tr>
 <tr>
-    <td><img src="./plots/Drugs/Succinylcholine_RespirationRate.jpg" width="550"></td>
-    <td><img src="./plots/Drugs/Succinylcholine_OxygenSaturation.jpg" width="550"></td>
+    <td><a href="./plots/Drugs/Succinylcholine_RespirationRate.jpg"><img src="./plots/Drugs/Succinylcholine_RespirationRate.jpg" width="550"></td></a>
+    <td><a href="./plots/Drugs/Succinylcholine_OxygenSaturation.jpg"><img src="./plots/Drugs/Succinylcholine_OxygenSaturation.jpg" width="550"></td></a>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Drugs/SuccinylcholineLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Drugs/SuccinylcholineLegend.jpg"><img src="./plots/Drugs/SuccinylcholineLegend.jpg" width="1100"></td></a>
 </tr>
 </table>
 </center>
@@ -326,73 +326,73 @@ Validation - Pharmacokinetic
 
 The PK model was validated by comparing the plasma concentration calculated by the engine to plasma concentration curves found in the literature. The comparisons are shown in Figures 2-14. No available data was found for Epinephrine, so this drug was only validated from a PD perspective.
 
-<img src="./plots/Drugs/Albuterol.jpg" width="1100">
+<a href="./plots/Drugs/Albuterol.jpg"><img src="./plots/Drugs/Albuterol.jpg" width="1100"></a>
 <center>
 <i>Figure 2. Albuterol is an aerosol. Alveolar exchange takes place bidirectionally as long as the "gas" (aerosol) is in the blood or in the environment. For that reason, the concentration of Albuterol in the plasma diminishes much faster in the engine than demonstrated in literature @cite anderson1998pharmacokinetics. This is a known issue and an area of future work.</i>
 </center><br>
 
-<img src="./plots/Drugs/Etomidate.jpg" width="1100">
+<a href="./plots/Drugs/Etomidate.jpg"><img src="./plots/Drugs/Etomidate.jpg" width="1100"></a>
 <center>
 <i>Figure 3. The physical chemical properties of etomidate found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite Hebron1983pharmacokinetics, @cite Valk2021etomidate, and @cite VanHamme1978pharmacokinetics.</i>
 </center><br>
 
 
-<img src="./plots/Drugs/Fentanyl.jpg" width="1100">
+<a href="./plots/Drugs/Fentanyl.jpg"><img src="./plots/Drugs/Fentanyl.jpg" width="1100"></a>
 <center>
 <i>Figure 4. The physical chemical properties of fentanyl found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite shankaran2013physiologically.</i>
 </center><br>
 
-<img src="./plots/Drugs/Furosemide.jpg" width="1100">
+<a href="./plots/Drugs/Furosemide.jpg"><img src="./plots/Drugs/Furosemide.jpg" width="1100"></a>
 <center>
 <i>Figure 4. The physical chemical properties of furosemide found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite hammarlund1985acute.</i>
 </center><br>
 
-<img src="./plots/Drugs/Ketamine.jpg" width="1100">
+<a href="./plots/Drugs/Ketamine.jpg"><img src="./plots/Drugs/Ketamine.jpg" width="1100"></a>
 <center>
 <i>Figure 5. The partition coefficients were calculated from initial physical chemical properties found for Ketamine. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite xie2003analgesic.</i>
 </center><br>
 
-<img src="./plots/Drugs/Lorazepam.jpg" width="1100">
+<a href="./plots/Drugs/Lorazepam.jpg"><img src="./plots/Drugs/Lorazepam.jpg" width="1100"></a>
 <center>
 <i>Figure 6. The engine curve for lorazepam plasma concentration shows a good overall fit with the experimental data found in @cite Swart2003comparitive, @cite Kyriakopoulos1978Clinical, and @cite Greenblatt1981Clinical.</i>
 </center><br>
 
-<img src="./plots/Drugs/Midazolam.jpg" width="1100">
+<a href="./plots/Drugs/Midazolam.jpg"><img src="./plots/Drugs/Midazolam.jpg" width="1100"></a>
 <center>
 <i>Figure 7. The engine curve for midazolam plasma concentration shows a good overall fit with the experimental data found in @cite schwagmeier1998midazolam. However, the clearance dominant (end) portion of the curve shows that the engine should be clearing more quickly, while midazolam appears to move into the tissues too quickly during the diffusion dominant portion of the curve (beginning).</i>
 </center><br>
 
-<img src="./plots/Drugs/Morphine.jpg" width="1100">
+<a href="./plots/Drugs/Morphine.jpg"><img src="./plots/Drugs/Morphine.jpg" width="1100"></a>
 <center>
 <i>Figure 8. The physical chemical properties of morphine found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite lotsch2002pharmacokinetic.</i>
 </center><br>
 
-<img src="./plots/Drugs/Naloxone.jpg" width="1100">
+<a href="./plots/Drugs/Naloxone.jpg"><img src="./plots/Drugs/Naloxone.jpg" width="1100"></a>
 <center>
 <i>Figure 9.  The partition coefficients were calculated from initial physical chemical properties found for Naloxone. However, the fit was unsatisfactory, so the partition coefficients were directly estimated for this drug to produce a good fit with the plasma concentration curve found in @cite aitkenhead1984pharmacokinetics.</i>
 </center><br>
 
-<img src="./plots/Drugs/Pralidoxime.jpg" width="1100">
+<a href="./plots/Drugs/Pralidoxime.jpg"><img src="./plots/Drugs/Pralidoxime.jpg" width="1100"></a>
 <center>
 <i>Figure 10. The pralidoxime experimental data found in @cite abbara2010pharmacokinetic was collected after an intramuscular injection. This administration method is available in the engine, so was used to validate the drug. The overall fit between the engine data and the experimental data was good. A slightly higher concentration throughout was evident and may be attributed to the amount of drug that never exits the muscle when this type of injection occurs. In the future, a loss factor could be added to represent this drug amount.</i>
 </center><br>
 
-<img src="./plots/Drugs/Prednisone.jpg" width="1100">
+<a href="./plots/Drugs/Prednisone.jpg"><img src="./plots/Drugs/Prednisone.jpg" width="1100"></a>
 <center>
 <i>Figure 11.  The physical chemical properties of prednisone found in the literature were used to produce a good fit for the plasma concentration. The experimental data was found in @cite rose1981dose.</i>
 </center><br>
 
-<img src="./plots/Drugs/Propofol.jpg" width="1100">
+<a href="./plots/Drugs/Propofol.jpg"><img src="./plots/Drugs/Propofol.jpg" width="1100"></a>
 <center>
 <i>Figure 12. The propofol experimental data was collected during and after an infusion of propofol. The engine is able to support a rate and concentration input for an infusion; therefore, the infusion methodology was used to adminster propofol in the engine. The infusion explains the initial curve evident in the plasma concentration. The initial diffusion dominant portion of the curve shows a reduced diffusion into the tissues compared to the experimental data; however, the clearance dominant portion of the curve shows good agreement with the data found in @cite ward2002pharmacodynamics.</i>
 </center><br>
 
-<img src="./plots/Drugs/Rocuronium.jpg" width="1100">
+<a href="./plots/Drugs/Rocuronium.jpg"><img src="./plots/Drugs/Rocuronium.jpg" width="1100"></a>
 <center>
 <i>Figure 13. The calculated plasma concentration curve for Rocuronium shows good agreement with the experimental data found in @cite de2014analysis. This is particularly true for the diffusion dominant portion of the curve, while the engine clearance is less than that shown in the experimental data.</i>
 </center><br>
 
-<img src="./plots/Drugs/Succinylcholine.jpg" width="1100">
+<a href="./plots/Drugs/Succinylcholine.jpg"><img src="./plots/Drugs/Succinylcholine.jpg" width="1100"></a>
 <center>
 <i>Figure 14. The succinycholine pharmacokinetics were initially calculated from the values found in literature for the physical chemical properties. However, this were significantly adjusted to attempt to match the calculated plasma concentration to the experimental data found in @cite roy2002concentration.</i>
 </center><br>
@@ -474,15 +474,15 @@ PD effects for the diuretic Furosemide are handled differently than other drugs 
 <center>
 <table border="0">
 <tr>
-    <td><img src="./plots/Drugs/Furosemide_BloodVolume.jpg" width="550"></td>
-    <td><img src="./plots/Drugs/Furosemide_ChlorideClearance.jpg" width="550"></td>
+    <td><a href="./plots/Drugs/Furosemide_BloodVolume.jpg"><img src="./plots/Drugs/Furosemide_BloodVolume.jpg" width="550"></a></td>
+    <td><a href="./plots/Drugs/Furosemide_ChlorideClearance.jpg"><img src="./plots/Drugs/Furosemide_ChlorideClearance.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td><img src="./plots/Drugs/Furosemide_SodiumClearance.jpg" width="550"></td>
-    <td><img src="./plots/Drugs/Furosemide_UrineProductionRate.jpg" width="550"></td>
+    <td><a href="./plots/Drugs/Furosemide_SodiumClearance.jpg"><img src="./plots/Drugs/Furosemide_SodiumClearance.jpg" width="550"></a></td>
+    <td><a href="./plots/Drugs/Furosemide_UrineProductionRate.jpg"><img src="./plots/Drugs/Furosemide_UrineProductionRate.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/Drugs/FurosemideLegend.jpg" width="1100"></td>
+    <td colspan="2"><a href="./plots/Drugs/FurosemideLegend.jpg"><img src="./plots/Drugs/FurosemideLegend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
@@ -498,11 +498,11 @@ Norepinephrine occurs naturally in the body and its basal metabolic value is val
 
 |	Drug	|	Infusion Rate (ug/(kg min))	|	Experimental Plasma Concentration (ug/L)	|	Computed Plasma Concentration (ug/L)	|	Experimental Heart Rate (beats/min)	|	Computed Heart Rate (beats/min)	|	Experimental Systolic Blood Pressure (mmHg)	|	Computed Systolic Blood Pressure (mmHg)	|	Experimental Diastolic Blood Pressure (mmHg)	|	Computed Diastolic Blood Pressure (mmHg)	|
 |	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|	---	|
-|	Norepinephrine	|	0.01	|	[0.363, 0.605] @cite ensinger1992relationship	|<span class="warning">	0.761	</span>|	[46, 66] NC to neglible @cite ensinger1992relationship	|<span class="success">	73	</span>|	[125, 145] Minimal Increase @cite ensinger1992relationship	|<span class="warning">	118	</span>|	[65, 75] NC @cite ensinger1992relationship	|<span class="warning">	72	</span>|
-|	Norepinephrine	|	0.06	|	[2.265, 3.391] @cite ensinger1992relationship	|<span class="success">	2.32	</span>|	[41, 57]Minimal Decrease @cite ensinger1992relationship	|<span class="success">	70	</span>|	[136, 160]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	118	</span>|	[70, 84]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	72	</span>|
-|	Norepinephrine	|	0.1	|	[3.608, 4.408] @cite ensinger1992relationship	|<span class="success">	3.71	</span>|	[40, 56] Minimal Decrease @cite ensinger1992relationship	|<span class="success">	68	</span>|	[146, 168]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	125	</span>|	[74, 86] Minimal Increase @cite ensinger1992relationship	|<span class="success">	84	</span>|
-|	Norepinephrine	|	0.14	|	[4.619, 6.765] @cite ensinger1992relationship	|<span class="success">	5.05	</span>|	[39, 55] Minimal Decrease@cite ensinger1992relationship	|<span class="success">	69	</span>|	[152, 182]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	135	</span>|	[77, 93] Minimal Increase @cite ensinger1992relationship	|<span class="success">	98	</span>|
-|	Norepinephrine	|	0.2	|	[6.404, 8.546] @cite ensinger1992relationship	|<span class="success">	7.1	</span>|	[39, 55] NC @cite ensinger1992relationship	|<span class="success">	69	</span>|	[174, 192]  Minimal Increase @cite ensinger1992relationship	|<span class="success">	136	</span>|	[83, 99] Minimal Increase @cite ensinger1992relationship	|<span class="success">	100	</span>|
+|	Norepinephrine	|	0.01	|	[0.363, 0.605] @cite Ensinger1992relationship	|<span class="warning">	0.761	</span>|	[46, 66] NC to neglible @cite Ensinger1992relationship	|<span class="success">	73	</span>|	[125, 145] Minimal Increase @cite Ensinger1992relationship	|<span class="warning">	118	</span>|	[65, 75] NC @cite Ensinger1992relationship	|<span class="warning">	72	</span>|
+|	Norepinephrine	|	0.06	|	[2.265, 3.391] @cite Ensinger1992relationship	|<span class="success">	2.32	</span>|	[41, 57]Minimal Decrease @cite Ensinger1992relationship	|<span class="success">	70	</span>|	[136, 160]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	118	</span>|	[70, 84]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	72	</span>|
+|	Norepinephrine	|	0.1	|	[3.608, 4.408] @cite Ensinger1992relationship	|<span class="success">	3.71	</span>|	[40, 56] Minimal Decrease @cite Ensinger1992relationship	|<span class="success">	68	</span>|	[146, 168]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	125	</span>|	[74, 86] Minimal Increase @cite Ensinger1992relationship	|<span class="success">	84	</span>|
+|	Norepinephrine	|	0.14	|	[4.619, 6.765] @cite Ensinger1992relationship	|<span class="success">	5.05	</span>|	[39, 55] Minimal Decrease@cite Ensinger1992relationship	|<span class="success">	69	</span>|	[152, 182]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	135	</span>|	[77, 93] Minimal Increase @cite Ensinger1992relationship	|<span class="success">	98	</span>|
+|	Norepinephrine	|	0.2	|	[6.404, 8.546] @cite Ensinger1992relationship	|<span class="success">	7.1	</span>|	[39, 55] NC @cite Ensinger1992relationship	|<span class="success">	69	</span>|	[174, 192]  Minimal Increase @cite Ensinger1992relationship	|<span class="success">	136	</span>|	[83, 99] Minimal Increase @cite Ensinger1992relationship	|<span class="success">	100	</span>|
 
 The infusion of phenylephrine was validated for the plasma concentration and the effects on heart rate and systolic and diastolic pressure. The values were examined for four different infusion rates. They are shown in Table 10.
 

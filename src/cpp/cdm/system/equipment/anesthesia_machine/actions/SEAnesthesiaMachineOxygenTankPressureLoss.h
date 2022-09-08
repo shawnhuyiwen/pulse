@@ -11,6 +11,9 @@ public:
   SEAnesthesiaMachineOxygenTankPressureLoss(Logger* logger=nullptr);
   virtual ~SEAnesthesiaMachineOxygenTankPressureLoss();
 
+  static constexpr char const* Name = "Oxygen Tank Pressure Loss";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEAnesthesiaMachineOxygenTankPressureLoss& src, bool /*preserveState*/=false);
 
@@ -20,8 +23,6 @@ public:
 
   virtual eSwitch GetState() const;
   virtual void SetState(eSwitch state);
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

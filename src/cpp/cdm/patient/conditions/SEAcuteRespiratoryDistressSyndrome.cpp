@@ -99,14 +99,3 @@ double SEAcuteRespiratoryDistressSyndrome::GetRightLungAffected() const
     return SEScalar::dNaN();
   return m_RightLungAffected->GetValue();
 }
-
-void SEAcuteRespiratoryDistressSyndrome::ToString(std::ostream &str) const
-{
-  str << "Patient Condition : ARDS"; 
-  if(HasComment())
-    str<<"\n\tComment: "<<m_Comment;
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
-  str << "\n\tLeftLungAffected: "; HasLeftLungAffected() ? str << *m_LeftLungAffected : str << "NaN";
-  str << "\n\tRightLungAffected: "; HasRightLungAffected() ? str << *m_RightLungAffected : str << "NaN";
-  str << std::flush;
-}

@@ -10,7 +10,6 @@
 #include "cdm/compartment/fluid/SEGasCompartment.h"
 #include "cdm/compartment/fluid/SELiquidCompartment.h"
 #include "cdm/patient/SEPatient.h"
-#include "cdm/patient/assessments/SEPulmonaryFunctionTest.h"
 #include "cdm/system/physiology/SEBloodChemistrySystem.h"
 #include "cdm/system/physiology/SECardiovascularSystem.h"
 #include "cdm/system/physiology/SEEnergySystem.h"

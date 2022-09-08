@@ -70,27 +70,3 @@ bool SEConsumeMeal::HasMealFile() const
 {
   return !m_MealFile.empty();
 }
-
-void SEConsumeMeal::ToString(std::ostream &str) const
-{
-  str << "Patient Condition :  Consume Meal";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  if (HasMealFile())
-  {
-    str << "\n\tMeal File: "; str << m_MealFile;
-  }
-  else if (HasMeal())
-  {
-    str << "\n\tCharbohydrates: "; m_Meal->HasCarbohydrate() ? str << m_Meal->GetCarbohydrate() : str << "None";
-    str << "\n\tCharbohydrates Digestion Rate: "; m_Meal->HasCarbohydrateDigestionRate() ? str << m_Meal->GetCarbohydrateDigestionRate() : str << "None";
-    str << "\n\tFat: "; m_Meal->HasFat() ? str << m_Meal->GetFat() : str << "None";
-    str << "\n\tFat Digestion Rate: "; m_Meal->HasFatDigestionRate() ? str << m_Meal->GetFatDigestionRate() : str << "None";
-    str << "\n\tProtein: "; m_Meal->HasProtein() ? str << m_Meal->GetProtein() : str << "None";
-    str << "\n\tProtein Digestion Rate: "; m_Meal->HasProteinDigestionRate() ? str << m_Meal->GetProteinDigestionRate() : str << "None";
-    str << "\n\tCalcium: "; m_Meal->HasCalcium() ? str << m_Meal->GetCalcium() : str << "None";
-    str << "\n\tSodium: "; m_Meal->HasSodium() ? str << m_Meal->GetSodium() : str << "None";
-    str << "\n\tWater: "; m_Meal->HasWater() ? str << m_Meal->GetWater() : str << "None";
-  }
-  str << std::flush;
-}

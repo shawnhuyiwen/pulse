@@ -60,6 +60,10 @@ public:
   virtual SEScalarPressure& GetCerebralPerfusionPressure();
   virtual double GetCerebralPerfusionPressure(const PressureUnit& unit) const;
 
+  virtual bool HasCoronaryPerfusionPressure() const;
+  virtual SEScalarPressure& GetCoronaryPerfusionPressure();
+  virtual double GetCoronaryPerfusionPressure(const PressureUnit& unit) const;
+
   virtual bool HasDiastolicArterialPressure() const;
   virtual SEScalarPressure& GetDiastolicArterialPressure();
   virtual double GetDiastolicArterialPressure(const PressureUnit& unit) const;
@@ -188,6 +192,7 @@ protected:
   SEScalarPressure*                      m_CentralVenousPressure;
   SEScalarVolumePerTime*                 m_CerebralBloodFlow;
   SEScalarPressure*                      m_CerebralPerfusionPressure;
+  SEScalarPressure*                      m_CoronaryPerfusionPressure;
   SEScalarPressure*                      m_DiastolicArterialPressure;
   SEScalarPressure*                      m_DiastolicLeftHeartPressure;
   SEScalarPressure*                      m_DiastolicRightHeartPressure;

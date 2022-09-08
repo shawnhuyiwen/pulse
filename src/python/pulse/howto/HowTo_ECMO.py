@@ -64,7 +64,7 @@ def HowTo_ECMO():
     settings.set_outflow_location(eECMO_CannulationLocation.InternalJugular)
     settings.get_oxygenator_volume().set_value(500, VolumeUnit.mL)
     settings.get_transfusion_flow().set_value(5, VolumePerTimeUnit.mL_Per_s)
-    settings.set_substance_compound("Sailine")
+    settings.set_substance_compound("Saline")
     # If you provide both, the compound will be added first, then any substance concentrations will be overwritten
     pulse.process_action(cfg)
     settings.clear() # Clear the settings so we only change the flow

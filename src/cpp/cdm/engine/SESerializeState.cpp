@@ -53,14 +53,6 @@ void SESerializeState::InvalidateFilename()
   m_Filename = "";
 }
 
-void SESerializeState::ToString(std::ostream &str) const
-{  
-  if(HasComment())
-    str<<"\n\tComment : "<<m_Comment;
-  str << "\n\tType : " << eSerialization_Type_Name(m_Type);
-  str << "\n\tFilename : " << m_Filename;
-}
-
 const SEScalar* SESerializeState::GetScalar(const std::string& /*name*/)
 {
   return nullptr;

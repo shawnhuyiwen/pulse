@@ -57,6 +57,9 @@ public:
   SEHemorrhage(Logger* logger=nullptr);
   virtual ~SEHemorrhage();
 
+  static constexpr char const* Name = "Hemorrhage";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEHemorrhage& src, bool /*preserveState*/=false);
 
@@ -86,8 +89,6 @@ public:
   virtual bool HasTotalBloodLost() const;
   virtual SEScalarVolume& GetTotalBloodLost();
   virtual double GetTotalBloodLost(const VolumeUnit& unit) const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

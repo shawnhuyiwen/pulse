@@ -13,6 +13,9 @@ public:
   SEMechanicalVentilatorContinuousPositiveAirwayPressure(Logger* logger = nullptr);
   virtual ~SEMechanicalVentilatorContinuousPositiveAirwayPressure();
 
+  static constexpr char const* Name = "CPAP";
+  virtual std::string GetName() const { return Name; }
+
   void Clear() override;
   virtual void Copy(const SEMechanicalVentilatorContinuousPositiveAirwayPressure& src, bool /*preserveState*/ = false);
   virtual bool ToSettings(SEMechanicalVentilatorSettings& s, const SESubstanceManager& subMgr) override;
@@ -60,8 +63,6 @@ public:
   virtual bool HasSlope() const;
   virtual SEScalarTime& GetSlope();
   virtual double GetSlope(const TimeUnit& unit) const;
-
-  void ToString(std::ostream& str) const override;
 
   const SEScalar* GetScalar(const std::string& name) override;
 

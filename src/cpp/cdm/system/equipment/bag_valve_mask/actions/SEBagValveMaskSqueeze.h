@@ -13,6 +13,9 @@ public:
   SEBagValveMaskSqueeze(Logger* logger=nullptr);
   virtual ~SEBagValveMaskSqueeze();
 
+  static constexpr char const* Name = "Squeeze";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear();
   virtual void Copy(const SEBagValveMaskSqueeze& src);
 
@@ -35,8 +38,6 @@ public:
   virtual bool HasInspiratoryPeriod() const;
   virtual SEScalarTime& GetInspiratoryPeriod();
   virtual double GetInspiratoryPeriod(const TimeUnit& unit) const;
-
-  virtual void ToString(std::ostream &str) const;
 
   virtual const SEScalar* GetScalar(const std::string& name);
 

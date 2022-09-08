@@ -109,12 +109,6 @@ namespace pulse
     std::vector<SEGasCompartment*>const& GetSimpleMaskCompartments() { return m_SimpleMaskCompartments; }
     std::vector<SEGasCompartment*>const& GetSimpleMaskLeafCompartments() { return m_SimpleMaskLeafCompartments; }
 
-
-    SELiquidCompartment& GetExtracellularFluid(SETissueCompartment& t) { return *m_ExtracellularFluid[&t]; }
-    SELiquidCompartment& GetIntracellularFluid(SETissueCompartment& t) { return *m_IntracellularFluid[&t]; }
-    std::map<SETissueCompartment*, SELiquidCompartment*>const& GetExtracellularFluid() { return m_ExtracellularFluid; }
-    std::map<SETissueCompartment*, SELiquidCompartment*>const& GetIntracellularFluid() { return m_IntracellularFluid; }
-
   protected:
     // I don't want these exposed in Pulse, you should be calling the Substance manager
     virtual void AddGasCompartmentSubstance(SESubstance& sub);
@@ -160,7 +154,6 @@ namespace pulse
     std::vector<SEThermalCompartment*> m_TemperatureCompartments;
     std::vector<SEThermalCompartment*> m_TemperatureLeafCompartments;
     std::vector<SETissueCompartment*>  m_TissueCompartments;
-    std::vector<SETissueCompartment*>  m_TissueLeafCompartments;
     std::vector<SELiquidCompartment*>  m_UrineCompartments;
     std::vector<SELiquidCompartment*>  m_UrineLeafCompartments;
     std::vector<SELiquidCompartment*>  m_VascularCompartments;
@@ -189,8 +182,5 @@ namespace pulse
     std::vector<SEGasCompartment*>     m_NonRebreatherMaskLeafCompartments;
     std::vector<SEGasCompartment*>     m_SimpleMaskCompartments;
     std::vector<SEGasCompartment*>     m_SimpleMaskLeafCompartments;
-
-    std::map<SETissueCompartment*, SELiquidCompartment*> m_ExtracellularFluid;
-    std::map<SETissueCompartment*, SELiquidCompartment*> m_IntracellularFluid;
   };
 END_NAMESPACE

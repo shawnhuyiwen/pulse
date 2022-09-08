@@ -6,7 +6,7 @@ Bag Valve Mask Methodology {#BagValveMaskMethodology}
 
 The bag valve mask (also known as Ambu bag or manual resuscitator) model is a generic representation of a hand-held device commonly used to provide positive pressure ventilation to patients who are not breathing or not breathing adequately. 
 
-<img src="./Images/BagValveMask/BagValveMaskPhoto.jpg" width="400">
+<a href="./Images/BagValveMask/BagValveMaskPhoto.jpg"><img src="./Images/BagValveMask/BagValveMaskPhoto.jpg" width="400"></a>
 <center>
 <i>Figure 1. A disposable BVM Resuscitator @cite bagvalvemask.</i>
 </center><br>
@@ -41,12 +41,12 @@ specific post process functionality for the bag valve mask. All postprocessing i
 
 The bag valve mask model consists of a pressure/flow source to model bag squeezing. Resistances are present between the bag, valve, filter, and connection.  There is a seal resistance that determines the amount of air that escapes during the simulation. Figure 2 shows the bag valve mask circuit.  The compartments and transport graph mirrors the circuit.  Substance values are set on the reservoir node/compartment, assuming infinite volume.
 
-<img src="./Images/BagValveMask/BagValveMaskCircuit.png" width="400">
+<a href="./Images/BagValveMask/BagValveMaskCircuit.png"><img src="./Images/BagValveMask/BagValveMaskCircuit.png" width="400"></a>
 <center>
 <i>Figure 2. Circuit diagram of the bag valve mask model. The circuit employs a driver source (either pressure or flow, depending on the settings) and resistances.</i>
 </center><br>
 
-### Connecting to the %Respiratory Circuit
+### Connecting to the Respiratory Circuit
 
 When the bag valve mask is used on a patient, there is a direct
 connection that allows air to flow freely between both. In the same
@@ -131,20 +131,22 @@ The bag valve mask settings are fully dynamic.  A scenario that varies the setti
 
 <center>
 <table border="0">
-<tr>    
-  <td><img src="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume.jpg" width="550"></td>
-	<td><img src="./plots/BagValveMask/BagValveMaskApnea_TidalVolume.jpg" width="550"></td>
-</tr>
-<tr>    
-  <td><img src="./plots/BagValveMask/BagValveMaskOxygenSaturation_RR.jpg" width="550"></td>
-	<td><img src="./plots/BagValveMask/BagValveMaskApnea_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></td>
+<tr>
+  <td><a href="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume.jpg"><img src="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume.jpg" width="550"></a></td>
+  <td><a href="./plots/BagValveMask/BagValveMaskApnea_TidalVolume.jpg"><img src="./plots/BagValveMask/BagValveMaskApnea_TidalVolume.jpg" width="550"></a></td>
 </tr>
 <tr>
-    <td colspan="2"><img src="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume_Legend.jpg" width="1100"></td>
+  <td><a href="./plots/BagValveMask/BagValveMaskOxygenSaturation_RR.jpg"><img src="./plots/BagValveMask/BagValveMaskOxygenSaturation_RR.jpg" width="550"></a></td>
+  <td><a href="./plots/BagValveMask/BagValveMaskApnea_Aorta-CarbonDioxide-PartialPressure.jpg"><img src="./plots/BagValveMask/BagValveMaskApnea_Aorta-CarbonDioxide-PartialPressure.jpg" width="550"></a></td>
+</tr>
+<tr>
+  <td colspan="2"><a href="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume_Legend.jpg"><img src="./plots/BagValveMask/BagValveMaskApnea_TotalLungVolume_Legend.jpg" width="1100"></a></td>
 </tr>
 </table>
 </center>
-<center><i>Figure 3. These plots show the successful implementation of varying bag valve mask settings with an apneic patient.</i></center><br>
+<center>
+<i>Figure 3. These plots show the successful implementation of varying bag valve mask settings with an apneic patient.</i>
+</center><br>
 
 <center><br>
 Table 1. Validation results for the bag valve mask scenario.

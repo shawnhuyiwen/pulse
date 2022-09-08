@@ -138,15 +138,3 @@ double SEBagValveMaskAutomated::GetSqueezeVolume(const VolumeUnit& unit) const
     return SEScalar::dNaN();
   return m_SqueezeVolume->GetValue(unit);
 }
-
-void SEBagValveMaskAutomated::ToString(std::ostream &str) const
-{
-  str << "Bag Valve Mask Automated";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tBreathFrequency: "; HasBreathFrequency() ? str << *m_BreathFrequency : str << "NaN";
-  str << "\n\tInspiratoryExpiratoryRatio: "; HasInspiratoryExpiratoryRatio() ? str << *m_InspiratoryExpiratoryRatio : str << "NaN";
-  str << "\n\tSqueezePressure: ";HasSqueezePressure() ? str << *m_SqueezePressure : str << "NaN";
-  str << "\n\tSqueezeVolume: "; HasSqueezeVolume() ? str << *m_SqueezeVolume : str << "NaN";
-  str << std::flush;
-}

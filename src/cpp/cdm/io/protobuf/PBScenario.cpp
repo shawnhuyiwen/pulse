@@ -155,6 +155,16 @@ void PBScenario::Serialize(const CDM_BIND::ScenarioExecData& src, SEScenarioExec
     dst.SetScenarioDirectory(src.scenariodirectory());
     break;
   }
+  case CDM_BIND::ScenarioExecData::ScenarioCase::kScenarioLogFilename:
+  {
+    dst.SetScenarioLogFilename(src.scenariologfilename());
+    break;
+  }
+  case CDM_BIND::ScenarioExecData::ScenarioCase::kScenarioLogDirectory:
+  {
+    dst.SetScenarioLogDirectory(src.scenariologdirectory());
+    break;
+  }
   case CDM_BIND::ScenarioExecData::ScenarioCase::SCENARIO_NOT_SET:
   {
     break;
@@ -193,6 +203,10 @@ void PBScenario::Serialize(const SEScenarioExec& src, CDM_BIND::ScenarioExecData
     dst.set_scenariofilename(src.GetScenarioFilename());
   else if (!src.GetScenarioDirectory().empty())
     dst.set_scenariodirectory(src.GetScenarioDirectory());
+  else if (!src.GetScenarioLogFilename().empty())
+    dst.set_scenariologfilename(src.GetScenarioLogFilename());
+  else if (!src.GetScenarioLogDirectory().empty())
+    dst.set_scenariologdirectory(src.GetScenarioLogDirectory());
 
   dst.set_contentformat((CDM_BIND::eSerializationFormat)src.GetContentFormat());
   dst.set_threadcount(src.GetThreadCount());

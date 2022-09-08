@@ -12,19 +12,18 @@ public:
   SEChronicAnemia(Logger* logger=nullptr);
   virtual ~SEChronicAnemia();
 
+  static constexpr char const* Name = "Chronic Anemia";
+  virtual std::string GetName() const { return Name; }
+
   virtual void Clear(); //clear memory
   virtual void Copy(const SEChronicAnemia& src);
 
   virtual bool IsValid() const;
   virtual bool IsActive() const;
 
-  virtual std::string GetName() const{ return "ChronicAnemia"; }
-
   virtual bool HasReductionFactor() const;
   virtual SEScalar0To1& GetReductionFactor();
   virtual double GetReductionFactor() const;
-
-  virtual void ToString(std::ostream &str) const;
 
 protected:
   SEScalar0To1*           m_ReductionFactor;

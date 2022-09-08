@@ -12,9 +12,10 @@ public:
   SEPatientAction(Logger* logger=nullptr);
   virtual ~SEPatientAction();
 
+  static constexpr char const* ActionType = "Patient";
+  virtual std::string GetActionType() const { return ActionType; }
+
   virtual void Clear(); //clear memory
 
   virtual bool IsValid() const;
-
-  virtual void ToString(std::ostream &str) const = 0;
 };  
