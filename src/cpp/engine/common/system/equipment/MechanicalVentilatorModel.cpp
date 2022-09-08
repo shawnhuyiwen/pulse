@@ -109,6 +109,11 @@ namespace pulse
     m_PreviousConnectionPressure_cmH2O = 0.0;
     m_LimitReached = false;
     m_Initializing = false;
+    m_PositiveEndExpiratoryPressure_cmH2O = 0.0;
+    m_EndTidalCarbonDioxideFraction = 0.0;
+    m_EndTidalCarbonDioxidePressure_cmH2O = 0.0;
+    m_EndTidalOxygenFraction = 0.0;
+    m_EndTidalOxygenPressure_cmH2O = 0.0;
 
     //System data
     GetAirwayPressure().SetValue(0.0, PressureUnit::cmH2O);
@@ -1149,8 +1154,24 @@ namespace pulse
     {
       inspiratoryFlow_L_Per_s = m_ConnectionToAirway->GetNextFlow(VolumePerTimeUnit::L_Per_s);
     }
+    double previousRespiratoryVolume_L = m_CurrentRespiratoryVolume_L;
     m_CurrentRespiratoryVolume_L += inspiratoryFlow_L_Per_s * m_data.GetTimeStep_s();
     GetTotalLungVolume().SetValue(m_CurrentRespiratoryVolume_L, VolumeUnit::L);
+
+    //Hold on to end of breath values at the transition point to inhaling
+    //This is needed mostly due to trigger delays
+    if (m_CurrentRespiratoryVolume_L <= previousRespiratoryVolume_L)
+    {
+      //Save for end of exhale
+      double ambientPressure_cmH2O = m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
+      double airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
+      m_PositiveEndExpiratoryPressure_cmH2O = airwayPressure_cmH2O - ambientPressure_cmH2O;
+
+      m_EndTidalCarbonDioxideFraction = m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction().GetValue();
+      m_EndTidalCarbonDioxidePressure_cmH2O = m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetPartialPressure(PressureUnit::cmH2O);
+      m_EndTidalOxygenFraction = m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction().GetValue();
+      m_EndTidalOxygenPressure_cmH2O = m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure(PressureUnit::cmH2O);
+    }
   }
 
   //--------------------------------------------------------------------------------------------------
@@ -1198,10 +1219,10 @@ namespace pulse
     if (totalTime_s > ZERO_APPROX)
       respirationRate_Per_min = 60.0 / totalTime_s;
     GetRespirationRate().SetValue(respirationRate_Per_min, FrequencyUnit::Per_min);
-    double inspiratioryExpiratiorRatio = 0.0;
+    double inspiratioryExpiratioryRatio = 0.0;
     if (expirationTime_s > ZERO_APPROX)
-      inspiratioryExpiratiorRatio = m_InspirationTime_s / expirationTime_s;
-    GetInspiratoryExpiratoryRatio().SetValue(inspiratioryExpiratiorRatio);
+      inspiratioryExpiratioryRatio = m_InspirationTime_s / expirationTime_s;
+    GetInspiratoryExpiratoryRatio().SetValue(inspiratioryExpiratioryRatio);
     GetTotalPulmonaryVentilation().SetValue(GetRespirationRate(FrequencyUnit::Per_min) * GetTidalVolume(VolumeUnit::L), VolumePerTimeUnit::L_Per_min);
 
     double inspiratoryTidalVolume_L = GetInspiratoryTidalVolume(VolumeUnit::L);
@@ -1216,10 +1237,8 @@ namespace pulse
     BLIM(leakFraction, 0.0, 1.0);
     GetLeakFraction().SetValue(leakFraction);
 
-    double ambientPressure_cmH2O = m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-    double airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
-    GetPositiveEndExpiratoryPressure().SetValue(airwayPressure_cmH2O - ambientPressure_cmH2O, PressureUnit::cmH2O);
-    GetIntrinsicPositiveEndExpiredPressure().SetValue(airwayPressure_cmH2O - ambientPressure_cmH2O, PressureUnit::cmH2O);
+    GetPositiveEndExpiratoryPressure().SetValue(m_PositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
+    GetIntrinsicPositiveEndExpiredPressure().SetValue(m_PositiveEndExpiratoryPressure_cmH2O, PressureUnit::cmH2O);
 
     GetMeanAirwayPressure().SetValue(m_MeanAirwayPressure_cmH2O->Value(), PressureUnit::cmH2O);
     m_MeanAirwayPressure_cmH2O->Clear();
@@ -1241,10 +1260,10 @@ namespace pulse
       resistance_cmH2O_s_Per_L = (GetPeakInspiratoryPressure(PressureUnit::cmH2O) - GetPlateauPressure(PressureUnit::cmH2O)) / m_InspiratoryFlow_L_Per_s;
     GetPulmonaryResistance().SetValue(resistance_cmH2O_s_Per_L, PressureTimePerVolumeUnit::cmH2O_s_Per_L);
 
-    GetEndTidalCarbonDioxideFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction());
-    GetEndTidalCarbonDioxidePressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetPartialPressure());
-    GetEndTidalOxygenFraction().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetVolumeFraction());
-    GetEndTidalOxygenPressure().Set(m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetO2())->GetPartialPressure());
+    GetEndTidalCarbonDioxideFraction().SetValue(m_EndTidalCarbonDioxideFraction);
+    GetEndTidalCarbonDioxidePressure().SetValue(m_EndTidalCarbonDioxidePressure_cmH2O, PressureUnit::cmH2O);
+    GetEndTidalOxygenFraction().SetValue(m_EndTidalOxygenFraction);
+    GetEndTidalOxygenPressure().SetValue(m_EndTidalOxygenPressure_cmH2O, PressureUnit::cmH2O);
 
     m_CurrentVentilatorVolume_L = 0.0;
     m_CurrentRespiratoryVolume_L = 0.0;
