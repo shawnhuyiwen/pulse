@@ -106,14 +106,3 @@ double SEIntubation::GetSeverity() const
   return m_Severity->GetValue();
 }
 
-void SEIntubation::ToString(std::ostream &str) const
-{
-  str << "Patient Action : Intubation";
-  if (HasComment())
-    str << "\n\tComment: " << m_Comment;
-  str << "\n\tType: " << eIntubation_Type_Name(GetType());
-  str << "\n\tAirwayResistance: "; HasAirwayResistance() ? str << *m_AirwayResistance : str << "NaN";
-  str << "\n\tSeverity: "; HasSeverity() ? str << *m_Severity : str << "NaN";
-
-  str << std::flush;
-}
