@@ -35,6 +35,7 @@ SEPatient::SEPatient(Logger* logger) : Loggable(logger)
   m_BloodVolumeBaseline = nullptr;
   m_BodyDensity = nullptr;
   m_BodyFatFraction = nullptr;
+  m_BodyMassIndex = nullptr;
   m_DiastolicArterialPressureBaseline = nullptr;
   m_ExpiratoryReserveVolume = nullptr;
   m_FunctionalResidualCapacity = nullptr;
@@ -46,6 +47,7 @@ SEPatient::SEPatient(Logger* logger) : Loggable(logger)
   m_InspiratoryReserveVolume = nullptr;
   m_LeanBodyMass = nullptr;
   m_MeanArterialPressureBaseline = nullptr;
+  m_PulsePressureBaseline = nullptr;
   m_ResidualVolume = nullptr;
   m_RespirationRateBaseline = nullptr;
   m_RightLungRatio = nullptr;
@@ -69,6 +71,7 @@ SEPatient::~SEPatient()
   SAFE_DELETE(m_BloodVolumeBaseline);
   SAFE_DELETE(m_BodyDensity);
   SAFE_DELETE(m_BodyFatFraction);
+  SAFE_DELETE(m_BodyMassIndex);
   SAFE_DELETE(m_DiastolicArterialPressureBaseline);
   SAFE_DELETE(m_ExpiratoryReserveVolume);
   SAFE_DELETE(m_FunctionalResidualCapacity);
@@ -80,6 +83,7 @@ SEPatient::~SEPatient()
   SAFE_DELETE(m_InspiratoryReserveVolume);
   SAFE_DELETE(m_LeanBodyMass);
   SAFE_DELETE(m_MeanArterialPressureBaseline);
+  SAFE_DELETE(m_PulsePressureBaseline);
   SAFE_DELETE(m_ResidualVolume);
   SAFE_DELETE(m_RespirationRateBaseline);
   SAFE_DELETE(m_RightLungRatio);
@@ -103,6 +107,7 @@ void SEPatient::Clear()
   INVALIDATE_PROPERTY(m_BloodVolumeBaseline);
   INVALIDATE_PROPERTY(m_BodyDensity);
   INVALIDATE_PROPERTY(m_BodyFatFraction);
+  INVALIDATE_PROPERTY(m_BodyMassIndex);
   INVALIDATE_PROPERTY(m_DiastolicArterialPressureBaseline);
   INVALIDATE_PROPERTY(m_ExpiratoryReserveVolume);
   INVALIDATE_PROPERTY(m_FunctionalResidualCapacity);
@@ -114,6 +119,7 @@ void SEPatient::Clear()
   INVALIDATE_PROPERTY(m_InspiratoryReserveVolume);
   INVALIDATE_PROPERTY(m_LeanBodyMass);
   INVALIDATE_PROPERTY(m_MeanArterialPressureBaseline);
+  INVALIDATE_PROPERTY(m_PulsePressureBaseline);
   INVALIDATE_PROPERTY(m_ResidualVolume);
   INVALIDATE_PROPERTY(m_RespirationRateBaseline);
   INVALIDATE_PROPERTY(m_RightLungRatio);
@@ -165,6 +171,8 @@ const SEScalar* SEPatient::GetScalar(const std::string& name)
     return &GetBodyDensity();
   if (name.compare("BodyFatFraction") == 0)
     return &GetBodyFatFraction();
+  if (name.compare("BodyMassIndex") == 0)
+    return &GetBodyMassIndex();
   if (name.compare("DiastolicArterialPressureBaseline") == 0)
     return &GetDiastolicArterialPressureBaseline();
   if (name.compare("ExpiratoryReserveVolume") == 0)
@@ -187,6 +195,8 @@ const SEScalar* SEPatient::GetScalar(const std::string& name)
     return &GetLeanBodyMass();
   if (name.compare("MeanArterialPressureBaseline") == 0)
     return &GetMeanArterialPressureBaseline();
+  if (name.compare("PulsePressureBaseline") == 0)
+    return &GetPulsePressureBaseline();
   if (name.compare("ResidualVolume") == 0)
     return &GetResidualVolume();
   if (name.compare("RespirationRateBaseline") == 0)
@@ -367,6 +377,23 @@ double SEPatient::GetBodyFatFraction() const
   if (m_BodyFatFraction == nullptr)
     return SEScalar::dNaN();
   return m_BodyFatFraction->GetValue();
+}
+
+bool SEPatient::HasBodyMassIndex() const
+{
+  return m_BodyMassIndex == nullptr ? false : m_BodyMassIndex->IsValid();
+}
+SEScalar& SEPatient::GetBodyMassIndex()
+{
+  if (m_BodyMassIndex == nullptr)
+    m_BodyMassIndex = new SEScalar();
+  return *m_BodyMassIndex;
+}
+double SEPatient::GetBodyMassIndex() const
+{
+  if (m_BodyMassIndex == nullptr)
+    return SEScalar::dNaN();
+  return m_BodyMassIndex->GetValue();
 }
 
 bool SEPatient::HasDiastolicArterialPressureBaseline() const
@@ -554,6 +581,23 @@ double SEPatient::GetMeanArterialPressureBaseline(const PressureUnit& unit) cons
   if (m_MeanArterialPressureBaseline == nullptr)
     return SEScalar::dNaN();
   return m_MeanArterialPressureBaseline->GetValue(unit);
+}
+
+bool SEPatient::HasPulsePressureBaseline() const
+{
+  return m_PulsePressureBaseline==nullptr?false:m_PulsePressureBaseline->IsValid();
+}
+SEScalarPressure& SEPatient::GetPulsePressureBaseline()
+{
+  if(m_PulsePressureBaseline==nullptr)
+    m_PulsePressureBaseline=new SEScalarPressure();
+  return *m_PulsePressureBaseline;
+}
+double SEPatient::GetPulsePressureBaseline(const PressureUnit& unit) const
+{
+  if (m_PulsePressureBaseline == nullptr)
+    return SEScalar::dNaN();
+  return m_PulsePressureBaseline->GetValue(unit);
 }
 
 bool SEPatient::HasResidualVolume() const

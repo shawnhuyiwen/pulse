@@ -86,9 +86,25 @@ namespace pulse { namespace human_adult_whole_body
     }
     if (!patient.HasHeight())
     {
-      patient.GetHeight().SetValue(heightStandard_cm, LengthUnit::cm);
-      ss << "No patient height set. Using the standard value of " << heightStandard_cm << " cm.";
-      patient.Info(ss);
+      if (patient.HasWeight() && patient.HasBodyMassIndex())
+      {
+        double weight_kg = patient.GetWeight(MassUnit::kg);
+        double bmi = patient.GetBodyMassIndex().GetValue();
+        double height_m = sqrt(weight_kg / bmi);
+        patient.GetHeight().SetValue(height_m, LengthUnit::m);
+        ss << "No patient height set. Using computed value of " << patient.GetHeight(LengthUnit::cm) << " cm from weight and body mass index.";
+        patient.Info(ss);
+      }
+      else
+      {
+        patient.GetHeight().SetValue(heightStandard_cm, LengthUnit::cm);
+        ss << "No patient height set. Using the standard value of " << heightStandard_cm << " cm.";
+        patient.Info(ss);
+      }
+    }
+    else if (patient.HasWeight() && patient.HasBodyMassIndex())
+    {
+      patient.Warning("Ignoring provided patient body mass index. It is determined by weight and height.");
     }
     double height_cm = patient.GetHeight().GetValue(LengthUnit::cm);
     double height_ft = Convert(height_cm, LengthUnit::cm, LengthUnit::ft);
@@ -114,7 +130,7 @@ namespace pulse { namespace human_adult_whole_body
     //page 295
     //Devine Formula
     if (patient.HasIdealBodyWeight())
-      patient.Warning("Ignorning provided patient ideal body weight. It is determined by weight and body fat fraction.");
+      patient.Warning("Ignoring provided patient ideal body weight. It is determined by weight and body fat fraction.");
     double height_in = patient.GetHeight().GetValue(LengthUnit::in);
     double idealWeight_kg = 0.0;
     if (patient.GetSex() == ePatient_Sex::Female)
@@ -142,10 +158,21 @@ namespace pulse { namespace human_adult_whole_body
     double BMISeverelyUnderweight_kg_per_m2 = 16.0;
     if (!patient.HasWeight())
     {
-      weight_kg = BMIStandard_kg_per_m2 * pow(patient.GetHeight().GetValue(LengthUnit::m), 2);
-      patient.GetWeight().SetValue(weight_kg, MassUnit::kg);
-      ss << "No patient weight set. Using the standard BMI value of 21.75 kg/m^2, resulting in a weight of " << weight_kg << " kg.";
-      patient.Info(ss);
+      if (!patient.HasBodyMassIndex())
+      {
+        weight_kg = BMIStandard_kg_per_m2 * pow(patient.GetHeight().GetValue(LengthUnit::m), 2);
+        patient.GetWeight().SetValue(weight_kg, MassUnit::kg);
+        ss << "No patient weight set. Using the standard BMI value of 21.75 kg/m^2, resulting in a weight of " << weight_kg << " kg.";
+        patient.Info(ss);
+      }
+      else
+      {
+        double bmi = patient.GetBodyMassIndex().GetValue();
+        weight_kg = bmi * pow(patient.GetHeight().GetValue(LengthUnit::m), 2);
+        patient.GetWeight().SetValue(weight_kg, MassUnit::kg);
+        ss << "No patient weight set. Using the given BMI value of " << bmi << " kg/m^2, resulting in a weight of " << weight_kg << " kg.";
+        patient.Info(ss);
+      }
     }
     weight_kg = patient.GetWeight(MassUnit::kg);
     BMI_kg_per_m2 = weight_kg / pow(patient.GetHeight().GetValue(LengthUnit::m), 2);
@@ -330,14 +357,140 @@ namespace pulse { namespace human_adult_whole_body
     double systolicMin_mmHg = 90.0; //Hypotension
     double diastolicMin_mmHg = 60.0; //Hypotension
     double narrowestPulseFactor = 0.75; //From Wikipedia: Pulse Pressure
-    if (!patient.HasSystolicArterialPressureBaseline())
+    double pulsePressureStandard_mmHg = systolicStandard_mmHg - diastolicStandard_mmHg;
+    double MAPStandard_mmHg = (2. * diastolicStandard_mmHg + systolicStandard_mmHg) / 3.;
+    if (patient.HasSystolicArterialPressureBaseline() && patient.HasDiastolicArterialPressureBaseline())
     {
-      systolic_mmHg = systolicStandard_mmHg;
-      patient.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
-      ss << "No patient systolic pressure baseline set. Using the standard value of " << systolic_mmHg << " mmHg.";
-      patient.Info(ss);
+      systolic_mmHg = patient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+      diastolic_mmHg = patient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+      if (patient.HasPulsePressureBaseline())
+      {
+        patient.Warning("Ignoring provided pulse pressure baseline. It is determined by diastolic and systolic arterial pressure baselines.");
+      }
+      if (patient.HasMeanArterialPressureBaseline())
+      {
+        patient.Warning("Ignoring provided mean arterial pressure baseline. It is determined by diastolic and systolic arterial pressure baselines.");
+      }
     }
-    systolic_mmHg = patient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+    else if (patient.HasSystolicArterialPressureBaseline())
+    {
+      systolic_mmHg = patient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg);
+      if (patient.HasPulsePressureBaseline())
+      {
+        double pp_mmHg = patient.GetPulsePressureBaseline(PressureUnit::mmHg);
+        diastolic_mmHg = systolic_mmHg - pp_mmHg;
+        patient.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient diastolic pressure baseline set. Computed value of " << diastolic_mmHg << " mmHg from given systolic arterial and pulse pressure baselines.";
+        patient.Info(ss);
+        if (patient.HasMeanArterialPressureBaseline())
+        {
+          patient.Warning("Ignoring provided mean arterial pressure baseline. It is determined by diastolic and systolic arterial pressure baselines.");
+        }
+      }
+      else if (patient.HasMeanArterialPressureBaseline())
+      {
+        double MAP_mmHg = patient.GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+        diastolic_mmHg = (3. * MAP_mmHg - systolic_mmHg) / 2.;
+        patient.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient diastolic pressure baseline set. Computed value of " << diastolic_mmHg << " mmHg from given systolic arterial and mean arterial pressure baselines.";
+        patient.Info(ss);
+      }
+      else
+      {
+        diastolic_mmHg = diastolicStandard_mmHg;
+        patient.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient diastolic pressure baseline set. Using the standard value of " << diastolic_mmHg << " mmHg.";
+        patient.Info(ss);
+      }
+    }
+    else if (patient.HasDiastolicArterialPressureBaseline())
+    {
+      diastolic_mmHg = patient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
+      if (patient.HasPulsePressureBaseline())
+      {
+        double pp_mmHg = patient.GetPulsePressureBaseline(PressureUnit::mmHg);
+        systolic_mmHg = pp_mmHg + diastolic_mmHg;
+        patient.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient systolic pressure baseline set. Computed value of " << systolic_mmHg << " mmHg from given diastolic arterial and pulse pressure baselines.";
+        patient.Info(ss);
+        if (patient.HasMeanArterialPressureBaseline())
+        {
+          patient.Warning("Ignoring provided mean arterial pressure baseline. It is determined by diastolic and systolic arterial pressure baselines.");
+        }
+      }
+      else if (patient.HasMeanArterialPressureBaseline())
+      {
+        double MAP_mmHg = patient.GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+        systolic_mmHg = 3. * MAP_mmHg + 2. * diastolic_mmHg;
+        patient.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient systolic pressure baseline set. Computed value of " << systolic_mmHg << " mmHg from given diastolic arterial and mean arterial pressure baselines.";
+        patient.Info(ss);
+      }
+      else
+      {
+        systolic_mmHg = systolicStandard_mmHg;
+        patient.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient systolic pressure baseline set. Using the standard value of " << systolic_mmHg << " mmHg.";
+        patient.Info(ss);
+      }
+    }
+    else
+    {
+      if (patient.HasPulsePressureBaseline())
+      {
+        double pp_mmHg = patient.GetPulsePressureBaseline(PressureUnit::mmHg);
+        double MAP_mmHg = MAPStandard_mmHg;
+        if (patient.HasMeanArterialPressureBaseline())
+        {
+          MAP_mmHg = patient.GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+          diastolic_mmHg = MAP_mmHg - pp_mmHg / 3.;
+          systolic_mmHg = pp_mmHg + diastolic_mmHg;
+          patient.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+          ss << "No patient systolic pressure baseline set. Computed value of " << systolic_mmHg << " mmHg from given pulse pressure baseline and standard mean arterial pressure baseline.";
+          patient.Info(ss);
+          patient.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+          ss << "No patient diastolic pressure baseline set. Computed value of " << diastolic_mmHg << " mmHg from given pulse pressure baseline and standard mean arterial pressure baseline.";
+          patient.Info(ss);
+        }
+        else
+        {
+          diastolic_mmHg = MAP_mmHg - pp_mmHg / 3.;
+          systolic_mmHg = pp_mmHg + diastolic_mmHg;
+          patient.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+          ss << "No patient systolic pressure baseline set. Computed value of " << systolic_mmHg << " mmHg from given pulse and mean arterial pressure baselines.";
+          patient.Info(ss);
+          patient.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+          ss << "No patient diastolic pressure baseline set. Computed value of " << diastolic_mmHg << " mmHg from given pulse and mean arterial pressure baselines.";
+          patient.Info(ss);
+        }
+      }
+      else if (patient.HasMeanArterialPressureBaseline())
+      {
+        double pp_mmHg = pulsePressureStandard_mmHg;
+        double MAP_mmHg = patient.GetMeanArterialPressureBaseline(PressureUnit::mmHg);
+        diastolic_mmHg = MAP_mmHg - pp_mmHg / 3.;
+        systolic_mmHg = pp_mmHg + diastolic_mmHg;
+        patient.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient systolic pressure baseline set. Computed value of " << systolic_mmHg << " mmHg from given mean arterial pressure baseline and standard pulse pressure baseline.";
+        patient.Info(ss);
+        patient.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient diastolic pressure baseline set. Computed value of " << diastolic_mmHg << " mmHg from given mean arterial pressure baseline and standard pulse pressure baseline.";
+        patient.Info(ss);
+      }
+      else
+      {
+        systolic_mmHg = systolicStandard_mmHg;
+        patient.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient systolic pressure baseline set. Using the standard value of " << systolic_mmHg << " mmHg.";
+        patient.Info(ss);
+
+        diastolic_mmHg = diastolicStandard_mmHg;
+        patient.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+        ss << "No patient diastolic pressure baseline set. Using the standard value of " << diastolic_mmHg << " mmHg.";
+        patient.Info(ss);
+      }
+    }
+
     if (systolic_mmHg < systolicMin_mmHg)
     {
       ss << "Patient systolic pressure baseline of " << systolic_mmHg << " mmHg is too low. Hypotension must be modeled by adding/using a condition. Minimum systolic pressure baseline allowed is " << systolicMin_mmHg << " mmHg.";
@@ -351,14 +504,6 @@ namespace pulse { namespace human_adult_whole_body
       err = true;
     }
 
-    if (!patient.HasDiastolicArterialPressureBaseline())
-    {
-      diastolic_mmHg = diastolicStandard_mmHg;
-      patient.GetDiastolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
-      ss << "No patient diastolic pressure baseline set. Using the standard value of " << diastolic_mmHg << " mmHg.";
-      patient.Info(ss);
-    }
-    diastolic_mmHg = patient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
     if (diastolic_mmHg < diastolicMin_mmHg)
     {
       ss << "Patient diastolic pressure baseline of " << diastolic_mmHg << " mmHg is too low. Hypotension must be modeled by adding/using a condition. Minimum diastolic pressure baseline allowed is " << diastolicMin_mmHg << " mmHg.";
@@ -379,12 +524,6 @@ namespace pulse { namespace human_adult_whole_body
       err = true;
     }
 
-    if (patient.HasMeanArterialPressureBaseline())
-    {
-      ss << "Patient mean arterial pressure baseline cannot be set. It is determined through homeostatic simulation.";
-      patient.Error(ss);
-      err = true;
-    }
     double MAP_mmHg = 1.0 / 3.0 * systolic_mmHg + 2.0 / 3.0 * diastolic_mmHg;
     patient.GetMeanArterialPressureBaseline().SetValue(MAP_mmHg, PressureUnit::mmHg);
 

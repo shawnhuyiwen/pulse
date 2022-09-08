@@ -24,6 +24,7 @@ message PatientData
   ScalarLengthData         Height                                = 5; /**<< @brief Patient height. */
   ScalarMassPerVolumeData  BodyDensity                           = 6; /**<< @brief The mass of the body divided by the volume of the body. */
   Scalar0To1Data           BodyFatFraction                       = 7; /**<< @brief Total mass of fat divided by total body mass; body fat includes essential body fat and storage body fat. */
+  ScalarData               BodyMassIndex                         = 30;/**<< @brief Broadly categorize a person as underweight, normal weight, overweight, or obese based on tissue mass and height.*/
   ScalarMassData           LeanBodyMass                          = 8; /**<< @brief Component of body composition after subtracting body fat weight. */
   ScalarMassData           IdealBodyWeight                       = 29;/**<< @brief Ideal patient weight based only on sex and height. */
   /** Physical Characteristics that can change and should be change due to a condition */
@@ -36,6 +37,7 @@ message PatientData
   ScalarPressureData       DiastolicArterialPressureBaseline     = 14;/**<< @brief The starting minimum pressure in the aorta over the course of a cardiac cycle. */
   ScalarFrequencyData      HeartRateBaseline                     = 15;/**<< @brief The resting heart rate. */
   ScalarPressureData       MeanArterialPressureBaseline          = 16;/**<< @brief The resting mean arterial pressure. */
+  ScalarPressureData       PulsePressureBaseline                 = 31;/**<< @brief The difference between the systolic and diastolic pressures*/
   ScalarFrequencyData      RespirationRateBaseline               = 17;/**<< @brief The resting respiration rate. */
   ScalarPressureData       SystolicArterialPressureBaseline      = 18;/**<< @brief The starting maximum pressure in the aorta over the course of a cardiac cycle. */
   ScalarVolumeData         TidalVolumeBaseline                   = 19;/**<< @brief The starting volume of air moved into or out of the lungs during normal respiration. */
