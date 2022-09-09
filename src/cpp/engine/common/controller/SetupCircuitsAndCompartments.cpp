@@ -2980,11 +2980,11 @@ namespace pulse
     // Airway
     SEFluidCircuitNode& Airway = cRespiratory.CreateNode(pulse::RespiratoryNode::Airway);
     Airway.GetPressure().Set(Ambient.GetNextPressure());
-    Airway.GetVolumeBaseline().SetValue(0.01, VolumeUnit::L);
+    Airway.GetVolumeBaseline().SetValue(0.0206, VolumeUnit::L);
     // Pharynx
     SEFluidCircuitNode& Pharynx = cRespiratory.CreateNode(pulse::RespiratoryNode::Pharynx);
     Pharynx.GetPressure().Set(Ambient.GetNextPressure());
-    Pharynx.GetVolumeBaseline().SetValue(0.01, VolumeUnit::L);
+    Pharynx.GetVolumeBaseline().SetValue(0.001, VolumeUnit::L);
     // Carina
     SEFluidCircuitNode& Carina = cRespiratory.CreateNode(pulse::RespiratoryNode::Carina);
     Carina.GetPressure().Set(Ambient.GetNextPressure());
