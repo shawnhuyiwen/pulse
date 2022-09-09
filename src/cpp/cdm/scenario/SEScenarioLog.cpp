@@ -374,7 +374,7 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   // Capture groups:
   //  0: Whole match
   //  1: Remainder of line, left trimmed (name info)
-  std::string patientPattern = R"(\[Patient\]\s*([^\n\r]*))";
+  std::string patientPattern = R"(\[Patient\][ \t]*([^\n\r]*))";
   std::smatch mPatient; 
   std::regex rPatient(patientPattern);
   std::string text = content;
@@ -385,10 +385,20 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   }
 
   // Locate end of patient info
+  // Capture groups:
+  //  0: Whole match
+  //  1: Opening bracket indicating end
   size_t endIdx;
-  if(!IdentifyTagStringEnd(mPatient.suffix().str(), endIdx))
+  std::smatch mTagEnd;
+  std::regex rTagEnd(R"([^\[]*(\[))");
+  std::string remainingText = mPatient.suffix().str();
+  if (std::regex_search(remainingText, mTagEnd, rTagEnd))
   {
-    Error("Unable to identify tag string terminator: " + std::string(mPatient[0]));
+    endIdx = mTagEnd.position(1);
+  }
+  else // Failed to find end of patient string
+  {
+    Error("Unable to identify patient string terminator: " + std::string(mPatient[0]));
     return false;
   }
   m_Patient = text.substr(mPatient.position(1), mPatient.length(1) + endIdx);

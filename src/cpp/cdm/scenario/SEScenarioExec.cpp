@@ -428,7 +428,7 @@ bool SEScenarioExec::Execute()
       relativePath = RelativePathFrom(m_ScenarioLogDirectory, m_ScenarioLogFilename);
     }
     // Append it to our m_OutputRootDirectory
-    m_OutputRootDirectory += "/" + relativePath + "/" + m_BaseFilename;
+    m_OutputRootDirectory += "/" + relativePath + "/";
   }
 
   m_LogFilename = m_OutputRootDirectory + m_BaseFilename + ".cnv.log";

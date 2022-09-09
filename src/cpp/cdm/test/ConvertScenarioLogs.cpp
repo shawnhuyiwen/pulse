@@ -17,12 +17,12 @@ void CommonDataModelTest::ConvertScenarioLogs(const std::string& rptDirectory)
   m_Logger->SetLogFile(rptDirectory + "/" + testName + ".log");
 
   std::string inputDir = GetCurrentWorkingDirectory();
-  inputDir.append("/test_results/scenarios");
+  inputDir.append("/verification/scenarios");
   std::string outputDir = GetCurrentWorkingDirectory();
   outputDir.append("/test_results/converted_scenarios");
 
   SETestReport testReport(m_Logger);
-  SETestSuite&  testSuite = testReport.CreateTestSuite();
+  SETestSuite& testSuite = testReport.CreateTestSuite();
   testSuite.SetName(testName);
 
   SETestCase& testCase1 = testSuite.CreateTestCase();
@@ -33,24 +33,22 @@ void CommonDataModelTest::ConvertScenarioLogs(const std::string& rptDirectory)
   opts1.SetOutputRootDirectory(outputDir);
   opts1.SetScenarioLogDirectory(inputDir);
   if (!opts1.Execute())
-    testCase1.AddFailure("Failed to convert all logs");
+    testCase1.AddFailure("Log conversion failure");
   testCase1.GetDuration().SetValue(pTimer.GetElapsedTime_s("Log Conversion"), TimeUnit::s);
   testCase1.SetName("Log Conversion");
   // TODO: would be nice to listen to errors on the logger and add them to the testCase failures...
 
-  // Run converted scenarios 
-  SETestCase& testCase2 = testSuite.CreateTestCase();
-  pTimer.Start("Run converted scenarios");
-  PulseScenarioExec opts2(m_Logger);
-  opts2.LogToConsole(eSwitch::Off);
-  opts2.SetModelType(eModelType::HumanAdultWholeBody);
-  opts2.SetScenarioDirectory(outputDir);
-  if (!opts2.Execute())
-    testCase1.AddFailure("Failed to run all converted scenarios");
-  testCase2.GetDuration().SetValue(pTimer.GetElapsedTime_s("Run converted scenarios"), TimeUnit::s);
-  testCase2.SetName("Run Converted Scenarios");
-
-  // TODO: Compare results
+  // Eventually we may want to run converted scenarios and compare results
+  //SETestCase& testCase2 = testSuite.CreateTestCase();
+  //pTimer.Start("Run converted scenarios");
+  //PulseScenarioExec opts2(m_Logger);
+  //opts2.LogToConsole(eSwitch::Off);
+  //opts2.SetModelType(eModelType::HumanAdultWholeBody);
+  //opts2.SetScenarioDirectory(outputDir);
+  //if (!opts2.Execute())
+  //  testCase1.AddFailure("Converted scenario failed to run");
+  //testCase2.GetDuration().SetValue(pTimer.GetElapsedTime_s("Run converted scenarios"), TimeUnit::s);
+  //testCase2.SetName("Run Converted Scenarios");
 
   testReport.SerializeToFile(rptDirectory +"/"+testName+"Report.json");
 }

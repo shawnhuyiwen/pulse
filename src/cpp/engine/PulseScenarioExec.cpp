@@ -151,21 +151,26 @@ bool PulseScenarioExec::Execute()
 
     ThreadPool pool(numThreadsToUse);
     std::vector<std::future<bool>> futures;
+    std::vector<PulseScenarioExec*> opts;
     for (auto& filename : logs)
     {
-      PulseScenarioExec* opts = new PulseScenarioExec(GetLogger());
-      opts->Copy(*this);
-      opts->m_ScenarioLogFilename = filename;
-      futures.emplace_back(pool.enqueue(ExecuteOpts, opts, nullptr));
+      opts.emplace_back(new PulseScenarioExec(GetLogger()));
+      opts.back()->Copy(*this);
+      opts.back()->m_ScenarioLogFilename = filename;
+      futures.emplace_back(pool.enqueue(ExecuteOpts, opts.back(), nullptr));
     }
 
-    for (auto& future : futures)
+    bool success = true;
+    for (size_t i = 0; i < futures.size(); ++i)
     {
-      if (!future.get())
-        return false;
+      if (!futures[i].get())
+      {
+        Error("Failed to convert " + opts[i]->m_ScenarioLogFilename);
+        success = false;
+      }
     }
 
-    return true;
+    return success;
   }
 
   Error("No scenario content/log provided");
