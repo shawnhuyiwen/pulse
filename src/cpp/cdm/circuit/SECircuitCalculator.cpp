@@ -593,17 +593,26 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
   case EigenCircuitSolver::Llt:
     _eigen->xVector = _eigen->AMatrix.llt().solve(_eigen->bVector);
     break;
-    //Sparse methods
+  //Sparse methods
   case EigenCircuitSolver::SparseLU:
   {
     Eigen::SparseMatrix<double> sparse = _eigen->AMatrix.sparseView();
     Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
     solver.compute(sparse);
-    //Check to see if we have a good solution.
-    if (solver.info() == Eigen::Success)
-      _eigen->xVector = solver.solve(_eigen->bVector);
-    else
+
+    if (solver.info() != Eigen::Success)
+    {
+      //Decomposition failed
       sparseFailed = true;
+      break;
+    }
+
+    _eigen->xVector = solver.solve(_eigen->bVector);
+    if (solver.info() != Eigen::Success)
+    {
+      //Solving failed
+      sparseFailed = true;
+    }
     break;
   }
   case EigenCircuitSolver::SparseQR:
@@ -612,23 +621,47 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
     //sparse.makeCompressed();
     Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> solver;
     solver.compute(sparse);
-    //Check to see if we have a good solution.
-    if (solver.info() == Eigen::Success)
-      _eigen->xVector = solver.solve(_eigen->bVector);
-    else
+
+    if (solver.info() != Eigen::Success)
+    {
+      //Decomposition failed
       sparseFailed = true;
+      break;
+    }
+
+    _eigen->xVector = solver.solve(_eigen->bVector);
+    if (solver.info() != Eigen::Success)
+    {
+      //Solving failed
+      sparseFailed = true;
+    }
     break;
   }
   case EigenCircuitSolver::BiCGSTAB:
   {
-    Eigen::SparseMatrix<double> sparse = _eigen->AMatrix.sparseView();
+    if (_eigen->xVector.rows() != _eigen->AMatrix.rows())
+    {
+      _eigen->xVector = Eigen::VectorXd::Zero(_eigen->AMatrix.rows());
+    }
+
     Eigen::BiCGSTAB<Eigen::SparseMatrix<double>> solver;
-    solver.compute(sparse);
-    //Check to see if we have a good solution.
-    if (solver.info() == Eigen::Success)
-      _eigen->xVector = solver.solve(_eigen->bVector);
-    else
+    //Eigen::BiCGSTAB<Eigen::SparseMatrix<double>, Eigen::IncompleteLUT<double>> solver;
+    solver.compute(_eigen->AMatrix.sparseView());
+
+    if (solver.info() != Eigen::Success)
+    {
+      //Decomposition failed
       sparseFailed = true;
+      break;
+    }
+
+    _eigen->xVector = solver.solve(_eigen->bVector);
+    //_eigen->xVector = solver.solveWithGuess(_eigen->bVector, _eigen->xVector).eval();
+    if (solver.info() != Eigen::Success)
+    {
+      //Solving failed
+      sparseFailed = true;
+    }
     break;
   }
   case EigenCircuitSolver::ConjugateGradient:
@@ -636,11 +669,20 @@ bool SECircuitCalculator<CIRCUIT_CALCULATOR_TYPES>::Solve()
     Eigen::SparseMatrix<double> sparse = _eigen->AMatrix.sparseView();
     Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> solver;
     solver.compute(sparse);
-    //Check to see if we have a good solution.
-    if (solver.info() == Eigen::Success)
-      _eigen->xVector = solver.solve(_eigen->bVector);
-    else
+
+    if (solver.info() != Eigen::Success)
+    {
+      //Decomposition failed
       sparseFailed = true;
+      break;
+    }
+
+    _eigen->xVector = solver.solve(_eigen->bVector);
+    if (solver.info() != Eigen::Success)
+    {
+      //Solving failed
+      sparseFailed = true;
+    }
     break;
   }
   default:
