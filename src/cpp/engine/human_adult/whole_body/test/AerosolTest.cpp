@@ -142,7 +142,7 @@ namespace pulse { namespace human_adult_whole_body
     mono2Concentrations.GetFraction().push_back(1.0);     // Bin 5 (Bounded by Boundary 5 and Boundary 6)
 
     SizeIndependentDepositionEfficencyCoefficientsTest(mono2Suite, mono2Substance, 0.26841, 0.36689, 0.0012658, 0.0014995);
-    DepositionFractionTest(mono2Suite, mono2Substance, 0.344719, 0.443596, 0.000942165, 0.000709455, 0.000947155, 0.000712776);
+    DepositionFractionTest(mono2Suite, mono2Substance, 0.344719, 0.443596, 0.000941221, 0.000709455, 0.000946139, 0.000712776);
 
     // Create a suite
     SETestSuite& mono3Suite = testReport.CreateTestSuite();
@@ -206,7 +206,7 @@ namespace pulse { namespace human_adult_whole_body
     zhangConcentrations.GetFraction().push_back(0.016661235);     // Bin 9 (Bounded by Boundary 9 and Boundary 10)
 
     SizeIndependentDepositionEfficencyCoefficientsTest(zhangDispersion, zhangSubstance, 0.25368, 0.3399, 0.00013825, 0.00022882);
-    DepositionFractionTest(zhangDispersion, zhangSubstance, 0.333249, 0.423409, 0.000104601, 0.000108576, 0.000105119, 0.000109058);
+    DepositionFractionTest(zhangDispersion, zhangSubstance, 0.333249, 0.423409, 0.000104601, 0.000108576, 0.000105008, 0.000109058);
 
     testReport.SerializeToFile(sOutputDirectory + "/AerosolTestReport.json");
   }
