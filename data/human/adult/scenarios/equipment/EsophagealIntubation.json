@@ -412,18 +412,49 @@
     }
   }, {
     "PatientAction": {
-      "SubstanceBolus": {
-        "Substance": "Succinylcholine",
-        "Concentration": {
-          "ScalarMassPerVolume": {
-            "Value": 4820.0,
-            "Unit": "ug/mL"
-          }
-        },
-        "Dose": {
-          "ScalarVolume": {
-            "Value": 30.0,
-            "Unit": "mL"
+      "Intubation": {
+        "Type": "Esophageal"
+      }
+    }
+  },
+    {
+    "EquipmentAction": {
+      "MechanicalVentilatorConfiguration": {
+        "MechanicalVentilatorAction": { "EquipmentAction": { "Action": {
+              "Comment": "Attach the mechanical ventilator - VC-AC: TV = 7 mL/kg(ideal)" }}},
+        "Settings":
+        {
+          "Connection": "On",
+          "InspirationWaveform": "Square",
+          "ExpirationWaveform": "Square",
+          "InspirationTargetFlow": { "ScalarVolumePerTime": { "Value": 0.351, "Unit": "L/s" } },
+          "PositiveEndExpiredPressure": { "ScalarPressure": { "Value": 5.0, "Unit": "cmH2O" } },
+          "InspirationMachineTriggerTime": { "ScalarTime": { "Value": 10.0, "Unit": "s" } },
+          "InspirationPatientTriggerPressure": { "ScalarPressure": { "Value": -1, "Unit": "cmH2O" } },
+          "ExpirationCycleVolume": { "ScalarVolume": { "Value": 0.527, "Unit": "L" } },
+          "FractionInspiredGas": [
+            { "Name": "Oxygen", "Amount": { "Scalar0To1": { "Value": 0.3, "Unit": "" } } }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "Esophageal",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.0
           }
         }
       }
@@ -440,63 +471,10 @@
   }, {
     "PatientAction": {
       "Intubation": {
-        "Type": "Esophageal"
-      }
-    }
-  }, {
-    "EquipmentAction": {
-      "AnesthesiaMachineConfiguration": {
-        "Configuration": {
-          "Connection": "On",
-          "InletFlow": {
-            "ScalarVolumePerTime": {
-              "Value": 5.0,
-              "Unit": "L/min"
-            }
-          },
-          "InspiratoryExpiratoryRatio": {
-            "Value": 0.5
-          },
-          "OxygenFraction": {
-            "Scalar0To1": {
-              "Value": 0.23
-            }
-          },
-          "OxygenSource": "Wall",
-          "PositiveEndExpiredPressure": {
-            "ScalarPressure": {
-              "Value": 8.0,
-              "Unit": "cmH2O"
-            }
-          },
-          "PrimaryGas": "Nitrogen",
-          "RespiratoryRate": {
-            "ScalarFrequency": {
-              "Value": 16.0,
-              "Unit": "1/min"
-            }
-          },
-          "PeakInspiratoryPressure": {
-            "ScalarPressure": {
-              "Value": 18,
-              "Unit": "cmH2O"
-            }
-          },
-          "OxygenBottleOne": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
-          },
-          "OxygenBottleTwo": {
-            "Volume": {
-              "ScalarVolume": {
-                "Value": 660.0,
-                "Unit": "L"
-              }
-            }
+        "Type": "Esophageal",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.3
           }
         }
       }
@@ -505,7 +483,67 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 120.0,
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "Esophageal",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.6
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "Esophageal",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.9
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "Esophageal",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 1.0
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
           "Unit": "s"
         }
       }
@@ -520,7 +558,7 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 500.0,
+          "Value": 30.0,
           "Unit": "s"
         }
       }

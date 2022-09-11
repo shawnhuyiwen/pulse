@@ -4,18 +4,21 @@
 #include "cdm/CommonDefs.h"
 #include "cdm/patient/actions/SEIntubation.h"
 #include "cdm/io/protobuf/PBPatientActions.h"
+#include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarPressureTimePerVolume.h"
 
 SEIntubation::SEIntubation(Logger* logger) : SEPatientAction(logger)
 {
   m_Type = eIntubation_Type::Off;
   m_AirwayResistance = nullptr;
+  m_Severity = nullptr;
 }
 
 SEIntubation::~SEIntubation()
 {
   m_Type = eIntubation_Type::Off;
   SAFE_DELETE(m_AirwayResistance);
+  SAFE_DELETE(m_Severity);
 }
 
 void SEIntubation::Clear()
@@ -23,6 +26,7 @@ void SEIntubation::Clear()
   SEPatientAction::Clear();
   m_Type = eIntubation_Type::Off;
   INVALIDATE_PROPERTY(m_AirwayResistance);
+  INVALIDATE_PROPERTY(m_Severity);
 }
 
 void SEIntubation::Copy(const SEIntubation& src, bool /*preserveState*/)
@@ -53,6 +57,8 @@ const SEScalar* SEIntubation::GetScalar(const std::string& name)
 {
   if (name == "AirwayResistance")
     return &GetAirwayResistance();
+  if (name.compare("Severity") == 0)
+    return &GetSeverity();
   return nullptr;
 }
 
@@ -82,3 +88,21 @@ double SEIntubation::GetAirwayResistance(const PressureTimePerVolumeUnit& unit) 
     return SEScalar::dNaN();
   return m_AirwayResistance->GetValue(unit);
 }
+
+bool SEIntubation::HasSeverity() const
+{
+  return m_Severity == nullptr ? false : m_Severity->IsValid();
+}
+SEScalar0To1& SEIntubation::GetSeverity()
+{
+  if (m_Severity == nullptr)
+    m_Severity = new SEScalar0To1();
+  return *m_Severity;
+}
+double SEIntubation::GetSeverity() const
+{
+  if (m_Severity == nullptr)
+    return SEScalar::dNaN();
+  return m_Severity->GetValue();
+}
+

@@ -228,7 +228,9 @@ namespace pulse
     SEFluidCircuitPath* m_LeftPleuralToRespiratoryMuscle;
     SEFluidCircuitPath* m_RightPleuralToRespiratoryMuscle;
     SEFluidCircuitPath* m_DriverPressurePath;
-    SEFluidCircuitPath* m_AirwayToCarina;
+    SEFluidCircuitPath* m_AirwayToPharynx;
+    SEFluidCircuitPath* m_PharynxToEnvironment;
+    SEFluidCircuitPath* m_PharynxToCarina;
     SEFluidCircuitPath* m_AirwayToStomach;
     SEFluidCircuitPath* m_EnvironmentToLeftChestLeak;
     SEFluidCircuitPath* m_EnvironmentToRightChestLeak;

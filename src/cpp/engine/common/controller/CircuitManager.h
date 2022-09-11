@@ -158,6 +158,7 @@ namespace pulse
     DEFINE_STATIC_STRING(LeftPleuralConnection);
 
     DEFINE_STATIC_STRING(Airway);
+    DEFINE_STATIC_STRING(Pharynx);
 
     DEFINE_STATIC_STRING(RightAlveoli);
     DEFINE_STATIC_STRING(RightAlveoliLeak);
@@ -192,8 +193,10 @@ namespace pulse
     DEFINE_STATIC_STRING(LeftPleuralToEnvironment);
     DEFINE_STATIC_STRING(LeftPleuralToRespiratoryMuscle);
 
-    DEFINE_STATIC_STRING(AirwayToCarina);
+    DEFINE_STATIC_STRING(AirwayToPharynx);
     DEFINE_STATIC_STRING(AirwayToStomach);
+    DEFINE_STATIC_STRING(PharynxToCarina);
+    DEFINE_STATIC_STRING(PharynxToEnvironment);
 
     DEFINE_STATIC_STRING(RightAlveoliLeakToRightPleural);
     DEFINE_STATIC_STRING(RightAlveoliToRightAlveoliLeak);

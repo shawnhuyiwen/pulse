@@ -513,7 +513,7 @@ namespace pulse
       m_EnvironmentToVentilator->GetNextFlowSource().SetValue(driverFlow_L_Per_s, VolumePerTimeUnit::L_Per_s);
     }
     if (stateChange)
-      m_data.GetCircuits().GetRespiratoryAndMechanicalVentilationCircuit().StateChange();
+      m_data.GetCircuits().GetActiveRespiratoryCircuit().StateChange();
 
     m_PreviousDriverPressure_cmH2O = driverPressure_cmH2O;
     m_PreviousDriverFlow_L_Per_s = driverFlow_L_Per_s;

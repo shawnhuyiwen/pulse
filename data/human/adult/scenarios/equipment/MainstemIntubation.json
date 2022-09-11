@@ -505,8 +505,208 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 2.0,
-          "Unit": "min"
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "RightMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.0
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "RightMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.3
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "RightMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.6
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "RightMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.9
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "RightMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 1.0
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "LeftMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.0
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "LeftMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.3
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "LeftMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.6
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "LeftMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 0.9
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
+        }
+      }
+    }
+  }, {
+    "PatientAction": {
+      "Intubation": {
+        "Type": "LeftMainstem",
+        "Severity": {
+          "Scalar0To1": {
+            "Value": 1.0
+          }
+        }
+      }
+    }
+  }, {
+    "AdvanceTime": {
+      "Time": {
+        "ScalarTime": {
+          "Value": 30.0,
+          "Unit": "s"
         }
       }
     }
@@ -520,38 +720,8 @@
     "AdvanceTime": {
       "Time": {
         "ScalarTime": {
-          "Value": 5.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Intubation": {
-        "Type": "LeftMainstem"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 2.0,
-          "Unit": "min"
-        }
-      }
-    }
-  }, {
-    "PatientAction": {
-      "Intubation": {
-        "Type": "Tracheal"
-      }
-    }
-  }, {
-    "AdvanceTime": {
-      "Time": {
-        "ScalarTime": {
-          "Value": 5.0,
-          "Unit": "min"
+          "Value": 30.0,
+          "Unit": "s"
         }
       }
     }
