@@ -1164,7 +1164,11 @@ namespace pulse
     {
       //Save for end of exhale
       double ambientPressure_cmH2O = m_AmbientNode->GetNextPressure(PressureUnit::cmH2O);
-      double airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
+      double airwayPressure_cmH2O = ambientPressure_cmH2O;
+      if (m_ConnectionNode->HasNextPressure())
+      {
+        airwayPressure_cmH2O = m_ConnectionNode->GetNextPressure(PressureUnit::cmH2O);
+      }
       m_PositiveEndExpiratoryPressure_cmH2O = airwayPressure_cmH2O - ambientPressure_cmH2O;
 
       m_EndTidalCarbonDioxideFraction = m_Connection->GetSubstanceQuantity(m_data.GetSubstances().GetCO2())->GetVolumeFraction().GetValue();
