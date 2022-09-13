@@ -75,7 +75,6 @@ namespace pulse
     double MoveMassByActiveTransport(SELiquidCompartment& source, SELiquidCompartment& target, const SESubstance& sub, double DiffusingCapacityO2_mL_Per_s_mmHg, double timestep_s);
 
     // Serializable member variables (Set in Initialize and in schema
-    double m_CardiacArrestCarbonDioxideProductionFactor;
     double m_RestingTissueGlucose_g;
     double m_RestingBloodGlucose_mg_Per_mL;
     double m_RestingBloodLipid_mg_Per_mL;
@@ -124,15 +123,6 @@ namespace pulse
     SELiquidCompartment* m_RightPulmonaryCapillaries;
 
     std::map<SETissueCompartment*, SELiquidCompartment*>          m_TissueToVascular;
-
-    struct ConsumptionProductionFraction
-    {
-      ConsumptionProductionFraction() {}
-      ConsumptionProductionFraction(double c, double p) :
-        ConsumptionFraction(c), ProductionFraction(p)  {}
-      double ConsumptionFraction = 0;
-      double ProductionFraction  = 0;
-    };
-    std::map<SETissueCompartment*, ConsumptionProductionFraction> m_ConsumptionProdutionTissues;
+    std::vector<SETissueCompartment*>                    m_ConsumptionProdutionTissues;
   };
 END_NAMESPACE
