@@ -82,6 +82,12 @@ namespace pulse
     eBreathState          m_CurrentBreathState;
     bool                  m_Initializing;
 
+    double                m_PositiveEndExpiratoryPressure_cmH2O;
+    double                m_EndTidalCarbonDioxideFraction;
+    double                m_EndTidalCarbonDioxidePressure_cmH2O;
+    double                m_EndTidalOxygenFraction;
+    double                m_EndTidalOxygenPressure_cmH2O;
+
     SERunningAverage* m_MeanAirwayPressure_cmH2O;
 
     // Stateless member variable (Set in SetUp())
