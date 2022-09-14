@@ -8,6 +8,8 @@ from google.protobuf import json_format
 from os.path import exists
 from enum import Enum
 import math
+import operator
+from typing import List, Dict, Union
 
 class Field(Enum):
     Age_yr = 1
@@ -16,6 +18,81 @@ class Field(Enum):
     HeartRate_bpm = 4
     MeanArterialPressure_mmHg = 5
     PulsePressure_mmHg = 6
+
+class ConditionalType(Enum):
+    AND = 1
+    OR = 2
+
+class Condition():
+    _slots = ["field", "_operator", "_value"]
+
+    def __init__(self, field:Field, operator, value):
+        self._field = field
+        self._operator = operator
+        self._value = value
+
+    def equal(self, frm, to):
+        if not frm or not to:
+            return False
+        if not math.isclose(frm, to, abs_tol=0.0001):
+            return False
+        return True
+
+    def compare(self, left, right, op):
+        ops = {'>': operator.gt,
+               '<': operator.lt,
+               '>=': operator.ge,
+               '<=': operator.le,
+               '==': self.equal}
+
+        return ops[op](left, right)
+
+    def eval(self, patient):
+        if self._field is Field.Age_yr:
+            return self.compare(patient.Age_yr, self._value, self._operator)
+        elif self._field is Field.Height_cm:
+            return self.compare(patient.Height_cm, self._value, self._operator)
+        elif self._field is Field.BMI:
+            return self.compare(patient.BMI, self._value, self._operator)
+        elif self._field is Field.HeartRate_bpm:
+            return self.compare(patient.HeartRate_bpm, self._value, self._operator)
+        elif self._field is Field.MeanArterialPressure_mmHg:
+            return self.compare(patient.MeanArterialPressure_mmHg, self._value, self._operator)
+        elif self._field is Field.PulsePressure_mmHg:
+            return self.compare(patient.PulsePressure_mmHg, self._value, self._operator)
+
+        return False
+
+class Conditional():
+    _slots = ["_conditions", "_conditionalType", "_sex"]
+
+    def __init__(self, cType=ConditionalType.AND, sex:PatientData.eSex=PatientData.eSex.Male):
+        self._conditions = []
+        self._conditionalType = cType
+        self._sex = PatientData.eSex.Male
+
+    def sex(self, sex:PatientData.eSex):
+        self._sex = sex
+
+    def addCondition(self, field:Field, operator, value):
+        self._conditions.append(Condition(field, operator, value))
+
+    def addConditional(self, conditional):
+        self._conditions.append(conditional)
+
+    def eval(self, patient):
+        if patient.Sex is not self._sex:
+            return False
+        if self._conditionalType is ConditionalType.AND:
+            for condition in self._conditions:
+                if not condition.eval(patient):
+                    return False
+            return True
+        elif self._conditionalType is ConditionalType.OR:
+            for condition in self._conditions:
+                if condition.eval(patient):
+                    return True
+            return False
 
 class PatientVariabilityResults():
     __slots__ = ["_results", "_results_dir"]
@@ -117,6 +194,20 @@ class PatientVariabilityResults():
 
         return filteredPatients.Patient
 
+    # Generates list of patients that match any of the conditionals/conditions
+    def conditionalFilter(self, conditionals:List[Union[Conditional, Condition]]):
+        filteredPatients = PatientStateListData()
+
+        for patient in self._results.Patient:
+            for conditional in conditionals:
+                if conditional.eval(patient):
+                    # Patient passes this conditional.
+                    # Add it to the list and move on to the next patient.
+                    p = filteredPatients.Patient.add()
+                    p.CopyFrom(patient)
+                    break
+
+        return filteredPatients.Patient
 
     # Create a filter from patient.
     # Provide patient name (e.g "StandardMale") for standard results
@@ -185,7 +276,7 @@ if __name__ == '__main__':
     for p in filteredPatients_age:
         print(p.OutputBaseFilename)
 
-    # Get the runs where age is the only thing that could be different from the StandardMal
+    # Example: Get the runs where age is the only thing that could be different from the StandardMale
     filters = results.createFilterList()
     filter = filters.add()
     standardMaleFilter = results.createFilter(name="StandardMale")
@@ -194,4 +285,30 @@ if __name__ == '__main__':
     filteredPatients_age2 = results.filter(filters)
     print("\n\n\nVary age from 'Standard Male' patient:\n" + lineSep)
     for p in filteredPatients_age2:
+        print(p.OutputBaseFilename)
+
+    # Example: Use conditional filtering (AND only)
+    # male AND age < 45 yr AND height >= 165 cm AND height <= 185 cm AND pulse pressure = 40.5 mmHg
+    conditional = Conditional()
+    conditional.sex(PatientData.eSex.Male) # Assumes male if not provided
+    conditional.addCondition(Field.Age_yr, '<', 45)
+    conditional.addCondition(Field.Height_cm, '>=', 165)
+    conditional.addCondition(Field.Height_cm, '<=', 185)
+    conditional.addCondition(Field.PulsePressure_mmHg, '==', 40.5)
+    filtered_conditionalA = results.conditionalFilter([conditional])
+    print("\n\n\nMale AND age < 45 yr AND height >= 165 cm AND height <= 185 cm AND pulse pressure = 40.5 mmHg:\n" + lineSep)
+    for p in filtered_conditionalA:
+        print(p.OutputBaseFilename)
+
+    # Example: Use conditional filtering (includes OR)
+    # (implicit: male AND) BMI == 16 AND (HR < 65 bpm OR HR > 85 bpm)
+    conditional = Conditional()
+    conditional.addCondition(Field.BMI, '==', 16)
+    conditional1 = Conditional(ConditionalType.OR)
+    conditional1.addCondition(Field.HeartRate_bpm, '<', 65)
+    conditional1.addCondition(Field.HeartRate_bpm, '>', 85)
+    conditional.addConditional(conditional1)
+    filteredPatients_conditionalB = results.conditionalFilter([conditional])
+    print("\n\n\nMale AND BMI == 16 AND (HR < 65 bpm OR HR > 85 bpm):\n" + lineSep)
+    for p in filteredPatients_conditionalB:
         print(p.OutputBaseFilename)
