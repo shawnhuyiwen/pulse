@@ -3,6 +3,7 @@
 
 #include "PVGenerator.h"
 #include "cdm/patient/SEPatient.h"
+#include "cdm/io/protobuf/PBPatient.h"
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarLength.h"
 #include "cdm/properties/SEScalarMass.h"
@@ -452,24 +453,28 @@ namespace pulse::study::patient_variability
 
     m_TotalRuns++;
     m_TotalPatients++;
-    pulse::study::bind::patient_variability::PatientStateData* patientData = pList.add_patient();
-    patientData->set_id(m_TotalRuns);
-    patientData->set_sex((pulse::cdm::bind::PatientData_eSex)sex);
-    patientData->set_age_yr(age_yr);
-    patientData->set_bmi(bmi);
-    patientData->set_heartrate_bpm(hr_bpm);
-    patientData->set_height_cm(height_cm);
-    patientData->set_meanarterialpressure_mmhg(map_mmHg);
-    patientData->set_pulsepressure_mmhg(pp_mmHg);
+    SEPatient patient(GetLogger());
+    patient.SetSex(sex);
+    patient.GetAge().SetValue(age_yr, TimeUnit::yr);
 
-    patientData->set_weight_kg(weight_kg);
-    patientData->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
-    patientData->set_systolicarterialpressure_mmhg(systolic_mmHg);
-    patientData->set_outputbasefilename(full_dir_path);
-    patientData->set_maxsimulationtime_s(runDuration_s); // Generate 2 mins of data
-    patientData->mutable_validation();// Create a validation object to fill
+    //patientData->set_bmi(bmi);
+    patient.GetHeight().SetValue(height_cm, LengthUnit::cm);
+    patient.GetWeight().SetValue(weight_kg, MassUnit::kg);
+    patient.GetHeartRateBaseline().SetValue(hr_bpm, FrequencyUnit::Per_min);
+    //patientData->set_meanarterialpressure_mmhg(map_mmHg);
+    //patientData->set_pulsepressure_mmhg(pp_mmHg);
+    patient.GetSystolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+    patient.GetDiastolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
 
-    return patientData;
+    pulse::study::bind::patient_variability::PatientStateData* patientStateData = pList.add_patientstate();
+    patientStateData->set_id(m_TotalRuns);
+    pulse::cdm::bind::PatientData* patientData = patientStateData->mutable_patient();
+    PBPatient::Serialize(patient, *patientData);
+    patientStateData->set_outputbasefilename(full_dir_path);
+    patientStateData->set_maxsimulationtime_s(runDuration_s); // Generate 2 mins of data
+    patientStateData->mutable_validation();// Create a validation object to fill
+
+    return patientStateData;
   }
 
   // Add values to our ParameterSpace

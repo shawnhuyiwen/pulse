@@ -6,7 +6,13 @@
 
 #include "cdm/properties/SEScalarLength.h"
 #include "cdm/utils/FileUtils.h"
-#include "io/protobuf/PBUtils.h"
+#include "cdm/io/protobuf/PBUtils.h"
+#include "cdm/io/protobuf/PBPatient.h"
+#include "cdm/properties/SEScalarFrequency.h"
+#include "cdm/properties/SEScalarLength.h"
+#include "cdm/properties/SEScalarMass.h"
+#include "cdm/properties/SEScalarPressure.h"
+#include "cdm/properties/SEScalarTime.h"
 
 using namespace pulse::study::patient_variability;
 
@@ -20,8 +26,8 @@ int main(int argc, char* argv[])
   bool hemorrhageMode          = false;
   bool useBaseline             = true;
   bool includeStandardPatients = true;
-  std::string data = "test";
-  Mode mode = Mode::Hemorrhage;
+  std::string data = "solo";
+  Mode mode = Mode::Validation;
   std::string rootDir = "./test_results/patient_variability/";
 
   // Process arguments
@@ -129,27 +135,21 @@ int main(int argc, char* argv[])
     double systolic_mmHg = 114;// Set to -1 if you want it computed
     double diastolic_mmHg = 73.5;// Set to -1 if you want it computed
 
-    auto p = patients.add_patient();
+    SEPatient patient(&log);
+    patient.SetSex(ePatient_Sex::Male);
+    patient.GetAge().SetValue(age_yr, TimeUnit::yr);
+
+    //patientData->set_bmi(bmi);
+    patient.GetHeight().SetValue(height_cm, LengthUnit::cm);
+    patient.GetHeartRateBaseline().SetValue(hr_bpm, FrequencyUnit::Per_min);
+    //patientData->set_meanarterialpressure_mmhg(map_mmHg);
+    //patientData->set_pulsepressure_mmhg(pp_mmHg);
+    patient.GetSystolicArterialPressureBaseline().SetValue(diastolic_mmHg, PressureUnit::mmHg);
+    patient.GetDiastolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
+
+    auto p = patients.add_patientstate();
     p->set_id(0);
-    p->set_sex(pulse::cdm::bind::PatientData_eSex::PatientData_eSex_Male);
-    p->set_age_yr(age_yr);
-    p->set_bmi(bmi);
-    p->set_heartrate_bpm(hr_bpm);
-    p->set_height_cm(height_cm);
-    p->set_meanarterialpressure_mmhg(map_mmHg);
-    p->set_pulsepressure_mmhg(pp_mmHg);
-    // Caclulate weight (kg) from height (m) and BMI
-    double height_m = Convert(height_cm, LengthUnit::cm, LengthUnit::m);
-    double weight_kg = bmi * height_m * height_m;
-    p->set_weight_kg(weight_kg);
-    // systolic - diastolic = pulse pressure
-    // MAP = (systolic + 2 * diastolic) / 3
-    if(diastolic_mmHg<0)
-      diastolic_mmHg = (3 * map_mmHg - pp_mmHg) / 3.0;
-    if(systolic_mmHg<0)
-      systolic_mmHg = pp_mmHg + diastolic_mmHg;
-    p->set_diastolicarterialpressure_mmhg(diastolic_mmHg);
-    p->set_systolicarterialpressure_mmhg(systolic_mmHg);
+
 
     p->set_outputbasefilename("solo/");
     p->set_maxsimulationtime_s(120); // Generate 2 mins of data

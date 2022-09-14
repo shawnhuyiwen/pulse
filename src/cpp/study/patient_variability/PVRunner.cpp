@@ -11,6 +11,7 @@
 #include "cdm/engine/SEDataRequestManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
+#include "cdm/io/protobuf/PBPatient.h"
 #include "cdm/patient/actions/SEHemorrhage.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarFrequency.h"
@@ -29,6 +30,7 @@
 #include "cdm/utils/TimingProfile.h"
 
 using namespace pulse;
+using eFailure = pulse::study::bind::patient_variability::PatientStateData_eFailure;
 
 namespace pulse::study::patient_variability
 {
@@ -72,13 +74,13 @@ namespace pulse::study::patient_variability
   
   bool PVRunner::Run()
   {
-    if (m_PatientList->patient_size() == 0)
+    if (m_PatientList->patientstate_size() == 0)
       return true; // Nothing to do
 
     TimingProfile profiler;
     profiler.Start("Total");
 
-    if (m_PatientList->patient()[0].has_validation())
+    if (m_PatientList->patientstate()[0].has_validation())
     {
       // Generate json files for standard male and female validation data from baselines
       // If json files already exist don't redo that work
@@ -114,31 +116,19 @@ namespace pulse::study::patient_variability
         for (auto& standard : standardPatients)
         {
           // Load patient info to save for later analysis
-          SEPatientConfiguration pc;
-          SEPatient& p = pc.GetPatient();
+          SEPatient p(GetLogger());
           p.SerializeFromFile("./patients/" + standard + ".json");
-          auto patient = standardResults.add_patient();
-          patient->set_sex((pulse::cdm::bind::PatientData_eSex)p.GetSex());
-          patient->set_age_yr(p.GetAge(TimeUnit::yr));
-          patient->set_height_cm(p.GetHeight(LengthUnit::cm));
-          patient->set_weight_kg(p.GetWeight(MassUnit::kg));
-          double bmi = p.GetWeight(MassUnit::kg) / (p.GetHeight(LengthUnit::m) * p.GetHeight(LengthUnit::m));
-          patient->set_bmi(bmi);
-          // MAP = (systolic + 2 * diastolic) / 3
-          double map_mmHg = (p.GetSystolicArterialPressureBaseline(PressureUnit::mmHg) + (2 * p.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg))) / 3;
-          patient->set_meanarterialpressure_mmhg(map_mmHg);
-          // systolic - diastolic = pulse pressure
-          double pp_mmHg = p.GetSystolicArterialPressureBaseline(PressureUnit::mmHg) - p.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg);
-          patient->set_pulsepressure_mmhg(pp_mmHg);
-          patient->set_heartrate_bpm(p.GetHeartRateBaseline(FrequencyUnit::Per_min));
-          patient->set_diastolicarterialpressure_mmhg(p.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg));
-          patient->set_systolicarterialpressure_mmhg(p.GetSystolicArterialPressureBaseline(PressureUnit::mmHg));
-          patient->set_outputbasefilename(standard);
+
+          auto patientStateData = standardResults.add_patientstate();
+          pulse::cdm::bind::PatientData* patientData = patientStateData->mutable_patient();
+          PBPatient::Serialize(p, *patientData);
+
+          patientStateData->set_outputbasefilename(standard);
 
           // Save validation results
           std::vector<std::string> validation_files;
           ListFiles(dir, validation_files, true, "-" + standard + "ValidationResults.json");
-          if (!AggregateResults(*patient, validation_files, GetLogger()))
+          if (!AggregateResults(*patientStateData, validation_files, GetLogger()))
           {
             GetLogger()->Warning("Unable to aggregate results for " + standard);
           }
@@ -166,17 +156,17 @@ namespace pulse::study::patient_variability
 
     // Get the ID's of Patients we need to run
     m_PatientsToRun.clear();
-    for (int i = 0; i < m_PatientList->patient_size(); i++)
-      m_PatientsToRun.insert(m_PatientList->patient()[i].id());
+    for (int i = 0; i < m_PatientList->patientstate_size(); i++)
+      m_PatientsToRun.insert(m_PatientList->patientstate()[i].id());
     // Remove any id's we have in the results
-    if (m_PatientResultsList->patient_size() > 0)
+    if (m_PatientResultsList->patientstate_size() > 0)
     {
-      Info("Found " + std::to_string(m_PatientResultsList->patient_size()) + " previously run Patients");
-      for (int i = 0; i < m_PatientResultsList->patient_size(); i++)
-        m_PatientsToRun.erase(m_PatientResultsList->patient()[i].id());
+      Info("Found " + std::to_string(m_PatientResultsList->patientstate_size()) + " previously run Patients");
+      for (int i = 0; i < m_PatientResultsList->patientstate_size(); i++)
+        m_PatientsToRun.erase(m_PatientResultsList->patientstate()[i].id());
     }
 
-    size_t numSimsToRun = m_PatientList->patient_size() - m_PatientResultsList->patient_size();
+    size_t numSimsToRun = m_PatientList->patientstate_size() - m_PatientResultsList->patientstate_size();
     if (numSimsToRun == 0)
     {
       Info("All Patients are run in the results file");
@@ -252,7 +242,7 @@ namespace pulse::study::patient_variability
     Finish
   };
 
-  bool PVRunner::RunPatient(pulse::study::bind::patient_variability::PatientStateData& patient)
+  bool PVRunner::RunPatient(pulse::study::bind::patient_variability::PatientStateData& patientState)
   {
     TimingProfile profiler;
     profiler.Start("Total");
@@ -263,10 +253,10 @@ namespace pulse::study::patient_variability
     // For hemorrhage runs only
     eHemorrhageState hState = eHemorrhageState::None;
     pulse::study::bind::patient_variability::PatientStateData_HemorrhageData* hemorrhageData = nullptr;
-    if (patient.has_hemorrhage())
+    if (patientState.has_hemorrhage())
     {
       hState = eHemorrhageState::Start;
-      hemorrhageData = patient.mutable_hemorrhage();
+      hemorrhageData = patientState.mutable_hemorrhage();
     }
 
     if(!PostProcessOnly)
@@ -276,18 +266,18 @@ namespace pulse::study::patient_variability
       // No logging to console (when threaded)
       pulse->GetLogger()->LogToConsole(false);
       // But, do write a log file
-      pulse->GetLogger()->SetLogFile(m_RootDir + patient.outputbasefilename() + "/patient.log");
+      pulse->GetLogger()->SetLogFile(m_RootDir + patientState.outputbasefilename() + "/patient.log");
 
-      if (patient.has_validation())
+      if (patientState.has_validation())
       {
         // Write out the computed patient baseline values so we can see how well we met them
         cfgChanges.EnableWritePatientBaselineFile(eSwitch::On);
-        cfgChanges.SetInitialPatientBaselineFilepath(m_RootDir + patient.outputbasefilename() + "/patient.init.json");
+        cfgChanges.SetInitialPatientBaselineFilepath(m_RootDir + patientState.outputbasefilename() + "/patient.init.json");
         pulse->SetConfigurationOverride(&cfgChanges);
 
         // Read in all System and Patient validation scenarios
         // Add in all the data requests from all of those files
-        csvFilename = m_RootDir + patient.outputbasefilename() + "/AllValidationResults.csv";
+        csvFilename = m_RootDir + patientState.outputbasefilename() + "/AllValidationResults.csv";
 
         std::string scenario_dir;
         ConfigSet* config = ConfigParser::FileToConfigSet("run.config");
@@ -328,7 +318,7 @@ namespace pulse::study::patient_variability
       }
       else if (hemorrhageData)
       {
-        csvFilename = m_RootDir + patient.outputbasefilename() + "/HemorrhageResults.csv";
+        csvFilename = m_RootDir + patientState.outputbasefilename() + "/HemorrhageResults.csv";
         pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("HeartRate", FrequencyUnit::Per_min);
         pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("BloodVolume", VolumeUnit::mL);
         pulse->GetEngineTracker()->GetDataRequestManager().CreatePhysiologyDataRequest("CardiacOutput", VolumePerTimeUnit::mL_Per_min);
@@ -349,32 +339,47 @@ namespace pulse::study::patient_variability
       pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(csvFilename);
 
       // Create our patient
-      SEPatientConfiguration pc;
-      SEPatient& p = pc.GetPatient();
-      p.SetName("Patient"+std::to_string(patient.id()));
-      p.SetSex((ePatient_Sex)patient.sex());
-      p.GetAge().SetValue(patient.age_yr(), TimeUnit::yr);
-      p.GetHeight().SetValue(patient.height_cm(), LengthUnit::cm);
-      p.GetWeight().SetValue(patient.weight_kg(), MassUnit::kg);
-      p.GetHeartRateBaseline().SetValue(patient.heartrate_bpm(), FrequencyUnit::Per_min);
-      p.GetSystolicArterialPressureBaseline().SetValue(patient.systolicarterialpressure_mmhg(), PressureUnit::mmHg);
-      p.GetDiastolicArterialPressureBaseline().SetValue(patient.diastolicarterialpressure_mmhg(), PressureUnit::mmHg);
-
-      p.SerializeToFile(m_RootDir + patient.outputbasefilename() + "/patient.json");
+      SEPatientConfiguration pc(GetLogger());
+      PBPatient::Serialize(patientState.patient(), pc.GetPatient());
+      pc.GetPatient().SerializeToFile(m_RootDir + patientState.outputbasefilename() + "/patient.json");
 
       if (!pulse->InitializeEngine(pc))
       {
-        patient.set_achievedstabilization(false);
-        patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
+        patientState.set_failure(eFailure::PatientStateData_eFailure_FailedStabilization);
+        patientState.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
         return false;
       }
-      patient.set_achievedstabilization(true);
-      patient.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
-      pulse->GetLogger()->Info("It took " + cdm::to_string(patient.stabilizationtime_s()) + "s to stabilize this Patient");
+      patientState.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
+      pulse->GetLogger()->Info("It took " + cdm::to_string(patientState.stabilizationtime_s()) + "s to stabilize this Patient");
+      // Check to see if we meet the requested patient data
+      std::string command = "cmake -DTYPE:STRING=PatientValidationOfFolder -DARG1:STRING=" + m_RootDir + patientState.outputbasefilename() + " -DARG2:STRING=false -P run.cmake";
+      BlockSystemCall(command);// Results analysis need to be single threaded or it will thrash memory
+      //Serialize the file contents
+      pulse::cdm::bind::PropertyValidationListData vList;
+      if (!PBUtils::SerializeFromFile(m_RootDir+patientState.outputbasefilename()+"/Patient-ValidationResults.json", vList, GetLogger()))
+        return false;
+      bool baselinesNotMet = false;
+      for (size_t i = 0; i < vList.property_size(); i++)
+      {
+        auto& p = vList.property()[i];
+        if (p.error() > 2)
+        {
+          baselinesNotMet = true;
+          Error("Failed to meet patient property " + p.name());
+          Error("Expected: " + pulse::cdm::to_string(p.expectedvalue()));
+          Error("Computed: " + pulse::cdm::to_string(p.computedvalue()));
+        }
+      }
+      if (baselinesNotMet)
+      {
+        patientState.set_failure(eFailure::PatientStateData_eFailure_BaselinesNotMet);
+        return false;
+      }
+
 
       pulse->GetEngineTracker()->TrackData(0);
       double dT_s = pulse->GetTimeStep(TimeUnit::s);
-      int count = patient.maxsimulationtime_s() / dT_s;
+      int count = patientState.maxsimulationtime_s() / dT_s;
 
       for (int i = 0; i < count; i++)
       {
@@ -391,11 +396,11 @@ namespace pulse::study::patient_variability
           {
           case eHemorrhageState::Start:
           {
-            if (time_s > patient.hemorrhage().starttime_s())
+            if (time_s > patientState.hemorrhage().starttime_s())
             {
               SEHemorrhage hemorrhage;
-              hemorrhage.SetExternal(patient.hemorrhage().compartment());
-              hemorrhage.GetSeverity().SetValue(patient.hemorrhage().severity());
+              hemorrhage.SetExternal(patientState.hemorrhage().compartment());
+              hemorrhage.GetSeverity().SetValue(patientState.hemorrhage().severity());
               pulse->ProcessAction(hemorrhage);
               hState = eHemorrhageState::TrackStart;
             }
@@ -420,7 +425,7 @@ namespace pulse::study::patient_variability
           }
           case eHemorrhageState::TrackTriage:
           {
-            if (time_s > patient.hemorrhage().triagetime_s())
+            if (time_s > patientState.hemorrhage().triagetime_s())
             {
               hemorrhageData->set_triageheartrate_bpm(pulse->GetCardiovascularSystem()->GetHeartRate(FrequencyUnit::Per_min));
               hemorrhageData->set_triagecardiacoutput_l_per_min(pulse->GetCardiovascularSystem()->GetCardiacOutput(VolumePerTimeUnit::L_Per_min));
@@ -435,13 +440,13 @@ namespace pulse::study::patient_variability
 
           if (pulse->GetEventManager().IsEventActive(eEvent::CardiovascularCollapse))
           {
-            Info("Patient "+std::to_string(patient.id())+" Has Cardiovascular Collapse " + patient.outputbasefilename());
+            Info("Patient "+std::to_string(patientState.id())+" Has Cardiovascular Collapse " + patientState.outputbasefilename());
             break;
           }
         }
 
       }
-      patient.set_finalsimulationtime_s(pulse->GetSimulationTime(TimeUnit::s));
+      patientState.set_finalsimulationtime_s(pulse->GetSimulationTime(TimeUnit::s));
       // Hemorrhage Mode //
       if (hemorrhageData)
       {
@@ -454,7 +459,7 @@ namespace pulse::study::patient_variability
 
       pulse->GetEngineTracker()->ResetFile();// So we can close it
 
-      if (patient.has_validation())
+      if (patientState.has_validation())
       {
         CSV::SplitCSV(csvFilename, allScenarioRequests);
         if (!DeleteFile(csvFilename,5))
@@ -462,30 +467,27 @@ namespace pulse::study::patient_variability
       }
     }// end if(!m_PostProcessOnly)
 
-    if (patient.has_validation())
+    if (patientState.has_validation())
     {
-      std::string command = "cmake -DTYPE:STRING=validateFolder -DARG1:STRING=" + m_RootDir + patient.outputbasefilename() + " -DARG2:STRING=false -P run.cmake";
+      std::string command = "cmake -DTYPE:STRING=SystemValidationOfFolder -DARG1:STRING=" + m_RootDir + patientState.outputbasefilename() + " -DARG2:STRING=false -P run.cmake";
       BlockSystemCall(command);// Results analysis need to be single threaded or it will thrash memory
 
       //Retrieve all validation json files for patient and serialize data from those files
       std::vector<std::string> validation_files;
-      ListFiles(m_RootDir + patient.outputbasefilename(), validation_files, true, "ValidationResults.json");
-      if (!AggregateResults(patient, validation_files, GetLogger()))
+      ListFiles(m_RootDir + patientState.outputbasefilename(), validation_files, true, "ValidationResults.json");
+      if (!AggregateResults(patientState, validation_files, GetLogger()))
         return false;
     }
 
     // Add our results to our results file
     m_VectorMutex.lock();
-    auto pResult = m_PatientResultsList->add_patient();
-    pResult->CopyFrom(patient);
+    auto pResult = m_PatientResultsList->add_patientstate();
+    pResult->CopyFrom(patientState);
     SerializeToFile(*m_PatientResultsList, m_PatientResultsListFile);
-    Info("Completed Simulation " + std::to_string(m_PatientResultsList->patient_size()) + " of " + std::to_string(m_PatientList->patient_size()));
+    Info("Completed Simulation " + std::to_string(m_PatientResultsList->patientstate_size()) + " of " + std::to_string(m_PatientList->patientstate_size()));
     if(!PostProcessOnly)
     {
-      if (patient.achievedstabilization())
-        Info("  Stabilized : " + patient.outputbasefilename());
-      else
-        Info("  FAILED STABILIZATION : " + patient.outputbasefilename());
+      Info("  Failure : " + pulse::study::bind::patient_variability::PatientStateData_eFailure_Name(patientState.failure()));
     }
     m_VectorMutex.unlock();
 
@@ -500,9 +502,9 @@ namespace pulse::study::patient_variability
     if (!m_PatientsToRun.empty())
     {
       auto id = *m_PatientsToRun.begin();
-      for (int i = 0; i < m_PatientList->patient_size(); i++)
+      for (int i = 0; i < m_PatientList->patientstate_size(); i++)
       {
-        patient = &(*m_PatientList->mutable_patient())[i];
+        patient = &(*m_PatientList->mutable_patientstate())[i];
         if (patient->id() == id)
           break;
       }
