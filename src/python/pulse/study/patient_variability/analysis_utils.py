@@ -66,10 +66,10 @@ class Condition():
 class Conditional():
     _slots = ["_conditions", "_conditionalType", "_sex"]
 
-    def __init__(self, cType=ConditionalType.AND, sex:PatientData.eSex=PatientData.eSex.Male):
+    def __init__(self, cType=ConditionalType.AND):
         self._conditions = []
         self._conditionalType = cType
-        self._sex = PatientData.eSex.Male
+        self._sex = None
 
     def sex(self, sex:PatientData.eSex):
         self._sex = sex
@@ -81,7 +81,7 @@ class Conditional():
         self._conditions.append(conditional)
 
     def eval(self, patient):
-        if patient.Sex is not self._sex:
+        if self._sex is not None and patient.Sex is not self._sex:
             return False
         if self._conditionalType is ConditionalType.AND:
             for condition in self._conditions:
@@ -290,7 +290,7 @@ if __name__ == '__main__':
     # Example: Use conditional filtering (AND only)
     # male AND age < 45 yr AND height >= 165 cm AND height <= 185 cm AND pulse pressure = 40.5 mmHg
     conditional = Conditional()
-    conditional.sex(PatientData.eSex.Male) # Assumes male if not provided
+    conditional.sex(PatientData.eSex.Male)
     conditional.addCondition(Field.Age_yr, '<', 45)
     conditional.addCondition(Field.Height_cm, '>=', 165)
     conditional.addCondition(Field.Height_cm, '<=', 185)
@@ -301,14 +301,15 @@ if __name__ == '__main__':
         print(p.OutputBaseFilename)
 
     # Example: Use conditional filtering (includes OR)
-    # (implicit: male AND) BMI == 16 AND (HR < 65 bpm OR HR > 85 bpm)
+    # female AND BMI == 16 AND (HR < 65 bpm OR HR > 85 bpm)
     conditional = Conditional()
+    conditional.sex(PatientData.eSex.Female)
     conditional.addCondition(Field.BMI, '==', 16)
     conditional1 = Conditional(ConditionalType.OR)
     conditional1.addCondition(Field.HeartRate_bpm, '<', 65)
     conditional1.addCondition(Field.HeartRate_bpm, '>', 85)
     conditional.addConditional(conditional1)
     filteredPatients_conditionalB = results.conditionalFilter([conditional])
-    print("\n\n\nMale AND BMI == 16 AND (HR < 65 bpm OR HR > 85 bpm):\n" + lineSep)
+    print("\n\n\nFemale AND BMI == 16 AND (HR < 65 bpm OR HR > 85 bpm):\n" + lineSep)
     for p in filteredPatients_conditionalB:
         print(p.OutputBaseFilename)
