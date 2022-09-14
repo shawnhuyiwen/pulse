@@ -236,7 +236,6 @@ namespace pulse
     m_PeakInspiratoryPressure_cmH2O = 0.0;
     m_PeakExpiratoryPressure_cmH2O = 0.0;
     m_PreviousTargetAlveolarVentilation_L_Per_min = m_data.GetCurrentPatient().GetTidalVolumeBaseline(VolumeUnit::L) * m_VentilationFrequency_Per_min;
-    m_AverageLocalTissueBronchodilationEffects = 0.0;
 
     m_IERatioScaleFactor = 1.0;
 
@@ -345,6 +344,7 @@ namespace pulse
     m_PatientActions = &m_data.GetActions().GetPatientActions();
     //Driver
     m_MaxDriverPressure_cmH2O = -50.0;
+    m_AverageLocalTissueBronchodilationEffects = 0.0;
     //Configuration parameters
     m_DefaultOpenResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultOpenFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);
     m_DefaultClosedResistance_cmH2O_s_Per_L = m_data.GetConfiguration().GetDefaultClosedFlowResistance(PressureTimePerVolumeUnit::cmH2O_s_Per_L);

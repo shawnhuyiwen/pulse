@@ -2405,18 +2405,11 @@ namespace pulse
 
     /////////////////
     // Left Kidney //
-    SELiquidCompartment* LeftKidney;
     SEFluidCircuitNode* LeftKidney1;
     if (!m_Config->IsRenalEnabled())
-    {
       LeftKidney1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::LeftKidney1);
-      LeftKidney = m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::LeftKidney);
-    }
     else
-    {
       LeftKidney1 = cCombinedCardiovascular.GetNode(pulse::RenalNode::LeftGlomerularCapillaries);
-      LeftKidney = m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::LeftGlomerularCapillaries);
-    }
 
     SEFluidCircuitNode& LeftKidneyT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT1);
     SEFluidCircuitNode& LeftKidneyT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::LeftKidneyT2);
@@ -2455,7 +2448,7 @@ namespace pulse
     LeftKidneyTissue.GetTissueToPlasmaLipoproteinRatio().SetValue(LKidneyLRatio);
     LeftKidneyTissue.GetTotalMass().SetValue(LKidneyTissueMass, MassUnit::kg);
 
-    SELiquidCompartmentLink& LeftKidneyVascularToTissue = m_Compartments->CreateLiquidLink(*LeftKidney,
+    SELiquidCompartmentLink& LeftKidneyVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::LeftKidney),
       LeftKidneyExtracellular, pulse::VascularLink::LeftKidneyVascularToTissue);
     LeftKidneyVascularToTissue.MapPath(LeftKidney1ToLeftKidneyT2);
 
@@ -2502,7 +2495,7 @@ namespace pulse
     LeftLungTissue.GetTissueToPlasmaAlphaAcidGlycoproteinRatio().SetValue(LLungAAGRatio);
     LeftLungTissue.GetTotalMass().SetValue(LLungTissueMass, MassUnit::kg);
 
-    SELiquidCompartmentLink& LeftLungVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::LeftPulmonaryCapillaries),
+    SELiquidCompartmentLink& LeftLungVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::LeftLung),
       LeftLungExtracellular, pulse::VascularLink::LeftLungVascularToTissue);
     LeftLungVascularToTissue.MapPath(LeftLung1ToLeftLungT2);
 
@@ -2652,18 +2645,11 @@ namespace pulse
 
     //////////////////
     // Right Kidney //
-    SELiquidCompartment* RightKidney;
     SEFluidCircuitNode* RightKidney1;
     if (!m_Config->IsRenalEnabled())
-    {
       RightKidney1 = cCombinedCardiovascular.GetNode(pulse::CardiovascularNode::RightKidney1);
-      RightKidney = m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::RightKidney);
-    }
     else
-    {
       RightKidney1 = cCombinedCardiovascular.GetNode(pulse::RenalNode::RightGlomerularCapillaries);
-      RightKidney = m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::RightGlomerularCapillaries);
-    }
 
     SEFluidCircuitNode& RightKidneyT1 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT1);
     SEFluidCircuitNode& RightKidneyT2 = cCombinedCardiovascular.CreateNode(pulse::TissueNode::RightKidneyT2);
@@ -2702,7 +2688,7 @@ namespace pulse
     RightKidneyTissue.GetTissueToPlasmaLipoproteinRatio().SetValue(RKidneyLRatio);
     RightKidneyTissue.GetTotalMass().SetValue(RKidneyTissueMass, MassUnit::kg);
 
-    SELiquidCompartmentLink& RightKidneyVascularToTissue = m_Compartments->CreateLiquidLink(*RightKidney,
+    SELiquidCompartmentLink& RightKidneyVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::RightKidney),
       RightKidneyExtracellular, pulse::VascularLink::RightKidneyVascularToTissue);
     RightKidneyVascularToTissue.MapPath(RightKidney1ToRightKidneyT2);
 
@@ -2749,7 +2735,7 @@ namespace pulse
     RightLungTissue.GetTissueToPlasmaLipoproteinRatio().SetValue(RLungLRatio);
     RightLungTissue.GetTotalMass().SetValue(RLungTissueMass, MassUnit::kg);
 
-    SELiquidCompartmentLink& RightLungVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::RightPulmonaryCapillaries),
+    SELiquidCompartmentLink& RightLungVascularToTissue = m_Compartments->CreateLiquidLink(*m_Compartments->GetLiquidCompartment(pulse::VascularCompartment::RightLung),
       RightLungExtracellular, pulse::VascularLink::RightLungVascularToTissue);
     RightLungVascularToTissue.MapPath(RightLung1ToRightLungT2);
 

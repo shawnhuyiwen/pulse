@@ -118,7 +118,7 @@ namespace pulse
     m_MyocardiumO2 = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium)->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_RightArm = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightArm);
     m_RightArmO2 = m_RightArm->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
-    m_VenaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain);
+    m_VenaCava = m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::VenaCava);
     m_VenaCavaO2 = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetO2());
     m_VenaCavaCO2 = m_VenaCava->GetSubstanceQuantity(m_data.GetSubstances().GetCO2());
 
