@@ -27,6 +27,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.BodyDensity, dst.GetBodyDensity());
       if (src.BodyFatFraction != null)
         PBProperty.Load(src.BodyFatFraction, dst.GetBodyFatFraction());
+      if (src.BodyMassIndex != null)
+        PBProperty.Load(src.BodyMassIndex, dst.GetBodyMassIndex());
       if (src.IdealBodyWeight != null)
         PBProperty.Load(src.IdealBodyWeight, dst.GetIdealBodyWeight());
       if (src.LeanBodyMass != null)
@@ -49,6 +51,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.HeartRateBaseline, dst.GetHeartRateBaseline());
       if (src.MeanArterialPressureBaseline != null)
         PBProperty.Load(src.MeanArterialPressureBaseline, dst.GetMeanArterialPressureBaseline());
+      if (src.PulsePressureBaseline != null)
+        PBProperty.Load(src.PulsePressureBaseline, dst.GetPulsePressureBaseline());
       if (src.RespirationRateBaseline != null)
         PBProperty.Load(src.RespirationRateBaseline, dst.GetRespirationRateBaseline());
       if (src.SystolicArterialPressureBaseline != null)
@@ -110,6 +114,8 @@ namespace Pulse.CDM
         dst.BodyDensity = PBProperty.Unload(src.GetBodyDensity());
       if (src.HasBodyFatFraction())
         dst.BodyFatFraction = PBProperty.Unload(src.GetBodyFatFraction());
+      if (src.HasBodyMassIndex())
+        dst.BodyMassIndex = PBProperty.Unload(src.GetBodyMassIndex());
       if (src.HasIdealBodyWeight())
         dst.IdealBodyWeight = PBProperty.Unload(src.GetIdealBodyWeight());
       if (src.HasLeanBodyMass())
@@ -132,6 +138,8 @@ namespace Pulse.CDM
         dst.HeartRateBaseline = PBProperty.Unload(src.GetHeartRateBaseline());
       if (src.HasMeanArterialPressureBaseline())
         dst.MeanArterialPressureBaseline = PBProperty.Unload(src.GetMeanArterialPressureBaseline());
+      if (src.HasPulsePressureBaseline())
+        dst.PulsePressureBaseline = PBProperty.Unload(src.GetPulsePressureBaseline());
       if (src.HasRespirationRateBaseline())
         dst.RespirationRateBaseline = PBProperty.Unload(src.GetRespirationRateBaseline());
       if (src.HasSystolicArterialPressureBaseline())
