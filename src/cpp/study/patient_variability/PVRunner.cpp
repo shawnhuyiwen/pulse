@@ -4,6 +4,7 @@
 #include "PVRunner.h"
 
 #include "PulseEngine.h"
+#include "engine/human_adult/whole_body/Engine.h"
 #include "engine/PulseConfiguration.h"
 #include "engine/PulseScenario.h"
 
@@ -34,12 +35,12 @@ using eFailure = pulse::study::bind::patient_variability::PatientStateData_eFail
 
 namespace pulse::study::patient_variability
 {
-  PVRunner::PVRunner(const std::string& rootDir, bool useBaseline, Logger* logger) : Loggable(logger)
+  PVRunner::PVRunner(const std::string& rootDir, eStandardValidationType t, Logger* logger) : Loggable(logger)
   {
     m_RootDir = rootDir;
     m_PatientList = nullptr;
     m_PatientResultsList = nullptr;
-    m_UseBaseline = useBaseline;
+    m_StandardValidationType = t;
   }
   PVRunner::~PVRunner()
   {
@@ -80,7 +81,7 @@ namespace pulse::study::patient_variability
     TimingProfile profiler;
     profiler.Start("Total");
 
-    if (m_PatientList->patientstate()[0].has_validation())
+    if (m_PatientList->patientstate()[0].has_validation() && m_StandardValidationType!=eStandardValidationType::None)
     {
       // Generate json files for standard male and female validation data from baselines
       // If json files already exist don't redo that work
@@ -88,7 +89,7 @@ namespace pulse::study::patient_variability
       {
         // Run standard patients if we aren't using baseline
         std::string dir = "./verification/scenarios/validation/systems";
-        if(!m_UseBaseline)
+        if(m_StandardValidationType == eStandardValidationType::Current)
         {
           Info("Executing System Validation...");
           std::string runCommand = "cmake -DTYPE:STRING=SystemValidation -P run.cmake";
@@ -192,6 +193,33 @@ namespace pulse::study::patient_variability
     for (size_t p = 0; p < processor_count; p++)
       m_Threads[p].join();
 
+    // Let's count up our stats
+    size_t SetupErrors = 0;
+    size_t StabilizationErrors = 0;
+    size_t RuntimeErrors = 0;
+    size_t FatalRuntimeErrors = 0;
+    size_t ValidRuns = 0;
+    Info("Total Patients: " + std::to_string(m_PatientResultsList->patientstate_size()));
+    for (int i = 0; i < m_PatientResultsList->patientstate_size(); i++)
+    {
+      auto& patientStateData = m_PatientResultsList->patientstate()[i];
+      if (patientStateData.failure() == eFailure::PatientStateData_eFailure_FailedSetup)
+        SetupErrors++;
+      else if (patientStateData.failure() == eFailure::PatientStateData_eFailure_FailedStabilization)
+        StabilizationErrors++;
+      else if (patientStateData.failure() == eFailure::PatientStateData_eFailure_RuntimeError)
+        RuntimeErrors++;
+      else if (patientStateData.failure() == eFailure::PatientStateData_eFailure_FatalRuntimeError)
+        FatalRuntimeErrors++;
+      else
+        ValidRuns++;
+    }
+    Info("Total Valid Patients: " + std::to_string(ValidRuns));
+    Info("Total SetupErrors: " + std::to_string(SetupErrors));
+    Info("Total StabilizationErrors: " + std::to_string(StabilizationErrors));
+    Info("Total RuntimeErrors: " + std::to_string(RuntimeErrors));
+    Info("Total FatalRuntimeErrors: " + std::to_string(FatalRuntimeErrors));
+
     Info("It took " + std::to_string(profiler.GetElapsedTime_s("Total")) + "s to run this Patient list");
     profiler.Clear();
     return true;
@@ -210,9 +238,14 @@ namespace pulse::study::patient_variability
         if (patient == nullptr)
           break;
 
-        Info("Running Patient " + std::to_string(patient->id())+" "+patient->outputbasefilename());
-        if(!RunPatient(*patient))
-          GetLogger()->Error("Unable to run patient " + patient->outputbasefilename());
+        if (patient->failure() != eFailure::PatientStateData_eFailure_None)
+          Info("Not running invalid patient " + std::to_string(patient->id()) + " " + patient->outputbasefilename());
+        else
+        {
+          Info("Running " + patient->outputbasefilename());
+          if (!RunPatient(*patient))
+            GetLogger()->Error("Unable to run patient " + patient->outputbasefilename());
+        }
       }
       catch (CommonDataModelException& cdm_ex)
       {
@@ -242,11 +275,20 @@ namespace pulse::study::patient_variability
     Finish
   };
 
+  bool CheckPatientSetup(const SEPatient& p)
+  {
+    SEPatient c(p.GetLogger());
+    c.Copy(p);
+    return pulse::human_adult_whole_body::SetupPatient(c);
+  }
+
   bool PVRunner::RunPatient(pulse::study::bind::patient_variability::PatientStateData& patientState)
   {
     TimingProfile profiler;
     profiler.Start("Total");
     profiler.Start("Status");
+
+
     std::string csvFilename;
     // For validation runs only
     std::map<std::string, std::vector<std::string>> allScenarioRequests;
@@ -258,6 +300,7 @@ namespace pulse::study::patient_variability
       hState = eHemorrhageState::Start;
       hemorrhageData = patientState.mutable_hemorrhage();
     }
+    std::string patientName = patientState.patient().name();
 
     if(!PostProcessOnly)
     {
@@ -267,6 +310,14 @@ namespace pulse::study::patient_variability
       pulse->GetLogger()->LogToConsole(false);
       // But, do write a log file
       pulse->GetLogger()->SetLogFile(m_RootDir + patientState.outputbasefilename() + "/patient.log");
+
+      SEPatientConfiguration pc(pulse->GetLogger());
+      PBPatient::Serialize(patientState.patient(), pc.GetPatient());
+      if (!CheckPatientSetup(pc.GetPatient()))
+      {
+        patientState.set_failure(eFailure::PatientStateData_eFailure_FailedSetup);
+        return false;
+      }
 
       if (patientState.has_validation())
       {
@@ -312,7 +363,8 @@ namespace pulse::study::patient_variability
         }
         else
         {
-          Error("Cannot find scenario root... cannot add any data requests...");
+          Error("["+patientName+"] Cannot find scenario root... cannot add any data requests...");
+          patientState.set_failure(eFailure::PatientStateData_eFailure_RuntimeError);
           return false;
         }
       }
@@ -333,49 +385,21 @@ namespace pulse::study::patient_variability
       }
       else
       {
-        Error("Unknown run mode");
+        Error("["+patientName+"] Unknown run mode");
+        patientState.set_failure(eFailure::PatientStateData_eFailure_RuntimeError);
         return false;
       }
       pulse->GetEngineTracker()->GetDataRequestManager().SetResultsFilename(csvFilename);
 
-      // Create our patient
-      SEPatientConfiguration pc(GetLogger());
-      PBPatient::Serialize(patientState.patient(), pc.GetPatient());
-      pc.GetPatient().SerializeToFile(m_RootDir + patientState.outputbasefilename() + "/patient.json");
-
       if (!pulse->InitializeEngine(pc))
       {
+        Error("["+patientName+"] Unable to stabilize engine");
         patientState.set_failure(eFailure::PatientStateData_eFailure_FailedStabilization);
-        patientState.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
-        return false;
-      }
-      patientState.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
-      pulse->GetLogger()->Info("It took " + cdm::to_string(patientState.stabilizationtime_s()) + "s to stabilize this Patient");
-      // Check to see if we meet the requested patient data
-      std::string command = "cmake -DTYPE:STRING=PatientValidationOfFolder -DARG1:STRING=" + m_RootDir + patientState.outputbasefilename() + " -DARG2:STRING=false -P run.cmake";
-      BlockSystemCall(command);// Results analysis need to be single threaded or it will thrash memory
-      //Serialize the file contents
-      pulse::cdm::bind::PropertyValidationListData vList;
-      if (!PBUtils::SerializeFromFile(m_RootDir+patientState.outputbasefilename()+"/Patient-ValidationResults.json", vList, GetLogger()))
-        return false;
-      bool baselinesNotMet = false;
-      for (size_t i = 0; i < vList.property_size(); i++)
-      {
-        auto& p = vList.property()[i];
-        if (p.error() > 2)
-        {
-          baselinesNotMet = true;
-          Error("Failed to meet patient property " + p.name());
-          Error("Expected: " + pulse::cdm::to_string(p.expectedvalue()));
-          Error("Computed: " + pulse::cdm::to_string(p.computedvalue()));
-        }
-      }
-      if (baselinesNotMet)
-      {
-        patientState.set_failure(eFailure::PatientStateData_eFailure_BaselinesNotMet);
         return false;
       }
 
+      patientState.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
+      pulse->GetLogger()->Info("["+patientName+"] It took " + cdm::to_string(patientState.stabilizationtime_s()) + "s to stabilize this Patient");
 
       pulse->GetEngineTracker()->TrackData(0);
       double dT_s = pulse->GetTimeStep(TimeUnit::s);
@@ -384,7 +408,11 @@ namespace pulse::study::patient_variability
       for (int i = 0; i < count; i++)
       {
         if (!pulse->AdvanceModelTime()) // Compute 1 time step
+        {
+          Error("["+patientName+"] Unable to advance time");
+          patientState.set_failure(eFailure::PatientStateData_eFailure_FatalRuntimeError);
           return false;
+        }
 
         double time_s = pulse->GetSimulationTime(TimeUnit::s);
         pulse->GetEngineTracker()->TrackData(time_s);
@@ -440,7 +468,7 @@ namespace pulse::study::patient_variability
 
           if (pulse->GetEventManager().IsEventActive(eEvent::CardiovascularCollapse))
           {
-            Info("Patient "+std::to_string(patientState.id())+" Has Cardiovascular Collapse " + patientState.outputbasefilename());
+            Info("["+patientName+"] "+ std::to_string(patientState.id())+" Has Cardiovascular Collapse " + patientState.outputbasefilename());
             break;
           }
         }
@@ -463,20 +491,24 @@ namespace pulse::study::patient_variability
       {
         CSV::SplitCSV(csvFilename, allScenarioRequests);
         if (!DeleteFile(csvFilename,5))
-          Error("Unable to remove file " + csvFilename);
+          Warning("["+patientName+"] Unable to remove file " + csvFilename);
       }
     }// end if(!m_PostProcessOnly)
 
     if (patientState.has_validation())
     {
-      std::string command = "cmake -DTYPE:STRING=SystemValidationOfFolder -DARG1:STRING=" + m_RootDir + patientState.outputbasefilename() + " -DARG2:STRING=false -P run.cmake";
+      // Run patient and system validation
+      std::string command = "cmake -DTYPE:STRING=ValidateFolder -DARG1:STRING=" + m_RootDir + patientState.outputbasefilename() + " -DARG2:STRING=false -P run.cmake";
       BlockSystemCall(command);// Results analysis need to be single threaded or it will thrash memory
 
       //Retrieve all validation json files for patient and serialize data from those files
       std::vector<std::string> validation_files;
       ListFiles(m_RootDir + patientState.outputbasefilename(), validation_files, true, "ValidationResults.json");
       if (!AggregateResults(patientState, validation_files, GetLogger()))
+      {
+        Error("["+patientName+"] Unable to aggregate results");
         return false;
+      }
     }
 
     // Add our results to our results file
@@ -484,10 +516,10 @@ namespace pulse::study::patient_variability
     auto pResult = m_PatientResultsList->add_patientstate();
     pResult->CopyFrom(patientState);
     SerializeToFile(*m_PatientResultsList, m_PatientResultsListFile);
-    Info("Completed Simulation " + std::to_string(m_PatientResultsList->patientstate_size()) + " of " + std::to_string(m_PatientList->patientstate_size()));
+    Info("["+patientName+"] Completed Simulation " + std::to_string(m_PatientResultsList->patientstate_size()) + " of " + std::to_string(m_PatientList->patientstate_size()));
     if(!PostProcessOnly)
     {
-      Info("  Failure : " + pulse::study::bind::patient_variability::PatientStateData_eFailure_Name(patientState.failure()));
+      Info("["+patientName+"] Failure : " + pulse::study::bind::patient_variability::PatientStateData_eFailure_Name(patientState.failure()));
     }
     m_VectorMutex.unlock();
 

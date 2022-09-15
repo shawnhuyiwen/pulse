@@ -198,6 +198,7 @@ namespace pulse { namespace human_adult_whole_body
       patient.Error(ss);
       err = true;
     }
+    patient.GetBodyMassIndex().SetValue(BMI_kg_per_m2);
 
     //BODY FAT FRACTION ---------------------------------------------------------------
     //From American Council on Exercise
@@ -526,6 +527,8 @@ namespace pulse { namespace human_adult_whole_body
 
     double MAP_mmHg = 1.0 / 3.0 * systolic_mmHg + 2.0 / 3.0 * diastolic_mmHg;
     patient.GetMeanArterialPressureBaseline().SetValue(MAP_mmHg, PressureUnit::mmHg);
+    double pulsePressure_mmHg = systolic_mmHg - diastolic_mmHg;
+    patient.GetPulsePressureBaseline().SetValue(pulsePressure_mmHg, PressureUnit::mmHg);
 
     //Blood Volume ---------------------------------------------------------------
     /// \cite Morgan2006Clinical

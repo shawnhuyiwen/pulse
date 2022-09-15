@@ -622,10 +622,7 @@ public abstract class ValidationTool
             {
               if(!t.isEmpty())
               {
-                if(patientValidation)
-                  WriteValidationJson(t, csv_root+name+"Results.json");
-                else
-                  WriteValidationJson(t, csv_root+name+"ValidationResults.json");
+                WriteValidationJson(t, csv_root+name+"-ValidationResults.json");
               }
             }
           }

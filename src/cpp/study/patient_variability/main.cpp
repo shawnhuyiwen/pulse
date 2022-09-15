@@ -24,10 +24,9 @@ int main(int argc, char* argv[])
   bool postProcessOnly         = false;
   bool validationMode          = false;
   bool hemorrhageMode          = false;
-  bool useBaseline             = true;
-  bool includeStandardPatients = true;
-  std::string data = "solo";
-  Mode mode = Mode::Validation;
+  eStandardValidationType vType = eStandardValidationType::None;
+  std::string data = "full";
+  eMode mode = eMode::Validation;
   std::string rootDir = "./test_results/patient_variability/";
 
   // Process arguments
@@ -68,27 +67,26 @@ int main(int argc, char* argv[])
     if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--validation"))
     {
       validationMode = true;
-      mode = Mode::Validation;
+      mode = eMode::Validation;
     }
     // Hemorrhage RunMode
     if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--hemorrhage"))
     {
       hemorrhageMode = true;
-      mode = Mode::Hemorrhage;
+      mode = eMode::Hemorrhage;
     }
 
-    // Use existing baseline results for comparison
-    if(!strcmp(argv[i], "-n") || !strcmp(argv[i], "--no-baseline"))
+    // Generate standard validation from baseline results for comparison
+    if(!strcmp(argv[i], "-b") || !strcmp(argv[i], "--baseline"))
     {
-      useBaseline = false;
+      vType = eStandardValidationType::Baseline;
+    }
+    // Generate standard validation from current code base
+    if (!strcmp(argv[i], "-rv") || !strcmp(argv[i], "--run_validation"))
+    {
+      vType = eStandardValidationType::Current;
     }
 
-    // Adjust parameters to exclude standard patients
-    if(!strcmp(argv[i], "-x") || !strcmp(argv[i], "--exclude-standard-patients"))
-    {
-      includeStandardPatients = false;
-    }
-    
   }
   if (validationMode && hemorrhageMode)
   {
@@ -99,10 +97,10 @@ int main(int argc, char* argv[])
   std::string modeDir = "";
   switch (mode)
   {
-  case Mode::Validation:
+  case eMode::Validation:
     modeDir = "validation/";
     break;
-  case Mode::Hemorrhage:
+  case eMode::Hemorrhage:
     modeDir = "hemorrhage/";
     break;
   }
@@ -114,7 +112,6 @@ int main(int argc, char* argv[])
   pulse::study::bind::patient_variability::PatientStateListData patients;
   PVGenerator pvg(&log);
   pvg.GenerateMode = mode;
-  pvg.IncludeStandardPatients = includeStandardPatients;
 
   if (data == "solo")
   {
@@ -162,16 +159,6 @@ int main(int argc, char* argv[])
       DeleteDirectory(rootDir);
     log.SetLogFile(rootDir + logName);
 
-    // The default min/max are the model bounds
-    // So just increase the fidelity via step size
-    pvg.Age_yr.AdjustStepSize(1);
-    pvg.HeightMale_cm.AdjustStepSize(1);
-    pvg.HeightFemale_cm.AdjustStepSize(1);
-    pvg.BMI.AdjustStepSize(1);
-    pvg.HR_bpm.AdjustStepSize(1);
-    pvg.MAP_mmHg.AdjustStepSize(1);
-    pvg.PP_mmHg.AdjustStepSize(1);
-
     ////////////////////////
     // Hemorrhage Options //
     ////////////////////////
@@ -180,26 +167,7 @@ int main(int argc, char* argv[])
     // HemorrhageSeverity(0.25,1.00,0.25)
     // HemorrhageTriageTime(1.0,5.0,1.0)
 
-    pvg.GenerateIndividualParamaterVariabilityPatientList(patients);
-  }
-  else if (data == "test")
-  {
-    rootDir += modeDir+"test/";
-    if(clear)
-      DeleteDirectory(rootDir);
-    log.SetLogFile(rootDir + logName);
-
-    // This will use the defaults, 2 patients for each parameter
-
-    ////////////////////////
-    // Hemorrhage Options //
-    ////////////////////////
-
-    // Defaults are
-    // HemorrhageSeverity(0.25,1.00,0.25)
-    // HemorrhageTriageTime(1.0,5.0,1.0)
-
-    pvg.GenerateIndividualParamaterVariabilityPatientList(patients);
+    pvg.GenerateMultiVariableCombinationPatientList(patients);
   }
 
   if (generateOnly)
@@ -211,7 +179,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  PVRunner pvr(rootDir, useBaseline, &log);
+  PVRunner pvr(rootDir, vType, &log);
   pvr.PostProcessOnly = postProcessOnly;
   pvr.SerializationFormat = binary ? eSerializationFormat::BINARY : eSerializationFormat::JSON;
   return !pvr.Run(patients);
