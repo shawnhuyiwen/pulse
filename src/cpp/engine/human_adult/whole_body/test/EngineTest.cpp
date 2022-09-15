@@ -64,6 +64,7 @@ namespace pulse { namespace human_adult_whole_body
     testFunction respCTTest = &EngineTest::RespiratoryCircuitAndTransportTest;
     testFunction anesthCTTest = &EngineTest::AnesthesiaMachineCircuitAndTransportTest;
     testFunction ventCTTest = &EngineTest::MechanicalVentilatorCircuitAndTransportTest;
+    testFunction setupPatientTest = &EngineTest::SetupPatientTest;
 
 
     testMap.insert(std::make_pair("ReadScenarios", &EngineTest::ReadScenarios));
@@ -139,5 +140,7 @@ namespace pulse { namespace human_adult_whole_body
     testMap.insert(std::make_pair("EmptyBlackBoxTest", &EngineTest::EmptyBlackBoxTest));
     testMap.insert(std::make_pair("ImposeFlowBlackBoxTest", &EngineTest::ImposeFlowBlackBoxTest));
     testMap.insert(std::make_pair("ImposePressureAndFlowBlackBoxTest", &EngineTest::ImposePressureAndFlowBlackBoxTest));
+
+    testMap.insert(std::make_pair("SetupPatientTest", setupPatientTest));
   }
 END_NAMESPACE_EX

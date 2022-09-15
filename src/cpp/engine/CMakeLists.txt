@@ -169,6 +169,7 @@ add_library_ex(PulseEngineTests
     human_adult/whole_body/test/RespiratoryCircuit.cpp
     human_adult/whole_body/test/ReuseEngine.cpp
     human_adult/whole_body/test/SerializationTest.cpp
+    human_adult/whole_body/test/SetupPatientTest.cpp
     human_adult/whole_body/test/SolverTests.cpp
     human_adult/whole_body/test/TemperatureCircuit.cpp
     human_adult/whole_body/test/TissueTests.cpp

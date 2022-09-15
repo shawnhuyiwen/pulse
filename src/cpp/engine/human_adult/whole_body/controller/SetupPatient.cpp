@@ -130,7 +130,7 @@ namespace pulse { namespace human_adult_whole_body
     //page 295
     //Devine Formula
     if (patient.HasIdealBodyWeight())
-      patient.Warning("Ignoring provided patient ideal body weight. It is determined by weight and body fat fraction.");
+      patient.Warning("Ignoring provided patient ideal body weight. It is determined by height.");
     double height_in = patient.GetHeight().GetValue(LengthUnit::in);
     double idealWeight_kg = 0.0;
     if (patient.GetSex() == ePatient_Sex::Female)
@@ -303,7 +303,7 @@ namespace pulse { namespace human_adult_whole_body
     }
     else if (heartRate_bpm < heartRateMin_bpm)
     {
-      if (heartRate_bpm <= heartRateTachycardia_bpm)
+      if (heartRate_bpm >= heartRateBradycardia_bpm)
       {
         ss << "Patient heart rate baseline of " << heartRate_bpm << " bpm is bradycardic. Bradycardia heart rate  is [" << heartRateBradycardia_bpm << "," << heartRateMin_bpm << "] bpm.";
         patient.Info(ss);
@@ -422,7 +422,7 @@ namespace pulse { namespace human_adult_whole_body
       else if (patient.HasMeanArterialPressureBaseline())
       {
         double MAP_mmHg = patient.GetMeanArterialPressureBaseline(PressureUnit::mmHg);
-        systolic_mmHg = 3. * MAP_mmHg + 2. * diastolic_mmHg;
+        systolic_mmHg = 3. * MAP_mmHg - 2. * diastolic_mmHg;
         patient.GetSystolicArterialPressureBaseline().SetValue(systolic_mmHg, PressureUnit::mmHg);
         ss << "No patient systolic pressure baseline set. Computed value of " << systolic_mmHg << " mmHg from given diastolic arterial and mean arterial pressure baselines.";
         patient.Info(ss);
