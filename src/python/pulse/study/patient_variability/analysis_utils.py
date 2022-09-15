@@ -289,7 +289,7 @@ if __name__ == '__main__':
 
     # Example: Use conditional filtering (AND only)
     # male AND age < 45 yr AND height >= 165 cm AND height <= 185 cm AND pulse pressure = 40.5 mmHg
-    conditional = Conditional()
+    conditional = Conditional() # Note: Conditional type defaults to AND
     conditional.sex(PatientData.eSex.Male)
     conditional.addCondition(Field.Age_yr, '<', 45)
     conditional.addCondition(Field.Height_cm, '>=', 165)
