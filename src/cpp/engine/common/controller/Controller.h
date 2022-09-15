@@ -324,15 +324,6 @@ namespace pulse
     pulse::Controller& _pc;
   };
 
-  struct IrreversibleStateException : public std::runtime_error
-  {
-    IrreversibleStateException()
-      : std::runtime_error("Engine Has Entered An Irreversible State") {}
-
-    IrreversibleStateException(const std::string& _Message)
-      : std::runtime_error(_Message) {}
-  };
-
   class FatalListner : public LoggerForward
   {
   public:
