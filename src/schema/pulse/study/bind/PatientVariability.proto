@@ -28,15 +28,16 @@ message PatientStateData
   double                                                  FinalSimulationTime_s             = 4;/**<< @brief We could stop the sim early (ex. due to hemorrhage) */
   // Requested Patient
   pulse.cdm.bind.PatientData                              Patient                           = 5;
+  pulse.cdm.bind.PatientData                              SetupPatient                      = 6;
   // Stabilization Info
-  eFailure                                                Failure                           = 6;
-  double                                                  StabilizationTime_s               = 7;
+  eFailure                                                Failure                           = 7;
+  double                                                  StabilizationTime_s               = 8;
   
   // Run Modes
   oneof RunMode
   {
-    HemorrhageData                                        Hemorrhage                        = 8;
-    ValidationData                                        Validation                        = 9;
+    HemorrhageData                                        Hemorrhage                        = 9;
+    ValidationData                                        Validation                        = 10;
   }
 
   message ValidationData

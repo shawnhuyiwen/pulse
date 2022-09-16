@@ -13,11 +13,34 @@ from typing import List, Dict, Union
 
 class Field(Enum):
     Age_yr = 1
-    Height_cm = 2
-    BMI = 3
-    HeartRate_bpm = 4
-    MeanArterialPressure_mmHg = 5
-    PulsePressure_mmHg = 6
+    Weight_kg = 2
+    Height_cm = 3
+    BodyDensity_g_Per_cm3 = 4
+    BodyFatFraction = 5
+    BodyMassIndex = 6
+    LeanBodyMass_kg = 7
+    IdealBodyWeight_kg = 8
+    AlveoliSurfaceArea_m2 = 9
+    RightLungRatio = 10
+    SkinSurfaceArea_m2 = 11
+    BasalMetabolicRate_kcal_Per_day = 12
+    BloodVolumeBaseline_mL = 13
+    DiastolicArterialPressureBaseline_mmHg = 14
+    HeartRateBaseline_bpm = 15
+    MeanArterialPressureBaseline_mmHg = 16
+    PulsePressureBaseline_mmHg = 17
+    RespirationRateBaseline_bpm = 18
+    SystolicArterialPressureBaseline_mmHg = 19
+    TidalVolumeBaseline_L = 20
+    HeartRateMaximum_bpm = 21
+    HeartRateMinimum_bpm = 22
+    ExpiratoryReserveVolume_L = 23
+    FunctionalResidualCapacity_L = 24
+    InspiratoryCapacity_L = 25
+    InspiratoryReserveVolume_L = 26
+    ResidualVolume_L = 27
+    TotalLungCapacity_L = 28
+    VitalCapacity_L = 29
 
 class ConditionalType(Enum):
     AND = 1
@@ -48,18 +71,65 @@ class Condition():
         return ops[op](left, right)
 
     def eval(self, patient):
+        # We are assuming the data stored is in these units
         if self._field is Field.Age_yr:
-            return self.compare(patient.Age_yr, self._value, self._operator)
-        elif self._field is Field.Height_cm:
-            return self.compare(patient.Height_cm, self._value, self._operator)
-        elif self._field is Field.BMI:
-            return self.compare(patient.BMI, self._value, self._operator)
-        elif self._field is Field.HeartRate_bpm:
-            return self.compare(patient.HeartRate_bpm, self._value, self._operator)
-        elif self._field is Field.MeanArterialPressure_mmHg:
-            return self.compare(patient.MeanArterialPressure_mmHg, self._value, self._operator)
-        elif self._field is Field.PulsePressure_mmHg:
-            return self.compare(patient.PulsePressure_mmHg, self._value, self._operator)
+            return self.compare(patient.Age.ScalarTime.Value, self._value, self._operator)
+        if self._field is Field.Weight_kg:
+            return self.compare(patient.Weight.ScalarMass.Value, self._value, self._operator)
+        if self._field is Field.Height_cm:
+            return self.compare(patient.Height.ScalarLength.Value, self._value, self._operator)
+        if self._field is Field.BodyDensity_g_Per_cm3:
+            return self.compare(patient.BodyDensity.ScalarMassPerVolume.Value, self._value, self._operator)
+        if self._field is Field.BodyFatFraction:
+            return self.compare(patient.BodyFatFraction.Scalar0To1.Value, self._value, self._operator)
+        if self._field is Field.BodyMassIndex:
+            return self.compare(patient.BodyMassIndex.Scalar.Value, self._value, self._operator)
+        if self._field is Field.LeanBodyMass_kg:
+            return self.compare(patient.LeanBodyMass.ScalarMass.Value, self._value, self._operator)
+        if self._field is Field.IdealBodyWeight_kg:
+            return self.compare(patient.IdealBodyWeight.ScalarMass.Value, self._value, self._operator)
+        if self._field is Field.AlveoliSurfaceArea_m2:
+            return self.compare(patient.AlveoliSurfaceArea.ScalarArea.Value, self._value, self._operator)
+        if self._field is Field.RightLungRatio:
+            return self.compare(patient.RightLungRatio.Scalar0To1.Value, self._value, self._operator)
+        if self._field is Field.SkinSurfaceArea_m2:
+            return self.compare(patient.SkinSurfaceArea.ScalarArea.Value, self._value, self._operator)
+        if self._field is Field.BasalMetabolicRate_kcal_Per_day:
+            return self.compare(patient.BasalMetabolicRate.ScalarPower.Value, self._value, self._operator)
+        if self._field is Field.BloodVolumeBaseline_mL:
+            return self.compare(patient.BloodVolumeBaseline.ScalarVolumeD.Value, self._value, self._operator)
+        if self._field is Field.DiastolicArterialPressureBaseline_mmHg:
+            return self.compare(patient.DiastolicArterialPressureBaseline.ScalarPressure.Value, self._value, self._operator)
+        if self._field is Field.HeartRateBaseline_bpm:
+            return self.compare(patient.HeartRateBaseline.ScalarFrequency.Value, self._value, self._operator)
+        if self._field is Field.MeanArterialPressureBaseline_mmHg:
+            return self.compare(patient.MeanArterialPressureBaseline.ScalarPressure.Value, self._value, self._operator)
+        if self._field is Field.PulsePressureBaseline_mmHg:
+            return self.compare(patient.PulsePressureBaseline.ScalarPressure.Value, self._value, self._operator)
+        if self._field is Field.RespirationRateBaseline_bpm:
+            return self.compare(patient.RespirationRateBaseline.ScalarFrequency.Value, self._value, self._operator)
+        if self._field is Field.SystolicArterialPressureBaseline_mmHg:
+            return self.compare(patient.SystolicArterialPressureBaseline.ScalarPressure.Value, self._value, self._operator)
+        if self._field is Field.TidalVolumeBaseline_L:
+            return self.compare(patient.TidalVolumeBaseline.ScalarVolume.Value, self._value, self._operator)
+        if self._field is Field.HeartRateMaximum_bpm:
+            return self.compare(patient.HeartRateMaximum.ScalarFrequency.Value, self._value, self._operator)
+        if self._field is Field.HeartRateMinimum_bpm:
+            return self.compare(patient.HeartRateMinimum.ScalarFrequency.Value, self._value, self._operator)
+        if self._field is Field.ExpiratoryReserveVolume_L:
+            return self.compare(patient.ExpiratoryReserveVolume.ScalarVolume.Value, self._value, self._operator)
+        if self._field is Field.FunctionalResidualCapacity_L:
+            return self.compare(patient.FunctionalResidualCapacity.ScalarVolume.Value, self._value, self._operator)
+        if self._field is Field.InspiratoryCapacity_L:
+            return self.compare(patient.InspiratoryCapacity.ScalarVolume.Value, self._value, self._operator)
+        if self._field is Field.InspiratoryReserveVolume_L:
+            return self.compare(patient.InspiratoryReserveVolume.ScalarVolume.Value, self._value, self._operator)
+        if self._field is Field.ResidualVolume_L:
+            return self.compare(patient.ResidualVolume.ScalarVolume.Value, self._value, self._operator)
+        if self._field is Field.TotalLungCapacity_L:
+            return self.compare(patient.TotalLungCapacity.ScalarVolume.Value, self._value, self._operator)
+        if self._field is Field.VitalCapacity_L:
+            return self.compare(patient.VitalCapacity.ScalarVolume.Value, self._value, self._operator)
 
         return False
 
@@ -198,16 +268,16 @@ class PatientVariabilityResults():
     def conditionalFilter(self, conditionals:List[Union[Conditional, Condition]]):
         filteredPatients = PatientStateListData()
 
-        for patient in self._results.Patient:
+        for state in self._results.PatientState:
             for conditional in conditionals:
-                if conditional.eval(patient):
+                if conditional.eval(state.Patient):
                     # Patient passes this conditional.
                     # Add it to the list and move on to the next patient.
-                    p = filteredPatients.Patient.add()
-                    p.CopyFrom(patient)
+                    s = filteredPatients.PatientState.add()
+                    s.CopyFrom(state)
                     break
 
-        return filteredPatients.Patient
+        return filteredPatients.PatientState
 
     # Create a filter from patient.
     # Provide patient name (e.g "StandardMale") for standard results
@@ -229,6 +299,13 @@ class PatientVariabilityResults():
                     return r
 
         # Could not locate patient with given arguments
+        return None
+
+    def getProperty(self, name:str, validation):
+        for key,value in validation.ValidationMap.items():
+            for v in value.Property:
+                if v.Name == name:
+                    return v
         return None
 
 if __name__ == '__main__':

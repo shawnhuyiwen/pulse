@@ -397,6 +397,8 @@ namespace pulse::study::patient_variability
         patientState.set_failure(eFailure::PatientStateData_eFailure_FailedStabilization);
         return false;
       }
+      // Add the full setup pateint to our state
+      PBPatient::Serialize(pulse->GetInitialPatient(), *patientState.mutable_setuppatient());
 
       patientState.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
       pulse->GetLogger()->Info("["+patientName+"] It took " + cdm::to_string(patientState.stabilizationtime_s()) + "s to stabilize this Patient");

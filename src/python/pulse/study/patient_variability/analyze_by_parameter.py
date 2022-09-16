@@ -1,35 +1,43 @@
 # Distributed under the Apache License, Version 2.0.
 # See accompanying NOTICE file for details.
 
-from pulse.study.patient_variability.analysis_utils import PatientVariabilityResults, Field
+from pulse.cdm.bind.Patient_pb2 import PatientData
+from pulse.study.patient_variability.analysis_utils import PatientVariabilityResults, Conditional, Field
 
 lineSep = "-------------------------------------------------------------------"
 
 class PatientVariabilityAnalysis(PatientVariabilityResults):
-    __slots__ = ["_standardMale", "_standardFemale"]
 
     def __init__(self, dir: str):
         super().__init__(dir)
-        self._standardMale = self.createFilter(name="StandardMale")
-        self._standardFemale = self.createFilter(name="StandardFemale")
 
-    def process_fields_individually(self):
+    def process(self):
+        # Create queries and analyze them
+        query = Conditional()
+        query.sex(PatientData.eSex.Male)
+        query.addCondition(Field.Age_yr, '<=', 45)
+        results = self.conditionalFilter([query])
+        for r in results:
+            print(r.OutputBaseFilename + " Age_yr: " + str(r.SetupPatient.Age.ScalarTime.Value))
+        print("Average RespirationRate(1/min) Error: " + str(self.averageError("RespirationRate(1/min)", results)))
 
-        for field in Field:
-            print("Analyzing Standard Male's with any " + str(field))
-            print(lineSep)
-            self.analyzeSlice(self.sliceResults(field, self._standardMale))
-            print("\n\n")
-
-            print("Analyzing Standard Female's with any " + str(field))
-            print(lineSep)
-            self.analyzeSlice(self.sliceResults(field, self._standardFemale))
-            print("\n\n")
-    def analyzeSlice(self, s):
-        # Just going to print out the base filename for each entry in the slice
-        for d in s:
-            print(d.OutputBaseFilename)
+    def averageError(self, name:str, results):
+        properties = []
+        for r in results:
+            rr = self.getProperty(name, r.Validation)
+            if rr is None:
+                print("Could not find your property, check spelling/unit")
+                return None
+            else:
+                properties.append(rr)
+        if len(properties) > 0:
+            rrError = 0
+            for rr in properties:
+                rrError = rrError + rr.Error
+            rrError = rrError / len(properties)
+            return rrError
+        return None
 
 if __name__ == '__main__':
-    analysis = PatientVariabilityAnalysis("./test_results/patient_variability/test//")
-    analysis.process_fields_individually()
+    analysis = PatientVariabilityAnalysis("./test_results/patient_variability/validation/full/")
+    analysis.process()
