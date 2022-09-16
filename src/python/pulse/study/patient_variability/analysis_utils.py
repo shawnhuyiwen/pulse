@@ -270,7 +270,7 @@ class PatientVariabilityResults():
 
         for state in self._results.PatientState:
             for conditional in conditionals:
-                if conditional.eval(state.Patient):
+                if conditional.eval(state.SetupPatient):
                     # Patient passes this conditional.
                     # Add it to the list and move on to the next patient.
                     s = filteredPatients.PatientState.add()
