@@ -155,6 +155,7 @@ namespace pulse::study::patient_variability
       }
     }
 
+    Info("Looking for any previously run patients...");
     // Get the ID's of Patients we need to run
     m_PatientsToRun.clear();
     for (int i = 0; i < m_PatientList->patientstate_size(); i++)
@@ -166,6 +167,8 @@ namespace pulse::study::patient_variability
       for (int i = 0; i < m_PatientResultsList->patientstate_size(); i++)
         m_PatientsToRun.erase(m_PatientResultsList->patientstate()[i].id());
     }
+    else
+      Info("None found, starting from scratch");
 
     size_t numSimsToRun = m_PatientList->patientstate_size() - m_PatientResultsList->patientstate_size();
     if (numSimsToRun == 0)
@@ -173,7 +176,7 @@ namespace pulse::study::patient_variability
       Info("All Patients are run in the results file");
       return true;
     }
-    size_t processor_count = std::thread::hardware_concurrency();
+    size_t processor_count = 1;// std::thread::hardware_concurrency();
     if (processor_count == 0)
     {
       Fatal("Unable to detect number of processors");
@@ -239,11 +242,14 @@ namespace pulse::study::patient_variability
           break;
 
         if (patient->failure() != eFailure::PatientStateData_eFailure_None)
+        {
           Info("Not running invalid patient " + std::to_string(patient->id()) + " " + patient->outputbasefilename());
+          CompletePatient(*patient);
+        }
         else
         {
           Info("Running " + patient->outputbasefilename());
-          if (!RunPatient(*patient))
+          if (!RunPatient(*patient) && patient->failure()==eFailure::PatientStateData_eFailure_None)
             GetLogger()->Error("Unable to run patient " + patient->outputbasefilename());
         }
       }
@@ -315,7 +321,9 @@ namespace pulse::study::patient_variability
       PBPatient::Serialize(patientState.patient(), pc.GetPatient());
       if (!CheckPatientSetup(pc.GetPatient()))
       {
+        Error("["+patientName+"] Could not setup patient");
         patientState.set_failure(eFailure::PatientStateData_eFailure_FailedSetup);
+        CompletePatient(patientState);
         return false;
       }
 
@@ -395,6 +403,7 @@ namespace pulse::study::patient_variability
       {
         Error("["+patientName+"] Unable to stabilize engine");
         patientState.set_failure(eFailure::PatientStateData_eFailure_FailedStabilization);
+        CompletePatient(patientState);
         return false;
       }
       // Add the full setup pateint to our state
@@ -513,18 +522,7 @@ namespace pulse::study::patient_variability
       }
     }
 
-    // Add our results to our results file
-    m_VectorMutex.lock();
-    auto pResult = m_PatientResultsList->add_patientstate();
-    pResult->CopyFrom(patientState);
-    SerializeToFile(*m_PatientResultsList, m_PatientResultsListFile);
-    Info("["+patientName+"] Completed Simulation " + std::to_string(m_PatientResultsList->patientstate_size()) + " of " + std::to_string(m_PatientList->patientstate_size()));
-    if(!PostProcessOnly)
-    {
-      Info("["+patientName+"] Failure : " + pulse::study::bind::patient_variability::PatientStateData_eFailure_Name(patientState.failure()));
-    }
-    m_VectorMutex.unlock();
-
+    CompletePatient(patientState);
     profiler.Clear();
     return true;
   }
@@ -546,6 +544,17 @@ namespace pulse::study::patient_variability
     }
     m_VectorMutex.unlock();
     return patient;
+  }
+
+  void PVRunner::CompletePatient(pulse::study::bind::patient_variability::PatientStateData& patientState)
+  {
+    // Add our results to our results file
+    m_VectorMutex.lock();
+    auto pResult = m_PatientResultsList->add_patientstate();
+    pResult->CopyFrom(patientState);
+    SerializeToFile(*m_PatientResultsList, m_PatientResultsListFile);
+    Info("["+patientState.patient().name()+"] Completed Simulation " + std::to_string(m_PatientResultsList->patientstate_size()) + " of " + std::to_string(m_PatientList->patientstate_size()));
+    m_VectorMutex.unlock();
   }
 
   bool PVRunner::SerializeToString(pulse::study::bind::patient_variability::PatientStateListData& src, std::string& output) const

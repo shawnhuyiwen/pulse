@@ -47,6 +47,7 @@ namespace pulse::study::patient_variability
     void ControllerLoop();
     bool RunPatient(pulse::study::bind::patient_variability::PatientStateData& patient);
     pulse::study::bind::patient_variability::PatientStateData* GetNextPatient();
+    void CompletePatient(pulse::study::bind::patient_variability::PatientStateData& patientState);
 
     bool AggregateResults(pulse::study::bind::patient_variability::PatientStateData& patient, const std::vector<std::string>& validation_files, Logger* logger);
 
