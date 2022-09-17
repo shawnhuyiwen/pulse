@@ -154,6 +154,31 @@ namespace pulse::study::patient_variability
         GetLogger()->Warning("Unable to read found results file");
       }
     }
+    else
+    {
+      // If there is no file, let's go through the patients and cull out any that cannot setup
+      size_t failedPatients = 0;
+      for (int i = 0; i < m_PatientList->patientstate_size(); i++)
+      {
+        SEPatient p(nullptr);
+        auto& patientStateData = m_PatientList->patientstate()[i];
+        PBPatient::Serialize(patientStateData.patient(), p);
+        if (!pulse::human_adult_whole_body::SetupPatient(p))
+        {
+          failedPatients++;
+          auto patientData = m_PatientResultsList->add_patientstate();
+          patientData->CopyFrom(patientStateData);
+          patientData->set_failure(eFailure::PatientStateData_eFailure_FailedSetup);
+        }
+      }
+      // Write this file to disk
+      if (failedPatients > 0)
+      {
+        Info("There are " + std::to_string(failedPatients) + " invalid patients in this dataset");
+        if(!SerializeToFile(*m_PatientResultsList, m_PatientResultsListFile))
+          Error("Unable to write initial results file, you may loose all your runs, check permissions.");
+      }
+    }
 
     Info("Looking for any previously run patients...");
     // Get the ID's of Patients we need to run
@@ -176,7 +201,7 @@ namespace pulse::study::patient_variability
       Info("All Patients are run in the results file");
       return true;
     }
-    size_t processor_count = 1;// std::thread::hardware_concurrency();
+    size_t processor_count = std::thread::hardware_concurrency();
     if (processor_count == 0)
     {
       Fatal("Unable to detect number of processors");

@@ -19,7 +19,7 @@ using namespace pulse::study::patient_variability;
 int main(int argc, char* argv[])
 {
   bool clear                   = false;
-  bool binary                  = false;
+  bool binary                  = true;
   bool generateOnly            = false;
   bool postProcessOnly         = false;
   bool validationMode          = false;

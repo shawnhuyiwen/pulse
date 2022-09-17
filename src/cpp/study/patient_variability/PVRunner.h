@@ -30,7 +30,7 @@ namespace pulse::study::patient_variability
     virtual ~PVRunner();
 
     bool PostProcessOnly = false;
-    eSerializationFormat SerializationFormat = eSerializationFormat::JSON;
+    eSerializationFormat SerializationFormat = eSerializationFormat::BINARY;
 
     bool Run(const std::string& filename);
     bool Run(pulse::study::bind::patient_variability::PatientStateListData& patients);
