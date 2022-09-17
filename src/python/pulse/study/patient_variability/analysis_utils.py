@@ -42,6 +42,10 @@ class Field(Enum):
     TotalLungCapacity_L = 28
     VitalCapacity_L = 29
 
+class PropertyError(object):
+    def __init__(self):
+        self.errors = list()
+
 class ConditionalType(Enum):
     AND = 1
     OR = 2
@@ -266,18 +270,24 @@ class PatientVariabilityResults():
 
     # Generates list of patients that match any of the conditionals/conditions
     def conditionalFilter(self, conditionals:List[Union[Conditional, Condition]]):
-        filteredPatients = PatientStateListData()
+        results = {}
 
         for state in self._results.PatientState:
             for conditional in conditionals:
                 if conditional.eval(state.SetupPatient):
-                    # Patient passes this conditional.
-                    # Add it to the list and move on to the next patient.
-                    s = filteredPatients.PatientState.add()
-                    s.CopyFrom(state)
-                    break
-
-        return filteredPatients.PatientState
+                    # Pull out the system properties that are patient specific and their errors
+                    for system,properties in state.Validation.ValidationMap.items():
+                        system = system[:system.find("-")]
+                        if system not in results:
+                            results[system] = {}
+                        property_map = results[system]
+                        for property in properties.Property:
+                            if property.PatientSpecific is True:
+                                if property.Name not in property_map:
+                                    property_map[property.Name] = PropertyError()
+                                property_error = property_map[property.Name]
+                                property_error.errors.append(property.Error)
+        return results
 
     # Create a filter from patient.
     # Provide patient name (e.g "StandardMale") for standard results

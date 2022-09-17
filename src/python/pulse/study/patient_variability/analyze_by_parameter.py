@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.bind.Patient_pb2 import PatientData
-from pulse.study.patient_variability.analysis_utils import PatientVariabilityResults, Conditional, Field
+from pulse.study.patient_variability.analysis_utils import PatientVariabilityResults, Conditional, Field, PropertyError
 
 lineSep = "-------------------------------------------------------------------"
 
@@ -12,31 +12,30 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         super().__init__(dir)
 
     def process(self):
+
         # Create queries and analyze them
         query = Conditional()
         query.sex(PatientData.eSex.Male)
         query.addCondition(Field.Age_yr, '<=', 45)
         results = self.conditionalFilter([query])
-        for r in results:
-            print(r.OutputBaseFilename + " Age_yr: " + str(r.SetupPatient.Age.ScalarTime.Value))
-        print("Average RespirationRate(1/min) Error: " + str(self.averageError("RespirationRate(1/min)", results)))
+        # The results are a map{"SystemName" : map{"PropertyName" : PropertyError()} }
+        # The PropertyError class has an array, errors, of all the errors of that property in the query results
+        # This condition filter will ONLY create PropertyName entries if the property is PatientSpecific
 
-    def averageError(self, name:str, results):
-        properties = []
-        for r in results:
-            rr = self.getProperty(name, r.Validation)
-            if rr is None:
-                print("Could not find your property, check spelling/unit")
-                return None
-            else:
-                properties.append(rr)
-        if len(properties) > 0:
-            rrError = 0
-            for rr in properties:
-                rrError = rrError + rr.Error
-            rrError = rrError / len(properties)
-            return rrError
-        return None
+        # Let's go through and calculate 'stuff' for each property
+        for system,properties in results.items():
+            print("Examining system "+system)
+            for property,property_error in properties.items():
+                print("Examining Property" + property)
+                self.analyzePropertyError(property_error)
+                print("  Average Error: " + str(property_error.average_error))
+
+    def analyzePropertyError(self, property_error: PropertyError):
+        # We can dynamically add members to our property_error object
+        property_error.average_error = 0
+        for error in property_error.errors:
+            property_error.average_error = property_error.average_error + error
+        property_error.average_error = property_error.average_error / len(property_error.errors)
 
 if __name__ == '__main__':
     analysis = PatientVariabilityAnalysis("./test_results/patient_variability/validation/full/")
