@@ -91,7 +91,7 @@ bool PulseScenarioExec::Execute()
 
     size_t numThreadsToUse;
     if (m_ThreadCount > 0)
-      numThreadsToUse = m_ThreadCount>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
+      numThreadsToUse = static_cast<size_t>(m_ThreadCount)>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
     else if (m_ThreadCount == 0)
       numThreadsToUse = numThreadsSupported;
     else
@@ -139,7 +139,7 @@ bool PulseScenarioExec::Execute()
 
     size_t numThreadsToUse;
     if (m_ThreadCount > 0)
-      numThreadsToUse = m_ThreadCount>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
+      numThreadsToUse = static_cast<size_t>(m_ThreadCount)>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
     else if (m_ThreadCount == 0)
       numThreadsToUse = numThreadsSupported;
     else
