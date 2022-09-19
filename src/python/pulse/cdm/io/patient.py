@@ -193,20 +193,20 @@ def serialize_nutrition_to_bind(src: SENutrition, dst: NutritionData):
 def serialize_nutrition_from_bind(src: NutritionData, dst: SENutrition):
     dst.clear()
     if src.HasField("Carbohydrate"):
-        serialize_scalar_mass_from_bind(src.Carbohydrate, dst.get_age())
+        serialize_scalar_mass_from_bind(src.Carbohydrate, dst.get_carbohydrate())
     if src.HasField("CarbohydrateDigestionRate"):
-        serialize_scalar_mass_per_time_from_bind(src.CarbohydrateDigestionRate, dst.get_weight())
+        serialize_scalar_mass_per_time_from_bind(src.CarbohydrateDigestionRate, dst.get_carbohydrate_digestion_rate())
     if src.HasField("Fat"):
-        serialize_scalar_mass_from_bind(src.Fat, dst.get_height())
+        serialize_scalar_mass_from_bind(src.Fat, dst.get_fat())
     if src.HasField("FatDigestionRate"):
-        serialize_scalar_mass_per_time_from_bind(src.FatDigestionRate, dst.get_body_density())
+        serialize_scalar_mass_per_time_from_bind(src.FatDigestionRate, dst.get_fat_digestion_rate())
     if src.HasField("Protein"):
-        serialize_scalar_mass_from_bind(src.Protein, dst.get_body_fat_fraction())
+        serialize_scalar_mass_from_bind(src.Protein, dst.get_protein())
     if src.HasField("ProteinDigestionRate"):
-        serialize_scalar_mass_per_time_from_bind(src.ProteinDigestionRate, dst.get_ideal_body_weight())
+        serialize_scalar_mass_per_time_from_bind(src.ProteinDigestionRate, dst.get_protein_digestion_rate())
     if src.HasField("Calcium"):
-        serialize_scalar_mass_from_bind(src.Calcium, dst.get_lean_body_mass())
+        serialize_scalar_mass_from_bind(src.Calcium, dst.get_calcium())
     if src.HasField("Sodium"):
-        serialize_scalar_mass_from_bind(src.Sodium, dst.get_alveoli_surface_area())
+        serialize_scalar_mass_from_bind(src.Sodium, dst.get_sodium())
     if src.HasField("Water"):
-        serialize_scalar_volume_from_bind(src.Water, dst.get_right_lung_ratio())
+        serialize_scalar_volume_from_bind(src.Water, dst.get_water())
