@@ -431,8 +431,11 @@ namespace pulse::study::patient_variability
         CompletePatient(patientState);
         return false;
       }
-      // Add the full setup pateint to our state
-      PBPatient::Serialize(pulse->GetInitialPatient(), *patientState.mutable_setuppatient());
+      // Get the Initial Patient Baseline File
+      // This is the patient after SetupPatient has been called, and before stabilization
+      SEPatient baselinePatient(GetLogger());
+      baselinePatient.SerializeFromFile(cfgChanges.GetInitialPatientBaselineFilepath());
+      PBPatient::Serialize(baselinePatient, *patientState.mutable_setuppatient());
 
       patientState.set_stabilizationtime_s(profiler.GetElapsedTime_s("Total"));
       pulse->GetLogger()->Info("["+patientName+"] It took " + cdm::to_string(patientState.stabilizationtime_s()) + "s to stabilize this Patient");
