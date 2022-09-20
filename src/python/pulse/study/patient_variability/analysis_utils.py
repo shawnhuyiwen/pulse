@@ -87,7 +87,7 @@ class Condition():
         if self._field is Field.BodyFatFraction:
             return self.compare(patient.BodyFatFraction.Scalar0To1.Value, self._value, self._operator)
         if self._field is Field.BodyMassIndex:
-            return self.compare(patient.BodyMassIndex.Scalar.Value, self._value, self._operator)
+            return self.compare(patient.BodyMassIndex.Value, self._value, self._operator)
         if self._field is Field.LeanBodyMass_kg:
             return self.compare(patient.LeanBodyMass.ScalarMass.Value, self._value, self._operator)
         if self._field is Field.IdealBodyWeight_kg:
