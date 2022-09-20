@@ -6,6 +6,9 @@ from pulse.study.patient_variability.analysis_utils import PatientVariabilityRes
 
 import plotly.graph_objects as go
 import plotly.offline as pyo
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
 minAge_yr = 18
@@ -75,15 +78,50 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
 
     def process(self):
         analysis.createRadarCharts()
+        #analysis.createBarChart()
+        #analysis.createBoxPlot()
+
+    def createBarChart(self):
+        # some example data
+        threshold = 43.0
+        values = np.array([30., 87.3, 99.9, 3.33, 50.0])
+        x = range(len(values))
+
+        # split it up
+        above_threshold = np.maximum(values - threshold, 0)
+        below_threshold = np.minimum(values, threshold)
+
+        # and plot it
+        fig, ax = plt.subplots()
+        ax.bar(x, below_threshold, 0.35, color="g")
+        ax.bar(x, above_threshold, 0.35, color="r",
+               bottom=below_threshold)
+
+        # horizontal line indicating the threshold
+        ax.plot([0., 4.5], [threshold, threshold], "k--")
+
+        fig.savefig("look-ma_a-threshold-plot.png")
+
+    def createBoxPlot(self):
+        N = 50
+        df = pd.DataFrame({"Prior": np.random.geometric(0.5, N) * 2 + 10,
+                           "DSI": np.random.geometric(0.1, N) * 3 + 20,
+                           "DSI.ESMDA": np.random.geometric(0.2, N) + 40,
+                           "DSI.ESMDA.LOC": np.random.geometric(0.2, N) * 4 + 30,
+                           "ES-MDA": np.random.geometric(0.7, N) * 2.5 + 60})
+        df.boxplot(grid=False, rot=18, fontsize=15)
+        reference = [20, 50, 75]
+        left, right = plt.xlim()
+        plt.hlines(reference, xmin=left, xmax=right, color='r', linestyles='--')
+        plt.subplots_adjust(bottom=0.20)
+        plt.show()
 
     def createRadarCharts(self):
         # Standard male
         results = analysis.standardMaleQuery()
 
         # Calculate pass rate for each system
-        radarCategories = []
-        for system,properties in results.items():
-            radarCategories.append(system)
+        radarCategories = analysis.combineCategories(results)
 
         passError = 0.1
         radarStandardMaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
@@ -163,21 +201,52 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
 
     def calculateSystemPassRate(self, results, passError, categories):
         passRates = [0] * len(categories)
+        totalNumPass = [0] * len(categories)
+        totalNumFail = [0] * len(categories)
         for system,properties in results.items():
             print("Examining system "+system)
             numPass = 0
-            numFailed = 0
+            numFail = 0
             for property,property_error in properties.items():
                 for error in property_error.errors:
                     if abs(error) > passError:
-                        numFailed = numFailed + 1
+                        numFail = numFail + 1
                     else:
                         numPass = numPass + 1
+            for idx, category in enumerate(categories):
+                if category in system:
+                    totalNumPass[idx] = totalNumPass[idx] + numPass
+                    totalNumFail[idx] = totalNumFail[idx] + numFail
+
+        for idx, category in enumerate(categories):
             passRate = 0
-            if numPass + numFailed != 0:
-                passRate = numPass / (numPass + numFailed)
-            passRates[categories.index(system)] = passRate
+            numPass = totalNumPass[idx]
+            numFail = totalNumFail[idx]
+            if numPass + numFail != 0:
+                passRate = numPass / (numPass + numFail)
+            passRates[idx] = passRate
         return passRates
+
+    def combineCategories(self, results):
+        startCategories = []
+        endCategories = []
+        for system, properties in results.items():
+            startCategories.append(system)
+        for startCategory in startCategories:
+            newCategory = True
+            for idx, endCategory in enumerate(endCategories):
+                if startCategory in endCategory:
+                    # Replace endCategory with startCategory
+                    endCategories[idx] = startCategory
+                    newCategory = False
+                if endCategory in startCategory:
+                    # Don't do anything
+                    newCategory = False
+                    break
+            if newCategory:
+                # New, so add
+                endCategories.append(startCategory)
+        return endCategories
 
 
 if __name__ == '__main__':
