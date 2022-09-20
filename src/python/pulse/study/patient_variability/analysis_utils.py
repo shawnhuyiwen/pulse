@@ -58,6 +58,9 @@ class Condition():
         self._operator = operator
         self._value = value
 
+    def nequal(self, frm, to):
+        return not self.equal(frm, to)
+
     def equal(self, frm, to):
         if not frm or not to:
             return False
@@ -70,7 +73,8 @@ class Condition():
                '<': operator.lt,
                '>=': operator.ge,
                '<=': operator.le,
-               '==': self.equal}
+               '==': self.equal,
+               '!=': self.nequal}
 
         return ops[op](left, right)
 
