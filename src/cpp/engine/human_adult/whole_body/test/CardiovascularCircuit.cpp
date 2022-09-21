@@ -157,7 +157,7 @@ namespace pulse { namespace human_adult_whole_body
     }
     catch (PhysiologyEngineException& ex)
     {
-      testCase.AddFailure("Failed test case " + sTestName);
+      testCase.AddFailure("Failed test case " + sTestName + " : " + ex.what());
     }
     testCase.GetDuration().SetValue(timer.GetElapsedTime_s("TestCase"), TimeUnit::s);
   }

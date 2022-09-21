@@ -14,7 +14,7 @@ int main()
 
   //HowToSandbox();
 
-  //HowToEngineUse();
+  HowToEngineUse();
   //HowToCreateAPatient();
   //HowToSerialize();
   //HowToPulseEnginePool();
@@ -46,7 +46,7 @@ int main()
 
   // These ones do not really run, pure examples
   //HowToRunScenario();
-  HowToScenarioFromLog();
+  //HowToScenarioFromLog();
 
   // More complicated examples that do run
   //HowToConcurrentEngines();

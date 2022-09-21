@@ -213,7 +213,7 @@ message RespiratoryData
 message TissueData
 {
   pulse.cdm.bind.TissueSystemData          Common                                              = 1;
-  double                                   CardiacArrestCarbonDioxideProductionFactor          = 2;
+  map<string,double>                       CardiacArrestVascularFlows_ml_per_min               = 2;
   double                                   RestingTissueGlucose_g                              = 3;
   double                                   RestingBloodGlucose_mg_Per_mL                       = 4;
   double                                   RestingBloodLipid_mg_Per_mL                         = 5;

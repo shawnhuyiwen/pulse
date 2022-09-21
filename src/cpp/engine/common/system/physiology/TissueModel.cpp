@@ -152,6 +152,7 @@ namespace pulse
   ///
   /// \details
   /// Called during both State loading and Patient Stabilization
+  /// This is called before we serialize
   /// Pull and setup up our data (can be from other systems)
   /// Initialize will be called after this and can overwrite any of this data (only if stabilizing)
   //--------------------------------------------------------------------------------------------------
@@ -232,6 +233,18 @@ namespace pulse
     m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Skin));
     m_ConsumptionProdutionTissues.push_back(m_data.GetCompartments().GetTissueCompartment(pulse::TissueCompartment::Spleen));
 
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Fat)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Bone)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Brain)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Gut)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::LeftKidney)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::RightKidney)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Liver)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Muscle)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Myocardium)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Skin)] = 0;
+    m_CardiacArrestVascularFlows_ml_per_min[m_data.GetCompartments().GetLiquidCompartment(pulse::VascularCompartment::Spleen)] = 0;
+
     // Here is some code to cross check our maps with what is in the compartment manager
     // If by some chance, some other system added a new tissue compartment we don't know about
     // this will put out a warning
@@ -284,6 +297,12 @@ namespace pulse
         Info(m_ss);
 #endif
       }
+    }
+    for (SETissueCompartment* tissue : m_ConsumptionProdutionTissues)
+    {
+      SELiquidCompartment* vascular = m_TissueToVascular[tissue];
+      if (vascular->HasInFlow())
+        m_CardiacArrestVascularFlows_ml_per_min[vascular] = vascular->GetInFlow(VolumePerTimeUnit::mL_Per_min);
     }
   }
 
@@ -714,7 +733,9 @@ namespace pulse
     for (SETissueCompartment* tissue : m_ConsumptionProdutionTissues)
     {
       vascular = m_TissueToVascular[tissue];
-      if (vascular->HasInFlow())
+      if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+        totalFlowRate_mL_Per_min += m_CardiacArrestVascularFlows_ml_per_min[vascular];
+      else if (vascular->HasInFlow())
         totalFlowRate_mL_Per_min += vascular->GetInFlow(VolumePerTimeUnit::mL_Per_min);
     }
 
@@ -738,7 +759,9 @@ namespace pulse
       tissueO2_mM = TissueO2->GetMolarity(AmountPerVolumeUnit::mmol_Per_L);
 
       BloodFlowFraction = 0;
-      if (vascular->HasInFlow() && totalFlowRate_mL_Per_min > 0)
+      if (m_data.GetEvents().IsEventActive(eEvent::CardiacArrest))
+        BloodFlowFraction = m_CardiacArrestVascularFlows_ml_per_min[vascular] / totalFlowRate_mL_Per_min;
+      else if (vascular->HasInFlow() && totalFlowRate_mL_Per_min > 0)
         BloodFlowFraction = vascular->GetInFlow(VolumePerTimeUnit::mL_Per_min) / totalFlowRate_mL_Per_min;
 
       LocalATPUseRate_mol_Per_s = BloodFlowFraction * ATPUseRate_mol_Per_s;
