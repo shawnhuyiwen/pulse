@@ -14,6 +14,7 @@
         { "DecimalFormat": { "Precision": 3 }, "Category": "Physiology", "PropertyName": "CentralVenousPressure",                         "Unit": "mmHg"          },
         { "DecimalFormat": { "Precision": 1 }, "Category": "Physiology", "PropertyName": "CerebralBloodFlow",                             "Unit": "mL/min"        },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "CerebralPerfusionPressure",                     "Unit": "mmHg"          },
+		{ "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "CoronaryPerfusionPressure",                     "Unit": "mmHg"          },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "DiastolicArterialPressure",                     "Unit": "mmHg"          },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "DiastolicLeftHeartPressure",                    "Unit": "mmHg"          },
         { "DecimalFormat": { "Precision": 2 }, "Category": "Physiology", "PropertyName": "DiastolicRightHeartPressure",                   "Unit": "mmHg"          },
