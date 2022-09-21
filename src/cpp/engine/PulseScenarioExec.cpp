@@ -152,7 +152,7 @@ bool PulseScenarioExec::Execute()
     ThreadPool pool(numThreadsToUse);
     std::vector<std::future<bool>> futures;
     std::vector<PulseScenarioExec*> opts;
-    for (auto& filename : logs)
+    for (auto filename : logs)
     {
       opts.emplace_back(new PulseScenarioExec(GetLogger()));
       opts.back()->Copy(*this);
@@ -169,6 +169,9 @@ bool PulseScenarioExec::Execute()
         success = false;
       }
     }
+
+    for ( PulseScenarioExec* o: opts)
+      delete o;
 
     return success;
   }
