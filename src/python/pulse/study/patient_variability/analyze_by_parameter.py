@@ -125,6 +125,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
     def createRadarCharts(self):
         # Everything
         results = analysis.everythingQuery()
+        numPatients = analysis.numPatients(results)
 
         # Standard male
         results = analysis.standardMaleQuery()
@@ -162,8 +163,8 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
             data=[
                 go.Scatterpolar(r=radarStandardMaleValues, theta=radarCategories, name='Standard Male'),
                 go.Scatterpolar(r=radarStandardFemaleValues, theta=radarCategories, name='Standard Female'),
-                go.Scatterpolar(r=radarNonstandardMaleValues, theta=radarCategories, name='Nonstandard Male'),
-                go.Scatterpolar(r=radarNonstandardFemaleValues, theta=radarCategories, name='Nonstandard Female')
+                go.Scatterpolar(r=radarNonstandardMaleValues, theta=radarCategories, name='Cumulative Nonstandard Male'),
+                go.Scatterpolar(r=radarNonstandardFemaleValues, theta=radarCategories, name='Cumulative Nonstandard Female')
             ],
             layout=go.Layout(
                 title=go.layout.Title(text='Physiology System Pass Rate'),
@@ -173,6 +174,10 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         )
 
         pyo.plot(fig)
+
+    def numPatients(self, results):
+        # TODO: Find a more elegant way to do this
+        return len(results["Patient"]["HeartRateBaseline(1/min)-Patient2SystemMean"].patient_ids)
 
     def analyzePropertyError(self, property_error: PropertyError):
         # We can dynamically add members to our property_error object
