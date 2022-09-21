@@ -54,11 +54,6 @@ stdPulsePressureMax_mmHg = stdPulsePressure_mmHg + stdPulsePressure_mmHg * pulse
 
 lineSep = "-------------------------------------------------------------------"
 
-
-class ConditionalType(Enum):
-    AND = 1
-    OR = 2
-
 class PatientVariabilityAnalysis(PatientVariabilityResults):
 
     def __init__(self, dir: str):
@@ -205,7 +200,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         print("Nonstandard male query")
         query = Conditional()
         query.sex(PatientData.eSex.Male)
-        queryOr = Conditional(ConditionalType.OR)
+        queryOr = Conditional('OR')
         queryOr.addCondition(Field.Age_yr, '!=', stdAge_yr)
         queryOr.addCondition(Field.Height_cm, '!=', stdMaleHeight_cm)
         queryOr.addCondition(Field.BodyMassIndex, '!=', stdMaleBMI)
@@ -237,7 +232,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         print("Nonstandard female query")
         query = Conditional()
         query.sex(PatientData.eSex.Female)
-        queryOr = Conditional(ConditionalType.OR)
+        queryOr = Conditional('OR')
         queryOr.addCondition(Field.Age_yr, '!=', stdAge_yr)
         queryOr.addCondition(Field.Height_cm, '!=', stdFemaleHeight_cm)
         queryOr.addCondition(Field.BodyMassIndex, '!=', stdFemaleBMI)
