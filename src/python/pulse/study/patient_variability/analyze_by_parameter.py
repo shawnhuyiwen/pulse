@@ -4,6 +4,8 @@
 from pulse.cdm.bind.Patient_pb2 import PatientData
 from pulse.study.patient_variability.analysis_utils import PatientVariabilityResults, Conditional, Field, PropertyError
 
+from enum import Enum
+
 import plotly.graph_objects as go
 import plotly.offline as pyo
 import numpy as np
@@ -52,6 +54,10 @@ stdPulsePressureMax_mmHg = stdPulsePressure_mmHg + stdPulsePressure_mmHg * pulse
 
 lineSep = "-------------------------------------------------------------------"
 
+
+class ConditionalType(Enum):
+    AND = 1
+    OR = 2
 
 class PatientVariabilityAnalysis(PatientVariabilityResults):
 
@@ -117,37 +123,47 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         plt.show()
 
     def createRadarCharts(self):
+        # Everything
+        results = analysis.everythingQuery()
+
         # Standard male
         results = analysis.standardMaleQuery()
 
         # Calculate pass rate for each system
         radarCategories = analysis.combineCategories(results)
 
-        passError = 0.1
+        passError = 10.0 # Errors are in %, not fraction!!!
         radarStandardMaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
 
         #Standard female
         results = analysis.standardFemaleQuery()
-
         # Calculate pass rate for each system
         radarStandardFemaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
 
         # Nonstandard male query
-        # To-Do
+        results = analysis.nonStandardMaleQuery()
+        # Calculate pass rate for each system
+        radarNonstandardMaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
 
         # Nonstandard female query
-        # To-Do
+        results = analysis.nonStandardFemaleQuery()
+        # Calculate pass rate for each system
+        radarNonstandardFemaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
 
         # Generate radar chart
         radarCategories = [*radarCategories, radarCategories[0]]
 
         radarStandardMaleValues = [*radarStandardMaleValues, radarStandardMaleValues[0]]
         radarStandardFemaleValues = [*radarStandardFemaleValues, radarStandardFemaleValues[0]]
+        radarNonstandardMaleValues = [*radarNonstandardMaleValues, radarNonstandardMaleValues[0]]
+        radarNonstandardFemaleValues = [*radarNonstandardFemaleValues, radarNonstandardFemaleValues[0]]
 
         fig = go.Figure(
             data=[
                 go.Scatterpolar(r=radarStandardMaleValues, theta=radarCategories, name='Standard Male'),
-                go.Scatterpolar(r=radarStandardFemaleValues, theta=radarCategories, name='Standard Female')
+                go.Scatterpolar(r=radarStandardFemaleValues, theta=radarCategories, name='Standard Female'),
+                go.Scatterpolar(r=radarNonstandardMaleValues, theta=radarCategories, name='Nonstandard Male'),
+                go.Scatterpolar(r=radarNonstandardFemaleValues, theta=radarCategories, name='Nonstandard Female')
             ],
             layout=go.Layout(
                 title=go.layout.Title(text='Physiology System Pass Rate'),
@@ -174,11 +190,26 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         query.addCondition(Field.BodyMassIndex, '==', stdMaleBMI)
         query.addCondition(Field.BodyFatFraction, '==', stdMaleBFF)
         query.addCondition(Field.HeartRateBaseline_bpm, '==', stdHR_bpm)
-        query.addCondition(Field.MeanArterialPressureBaseline_mmHg, '>=', stdMapMin_mmHg)
-        query.addCondition(Field.MeanArterialPressureBaseline_mmHg, '<=', stdMapMax_mmHg)
-        query.addCondition(Field.PulsePressureBaseline_mmHg, '>=', stdPulsePressureMin_mmHg)
-        query.addCondition(Field.PulsePressureBaseline_mmHg, '<=', stdPulsePressureMax_mmHg)
+        query.addCondition(Field.MeanArterialPressureBaseline_mmHg, '==', stdMAP_mmHg)
+        query.addCondition(Field.PulsePressureBaseline_mmHg, '==', stdPulsePressure_mmHg)
         query.addCondition(Field.RespirationRateBaseline_bpm, '==', stdRR_bpm)
+        results = self.conditionalFilter([query])
+        return results
+
+    def nonStandardMaleQuery(self):
+        print("Nonstandard male query")
+        query = Conditional()
+        query.sex(PatientData.eSex.Male)
+        queryOr = Conditional(ConditionalType.OR)
+        queryOr.addCondition(Field.Age_yr, '!=', stdAge_yr)
+        queryOr.addCondition(Field.Height_cm, '!=', stdMaleHeight_cm)
+        queryOr.addCondition(Field.BodyMassIndex, '!=', stdMaleBMI)
+        queryOr.addCondition(Field.BodyFatFraction, '!=', stdMaleBFF)
+        queryOr.addCondition(Field.HeartRateBaseline_bpm, '!=', stdHR_bpm)
+        queryOr.addCondition(Field.MeanArterialPressureBaseline_mmHg, '!=', stdMAP_mmHg)
+        queryOr.addCondition(Field.PulsePressureBaseline_mmHg, '!=', stdPulsePressure_mmHg)
+        queryOr.addCondition(Field.RespirationRateBaseline_bpm, '!=', stdRR_bpm)
+        query.addConditional(queryOr)
         results = self.conditionalFilter([query])
         return results
 
@@ -191,11 +222,32 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         query.addCondition(Field.BodyMassIndex, '==', stdFemaleBMI)
         query.addCondition(Field.BodyFatFraction, '==', stdFemaleBFF)
         query.addCondition(Field.HeartRateBaseline_bpm, '==', stdHR_bpm)
-        query.addCondition(Field.MeanArterialPressureBaseline_mmHg, '>=', stdMapMin_mmHg)
-        query.addCondition(Field.MeanArterialPressureBaseline_mmHg, '<=', stdMapMax_mmHg)
-        query.addCondition(Field.PulsePressureBaseline_mmHg, '>=', stdPulsePressureMin_mmHg)
-        query.addCondition(Field.PulsePressureBaseline_mmHg, '<=', stdPulsePressureMax_mmHg)
+        query.addCondition(Field.MeanArterialPressureBaseline_mmHg, '==', stdMAP_mmHg)
+        query.addCondition(Field.PulsePressureBaseline_mmHg, '==', stdPulsePressure_mmHg)
         query.addCondition(Field.RespirationRateBaseline_bpm, '==', stdRR_bpm)
+        results = self.conditionalFilter([query])
+        return results
+
+    def nonStandardFemaleQuery(self):
+        print("Nonstandard female query")
+        query = Conditional()
+        query.sex(PatientData.eSex.Female)
+        queryOr = Conditional(ConditionalType.OR)
+        queryOr.addCondition(Field.Age_yr, '!=', stdAge_yr)
+        queryOr.addCondition(Field.Height_cm, '!=', stdFemaleHeight_cm)
+        queryOr.addCondition(Field.BodyMassIndex, '!=', stdFemaleBMI)
+        queryOr.addCondition(Field.BodyFatFraction, '!=', stdFemaleBFF)
+        queryOr.addCondition(Field.HeartRateBaseline_bpm, '!=', stdHR_bpm)
+        queryOr.addCondition(Field.MeanArterialPressureBaseline_mmHg, '!=', stdMAP_mmHg)
+        queryOr.addCondition(Field.PulsePressureBaseline_mmHg, '!=', stdPulsePressure_mmHg)
+        queryOr.addCondition(Field.RespirationRateBaseline_bpm, '!=', stdRR_bpm)
+        query.addConditional(queryOr)
+        results = self.conditionalFilter([query])
+        return results
+
+    def everythingQuery(self):
+        print("Everything query")
+        query = Conditional()
         results = self.conditionalFilter([query])
         return results
 
