@@ -44,6 +44,7 @@ class Field(Enum):
 
 class PropertyError(object):
     def __init__(self):
+        self.patient_ids = list()
         self.errors = list()
 
 class ConditionalType(Enum):
@@ -290,6 +291,7 @@ class PatientVariabilityResults():
                                 if property.Name not in property_map:
                                     property_map[property.Name] = PropertyError()
                                 property_error = property_map[property.Name]
+                                property_error.patient_ids.append(state.ID)
                                 property_error.errors.append(property.Error)
         return results
 

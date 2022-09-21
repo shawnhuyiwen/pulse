@@ -1591,11 +1591,12 @@ public abstract class ValidationTool
     for(ValidationRow vRow : vData)
     {
       PropertyValidationData.Builder pvd = pvList.addPropertyBuilder();
-      pvd.setName(vRow.header);
+      pvd.setName(vRow.header+"-"+vRow.dType.toString());
       pvd.setExpectedValue(vRow.refValue);
       pvd.setComputedValue(vRow.result);
       pvd.setError(vRow.resultError);
       pvd.setPatientSpecific(vRow.patientSpecific);
+      
     }
     pvList.build();
     FileUtils.writeFile(filepath, JsonFormat.printer().print(pvList));
