@@ -47,10 +47,6 @@ class PropertyError(object):
         self.patient_ids = list()
         self.errors = list()
 
-class ConditionalType(Enum):
-    AND = 1
-    OR = 2
-
 class Condition():
     _slots = ["field", "_operator", "_value"]
 
@@ -140,14 +136,19 @@ class Condition():
         if self._field is Field.VitalCapacity_L:
             return self.compare(patient.VitalCapacity.ScalarVolume.Value, self._value, self._operator)
 
+        print("ERROR: Unknown field")
         return False
 
 class Conditional():
     _slots = ["_conditions", "_conditionalType", "_sex"]
 
-    def __init__(self, cType=ConditionalType.AND):
+    class ConditionalType(Enum):
+        AND = 1
+        OR = 2
+
+    def __init__(self, cType='AND'):
         self._conditions = []
-        self._conditionalType = cType
+        self._conditionalType = self.ConditionalType[cType]
         self._sex = None
 
     def sex(self, sex:PatientData.eSex):
@@ -160,18 +161,20 @@ class Conditional():
         self._conditions.append(conditional)
 
     def eval(self, patient):
-        if self._sex is not None and patient.Sex is not self._sex:
+        if self._sex is not None and patient.Sex != self._sex:
             return False
-        if self._conditionalType is ConditionalType.AND:
+        if self._conditionalType is self.ConditionalType.AND:
             for condition in self._conditions:
                 if not condition.eval(patient):
                     return False
             return True
-        elif self._conditionalType is ConditionalType.OR:
+        elif self._conditionalType is self.ConditionalType.OR:
             for condition in self._conditions:
                 if condition.eval(patient):
                     return True
             return False
+        print("ERROR: Unknown conditional type")
+        return False
 
 class PatientVariabilityResults():
     __slots__ = ["_results", "_results_dir"]
@@ -398,7 +401,7 @@ if __name__ == '__main__':
     conditional = Conditional()
     conditional.sex(PatientData.eSex.Female)
     conditional.addCondition(Field.BMI, '==', 16)
-    conditional1 = Conditional(ConditionalType.OR)
+    conditional1 = Conditional('OR')
     conditional1.addCondition(Field.HeartRate_bpm, '<', 65)
     conditional1.addCondition(Field.HeartRate_bpm, '>', 85)
     conditional.addConditional(conditional1)
