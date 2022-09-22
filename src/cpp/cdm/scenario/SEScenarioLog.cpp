@@ -5,6 +5,7 @@
 #include "cdm/scenario/SEScenarioLog.h"
 #include "cdm/scenario/SEScenario.h"
 #include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SECondition.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
@@ -53,7 +54,18 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
     dst.GetPatientConfiguration().GetPatient().SerializeFromString(m_Patient, eSerializationFormat::TEXT);
     for (std::string condition : m_Conditions)
     {
-      Error("TODO: Support Conditions");
+      SECondition* c = SECondition::SerializeFromString(condition, eSerializationFormat::TEXT, dst.GetSubstanceManager());
+      if (c == nullptr)
+      {
+        dst.Error("Unable to serialize condition : " + condition);
+        err = true;
+      }
+      else
+      {
+        if(!dst.GetPatientConfiguration().GetConditions().Copy(*c, dst.GetSubstanceManager()))
+          err = true;
+      }
+      delete c;
     }
   }
   else if (!m_StateFilename.empty())
@@ -136,7 +148,7 @@ bool SEScenarioLog::Extract(const std::string& filename)
   std::string content;
   if (!ReadFile(filename, content))
   {
-    Error("Failed to read file: " + filename);
+    Error("Failed to read file : " + filename);
     return false;
   }
 
@@ -236,12 +248,12 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
     size_t endIdx = 0;
     if (braces && mTagBegin[2].compare("{") != 0)
     {
-      Error("Is this a legacy log? Unable to identify opening brace: " + std::string(mTagBegin[0]));
+      Error("Is this a legacy log? Unable to identify opening brace : " + std::string(mTagBegin[0]));
       return false;
     }
     else if (braces && !IdentifyTagStringEnd(mTagBegin.suffix().str(), endIdx))
     {
-      Error("Unable to identify tag string terminator: " + std::string(mTagBegin[0]));
+      Error("Unable to identify tag string terminator : " + std::string(mTagBegin[0]));
       return false;
     }
     tagStr = text.substr(mTagBegin.position(1), mTagBegin.length(1) + endIdx);
@@ -277,12 +289,12 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
     size_t endIdx = 0;
     if (braces && mTagBegin[3].compare("{") != 0)
     {
-      Error("Is this a legacy log? Unable to identify opening brace: " + std::string(mTagBegin[0]));
+      Error("Is this a legacy log? Unable to identify opening brace : " + std::string(mTagBegin[0]));
       return false;
     }
     else if (braces && !IdentifyTagStringEnd(mTagBegin.suffix().str(), endIdx))
     {
-      Error("Unable to identify tag string terminator: " + std::string(mTagBegin[0]));
+      Error("Unable to identify tag string terminator : " + std::string(mTagBegin[0]));
       return false;
     }
     tagStr = text.substr(mTagBegin.position(2), mTagBegin.length(2) + endIdx);
@@ -405,7 +417,7 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   }
   else // Failed to find end of patient string
   {
-    Error("Unable to identify patient string terminator: " + std::string(mPatient[0]));
+    Error("Unable to identify patient string terminator : " + std::string(mPatient[0]));
     return false;
   }
   m_Patient = text.substr(mPatient.position(1), mPatient.length(1) + endIdx);

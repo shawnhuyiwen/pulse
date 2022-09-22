@@ -19,6 +19,7 @@ public:
   virtual void Clear();
 
   virtual bool SerializeToString(std::string& dst, eSerializationFormat fmt) const;
+  static SECondition* SerializeFromString(const std::string src, eSerializationFormat fmt, const SESubstanceManager& subMgr);
 
   virtual bool IsValid() const = 0;
   virtual bool IsActive() const = 0;

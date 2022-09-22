@@ -27,6 +27,10 @@ bool SECondition::SerializeToString(std::string& dst, eSerializationFormat fmt) 
 {
   return PBCondition::SerializeToString(*this, dst, fmt);
 }
+SECondition* SECondition::SerializeFromString(const std::string src, eSerializationFormat fmt, const SESubstanceManager& subMgr)
+{
+  return PBCondition::SerializeFromString(src, fmt, subMgr);
+}
 
 std::string SECondition::GetComment() const
 {

@@ -64,7 +64,9 @@ bool PBCondition::SerializeToString(const SECondition& a, std::string& dst, eSer
   auto* bind = Unload(a);
   return PBUtils::SerializeToString(*bind, dst, fmt, nullptr);
 }
-SECondition* PBCondition::SerializeFromString(const std::string& src, Logger& logger, eSerializationFormat fmt)
+SECondition* PBCondition::SerializeFromString(const std::string& src, eSerializationFormat fmt, const SESubstanceManager& subMgr)
 {
-  return nullptr;
+  CDM_BIND::AnyConditionData bind;
+  PBUtils::SerializeFromString(src, bind, fmt, subMgr.GetLogger());
+  return PBCondition::Load(bind, subMgr);
 }
