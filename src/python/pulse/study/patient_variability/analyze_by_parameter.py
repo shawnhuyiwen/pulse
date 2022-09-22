@@ -120,10 +120,11 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
     def createRadarCharts(self):
         # Everything
         results = analysis.everythingQuery()
-        numPatients = analysis.numPatients(results)
+        numAllPatients = analysis.numPatients(results)
 
         # Standard male
         results = analysis.standardMaleQuery()
+        numStandardMalePatients = analysis.numPatients(results)
 
         # Calculate pass rate for each system
         radarCategories = analysis.combineCategories(results)
@@ -133,16 +134,19 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
 
         #Standard female
         results = analysis.standardFemaleQuery()
+        numStandardFemalePatients = analysis.numPatients(results)
         # Calculate pass rate for each system
         radarStandardFemaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
 
         # Nonstandard male query
         results = analysis.nonStandardMaleQuery()
+        numNonstandardMalePatients = analysis.numPatients(results)
         # Calculate pass rate for each system
         radarNonstandardMaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
 
         # Nonstandard female query
         results = analysis.nonStandardFemaleQuery()
+        numNonstandardFemalePatients = analysis.numPatients(results)
         # Calculate pass rate for each system
         radarNonstandardFemaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
 
@@ -156,10 +160,10 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
 
         fig = go.Figure(
             data=[
-                go.Scatterpolar(r=radarStandardMaleValues, theta=radarCategories, name='Standard Male'),
-                go.Scatterpolar(r=radarStandardFemaleValues, theta=radarCategories, name='Standard Female'),
-                go.Scatterpolar(r=radarNonstandardMaleValues, theta=radarCategories, name='Cumulative Nonstandard Male'),
-                go.Scatterpolar(r=radarNonstandardFemaleValues, theta=radarCategories, name='Cumulative Nonstandard Female')
+                go.Scatterpolar(r=radarStandardMaleValues, theta=radarCategories, name='Standard Male ('+str(numStandardMalePatients)+' total)'),
+                go.Scatterpolar(r=radarStandardFemaleValues, theta=radarCategories, name='Standard Female ('+str(numStandardFemalePatients)+' total)'),
+                go.Scatterpolar(r=radarNonstandardMaleValues, theta=radarCategories, name='Cumulative Nonstandard Male ('+str(numNonstandardMalePatients)+' total)'),
+                go.Scatterpolar(r=radarNonstandardFemaleValues, theta=radarCategories, name='Cumulative Nonstandard Female ('+str(numNonstandardFemalePatients)+' total)')
             ],
             layout=go.Layout(
                 title=go.layout.Title(text='Physiology System Pass Rate'),
