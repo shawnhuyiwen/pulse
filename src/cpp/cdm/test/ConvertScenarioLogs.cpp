@@ -2,15 +2,11 @@
    See accompanying NOTICE file for details.*/
 
 #include "CommonDataModelTest.h"
-#include "cdm/engine/SEAction.h"
-#include "cdm/engine/SEAdvanceTime.h"
-#include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/scenario/SEScenario.h"
 #include "cdm/scenario/SEScenarioLog.h"
 #include "utils/testing/SETestReport.h"
 #include "utils/testing/SETestCase.h"
 #include "utils/testing/SETestSuite.h"
-#include "properties/SEScalarTime.h"
 #include "utils/FileUtils.h"
 #include "utils/TimingProfile.h"
 
