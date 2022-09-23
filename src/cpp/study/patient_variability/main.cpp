@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
     // HemorrhageSeverity(0.25,1.00,0.25)
     // HemorrhageTriageTime(1.0,5.0,1.0)
 
-    pvg.GenerateMultiVariableCombinationPatientList(patients);
+    pvg.GenerateData(eSetType::Both, patients);
   }
 
   if (generateOnly)

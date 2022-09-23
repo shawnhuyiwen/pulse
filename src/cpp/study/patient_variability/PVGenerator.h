@@ -28,6 +28,13 @@ namespace pulse::study::patient_variability
     Validation
   };
 
+  enum class eSetType
+  {
+    Slice = 0,
+    Combo,
+    Both
+  };
+
   class Parameter
   {
   public:
@@ -160,7 +167,6 @@ namespace pulse::study::patient_variability
     PVGenerator(Logger* logger=nullptr);
     virtual ~PVGenerator();
 
-    void GenerateMultiVariableCombinationPatientList(PatientStateListData& pList);
 
     eMode           GenerateMode = eMode::Validation;
     
@@ -176,10 +182,17 @@ namespace pulse::study::patient_variability
     StepParameter   HemorrhageSeverity;
     StepParameter   HemorrhageTriageTime_min;
 
+    void GenerateData(eSetType t, PatientStateListData& pList);
+
   protected:
+    eSetType     m_SetType;
     unsigned int m_TotalPatients=0; // The actual number of patients for this data set, (NOT the number of runs, i.e. hemorrhage options can create more runs for each patient)
     unsigned int m_NumPatientsFailedToSetup = 0;
     unsigned int m_TotalRuns=0; // This is the actual number of runs to perform
+
+
+    void GenerateSlicedPatientList(PatientStateListData& pList, const SEPatient& basePatient);
+    void GenerateMultiVariableCombinationPatientList(PatientStateListData& pList);
 
     void ResetParameters(ePatient_Sex sex);
 
