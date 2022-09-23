@@ -4,14 +4,21 @@
 from pulse.cdm.bind.Patient_pb2 import PatientData
 from pulse.study.patient_variability.analysis_utils import PatientVariabilityResults, Conditional, Field, PropertyError
 
-from enum import Enum
-
 import plotly.graph_objects as go
 import plotly.offline as pyo
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
+fields = [Field.Age_yr,
+Field.Height_cm,
+Field.BodyMassIndex,
+Field.BodyFatFraction,
+Field.HeartRateBaseline_bpm,
+Field.MeanArterialPressureBaseline_mmHg,
+Field.PulsePressureBaseline_mmHg,
+Field.RespirationRateBaseline_bpm]
 
 minAge_yr = 18
 stdAge_yr = 44
@@ -52,9 +59,30 @@ pulsePressureAllowableErrorFraction = 0.1
 stdPulsePressureMin_mmHg = stdPulsePressure_mmHg - stdPulsePressure_mmHg * pulsePressureAllowableErrorFraction
 stdPulsePressureMax_mmHg = stdPulsePressure_mmHg + stdPulsePressure_mmHg * pulsePressureAllowableErrorFraction
 
+standardValues = {
+    (PatientData.eSex.Male, Field.Age_yr): stdAge_yr,
+    (PatientData.eSex.Female, Field.Age_yr): stdAge_yr,
+    (PatientData.eSex.Male, Field.Height_cm): stdMaleHeight_cm,
+    (PatientData.eSex.Female, Field.Height_cm): stdFemaleHeight_cm,
+    (PatientData.eSex.Male, Field.BodyMassIndex): stdMaleBMI,
+    (PatientData.eSex.Female, Field.BodyMassIndex): stdFemaleBMI,
+    (PatientData.eSex.Male, Field.BodyFatFraction): stdMaleBFF,
+    (PatientData.eSex.Female, Field.BodyFatFraction): stdFemaleBFF,
+    (PatientData.eSex.Male, Field.HeartRateBaseline_bpm): stdHR_bpm,
+    (PatientData.eSex.Female, Field.HeartRateBaseline_bpm): stdHR_bpm,
+    (PatientData.eSex.Male, Field.MeanArterialPressureBaseline_mmHg): stdMAP_mmHg,
+    (PatientData.eSex.Female, Field.MeanArterialPressureBaseline_mmHg): stdMAP_mmHg,
+    (PatientData.eSex.Male, Field.PulsePressureBaseline_mmHg): stdPulsePressure_mmHg,
+    (PatientData.eSex.Female, Field.PulsePressureBaseline_mmHg): stdPulsePressure_mmHg,
+    (PatientData.eSex.Male, Field.RespirationRateBaseline_bpm): stdRR_bpm,
+    (PatientData.eSex.Female, Field.RespirationRateBaseline_bpm): stdRR_bpm
+    }
+
 lineSep = "-------------------------------------------------------------------"
 
 class PatientVariabilityAnalysis(PatientVariabilityResults):
+    systems = []
+    passError = 10.0  # Errors are in %, not fraction!!!
 
     def __init__(self, dir: str):
         super().__init__(dir)
@@ -78,80 +106,70 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
                 print("  Average Error: " + str(property_error.average_error))
 
     def process(self):
-        analysis.createRadarCharts()
-        #analysis.createBarChart()
-        #analysis.createBoxPlot()
-
-    def createBarChart(self):
-        # some example data
-        threshold = 43.0
-        values = np.array([30., 87.3, 99.9, 3.33, 50.0])
-        x = range(len(values))
-
-        # split it up
-        above_threshold = np.maximum(values - threshold, 0)
-        below_threshold = np.minimum(values, threshold)
-
-        # and plot it
-        fig, ax = plt.subplots()
-        ax.bar(x, below_threshold, 0.35, color="g")
-        ax.bar(x, above_threshold, 0.35, color="r",
-               bottom=below_threshold)
-
-        # horizontal line indicating the threshold
-        ax.plot([0., 4.5], [threshold, threshold], "k--")
-
-        fig.savefig("look-ma_a-threshold-plot.png")
-
-    def createBoxPlot(self):
-        N = 50
-        df = pd.DataFrame({"Prior": np.random.geometric(0.5, N) * 2 + 10,
-                           "DSI": np.random.geometric(0.1, N) * 3 + 20,
-                           "DSI.ESMDA": np.random.geometric(0.2, N) + 40,
-                           "DSI.ESMDA.LOC": np.random.geometric(0.2, N) * 4 + 30,
-                           "ES-MDA": np.random.geometric(0.7, N) * 2.5 + 60})
-        df.boxplot(grid=False, rot=18, fontsize=15)
-        reference = [20, 50, 75]
-        left, right = plt.xlim()
-        plt.hlines(reference, xmin=left, xmax=right, color='r', linestyles='--')
-        plt.subplots_adjust(bottom=0.20)
-        plt.show()
-
-    def createRadarCharts(self):
-        # Everything
+        # Count everything
         results = analysis.everythingQuery()
         numAllPatients = analysis.numPatients(results)
+        print("All patients: " + str(numAllPatients))
+        analysis.systems = analysis.combineCategories(results)
 
+        analysis.createRadarCharts()
+        analysis.createBoxPlots()
+
+    def createBoxPlots(self):
+        for system in analysis.systems:
+            plotData = {}
+            for field in fields:
+                results = analysis.singleParameterQuery(PatientData.eSex.Male, field)
+                values = analysis.calculateParameterPassRate(results, analysis.passError, system)
+                plotData.update({field: values})
+
+            # Add NaNs to make data size the same, so pandas doesn't complain
+            dataLength = 0
+            for key, value in plotData.items():
+                length = len(value)
+                if length > dataLength:
+                    dataLength = length
+            for key, value in plotData.items():
+                lengthDiff = dataLength - len(value)
+                if lengthDiff > 0:
+                    value = np.append(value, np.repeat(np.nan, lengthDiff))
+                    plotData.update({key: value})
+
+            df = pd.DataFrame(plotData)
+            df.boxplot(grid=False, rot=18, fontsize=15)
+            reference = [0.2, 0.5]
+            left, right = plt.xlim()
+            plt.hlines(reference, xmin=left, xmax=right, color='r', linestyles='--')
+            plt.subplots_adjust(bottom=0.20)
+            plt.show()
+
+    def createRadarCharts(self):
         # Standard male
-        results = analysis.standardMaleQuery()
+        results = analysis.standardQuery(PatientData.eSex.Male)
         numStandardMalePatients = analysis.numPatients(results)
-
-        # Calculate pass rate for each system
-        radarCategories = analysis.combineCategories(results)
-
-        passError = 10.0 # Errors are in %, not fraction!!!
-        radarStandardMaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
+        print("Standard male patients: " + str(numStandardMalePatients))
+        radarStandardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         #Standard female
-        results = analysis.standardFemaleQuery()
+        results = analysis.standardQuery(PatientData.eSex.Female)
         numStandardFemalePatients = analysis.numPatients(results)
-        # Calculate pass rate for each system
-        radarStandardFemaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
+        print("Standard female patients: " + str(numStandardFemalePatients))
+        radarStandardFemaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         # Nonstandard male query
-        results = analysis.nonStandardMaleQuery()
+        results = analysis.nonStandardQuery(PatientData.eSex.Male)
         numNonstandardMalePatients = analysis.numPatients(results)
-        # Calculate pass rate for each system
-        radarNonstandardMaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
+        print("Nonstandard male patients: " + str(numNonstandardMalePatients))
+        radarNonstandardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         # Nonstandard female query
-        results = analysis.nonStandardFemaleQuery()
+        results = analysis.nonStandardQuery(PatientData.eSex.Female)
         numNonstandardFemalePatients = analysis.numPatients(results)
-        # Calculate pass rate for each system
-        radarNonstandardFemaleValues = analysis.calculateSystemPassRate(results, passError, radarCategories)
+        print("Nonstandard female patients: " + str(numNonstandardFemalePatients))
+        radarNonstandardFemaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
 
         # Generate radar chart
-        radarCategories = [*radarCategories, radarCategories[0]]
+        radarCategories = [*analysis.systems, analysis.systems[0]]
 
         radarStandardMaleValues = [*radarStandardMaleValues, radarStandardMaleValues[0]]
         radarStandardFemaleValues = [*radarStandardFemaleValues, radarStandardFemaleValues[0]]
@@ -185,66 +203,23 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
             property_error.average_error = property_error.average_error + error
         property_error.average_error = property_error.average_error / len(property_error.errors)
 
-    def standardMaleQuery(self):
-        print("Standard male query")
+    def standardQuery(self, sex:PatientData.eSex):
+        #jbw
+        #print("Standard " + PatientData.eSex(sex).name + " query")
         query = Conditional()
-        query.sex(PatientData.eSex.Male)
-        query.addCondition(Field.Age_yr, '==', stdAge_yr)
-        query.addCondition(Field.Height_cm, '==', stdMaleHeight_cm)
-        query.addCondition(Field.BodyMassIndex, '==', stdMaleBMI)
-        query.addCondition(Field.BodyFatFraction, '==', stdMaleBFF)
-        query.addCondition(Field.HeartRateBaseline_bpm, '==', stdHR_bpm)
-        query.addCondition(Field.MeanArterialPressureBaseline_mmHg, '==', stdMAP_mmHg)
-        query.addCondition(Field.PulsePressureBaseline_mmHg, '==', stdPulsePressure_mmHg)
-        query.addCondition(Field.RespirationRateBaseline_bpm, '==', stdRR_bpm)
+        query.sex(sex)
+        for field in fields:
+            query.addCondition(field, '==', standardValues[sex, field])
         results = self.conditionalFilter([query])
         return results
 
-    def nonStandardMaleQuery(self):
-        print("Nonstandard male query")
+    def nonStandardQuery(self, sex:PatientData.eSex):
+        #print("Nonstandard " + sex.name + " query")
         query = Conditional()
-        query.sex(PatientData.eSex.Male)
+        query.sex(sex)
         queryOr = Conditional('OR')
-        queryOr.addCondition(Field.Age_yr, '!=', stdAge_yr)
-        queryOr.addCondition(Field.Height_cm, '!=', stdMaleHeight_cm)
-        queryOr.addCondition(Field.BodyMassIndex, '!=', stdMaleBMI)
-        queryOr.addCondition(Field.BodyFatFraction, '!=', stdMaleBFF)
-        queryOr.addCondition(Field.HeartRateBaseline_bpm, '!=', stdHR_bpm)
-        queryOr.addCondition(Field.MeanArterialPressureBaseline_mmHg, '!=', stdMAP_mmHg)
-        queryOr.addCondition(Field.PulsePressureBaseline_mmHg, '!=', stdPulsePressure_mmHg)
-        queryOr.addCondition(Field.RespirationRateBaseline_bpm, '!=', stdRR_bpm)
-        query.addConditional(queryOr)
-        results = self.conditionalFilter([query])
-        return results
-
-    def standardFemaleQuery(self):
-        print("Standard female query")
-        query = Conditional()
-        query.sex(PatientData.eSex.Female)
-        query.addCondition(Field.Age_yr, '==', stdAge_yr)
-        query.addCondition(Field.Height_cm, '==', stdFemaleHeight_cm)
-        query.addCondition(Field.BodyMassIndex, '==', stdFemaleBMI)
-        query.addCondition(Field.BodyFatFraction, '==', stdFemaleBFF)
-        query.addCondition(Field.HeartRateBaseline_bpm, '==', stdHR_bpm)
-        query.addCondition(Field.MeanArterialPressureBaseline_mmHg, '==', stdMAP_mmHg)
-        query.addCondition(Field.PulsePressureBaseline_mmHg, '==', stdPulsePressure_mmHg)
-        query.addCondition(Field.RespirationRateBaseline_bpm, '==', stdRR_bpm)
-        results = self.conditionalFilter([query])
-        return results
-
-    def nonStandardFemaleQuery(self):
-        print("Nonstandard female query")
-        query = Conditional()
-        query.sex(PatientData.eSex.Female)
-        queryOr = Conditional('OR')
-        queryOr.addCondition(Field.Age_yr, '!=', stdAge_yr)
-        queryOr.addCondition(Field.Height_cm, '!=', stdFemaleHeight_cm)
-        queryOr.addCondition(Field.BodyMassIndex, '!=', stdFemaleBMI)
-        queryOr.addCondition(Field.BodyFatFraction, '!=', stdFemaleBFF)
-        queryOr.addCondition(Field.HeartRateBaseline_bpm, '!=', stdHR_bpm)
-        queryOr.addCondition(Field.MeanArterialPressureBaseline_mmHg, '!=', stdMAP_mmHg)
-        queryOr.addCondition(Field.PulsePressureBaseline_mmHg, '!=', stdPulsePressure_mmHg)
-        queryOr.addCondition(Field.RespirationRateBaseline_bpm, '!=', stdRR_bpm)
+        for field in fields:
+            queryOr.addCondition(field, '!=', standardValues[sex, field])
         query.addConditional(queryOr)
         results = self.conditionalFilter([query])
         return results
@@ -252,6 +227,16 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
     def everythingQuery(self):
         print("Everything query")
         query = Conditional()
+        results = self.conditionalFilter([query])
+        return results
+
+    def singleParameterQuery(self, sex:PatientData.eSex, field:Field):
+        #print(sex.name + " " + field.name + " query")
+        query = Conditional()
+        query.sex(sex)
+        for currentField in fields:
+            if field != currentField:
+                query.addCondition(currentField, '==', standardValues[sex, currentField])
         results = self.conditionalFilter([query])
         return results
 
@@ -282,6 +267,33 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
                 passRate = numPass / (numPass + numFail)
             passRates[idx] = passRate
         return passRates
+
+    def calculateParameterPassRate(self, results, passError, category):
+        perPatientNumPass = []
+        perPatientNumFail = []
+        for system,properties in results.items():
+            if not category in system:
+                continue
+            print("Examining system "+system)
+            for property,property_error in properties.items():
+                numPass = 0
+                numFail = 0
+                for idx, error in enumerate(property_error.errors):
+                    if abs(error) > passError:
+                        numFail = 1
+                    else:
+                        numPass = 1
+                    if len(perPatientNumPass) < idx + 1:
+                        perPatientNumPass.append(numPass)
+                        perPatientNumFail.append(numFail)
+                    else:
+                        perPatientNumPass[idx] = perPatientNumPass[idx] + numPass
+                        perPatientNumFail[idx] = perPatientNumFail[idx] + numFail
+        perPatientPassRates = []
+        for idx, patient in enumerate(perPatientNumPass):
+            passRate = perPatientNumPass[idx] / (perPatientNumPass[idx] + perPatientNumFail[idx])
+            perPatientPassRates.append(passRate)
+        return perPatientPassRates
 
     def combineCategories(self, results):
         startCategories = []
