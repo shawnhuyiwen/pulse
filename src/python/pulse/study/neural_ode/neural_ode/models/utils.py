@@ -20,6 +20,8 @@ import ubelt as ub
 from copy import deepcopy
 from dataclasses import dataclass, field, asdict
 from typing import Optional, List, Literal, Any, Dict, Tuple
+import pickle as pkl
+import functools
 
 import pytorch_lightning as pl
 import pytorch_forecasting as pf
@@ -89,7 +91,7 @@ class PFMixin(pl.LightningModule):
 
     def __init__(
             self,
-            learning_rate=1e-3,
+            learning_rate=1e-2,
             # loss=pf.metrics.RMSE(),
             loss='MAE',  # coerce later to avoid yaml bug in LightningCLI(run=True)
             # loss=pf.metrics.SMAPE(),
@@ -150,7 +152,7 @@ class PFMixin(pl.LightningModule):
         # output sizes).
         # for TFT:
         # output_size=[7, 7, 7, 7], # 4 target variables
-        dataset = dm.dset_tr
+        dataset = dm._dset('df_tr', **dm.kwargs)
         loss_weights = cls.target_weights(dataset)
         x_dims = len(dataset.reals) + len(dataset.flat_categoricals)
         y_dims = len(dataset.target)
@@ -165,20 +167,20 @@ class PFMixin(pl.LightningModule):
             logging_metrics=logging_metrics,
         )
         self = cls.from_dataset(
-            dm.dset_tr,
+            dataset,
             **ub.dict_diff(
                 kwargs,
                 list(asdict(BaseModelWithCovariatesKwargs())) +
                 ['output_transformer', 'target', 'output_size']),
             STUB=False,
-        )  #, output_transformer=dm.dset_tr.target_normalizer)
+        )  #, output_transformer=dataset.target_normalizer)
         batch = next(iter(dm.train_dataloader()))
         x, y = batch
         # https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.core.LightningModule.html#pytorch_lightning.core.LightningModule.example_input_array
         self.example_input_array = (x, )
         # self.batch_size = len(x['encoder_lengths'])
         self.batch_size = dm.batch_size
-        self.t_idx = dm.dset_tr.reals.index(dm.t_param)
+        self.t_idx = dataset.reals.index(dm.t_param)
         # self.x_dims = x_dims  # TODO make properties based on pf?
         # self.y_dims = y_dims
         return self
@@ -356,7 +358,7 @@ class TFTAdapter(PFMixin, pf.TemporalFusionTransformer):
                  hidden_continuous_size=34,
                  attention_head_size=4,
                  learning_rate=1e-2,
-                 output_size=7,
+                 output_size=1,  # 7,
                  **kwargs):
 
         super().__init__(
@@ -386,6 +388,9 @@ class BaseData(pl.LightningDataModule):
     pass
 
 
+BASE_FREQ_S = 0.02
+
+
 @dataclass
 class HemorrhageVitals(BaseData):
 
@@ -397,7 +402,8 @@ class HemorrhageVitals(BaseData):
 
     # common
     root_path: str = '/data/pulse/hemorrhage/hemorrhage'
-    x_time_minutes: int = 20
+    x_time_minutes: float = 20
+    x_start_minutes: float = 0
     total_time_minutes_max: int = 120
 
     # split_train_val_test
@@ -416,7 +422,6 @@ class HemorrhageVitals(BaseData):
     stride: int = 1
     train_fraq: float = 0.7
     val_fraq: Optional[float] = 0.15
-    n_start: int = 0
     max_pts: Optional[int] = None
 
     # TRANS: Two kinds of architecture, using AutoEncoder need a small amount
@@ -434,46 +439,43 @@ class HemorrhageVitals(BaseData):
         self._prepare_data()
         self._setup()
 
+    @property
     def _cache_dir(self):
         if not self.hparams:
-            self.save_hyperparameters()
+            self.save_hyperparameters(ignore=['read_cache'])
         hparam_str = ub.hash_data(dict(self.hparams))
         return (ub.Path(self.root_path) / 'cache' / hparam_str)
 
     def _prepare_data(self):
-        cache_dir = self._cache_dir()
+        cache_dir = self._cache_dir
         if not (cache_dir.exists() and self.read_cache):
 
-            df, (dset_tr, dset_va, dset_te) = self._build_dsets()
+            kwargs, (df_tr, df_va, df_te) = self._build_dsets()
 
             # save
             cache_dir.ensuredir()
             with open(cache_dir / 'hparams.json', 'w') as f:
                 json.dump(self.hparams, f)
-            dset_tr.save(cache_dir / 'dset_tr.pt')
-            dset_va.save(cache_dir / 'dset_va.pt')
-            dset_te.save(cache_dir / 'dset_te.pt')
-            df.to_pickle(cache_dir / 'df.pkl')
+            df_tr.to_pickle(cache_dir / 'df_tr.pkl')
+            df_va.to_pickle(cache_dir / 'df_va.pkl')
+            df_te.to_pickle(cache_dir / 'df_te.pkl')
+            with open(cache_dir / 'kwargs.pkl', 'wb') as f:
+                pkl.dump(kwargs, f)
 
-    def _setup(self, stage: Optional[str] = None):
-        cache_dir = self._cache_dir()
+    def _setup(self):
+        cache_dir = self._cache_dir
         assert cache_dir.exists()
 
         # load
-        dset_tr = pf.TimeSeriesDataSet.load(cache_dir / f'dset_tr.pt')
-        dset_va = pf.TimeSeriesDataSet.load(cache_dir / f'dset_va.pt')
-        dset_te = pf.TimeSeriesDataSet.load(cache_dir / f'dset_te.pt')
+        self.df_tr = pd.read_pickle(cache_dir / f'df_tr.pkl')
+        self.df_va = pd.read_pickle(cache_dir / f'df_va.pkl')
+        self.df_te = pd.read_pickle(cache_dir / f'df_te.pkl')
+        with open(self._cache_dir / 'kwargs.pkl', 'rb') as f:
+            self.kwargs = pkl.load(f)
 
-        if stage == 'predict':
-            self.dset_pr = pf.TimeSeriesDataSet.from_dataset(
-                dset_te,
-                # stop_randomization=True,
-                # predict=True,
-            )
-        else:
-            self.dset_tr = dset_tr
-            self.dset_va = dset_va
-            self.dset_te = dset_te
+    def mins_to_ix(self, mins: float) -> int:
+        ASSUMED_FREQ_S = BASE_FREQ_S * self.stride
+        return int(mins * 60 / ASSUMED_FREQ_S)
 
     def _build_dsets(
         self
@@ -485,11 +487,8 @@ class HemorrhageVitals(BaseData):
         # get patient entries
         #
 
-        # TODO use patient_results.json manifest for id and init params
         self.root_path = ub.Path(self.root_path)
-        # csvs = sorted(self.root_path.glob('**/HemorrhageResults.csv'))
         manifest = json.load(open(self.root_path / 'patient_results.json'))
-        csvs_statics = []
 
         pts = []
         for pt in manifest['Patient']:
@@ -524,26 +523,13 @@ class HemorrhageVitals(BaseData):
             df = pd.read_csv(csv).assign(id=_id, **static)
             df['Sex'] = df['Sex'].astype(Sex)
             df['Compartment'] = df['Compartment'].astype(Compartment)
-            df = df[self.n_start::self.stride]
+            df = df[::self.stride]
             return df
 
         jobs = [exc.submit(_job, pt) for pt in pts]
         dfs = [j.result() for j in jobs]
         df = pd.concat(dfs, ignore_index=True)
         print(f'found {len(dfs)} patients with {len(df)} timesteps')
-
-        #
-        # narrow down to long enough ones
-        #
-
-        # TODO variable x_time, survival analysis approach (right-censoring)
-        # TODO see if pf can do this filtering https://stackoverflow.com/a/71874176
-        df = df.groupby('id').filter(lambda x: (x[self.t_param].max() - x[
-            self.t_param].min()) / 60 > self.x_time_minutes)
-        n_pts = len(df.groupby('id'))
-        print(
-            f'filtered to tmax > {self.x_time_minutes}; {n_pts} patients remaining'
-        )
 
         # TODO if not builtin to pf, use
         # https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelEncoder.html
@@ -558,20 +544,19 @@ class HemorrhageVitals(BaseData):
         # handle sampling
         #
 
-        # TODO add ASSUMED_FREQ_S as a static feature to enable training across
-        # resolutions, or return it from the DL and fudge it some other way
         # don't know why dropna() is necessary here...
         periods = df.groupby(
             ['id'])[self.t_param].diff()[1:-1].dropna().round(6).unique()
         assert len(periods) == 1, periods
-        ASSUMED_FREQ_S = periods[0]  # 0.05s
-        x_points = int(60 * self.x_time_minutes / ASSUMED_FREQ_S)
-        y_points = int(60 *
-                       (self.total_time_minutes_max - self.x_time_minutes) /
-                       ASSUMED_FREQ_S)
+        assert (BASE_FREQ_S * self.stride) == periods[0]  # >= 0.02s
+        x_points = self.mins_to_ix(self.x_time_minutes)
+        y_points = self.mins_to_ix(
+                       self.total_time_minutes_max - self.x_time_minutes)
         print(f'{x_points} in timesteps, [1, {y_points}] out timesteps')
         # make t_param integer
-        df['time_idx'] = (df[self.t_param] / ASSUMED_FREQ_S).astype(int)
+        assert (BASE_FREQ_S * self.stride) == periods[0]  # >= 0.02s
+        df['time_idx'] = (df[self.t_param] / (BASE_FREQ_S * self.stride)
+                         ).astype(int)
         # make continue_params float
         df[self.continue_params] = df[self.continue_params].astype(float)
 
@@ -579,30 +564,30 @@ class HemorrhageVitals(BaseData):
         # train-test split
         #
 
+        # pts will be deleted from splits for min_x_len after they're computed,
+        # so they may still be too small
         uids = df['id'].unique()
-        idx = np.random.randn(len(uids))
-        tr_idx = idx < self.train_fraq
+        n = len(uids)
+        idx = np.random.permutation(n)
+        tr_idx = idx[:int(n * self.train_fraq)]
         if self.val_fraq:
-            va_idx = ((self.train_fraq <= idx) &
-                      (idx < (self.train_fraq + self.val_fraq)))
-            te_idx = idx >= (self.train_fraq + self.val_fraq)
+            va_idx = idx[int(n * self.train_fraq):int(n * (self.train_fraq + self.val_fraq))]
+            te_idx = idx[int(n * (self.train_fraq + self.val_fraq)):]
         else:
-            va_idx = idx >= self.train_fraq
+            va_idx = idx[int(n * self.train_fraq):]
             te_idx = va_idx
         # ensure each contains at least a full batch
-        assert sum(tr_idx) >= self.batch_size
-        if not sum(va_idx) >= self.batch_size:
-            entries = np.where(tr_idx)[0][:(self.batch_size - sum(va_idx))]
-            tr_idx[entries] = False
-            va_idx[entries] = True
+        assert len(tr_idx) >= self.batch_size
+        if not len(va_idx) >= self.batch_size:
+            diff = batch_size - len(va_idx)
+            tr_idx, va_idx = tr_idx[:-diff], np.concatenate(tr_idx[-diff:], va_idx)
         if not sum(te_idx) >= self.batch_size:
-            entries = np.where(tr_idx)[0][:(self.batch_size - sum(te_idx))]
-            tr_idx[entries] = False
-            te_idx[entries] = True
+            diff = batch_size - len(te_idx)
+            tr_idx, te_idx = tr_idx[:-diff], np.concatenate(tr_idx[-diff:], te_idx)
 
-        df_tr = df[df['id'].isin(uids[tr_idx])]
-        df_va = df[df['id'].isin(uids[va_idx])]
-        df_te = df[df['id'].isin(uids[te_idx])]
+        df_tr = df[df.id.isin(uids[tr_idx])]
+        df_va = df[df.id.isin(uids[va_idx])]
+        df_te = df[df.id.isin(uids[te_idx])]
         print('train, val, test timesteps: ', df_tr.shape, df_va.shape,
               df_te.shape)
 
@@ -672,7 +657,8 @@ class HemorrhageVitals(BaseData):
             # mutitarget returns a list because the targets may have different dtypes. How to get around this besides fixing in dataloader? Multiindex? pd.Series of vectors?
             target=self.continue_params,
             group_ids=['id'],
-            min_encoder_length=x_points,
+            max_encoder_length=x_points,
+            min_prediction_idx=self.mins_to_ix(self.x_time_minutes + self.x_start_minutes),
             min_prediction_length=1,
             max_prediction_length=
             y_points,  # does this have to be masked or truncated?
@@ -689,67 +675,66 @@ class HemorrhageVitals(BaseData):
             # add_target_scales=True,  # TODO figure out how to add static feats
             add_target_scales=False,
             add_encoder_length=False,
+            # target_normalizer=target_normalizer,
+            target_normalizer='auto',
             scalers={self.t_param: None},
+            predict_mode=True,
+            # if not randomized, this happens; dec_len = minimax over batch samples
+            # decoder_length = self.calculate_decoder_length(time[-1], sequence_length)
+            # encoder_length = sequence_length - decoder_length
+            # turn this on for sliding-time-window
+            randomize_length=False,
         )
         if not self.time_augmentation:
             kwargs.update(
-                max_encoder_length=x_points,  # increase w/ min_prediction_idx
-                # how to predict_mode but only 1st sample instead of last?
-                # should be ok as is because max_prediction_length is greedy
-                # turn this off for sliding-time-window
-                predict_mode=True,
-                # turn this off for sliding-time-window?
-                min_prediction_idx=x_points,
-                # target_normalizer=target_normalizer,
-                target_normalizer='auto',
-                # if not randomized, this happens; dec_len = minimax over batch samples
-                # decoder_length = self.calculate_decoder_length(time[-1], sequence_length)
-                # encoder_length = sequence_length - decoder_length
-                # turn this on for sliding-time-window
-                randomize_length=False,
             )
         else:
             raise NotImplementedError
-
-        dset_tr = TimeSeriesDataSet(df_tr, **kwargs)
-        dset_va = TimeSeriesDataSet(
-            df_va,
-            **kwargs,
-        )
-        # predict=True,
-        # stop_randomization=True)
-        dset_te = TimeSeriesDataSet(
-            df_te,
-            **kwargs,
-        )
-        # predict=True,
-        # stop_randomization=True)
-
-        # this would be the approach if there were new entries from the
-        # existing groups (patients) at val/test time. But since group id is
-        # used for normalization, can't extend existing dset to new groups
-        # without treating them as NaN.
-        # Instead, create va/te independently.
-
-        # dset_va = TimeSeriesDataSet.from_dataset(
-        # dset_tr,
-        # data=df_va,
-        # predict=True,
-        # stop_randomization=True)
-
-        # dset_te = TimeSeriesDataSet.from_dataset(
-        # dset_tr,
-        # data=df_te,
-        # predict=True,
-        # stop_randomization=True)
 
         # TODO missingness
 
         # TODO y_delay (per batch), y_dim_list (?)
 
-        return df, (dset_tr, dset_va, dset_te)
+        # print('train, val, test pts after time filtering: ',
+              # len(dset_tr.decoded_index.id.unique()),
+              # len(dset_va.decoded_index.id.unique()),
+              # len(dset_te.decoded_index.id.unique()),
+        # )
 
-    def train_dataloader(self):
+        return kwargs, (df_tr, df_va, df_te)
+
+    # @functools.cache  # can't be used with dataclass(frozen=False)
+    # this'd get heavy for many pts or very small stride, seems ok for now
+    # could use shelve module to avoid dealing w serialization
+    def _dset(self, df_name, xt_mins: Optional[Tuple[int, int]]=None, **kwargs):
+
+        # import xdev
+        # with xdev.embed_on_exception_context():
+            # # TODO file issue
+            # # for sklearn.preprocessing.StandardScaler
+            # import sklearn
+            # from sklearn.preprocessing import StandardScaler
+            # ub.util_hash._HASHABLE_EXTENSIONS.register(StandardScaler)(hash)
+            # cache_fpath = (self._cache_dir /
+                           # f'{df_name}_{xt_mins}_{ub.hash_data(kwargs)}.pt')
+        # if not cache_fpath.exists():
+        if 1:
+
+            df = getattr(self, df_name)
+            if xt_mins is not None:
+                xt_start_ix, xt_end_ix = map(self.mins_to_ix, xt_mins)
+                kwargs['max_encoder_length'] = xt_end_ix
+                min_pred_idx_diff = (xt_start_ix + xt_end_ix - kwargs['min_prediction_idx'])
+                kwargs['min_prediction_idx'] += min_pred_idx_diff
+                kwargs['max_prediction_length'] -= min_pred_idx_diff
+            dset = pf.TimeSeriesDataSet(df, **kwargs)
+            print('loaded ', len(dset.decoded_index.id.unique()), ' pts')
+            # dset.save(cache_fpath)
+
+        # dset = pf.TimeSeriesDataSet.load(cache_fpath)
+        return dset
+
+    def train_dataloader(self, xt_mins: Optional[Tuple[float, float]]=None, xt_restrict=True):
         # can remove batch_sampler='synchronized' with irregular/masking support
         # (and should write a custom sampler - "TimeBounded"? - to ensure there
         # is some temporal overlap between batch entries)
@@ -758,12 +743,21 @@ class HemorrhageVitals(BaseData):
         # for speedup, try:
         # dataloader = AsynchronousLoader(DataLoader(ds, batch_size=16), device=device)
         # pl_bolts.datamodules.async_dataloader.AsynchronousLoader
-        dl = self.dset_tr.to_dataloader(train=True,
-                                        batch_size=self.batch_size,
-                                        batch_sampler='synchronized',
-                                        num_workers=self.num_workers,
-                                        shuffle=self.shuffle,
-                                        pin_memory=True)
+        kwargs = self.kwargs
+        if self.time_augmentation:
+            kwargs['predict_mode'] = False
+            kwargs['randomize_length'] = True  # TODO test this
+        dset = self._dset('df_tr', xt_mins, **kwargs)
+        if xt_restrict and xt_mins:
+            pts_in_orig = self._dset('df_tr', **kwargs).decoded_index.id.unique()
+            print('filtering', len(set(dset.decoded_index.id.unique()) - set(pts_in_orig)), 'pts')
+            dset.filter(lambda df: df.id.isin(pts_in_orig), copy=False)
+        dl = dset.to_dataloader(train=True,
+                                batch_size=self.batch_size,
+                                batch_sampler='synchronized',
+                                num_workers=self.num_workers,
+                                shuffle=self.shuffle,
+                                pin_memory=True)
         return dl
 
     def val_dataloader(self):

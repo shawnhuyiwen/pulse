@@ -145,9 +145,7 @@ class ODE_RNN(nn.Module):
             # print(f'{dt=} >= {minimum_step=}, solving {time_points=}')
 
         #TRANS: Calculate the GRU helped
-        import xdev
-        with xdev.embed_on_exception_context():
-            hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, xi)
+        hi, hi_std = self.RNN_net(hi_ode, prev_hi_std, xi)
         # print(f'x(t)={x[:, i, 0]}')
         return hi, hi_std
 

@@ -6,9 +6,11 @@ import seaborn as sns
 
 torch.set_default_tensor_type(torch.DoubleTensor)
 # for headless use (write to files, don't show())
-matplotlib.use("Agg")
+# matplotlib.use("Agg")
 
 from typing import Literal, Optional, List, Tuple, Dict
+import itertools
+import collections
 import ubelt as ub
 import numpy as np
 import pandas as pd
@@ -44,14 +46,76 @@ class UpdateKLCoef(pl.Callback):
 # https://pytorch-lightning.readthedocs.io/en/stable/common/debugging.html
 
 
+@dataclass
+class Batch:  # TODO make x optional?
+    y_pred: List[torch.Tensor]
+    y_true: List[torch.Tensor]
+    xs: List[torch.Tensor]
+    yt: Optional[List[torch.Tensor]] = None
+    xt: Optional[List[torch.Tensor]] = None
+
+    def __post_init__(self):
+        # stub out t if needed
+        assert (self.yt is None) == (self.xt is None)
+        if self.yt is None:
+            print('TODO this is probably broken')
+            # self.use_t_mins = False
+            self.xt = [torch.arange(0, len(x)) for x in self.xs[0]]
+            self.yt = [
+                torch.arange(0 + len(x),
+                             len(y) + len(x))
+                for x, y in zip(self.xs[0], self.y_pred[0])
+            ]
+        else:
+            # self.use_t_mins = True
+            pass
+
+    @classmethod
+    def from_net_out(cls, trainer, batch):
+        with torch.no_grad():
+            # batch = trainer.datamodule.transfer_batch_to_device(
+            # batch, trainer.model.device, 0)
+            # or pf.utils.move_to_device
+            x, y = batch
+            y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
+                                  x['encoder_target'])
+
+        def _detach_fn(tensor, lens=None):
+            tensor = tensor.detach().cpu()
+            if lens is not None:
+                tensor = [t[:l] for t, l in zip(tensor, lens)]
+            return tensor
+
+        try:
+            # TODO where to put this for recurrent?
+            xt, yt = (x['encoder_cont'][:, :, trainer.model.t_idx],
+                      x['decoder_cont'][:, :, trainer.model.t_idx])
+
+            return cls(
+                [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
+                [_detach_fn(y, x['decoder_lengths']) for y in y_true],
+                [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
+                [_detach_fn(yt, x['decoder_lengths'])],
+                [_detach_fn(xt, x['encoder_lengths'])],
+            )
+
+        except AttributeError:
+
+            return cls(
+                [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
+                [_detach_fn(y, x['decoder_lengths']) for y in y_true],
+                [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
+            )
+
+
 class PlotCallback(pl.Callback):
 
     def __init__(self, every_n_batches=1, every_n_epochs=10):
         self.every_n_batches = every_n_batches
         self.every_n_epochs = every_n_epochs
         self.ready = True
-        self.tr_data: List[Batch]  = []
-        self.va_data: List[Batch]  = []
+        self.tr_data: List[Batch] = []
+        self.va_data: List[Batch] = []
 
     def on_sanity_check_start(self, trainer, pl_module) -> None:
         self.ready = False
@@ -59,75 +123,17 @@ class PlotCallback(pl.Callback):
     def on_sanity_check_end(self, trainer, pl_module) -> None:
         self.ready = True
 
-    @dataclass
-    class Batch:  # TODO make x optional?
-        y_pred: List[torch.Tensor]
-        y_true: List[torch.Tensor]
-        xs: List[torch.Tensor]
-        yt: Optional[List[torch.Tensor]] = None
-        xt: Optional[List[torch.Tensor]] = None
-
-        def __post_init__(self):
-            # stub out t if needed
-            assert (self.yt is None) == (self.xt is None)
-            if self.yt is None:
-                print('TODO this is probably broken')
-                # self.use_t_mins = False
-                self.xt = [torch.arange(0, len(x)) for x in self.xs[0]]
-                self.yt = [torch.arange(0 + len(x), len(y) + len(x))
-                    for x, y in zip(self.xs[0], self.y_pred[0])]
-            else:
-                # self.use_t_mins = True
-                pass
-
-        @classmethod
-        def from_net_out(cls, trainer, batch):
-            with torch.no_grad():
-                # batch = trainer.datamodule.transfer_batch_to_device(
-                # batch, trainer.model.device, 0)
-                # or pf.utils.move_to_device
-                x, y = batch
-                y_pred, y_true, xs = (trainer.model(x)['prediction'], y[0],
-                                      x['encoder_target'])
-
-            def _detach_fn(tensor, lens=None):
-                tensor = tensor.detach().cpu()
-                if lens is not None:
-                    tensor = [t[:l] for t, l in zip(tensor, lens)]
-                return tensor
-
-            try:
-                # TODO where to put this for recurrent?
-                xt, yt = (x['encoder_cont'][:, :, trainer.model.t_idx],
-                          x['decoder_cont'][:, :, trainer.model.t_idx])
-
-                return cls(
-                    [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
-                    [_detach_fn(y, x['decoder_lengths']) for y in y_true],
-                    [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
-                    [_detach_fn(yt, x['decoder_lengths'])],
-                    [_detach_fn(xt, x['encoder_lengths'])],
-                )
-
-            except AttributeError:
-
-                return cls(
-                    [_detach_fn(y, x['decoder_lengths']) for y in y_pred],
-                    [_detach_fn(y, x['decoder_lengths']) for y in y_true],
-                    [_detach_fn(_x, x['encoder_lengths']) for _x in xs],
-                )
-
     def on_train_batch_end(self, trainer, pl_module, outputs, batch,
                            batch_idx):
         if (self.ready and (batch_idx % self.every_n_batches == 0)
                 and (trainer.current_epoch % self.every_n_epochs == 0)):
-            self.tr_data.append(self.Batch.from_net_out(trainer, batch))
+            self.tr_data.append(Batch.from_net_out(trainer, batch))
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch,
                                 batch_idx, dataloader_idx):
         if (self.ready and (batch_idx % self.every_n_batches == 0)
                 and (trainer.current_epoch % self.every_n_epochs == 0)):
-            self.va_data.append(self.Batch.from_net_out(trainer, batch))
+            self.va_data.append(Batch.from_net_out(trainer, batch))
 
     @staticmethod
     def make_plot(
@@ -234,34 +240,43 @@ class PlotCallback(pl.Callback):
             return arr
 
         # pred and true timeseries
-        grid1 = sns.relplot(kind='line',
-                            estimator=None,
-                            x='t',
-                            y='value',
-                            row='variable',
-                            col='facet',
-                            hue='vital',
-                            data=df,
-                            alpha=0.5,
-                            sort=False,
-                            legend=False,
-                            facet_kws=dict(sharey='col'),
-                            units='pt',
-                            style='is_y',
-                            markers=False,  # ['o', '.', '.'],
-                            style_order=['0_x', '1_y_predeath', '1_y_postdeath'],
-                            linewidth=1,
-                            # ms=1,
+        grid1 = sns.relplot(
+            kind='line',
+            estimator=None,
+            x='t',
+            y='value',
+            row='variable',
+            col='facet',
+            hue='vital',
+            data=df,
+            alpha=0.5,
+            sort=False,
+            legend=False,
+            facet_kws=dict(sharey='col'),
+            units='pt',
+            style='is_y',
+            markers=False,  # ['o', '.', '.'],
+            style_order=['0_x', '1_y_predeath', '1_y_postdeath'],
+            linewidth=1,
+            # ms=1,
         )
         # add green and yellow points
-        for ax, targets in zip(grid1.axes[1, :], facets_to_target_labels.values()):
+        for ax, targets in zip(grid1.axes[1, :],
+                               facets_to_target_labels.values()):
             batch_size = len(ax.lines) // (2 * len(targets))
-            for line in np.take(ax.lines, [i for i in range(len(ax.lines)) if (i // batch_size) % 2 == 0]):
+            for line in np.take(ax.lines, [
+                    i
+                    for i in range(len(ax.lines)) if (i // batch_size) % 2 == 0
+            ]):
                 ax.plot(line.get_xdata()[0], line.get_ydata()[0], 'go', ms=2)
                 ax.plot(line.get_xdata()[-1], line.get_ydata()[-1], 'yo', ms=2)
-        for ax, targets in zip(grid1.axes[0, :], facets_to_target_labels.values()):
+        for ax, targets in zip(grid1.axes[0, :],
+                               facets_to_target_labels.values()):
             batch_size = len(ax.lines) // (2 * len(targets))
-            for line in np.take(ax.lines, [i for i in range(len(ax.lines)) if (i // batch_size) % 2 == 0]):
+            for line in np.take(ax.lines, [
+                    i
+                    for i in range(len(ax.lines)) if (i // batch_size) % 2 == 0
+            ]):
                 ax.plot(line.get_xdata()[0], line.get_ydata()[0], 'go', ms=2)
                 ax.plot(line.get_xdata()[-1], line.get_ydata()[-1], 'yo', ms=2)
         if use_t_mins:
@@ -297,21 +312,16 @@ class PlotCallback(pl.Callback):
         grid2.figure.set_size_inches(width, (width * cur_h / cur_w) * 1.2)
         arr2 = to_array(grid2)
 
-        return (
-            np.vstack((arr1, arr2)),
-            dict(zip(target_labels_to_facets.keys(), errs))
-        )
+        return (np.vstack(
+            (arr1, arr2)), dict(zip(target_labels_to_facets.keys(), errs)))
 
     @staticmethod
     def _flatten(tups: List[Tuple]):
-            # n_batches f b t 1 -> f (n_batches * b) t 1
-            # this is a huge pain with ragged arrays, and unreadable...
-            lsts = zip(*tups)
-            return [
-                [[item for items in batch for item in items]
-                      for batch in zip(*lst)]
-                for lst in lsts
-            ]
+        # n_batches f b t 1 -> f (n_batches * b) t 1
+        # this is a huge pain with ragged arrays, and unreadable...
+        lsts = zip(*tups)
+        return [[[item for items in batch for item in items]
+                 for batch in zip(*lst)] for lst in lsts]
 
     # @rank_zero_only
     def on_train_epoch_end(self, trainer: pl.Trainer,
@@ -319,8 +329,10 @@ class PlotCallback(pl.Callback):
         if self.ready and self.tr_data:
             # predictions = trainer.predict(trainer.model, dataloaders=trainer.datamodule.train_dataloader())
 
-            kwargs = dict(zip(asdict(self.tr_data[0]).keys(),
-                              self._flatten(map(astuple, self.tr_data))))
+            kwargs = dict(
+                zip(
+                    asdict(self.tr_data[0]).keys(),
+                    self._flatten(map(astuple, self.tr_data))))
             arr, errs = self.make_plot(**kwargs, use_t_mins=True)
 
             trainer.logger.experiment.add_image(
@@ -339,8 +351,10 @@ class PlotCallback(pl.Callback):
     def on_validation_epoch_end(self, trainer: pl.Trainer,
                                 pl_module: pl.LightningModule) -> None:
         if self.ready and self.va_data:
-            kwargs = dict(zip(asdict(self.va_data[0]).keys(),
-                              self._flatten(map(astuple, self.va_data))))
+            kwargs = dict(
+                zip(
+                    asdict(self.va_data[0]).keys(),
+                    self._flatten(map(astuple, self.va_data))))
             arr, errs = self.make_plot(**kwargs, use_t_mins=True)
 
             trainer.logger.experiment.add_image(
@@ -410,6 +424,8 @@ class MyLightningCLI(LightningCLI):
 # this was done only for enc-dec arch, related to GoogleStock(start_reverse)?
 # https://gitlab.kitware.com/physiology/engine/-/blob/study/ode/src/python/pulse/study/neural_ode/neural_ode/run_models.py#L263
 from jsonargparse import lazy_instance
+
+
 def trainer_kwargs(load_ckpt=None):
     kl_getter = UpdateKLCoef(1)
     top_va_callback = pl.callbacks.ModelCheckpoint(dirpath='checkpoints',
@@ -420,11 +436,11 @@ def trainer_kwargs(load_ckpt=None):
                                                    monitor='train_loss_epoch')
     plot_callback = PlotCallback(every_n_epochs=20)
     early_stopping_callback = pl.callbacks.EarlyStopping(
-                monitor='train_loss_epoch',
-                # monitor='tr_mse',
-                # monitor='va_mse',
-                mode='min',
-                patience=30)
+        monitor='train_loss_epoch',
+        # monitor='tr_mse',
+        # monitor='va_mse',
+        mode='min',
+        patience=30)
     lr_monitor_callback = pl.callbacks.LearningRateMonitor()
     logger = lazy_instance(
         pl.loggers.TensorBoardLogger,
@@ -452,6 +468,106 @@ def trainer_kwargs(load_ckpt=None):
         gpus=1)
 
 
+class IdMetric(pf.MultiHorizonMetric):
+    """
+    Dummy metric to validate reduction/masking calcs. Always returns 1.
+    """
+
+    def loss(self, y_pred, target):
+        loss = torch.ones_like(target)
+        return loss
+
+
+def scan_metric(trainer,
+                model,
+                dm,
+                xt_starts_mins=[0],
+                xt_ends_mins=np.arange(10, 100, 10),
+                # xt_ends_mins=[10, 20],
+                # metric=pf.MAPE(),
+                metric=IdMetric(reduction='sum'),
+                train=True):
+
+    # ensure metric
+    # TODO skip MAE/MAPE step when y_true == 0
+    # regular `in` check doesn't work here, don't know why
+    if not any(metric.name == m.name for m in model.logging_metrics):
+        model.logging_metrics.append(metric)
+
+    # temporarily disable logging
+    loggers, trainer.loggers = trainer.loggers, []
+    callbacks, trainer.callbacks = trainer.callbacks, []
+
+    # run model and aggregate data
+    dct = collections.defaultdict(list)
+    for xt_start_mins, xt_end_mins in itertools.product(
+            xt_starts_mins, xt_ends_mins):
+
+        dl = dm.train_dataloader(xt_mins=(xt_start_mins, xt_end_mins),
+                                 xt_restrict=True)
+        trainer.test(model, dataloaders=dl)
+        metric_dct = {
+            k.split(' ')[0]: v.item()
+            for k, v in trainer.logged_metrics.items()
+            if metric.name in k.split(' ')[-1]
+        }
+        metric_dct.update(xt_start_mins=xt_start_mins,
+                          xt_end_mins=xt_end_mins,
+                          n_pts=len(dl.dataset))
+        for k, v in metric_dct.items():
+            dct[k].append(v)
+
+        n_timesteps = 0
+        for x, _ in dl:
+            # import xdev; xdev.embed()
+            n_timesteps += x['decoder_lengths'].sum()
+        print(f'{n_timesteps=}')
+
+    # resume logging
+    trainer.loggers = loggers
+    trainer.callbacks = callbacks
+
+    # plot
+    df = pd.DataFrame.from_dict(dct)
+    # df = df.set_index(['xt_start_mins', 'xt_end_mins'])
+    # n_pts = df.pop('n_pts')
+    # for trg_name, series in df.iteritems():
+    # pass
+    data = df.melt(id_vars=['xt_start_mins', 'xt_end_mins', 'n_pts'])
+    grid = sns.relplot(
+        kind='line',
+        estimator=None,
+        data=data,
+        x='xt_end_mins',
+        y='value',
+        col='xt_start_mins',
+        hue='variable',
+        alpha=1,
+        sort=False,
+        legend=True,
+        facet_kws=dict(),
+        # units='pt',  # should use estimator if this is available
+        markers=True,  # ['o', '.', '.'],
+        linewidth=2,
+        # ms=1,
+    )
+
+    # https://stackoverflow.com/a/65799913
+    def twin_lineplot(x, y, **kwargs):
+        ax = plt.twinx()
+        sns.lineplot(x=x, y=y, **kwargs)
+
+    grid.map(twin_lineplot,
+             'xt_end_mins',
+             'n_pts',
+             ls='--',
+             color='k',
+             markers=True,
+             legend=False,
+            )
+    import xdev; xdev.embed()
+
+
 if __name__ == "__main__":
 
     torch.set_default_dtype(torch.float32)
@@ -461,36 +577,36 @@ if __name__ == "__main__":
 
     # model = pf.DeepAR.from_dataset(dm.dset_tr, learning_rate=1e-4)
 
-    cli = MyLightningCLI(
-        model_class=utils.PFMixin,
-        datamodule_class=utils.BaseData,
-        trainer_defaults=trainer_kwargs(),
-        seed_everything_default=47,
-        run=False,
-        subclass_mode_model=True,
-        subclass_mode_data=True,
-        auto_registry=False)
+    cli = MyLightningCLI(model_class=utils.PFMixin,
+                         datamodule_class=utils.BaseData,
+                         trainer_defaults=trainer_kwargs(),
+                         seed_everything_default=47,
+                         run=False,
+                         subclass_mode_model=True,
+                         subclass_mode_data=True,
+                         auto_registry=False)
 
     print('reloading model')
-    cli.model = cli.model.from_datamodule(cli.datamodule,
-                                          **cli.model.hparams)
+    cli.model = cli.model.from_datamodule(cli.datamodule, **cli.model.hparams)
     # would need this if optimizer or lr scheduler is set through cli
     # cli._add_configure_optimizers_method_to_model(None)
 
     if cli.trainer.overfit_batches:
-        cli.datamodule.shuffle = False   # HACK
+        cli.datamodule.shuffle = False  # HACK
         # TODO change lr scheduler from val_loss to train_loss_epoch here
 
     # pretty log name for tensorboard
     # to set manually:
-        # --trainer.logger TensorBoardLogger
-        # --trainer.logger.save_dir lightning_logs
-        # --trainer.logger.name xxxx
+    # --trainer.logger TensorBoardLogger
+    # --trainer.logger.save_dir lightning_logs
+    # --trainer.logger.name xxxx
     # https://jsonargparse.readthedocs.io/en/stable/index.html#default-values
-    if cli.config.trainer.logger.init_args.name is None:
+    if (cli.trainer.logger
+            and (cli.config.trainer.logger.init_args.name is None)):
         dset_names = {
             '/data/pulse/hemorrhage/hemorrhage': 'orig',
-            '/data/pulse/hemorrhage/patient_variability/hemorrhage/test': 'mild'
+            '/data/pulse/hemorrhage/patient_variability/hemorrhage/test':
+            'mild'
         }
         b = cli.datamodule.batch_size
         s = cli.datamodule.stride
@@ -503,9 +619,9 @@ if __name__ == "__main__":
         new_name = '_'.join((
             type(cli.model).__name__,
             dset_names[str(cli.datamodule.root_path)],
-            f'b{b}'    # batches
-            f'p{p}'    # patients
-            f's{s}'    # stride
+            f'b{b}'  # batches
+            f'p{p}'  # patients
+            f's{s}'  # stride
             f'st{st}'  # static behavior ignore, propagate, augment
         ))
         kwargs = dict(cli.config.trainer.logger.init_args)
@@ -523,4 +639,5 @@ if __name__ == "__main__":
     # save_hparams_to_yaml('cli_dm.yaml', cli.datamodule.hparams)
 
     # # fit == train + validate
-    cli.trainer.fit(cli.model, datamodule=cli.datamodule)
+    # cli.trainer.fit(cli.model, datamodule=cli.datamodule)
+    scan_metric(cli.trainer, cli.model, cli.datamodule)
