@@ -7,6 +7,7 @@ class Logger;
 class SEScalarTime;
 class log_lib; // Encapsulates 3rd party logging library
 #include <sstream>
+#include <mutex>
 
 namespace pulse { namespace cdm
 {
@@ -125,6 +126,7 @@ protected:
   std::vector<LoggerForward*>   m_Forwards;
   const SEScalarTime*           m_time;
   std::stringstream             m_ss;
+  std::mutex                    m_mutex;
 
 private:
    log_lib*                     _log_lib;

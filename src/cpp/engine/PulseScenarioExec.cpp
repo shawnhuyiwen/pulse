@@ -91,7 +91,7 @@ bool PulseScenarioExec::Execute()
 
     size_t numThreadsToUse;
     if (m_ThreadCount > 0)
-      numThreadsToUse = m_ThreadCount>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
+      numThreadsToUse = static_cast<size_t>(m_ThreadCount)>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
     else if (m_ThreadCount == 0)
       numThreadsToUse = numThreadsSupported;
     else
@@ -139,7 +139,7 @@ bool PulseScenarioExec::Execute()
 
     size_t numThreadsToUse;
     if (m_ThreadCount > 0)
-      numThreadsToUse = m_ThreadCount>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
+      numThreadsToUse = static_cast<size_t>(m_ThreadCount)>numThreadsSupported ? numThreadsSupported : m_ThreadCount;
     else if (m_ThreadCount == 0)
       numThreadsToUse = numThreadsSupported;
     else
@@ -151,21 +151,29 @@ bool PulseScenarioExec::Execute()
 
     ThreadPool pool(numThreadsToUse);
     std::vector<std::future<bool>> futures;
-    for (auto& filename : logs)
+    std::vector<PulseScenarioExec*> opts;
+    for (auto filename : logs)
     {
-      PulseScenarioExec* opts = new PulseScenarioExec(GetLogger());
-      opts->Copy(*this);
-      opts->m_ScenarioLogFilename = filename;
-      futures.emplace_back(pool.enqueue(ExecuteOpts, opts, nullptr));
+      opts.emplace_back(new PulseScenarioExec(GetLogger()));
+      opts.back()->Copy(*this);
+      opts.back()->m_ScenarioLogFilename = filename;
+      futures.emplace_back(pool.enqueue(ExecuteOpts, opts.back(), nullptr));
     }
 
-    for (auto& future : futures)
+    bool success = true;
+    for (size_t i = 0; i < futures.size(); ++i)
     {
-      if (!future.get())
-        return false;
+      if (!futures[i].get())
+      {
+        Error("Failed to convert " + opts[i]->m_ScenarioLogFilename);
+        success = false;
+      }
     }
 
-    return true;
+    for ( PulseScenarioExec* o: opts)
+      delete o;
+
+    return success;
   }
 
   Error("No scenario content/log provided");

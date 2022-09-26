@@ -29,8 +29,8 @@ public:
 protected:
   void DetectEOL(const std::string& content);
   bool Extract(const std::string& filename);
-  bool ExtractTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs);
-  bool ExtractTagStrings(const std::string& tag, const std::string& content, std::map<double, std::vector<std::string>>& tagStrs);
+  bool ExtractTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs, bool braces=true);
+  bool ExtractTagStrings(const std::string& tag, const std::string& content, std::map<double, std::vector<std::string>>& tagStrs, bool braces=true);
   bool GetActions(const std::string& content);
   bool GetConditions(const std::string& content);
   bool GetFinalSimTime(const std::string& content);

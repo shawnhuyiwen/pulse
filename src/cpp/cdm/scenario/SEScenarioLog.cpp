@@ -5,6 +5,7 @@
 #include "cdm/scenario/SEScenarioLog.h"
 #include "cdm/scenario/SEScenario.h"
 #include "cdm/engine/SEAdvanceTime.h"
+#include "cdm/engine/SECondition.h"
 #include "cdm/engine/SEConditionManager.h"
 #include "cdm/engine/SEPatientConfiguration.h"
 #include "cdm/patient/SEPatient.h"
@@ -44,6 +45,7 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
     return false;
   }
 
+  bool err = false;
   dst.Clear();
   dst.SetName(logFilename);
   dst.SetDescription("Converted from log file : " + logFilename);
@@ -52,7 +54,18 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
     dst.GetPatientConfiguration().GetPatient().SerializeFromString(m_Patient, eSerializationFormat::TEXT);
     for (std::string condition : m_Conditions)
     {
-      Error("TODO: Support Conditions");
+      SECondition* c = SECondition::SerializeFromString(condition, eSerializationFormat::TEXT, dst.GetSubstanceManager());
+      if (c == nullptr)
+      {
+        dst.Error("Unable to serialize condition : " + condition);
+        err = true;
+      }
+      else
+      {
+        if(!dst.GetPatientConfiguration().GetConditions().Copy(*c, dst.GetSubstanceManager()))
+          err = true;
+      }
+      delete c;
     }
   }
   else if (!m_StateFilename.empty())
@@ -68,12 +81,13 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
   {
     // TODO
     Error("Inline state information not yet supported");
+    err = true;
   }
   else
   {
     Warning("Unable to find a starting patient or state file in log.");
-    Warning("Setting scenario to use the Standard Male");
-    dst.GetPatientConfiguration().SetPatientFile("./patients/StandardMale.json");
+    Info("To define a patient, you can add this line \"PatientConfiguration\": { \"PatientFile\": \"StandardMale.json\" }, after the Description");
+    err = true;
   }
 
   double time_s = 0;
@@ -92,7 +106,10 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
     {
       SEAction* a = SEAction::SerializeFromString(s, eSerializationFormat::TEXT, dst.GetSubstanceManager());
       if (a == nullptr)
+      {
         dst.Error("Unable to serialize action : " + s);
+        err = true;
+      }
       else
         dst.AddAction(*a);
       delete a;
@@ -110,11 +127,14 @@ bool SEScenarioLog::Convert(const std::string& logFilename, SEScenario& dst)
   {
     SEAdvanceTime adv;
     double additionalTime_s = m_AdditionalTime.GetValue(TimeUnit::s);
-    adv.GetTime().SetValue(additionalTime_s, TimeUnit::s);
-    time_s += additionalTime_s;
-    dst.AddAction(adv);
+    if (additionalTime_s > 0)
+    {
+      adv.GetTime().SetValue(additionalTime_s, TimeUnit::s);
+      time_s += additionalTime_s;
+      dst.AddAction(adv);
+    }
   }
-  return true;
+  return !err;
 }
 
 void SEScenarioLog::AbsentAdditionalTime(const SEScalarTime& time)
@@ -128,7 +148,7 @@ bool SEScenarioLog::Extract(const std::string& filename)
   std::string content;
   if (!ReadFile(filename, content))
   {
-    Error("Failed to read file: " + filename);
+    Error("Failed to read file : " + filename);
     return false;
   }
 
@@ -209,7 +229,7 @@ void SEScenarioLog::DetectEOL(const std::string& content)
   }
 }
 
-bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs)
+bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::vector<std::string>& tagStrs, bool braces)
 {
   std::string tagPattern = R"(\[)" + tag + R"(\][ \t]*(?:\d*\.?\d*\(.*\),)?[ \t]*([^\{\n\r]*(\{?)))";
   std::string text = content;
@@ -217,7 +237,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
   // Capture groups:
   //  0: Whole match
   //  1: Remainder of line after tag
-  //  2: Open bracket if it exists
+  //  2: Open brace if it exists
   std::smatch mTagBegin; 
   std::regex rTagBegin(tagPattern);
   while (std::regex_search(text, mTagBegin, rTagBegin))
@@ -226,9 +246,14 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
 
     // Locate end of tag string
     size_t endIdx = 0;
-    if(mTagBegin[2].compare("{") == 0 && !IdentifyTagStringEnd(mTagBegin.suffix().str(), endIdx))
+    if (braces && mTagBegin[2].compare("{") != 0)
     {
-      Error("Unable to identify tag string terminator: " + std::string(mTagBegin[0]));
+      Error("Is this a legacy log? Unable to identify opening brace : " + std::string(mTagBegin[0]));
+      return false;
+    }
+    else if (braces && !IdentifyTagStringEnd(mTagBegin.suffix().str(), endIdx))
+    {
+      Error("Unable to identify tag string terminator : " + std::string(mTagBegin[0]));
       return false;
     }
     tagStr = text.substr(mTagBegin.position(1), mTagBegin.length(1) + endIdx);
@@ -240,7 +265,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
   return true;
 }
 
-bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::map<double, std::vector<std::string>>& tagStrs)
+bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string& content, std::map<double, std::vector<std::string>>& tagStrs, bool braces)
 {
   std::string tagPattern = R"((\[\d*\.?\d*\(.*\)\])\s*\[)" + tag + R"(\][ \t]*(?:\d*\.?\d*\(.*\),)?[ \t]*([^\{\n\r]*(\{?)))";
   std::string text = content;
@@ -249,7 +274,7 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
   //  0: Whole match
   //  1: [Time(unit)]
   //  2: Remainder of line after tag
-  //  3: Open bracket if it exists
+  //  3: Open brace if it exists
   std::smatch mTagBegin; 
   std::regex rTagBegin(tagPattern);
   while (std::regex_search(text, mTagBegin, rTagBegin))
@@ -262,9 +287,14 @@ bool SEScenarioLog::ExtractTagStrings(const std::string& tag, const std::string&
 
     // Locate end of tag string
     size_t endIdx = 0;
-    if(mTagBegin[3].compare("{") == 0 && !IdentifyTagStringEnd(mTagBegin.suffix().str(), endIdx))
+    if (braces && mTagBegin[3].compare("{") != 0)
     {
-      Error("Unable to identify tag string terminator: " + std::string(mTagBegin[0]));
+      Error("Is this a legacy log? Unable to identify opening brace : " + std::string(mTagBegin[0]));
+      return false;
+    }
+    else if (braces && !IdentifyTagStringEnd(mTagBegin.suffix().str(), endIdx))
+    {
+      Error("Unable to identify tag string terminator : " + std::string(mTagBegin[0]));
       return false;
     }
     tagStr = text.substr(mTagBegin.position(2), mTagBegin.length(2) + endIdx);
@@ -289,12 +319,8 @@ bool SEScenarioLog::IdentifyTagStringEnd(const std::string& content, size_t& end
     endIdx = mTagEnd.position(0) + 1;
     return true;
   }
-  else // Failed to find terminating bracket
-  {
-    return false;
-  }
-
-  return true;
+  // Failed to find terminating brace
+  return false;
 }
 
 bool SEScenarioLog::ParseTime(const std::string& timeStr, double& time_s)
@@ -324,10 +350,7 @@ bool SEScenarioLog::ParseTime(const std::string& timeStr, double& time_s)
 bool SEScenarioLog::GetActions(const std::string& content)
 {
   if (!ExtractTagStrings("Action", content, m_Actions))
-  {
-    Error("Unable to identify action strings");
     return false;
-  }
 
   return true;
 }
@@ -335,10 +358,7 @@ bool SEScenarioLog::GetActions(const std::string& content)
 bool SEScenarioLog::GetConditions(const std::string& content)
 {
   if (!ExtractTagStrings("Condition", content, m_Conditions))
-  {
-    Error("Unable to identify condition strings");
     return false;
-  }
 
   return true;
 }
@@ -346,10 +366,9 @@ bool SEScenarioLog::GetConditions(const std::string& content)
 bool SEScenarioLog::GetFinalSimTime(const std::string& content)
 {
   std::vector<std::string> finalSimTimeStrs;
-  if (!ExtractTagStrings("Final SimTime", content, finalSimTimeStrs))
+  if (!ExtractTagStrings("Final SimTime", content, finalSimTimeStrs, false))
   {
     m_FinalSimTime_s = 0;
-    Error("Unable to identify Final SimTime string");
     return false;
   }
 
@@ -374,7 +393,7 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   // Capture groups:
   //  0: Whole match
   //  1: Remainder of line, left trimmed (name info)
-  std::string patientPattern = R"(\[Patient\]\s*([^\n\r]*))";
+  std::string patientPattern = R"(\[Patient\][ \t]*([^\n\r]*))";
   std::smatch mPatient; 
   std::regex rPatient(patientPattern);
   std::string text = content;
@@ -385,10 +404,20 @@ bool SEScenarioLog::GetPatient(const std::string& content)
   }
 
   // Locate end of patient info
+  // Capture groups:
+  //  0: Whole match
+  //  1: Opening bracket '[' indicating end
   size_t endIdx;
-  if(!IdentifyTagStringEnd(mPatient.suffix().str(), endIdx))
+  std::smatch mTagEnd;
+  std::regex rTagEnd(R"([^\[]*(\[))");
+  std::string remainingText = mPatient.suffix().str();
+  if (std::regex_search(remainingText, mTagEnd, rTagEnd))
   {
-    Error("Unable to identify tag string terminator: " + std::string(mPatient[0]));
+    endIdx = mTagEnd.position(1);
+  }
+  else // Failed to find end of patient string
+  {
+    Error("Unable to identify patient string terminator : " + std::string(mPatient[0]));
     return false;
   }
   m_Patient = text.substr(mPatient.position(1), mPatient.length(1) + endIdx);
@@ -399,11 +428,8 @@ bool SEScenarioLog::GetPatient(const std::string& content)
 bool SEScenarioLog::GetSerializeFromFile(const std::string& content)
 {
   std::vector<std::string> serializeFromFileStrs;
-  if (!ExtractTagStrings("SerializingFromFile", content, serializeFromFileStrs))
-  {
-    Error("Unable to identify SerializingFromFile strings");
+  if (!ExtractTagStrings("SerializingFromFile", content, serializeFromFileStrs, false))
     return false;
-  }
 
   if (serializeFromFileStrs.size() > 0)
   {
@@ -418,11 +444,8 @@ bool SEScenarioLog::GetSerializeFromFile(const std::string& content)
 bool SEScenarioLog::GetSerializeFromString(const std::string& content)
 {
   std::vector<std::string> serializeFromStringStrs;
-  if (!ExtractTagStrings("SerializingFromString", content, serializeFromStringStrs))
-  {
-    Error("Unable to identify SerializingFromString strings");
+  if (!ExtractTagStrings("SerializingFromString", content, serializeFromStringStrs, false))
     return false;
-  }
 
   if (serializeFromStringStrs.size() > 0)
   {

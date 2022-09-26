@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
       ////////////////////
 
       //hawbTest.ReadScenarios(hawbDir);
-      hawbTest.ReuseEngine(hawbDir);
+      //hawbTest.ReuseEngine(hawbDir);
 
       //hawbTest.CardiovascularCircuitAndTransportTest(hawbDir);
       //hawbTest.CardiovascularAndRenalCircuitAndTransportTest(hawbDir);
@@ -140,6 +140,7 @@ int main(int argc, char* argv[])
       // I/O Tests
       //cdmTest.ReadPatientDirectory(cdmDir);
       //cdmTest.ReadSubstanceDirectory(cdmDir);
+      cdmTest.ConvertScenarioLogs(cdmDir);
 
       // Property Tests
       //cdmTest.ScalarTest(cdmDir);
