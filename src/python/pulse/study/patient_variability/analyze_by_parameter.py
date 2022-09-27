@@ -164,7 +164,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
             left, right = plt.xlim()
             plt.hlines(standardMaleValues[idx], xmin=left, xmax=right, color='blue', linestyles='--')
             plt.hlines(standardFemaleValues[idx], xmin=left, xmax=right, color='r', linestyles='--')
-            plt.ylim([0, 1])
+            plt.ylim([0.0, 1.01])
             plt.title(system + " Pass Rate Per Parameter")
             plt.tight_layout()
             #plt.show()
@@ -217,7 +217,6 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
                 showlegend=True
             )
         )
-
         pyo.plot(fig)
 
     def numPatients(self, results):
@@ -304,9 +303,9 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
                 continue
             print("Examining system "+system)
             for property,property_error in properties.items():
-                numPass = 0
-                numFail = 0
                 for idx, error in enumerate(property_error.errors):
+                    numPass = 0
+                    numFail = 0
                     if abs(error) > passError:
                         numFail = 1
                     else:
@@ -342,7 +341,17 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
             if newCategory:
                 # New, so add
                 endCategories.append(startCategory)
-        return endCategories
+        finalCategories = []
+        for endCategory in endCategories:
+            duplicate = False
+            for finalCategory in finalCategories:
+                if endCategory == finalCategory:
+                    duplicate = True
+                    break
+            if not duplicate:
+                finalCategories.append(endCategory)
+
+        return finalCategories
 
 
 if __name__ == '__main__':
