@@ -116,12 +116,36 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         analysis.createBoxPlots()
 
     def createBoxPlots(self):
-        for system in analysis.systems:
+        # Standard male
+        results = analysis.standardQuery(PatientData.eSex.Male)
+        numStandardMalePatients = analysis.numPatients(results)
+        print("Standard male patients: " + str(numStandardMalePatients))
+        standardMaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
+
+        #Standard female
+        results = analysis.standardQuery(PatientData.eSex.Female)
+        numStandardFemalePatients = analysis.numPatients(results)
+        print("Standard female patients: " + str(numStandardFemalePatients))
+        standardFemaleValues = analysis.calculateSystemPassRate(results, analysis.passError, analysis.systems)
+
+        for idx, system in enumerate(analysis.systems):
             plotData = {}
             for field in fields:
                 results = analysis.singleParameterQuery(PatientData.eSex.Male, field)
-                values = analysis.calculateParameterPassRate(results, analysis.passError, system)
-                plotData.update({field: values})
+                maleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
+                results = analysis.singleParameterQuery(PatientData.eSex.Female, field)
+                femaleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
+                # Clean up the category names for the plot
+                strField = str(field).replace("Field.", "")
+                strField = strField.split("_", 1)[0]
+                strField = strField.replace("BodyMassIndex", "BMI")
+                strField = strField.replace("BodyFatFraction", "FF")
+                strField = strField.replace("HeartRateBaseline", "HR")
+                strField = strField.replace("MeanArterialPressureBaseline", "MAP")
+                strField = strField.replace("PulsePressureBaseline", "PP")
+                strField = strField.replace("RespirationRateBaseline", "RR")
+                plotData.update({strField: maleValues + femaleValues})
+                print("Patients evaluated: " + str(len(maleValues + femaleValues)))
 
             # Add NaNs to make data size the same, so pandas doesn't complain
             dataLength = 0
@@ -136,12 +160,16 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
                     plotData.update({key: value})
 
             df = pd.DataFrame(plotData)
-            df.boxplot(grid=False, rot=18, fontsize=15)
-            reference = [0.2, 0.5]
+            df.boxplot(grid=True, rot=0)
             left, right = plt.xlim()
-            plt.hlines(reference, xmin=left, xmax=right, color='r', linestyles='--')
-            plt.subplots_adjust(bottom=0.20)
-            plt.show()
+            plt.hlines(standardMaleValues[idx], xmin=left, xmax=right, color='blue', linestyles='--')
+            plt.hlines(standardFemaleValues[idx], xmin=left, xmax=right, color='r', linestyles='--')
+            plt.ylim([0, 1])
+            plt.title(system + " Pass Rate Per Parameter")
+            plt.tight_layout()
+            #plt.show()
+            plt.savefig(system + ".png")
+            plt.clf()
 
     def createRadarCharts(self):
         # Standard male
