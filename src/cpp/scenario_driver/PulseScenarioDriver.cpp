@@ -31,6 +31,12 @@ int main(int argc, char* argv[])
       eModelType_ValueOf(argv[2], t);
   }
 
+  std::string outputDir = "./test_results/converted_scenarios";
+  if (argc >= 4 && convertLogs)
+  {
+    outputDir = argv[3];
+  }
+
   if (t == (eModelType)-1)
     t = eModelType::HumanAdultWholeBody;
 
@@ -51,7 +57,11 @@ int main(int argc, char* argv[])
     opts.LogToConsole(eSwitch::Off);
 
     if (convertLogs)
+    {
+      opts.OrganizeOutputDirectory(eSwitch::On);
+      opts.SetOutputRootDirectory(outputDir);
       opts.SetScenarioLogDirectory(input);
+    }
     else
       opts.SetScenarioDirectory(input);
   }
