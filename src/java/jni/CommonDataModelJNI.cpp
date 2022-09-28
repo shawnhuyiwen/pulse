@@ -11,14 +11,13 @@
 extern "C"
 JNIEXPORT void JNICALL Java_com_kitware_pulse_utilities_jniBridge_nativeInitialize(JNIEnv *env, jobject obj)
 {
-  Logger::Initialize();
+  
 }
 
 extern "C"
 JNIEXPORT void JNICALL Java_com_kitware_pulse_utilities_jniBridge_nativeDeinitialize(JNIEnv *env, jobject obj)
 {
   CUnitConversionEngine::DestroyEngine();
-  Logger::Deinitialize();// Free up logger before the DllMain quits so we can stop threads on windows
 }
 
 extern "C"

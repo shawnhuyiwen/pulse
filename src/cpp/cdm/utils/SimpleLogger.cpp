@@ -6,8 +6,6 @@
 #include "cdm/utils/FileUtils.h"
 #include "cdm/properties/SEScalarTime.h"
 
-const std::string Loggable::empty("");
-
 class log_lib
 {
 public:
@@ -21,12 +19,13 @@ public:
       _file.close();
   }
 
-  bool log(Logger::Level requested_level)
+  bool log(Logger::Level requested_level) const
   {
     return requested_level >= _log_level;
   }
   void log(Logger::Level requested_level, const std::string& out)
   {
+    std::scoped_lock lock(_mutex);
     if (!_log_to_console && !_log_to_file)
       return;
     if (_last_requested_level != requested_level)
@@ -64,10 +63,8 @@ public:
   Logger::Level _last_requested_level = Logger::Level::Info;
 
   std::ofstream _file;
+  std::mutex    _mutex;
 };
-
-void Logger::Initialize() {}
-void Logger::Deinitialize() {}
 
 //logger constructor
 Logger::Logger(const std::string& logFilename)
@@ -79,7 +76,6 @@ Logger::Logger(const std::string& logFilename)
 
 void Logger::LogToConsole(bool b)
 {
-  std::scoped_lock lock(m_mutex);
   _log_lib->_log_to_console = b;
 }
 
@@ -90,7 +86,6 @@ bool Logger::IsLoggingToConsole()
 
 void Logger::SetLogFile(const std::string& logFilename)
 {
-  std::scoped_lock lock(m_mutex);
   if (logFilename.empty())
   {
     _log_lib->_log_to_file = false;
@@ -111,14 +106,12 @@ Logger::~Logger()
 
 void Logger::SetLogTime(const SEScalarTime* time)
 {
-  std::scoped_lock lock(m_mutex);
   m_time = time;
 }
 
 //This function will change the priority of the logger
 void Logger::SetLogLevel(Logger::Level l)
 {
-  std::scoped_lock lock(m_mutex);
   _log_lib->_log_level = l;
 }
 
@@ -134,14 +127,12 @@ bool Logger::HasForward() const
 }
 void Logger::AddForward(LoggerForward* forward)
 {
-  std::scoped_lock lock(m_mutex);
   if (forward != nullptr && std::find(m_Forwards.begin(), m_Forwards.end(), forward) == m_Forwards.end())
     m_Forwards.push_back(forward);
 }
 
 void Logger::RemoveForward(LoggerForward* forward)
 {
-  std::scoped_lock lock(m_mutex);
   auto idx = std::find(m_Forwards.begin(), m_Forwards.end(), forward);
   if (idx != m_Forwards.end())
     m_Forwards.erase(idx);
@@ -149,31 +140,31 @@ void Logger::RemoveForward(LoggerForward* forward)
 
 void Logger::RemoveForwards()
 {
-  std::scoped_lock lock(m_mutex);
   m_Forwards.clear();
 }
 
 std::string Logger::FormatLogMessage(const std::string& msg, const std::string& origin)
 {
-  m_ss.str("");
-  m_ss.clear();
+  std::string out = "";
   if (m_time != nullptr && m_time->IsValid())
-    m_ss << "[" << *m_time << "] " << msg;
-  else
-    m_ss << msg;
-  if (msg.empty())
-    return origin;
-  return origin + " : " + m_ss.str();
+    out += "[" + m_time->ToString() + "] ";
+
+  if(!origin.empty())
+    out += origin + " : ";
+
+  if (!msg.empty())
+    out += msg;
+
+  return out;
 }
 
 void Logger::Debug(std::string const& msg, const std::string& origin)
 {
-  std::scoped_lock lock(m_mutex);
   if (_log_lib->log(Level::Debug))
   {
     _log_lib->log(Level::Debug, FormatLogMessage(msg, origin));
     for (auto fwd : m_Forwards)
-      fwd->ForwardDebug(m_ss.str().c_str(), origin.c_str());
+      fwd->ForwardDebug(msg, origin);
   }
 }
 
@@ -192,12 +183,11 @@ void Logger::Debug(std::ostream& msg, const std::string& origin)
 
 void Logger::Info(const std::string& msg, const std::string& origin)
 {
-  std::scoped_lock lock(m_mutex);
   if (_log_lib->log(Level::Info))
   {
     _log_lib->log(Level::Info, FormatLogMessage(msg, origin));
     for (auto fwd : m_Forwards)
-      fwd->ForwardInfo(m_ss.str().c_str(), origin.c_str());
+      fwd->ForwardInfo(msg, origin);
   }
 }
 
@@ -222,12 +212,11 @@ void Logger::Info(std::ostream& msg, const std::string& origin)
 
 void Logger::Warning(const std::string& msg, const std::string& origin)
 {
-  std::scoped_lock lock(m_mutex);
   if (_log_lib->log(Level::Warn))
   {
     _log_lib->log(Level::Warn, FormatLogMessage(msg, origin));
     for (auto fwd : m_Forwards)
-      fwd->ForwardWarning(m_ss.str().c_str(), origin.c_str());
+      fwd->ForwardWarning(msg, origin);
   }
 }
 void Logger::Warning(std::stringstream& msg, const std::string& origin)
@@ -245,12 +234,11 @@ void Logger::Warning(std::ostream& msg, const std::string& origin)
 
 void Logger::Error(const std::string& msg, const std::string& origin)
 {
-  std::scoped_lock lock(m_mutex);
   if (_log_lib->log(Level::Error))
   {
     _log_lib->log(Level::Error, FormatLogMessage(msg, origin));
     for (auto fwd : m_Forwards)
-      fwd->ForwardError(m_ss.str().c_str(), origin.c_str());
+      fwd->ForwardError(msg, origin);
   }
 }
 void Logger::Error(std::stringstream& msg, const std::string& origin)
@@ -268,7 +256,6 @@ void Logger::Error(std::ostream& msg, const std::string& origin)
 
 void Logger::Fatal(const std::string& msg, const std::string& origin)
 {
-  std::scoped_lock lock(m_mutex);
   if (_log_lib->log(Level::Fatal))
   {
     _log_lib->log(Level::Fatal, FormatLogMessage(msg, origin));
@@ -276,7 +263,7 @@ void Logger::Fatal(const std::string& msg, const std::string& origin)
     // And that will kick out an exception and halt the engine, so let's let
     // the other forwards process this fatal first, before we halt the engine
     for (auto fwd = m_Forwards.rbegin(); fwd != m_Forwards.rend(); ++fwd)
-      (*fwd)->ForwardFatal(m_ss.str().c_str(), origin.c_str());
+      (*fwd)->ForwardFatal(msg, origin);
   }
 }
 void Logger::Fatal(std::stringstream& msg, const std::string& origin)
