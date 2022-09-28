@@ -596,8 +596,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.CompressionPeriod, dst.GetCompressionPeriod());
       if (src.Force != null)
         PBProperty.Load(src.Force, dst.GetForce());
-      if (src.ForceScale != null)
-        PBProperty.Load(src.ForceScale, dst.GetForceScale());
+      if (src.Depth != null)
+        PBProperty.Load(src.Depth, dst.GetDepth());
     }
     public static pulse.cdm.bind.ChestCompressionData Unload(SEChestCompression src)
     {
@@ -613,8 +613,8 @@ namespace Pulse.CDM
         dst.CompressionPeriod = PBProperty.Unload(src.GetCompressionPeriod());
       if (src.HasForce())
         dst.Force = PBProperty.Unload(src.GetForce());
-      if (src.HasForceScale())
-        dst.ForceScale = PBProperty.Unload(src.GetForceScale());
+      if (src.HasDepth())
+        dst.Depth = PBProperty.Unload(src.GetDepth());
     }
     #endregion
 
@@ -633,8 +633,8 @@ namespace Pulse.CDM
         PBProperty.Load(src.CompressionFrequency, dst.GetCompressionFrequency());
       if (src.Force != null)
         PBProperty.Load(src.Force, dst.GetForce());
-      if (src.ForceScale != null)
-        PBProperty.Load(src.ForceScale, dst.GetForceScale());
+      if (src.Depth != null)
+        PBProperty.Load(src.Depth, dst.GetDepth());
     }
     public static pulse.cdm.bind.ChestCompressionAutomatedData Unload(SEChestCompressionAutomated src)
     {
@@ -652,8 +652,8 @@ namespace Pulse.CDM
         dst.CompressionFrequency = PBProperty.Unload(src.GetCompressionFrequency());
       if (src.HasForce())
         dst.Force = PBProperty.Unload(src.GetForce());
-      if (src.HasForceScale())
-        dst.ForceScale = PBProperty.Unload(src.GetForceScale());
+      if (src.HasDepth())
+        dst.Depth = PBProperty.Unload(src.GetDepth());
     }
     #endregion
 
@@ -668,8 +668,8 @@ namespace Pulse.CDM
         Serialize(src.PatientAction, dst);
       if (src.Force != null)
         PBProperty.Load(src.Force, dst.GetForce());
-      if (src.ForceScale != null)
-        PBProperty.Load(src.ForceScale, dst.GetForceScale());
+      if (src.Depth != null)
+        PBProperty.Load(src.Depth, dst.GetDepth());
     }
     public static pulse.cdm.bind.ChestCompressionInstantaneousData Unload(SEChestCompressionInstantaneous src)
     {
@@ -683,8 +683,8 @@ namespace Pulse.CDM
       Serialize(src, dst.PatientAction);
       if (src.HasForce())
         dst.Force = PBProperty.Unload(src.GetForce());
-      if (src.HasForceScale())
-        dst.ForceScale = PBProperty.Unload(src.GetForceScale());
+      if (src.HasDepth())
+        dst.Depth = PBProperty.Unload(src.GetDepth());
     }
     #endregion
 

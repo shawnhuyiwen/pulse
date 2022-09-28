@@ -8,14 +8,14 @@ namespace Pulse.CDM
     protected SEScalar0To1          applied_force_fraction;
     protected SEScalarFrequency     compression_frequency;
     protected SEScalarForce         force;
-    protected SEScalar0To1          force_scale;
+    protected SEScalarLength        depth;
 
     public SEChestCompressionAutomated()
     {
       applied_force_fraction = null;
       compression_frequency = null;
       force = null;
-      force_scale = null;
+      depth = null;
     }
 
     public override void Clear()
@@ -23,8 +23,8 @@ namespace Pulse.CDM
       base.Clear();
       if (force != null)
         force.Invalidate();
-      if (force_scale != null)
-        force_scale.Invalidate();
+      if (depth != null)
+        depth.Invalidate();
       if (applied_force_fraction != null)
         applied_force_fraction.Invalidate();
       if (compression_frequency != null)
@@ -33,7 +33,7 @@ namespace Pulse.CDM
 
     public override bool IsValid()
     {
-      return (HasForce() || HasForceScale()) && HasCompressionFrequency();
+      return (HasForce() || HasDepth()) && HasCompressionFrequency();
     }
 
     public bool HasForce()
@@ -47,15 +47,15 @@ namespace Pulse.CDM
       return force;
     }
 
-    public bool HasForceScale()
+    public bool HasDepth()
     {
-      return force_scale == null ? false : force_scale.IsValid();
+      return depth == null ? false : depth.IsValid();
     }
-    public SEScalar0To1 GetForceScale()
+    public SEScalarLength GetDepth()
     {
-      if (force_scale == null)
-        force_scale = new SEScalar0To1();
-      return force_scale;
+      if (depth == null)
+        depth = new SEScalarLength();
+      return depth;
     }
 
     public bool HasAppliedForceFraction()

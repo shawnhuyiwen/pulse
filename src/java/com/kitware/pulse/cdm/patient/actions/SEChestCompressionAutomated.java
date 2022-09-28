@@ -7,6 +7,7 @@ import com.kitware.pulse.cdm.bind.PatientActions.ChestCompressionAutomatedData;
 import com.kitware.pulse.cdm.properties.SEScalarForce;
 import com.kitware.pulse.cdm.properties.SEScalar0To1;
 import com.kitware.pulse.cdm.properties.SEScalarFrequency;
+import com.kitware.pulse.cdm.properties.SEScalarLength;
 
 public class SEChestCompressionAutomated extends SEPatientAction
 {
@@ -15,14 +16,14 @@ public class SEChestCompressionAutomated extends SEPatientAction
   protected SEScalar0To1         appliedForceFraction;
   protected SEScalarFrequency    compressionFrequency;
   protected SEScalarForce        force;
-  protected SEScalar0To1         forceScale;
+  protected SEScalarLength       depth;
 
   public SEChestCompressionAutomated()
   {
     appliedForceFraction = null;
     compressionFrequency = null;
     force = null;
-    forceScale = null;
+    depth = null;
   }
   
   public SEChestCompressionAutomated(SEChestCompressionAutomated other)
@@ -38,10 +39,10 @@ public class SEChestCompressionAutomated extends SEPatientAction
     else if (force != null)
       force.invalidate();
     
-    if (other.forceScale != null)
-      getForceScale().set(other.forceScale);
-    else if (forceScale != null)
-      forceScale.invalidate();
+    if (other.depth != null)
+      getDepth().set(other.depth);
+    else if (depth != null)
+      depth.invalidate();
     
     if (other.appliedForceFraction != null)
       getAppliedForceFraction().set(other.appliedForceFraction);
@@ -60,8 +61,8 @@ public class SEChestCompressionAutomated extends SEPatientAction
     super.clear();
     if (force != null)
       force.invalidate();
-    if (forceScale != null)
-      forceScale.invalidate();
+    if (depth != null)
+      depth.invalidate();
     if (appliedForceFraction != null)
       appliedForceFraction.invalidate();
     if (compressionFrequency != null)
@@ -71,7 +72,7 @@ public class SEChestCompressionAutomated extends SEPatientAction
   @Override
   public boolean isValid()
   {
-    return (hasForce() || hasForceScale()) && hasCompressionFrequency();
+    return (hasForce() || hasDepth()) && hasCompressionFrequency();
   }
   
   public static void load(ChestCompressionAutomatedData src, SEChestCompressionAutomated dst)
@@ -79,8 +80,8 @@ public class SEChestCompressionAutomated extends SEPatientAction
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasForce())
       SEScalarForce.load(src.getForce(),dst.getForce());
-    if(src.hasForceScale())
-      SEScalar0To1.load(src.getForceScale(),dst.getForceScale());
+    if(src.hasDepth())
+      SEScalarLength.load(src.getDepth(),dst.getDepth());
     if(src.hasAppliedForceFraction())
       SEScalar0To1.load(src.getAppliedForceFraction(),dst.getAppliedForceFraction());
     if(src.hasCompressionFrequency())
@@ -99,8 +100,8 @@ public class SEChestCompressionAutomated extends SEPatientAction
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
     if (src.hasForce())
       dst.setForce(SEScalarForce.unload(src.force));
-    if (src.hasForceScale())
-      dst.setForceScale(SEScalar0To1.unload(src.forceScale));
+    if (src.hasDepth())
+      dst.setDepth(SEScalarLength.unload(src.depth));
     if (src.hasAppliedForceFraction())
       dst.setAppliedForceFraction(SEScalar0To1.unload(src.appliedForceFraction));
     if (src.hasCompressionFrequency())
@@ -118,15 +119,15 @@ public class SEChestCompressionAutomated extends SEPatientAction
     return force;
   }
 
-  public boolean hasForceScale()
+  public boolean hasDepth()
   {
-    return forceScale == null ? false : forceScale.isValid();
+    return depth == null ? false : depth.isValid();
   }
-  public SEScalar0To1 getForceScale()
+  public SEScalarLength getDepth()
   {
-    if (forceScale == null)
-      forceScale = new SEScalar0To1();
-    return forceScale;
+    if (depth == null)
+      depth = new SEScalarLength();
+    return depth;
   }
   
   public boolean hasAppliedForceFraction()
@@ -157,7 +158,7 @@ public class SEChestCompressionAutomated extends SEPatientAction
     if (force != null)
       return "Chest Compression" 
           + "\n\tForce: " +(hasForce() ? getForce() : "Not Provided")
-          + "\n\tForceScale: " + (hasForceScale() ? getForceScale() : "Not Provided")
+          + "\n\tDepth: " + (hasDepth() ? getDepth() : "Not Provided")
           + "\n\tAppliedForceFraction: " + (hasAppliedForceFraction() ? getAppliedForceFraction() : "Not Provided")
           + "\n\tCompressionFrequency: " + (hasCompressionFrequency() ? getCompressionFrequency() : "Not Provided");
     else

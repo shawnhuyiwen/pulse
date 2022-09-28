@@ -5,6 +5,7 @@
 #include "cdm/patient/actions/SEChestCompressionAutomated.h"
 #include "cdm/properties/SEScalar0To1.h"
 #include "cdm/properties/SEScalarForce.h"
+#include "cdm/properties/SEScalarLength.h"
 #include "cdm/properties/SEScalarFrequency.h"
 #include "cdm/properties/SEScalarTime.h"
 #include "cdm/io/protobuf/PBPatientActions.h"
@@ -14,7 +15,7 @@ SEChestCompressionAutomated::SEChestCompressionAutomated(Logger* logger) : SEPat
   m_AppliedForceFraction = nullptr;
   m_CompressionFrequency = nullptr;
   m_Force = nullptr;
-  m_ForceScale = nullptr;
+  m_Depth = nullptr;
 }
 
 SEChestCompressionAutomated::~SEChestCompressionAutomated()
@@ -22,7 +23,7 @@ SEChestCompressionAutomated::~SEChestCompressionAutomated()
   SAFE_DELETE(m_AppliedForceFraction);
   SAFE_DELETE(m_CompressionFrequency);
   SAFE_DELETE(m_Force);
-  SAFE_DELETE(m_ForceScale);
+  SAFE_DELETE(m_Depth);
 }
 
 void SEChestCompressionAutomated::Clear()
@@ -31,7 +32,7 @@ void SEChestCompressionAutomated::Clear()
   INVALIDATE_PROPERTY(m_AppliedForceFraction);
   INVALIDATE_PROPERTY(m_CompressionFrequency);
   INVALIDATE_PROPERTY(m_Force);
-  INVALIDATE_PROPERTY(m_ForceScale);
+  INVALIDATE_PROPERTY(m_Depth);
 }
 
 void SEChestCompressionAutomated::Copy(const SEChestCompressionAutomated& src, bool /*preserveState*/)
@@ -43,7 +44,7 @@ void SEChestCompressionAutomated::Copy(const SEChestCompressionAutomated& src, b
 
 bool SEChestCompressionAutomated::IsValid() const
 {
-  return SEPatientAction::IsValid() && (HasForce() || HasForceScale()) && HasCompressionFrequency();
+  return SEPatientAction::IsValid() && (HasForce() || HasDepth()) && HasCompressionFrequency();
 }
 
 bool SEChestCompressionAutomated::IsActive() const
@@ -53,7 +54,7 @@ bool SEChestCompressionAutomated::IsActive() const
   bool hasForceMode = false;
   if (HasForce() && m_Force->IsPositive())
     hasForceMode = true;
-  if (HasForceScale() && m_ForceScale->IsPositive())
+  if (HasDepth() && m_Depth->IsPositive())
     hasForceMode = true;
   if (!hasForceMode)
     return false;
@@ -108,8 +109,8 @@ const SEScalar* SEChestCompressionAutomated::GetScalar(const std::string& name)
     return &GetCompressionFrequency();
   if (name.compare("Force") == 0)
     return &GetForce();
-  if (name.compare("ForceScale") == 0)
-    return &GetForceScale();
+  if (name.compare("Depth") == 0)
+    return &GetDepth();
   return nullptr;
 }
 
@@ -130,20 +131,19 @@ double SEChestCompressionAutomated::GetForce(const ForceUnit& unit) const
   return m_Force->GetValue(unit);
 }
 
-bool SEChestCompressionAutomated::HasForceScale() const
+bool SEChestCompressionAutomated::HasDepth() const
 {
-  return m_ForceScale == nullptr ? false : m_ForceScale->IsValid();
+  return m_Depth == nullptr ? false : m_Depth->IsValid();
 }
-SEScalar0To1& SEChestCompressionAutomated::GetForceScale()
+SEScalarLength& SEChestCompressionAutomated::GetDepth()
 {
-  if (m_ForceScale == nullptr)
-    m_ForceScale = new SEScalar0To1();
-  return *m_ForceScale;
+  if (m_Depth == nullptr)
+    m_Depth = new SEScalarLength();
+  return *m_Depth;
 }
-double SEChestCompressionAutomated::GetForceScale() const
+double SEChestCompressionAutomated::GetDepth(const LengthUnit& unit) const
 {
-  if (m_ForceScale == nullptr)
+  if (m_Depth == nullptr)
     return SEScalar::dNaN();
-  
-  return m_ForceScale->GetValue();
+  return m_Depth->GetValue(unit);
 }

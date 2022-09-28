@@ -134,7 +134,7 @@ message ChestCompressionData
   oneof ForceMode
   {
     ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
-    Scalar0To1Data                          ForceScale                      = 3;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
+    ScalarLengthData                        Depth                           = 3;
   }
 
   ScalarTimeData                            CompressionPeriod               = 4;/**<<@brief The length of time the compression force is to be applied */
@@ -149,7 +149,7 @@ message ChestCompressionAutomatedData
   oneof ForceMode
   {
     ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
-    Scalar0To1Data                          ForceScale                      = 3;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
+    ScalarLengthData                        Depth                           = 3;
   }
 
   ScalarFrequencyData                       CompressionFrequency            = 4;/**<<@brief Compression rate, translates to heart rate. */
@@ -165,7 +165,7 @@ message ChestCompressionInstantaneousData
   oneof ForceMode
   {
     ScalarForceData                         Force                           = 2;/**<<@brief Amount of force applied to the chest*/
-    Scalar0To1Data                          ForceScale                      = 3;/**<<@brief A fractional representation of the maximum force that can be applied to the chest: 0.0 is no force applied, 1.0 is maximum force applied */
+    ScalarLengthData                        Depth                           = 3;
   }
 }
 

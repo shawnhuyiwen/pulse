@@ -1607,8 +1607,9 @@ namespace pulse
       compressionForce_N = 0;
       if (actions.GetChestCompressionInstantaneous().HasForce())
         compressionForce_N = actions.GetChestCompressionInstantaneous().GetForce(ForceUnit::N);
-      else if (actions.GetChestCompressionInstantaneous().HasForceScale())
-        compressionForce_N = actions.GetChestCompressionInstantaneous().GetForceScale().GetValue() * compressionForceMax_N;
+      // TODO: Use depth
+      //else if (actions.GetChestCompressionInstantaneous().HasForceScale())
+      //  compressionForce_N = actions.GetChestCompressionInstantaneous().GetForceScale().GetValue() * compressionForceMax_N;
       if (compressionForce_N == 0)
       {
         actions.RemoveChestCompressionInstantaneous();
@@ -1637,8 +1638,9 @@ namespace pulse
       compressionForce_N = 0;
       if (actions.GetChestCompression().HasForce())
         compressionForce_N = actions.GetChestCompression().GetForce(ForceUnit::N);
-      else if (actions.GetChestCompression().HasForceScale())
-        compressionForce_N = actions.GetChestCompression().GetForceScale().GetValue() * compressionForceMax_N;
+      // TODO: Use depth
+      //else if (actions.GetChestCompression().HasForceScale())
+      //  compressionForce_N = actions.GetChestCompression().GetForceScale().GetValue() * compressionForceMax_N;
       if (compressionForce_N == 0)
       {
         m_CompressionPeriodCurrentTime_s = 0;
@@ -1681,8 +1683,9 @@ namespace pulse
       compressionForce_N = 0.0;
       if (actions.GetChestCompressionAutomated().HasForce())
         compressionForce_N = actions.GetChestCompressionAutomated().GetForce(ForceUnit::N);
-      else if (actions.GetChestCompressionAutomated().HasForceScale())
-        compressionForce_N = actions.GetChestCompressionAutomated().GetForceScale().GetValue() * compressionForceMax_N;
+      // TODO: Use depth
+      //else if (actions.GetChestCompressionAutomated().HasForceScale())
+      //  compressionForce_N = actions.GetChestCompressionAutomated().GetForceScale().GetValue() * compressionForceMax_N;
       else
       {
         m_CompressionFrequencyCurrentTime_s = 0;

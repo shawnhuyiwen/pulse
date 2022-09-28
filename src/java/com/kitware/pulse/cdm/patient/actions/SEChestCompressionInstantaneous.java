@@ -5,19 +5,19 @@ package com.kitware.pulse.cdm.patient.actions;
 
 import com.kitware.pulse.cdm.bind.PatientActions.ChestCompressionInstantaneousData;
 import com.kitware.pulse.cdm.properties.SEScalarForce;
-import com.kitware.pulse.cdm.properties.SEScalar0To1;
+import com.kitware.pulse.cdm.properties.SEScalarLength;
 
 public class SEChestCompressionInstantaneous extends SEPatientAction
 {
   private static final long serialVersionUID = 4548017190134330946L;
   
   protected SEScalarForce    force;
-  protected SEScalar0To1     forceScale;
+  protected SEScalarLength   depth;
   
   public SEChestCompressionInstantaneous()
   {
     force = null;
-    forceScale = null;
+    depth = null;
   }
   
   public SEChestCompressionInstantaneous(SEChestCompressionInstantaneous other)
@@ -33,10 +33,10 @@ public class SEChestCompressionInstantaneous extends SEPatientAction
     else if (force != null)
       force.invalidate();
     
-    if (other.forceScale != null)
-      getForceScale().set(other.forceScale);
-    else if (forceScale != null)
-      forceScale.invalidate();
+    if (other.depth != null)
+      getDepth().set(other.depth);
+    else if (depth != null)
+      depth.invalidate();
   }
   
   @Override
@@ -45,14 +45,14 @@ public class SEChestCompressionInstantaneous extends SEPatientAction
     super.clear();
     if (force != null)
       force.invalidate();
-    if (forceScale != null)
-      forceScale.invalidate();
+    if (depth != null)
+      depth.invalidate();
   }
   
   @Override
   public boolean isValid()
   {
-    return (hasForce() || hasForceScale());
+    return (hasForce() || hasDepth());
   }
   
   public static void load(ChestCompressionInstantaneousData src, SEChestCompressionInstantaneous dst)
@@ -60,8 +60,8 @@ public class SEChestCompressionInstantaneous extends SEPatientAction
     SEPatientAction.load(src.getPatientAction(), dst);
     if(src.hasForce())
       SEScalarForce.load(src.getForce(),dst.getForce());
-    if(src.hasForceScale())
-      SEScalar0To1.load(src.getForceScale(),dst.getForceScale());
+    if(src.hasDepth())
+      SEScalarLength.load(src.getDepth(),dst.getDepth());
   }
   
   public static ChestCompressionInstantaneousData unload(SEChestCompressionInstantaneous src)
@@ -76,8 +76,8 @@ public class SEChestCompressionInstantaneous extends SEPatientAction
     SEPatientAction.unload(src,dst.getPatientActionBuilder());
     if (src.hasForce())
       dst.setForce(SEScalarForce.unload(src.force));
-    if (src.hasForceScale())
-      dst.setForceScale(SEScalar0To1.unload(src.forceScale));
+    if (src.hasDepth())
+      dst.setDepth(SEScalarLength.unload(src.depth));
   }
   
   public boolean hasForce()
@@ -91,15 +91,15 @@ public class SEChestCompressionInstantaneous extends SEPatientAction
     return force;
   }
 
-  public boolean hasForceScale()
+  public boolean hasDepth()
   {
-    return forceScale == null ? false : forceScale.isValid();
+    return depth == null ? false : depth.isValid();
   }
-  public SEScalar0To1 getForceScale()
+  public SEScalarLength getDepth()
   {
-    if (forceScale == null)
-      forceScale = new SEScalar0To1();
-    return forceScale;
+    if (depth == null)
+      depth = new SEScalarLength();
+    return depth;
   }
   
   @Override
@@ -108,7 +108,7 @@ public class SEChestCompressionInstantaneous extends SEPatientAction
     if (force != null)
       return "Chest Compression" 
           + "\n\tForce: " +(hasForce() ? getForce() : "Not Provided")
-          + "\n\tForceScale: " + (hasForceScale() ? getForceScale() : "Not Provided");
+          + "\n\tDepth: " + (hasDepth() ? getDepth() : "Not Provided");
     else
       return "Action not specified properly";
   }

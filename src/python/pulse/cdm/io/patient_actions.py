@@ -105,8 +105,8 @@ def serialize_chest_compression_to_bind(src: SEChestCompression, dst: ChestCompr
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_force():
         serialize_scalar_force_to_bind(src.get_force(), dst.Force)
-    if src.has_force_scale():
-        serialize_scalar_0to1_to_bind(src.get_force_scale(), dst.ForceScale)
+    if src.has_depth():
+        serialize_scalar_length_to_bind(src.get_depth(), dst.Depth)
     if src.has_compression_period():
         serialize_scalar_time_to_bind(src.get_compression_period(), dst.CompressionPeriod)
 
@@ -120,8 +120,8 @@ def serialize_chest_compression_automated_to_bind(src: SEChestCompressionAutomat
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_force():
         serialize_scalar_force_to_bind(src.get_force(), dst.Force)
-    if src.has_force_scale():
-        serialize_scalar_0to1_to_bind(src.get_force_scale(), dst.ForceScale)
+    if src.has_depth():
+        serialize_scalar_length_to_bind(src.get_depth(), dst.Depth)
     if src.has_applied_force_fraction():
         serialize_scalar_0to1_to_bind(src.get_applied_force_fraction(), dst.AppliedForceFraction)
     if src.has_compression_frequency():
@@ -137,8 +137,8 @@ def serialize_chest_compression_instantaneous_to_bind(src: SEChestCompressionIns
     serialize_patient_action_to_bind(src, dst.PatientAction)
     if src.has_force():
         serialize_scalar_force_to_bind(src.get_force(), dst.Force)
-    if src.has_force_scale():
-        serialize_scalar_0to1_to_bind(src.get_force_scale(), dst.ForceScale)
+    if src.has_depth():
+        serialize_scalar_length_to_bind(src.get_depth(), dst.Depth)
 
 def serialize_chest_compression_instantaneous_from_bind(src: ChestCompressionInstantaneousData, dst: SEChestCompressionInstantaneous):
     serialize_patient_action_from_bind(src.PatientAction, dst)
