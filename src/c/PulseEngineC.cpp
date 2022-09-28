@@ -35,7 +35,7 @@ char* c_strdup(const char* s, size_t slen)
 extern "C"
 C_EXPORT void C_CALL PulseInitialize()
 {
-  Logger::Initialize();
+  
 }
 
 extern "C"
@@ -56,7 +56,6 @@ extern "C"
 C_EXPORT void C_CALL PulseDeinitialize()
 {
   CUnitConversionEngine::DestroyEngine();
-  Logger::Deinitialize();// Free up logger before the DllMain quits so we can stop threads on windows
 }
 
 extern "C"
