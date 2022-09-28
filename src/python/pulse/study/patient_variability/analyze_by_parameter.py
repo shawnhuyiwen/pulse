@@ -116,6 +116,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         analysis.createBoxPlots()
 
     def createBoxPlots(self):
+        print(" --------------------- Create box plots ---------------------")
         # Standard male
         results = analysis.standardQuery(PatientData.eSex.Male)
         numStandardMalePatients = analysis.numPatients(results)
@@ -131,6 +132,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         for idx, system in enumerate(analysis.systems):
             plotData = {}
             for field in fields:
+                print("Evaluating " + system + " system with " + str(field))
                 results = analysis.singleParameterQuery(PatientData.eSex.Male, field)
                 maleValues = analysis.calculateParameterPassRate(results, analysis.passError, system)
                 results = analysis.singleParameterQuery(PatientData.eSex.Female, field)
@@ -172,6 +174,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
             plt.clf()
 
     def createRadarCharts(self):
+        print(" --------------------- Create radar chart ---------------------")
         # Standard male
         results = analysis.standardQuery(PatientData.eSex.Male)
         numStandardMalePatients = analysis.numPatients(results)
