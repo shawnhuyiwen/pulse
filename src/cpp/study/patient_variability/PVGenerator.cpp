@@ -90,12 +90,32 @@ namespace pulse::study::patient_variability
 
     if (t == eSetType::Both || t == eSetType::Slice)
     {
+      // Explicitly setting these:
+      // We are using different parameter combinations than whats in json
+      // The units we use in analysis are also different
+      // And those tools are not unit converting
+
       SEPatient standardMale(GetLogger());
-      standardMale.SerializeFromFile("./patients/StandardMale.json");
+      standardMale.GetAge().SetValue(44, TimeUnit::yr);
+      standardMale.GetHeight().SetValue(180.34, LengthUnit::cm);
+      standardMale.GetBodyMassIndex().SetValue(23.71);
+      standardMale.GetBodyFatFraction().SetValue(0.21);
+      standardMale.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
+      standardMale.GetMeanArterialPressureBaseline().SetValue(87, PressureUnit::mmHg);
+      standardMale.GetPulsePressureBaseline().SetValue(40.5, PressureUnit::mmHg);
+      standardMale.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
       GenerateSlicedPatientList(pList, standardMale);
 
       SEPatient standardFemale(GetLogger());
-      standardFemale.SerializeFromFile("./patients/StandardFemale.json");
+
+      standardMale.GetAge().SetValue(44, TimeUnit::yr);
+      standardMale.GetHeight().SetValue(162.56, LengthUnit::cm);
+      standardMale.GetBodyMassIndex().SetValue(22.31);
+      standardMale.GetBodyFatFraction().SetValue(0.28);
+      standardMale.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
+      standardMale.GetMeanArterialPressureBaseline().SetValue(87, PressureUnit::mmHg);
+      standardMale.GetPulsePressureBaseline().SetValue(40.5, PressureUnit::mmHg);
+      standardMale.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
       GenerateSlicedPatientList(pList, standardFemale);
     }
   }

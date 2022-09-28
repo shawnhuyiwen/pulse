@@ -97,6 +97,13 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         # The PropertyError class has an array, errors, of all the errors of that property in the query results
         # This condition filter will ONLY create PropertyName entries if the property is PatientSpecific
 
+        patient_ids = results["ids"]
+        print("I found "+str(len(patient_ids)))
+        for pid in patient_ids:
+            patient = self.getPatient(pid)
+            age_yr = patient.Age.ScalarTime.Value
+            print(str(patient.Name)+" id:"+str(pid)+" is "+str(age_yr)+" yrs old")
+
         # Let's go through and calculate 'stuff' for each property
         for system,properties in results.items():
             print("Examining system "+system)
@@ -223,8 +230,7 @@ class PatientVariabilityAnalysis(PatientVariabilityResults):
         pyo.plot(fig)
 
     def numPatients(self, results):
-        # TODO: Find a more elegant way to do this
-        return len(results["Patient"]["HeartRateBaseline(1/min)-Patient2SystemMean"].patient_ids)
+        return len(results["ids"])
 
     def analyzePropertyError(self, property_error: PropertyError):
         # We can dynamically add members to our property_error object

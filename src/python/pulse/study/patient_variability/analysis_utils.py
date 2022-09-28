@@ -2,7 +2,7 @@
 # See accompanying NOTICE file for details.
 
 from pulse.cdm.bind.Patient_pb2 import PatientData
-from pulse.study.bind.PatientVariability_pb2 import PatientStateListData
+from pulse.study.bind.PatientVariability_pb2 import PatientStateListData, PatientStateData
 
 from google.protobuf import json_format
 from os.path import exists
@@ -44,7 +44,6 @@ class Field(Enum):
 
 class PropertyError(object):
     def __init__(self):
-        self.patient_ids = list()
         self.errors = list()
 
 class Condition():
@@ -196,6 +195,12 @@ class PatientVariabilityResults():
                 json = f.read()
             json_format.Parse(json, self._results)
 
+    def getPatient(self, id):
+        for state in self._results.PatientState:
+            if state.ID is id:
+                return state.SetupPatient
+        return None
+
     def createFilterList(self):
         return PatientStateListData().Patient
 
@@ -279,10 +284,14 @@ class PatientVariabilityResults():
     # Generates list of patients that match any of the conditionals/conditions
     def conditionalFilter(self, conditionals:List[Union[Conditional, Condition]]):
         results = {}
+        results["ids"] = list()
 
         for state in self._results.PatientState:
             for conditional in conditionals:
+                if state.Failure != 0:
+                    continue
                 if conditional.eval(state.SetupPatient):
+                    results["ids"].append(state.ID)
                     # Pull out the system properties that are patient specific and their errors
                     for system,properties in state.Validation.ValidationMap.items():
                         system = system[:system.find("-")]
@@ -294,7 +303,6 @@ class PatientVariabilityResults():
                                 if property.Name not in property_map:
                                     property_map[property.Name] = PropertyError()
                                 property_error = property_map[property.Name]
-                                property_error.patient_ids.append(state.ID)
                                 property_error.errors.append(property.Error)
         return results
 
