@@ -145,7 +145,8 @@ void Logger::RemoveForwards()
 
 std::string Logger::FormatLogMessage(const std::string& msg, const std::string& origin)
 {
-  std::string out = "";
+  std::string out = " ";
+  size_t min = out.length();
   if (m_time != nullptr && m_time->IsValid())
     out += "[" + m_time->ToString() + "] ";
 
@@ -155,7 +156,7 @@ std::string Logger::FormatLogMessage(const std::string& msg, const std::string& 
   if (!msg.empty())
     out += msg;
 
-  return out;
+  return (out.length() > min)? out : "";
 }
 
 void Logger::Debug(std::string const& msg, const std::string& origin)
