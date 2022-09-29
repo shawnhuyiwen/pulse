@@ -62,12 +62,12 @@ namespace pulse { namespace human_adult_whole_body
     expectedPatient.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
     expectedPatient.GetRightLungRatio().SetValue(0.525);
     expectedPatient.GetTotalLungCapacity().SetValue(5.782, VolumeUnit::L);
-    expectedPatient.GetFunctionalResidualCapacity().SetValue(2.1682, VolumeUnit::L);
+    expectedPatient.GetFunctionalResidualCapacity().SetValue(2.1683, VolumeUnit::L);
     expectedPatient.GetResidualVolume().SetValue(1.1564, VolumeUnit::L);
-    expectedPatient.GetTidalVolumeBaseline().SetValue(0.506, VolumeUnit::L);
+    expectedPatient.GetTidalVolumeBaseline().SetValue(0.5059, VolumeUnit::L);
     expectedPatient.GetVitalCapacity().SetValue(4.6256, VolumeUnit::L);
-    expectedPatient.GetExpiratoryReserveVolume().SetValue(1.0118, VolumeUnit::L);
-    expectedPatient.GetInspiratoryReserveVolume().SetValue(3.1078, VolumeUnit::L);
+    expectedPatient.GetExpiratoryReserveVolume().SetValue(1.0119, VolumeUnit::L);
+    expectedPatient.GetInspiratoryReserveVolume().SetValue(3.1079, VolumeUnit::L);
     expectedPatient.GetInspiratoryCapacity().SetValue(3.6138, VolumeUnit::L);
     expectedPatient.GetAlveoliSurfaceArea().SetValue(65.5986, AreaUnit::m2);
     expectedPatient.GetSkinSurfaceArea().SetValue(1.8422, AreaUnit::m2);
@@ -104,15 +104,57 @@ namespace pulse { namespace human_adult_whole_body
     expectedPatient.GetResidualVolume().SetValue(0.8816, VolumeUnit::L);
     expectedPatient.GetTidalVolumeBaseline().SetValue(0.3857, VolumeUnit::L);
     expectedPatient.GetVitalCapacity().SetValue(3.5263, VolumeUnit::L);
-    expectedPatient.GetExpiratoryReserveVolume().SetValue(2.3692, VolumeUnit::L);
-    expectedPatient.GetInspiratoryReserveVolume().SetValue(2.7549, VolumeUnit::L);
-    expectedPatient.GetInspiratoryCapacity().SetValue(3.6138, VolumeUnit::L);
+    expectedPatient.GetExpiratoryReserveVolume().SetValue(0.7714, VolumeUnit::L);
+    expectedPatient.GetInspiratoryReserveVolume().SetValue(2.3692, VolumeUnit::L);
+    expectedPatient.GetInspiratoryCapacity().SetValue(2.7549, VolumeUnit::L);
     expectedPatient.GetAlveoliSurfaceArea().SetValue(50.0083, AreaUnit::m2);
     expectedPatient.GetSkinSurfaceArea().SetValue(1.6180, AreaUnit::m2);
     expectedPatient.GetBasalMetabolicRate().SetValue(1296.4087, PowerUnit::kcal_Per_day);
     ss.str("");
     ss.clear();
     ss << "Defaults (female)";
+    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+
+    ///////////////////////
+    // Standard Patients //
+    ///////////////////////
+    expectedPass = true;
+    patient.Clear();
+    patient.GetAge().SetValue(44, TimeUnit::yr);
+    patient.GetHeight().SetValue(180.34, LengthUnit::cm);
+    patient.GetBodyMassIndex().SetValue(23.71);
+    patient.GetBodyFatFraction().SetValue(0.21);
+    patient.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
+    patient.GetMeanArterialPressureBaseline().SetValue(87, PressureUnit::mmHg);
+    patient.GetPulsePressureBaseline().SetValue(40.5, PressureUnit::mmHg);
+    patient.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
+    expectedPatient.Copy(patient);
+    expectedPatient.GetWeight().SetValue(170, MassUnit::lb);
+    expectedPatient.GetDiastolicArterialPressureBaseline().SetValue(73.5, PressureUnit::mmHg);
+    expectedPatient.GetSystolicArterialPressureBaseline().SetValue(114, PressureUnit::mmHg);
+    ss.str("");
+    ss.clear();
+    ss << "Standard Male";
+    SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
+
+    expectedPass = true;
+    patient.Clear();
+    patient.SetSex(ePatient_Sex::Female);
+    patient.GetAge().SetValue(44, TimeUnit::yr);
+    patient.GetHeight().SetValue(162.56, LengthUnit::cm);
+    patient.GetBodyMassIndex().SetValue(22.31);
+    patient.GetBodyFatFraction().SetValue(0.28);
+    patient.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
+    patient.GetMeanArterialPressureBaseline().SetValue(87, PressureUnit::mmHg);
+    patient.GetPulsePressureBaseline().SetValue(40.5, PressureUnit::mmHg);
+    patient.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
+    expectedPatient.Copy(patient);
+    expectedPatient.GetWeight().SetValue(129.975, MassUnit::lb);
+    expectedPatient.GetDiastolicArterialPressureBaseline().SetValue(73.5, PressureUnit::mmHg);
+    expectedPatient.GetSystolicArterialPressureBaseline().SetValue(114, PressureUnit::mmHg);
+    ss.str("");
+    ss.clear();
+    ss << "Standard Female";
     SetupPatientTest(testSuite, sTestDirectory, ss.str(), &patient, &expectedPatient, expectedPass);
 
     //////////
@@ -168,7 +210,7 @@ namespace pulse { namespace human_adult_whole_body
     patient.GetWeight().SetValue(70, MassUnit::kg);
     expectedPatient.Copy(patient);
     expectedPatient.GetBodyMassIndex().SetValue(23);
-    expectedPatient.GetIdealBodyWeight().SetValue(69.9626, MassUnit::kg);
+    expectedPatient.GetIdealBodyWeight().SetValue(69.9717, MassUnit::kg);
     ss.str("");
     ss.clear();
     ss << "Specify Height and Weight (male)";
@@ -823,61 +865,235 @@ namespace pulse { namespace human_adult_whole_body
     testCase.SetName(sTestName);
 
     bool pass = pulse::human_adult_whole_body::SetupPatient(*patient);
+    std::vector<std::string> errs;
     if (pass != expectedPass)
-      testCase.AddFailure("Failed test case (unexpected pass/fail): " + sTestName);
-    else if (pass && expectedPatient != nullptr && !CheckSetupPatient(*patient, *expectedPatient))
-      testCase.AddFailure("Failed test case (patient doesn't match expected values): " + sTestName);
+      testCase.AddFailure("Unexpected pass/fail): " + sTestName);
+    else if (pass && expectedPatient != nullptr && !CheckSetupPatient(*patient, *expectedPatient, errs))
+    {
+      for (auto& e : errs)
+        testCase.AddFailure(e);
+    }
+      
 
     testCase.GetDuration().SetValue(timer.GetElapsedTime_s("TestCase"), TimeUnit::s);
   }
 
-  bool EngineTest::CheckSetupPatient(SEPatient& setupPatient, SEPatient& expectedPatient)
+  bool EngineTest::CheckSetupPatient(SEPatient& setupPatient, SEPatient& expectedPatient, std::vector<std::string>& errs)
   {
     double tol = 0.01;
+    std::stringstream ss;
+    if (expectedPatient.GetSex() != setupPatient.GetSex())
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Sex mismatch : " << "expected " << ((expectedPatient.GetSex() == ePatient_Sex::Male)? "male" : "female");
+      errs.push_back(ss.str()); 
+    }
     if (expectedPatient.HasAge() && GeneralMath::PercentDifference(expectedPatient.GetAge(TimeUnit::yr), setupPatient.GetAge(TimeUnit::yr)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Age mismatch : " << setupPatient.GetAge(TimeUnit::yr) << "yr expected " << expectedPatient.GetAge(TimeUnit::yr) << "yr";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasWeight() && GeneralMath::PercentDifference(expectedPatient.GetWeight(MassUnit::kg), setupPatient.GetWeight(MassUnit::kg)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Weight mismatch : " << setupPatient.GetWeight(MassUnit::kg) << "kg expected " << expectedPatient.GetWeight(MassUnit::kg) << "kg";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasHeight() && GeneralMath::PercentDifference(expectedPatient.GetHeight(LengthUnit::cm), setupPatient.GetHeight(LengthUnit::cm)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Height mismatch : " << setupPatient.GetHeight(LengthUnit::cm) << "cm expected " << expectedPatient.GetHeight(LengthUnit::cm) << "cm";
+      errs.push_back(ss.str());
+    }
+    if (expectedPatient.HasBodyDensity() && GeneralMath::PercentDifference(expectedPatient.GetBodyDensity(MassPerVolumeUnit::g_Per_cm3), setupPatient.GetBodyDensity(MassPerVolumeUnit::g_Per_cm3)) > tol)
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Body density mismatch : " << setupPatient.GetBodyDensity(MassPerVolumeUnit::g_Per_cm3) << "g/cm3 expected " << expectedPatient.GetBodyDensity(MassPerVolumeUnit::g_Per_cm3) << "g/cm3";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasBodyFatFraction() && GeneralMath::PercentDifference(expectedPatient.GetBodyFatFraction().GetValue(), setupPatient.GetBodyFatFraction().GetValue()) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Body fat fraction mismatch : " << setupPatient.GetBodyFatFraction().GetValue() << " expected " << expectedPatient.GetBodyFatFraction().GetValue();
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasBodyMassIndex() && GeneralMath::PercentDifference(expectedPatient.GetBodyMassIndex().GetValue(), setupPatient.GetBodyMassIndex().GetValue()) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Body mass index mismatch : " << setupPatient.GetBodyMassIndex().GetValue() << " expected " << expectedPatient.GetBodyMassIndex().GetValue();
+      errs.push_back(ss.str());
+    }
+    if (expectedPatient.HasLeanBodyMass() && GeneralMath::PercentDifference(expectedPatient.GetLeanBodyMass(MassUnit::kg), setupPatient.GetLeanBodyMass(MassUnit::kg)) > tol)
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Lean body mass mismatch : " << setupPatient.GetLeanBodyMass(MassUnit::kg) << "kg expected " << expectedPatient.GetLeanBodyMass(MassUnit::kg) << "kg";
+      errs.push_back(ss.str());
+    }
+    if (expectedPatient.HasIdealBodyWeight() && GeneralMath::PercentDifference(expectedPatient.GetIdealBodyWeight(MassUnit::kg), setupPatient.GetIdealBodyWeight(MassUnit::kg)) > tol)
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Ideal body weight mismatch : " << setupPatient.GetIdealBodyWeight(MassUnit::kg) << "kg expected " << expectedPatient.GetIdealBodyWeight(MassUnit::kg) << "kg";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasAlveoliSurfaceArea() && GeneralMath::PercentDifference(expectedPatient.GetAlveoliSurfaceArea(AreaUnit::m2), setupPatient.GetAlveoliSurfaceArea(AreaUnit::m2)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Alveoli surface area mismatch : " << setupPatient.GetAlveoliSurfaceArea(AreaUnit::m2) << "m2 expected " << expectedPatient.GetAlveoliSurfaceArea(AreaUnit::m2) << "m2";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasRightLungRatio() && GeneralMath::PercentDifference(expectedPatient.GetRightLungRatio().GetValue(), setupPatient.GetRightLungRatio().GetValue()) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Right lung ratio mismatch : " << setupPatient.GetRightLungRatio().GetValue() << " expected " << expectedPatient.GetRightLungRatio().GetValue();
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasSkinSurfaceArea() && GeneralMath::PercentDifference(expectedPatient.GetSkinSurfaceArea(AreaUnit::m2), setupPatient.GetSkinSurfaceArea(AreaUnit::m2)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Skin surface area mismatch : " << setupPatient.GetSkinSurfaceArea(AreaUnit::m2) << "m2 expected " << expectedPatient.GetSkinSurfaceArea(AreaUnit::m2) << "m2";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasBasalMetabolicRate() && GeneralMath::PercentDifference(expectedPatient.GetBasalMetabolicRate(PowerUnit::kcal_Per_day), setupPatient.GetBasalMetabolicRate(PowerUnit::kcal_Per_day)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Basal metabolic rate mismatch : " << setupPatient.GetBasalMetabolicRate(PowerUnit::kcal_Per_day) << "kcal/day expected " << expectedPatient.GetBasalMetabolicRate(PowerUnit::kcal_Per_day) << "kcal/day";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasBloodVolumeBaseline() && GeneralMath::PercentDifference(expectedPatient.GetBloodVolumeBaseline(VolumeUnit::mL), setupPatient.GetBloodVolumeBaseline(VolumeUnit::mL)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Blood volume baseline mismatch : " << setupPatient.GetBloodVolumeBaseline(VolumeUnit::mL) << "mL expected " << expectedPatient.GetBloodVolumeBaseline(VolumeUnit::mL) << "mL";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasDiastolicArterialPressureBaseline() && GeneralMath::PercentDifference(expectedPatient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg), setupPatient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Diastolic arterial pressure baseline mismatch : " << setupPatient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg) << "mmHg expected " << expectedPatient.GetDiastolicArterialPressureBaseline(PressureUnit::mmHg) << "mmHg";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasHeartRateBaseline() && GeneralMath::PercentDifference(expectedPatient.GetHeartRateBaseline(FrequencyUnit::Per_min), setupPatient.GetHeartRateBaseline(FrequencyUnit::Per_min)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Heart rate baseline mismatch : " << setupPatient.GetHeartRateBaseline(FrequencyUnit::Per_min) << "bpm expected " << expectedPatient.GetHeartRateBaseline(FrequencyUnit::Per_min) << "bpm";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasMeanArterialPressureBaseline() && GeneralMath::PercentDifference(expectedPatient.GetMeanArterialPressureBaseline(PressureUnit::mmHg), setupPatient.GetMeanArterialPressureBaseline(PressureUnit::mmHg)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Mean arterial pressure baseline mismatch : " << setupPatient.GetMeanArterialPressureBaseline(PressureUnit::mmHg) << "mmHg expected " << expectedPatient.GetMeanArterialPressureBaseline(PressureUnit::mmHg) << "mmHg";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasPulsePressureBaseline() && GeneralMath::PercentDifference(expectedPatient.GetPulsePressureBaseline(PressureUnit::mmHg), setupPatient.GetPulsePressureBaseline(PressureUnit::mmHg)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Pulse pressure baseline mismatch : " << setupPatient.GetPulsePressureBaseline(PressureUnit::mmHg) << "mmHg expected " << expectedPatient.GetPulsePressureBaseline(PressureUnit::mmHg) << "mmHg";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasRespirationRateBaseline() && GeneralMath::PercentDifference(expectedPatient.GetRespirationRateBaseline(FrequencyUnit::Per_min), setupPatient.GetRespirationRateBaseline(FrequencyUnit::Per_min)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Respiration rate baseline mismatch : " << setupPatient.GetRespirationRateBaseline(FrequencyUnit::Per_min) << "bpm expected " << expectedPatient.GetRespirationRateBaseline(FrequencyUnit::Per_min) << "bpm";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasSystolicArterialPressureBaseline() && GeneralMath::PercentDifference(expectedPatient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg), setupPatient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Systolic arterial pressure baseline mismatch : " << setupPatient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg) << "mmHg expected " << expectedPatient.GetSystolicArterialPressureBaseline(PressureUnit::mmHg) << "mmHg";
+      errs.push_back(ss.str());
+    }
+    if (expectedPatient.HasTidalVolumeBaseline() && GeneralMath::PercentDifference(expectedPatient.GetTidalVolumeBaseline(VolumeUnit::L), setupPatient.GetTidalVolumeBaseline(VolumeUnit::L)) > tol)
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Tidal volume baseline mismatch : " << setupPatient.GetTidalVolumeBaseline(VolumeUnit::L) << "L expected " << expectedPatient.GetTidalVolumeBaseline(VolumeUnit::L) << "L";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasHeartRateMaximum() && GeneralMath::PercentDifference(expectedPatient.GetHeartRateMaximum(FrequencyUnit::Per_min), setupPatient.GetHeartRateMaximum(FrequencyUnit::Per_min)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Heart rate maximum mismatch : " << setupPatient.GetHeartRateMaximum(FrequencyUnit::Per_min) << "bpm expected " << expectedPatient.GetHeartRateMaximum(FrequencyUnit::Per_min) << "bpm";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasHeartRateMinimum() && GeneralMath::PercentDifference(expectedPatient.GetHeartRateMinimum(FrequencyUnit::Per_min), setupPatient.GetHeartRateMinimum(FrequencyUnit::Per_min)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Heart rate minimum mismatch : " << setupPatient.GetHeartRateMinimum(FrequencyUnit::Per_min) << "bpm expected " << expectedPatient.GetHeartRateMinimum(FrequencyUnit::Per_min) << "bpm";
+      errs.push_back(ss.str());
+    }
+    if (expectedPatient.HasExpiratoryReserveVolume() && GeneralMath::PercentDifference(expectedPatient.GetExpiratoryReserveVolume(VolumeUnit::L), setupPatient.GetExpiratoryReserveVolume(VolumeUnit::L)) > tol)
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Expiratory reserve volume mismatch : " << setupPatient.GetExpiratoryReserveVolume(VolumeUnit::L) << "L expected " << expectedPatient.GetExpiratoryReserveVolume(VolumeUnit::L) << "L";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasFunctionalResidualCapacity() && GeneralMath::PercentDifference(expectedPatient.GetFunctionalResidualCapacity(VolumeUnit::L), setupPatient.GetFunctionalResidualCapacity(VolumeUnit::L)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Functional residual capactiy mismatch : " << setupPatient.GetFunctionalResidualCapacity(VolumeUnit::L) << "L expected " << expectedPatient.GetFunctionalResidualCapacity(VolumeUnit::L) << "L";
+      errs.push_back(ss.str());
+    }
+    if (expectedPatient.HasInspiratoryCapacity() && GeneralMath::PercentDifference(expectedPatient.GetInspiratoryCapacity(VolumeUnit::L), setupPatient.GetInspiratoryCapacity(VolumeUnit::L)) > tol)
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Inspiratory capacity mismatch : " << setupPatient.GetInspiratoryCapacity(VolumeUnit::L) << "L expected " << expectedPatient.GetInspiratoryCapacity(VolumeUnit::L) << "L";
+      errs.push_back(ss.str());
+    }
+    if (expectedPatient.HasInspiratoryReserveVolume() && GeneralMath::PercentDifference(expectedPatient.GetInspiratoryReserveVolume(VolumeUnit::L), setupPatient.GetInspiratoryReserveVolume(VolumeUnit::L)) > tol)
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Inspiratory reserve volume mismatch : " << setupPatient.GetInspiratoryReserveVolume(VolumeUnit::L) << "L expected " << expectedPatient.GetInspiratoryReserveVolume(VolumeUnit::L) << "L";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasResidualVolume() && GeneralMath::PercentDifference(expectedPatient.GetResidualVolume(VolumeUnit::L), setupPatient.GetResidualVolume(VolumeUnit::L)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Residual volume mismatch : " << setupPatient.GetResidualVolume(VolumeUnit::L) << "L expected " << expectedPatient.GetResidualVolume(VolumeUnit::L) << "L";
+      errs.push_back(ss.str());
+    }
     if (expectedPatient.HasTotalLungCapacity() && GeneralMath::PercentDifference(expectedPatient.GetTotalLungCapacity(VolumeUnit::L), setupPatient.GetTotalLungCapacity(VolumeUnit::L)) > tol)
-      return false;
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Total lung capacity mismatch : " << setupPatient.GetTotalLungCapacity(VolumeUnit::L) << "L expected " << expectedPatient.GetTotalLungCapacity(VolumeUnit::L) << "L";
+      errs.push_back(ss.str());
+    }
+    if (expectedPatient.HasVitalCapacity() && GeneralMath::PercentDifference(expectedPatient.GetVitalCapacity(VolumeUnit::L), setupPatient.GetVitalCapacity(VolumeUnit::L)) > tol)
+    {
+      ss.str("");
+      ss.clear();
+      ss << "Vital capacity mismatch : " << setupPatient.GetVitalCapacity(VolumeUnit::L) << "L expected " << expectedPatient.GetVitalCapacity(VolumeUnit::L) << "L";
+      errs.push_back(ss.str());
+    }
 
-    return true;
+    return errs.empty();
   }
 
 END_NAMESPACE_EX

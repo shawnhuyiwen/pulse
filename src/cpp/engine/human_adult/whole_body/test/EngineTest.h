@@ -211,7 +211,7 @@ namespace pulse { namespace human_adult_whole_body
     void InjectSuccsState(PhysiologyEngine* bg, HowToTracker& tracker, const SESubstance& succs);
 
     void SetupPatientTest(SETestSuite& testSuite, const std::string& sTestDirectory, const std::string& sTestName, SEPatient* patient, SEPatient* expectedPatient, bool expectedPass);
-    bool CheckSetupPatient(SEPatient& setupPatient, SEPatient& expectedPatient);
+    bool CheckSetupPatient(SEPatient& setupPatient, SEPatient& expectedPatient, std::vector<std::string>& errs);
   public:
     //////////////////////
     // Black Box Tests //
