@@ -2,6 +2,7 @@
    See accompanying NOTICE file for details.*/
 
 #include "PVRunner.h"
+#include "PVGenerator.h"
 
 #include "PulseEngine.h"
 #include "engine/human_adult/whole_body/Engine.h"
@@ -169,6 +170,7 @@ namespace pulse::study::patient_variability
           auto patientData = m_PatientResultsList->add_patientstate();
           patientData->CopyFrom(patientStateData);
           patientData->set_failure(eFailure::PatientStateData_eFailure_FailedSetup);
+          Info("[!Setup]  " + PVGenerator::ToString(p));
         }
       }
       // Write this file to disk

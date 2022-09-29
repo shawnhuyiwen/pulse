@@ -182,6 +182,7 @@ namespace pulse::study::patient_variability
     StepParameter   HemorrhageSeverity;
     StepParameter   HemorrhageTriageTime_min;
 
+    static std::string ToString(SEPatient& patient);
     void GenerateData(eSetType t, PatientStateListData& pList);
 
   protected:

@@ -107,22 +107,22 @@ namespace pulse::study::patient_variability
       GenerateSlicedPatientList(pList, standardMale);
 
       SEPatient standardFemale(GetLogger());
-
-      standardMale.GetAge().SetValue(44, TimeUnit::yr);
-      standardMale.GetHeight().SetValue(162.56, LengthUnit::cm);
-      standardMale.GetBodyMassIndex().SetValue(22.31);
-      standardMale.GetBodyFatFraction().SetValue(0.28);
-      standardMale.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
-      standardMale.GetMeanArterialPressureBaseline().SetValue(87, PressureUnit::mmHg);
-      standardMale.GetPulsePressureBaseline().SetValue(40.5, PressureUnit::mmHg);
-      standardMale.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
+      standardFemale.SetSex(ePatient_Sex::Female);
+      standardFemale.GetAge().SetValue(44, TimeUnit::yr);
+      standardFemale.GetHeight().SetValue(162.56, LengthUnit::cm);
+      standardFemale.GetBodyMassIndex().SetValue(22.31);
+      standardFemale.GetBodyFatFraction().SetValue(0.28);
+      standardFemale.GetHeartRateBaseline().SetValue(72, FrequencyUnit::Per_min);
+      standardFemale.GetMeanArterialPressureBaseline().SetValue(87, PressureUnit::mmHg);
+      standardFemale.GetPulsePressureBaseline().SetValue(40.5, PressureUnit::mmHg);
+      standardFemale.GetRespirationRateBaseline().SetValue(12, FrequencyUnit::Per_min);
       GenerateSlicedPatientList(pList, standardFemale);
     }
   }
 
   void PVGenerator::GenerateSlicedPatientList(PatientStateListData& pList, const SEPatient& basePatient)
   {
-    Info("Generating slice data set for "+basePatient.GetName());
+    Info("Generating Age slice data set for "+basePatient.GetName());
     for (size_t age_yr = minAge_yr; age_yr <= maxAge_yr; age_yr++)
     {
       SEPatient patient(GetLogger());
@@ -132,6 +132,7 @@ namespace pulse::study::patient_variability
       m_TotalPatients++;
     }
 
+    Info("Generating Height slice data set for " + basePatient.GetName());
     double minHeight_cm = basePatient.GetSex() == ePatient_Sex::Male ? minMaleHeight_cm : minFemaleHeight_cm;
     double maxHeight_cm = basePatient.GetSex() == ePatient_Sex::Male ? maxMaleHeight_cm : maxFemaleHeight_cm;
     for (double height_cm = minHeight_cm; height_cm <= maxHeight_cm; height_cm += 0.5)
@@ -143,6 +144,7 @@ namespace pulse::study::patient_variability
       m_TotalPatients++;
     }
 
+    Info("Generating BMI slice data set for " + basePatient.GetName());
     for (double bmi = minBMI; bmi <= maxBMI; bmi += 0.5)
     {
       SEPatient patient(GetLogger());
@@ -152,6 +154,7 @@ namespace pulse::study::patient_variability
       m_TotalPatients++;
     }
 
+    Info("Generating BFF slice data set for " + basePatient.GetName());
     double minBFF = basePatient.GetSex() == ePatient_Sex::Male ? minMaleBFF : minFemaleBFF;
     double maxBFF = basePatient.GetSex() == ePatient_Sex::Male ? maxMaleBFF : maxFemaleBFF;
     for (double bff = minBFF; bff <= maxBFF; bff += 0.01)
@@ -163,6 +166,7 @@ namespace pulse::study::patient_variability
       m_TotalPatients++;
     }
 
+    Info("Generating HR slice data set for " + basePatient.GetName());
     for (size_t hr_bpm = minHR_bpm; hr_bpm <= maxHR_bpm; hr_bpm++)
     {
       SEPatient patient(GetLogger());
@@ -172,6 +176,7 @@ namespace pulse::study::patient_variability
       m_TotalPatients++;
     }
 
+    Info("Generating MAP/PP combo slice data set for " + basePatient.GetName());
     // Iterating MAP and Pulse Pressure by themselves don't effectivly cover the variability we would like
     // They are dependent on each other and Systolic/Diastolic, so to get a good coverage,
     // we are going to combo these two values and toss invalid patients.
@@ -233,6 +238,7 @@ namespace pulse::study::patient_variability
     }
     */
 
+    Info("Generating RR slice data set for " + basePatient.GetName());
     for (double rr = minRR_bpm; rr <= maxRR_bpm; rr += 0.5)
     {
       SEPatient patient(GetLogger());
@@ -331,6 +337,7 @@ namespace pulse::study::patient_variability
     SEPatient& patient, double runDuration_s, const std::string& full_dir_path)
   {
     Info("Creating patient: " + full_dir_path);
+    //Info("  " + ToString(patient));
     pulse::study::bind::patient_variability::PatientStateData* patientStateData = pList.add_patientstate();
     patientStateData->set_id(m_TotalRuns);
     patientStateData->set_outputbasefilename(full_dir_path);
@@ -341,5 +348,21 @@ namespace pulse::study::patient_variability
     m_TotalRuns++;
 
     return patientStateData;
+  }
+
+  std::string PVGenerator::ToString(SEPatient& p)
+  {
+    std::string out;
+    out = ePatient_Sex_Name(p.GetSex()) + "_";
+    out += p.GetAge().ToString() + "_";
+    out += p.GetHeight().ToString() + "_";
+    out += p.GetBodyMassIndex().ToString() + "_";
+    out += p.GetBodyFatFraction().ToString() + "_";
+    out += p.GetHeartRateBaseline().ToString() + "_";
+    out += p.GetMeanArterialPressureBaseline().ToString() + "_";
+    out += p.GetPulsePressureBaseline().ToString() + "_";
+    out += p.GetRespirationRateBaseline().ToString();
+
+    return out;
   }
 }
